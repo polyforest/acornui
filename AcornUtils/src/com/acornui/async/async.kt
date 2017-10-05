@@ -18,24 +18,44 @@ package com.acornui.async
 
 import kotlin.coroutines.experimental.*
 
-fun <T> async(block: suspend () -> T): Deferred<T> = DeferredImpl(block)
-
+/**
+ * Launches a new coroutine on this same thread.
+ */
 fun launch(block: suspend () -> Unit) {
-	block.startCoroutine(object : Continuation<Unit> {
-		override val context: CoroutineContext get() = EmptyCoroutineContext
-		override fun resume(value: Unit) {}
-		override fun resumeWithException(exception: Throwable) {
-			println("Coroutine failed: $exception")
-		}
-	})
+	block.startCoroutine(BasicContinuationImpl())
+}
+
+typealias Work<R> = suspend () -> R
+
+/**
+ * Launches a new coroutine on this same thread, exposing the ability to suspend execution, awaiting a result.
+ */
+fun <T> async(work: Work<T>): Deferred<T> = DeferredImpl(work)
+
+/**
+ * A suspension point with no result.
+ */
+class BasicContinuationImpl(
+		override val context: CoroutineContext = EmptyCoroutineContext
+) : Continuation<Unit> {
+
+	override fun resume(value: Unit) {
+	}
+
+	override fun resumeWithException(exception: Throwable) {
+		println("Coroutine failed: $exception")
+	}
 }
 
 interface Deferred<out T> {
 
+	/**
+	 * Suspends the co-routine until the result is calculated.
+	 */
 	suspend fun await(): T
 }
 
-private class DeferredImpl<out T>(private val block: suspend () -> T) : Deferred<T> {
+private class DeferredImpl<out T>(private val work: Work<T>) : Deferred<T> {
 
 	private var status = DeferredStatus.PENDING
 	private var result: T? = null
@@ -44,8 +64,10 @@ private class DeferredImpl<out T>(private val block: suspend () -> T) : Deferred
 
 	init {
 		launch {
+			if (status != DeferredStatus.PENDING)
+				throw IllegalStateException("Deferred job is not currently pending.")
 			try {
-				result = block()
+				result = work()
 				status = DeferredStatus.SUCCESSFUL
 			} catch(e: Throwable) {
 				error = e
@@ -72,9 +94,7 @@ private class DeferredImpl<out T>(private val block: suspend () -> T) : Deferred
 	override suspend fun await(): T = suspendCoroutine {
 		cont: Continuation<T> ->
 		when (status) {
-			DeferredStatus.PENDING -> {
-				continuations.add(cont)
-			}
+			DeferredStatus.PENDING -> continuations.add(cont)
 			DeferredStatus.SUCCESSFUL -> cont.resume(result as T)
 			DeferredStatus.FAILED -> cont.resumeWithException(error as Throwable)
 		}
