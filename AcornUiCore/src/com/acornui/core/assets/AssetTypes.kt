@@ -26,8 +26,8 @@ import com.acornui.core.graphics.Texture
  *
  * Note: Custom asset types may be created, but be sure to use a unique name.
  */
-data class AssetType<T>(val name: String) {
-}
+@Suppress("unused")
+data class AssetType<T>(val name: String)
 
 object AssetTypes {
 

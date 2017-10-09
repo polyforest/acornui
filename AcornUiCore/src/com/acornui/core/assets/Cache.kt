@@ -20,7 +20,12 @@ interface Cache : Disposable {
 
 	operator fun <T : Any> set(key: CacheKey<T>, value: T)
 
-	fun <T : Any> getOr(key: CacheKey<T>, factory: () -> T): T
+	fun <T : Any> getOr(key: CacheKey<T>, factory: () -> T): T {
+		if (containsKey(key)) return get(key)!!
+		val value = factory()
+		set(key, value)
+		return value
+	}
 
 	/**
 	 * Decrements the use count for the cache value with the given key.
@@ -87,6 +92,7 @@ class CacheImpl(
 	}
 
 	override fun <T : Any> get(key: CacheKey<T>): T? {
+		@Suppress("UNCHECKED_CAST")
 		return cache[key]?.value as T?
 	}
 
@@ -96,20 +102,6 @@ class CacheImpl(
 		cache[key] = cacheValue
 		// Start in the death pool, it will be removed on refInc.
 		deathPool.add(key)
-	}
-
-	override fun <T : Any> getOr(key: CacheKey<T>, factory: () -> T): T {
-		val cacheValue: CacheValue
-		if (cache.containsKey(key)) {
-			cacheValue = cache[key]!!
-		} else {
-			cacheValue = CacheValue(factory(), gcFrames)
-			cache[key] = cacheValue
-
-			// Start in the death pool, it will be removed on refInc.
-			deathPool.add(key)
-		}
-		return cacheValue.value as T
 	}
 
 	override fun refDec(key: CacheKey<*>) {
@@ -144,7 +136,8 @@ class CacheImpl(
 
 }
 
-interface CacheKey<T> {}
+@Suppress("unused")
+interface CacheKey<T>
 
 private class CacheValue(
 		var value: Any,

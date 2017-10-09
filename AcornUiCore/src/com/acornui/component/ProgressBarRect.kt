@@ -22,7 +22,6 @@ import com.acornui.math.Pad
 class ProgressBarRect(owner: Owned) : ContainerImpl(owner) {
 
 
-
 	val style = bind(ProgressBarRectStyle())
 
 	val backRect = addChild(rect())
@@ -126,15 +125,13 @@ fun Owned.showAssetLoadingBar(onCompleted: () -> Unit = {}) {
 		onCompleted()
 	}
 	val progressBar = progressBar!!
-	if (assetManager.percentLoaded >= 0.9 || assetManager.loadingQueue.hasCompleted()) {
-		if (progressBar.parent == null) {
-			progressBar.reset()
-			val popUpManager = inject(PopUpManager)
-			val popUp = addPopUp(PopUpInfo(progressBar, priority = 1000f, onCloseRequested = { false }))
-			assetManager.loadingQueue.completed.addOnce {
-				_, _ ->
-				popUpManager.removePopUp(popUp)
-			}
-		}
+	if (assetManager.percentLoaded >= 0.9 || assetManager.loadingQueue.hasCompleted() || progressBar.parent != null) return
+	progressBar.reset()
+	val popUpManager = inject(PopUpManager)
+	val popUp = addPopUp(PopUpInfo(progressBar, priority = 1000f, onCloseRequested = { false }))
+	assetManager.loadingQueue.completed.addOnce {
+		_, _ ->
+		popUpManager.removePopUp(popUp)
 	}
+
 }
