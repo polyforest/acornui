@@ -94,7 +94,7 @@ class GreedyRectanglePacker(private val settings: PackerAlgorithmSettingsData) :
 			val (pageWidth, pageHeight) = SIZES[left]
 			fillPage(pageWidth, pageHeight, placed, remaining, false)
 
-			val page = PackerPageData(pageWidth, pageHeight, placed.toTypedArray())
+			val page = PackerPageData(pageWidth, pageHeight, placed)
 			pages.add(page)
 			if (pages.size > MAX_PAGES) throw Exception("Exceeded $MAX_PAGES pages, there may be a problem with this texture packing algorithm.")
 		}

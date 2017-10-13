@@ -16,14 +16,13 @@
 
 package com.acornui.core.request
 
-import com.acornui.action.LoadableRo
-import com.acornui.action.Loadable
+import com.acornui.action.Progress
+import com.acornui.async.CancelableDeferred
 import com.acornui.browser.UrlParams
 import com.acornui.collection.Clearable
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.io.NativeBuffer
-
 
 /**
  * A model with the necessary information to make an http request.
@@ -32,23 +31,21 @@ import com.acornui.io.NativeBuffer
  */
 data class UrlRequestData(
 
-		var url: String = "",
+		val url: String = "",
 
-		var method: String = UrlRequestMethod.GET,
+		val method: String = UrlRequestMethod.GET,
 
-		val headers: MutableMap<String, String> = HashMap(),
+		val headers: Map<String, String> = HashMap(),
 
-		var user: String = "",
+		val user: String = "",
 
-		var password: String = "",
+		val password: String = "",
 
-		var formData: MultipartFormData? = null,
+		val formData: MultipartFormDataRo? = null,
 
 		var variables: UrlParams? = null,
 
 		var body: String? = null,
-
-		var responseType: ResponseType = ResponseType.TEXT,
 
 		/**
 		 * The number of milliseconds a request can take before automatically being terminated.
@@ -67,110 +64,41 @@ object UrlRequestMethod {
 	val PUT: String = "PUT"
 	val DELETE: String = "DELETE"
 }
-
-enum class ResponseType {
-	BINARY,
-	TEXT
-}
-
 interface RestServiceFactory {
 
-	fun create(injector: Injector): MutableHttpRequest
+	fun createTextRequest(injector: Injector, requestData: UrlRequestData): Request<String>
+	fun createBinaryRequest(injector: Injector, requestData: UrlRequestData): Request<NativeBuffer<Byte>>
 
 	companion object {
 		lateinit var instance: RestServiceFactory
 	}
 }
 
-interface HttpRequest : LoadableRo<Any> {
+interface Request<out T>: Progress, CancelableDeferred<T>
 
-	val responseError: ResponseException?
-		get() = error as? ResponseException
-
-	val responseType: ResponseType
-	val requestData: UrlRequestData
-
-	/**
-	 * If [responseType] == [ResponseType.BINARY], and [status] == [ActionStatus.SUCCESSFUL], this will be set.
-	 */
-	@Suppress("unchecked_cast")
-	val resultBinary: NativeBuffer<Byte>
-		get() {
-			if (responseType != ResponseType.BINARY) throw Exception("responseType is not BINARY")
-			return result as NativeBuffer<Byte>
-		}
-
-	/**
-	 * If [responseType] == [ResponseType.TEXT], and [status] == [ActionStatus.SUCCESSFUL], this will be set.
-	 */
-	val resultText: String
-		get() {
-			if (responseType != ResponseType.TEXT) throw Exception("responseType is not TEXT")
-			return result as String
-		}
+fun Scoped.createTextRequest(requestData: UrlRequestData): Request<String> {
+	return RestServiceFactory.instance.createTextRequest(injector, requestData)
 }
 
-interface MutableHttpRequest : HttpRequest, Loadable<Any>
-
-/**
- * Creates an Http Request.
- *
- * 	val r = createRequest()
- *	r.requestData.url = "https://httpbin.org/post"
- *	r.requestData.method = UrlRequestMethod.POST
- *	r.requestData.headers["Content-type"] = "application/json"
- *	r.requestData.body = """{"pnyrId":"kartik","vbkiId":"matrix","upuId":"underlog pizza"}"""
- *	r.succeeded.add {
- *		println("Request completed")
- *		println("Result: ${r.result}")
- *	}
- *	r.failed.add {
- *		action, status, error ->
- *		println("Request failed ${r.responseError}")
- *	}
- *	r.invoke()
- *
- * ------------------------------------------------------
- *
- *  val r = createRequest()
- *	r.requestData.url = "https://httpbin.org/post"
- *	r.requestData.method = UrlRequestMethod.POST
- *	r.requestData.variables = UrlParamsImpl().apply {
- *		append("foo", "1")
- *		append("bar", "2")
- *	}
- *	r.succeeded.add {
- *		println("Request completed")
- *		println("Result: ${r.result}")
- *	}
- *	r.failed.add {
- *		action, status, error ->
- *		println("Request failed ${r.responseError}")
- *	}
- *	r.invoke()
- *
- *
- */
-fun Scoped.createRequest(): MutableHttpRequest {
-	return RestServiceFactory.instance.create(injector)
+fun Scoped.createBinaryRequest(requestData: UrlRequestData): Request<NativeBuffer<Byte>> {
+	return RestServiceFactory.instance.createBinaryRequest(injector, requestData)
 }
 
-data class HttpResponse(
-		val text: String? = null,
-		val data: NativeBuffer<Byte>? = null
-)
-
-open class ResponseException(val status: Int, message: String, val detail: String) : Throwable(message) {
+open class ResponseException(val status: Short, message: String, val detail: String) : Throwable(message) {
 
 	override fun toString(): String {
 		return "ResponseException(status=$status, message=$message)"
 	}
 }
 
-class MultipartFormData : Clearable {
+interface MultipartFormDataRo {
+	val items: List<FormDataItem>
+}
+
+class MultipartFormData : Clearable, MultipartFormDataRo {
 
 	private val _items = ArrayList<FormDataItem>()
-	val items: List<FormDataItem>
+	override val items: List<FormDataItem>
 		get() = _items
 
 	fun append(name: String, value: NativeBuffer<Byte>, filename: String? = null) {

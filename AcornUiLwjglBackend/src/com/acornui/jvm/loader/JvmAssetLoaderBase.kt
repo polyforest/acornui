@@ -1,60 +1,50 @@
 package com.acornui.jvm.loader
 
-import com.acornui.action.BasicAction
+import com.acornui.async.Deferred
+import com.acornui.async.Work
+import com.acornui.async.async
 import com.acornui.core.UserInfo
 import com.acornui.core.assets.AssetLoader
-import com.acornui.core.time.TimeDriver
-import com.acornui.jvm.async
+import com.acornui.core.assets.AssetType
+import com.acornui.jvm.asyncThread
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
 import java.net.URL
-import java.util.concurrent.ExecutorService
 
-abstract class JvmAssetLoaderBase<out T : Any>(
-		protected val isAsync: Boolean,
-		protected val timeDriver: TimeDriver? = null
-) : BasicAction(), AssetLoader<T> {
-
-	private var _asset: T? = null
-
-	override var path: String = ""
-
-	override val result: T
-		get() = _asset!!
+abstract class JvmAssetLoaderBase<T>(
+		override final val path: String,
+		override final val type: AssetType<T>,
+		protected val isAsync: Boolean
+) : AssetLoader<T> {
 
 	private var _bytesTotal: Int? = null
+	private var _bytesLoaded: Int = 0
 
 	val bytesTotal: Int
 		get() = _bytesTotal ?: estimatedBytesTotal
 
-	private var executor: ExecutorService? = null
+	private lateinit var work: Deferred<T>
 
-	override fun onInvocation() {
+	private var initialized: Boolean = false
+
+	protected fun init() {
+		initialized = true
 		if (path.startsWith("http:", ignoreCase = true) || path.startsWith("https:", ignoreCase = true)) {
-			doWork({
+			work = doWork {
 				val connection = URL(path).openConnection()
 				val fis = connection.inputStream
 				_bytesTotal = connection.contentLength
-				create(fis)
-			}) {
-				_asset = it
-				success()
+				create(fis).also { _bytesLoaded = bytesTotal }
 			}
 		} else {
 			val file = File(path)
 			_bytesTotal = file.length().toInt()
-			if (!file.exists()) {
-				fail(FileNotFoundException(path))
-				return
-			}
-			doWork({
+			if (!file.exists()) throw FileNotFoundException(path)
+			work = doWork {
 				val fis = FileInputStream(file)
-				create(fis)
-			}) {
-				_asset = it
-				success()
+				create(fis).also { _bytesLoaded = bytesTotal }
 			}
 		}
 	}
@@ -65,7 +55,7 @@ abstract class JvmAssetLoaderBase<out T : Any>(
 
 	override val secondsLoaded: Float
 		get() {
-			return if (hasCompleted()) secondsTotal else 0f
+			return _bytesLoaded.toFloat() * UserInfo.downBps
 		}
 
 	override val secondsTotal: Float
@@ -74,24 +64,15 @@ abstract class JvmAssetLoaderBase<out T : Any>(
 		}
 
 
-	private fun <T : Any> doWork(work: () -> T, callback: (T) -> Unit) {
-		if (isAsync) {
-			executor = async(timeDriver!!, work, callback, { fail(it) })
-		} else {
-			try {
-				callback(work())
-			} catch (e: Throwable) {
-				fail(e)
-			}
-		}
+	private fun <T> doWork(work: Work<T>): Deferred<T> {
+		return if (isAsync) asyncThread(work) else async(work)
 	}
 
-	override fun onAborted() {
-		executor?.shutdownNow()
+	suspend override fun await(): T {
+		if (!initialized) throw Exception("Subclass must call init()")
+		return work.await()
 	}
 
-	override fun dispose() {
-		super.dispose()
-		_asset = null
-	}
+	// TODO:
+	override fun cancel() {}
 }

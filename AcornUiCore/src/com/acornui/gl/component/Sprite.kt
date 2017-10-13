@@ -20,7 +20,6 @@ import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.pushQuadIndices
-import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.*
 

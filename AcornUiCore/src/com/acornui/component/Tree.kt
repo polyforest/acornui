@@ -16,14 +16,10 @@
 
 package com.acornui.component
 
-import com.acornui.collection.pop
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.algorithm.hGroup
 import com.acornui.component.layout.algorithm.vGroup
-import com.acornui.component.style.StyleBase
-import com.acornui.component.style.StyleTag
-import com.acornui.component.style.StyleType
-import com.acornui.component.style.noSkin
+import com.acornui.component.style.*
 import com.acornui.component.text.text
 import com.acornui.core.Parent
 import com.acornui.core.ParentBase
@@ -34,6 +30,7 @@ import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.core.input.interaction.click
+import com.acornui.core.selection.Selectable
 import com.acornui.math.Bounds
 import com.acornui.observe.Observable
 import com.acornui.signal.*
@@ -133,26 +130,6 @@ interface TreeItemRenderer<E : ParentRo<E>> : TreeItemRendererRo<E>, ItemRendere
 
 open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Owned, protected val tree: Tree<E>) : ContainerImpl(owner), TreeItemRenderer<E> {
 
-	private var _data: E? = null
-	override var data: E?
-		get() = _data
-		set(value) {
-			val oldData = _data
-			if (oldData == value) return
-			if (oldData is Observable) {
-				oldData.changed.remove(this::dataChangedHandler)
-			}
-			_data = value
-			if (value is Observable) {
-				value.changed.add(this::dataChangedHandler)
-			}
-			invalidateProperties()
-		}
-
-	private fun dataChangedHandler(o: Observable) {
-		invalidateProperties()
-	}
-
 	val style = bind(DefaultTreeItemRendererStyle())
 
 	protected var openedFolderIcon: UiComponent? = null
@@ -187,6 +164,26 @@ open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Owned, protected val 
 			leafIcon?.dispose()
 			leafIcon = if (it.useLeaf) hGroup.addElement(0, it.leafIcon(this)) else null
 		}
+	}
+
+	private var _data: E? = null
+	override var data: E?
+		get() = _data
+		set(value) {
+			val oldData = _data
+			if (oldData == value) return
+			if (oldData is Observable) {
+				oldData.changed.remove(this::dataChangedHandler)
+			}
+			_data = value
+			if (value is Observable) {
+				value.changed.add(this::dataChangedHandler)
+			}
+			invalidateStyles()
+		}
+
+	private fun dataChangedHandler(o: Observable) {
+		invalidateStyles()
 	}
 
 	private var _toggled = false
@@ -258,7 +255,9 @@ open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Owned, protected val 
 		data = null
 	}
 
-	companion object : StyleTag
+	companion object : StyleTag {
+		val SELECTED = styleTag()
+	}
 }
 
 open class DefaultTreeItemRendererStyle : StyleBase() {

@@ -1,5 +1,7 @@
 package com.acornui.js.audio
 
+import com.acornui.async.Deferred
+import com.acornui.async.Promise
 import org.khronos.webgl.ArrayBuffer
 import org.w3c.dom.HTMLMediaElement
 import org.w3c.dom.events.EventTarget
@@ -32,6 +34,15 @@ external class AudioContext : EventTarget {
 
 	fun createPanner(): PannerNode
 	fun createGain(): GainNode
+}
+
+fun AudioContext.decodeAudioData(audioData: ArrayBuffer): Deferred<ArrayBuffer> {
+	return object : Promise<ArrayBuffer>() {
+		init {
+			// The Audio Context handles creating source buffers from raw binary
+			decodeAudioData(audioData, this::success)
+		}
+	}
 }
 
 external class AudioDestinationNode : AudioNode {

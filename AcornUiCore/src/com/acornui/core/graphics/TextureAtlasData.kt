@@ -19,7 +19,6 @@ package com.acornui.core.graphics
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
 import com.acornui.gl.core.TexturePixelFormat
-import com.acornui.math.IntRectangle
 import com.acornui.math.IntRectangleRo
 import com.acornui.math.IntRectangleSerializer
 import com.acornui.serialization.*
@@ -27,9 +26,8 @@ import com.acornui.serialization.*
 /**
  * @author nbilyk
  */
-@Suppress("ArrayInDataClass") // Lazy
 data class TextureAtlasData(
-		val pages: Array<AtlasPageData>
+		val pages: List<AtlasPageData>
 ) {
 
 	/**
@@ -60,7 +58,7 @@ object TextureAtlasDataSerializer : To<TextureAtlasData>, From<TextureAtlasData>
 
 	override fun read(reader: Reader): TextureAtlasData {
 		return TextureAtlasData(
-				pages = reader.array2("pages", AtlasPageSerializer)!!
+				pages = reader.arrayList("pages", AtlasPageSerializer)!!
 		)
 	}
 
@@ -74,15 +72,19 @@ object TextureAtlasDataSerializer : To<TextureAtlasData>, From<TextureAtlasData>
  */
 @Suppress("ArrayInDataClass") // Lazy
 data class AtlasPageData(
-		var texturePath: String,
-		var width: Int,
-		var height: Int,
-		var pixelFormat: TexturePixelFormat,
-		var premultipliedAlpha: Boolean,
-		var filterMin: TextureMinFilter,
-		var filterMag: TextureMagFilter,
-		var regions: Array<AtlasRegionData>,
-		var hasWhitePixel: Boolean = false
+
+		/**
+		 * A path to the texture relative to the atlas page data.
+		 */
+		val texturePath: String,
+		val width: Int,
+		val height: Int,
+		val pixelFormat: TexturePixelFormat,
+		val premultipliedAlpha: Boolean,
+		val filterMin: TextureMinFilter,
+		val filterMag: TextureMagFilter,
+		val regions: List<AtlasRegionData>,
+		val hasWhitePixel: Boolean = false
 ) {
 
 	fun containsRegion(regionName: String): Boolean {
@@ -105,7 +107,7 @@ object AtlasPageSerializer : To<AtlasPageData>, From<AtlasPageData> {
 				premultipliedAlpha = reader.bool("premultipliedAlpha") ?: false,
 				filterMin = TextureMinFilter.valueOf(reader.string("filterMin") ?: TextureMinFilter.LINEAR.name),
 				filterMag = TextureMagFilter.valueOf(reader.string("filterMag") ?: TextureMagFilter.LINEAR.name),
-				regions = reader.array2("regions", AtlasRegionDataSerializer)!!,
+				regions = reader.arrayList("regions", AtlasRegionDataSerializer)!!,
 				hasWhitePixel = reader.bool("hasWhitePixel") ?: false
 		)
 	}
@@ -145,7 +147,7 @@ data class AtlasRegionData(
 		val bounds: IntRectangleRo,
 
 		/**
-		 * Used for 9 patches. An int array of left, top, right, bottom
+		 * Used for 9 patches. An float array of left, top, right, bottom
 		 */
 		val splits: FloatArray? = null,
 

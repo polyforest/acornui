@@ -16,8 +16,6 @@
 
 package com.acornui.core.assets
 
-import com.acornui.action.ActionRo
-import com.acornui.action.ActionStatus
 import com.acornui.core.cursor.CursorManager
 import com.acornui.core.cursor.CursorPriority
 import com.acornui.core.cursor.CursorReference
@@ -36,28 +34,21 @@ class LoadingQueueBusyWatch(injector: Injector) {
 	private var _busyCursor: CursorReference? = null
 	private var _isRunning = false
 
-	private val loadingQueueStatusChangeHandler = {
-		a: ActionRo, oldStatus: ActionStatus, newStatus: ActionStatus, error: Throwable? ->
-		if (assets.loadingQueue.isRunning()) {
-			setBusy(true)
-		} else {
-			setBusy(false)
-		}
+	private fun currentLoadersChanged() {
+		setBusy(assets.currentLoaders.isNotEmpty())
 	}
 
 	fun start() {
 		if (_isRunning) return
 		setBusy(true) // No matter what, toggle the busy cursor so we don't have an endless loop with the loading queue loading the cursor itself.
-		if (!assets.loadingQueue.isRunning()) {
-			setBusy(false)
-		}
-		assets.loadingQueue.statusChanged.add(loadingQueueStatusChangeHandler)
+		currentLoadersChanged()
+		assets.currentLoadersChanged.add(this::currentLoadersChanged)
 	}
 
 	fun stop() {
 		if (!_isRunning) return
 		setBusy(false)
-		assets.loadingQueue.statusChanged.remove(loadingQueueStatusChangeHandler)
+		assets.currentLoadersChanged.remove(this::currentLoadersChanged)
 	}
 
 	private fun setBusy(value: Boolean) {

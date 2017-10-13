@@ -30,49 +30,49 @@ data class TexturePackerSettingsData(
 		/**
 		 * 0f-1f describing what alpha value to consider as 'whitespace'. Only applicable if [stripWhitespace] is true.
 		 */
-		var alphaThreshold: Float = 0f,
+		val alphaThreshold: Float = 0f,
 
 		/**
 		 * @see Texture.filterMag
 		 */
-		var filterMag: TextureMagFilter = TextureMagFilter.NEAREST,
+		val filterMag: TextureMagFilter = TextureMagFilter.NEAREST,
 
 		/**
 		 * @see Texture.filterMin
 		 */
-		var filterMin: TextureMinFilter = TextureMinFilter.LINEAR_MIPMAP_LINEAR,
+		val filterMin: TextureMinFilter = TextureMinFilter.LINEAR_MIPMAP_LINEAR,
 
 		/**
 		 * @see Texture.pixelType
 		 */
-		var pixelType: TexturePixelType = TexturePixelType.UNSIGNED_BYTE,
+		val pixelType: TexturePixelType = TexturePixelType.UNSIGNED_BYTE,
 
 		/**
 		 * @see Texture.pixelFormat
 		 */
-		var pixelFormat: TexturePixelFormat = TexturePixelFormat.RGBA,
+		val pixelFormat: TexturePixelFormat = TexturePixelFormat.RGBA,
 
-		var premultipliedAlpha: Boolean = false,
+		val premultipliedAlpha: Boolean = false,
 
 		/**
 		 * jpg or png
 		 */
-		var compressionExtension: String = "png",
+		val compressionExtension: String = "png",
 
 		/**
 		 * Compression quality.
 		 */
-		var compressionQuality: Float = 0.9f,
+		val compressionQuality: Float = 0.9f,
 
 		/**
 		 * The maximum directory depth to find images to pack.
 		 */
-		var maxDirectoryDepth: Int = 10,
+		val maxDirectoryDepth: Int = 10,
 
 		/**
 		 * Use BEST, unless debugging a problem.
 		 */
-		var packAlgorithm: TexturePackAlgorithm = TexturePackAlgorithm.BEST,
+		val packAlgorithm: TexturePackAlgorithm = TexturePackAlgorithm.BEST,
 
 		/**
 		 * If true, the sides of an image will be trimmed if the pixels have alpha < [alphaThreshold].
@@ -80,9 +80,9 @@ data class TexturePackerSettingsData(
 		 * virtually.
 		 * Note that this could cause unexpected results if color transformation is applied.
 		 */
-		var stripWhitespace: Boolean = true,
+		val stripWhitespace: Boolean = true,
 
-		var algorithmSettings: PackerAlgorithmSettingsData = PackerAlgorithmSettingsData()
+		val algorithmSettings: PackerAlgorithmSettingsData = PackerAlgorithmSettingsData()
 ) {
 
 	fun validate() {
@@ -100,44 +100,44 @@ data class PackerAlgorithmSettingsData(
 		 * Allows the source image to be rotated in the atlas.
 		 * This is currently not supported on the DOM backend.
 		 */
-		var allowRotation: Boolean = true,
+		val allowRotation: Boolean = true,
 
 		/**
 		 * The x padding between images.
 		 */
-		var paddingX: Int = 2,
+		val paddingX: Int = 2,
 
 		/**
 		 * The y padding between images.
 		 */
-		var paddingY: Int = 2,
+		val paddingY: Int = 2,
 
 		/**
 		 * If true, the edges will have have [paddingX] and [paddingY]
 		 */
-		var edgePadding: Boolean = true,
+		val edgePadding: Boolean = true,
 
 		/**
 		 * The maximum texture width per page.
 		 */
-		var pageMaxHeight: Int = 1024,
+		val pageMaxHeight: Int = 1024,
 
 		/**
 		 * The maximum texture height per page.
 		 */
-		var pageMaxWidth: Int = 1024,
+		val pageMaxWidth: Int = 1024,
 
 		/**
 		 * Must be true if mipmaps are used.
 		 */
-		var powerOfTwo: Boolean = true,
+		val powerOfTwo: Boolean = true,
 
 		/**
 		 * In order to prevent frequent batch flushing when switching between vector and texture drawing, set this to
 		 * true. A white pixel will be added to the 0,0 position on every atlas page.
 		 * Note: This can be false for non-opengl back-ends.
 		 */
-		var addWhitePixel: Boolean = true
+		val addWhitePixel: Boolean = true
 
 
 )

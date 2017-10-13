@@ -68,7 +68,6 @@ import com.acornui.gl.component.text.*
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.io.file.FilesManifestSerializer
-import com.acornui.jvm.io.JvmHttpRequest
 import com.acornui.jvm.audio.NoAudioException
 import com.acornui.jvm.audio.OpenAlAudioManager
 import com.acornui.jvm.audio.OpenAlMusicLoader
@@ -81,6 +80,7 @@ import com.acornui.jvm.graphics.LwjglGl20
 import com.acornui.jvm.input.JvmMouseInput
 import com.acornui.jvm.input.LwjglKeyInput
 import com.acornui.jvm.io.JvmBufferFactory
+import com.acornui.jvm.io.JvmRestServiceFactory
 import com.acornui.jvm.loader.JvmTextLoader
 import com.acornui.jvm.persistance.LwjglPersistence
 import com.acornui.jvm.text.DateTimeFormatterImpl
@@ -287,7 +287,7 @@ open class LwjglApplication(
 	}
 
 	protected open fun initializeRequest() {
-		RestServiceFactory.instance = JvmHttpRequest
+		RestServiceFactory.instance = JvmRestServiceFactory
 	}
 
 	protected open fun initializeFocusManager() {
@@ -298,7 +298,7 @@ open class LwjglApplication(
 		bootstrap.on(Files, TimeDriver) {
 			val assetManager = AssetManagerImpl(config.rootPath, bootstrap[Files])
 			val isAsync = true
-			assetManager.setLoaderFactory(AssetTypes.TEXT, { JvmTextLoader(Charsets.UTF_8, isAsync, bootstrap[TimeDriver]) })
+			assetManager.setLoaderFactory(AssetTypes.TEXT, { path, _ -> JvmTextLoader(path, Charsets.UTF_8, isAsync) })
 			bootstrap[AssetManager] = assetManager
 		}
 	}
@@ -306,7 +306,7 @@ open class LwjglApplication(
 	protected open fun initializeTextures() {
 		bootstrap.on(AssetManager, Gl20, GlState, TimeDriver) {
 			val isAsync = true
-			bootstrap[AssetManager].setLoaderFactory(AssetTypes.TEXTURE, { JvmTextureLoader(bootstrap[Gl20], bootstrap[GlState], isAsync, bootstrap[TimeDriver]) })
+			bootstrap[AssetManager].setLoaderFactory(AssetTypes.TEXTURE, { path, _ ->  JvmTextureLoader(path, bootstrap[Gl20], bootstrap[GlState], isAsync) })
 		}
 
 	}
@@ -321,10 +321,10 @@ open class LwjglApplication(
 				val assetManager = bootstrap[AssetManager]
 				val isAsync = true
 				OpenAlSoundLoader.registerDefaultDecoders()
-				assetManager.setLoaderFactory(AssetTypes.SOUND, { OpenAlSoundLoader(audioManager, isAsync, timeDriver) })
+				assetManager.setLoaderFactory(AssetTypes.SOUND, { path, _ -> OpenAlSoundLoader(path, audioManager, isAsync) })
 
 				OpenAlMusicLoader.registerDefaultDecoders()
-				assetManager.setLoaderFactory(AssetTypes.MUSIC, { OpenAlMusicLoader(audioManager) })
+				assetManager.setLoaderFactory(AssetTypes.MUSIC, { path, _ -> OpenAlMusicLoader(path, audioManager) })
 			}
 		} catch (e: NoAudioException) {
 			Log.warn("No Audio device found.")

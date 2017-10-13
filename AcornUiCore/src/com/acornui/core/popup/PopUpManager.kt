@@ -17,6 +17,7 @@
 package com.acornui.core.popup
 
 import com.acornui.collection.Clearable
+import com.acornui.collection.find2
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
 import com.acornui.component.layout.LayoutContainerImpl
@@ -38,7 +39,6 @@ import com.acornui.core.tween.Tween
 import com.acornui.core.tween.drive
 import com.acornui.core.tween.tweenAlpha
 import com.acornui.math.Easing
-
 
 interface PopUpManager : Clearable {
 
@@ -62,10 +62,10 @@ interface PopUpManager : Clearable {
 	fun requestModalClose()
 
 	/**
-	 * Removes the given pop-up and optionally disposes it.
+	 * Removes the pop-up with the given component.
 	 */
 	fun removePopUp(child: UiComponent) {
-		val info = currentPopUps.find { it.child == child }
+		val info = currentPopUps.find2 { it.child == child }
 		if (info != null)
 			removePopUp(info)
 	}
@@ -82,8 +82,6 @@ interface PopUpManager : Clearable {
 		val MODAL_STYLE = styleTag()
 	}
 }
-
-// TODO: It would be nice if the canvas layout data type was explicit.
 
 class PopUpInfo<T : UiComponent>(
 
@@ -260,7 +258,7 @@ class PopUpManagerImpl(owner: Owned) : LayoutContainerImpl<PopUpManagerStyle, Ca
 		}
 	}
 
-	override fun <T: UiComponent> addPopUp(popUpInfo: PopUpInfo<T>) {
+	override fun <T : UiComponent> addPopUp(popUpInfo: PopUpInfo<T>) {
 		val child = popUpInfo.child
 		if (child.parent != null) throw Exception("The pop-up must be removed before adding.")
 		if (child is Closeable) {
@@ -297,11 +295,14 @@ class PopUpManagerImpl(owner: Owned) : LayoutContainerImpl<PopUpManagerStyle, Ca
 }
 
 fun <T : UiComponent> Owned.addPopUp(popUpInfo: PopUpInfo<T>): T {
-	val popUpManager = inject(PopUpManager)
-	popUpManager.addPopUp(popUpInfo)
+	inject(PopUpManager).addPopUp(popUpInfo)
 	return popUpInfo.child
 }
 
-fun Owned.removePopUp(child: UiComponent) {
-	inject(PopUpManager).removePopUp(child)
+fun Owned.removePopUp(popUpInfo: PopUpInfo<*>) {
+	inject(PopUpManager).removePopUp(popUpInfo)
+}
+
+fun Owned.removePopUp(popUpInfoChild: UiComponent) {
+	inject(PopUpManager).removePopUp(popUpInfoChild)
 }

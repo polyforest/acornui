@@ -16,6 +16,7 @@
 
 package com.acornui.texturepacker.jvm
 
+import com.acornui.async.launch
 import com.acornui.core.assets.AssetManager
 import com.acornui.core.io.file.Files
 import com.acornui.jvm.io.file.relativePath2
@@ -47,13 +48,12 @@ class TexturePackerUtil(
 
 					println("Packing assets: " + i.path)
 					val dirEntry = files.getDir(root.relativePath2(i))!!
-					AcornTexturePacker(assets, json).pack(dirEntry, {
-						packedData ->
+					launch {
+						val packedData = AcornTexturePacker(assets, json).pack(dirEntry)
 						writer.writeAtlas(atlasName + ".json", atlasName + "{0}", packedData, i.parentFile)
-					})
-
-					println("Deleting directory: " + i.path)
-					i.deleteRecursively()
+						println("Deleting directory: " + i.path)
+						i.deleteRecursively()
+					}
 				}
 			}
 		}

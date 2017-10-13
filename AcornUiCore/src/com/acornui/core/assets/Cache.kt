@@ -4,6 +4,8 @@ import com.acornui.collection.MutableListIteratorImpl
 import com.acornui.core.Disposable
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Injector
+import com.acornui.core.di.Scoped
+import com.acornui.core.di.inject
 import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.enterFrame
 
@@ -20,6 +22,12 @@ interface Cache : Disposable {
 
 	operator fun <T : Any> set(key: CacheKey<T>, value: T)
 
+	/**
+	 * Retrieves the cache value for the given key if it exists. Otherwise, constructs a new value via the [factory]
+	 * and adds the new value to the cache.
+	 * @param key The key to use for the cache index.
+	 * @return Returns the cached value.
+	 */
 	fun <T : Any> getOr(key: CacheKey<T>, factory: () -> T): T {
 		if (containsKey(key)) return get(key)!!
 		val value = factory()
@@ -107,9 +115,8 @@ class CacheImpl(
 	override fun refDec(key: CacheKey<*>) {
 		if (cache.containsKey(key)) {
 			val cacheValue = cache[key]!!
-			if (cacheValue.refCount <= 0) {
+			if (cacheValue.refCount <= 0)
 				throw Exception("refInc / refDec pairs are unbalanced.")
-			}
 			if (--cacheValue.refCount <= 0) {
 				deathPool.add(key)
 			}
@@ -122,7 +129,8 @@ class CacheImpl(
 			// Revive from the death pool.
 			cacheValue.deathTimer = gcFrames
 			val success = deathPool.remove(key)
-			if (!success) throw Exception("Could not find the key in the death pool.")
+			if (!success)
+				throw Exception("Could not find the key in the death pool.")
 		}
 		cacheValue.refCount++
 	}
@@ -144,4 +152,56 @@ private class CacheValue(
 		var deathTimer: Int
 ) {
 	var refCount: Int = 0
+}
+
+interface CachedGroup : Disposable {
+
+	/**
+	 * The cache instance this group uses.
+	 */
+	val cache: Cache
+
+	/**
+	 * Adds a key to be tracked.
+	 */
+	fun add(key: CacheKey<*>)
+}
+
+/**
+ * A caching group tracks a list of keys to refDec when the group is disposed.
+ */
+class CachedGroupImpl(
+		override val cache: Cache
+) : CachedGroup {
+
+	private var isDisposed = false
+
+	private val keys = ArrayList<CacheKey<*>>()
+
+	override fun add(key: CacheKey<*>) {
+		if (isDisposed) {
+			// This group has been disposed, immediately refDec the key.
+			cache.refInc(key)
+			cache.refDec(key)
+		} else {
+			cache.refInc(key)
+			keys.add(key)
+		}
+	}
+
+	override fun dispose() {
+		if (isDisposed) throw Exception("Already disposed")
+		isDisposed = true
+		for (i in 0..keys.lastIndex) {
+			cache.refDec(keys[i])
+		}
+		keys.clear()
+	}
+}
+
+/**
+ * Constructs a new [CachedGroup] object with the current scope's [Cache] manager.
+ */
+fun Scoped.cachedGroup(): CachedGroup {
+	return CachedGroupImpl(inject(Cache))
 }

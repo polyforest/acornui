@@ -3,8 +3,11 @@ package com.acornui.core.nav
 import com.acornui.browser.decodeUriComponent2
 import com.acornui.browser.encodeUriComponent2
 import com.acornui.collection.Clearable
-import com.acornui.collection.equalsArray
-import com.acornui.component.*
+import com.acornui.collection.copy
+import com.acornui.component.Button
+import com.acornui.component.ElementContainer
+import com.acornui.component.UiComponent
+import com.acornui.component.showAssetLoadingBar
 import com.acornui.core.ChildRo
 import com.acornui.core.Disposable
 import com.acornui.core.Lifecycle
@@ -25,13 +28,13 @@ interface NavigationManager : Clearable, Disposable {
 	/**
 	 * Returns a clone of the current path.
 	 */
-	fun path(): Array<NavNode>
+	fun path(): List<NavNode>
 
 	/**
 	 * Sets the current path.
 	 * A [changed] signal will be invoked if the path has changed.
 	 */
-	fun path(path: Array<NavNode>)
+	fun path(path: List<NavNode>)
 
 	/**
 	 * Sets the path as an absolute url string.
@@ -40,14 +43,14 @@ interface NavigationManager : Clearable, Disposable {
 	 */
 	fun path(value: String) {
 		val split = value.split("/")
-		val nodes = Array(split.size, {
+		val nodes = List(split.size, {
 			NavNode.fromStr(split[it])
 		})
 		path(nodes)
 	}
 
 	override fun clear() {
-		path(arrayOf())
+		path(listOf())
 	}
 
 	fun push(node: NavNode) {
@@ -61,7 +64,7 @@ interface NavigationManager : Clearable, Disposable {
 	fun pop() {
 		val p = path()
 		if (p.isNotEmpty()) {
-			path(p.copyOfRange(0, p.lastIndex))
+			path(p.subList(0, p.lastIndex))
 		}
 	}
 
@@ -74,7 +77,7 @@ interface NavigationManager : Clearable, Disposable {
 			return NavigationManagerImpl()
 		}
 
-		fun pathToString(path: Array<NavNode>): String {
+		fun pathToString(path: List<NavNode>): String {
 			return "" + path.joinToString("/")
 		}
 	}
@@ -87,10 +90,10 @@ interface NavEvent {
 	val newPath: List<NavNode>
 
 	val oldPathStr: String
-		get() = NavigationManager.pathToString(oldPath.toTypedArray())
+		get() = NavigationManager.pathToString(oldPath)
 
 	val newPathStr: String
-		get() = NavigationManager.pathToString(newPath.toTypedArray())
+		get() = NavigationManager.pathToString(newPath)
 }
 
 fun Scoped.navigate(absolutePath: String) {
@@ -134,20 +137,20 @@ data class NavNode(
 	}
 }
 
-class NavigationManagerImpl() : NavigationManager {
+class NavigationManagerImpl : NavigationManager {
 
 	override val changed = Signal1<NavEvent>()
 
-	private var lastPath: Array<NavNode> = arrayOf()
-	private var currentPath: Array<NavNode> = arrayOf()
+	private var lastPath: List<NavNode> = listOf()
+	private var currentPath: List<NavNode> = listOf()
 	private val event = NavEventImpl()
-
-	override fun path(): Array<NavNode> = currentPath.copyOf()
 
 	private var isDispatching: Boolean = false
 
-	override fun path(path: Array<NavNode>) {
-		if (lastPath.equalsArray(path)) return
+	override fun path(): List<NavNode> = currentPath.copy()
+
+	override fun path(path: List<NavNode>) {
+		if (lastPath == path) return
 		currentPath = path
 		if (isDispatching)
 			return
@@ -172,7 +175,7 @@ class NavEventImpl : NavEvent {
 	override val newPath = ArrayList<NavNode>()
 }
 
-interface NavBindable : ChildRo, Scoped {}
+interface NavBindable : ChildRo, Scoped
 
 @Suppress("UNUSED_ANONYMOUS_PARAMETER")
 /**
@@ -296,20 +299,20 @@ class NavBinding(
 	fun navigate(value: String) {
 		val split = value.split("/")
 		if (split.isEmpty()) {
-			navManager.path(emptyArray())
+			navManager.path(emptyList())
 		} else {
-			val relativeTo: Array<NavNode>
+			val relativeTo: List<NavNode>
 			var up = 0
 			if (split.size >= 2 && split[0] == "") {
 				// Absolute
-				relativeTo = emptyArray()
+				relativeTo = emptyList()
 				up = 1
 			} else {
 				while (up < split.size && split[up] == "..") {
 					up++
 				}
 				val oldPath = expandedPath
-				relativeTo = oldPath.copyOfRange(0, oldPath.size - up)
+				relativeTo = oldPath.subList(0, oldPath.size - up)
 			}
 			val nodes = Array(split.size - up, {
 				NavNode.fromStr(split[it + up])
@@ -321,11 +324,11 @@ class NavBinding(
 	/**
 	 * Returns the navigation manager's path, filled with empty nodes until it is as large as this binding's depth.
 	 */
-	private val expandedPath: Array<NavNode>
+	private val expandedPath: MutableList<NavNode>
 		get() {
 			if (depth < 0) throw Exception("This binding is not currently active.")
 			val fullPath = navManager.path()
-			return fullPath + Array(maxOf(0, depth - fullPath.lastIndex), { NavNode("") })
+			return (fullPath + List(maxOf(0, depth - fullPath.lastIndex), { NavNode("") })).toMutableList()
 		}
 
 	/**
@@ -333,7 +336,7 @@ class NavBinding(
 	 */
 	fun bindPathEnter(path: String?, callback: () -> Unit) {
 		changed.add({
-			event: NavBindingEvent ->
+			event ->
 			if (event.newPath == path)
 				callback()
 		})

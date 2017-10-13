@@ -16,26 +16,22 @@
 
 package com.acornui.jvm.loader
 
-/**
- * @author nbilyk
- */
-import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.AssetTypes
-import com.acornui.core.time.TimeDriver
 import java.io.InputStream
 import java.nio.charset.Charset
 
 open class JvmTextLoader(
+		path: String,
 		private val charset: Charset,
-		isAsync: Boolean,
-		timeDriver: TimeDriver?
-) : JvmAssetLoaderBase<String>(isAsync, timeDriver) {
+		isAsync: Boolean
+) : JvmAssetLoaderBase<String>(path, AssetTypes.TEXT, isAsync) {
 
-	override val type: AssetType<String> = AssetTypes.TEXT
+	init {
+		init()
+	}
 
 	override fun create(fis: InputStream): String {
-		var size = bytesTotal
-		if (size <= 0) size = DEFAULT_BUFFER_SIZE
+		val size = if (bytesTotal <= 0) DEFAULT_BUFFER_SIZE else bytesTotal
 		val bytes = fis.use { it.readBytes(size) }
 		return bytes.toString(charset)
 	}

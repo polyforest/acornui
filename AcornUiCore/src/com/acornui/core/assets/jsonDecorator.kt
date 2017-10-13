@@ -1,7 +1,7 @@
 package com.acornui.core.assets
 
 import com.acornui.action.Decorator
-import com.acornui.action.LoadableRo
+import com.acornui.async.Deferred
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.io.JSON_KEY
@@ -21,19 +21,6 @@ data class JsonDecorator<out R>(val serializer: Serializer<String>, val factory:
 	}
 }
 
-fun <R> Scoped.jsonBinding(factory: From<R>, onFailed: () -> Unit = {}, onChanged: (R) -> Unit): AssetBinding<String, R> {
-	return assetBinding(AssetTypes.TEXT, jsonDecorator(factory), onFailed, onChanged)
-}
-
-@Deprecated("use loadAndCacheJson", ReplaceWith("loadAndCacheJson(path, factory)"), DeprecationLevel.ERROR)
-fun <R> Scoped.loadJson(path: String, factory: From<R>): LoadableRo<R> {
-	return loadAndCacheJson(path, factory)
-}
-
-fun <R> Scoped.loadAndCacheJson(path: String, factory: From<R>): LoadableRo<R> {
-	return loadDecorated(path, AssetTypes.TEXT, jsonDecorator(factory))
-}
-
-fun <R> Scoped.unloadJson(path: String, factory: From<R>) {
-	unloadDecorated(path, AssetTypes.TEXT, jsonDecorator(factory))
+fun <R> Scoped.loadAndCacheJson(path: String, factory: From<R>, group: CachedGroup): Deferred<R> {
+	return loadAndCache(path, AssetTypes.TEXT, jsonDecorator(factory), group)
 }

@@ -16,40 +16,38 @@
 
 package com.acornui.core.assets
 
-import com.acornui.action.LoadableRo
-import com.acornui.action.ResultAction
-
+import com.acornui.action.Progress
+import com.acornui.async.CancelableDeferred
+import com.acornui.async.Deferred
 
 /**
  * AssetLoader is a read-only interface that represents a loading asset. It has progress and a value for a final result.
  * It is used by the asset manager.
  */
-interface AssetLoaderRo<out T> : LoadableRo<T> {
-
-	/**
-	 * The asset type this loader represents.
-	 */
-	val type: AssetType<*>
-
-	/**
-	 * The path used to find the asset.
-	 */
-	val path: String
-}
-
-/**
- * An asset loader that exposes an API capable of mutation.
- */
-interface AssetLoader<out T> : AssetLoaderRo<T>, ResultAction<T> {
+interface AssetLoaderRo<out T> : Deferred<T>, Progress {
 
 	/**
 	 * The estimated total number of bytes this loader will load.
 	 * (This is typically only used before the actual number is discovered)
 	 */
-	var estimatedBytesTotal: Int
+	val estimatedBytesTotal: Int
 
 	/**
 	 * The path used to find the asset.
 	 */
-	override var path: String
+	val path: String
+
+	/**
+	 * The asset type this loader represents.
+	 */
+	val type: AssetType<*>
 }
+
+/**
+ * An asset loader that exposes an API capable of mutation.
+ */
+interface AssetLoader<out T> : AssetLoaderRo<T>, CancelableDeferred<T>
+
+typealias LoaderFactory<T> = (path: String, estimatedBytesTotal: Int) -> AssetLoader<T>
+
+class AssetLoadingException(val path: String, val type: AssetType<*>) : Throwable("'$path' failed to load")

@@ -16,6 +16,7 @@
 
 package com.acornui.async
 
+import com.acornui.collection.ArrayList
 import kotlin.coroutines.experimental.*
 
 /**
@@ -30,7 +31,7 @@ typealias Work<R> = suspend () -> R
 /**
  * Launches a new coroutine on this same thread, exposing the ability to suspend execution, awaiting a result.
  */
-fun <T> async(work: Work<T>): Deferred<T> = DeferredImpl(work)
+fun <T> async(work: Work<T>): Deferred<T> = AsyncWorker(work)
 
 /**
  * A suspension point with no result.
@@ -43,7 +44,8 @@ class BasicContinuationImpl(
 	}
 
 	override fun resumeWithException(exception: Throwable) {
-		println("Coroutine failed: $exception")
+		//println("Coroutine failed: $exception")
+		throw exception
 	}
 }
 
@@ -55,49 +57,106 @@ interface Deferred<out T> {
 	suspend fun await(): T
 }
 
-private class DeferredImpl<out T>(private val work: Work<T>) : Deferred<T> {
+/**
+ * Wraps await in a try/catch block, returning null if there was an exception.
+ */
+suspend fun <T> Deferred<T>.awaitOrNull(): T? {
+	try {
+		return await()
+	} catch (e: Throwable) {
+		return null
+	}
+}
+
+interface CancelableDeferred<out T> : Deferred<T> {
+
+	/**
+	 * Cancels the operation if it is currently in progress.
+	 * This may throw a [CancellationException] on [await].
+	 */
+	fun cancel()
+
+}
+
+open class CancellationException(message: String = "Aborted") : Throwable(message)
+
+/**
+ * Invokes a callback when the deferred value has been computed successfully. This callback will not be invoked on
+ * failure.
+ */
+fun <T> Deferred<T>.then(callback: (result: T) -> Unit) {
+	launch {
+		var successful = false
+		var result: T? = null
+		try {
+			result = await()
+			successful = true
+		} catch (t: Throwable) {}
+		if (successful)
+			callback(result as T)
+	}
+}
+
+/**
+ * Invokes a callback when this deferred object has failed to produce a result.
+ */
+fun <T> Deferred<T>.catch(callback: (Throwable) -> Unit) {
+	launch {
+		try {
+			await()
+		} catch (t: Throwable) {
+			callback(t)
+		}
+	}
+}
+
+@Suppress("AddVarianceModifier")
+private class AsyncWorker<T>(work: Work<T>) : Deferred<T> {
 
 	private var status = DeferredStatus.PENDING
 	private var result: T? = null
 	private var error: Throwable? = null
-	private val continuations = ArrayList<Continuation<T>>()
+	private val children = ArrayList<Continuation<T>>()
 
 	init {
 		launch {
-			if (status != DeferredStatus.PENDING)
-				throw IllegalStateException("Deferred job is not currently pending.")
 			try {
 				result = work()
 				status = DeferredStatus.SUCCESSFUL
-			} catch(e: Throwable) {
+			} catch (e: Throwable) {
 				error = e
 				status = DeferredStatus.FAILED
-			} finally {
-				when (status) {
-					DeferredStatus.SUCCESSFUL -> {
-						for (i in 0..continuations.lastIndex) {
-							continuations[i].resume(result as T)
-						}
-					}
-					DeferredStatus.FAILED -> {
-						for (i in 0..continuations.lastIndex) {
-							continuations[i].resumeWithException(error as Throwable)
-						}
-					}
-					else -> throw IllegalStateException("Status is not successful or failed.")
-				}
-				continuations.clear()
+				throw e
 			}
+			result as T
 		}
 	}
 
-	override suspend fun await(): T = suspendCoroutine {
-		cont: Continuation<T> ->
-		when (status) {
-			DeferredStatus.PENDING -> continuations.add(cont)
-			DeferredStatus.SUCCESSFUL -> cont.resume(result as T)
-			DeferredStatus.FAILED -> cont.resumeWithException(error as Throwable)
+	private fun launch(block: suspend () -> T) {
+		block.startCoroutine(object : Continuation<T> {
+			override val context: CoroutineContext = EmptyCoroutineContext
+
+			override fun resume(value: T) {
+				for (i in 0..children.lastIndex) {
+					children[i].resume(value)
+				}
+			}
+
+			override fun resumeWithException(exception: Throwable) {
+				for (i in 0..children.lastIndex) {
+					children[i].resumeWithException(exception)
+				}
+			}
+		})
+	}
+
+	override suspend fun await(): T {
+		if (status == DeferredStatus.PENDING) return suspendCoroutine {
+			cont: Continuation<T> ->
+			children.add(cont)
 		}
+		if (status == DeferredStatus.FAILED) throw error!!
+		return result as T
 	}
 
 	private enum class DeferredStatus {
@@ -105,4 +164,58 @@ private class DeferredImpl<out T>(private val work: Work<T>) : Deferred<T> {
 		SUCCESSFUL,
 		FAILED
 	}
+}
+
+open class Promise<T> : Deferred<T> {
+
+	private var _status = Status.PENDING
+	protected val status: Status
+		get() = _status
+
+	private var _result: T? = null
+	protected val result: T?
+		get() = _result
+
+	private var _error: Throwable? = null
+	private val error: Throwable?
+		get() = _error
+
+	private val continuations = ArrayList<Continuation<T>>()
+
+	protected fun success(result: T) {
+		if (_status != Status.PENDING) throw IllegalStateException("Promise is not in pending state.")
+		_status = Status.SUCCESSFUL
+		this._result = result
+		for (i in 0..continuations.lastIndex) {
+			continuations[i].resume(result)
+		}
+	}
+
+	protected fun fail(error: Throwable) {
+		if (_status != Status.PENDING) throw IllegalStateException("Promise is not in pending state.")
+		_status = Status.FAILED
+		this._error = error
+		for (i in 0..continuations.lastIndex) {
+			continuations[i].resumeWithException(error)
+		}
+	}
+
+	override suspend fun await(): T = suspendCoroutine {
+		cont: Continuation<T> ->
+		when (_status) {
+			Status.PENDING -> continuations.add(cont)
+			Status.SUCCESSFUL -> cont.resume(_result as T)
+			Status.FAILED -> cont.resumeWithException(_error as Throwable)
+		}
+	}
+
+	enum class Status {
+		PENDING,
+		SUCCESSFUL,
+		FAILED
+	}
+}
+
+suspend fun <T> List<Deferred<T>>.awaitAll(): List<T> {
+	return ArrayList(size, { this[it].await() })
 }

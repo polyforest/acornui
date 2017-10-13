@@ -1,22 +1,19 @@
 package com.acornui.jvm.audio
 
-import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.AssetTypes
 import com.acornui.core.audio.SoundFactory
-import com.acornui.core.time.TimeDriver
 import com.acornui.jvm.loader.JvmAssetLoaderBase
 import java.io.InputStream
 
 
 open class OpenAlSoundLoader(
+		path: String,
 		private val audioManager: OpenAlAudioManager,
-		isAsync: Boolean,
-		timeDriver: TimeDriver
-) : JvmAssetLoaderBase<SoundFactory>(isAsync, timeDriver) {
-
-	override val type: AssetType<SoundFactory> = AssetTypes.SOUND
+		isAsync: Boolean
+) : JvmAssetLoaderBase<SoundFactory>(path, AssetTypes.SOUND, isAsync) {
 
 	init {
+		init()
 	}
 
 	override fun create(fis: InputStream): SoundFactory {

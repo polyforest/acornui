@@ -65,7 +65,7 @@ class DomTextureLoader : BasicAction(), AssetLoader<Texture> {
 			_asset = jsTexture
 		}
 		fileLoader.onFailed {
-			if (it is AbortedException) abort(it)
+			if (it is AbortedException) cancel(it)
 			else fail(it)
 		}
 		fileLoader()

@@ -16,6 +16,7 @@
 
 package com.acornui.texturepacker
 
+import com.acornui.async.launch
 import com.acornui.core.assets.AssetManager
 import com.acornui.core.di.inject
 import com.acornui.gl.core.TextureMagFilter
@@ -26,7 +27,7 @@ import com.acornui.core.io.JSON_KEY
 import com.acornui.core.io.file.Files
 import com.acornui.jvm.JvmHeadlessApplication
 import com.acornui.serialization.JsonSerializer
-import com.acornui.texturepacker.writer.JvmTextureAtlasWriter
+import com.acornui.texturepacker.jvm.writer.JvmTextureAtlasWriter
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -87,10 +88,10 @@ class AcornTexturePackerTest {
 		File("testAssets/out").deleteRecursively()
 		JvmHeadlessApplication {
 			val dir = inject(Files).getDir("testAssets/packTest1") ?: throw Exception("Missing testAssets/packTest1 folder")
-			AcornTexturePacker(inject(AssetManager), inject(JSON_KEY)).pack(dir, {
-				packedData ->
-				JvmTextureAtlasWriter.writeAtlas("packTest1.json", "packTest{0}", packedData, File("testAssets/out"))
-			})
+			launch {
+				val packedData = AcornTexturePacker(inject(AssetManager), inject(JSON_KEY)).pack(dir)
+				JvmTextureAtlasWriter(inject(JSON_KEY)).writeAtlas("packTest1.json", "packTest{0}", packedData, File("testAssets/out"))
+			}
 		}
 
 	}

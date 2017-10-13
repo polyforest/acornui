@@ -22,7 +22,7 @@ import com.acornui.serialization.*
  * @author nbilyk
  */
 data class FilesManifest(
-		val files: Array<ManifestEntry> = arrayOf()
+		val files: List<ManifestEntry>
 ) {
 }
 
@@ -32,14 +32,14 @@ object FilesManifestSerializer : To<FilesManifest>, From<FilesManifest> {
 	}
 
 	override fun read(reader: Reader): FilesManifest {
-		return FilesManifest(files = reader.array2("files", ManifestEntrySerializer)!!)
+		return FilesManifest(files = reader.arrayList("files", ManifestEntrySerializer)!!)
 	}
 }
 
 data class ManifestEntry(
-		var path: String = "",
-		var modified: Long = 0,
-		var size: Long = 0
+		val path: String,
+		val modified: Long,
+		val size: Long
 ) : Comparable<ManifestEntry> {
 
 	fun name(): String {

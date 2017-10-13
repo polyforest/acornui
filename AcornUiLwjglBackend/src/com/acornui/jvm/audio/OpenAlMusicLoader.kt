@@ -1,9 +1,10 @@
 package com.acornui.jvm.audio
 
-import com.acornui.action.BasicAction
+import com.acornui.async.Promise
+import com.acornui.async.launch
+import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.AssetTypes
-import com.acornui.core.assets.AssetLoader
 import com.acornui.core.audio.Music
 import java.io.File
 import java.io.FileInputStream
@@ -13,55 +14,37 @@ import java.net.URL
 
 
 class OpenAlMusicLoader(
-		val audioManager: OpenAlAudioManager
-) : BasicAction(), AssetLoader<Music> {
+		override val path: String,
+		audioManager: OpenAlAudioManager
+) : Promise<Music>(), AssetLoader<Music> {
 
 	override val type: AssetType<Music> = AssetTypes.MUSIC
 
 	override val secondsLoaded: Float = 0f
 	override val secondsTotal: Float = 0f
 
-	private var _asset: Music? = null
-	override val result: Music
-		get() = _asset!!
-
 	override var estimatedBytesTotal: Int = 0
-	override var path: String = ""
 
-	override fun onInvocation() {
-		val extension = path.extension()
-		if (!MusicDecoders.hasDecoder(extension)) {
-			fail(Exception("No decoder found for music extension: $extension"))
-			return
-		}
 
-		val inputStreamFactory: ()->InputStream
-		if (path.startsWith("http:", ignoreCase = true) || path.startsWith("https:", ignoreCase = true)) {
-			inputStreamFactory = {
-				URL(path).openStream()
+	init {
+		launch {
+			val extension = path.extension()
+			if (!MusicDecoders.hasDecoder(extension)) throw Exception("No decoder found for music extension: $extension")
+
+			val inputStreamFactory: () -> InputStream
+			if (path.startsWith("http:", ignoreCase = true) || path.startsWith("https:", ignoreCase = true)) {
+				inputStreamFactory = { URL(path).openStream() }
+			} else {
+				val file = File(path)
+				if (!file.exists()) throw FileNotFoundException(path)
+				inputStreamFactory = { FileInputStream(file) }
 			}
-		} else {
-			val file = File(path)
-			if (!file.exists()) {
-				fail(FileNotFoundException(path))
-				return
-			}
-			inputStreamFactory = { FileInputStream(file) }
+			val streamReader = MusicDecoders.createReader(extension, inputStreamFactory)
+			success(OpenAlMusic(audioManager, streamReader))
 		}
-		val streamReader = MusicDecoders.createReader(extension, inputStreamFactory)
-		try {
-			_asset = OpenAlMusic(audioManager, streamReader)
-			success()
-		} catch (e: Throwable) {
-			fail(e)
-		}
-
 	}
 
-	override fun dispose() {
-		super.dispose()
-		_asset?.dispose()
-		_asset = null
+	override fun cancel() {
 	}
 
 	companion object {
@@ -115,13 +98,13 @@ interface MusicStreamReader {
  */
 object MusicDecoders {
 
-	private val readerFactories = HashMap<String, (() -> InputStream)->MusicStreamReader>()
+	private val readerFactories = HashMap<String, (() -> InputStream) -> MusicStreamReader>()
 
 	/**
 	 * Adds a decoder for the given file type.
 	 * The decoder should accept an input stream and return a byte array.
 	 */
-	fun setReaderFactory(extension: String, readerFactory: (() -> InputStream)->MusicStreamReader) {
+	fun setReaderFactory(extension: String, readerFactory: (() -> InputStream) -> MusicStreamReader) {
 		readerFactories[extension.toLowerCase()] = readerFactory
 	}
 

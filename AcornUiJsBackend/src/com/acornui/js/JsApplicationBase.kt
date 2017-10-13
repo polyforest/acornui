@@ -16,16 +16,21 @@
 
 package com.acornui.js
 
-import com.acornui.action.onFailed
-import com.acornui.action.onSuccess
 import com.acornui.assertionsEnabled
+import com.acornui.async.catch
+import com.acornui.async.then
+import com.acornui.browser.appendParam
+import com.acornui.browser.decodeUriComponent2
+import com.acornui.browser.encodeUriComponent2
 import com.acornui.component.Stage
-import com.acornui.core.*
+import com.acornui.core.AppConfig
+import com.acornui.core.Disposable
+import com.acornui.core.UidUtil
 import com.acornui.core.assets.AssetManager
 import com.acornui.core.assets.AssetManagerImpl
 import com.acornui.core.assets.AssetTypes
-import com.acornui.core.audio.AudioManagerImpl
 import com.acornui.core.audio.AudioManager
+import com.acornui.core.audio.AudioManagerImpl
 import com.acornui.core.cursor.CursorManager
 import com.acornui.core.di.Bootstrap
 import com.acornui.core.di.Owned
@@ -34,6 +39,7 @@ import com.acornui.core.focus.FocusManagerImpl
 import com.acornui.core.graphics.Camera
 import com.acornui.core.graphics.OrthographicCamera
 import com.acornui.core.graphics.Window
+import com.acornui.core.graphics.autoCenterCamera
 import com.acornui.core.input.InteractivityManager
 import com.acornui.core.input.InteractivityManagerImpl
 import com.acornui.core.input.KeyInput
@@ -48,7 +54,11 @@ import com.acornui.core.popup.PopUpManagerImpl
 import com.acornui.core.request.RestServiceFactory
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionManagerImpl
-import com.acornui.core.UidUtil
+import com.acornui.core.text.DateTimeFormatter
+import com.acornui.core.text.NumberFormatter
+import com.acornui.core.time.TimeDriver
+import com.acornui.core.time.TimeDriverImpl
+import com.acornui.core.time.time
 import com.acornui.io.file.FilesManifestSerializer
 import com.acornui.js.audio.JsAudioElementMusicLoader
 import com.acornui.js.audio.JsAudioElementSoundLoader
@@ -59,22 +69,15 @@ import com.acornui.js.html.initializeUserInfo
 import com.acornui.js.input.JsKeyInput
 import com.acornui.js.input.JsMouseInput
 import com.acornui.js.io.JsBufferFactory
-import com.acornui.js.io.JsHttpRequest
+import com.acornui.js.io.JsRestServiceFactory
 import com.acornui.js.loader.JsTextLoader
 import com.acornui.js.persistance.JsPersistence
+import com.acornui.js.text.DateTimeFormatterImpl
+import com.acornui.js.text.NumberFormatterImpl
 import com.acornui.js.time.TimeProviderImpl
 import com.acornui.logging.ILogger
 import com.acornui.logging.Log
 import com.acornui.serialization.JsonSerializer
-import com.acornui.browser.appendParam
-import com.acornui.browser.decodeUriComponent2
-import com.acornui.browser.encodeUriComponent2
-import com.acornui.core.graphics.autoCenterCamera
-import com.acornui.core.text.NumberFormatter
-import com.acornui.core.text.DateTimeFormatter
-import com.acornui.core.time.*
-import com.acornui.js.text.NumberFormatterImpl
-import com.acornui.js.text.DateTimeFormatterImpl
 import org.w3c.dom.DocumentReadyState
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.LOADING
@@ -159,18 +162,17 @@ abstract class JsApplicationBase(
 	}
 
 	protected open fun initializeConfig() {
-		val buildVersionLoader = JsTextLoader()
-		buildVersionLoader.path = config.rootPath + "assets/build.txt".appendParam("version", UidUtil.createUid())
-		buildVersionLoader.onSuccess {
-			config.version.build = buildVersionLoader.result.toInt()
+		val path = config.rootPath + "assets/build.txt".appendParam("version", UidUtil.createUid())
+		val buildVersionLoader = JsTextLoader(path)
+		buildVersionLoader.then {
+			config.version.build = it.toInt()
 			Log.info("Build: ${config.version}")
 			bootstrap[AppConfig] = config
 		}
-		buildVersionLoader.onFailed {
+		buildVersionLoader.catch {
 			Log.warn("assets/build.txt failed to load: $it")
 			bootstrap[AppConfig] = config
 		}
-		buildVersionLoader.invoke()
 	}
 
 	protected open fun initializeBootstrap() {
@@ -265,24 +267,23 @@ abstract class JsApplicationBase(
 		bootstrap.waitFor(Files)
 		bootstrap.on(JSON_KEY) {
 			val json = bootstrap[JSON_KEY]
-			val manifestLoader = JsTextLoader()
-			manifestLoader.path = config.rootPath + config.assetsManifestPath.appendParam("version", config.version.toVersionString())
-			manifestLoader.onSuccess {
-				val manifest = json.read(manifestLoader.result, FilesManifestSerializer)
+			val path = config.rootPath + config.assetsManifestPath.appendParam("version", config.version.toVersionString())
+			val manifestLoader = JsTextLoader(path)
+			manifestLoader.then {
+				val manifest = json.read(it, FilesManifestSerializer)
 				this[Files] = FilesImpl(manifest)
 			}
-			manifestLoader.invoke()
 		}
 	}
 
 	protected open fun initializeRequest() {
-		RestServiceFactory.instance = JsHttpRequest
+		RestServiceFactory.instance = JsRestServiceFactory
 	}
 
 	protected open fun initializeAssetManager() {
 		bootstrap.on(Files) {
 			val assetManager = AssetManagerImpl(config.rootPath, bootstrap[Files], appendVersion = true)
-			assetManager.setLoaderFactory(AssetTypes.TEXT, { JsTextLoader() })
+			assetManager.setLoaderFactory(AssetTypes.TEXT, { path: String, estimatedBytesTotal: Int ->  JsTextLoader(path, estimatedBytesTotal) })
 			this[AssetManager] = assetManager
 		}
 	}
@@ -298,12 +299,12 @@ abstract class JsApplicationBase(
 			val assetManager = bootstrap[AssetManager]
 
 			if (audioContextSupported) {
-				assetManager.setLoaderFactory(AssetTypes.SOUND, { JsWebAudioSoundLoader(audioManager) })
+				assetManager.setLoaderFactory(AssetTypes.SOUND, { path: String, estimatedBytesTotal: Int ->  JsWebAudioSoundLoader(path, estimatedBytesTotal, audioManager) })
 //				assetManager.setLoaderFactory(AssetTypes.MUSIC, { JsWebAudioMusicLoader(audioManager) })
 			} else {
-				assetManager.setLoaderFactory(AssetTypes.SOUND, { JsAudioElementSoundLoader(audioManager) })
+				assetManager.setLoaderFactory(AssetTypes.SOUND, { path: String, estimatedBytesTotal: Int ->  JsAudioElementSoundLoader(path, estimatedBytesTotal, audioManager) })
 			}
-			assetManager.setLoaderFactory(AssetTypes.MUSIC, { JsAudioElementMusicLoader(audioManager) })
+			assetManager.setLoaderFactory(AssetTypes.MUSIC, { path: String, estimatedBytesTotal: Int ->  JsAudioElementMusicLoader(path, estimatedBytesTotal, audioManager) })
 		}
 	}
 

@@ -16,6 +16,7 @@
 
 package com.acornui.jvm.cursor
 
+import com.acornui.async.then
 import com.acornui.core.LifecycleBase
 import com.acornui.core.assets.*
 import com.acornui.core.cursor.Cursor
@@ -69,9 +70,9 @@ class JvmTextureCursor(
 	private var cursor: Long = -1L
 
 	init {
-		assets.load(texturePath, AssetTypes.TEXTURE, onSuccess = {
+		assets.load(texturePath, AssetTypes.TEXTURE).then {
 			setTexture(it)
-		})
+		}
 	}
 
 	private fun setTexture(texture: Texture) {

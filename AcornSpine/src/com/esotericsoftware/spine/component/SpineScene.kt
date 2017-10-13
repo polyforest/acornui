@@ -16,8 +16,6 @@
 
 package com.esotericsoftware.spine.component
 
-import com.acornui.action.onFailed
-import com.acornui.action.onSuccess
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponentImpl
 import com.acornui.core.di.Owned
@@ -67,6 +65,7 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 	fun addChild(index: Int, child: SkeletonComponent) {
 		child.skeleton.flipY = flipY
 		_children.add(index, child)
+		if (isActive) child.activate()
 	}
 
 	fun removeChild(child: SkeletonComponent): Boolean {
@@ -79,7 +78,22 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 	fun removeChild(index: Int): SkeletonComponent {
 		val child = _children[index]
 		_children.removeAt(index)
+		if (isActive) child.deactivate()
 		return child
+	}
+
+	override fun onActivated() {
+		super.onActivated()
+		for (i in 0.._children.lastIndex) {
+			_children[i].activate()
+		}
+	}
+
+	override fun onDeactivated() {
+		super.onDeactivated()
+		for (i in 0.._children.lastIndex) {
+			_children[i].deactivate()
+		}
 	}
 
 	fun tick(stepTime: Float) {
@@ -100,36 +114,6 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 			_children[i].draw(glState, concatenatedTransform, concatenatedColorTint)
 		}
 	}
-
-	//--------------------------------------------
-	// Utility
-	//--------------------------------------------
-
-	fun loadSkeleton(skeletonDataPath: String, textureAtlasPath: String, skins: Array<String>? = null, onSuccess: (LoadedSkeleton) -> Unit) {
-		loadSkeleton(skeletonDataPath, textureAtlasPath, skins, onSuccess, { println("Skeleton failed to load") })
-	}
-
-	/**
-	 * Loads the skeleton from the specified JSON file and texture atlas. Then loads the requested skins.
-	 * If no skins are requested, all skins will be loaded.
-	 */
-	fun loadSkeleton(skeletonDataPath: String, textureAtlasPath: String, skins: Array<String>? = null, onSuccess: (LoadedSkeleton) -> Unit, onFailed: () -> Unit) {
-		val sL = skeletonLoader(skeletonDataPath, textureAtlasPath)
-		sL.onSuccess {
-			val loadedSkeleton = it.result
-			val skinsL = if (skins == null) it.loadAllSkins() else it.loadSkins(*skins)
-			skinsL.onSuccess {
-				onSuccess(loadedSkeleton)
-			}
-			skinsL.onFailed {
-				onFailed()
-			}
-		}
-		sL.onFailed {
-			onFailed()
-		}
-	}
-
 
 	//--------------------------------------------
 

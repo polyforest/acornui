@@ -1,11 +1,14 @@
 package com.acornui.core.graphics
 
+import com.acornui.async.then
 import com.acornui.collection.fill
 import com.acornui.component.ComponentInit
 import com.acornui.component.ContainerImpl
 import com.acornui.component.ValidationFlags
 import com.acornui.core.AppConfig
-import com.acornui.core.assets.jsonBinding
+import com.acornui.core.assets.CachedGroup
+import com.acornui.core.assets.cachedGroup
+import com.acornui.core.assets.loadAndCacheJson
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.io.JSON_KEY
@@ -16,11 +19,6 @@ import com.acornui.math.Bounds
 class SpriteAnimation(owner: Owned) : ContainerImpl(owner) {
 
 	val json = inject(JSON_KEY)
-
-	private val textureAtlasBinding = jsonBinding(TextureAtlasDataSerializer) {
-		atlasData = it
-		refreshFrames()
-	}
 
 	/**
 	 * The current animation frame. This will increment after this animation's framerate duration has passed.
@@ -54,9 +52,6 @@ class SpriteAnimation(owner: Owned) : ContainerImpl(owner) {
 	 */
 	var paused: Boolean = false
 
-	private var atlasData: TextureAtlasData? = null
-	private var atlasPath: String? = null
-	private var regionName: String? = null
 	private var elapsed: Float = 0f
 
 	private var regionWidth: Int = 0
@@ -83,6 +78,8 @@ class SpriteAnimation(owner: Owned) : ContainerImpl(owner) {
 		}
 	}
 
+	private var group: CachedGroup? = null
+
 	fun setRegion(atlasPath: String, regionName: String, startFrame: Int = 0, endFrame: Int = -1) {
 		for (i in 0..frameClips.lastIndex) {
 			removeChild(frameClips[i])
@@ -90,48 +87,39 @@ class SpriteAnimation(owner: Owned) : ContainerImpl(owner) {
 		}
 		frameClips.clear()
 
-		_startFrame = startFrame
-		_endFrame = endFrame
-		textureAtlasBinding.path = atlasPath
-		this.atlasPath = atlasPath
-		this.regionName = regionName
-		refreshFrames()
-	}
-
-	private fun refreshFrames() {
-		val atlasPath = atlasPath ?: return
-		val atlasData = atlasData ?: return
-		val regionName = regionName ?: return
-
-		if (_startFrame < 0) _startFrame = 0
-
-		val regions = ArrayList<AtlasRegionData?>()
-		regionWidth = 0
-		for (page in atlasData.pages) {
-			for (region in page.regions) {
-				val index = region.name.calculateFrameIndex(regionName)
-				if (index >= _startFrame && (_endFrame == -1 || index <= _endFrame)) {
-					regions.fill(index - _startFrame + 1) { null }
-					regions[index - _startFrame] = region
-					if (region.originalWidth > regionWidth) {
-						regionWidth = region.originalWidth
-					}
-					if (region.originalHeight > regionHeight) {
-						regionHeight = region.originalHeight
+		group?.dispose()
+		group = cachedGroup()
+		loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group!!).then {
+			atlasData ->
+			val regions = ArrayList<AtlasRegionData?>()
+			regionWidth = 0
+			for (page in atlasData.pages) {
+				for (region in page.regions) {
+					val index = region.name.calculateFrameIndex(regionName)
+					if (index >= startFrame && (endFrame == -1 || index <= endFrame)) {
+						regions.fill(index - startFrame + 1) { null }
+						regions[index - startFrame] = region
+						if (region.originalWidth > regionWidth) {
+							regionWidth = region.originalWidth
+						}
+						if (region.originalHeight > regionHeight) {
+							regionHeight = region.originalHeight
+						}
 					}
 				}
 			}
+
+			for (i in 0..regions.lastIndex) {
+				val region = regions[i] ?: continue
+
+				val atlasComponent = addChild(atlas(atlasPath, region.name))
+				frameClips.add(atlasComponent)
+			}
+			_startFrame = startFrame
+			_endFrame = frameClips.lastIndex + _startFrame
+
+			invalidate(ValidationFlags.LAYOUT)
 		}
-
-		for (i in 0..regions.lastIndex) {
-			val region = regions[i] ?: continue
-
-			val atlasComponent = addChild(atlas(atlasPath, region.name))
-			frameClips.add(atlasComponent)
-		}
-		_endFrame = frameClips.lastIndex + _startFrame
-
-		invalidate(ValidationFlags.LAYOUT)
 	}
 
 	/**
@@ -159,6 +147,12 @@ class SpriteAnimation(owner: Owned) : ContainerImpl(owner) {
 		if (currentFrame >= startFrame && (currentFrame - startFrame) < frameClips.size) {
 			frameClips[currentFrame - startFrame].render()
 		}
+	}
+
+	override fun dispose() {
+		super.dispose()
+		group?.dispose()
+		group = null
 	}
 }
 

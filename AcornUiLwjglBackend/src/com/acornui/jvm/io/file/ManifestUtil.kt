@@ -45,7 +45,7 @@ object ManifestUtil {
 		}
 		fileEntries.sort()
 
-		val manifest = FilesManifest(fileEntries.toTypedArray())
+		val manifest = FilesManifest(fileEntries)
 		return manifest
 	}
 

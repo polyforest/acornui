@@ -20,7 +20,6 @@ import com.acornui.component.TextureComponent
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.ValidationFlags
 import com.acornui.core.assets.AssetTypes
-import com.acornui.core.assets.assetBinding
 import com.acornui.core.di.Owned
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture

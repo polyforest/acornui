@@ -19,26 +19,25 @@ package com.acornui.js.loader
 /**
  * @author nbilyk
  */
-import com.acornui.action.DelegateAction
 import com.acornui.core.UserInfo
+import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.AssetTypes
-import com.acornui.core.assets.AssetLoader
-import com.acornui.core.request.MutableHttpRequest
-import com.acornui.core.request.ResponseType
-import com.acornui.js.io.JsHttpRequest
+import com.acornui.core.request.Request
+import com.acornui.core.request.UrlRequestData
+import com.acornui.js.io.JsTextRequest
 
 /**
  * An asset loader for text.
  * @author nbilyk
  */
 class JsTextLoader(
-		private val request: MutableHttpRequest = JsHttpRequest()
-) : DelegateAction(request), AssetLoader<String> {
+		override val path: String,
+		override val estimatedBytesTotal: Int = 0,
+		private val request: Request<String> = JsTextRequest(UrlRequestData(path))
+) : AssetLoader<String> {
 
 	override val type: AssetType<String> = AssetTypes.TEXT
-
-	override var estimatedBytesTotal: Int = 0
 
 	override val secondsLoaded: Float
 		get() = request.secondsLoaded
@@ -46,16 +45,7 @@ class JsTextLoader(
 	override val secondsTotal: Float
 		get() = if (request.secondsTotal <= 0f) estimatedBytesTotal * UserInfo.downBpsInv else request.secondsTotal
 
-	override var path: String
-		get() = request.requestData.url
-		set(value) {
-			request.requestData.url = value
-		}
+	suspend override fun await(): String = request.await()
 
-	init {
-		request.requestData.responseType = ResponseType.TEXT
-	}
-
-	override val result: String
-		get() = request.result as String
+	override fun cancel() = request.cancel()
 }

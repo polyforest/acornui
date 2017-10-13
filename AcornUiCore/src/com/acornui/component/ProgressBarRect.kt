@@ -1,15 +1,18 @@
 package com.acornui.component
 
 import com.acornui.action.Progress
-import com.acornui.action.onSuccess
-import com.acornui.component.style.*
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleTag
+import com.acornui.component.style.StyleType
 import com.acornui.core.Disposable
 import com.acornui.core.assets.AssetManager
+import com.acornui.core.assets.onLoadersEmpty
+import com.acornui.core.assets.secondsRemaining
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.popup.PopUpInfo
-import com.acornui.core.popup.PopUpManager
 import com.acornui.core.popup.addPopUp
+import com.acornui.core.popup.removePopUp
 import com.acornui.core.time.onTick
 import com.acornui.graphics.Color
 import com.acornui.math.Bounds
@@ -109,29 +112,19 @@ fun Owned.progressBarRect(init: ComponentInit<ProgressBarRect> = {}): ProgressBa
 	return p
 }
 
-private var progressBar: ProgressBarRect? = null
+private var progressBarPopUp: PopUpInfo<ProgressBarRect>? = null
 fun Owned.showAssetLoadingBar(onCompleted: () -> Unit = {}) {
 	val assetManager = inject(AssetManager)
-	if (assetManager.percentLoaded >= 0.9 || assetManager.loadingQueue.hasCompleted()) {
-		onCompleted()
-		return
-	}
-	if (progressBar == null) {
-		progressBar = progressBarRect()
-		val bar = progressBar!!
-		bar.watch(assetManager)
-	}
-	assetManager.loadingQueue.onSuccess {
-		onCompleted()
-	}
-	val progressBar = progressBar!!
-	if (assetManager.percentLoaded >= 0.9 || assetManager.loadingQueue.hasCompleted() || progressBar.parent != null) return
-	progressBar.reset()
-	val popUpManager = inject(PopUpManager)
-	val popUp = addPopUp(PopUpInfo(progressBar, priority = 1000f, onCloseRequested = { false }))
-	assetManager.loadingQueue.completed.addOnce {
-		_, _ ->
-		popUpManager.removePopUp(popUp)
-	}
+	if (assetManager.secondsRemaining < 0.5f) return onCompleted() // Close enough
+	assetManager.onLoadersEmpty(onCompleted)
 
+	if (progressBarPopUp == null) {
+		// We only want a single progress bar pop up.
+		val progressBar = inject(Stage).progressBarRect()
+		progressBarPopUp = PopUpInfo(progressBar, priority = 1000f, onCloseRequested = { false })
+		progressBar.watch(assetManager)
+	}
+	val popUp = progressBarPopUp!!
+	addPopUp(popUp)
+	assetManager.onLoadersEmpty { removePopUp(popUp) }
 }

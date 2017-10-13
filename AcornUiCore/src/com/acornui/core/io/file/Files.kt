@@ -21,6 +21,7 @@ import com.acornui.core.di.DKey
 import com.acornui.io.file.FilesManifest
 import com.acornui.core.replace2
 import com.acornui.core.split2
+import kotlin.coroutines.experimental.buildSequence
 
 
 interface Files {
@@ -35,13 +36,13 @@ interface Files {
 /**
  * Files allows you to check if a file or directory exists without making a request.
  * Files depends on manifest data provided in the application bootstrap. This data should be auto-generated
- * by the AcornAssets ant task.
+ * by the AcornAssets task.
  */
-class FilesImpl(manifest: FilesManifest): Files {
+class FilesImpl(manifest: FilesManifest) : Files {
 
-	private val map: HashMap<String, FileEntry> = HashMap()
+	private val map = HashMap<String, FileEntry>()
 
-	val rootDir: Directory = Directory("")
+	private val rootDir = Directory("", null, HashMap(), HashMap())
 
 	init {
 		for (file in manifest.files) {
@@ -54,8 +55,8 @@ class FilesImpl(manifest: FilesManifest): Files {
 				var dir = p.directories[part]
 				if (dir == null) {
 					val newPath = if (p == rootDir) part else p.path + "/" + part
-					dir = Directory(newPath, p)
-					p.directories.put(part, dir)
+					dir = Directory(newPath, p, HashMap(), HashMap())
+					(p.directories as MutableMap).put(part, dir)
 				}
 				p = dir
 			}
@@ -63,7 +64,7 @@ class FilesImpl(manifest: FilesManifest): Files {
 			map.put(fileEntry.path, fileEntry)
 
 			// Add the file entry to the directory.
-			p.files.put(pathSplit.last(), fileEntry)
+			(p.files as MutableMap).put(pathSplit.last(), fileEntry)
 		}
 	}
 
@@ -83,12 +84,10 @@ class FilesImpl(manifest: FilesManifest): Files {
 	}
 }
 
-
-
 class FileEntry(
-		val path: String = "",
-		val modified: Long = 0,
-		val size: Long = 0,
+		val path: String,
+		val modified: Long,
+		val size: Long,
 		val parent: Directory
 ) : Comparable<FileEntry> {
 
@@ -100,64 +99,72 @@ class FileEntry(
 		return parent.getDir(name)
 	}
 
-	fun name(): String {
-		return path.substringAfterLast('/')
-	}
+	val name: String
+		get() {
+			return path.substringAfterLast('/')
+		}
 
-	fun nameNoExtension(): String {
-		return path.substringAfterLast('/').substringBeforeLast('.')
-	}
+	val nameNoExtension: String
+		get() {
+			return path.substringAfterLast('/').substringBeforeLast('.')
+		}
 
-	fun extension(): String {
-		return path.substringAfterLast('.')
-	}
+	val extension: String
+		get() {
+			return path.substringAfterLast('.')
+		}
 
 	fun hasExtension(extension: String): Boolean {
-		return extension().equals(extension, ignoreCase = true)
+		return extension.equals(extension, ignoreCase = true)
 	}
 
 	/**
 	 * Calculates the number of directories deep this file entry is.
 	 */
-	fun depth(): Int {
+	val depth: Int by lazy {
 		var count = -1
 		var index = -1
 		do {
 			count++
 			index = path.indexOf('/', index + 1)
 		} while (index != -1)
-		return count
+		count
 	}
 
 	override fun compareTo(other: FileEntry): Int {
-		if (depth() == other.depth()) {
+		if (depth == other.depth) {
 			return path.compareTo(other.path)
 		} else {
-			return depth().compareTo(other.depth())
+			return depth.compareTo(other.depth)
 		}
 	}
 }
 
+class Directory(
+		val path: String,
+		val parent: Directory?,
+		val directories: Map<String, Directory>,
+		val files: Map<String, FileEntry>
+) : Comparable<Directory> {
 
-class Directory(val path: String, parent: Directory? = null) : Comparable<Directory> {
+	val name: String
+		get() {
+			return path.substringAfterLast('/')
+		}
 
-	private val _parent: Directory? = parent
-
-	val directories: HashMap<String, Directory> = HashMap()
-	val files: HashMap<String, FileEntry> = HashMap()
-
-	fun name(): String {
-		return path.substringAfterLast('/')
+	val depth: Int by lazy {
+		if (parent == null) 0 else parent.depth + 1
 	}
 
-	fun depth(): Int {
-		var count = 0
-		var p: Directory? = this
-		while (p != null) {
-			count++
-			p = p.parent()
+	/**
+	 * Returns the total number of files in this directory (recursive).
+	 */
+	val totalFiles: Int by lazy {
+		var c = files.size
+		for (directory in directories.values) {
+			c += directory.totalFiles
 		}
-		return count
+		c
 	}
 
 	fun getFile(name: String): FileEntry? {
@@ -168,8 +175,12 @@ class Directory(val path: String, parent: Directory? = null) : Comparable<Direct
 		return directories[name]
 	}
 
-	fun parent(): Directory? {
-		return _parent
+	fun walkFilesTopDown(maxDepth: Int = 100): Sequence<FileEntry> {
+		return FilesTopDownSequence(this, maxDepth)
+	}
+
+	fun walkDirectoriesTopDown(maxDepth: Int = 100): Sequence<Directory> {
+		return DirectoriesTopDownSequence(this, maxDepth)
 	}
 
 	/**
@@ -177,6 +188,7 @@ class Directory(val path: String, parent: Directory? = null) : Comparable<Direct
 	 * @param callback Invoked once for each file. If the callback returns false, the iteration will immediately stop.
 	 * @param maxDepth The maximum depth to traverse. A maxDepth of 0 will not follow any subdirectories of this directory.
 	 */
+	@Deprecated("use walkTopDown")
 	fun mapFiles(callback: (FileEntry) -> Boolean, maxDepth: Int = 100) {
 		val openList = ArrayList<Directory>()
 		val depths = ArrayList<Int>()
@@ -204,6 +216,7 @@ class Directory(val path: String, parent: Directory? = null) : Comparable<Direct
 	 * @param callback Invoked once for each directory (Not including this directory). If the callback returns false, the iteration will immediately stop.
 	 * @param maxDepth The maximum depth to traverse. A maxDepth of 0 will not follow any subdirectories of this directory.
 	 */
+	@Deprecated("use walkTopDown")
 	fun mapDirectories(callback: (Directory) -> Boolean, maxDepth: Int = 100) {
 		val openList = ArrayList<Directory>()
 		val depths = ArrayList<Int>()
@@ -226,14 +239,80 @@ class Directory(val path: String, parent: Directory? = null) : Comparable<Direct
 	}
 
 	override fun compareTo(other: Directory): Int {
-		if (depth() == other.depth()) {
+		if (depth == other.depth) {
 			return path.compareTo(other.path)
 		} else {
-			return depth().compareTo(other.depth())
+			return depth.compareTo(other.depth)
 		}
 	}
 
 	fun relativePath(file: FileEntry): String {
 		return file.path.substringAfter(path + "/", path)
+	}
+}
+
+private class FilesTopDownSequence(private val root: Directory, private val maxDepth: Int) : Sequence<FileEntry> {
+
+	override fun iterator(): Iterator<FileEntry> = object : Iterator<FileEntry> {
+
+		private val openList = ArrayList<Directory>()
+		private val files = ArrayList<FileEntry>()
+		private var fileIndex = 0
+
+		init {
+			if (root.totalFiles > 0) {
+				openList.add(root)
+				step()
+			}
+		}
+
+		override fun next(): FileEntry {
+			val ret = files[fileIndex]
+			step()
+			return ret
+		}
+
+		private fun step() {
+			if (fileIndex < files.size) {
+				fileIndex++
+			} else {
+				fileIndex = 0
+				files.clear()
+				while (true) {
+					val newParent = openList.pop()
+					if (newParent.depth <= maxDepth && newParent.totalFiles > 0) {
+						openList.addAll(newParent.directories.values.sorted())
+					}
+					if (newParent.files.isNotEmpty()) {
+						files.addAll(newParent.files.values.sorted())
+						break
+					}
+				}
+			}
+		}
+
+		override fun hasNext(): Boolean {
+			return fileIndex < files.size || openList.isNotEmpty()
+		}
+	}
+}
+
+private class DirectoriesTopDownSequence(private val root: Directory, private val maxDepth: Int) : Sequence<Directory> {
+
+	override fun iterator(): Iterator<Directory> = object : Iterator<Directory> {
+
+		private val openList = arrayListOf(root)
+
+		override fun next(): Directory {
+			val next = openList.pop()
+			if (next.depth <= maxDepth) {
+				openList.addAll(next.directories.values.sorted())
+			}
+			return next
+		}
+
+		override fun hasNext(): Boolean {
+			return openList.isNotEmpty()
+		}
 	}
 }

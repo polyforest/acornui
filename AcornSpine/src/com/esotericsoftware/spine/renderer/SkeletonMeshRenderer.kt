@@ -49,7 +49,7 @@ object SkeletonMeshRenderer : SkeletonRenderer {
 
 	override fun draw(loadedSkeleton: LoadedSkeleton, skeleton: Skeleton, glState: GlState, concatenatedTransform: Matrix4Ro, concatenatedColorTint: ColorRo) {
 		val skin = skeleton.currentSkin ?: skeleton.defaultSkin ?: return // No skin to render.
-		val loadedSkin = loadedSkeleton.loadedSkins[skin.data] ?: return // Skin not loaded.
+		val loadedSkin = loadedSkeleton.loadedSkins[skin.data.name] ?: return // Skin not loaded.
 
 		var vertices: Array<Vertex>? = null
 		var triangles: ShortArray? = null
