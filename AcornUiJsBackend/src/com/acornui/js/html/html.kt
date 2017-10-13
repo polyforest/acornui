@@ -16,12 +16,8 @@
 
 package com.acornui.js.html
 
-import com.acornui.action.BasicAction
-import com.acornui.action.QueueAction
-import com.acornui.collection.CyclicList
 import com.acornui.collection.cyclicListObtain
 import com.acornui.collection.cyclicListPool
-import com.acornui.component.InteractiveElement
 import com.acornui.component.InteractiveElementRo
 import com.acornui.component.Stage
 import com.acornui.component.UiComponent
@@ -49,23 +45,6 @@ val Window.clipboardData: DataTransfer?
 		val d: dynamic = this
 		return d.clipboardData
 	}
-
-/**
- * Used to add an action to a queue that is marked successful when the event handler is invoked.
- */
-fun QueueAction.eventHandler(): (Event) -> Unit {
-	val action = HandlerAction()
-	action.invoke()
-	add(action)
-	return action.handler
-}
-
-class HandlerAction : BasicAction() {
-	val handler = {
-		event: Event ->
-		success()
-	}
-}
 
 fun Node.owns(element: Node): Boolean {
 	var p: Node? = element

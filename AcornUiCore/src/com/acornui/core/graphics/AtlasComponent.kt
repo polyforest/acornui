@@ -22,6 +22,7 @@ import com.acornui.collection.Clearable
 import com.acornui.component.*
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.core.assets.CachedGroup
+import com.acornui.core.assets.cachedGroup
 import com.acornui.core.assets.loadAndCacheJson
 import com.acornui.core.di.Owned
 import com.acornui.math.Bounds
@@ -61,6 +62,7 @@ class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
 	 */
 	fun setRegion(atlasPath: String, regionName: String): Deferred<Unit> = async {
 		clear()
+		group = cachedGroup()
 		val atlasData = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group!!).await()
 		val (page, region) = atlasData.findRegion(regionName) ?: throw Exception("Region '$regionName' not found in atlas.")
 		val texture = loadAndCacheAtlasPage(atlasPath, page, group!!).await()

@@ -16,10 +16,14 @@
 
 package com.acornui.js.dom.component
 
+import com.acornui.async.then
 import com.acornui.component.TextureComponent
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.ValidationFlags
 import com.acornui.core.assets.AssetTypes
+import com.acornui.core.assets.CachedGroup
+import com.acornui.core.assets.cachedGroup
+import com.acornui.core.assets.loadAndCache
 import com.acornui.core.di.Owned
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
@@ -53,11 +57,6 @@ open class DomTextureComponent(
 
 	private var imageElement: HTMLDivElement
 
-	protected val _assetBinding = assetBinding(AssetTypes.TEXTURE, {}) {
-		texture ->
-		_setTexture(texture)
-	}
-
 	override var isRotated: Boolean
 		get() = _isRotated
 		set(value) {
@@ -77,10 +76,22 @@ open class DomTextureComponent(
 		native.element.appendChild(imageElement)
 	}
 
-	override var path: String?
-		get() = _assetBinding.path
+	private var cached: CachedGroup? = null
+
+	private var _path: String? = null
+	override final var path: String?
+		get() = _path
 		set(value) {
-			_assetBinding.path = value
+			if (_path == value) return
+			cached?.dispose()
+			cached = cachedGroup()
+			if (value != null) {
+				loadAndCache(value, AssetTypes.TEXTURE, cached!!).then {
+					_setTexture(it)
+				}
+			} else {
+				_setTexture(null)
+			}
 		}
 
 	/**
@@ -93,7 +104,7 @@ open class DomTextureComponent(
 	override var texture: Texture?
 		get() = _texture
 		set(value) {
-			_assetBinding.clear()
+			path = null
 			_setTexture(value)
 		}
 
@@ -181,7 +192,7 @@ open class DomTextureComponent(
 	}
 
 	override fun dispose() {
+		path = null
 		super.dispose()
-		texture = (null)
 	}
 }

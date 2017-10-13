@@ -16,12 +16,11 @@
 
 package com.acornui.js.audio
 
-import com.acornui.action.BasicAction
+import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.AssetTypes
-import com.acornui.core.assets.AssetLoader
-import com.acornui.core.audio.Music
 import com.acornui.core.audio.AudioManager
+import com.acornui.core.audio.Music
 
 /**
  * An asset loader for js AudioContext sounds.
@@ -30,19 +29,13 @@ import com.acornui.core.audio.AudioManager
  * @author nbilyk
  */
 class JsWebAudioMusicLoader(
+		override val path: String,
+		override val estimatedBytesTotal: Int,
 		private val audioManager: AudioManager
-) : BasicAction(), AssetLoader<Music> {
+) : AssetLoader<Music> {
 
 	override val type: AssetType<Music> = AssetTypes.MUSIC
 
-	private var _asset: Music? = null
-
-	override var path: String = ""
-
-	override val result: Music
-		get() = _asset!!
-
-	override var estimatedBytesTotal: Int = 0
 
 	override val secondsLoaded: Float
 		get() = 0f
@@ -50,27 +43,18 @@ class JsWebAudioMusicLoader(
 	override val secondsTotal: Float
 		get() = 0f
 
-	override fun onInvocation() {
-		if (!audioContextSupported) {
-			fail(Exception("Audio not supported in this browser."))
-			return
-		}
-		val element = Audio(path)
+	val element = Audio(path)
+
+	init {
 		element.load()
-		_asset = JsWebAudioMusic(audioManager, JsAudioContext.instance, element)
-		success()
 	}
 
-	override fun onAborted() {
+	suspend override fun await(): Music {
+		if (!audioContextSupported) throw Exception("Audio not supported in this browser.")
+		return JsWebAudioMusic(audioManager, JsAudioContext.instance, element)
 	}
 
-	override fun onReset() {
-		_asset = null
-	}
-
-	override fun dispose() {
-		super.dispose()
-		_asset = null
+	override fun cancel() {
 	}
 }
 
