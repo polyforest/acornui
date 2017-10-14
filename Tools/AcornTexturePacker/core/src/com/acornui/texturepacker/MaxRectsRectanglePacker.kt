@@ -66,7 +66,7 @@ class MaxRectsPacker(algorithmSettings: PackerAlgorithmSettingsData) : Rectangle
 			PackerPageData(
 					page.width,
 					page.height,
-					Array(page.outputRects.size, {
+					List(page.outputRects.size, {
 						rectIndex ->
 						val rect = page.outputRects[rectIndex]
 						PackerRectangleData(

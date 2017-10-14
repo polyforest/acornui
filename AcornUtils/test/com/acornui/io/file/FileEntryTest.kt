@@ -26,32 +26,32 @@ import kotlin.test.*
 class FileEntryTest {
 
 	@Test fun compare() {
-		val arr = arrayOf(ManifestEntry("foo/Daz.txt"),
-				ManifestEntry("Caz.txt"),
-				ManifestEntry("foo/bar/Baz.txt"),
-				ManifestEntry("foo/bar/Caz.txt"),
-				ManifestEntry("foo/Baz.txt"),
-				ManifestEntry("Baz.txt"),
-				ManifestEntry("foo/bar/Daz.txt"),
-				ManifestEntry("Daz.txt"),
-				ManifestEntry("foo/Caz.txt")
+		val arr = arrayOf(ManifestEntry("foo/Daz.txt", 0L, 0L),
+				ManifestEntry("Caz.txt", 0L, 0L),
+				ManifestEntry("foo/bar/Baz.txt", 0L, 0L),
+				ManifestEntry("foo/bar/Caz.txt", 0L, 0L),
+				ManifestEntry("foo/Baz.txt", 0L, 0L),
+				ManifestEntry("Baz.txt", 0L, 0L),
+				ManifestEntry("foo/bar/Daz.txt", 0L, 0L),
+				ManifestEntry("Daz.txt", 0L, 0L),
+				ManifestEntry("foo/Caz.txt", 0L, 0L)
 		)
 
 		arr.sort()
-		assertListEquals(arrayOf(ManifestEntry("Baz.txt"),
-				ManifestEntry("Caz.txt"),
-				ManifestEntry("Daz.txt"),
-				ManifestEntry("foo/Baz.txt"),
-				ManifestEntry("foo/Caz.txt"),
-				ManifestEntry("foo/Daz.txt"),
-				ManifestEntry("foo/bar/Baz.txt"),
-				ManifestEntry("foo/bar/Caz.txt"),
-				ManifestEntry("foo/bar/Daz.txt")
+		assertListEquals(arrayOf(ManifestEntry("Baz.txt", 0L, 0L),
+				ManifestEntry("Caz.txt", 0L, 0L),
+				ManifestEntry("Daz.txt", 0L, 0L),
+				ManifestEntry("foo/Baz.txt", 0L, 0L),
+				ManifestEntry("foo/Caz.txt", 0L, 0L),
+				ManifestEntry("foo/Daz.txt", 0L, 0L),
+				ManifestEntry("foo/bar/Baz.txt", 0L, 0L),
+				ManifestEntry("foo/bar/Caz.txt", 0L, 0L),
+				ManifestEntry("foo/bar/Daz.txt", 0L, 0L)
 		), arr)
 
-		assertEquals("Baz.txt", ManifestEntry("Baz.txt").name())
-		assertEquals("Baz.txt", ManifestEntry("foo/bar/Baz.txt").name())
-		assertEquals("Caz.txt", ManifestEntry("foo/aaa/Caz.txt").name())
+		assertEquals("Baz.txt", ManifestEntry("Baz.txt", 0L, 0L).name())
+		assertEquals("Baz.txt", ManifestEntry("foo/bar/Baz.txt", 0L, 0L).name())
+		assertEquals("Caz.txt", ManifestEntry("foo/aaa/Caz.txt", 0L, 0L).name())
 	}
 
 }

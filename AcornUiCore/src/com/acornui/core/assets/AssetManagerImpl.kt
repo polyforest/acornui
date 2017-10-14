@@ -16,13 +16,12 @@
 
 package com.acornui.core.assets
 
-import com.acornui.action.ActionRo
-import com.acornui.action.ActionStatus
-import com.acornui.action.BasicAction
-import com.acornui.action.PriorityQueueAction
-import com.acornui.core.io.file.Files
-import com.acornui.logging.Log
+import com.acornui.async.awaitOrNull
+import com.acornui.async.launch
 import com.acornui.browser.appendParam
+import com.acornui.core.io.file.Files
+import com.acornui.signal.Signal
+import com.acornui.signal.Signal0
 
 
 /**
@@ -40,122 +39,69 @@ class AssetManagerImpl(
 		/**
 		 * If true, a version number will be appended to file requests for relative files.
 		 */
-		private val appendVersion: Boolean = false,
-
-		simultaneous: Int = 5
+		private val appendVersion: Boolean = false
 ) : AssetManager {
 
-	private val loaderFactories: HashMap<AssetType<*>, () -> AssetLoader<*>> = HashMap()
+	private val _currentLoadersChanged = Signal0()
+	override val currentLoadersChanged: Signal<() -> Unit>
+		get() = _currentLoadersChanged
 
-	override val loadingQueue: PriorityQueueAction = PriorityQueueAction()
+	private val loaderFactories: HashMap<AssetType<*>, LoaderFactory<*>> = HashMap()
+	private val _currentLoaders = ArrayList<AssetLoader<*>>()
+	override val currentLoaders: List<AssetLoaderRo<*>>
+		get() = _currentLoaders
 
-	init {
-		loadingQueue.cascadeFailure = false
-		loadingQueue.simultaneous = simultaneous
-		loadingQueue.autoInvoke = true
-	}
-
-	override fun <T> setLoaderFactory(type: AssetType<T>, factory: () -> AssetLoader<T>) {
+	override fun <T> setLoaderFactory(type: AssetType<T>, factory: LoaderFactory<T>) {
 		loaderFactories[type] = factory
 	}
 
-	private fun <T> _initLoader(loader: AssetLoader<T>, path: String) {
+	@Suppress("UNCHECKED_CAST")
+	override fun <T> load(path: String, type: AssetType<T>): AssetLoader<T> {
 		// Check if we can determine the estimated size by the manifest
 		val file = files.getFile(path)
-		if (file != null) {
-			loader.estimatedBytesTotal = file.size.toInt()
-			loader.path = rootPath + if (appendVersion) path.appendParam("version", file.modified.toString()) else path
-		} else {
-			loader.path = path
-		}
-		loader.failed.add(loadingFailedHandler)
-	}
+		val finalPath = if (file == null) path else rootPath + if (appendVersion) path.appendParam("version", file.modified.toString()) else path
+		val estimatedBytesTotal = file?.size?.toInt() ?: 0
 
-	@Suppress("UNCHECKED_CAST")
-	override fun <T> load(path: String, type: AssetType<T>, priority: Float): AssetLoaderRo<T> {
-		val factory = loaderFactories[type] ?: createFailedLoaderFactory(type)
-		val loader = factory() as AssetLoader<T>
-		_initLoader(loader, path)
-		loadingQueue.add(loader, priority)
+		val factory = loaderFactories[type] ?: return FailedLoader(type, path)
+		val loader = factory(finalPath, estimatedBytesTotal) as AssetLoader<T>
+		_currentLoaders.add(loader)
+		_currentLoadersChanged.dispatch()
+		launch {
+			// Remove the loader when it's finished.
+			loader.awaitOrNull()
+			_currentLoaders.remove(loader)
+			_currentLoadersChanged.dispatch()
+		}
 		return loader
 	}
 
-	override fun <T> abort(path: String, type: AssetType<T>) {
-		for (i in 0..loadingQueue.actions.lastIndex) {
-			val action = loadingQueue.actions[i] as AssetLoader<*>
-			if (action.path == path && action.type == type) {
-				action.abort()
-				return
-			}
+	private fun abortAll() {
+		for (i in 0.._currentLoaders.lastIndex) {
+			_currentLoaders[i].cancel()
 		}
+		_currentLoaders.clear()
+		_currentLoadersChanged.dispatch()
 	}
-
-	/**
-	 * When an asset type is requested that doesn't have a corresponding loader factory, warn on first attempt, and
-	 * create a factory that produces a [FailedLoader]
-	 */
-	private fun <T> createFailedLoaderFactory(type: AssetType<T>): () -> AssetLoader<T> {
-		Log.warn("No loader factory set for asset type $type")
-		val newFailedLoaderFactory: () -> AssetLoader<T> = {
-			@Suppress("CAST_NEVER_SUCCEEDS")
-			FailedLoader(type)
-		}
-		loaderFactories[type] = newFailedLoaderFactory
-		return newFailedLoaderFactory
-	}
-
-	override val secondsLoaded: Float
-		get() {
-			var c = 0f
-			for (i in 0..loadingQueue.actions.lastIndex) {
-				val action = loadingQueue.actions[i] as AssetLoaderRo<*>
-				c += action.secondsLoaded
-			}
-			return c
-		}
-
-	override val secondsTotal: Float
-		get() {
-			var c = 0f
-			for (i in 0..loadingQueue.actions.lastIndex) {
-				val action = loadingQueue.actions[i] as AssetLoaderRo<*>
-				c += action.secondsTotal
-			}
-			return c
-		}
 
 	override fun dispose() {
-		loadingQueue.dispose()
-	}
-
-	companion object {
-		var loadingFailedHandler = {
-			action: ActionRo, status: ActionStatus, error: Throwable? ->
-			if (status == ActionStatus.FAILED) {
-				Log.warn(error)
-			}
-		}
+		abortAll()
+		_currentLoadersChanged.dispose()
 	}
 }
 
-private data class AssetCacheKey(val path: String, val type: AssetType<*>) : CacheKey<AssetLoaderRo<*>> {}
+private class FailedLoader<T>(
+		override val type: AssetType<T>,
+		override val path: String
+) : AssetLoader<T> {
 
-private class FailedLoader<T>(override val type: AssetType<T>) : BasicAction(), AssetLoader<T> {
-
-	override var estimatedBytesTotal: Int = 0
+	override val estimatedBytesTotal: Int = 0
 
 	override val secondsLoaded: Float = 0f
 	override val secondsTotal: Float = 0f
-	override val result: T
-		get() = throw Exception("There will never be a result for this.")
 
-	override var path: String = ""
+	override fun cancel() {}
 
-	init {
-		invoke()
-	}
-
-	override fun onInvocation() {
-		fail(Exception("No asset loader for this type."))
+	suspend override fun await(): T {
+		throw AssetLoadingException(path, type)
 	}
 }

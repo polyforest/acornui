@@ -16,13 +16,14 @@
 
 package com.acornui.gl.component
 
+import com.acornui.async.then
 import com.acornui.component.TextureComponent
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.ValidationFlags
-import com.acornui.core.assets.AssetTypes
-import com.acornui.core.assets.assetBinding
+import com.acornui.core.assets.*
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
+import com.acornui.core.di.own
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
 import com.acornui.gl.core.GlState
@@ -42,11 +43,6 @@ open class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureCom
 
 	private val glState = inject(GlState)
 
-	protected val textureBinding = assetBinding(AssetTypes.TEXTURE, { _setTexture(null) }) {
-		texture ->
-		_setTexture(texture)
-	}
-
 	protected val sprite = Sprite()
 
 	init {
@@ -61,16 +57,28 @@ open class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureCom
 		this.texture = texture
 	}
 
+	private var cached: CachedGroup? = null
+
+	private var _path: String? = null
 	override final var path: String?
-		get() = textureBinding.path
+		get() = _path
 		set(value) {
-			textureBinding.path = value
+			if (_path == value) return
+			cached?.dispose()
+			cached = cachedGroup()
+			if (value != null) {
+				loadAndCache(value, AssetTypes.TEXTURE, cached!!).then {
+					_setTexture(it)
+				}
+			} else {
+				_setTexture(null)
+			}
 		}
 
 	override final var texture: Texture?
 		get() = sprite.texture
 		set(value) {
-			textureBinding.clear()
+			path = null
 			_setTexture(value)
 		}
 
@@ -143,7 +151,7 @@ open class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureCom
 	}
 
 	override fun dispose() {
+		path = null
 		super.dispose()
-		texture = null
 	}
 }

@@ -38,8 +38,8 @@ data class SkeletonData(
 
 		var name: String?,
 
-		var width: Float, // Ordered parents first.
-		var height: Float, // Setup pose draw order.
+		var width: Float,
+		var height: Float,
 
 		val version: String?,
 

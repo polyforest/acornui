@@ -4,8 +4,8 @@ interface Decorator<in T, out R> {
 	fun decorate(target: T): R
 }
 
-@Suppress("CAST_NEVER_SUCCEEDS")
 fun <T> noopDecorator(): Decorator<T, T> {
+	@Suppress("UNCHECKED_CAST")
 	return NoopDecorator as Decorator<T, T>
 }
 

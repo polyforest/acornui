@@ -16,12 +16,11 @@
 
 package com.acornui.js.audio
 
-import com.acornui.action.BasicAction
+import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.AssetTypes
-import com.acornui.core.assets.AssetLoader
-import com.acornui.core.audio.Music
 import com.acornui.core.audio.AudioManager
+import com.acornui.core.audio.Music
 import org.w3c.dom.HTMLAudioElement
 import kotlin.browser.document
 
@@ -30,20 +29,12 @@ import kotlin.browser.document
  * @author nbilyk
  */
 class JsAudioElementMusicLoader(
-		private val audioManager: AudioManager
-) : BasicAction(), AssetLoader<Music> {
+		override val path: String,
+		override val estimatedBytesTotal: Int,
+		audioManager: AudioManager
+) : AssetLoader<Music> {
 
 	override val type: AssetType<Music> = AssetTypes.MUSIC
-
-	private var _asset: Music? = null
-
-	override var path: String = ""
-
-	override val result: Music
-		get() = _asset!!
-
-
-	override var estimatedBytesTotal: Int = 0
 
 	override val secondsLoaded: Float
 		get() = 0f
@@ -51,30 +42,15 @@ class JsAudioElementMusicLoader(
 	override val secondsTotal: Float
 		get() = 0f
 
-	override fun onInvocation() {
-		_asset = JsAudioElementMusic(audioManager, Audio(path))
-		success()
-	}
+	private val music = JsAudioElementMusic(audioManager, Audio(path))
 
-	override fun onAborted() {
-		clear()
-	}
+	suspend override fun await(): Music = music
 
-	override fun onReset() {
-		clear()
-	}
-
-	override fun dispose() {
-		super.dispose()
-		clear()
-	}
-
-	fun clear() {
-		_asset = null
+	override fun cancel() {
 	}
 }
 
-fun Audio(source: String) : HTMLAudioElement {
+fun Audio(source: String): HTMLAudioElement {
 	val audio = document.createElement("AUDIO") as HTMLAudioElement
 	audio.src = source
 	return audio

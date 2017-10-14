@@ -16,11 +16,9 @@
 
 package com.acornui.jvm.graphics
 
-import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.AssetTypes
 import com.acornui.core.graphics.RgbData
 import com.acornui.core.graphics.Texture
-import com.acornui.core.time.TimeDriver
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.jvm.loader.JvmAssetLoaderBase
@@ -32,13 +30,15 @@ import javax.imageio.ImageIO
  * @author nbilyk
  */
 open class JvmTextureLoader(
+		path: String,
 		private val gl: Gl20,
 		private val glState: GlState,
-		isAsync: Boolean,
-		timeDriver: TimeDriver?
-) : JvmAssetLoaderBase<Texture>(isAsync, timeDriver) {
+		isAsync: Boolean
+) : JvmAssetLoaderBase<Texture>(path, AssetTypes.TEXTURE, isAsync) {
 
-	override val type: AssetType<Texture> = AssetTypes.TEXTURE
+	init {
+		init()
+	}
 
 	override fun create(fis: InputStream): Texture {
 		return JvmTexture(gl, glState, createImageData(fis))
@@ -46,12 +46,13 @@ open class JvmTextureLoader(
 }
 
 open class JvmRgbDataLoader(
-		isAsync: Boolean,
-		timeDriver: TimeDriver?
-) : JvmAssetLoaderBase<RgbData>(isAsync, timeDriver) {
+		path: String,
+		isAsync: Boolean
+) : JvmAssetLoaderBase<RgbData>(path, AssetTypes.RGB_DATA, isAsync) {
 
-	override val type: AssetType<RgbData> = AssetTypes.RGB_DATA
-
+	init {
+		init()
+	}
 
 	override fun create(fis: InputStream): RgbData {
 		return createImageData(fis)

@@ -26,8 +26,14 @@ import com.acornui.math.Rectangle
 
 interface TextureComponent : UiComponent {
 
+	/**
+	 * Loads a texture from the given path.
+	 */
 	var path: String?
 
+	/**
+	 * Sets the texture directly, as opposed to loading a Texture from the asset manager.
+	 */
 	var texture: Texture?
 
 	/**

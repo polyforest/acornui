@@ -2,13 +2,17 @@ package com.acornui.core.i18n
 
 import com.acornui._assert
 import com.acornui.action.Decorator
-import com.acornui.action.onSuccess
+import com.acornui.async.then
 import com.acornui.collection.copy
+import com.acornui.collection.find2
 import com.acornui.core.Disposable
 import com.acornui.core.UserInfo
 import com.acornui.core.assets.AssetTypes
-import com.acornui.core.assets.loadDecorated
-import com.acornui.core.di.*
+import com.acornui.core.assets.load
+import com.acornui.core.di.DKey
+import com.acornui.core.di.Injector
+import com.acornui.core.di.Scoped
+import com.acornui.core.di.inject
 import com.acornui.core.removeBackslashes
 import com.acornui.core.replace2
 import com.acornui.signal.Signal
@@ -222,8 +226,8 @@ fun Scoped.loadBundleForLocale(locales: List<Locale>, bundleName: String, path: 
 	val i18n = inject(I18n)
 	for (locale in locales) {
 		val path2 = path.replace2("{locale}", locale.value).replace2("{bundleName}", bundleName)
-		loadDecorated(path2, AssetTypes.TEXT, PropertiesDecorator).onSuccess {
-			i18n.setBundleValues(locale, bundleName, it.result)
+		load(path2, AssetTypes.TEXT).then {
+			i18n.setBundleValues(locale, bundleName, PropertiesDecorator.decorate(it))
 		}
 	}
 	return i18n.getBundle(locales, bundleName)
@@ -236,8 +240,8 @@ private fun Scoped._loadBundle(locale: Locale, bundleName: String, path: String,
 	} else {
 		path.replace2("{locale}", locale.value).replace2("{bundleName}", bundleName)
 	}
-	loadDecorated(path2, AssetTypes.TEXT, PropertiesDecorator).onSuccess {
-		i18n.setBundleValues(locale, bundleName, it.result)
+	load(path2, AssetTypes.TEXT).then {
+		i18n.setBundleValues(locale, bundleName, PropertiesDecorator.decorate(it))
 	}
 }
 
@@ -272,13 +276,7 @@ object PropertiesDecorator : Decorator<String, Map<String, String>> {
  */
 fun Scoped.chooseLocale(supported: List<Locale>): Locale? {
 	val i18n = inject(I18n)
-	for (i in 0..i18n.currentLocales.lastIndex) {
-		val locale = i18n.currentLocales[i]
-		if (supported.contains(locale)) {
-			return locale
-		}
-	}
-	return null
+	return i18n.currentLocales.find2 { supported.contains(it) }
 }
 
 

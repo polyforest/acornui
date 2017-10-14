@@ -20,8 +20,6 @@ import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.GlTextureBase
 import org.w3c.dom.HTMLImageElement
-import org.w3c.dom.url.URL
-import org.w3c.files.Blob
 import kotlin.browser.document
 
 // todo: https://stackoverflow.com/questions/13626606/read-pixels-from-a-webgl-texture
@@ -35,14 +33,6 @@ class WebGlTexture(
 
 	val image: HTMLImageElement = document.createElement("img") as HTMLImageElement
 
-	var onLoad: (() -> Unit)? = null
-
-	private var _objectUrl: String? = null
-
-	init {
-		image.onload = { onLoad?.invoke() }
-	}
-
 	override val width: Int
 		get() {
 			return image.naturalWidth
@@ -52,23 +42,4 @@ class WebGlTexture(
 		get() {
 			return image.naturalHeight
 		}
-
-	fun src(value: String) {
-		clear()
-		image.src = value
-	}
-
-	private fun clear() {
-		if (_objectUrl != null) {
-			URL.revokeObjectURL(_objectUrl!!)
-			_objectUrl = null
-		}
-	}
-
-	fun blob(value: Blob) {
-		clear()
-		_objectUrl = URL.createObjectURL(value)
-		image.src = _objectUrl!!
-	}
-
 }

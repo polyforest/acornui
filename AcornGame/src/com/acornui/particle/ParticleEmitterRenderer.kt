@@ -34,7 +34,7 @@ class ParticleEmitterRenderer(
 
 	private val finalColor = Color()
 
-	fun Particle.draw(concatenatedTransform: Matrix4Ro, concatenatedColorTint: ColorRo) {
+	private fun Particle.draw(concatenatedTransform: Matrix4Ro, concatenatedColorTint: ColorRo) {
 		val blendMode = if (particleEmitter.isAdditive) BlendMode.ADDITIVE else BlendMode.NORMAL
 		sprite.blendMode = blendMode
 		sprite.premultipliedAlpha = particleEmitter.isPremultipliedAlpha

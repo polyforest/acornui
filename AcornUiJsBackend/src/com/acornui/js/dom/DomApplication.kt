@@ -93,7 +93,7 @@ open class DomApplication(
 
 	override fun initializeTextures() {
 		bootstrap.on(AssetManager) {
-			get(AssetManager).setLoaderFactory(AssetTypes.TEXTURE, { DomTextureLoader() })
+			get(AssetManager).setLoaderFactory(AssetTypes.TEXTURE, { path, estimatedBytesTotal ->  DomTextureLoader(path, estimatedBytesTotal) })
 		}
 	}
 

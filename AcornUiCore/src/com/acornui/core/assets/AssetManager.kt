@@ -16,11 +16,15 @@
 
 package com.acornui.core.assets
 
-import com.acornui.action.ActionRo
-import com.acornui.action.ActionStatus
 import com.acornui.action.Progress
+import com.acornui.async.awaitAll
+import com.acornui.async.launch
+import com.acornui.collection.sumByFloat2
 import com.acornui.core.Disposable
 import com.acornui.core.di.DKey
+import com.acornui.core.di.Scoped
+import com.acornui.core.di.inject
+import com.acornui.signal.Signal
 
 /**
  * @author nbilyk
@@ -30,58 +34,64 @@ interface AssetManager : Disposable, Progress {
 	/**
 	 * Sets the factory for asset loaders associated with the specified asset type.
 	 */
-	fun <T> setLoaderFactory(type: AssetType<T>, factory: () -> AssetLoader<T>)
+	fun <T> setLoaderFactory(type: AssetType<T>, factory: LoaderFactory<T>)
 
 	/**
-	 * The loading queue representing the queue of currently loading assets.
-	 *
-	 * Invoking a callback when the queue is empty:
-	 * [D.assetManager.loadingQueue.onSuccess { println("Nothing is loading") }]
+	 * Dispatched when the current loaders list has changed.
 	 */
-	val loadingQueue: ActionRo
+	val currentLoadersChanged: Signal<() -> Unit>
+
+	val currentLoaders: List<AssetLoaderRo<*>>
 
 	/**
-	 * Loads specified file, invoking a callback on completion.
+	 * Loads an asset.
+	 * To cancel the loading, call `cancel` on the return value.
+	 * To await the result, create a coroutine, and call 'await'.
 	 *
-	 * @param path The path of the asset to load.
-	 * @param type The type of the asset to load, see AssetTypes
-	 * @param onSuccess A callback to be invoked if the asset successfully loads.
-	 * @see assetBinding
-	 */
-	fun <T> load(path: String, type: AssetType<T>, onSuccess: (T) -> Unit, onFail: ((Throwable) -> Unit)? = null, priority: Float = 0f): AssetLoaderRo<T> {
-		val loader = load(path, type, priority)
-		val onComplete = {
-			action: ActionRo, status: ActionStatus ->
-			if (status == ActionStatus.SUCCESSFUL) {
-				onSuccess(loader.result)
-			} else {
-				if (onFail != null) {
-					onFail(loader.error!!)
-				}
-			}
-		}
-		if (loader.hasCompleted()) {
-			onComplete(loader, loader.status)
-		} else {
-			loader.completed.add(onComplete, isOnce = true)
-		}
-		return loader
-	}
-
-	/**
-	 * Queues a single asset to be loaded.
+	 * ```
+	 * launch {
+	 *    val a = load("foo.txt", AssetTypes.TEXT)
+	 *    val b = load("bar.png", AssetTypes.TEXTURE)
+	 *    val str = a.await()
+	 *    val texture = b.await()
+	 * }
+	 *
+	 * ```
+	 *
 	 * @param path The location of the asset.
-	 * @param type The type of asset the path represents. @see AssetTypes
-	 * if the asset has already been loaded)
-	 * @see assetBinding
+	 * @param type The type of asset the path represents. For common asset types, see [AssetTypes]
+	 * @see AssetTypes
 	 */
-	fun <T> load(path: String, type: AssetType<T>, priority: Float = 0f): AssetLoaderRo<T>
+	fun <T> load(path: String, type: AssetType<T>): AssetLoader<T>
 
-	/**
-	 * Aborts loading of the specified asset. This does nothing if the asset is not currently loading.
-	 */
-	fun <T> abort(path: String, type: AssetType<T>)
+	override val secondsLoaded: Float
+		get() {
+			return currentLoaders.sumByFloat2 { it.secondsLoaded }
+		}
+
+	override val secondsTotal: Float
+		get() {
+			return currentLoaders.sumByFloat2 { it.secondsTotal }
+		}
 
 	companion object : DKey<AssetManager>
 
+}
+
+val AssetManager.secondsRemaining: Float
+	get() = secondsTotal - secondsLoaded
+
+
+fun AssetManager.onLoadersEmpty(callback: () -> Unit) {
+	launch {
+		currentLoaders.awaitAll()
+		callback()
+	}
+}
+
+/**
+ * Uses the scope's asset manager to load the given resource.
+ */
+fun <T> Scoped.load(path: String, type: AssetType<T>): AssetLoaderRo<T> {
+	return inject(AssetManager).load(path, type)
 }

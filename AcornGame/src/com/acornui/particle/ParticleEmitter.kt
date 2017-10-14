@@ -8,7 +8,7 @@ import com.acornui.math.Box
 import com.acornui.math.MathUtils
 import com.acornui.math.Rectangle
 
-class ParticleEmitter() : Disposable {
+class ParticleEmitter : Disposable {
 
 	var spriteWidth = 1f
 	var spriteHeight = 1f

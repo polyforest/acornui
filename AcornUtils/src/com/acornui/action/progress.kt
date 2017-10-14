@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Nicholas Bilyk
+ * Copyright 2017 Nicholas Bilyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,31 +32,5 @@ interface Progress {
 	val secondsTotal: Float
 
 	val percentLoaded: Float
-		get() = if (secondsTotal == 0f) 1f else secondsLoaded / secondsTotal
+		get() = if (secondsTotal <= 0f) 1f else secondsLoaded / secondsTotal
 }
-
-interface ProgressAction : ActionRo, Progress
-
-interface ResultActionRo<out R> : ActionRo {
-
-	/**
-	 * Only accessible on the action's success.
-	 */
-	val result: R
-}
-
-/**
- * The mutable version of a [ResultActionRo]
- */
-interface ResultAction<out R> : ResultActionRo<R>, Action
-
-interface InputAction<in R> : Action {
-	fun success(result: R)
-}
-
-/**
- * Loadable is a read-only interface representing an action that has a final result, and indicates its progress.
- */
-interface LoadableRo<out R> : ResultActionRo<R>, ProgressAction
-
-interface Loadable<out R> : LoadableRo<R>, ResultAction<R>

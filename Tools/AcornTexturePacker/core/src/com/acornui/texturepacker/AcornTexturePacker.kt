@@ -16,9 +16,8 @@
 
 package com.acornui.texturepacker
 
-import com.acornui.action.onFailed
-import com.acornui.action.onSuccess
 import com.acornui.collection.ArrayIterator
+import com.acornui.collection.ArrayList
 import com.acornui.core.assets.AssetManager
 import com.acornui.core.assets.AssetTypes
 import com.acornui.core.graphics.AtlasPageData
@@ -27,7 +26,6 @@ import com.acornui.core.graphics.RgbData
 import com.acornui.core.io.file.Directory
 import com.acornui.gl.core.TexturePixelFormat
 import com.acornui.graphics.Color
-import com.acornui.logging.Log
 import com.acornui.math.IntRectangle
 import com.acornui.serialization.Serializer
 
@@ -38,14 +36,11 @@ class AcornTexturePacker(
 		private val assets: AssetManager,
 		private val json: Serializer<String>) {
 
-	fun pack(root: Directory, onCompleted: (PackedTextureData) -> Unit, settingsFilename: String = "_packSettings.json") {
+	suspend fun pack(root: Directory, settingsFilename: String = "_packSettings.json"): PackedTextureData {
 		val settingsFile = root.getFile(settingsFilename) ?: throw Exception("$settingsFilename is missing")
-		assets.load(settingsFile.path, AssetTypes.TEXT, {
-			val settings = json.read(it, TexturePackerSettingsSerializer)
-			pack(root, onCompleted, settings)
-		}, {
-			throw Exception("File not found: " + root.getFile(settingsFilename)!!.path)
-		})
+		val settingsJson = assets.load(settingsFile.path, AssetTypes.TEXT).await()
+		val settings = json.read(settingsJson, TexturePackerSettingsSerializer)
+		return pack(root, settings)
 	}
 
 	/**
@@ -55,10 +50,9 @@ class AcornTexturePacker(
 	 * No files will be created in this step; use an atlas writer such as JvmTextureAtlasWriter to write to the filesystem.
 	 *
 	 * @param root  The root directory to recurse (up to settings.maxDirectoryDepth)
-	 * @param onCompleted The callback when the pages have been created.
 	 * @param settings The configuration variables to use when packing.
 	 */
-	fun pack(root: Directory, onCompleted: (PackedTextureData) -> Unit, settings: TexturePackerSettingsData) {
+	suspend fun pack(root: Directory, settings: TexturePackerSettingsData): PackedTextureData {
 		settings.validate()
 
 		val packer: RectanglePacker = when (settings.packAlgorithm) {
@@ -67,87 +61,70 @@ class AcornTexturePacker(
 			else -> throw UnsupportedOperationException("Unsupported pack algorithm: " + settings.packAlgorithm)
 		}
 
-		loadImageSources(root, settings, {
-			imageSources ->
+		val imageSources = loadImageSources(root, settings)
 
-			// Create an array of PackerRectangle objects from the sources.
-			val rectangles = Array(imageSources.size, {
-				val imageSource = imageSources[it]
-				PackerRectangleData(IntRectangle(0, 0, imageSource.rgbData.width, imageSource.rgbData.height), false, it, imageSource.path)
-			})
-
-			// Calculate how the pages should be laid out.
-			val packedRectanglePages = packer.pack(ArrayIterator(rectangles))
-
-			// Create the image data for each page.
-			val packedPages = createPackedPages(imageSources, packedRectanglePages, settings)
-
-			if (settings.algorithmSettings.addWhitePixel) {
-				for (packedPage in packedPages.pages) {
-					packedPage.second.hasWhitePixel = true
-					packedPage.first.setPixel(0, 0, Color.WHITE)
-				}
-			}
-
-			onCompleted(packedPages)
+		// Create an array of PackerRectangle objects from the sources.
+		val rectangles = Array(imageSources.size, {
+			val imageSource = imageSources[it]
+			PackerRectangleData(IntRectangle(0, 0, imageSource.rgbData.width, imageSource.rgbData.height), false, it, imageSource.path)
 		})
+
+		// Calculate how the pages should be laid out.
+		val packedRectanglePages = packer.pack(ArrayIterator(rectangles))
+
+		// Create the image data for each page.
+		val packedPages = createPackedPages(imageSources, packedRectanglePages, settings)
+
+		if (settings.algorithmSettings.addWhitePixel) {
+			for (packedPage in packedPages.pages) {
+				packedPage.first.setPixel(0, 0, Color.WHITE)
+			}
+		}
+		return packedPages
 	}
 
 	/**
 	 * Scours a given directory, populating a list of SourceImageData objects, which represent the bitmap data of an
 	 * image and its sibling metadata.
 	 */
-	private fun loadImageSources(root: Directory, settings: TexturePackerSettingsData, onComplete: (ArrayList<SourceImageData>) -> Unit) {
+	private suspend fun loadImageSources(root: Directory, settings: TexturePackerSettingsData): ArrayList<SourceImageData> {
 		val imageSources = ArrayList<SourceImageData>()
-		root.mapFiles({
+		root.walkFilesTopDown(settings.maxDirectoryDepth).forEach {
 			fileEntry ->
 			if (fileEntry.hasExtension("png") || fileEntry.hasExtension("jpg")) {
-				val metadataFile = fileEntry.siblingFile(fileEntry.nameNoExtension() + IMAGE_METADATA_EXTENSION)
-				val metadataLoaded = {
-					metadataJson: String ->
-					val textureLoader = assets.load(fileEntry.path, AssetTypes.RGB_DATA)
+				val metadataFile = fileEntry.siblingFile(fileEntry.nameNoExtension + IMAGE_METADATA_EXTENSION)
+				val rgbLoader = assets.load(fileEntry.path, AssetTypes.RGB_DATA)
 
-					textureLoader.onSuccess {
-						var rgbData = textureLoader.result
-						val metadata = json.read(metadataJson, ImageMetadataSerializer)
-						val padding: IntArray
-						if (settings.stripWhitespace && rgbData.hasAlpha) {
-							padding = rgbData.calculateWhitespace(settings.alphaThreshold)
-							if (padding.sum() > 0) {
-								// There is whitespace, strip it. Strip it good.
-								rgbData = rgbData.copySubRgbData(padding[0], padding[1], rgbData.width - padding[0] - padding[2], rgbData.height - padding[1] - padding[3])
-							}
-						} else {
-							padding = intArrayOf(0, 0, 0, 0)
-						}
-						if (rgbData.width != 0 && rgbData.height != 0) {
-							val imageSource = SourceImageData(
-									path = fileEntry.path,
-									relativePath = root.relativePath(fileEntry),
-									rgbData = rgbData,
-									metadata = metadata,
-									padding = padding
-							)
-							imageSources.add(imageSource)
-						}
-					}
-					textureLoader.onFailed {
-						Log.warn("Failed to load image: " + fileEntry.path)
-					}
-				}
 				// If the image has a corresponding metadata file, load that, otherwise, use default metadata settings.
-				if (metadataFile != null) {
-					assets.load(metadataFile.path, AssetTypes.TEXT, metadataLoaded)
+				val metadata: ImageMetadata = if (metadataFile != null) {
+					val metadataJson = assets.load(metadataFile.path, AssetTypes.TEXT).await()
+					json.read(metadataJson, ImageMetadataSerializer)
+				} else ImageMetadata()
+
+				var rgbData = rgbLoader.await()
+				val padding: IntArray
+				if (settings.stripWhitespace && rgbData.hasAlpha) {
+					padding = rgbData.calculateWhitespace(settings.alphaThreshold)
+					if (padding.sum() > 0) {
+						// There is whitespace, strip it. Strip it good.
+						rgbData = rgbData.copySubRgbData(padding[0], padding[1], rgbData.width - padding[0] - padding[2], rgbData.height - padding[1] - padding[3])
+					}
 				} else {
-					metadataLoaded("")
+					padding = intArrayOf(0, 0, 0, 0)
+				}
+				if (rgbData.width != 0 && rgbData.height != 0) {
+					val imageSource = SourceImageData(
+							path = fileEntry.path,
+							relativePath = root.relativePath(fileEntry),
+							rgbData = rgbData,
+							metadata = metadata,
+							padding = padding
+					)
+					imageSources.add(imageSource)
 				}
 			}
-			true
-		}, maxDepth = settings.maxDirectoryDepth)
-
-		assets.loadingQueue.onSuccess {
-			onComplete(imageSources)
 		}
+		return imageSources
 	}
 
 	/**
@@ -155,7 +132,7 @@ class AcornTexturePacker(
 	 * models.
 	 */
 	private fun createPackedPages(imageSources: List<SourceImageData>, packedRectanglePages: List<PackerPageData>, settings: TexturePackerSettingsData): PackedTextureData {
-		val packedTextureData = PackedTextureData(Array(packedRectanglePages.size, {
+		val packedTextureData = PackedTextureData(List(packedRectanglePages.size, {
 			val packedRectanglePage: PackerPageData = packedRectanglePages[it]
 
 			// Create the RgbData
@@ -175,7 +152,7 @@ class AcornTexturePacker(
 					premultipliedAlpha = settings.premultipliedAlpha,
 					filterMin = settings.filterMin,
 					filterMag = settings.filterMag,
-					regions = Array(packedRectanglePage.regions.size, {
+					regions = ArrayList(packedRectanglePage.regions.size, {
 						val packerRegion = packedRectanglePage.regions[it]
 						val imageSource = imageSources[packerRegion.originalIndex]
 						AtlasRegionData(
@@ -185,7 +162,8 @@ class AcornTexturePacker(
 								splits = imageSource.metadata.splits,
 								padding = imageSource.padding
 						)
-					})
+					}),
+					hasWhitePixel = settings.algorithmSettings.addWhitePixel
 			)
 
 			Pair(pageRgbData, atlasPage)
@@ -201,11 +179,9 @@ class AcornTexturePacker(
 /**
  * The product of the AcornTexturePacker. Contains the bitmap and model data ready to write for each page.
  */
-@Suppress("ArrayInDataClass")
 data class PackedTextureData(
-		val pages: Array<Pair<RgbData, AtlasPageData>>,
-		val settings: TexturePackerSettingsData) {
-}
+		val pages: List<Pair<RgbData, AtlasPageData>>,
+		val settings: TexturePackerSettingsData)
 
 /**
  * A representation of the image bitmap data, and its corresponding metadata.
@@ -285,7 +261,6 @@ data class PackerRectangleData(
 /**
  * The positioned regions the RectanglePacker placed.
  */
-@Suppress("ArrayInDataClass")
 data class PackerPageData(
 
 		/**
@@ -301,8 +276,7 @@ data class PackerPageData(
 		/**
 		 * The packer rectangles on this page.
 		 */
-		val regions: Array<PackerRectangleData>) {
-}
+		val regions: List<PackerRectangleData>)
 
 /**
  * An interface to an algorithm that places rectangles within pages.

@@ -16,10 +16,10 @@
 
 package com.acornui.js.audio
 
-import com.acornui.action.BasicAction
+import com.acornui.async.Promise
+import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.AssetTypes
-import com.acornui.core.assets.AssetLoader
 import com.acornui.core.audio.AudioManager
 import com.acornui.core.audio.SoundFactory
 import org.w3c.dom.HTMLAudioElement
@@ -31,20 +31,12 @@ import org.w3c.dom.events.Event
  * @author nbilyk
  */
 class JsAudioElementSoundLoader(
+		override val path: String,
+		override val estimatedBytesTotal: Int,
 		private val audioManager: AudioManager
-) : BasicAction(), AssetLoader<SoundFactory> {
+) : Promise<SoundFactory>(), AssetLoader<SoundFactory> {
 
 	override val type: AssetType<SoundFactory> = AssetTypes.SOUND
-
-	private var _asset: SoundFactory? = null
-
-	override var path: String = ""
-
-	override val result: SoundFactory
-		get() = _asset!!
-
-
-	override var estimatedBytesTotal: Int = 0
 
 	override val secondsLoaded: Float
 		get() = 0f
@@ -53,52 +45,27 @@ class JsAudioElementSoundLoader(
 		get() = 0f
 
 
-	private val loadedDataHandler = {
-		event: Event ->
-		val e = event.currentTarget as HTMLAudioElement
-		// Load just enough of the asset to get its duration.
-		if (!hasCompleted() && e.readyState >= 1) {
-			// METADATA
-			// Untested: http://stackoverflow.com/questions/3258587/how-to-properly-unload-destroy-a-video-element
-			val duration = e.duration
-			_asset = JsAudioElementSoundFactory(audioManager, path, duration.toFloat())
-			success()
-			unloadElement(e)
-		}
+	private val element = Audio(path)
+
+	init {
+		element.addEventListener("loadeddata", {
+			event: Event ->
+			val e = event.currentTarget as HTMLAudioElement
+			// Load just enough of the asset to get its duration.
+			if (e.readyState >= 1) {
+				// METADATA
+				// Untested: http://stackoverflow.com/questions/3258587/how-to-properly-unload-destroy-a-video-element
+				val duration = e.duration
+				val asset = JsAudioElementSoundFactory(audioManager, path, duration.toFloat())
+				success(asset)
+				cancel() // Unload the element now that we have the duration.
+			}
+		})
 	}
 
-	private fun unloadElement(e: HTMLAudioElement) {
-		e.removeEventListener("loadeddata", loadedDataHandler)
-		e.pause()
-		e.src = ""
-		e.load()
-	}
-
-	private var element: HTMLAudioElement? = null
-
-	override fun onInvocation() {
-		element = Audio(path)
-		element!!.addEventListener("loadeddata", loadedDataHandler)
-	}
-
-	override fun onAborted() {
-		clear()
-	}
-
-	override fun onReset() {
-		clear()
-	}
-
-	override fun dispose() {
-		super.dispose()
-		clear()
-	}
-
-	private fun clear() {
-		if (element != null) {
-			unloadElement(element!!)
-			element = null
-		}
-		_asset = null
+	override fun cancel() {
+		element.pause()
+		element.src = ""
+		element.load()
 	}
 }

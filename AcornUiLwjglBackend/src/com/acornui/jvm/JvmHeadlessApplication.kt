@@ -134,9 +134,8 @@ open class JvmHeadlessApplication(
 	protected open fun initializeAssetManager() {
 		val assetManager = AssetManagerImpl("", _injector.inject(Files))
 		val isAsync = false
-		val timeDriver = null
-		assetManager.setLoaderFactory(AssetTypes.TEXT, { JvmTextLoader(Charsets.UTF_8, isAsync, timeDriver) })
-		assetManager.setLoaderFactory(AssetTypes.RGB_DATA, { JvmRgbDataLoader(isAsync, timeDriver) })
+		assetManager.setLoaderFactory(AssetTypes.TEXT, { path, estimatedBytesTotal ->  JvmTextLoader(path, Charsets.UTF_8, isAsync) })
+		assetManager.setLoaderFactory(AssetTypes.RGB_DATA, { path, estimatedBytesTotal -> JvmRgbDataLoader(path, isAsync) })
 		_injector[AssetManager] = assetManager
 	}
 }

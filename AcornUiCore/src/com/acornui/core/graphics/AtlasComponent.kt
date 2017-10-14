@@ -16,9 +16,14 @@
 
 package com.acornui.core.graphics
 
+import com.acornui.async.Deferred
+import com.acornui.async.async
 import com.acornui.collection.Clearable
 import com.acornui.component.*
 import com.acornui.component.layout.SizeConstraints
+import com.acornui.core.assets.CachedGroup
+import com.acornui.core.assets.cachedGroup
+import com.acornui.core.assets.loadAndCacheJson
 import com.acornui.core.di.Owned
 import com.acornui.math.Bounds
 
@@ -29,12 +34,10 @@ import com.acornui.math.Bounds
  *
  * @author nbilyk
  */
-open class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
+class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
 
 	private var region: AtlasRegionData? = null
 	private var texture: Texture? = null
-
-	private val _textureRegionBinding: AtlasRegionBinding = atlasRegionBinding(this::clearRegionAndTexture, this::setRegionAndTexture)
 
 	private var _textureComponent: TextureComponent? = null
 	private var _ninePatchComponent: NinePatchComponent? = null
@@ -44,8 +47,11 @@ open class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
 	 */
 	private var _textureC: UiComponent? = null
 
+	private var group: CachedGroup? = null
+
 	override fun clear() {
-		_textureRegionBinding.clear()
+		group?.dispose()
+		group = null
 		clearRegionAndTexture()
 	}
 
@@ -54,8 +60,14 @@ open class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
 	 * @param atlasPath The atlas json file.
 	 * @param regionName The name of the region within the atlas.
 	 */
-	open fun setRegion(atlasPath: String, regionName: String) {
-		_textureRegionBinding.setRegion(atlasPath, regionName)
+	fun setRegion(atlasPath: String, regionName: String): Deferred<Unit> = async {
+		clear()
+		group = cachedGroup()
+		val atlasData = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group!!).await()
+		val (page, region) = atlasData.findRegion(regionName) ?: throw Exception("Region '$regionName' not found in atlas.")
+		val texture = loadAndCacheAtlasPage(atlasPath, page, group!!).await()
+		setRegionAndTexture(texture, region)
+		Unit
 	}
 
 	val ninePatchComponent: NinePatchComponent?
@@ -109,10 +121,10 @@ open class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
 			val t = _ninePatchComponent!!
 			val splits = region.splits
 			t.split(
-					(splits[0] - region.padding[0]).positive(),
-					(splits[1] - region.padding[1]).positive(),
-					(splits[2] - region.padding[2]).positive(),
-					(splits[3] - region.padding[3]).positive()
+					maxOf(0f, splits[0] - region.padding[0]),
+					maxOf(0f, splits[1] - region.padding[1]),
+					maxOf(0f, splits[2] - region.padding[2]),
+					maxOf(0f, splits[3] - region.padding[3])
 			)
 			t.setRegion(region.bounds, region.isRotated)
 		}
@@ -120,10 +132,6 @@ open class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
 		_ninePatchComponent?.texture = texture
 		this.region = region
 		this.texture = texture
-	}
-
-	private fun Float.positive(): Float {
-		return if (this < 0f) 0f else this
 	}
 
 	override fun updateSizeConstraints(out: SizeConstraints) {

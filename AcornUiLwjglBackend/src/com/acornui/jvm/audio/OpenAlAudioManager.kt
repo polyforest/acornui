@@ -86,4 +86,4 @@ class OpenAlAudioManager : AudioManagerImpl() {
 
 
 
-class NoAudioException : Exception("Audio could not be initialized")
+class NoAudioException : Throwable("Audio could not be initialized")

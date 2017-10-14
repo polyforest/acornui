@@ -65,7 +65,7 @@ private class DomDataTransferItem(private val item: org.w3c.dom.DataTransferItem
 	override fun getAsTexture(callback: (Texture) -> Unit) {
 		val f = item.getAsFile()!!
 		val t = DomTexture()
-		t.onLoad = {
+		t.image.onload = {
 			callback(t)
 		}
 		t.blob(f)
@@ -91,7 +91,7 @@ private class FileDataTransferItem(private val item: File) : DataTransferItem {
 
 	override fun getAsTexture(callback: (Texture) -> Unit) {
 		val t = DomTexture()
-		t.onLoad = {
+		t.image.onload = {
 			callback(t)
 		}
 		t.blob(item)

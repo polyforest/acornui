@@ -16,17 +16,15 @@
 
 package com.acornui.js.audio
 
-import com.acornui.action.AbortedException
-import com.acornui.action.BasicAction
-import com.acornui.action.onFailed
-import com.acornui.action.onSuccess
+import com.acornui.async.Deferred
+import com.acornui.async.async
+import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.AssetTypes
-import com.acornui.core.assets.AssetLoader
 import com.acornui.core.audio.AudioManager
 import com.acornui.core.audio.SoundFactory
-import com.acornui.core.request.ResponseType
-import com.acornui.js.io.JsHttpRequest
+import com.acornui.core.request.UrlRequestData
+import com.acornui.js.io.JsArrayBufferRequest
 
 /**
  * An asset loader for js AudioContext sounds.
@@ -35,60 +33,37 @@ import com.acornui.js.io.JsHttpRequest
  * @author nbilyk
  */
 class JsWebAudioSoundLoader(
+		override val path: String = "",
+		override val estimatedBytesTotal: Int,
 		private val audioManager: AudioManager
-) : BasicAction(), AssetLoader<SoundFactory> {
+) : AssetLoader<SoundFactory> {
 
 	override val type: AssetType<SoundFactory> = AssetTypes.SOUND
 
-	private var _asset: JsWebAudioSoundFactory? = null
 
-	override var path: String = ""
-
-	override val result: SoundFactory
-		get() = _asset!!
-
-	private var fileLoader: JsHttpRequest? = null
-
-	override var estimatedBytesTotal: Int = 0
+	private val fileLoader = JsArrayBufferRequest(requestData = UrlRequestData(url = path))
 
 	override val secondsLoaded: Float
-		get() = fileLoader?.secondsLoaded ?: 0f
+		get() = fileLoader.secondsLoaded
 
 	override val secondsTotal: Float
-		get() = fileLoader?.secondsTotal ?: 0f
+		get() = fileLoader.secondsTotal
 
-	override fun onInvocation() {
+	private var work: Deferred<JsWebAudioSoundFactory>
+
+	init {
 		if (!audioContextSupported) {
-			fail(Exception("Audio not supported in this browser."))
-			return
+			throw Exception("Audio not supported in this browser.")
 		}
-		val context = JsAudioContext.instance
-		val fileLoader = JsHttpRequest()
-		fileLoader.requestData.responseType = ResponseType.BINARY
-		fileLoader.requestData.url = path
-		fileLoader.onSuccess {
-			// The Audio Context handles creating source buffers from raw binary
-			context.decodeAudioData(fileLoader.resultArrayBuffer, {
-				decodedData ->
-				_asset = JsWebAudioSoundFactory(audioManager, context, decodedData)
-				success()
-			})
+		work = async {
+			val context = JsAudioContext.instance
+			val decodedData = context.decodeAudioData(fileLoader.await())
+			JsWebAudioSoundFactory(audioManager, context, decodedData.await())
 		}
-		fileLoader.onFailed {
-			if (it is AbortedException) abort(it)
-			else fail(it)
-		}
-		fileLoader()
-		this.fileLoader = fileLoader
 	}
 
-	override fun onAborted() {
-		fileLoader?.abort()
-		_asset = null
-	}
+	suspend override fun await(): SoundFactory = work.await()
 
-	override fun onReset() {
-		_asset = null
-	}
+	override fun cancel() = fileLoader.cancel()
 }
 

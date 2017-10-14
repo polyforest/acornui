@@ -313,6 +313,9 @@ open class ListIteratorImpl<out E>(
 		return cursor - 1
 	}
 
+	/**
+	 * Resets the iterator to the beginning.
+	 */
 	override fun clear() {
 		cursor = 0
 		lastRet = -1
@@ -431,7 +434,7 @@ fun <E> Iterator<E>.toList(): List<E> {
 	return list
 }
 
-fun <E> ArrayList(size: Int, factory: (index: Int) -> E): ArrayList<E> {
+inline fun <E> ArrayList(size: Int, factory: (index: Int) -> E): ArrayList<E> {
 	val a = ArrayList<E>(size)
 	for (i in 0..size - 1) {
 		a.add(factory(i))
@@ -551,4 +554,26 @@ inline fun <T> MutableList<T>.removeFirst(predicate: (T) -> Boolean): T? {
 	val index = indexOfFirst2(0, lastIndex, predicate)
 	if (index == -1) return null
 	return removeAt(index)
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the collection.
+ */
+inline fun <T> List<T>.sumBy2(selector: (T) -> Int): Int {
+	var sum: Int = 0
+	for (i in 0..lastIndex) {
+		sum += selector(this[i])
+	}
+	return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the collection.
+ */
+inline fun <T> List<T>.sumByFloat2(selector: (T) -> Float): Float {
+	var sum: Float = 0f
+	for (i in 0..lastIndex) {
+		sum += selector(this[i])
+	}
+	return sum
 }

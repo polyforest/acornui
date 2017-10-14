@@ -40,11 +40,11 @@ class NavigationManagerTest {
 		val m = NavigationManagerImpl()
 		m.push(NavNode("Hi", hashMapOf(Pair("test1", "test2"))))
 
-		assertListEquals(arrayOf(NavNode("Hi", hashMapOf(Pair("test1", "test2")))), m.path())
+		assertListEquals(listOf(NavNode("Hi", hashMapOf(Pair("test1", "test2")))), m.path())
 
 		m.push(NavNode("Bye", hashMapOf(Pair("test2", "test4"))))
 
-		assertListEquals(arrayOf(
+		assertListEquals(listOf(
 				NavNode("Hi", hashMapOf(Pair("test1", "test2"))),
 				NavNode("Bye", hashMapOf(Pair("test2", "test4")))
 		), m.path())
@@ -55,26 +55,26 @@ class NavigationManagerTest {
 		m.push(NavNode("Hi", hashMapOf(Pair("test1", "test2"))))
 		m.push(NavNode("Bye", hashMapOf(Pair("test2", "test4"))))
 		m.pop()
-		assertListEquals(arrayOf(NavNode("Hi", hashMapOf(Pair("test1", "test2")))), m.path())
+		assertListEquals(listOf(NavNode("Hi", hashMapOf(Pair("test1", "test2")))), m.path())
 		m.pop()
-		assertListEquals(arrayOf(), m.path())
+		assertListEquals(listOf(), m.path())
 		m.pop()
-		assertListEquals(arrayOf(), m.path())
+		assertListEquals(listOf(), m.path())
 	}
 
 	@Test fun changed() {
 		val m = NavigationManagerImpl()
 		m.changed.add({
 			event ->
-			assertListEquals(arrayOf(), event.oldPath)
-			assertListEquals(arrayOf(NavNode("Hi", hashMapOf(Pair("test1", "test2")))), event.newPath)
+			assertListEquals(listOf(), event.oldPath)
+			assertListEquals(listOf(NavNode("Hi", hashMapOf(Pair("test1", "test2")))), event.newPath)
 		}, isOnce = true)
 		m.push(NavNode("Hi", hashMapOf(Pair("test1", "test2"))))
 
 		m.changed.add({
 			event ->
-			assertListEquals(arrayOf(NavNode("Hi", hashMapOf(Pair("test1", "test2")))), event.oldPath)
-			assertListEquals(arrayOf(
+			assertListEquals(listOf(NavNode("Hi", hashMapOf(Pair("test1", "test2")))), event.oldPath)
+			assertListEquals(listOf(
 					NavNode("Hi", hashMapOf(Pair("test1", "test2"))),
 					NavNode("Bye", hashMapOf(Pair("test2", "test4")))
 			), event.newPath)
@@ -83,21 +83,21 @@ class NavigationManagerTest {
 
 		m.changed.add({
 			event ->
-			assertListEquals(arrayOf(
+			assertListEquals(listOf(
 					NavNode("Hi", hashMapOf(Pair("test1", "test2"))),
 					NavNode("Bye", hashMapOf(Pair("test2", "test4")))
 			), event.oldPath)
-			assertListEquals(arrayOf(
+			assertListEquals(listOf(
 					NavNode("Hi", hashMapOf(Pair("test1", "test2")))
 			), event.newPath)
 		}, isOnce = true)
 		m.pop()
 		m.changed.add({
 			event ->
-			assertListEquals(arrayOf(
+			assertListEquals(listOf(
 					NavNode("Hi", hashMapOf(Pair("test1", "test2")))
 			), event.oldPath)
-			assertListEquals(arrayOf(), event.newPath)
+			assertListEquals(listOf(), event.newPath)
 		}, isOnce = true)
 		m.pop()
 		val shouldNotChange = {
@@ -110,19 +110,19 @@ class NavigationManagerTest {
 
 		m.changed.add({
 			event ->
-			assertListEquals(arrayOf(), event.oldPath)
-			assertListEquals(arrayOf(
+			assertListEquals(listOf(), event.oldPath)
+			assertListEquals(listOf(
 					NavNode("Hi", hashMapOf(Pair("test1", "test2"))),
 					NavNode("Bye", hashMapOf(Pair("test2", "test4")))
 			), event.newPath)
 		}, isOnce = true)
-		m.path(arrayOf(
+		m.path(listOf(
 				NavNode("Hi", hashMapOf(Pair("test1", "test2"))),
 				NavNode("Bye", hashMapOf(Pair("test2", "test4")))
 		))
 
 		m.changed.add(shouldNotChange)
-		m.path(arrayOf(
+		m.path(listOf(
 				NavNode("Hi", hashMapOf(Pair("test1", "test2"))),
 				NavNode("Bye", hashMapOf(Pair("test2", "test4")))
 		))
@@ -136,7 +136,7 @@ class NavigationManagerTest {
 		val m = NavigationManagerImpl()
 		m.changed.add({
 			event ->
-			m.path(arrayOf(NavNode("test2")))
+			m.path(listOf(NavNode("test2")))
 		}, isOnce = true)
 
 		m.changed.add({
@@ -144,7 +144,7 @@ class NavigationManagerTest {
 			assertEquals("test1", event.newPath.first().name)
 			assertEquals("test2", m.path().first().name)
 		}, isOnce = true)
-		m.path(arrayOf(NavNode("test1")))
+		m.path(listOf(NavNode("test1")))
 
 		assertEquals("test2", m.path().first().name)
 	}

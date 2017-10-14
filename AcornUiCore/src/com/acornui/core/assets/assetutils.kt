@@ -16,11 +16,12 @@
 
 package com.acornui.core.assets
 
+import com.acornui.async.Deferred
+import com.acornui.async.async
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.io.JSON_KEY
 import com.acornui.serialization.From
-import com.acornui.serialization.JsonSerializer
 
 /**
  * A Collection of utilities for making common asset loading tasks more terse.
@@ -28,23 +29,9 @@ import com.acornui.serialization.JsonSerializer
 
 /**
  * Loads a json file, then parses it into the target.
- * This is not cached;
- *
- * @param onSuccess invoked after the deserialization is complete.
- * @param onFail invoked if the asset loading failed.
+ * This is not cached.
  */
-fun <T> Scoped.loadJson(path:String, factory: From<T>, onSuccess: (T) -> Unit, onFail: ((Throwable?) -> Unit)? = null) {
-	val json = inject(JSON_KEY)
-	inject(AssetManager).load(path, AssetTypes.TEXT, {
-		val instance = json.read(it, factory)
-		onSuccess(instance)
-	}, onFail)
-}
-
-@Deprecated("Deprecated")
-fun <T> AssetManager.loadJson(path:String, factory: From<T>, onSuccess: (T) -> Unit, onFail: ((Throwable?) -> Unit)? = null) {
-	load(path, AssetTypes.TEXT, {
-		val instance = JsonSerializer.read(it, factory)
-		onSuccess(instance)
-	}, onFail)
+fun <T> Scoped.loadJson(path:String, factory: From<T>): Deferred<T> = async {
+	val json = inject(AssetManager).load(path, AssetTypes.TEXT)
+	inject(JSON_KEY).read(json.await(), factory)
 }

@@ -16,6 +16,7 @@
 
 package com.acornui.texturepacker.jvm.writer
 
+import com.acornui.collection.ArrayList
 import com.acornui.core.graphics.TextureAtlasData
 import com.acornui.core.graphics.TextureAtlasDataSerializer
 import com.acornui.gl.core.TexturePixelFormat
@@ -42,13 +43,17 @@ class JvmTextureAtlasWriter(private val json: Serializer<String>) {
 		if (pagesFilename.indexOf("{0}") == -1)
 			throw IllegalArgumentException("pagesFilename must have \"{0}\" as a replacement token to represent the page index.")
 
-		for (i in 0..packedData.pages.lastIndex) {
-			val page = packedData.pages[i]
-			page.second.texturePath = pagesFilename.replaceTokens("" + i) + "." + packedData.settings.compressionExtension
+		val packedDataModified = packedData.copy(pages = ArrayList(packedData.pages.size, {
+			index ->
+			val textureData = packedData.pages[index].second
+			packedData.pages[index].copy(second = textureData.copy(texturePath = "${pagesFilename.replaceTokens("$index")}.${packedData.settings.compressionExtension}"))
+		}))
+		for (i in 0..packedDataModified.pages.lastIndex) {
+			val page = packedDataModified.pages[i]
 			JvmImageUtils.rgbDataToFile(page.first, dir.path + "/" + page.second.texturePath, packedData.settings.compressionExtension, packedData.settings.pixelFormat == TexturePixelFormat.RGBA, packedData.settings.premultipliedAlpha)
 		}
 
-		val atlas = TextureAtlasData(Array(packedData.pages.size, { packedData.pages[it].second }))
+		val atlas = TextureAtlasData(List(packedDataModified.pages.size, { packedDataModified.pages[it].second }))
 		val json = json.write(atlas, TextureAtlasDataSerializer)
 		val atlasFile = File(dir, atlasFilename)
 		atlasFile.writeText(json)

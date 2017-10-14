@@ -19,7 +19,6 @@ package com.esotericsoftware.spine.component
 import com.acornui.component.ComponentInit
 import com.acornui.gl.core.GlState
 import com.acornui.graphics.ColorRo
-import com.acornui.math.Matrix4
 import com.acornui.math.Matrix4Ro
 import com.esotericsoftware.spine.Skeleton
 import com.esotericsoftware.spine.animation.AnimationState
@@ -31,7 +30,8 @@ import com.esotericsoftware.spine.renderer.SkeletonRenderer
  * An encapsulation of the parts needed to animate and render a single skeleton.
  */
 open class SkeletonComponent(
-		val loadedSkeleton: LoadedSkeleton
+		val loadedSkeleton: LoadedSkeleton,
+		val renderer: SkeletonRenderer = SkeletonMeshRenderer
 ) {
 
 	val skeleton: Skeleton
@@ -39,16 +39,25 @@ open class SkeletonComponent(
 
 	var isPaused: Boolean = false
 
-	val renderer: SkeletonRenderer
-
 	init {
 		skeleton = Skeleton(loadedSkeleton.skeletonData, loadedSkeleton.textureAtlasData)
 		animationState = AnimationState(skeleton, AnimationStateData(loadedSkeleton.skeletonData))
-		renderer = createRenderer(skeleton)
 	}
 
-	protected open fun createRenderer(skeleton: Skeleton): SkeletonRenderer {
-		return SkeletonMeshRenderer
+	fun activate() {
+		for (loadedSkin in loadedSkeleton.loadedSkins.values) {
+			for (texture in loadedSkin.pageTextures.values) {
+				texture.refInc()
+			}
+		}
+	}
+
+	fun deactivate() {
+		for (loadedSkin in loadedSkeleton.loadedSkins.values) {
+			for (texture in loadedSkin.pageTextures.values) {
+				texture.refDec()
+			}
+		}
 	}
 
 	fun tick(stepTime: Float) {

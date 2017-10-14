@@ -16,193 +16,81 @@
 
 package com.esotericsoftware.spine.component
 
-import com.acornui.action.ActionWatch
-import com.acornui.action.LoadableRo
-import com.acornui.action.ProgressAction
-import com.acornui.action.onSuccess
-import com.acornui.core.Disposable
-import com.acornui.core.assets.*
-import com.acornui.core.di.*
+import com.acornui.async.Deferred
+import com.acornui.async.async
+import com.acornui.core.assets.AssetTypes
+import com.acornui.core.assets.load
+import com.acornui.core.assets.loadJson
+import com.acornui.core.di.Scoped
 import com.acornui.core.graphics.*
-import com.acornui.core.io.file.FileEntry
-import com.acornui.core.io.file.Files
 import com.esotericsoftware.spine.data.SkeletonData
 import com.esotericsoftware.spine.data.SkeletonDataSerializer
-import com.esotericsoftware.spine.data.SkinData
 
 
 class LoadedSkeleton(
 		val skeletonData: SkeletonData,
 		val textureAtlasData: TextureAtlasData,
-		val loadedSkins: Map<SkinData, LoadedSkin>
-) {}
+
+		/**
+		 * A map of loaded skins.
+		 * This will be a map of the skin name to the loaded skin.
+		 */
+		val loadedSkins: Map<String, LoadedSkin>
+)
 
 class LoadedSkin(
-		private val pageTextures: Map<String, Texture>
+
+		/**
+		 * A map of texture path (relative to the atlas json) to texture objects.
+		 * @see getTexture
+		 */
+		val pageTextures: Map<String, Texture>
 ) {
-	fun getTexture(page: AtlasPageData): Texture? {
+
+	/**
+	 * Retrieves the texture for the given atlas page.
+	 */
+	fun getTexture(page: AtlasPageData): Texture {
 		return pageTextures[page.texturePath] ?: throw Exception("Atlas page ${page.texturePath} not found in loaded skeleton.")
 	}
 }
 
 /**
- * Loads the skeleton data, the texture atlas, and all the required textures for the requested skins.
+ * Loads the skeleton from the specified JSON file and texture atlas.
+ * @param skins A list of skins to load by name. If this is null, all skins will be loaded.
  */
-class SkeletonLoader(
-		override val injector: Injector,
+fun Scoped.loadSkeleton(skeletonDataPath: String, textureAtlasPath: String, skins: List<String>? = null): Deferred<LoadedSkeleton> = async {
+	val skeletonDataLoader = loadJson(skeletonDataPath, SkeletonDataSerializer)
+	val textureAtlasLoader = loadJson(textureAtlasPath, TextureAtlasDataSerializer)
+	val loadedSkins = HashMap<String, LoadedSkin>()
 
-		/**
-		 * The filepath to the skeleton data.
-		 */
-		private val skeletonDataPath: String,
+	val skeletonData = skeletonDataLoader.await()
+	val textureAtlasData = textureAtlasLoader.await()
+	val skinsToLoad = skins ?: skeletonData.skins.keys
 
-		/**
-		 * THe filepath to the texture atlas data.
-		 */
-		private val textureAtlasPath: String
-) : Scoped, LoadableRo<LoadedSkeleton>, ActionWatch() {
-
-	private val files = inject(Files)
-
-	private var _result: LoadedSkeleton? = null
-
-	override val result: LoadedSkeleton
-		get() = _result ?: throw Exception("Skeleton is not loaded yet.")
-
-	private var skeletonDataLoader = loadAndCacheJson(skeletonDataPath, SkeletonDataSerializer)
-	private var textureAtlasLoader = loadAndCacheJson(textureAtlasPath, TextureAtlasDataSerializer)
-
-	private val skinLoaders: HashMap<SkinData, SkeletonSkinLoader> = HashMap()
-
-	private val loadedSkins = HashMap<SkinData, LoadedSkin>()
-	private val atlasFile: FileEntry
-
-	init {
-		atlasFile = files.getFile(textureAtlasPath) ?: throw Exception("File not found: $textureAtlasPath")
-		addAll(skeletonDataLoader, textureAtlasLoader)
+	val skinsDirectory = textureAtlasPath.substringBeforeLast("/")
+	for (skinName in skinsToLoad) {
+		loadedSkins[skinName] = loadSkeletonSkin(skeletonData, textureAtlasData, skinName, skinsDirectory).await()
 	}
-
-	override fun onSuccess() {
-		_result = LoadedSkeleton(skeletonDataLoader.result, textureAtlasLoader.result, loadedSkins)
-	}
-
-	fun loadAllSkins(): ProgressAction {
-		if (!hasSucceeded()) throw Exception("Cannot load skins until this action is successful.")
-		val action = ActionWatch()
-		action.batch {
-			for (skinData in result.skeletonData.skins.values) {
-				action.add(loadSkin(skinData))
-			}
-		}
-		return action
-	}
-
-	fun loadSkins(vararg skinNames: String): ProgressAction {
-		if (!hasSucceeded()) throw Exception("Cannot load skins until this action is successful.")
-		val action = ActionWatch()
-		action.batch {
-			for (skinName in skinNames) {
-				val skinData = result.skeletonData.findSkin(skinName) ?: throw Exception("Could not find skin '$skinName'")
-				action.add(loadSkin(skinData))
-			}
-		}
-		return action
-	}
-
-	private fun loadSkin(skinData: SkinData): ProgressAction {
-		if (skinLoaders.containsKey(skinData)) {
-			return skinLoaders[skinData]!!
-		} else {
-			val skinLoader = SkeletonSkinLoader(injector, skinData, atlasFile, result.textureAtlasData)
-			skinLoader.onSuccess {
-				loadedSkins[skinData] = skinLoader.result
-			}
-			skinLoaders[skinData] = skinLoader
-			return skinLoader
-		}
-	}
-
-	private var isDisposed: Boolean = false
-
-	/**
-	 * Disposes this loader and tells the asset manager one less thing is using the loaded assets.
-	 */
-	override fun dispose() {
-		if (isDisposed) throw Exception("Already disposed.")
-		isDisposed = true
-		super.dispose()
-
-		unloadJson(skeletonDataPath, SkeletonDataSerializer)
-		unloadJson(textureAtlasPath, TextureAtlasDataSerializer)
-
-		for (skinLoader in skinLoaders.values) {
-			skinLoader.dispose()
-		}
-		skinLoaders.clear()
-	}
+	LoadedSkeleton(skeletonData, textureAtlasData, loadedSkins)
 }
 
-fun Scoped.skeletonLoader(skeletonDataPath: String, textureAtlasPath: String, init: SkeletonLoader.() -> Unit = {}): SkeletonLoader {
-	val s = SkeletonLoader(injector, skeletonDataPath, textureAtlasPath)
-	s.init()
-	return s
-}
+fun Scoped.loadSkeletonSkin(
+		skeletonData: SkeletonData,
+		textureAtlasData: TextureAtlasData,
+		skin: String,
+		skinsDirectory: String
+): Deferred<LoadedSkin> = async {
 
-/**
- * Loads a skeleton's skin.
- */
-private class SkeletonSkinLoader(
-		override val injector: Injector,
-		private val skinData: SkinData,
-		private val atlasFile: FileEntry,
-		private val textureAtlasData: TextureAtlasData) : ActionWatch(), Scoped, LoadableRo<LoadedSkin>, Disposable {
-
-	private val textureLoaders: HashMap<AtlasPageData, LoadableRo<Texture>> = HashMap()
-
-	private var _result: LoadedSkin? = null
-	override val result: LoadedSkin
-		get() = _result ?: throw Exception("Skin loader is not finished.")
-
-	init {
-		batch {
-			for (i in skinData.attachments.keys) {
-				val (page, region) = textureAtlasData.findRegion(i.attachmentName) ?: throw Exception("Region ${i.attachmentName} not found in atlas.")
-				if (!textureLoaders.contains(page)) {
-					val textureFile = atlasFile.siblingFile(page.texturePath)
-							?: throw Exception("File not found: ${page.texturePath} relative to: ${atlasFile.parent.path}")
-
-					val textureLoader = loadDecorated(textureFile.path, AssetTypes.TEXTURE, AtlasPageDecorator(page))
-					add(textureLoader)
-					textureLoaders[page] = textureLoader
-				}
-			}
+	val skinData = skeletonData.findSkin(skin) ?: throw Exception("Could not find skin $skin")
+	val pageTextures = HashMap<String, Texture>()
+	for (i in skinData.attachments.keys) {
+		val (page, _) = textureAtlasData.findRegion(i.attachmentName) ?: throw Exception("Region ${i.attachmentName} not found in atlas.")
+		if (!pageTextures.contains(page.texturePath)) {
+			val pagePath = "$skinsDirectory/${page.texturePath}"
+			pageTextures[page.texturePath] = AtlasPageDecorator(page).decorate(load(pagePath, AssetTypes.TEXTURE).await())
 		}
 	}
+	LoadedSkin(pageTextures)
 
-	override fun onSuccess() {
-		val pageTextures = HashMap<String, Texture>()
-		for ((page, textureLoader) in textureLoaders) {
-			pageTextures[page.texturePath] = textureLoader.result
-			textureLoader.result.refInc()
-		}
-		_result = LoadedSkin(pageTextures)
-	}
-
-	private var isDisposed: Boolean = false
-
-	override fun dispose() {
-		if (isDisposed) throw Exception("Already disposed")
-		isDisposed = true
-		super.dispose()
-		for (i in skinData.attachments.keys) {
-			val page = textureAtlasData.findRegion(i.attachmentName)!!.first
-			if (textureLoaders.contains(page)) {
-				val textureFile = atlasFile.siblingFile(page.texturePath)!!
-				val textureLoader = textureLoaders[page]!!
-				textureLoader.result.refDec()
-				unloadDecorated(textureFile.path, AssetTypes.TEXTURE, AtlasPageDecorator(page))
-				textureLoaders.remove(page)
-			}
-		}
-	}
 }

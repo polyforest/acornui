@@ -16,11 +16,12 @@
 
 package com.acornui.js.gl
 
-import com.acornui.action.BasicAction
+import com.acornui.async.Deferred
+import com.acornui.async.Promise
 import com.acornui.core.UserInfo
+import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.AssetTypes
-import com.acornui.core.assets.AssetLoader
 import com.acornui.core.graphics.Texture
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
@@ -30,43 +31,37 @@ import com.acornui.gl.core.GlState
  * @author nbilyk
  */
 class WebGlTextureLoader(
+		override val path: String,
+		override val estimatedBytesTotal: Int,
 		private val gl: Gl20,
 		private val glState: GlState
-) : BasicAction(), AssetLoader<Texture> {
+) : AssetLoader<Texture> {
 
 	override val type: AssetType<Texture> = AssetTypes.TEXTURE
 
-	private var _asset: WebGlTexture? = null
-
-	override var path: String = ""
-
-	override val result: Texture
-		get() = _asset!!
-
-	override var estimatedBytesTotal: Int = 0
-
 	override val secondsLoaded: Float
-		get() = if (hasCompleted()) secondsTotal else 0f
+		get() = 0f
 	override val secondsTotal: Float
 		get() = estimatedBytesTotal * UserInfo.downBpsInv
 
-	override fun onInvocation() {
-		val jsTexture = WebGlTexture(gl, glState)
-		jsTexture.onLoad = {
-			success()
+	private val work: Deferred<Texture> = object : Promise<Texture>() {
+		init {
+			val jsTexture = WebGlTexture(gl, glState)
+			jsTexture.image.src = path
+
+			jsTexture.image.onload = {
+				success(jsTexture)
+			}
+			jsTexture.image.onerror = {
+				msg, url, lineNo, columnNo, error ->
+				fail(Exception(msg))
+			}
 		}
-		jsTexture.src(path)
-		_asset = jsTexture
 	}
 
-	override fun onAborted() {
-		_asset?.onLoad = null
-		_asset = null
-	}
+	suspend override fun await(): Texture = work.await()
 
-	override fun onReset() {
-		_asset?.onLoad = null
-		_asset = null
+	override fun cancel() {
 	}
 
 }

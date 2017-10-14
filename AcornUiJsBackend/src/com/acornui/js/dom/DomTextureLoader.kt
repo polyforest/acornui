@@ -16,67 +16,50 @@
 
 package com.acornui.js.dom
 
-import com.acornui.action.AbortedException
-import com.acornui.action.BasicAction
-import com.acornui.action.onFailed
-import com.acornui.action.onSuccess
+import com.acornui.async.Promise
+import com.acornui.async.launch
+import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.AssetTypes
-import com.acornui.core.assets.AssetLoader
 import com.acornui.core.graphics.Texture
-import com.acornui.core.request.ResponseType
-import com.acornui.js.io.JsHttpRequest
+import com.acornui.core.request.UrlRequestData
+import com.acornui.js.io.JsArrayBufferRequest
 
 /**
  * An asset loader for textures (images).
  * @author nbilyk
  */
-class DomTextureLoader : BasicAction(), AssetLoader<Texture> {
+class DomTextureLoader(override val path: String, override val estimatedBytesTotal: Int) : AssetLoader<Texture> {
 
 	override val type: AssetType<Texture> = AssetTypes.TEXTURE
 
-	private var _asset: DomTexture? = null
-
-	override var path: String = ""
-
-	override val result: Texture
-		get() = _asset!!
-
-	private var fileLoader: JsHttpRequest? = null
-
-	override var estimatedBytesTotal: Int = 0
+	private val fileLoader = JsArrayBufferRequest(UrlRequestData(path))
 
 	override val secondsLoaded: Float
-		get() = fileLoader?.secondsLoaded ?: 0f
+		get() = fileLoader.secondsLoaded
 
 	override val secondsTotal: Float
-		get() = fileLoader?.secondsTotal ?: 0f
+		get() = fileLoader.secondsTotal
 
-	override fun onInvocation() {
-		val fileLoader = JsHttpRequest()
-		fileLoader.requestData.responseType = ResponseType.BINARY
-		fileLoader.requestData.url = path
-		fileLoader.onSuccess {
-			val jsTexture = DomTexture()
-			jsTexture.onLoad = {
-				success()
+	private val work = object : Promise<Texture>() {
+		init {
+			launch {
+				val arrayBuffer = fileLoader.await()
+
+				val jsTexture = DomTexture()
+				jsTexture.image.onload = {
+					success(jsTexture)
+				}
+				jsTexture.image.onerror = {
+					msg, url, lineNo, columnNo, error ->
+					fail(Exception(msg))
+				}
+				jsTexture.arrayBuffer(arrayBuffer)
 			}
-			jsTexture.arrayBuffer(fileLoader.resultArrayBuffer)
-			_asset = jsTexture
 		}
-		fileLoader.onFailed {
-			if (it is AbortedException) abort(it)
-			else fail(it)
-		}
-		fileLoader()
-		this.fileLoader = fileLoader
 	}
 
-	override fun onAborted() {
-		fileLoader?.abort()
-	}
+	suspend override fun await(): Texture = work.await()
 
-	override fun onReset() {
-		_asset = null
-	}
+	override fun cancel() {}
 }

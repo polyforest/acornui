@@ -107,7 +107,7 @@ open class WebGlApplication(
 
 	override fun initializeTextures() {
 		bootstrap.on(AssetManager, Gl20, GlState) {
-			get(AssetManager).setLoaderFactory(AssetTypes.TEXTURE, { WebGlTextureLoader(get(Gl20), get(GlState)) })
+			get(AssetManager).setLoaderFactory(AssetTypes.TEXTURE, { path, estimatedBytesTotal ->  WebGlTextureLoader(path, estimatedBytesTotal, get(Gl20), get(GlState)) })
 		}
 	}
 

@@ -47,5 +47,4 @@ data class SkinData(
 data class SkinDataKey(
 		val slotName: String,
 		val attachmentName: String
-) {
-}
+)

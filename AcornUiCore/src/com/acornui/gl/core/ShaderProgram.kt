@@ -139,8 +139,7 @@ abstract class ShaderProgramBase(
 
 }
 
-class ShaderCompileException(message: String) : Exception(message) {
-}
+class ShaderCompileException(message: String) : Throwable(message)
 
 
 class DefaultShaderProgram(gl: Gl20) : ShaderProgramBase (

@@ -1,18 +1,16 @@
 package com.acornui.particle
 
 import com.acornui.action.Decorator
+import com.acornui.async.Deferred
+import com.acornui.async.async
 import com.acornui.component.InteractivityMode
 import com.acornui.component.UiComponentImpl
 import com.acornui.core.UserInfo
-import com.acornui.core.assets.AssetBinding
-import com.acornui.core.assets.AssetTypes
-import com.acornui.core.assets.assetBinding
-import com.acornui.core.assets.jsonBinding
+import com.acornui.core.assets.*
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
-import com.acornui.core.graphics.TextureAtlasData
 import com.acornui.core.graphics.TextureAtlasDataSerializer
-import com.acornui.core.graphics.atlasPageTextureBinding
+import com.acornui.core.graphics.loadAndCacheAtlasPage
 import com.acornui.core.time.onTick
 import com.acornui.gl.core.GlState
 import com.acornui.math.ceil
@@ -24,57 +22,11 @@ class ParticleEffectComponent(owner: Owned) : UiComponentImpl(owner) {
 	val effect = ParticleEffect()
 
 	private val emitterRenderers = ArrayList<ParticleEmitterRenderer>()
-	private val emitterBindings = ArrayList<AssetBinding<*, *>>()
-
-	private var textureAtlasData: TextureAtlasData? = null
-
-	private val pEffectBinding = assetBinding(AssetTypes.TEXT, ParticleEffectAssetDecorator, {}) {
-		if (maxParticleCountScale != 1f || minParticleCountScale != 1f) {
-			for (emitter in effect.emitters) {
-				emitter.maxParticleCount = (emitter.maxParticleCount * maxParticleCountScale).ceil()
-				emitter.minParticleCount = (emitter.minParticleCount * minParticleCountScale).ceil()
-			}
-		}
-		effect.set(it)
-		effect.flipY()
-		refreshRenderers()
-	}
-
-	private val textureAtlasBinding = jsonBinding(TextureAtlasDataSerializer) {
-		textureAtlasData: TextureAtlasData ->
-		this.textureAtlasData = textureAtlasData
-		refreshRenderers()
-	}
 
 	init {
 		interactivityMode = InteractivityMode.NONE
 		onTick {
 			effect.update(it)
-		}
-	}
-
-	private fun refreshRenderers() {
-		clearRenderers()
-		val textureAtlasPath = textureAtlasBinding.path ?: return
-		val textureAtlasData = textureAtlasData ?: return
-
-		for (emitter in effect.emitters) {
-			val imagePath = emitter.imagePath ?: continue
-			val binding = atlasPageTextureBinding(textureAtlasPath, textureAtlasData, imagePath, {}) {
-				texture, region ->
-				val renderer = ParticleEmitterRenderer(injector, emitter)
-				emitter.spriteWidth = region.originalWidth.toFloat()
-				emitter.spriteHeight = region.originalHeight.toFloat()
-				emitterRenderers.add(renderer)
-				val s = renderer.sprite
-				s.texture = texture
-				s.isRotated = region.isRotated
-				s.setRegion(region.bounds)
-				s.updateUv()
-				if (isActive)
-					texture.refInc()
-			} ?: continue
-			emitterBindings.add(binding)
 		}
 	}
 
@@ -92,9 +44,45 @@ class ParticleEffectComponent(owner: Owned) : UiComponentImpl(owner) {
 		}
 	}
 
-	fun load(pDataPath: String, atlasPath: String) {
-		pEffectBinding.path = pDataPath
-		textureAtlasBinding.path = atlasPath
+	private var group: CachedGroup? = null
+
+	fun load(pDataPath: String, atlasPath: String): Deferred<Unit> = async {
+		clearRenderers()
+		group?.dispose()
+		group = cachedGroup()
+		val group = group!!
+		val atlasDataAsync = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group)
+		val pEffectDataAsync = loadAndCache(pDataPath, AssetTypes.TEXT, group)
+
+		val pEffect = ParticleEffectAssetDecorator.decorate(pEffectDataAsync.await())
+		if (maxParticleCountScale != 1f || minParticleCountScale != 1f) {
+			for (emitter in effect.emitters) {
+				emitter.maxParticleCount = (emitter.maxParticleCount * maxParticleCountScale).ceil()
+				emitter.minParticleCount = (emitter.minParticleCount * minParticleCountScale).ceil()
+			}
+		}
+		effect.set(pEffect)
+		effect.flipY()
+
+		val textureAtlasData = atlasDataAsync.await()
+
+		for (emitter in effect.emitters) {
+			val imagePath = emitter.imagePath ?: continue
+			val (page, region) = textureAtlasData.findRegion(imagePath) ?: continue
+			val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
+
+			val renderer = ParticleEmitterRenderer(injector, emitter)
+			emitter.spriteWidth = region.originalWidth.toFloat()
+			emitter.spriteHeight = region.originalHeight.toFloat()
+			emitterRenderers.add(renderer)
+			val s = renderer.sprite
+			s.texture = texture
+			s.isRotated = region.isRotated
+			s.setRegion(region.bounds)
+			s.updateUv()
+			if (isActive)
+				texture.refInc()
+		}
 	}
 
 	override fun draw() {
@@ -113,19 +101,14 @@ class ParticleEffectComponent(owner: Owned) : UiComponentImpl(owner) {
 			}
 		}
 		emitterRenderers.clear()
-
-		for (i in 0..emitterBindings.lastIndex) {
-			emitterBindings[i].dispose()
-		}
-		emitterBindings.clear()
 	}
 
 	override fun dispose() {
 		super.dispose()
 
 		clearRenderers()
-		pEffectBinding.dispose()
-		textureAtlasBinding.dispose()
+		group?.dispose()
+		group = null
 	}
 
 	companion object {

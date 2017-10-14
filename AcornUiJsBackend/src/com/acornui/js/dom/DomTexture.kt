@@ -60,17 +60,8 @@ class DomTexture: Texture {
 
 	override var hasWhitePixel: Boolean = false
 
-	val image: HTMLImageElement
+	val image: HTMLImageElement = document.createElement("img") as HTMLImageElement
 	private var _src: String? = null
-
-	var onLoad: (() -> Unit)? = null
-
-	init {
-		image = document.createElement("img") as HTMLImageElement
-		image.onload = {
-			onLoad?.invoke()
-		}
-	}
 
 	override val width: Int
 		get() = image.naturalWidth

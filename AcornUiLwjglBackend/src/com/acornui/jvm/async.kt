@@ -16,52 +16,27 @@
 
 package com.acornui.jvm
 
-import com.acornui.core.DrivableChildBase
-import com.acornui.core.time.TimeDriver
-import java.util.concurrent.ExecutorService
+import com.acornui.async.*
 import java.util.concurrent.Executors
 
-open class AsyncCallback<T : Any>(private val onSuccess: (T) -> Unit, private val onFailure: (Throwable) -> Unit, private val executor: ExecutorService) : DrivableChildBase() {
+fun <T> asyncThread(work: Work<T>): Deferred<T> {
 
-	var result: T? = null
-	var error: Throwable? = null
+	// TODO:
 
-	override fun update(stepTime: Float) {
-		if (executor.isShutdown) {
-			remove()
-		} else {
-			if (result != null) {
-				onSuccess(result!!)
-				remove()
-			}
-			if (error != null) {
-				onFailure(error!!)
-				remove()
-			}
-		}
-	}
+	return async(work)
 
-	override fun onDeactivated() {
-		super.onDeactivated()
-		executor.shutdown()
-	}
-
-	override fun dispose() {
-		super.dispose()
-		executor.shutdownNow()
-	}
-}
-
-fun <T : Any> async(timeDriver: TimeDriver, work: () -> T, onSuccess: (T) -> Unit, onFailure: (Throwable) -> Unit): ExecutorService {
-	val executor = Executors.newSingleThreadExecutor()
-	val c = AsyncCallback(onSuccess, onFailure, executor)
-	timeDriver.addChild(c)
-	executor.submit {
-		try {
-			c.result = work()
-		} catch (e: Throwable) {
-			c.error = e
-		}
-	}
-	return executor
+//	return object : Promise<T>(), Deferred<T> {
+//		private val executor = Executors.newSingleThreadExecutor()
+//		init {
+//			executor.submit {
+//				launch {
+//					try {
+//						success(work())
+//					} catch (e: Throwable) {
+//						fail(e)
+//					}
+//				}
+//			}
+//		}
+//	}
 }
