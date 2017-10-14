@@ -84,7 +84,7 @@ fun Scoped.createBinaryRequest(requestData: UrlRequestData): Request<NativeBuffe
 	return RestServiceFactory.instance.createBinaryRequest(injector, requestData)
 }
 
-open class ResponseException(val status: Short, message: String, val detail: String) : Throwable(message) {
+open class ResponseException(val status: Short, message: String?, val detail: String) : Throwable(message) {
 
 	override fun toString(): String {
 		return "ResponseException(status=$status, message=$message)"

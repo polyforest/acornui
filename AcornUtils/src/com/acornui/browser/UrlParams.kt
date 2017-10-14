@@ -49,12 +49,18 @@ fun UrlParamsImpl(queryString: String): UrlParamsImpl {
 	return p
 }
 
-class UrlParamsImpl : Clearable, UrlParams {
+class UrlParamsImpl() : Clearable, UrlParams {
 
 	private val _items = ArrayList<Pair<String, String>>()
 
 	override val items: List<Pair<String, String>>
 		get() = _items
+
+	constructor(params: List<Pair<String, String>>) : this() {
+		for ((name, value) in params) {
+			append(name, value)
+		}
+	}
 
 	fun append(name: String, value: String) {
 		_items.add(Pair(name, value))
