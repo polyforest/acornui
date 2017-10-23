@@ -19,7 +19,7 @@ package com.acornui.core.time
 import com.acornui.core.di.*
 import com.acornui.core.text.StringParser
 
-val DATE_PARSER = DependencyKeyImpl<StringParser<Date>>()
+val DATE_PARSER = dKey<StringParser<Date>>()
 
 fun Scoped.parseDate(dateStr: String): Date {
 	return inject(DATE_PARSER).parse(dateStr)

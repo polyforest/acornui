@@ -134,6 +134,7 @@ abstract class Module(
 			outJs.clean()
 			expandLibraryDependencies(jsLibraryDependencies, libraryFiles)
 			val compilerArgs = K2JSCompilerArguments().apply {
+				coroutinesWarn = false
 				moduleKind = this@Module.moduleKind.name.toLowerCase()
 				outputFile = File(outJs, "$name.js").absolutePath
 				sourceMap = true

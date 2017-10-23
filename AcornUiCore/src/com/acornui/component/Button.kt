@@ -19,8 +19,10 @@
 package com.acornui.component
 
 import com.acornui.component.layout.SizeConstraints
-import com.acornui.component.style.*
-import com.acornui.core.UserInfo
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleTag
+import com.acornui.component.style.StyleType
+import com.acornui.component.style.noSkin
 import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
@@ -28,10 +30,15 @@ import com.acornui.core.di.own
 import com.acornui.core.focus.Focusable
 import com.acornui.core.input.*
 import com.acornui.core.input.interaction.*
+import com.acornui.core.userInfo
 import com.acornui.factory.LazyInstance
 import com.acornui.factory.disposeInstance
 import com.acornui.math.Bounds
 import com.acornui.signal.Signal1
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.lastIndex
+import kotlin.collections.set
 
 
 /**
@@ -122,7 +129,7 @@ open class Button(
 		styleTags.add(Button)
 
 		// Mouse over / out handlers cause problems on mobile.
-		if (!UserInfo.isTouchDevice) {
+		if (!userInfo.isTouchDevice) {
 			rollOver().add(rollOverHandler)
 			rollOut().add(rollOutHandler)
 		}

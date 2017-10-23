@@ -35,6 +35,7 @@ import com.acornui.core.graphics.atlas
 import com.acornui.core.graphics.contentsAtlas
 import com.acornui.core.input.interaction.enableDownRepeat
 import com.acornui.core.popup.PopUpManager
+import com.acornui.core.userInfo
 import com.acornui.gl.component.text.loadFontFromAtlas
 import com.acornui.graphics.Color
 import com.acornui.math.*
@@ -113,7 +114,7 @@ open class BasicUiSkin(
 		target.addStyleRule(theme.formLabelStyle, withAncestor(formLabelStyle))
 		target.addStyleRule(charStyle { selectable = true }, withAncestor(TextInput) or withAncestor(TextArea))
 
-		if (UserInfo.isOpenGl)
+		if (userInfo.isOpenGl)
 			loadBitmapFonts()
 
 		val textInputBoxStyle = BoxStyle()
@@ -281,7 +282,7 @@ open class BasicUiSkin(
 
 	protected open fun scrollBarStyle() {
 		// Note that this does not style native scroll bars.
-		val size = if (UserInfo.isTouchDevice) 16f else 10f
+		val size = if (userInfo.isTouchDevice) 16f else 10f
 
 		val thumb: Owned.() -> UiComponent = {
 			button {
@@ -467,6 +468,7 @@ open class BasicUiSkin(
 				}
 			}
 		}
+		dataGridStyle.resizeHandleWidth = if (userInfo.isTouchDevice) 16f else 8f
 		dataGridStyle.sortDownArrow = { atlas(theme.atlasPath, "DownArrow") }
 		dataGridStyle.sortUpArrow = { atlas(theme.atlasPath, "UpArrow") }
 		dataGridStyle.borderRadius = Corners(theme.borderRadius)

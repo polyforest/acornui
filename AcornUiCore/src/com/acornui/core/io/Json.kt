@@ -16,15 +16,14 @@
 
 package com.acornui.core.io
 
-import com.acornui.core.di.DKey
-import com.acornui.core.di.DependencyKeyImpl
 import com.acornui.core.di.Scoped
+import com.acornui.core.di.dKey
 import com.acornui.core.di.inject
 import com.acornui.serialization.From
 import com.acornui.serialization.Serializer
 import com.acornui.serialization.To
 
-val JSON_KEY: DKey<Serializer<String>> = DependencyKeyImpl()
+val JSON_KEY = dKey<Serializer<String>>()
 
 fun <T> Scoped.parseJson(json: String, factory: From<T>): T {
 	return inject(JSON_KEY).read(json, factory)

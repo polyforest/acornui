@@ -17,14 +17,18 @@
 package com.acornui.jvm
 
 import com.acornui.assertionsEnabled
+import com.acornui.async.async
+import com.acornui.async.launch
 import com.acornui.browser.decodeUriComponent2
 import com.acornui.browser.encodeUriComponent2
 import com.acornui.core.AppConfig
+import com.acornui.core.ApplicationBase
 import com.acornui.core.assets.AssetManager
 import com.acornui.core.assets.AssetManagerImpl
 import com.acornui.core.assets.AssetTypes
 import com.acornui.core.di.Injector
 import com.acornui.core.di.InjectorImpl
+import com.acornui.core.di.OwnedImpl
 import com.acornui.core.di.Scoped
 import com.acornui.core.io.JSON_KEY
 import com.acornui.core.io.file.Files
@@ -36,6 +40,7 @@ import com.acornui.core.time.time
 import com.acornui.jvm.graphics.JvmRgbDataLoader
 import com.acornui.jvm.io.file.ManifestUtil
 import com.acornui.jvm.loader.JvmTextLoader
+import com.acornui.jvm.loader.WorkScheduler
 import com.acornui.jvm.text.NumberFormatterImpl
 import com.acornui.jvm.text.DateTimeFormatterImpl
 import com.acornui.jvm.time.TimeProviderImpl
@@ -53,60 +58,30 @@ import java.net.URLEncoder
 open class JvmHeadlessApplication(
 		private val assetsPath: String = "./",
 		private val assetsRoot: String = "./",
-		private val config: AppConfig = AppConfig(),
+		config: AppConfig = AppConfig(),
 		onReady: Scoped.() -> Unit = {}
-) : Scoped {
-
-	protected val _injector = InjectorImpl()
-	override val injector: Injector
-		get() = _injector
+) : ApplicationBase() {
 
 	init {
-		initializeBootstrap()
-		_injector.lock()
-		onReady()
-	}
-
-	protected open fun initializeBootstrap() {
-		_injector[AppConfig] = config
-		initializeDebug()
-		initializeSystem()
-		initializeLogging()
-		initializeNumber()
-		initializeString()
-		initializeTime()
-		initializeJson()
-		initializeFiles()
-		initializeAssetManager()
-	}
-
-	protected open fun initializeDebug() {
-		config.debug = config.debug || System.getProperty("debug")?.toLowerCase() == "true"
-		if (config.debug) {
-			assertionsEnabled = true
+		launch {
+			initializeConfig(config)
+			awaitAll()
+			val injector = createInjector()
+			OwnedImpl(injector).onReady()
 		}
 	}
 
-	protected open fun initializeSystem() {
-		lineSeparator = System.lineSeparator()
-	}
-
-	protected open fun initializeLogging() {
-		if (config.debug) {
+	protected open fun initializeConfig(config: AppConfig) {
+		val finalConfig = config.copy(debug = config.debug || System.getProperty("debug")?.toLowerCase() == "true")
+		if (finalConfig.debug) {
+			assertionsEnabled = true
+		}
+		if (finalConfig.debug) {
 			Log.level = ILogger.DEBUG
 		} else {
 			Log.level = ILogger.INFO
 		}
-	}
-
-	/**
-	 * Initializes number constants and methods
-	 */
-	protected open fun initializeNumber() {
-		_injector[NumberFormatter.FACTORY_KEY] = { NumberFormatterImpl(it) }
-	}
-
-	protected open fun initializeString() {
+		lineSeparator = System.lineSeparator()
 		encodeUriComponent2 = {
 			str ->
 			URLEncoder.encode(str, "UTF-8")
@@ -115,27 +90,33 @@ open class JvmHeadlessApplication(
 			str ->
 			URLDecoder.decode(str, "UTF-8")
 		}
-	}
-
-	protected open fun initializeTime() {
 		time = TimeProviderImpl()
-		_injector[DateTimeFormatter.FACTORY_KEY] = { DateTimeFormatterImpl(it) }
+		set(AppConfig, finalConfig)
 	}
 
-	protected open fun initializeJson() {
-		_injector[JSON_KEY] = JsonSerializer
+	/**
+	 * Initializes number constants and methods
+	 */
+	protected open val formatterTask by BootTask {
+		set(NumberFormatter.FACTORY_KEY, { NumberFormatterImpl(it) })
+		set(DateTimeFormatter.FACTORY_KEY, { DateTimeFormatterImpl(it) })
 	}
 
-	protected open fun initializeFiles() {
+	protected open val jsonTask by BootTask {
+		set(JSON_KEY, JsonSerializer)
+	}
+
+	protected open val filesTask by BootTask {
 		val manifest = ManifestUtil.createManifest(File(assetsPath), File(assetsRoot))
-		_injector[Files] = FilesImpl(manifest)
+		set(Files, FilesImpl(manifest))
 	}
 
-	protected open fun initializeAssetManager() {
-		val assetManager = AssetManagerImpl("", _injector.inject(Files))
-		val isAsync = false
-		assetManager.setLoaderFactory(AssetTypes.TEXT, { path, estimatedBytesTotal ->  JvmTextLoader(path, Charsets.UTF_8, isAsync) })
-		assetManager.setLoaderFactory(AssetTypes.RGB_DATA, { path, estimatedBytesTotal -> JvmRgbDataLoader(path, isAsync) })
-		_injector[AssetManager] = assetManager
+	private fun <T> ioWorkScheduler(): WorkScheduler<T> = { async(it) }
+
+	protected open val assetManager by BootTask {
+		val assetManager = AssetManagerImpl("", get(Files))
+		assetManager.setLoaderFactory(AssetTypes.TEXT, { path, _ ->  JvmTextLoader(path, Charsets.UTF_8, ioWorkScheduler()) })
+		assetManager.setLoaderFactory(AssetTypes.RGB_DATA, { path, _ -> JvmRgbDataLoader(path, ioWorkScheduler()) })
+		set(AssetManager, assetManager)
 	}
 }

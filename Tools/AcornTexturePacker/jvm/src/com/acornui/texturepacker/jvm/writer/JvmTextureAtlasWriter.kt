@@ -39,7 +39,7 @@ class JvmTextureAtlasWriter(private val json: Serializer<String>) {
 	 * directory, and must have a {0} token representing the page index. Example: "myTexturePage{0}
 	 */
 	fun writeAtlas(atlasFilename: String, pagesFilename: String, packedData: PackedTextureData, dir: File) {
-		if (!dir.exists()) throw IllegalArgumentException("provided dir ${dir.path} does not exist.")
+		dir.mkdirs()
 		if (pagesFilename.indexOf("{0}") == -1)
 			throw IllegalArgumentException("pagesFilename must have \"{0}\" as a replacement token to represent the page index.")
 

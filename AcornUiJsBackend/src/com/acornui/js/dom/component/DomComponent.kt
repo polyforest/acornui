@@ -17,12 +17,11 @@
 package com.acornui.js.dom.component
 
 import com.acornui.component.NativeComponent
-import com.acornui.core.UserInfo
+import com.acornui.core.userInfo
 import com.acornui.graphics.Color
+import com.acornui.graphics.ColorRo
 import com.acornui.js.time.setTimeout
-import com.acornui.math.Bounds
-import com.acornui.math.Matrix4
-import com.acornui.math.Pad
+import com.acornui.math.*
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.css.CSSStyleDeclaration
 import kotlin.browser.document
@@ -74,7 +73,7 @@ open class DomComponent(
 	private var explicitWidth: Float? = null
 	private var explicitHeight: Float? = null
 
-	override val bounds: Bounds
+	override val bounds: BoundsRo
 		get() {
 			if (explicitWidth == null) {
 				_bounds.width = element.offsetWidth.toFloat() + marginW
@@ -130,7 +129,7 @@ open class DomComponent(
 
 	private var wasSimpleTranslate: Boolean = true
 
-	override fun setTransform(value: Matrix4) {
+	override fun setTransform(value: Matrix4Ro) {
 		if (wasSimpleTranslate) {
 			element.style.removeProperty("left")
 			element.style.removeProperty("top")
@@ -148,19 +147,19 @@ open class DomComponent(
 		element.style.left = "${x}px"
 	}
 
-	override fun setConcatenatedTransform(value: Matrix4) {
+	override fun setConcatenatedTransform(value: Matrix4Ro) {
 	}
 
-	override fun setColorTint(value: Color) {
+	override fun setColorTint(value: ColorRo) {
 		element.style.opacity = value.a.toString()
 	}
 
-	override fun setConcatenatedColorTint(value: Color) {
+	override fun setConcatenatedColorTint(value: ColorRo) {
 	}
 
 	open fun blur() {
 		element.removeAttribute("tabindex") // Must be all lowercase.
-		if (UserInfo.isIe) {
+		if (userInfo.isIe) {
 			setTimeout({element.blur()}, 100)
 		} else {
 			element.blur()
@@ -170,7 +169,7 @@ open class DomComponent(
 	open fun focus() {
 		element.setAttribute("tabindex", "0")
 		element.focus()
-		if (UserInfo.isIe) {
+		if (userInfo.isIe) {
 			// Because.. IE
 			setTimeout({element.focus()}, 100)
 		}

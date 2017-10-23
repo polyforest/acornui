@@ -36,7 +36,7 @@ import kotlin.browser.document
 // TODO: Support rotate
 open class DomTextureComponent(
 		owner: Owned,
-		override final val native: DomComponent = DomComponent("div")
+		native: DomComponent = DomComponent("div")
 ) : UiComponentImpl(owner, native), TextureComponent {
 
 	/**
@@ -55,7 +55,7 @@ open class DomTextureComponent(
 
 	private var _texture: DomTexture? = null
 
-	private var imageElement: HTMLDivElement
+	private var imageElement: HTMLDivElement = document.createElement("div") as HTMLDivElement
 
 	override var isRotated: Boolean
 		get() = _isRotated
@@ -67,7 +67,6 @@ open class DomTextureComponent(
 		}
 
 	init {
-		imageElement = document.createElement("div") as HTMLDivElement
 		imageElement.style.apply {
 			transformOrigin = "0 0"
 			overflowX = "hidden"

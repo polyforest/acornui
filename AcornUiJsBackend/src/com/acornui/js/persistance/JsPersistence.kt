@@ -1,7 +1,6 @@
 package com.acornui.js.persistance
 
 import com.acornui.core.Version
-import com.acornui.core.VersionRo
 import com.acornui.core.persistance.Persistence
 import kotlin.browser.localStorage
 
@@ -9,7 +8,7 @@ class JsPersistence(private val currentVersion: Version) : Persistence {
 
 	private var _version: Version?
 
-	override val version: VersionRo?
+	override val version: Version?
 		get() = _version
 
 	private val storageAllowed: Boolean = js("typeof(Storage) !== \"undefined\"") as Boolean

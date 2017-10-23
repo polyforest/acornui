@@ -1,5 +1,6 @@
 package com.acornui.core.mvc
 
+import com.acornui.core.Disposable
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
@@ -38,19 +39,26 @@ fun Scoped.invokeCommand(command: Command) {
 	inject(CommandDispatcher).invokeCommand(command)
 }
 
-open class CommandDispatcherImpl : CommandDispatcher {
+open class CommandDispatcherImpl : CommandDispatcher, Disposable {
 
-	override val commandInvoked: Signal1<Command> = Signal1()
+	private val _commandInvoked: Signal1<Command> = Signal1()
+	override val commandInvoked: Signal<(Command) -> Unit>
+		get() = _commandInvoked
 
 	override val history = ArrayList<Command>()
 	override var keepHistory: Boolean = false
 
 	override fun invokeCommand(command: Command) {
 		if (keepHistory) history.add(command)
-		commandInvoked.dispatch(command)
+		_commandInvoked.dispatch(command)
+	}
+
+	override fun dispose() {
+		_commandInvoked.dispose()
 	}
 }
 
+@Suppress("unused")
 interface CommandType<T : Command>
 
 interface Command {

@@ -1,7 +1,7 @@
 package com.acornui.js.io
 
 import com.acornui.async.Promise
-import com.acornui.core.UserInfo
+import com.acornui.core.Bandwidth
 import com.acornui.core.di.Injector
 import com.acornui.core.request.*
 import com.acornui.io.NativeBuffer
@@ -11,22 +11,24 @@ import org.khronos.webgl.Uint8Array
 import org.w3c.files.Blob
 import org.w3c.xhr.*
 
-abstract class JsHttpRequest<T>(requestData: UrlRequestData, responseType: XMLHttpRequestResponseType) : Promise<T>(), Request<T> {
+abstract class JsHttpRequest<T>(
+		requestData: UrlRequestData,
+		responseType: XMLHttpRequestResponseType
+) : Promise<T>(), Request<T> {
 
 	private var _bytesLoaded = 0
 	override val secondsLoaded: Float
-		get() = _bytesLoaded * UserInfo.downBpsInv
+		get() = _bytesLoaded * Bandwidth.downBpsInv
 
 	private var _bytesTotal = 0
 	override val secondsTotal: Float
 		get() {
-			return _bytesTotal * UserInfo.downBpsInv
+			return _bytesTotal * Bandwidth.downBpsInv
 		}
 
 	private val httpRequest = XMLHttpRequest()
 
 	init {
-
 		httpRequest.onprogress = {
 			event ->
 			event as ProgressEvent
@@ -37,6 +39,7 @@ abstract class JsHttpRequest<T>(requestData: UrlRequestData, responseType: XMLHt
 
 		httpRequest.onreadystatechange = {
 			if (httpRequest.readyState == XMLHttpRequest.DONE) {
+				httpRequest.onreadystatechange = null
 				if (httpRequest.status == 200.toShort() || httpRequest.status == 304.toShort()) {
 					val result = process(httpRequest)
 					success(result)
@@ -85,10 +88,6 @@ abstract class JsHttpRequest<T>(requestData: UrlRequestData, responseType: XMLHt
 
 	override fun cancel() = httpRequest.abort()
 
-	enum class ResponseType {
-		BINARY,
-		TEXT
-	}
 }
 
 class JsArrayBufferRequest(requestData: UrlRequestData) : JsHttpRequest<ArrayBuffer>(requestData, XMLHttpRequestResponseType.ARRAYBUFFER) {

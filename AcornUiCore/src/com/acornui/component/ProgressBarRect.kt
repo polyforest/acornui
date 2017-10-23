@@ -24,7 +24,6 @@ import com.acornui.math.Pad
  */
 class ProgressBarRect(owner: Owned) : ContainerImpl(owner) {
 
-
 	val style = bind(ProgressBarRectStyle())
 
 	val backRect = addChild(rect())
@@ -98,12 +97,6 @@ class ProgressBarRectStyle : StyleBase() {
 	var fillColor by prop(Color.RED.copy())
 
 	companion object : StyleType<ProgressBarRectStyle>
-}
-
-fun progressBarRectStyle(init: ComponentInit<ProgressBarRectStyle> = {}): ProgressBarRectStyle {
-	val s = ProgressBarRectStyle()
-	s.init()
-	return s
 }
 
 fun Owned.progressBarRect(init: ComponentInit<ProgressBarRect> = {}): ProgressBarRect {

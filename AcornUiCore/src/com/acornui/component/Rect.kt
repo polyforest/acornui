@@ -1,15 +1,14 @@
 package com.acornui.component
 
-import com.acornui.core.di.DKey
-import com.acornui.core.di.DependencyKeyImpl
 import com.acornui.core.di.Owned
+import com.acornui.core.di.dKey
 
 interface Rect : UiComponent {
 
 	val style: BoxStyle
 
 	companion object {
-		val FACTORY_KEY: DKey<(owner: Owned) -> Rect> = DependencyKeyImpl()
+		val FACTORY_KEY = dKey<(owner: Owned) -> Rect>()
 	}
 }
 

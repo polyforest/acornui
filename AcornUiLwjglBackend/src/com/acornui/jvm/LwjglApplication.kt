@@ -17,6 +17,8 @@
 package com.acornui.jvm
 
 import com.acornui.assertionsEnabled
+import com.acornui.async.async
+import com.acornui.async.launch
 import com.acornui.browser.decodeUriComponent2
 import com.acornui.browser.encodeUriComponent2
 import com.acornui.component.*
@@ -26,17 +28,16 @@ import com.acornui.component.text.EditableTextField
 import com.acornui.component.text.TextArea
 import com.acornui.component.text.TextField
 import com.acornui.component.text.TextInput
-import com.acornui.core.AppConfig
-import com.acornui.core.UserInfo
+import com.acornui.core.*
 import com.acornui.core.assets.AssetManager
 import com.acornui.core.assets.AssetManagerImpl
 import com.acornui.core.assets.AssetTypes
 import com.acornui.core.audio.AudioManager
 import com.acornui.core.cursor.CursorManager
 import com.acornui.core.di.*
+import com.acornui.core.focus.FakeFocusMouse
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.FocusManagerImpl
-import com.acornui.core.focus.fakeFocusMouse
 import com.acornui.core.graphics.Camera
 import com.acornui.core.graphics.OrthographicCamera
 import com.acornui.core.graphics.Window
@@ -46,12 +47,11 @@ import com.acornui.core.input.InteractivityManager
 import com.acornui.core.input.InteractivityManagerImpl
 import com.acornui.core.input.KeyInput
 import com.acornui.core.input.MouseInput
-import com.acornui.core.input.interaction.clickDispatcher
+import com.acornui.core.input.interaction.JvmClickDispatcher
 import com.acornui.core.io.BufferFactory
 import com.acornui.core.io.JSON_KEY
 import com.acornui.core.io.file.Files
 import com.acornui.core.io.file.FilesImpl
-import com.acornui.core.lineSeparator
 import com.acornui.core.persistance.Persistence
 import com.acornui.core.popup.PopUpManager
 import com.acornui.core.popup.PopUpManagerImpl
@@ -82,6 +82,7 @@ import com.acornui.jvm.input.LwjglKeyInput
 import com.acornui.jvm.io.JvmBufferFactory
 import com.acornui.jvm.io.JvmRestServiceFactory
 import com.acornui.jvm.loader.JvmTextLoader
+import com.acornui.jvm.loader.WorkScheduler
 import com.acornui.jvm.persistance.LwjglPersistence
 import com.acornui.jvm.text.DateTimeFormatterImpl
 import com.acornui.jvm.text.NumberFormatterImpl
@@ -102,306 +103,257 @@ import java.util.Locale as LocaleJvm
 /**
  * @author nbilyk
  */
-open class LwjglApplication(
-		private val config: AppConfig = AppConfig(),
-		onReady: Owned.(stage: Stage) -> Unit
-) {
+@Suppress("unused")
+open class LwjglApplication : ApplicationBase() {
 
-	val bootstrap = Bootstrap()
+	protected suspend fun config(): AppConfig = get(AppConfig)
 
 	// If accessing the window id, use bootstrap.on(Window) { }
-	protected var windowId: Long = -1
+	private var _windowId: Long = -1L
 
-	init {
-		initializeUserInfo()
+	private suspend fun getWindowId(): Long {
+		get(Window) // Ensure that the Window has been set.
+		return _windowId
+	}
 
-		initializeConfig()
-		initializeLwjglNative()
-		bootstrap.on(AppConfig) {
-			initializeBootstrap()
-			bootstrap.then {
-				bootstrap.lock()
-				val stage = bootstrap[Stage]
-				stage.onReady(stage)
-				stage.addElement(bootstrap[PopUpManager].view)
-				bootstrap.run()
+	companion object {
+		init {
+			lineSeparator = System.lineSeparator()
+
+			encodeUriComponent2 = {
+				str ->
+				URLEncoder.encode(str, "UTF-8")
 			}
+			decodeUriComponent2 = {
+				str ->
+				URLDecoder.decode(str, "UTF-8")
+			}
+
+			time = TimeProviderImpl()
+			BufferFactory.instance = JvmBufferFactory()
 		}
 	}
 
-	protected open fun initializeUserInfo() {
-		UserInfo.isDesktop = true
-		UserInfo.isOpenGl = true
-		UserInfo.isTouchDevice = false
-		UserInfo.languages = listOf(Locale(LocaleJvm.getDefault().toLanguageTag()))
-		println("UserInfo: $UserInfo")
+	fun start(config: AppConfig = AppConfig(),
+			  onReady: Owned.() -> Unit) {
+
+		initializeConfig(config)
+		launch {
+			awaitAll()
+			val injector = createInjector()
+			val stage = createStage(OwnedImpl(injector))
+			val popUpManager = createPopUpManager(stage)
+			val scope = stage.createScope(
+					listOf(
+							Stage to stage,
+							PopUpManager to popUpManager
+					)
+			)
+			initializeSpecialInteractivity(scope)
+			scope.onReady()
+
+			// Add the pop-up manager after onReady so that it is the highest index.
+			stage.addElement(popUpManager.view)
+
+			run(scope.injector)
+		}
 	}
 
-	protected open fun initializeConfig() {
+	protected open fun initializeConfig(config: AppConfig) {
 		val buildVersion = File("assets/build.txt")
-		if (buildVersion.exists()) {
-			config.version.build = buildVersion.readText().toInt()
-		}
-		Log.info("Build ${config.version.toVersionString()}")
-		bootstrap[AppConfig] = config
-	}
+		val build = if (buildVersion.exists()) buildVersion.readText().toInt() else config.version.build
 
-	/**
-	 * If the native libraries for lwjgl aren't included in the jar, set the path using
-	 * `System.setProperty("org.lwjgl.librarypath", "your/natives/path")`
-	 */
-	protected open fun initializeLwjglNative() {
-		println("LWJGL Version: ${Version.getVersion()}")
-	}
-
-	protected open fun initializeBootstrap() {
-		initializeDebug()
-		initializeSystem()
-		initializeLogging()
-		initializeNumber()
-		initializeString()
-		initializeTime()
-		initializeBufferFactory()
-		initializeJson()
-		initializeGl()
-		initializeWindow()
-		initializeGlState()
-		initializeMouseInput()
-		initializeKeyInput()
-		initializeCamera()
-		initializeFiles()
-		initializeRequest()
-		initializeTimeDriver()
-		initializeAssetManager()
-		initializeTextures()
-		initializeAudio()
-		initializeFocusManager()
-		initializeInteractivity()
-		initializeCursorManager()
-		initializeSelectionManager()
-		initializePersistence()
-		initializeTextFormatters()
-		initializeComponents()
-
-		bootstrap.then {
-			initializeStage()
-			initializePopUpManager()
-			initializeSpecialInteractivity()
-		}
-	}
-
-	protected open fun initializeDebug() {
-		config.debug = config.debug || System.getProperty("debug")?.toLowerCase() == "true"
-		if (config.debug) {
+		val finalConfig = config.copy(
+				version = config.version.copy(build = build),
+				debug = config.debug || System.getProperty("debug")?.toLowerCase() == "true"
+		)
+		if (finalConfig.debug) {
 			assertionsEnabled = true
-			Log.info("Assertions enabled")
 		}
-	}
-
-	protected open fun initializeSystem() {
-		lineSeparator = System.lineSeparator()
-	}
-
-	protected open fun initializeLogging() {
-		if (config.debug) {
+		if (finalConfig.debug) {
 			Log.level = ILogger.DEBUG
 		} else {
 			Log.level = ILogger.INFO
 		}
+
+		println("LWJGL Version: ${Version.getVersion()}")
+
+		Log.info("Config $finalConfig")
+		set(AppConfig, finalConfig)
 	}
 
 	/**
-	 * Initializes number constants and methods
+	 * Sets the UserInfo dependency.
 	 */
-	protected open fun initializeNumber() {
+	protected open val userInfoTask by BootTask {
+		val u = UserInfo(
+				isOpenGl = true,
+				isDesktop = true,
+				isTouchDevice = false,
+				languages = listOf(Locale(LocaleJvm.getDefault().toLanguageTag()))
+		)
+		userInfo = u
+		set(UserInfo, u)
 	}
 
-	protected open fun initializeString() {
-		encodeUriComponent2 = {
-			str ->
-			URLEncoder.encode(str, "UTF-8")
-		}
-		decodeUriComponent2 = {
-			str ->
-			URLDecoder.decode(str, "UTF-8")
-		}
+
+	/**
+	 * Sets the [JSON_KEY] dependency.
+	 */
+	protected open val jsonTask by BootTask {
+		set(JSON_KEY, JsonSerializer)
 	}
 
-	protected open fun initializeTime() {
-		time = TimeProviderImpl()
+	/**
+	 * Sets the [Gl20] dependency.
+	 */
+	protected open val glTask by BootTask {
+		set(Gl20, if (config().debug) JvmGl20Debug() else LwjglGl20())
 	}
 
-	protected open fun initializeBufferFactory() {
-		BufferFactory.instance = JvmBufferFactory()
+	/**
+	 * Sets the [Window] dependency.
+	 */
+	protected open val windowTask by BootTask {
+		val config = config()
+		val window = GlfwWindowImpl(config.window, config.gl, get(Gl20), config.debug)
+		_windowId = window.windowId
+		set(Window, window)
 	}
 
-	private fun initializeJson() {
-		bootstrap[JSON_KEY] = JsonSerializer
+	protected open val glStateTask by BootTask {
+		get(Window) // Shaders need a window to be created first.
+		set(GlState, GlState(get(Gl20)))
 	}
 
-	protected open fun initializeGl() {
-		bootstrap[Gl20] = if (config.debug) JvmGl20Debug() else LwjglGl20()
+	protected open val mouseInputTask by BootTask {
+		set(MouseInput, JvmMouseInput(getWindowId()))
 	}
 
-	protected open fun initializeWindow() {
-		bootstrap.on(Gl20) {
-			val window = GlfwWindowImpl(config.window, config.gl, bootstrap[Gl20], config.debug)
-			windowId = window.windowId
-			bootstrap[Window] = window
-		}
+	protected open val keyInputTask by BootTask {
+		set(KeyInput, LwjglKeyInput(getWindowId()))
 	}
 
-	protected open fun initializeGlState() {
-		bootstrap.on(Gl20) {
-			bootstrap[GlState] = GlState(bootstrap[Gl20])
-		}
+	protected open val cameraTask by BootTask {
+		val camera = OrthographicCamera()
+		set(Camera, camera)
+		get(Window).autoCenterCamera(camera)
 	}
 
-	protected open fun initializeMouseInput() {
-		bootstrap.on(Window) {
-			bootstrap[MouseInput] = JvmMouseInput(windowId)
-		}
-	}
-
-	protected open fun initializeKeyInput() {
-		bootstrap.on(Window) {
-			bootstrap[KeyInput] = LwjglKeyInput(windowId)
-		}
-	}
-
-	protected open fun initializeCamera() {
-		bootstrap.on(Window) {
-			val camera = OrthographicCamera()
-			bootstrap[Camera] = camera
-			bootstrap[Window].autoCenterCamera(camera)
-		}
-	}
-
-	protected open fun initializeFiles() {
-		val manifestFile = File(config.rootPath + config.assetsManifestPath)
-		if (!manifestFile.exists()) throw FileNotFoundException(config.rootPath + config.assetsManifestPath)
+	protected open val filesTask by BootTask {
+		val manifestFile = File(config().rootPath + config().assetsManifestPath)
+		if (!manifestFile.exists()) throw FileNotFoundException(config().rootPath + config().assetsManifestPath)
 		val reader = FileReader(manifestFile)
 		val jsonStr = reader.readText()
 		val files = FilesImpl(JsonSerializer.read(jsonStr, FilesManifestSerializer))
-		bootstrap[Files] = files
+		set(Files, files)
 	}
 
-	protected open fun initializeRequest() {
-		RestServiceFactory.instance = JvmRestServiceFactory
+	protected open val requestTask by BootTask {
+		set(RestServiceFactory, JvmRestServiceFactory)
 	}
 
-	protected open fun initializeFocusManager() {
-		bootstrap[FocusManager] = FocusManagerImpl()
+	protected open val focusManagerTask by BootTask {
+		set(FocusManager, FocusManagerImpl())
 	}
 
-	protected open fun initializeAssetManager() {
-		bootstrap.on(Files, TimeDriver) {
-			val assetManager = AssetManagerImpl(config.rootPath, bootstrap[Files])
-			val isAsync = true
-			assetManager.setLoaderFactory(AssetTypes.TEXT, { path, _ -> JvmTextLoader(path, Charsets.UTF_8, isAsync) })
-			bootstrap[AssetManager] = assetManager
-		}
+	private fun <T> ioWorkScheduler(): WorkScheduler<T> = { async(it) }
+
+	protected open val assetManagerTask by BootTask {
+		val assetManager = AssetManagerImpl(config().rootPath, get(Files))
+		assetManager.setLoaderFactory(AssetTypes.TEXT, { path, _ -> JvmTextLoader(path, Charsets.UTF_8, ioWorkScheduler()) })
+		set(AssetManager, assetManager)
 	}
 
-	protected open fun initializeTextures() {
-		bootstrap.on(AssetManager, Gl20, GlState, TimeDriver) {
-			val isAsync = true
-			bootstrap[AssetManager].setLoaderFactory(AssetTypes.TEXTURE, { path, _ ->  JvmTextureLoader(path, bootstrap[Gl20], bootstrap[GlState], isAsync) })
-		}
+	protected open val texturesTask by BootTask {
+		val gl20 = get(Gl20)
+		val glState = get(GlState)
+		get(AssetManager).setLoaderFactory(AssetTypes.TEXTURE, { path, _ -> JvmTextureLoader(path, gl20, glState, ioWorkScheduler()) })
 
 	}
 
-	protected open fun initializeAudio() {
+	protected open val audioTask by BootTask {
 		try {
 			val audioManager = OpenAlAudioManager()
-			bootstrap[AudioManager] = audioManager
-			bootstrap.on(AssetManager, TimeDriver) {
-				val timeDriver = bootstrap[TimeDriver]
-				timeDriver.addChild(audioManager)
-				val assetManager = bootstrap[AssetManager]
-				val isAsync = true
-				OpenAlSoundLoader.registerDefaultDecoders()
-				assetManager.setLoaderFactory(AssetTypes.SOUND, { path, _ -> OpenAlSoundLoader(path, audioManager, isAsync) })
+			set(AudioManager, audioManager)
+			val timeDriver = get(TimeDriver)
+			timeDriver.addChild(audioManager)
+			val assetManager = get(AssetManager)
+			OpenAlSoundLoader.registerDefaultDecoders()
+			assetManager.setLoaderFactory(AssetTypes.SOUND, { path, _ -> OpenAlSoundLoader(path, audioManager, ioWorkScheduler()) })
 
-				OpenAlMusicLoader.registerDefaultDecoders()
-				assetManager.setLoaderFactory(AssetTypes.MUSIC, { path, _ -> OpenAlMusicLoader(path, audioManager) })
-			}
+			OpenAlMusicLoader.registerDefaultDecoders()
+			assetManager.setLoaderFactory(AssetTypes.MUSIC, { path, _ -> OpenAlMusicLoader(path, audioManager) })
 		} catch (e: NoAudioException) {
 			Log.warn("No Audio device found.")
 		}
 	}
 
-	protected open fun initializeInteractivity() {
-		bootstrap.on(MouseInput, KeyInput, FocusManager) {
-			bootstrap[InteractivityManager] = InteractivityManagerImpl(bootstrap[MouseInput], bootstrap[KeyInput], bootstrap[FocusManager])
-		}
+	protected open val interactivityTask by BootTask {
+		set(InteractivityManager, InteractivityManagerImpl(get(MouseInput), get(KeyInput), get(FocusManager)))
 	}
 
-	protected open fun initializeTimeDriver() {
+	protected open val timeDriverTask by BootTask {
 		val timeDriver = TimeDriverImpl()
 		timeDriver.activate()
-		bootstrap[TimeDriver] = timeDriver
+		set(TimeDriver, timeDriver)
 	}
 
-	protected open fun initializeCursorManager() {
-		bootstrap.on(AssetManager, Window) {
-			bootstrap[CursorManager] = JvmCursorManager(bootstrap[AssetManager], windowId)
-		}
+	protected open val cursorManagerTask by BootTask {
+		set(CursorManager, JvmCursorManager(get(AssetManager), getWindowId()))
 	}
 
-	protected open fun initializeSelectionManager() {
-		bootstrap[SelectionManager] = SelectionManagerImpl()
+	protected open val selectionManagerTask by BootTask {
+		set(SelectionManager, SelectionManagerImpl())
 	}
 
-	protected open fun initializePersistence() {
-		bootstrap[Persistence] = LwjglPersistence(config.version, config.window.title)
+	protected open val persistenceTask by BootTask {
+		set(Persistence, LwjglPersistence(config().version, config().window.title))
 	}
 
-	protected open fun initializeTextFormatters() {
-		bootstrap[NumberFormatter.FACTORY_KEY] = { NumberFormatterImpl(it) }
-		bootstrap[DateTimeFormatter.FACTORY_KEY] = { DateTimeFormatterImpl(it) }
+	protected open val formattersTask by BootTask {
+		set(NumberFormatter.FACTORY_KEY, { NumberFormatterImpl(it) })
+		set(DateTimeFormatter.FACTORY_KEY, { DateTimeFormatterImpl(it) })
 	}
 
 	/**
 	 * The last chance to set dependencies on the application scope.
 	 */
-	protected open fun initializeComponents() {
-		bootstrap[NativeComponent.FACTORY_KEY] = { NativeComponentDummy }
-		bootstrap[NativeContainer.FACTORY_KEY] = { NativeContainerDummy }
-		bootstrap[TextField.FACTORY_KEY] = ::GlTextField
-		bootstrap[EditableTextField.FACTORY_KEY] = ::GlEditableTextField
-		bootstrap[TextInput.FACTORY_KEY] = ::GlTextInput
-		bootstrap[TextArea.FACTORY_KEY] = ::GlTextArea
-		bootstrap[TextureComponent.FACTORY_KEY] = ::GlTextureComponent
-		bootstrap[ScrollArea.FACTORY_KEY] = ::GlScrollArea
-		bootstrap[ScrollRect.FACTORY_KEY] = ::GlScrollRect
-		bootstrap[Rect.FACTORY_KEY] = ::GlRect
+	protected open val componentsTask by BootTask {
+		set(NativeComponent.FACTORY_KEY, { NativeComponentDummy })
+		set(NativeContainer.FACTORY_KEY, { NativeContainerDummy })
+		set(TextField.FACTORY_KEY, ::GlTextField)
+		set(EditableTextField.FACTORY_KEY, ::GlEditableTextField)
+		set(TextInput.FACTORY_KEY, ::GlTextInput)
+		set(TextArea.FACTORY_KEY, ::GlTextArea)
+		set(TextureComponent.FACTORY_KEY, ::GlTextureComponent)
+		set(ScrollArea.FACTORY_KEY, ::GlScrollArea)
+		set(ScrollRect.FACTORY_KEY, ::GlScrollRect)
+		set(Rect.FACTORY_KEY, ::GlRect)
 	}
 
-	protected open fun initializeStage() {
-		bootstrap[Stage] = GlStageImpl(OwnedImpl(null, bootstrap.injector))
+	protected open fun createStage(owned: Owned): Stage {
+		return GlStageImpl(owned)
 	}
 
-	protected open fun initializePopUpManager() {
-		bootstrap[PopUpManager] = PopUpManagerImpl(bootstrap[Stage])
+	protected open fun createPopUpManager(root: UiComponent): PopUpManager {
+		return PopUpManagerImpl(root)
 	}
 
-	protected open fun initializeSpecialInteractivity() {
-		val clickDispatcher = bootstrap.clickDispatcher()
-		clickDispatcher.init()
-		bootstrap.fakeFocusMouse()
+	protected open fun initializeSpecialInteractivity(owner: Owned) {
+		JvmClickDispatcher(owner.injector)
+		FakeFocusMouse(owner.injector)
 	}
 
-	open fun Scoped.run() {
-		JvmApplicationRunner(injector, windowId)
+	open suspend fun run(injector: Injector) {
+		JvmApplicationRunner(injector, getWindowId())
 		dispose()
 	}
 
-	private fun dispose() {
-		println("Application#dispose")
-		// Should be disposed in the reverse order they were created.
+
+	override fun dispose() {
 		BitmapFontRegistry.dispose()
-		bootstrap.dispose()
+		super.dispose()
 	}
 }
 
@@ -465,7 +417,6 @@ class JvmApplicationRunner(
 			stage.render()
 			window.renderEnd()
 		}
-		// TODO: capped frame rates?
 	}
 
 	companion object {

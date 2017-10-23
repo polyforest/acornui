@@ -23,8 +23,8 @@ import java.nio.charset.Charset
 open class JvmTextLoader(
 		path: String,
 		private val charset: Charset,
-		isAsync: Boolean
-) : JvmAssetLoaderBase<String>(path, AssetTypes.TEXT, isAsync) {
+		workScheduler: WorkScheduler<String>
+) : JvmAssetLoaderBase<String>(path, AssetTypes.TEXT, workScheduler) {
 
 	init {
 		init()
@@ -32,7 +32,9 @@ open class JvmTextLoader(
 
 	override fun create(fis: InputStream): String {
 		val size = if (bytesTotal <= 0) DEFAULT_BUFFER_SIZE else bytesTotal
-		val bytes = fis.use { it.readBytes(size) }
+		val bytes = fis.use {
+			it.readBytes(size)
+		}
 		return bytes.toString(charset)
 	}
 }

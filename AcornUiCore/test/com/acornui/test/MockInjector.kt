@@ -21,10 +21,7 @@ import com.acornui.component.NativeComponentDummy
 import com.acornui.component.NativeContainer
 import com.acornui.component.NativeContainerDummy
 import com.acornui.core.assets.AssetManager
-import com.acornui.core.di.Injector
-import com.acornui.core.di.InjectorImpl
-import com.acornui.core.di.Owned
-import com.acornui.core.di.OwnedImpl
+import com.acornui.core.di.*
 import com.acornui.core.graphics.Camera
 import com.acornui.core.graphics.Window
 import com.acornui.core.input.InteractivityManager
@@ -40,27 +37,32 @@ import org.mockito.Mockito
 
 object MockInjector {
 
-	val owner: Owned by lazy { OwnedImpl(null, create()) }
+	val owner: Owned by lazy { OwnedImpl(create()) }
 
 	@Deprecated("", ReplaceWith("owner"))
 	fun createOwner(): Owned {
-		return OwnedImpl(null, create())
+		return OwnedImpl(create())
 	}
 
 	fun create(): Injector {
-		val injector = InjectorImpl()
-		injector[TimeDriver] = Mockito.mock(TimeDriver::class.java)
-		injector[Window] = Mockito.mock(Window::class.java)
-		injector[MouseState] = Mockito.mock(MouseState::class.java)
-		injector[KeyState] = Mockito.mock(KeyState::class.java)
-		injector[Files] = Mockito.mock(Files::class.java)
+
+		@Suppress("UNCHECKED_CAST")
+		val json = Mockito.mock(Serializer::class.java) as Serializer<String>
+
+		val injector = InjectorImpl(null, listOf<DependencyPair<out Any>>(
+				TimeDriver to  Mockito.mock(TimeDriver::class.java),
+				Window to  Mockito.mock(Window::class.java),
+				MouseState to  Mockito.mock(MouseState::class.java),
+				KeyState to  Mockito.mock(KeyState::class.java),
+				Files to  Mockito.mock(Files::class.java),
+				AssetManager to  Mockito.mock(AssetManager::class.java),
+				InteractivityManager to  Mockito.mock(InteractivityManager::class.java),
+				Camera to  Mockito.mock(Camera::class.java),
+				JSON_KEY to json,
+				NativeComponent.FACTORY_KEY to  { NativeComponentDummy },
+				NativeContainer.FACTORY_KEY to  { NativeContainerDummy }
+		))
 		time = Mockito.mock(TimeProvider::class.java)
-		injector[AssetManager] = Mockito.mock(AssetManager::class.java)
-		injector[InteractivityManager] = Mockito.mock(InteractivityManager::class.java)
-		injector[Camera] = Mockito.mock(Camera::class.java)
-		injector[JSON_KEY] = Mockito.mock(Serializer::class.java) as Serializer<String>
-		injector[NativeComponent.FACTORY_KEY] = { NativeComponentDummy }
-		injector[NativeContainer.FACTORY_KEY] = { NativeContainerDummy }
 
 		return injector
 

@@ -9,7 +9,7 @@ import com.acornui.component.text.TextCommand
 import com.acornui.component.text.TextCommander
 import com.acornui.component.text.styleWithCSS
 import com.acornui.component.scroll.toCssString
-import com.acornui.core.UserInfo
+import com.acornui.core.userInfo
 import com.acornui.core.di.Owned
 import com.acornui.core.focus.blurred
 import com.acornui.core.focus.focused
@@ -97,7 +97,7 @@ open class DomEditableTextField(
 
 		override fun queryColor(commandId: String): Color {
 			val obj = document.queryCommandValue2(commandId)
-			if (UserInfo.isIe && obj is Number) {
+			if (userInfo.isIe && obj is Number) {
 				// Yeah... this is insane, IE 11 will either return a #RRGGBB or a number represented as BGR.
 				val bgr = obj.toInt()
 				val c = Color()

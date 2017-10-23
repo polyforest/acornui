@@ -24,8 +24,8 @@ import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.style.*
 import com.acornui.core.di.DKey
-import com.acornui.core.di.DependencyKeyImpl
 import com.acornui.core.di.Owned
+import com.acornui.core.di.dKey
 import com.acornui.core.focus.Focusable
 import com.acornui.core.selection.SelectableComponent
 import com.acornui.graphics.Color
@@ -82,7 +82,7 @@ interface TextField : UiComponent, Labelable, SelectableComponent, Styleable {
 		}
 
 	companion object : StyleTag {
-		val FACTORY_KEY: DKey<(owner: Owned) -> TextField> = DependencyKeyImpl()
+		val FACTORY_KEY = dKey<(owner: Owned) -> TextField>()
 	}
 }
 
@@ -274,7 +274,7 @@ interface TextInput : Focusable, SelectableComponent, Styleable {
 	}
 
 	companion object : StyleTag {
-		val FACTORY_KEY: DKey<(owner: Owned) -> TextInput> = DependencyKeyImpl()
+		val FACTORY_KEY = dKey<(owner: Owned) -> TextInput>()
 	}
 }
 
@@ -298,7 +298,7 @@ interface TextArea : SelectableComponent, Focusable {
 	var text: String
 
 	companion object : StyleTag {
-		val FACTORY_KEY: DKey<(owner: Owned) -> TextArea> = DependencyKeyImpl()
+		val FACTORY_KEY = dKey<(owner: Owned) -> TextArea>()
 	}
 }
 

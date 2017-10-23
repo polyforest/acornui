@@ -17,6 +17,8 @@
 package com.acornui.async
 
 import com.acornui.collection.ArrayList
+import com.acornui.collection.mapTo
+import com.acornui.collection.poll
 import kotlin.coroutines.experimental.*
 
 /**
@@ -126,37 +128,34 @@ private class AsyncWorker<T>(work: Work<T>) : Deferred<T> {
 			} catch (e: Throwable) {
 				error = e
 				status = DeferredStatus.FAILED
-				throw e
 			}
-			result as T
+			when (status) {
+				DeferredStatus.SUCCESSFUL -> {
+					val r = result as T
+					while (children.isNotEmpty()) {
+						children.poll().resume(r)
+					}
+				}
+				DeferredStatus.FAILED -> {
+					val e = error as Throwable
+					while (children.isNotEmpty()) {
+						children.poll().resumeWithException(e)
+					}
+				}
+				else -> throw Exception("Status should not be pending.")
+			}
 		}
-	}
-
-	private fun launch(block: suspend () -> T) {
-		block.startCoroutine(object : Continuation<T> {
-			override val context: CoroutineContext = EmptyCoroutineContext
-
-			override fun resume(value: T) {
-				for (i in 0..children.lastIndex) {
-					children[i].resume(value)
-				}
-			}
-
-			override fun resumeWithException(exception: Throwable) {
-				for (i in 0..children.lastIndex) {
-					children[i].resumeWithException(exception)
-				}
-			}
-		})
 	}
 
 	override suspend fun await(): T {
-		if (status == DeferredStatus.PENDING) return suspendCoroutine {
-			cont: Continuation<T> ->
-			children.add(cont)
+		when (status) {
+			DeferredStatus.PENDING -> return suspendCoroutine {
+				cont: Continuation<T> ->
+				children.add(cont)
+			}
+			DeferredStatus.FAILED -> throw error!!
+			else -> return result as T
 		}
-		if (status == DeferredStatus.FAILED) throw error!!
-		return result as T
 	}
 
 	private enum class DeferredStatus {
@@ -164,6 +163,19 @@ private class AsyncWorker<T>(work: Work<T>) : Deferred<T> {
 		SUCCESSFUL,
 		FAILED
 	}
+}
+
+/**
+ * A promise with exposed [setValue] and [setError] to defer to the [success] and [fail] methods.
+ */
+class LateValue<T> : Promise<T>() {
+
+	val isPending: Boolean
+		get() = status == Status.PENDING
+
+	fun setValue(value: T) = success(value)
+
+	fun setError(value: Throwable) = fail(value)
 }
 
 open class Promise<T> : Deferred<T> {
@@ -183,20 +195,22 @@ open class Promise<T> : Deferred<T> {
 	private val continuations = ArrayList<Continuation<T>>()
 
 	protected fun success(result: T) {
-		if (_status != Status.PENDING) throw IllegalStateException("Promise is not in pending state.")
-		_status = Status.SUCCESSFUL
+		if (_status != Status.PENDING)
+			throw IllegalStateException("Promise is not in pending state.")
 		this._result = result
-		for (i in 0..continuations.lastIndex) {
-			continuations[i].resume(result)
+		_status = Status.SUCCESSFUL
+		while (continuations.isNotEmpty()) {
+			continuations.poll().resume(result)
 		}
 	}
 
 	protected fun fail(error: Throwable) {
-		if (_status != Status.PENDING) throw IllegalStateException("Promise is not in pending state.")
-		_status = Status.FAILED
+		if (_status != Status.PENDING)
+			throw IllegalStateException("Promise is not in pending state.")
 		this._error = error
-		for (i in 0..continuations.lastIndex) {
-			continuations[i].resumeWithException(error)
+		_status = Status.FAILED
+		while (continuations.isNotEmpty()) {
+			continuations.poll().resumeWithException(error)
 		}
 	}
 
@@ -216,6 +230,19 @@ open class Promise<T> : Deferred<T> {
 	}
 }
 
+/**
+ * A deferred implementation that doesn't have any asynchronous work to do.
+ */
+class NonDeferred<out T>(val value: T) : Deferred<T> {
+	suspend override fun await(): T {
+		return value
+	}
+}
+
 suspend fun <T> List<Deferred<T>>.awaitAll(): List<T> {
 	return ArrayList(size, { this[it].await() })
+}
+
+suspend fun <K, V> Map<K, Deferred<V>>.awaitAll(): Map<K, V> {
+	return mapTo { key, value -> key to value.await() }
 }

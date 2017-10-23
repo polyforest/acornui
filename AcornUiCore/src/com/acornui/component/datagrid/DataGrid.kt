@@ -24,7 +24,6 @@ import com.acornui.component.*
 import com.acornui.component.layout.*
 import com.acornui.component.scroll.*
 import com.acornui.component.style.*
-import com.acornui.core.UserInfo
 import com.acornui.core.cache.*
 import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.cursor.cursor
@@ -2020,7 +2019,7 @@ class DataGridStyle : StyleBase() {
 	/**
 	 * The width of the column resize handles.
 	 */
-	var resizeHandleWidth by prop(if (UserInfo.isTouchDevice) 16f else 8f)
+	var resizeHandleWidth by prop(16f)
 
 	/**
 	 * The divider between the header and the body.

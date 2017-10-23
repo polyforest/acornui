@@ -16,9 +16,6 @@
 
 package com.acornui.core.di
 
-import com.acornui.assertionsEnabled
-import com.acornui.core.Disposable
-
 
 /**
  * A scoped object has a dependency injector.
@@ -28,13 +25,10 @@ interface Scoped {
 	val injector: Injector
 }
 
-fun <T : Any> Scoped.injectOptional(key: DKey<T>, factory: () -> T): T = injector.injectOptional(key, factory)
 fun <T : Any> Scoped.injectOptional(key: DKey<T>): T? = injector.injectOptional(key)
 fun <T : Any> Scoped.inject(key: DKey<T>): T = injector.inject(key)
 
 interface Injector {
-
-	val isLocked: Boolean
 
 	/**
 	 * Returns true if this injector contains a dependency with the given key.
@@ -43,42 +37,35 @@ interface Injector {
 
 	fun <T : Any> injectOptional(key: DKey<T>): T?
 
-	fun <T : Any> injectOptional(key: DKey<T>, factory: () -> T): T {
-		@Suppress("UNCHECKED_CAST")
-		return injectOptional(key) ?: return factory()
-	}
-
 	fun <T : Any> inject(key: DKey<T>): T {
 		@Suppress("UNCHECKED_CAST")
 		return injectOptional(key) ?: throw Exception("Dependency not found for key: $key")
 	}
 }
 
-class InjectorImpl(private val parent: Injector? = null) : Injector, Disposable {
+operator fun Injector.plus(dependenciesList: List<DependencyPair<*>>): Injector {
+	return InjectorImpl(this, dependenciesList)
+}
+
+class InjectorImpl(
+		private val parent: Injector? = null,
+		dependenciesList: List<DependencyPair<*>>
+) : Injector {
 
 	private val dependencies = HashMap<DKey<*>, Any>()
-	private val dependenciesOrdered = ArrayList<Any>()
 
-	private var _isLocked: Boolean = false
-
-	override val isLocked: Boolean
-		get() = _isLocked
-
-	/**
-	 * When all dependencies on an injector is set, lock the injector so it becomes immutable.
-	 */
-	fun lock() {
-		_isLocked = true
+	init {
+		for ((key, value) in dependenciesList) {
+			_set(key, value)
+		}
 	}
 
 	override fun containsKey(key: DKey<*>): Boolean {
 		return dependencies.containsKey(key)
 	}
 
-	@Suppress("UNCHECKED_CAST")
 	override fun <T : Any> injectOptional(key: DKey<T>): T? {
-		if (key.isPrivate && isLocked)
-			throw Exception("This dependency key is for bootstrap use only.")
+		@Suppress("UNCHECKED_CAST")
 		var d = dependencies[key] as T?
 		if (d == null) {
 			d = parent?.injectOptional(key)
@@ -93,42 +80,22 @@ class InjectorImpl(private val parent: Injector? = null) : Injector, Disposable 
 		return d
 	}
 
-	operator fun <T : Any> set(key: DKey<T>, value: T) {
-		if (isLocked) throw Exception("Dependencies may not be added after the Injector has been locked.")
-		_set(key, value)
-		if (key.extends != null) {
-			@Suppress("UNCHECKED_CAST")
-			set(key.extends as DKey<Any>, value)
+	private fun _set(key: DKey<out Any>, value: Any) {
+		var p: DKey<*>? = key
+		while (p != null) {
+			if (dependencies.containsKey(p))
+				throw Exception("Injector already contains dependency $p")
+			dependencies[p] = value
+			p = p.extends
 		}
-	}
-
-	@Suppress("UNCHECKED_CAST") private fun <T : Any> _set(key: DKey<T>, value: T) {
-		if (assertionsEnabled && dependencies.containsKey(key)) throw Exception("Injector already contains dependency $key")
-		dependencies[key] = value
-		if (!dependenciesOrdered.contains(value))
-			dependenciesOrdered.add(value)
-	}
-
-	override fun dispose() {
-		// Dispose the dependencies in the reverse order they were added:
-		for (i in dependenciesOrdered.lastIndex downTo 0) {
-			(dependenciesOrdered[i] as? Disposable)?.dispose()
-		}
-		dependencies.clear()
-		dependenciesOrdered.clear()
 	}
 }
 
 /**
  * A DependencyKey is a marker interface indicating an object representing a key of a specific dependency type.
  */
+@Suppress("AddVarianceModifier")
 interface DKey<T : Any> {
-
-	/**
-	 * If a DKey is private, it may not be injected after the Injector instance is locked.
-	 */
-	val isPrivate: Boolean
-		get() = false
 
 	val extends: DKey<*>?
 		get() = null
@@ -139,17 +106,24 @@ interface DKey<T : Any> {
 	 */
 	fun factory(injector: Injector): T? = null
 
+	infix fun to(value: T): DependencyPair<T> = DependencyPair(this, value)
 }
 
+
+data class DependencyPair<T : Any>(val key: DKey<T>, val value: T)
+
+@Deprecated("Use dKey", ReplaceWith("dKey()"))
 open class DependencyKeyImpl<T : Any> : DKey<T>
 
 /**
  * Creates a dependency key with the given factory function.
  */
-fun <T : Any> dKey(f: () -> T): DKey<T> {
+fun <T : Any> dKey(): DKey<T> {
+	return object : DKey<T> {}
+}
+
+fun <T : SuperKey, SuperKey : Any> dKey(extends: DKey<SuperKey>): DKey<T> {
 	return object : DKey<T> {
-		override fun factory(injector: Injector): T? {
-			return f()
-		}
+		override val extends: DKey<SuperKey>? = extends
 	}
 }

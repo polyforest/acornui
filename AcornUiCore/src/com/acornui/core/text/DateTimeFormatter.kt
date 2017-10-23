@@ -62,7 +62,7 @@ interface DateTimeFormatter : StringFormatter<Date> {
 	var locales: List<Locale>?
 
 	companion object {
-		val FACTORY_KEY: DKey<(injector: Injector) -> DateTimeFormatter> = DependencyKeyImpl()
+		val FACTORY_KEY = dKey<(injector: Injector) -> DateTimeFormatter>()
 	}
 }
 

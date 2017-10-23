@@ -21,3 +21,18 @@ val mapPool = object : ObjectPool<MutableMap<*, *>>(8, { HashMap<Any?, Any?>() }
 		super.free(obj)
 	}
 }
+
+/**
+ * Uses a transform method to create entries to put inside the [other] map.
+ *
+ * @param other The map to put the transformed keys and values into.
+ * @param transform A transform method to convert keys and values from the receiver to new keys and values.
+ * @return Returns the [other] map.
+ */
+inline fun <K, V, K2, V2> Map<K, V>.mapTo(other: MutableMap<K2, V2> = HashMap(), transform: (key: K, value: V) -> Pair<K2, V2>): MutableMap<K2, V2> {
+	for ((key, value) in this) {
+		val (newKey, newValue) = transform(key, value)
+		other.put(newKey, newValue)
+	}
+	return other
+}

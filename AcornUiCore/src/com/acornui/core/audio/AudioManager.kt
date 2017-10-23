@@ -59,8 +59,6 @@ interface AudioManager : AudioManagerRo, DrivableChild {
 
 	companion object : DKey<AudioManager> {
 
-		override val isPrivate: Boolean = true
-
 		override val extends: DKey<AudioManagerRo>? = AudioManagerRo
 	}
 }

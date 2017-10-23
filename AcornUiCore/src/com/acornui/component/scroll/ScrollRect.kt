@@ -20,8 +20,8 @@ import com.acornui.component.ComponentInit
 import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
 import com.acornui.core.di.DKey
-import com.acornui.core.di.DependencyKeyImpl
 import com.acornui.core.di.Owned
+import com.acornui.core.di.dKey
 import com.acornui.math.BoundsRo
 import com.acornui.math.CornersRo
 import com.acornui.math.RectangleRo
@@ -45,7 +45,7 @@ interface ScrollRect : ElementContainer<UiComponent> {
 	fun maskSize(width: Float, height: Float)
 
 	companion object {
-		val FACTORY_KEY: DKey<(owner: Owned) -> ScrollRect> = DependencyKeyImpl()
+		val FACTORY_KEY = dKey<(owner: Owned) -> ScrollRect>()
 	}
 }
 

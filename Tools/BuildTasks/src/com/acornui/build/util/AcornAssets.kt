@@ -56,7 +56,7 @@ object AcornAssets {
 			destination.delete()
 		}
 		destination.mkdir()
-		source.copyRecursively(destination)
+		source.copyRecursively(destination, true)
 	}
 
 }

@@ -17,12 +17,13 @@
 package com.acornui.component
 
 import com.acornui.core.di.DKey
-import com.acornui.core.di.DependencyKeyImpl
 import com.acornui.core.di.Owned
+import com.acornui.core.di.dKey
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
 import com.acornui.math.IntRectangleRo
 import com.acornui.math.Rectangle
+import com.acornui.math.RectangleRo
 
 interface TextureComponent : UiComponent {
 
@@ -49,7 +50,7 @@ interface TextureComponent : UiComponent {
 	/**
 	 * Sets the region of the texture to display.
 	 */
-	fun setRegion(region: Rectangle) {
+	fun setRegion(region: RectangleRo) {
 		setRegion(region.x, region.y, region.width, region.height)
 	}
 
@@ -68,7 +69,7 @@ interface TextureComponent : UiComponent {
 	fun setRegion(x: Float, y: Float, width: Float, height: Float)
 
 	companion object {
-		val FACTORY_KEY: DKey<(owner: Owned) -> TextureComponent> = DependencyKeyImpl()
+		val FACTORY_KEY = dKey<(owner: Owned) -> TextureComponent>()
 	}
 }
 

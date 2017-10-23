@@ -128,8 +128,7 @@ abstract class LifecycleBase : Lifecycle {
 /**
  * A common interface for objects with a lifecycle that can be updated.
  */
-interface Drivable : Updatable, Lifecycle {
-}
+interface Drivable : Updatable, Lifecycle
 
 interface Updatable : Disposable {
 

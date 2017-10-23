@@ -18,14 +18,9 @@ package com.acornui.component
 
 import com.acornui._assert
 import com.acornui.core.ParentRo
-import com.acornui.core.di.DKey
-import com.acornui.core.di.DependencyKeyImpl
-import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
-import com.acornui.graphics.Color
-import com.acornui.math.Bounds
-import com.acornui.math.Matrix4
-import com.acornui.math.RayRo
+import com.acornui.core.di.*
+import com.acornui.graphics.ColorRo
+import com.acornui.math.*
 
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
@@ -43,8 +38,10 @@ interface Container : UiComponent, ContainerRo
  */
 open class ContainerImpl(
 		owner: Owned,
-		override val native: NativeContainer = owner.inject(NativeContainer.FACTORY_KEY)(owner)
+		native: NativeContainer = owner.inject(NativeContainer.FACTORY_KEY)(owner)
 ) : UiComponentImpl(owner, native), Container {
+
+	private val nativeContainer = native
 
 	protected val _children = ArrayList<UiComponent>()
 	override val children: List<UiComponentRo>
@@ -77,7 +74,7 @@ open class ContainerImpl(
 
 		child.parent = this
 		_children.add(index, child)
-		native.addChild(child.native, index)
+		nativeContainer.addChild(child.native, index)
 		child.invalidated.add(this::childInvalidatedHandler)
 		child.disposed.add(this::childDisposedHandler)
 
@@ -132,7 +129,7 @@ open class ContainerImpl(
 		if (child.isActive) {
 			child.deactivate()
 		}
-		native.removeChild(index)
+		nativeContainer.removeChild(index)
 		invalidate(bubblingFlags)
 		child.invalidate(cascadingFlags)
 
@@ -320,7 +317,7 @@ interface NativeContainer : NativeComponent {
 	fun removeChild(index: Int)
 
 	companion object {
-		val FACTORY_KEY: DKey<(owner: Owned) -> NativeContainer> = DependencyKeyImpl()
+		val FACTORY_KEY: DKey<(owner: Owned) -> NativeContainer> = dKey()
 	}
 }
 
@@ -330,25 +327,25 @@ object NativeContainerDummy : NativeContainer {
 
 	override var visible: Boolean = true
 
-	override val bounds: Bounds
+	override val bounds: BoundsRo
 		get() = throw UnsupportedOperationException("NativeComponentDummy does not have bounds.")
 
 	override fun setSize(width: Float?, height: Float?) {
 	}
 
-	override fun setTransform(value: Matrix4) {
+	override fun setTransform(value: Matrix4Ro) {
 	}
 
 	override fun setSimpleTranslate(x: Float, y: Float) {
 	}
 
-	override fun setConcatenatedTransform(value: Matrix4) {
+	override fun setConcatenatedTransform(value: Matrix4Ro) {
 	}
 
-	override fun setColorTint(value: Color) {
+	override fun setColorTint(value: ColorRo) {
 	}
 
-	override fun setConcatenatedColorTint(value: Color) {
+	override fun setConcatenatedColorTint(value: ColorRo) {
 	}
 
 	override fun dispose() {

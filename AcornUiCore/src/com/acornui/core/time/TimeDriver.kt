@@ -30,7 +30,7 @@ import com.acornui.core.di.inject
  */
 interface TimeDriver : Parent<DrivableChild>, Drivable {
 
-	companion object : DKey<TimeDriver> {}
+	companion object : DKey<TimeDriver>
 }
 
 /**
@@ -119,6 +119,10 @@ open class TimeDriverImpl : LifecycleBase(), TimeDriver, Drivable {
 	}
 }
 
+/**
+ * Invokes the callback on every frame. This is similar to [onTick] except the receiver isn't watched for activation
+ * or disposal.
+ */
 fun Scoped.drive(update: (stepTime: Float) -> Unit): DrivableChild {
 	val child = object : DrivableChildBase() {
 		override fun update(stepTime: Float) {

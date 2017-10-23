@@ -1,78 +1,56 @@
 package com.acornui.core.di
 
+import com.acornui.async.LateValue
+import com.acornui.async.awaitAll
+import com.acornui.async.launch
 import com.acornui.core.Disposable
-import com.acornui.di.DependencyGraph
 
-class Bootstrap(
-		parentInjector: Injector? = null
-) : Scoped, Disposable {
+class Bootstrap : Disposable {
 
-	private val _injector = InjectorImpl(parentInjector)
-	override val injector: Injector
-		get() = _injector
-
-	private val dependencyGraph = DependencyGraph<DKey<*>>()
-
-	@Suppress("UNCHECKED_CAST")
-	operator fun <T : Any> get(key: DKey<T>): T {
-		return injector.inject(key)
-	}
-
-	operator fun <T : Any> set(key: DKey<T>, value: T) {
-		_injector[key] = value
-		dependencyGraph[key] = value
-	}
+	private val dependenciesList = ArrayList<DependencyPair<*>>()
 
 	/**
-	 * Invokes the provided callback when all provided dependencies have been set.
+	 * Creates a new injector with the dependencies set on this bootstrap.
 	 */
-	fun on(vararg dependencies: DKey<*>, callback: Bootstrap.() -> Unit) {
-		if (injector.isLocked)
-			throw Exception("Injector is locked, cannot set any more dependencies.")
+	suspend fun createInjector(parentInjector: Injector? = null): Injector {
+		awaitAll()
 
-		dependencyGraph.on(*dependencies) {
-			callback()
+		return InjectorImpl(parentInjector, dependenciesList)
+	}
+
+	private val _map = HashMap<DKey<*>, LateValue<Any>>()
+
+	suspend fun <T : Any> get(key: DKey<T>): T {
+		val late = _map.getOrPut(key) { LateValue<Any>() }
+		@Suppress("UNCHECKED_CAST")
+		return late.await() as T
+	}
+
+	fun <T : Any> set(key: DKey<T>, value: T) {
+		dependenciesList.add(key to value)
+
+		var p: DKey<*>? = key
+		while (p != null) {
+			val late = _map.getOrPut(p) { LateValue<Any>() }
+			if (!late.isPending)
+				throw Exception("value already set for key $p")
+			late.setValue(value)
+			p = p.extends
 		}
 	}
 
-	/**
-	 * Waits for the given dependencies before invoking [then] callbacks.
-	 */
-	fun waitFor(vararg dependencies: DKey<*>) = dependencyGraph.waitFor(*dependencies)
-
-	/**
-	 * When there are no more pending dependencies.
-	 */
-	fun then(callback: () -> Unit) = dependencyGraph.then(callback)
+	suspend fun awaitAll() {
+		_map.awaitAll()
+	}
 
 	override fun dispose() {
-		dependencyGraph.dispose()
-		_injector.dispose()
+		launch {
+			// Waits for all of the dependencies to be calculated before attempting to dispose.
+			awaitAll()
+			// Dispose the dependencies in the reverse order they were added:
+			for (i in dependenciesList.lastIndex downTo 0) {
+				(dependenciesList[i].value as? Disposable)?.dispose()
+			}
+		}
 	}
-
-	fun lock() {
-		if (dependencyGraph.hasPending()) throw Exception("Cannot lock the injector when there are still pending callbacks.")
-		_injector.lock()
-		dependencyGraph.clear()
-	}
-}
-
-/**
- * Sets up a child injector, allows dependencies to be set within [init], and when all dependencies are set,
- * calls [onReady] in the new child scope.
- *
- * This child scope will automatically be disposed when the element that created it is disposed.
- */
-fun Owned.scope(init: (injector: Bootstrap) -> Unit, onReady: Owned.() -> Unit): Bootstrap {
-	val bootstrap = Bootstrap(InjectorImpl(injector))
-	val owner = OwnedImpl(this, bootstrap.injector)
-	disposed.add {
-		bootstrap.dispose()
-	}
-	init(bootstrap)
-	bootstrap.then {
-		bootstrap.lock()
-		owner.onReady()
-	}
-	return bootstrap
 }

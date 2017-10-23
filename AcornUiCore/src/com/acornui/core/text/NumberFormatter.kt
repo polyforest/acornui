@@ -52,7 +52,7 @@ interface NumberFormatter : StringFormatter<Number?> {
 	var locales: List<Locale>?
 
 	companion object {
-		val FACTORY_KEY: DKey<(injector: Injector) -> NumberFormatter> = DependencyKeyImpl()
+		val FACTORY_KEY = dKey<(injector: Injector) -> NumberFormatter>()
 	}
 }
 

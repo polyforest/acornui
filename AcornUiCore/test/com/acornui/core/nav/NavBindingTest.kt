@@ -25,7 +25,7 @@ class NavBindingTest {
 		}
 	}
 
-	private val mockInjector = InjectorImpl()
+	private val mockInjector = InjectorImpl(null, listOf())
 
 	private val navMan: NavigationManager
 		get() = mockInjector.inject(NavigationManager)

@@ -3,13 +3,12 @@
 package com.acornui.jvm.persistance
 
 import com.acornui.core.Version
-import com.acornui.core.VersionRo
 import com.acornui.core.persistance.Persistence
 import com.acornui.serialization.*
 import java.io.File
 
 open class LwjglPersistence(
-		private val currentVersion: VersionRo,
+		private val currentVersion: Version,
 		name: String,
 		persistenceDir: String = System.getProperty("user.home") + "/.prefs"
 ) : Persistence {
@@ -17,7 +16,7 @@ open class LwjglPersistence(
 	private val file = File(persistenceDir, name + ".data")
 	private val data: PersistenceData
 
-	override val version: VersionRo?
+	override val version: Version?
 		get() = data.version
 
 	init {
@@ -70,7 +69,7 @@ open class LwjglPersistence(
 
 private class PersistenceData(
 		val map: MutableMap<String, String> = HashMap(),
-		var version: VersionRo? = null
+		var version: Version? = null
 
 ) : MutableMap<String, String> by map
 

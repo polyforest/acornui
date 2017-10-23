@@ -3,7 +3,6 @@ package com.acornui.core.input.interaction
 import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
 import com.acornui.component.Stage
-import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
 import com.acornui.core.Disposable
 import com.acornui.core.ancestry
@@ -11,7 +10,7 @@ import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.input.*
-import com.acornui.core.time.Timer
+import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.timer
 
 
@@ -21,12 +20,13 @@ import com.acornui.core.time.timer
  *
  * This will respond to mouse and touch, but not both.
  */
-open class ClickDispatcher(
+abstract class ClickDispatcher(
 		override val injector: Injector
 ) : Scoped, Disposable {
 
-	private val root: UiComponent = inject(Stage)
-	private val interactivity = inject(InteractivityManager)
+	protected val stage = inject(Stage)
+	private val timeDriver = inject(TimeDriver)
+	private val interactivityManager = inject(InteractivityManager)
 
 	var multiClickSpeed: Int = 400
 
@@ -41,18 +41,20 @@ open class ClickDispatcher(
 
 	private var pendingClick = false
 
-	private fun rootMouseDownHandler(event: MouseInteraction) {
+	private val rootMouseDownHandler = {
+		event: MouseInteraction ->
 		if (!touchMode) {
-			val downElement = root.getChildUnderPoint(event.canvasX, event.canvasY, onlyInteractive = true)
+			val downElement = stage.getChildUnderPoint(event.canvasX, event.canvasY, onlyInteractive = true)
 			if (downElement != null) {
 				setDownElement(downElement, event.button.ordinal)
 			}
 		}
 	}
 
-	private fun rootTouchStartHandler(event: TouchInteraction) {
+	private val rootTouchStartHandler = {
+		event: TouchInteraction ->
 		val first = event.changedTouches.first()
-		val downElement = root.getChildUnderPoint(first.canvasX, first.canvasY, onlyInteractive = true)
+		val downElement = stage.getChildUnderPoint(first.canvasX, first.canvasY, onlyInteractive = true)
 		if (downElement != null) {
 			setDownElement(downElement, WhichButton.LEFT.ordinal)
 		}
@@ -69,20 +71,22 @@ open class ClickDispatcher(
 		downButtons[ordinal] = ancestry
 	}
 
-	private var preventMouseTimer: Timer? = null
+	private var preventMouseTimer: Disposable? = null
 
-	private fun rootTouchEndHandler(event: TouchInteraction) {
+	private val rootTouchEndHandler =  {
+		event: TouchInteraction ->
 		val first = event.changedTouches.first()
 		release(WhichButton.LEFT, first.canvasX, first.canvasY, event.timestamp)
 		touchMode = true
-		preventMouseTimer?.stop()
-		preventMouseTimer = timer(2.5f, 1) {
+		preventMouseTimer?.dispose()
+		preventMouseTimer = timer(timeDriver, 2.5f, 1) {
 			touchMode = false
 			preventMouseTimer = null
 		}
 	}
 
-	private fun rootTouchCancelHandler(event: TouchInteraction) {
+	private val rootTouchCancelHandler = {
+		event: TouchInteraction ->
 		val downElements = downButtons[WhichButton.LEFT.ordinal]
 		if (downElements != null) {
 			downButtons[WhichButton.LEFT.ordinal] = null
@@ -90,7 +94,8 @@ open class ClickDispatcher(
 		}
 	}
 
-	private fun rootMouseUpHandler(event: MouseInteraction) {
+	private val rootMouseUpHandler = {
+		event: MouseInteraction ->
 		if (!touchMode && !event.isFabricated) {
 			release(event.button, event.canvasX, event.canvasY, event.timestamp)
 		}
@@ -127,7 +132,7 @@ open class ClickDispatcher(
 	}
 
 	private fun getClickType(button: WhichButton): InteractionType<ClickInteraction> {
-		return when(button) {
+		return when (button) {
 			WhichButton.LEFT -> ClickInteraction.LEFT_CLICK
 			WhichButton.RIGHT -> ClickInteraction.RIGHT_CLICK
 			WhichButton.MIDDLE -> ClickInteraction.MIDDLE_CLICK
@@ -137,36 +142,28 @@ open class ClickDispatcher(
 		}
 	}
 
-	fun init() {
-		root.mouseDown(isCapture = true).add(this::rootMouseDownHandler)
-		root.touchStart(isCapture = true).add(this::rootTouchStartHandler)
-		root.mouseUp().add(this::rootMouseUpHandler)
-		root.touchEnd().add(this::rootTouchEndHandler)
-		root.touchCancel(isCapture = true).add(this::rootTouchCancelHandler)
-		addClickHandlers()
+	init {
+		stage.mouseDown(isCapture = true).add(rootMouseDownHandler)
+		stage.touchStart(isCapture = true).add(rootTouchStartHandler)
+		stage.mouseUp().add(rootMouseUpHandler)
+		stage.touchEnd().add(rootTouchEndHandler)
+		stage.touchCancel(isCapture = true).add(rootTouchCancelHandler)
 	}
 
-	protected fun fireHandler(event: Any) {
-		if (!pendingClick) return
-		pendingClick = false
-		interactivity.dispatch(clickEvent.target!!, clickEvent)
-	}
-
-	protected open fun addClickHandlers() {
-		root.mouseUp().add(this::fireHandler)
-		root.touchEnd().add(this::fireHandler)
-	}
-
-	protected open fun removeClickHandlers() {
-		root.mouseUp().remove(this::fireHandler)
-		root.touchEnd().remove(this::fireHandler)
+	protected val fireHandler = {
+		_: Any ->
+		if (pendingClick) {
+			pendingClick = false
+			interactivityManager.dispatch(clickEvent.target!!, clickEvent)
+		}
 	}
 
 	override fun dispose() {
-		removeClickHandlers()
-		root.mouseDown(isCapture = true).remove(this::rootMouseDownHandler)
-		root.mouseUp().remove(this::rootMouseUpHandler)
-		root.touchEnd().remove(this::rootTouchEndHandler)
+		stage.mouseDown(isCapture = true).remove(rootMouseDownHandler)
+		stage.touchStart(isCapture = true).remove(rootTouchStartHandler)
+		stage.mouseUp().remove(rootMouseUpHandler)
+		stage.touchEnd().remove(rootTouchEndHandler)
+		stage.touchCancel(isCapture = true).remove(rootTouchCancelHandler)
 		for (i in 0..downButtons.lastIndex) {
 			val list = downButtons[i]
 			if (list != null) {
@@ -177,7 +174,16 @@ open class ClickDispatcher(
 	}
 }
 
+class JvmClickDispatcher(injector: Injector) : ClickDispatcher(injector) {
 
-fun Scoped.clickDispatcher(): ClickDispatcher {
-	return ClickDispatcher(injector)
+	init {
+		stage.mouseUp().add(fireHandler)
+		stage.touchEnd().add(fireHandler)
+	}
+
+	override fun dispose() {
+		super.dispose()
+		stage.mouseUp().remove(fireHandler)
+		stage.touchEnd().remove(fireHandler)
+	}
 }

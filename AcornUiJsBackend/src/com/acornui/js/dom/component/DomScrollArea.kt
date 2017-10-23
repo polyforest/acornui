@@ -21,7 +21,7 @@ import com.acornui.component.scroll.*
 import com.acornui.core.Disposable
 import com.acornui.core.di.Owned
 import com.acornui.math.Bounds
-import com.acornui.math.Matrix4
+import com.acornui.math.Matrix4Ro
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import org.w3c.dom.HTMLElement
@@ -31,15 +31,16 @@ import kotlin.properties.ReadWriteProperty
 
 class DomScrollArea(
 		owner: Owned,
-		override val native: DomContainer = DomContainer()
+		native: DomContainer = DomContainer()
 ) : ElementContainerImpl<UiComponent>(owner, native), ScrollArea {
 
+	private val element = native.element
 	override val style = bind(ScrollAreaStyle())
 
-	private val _hScrollModel = DomScrollLeftModel(native.element)
+	private val _hScrollModel = DomScrollLeftModel(element)
 	override val hScrollModel: ClampedScrollModelRo
 		get() = _hScrollModel
-	private val _vScrollModel = DomScrollTopModel(native.element)
+	private val _vScrollModel = DomScrollTopModel(element)
 	override val vScrollModel: ClampedScrollModelRo
 		get() = _vScrollModel
 
@@ -62,7 +63,7 @@ class DomScrollArea(
 
 		watch(style) {
 			val bR = it.borderRadius
-			native.element.style.apply {
+			element.style.apply {
 				borderTopLeftRadius = "${bR.topLeft.x}px ${bR.topLeft.y}px"
 				borderTopRightRadius = "${bR.topRight.x}px ${bR.topRight.y}px"
 				borderBottomRightRadius = "${bR.bottomRight.x}px ${bR.bottomRight.y}px"
@@ -153,21 +154,21 @@ class DomScrollArea(
 	}
 
 	private fun vScrollBarW(): Float {
-		val e = native.element
+		val e = element
 		return (e.offsetWidth - e.clientWidth).toFloat()
 	}
 
 	private fun hScrollBarH(): Float {
-		val e = native.element
+		val e = element
 		return (e.offsetHeight - e.clientHeight).toFloat()
 	}
 
 	private fun hScrollBarVisible(value: Boolean) {
-		native.element.style.overflowX = if (value) "scroll" else "hidden"
+		element.style.overflowX = if (value) "scroll" else "hidden"
 	}
 
 	private fun vScrollBarVisible(value: Boolean) {
-		native.element.style.overflowY = if (value) "scroll" else "hidden"
+		element.style.overflowY = if (value) "scroll" else "hidden"
 	}
 
 	private fun validateScroll() {
@@ -186,7 +187,7 @@ class DomInlineContainer : DomContainer() {
 	/**
 	 * Overridden so that we can separate the css transform from the actual transform to account for scrolling.
 	 */
-	override fun setTransform(value: Matrix4) {
+	override fun setTransform(value: Matrix4Ro) {
 	}
 
 	/**

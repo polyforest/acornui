@@ -25,7 +25,6 @@ import com.acornui.core.Disposable
 import com.acornui.core.di.inject
 import com.acornui.core.input.InteractionType
 import com.acornui.core.input.interaction.*
-import com.acornui.core.time.EnterFrame
 import com.acornui.core.time.enterFrame
 import com.acornui.core.time.time
 import com.acornui.math.Matrix4Ro
@@ -85,7 +84,7 @@ class TossScroller(
 	private val historyPoints = ArrayList<Vector2>()
 	private val historyTimes = ArrayList<Long>()
 
-	private var _timer: EnterFrame? = null
+	private var _timer: Disposable? = null
 	private var clickPreventer = 0
 
 	private val diff = Vector2()
@@ -198,7 +197,7 @@ class TossScroller(
 			dispatchDragEvent(TOSS_END, _tossEnd)
 			clickPreventer = 0
 			velocity.clear()
-			_timer?.stop()
+			_timer?.dispose()
 			_timer = null
 			startElement = null
 			event.clear()

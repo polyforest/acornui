@@ -73,9 +73,8 @@ interface NavigationManager : Clearable, Disposable {
 	}
 
 	companion object : DKey<NavigationManager> {
-		override fun factory(injector: Injector): NavigationManager? {
-			return NavigationManagerImpl()
-		}
+
+		override fun factory(injector: Injector) = NavigationManagerImpl()
 
 		fun pathToString(path: List<NavNode>): String {
 			return "" + path.joinToString("/")
@@ -223,7 +222,7 @@ class NavBinding(
 	private val navManager: NavigationManager = host.inject(NavigationManager)
 
 	init {
-		if (host is Lifecycle) {
+		if (host is LifecycleRo) {
 			host.activated.add(activatedHandler)
 			host.deactivated.add(deactivatedHandler)
 			host.disposed.add(disposedHandler)

@@ -3,14 +3,15 @@ package com.acornui.jvm.audio
 import com.acornui.core.assets.AssetTypes
 import com.acornui.core.audio.SoundFactory
 import com.acornui.jvm.loader.JvmAssetLoaderBase
+import com.acornui.jvm.loader.WorkScheduler
 import java.io.InputStream
 
 
 open class OpenAlSoundLoader(
 		path: String,
 		private val audioManager: OpenAlAudioManager,
-		isAsync: Boolean
-) : JvmAssetLoaderBase<SoundFactory>(path, AssetTypes.SOUND, isAsync) {
+		workScheduler: WorkScheduler<SoundFactory>
+) : JvmAssetLoaderBase<SoundFactory>(path, AssetTypes.SOUND, workScheduler) {
 
 	init {
 		init()

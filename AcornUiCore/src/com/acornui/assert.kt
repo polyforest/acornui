@@ -23,35 +23,27 @@ var assertionsEnabled: Boolean = false
  */
 
 fun _assert(value: Boolean, message: Any = "Assertion failed") {
-	if (assertionsEnabled) {
-		if (!value) {
-			throw Exception("" + message)
-		}
+	if (assertionsEnabled && !value) {
+		throw Exception("" + message)
 	}
 }
 
 inline fun _assert(value: Boolean, lazyMessage: () -> Any) {
-	if (assertionsEnabled) {
-		if (!value) {
-			val message = lazyMessage()
-			throw Exception("" + message)
-		}
+	if (assertionsEnabled && !value) {
+		val message = lazyMessage()
+		throw Exception("" + message)
 	}
 }
 
 inline fun _assert(lazyValue: () -> Boolean, message: Any = "Assertion failed") {
-	if (assertionsEnabled) {
-		if (!lazyValue()) {
-			throw Exception("" + message)
-		}
+	if (assertionsEnabled && !lazyValue()) {
+		throw Exception("" + message)
 	}
 }
 
 inline fun _assert(lazyValue: () -> Boolean, lazyMessage: () -> Any) {
-	if (assertionsEnabled) {
-		if (!lazyValue()) {
-			val message = lazyMessage()
-			throw Exception("" + message)
-		}
+	if (assertionsEnabled && !lazyValue()) {
+		val message = lazyMessage()
+		throw Exception("" + message)
 	}
 }

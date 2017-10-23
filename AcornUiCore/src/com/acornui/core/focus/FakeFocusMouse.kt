@@ -1,6 +1,5 @@
 package com.acornui.core.focus
 
-import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
 import com.acornui.component.stage
 import com.acornui.core.Disposable
@@ -8,7 +7,10 @@ import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.input.*
-import com.acornui.core.input.interaction.*
+import com.acornui.core.input.interaction.KeyInteraction
+import com.acornui.core.input.interaction.MouseInteraction
+import com.acornui.core.input.interaction.dispatchClick
+import com.acornui.core.input.interaction.downRepeatEnabled
 import com.acornui.core.time.time
 
 /**

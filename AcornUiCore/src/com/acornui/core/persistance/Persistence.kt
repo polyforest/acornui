@@ -1,7 +1,7 @@
 package com.acornui.core.persistance
 
 import com.acornui.collection.Clearable
-import com.acornui.core.VersionRo
+import com.acornui.core.Version
 import com.acornui.core.di.DKey
 
 interface Persistence : Clearable {
@@ -10,7 +10,7 @@ interface Persistence : Clearable {
 	 * The version of the application as described in [AppConfig.version] when the persistence was last saved.
 	 * This will be null if there was nothing loaded.
 	 */
-	val version: VersionRo?
+	val version: Version?
 
 	val allowed: Boolean
 

@@ -175,11 +175,18 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
  * UiComponent provides lifecycle, validation, interactivity, transformation, and layout.
  *
  * @author nbilyk
+ *
+ * @param owner The creator of this component. This is used for dependency injection, style inheritance, and when
+ * the owner has been disposed, this component will then be disposed.
+ * @param native Some back-ends (like DomApplication) will create native components that the acorn display hierarchy
+ * controls.
  */
 open class UiComponentImpl(
 		override final val owner: Owned,
-		override val native: NativeComponent = owner.inject(NativeComponent.FACTORY_KEY)(owner)
+		override final val native: NativeComponent = owner.inject(NativeComponent.FACTORY_KEY)(owner)
 ) : UiComponent {
+
+	override final val injector = owner.injector
 
 	//---------------------------------------------------------
 	// Lifecycle
@@ -226,8 +233,6 @@ open class UiComponentImpl(
 
 	protected open fun onDeactivated() {
 	}
-
-	override final val injector = owner.injector
 
 	/**
 	 * If true, the native component will be auto-sized to the measured bounds from updateLayout.
@@ -538,7 +543,7 @@ open class UiComponentImpl(
 	 * If set, when the layout is validated, if there was no explicit width,
 	 * this value will be used instead.
 	 */
-	override var defaultWidth: Float? by validationProp(null, ValidationFlags.LAYOUT)
+	override final var defaultWidth: Float? by validationProp(null, ValidationFlags.LAYOUT)
 
 	/**
 	 * If set, when the layout is validated, if there was no explicit height,
@@ -1206,7 +1211,7 @@ interface NativeComponent : Disposable {
 	 * Return the actual bounds of the component.
 	 * This is typically either the explicit dimensions, if they were set, or the measured dimensions.
 	 */
-	val bounds: Bounds
+	val bounds: BoundsRo
 
 	/**
 	 * Sets the explicit dimensions of this component. Null values represent using measured dimensions.
@@ -1217,7 +1222,7 @@ interface NativeComponent : Disposable {
 	 * Sets the transformation matrix.
 	 * Do not use both this method and [setSimpleTranslate]
 	 */
-	fun setTransform(value: Matrix4)
+	fun setTransform(value: Matrix4Ro)
 
 	/**
 	 * An alternate to [setTransform] that applies only a simple translation.
@@ -1228,20 +1233,20 @@ interface NativeComponent : Disposable {
 	/**
 	 * Sets the concatenated global transformation matrix.
 	 */
-	fun setConcatenatedTransform(value: Matrix4)
+	fun setConcatenatedTransform(value: Matrix4Ro)
 
 	/**
 	 * Sets the color tint.
 	 */
-	fun setColorTint(value: Color)
+	fun setColorTint(value: ColorRo)
 
 	/**
 	 * Sets the combined global color tint.
 	 */
-	fun setConcatenatedColorTint(value: Color)
+	fun setConcatenatedColorTint(value: ColorRo)
 
 	companion object {
-		val FACTORY_KEY: DKey<(owner: Owned) -> NativeComponent> = DependencyKeyImpl()
+		val FACTORY_KEY = dKey<(owner: Owned) -> NativeComponent>()
 	}
 }
 
@@ -1251,25 +1256,25 @@ object NativeComponentDummy : NativeComponent {
 
 	override var visible: Boolean = true
 
-	override val bounds: Bounds
+	override val bounds: BoundsRo
 		get() = throw UnsupportedOperationException("NativeComponentDummy does not have bounds.")
 
 	override fun setSize(width: Float?, height: Float?) {
 	}
 
-	override fun setTransform(value: Matrix4) {
+	override fun setTransform(value: Matrix4Ro) {
 	}
 
 	override fun setSimpleTranslate(x: Float, y: Float) {
 	}
 
-	override fun setConcatenatedTransform(value: Matrix4) {
+	override fun setConcatenatedTransform(value: Matrix4Ro) {
 	}
 
-	override fun setColorTint(value: Color) {
+	override fun setColorTint(value: ColorRo) {
 	}
 
-	override fun setConcatenatedColorTint(value: Color) {
+	override fun setConcatenatedColorTint(value: ColorRo) {
 	}
 
 	override fun dispose() {

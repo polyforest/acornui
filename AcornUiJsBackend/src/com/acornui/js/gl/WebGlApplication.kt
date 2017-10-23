@@ -24,12 +24,11 @@ import com.acornui.component.text.TextArea
 import com.acornui.component.text.TextField
 import com.acornui.component.text.TextInput
 import com.acornui.core.AppConfig
-import com.acornui.core.UserInfo
 import com.acornui.core.assets.AssetManager
 import com.acornui.core.assets.AssetTypes
 import com.acornui.core.di.Owned
-import com.acornui.core.di.OwnedImpl
-import com.acornui.core.focus.fakeFocusMouse
+import com.acornui.core.di.dKey
+import com.acornui.core.focus.FakeFocusMouse
 import com.acornui.core.graphics.Window
 import com.acornui.gl.component.*
 import com.acornui.gl.component.text.GlEditableTextField
@@ -50,25 +49,12 @@ import kotlin.dom.clear
 /**
  * @author nbilyk
  */
-open class WebGlApplication(
-		rootId: String,
-		config: AppConfig = AppConfig(),
-		onReady: Owned.(stage: Stage) -> Unit) : JsApplicationBase(rootId, config, onReady) {
+@Suppress("unused")
+open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 
-	override lateinit var canvas: HTMLCanvasElement
+	override val isOpenGl = true
 
-	init {
-		UserInfo.isOpenGl = true
-	}
-
-	override fun initializeBootstrap() {
-		println("webgl init bootstrap")
-		super.initializeBootstrap()
-		initializeGl()
-		initializeGlState()
-	}
-
-	override fun initializeCanvas() {
+	override val canvasTask by BootTask {
 		val rootElement = document.getElementById(rootId) ?: throw Exception("Could not find root canvas $rootId")
 		val root = rootElement as HTMLElement
 		root.clear()
@@ -76,10 +62,11 @@ open class WebGlApplication(
 		canvas.style.width = "100%"
 		canvas.style.height = "100%"
 		root.appendChild(canvas)
-		this.canvas = canvas
+		set(CANVAS, canvas)
 	}
 
-	protected open fun initializeGl() {
+	protected open val glTask by BootTask {
+		val config = get(AppConfig)
 		val glConfig = config.gl
 		val attributes = WebGLContextAttributes()
 		attributes.alpha = glConfig.alpha
@@ -88,53 +75,53 @@ open class WebGlApplication(
 		attributes.stencil = glConfig.stencil
 		attributes.premultipliedAlpha = false
 
-		val context = WebGl.getContext(canvas, attributes) ?: throw Exception("Browser does not support WebGL") // TODO: Make this a better UX
+		val context = WebGl.getContext(get(CANVAS), attributes) ?: throw Exception("Browser does not support WebGL") // TODO: Make this a better UX
 		val gl = WebGl20(context)
-		bootstrap[Gl20] = gl
+		set(Gl20, gl)
+	}
+	
+	override val windowTask by BootTask {
+		val config = get(AppConfig)
+		set(Window, WebGlWindowImpl(get(CANVAS), config.window, get(Gl20)))
 	}
 
-	override fun initializeWindow() {
-		bootstrap.on(Gl20) {
-			this[Window] = WebGlWindowImpl(canvas, config.window, get(Gl20))
-		}
+	protected open val glStateTask by BootTask {
+		set(GlState, GlState(get(Gl20)))
 	}
 
-	protected open fun initializeGlState() {
-		bootstrap.on(Gl20) {
-			this[GlState] = GlState(get(Gl20))
-		}
-	}
-
-	override fun initializeTextures() {
-		bootstrap.on(AssetManager, Gl20, GlState) {
-			get(AssetManager).setLoaderFactory(AssetTypes.TEXTURE, { path, estimatedBytesTotal ->  WebGlTextureLoader(path, estimatedBytesTotal, get(Gl20), get(GlState)) })
-		}
+	protected open val textureLoaderTask by BootTask {
+		val gl = get(Gl20)
+		val glState = get(GlState)
+		get(AssetManager).setLoaderFactory(AssetTypes.TEXTURE, { path, estimatedBytesTotal -> WebGlTextureLoader(path, estimatedBytesTotal, gl, glState) })
 	}
 
 	/**
 	 * The last chance to set dependencies on the application scope.
 	 */
-	override fun initializeComponents() {
-		bootstrap[NativeComponent.FACTORY_KEY] = { owner -> NativeComponentDummy }
-		bootstrap[NativeContainer.FACTORY_KEY] = { owner -> NativeContainerDummy }
-		bootstrap[TextField.FACTORY_KEY] = ::GlTextField
-		bootstrap[EditableTextField.FACTORY_KEY] = ::GlEditableTextField
-		bootstrap[TextInput.FACTORY_KEY] = ::GlTextInput
-		bootstrap[TextArea.FACTORY_KEY] = ::GlTextArea
-		bootstrap[TextureComponent.FACTORY_KEY] = ::GlTextureComponent
-		bootstrap[ScrollArea.FACTORY_KEY] = ::GlScrollArea
-		bootstrap[ScrollRect.FACTORY_KEY] = ::GlScrollRect
-		bootstrap[Rect.FACTORY_KEY] = ::GlRect
+	override val componentsTask  by BootTask {
+		set(NativeComponent.FACTORY_KEY, { _ -> NativeComponentDummy })
+		set(NativeContainer.FACTORY_KEY, { _ -> NativeContainerDummy })
+		set(TextField.FACTORY_KEY, ::GlTextField)
+		set(EditableTextField.FACTORY_KEY, ::GlEditableTextField)
+		set(TextInput.FACTORY_KEY, ::GlTextInput)
+		set(TextArea.FACTORY_KEY, ::GlTextArea)
+		set(TextureComponent.FACTORY_KEY, ::GlTextureComponent)
+		set(ScrollArea.FACTORY_KEY, ::GlScrollArea)
+		set(ScrollRect.FACTORY_KEY, ::GlScrollRect)
+		set(Rect.FACTORY_KEY, ::GlRect)
 	}
 
-	override fun initializeStage() {
-		bootstrap[Stage] = GlStageImpl(OwnedImpl(null, bootstrap.injector))
+	override suspend fun createStage(owner: Owned): Stage {
+		return GlStageImpl(owner)
 	}
 
-	override fun initializeSpecialInteractivity() {
-		bootstrap.fakeFocusMouse()
-		val clickDispatcher = JsClickDispatcher(bootstrap.injector, canvas)
-		clickDispatcher.init()
+	override suspend fun initializeSpecialInteractivity(owner: Owned) {
+		FakeFocusMouse(owner.injector)
+		JsClickDispatcher(get(CANVAS), owner.injector)
+	}
+	
+	companion object {
+		val CANVAS = dKey<HTMLCanvasElement, HTMLElement>(JsApplicationBase.CANVAS)
 	}
 
 }

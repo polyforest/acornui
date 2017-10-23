@@ -148,11 +148,9 @@ class PopUpManagerStyle : StyleBase() {
 	companion object : StyleType<PopUpManagerStyle>
 }
 
-class PopUpManagerImpl(owner: Owned) : LayoutContainerImpl<PopUpManagerStyle, CanvasLayoutData>(owner, CanvasLayout(), PopUpManagerStyle()), PopUpManager {
+class PopUpManagerImpl(private val root: UiComponent) : LayoutContainerImpl<PopUpManagerStyle, CanvasLayoutData>(root, CanvasLayout(), PopUpManagerStyle()), PopUpManager {
 
 	override val view: UiComponent = this
-
-	private val stage = inject(Stage)
 
 	private val _currentPopUps = ArrayList<PopUpInfo<*>>()
 	override val currentPopUps: List<PopUpInfo<*>>
@@ -227,7 +225,7 @@ class PopUpManagerImpl(owner: Owned) : LayoutContainerImpl<PopUpManagerStyle, Ca
 		}
 	}
 
-	private val stageKeyDownHandler = {
+	private val rootKeyDownHandler = {
 		event: KeyInteraction ->
 		if (_currentPopUps.isNotEmpty()) {
 			if (!event.handled && event.keyCode == Ascii.ESCAPE) {
@@ -238,7 +236,7 @@ class PopUpManagerImpl(owner: Owned) : LayoutContainerImpl<PopUpManagerStyle, Ca
 	}
 
 	init {
-		stage.keyDown().add(stageKeyDownHandler)
+		root.keyDown().add(rootKeyDownHandler)
 
 		// The pop up container should not intercept user interaction, unless it is modal.
 		interactivityMode = InteractivityMode.CHILDREN
@@ -290,7 +288,7 @@ class PopUpManagerImpl(owner: Owned) : LayoutContainerImpl<PopUpManagerStyle, Ca
 
 	override fun dispose() {
 		super.dispose()
-		stage.keyDown().remove(stageKeyDownHandler)
+		root.keyDown().remove(rootKeyDownHandler)
 	}
 }
 

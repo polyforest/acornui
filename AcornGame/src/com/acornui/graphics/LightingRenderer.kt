@@ -5,7 +5,6 @@ import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.graphics.BlendMode
-import com.acornui.core.graphics.Camera
 import com.acornui.core.graphics.CameraRo
 import com.acornui.core.graphics.Window
 import com.acornui.gl.core.*

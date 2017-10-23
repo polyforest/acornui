@@ -5,13 +5,13 @@ import com.acornui.async.Deferred
 import com.acornui.async.async
 import com.acornui.component.InteractivityMode
 import com.acornui.component.UiComponentImpl
-import com.acornui.core.UserInfo
 import com.acornui.core.assets.*
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.graphics.TextureAtlasDataSerializer
 import com.acornui.core.graphics.loadAndCacheAtlasPage
 import com.acornui.core.time.onTick
+import com.acornui.core.userInfo
 import com.acornui.gl.core.GlState
 import com.acornui.math.ceil
 
@@ -22,6 +22,9 @@ class ParticleEffectComponent(owner: Owned) : UiComponentImpl(owner) {
 	val effect = ParticleEffect()
 
 	private val emitterRenderers = ArrayList<ParticleEmitterRenderer>()
+
+	private val maxParticleCountScale: Float = if (userInfo.isMobile) 0.5f else 1f
+	private val minParticleCountScale: Float = 1f
 
 	init {
 		interactivityMode = InteractivityMode.NONE
@@ -109,11 +112,6 @@ class ParticleEffectComponent(owner: Owned) : UiComponentImpl(owner) {
 		clearRenderers()
 		group?.dispose()
 		group = null
-	}
-
-	companion object {
-		var maxParticleCountScale: Float = if (UserInfo.isMobile) 0.5f else 1f
-		var minParticleCountScale: Float = 1f
 	}
 }
 

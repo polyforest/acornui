@@ -29,7 +29,6 @@ import com.acornui.core.childWalkPreOrder
 import com.acornui.core.childWalkPreOrderReversed
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
-import com.acornui.core.graphics.BlendMode
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.Vertex

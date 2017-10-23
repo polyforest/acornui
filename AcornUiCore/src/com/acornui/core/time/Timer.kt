@@ -18,6 +18,7 @@ package com.acornui.core.time
 
 import com.acornui.collection.ClearableObjectPool
 import com.acornui.collection.Clearable
+import com.acornui.core.Disposable
 import com.acornui.core.DrivableChildBase
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
@@ -25,7 +26,7 @@ import com.acornui.core.di.inject
 /**
  * @author nbilyk
  */
-open class Timer private constructor() : DrivableChildBase(), Clearable {
+internal class Timer private constructor() : DrivableChildBase(), Clearable {
 
 	var duration: Float = 0f
 	var repetitions: Int = 1
@@ -40,15 +41,9 @@ open class Timer private constructor() : DrivableChildBase(), Clearable {
 			currentRepetition++
 			callback()
 			if (repetitions >= 0 && currentRepetition >= repetitions) {
-				stop()
+				dispose()
 			}
 		}
-	}
-
-	open fun stop() {
-		if (!isActive) return
-		remove()
-		pool.free(this)
 	}
 
 	override fun clear() {
@@ -68,8 +63,9 @@ open class Timer private constructor() : DrivableChildBase(), Clearable {
 	}
 
 	override fun dispose() {
-		super.dispose()
+		if (!isActive) return
 		remove()
+		pool.free(this)
 	}
 
 	companion object {
@@ -84,23 +80,30 @@ open class Timer private constructor() : DrivableChildBase(), Clearable {
 	}
 }
 
+fun Scoped.timer(duration: Float, repetitions: Int = 1, delay: Float = 0f, callback: () -> Unit): Disposable {
+	return timer(inject(TimeDriver), duration, repetitions, delay, callback)
+}
+
 /**
+ * @param timeDriver The time driver to add the Timer instance to.
  * @param duration The number of seconds between repetitions.
+ * @param repetitions The number of repetitions the timer will be invoked
  */
-fun Scoped.timer(duration: Float, repetitions: Int = 1, callback: () -> Unit): Timer {
+fun timer(timeDriver: TimeDriver, duration: Float, repetitions: Int = 1, delay: Float = 0f, callback: () -> Unit): Disposable {
 	if (repetitions == 0) throw IllegalArgumentException("repetitions argument may not be zero.")
 	val timer = Timer.obtain()
+	timer.currentTime = -delay
 	timer.duration = duration
 	timer.callback = callback
 	timer.repetitions = repetitions
-	inject(TimeDriver).addChild(timer)
+	timeDriver.addChild(timer)
 	return timer
 }
 
 /**
  * @author nbilyk
  */
-open class EnterFrame private constructor() : DrivableChildBase(), Clearable {
+internal class EnterFrame private constructor() : DrivableChildBase(), Clearable {
 
 	var repetitions: Int = 1
 	var currentRepetition: Int = 0
@@ -110,19 +113,19 @@ open class EnterFrame private constructor() : DrivableChildBase(), Clearable {
 		++currentRepetition
 		callback()
 		if (repetitions >= 0 && currentRepetition >= repetitions) {
-			stop()
+			dispose()
 		}
-	}
-
-	open fun stop() {
-		remove()
-		pool.free(this)
 	}
 
 	override fun clear() {
 		repetitions = 1
 		currentRepetition = 0
 		callback = NOOP
+	}
+
+	override fun dispose() {
+		remove()
+		pool.free(this)
 	}
 
 	companion object {
@@ -137,19 +140,19 @@ open class EnterFrame private constructor() : DrivableChildBase(), Clearable {
 	}
 }
 
-fun Scoped.callLater(callback: () -> Unit): EnterFrame {
+fun Scoped.callLater(callback: () -> Unit): Disposable {
 	return enterFrame(1, callback)
 }
 
-fun TimeDriver.callLater(callback: () -> Unit): EnterFrame {
+fun TimeDriver.callLater(callback: () -> Unit): Disposable {
 	return enterFrame(1, callback)
 }
 
-fun Scoped.enterFrame(repetitions: Int = -1, callback: () -> Unit): EnterFrame {
+fun Scoped.enterFrame(repetitions: Int = -1, callback: () -> Unit): Disposable {
 	return inject(TimeDriver).enterFrame(repetitions, callback)
 }
 
-fun TimeDriver.enterFrame(repetitions: Int = -1, callback: () -> Unit): EnterFrame {
+fun TimeDriver.enterFrame(repetitions: Int = -1, callback: () -> Unit): Disposable {
 	if (repetitions == 0) throw IllegalArgumentException("repetitions argument may not be zero.")
 	val enterFrame = EnterFrame.obtain()
 	enterFrame.callback = callback

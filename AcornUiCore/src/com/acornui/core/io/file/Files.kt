@@ -21,7 +21,6 @@ import com.acornui.core.di.DKey
 import com.acornui.io.file.FilesManifest
 import com.acornui.core.replace2
 import com.acornui.core.split2
-import kotlin.coroutines.experimental.buildSequence
 
 
 interface Files {
@@ -74,6 +73,7 @@ class FilesImpl(manifest: FilesManifest) : Files {
 	}
 
 	override fun getDir(path: String): Directory? {
+		if (path == "") return rootDir
 		var p: Directory? = rootDir
 		val pathSplit = path.replace2('\\', '/').split2('/')
 		for (part in pathSplit) {
@@ -115,7 +115,7 @@ class FileEntry(
 		}
 
 	fun hasExtension(extension: String): Boolean {
-		return extension.equals(extension, ignoreCase = true)
+		return this.extension.equals(extension, ignoreCase = true)
 	}
 
 	/**

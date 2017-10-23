@@ -1,8 +1,8 @@
 package com.acornui.component
 
 /**
- * An AttachmentHolder can contain a map of arbitrary objects. This is used to create components through composition
- * rather than inheritance.
+ * An AttachmentHolder can contain a map of arbitrary objects. This is used to attach reusable behaviors to components
+ * such as drag and drop, toss scrolling, user interaction.
  */
 interface AttachmentHolder {
 

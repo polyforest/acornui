@@ -1,12 +1,22 @@
 package com.acornui.core
 
-interface VersionRo : Comparable<VersionRo>  {
-	val major: Int
-	val minor: Int
-	val patch: Int
-	val build: Int
 
-	override fun compareTo(other: VersionRo): Int {
+/**
+ * A major.minor.patch.build representation
+ *
+ * MAJOR version when you make incompatible API changes,
+ * MINOR version when you add functionality in a backwards-compatible manner, and
+ * PATCH version when you make backwards-compatible bug fixes.
+ * BUILD version automatically incremented on a build.
+ */
+data class Version(
+		val major: Int,
+		val minor: Int,
+		val patch: Int,
+		val build: Int
+) : Comparable<Version> {
+
+	override fun compareTo(other: Version): Int {
 		val c1 = major.compareTo(other.major)
 		if (c1 != 0) return c1
 		val c2 = minor.compareTo(other.minor)
@@ -18,40 +28,15 @@ interface VersionRo : Comparable<VersionRo>  {
 		return 0
 	}
 
-	fun isApiCompatible(other: VersionRo): Boolean {
+	fun isApiCompatible(other: Version): Boolean {
 		return major == other.major && minor == other.minor
 	}
 
 	fun toVersionString(): String {
 		return "$major.$minor.$patch.$build"
 	}
-}
 
-/**
- * A major.minor.patch.build representation
- *
- * MAJOR version when you make incompatible API changes,
- * MINOR version when you add functionality in a backwards-compatible manner, and
- * PATCH version when you make backwards-compatible bug fixes.
- * BUILD version automatically incremented on a build.
- */
-data class Version(
-		override var major: Int,
-		override var minor: Int,
-		override var patch: Int,
-		override var build: Int
-) : VersionRo {
-
-	override fun toString(): String {
-		return super.toString()
-	}
-
-	fun set(other: VersionRo) {
-		major = other.major
-		minor = other.minor
-		patch = other.patch
-		build = other.build
-	}
+	override fun toString(): String = toVersionString()
 
 	companion object {
 		fun fromStr(value: String): Version {

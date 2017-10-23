@@ -17,7 +17,10 @@
 package com.acornui.core
 
 import com.acornui.core.di.DKey
+import com.acornui.core.di.Scoped
+import com.acornui.core.di.inject
 import com.acornui.core.i18n.Locale
+import kotlin.properties.Delegates
 
 /**
  * Application configuration common across back-end types.
@@ -25,12 +28,16 @@ import com.acornui.core.i18n.Locale
  */
 data class AppConfig(
 
+		/**
+		 * The application's version. The version's build number will be set to the number within the file:
+		 * `config.rootPath + "assets/build.txt"`
+		 */
 		val version: Version = Version(0, 1, 0, 0),
 
 		/**
 		 * All relative files will be prepended with this string.
 		 */
-		var rootPath: String = "",
+		val rootPath: String = "",
 
 		/**
 		 * A flag for enabling various debugging features like debug logging.
@@ -38,17 +45,17 @@ data class AppConfig(
 		 * On the JS backend debug=true exists as a querystring parameter.
 		 * On the JVM backend -Ddebug=true exists as a vm parameter.
 		 */
-		var debug: Boolean = false,
+		val debug: Boolean = false,
 
 		/**
 		 * The target number of ticks per second.
 		 */
-		var frameRate: Int = 50,
+		val frameRate: Int = 50,
 
 		/**
 		 * The location of the files.json file created by the AcornUI assets task.
 		 */
-		var assetsManifestPath: String = "assets/files.json",
+		val assetsManifestPath: String = "assets/files.json",
 
 		val window: WindowConfig = WindowConfig(),
 
@@ -69,17 +76,17 @@ data class AppConfig(
 
 data class WindowConfig(
 
-		var title: String = "",
+		val title: String = "",
 
 		/**
 		 * The initial width of the window (For JS backends, set the width style on the root div instead).
 		 */
-		var initialWidth: Float = 800f,
+		val initialWidth: Float = 800f,
 
 		/**
 		 * The initial height of the window (For JS backends, set the width style on the root div instead).
 		 */
-		var initialHeight: Float = 600f
+		val initialHeight: Float = 600f
 
 )
 
@@ -88,71 +95,92 @@ data class GlConfig(
 		/**
 		 * Post-scene 4x4 MSAA. May make text look blurry on certain systems.
 		 */
-		var antialias: Boolean = true,
+		val antialias: Boolean = true,
 
 		/**
 		 * Use a depth buffer.
 		 */
-		var depth: Boolean = false,
+		val depth: Boolean = false,
 
 		/**
 		 * Applies to webgl only, if true, the canvas will be transparent.
 		 * The stage background color should have transparency if this is true.
 		 */
-		var alpha: Boolean = false,
+		val alpha: Boolean = false,
 
 		/**
 		 * Use a stencil buffer.
 		 */
-		var stencil: Boolean = true,
+		val stencil: Boolean = true,
 
 		/**
 		 * Enable vertical sync.
 		 */
-		var vSync: Boolean = true
+		val vSync: Boolean = true
 )
 
-object UserInfo {
+/**
+ * A singleton reference to the user info. This does not need to be scoped; there can only be one machine.
+ */
+var userInfo: UserInfo by Delegates.notNull<UserInfo>()
 
-	/**
-	 * True if the backend is an open gl backend.
-	 */
-	var isOpenGl = false
+/**
+ * Details about the user.
+ */
+data class UserInfo(
 
-	var isTouchDevice = false
+		/**
+		 * True if the backend is an open gl backend.
+		 */
+		val isOpenGl: Boolean = false,
 
-	var isBrowser = false
-	var isDesktop = false
+		val isTouchDevice: Boolean = false,
 
-	/**
-	 * Because... I.E.
-	 */
-	var isIe = false
+		val isBrowser: Boolean = false,
+		val isDesktop: Boolean = false,
 
-	var isMobile = false
+		/**
+		 * Because... I.E.
+		 */
+		val isIe: Boolean = false,
 
+		val isMobile: Boolean = false,
+
+		val languages: List<Locale> = listOf()
+) {
+
+	override fun toString(): String {
+		return "UserInfo(isOpenGl=$isOpenGl isTouchDevice=$isTouchDevice isBrowser=$isBrowser isIe=$isIe isMobile=$isMobile languages=${languages.joinToString(",")})"
+	}
+
+	companion object : DKey<UserInfo>
+}
+
+/**
+ * A way to get at the user's average internet bandwidth.
+ */
+object Bandwidth {
 	// TODO: Calculate bandwidth
 
 	/**
 	 * Download speed, bytes per second.
 	 */
-	var downBps = 196608f
+	val downBps: Float = 196608f
 
-	var downBpsInv = 1f / 196608f
+	val downBpsInv: Float = 1f / 196608f
 
 	/**
 	 * Upload speed, bytes per second.
 	 */
-	var upBps = 196608f
+	val upBps: Float = 196608f
 
-	var upBpsInv = 1f / 196608f
-
-	var languages: List<Locale> = listOf()
-
-	override fun toString(): String {
-		return "UserInfo(isOpenGl=$isOpenGl isTouchDevice=$isTouchDevice isBrowser=$isBrowser isIe=$isIe isMobile=$isMobile languages=${languages.joinToString(",")})"
-	}
 }
+
+/**
+ * A convenient way to get the scoped AppConfig.
+ */
+val Scoped.config: AppConfig
+	get() = inject(AppConfig)
 
 //enum class Browser {
 //	NONE,

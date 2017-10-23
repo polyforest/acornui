@@ -18,9 +18,8 @@ package com.esotericsoftware.spine.component
 
 import com.acornui.async.Deferred
 import com.acornui.async.async
-import com.acornui.core.assets.AssetTypes
-import com.acornui.core.assets.load
-import com.acornui.core.assets.loadJson
+import com.acornui.async.awaitAll
+import com.acornui.core.assets.*
 import com.acornui.core.di.Scoped
 import com.acornui.core.graphics.*
 import com.esotericsoftware.spine.data.SkeletonData
@@ -59,27 +58,28 @@ class LoadedSkin(
  * Loads the skeleton from the specified JSON file and texture atlas.
  * @param skins A list of skins to load by name. If this is null, all skins will be loaded.
  */
-fun Scoped.loadSkeleton(skeletonDataPath: String, textureAtlasPath: String, skins: List<String>? = null): Deferred<LoadedSkeleton> = async {
-	val skeletonDataLoader = loadJson(skeletonDataPath, SkeletonDataSerializer)
-	val textureAtlasLoader = loadJson(textureAtlasPath, TextureAtlasDataSerializer)
-	val loadedSkins = HashMap<String, LoadedSkin>()
+fun Scoped.loadSkeleton(skeletonDataPath: String, textureAtlasPath: String, skins: List<String>?, cachedGroup: CachedGroup): Deferred<LoadedSkeleton> = async {
+	val skeletonDataLoader = loadAndCacheJson(skeletonDataPath, SkeletonDataSerializer, cachedGroup)
+	val textureAtlasLoader = loadAndCacheJson(textureAtlasPath, TextureAtlasDataSerializer, cachedGroup)
 
 	val skeletonData = skeletonDataLoader.await()
 	val textureAtlasData = textureAtlasLoader.await()
-	val skinsToLoad = skins ?: skeletonData.skins.keys
+	val skinsToLoad = skins ?: skeletonData.skins.keys // If skins is null, load all skins
 
 	val skinsDirectory = textureAtlasPath.substringBeforeLast("/")
+	val loadedSkins = HashMap<String, Deferred<LoadedSkin>>()
 	for (skinName in skinsToLoad) {
-		loadedSkins[skinName] = loadSkeletonSkin(skeletonData, textureAtlasData, skinName, skinsDirectory).await()
+		loadedSkins[skinName] = loadSkeletonSkin(skeletonData, textureAtlasData, skinName, skinsDirectory, cachedGroup)
 	}
-	LoadedSkeleton(skeletonData, textureAtlasData, loadedSkins)
+	LoadedSkeleton(skeletonData, textureAtlasData, loadedSkins.awaitAll())
 }
 
 fun Scoped.loadSkeletonSkin(
 		skeletonData: SkeletonData,
 		textureAtlasData: TextureAtlasData,
 		skin: String,
-		skinsDirectory: String
+		skinsDirectory: String,
+		cachedGroup: CachedGroup
 ): Deferred<LoadedSkin> = async {
 
 	val skinData = skeletonData.findSkin(skin) ?: throw Exception("Could not find skin $skin")
@@ -88,7 +88,7 @@ fun Scoped.loadSkeletonSkin(
 		val (page, _) = textureAtlasData.findRegion(i.attachmentName) ?: throw Exception("Region ${i.attachmentName} not found in atlas.")
 		if (!pageTextures.contains(page.texturePath)) {
 			val pagePath = "$skinsDirectory/${page.texturePath}"
-			pageTextures[page.texturePath] = AtlasPageDecorator(page).decorate(load(pagePath, AssetTypes.TEXTURE).await())
+			pageTextures[page.texturePath] = AtlasPageDecorator(page).decorate(loadAndCache(pagePath, AssetTypes.TEXTURE, cachedGroup).await())
 		}
 	}
 	LoadedSkin(pageTextures)

@@ -96,7 +96,7 @@ interface ElementContainer<T : UiComponent> : ElementContainerRo<T>, ElementPare
  */
 open class ElementContainerImpl<T : UiComponent>(
 		owner: Owned,
-		override val native: NativeContainer = owner.inject(NativeContainer.FACTORY_KEY)(owner)
+		native: NativeContainer = owner.inject(NativeContainer.FACTORY_KEY)(owner)
 ) : ContainerImpl(owner, native), ElementContainer<T>, Container {
 
 	//-------------------------------------------------------------------------------------------------

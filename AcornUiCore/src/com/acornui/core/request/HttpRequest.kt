@@ -20,8 +20,10 @@ import com.acornui.action.Progress
 import com.acornui.async.CancelableDeferred
 import com.acornui.browser.UrlParams
 import com.acornui.collection.Clearable
+import com.acornui.core.di.DKey
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
+import com.acornui.core.di.inject
 import com.acornui.io.NativeBuffer
 
 /**
@@ -69,19 +71,17 @@ interface RestServiceFactory {
 	fun createTextRequest(injector: Injector, requestData: UrlRequestData): Request<String>
 	fun createBinaryRequest(injector: Injector, requestData: UrlRequestData): Request<NativeBuffer<Byte>>
 
-	companion object {
-		lateinit var instance: RestServiceFactory
-	}
+	companion object : DKey<RestServiceFactory>
 }
 
 interface Request<out T>: Progress, CancelableDeferred<T>
 
 fun Scoped.createTextRequest(requestData: UrlRequestData): Request<String> {
-	return RestServiceFactory.instance.createTextRequest(injector, requestData)
+	return inject(RestServiceFactory).createTextRequest(injector, requestData)
 }
 
 fun Scoped.createBinaryRequest(requestData: UrlRequestData): Request<NativeBuffer<Byte>> {
-	return RestServiceFactory.instance.createBinaryRequest(injector, requestData)
+	return inject(RestServiceFactory).createBinaryRequest(injector, requestData)
 }
 
 open class ResponseException(val status: Short, message: String?, val detail: String) : Throwable(message) {

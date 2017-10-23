@@ -25,7 +25,6 @@ import com.acornui.component.style.StyleType
 import com.acornui.core.Disposable
 import com.acornui.core.di.inject
 import com.acornui.core.input.*
-import com.acornui.core.time.Timer
 import com.acornui.core.time.time
 import com.acornui.core.time.timer
 
@@ -39,14 +38,12 @@ class DownRepeat(
 	// TODO: This style won't inherit
 	val style = DownRepeatStyle()
 
-	private var repeatTimer: Timer? = null
+	private var repeatTimer: Disposable? = null
 
 	init {
 	}
 
 	private val repeatWaitHandler = {
-		repeatTimer!!.duration = style.repeatInterval
-
 		val m = mouseState
 		MOUSE_DOWN_REPEAT.type = MouseInteraction.MOUSE_DOWN
 		MOUSE_DOWN_REPEAT.canvasX = m.canvasX()
@@ -61,8 +58,8 @@ class DownRepeat(
 	private val mouseDownHandler = {
 		event: MouseInteraction ->
 		if (event != MOUSE_DOWN_REPEAT) {
-			repeatTimer?.stop()
-			repeatTimer = target.timer(style.repeatDelay, -1, repeatWaitHandler)
+			repeatTimer?.dispose()
+			repeatTimer = target.timer(style.repeatInterval, -1, style.repeatDelay, repeatWaitHandler)
 			stage.mouseUp().add(rawMouseUpHandler, true)
 		}
 	}
@@ -70,7 +67,7 @@ class DownRepeat(
 	private val rawMouseUpHandler = {
 		event: MouseInteraction ->
 		if (event.button == WhichButton.LEFT) {
-			repeatTimer?.stop()
+			repeatTimer?.dispose()
 			repeatTimer = null
 		}
 	}
@@ -83,7 +80,7 @@ class DownRepeat(
 		style.dispose()
 		target.mouseDown().remove(mouseDownHandler)
 		stage.mouseUp().remove(rawMouseUpHandler)
-		repeatTimer?.stop()
+		repeatTimer?.dispose()
 		repeatTimer = null
 	}
 

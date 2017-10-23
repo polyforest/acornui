@@ -24,13 +24,11 @@ import com.acornui.component.text.TextArea
 import com.acornui.component.text.TextField
 import com.acornui.component.text.TextInput
 import com.acornui.core.AppConfig
-import com.acornui.core.UserInfo
 import com.acornui.core.assets.AssetManager
 import com.acornui.core.assets.AssetTypes
 import com.acornui.core.di.Owned
-import com.acornui.core.di.OwnedImpl
+import com.acornui.core.focus.FakeFocusMouse
 import com.acornui.core.focus.FocusManager
-import com.acornui.core.focus.fakeFocusMouse
 import com.acornui.core.graphics.Window
 import com.acornui.core.input.InteractivityManager
 import com.acornui.core.selection.SelectionManager
@@ -47,23 +45,19 @@ import kotlin.dom.clear
  * @author nbilyk
  */
 open class DomApplication(
-		rootId: String,
-		config: AppConfig = AppConfig(),
-		onReady: Owned.(stage: Stage) -> Unit) : JsApplicationBase(rootId, config, onReady) {
+		private val rootId: String
+) : JsApplicationBase() {
 
-	override lateinit var canvas: HTMLElement
+	override val isOpenGl = false
 
-	init {
-		UserInfo.isOpenGl = false
-	}
-
-	override fun initializeCanvas() {
+	override val canvasTask by BootTask {
 		val rootElement = document.getElementById(rootId) ?: throw Exception("Could not find root canvas $rootId")
-		canvas = rootElement as HTMLElement
+		val canvas = rootElement as HTMLElement
 		canvas.clear()
+		set(CANVAS, canvas)
 	}
 
-	override fun initializeCss() {
+	open protected val cssTask by BootTask {
 		val e = document.createElement("style") as HTMLStyleElement
 		e.type = "text/css"
 		// language=CSS
@@ -84,53 +78,48 @@ open class DomApplication(
 				-ms-user-select: none;
 			}
 		"""
-		canvas.appendChild(e)
+		get(CANVAS).appendChild(e)
 	}
 
-	override fun initializeWindow() {
-		bootstrap[Window] = DomWindowImpl(canvas, config.window)
+	override val windowTask by BootTask {
+		set(Window, DomWindowImpl(get(CANVAS), get(AppConfig).window))
 	}
 
-	override fun initializeTextures() {
-		bootstrap.on(AssetManager) {
-			get(AssetManager).setLoaderFactory(AssetTypes.TEXTURE, { path, estimatedBytesTotal ->  DomTextureLoader(path, estimatedBytesTotal) })
-		}
-	}
-
-	override fun initializeInteractivity() {
-		bootstrap[InteractivityManager] = DomInteractivityManager()
-	}
-
-	override fun initializeFocusManager() {
-		bootstrap[FocusManager] = DomFocusManager()
-	}
-
-	override fun initializeSelectionManager() {
-		bootstrap[SelectionManager] = DomSelectionManager(canvas)
+	override val componentsTask by BootTask {
+		set(NativeComponent.FACTORY_KEY, { DomComponent() })
+		set(NativeContainer.FACTORY_KEY, { DomContainer() })
+		set(TextField.FACTORY_KEY, { DomTextField(it) })
+		set(EditableTextField.FACTORY_KEY, { DomEditableTextField(it) })
+		set(TextInput.FACTORY_KEY, { DomTextInput(it) })
+		set(TextArea.FACTORY_KEY, { DomTextArea(it) })
+		set(TextureComponent.FACTORY_KEY, { DomTextureComponent(it) })
+		set(ScrollArea.FACTORY_KEY, { DomScrollArea(it) })
+		set(ScrollRect.FACTORY_KEY, { DomScrollRect(it) })
+		set(Rect.FACTORY_KEY, { DomRect(it) })
 	}
 
 
-	/**
-	 * The last chance to set dependencies on the application scope.
-	 */
-	override fun initializeComponents() {
-		bootstrap[NativeComponent.FACTORY_KEY] = { DomComponent() }
-		bootstrap[NativeContainer.FACTORY_KEY] = { DomContainer() }
-		bootstrap[TextField.FACTORY_KEY] = { DomTextField(it) }
-		bootstrap[EditableTextField.FACTORY_KEY] = { DomEditableTextField(it) }
-		bootstrap[TextInput.FACTORY_KEY] = { DomTextInput(it) }
-		bootstrap[TextArea.FACTORY_KEY] = { DomTextArea(it) }
-		bootstrap[TextureComponent.FACTORY_KEY] = { DomTextureComponent(it) }
-		bootstrap[ScrollArea.FACTORY_KEY] = { DomScrollArea(it) }
-		bootstrap[ScrollRect.FACTORY_KEY] = { DomScrollRect(it) }
-		bootstrap[Rect.FACTORY_KEY] = { DomRect(it) }
+	protected open val texturesTask by BootTask {
+		get(AssetManager).setLoaderFactory(AssetTypes.TEXTURE, { path, estimatedBytesTotal -> DomTextureLoader(path, estimatedBytesTotal) })
 	}
 
-	override fun initializeStage() {
-		bootstrap[Stage] = DomStageImpl(OwnedImpl(null, bootstrap.injector), canvas)
+	override val interactivityTask by BootTask {
+		set(InteractivityManager, DomInteractivityManager())
 	}
 
-	override fun initializeSpecialInteractivity() {
-		bootstrap.fakeFocusMouse()
+	override val focusManagerTask by BootTask {
+		set(FocusManager, DomFocusManager())
+	}
+
+	override val selectionManagerTask by BootTask {
+		set(SelectionManager, DomSelectionManager(get(CANVAS)))
+	}
+
+	override suspend fun createStage(owner: Owned): Stage {
+		return DomStageImpl(owner, get(CANVAS))
+	}
+
+	override suspend fun initializeSpecialInteractivity(owner: Owned) {
+		FakeFocusMouse(owner.injector)
 	}
 }

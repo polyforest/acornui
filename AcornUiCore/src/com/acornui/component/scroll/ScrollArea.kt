@@ -23,8 +23,8 @@ import com.acornui.component.UiComponent
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.*
 import com.acornui.core.di.DKey
-import com.acornui.core.di.DependencyKeyImpl
 import com.acornui.core.di.Owned
+import com.acornui.core.di.dKey
 import com.acornui.math.Corners
 import com.acornui.math.CornersRo
 
@@ -44,7 +44,7 @@ interface ScrollArea : LayoutDataProvider<StackLayoutData>, ElementContainer<UiC
 	override fun createLayoutData(): StackLayoutData = StackLayoutData()
 
 	companion object : StyleTag {
-		val FACTORY_KEY: DKey<(owner: Owned) -> ScrollArea> = DependencyKeyImpl()
+		val FACTORY_KEY = dKey<(owner: Owned) -> ScrollArea>()
 
 		val VBAR_STYLE = styleTag()
 		val HBAR_STYLE = styleTag()

@@ -3,18 +3,14 @@ package com.acornui.core.i18n
 import com.acornui._assert
 import com.acornui.action.Decorator
 import com.acornui.async.then
-import com.acornui.collection.copy
 import com.acornui.collection.find2
-import com.acornui.core.Disposable
-import com.acornui.core.UserInfo
+import com.acornui.core.*
 import com.acornui.core.assets.AssetTypes
 import com.acornui.core.assets.load
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
-import com.acornui.core.removeBackslashes
-import com.acornui.core.replace2
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
@@ -49,7 +45,11 @@ interface I18n {
 
 	companion object : DKey<I18n> {
 
-		override fun factory(injector: Injector): I18n? = I18nImpl()
+		override fun factory(injector: Injector): I18n? {
+			val i18n = I18nImpl()
+			i18n.currentLocales = userInfo.languages
+			return i18n
+		}
 
 		val UNDEFINED: Locale = Locale("und")
 	}
@@ -85,7 +85,7 @@ class I18nImpl : I18n, Disposable {
 	override val currentLocaleChanged: Signal<(oldLocale: List<Locale>, newLocale: List<Locale>) -> Unit>
 		get() = _currentLocaleChanged
 
-	private var _currentLocale: List<Locale> = UserInfo.languages.copy()
+	private var _currentLocale: List<Locale> = listOf()
 	override var currentLocales: List<Locale>
 		get() = _currentLocale
 		set(value) {
@@ -286,20 +286,4 @@ fun Scoped.chooseLocale(supported: List<Locale>): Locale? {
  *
  * @param value The locale key. E.g. en-US
  */
-class Locale(val value: String) {
-
-	override fun equals(other: Any?): Boolean {
-		if (this === other) return true
-		if (other !is Locale) return false
-		if (value != other.value) return false
-		return true
-	}
-
-	override fun hashCode(): Int {
-		return value.hashCode()
-	}
-
-	override fun toString(): String {
-		return "Locale($value)"
-	}
-}
+data class Locale(val value: String)

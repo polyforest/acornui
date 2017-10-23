@@ -17,29 +17,28 @@
 package com.acornui.js
 
 import com.acornui.assertionsEnabled
-import com.acornui.async.catch
-import com.acornui.async.then
+import com.acornui.async.awaitOrNull
+import com.acornui.async.launch
 import com.acornui.browser.appendParam
 import com.acornui.browser.decodeUriComponent2
 import com.acornui.browser.encodeUriComponent2
 import com.acornui.component.Stage
-import com.acornui.core.AppConfig
-import com.acornui.core.Disposable
-import com.acornui.core.UidUtil
+import com.acornui.component.UiComponent
+import com.acornui.core.*
 import com.acornui.core.assets.AssetManager
 import com.acornui.core.assets.AssetManagerImpl
 import com.acornui.core.assets.AssetTypes
 import com.acornui.core.audio.AudioManager
 import com.acornui.core.audio.AudioManagerImpl
 import com.acornui.core.cursor.CursorManager
-import com.acornui.core.di.Bootstrap
-import com.acornui.core.di.Owned
+import com.acornui.core.di.*
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.FocusManagerImpl
 import com.acornui.core.graphics.Camera
 import com.acornui.core.graphics.OrthographicCamera
 import com.acornui.core.graphics.Window
 import com.acornui.core.graphics.autoCenterCamera
+import com.acornui.core.i18n.Locale
 import com.acornui.core.input.InteractivityManager
 import com.acornui.core.input.InteractivityManagerImpl
 import com.acornui.core.input.KeyInput
@@ -65,7 +64,6 @@ import com.acornui.js.audio.JsAudioElementSoundLoader
 import com.acornui.js.audio.JsWebAudioSoundLoader
 import com.acornui.js.audio.audioContextSupported
 import com.acornui.js.cursor.JsCursorManager
-import com.acornui.js.html.initializeUserInfo
 import com.acornui.js.input.JsKeyInput
 import com.acornui.js.input.JsMouseInput
 import com.acornui.js.io.JsBufferFactory
@@ -83,284 +81,263 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.LOADING
 import kotlin.browser.document
 import kotlin.browser.window
+import kotlin.coroutines.experimental.suspendCoroutine
 
 /**
  * The common setup tasks to both a webgl application and a dom application backend.
- * @author nbilyk
  */
-@Suppress("LeakingThis")
-abstract class JsApplicationBase(
-		protected val rootId: String,
-		protected val config: AppConfig,
-		private val onReady: Owned.(stage: Stage) -> Unit) : Disposable {
+@Suppress("unused")
+abstract class JsApplicationBase : ApplicationBase() {
 
-	val bootstrap = Bootstrap()
-
-	/**
-	 * The html element the application is placed in.
-	 */
-	protected abstract val canvas: HTMLElement
+	protected abstract val isOpenGl: Boolean
 
 	private var frameDriver: JsApplicationRunner? = null
 
 	init {
+		@Suppress("LeakingThis")
 		if (this::memberRefTest != this::memberRefTest) println("[SEVERE] Member reference fix isn't working, check the KotlinMonkeyPatcher build step.")
-		initializeUserInfo()
-		initializeTime()
-		initializeNumber()
-		initializeString()
-		initializeConfig()
-
-		if (document.readyState == DocumentReadyState.LOADING) {
-			document.addEventListener("DOMContentLoaded", {
-				start()
-			})
-		} else {
-			start()
-		}
-
+		time = TimeProviderImpl()
+		encodeUriComponent2 = ::encodeURIComponent
+		decodeUriComponent2 = ::decodeURIComponent
 		window.addEventListener("beforeunload", { dispose() })
 	}
 
-	private fun start() {
-		bootstrap.on(AppConfig) {
-			initializeBootstrap()
+	fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {
+		launch {
+			initializeConfig(appConfig)
+			contentLoad()
 
-			bootstrap.then {
-				initializeStage()
-				initializePopUpManager()
-				initializeSpecialInteractivity()
-			}
-			bootstrap.then {
-				bootstrap.lock()
+			awaitAll()
+			val injector = createInjector()
+			val stage = createStage(OwnedImpl(injector))
+			val popUpManager = createPopUpManager(stage)
+			val scope = stage.createScope(
+					listOf(
+							Stage to stage,
+							PopUpManager to popUpManager
+					)
+			)
+			initializeSpecialInteractivity(scope)
+			scope.onReady()
 
-				val stage = bootstrap[Stage]
-				stage.onReady(stage)
+			// Add the pop-up manager after onReady so that it is the highest index.
+			stage.addElement(popUpManager.view)
 
-				// Add the pop-up manager after onReady so that it is the highest index.
-				stage.addElement(bootstrap[PopUpManager].view)
-
-				frameDriver = initializeFrameDriver()
-				frameDriver!!.start()
-			}
+			frameDriver = initializeFrameDriver(scope.injector)
+			frameDriver!!.start()
 		}
 	}
 
-	/**
-	 * Initializes number constants and methods
-	 */
-	protected open fun initializeNumber() {
-	}
-
-	protected open fun initializeTime() {
-		time = TimeProviderImpl()
-	}
-
-	protected open fun initializeString() {
-		encodeUriComponent2 = ::encodeURIComponent
-		decodeUriComponent2 = ::decodeURIComponent
-	}
-
-	protected open fun initializeConfig() {
-		val path = config.rootPath + "assets/build.txt".appendParam("version", UidUtil.createUid())
+	protected open suspend fun initializeConfig(appConfig: AppConfig) {
+		// Copy the app config and set the build number and debug value.
+		val path = appConfig.rootPath + "assets/build.txt".appendParam("version", UidUtil.createUid())
 		val buildVersionLoader = JsTextLoader(path)
-		buildVersionLoader.then {
-			config.version.build = it.toInt()
-			Log.info("Build: ${config.version}")
-			bootstrap[AppConfig] = config
+		val debug = appConfig.debug || (window.location.search.contains(Regex("""(?:&|\?)debug=(true|1)""")))
+		val build = buildVersionLoader.awaitOrNull()
+		val finalConfig = if (build != null) {
+			appConfig.copy(debug = debug, version = appConfig.version.copy(build = build.toInt()))
+		} else {
+			Log.warn("assets/build.txt failed to load")
+			appConfig.copy(debug = debug)
 		}
-		buildVersionLoader.catch {
-			Log.warn("assets/build.txt failed to load: $it")
-			bootstrap[AppConfig] = config
-		}
-	}
 
-	protected open fun initializeBootstrap() {
-		initializeUncaughtExceptionHandler()
-		initializeDebug()
-		initializeLogging()
-		initializeBufferFactory()
-		initializeCanvas()
-		initializeCss()
-		initializeWindow()
-		initializeMouseInput()
-		initializeKeyInput()
-		initializeJson()
-		initializeCamera()
-		initializeFiles()
-		initializeRequest()
-		initializeAssetManager()
-		initializeTextures()
-		initializeAudio()
-		initializeTimeDriver()
-		initializeFocusManager()
-		initializeInteractivity()
-		initializeCursorManager()
-		initializeSelectionManager()
-		initializePersistence()
-		initializeTextFormatters()
-		initializeComponents()
-	}
-
-	abstract fun initializeCanvas()
-
-	protected open fun initializeCss() {
-	}
-
-	abstract fun initializeWindow()
-
-	protected open fun initializeFrameDriver(): JsApplicationRunner {
-		return JsApplicationRunnerImpl(bootstrap.injector)
-	}
-
-	protected open fun initializeUncaughtExceptionHandler() {
+		// Uncaught exception handler
 		window.onerror = {
 			message, source, lineNo, colNo, error ->
-			val msg = "Error caught: $message $lineNo $source $colNo $error"
+			val msg = "Error: $message $lineNo $source $colNo $error"
 			Log.error(msg)
-			if (config.debug)
+			if (finalConfig.debug)
 				window.alert(msg)
 		}
+
+		// _assert
+		assertionsEnabled = finalConfig.debug
+
+		Log.info("Config $finalConfig")
+		set(AppConfig, finalConfig)
 	}
 
-	protected open fun initializeDebug() {
-		config.debug = config.debug || (window.location.search.contains(Regex("""(?:&|\?)debug=(true|1)""")))
-		if (config.debug) {
-			println("Debug mode")
-			assertionsEnabled = true
+	protected open val userInfoTask by BootTask {
+		val ua = window.navigator.userAgent
+
+		val isIe = when {
+			ua.indexOf("MSIE ") >= 0 -> // IE 10 or older
+				true
+			ua.indexOf("Trident/") >= 0 -> // IE 11
+				true
+			else -> // Not IE
+				false
+		}
+
+		val isTouchDevice = js("""'ontouchstart' in window || !!navigator.maxTouchPoints;""") as? Boolean ?: false
+
+		val isMobile = js("""
+			var check = false;
+  (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
+  check;
+		""") as? Boolean ?: false
+
+		@Suppress("USELESS_ELVIS")
+		val languages = window.navigator.languages ?: arrayOf(window.navigator.language)
+
+		@Suppress("SENSELESS_COMPARISON") // window.navigator.languages can be null.
+		val uI = UserInfo(
+				isTouchDevice = isTouchDevice,
+				isBrowser = true,
+				isOpenGl = isOpenGl,
+				isMobile = isMobile,
+				isIe = isIe,
+				languages = languages.map { Locale(it) }
+		)
+
+		userInfo = uI
+		set(UserInfo, uI)
+	}
+
+	protected suspend fun contentLoad() {
+		suspendCoroutine<Unit> {
+			cont ->
+			if (document.readyState == DocumentReadyState.LOADING) {
+				document.addEventListener("DOMContentLoaded", {
+					cont.resume(Unit)
+				})
+			} else {
+				cont.resume(Unit)
+			}
 		}
 	}
 
-	protected open fun initializeLogging() {
-		if (config.debug) {
+	abstract val canvasTask: suspend () -> Unit
+	abstract val windowTask: suspend () -> Unit
+	abstract val componentsTask: suspend () -> Unit
+
+	protected open suspend fun initializeFrameDriver(injector: Injector): JsApplicationRunner {
+		return JsApplicationRunnerImpl(injector)
+	}
+
+	protected open val loggingTask by BootTask {
+		if (get(AppConfig).debug) {
 			Log.level = ILogger.DEBUG
 		} else {
 			Log.level = ILogger.WARN
 		}
 	}
 
-	protected open fun initializeBufferFactory() {
+	protected open val bufferTask by BootTask {
 		BufferFactory.instance = JsBufferFactory()
 	}
 
-	protected open fun initializeMouseInput() {
-		bootstrap[MouseInput] = JsMouseInput(canvas)
+	protected open val mouseInputTask by BootTask {
+		set(MouseInput, JsMouseInput(get(CANVAS)))
 	}
 
-	protected open fun initializeKeyInput() {
-		bootstrap[KeyInput] = JsKeyInput(canvas)
+	protected open val keyInputTask by BootTask {
+		set(KeyInput, JsKeyInput(get(CANVAS)))
 	}
 
-	protected open fun initializeJson() {
-		bootstrap[JSON_KEY] = JsonSerializer
+	protected open val jsonTask by BootTask {
+		set(JSON_KEY, JsonSerializer)
 	}
 
-	protected open fun initializeCamera() {
-		bootstrap.on(Window) {
-			val camera = OrthographicCamera()
-			bootstrap[Camera] = camera
-			bootstrap[Window].autoCenterCamera(camera)
-		}
+	protected open val cameraTask by BootTask {
+		val camera = OrthographicCamera()
+		set(Camera, camera)
+		get(Window).autoCenterCamera(camera)
 	}
 
-	protected open fun initializeFiles() {
-		bootstrap.waitFor(Files)
-		bootstrap.on(JSON_KEY) {
-			val json = bootstrap[JSON_KEY]
-			val path = config.rootPath + config.assetsManifestPath.appendParam("version", config.version.toVersionString())
-			val manifestLoader = JsTextLoader(path)
-			manifestLoader.then {
-				val manifest = json.read(it, FilesManifestSerializer)
-				this[Files] = FilesImpl(manifest)
-			}
-		}
+	protected open val filesTask by BootTask {
+		val json = get(JSON_KEY)
+		val config = get(AppConfig)
+		val path = config.rootPath + config.assetsManifestPath.appendParam("version", config.version.toVersionString())
+
+		val it = JsTextLoader(path).await()
+		val manifest = json.read(it, FilesManifestSerializer)
+		set(Files, FilesImpl(manifest))
 	}
 
-	protected open fun initializeRequest() {
-		RestServiceFactory.instance = JsRestServiceFactory
+	protected open val requestTask by BootTask {
+		set(RestServiceFactory, JsRestServiceFactory)
 	}
 
-	protected open fun initializeAssetManager() {
-		bootstrap.on(Files) {
-			val assetManager = AssetManagerImpl(config.rootPath, bootstrap[Files], appendVersion = true)
-			assetManager.setLoaderFactory(AssetTypes.TEXT, { path: String, estimatedBytesTotal: Int ->  JsTextLoader(path, estimatedBytesTotal) })
-			this[AssetManager] = assetManager
-		}
+	protected open val assetManagerTask by BootTask {
+		val config = get(AppConfig)
+		val assetManager = AssetManagerImpl(config.rootPath, get(Files), appendVersion = true)
+		assetManager.setLoaderFactory(AssetTypes.TEXT, { path: String, estimatedBytesTotal: Int -> JsTextLoader(path, estimatedBytesTotal) })
+		set(AssetManager, assetManager)
 	}
 
-	abstract fun initializeTextures()
-
-	protected open fun initializeAudio() {
+	protected open val audioTask by BootTask {
 		val audioManager = AudioManagerImpl()
-		bootstrap[AudioManager] = audioManager
+		set(AudioManager, audioManager)
 
-		bootstrap.on(AssetManager) {
-			// JS Audio doesn't need to be updated like OpenAL audio does, so we don't add it to the TimeDriver.
-			val assetManager = bootstrap[AssetManager]
+		// JS Audio doesn't need to be updated like OpenAL audio does, so we don't add it to the TimeDriver.
+		val assetManager = get(AssetManager)
 
-			if (audioContextSupported) {
-				assetManager.setLoaderFactory(AssetTypes.SOUND, { path: String, estimatedBytesTotal: Int ->  JsWebAudioSoundLoader(path, estimatedBytesTotal, audioManager) })
-//				assetManager.setLoaderFactory(AssetTypes.MUSIC, { JsWebAudioMusicLoader(audioManager) })
-			} else {
-				assetManager.setLoaderFactory(AssetTypes.SOUND, { path: String, estimatedBytesTotal: Int ->  JsAudioElementSoundLoader(path, estimatedBytesTotal, audioManager) })
-			}
-			assetManager.setLoaderFactory(AssetTypes.MUSIC, { path: String, estimatedBytesTotal: Int ->  JsAudioElementMusicLoader(path, estimatedBytesTotal, audioManager) })
+		if (audioContextSupported) {
+			assetManager.setLoaderFactory(AssetTypes.SOUND, { path: String, estimatedBytesTotal: Int -> JsWebAudioSoundLoader(path, estimatedBytesTotal, audioManager) })
+		} else {
+			assetManager.setLoaderFactory(AssetTypes.SOUND, { path: String, estimatedBytesTotal: Int -> JsAudioElementSoundLoader(path, estimatedBytesTotal, audioManager) })
 		}
+		assetManager.setLoaderFactory(AssetTypes.MUSIC, { path: String, estimatedBytesTotal: Int -> JsAudioElementMusicLoader(path, estimatedBytesTotal, audioManager) })
 	}
 
-	protected open fun initializeTimeDriver() {
+	protected open val timeDriverTask by BootTask {
 		val timeDriver = TimeDriverImpl()
 		timeDriver.activate()
-		bootstrap[TimeDriver] = timeDriver
+		set(TimeDriver, timeDriver)
 	}
 
-	protected open fun initializeInteractivity() {
-		bootstrap.on(MouseInput, KeyInput, FocusManager) {
-			bootstrap[InteractivityManager] = InteractivityManagerImpl(bootstrap[MouseInput], bootstrap[KeyInput], bootstrap[FocusManager])
-		}
+	protected open val interactivityTask by BootTask {
+		set(InteractivityManager, InteractivityManagerImpl(get(MouseInput), get(KeyInput), get(FocusManager)))
 	}
 
-	protected open fun initializeFocusManager() {
-		bootstrap[FocusManager] = FocusManagerImpl()
+	protected open val focusManagerTask by BootTask {
+		set(FocusManager, FocusManagerImpl())
 	}
 
-	protected open fun initializeCursorManager() {
-		bootstrap[CursorManager] = JsCursorManager(canvas)
+	protected open val cursorManagerTask by BootTask {
+		set(CursorManager, JsCursorManager(get(CANVAS)))
 	}
 
-	protected open fun initializePersistence() {
-		bootstrap[Persistence] = JsPersistence(config.version)
+	protected open val persistenceTask by BootTask {
+		set(Persistence, JsPersistence(get(AppConfig).version))
 	}
 
-	protected open fun initializeSelectionManager() {
-		bootstrap[SelectionManager] = SelectionManagerImpl()
+	protected open val selectionManagerTask by BootTask {
+		set(SelectionManager, SelectionManagerImpl())
 	}
 
-	protected open fun initializeTextFormatters() {
-		bootstrap[NumberFormatter.FACTORY_KEY] = { NumberFormatterImpl(it) }
-		bootstrap[DateTimeFormatter.FACTORY_KEY] = { DateTimeFormatterImpl(it) }
+	protected open val textFormattersTask by BootTask {
+		set(NumberFormatter.FACTORY_KEY, { NumberFormatterImpl(it) })
+		set(DateTimeFormatter.FACTORY_KEY, { DateTimeFormatterImpl(it) })
 	}
 
-	/**
-	 * The last chance to set dependencies on the application scope.
-	 */
-	abstract fun initializeComponents()
+	abstract suspend fun createStage(owner: Owned): Stage
 
-	abstract fun initializeStage()
-
-	protected open fun initializePopUpManager() {
-		bootstrap[PopUpManager] = PopUpManagerImpl(bootstrap[Stage])
+	protected open suspend fun createPopUpManager(root: UiComponent): PopUpManager {
+		return PopUpManagerImpl(root)
 	}
 
-	protected abstract fun initializeSpecialInteractivity()
+	protected abstract suspend fun initializeSpecialInteractivity(owner: Owned)
 
 	private fun memberRefTest() {}
 
+	//-----------------------------------
+	// Disposable
+	//-----------------------------------
+
 	override fun dispose() {
-		Log.info("Application#dispose")
-		frameDriver?.stop()
-		bootstrap.dispose()
+		super.dispose()
+		launch {
+			awaitAll()
+			frameDriver?.stop()
+		}
 	}
+
+	companion object {
+		protected val CANVAS = dKey<HTMLElement>()
+	}
+
 }
 
 private external fun encodeURIComponent(str: String): String

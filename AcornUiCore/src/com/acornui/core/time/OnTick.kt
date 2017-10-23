@@ -6,7 +6,7 @@ import com.acornui.core.DrivableChildBase
 import com.acornui.core.LifecycleRo
 import com.acornui.core.di.inject
 
-private class OnTick(private val component: UiComponent, private val callback: (stepTime: Float)->Unit) : DrivableChildBase() {
+private class OnTick(private val component: UiComponent, private val callback: (stepTime: Float) -> Unit) : DrivableChildBase() {
 
 	private val timeDriver = component.inject(TimeDriver)
 
@@ -44,6 +44,11 @@ private class OnTick(private val component: UiComponent, private val callback: (
 	}
 }
 
-fun UiComponent.onTick(callback: (stepTime: Float)->Unit): Disposable {
+/**
+ * While the receiver component is activated, every frame will invoke the callback.
+ *
+ * @return An instance that can be disposed to stop watching frames.
+ */
+fun UiComponent.onTick(callback: (stepTime: Float) -> Unit): Disposable {
 	return OnTick(this, callback)
 }
