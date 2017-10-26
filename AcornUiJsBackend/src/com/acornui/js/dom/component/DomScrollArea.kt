@@ -38,10 +38,10 @@ class DomScrollArea(
 	override val style = bind(ScrollAreaStyle())
 
 	private val _hScrollModel = DomScrollLeftModel(element)
-	override val hScrollModel: ClampedScrollModelRo
+	override val hScrollModel: ClampedScrollModel
 		get() = _hScrollModel
 	private val _vScrollModel = DomScrollTopModel(element)
-	override val vScrollModel: ClampedScrollModelRo
+	override val vScrollModel: ClampedScrollModel
 		get() = _vScrollModel
 
 	private val contents = addChild(StackLayoutContainer(owner, DomInlineContainer()))

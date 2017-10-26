@@ -26,7 +26,6 @@ import com.acornui.component.layout.algorithm.*
 import com.acornui.component.scroll.*
 import com.acornui.component.style.*
 import com.acornui.component.text.*
-import com.acornui.core.UserInfo
 import com.acornui.core.assets.cachedGroup
 import com.acornui.core.di.*
 import com.acornui.core.focus.FocusManager
@@ -81,7 +80,7 @@ open class BasicUiSkin(
 		rowsStyle()
 		formStyle()
 		treeStyle()
-		stage.invalidateStyles()
+		target.invalidateStyles()
 	}
 
 	open fun initTheme() {
@@ -774,9 +773,10 @@ open class CheckboxSkinPart(
 open class LabelButtonSkinPart(
 		owner: Owned,
 		val texture: UiComponent,
-		val textField: TextField = owner.text(),
 		val padding: Pad = Pad(5f, 5f, 5f, 5f)
 ) : ElementContainerImpl<UiComponent>(owner), Labelable {
+
+	val textField: TextField = text()
 
 	init {
 		textField.selectable = false
@@ -904,7 +904,7 @@ object StyleSelectors {
 /**
  * A shortcut to creating a text field with the [StyleSelectors.headingStyle] tag.
  */
-fun Owned.heading(text: String, init: ComponentInit<TextField> = {}): TextField {
+fun Owned.heading(text: String = "", init: ComponentInit<TextField> = {}): TextField {
 	val t = injector.inject(TextField.FACTORY_KEY)(this)
 	t.styleTags.add(StyleSelectors.headingStyle)
 	t.text = text

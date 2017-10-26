@@ -57,12 +57,11 @@ import java.net.URLEncoder
  */
 open class JvmHeadlessApplication(
 		private val assetsPath: String = "./",
-		private val assetsRoot: String = "./",
-		config: AppConfig = AppConfig(),
-		onReady: Scoped.() -> Unit = {}
+		private val assetsRoot: String = "./"
 ) : ApplicationBase() {
 
-	init {
+	fun start(config: AppConfig = AppConfig(),
+			  onReady: Scoped.() -> Unit = {}) {
 		launch {
 			initializeConfig(config)
 			awaitAll()

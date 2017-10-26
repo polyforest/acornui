@@ -22,7 +22,6 @@ import com.acornui.component.StackLayoutData
 import com.acornui.component.UiComponent
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.*
-import com.acornui.core.di.DKey
 import com.acornui.core.di.Owned
 import com.acornui.core.di.dKey
 import com.acornui.math.Corners
@@ -32,8 +31,8 @@ interface ScrollArea : LayoutDataProvider<StackLayoutData>, ElementContainer<UiC
 
 	val style: ScrollAreaStyle
 
-	val hScrollModel: ClampedScrollModelRo
-	val vScrollModel: ClampedScrollModelRo
+	val hScrollModel: ClampedScrollModel
+	val vScrollModel: ClampedScrollModel
 
 	var hScrollPolicy: ScrollPolicy
 	var vScrollPolicy: ScrollPolicy

@@ -22,6 +22,7 @@ import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.layout.algorithm.LineInfo
 import com.acornui.component.layout.algorithm.LineInfoRo
+import com.acornui.component.layout.intersects
 import com.acornui.component.style.*
 import com.acornui.component.text.CharStyle
 import com.acornui.component.text.TextField
@@ -38,8 +39,7 @@ import com.acornui.core.input.interaction.DragInteraction
 import com.acornui.core.selection.Selectable
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionRange
-import com.acornui.gl.core.GlState
-import com.acornui.gl.core.pushQuadIndices
+import com.acornui.gl.core.*
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.Bounds
@@ -625,9 +625,10 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 
 			// If this is multiline text and we extend beyond the right edge,then push the current line and start a new one.
 			val extendsEdge = flowStyle.multiline && (!part.overhangs && availableWidth != null && x + partW > availableWidth)
+			val isFirst = spanPartIndex == currentLine.startIndex
 			val isLast = spanPartIndex == _textElements.lastIndex
-			if (isLast || part.clearsLine || extendsEdge) {
-				if (extendsEdge) {
+			if (isLast || part.clearsLine || (extendsEdge && !isFirst)) {
+				if (extendsEdge && !isFirst) {
 					// Find the last good breaking point.
 					var breakIndex = _textElements.indexOfLast2(spanPartIndex, currentLine.startIndex) { it.isBreaking }
 					if (breakIndex == -1) breakIndex = spanPartIndex - 1
@@ -788,9 +789,9 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 	private val glState = inject(GlState)
 
 	override fun draw() {
-		glState.camera(camera)
-		for (i in 0.._textElements.lastIndex) {
-			_textElements[i].render(glState)
+		if (camera.intersects(this)) {
+			glState.camera(camera)
+			_textElements.forEach2 { it.render(glState) }
 		}
 	}
 

@@ -345,6 +345,18 @@ open class UiComponentImpl(
 	// CameraElement
 	//-----------------------------------------------
 
+	override fun localToGlobal(localCoord: Vector3): Vector3 {
+		if (isSimpleTranslate) {
+			val v = concatenatedTransform.values
+			localCoord.x += v[12]
+			localCoord.y += v[13]
+			localCoord.z += v[14]
+		} else {
+			concatenatedTransform.prj(localCoord)
+		}
+		return localCoord
+	}
+
 	override fun windowToLocal(windowCoord: Vector2): Vector2 {
 		val ray = Ray.obtain()
 		globalToLocal(camera.getPickRay(windowCoord.x, windowCoord.y, 0f, 0f, window.width, window.height, ray))

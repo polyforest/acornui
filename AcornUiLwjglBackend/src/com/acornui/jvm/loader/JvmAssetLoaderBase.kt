@@ -40,8 +40,9 @@ abstract class JvmAssetLoaderBase<T>(
 		} else {
 			val file = File(path)
 			_bytesTotal = file.length().toInt()
-			if (!file.exists()) throw FileNotFoundException(path)
 			work = workScheduler {
+				if (!file.exists())
+					throw FileNotFoundException(path)
 				create(FileInputStream(file)).also { _bytesLoaded = bytesTotal }
 			}
 		}

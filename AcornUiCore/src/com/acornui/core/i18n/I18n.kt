@@ -11,6 +11,7 @@ import com.acornui.core.di.DKey
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
+import com.acornui.core.io.file.Files
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
@@ -240,8 +241,12 @@ private fun Scoped._loadBundle(locale: Locale, bundleName: String, path: String,
 	} else {
 		path.replace2("{locale}", locale.value).replace2("{bundleName}", bundleName)
 	}
-	load(path2, AssetTypes.TEXT).then {
-		i18n.setBundleValues(locale, bundleName, PropertiesDecorator.decorate(it))
+
+	// Only try to load the locale if we know it to exist.
+	if (inject(Files).getFile(path2) != null) {
+		load(path2, AssetTypes.TEXT).then {
+			i18n.setBundleValues(locale, bundleName, PropertiesDecorator.decorate(it))
+		}
 	}
 }
 

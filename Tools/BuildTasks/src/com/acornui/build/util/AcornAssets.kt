@@ -34,7 +34,7 @@ object AcornAssets {
 		copyAssets(source, dest)
 
 		println("Assets directory: " + dest.path + " root directory: " + root.path)
-		JvmHeadlessApplication(dest.path) {
+		JvmHeadlessApplication(dest.path).start {
 			// Pack the assets in all directories in the dest folder with a name ending in "_unpacked"
 			TexturePackerUtil(inject(Files), inject(AssetManager), inject(JSON_KEY)).packAssets(dest, File("."))
 

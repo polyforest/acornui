@@ -18,9 +18,11 @@ package com.acornui.gl.core
 
 import com.acornui.collection.Clearable
 import com.acornui.core.Disposable
+import com.acornui.core.di.Injector
+import com.acornui.core.di.Scoped
+import com.acornui.core.di.inject
 import com.acornui.core.io.BufferFactory
 import com.acornui.gl.component.drawing.DrawElementsCall
-import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.io.NativeBuffer
 import com.acornui.math.Vector3Ro
@@ -33,7 +35,7 @@ import com.acornui.math.Vector3Ro
  */
 class StaticShaderBatchImpl(
 		private val gl: Gl20,
-		private val glState: GlState,
+		val glState: GlState,
 		maxIndices: Int = 32767,
 		maxVertexComponents: Int = 32767 * 16
 ) : ShaderBatch, Clearable, Disposable {
@@ -163,3 +165,41 @@ class StaticShaderBatchImpl(
 		gl.deleteBuffer(indicesBuffer)
 	}
 }
+
+/**
+ * Conditionally uses a static batch on [render]. Useful if there is a set of draw calls that conditionally may be
+ * faster if they are set in their own buffer as opposed to streamed in the application's batch.
+ */
+class OptionalStaticBatch(override val injector: Injector) : Scoped {
+
+	private val glState = inject(GlState)
+
+	private var _isDirty = true
+
+	fun dirty() {
+		_isDirty = true
+	}
+
+	private val staticBatch by lazy {
+		StaticShaderBatchImpl(inject(Gl20), glState)
+	}
+
+	fun render(useStaticBatch: Boolean, render: () -> Unit) {
+		if (useStaticBatch) {
+			glState.batch.flush(true)
+			if (_isDirty) {
+				_isDirty = false
+				val oldBatch = glState.batch
+				staticBatch.clear()
+				glState.batch = staticBatch
+				render()
+				glState.batch = oldBatch
+			}
+			staticBatch.render()
+		} else {
+			render()
+		}
+	}
+}
+
+fun Scoped.optionalStaticBatch(): OptionalStaticBatch = OptionalStaticBatch(injector)
