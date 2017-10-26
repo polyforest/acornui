@@ -222,3 +222,7 @@ fun String.compareTo2(other: String, ignoreCase: Boolean = false): Int {
 	else
 		return compareTo(other)
 }
+
+fun String.toUnderscoreCase(): String {
+	return replace(Regex("([a-z])([A-Z]+)"), "$1_$2").toLowerCase()
+}

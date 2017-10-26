@@ -2,8 +2,6 @@ package com.acornui.core.tween
 
 import com.acornui.math.Easing
 import com.acornui.math.Interpolation
-import com.acornui.math.MathUtils
-
 
 
 /**
