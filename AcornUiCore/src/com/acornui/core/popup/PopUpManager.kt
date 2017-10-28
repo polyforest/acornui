@@ -201,13 +201,13 @@ class PopUpManagerImpl(private val root: UiComponent) : LayoutContainerImpl<PopU
 				modalFill.visible = true
 				modalFill.alpha = 0f
 				tween = modalFill.tweenAlpha(s.modalEaseInDuration, s.modalEaseIn, 1f).drive(timeDriver)
-				tween!!.completed.add {
+				tween!!.completed.addOnce {
 					tween = null
 				}
 			} else {
 				tween?.complete()
 				tween = modalFill.tweenAlpha(s.modalEaseOutDuration, s.modalEaseOut, 0f).drive(timeDriver)
-				tween!!.completed.add {
+				tween!!.completed.addOnce {
 					modalFill.visible = false
 					tween = null
 				}

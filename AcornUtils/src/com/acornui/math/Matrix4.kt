@@ -359,7 +359,6 @@ data class Matrix4(
 	}
 
 	/**
-	 *
 	 * Adds a translational component to the matrix in the 4th column. The other columns are untouched.
 	 *
 	 * @param x The x-component of the translation vector.
@@ -728,7 +727,7 @@ data class Matrix4(
 		return if ((MathUtils.isZero(values[4]) && MathUtils.isZero(values[8])))
 			MathUtils.abs(values[0])
 		else
-			Math.sqrt(getScaleXSquared().toDouble()).toFloat()
+			MathUtils.sqrt(getScaleXSquared())
 	}
 
 	/**
@@ -738,7 +737,7 @@ data class Matrix4(
 		return if ((MathUtils.isZero(values[1]) && MathUtils.isZero(values[9])))
 			MathUtils.abs(values[5])
 		else
-			Math.sqrt(getScaleYSquared().toDouble()).toFloat()
+			MathUtils.sqrt(getScaleYSquared())
 	}
 
 	/**
@@ -748,7 +747,7 @@ data class Matrix4(
 		return if ((MathUtils.isZero(values[2]) && MathUtils.isZero(values[6])))
 			MathUtils.abs(values[10])
 		else
-			Math.sqrt(getScaleZSquared().toDouble()).toFloat()
+			MathUtils.sqrt(getScaleZSquared())
 	}
 
 	/**
@@ -1086,6 +1085,26 @@ data class Matrix4(
 			matA[15] = v33
 		}
 
+	}
+
+	/**
+	 * Postmultiplies this matrix by a shear matrix.
+	 * @param shearXZ The shear in x direction.
+	 * @param shearYZ The shear in y direction.
+	 * @return This matrix for the purpose of chaining.
+	 */
+	fun shear(shearXZ: Float = 0f, shearYZ: Float = 0f, shearXY: Float = 0f, shearZY: Float = 0f, shearZX: Float = 0f, shearYX: Float = 0f): Matrix4 {
+		var tmp0 = values[0] + shearYZ * values[4]
+		var tmp1 = values[4] + shearXZ * values[0]
+		values[0] = tmp0
+		values[4] = tmp1
+
+		tmp0 = values[1] + shearYZ * values[5]
+		tmp1 = values[5] + shearXZ * values[1]
+		values[1] = tmp0
+		values[5] = tmp1
+
+		return this
 	}
 }
 

@@ -1049,6 +1049,7 @@ open class UiComponentImpl(
 	protected open fun updateTransform() {
 		if (_customTransform != null) {
 			_transform.set(_customTransform!!)
+			native.setTransform(_transform)
 			return
 		}
 		_transform.idt()

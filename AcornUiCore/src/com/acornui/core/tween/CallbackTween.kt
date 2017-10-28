@@ -13,10 +13,10 @@ class CallbackTween(duration: Float, ease: Interpolation, delay: Float, loop: Bo
 
 	private val watchedTimes = ArrayList<Float>()
 	private val watchedTimeSignals = ArrayList<Signal1<Tween>>()
+	override val duration: Float = if (duration <= 0f) 0.0000001f else duration
+	override val durationInv = 1f / duration
 
 	init {
-		_duration = if (duration <= 0f) 0.0000001f else duration
-		_durationInv = 1f / duration
 		this.ease = ease
 		this.loopAfter = loop
 		jumpTo(-delay - 0.0000001f) // Subtract a small amount so time handlers at 0f time get invoked.

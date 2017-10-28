@@ -14,25 +14,48 @@
  * limitations under the License.
  */
 
-package com.acornui.core.tween
+package com.acornui.core.tween.animation
 
 /**
  * A data class representing an animation.
  */
 data class AnimationBundle(
-		val library: Any,
+
+		val library: Map<String, LibraryItem>,
+
 		/**
 		 * Global easings.
+		 * A map of easingId -> [AnimationEasing] object.
 		 */
-		val easings: Map<String, AnimationEasing>,
-		val animations: List<Animation>
+		val easings: Map<String, AnimationEasing>
 )
 
-data class Animation(
-		val name: String,
-		val timeline: Timeline)
 
-data class Timeline(val layers: List<Layer>)
+interface LibraryItem {
+	val itemType: LibraryItemType
+}
+
+data class AtlasLibraryItem(val atlasPath: String, val regionName: String) : LibraryItem {
+	override val itemType = LibraryItemType.ATLAS
+}
+
+data class ImageLibraryItem(val path: String) : LibraryItem {
+	override val itemType = LibraryItemType.IMAGE
+}
+
+enum class LibraryItemType {
+	IMAGE,
+	ATLAS,
+	ANIMATION
+}
+
+data class AnimationLibraryItem(
+		val timeline: Timeline
+) : LibraryItem {
+	override val itemType = LibraryItemType.ANIMATION
+}
+
+data class Timeline(val duration: Float, val layers: List<Layer>)
 
 data class Layer(
 		val name: String,
@@ -43,6 +66,12 @@ data class Layer(
 
 data class KeyFrame(
 		val time: Float,
+
+		/**
+		 * Easings local to the frame.
+		 * A map of easingId -> [AnimationEasing] object.
+		 * If the easing is not found, global easings will be checked.
+		 */
 		val easings: Map<String, AnimationEasing>,
 		val props: Map<PropType, Prop>
 )
@@ -85,14 +114,18 @@ enum class PropType {
 	SCALE_Y,
 	SCALE_Z,
 
-	SKEW_XZ,
-	SKEW_YZ,
+	ROTATION_X,
+	ROTATION_Y,
+	ROTATION_Z,
 
-	SKEW_ZX,
-	SKEW_YX,
+	SHEAR_XZ,
+	SHEAR_YZ,
 
-	SKEW_XY,
-	SKEW_ZY,
+	SHEAR_XY,
+	SHEAR_ZY,
+
+	SHEAR_ZX,
+	SHEAR_YX,
 
 	COLOR_R,
 	COLOR_G,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.acornui.core.tween
+package com.acornui.core.tween.animation
 
 import com.acornui.core.toUnderscoreCase
 import com.acornui.serialization.*
@@ -22,24 +22,41 @@ import com.acornui.serialization.*
 object AnimationBundleSerializer : From<AnimationBundle> {
 
 	override fun read(reader: Reader): AnimationBundle {
+		val library = HashMap<String, LibraryItem>()
+		reader["library"]!!.forEach {
+			name, reader ->
+			val type = reader.string("type")!!
+			library[name] = when (type) {
+				"image" -> reader.obj(ImageLibraryItemSerializer)!!
+				"atlas" -> reader.obj(AtlasLibraryItemSerializer)!!
+				"animation" -> reader.obj(AnimationLibraryItemSerializer)!!
+				else -> throw Exception("Unknown library item type $type")
+			}
+		}
 		return AnimationBundle(
-				library = 0,
-				easings = reader.map("easings", AnimationEasingSerializer)!!,
-				animations = reader.arrayList("animations", AnimationSerializer)!!)
+				library = library,
+				easings = reader.map("easings", AnimationEasingSerializer)!!)
 	}
 }
 
-object AnimationEasingSerializer : From<AnimationEasing> {
-
-	override fun read(reader: Reader): AnimationEasing {
-		return AnimationEasing(curve = reader.floatArray()!!.toList())
+object ImageLibraryItemSerializer : From<ImageLibraryItem> {
+	override fun read(reader: Reader): ImageLibraryItem {
+		return ImageLibraryItem(path = reader.string("path")!!)
 	}
 }
 
-object AnimationSerializer : From<Animation> {
-	override fun read(reader: Reader): Animation {
-		return Animation(
-				name = reader.string("name") ?: "",
+object AtlasLibraryItemSerializer : From<AtlasLibraryItem> {
+	override fun read(reader: Reader): AtlasLibraryItem {
+		return AtlasLibraryItem(
+				atlasPath = reader.string("atlasPath")!!,
+				regionName = reader.string("regionName")!!
+		)
+	}
+}
+
+object AnimationLibraryItemSerializer : From<AnimationLibraryItem> {
+	override fun read(reader: Reader): AnimationLibraryItem {
+		return AnimationLibraryItem(
 				timeline = reader.obj("timeline", TimelineSerializer)!!
 		)
 	}
@@ -49,6 +66,7 @@ object TimelineSerializer : From<Timeline> {
 
 	override fun read(reader: Reader): Timeline {
 		return Timeline(
+				duration = reader.float("duration")!!,
 				layers = reader.arrayList("layers", LayerSerializer)!!
 		)
 	}
@@ -94,5 +112,12 @@ object PropSerializer : From<Prop> {
 				value = reader.float("value")!!,
 				easing = reader.string("easing")
 		)
+	}
+}
+
+object AnimationEasingSerializer : From<AnimationEasing> {
+
+	override fun read(reader: Reader): AnimationEasing {
+		return AnimationEasing(curve = reader.floatArray()!!.toList())
 	}
 }

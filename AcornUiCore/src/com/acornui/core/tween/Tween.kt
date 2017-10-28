@@ -17,7 +17,6 @@
 package com.acornui.core.tween
 
 import com.acornui.collection.ObjectPool
-import com.acornui.collection.ClearableObjectPool
 import com.acornui.core.DrivableChildBase
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
@@ -165,19 +164,13 @@ interface Tween {
  */
 abstract class TweenBase : Tween {
 
-	override val completed = Signal1<Tween>()
+	protected val _completed = Signal1<Tween>()
+	override val completed: Signal<(Tween)->Unit>
+			get() = _completed
 
 	override var loopBefore: Boolean = false
 	override var loopAfter: Boolean = false
 	override var allowCompletion = false
-
-	protected var _duration: Float = 0f
-	override val duration: Float
-		get() = _duration
-
-	protected var _durationInv: Float = 0f
-	override val durationInv: Float
-		get() = _durationInv
 
 	override var startTime: Float = 0f
 
@@ -234,7 +227,7 @@ abstract class TweenBase : Tween {
 	abstract fun updateToTime(lastTime: Float, newTime: Float, apparentLastTime: Float, apparentNewTime: Float, jump: Boolean)
 
 	override fun complete() {
-		completed.dispatch(this)
+		_completed.dispatch(this)
 	}
 
 }
@@ -249,9 +242,10 @@ class TweenImpl(duration: Float, ease: Interpolation, delay: Float, loop: Boolea
 	private var tween: ((previousAlpha: Float, currentAlpha: Float) -> Unit)? = null
 	private var previousAlpha = 0f
 
+	override val duration = if (duration <= 0f) 0.0000001f else duration
+	override val durationInv = 1f / duration
+
 	init {
-		_duration = if (duration <= 0f) 0.0000001f else duration
-		_durationInv = 1f / duration
 		this.ease = ease
 		this.tween = tween
 		this.loopAfter = loop
@@ -274,7 +268,7 @@ class TweenImpl(duration: Float, ease: Interpolation, delay: Float, loop: Boolea
 	 * Use [finish] to first set this tween's progress to 100% and stop.
 	 */
 	override fun complete() {
-		completed.dispatch(this)
+		_completed.dispatch(this)
 	}
 }
 

@@ -2,8 +2,8 @@
 fl.runScript(fl.configURI + 'Javascript/JSON.jsfl')
 JSON.prettyPrint = true;
 fl.outputPanel.clear();
-var data = { library: {}, easings: {}, animations: [] };
-data.animations.push({ name: "document", timeline: processTimeline(document.timelines[0]) });
+var data = { library: {}, easings: {} };
+data.library["__document"] = { type: "animation", timeline: processTimeline(document.timelines[0]) };
 
 for (var i = 0; i < document.library.items.length; i++) {
 	var item = document.library.items[i];
@@ -11,26 +11,26 @@ for (var i = 0; i < document.library.items.length; i++) {
 	if (item.itemType == "movie clip") {
 		if (item.linkageExportForAS) {
 			var name = item.name;
+			if (name.indexOf("resources/") == 0) name = name.substring("resources/".length);
 			var unpackedIndex = name.indexOf("_unpacked")
 			if (unpackedIndex == -1) {
-				data.library[item.name] = { type: "image", path: item.name + ".png" };
+				data.library[item.name] = { type: "image", path: name + ".png" };
 			} else {
 				var regionName = name.substring(name.lastIndexOf("/") + 1);
 				var atlasPath = name.substring(0, unpackedIndex) + ".json";
 				data.library[item.name] = { type: "atlas", regionName: regionName, atlasPath: atlasPath };
 			}
 		} else {
-			data.animations.push({ name: item.name, timeline: processTimeline(item.timeline) });
-			data.library[item.name] = { type: "animation" };
+			data.library[item.name] = { type: "animation", timeline: processTimeline(item.timeline) };
 		}
 	}
-	
 }
 
 function processTimeline(timeline) {
-	var timelineData = { layers: [] };
+	var timelineData = { duration: round(timeline.frameCount / document.frameRate), layers: [] };
 	for (var layerIndex = 0; layerIndex < timeline.layers.length; layerIndex++) {
 		var layer = timeline.layers[layerIndex];
+		if (layer.layerType != "normal") continue;
 		
 		// Search the keyframes for the movie clip instance, and ensure there is only one per layer.
 		var symbolName = null;
@@ -72,7 +72,7 @@ function processTimeline(timeline) {
 
 function createFrameData(frame) {
 	//fl.trace("----------------------FRAME-----------------------------");
-	var frameData = { time: round(frame.startFrame / document.frameRate, 1000), easings: {} };
+	var frameData = { time: round(frame.startFrame / document.frameRate), easings: {} };
 	
 	if (frame.tweenType == "motion") {
 		var easingProps;
@@ -85,8 +85,8 @@ function createFrameData(frame) {
 			var customEase = frame.getCustomEase(easingProp);
 			var points = []; // x, y, ...
 			for each (var point in customEase) {
-				points.push(round(point.x, 1000));
-				points.push(round(point.y, 1000));
+				points.push(round(point.x));
+				points.push(round(point.y));
 			}
 			frameData.easings[easingProp] = points;
 		}
@@ -103,12 +103,12 @@ function createFrameData(frame) {
 	var propsEasingMap;
 	if (frame.tweenType == "motion") {
 		if (frame.useSingleEaseCurve) {
-			propsEasingMap = { visible: null, originX: null, originY: null, x: "all", y: "all", scaleX: "all", scaleY: "all", skewXZ: "all", skewYZ: "all", colorR: "all", colorG: "all", colorB: "all", colorA: "all" };
+			propsEasingMap = { visible: null, originX: null, originY: null, x: "all", y: "all", scaleX: "all", scaleY: "all", shearXZ: "all", shearYZ: "all", rotationZ: "all", colorR: "all", colorG: "all", colorB: "all", colorA: "all" };
 		} else {
-			propsEasingMap = { visible: null, originX: null, originY: null, x: "position", y: "position", scaleX: "scale", scaleY: "scale",  skewXZ: "rotation", skewYZ: "rotation", colorR: "color", colorG: "color", colorB: "color", colorA: "color" };
+			propsEasingMap = { visible: null, originX: null, originY: null, x: "position", y: "position", scaleX: "scale", scaleY: "scale",  shearXZ: "rotation", shearYZ: "rotation", rotationZ: "rotation", colorR: "color", colorG: "color", colorB: "color", colorA: "color" };
 		}
 	} else {
-		propsEasingMap = { visible: null, originX: null, originY: null, x: null, y: null, scaleX: null, scaleY: null, skewXZ: null, skewYZ: null, colorR: null, colorG: null, colorB: null, colorA: null };
+		propsEasingMap = { visible: null, originX: null, originY: null, x: null, y: null, scaleX: null, scaleY: null, shearXZ: null, shearYZ: null, colorR: null, colorG: null, colorB: null, colorA: null };
 	}
 	for (var all in rawProps) {
 		var easing = propsEasingMap[all];
@@ -130,16 +130,38 @@ function createPropsData(element) {
 	// Registration point ("origin") in acorn is local to the component.
 	var inv = fl.Math.invertMatrix( element.matrix )
 	var p2 = prj(element.transformX, element.transformY, inv);
-	props.originX = round(p2.x + origin.x, 1000);
-	props.originY = round(p2.y + origin.y, 1000);
+	
+	props.originX = round(p2.x + origin.x);
+	props.originY = round(p2.y + origin.y);
 	
 	// Translation in acorn is relative to the origin.
-	props.x = round(element.transformX, 1000);
-	props.y = round(element.transformY, 1000);
+	props.x = round(element.transformX);
+	props.y = round(element.transformY);
 	
-	//props.rotationZ = round(element.rotation, 1000);
-	props.scaleX = round(element.scaleX, 1000);
-	props.scaleY = round(element.scaleY, 1000);
+	var degRad = Math.PI / 180;
+	
+	if (isNaN(element.rotation)) {
+		var r = 0;
+		if (element.skewY > 0 && element.skewX > 0) {
+			r = Math.min(element.skewX, element.skewY);
+		} else if (element.skewY < 0 && element.skewX < 0) {
+			r = Math.max(element.skewX, element.skewY);
+		}
+		props.scaleX = round(element.scaleX * Math.cos((element.skewY - r) * degRad));
+		props.scaleY = round(element.scaleY * Math.cos((element.skewX - r) * degRad));
+
+		props.shearXZ = round(Math.tan((element.skewX - r)));
+		props.shearYZ = round(Math.tan((element.skewY - r)));
+		props.rotationZ = round(r * degRad);
+
+	} else {
+		props.shearXZ = 0;
+		props.shearYZ = 0;
+		props.scaleX = round(element.scaleX);
+		props.scaleY = round(element.scaleY);
+		props.rotationZ = round(element.rotation * degRad);
+	}
+	//fl.trace(element.scaleY + " : " + props.scaleY + " : " + props.scaleX);
 	
 	return props;
 }
@@ -155,7 +177,8 @@ function removeUnchanged(keyFrameData, lastKeyFrameData) {
 	}
 }
 
-function round(n, m) {
+function round(n) {
+	var m = 1000;
 	return Math.round(n * m) / m;
 }
 
@@ -163,8 +186,14 @@ function round(n, m) {
  * Multiplies an x,y coordinate by the given matrix.
  */
 function prj(x, y, matrix) {
-	var x2 = matrix.a * x + matrix.b * y + matrix.tx;
-	var y2 = matrix.c * x + matrix.d * y + matrix.ty;
+	var x2 = matrix.a * x + matrix.c * y + matrix.tx;
+	var y2 = matrix.b * x + matrix.d * y + matrix.ty;
+	return { x: x2, y: y2 };
+}
+
+function rot(x, y, matrix) {
+	var x2 = matrix.a * x + matrix.c * y;
+	var y2 = matrix.b * x + matrix.d * y;
 	return { x: x2, y: y2 };
 }
 
@@ -183,6 +212,7 @@ function _getOrigin(libraryItem) {
 		var top = 99999999;
 		
 		for each (var layer in libraryItem.timeline.layers) {
+			if (layer.layerType != "normal") continue;
 			for each (var element in layer.frames[0].elements) {
 				if (element.left < left) {
 					left = element.left;

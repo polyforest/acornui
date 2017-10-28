@@ -17,9 +17,12 @@ class TimelineTween(ease: Interpolation, delay: Float, loop: Boolean) : TweenBas
 	 */
 	var timeScale = 1f
 
+	private var _duration: Float = 0f
+
 	override val duration: Float
 		get() = _duration / timeScale
 
+	private var _durationInv: Float = 0f
 	override val durationInv: Float
 		get() = _durationInv * timeScale
 

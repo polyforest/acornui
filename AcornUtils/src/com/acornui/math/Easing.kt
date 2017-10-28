@@ -179,6 +179,15 @@ open class SwingIn(private val scale: Float) : Interpolation {
 // Interpolation without configuration
 //--------------------------------------------
 
+/**
+ * Jumps from 0f to 1f without interpolation.
+ */
+object Stepped : Interpolation {
+	override fun apply(alpha: Float): Float {
+		return if (alpha == 1f) 1f else 0f
+	}
+}
+
 object Linear : Interpolation {
 	override fun apply(alpha: Float): Float {
 		return alpha
@@ -382,6 +391,8 @@ class Clamp(val inner: Interpolation, val startAlpha: Float = 0f, val endAlpha: 
 }
 
 object Easing {
+
+	val stepped: Interpolation = Stepped
 
 	val linear: Interpolation = Linear
 
