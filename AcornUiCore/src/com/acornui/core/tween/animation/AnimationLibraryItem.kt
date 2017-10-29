@@ -16,6 +16,8 @@
 
 package com.acornui.core.tween.animation
 
+import com.acornui.math.Vector2Ro
+
 /**
  * A data class representing an animation.
  */
@@ -96,7 +98,7 @@ data class AnimationEasing(
 		/**
 		 * x, y, ...
 		 */
-		val curve: List<Float>
+		val points: List<Vector2Ro>
 )
 
 enum class PropType {

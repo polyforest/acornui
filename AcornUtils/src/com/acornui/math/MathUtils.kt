@@ -492,6 +492,89 @@ object MathUtils {
 		if (diff >= PI) diff -= PI2
 		return diff
 	}
+
+	/**
+	 * Given a quadratic equation of the form: y = ax^2 + bx + c, returns the solutions to x where y == 0f
+	 * Uses the quadratic formula: x = (-b += sqrt(b^2 - 4ac)) / 2a
+	 * @param a The a coefficient.
+	 * @param b The b coefficient.
+	 * @param c The c coefficient.
+	 * @param out The list to populate with the solutions.
+	 * @return Returns the x values where y == 0f. This may have 0, 1, or 2 values.
+	 */
+	fun getQuadraticRoots(a: Float, b: Float, c: Float, out: MutableList<Float>) {
+		out.clear()
+		if (a == 0f) {
+			// Not a quadratic equation.
+			if (b == 0f) return
+			out.add(-c / b)
+		}
+
+		val q = b * b - 4f * a * c
+		val signQ = if (q > 0f) 1 else if (q < 0f) -1 else 0
+
+		if (signQ < 0) {
+			// No solution
+		} else if (signQ == 0) {
+			out.add(-b / (2f * a))
+		} else {
+			val aa = -b / (2f * a)
+			val tmp = sqrt(q) / (2f * a)
+			out.add(aa - tmp)
+			out.add(aa + tmp)
+		}
+	}
+
+	/**
+	 * Given a cubic equation of the form: y = ax^3 + bx^2 + cx + d, returns the solutions to x where y == 0f
+	 * @param a The a coefficient.
+	 * @param b The b coefficient.
+	 * @param c The c coefficient.
+	 * @param c The d coefficient.
+	 * @param out The list to populate with the solutions.
+	 * @return Returns the x values where y == 0f. This may have 0, 1, 2 or 3 values.
+	 */
+	fun getCubicRoots(a: Float = 0f, b: Float = 0f, c: Float = 0f, d: Float = 0f, out: MutableList<Float>) {
+		if (a == 0f) {
+			// Not a cubic equation
+			return getQuadraticRoots(b, c, d, out)
+		}
+		out.clear()
+
+		var b = b
+		var c = c
+		var d = d
+		// normalize the coefficients so the cubed term is 1 and we can ignore it hereafter
+		if (a != 1f) {
+			b /= a
+			c /= a
+			d /= a
+		}
+
+		val q = (b * b - 3f * c) / 9f
+		val q3 = q * q * q
+		val r = (2f * b * b * b - 9f * b * c + 27f * d) / 54f
+		val diff: Float = q3 - r * r
+		if (diff >= 0) {
+			if (q == 0f) {
+				// avoid division by zero
+				out.add(0f)
+			} else {
+				// three real roots
+				val theta: Float = acos(r / sqrt(q3))
+				val qSqrt: Float = sqrt(q)
+
+				out.add(-2f * qSqrt * cos(theta / 3f) - b / 3f)
+				out.add(-2f * qSqrt * cos((theta + 2f * PI) / 3f) - b / 3f)
+				out.add(-2f * qSqrt * cos((theta + 4f * PI) / 3f) - b / 3f)
+			}
+		} else {
+			// one real root
+			val tmp: Float = pow(sqrt(-diff) + abs(r), 1f / 3f)
+			val rSign = if (r > 0f) 1f else if (r < 0f) -1f else 0f
+			out.add(-rSign * (tmp + q / tmp) - b / 3f)
+		}
+	}
 }
 
 inline fun Float.ceil(): Int {

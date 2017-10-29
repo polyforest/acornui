@@ -25,6 +25,8 @@ import com.acornui.core.tween.Tween
 import com.acornui.core.tween.TweenBase
 import com.acornui.core.tween.driveTween
 import com.acornui.core.tween.timelineTween
+import com.acornui.graphics.Color
+import com.acornui.logging.Log
 import com.acornui.math.*
 
 /**
@@ -57,19 +59,38 @@ private class LayerTween(override val duration: Float, layer: Layer, private val
 	private val transform = Matrix4()
 	private val origin = Vector3()
 	private val position = Vector3()
-	private val scale = Vector3()
+	private val scale = Vector3(1f, 1f, 1f)
 	private val rotation = Vector3()
+	private val color = Color.WHITE.copy()
 
 	private var shearXZ = 0f
 	private var shearYZ = 0f
 
 	init {
+		target.visible = false
 		target.customTransform = transform
 		for (keyFrame in layer.keyFrames) {
 			val props = ArrayList(PROPS.size) {
 				val dataProp = keyFrame.props[PROPS[it]]
 				if (dataProp == null) null
-				else Prop(dataProp.value, if (dataProp.easing == null) Easing.stepped else Easing.linear) // TODO: Calculate bezier
+				else {
+					val easing = if (dataProp.easing == null)
+						Easing.stepped
+					else {
+						val animEasing = keyFrame.easings[dataProp.easing] ?: globalEasings[dataProp.easing]
+						if (animEasing == null) {
+							Log.warn("Easing not found: ${dataProp.easing}")
+							Easing.stepped
+						} else {
+							if (animEasing.points.isEmpty()) {
+								EasingCache(Easing.linear)
+							} else {
+								EasingCache(Bezier(animEasing.points))
+							}
+						}
+					}
+					Prop(dataProp.value, easing)
+				}
 			}
 			frames.add(KeyFrame(keyFrame.time, props))
 		}
@@ -95,35 +116,9 @@ private class LayerTween(override val duration: Float, layer: Layer, private val
 				setValue(PROPS[i], eased * (endProp.value - prop.value) + prop.value)
 			}
 		}
-
-//		val values = transform.values
-//		values[0] = scale.x
-//		values[1] = shearYZ
-//		values[2] = 0f
-//		values[3] = 0f
-//
-//		values[4] = shearXZ
-//		values[5] = scale.y
-//		values[6] = 0f
-//		values[7] = 0f
-//
-//		values[8] = 0f
-//		values[9] = 0f
-//		values[10] = scale.z
-//		values[11] = 0f
-//
-//		values[12] = position.x
-//		values[13] = position.y
-//		values[14] = position.z
-//		values[15] = 1f
-
-
-
 		transform.idt()
-
 		transform.trn(position)
 		transform.scl(scale)
-
 		if (!rotation.isZero()) {
 			quat.setEulerAnglesRad(rotation.y, rotation.x, rotation.z)
 			transform.rotate(quat)
@@ -132,6 +127,8 @@ private class LayerTween(override val duration: Float, layer: Layer, private val
 
 		transform.translate(-origin.x, -origin.y, -origin.z)
 		target.invalidate(ValidationFlags.TRANSFORM)
+
+		target.colorTint = color
 
 	}
 
@@ -155,19 +152,19 @@ private class LayerTween(override val duration: Float, layer: Layer, private val
 			PropType.ROTATION_Z to { v -> rotation.z = v },
 
 			PropType.SHEAR_XZ to { v -> shearXZ = v },
-			PropType.SHEAR_YZ to { v -> shearYZ = v }
+			PropType.SHEAR_YZ to { v -> shearYZ = v },
 
-//			SHEAR_XY,
+			//			SHEAR_XY,
 //			SHEAR_ZY,
 //
 //			SHEAR_ZX,
 //			SHEAR_YX,
 //
 
-//			COLOR_R,
-//			COLOR_G,
-//			COLOR_B,
-//			COLOR_A
+			PropType.COLOR_R to { v -> color.r = v },
+			PropType.COLOR_G to { v -> color.g = v },
+			PropType.COLOR_B to { v -> color.b = v },
+			PropType.COLOR_A to { v -> color.a = v }
 	)
 
 	private fun setValue(propType: PropType, value: Float) {
@@ -187,6 +184,21 @@ private class LayerTween(override val duration: Float, layer: Layer, private val
 			val value: Float,
 			val easing: Interpolation
 	)
+
+	/**
+	 * Wraps an interpolation object and caches the result so subsequent eases with the same alpha skip calculation.
+	 */
+	private class EasingCache(val wrapped: Interpolation) : Interpolation {
+
+		private var lastAlpha: Float = 0f
+		private var lastResult: Float = 0f
+		override fun apply(alpha: Float): Float {
+			if (alpha == lastAlpha) return lastResult
+			lastAlpha = alpha
+			lastResult = wrapped.apply(alpha)
+			return lastResult
+		}
+	}
 
 	companion object {
 		private val PROPS = PropType.values()

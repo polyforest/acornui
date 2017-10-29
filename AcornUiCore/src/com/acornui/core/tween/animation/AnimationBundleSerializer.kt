@@ -17,6 +17,8 @@
 package com.acornui.core.tween.animation
 
 import com.acornui.core.toUnderscoreCase
+import com.acornui.math.Vector2
+import com.acornui.math.Vector2Ro
 import com.acornui.serialization.*
 
 object AnimationBundleSerializer : From<AnimationBundle> {
@@ -118,6 +120,11 @@ object PropSerializer : From<Prop> {
 object AnimationEasingSerializer : From<AnimationEasing> {
 
 	override fun read(reader: Reader): AnimationEasing {
-		return AnimationEasing(curve = reader.floatArray()!!.toList())
+		val arr = reader.floatArray()!!
+		val points = ArrayList<Vector2Ro>()
+		for (i in 0..arr.lastIndex step 2) {
+			points.add(Vector2(arr[i], arr[i + 1]))
+		}
+		return AnimationEasing(points = points)
 	}
 }

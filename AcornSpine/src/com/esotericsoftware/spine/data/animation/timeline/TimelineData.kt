@@ -53,16 +53,14 @@ data class CurveData(
 		 * Set when the [curveType] == [CurveType.BEZIER]
 		 */
 		val bezier: BezierCurveData?
-) {
-}
+)
 
 data class BezierCurveData(
 		val cx1: Float,
 		val cy1: Float,
 		val cx2: Float,
 		val cy2: Float
-) {
-}
+)
 
 interface CurvedFrameData : FrameData {
 	val curve: CurveData

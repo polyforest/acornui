@@ -84,7 +84,9 @@ function createFrameData(frame) {
 		for each (var easingProp in easingProps) {
 			var customEase = frame.getCustomEase(easingProp);
 			var points = []; // x, y, ...
-			for each (var point in customEase) {
+			// No need to save the first (0,0) and last (1,1).
+			for (var i = 1; i < customEase.length - 1; i++) {
+				var point = customEase[i];
 				points.push(round(point.x));
 				points.push(round(point.y));
 			}
@@ -161,8 +163,10 @@ function createPropsData(element) {
 		props.scaleY = round(element.scaleY);
 		props.rotationZ = round(element.rotation * degRad);
 	}
-	//fl.trace(element.scaleY + " : " + props.scaleY + " : " + props.scaleX);
-	
+	props.colorA = element.colorAlphaPercent / 100;
+	props.colorR = element.colorRedPercent / 100;
+	props.colorG = element.colorGreenPercent / 100;
+	props.colorB = element.colorBluePercent / 100;
 	return props;
 }
 

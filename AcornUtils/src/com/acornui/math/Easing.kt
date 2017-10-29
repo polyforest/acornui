@@ -17,6 +17,7 @@
 package com.acornui.math
 
 import com.acornui.collection.scl
+import com.acornui.collection.sortedInsertionIndex
 
 
 /**
@@ -353,7 +354,7 @@ class BounceInPlace(
 
 		val b = (2 * a - 1f)
 
-		val v =  decay * (1f - b * b)
+		val v = decay * (1f - b * b)
 		return v
 	}
 }
@@ -388,6 +389,37 @@ class Clamp(val inner: Interpolation, val startAlpha: Float = 0f, val endAlpha: 
 			return Clamp(inner, delayStart / d, (d - delayEnd) / d)
 		}
 	}
+}
+
+class Bezier(
+		points: List<Vector2Ro>
+) : Interpolation {
+
+	private val segments: List<BezierSegment>
+
+	init {
+		val pts = listOf(Vector2()) + points + listOf(Vector2(1f, 1f))
+
+		val segments = arrayListOf(BezierSegment(pts[0], pts[1], pts[2], pts[3]))
+		for (i in 3..pts.lastIndex - 3 step 3) {
+			segments.add(BezierSegment(pts[i], pts[i + 1], pts[i + 2], pts[i + 3]))
+		}
+		this.segments = segments
+	}
+
+	override fun apply(alpha: Float): Float {
+		if (alpha <= 0f) return 0f
+		if (alpha >= 1f) return 1f
+
+		val segmentIndex = segments.sortedInsertionIndex(alpha, {
+			time, segment ->
+			time.compareTo(segment.a.x)
+		}, matchForwards = true) - 1
+		val segment = segments[segmentIndex]
+		val eased = segment.getY(alpha)
+		return eased
+	}
+
 }
 
 object Easing {
