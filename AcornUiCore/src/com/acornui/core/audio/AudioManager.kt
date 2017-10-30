@@ -5,8 +5,8 @@ import com.acornui.collection.poll
 import com.acornui.collection.pop
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.core.Disposable
-import com.acornui.core.DrivableChild
-import com.acornui.core.DrivableChildBase
+import com.acornui.core.UpdatableChild
+import com.acornui.core.UpdatableChildBase
 import com.acornui.core.di.DKey
 
 
@@ -36,7 +36,7 @@ interface AudioManagerRo {
 
 }
 
-interface AudioManager : AudioManagerRo, DrivableChild {
+interface AudioManager : AudioManagerRo, UpdatableChild {
 
 	val simultaneousSounds: Int
 
@@ -63,7 +63,7 @@ interface AudioManager : AudioManagerRo, DrivableChild {
 	}
 }
 
-open class AudioManagerImpl(override final val simultaneousSounds: Int = 8) : DrivableChildBase(), AudioManager, Disposable {
+open class AudioManagerImpl(override final val simultaneousSounds: Int = 8) : UpdatableChildBase(), AudioManager, Disposable {
 
 	override val activeSounds = ActiveList<Sound>(simultaneousSounds)
 	override val activeMusics = ActiveList<Music>()

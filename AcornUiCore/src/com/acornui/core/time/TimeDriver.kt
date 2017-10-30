@@ -17,8 +17,6 @@
 package com.acornui.core.time
 
 import com.acornui._assert
-import com.acornui.collection.ObservableList
-import com.acornui.collection.ActiveList
 import com.acornui.core.*
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Scoped
@@ -28,7 +26,7 @@ import com.acornui.core.di.inject
 /**
  * @author nbilyk
  */
-interface TimeDriver : Parent<DrivableChild>, Drivable {
+interface TimeDriver : Parent<UpdatableChild>, Updatable {
 
 	companion object : DKey<TimeDriver>
 }
@@ -36,20 +34,10 @@ interface TimeDriver : Parent<DrivableChild>, Drivable {
 /**
  * @author nbilyk
  */
-open class TimeDriverImpl : LifecycleBase(), TimeDriver, Drivable {
+open class TimeDriverImpl : TimeDriver, Disposable {
 
 	override var parent: Parent<out ChildRo>? = null
-	private val _children = ActiveList<DrivableChild>()
-	private val childIterator = _children.iterator()
-
-	override fun onActivated() {
-		iterateChildren {
-			if (!it.isActive) {
-				it.activate()
-			}
-			true
-		}
-	}
+	private val _children = ArrayList<UpdatableChild>()
 
 	override fun update(stepTime: Float) {
 		iterateChildren {
@@ -62,22 +50,15 @@ open class TimeDriverImpl : LifecycleBase(), TimeDriver, Drivable {
 	// Parent
 	//-----------------------------------------------
 
-	override val children: ObservableList<DrivableChild>
+	override val children: List<UpdatableChild>
 		get() = _children
 
-	override fun iterateChildren(body: (DrivableChild) -> Boolean) {
-		childIterator.iterate(body)
-	}
-
-	override fun iterateChildrenReversed(body: (DrivableChild) -> Boolean) {
-		childIterator.iterateReversed(body)
-	}
 
 	/**
 	 * Adds the specified child to this container.
 	 * @param index The index of where to insert the child. By default this is the end of the list.
 	 */
-	override fun <S : DrivableChild> addChild(index: Int, child: S): S {
+	override fun <S : UpdatableChild> addChild(index: Int, child: S): S {
 		val n = _children.size
 		_assert(index <= n, "index is out of bounds.")
 		_assert(child.parent == null, "Remove the child before adding it again.")
@@ -87,10 +68,6 @@ open class TimeDriverImpl : LifecycleBase(), TimeDriver, Drivable {
 			_children.add(index, child)
 		}
 		child.parent = this
-
-		if (isActive) {
-			child.activate()
-		}
 		return child
 	}
 
@@ -98,24 +75,15 @@ open class TimeDriverImpl : LifecycleBase(), TimeDriver, Drivable {
 	 * Removes a child at the given index from this container.
 	 * @return Returns true if a child was removed, or false if the index was out of range.
 	 */
-	override fun removeChild(index: Int): DrivableChild {
+	override fun removeChild(index: Int): UpdatableChild {
 		val c = _children
 		val child = c.removeAt(index)
 		child.parent = null
-
-		if (child.isActive) {
-			child.deactivate()
-		}
 		return child
 	}
 
 	override fun dispose() {
-		super.dispose()
-		iterateChildren {
-			it.dispose()
-			true
-		}
-		_children.dispose()
+		_children.clear()
 	}
 }
 
@@ -123,8 +91,8 @@ open class TimeDriverImpl : LifecycleBase(), TimeDriver, Drivable {
  * Invokes the callback on every frame. This is similar to [onTick] except the receiver isn't watched for activation
  * or disposal.
  */
-fun Scoped.drive(update: (stepTime: Float) -> Unit): DrivableChild {
-	val child = object : DrivableChildBase() {
+fun Scoped.drive(update: (stepTime: Float) -> Unit): UpdatableChild {
+	val child = object : UpdatableChildBase() {
 		override fun update(stepTime: Float) {
 			update(stepTime)
 		}

@@ -17,7 +17,8 @@
 package com.acornui.core.tween
 
 import com.acornui.collection.ObjectPool
-import com.acornui.core.DrivableChildBase
+import com.acornui.core.Disposable
+import com.acornui.core.UpdatableChildBase
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.time.TimeDriver
@@ -153,7 +154,7 @@ interface Tween {
 		 * This prevents a stutter on the first used animation at the cost of startup time.
 		 */
 		fun prepare() {
-			TweenRegistry; Easing; TweenDriver; CallbackTween;
+			TweenRegistry; Easing; TweenDriver; CallbackTween
 		}
 	}
 
@@ -275,7 +276,7 @@ class TweenImpl(duration: Float, ease: Interpolation, delay: Float, loop: Boolea
 /**
  * A tween driver will update a single tween, then remove and recycle itself when the tween is completed.
  */
-class TweenDriver private constructor() : DrivableChildBase() {
+class TweenDriver private constructor() : UpdatableChildBase(), Disposable {
 
 	private var _tween: Tween? = null
 
@@ -292,18 +293,23 @@ class TweenDriver private constructor() : DrivableChildBase() {
 			_tween?.completed?.add(tweenCompletedHandler)
 		}
 
-	override fun onDeactivated() {
-		tween = null
-		pool.free(this)
-	}
-
 	override fun update(stepTime: Float) {
 		tween?.update(stepTime)
 	}
 
+	override fun dispose() {
+		if (tween == null) return
+		tween = null
+		pool.free(this)
+	}
+
 	companion object {
 		private val pool = ObjectPool { TweenDriver() }
-		fun obtain(): TweenDriver = pool.obtain()
+		fun obtain(tween: Tween): TweenDriver {
+			val driver = pool.obtain()
+			driver.tween = tween
+			return driver
+		}
 	}
 }
 
@@ -311,8 +317,7 @@ class TweenDriver private constructor() : DrivableChildBase() {
  * Creates a tween driver and updates the tween forward until completion.
  */
 fun <T : Tween> Scoped.driveTween(tween: T): T {
-	val driver = TweenDriver.obtain()
-	driver.tween = tween
+	val driver = TweenDriver.obtain(tween)
 	inject(TimeDriver).addChild(driver)
 	return tween
 }
@@ -321,8 +326,7 @@ fun <T : Tween> Scoped.driveTween(tween: T): T {
  * Creates a tween driver and updates the tween forward until completion.
  */
 fun <T : Tween> T.drive(timeDriver: TimeDriver): T {
-	val driver = TweenDriver.obtain()
-	driver.tween = this
+	val driver = TweenDriver.obtain(this)
 	timeDriver.addChild(driver)
 	return this
 }

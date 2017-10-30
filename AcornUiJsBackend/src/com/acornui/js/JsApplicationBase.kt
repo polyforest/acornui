@@ -282,9 +282,7 @@ abstract class JsApplicationBase : ApplicationBase() {
 	}
 
 	protected open val timeDriverTask by BootTask {
-		val timeDriver = TimeDriverImpl()
-		timeDriver.activate()
-		set(TimeDriver, timeDriver)
+		set(TimeDriver, TimeDriverImpl())
 	}
 
 	protected open val interactivityTask by BootTask {

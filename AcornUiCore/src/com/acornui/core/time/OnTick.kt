@@ -2,11 +2,11 @@ package com.acornui.core.time
 
 import com.acornui.component.UiComponent
 import com.acornui.core.Disposable
-import com.acornui.core.DrivableChildBase
+import com.acornui.core.UpdatableChildBase
 import com.acornui.core.LifecycleRo
 import com.acornui.core.di.inject
 
-private class OnTick(private val component: UiComponent, private val callback: (stepTime: Float) -> Unit) : DrivableChildBase() {
+private class OnTick(private val component: UiComponent, private val callback: (stepTime: Float) -> Unit) : UpdatableChildBase(), Disposable {
 
 	private val timeDriver = component.inject(TimeDriver)
 
@@ -37,7 +37,7 @@ private class OnTick(private val component: UiComponent, private val callback: (
 	}
 
 	override fun dispose() {
-		super.dispose()
+		remove()
 		component.activated.remove(componentActivatedHandler)
 		component.deactivated.remove(componentDeactivatedHandler)
 		component.disposed.remove(componentDisposedHandler)

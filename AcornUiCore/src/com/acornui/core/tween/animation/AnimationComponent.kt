@@ -48,6 +48,9 @@ class AnimationComponent(owner: Owned, bundle: AnimationBundle, animation: Anima
 		driveTween(tween)
 	}
 
+	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+		out.set(explicitWidth ?: 0f, explicitHeight ?: 0f)
+	}
 }
 
 private class LayerTween(override val duration: Float, layer: Layer, private val target: UiComponent, globalEasings: Map<String, AnimationEasing>) : TweenBase() {
@@ -123,7 +126,7 @@ private class LayerTween(override val duration: Float, layer: Layer, private val
 			quat.setEulerAnglesRad(rotation.y, rotation.x, rotation.z)
 			transform.rotate(quat)
 		}
-		transform.shear(shearXZ, shearYZ, 0f, 0f, 0f, 0f)
+		transform.shear(MathUtils.tan(shearXZ), MathUtils.tan(shearYZ), 0f, 0f, 0f, 0f)
 
 		transform.translate(-origin.x, -origin.y, -origin.z)
 		target.invalidate(ValidationFlags.TRANSFORM)

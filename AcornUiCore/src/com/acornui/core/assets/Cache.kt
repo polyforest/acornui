@@ -77,7 +77,7 @@ class CacheImpl(
 	private var timerPending = checkInterval
 
 	init {
-		timeDriver.enterFrame {
+		enterFrame(timeDriver) {
 			if (--timerPending <= 0) {
 				timerPending = checkInterval
 				deathPoolIterator.clear()

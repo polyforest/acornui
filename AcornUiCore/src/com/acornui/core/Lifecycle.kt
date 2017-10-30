@@ -125,12 +125,7 @@ abstract class LifecycleBase : Lifecycle {
 	}
 }
 
-/**
- * A common interface for objects with a lifecycle that can be updated.
- */
-interface Drivable : Updatable, Lifecycle
-
-interface Updatable : Disposable {
+interface Updatable {
 
 	/**
 	 * Updates this object.
@@ -138,21 +133,17 @@ interface Updatable : Disposable {
 	fun update(stepTime: Float)
 }
 
-interface DrivableChild : Drivable, ChildRo {
+interface UpdatableChild : Updatable, ChildRo {
 
-	override var parent: Parent<DrivableChild>?
+	override var parent: Parent<UpdatableChild>?
 
 	fun remove() {
 		parent?.removeChild(this)
 	}
 }
 
-abstract class DrivableChildBase : LifecycleBase(), DrivableChild {
+abstract class UpdatableChildBase : UpdatableChild {
 
-	override var parent: Parent<DrivableChild>? = null
+	override var parent: Parent<UpdatableChild>? = null
 
-	override fun dispose() {
-		super.dispose()
-		remove()
-	}
 }

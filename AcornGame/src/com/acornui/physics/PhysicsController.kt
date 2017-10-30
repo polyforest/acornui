@@ -1,5 +1,6 @@
 package com.acornui.physics
 
+import com.acornui.core.Disposable
 import com.acornui.core.Updatable
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
@@ -17,7 +18,7 @@ import com.acornui.math.Vector2
 class PhysicsController(
 		override val injector: Injector,
 		private val entities: List<Entity>
-) : Updatable, Scoped {
+) : Updatable, Scoped, Disposable {
 
 	private val cmd = commander()
 	private val physicsVos = ArrayList<PhysicsVo>()
