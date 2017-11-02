@@ -693,6 +693,16 @@ open class UiComponentImpl(
 			invalidate(ValidationFlags.COLOR_TRANSFORM)
 		}
 
+	override var alpha: Float
+		get() {
+			return colorTint.a
+		}
+		set(value) {
+			val t = colorTint
+			if (t.a == value) return
+			colorTint(t.r, t.g, t.b, value)
+		}
+
 	override fun colorTint(r: Float, g: Float, b: Float, a: Float) {
 		_colorTint.set(r, g, b, a)
 		invalidate(ValidationFlags.COLOR_TRANSFORM)

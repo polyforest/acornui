@@ -71,6 +71,7 @@ open class BasicUiSkin(
 		numericStepperStyle()
 		scrollAreaStyle()
 		scrollBarStyle()
+		progressBarStyle()
 		sliderStyle()
 		colorPickerStyle()
 		itemRendererStyle()
@@ -320,6 +321,16 @@ open class BasicUiSkin(
 		hScrollBarStyle.track = track
 		hScrollBarStyle.inactiveAlpha = 0.2f
 		target.addStyleRule(hScrollBarStyle, HScrollBar)
+	}
+
+	private fun progressBarStyle() {
+		val s = ProgressBarRectStyle()
+		s.borderColor = BorderColors(theme.stroke)
+		s.borderRadius = Corners(0f)
+		s.borderThickness = Pad(theme.strokeThickness)
+		s.fillColor = theme.fill
+		s.bgColor = Color(0f, 0f, 0f, 0.2f)
+		target.addStyleRule(s, ProgressBarRect)
 	}
 
 	protected open fun sliderStyle() {
@@ -877,6 +888,13 @@ class Theme {
 		colorTint = Color(0x333333FF)
 	}
 
+	var subHeadingStyle = charStyle {
+		face = "Verdana"
+		size = 14
+		bold = true
+		colorTint = Color(0x333333FF)
+	}
+
 	var formLabelStyle = charStyle {
 		colorTint = Color(0x555555FF)
 		bold = true
@@ -898,6 +916,7 @@ object StyleSelectors {
 
 	val cbNoLabelStyle = styleTag()
 	val headingStyle = styleTag()
+	val subHeadingStyle = styleTag()
 	val themeRect = styleTag()
 }
 
@@ -907,6 +926,17 @@ object StyleSelectors {
 fun Owned.heading(text: String = "", init: ComponentInit<TextField> = {}): TextField {
 	val t = injector.inject(TextField.FACTORY_KEY)(this)
 	t.styleTags.add(StyleSelectors.headingStyle)
+	t.text = text
+	t.init()
+	return t
+}
+
+/**
+ * A shortcut to creating a text field with the [StyleSelectors.subHeadingStyle] tag.
+ */
+fun Owned.subHeading(text: String = "", init: ComponentInit<TextField> = {}): TextField {
+	val t = injector.inject(TextField.FACTORY_KEY)(this)
+	t.styleTags.add(StyleSelectors.subHeadingStyle)
 	t.text = text
 	t.init()
 	return t

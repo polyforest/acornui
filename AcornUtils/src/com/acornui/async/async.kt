@@ -17,6 +17,7 @@
 package com.acornui.async
 
 import com.acornui.collection.ArrayList
+import com.acornui.collection.copy
 import com.acornui.collection.mapTo
 import com.acornui.collection.poll
 import kotlin.coroutines.experimental.*
@@ -240,9 +241,11 @@ class NonDeferred<out T>(val value: T) : Deferred<T> {
 }
 
 suspend fun <T> List<Deferred<T>>.awaitAll(): List<T> {
-	return ArrayList(size, { this[it].await() })
+	val copy = copy() // Copy the list so that it can't mutate in between awaits.
+	return ArrayList(copy.size, { copy[it].await() })
 }
 
 suspend fun <K, V> Map<K, Deferred<V>>.awaitAll(): Map<K, V> {
-	return mapTo { key, value -> key to value.await() }
+	// Copy the map so that it can't mutate in between awaits.
+	return copy().mapTo { key, value -> key to value.await() }
 }

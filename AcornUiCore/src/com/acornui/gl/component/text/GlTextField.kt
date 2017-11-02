@@ -660,15 +660,13 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 			val line = _lines[i]
 			line.y = y
 
-			var belowBaseline = 0f
 			for (j in line.startIndex..line.endIndex - 1) {
 				val part = _textElements[j]
 				val b = part.lineHeight - part.baseline
-				if (b > belowBaseline) belowBaseline = b
+				if (b > line.belowBaseline) line.belowBaseline = b
 				if (part.baseline > line.baseline) line.baseline = part.baseline
 				if (!part.overhangs) line.width = part.x + part.xAdvance
 			}
-			line.height = line.baseline + belowBaseline
 			if (line.width > measuredWidth)
 				measuredWidth = line.width
 			positionPartsInLine(line, availableWidth)

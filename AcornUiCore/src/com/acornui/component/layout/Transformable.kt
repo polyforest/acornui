@@ -218,5 +218,6 @@ interface Positionable : PositionableRo {
 	 * Sets the position of this component. (Without rounding)
 	 */
 	fun setPosition(x: Float = 0f, y: Float = 0f, z: Float = 0f)
+	fun setPosition(value: Vector3Ro) = setPosition(value.x, value.y, value.z)
 
 }

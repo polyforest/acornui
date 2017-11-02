@@ -19,33 +19,86 @@ package com.acornui.core.tween.animation
 import com.acornui.collection.ArrayList
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
+import com.acornui.core.Disposable
 import com.acornui.core.di.Owned
+import com.acornui.core.graphics.AtlasComponent
 import com.acornui.core.graphics.atlas
-import com.acornui.core.tween.Tween
-import com.acornui.core.tween.TweenBase
-import com.acornui.core.tween.driveTween
-import com.acornui.core.tween.timelineTween
+import com.acornui.core.time.onTick
+import com.acornui.core.tween.*
 import com.acornui.graphics.Color
 import com.acornui.logging.Log
 import com.acornui.math.*
 
 /**
+ * A UI Component representing an animation library item.
+ */
+interface SymbolInstance : UiComponent {
+	val libraryItem: LibraryItem
+}
+
+class ImageInstance(
+		private val texture: TextureComponent,
+		override val libraryItem: ImageLibraryItem
+) : SymbolInstance, UiComponent by texture
+
+class CustomInstance(
+		private val component: UiComponent
+) : SymbolInstance, UiComponent by component {
+
+	override val libraryItem = object : LibraryItem {
+		override val itemType = LibraryItemType.CUSTOM
+	}
+}
+
+class AtlasInstance(
+		private val atlas: AtlasComponent,
+		override val libraryItem: AtlasLibraryItem
+) : SymbolInstance, UiComponent by atlas
+
+/**
  * The visual component for an animation tween.
  */
-class AnimationComponent(owner: Owned, bundle: AnimationBundle, animation: AnimationLibraryItem) : ContainerImpl(owner) {
+class AnimationInstance(
+		owner: Owned,
+		val bundle: AnimationBundle,
+		override val libraryItem: AnimationLibraryItem
+) : ElementContainerImpl<SymbolInstance>(owner), SymbolInstance {
 
-	val tween: Tween
+	val tween: TimelineTween
+	private var driver: Disposable? = null
 
 	init {
 		tween = timelineTween()
 		tween.loopAfter = true
-		for (i in animation.timeline.layers.lastIndex downTo 0) {
-			val layer = animation.timeline.layers[i]
+		for (i in libraryItem.timeline.layers.lastIndex downTo 0) {
+			val layer = libraryItem.timeline.layers[i]
 			if (!layer.visible) continue
-			val component = addChild(createComponentFromLibrary(bundle, layer.symbolName))
-			tween.add(LayerTween(animation.timeline.duration, layer, component, bundle.easings))
+			val component = +createComponentFromLibrary(bundle, layer.symbolName)
+			component.visible = false
+			tween.add(LayerTween(libraryItem.timeline.duration, layer, component, bundle.easings))
 		}
-		driveTween(tween)
+		start()
+	}
+
+	/**
+	 * Starts driving the tween. (This is automatically done after initialization).
+	 * @see Tween.paused
+	 */
+	fun start() {
+		if (driver != null) return
+		driver = onTick {
+			tween.update(it)
+		}
+	}
+
+	/**
+	 * Stops driving the tween. This would be called if a custom tween updater is used instead. For pause/play
+	 * functionality, use [Tween.paused]
+	 * @see Tween.paused
+	 */
+	fun stop() {
+		driver?.dispose()
+		driver = null
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
@@ -209,21 +262,23 @@ private class LayerTween(override val duration: Float, layer: Layer, private val
 	}
 }
 
-fun Owned.animationComponent(bundle: AnimationBundle, libraryItemName: String, init: ComponentInit<AnimationComponent> = {}): AnimationComponent {
-	val c = createComponentFromLibrary(bundle, libraryItemName) as? AnimationComponent ?: throw Exception("Library item is not an animation.")
+fun Owned.animationComponent(bundle: AnimationBundle, libraryItemName: String, init: ComponentInit<AnimationInstance> = {}): AnimationInstance {
+	val c = createComponentFromLibrary(bundle, libraryItemName) as? AnimationInstance ?: throw Exception("Library item is not an animation.")
 	c.init()
 	return c
 }
 
-fun Owned.createComponentFromLibrary(bundle: AnimationBundle, libraryItemName: String, init: ComponentInit<UiComponent> = {}): UiComponent {
+
+fun Owned.createComponentFromLibrary(bundle: AnimationBundle, libraryItemName: String, init: ComponentInit<UiComponent> = {}): SymbolInstance {
 	val libraryItem = bundle.library[libraryItemName] ?: throw Exception("library item not found with name: $libraryItemName")
 	val component = when (libraryItem.itemType) {
-		LibraryItemType.IMAGE -> image((libraryItem as ImageLibraryItem).path)
+		LibraryItemType.CUSTOM -> throw Exception("Cannot create a component with a custom library type.")
+		LibraryItemType.IMAGE -> ImageInstance(textureC((libraryItem as ImageLibraryItem).path), libraryItem)
 		LibraryItemType.ATLAS -> {
 			libraryItem as AtlasLibraryItem
-			atlas(libraryItem.atlasPath, libraryItem.regionName)
+			AtlasInstance(atlas(libraryItem.atlasPath, libraryItem.regionName), libraryItem)
 		}
-		LibraryItemType.ANIMATION -> AnimationComponent(this, bundle, libraryItem as AnimationLibraryItem)
+		LibraryItemType.ANIMATION -> AnimationInstance(this, bundle, libraryItem as AnimationLibraryItem)
 	}
 	component.init()
 	return component

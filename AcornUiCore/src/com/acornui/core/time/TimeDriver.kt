@@ -17,6 +17,7 @@
 package com.acornui.core.time
 
 import com.acornui._assert
+import com.acornui.collection.ActiveList
 import com.acornui.core.*
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Scoped
@@ -37,7 +38,8 @@ interface TimeDriver : Parent<UpdatableChild>, Updatable {
 open class TimeDriverImpl : TimeDriver, Disposable {
 
 	override var parent: Parent<out ChildRo>? = null
-	private val _children = ArrayList<UpdatableChild>()
+	private val _children = ActiveList<UpdatableChild>()
+	private val childIterator = _children.iterator()
 
 	override fun update(stepTime: Float) {
 		iterateChildren {
@@ -53,6 +55,13 @@ open class TimeDriverImpl : TimeDriver, Disposable {
 	override val children: List<UpdatableChild>
 		get() = _children
 
+	override fun iterateChildren(body: (UpdatableChild) -> Boolean) {
+		childIterator.iterate(body)
+	}
+
+	override fun iterateChildrenReversed(body: (UpdatableChild) -> Boolean) {
+		childIterator.iterateReversed(body)
+	}
 
 	/**
 	 * Adds the specified child to this container.

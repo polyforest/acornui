@@ -48,7 +48,8 @@ data class ImageLibraryItem(val path: String) : LibraryItem {
 enum class LibraryItemType {
 	IMAGE,
 	ATLAS,
-	ANIMATION
+	ANIMATION,
+	CUSTOM
 }
 
 data class AnimationLibraryItem(
@@ -57,7 +58,15 @@ data class AnimationLibraryItem(
 	override val itemType = LibraryItemType.ANIMATION
 }
 
-data class Timeline(val duration: Float, val layers: List<Layer>)
+data class Timeline(
+		val duration: Float,
+		val layers: List<Layer>,
+
+		/**
+		 * A map of label name to times.
+		 */
+		val labels: Map<String, Float>
+)
 
 data class Layer(
 		val name: String,

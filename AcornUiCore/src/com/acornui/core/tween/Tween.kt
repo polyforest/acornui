@@ -43,6 +43,7 @@ interface Tween {
 	 * The current time of the tween, in seconds.
 	 *
 	 * If the implementation has a delayed start, this value will start as negative.
+	 * Settings this value is the same as calling [setCurrentTime] with jump = false.
 	 * @see update
 	 */
 	var currentTime: Float
@@ -106,11 +107,18 @@ interface Tween {
 	var allowCompletion: Boolean
 
 	/**
+	 * If true, [update] will not advance the current time.
+	 * This does not affect directly changing the current time.
+	 */
+	var paused: Boolean
+
+	/**
 	 * Steps forward [stepTime] seconds.
 	 * @param stepTime The number of seconds to progress. This may be negative.
 	 */
 	fun update(stepTime: Float) {
-		currentTime += stepTime
+		if (!paused)
+			currentTime += stepTime
 	}
 
 	/**
@@ -172,6 +180,7 @@ abstract class TweenBase : Tween {
 	override var loopBefore: Boolean = false
 	override var loopAfter: Boolean = false
 	override var allowCompletion = false
+	override var paused = false
 
 	override var startTime: Float = 0f
 

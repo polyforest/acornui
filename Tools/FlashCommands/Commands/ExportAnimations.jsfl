@@ -1,9 +1,10 @@
 ﻿var originCache = {};
+var folder = document.pathURI.substring(0, document.pathURI.lastIndexOf(document.name));
 fl.runScript(fl.configURI + 'Javascript/JSON.jsfl')
-JSON.prettyPrint = true;
+//JSON.prettyPrint = true;
 fl.outputPanel.clear();
 var data = { library: {}, easings: {} };
-data.library["__document"] = { type: "animation", timeline: processTimeline(document.timelines[0]) };
+data.library["__document"] = { type: "animation", timeline: processTimeline(document.timelines[0], "__document") };
 
 for (var i = 0; i < document.library.items.length; i++) {
 	var item = document.library.items[i];
@@ -21,13 +22,18 @@ for (var i = 0; i < document.library.items.length; i++) {
 				data.library[item.name] = { type: "atlas", regionName: regionName, atlasPath: atlasPath };
 			}
 		} else {
-			data.library[item.name] = { type: "animation", timeline: processTimeline(item.timeline) };
+			data.library[item.name] = { type: "animation", timeline: processTimeline(item.timeline, item.name) };
 		}
 	}
 }
 
-function processTimeline(timeline) {
-	var timelineData = { duration: round(timeline.frameCount / document.frameRate), layers: [] };
+/**
+ * Creates a data object representing a timeline.
+ * @param timeline The Timeline object.
+ * @param movieName The name of the movie (for debugging purposes)
+ */
+function processTimeline(timeline, movieName) {
+	var timelineData = { duration: round(timeline.frameCount / document.frameRate), labels: {}, layers: [] };
 	for (var layerIndex = 0; layerIndex < timeline.layers.length; layerIndex++) {
 		var layer = timeline.layers[layerIndex];
 		if (layer.layerType != "normal") continue;
@@ -37,20 +43,23 @@ function processTimeline(timeline) {
 		for (var frameIndex = 0; frameIndex < layer.frames.length; frameIndex++) {
 			var frame = layer.frames[frameIndex];
 			if (frame.startFrame == frameIndex && frame.elements.length > 0) {
-				if (frame.elements.length > 1) throw Error("Cannot have more than one element per layer.");
+				if (frame.elements.length > 1) throw Error("Cannot have more than one element per layer. movie: " + movieName + " layer: " + layer.name + " frame: " + frameIndex);
 				var element = frame.elements[0];
-				if (element.symbolType == "movie clip") {
-					var name = element.libraryItem.name;
-					if (name != symbolName) {
-						if (symbolName != null) throw Error("Cannot have different movie clips on one layer.");
-						symbolName = name;
-					}
-				} else {
-					throw Error("Only movie clips are currently supported.");
+				if (element.libraryItem == null || element.libraryItem.itemType == "bitmap") continue;
+				//if (element.libraryItem == null) throw Error("Error on frame " + frameIndex + " Only movie clips are currently supported. symbolType: " + element.symbolType + ", movie: " + movieName + " layer: " + layer.name + " frame: " + frameIndex);
+				var name = element.libraryItem.name;
+				if (name != symbolName) {
+					if (symbolName != null) throw Error("Cannot have different movie clips on one layer. movie: " + movieName + " layer: " + layer.name + " frame: " + frameIndex);
+					symbolName = name;
 				}
 			}
+			
+			// Frame labels
+			if (frame.startFrame == frameIndex && frame.labelType == "name") {
+				timelineData.labels[frame.name] = frame.startFrame / document.frameRate;
+			}
 		}
-		
+		if (symbolName == null) continue; // No symbol on that layer.
 		var layerData = { name: layer.name, symbolName: symbolName, visible: layer.visible, keyFrames: [] };
 		
 		var lastKeyFrameData = null;
@@ -65,6 +74,12 @@ function processTimeline(timeline) {
 				lastKeyFrameData = keyFrameData;
 			}
 		}
+		if (timeline.frameCount > layer.frames.length) {
+			// Add a virtual blank keyframe to the end if the layer is shorter than the timeline
+			var blankFrameData = { time: round(layer.frames.length / document.frameRate), easings: {}, props: { visible: { value: 0, easing: null }} };
+			layerData.keyFrames.push(blankFrameData);
+		}
+		
 		timelineData.layers.push(layerData);
 	}
 	return timelineData;
@@ -94,13 +109,16 @@ function createFrameData(frame) {
 		}
 	}
 	
-	var rawProps; // The properties before associating them with easing functions.
-	if (frame.elements.length > 0) {
-		var element = frame.elements[0];
-		rawProps = createPropsData(element);
-	} else {
-		rawProps = createPropsData(null);
+	var element = null;
+	// Find first element with a libraryItem
+	for each (i in frame.elements) {
+		if (i.libraryItem != null) {
+			element = i;
+			break;
+		}
 	}
+	var rawProps = createPropsData(element);// The properties before associating them with easing functions.
+	
 	frameData.props = {};
 	var propsEasingMap;
 	if (frame.tweenType == "motion") {
@@ -152,8 +170,8 @@ function createPropsData(element) {
 		props.scaleX = round(element.scaleX * Math.cos((element.skewY - r) * degRad));
 		props.scaleY = round(element.scaleY * Math.cos((element.skewX - r) * degRad));
 
-		props.shearXZ = round(Math.tan((element.skewX - r)));
-		props.shearYZ = round(Math.tan((element.skewY - r)));
+		props.shearXZ = -round((element.skewX - r) * degRad);
+		props.shearYZ = round((element.skewY - r) * degRad);
 		props.rotationZ = round(r * degRad);
 
 	} else {
@@ -232,9 +250,21 @@ function _getOrigin(libraryItem) {
 	}
 }
 
-fl.trace(JSON.stringify(data));
+var json = JSON.stringify(data);
+makeDirs("resources/assets/anim");
+var animName = document.name.substring(0, document.name.length-4) + ".json";
+FLfile.write(folder + "resources/assets/anim/" + animName, json)
 
-
+function makeDirs(path) {
+	var split = path.split("/");
+	var parent = folder;
+	for (var i = 0; i < split.length - 1; i++) {
+		parent += split[i] + "/";
+		if (!FLfile.exists(parent)) {
+			FLfile.createFolder(parent);
+		}
+	}
+}
 
 
 

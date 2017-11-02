@@ -57,13 +57,5 @@ interface ColorTransformable : ColorTransformableRo {
 	 * A utility method for setting and retrieving the alpha tint.
 	 */
 	override var alpha: Float
-		get() {
-			return colorTint.a
-		}
-		set(value) {
-			val t = colorTint
-			if (t.a == value) return
-			colorTint(t.r, t.g, t.b, value)
-		}
 
 }

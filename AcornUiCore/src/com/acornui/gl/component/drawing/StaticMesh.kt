@@ -114,8 +114,10 @@ open class StaticMeshComponent(
 		mesh.render(gl, glState)
 	}
 
+	// TODO: test
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		out.set(100f, 100f) // TODO: TEMP
+		val boundingBox = mesh?.boundingBox ?: return
+		out.ext(boundingBox.max.x, boundingBox.max.y)
 	}
 
 	override fun dispose() {

@@ -46,9 +46,9 @@ abstract class ApplicationBase : Disposable {
 		for (pendingTask in pendingTasks.values) {
 			waitFor.add(async {
 				try {
-					Log.debug("Task started: ${pendingTask.first}")
+					//Log.debug("Task started: ${pendingTask.first}")
 					pendingTask.second()
-					Log.debug("Task finished: ${pendingTask.first}")
+					//Log.debug("Task finished: ${pendingTask.first}")
 				} catch (e: Throwable) {
 					Log.error("Task failed: ${pendingTask.first} $e")
 				}

@@ -69,7 +69,12 @@ object TimelineSerializer : From<Timeline> {
 	override fun read(reader: Reader): Timeline {
 		return Timeline(
 				duration = reader.float("duration")!!,
-				layers = reader.arrayList("layers", LayerSerializer)!!
+				layers = reader.arrayList("layers", LayerSerializer)!!,
+				labels = reader.map("labels", object : From<Float> {
+					override fun read(reader: Reader): Float {
+						return reader.float()!!
+					}
+				})!!
 		)
 	}
 }

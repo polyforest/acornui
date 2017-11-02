@@ -1,17 +1,20 @@
 ﻿fl.outputPanel.clear();
 var doc = fl.getDocumentDOM();
-if (doc == null) {
+var library = document.library;
+var log = [];
+
+if (!doc) {
 	alert("Select a document.");
-} else {
+} else {	
+	var docName = doc.name.substring(0, doc.name.length - 4);
+	var folder = doc.pathURI.substring(0, doc.pathURI.lastIndexOf(doc.name));
+	
 	// Create a temporary doc.
 	fl.createDocument();
 	var exportDoc = fl.getDocumentDOM();
 	
-	var docName = doc.name.substring(0, doc.name.length - 4);
-	var folder = doc.pathURI.substring(0, doc.pathURI.lastIndexOf(doc.name));
-	var log = [];
 	trace("Publishing pngs to: " + folder);
-	for each (var item in doc.library.items) {
+	for each (var item in library.items) {
 		if (item.linkageExportForAS) {
 			makeDirs(item.name);
 			trace("Item: " + item.name);
@@ -90,6 +93,6 @@ function resizeDocument(doc, item) {
 	element.x += -element.left;
 	element.y += -element.top;
 	doc.width = Math.ceil(element.width);
-    doc.height = Math.ceil(element.height);
+	doc.height = Math.ceil(element.height);	
 	return true;
 }

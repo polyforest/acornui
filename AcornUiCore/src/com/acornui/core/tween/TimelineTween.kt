@@ -9,22 +9,33 @@ import com.acornui.math.Interpolation
  */
 class TimelineTween(ease: Interpolation, delay: Float, loop: Boolean) : TweenBase() {
 
-	private val children = ArrayList<Tween>()
-	private val offsets = ArrayList<Float>()
+	private val _children = ArrayList<Tween>()
+	private val _offsets = ArrayList<Float>()
+
+	val children: List<Tween>
+		get() = _children
+
+	val offsets: List<Float>
+		get() = _offsets
 
 	/**
 	 * The duration of the timeline tween can be scaled.
 	 */
 	var timeScale = 1f
 
-	private var _duration: Float = 0f
-
 	override val duration: Float
-		get() = _duration / timeScale
+		get() {
+			var d = 0.0000001f
+			for (i in 0.._children.lastIndex) {
+				val child = _children[i]
+				val offset = _offsets[i]
+				d = maxOf(d, child.duration + offset - child.startTime)
+			}
+			return d / timeScale
+		}
 
-	private var _durationInv: Float = 0f
 	override val durationInv: Float
-		get() = _durationInv * timeScale
+		get() = 1f / duration
 
 	init {
 		this.ease = ease
@@ -33,31 +44,35 @@ class TimelineTween(ease: Interpolation, delay: Float, loop: Boolean) : TweenBas
 		jumpTo(startTime)
 	}
 
+	fun add(tween: Tween, offset: Float = 0f) = add(_children.size, tween, offset)
+
 	/**
-	 * Adds a tween relative to 0f.
+	 * Adds a tween to this timeline.
 	 */
-	fun add(tween: Tween, offset: Float = 0f) {
-		_duration = maxOf(_duration, tween.duration + offset - tween.startTime)
-		_durationInv = 1f / _duration
-		children.add(tween)
-		offsets.add(offset)
+	fun add(index: Int, tween: Tween, offset: Float = 0f) {
+		_children.add(index, tween)
+		_offsets.add(index, offset)
 	}
 
 	fun remove(tween: Tween): Boolean {
-		val index = children.indexOf(tween)
+		val index = _children.indexOf(tween)
 		if (index != -1) {
-			children.removeAt(index)
-			offsets.removeAt(index)
+			remove(index)
 			return true
 		}
 		return false
+	}
+
+	fun remove(index: Int) {
+		_children.removeAt(index)
+		_offsets.removeAt(index)
 	}
 
 	/**
 	 * Adds a tween relative to the start of the previous tween.
 	 */
 	fun stagger(tween: Tween, offset: Float = 0.25f) {
-		val lastTweenOffset = offsets.lastOrNull() ?: 0f
+		val lastTweenOffset = _offsets.lastOrNull() ?: 0f
 		add(tween, lastTweenOffset + offset)
 	}
 
@@ -65,22 +80,22 @@ class TimelineTween(ease: Interpolation, delay: Float, loop: Boolean) : TweenBas
 	 * Adds a tween relative to the current ending.
 	 */
 	fun then(tween: Tween, offset: Float = 0f) {
-		add(tween, _duration + offset)
+		add(tween, duration + offset)
 	}
 
 	override fun updateToTime(lastTime: Float, newTime: Float, apparentLastTime: Float, apparentNewTime: Float, jump: Boolean) {
-		if (children.isEmpty()) return
-		val t = ease(apparentNewTime * durationInv) * _duration
+		if (_children.isEmpty()) return
+		val t = ease(apparentNewTime * durationInv) * duration
 
 		if (newTime >= lastTime) {
-			for (i in 0..children.lastIndex) {
-				val c = children[i]
-				c.setCurrentTime(t - offsets[i] + c.startTime, jump)
+			for (i in 0.._children.lastIndex) {
+				val c = _children[i]
+				c.setCurrentTime(t - _offsets[i] + c.startTime, jump)
 			}
 		} else {
-			for (i in children.lastIndex downTo 0) {
-				val c = children[i]
-				c.setCurrentTime(t - offsets[i] + c.startTime, jump)
+			for (i in _children.lastIndex downTo 0) {
+				val c = _children[i]
+				c.setCurrentTime(t - _offsets[i] + c.startTime, jump)
 			}
 		}
 	}

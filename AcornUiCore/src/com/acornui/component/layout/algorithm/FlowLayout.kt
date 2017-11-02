@@ -62,6 +62,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 		var measuredW: Float = 0f
 		_lines.freeTo(linesPool)
 		var line = linesPool.obtain()
+		line.y = padding.top
 		var x = 0f
 		var y = 0f
 		var previousElement: LayoutElement? = null
@@ -97,9 +98,10 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 				if (x > measuredW) measuredW = x
 			}
 			x += props.horizontalGap
-			if (h > line.height) line.height = h
 			val baseline = layoutData?.baseline ?: h
 			if (baseline > line.baseline) line.baseline = baseline
+			val belowBaseline = h - baseline
+			if (belowBaseline > belowBaseline) line.belowBaseline = belowBaseline
 			previousElement = element
 		}
 		line.endIndex = elements.size
@@ -149,7 +151,6 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 
 		var x = 0f
 		val padLeft = props.padding.left
-		val padTop = props.padding.top
 		for (j in line.startIndex..line.endIndex - 1) {
 			val element = elements[j]
 
@@ -160,8 +161,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 				FlowVAlign.BOTTOM -> (line.height - element.height)
 				FlowVAlign.BASELINE -> (line.baseline - (layoutData?.baseline ?: element.height))
 			}
-
-			element.moveTo(x + padLeft + xOffset, padTop + line.y + yOffset)
+			element.moveTo(x + padLeft + xOffset, line.y + yOffset)
 			x += element.width + hGap
 		}
 	}
@@ -213,7 +213,9 @@ interface LineInfoRo {
 	val y: Float
 	val width: Float
 	val height: Float
+		get() = baseline + belowBaseline
 	val baseline: Float
+	val belowBaseline: Float
 
 	val bottom: Float
 		get() = y + height
@@ -234,16 +236,16 @@ class LineInfo : Clearable, LineInfoRo {
 	override var endIndex: Int = 0
 	override var y: Float = 0f
 	override var width: Float = 0f
-	override var height: Float = 0f
 	override var baseline: Float = 0f
+	override var belowBaseline: Float = 0f
 
 	override fun clear() {
 		startIndex = 0
 		endIndex = 0
 		width = 0f
-		height = 0f
 		y = 0f
 		baseline = 0f
+		belowBaseline = 0f
 	}
 }
 

@@ -235,7 +235,7 @@ class AnimationState(
 
 	/** [.addAnimation]  */
 	fun addAnimation(trackIndex: Int, animationName: String, loop: Boolean = false, delay: Float = 0f): AnimationTrackEntry {
-		val animation = skeleton.findAnimation(animationName) ?: throw IllegalArgumentException("Animation not found: " + animationName)
+		val animation = skeleton.findAnimation(animationName) ?: throw IllegalArgumentException("AnimationInstance not found: " + animationName)
 		return addAnimation(trackIndex, animation, loop, delay)
 	}
 
