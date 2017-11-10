@@ -288,6 +288,12 @@ class Vector2(
 		return this
 	}
 
+	fun random(): Vector2 {
+		x = MathUtils.random() * 2f - 1f
+		y = MathUtils.random() * 2f - 1f
+		return this
+	}
+
 	fun clamp(min: Float, max: Float): Vector2 {
 		val l2 = len2()
 		if (l2 == 0f) return this

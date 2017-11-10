@@ -106,9 +106,9 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 			val element = elements[i]
 			val layoutData = element.layoutData as HorizontalLayoutData?
 			val y = when (layoutData?.verticalAlign ?: props.verticalAlign) {
-				VAlign.TOP -> padding.bottom
-				VAlign.MIDDLE -> (maxHeight - element.height) * 0.5f + padding.bottom
-				VAlign.BOTTOM -> maxHeight - element.height + padding.bottom
+				VAlign.TOP -> padding.top
+				VAlign.MIDDLE -> (maxHeight - element.height) * 0.5f + padding.top
+				VAlign.BOTTOM -> maxHeight - element.height + padding.top
 				else -> throw Exception()
 			}
 			element.moveTo(x, y)

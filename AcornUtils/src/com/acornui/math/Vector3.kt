@@ -272,6 +272,13 @@ class Vector3 (
 		return MathUtils.sqrt(x * x + y * y + z * z)
 	}
 
+	/**
+	 * Scales this vector so that the length is equal to the provided value.
+	 */
+	fun len(value: Float): Vector3 {
+		return nor().scl(value)
+	}
+
 	override fun len2(): Float {
 		return x * x + y * y + z * z
 	}
@@ -470,18 +477,18 @@ class Vector3 (
 	 * @param axisZ the z-component of the axis
 	 * @return This vector for chaining
 	 */
-	fun rotateRad(radians: Float, axisX: Float, axisY: Float, axisZ: Float): Vector3 {
+	fun rotate(radians: Float, axisX: Float, axisY: Float, axisZ: Float): Vector3 {
 		return this.mul(tmpMat.idt().rotate(axisX, axisY, axisZ, radians))
 	}
 
 	/**
 	 * Rotates this vector by the given angle in radians around the given axis.
 	 *
-	 * @param axis the axis
 	 * @param radians the angle in radians
+	 * @param axis the axis
 	 * @return This vector for chaining
 	 */
-	fun rotateRad(axis: Vector3Ro, radians: Float): Vector3 {
+	fun rotate(radians: Float, axis: Vector3Ro): Vector3 {
 		tmpMat.idt().rotate(axis, radians)
 		return this.mul(tmpMat)
 	}
@@ -562,7 +569,7 @@ class Vector3 (
 		if (dot > 0.9995f || dot < -0.9995f) return lerp(target, alpha)
 
 		// theta0 = angle between input vectors
-		val theta0 = Math.acos(dot.toDouble()).toFloat()
+		val theta0 = MathUtils.acos(dot)
 		// theta = angle between this vector and result
 		val theta = theta0 * alpha
 

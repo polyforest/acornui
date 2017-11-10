@@ -381,8 +381,8 @@ abstract class CameraBase : Camera {
 	 * @param axisZ the z-component of the axis
 	 */
 	fun rotate(radians: Float, axisX: Float, axisY: Float, axisZ: Float) {
-		_direction.rotateRad(radians, axisX, axisY, axisZ)
-		_up.rotateRad(radians, axisX, axisY, axisZ)
+		_direction.rotate(radians, axisX, axisY, axisZ)
+		_up.rotate(radians, axisX, axisY, axisZ)
 		dirty()
 	}
 
@@ -394,8 +394,8 @@ abstract class CameraBase : Camera {
 	 * @param radians the angle
 	 */
 	fun rotate(axis: Vector3Ro, radians: Float) {
-		_direction.rotateRad(axis, radians)
-		_up.rotateRad(axis, radians)
+		_direction.rotate(radians, axis)
+		_up.rotate(radians, axis)
 		dirty()
 	}
 
@@ -444,7 +444,7 @@ abstract class CameraBase : Camera {
 		tmpVec.sub(position)
 		translate(tmpVec)
 		rotate(axis, radians)
-		tmpVec.rotateRad(axis, radians)
+		tmpVec.rotate(radians, axis)
 		translate(-tmpVec.x, -tmpVec.y, -tmpVec.z)
 	}
 
