@@ -356,11 +356,10 @@ class ParticleEmitter : Disposable {
 				if (radiusX != 0f && radiusY != 0f) {
 					val scaleY = radiusX / radiusY
 					if (spawnShape.isEdges) {
-						val spawnAngle: Float
-						when (spawnShape.side) {
-							SpawnEllipseSide.top -> spawnAngle = -MathUtils.random(179f)
-							SpawnEllipseSide.bottom -> spawnAngle = MathUtils.random(179f)
-							else -> spawnAngle = MathUtils.random(360f)
+						val spawnAngle = when (spawnShape.side) {
+							SpawnEllipseSide.top -> -MathUtils.random(179f)
+							SpawnEllipseSide.bottom -> MathUtils.random(179f)
+							else -> MathUtils.random(360f)
 						}
 						val cosDeg = MathUtils.cos(spawnAngle * MathUtils.degRad)
 						val sinDeg = MathUtils.sin(spawnAngle * MathUtils.degRad)
