@@ -84,6 +84,7 @@ interface Vector3Ro {
 	fun dst2(x: Float, y: Float, z: Float): Float
 
 	fun dot(vector: Vector3Ro): Float
+
 	/**
 	 * Returns the dot product between this and the given vector.
 	 * @param x The x-component of the other vector

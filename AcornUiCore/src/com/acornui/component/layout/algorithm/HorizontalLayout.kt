@@ -32,8 +32,8 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 		val padding = props.padding
 		val gap = props.gap
 
-		var minHeight: Float = 0f
-		var minWidth: Float = 0f
+		var minHeight = 0f
+		var minWidth = 0f
 		for (i in 0..elements.lastIndex) {
 			val element = elements[i]
 			val sC = element.sizeConstraints
