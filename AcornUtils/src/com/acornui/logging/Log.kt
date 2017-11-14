@@ -35,21 +35,21 @@ interface ILogger {
 
 	fun log(message: () -> Any?, level: Int)
 
-	fun debug(message: Any?): Unit = log(message, DEBUG)
+	fun debug(message: Any?) = log(message, DEBUG)
 
-	fun debug(message: () -> Any?): Unit = log(message, DEBUG)
+	fun debug(message: () -> Any?) = log(message, DEBUG)
 
-	fun info(message: Any?): Unit = log(message, INFO)
+	fun info(message: Any?) = log(message, INFO)
 
-	fun info(message: () -> Any?): Unit = log(message, INFO)
+	fun info(message: () -> Any?) = log(message, INFO)
 
-	fun warn(message: Any?): Unit = log(message, WARN)
+	fun warn(message: Any?) = log(message, WARN)
 
-	fun warn(message: () -> Any?): Unit = log(message, WARN)
+	fun warn(message: () -> Any?) = log(message, WARN)
 
-	fun error(message: Any?): Unit = log(message, ERROR)
+	fun error(message: Any?) = log(message, ERROR)
 
-	fun error(e: Throwable, message: String = ""): Unit {
+	fun error(e: Throwable, message: String = "") {
 		var str = ""
 		if (message.isNotEmpty()) str += "$message\n"
 		str += "${e.message}\n"
@@ -57,7 +57,7 @@ interface ILogger {
 		log(str, ERROR)
 	}
 
-	fun error(message: () -> Any?): Unit = log(message, ERROR)
+	fun error(message: () -> Any?) = log(message, ERROR)
 
 }
 

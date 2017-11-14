@@ -15,7 +15,7 @@ class BasicMessageCollector(val verbose: Boolean = true) : MessageCollector {
 	override fun clear() {
 	}
 
-	override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
+	override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
 		if (severity.isError) {
 			_hasErrors = true
 			System.err.println(MessageRenderer.PLAIN_FULL_PATHS.render(severity, message, location))
@@ -26,7 +26,5 @@ class BasicMessageCollector(val verbose: Boolean = true) : MessageCollector {
 		}
 	}
 
-	override fun hasErrors(): Boolean {
-		return _hasErrors
-	}
+	override fun hasErrors(): Boolean = _hasErrors
 }
