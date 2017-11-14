@@ -18,10 +18,7 @@ package com.acornui.component
 
 import com.acornui.component.layout.Transformable
 import com.acornui.component.layout.TransformableRo
-import com.acornui.core.graphics.Camera
 import com.acornui.core.graphics.CameraRo
-import com.acornui.core.graphics.Window
-import com.acornui.math.Ray
 import com.acornui.math.Vector2
 import com.acornui.math.Vector3
 

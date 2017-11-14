@@ -38,44 +38,17 @@ interface LayoutElementRo : BasicLayoutElementRo, TransformableRo {
 	/**
 	 * Returns true if this primitive intersects with the provided ray (in world coordinates)
 	 */
-	fun intersectsGlobalRay(globalRay: RayRo): Boolean {
-		val v = Vector3.obtain()
-		val ret = intersectsGlobalRay(globalRay, v)
-		v.free()
-		return ret
-	}
+	fun intersectsGlobalRay(globalRay: RayRo): Boolean
 
 	/**
 	 * Returns true if this primitive intersects with the provided ray (in world coordinates)
 	 * If there was an intersection, the intersection vector will be set to the intersection point.
 	 *
 	 * @param globalRay The ray (in world coordinates) to cast.
-	 * @return Returns true if the local ray intersects with the bounding box of this layout element.
+	 *
+	 * @return Returns true if the ray intersects with the bounding box of this layout element.
 	 */
-	fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
-		val bounds = bounds
-		val topLeft = Vector3.obtain()
-		val topRight = Vector3.obtain()
-		val bottomRight = Vector3.obtain()
-		val bottomLeft = Vector3.obtain()
-		topLeft.clear()
-		topRight.set(bounds.width, 0f, 0f)
-		bottomRight.set(bounds.width, bounds.height, 0f)
-		bottomLeft.set(0f, bounds.height, 0f)
-		localToGlobal(topLeft)
-		localToGlobal(topRight)
-		localToGlobal(bottomRight)
-		localToGlobal(bottomLeft)
-
-		val intersects = globalRay.intersects(topLeft, topRight, bottomRight, intersection) ||
-				globalRay.intersects(topLeft, bottomLeft, bottomRight, intersection)
-
-		topLeft.free()
-		topRight.free()
-		bottomRight.free()
-		bottomLeft.free()
-		return intersects
-	}
+	fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean
 
 	/**
 	 * Returns the measured size constraints, bound by the explicit size constraints.
@@ -194,10 +167,8 @@ interface LayoutElement : LayoutElementRo, BasicLayoutElement, Transformable {
 interface BasicLayoutElementRo : SizableRo, PositionableRo {
 
 	val right: Float
-		get() = x + width
 
 	val bottom: Float
-		get() = y + height
 
 	/**
 	 * The layout data to be used in layout algorithms.
@@ -218,19 +189,18 @@ interface BasicLayoutElement : BasicLayoutElementRo, Sizable, Positionable {
 }
 
 interface SizableRo {
+
 	/**
 	 * Returns the measured width.
 	 * If layout is invalid, this will invoke a layout validation.
 	 */
 	val width: Float
-		get() = bounds.width
 
 	/**
 	 * Returns the measured height.
 	 * If layout is invalid, this will invoke a layout validation.
 	 */
 	val height: Float
-		get() = bounds.height
 
 	/**
 	 * The measured bounds of this component.

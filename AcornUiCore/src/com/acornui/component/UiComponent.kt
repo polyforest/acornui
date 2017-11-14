@@ -24,6 +24,7 @@ import com.acornui.collection.arrayListPool
 import com.acornui.component.layout.LayoutData
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.SizeConstraintsRo
+import com.acornui.component.layout.TransformableRo
 import com.acornui.component.style.*
 import com.acornui.core.*
 import com.acornui.core.assets.AssetManager
@@ -68,13 +69,7 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	 */
 	fun getChildUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean): UiComponentRo?
 
-	fun getChildUnderRay(globalRay: RayRo, onlyInteractive: Boolean): UiComponentRo? {
-		val tmpList = arrayListObtain<UiComponentRo>()
-		getChildrenUnderRay(globalRay, tmpList, onlyInteractive = onlyInteractive, returnAll = false)
-		val first = tmpList.firstOrNull()
-		arrayListPool.free(tmpList)
-		return first
-	}
+	fun getChildUnderRay(globalRay: RayRo, onlyInteractive: Boolean): UiComponentRo?
 
 	/**
 	 * Given a screen position, casts a ray in the direction of the camera, populating the [out] list with the
@@ -94,7 +89,9 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	 *
 	 * This method will not return elements where [UiComponent.visible] is false.
 	 */
-	fun getChildrenUnderRay(globalRay: RayRo, out: MutableList<UiComponentRo>, onlyInteractive: Boolean, returnAll: Boolean = true)
+	fun getChildrenUnderRay(globalRay: RayRo, out: MutableList<UiComponentRo>, onlyInteractive: Boolean, returnAll: Boolean)
+
+	fun getChildrenUnderRay(globalRay: RayRo, out: MutableList<UiComponentRo>, onlyInteractive: Boolean)
 
 	/**
 	 * If false, this component will not be rendered, interact with user input, included in layouts, or included in
@@ -113,16 +110,7 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	 * This component and all of its ancestors are visible.
 	 * This component does not have an alpha of 0f.
 	 */
-	fun isRendered(): Boolean {
-		if (!isActive) return false
-		if (concatenatedColorTint.a <= 0f) return false
-		var p: UiComponentRo? = this
-		while (p != null) {
-			if (!p.visible) return false
-			p = p.parent
-		}
-		return true
-	}
+	fun isRendered(): Boolean
 }
 
 interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, InteractiveElement, Styleable {
@@ -303,6 +291,17 @@ open class UiComponentImpl(
 			}
 		}
 
+	override val interactivityEnabled: Boolean
+		get() = inheritedInteractivityMode == InteractivityMode.ALL
+
+	override fun <T : InteractionEvent> handlesInteraction(type: InteractionType<T>): Boolean {
+		return handlesInteraction(type, true) || handlesInteraction(type, false)
+	}
+
+	override fun <T : InteractionEvent> handlesInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean {
+		return getInteractionSignal<InteractionEvent>(type, isCapture) != null
+	}
+
 	protected val _captureSignals = HashMap<InteractionType<*>, StoppableSignal<*>>()
 	protected val _bubbleSignals = HashMap<InteractionType<*>, StoppableSignal<*>>()
 	protected val _attachments = HashMap<Any, Any>()
@@ -344,18 +343,6 @@ open class UiComponentImpl(
 	//-----------------------------------------------
 	// CameraElement
 	//-----------------------------------------------
-
-	override fun localToGlobal(localCoord: Vector3): Vector3 {
-		if (isSimpleTranslate) {
-			val v = concatenatedTransform.values
-			localCoord.x += v[12]
-			localCoord.y += v[13]
-			localCoord.z += v[14]
-		} else {
-			concatenatedTransform.prj(localCoord)
-		}
-		return localCoord
-	}
 
 	override fun windowToLocal(windowCoord: Vector2): Vector2 {
 		val ray = Ray.obtain()
@@ -410,6 +397,38 @@ open class UiComponentImpl(
 		return b
 	}
 
+	override fun intersectsGlobalRay(globalRay: RayRo): Boolean {
+		val v = Vector3.obtain()
+		val ret = intersectsGlobalRay(globalRay, v)
+		v.free()
+		return ret
+	}
+
+	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
+		val bounds = bounds
+		val topLeft = Vector3.obtain()
+		val topRight = Vector3.obtain()
+		val bottomRight = Vector3.obtain()
+		val bottomLeft = Vector3.obtain()
+		topLeft.clear()
+		topRight.set(bounds.width, 0f, 0f)
+		bottomRight.set(bounds.width, bounds.height, 0f)
+		bottomLeft.set(0f, bounds.height, 0f)
+		localToGlobal(topLeft)
+		localToGlobal(topRight)
+		localToGlobal(bottomRight)
+		localToGlobal(bottomLeft)
+
+		val intersects = globalRay.intersects(topLeft, topRight, bottomRight, intersection) ||
+				globalRay.intersects(topLeft, bottomLeft, bottomRight, intersection)
+
+		topLeft.free()
+		topRight.free()
+		bottomRight.free()
+		bottomLeft.free()
+		return intersects
+	}
+
 	/**
 	 * The actual bounds of this component.
 	 */
@@ -436,6 +455,18 @@ open class UiComponentImpl(
 		get() {
 			return _explicitHeight
 		}
+
+	override val width: Float
+		get() = bounds.width
+
+	override val height: Float
+		get() = bounds.height
+
+	override val right: Float
+		get() = x + width
+
+	override val bottom: Float
+		get() = y + height
 
 	/**
 	 * Sets the explicit width. Set to null to use actual width.
@@ -468,6 +499,17 @@ open class UiComponentImpl(
 			_includeInLayout = value
 			invalidate(ValidationFlags.HIERARCHY_ASCENDING)
 		}
+
+	override fun isRendered(): Boolean {
+		if (!isActive) return false
+		if (concatenatedColorTint.a <= 0f) return false
+		var p: UiComponentRo? = this
+		while (p != null) {
+			if (!p.visible) return false
+			p = p.parent
+		}
+		return true
+	}
 
 	private fun layoutDataChangedHandler() {
 		invalidate(ValidationFlags.LAYOUT)
@@ -624,6 +666,13 @@ open class UiComponentImpl(
 		return _captureSignals.isNotEmpty() || _bubbleSignals.isNotEmpty()
 	}
 
+	override fun <T : InteractionEvent> hasInteraction(type: InteractionType<T>) = hasInteraction(type, false) // TODO: KT-20451
+	override fun <T : InteractionEvent> hasInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean {
+		return getInteractionSignal<InteractionEvent>(type, isCapture) != null
+	}
+
+	override fun <T : InteractionEvent> getInteractionSignal(type: InteractionType<T>) = getInteractionSignal(type, false) // TODO: KT-20451
+
 	@Suppress("UNCHECKED_CAST")
 	override fun <T : InteractionEvent> getInteractionSignal(type: InteractionType<T>, isCapture: Boolean): StoppableSignal<T>? {
 		val handlers = if (isCapture) _captureSignals else _bubbleSignals
@@ -635,6 +684,9 @@ open class UiComponentImpl(
 		handlers[type] = signal
 	}
 
+	override fun <T : InteractionEvent> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>) = addInteractionSignal(type, signal, false) // TODO: KT-20451
+
+	override fun <T : InteractionEvent> removeInteractionSignal(type: InteractionType<T>) = removeInteractionSignal(type, false) // TODO: KT-20451
 	override fun <T : InteractionEvent> removeInteractionSignal(type: InteractionType<T>, isCapture: Boolean) {
 		val handlers = if (isCapture) _captureSignals else _bubbleSignals
 		handlers.remove(type)
@@ -768,12 +820,22 @@ open class UiComponentImpl(
 		return element
 	}
 
+	override fun getChildUnderRay(globalRay: RayRo, onlyInteractive: Boolean): UiComponentRo? {
+		val tmpList = arrayListObtain<UiComponentRo>()
+		getChildrenUnderRay(globalRay, tmpList, onlyInteractive = onlyInteractive, returnAll = false)
+		val first = tmpList.firstOrNull()
+		arrayListPool.free(tmpList)
+		return first
+	}
+
 	override fun getChildrenUnderRay(globalRay: RayRo, out: MutableList<UiComponentRo>, onlyInteractive: Boolean, returnAll: Boolean) {
 		if (!_visible || (onlyInteractive && !interactivityEnabled)) return
 		if (intersectsGlobalRay(globalRay)) {
 			out.add(this)
 		}
 	}
+
+	override fun getChildrenUnderRay(globalRay: RayRo, out: MutableList<UiComponentRo>, onlyInteractive: Boolean) = getChildrenUnderRay(globalRay, out, onlyInteractive, true) // TODO: KT-20451
 
 	//-----------------------------------------------
 	// Styleable
@@ -958,6 +1020,17 @@ open class UiComponentImpl(
 		return
 	}
 
+	override fun setPosition(x: Float, y: Float) = setPosition(x, y, 0f) // TODO: KT-20451
+	override fun setPosition(value: Vector3Ro) = setPosition(value.x, value.y, value.z) // TODO: KT-20451
+
+	override fun moveTo(x: Float, y: Float, z: Float) {
+		// Round after a small, but obscure offset, to avoid flip-flopping around the common case of 0.5f
+		setPosition((x - 0.0136f).round(), (y - 0.0136f).round(), z)
+	}
+
+	override fun moveTo(x: Float, y: Float) = moveTo(x, y, 0f) // TODO: KT-20451
+	override fun moveTo(value: Vector3Ro) = moveTo(value.x, value.y, value.z)
+
 	override var scaleX: Float
 		get() = _scale.x
 		set(value) {
@@ -997,6 +1070,8 @@ open class UiComponentImpl(
 		return
 	}
 
+	override fun setScaling(x: Float, y: Float) = setScaling(x, y, 1f) // TODO: KT-20451
+
 	override var originX: Float
 		get() = _origin.x
 		set(value) {
@@ -1026,6 +1101,82 @@ open class UiComponentImpl(
 		_origin.set(x, y, z)
 		invalidate(ValidationFlags.TRANSFORM)
 		return
+	}
+
+	override fun setOrigin(x: Float, y: Float) = setOrigin(x, y, 0f) // TODO: KT-20451
+
+	/**
+	 * Converts a coordinate from local coordinate space to global coordinate space.
+	 * This will modify the provided coord parameter.
+	 * @param localCoord The coordinate local to this Transformable. This will be mutated to become a global coordinate.
+	 * @return Returns the coord
+	 */
+	override fun localToGlobal(localCoord: Vector3): Vector3 {
+		if (isSimpleTranslate) {
+			val v = concatenatedTransform.values
+			localCoord.x += v[12]
+			localCoord.y += v[13]
+			localCoord.z += v[14]
+		} else {
+			concatenatedTransform.prj(localCoord)
+		}
+		return localCoord
+	}
+
+	/**
+	 * Converts a coordinate from global coordinate space to local coordinate space.
+	 * This will modify the provided coord parameter.
+	 * @param globalCoord The coordinate in global space. This will be mutated to become a local coordinate.
+	 * @return Returns the coord
+	 */
+	override fun globalToLocal(globalCoord: Vector3): Vector3 {
+		concatenatedTransformInv.prj(globalCoord)
+		return globalCoord
+	}
+
+	/**
+	 * Converts a ray from local coordinate space to global coordinate space.
+	 * This will modify the provided ray parameter.
+	 * @param ray The ray local to this Transformable. This will be mutated to become a global ray.
+	 * @return Returns the ray
+	 */
+	override fun localToGlobal(ray: Ray): Ray {
+		ray.mul(concatenatedTransform)
+		return ray
+	}
+
+	/**
+	 * Converts a ray from global coordinate space to local coordinate space.
+	 * This will modify the provided ray parameter.
+	 *
+	 * Note: This is a heavy operation as it performs a Matrix4 inversion.
+	 *
+	 * @param ray The ray in global space. This will be mutated to become a local coordinate.
+	 * @return Returns the ray
+	 */
+	override fun globalToLocal(ray: Ray): Ray {
+		ray.mul(concatenatedTransformInv)
+		return ray
+	}
+
+	/**
+	 * Calculates the intersection coordinates of the provided Ray (in local coordinate space) and this layout
+	 * element's plane.
+	 * @return Returns true if the provided Ray intersects with this plane, or false if the Ray is parallel.
+	 */
+	override fun rayToPlane(ray: RayRo, out: Vector2): Boolean {
+		if (ray.direction.z == 0f) return false
+		val m = -ray.origin.z * ray.directionInv.z
+		out.x = ray.origin.x + m * ray.direction.x
+		out.y = ray.origin.y + m * ray.direction.y
+		return true
+	}
+
+	/**
+	 * Converts a coordinate from this Transformable's coordinate space to the target coordinate space.
+	 */
+	override fun convertCoord(coord: Vector3, targetCoordSpace: TransformableRo): Vector3 {
+		return targetCoordSpace.globalToLocal(localToGlobal(coord))
 	}
 
 	/**

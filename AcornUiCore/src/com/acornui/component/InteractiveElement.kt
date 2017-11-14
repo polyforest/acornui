@@ -36,7 +36,6 @@ interface InteractiveElementRo : LayoutElementRo, CameraElementRo, AttachmentHol
 	 * This value is calculated based on the [inheritedInteractivityMode] property.
 	 */
 	val interactivityEnabled: Boolean
-		get() = inheritedInteractivityMode == InteractivityMode.ALL
 
 	/**
 	 * The inherited interactivity mode.
@@ -48,21 +47,16 @@ interface InteractiveElementRo : LayoutElementRo, CameraElementRo, AttachmentHol
 	 */
 	val interactivityMode: InteractivityMode
 
-	fun <T: InteractionEvent> handlesInteraction(type: InteractionType<T>): Boolean {
-		return handlesInteraction(type, true) || handlesInteraction(type, false)
-	}
-
-	fun <T: InteractionEvent> handlesInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean {
-		return getInteractionSignal<InteractionEvent>(type, isCapture) != null
-	}
+	fun <T: InteractionEvent> handlesInteraction(type: InteractionType<T>): Boolean
+	fun <T: InteractionEvent> handlesInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean
 
 	fun hasInteraction(): Boolean
 
-	fun <T: InteractionEvent> hasInteraction(type: InteractionType<T>, isCapture: Boolean = false): Boolean {
-		return getInteractionSignal<InteractionEvent>(type, isCapture) != null
-	}
+	fun <T: InteractionEvent> hasInteraction(type: InteractionType<T>): Boolean
+	fun <T: InteractionEvent> hasInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean
 
-	fun <T: InteractionEvent> getInteractionSignal(type: InteractionType<T>, isCapture: Boolean = false): StoppableSignal<T>?
+	fun <T: InteractionEvent> getInteractionSignal(type: InteractionType<T>): StoppableSignal<T>?
+	fun <T: InteractionEvent> getInteractionSignal(type: InteractionType<T>, isCapture: Boolean): StoppableSignal<T>?
 
 	/**
 	 * Sets the [out] vector to the local mouse coordinates.
@@ -75,8 +69,10 @@ interface InteractiveElementRo : LayoutElementRo, CameraElementRo, AttachmentHol
 	 */
 	fun mouseIsOver(): Boolean
 
-	fun <T: InteractionEvent> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>, isCapture: Boolean = false)
+	fun <T: InteractionEvent> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>)
+	fun <T: InteractionEvent> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>, isCapture: Boolean)
 
+	fun <T: InteractionEvent> removeInteractionSignal(type: InteractionType<T>)
 	fun <T: InteractionEvent> removeInteractionSignal(type: InteractionType<T>, isCapture: Boolean)
 }
 

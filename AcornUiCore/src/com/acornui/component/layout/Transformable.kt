@@ -16,7 +16,6 @@
 
 package com.acornui.component.layout
 
-import com.acornui.core.round
 import com.acornui.math.*
 
 interface TransformableRo : PositionableRo {
@@ -66,10 +65,7 @@ interface TransformableRo : PositionableRo {
 	 * @param localCoord The coordinate local to this Transformable. This will be mutated to become a global coordinate.
 	 * @return Returns the coord
 	 */
-	fun localToGlobal(localCoord: Vector3): Vector3 {
-		concatenatedTransform.prj(localCoord)
-		return localCoord
-	}
+	fun localToGlobal(localCoord: Vector3): Vector3
 
 	/**
 	 * Converts a coordinate from global coordinate space to local coordinate space.
@@ -77,10 +73,7 @@ interface TransformableRo : PositionableRo {
 	 * @param globalCoord The coordinate in global space. This will be mutated to become a local coordinate.
 	 * @return Returns the coord
 	 */
-	fun globalToLocal(globalCoord: Vector3): Vector3 {
-		concatenatedTransformInv.prj(globalCoord)
-		return globalCoord
-	}
+	fun globalToLocal(globalCoord: Vector3): Vector3
 
 	/**
 	 * Converts a ray from local coordinate space to global coordinate space.
@@ -88,10 +81,7 @@ interface TransformableRo : PositionableRo {
 	 * @param ray The ray local to this Transformable. This will be mutated to become a global ray.
 	 * @return Returns the ray
 	 */
-	fun localToGlobal(ray: Ray): Ray {
-		ray.mul(concatenatedTransform)
-		return ray
-	}
+	fun localToGlobal(ray: Ray): Ray
 
 	/**
 	 * Converts a ray from global coordinate space to local coordinate space.
@@ -102,30 +92,19 @@ interface TransformableRo : PositionableRo {
 	 * @param ray The ray in global space. This will be mutated to become a local coordinate.
 	 * @return Returns the ray
 	 */
-	fun globalToLocal(ray: Ray): Ray {
-		ray.mul(concatenatedTransformInv)
-		return ray
-	}
+	fun globalToLocal(ray: Ray): Ray
 
 	/**
 	 * Calculates the intersection coordinates of the provided Ray (in local coordinate space) and this layout
 	 * element's plane.
 	 * @return Returns true if the provided Ray intersects with this plane, or false if the Ray is parallel.
 	 */
-	fun rayToPlane(ray: RayRo, out: Vector2): Boolean {
-		if (ray.direction.z == 0f) return false
-		val m = -ray.origin.z * ray.directionInv.z
-		out.x = ray.origin.x + m * ray.direction.x
-		out.y = ray.origin.y + m * ray.direction.y
-		return true
-	}
+	fun rayToPlane(ray: RayRo, out: Vector2): Boolean
 
 	/**
 	 * Converts a coordinate from this Transformable's coordinate space to the target coordinate space.
 	 */
-	fun convertCoord(coord: Vector3, targetCoordSpace: TransformableRo): Vector3 {
-		return targetCoordSpace.globalToLocal(localToGlobal(coord))
-	}
+	fun convertCoord(coord: Vector3, targetCoordSpace: TransformableRo): Vector3
 
 	/**
 	 * The global transform of this component, of all ancestor transforms multiplied together.
@@ -162,7 +141,7 @@ interface Transformable : TransformableRo, Positionable {
 	 */
 	override var rotation: Float
 
-	fun setRotation(x: Float = 0f, y: Float = 0f, z: Float = 0f)
+	fun setRotation(x: Float, y: Float, z: Float)
 
 	//---------------------------------------------------------------------------------------
 	// Transformation and translation methods
@@ -174,7 +153,8 @@ interface Transformable : TransformableRo, Positionable {
 
 	override var scaleZ: Float
 
-	fun setScaling(x: Float = 1f, y: Float = 1f, z: Float = 1f)
+	fun setScaling(x: Float, y: Float, z: Float)
+	fun setScaling(x: Float, y: Float)
 
 	override var originX: Float
 
@@ -182,7 +162,8 @@ interface Transformable : TransformableRo, Positionable {
 
 	override var originZ: Float
 
-	fun setOrigin(x: Float, y: Float, z: Float = 0f)
+	fun setOrigin(x: Float, y: Float, z: Float)
+	fun setOrigin(x: Float, y: Float)
 
 }
 
@@ -202,22 +183,19 @@ interface Positionable : PositionableRo {
 
 	override val position: Vector3Ro
 
-	fun moveTo(value: Vector3Ro) {
-		moveTo(value.x, value.y, value.z)
-	}
+	fun moveTo(value: Vector3Ro)
 
 	/**
 	 * Sets the position of this component, rounding the x and y coordinates.
 	 */
-	fun moveTo(x: Float = 0f, y: Float = 0f, z: Float = 0f) {
-		// Round after a small, but obscure offset, to avoid flip-flopping around the common case of 0.5f
-		setPosition((x - 0.0136f).round(), (y - 0.0136f).round(), z)
-	}
+	fun moveTo(x: Float, y: Float, z: Float)
+	fun moveTo(x: Float, y: Float)
 
 	/**
 	 * Sets the position of this component. (Without rounding)
 	 */
-	fun setPosition(x: Float = 0f, y: Float = 0f, z: Float = 0f)
-	fun setPosition(value: Vector3Ro) = setPosition(value.x, value.y, value.z)
+	fun setPosition(x: Float, y: Float, z: Float)
+	fun setPosition(x: Float, y: Float)
+	fun setPosition(value: Vector3Ro)
 
 }

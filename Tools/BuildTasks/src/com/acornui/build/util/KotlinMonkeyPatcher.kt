@@ -23,8 +23,8 @@ object KotlinMonkeyPatcher {
 	fun editKotlinJs(kotlinJs: File, dest: File) {
 		var src = kotlinJs.readText()
 		dest.parentFile.mkdirs()
-		src = addCachedBind(src)
-		src = patchKotlinCode(src)
+//		src = addCachedBind(src)
+//		src = patchKotlinCode(src)
 		dest.writeText(src)
 	}
 
