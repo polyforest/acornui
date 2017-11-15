@@ -203,19 +203,19 @@ object Fade : Interpolation {
 
 object Sine : Interpolation {
 	override fun apply(alpha: Float): Float {
-		return (1 - MathUtils.cos(alpha * PI)) / 2
+		return (1f - MathUtils.cos(alpha * PI)) / 2f
 	}
 }
 
 object SineIn : Interpolation {
 	override fun apply(alpha: Float): Float {
-		return 1 - MathUtils.cos(alpha * PI / 2)
+		return 1f - MathUtils.cos(alpha * PI / 2f)
 	}
 }
 
 object SineOut : Interpolation {
 	override fun apply(alpha: Float): Float {
-		return MathUtils.sin(alpha * PI / 2)
+		return MathUtils.sin(alpha * PI / 2f)
 	}
 }
 
@@ -259,10 +259,10 @@ class Reverse(val inner: Interpolation) : Interpolation {
 
 class ToFro(val inner: Interpolation, val split: Float = 0.5f) : Interpolation {
 	override fun apply(alpha: Float): Float {
-		if (alpha < split) {
-			return inner.apply(alpha / split)
+		return if (alpha < split) {
+			inner.apply(alpha / split)
 		} else {
-			return inner.apply(1f - (alpha - split) / (1f - split))
+			inner.apply(1f - (alpha - split) / (1f - split))
 		}
 	}
 }
@@ -282,10 +282,10 @@ class YoYo(
 	override fun apply(alpha: Float): Float {
 		val a = 2 * alpha * repetitions
 		val b = a.toInt()
-		if (b % 2 == 0) {
-			return inner.apply(a - b)
+		return if (b % 2 == 0) {
+			inner.apply(a - b)
 		} else {
-			return inner.apply(1f - (a - b))
+			inner.apply(1f - (a - b))
 		}
 	}
 }
@@ -305,17 +305,17 @@ class Repeat(val inner: Interpolation, val repetitions: Float = 1f) : Interpolat
 object BasicBounce : Interpolation {
 	override fun apply(alpha: Float): Float {
 		var a = alpha
-		if (a < 1f / 2.75f) {
-			return 7.5625f * a * a
+		return if (a < 1f / 2.75f) {
+			7.5625f * a * a
 		} else if (a < 2f / 2.75f) {
 			a -= 1.5f / 2.75f
-			return 7.5625f * a * a + 0.75f
+			7.5625f * a * a + 0.75f
 		} else if (a < 2.5f / 2.75f) {
 			a -= 2.25f / 2.75f
-			return 7.5625f * a * a + 0.9375f
+			7.5625f * a * a + 0.9375f
 		} else {
 			a -= 2.625f / 2.75f
-			return 7.5625f * a * a + 0.984375f
+			7.5625f * a * a + 0.984375f
 		}
 	}
 }
@@ -376,8 +376,8 @@ class Clamp(val inner: Interpolation, val startAlpha: Float = 0f, val endAlpha: 
 		 * A timed delay of [delay] seconds.
 		 */
 		fun delay(innerDuration: Float, inner: Interpolation, delay: Float): Interpolation {
-			if (delay <= 0f) return inner
-			else return Clamp(inner, delay / (innerDuration + delay))
+			return if (delay <= 0f) inner
+			else Clamp(inner, delay / (innerDuration + delay))
 		}
 
 		/**

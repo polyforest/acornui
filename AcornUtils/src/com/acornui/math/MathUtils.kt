@@ -581,6 +581,13 @@ inline fun Float.ceil(): Int {
 	return MathUtils.ceil(this)
 }
 
+/**
+ * Returns the fraction of this float.
+ */
+inline fun Float.fpart(): Float {
+	return this - MathUtils.floor(this).toFloat()
+}
+
 inline fun <T : Comparable<T>> maxOf4(a: T, b: T, c: T, d: T): T {
 	return maxOf(maxOf(a, b), maxOf(c, d))
 }
