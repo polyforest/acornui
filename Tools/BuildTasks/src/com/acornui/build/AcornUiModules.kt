@@ -64,9 +64,8 @@ object AcornUiJsBackend : Module(File(ACORNUI_HOME, "AcornUiJsBackend"), out = A
 		val indexB = cp.indexOf("kotlin-runtime.jar")
 		val indexA = cp.lastIndexOf(";", indexB) + 1
 		val runtimeLibFolder = File(cp.substring(indexA, indexB))
-		val patchedFile = File(outAssets, "lib/kotlin.patched.js")
-		if (sourcesAreNewer(listOf(runtimeLibFolder) + resources, patchedFile)) {
-			println("Extracting kotlin.js and patching it")
+		if (sourcesAreNewer(listOf(runtimeLibFolder) + resources, File(outAssets, "lib/kotlin.js"))) {
+			println("Extracting kotlin.js")
 			outAssets.clean()
 
 			val jsLib = File(runtimeLibFolder, "kotlin-jslib.jar")
@@ -75,8 +74,6 @@ object AcornUiJsBackend : Module(File(ACORNUI_HOME, "AcornUiJsBackend"), out = A
 				if (it.name == "kotlin.js") "lib/kotlin.js" // place the kotlin.js file in the outAssets/lib directory.
 				else null
 			})
-			KotlinMonkeyPatcher.editKotlinJs(File(outAssets, "lib/kotlin.js"), patchedFile)
-			File(outAssets, "lib/kotlin.js").delete()
 
 			for (resDir in resources) {
 				if (resDir.exists()) resDir.copyRecursively(File(outAssets, "assets/"))

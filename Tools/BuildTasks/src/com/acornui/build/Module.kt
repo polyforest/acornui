@@ -178,14 +178,6 @@ abstract class Module(
 		}
 	}
 
-	private fun ArrayList<File>.toStringList(): MutableList<String> {
-		val arr = ArrayList<String>()
-		for (i in this) {
-			arr.add(i.absolutePath)
-		}
-		return arr
-	}
-
 	/**
 	 * Pull built assets from dependent modules, merging them into one folder.
 	 */

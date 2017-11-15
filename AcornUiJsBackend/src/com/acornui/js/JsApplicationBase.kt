@@ -94,12 +94,32 @@ abstract class JsApplicationBase : ApplicationBase() {
 	private var frameDriver: JsApplicationRunner? = null
 
 	init {
+		js( // language=JS
+				"""
+Function.prototype.uncachedBind = Function.prototype.bind;
+/**
+ * Workaround to kotlin member references not being equal. KT-15101
+ */
+Function.prototype.bind = function() {
+	if (arguments.length !== 2 || arguments[0] !== null || arguments[1] === null) return this.uncachedBind.apply(this, arguments);
+	var receiver = arguments[1];
+	if (!receiver.__bindingCache) receiver.__bindingCache = {};
+	var existing = receiver.__bindingCache[this];
+	if (!!existing) {
+		return existing;
+	}
+	var newBind = this.uncachedBind.apply(this, arguments);
+	receiver.__bindingCache[this] = newBind;
+	return newBind;
+};
+		""")
+
+
 		@Suppress("LeakingThis")
 		if (this::memberRefTest != this::memberRefTest) println("[SEVERE] Member reference fix isn't working, check the KotlinMonkeyPatcher build step.")
 		time = TimeProviderImpl()
 		encodeUriComponent2 = ::encodeURIComponent
 		decodeUriComponent2 = ::decodeURIComponent
-		window.addEventListener("beforeunload", { dispose() })
 	}
 
 	fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {

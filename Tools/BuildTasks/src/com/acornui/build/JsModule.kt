@@ -21,6 +21,10 @@ import com.acornui.io.file.FilesManifestSerializer
 import com.acornui.jvm.io.file.ManifestUtil
 import com.acornui.serialization.JsonSerializer
 import com.google.javascript.jscomp.*
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments
+import org.jetbrains.kotlin.cli.js.dce.K2JSDce
+import org.jetbrains.kotlin.config.Services
 import java.io.File
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
@@ -101,7 +105,7 @@ open class JsModule(
 		libDirFile.mkdirs()
 
 		// Extract all library js files from the deployed Jars.
-		val libraryFiles = expandLibraryDependencies(jsLibraryDependencies, ArrayList<String>())
+		val libraryFiles = expandLibraryDependencies(jsLibraryDependencies, ArrayList())
 
 		walkDependenciesBottomUp {
 			it.outAssets.copyRecursively(dest, onError = BuildUtil.copyIfNewer) // Copy all assets from the dependent modules.
@@ -112,13 +116,8 @@ open class JsModule(
 			JarUtil.extractFromJar(JarFile(i), dest, this::extractFilter)
 		}
 
-		// Apply transformations on the source files.
-		val jsPatcher = SourceFileManipulator()
-		jsPatcher.addProcessor(KotlinMonkeyPatcher::patchKotlinCode, "js")
-		if (optimize) jsPatcher.addProcessor(KotlinMonkeyPatcher::optimizeProductionCode, "js")
-		jsPatcher.process(dest)
-
-		if (minimize) minify()
+		if (minimize) dce(dest)
+		if (optimize) optimize(dest)
 
 		val manifest = ManifestUtil.createManifest(File(dest, "lib/"), dest)
 		val filesJs = File(dest, "lib/files.js")
@@ -135,7 +134,28 @@ open class JsModule(
 		AcornAssets.writeManifest(File(dest, "assets/"), dest)
 	}
 
-	private fun minify() {
+	private fun optimize(dest: File) {
+		// Apply transformations on the source files.
+		val jsPatcher = SourceFileManipulator()
+		jsPatcher.addProcessor(KotlinMonkeyPatcher::optimizeProductionCode, "js")
+		jsPatcher.process(dest)
+	}
+
+	private fun dce(dest: File) {
+		val sources = arrayListOf(File(dest, "$libDir/kotlin.js"))
+		walkDependenciesBottomUp {
+			sources.add(File(dest, "$libDir/${it.name}.js"))
+		}
+
+		val compilerArgs = K2JSDceArguments().apply {
+			outputDirectory = File(dest, libDir).absolutePath
+			freeArgs = sources.toStringList()
+		}
+		val exitCode = K2JSDce().exec(BasicMessageCollector(verbose = verbose), Services.EMPTY, compilerArgs)
+		if (exitCode != ExitCode.OK) System.exit(exitCode.code)
+	}
+
+	private fun uglify(dest: File) {
 		val compiler = Compiler()
 		val options = CompilerOptions()
 		options.languageIn = CompilerOptions.LanguageMode.ECMASCRIPT5
@@ -143,16 +163,16 @@ open class JsModule(
 		CompilationLevel.SIMPLE_OPTIMIZATIONS.setOptionsForCompilationLevel(options)
 		WarningLevel.QUIET.setOptionsForWarningLevel(options)
 
-		val sources = arrayListOf(File(distWww, "$libDir/kotlin.patched.js"))
+		val sources = arrayListOf(File(dest, "$libDir/kotlin.js"))
 		walkDependenciesBottomUp {
-			sources.add(File(distWww, "$libDir/${it.name}.js"))
+			sources.add(File(dest, "$libDir/${it.name}.js"))
 		}
 		compiler.compile(listOf(), sources.map { SourceFile.fromFile(it) }, options)
 
 		for (message in compiler.errors) {
 			System.err.println("Error message: $message")
 		}
-		val minFile = File(distWww, "$libDir/$name.js")
+		val minFile = File(dest, "$libDir/$name.js")
 		for (source in sources) {
 			// Remove source files that were merged. Don't delete the file we're going to use for the minified version.
 			if (source.absolutePath != minFile.absolutePath)
