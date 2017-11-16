@@ -852,6 +852,23 @@ data class Matrix4(
 	}
 
 	/**
+	 * Postmultiplies this matrix with a scale matrix.
+	 * @return This matrix for the purpose of chaining methods together.
+	 */
+	fun scale(scale: Vector3Ro): Matrix4 = scale(scale.x, scale.y, scale.z)
+
+	/**
+	 * Postmultiplies this matrix with a scale matrix.
+	 * @return This matrix for the purpose of chaining methods together.
+	 */
+	fun scale(scaleX: Float, scaleY: Float, scaleZ: Float): Matrix4 {
+		if (scaleX == 1f && scaleY == 1f && scaleZ == 1f) return this
+		tmpMat.idt()
+		tmpMat.scl(scaleX, scaleY, scaleZ)
+		return mul(tmpMat)
+	}
+
+	/**
 	 * Copies the 4x3 upper-left sub-matrix into float array. The destination array is supposed to be a column major matrix.
 	 * @param dst the destination matrix
 	 */

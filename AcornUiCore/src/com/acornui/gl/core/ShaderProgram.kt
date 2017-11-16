@@ -173,12 +173,13 @@ uniform sampler2D u_texture;
 
 void main() {
 	gl_FragColor = v_colorTint * texture2D(u_texture, v_texCoord);
+	if (gl_FragColor.a < 0.01) discard;
 }"""
 ) {
 
 	override fun bind() {
 		super.bind()
-		gl.uniform1i(getUniformLocation(ShaderProgram.U_TEXTURE)!!, 0);  // set the fragment shader's texture to unit 0
+		gl.uniform1i(getUniformLocation(ShaderProgram.U_TEXTURE)!!, 0)  // set the fragment shader's texture to unit 0
 	}
 
 }

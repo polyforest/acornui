@@ -1219,11 +1219,11 @@ open class UiComponentImpl(
 			native.setSimpleTranslate(_position.x - _origin.x, _position.y - _origin.y)
 		} else {
 			_transform.trn(_position)
-			_transform.scl(_scale)
 			if (!_rotation.isZero()) {
 				quat.setEulerAnglesRad(_rotation.y, _rotation.x, _rotation.z)
 				_transform.rotate(quat)
 			}
+			_transform.scale(_scale)
 			if (!_origin.isZero())
 				_transform.translate(-_origin.x, -_origin.y, -_origin.z)
 			native.setTransform(_transform)

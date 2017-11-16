@@ -20,7 +20,6 @@ import com.acornui._assert
 import com.acornui.assertionsEnabled
 import com.acornui.core.Disposable
 import com.acornui.core.io.BufferFactory
-import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.io.NativeBuffer
 import com.acornui.math.Vector3Ro
