@@ -117,7 +117,7 @@ class IntEditorCell(owner: Owned) : NumberEditorCell(owner), DataGridEditorCell<
 class FloatEditorCell(owner: Owned) : NumberEditorCell(owner), DataGridEditorCell<Float?> {
 
 	init {
-		input.restrictPattern = "[^0-9.]"
+		input.restrictPattern = "[^0-9.-]"
 	}
 
 	override fun validateData(): Boolean {
