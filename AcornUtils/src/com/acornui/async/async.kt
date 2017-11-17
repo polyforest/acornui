@@ -64,10 +64,10 @@ interface Deferred<out T> {
  * Wraps await in a try/catch block, returning null if there was an exception.
  */
 suspend fun <T> Deferred<T>.awaitOrNull(): T? {
-	try {
-		return await()
+	return try {
+		await()
 	} catch (e: Throwable) {
-		return null
+		null
 	}
 }
 
@@ -95,6 +95,7 @@ fun <T> Deferred<T>.then(callback: (result: T) -> Unit) {
 			result = await()
 			successful = true
 		} catch (t: Throwable) {}
+		@Suppress("UNCHECKED_CAST")
 		if (successful)
 			callback(result as T)
 	}
@@ -130,6 +131,7 @@ private class AsyncWorker<T>(work: Work<T>) : Deferred<T> {
 				error = e
 				status = DeferredStatus.FAILED
 			}
+			@Suppress("UNCHECKED_CAST")
 			when (status) {
 				DeferredStatus.SUCCESSFUL -> {
 					val r = result as T
@@ -149,13 +151,14 @@ private class AsyncWorker<T>(work: Work<T>) : Deferred<T> {
 	}
 
 	override suspend fun await(): T {
-		when (status) {
-			DeferredStatus.PENDING -> return suspendCoroutine {
+		@Suppress("UNCHECKED_CAST")
+		return when (status) {
+			DeferredStatus.PENDING -> suspendCoroutine {
 				cont: Continuation<T> ->
 				children.add(cont)
 			}
 			DeferredStatus.FAILED -> throw error!!
-			else -> return result as T
+			else -> result as T
 		}
 	}
 
@@ -217,6 +220,7 @@ open class Promise<T> : Deferred<T> {
 
 	override suspend fun await(): T = suspendCoroutine {
 		cont: Continuation<T> ->
+		@Suppress("UNCHECKED_CAST")
 		when (_status) {
 			Status.PENDING -> continuations.add(cont)
 			Status.SUCCESSFUL -> cont.resume(_result as T)
@@ -241,11 +245,11 @@ class NonDeferred<out T>(val value: T) : Deferred<T> {
 }
 
 suspend fun <T> List<Deferred<T>>.awaitAll(): List<T> {
-	val copy = copy() // Copy the list so that it can't mutate in between awaits.
+	val copy = copy() // Copy the list so that it can't mutate in-between awaits.
 	return ArrayList(copy.size, { copy[it].await() })
 }
 
 suspend fun <K, V> Map<K, Deferred<V>>.awaitAll(): Map<K, V> {
-	// Copy the map so that it can't mutate in between awaits.
+	// Copy the map so that it can't mutate in-between awaits.
 	return copy().mapTo { key, value -> key to value.await() }
 }
