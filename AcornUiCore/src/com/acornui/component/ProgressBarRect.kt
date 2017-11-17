@@ -15,9 +15,8 @@ import com.acornui.core.popup.addPopUp
 import com.acornui.core.popup.removePopUp
 import com.acornui.core.time.onTick
 import com.acornui.graphics.Color
-import com.acornui.math.Bounds
-import com.acornui.math.Corners
-import com.acornui.math.Pad
+import com.acornui.graphics.ColorRo
+import com.acornui.math.*
 
 /**
  * A progress bar made from simple rectangles.
@@ -90,11 +89,11 @@ class ProgressBarRectStyle : StyleBase() {
 
 	var defaultWidth by prop(100f)
 	var defaultHeight by prop(6f)
-	var borderThickness by prop(Pad(2f))
-	var borderRadius by prop(Corners())
-	var borderColor by prop(BorderColors(Color.BLUE))
-	var bgColor by prop(Color.GREEN.copy())
-	var fillColor by prop(Color.RED.copy())
+	var borderThickness: PadRo by prop(Pad(2f))
+	var borderRadius: CornersRo by prop(Corners())
+	var borderColor: BorderColorsRo by prop(BorderColors(Color.BLUE))
+	var bgColor: ColorRo by prop(Color.GREEN.copy())
+	var fillColor: ColorRo by prop(Color.RED.copy())
 
 	companion object : StyleType<ProgressBarRectStyle>
 }

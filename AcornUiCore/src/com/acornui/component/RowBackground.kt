@@ -19,6 +19,7 @@ package com.acornui.component
 import com.acornui.component.style.*
 import com.acornui.core.di.Owned
 import com.acornui.graphics.Color
+import com.acornui.graphics.ColorRo
 import com.acornui.math.Bounds
 
 
@@ -71,10 +72,10 @@ class RowBackgroundImpl(owned: Owned) : ContainerImpl(owned), RowBackground {
 class RowBackgroundStyle : StyleBase() {
 	override val type = Companion
 
-	var selectedEvenColor by prop(Color(1f, 1f, 0f, 0.4f))
-	var selectedOddColor by prop(Color(0.8f, 0.8f, 0f, 0.4f))
-	var evenColor by prop(Color(0f, 0f, 0f, 0.05f))
-	var oddColor by prop(Color(1f, 1f, 1f, 0.05f))
+	var selectedEvenColor: ColorRo by prop(Color(1f, 1f, 0f, 0.4f))
+	var selectedOddColor: ColorRo by prop(Color(0.8f, 0.8f, 0f, 0.4f))
+	var evenColor: ColorRo by prop(Color(0f, 0f, 0f, 0.05f))
+	var oddColor: ColorRo by prop(Color(1f, 1f, 1f, 0.05f))
 
 	companion object : StyleType<RowBackgroundStyle>
 }

@@ -37,6 +37,7 @@ import com.acornui.core.popup.PopUpManager
 import com.acornui.core.userInfo
 import com.acornui.gl.component.text.loadFontFromAtlas
 import com.acornui.graphics.Color
+import com.acornui.graphics.ColorRo
 import com.acornui.math.*
 
 open class BasicUiSkin(
@@ -821,7 +822,7 @@ open class LabelButtonSkinPart(
 	}
 }
 
-fun Owned.getButtonFillColor(buttonState: ButtonState): Color {
+fun Owned.getButtonFillColor(buttonState: ButtonState): ColorRo {
 	val theme = inject(Theme)
 	return when (buttonState) {
 		ButtonState.UP,
@@ -836,7 +837,7 @@ fun Owned.getButtonFillColor(buttonState: ButtonState): Color {
 	}
 }
 
-fun Owned.getButtonStrokeColor(buttonState: ButtonState): Color {
+fun Owned.getButtonStrokeColor(buttonState: ButtonState): ColorRo {
 	val theme = inject(Theme)
 	return when (buttonState) {
 
@@ -855,22 +856,22 @@ fun Owned.getButtonStrokeColor(buttonState: ButtonState): Color {
 }
 
 class Theme {
-	var bgColor = Color(0xF1F2F3FF)
-	var panelBgColor = Color(0xC1C2C3FF)
+	var bgColor: ColorRo = Color(0xF1F2F3FF)
+	var panelBgColor: ColorRo = Color(0xC1C2C3FF)
 
-	private val brighten = Color(0x15151500)
+	private val brighten: ColorRo = Color(0x15151500)
 
-	var fill = Color(0xE3E9EAFF)
-	var fillHighlight = fill + brighten
-	var fillDisabled = Color(0xCCCCCCFF)
-	var fillShine = Color(1f, 1f, 1f, 0.9f)
+	var fill: ColorRo = Color(0xE3E9EAFF)
+	var fillHighlight: ColorRo = fill + brighten
+	var fillDisabled: ColorRo = Color(0xCCCCCCFF)
+	var fillShine: ColorRo = Color(1f, 1f, 1f, 0.9f)
 
-	var stroke = Color(0x888888FF)
+	var stroke: ColorRo = Color(0x888888FF)
 	var strokeThickness = 1f
 	var strokeHighlight = stroke + brighten
-	var strokeDisabled = Color(0x999999FF)
+	var strokeDisabled: ColorRo = Color(0x999999FF)
 
-	var strokeSelected = Color(0x0235ACFF)
+	var strokeSelected: ColorRo = Color(0x0235ACFF)
 	var strokeSelectedHighlight = strokeSelected + brighten
 
 	var borderRadius = 8f
@@ -900,10 +901,10 @@ class Theme {
 		bold = true
 	}
 
-	var controlBarBgColor = Color(0xDAE5F0FF)
+	var controlBarBgColor: ColorRo = Color(0xDAE5F0FF)
 
-	var evenRowBgColor = bgColor + Color(0x03030300)
-	var oddRowBgColor = bgColor - Color(0x03030300)
+	var evenRowBgColor: ColorRo = bgColor + Color(0x03030300)
+	var oddRowBgColor: ColorRo = bgColor - Color(0x03030300)
 
 	var atlasPath = "assets/uiskin/uiskin.json"
 
