@@ -57,8 +57,10 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 	override val canvasTask by BootTask {
 		val rootElement = document.getElementById(rootId) ?: throw Exception("Could not find root canvas $rootId")
 		val root = rootElement as HTMLElement
+		root.style.setProperty("-webkit-tap-highlight-color", "rgba(0,0,0,0)")
 		root.clear()
 		val canvas = document.createElement("canvas") as HTMLCanvasElement
+		canvas.style.setProperty("-webkit-tap-highlight-color", "rgba(0,0,0,0)")
 		canvas.style.width = "100%"
 		canvas.style.height = "100%"
 		root.appendChild(canvas)
