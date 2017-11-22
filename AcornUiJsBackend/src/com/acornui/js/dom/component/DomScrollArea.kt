@@ -20,6 +20,7 @@ import com.acornui.component.*
 import com.acornui.component.scroll.*
 import com.acornui.core.Disposable
 import com.acornui.core.di.Owned
+import com.acornui.core.di.own
 import com.acornui.math.Bounds
 import com.acornui.math.Matrix4Ro
 import com.acornui.signal.Signal
@@ -37,14 +38,17 @@ class DomScrollArea(
 	private val element = native.element
 	override val style = bind(ScrollAreaStyle())
 
-	private val _hScrollModel = DomScrollLeftModel(element)
+	private val _hScrollModel = own(DomScrollLeftModel(element))
 	override val hScrollModel: ClampedScrollModel
 		get() = _hScrollModel
-	private val _vScrollModel = DomScrollTopModel(element)
+	private val _vScrollModel = own(DomScrollTopModel(element))
 	override val vScrollModel: ClampedScrollModel
 		get() = _vScrollModel
 
 	private val contents = addChild(StackLayoutContainer(owner, DomInlineContainer()))
+
+	override val stackStyle: StackLayoutStyle
+		get() = contents.style
 
 	override var hScrollPolicy: ScrollPolicy by validationProp(ScrollPolicy.AUTO, ValidationFlags.LAYOUT)
 	override var vScrollPolicy: ScrollPolicy by validationProp(ScrollPolicy.AUTO, ValidationFlags.LAYOUT)
@@ -175,11 +179,6 @@ class DomScrollArea(
 		contents.moveTo(-hScrollModel.value, -vScrollModel.value)
 	}
 
-	override fun dispose() {
-		super.dispose()
-		_hScrollModel.dispose()
-		_vScrollModel.dispose()
-	}
 }
 
 class DomInlineContainer : DomContainer() {

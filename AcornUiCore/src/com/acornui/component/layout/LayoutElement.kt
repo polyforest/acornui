@@ -193,12 +193,14 @@ interface SizableRo {
 	/**
 	 * Returns the measured width.
 	 * If layout is invalid, this will invoke a layout validation.
+	 * This is the same as `bounds.width`
 	 */
 	val width: Float
 
 	/**
 	 * Returns the measured height.
 	 * If layout is invalid, this will invoke a layout validation.
+	 * This is the same as `bounds.height`
 	 */
 	val height: Float
 

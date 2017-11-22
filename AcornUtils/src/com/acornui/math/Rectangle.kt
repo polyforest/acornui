@@ -396,6 +396,8 @@ data class Rectangle(
 		height += top + bottom
 	}
 
+	fun inflate(pad: PadRo) = inflate(pad.left, pad.top, pad.right, pad.bottom)
+
 	/**
 	 * Extends this rectangle to include the given coordinates.
 	 */
@@ -411,7 +413,7 @@ data class Rectangle(
 	 * @param rect the other rectangle
 	 * @return this rectangle for chaining
 	 */
-	fun ext(rect: Rectangle): Rectangle {
+	fun ext(rect: RectangleRo): Rectangle {
 		val minX = minOf(x, rect.x)
 		val maxX = maxOf(x + width, rect.x + rect.width)
 		x = minX

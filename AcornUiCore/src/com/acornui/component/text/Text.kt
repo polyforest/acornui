@@ -22,8 +22,9 @@ import com.acornui.component.Labelable
 import com.acornui.component.UiComponent
 import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.layout.algorithm.FlowVAlign
+import com.acornui.component.scroll.ClampedScrollModel
+import com.acornui.component.scroll.ScrollPolicy
 import com.acornui.component.style.*
-import com.acornui.core.di.DKey
 import com.acornui.core.di.Owned
 import com.acornui.core.di.dKey
 import com.acornui.core.focus.Focusable
@@ -284,18 +285,16 @@ var TextInput.selectable: Boolean
 		charStyle.selectable = value
 	}
 
-interface TextArea : SelectableComponent, Focusable {
+interface TextArea : TextInput {
 
-	val charStyle: CharStyle
-	val flowStyle: TextFlowStyle
-	val boxStyle: BoxStyle
-	val textInputStyle: TextInputStyle
+	val hScrollModel: ClampedScrollModel
+	val vScrollModel: ClampedScrollModel
 
-	val changed: Signal<() -> Unit>
+	var hScrollPolicy: ScrollPolicy
+	var vScrollPolicy: ScrollPolicy
 
-	var editable: Boolean
-
-	var text: String
+	val contentsWidth: Float
+	val contentsHeight: Float
 
 	companion object : StyleTag {
 		val FACTORY_KEY = dKey<(owner: Owned) -> TextArea>()

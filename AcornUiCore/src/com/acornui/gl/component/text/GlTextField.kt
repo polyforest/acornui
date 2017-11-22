@@ -649,7 +649,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 			val extendsEdge = flowStyle.multiline && (!part.overhangs && availableWidth != null && x + partW > availableWidth)
 			val isFirst = spanPartIndex == currentLine.startIndex
 			val isLast = spanPartIndex == _textElements.lastIndex
-			if (isLast || part.clearsLine || (extendsEdge && !isFirst)) {
+			if (isLast || (part.clearsLine && flowStyle.multiline) || (extendsEdge && !isFirst)) {
 				if (extendsEdge && !isFirst) {
 					// Find the last good breaking point.
 					var breakIndex = _textElements.indexOfLast2(spanPartIndex, currentLine.startIndex) { it.isBreaking }
@@ -717,6 +717,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 
 	private val LineInfoRo.lastClearsLine: Boolean
 		get() {
+			if (!flowStyle.multiline) return false
 			return _textElements.getOrNull(endIndex - 1)?.clearsLine ?: false
 		}
 
@@ -741,7 +742,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 			if (flowStyle.horizontalAlign == FlowHAlign.JUSTIFY &&
 					line.size > 1 &&
 					_lines.last() != line &&
-					!_textElements[line.endIndex - 1].clearsLine
+					!(_textElements[line.endIndex - 1].clearsLine && flowStyle.multiline)
 					) {
 				// Apply JUSTIFY spacing if this is not the last line, and there are more than one elements.
 				val lastIndex = _textElements.indexOfLast2(line.endIndex - 1, line.startIndex) { !it.overhangs }
@@ -776,12 +777,6 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 		}
 	}
 
-	private val TextElementRo.lineHeight: Float
-		get() = (textParent?.lineHeight ?: 0f)
-
-	private val TextElementRo.baseline: Float
-		get() = (textParent?.baseline ?: 0f)
-
 	override fun getSelectionIndex(x: Float, y: Float): Int {
 		if (_lines.isEmpty()) return 0
 		if (y < _lines.first().y) return 0
@@ -793,7 +788,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 		val line = _lines[lineIndex]
 		return textElements.sortedInsertionIndex(x, {
 			x, part ->
-			if (part.clearsLine) -1 else x.compareTo(part.x + part.width / 2f)
+			if (part.clearsLine && flowStyle.multiline) -1 else x.compareTo(part.x + part.width / 2f)
 		}, line.startIndex, line.endIndex)
 	}
 
@@ -1096,3 +1091,43 @@ class LastTextElement(private val flow: TextFlow) : TextElementRo {
 	override val isBreaking = false
 	override val overhangs = false
 }
+
+val TextElementRo.lineHeight: Float
+	get() {
+		return textParent?.lineHeight ?: 0f
+	}
+
+val TextElementRo.baseline: Float
+	get() = (textParent?.baseline ?: 0f)
+
+val TextElementRo.textFieldX: Float
+	get() {
+		return x + (textParent?.textFieldX ?: 0f)
+	}
+
+val TextElementRo.textFieldY: Float
+	get() {
+		return y + (textParent?.textFieldY ?: 0f)
+	}
+
+val TextSpanElementRo<TextElementRo>.textFieldX: Float
+	get() {
+		var textFieldX = 0f
+		var p: TextNodeRo? = textParent
+		while (p != null) {
+			textFieldX += p.x
+			p = p.textParent
+		}
+		return textFieldX
+	}
+
+val TextSpanElementRo<TextElementRo>.textFieldY: Float
+	get() {
+		var textFieldY = 0f
+		var p: TextNodeRo? = textParent
+		while (p != null) {
+			textFieldY += p.y
+			p = p.textParent
+		}
+		return textFieldY
+	}

@@ -14,21 +14,27 @@
  * limitations under the License.
  */
 
+@file:Suppress("UNUSED_PARAMETER")
+
 package com.acornui.js.dom.component
 
 import com.acornui.collection.find2
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.layout.setSize
+import com.acornui.component.scroll.ClampedScrollModel
+import com.acornui.component.scroll.ScrollPolicy
 import com.acornui.component.text.*
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
+import com.acornui.core.di.own
 import com.acornui.core.focus.focused
 import com.acornui.core.input.keyDown
 import com.acornui.core.input.keyUp
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionRange
 import com.acornui.math.Bounds
+import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
@@ -95,25 +101,29 @@ open class DomTextField(
 
 }
 
-open class DomTextInput(
+class DomTextInput(
 		owner: Owned,
 		val inputElement: HTMLInputElement = document.createElement("input") as HTMLInputElement
 ) : ContainerImpl(owner, DomContainer(inputElement)), TextInput {
 
-	override final val charStyle = bind(CharStyle())
-	override final val flowStyle = bind(TextFlowStyle())
-	override final val boxStyle = bind(BoxStyle())
-	override final val textInputStyle = bind(TextInputStyle())
+	override val charStyle = bind(CharStyle())
+	override val flowStyle = bind(TextFlowStyle())
+	override val boxStyle = bind(BoxStyle())
+	override val textInputStyle = bind(TextInputStyle())
 
 	override var focusEnabled: Boolean = true
 	override var focusOrder: Float = 0f
-	override var highlight: UiComponent? by createSlot<UiComponent>()
+	override var highlight: UiComponent? by createSlot()
 
-	override val input: Signal0 = Signal0()
-	override val changed: Signal0 = Signal0()
+	private val _input = own(Signal0())
+	override val input: Signal<()->Unit>
+			get() = _input
+
+	private val _changed = own(Signal0())
+	override val changed: Signal<()->Unit>
+		get() = _changed
 
 	private var _editable: Boolean = true
-	private var _maxLength: Int? = null
 
 	private val selectionManager = inject(SelectionManager)
 
@@ -143,6 +153,7 @@ open class DomTextInput(
 			inputElement.readOnly = !value
 		}
 
+	private var _maxLength: Int? = null
 	override var maxLength: Int?
 		get() = _maxLength
 		set(value) {
@@ -168,11 +179,11 @@ open class DomTextInput(
 		inputElement.tabIndex = 0
 		inputElement.onchange = {
 			restrict()
-			changed.dispatch()
+			_changed.dispatch()
 		}
 		inputElement.oninput = {
 			restrict()
-			input.dispatch()
+			_input.dispatch()
 		}
 
 		watch(charStyle) {
@@ -236,21 +247,28 @@ open class DomTextInput(
 	}
 }
 
-open class DomTextArea(
+class DomTextArea(
 		owner: Owned,
 		private val areaElement: HTMLTextAreaElement = document.createElement("textarea") as HTMLTextAreaElement
 ) : ContainerImpl(owner, DomContainer(areaElement)), TextArea {
 
-	override final val charStyle = bind(CharStyle())
-	override final val flowStyle = bind(TextFlowStyle())
-	override final val boxStyle = bind(BoxStyle())
-	override final val textInputStyle = bind(TextInputStyle())
+	override val charStyle = bind(CharStyle())
+	override val flowStyle = bind(TextFlowStyle())
+	override val boxStyle = bind(BoxStyle())
+	override val textInputStyle = bind(TextInputStyle())
 
 	override var focusEnabled: Boolean = true
 	override var focusOrder: Float = 0f
-	override var highlight: UiComponent? by createSlot<UiComponent>()
+	override var highlight: UiComponent? by createSlot()
 
-	override val changed: Signal0 = Signal0()
+	private val _input = own(Signal0())
+	override val input: Signal<()->Unit>
+		get() = _input
+
+	private val _changed = own(Signal0())
+	override val changed: Signal<()->Unit>
+		get() = _changed
+
 
 	private var _editable: Boolean = true
 
@@ -262,6 +280,51 @@ open class DomTextArea(
 			areaElement.readOnly = !value
 		}
 
+	private val _hScrollModel = own(DomScrollLeftModel(areaElement))
+	override val hScrollModel: ClampedScrollModel
+		get() = _hScrollModel
+
+	private val _vScrollModel = own(DomScrollTopModel(areaElement))
+	override val vScrollModel: ClampedScrollModel
+		get() = _vScrollModel
+
+	private var _hScrollPolicy = ScrollPolicy.AUTO
+	override var hScrollPolicy: ScrollPolicy
+		get() = _hScrollPolicy
+		set(value) {
+			areaElement.style.overflowX = when(value) {
+				ScrollPolicy.AUTO -> "auto"
+				ScrollPolicy.OFF -> "hidden"
+				ScrollPolicy.ON -> "scroll"
+			}
+			invalidateLayout()
+		}
+
+	private var _vScrollPolicy = ScrollPolicy.AUTO
+	override var vScrollPolicy: ScrollPolicy
+		get() = _vScrollPolicy
+		set(value) {
+			areaElement.style.overflowY = when(value) {
+				ScrollPolicy.AUTO -> "auto"
+				ScrollPolicy.OFF -> "hidden"
+				ScrollPolicy.ON -> "scroll"
+			}
+			invalidateLayout()
+		}
+
+	private val contentBounds = Bounds()
+	override val contentsWidth: Float
+		get() {
+			validate(ValidationFlags.LAYOUT)
+			return contentBounds.width
+		}
+
+	override val contentsHeight: Float
+		get() {
+			validate(ValidationFlags.LAYOUT)
+			return contentBounds.height
+		}
+
 	init {
 		styleTags.add(TextField)
 		styleTags.add(TextArea)
@@ -271,7 +334,12 @@ open class DomTextArea(
 		areaElement.autofocus = false
 		areaElement.tabIndex = 0
 		areaElement.onchange = {
-			changed.dispatch()
+			restrict()
+			_changed.dispatch()
+		}
+		areaElement.oninput = {
+			restrict()
+			_input.dispatch()
 		}
 		areaElement.style.resize = "none"
 
@@ -290,6 +358,38 @@ open class DomTextArea(
 		}
 	}
 
+	private var _maxLength: Int? = null
+	override var maxLength: Int?
+		get() = _maxLength
+		set(value) {
+			if (_maxLength == value) return
+			_maxLength = value
+			if (value != null) {
+				areaElement.maxLength = value
+			} else {
+				areaElement.removeAttribute("maxlength")
+			}
+		}
+
+	override var placeholder: String
+		get() = areaElement.placeholder
+		set(value) {
+			areaElement.placeholder
+		}
+
+	private var _restrict: Regex? = null
+	override var restrictPattern: String?
+		get() = _restrict?.pattern
+		set(value) {
+			_restrict = if (value == null) null else Regex(value)
+		}
+
+	@Suppress("RedundantSetter")
+	override var password: Boolean
+		get() = false
+		set(value) {
+		}
+
 	override fun onAncestorVisibleChanged(uiComponent: UiComponent, value: Boolean) {
 		invalidate(ValidationFlags.LAYOUT)
 	}
@@ -301,10 +401,16 @@ open class DomTextArea(
 			invalidateLayout()
 		}
 
+	private fun restrict() {
+		if (_restrict == null) return
+		areaElement.value = areaElement.value.replace(_restrict!!, "")
+	}
+
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		native.setSize(explicitWidth ?: textInputStyle.defaultWidth, explicitHeight)
 		out.set(native.bounds)
 		highlight?.setSize(out)
+		contentBounds.set(boxStyle.margin.expandWidth2(areaElement.offsetWidth.toFloat()), boxStyle.margin.expandHeight2(areaElement.offsetHeight.toFloat()))
 	}
 
 	override fun dispose() {

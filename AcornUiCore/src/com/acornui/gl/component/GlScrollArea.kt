@@ -22,6 +22,7 @@ import com.acornui.core.di.Owned
 import com.acornui.core.input.interaction.WheelInteraction
 import com.acornui.core.input.wheel
 import com.acornui.math.Bounds
+import com.acornui.math.RectangleRo
 
 /**
  * A container with scrolling.
@@ -33,7 +34,11 @@ open class GlScrollArea(
 	override final val style = bind(ScrollAreaStyle())
 
 	private val scrollRect = scrollRect()
+
 	private val contents = scrollRect.addElement(stack())
+
+	override val stackStyle: StackLayoutStyle
+		get() = contents.style
 
 	private val hScrollBar = HScrollBar(this)
 	private val vScrollBar = VScrollBar(this)
@@ -75,7 +80,7 @@ open class GlScrollArea(
 		}
 
 	private val scrollChangedHandler = {
-		scrollModel: ScrollModelRo ->
+		_: ScrollModelRo ->
 		invalidate(ScrollArea.SCROLLING)
 		Unit
 	}
@@ -166,9 +171,9 @@ open class GlScrollArea(
 		scrollRect.setSize(contents.explicitWidth, contents.explicitHeight)
 
 		// Set the content mask to the explicit size of the contents stack, or the measured size if there was no bound.
-		val contentsW = scrollRect.explicitWidth ?: contents.width
-		val contentsH = scrollRect.explicitHeight ?: contents.height
-		scrollRect.maskSize(contentsW, contentsH)
+		val contentsSetW = scrollRect.explicitWidth ?: contents.width
+		val contentsSetH = scrollRect.explicitHeight ?: contents.height
+		scrollRect.maskSize(contentsSetW, contentsSetH)
 		val vScrollBarW2 = if (needsVScrollBar) vScrollBarW else 0f
 		val hScrollBarH2 = if (needsHScrollBar) hScrollBarH else 0f
 
@@ -200,14 +205,14 @@ open class GlScrollArea(
 			corner.visible = false
 		}
 
-		hScrollModel.max = maxOf(0f, scrollRect.contentsWidth - contentsW)
-		vScrollModel.max = maxOf(0f, scrollRect.contentsHeight - contentsH)
+		hScrollModel.max = maxOf(0f, scrollRect.contentsWidth - contentsSetW)
+		vScrollModel.max = maxOf(0f, scrollRect.contentsHeight - contentsSetH)
 
 		scrollRect.getAttachment<TossScroller>(TossScroller)?.enabled = needsHScrollBar || needsVScrollBar
 	}
 
 	protected fun validateScroll() {
-		scrollRect.scrollTo(hScrollModel.value.toInt().toFloat() * hScrollBar.modelToPixels, vScrollModel.value.toInt().toFloat() * vScrollBar.modelToPixels)
+		scrollRect.scrollTo(hScrollModel.value.toInt().toFloat(), vScrollModel.value.toInt().toFloat())
 	}
 
 	override fun dispose() {

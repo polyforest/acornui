@@ -16,16 +16,15 @@
 
 package com.acornui.component.scroll
 
-import com.acornui.component.ComponentInit
-import com.acornui.component.ElementContainer
-import com.acornui.component.StackLayoutData
-import com.acornui.component.UiComponent
+import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.*
 import com.acornui.core.di.Owned
 import com.acornui.core.di.dKey
 import com.acornui.math.Corners
 import com.acornui.math.CornersRo
+import com.acornui.math.Rectangle
+import com.acornui.math.RectangleRo
 
 interface ScrollArea : LayoutDataProvider<StackLayoutData>, ElementContainer<UiComponent> {
 
@@ -37,8 +36,20 @@ interface ScrollArea : LayoutDataProvider<StackLayoutData>, ElementContainer<UiC
 	var hScrollPolicy: ScrollPolicy
 	var vScrollPolicy: ScrollPolicy
 
+	/**
+	 * The unclipped width of the contents.
+	 */
 	val contentsWidth: Float
+
+	/**
+	 * The unclipped height of the contents.
+	 */
 	val contentsHeight: Float
+
+	/**
+	 * The layout for the contents stack.
+	 */
+	val stackStyle: StackLayoutStyle
 
 	override fun createLayoutData(): StackLayoutData = StackLayoutData()
 
@@ -53,6 +64,23 @@ interface ScrollArea : LayoutDataProvider<StackLayoutData>, ElementContainer<UiC
 		 */
 		val SCROLLING: Int = 1 shl 16
 	}
+}
+
+/**
+ * Scrolls the minimum distance to show the given bounding rectangle.
+ */
+fun ScrollArea.scrollTo(bounds: RectangleRo) {
+	validate(ValidationFlags.LAYOUT)
+	if (bounds.x < hScrollModel.value)
+		hScrollModel.value = bounds.x
+	if (bounds.y < vScrollModel.value)
+		vScrollModel.value = bounds.y
+	val contentsSetW = contentsWidth - hScrollModel.max
+	val contentsSetH = contentsHeight - vScrollModel.max
+	if (bounds.right > hScrollModel.value + contentsSetW)
+		hScrollModel.value = bounds.right - contentsSetW
+	if (bounds.bottom > vScrollModel.value + contentsSetH)
+		vScrollModel.value = bounds.bottom - contentsSetH
 }
 
 enum class ScrollPolicy {
