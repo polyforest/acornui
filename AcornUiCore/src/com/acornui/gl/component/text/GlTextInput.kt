@@ -152,8 +152,7 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 		} else if (event.keyCode == Ascii.RIGHT) {
 			val sel = firstSelection
 			if (sel != null) {
-//				val next = minOf(tF.contents.elements.size, sel.endIndex + 1)
-				val next = sel.endIndex + 1
+				val next = minOf(tF.contents.size, sel.endIndex + 1)
 				selectionManager.selection = listOf(SelectionRange(this, next, next))
 			}
 		} else if (event.keyCode == Ascii.UP) {
@@ -176,7 +175,7 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 				event.preventDefault() // Prevent focus manager from tabbing.
 				event.handled = true
 				if (flowStyle.multiline) {
-					replaceSelection("\t") // TODO: Consider instead, inserting a tab at beginning of the line. Style prop?
+					replaceSelection("\t")
 					_input.dispatch()
 				}
 			}
@@ -260,78 +259,69 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 
 	private fun updateTextCursor() {
 		tF.validate(ValidationFlags.LAYOUT)
-//		val textCursorVisible: Boolean
-//		val sel = firstSelection
-//		if (isFocused && sel != null) {
-//			val rangeEnd = tF.contents.textElements.size
-//
-//			val start = clamp(sel.startIndex, 0, rangeEnd)
-//			val end = clamp(sel.endIndex, 0, rangeEnd)
-//			if (start == end) {
-//				val textElement = tF.contents.textElements.getOrNull(start - 1)
-//				if (textElement == null) {
-//					// No content yet.
-//					val pad = tF.flowStyle.padding
-//					textCursor.x = when (tF.flowStyle.horizontalAlign) {
-//						FlowHAlign.JUSTIFY, FlowHAlign.LEFT -> pad.left
-//						FlowHAlign.CENTER -> pad.reduceWidth2(tF.width) / 2f + pad.left
-//						FlowHAlign.RIGHT -> tF.width - pad.right
-//					} + tF.x
-//					textCursor.y = tF.flowStyle.padding.top + tF.y
-//					val lineHeight = BitmapFontRegistry.getFont(charStyle)?.data?.lineHeight?.toFloat() ?: 0f
-//					textCursor.scaleY = lineHeight / textCursor.height
-//				} else {
-//					// Place the cursor after the element before the current selection index.
-//					if (textElement.clearsLine) {
-//						textCursor.x = tF.flowStyle.padding.left + tF.x
-//						textCursor.y = textElement.textFieldY + textElement.lineHeight + tF.y
-//					} else {
-//						textCursor.x = textElement.textFieldX + textElement.width + tF.x
-//						textCursor.y = textElement.textFieldY + tF.y
-//					}
-//					textCursor.scaleY = textElement.lineHeight / textCursor.height
-//				}
-//				textCursorVisible = true
-//			} else {
-//				textCursorVisible = false
-//			}
-//		} else {
-//			textCursorVisible = false
-//		}
-//		textCursor.visible = textCursorVisible
+
+
+		val textCursorVisible: Boolean
+		val sel = firstSelection
+		if (isFocused && sel != null) {
+			val rangeEnd = tF.contents.size
+
+			val start = clamp(sel.startIndex, 0, rangeEnd)
+			val end = clamp(sel.endIndex, 0, rangeEnd)
+			if (start == end) {
+				val textElement = if (start >= rangeEnd) tF.contents.placeholder else tF.contents.getTextElementAt(start)
+
+				textCursor.x = textElement.textFieldX + tF.x
+				textCursor.y = textElement.textFieldY + tF.y
+
+				textCursor.scaleY = textElement.lineHeight / textCursor.height
+
+				textCursorVisible = true
+			} else {
+				textCursorVisible = false
+			}
+		} else {
+			textCursorVisible = false
+		}
+		textCursor.visible = textCursorVisible
 	}
 
-//	private val TextElementRo.textFieldX: Float
-//		get() {
-//			return x + (parent?.textFieldX ?: 0f)
-//		}
+	private val TextElementRo.lineHeight: Float
+		get() {
+			return textParent?.lineHeight ?: 0f
+		}
+
+	private val TextElementRo.textFieldX: Float
+		get() {
+			return x + (textParent?.textFieldX ?: 0f)
+		}
+
+	private val TextElementRo.textFieldY: Float
+		get() {
+			return y + (textParent?.textFieldY ?: 0f)
+		}
 //
-//	private val TextElementRo.textFieldY: Float
-//		get() {
-//			return y + (parent?.textFieldY ?: 0f)
-//		}
-//
-//	private val TextSpanElementRo<TextElementRo>.textFieldX: Float
-//		get() {
-//			var textFieldX = x
-//			var p: UiComponentRo? = parent
-//			while (p != null && p != tF) {
-//				textFieldX += p.x
-//				p = p.parent
-//			}
-//			return textFieldX
-//		}
-//
-//	private val TextSpanElementRo<TextElementRo>.textFieldY: Float
-//		get() {
-//			var textFieldY = y
-//			var p: UiComponentRo? = parent
-//			while (p != null && p != tF) {
-//				textFieldY += p.y
-//				p = p.parent
-//			}
-//			return textFieldY
-//		}
+	private val TextSpanElementRo<TextElementRo>.textFieldX: Float
+		get() {
+			var textFieldX = x
+			var p: TextNodeRo? = textParent
+			while (p != null && p != tF) {
+				textFieldX += p.x
+				p = p.textParent
+			}
+			return textFieldX
+		}
+
+	private val TextSpanElementRo<TextElementRo>.textFieldY: Float
+		get() {
+			var textFieldY = y
+			var p: TextNodeRo? = textParent
+			while (p != null && p != tF) {
+				textFieldY += p.y
+				p = p.textParent
+			}
+			return textFieldY
+		}
 
 	override fun dispose() {
 		super.dispose()

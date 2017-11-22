@@ -120,6 +120,8 @@ Function.prototype.bind = function() {
 		time = TimeProviderImpl()
 		encodeUriComponent2 = ::encodeURIComponent
 		decodeUriComponent2 = ::decodeURIComponent
+
+		window.onbeforeunload = { dispose(); null }
 	}
 
 	fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {

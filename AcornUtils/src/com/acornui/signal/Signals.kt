@@ -138,7 +138,7 @@ abstract class SignalBase<T : Any> : Signal<T>, Disposable {
 	/**
 	 * Calls executor on each handler in this signal.
 	 */
-	protected inline fun dispatch(executor: (T) -> Unit): Unit {
+	protected inline fun dispatch(executor: (T) -> Unit) {
 		if (cursor != -1) throw Exception("This signal is currently dispatching.")
 		cursor = 0
 		if (handlers.size <= 4) {
@@ -193,63 +193,43 @@ abstract class SignalBase<T : Any> : Signal<T>, Disposable {
 }
 
 class Signal0 : SignalBase<() -> Unit>() {
-	fun dispatch(): Unit = dispatch { it() }
+	fun dispatch() = dispatch { it() }
 }
 
 class Signal1<P1> : SignalBase<(P1) -> Unit>() {
-	fun dispatch(p1: P1): Unit = dispatch { it(p1) }
+	fun dispatch(p1: P1) = dispatch { it(p1) }
 }
 
 class Signal2<P1, P2> : SignalBase<(P1, P2) -> Unit>() {
-	fun dispatch(p1: P1, p2: P2): Unit = dispatch { it(p1, p2) }
+	fun dispatch(p1: P1, p2: P2) = dispatch { it(p1, p2) }
 }
 
 class Signal3<P1, P2, P3> : SignalBase<(P1, P2, P3) -> Unit>() {
-	fun dispatch(p1: P1, p2: P2, p3: P3): Unit = dispatch { it(p1, p2, p3) }
+	fun dispatch(p1: P1, p2: P2, p3: P3) = dispatch { it(p1, p2, p3) }
 }
 
 class Signal4<P1, P2, P3, P4> : SignalBase<(P1, P2, P3, P4) -> Unit>() {
-	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4): Unit = dispatch { it(p1, p2, p3, p4) }
+	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4) = dispatch { it(p1, p2, p3, p4) }
 }
 
 class Signal5<P1, P2, P3, P4, P5> : SignalBase<(P1, P2, P3, P4, P5) -> Unit>() {
-	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5): Unit = dispatch { it(p1, p2, p3, p4, p5) }
+	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5) = dispatch { it(p1, p2, p3, p4, p5) }
 }
 
 class Signal6<P1, P2, P3, P4, P5, P6> : SignalBase<(P1, P2, P3, P4, P5, P6) -> Unit>() {
-	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6): Unit = dispatch { it(p1, p2, p3, p4, p5, p6) }
+	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6) = dispatch { it(p1, p2, p3, p4, p5, p6) }
 }
 
 class Signal7<P1, P2, P3, P4, P5, P6, P7> : SignalBase<(P1, P2, P3, P4, P5, P6, P7) -> Unit>() {
-	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7): Unit = dispatch { it(p1, p2, p3, p4, p5, p6, p7) }
+	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7) = dispatch { it(p1, p2, p3, p4, p5, p6, p7) }
 }
 
 class Signal8<P1, P2, P3, P4, P5, P6, P7, P8> : SignalBase<(P1, P2, P3, P4, P5, P6, P7, P8) -> Unit>() {
-	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7, p8: P8): Unit = dispatch { it(p1, p2, p3, p4, p5, p6, p7, p8) }
+	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7, p8: P8) = dispatch { it(p1, p2, p3, p4, p5, p6, p7, p8) }
 }
 
 class Signal9<P1, P2, P3, P4, P5, P6, P7, P8, P9> : SignalBase<(P1, P2, P3, P4, P5, P6, P7, P8, P9) -> Unit>() {
-	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7, p8: P8, p9: P9): Unit = dispatch { it(p1, p2, p3, p4, p5, p6, p7, p8, p9) }
-}
-
-class SignalR0<R> : SignalBase<R.() -> Unit>() {
-	fun dispatch(r: R): Unit = dispatch { r.it() }
-}
-
-class SignalR1<R, P1> : SignalBase<R.(P1) -> Unit>() {
-	fun dispatch(r: R, p1: P1): Unit = dispatch { r.it(p1) }
-}
-
-class SignalR2<R, P1, P2> : SignalBase<R.(P1, P2) -> Unit>() {
-	fun dispatch(r: R, p1: P1, p2: P2): Unit = dispatch { r.it(p1, p2) }
-}
-
-class SignalR3<R, P1, P2, P3> : SignalBase<R.(P1, P2, P3) -> Unit>() {
-	fun dispatch(r: R, p1: P1, p2: P2, p3: P3): Unit = dispatch { r.it(p1, p2, p3) }
-}
-
-class SignalR4<R, P1, P2, P3, P4> : SignalBase<R.(P1, P2, P3, P4) -> Unit>() {
-	fun dispatch(r: R, p1: P1, p2: P2, p3: P3, p4: P4): Unit = dispatch { r.it(p1, p2, p3, p4) }
+	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7, p8: P8, p9: P9) = dispatch { it(p1, p2, p3, p4, p5, p6, p7, p8, p9) }
 }
 
 interface Stoppable {
@@ -288,7 +268,7 @@ interface StoppableSignal<out P1 : Stoppable> : Signal<(P1) -> Unit>
  * @see [SignalBase.halt]
  */
 open class StoppableSignalImpl<P1 : Stoppable> : SignalBase<(P1) -> Unit>(), StoppableSignal<P1> {
-	fun dispatch(p1: P1): Unit = dispatch {
+	fun dispatch(p1: P1) = dispatch {
 		it(p1)
 		if (p1.isStopped()) halt()
 	}

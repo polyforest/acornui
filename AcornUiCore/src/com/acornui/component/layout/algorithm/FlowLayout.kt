@@ -56,10 +56,10 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 
 	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, props: FlowLayoutStyle, out: Bounds) {
 		val padding = props.padding
-		val childAvailableWidth: Float? = padding.reduceWidth(explicitWidth)
-		val childAvailableHeight: Float? = padding.reduceHeight(explicitHeight)
+		val availableWidth: Float? = padding.reduceWidth(explicitWidth)
+		val availableHeight: Float? = padding.reduceHeight(explicitHeight)
 
-		var measuredW: Float = 0f
+		var measuredW = 0f
 		_lines.freeTo(linesPool)
 		var line = linesPool.obtain()
 		line.y = padding.top
@@ -70,9 +70,9 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 		for (i in 0..elements.lastIndex) {
 			val element = elements[i]
 			val layoutData = element.layoutData as FlowLayoutData?
-			element.setSize(layoutData?.getPreferredWidth(childAvailableWidth), layoutData?.getPreferredHeight(childAvailableHeight))
-			if (childAvailableWidth != null && element.width > childAvailableWidth) {
-				element.width(childAvailableWidth)
+			element.setSize(layoutData?.getPreferredWidth(availableWidth), layoutData?.getPreferredHeight(availableHeight))
+			if (availableWidth != null && element.width > availableWidth) {
+				element.width(availableWidth)
 			}
 			val w = element.width
 			val h = element.height
@@ -80,9 +80,10 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 
 			if (props.multiline && i > line.startIndex &&
 					(previousElement!!.clearsLine() || element.startsNewLine() ||
-							(childAvailableWidth != null && !doesOverhang && x + w > childAvailableWidth))) {
+							(availableWidth != null && !doesOverhang && x + w > availableWidth))) {
 				line.endIndex = i
-				positionLine(line, childAvailableWidth, props, elements)
+				line.x = calculateLineX(availableWidth, props, line.contentsWidth)
+				positionElementsInLine(line, availableWidth, props, elements)
 				_lines.add(line)
 				x = 0f
 				y += line.height + props.verticalGap
@@ -93,8 +94,9 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 			}
 			x += w
 
+			line.width = x
 			if (!doesOverhang) {
-				line.width = x
+				line.contentsWidth = x
 				if (x > measuredW) measuredW = x
 			}
 			x += props.horizontalGap
@@ -106,7 +108,8 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 		}
 		line.endIndex = elements.size
 		if (line.isNotEmpty()) {
-			positionLine(line, childAvailableWidth, props, elements)
+			line.x = calculateLineX(availableWidth, props, line.contentsWidth)
+			positionElementsInLine(line, availableWidth, props, elements)
 			_lines.add(line)
 			y += line.height
 		} else {
@@ -119,38 +122,41 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 		if (measuredH > out.height) out.height = measuredH
 	}
 
-	/**
-	 * Adjusts the elements within a line to apply the horizontal and vertical alignment.
-	 */
-	private fun positionLine(line: LineInfoRo, availableWidth: Float?, props: FlowLayoutStyle, elements: List<LayoutElement>) {
-		val hGap: Float
-		val xOffset: Float
-		if (availableWidth != null) {
-			val remainingSpace = availableWidth - line.width
-			xOffset = when (props.horizontalAlign) {
+	private fun calculateLineX(availableWidth: Float?, props: FlowLayoutStyle, lineWidth: Float): Float {
+		return if (availableWidth != null) {
+			val remainingSpace = availableWidth - lineWidth
+			props.padding.left + when (props.horizontalAlign) {
 				FlowHAlign.LEFT -> 0f
 				FlowHAlign.CENTER -> (remainingSpace * 0.5f).round()
 				FlowHAlign.RIGHT -> remainingSpace
 				FlowHAlign.JUSTIFY -> 0f
 			}
+		} else {
+			props.padding.left
+		}
+	}
 
+	/**
+	 * Adjusts the elements within a line to apply the horizontal and vertical alignment.
+	 */
+	private fun positionElementsInLine(line: LineInfoRo, availableWidth: Float?, props: FlowLayoutStyle, elements: List<LayoutElement>) {
+		val hGap = if (availableWidth != null) {
+			val remainingSpace = availableWidth - line.contentsWidth
 			if (props.horizontalAlign == FlowHAlign.JUSTIFY &&
 					line.size > 1 &&
 					line.endIndex != elements.size &&
 					!elements[line.endIndex - 1].clearsLine() &&
 					!elements[line.endIndex].startsNewLine()) {
 				// Apply JUSTIFY spacing if this is not the last line, and there are more than one elements.
-				hGap = (props.horizontalGap + remainingSpace / (line.endIndex - line.startIndex - 1)).floor()
+				(props.horizontalGap + remainingSpace / (line.endIndex - line.startIndex - 1)).floor()
 			} else {
-				hGap = props.horizontalGap
+				props.horizontalGap
 			}
 		} else {
-			xOffset = props.padding.left
-			hGap = props.horizontalGap
+			props.horizontalGap
 		}
 
 		var x = 0f
-		val padLeft = props.padding.left
 		for (j in line.startIndex..line.endIndex - 1) {
 			val element = elements[j]
 
@@ -161,7 +167,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 				FlowVAlign.BOTTOM -> (line.height - element.height)
 				FlowVAlign.BASELINE -> (line.baseline - (layoutData?.baseline ?: element.height))
 			}
-			element.moveTo(x + padLeft + xOffset, line.y + yOffset)
+			element.moveTo(line.x + x, line.y + yOffset)
 			x += element.width + hGap
 		}
 	}
@@ -210,8 +216,22 @@ interface LineInfoRo {
 	 * The line's end index, exclusive.
 	 */
 	val endIndex: Int
+	val x: Float
 	val y: Float
+
+	/**
+	 * The width of the line, counting overhanging whitespace.
+	 */
 	val width: Float
+
+	/**
+	 * The width of the line, not counting overhanging whitespace.
+	 */
+	val contentsWidth: Float
+
+	/**
+	 * The [baseline] + [belowBaseline]
+	 */
 	val height: Float
 		get() = baseline + belowBaseline
 	val baseline: Float
@@ -234,7 +254,10 @@ class LineInfo : Clearable, LineInfoRo {
 
 	override var startIndex: Int = 0
 	override var endIndex: Int = 0
+	override var x: Float = 0f
 	override var y: Float = 0f
+
+	override var contentsWidth: Float = 0f
 	override var width: Float = 0f
 	override var baseline: Float = 0f
 	override var belowBaseline: Float = 0f
@@ -242,7 +265,9 @@ class LineInfo : Clearable, LineInfoRo {
 	override fun clear() {
 		startIndex = 0
 		endIndex = 0
+		contentsWidth = 0f
 		width = 0f
+		x = 0f
 		y = 0f
 		baseline = 0f
 		belowBaseline = 0f
