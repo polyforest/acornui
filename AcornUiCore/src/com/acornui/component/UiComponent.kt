@@ -69,8 +69,6 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	 */
 	fun getChildUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean): UiComponentRo?
 
-	fun getChildUnderRay(globalRay: RayRo, onlyInteractive: Boolean): UiComponentRo?
-
 	/**
 	 * Given a screen position, casts a ray in the direction of the camera, populating the [out] list with the
 	 * components
@@ -80,6 +78,8 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	 * @param out The array list to populate with elements.
 	 */
 	fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, out: MutableList<UiComponentRo>, onlyInteractive: Boolean): MutableList<UiComponentRo>
+
+	fun getChildUnderRay(globalRay: RayRo, onlyInteractive: Boolean): UiComponentRo?
 
 	/**
 	 * @param globalRay The ray in global coordinate space to check for intersections.
@@ -828,14 +828,14 @@ open class UiComponentImpl(
 		return first
 	}
 
+	override fun getChildrenUnderRay(globalRay: RayRo, out: MutableList<UiComponentRo>, onlyInteractive: Boolean) = getChildrenUnderRay(globalRay, out, onlyInteractive, true) // TODO: KT-20451
+
 	override fun getChildrenUnderRay(globalRay: RayRo, out: MutableList<UiComponentRo>, onlyInteractive: Boolean, returnAll: Boolean) {
 		if (!_visible || (onlyInteractive && !interactivityEnabled)) return
 		if (intersectsGlobalRay(globalRay)) {
 			out.add(this)
 		}
 	}
-
-	override fun getChildrenUnderRay(globalRay: RayRo, out: MutableList<UiComponentRo>, onlyInteractive: Boolean) = getChildrenUnderRay(globalRay, out, onlyInteractive, true) // TODO: KT-20451
 
 	//-----------------------------------------------
 	// Styleable

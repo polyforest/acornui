@@ -36,12 +36,6 @@ fun UiComponent.tweenZ(duration: Float, ease: Interpolation, toZ: Float, delay: 
 	return createPropertyTween(this, "z", duration, ease, { z }, { z = it }, toZ, delay)
 }
 
-// TODO
-//fun UiComponent.tweenScale(duration: Float, ease: Interpolation, toScaleX: Float, toScaleY: Float, delay: Float = 0f) {
-//	createPropertyTween(this, "scaleX", duration, ease, { scaleX }, { scaleX = it }, toScaleX, delay)
-//	createPropertyTween(this, "scaleY", duration, ease, { scaleY }, { scaleY = it }, toScaleY, delay)
-//}
-
 fun UiComponent.tweenScaleX(duration: Float, ease: Interpolation, toScaleX: Float, delay: Float = 0f): Tween {
 	return createPropertyTween(this, "scaleX", duration, ease, { scaleX }, { scaleX = it }, toScaleX, delay)
 }
@@ -60,13 +54,6 @@ fun UiComponent.tweenRotationY(duration: Float, ease: Interpolation, toRotationY
 
 fun UiComponent.tweenRotation(duration: Float, ease: Interpolation, toRotation: Float, delay: Float = 0f): Tween {
 	return createPropertyTween(this, "rotation", duration, ease, { rotation }, { rotation = it }, toRotation, delay)
-}
-
-// TODO
-fun UiComponent.tweenPosition(duration: Float, ease: Interpolation, toX: Float, toY: Float, toZ: Float = 0f, delay: Float = 0f) {
-	createPropertyTween(this, "x", duration, ease, { x }, { x = it }, toX, delay)
-	createPropertyTween(this, "y", duration, ease, { y }, { y = it }, toY, delay)
-	createPropertyTween(this, "z", duration, ease, { z }, { z = it }, toZ, delay)
 }
 
 fun UiComponent.tweenTint(duration: Float, ease: Interpolation, toTint: Color, delay: Float = 0f): Tween {

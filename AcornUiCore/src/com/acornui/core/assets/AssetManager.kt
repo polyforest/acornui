@@ -18,6 +18,7 @@ package com.acornui.core.assets
 
 import com.acornui.action.Progress
 import com.acornui.async.awaitAll
+import com.acornui.async.delay
 import com.acornui.async.launch
 import com.acornui.collection.sumByFloat2
 import com.acornui.core.Disposable
@@ -94,4 +95,14 @@ fun AssetManager.onLoadersEmpty(callback: () -> Unit) {
  */
 fun <T> Scoped.load(path: String, type: AssetType<T>): AssetLoaderRo<T> {
 	return inject(AssetManager).load(path, type)
+}
+
+/**
+ * Waits until there are no currently active loaders.
+ */
+suspend fun AssetManager.awaitAll() {
+	while (currentLoaders.isNotEmpty()) {
+		currentLoaders.awaitAll()
+		delay(1L)
+	}
 }

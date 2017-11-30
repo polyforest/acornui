@@ -21,10 +21,9 @@ import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.*
 import com.acornui.core.di.Owned
 import com.acornui.core.di.dKey
-import com.acornui.math.Corners
-import com.acornui.math.CornersRo
-import com.acornui.math.Rectangle
-import com.acornui.math.RectangleRo
+import com.acornui.core.tween.Tween
+import com.acornui.core.tween.createPropertyTween
+import com.acornui.math.*
 
 interface ScrollArea : LayoutDataProvider<StackLayoutData>, ElementContainer<UiComponent> {
 
@@ -76,11 +75,19 @@ fun ScrollArea.scrollTo(bounds: RectangleRo) {
 	if (bounds.y < vScrollModel.value)
 		vScrollModel.value = bounds.y
 	val contentsSetW = contentsWidth - hScrollModel.max
-	val contentsSetH = contentsHeight - vScrollModel.max
 	if (bounds.right > hScrollModel.value + contentsSetW)
 		hScrollModel.value = bounds.right - contentsSetW
+	val contentsSetH = contentsHeight - vScrollModel.max
 	if (bounds.bottom > vScrollModel.value + contentsSetH)
 		vScrollModel.value = bounds.bottom - contentsSetH
+}
+
+fun ScrollArea.tweenScrollX(duration: Float, ease: Interpolation, toScrollX: Float, delay: Float = 0f): Tween {
+	return createPropertyTween(this, "scrollX", duration, ease, { hScrollModel.value }, { hScrollModel.value = it }, toScrollX, delay)
+}
+
+fun ScrollArea.tweenScrollY(duration: Float, ease: Interpolation, toScrollY: Float, delay: Float = 0f): Tween {
+	return createPropertyTween(this, "scrollY", duration, ease, { vScrollModel.value }, { vScrollModel.value = it }, toScrollY, delay)
 }
 
 enum class ScrollPolicy {

@@ -100,10 +100,6 @@ class AnimationInstance(
 		driver?.dispose()
 		driver = null
 	}
-
-	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		out.set(explicitWidth ?: 0f, explicitHeight ?: 0f)
-	}
 }
 
 private class LayerTween(override val duration: Float, layer: Layer, private val target: UiComponent, globalEasings: Map<String, AnimationEasing>) : TweenBase() {
