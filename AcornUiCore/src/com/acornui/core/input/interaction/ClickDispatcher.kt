@@ -4,6 +4,7 @@ import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
 import com.acornui.component.Stage
 import com.acornui.component.UiComponentRo
+import com.acornui.component.getChildUnderPoint
 import com.acornui.core.Disposable
 import com.acornui.core.ancestry
 import com.acornui.core.di.Injector

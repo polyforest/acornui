@@ -22,6 +22,7 @@ import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
 import com.acornui.component.InteractiveElementRo
 import com.acornui.component.UiComponentRo
+import com.acornui.component.getChildUnderPoint
 import com.acornui.core.ancestry
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.input.interaction.*

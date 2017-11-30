@@ -233,23 +233,27 @@ open class ContainerImpl(
 	// Interactivity utility methods
 	//-----------------------------------------------------
 
-	override fun getChildrenUnderRay(globalRay: RayRo, out: MutableList<UiComponentRo>, onlyInteractive: Boolean, returnAll: Boolean) {
-		if (!visible || (onlyInteractive && inheritedInteractivityMode == InteractivityMode.NONE)) return
-		if (!intersectsGlobalRay(globalRay)) {
-			return
-		}
-		if ((returnAll || out.isEmpty())) {
-			iterateChildrenReversed {
-				child: UiComponentRo ->
-				child.getChildrenUnderRay(globalRay, out, onlyInteractive, returnAll)
-				// Continue iterating if we haven't found an intersecting child yet, or if returnAll is true.
-				returnAll || out.isEmpty()
+	private val rayTmp = Ray()
+
+	override fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo?): MutableList<UiComponentRo> {
+		if (!visible || (onlyInteractive && inheritedInteractivityMode == InteractivityMode.NONE)) return out
+		val ray = rayCache ?: camera.getPickRay(canvasX, canvasY, 0f, 0f, window.width, window.height, rayTmp)
+		if (intersectsGlobalRay(ray)) {
+			if ((returnAll || out.isEmpty())) {
+				iterateChildrenReversed {
+					child: UiComponentRo ->
+					val childRayCache = if (child.camera === camera) ray else null
+					child.getChildrenUnderPoint(canvasX, canvasY, onlyInteractive, returnAll, out, childRayCache)
+					// Continue iterating if we haven't found an intersecting child yet, or if returnAll is true.
+					returnAll || out.isEmpty()
+				}
+			}
+			if ((returnAll || out.isEmpty()) && (!onlyInteractive || interactivityEnabled)) {
+				// This component intersects with the ray, but none of its children do.
+				out.add(this)
 			}
 		}
-		if ((returnAll || out.isEmpty()) && (!onlyInteractive || interactivityEnabled)) {
-			// This component intersects with the ray, but none of its children do.
-			out.add(this)
-		}
+		return out
 	}
 
 	//-----------------------------------------------------

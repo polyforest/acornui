@@ -62,36 +62,19 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	override val parent: ContainerRo?
 
 	/**
-	 * Given a global position, casts a ray in the direction of the camera, returning the deepest enabled interactive
-	 * element at that position.
-	 * If there are multiple objects at this position, only the top-most object is returned. (by child index, not z
-	 * value)
-	 */
-	fun getChildUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean): UiComponentRo?
-
-	/**
 	 * Given a screen position, casts a ray in the direction of the camera, populating the [out] list with the
 	 * components
 	 *
 	 * @param canvasX The x coordinate relative to the canvas.
 	 * @param canvasY The y coordinate relative to the canvas.
-	 * @param out The array list to populate with elements.
-	 */
-	fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, out: MutableList<UiComponentRo>, onlyInteractive: Boolean): MutableList<UiComponentRo>
-
-	fun getChildUnderRay(globalRay: RayRo, onlyInteractive: Boolean): UiComponentRo?
-
-	/**
-	 * @param globalRay The ray in global coordinate space to check for intersections.
-	 * @param out The array list to populate with the interactive elements that match the criteria.
+	 * @param onlyInteractive If true, only elements whose interactivity is enabled will be returned.
 	 * @param returnAll If true, all intersecting elements will be added to [out], if false, only the top-most element.
-	 * @param onlyInteractive If true, only elements where [InteractiveElement.interactivityEnabled] is true.
-	 *
-	 * This method will not return elements where [UiComponent.visible] is false.
+	 * The top-most element is determined by child index, not z value.
+	 * @param out The array list to populate with elements.
+	 * @param rayCache If the ray is already calculated, pass this to avoid re-calculating the pick ray from the camera.
 	 */
-	fun getChildrenUnderRay(globalRay: RayRo, out: MutableList<UiComponentRo>, onlyInteractive: Boolean, returnAll: Boolean)
-
-	fun getChildrenUnderRay(globalRay: RayRo, out: MutableList<UiComponentRo>, onlyInteractive: Boolean)
+	fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo?): MutableList<UiComponentRo>
+	fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>): MutableList<UiComponentRo>
 
 	/**
 	 * If false, this component will not be rendered, interact with user input, included in layouts, or included in
@@ -257,7 +240,13 @@ open class UiComponentImpl(
 	protected val _scale: Vector3 = Vector3(1f, 1f, 1f)
 	protected val _origin: Vector3 = Vector3(0f, 0f, 0f)
 
-	override var cameraOverride: CameraRo? = null
+	private var _cameraOverride: CameraRo? = null
+	override var cameraOverride: CameraRo?
+		get() = _cameraOverride
+		set(value) {
+			_cameraOverride = value
+			window.requestRender()
+		}
 
 	/**
 	 * True if no scaling or rotation has been applied.
@@ -804,38 +793,18 @@ open class UiComponentImpl(
 	// Interactivity utility methods
 	//-----------------------------------------------
 
-	override fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, out: MutableList<UiComponentRo>, onlyInteractive: Boolean): MutableList<UiComponentRo> {
-		val ray = Ray.obtain()
-		camera.getPickRay(canvasX, canvasY, 0f, 0f, window.width, window.height, ray)
-		getChildrenUnderRay(ray, out, onlyInteractive)
-		ray.free()
+	private val rayTmp = Ray()
+
+	override fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo?): MutableList<UiComponentRo> {
+		if (!_visible || (onlyInteractive && !interactivityEnabled)) return out
+		val ray = rayCache ?: camera.getPickRay(canvasX, canvasY, 0f, 0f, window.width, window.height, rayTmp)
+		if (intersectsGlobalRay(ray)) {
+			out.add(this)
+		}
 		return out
 	}
 
-	override fun getChildUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean): UiComponentRo? {
-		val ray = Ray.obtain()
-		camera.getPickRay(canvasX, canvasY, 0f, 0f, window.width, window.height, ray)
-		val element = getChildUnderRay(ray, onlyInteractive)
-		ray.free()
-		return element
-	}
-
-	override fun getChildUnderRay(globalRay: RayRo, onlyInteractive: Boolean): UiComponentRo? {
-		val tmpList = arrayListObtain<UiComponentRo>()
-		getChildrenUnderRay(globalRay, tmpList, onlyInteractive = onlyInteractive, returnAll = false)
-		val first = tmpList.firstOrNull()
-		arrayListPool.free(tmpList)
-		return first
-	}
-
-	override fun getChildrenUnderRay(globalRay: RayRo, out: MutableList<UiComponentRo>, onlyInteractive: Boolean) = getChildrenUnderRay(globalRay, out, onlyInteractive, true) // TODO: KT-20451
-
-	override fun getChildrenUnderRay(globalRay: RayRo, out: MutableList<UiComponentRo>, onlyInteractive: Boolean, returnAll: Boolean) {
-		if (!_visible || (onlyInteractive && !interactivityEnabled)) return
-		if (intersectsGlobalRay(globalRay)) {
-			out.add(this)
-		}
-	}
+	override fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>): MutableList<UiComponentRo> = getChildrenUnderPoint(canvasX, canvasY, onlyInteractive, returnAll, out, null) // TODO: KT-20451
 
 	//-----------------------------------------------
 	// Styleable
@@ -1453,4 +1422,18 @@ object NativeComponentDummy : NativeComponent {
 
 	override fun dispose() {
 	}
+}
+
+/**
+ * Given a global position, casts a ray in the direction of the camera, returning the deepest enabled interactive
+ * element at that position.
+ * If there are multiple objects at this position, only the top-most object is returned. (by child index, not z
+ * value)
+ */
+fun UiComponentRo.getChildUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean): UiComponentRo? {
+	val out = arrayListObtain<UiComponentRo>()
+	getChildrenUnderPoint(canvasX, canvasY, onlyInteractive, false, out)
+	val first = out.firstOrNull()
+	arrayListPool.free(out)
+	return first
 }
