@@ -21,6 +21,7 @@ import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
 import com.acornui.component.InteractiveElementRo
 import com.acornui.component.UiComponentRo
+import com.acornui.component.getChildUnderPoint
 import com.acornui.core.ancestry
 import com.acornui.core.input.InteractionEvent
 import com.acornui.core.input.InteractionType
@@ -215,58 +216,58 @@ open class DomInteractivityManager : InteractivityManager {
 	override fun <T : InteractionEvent> getSignal(host: InteractiveElementRo, type: InteractionType<T>, isCapture: Boolean): StoppableSignalImpl<T> {
 		return when (type) {
 			KeyInteraction.KEY_DOWN -> {
-				NativeSignal<T>(host, "keydown", isCapture, type, keyEvent, nativeKeyHandler)
+				NativeSignal(host, "keydown", isCapture, type, keyEvent, nativeKeyHandler)
 			}
 			KeyInteraction.KEY_UP -> {
-				NativeSignal<T>(host, "keyup", isCapture, type, keyEvent, nativeKeyHandler)
+				NativeSignal(host, "keyup", isCapture, type, keyEvent, nativeKeyHandler)
 			}
 			MouseInteraction.MOUSE_OVER -> {
-				NativeSignal<T>(host, "mouseover", isCapture, type, mouseEvent, nativeMouseHandler)
+				NativeSignal(host, "mouseover", isCapture, type, mouseEvent, nativeMouseHandler)
 			}
 			MouseInteraction.MOUSE_OUT -> {
-				NativeSignal<T>(host, "mouseout", isCapture, type, mouseEvent, nativeMouseHandler)
+				NativeSignal(host, "mouseout", isCapture, type, mouseEvent, nativeMouseHandler)
 			}
 			MouseInteraction.MOUSE_MOVE -> {
-				NativeSignal<T>(host, "mousemove", isCapture, type, mouseEvent, nativeMouseHandler)
+				NativeSignal(host, "mousemove", isCapture, type, mouseEvent, nativeMouseHandler)
 			}
 			MouseInteraction.MOUSE_UP -> {
-				NativeSignal<T>(host, "mouseup", isCapture, type, mouseEvent, nativeMouseHandler)
+				NativeSignal(host, "mouseup", isCapture, type, mouseEvent, nativeMouseHandler)
 			}
 			MouseInteraction.MOUSE_DOWN -> {
-				NativeSignal<T>(host, "mousedown", isCapture, type, mouseEvent, nativeMouseHandler)
+				NativeSignal(host, "mousedown", isCapture, type, mouseEvent, nativeMouseHandler)
 			}
 			WheelInteraction.MOUSE_WHEEL -> {
-				NativeSignal<T>(host, "wheel", isCapture, type, wheelEvent, nativeWheelHandler)
+				NativeSignal(host, "wheel", isCapture, type, wheelEvent, nativeWheelHandler)
 			}
 			ClickInteraction.LEFT_CLICK -> {
-				NativeSignal<T>(host, "click", isCapture, type, clickEvent, nativeClickHandler)
+				NativeSignal(host, "click", isCapture, type, clickEvent, nativeClickHandler)
 			}
 			TouchInteraction.TOUCH_START -> {
-				NativeSignal<T>(host, "touchstart", isCapture, type, touchEvent, nativeTouchHandler)
+				NativeSignal(host, "touchstart", isCapture, type, touchEvent, nativeTouchHandler)
 			}
 			TouchInteraction.TOUCH_END -> {
-				NativeSignal<T>(host, "touchend", isCapture, type, touchEvent, nativeTouchHandler)
+				NativeSignal(host, "touchend", isCapture, type, touchEvent, nativeTouchHandler)
 			}
 			TouchInteraction.TOUCH_MOVE -> {
-				NativeSignal<T>(host, "touchmove", isCapture, type, touchEvent, nativeTouchHandler)
+				NativeSignal(host, "touchmove", isCapture, type, touchEvent, nativeTouchHandler)
 			}
 			TouchInteraction.TOUCH_CANCEL -> {
-				NativeSignal<T>(host, "touchcancel", isCapture, type, touchEvent, nativeTouchHandler)
+				NativeSignal(host, "touchcancel", isCapture, type, touchEvent, nativeTouchHandler)
 			}
 			TouchInteraction.TOUCH_ENTER -> {
-				NativeSignal<T>(host, "touchenter", isCapture, type, touchEvent, nativeTouchHandler)
+				NativeSignal(host, "touchenter", isCapture, type, touchEvent, nativeTouchHandler)
 			}
 			TouchInteraction.TOUCH_LEAVE -> {
-				NativeSignal<T>(host, "touchleave", isCapture, type, touchEvent, nativeTouchHandler)
+				NativeSignal(host, "touchleave", isCapture, type, touchEvent, nativeTouchHandler)
 			}
 			ClipboardInteraction.COPY -> {
-				NativeSignal<T>(host, "copy", isCapture, type, clipboardEvent, nativeClipboardHandler)
+				NativeSignal(host, "copy", isCapture, type, clipboardEvent, nativeClipboardHandler)
 			}
 			ClipboardInteraction.CUT -> {
-				NativeSignal<T>(host, "cut", isCapture, type, clipboardEvent, nativeClipboardHandler)
+				NativeSignal(host, "cut", isCapture, type, clipboardEvent, nativeClipboardHandler)
 			}
 			ClipboardInteraction.PASTE -> {
-				NativeSignal<T>(host, "paste", isCapture, type, clipboardEvent, nativeClipboardHandler)
+				NativeSignal(host, "paste", isCapture, type, clipboardEvent, nativeClipboardHandler)
 			}
 			else -> {
 				Log.warn("Could not find a signal for the type $type")

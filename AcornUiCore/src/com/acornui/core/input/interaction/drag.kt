@@ -16,9 +16,11 @@
 
 package com.acornui.core.input.interaction
 
-import com.acornui.component.*
+import com.acornui.component.InteractiveElementRo
+import com.acornui.component.UiComponent
+import com.acornui.component.createOrReuseAttachment
+import com.acornui.component.stage
 import com.acornui.core.Disposable
-import com.acornui.core.Lifecycle
 import com.acornui.core.LifecycleRo
 import com.acornui.core.input.*
 import com.acornui.core.time.callLater
@@ -87,7 +89,8 @@ class DragAttachment(
 		stop()
 	}
 
-	private fun clickBlocker(event: ClickInteraction) {
+	private val clickBlocker: (ClickInteraction)->Unit = {
+		event ->
 		event.handled = true
 		event.preventDefault()
 	}
@@ -244,7 +247,7 @@ class DragAttachment(
 			if (dragEvent.defaultPrevented()) {
 				_isDragging = false
 			} else {
-				stage.click(isCapture = true).add(this::clickBlocker, true) // Set the next click to be marked as handled.
+				stage.click(isCapture = true).add(clickBlocker, true) // Set the next click to be marked as handled.
 				dispatchDragEvent(DragInteraction.DRAG, _drag)
 			}
 		} else {
@@ -254,7 +257,7 @@ class DragAttachment(
 			dispatchDragEvent(DragInteraction.DRAG_END, _dragEnd)
 			startElement = null
 
-			target.callLater { stage.click(isCapture = true).remove(this::clickBlocker) }
+			target.callLater { stage.click(isCapture = true).remove(clickBlocker) }
 		}
 	}
 
