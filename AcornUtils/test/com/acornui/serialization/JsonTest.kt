@@ -37,10 +37,12 @@ class JsonTest {
 		{
 		    "bool1": true,
 		    "bool2": false,
+			"char": "c",
 		    "int1": 1,
 		    "int2": 2,
 		    "double1": -0.1,
 		    "str1": "String 0-1",
+			"strPadded": "  Test  ",
 		    "obj1": {
 		    	"bool1": true,
 				"bool2": false,
@@ -69,6 +71,7 @@ class JsonTest {
 		 """)
 
 		assertEquals(true, value["bool1"]!!.bool())
+		assertEquals('c', value["char"]!!.char())
 		assertEquals(false, value["bool2"]!!.bool())
 		assertEquals(1, value["int1"]!!.int())
 		assertEquals(2, value["int2"]!!.int())
@@ -86,6 +89,7 @@ class JsonTest {
 		assertEquals("Test1", value["arr2"]!![1]!!.string())
 		assertEquals(23, value["arr2"]!![2]!!["a"]!!.int())
 		assertEquals(43, value["arr2"]!![2]!!["b"]!!.int())
+		assertEquals("  Test  ", value["strPadded"]!!.string())
 	}
 
 	@Test fun parse2() {

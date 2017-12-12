@@ -14,33 +14,22 @@
  * limitations under the License.
  */
 
-package com.acornui.string.test
+package com.acornui.string
 
-import org.junit.*
-import kotlin.test.*
-import com.acornui.string.*
+import org.junit.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /**
  * @author nbilyk
  */
 class SubStringTest {
 
-	@Test fun testSetRange() {
-		val s = SubString("Hello World")
-		s.setRange(0, 5)
-		assertTrue(s.equals("Hello"))
-		assertEquals("Hello".hashCode(), s.hashCode())
-
-		s.setRange(0, 8)
-		assertTrue(s.equals("Hello Wo"))
-		assertEquals("Hello Wo".hashCode(), s.hashCode())
-	}
-
 	@Test fun testLength() {
 		val s = SubString("Hello World", 3, 5)
-		assertEquals(2, s.length())
-		s.setRange(0, 8)
-		assertEquals(8, s.length())
+		assertEquals(2, s.length)
+		assertEquals(2, s.subSequence(0, 8).length)
 	}
 
 	@Test fun testCharAt() {
@@ -53,25 +42,20 @@ class SubStringTest {
 
 	@Test fun testSubSequence() {
 		val s = SubString("Hello World")
-		s.setRange(0, 5)
-		assertEquals("el", s.subSequence(1, 3))
-
-		s.setRange(2, 7)
-		assertEquals("lo", s.subSequence(1, 3))
+		assertEquals("el", s.subSequence(0, 5).subSequence(1, 3).toString())
+		assertEquals("lo", s.subSequence(2, 7).subSequence(1, 3).toString())
+		assertEquals("lo", s.subSequence(2, 5).subSequence(1, 6).toString())
 	}
 
 	@Test fun testToString() {
 		val s = SubString("Hello World")
-		s.setRange(0, 5)
-		assertEquals("Hello", s.toString())
+		assertEquals("Hello", s.subSequence(0, 5).toString())
 
-		s.setRange(2, 7)
-		assertEquals("llo W", s.toString())
+		assertEquals("llo W", s.subSequence(2, 7).toString())
 	}
 
 	@Test fun testCompareTo() {
-		val s = SubString("Hello World")
-		s.setRange(6, 11)
+		val s = SubString("Hello World").subSequence(6, 11)
 		assertEquals(0, s.compareTo("World"))
 		assertEquals("World".compareTo("Xorld"), s.compareTo("Xorld"))
 		assertEquals("World".compareTo("Worldb"), s.compareTo("Worldb"))
@@ -81,32 +65,25 @@ class SubStringTest {
 
 	@Test fun testEquals() {
 		val s = SubString("Hello World")
-		s.setRange(0, 5)
-		assertTrue(s.equals("Hello"))
-		s.setRange(1, 5)
-		assertTrue(s.equals("ello"))
-		assertFalse(s.equals("Hello"))
-		assertFalse(s.equals("elo"))
-		assertFalse(s.equals("ell"))
-		s.setRange(1, 1)
-		assertTrue(s.equals(""))
-		assertFalse(s.equals("e"))
-		s.setRange(1, 2)
-		assertFalse(s.equals(""))
-		assertTrue(s.equals("e"))
+		assertTrue(s.subSequence(0, 5).equalsStr("Hello"))
+		val ello = s.subSequence(1, 5)
+		assertTrue(ello.equalsStr("ello"))
+		assertFalse(ello.equalsStr("Hello"))
+		assertFalse(ello.equalsStr("elo"))
+		assertFalse(ello.equalsStr("ell"))
+		assertTrue(s.subSequence(1, 1).equalsStr(""))
+		assertFalse(s.subSequence(1, 1).equalsStr("e"))
+		assertFalse(s.subSequence(1, 2).equalsStr(""))
+		assertTrue(s.subSequence(1, 2).equalsStr("e"))
 
 	}
 
 	@Test fun testHashCode() {
 		val s = SubString("Hello World")
-		s.setRange(0, 5)
-		assertEquals("Hello".hashCode(), s.hashCode())
-		s.setRange(1, 5)
-		assertEquals("ello".hashCode(), s.hashCode())
-		s.setRange(1, 1)
-		assertEquals("".hashCode(), s.hashCode())
-		s.setRange(1, 2)
-		assertEquals("e".hashCode(), s.hashCode())
+		assertEquals("Hello".hashCode(), s.subSequence(0, 5).hashCode())
+		assertEquals("ello".hashCode(), s.subSequence(1, 5).hashCode())
+		assertEquals("".hashCode(), s.subSequence(1, 1).hashCode())
+		assertEquals("e".hashCode(), s.subSequence(1, 2).hashCode())
 	}
 
 	@Test fun testStartsWith() {

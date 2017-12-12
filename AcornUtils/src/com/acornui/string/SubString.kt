@@ -21,40 +21,24 @@ package com.acornui.string
  *
  * @author nbilyk
  */
-@Suppress("NAME_SHADOWING") class SubString(
-	val target: String,
-	from: Int = 0,
-	to: Int = target.length
+class SubString(
+	private val target: String,
+	private val from: Int = 0,
+	private val to: Int = target.length
 ) : Comparable<SubString> {
 
-	private var from: Int = 0
-	private var to: Int = 0
-	private var length: Int = 0
-
 	init {
-		setRange(from, to)
 	}
 
-	fun setRange(from: Int, to: Int) {
-		if (from > to) throw IllegalArgumentException("to may not be greater than from")
-		if (from < 0) throw IllegalArgumentException("from is out of bounds")
-		if (to > target.length) throw IllegalArgumentException("to is out of bounds")
-		this.from = from
-		this.to = to
-		this.length = to - from
-		hash = 0 // Invalidate the cached hashcode.
-	}
-
-	fun length(): Int {
-		return to - from
-	}
+	val length: Int
+		get() = to - from
 
 	fun charAt(index: Int): Char {
 		return target[index + from]
 	}
 
-	fun subSequence(start: Int, end: Int): String {
-		return target.subSequence(start + from, end + from).toString()
+	fun subSequence(start: Int, end: Int): SubString {
+		return SubString(target, start + from, minOf(end, length) + from)
 	}
 
 	fun endsWith(suffix: String): Boolean {
@@ -78,15 +62,14 @@ package com.acornui.string
 	}
 
 	fun indexOf(ch: Char, fromIndex: Int = 0): Int {
-		var fromIndex = fromIndex
+		var f = fromIndex
 		val max = length
-		if (fromIndex < 0) {
-			fromIndex = 0
-		} else if (fromIndex >= max) {
-			// Note: fromIndex might be near -1>>>1.
+		if (f < 0) {
+			f = 0
+		} else if (f >= max) {
 			return -1
 		}
-		for (i in fromIndex..max - 1) {
+		for (i in f..max - 1) {
 			if (charAt(i) == ch) {
 				return i
 			}
@@ -143,7 +126,7 @@ package com.acornui.string
 
 	override fun compareTo(other: SubString): Int {
 		val len1 = to - from
-		val len2 = other.length()
+		val len2 = other.length
 		val lim = minOf(len1, len2)
 
 		var k = 0
@@ -158,62 +141,69 @@ package com.acornui.string
 		return len1 - len2
 	}
 
-	override fun equals(other: Any?): Boolean {
-		if (other is String) {
-			var n = to - from
-			if (n == other.length) {
-				var i = 0
-				while (n-- > 0) {
-					if (target[i + from] != other[i])
-						return false
-					i++
-				}
-				return true
+	fun equalsStr(other: String): Boolean {
+		var n = to - from
+		if (n == other.length) {
+			var i = 0
+			while (n-- > 0) {
+				if (target[i + from] != other[i])
+					return false
+				i++
 			}
+			return true
 		}
 		return false
 	}
 
-	private var hash: Int = 0 // Default to 0
-
-	override fun hashCode(): Int {
-		var h = hash
-		if (h == 0 && to > from) {
-			for (i in from..to - 1) {
-				h = 31 * h + target[i].toInt()
+	override fun equals(other: Any?): Boolean {
+		if (other !is SubString) return false
+		var n = to - from
+		if (n == other.length) {
+			var i = 0
+			while (n-- > 0) {
+				if (target[i + from] != other.charAt(i))
+					return false
+				i++
 			}
-			hash = h
+			return true
 		}
-		return h
+		return false
 	}
+
+	private val hashCode: Int by lazy {
+		var h = 0
+		for (i in from..to - 1) {
+			h = 31 * h + target[i].toInt()
+		}
+		h
+	}
+
+	override fun hashCode(): Int = hashCode
 
 	/**
 	 * Creates a new String that is the substring of the target.
 	 */
 	override fun toString(): String {
-		return subSequence(0, length)
+		return target.substring(from, to)
 	}
 
-
-
 	companion object {
-
 		fun indexOf(source: SubString, sourceOffset: Int, sourceCount: Int, target: String, targetOffset: Int, targetCount: Int, fromIndex: Int): Int {
-			var fromIndex = fromIndex
-			if (fromIndex >= sourceCount) {
+			var fI = fromIndex
+			if (fI >= sourceCount) {
 				return (if (targetCount == 0) sourceCount else -1)
 			}
-			if (fromIndex < 0) {
-				fromIndex = 0
+			if (fI < 0) {
+				fI = 0
 			}
 			if (targetCount == 0) {
-				return fromIndex
+				return fI
 			}
 
 			val first = target[targetOffset]
 			val max = sourceOffset + (sourceCount - targetCount)
 
-			var i = sourceOffset + fromIndex
+			var i = sourceOffset + fI
 			while (i <= max) {
 				/* Look for first character. */
 				if (source.charAt(i) != first) {
@@ -241,27 +231,27 @@ package com.acornui.string
 		}
 
 		fun lastIndexOf(source: SubString, sourceOffset: Int, sourceCount: Int, target: String, targetOffset: Int, targetCount: Int, fromIndex: Int): Int {
-			var fromIndex = fromIndex
+			var fI = fromIndex
 			/*
 					 * Check arguments; return immediately where possible. For
 					 * consistency, don't check for null str.
 					 */
 			val rightIndex = sourceCount - targetCount
-			if (fromIndex < 0) {
+			if (fI < 0) {
 				return -1
 			}
-			if (fromIndex > rightIndex) {
-				fromIndex = rightIndex
+			if (fI > rightIndex) {
+				fI = rightIndex
 			}
 			/* Empty string always matches. */
 			if (targetCount == 0) {
-				return fromIndex
+				return fI
 			}
 
 			val strLastIndex = targetOffset + targetCount - 1
 			val strLastChar = target[strLastIndex]
 			val min = sourceOffset + targetCount - 1
-			var i = min + fromIndex
+			var i = min + fI
 
 			startSearchForLastChar@ while (true) {
 				while (i >= min && source.charAt(i) != strLastChar) {
@@ -284,4 +274,16 @@ package com.acornui.string
 			}
 		}
 	}
+}
+
+fun SubString.trim(): SubString {
+	var fromTrimmed = 0
+	var toTrimmed = length
+	while (fromTrimmed < toTrimmed && charAt(fromTrimmed).isWhitespace()) {
+		fromTrimmed++
+	}
+	while (fromTrimmed < toTrimmed && charAt(toTrimmed - 1).isWhitespace()) {
+		toTrimmed--
+	}
+	return subSequence(fromTrimmed, toTrimmed)
 }

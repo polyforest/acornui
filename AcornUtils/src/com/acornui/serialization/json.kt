@@ -53,13 +53,13 @@ object JsonSerializer : Serializer<String> {
 /**
  * @author nbilyk
  */
-class JsonNode(private var source: String,
+class JsonNode(private val source: String,
 			   fromIndex: Int,
 			   toIndex: Int
 ) : Reader {
 
-	private val _properties: HashMap<String, JsonNode> = HashMap()
-	private val _elements: MutableList<JsonNode> = ArrayList()
+	private val _properties: HashMap<String, Reader> = HashMap()
+	private val _elements: MutableList<Reader> = ArrayList()
 
 	private var isParsed: Boolean = false
 	private val fromIndex: Int
@@ -177,27 +177,27 @@ class JsonNode(private var source: String,
 		return index < _elements.size
 	}
 
-	override fun properties(): HashMap<String, JsonNode> {
+	override fun properties(): HashMap<String, Reader> {
 		parseObject()
 		return _properties
 	}
 
-	override fun elements(): List<JsonNode> {
+	override fun elements(): List<Reader> {
 		parseObject()
 		return _elements
 	}
 
-	fun entries(): Set<Map.Entry<String, JsonNode>> {
+	fun entries(): Set<Map.Entry<String, Reader>> {
 		parseObject()
 		return _properties.entries
 	}
 
 	override val isNull: Boolean
-		get() = subStr.equals("null")
+		get() = subStr.equalsStr("null")
 
 	override fun bool(): Boolean? {
 		if (isNull) return null
-		return subStr.equals("true") || subStr.equals("1")
+		return subStr.equalsStr("true") || subStr.equalsStr("1")
 	}
 
 	override fun char(): Char? {
@@ -207,7 +207,7 @@ class JsonNode(private var source: String,
 
 	override fun string(): String? {
 		if (isNull) return null
-		return removeBackslashes(subStr.subSequence(1, subStr.length() - 1))
+		return removeBackslashes(subStr.subSequence(1, subStr.length - 1).toString())
 	}
 
 	override fun short(): Short? {
