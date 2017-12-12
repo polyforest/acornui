@@ -482,3 +482,36 @@ interface To<in T> {
 
 	fun T.write(writer: Writer)
 }
+
+
+class StringNode(val str: String) : Reader {
+	override val isNull: Boolean = false
+	override fun contains(name: String): Boolean = false
+	override fun contains(index: Int): Boolean = false
+	override fun bool(): Boolean? = null
+	override fun int(): Int? = null
+	override fun string(): String = str
+	override fun short(): Short? = null
+	override fun long(): Long? = null
+	override fun float(): Float? = null
+	override fun double(): Double? = null
+	override fun char(): Char? = null
+	override fun properties(): Map<String, Reader> = emptyMap()
+	override fun elements(): List<Reader> = emptyList()
+}
+
+object NullNode : Reader {
+	override val isNull: Boolean = true
+	override fun contains(name: String): Boolean = false
+	override fun contains(index: Int): Boolean = false
+	override fun bool(): Boolean? = null
+	override fun int(): Int? = null
+	override fun string(): String? = null
+	override fun short(): Short? = null
+	override fun long(): Long? = null
+	override fun float(): Float? = null
+	override fun double(): Double? = null
+	override fun char(): Char? = null
+	override fun properties(): Map<String, Reader> = emptyMap()
+	override fun elements(): List<Reader> = emptyList()
+}

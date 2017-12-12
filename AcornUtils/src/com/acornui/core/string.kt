@@ -145,9 +145,20 @@ fun htmlEntities(value: String): String {
 	return value
 }
 
+fun htmlEntitiesDecode(value: String): String {
+	@Suppress("name_shadowing")
+	var value = value
+	value = value.replace("&amp;", "&")
+	value = value.replace("&lt;", "<")
+	value = value.replace("&gt;", ">")
+	value = value.replace("&quot;", "\"")
+	value = value.replace("&apos;", "'")
+	return value
+}
+
 /**
  * Converts backslash escapes into their corresponding characters.
- * \t, \b, \n, \r, \', \", \\, \$, \uFF00
+ * \t, \b, \n, \r, \', \", \\, \/, \$, \uFF00
  */
 fun removeBackslashes(value: String): String {
 	val unescaped = StringBuilder()
@@ -164,6 +175,7 @@ fun removeBackslashes(value: String): String {
 				'r' -> '\r'
 				'\'' -> '\''
 				'\"' -> '\"'
+				'/' -> '/'
 				'\\' -> '\\'
 				'\$' -> '\$'
 				'u' -> {
