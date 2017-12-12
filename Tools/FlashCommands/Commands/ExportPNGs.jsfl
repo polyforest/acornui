@@ -24,25 +24,27 @@ if (!doc) {
 			timeline.insertFrames(totalFrames);
 			exportDoc.addItem({ x: 0, y: 0 }, item);
 			
-			exportDoc.timelines[0].layers[0].frames[0].elements[0].symbolType = "graphic";
-			resizeDocument(exportDoc, item);
-			var lastLabel = null;
-			var sameLabelCount = 0;
-			for (var i = 0; i < totalFrames; i++) {
-				exportDoc.timelines[0].setSelectedFrames(i, i);
-				var pngName;
-				var frame = item.timeline.layers[0].frames[i];
-				if (frame.labelType == "name") {
-					if (lastLabel != frame.name) {
-						lastLabel = frame.name;
+			if (exportDoc.timelines[0].layers[0].frames[0].elements.length > 0) {
+				exportDoc.timelines[0].layers[0].frames[0].elements[0].symbolType = "graphic";
+				resizeDocument(exportDoc, item);
+				var lastLabel = null;
+				var sameLabelCount = 0;
+				for (var i = 0; i < totalFrames; i++) {
+					exportDoc.timelines[0].setSelectedFrames(i, i);
+					var pngName;
+					var frame = item.timeline.layers[0].frames[i];
+					if (frame.labelType == "name") {
+						if (lastLabel != frame.name) {
+							lastLabel = frame.name;
+						} else {
+							sameLabelCount++;
+						}
+						pngName = folder + item.name + "_" + frame.name + numberTag(sameLabelCount) + ".png";
 					} else {
-						sameLabelCount++;
+						pngName = folder + item.name + numberTag(i) + ".png";
 					}
-					pngName = folder + item.name + "_" + frame.name + numberTag(sameLabelCount) + ".png";
-				} else {
-					pngName = folder + item.name + numberTag(i) + ".png";
+					exportDoc.exportPNG(pngName, true, true);
 				}
-				exportDoc.exportPNG(pngName, true, true);
 			}
 			exportDoc.timelines[0].setSelectedFrames(0, 0);
 		}
