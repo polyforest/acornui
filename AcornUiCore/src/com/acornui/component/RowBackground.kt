@@ -34,8 +34,6 @@ class RowBackgroundImpl(owned: Owned) : ContainerImpl(owned), RowBackground {
 	override var toggled: Boolean by validationProp(false, ValidationFlags.PROPERTIES)
 	override var rowIndex: Int by validationProp(0, ValidationFlags.PROPERTIES)
 
-
-
 	val style = bind(RowBackgroundStyle())
 
 	private val bg = addChild(rect())
