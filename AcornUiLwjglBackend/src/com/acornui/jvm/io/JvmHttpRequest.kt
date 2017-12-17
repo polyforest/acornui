@@ -3,6 +3,7 @@ package com.acornui.jvm.io
 import com.acornui.async.Deferred
 import com.acornui.core.di.Injector
 import com.acornui.core.request.*
+import com.acornui.core.time.TimeDriver
 import com.acornui.io.NativeBuffer
 import com.acornui.io.toByteArray
 import com.acornui.jvm.asyncThread
@@ -14,7 +15,7 @@ import java.net.URL
 import java.util.*
 
 
-abstract class JvmHttpRequest<out T>(requestData: UrlRequestData) : Request<T> {
+abstract class JvmHttpRequest<out T>(timeDriver: TimeDriver, requestData: UrlRequestData) : Request<T> {
 
 	// TODO: Seconds loaded / total.
 	override val secondsLoaded = 0f
@@ -23,7 +24,7 @@ abstract class JvmHttpRequest<out T>(requestData: UrlRequestData) : Request<T> {
 	private var work: Deferred<T>
 
 	init {
-		work = asyncThread {
+		work = asyncThread(timeDriver) {
 			// TODO: cookies
 
 			val urlStr = if (requestData.method == UrlRequestMethod.GET && requestData.variables != null)
@@ -104,7 +105,7 @@ abstract class JvmHttpRequest<out T>(requestData: UrlRequestData) : Request<T> {
 
 object JvmRestServiceFactory : RestServiceFactory {
 	override fun createTextRequest(injector: Injector, requestData: UrlRequestData): Request<String> {
-		return object : JvmHttpRequest<String>(requestData) {
+		return object : JvmHttpRequest<String>(injector.inject(TimeDriver), requestData) {
 			override fun process(inputStream: InputStream): String {
 				return inputStream.readTextAndClose()
 			}
@@ -112,7 +113,7 @@ object JvmRestServiceFactory : RestServiceFactory {
 	}
 
 	override fun createBinaryRequest(injector: Injector, requestData: UrlRequestData): Request<NativeBuffer<Byte>> {
-		return object : JvmHttpRequest<NativeBuffer<Byte>>(requestData) {
+		return object : JvmHttpRequest<NativeBuffer<Byte>>(injector.inject(TimeDriver), requestData) {
 			override fun process(inputStream: InputStream): NativeBuffer<Byte> {
 				TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 			}

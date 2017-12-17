@@ -16,6 +16,8 @@
 
 package com.acornui.gl.component.text
 
+import com.acornui.async.delay
+import com.acornui.async.launch
 import com.acornui.collection.*
 import com.acornui.component.*
 import com.acornui.component.layout.Positionable
@@ -42,6 +44,7 @@ import com.acornui.core.selection.SelectionRange
 import com.acornui.gl.core.*
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
+import com.acornui.logging.Log
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.floor
 import com.acornui.math.MathUtils.round
@@ -367,6 +370,9 @@ open class TextSpanElementImpl : TextSpanElement, ElementParent<TextElement>, St
 		tfCharStyle.selectedBackgroundColor.set(concatenatedColorTint).mul(charStyle.selectedBackgroundColor)
 		tfCharStyle.textColorTint.set(concatenatedColorTint).mul(charStyle.colorTint)
 		tfCharStyle.backgroundColor.set(concatenatedColorTint).mul(charStyle.backgroundColor)
+	}
+
+	init {
 	}
 }
 

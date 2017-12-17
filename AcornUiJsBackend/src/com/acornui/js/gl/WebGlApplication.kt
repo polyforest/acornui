@@ -38,6 +38,7 @@ import com.acornui.gl.component.text.GlTextInput
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.js.JsApplicationBase
+import com.acornui.js.html.JsHtmlComponent
 import com.acornui.js.html.WebGl
 import com.acornui.js.input.JsClickDispatcher
 import org.khronos.webgl.WebGLContextAttributes
@@ -61,8 +62,11 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 		root.clear()
 		val canvas = document.createElement("canvas") as HTMLCanvasElement
 		canvas.style.setProperty("-webkit-tap-highlight-color", "rgba(0,0,0,0)")
-		canvas.style.width = "100%"
-		canvas.style.height = "100%"
+		canvas.style.apply {
+			width = "100%"
+			height = "100%"
+			position = "absolute"
+		}
 		root.appendChild(canvas)
 		set(CANVAS, canvas)
 	}
@@ -111,6 +115,9 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 		set(ScrollArea.FACTORY_KEY, ::GlScrollArea)
 		set(ScrollRect.FACTORY_KEY, ::GlScrollRect)
 		set(Rect.FACTORY_KEY, ::GlRect)
+
+		val root = document.getElementById(rootId) as HTMLElement
+		set(HtmlComponent.FACTORY_KEY, { JsHtmlComponent(it, root) })
 	}
 
 	override suspend fun createStage(owner: Owned): Stage {

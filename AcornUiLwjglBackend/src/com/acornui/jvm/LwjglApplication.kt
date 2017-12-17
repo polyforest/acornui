@@ -257,18 +257,20 @@ open class LwjglApplication : ApplicationBase() {
 		set(FocusManager, FocusManagerImpl())
 	}
 
-	private fun <T> ioWorkScheduler(): WorkScheduler<T> = { async(it) }
+	private fun <T> ioWorkScheduler(timeDriver: TimeDriver): WorkScheduler<T> = { asyncThread(timeDriver, it) }
 
 	protected open val assetManagerTask by BootTask {
 		val assetManager = AssetManagerImpl(config().rootPath, get(Files))
-		assetManager.setLoaderFactory(AssetTypes.TEXT, { path, _ -> JvmTextLoader(path, Charsets.UTF_8, ioWorkScheduler()) })
+		val timeDriver = get(TimeDriver)
+		assetManager.setLoaderFactory(AssetTypes.TEXT, { path, _ -> JvmTextLoader(path, Charsets.UTF_8, ioWorkScheduler(timeDriver)) })
 		set(AssetManager, assetManager)
 	}
 
 	protected open val texturesTask by BootTask {
 		val gl20 = get(Gl20)
 		val glState = get(GlState)
-		get(AssetManager).setLoaderFactory(AssetTypes.TEXTURE, { path, _ -> JvmTextureLoader(path, gl20, glState, ioWorkScheduler()) })
+		val timeDriver = get(TimeDriver)
+		get(AssetManager).setLoaderFactory(AssetTypes.TEXTURE, { path, _ -> JvmTextureLoader(path, gl20, glState, ioWorkScheduler(timeDriver)) })
 
 	}
 
@@ -280,7 +282,7 @@ open class LwjglApplication : ApplicationBase() {
 			timeDriver.addChild(audioManager)
 			val assetManager = get(AssetManager)
 			OpenAlSoundLoader.registerDefaultDecoders()
-			assetManager.setLoaderFactory(AssetTypes.SOUND, { path, _ -> OpenAlSoundLoader(path, audioManager, ioWorkScheduler()) })
+			assetManager.setLoaderFactory(AssetTypes.SOUND, { path, _ -> OpenAlSoundLoader(path, audioManager, ioWorkScheduler(timeDriver)) })
 
 			OpenAlMusicLoader.registerDefaultDecoders()
 			assetManager.setLoaderFactory(AssetTypes.MUSIC, { path, _ -> OpenAlMusicLoader(path, audioManager) })
@@ -328,6 +330,12 @@ open class LwjglApplication : ApplicationBase() {
 		set(ScrollArea.FACTORY_KEY, ::GlScrollArea)
 		set(ScrollRect.FACTORY_KEY, ::GlScrollRect)
 		set(Rect.FACTORY_KEY, ::GlRect)
+
+		set(HtmlComponent.FACTORY_KEY, { object : UiComponentImpl(it), HtmlComponent {
+
+			override val boxStyle = BoxStyle()
+			override var html: String = ""
+		} })
 	}
 
 	protected open fun createStage(owned: Owned): Stage {

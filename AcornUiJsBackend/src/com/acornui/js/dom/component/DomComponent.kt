@@ -18,10 +18,12 @@ package com.acornui.js.dom.component
 
 import com.acornui.component.NativeComponent
 import com.acornui.core.userInfo
-import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.js.time.setTimeout
-import com.acornui.math.*
+import com.acornui.math.Bounds
+import com.acornui.math.BoundsRo
+import com.acornui.math.Matrix4Ro
+import com.acornui.math.Pad
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.css.CSSStyleDeclaration
 import kotlin.browser.document

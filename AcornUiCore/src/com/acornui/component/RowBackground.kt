@@ -24,14 +24,18 @@ import com.acornui.math.Bounds
 
 
 interface RowBackground : UiComponent, Toggleable {
+
 	var rowIndex: Int
+
+	var highlighted: Boolean
 
 	companion object : StyleTag
 }
 
-class RowBackgroundImpl(owned: Owned) : ContainerImpl(owned), RowBackground {
+class RowBackgroundImpl(owner: Owned) : ContainerImpl(owner), RowBackground {
 
 	override var toggled: Boolean by validationProp(false, ValidationFlags.PROPERTIES)
+	override var highlighted: Boolean by validationProp(false, ValidationFlags.PROPERTIES)
 	override var rowIndex: Int by validationProp(0, ValidationFlags.PROPERTIES)
 
 	val style = bind(RowBackgroundStyle())
@@ -53,10 +57,18 @@ class RowBackgroundImpl(owned: Owned) : ContainerImpl(owned), RowBackground {
 				bg.style.backgroundColor = style.selectedOddColor
 			}
 		} else {
-			if (rowIndex % 2 == 0) {
-				bg.style.backgroundColor = style.evenColor
+			if (highlighted) {
+				if (rowIndex % 2 == 0) {
+					bg.style.backgroundColor = style.highlightedEvenColor
+				} else {
+					bg.style.backgroundColor = style.highlightedOddColor
+				}
 			} else {
-				bg.style.backgroundColor = style.oddColor
+				if (rowIndex % 2 == 0) {
+					bg.style.backgroundColor = style.evenColor
+				} else {
+					bg.style.backgroundColor = style.oddColor
+				}
 			}
 		}
 	}
@@ -72,6 +84,8 @@ class RowBackgroundStyle : StyleBase() {
 
 	var selectedEvenColor: ColorRo by prop(Color(1f, 1f, 0f, 0.4f))
 	var selectedOddColor: ColorRo by prop(Color(0.8f, 0.8f, 0f, 0.4f))
+	var highlightedEvenColor: ColorRo by prop(Color(0f, 0f, 0f, 0.1f))
+	var highlightedOddColor: ColorRo by prop(Color(1f, 1f, 1f, 0.1f))
 	var evenColor: ColorRo by prop(Color(0f, 0f, 0f, 0.05f))
 	var oddColor: ColorRo by prop(Color(1f, 1f, 1f, 0.05f))
 

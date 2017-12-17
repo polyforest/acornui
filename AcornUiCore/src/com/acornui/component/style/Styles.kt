@@ -219,28 +219,6 @@ interface StyleTag : StyleFilter {
  */
 fun styleTag(): StyleTag = object : StyleTag {}
 
-@Deprecated("Use styleTags.add(tag)", ReplaceWith("this.styleTags.add(tag)"), DeprecationLevel.ERROR)
-fun AttachmentHolder.addTag(tag: StyleTag) {
-}
-
-@Deprecated("Use styleTags.remove(tag)", ReplaceWith("this.styleTags.remove(tag)"), DeprecationLevel.ERROR)
-fun AttachmentHolder.removeTag(tag: StyleTag) {
-}
-
-@Deprecated("Deprecated", ReplaceWith("this.addStyleRule(style, tag)"))
-fun <T : StyleRo> Styleable.setStyle(style: T, tag: StyleTag) = addStyleRule(style, tag)
-
-@Deprecated("Deprecated", ReplaceWith("this.addStyleRule(style)"))
-fun <T : StyleRo> Styleable.setStyle(style: T) = addStyleRule(style)
-
-/**
- * Creates a style entry to be applied when all specified tags are present.
- */
-@Deprecated("Deprecated", ReplaceWith("addStyleRule(style, tag, priority)"))
-fun <T : StyleRo> Styleable.setStyle(style: T, priority: Float, tag: StyleTag) {
-	addStyleRule(style, tag, priority)
-}
-
 inline fun StyleableRo.walkStyleableAncestry(callback: (StyleableRo) -> Unit) {
 	var p: StyleableRo? = this
 	while (p != null) {

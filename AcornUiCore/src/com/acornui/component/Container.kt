@@ -214,7 +214,6 @@ open class ContainerImpl(
 	 * The validation flags that, if a child has invalidated, will cause this container's layout to become invalidated.
 	 */
 	protected var layoutInvalidatingFlags =
-			ValidationFlags.TRANSFORM or
 			ValidationFlags.HIERARCHY_ASCENDING or
 			ValidationFlags.LAYOUT
 

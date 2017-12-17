@@ -21,6 +21,8 @@ import com.acornui.core.di.dKey
 
 interface HtmlComponent : UiComponent {
 
+	val boxStyle: BoxStyle
+
 	var html: String
 
 	companion object {

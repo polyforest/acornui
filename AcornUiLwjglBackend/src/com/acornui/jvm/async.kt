@@ -17,26 +17,42 @@
 package com.acornui.jvm
 
 import com.acornui.async.*
+import com.acornui.core.time.TimeDriver
+import com.acornui.core.time.enterFrame
 import java.util.concurrent.Executors
 
-fun <T> asyncThread(work: Work<T>): Deferred<T> {
+private val executor = Executors.newSingleThreadExecutor()
+
+private var c = 0
+
+fun <T> asyncThread(timeDriver: TimeDriver, work: Work<T>): Deferred<T> {
 
 	// TODO:
 
-	return async(work)
+//	return async(work)
 
-//	return object : Promise<T>(), Deferred<T> {
-//		private val executor = Executors.newSingleThreadExecutor()
-//		init {
-//			executor.submit {
-//				launch {
-//					try {
-//						success(work())
-//					} catch (e: Throwable) {
-//						fail(e)
-//					}
-//				}
-//			}
-//		}
-//	}
+	return object : Promise<T>(), Deferred<T> {
+
+		init {
+			executor.submit {
+				var result: T? = null
+				var error: Throwable? = null
+				try {
+					launch {
+						result = work()
+					}
+				} catch (e: Throwable) {
+					error = e
+				}
+				enterFrame(timeDriver, 1) {
+					// On the next frame, invoke the failure callback in the UI thread.
+					@Suppress("UNCHECKED_CAST")
+					if (error != null)
+						fail(error)
+					else
+						success(result as T)
+				}
+			}
+		}
+	}
 }

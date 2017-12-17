@@ -222,7 +222,7 @@ class TossScroller(
 		val TOSS_END = InteractionType<DragInteraction>("tossEnd")
 
 		val DEFAULT_DAMPENING: Float = 0.9f
-		private val MAX_HISTORY = 15
+		private val MAX_HISTORY = 10
 
 		var minTossDistance: Float = 7f
 	}

@@ -49,8 +49,10 @@ import com.acornui.math.MathUtils.clamp
 import com.acornui.observe.IndexBinding
 import com.acornui.observe.bind
 import com.acornui.observe.bindIndex
+import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
+import com.acornui.signal.Signal2
 import kotlin.properties.ObservableProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -75,11 +77,22 @@ class DataGrid<E>(
 		val data: ObservableList<E>
 ) : ContainerImpl(owner), Focusable {
 
+	private val cellClickedCancel = Cancel()
+	private val _cellClicked = own(Signal2<CellLocation, Cancel>())
+
+	/**
+	 * Dispatched when the contents area has been clicked. Use [CellLocation.isValid] to determine whether or not
+	 * a valid cell has been clicked before getting the row/column.
+	 * If the cancel object is invoked, the default behavior for clicking a cell will be prevented. (I.e. cell editing)
+	 */
+	val cellClicked: Signal<(CellLocation, Cancel)->Unit>
+		get() = _cellClicked
+
 	val style = bind(DataGridStyle())
 
 	override var focusEnabled: Boolean = true
 	override var focusOrder: Float = 0f
-	override var highlight: UiComponent? by createSlot<UiComponent>()
+	override var highlight: UiComponent? by createSlot()
 
 	var hScrollPolicy: ScrollPolicy by validationProp(ScrollPolicy.OFF, COLUMNS_WIDTHS_VALIDATION or ValidationFlags.SIZE_CONSTRAINTS)
 	var vScrollPolicy: ScrollPolicy by validationProp(ScrollPolicy.AUTO, COLUMNS_WIDTHS_VALIDATION)
@@ -474,13 +487,17 @@ class DataGrid<E>(
 
 	private fun contentsClickedHandler(event: ClickInteraction) {
 		if (event.handled) return
+		val cell = getCellFromPosition(event.canvasX, event.canvasY)
 		event.handled = true
-		if (editorCell != null) {
-			commitCellEditorValue()
-			disposeCellEditor()
-		}
-		if (editable) {
-			editCell(getCellFromPosition(event.canvasX, event.canvasY))
+		_cellClicked.dispatch(cell, cellClickedCancel)
+		if (!cellClickedCancel.canceled()) {
+			if (editorCell != null) {
+				commitCellEditorValue()
+				disposeCellEditor()
+			}
+			if (editable) {
+				editCell(cell)
+			}
 		}
 	}
 
@@ -531,7 +548,8 @@ class DataGrid<E>(
 	fun editCell(sourceIndex: Int, columnIndex: Int) = editCell(CellLocation(sourceIndexToLocal(editorCellRow!!.index)!!, columnIndex))
 
 	/**
-	 * Edits the cell at the given location.
+	 * Edits the cell at the given location. The user interaction may be intercepted by canceling the [cellClicked]
+	 * event.
 	 */
 	fun editCell(cellLocation: CellLocation) {
 		val columnIndex = cellLocation.columnIndex

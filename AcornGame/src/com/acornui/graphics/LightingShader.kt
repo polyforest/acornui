@@ -167,7 +167,7 @@ void main() {
 
 
 """
-) {}
+)
 
 class PointShadowShader(gl: Gl20, useModel: Boolean) : ShaderProgramBase(
 		gl, vertexShaderSrc = """

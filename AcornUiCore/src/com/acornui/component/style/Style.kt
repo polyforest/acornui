@@ -109,6 +109,16 @@ abstract class StyleBase : Style, Disposable {
 	override fun dispose() {
 		_changed.dispose()
 	}
+
+	override fun toString(): String {
+		var props = ""
+		for (entry in calculated) {
+			val explicit = if (explicit.containsKey(entry.key)) "*" else ""
+			if (props.isNotEmpty()) props += ", "
+			props += "${entry.key}=$explicit${entry.value}"
+		}
+		return "Style($props)"
+	}
 }
 
 class StyleValidator(

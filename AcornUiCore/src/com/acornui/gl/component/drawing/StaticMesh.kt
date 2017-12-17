@@ -110,7 +110,7 @@ open class StaticMeshComponent(
 
 	override fun draw() {
 		val mesh = mesh ?: return
-		glState.camera(camera, concatenatedTransform)
+		glState.camera(camera, concatenatedTransform) // Use the concatenated transform as the model matrix.
 		mesh.render(gl, glState)
 	}
 

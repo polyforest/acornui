@@ -22,10 +22,8 @@ import com.acornui.component.InteractiveElementRo
 import com.acornui.component.Stage
 import com.acornui.component.UiComponent
 import com.acornui.core.TreeWalk
-import com.acornui.core.UserInfo
 import com.acornui.core.childWalkLevelOrder
 import com.acornui.core.di.inject
-import com.acornui.core.i18n.Locale
 import com.acornui.js.dom.component.DomComponent
 import org.w3c.dom.*
 import org.w3c.dom.events.Event
