@@ -23,8 +23,6 @@ import java.util.concurrent.Executors
 
 private val executor = Executors.newSingleThreadExecutor()
 
-private var c = 0
-
 fun <T> asyncThread(timeDriver: TimeDriver, work: Work<T>): Deferred<T> {
 
 	// TODO:
@@ -48,7 +46,7 @@ fun <T> asyncThread(timeDriver: TimeDriver, work: Work<T>): Deferred<T> {
 					// On the next frame, invoke the failure callback in the UI thread.
 					@Suppress("UNCHECKED_CAST")
 					if (error != null)
-						fail(error)
+						fail(error as Throwable)
 					else
 						success(result as T)
 				}

@@ -425,7 +425,6 @@ fun <E> MutableList<E>.addAll2(index: Int, list: List<E>) {
 	}
 }
 
-
 fun <E> Iterator<E>.toList(): List<E> {
 	val list = ArrayList<E>()
 	while (hasNext()) {

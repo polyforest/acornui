@@ -16,12 +16,13 @@
 
 package com.acornui.core.time
 
-import com.acornui.collection.ClearableObjectPool
 import com.acornui.collection.Clearable
+import com.acornui.collection.ClearableObjectPool
 import com.acornui.core.Disposable
 import com.acornui.core.UpdatableChildBase
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
+import kotlin.coroutines.experimental.suspendCoroutine
 
 /**
  * @author nbilyk
@@ -92,6 +93,18 @@ internal class Timer private constructor() : UpdatableChildBase(), Clearable, Di
 fun Scoped.timer(duration: Float, repetitions: Int = 1, delay: Float = 0f, callback: () -> Unit): Disposable {
 	return timer(inject(TimeDriver), duration, repetitions, delay, callback)
 }
+
+/**
+ * Suspends the coroutine for [duration] seconds.
+ */
+suspend fun Scoped.delay(
+		duration: Float
+) = suspendCoroutine<Unit> { cont ->
+	timer(inject(TimeDriver), duration, 1, 0f) {
+		cont.resume(Unit)
+	}
+}
+
 
 /**
  * @param timeDriver The time driver to add the Timer instance to.

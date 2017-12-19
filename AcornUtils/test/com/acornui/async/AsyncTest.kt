@@ -47,21 +47,21 @@ class AsyncTest {
 
 	private var s = 0
 
-	@Test fun testAsyncNested() {
-
-		launch {
-			val a = async {
-				s++
-				val a1 = async {
-					delay(1)
-					3
-				}
-				val a2 = async { 4 }
-				a1.await() + a2.await()
-			}
-
-			assertEquals(21, a.await() + a.await() + a.await())
-			assertEquals(1, s)
-		}
-	}
+//	@Test fun testAsyncNested() {
+//
+//		launch {
+//			val a = async {
+//				s++
+//				val a1 = async {
+//					delay(1)
+//					3
+//				}
+//				val a2 = async { 4 }
+//				a1.await() + a2.await()
+//			}
+//
+//			assertEquals(21, a.await() + a.await() + a.await())
+//			assertEquals(1, s)
+//		}
+//	}
 }

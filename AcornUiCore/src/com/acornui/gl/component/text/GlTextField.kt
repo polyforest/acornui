@@ -16,13 +16,14 @@
 
 package com.acornui.gl.component.text
 
-import com.acornui.async.delay
-import com.acornui.async.launch
 import com.acornui.collection.*
 import com.acornui.component.*
 import com.acornui.component.layout.Positionable
 import com.acornui.component.layout.PositionableRo
-import com.acornui.component.layout.algorithm.*
+import com.acornui.component.layout.algorithm.FlowHAlign
+import com.acornui.component.layout.algorithm.FlowVAlign
+import com.acornui.component.layout.algorithm.LineInfo
+import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.component.layout.intersects
 import com.acornui.component.style.*
 import com.acornui.component.text.CharStyle
@@ -41,10 +42,10 @@ import com.acornui.core.round
 import com.acornui.core.selection.Selectable
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionRange
-import com.acornui.gl.core.*
+import com.acornui.gl.core.GlState
+import com.acornui.gl.core.pushQuadIndices
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
-import com.acornui.logging.Log
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.floor
 import com.acornui.math.MathUtils.round
