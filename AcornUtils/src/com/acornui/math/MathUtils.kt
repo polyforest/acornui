@@ -474,11 +474,20 @@ object MathUtils {
 
 	/**
 	 * n must be positive.
-	 * mod( 5, 3) produces 2
-	 * mod(-5, 3) produces 1
+	 * mod( 5f, 3f) produces 2f
+	 * mod(-5f, 3f) produces 1f
 	 */
 	fun mod(a: Float, n: Float): Float {
 		return if (a < 0f) (a % n + n) % n else a % n
+	}
+
+	/**
+	 * n must be positive.
+	 * mod( 5, 3) produces 2
+	 * mod(-5, 3) produces 1
+	 */
+	fun mod(a: Int, n: Int): Int {
+		return if (a < 0) (a % n + n) % n else a % n
 	}
 
 	/**

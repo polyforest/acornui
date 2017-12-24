@@ -25,7 +25,7 @@ import com.acornui.core.graphics.contentsAtlas
 /**
  * A component representing a single image.
  */
-class Image(owner: Owned) : ScaleBoxLayoutContainer(owner) {
+open class Image(owner: Owned) : ScaleBoxLayoutContainer(owner) {
 
 	override fun onElementAdded(index: Int, element: UiComponent) {
 		super.onElementAdded(index, element)
