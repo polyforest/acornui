@@ -5,22 +5,21 @@ import com.acornui.component.layout.setSize
 import com.acornui.component.scroll.ClampedScrollModel
 import com.acornui.component.scroll.ScrollPolicy
 import com.acornui.component.scroll.scrollArea
-import com.acornui.component.scroll.scrollTo
 import com.acornui.component.style.set
 import com.acornui.component.text.*
+import com.acornui.core.Disposable
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.focus.blurred
 import com.acornui.core.focus.focused
-import com.acornui.core.input.Ascii
-import com.acornui.core.input.char
+import com.acornui.core.input.*
 import com.acornui.core.input.interaction.KeyInteraction
-import com.acornui.core.input.keyDown
 import com.acornui.core.repeat2
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionRange
 import com.acornui.core.selection.selectAll
 import com.acornui.core.selection.unselect
+import com.acornui.core.time.enterFrame
 import com.acornui.gl.component.drawing.dynamicMeshC
 import com.acornui.gl.component.drawing.fillStyle
 import com.acornui.gl.component.drawing.lineStyle
@@ -29,7 +28,8 @@ import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.clamp
-import com.acornui.math.Rectangle
+import com.acornui.math.Vector2
+import com.acornui.math.minOf4
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 
@@ -210,8 +210,6 @@ open class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 	override val contentsHeight: Float
 		get() = scroller.contentsHeight
 
-	private val selectionManager = inject(SelectionManager)
-
 	init {
 		styleTags.add(TextInput)
 		styleTags.add(TextArea)
@@ -224,23 +222,47 @@ open class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 			editableText.textCursorColor = it.cursorColor
 			invalidateLayout()
 		}
-		selectionManager.selectionChanged.add(this::selectionChangedHandler)
+
+		mouseDown().add(this::startScrollWatch)
+		touchStart().add(this::startScrollWatch)
 	}
 
-	private val b = Rectangle()
+	private val maxScrollSpeed = 20f
+	private val bufferP = 0.2f
+	private val innerBufferMax = 80f
+	private val outerBufferMax = 200f
+	private val tmpVec = Vector2()
+	private var startMouseY = 0f
+	private var _frameWatch: Disposable? = null
 
-	private fun selectionChangedHandler(oldSelection: List<SelectionRange>, newSelection: List<SelectionRange>) {
-		// Scroll to the selection position.
-		// TODO: Determine direction.
-		val selection = newSelection.firstOrNull { it.target == this } ?: return
-		val contents = editableText.textField.contents
-		val rangeEnd = contents.size
-		val start = selection.startIndex
-		val textElement = if (start >= rangeEnd) contents.placeholder else contents.getTextElementAt(start)
+	private fun startScrollWatch(event: Any) {
+		mousePosition(tmpVec)
+		startMouseY = tmpVec.y
+		_frameWatch?.dispose()
+		_frameWatch = enterFrame(-1, this::scrollWatcher)
+		stage.mouseUp().add(this::endScrollWatch)
+		stage.touchEnd().add(this::endScrollWatch)
+	}
+	private fun endScrollWatch(event: Any) {
+		_frameWatch?.dispose()
+		_frameWatch = null
+		stage.mouseUp().remove(this::endScrollWatch)
+		stage.touchEnd().remove(this::endScrollWatch)
+	}
 
-		b.set(textElement.textFieldX, textElement.textFieldY, textElement.width, textElement.lineHeight)
-		b.inflate(flowStyle.padding)
-		scroller.scrollTo(b)
+	private fun scrollWatcher() {
+		mousePosition(tmpVec)
+		val height = height
+		val b = maxOf(0f, minOf4(innerBufferMax, height * bufferP, startMouseY, height - startMouseY))
+		val speed = if (tmpVec.y < b) {
+			-(1f - (tmpVec.y + outerBufferMax) / (b + outerBufferMax))
+		} else if (tmpVec.y > height - b) {
+			(tmpVec.y - height + b) / (b + outerBufferMax)
+		} else {
+			0f
+		}
+		vScrollModel.value += speed * maxScrollSpeed
+
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
@@ -256,10 +278,6 @@ open class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 		highlight?.setPosition(margin.left, margin.top)
 	}
 
-	override fun dispose() {
-		super.dispose()
-		selectionManager.selectionChanged.remove(this::selectionChangedHandler)
-	}
 }
 
 @Suppress("LeakingThis")
@@ -268,6 +286,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private val _input = Signal0()
 	val input: Signal<() -> Unit>
 		get() = _input
+
 	private val _changed = Signal0()
 	val changed: Signal<() -> Unit>
 		get() = _changed
@@ -386,6 +405,8 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		} else if (event.keyCode == Ascii.UP) {
 			val sel = firstSelection
 			if (sel != null) {
+
+
 //						val leafRangeStart
 //						val index = minOf(tF.textElementsCount, sel.endIndex)
 //
@@ -425,6 +446,10 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private val firstSelection: SelectionRange?
 		get() = selectionManager.selection.firstOrNull { it.target == host }
 
+	/**
+	 * If there is a non-empty selection, that selection is replaced with nothing. If there is an empty selection,
+	 * the previous character is deleted.
+	 */
 	private fun backspace() {
 		val sel = firstSelection ?: return
 		if (sel.startIndex != sel.endIndex) {
@@ -436,6 +461,10 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		}
 	}
 
+	/**
+	 * If there is a non-empty selection, that selection is replaced with nothing. If there is an empty selection,
+	 * the next character is deleted.
+	 */
 	private fun delete() {
 		val sel = firstSelection ?: return
 		if (sel.startIndex != sel.endIndex) {

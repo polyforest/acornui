@@ -77,9 +77,11 @@ fun <T> bindable(changed: Signal0, initialValue: T): ReadWriteProperty<Any?, T> 
 	}
 }
 
+// TODO: Implement SequencedLayout for Horizontal/Vertical/etc layouts
+
 /**
  * A sequenced layout is a layout where the the elements are laid out in a serial manner.
- * This means that for elements `a, b, c`, b will always be spatially positioned between a and c.
+ * This means that for elements {a, b, c}, b will always be spatially positioned between a and c.
  */
 interface SequencedLayout<in S, out T : LayoutData> : LayoutAlgorithm<S, T> {
 

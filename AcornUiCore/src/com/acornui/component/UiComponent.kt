@@ -163,18 +163,18 @@ open class UiComponentImpl(
 	// Lifecycle
 	//---------------------------------------------------------
 
-	protected val _activated = Signal1<UiComponent>()
+	private val _activated = Signal1<UiComponent>()
 	override val activated: Signal<(UiComponent) -> Unit>
 		get() = _activated
-	protected val _deactivated = Signal1<UiComponent>()
+	private val _deactivated = Signal1<UiComponent>()
 	override val deactivated: Signal<(UiComponent) -> Unit>
 		get() = _deactivated
-	protected val _disposed = Signal1<UiComponent>()
+	private val _disposed = Signal1<UiComponent>()
 	override val disposed: Signal<(UiComponent) -> Unit>
 		get() = _disposed
 
-	protected var _isDisposed: Boolean = false
-	protected var _isActive: Boolean = false
+	private var _isDisposed: Boolean = false
+	private var _isActive: Boolean = false
 
 	override val isActive: Boolean
 		get() = _isActive
@@ -291,9 +291,9 @@ open class UiComponentImpl(
 		return getInteractionSignal<InteractionEvent>(type, isCapture) != null
 	}
 
-	protected val _captureSignals = HashMap<InteractionType<*>, StoppableSignal<*>>()
-	protected val _bubbleSignals = HashMap<InteractionType<*>, StoppableSignal<*>>()
-	protected val _attachments = HashMap<Any, Any>()
+	private val _captureSignals = HashMap<InteractionType<*>, StoppableSignal<*>>()
+	private val _bubbleSignals = HashMap<InteractionType<*>, StoppableSignal<*>>()
+	private val _attachments = HashMap<Any, Any>()
 
 	// ColorTransformable properties
 	protected val _colorTint: Color = Color.WHITE.copy()
@@ -651,42 +651,42 @@ open class UiComponentImpl(
 	//-----------------------------------------------
 
 
-	override fun hasInteraction(): Boolean {
+	override final fun hasInteraction(): Boolean {
 		return _captureSignals.isNotEmpty() || _bubbleSignals.isNotEmpty()
 	}
 
-	override fun <T : InteractionEvent> hasInteraction(type: InteractionType<T>) = hasInteraction(type, false) // TODO: KT-20451
-	override fun <T : InteractionEvent> hasInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean {
+	override final fun <T : InteractionEvent> hasInteraction(type: InteractionType<T>) = hasInteraction(type, false) // TODO: KT-20451
+	override final fun <T : InteractionEvent> hasInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean {
 		return getInteractionSignal<InteractionEvent>(type, isCapture) != null
 	}
 
-	override fun <T : InteractionEvent> getInteractionSignal(type: InteractionType<T>) = getInteractionSignal(type, false) // TODO: KT-20451
+	override final fun <T : InteractionEvent> getInteractionSignal(type: InteractionType<T>) = getInteractionSignal(type, false) // TODO: KT-20451
 
 	@Suppress("UNCHECKED_CAST")
-	override fun <T : InteractionEvent> getInteractionSignal(type: InteractionType<T>, isCapture: Boolean): StoppableSignal<T>? {
+	override final fun <T : InteractionEvent> getInteractionSignal(type: InteractionType<T>, isCapture: Boolean): StoppableSignal<T>? {
 		val handlers = if (isCapture) _captureSignals else _bubbleSignals
 		return handlers[type] as StoppableSignal<T>?
 	}
 
-	override fun <T : InteractionEvent> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>, isCapture: Boolean) {
+	override final fun <T : InteractionEvent> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>, isCapture: Boolean) {
 		val handlers = if (isCapture) _captureSignals else _bubbleSignals
 		handlers[type] = signal
 	}
 
-	override fun <T : InteractionEvent> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>) = addInteractionSignal(type, signal, false) // TODO: KT-20451
+	override final fun <T : InteractionEvent> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>) = addInteractionSignal(type, signal, false) // TODO: KT-20451
 
-	override fun <T : InteractionEvent> removeInteractionSignal(type: InteractionType<T>) = removeInteractionSignal(type, false) // TODO: KT-20451
-	override fun <T : InteractionEvent> removeInteractionSignal(type: InteractionType<T>, isCapture: Boolean) {
+	override final fun <T : InteractionEvent> removeInteractionSignal(type: InteractionType<T>) = removeInteractionSignal(type, false) // TODO: KT-20451
+	override final  fun <T : InteractionEvent> removeInteractionSignal(type: InteractionType<T>, isCapture: Boolean) {
 		val handlers = if (isCapture) _captureSignals else _bubbleSignals
 		handlers.remove(type)
 	}
 
 	@Suppress("UNCHECKED_CAST")
-	override fun <T : Any> getAttachment(key: Any): T? {
+	override final fun <T : Any> getAttachment(key: Any): T? {
 		return _attachments[key] as T?
 	}
 
-	override fun setAttachment(key: Any, value: Any) {
+	override final fun setAttachment(key: Any, value: Any) {
 		_attachments.put(key, value)
 	}
 
@@ -694,7 +694,7 @@ open class UiComponentImpl(
 	 * Removes an attachment added via [setAttachment]
 	 */
 	@Suppress("UNCHECKED_CAST")
-	override fun <T : Any> removeAttachment(key: Any): T? {
+	override final  fun <T : Any> removeAttachment(key: Any): T? {
 		return _attachments.remove(key) as T?
 	}
 

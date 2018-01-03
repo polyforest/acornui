@@ -95,6 +95,8 @@ open class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 		return value
 	}
 
+	private var _drag: DragAttachment? = null
+
 	init {
 		addStyleRule(flowStyle)
 		addStyleRule(charStyle)
@@ -104,18 +106,17 @@ open class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 		watch(charStyle) {
 			refreshCursor()
 			if (it.selectable) {
-				createOrReuseAttachment(TEXT_DRAG_ATTACHMENT, {
+				if (_drag == null) {
 					val d = DragAttachment(this, 0f)
 					d.drag.add(this::dragHandler)
-					d
-				})
+					_drag = d
+				}
 			} else {
-				removeAttachment<DragAttachment>(TEXT_DRAG_ATTACHMENT)?.dispose()
+				_drag?.dispose()
+				_drag = null
 			}
 		}
-
 		validation.addNode(TextValidationFlags.SELECTION, ValidationFlags.HIERARCHY_ASCENDING, this::updateSelection)
-
 		selectionManager.selectionChanged.add(this::selectionChangedHandler)
 	}
 
@@ -189,11 +190,10 @@ open class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 		_selectionCursor?.dispose()
 		_selectionCursor = null
 		selectionManager.selectionChanged.remove(this::selectionChangedHandler)
+		_drag?.dispose()
+		_drag = null
 	}
 
-	companion object {
-		private val TEXT_DRAG_ATTACHMENT = object {}
-	}
 }
 
 object TextValidationFlags {

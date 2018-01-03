@@ -22,8 +22,11 @@ import com.acornui.component.createOrReuseAttachment
 import com.acornui.component.stage
 import com.acornui.core.Disposable
 import com.acornui.core.LifecycleRo
+import com.acornui.core.di.inject
 import com.acornui.core.input.*
+import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.callLater
+import com.acornui.core.time.enterFrame
 import com.acornui.math.Vector2
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
@@ -41,6 +44,8 @@ class DragAttachment(
 ) : Disposable {
 
 	private val stage = target.stage
+	private val mouse = target.inject(MouseState)
+	private val timeDriver = target.inject(TimeDriver)
 
 	private var watchingMouse = false
 	private var watchingTouch = false
@@ -84,6 +89,7 @@ class DragAttachment(
 	private val startPosition = Vector2()
 	private val startPositionLocal = Vector2()
 	private var startElement: InteractiveElementRo? = null
+	private var _enterFrame: Disposable? = null
 
 	private fun targetDeactivatedHandler(c: LifecycleRo) {
 		stop()
@@ -99,12 +105,20 @@ class DragAttachment(
 		if (watchingMouse == value) return
 		watchingMouse = value
 		if (value) {
+			_enterFrame = enterFrame(timeDriver, -1, this::enterFrameHandler)
 			stage.mouseMove().add(this::stageMouseMoveHandler)
 			stage.mouseUp().add(this::stageMouseUpHandler)
 		} else {
+			_enterFrame?.dispose()
+			_enterFrame = null
 			stage.mouseMove().remove(this::stageMouseMoveHandler)
 			stage.mouseUp().remove(this::stageMouseUpHandler)
 		}
+	}
+
+	private fun stageMouseMoveHandler(event: MouseInteraction) {
+		event.handled = true
+		event.preventDefault()
 	}
 
 	//--------------------------------------------------------------
@@ -119,23 +133,7 @@ class DragAttachment(
 			startPosition.set(event.canvasX, event.canvasY)
 			position.set(startPosition)
 			startPositionLocal.set(event.localX, event.localY)
-			if (!_isDragging && allowMouseDragStart(event)) {
-				setIsDragging(true)
-			}
-		}
-	}
-
-	private fun stageMouseMoveHandler(event: MouseInteraction) {
-		if (!watchingMouse) {
-			throw Exception("stage mouse handler not properly removed, check that the KotlinMonkeyPatcher is working.")
-		}
-		position.set(event.canvasX, event.canvasY)
-		if (_isDragging) {
-			event.handled = true
-			event.preventDefault()
-			dispatchDragEvent(DragInteraction.DRAG, _drag)
-		} else {
-			if (!_isDragging && allowMouseDragStart(event)) {
+			if (!_isDragging && allowMouseDragStart()) {
 				setIsDragging(true)
 			}
 		}
@@ -157,7 +155,7 @@ class DragAttachment(
 		return enabled && !event.isFabricated && event.button == WhichButton.LEFT && !event.handled
 	}
 
-	private fun allowMouseDragStart(event: MouseInteraction): Boolean {
+	private fun allowMouseDragStart(): Boolean {
 		return position.manhattanDst(startPosition) >= affordance
 	}
 
@@ -197,33 +195,24 @@ class DragAttachment(
 		return event.touches.isEmpty()
 	}
 
-
 	private fun setWatchingTouch(value: Boolean) {
 		if (watchingTouch == value) return
 		watchingTouch = value
 		if (value) {
+			_enterFrame = enterFrame(timeDriver, -1, this::enterFrameHandler)
 			stage.touchMove().add(this::stageTouchMoveHandler)
 			stage.touchEnd().add(this::stageTouchEndHandler)
 		} else {
+			_enterFrame?.dispose()
+			_enterFrame = null
 			stage.touchMove().remove(this::stageTouchMoveHandler)
 			stage.touchEnd().remove(this::stageTouchEndHandler)
 		}
-
 	}
 
 	private fun stageTouchMoveHandler(event: TouchInteraction) {
-		val t = event.touches.first()
-		position.set(t.canvasX, t.canvasY)
-
-		if (_isDragging) {
-			event.handled = true
-			event.preventDefault()
-			dispatchDragEvent(DragInteraction.DRAG, _drag)
-		} else {
-			if (!_isDragging && allowTouchDragStart(event)) {
-				setIsDragging(true)
-			}
-		}
+		event.handled = true
+		event.preventDefault()
 	}
 
 	private fun stageTouchEndHandler(event: TouchInteraction) {
@@ -238,6 +227,17 @@ class DragAttachment(
 	//--------------------------------------------------------------
 	// Drag
 	//--------------------------------------------------------------
+
+	private fun enterFrameHandler() {
+		mouse.mousePosition(position)
+		if (_isDragging) {
+			dispatchDragEvent(DragInteraction.DRAG, _drag)
+		} else {
+			if (!_isDragging && allowMouseDragStart()) {
+				setIsDragging(true)
+			}
+		}
+	}
 
 	private fun setIsDragging(value: Boolean) {
 		if (_isDragging == value) return
