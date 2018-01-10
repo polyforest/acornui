@@ -320,7 +320,7 @@ class ListView<E>(
 		return if (sortComparator == null) {
 			local.sortedInsertionIndex(sourceIndex, matchForwards = false)
 		} else {
-			local.sortedInsertionIndex(sourceIndex, insertionComparator, matchForwards = false)
+			local.sortedInsertionIndex(sourceIndex, matchForwards = false, comparator = insertionComparator)
 		}
 	}
 
@@ -336,7 +336,7 @@ class ListView<E>(
 		return if (sortComparator == null) {
 			local.sortedInsertionIndex(sourceIndex)
 		} else {
-			local.sortedInsertionIndex(sourceIndex, insertionComparator)
+			local.sortedInsertionIndex(sourceIndex, comparator = insertionComparator)
 		}
 	}
 

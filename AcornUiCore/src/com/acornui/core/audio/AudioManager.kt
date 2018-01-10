@@ -89,7 +89,7 @@ open class AudioManagerImpl(override final val simultaneousSounds: Int = 8) : Up
 	}
 
 	override fun registerSound(sound: Sound) {
-		val index = activeSounds.sortedInsertionIndex(sound, soundPriorityComparator)
+		val index = activeSounds.sortedInsertionIndex(sound, comparator = soundPriorityComparator)
 		activeSounds.add(index, sound)
 		if (activeSounds.size > simultaneousSounds) {
 			// Exceeded simultaneous sounds.

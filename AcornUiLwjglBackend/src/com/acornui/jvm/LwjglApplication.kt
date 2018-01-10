@@ -17,7 +17,6 @@
 package com.acornui.jvm
 
 import com.acornui.assertionsEnabled
-import com.acornui.async.async
 import com.acornui.async.launch
 import com.acornui.browser.decodeUriComponent2
 import com.acornui.browser.encodeUriComponent2
@@ -29,9 +28,7 @@ import com.acornui.component.text.TextArea
 import com.acornui.component.text.TextField
 import com.acornui.component.text.TextInput
 import com.acornui.core.*
-import com.acornui.core.assets.AssetManager
-import com.acornui.core.assets.AssetManagerImpl
-import com.acornui.core.assets.AssetTypes
+import com.acornui.core.assets.*
 import com.acornui.core.audio.AudioManager
 import com.acornui.core.cursor.CursorManager
 import com.acornui.core.di.*
@@ -260,35 +257,29 @@ open class LwjglApplication : ApplicationBase() {
 	private fun <T> ioWorkScheduler(timeDriver: TimeDriver): WorkScheduler<T> = { asyncThread(timeDriver, it) }
 
 	protected open val assetManagerTask by BootTask {
-		val assetManager = AssetManagerImpl(config().rootPath, get(Files))
-		val timeDriver = get(TimeDriver)
-		assetManager.setLoaderFactory(AssetTypes.TEXT, { path, _ -> JvmTextLoader(path, Charsets.UTF_8, ioWorkScheduler(timeDriver)) })
-		set(AssetManager, assetManager)
-	}
-
-	protected open val texturesTask by BootTask {
 		val gl20 = get(Gl20)
 		val glState = get(GlState)
 		val timeDriver = get(TimeDriver)
-		get(AssetManager).setLoaderFactory(AssetTypes.TEXTURE, { path, _ -> JvmTextureLoader(path, gl20, glState, ioWorkScheduler(timeDriver)) })
 
-	}
+		val loaders = HashMap<AssetType<*>, LoaderFactory<*>>()
+		loaders[AssetTypes.TEXTURE] = { path, _ -> JvmTextureLoader(path, gl20, glState, ioWorkScheduler(timeDriver)) }
+		loaders[AssetTypes.TEXT] = { path, _ -> JvmTextLoader(path, Charsets.UTF_8, ioWorkScheduler(timeDriver)) }
 
-	protected open val audioTask by BootTask {
+		// Audio
 		try {
 			val audioManager = OpenAlAudioManager()
 			set(AudioManager, audioManager)
-			val timeDriver = get(TimeDriver)
 			timeDriver.addChild(audioManager)
-			val assetManager = get(AssetManager)
 			OpenAlSoundLoader.registerDefaultDecoders()
-			assetManager.setLoaderFactory(AssetTypes.SOUND, { path, _ -> OpenAlSoundLoader(path, audioManager, ioWorkScheduler(timeDriver)) })
+			loaders[AssetTypes.SOUND] = { path, _ -> OpenAlSoundLoader(path, audioManager, ioWorkScheduler(timeDriver)) }
 
 			OpenAlMusicLoader.registerDefaultDecoders()
-			assetManager.setLoaderFactory(AssetTypes.MUSIC, { path, _ -> OpenAlMusicLoader(path, audioManager) })
+			loaders[AssetTypes.MUSIC] = { path, _ -> OpenAlMusicLoader(path, audioManager) }
 		} catch (e: NoAudioException) {
 			Log.warn("No Audio device found.")
 		}
+
+		set(AssetManager, AssetManagerImpl(config().rootPath, get(Files), loaders))
 	}
 
 	protected open val interactivityTask by BootTask {

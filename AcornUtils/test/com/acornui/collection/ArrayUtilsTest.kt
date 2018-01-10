@@ -43,11 +43,11 @@ class ArrayUtilsTest {
 		}
 
 		val arr = arrayListOf(1, 4, 6, 7, 8)
-		assertEquals(1, arr.sortedInsertionIndex(1, comparator))
-		assertEquals(2, arr.sortedInsertionIndex(5, comparator))
-		assertEquals(3, arr.sortedInsertionIndex(6, comparator))
-		assertEquals(4, arr.sortedInsertionIndex(7, comparator))
-		assertEquals(5, arr.sortedInsertionIndex(8, comparator))
-		assertEquals(5, arr.sortedInsertionIndex(9, comparator))
+		assertEquals(1, arr.sortedInsertionIndex(1, comparator = comparator))
+		assertEquals(2, arr.sortedInsertionIndex(5, comparator = comparator))
+		assertEquals(3, arr.sortedInsertionIndex(6, comparator = comparator))
+		assertEquals(4, arr.sortedInsertionIndex(7, comparator = comparator))
+		assertEquals(5, arr.sortedInsertionIndex(8, comparator = comparator))
+		assertEquals(5, arr.sortedInsertionIndex(9, comparator = comparator))
 	}
 }

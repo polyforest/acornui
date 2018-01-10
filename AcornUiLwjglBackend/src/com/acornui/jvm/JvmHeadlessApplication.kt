@@ -23,9 +23,7 @@ import com.acornui.browser.decodeUriComponent2
 import com.acornui.browser.encodeUriComponent2
 import com.acornui.core.AppConfig
 import com.acornui.core.ApplicationBase
-import com.acornui.core.assets.AssetManager
-import com.acornui.core.assets.AssetManagerImpl
-import com.acornui.core.assets.AssetTypes
+import com.acornui.core.assets.*
 import com.acornui.core.di.Injector
 import com.acornui.core.di.InjectorImpl
 import com.acornui.core.di.OwnedImpl
@@ -113,9 +111,10 @@ open class JvmHeadlessApplication(
 	private fun <T> ioWorkScheduler(): WorkScheduler<T> = { async(it) }
 
 	protected open val assetManager by BootTask {
-		val assetManager = AssetManagerImpl("", get(Files))
-		assetManager.setLoaderFactory(AssetTypes.TEXT, { path, _ ->  JvmTextLoader(path, Charsets.UTF_8, ioWorkScheduler()) })
-		assetManager.setLoaderFactory(AssetTypes.RGB_DATA, { path, _ -> JvmRgbDataLoader(path, ioWorkScheduler()) })
+		val loaders = HashMap<AssetType<*>, LoaderFactory<*>>()
+		loaders[AssetTypes.TEXT] = { path, _ ->  JvmTextLoader(path, Charsets.UTF_8, ioWorkScheduler()) }
+		loaders[AssetTypes.RGB_DATA] = { path, _ -> JvmRgbDataLoader(path, ioWorkScheduler()) }
+		val assetManager = AssetManagerImpl("", get(Files), loaders)
 		set(AssetManager, assetManager)
 	}
 }

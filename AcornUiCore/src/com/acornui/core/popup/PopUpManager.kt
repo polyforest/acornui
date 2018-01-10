@@ -262,7 +262,7 @@ class PopUpManagerImpl(private val root: UiComponent) : LayoutContainerImpl<PopU
 		if (child is Closeable) {
 			child.closed.add(childClosedHandler)
 		}
-		val index = _currentPopUps.sortedInsertionIndex(popUpInfo, { a, b -> a.priority.compareTo(b.priority) })
+		val index = _currentPopUps.sortedInsertionIndex(popUpInfo) { a, b -> a.priority.compareTo(b.priority) }
 		_currentPopUps.add(index, popUpInfo)
 		if (index == _currentPopUps.lastIndex) {
 			addElement(child)

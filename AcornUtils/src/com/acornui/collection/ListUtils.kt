@@ -94,7 +94,7 @@ fun <E : Comparable<E>> List<E>.sortedInsertionIndex(element: E, startIndex: Int
  *
  * @param matchForwards If true, the returned index will be after comparisons of 0, if false, before.
  */
-fun <K, E> List<E>.sortedInsertionIndex(element: K, comparator: (K, E) -> Int, startIndex: Int = 0, endIndex: Int = size, matchForwards: Boolean = true): Int {
+fun <K, E> List<E>.sortedInsertionIndex(element: K, startIndex: Int = 0, endIndex: Int = size, matchForwards: Boolean = true, comparator: (K, E) -> Int): Int {
 	var indexA = startIndex
 	var indexB = endIndex
 
@@ -120,8 +120,8 @@ fun <K, E> List<E>.sortedInsertionIndex(element: K, comparator: (K, E) -> Int, s
 /**
  * Adds an element to a sorted list based on the provided comparator function.
  */
-fun <E> MutableList<E>.addSorted(element: E, comparator: (o1: E, o2: E) -> Int, matchForwards: Boolean = true): Int {
-	val index = sortedInsertionIndex(element, comparator, matchForwards = matchForwards)
+fun <E> MutableList<E>.addSorted(element: E, matchForwards: Boolean = true, comparator: (o1: E, o2: E) -> Int): Int {
+	val index = sortedInsertionIndex(element, matchForwards = matchForwards, comparator = comparator)
 	add(index, element)
 	return index
 }

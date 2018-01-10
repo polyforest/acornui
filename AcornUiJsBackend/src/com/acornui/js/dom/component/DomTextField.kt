@@ -235,6 +235,12 @@ class DomTextInput(
 			inputElement.type = if (value) "password" else "text"
 		}
 
+	@Suppress("RedundantSetter")
+	override var allowTab: Boolean
+		get() = false
+		set(value) {
+		}
+
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		native.setSize(explicitWidth ?: textInputStyle.defaultWidth, explicitHeight)
 		out.set(native.bounds)
@@ -386,6 +392,12 @@ class DomTextArea(
 
 	@Suppress("RedundantSetter")
 	override var password: Boolean
+		get() = false
+		set(value) {
+		}
+
+	@Suppress("RedundantSetter")
+	override var allowTab: Boolean
 		get() = false
 		set(value) {
 		}

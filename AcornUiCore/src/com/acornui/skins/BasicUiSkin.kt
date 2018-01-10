@@ -105,7 +105,7 @@ open class BasicUiSkin(
 		focusManager.highlight = null
 		focusManager.highlight?.dispose()
 		val focusHighlight = SimpleHighlight(target, theme.atlasPath, "FocusRect")
-		focusHighlight.colorTint = theme.strokeSelected
+		focusHighlight.colorTint = theme.strokeToggled
 		focusManager.highlight = focusHighlight
 	}
 
@@ -846,9 +846,9 @@ fun Owned.getButtonStrokeColor(buttonState: ButtonState): ColorRo {
 		ButtonState.OVER -> theme.strokeHighlight
 
 		ButtonState.TOGGLED_UP,
-		ButtonState.TOGGLED_DOWN -> theme.strokeSelected
+		ButtonState.TOGGLED_DOWN -> theme.strokeToggled
 
-		ButtonState.TOGGLED_OVER -> theme.strokeSelectedHighlight
+		ButtonState.TOGGLED_OVER -> theme.strokeToggledHighlight
 
 		ButtonState.DISABLED -> theme.strokeDisabled
 	}
@@ -870,8 +870,8 @@ class Theme {
 	var strokeHighlight = stroke + brighten
 	var strokeDisabled: ColorRo = Color(0x999999FF)
 
-	var strokeSelected: ColorRo = Color(0x0235ACFF)
-	var strokeSelectedHighlight = strokeSelected + brighten
+	var strokeToggled: ColorRo = Color(0x0235ACFF)
+	var strokeToggledHighlight = strokeToggled + brighten
 
 	var borderRadius = 8f
 

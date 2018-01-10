@@ -411,10 +411,9 @@ class Bezier(
 		if (alpha <= 0f) return 0f
 		if (alpha >= 1f) return 1f
 
-		val segmentIndex = segments.sortedInsertionIndex(alpha, {
-			time, segment ->
+		val segmentIndex = segments.sortedInsertionIndex(alpha, matchForwards = true, comparator = { time, segment ->
 			time.compareTo(segment.a.x)
-		}, matchForwards = true) - 1
+		}) - 1
 		val segment = segments[segmentIndex]
 		val eased = segment.getY(alpha)
 		return eased

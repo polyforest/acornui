@@ -36,6 +36,8 @@ class AssetManagerImpl(
 
 		private val files: Files,
 
+		private val loaderFactories: Map<AssetType<*>, LoaderFactory<*>>,
+
 		/**
 		 * If true, a version number will be appended to file requests for relative files.
 		 */
@@ -46,14 +48,9 @@ class AssetManagerImpl(
 	override val currentLoadersChanged: Signal<() -> Unit>
 		get() = _currentLoadersChanged
 
-	private val loaderFactories: HashMap<AssetType<*>, LoaderFactory<*>> = HashMap()
 	private val _currentLoaders = ArrayList<AssetLoader<*>>()
 	override val currentLoaders: List<AssetLoaderRo<*>>
 		get() = _currentLoaders
-
-	override fun <T> setLoaderFactory(type: AssetType<T>, factory: LoaderFactory<T>) {
-		loaderFactories[type] = factory
-	}
 
 	@Suppress("UNCHECKED_CAST")
 	override fun <T> load(path: String, type: AssetType<T>): AssetLoader<T> {

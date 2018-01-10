@@ -25,9 +25,7 @@ import com.acornui.browser.encodeUriComponent2
 import com.acornui.component.Stage
 import com.acornui.component.UiComponent
 import com.acornui.core.*
-import com.acornui.core.assets.AssetManager
-import com.acornui.core.assets.AssetManagerImpl
-import com.acornui.core.assets.AssetTypes
+import com.acornui.core.assets.*
 import com.acornui.core.audio.AudioManager
 import com.acornui.core.audio.AudioManagerImpl
 import com.acornui.core.cursor.CursorManager
@@ -283,24 +281,23 @@ Function.prototype.bind = function() {
 
 	protected open val assetManagerTask by BootTask {
 		val config = get(AppConfig)
-		val assetManager = AssetManagerImpl(config.rootPath, get(Files), appendVersion = true)
-		assetManager.setLoaderFactory(AssetTypes.TEXT, { path: String, estimatedBytesTotal: Int -> JsTextLoader(path, estimatedBytesTotal) })
-		set(AssetManager, assetManager)
+		val loaders = HashMap<AssetType<*>, LoaderFactory<*>>()
+		addAssetLoaders(loaders)
+		set(AssetManager, AssetManagerImpl(config.rootPath, get(Files), loaders, appendVersion = true))
 	}
 
-	protected open val audioTask by BootTask {
-		val audioManager = AudioManagerImpl()
-		set(AudioManager, audioManager)
+	protected open fun addAssetLoaders(loaders: HashMap<AssetType<*>, LoaderFactory<*>>) {
+		loaders[AssetTypes.TEXT] = { path: String, estimatedBytesTotal: Int -> JsTextLoader(path, estimatedBytesTotal) }
 
 		// JS Audio doesn't need to be updated like OpenAL audio does, so we don't add it to the TimeDriver.
-		val assetManager = get(AssetManager)
-
-		if (audioContextSupported) {
-			assetManager.setLoaderFactory(AssetTypes.SOUND, { path: String, estimatedBytesTotal: Int -> JsWebAudioSoundLoader(path, estimatedBytesTotal, audioManager) })
+		val audioManager = AudioManagerImpl()
+		set(AudioManager, audioManager)
+		loaders[AssetTypes.SOUND] = if (audioContextSupported) {
+			{ path: String, estimatedBytesTotal: Int -> JsWebAudioSoundLoader(path, estimatedBytesTotal, audioManager) }
 		} else {
-			assetManager.setLoaderFactory(AssetTypes.SOUND, { path: String, estimatedBytesTotal: Int -> JsAudioElementSoundLoader(path, estimatedBytesTotal, audioManager) })
+			{ path: String, estimatedBytesTotal: Int -> JsAudioElementSoundLoader(path, estimatedBytesTotal, audioManager) }
 		}
-		assetManager.setLoaderFactory(AssetTypes.MUSIC, { path: String, estimatedBytesTotal: Int -> JsAudioElementMusicLoader(path, estimatedBytesTotal, audioManager) })
+		loaders[AssetTypes.MUSIC] = { path: String, estimatedBytesTotal: Int -> JsAudioElementMusicLoader(path, estimatedBytesTotal, audioManager) }
 	}
 
 	protected open val timeDriverTask by BootTask {

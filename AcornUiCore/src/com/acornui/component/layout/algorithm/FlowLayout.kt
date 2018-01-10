@@ -188,15 +188,14 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 		if (lines.isEmpty()) return 0
 		if (y < lines.first().y) return 0
 		if (y >= lines.last().bottom) return elements.size
-		val lineIndex = _lines.sortedInsertionIndex(y, {
-			y, line ->
+		val lineIndex = _lines.sortedInsertionIndex(y, comparator = { y, line ->
 			y.compareTo(line.bottom)
 		})
 		val line = _lines[lineIndex]
-		return elements.sortedInsertionIndex(x, {
+		return elements.sortedInsertionIndex(x, line.startIndex, line.endIndex) {
 			x, element ->
 			x.compareTo(element.right)
-		}, line.startIndex, line.endIndex)
+		}
 	}
 
 	companion object {
@@ -272,6 +271,12 @@ class LineInfo : Clearable, LineInfoRo {
 		baseline = 0f
 		belowBaseline = 0f
 	}
+
+	override fun toString(): String {
+		return "LineInfo(startIndex=$startIndex, endIndex=$endIndex)"
+	}
+
+
 }
 
 class FlowLayoutStyle : StyleBase() {

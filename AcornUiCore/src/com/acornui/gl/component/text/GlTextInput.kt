@@ -1,10 +1,12 @@
 package com.acornui.gl.component.text
 
 import com.acornui.component.*
+import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.component.layout.setSize
 import com.acornui.component.scroll.ClampedScrollModel
 import com.acornui.component.scroll.ScrollPolicy
 import com.acornui.component.scroll.scrollArea
+import com.acornui.component.scroll.scrollTo
 import com.acornui.component.style.set
 import com.acornui.component.text.*
 import com.acornui.core.Disposable
@@ -28,6 +30,7 @@ import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.clamp
+import com.acornui.math.Rectangle
 import com.acornui.math.Vector2
 import com.acornui.math.minOf4
 import com.acornui.signal.Signal
@@ -43,54 +46,60 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 
 	override final val textInputStyle = bind(TextInputStyle())
 	override final val boxStyle = bind(BoxStyle())
-	protected val tF = addChild(EditableText(this))
+	protected val editableText = addChild(EditableText(this))
 
 	override val charStyle: CharStyle
-		get() = tF.charStyle
+		get() = editableText.charStyle
 
 	override val flowStyle: TextFlowStyle
-		get() = tF.flowStyle
+		get() = editableText.flowStyle
 
 	override val input: Signal<() -> Unit>
-		get() = tF.input
+		get() = editableText.input
 
 	override val changed: Signal<() -> Unit>
-		get() = tF.changed
+		get() = editableText.changed
 
 	override var editable: Boolean
-		get() = tF.editable
+		get() = editableText.editable
 		set(value) {
-			tF.editable = value
+			editableText.editable = value
 		}
 
 	override var maxLength: Int?
-		get() = tF.maxLength
+		get() = editableText.maxLength
 		set(value) {
-			tF.maxLength = value
+			editableText.maxLength = value
 		}
 
 	override var text: String
-		get() = tF.text
+		get() = editableText.text
 		set(value) {
-			tF.text = value
+			editableText.text = value
 		}
 
 	override var placeholder: String
-		get() = tF.placeholder
+		get() = editableText.placeholder
 		set(value) {
-			tF.placeholder = value
+			editableText.placeholder = value
 		}
 
 	override var restrictPattern: String?
-		get() = tF.restrictPattern
+		get() = editableText.restrictPattern
 		set(value) {
-			tF.restrictPattern = value
+			editableText.restrictPattern = value
 		}
 
 	override var password: Boolean
-		get() = tF.password
+		get() = editableText.password
 		set(value) {
-			tF.password = value
+			editableText.password = value
+		}
+
+	override var allowTab: Boolean
+		get() = editableText.allowTab
+		set(value) {
+			editableText.allowTab = value
 		}
 
 	init {
@@ -99,7 +108,7 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 			background.style.set(it)
 		}
 		watch(textInputStyle) {
-			tF.textCursorColor = it.cursorColor
+			editableText.textCursorColor = it.cursorColor
 			invalidateLayout()
 		}
 	}
@@ -109,9 +118,9 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 		val margin = boxStyle.margin
 		val w = margin.reduceWidth2(pad.reduceWidth2(explicitWidth ?: textInputStyle.defaultWidth))
 		val h = margin.reduceHeight(pad.reduceHeight(explicitHeight))
-		tF.setSize(w, h)
-		tF.setPosition(margin.left + pad.left, margin.top + pad.top)
-		out.set(explicitWidth ?: textInputStyle.defaultWidth, explicitHeight ?: margin.expandHeight2(pad.expandHeight2(tF.height)))
+		editableText.setSize(w, h)
+		editableText.setPosition(margin.left + pad.left, margin.top + pad.top)
+		out.set(explicitWidth ?: textInputStyle.defaultWidth, explicitHeight ?: margin.expandHeight2(pad.expandHeight2(editableText.height)))
 		background.setSize(margin.reduceWidth2(out.width), margin.reduceHeight(out.height))
 		background.setPosition(margin.left, margin.top)
 		highlight?.setSize(background.bounds)
@@ -186,6 +195,12 @@ open class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 			editableText.password = value
 		}
 
+	override var allowTab: Boolean
+		get() = editableText.allowTab
+		set(value) {
+			editableText.allowTab = value
+		}
+
 	override val hScrollModel: ClampedScrollModel
 		get() = scroller.hScrollModel
 
@@ -210,6 +225,9 @@ open class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 	override val contentsHeight: Float
 		get() = scroller.contentsHeight
 
+	private val selectionManager = inject(SelectionManager)
+	private val rect = Rectangle()
+
 	init {
 		styleTags.add(TextInput)
 		styleTags.add(TextArea)
@@ -225,7 +243,19 @@ open class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 
 		mouseDown().add(this::startScrollWatch)
 		touchStart().add(this::startScrollWatch)
+		keyDown().add(this::scrollToSelected)
 	}
+
+	private fun scrollToSelected(event: KeyInteraction) {
+		val sel = firstSelection ?: return
+		val line = contents.getLineAt(minOf(contents.size - 1, sel.endIndex)) ?: return
+		rect.set(line.x, line.y, line.width, line.height)
+		rect.inflate(flowStyle.padding)
+		scroller.scrollTo(rect)
+	}
+
+	private val contents
+		get() = editableText.textField.contents
 
 	private val maxScrollSpeed = 20f
 	private val bufferP = 0.2f
@@ -243,6 +273,7 @@ open class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 		stage.mouseUp().add(this::endScrollWatch)
 		stage.touchEnd().add(this::endScrollWatch)
 	}
+
 	private fun endScrollWatch(event: Any) {
 		_frameWatch?.dispose()
 		_frameWatch = null
@@ -278,6 +309,9 @@ open class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 		highlight?.setPosition(margin.left, margin.top)
 	}
 
+	private val firstSelection: SelectionRange?
+		get() = selectionManager.selection.firstOrNull { it.target == this }
+
 }
 
 @Suppress("LeakingThis")
@@ -301,7 +335,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		buildMesh {
 			lineStyle.isVisible = false
 			fillStyle.colorTint.set(Color.WHITE)
-			+quad(0f, 0f, 1f, 0f, 1f, 1f, 0f, 1f)
+			+quad(-1f, 0f, 1f, 0f, 1f, 1f, -1f, 1f)
 		}
 	})
 
@@ -338,6 +372,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		}
 
 	private fun refreshText() {
+		column = -1
 		textField.text = if (_password) _text.toPassword() else _text
 	}
 
@@ -385,62 +420,123 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		}
 
 		host.keyDown().add(this::keyDownHandler)
+		host.touchStart().add { column = -1 }
+		host.mouseDown().add { column = -1 }
 
 		selectionManager.selectionChanged.add(this::selectionChangedHandler)
 	}
 
+	private val contents
+		get() = textField.contents
+
+	private var column = -1
+
 	private fun keyDownHandler(event: KeyInteraction) {
-		if (event.keyCode == Ascii.LEFT) {
-			val sel = firstSelection
-			if (sel != null) {
-				val next = maxOf(0, sel.startIndex - 1)
-				selectionManager.selection = listOf(SelectionRange(host, next, next))
-			}
-		} else if (event.keyCode == Ascii.RIGHT) {
-			val sel = firstSelection
-			if (sel != null) {
-				val next = minOf(textField.contents.size, sel.endIndex + 1)
-				selectionManager.selection = listOf(SelectionRange(host, next, next))
-			}
-		} else if (event.keyCode == Ascii.UP) {
-			val sel = firstSelection
-			if (sel != null) {
+		if (event.keyCode != Ascii.UP && event.keyCode != Ascii.DOWN) column = -1
 
-
-//						val leafRangeStart
-//						val index = minOf(tF.textElementsCount, sel.endIndex)
-//
-//
-//						//tF.leaves.indexOfLast2 { it }
-//						val next = minOf(tF.textElementsCount, sel.endIndex + 1)
-//						selectionManager.selection = listOf(SelectionRange(this, next, next))
+		when (event.keyCode) {
+			Ascii.LEFT -> cursorDelta(event.shiftKey, -1)
+			Ascii.RIGHT -> cursorDelta(event.shiftKey, 1)
+			Ascii.UP -> cursorUp(event.shiftKey)
+			Ascii.DOWN -> cursorDown(event.shiftKey)
+			Ascii.BACKSPACE -> {
+				event.handled = true
+				backspace()
+				_input.dispatch()
 			}
-		} else if (event.keyCode == Ascii.BACKSPACE) {
-			event.handled = true
-			backspace()
-			_input.dispatch()
-		} else if (event.keyCode == Ascii.TAB) {
-			if (allowTab) {
+			Ascii.TAB -> if (allowTab) {
 				event.preventDefault() // Prevent focus manager from tabbing.
 				event.handled = true
+				replaceSelection("\t")
+				_input.dispatch()
+			}
+			Ascii.DELETE -> {
+				event.handled = true
+				delete()
+				_input.dispatch()
+			}
+			Ascii.ENTER, Ascii.RETURN -> {
+				event.handled = true
 				if (flowStyle.multiline) {
-					replaceSelection("\t")
+					replaceSelection("\n")
 					_input.dispatch()
+				} else {
+					_changed.dispatch()
 				}
 			}
-		} else if (event.keyCode == Ascii.DELETE) {
-			event.handled = true
-			delete()
-			_input.dispatch()
-		} else if (event.keyCode == Ascii.ENTER || event.keyCode == Ascii.RETURN) {
-			event.handled = true
-			if (flowStyle.multiline) {
-				replaceSelection("\n")
-				_input.dispatch()
-			} else {
-				_changed.dispatch()
+			Ascii.HOME -> cursorHome(event.shiftKey)
+			Ascii.END -> cursorEnd(event.shiftKey)
+			Ascii.A -> {
+				if (event.ctrlKey) {
+					val n = contents.size
+					selectionManager.selection = listOf(SelectionRange(host, 0, n))
+				}
 			}
+			Ascii.PAGE_UP -> cursorPageUp(event.shiftKey)
+			Ascii.PAGE_DOWN -> cursorPageDown(event.shiftKey)
 		}
+	}
+
+	private fun cursorDelta(shiftKey: Boolean, offset: Int) {
+		val sel = firstSelection ?: return
+		val n = contents.size
+		val next = clamp(clamp(sel.endIndex, 0, n) + offset, 0, n)
+		selectionManager.selection = listOf(SelectionRange(host, if (shiftKey) sel.startIndex else next, next))
+	}
+
+	private fun cursorUp(shiftKey: Boolean) {
+		val sel = firstSelection ?: return
+		val line = contents.getLineAt(minOf(contents.size - 1, sel.endIndex)) ?: return
+		val previousLine = contents.getLineAt(line.startIndex - 1)
+		if (previousLine != null) {
+			if (column == -1)
+				column = sel.endIndex - line.startIndex
+			val nextPos = minOf(previousLine.endIndex - 1, previousLine.startIndex + column)
+			selectionManager.selection = listOf(SelectionRange(host, if (shiftKey) sel.startIndex else nextPos, nextPos))
+		} else {
+			selectionManager.selection = listOf(SelectionRange(host, if (shiftKey) sel.startIndex else 0, 0))
+		}
+	}
+
+	private fun cursorDown(shiftKey: Boolean) {
+		val sel = firstSelection ?: return
+		val line = contents.getLineAt(sel.endIndex) ?: return
+		val nextLine = contents.getLineAt(line.endIndex)
+		if (nextLine != null) {
+			if (column == -1)
+				column = sel.endIndex - line.startIndex
+			val nextPos = minOf(lineEnd(nextLine), nextLine.startIndex + column)
+			selectionManager.selection = listOf(SelectionRange(host, if (shiftKey) sel.startIndex else nextPos, nextPos))
+		} else {
+			val n = contents.size
+			selectionManager.selection = listOf(SelectionRange(host, if (shiftKey) sel.startIndex else n, n))
+		}
+	}
+
+	private fun lineEnd(line: LineInfoRo): Int {
+		val n = contents.size
+		return if (line.endIndex == n) n else line.endIndex - 1
+	}
+
+	private fun cursorHome(shiftKey: Boolean) {
+		val sel = firstSelection ?: return
+		val line = contents.getLineAt(minOf(contents.size - 1, sel.endIndex)) ?: return
+		selectionManager.selection = listOf(SelectionRange(host, if (shiftKey) sel.startIndex else line.startIndex, line.startIndex))
+	}
+
+	private fun cursorEnd(shiftKey: Boolean) {
+		val sel = firstSelection ?: return
+		val line = contents.getLineAt(sel.endIndex) ?: return
+		val pos = lineEnd(line)
+		selectionManager.selection = listOf(SelectionRange(host, if (shiftKey) sel.startIndex else pos, pos))
+	}
+
+	private fun cursorPageUp(shiftKey: Boolean) {
+
+	}
+
+	private fun cursorPageDown(shiftKey: Boolean) {
+
 	}
 
 	private val firstSelection: SelectionRange?
@@ -453,11 +549,11 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private fun backspace() {
 		val sel = firstSelection ?: return
 		if (sel.startIndex != sel.endIndex) {
-			replaceTextRange(sel.startIndex, sel.endIndex, "")
-			selectionManager.selection = listOf(SelectionRange(host, sel.startIndex, sel.startIndex))
-		} else if (sel.startIndex > 0) {
-			replaceTextRange(sel.startIndex - 1, sel.startIndex, "")
-			selectionManager.selection = listOf(SelectionRange(host, sel.startIndex - 1, sel.startIndex - 1))
+			replaceTextRange(sel.min, sel.max, "")
+			selectionManager.selection = listOf(SelectionRange(host, sel.min, sel.min))
+		} else if (sel.min > 0) {
+			replaceTextRange(sel.min - 1, sel.min, "")
+			selectionManager.selection = listOf(SelectionRange(host, sel.min - 1, sel.min - 1))
 		}
 	}
 
@@ -468,19 +564,20 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private fun delete() {
 		val sel = firstSelection ?: return
 		if (sel.startIndex != sel.endIndex) {
-			replaceTextRange(sel.startIndex, sel.endIndex, "")
-			selectionManager.selection = listOf(SelectionRange(host, sel.startIndex, sel.startIndex))
-		} else if (sel.startIndex < _text.length) {
-			replaceTextRange(sel.startIndex, sel.startIndex + 1, "")
-			selectionManager.selection = listOf(SelectionRange(host, sel.startIndex, sel.startIndex))
+			replaceTextRange(sel.min, sel.max, "")
+			selectionManager.selection = listOf(SelectionRange(host, sel.min, sel.min))
+		} else if (sel.min < _text.length) {
+			replaceTextRange(sel.min, sel.max + 1, "")
+			selectionManager.selection = listOf(SelectionRange(host, sel.min, sel.min))
 		}
 	}
 
 	private fun replaceSelection(str: String) {
 		val str2 = if (_restrictPatternRegex == null) str else str.replace(_restrictPatternRegex!!, "")
 		val sel = firstSelection ?: return
-		replaceTextRange(sel.startIndex, sel.endIndex, str2)
-		selectionManager.selection = listOf(SelectionRange(host, sel.startIndex + str2.length, sel.startIndex + str2.length))
+		replaceTextRange(sel.min, sel.max, str2)
+		val p = sel.min + str2.length
+		selectionManager.selection = listOf(SelectionRange(host, p, p))
 	}
 
 	fun replaceTextRange(startIndex: Int, endIndex: Int, newText: String) {
@@ -511,22 +608,13 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		val textCursorVisible: Boolean
 		val sel = firstSelection
 		if (host.isFocused && sel != null) {
-			val rangeEnd = textField.contents.size
-
-			val start = clamp(sel.startIndex, 0, rangeEnd)
+			val rangeEnd = contents.size
 			val end = clamp(sel.endIndex, 0, rangeEnd)
-			if (start == end) {
-				val textElement = if (start >= rangeEnd) textField.contents.placeholder else textField.contents.getTextElementAt(start)
-
-				textCursor.x = textElement.textFieldX
-				textCursor.y = textElement.textFieldY
-
-				textCursor.scaleY = textElement.lineHeight / textCursor.height
-
-				textCursorVisible = true
-			} else {
-				textCursorVisible = false
-			}
+			val textElement = if (end >= rangeEnd) contents.placeholder else contents.getTextElementAt(end)
+			textCursor.x = textElement.textFieldX
+			textCursor.y = textElement.textFieldY
+			textCursor.scaleY = textElement.lineHeight / textCursor.height
+			textCursorVisible = true
 		} else {
 			textCursorVisible = false
 		}

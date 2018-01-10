@@ -135,11 +135,7 @@ open class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 		val p2 = event.positionLocal
 		val p1A = contents.getSelectionIndex(p1.x, p1.y)
 		val p2A = contents.getSelectionIndex(p2.x, p2.y)
-		return if (p2A > p1A) {
-			listOf(SelectionRange(selectionTarget, p1A, p2A))
-		} else {
-			listOf(SelectionRange(selectionTarget, p2A, p1A))
-		}
+		return listOf(SelectionRange(selectionTarget, p1A, p2A))
 	}
 
 	protected open fun refreshCursor() {
@@ -494,6 +490,11 @@ interface TextNodeRo : Validatable, StyleableRo, PositionableRo {
 	fun getTextElementAt(index: Int): TextElementRo
 
 	/**
+	 * Returns the line at the given index.
+	 */
+	fun getLineAt(index: Int): LineInfoRo?
+
+	/**
 	 * @param x The relative x coordinate
 	 * @param y The relative y coordinate
 	 * @return Returns the relative index of the text element nearest (x, y). The text element index will be separated
@@ -552,11 +553,20 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 	override val size: Int
 		get() = textElements.size
 
-	override fun getTextElementAt(index: Int): TextElementRo = textElements[index]
-
 	init {
 		validation.addNode(VERTICES, ValidationFlags.LAYOUT or ValidationFlags.CONCATENATED_TRANSFORM or ValidationFlags.STYLES, 0, this::updateVertices)
 		validation.addNode(CHAR_STYLE, ValidationFlags.CONCATENATED_COLOR_TRANSFORM or ValidationFlags.STYLES, 0, this::updateCharStyle)
+	}
+
+	override fun getTextElementAt(index: Int): TextElementRo = textElements[index]
+
+	override fun getLineAt(index: Int): LineInfoRo? {
+		if (_lines.isEmpty() || index < 0 || index >= _lines.last().endIndex) return null
+		val lineIndex = _lines.sortedInsertionIndex(index) {
+			i, line ->
+			index.compareTo(line.startIndex)
+		} - 1
+		return _lines.getOrNull(lineIndex)
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -788,15 +798,14 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 		if (_lines.isEmpty()) return 0
 		if (y < _lines.first().y) return 0
 		if (y >= _lines.last().bottom) return textElements.size
-		val lineIndex = _lines.sortedInsertionIndex(y, {
-			y, line ->
-			y.compareTo(line.bottom)
-		})
+		val lineIndex = _lines.sortedInsertionIndex(y) {
+			yVal, line ->
+			yVal.compareTo(line.bottom)
+		}
 		val line = _lines[lineIndex]
-		return textElements.sortedInsertionIndex(x, {
-			x, part ->
+		return textElements.sortedInsertionIndex(x, line.startIndex, line.endIndex, comparator = { x, part ->
 			if (part.clearsLine && flowStyle.multiline) -1 else x.compareTo(part.x + part.width / 2f)
-		}, line.startIndex, line.endIndex)
+		})
 	}
 
 	private fun updateVertices() {

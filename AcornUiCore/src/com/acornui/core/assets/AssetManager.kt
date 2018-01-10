@@ -32,11 +32,6 @@ import com.acornui.signal.Signal
 interface AssetManager : Disposable, Progress {
 
 	/**
-	 * Sets the factory for asset loaders associated with the specified asset type.
-	 */
-	fun <T> setLoaderFactory(type: AssetType<T>, factory: LoaderFactory<T>)
-
-	/**
 	 * Dispatched when the current loaders list has changed.
 	 */
 	val currentLoadersChanged: Signal<() -> Unit>

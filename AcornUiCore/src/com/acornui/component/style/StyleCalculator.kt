@@ -34,7 +34,7 @@ object CascadingStyleCalculator : StyleCalculator {
 				tmp.forEachReversed2 {
 					entry ->
 					if (entry.filter(target) != null) {
-						entries.addSorted(entry, entrySortComparator)
+						entries.addSorted(entry, comparator = entrySortComparator)
 					}
 				}
 			}
@@ -69,7 +69,7 @@ object CascadingStyleCalculator : StyleCalculator {
 				tmp.forEachReversed2 {
 					entry ->
 					if (entry.filter(target) != null) {
-						val index = entries.sortedInsertionIndex(entry, entrySortComparator)
+						val index = entries.sortedInsertionIndex(entry, comparator = entrySortComparator)
 						entries.add(index, entry)
 						appliedRules.add(index, StyleRuleDebugInfo(ancestor, entry))
 					}

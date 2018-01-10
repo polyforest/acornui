@@ -25,7 +25,9 @@ import com.acornui.component.text.TextField
 import com.acornui.component.text.TextInput
 import com.acornui.core.AppConfig
 import com.acornui.core.assets.AssetManager
+import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.AssetTypes
+import com.acornui.core.assets.LoaderFactory
 import com.acornui.core.di.Owned
 import com.acornui.core.focus.FakeFocusMouse
 import com.acornui.core.focus.FocusManager
@@ -99,8 +101,9 @@ open class DomApplication(
 	}
 
 
-	protected open val texturesTask by BootTask {
-		get(AssetManager).setLoaderFactory(AssetTypes.TEXTURE, { path, estimatedBytesTotal -> DomTextureLoader(path, estimatedBytesTotal) })
+	override fun addAssetLoaders(loaders: HashMap<AssetType<*>, LoaderFactory<*>>) {
+		super.addAssetLoaders(loaders)
+		loaders[AssetTypes.TEXTURE] = { path, estimatedBytesTotal -> DomTextureLoader(path, estimatedBytesTotal) }
 	}
 
 	override val interactivityTask by BootTask {

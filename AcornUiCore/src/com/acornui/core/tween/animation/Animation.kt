@@ -149,10 +149,10 @@ private class LayerTween(override val duration: Float, layer: Layer, private val
 	}
 
 	override fun updateToTime(lastTime: Float, newTime: Float, apparentLastTime: Float, apparentNewTime: Float, jump: Boolean) {
-		val frameIndex: Int = frames.sortedInsertionIndex(apparentNewTime, {
+		val frameIndex: Int = frames.sortedInsertionIndex(apparentNewTime, matchForwards = true) {
 			time, frame ->
 			time.compareTo(frame.time)
-		}, matchForwards = true) - 1
+		} - 1
 		val frame = frames[maxOf(0, frameIndex)]
 		val nextFrame = frames.getOrNull(frameIndex + 1) ?: frame
 		for (i in 0..frame.props.lastIndex) {

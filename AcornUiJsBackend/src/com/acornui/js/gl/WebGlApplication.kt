@@ -16,6 +16,7 @@
 
 package com.acornui.js.gl
 
+import com.acornui.async.launch
 import com.acornui.component.*
 import com.acornui.component.scroll.ScrollArea
 import com.acornui.component.scroll.ScrollRect
@@ -24,8 +25,9 @@ import com.acornui.component.text.TextArea
 import com.acornui.component.text.TextField
 import com.acornui.component.text.TextInput
 import com.acornui.core.AppConfig
-import com.acornui.core.assets.AssetManager
+import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.AssetTypes
+import com.acornui.core.assets.LoaderFactory
 import com.acornui.core.di.Owned
 import com.acornui.core.di.dKey
 import com.acornui.core.focus.FakeFocusMouse
@@ -96,9 +98,15 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 	}
 
 	protected open val textureLoaderTask by BootTask {
-		val gl = get(Gl20)
-		val glState = get(GlState)
-		get(AssetManager).setLoaderFactory(AssetTypes.TEXTURE, { path, estimatedBytesTotal -> WebGlTextureLoader(path, estimatedBytesTotal, gl, glState) })
+	}
+
+	override fun addAssetLoaders(loaders: HashMap<AssetType<*>, LoaderFactory<*>>) {
+		super.addAssetLoaders(loaders)
+		launch {
+			val gl = get(Gl20)
+			val glState = get(GlState)
+			loaders[AssetTypes.TEXTURE] = { path, estimatedBytesTotal -> WebGlTextureLoader(path, estimatedBytesTotal, gl, glState) }
+		}
 	}
 
 	/**

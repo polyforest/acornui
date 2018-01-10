@@ -255,6 +255,11 @@ interface TextInput : Focusable, SelectableComponent, Styleable {
 
 	var password: Boolean
 
+	/**
+	 * If true, pressing TAB inserts a tab character as opposed to the default behavior (typically a focus change).
+	 */
+	var allowTab: Boolean
+
 	// TODO: Make this efficient in GlTextInput.
 	/**
 	 * Replaces the given range with the provided text.
@@ -324,7 +329,8 @@ class TextInputStyle : StyleBase() {
 	override val type = Companion
 
 	var defaultWidth by prop(180f)
-	var cursorColor: ColorRo by prop(Color(0.1f, 0.1f, 0.1f, 1f))
+//	var cursorColor: ColorRo by prop(Color(0.1f, 0.1f, 0.1f, 1f))
+	var cursorColor: ColorRo by prop(Color(1f, 0.1f, 0.1f, 1f))
 
 	companion object : StyleType<TextInputStyle>
 }

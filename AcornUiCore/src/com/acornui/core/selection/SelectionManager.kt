@@ -67,8 +67,11 @@ class SelectionManagerImpl : SelectionManager {
  */
 data class SelectionRange(val target: Selectable, val startIndex: Int, val endIndex: Int) {
 
+	val min = minOf(startIndex, endIndex)
+	val max = maxOf(startIndex, endIndex)
+
 	fun contains(index: Int): Boolean {
-		return index >= startIndex && index < endIndex
+		return index >= min && index < max
 	}
 }
 
