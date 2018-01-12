@@ -25,7 +25,7 @@ import com.acornui.math.*
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 
-interface ContainerRo: UiComponentRo, ParentRo<UiComponentRo>
+interface ContainerRo : UiComponentRo, ParentRo<UiComponentRo>
 
 /**
  * An interface for a ui component that has child components.
@@ -163,20 +163,18 @@ open class ContainerImpl(
 	 */
 	protected var cascadingFlags =
 			ValidationFlags.STYLES or
-			ValidationFlags.HIERARCHY_DESCENDING or
-			ValidationFlags.CONCATENATED_COLOR_TRANSFORM or
-			ValidationFlags.CONCATENATED_TRANSFORM or
-			ValidationFlags.INTERACTIVITY_MODE
+					ValidationFlags.HIERARCHY_DESCENDING or
+					ValidationFlags.CONCATENATED_COLOR_TRANSFORM or
+					ValidationFlags.CONCATENATED_TRANSFORM or
+					ValidationFlags.INTERACTIVITY_MODE
 
 	override fun onInvalidated(flagsInvalidated: Int) {
 		val flagsToCascade = flagsInvalidated and cascadingFlags
 		if (flagsToCascade > 0) {
 			// This component has flags that have been invalidated that must cascade down to the children.
-			_isInvalidatingChildren = true
 			for (i in 0.._children.lastIndex) {
 				_children[i].invalidate(flagsToCascade)
 			}
-			_isInvalidatingChildren = false
 		}
 	}
 
@@ -204,18 +202,11 @@ open class ContainerImpl(
 	}
 
 	/**
-	 * If this container is currently invalidating the children, ignore the child invalidated signals.
-	 */
-	private var _isInvalidatingChildren: Boolean = false
-	protected val isInvalidatingChildren: Boolean
-		get() = _isInvalidatingChildren
-
-	/**
 	 * The validation flags that, if a child has invalidated, will cause this container's layout to become invalidated.
 	 */
 	protected var layoutInvalidatingFlags =
 			ValidationFlags.HIERARCHY_ASCENDING or
-			ValidationFlags.LAYOUT
+					ValidationFlags.LAYOUT
 
 	/**
 	 * The validation flags that, if a child has invalidated, will cause the same flags on this container to become
@@ -225,8 +216,8 @@ open class ContainerImpl(
 	 */
 	protected var bubblingFlags =
 			ValidationFlags.HIERARCHY_ASCENDING or
-			ValidationFlags.LAYOUT or
-			ValidationFlags.SIZE_CONSTRAINTS
+					ValidationFlags.LAYOUT or
+					ValidationFlags.SIZE_CONSTRAINTS
 
 	//-----------------------------------------------------
 	// Interactivity utility methods
@@ -239,8 +230,7 @@ open class ContainerImpl(
 		val ray = rayCache ?: camera.getPickRay(canvasX, canvasY, 0f, 0f, window.width, window.height, rayTmp)
 		if (intersectsGlobalRay(ray)) {
 			if ((returnAll || out.isEmpty())) {
-				iterateChildrenReversed {
-					child: UiComponentRo ->
+				iterateChildrenReversed { child: UiComponentRo ->
 					val childRayCache = if (child.camera === camera) ray else null
 					child.getChildrenUnderPoint(canvasX, canvasY, onlyInteractive, returnAll, out, childRayCache)
 					// Continue iterating if we haven't found an intersecting child yet, or if returnAll is true.
@@ -264,8 +254,7 @@ open class ContainerImpl(
 	 */
 	protected fun <T : UiComponent> createSlot(): ReadWriteProperty<Any?, T?> {
 		val placeholder = addChild(UiComponentImpl(this))
-		return Delegates.observable(null as T?) {
-			_, oldValue, newValue ->
+		return Delegates.observable(null as T?) { _, oldValue, newValue ->
 			val index = children.indexOf(oldValue ?: placeholder)
 			removeChild(index)
 			addChild(index, newValue ?: placeholder)
@@ -273,16 +262,14 @@ open class ContainerImpl(
 	}
 
 	protected open fun childInvalidatedHandler(child: UiComponentRo, flagsInvalidated: Int) {
-		if (!_isInvalidatingChildren) {
-			if (flagsInvalidated and layoutInvalidatingFlags > 0) {
-				if (child.includeInLayout || flagsInvalidated and ValidationFlags.HIERARCHY_ASCENDING > 0) {
-					invalidate(ValidationFlags.SIZE_CONSTRAINTS)
-				}
+		if (flagsInvalidated and layoutInvalidatingFlags > 0) {
+			if (child.includeInLayout || flagsInvalidated and ValidationFlags.HIERARCHY_ASCENDING > 0) {
+				invalidate(ValidationFlags.SIZE_CONSTRAINTS)
 			}
-			val bubblingFlags = flagsInvalidated and bubblingFlags
-			if (bubblingFlags > 0) {
-				invalidate(bubblingFlags)
-			}
+		}
+		val bubblingFlags = flagsInvalidated and bubblingFlags
+		if (bubblingFlags > 0) {
+			invalidate(bubblingFlags)
 		}
 	}
 

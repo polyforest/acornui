@@ -80,18 +80,16 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutConta
 	init {
 		contents.invalidated.add {
 			child, flagsInvalidated ->
-			if (!isInvalidatingChildren) {
-				if (flagsInvalidated and layoutInvalidatingFlags > 0) {
-					if (child.includeInLayout || flagsInvalidated and ValidationFlags.HIERARCHY_ASCENDING > 0) {
-						invalidate(ValidationFlags.SIZE_CONSTRAINTS)
-					}
+			if (flagsInvalidated and layoutInvalidatingFlags > 0) {
+				if (child.includeInLayout || flagsInvalidated and ValidationFlags.HIERARCHY_ASCENDING > 0) {
+					invalidate(ValidationFlags.SIZE_CONSTRAINTS)
 				}
-				val bubblingFlags = flagsInvalidated and bubblingFlags
-				if (bubblingFlags > 0) {
-					invalidate(bubblingFlags)
-				}
-				if (constrainToStage) invalidate(ValidationFlags.CONCATENATED_TRANSFORM)
 			}
+			val bubblingFlags = flagsInvalidated and bubblingFlags
+			if (bubblingFlags > 0) {
+				invalidate(bubblingFlags)
+			}
+			if (constrainToStage) invalidate(ValidationFlags.CONCATENATED_TRANSFORM)
 		}
 	}
 

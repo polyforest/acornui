@@ -228,7 +228,6 @@ open class UiComponentImpl(
 	 * This may be manipulated, but only on construction.
 	 */
 	protected var validation: ValidationTree
-	private var _isValidating: Boolean = false
 
 	// Transformable properties
 	protected val _transform: Matrix4 = Matrix4()
@@ -1260,10 +1259,7 @@ open class UiComponentImpl(
 	 * @param force If true, the provided flags will be validated, even if they are not currently invalid.
 	 */
 	override fun validate(flags: Int, force: Boolean) {
-		if (_isValidating) return
-		_isValidating = true
 		validation.validate(flags, force)
-		_isValidating = false
 	}
 
 	//-----------------------------------------------

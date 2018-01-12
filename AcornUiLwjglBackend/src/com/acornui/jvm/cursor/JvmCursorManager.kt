@@ -71,7 +71,6 @@ class JvmTextureCursor(
 
 	init {
 		assets.load(texturePath, AssetTypes.TEXTURE).then {
-			println("Cursor loaded $texturePath")
 			setTexture(it)
 		}
 	}

@@ -88,7 +88,7 @@ open class DomStageImpl(owner: Owned, root: HTMLElement) : Stage, ElementContain
 	 * dragging off the stage.
 	 */
 	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
-		validate() // TODO: Why am I doing a validate here?
+		//validate() // TODO: Why am I doing a validate here?
 		return true
 	}
 

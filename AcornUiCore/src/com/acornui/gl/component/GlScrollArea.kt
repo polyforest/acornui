@@ -19,10 +19,10 @@ package com.acornui.gl.component
 import com.acornui.component.*
 import com.acornui.component.scroll.*
 import com.acornui.core.di.Owned
+import com.acornui.core.floor
 import com.acornui.core.input.interaction.WheelInteraction
 import com.acornui.core.input.wheel
 import com.acornui.math.Bounds
-import com.acornui.math.RectangleRo
 
 /**
  * A container with scrolling.
@@ -142,6 +142,7 @@ open class GlScrollArea(
 		if (!(requireHScrolling || requireVScrolling)) {
 			// Size target without scrolling.
 			contents.setSize(explicitWidth, explicitHeight)
+			println("Contents Size ${contents.bounds}")
 		}
 		var needsHScrollBar = allowHScrolling && (requireHScrolling || contents.width > explicitWidth!!)
 		var needsVScrollBar = allowVScrolling && (requireVScrolling || contents.height > explicitHeight!!)
@@ -212,7 +213,7 @@ open class GlScrollArea(
 	}
 
 	protected fun validateScroll() {
-		scrollRect.scrollTo(hScrollModel.value.toInt().toFloat(), vScrollModel.value.toInt().toFloat())
+		scrollRect.scrollTo(hScrollModel.value.floor(), vScrollModel.value.floor())
 	}
 
 	override fun dispose() {

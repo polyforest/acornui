@@ -170,6 +170,7 @@ class ValidationTree {
 	}
 
 	fun validate(flags: Int = -1, force: Boolean = false): Int {
+		if (currentIndex != -1) return 0
 		var flagsValidated = 0
 		var flagsToValidate = flags and invalidFlags
 		if (flagsToValidate == 0) return 0

@@ -1,6 +1,5 @@
 package com.acornui.component
 
-import com.acornui.gl.component.text.TextValidationFlags
 import com.acornui.string.toRadix
 import org.junit.Before
 import org.junit.Test
@@ -8,7 +7,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 
-class ValidationNodeTest {
+class ValidationTreeTest {
 
 	private val ONE: Int = 1 shl 0
 	private val TWO: Int = 1 shl 1
