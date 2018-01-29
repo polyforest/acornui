@@ -2,6 +2,8 @@ package com.acornui.jvm.browser
 
 import com.acornui.core.browser.Location
 import com.acornui.core.graphics.PopUpSpecs
+import java.awt.Desktop
+import java.net.URI
 
 class LwjglLocation : Location {
 
@@ -19,5 +21,8 @@ class LwjglLocation : Location {
 	}
 
 	override fun navigateToUrl(url: String, name: String, specs: PopUpSpecs?) {
+		if (Desktop.isDesktopSupported()) {
+			Desktop.getDesktop().browse(URI(url))
+		}
 	}
 }
