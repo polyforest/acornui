@@ -423,6 +423,8 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		host.touchStart().add { column = -1 }
 		host.mouseDown().add { column = -1 }
 
+		validation.addNode(TEXT_CURSOR, ValidationFlags.LAYOUT, this::updateTextCursor)
+
 		selectionManager.selectionChanged.add(this::selectionChangedHandler)
 	}
 
@@ -592,14 +594,13 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	private fun selectionChangedHandler(oldSelection: List<SelectionRange>, newSelection: List<SelectionRange>) {
 		if (oldSelection.filter { it.target == host } != newSelection.filter { it.target == host }) {
-			invalidateLayout()
+			invalidate(TEXT_CURSOR)
 		}
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		textField.setSize(explicitWidth, explicitHeight)
 		out.set(textField.bounds)
-		updateTextCursor()
 	}
 
 	private fun updateTextCursor() {
@@ -624,5 +625,9 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	override fun dispose() {
 		super.dispose()
 		selectionManager.selectionChanged.remove(this::selectionChangedHandler)
+	}
+
+	companion object {
+		private const val TEXT_CURSOR = 1 shl 16
 	}
 }
