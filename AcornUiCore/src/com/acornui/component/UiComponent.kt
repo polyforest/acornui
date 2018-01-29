@@ -1256,10 +1256,9 @@ open class UiComponentImpl(
 	 *
 	 * @param flags A bit mask for which flags to validate. (Use -1 to validate all)
 	 * Example: validate(ValidationFlags.LAYOUT or ValidationFlags.PROPERTIES) to validate both layout an properties.
-	 * @param force If true, the provided flags will be validated, even if they are not currently invalid.
 	 */
-	override fun validate(flags: Int, force: Boolean) {
-		validation.validate(flags, force)
+	override fun validate(flags: Int) {
+		validation.validate(flags)
 	}
 
 	//-----------------------------------------------

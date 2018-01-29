@@ -49,17 +49,10 @@ interface Validatable {
 	 *
 	 * @param flags A bit mask for which flags to validate. (Use -1 to validate all)
 	 * Example: validate(ValidationFlags.LAYOUT or ValidationFlags.PROPERTIES) to validate both layout an properties.
-	 * @param force If true, the provided flags will be validated, even if they are not currently invalid.
 	 */
-	fun validate(flags: Int, force: Boolean)
+	fun validate(flags: Int)
 
-	fun validate() {
-		validate(-1, false)
-	}
-
-	fun validate(flags: Int) {
-		validate(flags, false)
-	}
+	fun validate() = validate(-1)
 
 }
 
@@ -108,6 +101,11 @@ class ValidationTree {
 	 */
 	private var currentIndex = -1
 
+	/**
+	 * The flags that have been validated in the current [validate] call.
+	 */
+	private var currentValidation = 0
+
 	private var invalidFlags = -1
 
 	fun addNode(flag: Int, onValidate: () -> Unit) = addNode(flag, 0, 0, onValidate)
@@ -151,41 +149,46 @@ class ValidationTree {
 			throw Exception("validation node added, but the dependency flags: ${dependenciesNotFound.toRadix(2)} were not found.")
 	}
 
+	/**
+	 * Invalidates the given flags.
+	 * @return Returns a bitmask of all the flags invalidated. (This will consider the dependencies for all nodes
+	 * within the [flags] argument.
+	 */
 	fun invalidate(flags: Int = -1): Int {
 		var flagsInvalidated = 0
 		var flagsToInvalidate = flags and invalidFlags.inv()
 		if (flagsToInvalidate == 0) return 0
-		for (i in (currentIndex + 1)..nodes.lastIndex) {
+		for (i in currentIndex + 1..nodes.lastIndex) {
 			val n = nodes[i]
+			if (!n.isValid) continue
 			if (flagsToInvalidate and n.flag > 0) {
-				if (n.isValid) {
-					n.isValid = false
-					flagsToInvalidate = flagsToInvalidate or n.invalidationMask
-					flagsInvalidated = flagsInvalidated or n.flag
-				}
+				n.isValid = false
+				flagsToInvalidate = flagsToInvalidate or n.invalidationMask
+				flagsInvalidated = flagsInvalidated or n.flag
 			}
 		}
 		invalidFlags = invalidFlags or flagsInvalidated
 		return flagsInvalidated
 	}
 
-	fun validate(flags: Int = -1, force: Boolean = false): Int {
+	fun validate(flags: Int = -1): Int {
 		if (currentIndex != -1) return 0
-		var flagsValidated = 0
 		var flagsToValidate = flags and invalidFlags
 		if (flagsToValidate == 0) return 0
 		for (i in 0..nodes.lastIndex) {
 			currentIndex = i
 			val n = nodes[i]
-			if ((!n.isValid || (force && flags and n.flag > 0)) && flagsToValidate and n.invalidationMask > 0) {
+			if (!n.isValid && flagsToValidate and n.invalidationMask > 0) {
 				n.onValidate()
 				n.isValid = true
 				flagsToValidate = flagsToValidate or n.validationMask
-				flagsValidated = flagsValidated or n.flag
+				currentValidation = currentValidation or n.flag
 			}
 		}
 		currentIndex = -1
-		invalidFlags = invalidFlags and flagsValidated.inv()
+		invalidFlags = invalidFlags and currentValidation.inv()
+		val flagsValidated = currentValidation
+		currentValidation = 0
 		return flagsValidated
 	}
 
@@ -204,9 +207,8 @@ fun validationTree(init: ValidationTree.() -> Unit): ValidationTree {
 	return v
 }
 
-fun <T> Validatable.validationProp(initialValue : T, flags: Int) : ReadWriteProperty<Any, T> {
-	return Delegates.observable(initialValue, {
-		prop, old, new ->
+fun <T> Validatable.validationProp(initialValue: T, flags: Int): ReadWriteProperty<Any, T> {
+	return Delegates.observable(initialValue, { prop, old, new ->
 		if (old != new) {
 			invalidate(flags)
 		}
