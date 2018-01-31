@@ -16,6 +16,7 @@
 
 package com.acornui.component
 
+import com.acornui.assertionsEnabled
 import com.acornui.math.MathUtils
 import com.acornui.signal.Signal
 import com.acornui.string.toRadix
@@ -172,7 +173,15 @@ class ValidationTree {
 	}
 
 	fun validate(flags: Int = -1): Int {
-		if (currentIndex != -1) return 0
+		if (currentIndex != -1) {
+			if (assertionsEnabled) {
+				val node = nodes[currentIndex]
+				val badFlags = node.validationMask.inv() and flags
+				if (badFlags > 0)
+					throw IllegalStateException("Cannot validate ${badFlags.toRadix(2)} while validating ${node.flag.toRadix(2)}")
+			}
+			return 0
+		}
 		var flagsToValidate = flags and invalidFlags
 		if (flagsToValidate == 0) return 0
 		for (i in 0..nodes.lastIndex) {

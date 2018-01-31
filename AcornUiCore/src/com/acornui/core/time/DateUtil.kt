@@ -42,11 +42,9 @@ class DateUtil {
 			if ((year and 3) != 0) {
 				return false
 			}
-			if (year >= GREGORIAN_CUTOVER_YEAR) {
-				return (year % 100 != 0) || (year % 400 == 0) // Gregorian
-			} else {
-				return true // Julian calendar had no correction.
-			}
+			return if (year >= GREGORIAN_CUTOVER_YEAR) {
+				(year % 100 != 0) || (year % 400 == 0) // Gregorian
+			} else true // Julian calendar had no correction.
 		}
 
 	}
