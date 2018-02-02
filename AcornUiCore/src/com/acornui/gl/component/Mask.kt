@@ -139,9 +139,13 @@ class GlScrollRect(
 	}
 
 	override fun draw() {
-		StencilUtil.mask(glState.batch, gl, { maskClip.render() }) {
+		StencilUtil.mask(glState.batch, gl, {
+			if (maskClip.visible)
+				maskClip.render()
+		}) {
 			for (i in 0.._elements.lastIndex) {
-				_elements[i].render()
+				val element = _elements[i]
+				if (element.visible) element.render()
 			}
 		}
 	}

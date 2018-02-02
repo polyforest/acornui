@@ -379,9 +379,13 @@ open class GlRect(
 
 	override fun draw() {
 		if (style.linearGradient != null) {
-			StencilUtil.mask(glState.batch, gl, { fill.render() }) {
-				gradient.render()
-				stroke.render()
+			StencilUtil.mask(glState.batch, gl, {
+				if (fill.visible) fill.render()
+			}) {
+				if (gradient.visible)
+					gradient.render()
+				if (stroke.visible)
+					stroke.render()
 			}
 		} else {
 			super.draw()

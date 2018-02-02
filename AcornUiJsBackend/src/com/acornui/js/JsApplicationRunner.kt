@@ -85,7 +85,8 @@ class JsApplicationRunnerImpl(
 		if (jsWindow.shouldRender(true)) {
 			stage.update()
 			jsWindow.renderBegin()
-			stage.render()
+			if (stage.visible)
+				stage.render()
 			jsWindow.renderEnd()
 		}
 		tickFrameId = window.requestAnimationFrame(tick)

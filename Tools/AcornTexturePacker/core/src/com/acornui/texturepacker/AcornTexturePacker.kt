@@ -58,7 +58,6 @@ class AcornTexturePacker(
 		val packer: RectanglePacker = when (settings.packAlgorithm) {
 			TexturePackAlgorithm.BEST -> MaxRectsPacker(settings.algorithmSettings)
 			TexturePackAlgorithm.GREEDY -> GreedyRectanglePacker(settings.algorithmSettings)
-			else -> throw UnsupportedOperationException("Unsupported pack algorithm: " + settings.packAlgorithm)
 		}
 
 		val imageSources = loadImageSources(root, settings)
@@ -144,7 +143,7 @@ class AcornTexturePacker(
 			}
 
 			// Create the AtlasPage value object.
-			val atlasPage: AtlasPageData = AtlasPageData(
+			val atlasPage = AtlasPageData(
 					texturePath = "", // Will be set later in the atlas writer.
 					width = packedRectanglePage.width,
 					height = packedRectanglePage.height,

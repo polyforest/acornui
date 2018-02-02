@@ -411,7 +411,8 @@ class JvmApplicationRunner(
 		if (window.shouldRender(true)) {
 			stage.update()
 			window.renderBegin()
-			stage.render()
+			if (stage.visible)
+				stage.render()
 			window.renderEnd()
 		}
 	}

@@ -329,8 +329,7 @@ class TextInputStyle : StyleBase() {
 	override val type = Companion
 
 	var defaultWidth by prop(180f)
-//	var cursorColor: ColorRo by prop(Color(0.1f, 0.1f, 0.1f, 1f))
-	var cursorColor: ColorRo by prop(Color(1f, 0.1f, 0.1f, 1f))
+	var cursorColor: ColorRo by prop(Color(0.1f, 0.1f, 0.1f, 1f))
 
 	companion object : StyleType<TextInputStyle>
 }

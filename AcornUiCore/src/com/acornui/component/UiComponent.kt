@@ -1278,7 +1278,7 @@ open class UiComponentImpl(
 	 * Typically, custom components override the [draw] method.
 	 */
 	override fun render() {
-		if (!visible || _concatenatedColorTint.a <= 0f) return // Nothing visible.
+		if (_concatenatedColorTint.a <= 0f) return // Nothing visible.
 		draw()
 	}
 

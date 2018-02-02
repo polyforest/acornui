@@ -24,7 +24,7 @@ import com.acornui.core.graphics.Window
 /**
  * @author nbilyk
  */
-open class Framebuffer(
+class Framebuffer(
 		injector: Injector,
 		val width: Int = 0,
 		val height: Int = 0,
@@ -85,10 +85,9 @@ open class Framebuffer(
 		}
 	}
 
-
 	private var previousFrameBuffer: Framebuffer? = null
 
-	open fun begin() {
+	fun begin() {
 		glState.batch.flush(true)
 		previousFrameBuffer = currentFrameBuffer
 		currentFrameBuffer = this
@@ -96,7 +95,7 @@ open class Framebuffer(
 		gl.viewport(0, 0, width, height)
 	}
 
-	open fun end() {
+	fun end() {
 		glState.batch.flush(true)
 		val gl = gl
 		if (previousFrameBuffer == null) {
@@ -119,10 +118,6 @@ open class Framebuffer(
 		}
 		gl.deleteFramebuffer(framebufferHandle)
 	}
-
-	//	override fun rgbData(): RgbData {
-	//		throw UnsupportedOperationException()
-	//	}
 
 	override fun dispose() {
 		delete()

@@ -210,7 +210,7 @@ object AtlasRegionDataSerializer : To<AtlasRegionData>, From<AtlasRegionData> {
 		writer.string("name", name)
 		writer.bool("isRotated", isRotated)
 		writer.obj("bounds", bounds, IntRectangleSerializer)
-		if (splits != null) writer.floatArray("splits", splits!!)
+		if (splits != null) writer.floatArray("splits", splits)
 		writer.intArray("padding", padding)
 	}
 }

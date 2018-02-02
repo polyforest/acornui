@@ -188,7 +188,9 @@ open class ContainerImpl(
 
 	override fun draw() {
 		for (i in 0.._children.lastIndex) {
-			_children[i].render()
+			val child = _children[i]
+			if (child.visible)
+				child.render()
 		}
 	}
 

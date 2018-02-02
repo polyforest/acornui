@@ -103,6 +103,15 @@ fun <T> Reader.map(itemFactory: From<T>): HashMap<String, T>? {
 	return hashMap
 }
 
+fun <T> Reader.map(valueReader: (Reader)->T): HashMap<String, T>? {
+	val hashMap = HashMap<String, T>()
+	forEach {
+		propName, reader ->
+		hashMap[propName] = valueReader(reader)
+	}
+	return hashMap
+}
+
 fun Reader.boolArray(): BooleanArray? {
 	if (isNull) return null
 	val elements = elements()
@@ -256,6 +265,7 @@ fun Reader.doubleArray(name: String): DoubleArray? = get(name)?.doubleArray()
 fun Reader.charArray(name: String): CharArray? = get(name)?.charArray()
 fun <T> Reader.obj(name: String, factory: From<T>): T? = get(name)?.obj(factory)
 fun <T> Reader.map(name: String, itemFactory: From<T>): HashMap<String, T>? = get(name)?.map(itemFactory)
+fun <T> Reader.map(name: String, valueReader: (Reader) -> T): HashMap<String, T>? = get(name)?.map(valueReader)
 
 interface Writer {
 
@@ -477,7 +487,6 @@ interface From<out T> {
  */
 interface To<in T> {
 
-	// TODO: this can be removed once JS implements receivers as parameters.
 	fun write2(receiver: T, writer: Writer) = receiver.write(writer)
 
 	fun T.write(writer: Writer)

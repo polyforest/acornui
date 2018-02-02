@@ -145,7 +145,8 @@ class SpriteAnimation(owner: Owned) : ContainerImpl(owner) {
 
 	override fun draw() {
 		if (currentFrame >= startFrame && (currentFrame - startFrame) < frameClips.size) {
-			frameClips[currentFrame - startFrame].render()
+			val frameClip = frameClips[currentFrame - startFrame]
+			if (frameClip.visible) frameClip.render()
 		}
 	}
 
