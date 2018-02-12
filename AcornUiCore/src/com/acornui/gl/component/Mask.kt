@@ -174,10 +174,13 @@ inline fun UiComponent.scissorLocal(x: Float, y: Float, width: Float, height: Fl
 	val sY2 = tmp.y
 	tmp.free()
 
+	val batch = inject(GlState).batch
+	batch.flush(true)
 	val gl = inject(Gl20)
 	val window = inject(Window)
 	gl.enable(Gl20.SCISSOR_TEST)
 	gl.scissor(minOf(sX1, sX2), window.height - maxOf(sY1, sY2), MathUtils.abs(sX2 - sX1), MathUtils.abs(sY2 - sY1))
 	inner()
+	batch.flush(true)
 	gl.disable(Gl20.SCISSOR_TEST)
 }
