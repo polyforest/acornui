@@ -208,7 +208,12 @@ open class ActiveList<E>(initialCapacity: Int) : Clearable, MutableObservableLis
 	 * Force notifies a reset.
 	 */
 	fun dirty() {
-		_reset.dispatch()
+		if (updatesEnabled)
+			_reset.dispatch()
+	}
+
+	override fun toString(): String {
+		return wrapped.toString()
 	}
 
 	override fun dispose() {
