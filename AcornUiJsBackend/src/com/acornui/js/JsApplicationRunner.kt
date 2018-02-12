@@ -97,7 +97,6 @@ class JsApplicationRunnerImpl(
 		Log.info("Application#stop")
 		isRunning = false
 		window.cancelAnimationFrame(tickFrameId)
-		stage.deactivate()
 	}
 
 	companion object {

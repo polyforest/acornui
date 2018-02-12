@@ -138,7 +138,7 @@ open class LwjglApplication : ApplicationBase() {
 		launch {
 			awaitAll()
 			val injector = createInjector()
-			val stage = createStage(OwnedImpl(injector))
+			stage = createStage(OwnedImpl(injector))
 			val popUpManager = createPopUpManager(stage)
 			val scope = stage.createScope(
 					listOf(

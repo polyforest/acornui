@@ -20,6 +20,7 @@ import com.acornui.async.Deferred
 import com.acornui.async.async
 import com.acornui.async.awaitAll
 import com.acornui.async.launch
+import com.acornui.component.Stage
 import com.acornui.core.di.Bootstrap
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Injector
@@ -34,6 +35,7 @@ abstract class ApplicationBase : Disposable {
 
 	private val pendingTasks = HashMap<String, Pair<String, suspend () -> Unit>>()
 	private val bootstrap = Bootstrap()
+	protected lateinit var stage: Stage
 
 	protected fun <T : Any> set(key: DKey<T>, value: T) = bootstrap.set(key, value)
 
@@ -74,10 +76,12 @@ abstract class ApplicationBase : Disposable {
 	}
 
 	override fun dispose() {
-		Log.info("Application#dispose")
+		Log.info("Application disposing")
 		launch {
 			awaitAll()
 			bootstrap.dispose()
+			stage.dispose()
+			Log.info("Application disposed")
 		}
 	}
 }
