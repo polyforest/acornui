@@ -11,13 +11,15 @@ import com.acornui.core.mvc.invokeCommand
 import com.acornui.ecs.Entity
 import com.acornui.ecs.componentList
 import com.acornui.geom.CollisionInfo
+import com.acornui.geom.CollisionInfoRo
 import com.acornui.geom.Polygon2
 import com.acornui.math.Matrix3
 import com.acornui.math.Vector2
+import com.acornui.math.Vector2Ro
 
 class PhysicsController(
 		override val injector: Injector,
-		private val entities: List<Entity>
+		entities: List<Entity>
 ) : Updatable, Scoped, Disposable {
 
 	private val cmd = commander()
@@ -45,7 +47,6 @@ class PhysicsController(
 				checkCollision(pA, pB)
 			}
 		}
-
 	}
 
 	/**
@@ -134,19 +135,32 @@ class PhysicsController(
 	}
 }
 
+interface CollisionRo : Command {
+
+	val collisionInfo: CollisionInfoRo
+
+	val z: Float
+	val impactSpeed: Vector2Ro
+	val impactDirection: Vector2Ro
+	val impactStrength: Float
+
+	val entityA: Entity?
+	val entityB: Entity?
+
+	companion object : CommandType<CollisionRo>
+}
+
 class Collision(
-		val collisionInfo: CollisionInfo
-) : Command {
+		override val collisionInfo: CollisionInfo
+) : CollisionRo {
 
-	var z = 0f
-	val impactSpeed = Vector2()
-	val impactDirection = Vector2()
-	var impactStrength = 0f
+	override val type = CollisionRo
 
-	var entityA: Entity? = null
-	var entityB: Entity? = null
+	override var z = 0f
+	override val impactSpeed = Vector2()
+	override val impactDirection = Vector2()
+	override var impactStrength = 0f
 
-	override val type = Companion
-
-	companion object : CommandType<Collision>
+	override var entityA: Entity? = null
+	override var entityB: Entity? = null
 }

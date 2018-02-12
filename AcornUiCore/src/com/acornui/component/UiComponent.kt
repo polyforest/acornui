@@ -195,8 +195,10 @@ open class UiComponentImpl(
 	protected open fun onActivated() {}
 
 	final override fun deactivate() {
-		if (_isDisposed) throw IllegalStateException("Disposed")
-		if (!_isActive) throw IllegalStateException("Not active")
+		if (_isDisposed)
+			throw IllegalStateException("Disposed")
+		if (!_isActive)
+			throw IllegalStateException("Not active")
 		_isActive = false
 		onDeactivated()
 		_deactivated.dispatch(this)

@@ -11,15 +11,36 @@ fun Polygon2(vertices: List<Float>): Polygon2 {
 	return p
 }
 
-/**
- * A 2d polygon.
- */
-class Polygon2(initialCapacity: Int = 16) {
+interface Polygon2Ro {
 
 	/**
 	 * x, y, ...
 	 */
-	val vertices: MutableList<Float> = ArrayList(initialCapacity)
+	val vertices: List<Float>
+
+	val bounds: MinMaxRo
+
+	fun copy(): Polygon2
+
+	/**
+	 * Intersection test only works if both polygons are convex.
+	 * @param mTd Will be set to the minimum translation distance to resolve the collision.
+	 */
+	fun intersects(other: Polygon2Ro, mTd: Vector2? = null): Boolean
+
+	fun getContactInfo(other: Polygon2Ro, mTd: Vector2, collisionInfo: CollisionInfo)
+
+}
+
+/**
+ * A 2d polygon.
+ */
+class Polygon2(initialCapacity: Int = 16) : Polygon2Ro {
+
+	/**
+	 * x, y, ...
+	 */
+	override val vertices: MutableList<Float> = ArrayList(initialCapacity)
 
 	/**
 	 * Marks that the vertices have changed and cached properties such as [bounds] and [isConvex] need to revalidate
@@ -30,12 +51,12 @@ class Polygon2(initialCapacity: Int = 16) {
 		return this
 	}
 
-	fun copy(): Polygon2 {
+	override fun copy(): Polygon2 {
 		return Polygon2(vertices)
 	}
 
 	private var _bounds: MinMax? = null
-	val bounds: MinMax
+	override val bounds: MinMaxRo
 		get() {
 			if (_bounds == null) {
 				val b = MinMax()
@@ -51,7 +72,7 @@ class Polygon2(initialCapacity: Int = 16) {
 	 * Intersection test only works if both polygons are convex.
 	 * @param mTd Will be set to the minimum translation distance to resolve the collision.
 	 */
-	fun intersects(other: Polygon2, mTd: Vector2? = null): Boolean {
+	override fun intersects(other: Polygon2Ro, mTd: Vector2?): Boolean {
 		mTd?.clear()
 		if (!bounds.intersects(other.bounds)) return false
 		if (!sat(other.vertices, this.vertices, Float.MAX_VALUE, mTd)) {
@@ -69,7 +90,7 @@ class Polygon2(initialCapacity: Int = 16) {
 	/**
 	 * Adds an x, y pair to the vertices list. Must call [invalidate] before accessing calculated values.
 	 */
-	fun add(vertex: Vector3) {
+	fun add(vertex: Vector3Ro) {
 		vertices.add(vertex.x)
 		vertices.add(vertex.y)
 	}
@@ -77,7 +98,7 @@ class Polygon2(initialCapacity: Int = 16) {
 	/**
 	 * Adds an x, y pair to the vertices list. Must call [invalidate] before accessing calculated values.
 	 */
-	fun add(vertex: Vector2) {
+	fun add(vertex: Vector2Ro) {
 		vertices.add(vertex.x)
 		vertices.add(vertex.y)
 	}
@@ -99,7 +120,7 @@ class Polygon2(initialCapacity: Int = 16) {
 	/**
 	 * Left multiplies the vertex points by the given matrix.
 	 */
-	fun mul(mat: Matrix3): Polygon2 {
+	fun mul(mat: Matrix3Ro): Polygon2 {
 		val vals = mat.values
 		val m0 = vals[0]
 		val m1 = vals[1]
@@ -139,43 +160,14 @@ class Polygon2(initialCapacity: Int = 16) {
 		return this
 	}
 
-	fun getContactInfo(other: Polygon2, mTd: Vector2, collisionInfo: CollisionInfo) {
+	override fun getContactInfo(other: Polygon2Ro, mTd: Vector2, collisionInfo: CollisionInfo) {
 		mTd2.set(mTd).scl(-1f)
-		val nA = getSupportPoints(mTd2, supportA)
-		val nB = other.getSupportPoints(mTd, supportB)
+		val nA = getSupportPoints(vertices, mTd2, supportA)
+		val nB = getSupportPoints(other.vertices, mTd, supportB)
 		getContactPoints(supportA, nA, supportB, nB, collisionInfo)
 	}
 
-	private fun getSupportPoints(dir: Vector2, out: FloatArray): Int {
-		_assert(vertices.isNotEmpty())
-
-		var minD = Float.MAX_VALUE
-
-		for (i in 0..vertices.lastIndex step 2) {
-			val d = vertices[i] * dir.x + vertices[i + 1] * dir.y
-			if (d < minD) {
-				minD = d
-			}
-		}
-
-		var count = 0
-		val threshold = 1.0E-8f
-		val minD2 = minD + threshold
-		for (i in 0..vertices.lastIndex step 2) {
-			val d = vertices[i] * dir.x + vertices[i + 1] * dir.y
-			if (d <= minD2) {
-				out[count * 2] = vertices[i]
-				out[count * 2 + 1] = vertices[i + 1]
-				count++
-				if (count >= 2) return count
-			}
-		}
-
-		return count
-
-	}
-
-	fun getContactPoints(supportA: FloatArray, numA: Int, supportB: FloatArray, numB: Int, collisionInfo: CollisionInfo) {
+	private fun getContactPoints(supportA: FloatArray, numA: Int, supportB: FloatArray, numB: Int, collisionInfo: CollisionInfo) {
 		when (numA + numB) {
 			2 -> {
 				// An unlikely case; vertex to vertex.
@@ -279,9 +271,9 @@ class Polygon2(initialCapacity: Int = 16) {
 		 * @param mTd Will be set to the minimum translation distance to resolve the collision.
 		 */
 		private fun sat(pA: List<Float>, pB: List<Float>, shortestDistAbs: Float, mTd: Vector2?): Boolean {
+			@Suppress("NAME_SHADOWING")
 			var shortestDistAbs = shortestDistAbs
 			// Loop through all of the axis on the first polygon
-			val n = pA.size
 			for (i in 0..pA.lastIndex step 2) {
 				// Find the axis that we will project onto
 				getNormal(pA, i, vAxis)
@@ -331,6 +323,35 @@ class Polygon2(initialCapacity: Int = 16) {
 			out.nor()
 		}
 
+		private fun getSupportPoints(vertices: List<Float>, dir: Vector2, out: FloatArray): Int {
+			_assert(vertices.isNotEmpty())
+
+			var minD = Float.MAX_VALUE
+
+			for (i in 0..vertices.lastIndex step 2) {
+				val d = vertices[i] * dir.x + vertices[i + 1] * dir.y
+				if (d < minD) {
+					minD = d
+				}
+			}
+
+			var count = 0
+			val threshold = 1.0E-8f
+			val minD2 = minD + threshold
+			for (i in 0..vertices.lastIndex step 2) {
+				val d = vertices[i] * dir.x + vertices[i + 1] * dir.y
+				if (d <= minD2) {
+					out[count * 2] = vertices[i]
+					out[count * 2 + 1] = vertices[i + 1]
+					count++
+					if (count >= 2) return count
+				}
+			}
+
+			return count
+
+		}
+
 		//-----------------------------------------
 		// Serialization
 		//-----------------------------------------
@@ -362,15 +383,25 @@ fun basicPolygon(sides: Int = 3, radius: Float = 100f): Polygon2 {
 	return poly
 }
 
+interface CollisionInfoRo {
+	val contactA: Vector2Ro
+	val contactA2: Vector2Ro
+	val contactB: Vector2Ro
+	val contactB2: Vector2Ro
+	val numPoints: Int
+	val midA: Vector2Ro
+	val midB: Vector2Ro
+}
+
 data class CollisionInfo(
-		val contactA: Vector2 = Vector2(),
-		val contactA2: Vector2 = Vector2(),
-		val contactB: Vector2 = Vector2(),
-		val contactB2: Vector2 = Vector2(),
-		var numPoints: Int = 0
-) {
-	val midA: Vector2 = Vector2()
-	val midB: Vector2 = Vector2()
+		override val contactA: Vector2 = Vector2(),
+		override val contactA2: Vector2 = Vector2(),
+		override val contactB: Vector2 = Vector2(),
+		override val contactB2: Vector2 = Vector2(),
+		override var numPoints: Int = 0
+) : CollisionInfoRo {
+	override val midA: Vector2 = Vector2()
+	override val midB: Vector2 = Vector2()
 }
 
 private data class SortedPoint(var x: Float = 0f, var y: Float = 0f, var d: Float = 0f, var whichEdge: Int = -1) : Comparable<SortedPoint> {

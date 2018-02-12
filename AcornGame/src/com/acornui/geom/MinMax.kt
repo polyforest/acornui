@@ -1,11 +1,25 @@
 package com.acornui.geom
 
+interface MinMaxRo {
+
+	val xMin: Float
+	val xMax: Float
+	val yMin: Float
+	val yMax: Float
+	val width: Float
+	val height: Float
+	fun isEmpty(): Boolean
+	fun isNotEmpty(): Boolean
+	fun intersects(other: MinMaxRo): Boolean
+
+}
+
 data class MinMax(
-		var xMin: Float = Float.POSITIVE_INFINITY,
-		var xMax: Float = Float.NEGATIVE_INFINITY,
-		var yMin: Float = Float.POSITIVE_INFINITY,
-		var yMax: Float = Float.NEGATIVE_INFINITY
-) {
+		override var xMin: Float = Float.POSITIVE_INFINITY,
+		override var xMax: Float = Float.NEGATIVE_INFINITY,
+		override var yMin: Float = Float.POSITIVE_INFINITY,
+		override var yMax: Float = Float.NEGATIVE_INFINITY
+) : MinMaxRo {
 
 	fun inf() {
 		xMin = Float.POSITIVE_INFINITY
@@ -21,11 +35,11 @@ data class MinMax(
 		if (y > yMax) yMax = y
 	}
 
-	fun isEmpty(): Boolean {
+	override fun isEmpty(): Boolean {
 		return xMax <= xMin || yMax <= yMin
 	}
 
-	fun isNotEmpty(): Boolean = !isEmpty()
+	override fun isNotEmpty(): Boolean = !isEmpty()
 
 	fun scl(x: Float, y: Float) {
 		xMin *= x
@@ -41,20 +55,20 @@ data class MinMax(
 		yMax += bottom
 	}
 
-	val width: Float
+	override val width: Float
 		get() = xMax - xMin
 
-	val height: Float
+	override val height: Float
 		get() = yMax - yMin
 
-	fun set(other: MinMax) {
+	fun set(other: MinMaxRo) {
 		xMin = other.xMin
 		xMax = other.xMax
 		yMin = other.yMin
 		yMax = other.yMax
 	}
 
-	fun intersects(other: MinMax): Boolean {
+	override fun intersects(other: MinMaxRo): Boolean {
 		return (xMax >= other.xMin && yMax >= other.yMin && xMin <= other.xMax && yMin <= other.yMax)
 	}
 }
