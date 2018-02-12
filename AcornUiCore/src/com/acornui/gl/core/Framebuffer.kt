@@ -42,6 +42,7 @@ class Framebuffer(
 	private val stencilbufferHandle: GlRenderbufferRef?
 
 	init {
+		if (width <= 0 || height <= 0) throw IllegalArgumentException("width or height cannot be less than zero.")
 		texture.refInc()
 		framebufferHandle = gl.createFramebuffer()
 		gl.bindFramebuffer(Gl20.FRAMEBUFFER, framebufferHandle)

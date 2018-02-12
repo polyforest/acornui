@@ -31,8 +31,7 @@ import com.acornui.math.Vector3
 class FullScreenFramebuffer(override val injector: Injector, private val hasDepth: Boolean = false, private val hasStencil: Boolean = false) : Scoped {
 
 	private val window = inject(Window)
-	private var frameBuffer = Framebuffer(injector, window.width.toInt(), window.height.toInt(), hasDepth, hasStencil)
-
+	private var frameBuffer = createFrameBuffer()
 
 	init {
 		val windowResizedHandler = {
@@ -42,23 +41,28 @@ class FullScreenFramebuffer(override val injector: Injector, private val hasDept
 		window.sizeChanged.add(windowResizedHandler)
 	}
 
+	private fun createFrameBuffer(): Framebuffer? {
+		if (window.width <= 0f || window.height <= 0f) return null
+		return Framebuffer(injector, window.width.toInt(), window.height.toInt(), hasDepth, hasStencil)
+	}
+
 	private fun resize() {
-		frameBuffer.dispose()
-		frameBuffer = Framebuffer(injector, window.width.toInt(), window.height.toInt(), hasDepth, hasStencil)
+		frameBuffer?.dispose()
+		frameBuffer = createFrameBuffer()
 	}
 
 	/**
 	 * Begins drawing to the frame buffer.
 	 */
 	fun begin() {
-		frameBuffer.begin()
+		frameBuffer?.begin()
 	}
 
 	/**
 	 * Ends drawing to the frame buffer.
 	 */
 	fun end() {
-		frameBuffer.end()
+		frameBuffer?.end()
 	}
 
 	private val glState = inject(GlState)
@@ -72,6 +76,7 @@ class FullScreenFramebuffer(override val injector: Injector, private val hasDept
 	 * Renders the frame buffer to the screen.
 	 */
 	fun render() {
+		val frameBuffer = frameBuffer ?: return
 		glState.setTexture(frameBuffer.texture)
 		glState.viewProjection(Matrix4.IDENTITY.values)
 		glState.model(Matrix4.IDENTITY.values)
@@ -83,6 +88,5 @@ class FullScreenFramebuffer(override val injector: Injector, private val hasDept
 		batch.putVertex(bL)
 		batch.pushQuadIndices()
 	}
-
 
 }
