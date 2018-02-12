@@ -36,3 +36,12 @@ inline fun <K, V, K2, V2> Map<K, V>.mapTo(other: MutableMap<K2, V2> = HashMap(),
 	}
 	return other
 }
+
+fun <K, V> Map<K, V?>.toNotNull(): MutableMap<K, V> {
+	val newMap = HashMap<K, V>()
+	for ((k, v) in entries) {
+		if (v != null)
+			newMap[k] = v
+	}
+	return newMap
+}

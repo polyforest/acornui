@@ -142,7 +142,7 @@ open class GlScrollArea(
 		if (!(requireHScrolling || requireVScrolling)) {
 			// Size target without scrolling.
 			contents.setSize(explicitWidth, explicitHeight)
-			println("Contents Size ${contents.bounds}")
+//			println("Contents Size ${contents.bounds}")
 		}
 		var needsHScrollBar = allowHScrolling && (requireHScrolling || contents.width > explicitWidth!!)
 		var needsVScrollBar = allowVScrolling && (requireVScrolling || contents.height > explicitHeight!!)

@@ -48,7 +48,7 @@ internal class LimitedCallback(
 /**
  *
  */
-internal fun Scoped.limitedCallback(duration: Float, callback: () -> Unit): CallbackWrapper {
+fun Scoped.limitedCallback(duration: Float, callback: () -> Unit): CallbackWrapper {
 	return LimitedCallback(inject(TimeDriver), duration, callback)
 }
 

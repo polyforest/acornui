@@ -54,7 +54,7 @@ class WebGlTextureLoader(
 			}
 			jsTexture.image.onerror = {
 				msg, url, lineNo, columnNo, error ->
-				fail(Exception(msg))
+				fail(Exception(msg as String))
 			}
 		}
 	}

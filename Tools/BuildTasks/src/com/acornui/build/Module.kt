@@ -141,7 +141,7 @@ abstract class Module(
 				metaInfo = true
 				if (libraryFiles.isNotEmpty())
 					libraries = libraryFiles.joinToString(";")
-				freeArgs.addAll(sourceFolders.toStringList())
+				freeArgs = sourceFolders.toStringList()
 			}
 			println("$name Compiling JS")
 			val exitCode = K2JSCompiler().exec(BasicMessageCollector(verbose = verbose), Services.EMPTY, compilerArgs)
@@ -170,7 +170,7 @@ abstract class Module(
 				if (libraryFiles.isNotEmpty())
 					classpath = libraryFiles.joinToString(";")
 				includeRuntime = includeKotlinJvmRuntime
-				freeArgs.addAll(sourceFolders.toStringList())
+				freeArgs = sourceFolders.toStringList()
 			}
 			println("$name Compiling JVM")
 			val exitCode = K2JVMCompiler().exec(BasicMessageCollector(verbose = verbose), Services.EMPTY, compilerArgs)

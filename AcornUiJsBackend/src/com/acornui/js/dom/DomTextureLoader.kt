@@ -52,7 +52,7 @@ class DomTextureLoader(override val path: String, override val estimatedBytesTot
 				}
 				jsTexture.image.onerror = {
 					msg, url, lineNo, columnNo, error ->
-					fail(Exception(msg))
+					fail(Exception(msg as String))
 				}
 				jsTexture.arrayBuffer(arrayBuffer)
 			}
