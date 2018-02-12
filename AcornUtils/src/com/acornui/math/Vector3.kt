@@ -18,11 +18,9 @@
 
 package com.acornui.math
 
-import com.acornui.collection.ClearableObjectPool
 import com.acornui.collection.Clearable
-import com.acornui.serialization.Reader
-import com.acornui.serialization.Writer
-import com.acornui.serialization.floatArray
+import com.acornui.collection.ClearableObjectPool
+import com.acornui.serialization.*
 
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
@@ -715,8 +713,20 @@ class Vector3 (
 
 }
 
-fun Writer.vector3(v: Vector3Ro) {
-	floatArray(floatArrayOf(v.x, v.y, v.z))
+object Vector3Serializer : From<Vector3?>, To<Vector3Ro?> {
+
+	override fun read(reader: Reader): Vector3? {
+		return reader.vector3()
+	}
+
+	override fun Vector3Ro?.write(writer: Writer) {
+		writer.vector3(this)
+	}
+}
+
+fun Writer.vector3(v: Vector3Ro?) {
+	if (v == null) writeNull()
+	else floatArray(floatArrayOf(v.x, v.y, v.z))
 }
 
 fun Writer.vector3(name: String, v: Vector3Ro) = property(name).vector3(v)

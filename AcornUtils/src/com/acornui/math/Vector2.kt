@@ -20,9 +20,7 @@ package com.acornui.math
 
 import com.acornui.collection.ClearableObjectPool
 import com.acornui.collection.Clearable
-import com.acornui.serialization.Reader
-import com.acornui.serialization.Writer
-import com.acornui.serialization.floatArray
+import com.acornui.serialization.*
 
 /**
  * A read-only view into a Vector2
@@ -541,8 +539,20 @@ class Vector2(
 
 }
 
-fun Writer.vector2(v: Vector2Ro) {
-	floatArray(floatArrayOf(v.x, v.y))
+object Vector2Serializer : From<Vector2?>, To<Vector2Ro?> {
+
+	override fun read(reader: Reader): Vector2? {
+		return reader.vector2()
+	}
+
+	override fun Vector2Ro?.write(writer: Writer) {
+		writer.vector2(this)
+	}
+}
+
+fun Writer.vector2(v: Vector2Ro?) {
+	if (v == null) writeNull()
+	else floatArray(floatArrayOf(v.x, v.y))
 }
 
 fun Writer.vector2(name: String, v: Vector2Ro) = property(name).vector2(v)
