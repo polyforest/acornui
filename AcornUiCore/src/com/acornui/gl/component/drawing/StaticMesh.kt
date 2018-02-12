@@ -72,7 +72,7 @@ open class StaticMeshComponent(
 		}
 
 	init {
-		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.CONCATENATED_TRANSFORM, {
+		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.CONCATENATED_TRANSFORM or ValidationFlags.LAYOUT, {
 			if (mesh != null) {
 				globalBoundingBox.set(mesh!!.boundingBox).mul(concatenatedTransform)
 			} else {
