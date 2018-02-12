@@ -230,7 +230,7 @@ open class ContainerImpl(
 	override fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo?): MutableList<UiComponentRo> {
 		if (!visible || (onlyInteractive && inheritedInteractivityMode == InteractivityMode.NONE)) return out
 		val ray = rayCache ?: camera.getPickRay(canvasX, canvasY, 0f, 0f, window.width, window.height, rayTmp)
-		if (intersectsGlobalRay(ray)) {
+		if (interactivityMode == InteractivityMode.ALWAYS || intersectsGlobalRay(ray)) {
 			if ((returnAll || out.isEmpty())) {
 				iterateChildrenReversed { child: UiComponentRo ->
 					val childRayCache = if (child.camera === camera) ray else null

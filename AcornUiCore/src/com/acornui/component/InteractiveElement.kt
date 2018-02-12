@@ -105,7 +105,12 @@ enum class InteractivityMode {
 	/**
 	 * This InteractiveElement will NOT be interactive, but its children will be.
 	 */
-	CHILDREN
+	CHILDREN,
+
+	/**
+	 * This InteractiveElement will always pass boundary testing.
+	 */
+	ALWAYS
 }
 
 

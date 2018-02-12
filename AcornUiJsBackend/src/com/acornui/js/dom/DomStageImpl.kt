@@ -25,8 +25,6 @@ import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.Focusable
 import com.acornui.js.dom.component.DomContainer
 import com.acornui.math.Bounds
-import com.acornui.math.RayRo
-import com.acornui.math.Vector3
 import org.w3c.dom.HTMLElement
 
 /**
@@ -52,6 +50,7 @@ open class DomStageImpl(owner: Owned, root: HTMLElement) : Stage, ElementContain
 	override var highlight: UiComponent? = null // Do nothing to highlight when the stage has focus.
 
 	init {
+		interactivityMode = InteractivityMode.ALWAYS
 		styleTags.add(Stage)
 		interactivity.init(this)
 		focus.init(this)
@@ -81,15 +80,6 @@ open class DomStageImpl(owner: Owned, root: HTMLElement) : Stage, ElementContain
 			_elements[i].setSize(w, h)
 		}
 		out.set(w, h)
-	}
-
-	/**
-	 * The Stage should always intersect, this is so that it isn't extra effort to handle events such as
-	 * dragging off the stage.
-	 */
-	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
-		//validate() // TODO: Why am I doing a validate here?
-		return true
 	}
 
 	override fun onDeactivated() {

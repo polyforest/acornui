@@ -25,8 +25,6 @@ import com.acornui.core.focus.Focusable
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.math.Bounds
-import com.acornui.math.RayRo
-import com.acornui.math.Vector3
 
 /**
  * @author nbilyk
@@ -52,6 +50,7 @@ open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(
 	override var highlight: UiComponent? = null // The stage is never highlighted, do nothing.
 
 	init {
+		interactivityMode = InteractivityMode.ALWAYS
 		styleTags.add(Stage)
 		interactivity.init(this)
 		focus.init(this)
@@ -80,11 +79,6 @@ open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(
 			_elements[i].setSize(w, h)
 		}
 		out.set(w, h)
-	}
-
-	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
-		validate()
-		return true
 	}
 
 	override fun render() {
