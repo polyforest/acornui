@@ -37,8 +37,8 @@ class MouseUpOutside(private val target: UiComponentRo) : StoppableSignalImpl<Mo
 	private var downButtons = BooleanArray(WhichButton.values().size)
 	private var downCount = 0
 
-	private val mouseDownHandler: (MouseInteraction) -> Unit = {
-		event: MouseInteraction ->
+	private val mouseDownHandler = {
+		event: MouseInteractionRo ->
 		if (downCount == 0) {
 			// When the target interactive element has been given a touch down, listen for the next touch up,
 			// no matter where it is.
@@ -52,12 +52,12 @@ class MouseUpOutside(private val target: UiComponentRo) : StoppableSignalImpl<Mo
 	}
 
 	// TODO: Workaround for https://youtrack.jetbrains.com/issue/KT-10350
-	private val stageMouseUpHandler: (MouseInteraction) -> Unit = {
-		event: MouseInteraction ->
+	private val stageMouseUpHandler = {
+		event: MouseInteractionRo ->
 		_rawTouchUpHandler(event)
 	}
 
-	private fun _rawTouchUpHandler(event: MouseInteraction) {
+	private fun _rawTouchUpHandler(event: MouseInteractionRo) {
 		if (downButtons[event.button.ordinal]) {
 			downButtons[event.button.ordinal] = false
 			downCount--

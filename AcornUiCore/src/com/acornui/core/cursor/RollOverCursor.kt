@@ -21,6 +21,7 @@ import com.acornui.component.createOrReuseAttachment
 import com.acornui.core.Disposable
 import com.acornui.core.di.inject
 import com.acornui.core.input.interaction.MouseInteraction
+import com.acornui.core.input.interaction.MouseInteractionRo
 import com.acornui.core.input.interaction.rollOut
 import com.acornui.core.input.interaction.rollOver
 
@@ -37,7 +38,7 @@ class RollOverCursor(
 	private var cursorRef: CursorReference? = null
 
 	private val rollOverHandler = {
-		event: MouseInteraction ->
+		event: MouseInteractionRo ->
 //		_assert(cursorRef == null)
 		// TODO: cursorRef shouldn't be set here...
 		cursorRef?.remove()
@@ -45,7 +46,7 @@ class RollOverCursor(
 	}
 
 	private val rollOutHandler = {
-		event: MouseInteraction ->
+		event: MouseInteractionRo ->
 		cursorRef?.remove()
 		cursorRef = null
 	}

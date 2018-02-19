@@ -24,15 +24,16 @@ import com.acornui.component.ancestry
 import com.acornui.component.getChildUnderPoint
 import com.acornui.core.input.*
 import com.acornui.core.input.interaction.*
-import com.acornui.core.input.interaction.Touch
 import com.acornui.js.dom.component.DomComponent
-import com.acornui.js.html.*
+import com.acornui.js.html.ClipboardEvent
+import com.acornui.js.html.TouchEvent
+import com.acornui.js.html.findComponentFromDom
+import com.acornui.js.html.owns
 import com.acornui.logging.Log
 import com.acornui.signal.StoppableSignalImpl
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.Node
 import org.w3c.dom.events.*
-import kotlin.browser.window
 
 /**
  * An implementation of InteractivityManager that uses native browser events.
@@ -55,7 +56,7 @@ open class DomInteractivityManager : InteractivityManager {
 	private val clickEvent = ClickInteraction()
 	private val touchEvent = TouchInteraction()
 	private val wheelEvent = WheelInteraction()
-	private val clipboardEvent = ClipboardInteraction()
+//	private val clipboardEvent = ClipboardInteraction()
 
 	private val resetKeyEventHandler = {
 		e: Event ->
@@ -89,7 +90,7 @@ open class DomInteractivityManager : InteractivityManager {
 
 	private val resetClipboardEventHandler = {
 		e: Event ->
-		clipboardEvent.clear()
+//		clipboardEvent.clear()
 		Unit
 	}
 
@@ -204,67 +205,67 @@ open class DomInteractivityManager : InteractivityManager {
 	}
 
 	private val nativeClipboardHandler: (Event) -> dynamic = {
-		clipboardEvent.set(it as ClipboardEvent)
+//		clipboardEvent.set(it as ClipboardEvent)
 		Unit
 	}
 
 
 	override fun <T : InteractionEventRo> getSignal(host: UiComponentRo, type: InteractionType<T>, isCapture: Boolean): StoppableSignalImpl<T> {
 		return when (type) {
-			KeyInteraction.KEY_DOWN -> {
+			KeyInteractionRo.KEY_DOWN -> {
 				NativeSignal(host, "keydown", isCapture, type, keyEvent, nativeKeyHandler)
 			}
-			KeyInteraction.KEY_UP -> {
+			KeyInteractionRo.KEY_UP -> {
 				NativeSignal(host, "keyup", isCapture, type, keyEvent, nativeKeyHandler)
 			}
-			MouseInteraction.MOUSE_OVER -> {
+			MouseInteractionRo.MOUSE_OVER -> {
 				NativeSignal(host, "mouseover", isCapture, type, mouseEvent, nativeMouseHandler)
 			}
-			MouseInteraction.MOUSE_OUT -> {
+			MouseInteractionRo.MOUSE_OUT -> {
 				NativeSignal(host, "mouseout", isCapture, type, mouseEvent, nativeMouseHandler)
 			}
-			MouseInteraction.MOUSE_MOVE -> {
+			MouseInteractionRo.MOUSE_MOVE -> {
 				NativeSignal(host, "mousemove", isCapture, type, mouseEvent, nativeMouseHandler)
 			}
-			MouseInteraction.MOUSE_UP -> {
+			MouseInteractionRo.MOUSE_UP -> {
 				NativeSignal(host, "mouseup", isCapture, type, mouseEvent, nativeMouseHandler)
 			}
-			MouseInteraction.MOUSE_DOWN -> {
+			MouseInteractionRo.MOUSE_DOWN -> {
 				NativeSignal(host, "mousedown", isCapture, type, mouseEvent, nativeMouseHandler)
 			}
-			WheelInteraction.MOUSE_WHEEL -> {
+			WheelInteractionRo.MOUSE_WHEEL -> {
 				NativeSignal(host, "wheel", isCapture, type, wheelEvent, nativeWheelHandler)
 			}
-			ClickInteraction.LEFT_CLICK -> {
+			ClickInteractionRo.LEFT_CLICK -> {
 				NativeSignal(host, "click", isCapture, type, clickEvent, nativeClickHandler)
 			}
-			TouchInteraction.TOUCH_START -> {
+			TouchInteractionRo.TOUCH_START -> {
 				NativeSignal(host, "touchstart", isCapture, type, touchEvent, nativeTouchHandler)
 			}
-			TouchInteraction.TOUCH_END -> {
+			TouchInteractionRo.TOUCH_END -> {
 				NativeSignal(host, "touchend", isCapture, type, touchEvent, nativeTouchHandler)
 			}
-			TouchInteraction.TOUCH_MOVE -> {
+			TouchInteractionRo.TOUCH_MOVE -> {
 				NativeSignal(host, "touchmove", isCapture, type, touchEvent, nativeTouchHandler)
 			}
-			TouchInteraction.TOUCH_CANCEL -> {
+			TouchInteractionRo.TOUCH_CANCEL -> {
 				NativeSignal(host, "touchcancel", isCapture, type, touchEvent, nativeTouchHandler)
 			}
-			TouchInteraction.TOUCH_ENTER -> {
+			TouchInteractionRo.TOUCH_ENTER -> {
 				NativeSignal(host, "touchenter", isCapture, type, touchEvent, nativeTouchHandler)
 			}
-			TouchInteraction.TOUCH_LEAVE -> {
+			TouchInteractionRo.TOUCH_LEAVE -> {
 				NativeSignal(host, "touchleave", isCapture, type, touchEvent, nativeTouchHandler)
 			}
-			ClipboardInteraction.COPY -> {
-				NativeSignal(host, "copy", isCapture, type, clipboardEvent, nativeClipboardHandler)
-			}
-			ClipboardInteraction.CUT -> {
-				NativeSignal(host, "cut", isCapture, type, clipboardEvent, nativeClipboardHandler)
-			}
-			ClipboardInteraction.PASTE -> {
-				NativeSignal(host, "paste", isCapture, type, clipboardEvent, nativeClipboardHandler)
-			}
+//			ClipboardInteractionRo.COPY -> {
+//				NativeSignal(host, "copy", isCapture, type, clipboardEvent, nativeClipboardHandler)
+//			}
+//			ClipboardInteractionRo.CUT -> {
+//				NativeSignal(host, "cut", isCapture, type, clipboardEvent, nativeClipboardHandler)
+//			}
+//			ClipboardInteractionRo.PASTE -> {
+//				NativeSignal(host, "paste", isCapture, type, clipboardEvent, nativeClipboardHandler)
+//			}
 			else -> {
 				Log.warn("Could not find a signal for the type $type")
 				StoppableSignalImpl()
@@ -322,10 +323,10 @@ open class DomInteractivityManager : InteractivityManager {
 		}
 	}
 
-	private fun ClipboardInteraction.set(jsEvent: ClipboardEvent) {
-		target = findComponentFromDom(jsEvent.target, root)
-		dataTransfer = DomDataTransfer(jsEvent.clipboardData ?: window.clipboardData)
-	}
+//	private fun ClipboardInteraction.set(jsEvent: ClipboardEvent) {
+//		target = findComponentFromDom(jsEvent.target, root)
+//		dataTransfer = DomDataTransfer(jsEvent.clipboardData ?: window.clipboardData)
+//	}
 
 	private fun Touch.set(jsTouch: com.acornui.js.html.Touch) {
 		target = findComponentFromDom(jsTouch.target, root)

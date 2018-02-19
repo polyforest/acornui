@@ -74,6 +74,7 @@ import com.acornui.jvm.graphics.GlfwWindowImpl
 import com.acornui.jvm.graphics.JvmGl20Debug
 import com.acornui.jvm.graphics.JvmTextureLoader
 import com.acornui.jvm.graphics.LwjglGl20
+import com.acornui.jvm.input.JvmClipboardDispatcher
 import com.acornui.jvm.input.JvmMouseInput
 import com.acornui.jvm.input.LwjglKeyInput
 import com.acornui.jvm.io.JvmBufferFactory
@@ -340,6 +341,7 @@ open class LwjglApplication : ApplicationBase() {
 	protected open fun initializeSpecialInteractivity(owner: Owned) {
 		JvmClickDispatcher(owner.injector)
 		FakeFocusMouse(owner.injector)
+		JvmClipboardDispatcher(owner.injector)
 	}
 
 	open suspend fun run(injector: Injector) {

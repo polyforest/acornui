@@ -53,7 +53,6 @@ import com.acornui.math.Matrix4Ro
 import com.acornui.math.Vector3
 import com.acornui.math.ceil
 import com.acornui.string.isBreaking
-import com.acornui.string.toRadix
 
 /**
  * A TextField implementation for the OpenGL back-ends.
@@ -162,11 +161,6 @@ open class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 
 	private fun fontRegisteredHandler(registeredFont: BitmapFont) {
 		invalidateStyles()
-		println("Font registered")
-		parentWalk {
-			println("Invalid flags $it ${(it.invalidFlags and (ValidationFlags.STYLES or ValidationFlags.LAYOUT)).toRadix(2)}")
-			true
-		}
 	}
 
 	protected open fun updateSelection() {

@@ -76,19 +76,19 @@ open class Button(
 	override var highlight: UiComponent? by createSlot()
 
 	private val rollOverHandler = {
-		event: MouseInteraction ->
+		event: MouseInteractionRo ->
 		_mouseIsOver = true
 		refreshState()
 	}
 
 	private val rollOutHandler = {
-		event: MouseInteraction ->
+		event: MouseInteractionRo ->
 		_mouseIsOver = false
 		refreshState()
 	}
 
 	private val mouseDownHandler = {
-		event: MouseInteraction ->
+		event: MouseInteractionRo ->
 		if (!_mouseIsDown && event.button == WhichButton.LEFT) {
 			_mouseIsDown = true
 			stage.mouseUp().add(stageMouseUpHandler, true)
@@ -106,7 +106,7 @@ open class Button(
 	}
 
 	private val stageMouseUpHandler = {
-		event: MouseInteraction ->
+		event: MouseInteractionRo ->
 		if (event.button == WhichButton.LEFT) {
 			_mouseIsDown = false
 			refreshState()

@@ -239,10 +239,10 @@ class Directory(
 	}
 
 	override fun compareTo(other: Directory): Int {
-		if (depth == other.depth) {
-			return path.compareTo(other.path)
+		return if (depth == other.depth) {
+			path.compareTo(other.path)
 		} else {
-			return depth.compareTo(other.depth)
+			depth.compareTo(other.depth)
 		}
 	}
 

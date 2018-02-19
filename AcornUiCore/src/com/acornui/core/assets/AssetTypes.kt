@@ -31,6 +31,9 @@ data class AssetType<T>(val name: String)
 
 object AssetTypes {
 
+	/**
+	 * Loads as UTF-8 text.
+	 */
 	val TEXT: AssetType<String> = AssetType("text")
 
 	// Currently only available on the JS backend.

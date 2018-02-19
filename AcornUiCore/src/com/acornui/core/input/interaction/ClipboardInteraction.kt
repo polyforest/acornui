@@ -1,36 +1,33 @@
 package com.acornui.core.input.interaction
 
-import com.acornui.collection.find2
 import com.acornui.core.graphics.Texture
-import com.acornui.core.input.InteractionEventBase
 import com.acornui.core.input.InteractionEventRo
 import com.acornui.core.input.InteractionType
-import kotlin.properties.Delegates
+import com.acornui.io.ReadBuffer
 
 interface ClipboardInteractionRo : InteractionEventRo {
 
-	val dataTransfer: DataTransferRead
+	fun getItemByType(type: ClipboardItemType): DataTransferItem?
 
 	companion object {
-		val COPY = InteractionType<ClipboardInteraction>("copy")
-		val CUT = InteractionType<ClipboardInteraction>("cut")
-		val PASTE = InteractionType<ClipboardInteraction>("paste")
+		val COPY = InteractionType<ClipboardInteractionRo>("copy")
+		val CUT = InteractionType<ClipboardInteractionRo>("cut")
+		val PASTE = InteractionType<ClipboardInteractionRo>("paste")
 	}
 }
 
-class ClipboardInteraction : InteractionEventBase(), ClipboardInteractionRo {
+enum class ClipboardItemType {
 
-	override var dataTransfer: DataTransferRead by Delegates.notNull()
+	PLAIN_TEXT,
 
-}
+	HTML,
 
-interface DataTransferRead {
+	URI_LIST,
 
-	val items: List<DataTransferItem>
+	TEXTURE,
 
-	fun getItemByType(type: String): DataTransferItem? {
-		return items.find2 { it.type == type }
-	}
+	FILE_LIST
+
 }
 
 //fun addItem(data: String, type: String): DataTransferItem?
@@ -40,18 +37,21 @@ interface DataTransferRead {
 
 interface DataTransferItem {
 
-	val kind: String
-	val type: String
+	val humanName: String
+
+	val mimeType: String
 
 	/**
-	 * Retrieves the data transfer as plain text, passing it to the [callback] argument when ready.
+	 * Retrieves the data transfer as plain UTF-8 text.
 	 */
-	fun getAsString(callback: (String) -> Unit)
+	suspend fun getAsString(): String?
 
 	/**
-	 * Retrieves the data transfer as a Texture, passing it to the [callback] argument when ready.
+	 * Retrieves the data transfer as a Texture.
 	 */
-	fun getAsTexture(callback: (Texture) -> Unit)
+	suspend fun getAsTexture(): Texture?
+
+	suspend fun getAsBlob(): ReadBuffer<Byte>?
 
 //	fun getAsBlob(callback: (ByteArray) -> Unit)
 

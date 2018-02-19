@@ -386,7 +386,7 @@ class DataGrid<E>(
 		}
 	}
 
-	private fun keyDownHandler(event: KeyInteraction) {
+	private fun keyDownHandler(event: KeyInteractionRo) {
 		if (event.defaultPrevented()) return
 
 		if (editorCell != null) {

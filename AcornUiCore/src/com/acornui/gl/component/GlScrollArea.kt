@@ -21,6 +21,7 @@ import com.acornui.component.scroll.*
 import com.acornui.core.di.Owned
 import com.acornui.core.floor
 import com.acornui.core.input.interaction.WheelInteraction
+import com.acornui.core.input.interaction.WheelInteractionRo
 import com.acornui.core.input.wheel
 import com.acornui.math.Bounds
 
@@ -55,7 +56,7 @@ open class GlScrollArea(
 	override var vScrollPolicy: ScrollPolicy by validationProp(ScrollPolicy.AUTO, ValidationFlags.LAYOUT)
 
 	private val wheelHandler = {
-		event: WheelInteraction ->
+		event: WheelInteractionRo ->
 		vScrollModel.value += event.deltaY
 		hScrollModel.value += event.deltaX
 	}

@@ -25,10 +25,7 @@ import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
-import com.acornui.core.input.interaction.DragInteraction
-import com.acornui.core.input.interaction.MouseInteraction
-import com.acornui.core.input.interaction.drag
-import com.acornui.core.input.interaction.dragAttachment
+import com.acornui.core.input.interaction.*
 import com.acornui.core.input.mouseDown
 import com.acornui.core.input.mouseOver
 import com.acornui.core.tween.driveTween
@@ -108,15 +105,15 @@ abstract class ScrollBarBase(owner: Owned) : ContainerImpl(owner) {
 		driveTween(thumb.tweenAlpha(style.alphaDuration, Easing.pow2Out, style.inactiveAlpha, 0.5f))
 	}
 
-	private fun decrementPressHandler(event: MouseInteraction) {
+	private fun decrementPressHandler(event: MouseInteractionRo) {
 		stepDec()
 	}
 
-	private fun incrementPressHandler(event: MouseInteraction) {
+	private fun incrementPressHandler(event: MouseInteractionRo) {
 		stepInc()
 	}
 
-	private fun trackPressHandler(event: MouseInteraction) {
+	private fun trackPressHandler(event: MouseInteractionRo) {
 		event.handled = true
 		event.preventDefault() // Prevent dom selection
 		mousePosition(positionTmp)

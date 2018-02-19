@@ -33,6 +33,7 @@ import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.focusFirst
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.KeyInteraction
+import com.acornui.core.input.interaction.KeyInteractionRo
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.keyDown
 import com.acornui.core.tween.Tween
@@ -226,7 +227,7 @@ class PopUpManagerImpl(private val root: UiComponent) : LayoutContainerImpl<PopU
 	}
 
 	private val rootKeyDownHandler = {
-		event: KeyInteraction ->
+		event: KeyInteractionRo ->
 		if (_currentPopUps.isNotEmpty()) {
 			if (!event.handled && event.keyCode == Ascii.ESCAPE) {
 				event.handled = true

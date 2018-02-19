@@ -45,7 +45,7 @@ class JsTextLoader(
 	override val secondsTotal: Float
 		get() = if (request.secondsTotal <= 0f) estimatedBytesTotal * Bandwidth.downBpsInv else request.secondsTotal
 
-	suspend override fun await(): String = request.await()
+	override suspend fun await(): String = request.await()
 
 	override fun cancel() = request.cancel()
 }

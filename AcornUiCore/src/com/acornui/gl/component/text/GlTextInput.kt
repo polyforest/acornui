@@ -1,5 +1,6 @@
 package com.acornui.gl.component.text
 
+import com.acornui.async.launch
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.component.layout.setSize
@@ -15,7 +16,8 @@ import com.acornui.core.di.inject
 import com.acornui.core.focus.blurred
 import com.acornui.core.focus.focused
 import com.acornui.core.input.*
-import com.acornui.core.input.interaction.KeyInteraction
+import com.acornui.core.input.interaction.ClipboardItemType
+import com.acornui.core.input.interaction.KeyInteractionRo
 import com.acornui.core.repeat2
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionRange
@@ -246,7 +248,7 @@ open class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 		keyDown().add(this::scrollToSelected)
 	}
 
-	private fun scrollToSelected(event: KeyInteraction) {
+	private fun scrollToSelected(event: KeyInteractionRo) {
 		val sel = firstSelection ?: return
 		val line = contents.getLineAt(minOf(contents.size - 1, sel.endIndex)) ?: return
 		rect.set(line.x, line.y, line.width, line.height)
@@ -419,6 +421,14 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			}
 		}
 
+		host.clipboardPaste().add {
+			launch {
+				val str = it.getItemByType(ClipboardItemType.PLAIN_TEXT)?.getAsString()
+				if (str != null)
+					replaceSelection(str)
+			}
+		}
+
 		host.keyDown().add(this::keyDownHandler)
 		host.touchStart().add { column = -1 }
 		host.mouseDown().add { column = -1 }
@@ -433,7 +443,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	private var column = -1
 
-	private fun keyDownHandler(event: KeyInteraction) {
+	private fun keyDownHandler(event: KeyInteractionRo) {
 		if (event.keyCode != Ascii.UP && event.keyCode != Ascii.DOWN) column = -1
 
 		when (event.keyCode) {

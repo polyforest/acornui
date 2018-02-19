@@ -2,11 +2,14 @@ package com.acornui.component
 
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.algorithm.BasicLayoutData
-import com.acornui.component.style.*
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleTag
+import com.acornui.component.style.StyleType
+import com.acornui.component.style.styleTag
 import com.acornui.component.text.textInput
 import com.acornui.core.di.Owned
 import com.acornui.core.input.Ascii
-import com.acornui.core.input.interaction.KeyInteraction
+import com.acornui.core.input.interaction.KeyInteractionRo
 import com.acornui.core.input.interaction.enableDownRepeat
 import com.acornui.core.input.keyDown
 import com.acornui.core.input.mouseDown
@@ -105,7 +108,7 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	private val cancel: Cancel = Cancel()
 
 	private val keyDownHandler = {
-		e: KeyInteraction ->
+		e: KeyInteractionRo ->
 		if (e.keyCode == Ascii.UP) {
 			userChange(value + step)
 		} else if (e.keyCode == Ascii.DOWN) {

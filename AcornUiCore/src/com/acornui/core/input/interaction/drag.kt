@@ -115,7 +115,7 @@ class DragAttachment(
 		}
 	}
 
-	private fun stageMouseMoveHandler(event: MouseInteraction) {
+	private fun stageMouseMoveHandler(event: MouseInteractionRo) {
 		event.handled = true
 		event.preventDefault()
 	}
@@ -124,7 +124,7 @@ class DragAttachment(
 	// Mouse UX
 	//--------------------------------------------------------------
 
-	private fun mouseDownHandler(event: MouseInteraction) {
+	private fun mouseDownHandler(event: MouseInteractionRo) {
 		if (!watchingMouse && !watchingTouch && allowMouseStart(event)) {
 			setIsWatchingMouse(true)
 			event.handled = true
@@ -138,7 +138,7 @@ class DragAttachment(
 		}
 	}
 
-	private fun stageMouseUpHandler(event: MouseInteraction) {
+	private fun stageMouseUpHandler(event: MouseInteractionRo) {
 		event.handled = true
 		setIsWatchingMouse(false)
 		setIsDragging(false)
@@ -150,7 +150,7 @@ class DragAttachment(
 	 * This does not determine if a drag start may begin.
 	 * @see allowMouseDragStart
 	 */
-	private fun allowMouseStart(event: MouseInteraction): Boolean {
+	private fun allowMouseStart(event: MouseInteractionRo): Boolean {
 		return enabled && !event.isFabricated && event.button == WhichButton.LEFT && !event.handled
 	}
 
