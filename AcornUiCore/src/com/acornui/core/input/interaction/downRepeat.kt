@@ -45,7 +45,7 @@ class DownRepeat(
 
 	private val repeatWaitHandler = {
 		val m = mouseState
-		MOUSE_DOWN_REPEAT.type = MouseInteraction.MOUSE_DOWN
+		MOUSE_DOWN_REPEAT.type = MouseInteractionRo.MOUSE_DOWN
 		MOUSE_DOWN_REPEAT.canvasX = m.canvasX()
 		MOUSE_DOWN_REPEAT.canvasY = m.canvasY()
 		MOUSE_DOWN_REPEAT.button = WhichButton.LEFT

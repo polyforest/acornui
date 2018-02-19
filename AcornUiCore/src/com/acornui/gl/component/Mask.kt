@@ -86,7 +86,7 @@ class GlScrollRect(
 
 	init {
 		maskClip.interactivityMode = InteractivityMode.NONE
-		maskClip.includeInLayout = false
+//		maskClip.includeInLayout = false
 		maskSize(100f, 100f)
 	}
 

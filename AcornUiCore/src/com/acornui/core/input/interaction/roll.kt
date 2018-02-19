@@ -16,12 +16,12 @@
 
 package com.acornui.core.input.interaction
 
-import com.acornui.component.InteractiveElement
+import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuseAttachment
+import com.acornui.component.isDescendantOf
 import com.acornui.core.Disposable
 import com.acornui.core.input.mouseOut
 import com.acornui.core.input.mouseOver
-import com.acornui.core.isDescendantOf
 import com.acornui.signal.StoppableSignal
 import com.acornui.signal.StoppableSignalImpl
 
@@ -32,7 +32,7 @@ import com.acornui.signal.StoppableSignalImpl
  * @author nbilyk
  */
 private class MouseOverChanged(
-		private val interactiveElement: InteractiveElement,
+		private val interactiveElement: UiComponentRo,
 		private val isCapture: Boolean) : Disposable {
 
 	val over = StoppableSignalImpl<MouseInteraction>()
@@ -69,13 +69,13 @@ private class MouseOverChanged(
  * An interaction signal dispatched when this element has had the mouse move over the element, but unlike touchOver,
  * this will not bubble, and therefore will not be fired if a child element has had a touchOver event.
  */
-fun InteractiveElement.rollOver(isCapture: Boolean = false): StoppableSignal<MouseInteraction> {
+fun UiComponentRo.rollOver(isCapture: Boolean = false): StoppableSignal<MouseInteraction> {
 	return createOrReuseAttachment("MouseOverChanged_" + isCapture, {
 		MouseOverChanged(this, isCapture = isCapture)
 	}).over
 }
 
-fun InteractiveElement.rollOut(isCapture: Boolean = false): StoppableSignal<MouseInteraction> {
+fun UiComponentRo.rollOut(isCapture: Boolean = false): StoppableSignal<MouseInteraction> {
 	return createOrReuseAttachment("MouseOverChanged_" + isCapture, {
 		MouseOverChanged(this, isCapture = isCapture)
 	}).out

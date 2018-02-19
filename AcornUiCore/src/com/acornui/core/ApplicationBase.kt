@@ -79,8 +79,8 @@ abstract class ApplicationBase : Disposable {
 		Log.info("Application disposing")
 		launch {
 			awaitAll()
-			bootstrap.dispose()
 			stage.dispose()
+			bootstrap.dispose()
 			Log.info("Application disposed")
 		}
 	}

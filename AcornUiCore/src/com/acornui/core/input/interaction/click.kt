@@ -16,7 +16,7 @@
 
 package com.acornui.core.input.interaction
 
-import com.acornui.component.InteractiveElementRo
+import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuse
 import com.acornui.core.di.inject
 import com.acornui.core.input.InteractionType
@@ -25,59 +25,64 @@ import com.acornui.core.input.WhichButton
 import com.acornui.core.time.time
 import com.acornui.signal.StoppableSignal
 
+interface ClickInteractionRo : MouseInteractionRo {
+
+	val count: Int
+
+	companion object {
+		val LEFT_CLICK = InteractionType<ClickInteractionRo>("leftClick")
+		val RIGHT_CLICK = InteractionType<ClickInteractionRo>("rightClick")
+		val BACK_CLICK = InteractionType<ClickInteractionRo>("backClick")
+		val FORWARD_CLICK = InteractionType<ClickInteractionRo>("forwardClick")
+		val MIDDLE_CLICK = InteractionType<ClickInteractionRo>("middleClick")
+	}
+}
+
 /**
  * @author nbilyk
  */
-open class ClickInteraction : MouseInteraction() {
+open class ClickInteraction : ClickInteractionRo, MouseInteraction() {
 
 	/**
 	 * In a standard click event, this is always 1. When used in a multi click event, count is the number of
 	 * consecutive clicks, each click within [ClickDispatcher.multiClickSpeed] milliseconds of the next.
 	 */
-	var count: Int = 0
+	override var count: Int = 0
 
 	override fun clear() {
 		super.clear()
 		count = 0
-	}
-
-	companion object {
-		val LEFT_CLICK = InteractionType<ClickInteraction>("leftClick")
-		val RIGHT_CLICK = InteractionType<ClickInteraction>("rightClick")
-		val BACK_CLICK = InteractionType<ClickInteraction>("backClick")
-		val FORWARD_CLICK = InteractionType<ClickInteraction>("forwardClick")
-		val MIDDLE_CLICK = InteractionType<ClickInteraction>("middleClick")
 	}
 }
 
 /**
  * A click interaction is where there is a touch down event, then a touch up event on that same target.
  */
-fun InteractiveElementRo.click(isCapture: Boolean = false): StoppableSignal<ClickInteraction> {
-	return createOrReuse(ClickInteraction.LEFT_CLICK, isCapture)
+fun UiComponentRo.click(isCapture: Boolean = false): StoppableSignal<ClickInteractionRo> {
+	return createOrReuse(ClickInteractionRo.LEFT_CLICK, isCapture)
 }
 
-fun InteractiveElementRo.rightClick(isCapture: Boolean = false): StoppableSignal<ClickInteraction> {
-	return createOrReuse(ClickInteraction.RIGHT_CLICK, isCapture)
+fun UiComponentRo.rightClick(isCapture: Boolean = false): StoppableSignal<ClickInteractionRo> {
+	return createOrReuse(ClickInteractionRo.RIGHT_CLICK, isCapture)
 }
 
-fun InteractiveElementRo.middleClick(isCapture: Boolean = false): StoppableSignal<ClickInteraction> {
-	return createOrReuse(ClickInteraction.MIDDLE_CLICK, isCapture)
+fun UiComponentRo.middleClick(isCapture: Boolean = false): StoppableSignal<ClickInteractionRo> {
+	return createOrReuse(ClickInteractionRo.MIDDLE_CLICK, isCapture)
 }
 
-fun InteractiveElementRo.backClick(isCapture: Boolean = false): StoppableSignal<ClickInteraction> {
-	return createOrReuse(ClickInteraction.BACK_CLICK, isCapture)
+fun UiComponentRo.backClick(isCapture: Boolean = false): StoppableSignal<ClickInteractionRo> {
+	return createOrReuse(ClickInteractionRo.BACK_CLICK, isCapture)
 }
 
-fun InteractiveElementRo.forwardClick(isCapture: Boolean = false): StoppableSignal<ClickInteraction> {
-	return createOrReuse(ClickInteraction.FORWARD_CLICK, isCapture)
+fun UiComponentRo.forwardClick(isCapture: Boolean = false): StoppableSignal<ClickInteractionRo> {
+	return createOrReuse(ClickInteractionRo.FORWARD_CLICK, isCapture)
 }
 
 private val fakeClickEvent = ClickInteraction()
 
-fun InteractiveElementRo.dispatchClick() {
+fun UiComponentRo.dispatchClick() {
 	fakeClickEvent.clear()
-	fakeClickEvent.type = ClickInteraction.LEFT_CLICK
+	fakeClickEvent.type = ClickInteractionRo.LEFT_CLICK
 	fakeClickEvent.target = this
 	fakeClickEvent.button = WhichButton.LEFT
 	fakeClickEvent.timestamp = time.nowMs()

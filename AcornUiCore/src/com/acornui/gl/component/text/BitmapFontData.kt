@@ -31,7 +31,7 @@ data class BitmapFontData(
 		/**
 		 * The style of the glyphs packed in this font. (font face, size, bold, italic)
 		 */
-		val fontStyle: FontStyle,
+		val fontStyle: FontStyleRo,
 
 		val pages: List<BitmapFontPageData>,
 
@@ -60,8 +60,8 @@ data class BitmapFontData(
 )
 
 data class BitmapFontPageData(
-		var id: Int,
-		var imagePath: String
+		val id: Int,
+		val imagePath: String
 )
 
 /**
@@ -97,15 +97,14 @@ data class GlyphData(
 		 */
 		var page: Int = 0,
 
-		private var kerning: MutableMap<Char, Int>? = null
+		/**
+		 * Kerning pairs.
+		 */
+		val kerning: Map<Char, Int> = HashMap()
 ) {
 
 	fun getKerning(ch: Char): Int {
-		return kerning?.get(ch) ?: 0
+		return kerning[ch] ?: 0
 	}
 
-	fun setKerning(ch: Char, value: Int) {
-		if (kerning == null) kerning = HashMap()
-		kerning!![ch] = value
-	}
 }

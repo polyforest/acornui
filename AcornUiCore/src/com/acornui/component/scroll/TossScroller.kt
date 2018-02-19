@@ -169,7 +169,7 @@ class TossScroller(
 	}
 
 	private val clickHandler = {
-		event: ClickInteraction ->
+		event: ClickInteractionRo ->
 		if (clickPreventer > 0) {
 			event.propagation.stopImmediatePropagation()
 		}

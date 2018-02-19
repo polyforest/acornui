@@ -91,10 +91,10 @@ class StackLayout : LayoutAlgorithm<StackLayoutStyle, StackLayoutData> {
 
 			out.ext(padding.expandWidth2(child.width), padding.expandHeight2(child.height))
 		}
-//		println("Stack size $out")
-//		if (out.height == 656f) {
-//			println("...")
-//		}
+		println("Stack size $out")
+		if (out.height == 656f) {
+			println("...")
+		}
 	}
 
 	override fun createLayoutData(): StackLayoutData = StackLayoutData()

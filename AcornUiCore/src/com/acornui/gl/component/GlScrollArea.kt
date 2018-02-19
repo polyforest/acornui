@@ -31,7 +31,7 @@ open class GlScrollArea(
 		owner: Owned
 ) : ElementContainerImpl<UiComponent>(owner), ScrollArea {
 
-	override final val style = bind(ScrollAreaStyle())
+	final override val style = bind(ScrollAreaStyle())
 
 	private val scrollRect = scrollRect()
 
@@ -44,10 +44,10 @@ open class GlScrollArea(
 	private val vScrollBar = VScrollBar(this)
 	private var corner: UiComponent? = null
 
-	override final val hScrollModel: ClampedScrollModel
+	final override val hScrollModel: ClampedScrollModel
 		get() = hScrollBar.scrollModel
 
-	override final val vScrollModel: ClampedScrollModel
+	final override val vScrollModel: ClampedScrollModel
 		get() = vScrollBar.scrollModel
 
 	private var _tossScrolling = false
@@ -89,8 +89,8 @@ open class GlScrollArea(
 		styleTags.add(ScrollArea)
 		validation.addNode(ScrollArea.SCROLLING, ValidationFlags.LAYOUT, this::validateScroll)
 
-		hScrollBar.includeInLayout = false
-		vScrollBar.includeInLayout = false
+//		hScrollBar.includeInLayout = false
+//		vScrollBar.includeInLayout = false
 		styleTags.add(ScrollArea.HBAR_STYLE)
 		styleTags.add(ScrollArea.VBAR_STYLE)
 
@@ -142,7 +142,6 @@ open class GlScrollArea(
 		if (!(requireHScrolling || requireVScrolling)) {
 			// Size target without scrolling.
 			contents.setSize(explicitWidth, explicitHeight)
-//			println("Contents Size ${contents.bounds}")
 		}
 		var needsHScrollBar = allowHScrolling && (requireHScrolling || contents.width > explicitWidth!!)
 		var needsVScrollBar = allowVScrolling && (requireVScrolling || contents.height > explicitHeight!!)
@@ -210,6 +209,7 @@ open class GlScrollArea(
 		vScrollModel.max = maxOf(0f, scrollRect.contentsHeight - contentsSetH)
 
 		scrollRect.getAttachment<TossScroller>(TossScroller)?.enabled = needsHScrollBar || needsVScrollBar
+		scrollRect.validate(ValidationFlags.LAYOUT)
 	}
 
 	protected fun validateScroll() {

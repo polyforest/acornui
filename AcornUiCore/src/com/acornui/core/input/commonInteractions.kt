@@ -16,7 +16,7 @@
 
 package com.acornui.core.input
 
-import com.acornui.component.InteractiveElementRo
+import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuse
 import com.acornui.core.input.interaction.*
 import com.acornui.signal.StoppableSignal
@@ -24,90 +24,90 @@ import com.acornui.signal.StoppableSignal
 /**
  * Dispatched when the mouse or touch is pressed down on this element.
  */
-fun InteractiveElementRo.mouseDown(isCapture: Boolean = false): StoppableSignal<MouseInteraction> {
-	return createOrReuse(MouseInteraction.MOUSE_DOWN, isCapture)
+fun UiComponentRo.mouseDown(isCapture: Boolean = false): StoppableSignal<MouseInteraction> {
+	return createOrReuse(MouseInteractionRo.MOUSE_DOWN, isCapture)
 }
 
 /**
  * Dispatched when the mouse or touch is released from this element.
  */
-fun InteractiveElementRo.mouseUp(isCapture: Boolean = false): StoppableSignal<MouseInteraction> {
-	return createOrReuse(MouseInteraction.MOUSE_UP, isCapture)
+fun UiComponentRo.mouseUp(isCapture: Boolean = false): StoppableSignal<MouseInteraction> {
+	return createOrReuse(MouseInteractionRo.MOUSE_UP, isCapture)
 }
 
 /**
  * Dispatched when the mouse or touch has moved within the bounds of this element.
  */
-fun InteractiveElementRo.mouseMove(isCapture: Boolean = false): StoppableSignal<MouseInteraction> {
-	return createOrReuse(MouseInteraction.MOUSE_MOVE, isCapture)
+fun UiComponentRo.mouseMove(isCapture: Boolean = false): StoppableSignal<MouseInteraction> {
+	return createOrReuse(MouseInteractionRo.MOUSE_MOVE, isCapture)
 }
 
 /**
  * Dispatched when a key has been pressed while this interactive element has focus.
  */
-fun InteractiveElementRo.keyDown(isCapture: Boolean = false): StoppableSignal<KeyInteraction> {
+fun UiComponentRo.keyDown(isCapture: Boolean = false): StoppableSignal<KeyInteraction> {
 	return createOrReuse(KeyInteraction.KEY_DOWN, isCapture)
 }
 
 /**
  * Dispatched when a key has been released while this interactive element has focus.
  */
-fun InteractiveElementRo.keyUp(isCapture: Boolean = false): StoppableSignal<KeyInteraction> {
+fun UiComponentRo.keyUp(isCapture: Boolean = false): StoppableSignal<KeyInteraction> {
 	return createOrReuse(KeyInteraction.KEY_UP, isCapture)
 }
 
 /**
  * Dispatched when a character has been inputted while this interactive element has focus.
  */
-fun InteractiveElementRo.char(isCapture: Boolean = false): StoppableSignal<CharInteraction> {
+fun UiComponentRo.char(isCapture: Boolean = false): StoppableSignal<CharInteraction> {
 	return createOrReuse(CharInteraction.CHAR, isCapture)
 }
 
 /**
  * Dispatched when the mouse is moved over this target. This will not trigger for touch surface interaction.
  */
-fun InteractiveElementRo.mouseOver(isCapture: Boolean = false): StoppableSignal<MouseInteraction> {
-	return createOrReuse(MouseInteraction.MOUSE_OVER, isCapture)
+fun UiComponentRo.mouseOver(isCapture: Boolean = false): StoppableSignal<MouseInteraction> {
+	return createOrReuse(MouseInteractionRo.MOUSE_OVER, isCapture)
 }
 
 /**
  * Dispatched when the mouse has moved off of this target. This will not trigger for touch surface interaction.
  */
-fun InteractiveElementRo.mouseOut(isCapture: Boolean = false): StoppableSignal<MouseInteraction> {
-	return createOrReuse(MouseInteraction.MOUSE_OUT, isCapture)
+fun UiComponentRo.mouseOut(isCapture: Boolean = false): StoppableSignal<MouseInteraction> {
+	return createOrReuse(MouseInteractionRo.MOUSE_OUT, isCapture)
 }
 
 /**
  * Dispatched when the mouse wheel has been scrolled.
  */
-fun InteractiveElementRo.wheel(isCapture: Boolean = false): StoppableSignal<WheelInteraction> {
-	return createOrReuse(WheelInteraction.MOUSE_WHEEL, isCapture)
+fun UiComponentRo.wheel(isCapture: Boolean = false): StoppableSignal<WheelInteraction> {
+	return createOrReuse(WheelInteractionRo.MOUSE_WHEEL, isCapture)
 }
 
-fun InteractiveElementRo.touchStart(isCapture: Boolean = false): StoppableSignal<TouchInteraction> {
-	return createOrReuse(TouchInteraction.TOUCH_START, isCapture)
+fun UiComponentRo.touchStart(isCapture: Boolean = false): StoppableSignal<TouchInteractionRo> {
+	return createOrReuse(TouchInteractionRo.TOUCH_START, isCapture)
 }
 
-fun InteractiveElementRo.touchMove(isCapture: Boolean = false): StoppableSignal<TouchInteraction> {
-	return createOrReuse(TouchInteraction.TOUCH_MOVE, isCapture)
+fun UiComponentRo.touchMove(isCapture: Boolean = false): StoppableSignal<TouchInteractionRo> {
+	return createOrReuse(TouchInteractionRo.TOUCH_MOVE, isCapture)
 }
 
-fun InteractiveElementRo.touchEnd(isCapture: Boolean = false): StoppableSignal<TouchInteraction> {
-	return createOrReuse(TouchInteraction.TOUCH_END, isCapture)
+fun UiComponentRo.touchEnd(isCapture: Boolean = false): StoppableSignal<TouchInteractionRo> {
+	return createOrReuse(TouchInteractionRo.TOUCH_END, isCapture)
 }
 
-fun InteractiveElementRo.touchCancel(isCapture: Boolean = false): StoppableSignal<TouchInteraction> {
-	return createOrReuse(TouchInteraction.TOUCH_CANCEL, isCapture)
+fun UiComponentRo.touchCancel(isCapture: Boolean = false): StoppableSignal<TouchInteractionRo> {
+	return createOrReuse(TouchInteractionRo.TOUCH_CANCEL, isCapture)
 }
 
-fun InteractiveElementRo.clipboardCopy(isCapture: Boolean = false): StoppableSignal<ClipboardInteraction> {
+fun UiComponentRo.clipboardCopy(isCapture: Boolean = false): StoppableSignal<ClipboardInteraction> {
 	return createOrReuse(ClipboardInteraction.COPY, isCapture)
 }
 
-fun InteractiveElementRo.clipboardCut(isCapture: Boolean = false): StoppableSignal<ClipboardInteraction> {
+fun UiComponentRo.clipboardCut(isCapture: Boolean = false): StoppableSignal<ClipboardInteraction> {
 	return createOrReuse(ClipboardInteraction.CUT, isCapture)
 }
 
-fun InteractiveElementRo.clipboardPaste(isCapture: Boolean = false): StoppableSignal<ClipboardInteraction> {
+fun UiComponentRo.clipboardPaste(isCapture: Boolean = false): StoppableSignal<ClipboardInteraction> {
 	return createOrReuse(ClipboardInteraction.PASTE, isCapture)
 }

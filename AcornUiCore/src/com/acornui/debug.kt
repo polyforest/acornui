@@ -1,19 +1,18 @@
 package com.acornui
 
-import com.acornui.component.Stage
-import com.acornui.component.UiComponent
-import com.acornui.component.stage
+import com.acornui.component.*
 import com.acornui.core.ancestry
-import com.acornui.core.parentWalk
 import com.acornui.core.time.callLater
-import com.acornui.math.*
+import com.acornui.math.Vector3
+import com.acornui.math.maxOf4
+import com.acornui.math.minOf4
 
 
 fun debugWhyCantSee(target: UiComponent) {
 	target.callLater({canSee(target)})
 }
 
-private fun canSee(target: UiComponent, print: Boolean = true): Boolean {
+private fun canSee(target: UiComponentRo, print: Boolean = true): Boolean {
 	target.stage.validate()
 	var canSee = true
 
@@ -50,7 +49,7 @@ private fun canSee(target: UiComponent, print: Boolean = true): Boolean {
 /**
  * Returns true if the element isn't out of the bounds of any of its ancestors.
  */
-private fun isInBounds(target: UiComponent, print: Boolean): Boolean {
+private fun isInBounds(target: UiComponentRo, print: Boolean): Boolean {
 	var canSee = true
 	val topLeftGlobal = target.localToGlobal(Vector3(0f, 0f))
 	val topRightGlobal = target.localToGlobal(Vector3(target.width, 0f))
@@ -97,7 +96,7 @@ private fun isInBounds(target: UiComponent, print: Boolean): Boolean {
 	return canSee
 }
 
-fun debugFullPath(target: UiComponent): String {
+fun debugFullPath(target: UiComponentRo): String {
 	val ancestry = target.ancestry(ArrayList())
 	ancestry.reverse()
 	return ancestry.joinToString(".")

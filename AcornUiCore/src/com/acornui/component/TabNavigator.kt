@@ -9,6 +9,7 @@ import com.acornui.component.style.*
 import com.acornui.core.di.Owned
 import com.acornui.core.graphics.Scaling
 import com.acornui.core.input.interaction.ClickInteraction
+import com.acornui.core.input.interaction.ClickInteractionRo
 import com.acornui.core.input.interaction.click
 import com.acornui.factory.LazyInstance
 import com.acornui.factory.disposeInstance
@@ -51,7 +52,7 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 	private val cancel = Cancel()
 
 	private val tabClickHandler = {
-		e: ClickInteraction ->
+		e: ClickInteractionRo ->
 		if (!e.handled) {
 			val index = tabBar.elements.indexOf(e.currentTarget)
 			if (_currentIndex != index) {

@@ -95,8 +95,7 @@ class DragAttachment(
 		stop()
 	}
 
-	private val clickBlocker: (ClickInteraction)->Unit = {
-		event ->
+	private val clickBlocker = { event: ClickInteractionRo ->
 		event.handled = true
 		event.preventDefault()
 	}
@@ -163,7 +162,7 @@ class DragAttachment(
 	// Touch UX
 	//--------------------------------------------------------------
 
-	private fun touchStartHandler(event: TouchInteraction) {
+	private fun touchStartHandler(event: TouchInteractionRo) {
 		if (!watchingMouse && !watchingTouch && allowTouchStart(event)) {
 			setWatchingTouch(true)
 			event.handled = true
@@ -183,15 +182,15 @@ class DragAttachment(
 	 * This does not determine if a drag start may begin.
 	 * @see allowTouchDragStart
 	 */
-	private fun allowTouchStart(event: TouchInteraction): Boolean {
+	private fun allowTouchStart(event: TouchInteractionRo): Boolean {
 		return enabled && !event.handled
 	}
 
-	private fun allowTouchDragStart(event: TouchInteraction): Boolean {
+	private fun allowTouchDragStart(event: TouchInteractionRo): Boolean {
 		return position.manhattanDst(startPosition) >= affordance
 	}
 
-	private fun allowTouchEnd(event: TouchInteraction): Boolean {
+	private fun allowTouchEnd(event: TouchInteractionRo): Boolean {
 		return event.touches.isEmpty()
 	}
 
@@ -210,12 +209,12 @@ class DragAttachment(
 		}
 	}
 
-	private fun stageTouchMoveHandler(event: TouchInteraction) {
+	private fun stageTouchMoveHandler(event: TouchInteractionRo) {
 		event.handled = true
 		event.preventDefault()
 	}
 
-	private fun stageTouchEndHandler(event: TouchInteraction) {
+	private fun stageTouchEndHandler(event: TouchInteractionRo) {
 		if (allowTouchEnd(event)) {
 			event.handled = true
 			setWatchingTouch(false)

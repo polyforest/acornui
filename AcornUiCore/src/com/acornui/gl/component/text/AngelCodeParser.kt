@@ -68,6 +68,7 @@ object AngelCodeParser : Decorator<String, BitmapFontData> {
 		if (!parser.consumeString("chars")) throw Exception("Expected chars block")
 		// The chars count from Hiero is off, so we're not going to use it.
 		val glyphs = HashMap<Char, GlyphData>()
+		val kernings = HashMap<Char, MutableMap<Char, Int>>()
 
 		// Read each glyph definition.
 		while (true) {
@@ -85,17 +86,21 @@ object AngelCodeParser : Decorator<String, BitmapFontData> {
 			val offsetY = parseIntProp(parser, "yoffset")
 			val xAdvance = parseIntProp(parser, "xadvance")
 			val page = parseIntProp(parser, "page")
+			val kerning = HashMap<Char, Int>()
+			kernings[ch] = kerning
 			glyphs[ch] = GlyphData(
 					char = ch,
 					region = IntRectangle(regionX, regionY, regionW,  regionH),
 					offsetX = offsetX,
 					offsetY = offsetY,
 					advanceX = xAdvance,
-					page = page
+					page = page,
+					kerning = kerning
 			)
 		}
 
 		parser.consumeString("kernings")
+
 		while (true) {
 			nextLine(parser)
 			if (!parser.consumeString("kerning")) break
@@ -106,8 +111,7 @@ object AngelCodeParser : Decorator<String, BitmapFontData> {
 			val amount = parseIntProp(parser, "amount")
 			if (glyphs.containsKey(first.toChar())) {
 				// Kerning pairs may exist for glyphs not contained in the font.
-				val glyph = glyphs[first.toChar()]!!
-				glyph.setKerning(second.toChar(), amount)
+				kernings[first.toChar()]!![second.toChar()] = amount
 			}
 		}
 

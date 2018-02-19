@@ -16,8 +16,7 @@
 
 package com.acornui.core.cursor
 
-import com.acornui._assert
-import com.acornui.component.InteractiveElement
+import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.core.Disposable
 import com.acornui.core.di.inject
@@ -29,7 +28,7 @@ import com.acornui.core.input.interaction.rollOver
  * An attachment that changes the cursor on roll over.
  */
 class RollOverCursor(
-		private val target: InteractiveElement,
+		private val target: UiComponentRo,
 		private val cursor: Cursor,
 		private val priority: Float = CursorPriority.ACTIVE) : Disposable {
 
@@ -66,10 +65,10 @@ class RollOverCursor(
 	companion object
 }
 
-fun InteractiveElement.clearCursor() {
+fun UiComponentRo.clearCursor() {
 	removeAttachment<RollOverCursor>(RollOverCursor)?.dispose()
 }
 
-fun InteractiveElement.cursor(cursor: Cursor, priority: Float = CursorPriority.ACTIVE): RollOverCursor {
+fun UiComponentRo.cursor(cursor: Cursor, priority: Float = CursorPriority.ACTIVE): RollOverCursor {
 	return createOrReuseAttachment(RollOverCursor, { RollOverCursor(this, cursor, priority) })
 }

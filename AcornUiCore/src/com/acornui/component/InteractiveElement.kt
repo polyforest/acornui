@@ -18,16 +18,15 @@ package com.acornui.component
 
 import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.LayoutElementRo
-import com.acornui.core.ChildRo
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
-import com.acornui.core.input.InteractionEvent
+import com.acornui.core.input.InteractionEventRo
 import com.acornui.core.input.InteractionType
 import com.acornui.core.input.InteractivityManager
 import com.acornui.math.Vector2
 import com.acornui.signal.StoppableSignal
 
-interface InteractiveElementRo : LayoutElementRo, CameraElementRo, AttachmentHolder, ChildRo, Owned {
+interface InteractiveElementRo : LayoutElementRo, CameraElementRo, AttachmentHolder, Owned {
 
 	val native: NativeComponent
 
@@ -47,16 +46,16 @@ interface InteractiveElementRo : LayoutElementRo, CameraElementRo, AttachmentHol
 	 */
 	val interactivityMode: InteractivityMode
 
-	fun <T: InteractionEvent> handlesInteraction(type: InteractionType<T>): Boolean
-	fun <T: InteractionEvent> handlesInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean
+	fun <T: InteractionEventRo> handlesInteraction(type: InteractionType<T>): Boolean
+	fun <T: InteractionEventRo> handlesInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean
 
 	fun hasInteraction(): Boolean
 
-	fun <T: InteractionEvent> hasInteraction(type: InteractionType<T>): Boolean
-	fun <T: InteractionEvent> hasInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean
+	fun <T: InteractionEventRo> hasInteraction(type: InteractionType<T>): Boolean
+	fun <T: InteractionEventRo> hasInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean
 
-	fun <T: InteractionEvent> getInteractionSignal(type: InteractionType<T>): StoppableSignal<T>?
-	fun <T: InteractionEvent> getInteractionSignal(type: InteractionType<T>, isCapture: Boolean): StoppableSignal<T>?
+	fun <T: InteractionEventRo> getInteractionSignal(type: InteractionType<T>): StoppableSignal<T>?
+	fun <T: InteractionEventRo> getInteractionSignal(type: InteractionType<T>, isCapture: Boolean): StoppableSignal<T>?
 
 	/**
 	 * Sets the [out] vector to the local mouse coordinates.
@@ -69,11 +68,11 @@ interface InteractiveElementRo : LayoutElementRo, CameraElementRo, AttachmentHol
 	 */
 	fun mouseIsOver(): Boolean
 
-	fun <T: InteractionEvent> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>)
-	fun <T: InteractionEvent> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>, isCapture: Boolean)
+	fun <T: InteractionEventRo> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>)
+	fun <T: InteractionEventRo> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>, isCapture: Boolean)
 
-	fun <T: InteractionEvent> removeInteractionSignal(type: InteractionType<T>)
-	fun <T: InteractionEvent> removeInteractionSignal(type: InteractionType<T>, isCapture: Boolean)
+	fun <T: InteractionEventRo> removeInteractionSignal(type: InteractionType<T>)
+	fun <T: InteractionEventRo> removeInteractionSignal(type: InteractionType<T>, isCapture: Boolean)
 }
 
 /**
@@ -118,14 +117,14 @@ enum class InteractivityMode {
  * Creates or reuses a stoppable signal for the specified interaction type.
  * This should be used in the same style you see in CommonInteractions.kt
  */
-fun <T : InteractionEvent> InteractiveElementRo.createOrReuse(type: InteractionType<T>, isCapture: Boolean): StoppableSignal<T> {
+fun <T : InteractionEventRo> UiComponentRo.createOrReuse(type: InteractionType<T>, isCapture: Boolean): StoppableSignal<T> {
 	val existing = getInteractionSignal(type, isCapture)
-	if (existing != null) {
-		return existing
+	return if (existing != null) {
+		existing
 	} else {
 		val interactivityManager = inject(InteractivityManager)
 		val newHandler = interactivityManager.getSignal(this, type, isCapture)
 		addInteractionSignal(type, newHandler, isCapture)
-		return newHandler
+		newHandler
 	}
 }

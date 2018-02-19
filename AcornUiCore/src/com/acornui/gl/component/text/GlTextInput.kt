@@ -44,8 +44,8 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 	override var focusOrder: Float = 0f
 	override var highlight: UiComponent? by createSlot()
 
-	override final val textInputStyle = bind(TextInputStyle())
-	override final val boxStyle = bind(BoxStyle())
+	final override val textInputStyle = bind(TextInputStyle())
+	final override val boxStyle = bind(BoxStyle())
 	protected val editableText = addChild(EditableText(this))
 
 	override val charStyle: CharStyle
@@ -137,8 +137,8 @@ open class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 	override var focusOrder: Float = 0f
 	override var highlight: UiComponent? by createSlot()
 
-	override final val textInputStyle = bind(TextInputStyle())
-	override final val boxStyle = bind(BoxStyle())
+	final override val textInputStyle = bind(TextInputStyle())
+	final override val boxStyle = bind(BoxStyle())
 
 	protected val editableText = EditableText(this)
 

@@ -16,11 +16,13 @@
 
 package com.acornui.core.input.interaction
 
-import com.acornui.component.InteractiveElement
-import com.acornui.component.Stage
+import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuse
 import com.acornui.component.stage
-import com.acornui.core.input.*
+import com.acornui.core.input.InteractionType
+import com.acornui.core.input.WhichButton
+import com.acornui.core.input.mouseDown
+import com.acornui.core.input.mouseUp
 import com.acornui.signal.StoppableSignal
 import com.acornui.signal.StoppableSignalImpl
 
@@ -28,7 +30,7 @@ import com.acornui.signal.StoppableSignalImpl
  * An interaction where the user touches down on a target, then releases outside of that target. (Including outside
  * the canvas)
  */
-class MouseUpOutside(private val target: InteractiveElement) : StoppableSignalImpl<MouseInteraction>() {
+class MouseUpOutside(private val target: UiComponentRo) : StoppableSignalImpl<MouseInteraction>() {
 
 	private val stage = target.stage
 
@@ -98,6 +100,6 @@ class MouseUpOutside(private val target: InteractiveElement) : StoppableSignalIm
  * on a different element. This does not have capture or bubble phases; a touchUpOutside event for a child does
  * not necessarily mean a touchUpOutside event for its parent.
  */
-fun InteractiveElement.mouseUpOutside(): StoppableSignal<MouseInteraction> {
+fun UiComponentRo.mouseUpOutside(): StoppableSignal<MouseInteraction> {
 	return createOrReuse(MouseUpOutside.MOUSE_UP_OUTSIDE, false)
 }

@@ -18,9 +18,9 @@ package com.acornui.js.html
 
 import com.acornui.collection.cyclicListObtain
 import com.acornui.collection.cyclicListPool
-import com.acornui.component.InteractiveElementRo
 import com.acornui.component.Stage
 import com.acornui.component.UiComponent
+import com.acornui.component.UiComponentRo
 import com.acornui.core.TreeWalk
 import com.acornui.core.childWalkLevelOrder
 import com.acornui.core.di.inject
@@ -56,11 +56,11 @@ fun Node.owns(element: Node): Boolean {
  * Traverses the root interactive element until it finds the acorn component that wraps the target html element.
  * Only the branches of the tree that are part of the target's ancestry are traversed.
  */
-fun findComponentFromDom(target: EventTarget?, root: InteractiveElementRo): InteractiveElementRo? {
+fun findComponentFromDom(target: EventTarget?, root: UiComponentRo): UiComponentRo? {
 	if (target == window) return root.inject(Stage)
 	if (target !is HTMLElement) return null
 
-	var found: InteractiveElementRo? = null
+	var found: UiComponentRo? = null
 	root.childWalkLevelOrder {
 		val native = (it as UiComponent).native as DomComponent
 		val element = native.element

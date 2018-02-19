@@ -32,10 +32,7 @@ import com.acornui.core.di.*
 import com.acornui.core.graphics.Camera
 import com.acornui.core.graphics.CameraRo
 import com.acornui.core.graphics.Window
-import com.acornui.core.input.InteractionEvent
-import com.acornui.core.input.InteractionType
-import com.acornui.core.input.InteractivityManager
-import com.acornui.core.input.MouseState
+import com.acornui.core.input.*
 import com.acornui.core.time.TimeDriver
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
@@ -52,7 +49,7 @@ annotation class ComponentDslMarker
 
 typealias ComponentInit<T> = (@ComponentDslMarker T).() -> Unit
 
-interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementRo, Validatable, StyleableRo {
+interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementRo, Validatable, StyleableRo, ChildRo {
 
 	override val disposed: Signal<(UiComponentRo) -> Unit>
 	override val activated: Signal<(UiComponentRo) -> Unit>
@@ -94,7 +91,65 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	 * This component does not have an alpha of 0f.
 	 */
 	fun isRendered(): Boolean
+
 }
+
+/**
+ * Traverses this ChildRo's ancestry, invoking a callback on each parent up the chain.
+ * (including this object)
+ * @param callback The callback to invoke on each ancestor. If this callback returns true, iteration will continue,
+ * if it returns false, iteration will be halted.
+ * @return If [callback] returned false, this method returns the element on which the iteration halted.
+ */
+inline fun UiComponentRo.parentWalk(callback: (UiComponentRo) -> Boolean): UiComponentRo? {
+	var p: UiComponentRo? = this
+	while (p != null) {
+		val shouldContinue = callback(p)
+		if (!shouldContinue) return p
+		p = p.parent
+	}
+	return null
+}
+
+fun UiComponentRo.root(): UiComponentRo {
+	var root: UiComponentRo = this
+	var p: UiComponentRo? = this
+	while (p != null) {
+		root = p
+		p = p.parent
+	}
+	return root
+}
+
+
+/**
+ * Populates an ArrayList with this component's ancestry.
+ * @return Returns the [out] ArrayList
+ */
+fun UiComponentRo.ancestry(out: MutableList<UiComponentRo>): MutableList<UiComponentRo> {
+	out.clear()
+	parentWalk {
+		out.add(it)
+		true
+	}
+	return out
+}
+
+/**
+ * Returns true if this [ChildRo] is the ancestor of the given [child].
+ * X is considered to be an ancestor of Y if doing a parent walk starting from Y, X is then reached.
+ * This will return true if X === Y
+ */
+fun UiComponentRo.isAncestorOf(child: UiComponentRo): Boolean {
+	var isAncestor = false
+	child.parentWalk {
+		isAncestor = it === this
+		!isAncestor
+	}
+	return isAncestor
+}
+
+fun UiComponentRo.isDescendantOf(ancestor: UiComponentRo): Boolean = ancestor.isAncestorOf(this)
 
 interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, InteractiveElement, Styleable {
 
@@ -153,11 +208,11 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
  * controls.
  */
 open class UiComponentImpl(
-		override final val owner: Owned,
-		override final val native: NativeComponent = owner.inject(NativeComponent.FACTORY_KEY)(owner)
+		final override val owner: Owned,
+		final override val native: NativeComponent = owner.inject(NativeComponent.FACTORY_KEY)(owner)
 ) : UiComponent {
 
-	override final val injector = owner.injector
+	final override val injector = owner.injector
 
 	//---------------------------------------------------------
 	// Lifecycle
@@ -222,7 +277,7 @@ open class UiComponentImpl(
 
 	// Validatable Properties
 	private val _invalidated = own(Signal2<UiComponent, Int>())
-	override final val invalidated: Signal<(UiComponent, Int) -> Unit>
+	final override val invalidated: Signal<(UiComponent, Int) -> Unit>
 		get() = _invalidated
 
 	/**
@@ -265,14 +320,14 @@ open class UiComponentImpl(
 
 	// InteractiveElement properties
 	protected var _inheritedInteractivityMode = InteractivityMode.ALL
-	override final val inheritedInteractivityMode: InteractivityMode
+	final override val inheritedInteractivityMode: InteractivityMode
 		get() {
 			validate(ValidationFlags.INTERACTIVITY_MODE)
 			return _inheritedInteractivityMode
 		}
 
 	protected var _interactivityMode: InteractivityMode = InteractivityMode.ALL
-	override final var interactivityMode: InteractivityMode
+	final override var interactivityMode: InteractivityMode
 		get() = _interactivityMode
 		set(value) {
 			if (value != _interactivityMode) {
@@ -284,12 +339,12 @@ open class UiComponentImpl(
 	override val interactivityEnabled: Boolean
 		get() = inheritedInteractivityMode == InteractivityMode.ALL
 
-	override fun <T : InteractionEvent> handlesInteraction(type: InteractionType<T>): Boolean {
+	override fun <T : InteractionEventRo> handlesInteraction(type: InteractionType<T>): Boolean {
 		return handlesInteraction(type, true) || handlesInteraction(type, false)
 	}
 
-	override fun <T : InteractionEvent> handlesInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean {
-		return getInteractionSignal<InteractionEvent>(type, isCapture) != null
+	override fun <T : InteractionEventRo> handlesInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean {
+		return getInteractionSignal<InteractionEventRo>(type, isCapture) != null
 	}
 
 	private val _captureSignals = HashMap<InteractionType<*>, StoppableSignal<*>>()
@@ -352,7 +407,7 @@ open class UiComponentImpl(
 	// UiComponent
 	//-----------------------------------------------
 
-	override final var visible: Boolean
+	final override var visible: Boolean
 		get() {
 			return _visible
 		}
@@ -480,7 +535,7 @@ open class UiComponentImpl(
 			return _includeInLayout && _visible
 		}
 
-	override final var includeInLayout: Boolean
+	final override var includeInLayout: Boolean
 		get() {
 			return _includeInLayout
 		}
@@ -587,7 +642,7 @@ open class UiComponentImpl(
 	 * If set, when the layout is validated, if there was no explicit width,
 	 * this value will be used instead.
 	 */
-	override final var defaultWidth: Float? by validationProp(null, ValidationFlags.LAYOUT)
+	final override var defaultWidth: Float? by validationProp(null, ValidationFlags.LAYOUT)
 
 	/**
 	 * If set, when the layout is validated, if there was no explicit height,
@@ -652,42 +707,42 @@ open class UiComponentImpl(
 	//-----------------------------------------------
 
 
-	override final fun hasInteraction(): Boolean {
+	final override fun hasInteraction(): Boolean {
 		return _captureSignals.isNotEmpty() || _bubbleSignals.isNotEmpty()
 	}
 
-	override final fun <T : InteractionEvent> hasInteraction(type: InteractionType<T>) = hasInteraction(type, false) // TODO: KT-20451
-	override final fun <T : InteractionEvent> hasInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean {
-		return getInteractionSignal<InteractionEvent>(type, isCapture) != null
+	final override fun <T : InteractionEventRo> hasInteraction(type: InteractionType<T>) = hasInteraction(type, false) // TODO: KT-20451
+	final override fun <T : InteractionEventRo> hasInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean {
+		return getInteractionSignal<InteractionEventRo>(type, isCapture) != null
 	}
 
-	override final fun <T : InteractionEvent> getInteractionSignal(type: InteractionType<T>) = getInteractionSignal(type, false) // TODO: KT-20451
+	final override fun <T : InteractionEventRo> getInteractionSignal(type: InteractionType<T>) = getInteractionSignal(type, false) // TODO: KT-20451
 
 	@Suppress("UNCHECKED_CAST")
-	override final fun <T : InteractionEvent> getInteractionSignal(type: InteractionType<T>, isCapture: Boolean): StoppableSignal<T>? {
+	override fun <T : InteractionEventRo> getInteractionSignal(type: InteractionType<T>, isCapture: Boolean): StoppableSignal<T>? {
 		val handlers = if (isCapture) _captureSignals else _bubbleSignals
 		return handlers[type] as StoppableSignal<T>?
 	}
 
-	override final fun <T : InteractionEvent> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>, isCapture: Boolean) {
+	final override fun <T : InteractionEventRo> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>, isCapture: Boolean) {
 		val handlers = if (isCapture) _captureSignals else _bubbleSignals
 		handlers[type] = signal
 	}
 
-	override final fun <T : InteractionEvent> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>) = addInteractionSignal(type, signal, false) // TODO: KT-20451
+	final override fun <T : InteractionEventRo> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>) = addInteractionSignal(type, signal, false) // TODO: KT-20451
 
-	override final fun <T : InteractionEvent> removeInteractionSignal(type: InteractionType<T>) = removeInteractionSignal(type, false) // TODO: KT-20451
-	override final  fun <T : InteractionEvent> removeInteractionSignal(type: InteractionType<T>, isCapture: Boolean) {
+	final override fun <T : InteractionEventRo> removeInteractionSignal(type: InteractionType<T>) = removeInteractionSignal(type, false) // TODO: KT-20451
+	final override fun <T : InteractionEventRo> removeInteractionSignal(type: InteractionType<T>, isCapture: Boolean) {
 		val handlers = if (isCapture) _captureSignals else _bubbleSignals
 		handlers.remove(type)
 	}
 
 	@Suppress("UNCHECKED_CAST")
-	override final fun <T : Any> getAttachment(key: Any): T? {
+	override fun <T : Any> getAttachment(key: Any): T? {
 		return _attachments[key] as T?
 	}
 
-	override final fun setAttachment(key: Any, value: Any) {
+	final override fun setAttachment(key: Any, value: Any) {
 		_attachments.put(key, value)
 	}
 
@@ -695,7 +750,7 @@ open class UiComponentImpl(
 	 * Removes an attachment added via [setAttachment]
 	 */
 	@Suppress("UNCHECKED_CAST")
-	override final  fun <T : Any> removeAttachment(key: Any): T? {
+	override fun <T : Any> removeAttachment(key: Any): T? {
 		return _attachments.remove(key) as T?
 	}
 
@@ -831,10 +886,10 @@ open class UiComponentImpl(
 			return _styles!!
 		}
 
-	override final val styleTags: MutableList<StyleTag>
+	final override val styleTags: MutableList<StyleTag>
 		get() = styles.styleTags
 
-	override final val styleRules: MutableList<StyleRule<*>>
+	final override val styleRules: MutableList<StyleRule<*>>
 		get() = styles.styleRules
 
 	override fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRule<T>>) = styles.getRulesByType(type, out)
@@ -861,6 +916,9 @@ open class UiComponentImpl(
 	// Validatable properties
 	//-----------------------------------------------
 
+
+	override val invalidFlags: Int
+		get() = validation.invalidFlags
 
 	/**
 	 * Validates this component's properties. This is done before any layout or transformation
@@ -1228,11 +1286,7 @@ open class UiComponentImpl(
 		get() {
 			if (cameraOverride != null) return cameraOverride!!
 			val p = parent
-			if (p != null) {
-				return p.camera
-			} else {
-				return defaultCamera
-			}
+			return p?.camera ?: defaultCamera
 		}
 
 	//-----------------------------------------------

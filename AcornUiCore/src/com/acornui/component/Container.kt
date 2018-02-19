@@ -197,9 +197,8 @@ open class ContainerImpl(
 	override fun onDeactivated() {
 		for (i in 0.._children.lastIndex) {
 			val child = _children[i]
-			if (child.isActive) {
+			if (child.isActive)
 				child.deactivate()
-			}
 		}
 	}
 
@@ -282,16 +281,6 @@ open class ContainerImpl(
 	//-----------------------------------------------------
 	// Disposable
 	//-----------------------------------------------------
-
-	@Deprecated("use component?.dispose()", ReplaceWith("component?.dispose()"))
-	open protected fun dispose(component: UiComponent?) {
-		if (component == null) return
-		if (component.parent != null) {
-			if (component.parent == this) removeChild(component)
-			else throw Exception("target component is not a child of this")
-		}
-		component.dispose()
-	}
 
 	/**
 	 * Disposes this container and all its children.

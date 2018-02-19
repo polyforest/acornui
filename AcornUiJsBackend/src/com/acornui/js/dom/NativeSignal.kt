@@ -1,10 +1,8 @@
 package com.acornui.js.dom
 
-import com.acornui.component.InteractiveElement
-import com.acornui.component.InteractiveElementRo
-import com.acornui.component.Stage
-import com.acornui.component.UiComponent
+import com.acornui.component.*
 import com.acornui.core.input.InteractionEvent
+import com.acornui.core.input.InteractionEventRo
 import com.acornui.core.input.InteractionType
 import com.acornui.core.input.interaction.KeyInteraction
 import com.acornui.core.input.interaction.MouseInteraction
@@ -15,11 +13,11 @@ import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventTarget
 import kotlin.browser.window
 
-class NativeSignal<T : InteractionEvent>(
-		private val host: InteractiveElementRo,
+class NativeSignal<T : InteractionEventRo>(
+		private val host: UiComponentRo,
 		private val jsType: String,
 		private val isCapture: Boolean,
-		private val type: InteractionType<InteractionEvent>,
+		private val type: InteractionType<InteractionEventRo>,
 		private val event: InteractionEvent,
 		private val handler: (Event) -> dynamic
 ) : StoppableSignalImpl<T>() {

@@ -155,7 +155,7 @@ class HierarchyTest {
 
 }
 
-private class TestNode(val id: String) : ConcurrentParent<TestNode>() {
+private class TestNode(val id: String) : Parent<TestNode> {
 
 	/**
 	 * Syntax sugar for addChild.
@@ -165,8 +165,25 @@ private class TestNode(val id: String) : ConcurrentParent<TestNode>() {
 		return this
 	}
 
+	override val parent: ParentRo<ChildRo>? = null
+
+	private val _children = ArrayList<TestNode>()
+	override val children: List<TestNode>
+		get() = _children
+
+
+
+	override fun <S : TestNode> addChild(index: Int, child: S): S {
+		_children.add(index, child)
+		return child
+	}
+
+	override fun removeChild(index: Int): TestNode {
+		return _children.removeAt(index)
+	}
+
 	override fun hashCode(): Int {
-		return super.hashCode()
+		return 31 + id.hashCode()
 	}
 
 	override fun equals(other: Any?): Boolean {

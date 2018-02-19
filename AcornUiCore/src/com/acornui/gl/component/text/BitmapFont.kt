@@ -71,6 +71,23 @@ class BitmapFont(
 
 }
 
+interface FontStyleRo {
+
+	/**
+	 * The name of the font face. (case sensitive)
+	 */
+	val face: String
+
+	/**
+	 * The size of the font.
+	 */
+	val size: Int
+
+	val bold: Boolean
+
+	val italic: Boolean
+}
+
 /**
  * A data class representing the criteria for what separates a bitmap font set.
  */
@@ -79,17 +96,17 @@ data class FontStyle(
 		/**
 		 * The name of the font face. (case sensitive)
 		 */
-		var face: String = "[Unknown]",
+		override var face: String = "[Unknown]",
 
 		/**
 		 * The size of the font.
 		 */
-		var size: Int = 0,
+		override var size: Int = 0,
 
-		var bold: Boolean = false,
+		override var bold: Boolean = false,
 
-		var italic: Boolean = false
-)
+		override var italic: Boolean = false
+) : FontStyleRo
 
 /**
  * The data required to render a glyph inside of a texture.
@@ -137,6 +154,7 @@ class Glyph(
 		val region: IntRectangleRo,
 
 		val texture: Texture,
+
 		val premultipliedAlpha: Boolean
 ) {
 	fun getKerning(ch: Char): Int = data.getKerning(ch)
@@ -302,7 +320,7 @@ object BitmapFontRegistry : Clearable, Disposable {
 	val fontRegistered: Signal<(BitmapFont) -> Unit>
 		get() = _fontRegistered
 
-	val registry: HashMap<FontStyle, BitmapFont> = HashMap()
+	val registry: HashMap<FontStyleRo, BitmapFont> = HashMap()
 
 	fun register(bitmapFont: BitmapFont) {
 		if (registry.containsKey(bitmapFont.data.fontStyle)) return

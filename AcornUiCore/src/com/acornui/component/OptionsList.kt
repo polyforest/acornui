@@ -22,12 +22,15 @@ import com.acornui.component.layout.ListItemRenderer
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.layout.algorithm.VerticalLayoutData
 import com.acornui.component.layout.algorithm.virtual.vDataScroller
-import com.acornui.component.style.*
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleTag
+import com.acornui.component.style.StyleType
+import com.acornui.component.style.noSkin
 import com.acornui.component.text.TextInput
 import com.acornui.component.text.textInput
 import com.acornui.core.di.Owned
 import com.acornui.core.input.Ascii
-import com.acornui.core.input.interaction.ClickInteraction
+import com.acornui.core.input.interaction.ClickInteractionRo
 import com.acornui.core.input.interaction.MouseInteraction
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.keyDown
@@ -86,7 +89,7 @@ open class OptionsList<E : Any>(
 	private val dataView = ListView(data)
 
 	@Suppress("UNCHECKED_CAST")
-	private fun elementClickedHandler(e: ClickInteraction) {
+	private fun elementClickedHandler(e: ClickInteractionRo) {
 		selectedItem = (e.currentTarget as ListItemRenderer<E>).data
 		close()
 	}

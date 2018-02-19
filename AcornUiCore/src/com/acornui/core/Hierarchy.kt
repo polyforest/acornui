@@ -18,8 +18,8 @@
 
 package com.acornui.core
 
-import com.acornui._assert
-import com.acornui.collection.*
+import com.acornui.collection.cyclicListObtain
+import com.acornui.collection.cyclicListPool
 
 
 /**
@@ -177,86 +177,6 @@ interface Parent<T> : ParentRo<T> {
 		while (c.isNotEmpty()) {
 			removeChild(children.size - 1)
 		}
-	}
-}
-
-/**
- * An abstract base MutableParent implementation that provides the defaults for adding and removing children.
- */
-open class ParentBase<T : ParentBase<T>> : Parent<T>, ChildRo, Disposable {
-
-	override var parent: ParentBase<T>? = null
-
-	protected open val _children: MutableList<T> = ArrayList()
-
-	override val children: List<T>
-		get() = _children
-
-	/**
-	 * Adds the specified child to this container.
-	 * @param index The index of where to insert the child. By default this is the end of the list.
-	 */
-	override fun <S : T> addChild(index: Int, child: S): S {
-		val n = _children.size
-		_assert(index <= n, "index is out of bounds.")
-		_assert(child.parent == null, "Remove the child before adding it again.")
-		_children.add(index, child)
-		child.parent = this
-		onChildAdded(index, child)
-		return child
-	}
-
-	protected open fun <S> onChildAdded(index: Int, child: S) {}
-
-	/**
-	 * Removes a child at the given index from this container.
-	 * This will throw an exception if this parent does not contain a child at the given index.
-	 * Use `children.size` to ensure that the index is within bounds.
-	 */
-	override fun removeChild(index: Int): T {
-		val child = _children.removeAt(index)
-		child.parent = null
-		onChildRemoved(index, child)
-		return child
-	}
-
-	protected open fun <S> onChildRemoved(index: Int, child: S) {}
-
-	/**
-	 * When the parent is disposed, dispose all the children.
-	 */
-	override fun dispose() {
-		iterateChildren {
-			it.parent = null
-			if (it is Disposable)
-				it.dispose()
-			true
-		}
-	}
-}
-
-/**
- * A Parent implementation that allows for concurrent modification of its children.
- */
-open class ConcurrentParent<T : ParentBase<T>> : ParentBase<T>(), Disposable {
-
-	override final val _children = ActiveList<T>()
-	private val childIterator = _children.iterator()
-
-	override val children: ObservableList<T>
-		get() = _children
-
-	override fun iterateChildren(body: (T) -> Boolean) {
-		childIterator.iterate(body)
-	}
-
-	override fun iterateChildrenReversed(body: (T) -> Boolean) {
-		childIterator.iterateReversed(body)
-	}
-
-	override fun dispose() {
-		super.dispose()
-		_children.dispose()
 	}
 }
 
@@ -432,33 +352,6 @@ inline fun <reified T> T.findLastChildPreOrder(callback: (T) -> Boolean): T? {
 }
 
 /**
- * Traverses this ChildRo's ancestry, invoking a callback on each parent up the chain.
- * (including this object)
- * @param callback The callback to invoke on each ancestor. If this callback returns true, iteration will continue,
- * if it returns false, iteration will be halted.
- * @return If [callback] returned false, this method returns the element on which the iteration halted.
- */
-inline fun <reified T : ChildRo> T.parentWalk(callback: (T) -> Boolean): T? {
-	var p: T? = this
-	while (p != null) {
-		val shouldContinue = callback(p)
-		if (!shouldContinue) return p
-		p = p.parent as? T?
-	}
-	return null
-}
-
-fun ChildRo.root(): ChildRo {
-	var root: ChildRo = this
-	var p: ChildRo? = this
-	while (p != null) {
-		root = p
-		p = p.parent
-	}
-	return root
-}
-
-/**
  * Returns the lineage count. 0 if this child is the stage, or is the stage, 1 if the stage is the parent,
  * 2 if the stage is the grandparent, 3 if the stage is the great grandparent, and so on.
  */
@@ -470,57 +363,6 @@ fun ChildRo.ancestryCount(): Int {
 		p = p.parent
 	}
 	return count
-}
-
-/**
- * Populates an ArrayList with a ChildRo's ancestry.
- * @return Returns the [out] ArrayList
- */
-@Suppress("UNCHECKED_CAST")
-inline fun <reified T : ChildRo> T.ancestry(out: MutableList<T>): MutableList<T> {
-	out.clear()
-	parentWalk {
-		out.add(it)
-		true
-	}
-	return out
-}
-
-/**
- * Returns true if this [ChildRo] is the ancestor of the given [child].
- * X is considered to be an ancestor of Y if doing a parent walk starting from Y, X is then reached.
- * This will return true if X === Y
- */
-fun ChildRo.isAncestorOf(child: ChildRo): Boolean {
-	var isAncestor = false
-	child.parentWalk {
-		isAncestor = it === this
-		!isAncestor
-	}
-	return isAncestor
-}
-
-fun ChildRo.isDescendantOf(ancestor: ChildRo): Boolean {
-	if (ancestor is ParentRo<*>) {
-		return ancestor.isAncestorOf(this)
-	} else {
-		return false
-	}
-}
-
-inline fun <reified T : ChildRo> T.findCommonParent(other: T): ParentRo<T>? {
-	if (this === other) throw Exception("this == other")
-	parentWalk {
-		parentA ->
-		other.parentWalk {
-			parentB ->
-			@Suppress("UNCHECKED_CAST")
-			if (parentA === parentB) return parentA as ParentRo<T>
-			true
-		}
-		true
-	}
-	return null
 }
 
 /**
@@ -547,6 +389,39 @@ fun <T : ChildRo> T.rightDescendant(): T {
 	} else {
 		return this
 	}
+}
+
+inline fun ChildRo.parentWalk(callback: (ChildRo) -> Boolean): ChildRo? {
+	var p: ChildRo? = this
+	while (p != null) {
+		val shouldContinue = callback(p)
+		if (!shouldContinue) return p
+		p = p.parent
+	}
+	return null
+}
+
+/**
+ * Populates an ArrayList with a ChildRo's ancestry.
+ * @return Returns the [out] ArrayList
+ */
+fun ChildRo.ancestry(out: MutableList<ChildRo>): MutableList<ChildRo> {
+	out.clear()
+	parentWalk {
+		out.add(it)
+		true
+	}
+	return out
+}
+
+fun ChildRo.root(): ChildRo {
+	var root: ChildRo = this
+	var p: ChildRo? = this
+	while (p != null) {
+		root = p
+		p = p.parent
+	}
+	return root
 }
 
 /**
@@ -600,3 +475,19 @@ fun ChildRo.isAfter(other: ChildRo): Boolean {
 	}
 	throw Exception("No common withAncestor")
 }
+
+/**
+ * Returns true if this [ChildRo] is the ancestor of the given [child].
+ * X is considered to be an ancestor of Y if doing a parent walk starting from Y, X is then reached.
+ * This will return true if X === Y
+ */
+fun ChildRo.isAncestorOf(child: ChildRo): Boolean {
+	var isAncestor = false
+	child.parentWalk {
+		isAncestor = it === this
+		!isAncestor
+	}
+	return isAncestor
+}
+
+fun ChildRo.isDescendantOf(ancestor: ChildRo): Boolean = ancestor.isAncestorOf(this)

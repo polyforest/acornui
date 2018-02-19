@@ -36,6 +36,11 @@ interface Validatable {
 	val invalidated: Signal<(Validatable, Int) -> Unit>
 
 	/**
+	 * The currently invalid flags.
+	 */
+	val invalidFlags: Int
+
+	/**
 	 * Invalidates the given flag.
 	 * Returns a bit mask representing the flags newly invalidated.
 	 * Dispatches [invalidated] with the newly invalidated flags.
@@ -107,7 +112,9 @@ class ValidationTree {
 	 */
 	private var currentValidation = 0
 
-	private var invalidFlags = -1
+	private var _invalidFlags = -1
+	val invalidFlags: Int
+		get() = _invalidFlags
 
 	fun addNode(flag: Int, onValidate: () -> Unit) = addNode(flag, 0, 0, onValidate)
 
@@ -157,7 +164,7 @@ class ValidationTree {
 	 */
 	fun invalidate(flags: Int = -1): Int {
 		var flagsInvalidated = 0
-		var flagsToInvalidate = flags and invalidFlags.inv()
+		var flagsToInvalidate = flags and _invalidFlags.inv()
 		if (flagsToInvalidate == 0) return 0
 		for (i in currentIndex + 1..nodes.lastIndex) {
 			val n = nodes[i]
@@ -168,7 +175,7 @@ class ValidationTree {
 				flagsInvalidated = flagsInvalidated or n.flag
 			}
 		}
-		invalidFlags = invalidFlags or flagsInvalidated
+		_invalidFlags = _invalidFlags or flagsInvalidated
 		return flagsInvalidated
 	}
 
@@ -182,7 +189,7 @@ class ValidationTree {
 			}
 			return 0
 		}
-		var flagsToValidate = flags and invalidFlags
+		var flagsToValidate = flags and _invalidFlags
 		if (flagsToValidate == 0) return 0
 		for (i in 0..nodes.lastIndex) {
 			currentIndex = i
@@ -195,7 +202,7 @@ class ValidationTree {
 			}
 		}
 		currentIndex = -1
-		invalidFlags = invalidFlags and currentValidation.inv()
+		_invalidFlags = _invalidFlags and currentValidation.inv()
 		val flagsValidated = currentValidation
 		currentValidation = 0
 		return flagsValidated

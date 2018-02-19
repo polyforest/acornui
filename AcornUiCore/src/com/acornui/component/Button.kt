@@ -97,7 +97,7 @@ open class Button(
 	}
 
 	private val touchStartHandler = {
-		event: TouchInteraction ->
+		event: TouchInteractionRo ->
 		if (!_mouseIsDown) {
 			_mouseIsDown = true
 			stage.touchEnd().add(stageTouchEndHandler, true)
@@ -114,13 +114,13 @@ open class Button(
 	}
 
 	private val stageTouchEndHandler = {
-		event: TouchInteraction ->
+		event: TouchInteractionRo ->
 		_mouseIsDown = false
 		refreshState()
 	}
 
 	private val clickHandler = {
-		event: ClickInteraction ->
+		event: ClickInteractionRo ->
 		if (toggleOnClick)
 			toggled = !toggled
 	}

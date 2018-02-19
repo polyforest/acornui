@@ -18,6 +18,23 @@ package com.acornui.core.input
 
 import com.acornui.collection.Clearable
 
+interface PropagationRo {
+
+	fun immediatePropagationStopped(): Boolean
+
+	/**
+	 * Immediately stops execution of the sequence, neither progressing further, or finishing the current level.
+	 */
+	fun stopImmediatePropagation()
+
+	fun propagationStopped(): Boolean
+
+	/**
+	 * Stops the sequence from going to the next level, but will continue along the current level.
+	 */
+	fun stopPropagation()
+}
+
 /**
  * Given a ladder of propagation, [stopPropagation] stops the sequence from reaching the next rung, and
  * [stopImmediatePropagation] stops the sequence from reaching the next rung and stops the sequence from continuing
@@ -25,31 +42,31 @@ import com.acornui.collection.Clearable
  *
  * @author nbilyk
  */
-open class Propagation : Clearable {
+open class Propagation : PropagationRo, Clearable {
 
 	private var _immediatePropagationStopped = false
 	private var _propagationStopped = false
 
-	fun immediatePropagationStopped(): Boolean {
+	override fun immediatePropagationStopped(): Boolean {
 		return _immediatePropagationStopped
 	}
 
 	/**
 	 * Immediately stops execution of the sequence, neither progressing further, or finishing the current level.
 	 */
-	fun stopImmediatePropagation() {
+	override fun stopImmediatePropagation() {
 		_immediatePropagationStopped = true
 		_propagationStopped = true
 	}
 
-	fun propagationStopped(): Boolean {
+	override fun propagationStopped(): Boolean {
 		return _propagationStopped
 	}
 
 	/**
 	 * Stops the sequence from going to the next level, but will continue along the current level.
 	 */
-	fun stopPropagation() {
+	override fun stopPropagation() {
 		_propagationStopped = true
 	}
 

@@ -4,9 +4,9 @@ import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
 import com.acornui.component.Stage
 import com.acornui.component.UiComponentRo
+import com.acornui.component.ancestry
 import com.acornui.component.getChildUnderPoint
 import com.acornui.core.Disposable
-import com.acornui.core.ancestry
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
@@ -53,7 +53,7 @@ abstract class ClickDispatcher(
 	}
 
 	private val rootTouchStartHandler = {
-		event: TouchInteraction ->
+		event: TouchInteractionRo ->
 		val first = event.changedTouches.first()
 		val downElement = stage.getChildUnderPoint(first.canvasX, first.canvasY, onlyInteractive = true)
 		if (downElement != null) {
@@ -75,7 +75,7 @@ abstract class ClickDispatcher(
 	private var preventMouseTimer: Disposable? = null
 
 	private val rootTouchEndHandler =  {
-		event: TouchInteraction ->
+		event: TouchInteractionRo ->
 		val first = event.changedTouches.first()
 		release(WhichButton.LEFT, first.canvasX, first.canvasY, event.timestamp)
 		touchMode = true
@@ -87,7 +87,7 @@ abstract class ClickDispatcher(
 	}
 
 	private val rootTouchCancelHandler = {
-		event: TouchInteraction ->
+		event: TouchInteractionRo ->
 		val downElements = downButtons[WhichButton.LEFT.ordinal]
 		if (downElements != null) {
 			downButtons[WhichButton.LEFT.ordinal] = null
@@ -102,7 +102,7 @@ abstract class ClickDispatcher(
 		}
 	}
 
-	fun release(button: WhichButton, canvasX: Float, canvasY: Float, timestamp: Long) {
+	private fun release(button: WhichButton, canvasX: Float, canvasY: Float, timestamp: Long) {
 		val downElements = downButtons[button.ordinal]
 		if (downElements != null) {
 			downButtons[button.ordinal] = null
@@ -132,13 +132,13 @@ abstract class ClickDispatcher(
 		}
 	}
 
-	private fun getClickType(button: WhichButton): InteractionType<ClickInteraction> {
+	private fun getClickType(button: WhichButton): InteractionType<ClickInteractionRo> {
 		return when (button) {
-			WhichButton.LEFT -> ClickInteraction.LEFT_CLICK
-			WhichButton.RIGHT -> ClickInteraction.RIGHT_CLICK
-			WhichButton.MIDDLE -> ClickInteraction.MIDDLE_CLICK
-			WhichButton.BACK -> ClickInteraction.BACK_CLICK
-			WhichButton.FORWARD -> ClickInteraction.FORWARD_CLICK
+			WhichButton.LEFT -> ClickInteractionRo.LEFT_CLICK
+			WhichButton.RIGHT -> ClickInteractionRo.RIGHT_CLICK
+			WhichButton.MIDDLE -> ClickInteractionRo.MIDDLE_CLICK
+			WhichButton.BACK -> ClickInteractionRo.BACK_CLICK
+			WhichButton.FORWARD -> ClickInteractionRo.FORWARD_CLICK
 			else -> throw Exception("Unknown click type.")
 		}
 	}

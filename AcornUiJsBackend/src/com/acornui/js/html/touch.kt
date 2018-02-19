@@ -20,7 +20,7 @@ import org.w3c.dom.Element
 import org.w3c.dom.events.UIEvent
 
 
-external open class TouchEvent(typeArg: String) : UIEvent {
+open external class TouchEvent(typeArg: String) : UIEvent {
 
 	open val ctrlKey: Boolean
 	open val shiftKey: Boolean
@@ -31,7 +31,7 @@ external open class TouchEvent(typeArg: String) : UIEvent {
 	open val touches: Array<Touch>
 }
 
-external open class Touch {
+open external class Touch {
 
 	open val target: Element
 	open val clientX: Double

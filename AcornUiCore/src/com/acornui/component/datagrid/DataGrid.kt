@@ -38,10 +38,7 @@ import com.acornui.core.focus.focusFirst
 import com.acornui.core.focus.ownsFocused
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.KeyState
-import com.acornui.core.input.interaction.ClickInteraction
-import com.acornui.core.input.interaction.KeyInteraction
-import com.acornui.core.input.interaction.click
-import com.acornui.core.input.interaction.dragAttachment
+import com.acornui.core.input.interaction.*
 import com.acornui.core.input.keyDown
 import com.acornui.core.input.wheel
 import com.acornui.math.*
@@ -485,7 +482,7 @@ class DataGrid<E>(
 		return CellLocation(rowIterator, columnIndex)
 	}
 
-	private fun contentsClickedHandler(event: ClickInteraction) {
+	private fun contentsClickedHandler(event: ClickInteractionRo) {
 		if (event.handled) return
 		val cell = getCellFromPosition(event.canvasX, event.canvasY)
 		event.handled = true
@@ -1471,7 +1468,7 @@ class DataGrid<E>(
 		return headerCellBackground
 	}
 
-	private fun headerCellBackgroundClickedHandler(e: ClickInteraction) {
+	private fun headerCellBackgroundClickedHandler(e: ClickInteractionRo) {
 		if (!_columnSortingEnabled || e.handled) {
 			return
 		}

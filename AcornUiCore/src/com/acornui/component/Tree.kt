@@ -21,8 +21,8 @@ import com.acornui.component.layout.algorithm.hGroup
 import com.acornui.component.layout.algorithm.vGroup
 import com.acornui.component.style.*
 import com.acornui.component.text.text
+import com.acornui.core.ChildRo
 import com.acornui.core.Parent
-import com.acornui.core.ParentBase
 import com.acornui.core.ParentRo
 import com.acornui.core.cache.recycle
 import com.acornui.core.cursor.StandardCursors
@@ -30,7 +30,6 @@ import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.core.input.interaction.click
-import com.acornui.core.selection.Selectable
 import com.acornui.math.Bounds
 import com.acornui.observe.Observable
 import com.acornui.signal.*
@@ -292,7 +291,7 @@ fun <E : ParentRo<E>> Owned.tree(rootFactory: (tree: Tree<E>) -> TreeItemRendere
 /**
  * A simple data model representing the most rudimentary tree node.
  */
-open class TreeNode(label: String) : ParentBase<TreeNode>(), Parent<TreeNode>, Observable {
+open class TreeNode(label: String) : Parent<TreeNode>, Observable {
 
 	private val _changed = Signal1<TreeNode>()
 	override val changed: Signal<(Observable) -> Unit>
@@ -306,12 +305,24 @@ open class TreeNode(label: String) : ParentBase<TreeNode>(), Parent<TreeNode>, O
 		return this
 	}
 
-	override fun <S> onChildAdded(index: Int, child: S) {
+	override var parent: ParentRo<ChildRo>? = null
+
+	private val _children = ArrayList<TreeNode>()
+	override val children: List<TreeNode>
+		get() = _children
+
+	override fun <S : TreeNode> addChild(index: Int, child: S): S {
+		child.parent = this
+		_children.add(index, child)
 		_changed.dispatch(this)
+		return child
 	}
 
-	override fun <S> onChildRemoved(index: Int, child: S) {
+	override fun removeChild(index: Int): TreeNode {
+		val c = _children.removeAt(index)
+		c.parent = this
 		_changed.dispatch(this)
+		return c
 	}
 
 	private var _label: String = label

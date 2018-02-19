@@ -20,10 +20,9 @@ import com.acornui._assert
 import com.acornui.collection.ClearableObjectPool
 import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
-import com.acornui.component.InteractiveElementRo
 import com.acornui.component.UiComponentRo
+import com.acornui.component.ancestry
 import com.acornui.component.getChildUnderPoint
-import com.acornui.core.ancestry
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.input.interaction.*
 import com.acornui.core.time.time
@@ -52,7 +51,7 @@ open class InteractivityManagerImpl(
 	private val keyPool = ClearableObjectPool { KeyInteraction() }
 	private val charPool = ClearableObjectPool { CharInteraction() }
 
-	private val overTargets = ArrayList<InteractiveElementRo>()
+	private val overTargets = ArrayList<UiComponentRo>()
 
 
 	private fun overCanvasChangedHandler(overCanvas: Boolean) {
@@ -61,40 +60,40 @@ open class InteractivityManagerImpl(
 	}
 
 	private fun rawTouchStartHandler(event: TouchInteraction) {
-		touchHandler(TouchInteraction.TOUCH_START, event)
+		touchHandler(TouchInteractionRo.TOUCH_START, event)
 	}
 
 	private fun rawTouchEndHandler(event: TouchInteraction) {
-		touchHandler(TouchInteraction.TOUCH_END, event)
+		touchHandler(TouchInteractionRo.TOUCH_END, event)
 	}
 
 	private fun rawTouchMoveHandler(event: TouchInteraction) {
-		overTarget(touchHandler(TouchInteraction.TOUCH_MOVE, event))
+		overTarget(touchHandler(TouchInteractionRo.TOUCH_MOVE, event))
 	}
 
 	private fun rawMouseDownHandler(event: MouseInteraction) {
-		mouseHandler(MouseInteraction.MOUSE_DOWN, event)
+		mouseHandler(MouseInteractionRo.MOUSE_DOWN, event)
 	}
 
 	private fun rawMouseUpHandler(event: MouseInteraction) {
-		mouseHandler(MouseInteraction.MOUSE_UP, event)
+		mouseHandler(MouseInteractionRo.MOUSE_UP, event)
 	}
 
 	private fun rawMouseMoveHandler(event: MouseInteraction) {
-		overTarget(mouseHandler(MouseInteraction.MOUSE_MOVE, event))
+		overTarget(mouseHandler(MouseInteractionRo.MOUSE_MOVE, event))
 	}
 
 	private fun rawWheelHandler(event: WheelInteraction) {
 		val wheel = wheelPool.obtain()
 		wheel.set(event)
-		wheel.type = WheelInteraction.MOUSE_WHEEL
+		wheel.type = WheelInteractionRo.MOUSE_WHEEL
 		dispatch(event.canvasX + 0.5f, event.canvasY + 0.5f, wheel)
 		if (wheel.defaultPrevented())
 			event.preventDefault()
 		wheelPool.free(wheel)
 	}
 
-	private fun <T : MouseInteraction> mouseHandler(type: InteractionType<T>, event: MouseInteraction): InteractiveElementRo? {
+	private fun <T : MouseInteraction> mouseHandler(type: InteractionType<T>, event: MouseInteraction): UiComponentRo? {
 		val mouse = mousePool.obtain()
 		mouse.set(event)
 		mouse.type = type
@@ -106,7 +105,7 @@ open class InteractivityManagerImpl(
 		return ele
 	}
 
-	private fun touchHandler(type: InteractionType<TouchInteraction>, event: TouchInteraction): InteractiveElementRo? {
+	private fun touchHandler(type: InteractionType<TouchInteractionRo>, event: TouchInteraction): UiComponentRo? {
 		val touch = touchPool.obtain()
 		touch.set(event)
 		touch.type = type
@@ -148,7 +147,8 @@ open class InteractivityManagerImpl(
 		char.type = CharInteraction.CHAR
 		char.set(event)
 		dispatch(f, char)
-		if (char.defaultPrevented()) event.preventDefault()
+		if (char.defaultPrevented())
+			event.preventDefault()
 		charPool.free(char)
 	}
 
@@ -170,7 +170,7 @@ open class InteractivityManagerImpl(
 		keyInput.char.add(this::charHandler)
 	}
 
-	private fun overTarget(target: InteractiveElementRo?) {
+	private fun overTarget(target: UiComponentRo?) {
 		val previousOverTarget = overTargets.firstOrNull()
 		if (target == previousOverTarget) return
 		val mouse = mousePool.obtain()
@@ -182,14 +182,14 @@ open class InteractivityManagerImpl(
 		if (previousOverTarget != null) {
 			mouse.relatedTarget = target
 			mouse.target = previousOverTarget
-			mouse.type = MouseInteraction.MOUSE_OUT
+			mouse.type = MouseInteractionRo.MOUSE_OUT
 			dispatch(overTargets, mouse)
 		}
 		if (target != null) {
 			target.ancestry(overTargets)
 			mouse.relatedTarget = previousOverTarget
 			mouse.target = target
-			mouse.type = MouseInteraction.MOUSE_OVER
+			mouse.type = MouseInteractionRo.MOUSE_OVER
 			dispatch(overTargets, mouse)
 		} else {
 			overTargets.clear()
@@ -197,7 +197,7 @@ open class InteractivityManagerImpl(
 		mousePool.free(mouse)
 	}
 
-	override fun <T : InteractionEvent> getSignal(host: InteractiveElementRo, type: InteractionType<T>, isCapture: Boolean): StoppableSignalImpl<T> {
+	override fun <T : InteractionEventRo> getSignal(host: UiComponentRo, type: InteractionType<T>, isCapture: Boolean): StoppableSignalImpl<T> {
 		return StoppableSignalImpl()
 	}
 
@@ -217,20 +217,20 @@ open class InteractivityManagerImpl(
 	 * This will first dispatch a capture event from the stage down to the given target, and then
 	 * a bubbling event up to the stage.
 	 */
-	override fun dispatch(target: InteractiveElementRo, event: InteractionEvent, useCapture: Boolean, useBubble: Boolean) {
+	override fun dispatch(target: UiComponentRo, event: InteractionEvent, useCapture: Boolean, useBubble: Boolean) {
 		event.target = target
 		if (!useCapture && !useBubble) {
 			// Dispatch only for current target.
 			dispatchForCurrentTarget(target, event, isCapture = false)
 		} else {
-			val rawAncestry = arrayListObtain<InteractiveElementRo>()
+			val rawAncestry = arrayListObtain<UiComponentRo>()
 			target.ancestry(rawAncestry)
 			dispatch(rawAncestry, event, useCapture, useBubble)
 			arrayListPool.free(rawAncestry)
 		}
 	}
 
-	private fun dispatch(rawAncestry: List<InteractiveElementRo>, event: InteractionEvent, useCapture: Boolean = true, useBubble: Boolean = true) {
+	private fun dispatch(rawAncestry: List<UiComponentRo>, event: InteractionEvent, useCapture: Boolean = true, useBubble: Boolean = true) {
 		// Capture phase
 		if (useCapture) {
 			for (i in rawAncestry.lastIndex downTo 0) {
@@ -247,7 +247,7 @@ open class InteractivityManagerImpl(
 		}
 	}
 
-	private fun dispatchForCurrentTarget(currentTarget: InteractiveElementRo, event: InteractionEvent, isCapture: Boolean) {
+	private fun dispatchForCurrentTarget(currentTarget: UiComponentRo, event: InteractionEvent, isCapture: Boolean) {
 		val signal = currentTarget.getInteractionSignal(event.type, isCapture) as StoppableSignalImpl?
 		if (signal != null && signal.isNotEmpty()) {
 			event.localize(currentTarget)

@@ -19,14 +19,10 @@ package com.acornui.js.dom
 import com.acornui._assert
 import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
-import com.acornui.component.InteractiveElementRo
 import com.acornui.component.UiComponentRo
+import com.acornui.component.ancestry
 import com.acornui.component.getChildUnderPoint
-import com.acornui.core.ancestry
-import com.acornui.core.input.InteractionEvent
-import com.acornui.core.input.InteractionType
-import com.acornui.core.input.InteractivityManager
-import com.acornui.core.input.WhichButton
+import com.acornui.core.input.*
 import com.acornui.core.input.interaction.*
 import com.acornui.core.input.interaction.Touch
 import com.acornui.js.dom.component.DomComponent
@@ -213,7 +209,7 @@ open class DomInteractivityManager : InteractivityManager {
 	}
 
 
-	override fun <T : InteractionEvent> getSignal(host: InteractiveElementRo, type: InteractionType<T>, isCapture: Boolean): StoppableSignalImpl<T> {
+	override fun <T : InteractionEventRo> getSignal(host: UiComponentRo, type: InteractionType<T>, isCapture: Boolean): StoppableSignalImpl<T> {
 		return when (type) {
 			KeyInteraction.KEY_DOWN -> {
 				NativeSignal(host, "keydown", isCapture, type, keyEvent, nativeKeyHandler)
@@ -365,8 +361,8 @@ open class DomInteractivityManager : InteractivityManager {
 	 * This will first dispatch a capture event from the stage down to the given target, and then
 	 * a bubbling event up to the stage.
 	 */
-	override fun dispatch(target: InteractiveElementRo, event: InteractionEvent, useCapture: Boolean, useBubble: Boolean) {
-		val rawAncestry = arrayListObtain<InteractiveElementRo>()
+	override fun dispatch(target: UiComponentRo, event: InteractionEvent, useCapture: Boolean, useBubble: Boolean) {
+		val rawAncestry = arrayListObtain<UiComponentRo>()
 		event.target = target
 		if (!useCapture && !useBubble) {
 			// Dispatch only for current target.
@@ -378,7 +374,7 @@ open class DomInteractivityManager : InteractivityManager {
 		arrayListPool.free(rawAncestry)
 	}
 
-	private fun dispatch(rawAncestry: List<InteractiveElementRo>, event: InteractionEvent, useCapture: Boolean, useBubble: Boolean) {
+	private fun dispatch(rawAncestry: List<UiComponentRo>, event: InteractionEvent, useCapture: Boolean, useBubble: Boolean) {
 		// Capture phase
 		if (useCapture) {
 			for (i in rawAncestry.lastIndex downTo 0) {
@@ -395,7 +391,7 @@ open class DomInteractivityManager : InteractivityManager {
 		}
 	}
 
-	private fun dispatchForCurrentTarget(currentTarget: InteractiveElementRo, event: InteractionEvent, isCapture: Boolean) {
+	private fun dispatchForCurrentTarget(currentTarget: UiComponentRo, event: InteractionEvent, isCapture: Boolean) {
 		val signal = currentTarget.getInteractionSignal(event.type, isCapture) as StoppableSignalImpl?
 		if (signal != null && signal.isNotEmpty()) {
 			event.localize(currentTarget)

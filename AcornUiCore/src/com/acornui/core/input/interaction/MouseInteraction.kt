@@ -17,27 +17,89 @@
 package com.acornui.core.input.interaction
 
 import com.acornui.component.InteractiveElement
-import com.acornui.component.InteractiveElementRo
+import com.acornui.component.UiComponentRo
 import com.acornui.core.input.InteractionEventBase
+import com.acornui.core.input.InteractionEventRo
 import com.acornui.core.input.InteractionType
 import com.acornui.core.input.WhichButton
 import com.acornui.math.Vector2
 
-/**
- * A data class representing a mouse event, as provided to [InteractiveElement] objects by the [InteractivityManager]
- * @author nbilyk
- */
-open class MouseInteraction : InteractionEventBase() {
+interface MouseInteractionRo : InteractionEventRo {
 
 	/**
 	 * The x position of the mouse event relative to the root canvas.
 	 */
-	var canvasX: Float = 0f
+	val canvasX: Float
 
 	/**
 	 * The y position of the mouse event relative to the root canvas.
 	 */
-	var canvasY: Float = 0f
+	val canvasY: Float
+
+	/**
+	 * The x position of the mouse event relative to the [currentTarget].
+	 */
+	val localX: Float
+
+	/**
+	 * The y position of the mouse event relative to the [currentTarget].
+	 */
+	val localY: Float
+
+	/**
+	 * On a mouse out interaction, the relatedTarget will be the new over target (or null if there isn't one)
+	 * On a mouse over interaction, the relatedTarget will be the previous over target (or null if there wasn't one)
+	 */
+	val relatedTarget: UiComponentRo?
+
+	val button: WhichButton
+
+	/**
+	 * The number of milliseconds from the Unix epoch.
+	 */
+	val timestamp: Long
+
+	/**
+	 * If true, this interaction was triggered from code, not real user input.
+	 */
+	val isFabricated: Boolean
+
+	/**
+	 * Calculates the average velocity in pixels per millisecond of this touch event compared to a previous touch event.
+	 */
+	fun velocity(previous: MouseInteractionRo): Float {
+		val xDiff = previous.canvasX - canvasX
+		val yDiff = previous.canvasY - canvasY
+		val distance = Math.sqrt((xDiff * xDiff + yDiff * yDiff).toDouble()).toFloat()
+		val time = timestamp - previous.timestamp
+		return distance / time
+	}
+
+	companion object {
+		val MOUSE_DOWN = InteractionType<MouseInteraction>("mouseDown")
+		val MOUSE_UP = InteractionType<MouseInteraction>("mouseUp")
+		val MOUSE_MOVE = InteractionType<MouseInteraction>("mouseMove")
+
+		val MOUSE_OVER = InteractionType<MouseInteraction>("mouseOver")
+		val MOUSE_OUT = InteractionType<MouseInteraction>("mouseOut")
+	}
+}
+
+/**
+ * Representing a mouse event, as provided to [InteractiveElement] objects by the [InteractivityManager]
+ * @author nbilyk
+ */
+open class MouseInteraction : InteractionEventBase(), MouseInteractionRo {
+
+	/**
+	 * The x position of the mouse event relative to the root canvas.
+	 */
+	override var canvasX: Float = 0f
+
+	/**
+	 * The y position of the mouse event relative to the root canvas.
+	 */
+	override var canvasY: Float = 0f
 
 	private var _localPositionIsValid = false
 	private val _localPosition: Vector2 = Vector2()
@@ -58,45 +120,34 @@ open class MouseInteraction : InteractionEventBase() {
 	/**
 	 * The x position of the mouse event relative to the [currentTarget].
 	 */
-	val localX: Float
+	override val localX: Float
 		get() = localPosition().x
 
 	/**
 	 * The y position of the mouse event relative to the [currentTarget].
 	 */
-	val localY: Float
+	override val localY: Float
 		get() = localPosition().y
 
 	/**
 	 * On a mouse out interaction, the relatedTarget will be the new over target (or null if there isn't one)
 	 * On a mouse over interaction, the relatedTarget will be the previous over target (or null if there wasn't one)
 	 */
-	var relatedTarget: InteractiveElementRo? = null
+	override var relatedTarget: UiComponentRo? = null
 
-	var button: WhichButton = WhichButton.UNKNOWN
+	override var button: WhichButton = WhichButton.UNKNOWN
 
 	/**
 	 * The number of milliseconds from the Unix epoch.
 	 */
-	var timestamp: Long = 0
+	override var timestamp: Long = 0
 
 	/**
 	 * If true, this interaction was triggered from code, not real user input.
 	 */
-	var isFabricated: Boolean = false
+	override var isFabricated: Boolean = false
 
-	/**
-	 * Calculates the average velocity in pixels per millisecond of this touch event compared to a previous touch event.
-	 */
-	fun velocity(previous: MouseInteraction): Float {
-		val xDiff = previous.canvasX - canvasX
-		val yDiff = previous.canvasY - canvasY
-		val distance = Math.sqrt((xDiff * xDiff + yDiff * yDiff).toDouble()).toFloat()
-		val time = timestamp - previous.timestamp
-		return distance / time
-	}
-
-	open fun set(event: MouseInteraction) {
+	open fun set(event: MouseInteractionRo) {
 		type = event.type
 		canvasX = event.canvasX
 		canvasY = event.canvasY
@@ -104,7 +155,7 @@ open class MouseInteraction : InteractionEventBase() {
 		timestamp = event.timestamp
 	}
 
-	override fun localize(currentTarget: InteractiveElementRo) {
+	override fun localize(currentTarget: UiComponentRo) {
 		super.localize(currentTarget)
 		_localPositionIsValid = false
 	}
@@ -120,25 +171,26 @@ open class MouseInteraction : InteractionEventBase() {
 		timestamp = 0
 		isFabricated = false
 	}
+}
+
+interface WheelInteractionRo : MouseInteractionRo {
+
+	val deltaX: Float
+	val deltaY: Float
+	val deltaZ: Float
 
 	companion object {
-		val MOUSE_DOWN = InteractionType<MouseInteraction>("mouseDown")
-		val MOUSE_UP = InteractionType<MouseInteraction>("mouseUp")
-		val MOUSE_MOVE = InteractionType<MouseInteraction>("mouseMove")
-
-		val MOUSE_OVER = InteractionType<MouseInteraction>("mouseOver")
-		val MOUSE_OUT = InteractionType<MouseInteraction>("mouseOut")
+		val MOUSE_WHEEL = InteractionType<WheelInteraction>("mouseWheel")
 	}
 }
 
-class WheelInteraction : MouseInteraction() {
+class WheelInteraction : MouseInteraction(), WheelInteractionRo {
 
-	var deltaX: Float = 0f
-	var deltaY: Float = 0f
-	var deltaZ: Float = 0f
+	override var deltaX: Float = 0f
+	override var deltaY: Float = 0f
+	override var deltaZ: Float = 0f
 
-	override fun set(event: MouseInteraction) {
-		(event as WheelInteraction)
+	fun set(event: WheelInteractionRo) {
 		super.set(event)
 		deltaX = event.deltaX
 		deltaY = event.deltaY
@@ -152,7 +204,4 @@ class WheelInteraction : MouseInteraction() {
 		deltaZ = 0f
 	}
 
-	companion object {
-		val MOUSE_WHEEL = InteractionType<WheelInteraction>("mouseWheel")
-	}
 }

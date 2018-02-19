@@ -3,51 +3,91 @@ package com.acornui.core.input.interaction
 import com.acornui.collection.Clearable
 import com.acornui.collection.ClearableObjectPool
 import com.acornui.component.InteractiveElementRo
+import com.acornui.component.UiComponentRo
 import com.acornui.core.input.InteractionEventBase
+import com.acornui.core.input.InteractionEventRo
 import com.acornui.core.input.InteractionType
 import com.acornui.math.MathUtils
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
 
-class TouchInteraction : InteractionEventBase() {
+interface TouchInteractionRo : InteractionEventRo {
 
 	/**
 	 * The number of milliseconds from the Unix epoch.
 	 */
-	var timestamp: Long = 0
+	val timestamp: Long
 
 	/**
 	 * A list of all the Touch objects that are both currently in contact with the touch surface and were also started
 	 * on the same element that is the target of the event.
 	 */
-	val targetTouches = ArrayList<Touch>()
+	val targetTouches: List<TouchRo>
 
 	/**
 	 * A list of all the Touch objects representing individual points of contact whose states changed between the
 	 * previous touch event and this one.
 	 */
-	val changedTouches = ArrayList<Touch>()
+	val changedTouches: List<TouchRo>
 
 	/**
 	 * A list of all the Touch objects representing all current points of contact with the surface, regardless of
 	 * target or changed status.
 	 */
-	val touches = ArrayList<Touch>()
+	val touches: List<TouchRo>
 
-	override fun localize(currentTarget: InteractiveElementRo) {
+	companion object {
+
+		val TOUCH_START = InteractionType<TouchInteractionRo>("touchStart")
+		val TOUCH_MOVE = InteractionType<TouchInteractionRo>("touchMove")
+		val TOUCH_ENTER = InteractionType<TouchInteractionRo>("touchEnter")
+		val TOUCH_LEAVE = InteractionType<TouchInteractionRo>("touchLeave")
+		val TOUCH_END = InteractionType<TouchInteractionRo>("touchEnd")
+		val TOUCH_CANCEL = InteractionType<TouchInteractionRo>("touchCancel")
+
+	}
+
+}
+
+class TouchInteraction : TouchInteractionRo, InteractionEventBase() {
+
+	/**
+	 * The number of milliseconds from the Unix epoch.
+	 */
+	override var timestamp: Long = 0
+
+	/**
+	 * A list of all the Touch objects that are both currently in contact with the touch surface and were also started
+	 * on the same element that is the target of the event.
+	 */
+	override val targetTouches = ArrayList<Touch>()
+
+	/**
+	 * A list of all the Touch objects representing individual points of contact whose states changed between the
+	 * previous touch event and this one.
+	 */
+	override val changedTouches = ArrayList<Touch>()
+
+	/**
+	 * A list of all the Touch objects representing all current points of contact with the surface, regardless of
+	 * target or changed status.
+	 */
+	override val touches = ArrayList<Touch>()
+
+	override fun localize(currentTarget: UiComponentRo) {
 		super.localize(currentTarget)
-		for (targetTouch in targetTouches) {
-			targetTouch.localize(currentTarget)
+		for (i in 0..targetTouches.lastIndex) {
+			targetTouches[i].localize(currentTarget)
 		}
-		for (changedTouch in changedTouches) {
-			changedTouch.localize(currentTarget)
+		for (i in 0..changedTouches.lastIndex) {
+			changedTouches[i].localize(currentTarget)
 		}
-		for (touch in touches) {
-			touch.localize(currentTarget)
+		for (i in 0..touches.lastIndex) {
+			touches[i].localize(currentTarget)
 		}
 	}
 
-	fun set(event: TouchInteraction) {
+	fun set(event: TouchInteractionRo) {
 		type = event.type
 		clearTouches()
 		targetTouches.addTouches(event.targetTouches)
@@ -77,17 +117,11 @@ class TouchInteraction : InteractionEventBase() {
 	}
 
 	companion object {
-		val TOUCH_START = InteractionType<TouchInteraction>("touchStart")
-		val TOUCH_MOVE = InteractionType<TouchInteraction>("touchMove")
-		val TOUCH_ENTER = InteractionType<TouchInteraction>("touchEnter")
-		val TOUCH_LEAVE = InteractionType<TouchInteraction>("touchLeave")
-		val TOUCH_END = InteractionType<TouchInteraction>("touchEnd")
-		val TOUCH_CANCEL = InteractionType<TouchInteraction>("touchCancel")
 
 		/**
 		 * Fills the [toList] with clones of the touches in [fromList]
 		 */
-		fun MutableList<Touch>.addTouches(fromList: List<Touch>) {
+		private fun MutableList<Touch>.addTouches(fromList: List<TouchRo>) {
 			for (i in 0..fromList.lastIndex) {
 				val fromTouch = fromList[i]
 				val newTouch = Touch.obtain()
@@ -99,24 +133,63 @@ class TouchInteraction : InteractionEventBase() {
 
 }
 
-class Touch : Clearable {
+interface TouchRo {
 
 	/**
 	 * The x position of the mouse event relative to the root canvas.
 	 */
-	var canvasX: Float = 0f
+	val canvasX: Float
 
 	/**
 	 * The y position of the mouse event relative to the root canvas.
 	 */
-	var canvasY: Float = 0f
+	val canvasY: Float
 
-	var radiusX: Float = 0f
-	var radiusY: Float = 0f
-	var rotationAngle: Float = 0f
+	val radiusX: Float
+	val radiusY: Float
+	val rotationAngle: Float
 
-	var target: InteractiveElementRo? = null
-	var currentTarget: InteractiveElementRo? = null
+	val target: InteractiveElementRo?
+	val currentTarget: InteractiveElementRo?
+
+	/**
+	 * The x position of the mouse event relative to the [currentTarget].
+	 */
+	val localX: Float
+
+	/**
+	 * The y position of the mouse event relative to the [currentTarget].
+	 */
+	val localY: Float
+
+	/**
+	 * The distance of this touch point to the other touch point (in canvas coordinates)
+	 */
+	fun dst(other: TouchRo): Float {
+		val xD = other.canvasX - canvasX
+		val yD = other.canvasY - canvasY
+		return MathUtils.sqrt((xD * xD + yD * yD))
+	}
+}
+
+class Touch : TouchRo, Clearable {
+
+	/**
+	 * The x position of the mouse event relative to the root canvas.
+	 */
+	override var canvasX: Float = 0f
+
+	/**
+	 * The y position of the mouse event relative to the root canvas.
+	 */
+	override var canvasY: Float = 0f
+
+	override var radiusX: Float = 0f
+	override var radiusY: Float = 0f
+	override var rotationAngle: Float = 0f
+
+	override var target: InteractiveElementRo? = null
+	override var currentTarget: InteractiveElementRo? = null
 
 	private var _localPositionIsValid = false
 	private val _localPosition: Vector2 = Vector2()
@@ -136,13 +209,13 @@ class Touch : Clearable {
 	/**
 	 * The x position of the mouse event relative to the [currentTarget].
 	 */
-	val localX: Float
+	override val localX: Float
 		get() = localPosition().x
 
 	/**
 	 * The y position of the mouse event relative to the [currentTarget].
 	 */
-	val localY: Float
+	override val localY: Float
 		get() = localPosition().y
 
 	fun localize(currentTarget: InteractiveElementRo) {
@@ -170,7 +243,7 @@ class Touch : Clearable {
 		_localPositionIsValid = false
 	}
 
-	fun set(otherTouch: Touch) {
+	fun set(otherTouch: TouchRo) {
 		canvasX = otherTouch.canvasX
 		canvasY = otherTouch.canvasY
 		radiusX = otherTouch.radiusX

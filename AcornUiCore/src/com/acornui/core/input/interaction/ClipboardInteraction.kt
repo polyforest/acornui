@@ -1,7 +1,7 @@
 package com.acornui.core.input.interaction
 
 import com.acornui.collection.find2
-import com.acornui.component.InteractiveElementRo
+import com.acornui.component.UiComponentRo
 import com.acornui.core.graphics.Texture
 import com.acornui.core.input.InteractionEventBase
 import com.acornui.core.input.InteractionType
@@ -11,7 +11,7 @@ class ClipboardInteraction : InteractionEventBase() {
 
 	var dataTransfer: DataTransferRead by Delegates.notNull()
 
-	override fun localize(currentTarget: InteractiveElementRo) {
+	override fun localize(currentTarget: UiComponentRo) {
 		super.localize(currentTarget)
 	}
 

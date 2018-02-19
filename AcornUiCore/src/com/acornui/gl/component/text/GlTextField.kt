@@ -53,6 +53,7 @@ import com.acornui.math.Matrix4Ro
 import com.acornui.math.Vector3
 import com.acornui.math.ceil
 import com.acornui.string.isBreaking
+import com.acornui.string.toRadix
 
 /**
  * A TextField implementation for the OpenGL back-ends.
@@ -61,8 +62,8 @@ import com.acornui.string.isBreaking
 @Suppress("LeakingThis", "UNUSED_PARAMETER")
 open class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 
-	override final val flowStyle = bind(TextFlowStyle())
-	override final val charStyle = bind(CharStyle())
+	final override val flowStyle = bind(TextFlowStyle())
+	final override val charStyle = bind(CharStyle())
 
 	private val selectionManager = inject(SelectionManager)
 
@@ -161,6 +162,11 @@ open class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 
 	private fun fontRegisteredHandler(registeredFont: BitmapFont) {
 		invalidateStyles()
+		println("Font registered")
+		parentWalk {
+			println("Invalid flags $it ${(it.invalidFlags and (ValidationFlags.STYLES or ValidationFlags.LAYOUT)).toRadix(2)}")
+			true
+		}
 	}
 
 	protected open fun updateSelection() {
@@ -260,10 +266,10 @@ open class TextSpanElementImpl : TextSpanElement, ElementParent<TextElement>, St
 	// Styleable
 	//-------------------------------------------------------
 
-	override final val styleTags: MutableList<StyleTag>
+	final override val styleTags: MutableList<StyleTag>
 		get() = styles.styleTags
 
-	override final val styleRules: MutableList<StyleRule<*>>
+	final override val styleRules: MutableList<StyleRule<*>>
 		get() = styles.styleRules
 
 	override fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRule<T>>) = styles.getRulesByType(type, out)

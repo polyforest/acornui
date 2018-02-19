@@ -17,7 +17,6 @@
 package com.acornui.core.input
 
 import com.acornui.collection.Clearable
-import com.acornui.component.InteractiveElementRo
 import com.acornui.component.UiComponentRo
 import com.acornui.core.Disposable
 import com.acornui.core.di.DKey
@@ -38,7 +37,7 @@ interface InteractivityManager : Disposable {
 	/**
 	 * Produces a new Signal for the specified interaction type.
 	 */
-	fun <T : InteractionEvent> getSignal(host: InteractiveElementRo, type: InteractionType<T>, isCapture: Boolean): StoppableSignal<T>
+	fun <T : InteractionEventRo> getSignal(host: UiComponentRo, type: InteractionType<T>, isCapture: Boolean): StoppableSignal<T>
 
 	/**
 	 * Dispatches an interaction for the layout element at the given stage position.
@@ -62,13 +61,13 @@ interface InteractivityManager : Disposable {
 	 * If both [useCapture] and [useBubble] are false, only the target will have the event dispatched. (Using the
 	 * bubble-phase signal)
 	 */
-	fun dispatch(target: InteractiveElementRo, event: InteractionEvent, useCapture: Boolean = true, useBubble: Boolean = true)
+	fun dispatch(target: UiComponentRo, event: InteractionEvent, useCapture: Boolean = true, useBubble: Boolean = true)
 
 	companion object : DKey<InteractivityManager>
 }
 
 @Suppress("unused")
-data class InteractionType<out T : InteractionEvent>(val displayName: String) {
+data class InteractionType<out T : InteractionEventRo>(val displayName: String) {
 
 	override fun toString(): String {
 		return "InteractionType($displayName)"
@@ -77,34 +76,47 @@ data class InteractionType<out T : InteractionEvent>(val displayName: String) {
 	companion object
 }
 
-interface InteractionEvent : Clearable, Stoppable {
+interface InteractionEventRo : Stoppable {
 
-	var type: InteractionType<InteractionEvent>
+	val type: InteractionType<InteractionEventRo>
+
+	val target: UiComponentRo?
+
+	val currentTarget: UiComponentRo?
 
 	/**
 	 * True if this event was used in an interaction.
 	 */
 	var handled: Boolean
 
-	val propagation: Propagation
+	val propagation: PropagationRo
+
+	fun preventDefault()
+
+	fun defaultPrevented(): Boolean
+
+	companion object {
+		val UNKNOWN = InteractionType<InteractionEventRo>("unknown")
+	}
+}
+
+interface InteractionEvent : InteractionEventRo, Clearable {
+
+	override var type: InteractionType<InteractionEventRo>
+	override var target: UiComponentRo?
+	override var currentTarget: UiComponentRo?
+
+	override val propagation: Propagation
 
 	override fun isStopped(): Boolean {
 		return propagation.immediatePropagationStopped()
 	}
 
-	var target: InteractiveElementRo?
-	var currentTarget: InteractiveElementRo?
-
 	/**
 	 * Changes the local properties of this interaction to be relative to the given target. (Such as touch x, y)
 	 */
-	fun localize(currentTarget: InteractiveElementRo)
+	fun localize(currentTarget: UiComponentRo)
 
-	fun defaultPrevented(): Boolean
-
-	fun preventDefault()
-
-	override fun clear()
 }
 
 /**
@@ -112,20 +124,20 @@ interface InteractionEvent : Clearable, Stoppable {
  */
 abstract class InteractionEventBase : InteractionEvent {
 
-	override var type: InteractionType<InteractionEvent> = UNKNOWN
+	override var type: InteractionType<InteractionEventRo> = InteractionEventRo.UNKNOWN
 
 	override var handled: Boolean = false
 
-	override var target: InteractiveElementRo? = null
-	override var currentTarget: InteractiveElementRo? = null
+	override var target: UiComponentRo? = null
+	override var currentTarget: UiComponentRo? = null
 
-	override fun localize(currentTarget: InteractiveElementRo) {
+	override fun localize(currentTarget: UiComponentRo) {
 		this.currentTarget = currentTarget
 	}
 
 	override val propagation: Propagation = Propagation()
 
-	protected var _defaultPrevented: Boolean = false
+	private var _defaultPrevented: Boolean = false
 
 	override fun defaultPrevented(): Boolean = _defaultPrevented
 
@@ -137,15 +149,11 @@ abstract class InteractionEventBase : InteractionEvent {
 	}
 
 	override fun clear() {
-		type = UNKNOWN
+		type = InteractionEventRo.UNKNOWN
 		propagation.clear()
 		handled = false
 		target = null
 		currentTarget = null
 		_defaultPrevented = false
-	}
-
-	companion object {
-		val UNKNOWN = InteractionType<InteractionEvent>("unknown")
 	}
 }

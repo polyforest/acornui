@@ -8,7 +8,6 @@ import com.acornui.collection.ActiveList
 import com.acornui.collection.addSorted
 import com.acornui.collection.find2
 import com.acornui.collection.removeFirst
-import com.acornui.component.AttachmentHolder
 import com.acornui.core.Disposable
 import com.acornui.observe.Observable
 import com.acornui.observe.bind
