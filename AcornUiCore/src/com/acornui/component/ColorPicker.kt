@@ -9,6 +9,7 @@ import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.core.focus.Focusable
 import com.acornui.core.input.interaction.MouseInteraction
+import com.acornui.core.input.interaction.MouseInteractionRo
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.interaction.dragAttachment
 import com.acornui.core.input.mouseDown
@@ -46,7 +47,7 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner), Focusable {
 		get() = colorPalette.changed
 
 	private val stageMouseDownHandler = {
-		event: MouseInteraction ->
+		event: MouseInteractionRo ->
 
 		if (event.target == null || (!event.target!!.isDescendantOf(colorPalette) && !event.target!!.isDescendantOf(this))) {
 			close()

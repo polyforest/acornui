@@ -43,7 +43,7 @@ abstract class ClickDispatcher(
 	private var pendingClick = false
 
 	private val rootMouseDownHandler = {
-		event: MouseInteraction ->
+		event: MouseInteractionRo ->
 		if (!touchMode) {
 			val downElement = stage.getChildUnderPoint(event.canvasX, event.canvasY, onlyInteractive = true)
 			if (downElement != null) {
@@ -96,7 +96,7 @@ abstract class ClickDispatcher(
 	}
 
 	private val rootMouseUpHandler = {
-		event: MouseInteraction ->
+		event: MouseInteractionRo ->
 		if (!touchMode && !event.isFabricated) {
 			release(event.button, event.canvasX, event.canvasY, event.timestamp)
 		}

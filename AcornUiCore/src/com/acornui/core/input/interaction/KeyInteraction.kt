@@ -18,64 +18,122 @@ package com.acornui.core.input.interaction
 
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.InteractionEventBase
+import com.acornui.core.input.InteractionEventRo
 import com.acornui.core.input.InteractionType
 
-/**
- * An event representing an interaction with the keyboard.
- * @author nbilyk
- */
-open class KeyInteraction : InteractionEventBase() {
+interface KeyInteractionRo : InteractionEventRo {
 
 	/**
 	 * The ascii keyCode.
 	 * @see Ascii
 	 */
-	var keyCode: Int = 0
+	val keyCode: Int
 
 	/**
 	 * The location of the key.
 	 * If there is only one location for the related key, it will have a location of STANDARD.
 	 */
-	var location: KeyLocation = KeyLocation.STANDARD
+	val location: KeyLocation
 
 	/**
 	 * True if the Alt key was active when the KeyboardEvent was generated.
 	 */
-	var altKey: Boolean = false
+	val altKey: Boolean
 
 	/**
 	 * True if the Control key was active when the KeyboardEvent was generated.
 	 */
-	var ctrlKey: Boolean = false
+	val ctrlKey: Boolean
 
 	/**
 	 * True if the Meta key, (or Command key on OS X) was active when the KeyboardEvent was generated.
 	 * Also called the "super" key.
 	 */
-	var metaKey: Boolean = false
+	val metaKey: Boolean
 
 	/**
 	 * True if the Shift key was active when the KeyboardEvent was generated.
 	 */
-	var shiftKey: Boolean = false
+	val shiftKey: Boolean
 
 	/**
 	 * The time (in milliseconds since the Unix Epoch) this key event took place.
 	 */
-	var timestamp: Long = 0
+	val timestamp: Long
 
 	/**
 	 * If the key was held down, a KEY_DOWN event will repeat, and this will be true
 	 */
-	var isRepeat: Boolean = false
+	val isRepeat: Boolean
 
 
 	/**
 	 * If true, this interaction was triggered from code, not user input.
 	 */
-	var isFabricated: Boolean = false
+	val isFabricated: Boolean
 
-	fun set(other: KeyInteraction) {
+	companion object {
+		val KEY_DOWN = InteractionType<KeyInteractionRo>("keyDown")
+		val KEY_UP = InteractionType<KeyInteractionRo>("keyUp")
+	}
+}
+
+/**
+ * An event representing an interaction with the keyboard.
+ * @author nbilyk
+ */
+open class KeyInteraction : InteractionEventBase(), KeyInteractionRo {
+
+	/**
+	 * The ascii keyCode.
+	 * @see Ascii
+	 */
+	override var keyCode: Int = 0
+
+	/**
+	 * The location of the key.
+	 * If there is only one location for the related key, it will have a location of STANDARD.
+	 */
+	override var location: KeyLocation = KeyLocation.STANDARD
+
+	/**
+	 * True if the Alt key was active when the KeyboardEvent was generated.
+	 */
+	override var altKey: Boolean = false
+
+	/**
+	 * True if the Control key was active when the KeyboardEvent was generated.
+	 */
+	override var ctrlKey: Boolean = false
+
+	/**
+	 * True if the Meta key, (or Command key on OS X) was active when the KeyboardEvent was generated.
+	 * Also called the "super" key.
+	 */
+	override var metaKey: Boolean = false
+
+	/**
+	 * True if the Shift key was active when the KeyboardEvent was generated.
+	 */
+	override var shiftKey: Boolean = false
+
+	/**
+	 * The time (in milliseconds since the Unix Epoch) this key event took place.
+	 */
+	override var timestamp: Long = 0
+
+	/**
+	 * If the key was held down, a KEY_DOWN event will repeat, and this will be true
+	 */
+	override var isRepeat: Boolean = false
+
+
+	/**
+	 * If true, this interaction was triggered from code, not user input.
+	 */
+	override var isFabricated: Boolean = false
+
+	fun set(other: KeyInteractionRo) {
 		keyCode = other.keyCode
 		location = other.location
 		altKey = other.altKey
@@ -104,10 +162,6 @@ open class KeyInteraction : InteractionEventBase() {
 		isFabricated = false
 	}
 
-	companion object {
-		val KEY_DOWN = InteractionType<KeyInteraction>("keyDown")
-		val KEY_UP = InteractionType<KeyInteraction>("keyUp")
-	}
 }
 
 enum class KeyLocation {

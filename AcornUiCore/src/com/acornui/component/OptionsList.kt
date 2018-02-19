@@ -32,6 +32,7 @@ import com.acornui.core.di.Owned
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.ClickInteractionRo
 import com.acornui.core.input.interaction.MouseInteraction
+import com.acornui.core.input.interaction.MouseInteractionRo
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.keyDown
 import com.acornui.core.input.mouseDown
@@ -127,7 +128,7 @@ open class OptionsList<E : Any>(
 		}
 
 	private val stageMouseDownHandler = {
-		event: MouseInteraction ->
+		event: MouseInteractionRo ->
 		if (event.target == null || (!event.target!!.isDescendantOf(dataScroller) && !event.target!!.isDescendantOf(downArrow!!))) {
 			close()
 		}

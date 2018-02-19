@@ -56,7 +56,7 @@ class DownRepeat(
 	}
 
 	private val mouseDownHandler = {
-		event: MouseInteraction ->
+		event: MouseInteractionRo ->
 		if (event != MOUSE_DOWN_REPEAT) {
 			repeatTimer?.dispose()
 			repeatTimer = target.timer(style.repeatInterval, -1, style.repeatDelay, repeatWaitHandler)
@@ -65,7 +65,7 @@ class DownRepeat(
 	}
 
 	private val rawMouseUpHandler = {
-		event: MouseInteraction ->
+		event: MouseInteractionRo ->
 		if (event.button == WhichButton.LEFT) {
 			repeatTimer?.dispose()
 			repeatTimer = null

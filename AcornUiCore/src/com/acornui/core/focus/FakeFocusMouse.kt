@@ -25,7 +25,7 @@ class FakeFocusMouse(
 	private var downElement: UiComponentRo? = null
 
 	private val keyDownHandler = {
-		event: KeyInteraction ->
+		event: KeyInteractionRo ->
 		if (!event.handled) {
 			val f = focus.focused()
 			if (f != null) {
@@ -41,7 +41,7 @@ class FakeFocusMouse(
 	}
 
 	private val keyUpHandler = {
-		event: KeyInteraction ->
+		event: KeyInteractionRo ->
 		if (!event.handled && event.keyCode == downKey) {
 			event.handled = true
 			dispatchFakeMouseEvent(MouseInteractionRo.MOUSE_UP)
@@ -53,7 +53,7 @@ class FakeFocusMouse(
 		}
 	}
 
-	private fun dispatchFakeMouseEvent(type: InteractionType<MouseInteraction>) {
+	private fun dispatchFakeMouseEvent(type: InteractionType<MouseInteractionRo>) {
 		val f = focus.focused()
 		if (f != null) {
 			fakeMouseEvent.clear()

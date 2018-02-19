@@ -23,8 +23,8 @@ import com.acornui.component.layout.LayoutElementRo
 import com.acornui.core.LifecycleRo
 import com.acornui.core.di.owns
 import com.acornui.core.input.Ascii
-import com.acornui.core.input.interaction.KeyInteraction
-import com.acornui.core.input.interaction.MouseInteraction
+import com.acornui.core.input.interaction.KeyInteractionRo
+import com.acornui.core.input.interaction.MouseInteractionRo
 import com.acornui.core.input.keyDown
 import com.acornui.core.input.mouseDown
 import com.acornui.core.parentWalk
@@ -55,7 +55,7 @@ open class FocusManagerImpl : FocusManager {
 	protected var highlightIsChanging: Boolean = false
 
 	private val rootKeyDownHandler = {
-		event: KeyInteraction ->
+		event: KeyInteractionRo ->
 		if (!event.defaultPrevented() && event.keyCode == Ascii.TAB) {
 			event.preventDefault()
 			if (event.shiftKey) focusPrevious()
@@ -68,7 +68,7 @@ open class FocusManagerImpl : FocusManager {
 	}
 
 	private val rootMouseDownHandler = {
-		event: MouseInteraction ->
+		event: MouseInteractionRo ->
 		event.target!!.parentWalk {
 			if (it is Focusable && it.focusEnabled) {
 				val changed = focused(it)

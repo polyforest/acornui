@@ -93,7 +93,7 @@ open class InteractivityManagerImpl(
 		wheelPool.free(wheel)
 	}
 
-	private fun <T : MouseInteraction> mouseHandler(type: InteractionType<T>, event: MouseInteraction): UiComponentRo? {
+	private fun <T : MouseInteractionRo> mouseHandler(type: InteractionType<T>, event: MouseInteraction): UiComponentRo? {
 		val mouse = mousePool.obtain()
 		mouse.set(event)
 		mouse.type = type
@@ -118,20 +118,19 @@ open class InteractivityManagerImpl(
 		return ele
 	}
 
-	private fun keyDownHandler(event: KeyInteraction) {
-		keyHandler(KeyInteraction.KEY_DOWN, event)
+	private fun keyDownHandler(event: KeyInteractionRo) {
+		keyHandler(KeyInteractionRo.KEY_DOWN, event)
 	}
 
-	private fun keyUpHandler(event: KeyInteraction)
-	{
-		keyHandler(KeyInteraction.KEY_UP, event)
+	private fun keyUpHandler(event: KeyInteractionRo) {
+		keyHandler(KeyInteractionRo.KEY_UP, event)
 	}
 
-	private fun charHandler(event: CharInteraction) {
-		charHandler(CharInteraction.CHAR, event)
+	private fun charHandler(event: CharInteractionRo) {
+		charHandler(CharInteractionRo.CHAR, event)
 	}
 
-	private fun <T : KeyInteraction> keyHandler(type: InteractionType<T>, event: KeyInteraction) {
+	private fun <T : KeyInteractionRo> keyHandler(type: InteractionType<T>, event: KeyInteractionRo) {
 		val f = focus.focused() ?: return
 		val key = keyPool.obtain()
 		key.type = type
@@ -141,10 +140,10 @@ open class InteractivityManagerImpl(
 		keyPool.free(key)
 	}
 
-	private fun <T : CharInteraction> charHandler(type: InteractionType<T>, event: CharInteraction) {
+	private fun <T : CharInteractionRo> charHandler(type: InteractionType<T>, event: CharInteractionRo) {
 		val f = focus.focused() ?: return
 		val char = charPool.obtain()
-		char.type = CharInteraction.CHAR
+		char.type = CharInteractionRo.CHAR
 		char.set(event)
 		dispatch(f, char)
 		if (char.defaultPrevented())

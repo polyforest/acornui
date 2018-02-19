@@ -209,7 +209,7 @@ open class GlScrollArea(
 		vScrollModel.max = maxOf(0f, scrollRect.contentsHeight - contentsSetH)
 
 		scrollRect.getAttachment<TossScroller>(TossScroller)?.enabled = needsHScrollBar || needsVScrollBar
-		scrollRect.validate(ValidationFlags.LAYOUT)
+//		scrollRect.validate(ValidationFlags.LAYOUT)
 	}
 
 	protected fun validateScroll() {

@@ -35,22 +35,22 @@ private class MouseOverChanged(
 		private val interactiveElement: UiComponentRo,
 		private val isCapture: Boolean) : Disposable {
 
-	val over = StoppableSignalImpl<MouseInteraction>()
-	val out = StoppableSignalImpl<MouseInteraction>()
+	val over = StoppableSignalImpl<MouseInteractionRo>()
+	val out = StoppableSignalImpl<MouseInteractionRo>()
 
 	private val mouseOverHandler = {
-		event: MouseInteraction ->
+		event: MouseInteractionRo ->
 		if (filter(event))
 			over.dispatch(event)
 	}
 
 	private val mouseOutHandler = {
-		event: MouseInteraction ->
+		event: MouseInteractionRo ->
 		if (filter(event))
 			out.dispatch(event)
 	}
 
-	private fun filter(event: MouseInteraction): Boolean {
+	private fun filter(event: MouseInteractionRo): Boolean {
 		return event.relatedTarget?.isDescendantOf(interactiveElement) != true
 	}
 
@@ -69,13 +69,13 @@ private class MouseOverChanged(
  * An interaction signal dispatched when this element has had the mouse move over the element, but unlike touchOver,
  * this will not bubble, and therefore will not be fired if a child element has had a touchOver event.
  */
-fun UiComponentRo.rollOver(isCapture: Boolean = false): StoppableSignal<MouseInteraction> {
+fun UiComponentRo.rollOver(isCapture: Boolean = false): StoppableSignal<MouseInteractionRo> {
 	return createOrReuseAttachment("MouseOverChanged_" + isCapture, {
 		MouseOverChanged(this, isCapture = isCapture)
 	}).over
 }
 
-fun UiComponentRo.rollOut(isCapture: Boolean = false): StoppableSignal<MouseInteraction> {
+fun UiComponentRo.rollOut(isCapture: Boolean = false): StoppableSignal<MouseInteractionRo> {
 	return createOrReuseAttachment("MouseOverChanged_" + isCapture, {
 		MouseOverChanged(this, isCapture = isCapture)
 	}).out

@@ -47,7 +47,6 @@ open class ContainerImpl(
 	override val children: List<UiComponentRo>
 		get() = _children
 
-
 	protected fun <T : UiComponent> addChild(child: T): T {
 		return addChild(_children.size, child)
 	}
@@ -276,6 +275,20 @@ open class ContainerImpl(
 
 	protected open fun childDisposedHandler(child: UiComponent) {
 		removeChild(child)
+	}
+
+	init {
+		validation.addNode(ValidationFlags.RESERVED_1, ValidationFlags.LAYOUT, this::validateChildBubblingFlags)
+	}
+
+	/**
+	 * After this component's layout is validated, validate any remaining flags on the children that would invalidate
+	 * this layout.
+	 */
+	private fun validateChildBubblingFlags() {
+		for (i in 0.._children.lastIndex) {
+			_children[i].validate(layoutInvalidatingFlags)
+		}
 	}
 
 	//-----------------------------------------------------

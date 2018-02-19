@@ -1,25 +1,26 @@
 package com.acornui.core.input.interaction
 
 import com.acornui.collection.find2
-import com.acornui.component.UiComponentRo
 import com.acornui.core.graphics.Texture
 import com.acornui.core.input.InteractionEventBase
+import com.acornui.core.input.InteractionEventRo
 import com.acornui.core.input.InteractionType
 import kotlin.properties.Delegates
 
-class ClipboardInteraction : InteractionEventBase() {
+interface ClipboardInteractionRo : InteractionEventRo {
 
-	var dataTransfer: DataTransferRead by Delegates.notNull()
-
-	override fun localize(currentTarget: UiComponentRo) {
-		super.localize(currentTarget)
-	}
+	val dataTransfer: DataTransferRead
 
 	companion object {
 		val COPY = InteractionType<ClipboardInteraction>("copy")
 		val CUT = InteractionType<ClipboardInteraction>("cut")
 		val PASTE = InteractionType<ClipboardInteraction>("paste")
 	}
+}
+
+class ClipboardInteraction : InteractionEventBase(), ClipboardInteractionRo {
+
+	override var dataTransfer: DataTransferRead by Delegates.notNull()
 
 }
 

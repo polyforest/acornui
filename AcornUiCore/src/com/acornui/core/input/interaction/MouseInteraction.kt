@@ -76,12 +76,12 @@ interface MouseInteractionRo : InteractionEventRo {
 	}
 
 	companion object {
-		val MOUSE_DOWN = InteractionType<MouseInteraction>("mouseDown")
-		val MOUSE_UP = InteractionType<MouseInteraction>("mouseUp")
-		val MOUSE_MOVE = InteractionType<MouseInteraction>("mouseMove")
+		val MOUSE_DOWN = InteractionType<MouseInteractionRo>("mouseDown")
+		val MOUSE_UP = InteractionType<MouseInteractionRo>("mouseUp")
+		val MOUSE_MOVE = InteractionType<MouseInteractionRo>("mouseMove")
 
-		val MOUSE_OVER = InteractionType<MouseInteraction>("mouseOver")
-		val MOUSE_OUT = InteractionType<MouseInteraction>("mouseOut")
+		val MOUSE_OVER = InteractionType<MouseInteractionRo>("mouseOver")
+		val MOUSE_OUT = InteractionType<MouseInteractionRo>("mouseOut")
 	}
 }
 
@@ -180,7 +180,7 @@ interface WheelInteractionRo : MouseInteractionRo {
 	val deltaZ: Float
 
 	companion object {
-		val MOUSE_WHEEL = InteractionType<WheelInteraction>("mouseWheel")
+		val MOUSE_WHEEL = InteractionType<WheelInteractionRo>("mouseWheel")
 	}
 }
 
