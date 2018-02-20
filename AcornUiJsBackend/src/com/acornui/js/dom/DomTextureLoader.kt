@@ -20,7 +20,6 @@ import com.acornui.async.Promise
 import com.acornui.async.launch
 import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
-import com.acornui.core.assets.AssetTypes
 import com.acornui.core.graphics.Texture
 import com.acornui.core.request.UrlRequestData
 import com.acornui.js.io.JsArrayBufferRequest
@@ -31,7 +30,7 @@ import com.acornui.js.io.JsArrayBufferRequest
  */
 class DomTextureLoader(override val path: String, override val estimatedBytesTotal: Int) : AssetLoader<Texture> {
 
-	override val type: AssetType<Texture> = AssetTypes.TEXTURE
+	override val type: AssetType<Texture> = AssetType.TEXTURE
 
 	private val fileLoader = JsArrayBufferRequest(UrlRequestData(path))
 

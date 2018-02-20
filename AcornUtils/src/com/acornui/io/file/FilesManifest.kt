@@ -39,7 +39,12 @@ object FilesManifestSerializer : To<FilesManifest>, From<FilesManifest> {
 data class ManifestEntry(
 		val path: String,
 		val modified: Long,
-		val size: Long
+		val size: Long,
+
+		/**
+		 * The mime type of this file, if it can be determined.
+		 */
+		val mimeType: String?
 ) : Comparable<ManifestEntry> {
 
 	fun name(): String {
@@ -90,13 +95,15 @@ object ManifestEntrySerializer : To<ManifestEntry>, From<ManifestEntry> {
 		writer.string("path", path)
 		writer.long("modified", modified)
 		writer.long("size", size)
+		writer.string("mimeType", mimeType)
 	}
 
 	override fun read(reader: Reader): ManifestEntry {
 		return ManifestEntry(
 				path = reader.string("path")!!,
 				modified = reader.long("modified")!!,
-				size = reader.long("size")!!
+				size = reader.long("size")!!,
+				mimeType = reader.string("mimeType")
 		)
 	}
 }

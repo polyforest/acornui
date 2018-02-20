@@ -18,7 +18,7 @@ package com.acornui.core.graphics
 
 import com.acornui.action.Decorator
 import com.acornui.async.Deferred
-import com.acornui.core.assets.AssetTypes
+import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.CachedGroup
 import com.acornui.core.assets.loadAndCache
 import com.acornui.core.di.Scoped
@@ -39,7 +39,7 @@ fun Scoped.loadAndCacheAtlasPage(atlasPath: String, page: AtlasPageData, group: 
 	val files = inject(Files)
 	val atlasFile = files.getFile(atlasPath) ?: throw Exception("File not found: $atlasPath")
 	val textureFile = atlasFile.siblingFile(page.texturePath)
-			?: throw Exception("File not found: ${page.texturePath} relative to: ${atlasFile.parent.path}")
+			?: throw Exception("File not found: ${page.texturePath} relative to: ${atlasFile.parent?.path}")
 
-	return loadAndCache(textureFile.path, AssetTypes.TEXTURE, AtlasPageDecorator(page), group)
+	return loadAndCache(textureFile.path, AssetType.TEXTURE, AtlasPageDecorator(page), group)
 }

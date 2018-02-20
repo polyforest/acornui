@@ -88,7 +88,7 @@ fun Scoped.loadSkeletonSkin(
 		val (page, _) = textureAtlasData.findRegion(i.attachmentName) ?: throw Exception("Region ${i.attachmentName} not found in atlas.")
 		if (!pageTextures.contains(page.texturePath)) {
 			val pagePath = "$skinsDirectory/${page.texturePath}"
-			pageTextures[page.texturePath] = AtlasPageDecorator(page).decorate(loadAndCache(pagePath, AssetTypes.TEXTURE, cachedGroup).await())
+			pageTextures[page.texturePath] = AtlasPageDecorator(page).decorate(loadAndCache(pagePath, AssetType.TEXTURE, cachedGroup).await())
 		}
 	}
 	LoadedSkin(pageTextures)

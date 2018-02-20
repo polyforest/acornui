@@ -20,6 +20,7 @@ import com.acornui.io.file.FilesManifest
 import com.acornui.io.file.ManifestEntry
 import com.acornui.core.replace2
 import java.io.File
+import java.nio.file.Files
 
 
 /**
@@ -40,7 +41,8 @@ object ManifestUtil {
 		for (file in directory.walkTopDown()) {
 			if (!file.isDirectory) {
 				val relativePath = root.relativePath2(file)
-				fileEntries.add(ManifestEntry(relativePath.replace2('\\', '/'), file.lastModified(), file.length()))
+				val contentType = Files.probeContentType(file.toPath())
+				fileEntries.add(ManifestEntry(relativePath.replace2('\\', '/'), file.lastModified(), file.length(), contentType))
 			}
 		}
 		fileEntries.sort()

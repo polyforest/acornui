@@ -26,32 +26,32 @@ import kotlin.test.*
 class FileEntryTest {
 
 	@Test fun compare() {
-		val arr = arrayOf(ManifestEntry("foo/Daz.txt", 0L, 0L),
-				ManifestEntry("Caz.txt", 0L, 0L),
-				ManifestEntry("foo/bar/Baz.txt", 0L, 0L),
-				ManifestEntry("foo/bar/Caz.txt", 0L, 0L),
-				ManifestEntry("foo/Baz.txt", 0L, 0L),
-				ManifestEntry("Baz.txt", 0L, 0L),
-				ManifestEntry("foo/bar/Daz.txt", 0L, 0L),
-				ManifestEntry("Daz.txt", 0L, 0L),
-				ManifestEntry("foo/Caz.txt", 0L, 0L)
+		val arr = arrayOf(ManifestEntry("foo/Daz.txt", 0L, 0L, "unknown"),
+				ManifestEntry("Caz.txt", 0L, 0L, "unknown"),
+				ManifestEntry("foo/bar/Baz.txt", 0L, 0L, "unknown"),
+				ManifestEntry("foo/bar/Caz.txt", 0L, 0L, "unknown"),
+				ManifestEntry("foo/Baz.txt", 0L, 0L, "unknown"),
+				ManifestEntry("Baz.txt", 0L, 0L, "unknown"),
+				ManifestEntry("foo/bar/Daz.txt", 0L, 0L, "unknown"),
+				ManifestEntry("Daz.txt", 0L, 0L, "unknown"),
+				ManifestEntry("foo/Caz.txt", 0L, 0L, "unknown")
 		)
 
 		arr.sort()
-		assertListEquals(arrayOf(ManifestEntry("Baz.txt", 0L, 0L),
-				ManifestEntry("Caz.txt", 0L, 0L),
-				ManifestEntry("Daz.txt", 0L, 0L),
-				ManifestEntry("foo/Baz.txt", 0L, 0L),
-				ManifestEntry("foo/Caz.txt", 0L, 0L),
-				ManifestEntry("foo/Daz.txt", 0L, 0L),
-				ManifestEntry("foo/bar/Baz.txt", 0L, 0L),
-				ManifestEntry("foo/bar/Caz.txt", 0L, 0L),
-				ManifestEntry("foo/bar/Daz.txt", 0L, 0L)
+		assertListEquals(arrayOf(ManifestEntry("Baz.txt", 0L, 0L, "unknown"),
+				ManifestEntry("Caz.txt", 0L, 0L, "unknown"),
+				ManifestEntry("Daz.txt", 0L, 0L, "unknown"),
+				ManifestEntry("foo/Baz.txt", 0L, 0L, "unknown"),
+				ManifestEntry("foo/Caz.txt", 0L, 0L, "unknown"),
+				ManifestEntry("foo/Daz.txt", 0L, 0L, "unknown"),
+				ManifestEntry("foo/bar/Baz.txt", 0L, 0L, "unknown"),
+				ManifestEntry("foo/bar/Caz.txt", 0L, 0L, "unknown"),
+				ManifestEntry("foo/bar/Daz.txt", 0L, 0L, "unknown")
 		), arr)
 
-		assertEquals("Baz.txt", ManifestEntry("Baz.txt", 0L, 0L).name())
-		assertEquals("Baz.txt", ManifestEntry("foo/bar/Baz.txt", 0L, 0L).name())
-		assertEquals("Caz.txt", ManifestEntry("foo/aaa/Caz.txt", 0L, 0L).name())
+		assertEquals("Baz.txt", ManifestEntry("Baz.txt", 0L, 0L, "unknown").name())
+		assertEquals("Baz.txt", ManifestEntry("foo/bar/Baz.txt", 0L, 0L, "unknown").name())
+		assertEquals("Caz.txt", ManifestEntry("foo/aaa/Caz.txt", 0L, 0L, "unknown").name())
 	}
 
 }

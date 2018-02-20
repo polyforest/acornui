@@ -25,7 +25,6 @@ import com.acornui.component.getChildUnderPoint
 import com.acornui.core.input.*
 import com.acornui.core.input.interaction.*
 import com.acornui.js.dom.component.DomComponent
-import com.acornui.js.html.ClipboardEvent
 import com.acornui.js.html.TouchEvent
 import com.acornui.js.html.findComponentFromDom
 import com.acornui.js.html.owns
@@ -56,7 +55,6 @@ open class DomInteractivityManager : InteractivityManager {
 	private val clickEvent = ClickInteraction()
 	private val touchEvent = TouchInteraction()
 	private val wheelEvent = WheelInteraction()
-//	private val clipboardEvent = ClipboardInteraction()
 
 	private val resetKeyEventHandler = {
 		e: Event ->
@@ -88,12 +86,6 @@ open class DomInteractivityManager : InteractivityManager {
 		Unit
 	}
 
-	private val resetClipboardEventHandler = {
-		e: Event ->
-//		clipboardEvent.clear()
-		Unit
-	}
-
 	override fun init(root: UiComponentRo) {
 		_assert(_root == null, "Already initialized.")
 		_root = root
@@ -105,7 +97,6 @@ open class DomInteractivityManager : InteractivityManager {
 		rootElement.addEventListener("click", resetClickEventHandler, true)
 		rootElement.addEventListeners(arrayOf("touchstart", "touchend", "touchmove", "touchcancel", "touchenter", "touchleave"), resetTouchEventHandler)
 		rootElement.addEventListener("wheel", resetWheelEventHandler, true)
-		rootElement.addEventListeners(arrayOf("copy", "cut", "paste"), resetClipboardEventHandler)
 
 		mouseOutWorkaround()
 	}
@@ -204,12 +195,6 @@ open class DomInteractivityManager : InteractivityManager {
 		Unit
 	}
 
-	private val nativeClipboardHandler: (Event) -> dynamic = {
-//		clipboardEvent.set(it as ClipboardEvent)
-		Unit
-	}
-
-
 	override fun <T : InteractionEventRo> getSignal(host: UiComponentRo, type: InteractionType<T>, isCapture: Boolean): StoppableSignalImpl<T> {
 		return when (type) {
 			KeyInteractionRo.KEY_DOWN -> {
@@ -257,15 +242,6 @@ open class DomInteractivityManager : InteractivityManager {
 			TouchInteractionRo.TOUCH_LEAVE -> {
 				NativeSignal(host, "touchleave", isCapture, type, touchEvent, nativeTouchHandler)
 			}
-//			ClipboardInteractionRo.COPY -> {
-//				NativeSignal(host, "copy", isCapture, type, clipboardEvent, nativeClipboardHandler)
-//			}
-//			ClipboardInteractionRo.CUT -> {
-//				NativeSignal(host, "cut", isCapture, type, clipboardEvent, nativeClipboardHandler)
-//			}
-//			ClipboardInteractionRo.PASTE -> {
-//				NativeSignal(host, "paste", isCapture, type, clipboardEvent, nativeClipboardHandler)
-//			}
 			else -> {
 				Log.warn("Could not find a signal for the type $type")
 				StoppableSignalImpl()
@@ -284,13 +260,13 @@ open class DomInteractivityManager : InteractivityManager {
 		isRepeat = jsEvent.repeat
 	}
 
-	fun keyLocationFromInt(location: Int): KeyLocation {
-		when (location) {
-			0 -> return KeyLocation.STANDARD
-			1 -> return KeyLocation.LEFT
-			2 -> return KeyLocation.RIGHT
-			3 -> return KeyLocation.NUMBER_PAD
-			else -> return KeyLocation.UNKNOWN
+	private fun keyLocationFromInt(location: Int): KeyLocation {
+		return when (location) {
+			0 -> KeyLocation.STANDARD
+			1 -> KeyLocation.LEFT
+			2 -> KeyLocation.RIGHT
+			3 -> KeyLocation.NUMBER_PAD
+			else -> KeyLocation.UNKNOWN
 		}
 	}
 
@@ -335,14 +311,14 @@ open class DomInteractivityManager : InteractivityManager {
 	}
 
 	private fun getWhichButton(i: Int): WhichButton {
-		when (i) {
-			-1 -> return WhichButton.UNKNOWN
-			0 -> return WhichButton.LEFT
-			1 -> return WhichButton.MIDDLE
-			2 -> return WhichButton.RIGHT
-			3 -> return WhichButton.BACK
-			4 -> return WhichButton.FORWARD
-			else -> return WhichButton.UNKNOWN
+		return when (i) {
+			-1 -> WhichButton.UNKNOWN
+			0 -> WhichButton.LEFT
+			1 -> WhichButton.MIDDLE
+			2 -> WhichButton.RIGHT
+			3 -> WhichButton.BACK
+			4 -> WhichButton.FORWARD
+			else -> WhichButton.UNKNOWN
 		}
 	}
 
@@ -407,7 +383,6 @@ open class DomInteractivityManager : InteractivityManager {
 		rootElement.removeEventListener("click", resetClickEventHandler, true)
 		rootElement.removeEventListeners(arrayOf("touchstart", "touchend", "touchmove", "touchcancel", "touchenter", "touchleave"), resetTouchEventHandler)
 		rootElement.removeEventListener("wheel", resetWheelEventHandler, true)
-		rootElement.removeEventListeners(arrayOf("copy", "cut", "paste"), resetClipboardEventHandler)
 	}
 
 	private fun EventTarget.addEventListeners(list: Array<String>, handler: (Event) -> dynamic) {

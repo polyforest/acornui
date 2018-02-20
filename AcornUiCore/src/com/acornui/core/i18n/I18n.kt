@@ -5,7 +5,7 @@ import com.acornui.action.Decorator
 import com.acornui.async.then
 import com.acornui.collection.find2
 import com.acornui.core.*
-import com.acornui.core.assets.AssetTypes
+import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.load
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Injector
@@ -227,7 +227,7 @@ fun Scoped.loadBundleForLocale(locales: List<Locale>, bundleName: String, path: 
 	val i18n = inject(I18n)
 	for (locale in locales) {
 		val path2 = path.replace2("{locale}", locale.value).replace2("{bundleName}", bundleName)
-		load(path2, AssetTypes.TEXT).then {
+		load(path2, AssetType.TEXT).then {
 			i18n.setBundleValues(locale, bundleName, PropertiesDecorator.decorate(it))
 		}
 	}
@@ -244,7 +244,7 @@ private fun Scoped._loadBundle(locale: Locale, bundleName: String, path: String,
 
 	// Only try to load the locale if we know it to exist.
 	if (inject(Files).getFile(path2) != null) {
-		load(path2, AssetTypes.TEXT).then {
+		load(path2, AssetType.TEXT).then {
 			i18n.setBundleValues(locale, bundleName, PropertiesDecorator.decorate(it))
 		}
 	}

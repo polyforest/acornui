@@ -55,7 +55,7 @@ class ParticleEffectComponent(owner: Owned) : UiComponentImpl(owner) {
 		group = cachedGroup()
 		val group = group!!
 		val atlasDataAsync = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group)
-		val pEffectDataAsync = loadAndCache(pDataPath, AssetTypes.TEXT, group)
+		val pEffectDataAsync = loadAndCache(pDataPath, AssetType.TEXT, group)
 
 		val pEffect = ParticleEffectAssetDecorator.decorate(pEffectDataAsync.await())
 		if (maxParticleCountScale != 1f || minParticleCountScale != 1f) {

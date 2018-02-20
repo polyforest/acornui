@@ -263,8 +263,8 @@ open class LwjglApplication : ApplicationBase() {
 		val timeDriver = get(TimeDriver)
 
 		val loaders = HashMap<AssetType<*>, LoaderFactory<*>>()
-		loaders[AssetTypes.TEXTURE] = { path, _ -> JvmTextureLoader(path, gl20, glState, ioWorkScheduler(timeDriver)) }
-		loaders[AssetTypes.TEXT] = { path, _ -> JvmTextLoader(path, Charsets.UTF_8, ioWorkScheduler(timeDriver)) }
+		loaders[AssetType.TEXTURE] = { path, _ -> JvmTextureLoader(path, gl20, glState, ioWorkScheduler(timeDriver)) }
+		loaders[AssetType.TEXT] = { path, _ -> JvmTextLoader(path, Charsets.UTF_8, ioWorkScheduler(timeDriver)) }
 
 		// Audio
 		try {
@@ -272,10 +272,10 @@ open class LwjglApplication : ApplicationBase() {
 			set(AudioManager, audioManager)
 			timeDriver.addChild(audioManager)
 			OpenAlSoundLoader.registerDefaultDecoders()
-			loaders[AssetTypes.SOUND] = { path, _ -> OpenAlSoundLoader(path, audioManager, ioWorkScheduler(timeDriver)) }
+			loaders[AssetType.SOUND] = { path, _ -> OpenAlSoundLoader(path, audioManager, ioWorkScheduler(timeDriver)) }
 
 			OpenAlMusicLoader.registerDefaultDecoders()
-			loaders[AssetTypes.MUSIC] = { path, _ -> OpenAlMusicLoader(path, audioManager) }
+			loaders[AssetType.MUSIC] = { path, _ -> OpenAlMusicLoader(path, audioManager) }
 		} catch (e: NoAudioException) {
 			Log.warn("No Audio device found.")
 		}

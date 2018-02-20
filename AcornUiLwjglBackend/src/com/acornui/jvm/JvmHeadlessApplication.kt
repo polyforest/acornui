@@ -112,8 +112,8 @@ open class JvmHeadlessApplication(
 
 	protected open val assetManager by BootTask {
 		val loaders = HashMap<AssetType<*>, LoaderFactory<*>>()
-		loaders[AssetTypes.TEXT] = { path, _ ->  JvmTextLoader(path, Charsets.UTF_8, ioWorkScheduler()) }
-		loaders[AssetTypes.RGB_DATA] = { path, _ -> JvmRgbDataLoader(path, ioWorkScheduler()) }
+		loaders[AssetType.TEXT] = { path, _ ->  JvmTextLoader(path, Charsets.UTF_8, ioWorkScheduler()) }
+		loaders[AssetType.RGB_DATA] = { path, _ -> JvmRgbDataLoader(path, ioWorkScheduler()) }
 		val assetManager = AssetManagerImpl("", get(Files), loaders)
 		set(AssetManager, assetManager)
 	}

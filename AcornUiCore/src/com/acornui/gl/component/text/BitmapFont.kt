@@ -166,7 +166,7 @@ class Glyph(
 fun Owned.loadFontFromDir(fntPath: String): Deferred<BitmapFont> {
 	val files = inject(Files)
 	val fontFile = files.getFile(fntPath) ?: throw Exception("$fntPath not found.")
-	return loadFontFromDir(fntPath, fontFile.parent.path)
+	return loadFontFromDir(fntPath, fontFile.parent!!.path)
 }
 
 /**
@@ -180,7 +180,7 @@ fun Owned.loadFontFromDir(fntPath: String, imagesDir: String): Deferred<BitmapFo
 	val files = inject(Files)
 	val assetManager = inject(AssetManager)
 	val dir = files.getDir(imagesDir) ?: throw Exception("Directory not found: $imagesDir")
-	val bitmapFontStr = assetManager.load(fntPath, AssetTypes.TEXT).await()
+	val bitmapFontStr = assetManager.load(fntPath, AssetType.TEXT).await()
 	val bitmapFontData = AngelCodeParser.parse(bitmapFontStr)
 
 	val n = bitmapFontData.pages.size
@@ -188,7 +188,7 @@ fun Owned.loadFontFromDir(fntPath: String, imagesDir: String): Deferred<BitmapFo
 	for (i in 0..n - 1) {
 		val page = bitmapFontData.pages[i]
 		val imageFile = dir.getFile(page.imagePath) ?: throw Exception("Font image file not found: ${page.imagePath}")
-		pageTextures.add(assetManager.load(imageFile.path, AssetTypes.TEXTURE))
+		pageTextures.add(assetManager.load(imageFile.path, AssetType.TEXTURE))
 	}
 	// Finished loading the font and all its textures.
 	val glyphs = HashMap<Char, Glyph>()
@@ -222,14 +222,14 @@ fun Scoped.loadFontFromAtlas(fntPath: String, atlasPath: String, group: CachedGr
 	val files = inject(Files)
 	val atlasFile = files.getFile(atlasPath) ?: throw Exception("File not found: $atlasPath")
 
-	val bitmapFontData = loadAndCache(fntPath, AssetTypes.TEXT, AngelCodeParser, group).await()
+	val bitmapFontData = loadAndCache(fntPath, AssetType.TEXT, AngelCodeParser, group).await()
 	val atlasData = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group).await()
 	val atlasPageTextures = ArrayList<Deferred<Texture>>()
 
 	for (atlasPageIndex in 0..atlasData.pages.lastIndex) {
 		val atlasPageData = atlasData.pages[atlasPageIndex]
 		val textureEntry = atlasFile.siblingFile(atlasPageData.texturePath) ?: throw Exception("File not found: ${atlasPageData.texturePath} relative to: $atlasPath")
-		atlasPageTextures.add(loadAndCache(textureEntry.path, AssetTypes.TEXTURE, AtlasPageDecorator(atlasPageData), group))
+		atlasPageTextures.add(loadAndCache(textureEntry.path, AssetType.TEXTURE, AtlasPageDecorator(atlasPageData), group))
 	}
 
 	// Finished loading the font and all its textures.

@@ -18,7 +18,6 @@ package com.acornui.js.audio
 
 import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
-import com.acornui.core.assets.AssetTypes
 import com.acornui.core.audio.AudioManager
 import com.acornui.core.audio.Music
 
@@ -34,7 +33,7 @@ class JsWebAudioMusicLoader(
 		private val audioManager: AudioManager
 ) : AssetLoader<Music> {
 
-	override val type: AssetType<Music> = AssetTypes.MUSIC
+	override val type: AssetType<Music> = AssetType.MUSIC
 
 
 	override val secondsLoaded: Float

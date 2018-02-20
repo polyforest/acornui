@@ -337,9 +337,7 @@ open class TextSpanElementImpl : TextSpanElement, ElementParent<TextElement>, St
 	operator fun String?.unaryPlus() {
 		if (this == null) return
 		for (i in 0..length - 1) {
-			val c = this[i]
-			if (c != '\r')
-				addElement(char(c))
+			addElement(char(this[i]))
 		}
 	}
 

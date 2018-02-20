@@ -1,6 +1,6 @@
 package com.acornui.jvm.audio
 
-import com.acornui.core.assets.AssetTypes
+import com.acornui.core.assets.AssetType
 import com.acornui.core.audio.SoundFactory
 import com.acornui.jvm.loader.JvmAssetLoaderBase
 import com.acornui.jvm.loader.WorkScheduler
@@ -11,7 +11,7 @@ open class OpenAlSoundLoader(
 		path: String,
 		private val audioManager: OpenAlAudioManager,
 		workScheduler: WorkScheduler<SoundFactory>
-) : JvmAssetLoaderBase<SoundFactory>(path, AssetTypes.SOUND, workScheduler) {
+) : JvmAssetLoaderBase<SoundFactory>(path, AssetType.SOUND, workScheduler) {
 
 	init {
 		init()

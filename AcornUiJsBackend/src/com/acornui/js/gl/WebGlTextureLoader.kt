@@ -21,7 +21,6 @@ import com.acornui.async.Promise
 import com.acornui.core.Bandwidth
 import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
-import com.acornui.core.assets.AssetTypes
 import com.acornui.core.graphics.Texture
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
@@ -37,7 +36,7 @@ class WebGlTextureLoader(
 		private val glState: GlState
 ) : AssetLoader<Texture> {
 
-	override val type = AssetTypes.TEXTURE
+	override val type = AssetType.TEXTURE
 
 	override val secondsLoaded: Float
 		get() = 0f

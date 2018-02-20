@@ -26,7 +26,6 @@ import com.acornui.component.text.TextInput
 import com.acornui.core.AppConfig
 import com.acornui.core.assets.AssetManager
 import com.acornui.core.assets.AssetType
-import com.acornui.core.assets.AssetTypes
 import com.acornui.core.assets.LoaderFactory
 import com.acornui.core.di.Owned
 import com.acornui.core.focus.FakeFocusMouse
@@ -103,7 +102,7 @@ open class DomApplication(
 
 	override fun addAssetLoaders(loaders: HashMap<AssetType<*>, LoaderFactory<*>>) {
 		super.addAssetLoaders(loaders)
-		loaders[AssetTypes.TEXTURE] = { path, estimatedBytesTotal -> DomTextureLoader(path, estimatedBytesTotal) }
+		loaders[AssetType.TEXTURE] = { path, estimatedBytesTotal -> DomTextureLoader(path, estimatedBytesTotal) }
 	}
 
 	override val interactivityTask by BootTask {
@@ -123,6 +122,7 @@ open class DomApplication(
 	}
 
 	override suspend fun initializeSpecialInteractivity(owner: Owned) {
+		super.initializeSpecialInteractivity(owner)
 		FakeFocusMouse(owner.injector)
 	}
 }

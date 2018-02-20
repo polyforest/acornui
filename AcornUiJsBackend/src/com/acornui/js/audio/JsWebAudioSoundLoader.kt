@@ -20,7 +20,6 @@ import com.acornui.async.Deferred
 import com.acornui.async.async
 import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
-import com.acornui.core.assets.AssetTypes
 import com.acornui.core.audio.AudioManager
 import com.acornui.core.audio.SoundFactory
 import com.acornui.core.request.UrlRequestData
@@ -38,7 +37,7 @@ class JsWebAudioSoundLoader(
 		private val audioManager: AudioManager
 ) : AssetLoader<SoundFactory> {
 
-	override val type: AssetType<SoundFactory> = AssetTypes.SOUND
+	override val type: AssetType<SoundFactory> = AssetType.SOUND
 
 
 	private val fileLoader = JsArrayBufferRequest(requestData = UrlRequestData(url = path))

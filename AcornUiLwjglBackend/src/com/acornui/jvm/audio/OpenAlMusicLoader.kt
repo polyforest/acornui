@@ -4,7 +4,6 @@ import com.acornui.async.Promise
 import com.acornui.async.launch
 import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
-import com.acornui.core.assets.AssetTypes
 import com.acornui.core.audio.Music
 import java.io.File
 import java.io.FileInputStream
@@ -18,7 +17,7 @@ class OpenAlMusicLoader(
 		audioManager: OpenAlAudioManager
 ) : Promise<Music>(), AssetLoader<Music> {
 
-	override val type: AssetType<Music> = AssetTypes.MUSIC
+	override val type: AssetType<Music> = AssetType.MUSIC
 
 	override val secondsLoaded: Float = 0f
 	override val secondsTotal: Float = 0f

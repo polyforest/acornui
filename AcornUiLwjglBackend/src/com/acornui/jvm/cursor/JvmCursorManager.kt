@@ -70,7 +70,7 @@ class JvmTextureCursor(
 	private var cursor: Long = -1L
 
 	init {
-		assets.load(texturePath, AssetTypes.TEXTURE).then {
+		assets.load(texturePath, AssetType.TEXTURE).then {
 			setTexture(it)
 		}
 	}

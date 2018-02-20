@@ -22,7 +22,6 @@ package com.acornui.js.loader
 import com.acornui.core.Bandwidth
 import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
-import com.acornui.core.assets.AssetTypes
 import com.acornui.core.request.Request
 import com.acornui.core.request.UrlRequestData
 import com.acornui.js.io.JsTextRequest
@@ -37,7 +36,7 @@ class JsTextLoader(
 		private val request: Request<String> = JsTextRequest(UrlRequestData(path))
 ) : AssetLoader<String> {
 
-	override val type: AssetType<String> = AssetTypes.TEXT
+	override val type: AssetType<String> = AssetType.TEXT
 
 	override val secondsLoaded: Float
 		get() = request.secondsLoaded

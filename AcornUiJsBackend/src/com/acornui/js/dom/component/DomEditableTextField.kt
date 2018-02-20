@@ -40,11 +40,11 @@ open class DomEditableTextField(
 		domContainer: DomContainer = DomContainer(element)
 ) : DomTextField(owner, element, domContainer), EditableTextField {
 
-	override var focusEnabled: Boolean = false
-	override var focusOrder: Float = 0f
-	override var highlight: UiComponent? by createSlot<UiComponent>()
+	final override var focusEnabled: Boolean = false
+	final override var focusOrder: Float = 0f
+	final override var highlight: UiComponent? by createSlot()
 
-	override final val boxStyle = bind(BoxStyle())
+	final override val boxStyle = bind(BoxStyle())
 
 	override val hScrollModel = DomScrollLeftModel(element)
 	override val vScrollModel = DomScrollTopModel(element)

@@ -32,6 +32,6 @@ import com.acornui.serialization.From
  * This is not cached.
  */
 fun <T> Scoped.loadJson(path:String, factory: From<T>): Deferred<T> = async {
-	val json = inject(AssetManager).load(path, AssetTypes.TEXT)
+	val json = inject(AssetManager).load(path, AssetType.TEXT)
 	inject(JSON_KEY).read(json.await(), factory)
 }

@@ -19,7 +19,7 @@ package com.acornui.texturepacker
 import com.acornui.collection.ArrayIterator
 import com.acornui.collection.ArrayList
 import com.acornui.core.assets.AssetManager
-import com.acornui.core.assets.AssetTypes
+import com.acornui.core.assets.AssetType
 import com.acornui.core.graphics.AtlasPageData
 import com.acornui.core.graphics.AtlasRegionData
 import com.acornui.core.graphics.RgbData
@@ -38,7 +38,7 @@ class AcornTexturePacker(
 
 	suspend fun pack(root: Directory, settingsFilename: String = "_packSettings.json"): PackedTextureData {
 		val settingsFile = root.getFile(settingsFilename) ?: throw Exception("$settingsFilename is missing")
-		val settingsJson = assets.load(settingsFile.path, AssetTypes.TEXT).await()
+		val settingsJson = assets.load(settingsFile.path, AssetType.TEXT).await()
 		val settings = json.read(settingsJson, TexturePackerSettingsSerializer)
 		return pack(root, settings)
 	}
@@ -92,11 +92,11 @@ class AcornTexturePacker(
 			fileEntry ->
 			if (fileEntry.hasExtension("png") || fileEntry.hasExtension("jpg")) {
 				val metadataFile = fileEntry.siblingFile(fileEntry.nameNoExtension + IMAGE_METADATA_EXTENSION)
-				val rgbLoader = assets.load(fileEntry.path, AssetTypes.RGB_DATA)
+				val rgbLoader = assets.load(fileEntry.path, AssetType.RGB_DATA)
 
 				// If the image has a corresponding metadata file, load that, otherwise, use default metadata settings.
 				val metadata: ImageMetadata = if (metadataFile != null) {
-					val metadataJson = assets.load(metadataFile.path, AssetTypes.TEXT).await()
+					val metadataJson = assets.load(metadataFile.path, AssetType.TEXT).await()
 					json.read(metadataJson, ImageMetadataSerializer)
 				} else ImageMetadata()
 

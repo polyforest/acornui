@@ -19,7 +19,6 @@ package com.acornui.js.audio
 import com.acornui.async.Promise
 import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
-import com.acornui.core.assets.AssetTypes
 import com.acornui.core.audio.AudioManager
 import com.acornui.core.audio.SoundFactory
 import org.w3c.dom.HTMLAudioElement
@@ -36,7 +35,7 @@ class JsAudioElementSoundLoader(
 		private val audioManager: AudioManager
 ) : Promise<SoundFactory>(), AssetLoader<SoundFactory> {
 
-	override val type: AssetType<SoundFactory> = AssetTypes.SOUND
+	override val type: AssetType<SoundFactory> = AssetType.SOUND
 
 	override val secondsLoaded: Float
 		get() = 0f

@@ -3,56 +3,39 @@ package com.acornui.core.input.interaction
 import com.acornui.core.graphics.Texture
 import com.acornui.core.input.InteractionEventRo
 import com.acornui.core.input.InteractionType
-import com.acornui.io.ReadBuffer
 
-interface ClipboardInteractionRo : InteractionEventRo {
+interface PasteInteractionRo : InteractionEventRo {
 
-	fun getItemByType(type: ClipboardItemType): DataTransferItem?
+	suspend fun <T : Any> getItemByType(type: ClipboardItemType<T>): T?
 
 	companion object {
-		val COPY = InteractionType<ClipboardInteractionRo>("copy")
-		val CUT = InteractionType<ClipboardInteractionRo>("cut")
-		val PASTE = InteractionType<ClipboardInteractionRo>("paste")
+		val PASTE = InteractionType<PasteInteractionRo>("paste")
 	}
 }
 
-enum class ClipboardItemType {
+interface CutOrCopyInteractionRo : InteractionEventRo {
 
-	PLAIN_TEXT,
-
-	HTML,
-
-	URI_LIST,
-
-	TEXTURE,
-
-	FILE_LIST
-
+	companion object {
+		val COPY = InteractionType<CutOrCopyInteractionRo>("copy")
+		val CUT = InteractionType<CutOrCopyInteractionRo>("cut")
+	}
 }
 
-//fun addItem(data: String, type: String): DataTransferItem?
-//fun addItem(data: File): DataTransferItem?
-//fun removeItem(index: Int)
-//fun clearItems()
+@Suppress("unused")
+class ClipboardItemType<T : Any> {
 
-interface DataTransferItem {
+	companion object {
 
-	val humanName: String
+		val PLAIN_TEXT = ClipboardItemType<String>()
 
-	val mimeType: String
+		val HTML = ClipboardItemType<String>()
 
-	/**
-	 * Retrieves the data transfer as plain UTF-8 text.
-	 */
-	suspend fun getAsString(): String?
+		val TEXTURE = ClipboardItemType<Texture>()
 
-	/**
-	 * Retrieves the data transfer as a Texture.
-	 */
-	suspend fun getAsTexture(): Texture?
+		val FILE_LIST = ClipboardItemType<List<ClipboardFile>>()
+	}
+}
 
-	suspend fun getAsBlob(): ReadBuffer<Byte>?
-
-//	fun getAsBlob(callback: (ByteArray) -> Unit)
+class ClipboardFile {
 
 }

@@ -45,8 +45,8 @@ interface AssetManager : Disposable, Progress {
 	 *
 	 * ```
 	 * launch {
-	 *    val a = load("foo.txt", AssetTypes.TEXT)
-	 *    val b = load("bar.png", AssetTypes.TEXTURE)
+	 *    val a = load("foo.txt", AssetType.TEXT)
+	 *    val b = load("bar.png", AssetType.TEXTURE)
 	 *    val str = a.await()
 	 *    val texture = b.await()
 	 * }

@@ -100,14 +100,14 @@ fun UiComponentRo.touchCancel(isCapture: Boolean = false): StoppableSignal<Touch
 	return createOrReuse(TouchInteractionRo.TOUCH_CANCEL, isCapture)
 }
 
-fun UiComponentRo.clipboardCopy(isCapture: Boolean = false): StoppableSignal<ClipboardInteractionRo> {
-	return createOrReuse(ClipboardInteractionRo.COPY, isCapture)
+fun UiComponentRo.clipboardCopy(isCapture: Boolean = false): StoppableSignal<CutOrCopyInteractionRo> {
+	return createOrReuse(CutOrCopyInteractionRo.COPY, isCapture)
 }
 
-fun UiComponentRo.clipboardCut(isCapture: Boolean = false): StoppableSignal<ClipboardInteractionRo> {
-	return createOrReuse(ClipboardInteractionRo.CUT, isCapture)
+fun UiComponentRo.clipboardCut(isCapture: Boolean = false): StoppableSignal<CutOrCopyInteractionRo> {
+	return createOrReuse(CutOrCopyInteractionRo.CUT, isCapture)
 }
 
-fun UiComponentRo.clipboardPaste(isCapture: Boolean = false): StoppableSignal<ClipboardInteractionRo> {
-	return createOrReuse(ClipboardInteractionRo.PASTE, isCapture)
+fun UiComponentRo.clipboardPaste(isCapture: Boolean = false): StoppableSignal<PasteInteractionRo> {
+	return createOrReuse(PasteInteractionRo.PASTE, isCapture)
 }

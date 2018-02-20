@@ -16,7 +16,7 @@
 
 package com.acornui.jvm.loader
 
-import com.acornui.core.assets.AssetTypes
+import com.acornui.core.assets.AssetType
 import java.io.InputStream
 import java.nio.charset.Charset
 
@@ -24,7 +24,7 @@ open class JvmTextLoader(
 		path: String,
 		private val charset: Charset,
 		workScheduler: WorkScheduler<String>
-) : JvmAssetLoaderBase<String>(path, AssetTypes.TEXT, workScheduler) {
+) : JvmAssetLoaderBase<String>(path, AssetType.TEXT, workScheduler) {
 
 	init {
 		init()

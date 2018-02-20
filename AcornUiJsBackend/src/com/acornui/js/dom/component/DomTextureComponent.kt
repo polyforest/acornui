@@ -20,7 +20,7 @@ import com.acornui.async.then
 import com.acornui.component.TextureComponent
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.ValidationFlags
-import com.acornui.core.assets.AssetTypes
+import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.CachedGroup
 import com.acornui.core.assets.cachedGroup
 import com.acornui.core.assets.loadAndCache
@@ -85,7 +85,7 @@ open class DomTextureComponent(
 			cached?.dispose()
 			cached = cachedGroup()
 			if (value != null) {
-				loadAndCache(value, AssetTypes.TEXTURE, cached!!).then {
+				loadAndCache(value, AssetType.TEXTURE, cached!!).then {
 					_setTexture(it)
 				}
 			} else {

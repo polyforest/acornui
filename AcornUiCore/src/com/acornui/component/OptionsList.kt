@@ -144,9 +144,7 @@ open class OptionsList<E : Any>(
 		})
 
 		keyDown().add {
-			when (it.keyCode) {
-				Ascii.ESCAPE, Ascii.RETURN, Ascii.ENTER -> close()
-			}
+			if (it.keyCode == Ascii.ESCAPE || it.keyCode == Ascii.RETURN || it.keyCode == Ascii.ENTER) close()
 		}
 
 		dataView.sortComparator = {

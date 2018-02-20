@@ -59,11 +59,11 @@ class FilesImpl(manifest: FilesManifest) : Files {
 				}
 				p = dir
 			}
-			val fileEntry = FileEntry(file.path, file.modified, file.size, p)
-			map.put(fileEntry.path, fileEntry)
+			val fileEntry = FileEntry(file.path, file.modified, file.size, file.mimeType, p)
+			map[fileEntry.path] = fileEntry
 
 			// Add the file entry to the directory.
-			(p.files as MutableMap).put(pathSplit.last(), fileEntry)
+			(p.files as MutableMap)[pathSplit.last()] = fileEntry
 		}
 	}
 
@@ -88,15 +88,16 @@ class FileEntry(
 		val path: String,
 		val modified: Long,
 		val size: Long,
-		val parent: Directory
+		val mimeType: String?,
+		val parent: Directory?
 ) : Comparable<FileEntry> {
 
 	fun siblingFile(name: String): FileEntry? {
-		return parent.getFile(name)
+		return parent?.getFile(name)
 	}
 
 	fun siblingDir(name: String): Directory? {
-		return parent.getDir(name)
+		return parent?.getDir(name)
 	}
 
 	val name: String
@@ -132,10 +133,10 @@ class FileEntry(
 	}
 
 	override fun compareTo(other: FileEntry): Int {
-		if (depth == other.depth) {
-			return path.compareTo(other.path)
+		return if (depth == other.depth) {
+			path.compareTo(other.path)
 		} else {
-			return depth.compareTo(other.depth)
+			depth.compareTo(other.depth)
 		}
 	}
 }

@@ -16,7 +16,7 @@
 
 package com.acornui.jvm.graphics
 
-import com.acornui.core.assets.AssetTypes
+import com.acornui.core.assets.AssetType
 import com.acornui.core.graphics.RgbData
 import com.acornui.core.graphics.Texture
 import com.acornui.gl.core.Gl20
@@ -35,7 +35,7 @@ open class JvmTextureLoader(
 		private val gl: Gl20,
 		private val glState: GlState,
 		workScheduler: WorkScheduler<Texture>
-) : JvmAssetLoaderBase<Texture>(path, AssetTypes.TEXTURE, workScheduler) {
+) : JvmAssetLoaderBase<Texture>(path, AssetType.TEXTURE, workScheduler) {
 
 	init {
 		init()
@@ -49,7 +49,7 @@ open class JvmTextureLoader(
 open class JvmRgbDataLoader(
 		path: String,
 		workScheduler: WorkScheduler<RgbData>
-) : JvmAssetLoaderBase<RgbData>(path, AssetTypes.RGB_DATA, workScheduler) {
+) : JvmAssetLoaderBase<RgbData>(path, AssetType.RGB_DATA, workScheduler) {
 
 	init {
 		init()

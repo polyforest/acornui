@@ -353,6 +353,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		set(value) {
 			if (_text == value) return
 			_text = if (_restrictPatternRegex == null) value else value.replace(_restrictPatternRegex!!, "")
+			_text = _text.replace("\r", "")
 			refreshText()
 		}
 
@@ -423,9 +424,11 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 		host.clipboardPaste().add {
 			launch {
-				val str = it.getItemByType(ClipboardItemType.PLAIN_TEXT)?.getAsString()
-				if (str != null)
+				var str = it.getItemByType(ClipboardItemType.PLAIN_TEXT)
+				if (str != null) {
+					str = str.replace("\r", "")
 					replaceSelection(str)
+				}
 			}
 		}
 
@@ -447,10 +450,10 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		if (event.keyCode != Ascii.UP && event.keyCode != Ascii.DOWN) column = -1
 
 		when (event.keyCode) {
-			Ascii.LEFT -> cursorDelta(event.shiftKey, -1)
-			Ascii.RIGHT -> cursorDelta(event.shiftKey, 1)
-			Ascii.UP -> cursorUp(event.shiftKey)
-			Ascii.DOWN -> cursorDown(event.shiftKey)
+			Ascii.LEFT -> cursorDelta(event, -1)
+			Ascii.RIGHT -> cursorDelta(event, 1)
+			Ascii.UP -> cursorUp(event)
+			Ascii.DOWN -> cursorDown(event)
 			Ascii.BACKSPACE -> {
 				event.handled = true
 				backspace()
@@ -476,27 +479,27 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 					_changed.dispatch()
 				}
 			}
-			Ascii.HOME -> cursorHome(event.shiftKey)
-			Ascii.END -> cursorEnd(event.shiftKey)
+			Ascii.HOME -> cursorHome(event)
+			Ascii.END -> cursorEnd(event)
 			Ascii.A -> {
 				if (event.ctrlKey) {
 					val n = contents.size
 					selectionManager.selection = listOf(SelectionRange(host, 0, n))
 				}
 			}
-			Ascii.PAGE_UP -> cursorPageUp(event.shiftKey)
-			Ascii.PAGE_DOWN -> cursorPageDown(event.shiftKey)
+			Ascii.PAGE_UP -> cursorPageUp(event)
+			Ascii.PAGE_DOWN -> cursorPageDown(event)
 		}
 	}
 
-	private fun cursorDelta(shiftKey: Boolean, offset: Int) {
+	private fun cursorDelta(event: KeyInteractionRo, offset: Int) {
 		val sel = firstSelection ?: return
 		val n = contents.size
 		val next = clamp(clamp(sel.endIndex, 0, n) + offset, 0, n)
-		selectionManager.selection = listOf(SelectionRange(host, if (shiftKey) sel.startIndex else next, next))
+		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else next, next))
 	}
 
-	private fun cursorUp(shiftKey: Boolean) {
+	private fun cursorUp(event: KeyInteractionRo) {
 		val sel = firstSelection ?: return
 		val line = contents.getLineAt(minOf(contents.size - 1, sel.endIndex)) ?: return
 		val previousLine = contents.getLineAt(line.startIndex - 1)
@@ -504,13 +507,13 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			if (column == -1)
 				column = sel.endIndex - line.startIndex
 			val nextPos = minOf(previousLine.endIndex - 1, previousLine.startIndex + column)
-			selectionManager.selection = listOf(SelectionRange(host, if (shiftKey) sel.startIndex else nextPos, nextPos))
+			selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else nextPos, nextPos))
 		} else {
-			selectionManager.selection = listOf(SelectionRange(host, if (shiftKey) sel.startIndex else 0, 0))
+			selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else 0, 0))
 		}
 	}
 
-	private fun cursorDown(shiftKey: Boolean) {
+	private fun cursorDown(event: KeyInteractionRo) {
 		val sel = firstSelection ?: return
 		val line = contents.getLineAt(sel.endIndex) ?: return
 		val nextLine = contents.getLineAt(line.endIndex)
@@ -518,10 +521,10 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			if (column == -1)
 				column = sel.endIndex - line.startIndex
 			val nextPos = minOf(lineEnd(nextLine), nextLine.startIndex + column)
-			selectionManager.selection = listOf(SelectionRange(host, if (shiftKey) sel.startIndex else nextPos, nextPos))
+			selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else nextPos, nextPos))
 		} else {
 			val n = contents.size
-			selectionManager.selection = listOf(SelectionRange(host, if (shiftKey) sel.startIndex else n, n))
+			selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else n, n))
 		}
 	}
 
@@ -530,24 +533,24 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		return if (line.endIndex == n) n else line.endIndex - 1
 	}
 
-	private fun cursorHome(shiftKey: Boolean) {
+	private fun cursorHome(event: KeyInteractionRo) {
 		val sel = firstSelection ?: return
 		val line = contents.getLineAt(minOf(contents.size - 1, sel.endIndex)) ?: return
-		selectionManager.selection = listOf(SelectionRange(host, if (shiftKey) sel.startIndex else line.startIndex, line.startIndex))
+		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else line.startIndex, line.startIndex))
 	}
 
-	private fun cursorEnd(shiftKey: Boolean) {
+	private fun cursorEnd(event: KeyInteractionRo) {
 		val sel = firstSelection ?: return
 		val line = contents.getLineAt(sel.endIndex) ?: return
 		val pos = lineEnd(line)
-		selectionManager.selection = listOf(SelectionRange(host, if (shiftKey) sel.startIndex else pos, pos))
+		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else pos, pos))
 	}
 
-	private fun cursorPageUp(shiftKey: Boolean) {
+	private fun cursorPageUp(event: KeyInteractionRo) {
 
 	}
 
-	private fun cursorPageDown(shiftKey: Boolean) {
+	private fun cursorPageDown(event: KeyInteractionRo) {
 
 	}
 
@@ -592,7 +595,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		selectionManager.selection = listOf(SelectionRange(host, p, p))
 	}
 
-	fun replaceTextRange(startIndex: Int, endIndex: Int, newText: String) {
+	private fun replaceTextRange(startIndex: Int, endIndex: Int, newText: String) {
 		val text = this.text
 		this.text = text.substring(0, clamp(startIndex, 0, text.length)) + newText + text.substring(clamp(endIndex, 0, text.length), text.length)
 		validateLayout()

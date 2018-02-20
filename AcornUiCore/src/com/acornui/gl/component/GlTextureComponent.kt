@@ -67,7 +67,7 @@ open class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureCom
 			cached?.dispose()
 			cached = cachedGroup()
 			if (value != null) {
-				loadAndCache(value, AssetTypes.TEXTURE, cached!!).then {
+				loadAndCache(value, AssetType.TEXTURE, cached!!).then {
 					_setTexture(it)
 				}
 			} else {

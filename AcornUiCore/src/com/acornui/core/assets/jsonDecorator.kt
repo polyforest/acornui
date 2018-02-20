@@ -22,5 +22,5 @@ data class JsonDecorator<out R>(val serializer: Serializer<String>, val factory:
 }
 
 fun <R> Scoped.loadAndCacheJson(path: String, factory: From<R>, group: CachedGroup): Deferred<R> {
-	return loadAndCache(path, AssetTypes.TEXT, jsonDecorator(factory), group)
+	return loadAndCache(path, AssetType.TEXT, jsonDecorator(factory), group)
 }

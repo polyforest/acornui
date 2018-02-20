@@ -62,6 +62,7 @@ import com.acornui.js.audio.JsAudioElementSoundLoader
 import com.acornui.js.audio.JsWebAudioSoundLoader
 import com.acornui.js.audio.audioContextSupported
 import com.acornui.js.cursor.JsCursorManager
+import com.acornui.js.input.JsClipboardDispatcher
 import com.acornui.js.input.JsKeyInput
 import com.acornui.js.input.JsMouseInput
 import com.acornui.js.io.JsBufferFactory
@@ -214,7 +215,7 @@ Function.prototype.bind = function() {
 		set(UserInfo, uI)
 	}
 
-	protected suspend fun contentLoad() {
+	private suspend fun contentLoad() {
 		suspendCoroutine<Unit> {
 			cont ->
 			if (document.readyState == DocumentReadyState.LOADING) {
@@ -287,17 +288,17 @@ Function.prototype.bind = function() {
 	}
 
 	protected open fun addAssetLoaders(loaders: HashMap<AssetType<*>, LoaderFactory<*>>) {
-		loaders[AssetTypes.TEXT] = { path: String, estimatedBytesTotal: Int -> JsTextLoader(path, estimatedBytesTotal) }
+		loaders[AssetType.TEXT] = { path: String, estimatedBytesTotal: Int -> JsTextLoader(path, estimatedBytesTotal) }
 
 		// JS Audio doesn't need to be updated like OpenAL audio does, so we don't add it to the TimeDriver.
 		val audioManager = AudioManagerImpl()
 		set(AudioManager, audioManager)
-		loaders[AssetTypes.SOUND] = if (audioContextSupported) {
+		loaders[AssetType.SOUND] = if (audioContextSupported) {
 			{ path: String, estimatedBytesTotal: Int -> JsWebAudioSoundLoader(path, estimatedBytesTotal, audioManager) }
 		} else {
 			{ path: String, estimatedBytesTotal: Int -> JsAudioElementSoundLoader(path, estimatedBytesTotal, audioManager) }
 		}
-		loaders[AssetTypes.MUSIC] = { path: String, estimatedBytesTotal: Int -> JsAudioElementMusicLoader(path, estimatedBytesTotal, audioManager) }
+		loaders[AssetType.MUSIC] = { path: String, estimatedBytesTotal: Int -> JsAudioElementMusicLoader(path, estimatedBytesTotal, audioManager) }
 	}
 
 	protected open val timeDriverTask by BootTask {
@@ -335,7 +336,9 @@ Function.prototype.bind = function() {
 		return PopUpManagerImpl(root)
 	}
 
-	protected abstract suspend fun initializeSpecialInteractivity(owner: Owned)
+	protected open suspend fun initializeSpecialInteractivity(owner: Owned) {
+		JsClipboardDispatcher(owner.inject(CANVAS), owner.injector)
+	}
 
 	private fun memberRefTest() {}
 

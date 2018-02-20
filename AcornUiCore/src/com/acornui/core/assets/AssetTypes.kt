@@ -27,31 +27,31 @@ import com.acornui.core.graphics.Texture
  * Note: Custom asset types may be created, but be sure to use a unique name.
  */
 @Suppress("unused")
-data class AssetType<T>(val name: String)
+data class AssetType<T>(val name: String) {
 
-object AssetTypes {
+	companion object {
 
-	/**
-	 * Loads as UTF-8 text.
-	 */
-	val TEXT: AssetType<String> = AssetType("text")
+		/**
+		 * Loads as UTF-8 text.
+		 */
+		val TEXT: AssetType<String> = AssetType("text")
 
-	// Currently only available on the JS backend.
-	val BINARY:AssetType<ByteArray> = AssetType("binary")
+		// Currently only available on the JS backend.
+		val BINARY:AssetType<ByteArray> = AssetType("binary")
 
-	val TEXTURE: AssetType<Texture> = AssetType("texture")
+		val TEXTURE: AssetType<Texture> = AssetType("texture")
 
-	/**
-	 * An in-memory sound.
-	 */
-	val SOUND: AssetType<SoundFactory> = AssetType("audio")
+		/**
+		 * An in-memory sound.
+		 */
+		val SOUND: AssetType<SoundFactory> = AssetType("audio")
 
-	/**
-	 * A Streaming sound.
-	 */
-	val MUSIC: AssetType<Music> = AssetType("music")
+		/**
+		 * A Streaming sound.
+		 */
+		val MUSIC: AssetType<Music> = AssetType("music")
 
-	// Currently only available in the JvmHeadless backend.
-	val RGB_DATA: AssetType<RgbData> = AssetType("rgbData")
-
+		// Currently only available in the JvmHeadless backend.
+		val RGB_DATA: AssetType<RgbData> = AssetType("rgbData")
+	}
 }

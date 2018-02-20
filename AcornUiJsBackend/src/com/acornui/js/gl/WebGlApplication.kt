@@ -26,7 +26,6 @@ import com.acornui.component.text.TextField
 import com.acornui.component.text.TextInput
 import com.acornui.core.AppConfig
 import com.acornui.core.assets.AssetType
-import com.acornui.core.assets.AssetTypes
 import com.acornui.core.assets.LoaderFactory
 import com.acornui.core.di.Owned
 import com.acornui.core.di.dKey
@@ -105,7 +104,7 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 		launch {
 			val gl = get(Gl20)
 			val glState = get(GlState)
-			loaders[AssetTypes.TEXTURE] = { path, estimatedBytesTotal -> WebGlTextureLoader(path, estimatedBytesTotal, gl, glState) }
+			loaders[AssetType.TEXTURE] = { path, estimatedBytesTotal -> WebGlTextureLoader(path, estimatedBytesTotal, gl, glState) }
 		}
 	}
 
@@ -133,6 +132,7 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 	}
 
 	override suspend fun initializeSpecialInteractivity(owner: Owned) {
+		super.initializeSpecialInteractivity(owner)
 		FakeFocusMouse(owner.injector)
 		JsClickDispatcher(get(CANVAS), owner.injector)
 	}
