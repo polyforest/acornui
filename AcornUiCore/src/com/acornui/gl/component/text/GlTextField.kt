@@ -495,6 +495,11 @@ interface TextNodeRo : Validatable, StyleableRo, PositionableRo {
 	val placeholder: TextElementRo
 
 	/**
+	 * True if this node allows \n characters.
+	 */
+	val multiline: Boolean
+
+	/**
 	 * Returns the text element at the given index.
 	 * @param index The text element index between 0 and size - 1.
 	 */
@@ -575,6 +580,9 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 	private val _placeholder = LastTextElement(this)
 	override val placeholder: TextElementRo
 		get() = _placeholder
+
+	override val multiline: Boolean
+		get() = flowStyle.multiline
 
 	override val size: Int
 		get() = textElements.size

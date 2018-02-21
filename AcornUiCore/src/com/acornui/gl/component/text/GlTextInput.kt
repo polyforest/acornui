@@ -258,9 +258,10 @@ class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 
 	private fun scrollToSelected(event: KeyInteractionRo) {
 		val sel = firstSelection ?: return
-		val line = contents.getLineAt(minOf(contents.size - 1, sel.endIndex)) ?: return
-		rect.set(line.x, line.y, line.width, line.height)
+		val e = if (sel.endIndex >= contents.size) contents.placeholder else contents.getTextElementAt(sel.endIndex)
+		rect.set(e.x, e.y, e.width, e.lineHeight)
 		rect.inflate(flowStyle.padding)
+
 		scroller.scrollTo(rect)
 	}
 
@@ -509,7 +510,10 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			}
 			Ascii.ENTER, Ascii.RETURN -> {
 				event.handled = true
-				if (flowStyle.multiline) {
+				val sel = firstSelection
+				val multiline = if (sel == null || sel.min >= contents.size) null else textField.contents.getTextElementAt(sel.min).textParent?.textParent?.multiline
+
+				if (multiline ?: flowStyle.multiline) {
 					replaceSelection("\n")
 					_input.dispatch()
 				} else {
