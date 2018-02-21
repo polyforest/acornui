@@ -304,6 +304,7 @@ open class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 		val h = margin.reduceHeight(explicitHeight)
 		scroller.setSize(w, h)
 		scroller.setPosition(margin.left, margin.top)
+		editableText.pageHeight = h ?: 400f
 		out.set(explicitWidth ?: textInputStyle.defaultWidth, explicitHeight ?: margin.expandHeight2(scroller.height))
 		background.setSize(margin.reduceWidth2(out.width), margin.reduceHeight(out.height))
 		background.setPosition(margin.left, margin.top)
@@ -332,6 +333,8 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	var maxLength: Int? = null
 
 	val textField = addChild(GlTextField(this).apply { selectionTarget = host })
+
+	var pageHeight: Float = 400f
 
 	private val textCursor = addChild(dynamicMeshC {
 		buildMesh {
@@ -447,7 +450,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private var column = -1
 
 	private fun keyDownHandler(event: KeyInteractionRo) {
-		if (event.keyCode != Ascii.UP && event.keyCode != Ascii.DOWN) column = -1
+		if (event.keyCode != Ascii.UP && event.keyCode != Ascii.DOWN && event.keyCode != Ascii.PAGE_UP && event.keyCode != Ascii.PAGE_DOWN) column = -1
 
 		when (event.keyCode) {
 			Ascii.LEFT -> cursorDelta(event, -1)
@@ -536,22 +539,57 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private fun cursorHome(event: KeyInteractionRo) {
 		val sel = firstSelection ?: return
 		val line = contents.getLineAt(minOf(contents.size - 1, sel.endIndex)) ?: return
-		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else line.startIndex, line.startIndex))
+		val metaKey = event.ctrlKey || event.metaKey
+		val toIndex = if (metaKey) 0 else line.startIndex
+		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else toIndex, toIndex))
 	}
 
 	private fun cursorEnd(event: KeyInteractionRo) {
 		val sel = firstSelection ?: return
 		val line = contents.getLineAt(sel.endIndex) ?: return
 		val pos = lineEnd(line)
-		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else pos, pos))
+		val metaKey = event.ctrlKey || event.metaKey
+		val toIndex = if (metaKey) contents.size else pos
+		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else toIndex, toIndex))
 	}
 
 	private fun cursorPageUp(event: KeyInteractionRo) {
-
+		val sel = firstSelection ?: return
+		val currentLine = contents.getLineAt(minOf(sel.endIndex, contents.size - 1)) ?: return
+		var line: LineInfoRo? = currentLine
+		var h = line?.height ?: 0f
+		while (line != null && h < pageHeight) {
+			line = contents.getLineAt(line.startIndex - 1)
+			h += line?.height ?: 0f
+		}
+		if (line != null) {
+			if (column == -1)
+				column = sel.endIndex - currentLine.startIndex
+			val nextPos = minOf(line.endIndex - 1, line.startIndex + column)
+			selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else nextPos, nextPos))
+		} else {
+			selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else 0, 0))
+		}
 	}
 
 	private fun cursorPageDown(event: KeyInteractionRo) {
-
+		val sel = firstSelection ?: return
+		val currentLine = contents.getLineAt(sel.endIndex) ?: return
+		var line: LineInfoRo? = currentLine
+		var h = line?.height ?: 0f
+		while (line != null && h < pageHeight) {
+			line = contents.getLineAt(line.endIndex)
+			h += line?.height ?: 0f
+		}
+		if (line != null) {
+			if (column == -1)
+				column = sel.endIndex - currentLine.startIndex
+			val nextPos = minOf(lineEnd(line), line.startIndex + column)
+			selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else nextPos, nextPos))
+		} else {
+			val n = contents.size
+			selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else n, n))
+		}
 	}
 
 	private val firstSelection: SelectionRange?
