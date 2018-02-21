@@ -20,7 +20,6 @@ import com.acornui.component.*
 import com.acornui.component.scroll.*
 import com.acornui.core.di.Owned
 import com.acornui.core.floor
-import com.acornui.core.input.interaction.WheelInteraction
 import com.acornui.core.input.interaction.WheelInteractionRo
 import com.acornui.core.input.wheel
 import com.acornui.math.Bounds
@@ -90,8 +89,6 @@ open class GlScrollArea(
 		styleTags.add(ScrollArea)
 		validation.addNode(ScrollArea.SCROLLING, ValidationFlags.LAYOUT, this::validateScroll)
 
-//		hScrollBar.includeInLayout = false
-//		vScrollBar.includeInLayout = false
 		styleTags.add(ScrollArea.HBAR_STYLE)
 		styleTags.add(ScrollArea.VBAR_STYLE)
 
@@ -210,7 +207,6 @@ open class GlScrollArea(
 		vScrollModel.max = maxOf(0f, scrollRect.contentsHeight - contentsSetH)
 
 		scrollRect.getAttachment<TossScroller>(TossScroller)?.enabled = needsHScrollBar || needsVScrollBar
-//		scrollRect.validate(ValidationFlags.LAYOUT)
 	}
 
 	protected fun validateScroll() {

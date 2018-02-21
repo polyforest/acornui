@@ -329,7 +329,21 @@ class TextInputStyle : StyleBase() {
 	override val type = Companion
 
 	var defaultWidth by prop(180f)
-	var cursorColor: ColorRo by prop(Color(0.1f, 0.1f, 0.1f, 1f))
+
+	/**
+	 * The cursor blinks, this is color one.
+	 */
+	var cursorColorOne: ColorRo by prop(Color(0.1f, 0.1f, 0.1f, 1f))
+
+	/**
+	 * The cursor blinks, this is color two.
+	 */
+	var cursorColorTwo: ColorRo by prop(Color(0.9f, 0.9f, 0.9f, 1f))
+
+	/**
+	 * The number of seconds between cursor blinks.
+	 */
+	var cursorBlinkSpeed: Float by prop(0.5f)
 
 	companion object : StyleType<TextInputStyle>
 }

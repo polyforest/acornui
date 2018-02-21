@@ -24,6 +24,7 @@ import com.acornui.core.selection.SelectionRange
 import com.acornui.core.selection.selectAll
 import com.acornui.core.selection.unselect
 import com.acornui.core.time.enterFrame
+import com.acornui.core.time.onTick
 import com.acornui.gl.component.drawing.dynamicMeshC
 import com.acornui.gl.component.drawing.fillStyle
 import com.acornui.gl.component.drawing.lineStyle
@@ -110,7 +111,9 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 			background.style.set(it)
 		}
 		watch(textInputStyle) {
-			editableText.textCursorColor = it.cursorColor
+			editableText.cursorColorOne = it.cursorColorOne
+			editableText.cursorColorTwo = it.cursorColorTwo
+			editableText.cursorBlinkSpeed = it.cursorBlinkSpeed
 			invalidateLayout()
 		}
 	}
@@ -122,7 +125,8 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 		val h = margin.reduceHeight(pad.reduceHeight(explicitHeight))
 		editableText.setSize(w, h)
 		editableText.setPosition(margin.left + pad.left, margin.top + pad.top)
-		out.set(explicitWidth ?: textInputStyle.defaultWidth, explicitHeight ?: margin.expandHeight2(pad.expandHeight2(editableText.height)))
+		out.set(explicitWidth ?: textInputStyle.defaultWidth, explicitHeight
+				?: margin.expandHeight2(pad.expandHeight2(editableText.height)))
 		background.setSize(margin.reduceWidth2(out.width), margin.reduceHeight(out.height))
 		background.setPosition(margin.left, margin.top)
 		highlight?.setSize(background.bounds)
@@ -131,22 +135,25 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 }
 
 
-open class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
+class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 
-	protected val background = addChild(rect())
+	private val background = addChild(rect())
 
 	override var focusEnabled: Boolean = true
 	override var focusOrder: Float = 0f
 	override var highlight: UiComponent? by createSlot()
 
-	final override val textInputStyle = bind(TextInputStyle())
-	final override val boxStyle = bind(BoxStyle())
+	override val textInputStyle = bind(TextInputStyle())
+	override val boxStyle = bind(BoxStyle())
 
-	protected val editableText = EditableText(this)
+	private val editableTextLayoutData = StackLayoutData()
+	private val editableText = EditableText(this).apply {
+		layoutData = editableTextLayoutData
+	}
 
 	private val scroller = addChild(scrollArea {
 		hScrollPolicy = ScrollPolicy.OFF
-		+editableText layout { widthPercent = 1f }
+		+editableText
 	})
 
 	override val charStyle: CharStyle
@@ -233,13 +240,18 @@ open class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 	init {
 		styleTags.add(TextInput)
 		styleTags.add(TextArea)
+		watch(bind(editableText.flowStyle)) {
+			editableTextLayoutData.widthPercent = if (it.multiline) 1f else null
+		}
 		watch(boxStyle) {
 			scroller.stackStyle.padding = it.padding
 			scroller.style.borderRadius = it.borderRadius
 			background.style.set(it)
 		}
 		watch(textInputStyle) {
-			editableText.textCursorColor = it.cursorColor
+			editableText.cursorColorOne = it.cursorColorOne
+			editableText.cursorColorTwo = it.cursorColorTwo
+			editableText.cursorBlinkSpeed = it.cursorBlinkSpeed
 			invalidateLayout()
 		}
 
@@ -342,13 +354,15 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			fillStyle.colorTint.set(Color.WHITE)
 			+quad(-1f, 0f, 1f, 0f, 1f, 1f, -1f, 1f)
 		}
+		colorTint = Color.CLEAR
 	})
 
-	var textCursorColor: ColorRo
-		get() = textCursor.colorTint
-		set(value) {
-			textCursor.colorTint = value
-		}
+	var cursorColorOne: ColorRo = Color.BLACK
+	var cursorColorTwo: ColorRo = Color.WHITE
+	var cursorBlinkSpeed: Float = 0.5f
+
+	private var usingCursorColorOne = true
+	private var cursorTimer: Float = 0f
 
 	private var _text: String = ""
 	var text: String
@@ -442,6 +456,16 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		validation.addNode(TEXT_CURSOR, ValidationFlags.LAYOUT, this::updateTextCursor)
 
 		selectionManager.selectionChanged.add(this::selectionChangedHandler)
+
+		// Handle the cursor blink
+		onTick {
+			cursorTimer -= it
+			if (cursorTimer <= 0f) {
+				cursorTimer = cursorBlinkSpeed
+				usingCursorColorOne = !usingCursorColorOne
+				textCursor.colorTint = if (usingCursorColorOne) cursorColorOne else cursorColorTwo
+			}
+		}
 	}
 
 	private val contents
@@ -450,6 +474,10 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private var column = -1
 
 	private fun keyDownHandler(event: KeyInteractionRo) {
+		cursorTimer = cursorBlinkSpeed
+		usingCursorColorOne = true
+		textCursor.colorTint = cursorColorOne
+
 		if (event.keyCode != Ascii.UP && event.keyCode != Ascii.DOWN && event.keyCode != Ascii.PAGE_UP && event.keyCode != Ascii.PAGE_DOWN) column = -1
 
 		when (event.keyCode) {
