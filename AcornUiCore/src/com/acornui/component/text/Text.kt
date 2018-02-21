@@ -295,7 +295,16 @@ interface TextArea : TextInput {
 	val hScrollModel: ClampedScrollModel
 	val vScrollModel: ClampedScrollModel
 
+	/**
+	 * The horizontal scrolling policy.
+	 * Default: ScrollPolicy.OFF
+	 */
 	var hScrollPolicy: ScrollPolicy
+
+	/**
+	 * The vertical scrolling policy.
+	 * Default: ScrollPolicy.AUTO
+	 */
 	var vScrollPolicy: ScrollPolicy
 
 	val contentsWidth: Float

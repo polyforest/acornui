@@ -59,14 +59,14 @@ import com.acornui.string.isBreaking
  * @author nbilyk
  */
 @Suppress("LeakingThis", "UNUSED_PARAMETER")
-open class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
+class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 
-	final override val flowStyle = bind(TextFlowStyle())
-	final override val charStyle = bind(CharStyle())
+	override val flowStyle = bind(TextFlowStyle())
+	override val charStyle = bind(CharStyle())
 
 	private val selectionManager = inject(SelectionManager)
 
-	protected var _selectionCursor: RollOverCursor? = null
+	private var _selectionCursor: RollOverCursor? = null
 
 	/**
 	 * The Selectable target to use for the selection range.
@@ -94,6 +94,17 @@ open class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 		addChild(value)
 		return value
 	}
+
+	/**
+	 * If true (default), the contents will be clipped to the explicit size of this text field.
+	 */
+	var allowClipping: Boolean
+		get() = _contents.allowClipping
+		set(value) {
+			if (_contents.allowClipping == value) return
+			_contents.allowClipping = value
+			invalidateLayout()
+		}
 
 	private var _drag: DragAttachment? = null
 
@@ -138,7 +149,7 @@ open class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 		return listOf(SelectionRange(selectionTarget, p1A, p2A))
 	}
 
-	protected open fun refreshCursor() {
+	private fun refreshCursor() {
 		if (charStyle.selectable) {
 			if (_selectionCursor == null)
 				_selectionCursor = RollOverCursor(this, StandardCursors.IBEAM)
@@ -163,7 +174,7 @@ open class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 		invalidateStyles()
 	}
 
-	protected open fun updateSelection() {
+	private fun updateSelection() {
 		_contents.setSelection(0, selectionManager.selection.filter { it.target == selectionTarget })
 	}
 
@@ -176,8 +187,10 @@ open class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 		val minHeight = flowStyle.padding.expandHeight(BitmapFontRegistry.getFont(charStyle)?.data?.lineHeight?.toFloat()) ?: 0f
 		if (out.height < minHeight) out.height = minHeight
 
-		if (explicitWidth != null) out.width = explicitWidth
-		if (explicitHeight != null) out.height = explicitHeight
+		if (contents.allowClipping) {
+			if (explicitWidth != null) out.width = explicitWidth
+			if (explicitHeight != null) out.height = explicitHeight
+		}
 	}
 
 	override fun dispose() {
@@ -520,7 +533,13 @@ interface TextNode : TextNodeRo, Positionable {
 }
 
 
-interface TextNodeComponent : TextNode, UiComponent
+interface TextNodeComponent : TextNode, UiComponent {
+
+	/**
+	 * If true, this component's vertices will be clipped to the explicit size.
+	 */
+	var allowClipping: Boolean
+}
 
 /**
  * A TextFlow component is a container of styleable text spans, to be used inside of a TextField.
@@ -530,6 +549,15 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 	override var textParent: TextNodeRo? = null
 
 	val flowStyle = bind(TextFlowStyle())
+
+	private var _allowClipping = true
+	override var allowClipping: Boolean
+		get() = _allowClipping
+		set(value) {
+			if (_allowClipping == value) return
+			_allowClipping = value
+			invalidate(VERTICES)
+		}
 
 	private val _lines = ArrayList<LineInfo>()
 
@@ -810,8 +838,10 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 		val padding = flowStyle.padding
 		val leftClip = padding.left
 		val topClip = padding.top
-		val rightClip = (explicitWidth ?: Float.MAX_VALUE) - padding.right
-		val bottomClip = (explicitHeight ?: Float.MAX_VALUE) - padding.bottom
+		val w = (if (allowClipping) explicitWidth else null) ?: Float.MAX_VALUE
+		val h = (if (allowClipping) explicitHeight else null) ?: Float.MAX_VALUE
+		val rightClip = w - padding.right
+		val bottomClip = h - padding.bottom
 		for (i in 0.._textElements.lastIndex) {
 			_textElements[i].validateVertices(concatenatedTransform, leftClip, topClip, rightClip, bottomClip)
 		}

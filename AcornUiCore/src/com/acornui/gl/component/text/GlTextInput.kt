@@ -146,14 +146,13 @@ class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 	override val textInputStyle = bind(TextInputStyle())
 	override val boxStyle = bind(BoxStyle())
 
-	private val editableTextLayoutData = StackLayoutData()
 	private val editableText = EditableText(this).apply {
-		layoutData = editableTextLayoutData
+		textField.allowClipping = false
 	}
 
 	private val scroller = addChild(scrollArea {
 		hScrollPolicy = ScrollPolicy.OFF
-		+editableText
+		+editableText layout { widthPercent = 1f }
 	})
 
 	override val charStyle: CharStyle
@@ -240,9 +239,6 @@ class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 	init {
 		styleTags.add(TextInput)
 		styleTags.add(TextArea)
-		watch(bind(editableText.flowStyle)) {
-			editableTextLayoutData.widthPercent = if (it.multiline) 1f else null
-		}
 		watch(boxStyle) {
 			scroller.stackStyle.padding = it.padding
 			scroller.style.borderRadius = it.borderRadius
@@ -275,13 +271,12 @@ class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 	private val bufferP = 0.2f
 	private val innerBufferMax = 80f
 	private val outerBufferMax = 200f
-	private val tmpVec = Vector2()
-	private var startMouseY = 0f
+	private var startMouse = Vector2()
+	private val currentMouse = Vector2()
 	private var _frameWatch: Disposable? = null
 
 	private fun startScrollWatch(event: Any) {
-		mousePosition(tmpVec)
-		startMouseY = tmpVec.y
+		mousePosition(startMouse)
 		_frameWatch?.dispose()
 		_frameWatch = enterFrame(-1, this::scrollWatcher)
 		stage.mouseUp().add(this::endScrollWatch)
@@ -296,18 +291,31 @@ class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 	}
 
 	private fun scrollWatcher() {
-		mousePosition(tmpVec)
-		val height = height
-		val b = maxOf(0f, minOf4(innerBufferMax, height * bufferP, startMouseY, height - startMouseY))
-		val speed = if (tmpVec.y < b) {
-			-(1f - (tmpVec.y + outerBufferMax) / (b + outerBufferMax))
-		} else if (tmpVec.y > height - b) {
-			(tmpVec.y - height + b) / (b + outerBufferMax)
-		} else {
-			0f
+		mousePosition(currentMouse)
+		if (hScrollPolicy != ScrollPolicy.OFF) {
+			val width = width
+			val b = maxOf(0f, minOf4(innerBufferMax, width * bufferP, startMouse.x, width - startMouse.x))
+			val speed = if (currentMouse.x < b) {
+				-(1f - (currentMouse.x + outerBufferMax) / (b + outerBufferMax))
+			} else if (currentMouse.x > width - b) {
+				(currentMouse.x - width + b) / (b + outerBufferMax)
+			} else {
+				0f
+			}
+			hScrollModel.value += speed * maxScrollSpeed
 		}
-		vScrollModel.value += speed * maxScrollSpeed
-
+		if (vScrollPolicy != ScrollPolicy.OFF) {
+			val height = height
+			val b = maxOf(0f, minOf4(innerBufferMax, height * bufferP, startMouse.y, height - startMouse.y))
+			val speed = if (currentMouse.y < b) {
+				-(1f - (currentMouse.y + outerBufferMax) / (b + outerBufferMax))
+			} else if (currentMouse.y > height - b) {
+				(currentMouse.y - height + b) / (b + outerBufferMax)
+			} else {
+				0f
+			}
+			vScrollModel.value += speed * maxScrollSpeed
+		}
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
@@ -450,8 +458,8 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		}
 
 		host.keyDown().add(this::keyDownHandler)
-		host.touchStart().add { column = -1 }
-		host.mouseDown().add { column = -1 }
+		host.touchStart().add { column = -1; resetCursorBlink() }
+		host.mouseDown().add { column = -1; resetCursorBlink() }
 
 		validation.addNode(TEXT_CURSOR, ValidationFlags.LAYOUT, this::updateTextCursor)
 
@@ -474,9 +482,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private var column = -1
 
 	private fun keyDownHandler(event: KeyInteractionRo) {
-		cursorTimer = cursorBlinkSpeed
-		usingCursorColorOne = true
-		textCursor.colorTint = cursorColorOne
+		resetCursorBlink()
 
 		if (event.keyCode != Ascii.UP && event.keyCode != Ascii.DOWN && event.keyCode != Ascii.PAGE_UP && event.keyCode != Ascii.PAGE_DOWN) column = -1
 
@@ -521,6 +527,12 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			Ascii.PAGE_UP -> cursorPageUp(event)
 			Ascii.PAGE_DOWN -> cursorPageDown(event)
 		}
+	}
+
+	private fun resetCursorBlink() {
+		cursorTimer = cursorBlinkSpeed
+		usingCursorColorOne = true
+		textCursor.colorTint = cursorColorOne
 	}
 
 	private fun cursorDelta(event: KeyInteractionRo, offset: Int) {
