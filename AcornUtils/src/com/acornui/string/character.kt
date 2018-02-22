@@ -30,12 +30,6 @@ fun Char.isLetterOrDigit2(): Boolean {
 	return isLetter2() || isDigit2()
 }
 
-@Deprecated(replaceWith = ReplaceWith("isWhitespace()"), message = "use isWhitespace")
-fun Char.isWhitespace2(): Boolean {
-	return this.isWhitespace()
-	//return this <= ' ' || this == 160.toChar() // 160 = nbsp;
-}
-
 /**
  * Characters where text is wrapped.
  */

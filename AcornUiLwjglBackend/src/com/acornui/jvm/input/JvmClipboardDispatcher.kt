@@ -16,25 +16,28 @@
 
 package com.acornui.jvm.input
 
+import com.acornui.collection.Clearable
 import com.acornui.component.Stage
 import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.focus.FocusManager
-import com.acornui.core.graphics.Texture
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.InteractionEventBase
 import com.acornui.core.input.InteractivityManager
 import com.acornui.core.input.KeyInput
-import com.acornui.core.input.interaction.PasteInteractionRo
 import com.acornui.core.input.interaction.ClipboardItemType
+import com.acornui.core.input.interaction.CopyInteractionRo
 import com.acornui.core.input.interaction.KeyInteractionRo
-import com.acornui.io.ReadBuffer
+import com.acornui.core.input.interaction.PasteInteractionRo
 import com.acornui.jvm.io.readTextAndClose
 import java.awt.Toolkit
+import java.awt.datatransfer.Clipboard
 import java.awt.datatransfer.DataFlavor
+import java.awt.datatransfer.Transferable
 import java.io.InputStream
+import java.io.StringReader
 
 
 class JvmClipboardDispatcher(
@@ -46,7 +49,8 @@ class JvmClipboardDispatcher(
 	private val focus = inject(FocusManager)
 	private val stage = inject(Stage)
 
-	private val event = JvmPasteInteraction()
+	private val pasteEvent = JvmPasteInteraction()
+	private val copyEvent = JvmCopyInteraction()
 
 	init {
 		key.keyDown.add(this::keyDownHandler)
@@ -54,9 +58,17 @@ class JvmClipboardDispatcher(
 
 	private fun keyDownHandler(e: KeyInteractionRo) {
 		if (e.ctrlKey && e.keyCode == Ascii.V) {
-			event.clear()
-			event.type = PasteInteractionRo.PASTE
-			interactivity.dispatch(focus.focused() ?: stage, event)
+			pasteEvent.clear()
+			pasteEvent.type = PasteInteractionRo.PASTE
+			interactivity.dispatch(focus.focused() ?: stage, pasteEvent)
+		} else if (e.ctrlKey && e.keyCode == Ascii.C) {
+			copyEvent.clear()
+			copyEvent.type = CopyInteractionRo.COPY
+			interactivity.dispatch(focus.focused() ?: stage, copyEvent)
+		} else if (e.ctrlKey && e.keyCode == Ascii.X) {
+			copyEvent.clear()
+			copyEvent.type = CopyInteractionRo.CUT
+			interactivity.dispatch(focus.focused() ?: stage, copyEvent)
 		}
 	}
 
@@ -67,15 +79,18 @@ class JvmClipboardDispatcher(
 
 private class JvmPasteInteraction : InteractionEventBase(), PasteInteractionRo {
 
+	private val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+
 	@Suppress("UNCHECKED_CAST")
 	override suspend fun <T : Any> getItemByType(type: ClipboardItemType<T>): T? {
 		return when (type) {
 			ClipboardItemType.PLAIN_TEXT -> {
-				getItemByFlavor(PLAIN_TEXT_FLAVOR)?.getAsString() as T?
+				@Suppress("DEPRECATION")
+				clipboard.getString(Flavors.PLAIN_TEXT_FLAVOR, DataFlavor.stringFlavor, DataFlavor.plainTextFlavor) as T?
 			}
 
 			ClipboardItemType.HTML -> {
-				getItemByFlavor(HTML_TEXT_FLAVOR)?.getAsString() as T?
+				clipboard.getString(Flavors.HTML_TEXT_FLAVOR) as T?
 			}
 
 			ClipboardItemType.TEXTURE ->  {
@@ -87,36 +102,85 @@ private class JvmPasteInteraction : InteractionEventBase(), PasteInteractionRo {
 		}
 	}
 
-	private fun getItemByFlavor(flavor: DataFlavor): JvmDataTransferItem? {
-		val clipboard = Toolkit.getDefaultToolkit().systemClipboard
-		if (clipboard.isDataFlavorAvailable(flavor)) {
-			return JvmDataTransferItem(flavor)
-		} else {
-			return null
-		}
+	private fun Clipboard.getDataOrNull(flavor: DataFlavor): Any? {
+		return if (isDataFlavorAvailable(flavor)) getData(flavor) else null
 	}
 
-	companion object {
-
-		private val PLAIN_TEXT_FLAVOR = DataFlavor("text/plain; class=java.io.InputStream; charset=UTF-8")
-		private val HTML_TEXT_FLAVOR = DataFlavor("text/html; class=java.io.InputStream; charset=UTF-8")
+	private fun Clipboard.getString(vararg flavors: DataFlavor): String? {
+		for (flavor in flavors) {
+			val data = getDataOrNull(flavor)
+			if (data is InputStream) {
+				return data.readTextAndClose()
+			} else if (data is String) {
+				return data
+			}
+		}
+		return null
 	}
 }
 
-private class JvmDataTransferItem(val flavor: DataFlavor) {
 
-	fun getAsString(): String? {
-		val clipboard = Toolkit.getDefaultToolkit().systemClipboard
-		val data = clipboard.getData(flavor) as InputStream
-		return data.readTextAndClose()
+private class JvmCopyInteraction : InteractionEventBase(), CopyInteractionRo {
+
+	private val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+
+	private val contents = object : Transferable, Clearable {
+
+		private val map = HashMap<DataFlavor, Any>()
+
+		override fun getTransferData(flavor: DataFlavor?): Any {
+			return map[flavor]!!
+		}
+
+		override fun isDataFlavorSupported(flavor: DataFlavor?): Boolean {
+			return map.containsKey(flavor)
+		}
+
+		override fun getTransferDataFlavors(): Array<DataFlavor> {
+			return map.keys.toTypedArray()
+		}
+
+		fun addData(flavor: DataFlavor, data: Any) {
+			map[flavor] = data
+		}
+
+		override fun clear() {
+			map.clear()
+		}
 	}
 
-	suspend fun getAsTexture(): Texture? {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	override fun <T : Any> addItem(type: ClipboardItemType<T>, value: T) {
+		when (type) {
+			ClipboardItemType.PLAIN_TEXT -> {
+				contents.addData(DataFlavor.stringFlavor, value as String)
+				val reader = StringReader(value as String)
+				contents.addData(Flavors.PLAIN_TEXT_FLAVOR, reader)
+				contents.addData(DataFlavor.plainTextFlavor, reader)
+			}
+
+			ClipboardItemType.HTML -> {
+				contents.addData(DataFlavor.stringFlavor, value as String)
+				val reader = StringReader(value as String)
+				contents.addData(Flavors.HTML_TEXT_FLAVOR, reader)
+				contents.addData(Flavors.PLAIN_TEXT_FLAVOR, reader)
+				contents.addData(DataFlavor.plainTextFlavor, reader)
+			}
+
+			ClipboardItemType.TEXTURE ->  {
+				TODO()
+			}
+			ClipboardItemType.FILE_LIST -> TODO()
+		}
+		clipboard.setContents(contents, null)
 	}
 
-	suspend fun getAsBlob(): ReadBuffer<Byte>? {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	override fun clear() {
+		super.clear()
+		contents.clear()
 	}
+}
+internal object Flavors {
 
+	val PLAIN_TEXT_FLAVOR = DataFlavor("text/plain; class=java.io.InputStream; charset=UTF-8")
+	val HTML_TEXT_FLAVOR = DataFlavor("text/html; class=java.io.InputStream; charset=UTF-8")
 }

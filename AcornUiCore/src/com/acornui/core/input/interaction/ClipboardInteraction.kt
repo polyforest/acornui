@@ -13,11 +13,13 @@ interface PasteInteractionRo : InteractionEventRo {
 	}
 }
 
-interface CutOrCopyInteractionRo : InteractionEventRo {
+interface CopyInteractionRo : InteractionEventRo {
+
+	fun <T : Any> addItem(type: ClipboardItemType<T>, value: T)
 
 	companion object {
-		val COPY = InteractionType<CutOrCopyInteractionRo>("copy")
-		val CUT = InteractionType<CutOrCopyInteractionRo>("cut")
+		val COPY = InteractionType<CopyInteractionRo>("copy")
+		val CUT = InteractionType<CopyInteractionRo>("cut")
 	}
 }
 

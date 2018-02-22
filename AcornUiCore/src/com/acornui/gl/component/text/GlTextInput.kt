@@ -13,16 +13,21 @@ import com.acornui.component.text.*
 import com.acornui.core.Disposable
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
+import com.acornui.core.di.own
 import com.acornui.core.focus.blurred
 import com.acornui.core.focus.focused
 import com.acornui.core.input.*
 import com.acornui.core.input.interaction.ClipboardItemType
 import com.acornui.core.input.interaction.KeyInteractionRo
+import com.acornui.core.mvc.CommandGroup
+import com.acornui.core.mvc.commander
+import com.acornui.core.mvc.invokeCommand
 import com.acornui.core.repeat2
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionRange
 import com.acornui.core.selection.selectAll
 import com.acornui.core.selection.unselect
+import com.acornui.core.time.delayedCallback
 import com.acornui.core.time.enterFrame
 import com.acornui.core.time.onTick
 import com.acornui.gl.component.drawing.dynamicMeshC
@@ -38,6 +43,7 @@ import com.acornui.math.Vector2
 import com.acornui.math.minOf4
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
+import com.acornui.string.isLetterOrDigit2
 
 open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 
@@ -429,6 +435,8 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	 */
 	var allowTab: Boolean = false
 
+	private val cmd = own(commander())
+
 	init {
 		host.focused().add {
 			host.selectAll()
@@ -441,7 +449,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		}
 
 		host.char().add {
-			if (it.char != '\r') {
+			if (it.char != '\r' && it.char != CTRL_Z && it.char != CTRL_Y) {
 				it.handled = true
 				replaceSelection(it.char.toString())
 				_input.dispatch()
@@ -449,11 +457,41 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		}
 
 		host.clipboardPaste().add {
-			launch {
-				var str = it.getItemByType(ClipboardItemType.PLAIN_TEXT)
-				if (str != null) {
-					str = str.replace("\r", "")
-					replaceSelection(str)
+			if (!it.defaultPrevented()) {
+				it.handled = true
+				launch {
+					var str = it.getItemByType(ClipboardItemType.PLAIN_TEXT)
+					if (str != null) {
+						str = str.replace("\r", "")
+						replaceSelection(str, CommandGroup())
+						currentGroup = CommandGroup()
+					}
+				}
+			}
+		}
+
+		host.clipboardCopy().add {
+			if (!it.defaultPrevented()) {
+				it.handled = true
+				val sel = firstSelection
+				if (sel != null) {
+					val text = this.text
+					val subStr = text.substring(sel.min, sel.max)
+					it.addItem(ClipboardItemType.PLAIN_TEXT, subStr)
+				}
+			}
+		}
+
+		host.clipboardCut().add {
+			if (!it.defaultPrevented()) {
+				it.handled = true
+				val sel = firstSelection
+				if (sel != null) {
+					val text = this.text
+					val subStr = text.substring(sel.min, sel.max)
+					replaceSelection("", CommandGroup())
+					it.addItem(ClipboardItemType.PLAIN_TEXT, subStr)
+					currentGroup = CommandGroup()
 				}
 			}
 		}
@@ -475,6 +513,18 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 				textCursor.colorTint = if (usingCursorColorOne) cursorColorOne else cursorColorTwo
 			}
 		}
+
+		cmd.onCommandInvoked(ReplaceTextRangeCommand) {
+			if (it.target == this) {
+				onReplaceTextRange(it)
+			}
+		}
+
+		cmd.onCommandInvoked(ChangeSelectionCommand) {
+			if (it.target == this) {
+				selectionManager.selection = it.newSelection
+			}
+		}
 	}
 
 	private val contents
@@ -483,13 +533,14 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private var column = -1
 
 	private fun keyDownHandler(event: KeyInteractionRo) {
+		clearGroup()
 		resetCursorBlink()
 
 		if (event.keyCode != Ascii.UP && event.keyCode != Ascii.DOWN && event.keyCode != Ascii.PAGE_UP && event.keyCode != Ascii.PAGE_DOWN) column = -1
 
 		when (event.keyCode) {
-			Ascii.LEFT -> cursorDelta(event, -1)
-			Ascii.RIGHT -> cursorDelta(event, 1)
+			Ascii.LEFT -> cursorLeft(event)
+			Ascii.RIGHT -> cursorRight(event)
 			Ascii.UP -> cursorUp(event)
 			Ascii.DOWN -> cursorDown(event)
 			Ascii.BACKSPACE -> {
@@ -525,12 +576,16 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			Ascii.A -> {
 				if (event.ctrlKey) {
 					val n = contents.size
-					selectionManager.selection = listOf(SelectionRange(host, 0, n))
+					setSelection(listOf(SelectionRange(host, 0, n)))
 				}
 			}
 			Ascii.PAGE_UP -> cursorPageUp(event)
 			Ascii.PAGE_DOWN -> cursorPageDown(event)
 		}
+	}
+
+	private val clearGroup = delayedCallback(0.4f) {
+		currentGroup = CommandGroup()
 	}
 
 	private fun resetCursorBlink() {
@@ -539,11 +594,51 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		textCursor.colorTint = cursorColorOne
 	}
 
-	private fun cursorDelta(event: KeyInteractionRo, offset: Int) {
+	private fun cursorLeft(event: KeyInteractionRo) {
 		val sel = firstSelection ?: return
 		val n = contents.size
-		val next = clamp(clamp(sel.endIndex, 0, n) + offset, 0, n)
-		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else next, next))
+		var i = clamp(sel.endIndex, 0, n)
+		if (event.ctrlKey) {
+			while (i > 0 && charAt(i - 1).charType() == 0) {
+				i--
+			}
+			val startType = charAt(--i).charType()
+			while (i > 0 && charAt(i - 1).charType() == startType) {
+				i--
+			}
+		} else --i
+		if (i < 0) i = 0
+		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else i, i))
+	}
+
+	private fun cursorRight(event: KeyInteractionRo) {
+		val sel = firstSelection ?: return
+		val n = contents.size
+		var i = clamp(sel.endIndex, 0, n)
+		if (event.ctrlKey) {
+			val startType = charAt(i++).charType()
+			while (i < n && charAt(i).charType() == startType) {
+				i++
+			}
+			while (i < n && charAt(i).charType() == 0) {
+				i++
+			}
+		} else ++i
+		if (i > n) i = n
+		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else i, i))
+	}
+
+	private fun charAt(index: Int): Char? {
+		return contents.getTextElementAt(index).char
+	}
+
+	private fun Char?.charType(): Int {
+		if (this == null) return -1
+		return when {
+			isWhitespace() -> 0
+			isLetterOrDigit2() -> 1
+			else -> 2
+		}
 	}
 
 	private fun cursorUp(event: KeyInteractionRo) {
@@ -647,10 +742,10 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		val sel = firstSelection ?: return
 		if (sel.startIndex != sel.endIndex) {
 			replaceTextRange(sel.min, sel.max, "")
-			selectionManager.selection = listOf(SelectionRange(host, sel.min, sel.min))
+			setSelection(listOf(SelectionRange(host, sel.min, sel.min)))
 		} else if (sel.min > 0) {
 			replaceTextRange(sel.min - 1, sel.min, "")
-			selectionManager.selection = listOf(SelectionRange(host, sel.min - 1, sel.min - 1))
+			setSelection(listOf(SelectionRange(host, sel.min - 1, sel.min - 1)))
 		}
 	}
 
@@ -662,24 +757,40 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		val sel = firstSelection ?: return
 		if (sel.startIndex != sel.endIndex) {
 			replaceTextRange(sel.min, sel.max, "")
-			selectionManager.selection = listOf(SelectionRange(host, sel.min, sel.min))
+			setSelection(listOf(SelectionRange(host, sel.min, sel.min)))
 		} else if (sel.min < _text.length) {
 			replaceTextRange(sel.min, sel.max + 1, "")
-			selectionManager.selection = listOf(SelectionRange(host, sel.min, sel.min))
+			setSelection(listOf(SelectionRange(host, sel.min, sel.min)))
 		}
 	}
 
-	private fun replaceSelection(str: String) {
+	private fun replaceSelection(str: String, group: CommandGroup = currentGroup) {
 		val str2 = if (_restrictPatternRegex == null) str else str.replace(_restrictPatternRegex!!, "")
 		val sel = firstSelection ?: return
-		replaceTextRange(sel.min, sel.max, str2)
+		replaceTextRange(sel.min, sel.max, str2, group)
 		val p = sel.min + str2.length
-		selectionManager.selection = listOf(SelectionRange(host, p, p))
+		setSelection(listOf(SelectionRange(host, p, p)), group)
 	}
 
-	private fun replaceTextRange(startIndex: Int, endIndex: Int, newText: String) {
+	private var currentGroup = CommandGroup()
+
+	/**
+	 * Invokes the command to replace the given text range.
+	 */
+	private fun replaceTextRange(startIndex: Int, endIndex: Int, newText: String, group: CommandGroup = currentGroup) {
+		invokeCommand(ReplaceTextRangeCommand(this, startIndex, text.substring(clamp(startIndex, 0, text.length), clamp(endIndex, 0, text.length)), newText, group))
+	}
+
+	/**
+	 * Invokes the command to change the current selection.
+	 */
+	private fun setSelection(newSelection: List<SelectionRange>, group: CommandGroup = currentGroup) {
+		invokeCommand(ChangeSelectionCommand(this, selectionManager.selection, newSelection, group))
+	}
+
+	private fun onReplaceTextRange(cmd: ReplaceTextRangeCommand) {
 		val text = this.text
-		this.text = text.substring(0, clamp(startIndex, 0, text.length)) + newText + text.substring(clamp(endIndex, 0, text.length), text.length)
+		this.text = text.substring(0, clamp(cmd.startIndex, 0, text.length)) + cmd.newText + text.substring(clamp(cmd.endIndex, 0, text.length), text.length)
 		validateLayout()
 	}
 
@@ -724,5 +835,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	companion object {
 		private const val TEXT_CURSOR = 1 shl 16
+		private const val CTRL_Z = 26.toChar()
+		private const val CTRL_Y = 25.toChar()
 	}
 }

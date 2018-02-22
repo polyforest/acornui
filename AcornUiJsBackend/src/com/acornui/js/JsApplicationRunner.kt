@@ -60,7 +60,7 @@ class JsApplicationRunnerImpl(
 
 	override fun start() {
 		if (isRunning) return
-		Log.info("Application#start")
+		Log.info("Application#startIndex")
 		isRunning = true
 		stage.activate()
 		nextTick = time.nowMs()

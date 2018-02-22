@@ -24,16 +24,12 @@ import com.acornui.core.di.inject
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.input.InteractionEventBase
 import com.acornui.core.input.InteractivityManager
-import com.acornui.core.input.interaction.PasteInteractionRo
 import com.acornui.core.input.interaction.ClipboardItemType
+import com.acornui.core.input.interaction.CopyInteractionRo
+import com.acornui.core.input.interaction.PasteInteractionRo
 import com.acornui.js.html.ClipboardEvent
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event
-import org.w3c.dom.DataTransfer
-import org.w3c.dom.DataTransferItemList
-import org.w3c.dom.get
-import org.w3c.files.FileList
-import org.w3c.files.get
 import kotlin.browser.window
 
 
@@ -47,20 +43,45 @@ class JsClipboardDispatcher(
 	private val stage = inject(Stage)
 
 	private val pasteEvent = JsPasteInteraction()
+	private val copyEvent = JsCopyInteraction()
 
 	private val pasteHandler: (Event) -> dynamic = {
+		pasteEvent.clear()
+		pasteEvent.type = PasteInteractionRo.PASTE
 		pasteEvent.set(it as ClipboardEvent)
 		interactivity.dispatch(focus.focused() ?: stage, pasteEvent)
+		it.preventDefault()
+		Unit
+	}
+
+	private val copyHandler: (Event) -> dynamic = {
+		copyEvent.clear()
+		copyEvent.type = CopyInteractionRo.COPY
+		copyEvent.set(it as ClipboardEvent)
+		interactivity.dispatch(focus.focused() ?: stage, copyEvent)
+		it.preventDefault()
+		Unit
+	}
+
+	private val cutHandler: (Event) -> dynamic = {
+		copyEvent.clear()
+		copyEvent.type = CopyInteractionRo.CUT
+		copyEvent.set(it as ClipboardEvent)
+		interactivity.dispatch(focus.focused() ?: stage, copyEvent)
+		it.preventDefault()
 		Unit
 	}
 
 	init {
-		pasteEvent.type = PasteInteractionRo.PASTE
 		window.addEventListener("paste", pasteHandler, true)
+		window.addEventListener("cut", cutHandler, true)
+		window.addEventListener("copy", copyHandler, true)
 	}
 
 	override fun dispose() {
 		window.removeEventListener("paste", pasteHandler, true)
+		window.removeEventListener("cut", cutHandler, true)
+		window.removeEventListener("copy", copyHandler, true)
 	}
 }
 
@@ -85,6 +106,37 @@ private class JsPasteInteraction : InteractionEventBase(), PasteInteractionRo {
 
 			else -> null
 		} as T?
+	}
+
+	fun set(clipboardEvent: ClipboardEvent) {
+		jsEvent = clipboardEvent
+	}
+
+	override fun clear() {
+		super.clear()
+		jsEvent = null
+	}
+}
+
+
+private class JsCopyInteraction : InteractionEventBase(), CopyInteractionRo {
+
+	private var jsEvent: ClipboardEvent? = null
+
+	override fun <T : Any> addItem(type: ClipboardItemType<T>, value: T) {
+		val jsEvent = jsEvent ?: return
+		when (type) {
+			ClipboardItemType.PLAIN_TEXT -> {
+				jsEvent.clipboardData?.setData("text/plain", value as String)
+			}
+			ClipboardItemType.HTML -> {
+				jsEvent.clipboardData?.setData("text/html", value as String)
+			}
+			ClipboardItemType.TEXTURE ->  {
+				TODO()
+			}
+			ClipboardItemType.FILE_LIST -> TODO()
+		}
 	}
 
 	fun set(clipboardEvent: ClipboardEvent) {

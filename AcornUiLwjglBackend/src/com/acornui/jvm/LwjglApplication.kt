@@ -374,7 +374,7 @@ class JvmApplicationRunner(
 	}
 
 	init {
-		Log.info("Application#start")
+		Log.info("Application#startIndex")
 
 		stage.activate()
 
