@@ -166,9 +166,15 @@ class CommandGroup
 
 fun UiComponentRo.enableUndoRedo() {
 	undo().add {
-		stateCommandHistory().undoCommandGroup()
+		if (!it.handled) {
+			it.handled = true
+			stateCommandHistory().undoCommandGroup()
+		}
 	}
 	redo().add {
-		stateCommandHistory().redoCommandGroup()
+		if (!it.handled) {
+			it.handled = true
+			stateCommandHistory().redoCommandGroup()
+		}
 	}
 }
