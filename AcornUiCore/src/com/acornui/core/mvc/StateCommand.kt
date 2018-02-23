@@ -24,8 +24,8 @@ import com.acornui.core.di.DKey
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
-import com.acornui.core.input.Ascii
-import com.acornui.core.input.keyDown
+import com.acornui.core.input.interaction.redo
+import com.acornui.core.input.interaction.undo
 import com.acornui.logging.Log
 
 open class StateCommandHistory(
@@ -162,23 +162,13 @@ interface StateCommand : Command {
 	fun reverse(): Command
 }
 
-abstract class CommandBase(
-		override val group: CommandGroup?
-) : StateCommand
-
 class CommandGroup
 
 fun UiComponentRo.enableUndoRedo() {
-	val history = stateCommandHistory()
-
-	// UNDO / REDO
-	keyDown().add { e ->
-		if (!e.handled) {
-			if (e.ctrlKey && (e.keyCode == Ascii.Y || (e.shiftKey && e.keyCode == Ascii.Z))) {
-				history.redoCommandGroup()
-			} else if (e.ctrlKey && e.keyCode == Ascii.Z) {
-				history.undoCommandGroup()
-			}
-		}
+	undo().add {
+		stateCommandHistory().undoCommandGroup()
+	}
+	redo().add {
+		stateCommandHistory().redoCommandGroup()
 	}
 }

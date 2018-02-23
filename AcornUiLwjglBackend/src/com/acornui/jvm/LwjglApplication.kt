@@ -45,6 +45,7 @@ import com.acornui.core.input.InteractivityManagerImpl
 import com.acornui.core.input.KeyInput
 import com.acornui.core.input.MouseInput
 import com.acornui.core.input.interaction.JvmClickDispatcher
+import com.acornui.core.input.interaction.UndoDispatcher
 import com.acornui.core.io.BufferFactory
 import com.acornui.core.io.JSON_KEY
 import com.acornui.core.io.file.Files
@@ -342,6 +343,7 @@ open class LwjglApplication : ApplicationBase() {
 		JvmClickDispatcher(owner.injector)
 		FakeFocusMouse(owner.injector)
 		JvmClipboardDispatcher(owner.injector)
+		UndoDispatcher(owner.injector)
 	}
 
 	open suspend fun run(injector: Injector) {

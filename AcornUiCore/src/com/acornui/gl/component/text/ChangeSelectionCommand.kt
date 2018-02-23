@@ -23,7 +23,6 @@ import com.acornui.core.mvc.StateCommand
 import com.acornui.core.selection.SelectionRange
 
 class ChangeSelectionCommand(
-		val target: Any,
 		val oldSelection: List<SelectionRange>,
 		val newSelection: List<SelectionRange>,
 		override val group: CommandGroup?
@@ -32,7 +31,7 @@ class ChangeSelectionCommand(
 	override val type = Companion
 
 	override fun reverse(): Command {
-		return ChangeSelectionCommand(target, newSelection, oldSelection, group)
+		return ChangeSelectionCommand(newSelection, oldSelection, group)
 	}
 
 	companion object : CommandType<ChangeSelectionCommand>

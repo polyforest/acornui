@@ -19,9 +19,9 @@ import com.acornui.core.focus.focused
 import com.acornui.core.input.*
 import com.acornui.core.input.interaction.ClipboardItemType
 import com.acornui.core.input.interaction.KeyInteractionRo
-import com.acornui.core.mvc.CommandGroup
-import com.acornui.core.mvc.commander
-import com.acornui.core.mvc.invokeCommand
+import com.acornui.core.input.interaction.redo
+import com.acornui.core.input.interaction.undo
+import com.acornui.core.mvc.*
 import com.acornui.core.repeat2
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionRange
@@ -435,7 +435,9 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	 */
 	var allowTab: Boolean = false
 
-	private val cmd = own(commander())
+	private val commandDispatcher = own(CommandDispatcherImpl())
+	private val undoHistory = StateCommandHistory(commandDispatcher)
+	private val cmd = own(Commander(commandDispatcher))
 
 	init {
 		host.focused().add {
@@ -465,6 +467,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 						str = str.replace("\r", "")
 						replaceSelection(str, CommandGroup())
 						currentGroup = CommandGroup()
+						_input.dispatch()
 					}
 				}
 			}
@@ -492,6 +495,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 					replaceSelection("", CommandGroup())
 					it.addItem(ClipboardItemType.PLAIN_TEXT, subStr)
 					currentGroup = CommandGroup()
+					_input.dispatch()
 				}
 			}
 		}
@@ -515,15 +519,20 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		}
 
 		cmd.onCommandInvoked(ReplaceTextRangeCommand) {
-			if (it.target == this) {
-				onReplaceTextRange(it)
-			}
+			onReplaceTextRange(it)
 		}
 
 		cmd.onCommandInvoked(ChangeSelectionCommand) {
-			if (it.target == this) {
-				selectionManager.selection = it.newSelection
-			}
+			selectionManager.selection = it.newSelection
+		}
+
+		host.undo().add {
+			undoHistory.undoCommandGroup()
+			_input.dispatch()
+		}
+		host.redo().add {
+			undoHistory.redoCommandGroup()
+			_input.dispatch()
 		}
 	}
 
@@ -778,14 +787,14 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	 * Invokes the command to replace the given text range.
 	 */
 	private fun replaceTextRange(startIndex: Int, endIndex: Int, newText: String, group: CommandGroup = currentGroup) {
-		invokeCommand(ReplaceTextRangeCommand(this, startIndex, text.substring(clamp(startIndex, 0, text.length), clamp(endIndex, 0, text.length)), newText, group))
+		commandDispatcher.invokeCommand(ReplaceTextRangeCommand(startIndex, text.substring(clamp(startIndex, 0, text.length), clamp(endIndex, 0, text.length)), newText, group))
 	}
 
 	/**
 	 * Invokes the command to change the current selection.
 	 */
 	private fun setSelection(newSelection: List<SelectionRange>, group: CommandGroup = currentGroup) {
-		invokeCommand(ChangeSelectionCommand(this, selectionManager.selection, newSelection, group))
+		commandDispatcher.invokeCommand(ChangeSelectionCommand(selectionManager.selection, newSelection, group))
 	}
 
 	private fun onReplaceTextRange(cmd: ReplaceTextRangeCommand) {

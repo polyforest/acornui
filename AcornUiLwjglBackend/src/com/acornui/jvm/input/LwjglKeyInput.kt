@@ -20,6 +20,7 @@ import com.acornui.collection.DualHashMap
 import com.acornui.core.input.*
 import com.acornui.core.input.interaction.CharInteraction
 import com.acornui.core.input.interaction.KeyInteraction
+import com.acornui.core.input.interaction.KeyInteractionRo
 import com.acornui.core.input.interaction.KeyLocation
 import com.acornui.core.time.time
 import com.acornui.signal.Signal1
@@ -115,6 +116,7 @@ class LwjglKeyInput(private val window: Long) : KeyInput {
 	private val keyCallback: GLFWKeyCallback = object : GLFWKeyCallback() {
 
 		override fun invoke(window: kotlin.Long, key: kotlin.Int, scanCode: kotlin.Int, action: kotlin.Int, mods: kotlin.Int) {
+			keyEvent.clear()
 			if (keyCodeMap.containsKey(key)) {
 				val (keyCode, location) = keyCodeMap[key]!!
 				keyEvent.keyCode = keyCode
@@ -130,18 +132,20 @@ class LwjglKeyInput(private val window: Long) : KeyInput {
 			keyEvent.shiftKey = mods and GLFW.GLFW_MOD_SHIFT > 0
 
 			keyEvent.timestamp = time.nowMs()
-			keyEvent.isRepeat = false
 
 			when (action) {
 				GLFW.GLFW_PRESS -> {
 					downMap.put(keyEvent.keyCode, keyEvent.location, true)
+					keyEvent.type = KeyInteractionRo.KEY_DOWN
 					keyDown.dispatch(keyEvent)
 				}
 				GLFW.GLFW_RELEASE -> {
 					downMap.remove(keyEvent.keyCode, keyEvent.location)
+					keyEvent.type = KeyInteractionRo.KEY_UP
 					keyUp.dispatch(keyEvent)
 				}
 				GLFW.GLFW_REPEAT -> {
+					keyEvent.type = KeyInteractionRo.KEY_DOWN
 					keyEvent.isRepeat = true
 					keyDown.dispatch(keyEvent)
 				}
