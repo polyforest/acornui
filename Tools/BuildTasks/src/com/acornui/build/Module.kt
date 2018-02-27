@@ -215,8 +215,8 @@ abstract class Module(
 			} else {
 				println("Creating manifest with mainClass $mainClass.")
 				manifest = Manifest()
-				manifest.mainAttributes.put(Attributes.Name.MANIFEST_VERSION, "1.0")
-				if (mainClass != null) manifest.mainAttributes.put(Attributes.Name.MAIN_CLASS, mainClass)
+				manifest.mainAttributes[Attributes.Name.MANIFEST_VERSION] = "1.0"
+				if (mainClass != null) manifest.mainAttributes[Attributes.Name.MAIN_CLASS] = mainClass
 			}
 			JarUtil.createJar(arrayOf(outJvm), jvmJar, manifest = manifest)
 		}

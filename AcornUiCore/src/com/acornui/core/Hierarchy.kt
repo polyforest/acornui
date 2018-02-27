@@ -180,6 +180,27 @@ interface Parent<T> : ParentRo<T> {
 	}
 }
 
+abstract class ParentBase<T : ParentBase<T>> : Parent<T> {
+
+	override var parent: ParentRo<ChildRo>? = null
+
+	protected val _children = ArrayList<T>()
+	override val children: List<T>
+		get() = _children
+
+	override fun <S : T> addChild(index: Int, child: S): S {
+		_children.add(index, child)
+		child.parent = this
+		return child
+	}
+
+	override fun removeChild(index: Int): T {
+		val c = _children.removeAt(index)
+		c.parent = null
+		return c
+	}
+}
+
 //------------------------------------------------
 // Hierarchy traversal methods
 //------------------------------------------------
