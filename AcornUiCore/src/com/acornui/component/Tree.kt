@@ -320,7 +320,7 @@ open class TreeNode(label: String) : Parent<TreeNode>, Observable {
 
 	override fun removeChild(index: Int): TreeNode {
 		val c = _children.removeAt(index)
-		c.parent = this
+		c.parent = null
 		_changed.dispatch(this)
 		return c
 	}
