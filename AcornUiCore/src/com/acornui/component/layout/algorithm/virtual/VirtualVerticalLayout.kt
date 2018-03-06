@@ -25,42 +25,32 @@ import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.ListItemRenderer
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.layout.algorithm.VerticalLayoutData
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
 import com.acornui.core.floor
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
-import com.acornui.signal.Signal0
+import com.acornui.math.PadRo
 
+class VirtualVerticalLayout : VirtualLayoutAlgorithm<VirtualVerticalLayoutStyle, VerticalLayoutData> {
 
-class VirtualizedVerticalLayout : VirtualLayoutAlgorithm<VerticalLayoutData> {
+	override val direction: VirtualLayoutDirection = VirtualLayoutDirection.VERTICAL
 
-	override val changed = Signal0()
-
-	override val direction: VirtualDirection = VirtualDirection.VERTICAL
-
-	var gap by bindable(5f)
-
-	/**
-	 * If there was an explicit height, this represents the percent of that height out of bounds an element can be
-	 * before being recycled.
-	 */
-	var buffer: Float by bindable(0.15f)
-
-	/**
-	 * The Padding object with left, bottom, top, and right padding.
-	 */
-	var padding by bindable(Pad())
-	var horizontalAlign by bindable(HAlign.LEFT)
-
-	override fun getOffset(width: Float, height: Float, element: LayoutElement, index: Int, lastIndex: Int, isReversed: Boolean): Float {
-		if (isReversed) {
-			return (height - padding.bottom - (element.y + element.height)) / (element.height + gap)
+	override fun getOffset(width: Float, height: Float, element: LayoutElement, index: Int, lastIndex: Int, isReversed: Boolean, props: VirtualVerticalLayoutStyle): Float {
+		val padding = props.padding
+		val gap = props.gap
+		return if (isReversed) {
+			(height - padding.bottom - (element.y + element.height)) / (element.height + gap)
 		} else {
-			return (element.y - padding.top) / (element.height + gap)
+			(element.y - padding.top) / (element.height + gap)
 		}
 	}
 
-	override fun updateLayoutEntry(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElement, currentIndex: Int, startIndex: Float, lastIndex: Int, previousElement: LayoutElement?, isReversed: Boolean) {
+	override fun updateLayoutEntry(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElement, currentIndex: Int, startIndex: Float, lastIndex: Int, previousElement: LayoutElement?, isReversed: Boolean, props: VirtualVerticalLayoutStyle) {
+		val padding = props.padding
+		val gap = props.gap
+		val horizontalAlign = props.horizontalAlign
 		val childAvailableWidth = padding.reduceWidth(explicitWidth)
 		val childAvailableHeight = padding.reduceHeight(explicitHeight)
 
@@ -71,19 +61,18 @@ class VirtualizedVerticalLayout : VirtualLayoutAlgorithm<VerticalLayoutData> {
 		element.setSize(w, h)
 
 		// Position the element
-		val y: Float
-		if (previousElement == null) {
+		val y = if (previousElement == null) {
 			val startY = (currentIndex - startIndex) * (element.height + gap)
 			if (isReversed) {
-				y = (childAvailableHeight ?: 0f) - padding.bottom + startY - element.height
+				(childAvailableHeight ?: 0f) - padding.bottom + startY - element.height
 			} else {
-				y = padding.top + startY
+				padding.top + startY
 			}
 		} else {
 			if (isReversed) {
-				y = previousElement.y - gap - element.height
+				previousElement.y - gap - element.height
 			} else {
-				y = previousElement.y + previousElement.height + gap
+				previousElement.y + previousElement.height + gap
 			}
 		}
 
@@ -101,15 +90,16 @@ class VirtualizedVerticalLayout : VirtualLayoutAlgorithm<VerticalLayoutData> {
 		}
 	}
 
-	override fun measure(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
-		super.measure(explicitWidth, explicitHeight, elements, out)
+	override fun measure(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, props: VirtualVerticalLayoutStyle, out: Bounds) {
+		val padding = props.padding
+		super.measure(explicitWidth, explicitHeight, elements, props, out)
 		out.add(padding.right, padding.bottom)
 	}
 
-	override fun shouldShowRenderer(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElement): Boolean {
+	override fun shouldShowRenderer(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElement, props: VirtualVerticalLayoutStyle): Boolean {
 		if (explicitHeight != null) {
 			val bottom = element.y + element.height
-			val bufferY = explicitHeight * buffer
+			val bufferY = explicitHeight * props.buffer
 			if (bottom < -bufferY ||
 					element.y > explicitHeight + bufferY) {
 				return false
@@ -121,16 +111,42 @@ class VirtualizedVerticalLayout : VirtualLayoutAlgorithm<VerticalLayoutData> {
 	override fun createLayoutData(): VerticalLayoutData = VerticalLayoutData()
 }
 
+open class VirtualVerticalLayoutStyle : StyleBase() {
+
+	override val type: StyleType<VirtualVerticalLayoutStyle> = Companion
+
+	var gap by prop(5f)
+
+	/**
+	 * If there was an explicit height, this represents the percent of that height out of bounds an element can be
+	 * before being recycled.
+	 */
+	var buffer: Float by prop(0.15f)
+
+	/**
+	 * The Padding object with left, bottom, top, and right padding.
+	 */
+	var padding: PadRo by prop(Pad())
+
+	/**
+	 * The horizontal alignment of each element within the measured width.
+	 */
+	var horizontalAlign by prop(HAlign.LEFT)
+
+	companion object : StyleType<VirtualVerticalLayoutStyle>
+
+}
+
 /**
  * Creates a virtualized data scroller with a vertical layout.
  */
 fun <E> Owned.vDataScroller(
 		rendererFactory: LayoutDataProvider<VerticalLayoutData>.() -> ListItemRenderer<E>,
 		data: ObservableList<E> = ActiveList(ArrayList()),
-		init: ComponentInit<DataScroller<E, VerticalLayoutData, VirtualizedVerticalLayout>> = {}
-): DataScroller<E, VerticalLayoutData, VirtualizedVerticalLayout> {
-	val layoutAlgorithm = VirtualizedVerticalLayout()
-	val c = DataScroller(this, rendererFactory, layoutAlgorithm, data)
+		init: ComponentInit<DataScroller<E, VirtualVerticalLayoutStyle, VerticalLayoutData>> = {}
+): DataScroller<E, VirtualVerticalLayoutStyle, VerticalLayoutData> {
+	val layoutAlgorithm = VirtualVerticalLayout()
+	val c = DataScroller(this, rendererFactory, layoutAlgorithm, VirtualVerticalLayoutStyle(), data)
 	c.init()
 	return c
 }

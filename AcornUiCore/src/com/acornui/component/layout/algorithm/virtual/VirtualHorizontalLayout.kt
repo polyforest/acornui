@@ -25,41 +25,32 @@ import com.acornui.component.layout.ListItemRenderer
 import com.acornui.component.layout.VAlign
 import com.acornui.component.layout.algorithm.HorizontalLayoutData
 import com.acornui.component.layout.algorithm.LayoutDataProvider
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
-import com.acornui.signal.Signal0
+import com.acornui.math.PadRo
 
 
-class VirtualHorizontalLayout : VirtualLayoutAlgorithm<HorizontalLayoutData> {
+class VirtualHorizontalLayout : VirtualLayoutAlgorithm<VirtualHorizontalLayoutStyle, HorizontalLayoutData> {
 
-	override val changed = Signal0()
+	override val direction: VirtualLayoutDirection = VirtualLayoutDirection.HORIZONTAL
 
-	override val direction: VirtualDirection = VirtualDirection.HORIZONTAL
-
-	var gap by bindable(5f)
-
-	/**
-	 * If there was an explicit height, this represents the percent of that height out of bounds an element can be
-	 * before being recycled.
-	 */
-	var buffer: Float by bindable(0.15f)
-
-	/**
-	 * The Padding object with left, bottom, top, and right padding.
-	 */
-	var padding by bindable(Pad())
-	var verticalAlign by bindable(VAlign.BOTTOM)
-
-	override fun getOffset(width: Float, height: Float, element: LayoutElement, index: Int, lastIndex: Int, isReversed: Boolean): Float {
-		if (isReversed) {
-			return (width - padding.right - (element.x + element.width)) / (element.width + gap)
+	override fun getOffset(width: Float, height: Float, element: LayoutElement, index: Int, lastIndex: Int, isReversed: Boolean, props: VirtualHorizontalLayoutStyle): Float {
+		val padding = props.padding
+		val gap = props.gap
+		return if (isReversed) {
+			(width - padding.right - (element.x + element.width)) / (element.width + gap)
 		} else {
-			return (element.x - padding.bottom) / (element.width + gap)
+			(element.x - padding.bottom) / (element.width + gap)
 		}
 	}
 
-	override fun updateLayoutEntry(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElement, currentIndex: Int, startIndex: Float, lastIndex: Int, previousElement: LayoutElement?, isReversed: Boolean) {
+	override fun updateLayoutEntry(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElement, currentIndex: Int, startIndex: Float, lastIndex: Int, previousElement: LayoutElement?, isReversed: Boolean, props: VirtualHorizontalLayoutStyle) {
+		val padding = props.padding
+		val gap = props.gap
+		val verticalAlign = props.verticalAlign
 		val childAvailableWidth = padding.reduceWidth(explicitWidth)
 		val childAvailableHeight = padding.reduceHeight(explicitHeight)
 
@@ -70,19 +61,18 @@ class VirtualHorizontalLayout : VirtualLayoutAlgorithm<HorizontalLayoutData> {
 		element.setSize(w, h)
 
 		// Position the element
-		val x: Float
-		if (previousElement == null) {
+		val x = if (previousElement == null) {
 			val startX = (currentIndex - startIndex) * (element.width + gap)
 			if (isReversed) {
-				x = (childAvailableWidth ?: 0f) - padding.right + startX - element.width
+				(childAvailableWidth ?: 0f) - padding.right + startX - element.width
 			} else {
-				x = padding.left + startX
+				padding.left + startX
 			}
 		} else {
 			if (isReversed) {
-				x = previousElement.x - gap - element.width
+				previousElement.x - gap - element.width
 			} else {
-				x = previousElement.x + previousElement.width + gap
+				previousElement.x + previousElement.width + gap
 			}
 		}
 
@@ -100,12 +90,14 @@ class VirtualHorizontalLayout : VirtualLayoutAlgorithm<HorizontalLayoutData> {
 		}
 	}
 
-	override fun measure(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
-		super.measure(explicitWidth, explicitHeight, elements, out)
+	override fun measure(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, props: VirtualHorizontalLayoutStyle, out: Bounds) {
+		val padding = props.padding
+		super.measure(explicitWidth, explicitHeight, elements, props, out)
 		out.add(padding.right, padding.bottom)
 	}
 
-	override fun shouldShowRenderer(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElement): Boolean {
+	override fun shouldShowRenderer(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElement, props: VirtualHorizontalLayoutStyle): Boolean {
+		val buffer = props.buffer
 		if (explicitWidth != null) {
 			val right = element.x + element.width
 			val bufferX = explicitWidth * buffer
@@ -120,16 +112,43 @@ class VirtualHorizontalLayout : VirtualLayoutAlgorithm<HorizontalLayoutData> {
 	override fun createLayoutData(): HorizontalLayoutData = HorizontalLayoutData()
 }
 
+
+open class VirtualHorizontalLayoutStyle : StyleBase() {
+
+	override val type: StyleType<VirtualHorizontalLayoutStyle> = Companion
+
+	var gap by prop(5f)
+
+	/**
+	 * If there was an explicit height, this represents the percent of that height out of bounds an element can be
+	 * before being recycled.
+	 */
+	var buffer: Float by prop(0.15f)
+
+	/**
+	 * The Padding object with left, bottom, top, and right padding.
+	 */
+	var padding: PadRo by prop(Pad())
+
+	/**
+	 * The horizontal alignment of each element within the measured width.
+	 */
+	var verticalAlign by prop(VAlign.BOTTOM)
+
+	companion object : StyleType<VirtualHorizontalLayoutStyle>
+
+}
+
 /**
  * Creates a virtualized data scroller with a horizontal layout.
  */
 fun <E> Owned.hDataScroller(
 		rendererFactory: LayoutDataProvider<HorizontalLayoutData>.() -> ListItemRenderer<E>,
 		data: ObservableList<E> = ActiveList(ArrayList()),
-		init: ComponentInit<DataScroller<E, HorizontalLayoutData, VirtualHorizontalLayout>> = {}
-): DataScroller<E, HorizontalLayoutData, VirtualHorizontalLayout> {
+		init: ComponentInit<DataScroller<E, VirtualHorizontalLayoutStyle, HorizontalLayoutData>> = {}
+): DataScroller<E, VirtualHorizontalLayoutStyle, HorizontalLayoutData> {
 	val layoutAlgorithm = VirtualHorizontalLayout()
-	val c = DataScroller(this, rendererFactory, layoutAlgorithm, data)
+	val c = DataScroller(this, rendererFactory, layoutAlgorithm, VirtualHorizontalLayoutStyle(), data)
 	c.init()
 	return c
 }

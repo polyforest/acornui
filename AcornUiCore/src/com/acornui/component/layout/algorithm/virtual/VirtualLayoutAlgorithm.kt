@@ -16,27 +16,19 @@
 
 package com.acornui.component.layout.algorithm.virtual
 
-import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.LayoutData
+import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.core.di.Owned
 import com.acornui.math.Bounds
-import com.acornui.signal.Signal0
-import kotlin.properties.ObservableProperty
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
-
-// TODO: Refactor virtual layouts.
 
 /**
  * A Virtualized layout algorithm is a type of layout that is only given a single layout element to size and position
  * at a time.
  */
-interface VirtualLayoutAlgorithm<out T : LayoutData> : LayoutDataProvider<T> {
+interface VirtualLayoutAlgorithm<in S, out T : LayoutData> : LayoutDataProvider<T> {
 
-	val changed: Signal0
-
-	val direction: VirtualDirection
+	val direction: VirtualLayoutDirection
 
 	/**
 	 * Given a renderer, returns the position offset of that item.
@@ -47,9 +39,10 @@ interface VirtualLayoutAlgorithm<out T : LayoutData> : LayoutDataProvider<T> {
 	 * @param index The index of the element.
 	 * @param lastIndex The index of the last item.
 	 * @param isReversed
+	 * @param props The style parameters object.
 	 * @return
 	 */
-	fun getOffset(width: Float, height: Float, element: LayoutElement, index: Int, lastIndex: Int, isReversed: Boolean): Float
+	fun getOffset(width: Float, height: Float, element: LayoutElement, index: Int, lastIndex: Int, isReversed: Boolean, props: S): Float
 
 	/**
 	 * Sizes and positions the given layout element.
@@ -62,16 +55,17 @@ interface VirtualLayoutAlgorithm<out T : LayoutData> : LayoutDataProvider<T> {
 	 * @param lastIndex The index of the last item.
 	 * @param previousElement The layout element previously updated. May be null if this is the first item.
 	 * @param isReversed If true, the layout is iterating in reverse order.
+	 * @param props The style parameters object.
 	 *
 	 * @return out Returns x,y coordinates representing the measured width and height.
 	 */
-	fun updateLayoutEntry(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElement, currentIndex: Int, startIndex: Float, lastIndex: Int, previousElement: LayoutElement?, isReversed: Boolean)
+	fun updateLayoutEntry(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElement, currentIndex: Int, startIndex: Float, lastIndex: Int, previousElement: LayoutElement?, isReversed: Boolean, props: S)
 
 	/**
 	 * Given a list of the elements laid out via [updateLayoutEntry] this calculates the measured dimensions considering
 	 * whitespace such as padding.
 	 */
-	fun measure(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
+	fun measure(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, props: S, out: Bounds) {
 		for (i in 0..elements.lastIndex) {
 			val element = elements[i]
 			val r = element.right
@@ -86,19 +80,13 @@ interface VirtualLayoutAlgorithm<out T : LayoutData> : LayoutDataProvider<T> {
 	/**
 	 * Returns true if the layout element is in bounds.
 	 */
-	fun shouldShowRenderer(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElement): Boolean
+	fun shouldShowRenderer(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElement, props: S): Boolean
 
 }
 
-interface ItemRendererOwner<out T : LayoutData> : Owned, LayoutDataProvider<T> {}
+interface ItemRendererOwner<out T : LayoutData> : Owned, LayoutDataProvider<T>
 
-enum class VirtualDirection {
+enum class VirtualLayoutDirection {
 	VERTICAL,
 	HORIZONTAL
-}
-
-fun <T> VirtualLayoutAlgorithm<*>.bindable(initialValue: T): ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
-	override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) {
-		changed.dispatch()
-	}
 }

@@ -32,7 +32,6 @@ interface LayoutContainer<S, out T : LayoutData> : LayoutDataProvider<T>, Elemen
 
 	val style: S
 
-	override fun createLayoutData(): T
 }
 
 open class LayoutContainerImpl<S : Style, out U : LayoutData>(
@@ -48,8 +47,8 @@ open class LayoutContainerImpl<S : Style, out U : LayoutData>(
 
 	protected val elementsToLayout = ArrayList<LayoutElement>()
 
-	override final val style: S = bind(style)
-	override final fun createLayoutData(): U = layoutAlgorithm.createLayoutData()
+	final override val style: S = bind(style)
+	final override fun createLayoutData(): U = layoutAlgorithm.createLayoutData()
 
 	override fun updateSizeConstraints(out: SizeConstraints) {
 		elementsToLayout.clear()

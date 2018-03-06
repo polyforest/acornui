@@ -3,34 +3,29 @@ package com.acornui.component.layout
 import com.acornui.collection.ActiveList
 import com.acornui.collection.ObservableList
 import com.acornui.component.*
-import com.acornui.component.layout.algorithm.virtual.VirtualDirection
-import com.acornui.component.layout.algorithm.virtual.VirtualLayoutAlgorithm
 import com.acornui.component.layout.algorithm.virtual.ItemRendererOwner
+import com.acornui.component.layout.algorithm.virtual.VirtualLayoutAlgorithm
+import com.acornui.component.layout.algorithm.virtual.VirtualLayoutDirection
 import com.acornui.component.scroll.*
 import com.acornui.component.style.*
 import com.acornui.core.behavior.Selection
 import com.acornui.core.behavior.SelectionBase
 import com.acornui.core.di.Owned
-import com.acornui.core.focus.Focusable
 import com.acornui.core.di.own
+import com.acornui.core.focus.Focusable
+import com.acornui.core.input.wheel
 import com.acornui.math.Bounds
-
-
-interface VirtualLayoutContainer<out T : LayoutData, out S : VirtualLayoutAlgorithm<T>> : Container, Focusable {
-
-	val layoutAlgorithm: S
-
-}
 
 // TODO: largest renderer?
 // TODO: I don't love the virtual layout algorithms.
 
-class DataScroller<E, out T : LayoutData, out S : VirtualLayoutAlgorithm<T>>(
+class DataScroller<E, S : Style, out T : LayoutData>(
 		owner: Owned,
 		rendererFactory: ItemRendererOwner<T>.() -> ListItemRenderer<E>,
-		override val layoutAlgorithm: S,
+		layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
+		val layoutStyle: S,
 		val data: ObservableList<E> = ActiveList()
-) : ContainerImpl(owner), VirtualLayoutContainer<T, S> {
+) : ContainerImpl(owner), Focusable {
 
 	override var focusEnabled: Boolean = false // Layout containers by default are not focusable.
 	override var focusOrder: Float = 0f
@@ -38,15 +33,14 @@ class DataScroller<E, out T : LayoutData, out S : VirtualLayoutAlgorithm<T>>(
 
 	val style = bind(DataScrollerStyle())
 
-	val bottomContents = addChild(virtualList(rendererFactory, layoutAlgorithm, data) {
+	val bottomContents = addChild(virtualList(rendererFactory, layoutAlgorithm, layoutStyle, data) {
 		alpha = 0f
-		includeInLayout = false
 		interactivityMode = InteractivityMode.NONE
 	})
 
-	private val contents = virtualList(rendererFactory, layoutAlgorithm, data)
+	private val contents = virtualList(rendererFactory, layoutAlgorithm, layoutStyle, data)
 
-	private val _selection: SelectionBase<E> = own(DataScrollerSelection(data, contents, bottomContents))
+	private val _selection = own(DataScrollerSelection(data, contents, bottomContents))
 
 	val selection: Selection<E>
 		get() = _selection
@@ -55,7 +49,7 @@ class DataScroller<E, out T : LayoutData, out S : VirtualLayoutAlgorithm<T>>(
 	// Scrolling
 	//---------------------------------------------------
 
-	private val isVertical = layoutAlgorithm.direction == VirtualDirection.VERTICAL
+	private val isVertical = layoutAlgorithm.direction == VirtualLayoutDirection.VERTICAL
 
 	val scrollModel: ScrollModel
 		get() = scrollBar.scrollModel
@@ -65,10 +59,9 @@ class DataScroller<E, out T : LayoutData, out S : VirtualLayoutAlgorithm<T>>(
 	/**
 	 * The scroll area is just used for clipping, not scrolling.
 	 */
-	private val _scrollArea = addChild(scrollArea {
-		+contents layout { widthPercent = 1f; heightPercent = 1f }
-		hScrollPolicy = ScrollPolicy.OFF
-		vScrollPolicy = ScrollPolicy.OFF
+	private val clipper = addChild(scrollRect {
+		includeInLayout = false // If the clipper changes size, it doesn't affect this data scroller's size.
+		+contents
 	})
 
 	/**
@@ -128,9 +121,6 @@ class DataScroller<E, out T : LayoutData, out S : VirtualLayoutAlgorithm<T>>(
 
 	private var background: UiComponent? = null
 
-	val activeRenderers: List<ListItemRenderer<E>>
-		get() = contents.activeRenderers
-
 	init {
 		styleTags.add(DataScroller)
 		maxItems = 15
@@ -140,6 +130,11 @@ class DataScroller<E, out T : LayoutData, out S : VirtualLayoutAlgorithm<T>>(
 		watch(style) {
 			background?.dispose()
 			background = addOptionalChild(0, it.background(this))
+		}
+
+		wheel().add {
+			tossScroller.stop()
+			scrollModel.value += (if (isVertical) it.deltaY else it.deltaX) / scrollBar.modelToPixels
 		}
 	}
 
@@ -162,7 +157,7 @@ class DataScroller<E, out T : LayoutData, out S : VirtualLayoutAlgorithm<T>>(
 
 				if (scrollPolicy == ScrollPolicy.ON || bottomContents.visiblePosition > 0f) {
 					// Keep the scroll bar.
-					_scrollArea.setSize(bottomContents.width, explicitHeight ?: bottomContents.height)
+					contents.setSize(bottomContents.width, explicitHeight ?: bottomContents.height)
 					scrollBar.visible = true
 					scrollBar.setSize(vScrollBarW, bottomContents.height)
 					scrollBar.setPosition(bottomContents.width, 0f)
@@ -174,7 +169,7 @@ class DataScroller<E, out T : LayoutData, out S : VirtualLayoutAlgorithm<T>>(
 				scrollBar.visible = false
 			}
 			if (!scrollBar.visible) {
-				_scrollArea.setSize(explicitWidth, explicitHeight)
+				contents.setSize(explicitWidth, explicitHeight)
 				bottomContents.setSize(explicitWidth, explicitHeight)
 			}
 			out.set(bottomContents.width + (if (scrollBar.visible) scrollBar.width else 0f), bottomContents.height)
@@ -193,7 +188,7 @@ class DataScroller<E, out T : LayoutData, out S : VirtualLayoutAlgorithm<T>>(
 
 				if (scrollPolicy == ScrollPolicy.ON || bottomContents.visiblePosition > 0f) {
 					// Keep the scroll bar.
-					_scrollArea.setSize(explicitWidth ?: bottomContents.width, bottomContents.height)
+					contents.setSize(explicitWidth ?: bottomContents.width, bottomContents.height)
 					scrollBar.visible = true
 					scrollBar.setSize(bottomContents.width, hScrollBarH)
 					scrollBar.setPosition(0f, bottomContents.height)
@@ -205,7 +200,7 @@ class DataScroller<E, out T : LayoutData, out S : VirtualLayoutAlgorithm<T>>(
 				scrollBar.visible = false
 			}
 			if (!scrollBar.visible) {
-				_scrollArea.setSize(explicitWidth, explicitHeight)
+				contents.setSize(explicitWidth, explicitHeight)
 				bottomContents.setSize(explicitWidth, explicitHeight)
 			}
 			out.set(bottomContents.width, bottomContents.height + (if (scrollBar.visible) scrollBar.height else 0f))
@@ -214,6 +209,9 @@ class DataScroller<E, out T : LayoutData, out S : VirtualLayoutAlgorithm<T>>(
 		tossBinding.modelToPixelsX = scrollBar.modelToPixels
 		tossBinding.modelToPixelsY = scrollBar.modelToPixels
 		scrollBar.scrollModel.max = bottomContents.visiblePosition
+
+		clipper.maskSize(contents.explicitWidth ?: 0f, contents.explicitHeight ?: 0f)
+		clipper.setSize(contents.explicitWidth, contents.explicitHeight)
 		background?.setSize(out)
 		highlight?.setSize(out)
 	}
@@ -227,10 +225,15 @@ class DataScrollerStyle : StyleBase() {
 
 	var background by prop(noSkinOptional)
 
+	/**
+	 * The background for each row.
+	 */
+	var rowBackground by prop<Owned.() -> RowBackground>({ rowBackground() })
+
 	companion object : StyleType<DataScrollerStyle>
 }
 
-class DataScrollerSelection<E>(private val data: List<E>, private val listA: VirtualList<E, *, *>, private val listB: VirtualList<E, *, *>) : SelectionBase<E>() {
+private class DataScrollerSelection<E>(private val data: List<E>, private val listA: VirtualList<E, *, *>, private val listB: VirtualList<E, *, *>) : SelectionBase<E>() {
 	override fun walkSelectableItems(callback: (E) -> Unit) {
 		for (i in 0..data.lastIndex) {
 			callback(data[i])

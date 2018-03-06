@@ -36,6 +36,13 @@ interface SelectionRo<E> {
 	 */
 	val selectedItem: E?
 
+	/**
+	 * Populates the [out] list with the selected items.
+	 * @param out The list to fill with the selected items.
+	 * @param ordered If true, the list will be ordered. (Slower)
+	 */
+	fun selectedItems(out: MutableList<E>, ordered: Boolean)
+
 	fun isEmpty(): Boolean
 	fun isNotEmpty(): Boolean
 	fun selectedItemsCount(): Int
@@ -51,13 +58,6 @@ interface Selection<E> : SelectionRo<E> {
 	val changing: Signal<(E, Boolean, Cancel) -> Unit>
 
 	override var selectedItem: E?
-
-	/**
-	 * Populates the [out] list with the selected items.
-	 * @param out The list to fill with the selected items.
-	 * @param ordered If true, the list will be ordered. (Slower)
-	 */
-	fun selectedItems(out: MutableList<E>, ordered: Boolean)
 
 	fun setItemIsSelected(item: E, value: Boolean)
 	fun setSelectedItems(items: Map<E, Boolean>)
@@ -99,7 +99,7 @@ abstract class SelectionBase<E> : Selection<E>, Disposable {
 	/**
 	 * Walks all selectable items, in order.
 	 */
-	abstract protected fun walkSelectableItems(callback: (item: E) -> Unit)
+	protected abstract fun walkSelectableItems(callback: (item: E) -> Unit)
 
 	/**
 	 * Populates the [out] list with the selected items.
@@ -164,7 +164,7 @@ abstract class SelectionBase<E> : Selection<E>, Disposable {
 		_changed.dispatch(item, value)
 	}
 
-	abstract protected fun onItemSelectionChanged(item: E, selected: Boolean)
+	protected abstract fun onItemSelectionChanged(item: E, selected: Boolean)
 
 	override fun setSelectedItems(items: Map<E, Boolean>) {
 		for (item in _selectedMap.keys) {

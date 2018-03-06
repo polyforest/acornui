@@ -76,7 +76,7 @@ data class SelectionRange(val target: Selectable, val startIndex: Int, val endIn
 }
 
 /**
- * A marker interface indicating that an object can be selected by the [SelectionManager].
+ * A marker interface indicating that an object can have selection ranges set in the [SelectionManager].
  */
 interface Selectable
 interface SelectableComponent : UiComponent, Selectable

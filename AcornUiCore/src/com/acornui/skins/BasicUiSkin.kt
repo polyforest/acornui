@@ -23,6 +23,8 @@ import com.acornui.component.datagrid.DataGridGroupHeaderStyle
 import com.acornui.component.datagrid.DataGridStyle
 import com.acornui.component.layout.*
 import com.acornui.component.layout.algorithm.*
+import com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle
+import com.acornui.component.layout.algorithm.virtual.VirtualVerticalLayoutStyle
 import com.acornui.component.scroll.*
 import com.acornui.component.style.*
 import com.acornui.component.text.*
@@ -44,7 +46,7 @@ open class BasicUiSkin(
 		val target: UiComponent
 ) : Scoped {
 
-	override final val injector = target.injector
+	final override val injector = target.injector
 
 	protected val theme = inject(Theme)
 
@@ -75,7 +77,6 @@ open class BasicUiSkin(
 		progressBarStyle()
 		sliderStyle()
 		colorPickerStyle()
-		itemRendererStyle()
 		dataScrollerStyle()
 		optionsListStyle()
 		dataGridStyle()
@@ -422,14 +423,6 @@ open class BasicUiSkin(
 		target.addStyleRule(colorSwatchStyle, ColorPicker.COLOR_SWATCH_STYLE)
 	}
 
-	protected open fun itemRendererStyle() {
-		target.populateButtonStyle(SimpleItemRenderer) {
-			labelButtonSkin(theme, it)
-		}
-//		populateButtonStyle(SimpleItemRenderer.EVEN_STYLE, { labelButtonSkin(it) })
-//		populateButtonStyle(SimpleItemRenderer.ODD_STYLE, { labelButtonSkin(it) })
-	}
-
 	protected open fun dataScrollerStyle() {
 		val dataScrollerStyle = DataScrollerStyle()
 		dataScrollerStyle.background = {
@@ -437,12 +430,20 @@ open class BasicUiSkin(
 				style.apply {
 					backgroundColor = theme.panelBgColor
 					borderThickness = Pad(theme.strokeThickness)
-					borderRadius = Corners(theme.borderRadius)
+					borderRadius = Corners(topLeft = 0f, topRight = 0f, bottomRight = theme.borderRadius, bottomLeft = theme.borderRadius)
 					borderColor = BorderColors(theme.stroke)
 				}
 			}
 		}
 		target.addStyleRule(dataScrollerStyle, DataScroller)
+
+		val verticalLayoutStyle = VirtualVerticalLayoutStyle()
+		verticalLayoutStyle.padding = Pad(5f)
+		target.addStyleRule(verticalLayoutStyle, withParent(DataScroller))
+
+		val horizontalLayoutStyle = VirtualHorizontalLayoutStyle()
+		horizontalLayoutStyle.padding = Pad(5f)
+		target.addStyleRule(horizontalLayoutStyle, withParent(DataScroller))
 	}
 
 	protected open fun optionsListStyle() {

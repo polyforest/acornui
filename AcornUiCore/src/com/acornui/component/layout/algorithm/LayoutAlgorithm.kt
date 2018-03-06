@@ -21,10 +21,6 @@ import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.LayoutElementRo
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.math.Bounds
-import com.acornui.signal.Signal0
-import kotlin.properties.ObservableProperty
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 /**
  * A LayoutAlgorithm implementation sizes and positions layout elements. This is typically paired with a
@@ -68,12 +64,6 @@ interface LayoutDataProvider<out T : LayoutData> {
 		layoutData.init()
 		this.layoutData = layoutData
 		return this
-	}
-}
-
-fun <T> bindable(changed: Signal0, initialValue: T): ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
-	override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) {
-		changed.dispatch()
 	}
 }
 

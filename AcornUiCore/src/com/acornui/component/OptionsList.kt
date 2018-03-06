@@ -18,9 +18,11 @@ package com.acornui.component
 
 import com.acornui.collection.ListView
 import com.acornui.collection.ObservableList
+import com.acornui.component.layout.DataScrollerStyle
 import com.acornui.component.layout.ListItemRenderer
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.layout.algorithm.VerticalLayoutData
+import com.acornui.component.layout.algorithm.virtual.VirtualVerticalLayoutStyle
 import com.acornui.component.layout.algorithm.virtual.vDataScroller
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
@@ -31,7 +33,6 @@ import com.acornui.component.text.textInput
 import com.acornui.core.di.Owned
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.ClickInteractionRo
-import com.acornui.core.input.interaction.MouseInteraction
 import com.acornui.core.input.interaction.MouseInteractionRo
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.keyDown
@@ -63,6 +64,8 @@ open class OptionsList<E : Any>(
 	val input: Signal<() -> Unit>
 		get() = textInput.input
 
+
+	// TODO: changed should dispatch on element clicked
 	/**
 	 * Dispatched on value commit.
 	 */
@@ -81,8 +84,6 @@ open class OptionsList<E : Any>(
 			dataScroller.selection.selectedItem = value
 		}
 
-	val style = bind(OptionsListStyle())
-
 	val textInput: TextInput
 
 	private var downArrow: UiComponent? = null
@@ -95,9 +96,7 @@ open class OptionsList<E : Any>(
 		close()
 	}
 
-	val dataScroller = vDataScroller(rendererFactory, dataView) {
-		layoutAlgorithm.padding = Pad(5f)
-
+	private val dataScroller = vDataScroller(rendererFactory, dataView) {
 		onRendererObtained = {
 			it.click().add(this@OptionsList::elementClickedHandler)
 		}
@@ -135,6 +134,14 @@ open class OptionsList<E : Any>(
 	}
 
 	private var isUserInput: Boolean = false
+
+	val style = bind(OptionsListStyle())
+
+	val dataScrollerStyle: DataScrollerStyle
+		get() = dataScroller.style
+
+	val dataScrollerLayoutStyle: VirtualVerticalLayoutStyle
+		get() = dataScroller.layoutStyle
 
 	init {
 		styleTags.add(OptionsList)
@@ -267,10 +274,6 @@ open class OptionsList<E : Any>(
 		listLift.moveTo(0f, textInput.height)
 	}
 
-	override fun dispose() {
-		super.dispose()
-	}
-
 	companion object : StyleTag
 }
 
@@ -279,7 +282,7 @@ class OptionsListStyle : StyleBase() {
 
 	var downArrow by prop(noSkin)
 
-	companion object : StyleType<OptionsListStyle> {}
+	companion object : StyleType<OptionsListStyle>
 }
 
 fun <E : Any> Owned.optionsList(

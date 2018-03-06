@@ -1,9 +1,12 @@
+@file:Suppress("UNUSED_ANONYMOUS_PARAMETER")
+
 package com.acornui.component.layout
 
 import com.acornui.collection.*
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.virtual.ItemRendererOwner
 import com.acornui.component.layout.algorithm.virtual.VirtualLayoutAlgorithm
+import com.acornui.component.style.Style
 import com.acornui.core.behavior.Selection
 import com.acornui.core.behavior.SelectionBase
 import com.acornui.core.di.Owned
@@ -13,15 +16,26 @@ import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
 
 
+interface VirtualLayoutContainer<S, out T : LayoutData> : Container {
+
+	val layoutAlgorithm: VirtualLayoutAlgorithm<S, T>
+
+	val style: S
+
+}
+
 /**
  * A virtualized list of components, with no clipping or scrolling. This is a lower-level component, used by the [DataScroller].
  */
-class VirtualList<E, out T : LayoutData, out S : VirtualLayoutAlgorithm<T>>(
+class VirtualList<E, S : Style, out T : LayoutData>(
 		owner: Owned,
 		rendererFactory: ItemRendererOwner<T>.() -> ListItemRenderer<E>,
-		val layoutAlgorithm: S,
+		override val layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
+		style : S,
 		val data: ObservableList<E>
-) : ContainerImpl(owner), FocusContainer, ItemRendererOwner<T> {
+) : ContainerImpl(owner), FocusContainer, ItemRendererOwner<T>, VirtualLayoutContainer<S, T> {
+
+	override val style: S = bind(style)
 
 	override fun createLayoutData(): T {
 		return layoutAlgorithm.createLayoutData()
@@ -38,14 +52,14 @@ class VirtualList<E, out T : LayoutData, out S : VirtualLayoutAlgorithm<T>>(
 	 */
 	val visiblePosition: Float
 		get() {
+			validate(ValidationFlags.LAYOUT)
 			if (_visiblePosition == null) {
 				// Calculate the current position.
-				validate(ValidationFlags.LAYOUT)
 				val lastIndex = data.lastIndex
 				_visiblePosition = 0f
 				for (i in 0.._activeRenderers.lastIndex) {
 					val renderer = _activeRenderers[i]
-					val itemOffset = layoutAlgorithm.getOffset(width, height, renderer, renderer.index, lastIndex, isReversed = false)
+					val itemOffset = layoutAlgorithm.getOffset(width, height, renderer, renderer.index, lastIndex, isReversed = false, props = style)
 					_visiblePosition = renderer.index - itemOffset
 					if (itemOffset > -1) {
 						break
@@ -71,7 +85,7 @@ class VirtualList<E, out T : LayoutData, out S : VirtualLayoutAlgorithm<T>>(
 				val lastIndex = data.lastIndex
 				for (i in _activeRenderers.lastIndex downTo 0) {
 					val renderer = _activeRenderers[i]
-					val itemOffset = layoutAlgorithm.getOffset(width, height, renderer, renderer.index, lastIndex, isReversed = true)
+					val itemOffset = layoutAlgorithm.getOffset(width, height, renderer, renderer.index, lastIndex, isReversed = true, props = style)
 					_visibleBottomPosition = renderer.index + itemOffset
 					if (itemOffset > -1) {
 						break
@@ -161,17 +175,12 @@ class VirtualList<E, out T : LayoutData, out S : VirtualLayoutAlgorithm<T>>(
 	 * Returns a list of currently active renderers. There will be renderers in this list beyond the visible bounds,
 	 * but within the buffer.
 	 */
-	val activeRenderers: List<ListItemRenderer<E>>
+	private val activeRenderers: List<ListItemRenderer<E>>
 		get() = _activeRenderers
 
 	private val _selection: SelectionBase<E> = own(VirtualListSelection(data, _activeRenderers))
 	val selection: Selection<E>
 		get() = _selection
-
-	private val layoutAlgorithmChangedHandler = {
-		invalidate(ValidationFlags.SIZE_CONSTRAINTS)
-		Unit
-	}
 
 	private val dataAddedHandler = {
 		index: Int, element: E ->
@@ -197,7 +206,6 @@ class VirtualList<E, out T : LayoutData, out S : VirtualLayoutAlgorithm<T>>(
 	}
 
 	init {
-		layoutAlgorithm.changed.add(layoutAlgorithmChangedHandler)
 		// Invalidate the layout on any dataView changes.
 		data.added.add(dataAddedHandler)
 		data.removed.add(dataRemovedHandler)
@@ -221,15 +229,15 @@ class VirtualList<E, out T : LayoutData, out S : VirtualLayoutAlgorithm<T>>(
 		// Starting at the set position, render as many items as we can until we go out of bounds,
 		// then go back to the beginning and reverse direction until we go out of bounds again.
 		val currentIndex = if (isReversed) MathUtils.ceil(startIndex) else MathUtils.floor(startIndex)
-		renderItems(explicitWidth, explicitHeight, currentIndex, startIndex, isReversed, previousElement = null, laidOutRenderers = laidOutRenderers)
+		layoutElements(explicitWidth, explicitHeight, currentIndex, startIndex, isReversed, previousElement = null, laidOutRenderers = laidOutRenderers)
 
 		val first = if (isReversed) laidOutRenderers.lastOrNull() else laidOutRenderers.firstOrNull()
 
 		val resumeIndex = if (isReversed) currentIndex + 1 else currentIndex - 1
-		renderItems(explicitWidth, explicitHeight, resumeIndex, startIndex, !isReversed, previousElement = first, laidOutRenderers = laidOutRenderers)
+		layoutElements(explicitWidth, explicitHeight, resumeIndex, startIndex, !isReversed, previousElement = first, laidOutRenderers = laidOutRenderers)
 
 		out.clear()
-		layoutAlgorithm.measure(explicitWidth, explicitHeight, laidOutRenderers, out)
+		layoutAlgorithm.measure(explicitWidth, explicitHeight, laidOutRenderers, style, out)
 		if (explicitWidth != null && explicitWidth > out.width) out.width = explicitWidth
 		if (explicitHeight != null && explicitHeight > out.height) out.height = explicitHeight
 
@@ -256,7 +264,7 @@ class VirtualList<E, out T : LayoutData, out S : VirtualLayoutAlgorithm<T>>(
 	 *
 	 * @return
 	 */
-	private fun renderItems(explicitWidth: Float?, explicitHeight: Float?, currentIndex: Int, startIndex: Float, isReversed: Boolean, previousElement: LayoutElement?, laidOutRenderers: MutableList<ListItemRenderer<E>>) {
+	private fun layoutElements(explicitWidth: Float?, explicitHeight: Float?, currentIndex: Int, startIndex: Float, isReversed: Boolean, previousElement: LayoutElement?, laidOutRenderers: MutableList<ListItemRenderer<E>>) {
 		val n = data.size
 		var skipped = 0
 		val d = if (isReversed) -1 else 1
@@ -280,10 +288,10 @@ class VirtualList<E, out T : LayoutData, out S : VirtualLayoutAlgorithm<T>>(
 			else _activeRenderers.add(element)
 
 			if (element.shouldLayout) {
-				layoutAlgorithm.updateLayoutEntry(explicitWidth, explicitHeight, element, displayIndex, startIndex, n - 1, previousElement, isReversed)
+				layoutAlgorithm.updateLayoutEntry(explicitWidth, explicitHeight, element, displayIndex, startIndex, n - 1, previousElement, isReversed, style)
 				previousElement = element
 
-				if (layoutAlgorithm.shouldShowRenderer(explicitWidth, explicitHeight, element)) {
+				if (layoutAlgorithm.shouldShowRenderer(explicitWidth, explicitHeight, element, style)) {
 					// Within bounds and good to show.
 					skipped = 0
 
@@ -301,9 +309,12 @@ class VirtualList<E, out T : LayoutData, out S : VirtualLayoutAlgorithm<T>>(
 		}
 	}
 
+	override fun draw() {
+		super.draw()
+	}
+
 	override fun dispose() {
 		super.dispose()
-		layoutAlgorithm.changed.remove(layoutAlgorithmChangedHandler)
 		data.added.remove(dataAddedHandler)
 		data.removed.remove(dataRemovedHandler)
 		data.changed.remove(dataChangedHandler)
@@ -312,7 +323,7 @@ class VirtualList<E, out T : LayoutData, out S : VirtualLayoutAlgorithm<T>>(
 	}
 
 	companion object {
-		private val MAX_SKIPPED = 5
+		const val MAX_SKIPPED = 5
 	}
 }
 
@@ -330,19 +341,19 @@ private class SmartCache<E>(private val pool: Pool<ListItemRenderer<E>>) {
 	fun obtain(index: Int, isReversed: Boolean): ListItemRenderer<E> {
 		if (!enabled) return pool.obtain()
 		val existing = cache[index]
-		if (existing == null) {
+		return if (existing == null) {
 			// We don't have the exact item, but take the next one least likely to be used.
 			if (cache.isEmpty()) {
-				return pool.obtain()
+				pool.obtain()
 			} else {
 				val index2 = indices[if (isReversed) indices.indexOfFirst2 { cache.containsKey(it) } else indices.indexOfLast2 { cache.containsKey(it) }]
 				val existing2 = cache[index2]!!
 				cache.remove(index2)
-				return existing2
+				existing2
 			}
 		} else {
 			cache.remove(index)
-			return existing
+			existing
 		}
 	}
 
@@ -394,11 +405,12 @@ private class SmartCache<E>(private val pool: Pool<ListItemRenderer<E>>) {
 	}
 }
 
-fun <E, T : LayoutData, S : VirtualLayoutAlgorithm<T>> Owned.virtualList(
+fun <E, S : Style, T : LayoutData> Owned.virtualList(
 		rendererFactory: ItemRendererOwner<T>.() -> ListItemRenderer<E>,
-		layoutAlgorithm: S,
-		data: ObservableList<E>, init: ComponentInit<VirtualList<E, T, S>> = {}): VirtualList<E, T, S> {
-	val c = VirtualList(this, rendererFactory, layoutAlgorithm, data)
+		layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
+		style: S,
+		data: ObservableList<E>, init: ComponentInit<VirtualList<E, S, T>> = {}): VirtualList<E, S, T> {
+	val c = VirtualList(this, rendererFactory, layoutAlgorithm, style, data)
 	c.init()
 	return c
 }
@@ -445,11 +457,17 @@ private class VirtualListPool<E>(factory: () -> ListItemRenderer<E>) : ObjectPoo
 	}
 }
 
-interface ListItemRenderer<E> : ItemRenderer<E>, Toggleable {
+
+interface ListItemRendererRo<E> : ItemRendererRo<E>, ToggleableRo {
 
 	/**
 	 * The index of the data in the List this ItemRenderer represents.
 	 */
-	var index: Int
+	val index: Int
+}
+
+interface ListItemRenderer<E> : ListItemRendererRo<E>, ItemRenderer<E>, Toggleable {
+
+	override var index: Int
 
 }

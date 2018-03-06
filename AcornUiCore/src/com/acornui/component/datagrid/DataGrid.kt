@@ -54,6 +54,8 @@ import kotlin.properties.ObservableProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
+// TODO: Selection
+
 /**
  * A component for displaying a virtualized table of data.
  *
