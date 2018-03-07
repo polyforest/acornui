@@ -41,11 +41,11 @@ interface SelectionRo<E> {
 	 * @param out The list to fill with the selected items.
 	 * @param ordered If true, the list will be ordered. (Slower)
 	 */
-	fun selectedItems(out: MutableList<E>, ordered: Boolean)
+	fun getSelectedItems(out: MutableList<E>, ordered: Boolean)
 
-	fun isEmpty(): Boolean
-	fun isNotEmpty(): Boolean
-	fun selectedItemsCount(): Int
+	val isEmpty: Boolean
+	val isNotEmpty: Boolean
+	val selectedItemsCount: Int
 	fun getItemIsSelected(item: E): Boolean
 }
 
@@ -106,7 +106,7 @@ abstract class SelectionBase<E> : Selection<E>, Disposable {
 	 * @param out The list to fill with the selected items.
 	 * @param ordered If true, the list will be ordered. (Slower)
 	 */
-	override fun selectedItems(out: MutableList<E>, ordered: Boolean) {
+	override fun getSelectedItems(out: MutableList<E>, ordered: Boolean) {
 		out.clear()
 		if (ordered) {
 			walkSelectableItems {
@@ -134,17 +134,20 @@ abstract class SelectionBase<E> : Selection<E>, Disposable {
 				setItemIsSelected(value, true)
 		}
 
-	override fun isEmpty(): Boolean {
-		return _selectedMap.isEmpty()
-	}
+	override val isEmpty: Boolean
+		get() {
+			return _selectedMap.isEmpty()
+		}
 
-	override fun isNotEmpty(): Boolean {
-		return _selectedMap.isNotEmpty()
-	}
+	override val isNotEmpty: Boolean
+		get() {
+			return _selectedMap.isNotEmpty()
+		}
 
-	override fun selectedItemsCount(): Int {
-		return _selectedMap.size
-	}
+	override val selectedItemsCount: Int
+		get() {
+			return _selectedMap.size
+		}
 
 	override fun getItemIsSelected(item: E): Boolean {
 		return _selectedMap[item] ?: false
