@@ -438,11 +438,11 @@ open class BasicUiSkin(
 		target.addStyleRule(dataScrollerStyle, DataScroller)
 
 		val verticalLayoutStyle = VirtualVerticalLayoutStyle()
-		verticalLayoutStyle.padding = Pad(5f)
+		verticalLayoutStyle.padding = Pad(top = 0f, right = 5f, bottom = 0f, left = 5f)
 		target.addStyleRule(verticalLayoutStyle, withParent(DataScroller))
 
 		val horizontalLayoutStyle = VirtualHorizontalLayoutStyle()
-		horizontalLayoutStyle.padding = Pad(5f)
+		horizontalLayoutStyle.padding = Pad(top = 5f, right = 0f, bottom = 5f, left = 0f)
 		target.addStyleRule(horizontalLayoutStyle, withParent(DataScroller))
 	}
 

@@ -49,7 +49,9 @@ data class Vertex(
 	}
 
 	companion object {
-		private val pool = ClearableObjectPool { Vertex() }
+		private val pool = ClearableObjectPool {
+			Vertex()
+		}
 
 		fun obtain(): Vertex {
 			return pool.obtain()

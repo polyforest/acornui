@@ -435,9 +435,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	 */
 	var allowTab: Boolean = false
 
-	private val commandDispatcher = own(CommandDispatcherImpl())
-	private val undoHistory = StateCommandHistory(commandDispatcher)
-	private val cmd = own(Commander(commandDispatcher))
+	private val cmd = own(commander())
 
 	init {
 		host.focused().add {
@@ -518,6 +516,8 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			}
 		}
 
+		host.enableUndoRedo()
+
 		cmd.onCommandInvoked(ReplaceTextRangeCommand) {
 			onReplaceTextRange(it)
 		}
@@ -527,12 +527,12 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		}
 
 		host.undo().add {
-			undoHistory.undoCommandGroup()
 			_input.dispatch()
+			_changed.dispatch()
 		}
 		host.redo().add {
-			undoHistory.redoCommandGroup()
 			_input.dispatch()
+			_changed.dispatch()
 		}
 	}
 
@@ -786,18 +786,17 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	/**
 	 * Invokes the command to replace the given text range.
 	 */
-	private fun replaceTextRange(startIndex: Int, endIndex: Int, newText: String, group: CommandGroup = currentGroup) {
-		commandDispatcher.invokeCommand(ReplaceTextRangeCommand(startIndex, text.substring(clamp(startIndex, 0, text.length), clamp(endIndex, 0, text.length)), newText, group))
-	}
+	private fun replaceTextRange(startIndex: Int, endIndex: Int, newText: String, group: CommandGroup = currentGroup) = host.replaceTextRange(startIndex, endIndex, newText, group)
 
 	/**
 	 * Invokes the command to change the current selection.
 	 */
 	private fun setSelection(newSelection: List<SelectionRange>, group: CommandGroup = currentGroup) {
-		commandDispatcher.invokeCommand(ChangeSelectionCommand(selectionManager.selection, newSelection, group))
+		invokeCommand(ChangeSelectionCommand(selectionManager.selection, newSelection, group))
 	}
 
 	private fun onReplaceTextRange(cmd: ReplaceTextRangeCommand) {
+		// TODO: Make this efficient.
 		val text = this.text
 		this.text = text.substring(0, clamp(cmd.startIndex, 0, text.length)) + cmd.newText + text.substring(clamp(cmd.endIndex, 0, text.length), text.length)
 		validateLayout()

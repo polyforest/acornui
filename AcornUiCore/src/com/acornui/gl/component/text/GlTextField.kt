@@ -84,7 +84,7 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 		get() = _contents
 
 	/**
-	 * Sets the contents of this textfield.
+	 * Sets the contents of this text field.
 	 * This will remove the existing contents, but does not dispose.
 	 */
 	fun <T : TextNodeComponent> contents(value: T): T {

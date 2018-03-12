@@ -16,6 +16,7 @@
 
 package com.acornui.core.behavior
 
+import com.acornui.collection.Clearable
 import com.acornui.core.Disposable
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
@@ -49,11 +50,12 @@ interface SelectionRo<E> {
 	fun getItemIsSelected(item: E): Boolean
 }
 
-interface Selection<E> : SelectionRo<E> {
+interface Selection<E> : SelectionRo<E>, Clearable {
 
 	/**
 	 * Dispatched when an item's selection status is about to change. This provides an opportunity to cancel the
 	 * selection change.
+	 * (element, toggled, cancel)
 	 */
 	val changing: Signal<(E, Boolean, Cancel) -> Unit>
 
@@ -61,7 +63,6 @@ interface Selection<E> : SelectionRo<E> {
 
 	fun setItemIsSelected(item: E, value: Boolean)
 	fun setSelectedItems(items: Map<E, Boolean>)
-	fun clearSelection()
 	fun selectAll()
 
 }
@@ -123,31 +124,23 @@ abstract class SelectionBase<E> : Selection<E>, Disposable {
 	 * The first selected item.
 	 */
 	override var selectedItem: E?
-		get() {
-			return _selectedMap.keys.firstOrNull()
-		}
+		get() = _selectedMap.keys.firstOrNull()
 		set(value) {
 			if (value == null && _selectedMap.isEmpty()) return
 			else if (value != null && getItemIsSelected(value)) return
-			clearSelection()
+			clear()
 			if (value != null)
 				setItemIsSelected(value, true)
 		}
 
 	override val isEmpty: Boolean
-		get() {
-			return _selectedMap.isEmpty()
-		}
+		get() = _selectedMap.isEmpty()
 
 	override val isNotEmpty: Boolean
-		get() {
-			return _selectedMap.isNotEmpty()
-		}
+		get() = _selectedMap.isNotEmpty()
 
 	override val selectedItemsCount: Int
-		get() {
-			return _selectedMap.size
-		}
+		get() = _selectedMap.size
 
 	override fun getItemIsSelected(item: E): Boolean {
 		return _selectedMap[item] ?: false
@@ -180,7 +173,7 @@ abstract class SelectionBase<E> : Selection<E>, Disposable {
 		}
 	}
 
-	override fun clearSelection() {
+	override fun clear() {
 		for (key in _selectedMap.keys) {
 			setItemIsSelected(key, false)
 		}
@@ -195,7 +188,7 @@ abstract class SelectionBase<E> : Selection<E>, Disposable {
 	override fun dispose() {
 		_changing.dispose()
 		_changed.dispose()
-		clearSelection()
+		clear()
 	}
 
 }

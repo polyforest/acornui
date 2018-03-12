@@ -19,14 +19,6 @@ interface SelectionManager : Disposable, Clearable {
 
 	var selection: List<SelectionRange>
 
-	fun contains(target: Selectable, index: Int): Boolean {
-		for (i in 0..selection.lastIndex) {
-			val s = selection[i]
-			if (s.target == target && s.contains(index)) return true
-		}
-		return false
-	}
-
 	override fun clear() {
 		if (selection.isEmpty()) return
 		selection = listOf()
@@ -37,6 +29,14 @@ interface SelectionManager : Disposable, Clearable {
 			return SelectionManagerImpl()
 		}
 	}
+}
+
+fun SelectionManager.contains(target: Selectable, index: Int): Boolean {
+	for (i in 0..selection.lastIndex) {
+		val s = selection[i]
+		if (s.target == target && s.contains(index)) return true
+	}
+	return false
 }
 
 class SelectionManagerImpl : SelectionManager {
@@ -65,7 +65,11 @@ class SelectionManagerImpl : SelectionManager {
  * @param startIndex The starting index of the selection (inclusive)
  * @param endIndex The starting index of the selection (exclusive)
  */
-data class SelectionRange(val target: Selectable, val startIndex: Int, val endIndex: Int) {
+data class SelectionRange(
+		val target: Selectable,
+		val startIndex: Int,
+		val endIndex: Int
+) {
 
 	val min = minOf(startIndex, endIndex)
 	val max = maxOf(startIndex, endIndex)

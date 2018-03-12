@@ -23,7 +23,7 @@ open class GlRect(
 		owner: Owned
 ) : ContainerImpl(owner), Rect {
 
-	override final val style = bind(BoxStyle())
+	final override val style = bind(BoxStyle())
 
 	var segments = 40
 

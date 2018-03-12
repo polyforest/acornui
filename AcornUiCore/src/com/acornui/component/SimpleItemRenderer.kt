@@ -18,7 +18,7 @@ class SimpleItemRenderer<E : Any>(
 		private val formatter: StringFormatter<E>
 ) : ContainerImpl(owner), ListItemRenderer<E> {
 
-	private val textField = addChild(text { interactivityMode = InteractivityMode.NONE })
+	private val textField = addChild(text())
 	override var toggled: Boolean = false
 
 	override var index: Int = -1
@@ -32,6 +32,10 @@ class SimpleItemRenderer<E : Any>(
 			val text = if (value == null) "" else formatter.format(value)
 			textField.text = text
 		}
+
+	init {
+		interactivityMode = InteractivityMode.NONE
+	}
 
 	override fun updateSizeConstraints(out: SizeConstraints) {
 		out.bound(textField.sizeConstraints)

@@ -26,12 +26,17 @@ import com.acornui.component.scroll.ClampedScrollModel
 import com.acornui.component.scroll.ScrollPolicy
 import com.acornui.component.style.*
 import com.acornui.core.di.Owned
+import com.acornui.core.di.Scoped
 import com.acornui.core.di.dKey
 import com.acornui.core.focus.Focusable
+import com.acornui.core.mvc.CommandGroup
+import com.acornui.core.mvc.invokeCommand
 import com.acornui.core.selection.SelectableComponent
+import com.acornui.gl.component.text.ReplaceTextRangeCommand
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.graphics.color
+import com.acornui.math.MathUtils
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.serialization.*
@@ -260,28 +265,26 @@ interface TextInput : Focusable, SelectableComponent, Styleable {
 	 */
 	var allowTab: Boolean
 
-	// TODO: Make this efficient in GlTextInput.
-	/**
-	 * Replaces the given range with the provided text.
-	 * This is functionally the same as:
-	 * text.substring(0, startIndex) + newText + text.substring(endIndex, text.length)
-	 *
-	 * @param startIndex The starting character index for the replacement. (Inclusive)
-	 * @param endIndex The ending character index for the replacement. (Exclusive)
-	 *
-	 * E.g.
-	 * +text("Hello World") {
-	 *   replaceTextRange(1, 5, "i") // Hi World
-	 * }
-	 */
-	fun replaceTextRange(startIndex: Int, endIndex: Int, newText: String) {
-		val text = text
-		this.text = text.substring(0, maxOf(0, startIndex)) + newText + text.substring(minOf(text.length, endIndex), text.length)
-	}
-
 	companion object : StyleTag {
 		val FACTORY_KEY = dKey<(owner: Owned) -> TextInput>()
 	}
+}
+
+/**
+ * Replaces the given range with the provided text.
+ * This is functionally the same as:
+ * text.substring(0, startIndex) + newText + text.substring(endIndex, text.length)
+ *
+ * @param startIndex The starting character index for the replacement. (Inclusive)
+ * @param endIndex The ending character index for the replacement. (Exclusive)
+ *
+ * E.g.
+ * +text("Hello World") {
+ *   replaceTextRange(1, 5, "i") // Hi World
+ * }
+ */
+fun TextInput.replaceTextRange(startIndex: Int, endIndex: Int, newText: String, group: CommandGroup? = null) {
+	invokeCommand(ReplaceTextRangeCommand(startIndex, text.substring(MathUtils.clamp(startIndex, 0, text.length), MathUtils.clamp(endIndex, 0, text.length)), newText, group))
 }
 
 var TextInput.selectable: Boolean

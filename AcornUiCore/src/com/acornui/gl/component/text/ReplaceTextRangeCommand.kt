@@ -39,4 +39,3 @@ class ReplaceTextRangeCommand(
 
 	companion object : CommandType<ReplaceTextRangeCommand>
 }
-

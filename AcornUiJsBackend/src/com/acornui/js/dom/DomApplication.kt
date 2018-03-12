@@ -45,6 +45,7 @@ import kotlin.dom.clear
 /**
  * @author nbilyk
  */
+@Deprecated("Use WebGlApplication")
 open class DomApplication(
 		private val rootId: String
 ) : JsApplicationBase() {

@@ -175,8 +175,11 @@ class VirtualList<E, S : Style, out T : LayoutData>(
 	 * Returns a list of currently active renderers. There will be renderers in this list beyond the visible bounds,
 	 * but within the buffer.
 	 */
-	private val activeRenderers: List<ListItemRenderer<E>>
-		get() = _activeRenderers
+	val activeRenderers: List<ListItemRendererRo<E>>
+		get() {
+			validate(ValidationFlags.LAYOUT)
+			return _activeRenderers
+		}
 
 	private val _selection: SelectionBase<E> = own(VirtualListSelection(data, _activeRenderers))
 	val selection: Selection<E>

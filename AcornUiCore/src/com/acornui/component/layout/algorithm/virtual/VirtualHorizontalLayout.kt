@@ -77,15 +77,15 @@ class VirtualHorizontalLayout : VirtualLayoutAlgorithm<VirtualHorizontalLayoutSt
 		}
 
 		if (childAvailableHeight == null) {
-			element.setPosition(x, padding.top)
+			element.moveTo(x, padding.top)
 		} else {
 			when (layoutData?.verticalAlign ?: verticalAlign) {
 				VAlign.TOP ->
-					element.setPosition(x, padding.top)
+					element.moveTo(x, padding.top)
 				VAlign.MIDDLE ->
-					element.setPosition(x, padding.top + (childAvailableHeight - element.height) * 0.5f)
+					element.moveTo(x, padding.top + (childAvailableHeight - element.height) * 0.5f)
 				VAlign.BOTTOM ->
-					element.setPosition(x, padding.top + (childAvailableHeight - element.height))
+					element.moveTo(x, padding.top + (childAvailableHeight - element.height))
 			}
 		}
 	}
@@ -117,7 +117,7 @@ open class VirtualHorizontalLayoutStyle : StyleBase() {
 
 	override val type: StyleType<VirtualHorizontalLayoutStyle> = Companion
 
-	var gap by prop(5f)
+	var gap by prop(0f)
 
 	/**
 	 * If there was an explicit height, this represents the percent of that height out of bounds an element can be

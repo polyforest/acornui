@@ -28,7 +28,7 @@ interface CommandDispatcher {
 
 	val history: List<Command>
 
-	var keepHistory: Boolean
+	val keepHistory: Boolean
 
 	companion object : DKey<CommandDispatcher> {
 		override fun factory(injector: Injector): CommandDispatcher? = CommandDispatcherImpl()
@@ -39,17 +39,20 @@ fun Scoped.invokeCommand(command: Command) {
 	inject(CommandDispatcher).invokeCommand(command)
 }
 
-open class CommandDispatcherImpl : CommandDispatcher, Disposable {
+open class CommandDispatcherImpl(
+		override val keepHistory: Boolean = false
+) : CommandDispatcher, Disposable {
 
 	private val _commandInvoked: Signal1<Command> = Signal1()
 	override val commandInvoked: Signal<(Command) -> Unit>
 		get() = _commandInvoked
 
-	override val history = ArrayList<Command>()
-	override var keepHistory: Boolean = false
+	private val _history = ArrayList<Command>()
+	override val history: List<Command>
+		get() = _history
 
 	override fun invokeCommand(command: Command) {
-		if (keepHistory) history.add(command)
+		if (keepHistory) _history.add(command)
 		_commandInvoked.dispatch(command)
 	}
 

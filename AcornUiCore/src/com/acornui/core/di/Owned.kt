@@ -66,15 +66,16 @@ fun <T : Disposable> Owned.own(target: T): T {
  * implementation can be used to have a different dependency injector than what the owner uses.
  */
 class OwnedImpl(
-		override val injector: Injector
+		override val injector: Injector,
+		override val owner: Owned? = null
 ) : Owned, Disposable {
 
-	override val owner: Owned? = null
-
-	override val disposed = Signal1<Owned>()
+	private val _disposed = Signal1<Owned>()
+	override val disposed: Signal<(Owned) -> Unit>
+		get() = _disposed
 
 	override fun dispose() {
-		disposed.dispatch(this)
-		disposed.dispose()
+		_disposed.dispatch(this)
+		_disposed.dispose()
 	}
 }

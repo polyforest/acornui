@@ -34,56 +34,61 @@ interface RowBackground : UiComponent, Toggleable {
 
 class RowBackgroundImpl(owner: Owned) : ContainerImpl(owner), RowBackground {
 
-	override var toggled: Boolean by validationProp(false, ValidationFlags.PROPERTIES)
-	override var highlighted: Boolean by validationProp(false, ValidationFlags.PROPERTIES)
-	override var rowIndex: Int by validationProp(0, ValidationFlags.PROPERTIES)
+	override var toggled: Boolean by validationProp(false, BACKGROUND_COLOR)
+	override var highlighted: Boolean by validationProp(false, BACKGROUND_COLOR)
+	override var rowIndex: Int by validationProp(0, BACKGROUND_COLOR)
 
 	val style = bind(RowBackgroundStyle())
 
-	private val bg = addChild(rect())
+	private val bg = addChild(rect { style.backgroundColor = Color.WHITE })
 
 	init {
 		styleTags.add(RowBackground)
-		watch(style) {
-			invalidate(ValidationFlags.PROPERTIES)
-		}
+
+		validation.addNode(BACKGROUND_COLOR, ValidationFlags.STYLES, this::updateColor)
 	}
 
-	override fun updateProperties() {
+
+	private fun updateColor() {
 		if (toggled) {
 			if (rowIndex % 2 == 0) {
-				bg.style.backgroundColor = style.selectedEvenColor
+				bg.colorTint = style.toggledEvenColor
 			} else {
-				bg.style.backgroundColor = style.selectedOddColor
+				bg.colorTint = style.toggledOddColor
 			}
 		} else {
 			if (highlighted) {
 				if (rowIndex % 2 == 0) {
-					bg.style.backgroundColor = style.highlightedEvenColor
+					bg.colorTint = style.highlightedEvenColor
 				} else {
-					bg.style.backgroundColor = style.highlightedOddColor
+					bg.colorTint = style.highlightedOddColor
 				}
 			} else {
 				if (rowIndex % 2 == 0) {
-					bg.style.backgroundColor = style.evenColor
+					bg.colorTint = style.evenColor
 				} else {
-					bg.style.backgroundColor = style.oddColor
+					bg.colorTint = style.oddColor
 				}
 			}
 		}
 	}
 
+
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		bg.setSize(explicitWidth, explicitHeight)
 		out.set(bg.bounds)
+	}
+
+	companion object {
+		private const val BACKGROUND_COLOR = 1 shl 16
 	}
 }
 
 class RowBackgroundStyle : StyleBase() {
 	override val type = Companion
 
-	var selectedEvenColor: ColorRo by prop(Color(1f, 1f, 0f, 0.4f))
-	var selectedOddColor: ColorRo by prop(Color(0.8f, 0.8f, 0f, 0.4f))
+	var toggledEvenColor: ColorRo by prop(Color(1f, 1f, 0f, 0.4f))
+	var toggledOddColor: ColorRo by prop(Color(0.8f, 0.8f, 0f, 0.4f))
 	var highlightedEvenColor: ColorRo by prop(Color(0f, 0f, 0f, 0.1f))
 	var highlightedOddColor: ColorRo by prop(Color(1f, 1f, 1f, 0.1f))
 	var evenColor: ColorRo by prop(Color(0f, 0f, 0f, 0.05f))

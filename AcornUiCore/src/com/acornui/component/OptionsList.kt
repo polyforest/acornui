@@ -32,7 +32,6 @@ import com.acornui.component.text.TextInput
 import com.acornui.component.text.textInput
 import com.acornui.core.di.Owned
 import com.acornui.core.input.Ascii
-import com.acornui.core.input.interaction.ClickInteractionRo
 import com.acornui.core.input.interaction.MouseInteractionRo
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.keyDown
@@ -64,7 +63,6 @@ open class OptionsList<E : Any>(
 	val input: Signal<() -> Unit>
 		get() = textInput.input
 
-
 	// TODO: changed should dispatch on element clicked
 	/**
 	 * Dispatched on value commit.
@@ -84,24 +82,16 @@ open class OptionsList<E : Any>(
 			dataScroller.selection.selectedItem = value
 		}
 
-	val textInput: TextInput
+	private val textInput: TextInput
 
 	private var downArrow: UiComponent? = null
 
 	private val dataView = ListView(data)
 
-	@Suppress("UNCHECKED_CAST")
-	private fun elementClickedHandler(e: ClickInteractionRo) {
-		selectedItem = (e.currentTarget as ListItemRenderer<E>).data
-		close()
-	}
-
 	private val dataScroller = vDataScroller(rendererFactory, dataView) {
-		onRendererObtained = {
-			it.click().add(this@OptionsList::elementClickedHandler)
-		}
-		onRendererFreed = {
-			it.click().remove(this@OptionsList::elementClickedHandler)
+		selection.changed.add {
+			element, selected ->
+			close()
 		}
 	}
 
@@ -229,39 +219,13 @@ open class OptionsList<E : Any>(
 	}
 
 	var text: String
-		get() {
-			return textInput.text
-		}
+		get() = textInput.text
 		set(value) {
 			textInput.text = value
 		}
 
-	private var _listWidth: Float? = null
-	var listWidth: Float?
-		get() = _listWidth
-		set(value) {
-			if (_listWidth == value) return
-			_listWidth = value
-			invalidate(ValidationFlags.LAYOUT)
-		}
-
-	private var _listHeight: Float? = null
-	var listHeight: Float?
-		get() = _listHeight
-		set(value) {
-			if (_listHeight == value) return
-			_listHeight = value
-			invalidate(ValidationFlags.LAYOUT)
-		}
-
-	/**
-	 * Sets the size of the dropdown list.
-	 */
-	fun setListSize(explicitWidth: Float?, explicitHeight: Float?) {
-		_listWidth = explicitWidth
-		_listHeight = explicitHeight
-		invalidate(ValidationFlags.LAYOUT)
-	}
+	var listWidth: Float? by validationProp(null, ValidationFlags.LAYOUT)
+	var listHeight: Float? by validationProp(null, ValidationFlags.LAYOUT)
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val downArrow = this.downArrow!!
@@ -270,7 +234,7 @@ open class OptionsList<E : Any>(
 		downArrow.setPosition(textInput.width - downArrow.width, (textInput.height - downArrow.height) * 0.5f)
 		out.set(textInput.bounds)
 
-		listLift.setSize(_listWidth ?: textInput.width, _listHeight)
+		listLift.setSize(listWidth ?: textInput.width, listHeight)
 		listLift.moveTo(0f, textInput.height)
 	}
 
