@@ -170,12 +170,12 @@ private class LayerTween(override val duration: Float, layer: Layer, private val
 		}
 		transform.idt()
 		transform.trn(position)
-		transform.scl(scale)
 		if (!rotation.isZero()) {
 			quat.setEulerAnglesRad(rotation.y, rotation.x, rotation.z)
 			transform.rotate(quat)
 		}
 		transform.shear(MathUtils.tan(shearXZ), MathUtils.tan(shearYZ), 0f, 0f, 0f, 0f)
+		transform.scale(scale)
 
 		transform.translate(-origin.x, -origin.y, -origin.z)
 		target.invalidate(ValidationFlags.TRANSFORM)
