@@ -627,6 +627,7 @@ class Vector3 (
 		z = 0f
 	}
 
+	@Deprecated("Use Vector3.free", ReplaceWith("Vector3.free(this)"))
 	fun free() {
 		pool.free(this)
 	}
@@ -706,9 +707,8 @@ class Vector3 (
 
 		private val pool = ClearableObjectPool { Vector3() }
 
-		fun obtain(): Vector3 {
-			return pool.obtain()
-		}
+		fun obtain(): Vector3 = pool.obtain()
+		fun free(obj: Vector3) = pool.free(obj)
 	}
 
 }

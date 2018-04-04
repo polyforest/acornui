@@ -518,12 +518,11 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 		host.enableUndoRedo()
 
-		cmd.onCommandInvoked(ReplaceTextRangeCommand) {
-			onReplaceTextRange(it)
-		}
+		cmd.onCommandInvoked(ReplaceTextRangeCommand, this::onReplaceTextRange)
 
 		cmd.onCommandInvoked(ChangeSelectionCommand) {
-			selectionManager.selection = it.newSelection
+			if (it.target == host)
+				selectionManager.selection = it.newSelection
 		}
 
 		host.undo().add {
@@ -792,10 +791,11 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	 * Invokes the command to change the current selection.
 	 */
 	private fun setSelection(newSelection: List<SelectionRange>, group: CommandGroup = currentGroup) {
-		invokeCommand(ChangeSelectionCommand(selectionManager.selection, newSelection, group))
+		invokeCommand(ChangeSelectionCommand(host, selectionManager.selection, newSelection, group))
 	}
 
 	private fun onReplaceTextRange(cmd: ReplaceTextRangeCommand) {
+		if (cmd.target != host) return
 		// TODO: Make this efficient.
 		val text = this.text
 		this.text = text.substring(0, clamp(cmd.startIndex, 0, text.length)) + cmd.newText + text.substring(clamp(cmd.endIndex, 0, text.length), text.length)

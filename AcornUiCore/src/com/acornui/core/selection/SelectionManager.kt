@@ -42,7 +42,7 @@ fun SelectionManager.contains(target: Selectable, index: Int): Boolean {
 class SelectionManagerImpl : SelectionManager {
 
 	private val _selectionChanged = Signal2<List<SelectionRange>, List<SelectionRange>>()
-	override val selectionChanged: Signal2<List<SelectionRange>, List<SelectionRange>>
+	override val selectionChanged: Signal<(List<SelectionRange>, List<SelectionRange>) -> Unit>
 		get() = _selectionChanged
 
 	private var _selection: List<SelectionRange> = ArrayList()
@@ -51,11 +51,11 @@ class SelectionManagerImpl : SelectionManager {
 		set(value) {
 			val old = _selection
 			_selection = value
-			selectionChanged.dispatch(old, value)
+			_selectionChanged.dispatch(old, value)
 		}
 
 	override fun dispose() {
-		selectionChanged.dispose()
+		_selectionChanged.dispose()
 	}
 }
 
@@ -83,6 +83,7 @@ data class SelectionRange(
  * A marker interface indicating that an object can have selection ranges set in the [SelectionManager].
  */
 interface Selectable
+
 interface SelectableComponent : UiComponent, Selectable
 
 /**

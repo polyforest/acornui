@@ -50,8 +50,21 @@ open class DynamicMeshComponent(
 
 	var intersectionType = MeshIntersectionType.BOUNDING_BOX
 
-	protected val boundingBox = Box()
-	private val globalBoundingBox = Box()
+	private val _boundingBox = Box()
+
+	val boundingBox: BoxRo
+		get() {
+			validate(ValidationFlags.LAYOUT)
+			return _boundingBox
+		}
+
+	private val _globalBoundingBox = Box()
+
+	val globalBoundingBox: BoxRo
+		get() {
+			validate(GLOBAL_BOUNDING_BOX)
+			return _globalBoundingBox
+		}
 
 	private val glState = inject(GlState)
 
@@ -93,7 +106,9 @@ open class DynamicMeshComponent(
 	init {
 		validation.addNode(VERTEX_TRANSFORM, ValidationFlags.CONCATENATED_TRANSFORM, { validateGlobalTransform() })
 		validation.addNode(VERTEX_COLOR_TRANSFORM, ValidationFlags.CONCATENATED_COLOR_TRANSFORM, { validateGlobalColor() })
-		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.LAYOUT or ValidationFlags.CONCATENATED_TRANSFORM, { globalBoundingBox.set(boundingBox).mul(concatenatedTransform) })
+		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.LAYOUT or ValidationFlags.CONCATENATED_TRANSFORM, {
+			_globalBoundingBox.set(_boundingBox).mul(concatenatedTransform)
+		})
 	}
 
 	fun buildMesh(inner: MeshData.() -> Unit) {
@@ -148,7 +163,7 @@ open class DynamicMeshComponent(
 	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
 		validate(VERTEX_TRANSFORM or GLOBAL_BOUNDING_BOX)
 
-		if (!globalBoundingBox.intersects(globalRay, intersection)) {
+		if (!_globalBoundingBox.intersects(globalRay, intersection)) {
 			return false
 		}
 		if (intersectionType == MeshIntersectionType.EXACT) {
@@ -179,19 +194,19 @@ open class DynamicMeshComponent(
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		out.clear()
-		boundingBox.inf()
+		_boundingBox.inf()
 		if (data.children.isEmpty() && data.vertices.isEmpty()) return
 
 		data.childWalkPreOrder {
 			primitive ->
 			for (j in 0..primitive.vertices.lastIndex) {
 				val p = primitive.vertices[j].position
-				boundingBox.ext(p, false)
+				_boundingBox.ext(p, false)
 			}
 			TreeWalk.CONTINUE
 		}
-		boundingBox.update()
-		out.ext(boundingBox.max.x, boundingBox.max.y)
+		_boundingBox.update()
+		out.ext(_boundingBox.max.x, _boundingBox.max.y)
 	}
 
 	private var globalPrimitiveIndex = 0

@@ -57,11 +57,18 @@ class IndexedCache<E>(val pool: Pool<E>) {
 
 	constructor(factory: ()->E) : this(ObjectPool(factory))
 
-	private var startIndex = 0
+	private var _startIndex = 0
+	val startIndex: Int
+		get() = _startIndex
+
+	private var _size = 0
+	val size: Int
+		get() = _size
+
+
 	private var cache = ArrayList<E?>()
 	private var used = ArrayList<E?>()
 	private var usedStartIndex = Int.MAX_VALUE
-	private var _size = 0
 
 	/**
 	 * Obtain will provide a pooled instance in this order:
@@ -85,10 +92,10 @@ class IndexedCache<E>(val pool: Pool<E>) {
 		if (_size == 0) {
 			element = pool.obtain()
 		} else {
-			val e = cache.getOrNull(index - startIndex)
+			val e = cache.getOrNull(index - _startIndex)
 			if (e != null) {
 				element = e
-				cache[index - startIndex] = null
+				cache[index - _startIndex] = null
 				_size--
 			} else {
 				val index2 = if (highestFirst) cache.indexOfLast2 { it != null } else cache.indexOfFirst2 { it != null }
@@ -112,7 +119,7 @@ class IndexedCache<E>(val pool: Pool<E>) {
 	 * Returns the cached element at the given index, if it exists.
 	 */
 	fun getCached(index: Int): E? {
-		return cache.getOrNull(index - startIndex)
+		return cache.getOrNull(index - _startIndex)
 	}
 
 	/**
@@ -133,7 +140,7 @@ class IndexedCache<E>(val pool: Pool<E>) {
 	 */
 	fun clear() {
 		cache.clear()
-		startIndex = usedStartIndex
+		_startIndex = usedStartIndex
 		usedStartIndex = Int.MAX_VALUE
 		_size = cache.size
 	}
@@ -145,7 +152,7 @@ class IndexedCache<E>(val pool: Pool<E>) {
 		forEach(pool::free)
 		val tmp = cache
 		cache = used
-		startIndex = usedStartIndex
+		_startIndex = usedStartIndex
 		usedStartIndex = Int.MAX_VALUE
 		_size = cache.size
 		used = tmp

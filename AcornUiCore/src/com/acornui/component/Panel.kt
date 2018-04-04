@@ -76,6 +76,10 @@ open class Panel(
 		}
 	}
 
+	override fun dispose() {
+		super.dispose()
+	}
+
 	companion object : StyleTag
 }
 

@@ -20,10 +20,12 @@ import com.acornui.async.then
 import com.acornui.component.TextureComponent
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.ValidationFlags
-import com.acornui.core.assets.*
+import com.acornui.core.assets.AssetType
+import com.acornui.core.assets.CachedGroup
+import com.acornui.core.assets.cachedGroup
+import com.acornui.core.assets.loadAndCache
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
-import com.acornui.core.di.own
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
 import com.acornui.gl.core.GlState
@@ -39,11 +41,11 @@ import com.acornui.math.Bounds
  *
  * @author nbilyk
  */
-open class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureComponent {
+class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureComponent {
 
 	private val glState = inject(GlState)
 
-	protected val sprite = Sprite()
+	private val sprite = Sprite()
 
 	init {
 		validation.addNode(1 shl 16, ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM or ValidationFlags.CONCATENATED_TRANSFORM, { validateVertices() })
@@ -60,7 +62,7 @@ open class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureCom
 	private var cached: CachedGroup? = null
 
 	private var _path: String? = null
-	override final var path: String?
+	override var path: String?
 		get() = _path
 		set(value) {
 			if (_path == value) return
@@ -75,14 +77,14 @@ open class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureCom
 			}
 		}
 
-	override final var texture: Texture?
+	override var texture: Texture?
 		get() = sprite.texture
 		set(value) {
 			path = null
 			_setTexture(value)
 		}
 
-	protected open fun _setTexture(value: Texture?) {
+	private fun _setTexture(value: Texture?) {
 		if (sprite.texture == value) return
 		val oldTexture = sprite.texture
 		if (isActive) {

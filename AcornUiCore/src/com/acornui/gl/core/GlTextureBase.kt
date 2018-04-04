@@ -35,7 +35,7 @@ abstract class GlTextureBase(
 	 * The total number of components using this texture.
 	 * This is used to determine whether the texture should be created or deleted from the gpu.
 	 */
-	protected var refCount: Int = 0
+	private var refCount: Int = 0
 
 	override var target: TextureTarget = TextureTarget.TEXTURE_2D
 
@@ -92,10 +92,10 @@ abstract class GlTextureBase(
 
 		if (filterMin.useMipMap) {
 			if (!supportsNpot() && (!MathUtils.isPowerOfTwo(width) || !MathUtils.isPowerOfTwo(height))) {
-				Log.warn("MipMaps cannot be generated for non power of two textures (${width}x${height})")
+				Log.warn("MipMaps cannot be generated for non power of two textures (${width}x$height)")
 				gl.texParameteri(target.value, Gl20.TEXTURE_MIN_FILTER, TextureMinFilter.LINEAR.value)
 			} else {
-				gl.generateMipmap(target.value);
+				gl.generateMipmap(target.value)
 			}
 		}
 	}

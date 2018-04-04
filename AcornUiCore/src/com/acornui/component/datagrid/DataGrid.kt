@@ -43,6 +43,7 @@ import com.acornui.core.input.keyDown
 import com.acornui.core.input.wheel
 import com.acornui.math.*
 import com.acornui.math.MathUtils.clamp
+import com.acornui.math.Vector2.Companion
 import com.acornui.observe.IndexBinding
 import com.acornui.observe.bind
 import com.acornui.observe.bindIndex
@@ -1015,8 +1016,7 @@ class DataGrid<E>(
 			headerDivider.moveTo(0f, headerCells.height - headerDivider.height)
 		}
 
-		clipper.maskSize(bodyW, contents.height + headerCells.height + hScrollBarH)
-		clipper.setSize(clipper.maskBounds)
+		clipper.setSize(bodyW, contents.height + headerCells.height + hScrollBarH)
 		clipper.setPosition(pad.left, pad.top)
 
 		background?.setSize(out)
@@ -1422,10 +1422,10 @@ class DataGrid<E>(
 		val headerCellBackground = style.headerCellBackground(this)
 		val drag = headerCellBackground.dragAttachment()
 		drag.dragStart.add {
-			val columnIndex = it.currentTarget!!.getAttachment<Int>(COL_INDEX_KEY)!!
+			val columnIndex = it.currentTarget.getAttachment<Int>(COL_INDEX_KEY)!!
 			if (_columnReorderingEnabled && _columns[columnIndex].reorderable) {
 				columnMoveIndicator.visible = true
-				columnMoveIndicator.setSize(it.currentTarget!!.bounds)
+				columnMoveIndicator.setSize(it.currentTarget.bounds)
 				columnInsertionIndicator.visible = true
 				columnInsertionIndicator.setSize(null, height)
 			} else {
@@ -1434,7 +1434,7 @@ class DataGrid<E>(
 		}
 
 		drag.drag.add {
-			columnMoveIndicator.setPosition(it.currentTarget!!.x + (it.position.x - it.startPosition.x), 0f)
+			columnMoveIndicator.setPosition(it.currentTarget.x + (it.position.x - it.startPosition.x), 0f)
 			val localP = headerCells.windowToLocal(Vector2.obtain().set(it.position))
 
 			val currX = localP.x + hScrollModel.value
@@ -1444,7 +1444,7 @@ class DataGrid<E>(
 			index = minOf(index, _columns.indexOfLast2 { it.visible && it.reorderable } + 1)
 			val insertX = (if (index <= 0) 0f else if (index >= columnPositions.size) columnPositions.last() + columnWidths.last() else columnPositions[index]) - hScrollModel.value
 			columnInsertionIndicator.setPosition(insertX - columnInsertionIndicator.width * 0.5f, 0f)
-			localP.free()
+			Vector2.free(localP)
 		}
 
 		drag.dragEnd.add {
@@ -1453,13 +1453,13 @@ class DataGrid<E>(
 
 			val localP = headerCells.windowToLocal(Vector2.obtain().set(it.position))
 
-			val fromIndex = it.currentTarget!!.getAttachment<Int>(COL_INDEX_KEY)!!
+			val fromIndex = it.currentTarget.getAttachment<Int>(COL_INDEX_KEY)!!
 			val currX = localP.x + hScrollModel.value
 			var toIndex = columnPositions.sortedInsertionIndex(currX)
 			if (toIndex > 0 && currX < columnPositions[toIndex - 1] + columnWidths[toIndex - 1] * 0.5f) toIndex--
 			toIndex = maxOf(toIndex, _columns.indexOfFirst2 { it.visible && it.reorderable })
 			toIndex = minOf(toIndex, _columns.indexOfLast2 { it.visible && it.reorderable } + 1)
-			localP.free()
+			Vector2.free(localP)
 			moveColumn(fromIndex, toIndex)
 		}
 
@@ -1474,7 +1474,7 @@ class DataGrid<E>(
 		if (!_columnSortingEnabled || e.handled) {
 			return
 		}
-		val columnIndex = e.currentTarget!!.getAttachment<Int>(COL_INDEX_KEY) ?: return
+		val columnIndex = e.currentTarget.getAttachment<Int>(COL_INDEX_KEY) ?: return
 		val column = _columns[columnIndex]
 		if (!column.sortable) return
 		e.handled = true
@@ -1500,7 +1500,7 @@ class DataGrid<E>(
 		var colResizeStartX = 0f
 		var columnIndex = 0
 		drag.dragStart.add {
-			columnIndex = it.currentTarget!!.getAttachment<Int>(COL_INDEX_KEY)!!
+			columnIndex = it.currentTarget.getAttachment(COL_INDEX_KEY)!!
 			colResizeStartX = -hScrollModel.value + columnPositions[columnIndex]
 
 			if (explicitWidth != null && hScrollPolicy == ScrollPolicy.OFF) {
@@ -1518,7 +1518,7 @@ class DataGrid<E>(
 
 			val availableWidth = style.borderThickness.reduceWidth(explicitWidth)
 			var newWidth: Float = maxOf(column.minWidth, localP.x - colResizeStartX)
-			localP.free()
+			Vector2.free(localP)
 			if (availableWidth == null || hScrollPolicy != ScrollPolicy.OFF) {
 				setColumnWidth(columnIndex, newWidth)
 			} else {

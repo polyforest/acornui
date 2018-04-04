@@ -44,6 +44,7 @@ import com.acornui.core.input.InteractivityManager
 import com.acornui.core.input.InteractivityManagerImpl
 import com.acornui.core.input.KeyInput
 import com.acornui.core.input.MouseInput
+import com.acornui.core.input.interaction.ContextMenuManager
 import com.acornui.core.input.interaction.JvmClickDispatcher
 import com.acornui.core.input.interaction.UndoDispatcher
 import com.acornui.core.io.BufferFactory
@@ -344,6 +345,7 @@ open class LwjglApplication : ApplicationBase() {
 		FakeFocusMouse(owner.injector)
 		JvmClipboardDispatcher(owner.injector)
 		UndoDispatcher(owner.injector)
+		ContextMenuManager(owner.injector)
 	}
 
 	open suspend fun run(injector: Injector) {

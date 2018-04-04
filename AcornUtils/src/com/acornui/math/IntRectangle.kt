@@ -19,6 +19,7 @@
 package com.acornui.math
 
 import com.acornui.collection.Clearable
+import com.acornui.collection.ClearableObjectPool
 import com.acornui.serialization.*
 
 /**
@@ -261,6 +262,13 @@ data class IntRectangle(
 		y *= scalar
 		width *= scalar
 		height *= scalar
+	}
+
+	companion object {
+		private val pool = ClearableObjectPool { IntRectangle() }
+
+		fun obtain(): IntRectangle = pool.obtain()
+		fun free(obj: IntRectangle) = pool.free(obj)
 	}
 
 }

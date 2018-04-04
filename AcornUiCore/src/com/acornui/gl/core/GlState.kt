@@ -20,11 +20,17 @@ import com.acornui.collection.ArrayList
 import com.acornui.collection.arrayCopy
 import com.acornui.core.Disposable
 import com.acornui.core.di.DKey
-import com.acornui.core.graphics.*
+import com.acornui.core.graphics.BlendMode
+import com.acornui.core.graphics.CameraRo
+import com.acornui.core.graphics.Texture
+import com.acornui.core.graphics.rgbData
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
+import com.acornui.math.IntRectangle
+import com.acornui.math.IntRectangleRo
 import com.acornui.math.Matrix4
 import com.acornui.math.Matrix4Ro
+import kotlin.properties.Delegates
 
 /**
  * GlState stores OpenGl state information necessary for knowing whether basic operations can be batched.
@@ -177,6 +183,43 @@ class GlState(
 		}
 	}
 
+	/**
+	 * Returns whether scissoring is currently enabled.
+	 * @see scissor
+	 */
+	var scissorEnabled: Boolean by Delegates.observable(false) { prop, old, new ->
+		batch.flush(true)
+		if (new)
+			gl.enable(Gl20.SCISSOR_TEST)
+		else
+			gl.disable(Gl20.SCISSOR_TEST)
+	}
+
+
+	/**
+	 * We must copy the set scissor instead of maintaining a reference in case the reference is mutated.
+	 */
+	private val _scissor = IntRectangle()
+
+	/**
+	 * Gets the current scissor rectangle.
+	 * @param out Sets this rectangle to the current scissor rect.
+	 * @return Returns the [out] parameter.
+	 */
+	fun getScissor(out: IntRectangle): IntRectangle {
+		return out.set(_scissor)
+	}
+
+	fun scissor(value: IntRectangleRo) = scissor(value.x, value.y, value.width, value.height)
+
+	fun scissor(x: Int, y: Int, width: Int, height: Int) {
+		if (_scissor.x != x || _scissor.y != y || _scissor.width != width || _scissor.height != height) {
+			batch.flush(true)
+			_scissor.set(x, y, width, height)
+			gl.scissor(x, y, width, height)
+		}
+	}
+
 	private val _mvp = Matrix4()
 
 	fun camera(camera: CameraRo, model: Matrix4Ro = Matrix4.IDENTITY) {
@@ -260,4 +303,16 @@ private class ColorCache(
 			gl.uniform4f(uniform, value)
 		}
 	}
+}
+
+
+inline fun GlState.scissor(x: Int, y: Int, width: Int, height: Int, inner: () -> Unit) {
+	val oldRect = getScissor(IntRectangle.obtain())
+	val oldEnabled = scissorEnabled
+	scissorEnabled = true
+	scissor(x, y, width, height)
+	inner()
+	scissorEnabled = oldEnabled
+	scissor(oldRect)
+	IntRectangle.free(oldRect)
 }

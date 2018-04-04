@@ -29,6 +29,7 @@ import com.acornui.core.time.enterFrame
 import com.acornui.core.time.time
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.Vector2
+import com.acornui.math.Vector2.Companion
 import com.acornui.signal.StoppableSignal
 import com.acornui.signal.StoppableSignalImpl
 
@@ -108,7 +109,7 @@ class TossScroller(
 		historyPoints.add(Vector2.obtain().set(position.x, position.y))
 		historyTimes.add(time.nowMs())
 		if (historyPoints.size > MAX_HISTORY) {
-			historyPoints.poll().free()
+			Vector2.free(historyPoints.poll())
 			historyTimes.poll()
 		}
 	}
@@ -162,7 +163,7 @@ class TossScroller(
 
 	private fun clearHistory() {
 		for (i in 0..historyPoints.lastIndex) {
-			historyPoints[i].free()
+			Vector2.free(historyPoints[i])
 		}
 		historyPoints.clear()
 		historyTimes.clear()

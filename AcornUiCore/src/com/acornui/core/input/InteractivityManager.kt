@@ -80,9 +80,9 @@ interface InteractionEventRo : Stoppable {
 
 	val type: InteractionType<InteractionEventRo>
 
-	val target: UiComponentRo?
+	val target: UiComponentRo
 
-	val currentTarget: UiComponentRo?
+	val currentTarget: UiComponentRo
 
 	/**
 	 * True if this event was used in an interaction.
@@ -103,8 +103,8 @@ interface InteractionEventRo : Stoppable {
 interface InteractionEvent : InteractionEventRo, Clearable {
 
 	override var type: InteractionType<InteractionEventRo>
-	override var target: UiComponentRo?
-	override var currentTarget: UiComponentRo?
+	override var target: UiComponentRo
+	override var currentTarget: UiComponentRo
 
 	override val propagation: Propagation
 
@@ -128,8 +128,19 @@ abstract class InteractionEventBase : InteractionEvent {
 
 	override var handled: Boolean = false
 
-	override var target: UiComponentRo? = null
-	override var currentTarget: UiComponentRo? = null
+	private var _target: UiComponentRo? = null
+	override var target: UiComponentRo
+		get() = _target!!
+		set(value) {
+			_target = value
+		}
+
+	private var _currentTarget: UiComponentRo? = null
+	override var currentTarget: UiComponentRo
+		get() = _currentTarget!!
+		set(value) {
+			_currentTarget = value
+		}
 
 	override fun localize(currentTarget: UiComponentRo) {
 		this.currentTarget = currentTarget
@@ -152,8 +163,8 @@ abstract class InteractionEventBase : InteractionEvent {
 		type = InteractionEventRo.UNKNOWN
 		propagation.clear()
 		handled = false
-		target = null
-		currentTarget = null
+		_target = null
+		_currentTarget = null
 		_defaultPrevented = false
 	}
 }

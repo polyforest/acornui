@@ -194,7 +194,7 @@ data class Ray(
 		val u = cross.dot(origin)
 		val u2 = cross.dot(ray.origin)
 		if (u.notCloseTo(u2)) {
-			cross.free()
+			Vector3.free(cross)
 			return false
 		}
 
@@ -208,8 +208,8 @@ data class Ray(
 			ray.getEndPoint(t, out)
 		}
 
-		cross.free()
-		perp1.free()
+		Vector3.free(cross)
+		Vector3.free(perp1)
 		return true
 	}
 
@@ -270,6 +270,7 @@ data class Ray(
 		}
 	}
 
+	@Deprecated("Use Ray.free", ReplaceWith("Ray.free(this)"), DeprecationLevel.ERROR)
 	fun free() {
 		pool.free(this)
 	}
@@ -292,9 +293,8 @@ data class Ray(
 
 		private val pool = ClearableObjectPool { Ray() }
 
-		fun obtain(): Ray {
-			return pool.obtain()
-		}
+		fun obtain(): Ray = pool.obtain()
+		fun free(obj: Ray) = pool.free(obj)
 
 	}
 }
@@ -318,6 +318,7 @@ data class Ray2(
 		return intersects(origin, direction, ray.origin, ray.direction, out)
 	}
 
+	@Deprecated("Use Ray.free", ReplaceWith("Ray.free(this)"), DeprecationLevel.ERROR)
 	fun free() {
 		pool.free(this)
 	}
@@ -331,9 +332,8 @@ data class Ray2(
 
 		private val pool = ClearableObjectPool { Ray2() }
 
-		fun obtain(): Ray2 {
-			return pool.obtain()
-		}
+		fun obtain(): Ray2 = pool.obtain()
+		fun free(obj: Ray2) = pool.free(obj)
 
 		/**
 		 * Intersect two 2D Rays and return the scalar parameter of the first ray at the intersection point.

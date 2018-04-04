@@ -112,7 +112,7 @@ open class MouseInteraction : InteractionEventBase(), MouseInteractionRo {
 		if (!_localPositionIsValid) {
 			_localPositionIsValid = true
 			_localPosition.set(canvasX, canvasY)
-			currentTarget!!.windowToLocal(_localPosition)
+			currentTarget.windowToLocal(_localPosition)
 		}
 		return _localPosition
 	}

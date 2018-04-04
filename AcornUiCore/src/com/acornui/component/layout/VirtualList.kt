@@ -278,12 +278,12 @@ class VirtualList<E, S : Style, out T : LayoutData>(
 			val data: E = data[currentIndex]
 			val element = cache.obtain(currentIndex, isReversed)
 			if (currentIndex != element.index) element.index = currentIndex
+
 			if (data != element.data) element.data = data
 
 			val elementSelected = selection.getItemIsSelected(data)
-			if (element.toggled != elementSelected) {
+			if (element.toggled != elementSelected)
 				element.toggled = elementSelected
-			}
 
 			if (element.parent == null)
 				addChild(element)
@@ -310,10 +310,6 @@ class VirtualList<E, S : Style, out T : LayoutData>(
 			}
 			currentIndex += d
 		}
-	}
-
-	override fun draw() {
-		super.draw()
 	}
 
 	override fun dispose() {
@@ -461,7 +457,7 @@ private class VirtualListPool<E>(factory: () -> ListItemRenderer<E>) : ObjectPoo
 }
 
 
-interface ListItemRendererRo<E> : ItemRendererRo<E>, ToggleableRo {
+interface ListItemRendererRo<out E> : ItemRendererRo<E>, ToggleableRo {
 
 	/**
 	 * The index of the data in the List this ItemRenderer represents.

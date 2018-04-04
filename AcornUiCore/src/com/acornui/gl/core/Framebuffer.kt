@@ -37,7 +37,7 @@ class Framebuffer(
 	private val glState = injector.inject(GlState)
 	private val window = injector.inject(Window)
 
-	val framebufferHandle: GlFramebufferRef
+	private val framebufferHandle: GlFramebufferRef
 	private val depthbufferHandle: GlRenderbufferRef?
 	private val stencilbufferHandle: GlRenderbufferRef?
 

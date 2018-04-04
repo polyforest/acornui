@@ -2,6 +2,7 @@ package com.acornui.gl.component.drawing
 
 import com.acornui._assert
 import com.acornui.math.*
+import com.acornui.math.Vector2.Companion
 
 private val v1 = Vector2()
 private val v2 = Vector2()
@@ -39,8 +40,8 @@ fun line(x1: Float, y1: Float, x2: Float, y2: Float, controlA: Vector2? = null, 
 	val p1 = Vector2.obtain().set(x1, y1)
 	val p2 = Vector2.obtain().set(x2, y2)
 	val ret = line(p1, p2, controlA, controlB, controlAThickness, controlBThickness, init)
-	p1.free()
-	p2.free()
+	Vector2.free(p1)
+	Vector2.free(p2)
 	return ret
 }
 

@@ -32,11 +32,15 @@ import com.acornui.core.di.*
 import com.acornui.core.graphics.Camera
 import com.acornui.core.graphics.CameraRo
 import com.acornui.core.graphics.Window
-import com.acornui.core.input.*
+import com.acornui.core.input.InteractionEventRo
+import com.acornui.core.input.InteractionType
+import com.acornui.core.input.InteractivityManager
+import com.acornui.core.input.MouseState
 import com.acornui.core.time.TimeDriver
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.*
+import com.acornui.math.Ray.Companion
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
@@ -91,7 +95,6 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	 * This component does not have an alpha of 0f.
 	 */
 	fun isRendered(): Boolean
-
 }
 
 /**
@@ -375,7 +378,7 @@ open class UiComponentImpl(
 				addNode(TRANSFORM, r::updateTransform)
 				addNode(CONCATENATED_TRANSFORM, HIERARCHY_DESCENDING or TRANSFORM, r::updateConcatenatedTransform)
 				addNode(COLOR_TRANSFORM, r::updateColorTransform)
-				addNode(CONCATENATED_COLOR_TRANSFORM, COLOR_TRANSFORM, r::updateConcatenatedColorTransform)
+				addNode(CONCATENATED_COLOR_TRANSFORM, HIERARCHY_DESCENDING or COLOR_TRANSFORM, r::updateConcatenatedColorTransform)
 				addNode(INTERACTIVITY_MODE, r::updateInheritedInteractivityMode)
 			}
 		}
@@ -393,7 +396,7 @@ open class UiComponentImpl(
 		val ray = Ray.obtain()
 		globalToLocal(camera.getPickRay(windowCoord.x, windowCoord.y, 0f, 0f, window.width, window.height, ray))
 		rayToPlane(ray, windowCoord)
-		ray.free()
+		Ray.free(ray)
 		return windowCoord
 	}
 
@@ -438,14 +441,14 @@ open class UiComponentImpl(
 		val ray = Ray.obtain()
 		camera.getPickRay(canvasX, canvasY, 0f, 0f, window.width, window.height, ray)
 		val b = intersectsGlobalRay(ray)
-		ray.free()
+		Ray.free(ray)
 		return b
 	}
 
 	override fun intersectsGlobalRay(globalRay: RayRo): Boolean {
 		val v = Vector3.obtain()
 		val ret = intersectsGlobalRay(globalRay, v)
-		v.free()
+		Vector3.free(v)
 		return ret
 	}
 
@@ -467,10 +470,10 @@ open class UiComponentImpl(
 		val intersects = globalRay.intersects(topLeft, topRight, bottomRight, intersection) ||
 				globalRay.intersects(topLeft, bottomLeft, bottomRight, intersection)
 
-		topLeft.free()
-		topRight.free()
-		bottomRight.free()
-		bottomLeft.free()
+		Vector3.free(topLeft)
+		Vector3.free(topRight)
+		Vector3.free(bottomRight)
+		Vector3.free(bottomLeft)
 		return intersects
 	}
 

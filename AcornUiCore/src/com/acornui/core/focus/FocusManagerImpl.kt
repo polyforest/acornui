@@ -69,7 +69,7 @@ open class FocusManagerImpl : FocusManager {
 
 	private val rootMouseDownHandler = {
 		event: MouseInteractionRo ->
-		event.target!!.parentWalk {
+		event.target.parentWalk {
 			if (it is Focusable && it.focusEnabled) {
 				val changed = focused(it)
 				if (changed == FocusChangeResult.CANCELED) {
@@ -281,7 +281,7 @@ open class FocusManagerImpl : FocusManager {
 
 }
 
-class FocusNode private constructor() : Comparable<FocusNode> {
+private class FocusNode private constructor() : Comparable<FocusNode> {
 
 	var childIndex: Int = 0
 	var focusOrder: Float = 0f

@@ -478,6 +478,7 @@ class Vector2(
 		this.y = 0f
 	}
 
+	@Deprecated("Use Vector2.free", ReplaceWith("Vector2.free(this)"))
 	fun free() {
 		pool.free(this)
 	}
@@ -532,9 +533,8 @@ class Vector2(
 
 		private val pool = ClearableObjectPool { Vector2() }
 
-		fun obtain(): Vector2 {
-			return pool.obtain()
-		}
+		fun obtain(): Vector2 = pool.obtain()
+		fun free(obj: Vector2) = pool.free(obj)
 	}
 
 }

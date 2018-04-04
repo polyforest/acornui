@@ -137,11 +137,13 @@ class LightingRenderer(
 		gl.clearColor(Color.BLUE) // Blue represents a z / w depth of 1.0. (The camera's far position)
 		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT)
 		if (directionalLight.color != Color.BLACK) {
-			glState.batch.flush(true)
-			if (directionalLightCamera.update(directionalLight.direction, camera)) {
-				gl.uniformMatrix4fv(directionalShadowMapShader.getRequiredUniformLocation("u_directionalLightMvp"), false, directionalLightCamera.combined)
+			glState.scissor(1, 1, directionalShadowsFbo.width - 2, directionalShadowsFbo.height - 2) {
+				glState.batch.flush(true)
+				if (directionalLightCamera.update(directionalLight.direction, camera)) {
+					gl.uniformMatrix4fv(directionalShadowMapShader.getRequiredUniformLocation("u_directionalLightMvp"), false, directionalLightCamera.combined)
+				}
+				renderOcclusion()
 			}
-			renderOcclusion()
 		}
 		directionalShadowsFbo.end()
 		gl.clearColor(oldClearColor)
@@ -154,6 +156,7 @@ class LightingRenderer(
 		val oldClearColor = window.clearColor
 		gl.clearColor(Color.BLUE) // Blue represents a z / w depth of 1.0. (The camera's far position)
 		pointShadowsFbo.begin()
+
 		for (i in 0..minOf(numShadowPointLights - 1, pointLights.lastIndex)) {
 			val pointLight = pointLights[i]
 			val pointLightShadowMap = pointLightShadowMaps[i]
@@ -166,9 +169,11 @@ class LightingRenderer(
 					gl.framebufferTexture2D(Gl20.FRAMEBUFFER, Gl20.COLOR_ATTACHMENT0,
 							Gl20.TEXTURE_CUBE_MAP_POSITIVE_X + j, pointLightShadowMap.textureHandle!!, 0)
 					gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT)
-					pointLightCamera.update(pointLight, j)
-					gl.uniformMatrix4fv(u_pointLightMvp, false, pointLightCamera.camera.combined)
-					renderOcclusion()
+					glState.scissor(1, 1, pointShadowsFbo.width - 2, pointShadowsFbo.height - 2) {
+						pointLightCamera.update(pointLight, j)
+						gl.uniformMatrix4fv(u_pointLightMvp, false, pointLightCamera.camera.combined)
+						renderOcclusion()
+					}
 					glState.batch.flush(true)
 				}
 			}
@@ -190,12 +195,12 @@ class LightingRenderer(
 
 		glState.setTexture(directionalShadowsFbo.texture, DIRECTIONAL_SHADOW_UNIT)
 		gl.uniformMatrix4fv(lightingShaderUniforms.u_directionalLightMvp, false, u_directionalLightMvp.set(bias).mul(directionalLightCamera.combined))
-		gl.uniform1i(lightingShaderUniforms.u_shadowsEnabled, if (allowShadows) 1 else 0)
+		if (lightingShaderUniforms.u_shadowsEnabled != null)
+			gl.uniform1i(lightingShaderUniforms.u_shadowsEnabled, if (allowShadows) 1 else 0)
 		gl.uniform4f(lightingShaderUniforms.u_ambient, ambientLight.color.r, ambientLight.color.g, ambientLight.color.b, ambientLight.color.a)
 		gl.uniform4f(lightingShaderUniforms.u_directional, directionalLight.color.r, directionalLight.color.g, directionalLight.color.b, directionalLight.color.a)
-		if (lightingShaderUniforms.u_directionalLightDir != null) {
+		if (lightingShaderUniforms.u_directionalLightDir != null)
 			gl.uniform3f(lightingShaderUniforms.u_directionalLightDir, directionalLight.direction)
-		}
 		glState.blendMode(BlendMode.NORMAL, premultipliedAlpha = false)
 	}
 
@@ -234,10 +239,10 @@ class LightingRenderer(
 
 private class LightingShaderUniforms(
 		shader: ShaderProgram,
-		private val numPointLights: Int,
-		private val numShadowPointLights: Int) {
+		numPointLights: Int,
+		numShadowPointLights: Int) {
 	val u_directionalLightMvp: GlUniformLocationRef
-	val u_shadowsEnabled: GlUniformLocationRef
+	val u_shadowsEnabled: GlUniformLocationRef?
 	val u_resolutionInv: GlUniformLocationRef
 
 	val u_ambient: GlUniformLocationRef
@@ -251,7 +256,7 @@ private class LightingShaderUniforms(
 
 	init {
 		u_directionalLightMvp = shader.getRequiredUniformLocation("u_directionalLightMvp")
-		u_shadowsEnabled = shader.getRequiredUniformLocation("u_shadowsEnabled")
+		u_shadowsEnabled = shader.getUniformLocation("u_shadowsEnabled")
 		u_resolutionInv = shader.getRequiredUniformLocation("u_resolutionInv")
 
 		u_ambient = shader.getRequiredUniformLocation("u_ambient")

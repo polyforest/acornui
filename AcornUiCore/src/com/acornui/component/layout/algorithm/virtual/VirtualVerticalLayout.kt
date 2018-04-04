@@ -25,6 +25,7 @@ import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.ListItemRenderer
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.layout.algorithm.VerticalLayoutData
+import com.acornui.component.simpleItemRenderer
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
@@ -140,8 +141,8 @@ open class VirtualVerticalLayoutStyle : StyleBase() {
 /**
  * Creates a virtualized data scroller with a vertical layout.
  */
-fun <E> Owned.vDataScroller(
-		rendererFactory: LayoutDataProvider<VerticalLayoutData>.() -> ListItemRenderer<E>,
+fun <E : Any> Owned.vDataScroller(
+		rendererFactory: LayoutDataProvider<VerticalLayoutData>.() -> ListItemRenderer<E> = { simpleItemRenderer() },
 		data: ObservableList<E> = ActiveList(ArrayList()),
 		init: ComponentInit<DataScroller<E, VirtualVerticalLayoutStyle, VerticalLayoutData>> = {}
 ): DataScroller<E, VirtualVerticalLayoutStyle, VerticalLayoutData> {

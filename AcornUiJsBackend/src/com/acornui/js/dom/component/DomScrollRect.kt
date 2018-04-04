@@ -18,7 +18,6 @@ package com.acornui.js.dom.component
 
 import com.acornui.component.ElementContainerImpl
 import com.acornui.component.UiComponent
-import com.acornui.component.invalidateLayout
 import com.acornui.component.scroll.ScrollRect
 import com.acornui.core.di.Owned
 import com.acornui.math.*
@@ -31,7 +30,6 @@ class DomScrollRect(
 		private val element: HTMLElement = document.createElement("div") as HTMLDivElement
 ) : ElementContainerImpl<UiComponent>(owner, DomContainer(element)), ScrollRect {
 
-	private val _maskBounds = Bounds()
 	private val _contentBounds = Rectangle()
 
 	private val _borderRadius = Corners()
@@ -50,24 +48,11 @@ class DomScrollRect(
 	override val contentBounds: RectangleRo
 		get() = _contentBounds
 
-	init {
-		maskSize(100f, 100f)
-	}
-
 	override fun scrollTo(x: Float, y: Float) {
 		element.scrollLeft = x.toDouble()
 		element.scrollTop = y.toDouble()
 		_contentBounds.x = -x
 		_contentBounds.y = -y
-	}
-
-	override val maskBounds: BoundsRo
-		get() = _maskBounds
-
-	override fun maskSize(width: Float, height: Float) {
-		if (_maskBounds.width == width && _maskBounds.height == height) return
-		_maskBounds.set(width, height)
-		invalidateLayout()
 	}
 
 	init {
@@ -83,10 +68,12 @@ class DomScrollRect(
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+		val w = explicitWidth ?: 100f
+		val h = explicitHeight ?: 100f
 		super.updateLayout(explicitWidth, explicitHeight, out)
 		_contentBounds.width = out.width
 		_contentBounds.height = out.height
-		out.set(_maskBounds)
+		out.set(w, h)
 	}
 }
 

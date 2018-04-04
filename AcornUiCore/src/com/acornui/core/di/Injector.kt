@@ -48,7 +48,7 @@ operator fun Injector.plus(dependenciesList: List<DependencyPair<*>>): Injector 
 }
 
 class InjectorImpl(
-		private val parent: Injector? = null,
+		private val parent: Injector?,
 		dependenciesList: List<DependencyPair<*>>
 ) : Injector {
 

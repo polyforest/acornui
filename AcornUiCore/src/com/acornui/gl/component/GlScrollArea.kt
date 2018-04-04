@@ -171,7 +171,7 @@ open class GlScrollArea(
 		// Set the content mask to the explicit size of the contents stack, or the measured size if there was no bound.
 		val contentsSetW = scrollRect.explicitWidth ?: contents.width
 		val contentsSetH = scrollRect.explicitHeight ?: contents.height
-		scrollRect.maskSize(contentsSetW, contentsSetH)
+		scrollRect.setSize(contentsSetW, contentsSetH)
 		val vScrollBarW2 = if (needsVScrollBar) vScrollBarW else 0f
 		val hScrollBarH2 = if (needsHScrollBar) hScrollBarH else 0f
 

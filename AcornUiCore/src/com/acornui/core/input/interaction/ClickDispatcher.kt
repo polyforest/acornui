@@ -155,7 +155,7 @@ abstract class ClickDispatcher(
 		_: Any ->
 		if (pendingClick) {
 			pendingClick = false
-			interactivityManager.dispatch(clickEvent.target!!, clickEvent)
+			interactivityManager.dispatch(clickEvent.target, clickEvent)
 		}
 	}
 

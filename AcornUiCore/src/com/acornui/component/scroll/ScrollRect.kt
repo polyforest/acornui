@@ -21,7 +21,6 @@ import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
 import com.acornui.core.di.Owned
 import com.acornui.core.di.dKey
-import com.acornui.math.BoundsRo
 import com.acornui.math.CornersRo
 import com.acornui.math.RectangleRo
 
@@ -38,10 +37,6 @@ interface ScrollRect : ElementContainer<UiComponent> {
 		get() = contentBounds.height
 
 	fun scrollTo(x: Float, y: Float)
-
-	val maskBounds: BoundsRo
-
-	fun maskSize(width: Float, height: Float)
 
 	companion object {
 		val FACTORY_KEY = dKey<(owner: Owned) -> ScrollRect>()

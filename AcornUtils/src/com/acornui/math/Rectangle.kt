@@ -19,6 +19,7 @@
 package com.acornui.math
 
 import com.acornui.collection.Clearable
+import com.acornui.collection.ClearableObjectPool
 import com.acornui.serialization.*
 
 /**
@@ -434,6 +435,11 @@ data class Rectangle(
 		height *= scalar
 	}
 
+	companion object {
+		private val pool = ClearableObjectPool { Rectangle() }
+		fun obtain(): Rectangle = pool.obtain()
+		fun free(obj: Rectangle) = pool.free(obj)
+	}
 }
 
 object RectangleSerializer : To<Rectangle>, From<Rectangle> {

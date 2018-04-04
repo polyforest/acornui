@@ -284,7 +284,7 @@ interface TextInput : Focusable, SelectableComponent, Styleable {
  * }
  */
 fun TextInput.replaceTextRange(startIndex: Int, endIndex: Int, newText: String, group: CommandGroup? = null) {
-	invokeCommand(ReplaceTextRangeCommand(startIndex, text.substring(MathUtils.clamp(startIndex, 0, text.length), MathUtils.clamp(endIndex, 0, text.length)), newText, group))
+	invokeCommand(ReplaceTextRangeCommand(this, startIndex, text.substring(MathUtils.clamp(startIndex, 0, text.length), MathUtils.clamp(endIndex, 0, text.length)), newText, group))
 }
 
 var TextInput.selectable: Boolean

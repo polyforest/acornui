@@ -22,6 +22,7 @@ import com.acornui.core.mvc.CommandType
 import com.acornui.core.mvc.StateCommand
 
 class ReplaceTextRangeCommand(
+		val target: Any?,
 		val startIndex: Int,
 		val oldText: String,
 		val newText: String,
@@ -34,7 +35,7 @@ class ReplaceTextRangeCommand(
 		get() = startIndex + oldText.length
 
 	override fun reverse(): Command {
-		return ReplaceTextRangeCommand(startIndex, newText, oldText, group)
+		return ReplaceTextRangeCommand(target, startIndex, newText, oldText, group)
 	}
 
 	companion object : CommandType<ReplaceTextRangeCommand>

@@ -193,7 +193,7 @@ open class ActiveList<E>(initialCapacity: Int) : Clearable, MutableObservableLis
 		iteratorPool.free(iterator)
 	}
 
-	override final fun batchUpdate(inner: () -> Unit) {
+	final override fun batchUpdate(inner: () -> Unit) {
 		updatesEnabled = false
 		inner()
 		updatesEnabled = true

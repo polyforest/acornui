@@ -54,6 +54,7 @@ data class Bounds(
 		this.height = 0f
 	}
 
+	@Deprecated("Use Bounds.free", ReplaceWith("Bounds.free(this)"))
 	fun free() {
 		pool.free(this)
 	}
@@ -62,9 +63,8 @@ data class Bounds(
 
 		private val pool = ClearableObjectPool { Bounds() }
 
-		fun obtain(): Bounds {
-			return pool.obtain()
-		}
+		fun obtain(): Bounds = pool.obtain()
+		fun free(obj: Bounds) = pool.free(obj)
 	}
 
 }

@@ -49,7 +49,7 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner), Focusable {
 	private val stageMouseDownHandler = {
 		event: MouseInteractionRo ->
 
-		if (event.target == null || (!event.target!!.isDescendantOf(colorPalette) && !event.target!!.isDescendantOf(this))) {
+		if (!event.target.isDescendantOf(colorPalette) && !event.target.isDescendantOf(this)) {
 			close()
 		}
 	}

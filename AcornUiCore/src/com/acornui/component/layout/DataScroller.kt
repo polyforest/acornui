@@ -16,10 +16,16 @@ import com.acornui.core.cache.hideAndFlip
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.core.focus.Focusable
+import com.acornui.core.input.interaction.MouseInteractionRo
 import com.acornui.core.input.interaction.click
-import com.acornui.core.input.interaction.rollOver
+import com.acornui.core.input.mouseMove
 import com.acornui.core.input.wheel
 import com.acornui.math.Bounds
+import com.acornui.math.Vector2
+import com.acornui.math.Vector2Ro
+import com.acornui.signal.Cancel
+import com.acornui.signal.Signal
+import com.acornui.signal.Signal2
 
 // TODO: largest renderer?
 // TODO: I don't love the virtual layout algorithms.
@@ -63,22 +69,7 @@ class DataScroller<E, S : Style, out T : LayoutData>(
 
 	private val rowBackgrounds = clipper.addElement(container())
 	private val rowBackgroundsCache = IndexedCache {
-		val c = style.rowBackground(rowBackgrounds)
-		c.click().add {
-			if (!it.handled && c.rowIndex >= 0 && c.rowIndex < data.size) {
-				val e = data[c.rowIndex]
-				it.handled = true
-				selection.selectedItem = e
-			}
-		}
-		c.rollOver().add {
-			if (!it.handled && c.rowIndex >= 0 && c.rowIndex < data.size) {
-				val e = data[c.rowIndex]
-				it.handled = true
-				highlighted.selectedItem = e
-			}
-		}
-		c
+		style.rowBackground(rowBackgrounds)
 	}
 
 	private val contents = clipper.addElement(virtualList(rendererFactory, layoutAlgorithm, layoutStyle, data) {
@@ -148,12 +139,22 @@ class DataScroller<E, S : Style, out T : LayoutData>(
 			bottomContents.onRendererFreed = value
 		}
 
+	var selectable: Boolean = true
+	var highlightable: Boolean = true
+
 
 	//---------------------------------------------------
 	// Children
 	//---------------------------------------------------
 
 	private var background: UiComponent? = null
+
+	private val _mousePosition = Vector2()
+
+	private val stageMouseMoveHandler = {
+		e: MouseInteractionRo ->
+		if (highlightable) updateHighlight()
+	}
 
 	init {
 		styleTags.add(DataScroller)
@@ -172,6 +173,41 @@ class DataScroller<E, S : Style, out T : LayoutData>(
 			tossScroller.stop()
 			scrollModel.value += (if (isVertical) it.deltaY else it.deltaX) / scrollBar.modelToPixels
 		}
+
+		click().add {
+			if (selectable && !it.handled) {
+				val e = getElementUnderPosition(mousePosition(_mousePosition))
+				if (e != null) {
+						it.handled = true
+						selection.selectedItem = e
+				}
+			}
+		}
+	}
+
+	override fun onActivated() {
+		super.onActivated()
+		stage.mouseMove().add(stageMouseMoveHandler)
+	}
+
+	override fun onDeactivated() {
+		super.onDeactivated()
+		stage.mouseMove().remove(stageMouseMoveHandler)
+	}
+
+	private fun updateHighlight() {
+		val e = getElementUnderPosition(mousePosition(_mousePosition))
+		highlighted.selectedItem = e
+	}
+
+	private fun getElementUnderPosition(p: Vector2Ro): E? {
+		for (i in rowBackgroundsCache.startIndex .. rowBackgroundsCache.startIndex + rowBackgroundsCache.size - 1) {
+			val bg = rowBackgroundsCache.getCached(i) ?: continue
+			if (p.x >= bg.x && p.y >= bg.y && p.x < bg.right && p.y < bg.bottom) {
+				return data[bg.rowIndex]
+			}
+		}
+		return null
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
@@ -250,27 +286,30 @@ class DataScroller<E, S : Style, out T : LayoutData>(
 		val activeRenderers = contents.activeRenderers
 		for (i in 0..activeRenderers.lastIndex) {
 			val activeRenderer = activeRenderers[i]
+			val e = activeRenderer.data!!
 			val rowBackground = rowBackgroundsCache.obtain(activeRenderer.index, true)
 			if (rowBackground.parent == null) {
 				rowBackgrounds.addElement(rowBackground)
 			}
 			@Suppress("UNCHECKED_CAST")
-			rowMap[activeRenderer.data as E] = rowBackground
+			rowMap[e] = rowBackground
 			rowBackground.visible = true
 			rowBackground.rowIndex = activeRenderer.index
+			rowBackground.toggled = _selection.getItemIsSelected(e)
+			rowBackground.highlighted = _highlighted.getItemIsSelected(e)
 			if (isVertical) {
-				rowBackground.setSize(contents.explicitWidth, activeRenderer.height)
+				rowBackground.setSize(bottomContents.width, activeRenderer.height)
 				rowBackground.moveTo(0f, activeRenderer.y)
 			} else {
-				rowBackground.setSize(activeRenderer.width, contents.explicitHeight)
+				rowBackground.setSize(activeRenderer.width, bottomContents.height)
 				rowBackground.moveTo(activeRenderer.x, 0f)
 			}
 		}
 
 		rowBackgroundsCache.hideAndFlip()
 
-		clipper.maskSize(contents.explicitWidth ?: 0f, contents.explicitHeight ?: 0f)
-		clipper.setSize(contents.explicitWidth, contents.explicitHeight)
+		clipper.setSize(bottomContents.width, bottomContents.height)
+		//clipper.setSize(contents.explicitWidth, contents.explicitHeight)
 		background?.setSize(out)
 		highlight?.setSize(out)
 	}
@@ -305,7 +344,6 @@ private class DataScrollerSelection<E>(private val data: List<E>, private val li
 		rowMap[item]?.toggled = selected
 	}
 }
-
 
 private class DataScrollerHighlight<E>(private val data: List<E>, private val rowMap: Map<E, RowBackground>) : SelectionBase<E>() {
 	override fun walkSelectableItems(callback: (E) -> Unit) {

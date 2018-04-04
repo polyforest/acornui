@@ -63,7 +63,7 @@ interface AudioManager : AudioManagerRo, UpdatableChild {
 	}
 }
 
-open class AudioManagerImpl(override final val simultaneousSounds: Int = 8) : UpdatableChildBase(), AudioManager, Disposable {
+open class AudioManagerImpl(final override val simultaneousSounds: Int = 8) : UpdatableChildBase(), AudioManager, Disposable {
 
 	override val activeSounds = ActiveList<Sound>(simultaneousSounds)
 	override val activeMusics = ActiveList<Music>()

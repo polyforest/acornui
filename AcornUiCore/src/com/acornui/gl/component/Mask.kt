@@ -27,6 +27,8 @@ import com.acornui.gl.core.ShaderBatch
 import com.acornui.gl.core.scissor
 import com.acornui.graphics.Color
 import com.acornui.math.*
+import com.acornui.math.Vector3.Companion
+import kotlin.math.roundToInt
 
 object StencilUtil {
 
@@ -79,15 +81,12 @@ class GlScrollRect(
 
 	override var borderRadius: CornersRo by validationProp(Corners(), ValidationFlags.LAYOUT)
 
-	private val _maskBounds = Bounds()
 	private val gl = inject(Gl20)
 
 	private val glState = inject(GlState)
 
 	init {
 		maskClip.interactivityMode = InteractivityMode.NONE
-//		maskClip.includeInLayout = false
-		maskSize(100f, 100f)
 	}
 
 	private val _contentBounds = Rectangle()
@@ -109,29 +108,22 @@ class GlScrollRect(
 		contents.setPosition(-x, -y)
 	}
 
-	override val maskBounds: BoundsRo
-		get() = _maskBounds
-
-	override fun maskSize(width: Float, height: Float) {
-		if (_maskBounds.width == width && _maskBounds.height == height) return
-		_maskBounds.set(width, height)
-		invalidateLayout()
-	}
-
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+		val w = explicitWidth ?: 100f
+		val h = explicitHeight ?: 100f
 		val borderRadius = borderRadius
 		if (borderRadius.isEmpty()) {
 			// An optimized case where we can just scale the mask instead of recreating the mesh.
 			maskClip.style.borderRadius = borderRadius
 			maskClip.setSize(1f, 1f)
-			maskClip.setScaling(_maskBounds.width, _maskBounds.height)
+			maskClip.setScaling(w, h)
 		} else {
 			// Our mask needs curved borders.
 			maskClip.style.borderRadius = borderRadius
-			maskClip.setSize(_maskBounds.width, _maskBounds.height)
+			maskClip.setSize(w, h)
 			maskClip.setScaling(1f, 1f)
 		}
-		out.set(_maskBounds)
+		out.set(w, h)
 	}
 
 	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
@@ -153,10 +145,10 @@ class GlScrollRect(
 
 
 /**
- * Calls scissorLocal with the default rectangle of 0, 0, width / scaleX, height / scaleY
+ * Calls scissorLocal with the default rectangle of 0, 0, width, height
  */
-inline fun UiComponent.scissorLocal(inner: () -> Unit) {
-	scissorLocal(0f, 0f, width / scaleX, height / scaleY, inner)
+fun UiComponent.scissorLocal(inner: () -> Unit) {
+	scissorLocal(0f, 0f, width, height, inner)
 }
 
 /**
@@ -164,7 +156,7 @@ inline fun UiComponent.scissorLocal(inner: () -> Unit) {
  * The coordinates will be converted to global automatically.
  * Note that this will not work properly for rotated components.
  */
-inline fun UiComponent.scissorLocal(x: Float, y: Float, width: Float, height: Float, inner: () -> Unit) {
+fun UiComponent.scissorLocal(x: Float, y: Float, width: Float, height: Float, inner: () -> Unit) {
 	val tmp = Vector3.obtain()
 	localToWindow(tmp.set(x, y, 0f))
 	val sX1 = tmp.x
@@ -172,15 +164,9 @@ inline fun UiComponent.scissorLocal(x: Float, y: Float, width: Float, height: Fl
 	localToWindow(tmp.set(width, height, 0f))
 	val sX2 = tmp.x
 	val sY2 = tmp.y
-	tmp.free()
+	Vector3.free(tmp)
 
-	val batch = inject(GlState).batch
-	batch.flush(true)
-	val gl = inject(Gl20)
+	val glState = inject(GlState)
 	val window = inject(Window)
-	gl.enable(Gl20.SCISSOR_TEST)
-	gl.scissor(minOf(sX1, sX2), window.height - maxOf(sY1, sY2), MathUtils.abs(sX2 - sX1), MathUtils.abs(sY2 - sY1))
-	inner()
-	batch.flush(true)
-	gl.disable(Gl20.SCISSOR_TEST)
+	glState.scissor(minOf(sX1, sX2).roundToInt(), (window.height - maxOf(sY1, sY2)).roundToInt(), MathUtils.abs(sX2 - sX1).roundToInt(), MathUtils.abs(sY2 - sY1).roundToInt(), inner)
 }

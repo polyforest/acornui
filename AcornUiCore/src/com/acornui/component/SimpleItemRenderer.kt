@@ -2,13 +2,15 @@ package com.acornui.component
 
 import com.acornui.component.layout.ListItemRenderer
 import com.acornui.component.layout.SizeConstraints
+import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
-import com.acornui.component.style.styleTag
+import com.acornui.component.style.StyleType
 import com.acornui.component.text.text
 import com.acornui.core.di.Owned
 import com.acornui.core.text.StringFormatter
 import com.acornui.core.text.ToStringFormatter
 import com.acornui.math.Bounds
+import com.acornui.math.Pad
 
 /**
  * A SimpleItemRenderer is a [ListItemRenderer] implementation that displays data as text using a formatter.
@@ -33,7 +35,10 @@ class SimpleItemRenderer<E : Any>(
 			textField.text = text
 		}
 
+	val style = bind(SimpleItemRendererStyle())
+
 	init {
+		styleTags.add(Companion)
 		interactivityMode = InteractivityMode.NONE
 	}
 
@@ -42,15 +47,23 @@ class SimpleItemRenderer<E : Any>(
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+		val pad = style.padding
 		super.updateLayout(explicitWidth, explicitHeight, out)
-		textField.setSize(explicitWidth, explicitHeight)
-		out.set(textField.bounds)
+		textField.setSize(pad.expandWidth(explicitWidth), pad.expandHeight(explicitHeight))
+		textField.moveTo(pad.left, pad.top)
+		out.set(pad.expandWidth2(textField.width), pad.expandHeight2(textField.height))
 	}
 
-	companion object : StyleTag {
-		val EVEN_STYLE = styleTag()
-		val ODD_STYLE = styleTag()
-	}
+	companion object : StyleTag
+}
+
+class SimpleItemRendererStyle : StyleBase() {
+
+	override val type: StyleType<SimpleItemRendererStyle> = SimpleItemRendererStyle
+
+	var padding by prop(Pad())
+
+	companion object : StyleType<SimpleItemRendererStyle>
 }
 
 fun <E : Any> Owned.simpleItemRenderer(formatter: StringFormatter<E> = ToStringFormatter, init: ComponentInit<SimpleItemRenderer<E>> = {}): SimpleItemRenderer<E> {

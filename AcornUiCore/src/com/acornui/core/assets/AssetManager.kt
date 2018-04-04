@@ -54,8 +54,8 @@ interface AssetManager : Disposable, Progress {
 	 * ```
 	 *
 	 * @param path The location of the asset.
-	 * @param type The type of asset the path represents. For common asset types, see [AssetTypes]
-	 * @see AssetTypes
+	 * @param type The type of asset the path represents. For common asset types, see [AssetType]
+	 * @see AssetType
 	 */
 	fun <T> load(path: String, type: AssetType<T>): AssetLoader<T>
 

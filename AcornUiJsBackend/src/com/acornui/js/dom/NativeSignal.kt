@@ -29,19 +29,24 @@ class NativeSignal<T : InteractionEventRo>(
 	@Suppress("UNCHECKED_CAST")
 	private val wrappedHandler: (Event) -> dynamic = {
 		if (host.interactivityEnabled) {
-			val returnVal = handler(it)
-			event.type = type
-			event.target = findComponentFromDom(it.target, host)
-			event.localize(host)
-			dispatch(event as T)
-			if (event.defaultPrevented())
-				it.preventDefault()
-			if (event.propagation.immediatePropagationStopped())
-				it.stopImmediatePropagation()
-			else if (event.propagation.propagationStopped())
-				it.stopPropagation()
+			val target = findComponentFromDom(it.target, host)
+			if (target != null) {
+				val returnVal = handler(it)
+				event.type = type
+				event.target = target
+				event.localize(host)
+				dispatch(event as T)
+				if (event.defaultPrevented())
+					it.preventDefault()
+				if (event.propagation.immediatePropagationStopped())
+					it.stopImmediatePropagation()
+				else if (event.propagation.propagationStopped())
+					it.stopPropagation()
 
-			returnVal
+				returnVal
+			} else {
+				Unit
+			}
 		} else {
 			Unit
 		}

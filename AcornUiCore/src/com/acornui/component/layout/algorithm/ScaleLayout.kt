@@ -27,6 +27,7 @@ import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.math.Vector2
+import com.acornui.math.Vector2.Companion
 
 /**
  * This layout will scale and position its elements to fit the provided dimensions of the box.
@@ -101,7 +102,7 @@ object ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 			if (explicitWidth == null) out.width = maxOf(out.width, size.x + padding.left + padding.right)
 			if (explicitHeight == null) out.height = maxOf(out.height, size.y + padding.top + padding.bottom)
 		}
-		size.free()
+		Vector2.free(size)
 	}
 }
 
