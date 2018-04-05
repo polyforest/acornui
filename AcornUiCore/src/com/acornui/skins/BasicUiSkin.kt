@@ -34,6 +34,8 @@ import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.SimpleHighlight
 import com.acornui.core.graphics.atlas
 import com.acornui.core.graphics.contentsAtlas
+import com.acornui.core.input.interaction.ContextMenuStyle
+import com.acornui.core.input.interaction.ContextMenuView
 import com.acornui.core.input.interaction.enableDownRepeat
 import com.acornui.core.popup.PopUpManager
 import com.acornui.core.userInfo
@@ -83,6 +85,7 @@ open class BasicUiSkin(
 		rowsStyle()
 		formStyle()
 		treeStyle()
+		contextMenuStyle()
 		target.invalidateStyles()
 	}
 
@@ -569,6 +572,14 @@ open class BasicUiSkin(
 		val charStyle = CharStyle()
 		charStyle.selectable = false
 		target.addStyleRule(charStyle, withParent(DefaultTreeItemRenderer))
+	}
+
+	protected open fun contextMenuStyle() {
+		val contextMenuStyle = ContextMenuStyle()
+		contextMenuStyle.rightArrow = {
+			atlas(theme.atlasPath, "RightArrow")
+		}
+		target.addStyleRule(contextMenuStyle, ContextMenuView)
 	}
 
 }

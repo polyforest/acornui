@@ -23,19 +23,29 @@ import com.acornui.component.text.text
 import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Owned
-import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.input.*
+import com.acornui.core.popup.PopUpInfo
+import com.acornui.core.popup.PopUpManager
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
+import com.acornui.signal.Signal
+import com.acornui.signal.Signal1
 import com.acornui.signal.StoppableSignal
 
-class ContextMenuManager(override val injector: Injector) : Scoped, Disposable {
+class ContextMenuManager(override val owner: Owned) : Owned, Disposable {
 
-	private val contextEvent = ContextInteraction()
+	private val _disposed = Signal1<Owned>()
+	override val disposed: Signal<(Owned) -> Unit>
+		get() = _disposed
+
+	override val injector: Injector = owner.injector
+
+	private val contextEvent = ContextMenuInteraction()
 	private val interactivity = inject(InteractivityManager)
+	private val popUpManager = inject(PopUpManager)
 
 	init {
 		stage.rightClick().add(this::rightClickHandler)
@@ -45,30 +55,36 @@ class ContextMenuManager(override val injector: Injector) : Scoped, Disposable {
 	private fun rightClickHandler(event: MouseInteractionRo) {
 		if (!event.defaultPrevented()) {
 			contextEvent.clear()
+			contextEvent.type = ContextMenuInteractionRo.CONTEXT_MENU
 			interactivity.dispatch(event.target, contextEvent)
 			if (!contextEvent.defaultPrevented() && contextEvent.menuGroups.isNotEmpty()) {
 				event.preventDefault() // Prevent native context menu
-				println("Create menu...")
+
+				val view = ContextMenuView(this)
+				view.setData(contextEvent.menuGroups)
+				popUpManager.addPopUp(PopUpInfo(view, dispose = true))
 			}
 		}
 	}
 
 	override fun dispose() {
 		stage.rightClick().remove(this::rightClickHandler)
+		_disposed.dispatch(this)
+		_disposed.dispose()
 	}
 }
 
-interface ContextInteractionRo : InteractionEventRo {
+interface ContextMenuInteractionRo : InteractionEventRo {
 
 	fun addMenuGroup(group: ContextMenuGroup, priority: Float = 0f)
 
 	companion object {
 
-		val CONTEXT_MENU = InteractionType<ContextInteractionRo>("contextMnu")
+		val CONTEXT_MENU = InteractionType<ContextMenuInteractionRo>("contextMenu")
 	}
 }
 
-class ContextInteraction : InteractionEventBase(), ContextInteractionRo {
+class ContextMenuInteraction : InteractionEventBase(), ContextMenuInteractionRo {
 
 	private val _menuGroups = ArrayList<ContextMenuGroup>()
 
@@ -85,8 +101,6 @@ class ContextInteraction : InteractionEventBase(), ContextInteractionRo {
 		_menuGroups.add(index, group)
 		menuGroupPriorities.add(index, priority)
 	}
-
-	operator fun ContextMenuGroup.unaryPlus() = addMenuGroup(this)
 
 	override fun clear() {
 		super.clear()
@@ -170,15 +184,14 @@ class ContextMenuView(owner: Owned) : ContainerImpl(owner) {
 			for (i in 0..itemViews.lastIndex) {
 				val itemView = itemViews[i]
 
-				val rightArrow = itemView.rightArrow
-				if (rightArrow != null) {
-					rightArrow.dispose()
-					itemView.rightArrow = contents.addElement(it.rightArrow(this))
-				}
+				itemView.rightArrow?.dispose()
+				itemView.rightArrow = if (itemView.item.children.isEmpty()) null else contents.addElement(it.rightArrow(this))
 				itemView.background.dispose()
 				itemView.background = rowBackgrounds.addElement(it.rowBackground(this))
 			}
 		}
+
+		click().add(this::clickHandler)
 	}
 
 	override fun onActivated() {
@@ -190,6 +203,14 @@ class ContextMenuView(owner: Owned) : ContainerImpl(owner) {
 		super.onDeactivated()
 		stage.mouseMove().remove(stageMouseMoveHandler)
 	}
+
+	private fun clickHandler(event: MouseInteractionRo) {
+		if (!event.defaultPrevented()) {
+			val e = getElementUnderPosition(mousePosition(_mousePosition)) ?: return
+			e.item.onSelected()
+		}
+	}
+
 
 	private fun updateHighlight() {
 		val e = getElementUnderPosition(mousePosition(_mousePosition))
@@ -211,6 +232,7 @@ class ContextMenuView(owner: Owned) : ContainerImpl(owner) {
 	}
 
 	fun setData(value: List<ContextMenuGroup>) {
+		validate(ValidationFlags.STYLES)
 		contents.clearElements(true)
 		rowBackgrounds.clearElements(true)
 		itemViews.clear()
@@ -224,7 +246,7 @@ class ContextMenuView(owner: Owned) : ContainerImpl(owner) {
 					val label = +text(item.text)
 					val hotkey = item.hotkey
 					val hotkeyLabel = if (hotkey != null) +text(hotkey.label) else null
-					val rightArrow = +style.rightArrow(this)
+					val rightArrow = if (item.children.isEmpty()) null else +style.rightArrow(this)
 					val rowBackground = rowBackgrounds.addElement(style.rowBackground(this))
 					val itemView = ContextMenuItemView(item, item.icon, label, hotkeyLabel, rightArrow, rowBackground)
 					itemViews.add(itemView)
@@ -341,6 +363,6 @@ class ContextMenuStyle : StyleBase() {
 /**
  * Dispatched when the mouse or touch is pressed down on this element.
  */
-fun UiComponentRo.contextMenu(isCapture: Boolean = false): StoppableSignal<ContextInteractionRo> {
-	return createOrReuse(ContextInteractionRo.CONTEXT_MENU, isCapture)
+fun UiComponentRo.contextMenu(isCapture: Boolean = false): StoppableSignal<ContextMenuInteractionRo> {
+	return createOrReuse(ContextMenuInteractionRo.CONTEXT_MENU, isCapture)
 }

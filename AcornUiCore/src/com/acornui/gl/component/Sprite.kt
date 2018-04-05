@@ -99,10 +99,10 @@ class Sprite {
 	val naturalHeight: Float
 		get() {
 			val t = texture ?: return 0f
-			if (isRotated) {
-				return t.width.toFloat() * MathUtils.abs(u2 - u)
+			return if (isRotated) {
+				t.width.toFloat() * MathUtils.abs(u2 - u)
 			} else {
-				return t.height.toFloat() * MathUtils.abs(v2 - v)
+				t.height.toFloat() * MathUtils.abs(v2 - v)
 			}
 		}
 

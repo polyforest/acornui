@@ -1104,6 +1104,7 @@ data class Matrix4(
 
 	}
 
+	// TODO: support shearXY, shearZY, etc
 	/**
 	 * Postmultiplies this matrix by a shear matrix.
 	 * @param shearXZ The shear in x direction.

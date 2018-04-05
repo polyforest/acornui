@@ -345,7 +345,7 @@ open class LwjglApplication : ApplicationBase() {
 		FakeFocusMouse(owner.injector)
 		JvmClipboardDispatcher(owner.injector)
 		UndoDispatcher(owner.injector)
-		ContextMenuManager(owner.injector)
+		ContextMenuManager(owner)
 	}
 
 	open suspend fun run(injector: Injector) {
