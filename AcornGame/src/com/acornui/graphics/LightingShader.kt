@@ -1,6 +1,7 @@
 package com.acornui.graphics
 
 import com.acornui.gl.core.Gl20
+import com.acornui.gl.core.SHADER_PRECISION
 import com.acornui.gl.core.ShaderProgram
 import com.acornui.gl.core.ShaderProgramBase
 
@@ -14,7 +15,7 @@ vec4 packFloat(const in float value) {
 }
 """
 
-private val UNPACK_FLOAT: String = """
+private const val UNPACK_FLOAT: String = """
 float unpackFloat(const in vec4 rgba_depth) {
 	const vec4 bit_shift = vec4(1.0/(256.0*256.0*256.0), 1.0/(256.0*256.0), 1.0/256.0, 1.0);
 	float depth = dot(rgba_depth, bit_shift);
@@ -25,6 +26,8 @@ float unpackFloat(const in vec4 rgba_depth) {
 class LightingShader(gl: Gl20, numPointLights: Int, numShadowPointLights: Int, useModel: Boolean = false) : ShaderProgramBase(
 		gl, vertexShaderSrc = """
 #version 100
+
+$SHADER_PRECISION
 
 attribute vec4 a_position;
 attribute vec3 a_normal;
@@ -49,34 +52,27 @@ void main() {
 	v_directionalShadowCoord = u_directionalLightMvp * v_worldPosition;
 }
 """, fragmentShaderSrc = """
-#ifdef GL_ES
-#define LOWP lowp
-#define MEDIUMP mediump
-#define HIGHP highp
-precision mediump float;
-#else
-#define LOWP
-#define MEDIUMP
-#define HIGHP
-#endif
+#version 100
+
+$SHADER_PRECISION
 
 struct PointLight {
 	float radius;
-	LOWP vec3 position;
-	LOWP vec3 color;
+	LOW_P vec3 position;
+	LOW_P vec3 color;
 };
 
-varying LOWP vec4 v_worldPosition;
-varying LOWP vec3 v_normal;
-varying LOWP vec4 v_colorTint;
-varying LOWP vec4 v_directionalShadowCoord;
-varying LOWP vec2 v_texCoord;
+varying LOW_P vec4 v_worldPosition;
+varying LOW_P vec3 v_normal;
+varying LOW_P vec4 v_colorTint;
+varying LOW_P vec4 v_directionalShadowCoord;
+varying LOW_P vec2 v_texCoord;
 
 uniform int u_shadowsEnabled;
-uniform LOWP vec2 u_resolutionInv;
-uniform LOWP vec4 u_ambient;
-uniform LOWP vec4 u_directional;
-uniform LOWP vec3 u_directionalLightDir;
+uniform LOW_P vec2 u_resolutionInv;
+uniform LOW_P vec4 u_ambient;
+uniform LOW_P vec4 u_directional;
+uniform LOW_P vec3 u_directionalLightDir;
 uniform sampler2D u_texture;
 uniform sampler2D u_directionalShadowMap;
 
@@ -113,10 +109,10 @@ vec3 getDirectionalColor() {
 vec3 getPointColor() {
 	vec3 pointColor = vec3(0.0);
 	PointLight pointLight;
-	HIGHP vec3 lightToPixel;
+	HIGH_P vec3 lightToPixel;
 	vec3 lightToPixelN;
 	float attenuation;
-	HIGHP float distance;
+	HIGH_P float distance;
 	float shadow;
 
 	for (int i = 0; i < $numPointLights; i++) {
@@ -173,6 +169,8 @@ class PointShadowShader(gl: Gl20, useModel: Boolean) : ShaderProgramBase(
 		gl, vertexShaderSrc = """
 #version 100
 
+$SHADER_PRECISION
+
 attribute vec4 a_position;
 attribute vec4 a_colorTint;
 attribute vec2 a_texCoord0;
@@ -191,16 +189,13 @@ void main() {
 	gl_Position = u_pointLightMvp * v_worldPosition;
 }
 """, fragmentShaderSrc = """
-#ifdef GL_ES
-#define LOWP lowp
-precision mediump float;
-#else
-#define LOWP
-#endif
+#version 100
+
+$SHADER_PRECISION
 
 uniform vec3 u_lightPosition;
 uniform float u_lightRadius;
-varying LOWP vec4 v_colorTint;
+varying LOW_P vec4 v_colorTint;
 varying vec2 v_texCoord;
 
 uniform sampler2D u_texture;
@@ -223,6 +218,8 @@ class DirectionalShadowShader(gl: Gl20, useModel: Boolean) : ShaderProgramBase(
 		gl, vertexShaderSrc = """
 #version 100
 
+$SHADER_PRECISION
+
 attribute vec4 a_position;
 attribute vec4 a_colorTint;
 attribute vec2 a_texCoord0;
@@ -240,14 +237,11 @@ void main() {
 	gl_Position = u_directionalLightMvp * worldPosition;
 }
 """, fragmentShaderSrc = """
-#ifdef GL_ES
-#define LOWP lowp
-precision mediump float;
-#else
-#define LOWP
-#endif
+#version 100
 
-varying LOWP vec4 v_colorTint;
+$SHADER_PRECISION
+
+varying LOW_P vec4 v_colorTint;
 varying vec2 v_texCoord;
 
 uniform sampler2D u_texture;

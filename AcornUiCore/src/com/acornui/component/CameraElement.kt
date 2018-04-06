@@ -51,6 +51,9 @@ interface CameraElement : CameraElementRo, Transformable {
 	/**
 	 * Overrides the camera to be used for this component (and its children).
 	 * Set to null to switch back to the inherited camera.
+	 *
+	 * Note that this does NOT request a render (so it is safe to call within a draw call).
+	 * If this is set outside of a render, window.requestRender should be invoked.
 	 */
 	var cameraOverride: CameraRo?
 }

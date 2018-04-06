@@ -28,6 +28,7 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.events.WheelEvent
+import kotlin.browser.document
 import kotlin.browser.window
 
 /**

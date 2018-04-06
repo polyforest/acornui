@@ -50,6 +50,11 @@ class ColorTest {
 		c.set8888(4294967295L)
 		assertEquals("ffffffff", c.toRgbaString())
 	}
+
+	@Test fun equals() {
+		assertEquals(Color(1f, 0.2f, 0.3f, 0.4f), Color(1f, 0.2f, 0.3f, 0.4f))
+		assertEquals(Color(), Color())
+	}
 }
 
 class HSLTest {

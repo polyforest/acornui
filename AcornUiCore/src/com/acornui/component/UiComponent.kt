@@ -304,7 +304,6 @@ open class UiComponentImpl(
 		get() = _cameraOverride
 		set(value) {
 			_cameraOverride = value
-			window.requestRender()
 		}
 
 	/**

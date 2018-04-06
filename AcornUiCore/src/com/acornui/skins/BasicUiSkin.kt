@@ -433,7 +433,6 @@ open class BasicUiSkin(
 				style.apply {
 					backgroundColor = theme.panelBgColor
 					borderThickness = Pad(theme.strokeThickness)
-					borderRadius = Corners(topLeft = 0f, topRight = 0f, bottomRight = theme.borderRadius, bottomLeft = theme.borderRadius)
 					borderColor = BorderColors(theme.stroke)
 				}
 			}

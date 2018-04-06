@@ -17,8 +17,10 @@
 package com.acornui.gl.core
 
 import com.acornui.collection.Clearable
+import com.acornui.component.*
 import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
+import com.acornui.core.di.Owned
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.io.BufferFactory
@@ -203,3 +205,43 @@ class OptionalStaticBatch(override val injector: Injector) : Scoped {
 }
 
 fun Scoped.optionalStaticBatch(): OptionalStaticBatch = OptionalStaticBatch(injector)
+
+open class StaticContainer(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
+
+	private val glState = inject(GlState)
+
+	private var _isDirty = true
+
+	fun dirty() {
+		_isDirty = true
+	}
+
+	private val staticBatch by lazy {
+		StaticShaderBatchImpl(inject(Gl20), glState)
+	}
+
+	override fun onInvalidated(flagsInvalidated: Int) {
+		super.onInvalidated(flagsInvalidated)
+		_isDirty = true
+	}
+
+	override fun draw() {
+		glState.batch.flush(true)
+		if (_isDirty) {
+			_isDirty = false
+			val oldBatch = glState.batch
+			staticBatch.clear()
+			glState.batch = staticBatch
+			super.draw()
+			glState.batch = oldBatch
+		}
+		glState.camera(camera, concatenatedTransform)
+		staticBatch.render()
+	}
+}
+
+fun Owned.staticContainer(init: ComponentInit<StaticContainer> = {}): StaticContainer {
+	val s = StaticContainer(this)
+	s.init()
+	return s
+}

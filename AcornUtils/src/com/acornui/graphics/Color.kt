@@ -18,6 +18,7 @@
 package com.acornui.graphics
 
 import com.acornui.collection.Clearable
+import com.acornui.core.closeTo
 import com.acornui.math.MathUtils
 import com.acornui.serialization.*
 import com.acornui.serialization.Writer
@@ -111,6 +112,18 @@ interface ColorRo {
 			else out.s = d / max
 		}
 		return out
+	}
+
+	/**
+	 * Returns true if each of the channels is close to the other color within the given tolerance.
+	 */
+	fun closeTo(other: ColorRo, tolerance: Float = 0.0001f): Boolean {
+		if (this === other) return true
+		if (!r.closeTo(other.r, tolerance)) return false
+		if (!g.closeTo(other.g, tolerance)) return false
+		if (!b.closeTo(other.b, tolerance)) return false
+		if (!a.closeTo(other.a, tolerance)) return false
+		return true
 	}
 
 	fun copy(): Color {

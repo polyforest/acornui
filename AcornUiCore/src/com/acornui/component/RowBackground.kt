@@ -90,7 +90,7 @@ class RowBackgroundStyle : StyleBase() {
 	var toggledEvenColor: ColorRo by prop(Color(1f, 1f, 0f, 0.4f))
 	var toggledOddColor: ColorRo by prop(Color(0.8f, 0.8f, 0f, 0.4f))
 	var highlightedEvenColor: ColorRo by prop(Color(0f, 0f, 0f, 0.1f))
-	var highlightedOddColor: ColorRo by prop(Color(1f, 1f, 1f, 0.1f))
+	var highlightedOddColor: ColorRo by prop(Color(0f, 0f, 0f, 0.1f))
 	var evenColor: ColorRo by prop(Color(0f, 0f, 0f, 0.05f))
 	var oddColor: ColorRo by prop(Color(1f, 1f, 1f, 0.05f))
 
