@@ -209,8 +209,14 @@ object TextValidationFlags {
 	const val SELECTION = 1 shl 16
 }
 
+/**
+ *
+ */
 class TfCharStyle {
 	var font: BitmapFont? = null
+	var underlined: Boolean = false
+	var strikeThrough: Boolean = false
+	var lineThickness: Float = 1f
 	val selectedTextColorTint: Color = Color()
 	val selectedBackgroundColor: Color = Color()
 	val textColorTint: Color = Color()
@@ -288,6 +294,9 @@ open class TextSpanElementImpl : TextSpanElement, ElementParent<TextElement>, St
 	override fun validateStyles() {
 		styles.validateStyles()
 		tfCharStyle.font = BitmapFontRegistry.getFont(charStyle)
+		tfCharStyle.underlined = charStyle.underlined
+		tfCharStyle.strikeThrough = charStyle.strikeThrough
+		tfCharStyle.lineThickness = charStyle.lineThickness
 	}
 
 	private val font: BitmapFont?
@@ -908,7 +917,7 @@ private fun Owned.textFlow(init: ComponentInit<TextFlow>): TextFlow {
 class TfChar private constructor() : TextElement, Clearable {
 
 	override var char: Char = CHAR_PLACEHOLDER
-	var style: TfCharStyle? = null
+	private var style: TfCharStyle? = null
 
 	override var textParent: TextSpanElementRo<TextElementRo>? = null
 
@@ -941,10 +950,12 @@ class TfChar private constructor() : TextElement, Clearable {
 	/**
 	 * A cache of the vertex positions in world space.
 	 */
-	private val vertexPoints: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
+	private val charVertices: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
 	private val normal = Vector3()
 
 	private val backgroundVertices: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
+
+	private val lineVertices: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
 
 	// By reference
 	private var fontColor: ColorRo = Color.BLACK
@@ -972,6 +983,7 @@ class TfChar private constructor() : TextElement, Clearable {
 	}
 
 	override fun validateVertices(transform: Matrix4Ro, leftClip: Float, topClip: Float, rightClip: Float, bottomClip: Float) {
+		val style = style ?: return
 		val x = x
 		val y = y
 		val glyph = glyph ?: return
@@ -1027,10 +1039,10 @@ class TfChar private constructor() : TextElement, Clearable {
 		v2 = regionB / textureH
 
 		// Transform vertex coordinates from local to global
-		transform.prj(vertexPoints[0].set(charL, charT, 0f))
-		transform.prj(vertexPoints[1].set(charR, charT, 0f))
-		transform.prj(vertexPoints[2].set(charR, charB, 0f))
-		transform.prj(vertexPoints[3].set(charL, charB, 0f))
+		transform.prj(charVertices[0].set(charL, charT, 0f))
+		transform.prj(charVertices[1].set(charR, charT, 0f))
+		transform.prj(charVertices[2].set(charR, charB, 0f))
+		transform.prj(charVertices[3].set(charL, charB, 0f))
 
 		// Background vertices
 		transform.prj(backgroundVertices[0].set(bgL, bgT, 0f))
@@ -1038,11 +1050,32 @@ class TfChar private constructor() : TextElement, Clearable {
 		transform.prj(backgroundVertices[2].set(bgR, bgB, 0f))
 		transform.prj(backgroundVertices[3].set(bgL, bgB, 0f))
 
+		if (style.underlined || style.strikeThrough) {
+			var lineL = x
+			if (lineL < leftClip) lineL = leftClip
+			var lineR = x + glyph.advanceX
+			if (lineL > rightClip) lineR = rightClip
+			var lineT = y + if (style.strikeThrough) {
+				(baseline / 2f).floor()
+			} else {
+				baseline
+			}
+			if (lineT < topClip) lineT = topClip
+			var lineB = lineT + style.lineThickness
+			if (lineB > bottomClip) lineB = bottomClip
+
+			transform.prj(lineVertices[0].set(lineL, lineT, 0f))
+			transform.prj(lineVertices[1].set(lineR, lineT, 0f))
+			transform.prj(lineVertices[2].set(lineR, lineB, 0f))
+			transform.prj(lineVertices[3].set(lineL, lineB, 0f))
+		}
+
 		transform.rot(normal.set(Vector3.NEG_Z)).nor()
 	}
 
 	override fun render(glState: GlState) {
 		if (!visible) return
+		val style = style ?: return
 		val glyph = glyph ?: return
 		val batch = glState.batch
 
@@ -1061,6 +1094,22 @@ class TfChar private constructor() : TextElement, Clearable {
 			batch.pushQuadIndices()
 		}
 
+		if (style.underlined || style.strikeThrough) {
+			batch.begin()
+			glState.setTexture(glState.whitePixel)
+			glState.blendMode(BlendMode.NORMAL, false)
+
+			// Top left
+			batch.putVertex(lineVertices[0], normal, fontColor, 0f, 0f)
+			// Top right
+			batch.putVertex(lineVertices[1], normal, fontColor, 0f, 0f)
+			// Bottom right
+			batch.putVertex(lineVertices[2], normal, fontColor, 0f, 0f)
+			// Bottom left
+			batch.putVertex(lineVertices[3], normal, fontColor, 0f, 0f)
+			batch.pushQuadIndices()
+		}
+
 		if (u == u2 || v == v2 || glyph.width <= 0f || glyph.height <= 0f) return // Nothing to draw
 		batch.begin()
 		glState.setTexture(glyph.texture)
@@ -1068,22 +1117,22 @@ class TfChar private constructor() : TextElement, Clearable {
 
 		if (glyph.isRotated) {
 			// Top left
-			batch.putVertex(vertexPoints[0], normal, fontColor, u2, v)
+			batch.putVertex(charVertices[0], normal, fontColor, u2, v)
 			// Top right
-			batch.putVertex(vertexPoints[1], normal, fontColor, u2, v2)
+			batch.putVertex(charVertices[1], normal, fontColor, u2, v2)
 			// Bottom right
-			batch.putVertex(vertexPoints[2], normal, fontColor, u, v2)
+			batch.putVertex(charVertices[2], normal, fontColor, u, v2)
 			// Bottom left
-			batch.putVertex(vertexPoints[3], normal, fontColor, u, v)
+			batch.putVertex(charVertices[3], normal, fontColor, u, v)
 		} else {
 			// Top left
-			batch.putVertex(vertexPoints[0], normal, fontColor, u, v)
+			batch.putVertex(charVertices[0], normal, fontColor, u, v)
 			// Top right
-			batch.putVertex(vertexPoints[1], normal, fontColor, u2, v)
+			batch.putVertex(charVertices[1], normal, fontColor, u2, v)
 			// Bottom right
-			batch.putVertex(vertexPoints[2], normal, fontColor, u2, v2)
+			batch.putVertex(charVertices[2], normal, fontColor, u2, v2)
 			// Bottom left
-			batch.putVertex(vertexPoints[3], normal, fontColor, u, v2)
+			batch.putVertex(charVertices[3], normal, fontColor, u, v2)
 		}
 
 		batch.pushQuadIndices()
