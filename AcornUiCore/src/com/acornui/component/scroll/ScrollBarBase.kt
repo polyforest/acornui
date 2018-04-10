@@ -16,10 +16,7 @@
 
 package com.acornui.component.scroll
 
-import com.acornui.component.ContainerImpl
-import com.acornui.component.InteractivityMode
-import com.acornui.component.UiComponent
-import com.acornui.component.ValidationFlags
+import com.acornui.component.*
 import com.acornui.component.style.*
 import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.cursor.cursor
@@ -46,13 +43,13 @@ abstract class ScrollBarBase(owner: Owned) : ContainerImpl(owner) {
 	/**
 	 * The value to add or subtract to the scroll model on step up or step down button press.
 	 */
-	var stepSize: Float = 5f
+	var stepSize = 5f
 
 	/**
 	 * The value to multiply against the scroll model to convert to pixels.
 	 * In other words, how many pixels per 1 unit on the scroll model.
 	 */
-	var modelToPixels: Float = 1f
+	var modelToPixels by validationProp(1f, ValidationFlags.LAYOUT)
 
 	private val thumbOffset = Vector2()
 	private val positionTmp = Vector2()

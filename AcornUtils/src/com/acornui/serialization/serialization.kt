@@ -340,6 +340,18 @@ fun <T : Any> Writer.array(value: Iterable<T?>?, to: To<T>) {
 	}
 }
 
+fun Writer.array(value: Iterable<String?>?) {
+	if (value == null) writeNull()
+	else {
+		array(true, {
+			for (v in value) {
+				if (v == null) it.element().writeNull()
+				else it.element().string(v)
+			}
+		})
+	}
+}
+
 /**
  * Writes a sparse array in the following format:
  * [size, indexN, objectN, ...]

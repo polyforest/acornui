@@ -239,7 +239,7 @@ open class Promise<T> : Deferred<T> {
  * A deferred implementation that doesn't have any asynchronous work to do.
  */
 class NonDeferred<out T>(val value: T) : Deferred<T> {
-	suspend override fun await(): T {
+	override suspend fun await(): T {
 		return value
 	}
 }

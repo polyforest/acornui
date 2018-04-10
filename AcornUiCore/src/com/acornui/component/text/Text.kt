@@ -144,7 +144,22 @@ class CharStyle : StyleBase() {
 
 	var italic by prop(false)
 
+	/**
+	 * True if the characters should draw an line at the baseline.
+	 */
 	var underlined by prop(false)
+
+	/**
+	 * True if the characters should draw a line through the middle.
+	 */
+	var strikeThrough by prop(false)
+
+	/**
+	 * The line thickness of the underline or strike through if there is one.
+	 * @see underlined
+	 * @see strikeThrough
+	 */
+	var lineThickness by prop(1f)
 
 	var colorTint: ColorRo by prop(Color(1f, 1f, 1f, 1f))
 	var backgroundColor: ColorRo by prop(Color())

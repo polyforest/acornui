@@ -40,7 +40,6 @@ import com.acornui.core.time.TimeDriver
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.*
-import com.acornui.math.Ray.Companion
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
@@ -64,7 +63,7 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 
 	/**
 	 * Given a screen position, casts a ray in the direction of the camera, populating the [out] list with the
-	 * components
+	 * components that intersect the ray.
 	 *
 	 * @param canvasX The x coordinate relative to the canvas.
 	 * @param canvasY The y coordinate relative to the canvas.
@@ -181,6 +180,7 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	 * this value will be used instead.
 	 */
 	var defaultWidth: Float?
+
 	/**
 	 * If set, when the layout is validated, if there was no explicit height,
 	 * this height will be used instead.

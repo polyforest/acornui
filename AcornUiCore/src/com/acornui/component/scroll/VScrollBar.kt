@@ -70,7 +70,7 @@ open class VScrollBar(
 		val thumbAvailable = maxTrack() - minTrack()
 		thumb.visible = thumbAvailable > maxOf(1f, (thumb.minHeight ?: 0f))
 		if (thumb.visible) {
-			val thumbHeight = (thumbAvailable * thumbAvailable) / (thumbAvailable + scrollDiff * modelToPixels)
+			val thumbHeight = (thumbAvailable * thumbAvailable) / maxOf(1f, thumbAvailable + scrollDiff * modelToPixels)
 			val thumbLd = thumb.layoutData as BasicLayoutData?
 			if (thumbLd == null) thumb.setSize(w, thumbHeight)
 			else thumb.setSize(thumbLd.getPreferredWidth(w), thumbLd.getPreferredHeight(thumbHeight))

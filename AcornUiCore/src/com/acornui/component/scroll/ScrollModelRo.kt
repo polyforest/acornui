@@ -143,9 +143,11 @@ class ScrollModelImpl(
 	override val changed: Signal<(ClampedScrollModel) -> Unit>
 		get() = _changed
 
-	private fun <T> bindable(initial: T): ReadWriteProperty<Any?, T> {
+	private fun bindable(initial: Float): ReadWriteProperty<Any?, Float> {
 		return Delegates.observable(initial, {
 			meta, old, new ->
+			if (new.isNaN())
+				throw Exception("Cannot set scroll model to NaN")
 			if (old != new) _changed.dispatch(this)}
 		)
 	}

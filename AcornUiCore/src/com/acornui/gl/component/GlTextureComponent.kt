@@ -48,7 +48,7 @@ class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureComponen
 	private val sprite = Sprite()
 
 	init {
-		validation.addNode(1 shl 16, ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM or ValidationFlags.CONCATENATED_TRANSFORM, { validateVertices() })
+		validation.addNode(1 shl 16, ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM or ValidationFlags.CONCATENATED_TRANSFORM) { validateVertices() }
 	}
 
 	constructor (owner: Owned, path: String) : this(owner) {

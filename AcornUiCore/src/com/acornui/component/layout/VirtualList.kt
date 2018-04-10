@@ -78,9 +78,9 @@ class VirtualList<E, S : Style, out T : LayoutData>(
 	 */
 	val visibleBottomPosition: Float
 		get() {
+			validate(ValidationFlags.LAYOUT)
 			if (_visibleBottomPosition == null) {
 				// Calculate the current bottomPosition.
-				validate(ValidationFlags.LAYOUT)
 				_visibleBottomPosition = data.lastIndex.toFloat()
 				val lastIndex = data.lastIndex
 				for (i in _activeRenderers.lastIndex downTo 0) {

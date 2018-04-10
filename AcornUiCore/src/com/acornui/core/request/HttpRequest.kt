@@ -39,9 +39,9 @@ data class UrlRequestData(
 
 		val headers: Map<String, String> = HashMap(),
 
-		val user: String = "",
+		val user: String? = null,
 
-		val password: String = "",
+		val password: String? = null,
 
 		val formData: MultipartFormDataRo? = null,
 

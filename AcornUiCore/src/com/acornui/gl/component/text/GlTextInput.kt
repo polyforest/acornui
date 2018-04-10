@@ -739,6 +739,9 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		}
 	}
 
+	private val contentsSize: Int
+		get() = textField.contents.size
+
 	private val firstSelection: SelectionRange?
 		get() = selectionManager.selection.firstOrNull { it.target == host }
 
@@ -752,7 +755,8 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			replaceTextRange(sel.min, sel.max, "")
 			setSelection(listOf(SelectionRange(host, sel.min, sel.min)))
 		} else if (sel.min > 0) {
-			replaceTextRange(sel.min - 1, sel.min, "")
+			val i = minOf(contentsSize, sel.min)
+			replaceTextRange(i - 1, i, "")
 			setSelection(listOf(SelectionRange(host, sel.min - 1, sel.min - 1)))
 		}
 	}
@@ -766,7 +770,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		if (sel.startIndex != sel.endIndex) {
 			replaceTextRange(sel.min, sel.max, "")
 			setSelection(listOf(SelectionRange(host, sel.min, sel.min)))
-		} else if (sel.min < _text.length) {
+		} else if (sel.min < contentsSize) {
 			replaceTextRange(sel.min, sel.max + 1, "")
 			setSelection(listOf(SelectionRange(host, sel.min, sel.min)))
 		}
@@ -798,7 +802,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		if (cmd.target != host) return
 		// TODO: Make this efficient.
 		val text = this.text
-		this.text = text.substring(0, clamp(cmd.startIndex, 0, text.length)) + cmd.newText + text.substring(clamp(cmd.endIndex, 0, text.length), text.length)
+		this.text = text.substring(0, clamp(cmd.startIndex, 0, contentsSize)) + cmd.newText + text.substring(clamp(cmd.endIndex, 0, contentsSize), contentsSize)
 		validateLayout()
 	}
 

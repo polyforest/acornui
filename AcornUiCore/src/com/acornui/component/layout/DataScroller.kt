@@ -23,9 +23,6 @@ import com.acornui.core.input.wheel
 import com.acornui.math.Bounds
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
-import com.acornui.signal.Cancel
-import com.acornui.signal.Signal
-import com.acornui.signal.Signal2
 
 // TODO: largest renderer?
 // TODO: I don't love the virtual layout algorithms.
@@ -63,9 +60,7 @@ class DataScroller<E, S : Style, out T : LayoutData>(
 	/**
 	 * The scroll area is just used for clipping, not scrolling.
 	 */
-	private val clipper = addChild(scrollRect {
-		includeInLayout = false // If the clipper changes size, it doesn't affect this data scroller's size.
-	})
+	private val clipper = addChild(scrollRect())
 
 	private val rowBackgrounds = clipper.addElement(container())
 	private val rowBackgroundsCache = IndexedCache {
@@ -245,6 +240,7 @@ class DataScroller<E, S : Style, out T : LayoutData>(
 				bottomContents.setSize(explicitWidth, explicitHeight)
 			}
 			out.set(bottomContents.width + (if (scrollBar.visible) scrollBar.width else 0f), bottomContents.height)
+
 			scrollBar.modelToPixels = out.height / (bottomContents.visibleBottomPosition - bottomContents.visiblePosition)
 		} else {
 			if (scrollPolicy != ScrollPolicy.OFF) {

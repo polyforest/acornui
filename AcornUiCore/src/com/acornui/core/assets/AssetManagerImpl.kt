@@ -98,7 +98,7 @@ private class FailedLoader<T>(
 
 	override fun cancel() {}
 
-	suspend override fun await(): T {
+	override suspend fun await(): T {
 		throw AssetLoadingException(path, type)
 	}
 }

@@ -70,7 +70,7 @@ open class HScrollBar(
 		val thumbAvailable = maxTrack() - minTrack()
 		thumb.visible = thumbAvailable > maxOf(1f, (thumb.minWidth ?: 0f))
 		if (thumb.visible) {
-			val thumbWidth = (thumbAvailable * thumbAvailable) / (thumbAvailable + scrollDiff * modelToPixels)
+			val thumbWidth = (thumbAvailable * thumbAvailable) / maxOf(1f, thumbAvailable + scrollDiff * modelToPixels)
 			val thumbLd = thumb.layoutData as BasicLayoutData?
 			if (thumbLd == null) thumb.setSize(thumbWidth, h)
 			else thumb.setSize(thumbLd.getPreferredWidth(thumbWidth), thumbLd.getPreferredHeight(h))

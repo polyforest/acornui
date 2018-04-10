@@ -35,7 +35,6 @@ open class WindowPanel(owner: Owned) : ElementContainerImpl<UiComponent>(owner),
 	override val closed = own(Signal1<Closeable>())
 	protected val cancel = Cancel()
 
-
 	val style = bind(WindowPanelStyle())
 
 	protected val textField = addChild(text())

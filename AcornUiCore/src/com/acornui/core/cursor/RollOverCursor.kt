@@ -20,7 +20,6 @@ import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.core.Disposable
 import com.acornui.core.di.inject
-import com.acornui.core.input.interaction.MouseInteraction
 import com.acornui.core.input.interaction.MouseInteractionRo
 import com.acornui.core.input.interaction.rollOut
 import com.acornui.core.input.interaction.rollOver

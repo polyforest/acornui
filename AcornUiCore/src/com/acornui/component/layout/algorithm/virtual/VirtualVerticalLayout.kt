@@ -42,9 +42,9 @@ class VirtualVerticalLayout : VirtualLayoutAlgorithm<VirtualVerticalLayoutStyle,
 		val padding = props.padding
 		val gap = props.gap
 		return if (isReversed) {
-			(height - padding.bottom - (element.y + element.height)) / (element.height + gap)
+			(height - padding.bottom - (element.y + element.height)) / maxOf(0.0001f, element.height + gap)
 		} else {
-			(element.y - padding.top) / (element.height + gap)
+			(element.y - padding.top) / maxOf(0.0001f, element.height + gap)
 		}
 	}
 

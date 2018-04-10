@@ -55,7 +55,7 @@ abstract class JvmHttpRequest<out T>(timeDriver: TimeDriver, requestData: UrlReq
 	}
 
 	private fun configure(con: HttpURLConnection, requestData: UrlRequestData) {
-		if (requestData.user.isNotEmpty()) {
+		if (requestData.user != null) {
 			val userPass = "${requestData.user}:${requestData.password}"
 			val basicAuth = "Basic " + Base64.getEncoder().encodeToString(userPass.toByteArray())
 			con.setRequestProperty("Authorization", basicAuth)
