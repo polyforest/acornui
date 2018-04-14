@@ -30,6 +30,7 @@ import com.acornui.core.tween.killTween
 import com.acornui.core.tween.tweenAlpha
 import com.acornui.math.Easing
 import com.acornui.math.Vector2
+import kotlin.properties.Delegates
 
 abstract class ScrollBarBase(owner: Owned) : ContainerImpl(owner) {
 
@@ -49,7 +50,12 @@ abstract class ScrollBarBase(owner: Owned) : ContainerImpl(owner) {
 	 * The value to multiply against the scroll model to convert to pixels.
 	 * In other words, how many pixels per 1 unit on the scroll model.
 	 */
-	var modelToPixels by validationProp(1f, ValidationFlags.LAYOUT)
+	var modelToPixels by Delegates.observable(1f) {
+		prop, old, new ->
+		if (new.isNaN() || new.isInfinite())
+			throw Exception("modelToPixels may not be NaN")
+		invalidate(ValidationFlags.LAYOUT)
+	}
 
 	private val thumbOffset = Vector2()
 	private val positionTmp = Vector2()

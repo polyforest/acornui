@@ -241,7 +241,7 @@ class DataScroller<E, S : Style, out T : LayoutData>(
 			}
 			out.set(bottomContents.width + (if (scrollBar.visible) scrollBar.width else 0f), bottomContents.height)
 
-			scrollBar.modelToPixels = out.height / (bottomContents.visibleBottomPosition - bottomContents.visiblePosition)
+			scrollBar.modelToPixels = out.height / maxOf(0.0001f, bottomContents.visibleBottomPosition - bottomContents.visiblePosition)
 		} else {
 			if (scrollPolicy != ScrollPolicy.OFF) {
 				// First size as if the scroll bars are needed.
@@ -272,7 +272,7 @@ class DataScroller<E, S : Style, out T : LayoutData>(
 				bottomContents.setSize(explicitWidth, explicitHeight)
 			}
 			out.set(bottomContents.width, bottomContents.height + (if (scrollBar.visible) scrollBar.height else 0f))
-			scrollBar.modelToPixels = out.width / (bottomContents.visibleBottomPosition - bottomContents.visiblePosition)
+			scrollBar.modelToPixels = out.width / maxOf(0.0001f, bottomContents.visibleBottomPosition - bottomContents.visiblePosition)
 		}
 		tossBinding.modelToPixelsX = scrollBar.modelToPixels
 		tossBinding.modelToPixelsY = scrollBar.modelToPixels

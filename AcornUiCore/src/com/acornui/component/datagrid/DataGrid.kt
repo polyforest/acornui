@@ -974,7 +974,7 @@ class DataGrid<E>(
 		_totalRows = calculateTotalRows()
 		var contentsH = if (explicitHeight == null) null else pad.reduceHeight2(explicitHeight) - headerCells.height - hScrollBarH
 		val bottomRowCount = updateBottomRows(contentsW, contentsH)
-		vScrollBar.modelToPixels = bottomContents.height / bottomRowCount
+		vScrollBar.modelToPixels = bottomContents.height / maxOf(0.0001f, bottomRowCount)
 		vScrollBar.scrollModel.max = maxOf(0f, _totalRows - bottomRowCount)
 		vScrollBar.visible = vScrollPolicy != ScrollPolicy.OFF && vScrollBar.scrollModel.max > 0.0001f
 		val vScrollBarW = if (vScrollBar.visible) vScrollBar.minWidth ?: 0f else 0f

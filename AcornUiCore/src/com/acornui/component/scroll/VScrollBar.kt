@@ -72,6 +72,8 @@ open class VScrollBar(
 		if (thumb.visible) {
 			val thumbHeight = (thumbAvailable * thumbAvailable) / maxOf(1f, thumbAvailable + scrollDiff * modelToPixels)
 			val thumbLd = thumb.layoutData as BasicLayoutData?
+			if (thumbHeight.isNaN())
+				throw Exception("thumb height may not be NaN")
 			if (thumbLd == null) thumb.setSize(w, thumbHeight)
 			else thumb.setSize(thumbLd.getPreferredWidth(w), thumbLd.getPreferredHeight(thumbHeight))
 			refreshThumbPosition()

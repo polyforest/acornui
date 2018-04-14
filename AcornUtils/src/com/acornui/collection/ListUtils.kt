@@ -57,9 +57,9 @@ fun <E> MutableList<in E>.addAllUnique(other: Array<out E>) {
  * Given a sorted list of comparable objects, this finds the insertion index of the given element.
  * If there are equal elements, the insertion index returned will be after.
  */
-fun <E : Comparable<E>> List<E>.sortedInsertionIndex(element: E, startIndex: Int = 0, endIndex: Int = size, matchForwards: Boolean = true): Int {
-	var indexA = startIndex
-	var indexB = endIndex
+fun <E : Comparable<E>> List<E>.sortedInsertionIndex(element: E, fromIndex: Int = 0, toIndex: Int = size, matchForwards: Boolean = true): Int {
+	var indexA = fromIndex
+	var indexB = toIndex
 
 	while (indexA < indexB) {
 		val midIndex = (indexA + indexB) ushr 1
@@ -94,9 +94,9 @@ fun <E : Comparable<E>> List<E>.sortedInsertionIndex(element: E, startIndex: Int
  *
  * @param matchForwards If true, the returned index will be after comparisons of 0, if false, before.
  */
-fun <K, E> List<E>.sortedInsertionIndex(element: K, startIndex: Int = 0, endIndex: Int = size, matchForwards: Boolean = true, comparator: (K, E) -> Int): Int {
-	var indexA = startIndex
-	var indexB = endIndex
+fun <K, E> List<E>.sortedInsertionIndex(element: K, fromIndex: Int = 0, toIndex: Int = size, matchForwards: Boolean = true, comparator: (K, E) -> Int): Int {
+	var indexA = fromIndex
+	var indexB = toIndex
 
 	while (indexA < indexB) {
 		val midIndex = (indexA + indexB) ushr 1
@@ -576,3 +576,12 @@ inline fun <T> List<T>.sumByFloat2(selector: (T) -> Float): Float {
 	}
 	return sum
 }
+
+/**
+ * Returns a view of the portion of this list between the specified 0 and [size] (exclusive).
+ * The returned list is backed by this list, so non-structural changes in the returned list are reflected in this list.
+ *
+ * Structural changes in the base list make the behavior of the view undefined.
+ * @see List.subList
+ */
+fun <T> List<T>.limit(size: Int): List<T> = subList(0, size)

@@ -303,7 +303,7 @@ interface Ray2Ro {
 	val origin: Vector2Ro
 	val direction: Vector2Ro
 
-	fun intersects(ray: Ray2, out: Vector2): Boolean
+	fun intersects(ray: Ray2Ro, out: Vector2): Boolean
 }
 
 /**
@@ -314,7 +314,7 @@ data class Ray2(
 		override val direction: Vector2 = Vector2()
 ) : Clearable, Ray2Ro {
 
-	override fun intersects(ray: Ray2, out: Vector2): Boolean {
+	override fun intersects(ray: Ray2Ro, out: Vector2): Boolean {
 		return intersects(origin, direction, ray.origin, ray.direction, out)
 	}
 
@@ -347,26 +347,26 @@ data class Ray2(
 		 * @return scalar parameter on the first ray describing the point where the intersection happens. May be negative.
 		 * In the case the rays are collinear, PositiveInfinity will be returned.
 		 */
-		fun intersects(start1: Vector2, direction1: Vector2, start2: Vector2, direction2: Vector2): Float {
-			val difx = start2.x - start1.x
-			val dify = start2.y - start1.y
+		fun intersects(start1: Vector2Ro, direction1: Vector2Ro, start2: Vector2Ro, direction2: Vector2Ro): Float {
+			val diffX = start2.x - start1.x
+			val diffY = start2.y - start1.y
 			val d1xd2 = direction1.x * direction2.y - direction1.y * direction2.x
 			if (d1xd2 == 0f) {
 				return Float.POSITIVE_INFINITY // collinear
 			}
 			val d2sx = direction2.x / d1xd2
 			val d2sy = direction2.y / d1xd2
-			return difx * d2sy - dify * d2sx
+			return diffX * d2sy - diffY * d2sx
 		}
 
-		fun intersects(start1: Vector2, direction1: Vector2, start2: Vector2, direction2: Vector2, out: Vector2): Boolean {
+		fun intersects(start1: Vector2Ro, direction1: Vector2Ro, start2: Vector2Ro, direction2: Vector2Ro, out: Vector2): Boolean {
 			val f = intersects(start1, direction1, start2, direction2)
-			if (f < Float.POSITIVE_INFINITY) {
+			return if (f < Float.POSITIVE_INFINITY) {
 				out.set(direction1).scl(f).add(start1)
-				return true
+				true
 			} else {
 				out.set(start1)
-				return false
+				false
 			}
 		}
 	}
