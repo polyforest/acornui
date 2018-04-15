@@ -24,7 +24,6 @@ import com.acornui.gl.component.Sprite
 import com.acornui.gl.core.GlState
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
-import com.acornui.math.Matrix4Ro
 
 class ParticleEmitterRenderer2d(
 		override val injector: Injector,
@@ -49,26 +48,26 @@ class ParticleEmitterRenderer2d(
 		}
 	}
 
-	override fun render(concatenatedTransform: Matrix4Ro, concatenatedColorTint: ColorRo) {
+	override fun render(concatenatedColorTint: ColorRo) {
 		if (!emitterInstance.emitter.enabled) return
 		val particles = emitterInstance.particles
 		for (i in 0..particles.lastIndex) {
 			val particle = particles[i]
 			if (particle.active)
-				particle.draw(concatenatedTransform, concatenatedColorTint)
+				particle.draw(concatenatedColorTint)
 		}
 	}
 
 	private val finalColor = Color()
 
-	private fun ParticleVo.draw(concatenatedTransform: Matrix4Ro, concatenatedColorTint: ColorRo) {
+	private fun ParticleVo.draw(concatenatedColorTint: ColorRo) {
 		val sprite = sprites.getOrNull(imageIndex) ?: return
 		sprite.blendMode = emitterInstance.emitter.blendMode
 		sprite.premultipliedAlpha = emitterInstance.emitter.premultipliedAlpha
 
 		val w = sprite.naturalWidth * scale.x
 		val h = sprite.naturalHeight * scale.y
-		sprite.updateWorldVertices(concatenatedTransform, w, h, position.x, position.y, position.z, rotation.z, w * origin.x, h * origin.y)
+		sprite.updateVertices(w, h, position.x, position.y, position.z, rotation.z, w * origin.x, h * origin.y)
 		sprite.draw(glState, finalColor.set(colorTint).mul(concatenatedColorTint))
 	}
 

@@ -39,14 +39,14 @@ data class ParticleEffectVo(
 
 data class ParticleEmitterVo(
 
-		var name: String,
+		val name: String,
 
-		var enabled: Boolean,
+		val enabled: Boolean,
 
 		/**
 		 * If false, this emitter will not loop after the total duration.
 		 */
-		var loops: Boolean,
+		val loops: Boolean,
 
 		/**
 		 * Represents when and how long this emitter will be active.
@@ -56,27 +56,27 @@ data class ParticleEmitterVo(
 		/**
 		 * The maximum number of particles to create.
 		 */
-		var count: Int,
+		val count: Int,
 
 		/**
 		 * The rate of emissions, in particles per second.
 		 */
-		var emissionRate: PropertyTimeline,
+		val emissionRate: PropertyTimeline,
 
 		/**
 		 * Calculates the life of a newly created particle.
 		 */
-		var particleLifeExpectancy: PropertyTimeline,
+		val particleLifeExpectancy: PropertyTimeline,
 
-		var spawnLocation: ParticleSpawn,
+		val spawnLocation: ParticleSpawn,
 
-		var blendMode: BlendMode,
+		val blendMode: BlendMode,
 
-		var premultipliedAlpha: Boolean,
+		val premultipliedAlpha: Boolean,
 
-		val imageEntries: MutableList<ParticleImageEntry>,
+		val imageEntries: List<ParticleImageEntry>,
 
-		val propertyTimelines: MutableList<PropertyTimeline>
+		val propertyTimelines: List<PropertyTimeline>
 ) {
 	fun createInstance(): ParticleEmitterInstance {
 		return ParticleEmitterInstance(this)
@@ -88,27 +88,27 @@ data class EmitterDuration(
 		/**
 		 * The minimum number of seconds this emitter will create particles.
 		 */
-		var durationMin: Float,
+		val durationMin: Float,
 
 		/**
 		 * The maximum number of seconds this emitter will create particles.
 		 */
-		var durationMax: Float,
+		val durationMax: Float,
 
 		/**
 		 * The easing to apply when calculating the duration between [durationMin] and [durationMax]
 		 */
-		var durationEasing: Interpolation,
+		val durationEasing: Interpolation,
 
 		/**
 		 * The time, in seconds, before the emitter begins.
 		 */
-		var delayBefore: Float,
+		val delayBefore: Float,
 
 		/**
 		 * The time, in seconds, after completion before restarting.
 		 */
-		var delayAfter: Float
+		val delayAfter: Float
 ) {
 	fun calculateDuration(): Float {
 		return durationEasing.apply(MathUtils.random()) * (durationMax - durationMin) + durationMin
@@ -116,8 +116,8 @@ data class EmitterDuration(
 }
 
 data class ParticleImageEntry(
-		var time: Float,
-		var path: String
+		val time: Float,
+		val path: String
 )
 
 data class PropertyTimeline(
@@ -127,25 +127,25 @@ data class PropertyTimeline(
 		/**
 		 * If true, the final value will not be the high value, but the high + low
 		 */
-		var relative: Boolean,
+		val relative: Boolean,
 
-		var lowMin: Float,
-		var lowMax: Float,
+		val lowMin: Float,
+		val lowMax: Float,
 
 		/**
 		 * When selecting a random value between [lowMin] and [lowMax], this easing is applied in order to
 		 * allow control over random distribution.
 		 */
-		var lowEasing: Interpolation,
+		val lowEasing: Interpolation,
 
-		var highMin: Float,
-		var highMax: Float,
+		val highMin: Float,
+		val highMax: Float,
 
 		/**
 		 * When selecting a random value between [highMin] and [highMax], this easing is applied in order to
 		 * allow control over random distribution.
 		 */
-		var highEasing: Interpolation,
+		val highEasing: Interpolation,
 
 		/**
 		 * A list of control points for interpolated values. If this is empty, the low value will always be used.
@@ -158,8 +158,8 @@ data class PropertyTimeline(
 		target.high = (highMax - highMin) * highEasing.apply(MathUtils.random())
 		if (relative) target.high += target.low
 		target.diff = target.high - target.low
-		val alpha = timeline.firstOrNull()?.value ?: 0f
-		target.current = target.diff * alpha + target.low
+		target.current = target.high
+		apply(target,  0f)
 	}
 
 	private val comparator: (Float, TimelineValue) -> Int = {
@@ -168,10 +168,33 @@ data class PropertyTimeline(
 	}
 
 	fun apply(target: PropertyValue, alpha: Float) {
-		if (timeline.size <= 1) return
-		val timelineIndex = timeline.sortedInsertionIndex(alpha, matchForwards = false, comparator = comparator)
-		val value = timeline[timelineIndex].value
-		target.current = target.diff * value + target.low
+		val n = timeline.size
+		if (n == 0) return
+		val timelineIndex = timeline.sortedInsertionIndex(alpha, matchForwards = true, comparator = comparator) - 1
+		val timeA: Float
+		val valueA: Float
+		if (timelineIndex < 0) {
+			timeA = 0f
+			valueA = timeline.first().value
+		} else {
+			val timelineEntry = timeline[timelineIndex]
+			timeA = timelineEntry.time
+			valueA = timelineEntry.value
+		}
+
+		val timeB: Float
+		val valueB: Float
+		if (timelineIndex >= n - 1) {
+			timeB = 1f
+			valueB = timeline.last().value
+		} else {
+			val timelineEntry = timeline[timelineIndex + 1]
+			timeB = timelineEntry.time
+			valueB = timelineEntry.value
+		}
+		val valueAlpha = (alpha - timeA) / (timeB - timeA)
+		val valueValue = (valueB - valueA) * valueAlpha + valueA
+		target.current = valueValue * target.diff + target.low
 	}
 }
 
@@ -183,12 +206,12 @@ data class TimelineValue(
 		/**
 		 * A value of 0f - 1f indicating the current progress of this particle where the [value] will be used.
 		 */
-		var time: Float,
+		val time: Float,
 
 		/**
 		 * A value of 0f - 1f indicating the interpolation of the low to high value.
 		 */
-		var value: Float
+		val value: Float
 ) : Comparable<TimelineValue> {
 
 	override fun compareTo(other: TimelineValue): Int {

@@ -126,6 +126,8 @@ class Sprite {
 	private var height: Float = 0f
 
 	/**
+	 * Updates this Sprite's local vertices and then multiplies them with the world transformation matrix.
+	 *
 	 * @param worldTransform The transformation matrix to project the local coordinates to global coordinates.
 	 * @param width The width of the sprite.
 	 * @param height The height of the sprite.
@@ -137,6 +139,27 @@ class Sprite {
 	 * @param originY The y point of the rectangle that will be 0,0
 	 */
 	fun updateWorldVertices(worldTransform: Matrix4Ro, width: Float, height: Float, x: Float = 0f, y: Float = 0f, z: Float = 0f, rotation: Float = 0f, originX: Float = 0f, originY: Float = 0f) {
+		updateVertices(width, height, x, y, z, rotation, originX, originY)
+		worldTransform.prj(vertexPoints[0])
+		worldTransform.prj(vertexPoints[1])
+		worldTransform.prj(vertexPoints[2])
+		worldTransform.prj(vertexPoints[3])
+		worldTransform.rot(normal).nor()
+	}
+
+	/**
+	 * Updates this Sprite's local vertices.
+	 *
+	 * @param width The width of the sprite.
+	 * @param height The height of the sprite.
+	 * @param x translation
+	 * @param y translation
+	 * @param z translation
+	 * @param rotation The rotation around the Z axis in radians.
+	 * @param originX The x point of the rectangle that will be 0,0
+	 * @param originY The y point of the rectangle that will be 0,0
+	 */
+	fun updateVertices(width: Float, height: Float, x: Float = 0f, y: Float = 0f, z: Float = 0f, rotation: Float = 0f, originX: Float = 0f, originY: Float = 0f) {
 		this.width = width
 		this.height = height
 		// Transform vertex coordinates from local to global
@@ -157,14 +180,19 @@ class Sprite {
 			bX = cos * (-originX + width) - sin * -originY + x
 			bY = sin * (-originX + width) + cos * (-originY + height) + y
 		}
-		worldTransform.prj(vertexPoints[0].set(aX, aY, z))
-		worldTransform.prj(vertexPoints[1].set(bX, aY, z))
-		worldTransform.prj(vertexPoints[2].set(bX, bY, z))
-		worldTransform.prj(vertexPoints[3].set(aX, bY, z))
-
-		worldTransform.rot(normal.set(Vector3.NEG_Z)).nor()
+		vertexPoints[0].set(aX, aY, z)
+		vertexPoints[1].set(bX, aY, z)
+		vertexPoints[2].set(bX, bY, z)
+		vertexPoints[3].set(aX, bY, z)
+		normal.set(Vector3.NEG_Z)
 	}
 
+	/**
+	 * Draws this sprite.
+	 * Remember to set the camera on the [GlState] object before drawing.
+	 * If [updateVertices] was used (and therefore no world transformation), that world transform matrix must be
+	 * supplied to [GlState.camera] first.
+	 */
 	fun draw(glState: GlState, colorTint: ColorRo) {
 		if (texture == null || colorTint.a <= 0f || width == 0f || height == 0f) return // Nothing to draw
 		val batch = glState.batch

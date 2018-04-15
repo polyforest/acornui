@@ -144,12 +144,13 @@ class ParticleEmitterInstance(
 
 	private fun activateParticle(particle: ParticleVo) {
 		particle.active = true
-		for (j in 0..particle.timelines.lastIndex) {
-			val prop = particle.timelines[j]
+		for (i in 0..particle.timelines.lastIndex) {
+			val prop = particle.timelines[i]
 			prop.timeline.reset(prop.value)
 			prop.setter(particle, prop.value.current)
 		}
 		emitter.spawnLocation.calculate(particle.position)
+		particle.life = 0f
 		particle.lifeExpectancy = lifeExpectancyValue.current
 		_activeCount++
 		accumulator--
@@ -225,7 +226,7 @@ class ParticleVo {
 	val position = Vector3()
 	val velocity = Vector3()
 
-	val scale = Vector3()
+	val scale = Vector3(1f, 1f, 1f)
 	val scaleVelocity = Vector3()
 
 	val rotation = Vector3()
@@ -237,7 +238,7 @@ class ParticleVo {
 	val forwardDirection = Vector3()
 	var forwardVelocity = 0f
 
-	val colorTint = Color()
+	val colorTint: Color = Color.WHITE.copy()
 
 	/**
 	 * The origin of the particle, with percent-based values.

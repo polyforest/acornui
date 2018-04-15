@@ -30,7 +30,6 @@ import com.acornui.core.time.onTick
 import com.acornui.gl.component.Sprite
 import com.acornui.gl.core.GlState
 import com.acornui.graphics.ColorRo
-import com.acornui.math.Matrix4Ro
 
 class ParticleEffectComponent(
 		owner: Owned
@@ -97,8 +96,8 @@ class ParticleEffectComponent(
 
 	override fun draw() {
 		val effect = _effect ?: return
-		glState.camera(camera)
-		effect.render(concatenatedTransform, concatenatedColorTint)
+		glState.camera(camera, concatenatedTransform)
+		effect.render(concatenatedColorTint)
 	}
 
 	override fun dispose() {
@@ -148,20 +147,46 @@ class LoadedParticleEffect(
 		group.dispose()
 	}
 
-	fun render(concatenatedTransform: Matrix4Ro, concatenatedColorTint: ColorRo) {
+	fun render(concatenatedColorTint: ColorRo) {
 		for (i in 0..renderers.lastIndex) {
-			renderers[i].render(concatenatedTransform, concatenatedColorTint)
+			renderers[i].render(concatenatedColorTint)
 		}
 	}
 }
 
-suspend fun Scoped.loadParticleEffect(pDataPath: String, atlasPath: String): LoadedParticleEffect {
-	val group = cachedGroup()
+suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffectVo, atlasPath: String, group: CachedGroup = cachedGroup()): LoadedParticleEffect {
 	val atlasDataPromise = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group)
-	val effectData = loadAndCacheJson(pDataPath, ParticleEffectSerializer, group).await()
 	val atlasData = atlasDataPromise.await()
-	val emitterRenderers = ArrayList<ParticleEmitterRenderer>(effectData.emitters.size)
-	val effectInstance = effectData.createInstance()
+	val emitterRenderers = ArrayList<ParticleEmitterRenderer>(particleEffect.emitters.size)
+	val effectInstance = particleEffect.createInstance()
+
+	for (emitterInstance in effectInstance.emitterInstances) {
+		val emitter = emitterInstance.emitter
+		val sprites = ArrayList<Sprite>(emitter.imageEntries.size)
+		for (i in 0..emitter.imageEntries.lastIndex) {
+			val imagePath = emitter.imageEntries[i].path
+
+			val (page, region) = atlasData.findRegion(imagePath) ?: throw Exception("Could not find $imagePath in the atlas $atlasPath")
+			val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
+
+			val sprite = Sprite()
+			sprite.texture = texture
+			sprite.isRotated = region.isRotated
+			sprite.setRegion(region.bounds)
+			sprite.updateUv()
+			sprites.add(sprite)
+		}
+		emitterRenderers.add(ParticleEmitterRenderer2d(injector, emitterInstance, sprites))
+	}
+	return LoadedParticleEffect(effectInstance, emitterRenderers, group)
+}
+
+suspend fun Scoped.loadParticleEffect(pDataPath: String, atlasPath: String, group: CachedGroup = cachedGroup()): LoadedParticleEffect {
+	val atlasDataPromise = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group)
+	val particleEffect = loadAndCacheJson(pDataPath, ParticleEffectSerializer, group).await()
+	val atlasData = atlasDataPromise.await()
+	val emitterRenderers = ArrayList<ParticleEmitterRenderer>(particleEffect.emitters.size)
+	val effectInstance = particleEffect.createInstance()
 
 	for (emitterInstance in effectInstance.emitterInstances) {
 		val emitter = emitterInstance.emitter
@@ -186,7 +211,7 @@ suspend fun Scoped.loadParticleEffect(pDataPath: String, atlasPath: String): Loa
 
 interface ParticleEmitterRenderer : Lifecycle {
 
-	fun render(concatenatedTransform: Matrix4Ro, concatenatedColorTint: ColorRo)
+	fun render(concatenatedColorTint: ColorRo)
 }
 
 
