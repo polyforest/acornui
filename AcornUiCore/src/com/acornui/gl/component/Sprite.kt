@@ -89,10 +89,10 @@ class Sprite {
 	val naturalWidth: Float
 		get() {
 			val t = texture ?: return 0f
-			if (isRotated) {
-				return t.height.toFloat() * MathUtils.abs(v2 - v)
+			return if (isRotated) {
+				t.height.toFloat() * MathUtils.abs(v2 - v)
 			} else {
-				return t.width.toFloat() * MathUtils.abs(u2 - u)
+				t.width.toFloat() * MathUtils.abs(u2 - u)
 			}
 		}
 
@@ -127,7 +127,14 @@ class Sprite {
 
 	/**
 	 * @param worldTransform The transformation matrix to project the local coordinates to global coordinates.
-	 * @param rotation In radians
+	 * @param width The width of the sprite.
+	 * @param height The height of the sprite.
+	 * @param x translation
+	 * @param y translation
+	 * @param z translation
+	 * @param rotation The rotation around the Z axis in radians.
+	 * @param originX The x point of the rectangle that will be 0,0
+	 * @param originY The y point of the rectangle that will be 0,0
 	 */
 	fun updateWorldVertices(worldTransform: Matrix4Ro, width: Float, height: Float, x: Float = 0f, y: Float = 0f, z: Float = 0f, rotation: Float = 0f, originX: Float = 0f, originY: Float = 0f) {
 		this.width = width

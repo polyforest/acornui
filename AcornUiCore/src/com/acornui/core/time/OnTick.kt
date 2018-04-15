@@ -1,12 +1,15 @@
 package com.acornui.core.time
 
-import com.acornui.component.UiComponent
+import com.acornui.component.UiComponentRo
 import com.acornui.core.Disposable
-import com.acornui.core.UpdatableChildBase
 import com.acornui.core.LifecycleRo
+import com.acornui.core.UpdatableChildBase
 import com.acornui.core.di.inject
 
-private class OnTick(private val component: UiComponent, private val callback: (stepTime: Float) -> Unit) : UpdatableChildBase(), Disposable {
+private class OnTick(
+		private val component: UiComponentRo,
+		private val callback: (stepTime: Float) -> Unit
+) : UpdatableChildBase(), Disposable {
 
 	private val timeDriver = component.inject(TimeDriver)
 
@@ -49,6 +52,6 @@ private class OnTick(private val component: UiComponent, private val callback: (
  *
  * @return An instance that can be disposed to stop watching frames.
  */
-fun UiComponent.onTick(callback: (stepTime: Float) -> Unit): Disposable {
+fun UiComponentRo.onTick(callback: (stepTime: Float) -> Unit): Disposable {
 	return OnTick(this, callback)
 }

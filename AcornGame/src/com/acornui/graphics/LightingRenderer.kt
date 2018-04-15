@@ -10,7 +10,6 @@ import com.acornui.core.graphics.Window
 import com.acornui.gl.core.*
 import com.acornui.graphics.lighting.*
 import com.acornui.math.Matrix4
-import com.acornui.math.matrix4
 
 /**
  * @author nbilyk
@@ -44,7 +43,7 @@ class LightingRenderer(
 	private val pointLightCamera = PointLightCamera(window, pointShadowsResolution.toFloat())
 
 	private val lightingShaderUniforms = LightingShaderUniforms(lightingShader, numPointLights, numShadowPointLights)
-	private val bias = matrix4 {
+	private val bias = Matrix4().apply {
 		scl(0.5f, 0.5f, 0.5f)
 		translate(1f, 1f, 1f)
 	}

@@ -1104,14 +1104,15 @@ data class Matrix4(
 
 	}
 
-	// TODO: support shearXY, shearZY, etc
+	// TODO: support shearing on Y and Z axes
+
 	/**
-	 * Postmultiplies this matrix by a shear matrix.
+	 * Postmultiplies this matrix by a shear matrix on the z axis.
 	 * @param shearXZ The shear in x direction.
 	 * @param shearYZ The shear in y direction.
 	 * @return This matrix for the purpose of chaining.
 	 */
-	fun shear(shearXZ: Float = 0f, shearYZ: Float = 0f, shearXY: Float = 0f, shearZY: Float = 0f, shearZX: Float = 0f, shearYX: Float = 0f): Matrix4 {
+	fun shearZ(shearXZ: Float = 0f, shearYZ: Float = 0f): Matrix4 {
 		var tmp0 = values[0] + shearYZ * values[4]
 		var tmp1 = values[4] + shearXZ * values[0]
 		values[0] = tmp0
@@ -1124,10 +1125,4 @@ data class Matrix4(
 
 		return this
 	}
-}
-
-fun matrix4(init: Matrix4.() -> Unit): Matrix4 {
-	val m = Matrix4()
-	m.init()
-	return m
 }

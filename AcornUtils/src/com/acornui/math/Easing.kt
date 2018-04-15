@@ -469,4 +469,76 @@ object Easing {
 	val swingIn: Interpolation = SwingIn(2f)
 	val swingOut: Interpolation = SwingOut(2f)
 
+	private val registry = mutableMapOf(
+			"stepped" to stepped,
+			"linear" to linear,
+
+			"fade" to fade,
+
+			"pow2" to pow2,
+			"pow2In" to pow2In,
+			"pow2Out" to pow2Out,
+
+			"pow3" to pow3,
+			"pow3In" to pow3In,
+			"pow3Out" to pow3Out,
+
+			"pow4" to pow4,
+			"pow4In" to pow4In,
+			"pow4Out" to pow4Out,
+
+			"pow5" to pow5,
+			"pow5In" to pow5In,
+			"pow5Out" to pow5Out,
+
+			"exp10" to exp10,
+			"exp10In" to exp10In,
+			"exp10Out" to exp10Out,
+
+			"exp5" to exp5,
+			"exp5In" to exp5In,
+			"exp5Out" to exp5Out,
+
+			"circle" to circle,
+			"circleIn" to circleIn,
+			"circleOut" to circleOut,
+
+			"sine" to sine,
+			"sineIn" to sineIn,
+			"sineOut" to sineOut,
+
+			"elastic" to elastic,
+			"elasticIn" to elasticIn,
+			"elasticOut" to elasticOut,
+
+			"swing" to swing,
+			"swingIn" to swingIn,
+			"swingOut" to swingOut
+	)
+
+	/**
+	 * Registers a named interpolation object, for use in serialization.
+	 */
+	fun registerInterpolation(name: String, value: Interpolation) {
+		registry[name] = value
+	}
+
+	/**
+	 * Returns the interpolation object if there was one registered with the given name.
+	 */
+	fun fromString(name: String): Interpolation? {
+		return registry[name]
+	}
+
+	/**
+	 * Returns the name of the static interpolation value if it was registered.
+	 */
+	fun toString(value: Interpolation?): String? {
+		if (value == null) return null
+		for (entry in registry) {
+			if (entry.value === value) return entry.key
+		}
+		return null
+	}
+
 }

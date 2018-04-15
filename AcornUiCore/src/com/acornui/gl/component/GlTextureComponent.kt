@@ -41,7 +41,7 @@ import com.acornui.math.Bounds
  *
  * @author nbilyk
  */
-class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureComponent {
+open class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureComponent {
 
 	private val glState = inject(GlState)
 
@@ -62,7 +62,7 @@ class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureComponen
 	private var cached: CachedGroup? = null
 
 	private var _path: String? = null
-	override var path: String?
+	final override var path: String?
 		get() = _path
 		set(value) {
 			if (_path == value) return
@@ -84,7 +84,7 @@ class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureComponen
 			_setTexture(value)
 		}
 
-	private fun _setTexture(value: Texture?) {
+	protected open fun _setTexture(value: Texture?) {
 		if (sprite.texture == value) return
 		val oldTexture = sprite.texture
 		if (isActive) {
@@ -98,9 +98,7 @@ class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureComponen
 	}
 
 	override var isRotated: Boolean
-		get() {
-			return sprite.isRotated
-		}
+		get() = sprite.isRotated
 		set(value) {
 			if (sprite.isRotated == value) return
 			sprite.isRotated = value
@@ -108,9 +106,7 @@ class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureComponen
 		}
 
 	override var blendMode: BlendMode
-		get() {
-			return sprite.blendMode
-		}
+		get() = sprite.blendMode
 		set(value) {
 			if (sprite.blendMode == value) return
 			sprite.blendMode = value
