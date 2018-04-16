@@ -41,7 +41,10 @@ class GlState(
 		private val gl: Gl20
 ) : Disposable {
 
-	var defaultShader: ShaderProgram = DefaultShaderProgram(gl)
+	/**
+	 * The default shader for this application.
+	 */
+	private val defaultShader: ShaderProgram = DefaultShaderProgram(gl)
 
 	private val viewProjectionCache = MatrixCache(gl, ShaderProgram.U_PROJ_TRANS)
 	private val modelCache = MatrixCache(gl, ShaderProgram.U_MODEL_TRANS)
@@ -259,6 +262,7 @@ class GlState(
 		defaultWhitePixel.refDec()
 		_whitePixel = null
 		shader = null
+		defaultShader.dispose()
 	}
 
 	companion object : DKey<GlState>

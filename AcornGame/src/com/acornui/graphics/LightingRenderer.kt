@@ -55,6 +55,8 @@ class LightingRenderer(
 	//--------------------------------------------
 
 	init {
+		val previousShader = glState.shader
+
 		// Point lights.
 		pointShadowsFbo.begin()
 		pointLightShadowMaps = Array(numShadowPointLights) {
@@ -85,10 +87,11 @@ class LightingRenderer(
 			gl.uniform1i(lightingShaderUniforms.u_pointLightShadowMaps[i], POINT_SHADOW_UNIT + i)
 		}
 
-		glState.shader = glState.defaultShader
+		glState.shader = previousShader
 	}
 
 	fun render(camera: CameraRo, ambientLight: AmbientLight, directionalLight: DirectionalLight, pointLights: List<PointLight>, renderOcclusion: () -> Unit, renderWorld: () -> Unit) {
+		val previousShader = glState.shader
 		val currentW = window.width.toInt()
 		val currentH = window.height.toInt()
 		if (currentW == 0 || currentH == 0) return
@@ -102,7 +105,7 @@ class LightingRenderer(
 		renderWorld()
 		glState.batch.flush(true)
 
-		glState.shader = glState.defaultShader
+		glState.shader = previousShader
 	}
 
 	//--------------------------------------------
