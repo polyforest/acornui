@@ -1406,7 +1406,7 @@ class DataGrid<E>(
 	 * Iterates over all of the columns, invoking the callback with the columnIndex, column, x position, and width.
 	 * This assumes the COLUMNS_WIDTHS_VALIDATION flag has already been validated.
 	 */
-	inline private fun iterateVisibleColumnsInternal(callback: (columnIndex: Int, column: DataGridColumn<E, *>, columnX: Float, columnWidth: Float) -> Boolean) {
+	private inline fun iterateVisibleColumnsInternal(callback: (columnIndex: Int, column: DataGridColumn<E, *>, columnX: Float, columnWidth: Float) -> Boolean) {
 		val xOffset = -hScrollModel.value
 		for (i in firstVisibleColumn..lastVisibleColumn) {
 			val col = _columns[i]
@@ -1659,7 +1659,7 @@ class DataGrid<E>(
 	 * An object representing a row within the grid.
 	 * This position includes header and footer rows.
 	 */
-	inner open class RowLocation() {
+	open inner class RowLocation() {
 
 		private var _groupIndex: Int = 0
 
