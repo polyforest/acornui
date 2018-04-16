@@ -34,6 +34,7 @@ import com.acornui.core.userInfo
 import com.acornui.factory.LazyInstance
 import com.acornui.factory.disposeInstance
 import com.acornui.math.Bounds
+import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -50,10 +51,13 @@ open class Button(
 
 	val style = bind(ButtonStyle())
 
+	private val _toggledChanged = own(Signal1<Button>())
+
 	/**
 	 * Dispatched when the toggled flag has changed.
 	 */
-	val toggledChanged = own(Signal1<Button>())
+	val toggledChanged: Signal<(Button) -> Unit>
+		get() = _toggledChanged
 
 	/**
 	 * If true, when this button is pressed, the selected state will be toggled.
@@ -75,20 +79,17 @@ open class Button(
 	override var focusOrder = 0f
 	override var highlight: UiComponent? by createSlot()
 
-	private val rollOverHandler = {
-		event: MouseInteractionRo ->
+	private val rollOverHandler = { event: MouseInteractionRo ->
 		_mouseIsOver = true
 		refreshState()
 	}
 
-	private val rollOutHandler = {
-		event: MouseInteractionRo ->
+	private val rollOutHandler = { event: MouseInteractionRo ->
 		_mouseIsOver = false
 		refreshState()
 	}
 
-	private val mouseDownHandler = {
-		event: MouseInteractionRo ->
+	private val mouseDownHandler = { event: MouseInteractionRo ->
 		if (!_mouseIsDown && event.button == WhichButton.LEFT) {
 			_mouseIsDown = true
 			stage.mouseUp().add(stageMouseUpHandler, true)
@@ -96,8 +97,7 @@ open class Button(
 		}
 	}
 
-	private val touchStartHandler = {
-		event: TouchInteractionRo ->
+	private val touchStartHandler = { event: TouchInteractionRo ->
 		if (!_mouseIsDown) {
 			_mouseIsDown = true
 			stage.touchEnd().add(stageTouchEndHandler, true)
@@ -105,22 +105,19 @@ open class Button(
 		}
 	}
 
-	private val stageMouseUpHandler = {
-		event: MouseInteractionRo ->
+	private val stageMouseUpHandler = { event: MouseInteractionRo ->
 		if (event.button == WhichButton.LEFT) {
 			_mouseIsDown = false
 			refreshState()
 		}
 	}
 
-	private val stageTouchEndHandler = {
-		event: TouchInteractionRo ->
+	private val stageTouchEndHandler = { event: TouchInteractionRo ->
 		_mouseIsDown = false
 		refreshState()
 	}
 
-	private val clickHandler = {
-		event: ClickInteractionRo ->
+	private val clickHandler = { event: ClickInteractionRo ->
 		if (toggleOnClick)
 			toggled = !toggled
 	}
@@ -177,7 +174,7 @@ open class Button(
 			if (_toggled == value) return
 			_toggled = value
 			refreshState()
-			toggledChanged.dispatch(this)
+			_toggledChanged.dispatch(this)
 		}
 
 	protected open fun refreshState() {

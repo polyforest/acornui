@@ -66,12 +66,12 @@ class ParticleEffectComponent(
 
 	override fun onActivated() {
 		super.onActivated()
-		_effect?.activate()
+		_effect?.refInc()
 	}
 
 	override fun onDeactivated() {
 		super.onDeactivated()
-		_effect?.deactivate()
+		_effect?.refDec()
 	}
 
 	private var _effect: LoadedParticleEffect? = null
@@ -81,12 +81,10 @@ class ParticleEffectComponent(
 		set(value) {
 			val oldValue = _effect
 			if (oldValue == value) return
-			if (oldValue != null && isActive) {
-				oldValue.deactivate()
-			}
 			_effect = value
-			if (value != null && isActive) {
-				value.activate()
+			if (isActive) {
+				value?.refInc()
+				oldValue?.refDec()
 			}
 		}
 
@@ -116,24 +114,22 @@ class LoadedParticleEffect(
 		 * The cached group the particle effect used to load all the files.
 		 */
 		private val group: CachedGroup
-) : LifecycleBase(), Updatable {
+) : Updatable, Disposable {
 
 	private val emitterInstances = effectInstance.emitterInstances
 
 	init {
 	}
 
-	override fun onActivated() {
-		super.onActivated()
+	fun refInc() {
 		for (i in 0..renderers.lastIndex) {
-			renderers[i].activate()
+			renderers[i].refInc()
 		}
 	}
 
-	override fun onDeactivated() {
-		super.onDeactivated()
+	fun refDec() {
 		for (i in 0..renderers.lastIndex) {
-			renderers[i].deactivate()
+			renderers[i].refDec()
 		}
 	}
 
@@ -209,9 +205,14 @@ suspend fun Scoped.loadParticleEffect(pDataPath: String, atlasPath: String, grou
 	return LoadedParticleEffect(effectInstance, emitterRenderers, group)
 }
 
-interface ParticleEmitterRenderer : Lifecycle {
+interface ParticleEmitterRenderer {
+
+	fun refInc()
+
+	fun refDec()
 
 	fun render(concatenatedColorTint: ColorRo)
+
 }
 
 

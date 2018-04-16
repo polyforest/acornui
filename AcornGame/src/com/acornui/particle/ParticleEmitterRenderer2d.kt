@@ -36,13 +36,13 @@ class ParticleEmitterRenderer2d(
 	init {
 	}
 
-	override fun onActivated() {
+	override fun refInc() {
 		for (i in 0..sprites.lastIndex) {
 			sprites[i].texture?.refInc()
 		}
 	}
 
-	override fun onDeactivated() {
+	override fun refDec() {
 		for (i in 0..sprites.lastIndex) {
 			sprites[i].texture?.refDec()
 		}
@@ -67,7 +67,8 @@ class ParticleEmitterRenderer2d(
 
 		val w = sprite.naturalWidth * scale.x
 		val h = sprite.naturalHeight * scale.y
-		sprite.updateVertices(w, h, position.x, position.y, position.z, rotation.z, w * origin.x, h * origin.y)
+		val emitterPosition = emitterInstance.position
+		sprite.updateVertices(w, h, position.x + emitterPosition.x, position.y + emitterPosition.y, position.z + emitterPosition.z, rotation.z, w * origin.x, h * origin.y)
 		sprite.draw(glState, finalColor.set(colorTint).mul(concatenatedColorTint))
 	}
 

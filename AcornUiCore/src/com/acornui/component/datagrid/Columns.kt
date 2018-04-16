@@ -51,6 +51,24 @@ abstract class IntColumn<in E>(override val injector: Injector) : DataGridColumn
 	}
 }
 
+
+abstract class FloatColumn<in E>(override val injector: Injector) : DataGridColumn<E, Float?>(), Scoped {
+
+	val formatter = numberFormatter()
+
+	init {
+		cellHAlign = HAlign.RIGHT
+		sortable = true
+	}
+
+	override fun createCell(owner: Owned): DataGridCell<Float?> = NumberCell(owner, formatter)
+	override fun createEditorCell(owner: Owned): DataGridEditorCell<Float?> = FloatEditorCell(owner)
+
+	override fun compareRows(row1: E, row2: E): Int {
+		return getCellData(row1).compareTo(getCellData(row2))
+	}
+}
+
 class NumberCell(owner: Owned, private val formatter: NumberFormatter) : ContainerImpl(owner), DataGridCell<Number?> {
 
 	private val textField = addChild(text { selectable = false; flowStyle.horizontalAlign = FlowHAlign.RIGHT })
@@ -193,22 +211,5 @@ class StringEditorCell(owner: Owned) : ContainerImpl(owner), DataGridEditorCell<
 		super.updateLayout(explicitWidth, explicitHeight, out)
 		input.setSize(explicitWidth, explicitHeight)
 		out.set(input.bounds)
-	}
-}
-
-abstract class FloatColumn<in E>(override val injector: Injector) : DataGridColumn<E, Float?>(), Scoped {
-
-	val formatter = numberFormatter()
-
-	init {
-		cellHAlign = HAlign.RIGHT
-		sortable = true
-	}
-
-	override fun createCell(owner: Owned): DataGridCell<Float?> = NumberCell(owner, formatter)
-	override fun createEditorCell(owner: Owned): DataGridEditorCell<Float?> = FloatEditorCell(owner)
-
-	override fun compareRows(row1: E, row2: E): Int {
-		return getCellData(row1).compareTo(getCellData(row2))
 	}
 }

@@ -48,20 +48,20 @@ class IconButton(
 	companion object : StyleTag
 }
 
-fun Owned.iconButton(init: ComponentInit<Button> = {}): IconButton {
+fun Owned.iconButton(init: ComponentInit<IconButton> = {}): IconButton {
 	val b = IconButton(this)
 	b.init()
 	return b
 }
 
-fun Owned.iconButton(icon: String, init: ComponentInit<Button> = {}): IconButton {
+fun Owned.iconButton(icon: String, init: ComponentInit<IconButton> = {}): IconButton {
 	val b = IconButton(this)
 	b.contentsImage(icon)
 	b.init()
 	return b
 }
 
-fun Owned.iconButton(atlas: String, region: String, init: ComponentInit<Button> = {}): IconButton {
+fun Owned.iconButton(atlas: String, region: String, init: ComponentInit<IconButton> = {}): IconButton {
 	val b = IconButton(this)
 	b.contentsAtlas(atlas, region)
 	b.init()

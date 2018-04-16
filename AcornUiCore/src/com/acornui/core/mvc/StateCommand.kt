@@ -25,17 +25,17 @@ import com.acornui.core.input.interaction.redo
 import com.acornui.core.input.interaction.undo
 import com.acornui.logging.Log
 
-open class StateCommandHistory(
+class StateCommandHistory(
 		private val commandDispatcher: CommandDispatcher
 ) : Disposable {
 
-	protected var maxCommandHistory = 100000
-	protected val _commandHistory: ArrayList<StateCommand> = ArrayList()
+	private var maxCommandHistory = 100000
+	private val _commandHistory: ArrayList<StateCommand> = ArrayList()
 	val commandHistory: List<StateCommand>
 		get() = _commandHistory
 
-	protected var commandCursor: Int = 0
-	protected var isDispatching = false
+	private var commandCursor: Int = 0
+	private var isDispatching = false
 
 	private val commandInvokedHandler: (Command) -> Unit = {
 		if (!isDispatching) {
@@ -59,7 +59,7 @@ open class StateCommandHistory(
 		return _commandHistory[commandCursor]
 	}
 
-	protected fun add(command: StateCommand) {
+	private fun add(command: StateCommand) {
 		if (commandCursor != _commandHistory.size) {
 			// If we have undone commands and are now invoking a new command,
 			// then remove the undone commands from the history.

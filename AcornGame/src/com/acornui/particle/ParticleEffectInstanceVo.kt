@@ -26,12 +26,31 @@ import com.acornui.serialization.*
 class ParticleEffectInstanceVo(
 
 		val emitterInstances: List<ParticleEmitterInstance>
-)
+
+) {
+
+	val _position = Vector3()
+
+	val position: Vector3Ro
+		get() = _position
+
+	fun setPosition(x: Float, y: Float, z: Float) {
+		translatePosition(x - _position.x, y - _position.y, z - _position.z)
+	}
+
+	fun translatePosition(xD: Float, yD: Float, zD: Float) {
+		for (i in 0..emitterInstances.lastIndex) {
+			emitterInstances[i].position.add(xD, yD, zD)
+		}
+	}
+}
 
 class ParticleEmitterInstance(
 
 		val emitter: ParticleEmitterVo
 ) {
+
+	val position = Vector3()
 
 	val particles: List<ParticleVo>
 
@@ -390,7 +409,11 @@ object ParticleSpawnRegistry {
 	}
 }
 
-data class PointSpawn(val x: Float, val y: Float, val z: Float) : ParticleSpawn {
+data class PointSpawn(
+		var x: Float,
+		var y: Float,
+		var z: Float
+) : ParticleSpawn {
 
 	override val type = TYPE
 

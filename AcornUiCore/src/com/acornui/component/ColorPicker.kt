@@ -8,7 +8,6 @@ import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.core.focus.Focusable
-import com.acornui.core.input.interaction.MouseInteraction
 import com.acornui.core.input.interaction.MouseInteractionRo
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.interaction.dragAttachment
@@ -23,6 +22,7 @@ import com.acornui.math.*
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
+import kotlin.properties.Delegates
 
 open class ColorPicker(owner: Owned) : ContainerImpl(owner), Focusable {
 
@@ -167,9 +167,19 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 
 	val style = bind(ColorPaletteStyle())
 
+	var showAlphaPicker by Delegates.observable(false, {
+		prop, old, new ->
+		if (old != new) {
+			alphaRect.visible = new
+			alphaValueIndicator?.visible = new
+			invalidateLayout()
+		}
+	})
+
 	private var background: UiComponent? = null
 	private var hueSaturationIndicator: UiComponent? = null
-	private var valueIndicator: UiComponent? = null
+	private var saturationValueIndicator: UiComponent? = null
+	private var alphaValueIndicator: UiComponent? = null
 
 	val hueRect = addChild(rect {
 		style.linearGradient = LinearGradient(GradientDirection.RIGHT,
@@ -222,6 +232,17 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 		}
 	})
 
+	val alphaRect = addChild(rect {
+		dragAttachment(0f).drag.add {
+			windowToLocal(tmpVec.set(it.position))
+			val p = MathUtils.clamp(tmpVec.y / height, 0f, 1f)
+
+			tmpHSV.set(_value)
+			tmpHSV.a = 1f - p
+			userChange(tmpHSV)
+		}
+	})
+
 	private var _value = Color.WHITE.toHsv(Hsv())
 
 	var color: ColorRo
@@ -237,7 +258,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 			if (oldValue == value) return
 			_value = value.copy()
 			changed.dispatch(oldValue, value)
-			invalidate(ValidationFlags.STYLES)
+			invalidate(COLORS)
 		}
 
 	init {
@@ -245,26 +266,32 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 		watch(style) {
 			background?.dispose()
 			hueSaturationIndicator?.dispose()
-			valueIndicator?.dispose()
+			saturationValueIndicator?.dispose()
+			alphaValueIndicator?.dispose()
 
 			background = addChild(0, it.background(this))
 
 			hueSaturationIndicator = addChild(it.hueSaturationIndicator(this))
 			hueSaturationIndicator!!.interactivityMode = InteractivityMode.NONE
 
-			valueIndicator = addChild(it.valueIndicator(this))
-			valueIndicator!!.interactivityMode = InteractivityMode.NONE
+			saturationValueIndicator = addChild(it.valueIndicator(this))
+			saturationValueIndicator!!.interactivityMode = InteractivityMode.NONE
+
+			alphaValueIndicator = addChild(it.valueIndicator(this))
+			alphaValueIndicator!!.interactivityMode = InteractivityMode.NONE
+			alphaValueIndicator?.visible = showAlphaPicker
 		}
+
+		validation.addNode(COLORS, ValidationFlags.STYLES, ValidationFlags.LAYOUT, this::validateColors)
 	}
 
-	override fun updateStyles() {
+	private fun validateColors() {
 		tmpHSV.set(_value)
 		tmpHSV.v = 1f
 		valueRect.style.linearGradient = LinearGradient(GradientDirection.BOTTOM,
 				tmpHSV.toRgb(tmpColor),
 				Color(0f, 0f, 0f, 1f)
 		)
-		super.updateStyles()
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
@@ -285,7 +312,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 
 		hueSaturationIndicator!!.moveTo(saturationRect.x + _value.h / 360f * saturationRect.width - hueSaturationIndicator!!.width * 0.5f, saturationRect.y + (1f - _value.s) * saturationRect.height - hueSaturationIndicator!!.height * 0.5f)
 
-		valueIndicator!!.moveTo(valueRect.x - valueIndicator!!.width * 0.5f, (1f - _value.v) * satHeight + padding.top - valueIndicator!!.height * 0.5f)
+		saturationValueIndicator!!.moveTo(valueRect.x - saturationValueIndicator!!.width * 0.5f, (1f - _value.v) * satHeight + padding.top - saturationValueIndicator!!.height * 0.5f)
 
 		val bg = background!!
 		bg.setSize(w, h)
@@ -296,6 +323,8 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 		private val tmpVec = Vector2()
 		private val tmpHSV = Hsv()
 		private val tmpColor = Color()
+
+		private const val COLORS = 1 shl 16
 	}
 
 }

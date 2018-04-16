@@ -118,7 +118,7 @@ open class OptionsList<E : Any>(
 
 	private val stageMouseDownHandler = {
 		event: MouseInteractionRo ->
-		if (event.target == null || (!event.target!!.isDescendantOf(dataScroller) && !event.target!!.isDescendantOf(downArrow!!))) {
+		if (!event.target.isDescendantOf(dataScroller) && !event.target.isDescendantOf(downArrow!!)) {
 			close()
 		}
 	}

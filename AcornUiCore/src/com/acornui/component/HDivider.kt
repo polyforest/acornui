@@ -93,7 +93,7 @@ open class HDivider(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	}
 
 	override fun updateSizeConstraints(out: SizeConstraints) {
-		var mW: Float = 0f
+		var mW = 0f
 		if (_left != null) {
 			out.height.bound(_left!!.sizeConstraints.height)
 			mW += _left!!.minWidth ?: 0f
