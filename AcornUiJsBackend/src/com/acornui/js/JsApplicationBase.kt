@@ -58,12 +58,14 @@ import com.acornui.core.text.NumberFormatter
 import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.TimeDriverImpl
 import com.acornui.core.time.time
+import com.acornui.file.FileReadWriteManager
 import com.acornui.io.file.FilesManifestSerializer
 import com.acornui.js.audio.JsAudioElementMusicLoader
 import com.acornui.js.audio.JsAudioElementSoundLoader
 import com.acornui.js.audio.JsWebAudioSoundLoader
 import com.acornui.js.audio.audioContextSupported
 import com.acornui.js.cursor.JsCursorManager
+import com.acornui.js.file.JsFileReadWriteManager
 import com.acornui.js.input.JsClipboardDispatcher
 import com.acornui.js.input.JsKeyInput
 import com.acornui.js.input.JsMouseInput
@@ -330,6 +332,10 @@ Function.prototype.bind = function() {
 	protected open val textFormattersTask by BootTask {
 		set(NumberFormatter.FACTORY_KEY, { NumberFormatterImpl(it) })
 		set(DateTimeFormatter.FACTORY_KEY, { DateTimeFormatterImpl(it) })
+	}
+
+	protected open val fileReadWriteManagerTask by BootTask {
+		set(FileReadWriteManager, JsFileReadWriteManager())
 	}
 
 	abstract suspend fun createStage(owner: Owned): Stage
