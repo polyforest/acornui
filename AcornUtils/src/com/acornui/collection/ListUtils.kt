@@ -1,5 +1,7 @@
 package com.acornui.collection
 
+import kotlin.math.truncate
+
 
 fun <E> arrayCopy(src: List<E>,
 				  srcPos: Int,
@@ -139,33 +141,33 @@ fun <E : Comparable<E>> MutableList<E>.addSorted(element: E, matchForwards: Bool
 /**
  * Provides a partial implementation of the List interface.
  */
-abstract class ListBase<E> : List<E> {
+abstract class ListBase<out E> : List<E> {
 
 	val lastIndex: Int
 		get() = size - 1
 
-	override fun indexOf(element: E): Int {
+	override fun indexOf(element: @UnsafeVariance E): Int {
 		for (i in 0..lastIndex) {
 			if (this[i] == element) return i
 		}
 		return -1
 	}
 
-	override fun lastIndexOf(element: E): Int {
+	override fun lastIndexOf(element: @UnsafeVariance E): Int {
 		for (i in lastIndex downTo 0) {
 			if (this[i] == element) return i
 		}
 		return -1
 	}
 
-	override fun contains(element: E): Boolean {
+	override fun contains(element: @UnsafeVariance E): Boolean {
 		for (i in 0..lastIndex) {
 			if (this[i] == element) return true
 		}
 		return false
 	}
 
-	override fun containsAll(elements: Collection<E>): Boolean {
+	override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean {
 		for (element in elements) {
 			if (!contains(element)) return false
 		}
@@ -453,7 +455,7 @@ fun <E> arrayList2(array: Array<E>): ArrayList<E> {
  * Appends all elements matching the given [predicate] to the given [destination].
  * Does not cause allocation.
  */
-inline fun <T, C : MutableCollection<in T>> List<T>.filterTo2(destination: C, predicate: (T) -> Boolean): C {
+inline fun <E, C : MutableCollection<in E>> List<E>.filterTo2(destination: C, predicate: (E) -> Boolean): C {
 	for (i in 0..lastIndex) {
 		val element = this[i]
 		if (predicate(element)) destination.add(element)
@@ -465,7 +467,7 @@ inline fun <T, C : MutableCollection<in T>> List<T>.filterTo2(destination: C, pr
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  * Does not cause allocation.
  */
-inline fun <T> List<T>.find2(startIndex: Int = 0, predicate: (T) -> Boolean): T? {
+inline fun <E> List<E>.find2(startIndex: Int = 0, predicate: (E) -> Boolean): E? {
 	val index = indexOfFirst2(startIndex, lastIndex, predicate)
 	return if (index == -1) null else this[index]
 }
@@ -476,7 +478,7 @@ inline fun <T> List<T>.find2(startIndex: Int = 0, predicate: (T) -> Boolean): T?
  * @param startIndex The starting index to search from (inclusive).
  * @param lastIndex The ending index to search to (inclusive). lastIndex >= startIndex
  */
-inline fun <T> List<T>.indexOfFirst2(startIndex: Int = 0, lastIndex: Int = this.lastIndex, predicate: (T) -> Boolean): Int {
+inline fun <E> List<E>.indexOfFirst2(startIndex: Int = 0, lastIndex: Int = this.lastIndex, predicate: (E) -> Boolean): Int {
 	if (startIndex == lastIndex) return if (predicate(this[startIndex])) startIndex else -1
 	for (i in startIndex..lastIndex) {
 		if (predicate(this[i]))
@@ -491,7 +493,7 @@ inline fun <T> List<T>.indexOfFirst2(startIndex: Int = 0, lastIndex: Int = this.
  * @param lastIndex The starting index to search from (inclusive).
  * @param startIndex The ending index to search to (inclusive).
  */
-inline fun <T> List<T>.indexOfLast2(lastIndex: Int = this.lastIndex, startIndex: Int = 0, predicate: (T) -> Boolean): Int {
+inline fun <E> List<E>.indexOfLast2(lastIndex: Int = this.lastIndex, startIndex: Int = 0, predicate: (E) -> Boolean): Int {
 	if (lastIndex == startIndex) return if (predicate(this[lastIndex])) lastIndex else -1
 	for (i in lastIndex downTo startIndex) {
 		if (predicate(this[i]))
@@ -500,11 +502,11 @@ inline fun <T> List<T>.indexOfLast2(lastIndex: Int = this.lastIndex, startIndex:
 	return -1
 }
 
-inline fun <T> List<T>.forEach2(action: (T) -> Unit): Unit {
+inline fun <E> List<E>.forEach2(action: (E) -> Unit): Unit {
 	for (i in 0..lastIndex) action(this[i])
 }
 
-inline fun <T> List<T>.forEachReversed2(action: (T) -> Unit): Unit {
+inline fun <E> List<E>.forEachReversed2(action: (E) -> Unit): Unit {
 	for (i in lastIndex downTo 0) action(this[i])
 }
 
@@ -525,7 +527,7 @@ fun <E> MutableList<E>.addAll(vararg elements: E) {
 /**
  * Creates a wrapper to a target list that maps the elements on retrieval.
  */
-class ListTransform<T, R>(private val target: List<T>, private val transform: (T) -> R) : ListBase<R>() {
+class ListTransform<E, R>(private val target: List<E>, private val transform: (E) -> R) : ListBase<R>() {
 	override val size: Int
 		get() = target.size
 
@@ -542,14 +544,14 @@ class ListTransform<T, R>(private val target: List<T>, private val transform: (T
  * @return Returns a count representing the number of times [predicate] returned true. This will always be within the
  * range 0 and (lastIndex - startIndex + 1)
  */
-inline fun <T> List<T>.count2(startIndex: Int = 0, lastIndex: Int = this.lastIndex, predicate: (T) -> Boolean): Int {
+inline fun <E> List<E>.count2(startIndex: Int = 0, lastIndex: Int = this.lastIndex, predicate: (E) -> Boolean): Int {
 	var count = 0
 	for (i in startIndex..lastIndex) if (predicate(this[i])) count++
 	return count
 }
 
 
-inline fun <T> MutableList<T>.removeFirst(predicate: (T) -> Boolean): T? {
+inline fun <E> MutableList<E>.removeFirst(predicate: (E) -> Boolean): E? {
 	val index = indexOfFirst2(0, lastIndex, predicate)
 	if (index == -1) return null
 	return removeAt(index)
@@ -558,8 +560,8 @@ inline fun <T> MutableList<T>.removeFirst(predicate: (T) -> Boolean): T? {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
  */
-inline fun <T> List<T>.sumBy2(selector: (T) -> Int): Int {
-	var sum: Int = 0
+inline fun <E> List<E>.sumBy2(selector: (E) -> Int): Int {
+	var sum = 0
 	for (i in 0..lastIndex) {
 		sum += selector(this[i])
 	}
@@ -569,8 +571,8 @@ inline fun <T> List<T>.sumBy2(selector: (T) -> Int): Int {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
  */
-inline fun <T> List<T>.sumByFloat2(selector: (T) -> Float): Float {
-	var sum: Float = 0f
+inline fun <E> List<E>.sumByFloat2(selector: (E) -> Float): Float {
+	var sum = 0f
 	for (i in 0..lastIndex) {
 		sum += selector(this[i])
 	}
@@ -584,4 +586,18 @@ inline fun <T> List<T>.sumByFloat2(selector: (T) -> Float): Float {
  * Structural changes in the base list make the behavior of the view undefined.
  * @see List.subList
  */
-fun <T> List<T>.limit(size: Int): List<T> = subList(0, size)
+fun <E> List<E>.subList(size: Int): List<E> = subList(0, size)
+
+/**
+ * Modifies this list to become the new size.
+ */
+fun <E> MutableList<E>.setSize(newSize: Int, factory: () -> E) {
+	if (newSize < size) {
+		for (i in 0..size - newSize)
+			pop()
+	} else if (newSize > size) {
+		for (i in 0..newSize - size)
+			add(factory())
+	}
+}
+

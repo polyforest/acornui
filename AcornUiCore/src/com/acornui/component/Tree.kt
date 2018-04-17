@@ -219,21 +219,23 @@ open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Owned, protected val 
 	}
 
 	protected open fun updateChildren() {
-		recycle(_data?.children, _elements, this::createChildRenderer, {
-			element, item, index ->
-			if (item !== element.data) {
-				element.data = item
-				element.toggled = false
-			}
-			childrenContainer.addElement(index, element)
-		}, {
-			it.dispose()
-		})
+		recycle(_data?.children,
+				_elements,
+				factory = {
+					DefaultTreeItemRenderer(this, tree)
+				},
+				configure = { element, item, index ->
+					if (item !== element.data) {
+						element.data = item
+						element.toggled = false
+					}
+					childrenContainer.addElement(index, element)
+				},
+				disposer = {
+					it.dispose()
+				}
+		)
 		childrenContainer.visible = toggled
-	}
-
-	protected open fun createChildRenderer(): TreeItemRenderer<E> {
-		return DefaultTreeItemRenderer(this, tree)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

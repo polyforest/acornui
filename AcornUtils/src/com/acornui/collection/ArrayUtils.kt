@@ -98,8 +98,8 @@ fun <E> MutableList<E>.poll(): E {
 }
 
 @Suppress("BASE_WITH_NULLABLE_UPPER_BOUND") fun <T> List<T>.peek(): T? {
-	if (isEmpty()) return null
-	else return this[lastIndex]
+	return if (isEmpty()) null
+	else this[lastIndex]
 }
 
 /**
