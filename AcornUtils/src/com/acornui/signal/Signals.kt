@@ -135,11 +135,15 @@ abstract class SignalBase<T : Any> : Signal<T>, Disposable {
 		cursor = 999999999
 	}
 
+	val isDispatching: Boolean
+		get() = cursor != -1
+
 	/**
 	 * Calls executor on each handler in this signal.
 	 */
 	protected inline fun dispatch(executor: (T) -> Unit) {
-		if (cursor != -1) throw Exception("This signal is currently dispatching.")
+		if (cursor != -1)
+			throw Exception("This signal is currently dispatching.")
 		cursor = 0
 		if (handlers.size <= 4) {
 			if (cursor < handlers.size) {
