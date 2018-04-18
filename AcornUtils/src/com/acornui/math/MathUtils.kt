@@ -420,6 +420,8 @@ object MathUtils {
 		return maxOf(w, x, maxOf(y, z))
 	}
 
+	// TODO: deprecate what's now in kotlin native math
+
 	inline fun ceil(v: Float): Int {
 		return Math.ceil(v.toDouble()).toInt()
 	}
@@ -583,6 +585,38 @@ object MathUtils {
 			val rSign = if (r > 0f) 1f else if (r < 0f) -1f else 0f
 			out.add(-rSign * (tmp + q / tmp) - b / 3f)
 		}
+	}
+
+	// TODO: Document
+
+	/**
+	 * Snaps a value to the nearest interval.
+	 */
+	fun roundToNearest(value: Float, snap: Float, offset: Float = 0f): Float {
+		if (snap <= 0) return value
+		var v = value - offset
+		v /= snap
+		v = MathUtils.round(v).toFloat()
+		v *= snap
+		return v + offset
+	}
+
+	fun floorToNearest(value: Float, snap: Float, offset: Float = 0f): Float {
+		if (snap <= 0) return value
+		var v = value - offset
+		v /= snap
+		v = MathUtils.floor(v).toFloat()
+		v *= snap
+		return v + offset
+	}
+
+	fun ceilToNearest(value: Float, snap: Float, offset: Float = 0f): Float {
+		if (snap <= 0) return value
+		var v = value - offset
+		v /= snap
+		v = MathUtils.ceil(v).toFloat()
+		v *= snap
+		return v + offset
 	}
 }
 

@@ -16,14 +16,17 @@
 
 package com.acornui.component
 
+import com.acornui.collection.Filter
 import com.acornui.collection.ListView
 import com.acornui.collection.ObservableList
+import com.acornui.collection.SortComparator
 import com.acornui.component.layout.DataScrollerStyle
 import com.acornui.component.layout.ListItemRenderer
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.layout.algorithm.VerticalLayoutData
 import com.acornui.component.layout.algorithm.virtual.VirtualVerticalLayoutStyle
 import com.acornui.component.layout.algorithm.virtual.vDataScroller
+import com.acornui.component.scroll.ScrollModel
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
@@ -31,6 +34,7 @@ import com.acornui.component.style.noSkin
 import com.acornui.component.text.TextInput
 import com.acornui.component.text.textInput
 import com.acornui.core.di.Owned
+import com.acornui.core.di.own
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.MouseInteractionRo
 import com.acornui.core.input.interaction.click
@@ -43,6 +47,7 @@ import com.acornui.core.text.ToStringFormatter
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.signal.Signal
+import com.acornui.signal.Signal0
 
 // TODO: delegate focus to input
 
@@ -57,18 +62,21 @@ open class OptionsList<E : Any>(
 	 */
 	var caseInsensitive = true
 
+	private val _input = own(Signal0())
+
 	/**
 	 * Dispatched on each input character.
 	 */
 	val input: Signal<() -> Unit>
-		get() = textInput.input
+		get() = _input
 
-	// TODO: changed should dispatch on element clicked
+	private val _changed = own(Signal0())
+
 	/**
 	 * Dispatched on value commit.
 	 */
-	val changed: Signal<()->Unit>
-		get() = textInput.changed
+	val changed: Signal<() -> Unit>
+		get() = _changed
 
 	/**
 	 * The formatter to be used when converting a data element to a string.
@@ -76,21 +84,34 @@ open class OptionsList<E : Any>(
 	 */
 	var formatter: StringFormatter<E> = ToStringFormatter
 
+	/**
+	 * Given the text input's text, returns the matching item in the data list, or null if there are no matches.
+	 * By default this will search for a case insensitive match to the item's string result from the [formatter].
+	 */
+	var textToItem = { text: String ->
+		val textLower = text.toLowerCase()
+		data.firstOrNull { formatter.format(it).toLowerCase() == textLower }
+	}
+
 	var selectedItem: E?
 		get() = dataScroller.selection.selectedItem
 		set(value) {
 			dataScroller.selection.selectedItem = value
 		}
 
-	private val textInput: TextInput
+	private val textInput: TextInput = textInput {
+		input.add(this@OptionsList::onInput)
+		changed.add {
+			_changed.dispatch()
+		}
+	}
 
 	private var downArrow: UiComponent? = null
 
 	private val dataView = ListView(data)
 
 	private val dataScroller = vDataScroller(rendererFactory, dataView) {
-		selection.changed.add {
-			element, selected ->
+		selection.changed.add { _, _ ->
 			close()
 		}
 	}
@@ -116,13 +137,6 @@ open class OptionsList<E : Any>(
 			dataScroller.maxItems = value
 		}
 
-	private val stageMouseDownHandler = {
-		event: MouseInteractionRo ->
-		if (!event.target.isDescendantOf(dataScroller) && !event.target.isDescendantOf(downArrow!!)) {
-			close()
-		}
-	}
-
 	private var isUserInput: Boolean = false
 
 	val style = bind(OptionsListStyle())
@@ -133,25 +147,59 @@ open class OptionsList<E : Any>(
 	val dataScrollerLayoutStyle: VirtualVerticalLayoutStyle
 		get() = dataScroller.layoutStyle
 
+	private val defaultSortComparator = { o1: E, o2: E ->
+		var str = textInput.text
+		if (caseInsensitive) str = str.toLowerCase()
+		val score1 = scoreBySearchIndex(o1, str)
+		val score2 = scoreBySearchIndex(o2, str)
+		score1.compareTo(score2)
+	}
+
+	/**
+	 * Sorts the list.
+	 * The default is to sort based on the text input's text compared to the position of the found text within
+	 * the formatted element via [formatter].
+	 * This does not modify the original list.
+	 */
+	var sortComparator: SortComparator<E>?
+		get() = dataView.sortComparator
+		set(value) {
+			dataView.sortComparator = value
+		}
+
+	/**
+	 * Filters the list.
+	 * This does not modify the original list.
+	 */
+	var filter: Filter<E>?
+		get() = dataView.filter
+		set(value) {
+			dataView.filter = value
+		}
+
+	/**
+	 * The scroll model for the dropdown list.
+	 */
+	val scrollModel: ScrollModel
+		get() = dataScroller.scrollModel
+
+	private val stageMouseDownHandler = { event: MouseInteractionRo ->
+		if (!event.target.isDescendantOf(dataScroller) && !event.target.isDescendantOf(downArrow!!)) {
+			close()
+		}
+	}
+
 	init {
 		styleTags.add(OptionsList)
 		maxItems = 10
-		textInput = addChild(textInput {
-			input.add(this@OptionsList::onInput)
-		})
+		addChild(textInput)
 
 		keyDown().add {
-			if (it.keyCode == Ascii.ESCAPE || it.keyCode == Ascii.RETURN || it.keyCode == Ascii.ENTER) close()
+			if (it.keyCode == Ascii.ESCAPE || it.keyCode == Ascii.RETURN || it.keyCode == Ascii.ENTER)
+				close()
 		}
 
-		dataView.sortComparator = {
-			o1, o2 ->
-			var str = textInput.text
-			if (caseInsensitive) str = str.toLowerCase()
-			val score1 = searchScore(o1, str)
-			val score2 = searchScore(o2, str)
-			score1.compareTo(score2)
-		}
+		sortComparator = defaultSortComparator
 
 		dataScroller.selection.changed.add {
 			item, selected ->
@@ -161,6 +209,7 @@ open class OptionsList<E : Any>(
 				else
 					textInput.text = ""
 			}
+			_changed.dispatch()
 		}
 
 		watch(style) {
@@ -176,15 +225,15 @@ open class OptionsList<E : Any>(
 	private fun onInput() {
 		dataView.dirty()
 		open()
-		dataScroller.scrollModel.value = 0f // Scroll to the top.
+		scrollModel.value = 0f // Scroll to the top.
 
 		isUserInput = true
-		val textLower = text.toLowerCase()
-		selectedItem = data.firstOrNull { formatter.format(it).toLowerCase() == textLower }
+		selectedItem = textToItem(text)
 		isUserInput = false
+		_input.dispatch()
 	}
 
-	private fun searchScore(obj: E, str: String): Int {
+	private fun scoreBySearchIndex(obj: E, str: String): Int {
 		var itemStr = formatter.format(obj)
 		if (caseInsensitive) itemStr = itemStr.toLowerCase()
 		val i = itemStr.indexOf(str)
@@ -214,9 +263,9 @@ open class OptionsList<E : Any>(
 		else open()
 	}
 
-	override fun onAncestorVisibleChanged(uiComponent: UiComponent, value: Boolean) {
-		invalidate(ValidationFlags.LAYOUT)
-	}
+//	override fun onAncestorVisibleChanged(uiComponent: UiComponent, value: Boolean) {
+//		invalidate(ValidationFlags.LAYOUT)
+//	}
 
 	var text: String
 		get() = textInput.text
@@ -236,6 +285,11 @@ open class OptionsList<E : Any>(
 
 		listLift.setSize(listWidth ?: textInput.width, listHeight)
 		listLift.moveTo(0f, textInput.height)
+	}
+
+	override fun dispose() {
+		super.dispose()
+		close()
 	}
 
 	companion object : StyleTag

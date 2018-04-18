@@ -23,7 +23,7 @@ import com.acornui.signal.Signal
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
 
-interface SelectionRo<E> {
+interface SelectionRo<E : Any> {
 
 	/**
 	 * Dispatched when the selection status of an item has changed.
@@ -42,7 +42,7 @@ interface SelectionRo<E> {
 	 * @param out The list to fill with the selected items.
 	 * @param ordered If true, the list will be ordered. (Slower)
 	 */
-	fun getSelectedItems(out: MutableList<E>, ordered: Boolean)
+	fun getSelectedItems(ordered: Boolean, out: MutableList<E>)
 
 	val isEmpty: Boolean
 	val isNotEmpty: Boolean
@@ -50,7 +50,7 @@ interface SelectionRo<E> {
 	fun getItemIsSelected(item: E): Boolean
 }
 
-interface Selection<E> : SelectionRo<E>, Clearable {
+interface Selection<E : Any> : SelectionRo<E>, Clearable {
 
 	/**
 	 * Dispatched when an item's selection status is about to change. This provides an opportunity to cancel the
@@ -72,7 +72,7 @@ interface Selection<E> : SelectionRo<E>, Clearable {
  * This is typically paired with a selection controller.
  * @author nbilyk
  */
-abstract class SelectionBase<E> : Selection<E>, Disposable {
+abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 
 	private val _changing = Signal3<E, Boolean, Cancel>()
 
@@ -107,7 +107,7 @@ abstract class SelectionBase<E> : Selection<E>, Disposable {
 	 * @param out The list to fill with the selected items.
 	 * @param ordered If true, the list will be ordered. (Slower)
 	 */
-	override fun getSelectedItems(out: MutableList<E>, ordered: Boolean) {
+	override fun getSelectedItems(ordered: Boolean, out: MutableList<E>) {
 		out.clear()
 		if (ordered) {
 			walkSelectableItems {
@@ -126,9 +126,10 @@ abstract class SelectionBase<E> : Selection<E>, Disposable {
 	override var selectedItem: E?
 		get() = _selectedMap.keys.firstOrNull()
 		set(value) {
-			if (value == null && _selectedMap.isEmpty()) return
-			else if (value != null && getItemIsSelected(value)) return
-			clear()
+			for (key in _selectedMap.keys) {
+				if (key !== value)
+					setItemIsSelected(key, false)
+			}
 			if (value != null)
 				setItemIsSelected(value, true)
 		}

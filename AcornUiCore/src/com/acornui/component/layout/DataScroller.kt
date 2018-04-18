@@ -27,7 +27,7 @@ import com.acornui.math.Vector2Ro
 // TODO: largest renderer?
 // TODO: I don't love the virtual layout algorithms.
 
-class DataScroller<E, S : Style, out T : LayoutData>(
+class DataScroller<E : Any, S : Style, out T : LayoutData>(
 		owner: Owned,
 		rendererFactory: ItemRendererOwner<T>.() -> ListItemRenderer<E>,
 		layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
@@ -327,7 +327,13 @@ class DataScrollerStyle : StyleBase() {
 	companion object : StyleType<DataScrollerStyle>
 }
 
-private class DataScrollerSelection<E>(private val data: List<E>, private val listA: VirtualList<E, *, *>, private val listB: VirtualList<E, *, *>, private val rowMap: Map<E, RowBackground>) : SelectionBase<E>() {
+private class DataScrollerSelection<E : Any>(
+		private val data: List<E>,
+		private val listA: VirtualList<E, *, *>,
+		private val listB: VirtualList<E, *, *>,
+		private val rowMap: Map<E, RowBackground>
+) : SelectionBase<E>() {
+
 	override fun walkSelectableItems(callback: (E) -> Unit) {
 		for (i in 0..data.lastIndex) {
 			callback(data[i])
@@ -341,7 +347,7 @@ private class DataScrollerSelection<E>(private val data: List<E>, private val li
 	}
 }
 
-private class DataScrollerHighlight<E>(private val data: List<E>, private val rowMap: Map<E, RowBackground>) : SelectionBase<E>() {
+private class DataScrollerHighlight<E : Any>(private val data: List<E>, private val rowMap: Map<E, RowBackground>) : SelectionBase<E>() {
 	override fun walkSelectableItems(callback: (E) -> Unit) {
 		for (i in 0..data.lastIndex) {
 			callback(data[i])

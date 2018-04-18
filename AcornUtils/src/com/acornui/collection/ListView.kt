@@ -47,7 +47,7 @@ class ListView<E>(
 	 * If set, this list will be reduced to elements passing the given filter function.
 	 * Changing this will dispatch a [reset] signal.
 	 */
-	var filter by Delegates.observable<((E) -> Boolean)?>(null) {
+	var filter by Delegates.observable<Filter<E>?>(null) {
 		_, _, _ ->
 		dirty()
 		Unit

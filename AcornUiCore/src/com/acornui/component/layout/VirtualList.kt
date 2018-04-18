@@ -27,7 +27,7 @@ interface VirtualLayoutContainer<S, out T : LayoutData> : Container {
 /**
  * A virtualized list of components, with no clipping or scrolling. This is a lower-level component, used by the [DataScroller].
  */
-class VirtualList<E, S : Style, out T : LayoutData>(
+class VirtualList<E : Any, S : Style, out T : LayoutData>(
 		owner: Owned,
 		rendererFactory: ItemRendererOwner<T>.() -> ListItemRenderer<E>,
 		override val layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
@@ -404,7 +404,7 @@ private class SmartCache<E>(private val pool: Pool<ListItemRenderer<E>>) {
 	}
 }
 
-fun <E, S : Style, T : LayoutData> Owned.virtualList(
+fun <E : Any, S : Style, T : LayoutData> Owned.virtualList(
 		rendererFactory: ItemRendererOwner<T>.() -> ListItemRenderer<E>,
 		layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
 		style: S,
@@ -414,7 +414,7 @@ fun <E, S : Style, T : LayoutData> Owned.virtualList(
 	return c
 }
 
-class VirtualListSelection<E>(private val data: List<E>, private val activeRenderers: List<ListItemRenderer<E>>) : SelectionBase<E>() {
+class VirtualListSelection<E : Any>(private val data: List<E>, private val activeRenderers: List<ListItemRenderer<E>>) : SelectionBase<E>() {
 	override fun walkSelectableItems(callback: (E) -> Unit) {
 		for (i in 0..data.lastIndex) {
 			callback(data[i])

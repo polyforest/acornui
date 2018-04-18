@@ -347,11 +347,11 @@ class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 @Suppress("LeakingThis")
 class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
-	private val _input = Signal0()
+	private val _input = own(Signal0())
 	val input: Signal<() -> Unit>
 		get() = _input
 
-	private val _changed = Signal0()
+	private val _changed = own(Signal0())
 	val changed: Signal<() -> Unit>
 		get() = _changed
 
@@ -516,7 +516,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			}
 		}
 
-		host.enableUndoRedo()
+		//host.enableUndoRedo()
 
 		cmd.onCommandInvoked(ReplaceTextRangeCommand, this::onReplaceTextRange)
 

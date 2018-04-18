@@ -114,13 +114,13 @@ class CyclicList<E>(initialCapacity: Int = 16) : Clearable, ListBase<E>() {
 		if (localIndex >= capacity) {
 			localIndex -= capacity
 			if (localIndex >= start) {
-				throw IllegalArgumentException("Index is out of bounds: " + index)
+				throw IllegalArgumentException("Index is out of bounds: $index")
 			}
 		}
 		if (localIndex < 0) {
 			localIndex += capacity
 			if (localIndex < start + _size) {
-				throw IllegalArgumentException("Index is out of bounds: " + index)
+				throw IllegalArgumentException("Index is out of bounds: $index")
 			}
 		}
 		return localIndex
