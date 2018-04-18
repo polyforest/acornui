@@ -519,6 +519,7 @@ fun List<Float>.sum2(): Float {
 }
 
 typealias SortComparator<E> = (o1: E, o2: E) -> Int
+typealias Filter<E> = (E) -> Boolean
 
 fun <E> MutableList<E>.addAll(vararg elements: E) {
 	addAll(elements.toList())
