@@ -140,24 +140,34 @@ open class LwjglApplication : ApplicationBase() {
 			  onReady: Owned.() -> Unit) {
 
 		initializeConfig(config)
+		var injector: Injector? = null
 		launch {
 			awaitAll()
-			val injector = createInjector()
-			stage = createStage(OwnedImpl(injector))
-			val popUpManager = createPopUpManager(stage)
-			val scope = stage.createScope(
-					listOf(
-							Stage to stage,
-							PopUpManager to popUpManager
-					)
-			)
-			initializeSpecialInteractivity(scope)
-			scope.onReady()
+			injector = createInjector()
+		}
 
-			// Add the pop-up manager after onReady so that it is the highest index.
-			stage.addElement(popUpManager.view)
+		while (true) {
+			if (injector != null) {
+				stage = createStage(OwnedImpl(injector!!))
+				val popUpManager = createPopUpManager(stage)
+				val scope = stage.createScope(
+						listOf(
+								Stage to stage,
+								PopUpManager to popUpManager
+						)
+				)
+				initializeSpecialInteractivity(scope)
+				scope.onReady()
 
-			run(scope.injector)
+				// Add the pop-up manager after onReady so that it is the highest index.
+				stage.addElement(popUpManager.view)
+
+				JvmApplicationRunner(scope.injector, _windowId)
+				dispose()
+				break
+			} else {
+				Thread.sleep(10L)
+			}
 		}
 	}
 
@@ -353,12 +363,6 @@ open class LwjglApplication : ApplicationBase() {
 		UndoDispatcher(owner.injector)
 		ContextMenuManager(owner)
 	}
-
-	open suspend fun run(injector: Injector) {
-		JvmApplicationRunner(injector, getWindowId())
-		dispose()
-	}
-
 
 	override fun dispose() {
 		BitmapFontRegistry.dispose()
