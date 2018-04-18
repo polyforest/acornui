@@ -1801,7 +1801,7 @@ class DataGrid<E>(
 		 */
 		fun moveToFirstRow() {
 			_position = -1
-			_groupIndex = displayGroupCaches.indexOfFirst2 { it.shouldRender }
+			_groupIndex = maxOf(0, displayGroupCaches.indexOfFirst2 { it.shouldRender })
 			_groupPosition = -1
 		}
 
@@ -1810,7 +1810,7 @@ class DataGrid<E>(
 		 */
 		fun moveToLastRow() {
 			_position = _totalRows
-			_groupIndex = displayGroupCaches.indexOfLast2 { it.shouldRender }
+			_groupIndex = maxOf(0, displayGroupCaches.indexOfLast2 { it.shouldRender })
 			_groupPosition = groupCache.size
 		}
 
