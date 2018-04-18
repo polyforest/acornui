@@ -88,6 +88,7 @@ class JvmMouseInput(private val window: Long) : MouseInput {
 
 	private val cursorPosCallback: GLFWCursorPosCallback = object : GLFWCursorPosCallback() {
 		override fun invoke(window: Long, xpos: Double, ypos: Double) {
+			if (mouseMove.isDispatching) return
 			_canvasX = xpos.toFloat()
 			_canvasY = ypos.toFloat()
 
@@ -102,6 +103,7 @@ class JvmMouseInput(private val window: Long) : MouseInput {
 
 	private val cursorEnterCallback: GLFWCursorEnterCallback = object : GLFWCursorEnterCallback() {
 		override fun invoke(window: Long, entered: Boolean) {
+			if (overCanvasChanged.isDispatching) return
 			_overCanvas = entered
 			overCanvasChanged.dispatch(_overCanvas)
 		}
@@ -109,6 +111,7 @@ class JvmMouseInput(private val window: Long) : MouseInput {
 
 	private val mouseWheelCallback: GLFWScrollCallback = object : GLFWScrollCallback() {
 		override fun invoke(window: Long, xoffset: Double, yoffset: Double) {
+			if (mouseWheel.isDispatching) return
 			wheelEvent.clear()
 			wheelEvent.canvasX = _canvasX
 			wheelEvent.canvasY = _canvasY
