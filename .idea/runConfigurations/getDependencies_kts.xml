@@ -1,15 +1,14 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="getDependencies.kts" type="KotlinStandaloneScriptRunConfigurationType" factoryName="Kotlin script" nameIsGenerated="true">
-    <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
     <option name="filePath" value="$PROJECT_DIR$/scripts/getDependencies.kts" />
     <option name="vmParameters" value="" />
-    <option name="alternativeJrePath" value="" />
+    <option name="alternativeJrePath" />
     <option name="programParameters" value="" />
     <option name="passParentEnvs" value="true" />
     <option name="workingDirectory" value="" />
     <option name="isAlternativeJrePathEnabled" value="false" />
     <envs>
-      <env name="ACORNUI_HOME" value="C:/Projects/AcornUi" />
+      <env name="ACORNUI_HOME" value="$ACORNUI_HOME$" />
     </envs>
     <method />
   </configuration>
