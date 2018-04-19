@@ -33,7 +33,7 @@ class JvmFileReadWriteManager : FileReadWriteManager {
 
 	override suspend fun saveToFileAsString(extension: String, defaultPath: String, value: String): Boolean {
 		var filePath = savePrompt(extension, "") ?: return false
-		if (!filePath.contains(".")) filePath += extension
+		if (!filePath.contains(".")) filePath += ".$extension"
 		File(filePath).writeText(value)
 		return true
 	}

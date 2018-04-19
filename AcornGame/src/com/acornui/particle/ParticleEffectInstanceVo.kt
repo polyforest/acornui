@@ -130,6 +130,7 @@ class ParticleEmitterInstance(
 				_currentTime += remainder
 			} else if (_activeCount == 0) {
 				_isComplete = true
+				accumulator = 0f
 				return
 			}
 		}
@@ -138,14 +139,17 @@ class ParticleEmitterInstance(
 
 		emitter.emissionRate.apply(emissionRateValue, alpha)
 		emitter.particleLifeExpectancy.apply(lifeExpectancyValue, alpha)
-		accumulator += emissionRateValue.current * stepTime
-		if (accumulator > 1f) {
-			for (i in 0..particles.lastIndex) {
-				val particle = particles[i]
-				if (!particle.active)
-					activateParticle(particle)
-				if (_activeCount >= count) accumulator = 0f
-				if (accumulator < 1f) break
+		if (_currentTime < endTime) {
+			// Create new particles if the accumulator surpasses 1.
+			accumulator += emissionRateValue.current * stepTime
+			if (accumulator > 1f) {
+				for (i in 0..particles.lastIndex) {
+					val particle = particles[i]
+					if (!particle.active)
+						activateParticle(particle)
+					if (_activeCount >= count) accumulator = 0f
+					if (accumulator < 1f) break
+				}
 			}
 		}
 

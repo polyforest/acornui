@@ -1,7 +1,5 @@
 package com.acornui.collection
 
-import kotlin.math.truncate
-
 
 fun <E> arrayCopy(src: List<E>,
 				  srcPos: Int,
@@ -602,3 +600,21 @@ fun <E> MutableList<E>.setSize(newSize: Int, factory: () -> E) {
 	}
 }
 
+/**
+ * Clones this list, replacing the value at the given index with the new value.
+ */
+fun <E> List<E>.replace(index: Int, newValue: E): List<E> {
+	val newList = ArrayList<E>(size)
+	for (i in 0..lastIndex) {
+		newList.add(if (i == index) newValue else this[i])
+	}
+	return newList
+}
+
+/**
+ * Clears this list and adds all elements from [other].
+ */
+fun <E> MutableList<E>.setTo(other: List<E>) {
+	clear()
+	addAll(this)
+}

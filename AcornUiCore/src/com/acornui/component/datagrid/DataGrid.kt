@@ -38,12 +38,14 @@ import com.acornui.core.focus.focusFirst
 import com.acornui.core.focus.ownsFocused
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.KeyState
-import com.acornui.core.input.interaction.*
+import com.acornui.core.input.interaction.ClickInteractionRo
+import com.acornui.core.input.interaction.KeyInteractionRo
+import com.acornui.core.input.interaction.click
+import com.acornui.core.input.interaction.dragAttachment
 import com.acornui.core.input.keyDown
 import com.acornui.core.input.wheel
 import com.acornui.math.*
 import com.acornui.math.MathUtils.clamp
-import com.acornui.math.Vector2.Companion
 import com.acornui.observe.IndexBinding
 import com.acornui.observe.bind
 import com.acornui.observe.bindIndex
@@ -128,9 +130,9 @@ class DataGrid<E>(
 
 	private var background: UiComponent? = null
 
-	private val dataView = ListView(data)
+	private val dataView = own(ListView(data))
 
-	private val _columns = ActiveList<DataGridColumn<E, *>>()
+	private val _columns = own(ActiveList<DataGridColumn<E, *>>())
 
 	/**
 	 * The columns this data grid will display.
@@ -142,7 +144,7 @@ class DataGrid<E>(
 	/**
 	 * Add data grid groups to group data under collapsible headers.
 	 */
-	private val _groups = ActiveList<DataGridGroup<E>>()
+	private val _groups = own(ActiveList<DataGridGroup<E>>())
 
 	/**
 	 * The groups this data grid will display. If this is empty, there will be no grouping.
@@ -637,6 +639,7 @@ class DataGrid<E>(
 
 	private fun commitCellEditorValue() {
 		val editorCell = editorCell ?: return
+		@Suppress("UNCHECKED_CAST")
 		val column = _columns[editorCellCol!!.index] as DataGridColumn<E, Any?>
 		val element = data[editorCellRow!!.index]
 		column.setCellData(element, editorCell.getData())
@@ -1584,9 +1587,6 @@ class DataGrid<E>(
 
 	override fun dispose() {
 		disposeCellEditor()
-		_columns.dispose()
-		_groups.dispose()
-		dataView.dispose()
 		super.dispose()
 	}
 
