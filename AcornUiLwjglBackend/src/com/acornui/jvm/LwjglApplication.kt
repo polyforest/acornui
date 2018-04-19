@@ -391,6 +391,7 @@ class JvmApplicationRunner(
 		Log.info("Application#startIndex")
 
 		stage.activate()
+		tick()
 
 		// The window has been damaged.
 		GLFW.glfwSetWindowRefreshCallback(windowId, refreshCallback)
