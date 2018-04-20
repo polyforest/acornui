@@ -93,6 +93,7 @@ class GlfwWindowImpl(
 			_, width, height ->
 			updateSize(width.toFloat(), height.toFloat(), true)
 		}
+
 		GLFW.glfwSetWindowFocusCallback(windowId) {
 			_, focused ->
 			isActive(focused)
