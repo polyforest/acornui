@@ -193,7 +193,8 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	fun update()
 
 	/**
-	 * Render any graphics.
+	 * Renders any graphics.
+	 * [render] does not check the [visible] flag; that is the responsibility of the caller.
 	 */
 	fun render()
 
