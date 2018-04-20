@@ -86,7 +86,7 @@ object AcornUiLwjglBackend : Module(File(ACORNUI_HOME, "AcornUiLwjglBackend"), o
 	init {
 		moduleDependencies = listOf(AcornUtils, AcornUiCore)
 		hasJs = false
-		jvmLibraryDependencies += listOf(rel("lib/lwjgl-release-3.1.1-custom"), rel("lib/jlayer-1.0.2-gdx.jar"))
+		jvmLibraryDependencies += listOf(rel("externalLib/compile"))
 	}
 }
 
