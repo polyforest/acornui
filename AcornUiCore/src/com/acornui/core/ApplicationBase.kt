@@ -52,7 +52,8 @@ abstract class ApplicationBase : Disposable {
 					pendingTask.second()
 					//Log.debug("Task finished: ${pendingTask.first}")
 				} catch (e: Throwable) {
-					Log.error("Task failed: ${pendingTask.first} $e")
+					Log.error("Task failed: ${pendingTask.first} ${e.message}")
+					e.printStackTrace()
 				}
 			})
 		}

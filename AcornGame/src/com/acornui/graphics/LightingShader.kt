@@ -1,7 +1,7 @@
 package com.acornui.graphics
 
 import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.SHADER_PRECISION
+import com.acornui.gl.core.DEFAULT_SHADER_HEADER
 import com.acornui.gl.core.ShaderProgram
 import com.acornui.gl.core.ShaderProgramBase
 
@@ -25,9 +25,7 @@ float unpackFloat(const in vec4 rgba_depth) {
 
 class LightingShader(gl: Gl20, numPointLights: Int, numShadowPointLights: Int, useModel: Boolean = false) : ShaderProgramBase(
 		gl, vertexShaderSrc = """
-#version 100
-
-$SHADER_PRECISION
+$DEFAULT_SHADER_HEADER
 
 attribute vec4 a_position;
 attribute vec3 a_normal;
@@ -52,9 +50,7 @@ void main() {
 	v_directionalShadowCoord = u_directionalLightMvp * v_worldPosition;
 }
 """, fragmentShaderSrc = """
-#version 100
-
-$SHADER_PRECISION
+$DEFAULT_SHADER_HEADER
 
 struct PointLight {
 	float radius;
@@ -167,9 +163,7 @@ void main() {
 
 class PointShadowShader(gl: Gl20, useModel: Boolean) : ShaderProgramBase(
 		gl, vertexShaderSrc = """
-#version 100
-
-$SHADER_PRECISION
+$DEFAULT_SHADER_HEADER
 
 attribute vec4 a_position;
 attribute vec4 a_colorTint;
@@ -189,9 +183,7 @@ void main() {
 	gl_Position = u_pointLightMvp * v_worldPosition;
 }
 """, fragmentShaderSrc = """
-#version 100
-
-$SHADER_PRECISION
+$DEFAULT_SHADER_HEADER
 
 uniform vec3 u_lightPosition;
 uniform float u_lightRadius;
@@ -216,9 +208,7 @@ void main() {
 
 class DirectionalShadowShader(gl: Gl20, useModel: Boolean) : ShaderProgramBase(
 		gl, vertexShaderSrc = """
-#version 100
-
-$SHADER_PRECISION
+$DEFAULT_SHADER_HEADER
 
 attribute vec4 a_position;
 attribute vec4 a_colorTint;
@@ -237,9 +227,7 @@ void main() {
 	gl_Position = u_directionalLightMvp * worldPosition;
 }
 """, fragmentShaderSrc = """
-#version 100
-
-$SHADER_PRECISION
+$DEFAULT_SHADER_HEADER
 
 varying LOW_P vec4 v_colorTint;
 varying vec2 v_texCoord;

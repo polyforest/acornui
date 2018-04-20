@@ -144,9 +144,8 @@ class ShaderCompileException(message: String) : Throwable(message)
 
 class DefaultShaderProgram(gl: Gl20) : ShaderProgramBase (
 		gl, vertexShaderSrc = """
-#version 100
 
-$SHADER_PRECISION
+$DEFAULT_SHADER_HEADER
 
 attribute vec4 a_position;
 attribute vec4 a_colorTint;
@@ -163,9 +162,8 @@ void main() {
 	gl_Position =  u_projTrans * a_position;
 }""",
 		fragmentShaderSrc = """
-#version 100
 
-$SHADER_PRECISION
+$DEFAULT_SHADER_HEADER
 
 varying LOW_P vec4 v_colorTint;
 varying HIGH_P vec2 v_texCoord;
@@ -227,8 +225,7 @@ val standardVertexAttributes = object : VertexAttributes(listOf(
 	}
 }
 
-const val SHADER_PRECISION: String = """
-#define LOW_P lowp
-#define HIGH_P highp
-precision mediump float;
+const val DEFAULT_SHADER_HEADER: String = """
+#define LOW_P
+#define HIGH_P
 """
