@@ -96,7 +96,7 @@ class GlfwWindowImpl(
 
 		GLFW.glfwSetFramebufferSizeCallback(windowId) {
 			_, width, height ->
-			updateSize(width.toFloat(), height.toFloat(), true)
+			updateSize(width.toFloat() / _scaleX, height.toFloat() / _scaleY, true)
 		}
 
 		GLFW.glfwSetWindowContentScaleCallback(windowId) {
@@ -136,8 +136,8 @@ class GlfwWindowImpl(
 		val scaleXArr = FloatArray(1)
 		val scaleYArr = FloatArray(1)
 		GLFW.glfwGetMonitorContentScale(monitor, scaleXArr, scaleYArr)
-		_scaleX = maxOf(1f, scaleXArr[0])
-		_scaleY = maxOf(1f, scaleYArr[0])
+		_scaleX = scaleXArr[0]
+		_scaleY = scaleYArr[0]
 
 		// Get the resolution of the primary monitor
 		val vidMode = GLFW.glfwGetVideoMode(monitor)
