@@ -816,10 +816,10 @@ class DataGrid<E>(
 				continue
 			}
 			val prefWidth = getPreferredColumnWidth(col)
-			if (!col.getIsFlexible()) {
-				inflexibleW += prefWidth
+			inflexibleW += if (!col.getIsFlexible()) {
+				prefWidth
 			} else {
-				inflexibleW += col.minWidth
+				col.minWidth
 			}
 			totalColW += prefWidth
 			columnWidths.add(prefWidth)
@@ -1151,7 +1151,7 @@ class DataGrid<E>(
 	 * This method must set the size of [bottomContents], and return the number of visible rows.
 	 */
 	private fun updateBottomRows(width: Float, height: Float?): Float {
-		var rowsY: Float = 0f
+		var rowsY = 0f
 		val visibleRows: Float
 		val rowHeight = rowHeight
 		if (rowHeight != null) {
@@ -1336,7 +1336,7 @@ class DataGrid<E>(
 
 		// Recycle unused cells.
 		iterateVisibleColumnsInternal {
-			columnIndex, column, x, width ->
+			columnIndex, _, _, _ ->
 			columnCaches[columnIndex].cellCache.removeAndFlip(contents)
 			true
 		}

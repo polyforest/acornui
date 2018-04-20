@@ -616,5 +616,5 @@ fun <E> List<E>.replace(index: Int, newValue: E): List<E> {
  */
 fun <E> MutableList<E>.setTo(other: List<E>) {
 	clear()
-	addAll(this)
+	addAll(other)
 }
