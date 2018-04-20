@@ -82,7 +82,6 @@ class GlfwWindowImpl(
 
 		// Redraw when the window has been minimized / restored / etc.
 
-
 		GLFW.glfwSetWindowIconifyCallback(windowId) {
 			_, iconified ->
 			isVisible(!iconified)

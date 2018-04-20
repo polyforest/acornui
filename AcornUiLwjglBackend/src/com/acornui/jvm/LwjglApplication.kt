@@ -359,7 +359,7 @@ open class LwjglApplication : ApplicationBase() {
 	protected open fun initializeSpecialInteractivity(owner: Owned) {
 		JvmClickDispatcher(owner.injector)
 		FakeFocusMouse(owner.injector)
-		JvmClipboardDispatcher(owner.injector)
+		JvmClipboardDispatcher(owner.injector, _windowId)
 		UndoDispatcher(owner.injector)
 		ContextMenuManager(owner)
 	}
@@ -424,6 +424,7 @@ class JvmApplicationRunner(
 				break
 			}
 		}
+		// TODO: Should we check .visible?
 		if (window.shouldRender(true)) {
 			stage.update()
 			window.renderBegin()
@@ -442,3 +443,4 @@ class JvmApplicationRunner(
 	}
 
 }
+
