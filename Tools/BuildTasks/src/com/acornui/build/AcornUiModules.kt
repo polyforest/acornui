@@ -62,7 +62,7 @@ object AcornUiJsBackend : Module(File(ACORNUI_HOME, "AcornUiJsBackend"), out = A
 		// Pull the kotlin-jslib out of the kotlin runtime jar.
 		val cp = System.getProperty("java.class.path")
 		val indexB = cp.indexOf("kotlin-runtime.jar")
-		val indexA = cp.lastIndexOf(";", indexB) + 1
+		val indexA = cp.lastIndexOf(PATH_SEPARATOR, indexB) + 1
 		val runtimeLibFolder = File(cp.substring(indexA, indexB))
 		if (sourcesAreNewer(listOf(runtimeLibFolder) + resources, File(outAssets, "lib/kotlin.js"))) {
 			println("Extracting kotlin.js")

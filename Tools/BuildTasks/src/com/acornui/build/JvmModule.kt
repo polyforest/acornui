@@ -125,7 +125,7 @@ open class JvmModule(
 
 		val cp = System.getProperty("java.class.path")
 		val indexB = cp.indexOf("kotlin-runtime.jar")
-		val indexA = cp.lastIndexOf(";", indexB) + 1
+		val indexA = cp.lastIndexOf(PATH_SEPARATOR, indexB) + 1
 		libraryFiles.add(cp.substring(indexA, indexB + "kotlin-runtime.jar".length))
 		Module.expandLibraryDependencies(jvmLibraryDependencies, libraryFiles)
 		config.classpath = libraryFiles

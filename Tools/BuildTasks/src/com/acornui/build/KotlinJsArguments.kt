@@ -72,7 +72,7 @@ data class KotlinJsArguments(
 	fun populate(args: MutableList<String>) {
 		if (output != null) args.add("-output", output)
 		if (noStdlib) args.add("-no-stdlib")
-		if (libraries != null && libraries.isNotEmpty()) args.add("-libraries", libraries.joinToString(";"))
+		if (libraries != null && libraries.isNotEmpty()) args.add("-libraries", libraries.joinToString(PATH_SEPARATOR))
 		if (sourceMap) args.add("-source-map")
 		if (metaInfo) args.add("-meta-info")
 		if (target != null) args.add("-target", target)

@@ -12,3 +12,5 @@ fun ArrayList<File>.toStringList(): MutableList<String> {
 	}
 	return arr
 }
+
+val PATH_SEPARATOR = System.getProperty("path.separator")

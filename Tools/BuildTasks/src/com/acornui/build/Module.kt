@@ -140,7 +140,7 @@ abstract class Module(
 				sourceMap = true
 				metaInfo = true
 				if (libraryFiles.isNotEmpty())
-					libraries = libraryFiles.joinToString(";")
+					libraries = libraryFiles.joinToString(PATH_SEPARATOR)
 				freeArgs = sourceFolders.toStringList()
 			}
 			println("$name Compiling JS")
@@ -168,7 +168,7 @@ abstract class Module(
 			val compilerArgs = K2JVMCompilerArguments().apply {
 				destination = outJvm.absolutePath
 				if (libraryFiles.isNotEmpty())
-					classpath = libraryFiles.joinToString(";")
+					classpath = libraryFiles.joinToString(PATH_SEPARATOR)
 				includeRuntime = includeKotlinJvmRuntime
 				freeArgs = sourceFolders.toStringList()
 			}
@@ -252,7 +252,7 @@ abstract class Module(
 		//println("classpath: " + System.getProperty("java.class.path"))
 		expandLibraryDependencies(jvmLibraryDependencies, libraryFiles)
 
-		val processBuilder = ProcessBuilder("java", "-cp", System.getProperty("java.class.path") + ";" + libraryFiles.joinToString(";") + ";" + jvmJar.absolutePath, className, *args)
+		val processBuilder = ProcessBuilder("java", "-cp", System.getProperty("java.class.path") + PATH_SEPARATOR + libraryFiles.joinToString(PATH_SEPARATOR) + PATH_SEPARATOR + jvmJar.absolutePath, className, *args)
 		val process = processBuilder.start()
 		Thread(LogStreamReader(process.inputStream)).start()
 		Thread(LogStreamReader(process.errorStream, System.err)).start()

@@ -91,7 +91,7 @@ data class KotlinJvmArguments(
 
 	fun populate(args: MutableList<String>) {
 		if (destination != null) args.add("-d", destination)
-		if (classpath != null && classpath.isNotEmpty()) args.add("-classpath", classpath.joinToString(";"))
+		if (classpath != null && classpath.isNotEmpty()) args.add("-classpath", classpath.joinToString(PATH_SEPARATOR))
 		if (annotations != null) args.add("-annotations", annotations)
 		if (includeRuntime) args.add("-include-runtime")
 		if (noJdk) args.add("-no-jdk")
