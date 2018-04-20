@@ -391,19 +391,18 @@ class JvmApplicationRunner(
 		Log.info("Application#startIndex")
 
 		stage.activate()
-		tick() // TODO: A temporary workaround for glfw callbacks being nested.
 
 		// The window has been damaged.
 		GLFW.glfwSetWindowRefreshCallback(windowId, refreshCallback)
 		var timeMs = time.nowMs()
 		while (!window.isCloseRequested()) {
 			// Poll for window events. Input callbacks will be invoked at this time.
-			GLFW.glfwPollEvents()
 			tick()
 			val t = time.nowMs()
 			val sleepTime = (appConfig.stepTime * 1000f - (t - timeMs)).toLong()
 			if (sleepTime > 0) Thread.sleep(sleepTime)
 			timeMs = t
+			GLFW.glfwPollEvents()
 		}
 		GLFW.glfwSetWindowRefreshCallback(windowId, null)
 	}

@@ -28,10 +28,15 @@ import com.acornui.logging.Log
 import com.acornui.signal.Signal1
 import com.acornui.signal.Signal3
 import org.lwjgl.glfw.*
+import org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor
+import org.lwjgl.glfw.GLFW.glfwGetVideoMode
+import org.lwjgl.glfw.GLFW.glfwSetWindowPos
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL20
+import org.lwjgl.system.MemoryStack.stackPush
 import org.lwjgl.system.MemoryUtil
+
 
 /**
  * @author nbilyk
@@ -91,6 +96,28 @@ class GlfwWindowImpl(
 		GLFW.glfwSetWindowFocusCallback(windowId) {
 			_, focused ->
 			isActive(focused)
+		}
+
+		// Get the thread stack and push a new frame
+		val stack = stackPush()
+		try {
+			val pWidth = stack.mallocInt(1) // int*
+			val pHeight = stack.mallocInt(1) // int*
+
+			// Get the window size passed to glfwCreateWindow
+			GLFW.glfwGetWindowSize(windowId, pWidth, pHeight)
+
+			// Get the resolution of the primary monitor
+			val vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor())
+
+			// Center the window
+			glfwSetWindowPos(
+					windowId,
+					(vidMode!!.width() - pWidth.get(0)) / 2,
+					(vidMode.height() - pHeight.get(0)) / 2
+			)
+		} finally {
+			stack.close()
 		}
 
 		// Get the resolution of the primary monitor
