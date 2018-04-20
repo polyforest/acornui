@@ -22,7 +22,9 @@ import com.acornui.core.graphics.Window
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.js.window.JsLocation
+import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
+import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event
@@ -142,6 +144,12 @@ open class DomWindowImpl(
 		get() {
 			return _height
 		}
+
+	override val scaleChanged: Signal<(Float, Float) -> Unit> = Signal2()
+	override val scaleX: Float
+		get() = 1f
+	override val scaleY: Float
+		get() = 1f
 
 	override fun setSize(width: Float, height: Float, isUserInteraction: Boolean) {
 		if (_width == width && _height == height) return // no-op

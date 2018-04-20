@@ -24,7 +24,9 @@ import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.js.window.JsLocation
 import com.acornui.logging.Log
+import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
+import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.events.Event
@@ -43,6 +45,7 @@ open class WebGlWindowImpl(
 	override val isActiveChanged: Signal1<Boolean> = Signal1()
 	override val isVisibleChanged: Signal1<Boolean> = Signal1()
 	override val sizeChanged: Signal3<Float, Float, Boolean> = Signal3()
+	override val scaleChanged: Signal2<Float, Float> = Signal2()
 
 	private var _width: Float = 0f
 	private var _height: Float = 0f
@@ -157,6 +160,11 @@ open class WebGlWindowImpl(
 		get() {
 			return _height
 		}
+
+	override val scaleX: Float
+		get() = 1f
+	override val scaleY: Float
+		get() = 1f
 
 	override fun setSize(width: Float, height: Float, isUserInteraction: Boolean) {
 		if (_width == width && _height == height) return // no-op
