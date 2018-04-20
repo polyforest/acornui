@@ -391,7 +391,7 @@ class JvmApplicationRunner(
 		Log.info("Application#startIndex")
 
 		stage.activate()
-		tick()
+		tick() // TODO: A temporary workaround for glfw callbacks being nested.
 
 		// The window has been damaged.
 		GLFW.glfwSetWindowRefreshCallback(windowId, refreshCallback)

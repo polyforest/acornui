@@ -96,7 +96,8 @@ class GlfwWindowImpl(
 		// Get the resolution of the primary monitor
 		val vidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor())
 		// Center our window
-		GLFW.glfwSetWindowPos(windowId, (vidMode.width() - windowConfig.initialWidth.toInt()) / 2, (vidMode.height() - windowConfig.initialHeight.toInt()) / 2)
+		if (vidMode != null)
+			GLFW.glfwSetWindowPos(windowId, (vidMode.width() - windowConfig.initialWidth.toInt()) / 2, (vidMode.height() - windowConfig.initialHeight.toInt()) / 2)
 
 		// Make the OpenGL context current
 		GLFW.glfwMakeContextCurrent(windowId)
@@ -224,8 +225,8 @@ class GlfwWindowImpl(
 		set(value) {
 			if (_fullScreen != value) {
 				Log.info("Fullscreen $value")
+				val videoMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor()) ?: return
 				_fullScreen = value
-				val videoMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor())
 				val w = videoMode.width()
 				val h = videoMode.height()
 				val r = videoMode.refreshRate()

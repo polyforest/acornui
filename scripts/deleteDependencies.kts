@@ -5,6 +5,8 @@ if (!File(ACORNUI_HOME).exists()) throw Exception("ACORNUI_HOME '$ACORNUI_HOME' 
 
 for (file in File(ACORNUI_HOME).walkTopDown()) {
 	if (file.name == "externalLib") {
-		file.deleteRecursively()
+		print("Deleting ${file.absolutePath}... ")
+		val success = file.deleteRecursively()
+		println(if (success) "success" else "failed")
 	}
 }

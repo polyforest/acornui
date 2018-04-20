@@ -7,7 +7,7 @@ val ACORNUI_HOME: String = System.getenv()["ACORNUI_HOME"] ?: throw Exception("E
 if (!File(ACORNUI_HOME).exists()) throw Exception("ACORNUI_HOME '$ACORNUI_HOME' does not exist.")
 
 val repo = "http://repo1.maven.org/maven2"
-val lwjglVersion = "3.1.2"
+val lwjglVersion = "3.1.6"
 
 dependency("$repo/com/bladecoder/packr/packr/2.1/packr-2.1", "Tools/BuildTasks")
 dependency("$repo/com/google/code/gson/gson/2.7/gson-2.7", "Tools/BuildTasks")

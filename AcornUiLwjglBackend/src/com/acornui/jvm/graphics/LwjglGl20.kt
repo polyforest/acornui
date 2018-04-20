@@ -628,7 +628,7 @@ open class LwjglGl20 : Gl20 {
 
 	override fun getSupportedExtensions(): List<String> {
 		val extensionsStr = GL11.glGetString(GL11.GL_EXTENSIONS)
-		return extensionsStr.split(" ")
+		return extensionsStr?.split(" ") ?: listOf()
 	}
 }
 
