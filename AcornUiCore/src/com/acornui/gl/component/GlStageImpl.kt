@@ -61,7 +61,7 @@ open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(
 
 	protected open val windowResizedHandler: (Float, Float, Boolean) -> Unit = {
 		newWidth: Float, newHeight: Float, isUserInteraction: Boolean ->
-		gl.viewport(0, 0, newWidth.toInt(), newHeight.toInt())
+		gl.viewport(0, 0, (newWidth * window.scaleX).toInt(), (newHeight * window.scaleY).toInt())
 		invalidate(ValidationFlags.LAYOUT)
 	}
 

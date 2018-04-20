@@ -26,11 +26,13 @@ import com.acornui.graphics.ColorRo
 import com.acornui.jvm.browser.LwjglLocation
 import com.acornui.logging.Log
 import com.acornui.signal.Signal1
+import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
-import org.lwjgl.glfw.*
+import org.lwjgl.glfw.Callbacks
+import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor
 import org.lwjgl.glfw.GLFW.glfwGetVideoMode
-import org.lwjgl.glfw.GLFW.glfwSetWindowPos
+import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL20
@@ -54,6 +56,10 @@ class GlfwWindowImpl(
 
 	private var _width: Float = 0f
 	private var _height: Float = 0f
+
+	private var _scaleX: Float = 1f
+	private var _scaleY: Float = 1f
+	override val scaleChanged: Signal2<Float, Float> = Signal2()
 
 	val windowId: Long
 
@@ -93,16 +99,21 @@ class GlfwWindowImpl(
 			updateSize(width.toFloat(), height.toFloat(), true)
 		}
 
+		GLFW.glfwSetWindowContentScaleCallback(windowId) {
+			_, scaleX, scaleY ->
+			updateScale(scaleX, scaleY)
+		}
+
 		GLFW.glfwSetWindowFocusCallback(windowId) {
 			_, focused ->
 			isActive(focused)
 		}
 
 		// Get the thread stack and push a new frame
-		val stack = stackPush()
+		val sizeStack = stackPush()
 		try {
-			val pWidth = stack.mallocInt(1) // int*
-			val pHeight = stack.mallocInt(1) // int*
+			val pWidth = sizeStack.mallocInt(1) // int*
+			val pHeight = sizeStack.mallocInt(1) // int*
 
 			// Get the window size passed to glfwCreateWindow
 			GLFW.glfwGetWindowSize(windowId, pWidth, pHeight)
@@ -111,17 +122,25 @@ class GlfwWindowImpl(
 			val vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor())
 
 			// Center the window
-			glfwSetWindowPos(
+			GLFW.glfwSetWindowPos(
 					windowId,
 					(vidMode!!.width() - pWidth.get(0)) / 2,
 					(vidMode.height() - pHeight.get(0)) / 2
 			)
 		} finally {
-			stack.close()
+			sizeStack.close()
 		}
 
+		// Get the window high definition scale
+		val monitor = GLFW.glfwGetPrimaryMonitor()
+		val scaleXArr = FloatArray(1)
+		val scaleYArr = FloatArray(1)
+		GLFW.glfwGetMonitorContentScale(monitor, scaleXArr, scaleYArr)
+		_scaleX = maxOf(1f, scaleXArr[0])
+		_scaleY = maxOf(1f, scaleYArr[0])
+
 		// Get the resolution of the primary monitor
-		val vidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor())
+		val vidMode = GLFW.glfwGetVideoMode(monitor)
 		// Center our window
 		if (vidMode != null)
 			GLFW.glfwSetWindowPos(windowId, (vidMode.width() - windowConfig.initialWidth.toInt()) / 2, (vidMode.height() - windowConfig.initialHeight.toInt()) / 2)
@@ -151,6 +170,12 @@ class GlfwWindowImpl(
 
 		Log.info("Vendor: ${GL11.glGetString(GL11.GL_VENDOR)}")
 		Log.info("Supported GLSL language version: ${GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)}")
+	}
+
+	private fun updateScale(scaleX: Float, scaleY: Float) {
+		_scaleX = scaleX
+		_scaleY = scaleY
+		scaleChanged.dispatch(scaleX, scaleY)
 	}
 
 	private var _clearColor = Color.CLEAR.copy()
@@ -190,14 +215,16 @@ class GlfwWindowImpl(
 	}
 
 	override val width: Float
-		get() {
-			return _width
-		}
+		get() = _width
 
 	override val height: Float
-		get() {
-			return _height
-		}
+		get() = _height
+
+	override val scaleX: Float
+		get() = _scaleX
+
+	override val scaleY: Float
+		get() = _scaleY
 
 	override fun setSize(width: Float, height: Float, isUserInteraction: Boolean) {
 		if (_width == width && _height == height) return // no-op

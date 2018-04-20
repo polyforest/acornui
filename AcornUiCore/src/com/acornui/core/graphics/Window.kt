@@ -59,6 +59,12 @@ interface Window : Disposable {
 
 	val height: Float
 
+	val scaleChanged: Signal<(Float, Float) -> Unit>
+
+	val scaleX: Float
+
+	val scaleY: Float
+
 	/**
 	 * Sets the size of this window.
 	 * Note, cameras will only automatically center if [Camera.autoCenter] is true.
@@ -112,7 +118,7 @@ interface Window : Disposable {
 
 	val location: Location
 
-	companion object : DKey<Window> {}
+	companion object : DKey<Window>
 
 }
 
