@@ -31,17 +31,14 @@ import com.acornui.core.input.interaction.ClipboardItemType
 import com.acornui.core.input.interaction.CopyInteractionRo
 import com.acornui.core.input.interaction.KeyInteractionRo
 import com.acornui.core.input.interaction.PasteInteractionRo
-import com.acornui.jvm.io.readTextAndClose
-import java.awt.Toolkit
-import java.awt.datatransfer.Clipboard
+import org.lwjgl.glfw.GLFW
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
-import java.io.InputStream
-import java.io.StringReader
 
 
 class JvmClipboardDispatcher(
-		override val injector: Injector
+		override val injector: Injector,
+		windowId: Long
 ) : Scoped, Disposable {
 
 	private val key = inject(KeyInput)
@@ -49,8 +46,8 @@ class JvmClipboardDispatcher(
 	private val focus = inject(FocusManager)
 	private val stage = inject(Stage)
 
-	private val pasteEvent = JvmPasteInteraction()
-	private val copyEvent = JvmCopyInteraction()
+	private val pasteEvent = JvmPasteInteraction(windowId)
+	private val copyEvent = JvmCopyInteraction(windowId)
 
 	init {
 		key.keyDown.add(this::keyDownHandler)
@@ -77,20 +74,17 @@ class JvmClipboardDispatcher(
 	}
 }
 
-private class JvmPasteInteraction : InteractionEventBase(), PasteInteractionRo {
-
-	private val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+private class JvmPasteInteraction(private val windowId: Long) : InteractionEventBase(), PasteInteractionRo {
 
 	@Suppress("UNCHECKED_CAST")
 	override suspend fun <T : Any> getItemByType(type: ClipboardItemType<T>): T? {
 		return when (type) {
 			ClipboardItemType.PLAIN_TEXT -> {
-				@Suppress("DEPRECATION")
-				clipboard.getString(Flavors.PLAIN_TEXT_FLAVOR, DataFlavor.stringFlavor, DataFlavor.plainTextFlavor) as T?
+				GLFW.glfwGetClipboardString(windowId) as T
 			}
 
 			ClipboardItemType.HTML -> {
-				clipboard.getString(Flavors.HTML_TEXT_FLAVOR) as T?
+				GLFW.glfwGetClipboardString(windowId) as T
 			}
 
 			ClipboardItemType.TEXTURE ->  {
@@ -101,28 +95,10 @@ private class JvmPasteInteraction : InteractionEventBase(), PasteInteractionRo {
 			else -> null
 		}
 	}
-
-	private fun Clipboard.getDataOrNull(flavor: DataFlavor): Any? {
-		return if (isDataFlavorAvailable(flavor)) getData(flavor) else null
-	}
-
-	private fun Clipboard.getString(vararg flavors: DataFlavor): String? {
-		for (flavor in flavors) {
-			val data = getDataOrNull(flavor)
-			if (data is InputStream) {
-				return data.readTextAndClose()
-			} else if (data is String) {
-				return data
-			}
-		}
-		return null
-	}
 }
 
 
-private class JvmCopyInteraction : InteractionEventBase(), CopyInteractionRo {
-
-	private val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+private class JvmCopyInteraction(private val windowId: Long) : InteractionEventBase(), CopyInteractionRo {
 
 	private val contents = object : Transferable, Clearable {
 
@@ -152,18 +128,11 @@ private class JvmCopyInteraction : InteractionEventBase(), CopyInteractionRo {
 	override fun <T : Any> addItem(type: ClipboardItemType<T>, value: T) {
 		when (type) {
 			ClipboardItemType.PLAIN_TEXT -> {
-				contents.addData(DataFlavor.stringFlavor, value as String)
-				val reader = StringReader(value as String)
-				contents.addData(Flavors.PLAIN_TEXT_FLAVOR, reader)
-				contents.addData(DataFlavor.plainTextFlavor, reader)
+				GLFW.glfwSetClipboardString(windowId, value as String)
 			}
 
 			ClipboardItemType.HTML -> {
-				contents.addData(DataFlavor.stringFlavor, value as String)
-				val reader = StringReader(value as String)
-				contents.addData(Flavors.HTML_TEXT_FLAVOR, reader)
-				contents.addData(Flavors.PLAIN_TEXT_FLAVOR, reader)
-				contents.addData(DataFlavor.plainTextFlavor, reader)
+				GLFW.glfwSetClipboardString(windowId, value as String)
 			}
 
 			ClipboardItemType.TEXTURE ->  {
@@ -171,16 +140,10 @@ private class JvmCopyInteraction : InteractionEventBase(), CopyInteractionRo {
 			}
 			ClipboardItemType.FILE_LIST -> TODO()
 		}
-		clipboard.setContents(contents, null)
 	}
 
 	override fun clear() {
 		super.clear()
 		contents.clear()
 	}
-}
-internal object Flavors {
-
-	val PLAIN_TEXT_FLAVOR = DataFlavor("text/plain; class=java.io.InputStream; charset=UTF-8")
-	val HTML_TEXT_FLAVOR = DataFlavor("text/html; class=java.io.InputStream; charset=UTF-8")
 }
