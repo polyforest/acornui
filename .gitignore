@@ -5,3 +5,4 @@ externalLib
 /.idea/workspace.xml
 /Tools/BuildTasks/testOut
 /Tools/BuildTasks/lib
+.DS_Store
