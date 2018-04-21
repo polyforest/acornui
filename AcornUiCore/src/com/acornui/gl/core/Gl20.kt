@@ -912,6 +912,10 @@ interface Gl20 {
 
 	fun shaderSource(shader: GlShaderRef, source: String)
 
+	/**
+	 * @param ref Specifies the reference value for the stencil test. ref is clamped to the range [0,2n−1], where n is
+	 * the number of bitplanes in the stencil buffer. The initial value is 0.
+	 */
 	fun stencilFunc(func: Int, ref: Int, mask: Int)
 
 	fun stencilFuncSeparate(face: Int, func: Int, ref: Int, mask: Int)

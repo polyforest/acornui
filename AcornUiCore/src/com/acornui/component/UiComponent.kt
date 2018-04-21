@@ -74,6 +74,7 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	 * @param rayCache If the ray is already calculated, pass this to avoid re-calculating the pick ray from the camera.
 	 */
 	fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo?): MutableList<UiComponentRo>
+
 	fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>): MutableList<UiComponentRo>
 
 	/**
@@ -1065,9 +1066,10 @@ open class UiComponentImpl(
 	override var scaleX: Float
 		get() = _scale.x
 		set(value) {
-			if (_scale.x == value) return
-			_scale.x = value
-			if (isSimpleTranslate && value != 1f)
+			val v = maxOf(0.000001f, value)
+			if (_scale.x == v) return
+			_scale.x = v
+			if (isSimpleTranslate && v != 1f)
 				isSimpleTranslate = false
 			invalidate(ValidationFlags.TRANSFORM)
 		}
@@ -1075,9 +1077,10 @@ open class UiComponentImpl(
 	override var scaleY: Float
 		get() = _scale.y
 		set(value) {
-			if (_scale.y == value) return
-			_scale.y = value
-			if (isSimpleTranslate && value != 1f)
+			val v = maxOf(0.000001f, value)
+			if (_scale.y == v) return
+			_scale.y = v
+			if (isSimpleTranslate && v != 1f)
 				isSimpleTranslate = false
 			invalidate(ValidationFlags.TRANSFORM)
 		}
@@ -1085,17 +1088,21 @@ open class UiComponentImpl(
 	override var scaleZ: Float
 		get() = _scale.z
 		set(value) {
-			if (_scale.z == value) return
-			_scale.z = value
-			if (isSimpleTranslate && value != 1f)
+			val v = maxOf(0.000001f, value)
+			if (_scale.z == v) return
+			_scale.z = v
+			if (isSimpleTranslate && v != 1f)
 				isSimpleTranslate = false
 			invalidate(ValidationFlags.TRANSFORM)
 		}
 
 	override fun setScaling(x: Float, y: Float, z: Float) {
-		if (_scale.x == x && _scale.y == y && _scale.z == z) return
-		_scale.set(x, y, z)
-		if (isSimpleTranslate && (x != 1f || y != 1f || z != 1f))
+		val x2 = maxOf(0.000001f, x)
+		val y2 = maxOf(0.000001f, y)
+		val z2 = maxOf(0.000001f, z)
+		if (_scale.x == x2 && _scale.y == y2 && _scale.z == z2) return
+		_scale.set(x2, y2, z2)
+		if (isSimpleTranslate && (x2 != 1f || y2 != 1f || z2 != 1f))
 			isSimpleTranslate = false
 		invalidate(ValidationFlags.TRANSFORM)
 		return
@@ -1229,7 +1236,11 @@ open class UiComponentImpl(
 			if (!_concatenatedTransformInvIsValid) {
 				_concatenatedTransformInvIsValid = true
 				_concatenatedTransformInv.set(_concatenatedTransform)
-				_concatenatedTransformInv.inv()
+				try {
+					_concatenatedTransformInv.inv()
+				} catch (e: Throwable) {
+					println("Error inverting matrix")
+				}
 			}
 			return _concatenatedTransformInv
 		}
