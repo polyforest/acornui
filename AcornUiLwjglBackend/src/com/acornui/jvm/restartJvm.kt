@@ -18,6 +18,9 @@ package com.acornui.jvm
 
 import java.lang.management.ManagementFactory
 
+/**
+ * Derived from http://www.java-gaming.org/index.php?;topic=37697.0
+ */
 fun restartJvm(): Boolean {
 
 	val osName = System.getProperty("os.name")
@@ -33,7 +36,7 @@ fun restartJvm(): Boolean {
 	val env = System.getenv("JAVA_STARTED_ON_FIRST_THREAD_$pid")
 
 	// if environment variable is "1" then XstartOnFirstThread is enabled
-	if (env != null && env.equals("1")) {
+	if (env != null && env == "1") {
 		return false
 	}
 
