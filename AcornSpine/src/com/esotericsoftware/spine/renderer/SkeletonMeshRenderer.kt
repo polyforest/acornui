@@ -34,7 +34,6 @@ import com.acornui.core.graphics.Texture
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.Vertex
 import com.acornui.graphics.ColorRo
-import com.acornui.math.Matrix4Ro
 import com.acornui.math.Vector3
 import com.esotericsoftware.spine.Skeleton
 import com.esotericsoftware.spine.attachments.MeshAttachment
@@ -47,7 +46,7 @@ object SkeletonMeshRenderer : SkeletonRenderer {
 
 	private val quadTriangles = shortArrayOf(0, 1, 2, 2, 3, 0)
 
-	override fun draw(loadedSkeleton: LoadedSkeleton, skeleton: Skeleton, glState: GlState, concatenatedTransform: Matrix4Ro, concatenatedColorTint: ColorRo) {
+	override fun draw(loadedSkeleton: LoadedSkeleton, skeleton: Skeleton, glState: GlState, concatenatedColorTint: ColorRo) {
 		val skin = skeleton.currentSkin ?: skeleton.defaultSkin ?: return // No skin to render.
 		val loadedSkin = loadedSkeleton.loadedSkins[skin.data.name] ?: return // Skin not loaded.
 
@@ -92,7 +91,7 @@ object SkeletonMeshRenderer : SkeletonRenderer {
 				rootBone.rotation = oldRotation + bone.worldRotationX
 				attachmentSkeleton.updateWorldTransform()
 
-				SkeletonMeshRenderer.draw(loadedSkeleton, attachmentSkeleton, glState, concatenatedTransform, concatenatedColorTint)
+				SkeletonMeshRenderer.draw(loadedSkeleton, attachmentSkeleton, glState, concatenatedColorTint)
 
 				attachmentSkeleton.setPosition(0f, 0f)
 				rootBone.scaleX = oldScaleX
@@ -107,8 +106,6 @@ object SkeletonMeshRenderer : SkeletonRenderer {
 				val v = vertices!!
 				for (j in 0..v.lastIndex) {
 					val vertex = v[j]
-					concatenatedTransform.prj(vertex.position)
-					concatenatedTransform.rot(vertex.normal.set(Vector3.NEG_Z))
 					vertex.colorTint.mul(concatenatedColorTint)
 					batch.putVertex(vertex)
 				}

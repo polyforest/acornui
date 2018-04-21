@@ -75,8 +75,8 @@ open class SkeletonComponent(
 		skeleton.updateWorldTransform()
 	}
 
-	fun draw(glState: GlState, concatenatedTransform: Matrix4Ro, concatenatedColorTint: ColorRo) {
-		renderer.draw(loadedSkeleton, skeleton, glState, concatenatedTransform, concatenatedColorTint)
+	fun draw(glState: GlState, concatenatedColorTint: ColorRo) {
+		renderer.draw(loadedSkeleton, skeleton, glState, concatenatedColorTint)
 	}
 
 	fun getSlotAtPosition(x: Float, y: Float): Slot? = getSlotAtPosition(x, y, skeleton)

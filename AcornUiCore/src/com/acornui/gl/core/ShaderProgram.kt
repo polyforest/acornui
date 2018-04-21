@@ -230,7 +230,7 @@ const val DEFAULT_SHADER_HEADER: String = """
 #define LOW_P lowp
 #define MED_P mediump
 #define HIGH_P highp
-precision mediump float;
+precision highp float;
 #else
 #define MED_P
 #define LOW_P

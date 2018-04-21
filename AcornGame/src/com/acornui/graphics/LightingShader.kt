@@ -5,7 +5,7 @@ import com.acornui.gl.core.DEFAULT_SHADER_HEADER
 import com.acornui.gl.core.ShaderProgram
 import com.acornui.gl.core.ShaderProgramBase
 
-private val PACK_FLOAT: String = """
+val PACK_FLOAT: String = """
 vec4 packFloat(const in float value) {
 	const vec4 bit_shift = vec4(256.0 * 256.0 * 256.0, 256.0 * 256.0, 256.0, 1.0);
 	const vec4 bit_mask  = vec4(0.0, 1.0 / 256.0, 1.0 / 256.0, 1.0 / 256.0);
@@ -15,7 +15,7 @@ vec4 packFloat(const in float value) {
 }
 """
 
-private const val UNPACK_FLOAT: String = """
+const val UNPACK_FLOAT: String = """
 float unpackFloat(const in vec4 rgba_depth) {
 	const vec4 bit_shift = vec4(1.0/(256.0*256.0*256.0), 1.0/(256.0*256.0), 1.0/256.0, 1.0);
 	float depth = dot(rgba_depth, bit_shift);
@@ -54,21 +54,21 @@ $DEFAULT_SHADER_HEADER
 
 struct PointLight {
 	float radius;
-	LOW_P vec3 position;
-	LOW_P vec3 color;
+	vec3 position;
+	vec3 color;
 };
 
-varying LOW_P vec4 v_worldPosition;
-varying LOW_P vec3 v_normal;
-varying LOW_P vec4 v_colorTint;
-varying LOW_P vec4 v_directionalShadowCoord;
-varying LOW_P vec2 v_texCoord;
+varying vec4 v_worldPosition;
+varying vec3 v_normal;
+varying vec4 v_colorTint;
+varying vec4 v_directionalShadowCoord;
+varying vec2 v_texCoord;
 
 uniform int u_shadowsEnabled;
-uniform LOW_P vec2 u_resolutionInv;
-uniform LOW_P vec4 u_ambient;
-uniform LOW_P vec4 u_directional;
-uniform LOW_P vec3 u_directionalLightDir;
+uniform vec2 u_resolutionInv;
+uniform vec4 u_ambient;
+uniform vec4 u_directional;
+uniform vec3 u_directionalLightDir;
 uniform sampler2D u_texture;
 uniform sampler2D u_directionalShadowMap;
 
@@ -86,7 +86,7 @@ float getShadowDepth(const in vec2 coord) {
 }
 
 vec3 getDirectionalColor() {
-	float cosTheta = clamp(dot(v_normal, (-1.0 * u_directionalLightDir)), 0.05, 1.0);
+	float cosTheta = clamp(dot(v_normal, u_directionalLightDir), 0.05, 1.0);
 	if (u_shadowsEnabled == 0 || u_directional.rgb == vec3(0.0)) return cosTheta * u_directional.rgb;
 	float visibility = 0.0;
 	float shadow = getShadowDepth(v_directionalShadowCoord.xy / v_directionalShadowCoord.w);
@@ -105,10 +105,10 @@ vec3 getDirectionalColor() {
 vec3 getPointColor() {
 	vec3 pointColor = vec3(0.0);
 	PointLight pointLight;
-	HIGH_P vec3 lightToPixel;
+	vec3 lightToPixel;
 	vec3 lightToPixelN;
 	float attenuation;
-	HIGH_P float distance;
+	float distance;
 	float shadow;
 
 	for (int i = 0; i < $numPointLights; i++) {
@@ -187,7 +187,7 @@ $DEFAULT_SHADER_HEADER
 
 uniform vec3 u_lightPosition;
 uniform float u_lightRadius;
-varying LOW_P vec4 v_colorTint;
+varying vec4 v_colorTint;
 varying vec2 v_texCoord;
 
 uniform sampler2D u_texture;
@@ -229,7 +229,7 @@ void main() {
 """, fragmentShaderSrc = """
 $DEFAULT_SHADER_HEADER
 
-varying LOW_P vec4 v_colorTint;
+varying vec4 v_colorTint;
 varying vec2 v_texCoord;
 
 uniform sampler2D u_texture;

@@ -33,12 +33,11 @@ package com.esotericsoftware.spine.renderer
 
 import com.acornui.gl.core.GlState
 import com.acornui.graphics.ColorRo
-import com.acornui.math.Matrix4Ro
 import com.esotericsoftware.spine.Skeleton
 import com.esotericsoftware.spine.component.LoadedSkeleton
 
 interface SkeletonRenderer {
-	fun draw(loadedSkeleton: LoadedSkeleton, skeleton: Skeleton, glState: GlState, concatenatedTransform: Matrix4Ro, concatenatedColorTint: ColorRo)
+	fun draw(loadedSkeleton: LoadedSkeleton, skeleton: Skeleton, glState: GlState, concatenatedColorTint: ColorRo)
 }
 
 

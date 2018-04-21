@@ -106,12 +106,12 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 
 	override fun draw() {
 		super.draw()
-		glState.camera(camera)
 		val concatenatedTransform = concatenatedTransform
+		glState.camera(camera, concatenatedTransform)
 		val concatenatedColorTint = concatenatedColorTint
 
 		for (i in 0.._children.lastIndex) {
-			_children[i].draw(glState, concatenatedTransform, concatenatedColorTint)
+			_children[i].draw(glState, concatenatedColorTint)
 		}
 	}
 
