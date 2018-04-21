@@ -168,7 +168,7 @@ class Vector2(
 
 	fun nor(): Vector2 {
 		val len = len()
-		if (len != 0f) {
+		if (len > 0.00001f) {
 			x /= len
 			y /= len
 		}

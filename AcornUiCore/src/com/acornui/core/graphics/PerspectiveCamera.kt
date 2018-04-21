@@ -27,7 +27,7 @@ import com.acornui.math.Vector3
 /**
  * @author nbilyk
  */
-class PerspectiveCamera : CameraBase() {
+open class PerspectiveCamera : CameraBase() {
 
 	/**
 	 * The field of view of the height, in radians
@@ -55,8 +55,8 @@ class PerspectiveCamera : CameraBase() {
 
 fun Owned.perspectiveCamera(autoCenter: Boolean = false, init: PerspectiveCamera.() -> Unit = {}): PerspectiveCamera {
 	val p = PerspectiveCamera()
-	if (autoCenter) own(inject(Window).autoCenterCamera(p))
 	p.init()
+	if (autoCenter) own(inject(Window).autoCenterCamera(p))
 	return p
 }
 

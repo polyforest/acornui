@@ -38,8 +38,6 @@ class RollOverCursor(
 
 	private val rollOverHandler = {
 		event: MouseInteractionRo ->
-//		_assert(cursorRef == null)
-		// TODO: cursorRef shouldn't be set here...
 		cursorRef?.remove()
 		cursorRef = cursorManager.addCursor(cursor, priority)
 	}
@@ -53,6 +51,10 @@ class RollOverCursor(
 	init {
 		target.rollOver().add(rollOverHandler)
 		target.rollOut().add(rollOutHandler)
+		// TODO:
+//		if (target.mouseIsOver()) {
+//			cursorRef = cursorManager.addCursor(cursor, priority)
+//		}
 	}
 
 	override fun dispose() {

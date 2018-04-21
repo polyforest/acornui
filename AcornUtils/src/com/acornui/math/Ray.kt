@@ -262,11 +262,11 @@ data class Ray(
 		val u = (dot11 * dot02 - dot01 * dot12) / denom
 		val v = (dot00 * dot12 - dot01 * dot02) / denom
 
-		if (u >= 0f && v >= 0f && u + v <= 1f) {
+		return if (u >= 0f && v >= 0f && u + v <= 1f) {
 			out?.set(v3_3)
-			return true
+			true
 		} else {
-			return false
+			false
 		}
 	}
 

@@ -237,7 +237,7 @@ abstract class CameraBase : Camera {
 		dirty()
 	}
 
-	protected val _direction = Vector3(0f, 0f, 1f)
+	protected val _direction = Vector3.Z.copy()
 
 	/**
 	 * The unit length direction vector of the camera
@@ -245,7 +245,7 @@ abstract class CameraBase : Camera {
 	override val direction: Vector3Ro
 		get() = _direction
 
-	protected val _up: Vector3 = Vector3(0f, -1f, 0f)
+	protected val _up: Vector3 = Vector3.NEG_Y.copy()
 
 	/**
 	 * The unit length up vector of the camera
@@ -534,7 +534,7 @@ abstract class CameraBase : Camera {
 		updateFrustum()
 	}
 
-	abstract protected fun updateViewProjection()
+	protected abstract fun updateViewProjection()
 
 	protected open fun updateInvCombined() {
 		_invCombined.set(_combined)
