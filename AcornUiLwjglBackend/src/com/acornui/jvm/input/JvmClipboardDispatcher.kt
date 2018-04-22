@@ -16,7 +16,6 @@
 
 package com.acornui.jvm.input
 
-import com.acornui.collection.Clearable
 import com.acornui.component.Stage
 import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
@@ -32,8 +31,6 @@ import com.acornui.core.input.interaction.CopyInteractionRo
 import com.acornui.core.input.interaction.KeyInteractionRo
 import com.acornui.core.input.interaction.PasteInteractionRo
 import org.lwjgl.glfw.GLFW
-import java.awt.datatransfer.DataFlavor
-import java.awt.datatransfer.Transferable
 
 
 class JvmClipboardDispatcher(
@@ -100,31 +97,6 @@ private class JvmPasteInteraction(private val windowId: Long) : InteractionEvent
 
 private class JvmCopyInteraction(private val windowId: Long) : InteractionEventBase(), CopyInteractionRo {
 
-	private val contents = object : Transferable, Clearable {
-
-		private val map = HashMap<DataFlavor, Any>()
-
-		override fun getTransferData(flavor: DataFlavor?): Any {
-			return map[flavor]!!
-		}
-
-		override fun isDataFlavorSupported(flavor: DataFlavor?): Boolean {
-			return map.containsKey(flavor)
-		}
-
-		override fun getTransferDataFlavors(): Array<DataFlavor> {
-			return map.keys.toTypedArray()
-		}
-
-		fun addData(flavor: DataFlavor, data: Any) {
-			map[flavor] = data
-		}
-
-		override fun clear() {
-			map.clear()
-		}
-	}
-
 	override fun <T : Any> addItem(type: ClipboardItemType<T>, value: T) {
 		when (type) {
 			ClipboardItemType.PLAIN_TEXT -> {
@@ -140,10 +112,5 @@ private class JvmCopyInteraction(private val windowId: Long) : InteractionEventB
 			}
 			ClipboardItemType.FILE_LIST -> TODO()
 		}
-	}
-
-	override fun clear() {
-		super.clear()
-		contents.clear()
 	}
 }
