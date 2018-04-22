@@ -101,7 +101,7 @@ class Framebuffer(
 		val gl = gl
 		if (previousFrameBuffer == null) {
 			gl.bindFramebuffer(Gl20.FRAMEBUFFER, null)
-			gl.viewport(0, 0, window.width.toInt(), window.height.toInt())
+			gl.viewport(0, 0, (window.width * window.scaleX).toInt(), (window.height * window.scaleY).toInt())
 		} else {
 			gl.bindFramebuffer(Gl20.FRAMEBUFFER, previousFrameBuffer!!.framebufferHandle)
 			gl.viewport(0, 0, previousFrameBuffer!!.width, previousFrameBuffer!!.height)
