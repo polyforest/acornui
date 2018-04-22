@@ -89,13 +89,15 @@ vec3 getDirectionalColor() {
 	float cosTheta = clamp(dot(v_normal, u_directionalLightDir), 0.05, 1.0);
 	if (u_shadowsEnabled == 0 || u_directional.rgb == vec3(0.0)) return cosTheta * u_directional.rgb;
 	float visibility = 0.0;
-	float shadow = getShadowDepth(v_directionalShadowCoord.xy / v_directionalShadowCoord.w);
+	float shadow = getShadowDepth(v_directionalShadowCoord.xy);
 	float bias = 0.002;
-	float testZ = v_directionalShadowCoord.z / v_directionalShadowCoord.w - bias;
+	float testZ = v_directionalShadowCoord.z - bias;
+	if (testZ >= unpackFloat(vec4(0.0, 0.0, 1.0, 1.0)))
+    	return cosTheta * u_directional.rgb;
 
 	if (shadow >= testZ) visibility += 0.2;
 	for (int i = 0; i < 4; i++) {
-		shadow = getShadowDepth((v_directionalShadowCoord.xy + poissonDisk[i] * u_resolutionInv) / v_directionalShadowCoord.w);
+		shadow = getShadowDepth((v_directionalShadowCoord.xy + poissonDisk[i] * u_resolutionInv));
 		if (shadow >= testZ) visibility += 0.2;
 	}
 
@@ -239,7 +241,7 @@ $PACK_FLOAT
 void main() {
 	vec4 diffuse = v_colorTint * texture2D(u_texture, v_texCoord);
 	if (diffuse.a < 0.2) discard;
-	gl_FragColor = packFloat(gl_FragCoord.z / gl_FragCoord.w);
+	gl_FragColor = packFloat(gl_FragCoord.z);
 }
 
 """

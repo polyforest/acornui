@@ -45,8 +45,8 @@ class AnimationStateData(val skeletonData: SkeletonData) {
 	var defaultMix: Float = 0f
 
 	fun setMix(fromName: String, toName: String, duration: Float) {
-		val from = skeletonData.findAnimation(fromName) ?: throw IllegalArgumentException("AnimationInstance not found: " + fromName)
-		val to = skeletonData.findAnimation(toName) ?: throw IllegalArgumentException("AnimationInstance not found: " + toName)
+		val from = skeletonData.findAnimation(fromName) ?: throw IllegalArgumentException("AnimationInstance not found: $fromName")
+		val to = skeletonData.findAnimation(toName) ?: throw IllegalArgumentException("AnimationInstance not found: $toName")
 		setMix(from, to, duration)
 	}
 
