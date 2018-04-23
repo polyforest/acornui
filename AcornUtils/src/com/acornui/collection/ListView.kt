@@ -11,9 +11,18 @@ import kotlin.properties.Delegates
  * ListView is a read-only wrapper to an ObservableList that will allow filtering and sorting
  * without modifying the original list.
  */
-class ListView<E>(
-		private val wrapped: ObservableList<E>
-) : ObservableList<E>, Disposable {
+class ListView<E>() : ObservableList<E>, Disposable {
+
+	private var wrapped: List<E> = emptyList()
+	private var observableWrapped: ObservableList<E>? = null
+
+	constructor(source: List<E>) : this() {
+		data(source)
+	}
+
+	constructor(source: ObservableList<E>) : this() {
+		data(source)
+	}
 
 	/**
 	 * A list of ordered and reduced indices mapping to the [wrapped] list.
@@ -47,8 +56,7 @@ class ListView<E>(
 	 * If set, this list will be reduced to elements passing the given filter function.
 	 * Changing this will dispatch a [reset] signal.
 	 */
-	var filter by Delegates.observable<Filter<E>?>(null) {
-		_, _, _ ->
+	var filter by Delegates.observable<Filter<E>?>(null) { _, _, _ ->
 		dirty()
 		Unit
 	}
@@ -58,14 +66,12 @@ class ListView<E>(
 	 * Changing this will dispatch a [reset] signal.
 	 * Example: listView.sortComparator = { o1, o2 -> o1.compareTo(o2) }
 	 */
-	var sortComparator by Delegates.observable<SortComparator<E>?>(null) {
-		_, _, _ ->
+	var sortComparator by Delegates.observable<SortComparator<E>?>(null) { _, _, _ ->
 		dirty()
 		Unit
 	}
 
-	private val insertionComparator: SortComparator<Int> = {
-		insertSourceIndex, sourceIndex ->
+	private val insertionComparator: SortComparator<Int> = { insertSourceIndex, sourceIndex ->
 		val a = wrapped[insertSourceIndex]
 		val b = wrapped[sourceIndex]
 		val result = sortComparator!!(a, b)
@@ -73,8 +79,7 @@ class ListView<E>(
 		else result
 	}
 
-	private val sortComparatorObj: Comparator<Int> = Comparator {
-		sourceIndexA, sourceIndexB ->
+	private val sortComparatorObj: Comparator<Int> = Comparator { sourceIndexA, sourceIndexB ->
 		val a = wrapped[sourceIndexA]
 		val b = wrapped[sourceIndexB]
 		val result = sortComparator!!(a, b)
@@ -82,12 +87,34 @@ class ListView<E>(
 		else result
 	}
 
-	init {
-		wrapped.added.add(this::addedHandler)
-		wrapped.removed.add(this::removedHandler)
-		wrapped.changed.add(this::changedHandler)
-		wrapped.modified.add(this::elementModifiedHandler)
-		wrapped.reset.add(this::dirty)
+	fun data(source: List<E>) {
+		if (wrapped === source) return
+		unwatchWrappedList()
+		wrapped = source
+		dirty()
+	}
+
+	private fun unwatchWrappedList() {
+		val old = observableWrapped ?: return
+		old.added.add(this::addedHandler)
+		old.removed.add(this::removedHandler)
+		old.changed.add(this::changedHandler)
+		old.modified.add(this::elementModifiedHandler)
+		old.reset.add(this::dirty)
+		observableWrapped = null
+	}
+
+	fun data(source: ObservableList<E>) {
+		if (observableWrapped === source) return
+		unwatchWrappedList()
+		observableWrapped = source
+		wrapped = source
+		source.added.add(this::addedHandler)
+		source.removed.add(this::removedHandler)
+		source.changed.add(this::changedHandler)
+		source.modified.add(this::elementModifiedHandler)
+		source.reset.add(this::dirty)
+		dirty()
 	}
 
 	private fun addedHandler(sourceIndex: Int, element: E) {
@@ -149,7 +176,13 @@ class ListView<E>(
 	}
 
 	override fun notifyElementModified(index: Int) {
-		wrapped.notifyElementModified(local[index])
+		validate()
+		if (observableWrapped != null) {
+			observableWrapped!!.notifyElementModified(local[index])
+		} else {
+			val localIndex = local[index]
+			elementModifiedHandler(localIndex, wrapped[localIndex])
+		}
 	}
 
 	private fun isLocalIndexCorrect(sourceIndex: Int): Boolean {
@@ -341,11 +374,7 @@ class ListView<E>(
 	}
 
 	override fun dispose() {
-		wrapped.added.remove(this::addedHandler)
-		wrapped.removed.remove(this::removedHandler)
-		wrapped.changed.remove(this::changedHandler)
-		wrapped.modified.remove(this::elementModifiedHandler)
-		wrapped.reset.remove(this::dirty)
+		unwatchWrappedList()
 		_added.dispose()
 		_removed.dispose()
 		_changed.dispose()
