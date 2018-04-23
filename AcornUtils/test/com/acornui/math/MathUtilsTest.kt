@@ -62,7 +62,7 @@ class MathUtilsTest {
 		println("Math.sin speed: " + nativeSpeed)
 
 		if (utilsSpeed * 1.5f > nativeSpeed) {
-			fail("MathUtils.sin not fast enough")
+			fail("MathUtils.sin not fast enough $utilsSpeed $nativeSpeed")
 		}
 	}
 

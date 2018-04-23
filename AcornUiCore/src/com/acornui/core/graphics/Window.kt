@@ -61,8 +61,14 @@ interface Window : Disposable {
 
 	val scaleChanged: Signal<(Float, Float) -> Unit>
 
+	/**
+	 * The monitor content scale x factor.
+	 */
 	val scaleX: Float
 
+	/**
+	 * The monitor content scale y factor.
+	 */
 	val scaleY: Float
 
 	/**

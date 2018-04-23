@@ -1063,6 +1063,18 @@ interface Gl20 {
 	 */
 	fun vertexAttribPointer(index: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Int)
 
+	/**
+	 * Specifies the affine transformation of x and y from normalized device coordinates to window coordinates.
+	 *
+	 * Note - if the current frame buffer is the window, the width and height should be multiplied by
+	 * [com.acornui.core.graphics.Window.scaleX] and [com.acornui.core.graphics.Window.scaleY]
+	 *
+	 * @param x Specify the lower left corner of the viewport rectangle, in pixels. The initial value is (0,0).
+	 * @param y
+	 * @param width Specify the width and height of the viewport. When a GL context is first attached to a window,
+	 * width and height are set to the dimensions of that window.
+	 * @param height
+	 */
 	fun viewport(x: Int, y: Int, width: Int, height: Int)
 
 	/**

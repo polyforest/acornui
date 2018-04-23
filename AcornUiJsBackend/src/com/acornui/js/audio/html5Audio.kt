@@ -7,7 +7,7 @@ import org.w3c.dom.HTMLMediaElement
 import org.w3c.dom.events.EventTarget
 
 
-val audioContextSupported: Boolean = js("var JsAudioContext = window.AudioContext || window.webkitAudioContext; JsAudioContext != null")
+val audioContextSupported: Boolean = js("var JsAudioContext = window.AudioContext || window.webkitAudioContext; JsAudioContext != null") as Boolean
 
 external class AudioContext : EventTarget {
 
@@ -76,7 +76,7 @@ external class AudioBufferSourceNode : AudioNode {
 	fun stop(delay: Float)
 }
 
-external abstract class AudioNode : EventTarget {
+abstract external class AudioNode : EventTarget {
 	val context: AudioContext
 	val numberOfInputs: Int
 	val numberOfOutputs: Int
@@ -88,9 +88,23 @@ external abstract class AudioNode : EventTarget {
 }
 
 external interface AudioParam {
+
+	/**
+	 * Gets or sets the current value of this AudioParam. Initially, the value is set to AudioParam.defaultValue.
+	 * Part of the Web Audio API.
+	 *
+	 * Note: Though value can be set, any modifications happening while there are automation events scheduled—that is,
+	 * events scheduled using the methods of the AudioParam—are ignored, without raising any exception.
+	 */
 	var value: Float
+
 	val defaultValue: Float
 
+	/**
+	 * @param value A floating point number representing the value the AudioParam will change to at the given time.
+	 * @param startTime A double representing the time (in seconds) after the AudioContext was first created that the
+	 * change in value will happen. A TypeError is thrown if this value is negative.
+	 */
 	fun setValueAtTime(value: Float, startTime: Float)
 	fun linearRampToValueAtTime(value: Float, endTime: Float)
 	fun exponentialRampToValueAtTime(value: Float, endTime: Float)
