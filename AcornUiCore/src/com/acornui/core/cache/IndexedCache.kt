@@ -16,18 +16,18 @@
 
 package com.acornui.core.cache
 
-import com.acornui._assert
 import com.acornui.collection.*
 import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
 import com.acornui.core.Disposable
+import com.acornui.math.MathUtils
 
 /**
  * A layer between item reuse and an object pool that first seeks an item from the same index.
  * It is to reduce the amount of changes a pooled item may need to make.
  *
- * To use this class, make a series of [obtain] calls to grab recycled elements, call [forEach] to iterate over the
- * elements that weren't obtained, then call [flip] to send unused elements back to the object pool, and make the
+ * To use this class, make a series of [obtain] calls to grab recycled elements, call [forEachUnused] to iterate over
+ * the elements that weren't obtained, then call [flip] to send unused elements back to the object pool, and make the
  * obtained elements available for the next series.
  *
  * A set may look like this:
@@ -36,44 +36,51 @@ import com.acornui.core.Disposable
  * obtain(3)
  * obtain(4)
  * obtain(5)
- * obtain(2, highestFirst = false)
- * obtain(1, highestFirst = false)
- * forEach { ... } // Deactivate unused items
+ * obtain(2)
+ * obtain(1)
+ * forEachUnused { ... } // Deactivate unused items
  * flip()
  * ```
  *
  * A set pulling in reverse order should look like this:
  * ```
- * obtain(5, highestFirst = false)
- * obtain(4, highestFirst = false)
- * obtain(3, highestFirst = false)
- * obtain(6, highestFirst = true)
- * obtain(7, highestFirst = true)
- * forEach { ... } // Deactivate unused items
+ * obtain(5)
+ * obtain(4)
+ * obtain(3)
+ * obtain(6)
+ * obtain(7)
+ * forEachUnused { ... } // Deactivate unused items
  * flip()
  * ```
+ *
+ *
  */
-class IndexedCache<E>(val pool: Pool<E>) {
+class IndexedCache<E>(val pool: Pool<E>) : ListBase<E>() {
 
 	constructor(factory: ()->E) : this(ObjectPool(factory))
+
+	private var usedStartIndex = 0
 
 	private var _startIndex = 0
 	val startIndex: Int
 		get() = _startIndex
 
-	private var _size = 0
-	val size: Int
-		get() = _size
+	override val size: Int
+		get() = cache.size
 
+	override fun get(index: Int): E = cache[index]!!
 
-	private var cache = ArrayList<E?>()
-	private var used = ArrayList<E?>()
-	private var usedStartIndex = Int.MAX_VALUE
+	private var cache = CyclicList<E?>()
+	private var used = CyclicList<E?>()
+
+	private var _unusedSize = 0
+	val unusedSize: Int
+		get() = _unusedSize
 
 	/**
 	 * Obtain will provide a pooled instance in this order:
 	 * 1) An item from the previous set with a matching index.
-	 * 2) If highestFirst, the highest available index from the previous set, otherwise, the lowest.
+	 * 2) If
 	 * 3) If no items remain from the previous set, the provided [Pool] will be used.
 	 *
 	 * @param index Obtain must pull from the tail or the head. That is, [index] must be sequential from the first index
@@ -83,34 +90,29 @@ class IndexedCache<E>(val pool: Pool<E>) {
 	 * Legal: 6, 7, 8, 5, 4, 3, 9, 10, 11
 	 * Illegal: 6, 7, 8, 10
 	 * Illegal: 6, 7, 8, 4
-	 *
-	 * @param highestFirst If true, and an item with a matching index cannot be found, the item with the highest index
-	 * will be returned before the item with the lowest.
 	 */
-	fun obtain(index: Int, highestFirst: Boolean = true): E {
+	fun obtain(index: Int): E {
 		val element: E
-		if (_size == 0) {
-			element = pool.obtain()
+		element = if (_unusedSize == 0) {
+			pool.obtain()
 		} else {
-			val e = cache.getOrNull(index - _startIndex)
-			if (e != null) {
-				element = e
-				cache[index - _startIndex] = null
-				_size--
-			} else {
-				val index2 = if (highestFirst) cache.indexOfLast2 { it != null } else cache.indexOfFirst2 { it != null }
-				element = cache[index2]!!
-				cache[index2] = null
-				_size--
-			}
+			val index2 = MathUtils.mod(index - _startIndex, size)
+			_unusedSize--
+			val e = cache[index2]!!
+			cache[index2] = null
+			e
 		}
-		if (index < usedStartIndex) {
-			_assert(used.isEmpty() || index == usedStartIndex - 1)
+
+		if (used.isEmpty())
 			usedStartIndex = index
-			used.add(0, element)
-		} else {
-			_assert(index == usedStartIndex + used.size)
+
+		if (index >= usedStartIndex) {
+			if (index != usedStartIndex + used.size) throw IllegalStateException("IndexedCache.obtain must be requested sequentially.")
 			used.add(element)
+		} else {
+			if (index != usedStartIndex - 1) throw IllegalStateException("IndexedCache.obtain must be requested sequentially.")
+			usedStartIndex = index
+			used.unshift(element)
 		}
 		return element
 	}
@@ -118,43 +120,44 @@ class IndexedCache<E>(val pool: Pool<E>) {
 	/**
 	 * Returns the cached element at the given index, if it exists.
 	 */
-	fun getCached(index: Int): E? {
-		return cache.getOrNull(index - _startIndex)
+	fun getCached(index: Int): E {
+		return cache[index - _startIndex]!!
 	}
 
 	/**
 	 * Iterates over each unused item still in the cache.
 	 */
-	fun forEach(callback: (renderer: E) -> Unit) {
-		if (_size == 0) return
+	fun forEachUnused(callback: (renderer: E) -> Unit) {
+		if (unusedSize == 0) return
 		for (i in 0..cache.lastIndex) {
-			val element = cache[i]
-			if (element != null)
-				callback(element)
+			val e = cache[i]
+			if (e != null)
+				callback(e)
 		}
 	}
 
 	/**
 	 * Clears the current cache values. Note that this does not clear the pool, nor does it move the current cache
 	 * values into the pool.
+	 * @see flip
 	 */
 	fun clear() {
 		cache.clear()
-		_startIndex = usedStartIndex
-		usedStartIndex = Int.MAX_VALUE
-		_size = cache.size
+		_startIndex = 0
+		usedStartIndex = 0
+		_unusedSize = 0
 	}
 
 	/**
 	 * Sets the items returned via [obtain] to be used as the cached items for the next set.
 	 */
 	fun flip() {
-		forEach(pool::free)
+		forEachUnused(pool::free)
 		val tmp = cache
 		cache = used
 		_startIndex = usedStartIndex
-		usedStartIndex = Int.MAX_VALUE
-		_size = cache.size
+		usedStartIndex = 0
+		_unusedSize = cache.size
 		used = tmp
 		used.clear()
 	}
@@ -164,7 +167,7 @@ class IndexedCache<E>(val pool: Pool<E>) {
  * Disposes each instance in the cache and pool.
  */
 fun <E : Disposable> IndexedCache<E>.disposeAndClear() {
-	forEach { it.dispose() }
+	forEachUnused { it.dispose() }
 	pool.disposeAndClear()
 	clear()
 }
@@ -173,7 +176,7 @@ fun <E : Disposable> IndexedCache<E>.disposeAndClear() {
  * Removes all unused cache instances from the given container before flipping.
  */
 fun <E : UiComponent> IndexedCache<E>.removeAndFlip(parent: ElementContainer<UiComponent>) {
-	forEach {
+	forEachUnused {
 		parent.removeElement(it)
 	}
 	flip()
@@ -183,7 +186,7 @@ fun <E : UiComponent> IndexedCache<E>.removeAndFlip(parent: ElementContainer<UiC
  * Sets visible to false on all unused cache instances before flipping.
  */
 fun <E : UiComponent> IndexedCache<E>.hideAndFlip() {
-	forEach {
+	forEachUnused {
 		it.visible = false
 	}
 	flip()

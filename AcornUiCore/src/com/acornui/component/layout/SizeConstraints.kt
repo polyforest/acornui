@@ -41,12 +41,12 @@ data class SizeConstraints(
 		/**
 		 * The minimum and maximum width.
 		 */
-		override val width: Range2<Float> = Range2<Float>(),
+		override val width: Range2<Float> = Range2(),
 
 		/**
 		 * The minimum and maximum height.
 		 */
-		override val height: Range2<Float> = Range2<Float>()
+		override val height: Range2<Float> = Range2()
 
 ) : Clearable, SizeConstraintsRo {
 

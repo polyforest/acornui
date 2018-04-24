@@ -9,9 +9,13 @@ import com.acornui.component.layout.algorithm.virtual.VirtualLayoutAlgorithm
 import com.acornui.component.style.Style
 import com.acornui.core.behavior.Selection
 import com.acornui.core.behavior.SelectionBase
+import com.acornui.core.behavior.deselectNotContaining
+import com.acornui.core.cache.IndexedCache
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.core.focus.FocusContainer
+import com.acornui.function.as2
+import com.acornui.function.as3
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
 
@@ -29,11 +33,27 @@ interface VirtualLayoutContainer<S, out T : LayoutData> : Container {
  */
 class VirtualList<E : Any, S : Style, out T : LayoutData>(
 		owner: Owned,
-		rendererFactory: ItemRendererOwner<T>.() -> ListItemRenderer<E>,
 		override val layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
-		style : S,
-		val data: ObservableList<E>
+		style : S
 ) : ContainerImpl(owner), FocusContainer, ItemRendererOwner<T>, VirtualLayoutContainer<S, T> {
+
+	constructor(owner: Owned,
+				layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
+				style : S,
+				data: ObservableList<E>
+	) : this(owner, layoutAlgorithm, style) {
+		data(data)
+	}
+
+	constructor(owner: Owned,
+				layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
+				style : S,
+				data: List<E>
+	) : this(owner, layoutAlgorithm, style) {
+		data(data)
+	}
+
+	private var data: List<E> = emptyList()
 
 	override val style: S = bind(style)
 
@@ -57,8 +77,8 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 				// Calculate the current position.
 				val lastIndex = data.lastIndex
 				_visiblePosition = 0f
-				for (i in 0.._activeRenderers.lastIndex) {
-					val renderer = _activeRenderers[i]
+				for (i in 0..rendererCache.lastIndex) {
+					val renderer = rendererCache[i]
 					val itemOffset = layoutAlgorithm.getOffset(width, height, renderer, renderer.index, lastIndex, isReversed = false, props = style)
 					_visiblePosition = renderer.index - itemOffset
 					if (itemOffset > -1) {
@@ -83,8 +103,8 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 				// Calculate the current bottomPosition.
 				_visibleBottomPosition = data.lastIndex.toFloat()
 				val lastIndex = data.lastIndex
-				for (i in _activeRenderers.lastIndex downTo 0) {
-					val renderer = _activeRenderers[i]
+				for (i in rendererCache.lastIndex downTo 0) {
+					val renderer = rendererCache[i]
 					val itemOffset = layoutAlgorithm.getOffset(width, height, renderer, renderer.index, lastIndex, isReversed = true, props = style)
 					_visibleBottomPosition = renderer.index + itemOffset
 					if (itemOffset > -1) {
@@ -118,7 +138,7 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 			if (_indexPosition == value) return
 			_indexPosition = value
 			_bottomIndexPosition = null
-			invalidate(ValidationFlags.LAYOUT)
+			invalidateLayout()
 		}
 
 	private var _bottomIndexPosition: Float? = null
@@ -133,43 +153,52 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 			if (_bottomIndexPosition == value) return
 			_bottomIndexPosition = value
 			_indexPosition = null
-			invalidate(ValidationFlags.LAYOUT)
+			invalidateLayout()
 		}
 
-	//---------------------------------------------------
-	// Item Renderer Pooling
-	//---------------------------------------------------
+	//-------------------------------------------------
+	// Null item renderers
+	//-------------------------------------------------
 
-	private val pool = VirtualListPool {
-		rendererFactory()
+	private var _nullRendererFactory: ItemRendererOwner<T>.() -> NullListItemRenderer = { nullItemRenderer() }
+
+	/**
+	 * Sets the nullRenderer factory for this list. The nullRenderer factory is responsible for creating nullRenderers to be used
+	 * in this list.
+	 */
+	fun nullRendererFactory(value: ItemRendererOwner<T>.() -> NullListItemRenderer) {
+		if (_nullRendererFactory === value) return
+		_nullRendererFactory = value
+		nullRendererPool.disposeAndClear()
 	}
 
-	private val cache = SmartCache(pool)
+	private val nullRendererPool = ObjectPool { _nullRendererFactory() }
+
+	private val nullRendererCache = IndexedCache(nullRendererPool)
+
+	//-------------------------------------------------
+	// Item renderers
+	//-------------------------------------------------
+
+	private var _rendererFactory: ItemRendererOwner<T>.() -> ListItemRenderer<E> = { simpleItemRenderer() }
 
 	/**
-	 * If set, this is invoked when an item renderer has been obtained from the pool.
+	 * Sets the renderer factory for this list. The renderer factory is responsible for creating renderers to be used
+	 * in this list.
 	 */
-	var onRendererObtained: ((ListItemRenderer<E>) -> Unit)?
-		get() = pool.onObtained
-		set(value) {
-			pool.onObtained = value
-		}
+	fun rendererFactory(value: ItemRendererOwner<T>.() -> ListItemRenderer<E>) {
+		if (_rendererFactory === value) return
+		_rendererFactory = value
+		rendererPool.disposeAndClear()
+	}
 
-	/**
-	 * If set, this is invoked when an item renderer has been returned to the pool.
-	 */
-	var onRendererFreed: ((ListItemRenderer<E>) -> Unit)?
-		get() = pool.onFreed
-		set(value) {
-			pool.onFreed = value
-		}
+	private val rendererPool = ObjectPool { _rendererFactory() }
 
+	private val rendererCache = IndexedCache(rendererPool)
 
 	//---------------------------------------------------
 	// Children
 	//---------------------------------------------------
-
-	private val _activeRenderers = ArrayList<ListItemRenderer<E>>()
 
 	/**
 	 * Returns a list of currently active renderers. There will be renderers in this list beyond the visible bounds,
@@ -178,42 +207,51 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 	val activeRenderers: List<ListItemRendererRo<E>>
 		get() {
 			validate(ValidationFlags.LAYOUT)
-			return _activeRenderers
+			return rendererCache
 		}
 
-	private val _selection: SelectionBase<E> = own(VirtualListSelection(data, _activeRenderers))
+	private val _selection = own(VirtualListSelection(rendererCache))
 	val selection: Selection<E>
 		get() = _selection
 
-	private val dataAddedHandler = {
-		index: Int, element: E ->
-		invalidate(ValidationFlags.LAYOUT)
-		Unit
+	private var observableData: ObservableList<E>? = null
+
+	private fun unwatchWrappedList() {
+		val old = observableData ?: return
+		old.added.remove(this::invalidateLayout.as2)
+		old.removed.remove(this::invalidateLayout.as2)
+		old.changed.remove(this::invalidateLayout.as3)
+		old.reset.remove(this::invalidateLayout)
+		observableData = null
+		data = emptyList()
 	}
 
-	private val dataRemovedHandler = {
-		index: Int, element: E ->
-		invalidate(ValidationFlags.LAYOUT)
-		Unit
+	/**
+	 * Sets the data source to the given non-observable list.
+	 */
+	fun data(source: List<E>) {
+		if (data === source) return
+		unwatchWrappedList()
+		data = source
+		_selection.data(source)
+		invalidateLayout()
 	}
 
-	private val dataChangedHandler = {
-		index: Int, oldElement: E, newElement: E ->
-		invalidate(ValidationFlags.LAYOUT)
-		Unit
-	}
+	/**
+	 * Sets the data source to the given observable list, and watches for changes.
+	 */
+	fun data(source: ObservableList<E>) {
+		if (observableData === source) return
+		unwatchWrappedList()
+		observableData = source
+		data = source
+		_selection.data(source)
+		source.added.add(this::invalidateLayout.as2)
+		source.removed.add(this::invalidateLayout.as2)
+		source.changed.add(this::invalidateLayout.as3)
+		source.reset.add(this::invalidateLayout)
 
-	private val dataResetHandler = {
-		invalidate(ValidationFlags.LAYOUT)
-		Unit
-	}
-
-	init {
-		// Invalidate the layout on any dataView changes.
-		data.added.add(dataAddedHandler)
-		data.removed.add(dataRemovedHandler)
-		data.changed.add(dataChangedHandler)
-		data.reset.add(dataResetHandler)
+		invalidateLayout()
 	}
 
 	private val laidOutRenderers = ArrayList<ListItemRenderer<E>>()
@@ -222,9 +260,6 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 		// Clear the cached visible position and visible bottom position.
 		_visiblePosition = null
 		_visibleBottomPosition = null
-
-		cache.hold(_activeRenderers)
-		_activeRenderers.clear()
 
 		val isReversed = _bottomIndexPosition != null
 		val startIndex = MathUtils.clamp(if (isReversed) _bottomIndexPosition!! else _indexPosition ?: 0f, 0f, data.lastIndex.toFloat())
@@ -247,10 +282,10 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 		laidOutRenderers.clear() // We don't need to keep this list, it was just for measurement.
 
 		// Deactivate and remove all old entries if they haven't been recycled.
-		cache.forEach {
+		rendererCache.forEachUnused {
 			removeChild(it)
 		}
-		cache.flush()
+		rendererCache.flip()
 	}
 
 	/**
@@ -274,9 +309,9 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 		@Suppress("NAME_SHADOWING") var previousElement = previousElement
 		@Suppress("NAME_SHADOWING") var currentIndex = currentIndex
 		var displayIndex = currentIndex
-		while (currentIndex >= 0 && currentIndex < n && skipped < MAX_SKIPPED && _activeRenderers.size < maxItems) {
+		while (currentIndex >= 0 && currentIndex < n && skipped < MAX_SKIPPED && rendererCache.size < maxItems) {
 			val data: E = data[currentIndex]
-			val element = cache.obtain(currentIndex, isReversed)
+			val element = rendererCache.obtain(currentIndex)
 			if (currentIndex != element.index) element.index = currentIndex
 
 			if (data != element.data) element.data = data
@@ -287,8 +322,6 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 
 			if (element.parent == null)
 				addChild(element)
-			if (isReversed) _activeRenderers.add(0, element)
-			else _activeRenderers.add(element)
 
 			if (element.shouldLayout) {
 				layoutAlgorithm.updateLayoutEntry(explicitWidth, explicitHeight, element, displayIndex, startIndex, n - 1, previousElement, isReversed, style)
@@ -314,11 +347,14 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 
 	override fun dispose() {
 		super.dispose()
-		data.added.remove(dataAddedHandler)
-		data.removed.remove(dataRemovedHandler)
-		data.changed.remove(dataChangedHandler)
-		data.reset.remove(dataResetHandler)
-		pool.disposeAndClear()
+
+		unwatchWrappedList()
+
+		nullRendererCache.flip()
+		nullRendererPool.disposeAndClear()
+
+		rendererCache.flip()
+		rendererPool.disposeAndClear()
 	}
 
 	companion object {
@@ -326,95 +362,24 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 	}
 }
 
-/**
- * A layer between the creation and the pool that first seeks items from the same index, thus reducing the frequency
- * of changes to the data and index properties on the item renderers.
- */
-private class SmartCache<E>(private val pool: Pool<ListItemRenderer<E>>) {
-
-	var enabled: Boolean = true
-
-	private val cache = HashMap<Int, ListItemRenderer<E>>()
-	private val indices = ArrayList<Int>()
-
-	fun obtain(index: Int, isReversed: Boolean): ListItemRenderer<E> {
-		if (!enabled) return pool.obtain()
-		val existing = cache[index]
-		return if (existing == null) {
-			// We don't have the exact item, but take the next one least likely to be used.
-			if (cache.isEmpty()) {
-				pool.obtain()
-			} else {
-				val index2 = indices[if (isReversed) indices.indexOfFirst2 { cache.containsKey(it) } else indices.indexOfLast2 { cache.containsKey(it) }]
-				val existing2 = cache[index2]!!
-				cache.remove(index2)
-				existing2
-			}
-		} else {
-			cache.remove(index)
-			existing
-		}
-	}
-
-	fun hold(elements: List<ListItemRenderer<E>>) {
-		for (i in 0..elements.lastIndex) {
-			hold(elements[i])
-		}
-	}
-
-	/**
-	 * Holds onto the element until the next [flush]
-	 */
-	fun hold(element: ListItemRenderer<E>) {
-		val i = element.index
-		cache[i] = element
-		indices.add(i)
-	}
-
-	/**
-	 * Iterates over each held item in the cache.
-	 */
-	fun forEach(callback: (renderer: ListItemRenderer<E>) -> Unit) {
-		for (i in 0..indices.lastIndex) {
-			val index = indices[i]
-			val element = cache[index]
-			if (element != null)
-				callback(element)
-		}
-	}
-
-	/**
-	 * Returns all unused held items to the pool.
-	 */
-	fun flush() {
-		if (indices.isNotEmpty()) {
-			for (i in 0..indices.lastIndex) {
-				// Returns all elements that were not reused back to the provider.
-				val index = indices[i]
-				val element = cache[index]
-				if (element != null) {
-					element.index = -1
-					element.data = null
-					pool.free(element)
-				}
-			}
-			cache.clear()
-			indices.clear()
-		}
-	}
-}
-
 fun <E : Any, S : Style, T : LayoutData> Owned.virtualList(
-		rendererFactory: ItemRendererOwner<T>.() -> ListItemRenderer<E>,
 		layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
 		style: S,
-		data: ObservableList<E>, init: ComponentInit<VirtualList<E, S, T>> = {}): VirtualList<E, S, T> {
-	val c = VirtualList(this, rendererFactory, layoutAlgorithm, style, data)
+		init: ComponentInit<VirtualList<E, S, T>> = {}): VirtualList<E, S, T> {
+	val c = VirtualList<E, S, T>(this, layoutAlgorithm, style)
 	c.init()
 	return c
 }
 
-class VirtualListSelection<E : Any>(private val data: List<E>, private val activeRenderers: List<ListItemRenderer<E>>) : SelectionBase<E>() {
+class VirtualListSelection<E : Any>(private val activeRenderers: List<ListItemRenderer<E>>) : SelectionBase<E>() {
+
+	private var data: List<E> = emptyList()
+
+	fun data(value: List<E>) {
+		deselectNotContaining(value)
+		data = value
+	}
+
 	override fun walkSelectableItems(callback: (E) -> Unit) {
 		for (i in 0..data.lastIndex) {
 			callback(data[i])
@@ -422,50 +387,38 @@ class VirtualListSelection<E : Any>(private val data: List<E>, private val activ
 	}
 
 	override fun onItemSelectionChanged(item: E, selected: Boolean) {
-		for (i in 0..activeRenderers.lastIndex) {
-			val renderer = activeRenderers[i]
-			if (renderer.data == item) {
-				renderer.toggled = selected
-				break
+		activeRenderers.forEach2 {
+			if (it.data == item) {
+				it.toggled = selected
+				return
 			}
 		}
 	}
 }
 
-private class VirtualListPool<E>(factory: () -> ListItemRenderer<E>) : ObjectPool<ListItemRenderer<E>>(8, factory) {
-
-	/**
-	 * If set, this is invoked when an object has been obtained from the pool.
-	 */
-	var onObtained: ((ListItemRenderer<E>) -> Unit)? = null
-
-	/**
-	 * If set, this is invoked when an object has been returned to the pool.
-	 */
-	var onFreed: ((ListItemRenderer<E>) -> Unit)? = null
-
-	override fun obtain(): ListItemRenderer<E> {
-		val obj = super.obtain()
-		onObtained?.invoke(obj)
-		return obj
-	}
-
-	override fun free(obj: ListItemRenderer<E>) {
-		onFreed?.invoke(obj)
-		super.free(obj)
-	}
-}
-
-
 interface ListItemRendererRo<out E> : ItemRendererRo<E>, ToggleableRo {
 
 	/**
-	 * The index of the data in the List this ItemRenderer represents.
+	 * The index of the data in the List this item renderer represents.
 	 */
 	val index: Int
 }
 
 interface ListItemRenderer<E> : ListItemRendererRo<E>, ItemRenderer<E>, Toggleable {
+
+	override var index: Int
+
+}
+
+interface NullListItemRendererRo : UiComponentRo {
+
+	/**
+	 * The index of the data in the List this item renderer represents.
+	 */
+	val index: Int
+}
+
+interface NullListItemRenderer : NullListItemRendererRo, UiComponent {
 
 	override var index: Int
 

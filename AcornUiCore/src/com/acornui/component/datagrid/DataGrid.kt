@@ -1198,7 +1198,7 @@ class DataGrid<E>(
 						columnIndex, column, columnX, columnWidth ->
 						val columnCache = columnCaches[columnIndex]
 						@Suppress("unchecked_cast")
-						val cell = columnCache.bottomCellCache.obtain(rowIndex, highestFirst = false) as DataGridCell<Any?>
+						val cell = columnCache.bottomCellCache.obtain(rowIndex) as DataGridCell<Any?>
 						if (cell.parent == null) {
 							bottomContents.addElement(cell)
 						}

@@ -43,12 +43,12 @@ class SimpleItemRenderer<E : Any>(
 	}
 
 	override fun updateSizeConstraints(out: SizeConstraints) {
-		out.bound(textField.sizeConstraints)
+		out.width.min = style.padding.expandWidth2(textField.minWidth ?: 0f)
+		out.height.min = style.padding.expandHeight2(textField.minHeight?: 0f)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val pad = style.padding
-		super.updateLayout(explicitWidth, explicitHeight, out)
 		textField.setSize(pad.expandWidth(explicitWidth), pad.expandHeight(explicitHeight))
 		textField.moveTo(pad.left, pad.top)
 		out.set(pad.expandWidth2(textField.width), pad.expandHeight2(textField.height))

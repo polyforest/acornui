@@ -16,16 +16,11 @@
 
 package com.acornui.component.layout.algorithm.virtual
 
-import com.acornui.collection.ActiveList
-import com.acornui.collection.ObservableList
 import com.acornui.component.ComponentInit
 import com.acornui.component.layout.DataScroller
 import com.acornui.component.layout.HAlign
 import com.acornui.component.layout.LayoutElement
-import com.acornui.component.layout.ListItemRenderer
-import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.layout.algorithm.VerticalLayoutData
-import com.acornui.component.simpleItemRenderer
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
@@ -142,12 +137,10 @@ open class VirtualVerticalLayoutStyle : StyleBase() {
  * Creates a virtualized data scroller with a vertical layout.
  */
 fun <E : Any> Owned.vDataScroller(
-		rendererFactory: LayoutDataProvider<VerticalLayoutData>.() -> ListItemRenderer<E> = { simpleItemRenderer() },
-		data: ObservableList<E> = ActiveList(ArrayList()),
 		init: ComponentInit<DataScroller<E, VirtualVerticalLayoutStyle, VerticalLayoutData>> = {}
 ): DataScroller<E, VirtualVerticalLayoutStyle, VerticalLayoutData> {
 	val layoutAlgorithm = VirtualVerticalLayout()
-	val c = DataScroller(this, rendererFactory, layoutAlgorithm, VirtualVerticalLayoutStyle(), data)
+	val c = DataScroller<E, VirtualVerticalLayoutStyle, VerticalLayoutData>(this, layoutAlgorithm, VirtualVerticalLayoutStyle())
 	c.init()
 	return c
 }

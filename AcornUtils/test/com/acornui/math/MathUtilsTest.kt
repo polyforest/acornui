@@ -50,7 +50,7 @@ class MathUtilsTest {
 				x += 0.01f
 			}
 		}
-		println("MathUtils.sin speed: " + utilsSpeed)
+		println("MathUtils.sin speed: $utilsSpeed")
 
 		val nativeSpeed = benchmark {
 			var x = -7.0
@@ -59,7 +59,7 @@ class MathUtilsTest {
 				x += 0.01
 			}
 		}
-		println("Math.sin speed: " + nativeSpeed)
+		println("Math.sin speed: $nativeSpeed")
 
 		if (utilsSpeed * 1.5f > nativeSpeed) {
 			fail("MathUtils.sin not fast enough $utilsSpeed $nativeSpeed")
@@ -74,7 +74,7 @@ class MathUtilsTest {
 				x += 0.01f
 			}
 		}
-		println("MathUtils.tan speed: " + utilsSpeed)
+		println("MathUtils.tan speed: $utilsSpeed")
 
 		val nativeSpeed = benchmark {
 			var x = -7.0
@@ -83,7 +83,7 @@ class MathUtilsTest {
 				x += 0.01
 			}
 		}
-		println("Math.tan speed: " + nativeSpeed)
+		println("Math.tan speed: $nativeSpeed")
 
 		if (utilsSpeed * 2.0f > nativeSpeed) {
 			fail("MathUtils.tan not fast enough")
@@ -152,6 +152,25 @@ class MathUtilsTest {
 		assertClose(PI * 2f / 3f, MathUtils.angleDiff(PI * 2f / 3f, PI * 4f / 3f))
 		assertClose(-PI * 2f / 3f, MathUtils.angleDiff(PI * 4f / 3f, PI * 2f / 3f))
 		assertClose(-PI, MathUtils.angleDiff(PI * 3f / 2f, PI / 2f))
+	}
+
+	@Test fun modInt() {
+
+		assertEquals(0, MathUtils.mod(0, 4))
+		assertEquals(1, MathUtils.mod(1, 4))
+		assertEquals(2, MathUtils.mod(2, 4))
+		assertEquals(3, MathUtils.mod(3, 4))
+		assertEquals(0, MathUtils.mod(4, 4))
+		assertEquals(1, MathUtils.mod(5, 4))
+		assertEquals(1, MathUtils.mod(5 + 4, 4))
+
+		assertEquals(3, MathUtils.mod(-1, 4))
+		assertEquals(2, MathUtils.mod(-2, 4))
+		assertEquals(1, MathUtils.mod(-3, 4))
+		assertEquals(0, MathUtils.mod(-4, 4))
+		assertEquals(3, MathUtils.mod(-5, 4))
+		assertEquals(3, MathUtils.mod(-5 - 4, 4))
+
 	}
 
 }

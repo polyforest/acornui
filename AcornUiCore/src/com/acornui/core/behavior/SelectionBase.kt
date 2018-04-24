@@ -17,6 +17,9 @@
 package com.acornui.core.behavior
 
 import com.acornui.collection.Clearable
+import com.acornui.collection.arrayListObtain
+import com.acornui.collection.arrayListPool
+import com.acornui.collection.forEach2
 import com.acornui.core.Disposable
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
@@ -39,10 +42,11 @@ interface SelectionRo<E : Any> {
 
 	/**
 	 * Populates the [out] list with the selected items.
-	 * @param out The list to fill with the selected items.
 	 * @param ordered If true, the list will be ordered. (Slower)
+	 * @param out The list to fill with the selected items.
+	 * @return Returns the [out] list.
 	 */
-	fun getSelectedItems(ordered: Boolean, out: MutableList<E>)
+	fun getSelectedItems(ordered: Boolean, out: MutableList<E>): MutableList<E>
 
 	val isEmpty: Boolean
 	val isNotEmpty: Boolean
@@ -107,7 +111,7 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 	 * @param out The list to fill with the selected items.
 	 * @param ordered If true, the list will be ordered. (Slower)
 	 */
-	override fun getSelectedItems(ordered: Boolean, out: MutableList<E>) {
+	override fun getSelectedItems(ordered: Boolean, out: MutableList<E>): MutableList<E> {
 		out.clear()
 		if (ordered) {
 			walkSelectableItems {
@@ -118,6 +122,7 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 				out.add(item)
 			}
 		}
+		return out
 	}
 
 	/**
@@ -191,5 +196,14 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 		_changed.dispose()
 		clear()
 	}
+}
 
+fun <E : Any> Selection<E>.deselectNotContaining(list: List<E>) {
+	val tmp = arrayListObtain<E>()
+	getSelectedItems(false, tmp).forEach2 {
+		if (!list.contains(it))
+			setItemIsSelected(it, false)
+
+	}
+	arrayListPool.free(tmp)
 }

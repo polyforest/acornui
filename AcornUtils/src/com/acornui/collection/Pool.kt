@@ -47,7 +47,8 @@ interface Pool<T> {
 	fun forEach(callback: (T)->Unit)
 
 	/**
-	 * Clears the free objects from this Pool, and optionally disposes them.
+	 * Clears the free objects from this Pool.
+	 * If the objects are disposable, consider using [disposeAndClear]
 	 */
 	fun clear()
 }
@@ -65,6 +66,9 @@ fun <T : Disposable> Pool<T>.clear(dispose: Boolean) {
 	clear()
 }
 
+/**
+ * Disposes each object in this pool, then clears them from this list.
+ */
 fun <T : Disposable> Pool<T>.disposeAndClear() {
 	forEach {
 		it.dispose()

@@ -24,6 +24,7 @@ import com.acornui.component.layout.DataScrollerStyle
 import com.acornui.component.layout.ListItemRenderer
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.layout.algorithm.VerticalLayoutData
+import com.acornui.component.layout.algorithm.virtual.ItemRendererOwner
 import com.acornui.component.layout.algorithm.virtual.VirtualVerticalLayoutStyle
 import com.acornui.component.layout.algorithm.virtual.vDataScroller
 import com.acornui.component.scroll.ScrollModel
@@ -52,10 +53,16 @@ import com.acornui.signal.Signal0
 // TODO: delegate focus to input
 
 open class OptionsList<E : Any>(
-		owner: Owned,
-		val data: ObservableList<E>,
-		rendererFactory: LayoutDataProvider<VerticalLayoutData>.() -> ListItemRenderer<E>
+		owner: Owned
 ) : ContainerImpl(owner) {
+
+	constructor(owner: Owned, data: List<E>) : this(owner) {
+		data(data)
+	}
+
+	constructor(owner: Owned, data: ObservableList<E>) : this(owner) {
+		data(data)
+	}
 
 	/**
 	 * If true, search sorting and item selection will be case insensitive.
@@ -108,9 +115,9 @@ open class OptionsList<E : Any>(
 
 	private var downArrow: UiComponent? = null
 
-	private val dataView = ListView(data)
+	private val dataView = ListView<E>()
 
-	private val dataScroller = vDataScroller(rendererFactory, dataView) {
+	private val dataScroller = vDataScroller<E> {
 		selection.changed.add { _, _ ->
 			close()
 		}
@@ -189,6 +196,20 @@ open class OptionsList<E : Any>(
 		}
 	}
 
+	fun rendererFactory(value: ItemRendererOwner<VerticalLayoutData>.() -> ListItemRenderer<E>) {
+		dataScroller.rendererFactory(value)
+	}
+
+	private var data: List<E> = emptyList()
+
+	fun data(value: List<E>) {
+		dataScroller.data(value)
+	}
+
+	fun data(value: ObservableList<E>) {
+		dataScroller.data(value)
+	}
+
 	init {
 		styleTags.add(OptionsList)
 		maxItems = 10
@@ -263,10 +284,6 @@ open class OptionsList<E : Any>(
 		else open()
 	}
 
-//	override fun onAncestorVisibleChanged(uiComponent: UiComponent, value: Boolean) {
-//		invalidate(ValidationFlags.LAYOUT)
-//	}
-
 	var text: String
 		get() = textInput.text
 		set(value) {
@@ -304,10 +321,30 @@ class OptionsListStyle : StyleBase() {
 }
 
 fun <E : Any> Owned.optionsList(
+		init: ComponentInit<OptionsList<E>> = {}): OptionsList<E> {
+	val t = OptionsList<E>(this)
+	t.init()
+	return t
+}
+
+fun <E : Any> Owned.optionsList(
 		data: ObservableList<E>,
 		rendererFactory: LayoutDataProvider<VerticalLayoutData>.() -> ListItemRenderer<E> = { simpleItemRenderer() },
 		init: ComponentInit<OptionsList<E>> = {}): OptionsList<E> {
-	val t = OptionsList(this, data, rendererFactory)
+	val t = OptionsList<E>(this)
+	t.data(data)
+	t.rendererFactory(rendererFactory)
+	t.init()
+	return t
+}
+
+fun <E : Any> Owned.optionsList(
+		data: List<E>,
+		rendererFactory: LayoutDataProvider<VerticalLayoutData>.() -> ListItemRenderer<E> = { simpleItemRenderer() },
+		init: ComponentInit<OptionsList<E>> = {}): OptionsList<E> {
+	val t = OptionsList<E>(this)
+	t.data(data)
+	t.rendererFactory(rendererFactory)
 	t.init()
 	return t
 }

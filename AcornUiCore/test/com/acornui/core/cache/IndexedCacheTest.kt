@@ -63,7 +63,7 @@ class IndexedCacheTest {
 
 		// Reversed
 		for (i in 11 downTo 7) {
-			c.obtain(i, true).value = i
+			c.obtain(i).value = i
 		}
 		c.flip()
 		assertChangedCount(0)
@@ -75,7 +75,7 @@ class IndexedCacheTest {
 		}
 		assertChangedCount(0)
 		for (i in 7 downTo 5) {
-			c.obtain(i, true).value = i
+			c.obtain(i).value = i
 		}
 		assertChangedCount(2)
 		assertConstructionCount(2)
@@ -83,7 +83,7 @@ class IndexedCacheTest {
 
 		// Split reversed
 		for (i in 8 downTo 11) {
-			c.obtain(i, true).value = i
+			c.obtain(i).value = i
 		}
 		assertChangedCount(0)
 		for (i in 7..5) {
@@ -113,20 +113,20 @@ class IndexedCacheTest {
 		}
 		c.flip()
 
-		assertListEquals(listOf(5, 6, 7, 8, 9), c.getCacheList())
+		assertListEquals(listOf(5, 6, 7, 8, 9), c.getUnused())
 		c.obtain(6)
-		assertListEquals(listOf(5, 7, 8, 9), c.getCacheList())
+		assertListEquals(listOf(5, 7, 8, 9), c.getUnused())
 		c.obtain(7)
-		assertListEquals(listOf(5, 8, 9), c.getCacheList())
+		assertListEquals(listOf(5, 8, 9), c.getUnused())
 		c.obtain(5)
-		assertListEquals(listOf(8, 9), c.getCacheList())
+		assertListEquals(listOf(8, 9), c.getUnused())
 		c.clear()
-		assertListEquals(listOf(), c.getCacheList())
+		assertListEquals(listOf(), c.getUnused())
 	}
 
-	private fun IndexedCache<TestObj>.getCacheList(): List<Int> {
+	private fun IndexedCache<TestObj>.getUnused(): List<Int> {
 		val list = ArrayList<Int>()
-		forEach { list.add(it.value) }
+		forEachUnused { list.add(it.value) }
 		return list
 	}
 

@@ -1,6 +1,5 @@
 package com.acornui.component.layout
 
-import com.acornui.collection.ActiveList
 import com.acornui.collection.ObservableList
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.virtual.ItemRendererOwner
@@ -10,6 +9,7 @@ import com.acornui.component.scroll.*
 import com.acornui.component.style.*
 import com.acornui.core.behavior.Selection
 import com.acornui.core.behavior.SelectionBase
+import com.acornui.core.behavior.deselectNotContaining
 import com.acornui.core.cache.IndexedCache
 import com.acornui.core.cache.disposeAndClear
 import com.acornui.core.cache.hideAndFlip
@@ -25,14 +25,11 @@ import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
 
 // TODO: largest renderer?
-// TODO: I don't love the virtual layout algorithms.
 
-class DataScroller<E : Any, S : Style, out T : LayoutData>(
+class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 		owner: Owned,
-		rendererFactory: ItemRendererOwner<T>.() -> ListItemRenderer<E>,
 		layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
-		val layoutStyle: S,
-		val data: ObservableList<E> = ActiveList()
+		val layoutStyle: S
 ) : ContainerImpl(owner), Focusable {
 
 	override var focusEnabled: Boolean = false // Layout containers by default are not focusable.
@@ -41,7 +38,7 @@ class DataScroller<E : Any, S : Style, out T : LayoutData>(
 
 	val style = bind(DataScrollerStyle())
 
-	val bottomContents = addChild(virtualList(rendererFactory, layoutAlgorithm, layoutStyle, data) {
+	private val bottomContents = addChild(virtualList<E, S, T>(layoutAlgorithm, layoutStyle) {
 		alpha = 0f
 		interactivityMode = InteractivityMode.NONE
 	})
@@ -67,18 +64,18 @@ class DataScroller<E : Any, S : Style, out T : LayoutData>(
 		style.rowBackground(rowBackgrounds)
 	}
 
-	private val contents = clipper.addElement(virtualList(rendererFactory, layoutAlgorithm, layoutStyle, data) {
+	private val contents = clipper.addElement(virtualList<E, S, T>(layoutAlgorithm, layoutStyle) {
 		interactivityMode = InteractivityMode.CHILDREN
 	})
 
 	private val rowMap = HashMap<E, RowBackground>()
 
-	private val _selection = own(DataScrollerSelection(data, contents, bottomContents, rowMap))
+	private val _selection = own(DataScrollerSelection(contents, bottomContents, rowMap))
 
 	val selection: Selection<E>
 		get() = _selection
 
-	private val _highlighted = own(DataScrollerHighlight(data, rowMap))
+	private val _highlighted = own(DataScrollerHighlight(rowMap))
 
 	val highlighted: Selection<E>
 		get() = _highlighted
@@ -114,41 +111,46 @@ class DataScroller<E : Any, S : Style, out T : LayoutData>(
 	// Item Renderer Pooling
 	//---------------------------------------------------
 
-	/**
-	 * If set, this is invoked when an item renderer has been obtained from the pool.
-	 */
-	var onRendererObtained: ((ListItemRenderer<E>) -> Unit)?
-		get() = contents.onRendererObtained
-		set(value) {
-			contents.onRendererObtained = value
-			bottomContents.onRendererObtained = value
-		}
-
-	/**
-	 * If set, this is invoked when an item renderer has been returned to the pool.
-	 */
-	var onRendererFreed: ((ListItemRenderer<E>) -> Unit)?
-		get() = contents.onRendererFreed
-		set(value) {
-			contents.onRendererFreed = value
-			bottomContents.onRendererFreed = value
-		}
-
 	var selectable: Boolean = true
 	var highlightable: Boolean = true
-
-
-	//---------------------------------------------------
-	// Children
-	//---------------------------------------------------
 
 	private var background: UiComponent? = null
 
 	private val _mousePosition = Vector2()
 
-	private val stageMouseMoveHandler = {
-		e: MouseInteractionRo ->
+	private val stageMouseMoveHandler = { e: MouseInteractionRo ->
 		if (highlightable) updateHighlight()
+	}
+
+	/**
+	 * Sets the renderer factory for this list. The renderer factory is responsible for creating renderers to be used
+	 * in this scroller.
+	 */
+	fun rendererFactory(value: ItemRendererOwner<T>.() -> ListItemRenderer<E>) {
+		contents.rendererFactory(value)
+		bottomContents.rendererFactory(value)
+	}
+
+	private var data = emptyList<E>()
+
+	/**
+	 * Sets the data source to the given observable list, and watches for changes.
+	 */
+	fun data(value: ObservableList<E>) {
+		contents.data(value)
+		bottomContents.data(value)
+		_selection.data(value)
+		_highlighted.data(value)
+	}
+
+	/**
+	 * Sets the data source to the given non-observable list.
+	 */
+	fun data(value: List<E>) {
+		contents.data(value)
+		bottomContents.data(value)
+		_selection.data(value)
+		_highlighted.data(value)
 	}
 
 	init {
@@ -173,8 +175,8 @@ class DataScroller<E : Any, S : Style, out T : LayoutData>(
 			if (selectable && !it.handled) {
 				val e = getElementUnderPosition(mousePosition(_mousePosition))
 				if (e != null) {
-						it.handled = true
-						selection.selectedItem = e
+					it.handled = true
+					selection.selectedItem = e
 				}
 			}
 		}
@@ -196,8 +198,8 @@ class DataScroller<E : Any, S : Style, out T : LayoutData>(
 	}
 
 	private fun getElementUnderPosition(p: Vector2Ro): E? {
-		for (i in rowBackgroundsCache.startIndex .. rowBackgroundsCache.startIndex + rowBackgroundsCache.size - 1) {
-			val bg = rowBackgroundsCache.getCached(i) ?: continue
+		for (i in 0 .. rowBackgroundsCache.lastIndex) {
+			val bg = rowBackgroundsCache[i]
 			if (p.x >= bg.x && p.y >= bg.y && p.x < bg.right && p.y < bg.bottom) {
 				return data[bg.rowIndex]
 			}
@@ -283,7 +285,7 @@ class DataScroller<E : Any, S : Style, out T : LayoutData>(
 		for (i in 0..activeRenderers.lastIndex) {
 			val activeRenderer = activeRenderers[i]
 			val e = activeRenderer.data!!
-			val rowBackground = rowBackgroundsCache.obtain(activeRenderer.index, true)
+			val rowBackground = rowBackgroundsCache.obtain(activeRenderer.index)
 			if (rowBackground.parent == null) {
 				rowBackgrounds.addElement(rowBackground)
 			}
@@ -328,11 +330,17 @@ class DataScrollerStyle : StyleBase() {
 }
 
 private class DataScrollerSelection<E : Any>(
-		private val data: List<E>,
 		private val listA: VirtualList<E, *, *>,
 		private val listB: VirtualList<E, *, *>,
 		private val rowMap: Map<E, RowBackground>
 ) : SelectionBase<E>() {
+
+	private var data = emptyList<E>()
+
+	fun data(value: List<E>) {
+		deselectNotContaining(value)
+		data = value
+	}
 
 	override fun walkSelectableItems(callback: (E) -> Unit) {
 		for (i in 0..data.lastIndex) {
@@ -347,7 +355,19 @@ private class DataScrollerSelection<E : Any>(
 	}
 }
 
-private class DataScrollerHighlight<E : Any>(private val data: List<E>, private val rowMap: Map<E, RowBackground>) : SelectionBase<E>() {
+private class DataScrollerHighlight<E : Any>(private val rowMap: Map<E, RowBackground>) : SelectionBase<E>() {
+
+	private var data = emptyList<E>()
+
+	fun data(value: List<E>) {
+		getSelectedItems(false, ArrayList()).forEach {
+			if (!value.contains(it))
+				setItemIsSelected(it, false)
+
+		}
+		data = value
+	}
+
 	override fun walkSelectableItems(callback: (E) -> Unit) {
 		for (i in 0..data.lastIndex) {
 			callback(data[i])
