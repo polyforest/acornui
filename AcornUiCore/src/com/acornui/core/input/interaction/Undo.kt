@@ -57,6 +57,7 @@ class UndoDispatcher(override val injector: Injector) : Scoped {
 		//val history = stateCommandHistory()
 
 		// UNDO / REDO
+		// TODO: Mac
 		key.keyDown.add { e ->
 			if (!e.handled) {
 				if (e.ctrlKey && (e.keyCode == Ascii.Y || (e.shiftKey && e.keyCode == Ascii.Z))) {
