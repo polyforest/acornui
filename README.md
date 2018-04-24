@@ -19,3 +19,7 @@
    (Project Structure > Project Settings > Project > Project SDK > Project SDK)
 8. Get dependencies  
    (Run > Run… > getDependencies.kts)
+
+## Style Guide
+Git commit style guide - https://chris.beams.io/posts/git-commit/
+Kotlin code style guide - https://kotlinlang.org/docs/reference/coding-conventions.html
