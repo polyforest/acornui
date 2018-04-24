@@ -1,10 +1,13 @@
 package com.acornui.collection
 
+import com.acornui.math.MathUtils
 import com.acornui.test.assertListEquals
+import com.acornui.test.benchmark
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlin.test.fail
 
 class CyclicListTest {
 
@@ -151,5 +154,79 @@ class CyclicListTest {
 		list.shift()
 		list.shift()
 	}
+
+
+	@Test fun add() {
+		val list = CyclicList<Int>(5)
+		list.addAll(1, 2, 4, 5)
+		list.add(2, 3)
+		assertListEquals(listOf(1, 2, 3, 4, 5), list)
+		list.add(0, 0)
+		assertListEquals(listOf(0, 1, 2, 3, 4, 5), list)
+		list.add(6, 6)
+		assertListEquals(listOf(0, 1, 2, 3, 4, 5, 6), list)
+		list.add(3, 6)
+		assertListEquals(listOf(0, 1, 2, 6, 3, 4, 5, 6), list)
+	}
+
+	@Test fun removeAt() {
+		val list = CyclicList<Int>(5)
+		list.addAll(1, 2, 4, 5, 6, 7, 8, 9)
+		list.removeAt(2)
+		assertListEquals(listOf(1, 2, 5, 6, 7, 8, 9), list)
+		list.removeAt(0)
+		assertListEquals(listOf(2, 5, 6, 7, 8, 9), list)
+		list.removeAt(3)
+		assertListEquals(listOf(2, 5, 6, 8, 9), list)
+		list.removeAt(4)
+		assertListEquals(listOf(2, 5, 6, 8), list)
+	}
+
+	@Test fun speedTest() {
+		val n = 1_000
+		val list = CyclicList<Int>(n)
+		val cyclicListSpeed = benchmark(100) {
+			for (i in 0..n - 1) {
+				list.unshift(i)
+			}
+		}
+		val list2 = ArrayList<Int>(n)
+		val arrayListSpeed = benchmark(100) {
+			for (i in 0..n - 1) {
+				list2.add(0, i)
+			}
+		}
+		if (cyclicListSpeed * 10f > arrayListSpeed) {
+			fail("CyclicList unshift not fast enough. $cyclicListSpeed $arrayListSpeed")
+		}
+
+		val cyclicListSpeed2 = benchmark(100) {
+			for (i in 0..n - 1) {
+				list.shift()
+			}
+		}
+		val arrayListSpeed2 = benchmark(100) {
+			for (i in 0..n - 1) {
+				list2.removeAt(0)
+			}
+		}
+		if (cyclicListSpeed2 * 10f > arrayListSpeed2) {
+			fail("CyclicList shift not fast enough. $cyclicListSpeed2 $arrayListSpeed2")
+		}
+
+		val cyclicListSpeed3 = benchmark(100) {
+			for (i in 0..n - 1) {
+				list.add(i)
+			}
+		}
+		val arrayListSpeed3 = benchmark(100) {
+			for (i in 0..n - 1) {
+				list2.add(i)
+			}
+		}
+		println("1 $cyclicListSpeed3 2 $arrayListSpeed3")
+
+	}
+
 
 }

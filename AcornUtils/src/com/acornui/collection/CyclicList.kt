@@ -9,7 +9,7 @@ package com.acornui.collection
 
  * @author nbilyk
  */
-class CyclicList<E>(initialCapacity: Int = 16) : Clearable, ListBase<E>() {
+class CyclicList<E>(initialCapacity: Int = 16) : Clearable, MutableListBase<E>() {
 
 	private var items = ArrayList<E?>(initialCapacity)
 
@@ -80,16 +80,52 @@ class CyclicList<E>(initialCapacity: Int = 16) : Clearable, ListBase<E>() {
 		}
 	}
 
+	override fun add(index: Int, element: E) {
+		if (index == 0) {
+			unshift(element)
+		} else if (index == size) {
+			add(element)
+		} else {
+			val localIndex = getLocalIndex(index)
+			items.add(localIndex, element)
+			_size++
+			capacity++
+		}
+	}
+
+	override fun removeAt(index: Int): E {
+		if (index >= _size) throw IndexOutOfBoundsException(index)
+		return if (index == 0) {
+			shift()
+		} else if (index == lastIndex) {
+			pop()
+		} else {
+			val localIndex = getLocalIndex(index)
+			val e = items.removeAt(localIndex)!!
+			_size--
+			capacity--
+			e
+		}
+	}
+
+	override fun set(index: Int, element: E): E {
+		val localIndex = getLocalIndex(index)
+		val previous = items[localIndex] ?: throw IndexOutOfBoundsException(index)
+		items[localIndex] = element
+		return previous
+	}
+
 	/**
 	 * pushBack
 	 */
-	fun add(value: E) {
+	override fun add(element: E): Boolean {
 		if (_size == capacity) {
 			resize(maxOf(8, (_size * 1.75f).toInt()))
 		}
 		val localIndex = getLocalIndex(_size)
-		items[localIndex] = value
+		items[localIndex] = element
 		_size++
+		return true
 	}
 
 	/**
@@ -104,9 +140,11 @@ class CyclicList<E>(initialCapacity: Int = 16) : Clearable, ListBase<E>() {
 		return item
 	}
 
+	@Suppress("UNCHECKED_CAST")
 	override fun get(index: Int): E {
+		if (index < 0 || index >= size) throw IllegalArgumentException("Index is out of bounds: $index")
 		val localIndex = getLocalIndex(index)
-		return items[localIndex]!!
+		return items[localIndex] as E
 	}
 
 	private fun getLocalIndex(index: Int): Int {
