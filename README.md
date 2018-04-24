@@ -21,5 +21,5 @@
    (Run > Run… > getDependencies.kts)
 
 ## Style Guide
-Git commit style guide - https://chris.beams.io/posts/git-commit/
-Kotlin code style guide - https://kotlinlang.org/docs/reference/coding-conventions.html
+- Git commit style guide - https://chris.beams.io/posts/git-commit/
+- Kotlin code style guide - https://kotlinlang.org/docs/reference/coding-conventions.html
