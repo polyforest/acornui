@@ -86,7 +86,7 @@ class IndexedCacheTest {
 			c.obtain(i).value = i
 		}
 		assertChangedCount(0)
-		for (i in 7..5) {
+		for (i in 7 downTo 5) {
 			c.obtain(i).value = i
 		}
 		assertChangedCount(0)
