@@ -78,42 +78,29 @@ class IndexedCache<E>(val pool: Pool<E>) : ListBase<E>() {
 		get() = _unusedSize
 
 	/**
-	 * Obtain will provide a pooled instance in this order:
-	 * 1) An item from the previous set with a matching index.
-	 * 2) If
-	 * 3) If no items remain from the previous set, the provided [Pool] will be used.
-	 *
-	 * @param index Obtain must pull from the tail or the head. That is, [index] must be sequential from the first index
-	 * obtained, where the head is the lowest index, and the tail is the highest index.
-	 * Note that the indices are arbitrary and only used for matching purposes.
-	 *
-	 * Legal: 6, 7, 8, 5, 4, 3, 9, 10, 11
-	 * Illegal: 6, 7, 8, 10
-	 * Illegal: 6, 7, 8, 4
+	 * Obtains an element.
+	 * This algorithm attempts to obtain an element with the same index that was cached in the last obtain/flip set.
 	 */
 	fun obtain(index: Int): E {
+		if (used.isEmpty())
+			usedStartIndex = index
+
+		val isForward = index >= usedStartIndex
+		if (!isForward) usedStartIndex--
+
 		val element: E
 		element = if (_unusedSize == 0) {
 			pool.obtain()
 		} else {
-			val index2 = MathUtils.mod(index - _startIndex, size)
+			val next = if (isForward) used.size + usedStartIndex else usedStartIndex
+			val index2 = MathUtils.mod(next - _startIndex, size)
 			_unusedSize--
 			val e = cache[index2]!!
 			cache[index2] = null
 			e
 		}
-
-		if (used.isEmpty())
-			usedStartIndex = index
-
-		if (index >= usedStartIndex) {
-			if (index != usedStartIndex + used.size) throw IllegalStateException("IndexedCache.obtain must be requested sequentially.")
-			used.add(element)
-		} else {
-			if (index != usedStartIndex - 1) throw IllegalStateException("IndexedCache.obtain must be requested sequentially.")
-			usedStartIndex = index
-			used.unshift(element)
-		}
+		if (isForward) used.add(element)
+		else used.unshift(element)
 		return element
 	}
 
@@ -130,9 +117,8 @@ class IndexedCache<E>(val pool: Pool<E>) : ListBase<E>() {
 	fun forEachUnused(callback: (renderer: E) -> Unit) {
 		if (unusedSize == 0) return
 		for (i in 0..cache.lastIndex) {
-			val e = cache[i]
-			if (e != null)
-				callback(e)
+			val e = cache[i] ?: continue
+			callback(e)
 		}
 	}
 

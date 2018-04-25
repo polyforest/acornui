@@ -94,13 +94,20 @@ class IndexedCacheTest {
 		c.flip()
 	}
 
-	@Test(expected = Exception::class) fun testSequential1() {
+	@Test fun testNonSequential1() {
 		val c = IndexedCache(ClearableObjectPool { TestObj() })
-		c.obtain(9)
+		c.obtain(9).value = 9
+		c.obtain(11).value = 11
+		c.flip()
+		assertListEquals(listOf(9, 11), c.getUnused())
 		c.obtain(11)
+		assertListEquals(listOf(9), c.getUnused())
+		c.obtain(9)
+		assertListEquals(listOf(), c.getUnused())
+		assertEquals(Int.MAX_VALUE, c.obtain(12).value)
 	}
 
-	@Test(expected = Exception::class) fun testSequential2() {
+	@Test fun testNonSequential2() {
 		val c = IndexedCache(ClearableObjectPool { TestObj() })
 		c.obtain(9)
 		c.obtain(7)
