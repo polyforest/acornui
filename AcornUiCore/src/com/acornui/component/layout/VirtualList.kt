@@ -433,7 +433,7 @@ class VirtualListSelection<E : Any>(private val activeRenderers: List<ListItemRe
 
 	override fun onItemSelectionChanged(item: E, selected: Boolean) {
 		activeRenderers.forEach2 {
-			if (it.data == item) {
+			if (it.data === item) {
 				it.toggled = selected
 				return
 			}

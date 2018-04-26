@@ -180,7 +180,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 				val e = getElementUnderPosition(mousePosition(_mousePosition))
 				if (e != null) {
 					it.handled = true
-					selection.selectedItem = e
+					_selection.setSelectedItemUser(e)
 				}
 			}
 		}
@@ -198,7 +198,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 
 	private fun updateHighlight() {
 		val e = getElementUnderPosition(mousePosition(_mousePosition))
-		highlighted.selectedItem = e
+		_highlighted.setSelectedItemUser(e)
 	}
 
 	private fun getElementUnderPosition(p: Vector2Ro): E? {

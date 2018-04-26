@@ -36,7 +36,7 @@ class NullRenderer(
 
 	override var index: Int = -1
 
-	val style = bind(NullItemRendererStyle())
+	val style = bind(NullRendererStyle())
 
 	private var contents: UiComponent? = null
 
@@ -67,15 +67,15 @@ class NullRenderer(
 	companion object : StyleTag
 }
 
-class NullItemRendererStyle : StyleBase() {
+class NullRendererStyle : StyleBase() {
 
-	override val type: StyleType<NullItemRendererStyle> = NullItemRendererStyle
+	override val type: StyleType<NullRendererStyle> = NullRendererStyle
 
 	var padding by prop(Pad())
 
-	var contents by prop<Owned.() -> UiComponent>({ spacer(10f, 25f) })
+	var contents by prop<Owned.() -> UiComponent>({ spacer(15f, 15f) })
 
-	companion object : StyleType<NullItemRendererStyle>
+	companion object : StyleType<NullRendererStyle>
 }
 
 fun Owned.nullItemRenderer(init: ComponentInit<NullRenderer> = {}): NullRenderer {

@@ -29,7 +29,7 @@ import com.acornui.signal.Signal3
 interface SelectionRo<E : Any> {
 
 	/**
-	 * Dispatched when the selection status of an item has changed.
+	 * Dispatched when the selection status of an item has changed via user input.
 	 * The handler should have the signature:
 	 * item: E, newState: Boolean
 	 */
@@ -48,6 +48,14 @@ interface SelectionRo<E : Any> {
 	 */
 	fun getSelectedItems(ordered: Boolean, out: MutableList<E>): MutableList<E>
 
+	/**
+	 * Populates the [out] list with the selected items (unordered).
+	 * @param out The list to fill with the selected items.
+	 * @return Returns the [out] list.
+	 * @see getSelectedItems
+	 */
+	fun getSelectedItems(out: MutableList<E>): MutableList<E> = getSelectedItems(false, out)
+
 	val isEmpty: Boolean
 	val isNotEmpty: Boolean
 	val selectedItemsCount: Int
@@ -57,12 +65,17 @@ interface SelectionRo<E : Any> {
 interface Selection<E : Any> : SelectionRo<E>, Clearable {
 
 	/**
-	 * Dispatched when an item's selection status is about to change. This provides an opportunity to cancel the
-	 * selection change.
+	 * Dispatched when an item's selection status is about to change via user input. This provides an opportunity to
+	 * cancel the selection change.
 	 * (element, toggled, cancel)
 	 */
 	val changing: Signal<(E, Boolean, Cancel) -> Unit>
 
+	/**
+	 * Gets the first selected item.
+	 * If set, the selection is cleared and the selection will be the provided item if not null.
+	 * Note: setting this does not invoke a [changing] or [changed] signal.
+	 */
 	override var selectedItem: E?
 
 	fun setItemIsSelected(item: E, value: Boolean)
@@ -80,10 +93,6 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 
 	private val _changing = Signal3<E, Boolean, Cancel>()
 
-	/**
-	 * Dispatched when an item's selection status is about to change. This provides an opportunity to cancel the
-	 * selection change.
-	 */
 	override val changing: Signal<(E, Boolean, Cancel) -> Unit>
 		get() = _changing
 
@@ -91,11 +100,6 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 
 	private val _changed = Signal2<E, Boolean>()
 
-	/**
-	 * Dispatched when the selection status of an item has changed.
-	 * The handler should have the signature:
-	 * item: E, newState: Boolean
-	 */
 	override val changed: Signal<(E, Boolean) -> Unit>
 		get() = _changed
 
@@ -115,7 +119,8 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 		out.clear()
 		if (ordered) {
 			walkSelectableItems {
-				if (getItemIsSelected(it)) out.add(it)
+				if (getItemIsSelected(it))
+					out.add(it)
 			}
 		} else {
 			for (item in _selectedMap.keys) {
@@ -131,6 +136,7 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 	override var selectedItem: E?
 		get() = _selectedMap.keys.firstOrNull()
 		set(value) {
+			if (_selectedMap.size == 1 && value === _selectedMap.keys.firstOrNull()) return
 			for (key in _selectedMap.keys) {
 				if (key !== value)
 					setItemIsSelected(key, false)
@@ -154,15 +160,37 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 
 	override fun setItemIsSelected(item: E, value: Boolean) {
 		if (getItemIsSelected(item) == value) return // no-op
-		if (changing.isNotEmpty()) {
-			_changing.dispatch(item, value, cancel.reset())
-			if (cancel.canceled()) return
-		}
 		if (value)
 			_selectedMap[item] = true
 		else
 			_selectedMap.remove(item)
 		onItemSelectionChanged(item, value)
+	}
+
+	/**
+	 * Sets the current selection to the given item. If the selection has changed this will dispatch [changing]
+	 * and [changed] signals.
+	 */
+	fun setSelectedItemUser(value: E?) {
+		if (_selectedMap.size == 1 && value === _selectedMap.keys.firstOrNull()) return
+		for (key in _selectedMap.keys) {
+			if (key !== value)
+				setItemIsSelectedUser(key, false)
+		}
+		if (value != null)
+			setItemIsSelectedUser(value, true)
+	}
+
+	/**
+	 * The user has changed the selection. This will invoke the [changing] and [changed] signals.
+	 */
+	fun setItemIsSelectedUser(item: E, value: Boolean) {
+		if (getItemIsSelected(item) == value) return // no-op
+		if (changing.isNotEmpty()) {
+			_changing.dispatch(item, value, cancel.reset())
+			if (cancel.canceled()) return
+		}
+		setItemIsSelected(item, value)
 		_changed.dispatch(item, value)
 	}
 

@@ -40,6 +40,7 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.lastIndex
 import kotlin.collections.set
+import kotlin.properties.Delegates
 
 
 /**
@@ -54,7 +55,8 @@ open class Button(
 	private val _toggledChanged = own(Signal1<Button>())
 
 	/**
-	 * Dispatched when the toggled flag has changed.
+	 * Dispatched when the toggled flag has changed via user interaction. This will only be invoked if [toggleOnClick]
+	 * is true, and the user clicks this button.
 	 */
 	val toggledChanged: Signal<(Button) -> Unit>
 		get() = _toggledChanged
@@ -118,8 +120,10 @@ open class Button(
 	}
 
 	private val clickHandler = { event: ClickInteractionRo ->
-		if (toggleOnClick)
+		if (toggleOnClick) {
 			toggled = !toggled
+			_toggledChanged.dispatch(this)
+		}
 	}
 
 	init {
@@ -166,16 +170,7 @@ open class Button(
 			refreshState()
 		}
 
-	override var toggled: Boolean
-		get() {
-			return _toggled
-		}
-		set(value) {
-			if (_toggled == value) return
-			_toggled = value
-			refreshState()
-			_toggledChanged.dispatch(this)
-		}
+	override var toggled: Boolean by Delegates.observable(false) { _, _, _ -> refreshState() }
 
 	protected open fun refreshState() {
 		currentState(calculateButtonState())

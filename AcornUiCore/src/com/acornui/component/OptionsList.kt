@@ -16,10 +16,7 @@
 
 package com.acornui.component
 
-import com.acornui.collection.Filter
-import com.acornui.collection.ListView
-import com.acornui.collection.ObservableList
-import com.acornui.collection.SortComparator
+import com.acornui.collection.*
 import com.acornui.component.layout.DataScrollerStyle
 import com.acornui.component.layout.ListItemRenderer
 import com.acornui.component.layout.algorithm.LayoutDataProvider
@@ -54,7 +51,7 @@ import com.acornui.signal.Signal0
 
 open class OptionsList<E : Any>(
 		owner: Owned
-) : ContainerImpl(owner) {
+) : ContainerImpl(owner), Clearable {
 
 	constructor(owner: Owned, data: List<E?>) : this(owner) {
 		data(data)
@@ -81,6 +78,8 @@ open class OptionsList<E : Any>(
 
 	/**
 	 * Dispatched on value commit.
+	 * It is dispatched when the user selects an item, or commits the value of the text input. It is not dispatched
+	 * when the selected item or text is programmatically changed.
 	 */
 	val changed: Signal<() -> Unit>
 		get() = _changed
@@ -100,10 +99,15 @@ open class OptionsList<E : Any>(
 		data.firstOrNull { formatter.format(it).toLowerCase() == textLower }
 	}
 
+	/**
+	 * Sets the currently selected item.
+	 * Note that this does not invoke [input] or [changed] signals.
+	 */
 	var selectedItem: E?
 		get() = dataScroller.selection.selectedItem
 		set(value) {
 			dataScroller.selection.selectedItem = value
+			textInput.text = if (value == null) "" else formatter.format(value)
 		}
 
 	private val textInput: TextInput = textInput {
@@ -118,8 +122,14 @@ open class OptionsList<E : Any>(
 	private val dataView = ListView<E>()
 
 	private val dataScroller = vDataScroller<E> {
-		selection.changed.add { _, _ ->
+		selection.changed.add { item, selected ->
+			if (selected)
+				textInput.text = formatter.format(item)
+			else
+				textInput.text = ""
+
 			close()
+			_changed.dispatch()
 		}
 	}
 
@@ -143,8 +153,6 @@ open class OptionsList<E : Any>(
 		set(value) {
 			dataScroller.maxItems = value
 		}
-
-	private var isUserInput: Boolean = false
 
 	val style = bind(OptionsListStyle())
 
@@ -222,17 +230,6 @@ open class OptionsList<E : Any>(
 
 		sortComparator = defaultSortComparator
 
-		dataScroller.selection.changed.add {
-			item, selected ->
-			if (!isUserInput) {
-				if (selected)
-					textInput.text = formatter.format(item)
-				else
-					textInput.text = ""
-			}
-			_changed.dispatch()
-		}
-
 		watch(style) {
 			downArrow?.dispose()
 			downArrow = it.downArrow(this)
@@ -248,9 +245,7 @@ open class OptionsList<E : Any>(
 		open()
 		scrollModel.value = 0f // Scroll to the top.
 
-		isUserInput = true
-		selectedItem = textToItem(text)
-		isUserInput = false
+		dataScroller.selection.selectedItem = textToItem(text)
 		_input.dispatch()
 	}
 
@@ -267,6 +262,7 @@ open class OptionsList<E : Any>(
 	fun open() {
 		if (_isOpen) return
 		_isOpen = true
+		dataScroller.highlighted.clear()
 		addChild(listLift)
 		stage.mouseDown(isCapture = true).add(stageMouseDownHandler)
 		textInput.focus()
@@ -302,6 +298,11 @@ open class OptionsList<E : Any>(
 
 		listLift.setSize(listWidth ?: textInput.width, listHeight)
 		listLift.moveTo(0f, textInput.height)
+	}
+
+	override fun clear() {
+		textInput.clear()
+		selectedItem = null
 	}
 
 	override fun dispose() {

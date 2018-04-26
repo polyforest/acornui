@@ -16,6 +16,7 @@
 
 package com.acornui.component.text
 
+import com.acornui.collection.Clearable
 import com.acornui.component.BoxStyle
 import com.acornui.component.ComponentInit
 import com.acornui.component.Labelable
@@ -239,7 +240,7 @@ class TextFlowStyle : StyleBase() {
 	companion object : StyleType<TextFlowStyle>
 }
 
-interface TextInput : Focusable, SelectableComponent, Styleable {
+interface TextInput : Focusable, SelectableComponent, Styleable, Clearable {
 
 	val charStyle: CharStyle
 	val flowStyle: TextFlowStyle
@@ -248,11 +249,14 @@ interface TextInput : Focusable, SelectableComponent, Styleable {
 
 	/**
 	 * Dispatched on each input character.
+	 * Note - this does not invoke when the text is programmatically changed.
 	 */
 	val input: Signal<() -> Unit>
 
 	/**
 	 * Dispatched on value commit.
+	 * This is only dispatched on a user interaction, such as pressing ENTER or TAB. It is not dispatched when
+	 * the text is programmatically changed.
 	 */
 	val changed: Signal<() -> Unit>
 

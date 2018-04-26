@@ -48,8 +48,8 @@ open class DomTextField(
 		domContainer: DomContainer = DomContainer(element)
 ) : ContainerImpl(owner, domContainer), TextField {
 
-	override final val charStyle = bind(CharStyle())
-	override final val flowStyle = bind(TextFlowStyle())
+	final override val charStyle = bind(CharStyle())
+	final override val flowStyle = bind(TextFlowStyle())
 
 	// TODO: DomTextSelection
 
@@ -247,6 +247,10 @@ class DomTextInput(
 		highlight?.setSize(out)
 	}
 
+	override fun clear() {
+		text = ""
+	}
+
 	override fun dispose() {
 		super.dispose()
 		inputElement.oninput = null
@@ -423,6 +427,10 @@ class DomTextArea(
 		out.set(native.bounds)
 		highlight?.setSize(out)
 		contentBounds.set(boxStyle.margin.expandWidth2(areaElement.offsetWidth.toFloat()), boxStyle.margin.expandHeight2(areaElement.offsetHeight.toFloat()))
+	}
+
+	override fun clear() {
+		text = ""
 	}
 
 	override fun dispose() {

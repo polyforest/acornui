@@ -138,6 +138,10 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 		highlight?.setSize(background.bounds)
 		highlight?.setPosition(margin.left, margin.top)
 	}
+
+	override fun clear() {
+		text = ""
+	}
 }
 
 
@@ -337,6 +341,10 @@ class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 		background.setPosition(margin.left, margin.top)
 		highlight?.setSize(background.bounds)
 		highlight?.setPosition(margin.left, margin.top)
+	}
+
+	override fun clear() {
+		text = ""
 	}
 
 	private val firstSelection: SelectionRange?
