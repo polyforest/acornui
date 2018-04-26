@@ -198,7 +198,7 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 	}
 }
 
-fun <E : Any> Selection<E>.deselectNotContaining(list: List<E>) {
+fun <E : Any> Selection<E>.deselectNotContaining(list: List<E?>) {
 	val tmp = arrayListObtain<E>()
 	getSelectedItems(false, tmp).forEach2 {
 		if (!list.contains(it))

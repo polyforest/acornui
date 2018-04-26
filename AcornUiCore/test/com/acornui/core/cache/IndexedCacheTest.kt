@@ -20,6 +20,7 @@ import com.acornui.assertionsEnabled
 import com.acornui.collection.Clearable
 import com.acornui.collection.ClearableObjectPool
 import com.acornui.test.assertListEquals
+import com.acornui.test.assertUnorderedListEquals
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -94,16 +95,17 @@ class IndexedCacheTest {
 		c.flip()
 	}
 
+
 	@Test fun testNonSequential1() {
 		val c = IndexedCache(ClearableObjectPool { TestObj() })
 		c.obtain(9).value = 9
 		c.obtain(11).value = 11
 		c.flip()
-		assertListEquals(listOf(9, 11), c.getUnused())
+		assertUnorderedListEquals(listOf(9, 11), c.getUnused())
 		c.obtain(11)
-		assertListEquals(listOf(9), c.getUnused())
+		assertUnorderedListEquals(listOf(9), c.getUnused())
 		c.obtain(9)
-		assertListEquals(listOf(), c.getUnused())
+		assertUnorderedListEquals(listOf(), c.getUnused())
 		assertEquals(Int.MAX_VALUE, c.obtain(12).value)
 	}
 
@@ -120,20 +122,23 @@ class IndexedCacheTest {
 		}
 		c.flip()
 
-		assertListEquals(listOf(5, 6, 7, 8, 9), c.getUnused())
+		assertUnorderedListEquals(listOf(5, 6, 7, 8, 9), c.getUnused())
 		c.obtain(6)
-		assertListEquals(listOf(5, 7, 8, 9), c.getUnused())
+		assertUnorderedListEquals(listOf(5, 7, 8, 9), c.getUnused())
 		c.obtain(7)
-		assertListEquals(listOf(5, 8, 9), c.getUnused())
+		assertUnorderedListEquals(listOf(5, 8, 9), c.getUnused())
 		c.obtain(5)
-		assertListEquals(listOf(8, 9), c.getUnused())
+		assertUnorderedListEquals(listOf(8, 9), c.getUnused())
 		c.clear()
-		assertListEquals(listOf(), c.getUnused())
+		assertUnorderedListEquals(listOf(), c.getUnused())
 	}
 
 	private fun IndexedCache<TestObj>.getUnused(): List<Int> {
 		val list = ArrayList<Int>()
-		forEachUnused { list.add(it.value) }
+		forEachUnused {
+			_, it ->
+			list.add(it.value)
+		}
 		return list
 	}
 

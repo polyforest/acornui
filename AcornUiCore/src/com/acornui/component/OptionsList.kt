@@ -56,11 +56,11 @@ open class OptionsList<E : Any>(
 		owner: Owned
 ) : ContainerImpl(owner) {
 
-	constructor(owner: Owned, data: List<E>) : this(owner) {
+	constructor(owner: Owned, data: List<E?>) : this(owner) {
 		data(data)
 	}
 
-	constructor(owner: Owned, data: ObservableList<E>) : this(owner) {
+	constructor(owner: Owned, data: ObservableList<E?>) : this(owner) {
 		data(data)
 	}
 
@@ -202,11 +202,11 @@ open class OptionsList<E : Any>(
 
 	private var data: List<E> = emptyList()
 
-	fun data(value: List<E>) {
+	fun data(value: List<E?>) {
 		dataScroller.data(value)
 	}
 
-	fun data(value: ObservableList<E>) {
+	fun data(value: ObservableList<E?>) {
 		dataScroller.data(value)
 	}
 
@@ -328,7 +328,7 @@ fun <E : Any> Owned.optionsList(
 }
 
 fun <E : Any> Owned.optionsList(
-		data: ObservableList<E>,
+		data: ObservableList<E?>,
 		rendererFactory: LayoutDataProvider<VerticalLayoutData>.() -> ListItemRenderer<E> = { simpleItemRenderer() },
 		init: ComponentInit<OptionsList<E>> = {}): OptionsList<E> {
 	val t = OptionsList<E>(this)
@@ -339,7 +339,7 @@ fun <E : Any> Owned.optionsList(
 }
 
 fun <E : Any> Owned.optionsList(
-		data: List<E>,
+		data: List<E?>,
 		rendererFactory: LayoutDataProvider<VerticalLayoutData>.() -> ListItemRenderer<E> = { simpleItemRenderer() },
 		init: ComponentInit<OptionsList<E>> = {}): OptionsList<E> {
 	val t = OptionsList<E>(this)

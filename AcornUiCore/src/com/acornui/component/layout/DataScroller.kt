@@ -131,12 +131,16 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 		bottomContents.rendererFactory(value)
 	}
 
-	private var data = emptyList<E>()
+	/**
+	 * The data list, as set via [data].
+	 */
+	val data: List<E?>
+		get() = contents.data
 
 	/**
 	 * Sets the data source to the given observable list, and watches for changes.
 	 */
-	fun data(value: ObservableList<E>) {
+	fun data(value: ObservableList<E?>) {
 		contents.data(value)
 		bottomContents.data(value)
 		_selection.data(value)
@@ -146,7 +150,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 	/**
 	 * Sets the data source to the given non-observable list.
 	 */
-	fun data(value: List<E>) {
+	fun data(value: List<E?>) {
 		contents.data(value)
 		bottomContents.data(value)
 		_selection.data(value)
@@ -201,7 +205,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 		for (i in 0 .. rowBackgroundsCache.lastIndex) {
 			val bg = rowBackgroundsCache[i]
 			if (p.x >= bg.x && p.y >= bg.y && p.x < bg.right && p.y < bg.bottom) {
-				return data[bg.rowIndex]
+				return data.getOrNull(bg.rowIndex)
 			}
 		}
 		return null
@@ -281,35 +285,45 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 		scrollBar.scrollModel.max = bottomContents.visiblePosition
 
 		rowMap.clear()
-		val activeRenderers = contents.activeRenderers
-		for (i in 0..activeRenderers.lastIndex) {
-			val activeRenderer = activeRenderers[i]
-			val e = activeRenderer.data!!
-			val rowBackground = rowBackgroundsCache.obtain(activeRenderer.index)
-			if (rowBackground.parent == null) {
-				rowBackgrounds.addElement(rowBackground)
-			}
-			@Suppress("UNCHECKED_CAST")
+
+		val itemRenderers = contents.activeItemRenderers
+		for (i in 0..itemRenderers.lastIndex) {
+			val itemRenderer = itemRenderers[i]
+			val rowBackground = updateRowBackgroundForRenderer(itemRenderer)
+			val e = itemRenderer.data ?: continue
 			rowMap[e] = rowBackground
-			rowBackground.visible = true
-			rowBackground.rowIndex = activeRenderer.index
 			rowBackground.toggled = _selection.getItemIsSelected(e)
 			rowBackground.highlighted = _highlighted.getItemIsSelected(e)
-			if (isVertical) {
-				rowBackground.setSize(bottomContents.width, activeRenderer.height)
-				rowBackground.moveTo(0f, activeRenderer.y)
-			} else {
-				rowBackground.setSize(activeRenderer.width, bottomContents.height)
-				rowBackground.moveTo(activeRenderer.x, 0f)
-			}
+		}
+		val nullItemRenderers = contents.activeNullRenderers
+		for (i in 0..nullItemRenderers.lastIndex) {
+			val rowBackground = updateRowBackgroundForRenderer(nullItemRenderers[i])
+			rowBackground.toggled = false
+			rowBackground.highlighted = false
 		}
 
 		rowBackgroundsCache.hideAndFlip()
 
 		clipper.setSize(bottomContents.width, bottomContents.height)
-		//clipper.setSize(contents.explicitWidth, contents.explicitHeight)
 		background?.setSize(out)
 		highlight?.setSize(out)
+	}
+
+	private fun updateRowBackgroundForRenderer(renderer: ListRendererRo): RowBackground {
+		val rowBackground = rowBackgroundsCache.obtain(renderer.index)
+		if (rowBackground.parent == null) {
+			rowBackgrounds.addElement(rowBackground)
+		}
+		rowBackground.visible = true
+		rowBackground.rowIndex = renderer.index
+		if (isVertical) {
+			rowBackground.setSize(bottomContents.width, renderer.height)
+			rowBackground.moveTo(0f, renderer.y)
+		} else {
+			rowBackground.setSize(renderer.width, bottomContents.height)
+			rowBackground.moveTo(renderer.x, 0f)
+		}
+		return rowBackground
 	}
 
 	companion object : StyleTag
@@ -335,16 +349,17 @@ private class DataScrollerSelection<E : Any>(
 		private val rowMap: Map<E, RowBackground>
 ) : SelectionBase<E>() {
 
-	private var data = emptyList<E>()
+	private var data = emptyList<E?>()
 
-	fun data(value: List<E>) {
+	fun data(value: List<E?>) {
 		deselectNotContaining(value)
 		data = value
 	}
 
 	override fun walkSelectableItems(callback: (E) -> Unit) {
 		for (i in 0..data.lastIndex) {
-			callback(data[i])
+			val item = data[i] ?: continue
+			callback(item)
 		}
 	}
 
@@ -357,9 +372,9 @@ private class DataScrollerSelection<E : Any>(
 
 private class DataScrollerHighlight<E : Any>(private val rowMap: Map<E, RowBackground>) : SelectionBase<E>() {
 
-	private var data = emptyList<E>()
+	private var data = emptyList<E?>()
 
-	fun data(value: List<E>) {
+	fun data(value: List<E?>) {
 		getSelectedItems(false, ArrayList()).forEach {
 			if (!value.contains(it))
 				setItemIsSelected(it, false)
@@ -370,7 +385,8 @@ private class DataScrollerHighlight<E : Any>(private val rowMap: Map<E, RowBackg
 
 	override fun walkSelectableItems(callback: (E) -> Unit) {
 		for (i in 0..data.lastIndex) {
-			callback(data[i])
+			val item = data[i] ?: continue
+			callback(item)
 		}
 	}
 

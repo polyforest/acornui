@@ -40,7 +40,7 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 	constructor(owner: Owned,
 				layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
 				style : S,
-				data: ObservableList<E>
+				data: ObservableList<E?>
 	) : this(owner, layoutAlgorithm, style) {
 		data(data)
 	}
@@ -48,12 +48,18 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 	constructor(owner: Owned,
 				layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
 				style : S,
-				data: List<E>
+				data: List<E?>
 	) : this(owner, layoutAlgorithm, style) {
 		data(data)
 	}
 
-	private var data: List<E> = emptyList()
+	private var _data: List<E?> = emptyList()
+
+	/**
+	 * The data list, as set via [data].
+	 */
+	val data: List<E?>
+		get() = _data
 
 	override val style: S = bind(style)
 
@@ -75,10 +81,10 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 			validate(ValidationFlags.LAYOUT)
 			if (_visiblePosition == null) {
 				// Calculate the current position.
-				val lastIndex = data.lastIndex
+				val lastIndex = _data.lastIndex
 				_visiblePosition = 0f
-				for (i in 0..rendererCache.lastIndex) {
-					val renderer = rendererCache[i]
+				for (i in 0.._activeRenderers.lastIndex) {
+					val renderer = _activeRenderers[i]
 					val itemOffset = layoutAlgorithm.getOffset(width, height, renderer, renderer.index, lastIndex, isReversed = false, props = style)
 					_visiblePosition = renderer.index - itemOffset
 					if (itemOffset > -1) {
@@ -101,10 +107,10 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 			validate(ValidationFlags.LAYOUT)
 			if (_visibleBottomPosition == null) {
 				// Calculate the current bottomPosition.
-				_visibleBottomPosition = data.lastIndex.toFloat()
-				val lastIndex = data.lastIndex
-				for (i in rendererCache.lastIndex downTo 0) {
-					val renderer = rendererCache[i]
+				_visibleBottomPosition = _data.lastIndex.toFloat()
+				val lastIndex = _data.lastIndex
+				for (i in _activeRenderers.lastIndex downTo 0) {
+					val renderer = _activeRenderers[i]
 					val itemOffset = layoutAlgorithm.getOffset(width, height, renderer, renderer.index, lastIndex, isReversed = true, props = style)
 					_visibleBottomPosition = renderer.index + itemOffset
 					if (itemOffset > -1) {
@@ -160,13 +166,13 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 	// Null item renderers
 	//-------------------------------------------------
 
-	private var _nullRendererFactory: ItemRendererOwner<T>.() -> NullListItemRenderer = { nullItemRenderer() }
+	private var _nullRendererFactory: ItemRendererOwner<T>.() -> ListRenderer = { nullItemRenderer() }
 
 	/**
 	 * Sets the nullRenderer factory for this list. The nullRenderer factory is responsible for creating nullRenderers to be used
 	 * in this list.
 	 */
-	fun nullRendererFactory(value: ItemRendererOwner<T>.() -> NullListItemRenderer) {
+	fun nullRendererFactory(value: ItemRendererOwner<T>.() -> ListRenderer) {
 		if (_nullRendererFactory === value) return
 		_nullRendererFactory = value
 		nullRendererPool.disposeAndClear()
@@ -201,20 +207,44 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 	//---------------------------------------------------
 
 	/**
-	 * Returns a list of currently active renderers. There will be renderers in this list beyond the visible bounds,
-	 * but within the buffer.
+	 * All renderers, null and non-null.
 	 */
-	val activeRenderers: List<ListItemRendererRo<E>>
+	private val _activeRenderers = CyclicList<ListRenderer>()
+
+	/**
+	 * Returns a list of currently active renderers, both null and non-null.
+	 *
+	 * Note: For active renderers there will be renderers in this list beyond the visible bounds, but within the buffer.
+	 */
+	val activeRenderers: List<ListRendererRo>
+		get() {
+			validate(ValidationFlags.LAYOUT)
+			return _activeRenderers
+		}
+
+	/**
+	 * Returns a list of currently active non-null item renderers.
+	 */
+	val activeItemRenderers: List<ListItemRendererRo<E>>
 		get() {
 			validate(ValidationFlags.LAYOUT)
 			return rendererCache
+		}
+
+	/**
+	 * Returns a list of currently active null renderers.
+	 */
+	val activeNullRenderers: List<ListRendererRo>
+		get() {
+			validate(ValidationFlags.LAYOUT)
+			return nullRendererCache
 		}
 
 	private val _selection = own(VirtualListSelection(rendererCache))
 	val selection: Selection<E>
 		get() = _selection
 
-	private var observableData: ObservableList<E>? = null
+	private var observableData: ObservableList<E?>? = null
 
 	private fun unwatchWrappedList() {
 		val old = observableData ?: return
@@ -223,16 +253,16 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 		old.changed.remove(this::invalidateLayout.as3)
 		old.reset.remove(this::invalidateLayout)
 		observableData = null
-		data = emptyList()
+		_data = emptyList()
 	}
 
 	/**
 	 * Sets the data source to the given non-observable list.
 	 */
-	fun data(source: List<E>) {
-		if (data === source) return
+	fun data(source: List<E?>) {
+		if (_data === source) return
 		unwatchWrappedList()
-		data = source
+		_data = source
 		_selection.data(source)
 		invalidateLayout()
 	}
@@ -240,11 +270,11 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 	/**
 	 * Sets the data source to the given observable list, and watches for changes.
 	 */
-	fun data(source: ObservableList<E>) {
+	fun data(source: ObservableList<E?>) {
 		if (observableData === source) return
 		unwatchWrappedList()
 		observableData = source
-		data = source
+		_data = source
 		_selection.data(source)
 		source.added.add(this::invalidateLayout.as2)
 		source.removed.add(this::invalidateLayout.as2)
@@ -254,15 +284,16 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 		invalidateLayout()
 	}
 
-	private val laidOutRenderers = ArrayList<ListItemRenderer<E>>()
+	private val laidOutRenderers = ArrayList<UiComponent>()
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		// Clear the cached visible position and visible bottom position.
 		_visiblePosition = null
 		_visibleBottomPosition = null
+		_activeRenderers.clear()
 
 		val isReversed = _bottomIndexPosition != null
-		val startIndex = MathUtils.clamp(if (isReversed) _bottomIndexPosition!! else _indexPosition ?: 0f, 0f, data.lastIndex.toFloat())
+		val startIndex = MathUtils.clamp(if (isReversed) _bottomIndexPosition!! else _indexPosition ?: 0f, 0f, _data.lastIndex.toFloat())
 
 		// Starting at the set position, render as many items as we can until we go out of bounds,
 		// then go back to the beginning and reverse direction until we go out of bounds again.
@@ -282,7 +313,14 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 		laidOutRenderers.clear() // We don't need to keep this list, it was just for measurement.
 
 		// Deactivate and remove all old entries if they haven't been recycled.
+		nullRendererCache.forEachUnused {
+			_, it ->
+			removeChild(it)
+		}
+		nullRendererCache.flip()
+
 		rendererCache.forEachUnused {
+			_, it ->
 			removeChild(it)
 		}
 		rendererCache.flip()
@@ -302,23 +340,30 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 	 *
 	 * @return
 	 */
-	private fun layoutElements(explicitWidth: Float?, explicitHeight: Float?, currentIndex: Int, startIndex: Float, isReversed: Boolean, previousElement: LayoutElement?, laidOutRenderers: MutableList<ListItemRenderer<E>>) {
-		val n = data.size
+	private fun layoutElements(explicitWidth: Float?, explicitHeight: Float?, currentIndex: Int, startIndex: Float, isReversed: Boolean, previousElement: LayoutElement?, laidOutRenderers: MutableList<UiComponent>) {
+		val n = _data.size
 		var skipped = 0
 		val d = if (isReversed) -1 else 1
 		@Suppress("NAME_SHADOWING") var previousElement = previousElement
 		@Suppress("NAME_SHADOWING") var currentIndex = currentIndex
 		var displayIndex = currentIndex
-		while (currentIndex >= 0 && currentIndex < n && skipped < MAX_SKIPPED && rendererCache.size < maxItems) {
-			val data: E = data[currentIndex]
-			val element = rendererCache.obtain(currentIndex)
-			if (currentIndex != element.index) element.index = currentIndex
+		while (currentIndex >= 0 && currentIndex < n && skipped < MAX_SKIPPED && rendererCache.obtainedSize + nullRendererCache.obtainedSize < maxItems) {
+			val data: E? = _data[currentIndex]
 
-			if (data != element.data) element.data = data
+			val element: ListRenderer = if (data == null) {
+				val nullItemRenderer = nullRendererCache.obtain(currentIndex)
+				nullItemRenderer.index = currentIndex
+				nullItemRenderer
+			} else {
+				val itemRenderer = rendererCache.obtain(currentIndex)
+				itemRenderer.index = currentIndex
+				itemRenderer.data = data
+				val elementSelected = selection.getItemIsSelected(data)
+				itemRenderer.toggled = elementSelected
+				itemRenderer
+			}
 
-			val elementSelected = selection.getItemIsSelected(data)
-			if (element.toggled != elementSelected)
-				element.toggled = elementSelected
+			if (isReversed) _activeRenderers.unshift(element) else _activeRenderers.add(element)
 
 			if (element.parent == null)
 				addChild(element)
@@ -347,14 +392,13 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 
 	override fun dispose() {
 		super.dispose()
-
 		unwatchWrappedList()
 
 		nullRendererCache.flip()
-		nullRendererPool.disposeAndClear()
+		nullRendererPool.clear()
 
 		rendererCache.flip()
-		rendererPool.disposeAndClear()
+		rendererPool.clear()
 	}
 
 	companion object {
@@ -373,16 +417,17 @@ fun <E : Any, S : Style, T : LayoutData> Owned.virtualList(
 
 class VirtualListSelection<E : Any>(private val activeRenderers: List<ListItemRenderer<E>>) : SelectionBase<E>() {
 
-	private var data: List<E> = emptyList()
+	private var data: List<E?> = emptyList()
 
-	fun data(value: List<E>) {
+	fun data(value: List<E?>) {
 		deselectNotContaining(value)
 		data = value
 	}
 
 	override fun walkSelectableItems(callback: (E) -> Unit) {
 		for (i in 0..data.lastIndex) {
-			callback(data[i])
+			val item = data[i] ?: continue
+			callback(item)
 		}
 	}
 
@@ -396,7 +441,7 @@ class VirtualListSelection<E : Any>(private val activeRenderers: List<ListItemRe
 	}
 }
 
-interface ListItemRendererRo<out E> : ItemRendererRo<E>, ToggleableRo {
+interface ListRendererRo : UiComponentRo {
 
 	/**
 	 * The index of the data in the List this item renderer represents.
@@ -404,22 +449,11 @@ interface ListItemRendererRo<out E> : ItemRendererRo<E>, ToggleableRo {
 	val index: Int
 }
 
-interface ListItemRenderer<E> : ListItemRendererRo<E>, ItemRenderer<E>, Toggleable {
+interface ListRenderer : ListRendererRo, UiComponent {
 
 	override var index: Int
-
 }
 
-interface NullListItemRendererRo : UiComponentRo {
+interface ListItemRendererRo<out E> : ItemRendererRo<E>, ToggleableRo, ListRendererRo
 
-	/**
-	 * The index of the data in the List this item renderer represents.
-	 */
-	val index: Int
-}
-
-interface NullListItemRenderer : NullListItemRendererRo, UiComponent {
-
-	override var index: Int
-
-}
+interface ListItemRenderer<E> : ListItemRendererRo<E>, ItemRenderer<E>, Toggleable, ListRenderer

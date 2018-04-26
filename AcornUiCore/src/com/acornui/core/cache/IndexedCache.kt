@@ -20,7 +20,6 @@ import com.acornui.collection.*
 import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
 import com.acornui.core.Disposable
-import com.acornui.math.MathUtils
 
 /**
  * A layer between item reuse and an object pool that first seeks an item from the same index.
@@ -52,55 +51,64 @@ import com.acornui.math.MathUtils
  * forEachUnused { ... } // Deactivate unused items
  * flip()
  * ```
- *
- *
  */
 class IndexedCache<E>(val pool: Pool<E>) : ListBase<E>() {
 
-	constructor(factory: ()->E) : this(ObjectPool(factory))
+	constructor(factory: () -> E) : this(ObjectPool(factory))
 
-	private var usedStartIndex = 0
+	/**
+	 * The current items are indexed in this list starting at index 0. This offset represents the lowest index used in
+	 * the last [obtain] set.
+	 */
+	val offset: Int
+		get() = currentIndices.firstOrNull() ?: 0
 
-	private var _startIndex = 0
-	val startIndex: Int
-		get() = _startIndex
-
+	/**
+	 * The size of this list. This will be updated after a [flip]
+	 */
 	override val size: Int
-		get() = cache.size
+		get() = current.size
 
-	override fun get(index: Int): E = cache[index]!!
+	/**
+	 * Returns the size of the obtained list.
+	 */
+	val obtainedSize: Int
+		get() = obtained.size
 
-	private var cache = CyclicList<E?>()
-	private var used = CyclicList<E?>()
+	override fun get(index: Int): E = current[index]
 
-	private var _unusedSize = 0
-	val unusedSize: Int
-		get() = _unusedSize
+	private var current = CyclicList<E>()
+	private var currentIndices = CyclicList<Int>()
+
+	private var obtained = CyclicList<E>()
+	private var obtainedIndices = CyclicList<Int>()
 
 	/**
 	 * Obtains an element.
 	 * This algorithm attempts to obtain an element with the same index that was cached in the last obtain/flip set.
 	 */
 	fun obtain(index: Int): E {
-		if (used.isEmpty())
-			usedStartIndex = index
-
-		val isForward = index >= usedStartIndex
-		if (!isForward) usedStartIndex--
+		if (obtainedIndices.isEmpty()) {
+			val shiftIndex = currentIndices.sortedInsertionIndex(index, matchForwards = false)
+			currentIndices.shiftAll(shiftIndex)
+			current.shiftAll(shiftIndex)
+		}
+		val isForward = obtainedIndices.isEmpty() || index >= obtainedIndices.first()
 
 		val element: E
-		element = if (_unusedSize == 0) {
+		element = if (current.isEmpty()) {
 			pool.obtain()
 		} else {
-			val next = if (isForward) used.size + usedStartIndex else usedStartIndex
-			val index2 = MathUtils.mod(next - _startIndex, size)
-			_unusedSize--
-			val e = cache[index2]!!
-			cache[index2] = null
-			e
+			if (isForward) current.shift()
+			else current.pop()
 		}
-		if (isForward) used.add(element)
-		else used.unshift(element)
+		if (isForward) {
+			obtained.add(element)
+			obtainedIndices.add(index)
+		} else {
+			obtained.unshift(element)
+			obtainedIndices.unshift(index)
+		}
 		return element
 	}
 
@@ -108,17 +116,16 @@ class IndexedCache<E>(val pool: Pool<E>) : ListBase<E>() {
 	 * Returns the cached element at the given index, if it exists.
 	 */
 	fun getCached(index: Int): E {
-		return cache[index - _startIndex]!!
+		return current[index - offset]!!
 	}
 
 	/**
 	 * Iterates over each unused item still in the cache.
 	 */
-	fun forEachUnused(callback: (renderer: E) -> Unit) {
-		if (unusedSize == 0) return
-		for (i in 0..cache.lastIndex) {
-			val e = cache[i] ?: continue
-			callback(e)
+	fun forEachUnused(callback: (index: Int, renderer: E) -> Unit) {
+		if (current.isEmpty()) return
+		for (i in 0..current.lastIndex) {
+			callback(currentIndices[i], current[i])
 		}
 	}
 
@@ -128,24 +135,23 @@ class IndexedCache<E>(val pool: Pool<E>) : ListBase<E>() {
 	 * @see flip
 	 */
 	fun clear() {
-		cache.clear()
-		_startIndex = 0
-		usedStartIndex = 0
-		_unusedSize = 0
+		current.clear()
+		currentIndices.clear()
 	}
 
 	/**
 	 * Sets the items returned via [obtain] to be used as the cached items for the next set.
 	 */
 	fun flip() {
-		forEachUnused(pool::free)
-		val tmp = cache
-		cache = used
-		_startIndex = usedStartIndex
-		usedStartIndex = 0
-		_unusedSize = cache.size
-		used = tmp
-		used.clear()
+		pool.freeAll(current)
+		val tmp = current
+		val tmpIndices = currentIndices
+		current = obtained
+		currentIndices = obtainedIndices
+		obtained = tmp
+		obtained.clear()
+		obtainedIndices = tmpIndices
+		obtainedIndices.clear()
 	}
 }
 
@@ -153,7 +159,10 @@ class IndexedCache<E>(val pool: Pool<E>) : ListBase<E>() {
  * Disposes each instance in the cache and pool.
  */
 fun <E : Disposable> IndexedCache<E>.disposeAndClear() {
-	forEachUnused { it.dispose() }
+	forEachUnused {
+		_, it ->
+		it.dispose()
+	}
 	pool.disposeAndClear()
 	clear()
 }
@@ -163,6 +172,7 @@ fun <E : Disposable> IndexedCache<E>.disposeAndClear() {
  */
 fun <E : UiComponent> IndexedCache<E>.removeAndFlip(parent: ElementContainer<UiComponent>) {
 	forEachUnused {
+		_, it ->
 		parent.removeElement(it)
 	}
 	flip()
@@ -173,6 +183,7 @@ fun <E : UiComponent> IndexedCache<E>.removeAndFlip(parent: ElementContainer<UiC
  */
 fun <E : UiComponent> IndexedCache<E>.hideAndFlip() {
 	forEachUnused {
+		_, it ->
 		it.visible = false
 	}
 	flip()

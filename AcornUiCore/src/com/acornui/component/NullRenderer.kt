@@ -16,21 +16,23 @@
 
 package com.acornui.component
 
-import com.acornui.component.layout.NullListItemRenderer
+import com.acornui.component.layout.ListRenderer
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.spacer
-import com.acornui.component.style.*
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleTag
+import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 
 /**
- * A NullItemRenderer is a renderer for a virtual list that represents a null object.
+ * A NullRenderer is a renderer for a virtual list that represents a null object.
  * It contains no data, and is not toggleable.
  */
-class NullItemRenderer(
+class NullRenderer(
 		owner: Owned
-) : ContainerImpl(owner), NullListItemRenderer {
+) : ContainerImpl(owner), ListRenderer {
 
 	override var index: Int = -1
 
@@ -71,13 +73,13 @@ class NullItemRendererStyle : StyleBase() {
 
 	var padding by prop(Pad())
 
-	var contents by prop<Owned.() -> UiComponent>({ spacer(10f, 40f) })
+	var contents by prop<Owned.() -> UiComponent>({ spacer(10f, 25f) })
 
 	companion object : StyleType<NullItemRendererStyle>
 }
 
-fun Owned.nullItemRenderer(init: ComponentInit<NullItemRenderer> = {}): NullItemRenderer {
-	val renderer = NullItemRenderer(this)
+fun Owned.nullItemRenderer(init: ComponentInit<NullRenderer> = {}): NullRenderer {
+	val renderer = NullRenderer(this)
 	renderer.init()
 	return renderer
 }
