@@ -195,6 +195,25 @@ class CyclicList<E>(initialCapacity: Int = 16) : Clearable, MutableListBase<E>()
 		this.start = 0
 		this.capacity = newCapacity
 	}
+
+	/**
+	 * Shifts the backing array so that [delta] becomes the new zero.
+	 *
+	 * E.g. if this list is   [0, 1, 2, 3, 4, 5] shift(3) will change the list to be [3, 4, 5, 0, 1, 2].
+	 */
+	fun shiftAll(delta: Int) {
+		if (delta == 0) return
+		var delta2 = delta
+		if (delta2 < 0)
+			delta2 += size
+		val newItems = ArrayList<E?>(capacity)
+		newItems.fill(capacity, { null })
+		arrayCopy(this, delta2, newItems, 0, size - delta2)
+		arrayCopy(this, 0, newItems, size - delta2, delta2)
+
+		this.items = newItems
+		this.start = 0
+	}
 }
 
 val cyclicListPool = ClearableObjectPool<CyclicList<*>> { CyclicList<Any>() }

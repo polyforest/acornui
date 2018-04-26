@@ -228,5 +228,16 @@ class CyclicListTest {
 
 	}
 
+	@Test fun shiftAll() {
+		val list = CyclicList<Int>(16)
+		list.addAll(0, 1, 2, 3, 4, 5, 6)
+		list.shiftAll(3)
+		assertListEquals(listOf(3, 4, 5, 6, 0, 1, 2), list)
+
+		list.shiftAll(-3)
+		assertListEquals(listOf(0, 1, 2, 3, 4, 5, 6), list)
+
+	}
+
 
 }
