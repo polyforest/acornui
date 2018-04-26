@@ -24,6 +24,16 @@ class ConcatList<out E>(private val listA: List<E>, private val listB: List<E>) 
 	override fun get(index: Int): E {
 		return if (index >= listA.size) listB[index - listA.size] else listA[index]
 	}
+
+	/**
+	 * Copies this concatenation, creating a new list. The new list will no longer be backed by the two lists
+	 * backing this concatenation.
+	 */
+	fun copy(): List<E> {
+		val newList = ArrayList<E>(size)
+		newList.addAll(this)
+		return newList
+	}
 }
 
 operator fun <T> List<T>.plus(other: List<T>): List<T> = ConcatList(this, other)
