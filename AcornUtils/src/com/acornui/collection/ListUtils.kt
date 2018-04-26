@@ -592,10 +592,10 @@ fun <E> List<E>.subList(size: Int): List<E> = subList(0, size)
  */
 fun <E> MutableList<E>.setSize(newSize: Int, factory: () -> E) {
 	if (newSize < size) {
-		for (i in 0..size - newSize)
+		for (i in 0 until size - newSize)
 			pop()
 	} else if (newSize > size) {
-		for (i in 0..newSize - size)
+		for (i in 0 until newSize - size)
 			add(factory())
 	}
 }

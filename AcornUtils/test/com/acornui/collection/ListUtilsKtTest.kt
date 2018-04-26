@@ -16,6 +16,7 @@
 
 package com.acornui.collection
 
+import com.acornui.test.assertListEquals
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -135,6 +136,16 @@ class ListUtilsKtTest {
 
 	@Test
 	fun removeFirst() {
+	}
+
+	@Test
+	fun setSize() {
+		val list = arrayListOf(1, 2, 3)
+		list.setSize(5) { 0 }
+		assertListEquals(listOf(1, 2, 3, 0, 0), list)
+
+		list.setSize(3) { 0 }
+		assertListEquals(listOf(1, 2, 3), list)
 	}
 
 }
