@@ -94,7 +94,7 @@ class CyclicList<E>(initialCapacity: Int = 16) : Clearable, MutableListBase<E>()
 	}
 
 	override fun removeAt(index: Int): E {
-		if (index >= _size) throw IndexOutOfBoundsException(index)
+		if (index >= _size) throw IndexOutOfBoundsException("$index is out of bounds")
 		return if (index == 0) {
 			shift()
 		} else if (index == lastIndex) {
@@ -110,7 +110,7 @@ class CyclicList<E>(initialCapacity: Int = 16) : Clearable, MutableListBase<E>()
 
 	override fun set(index: Int, element: E): E {
 		val localIndex = getLocalIndex(index)
-		val previous = items[localIndex] ?: throw IndexOutOfBoundsException(index)
+		val previous = items[localIndex] ?: throw IndexOutOfBoundsException("$index is out of bounds")
 		items[localIndex] = element
 		return previous
 	}

@@ -50,7 +50,7 @@ class TexturePackerUtil(
 					val dirEntry = files.getDir(root.relativePath2(i))!!
 					launch {
 						val packedData = AcornTexturePacker(assets, json).pack(dirEntry)
-						writer.writeAtlas(atlasName + ".json", atlasName + "{0}", packedData, i.parentFile)
+						writer.writeAtlas("$atlasName.json", "$atlasName{0}", packedData, i.parentFile)
 						println("Deleting directory: " + i.path)
 						i.deleteRecursively()
 					}
