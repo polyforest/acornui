@@ -25,7 +25,7 @@ class ConcatListTest {
 	fun get() {
 		val a = arrayListOf(1, 2, 3)
 		val b = arrayListOf(4, 5, 6)
-		val c = a + b
+		val c = a concat b
 		assertListEquals(listOf(1, 2, 3, 4, 5, 6), c)
 
 		a.add(4)
@@ -42,7 +42,7 @@ class ConcatListTest {
 	fun copy() {
 		val a = arrayListOf(1, 2, 3)
 		val b = arrayListOf(4, 5, 6)
-		val c = a + b
+		val c = a concat b
 
 		val copied = c.copy()
 		assertListEquals(listOf(1, 2, 3, 4, 5, 6), copied)

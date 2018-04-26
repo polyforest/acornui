@@ -36,4 +36,4 @@ class ConcatList<out E>(private val listA: List<E>, private val listB: List<E>) 
 	}
 }
 
-operator fun <T> List<T>.plus(other: List<T>): List<T> = ConcatList(this, other)
+infix fun <T> List<T>.concat(other: List<T>): List<T> = ConcatList(this, other)
