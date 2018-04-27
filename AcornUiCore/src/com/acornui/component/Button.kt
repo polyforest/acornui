@@ -68,8 +68,6 @@ open class Button(
 
 	protected var _mouseIsOver = false
 	protected var _mouseIsDown = false
-	protected var _disabled = false
-	protected var _toggled = false
 
 	protected var _label: String = ""
 
@@ -159,16 +157,10 @@ open class Button(
 		}
 	}
 
-	open var disabled: Boolean
-		get() {
-			return _disabled
-		}
-		set(value) {
-			if (_disabled == value) return
-			_disabled = value
-			interactivityMode = if (value) InteractivityMode.NONE else InteractivityMode.ALL
-			refreshState()
-		}
+	open var disabled: Boolean by Delegates.observable(false) { _, _, newValue ->
+		interactivityMode = if (newValue) InteractivityMode.NONE else InteractivityMode.ALL
+		refreshState()
+	}
 
 	override var toggled: Boolean by Delegates.observable(false) { _, _, _ -> refreshState() }
 
@@ -177,10 +169,10 @@ open class Button(
 	}
 
 	protected open fun calculateButtonState(): ButtonState {
-		return if (_disabled) {
+		return if (disabled) {
 			ButtonState.DISABLED
 		} else {
-			if (_toggled) {
+			if (toggled) {
 				if (_mouseIsDown) {
 					ButtonState.TOGGLED_DOWN
 				} else if (_mouseIsOver) {
