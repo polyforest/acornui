@@ -122,12 +122,10 @@ open class LwjglApplication : ApplicationBase() {
 		init {
 			lineSeparator = System.lineSeparator()
 
-			encodeUriComponent2 = {
-				str ->
+			encodeUriComponent2 = { str ->
 				URLEncoder.encode(str, "UTF-8")
 			}
-			decodeUriComponent2 = {
-				str ->
+			decodeUriComponent2 = { str ->
 				URLDecoder.decode(str, "UTF-8")
 			}
 
@@ -341,11 +339,13 @@ open class LwjglApplication : ApplicationBase() {
 		set(ScrollRect.FACTORY_KEY, ::GlScrollRect)
 		set(Rect.FACTORY_KEY, ::GlRect)
 
-		set(HtmlComponent.FACTORY_KEY, { object : UiComponentImpl(it), HtmlComponent {
+		set(HtmlComponent.FACTORY_KEY, {
+			object : UiComponentImpl(it), HtmlComponent {
 
-			override val boxStyle = BoxStyle()
-			override var html: String = ""
-		} })
+				override val boxStyle = BoxStyle()
+				override var html: String = ""
+			}
+		})
 	}
 
 	protected open fun createStage(owned: Owned): Stage {
@@ -424,13 +424,14 @@ class JvmApplicationRunner(
 				break
 			}
 		}
-		// TODO: Should we check .visible?
 		if (window.shouldRender(true)) {
 			stage.update()
-			window.renderBegin()
-			if (stage.visible)
-				stage.render()
-			window.renderEnd()
+			if (window.width > 0f && window.height > 0f) {
+				window.renderBegin()
+				if (stage.visible)
+					stage.render()
+				window.renderEnd()
+			}
 		}
 	}
 
