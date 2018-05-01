@@ -265,7 +265,7 @@ open class OptionsList<E : Any>(
 	}
 
 	private fun highlightNext(delta: Int) {
-		if (delta <= 0) throw IllegalArgumentException("delta must be > 0")
+		if (delta <= 0) return
 		if (!_isOpen) return
 		val selected = dataScroller.highlighted.selectedItem
 		val selectedIndex = if (selected == null) -1 else data.indexOf(selected)
@@ -279,7 +279,7 @@ open class OptionsList<E : Any>(
 	}
 
 	private fun highlightPrevious(delta: Int) {
-		if (delta <= 0) throw IllegalArgumentException("delta must be > 0")
+		if (delta <= 0) return
 		if (!_isOpen) return
 		val selected = dataScroller.highlighted.selectedItem
 		val selectedIndex = if (selected == null) data.size else data.indexOf(selected)
