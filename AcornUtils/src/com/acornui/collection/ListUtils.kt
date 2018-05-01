@@ -477,6 +477,7 @@ inline fun <E> List<E>.find2(startIndex: Int = 0, predicate: (E) -> Boolean): E?
  * @param lastIndex The ending index to search to (inclusive). lastIndex >= startIndex
  */
 inline fun <E> List<E>.indexOfFirst2(startIndex: Int = 0, lastIndex: Int = this.lastIndex, predicate: (E) -> Boolean): Int {
+	if (isEmpty()) return -1
 	if (startIndex == lastIndex) return if (predicate(this[startIndex])) startIndex else -1
 	for (i in startIndex..lastIndex) {
 		if (predicate(this[i]))
@@ -492,6 +493,7 @@ inline fun <E> List<E>.indexOfFirst2(startIndex: Int = 0, lastIndex: Int = this.
  * @param startIndex The ending index to search to (inclusive).
  */
 inline fun <E> List<E>.indexOfLast2(lastIndex: Int = this.lastIndex, startIndex: Int = 0, predicate: (E) -> Boolean): Int {
+	if (isEmpty()) return -1
 	if (lastIndex == startIndex) return if (predicate(this[lastIndex])) lastIndex else -1
 	for (i in lastIndex downTo startIndex) {
 		if (predicate(this[i]))

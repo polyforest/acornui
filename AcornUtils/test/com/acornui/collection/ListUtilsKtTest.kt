@@ -115,6 +115,17 @@ class ListUtilsKtTest {
 	}
 
 	@Test
+	fun emptyList() {
+		val list = emptyList<Int>()
+		assertEquals(-1, list.indexOfLast2 { it == 0 })
+		assertEquals(-1, list.indexOfFirst2 { it == 0 })
+		assertEquals(-1, list.indexOfLast2(0, 1) { it == 0 })
+		assertEquals(-1, list.indexOfFirst2(0, 1) { it == 0 })
+		assertEquals(-1, list.indexOfLast2(1, 1) { it == 0 })
+		assertEquals(-1, list.indexOfFirst2(1, 1) { it == 0 })
+	}
+
+	@Test
 	fun forEach2() {
 	}
 
