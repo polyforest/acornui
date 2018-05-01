@@ -52,6 +52,15 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 	val scrollModel: ScrollModel
 		get() = scrollBar.scrollModel
 
+	/**
+	 * The maximum value this data scroller can scroll to.
+	 */
+	val scrollMax: Float
+		get() {
+			validateLayout()
+			return scrollBar.scrollModel.max
+		}
+
 	private val scrollBar = addChild(if (isVertical) vScrollBar() else hScrollBar())
 
 	/**

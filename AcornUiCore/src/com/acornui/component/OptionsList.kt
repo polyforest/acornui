@@ -33,7 +33,9 @@ import com.acornui.component.text.TextInput
 import com.acornui.component.text.textInput
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
+import com.acornui.core.focus.focusFirst
 import com.acornui.core.input.Ascii
+import com.acornui.core.input.interaction.KeyInteractionRo
 import com.acornui.core.input.interaction.MouseInteractionRo
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.keyDown
@@ -96,7 +98,11 @@ open class OptionsList<E : Any>(
 	 */
 	var textToItem = { text: String ->
 		val textLower = text.toLowerCase()
-		data.firstOrNull { formatter.format(it).toLowerCase() == textLower }
+		data.firstOrNull {
+			if (it != null)
+				formatter.format(it).toLowerCase() == textLower
+			else false
+		}
 	}
 
 	/**
@@ -122,12 +128,9 @@ open class OptionsList<E : Any>(
 	private val dataView = ListView<E>()
 
 	private val dataScroller = vDataScroller<E> {
+		keyDown().add(this@OptionsList::keyDownHandler)
 		selection.changed.add { item, selected ->
-			if (selected)
-				textInput.text = formatter.format(item)
-			else
-				textInput.text = ""
-
+			selectedItem = if (selected) item else null
 			close()
 			_changed.dispatch()
 		}
@@ -139,9 +142,9 @@ open class OptionsList<E : Any>(
 			widthPercent = 1f
 			heightPercent = 1f
 		}
-
 		onClosed = {
 			close()
+			this@OptionsList.focusFirst()
 		}
 	}
 
@@ -208,7 +211,8 @@ open class OptionsList<E : Any>(
 		dataScroller.rendererFactory(value)
 	}
 
-	private var data: List<E> = emptyList()
+	private val data: List<E?>
+		get() = dataScroller.data
 
 	fun data(value: List<E?>) {
 		dataScroller.data(value)
@@ -223,10 +227,7 @@ open class OptionsList<E : Any>(
 		maxItems = 10
 		addChild(textInput)
 
-		keyDown().add {
-			if (it.keyCode == Ascii.ESCAPE || it.keyCode == Ascii.RETURN || it.keyCode == Ascii.ENTER)
-				close()
-		}
+		keyDown().add(this::keyDownHandler)
 
 		sortComparator = defaultSortComparator
 
@@ -238,6 +239,88 @@ open class OptionsList<E : Any>(
 				toggleOpen()
 			}
 		}
+	}
+
+	private fun keyDownHandler(event: KeyInteractionRo) {
+		when (event.keyCode) {
+			Ascii.ESCAPE -> close()
+			Ascii.RETURN, Ascii.ENTER -> {
+				selectedItem = dataScroller.highlighted.selectedItem
+				close()
+				_changed.dispatch()
+			}
+			Ascii.DOWN ->
+				highlightNext(1)
+			Ascii.UP ->
+				highlightPrevious(1)
+			Ascii.PAGE_DOWN ->
+				highlightNext((data.size - dataScroller.scrollMax).toInt())
+			Ascii.PAGE_UP ->
+				highlightPrevious((data.size - dataScroller.scrollMax).toInt())
+			Ascii.HOME ->
+				highlightFirst()
+			Ascii.END ->
+				highlightLast()
+		}
+	}
+
+	private fun highlightNext(delta: Int) {
+		if (delta <= 0) throw IllegalArgumentException("delta must be > 0")
+		if (!_isOpen) return
+		val selected = dataScroller.highlighted.selectedItem
+		val selectedIndex = if (selected == null) -1 else data.indexOf(selected)
+		val nextIndex = minOf(data.lastIndex, selectedIndex + delta)
+		val nextIndexNotNull = data.indexOfFirst2(nextIndex) { it != null }
+		if (nextIndexNotNull != -1) {
+			dataScroller.highlighted.selectedItem = data[nextIndexNotNull]
+			scrollTo(nextIndexNotNull.toFloat())
+			dataScroller.focus()
+		}
+	}
+
+	private fun highlightPrevious(delta: Int) {
+		if (delta <= 0) throw IllegalArgumentException("delta must be > 0")
+		if (!_isOpen) return
+		val selected = dataScroller.highlighted.selectedItem
+		val selectedIndex = if (selected == null) data.size else data.indexOf(selected)
+		val previousIndex = maxOf(0, selectedIndex - delta)
+		val previousIndexNotNull = data.indexOfLast2(previousIndex) { it != null }
+		if (previousIndexNotNull != -1) {
+			dataScroller.highlighted.selectedItem = data[previousIndexNotNull]
+			scrollTo(previousIndexNotNull.toFloat())
+			dataScroller.focus()
+		}
+	}
+
+	private fun highlightLast() {
+		if (!_isOpen) return
+		val lastIndexNotNull = data.indexOfLast2 { it != null }
+		if (lastIndexNotNull != -1) {
+			dataScroller.highlighted.selectedItem = data[lastIndexNotNull]
+			scrollTo(lastIndexNotNull.toFloat())
+			dataScroller.focus()
+		}
+	}
+
+	private fun highlightFirst() {
+		if (!_isOpen) return
+		val firstIndexNotNull = data.indexOfFirst2 { it != null }
+		if (firstIndexNotNull != -1) {
+			dataScroller.highlighted.selectedItem = data[firstIndexNotNull]
+			scrollTo(firstIndexNotNull.toFloat())
+			dataScroller.focus()
+		}
+	}
+
+	/**
+	 * Scrolls the minimum distance to show the given bounding rectangle.
+	 */
+	private fun scrollTo(index: Float) {
+		if (index < scrollModel.value)
+			scrollModel.value = index
+		val pageSize = data.size - dataScroller.scrollMax
+		if (index + 1f > scrollModel.value + pageSize)
+			scrollModel.value = index + 1f - pageSize
 	}
 
 	private fun onInput() {

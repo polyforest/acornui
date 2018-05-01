@@ -456,8 +456,10 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 				_changed.dispatch()
 		}
 
+		// TODO: valid char ranges
 		host.char().add {
-			if (it.char != '\r' && it.char != CTRL_Z && it.char != CTRL_Y) {
+			val font = BitmapFontRegistry.getFont(host.charStyle)
+			if (font?.glyphs?.containsKey(it.char) == true) {
 				it.handled = true
 				replaceSelection(it.char.toString())
 				_input.dispatch()
