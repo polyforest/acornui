@@ -42,8 +42,6 @@ import com.acornui.core.round
 import com.acornui.core.selection.Selectable
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionRange
-import com.acornui.core.time.TimeDriver
-import com.acornui.core.time.timer
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.pushQuadIndices
 import com.acornui.graphics.Color
@@ -345,10 +343,8 @@ open class TextSpanElementImpl : TextSpanElement, ElementParent<TextElement>, St
 	 */
 	override fun clearElements(dispose: Boolean) {
 		for (i in 0.._elements.lastIndex) {
-			val e = _elements[i]
-			e.textParent = null
 			if (dispose)
-				e.dispose()
+				_elements[i].dispose()
 		}
 		_elements.clear()
 		textParent?.invalidate(bubblingFlags)

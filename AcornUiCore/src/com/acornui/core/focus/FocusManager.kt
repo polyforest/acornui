@@ -216,12 +216,10 @@ val Container.firstFocusableChild: Focusable?
 	get() {
 		val focusManager = inject(FocusManager)
 		var found: Focusable? = null
-		if (this is Container) {
-			focusManager.iterateFocusables {
-				if (it.focusEnabled && it != this && owns(it))
-					found = it
-				found == null
-			}
+		focusManager.iterateFocusables {
+			if (it.focusEnabled && it != this && owns(it))
+				found = it
+			found == null
 		}
 		return found
 	}

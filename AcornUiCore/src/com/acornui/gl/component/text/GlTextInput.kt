@@ -21,7 +21,9 @@ import com.acornui.core.input.interaction.ClipboardItemType
 import com.acornui.core.input.interaction.KeyInteractionRo
 import com.acornui.core.input.interaction.redo
 import com.acornui.core.input.interaction.undo
-import com.acornui.core.mvc.*
+import com.acornui.core.mvc.CommandGroup
+import com.acornui.core.mvc.commander
+import com.acornui.core.mvc.invokeCommand
 import com.acornui.core.repeat2
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionRange
@@ -812,7 +814,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		if (cmd.target != host) return
 		// TODO: Make this efficient.
 		val text = this.text
-		this.text = text.substring(0, clamp(cmd.startIndex, 0, contentsSize)) + cmd.newText + text.substring(clamp(cmd.endIndex, 0, contentsSize), contentsSize)
+		this.text = text.substring(0, clamp(cmd.startIndex, 0, text.length)) + cmd.newText + text.substring(clamp(cmd.endIndex, 0, text.length), text.length)
 		validateLayout()
 	}
 

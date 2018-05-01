@@ -31,8 +31,14 @@ import com.acornui.component.style.StyleType
 import com.acornui.component.style.noSkin
 import com.acornui.component.text.TextInput
 import com.acornui.component.text.textInput
+import com.acornui.core.Disposable
 import com.acornui.core.di.Owned
+import com.acornui.core.di.inject
 import com.acornui.core.di.own
+import com.acornui.core.di.owns
+import com.acornui.core.focus.FocusContainer
+import com.acornui.core.focus.FocusManager
+import com.acornui.core.focus.Focusable
 import com.acornui.core.focus.focusFirst
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.KeyInteractionRo
@@ -46,6 +52,7 @@ import com.acornui.core.text.StringFormatter
 import com.acornui.core.text.ToStringFormatter
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
+import com.acornui.observe.bind
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 
@@ -53,7 +60,7 @@ import com.acornui.signal.Signal0
 
 open class OptionsList<E : Any>(
 		owner: Owned
-) : ContainerImpl(owner), Clearable {
+) : ContainerImpl(owner), Clearable, FocusContainer {
 
 	constructor(owner: Owned, data: List<E?>) : this(owner) {
 		data(data)
@@ -62,6 +69,8 @@ open class OptionsList<E : Any>(
 	constructor(owner: Owned, data: ObservableList<E?>) : this(owner) {
 		data(data)
 	}
+
+	override var focusOrder: Float = 0f
 
 	/**
 	 * If true, search sorting and item selection will be case insensitive.
@@ -72,6 +81,7 @@ open class OptionsList<E : Any>(
 
 	/**
 	 * Dispatched on each input character.
+	 * This does not dispatch when selecting an item from the drop down list.
 	 */
 	val input: Signal<() -> Unit>
 		get() = _input
@@ -117,9 +127,12 @@ open class OptionsList<E : Any>(
 		}
 
 	private val textInput: TextInput = textInput {
-		input.add(this@OptionsList::onInput)
-		changed.add {
-			_changed.dispatch()
+		input.add {
+			dataView.dirty()  // Most data views will change based on the text input.
+			open()
+			scrollModel.value = 0f // Scroll to the top.
+			setSelectedItemFromText()
+			_input.dispatch()
 		}
 	}
 
@@ -130,9 +143,11 @@ open class OptionsList<E : Any>(
 	private val dataScroller = vDataScroller<E> {
 		keyDown().add(this@OptionsList::keyDownHandler)
 		selection.changed.add { item, selected ->
-			selectedItem = if (selected) item else null
-			close()
-			_changed.dispatch()
+			if (selected) {
+				this@OptionsList.focusFirst()
+				close()
+				_changed.dispatch()
+			}
 		}
 	}
 
@@ -144,7 +159,6 @@ open class OptionsList<E : Any>(
 		}
 		onClosed = {
 			close()
-			this@OptionsList.focusFirst()
 		}
 	}
 
@@ -211,15 +225,36 @@ open class OptionsList<E : Any>(
 		dataScroller.rendererFactory(value)
 	}
 
-	private val data: List<E?>
+	private var dataBinding: Disposable? = null
+
+	private fun unbindData() {
+		dataBinding?.dispose()
+		dataBinding = null
+	}
+
+	val data: List<E?>
 		get() = dataScroller.data
 
 	fun data(value: List<E?>) {
+		unbindData()
 		dataScroller.data(value)
+		setSelectedItemFromText()
 	}
 
 	fun data(value: ObservableList<E?>) {
+		unbindData()
 		dataScroller.data(value)
+		setSelectedItemFromText()
+		dataBinding = value.bind {
+			setSelectedItemFromText()
+		}
+	}
+
+	private fun setSelectedItemFromText() {
+		val item = textToItem(text)
+		dataScroller.selection.selectedItem = item
+		if (item != null)
+			dataScroller.highlighted.selectedItem = item
 	}
 
 	init {
@@ -239,36 +274,70 @@ open class OptionsList<E : Any>(
 				toggleOpen()
 			}
 		}
+
+		inject(FocusManager).focusedChanged.add(this::focusChangedHandler)
+	}
+
+	private fun focusChangedHandler(old: Focusable?, new: Focusable?) {
+		if (new == null || !owns(new)) {
+			close()
+			_changed.dispatch()
+		}
 	}
 
 	private fun keyDownHandler(event: KeyInteractionRo) {
+		if (event.defaultPrevented()) return
 		when (event.keyCode) {
-			Ascii.ESCAPE -> close()
-			Ascii.RETURN, Ascii.ENTER -> {
-				selectedItem = dataScroller.highlighted.selectedItem
+			Ascii.ESCAPE -> {
+				event.handled = true
+				event.preventDefault() // Prevent focus manager from setting focus back to the stage.
+				focusFirst()
 				close()
+			}
+			Ascii.RETURN, Ascii.ENTER -> {
+				event.handled = true
+				val newSelectedItem = dataScroller.highlighted.selectedItem ?: textToItem(text)
+				if (newSelectedItem != selectedItem) {
+					selectedItem = newSelectedItem
+					focusFirst()
+					close()
+				}
 				_changed.dispatch()
 			}
-			Ascii.DOWN ->
+			Ascii.DOWN -> {
+				event.handled = true
+				if (!_isOpen)
+					open()
 				highlightNext(1)
-			Ascii.UP ->
+			}
+			Ascii.UP -> {
+				event.handled = true
 				highlightPrevious(1)
-			Ascii.PAGE_DOWN ->
+			}
+			Ascii.PAGE_DOWN -> {
+				event.handled = true
 				highlightNext((data.size - dataScroller.scrollMax).toInt())
-			Ascii.PAGE_UP ->
+			}
+			Ascii.PAGE_UP -> {
+				event.handled = true
 				highlightPrevious((data.size - dataScroller.scrollMax).toInt())
-			Ascii.HOME ->
+			}
+			Ascii.HOME -> {
+				event.handled = true
 				highlightFirst()
-			Ascii.END ->
+			}
+			Ascii.END -> {
+				event.handled = true
 				highlightLast()
+			}
 		}
 	}
 
 	private fun highlightNext(delta: Int) {
 		if (delta <= 0) return
 		if (!_isOpen) return
-		val selected = dataScroller.highlighted.selectedItem
-		val selectedIndex = if (selected == null) -1 else data.indexOf(selected)
+		val highlighted = dataScroller.highlighted.selectedItem
+		val selectedIndex = if (highlighted == null) -1 else data.indexOf(highlighted)
 		val nextIndex = minOf(data.lastIndex, selectedIndex + delta)
 		val nextIndexNotNull = data.indexOfFirst2(nextIndex) { it != null }
 		if (nextIndexNotNull != -1) {
@@ -281,8 +350,8 @@ open class OptionsList<E : Any>(
 	private fun highlightPrevious(delta: Int) {
 		if (delta <= 0) return
 		if (!_isOpen) return
-		val selected = dataScroller.highlighted.selectedItem
-		val selectedIndex = if (selected == null) data.size else data.indexOf(selected)
+		val highlighted = dataScroller.highlighted.selectedItem
+		val selectedIndex = if (highlighted == null) data.size else data.indexOf(highlighted)
 		val previousIndex = maxOf(0, selectedIndex - delta)
 		val previousIndexNotNull = data.indexOfLast2(previousIndex) { it != null }
 		if (previousIndexNotNull != -1) {
@@ -321,15 +390,6 @@ open class OptionsList<E : Any>(
 		val pageSize = data.size - dataScroller.scrollMax
 		if (index + 1f > scrollModel.value + pageSize)
 			scrollModel.value = index + 1f - pageSize
-	}
-
-	private fun onInput() {
-		dataView.dirty()
-		open()
-		scrollModel.value = 0f // Scroll to the top.
-
-		dataScroller.selection.selectedItem = textToItem(text)
-		_input.dispatch()
 	}
 
 	private fun scoreBySearchIndex(obj: E, str: String): Int {
@@ -374,7 +434,7 @@ open class OptionsList<E : Any>(
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val downArrow = this.downArrow!!
-		textInput.boxStyle.padding = Pad(2f, downArrow.width, 2f, 2f)
+		//textInput.boxStyle.padding = Pad(2f, downArrow.width, 2f, 2f)
 		textInput.setSize(explicitWidth, explicitHeight)
 		downArrow.setPosition(textInput.width - downArrow.width, (textInput.height - downArrow.height) * 0.5f)
 		out.set(textInput.bounds)
@@ -389,8 +449,10 @@ open class OptionsList<E : Any>(
 	}
 
 	override fun dispose() {
-		super.dispose()
+		unbindData()
+		inject(FocusManager).focusedChanged.remove(this::focusChangedHandler)
 		close()
+		super.dispose()
 	}
 
 	companion object : StyleTag

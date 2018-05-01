@@ -83,15 +83,6 @@ open class FocusManagerImpl : FocusManager {
 		Unit
 	}
 
-	private val rootInvalidatedHandler = {
-		stage: Validatable, flags: Int ->
-		if (!highlightIsChanging && flags and ValidationFlags.HIERARCHY_ASCENDING > 0) {
-			_focusablesValid = false
-			val f = _focused
-			if (f != null && (!f.focusEnabled || !f.visible)) clearFocused()
-		}
-	}
-
 	private var _highlight: UiComponent? = null
 	override var highlight: UiComponent?
 		get() = _highlight
@@ -107,7 +98,6 @@ open class FocusManagerImpl : FocusManager {
 		_assert(_root == null, "Already initialized.")
 		_root = root
 		_focused = root
-		root.invalidated.add(rootInvalidatedHandler)
 		root.keyDown().add(rootKeyDownHandler)
 		root.mouseDown(isCapture = true).add(rootMouseDownHandler)
 	}
@@ -273,7 +263,6 @@ open class FocusManagerImpl : FocusManager {
 		if (root != null) {
 			root.keyDown().remove(rootKeyDownHandler)
 			root.mouseDown(isCapture = true).remove(rootMouseDownHandler)
-			root.invalidated.remove(rootInvalidatedHandler)
 			_root = null
 
 		}
