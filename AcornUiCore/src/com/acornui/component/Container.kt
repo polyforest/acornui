@@ -205,11 +205,10 @@ open class ContainerImpl(
 	}
 
 	/**
-	 * The validation flags that, if a child has invalidated, will cause this container's layout to become invalidated.
+	 * The validation flags that, if a child has invalidated, will cause this container's size constraints and
+	 * layout to become invalidated.
 	 */
-	protected var layoutInvalidatingFlags =
-			ValidationFlags.HIERARCHY_ASCENDING or
-					ValidationFlags.LAYOUT
+	protected var layoutInvalidatingFlags = DEFAULT_INVALIDATING_FLAGS
 
 	/**
 	 * The validation flags that, if a child has invalidated, will cause the same flags on this container to become
@@ -218,9 +217,7 @@ open class ContainerImpl(
 	 * [ValidationFlags.HIERARCHY_ASCENDING]
 	 */
 	protected var bubblingFlags =
-			ValidationFlags.HIERARCHY_ASCENDING or
-					ValidationFlags.LAYOUT or
-					ValidationFlags.SIZE_CONSTRAINTS
+			ValidationFlags.HIERARCHY_ASCENDING
 
 	//-----------------------------------------------------
 	// Interactivity utility methods
@@ -266,7 +263,7 @@ open class ContainerImpl(
 
 	protected open fun childInvalidatedHandler(child: UiComponentRo, flagsInvalidated: Int) {
 		if (flagsInvalidated and layoutInvalidatingFlags > 0) {
-			if (child.includeInLayout || flagsInvalidated and ValidationFlags.HIERARCHY_ASCENDING > 0) {
+			if (child.includeInLayout || flagsInvalidated and ValidationFlags.LAYOUT_ENABLED > 0) {
 				invalidate(ValidationFlags.SIZE_CONSTRAINTS)
 			}
 		}
@@ -304,6 +301,13 @@ open class ContainerImpl(
 	override fun dispose() {
 		clearChildren(dispose = false)
 		super.dispose()
+	}
+
+	companion object {
+		private const val DEFAULT_INVALIDATING_FLAGS = ValidationFlags.HIERARCHY_ASCENDING or
+				ValidationFlags.SIZE_CONSTRAINTS or
+				ValidationFlags.LAYOUT or
+				ValidationFlags.LAYOUT_ENABLED
 	}
 }
 

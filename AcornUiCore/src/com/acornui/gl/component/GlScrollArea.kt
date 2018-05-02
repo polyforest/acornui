@@ -123,9 +123,7 @@ open class GlScrollArea(
 	 */
 	override fun childInvalidatedHandler(child: UiComponentRo, flagsInvalidated: Int) {
 		if (child == vScrollBar || child == hScrollBar) {
-			if (flagsInvalidated and ValidationFlags.SIZE_CONSTRAINTS > 0) {
-				//invalidate(ValidationFlags.SIZE_CONSTRAINTS)
-			}
+			// TODO: handle certain scroll bar invalidations
 		} else {
 			super.childInvalidatedHandler(child, flagsInvalidated)
 		}

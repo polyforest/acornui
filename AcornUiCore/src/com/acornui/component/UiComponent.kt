@@ -380,6 +380,7 @@ open class UiComponentImpl(
 				addNode(HIERARCHY_DESCENDING, PROPERTIES, r::updateHierarchyDescending)
 				addNode(SIZE_CONSTRAINTS, HIERARCHY_DESCENDING or HIERARCHY_ASCENDING or PROPERTIES, r::validateSizeConstraints)
 				addNode(LAYOUT, SIZE_CONSTRAINTS, r::validateLayout)
+				addNode(LAYOUT_ENABLED, r::updateLayoutEnabled)
 				addNode(TRANSFORM, r::updateTransform)
 				addNode(CONCATENATED_TRANSFORM, HIERARCHY_DESCENDING or TRANSFORM, r::updateConcatenatedTransform)
 				addNode(COLOR_TRANSFORM, r::updateColorTransform)
@@ -431,7 +432,7 @@ open class UiComponentImpl(
 					TreeWalk.CONTINUE
 				}
 			}
-			invalidate(ValidationFlags.HIERARCHY_ASCENDING)
+			invalidate(ValidationFlags.LAYOUT_ENABLED)
 		}
 
 	override fun onAncestorVisibleChanged(uiComponent: UiComponent, value: Boolean) {
@@ -550,7 +551,7 @@ open class UiComponentImpl(
 		set(value) {
 			if (_includeInLayout == value) return
 			_includeInLayout = value
-			invalidate(ValidationFlags.HIERARCHY_ASCENDING)
+			invalidate(ValidationFlags.LAYOUT_ENABLED)
 		}
 
 	override fun isRendered(): Boolean {
@@ -852,6 +853,7 @@ open class UiComponentImpl(
 
 	protected open fun updateHierarchyAscending() {}
 	protected open fun updateHierarchyDescending() {}
+	protected open fun updateLayoutEnabled() {}
 
 	//-----------------------------------------------
 	// Interactivity utility methods
