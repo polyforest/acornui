@@ -620,3 +620,27 @@ fun <E> MutableList<E>.setTo(other: List<E>) {
 	clear()
 	addAll(other)
 }
+
+/**
+ * Returns true if this list is currently sorted.
+ */
+fun <E : Comparable<E>> List<E>.isSorted(): Boolean {
+	for (i in 1..lastIndex) {
+		val a = this[i - 1]
+		val b = this[i]
+		if (a > b) return false
+	}
+	return true
+}
+
+/**
+ * Returns true if this list is currently descendingly sorted.
+ */
+fun <E : Comparable<E>> List<E>.isReverseSorted(): Boolean {
+	for (i in 1..lastIndex) {
+		val a = this[i - 1]
+		val b = this[i]
+		if (a < b) return false
+	}
+	return true
+}

@@ -16,6 +16,8 @@
 
 package com.acornui.core.io.file
 
+import com.acornui.collection.CyclicList
+import com.acornui.collection.poll
 import com.acornui.collection.pop
 import com.acornui.core.di.DKey
 import com.acornui.io.file.FilesManifest
@@ -68,8 +70,7 @@ class FilesImpl(manifest: FilesManifest) : Files {
 	}
 
 	override fun getFile(path: String): FileEntry? {
-		val entry = map[path.replace2('\\', '/')]
-		return entry
+		return map[path.replace2('\\', '/')]
 	}
 
 	override fun getDir(path: String): Directory? {
@@ -132,6 +133,10 @@ class FileEntry(
 		count
 	}
 
+	/**
+	 * Note, files are sorted case-sensitively. This is to ensure consistent order when two files have names
+	 * that differ only in case.
+	 */
 	override fun compareTo(other: FileEntry): Int {
 		return if (depth == other.depth) {
 			path.compareTo(other.path)
@@ -248,7 +253,7 @@ class Directory(
 	}
 
 	fun relativePath(file: FileEntry): String {
-		return file.path.substringAfter(path + "/", path)
+		return file.path.substringAfter("$path/", path)
 	}
 }
 
@@ -256,7 +261,7 @@ private class FilesTopDownSequence(private val root: Directory, private val maxD
 
 	override fun iterator(): Iterator<FileEntry> = object : Iterator<FileEntry> {
 
-		private val openList = ArrayList<Directory>()
+		private val openList = CyclicList<Directory>()
 		private val files = ArrayList<FileEntry>()
 		private var fileIndex = 0
 
@@ -268,19 +273,19 @@ private class FilesTopDownSequence(private val root: Directory, private val maxD
 		}
 
 		override fun next(): FileEntry {
-			val ret = files[fileIndex]
+			val current = files[fileIndex]
 			step()
-			return ret
+			return current
 		}
 
 		private fun step() {
-			if (fileIndex < files.size) {
+			if (fileIndex < files.lastIndex) {
 				fileIndex++
 			} else {
 				fileIndex = 0
 				files.clear()
-				while (true) {
-					val newParent = openList.pop()
+				while (openList.isNotEmpty()) {
+					val newParent = openList.poll()
 					if (newParent.depth <= maxDepth && newParent.totalFiles > 0) {
 						openList.addAll(newParent.directories.values.sorted())
 					}
@@ -293,7 +298,7 @@ private class FilesTopDownSequence(private val root: Directory, private val maxD
 		}
 
 		override fun hasNext(): Boolean {
-			return fileIndex < files.size || openList.isNotEmpty()
+			return fileIndex < files.size
 		}
 	}
 }
