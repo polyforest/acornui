@@ -1350,12 +1350,26 @@ open class UiComponentImpl(
 	//-----------------------------------------------
 
 	/**
+	 * If true, this component will only be rendered if its bounds are within the viewport.
+	 */
+	var renderOnlyInViewport = true
+
+	/**
 	 * Responsible for rendering this component.
 	 * Typically, custom components override the [draw] method.
 	 *
 	 */
 	override fun render(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
-		if (_concatenatedColorTint.a <= 0f || viewportX >= viewportRight || viewportY >= viewportBottom) return // Nothing visible.
+		if (_concatenatedColorTint.a <= 0f ||
+				(renderOnlyInViewport &&
+						(viewportBottom < 0f ||
+								viewportRight < 0f ||
+								viewportX > _bounds.width * _scale.x ||
+								viewportY > _bounds.height * _scale.y))
+		) {
+			// Nothing visible.
+			return
+		}
 		draw(viewportX, viewportY, viewportRight, viewportBottom)
 	}
 

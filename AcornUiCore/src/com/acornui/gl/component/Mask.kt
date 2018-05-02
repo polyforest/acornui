@@ -76,17 +76,16 @@ class GlScrollRect(
 ) : ElementContainerImpl<UiComponent>(owner), ScrollRect {
 
 	private val contents = addChild(container())
-	private val maskClip = addChild(rect { style.backgroundColor = Color.WHITE })
+	private val maskClip = addChild(rect {
+		style.backgroundColor = Color.WHITE
+		interactivityMode = InteractivityMode.NONE
+	})
 
 	override var borderRadius: CornersRo by validationProp(Corners(), ValidationFlags.LAYOUT)
 
 	private val gl = inject(Gl20)
 
 	private val glState = inject(GlState)
-
-	init {
-		maskClip.interactivityMode = InteractivityMode.NONE
-	}
 
 	private val _contentBounds = Rectangle()
 	override val contentBounds: RectangleRo
@@ -131,17 +130,13 @@ class GlScrollRect(
 
 	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
 		StencilUtil.mask(glState.batch, gl, {
-			if (maskClip.visible)
+			if (maskClip.visible) {
 				maskClip.render(viewportX, viewportY, viewportRight, viewportBottom)
-		}) {
-			for (i in 0.._elements.lastIndex) {
-				val element = _elements[i]
-				if (element.visible) {
-					val childX = element.x
-					val childY = element.y
-					element.render(viewportX - childX, viewportY - childY, viewportRight - childX, viewportBottom - childY)
-				}
 			}
+		}) {
+			val contentsX = contents.x
+			val contentsY = contents.y
+			contents.render(maxOf(0f, viewportX) - contentsX, maxOf(0f, viewportY) - contentsY, minOf(viewportRight, _bounds.width) - contentsX, minOf(viewportBottom, _bounds.height) - contentsY)
 		}
 	}
 }

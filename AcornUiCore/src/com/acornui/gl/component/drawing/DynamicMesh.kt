@@ -104,6 +104,7 @@ open class DynamicMeshComponent(
 	}
 
 	init {
+		renderOnlyInViewport = false
 		validation.addNode(VERTEX_TRANSFORM, ValidationFlags.CONCATENATED_TRANSFORM, { validateGlobalTransform() })
 		validation.addNode(VERTEX_COLOR_TRANSFORM, ValidationFlags.CONCATENATED_COLOR_TRANSFORM, { validateGlobalColor() })
 		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.LAYOUT or ValidationFlags.CONCATENATED_TRANSFORM, {

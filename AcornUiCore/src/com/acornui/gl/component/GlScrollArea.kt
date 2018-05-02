@@ -233,17 +233,6 @@ open class GlScrollArea(
 		scrollRect.scrollTo(xScroll, yScroll)
 	}
 
-	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
-		val xScroll = hScrollModel.value.floor()
-		val yScroll = vScrollModel.value.floor()
-		val viewportX2 = xScroll
-		val viewportY2 = yScroll
-		val viewportRight2 = xScroll + scrollRect.width
-		val viewportBottom2 = yScroll + scrollRect.height
-		if (viewportRight2 > viewportX2 && viewportBottom2 > viewportY2)
-			super.draw(viewportX2, viewportY2, viewportRight2, viewportBottom2)
-	}
-
 	override fun dispose() {
 		super.dispose()
 		hScrollModel.changed.remove(scrollChangedHandler)
