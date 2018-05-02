@@ -429,7 +429,7 @@ class JvmApplicationRunner(
 			if (window.width > 0f && window.height > 0f) {
 				window.renderBegin()
 				if (stage.visible)
-					stage.render()
+					stage.render(0f, 0f, window.width, window.height)
 				window.renderEnd()
 			}
 		}

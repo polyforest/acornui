@@ -24,7 +24,6 @@ import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.layout.algorithm.LineInfo
 import com.acornui.component.layout.algorithm.LineInfoRo
-import com.acornui.component.scroll.ViewportComponent
 import com.acornui.component.style.*
 import com.acornui.component.text.CharStyle
 import com.acornui.component.text.TextField
@@ -49,7 +48,6 @@ import com.acornui.graphics.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.floor
 import com.acornui.math.MathUtils.round
-import com.acornui.math.Rectangle
 import com.acornui.math.Vector3
 import com.acornui.math.ceil
 import com.acornui.string.isBreaking
@@ -59,7 +57,7 @@ import com.acornui.string.isBreaking
  * @author nbilyk
  */
 @Suppress("LeakingThis", "UNUSED_PARAMETER")
-class GlTextField(owner: Owned) : ContainerImpl(owner), TextField, ViewportComponent {
+class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 
 	override val flowStyle = bind(TextFlowStyle())
 	override val charStyle = bind(CharStyle())
@@ -194,12 +192,8 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField, ViewportCompo
 		}
 	}
 
-	override fun clearViewport() = _contents.clearViewport()
-
-	override fun viewport(x: Float, y: Float, width: Float, height: Float) = _contents.viewport(x, y, width, height)
-
-	override fun draw() {
-		_contents.render()
+	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
+		_contents.render(viewportX, viewportY, viewportRight, viewportBottom)
 	}
 
 	override fun dispose() {
@@ -556,7 +550,7 @@ interface TextNode : TextNodeRo, Positionable {
 /**
  * A component that can be set as content to a text field.
  */
-interface TextNodeComponent : TextNode, UiComponent, ViewportComponent {
+interface TextNodeComponent : TextNode, UiComponent {
 
 	/**
 	 * If true, this component's vertices will be clipped to the explicit size.
@@ -893,28 +887,17 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 	}
 
 	private val glState = inject(GlState)
-	private val _viewport = Rectangle()
-	private var viewportSet = false
 
-	override fun clearViewport() {
-		viewportSet = false
-	}
-
-	override fun viewport(x: Float, y: Float, width: Float, height: Float) {
-		_viewport.set(x, y, width, height)
-		viewportSet = true
-	}
-
-	override fun draw() {
-		val lineStart = if (viewportSet) _lines.sortedInsertionIndex(_viewport) {
-			viewPort, line ->
-			viewPort.y.compareTo(line.bottom)
-		} else 0
+	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
+		val lineStart = _lines.sortedInsertionIndex(viewportY) {
+			viewPortY, line ->
+			viewPortY.compareTo(line.bottom)
+		}
 		if (lineStart == -1) return
-		val lineEnd = if (viewportSet) _lines.sortedInsertionIndex(_viewport) {
-			viewPort, line ->
-			viewPort.bottom.compareTo(line.y)
-		} else _lines.size
+		val lineEnd = _lines.sortedInsertionIndex(viewportBottom) {
+			viewPortBottom, line ->
+			viewPortBottom.compareTo(line.y)
+		}
 		if (lineEnd <= lineStart) return
 
 		glState.camera(camera, concatenatedTransform)

@@ -104,8 +104,7 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 		window.requestRender()
 	}
 
-	override fun draw() {
-		super.draw()
+	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
 		val concatenatedTransform = concatenatedTransform
 		glState.camera(camera, concatenatedTransform)
 		val concatenatedColorTint = concatenatedColorTint

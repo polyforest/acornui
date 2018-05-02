@@ -41,7 +41,7 @@ class JsApplicationRunnerImpl(
 
 	private val stage = inject(Stage)
 	private val timeDriver = inject(TimeDriver)
-	private val jsWindow = inject(Window)
+	private val appWindow = inject(Window)
 	private val appConfig = inject(AppConfig)
 
 	private var isRunning: Boolean = false
@@ -82,12 +82,12 @@ class JsApplicationRunnerImpl(
 				break
 			}
 		}
-		if (jsWindow.shouldRender(true)) {
+		if (appWindow.shouldRender(true)) {
 			stage.update()
-			jsWindow.renderBegin()
+			appWindow.renderBegin()
 			if (stage.visible)
-				stage.render()
-			jsWindow.renderEnd()
+				stage.render(0f, 0f, appWindow.width, appWindow.height)
+			appWindow.renderEnd()
 		}
 		tickFrameId = window.requestAnimationFrame(tick)
 	}

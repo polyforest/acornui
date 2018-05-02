@@ -211,7 +211,7 @@ open class DynamicMeshComponent(
 
 	private var globalPrimitiveIndex = 0
 
-	override fun draw() {
+	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
 		glState.camera(camera)
 		globalPrimitiveIndex = 0
 		renderMeshData(data)

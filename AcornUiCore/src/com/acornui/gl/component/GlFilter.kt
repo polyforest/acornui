@@ -56,7 +56,7 @@ class GlFilter(
 	private val tempTransform = Matrix4()
 	private val sprite = Sprite()
 	
-	override fun draw() {
+	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
 		tempTransform.set(_concatenatedTransform)
 		
 		
@@ -70,7 +70,7 @@ class GlFilter(
 		framebuffer!!.begin()
 
 		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
-		super.draw()
+		super.draw(viewportX, viewportY, viewportRight, viewportBottom)
 		framebuffer.end()
 
 		glState.shader = shader

@@ -27,7 +27,6 @@ import com.acornui.gl.core.ShaderBatch
 import com.acornui.gl.core.scissor
 import com.acornui.graphics.Color
 import com.acornui.math.*
-import com.acornui.math.Vector3.Companion
 import kotlin.math.roundToInt
 
 object StencilUtil {
@@ -130,14 +129,18 @@ class GlScrollRect(
 		return maskClip.intersectsGlobalRay(globalRay, intersection)
 	}
 
-	override fun draw() {
+	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
 		StencilUtil.mask(glState.batch, gl, {
 			if (maskClip.visible)
-				maskClip.render()
+				maskClip.render(viewportX, viewportY, viewportRight, viewportBottom)
 		}) {
 			for (i in 0.._elements.lastIndex) {
 				val element = _elements[i]
-				if (element.visible) element.render()
+				if (element.visible) {
+					val childX = element.x
+					val childY = element.y
+					element.render(viewportX - childX, viewportY - childY, viewportRight - childX, viewportBottom - childY)
+				}
 			}
 		}
 	}

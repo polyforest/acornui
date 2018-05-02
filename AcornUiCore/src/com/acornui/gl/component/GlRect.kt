@@ -377,18 +377,18 @@ open class GlRect(
 	private val glState = inject(GlState)
 	private val gl = inject(Gl20)
 
-	override fun draw() {
+	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
 		if (style.linearGradient != null) {
 			StencilUtil.mask(glState.batch, gl, {
-				if (fill.visible) fill.render()
+				if (fill.visible) fill.render(viewportX, viewportY, viewportRight, viewportBottom)
 			}) {
 				if (gradient.visible)
-					gradient.render()
+					gradient.render(viewportX, viewportY, viewportRight, viewportBottom)
 				if (stroke.visible)
-					stroke.render()
+					stroke.render(viewportX, viewportY, viewportRight, viewportBottom)
 			}
 		} else {
-			super.draw()
+			super.draw(viewportX, viewportY, viewportRight, viewportBottom)
 		}
 	}
 }

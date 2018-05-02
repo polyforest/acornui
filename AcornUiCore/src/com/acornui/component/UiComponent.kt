@@ -196,8 +196,12 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	/**
 	 * Renders any graphics.
 	 * [render] does not check the [visible] flag; that is the responsibility of the caller.
+	 * @param viewportX The x value of the visible viewport (relative to this component)
+	 * @param viewportY The y value of the visible viewport (relative to this component)
+	 * @param viewportRight The bottom x value of the visible viewport (relative to this component)
+	 * @param viewportBottom The bottom y value of the visible viewport (relative to this component)
 	 */
-	fun render()
+	fun render(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float)
 
 }
 
@@ -1346,16 +1350,17 @@ open class UiComponentImpl(
 	/**
 	 * Responsible for rendering this component.
 	 * Typically, custom components override the [draw] method.
+	 *
 	 */
-	override fun render() {
-		if (_concatenatedColorTint.a <= 0f) return // Nothing visible.
-		draw()
+	override fun render(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
+		if (_concatenatedColorTint.a <= 0f || viewportX >= viewportRight || viewportY >= viewportBottom) return // Nothing visible.
+		draw(viewportX, viewportY, viewportRight, viewportBottom)
 	}
 
 	/**
 	 * The core drawing method for this component.
 	 */
-	protected open fun draw() {
+	protected open fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
 	}
 
 	//-----------------------------------------------

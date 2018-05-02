@@ -81,9 +81,9 @@ open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(
 		out.set(w, h)
 	}
 
-	override fun render() {
+	override fun render(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
 		glState.batch.resetRenderCount()
-		super.render()
+		super.render(viewportX, viewportY, viewportRight, viewportBottom)
 		glState.batch.flush(true)
 	}
 

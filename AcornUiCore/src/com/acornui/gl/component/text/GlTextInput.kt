@@ -44,7 +44,7 @@ import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import com.acornui.string.isLetterOrDigit2
 
-open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput, ViewportComponent {
+open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 
 	protected val background = addChild(rect())
 
@@ -137,10 +137,6 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput, Viewport
 		highlight?.setSize(background.bounds)
 		highlight?.setPosition(margin.left, margin.top)
 	}
-
-	override fun clearViewport() = editableText.clearViewport()
-
-	override fun viewport(x: Float, y: Float, width: Float, height: Float) = editableText.viewport(x, y, width, height)
 
 	override fun clear() {
 		text = ""
@@ -360,7 +356,7 @@ class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
  * @suppress
  */
 @Suppress("LeakingThis")
-class EditableText(private val host: TextInput) : ContainerImpl(host), ViewportComponent {
+class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	private val _input = own(Signal0())
 	val input: Signal<() -> Unit>
@@ -856,10 +852,6 @@ class EditableText(private val host: TextInput) : ContainerImpl(host), ViewportC
 		}
 		textCursor.visible = textCursorVisible
 	}
-
-	override fun clearViewport() = textField.clearViewport()
-
-	override fun viewport(x: Float, y: Float, width: Float, height: Float) = textField.viewport(x, y, width, height)
 
 	override fun dispose() {
 		super.dispose()

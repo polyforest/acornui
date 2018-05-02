@@ -85,8 +85,6 @@ open class GlScrollArea(
 		Unit
 	}
 
-	private val viewportElements = ArrayList<ViewportComponent>()
-
 	init {
 		styleTags.add(ScrollArea)
 		validation.addNode(ScrollArea.SCROLLING, ValidationFlags.LAYOUT, this::validateScroll)
@@ -135,14 +133,10 @@ open class GlScrollArea(
 
 	override fun onElementAdded(index: Int, element: UiComponent) {
 		contents.addElement(index, element)
-		if (element is ViewportComponent)
-			viewportElements.add(element)
 	}
 
 	override fun onElementRemoved(index: Int, element: UiComponent) {
 		contents.removeElement(element)
-		if (element is ViewportComponent)
-			viewportElements.remove(element)
 	}
 
 	override val contentsWidth: Float
@@ -238,12 +232,18 @@ open class GlScrollArea(
 	protected open fun validateScroll() {
 		val xScroll = hScrollModel.value.floor()
 		val yScroll = vScrollModel.value.floor()
-		val width = scrollRect.width
-		val height = scrollRect.height
 		scrollRect.scrollTo(xScroll, yScroll)
-		for (i in 0..viewportElements.lastIndex) {
-			viewportElements[i].viewport(xScroll, yScroll, width, height)
-		}
+	}
+
+	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
+		val xScroll = hScrollModel.value.floor()
+		val yScroll = vScrollModel.value.floor()
+		val viewportX2 = xScroll
+		val viewportY2 = yScroll
+		val viewportRight2 = xScroll + scrollRect.width
+		val viewportBottom2 = yScroll + scrollRect.height
+		if (viewportRight2 > viewportX2 && viewportBottom2 > viewportY2)
+			super.draw(viewportX2, viewportY2, viewportRight2, viewportBottom2)
 	}
 
 	override fun dispose() {

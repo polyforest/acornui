@@ -143,7 +143,7 @@ open class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureCom
 		sprite.updateWorldVertices(concatenatedTransform, width, height, z = 0f)
 	}
 
-	override fun draw() {
+	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
 		glState.camera(camera)
 		sprite.draw(glState, concatenatedColorTint)
 	}

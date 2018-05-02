@@ -185,11 +185,14 @@ open class ContainerImpl(
 		}
 	}
 
-	override fun draw() {
+	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
 		for (i in 0.._children.lastIndex) {
 			val child = _children[i]
-			if (child.visible)
-				child.render()
+			if (child.visible) {
+				val childX = child.x
+				val childY = child.y
+				child.render(viewportX - childX, viewportY - childY, viewportRight - childX, viewportBottom - childY)
+			}
 		}
 	}
 

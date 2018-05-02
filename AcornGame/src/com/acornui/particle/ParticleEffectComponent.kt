@@ -92,7 +92,7 @@ class ParticleEffectComponent(
 		effect = value
 	}
 
-	override fun draw() {
+	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
 		val effect = _effect ?: return
 		glState.camera(camera, concatenatedTransform)
 		effect.render(concatenatedColorTint)

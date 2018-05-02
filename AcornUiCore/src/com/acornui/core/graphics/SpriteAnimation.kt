@@ -143,10 +143,11 @@ class SpriteAnimation(owner: Owned) : ContainerImpl(owner) {
 		out.set(regionWidth.toFloat(), regionHeight.toFloat())
 	}
 
-	override fun draw() {
+	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
 		if (currentFrame >= startFrame && (currentFrame - startFrame) < frameClips.size) {
 			val frameClip = frameClips[currentFrame - startFrame]
-			if (frameClip.visible) frameClip.render()
+			if (frameClip.visible)
+				frameClip.render(viewportX, viewportY, viewportRight, viewportBottom)
 		}
 	}
 
