@@ -24,7 +24,7 @@ import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.layout.algorithm.LineInfo
 import com.acornui.component.layout.algorithm.LineInfoRo
-import com.acornui.component.layout.intersects
+import com.acornui.component.scroll.ViewportComponent
 import com.acornui.component.style.*
 import com.acornui.component.text.CharStyle
 import com.acornui.component.text.TextField
@@ -49,6 +49,7 @@ import com.acornui.graphics.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.floor
 import com.acornui.math.MathUtils.round
+import com.acornui.math.Rectangle
 import com.acornui.math.Vector3
 import com.acornui.math.ceil
 import com.acornui.string.isBreaking
@@ -58,7 +59,7 @@ import com.acornui.string.isBreaking
  * @author nbilyk
  */
 @Suppress("LeakingThis", "UNUSED_PARAMETER")
-class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
+class GlTextField(owner: Owned) : ContainerImpl(owner), TextField, ViewportComponent {
 
 	override val flowStyle = bind(TextFlowStyle())
 	override val charStyle = bind(CharStyle())
@@ -183,13 +184,22 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 		contents.setPosition(0f, 0f)
 		out.set(contents.bounds)
 
-		val minHeight = flowStyle.padding.expandHeight(BitmapFontRegistry.getFont(charStyle)?.data?.lineHeight?.toFloat()) ?: 0f
+		val minHeight = flowStyle.padding.expandHeight(BitmapFontRegistry.getFont(charStyle)?.data?.lineHeight?.toFloat())
+				?: 0f
 		if (out.height < minHeight) out.height = minHeight
 
 		if (contents.allowClipping) {
 			if (explicitWidth != null) out.width = explicitWidth
 			if (explicitHeight != null) out.height = explicitHeight
 		}
+	}
+
+	override fun clearViewport() = _contents.clearViewport()
+
+	override fun viewport(x: Float, y: Float, width: Float, height: Float) = _contents.viewport(x, y, width, height)
+
+	override fun draw() {
+		_contents.render()
 	}
 
 	override fun dispose() {
@@ -543,8 +553,10 @@ interface TextNode : TextNodeRo, Positionable {
 
 }
 
-
-interface TextNodeComponent : TextNode, UiComponent {
+/**
+ * A component that can be set as content to a text field.
+ */
+interface TextNodeComponent : TextNode, UiComponent, ViewportComponent {
 
 	/**
 	 * If true, this component's vertices will be clipped to the explicit size.
@@ -594,7 +606,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 		get() = textElements.size
 
 	init {
-		validation.addNode(VERTICES, ValidationFlags.LAYOUT or ValidationFlags.CONCATENATED_TRANSFORM or ValidationFlags.STYLES, 0, this::updateVertices)
+		validation.addNode(VERTICES, ValidationFlags.LAYOUT or ValidationFlags.STYLES, 0, this::updateVertices)
 		validation.addNode(CHAR_STYLE, ValidationFlags.CONCATENATED_COLOR_TRANSFORM or ValidationFlags.STYLES, 0, this::updateCharStyle)
 	}
 
@@ -602,8 +614,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 
 	override fun getLineAt(index: Int): LineInfoRo? {
 		if (_lines.isEmpty() || index < 0 || index >= _lines.last().endIndex) return null
-		val lineIndex = _lines.sortedInsertionIndex(index) {
-			i, line ->
+		val lineIndex = _lines.sortedInsertionIndex(index) { i, line ->
 			index.compareTo(line.startIndex)
 		} - 1
 		return _lines.getOrNull(lineIndex)
@@ -614,10 +625,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 	//-------------------------------------------------------------------------------------------------
 
 	/**
-	 * The validation flags that, if a child has invalidated, will cause the same flags on this container to become
-	 * invalidated.
-	 * If this container doesn't lay its children out, it is a good practice to set this property to just
-	 * [ValidationFlags.HIERARCHY_ASCENDING]
+	 * When an element is added or removed, these flags are invalidated.
 	 */
 	private val bubblingFlags =
 			ValidationFlags.HIERARCHY_ASCENDING or
@@ -800,7 +808,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 					line.size > 1 &&
 					_lines.last() != line &&
 					!(_textElements[line.endIndex - 1].clearsLine && flowStyle.multiline)
-					) {
+			) {
 				// Apply JUSTIFY spacing if this is not the last line, and there are more than one elements.
 				val lastIndex = _textElements.indexOfLast2(line.endIndex - 1, line.startIndex) { !it.overhangs }
 				val numSpaces = _textElements.count2(line.startIndex, lastIndex) { it.char == ' ' }
@@ -838,8 +846,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 		if (_lines.isEmpty()) return 0
 		if (y < _lines.first().y) return 0
 		if (y >= _lines.last().bottom) return textElements.size
-		val lineIndex = _lines.sortedInsertionIndex(y) {
-			yVal, line ->
+		val lineIndex = _lines.sortedInsertionIndex(y) { yVal, line ->
 			yVal.compareTo(line.bottom)
 		}
 		val line = _lines[lineIndex]
@@ -886,19 +893,43 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 	}
 
 	private val glState = inject(GlState)
+	private val _viewport = Rectangle()
+	private var viewportSet = false
+
+	override fun clearViewport() {
+		viewportSet = false
+	}
+
+	override fun viewport(x: Float, y: Float, width: Float, height: Float) {
+		_viewport.set(x, y, width, height)
+		viewportSet = true
+	}
 
 	override fun draw() {
-		if (camera.intersects(this)) {
-			glState.camera(camera, concatenatedTransform)
-			_textElements.forEach2 { it.render(glState) }
+		val lineStart = if (viewportSet) _lines.sortedInsertionIndex(_viewport) {
+			viewPort, line ->
+			viewPort.y.compareTo(line.bottom)
+		} else 0
+		if (lineStart == -1) return
+		val lineEnd = if (viewportSet) _lines.sortedInsertionIndex(_viewport) {
+			viewPort, line ->
+			viewPort.bottom.compareTo(line.y)
+		} else _lines.size
+		if (lineEnd <= lineStart) return
+
+		glState.camera(camera, concatenatedTransform)
+		for (i in lineStart .. lineEnd - 1) {
+			val line = _lines[i]
+			for (j in line.startIndex .. line.endIndex - 1) {
+				_textElements[j].render(glState)
+			}
 		}
 	}
 
 	companion object {
-		private val linesPool = ClearableObjectPool { LineInfo() }
-
 		private const val VERTICES = 1 shl 16
 		private const val CHAR_STYLE = 1 shl 17
+		private val linesPool = ClearableObjectPool { LineInfo() }
 	}
 }
 

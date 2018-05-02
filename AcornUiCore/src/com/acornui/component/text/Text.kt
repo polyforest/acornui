@@ -27,7 +27,6 @@ import com.acornui.component.scroll.ClampedScrollModel
 import com.acornui.component.scroll.ScrollPolicy
 import com.acornui.component.style.*
 import com.acornui.core.di.Owned
-import com.acornui.core.di.Scoped
 import com.acornui.core.di.dKey
 import com.acornui.core.focus.Focusable
 import com.acornui.core.mvc.CommandGroup

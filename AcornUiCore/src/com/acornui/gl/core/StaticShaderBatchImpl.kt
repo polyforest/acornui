@@ -17,15 +17,11 @@
 package com.acornui.gl.core
 
 import com.acornui.collection.Clearable
-import com.acornui.component.*
 import com.acornui.core.Disposable
-import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
 import com.acornui.core.io.BufferFactory
 import com.acornui.gl.component.drawing.DrawElementsCall
 import com.acornui.graphics.ColorRo
 import com.acornui.io.NativeBuffer
-import com.acornui.math.Bounds
 import com.acornui.math.Vector3Ro
 
 
@@ -165,55 +161,4 @@ class StaticShaderBatchImpl(
 		gl.deleteBuffer(vertexComponentsBuffer)
 		gl.deleteBuffer(indicesBuffer)
 	}
-}
-
-open class StaticContainer(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
-
-	private val glState = inject(GlState)
-
-	private var needsRedraw = true
-
-	fun dirty() {
-		needsRedraw = true
-	}
-
-	private val staticBatch by lazy {
-		StaticShaderBatchImpl(inject(Gl20), glState)
-	}
-
-	override fun onInvalidated(flagsInvalidated: Int) {
-		super.onInvalidated(flagsInvalidated)
-
-	}
-
-	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		super.updateLayout(explicitWidth, explicitHeight, out)
-
-		needsRedraw = true
-	}
-
-	override fun draw() {
-		glState.batch.flush(true)
-		glState.camera(camera)
-		if (needsRedraw) {
-			val oldBatch = glState.batch
-			needsRedraw = false
-			println("redraw")
-			staticBatch.clear()
-			glState.batch = staticBatch
-			for (i in 0.._children.lastIndex) {
-				_children[i].render()
-			}
-			glState.batch = oldBatch
-		}
-		glState.camera(camera, concatenatedTransform)
-		staticBatch.render()
-		glState.batch.flush(true)
-	}
-}
-
-fun Owned.staticContainer(init: ComponentInit<StaticContainer> = {}): StaticContainer {
-	val s = StaticContainer(this)
-	s.init()
-	return s
 }

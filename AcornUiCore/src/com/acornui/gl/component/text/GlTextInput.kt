@@ -4,10 +4,7 @@ import com.acornui.async.launch
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.component.layout.setSize
-import com.acornui.component.scroll.ClampedScrollModel
-import com.acornui.component.scroll.ScrollPolicy
-import com.acornui.component.scroll.scrollArea
-import com.acornui.component.scroll.scrollTo
+import com.acornui.component.scroll.*
 import com.acornui.component.style.set
 import com.acornui.component.text.*
 import com.acornui.core.Disposable
@@ -47,7 +44,7 @@ import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import com.acornui.string.isLetterOrDigit2
 
-open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
+open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput, ViewportComponent {
 
 	protected val background = addChild(rect())
 
@@ -140,6 +137,10 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 		highlight?.setSize(background.bounds)
 		highlight?.setPosition(margin.left, margin.top)
 	}
+
+	override fun clearViewport() = editableText.clearViewport()
+
+	override fun viewport(x: Float, y: Float, width: Float, height: Float) = editableText.viewport(x, y, width, height)
 
 	override fun clear() {
 		text = ""
@@ -354,8 +355,12 @@ class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 
 }
 
+/**
+ * Encapsulates the common functionality of editable text.
+ * @suppress
+ */
 @Suppress("LeakingThis")
-class EditableText(private val host: TextInput) : ContainerImpl(host) {
+class EditableText(private val host: TextInput) : ContainerImpl(host), ViewportComponent {
 
 	private val _input = own(Signal0())
 	val input: Signal<() -> Unit>
@@ -852,6 +857,10 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		textCursor.visible = textCursorVisible
 	}
 
+	override fun clearViewport() = textField.clearViewport()
+
+	override fun viewport(x: Float, y: Float, width: Float, height: Float) = textField.viewport(x, y, width, height)
+
 	override fun dispose() {
 		super.dispose()
 		selectionManager.selectionChanged.remove(this::selectionChangedHandler)
@@ -859,7 +868,5 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	companion object {
 		private const val TEXT_CURSOR = 1 shl 16
-		private const val CTRL_Z = 26.toChar()
-		private const val CTRL_Y = 25.toChar()
 	}
 }

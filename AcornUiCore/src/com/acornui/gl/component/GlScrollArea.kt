@@ -85,6 +85,8 @@ open class GlScrollArea(
 		Unit
 	}
 
+	private val viewportElements = ArrayList<ViewportComponent>()
+
 	init {
 		styleTags.add(ScrollArea)
 		validation.addNode(ScrollArea.SCROLLING, ValidationFlags.LAYOUT, this::validateScroll)
@@ -111,12 +113,36 @@ open class GlScrollArea(
 		}
 	}
 
+	/**
+	 * The scroll bar layout is a little unique in this scroll area -- we layout based on the size constraints, not
+	 * the size. This is for performance optimization reasons.
+	 * Use case -
+	 * When the user uses the scroll bar, the scroll bar layout is invalidated, but this scroll area doesn't care
+	 * because we're going off of minWidth/minHeight.
+	 *
+	 * We also cannot just set includeInLayout to false for the scroll bars, because we do care about when their size
+	 * constraints have changed.
+	 */
+	override fun childInvalidatedHandler(child: UiComponentRo, flagsInvalidated: Int) {
+		if (child == vScrollBar || child == hScrollBar) {
+			if (flagsInvalidated and ValidationFlags.SIZE_CONSTRAINTS > 0) {
+				//invalidate(ValidationFlags.SIZE_CONSTRAINTS)
+			}
+		} else {
+			super.childInvalidatedHandler(child, flagsInvalidated)
+		}
+	}
+
 	override fun onElementAdded(index: Int, element: UiComponent) {
 		contents.addElement(index, element)
+		if (element is ViewportComponent)
+			viewportElements.add(element)
 	}
 
 	override fun onElementRemoved(index: Int, element: UiComponent) {
 		contents.removeElement(element)
+		if (element is ViewportComponent)
+			viewportElements.remove(element)
 	}
 
 	override val contentsWidth: Float
@@ -210,7 +236,14 @@ open class GlScrollArea(
 	}
 
 	protected open fun validateScroll() {
-		scrollRect.scrollTo(hScrollModel.value.floor(), vScrollModel.value.floor())
+		val xScroll = hScrollModel.value.floor()
+		val yScroll = vScrollModel.value.floor()
+		val width = scrollRect.width
+		val height = scrollRect.height
+		scrollRect.scrollTo(xScroll, yScroll)
+		for (i in 0..viewportElements.lastIndex) {
+			viewportElements[i].viewport(xScroll, yScroll, width, height)
+		}
 	}
 
 	override fun dispose() {

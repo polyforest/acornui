@@ -122,3 +122,20 @@ class ScrollAreaStyle : StyleBase() {
 
 	companion object : StyleType<ScrollAreaStyle>
 }
+
+/**
+ * A component with virtualization based on scrolling may implement this interface in order to virtualize the
+ * visible area.
+ */
+interface ViewportComponent : UiComponent {
+
+	/**
+	 * Sets this component's visible area. The coordinates should be relative to this component.
+	 */
+	fun viewport(x: Float, y: Float, width: Float, height: Float)
+
+	/**
+	 * This entire component will be considered visible.
+	 */
+	fun clearViewport()
+}
