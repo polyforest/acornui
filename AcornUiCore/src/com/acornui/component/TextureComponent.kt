@@ -59,7 +59,7 @@ interface TextureComponent : UiComponent {
 	/**
 	 * Sets the UV coordinates of the image to display.
 	 */
-	fun setUV(u: Float, v: Float, u2: Float, v2: Float)
+	fun setUv(u: Float, v: Float, u2: Float, v2: Float)
 
 	/**
 	 * Sets the region of the texture to display.

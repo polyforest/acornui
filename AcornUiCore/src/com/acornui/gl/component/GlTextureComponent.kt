@@ -123,7 +123,7 @@ open class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureCom
 		sprite.texture?.refDec()
 	}
 
-	override fun setUV(u: Float, v: Float, u2: Float, v2: Float) {
+	override fun setUv(u: Float, v: Float, u2: Float, v2: Float) {
 		sprite.setUv(u, v, u2, v2)
 		invalidate(ValidationFlags.LAYOUT)
 	}

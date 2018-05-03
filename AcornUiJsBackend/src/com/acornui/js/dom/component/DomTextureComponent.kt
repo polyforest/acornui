@@ -121,7 +121,7 @@ open class DomTextureComponent(
 		invalidate(ValidationFlags.PROPERTIES)
 	}
 
-	override fun setUV(u: Float, v: Float, u2: Float, v2: Float) {
+	override fun setUv(u: Float, v: Float, u2: Float, v2: Float) {
 		_region[0] = u
 		_region[1] = v
 		_region[2] = u2
