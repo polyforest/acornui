@@ -119,7 +119,7 @@ Function.prototype.bind = function() {
 
 
 		@Suppress("LeakingThis")
-		if (this::memberRefTest != this::memberRefTest) println("[SEVERE] Member reference fix isn't working, check the KotlinMonkeyPatcher build step.")
+		if (this::memberRefTest != this::memberRefTest) println("[SEVERE] Member reference fix isn't working.")
 		time = TimeProviderImpl()
 		encodeUriComponent2 = ::encodeURIComponent
 		decodeUriComponent2 = ::decodeURIComponent
