@@ -75,8 +75,7 @@ open class DynamicMeshComponent(
 			if (!globalPrimitivesAreValid) {
 				globalPrimitivesAreValid = true
 				clearGlobalPrimitives()
-				data.childWalkPreOrder {
-					primitive ->
+				data.childWalkPreOrder { primitive ->
 					val globalPrimitive = arrayListObtain<Vertex>()
 					for (j in 0..primitive.vertices.lastIndex) {
 						val localVertex = primitive.vertices[j]
@@ -104,7 +103,6 @@ open class DynamicMeshComponent(
 	}
 
 	init {
-		renderOnlyInViewport = false
 		validation.addNode(VERTEX_TRANSFORM, ValidationFlags.CONCATENATED_TRANSFORM, { validateGlobalTransform() })
 		validation.addNode(VERTEX_COLOR_TRANSFORM, ValidationFlags.CONCATENATED_COLOR_TRANSFORM, { validateGlobalColor() })
 		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.LAYOUT or ValidationFlags.CONCATENATED_TRANSFORM, {
@@ -129,8 +127,7 @@ open class DynamicMeshComponent(
 
 	private fun validateGlobalTransform() {
 		var index = 0
-		data.childWalkPreOrder {
-			primitive ->
+		data.childWalkPreOrder { primitive ->
 			val cT = concatenatedTransform
 			val globalPrimitive = globalPrimitives[index++]
 			for (j in 0..primitive.vertices.lastIndex) {
@@ -145,8 +142,7 @@ open class DynamicMeshComponent(
 
 	private fun validateGlobalColor() {
 		var index = 0
-		data.childWalkPreOrder {
-			primitive ->
+		data.childWalkPreOrder { primitive ->
 			val cCt = concatenatedColorTint
 			val globalPrimitive = globalPrimitives[index++]
 			for (j in 0..primitive.vertices.lastIndex) {
@@ -170,8 +166,7 @@ open class DynamicMeshComponent(
 		if (intersectionType == MeshIntersectionType.EXACT) {
 			if (data.children.isEmpty() && data.vertices.isEmpty()) return false
 			var index = 0
-			data.childWalkPreOrderReversed {
-				primitive ->
+			data.childWalkPreOrderReversed { primitive ->
 				val indices = primitive.indices
 				val globalPrimitive = globalPrimitives[index++]
 				// TODO: Implement intersections for TRIANGLE_STRIP and TRIANGLE_FAN
@@ -198,8 +193,7 @@ open class DynamicMeshComponent(
 		_boundingBox.inf()
 		if (data.children.isEmpty() && data.vertices.isEmpty()) return
 
-		data.childWalkPreOrder {
-			primitive ->
+		data.childWalkPreOrder { primitive ->
 			for (j in 0..primitive.vertices.lastIndex) {
 				val p = primitive.vertices[j].position
 				_boundingBox.ext(p, false)
@@ -213,6 +207,12 @@ open class DynamicMeshComponent(
 	private var globalPrimitiveIndex = 0
 
 	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
+		if (viewportBottom < _boundingBox.min.x ||
+				viewportRight < _boundingBox.min.y ||
+				viewportX > _boundingBox.max.x ||
+				viewportY > _boundingBox.max.y) {
+			return // Out of bounds
+		}
 		glState.camera(camera)
 		globalPrimitiveIndex = 0
 		renderMeshData(data)

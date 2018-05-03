@@ -144,6 +144,12 @@ open class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureCom
 	}
 
 	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
+		if (viewportBottom < 0f ||
+				viewportRight < 0f ||
+				viewportX > width ||
+				viewportY > height) {
+			return // Out of bounds
+		}
 		glState.camera(camera)
 		sprite.draw(glState, concatenatedColorTint)
 	}
