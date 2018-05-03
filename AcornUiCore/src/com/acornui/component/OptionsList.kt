@@ -25,10 +25,7 @@ import com.acornui.component.layout.algorithm.virtual.ItemRendererOwner
 import com.acornui.component.layout.algorithm.virtual.VirtualVerticalLayoutStyle
 import com.acornui.component.layout.algorithm.virtual.vDataScroller
 import com.acornui.component.scroll.ScrollModel
-import com.acornui.component.style.StyleBase
-import com.acornui.component.style.StyleTag
-import com.acornui.component.style.StyleType
-import com.acornui.component.style.noSkin
+import com.acornui.component.style.*
 import com.acornui.component.text.TextInput
 import com.acornui.component.text.textInput
 import com.acornui.core.Disposable
@@ -55,6 +52,7 @@ import com.acornui.math.Pad
 import com.acornui.observe.bind
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
+import kotlin.properties.Delegates
 
 // TODO: delegate focus to input
 
@@ -136,6 +134,12 @@ open class OptionsList<E : Any>(
 		}
 	}
 
+	var editable: Boolean by Delegates.observable(true) {
+		_, _, new ->
+		textInput.editable = new
+	}
+
+	private var background: UiComponent? = null
 	private var downArrow: UiComponent? = null
 
 	private val dataView = ListView<E>()
@@ -153,10 +157,7 @@ open class OptionsList<E : Any>(
 
 	private val listLift = lift {
 		focusEnabled = true
-		+dataScroller layout {
-			widthPercent = 1f
-			heightPercent = 1f
-		}
+		+dataScroller layout { fill() }
 		onClosed = {
 			close()
 		}
@@ -267,9 +268,11 @@ open class OptionsList<E : Any>(
 		sortComparator = defaultSortComparator
 
 		watch(style) {
+			background?.dispose()
+			background = addOptionalChild(0, it.background(this))
+
 			downArrow?.dispose()
-			downArrow = it.downArrow(this)
-			addChild(downArrow!!)
+			downArrow = addChild(it.downArrow(this))
 			downArrow!!.click().add {
 				toggleOpen()
 			}
@@ -433,14 +436,18 @@ open class OptionsList<E : Any>(
 	var listHeight: Float? by validationProp(null, ValidationFlags.LAYOUT)
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+		val pad = style.padding
+		val w = pad.reduceWidth(explicitWidth)
+		val h = pad.reduceHeight(explicitHeight)
 		val downArrow = this.downArrow!!
-		//textInput.boxStyle.padding = Pad(2f, downArrow.width, 2f, 2f)
-		textInput.setSize(explicitWidth, explicitHeight)
-		downArrow.setPosition(textInput.width - downArrow.width, (textInput.height - downArrow.height) * 0.5f)
-		out.set(textInput.bounds)
+		textInput.setSize(if (w == null) null else w - style.gap - downArrow.width, h)
+		textInput.setPosition(pad.left, pad.top)
+		downArrow.moveTo(pad.left + textInput.width + style.gap, pad.top + (textInput.height - downArrow.height) * 0.5f)
+		out.set(pad.expandWidth2(textInput.width + style.gap + downArrow.width), pad.expandHeight2(maxOf(textInput.height, downArrow.height)))
+		background?.setSize(out.width, out.height)
 
-		listLift.setSize(listWidth ?: textInput.width, listHeight)
-		listLift.moveTo(0f, textInput.height)
+		listLift.setSize(listWidth ?: out.width, listHeight)
+		listLift.moveTo(0f, out.height)
 	}
 
 	override fun clear() {
@@ -461,7 +468,23 @@ open class OptionsList<E : Any>(
 class OptionsListStyle : StyleBase() {
 	override val type: StyleType<OptionsListStyle> = OptionsListStyle
 
+	/**
+	 * The background of the text input / down arrow area.
+	 * Skins should ensure the text input doesn't have a background.
+	 */
+	var background by prop(noSkinOptional)
+
+	/**
+	 * The padding between the background and the text input / down arrow area.
+	 */
+	var padding by prop(Pad(0f))
+
 	var downArrow by prop(noSkin)
+
+	/**
+	 * The gap between the down arrow and the text field.
+	 */
+	var gap by prop(2f)
 
 	companion object : StyleType<OptionsListStyle>
 }

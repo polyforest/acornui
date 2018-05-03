@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_PARAMETER")
+
 package com.acornui.gl.component.text
 
 import com.acornui.async.launch
@@ -43,6 +45,7 @@ import com.acornui.math.minOf4
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import com.acornui.string.isLetterOrDigit2
+import kotlin.properties.Delegates
 
 open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 
@@ -366,7 +369,9 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	val changed: Signal<() -> Unit>
 		get() = _changed
 
-	var editable: Boolean = true
+	var editable by Delegates.observable(true) { _, _, new ->
+		textCursor.visible = new
+	}
 
 	var maxLength: Int? = null
 
@@ -459,18 +464,19 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 				_changed.dispatch()
 		}
 
-		// TODO: valid char ranges
 		host.char().add {
-			val font = BitmapFontRegistry.getFont(host.charStyle)
-			if (font?.glyphs?.containsKey(it.char) == true) {
-				it.handled = true
-				replaceSelection(it.char.toString())
-				_input.dispatch()
+			if (editable) {
+				val font = BitmapFontRegistry.getFont(host.charStyle)
+				if (font?.glyphs?.containsKey(it.char) == true) {
+					it.handled = true
+					replaceSelection(it.char.toString())
+					_input.dispatch()
+				}
 			}
 		}
 
 		host.clipboardPaste().add {
-			if (!it.defaultPrevented()) {
+			if (editable && !it.defaultPrevented()) {
 				it.handled = true
 				launch {
 					var str = it.getItemByType(ClipboardItemType.PLAIN_TEXT)
@@ -503,7 +509,8 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 				if (sel != null) {
 					val text = this.text
 					val subStr = text.substring(sel.min, sel.max)
-					replaceSelection("", CommandGroup())
+					if (editable)
+						replaceSelection("", CommandGroup())
 					it.addItem(ClipboardItemType.PLAIN_TEXT, subStr)
 					currentGroup = CommandGroup()
 					_input.dispatch()

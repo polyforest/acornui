@@ -356,7 +356,7 @@ class DataGrid<E>(
 			columnDividersContents.clearElements(dispose = true)
 			columnDividersHeader.clearElements(dispose = true)
 
-			clipper.borderRadius = Corners().set(it.borderRadius).deflate(it.borderThickness)
+			clipper.style.borderRadius = Corners().set(it.borderRadius).deflate(it.borderThickness)
 			background?.dispose()
 			background = addChild(0, it.background(this))
 

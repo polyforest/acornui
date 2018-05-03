@@ -39,6 +39,7 @@ import com.acornui.core.input.interaction.ContextMenuView
 import com.acornui.core.input.interaction.enableDownRepeat
 import com.acornui.core.popup.PopUpManager
 import com.acornui.core.userInfo
+import com.acornui.gl.component.ScrollRectStyle
 import com.acornui.gl.component.text.loadFontFromAtlas
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
@@ -124,10 +125,10 @@ open class BasicUiSkin(
 
 		val textInputBoxStyle = BoxStyle()
 		textInputBoxStyle.apply {
-			backgroundColor = Color(0.97f, 0.97f, 0.97f, 1f)
-			borderColor = BorderColors(Color(0.3f, 0.3f, 0.3f, 1f))
-			borderThickness = Pad(1f)
-			padding = Pad(2f)
+			backgroundColor = theme.inputFill
+			borderColor = BorderColors(theme.stroke)
+			borderThickness = Pad(theme.strokeThickness)
+			padding = Pad(theme.strokeThickness + 2f)
 		}
 		target.addStyleRule(textInputBoxStyle, TextInput)
 		target.addStyleRule(textInputBoxStyle, TextArea)
@@ -428,6 +429,7 @@ open class BasicUiSkin(
 
 	protected open fun dataScrollerStyle() {
 		val dataScrollerStyle = DataScrollerStyle()
+		dataScrollerStyle.padding = Pad(theme.strokeThickness)
 		dataScrollerStyle.background = {
 			rect {
 				style.apply {
@@ -449,24 +451,51 @@ open class BasicUiSkin(
 	}
 
 	protected open fun optionsListStyle() {
-		val optionsListStyle = OptionsListStyle()
-		optionsListStyle.downArrow = {
-			atlas(theme.atlasPath, "OptionsListArrow")
-		}
-		target.addStyleRule(optionsListStyle, OptionsList)
-
-		val dataScrollerStyle = DataScrollerStyle()
-		dataScrollerStyle.background = {
-			rect {
-				style.apply {
-					backgroundColor = theme.panelBgColor
-					borderThickness = Pad(theme.strokeThickness)
-					borderRadius = Corners(0f, 0f, theme.borderRadius, theme.borderRadius)
-					borderColor = BorderColors(theme.stroke)
+		val optionsListStyle = OptionsListStyle().apply {
+			downArrow = {
+				atlas(theme.atlasPath, "OptionsListArrow")
+			}
+			padding = Pad(theme.strokeThickness)
+			background = {
+				rect {
+					style.apply {
+						backgroundColor = theme.inputFill
+						borderThickness = Pad(theme.strokeThickness)
+						borderRadius = Corners(0f)
+						borderColor = BorderColors(theme.stroke)
+					}
 				}
 			}
 		}
-		target.styleRules.add(StyleRule(dataScrollerStyle, withAncestor(DataScroller) andThen OptionsList))
+		target.addStyleRule(optionsListStyle, OptionsList)
+
+		val pad = Pad(top = 0f, right = theme.strokeThickness, bottom = theme.strokeThickness, left = theme.strokeThickness)
+		val dataScrollerStyle = DataScrollerStyle().apply {
+			padding = pad
+			background = {
+				rect {
+					style.apply {
+						backgroundColor = theme.panelBgColor
+						borderThickness = pad
+						borderRadius = Corners(0f, 0f, theme.borderRadius, theme.borderRadius)
+						borderColor = BorderColors(theme.stroke)
+					}
+				}
+			}
+		}
+		target.styleRules.add(StyleRule(dataScrollerStyle, withAncestor(OptionsList)))
+
+		val scrollRectStyle = ScrollRectStyle().apply {
+			borderRadius = Corners(0f, 0f, 0f, theme.borderRadius - theme.strokeThickness)
+		}
+		target.styleRules.add(StyleRule(scrollRectStyle, withAncestor(OptionsList)))
+
+		val textInputBoxStyle = BoxStyle()
+		textInputBoxStyle.apply {
+			backgroundColor = Color.CLEAR
+			borderThickness = Pad(0f)
+		}
+		target.addStyleRule(textInputBoxStyle, withAncestor(OptionsList) and TextInput)
 	}
 
 	protected open fun dataGridStyle() {
@@ -488,8 +517,7 @@ open class BasicUiSkin(
 		dataGridStyle.borderThickness = Pad(theme.strokeThickness)
 
 		val headerCellBackground = styleTag()
-		target.populateButtonStyle(headerCellBackground) {
-			buttonState ->
+		target.populateButtonStyle(headerCellBackground) { buttonState ->
 			{ buttonTexture(buttonState, Corners(0f), Pad(0f)) }
 		}
 		dataGridStyle.headerCellBackground = { button { styleTags.add(headerCellBackground) } }
@@ -875,6 +903,7 @@ class Theme {
 	var fillHighlight: ColorRo = fill + brighten
 	var fillDisabled: ColorRo = Color(0xCCCCCCFF)
 	var fillShine: ColorRo = Color(1f, 1f, 1f, 0.9f)
+	var inputFill: ColorRo = Color(0.97f, 0.97f, 0.97f, 1f)
 
 	var stroke: ColorRo = Color(0x888888FF)
 	var strokeThickness = 1f

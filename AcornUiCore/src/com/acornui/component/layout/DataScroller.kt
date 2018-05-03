@@ -21,6 +21,7 @@ import com.acornui.core.input.interaction.click
 import com.acornui.core.input.mouseMove
 import com.acornui.core.input.wheel
 import com.acornui.math.Bounds
+import com.acornui.math.Pad
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
 
@@ -224,25 +225,30 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 		// The typical ScrollArea implementations optimize for the case of not needing scroll bars, but the
 		// DataScroller optimizes for the case of needing one. That is, size first with the scroll bar, and if it's not
 		// needed, remove it.
+
+		val pad = style.padding
+		val w: Float? = pad.reduceWidth(explicitWidth)
+		val h: Float? = pad.reduceHeight(explicitHeight)
+
 		if (isVertical) {
 			if (scrollPolicy != ScrollPolicy.OFF) {
 				// First size as if the scroll bars are needed.
-				val vScrollBarW = minOf(explicitWidth ?: 0f, scrollBar.minWidth ?: 0f)
-				val scrollAreaW = if (explicitWidth == null) null else explicitWidth - vScrollBarW
+				val vScrollBarW = minOf(w ?: 0f, scrollBar.minWidth ?: 0f)
+				val scrollAreaW = if (w == null) null else w - vScrollBarW
 
-				if (explicitHeight == null) {
+				if (h == null) {
 					bottomContents.indexPosition = maxOf(0f, (data.size - maxItems).toFloat())
 				} else {
 					bottomContents.bottomIndexPosition = data.lastIndex.toFloat()
 				}
-				bottomContents.setSize(scrollAreaW, explicitHeight)
+				bottomContents.setSize(scrollAreaW, h)
 
 				if (scrollPolicy == ScrollPolicy.ON || bottomContents.visiblePosition > 0f) {
 					// Keep the scroll bar.
-					contents.setSize(bottomContents.width, explicitHeight ?: bottomContents.height)
+					contents.setSize(bottomContents.width, h ?: bottomContents.height)
 					scrollBar.visible = true
 					scrollBar.setSize(vScrollBarW, bottomContents.height)
-					scrollBar.setPosition(bottomContents.width, 0f)
+					scrollBar.setPosition(pad.left + bottomContents.width, pad.top)
 				} else {
 					// Auto scroll policy and we don't need a scroll bar.
 					scrollBar.visible = false
@@ -251,30 +257,30 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 				scrollBar.visible = false
 			}
 			if (!scrollBar.visible) {
-				contents.setSize(explicitWidth, explicitHeight)
-				bottomContents.setSize(explicitWidth, explicitHeight)
+				contents.setSize(w, h)
+				bottomContents.setSize(w, h)
 			}
-			out.set(bottomContents.width + (if (scrollBar.visible) scrollBar.width else 0f), bottomContents.height)
+			out.set(pad.expandWidth2(bottomContents.width + (if (scrollBar.visible) scrollBar.width else 0f)), pad.expandHeight2(bottomContents.height))
 
-			scrollBar.modelToPixels = out.height / maxOf(0.0001f, bottomContents.visibleBottomPosition - bottomContents.visiblePosition)
+			scrollBar.modelToPixels = bottomContents.height / maxOf(0.0001f, bottomContents.visibleBottomPosition - bottomContents.visiblePosition)
 		} else {
 			if (scrollPolicy != ScrollPolicy.OFF) {
 				// First size as if the scroll bars are needed.
-				val hScrollBarH = minOf(explicitHeight ?: 0f, scrollBar.minHeight ?: 0f)
-				val scrollAreaH = if (explicitHeight == null) null else explicitHeight - hScrollBarH
-				if (explicitWidth == null) {
+				val hScrollBarH = minOf(h ?: 0f, scrollBar.minHeight ?: 0f)
+				val scrollAreaH = if (h == null) null else h - hScrollBarH
+				if (w == null) {
 					bottomContents.indexPosition = maxOf(0f, (data.size - maxItems).toFloat())
 				} else {
 					bottomContents.bottomIndexPosition = data.lastIndex.toFloat()
 				}
-				bottomContents.setSize(explicitWidth, scrollAreaH)
+				bottomContents.setSize(w, scrollAreaH)
 
 				if (scrollPolicy == ScrollPolicy.ON || bottomContents.visiblePosition > 0f) {
 					// Keep the scroll bar.
-					contents.setSize(explicitWidth ?: bottomContents.width, bottomContents.height)
+					contents.setSize(w ?: bottomContents.width, bottomContents.height)
 					scrollBar.visible = true
 					scrollBar.setSize(bottomContents.width, hScrollBarH)
-					scrollBar.setPosition(0f, bottomContents.height)
+					scrollBar.setPosition(pad.left, pad.top + bottomContents.height)
 				} else {
 					// Auto scroll policy and we don't need a scroll bar.
 					scrollBar.visible = false
@@ -283,12 +289,13 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 				scrollBar.visible = false
 			}
 			if (!scrollBar.visible) {
-				contents.setSize(explicitWidth, explicitHeight)
-				bottomContents.setSize(explicitWidth, explicitHeight)
+				contents.setSize(w, h)
+				bottomContents.setSize(w, h)
 			}
-			out.set(bottomContents.width, bottomContents.height + (if (scrollBar.visible) scrollBar.height else 0f))
-			scrollBar.modelToPixels = out.width / maxOf(0.0001f, bottomContents.visibleBottomPosition - bottomContents.visiblePosition)
+			out.set(pad.expandWidth2(bottomContents.width), pad.expandHeight2(bottomContents.height + (if (scrollBar.visible) scrollBar.height else 0f)))
+			scrollBar.modelToPixels = bottomContents.width / maxOf(0.0001f, bottomContents.visibleBottomPosition - bottomContents.visiblePosition)
 		}
+
 		tossBinding.modelToPixelsX = scrollBar.modelToPixels
 		tossBinding.modelToPixelsY = scrollBar.modelToPixels
 		scrollBar.scrollModel.max = bottomContents.visiblePosition
@@ -314,6 +321,8 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 		rowBackgroundsCache.hideAndFlip()
 
 		clipper.setSize(bottomContents.width, bottomContents.height)
+		clipper.setPosition(pad.left, pad.top)
+
 		background?.setSize(out)
 		highlight?.setSize(out)
 	}
@@ -343,6 +352,11 @@ class DataScrollerStyle : StyleBase() {
 	override val type: StyleType<DataScrollerStyle> = DataScrollerStyle
 
 	var background by prop(noSkinOptional)
+
+	/**
+	 * The padding between the background and elements.
+	 */
+	var padding by prop(Pad(0f))
 
 	/**
 	 * The background for each row.

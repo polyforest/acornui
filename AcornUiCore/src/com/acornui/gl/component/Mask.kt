@@ -18,6 +18,8 @@ package com.acornui.gl.component
 
 import com.acornui.component.*
 import com.acornui.component.scroll.ScrollRect
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.graphics.Window
@@ -75,13 +77,13 @@ class GlScrollRect(
 		owner: Owned
 ) : ElementContainerImpl<UiComponent>(owner), ScrollRect {
 
+	override val style = bind(ScrollRectStyle())
+
 	private val contents = addChild(container())
 	private val maskClip = addChild(rect {
 		style.backgroundColor = Color.WHITE
 		interactivityMode = InteractivityMode.NONE
 	})
-
-	override var borderRadius: CornersRo by validationProp(Corners(), ValidationFlags.LAYOUT)
 
 	private val gl = inject(Gl20)
 
@@ -93,6 +95,12 @@ class GlScrollRect(
 			_contentBounds.set(contents.x, contents.y, contents.width, contents.height)
 			return _contentBounds
 		}
+
+	init {
+		watch(style) {
+			maskClip.style.borderRadius = it.borderRadius
+		}
+	}
 
 	override fun onElementAdded(index: Int, element: UiComponent) {
 		contents.addElement(index, element)
@@ -109,15 +117,13 @@ class GlScrollRect(
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val w = explicitWidth ?: 100f
 		val h = explicitHeight ?: 100f
-		val borderRadius = borderRadius
+		val borderRadius = style.borderRadius
 		if (borderRadius.isEmpty()) {
 			// An optimized case where we can just scale the mask instead of recreating the mesh.
-			maskClip.style.borderRadius = borderRadius
 			maskClip.setSize(1f, 1f)
 			maskClip.setScaling(w, h)
 		} else {
 			// Our mask needs curved borders.
-			maskClip.style.borderRadius = borderRadius
 			maskClip.setSize(w, h)
 			maskClip.setScaling(1f, 1f)
 		}
@@ -139,6 +145,14 @@ class GlScrollRect(
 			contents.render(maxOf(0f, viewportX) - contentsX, maxOf(0f, viewportY) - contentsY, minOf(viewportRight, _bounds.width) - contentsX, minOf(viewportBottom, _bounds.height) - contentsY)
 		}
 	}
+}
+
+class ScrollRectStyle : StyleBase() {
+
+	override val type: StyleType<ScrollRectStyle> = Companion
+	var borderRadius: CornersRo by prop(Corners())
+
+	companion object : StyleType<ScrollRectStyle>
 }
 
 

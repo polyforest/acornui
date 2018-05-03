@@ -21,12 +21,12 @@ import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
 import com.acornui.core.di.Owned
 import com.acornui.core.di.dKey
-import com.acornui.math.CornersRo
+import com.acornui.gl.component.ScrollRectStyle
 import com.acornui.math.RectangleRo
 
 interface ScrollRect : ElementContainer<UiComponent> {
 
-	var borderRadius: CornersRo
+	val style: ScrollRectStyle
 
 	val contentBounds: RectangleRo
 

@@ -138,8 +138,9 @@ open class ContainerImpl(
 	protected fun clearChildren(dispose: Boolean = true) {
 		val c = _children
 		while (c.isNotEmpty()) {
-			val child = removeChild(_children.size - 1)
-			if (dispose) child.dispose()
+			val child = removeChild(c.lastIndex)
+			if (dispose)
+				child.dispose()
 		}
 	}
 
@@ -296,7 +297,8 @@ open class ContainerImpl(
 	//-----------------------------------------------------
 
 	/**
-	 * Disposes this container and all its children.
+	 * Disposes this container, removes all its children.
+	 * Components with this container as the owner will be disposed as well.
 	 */
 	override fun dispose() {
 		clearChildren(dispose = false)

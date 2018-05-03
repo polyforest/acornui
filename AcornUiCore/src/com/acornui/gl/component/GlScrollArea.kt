@@ -103,7 +103,7 @@ open class GlScrollArea(
 
 		watch(style) {
 			tossScrolling = it.tossScrolling
-			scrollRect.borderRadius = it.borderRadius
+			scrollRect.style.borderRadius = it.borderRadius
 
 			corner?.dispose()
 			corner = it.corner(this)
