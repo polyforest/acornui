@@ -23,10 +23,7 @@ import com.acornui.gl.core.Framebuffer
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.ShaderProgram
-import com.acornui.math.MathUtils
-import com.acornui.math.Matrix4
-import com.acornui.math.Pad
-import com.acornui.math.ceil
+import com.acornui.math.*
 
 // TODO: WIP
 
@@ -56,7 +53,7 @@ class GlFilter(
 	private val tempTransform = Matrix4()
 	private val sprite = Sprite()
 	
-	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
+	override fun draw(viewport: MinMaxRo) {
 		tempTransform.set(_concatenatedTransform)
 		
 		
@@ -70,7 +67,7 @@ class GlFilter(
 		framebuffer!!.begin()
 
 		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
-		super.draw(viewportX, viewportY, viewportRight, viewportBottom)
+		super.draw(viewport)
 		framebuffer.end()
 
 		glState.shader = shader

@@ -25,6 +25,7 @@ import com.acornui.core.graphics.Window
 import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.time
 import com.acornui.logging.Log
+import com.acornui.math.MinMax
 import kotlin.browser.window
 
 interface JsApplicationRunner {
@@ -58,6 +59,8 @@ class JsApplicationRunnerImpl(
 		_tick()
 	}
 
+	private val viewport = MinMax()
+
 	override fun start() {
 		if (isRunning) return
 		Log.info("Application#startIndex")
@@ -86,7 +89,7 @@ class JsApplicationRunnerImpl(
 			stage.update()
 			appWindow.renderBegin()
 			if (stage.visible)
-				stage.render(0f, 0f, appWindow.width, appWindow.height)
+				stage.render(viewport.set(0f, 0f, appWindow.width, appWindow.height))
 			appWindow.renderEnd()
 		}
 		tickFrameId = window.requestAnimationFrame(tick)

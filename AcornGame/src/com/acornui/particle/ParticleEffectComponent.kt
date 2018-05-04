@@ -30,6 +30,7 @@ import com.acornui.core.time.onTick
 import com.acornui.gl.component.Sprite
 import com.acornui.gl.core.GlState
 import com.acornui.graphics.ColorRo
+import com.acornui.math.MinMaxRo
 
 class ParticleEffectComponent(
 		owner: Owned
@@ -92,7 +93,7 @@ class ParticleEffectComponent(
 		effect = value
 	}
 
-	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
+	override fun draw(viewport: MinMaxRo) {
 		val effect = _effect ?: return
 		glState.camera(camera, concatenatedTransform)
 		effect.render(concatenatedColorTint)

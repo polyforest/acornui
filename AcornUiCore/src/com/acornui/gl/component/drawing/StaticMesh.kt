@@ -108,7 +108,7 @@ open class StaticMeshComponent(
 		return true
 	}
 
-	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
+	override fun draw(viewport: MinMaxRo) {
 		val mesh = mesh ?: return
 		glState.camera(camera, concatenatedTransform) // Use the concatenated transform as the model matrix.
 		mesh.render(gl, glState)

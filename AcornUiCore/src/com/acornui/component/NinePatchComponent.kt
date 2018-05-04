@@ -213,19 +213,19 @@ class NinePatchComponent(owner: Owned) : ContainerImpl(owner) {
 		val scaledMidW = scaledW - _splitLeft - _splitRight
 		val scaledMidH = scaledH - _splitBottom - _splitTop
 
-		leftC.moveTo(0f, _splitTop)
+		leftC.setPosition(0f, _splitTop)
 		leftC.setSize(null, scaledMidH)
-		topLeftC.moveTo(0f, 0f)
-		topC.moveTo(_splitLeft, 0f)
+		topLeftC.setPosition(0f, 0f)
+		topC.setPosition(_splitLeft, 0f)
 		topC.setSize(scaledMidW, null)
-		topRightC.moveTo(scaledX2, 0f)
-		rightC.moveTo(scaledX2, _splitTop)
+		topRightC.setPosition(scaledX2, 0f)
+		rightC.setPosition(scaledX2, _splitTop)
 		rightC.setSize(null, scaledMidH)
-		bottomRightC.moveTo(scaledX2, scaledY2)
-		bottomC.moveTo(_splitLeft, scaledY2)
+		bottomRightC.setPosition(scaledX2, scaledY2)
+		bottomC.setPosition(_splitLeft, scaledY2)
 		bottomC.setSize(scaledMidW, null)
-		bottomLeftC.moveTo(0f, scaledY2)
-		midC.moveTo(_splitLeft, _splitTop)
+		bottomLeftC.setPosition(0f, scaledY2)
+		midC.setPosition(_splitLeft, _splitTop)
 		midC.setSize(scaledMidW, scaledMidH)
 		out.set(scaledW, scaledH)
 	}

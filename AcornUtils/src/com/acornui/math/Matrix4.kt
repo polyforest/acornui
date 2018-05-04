@@ -35,7 +35,22 @@ interface Matrix4Ro {
 	fun det3x3(): Float
 
 	/**
-	 * Sets the provided position Vector3 with the translation of this Matrix
+	 * The x translation.
+	 */
+	val translationX: Float
+
+	/**
+	 * The y translation.
+	 */
+	val translationY: Float
+
+	/**
+	 * The z translation.
+	 */
+	val translationZ: Float
+
+	/**
+	 * Sets the provided [out] Vector3 with the translation of this Matrix.
 	 */
 	fun getTranslation(out: Vector3): Vector3
 
@@ -669,6 +684,15 @@ data class Matrix4(
 		values[10] *= scale
 		return this
 	}
+
+	override val translationX: Float
+		get() = values[12]
+
+	override val translationY: Float
+		get() = values[13]
+
+	override val translationZ: Float
+		get() = values[14]
 
 	/**
 	 * Sets the provided position Vector3 with the translation of this Matrix

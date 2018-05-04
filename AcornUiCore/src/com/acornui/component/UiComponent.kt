@@ -196,12 +196,10 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	/**
 	 * Renders any graphics.
 	 * [render] does not check the [visible] flag; that is the responsibility of the caller.
-	 * @param viewportX The x value of the visible viewport (relative to this component)
-	 * @param viewportY The y value of the visible viewport (relative to this component)
-	 * @param viewportRight The bottom x value of the visible viewport (relative to this component)
-	 * @param viewportBottom The bottom y value of the visible viewport (relative to this component)
+	 * @param viewport The visible viewport (in screen coordinates.) If you wish to render a component with a boundless
+	 * viewport, you may use [MinMaxRo.POSITIVE_INFINITY].
 	 */
-	fun render(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float)
+	fun render(viewport: MinMaxRo)
 
 }
 
@@ -1353,17 +1351,39 @@ open class UiComponentImpl(
 	 * Responsible for rendering this component.
 	 * Typically, custom components override the [draw] method.
 	 */
-	override fun render(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
+	override fun render(viewport: MinMaxRo) {
 		// Nothing visible.
 		if (_concatenatedColorTint.a <= 0f)
 			return
-		draw(viewportX, viewportY, viewportRight, viewportBottom)
+		draw(viewport)
+	}
+
+	private val viewportTmpMinMax = MinMax()
+	private val viewportTmpVec = Vector3()
+
+	/**
+	 * Returns true if the given viewport in local coordinates intersects with the viewport in screen coordinates.
+	 * This does not perform a validation if the transformation is currently invalid.
+	 */
+	fun isInViewport(local: MinMaxRo, viewport: MinMaxRo): Boolean {
+		localToWindow(viewportTmpMinMax.set(local))
+		return viewport.intersects(viewportTmpMinMax)
+	}
+
+	/**
+	 * Returns true if this component's bounds are currently within the given window viewport.
+	 *
+	 * This does not perform a validation if the layout or transformation is currently invalid.
+	 */
+	fun isBoundsInViewport(viewport: MinMaxRo): Boolean {
+		localToWindow(viewportTmpMinMax.set(0f, 0f, _bounds.width, _bounds.height))
+		return viewport.intersects(viewportTmpMinMax)
 	}
 
 	/**
 	 * The core drawing method for this component.
 	 */
-	protected open fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
+	protected open fun draw(viewport: MinMaxRo) {
 	}
 
 	//-----------------------------------------------

@@ -25,6 +25,7 @@ import com.acornui.core.focus.Focusable
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.math.Bounds
+import com.acornui.math.MinMaxRo
 
 /**
  * @author nbilyk
@@ -81,9 +82,9 @@ open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(
 		out.set(w, h)
 	}
 
-	override fun render(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
+	override fun render(viewport: MinMaxRo) {
 		glState.batch.resetRenderCount()
-		super.render(viewportX, viewportY, viewportRight, viewportBottom)
+		super.render(viewport)
 		glState.batch.flush(true)
 	}
 

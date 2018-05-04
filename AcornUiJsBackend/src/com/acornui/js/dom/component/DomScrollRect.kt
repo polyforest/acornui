@@ -20,6 +20,7 @@ import com.acornui.component.ElementContainerImpl
 import com.acornui.component.UiComponent
 import com.acornui.component.scroll.ScrollRect
 import com.acornui.core.di.Owned
+import com.acornui.gl.component.ScrollRectStyle
 import com.acornui.math.*
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
@@ -30,20 +31,9 @@ class DomScrollRect(
 		private val element: HTMLElement = document.createElement("div") as HTMLDivElement
 ) : ElementContainerImpl<UiComponent>(owner, DomContainer(element)), ScrollRect {
 
-	private val _contentBounds = Rectangle()
+	override val style = bind(ScrollRectStyle())
 
-	private val _borderRadius = Corners()
-	override var borderRadius: CornersRo
-		get() = _borderRadius
-		set(value) {
-			_borderRadius.set(value)
-			element.style.apply {
-				borderTopLeftRadius = "${value.topLeft.x}px ${value.topLeft.y}px"
-				borderTopRightRadius = "${value.topRight.x}px ${value.topRight.y}px"
-				borderBottomRightRadius = "${value.bottomRight.x}px ${value.bottomRight.y}px"
-				borderBottomLeftRadius = "${value.bottomLeft.x}px ${value.bottomLeft.y}px"
-			}
-		}
+	private val _contentBounds = Rectangle()
 
 	override val contentBounds: RectangleRo
 		get() = _contentBounds
@@ -59,6 +49,15 @@ class DomScrollRect(
 		element.style.apply {
 			overflowX = "hidden"
 			overflowY = "hidden"
+		}
+		watch(style) {
+			val bR = it.borderRadius
+			element.style.apply {
+				borderTopLeftRadius = "${bR.topLeft.x}px ${bR.topLeft.y}px"
+				borderTopRightRadius = "${bR.topRight.x}px ${bR.topRight.y}px"
+				borderBottomRightRadius = "${bR.bottomRight.x}px ${bR.bottomRight.y}px"
+				borderBottomLeftRadius = "${bR.bottomLeft.x}px ${bR.bottomLeft.y}px"
+			}
 		}
 	}
 

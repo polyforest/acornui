@@ -22,6 +22,7 @@ import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.time.onTick
 import com.acornui.gl.core.GlState
+import com.acornui.math.MinMaxRo
 
 
 /**
@@ -104,7 +105,7 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 		window.requestRender()
 	}
 
-	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
+	override fun draw(viewport: MinMaxRo) {
 		val concatenatedTransform = concatenatedTransform
 		glState.camera(camera, concatenatedTransform)
 		val concatenatedColorTint = concatenatedColorTint

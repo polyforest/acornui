@@ -14,10 +14,7 @@ import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
-import com.acornui.math.Bounds
-import com.acornui.math.MathUtils
-import com.acornui.math.PI
-import com.acornui.math.Vector3
+import com.acornui.math.*
 
 open class GlRect(
 		owner: Owned
@@ -377,18 +374,18 @@ open class GlRect(
 	private val glState = inject(GlState)
 	private val gl = inject(Gl20)
 
-	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
+	override fun draw(viewport: MinMaxRo) {
 		if (style.linearGradient != null) {
 			StencilUtil.mask(glState.batch, gl, {
-				if (fill.visible) fill.render(viewportX, viewportY, viewportRight, viewportBottom)
+				if (fill.visible) fill.render(viewport)
 			}) {
 				if (gradient.visible)
-					gradient.render(viewportX, viewportY, viewportRight, viewportBottom)
+					gradient.render(viewport)
 				if (stroke.visible)
-					stroke.render(viewportX, viewportY, viewportRight, viewportBottom)
+					stroke.render(viewport)
 			}
 		} else {
-			super.draw(viewportX, viewportY, viewportRight, viewportBottom)
+			super.draw(viewport)
 		}
 	}
 }

@@ -48,6 +48,7 @@ import com.acornui.graphics.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.floor
 import com.acornui.math.MathUtils.round
+import com.acornui.math.MinMaxRo
 import com.acornui.math.Vector3
 import com.acornui.math.ceil
 import com.acornui.string.isBreaking
@@ -192,8 +193,8 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 		}
 	}
 
-	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
-		_contents.render(viewportX, viewportY, viewportRight, viewportBottom)
+	override fun draw(viewport: MinMaxRo) {
+		_contents.render(viewport)
 	}
 
 	override fun dispose() {
@@ -887,24 +888,37 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 	}
 
 	private val glState = inject(GlState)
+	private val tmp = Vector3()
 
-	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
-		val lineStart = _lines.sortedInsertionIndex(viewportY) {
-			viewPortY, line ->
-			viewPortY.compareTo(line.bottom)
-		}
-		if (lineStart == -1) return
-		val lineEnd = _lines.sortedInsertionIndex(viewportBottom) {
-			viewPortBottom, line ->
-			viewPortBottom.compareTo(line.y)
-		}
-		if (lineEnd <= lineStart) return
+	override fun draw(viewport: MinMaxRo) {
+		if (_lines.isEmpty())
+			return
+		val y1 = localToWindow(tmp.set(0f, 0f, 0f)).y
+		val y2 = localToWindow(tmp.set(_bounds.width, 0f, 0f)).y
+		if (y1 == y2) {
+			val lineStart = _lines.sortedInsertionIndex(viewport.yMin - y1) {
+				viewPortY, line ->
+				viewPortY.compareTo(line.bottom)
+			}
+			if (lineStart == -1)
+				return
+			val lineEnd = _lines.sortedInsertionIndex(viewport.yMax - y1) {
+				viewPortBottom, line ->
+				viewPortBottom.compareTo(line.y)
+			}
+			if (lineEnd <= lineStart)
+				return
 
-		glState.camera(camera, concatenatedTransform)
-		for (i in lineStart .. lineEnd - 1) {
-			val line = _lines[i]
-			for (j in line.startIndex .. line.endIndex - 1) {
-				_textElements[j].render(glState)
+			glState.camera(camera, concatenatedTransform)
+			for (i in lineStart .. lineEnd - 1) {
+				val line = _lines[i]
+				for (j in line.startIndex .. line.endIndex - 1) {
+					_textElements[j].render(glState)
+				}
+			}
+		} else {
+			for (i in 0 .. _textElements.lastIndex) {
+				_textElements[i].render(glState)
 			}
 		}
 	}

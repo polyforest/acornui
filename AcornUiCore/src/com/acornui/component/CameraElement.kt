@@ -19,6 +19,7 @@ package com.acornui.component
 import com.acornui.component.layout.Transformable
 import com.acornui.component.layout.TransformableRo
 import com.acornui.core.graphics.CameraRo
+import com.acornui.math.MinMax
 import com.acornui.math.Vector2
 import com.acornui.math.Vector3
 
@@ -32,9 +33,31 @@ interface CameraElementRo : TransformableRo {
 	fun windowToLocal(windowCoord: Vector2): Vector2
 
 	/**
-	 * Converts a local coordinate to screen coordinates.
+	 * Converts a local coordinate to window coordinates.
 	 */
 	fun localToWindow(localCoord: Vector3): Vector3
+
+	/**
+	 * Converts a bounding rectangle from local to window coordinates.
+	 */
+	fun localToWindow(minMax: MinMax): MinMax {
+		val tmp1 =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)
+		val tmp2 =  Vector3.obtain().set(minMax.xMax, minMax.yMax, 0f)
+		val tmp =  Vector3.obtain()
+		minMax.inf()
+		localToWindow(tmp.set(tmp1))
+		minMax.ext(tmp.x, tmp.y)
+		localToWindow(tmp.set(tmp2.x, tmp1.y, 0f))
+		minMax.ext(tmp.x, tmp.y)
+		localToWindow(tmp.set(tmp2))
+		minMax.ext(tmp.x, tmp.y)
+		localToWindow(tmp.set(tmp1.x, tmp2.y, 0f))
+		minMax.ext(tmp.x, tmp.y)
+		Vector3.free(tmp1)
+		Vector3.free(tmp2)
+		Vector3.free(tmp)
+		return minMax
+	}
 
 	/**
 	 * Returns the camera to be used for this component.

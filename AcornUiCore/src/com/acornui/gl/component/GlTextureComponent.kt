@@ -30,6 +30,7 @@ import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
 import com.acornui.gl.core.GlState
 import com.acornui.math.Bounds
+import com.acornui.math.MinMaxRo
 
 /**
  * A UiComponent representing a single Texture.
@@ -143,13 +144,7 @@ open class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureCom
 		sprite.updateWorldVertices(concatenatedTransform, width, height, z = 0f)
 	}
 
-	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
-		if (viewportBottom < 0f ||
-				viewportRight < 0f ||
-				viewportX > width ||
-				viewportY > height) {
-			return // Out of bounds
-		}
+	override fun draw(viewport: MinMaxRo) {
 		glState.camera(camera)
 		sprite.draw(glState, concatenatedColorTint)
 	}

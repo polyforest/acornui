@@ -39,11 +39,8 @@ import com.acornui.core.focus.Focusable
 import com.acornui.core.focus.focusFirst
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.KeyInteractionRo
-import com.acornui.core.input.interaction.MouseInteractionRo
-import com.acornui.core.input.interaction.click
 import com.acornui.core.input.keyDown
 import com.acornui.core.input.mouseDown
-import com.acornui.core.isDescendantOf
 import com.acornui.core.popup.lift
 import com.acornui.core.text.StringFormatter
 import com.acornui.core.text.ToStringFormatter
@@ -216,12 +213,6 @@ open class OptionsList<E : Any>(
 	val scrollModel: ScrollModel
 		get() = dataScroller.scrollModel
 
-	private val stageMouseDownHandler = { event: MouseInteractionRo ->
-		if (!event.target.isDescendantOf(dataScroller) && !event.target.isDescendantOf(downArrow!!)) {
-			close()
-		}
-	}
-
 	fun rendererFactory(value: ItemRendererOwner<VerticalLayoutData>.() -> ListItemRenderer<E>) {
 		dataScroller.rendererFactory(value)
 	}
@@ -273,9 +264,11 @@ open class OptionsList<E : Any>(
 
 			downArrow?.dispose()
 			downArrow = addChild(it.downArrow(this))
-			downArrow!!.click().add {
-				toggleOpen()
+			downArrow!!.mouseDown().add {
+				// Using mouseDown instead of click because we close on blur (which is often via mouseDown).
+				open()
 			}
+			downArrow?.interactivityMode = if (_isOpen) InteractivityMode.NONE else InteractivityMode.ALL
 		}
 
 		inject(FocusManager).focusedChanged.add(this::focusChangedHandler)
@@ -410,7 +403,6 @@ open class OptionsList<E : Any>(
 		_isOpen = true
 		dataScroller.highlighted.clear()
 		addChild(listLift)
-		stage.mouseDown(isCapture = true).add(stageMouseDownHandler)
 		textInput.focus()
 	}
 
@@ -418,7 +410,6 @@ open class OptionsList<E : Any>(
 		if (!_isOpen) return
 		_isOpen = false
 		removeChild(listLift)
-		stage.mouseDown(isCapture = true).remove(stageMouseDownHandler)
 	}
 
 	fun toggleOpen() {

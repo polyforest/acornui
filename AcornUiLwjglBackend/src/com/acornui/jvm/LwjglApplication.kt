@@ -91,6 +91,7 @@ import com.acornui.jvm.text.NumberFormatterImpl
 import com.acornui.jvm.time.TimeProviderImpl
 import com.acornui.logging.ILogger
 import com.acornui.logging.Log
+import com.acornui.math.MinMax
 import com.acornui.serialization.JsonSerializer
 import org.lwjgl.Version
 import org.lwjgl.glfw.GLFW
@@ -387,6 +388,9 @@ class JvmApplicationRunner(
 		}
 	}
 
+	private val viewport = MinMax()
+	private var nextTick: Long = 0
+
 	init {
 		Log.info("Application#startIndex")
 
@@ -407,8 +411,6 @@ class JvmApplicationRunner(
 		GLFW.glfwSetWindowRefreshCallback(windowId, null)
 	}
 
-	private var nextTick: Long = 0
-
 	private fun tick() {
 		val stepTimeFloat = appConfig.stepTime
 		val stepTimeMs = 1000 / appConfig.frameRate
@@ -428,8 +430,9 @@ class JvmApplicationRunner(
 			stage.update()
 			if (window.width > 0f && window.height > 0f) {
 				window.renderBegin()
-				if (stage.visible)
-					stage.render(0f, 0f, window.width, window.height)
+				if (stage.visible) {
+					stage.render(viewport.set(0f, 0f, window.width, window.height))
+				}
 				window.renderEnd()
 			}
 		}

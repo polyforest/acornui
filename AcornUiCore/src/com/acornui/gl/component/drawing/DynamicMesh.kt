@@ -206,13 +206,7 @@ open class DynamicMeshComponent(
 
 	private var globalPrimitiveIndex = 0
 
-	override fun draw(viewportX: Float, viewportY: Float, viewportRight: Float, viewportBottom: Float) {
-		if (viewportBottom < _boundingBox.min.x ||
-				viewportRight < _boundingBox.min.y ||
-				viewportX > _boundingBox.max.x ||
-				viewportY > _boundingBox.max.y) {
-			return // Out of bounds
-		}
+	override fun draw(viewport: MinMaxRo) {
 		glState.camera(camera)
 		globalPrimitiveIndex = 0
 		renderMeshData(data)
