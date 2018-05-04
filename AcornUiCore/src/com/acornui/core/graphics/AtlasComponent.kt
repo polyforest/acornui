@@ -179,7 +179,7 @@ class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
 				if (explicitWidth == null) null else explicitWidth - totalPadLeft - totalPadRight,
 				if (explicitHeight == null) null else explicitHeight - totalPadBottom - totalPadTop
 		)
-		textureC.moveTo(totalPadLeft, totalPadTop)
+		textureC.setPosition(totalPadLeft, totalPadTop)
 
 		out.set(explicitWidth ?: naturalWidth, explicitHeight ?: naturalHeight)
 	}
