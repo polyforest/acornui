@@ -18,6 +18,8 @@
 
 package com.acornui.math
 
+import com.acornui.collection.copy
+
 interface Matrix3Ro {
 
 	val values: List<Float>
@@ -33,7 +35,13 @@ interface Matrix3Ro {
 
 	fun getRotation(): Float
 
-	fun getRotationRad(): Float
+	/**
+	 * Copies this matrix. Note that the [values] list will be copied as well and the new Matrix will not back the
+	 * same list.
+	 */
+	fun copy(): Matrix3 {
+		return Matrix3(values.copy())
+	}
 }
 
 /**
@@ -151,7 +159,7 @@ data class Matrix3(
 		val det = det()
 		if (det == 0f) throw Exception("Can't invert a singular matrix")
 
-		val inv_det = 1.0.toFloat() / det
+		val invDet = 1f / det
 
 		tmp[M00] = values[M11] * values[M22] - values[M21] * values[M12]
 		tmp[M10] = values[M20] * values[M12] - values[M10] * values[M22]
@@ -163,15 +171,15 @@ data class Matrix3(
 		tmp[M12] = values[M10] * values[M02] - values[M00] * values[M12]
 		tmp[M22] = values[M00] * values[M11] - values[M10] * values[M01]
 
-		values[M00] = inv_det * tmp[M00]
-		values[M10] = inv_det * tmp[M10]
-		values[M20] = inv_det * tmp[M20]
-		values[M01] = inv_det * tmp[M01]
-		values[M11] = inv_det * tmp[M11]
-		values[M21] = inv_det * tmp[M21]
-		values[M02] = inv_det * tmp[M02]
-		values[M12] = inv_det * tmp[M12]
-		values[M22] = inv_det * tmp[M22]
+		values[M00] = invDet * tmp[M00]
+		values[M10] = invDet * tmp[M10]
+		values[M20] = invDet * tmp[M20]
+		values[M01] = invDet * tmp[M01]
+		values[M11] = invDet * tmp[M11]
+		values[M21] = invDet * tmp[M21]
+		values[M02] = invDet * tmp[M02]
+		values[M12] = invDet * tmp[M12]
+		values[M22] = invDet * tmp[M22]
 
 		return this
 	}
@@ -207,22 +215,22 @@ data class Matrix3(
 	}
 
 	/**
-	 * Sets the matrix to the given matrix as a float array. The float array must have at least 9 elements; the first 9 will be
-	 * copied.
+	 * Sets the matrix to the given matrix as a float array. The float array must have at least 9 elements; the first
+	 * 9 will be copied.
 	 *
 	 * @param values The matrix, in float form, that is to be copied. Remember that this matrix is in <a
 	*           href="http://en.wikipedia.org/wiki/Row-major_order#Column-major_order">column major</a> order.
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun set(values: List<Float>): Matrix3 {
-		for (i in 0..16 - 1) {
+		for (i in 0..9 - 1) {
 			this.values[i] = values[i]
 		}
 		return this
 	}
 
 	/**
-	 *
+	 * Sets this matrix to have the given translation.
 	 */
 	fun setTranslation(x: Float, y: Float): Matrix3 {
 		values[6] = x
@@ -265,18 +273,8 @@ data class Matrix3(
 	}
 
 	/**
-	 * Postmultiplies this matrix with a (counter-clockwise) rotation matrix. Postmultiplication is also used by OpenGL ES' 1.x
-	 * glTranslate/glRotate/glScale.
-	 * @param degrees The angle in degrees
-	 * @return This matrix for the purpose of chaining.
-	 */
-	fun rotateDeg(degrees: Float): Matrix3 {
-		return rotate(MathUtils.degRad * degrees)
-	}
-
-	/**
-	 * Postmultiplies this matrix with a (counter-clockwise) rotation matrix. Postmultiplication is also used by OpenGL ES' 1.x
-	 * glTranslate/glRotate/glScale.
+	 * Postmultiplies this matrix with a (counter-clockwise) rotation matrix. Postmultiplication is also used by
+	 * OpenGL ES' 1.x glTranslate/glRotate/glScale.
 	 * @param radians The angle in degrees
 	 * @return This matrix for the purpose of chaining.
 	 */
@@ -313,11 +311,7 @@ data class Matrix3(
 	}
 
 	override fun getRotation(): Float {
-		return MathUtils.radDeg * Math.atan2(values[M10].toDouble(), values[M00].toDouble()).toFloat()
-	}
-
-	override fun getRotationRad(): Float {
-		return Math.atan2(values[M10].toDouble(), values[M00].toDouble()).toFloat()
+		return MathUtils.atan2(values[M10], values[M00])
 	}
 
 	/**
@@ -389,6 +383,8 @@ data class Matrix3(
 	companion object {
 
 		private val tmp = arrayListOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+
+		val IDENTITY: Matrix3Ro = Matrix3()
 
 		const val M00: Int = 0
 		const val M01: Int = 3

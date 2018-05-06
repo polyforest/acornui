@@ -296,7 +296,3 @@ class Matrix4Test {
 
 
 }
-//
-//private fun <E> List<E>.printF() {
-//	println(joinToString("f, ") + "f")
-//}
