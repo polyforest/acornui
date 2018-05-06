@@ -896,13 +896,15 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 		val y1 = localToWindow(tmp.set(0f, 0f, 0f)).y
 		val y2 = localToWindow(tmp.set(_bounds.width, 0f, 0f)).y
 		if (y1 == y2) {
+			// This text field is axis aligned, we can check against the viewport without a matrix inversion.
 			val lineStart = _lines.sortedInsertionIndex(viewport.yMin - y1) {
 				viewPortY, line ->
 				viewPortY.compareTo(line.bottom)
 			}
 			if (lineStart == -1)
 				return
-			val lineEnd = _lines.sortedInsertionIndex(viewport.yMax - y1) {
+			val scaleY = concatenatedTransform.getScaleY()
+			val lineEnd = _lines.sortedInsertionIndex((viewport.yMax - y1) / scaleY) {
 				viewPortBottom, line ->
 				viewPortBottom.compareTo(line.y)
 			}

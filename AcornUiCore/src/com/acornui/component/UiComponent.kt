@@ -197,7 +197,12 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	 * Renders any graphics.
 	 * [render] does not check the [visible] flag; that is the responsibility of the caller.
 	 * @param viewport The visible viewport (in screen coordinates.) If you wish to render a component with a boundless
-	 * viewport, you may use [MinMaxRo.POSITIVE_INFINITY].
+	 * viewport, you may use [MinMaxRo.POSITIVE_INFINITY]. This is used in order to potentially avoid drawing things
+	 * the user cannot see. (Due to the screen size, stencil buffers, or scissors)
+	 *
+	 * You may convert the screen coordinate viewport to local coordinates via [windowToLocal], but in general it is
+	 * faster to convert the local coordinates to screen coordinates [localToWindow], as no matrix inversion is
+	 * required.
 	 */
 	fun render(viewport: MinMaxRo)
 
@@ -1347,10 +1352,6 @@ open class UiComponentImpl(
 	// Renderable
 	//-----------------------------------------------
 
-	/**
-	 * Responsible for rendering this component.
-	 * Typically, custom components override the [draw] method.
-	 */
 	override fun render(viewport: MinMaxRo) {
 		// Nothing visible.
 		if (_concatenatedColorTint.a <= 0f)
