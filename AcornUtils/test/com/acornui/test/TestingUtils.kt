@@ -17,6 +17,7 @@
 package com.acornui.test
 
 import com.acornui.collection.toList
+import com.acornui.core.closeTo
 import com.acornui.math.*
 import org.junit.Test
 
@@ -31,42 +32,42 @@ fun assertListEquals(expected: BooleanArray, actual: BooleanArray) {
 	assertListEquals(expected.iterator(), actual.iterator())
 }
 
-fun assertListEquals(expected: DoubleArray, actual: DoubleArray) {
-	assertListEquals(expected.iterator(), actual.iterator())
+fun assertListEquals(expected: DoubleArray, actual: DoubleArray, margin: Double = 0.0001) {
+	assertListEquals(expected.iterator(), actual.iterator(), { a, b -> a.closeTo(b, margin) })
 }
 
-fun assertListEquals(expected: FloatArray, actual: FloatArray) {
-	assertListEquals(expected.iterator(), actual.iterator())
+fun assertListEquals(expected: FloatArray, actual: FloatArray, margin: Float = 0.0001f) {
+	assertListEquals(expected.iterator(), actual.iterator(), { a, b -> a.closeTo(b, margin) })
 }
 
 fun assertListEquals(expected: CharArray, actual: CharArray) {
 	assertListEquals(expected.iterator(), actual.iterator())
 }
 
-fun <T> assertListEquals(expected: Array<T>, actual: Array<T>) {
-	assertListEquals(expected.iterator(), actual.iterator())
+fun <T> assertListEquals(expected: Array<T>, actual: Array<T>, comparator: (a: T, b: T) -> Boolean = { a, b -> a == b }) {
+	assertListEquals(expected.iterator(), actual.iterator(), comparator)
 }
 
-fun <T> assertListEquals(expected: Array<T>, actual: Iterable<T>) {
-	assertListEquals(expected.iterator(), actual.iterator())
+fun <T> assertListEquals(expected: Array<T>, actual: Iterable<T>, comparator: (a: T, b: T) -> Boolean = { a, b -> a == b }) {
+	assertListEquals(expected.iterator(), actual.iterator(), comparator)
 }
 
-fun <T> assertListEquals(expected: Iterable<T>, actual: Array<T>) {
-	assertListEquals(expected.iterator(), actual.iterator())
+fun <T> assertListEquals(expected: Iterable<T>, actual: Array<T>, comparator: (a: T, b: T) -> Boolean = { a, b -> a == b }) {
+	assertListEquals(expected.iterator(), actual.iterator(), comparator)
 }
 
-fun <T> assertListEquals(expected: Iterable<T>, actual: Iterable<T>) {
-	assertListEquals(expected.iterator(), actual.iterator())
+fun <T> assertListEquals(expected: Iterable<T>, actual: Iterable<T>, comparator: (a: T, b: T) -> Boolean = { a, b -> a == b }) {
+	assertListEquals(expected.iterator(), actual.iterator(), comparator)
 }
 
-fun <T> assertListEquals(expected: Iterator<T>, actual: Iterator<T>) {
+fun <T> assertListEquals(expected: Iterator<T>, actual: Iterator<T>, comparator: (a: T, b: T) -> Boolean = { a, b -> a == b }) {
 	var expectedSize = 0
 	var actualSize = 0
 	while (expected.hasNext() || actual.hasNext()) {
 		if (expected.hasNext() && actual.hasNext()) {
 			val expectedI = expected.next()
 			val actualI = actual.next()
-			if (expectedI != actualI) {
+			if (!comparator(expectedI, actualI)) {
 				fail("At index $expectedSize expected: $expectedI actual: $actualI")
 			}
 			expectedSize++
@@ -80,7 +81,7 @@ fun <T> assertListEquals(expected: Iterator<T>, actual: Iterator<T>) {
 		}
 	}
 	if (expectedSize != actualSize) {
-		fail("actual size: $actualSize expected size: ${expectedSize}")
+		fail("actual size: $actualSize expected size: $expectedSize")
 	}
 }
 
@@ -146,7 +147,8 @@ fun <T : Any> assertUnorderedListEquals(expected: Iterator<T>, actual: Iterator<
 
 class TestUtils {
 
-	@Test fun testAssertListEquals() {
+	@Test
+	fun testAssertListEquals() {
 		assertListEquals(arrayOf(1, 2, 3, 4), arrayOf(1, 2, 3, 4))
 		assertListEquals(arrayListOf(1, 2, 3, 4), arrayOf(1, 2, 3, 4))
 		assertListEquals(arrayOf(1, 2, 3, 4), arrayListOf(1, 2, 3, 4))
@@ -165,7 +167,8 @@ class TestUtils {
 		}
 	}
 
-	@Test fun testAssertUnorderedListEquals() {
+	@Test
+	fun testAssertUnorderedListEquals() {
 		assertUnorderedListEquals(arrayOf(1, 2, 3, 4), arrayListOf(1, 2, 3, 4))
 		assertUnorderedListEquals(arrayOf(1, 2, 3, 4), arrayListOf(2, 1, 3, 4))
 		assertUnorderedListEquals(arrayOf(1, 1, 3, 4), arrayListOf(3, 1, 1, 4))

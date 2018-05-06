@@ -60,13 +60,6 @@ interface QuaternionRo {
 	fun len2(): Float
 
 	/**
-	 * Fills a 4x4 matrix with the rotation matrix represented by this quaternion.
-	 *
-	 * @param out Matrix to fill
-	 */
-	fun toMatrix(out: MutableList<Float>)
-
-	/**
 	 * @return If this quaternion is an identity Quaternion
 	 */
 	fun isIdentity(): Boolean
@@ -439,42 +432,6 @@ data class Quaternion(
 		this.z += qz
 		this.w += qw
 		return this
-	}
-
-	// TODO : the matrix4 set(quaternion) doesn't set the last row+col of the matrix to 0,0,0,1 so... that's why there is this
-	// method
-	/**
-	 * Fills a 4x4 matrix with the rotation matrix represented by this quaternion.
-	 *
-	 * @param out Matrix to fill
-	 */
-	override fun toMatrix(out: MutableList<Float>) {
-		val xx = x * x
-		val xy = x * y
-		val xz = x * z
-		val xw = x * w
-		val yy = y * y
-		val yz = y * z
-		val yw = y * w
-		val zz = z * z
-		val zw = z * w
-		// Set matrix from quaternion
-		out[0] = 1f - 2f * (yy + zz)
-		out[4] = 2f * (xy - zw)
-		out[8] = 2f * (xz + yw)
-		out[12] = 0f
-		out[1] = 2f * (xy + zw)
-		out[5] = 1f - 2f * (xx + zz)
-		out[9] = 2f * (yz - xw)
-		out[13] = 0f
-		out[2] = 2f * (xz - yw)
-		out[6] = 2f * (yz + xw)
-		out[10] = 1f - 2f * (xx + yy)
-		out[14] = 0f
-		out[3] = 0f
-		out[7] = 0f
-		out[11] = 0f
-		out[15] = 1f
 	}
 
 	/**

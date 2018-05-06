@@ -134,6 +134,10 @@ fun Float.closeTo(other: Float, tolerance: Float = 0.0001f): Boolean {
 	return MathUtils.abs(this - other) <= tolerance
 }
 
+fun Double.closeTo(other: Double, tolerance: Double = 0.0001): Boolean {
+	return MathUtils.abs(this - other) <= tolerance
+}
+
 fun Boolean.toInt(): Int {
 	return if (this) 1 else 0
 }

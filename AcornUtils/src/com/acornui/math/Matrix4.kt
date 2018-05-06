@@ -860,8 +860,8 @@ data class Matrix4(
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun rotate(rotation: QuaternionRo): Matrix4 {
-		rotation.toMatrix(tmp)
-		mul(values, tmp)
+		tmpMat.set(rotation)
+		mul(values, tmpMat.values)
 		return this
 	}
 
