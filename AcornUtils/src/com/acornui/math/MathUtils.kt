@@ -136,17 +136,17 @@ object MathUtils {
 	val nanoToSec: Float = 1 / 1000000000f
 
 	// ---
-	val FLOAT_ROUNDING_ERROR: Float = 0.000001f // 32 bits
+	const val FLOAT_ROUNDING_ERROR: Float = 0.000001f // 32 bits
 
 	/**
 	 * multiply by this to convert from radians to degrees
 	 */
-	val radDeg: Float = 180f / PI
+	const val radDeg: Float = 180f / PI
 
 	/**
 	 * multiply by this to convert from degrees to radians
 	 */
-	val degRad: Float = PI / 180f
+	const val degRad: Float = PI / 180f
 
 	/**
 	 * Returns the sine in radians from a lookup table.
@@ -170,41 +170,41 @@ object MathUtils {
 
 	// ---
 
-	var _rng: Random = Random()
+	val rng: Random = Random()
 
 	/**
 	 * Returns a random number between 0 (inclusive) and the specified value (inclusive).
 	 */
 	fun random(range: Int): Int {
-		return _rng.nextInt(range + 1)
+		return rng.nextInt(range + 1)
 	}
 
 	/**
 	 * Returns a random number between start (inclusive) and end (inclusive).
 	 */
 	fun random(start: Int, end: Int): Int {
-		return start + _rng.nextInt(end - start + 1)
+		return start + rng.nextInt(end - start + 1)
 	}
 
 	/**
 	 * Returns a random number between 0 (inclusive) and the specified value (inclusive).
 	 */
 	fun random(range: Long): Long {
-		return (_rng.nextDouble() * range.toDouble()).toLong()
+		return (rng.nextDouble() * range.toDouble()).toLong()
 	}
 
 	/**
 	 * Returns a random number between start (inclusive) and end (inclusive).
 	 */
 	fun random(start: Long, end: Long): Long {
-		return start + (_rng.nextDouble() * (end - start).toDouble()).toLong()
+		return start + (rng.nextDouble() * (end - start).toDouble()).toLong()
 	}
 
 	/**
 	 * Returns a random boolean value.
 	 */
 	fun randomBoolean(): Boolean {
-		return _rng.nextBoolean()
+		return rng.nextBoolean()
 	}
 
 	/**
@@ -218,28 +218,28 @@ object MathUtils {
 	 * Returns random number between 0.0 (inclusive) and 1.0 (exclusive).
 	 */
 	fun random(): Float {
-		return _rng.nextFloat()
+		return rng.nextFloat()
 	}
 
 	/**
 	 * Returns a random number between 0 (inclusive) and the specified value (exclusive).
 	 */
 	fun random(range: Float): Float {
-		return _rng.nextFloat() * range
+		return rng.nextFloat() * range
 	}
 
 	/**
 	 * Returns a random number between start (inclusive) and end (exclusive).
 	 */
 	fun random(start: Float, end: Float): Float {
-		return start + _rng.nextFloat() * (end - start)
+		return start + rng.nextFloat() * (end - start)
 	}
 
 	/**
 	 * Returns -1 or 1, randomly.
 	 */
 	fun randomSign(): Int {
-		return 1 or (_rng.nextInt() shr 31)
+		return 1 or (rng.nextInt() shr 31)
 	}
 
 	/**
@@ -248,7 +248,7 @@ object MathUtils {
 	 * This is an optimized version of {@link #randomTriangular(float, float, float) randomTriangular(-1, 1, 0)}
 	 */
 	fun randomTriangular(): Float {
-		return _rng.nextFloat() - _rng.nextFloat()
+		return rng.nextFloat() - rng.nextFloat()
 	}
 
 	/**
@@ -258,7 +258,7 @@ object MathUtils {
 	 * @param max the upper limit
 	 */
 	fun randomTriangular(max: Float): Float {
-		return (_rng.nextFloat() - _rng.nextFloat()) * max
+		return (rng.nextFloat() - rng.nextFloat()) * max
 	}
 
 	/**
@@ -281,7 +281,7 @@ object MathUtils {
 	 * @param mode the point around which the values are more likely
 	 */
 	fun randomTriangular(min: Float, max: Float, mode: Float): Float {
-		val u = _rng.nextFloat()
+		val u = rng.nextFloat()
 		val d = max - min
 		if (u <= (mode - min) / d) return min + MathUtils.sqrt(u * d * (mode - min))
 		return max - MathUtils.sqrt((1 - u) * d * (max - mode))

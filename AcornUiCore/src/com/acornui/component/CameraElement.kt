@@ -60,6 +60,29 @@ interface CameraElementRo : TransformableRo {
 	}
 
 	/**
+	 * Converts a bounding rectangle from window to local coordinates.
+	 * Warning: this does require a matrix inversion calculation, which is a fairly expensive operation.
+	 */
+	fun windowToLocal(minMax: MinMax): MinMax {
+		val tmp1 =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)
+		val tmp2 =  Vector3.obtain().set(minMax.xMax, minMax.yMax, 0f)
+		val tmp =  Vector2.obtain()
+		minMax.inf()
+		windowToLocal(tmp.set(tmp1.x, tmp1.y))
+		minMax.ext(tmp.x, tmp.y)
+		windowToLocal(tmp.set(tmp2.x, tmp1.y))
+		minMax.ext(tmp.x, tmp.y)
+		windowToLocal(tmp.set(tmp2.x, tmp2.y))
+		minMax.ext(tmp.x, tmp.y)
+		windowToLocal(tmp.set(tmp1.x, tmp2.y))
+		minMax.ext(tmp.x, tmp.y)
+		Vector3.free(tmp1)
+		Vector3.free(tmp2)
+		Vector2.free(tmp)
+		return minMax
+	}
+
+	/**
 	 * Returns the camera to be used for this component.
 	 * camera.
 	 */

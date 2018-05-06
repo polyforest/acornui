@@ -21,14 +21,11 @@ package com.acornui.math
 import com.acornui.core.LONG_MAX_VALUE
 import com.acornui.core.LONG_MIN_VALUE
 
-// TODO: This is probably slow in JS due to Long objects.
-
-
 /**
- * This class implements the xorshift128+ algorithm that is a very fast, top-quality 64-bit pseudo-random number generator. The
- * quality of this PRNG is much higher than {@link Random}'s, and its cycle length is 2<sup>128</sup>&nbsp;&minus;&nbsp;1, which
- * is more than enough for any single-thread application. More details and algorithms can be found <a
- * href="http://xorshift.di.unimi.it/">here</a>.
+ * This class implements the xorshift128+ algorithm that is a very fast, top-quality 64-bit pseudo-random number
+ * generator. The quality of this PRNG is much higher than {@link Random}'s, and its cycle length is
+ * 2<sup>128</sup>&nbsp;&minus;&nbsp;1, which is more than enough for any single-thread application. More details and
+ * algorithms can be found <a href="http://xorshift.di.unimi.it/">here</a>.
  * <p>
  * Instances of RandomXS128 are not thread-safe.
  *
@@ -57,12 +54,12 @@ open class Random(var seed0: Long = 0, var seed1: Long = 0) {
 		/**
 		 * Normalization constant for double.
 		 */
-		private val NORM_DOUBLE = 1.0 / (1 shl 53).toDouble()
+		private const val NORM_DOUBLE = 1.0 / (1 shl 53).toDouble()
 
 		/**
 		 * Normalization constant for float.
 		 */
-		private val NORM_FLOAT = 1.0 / (1 shl 24).toDouble()
+		private const val NORM_FLOAT = 1.0 / (1 shl 24).toDouble()
 
 		private fun murmurHash3(x: Long): Long {
 			var xV = x

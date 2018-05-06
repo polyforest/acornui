@@ -478,9 +478,9 @@ data class Matrix4(
 	 * @throws RuntimeException if the matrix is singular (not invertible)
 	 */
 	fun inv(): Matrix4 {
-		val l_det = det()
-		if (l_det == 0f) throw RuntimeException("non-invertible matrix")
-		val inv_det = 1f / l_det
+		val lDet = det()
+		if (lDet == 0f) throw RuntimeException("non-invertible matrix")
+		val invDet = 1f / lDet
 		tmp[0] = values[9] * values[14] * values[7] - values[13] * values[10] * values[7] + values[13] * values[6] * values[11] - values[5] * values[14] * values[11] - values[9] * values[6] * values[15] + values[5] * values[10] * values[15]
 		tmp[4] = values[12] * values[10] * values[7] - values[8] * values[14] * values[7] - values[12] * values[6] * values[11] + values[4] * values[14] * values[11] + values[8] * values[6] * values[15] - values[4] * values[10] * values[15]
 		tmp[8] = values[8] * values[13] * values[7] - values[12] * values[9] * values[7] + values[12] * values[5] * values[11] - values[4] * values[13] * values[11] - values[8] * values[5] * values[15] + values[4] * values[9] * values[15]
@@ -497,22 +497,22 @@ data class Matrix4(
 		tmp[7] = values[4] * values[10] * values[3] - values[8] * values[6] * values[3] + values[8] * values[2] * values[7] - values[0] * values[10] * values[7] - values[4] * values[2] * values[11] + values[0] * values[6] * values[11]
 		tmp[11] = values[8] * values[5] * values[3] - values[4] * values[9] * values[3] - values[8] * values[1] * values[7] + values[0] * values[9] * values[7] + values[4] * values[1] * values[11] - values[0] * values[5] * values[11]
 		tmp[15] = values[4] * values[9] * values[2] - values[8] * values[5] * values[2] + values[8] * values[1] * values[6] - values[0] * values[9] * values[6] - values[4] * values[1] * values[10] + values[0] * values[5] * values[10]
-		values[0] = tmp[0] * inv_det
-		values[4] = tmp[4] * inv_det
-		values[8] = tmp[8] * inv_det
-		values[12] = tmp[12] * inv_det
-		values[1] = tmp[1] * inv_det
-		values[5] = tmp[5] * inv_det
-		values[9] = tmp[9] * inv_det
-		values[13] = tmp[13] * inv_det
-		values[2] = tmp[2] * inv_det
-		values[6] = tmp[6] * inv_det
-		values[10] = tmp[10] * inv_det
-		values[14] = tmp[14] * inv_det
-		values[3] = tmp[3] * inv_det
-		values[7] = tmp[7] * inv_det
-		values[11] = tmp[11] * inv_det
-		values[15] = tmp[15] * inv_det
+		values[0] = tmp[0] * invDet
+		values[4] = tmp[4] * invDet
+		values[8] = tmp[8] * invDet
+		values[12] = tmp[12] * invDet
+		values[1] = tmp[1] * invDet
+		values[5] = tmp[5] * invDet
+		values[9] = tmp[9] * invDet
+		values[13] = tmp[13] * invDet
+		values[2] = tmp[2] * invDet
+		values[6] = tmp[6] * invDet
+		values[10] = tmp[10] * invDet
+		values[14] = tmp[14] * invDet
+		values[3] = tmp[3] * invDet
+		values[7] = tmp[7] * invDet
+		values[11] = tmp[11] * invDet
+		values[15] = tmp[15] * invDet
 		return this
 	}
 
