@@ -18,6 +18,8 @@
 
 package com.acornui.math
 
+import com.acornui.core.closeTo
+
 interface QuaternionRo {
 
 	val x: Float
@@ -168,6 +170,14 @@ interface QuaternionRo {
 		v.y = tmp2.y
 		v.z = tmp2.z
 		return v
+	}
+
+	fun closeTo(other: QuaternionRo?, epsilon: Float = 0.0001f): Boolean {
+		if (other == null) return false
+		return x.closeTo(other.x, epsilon) &&
+				y.closeTo(other.y, epsilon) &&
+				z.closeTo(other.z, epsilon) &&
+				w.closeTo(other.w, epsilon)
 	}
 
 	companion object {

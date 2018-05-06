@@ -19,6 +19,7 @@
 package com.acornui.math
 
 import com.acornui.collection.ArrayList
+import com.acornui.collection.copy
 
 interface Matrix4Ro {
 
@@ -60,14 +61,7 @@ interface Matrix4Ro {
 	 * @param normalizeAxes True to normalize the axes, necessary when the matrix might also include scaling.
 	 * @return The provided {@link Quaternion} for chaining.
 	 */
-	fun getRotation(out: Quaternion, normalizeAxes: Boolean): Quaternion
-
-	/**
-	 * Gets the rotation of this matrix.
-	 * @param out The {@link Quaternion} to receive the rotation
-	 * @return The provided {@link Quaternion} for chaining.
-	 */
-	fun getRotation(out: Quaternion): Quaternion
+	fun getRotation(out: Quaternion, normalizeAxes: Boolean = false): Quaternion
 
 	/**
 	 * @return the squared scale factor on the X axis
@@ -135,9 +129,18 @@ interface Matrix4Ro {
 
 	/**
 	 * Copies the 4x3 upper-left sub-matrix into float array. The destination array is supposed to be a column major matrix.
-	 * @param dst the destination matrix
+	 * @param out the destination matrix
+	 * @return Returns the [out] parameter.
 	 */
-	fun extract4x3Matrix(dst: MutableList<Float>)
+	fun extract4x3Matrix(out: MutableList<Float>): MutableList<Float>
+
+	/**
+	 * Copies this matrix. Note that the [values] list will be copied as well and the new Matrix will not back the
+	 * same list.
+	 */
+	fun copy(): Matrix4 {
+		return Matrix4(values.copy())
+	}
 
 }
 
@@ -629,18 +632,6 @@ data class Matrix4(
 	}
 
 	/**
-	 * Linearly interpolates between this matrix and the given matrix mixing by alpha
-	 * @param matrix the matrix
-	 * @param alpha the alpha value in the range [0,1]
-	 * @return This matrix for the purpose of chaining methods together.
-	 */
-	fun lerp(matrix: Matrix3Ro, alpha: Float): Matrix4 {
-		for (i in 0..16 - 1)
-			this.values[i] = this.values[i] * (1 - alpha) + matrix.values[i] * alpha
-		return this
-	}
-
-	/**
 	 * Sets this matrix to the given 3x3 matrix. The third column of this matrix is set to (0,0,1,0).
 	 * @param mat the matrix
 	 */
@@ -712,15 +703,6 @@ data class Matrix4(
 	 */
 	override fun getRotation(out: Quaternion, normalizeAxes: Boolean): Quaternion {
 		return out.setFromMatrix(this, normalizeAxes)
-	}
-
-	/**
-	 * Gets the rotation of this matrix.
-	 * @param out The {@link Quaternion} to receive the rotation
-	 * @return The provided {@link Quaternion} for chaining.
-	 */
-	override fun getRotation(out: Quaternion): Quaternion {
-		return out.setFromMatrix(this)
 	}
 
 	/**
@@ -894,21 +876,22 @@ data class Matrix4(
 
 	/**
 	 * Copies the 4x3 upper-left sub-matrix into float array. The destination array is supposed to be a column major matrix.
-	 * @param dst the destination matrix
+	 * @param out the destination matrix
 	 */
-	override fun extract4x3Matrix(dst: MutableList<Float>) {
-		dst[0] = values[0]
-		dst[1] = values[1]
-		dst[2] = values[2]
-		dst[3] = values[4]
-		dst[4] = values[5]
-		dst[5] = values[6]
-		dst[6] = values[8]
-		dst[7] = values[9]
-		dst[8] = values[10]
-		dst[9] = values[12]
-		dst[10] = values[13]
-		dst[11] = values[14]
+	override fun extract4x3Matrix(out: MutableList<Float>): MutableList<Float> {
+		out[0] = values[0]
+		out[1] = values[1]
+		out[2] = values[2]
+		out[3] = values[4]
+		out[4] = values[5]
+		out[5] = values[6]
+		out[6] = values[8]
+		out[7] = values[9]
+		out[8] = values[10]
+		out[9] = values[12]
+		out[10] = values[13]
+		out[11] = values[14]
+		return out
 	}
 
 	/**
