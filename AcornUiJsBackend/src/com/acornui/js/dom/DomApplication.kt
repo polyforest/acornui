@@ -24,10 +24,10 @@ import com.acornui.component.text.TextArea
 import com.acornui.component.text.TextField
 import com.acornui.component.text.TextInput
 import com.acornui.core.AppConfig
-import com.acornui.core.assets.AssetManager
 import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.LoaderFactory
 import com.acornui.core.di.Owned
+import com.acornui.core.di.own
 import com.acornui.core.focus.FakeFocusMouse
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.graphics.Window
@@ -59,7 +59,7 @@ open class DomApplication(
 		set(CANVAS, canvas)
 	}
 
-	open protected val cssTask by BootTask {
+	protected open val cssTask by BootTask {
 		val e = document.createElement("style") as HTMLStyleElement
 		e.type = "text/css"
 		// language=CSS
@@ -124,6 +124,6 @@ open class DomApplication(
 
 	override suspend fun initializeSpecialInteractivity(owner: Owned) {
 		super.initializeSpecialInteractivity(owner)
-		FakeFocusMouse(owner.injector)
+		owner.own(FakeFocusMouse(owner.injector))
 	}
 }

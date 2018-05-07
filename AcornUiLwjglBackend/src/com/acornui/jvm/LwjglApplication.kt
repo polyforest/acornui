@@ -358,11 +358,11 @@ open class LwjglApplication : ApplicationBase() {
 	}
 
 	protected open fun initializeSpecialInteractivity(owner: Owned) {
-		JvmClickDispatcher(owner.injector)
-		FakeFocusMouse(owner.injector)
-		JvmClipboardDispatcher(owner.injector, _windowId)
-		UndoDispatcher(owner.injector)
-		ContextMenuManager(owner)
+		owner.own(JvmClickDispatcher(owner.injector))
+		owner.own(FakeFocusMouse(owner.injector))
+		owner.own(JvmClipboardDispatcher(owner.injector, _windowId))
+		owner.own(UndoDispatcher(owner.injector))
+		owner.own(ContextMenuManager(owner))
 	}
 
 	override fun dispose() {

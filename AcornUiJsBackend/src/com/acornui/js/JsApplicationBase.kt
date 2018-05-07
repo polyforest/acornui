@@ -345,9 +345,9 @@ Function.prototype.bind = function() {
 	}
 
 	protected open suspend fun initializeSpecialInteractivity(owner: Owned) {
-		JsClipboardDispatcher(owner.inject(CANVAS), owner.injector)
-		UndoDispatcher(owner.injector)
-		ContextMenuManager(owner)
+		owner.own(JsClipboardDispatcher(owner.inject(CANVAS), owner.injector))
+		owner.own(UndoDispatcher(owner.injector))
+		owner.own(ContextMenuManager(owner))
 	}
 
 	private fun memberRefTest() {}

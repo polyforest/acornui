@@ -29,6 +29,7 @@ import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.LoaderFactory
 import com.acornui.core.di.Owned
 import com.acornui.core.di.dKey
+import com.acornui.core.di.own
 import com.acornui.core.focus.FakeFocusMouse
 import com.acornui.core.graphics.Window
 import com.acornui.gl.component.*
@@ -133,8 +134,8 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 
 	override suspend fun initializeSpecialInteractivity(owner: Owned) {
 		super.initializeSpecialInteractivity(owner)
-		FakeFocusMouse(owner.injector)
-		JsClickDispatcher(get(CANVAS), owner.injector)
+		owner.own(FakeFocusMouse(owner.injector))
+		owner.own(JsClickDispatcher(get(CANVAS), owner.injector))
 	}
 	
 	companion object {
