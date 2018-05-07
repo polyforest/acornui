@@ -19,6 +19,7 @@ package com.acornui.core.input.interaction
 import com.acornui.component.Stage
 import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuse
+import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
@@ -44,7 +45,7 @@ fun UiComponentRo.redo(isCapture: Boolean = false): StoppableSignal<UndoInteract
 	return createOrReuse(UndoInteractionRo.REDO, isCapture)
 }
 
-class UndoDispatcher(override val injector: Injector) : Scoped {
+class UndoDispatcher(override val injector: Injector) : Scoped, Disposable {
 
 	private val key = inject(KeyInput)
 	private val interactivity = inject(InteractivityManager)
@@ -53,26 +54,28 @@ class UndoDispatcher(override val injector: Injector) : Scoped {
 
 	private val event = UndoInteraction()
 
-	init {
-		//val history = stateCommandHistory()
-
-		// UNDO / REDO
-		// TODO: Mac
-		key.keyDown.add { e ->
-			if (!e.handled) {
-				if (e.ctrlKey && (e.keyCode == Ascii.Y || (e.shiftKey && e.keyCode == Ascii.Z))) {
-					e.handled = true
-					event.clear()
-					event.type = UndoInteractionRo.REDO
-					interactivity.dispatch(focus.focused() ?: stage, event)
-				} else if (e.ctrlKey && e.keyCode == Ascii.Z) {
-					e.handled = true
-					event.clear()
-					event.type = UndoInteractionRo.UNDO
-					interactivity.dispatch(focus.focused() ?: stage, event)
-				}
+	private val keyDownHandler =  { e: KeyInteractionRo ->
+		if (!e.handled) {
+			if (e.ctrlKey && (e.keyCode == Ascii.Y || (e.shiftKey && e.keyCode == Ascii.Z))) {
+				e.handled = true
+				event.clear()
+				event.type = UndoInteractionRo.REDO
+				interactivity.dispatch(focus.focused() ?: stage, event)
+			} else if (e.ctrlKey && e.keyCode == Ascii.Z) {
+				e.handled = true
+				event.clear()
+				event.type = UndoInteractionRo.UNDO
+				interactivity.dispatch(focus.focused() ?: stage, event)
 			}
 		}
 	}
 
+	init {
+		// TODO: Mac
+		key.keyDown.add(keyDownHandler)
+	}
+
+	override fun dispose() {
+		key.keyDown.remove(keyDownHandler)
+	}
 }
