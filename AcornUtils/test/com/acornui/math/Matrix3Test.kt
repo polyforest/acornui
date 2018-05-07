@@ -186,7 +186,7 @@ class Matrix3Test {
 	fun copy() {
 		val copy = m1.copy()
 		assertListEquals(m1.values, copy.values)
-		assertFalse(m1 === copy)
+		assertFalse(m1.values === copy.values)
 	}
 
 

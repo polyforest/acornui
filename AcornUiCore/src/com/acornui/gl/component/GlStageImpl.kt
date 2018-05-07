@@ -32,7 +32,7 @@ import com.acornui.math.MinMaxRo
  */
 open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(owner), FocusContainer, Focusable {
 
-	override final val style = bind(StageStyle())
+	final override val style = bind(StageStyle())
 
 	private val gl = inject(Gl20)
 	private val glState = inject(GlState)

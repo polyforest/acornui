@@ -2,6 +2,7 @@ package com.acornui.geom
 
 import com.acornui._assert
 import com.acornui.collection.addAll2
+import com.acornui.collection.copy
 import com.acornui.math.*
 import com.acornui.serialization.*
 
@@ -52,7 +53,7 @@ class Polygon2(initialCapacity: Int = 16) : Polygon2Ro {
 	}
 
 	override fun copy(): Polygon2 {
-		return Polygon2(vertices)
+		return Polygon2(vertices.copy())
 	}
 
 	private var _bounds: MinMax? = null
@@ -391,6 +392,13 @@ interface CollisionInfoRo {
 	val numPoints: Int
 	val midA: Vector2Ro
 	val midB: Vector2Ro
+
+	fun copy(): CollisionInfo {
+		val info = CollisionInfo(contactA.copy(), contactA2.copy(), contactB.copy(), contactB2.copy(), numPoints)
+		info.midA.set(midA)
+		info.midB.set(midB)
+		return info
+	}
 }
 
 data class CollisionInfo(

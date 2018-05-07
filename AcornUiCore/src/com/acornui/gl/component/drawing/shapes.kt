@@ -2,7 +2,6 @@ package com.acornui.gl.component.drawing
 
 import com.acornui._assert
 import com.acornui.math.*
-import com.acornui.math.Vector2.Companion
 
 private val v1 = Vector2()
 private val v2 = Vector2()

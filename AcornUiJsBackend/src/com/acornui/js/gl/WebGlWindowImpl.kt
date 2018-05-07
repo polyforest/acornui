@@ -24,7 +24,6 @@ import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.js.window.JsLocation
 import com.acornui.logging.Log
-import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
@@ -166,7 +165,7 @@ open class WebGlWindowImpl(
 	override val scaleY: Float
 		get() = 1f
 
-	override fun setSize(width: Float, height: Float, isUserInteraction: Boolean) {
+	final override fun setSize(width: Float, height: Float, isUserInteraction: Boolean) {
 		if (_width == width && _height == height) return // no-op
 		_width = width
 		_height = height

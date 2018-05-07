@@ -11,6 +11,7 @@ class Polygon2Test {
 		val p1 = Polygon2(listOf(1f, 2f, 3f, 4f))
 		val p2 = p1.copy()
 		assertTrue(p1 !== p2)
+		assertTrue(p1.vertices !== p2.vertices)
 		assertListEquals(p1.vertices, p2.vertices)
 	}
 

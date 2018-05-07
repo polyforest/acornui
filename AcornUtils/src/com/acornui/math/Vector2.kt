@@ -107,7 +107,7 @@ interface Vector2Ro {
  * Encapsulates a 2D vector. Allows chaining methods by returning a reference to itself
  * @author badlogicgames@gmail.com
  */
-class Vector2(
+data class Vector2(
 
 		/**
 		 * The x-component of this vector
@@ -220,18 +220,6 @@ class Vector2(
 	fun scl(v: Vector2Ro): Vector2 {
 		this.x *= v.x
 		this.y *= v.y
-		return this
-	}
-
-	fun mulAdd(vec: Vector2Ro, scalar: Float): Vector2 {
-		this.x += vec.x * scalar
-		this.y += vec.y * scalar
-		return this
-	}
-
-	fun mulAdd(vec: Vector2Ro, mulVec: Vector2Ro): Vector2 {
-		this.x += vec.x * mulVec.x
-		this.y += vec.y * mulVec.y
 		return this
 	}
 
@@ -481,24 +469,6 @@ class Vector2(
 	@Deprecated("Use Vector2.free", ReplaceWith("Vector2.free(this)"))
 	fun free() {
 		pool.free(this)
-	}
-
-	override fun equals(other: Any?): Boolean {
-		if (this === other) return true
-		if (other !is Vector2) return false
-		if (x != other.x) return false
-		if (y != other.y) return false
-		return true
-	}
-
-	override fun hashCode(): Int {
-		var result = x.hashCode()
-		result = 31 * result + y.hashCode()
-		return result
-	}
-
-	override fun toString(): String {
-		return "[x=$x, y=$y]"
 	}
 
 	companion object {

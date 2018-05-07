@@ -23,8 +23,7 @@ import com.acornui.serialization.*
  */
 data class FilesManifest(
 		val files: List<ManifestEntry>
-) {
-}
+)
 
 object FilesManifestSerializer : To<FilesManifest>, From<FilesManifest> {
 	override fun FilesManifest.write(writer: Writer) {

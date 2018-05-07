@@ -29,7 +29,7 @@ interface RayRo {
 
 	/**
 	 * 1f / direction
-	 * Must call [update] before this is valid.
+	 * Mutable owners must call [Ray.update] before this is valid.
 	 */
 	val directionInv: Vector3Ro
 
@@ -71,6 +71,13 @@ interface RayRo {
 	 * @return True in case an intersection is present.
 	 */
 	fun intersects(v1: Vector3Ro, v2: Vector3Ro, v3: Vector3Ro, out: Vector3? = null): Boolean
+
+	fun copy(): Ray {
+		val r = Ray(origin.copy(), direction.copy())
+		r.update()
+		return r
+	}
+
 }
 
 /**
@@ -222,16 +229,16 @@ data class Ray(
 	 */
 	override fun intersects(plane: PlaneRo, out: Vector3?): Boolean {
 		val denom = direction.dot(plane.normal)
-		if (denom != 0f) {
+		return if (denom != 0f) {
 			val t = -(origin.dot(plane.normal) + plane.d) / denom
 			if (t < 0) return false
 			out?.set(origin)?.add(v3_0.set(direction).scl(t))
-			return true
+			true
 		} else if (plane.testPoint(origin) === PlaneSide.ON_PLANE) {
 			out?.set(origin)
-			return true
+			true
 		} else
-			return false
+			false
 	}
 
 	/**
@@ -268,11 +275,6 @@ data class Ray(
 		} else {
 			false
 		}
-	}
-
-	@Deprecated("Use Ray.free", ReplaceWith("Ray.free(this)"), DeprecationLevel.ERROR)
-	fun free() {
-		pool.free(this)
 	}
 
 	override fun clear() {

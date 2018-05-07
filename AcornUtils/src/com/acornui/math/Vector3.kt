@@ -122,7 +122,7 @@ interface Vector3Ro {
  * Encapsulates a 3D vector. Allows chaining operations by returning a reference to itself in all modification methods.
  * @author badlogicgames@gmail.com
  */
-class Vector3 (
+data class Vector3 (
 
 		/**
 		 * The x-component of this vector
@@ -253,20 +253,6 @@ class Vector3 (
 		return this.set(this.x * vx, this.y * vy, this.z * vz)
 	}
 
-	fun mulAdd(vec: Vector3Ro, scalar: Float): Vector3 {
-		this.x += vec.x * scalar
-		this.y += vec.y * scalar
-		this.z += vec.z * scalar
-		return this
-	}
-
-	fun mulAdd(vec: Vector3Ro, mulVec: Vector3Ro): Vector3 {
-		this.x += vec.x * mulVec.x
-		this.y += vec.y * mulVec.y
-		this.z += vec.z * mulVec.z
-		return this
-	}
-
 	override fun len(): Float {
 		return MathUtils.sqrt(x * x + y * y + z * z)
 	}
@@ -385,11 +371,11 @@ class Vector3 (
 	 * @return This vector for chaining
 	 */
 	fun mul(matrix: Matrix4Ro): Vector3 {
-		val l_mat = matrix.values
+		val lMat = matrix.values
 		return set(
-				x * l_mat[0] + y * l_mat[4] + z * l_mat[8] + l_mat[12],
-				x * l_mat[1] + y * l_mat[5] + z * l_mat[9] + l_mat[13],
-				x * l_mat[2] + y * l_mat[6] + z * l_mat[10] + l_mat[14])
+				x * lMat[0] + y * lMat[4] + z * lMat[8] + lMat[12],
+				x * lMat[1] + y * lMat[5] + z * lMat[9] + lMat[13],
+				x * lMat[2] + y * lMat[6] + z * lMat[10] + lMat[14])
 	}
 
 	/**
@@ -398,8 +384,8 @@ class Vector3 (
 	 * @return This vector for chaining
 	 */
 	fun traMul(matrix: Matrix4Ro): Vector3 {
-		val l_mat = matrix.values
-		return this.set(x * l_mat[0] + y * l_mat[1] + z * l_mat[2] + l_mat[3], x * l_mat[4] + y * l_mat[5] + z * l_mat[6] + l_mat[7], x * l_mat[8] + y * l_mat[9] + z * l_mat[10] + l_mat[11])
+		val lMat = matrix.values
+		return this.set(x * lMat[0] + y * lMat[1] + z * lMat[2] + lMat[3], x * lMat[4] + y * lMat[5] + z * lMat[6] + lMat[7], x * lMat[8] + y * lMat[9] + z * lMat[10] + lMat[11])
 	}
 
 	/**
@@ -408,8 +394,8 @@ class Vector3 (
 	 * @return This vector for chaining
 	 */
 	fun mul(matrix: Matrix3Ro): Vector3 {
-		val l_mat = matrix.values
-		return set(x * l_mat[Matrix3.M00] + y * l_mat[Matrix3.M01] + z * l_mat[Matrix3.M02], x * l_mat[Matrix3.M10] + y * l_mat[Matrix3.M11] + z * l_mat[Matrix3.M12], x * l_mat[Matrix3.M20] + y * l_mat[Matrix3.M21] + z * l_mat[Matrix3.M22])
+		val lMat = matrix.values
+		return set(x * lMat[Matrix3.M00] + y * lMat[Matrix3.M01] + z * lMat[Matrix3.M02], x * lMat[Matrix3.M10] + y * lMat[Matrix3.M11] + z * lMat[Matrix3.M12], x * lMat[Matrix3.M20] + y * lMat[Matrix3.M21] + z * lMat[Matrix3.M22])
 	}
 
 	/**
@@ -418,8 +404,8 @@ class Vector3 (
 	 * @return This vector for chaining
 	 */
 	fun traMul(matrix: Matrix3Ro): Vector3 {
-		val l_mat = matrix.values
-		return set(x * l_mat[Matrix3.M00] + y * l_mat[Matrix3.M10] + z * l_mat[Matrix3.M20], x * l_mat[Matrix3.M01] + y * l_mat[Matrix3.M11] + z * l_mat[Matrix3.M21], x * l_mat[Matrix3.M02] + y * l_mat[Matrix3.M12] + z * l_mat[Matrix3.M22])
+		val lMat = matrix.values
+		return set(x * lMat[Matrix3.M00] + y * lMat[Matrix3.M10] + z * lMat[Matrix3.M20], x * lMat[Matrix3.M01] + y * lMat[Matrix3.M11] + z * lMat[Matrix3.M21], x * lMat[Matrix3.M02] + y * lMat[Matrix3.M12] + z * lMat[Matrix3.M22])
 	}
 
 	/**
@@ -437,8 +423,8 @@ class Vector3 (
 	 * @return This vector for chaining
 	 */
 	fun rot(matrix: Matrix4Ro): Vector3 {
-		val l_mat = matrix.values
-		return this.set(x * l_mat[0] + y * l_mat[4] + z * l_mat[8], x * l_mat[1] + y * l_mat[5] + z * l_mat[9], x * l_mat[2] + y * l_mat[6] + z * l_mat[10])
+		val lMat = matrix.values
+		return this.set(x * lMat[0] + y * lMat[4] + z * lMat[8], x * lMat[1] + y * lMat[5] + z * lMat[9], x * lMat[2] + y * lMat[6] + z * lMat[10])
 	}
 
 	/**
@@ -448,8 +434,8 @@ class Vector3 (
 	 * @return The vector for chaining
 	 */
 	fun unrotate(matrix: Matrix4Ro): Vector3 {
-		val l_mat = matrix.values
-		return this.set(x * l_mat[0] + y * l_mat[1] + z * l_mat[2], x * l_mat[4] + y * l_mat[5] + z * l_mat[6], x * l_mat[8] + y * l_mat[9] + z * l_mat[10])
+		val lMat = matrix.values
+		return this.set(x * lMat[0] + y * lMat[1] + z * lMat[2], x * lMat[4] + y * lMat[5] + z * lMat[6], x * lMat[8] + y * lMat[9] + z * lMat[10])
 	}
 
 	/**
@@ -460,11 +446,11 @@ class Vector3 (
 	 * @return The vector for chaining
 	 */
 	fun untransform(matrix: Matrix4Ro): Vector3 {
-		val l_mat = matrix.values
-		x -= l_mat[12]
-		y -= l_mat[12]
-		z -= l_mat[12]
-		return this.set(x * l_mat[0] + y * l_mat[1] + z * l_mat[2], x * l_mat[4] + y * l_mat[5] + z * l_mat[6], x * l_mat[8] + y * l_mat[9] + z * l_mat[10])
+		val lMat = matrix.values
+		x -= lMat[12]
+		y -= lMat[12]
+		z -= lMat[12]
+		return this.set(x * lMat[0] + y * lMat[1] + z * lMat[2], x * lMat[4] + y * lMat[5] + z * lMat[6], x * lMat[8] + y * lMat[9] + z * lMat[10])
 	}
 
 	/**
@@ -630,26 +616,6 @@ class Vector3 (
 	@Deprecated("Use Vector3.free", ReplaceWith("Vector3.free(this)"))
 	fun free() {
 		pool.free(this)
-	}
-
-	override fun equals(other: Any?): Boolean {
-		if (this === other) return true
-		if (other !is Vector3) return false
-		if (x != other.x) return false
-		if (y != other.y) return false
-		if (z != other.z) return false
-		return true
-	}
-
-	override fun hashCode(): Int {
-		var result = x.hashCode()
-		result = 31 * result + y.hashCode()
-		result = 31 * result + z.hashCode()
-		return result
-	}
-
-	override fun toString(): String {
-		return "[x=$x, y=$y, z=$z]"
 	}
 
 	companion object {
