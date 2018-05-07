@@ -134,7 +134,7 @@ class GlScrollRect(
 		return maskClip.intersectsGlobalRay(globalRay, intersection)
 	}
 
-	private val corners = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
+	private val localViewport = MinMax()
 
 	override fun draw(viewport: MinMaxRo) {
 		StencilUtil.mask(glState.batch, gl, {
@@ -142,16 +142,10 @@ class GlScrollRect(
 				maskClip.render(viewport)
 			}
 		}) {
-			localToWindow(corners[0].set(0f, 0f, 0f))
-			localToWindow(corners[1].set(_bounds.width, 0f, 0f))
-			localToWindow(corners[2].set(_bounds.width, _bounds.height, 0f))
-			localToWindow(corners[3].set(0f, _bounds.height, 0f))
-			val minX = minOf4(corners[0].x, corners[1].x, corners[2].x, corners[3].x)
-			val minY = minOf4(corners[0].y, corners[1].y, corners[2].y, corners[3].y)
-			val maxX = maxOf4(corners[0].x, corners[1].x, corners[2].x, corners[3].x)
-			val maxY = maxOf4(corners[0].y, corners[1].y, corners[2].y, corners[3].y)
+			localToWindow(localViewport.set(0f, 0f, _bounds.width, _bounds.height))
+			localViewport.intersection(viewport)
 
-			contents.render(viewport)
+			contents.render(localViewport)
 		}
 	}
 }

@@ -27,8 +27,12 @@ interface MinMaxRo {
 	val yMax: Float
 	val width: Float
 	val height: Float
-	fun isEmpty(): Boolean
-	fun isNotEmpty(): Boolean
+
+	fun isEmpty(): Boolean {
+		return xMax <= xMin || yMax <= yMin
+	}
+
+	fun isNotEmpty(): Boolean = !isEmpty()
 
 	fun intersects(other: MinMaxRo): Boolean {
 		return (xMax > other.xMin && yMax > other.yMin && xMin < other.xMax && yMin < other.yMax)
@@ -36,6 +40,17 @@ interface MinMaxRo {
 
 	fun contains(x: Float, y: Float): Boolean {
 		return x > xMin && y > yMin && x < xMax && y < yMax
+	}
+
+	/**
+	 * Clamps a 2d vector to these bounds.
+	 */
+	fun clampPoint(value: Vector2): Vector2 {
+		if (value.x < xMin) value.x = xMin
+		if (value.y < yMin) value.y = yMin
+		if (value.x > xMax) value.x = xMax
+		if (value.y > yMax) value.y = yMax
+		return value
 	}
 
 	companion object {
@@ -48,21 +63,21 @@ interface MinMaxRo {
 		/**
 		 * Infinitely positive size.
 		 */
-		val POSITIVE_INFINITY: MinMaxRo = MinMax(Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY)
+		val POSITIVE_INFINITY: MinMaxRo = MinMax(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
 	}
 }
 
 data class MinMax(
 		override var xMin: Float = Float.POSITIVE_INFINITY,
-		override var xMax: Float = Float.NEGATIVE_INFINITY,
 		override var yMin: Float = Float.POSITIVE_INFINITY,
+		override var xMax: Float = Float.NEGATIVE_INFINITY,
 		override var yMax: Float = Float.NEGATIVE_INFINITY
 ) : MinMaxRo {
 
 	fun inf() {
 		xMin = Float.POSITIVE_INFINITY
-		xMax = Float.NEGATIVE_INFINITY
 		yMin = Float.POSITIVE_INFINITY
+		xMax = Float.NEGATIVE_INFINITY
 		yMax = Float.NEGATIVE_INFINITY
 	}
 
@@ -71,24 +86,18 @@ data class MinMax(
 	 */
 	fun ext(x: Float, y: Float) {
 		if (x < xMin) xMin = x
-		if (x > xMax) xMax = x
 		if (y < yMin) yMin = y
+		if (x > xMax) xMax = x
 		if (y > yMax) yMax = y
 	}
-
-	override fun isEmpty(): Boolean {
-		return xMax <= xMin || yMax <= yMin
-	}
-
-	override fun isNotEmpty(): Boolean = !isEmpty()
 
 	/**
 	 * Scales this value by the given scalars.
 	 */
 	fun scl(x: Float, y: Float) {
 		xMin *= x
-		xMax *= x
 		yMin *= y
+		xMax *= x
 		yMax *= y
 	}
 
@@ -97,8 +106,8 @@ data class MinMax(
 	 */
 	fun inflate(left: Float, top: Float, right: Float, bottom: Float) {
 		xMin -= left
-		xMax += right
 		yMin -= top
+		xMax += right
 		yMax += bottom
 	}
 
@@ -110,8 +119,8 @@ data class MinMax(
 
 	fun set(other: MinMaxRo): MinMax {
 		xMin = other.xMin
-		xMax = other.xMax
 		yMin = other.yMin
+		xMax = other.xMax
 		yMax = other.yMax
 		return this
 	}
@@ -125,13 +134,20 @@ data class MinMax(
 	}
 
 	/**
-	 * Clamps a 2d vector to these bounds.
+	 * Sets this value to be the intersection of this and [other].
 	 */
-	fun clampPoint(value: Vector2) {
-		if (value.x < xMin) value.x = xMin
-		if (value.y < yMin) value.y = yMin
-		if (value.x > xMax) value.x = xMax
-		if (value.y > yMax) value.y = yMax
+	fun intersection(other: MinMaxRo) {
+		xMin = maxOf(xMin, other.xMin)
+		yMin = maxOf(yMin, other.yMin)
+		xMax = minOf(xMax, other.xMax)
+		yMax = minOf(yMax, other.yMax)
 	}
 
+	/**
+	 * Expands this value to include the given [MinMaxRo].
+	 */
+	fun ext(other: MinMaxRo) {
+		ext(other.xMin, other.yMin)
+		ext(other.xMax, other.yMax)
+	}
 }
