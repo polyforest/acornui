@@ -169,8 +169,8 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 	private var _nullRendererFactory: ItemRendererOwner<T>.() -> ListRenderer = { nullItemRenderer() }
 
 	/**
-	 * Sets the nullRenderer factory for this list. The nullRenderer factory is responsible for creating nullRenderers to be used
-	 * in this list.
+	 * Sets the nullRenderer factory for this list. The nullRenderer factory is responsible for creating nullRenderers
+	 * to be used in this list.
 	 */
 	fun nullRendererFactory(value: ItemRendererOwner<T>.() -> ListRenderer) {
 		if (_nullRendererFactory === value) return
@@ -442,7 +442,7 @@ class VirtualListSelection<E : Any>(private val activeRenderers: List<ListItemRe
 	private var data: List<E?> = emptyList()
 
 	fun data(value: List<E?>) {
-		deselectNotContaining(value)
+		deselectNotContaining(value.filterNotNull())
 		data = value
 	}
 
@@ -453,12 +453,9 @@ class VirtualListSelection<E : Any>(private val activeRenderers: List<ListItemRe
 		}
 	}
 
-	override fun onItemSelectionChanged(item: E, selected: Boolean) {
+	override fun onSelectionChanged(oldSelection: Iterable<E>, newSelection: Iterable<E>) {
 		activeRenderers.forEach2 {
-			if (it.data === item) {
-				it.toggled = selected
-				return
-			}
+			it.toggled = getItemIsSelected(it.data!!)
 		}
 	}
 }

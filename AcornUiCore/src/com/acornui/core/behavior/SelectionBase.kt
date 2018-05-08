@@ -19,7 +19,6 @@ package com.acornui.core.behavior
 import com.acornui.collection.Clearable
 import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
-import com.acornui.collection.forEach2
 import com.acornui.core.Disposable
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
@@ -31,12 +30,12 @@ interface SelectionRo<E : Any> {
 	/**
 	 * Dispatched when the selection status of an item has changed via user input.
 	 * The handler should have the signature:
-	 * item: E, newState: Boolean
+	 * oldSelected: List<E>, newSelected: List<E>
 	 */
-	val changed: Signal<(E, Boolean) -> Unit>
+	val changed: Signal<(List<E>, List<E>) -> Unit>
 
 	/**
-	 * The first selected item.
+	 * The first selected item. If there is more than one item selected, this will only return the first.
 	 */
 	val selectedItem: E?
 
@@ -67,9 +66,9 @@ interface Selection<E : Any> : SelectionRo<E>, Clearable {
 	/**
 	 * Dispatched when an item's selection status is about to change via user input. This provides an opportunity to
 	 * cancel the selection change.
-	 * (element, toggled, cancel)
+	 * (oldSelected: List<E>, newSelected: List<E>, cancel)
 	 */
-	val changing: Signal<(E, Boolean, Cancel) -> Unit>
+	val changing: Signal<(List<E>, List<E>, Cancel) -> Unit>
 
 	/**
 	 * Gets the first selected item.
@@ -78,8 +77,7 @@ interface Selection<E : Any> : SelectionRo<E>, Clearable {
 	 */
 	override var selectedItem: E?
 
-	fun setItemIsSelected(item: E, value: Boolean)
-	fun setSelectedItems(items: Map<E, Boolean>)
+	fun setSelectedItems(items: Iterable<E>)
 	fun selectAll()
 
 }
@@ -91,16 +89,16 @@ interface Selection<E : Any> : SelectionRo<E>, Clearable {
  */
 abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 
-	private val _changing = Signal3<E, Boolean, Cancel>()
+	private val _changing = Signal3<List<E>, List<E>, Cancel>()
 
-	override val changing: Signal<(E, Boolean, Cancel) -> Unit>
+	override val changing: Signal<(List<E>, List<E>, Cancel) -> Unit>
 		get() = _changing
 
 	private val cancel = Cancel()
 
-	private val _changed = Signal2<E, Boolean>()
+	private val _changed = Signal2<List<E>, List<E>>()
 
-	override val changed: Signal<(E, Boolean) -> Unit>
+	override val changed: Signal<(List<E>, List<E>) -> Unit>
 		get() = _changed
 
 	private val _selectedMap = HashMap<E, Boolean>()
@@ -136,13 +134,7 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 	override var selectedItem: E?
 		get() = _selectedMap.keys.firstOrNull()
 		set(value) {
-			if (_selectedMap.size == 1 && value === _selectedMap.keys.firstOrNull()) return
-			for (key in _selectedMap.keys) {
-				if (key !== value)
-					setItemIsSelected(key, false)
-			}
-			if (value != null)
-				setItemIsSelected(value, true)
+			setSelectedItems(if (value == null) emptyList() else listOf(value))
 		}
 
 	override val isEmpty: Boolean
@@ -158,65 +150,39 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 		return _selectedMap[item] ?: false
 	}
 
-	override fun setItemIsSelected(item: E, value: Boolean) {
-		if (getItemIsSelected(item) == value) return // no-op
-		if (value)
-			_selectedMap[item] = true
-		else
-			_selectedMap.remove(item)
-		onItemSelectionChanged(item, value)
-	}
-
-	/**
-	 * Sets the current selection to the given item. If the selection has changed this will dispatch [changing]
-	 * and [changed] signals.
-	 */
-	fun setSelectedItemUser(value: E?) {
-		if (_selectedMap.size == 1 && value === _selectedMap.keys.firstOrNull()) return
-		for (key in _selectedMap.keys) {
-			if (key !== value)
-				setItemIsSelectedUser(key, false)
-		}
-		if (value != null)
-			setItemIsSelectedUser(value, true)
+	override fun setSelectedItems(items: Iterable<E>) {
+		val oldSelection = _selectedMap.keys.toList()
+		_selectedMap.clear()
+		_selectedMap.putAll(items.map { it to true })
+		onSelectionChanged(oldSelection, items)
 	}
 
 	/**
 	 * The user has changed the selection. This will invoke the [changing] and [changed] signals.
 	 */
-	fun setItemIsSelectedUser(item: E, value: Boolean) {
-		if (getItemIsSelected(item) == value) return // no-op
+	fun setSelectedItemsUser(newSelection: List<E>) {
+		val previousSelection = _selectedMap.keys.toList()
+		if (previousSelection == newSelection) return // no-op
 		if (changing.isNotEmpty()) {
-			_changing.dispatch(item, value, cancel.reset())
+			_changing.dispatch(previousSelection, newSelection, cancel.reset())
 			if (cancel.canceled()) return
 		}
-		setItemIsSelected(item, value)
-		_changed.dispatch(item, value)
+		setSelectedItems(newSelection)
+		_changed.dispatch(previousSelection, newSelection)
 	}
 
-	protected abstract fun onItemSelectionChanged(item: E, selected: Boolean)
-
-	override fun setSelectedItems(items: Map<E, Boolean>) {
-		for (item in _selectedMap.keys) {
-			if (!items.containsKey(item) || items[item] == false) {
-				setItemIsSelected(item, false)
-			}
-		}
-		for (i in items.keys) {
-			setItemIsSelected(i, true)
-		}
-	}
+	protected abstract fun onSelectionChanged(oldSelection: Iterable<E>, newSelection: Iterable<E>)
 
 	override fun clear() {
-		for (key in _selectedMap.keys) {
-			setItemIsSelected(key, false)
-		}
+		setSelectedItems(emptyList())
 	}
 
 	override fun selectAll() {
+		val newSelection = ArrayList<E>()
 		walkSelectableItems {
-			setItemIsSelected(it, true)
+			newSelection.add(it)
 		}
+		setSelectedItems(newSelection)
 	}
 
 	override fun dispose() {
@@ -226,12 +192,9 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 	}
 }
 
-fun <E : Any> Selection<E>.deselectNotContaining(list: List<E?>) {
+fun <E : Any> Selection<E>.deselectNotContaining(list: List<E>) {
 	val tmp = arrayListObtain<E>()
-	getSelectedItems(false, tmp).forEach2 {
-		if (!list.contains(it))
-			setItemIsSelected(it, false)
-
-	}
+	val current = getSelectedItems(false, tmp)
+	setSelectedItems(current.intersect(list))
 	arrayListPool.free(tmp)
 }

@@ -19,6 +19,7 @@ package com.acornui.component
 import com.acornui.collection.*
 import com.acornui.component.layout.DataScrollerStyle
 import com.acornui.component.layout.ListItemRenderer
+import com.acornui.component.layout.ListRenderer
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.layout.algorithm.VerticalLayoutData
 import com.acornui.component.layout.algorithm.virtual.ItemRendererOwner
@@ -143,12 +144,10 @@ open class OptionsList<E : Any>(
 
 	private val dataScroller = vDataScroller<E> {
 		keyDown().add(this@OptionsList::keyDownHandler)
-		selection.changed.add { item, selected ->
-			if (selected) {
-				this@OptionsList.focusFirst()
-				close()
-				_changed.dispatch()
-			}
+		selection.changed.add { _, _ ->
+			this@OptionsList.focusFirst()
+			close()
+			_changed.dispatch()
 		}
 	}
 
@@ -215,6 +214,14 @@ open class OptionsList<E : Any>(
 
 	fun rendererFactory(value: ItemRendererOwner<VerticalLayoutData>.() -> ListItemRenderer<E>) {
 		dataScroller.rendererFactory(value)
+	}
+
+	/**
+	 * Sets the nullRenderer factory for this list. The nullRenderer factory is responsible for creating nullRenderers
+	 * to be used in this list.
+	 */
+	fun nullRendererFactory(value: ItemRendererOwner<VerticalLayoutData>.() -> ListRenderer) {
+		dataScroller.nullRendererFactory(value)
 	}
 
 	private var dataBinding: Disposable? = null

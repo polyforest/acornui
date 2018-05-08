@@ -1,6 +1,7 @@
 package com.acornui.component.layout
 
 import com.acornui.collection.ObservableList
+import com.acornui.collection.disposeAndClear
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.virtual.ItemRendererOwner
 import com.acornui.component.layout.algorithm.virtual.VirtualLayoutAlgorithm
@@ -142,6 +143,15 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 	}
 
 	/**
+	 * Sets the nullRenderer factory for this list. The nullRenderer factory is responsible for creating nullRenderers
+	 * to be used in this list.
+	 */
+	fun nullRendererFactory(value: ItemRendererOwner<T>.() -> ListRenderer) {
+		contents.nullRendererFactory(value)
+		bottomContents.nullRendererFactory(value)
+	}
+
+	/**
 	 * The data list, as set via [data].
 	 */
 	val data: List<E?>
@@ -195,7 +205,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 				val e = getElementUnderPosition(mousePosition(_mousePosition))
 				if (e != null) {
 					it.handled = true
-					_selection.setSelectedItemUser(e)
+					_selection.setSelectedItemsUser(listOf(e))
 				}
 			}
 		}
@@ -213,7 +223,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 
 	private fun updateHighlight() {
 		val e = getElementUnderPosition(mousePosition(_mousePosition))
-		_highlighted.setSelectedItemUser(e)
+		_highlighted.setSelectedItemsUser(if (e == null) emptyList() else listOf(e))
 	}
 
 	private fun getElementUnderPosition(p: Vector2Ro): E? {
@@ -380,7 +390,7 @@ private class DataScrollerSelection<E : Any>(
 	private var data = emptyList<E?>()
 
 	fun data(value: List<E?>) {
-		deselectNotContaining(value)
+		deselectNotContaining(value.filterNotNull())
 		data = value
 	}
 
@@ -391,10 +401,15 @@ private class DataScrollerSelection<E : Any>(
 		}
 	}
 
-	override fun onItemSelectionChanged(item: E, selected: Boolean) {
-		listA.selection.setItemIsSelected(item, selected)
-		listB.selection.setItemIsSelected(item, selected) // Only necessary if variable sizes.
-		rowMap[item]?.toggled = selected
+	override fun onSelectionChanged(oldSelection: Iterable<E>, newSelection: Iterable<E>) {
+		listA.selection.setSelectedItems(newSelection)
+		listB.selection.setSelectedItems(newSelection)
+		for (e in oldSelection - newSelection) {
+			rowMap[e]?.toggled = false
+		}
+		for (e in newSelection - oldSelection) {
+			rowMap[e]?.toggled = true
+		}
 	}
 }
 
@@ -403,11 +418,7 @@ private class DataScrollerHighlight<E : Any>(private val rowMap: Map<E, RowBackg
 	private var data = emptyList<E?>()
 
 	fun data(value: List<E?>) {
-		getSelectedItems(false, ArrayList()).forEach {
-			if (!value.contains(it))
-				setItemIsSelected(it, false)
-
-		}
+		deselectNotContaining(value.filterNotNull())
 		data = value
 	}
 
@@ -418,7 +429,12 @@ private class DataScrollerHighlight<E : Any>(private val rowMap: Map<E, RowBackg
 		}
 	}
 
-	override fun onItemSelectionChanged(item: E, selected: Boolean) {
-		rowMap[item]?.highlighted = selected
+	override fun onSelectionChanged(oldSelection: Iterable<E>, newSelection: Iterable<E>) {
+		for (e in oldSelection - newSelection) {
+			rowMap[e]?.highlighted = false
+		}
+		for (e in newSelection - oldSelection) {
+			rowMap[e]?.highlighted = true
+		}
 	}
 }
