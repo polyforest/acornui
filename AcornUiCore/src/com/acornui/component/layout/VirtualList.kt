@@ -24,7 +24,7 @@ interface VirtualLayoutContainer<S, out T : LayoutData> : Container {
 
 	val layoutAlgorithm: VirtualLayoutAlgorithm<S, T>
 
-	val style: S
+	val layoutStyle: S
 
 }
 
@@ -34,12 +34,12 @@ interface VirtualLayoutContainer<S, out T : LayoutData> : Container {
 class VirtualList<E : Any, S : Style, out T : LayoutData>(
 		owner: Owned,
 		override val layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
-		style : S
+		layoutStyle: S
 ) : ContainerImpl(owner), FocusContainer, ItemRendererOwner<T>, VirtualLayoutContainer<S, T> {
 
 	constructor(owner: Owned,
 				layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
-				style : S,
+				style: S,
 				data: ObservableList<E?>
 	) : this(owner, layoutAlgorithm, style) {
 		data(data)
@@ -47,7 +47,7 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 
 	constructor(owner: Owned,
 				layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
-				style : S,
+				style: S,
 				data: List<E?>
 	) : this(owner, layoutAlgorithm, style) {
 		data(data)
@@ -61,7 +61,7 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 	val data: List<E?>
 		get() = _data
 
-	override val style: S = bind(style)
+	override val layoutStyle: S = bind(layoutStyle)
 
 	override fun createLayoutData(): T {
 		return layoutAlgorithm.createLayoutData()
@@ -85,7 +85,7 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 				_visiblePosition = 0f
 				for (i in 0.._activeRenderers.lastIndex) {
 					val renderer = _activeRenderers[i]
-					val itemOffset = layoutAlgorithm.getOffset(width, height, renderer, renderer.index, lastIndex, isReversed = false, props = style)
+					val itemOffset = layoutAlgorithm.getOffset(width, height, renderer, renderer.index, lastIndex, isReversed = false, props = layoutStyle)
 					_visiblePosition = renderer.index - itemOffset
 					if (itemOffset > -1) {
 						break
@@ -111,7 +111,7 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 				val lastIndex = _data.lastIndex
 				for (i in _activeRenderers.lastIndex downTo 0) {
 					val renderer = _activeRenderers[i]
-					val itemOffset = layoutAlgorithm.getOffset(width, height, renderer, renderer.index, lastIndex, isReversed = true, props = style)
+					val itemOffset = layoutAlgorithm.getOffset(width, height, renderer, renderer.index, lastIndex, isReversed = true, props = layoutStyle)
 					_visibleBottomPosition = renderer.index + itemOffset
 					if (itemOffset > -1) {
 						break
@@ -202,6 +202,15 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 
 	private val rendererCache = IndexedCache(rendererPool)
 
+	private var _emptyListRenderer: UiComponent? = null
+
+	fun emptyListRenderer(value: ItemRendererOwner<T>.() -> UiComponent) {
+		_emptyListRenderer?.dispose()
+		_emptyListRenderer = addOptionalChild(value.invoke(this)).apply {
+			this?.visible = false
+		}
+	}
+
 	//---------------------------------------------------
 	// Children
 	//---------------------------------------------------
@@ -245,6 +254,7 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 		get() = _selection
 
 	private var observableData: ObservableList<E?>? = null
+
 
 	private fun unwatchWrappedList() {
 		val old = observableData ?: return
@@ -293,7 +303,8 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 		_activeRenderers.clear()
 
 		val isReversed = _bottomIndexPosition != null
-		val startIndex = MathUtils.clamp(if (isReversed) _bottomIndexPosition!! else _indexPosition ?: 0f, 0f, _data.lastIndex.toFloat())
+		val startIndex = MathUtils.clamp(if (isReversed) _bottomIndexPosition!! else _indexPosition
+				?: 0f, 0f, _data.lastIndex.toFloat())
 
 		// Starting at the set position, render as many items as we can until we go out of bounds,
 		// then go back to the beginning and reverse direction until we go out of bounds again.
@@ -306,24 +317,35 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 		layoutElements(explicitWidth, explicitHeight, resumeIndex, startIndex, !isReversed, previousElement = first, laidOutRenderers = laidOutRenderers)
 
 		out.clear()
-		layoutAlgorithm.measure(explicitWidth, explicitHeight, laidOutRenderers, style, out)
-		if (explicitWidth != null && explicitWidth > out.width) out.width = explicitWidth
-		if (explicitHeight != null && explicitHeight > out.height) out.height = explicitHeight
-
-		laidOutRenderers.clear() // We don't need to keep this list, it was just for measurement.
+		layoutAlgorithm.measure(explicitWidth, explicitHeight, laidOutRenderers, layoutStyle, out)
 
 		// Deactivate and remove all old entries if they haven't been recycled.
-		nullRendererCache.forEachUnused {
-			_, it ->
+		nullRendererCache.forEachUnused { _, it ->
 			removeChild(it)
 		}
 		nullRendererCache.flip()
 
-		rendererCache.forEachUnused {
-			_, it ->
+		rendererCache.forEachUnused { _, it ->
 			removeChild(it)
 		}
 		rendererCache.flip()
+
+		if (_data.isEmpty()) {
+			val r = _emptyListRenderer
+			if (r != null) {
+				r.visible = true
+				laidOutRenderers.add(r)
+				layoutAlgorithm.updateLayoutEntry(explicitWidth, explicitHeight, r, 0, 0f, 0, null, false, layoutStyle)
+				layoutAlgorithm.measure(explicitWidth, explicitHeight, laidOutRenderers, layoutStyle, out)
+			}
+		} else {
+			_emptyListRenderer?.visible = false
+		}
+
+		if (explicitWidth != null && explicitWidth > out.width) out.width = explicitWidth
+		if (explicitHeight != null && explicitHeight > out.height) out.height = explicitHeight
+
+		laidOutRenderers.clear() // We don't need to keep this list, it was just for measurement.
 	}
 
 	/**
@@ -369,10 +391,10 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 				addChild(element)
 
 			if (element.shouldLayout) {
-				layoutAlgorithm.updateLayoutEntry(explicitWidth, explicitHeight, element, displayIndex, startIndex, n - 1, previousElement, isReversed, style)
+				layoutAlgorithm.updateLayoutEntry(explicitWidth, explicitHeight, element, displayIndex, startIndex, n - 1, previousElement, isReversed, layoutStyle)
 				previousElement = element
 
-				if (layoutAlgorithm.shouldShowRenderer(explicitWidth, explicitHeight, element, style)) {
+				if (layoutAlgorithm.shouldShowRenderer(explicitWidth, explicitHeight, element, layoutStyle)) {
 					// Within bounds and good to show.
 					skipped = 0
 

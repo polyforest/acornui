@@ -249,6 +249,10 @@ open class OptionsList<E : Any>(
 			dataScroller.highlighted.selectedItem = item
 	}
 
+	fun emptyListRenderer(value: ItemRendererOwner<VerticalLayoutData>.() -> UiComponent) {
+		dataScroller.emptyListRenderer(value)
+	}
+
 	init {
 		styleTags.add(OptionsList)
 		maxItems = 10

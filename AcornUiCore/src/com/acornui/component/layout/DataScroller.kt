@@ -167,6 +167,11 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 		_highlighted.data(value)
 	}
 
+	fun emptyListRenderer(value: ItemRendererOwner<T>.() -> UiComponent) {
+		contents.emptyListRenderer(value)
+		bottomContents.emptyListRenderer(value)
+	}
+
 	init {
 		styleTags.add(DataScroller)
 		maxItems = 15
