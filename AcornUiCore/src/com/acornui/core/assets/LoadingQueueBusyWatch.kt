@@ -53,11 +53,11 @@ class LoadingQueueBusyWatch(injector: Injector) {
 
 	private fun setBusy(value: Boolean) {
 		if ((_busyCursor != null) == value) return
-		if (value) {
-			_busyCursor = cursor.addCursor(StandardCursors.POINTER_WAIT, CursorPriority.POINTER_WAIT)
+		_busyCursor = if (value) {
+			cursor.addCursor(StandardCursors.POINTER_WAIT, CursorPriority.POINTER_WAIT)
 		} else {
 			_busyCursor?.remove()
-			_busyCursor = null
+			null
 		}
 	}
 }

@@ -16,11 +16,13 @@
 
 package com.acornui.core.cursor
 
-import com.acornui.collection.ClearableObjectPool
 import com.acornui.collection.Clearable
+import com.acornui.collection.ClearableObjectPool
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.core.Lifecycle
 import com.acornui.core.di.DKey
+import com.acornui.core.di.Owned
+import com.acornui.core.di.inject
 import kotlin.properties.Delegates
 
 interface CursorManager {
@@ -153,4 +155,8 @@ object CursorPriority {
 	var POINTER_WAIT: Float = 50f
 	var WAIT: Float = 100f
 	var NOT_ALLOWED: Float = 1000f
+}
+
+fun Owned.busyCursor(): CursorReference {
+	return inject(CursorManager).addCursor(StandardCursors.POINTER_WAIT, CursorPriority.POINTER_WAIT)
 }
