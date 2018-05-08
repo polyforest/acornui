@@ -200,9 +200,9 @@ fun Owned.atlas(init: ComponentInit<AtlasComponent> = {}): AtlasComponent {
 	return a
 }
 
-fun Owned.atlas(atlas: String, region: String, init: ComponentInit<AtlasComponent> = {}): AtlasComponent {
+fun Owned.atlas(atlasPath: String, region: String, init: ComponentInit<AtlasComponent> = {}): AtlasComponent {
 	val a = AtlasComponent(this)
-	a.setRegion(atlas, region)
+	a.setRegion(atlasPath, region)
 	a.init()
 	return a
 }
@@ -210,6 +210,6 @@ fun Owned.atlas(atlas: String, region: String, init: ComponentInit<AtlasComponen
 /**
  * Creates a texture component and uses it as the contents
  */
-fun ElementContainer<UiComponent>.contentsAtlas(atlas: String, region: String) {
-	createOrReuseContents({ atlas() }).setRegion(atlas, region)
+fun ElementContainer<UiComponent>.contentsAtlas(atlasPath: String, region: String) {
+	createOrReuseContents({ atlas() }).setRegion(atlasPath, region)
 }

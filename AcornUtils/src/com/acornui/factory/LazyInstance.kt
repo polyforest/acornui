@@ -7,26 +7,31 @@ class LazyInstance<out R, out T>(
 		private val factory: R.() -> T
 ) {
 
+	private var _created = false
 	private var _instance: T? = null
 
 	val created: Boolean
-		get() = (_instance != null)
+		get() = _created
 
 	val instance: T
 		get() {
-			if (_instance == null) _instance = receiver.factory()
+			if (!_created) {
+				_instance = receiver.factory()
+				_created = true
+			}
 			return _instance!!
 		}
 
 	fun clear() {
 		_instance = null
+		_created = false
 	}
 
 }
 
-fun <R, T : Disposable> LazyInstance<R, T>.disposeInstance() {
+fun <R, T : Disposable?> LazyInstance<R, T>.disposeInstance() {
 	if (created) {
-		instance.dispose()
+		instance?.dispose()
 		clear()
 	}
 }

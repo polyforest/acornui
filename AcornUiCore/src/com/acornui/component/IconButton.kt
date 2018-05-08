@@ -1,11 +1,13 @@
 package com.acornui.component
 
+import com.acornui.collection.mapTo
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.VAlign
 import com.acornui.component.style.StyleTag
 import com.acornui.component.text.TextField
 import com.acornui.component.text.text
 import com.acornui.core.di.Owned
+import com.acornui.core.graphics.atlas
 import com.acornui.core.graphics.contentsAtlas
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
@@ -17,6 +19,19 @@ class IconButton(
 
 	init {
 		styleTags.add(IconButton)
+	}
+
+	private var _iconMap: Map<ButtonState, UiComponent>? = null
+
+	/**
+	 * Sets a map of icons to use.
+	 * ButtonState.UP must be set in the map.
+	 */
+	fun iconMap(map: Map<ButtonState, UiComponent>) {
+		if (!map.containsKey(ButtonState.UP)) throw IllegalArgumentException("iconMap must at least set the icon for the UP state.")
+		clearElements(dispose = true)
+		_iconMap = map
+		refreshContents()
 	}
 
 	override fun onElementAdded(index: Int, element: UiComponent) {
@@ -34,8 +49,18 @@ class IconButton(
 
 	private var _contentsContainer: ElementContainer<UiComponent>? = null
 
+	private fun getContents(): UiComponent? {
+		val iconMap = _iconMap
+		if (iconMap != null) {
+			return currentState.backupWalk {
+				iconMap[it]
+			}
+		}
+		return elements.getOrNull(0)
+	}
+
 	private fun refreshContents() {
-		val contents = elements.getOrNull(0)
+		val contents = getContents()
 		@Suppress("UNCHECKED_CAST")
 		val currentContentsContainer = currentSkinPart as? ElementContainer<UiComponent>
 		if (currentContentsContainer != null && currentContentsContainer.elements.getOrNull(0) != contents) {
@@ -61,9 +86,19 @@ fun Owned.iconButton(icon: String, init: ComponentInit<IconButton> = {}): IconBu
 	return b
 }
 
-fun Owned.iconButton(atlas: String, region: String, init: ComponentInit<IconButton> = {}): IconButton {
+fun Owned.iconButton(atlasPath: String, region: String, init: ComponentInit<IconButton> = {}): IconButton {
 	val b = IconButton(this)
-	b.contentsAtlas(atlas, region)
+	b.contentsAtlas(atlasPath, region)
+	b.init()
+	return b
+}
+
+fun Owned.iconButton(atlasPath: String, regions: Map<ButtonState, String>, init: ComponentInit<IconButton> = {}): IconButton {
+	val b = IconButton(this)
+	b.iconMap(regions.mapTo {
+		key, value ->
+		key to atlas(atlasPath, value)
+	})
 	b.init()
 	return b
 }

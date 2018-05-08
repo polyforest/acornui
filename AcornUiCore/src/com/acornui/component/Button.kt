@@ -19,10 +19,7 @@
 package com.acornui.component
 
 import com.acornui.component.layout.SizeConstraints
-import com.acornui.component.style.StyleBase
-import com.acornui.component.style.StyleTag
-import com.acornui.component.style.StyleType
-import com.acornui.component.style.noSkin
+import com.acornui.component.style.*
 import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
@@ -73,7 +70,7 @@ open class Button(
 
 	private var _currentState = ButtonState.UP
 	private var _currentSkinPart: UiComponent? = null
-	private val _stateSkinMap = HashMap<ButtonState, LazyInstance<Owned, UiComponent>>()
+	private val _stateSkinMap = HashMap<ButtonState, LazyInstance<Owned, UiComponent?>>()
 
 	override var focusEnabled = true
 	override var focusOrder = 0f
@@ -137,7 +134,7 @@ open class Button(
 		click().add(clickHandler)
 		cursor(StandardCursors.HAND)
 
-		val oldInstances = ArrayList<LazyInstance<Owned, UiComponent>>()
+		val oldInstances = ArrayList<LazyInstance<Owned, UiComponent?>>()
 		watch(style) {
 			oldInstances.addAll(_stateSkinMap.values)
 			_stateSkinMap[ButtonState.UP] = LazyInstance(this, it.upState)
@@ -204,7 +201,7 @@ open class Button(
 		if (isDisposed) return
 		val previousState = _currentState
 		_currentState = newState
-		val newSkinPart = _stateSkinMap[newState]?.instance
+		val newSkinPart = newState.backupWalk { _stateSkinMap[newState]?.instance }
 		val previousSkinPart = _currentSkinPart
 		if (previousSkinPart == newSkinPart) return
 		newSkinPart?.interactivityMode = InteractivityMode.NONE
@@ -254,14 +251,24 @@ open class Button(
 
 }
 
-enum class ButtonState(val toggled: Boolean) {
-	UP(false),
-	OVER(false),
-	DOWN(false),
-	TOGGLED_UP(true),
-	TOGGLED_OVER(true),
-	TOGGLED_DOWN(true),
-	DISABLED(false);
+enum class ButtonState(val toggled: Boolean, val backup: ButtonState?) {
+	UP(false, null),
+	OVER(false, UP),
+	DOWN(false, OVER),
+	TOGGLED_UP(true, UP),
+	TOGGLED_OVER(true, TOGGLED_UP),
+	TOGGLED_DOWN(true, TOGGLED_UP),
+	DISABLED(false, UP);
+}
+
+fun <T : Any> ButtonState.backupWalk(block: (ButtonState) -> T?): T? {
+	var curr: ButtonState? = this
+	while (curr != null) {
+		val result = block(curr)
+		if (result != null) return result
+		curr = curr.backup
+	}
+	return null
 }
 
 open class ButtonStyle : StyleBase() {
@@ -269,12 +276,12 @@ open class ButtonStyle : StyleBase() {
 	override val type: StyleType<ButtonStyle> = ButtonStyle
 
 	var upState by prop(noSkin)
-	var overState by prop(noSkin)
-	var downState by prop(noSkin)
-	var toggledUpState by prop(noSkin)
-	var toggledOverState by prop(noSkin)
-	var toggledDownState by prop(noSkin)
-	var disabledState by prop(noSkin)
+	var overState by prop(noSkinOptional)
+	var downState by prop(noSkinOptional)
+	var toggledUpState by prop(noSkinOptional)
+	var toggledOverState by prop(noSkinOptional)
+	var toggledDownState by prop(noSkinOptional)
+	var disabledState by prop(noSkinOptional)
 
 	companion object : StyleType<ButtonStyle>
 }
