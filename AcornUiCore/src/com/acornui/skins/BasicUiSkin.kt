@@ -53,7 +53,7 @@ open class BasicUiSkin(
 
 	protected val theme = inject(Theme)
 
-	fun apply() {
+	open fun apply() {
 		target.styleRules.clear()
 		initTheme()
 
@@ -571,6 +571,10 @@ open class BasicUiSkin(
 		val rowBackgroundsStyle = RowBackgroundStyle()
 		rowBackgroundsStyle.evenColor = theme.evenRowBgColor
 		rowBackgroundsStyle.oddColor = theme.oddRowBgColor
+		rowBackgroundsStyle.highlightedEvenColor = theme.highlightedEvenRowBgColor
+		rowBackgroundsStyle.highlightedOddColor = theme.highlightedOddRowBgColor
+		rowBackgroundsStyle.toggledEvenColor = theme.toggledEvenRowBgColor
+		rowBackgroundsStyle.toggledOddColor = theme.toggledOddRowBgColor
 		target.addStyleRule(rowBackgroundsStyle, RowBackground)
 	}
 
@@ -895,7 +899,7 @@ fun Owned.getButtonStrokeColor(buttonState: ButtonState): ColorRo {
 
 class Theme {
 	var bgColor: ColorRo = Color(0xF1F2F3FF)
-	var panelBgColor: ColorRo = Color(0xC1C2C3FF)
+	var panelBgColor: ColorRo = Color(0xE7EDF1FF)
 
 	private val brighten: ColorRo = Color(0x15151500)
 
@@ -944,6 +948,12 @@ class Theme {
 
 	var evenRowBgColor: ColorRo = bgColor + Color(0x03030300)
 	var oddRowBgColor: ColorRo = bgColor - Color(0x03030300)
+
+	var highlightedEvenRowBgColor: ColorRo = Color(0xFEFFD2FF)
+	var highlightedOddRowBgColor: ColorRo = Color(0xFEFFD2FF)
+
+	var toggledEvenRowBgColor: ColorRo = Color(0xFCFD7CFF)
+	var toggledOddRowBgColor: ColorRo = Color(0xFCFD7CFF)
 
 	var atlasPath = "assets/uiskin/uiskin.json"
 
