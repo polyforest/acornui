@@ -919,6 +919,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 				}
 			}
 		} else {
+			glState.camera(camera, concatenatedTransform)
 			for (i in 0 .. _textElements.lastIndex) {
 				_textElements[i].render(glState)
 			}
