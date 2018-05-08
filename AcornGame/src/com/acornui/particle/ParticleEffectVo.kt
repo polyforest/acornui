@@ -17,6 +17,7 @@
 package com.acornui.particle
 
 import com.acornui.collection.sortedInsertionIndex
+import com.acornui.core.UidUtil
 import com.acornui.core.graphics.BlendMode
 import com.acornui.math.Easing
 import com.acornui.math.Interpolation
@@ -38,6 +39,8 @@ data class ParticleEffectVo(
 }
 
 data class ParticleEmitterVo(
+
+		val id: String = UidUtil.createUid(),
 
 		val name: String,
 
