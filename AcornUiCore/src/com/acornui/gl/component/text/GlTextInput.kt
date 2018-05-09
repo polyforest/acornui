@@ -877,7 +877,11 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 				false
 			}
 		}
-		textCursor.visible = textCursorVisible
+		if (textCursor.visible != textCursorVisible) {
+			if (textCursorVisible)
+				resetCursorBlink()
+			textCursor.visible = textCursorVisible
+		}
 	}
 
 	override fun dispose() {
