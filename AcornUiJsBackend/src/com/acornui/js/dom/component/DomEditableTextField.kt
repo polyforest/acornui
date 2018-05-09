@@ -1,35 +1,30 @@
 package com.acornui.js.dom.component
 
 import com.acornui.component.BoxStyle
-import com.acornui.component.scroll.ScrollPolicy
 import com.acornui.component.UiComponent
 import com.acornui.component.layout.setSize
+import com.acornui.component.scroll.ScrollPolicy
+import com.acornui.component.scroll.toCssString
 import com.acornui.component.text.EditableTextField
 import com.acornui.component.text.TextCommand
 import com.acornui.component.text.TextCommander
 import com.acornui.component.text.styleWithCSS
-import com.acornui.component.scroll.toCssString
-import com.acornui.core.userInfo
 import com.acornui.core.di.Owned
 import com.acornui.core.focus.blurred
 import com.acornui.core.focus.focused
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.keyDown
 import com.acornui.core.input.keyUp
+import com.acornui.core.userInfo
 import com.acornui.graphics.Color
 import com.acornui.js.html.ClipboardEvent
 import com.acornui.js.html.getSelection
 import com.acornui.math.Bounds
+import com.acornui.reflect.observable
 import org.w3c.dom.*
-import org.w3c.dom.DataTransferItemList
-import org.w3c.dom.HTMLDivElement
-import org.w3c.dom.HTMLImageElement
-import org.w3c.dom.HTMLSpanElement
-import org.w3c.dom.Range
 import org.w3c.dom.events.Event
 import org.w3c.files.FileReader
 import kotlin.browser.document
-import kotlin.properties.Delegates
 
 /**
  * The Dom Editable text implementation which provides the utility needed for a rich text editor.
@@ -49,7 +44,7 @@ open class DomEditableTextField(
 	override val hScrollModel = DomScrollLeftModel(element)
 	override val vScrollModel = DomScrollTopModel(element)
 
-	override val textCommander: TextCommander = object : TextCommander {
+	final override val textCommander: TextCommander = object : TextCommander {
 		override fun exec(commandName: String, value: String): Boolean {
 			focus()
 
@@ -118,19 +113,16 @@ open class DomEditableTextField(
 		}
 	}
 
-	override var hScrollPolicy: ScrollPolicy by Delegates.observable(ScrollPolicy.OFF, {
-		prop, old, new ->
-		element.style.overflowX = new.toCssString()
+	final override var hScrollPolicy: ScrollPolicy by observable(ScrollPolicy.OFF, {
+		element.style.overflowX = it.toCssString()
 	})
 
-	override var vScrollPolicy: ScrollPolicy by Delegates.observable(ScrollPolicy.OFF, {
-		prop, old, new ->
-		element.style.overflowY = new.toCssString()
+	final override var vScrollPolicy: ScrollPolicy by observable(ScrollPolicy.OFF, {
+		element.style.overflowY = it.toCssString()
 	})
 
-	override var editable: Boolean by Delegates.observable(false, {
-		prop, old, new ->
-		element.contentEditable = if (new) "true" else "false"
+	final override var editable: Boolean by observable(false, {
+		element.contentEditable = if (it) "true" else "false"
 	})
 
 	val imagePasteHandler = {
