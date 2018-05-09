@@ -19,9 +19,8 @@ package com.acornui.gl.component.text
 import com.acornui.component.BoxStyle
 import com.acornui.component.ContainerImpl
 import com.acornui.component.UiComponent
-import com.acornui.component.layout.algorithm.FlowLayoutStyle
-import com.acornui.component.scroll.ScrollPolicy
 import com.acornui.component.scroll.ScrollModelImpl
+import com.acornui.component.scroll.ScrollPolicy
 import com.acornui.component.text.CharStyle
 import com.acornui.component.text.EditableTextField
 import com.acornui.component.text.TextCommander

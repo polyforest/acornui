@@ -159,4 +159,12 @@ class ListUtilsKtTest {
 		assertListEquals(listOf(1, 2, 3), list)
 	}
 
+	@Test
+	fun replaceRange() {
+		val list = arrayListOf(0, 1, 2, 3)
+		assertEquals(listOf(0, 1, 5, 6), list.replaceRange(2, 4, listOf(5, 6)))
+		assertEquals(listOf(0, 1, 5, 6, 2, 3), list.replaceRange(2, 2, listOf(5, 6)))
+
+	}
+
 }

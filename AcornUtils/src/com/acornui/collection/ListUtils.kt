@@ -605,10 +605,34 @@ fun <E> MutableList<E>.setSize(newSize: Int, factory: () -> E) {
 /**
  * Clones this list, replacing the value at the given index with the new value.
  */
-fun <E> List<E>.replace(index: Int, newValue: E): List<E> {
+fun <E> List<E>.replaceAt(index: Int, newValue: E): List<E> {
 	val newList = ArrayList<E>(size)
 	for (i in 0..lastIndex) {
 		newList.add(if (i == index) newValue else this[i])
+	}
+	return newList
+}
+
+/**
+ * Clones this list, replacing the given range with the new elements.
+ * @param startIndex The starting index of the replacement.
+ * @param endIndex The range [startIndex] to [endIndex] (exclusive) will not be added to the new list. Must not be less
+ * than startIndex
+ */
+fun <E> List<E>.replaceRange(startIndex: Int, endIndex: Int = startIndex, newElements: List<E>): List<E> {
+	if (endIndex > size) throw IllegalArgumentException("endIndex ($endIndex) may not be greater than size ($size)")
+	if (endIndex < startIndex) throw IllegalArgumentException("endIndex ($endIndex) may not be less than startIndex ($startIndex)")
+	if (endIndex == startIndex && newElements.isEmpty()) return copy()
+	val newSize = size - (endIndex - startIndex) + newElements.size
+	val newList = ArrayList<E>(newSize)
+	for (i in 0..startIndex - 1) {
+		newList.add(this[i])
+	}
+	for (i in 0..newElements.lastIndex) {
+		newList.add(newElements[i])
+	}
+	for (i in endIndex..lastIndex) {
+		newList.add(this[i])
 	}
 	return newList
 }
