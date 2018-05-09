@@ -470,7 +470,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		host.char().add {
 			if (editable) {
 				val font = BitmapFontRegistry.getFont(host.charStyle)
-				if (font?.glyphs?.containsKey(it.char) == true) {
+				if (font?.glyphs?.containsKey(it.char) == true && it.char != '\n' && it.char != '\r') {
 					it.handled = true
 					replaceSelection(it.char.toString())
 					_input.dispatch()
