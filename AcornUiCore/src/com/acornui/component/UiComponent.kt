@@ -29,6 +29,7 @@ import com.acornui.component.style.*
 import com.acornui.core.*
 import com.acornui.core.assets.AssetManager
 import com.acornui.core.di.*
+import com.acornui.core.focus.FocusManager
 import com.acornui.core.graphics.Camera
 import com.acornui.core.graphics.CameraRo
 import com.acornui.core.graphics.Window
@@ -343,6 +344,21 @@ open class UiComponentImpl(
 		set(value) {
 			if (value != _interactivityMode) {
 				_interactivityMode = value
+
+				val focused = injectOptional(FocusManager)?.focused()
+				when (value) {
+					InteractivityMode.NONE -> {
+						if (owns(focused)) {
+							focused?.blur()
+						}
+					}
+					InteractivityMode.CHILDREN -> {
+						if (focused == this) {
+							focused.blur()
+						}
+					}
+					else -> {}
+				}
 				invalidate(ValidationFlags.INTERACTIVITY_MODE)
 			}
 		}
