@@ -38,7 +38,7 @@ fun Owned.createScope(dependenciesList: List<DependencyPair<*>>): Owned {
 	}
 }
 
-fun Owned.owns(other: Owned): Boolean {
+fun Owned.owns(other: Owned?): Boolean {
 	var p: Owned? = other
 	while (p != null) {
 		if (p == this) return true
