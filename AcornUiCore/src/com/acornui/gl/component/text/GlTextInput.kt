@@ -31,6 +31,7 @@ import com.acornui.core.selection.unselect
 import com.acornui.core.time.delayedCallback
 import com.acornui.core.time.enterFrame
 import com.acornui.core.time.onTick
+import com.acornui.function.as1
 import com.acornui.gl.component.drawing.dynamicMeshC
 import com.acornui.gl.component.drawing.fillStyle
 import com.acornui.gl.component.drawing.lineStyle
@@ -459,6 +460,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			host.selectAll()
 			// todo: open mobile keyboard
 		}
+
 		host.blurred().add {
 			host.unselect()
 			if (isActive)
@@ -550,10 +552,26 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			_input.dispatch()
 			_changed.dispatch()
 		}
+
 		host.redo().add {
 			_input.dispatch()
 			_changed.dispatch()
 		}
+	}
+
+	override fun onActivated() {
+		super.onActivated()
+		window.isActiveChanged.add(this::windowActiveChangedHandler.as1)
+		windowActiveChangedHandler()
+	}
+
+	override fun onDeactivated() {
+		super.onDeactivated()
+		window.isActiveChanged.remove(this::windowActiveChangedHandler.as1)
+	}
+
+	private fun windowActiveChangedHandler() {
+		invalidate(TEXT_CURSOR)
 	}
 
 	private val contents
@@ -845,18 +863,19 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private fun updateTextCursor() {
 		textField.validate(ValidationFlags.LAYOUT)
 
-		val textCursorVisible: Boolean
-		val sel = firstSelection
-		if (host.isFocused && sel != null) {
-			val rangeEnd = contents.size
-			val end = clamp(sel.endIndex, 0, rangeEnd)
-			val textElement = if (end >= rangeEnd) contents.placeholder else contents.getTextElementAt(end)
-			textCursor.x = textElement.textFieldX
-			textCursor.y = textElement.textFieldY
-			textCursor.scaleY = textElement.lineHeight / textCursor.height
-			textCursorVisible = true
-		} else {
-			textCursorVisible = false
+		val textCursorVisible = if (!window.isActive) false else {
+			val sel = firstSelection
+			if (host.isFocused && sel != null) {
+				val rangeEnd = contents.size
+				val end = clamp(sel.endIndex, 0, rangeEnd)
+				val textElement = if (end >= rangeEnd) contents.placeholder else contents.getTextElementAt(end)
+				textCursor.x = textElement.textFieldX
+				textCursor.y = textElement.textFieldY
+				textCursor.scaleY = textElement.lineHeight / textCursor.height
+				true
+			} else {
+				false
+			}
 		}
 		textCursor.visible = textCursorVisible
 	}
