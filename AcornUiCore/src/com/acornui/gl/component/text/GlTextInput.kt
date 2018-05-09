@@ -42,6 +42,7 @@ import com.acornui.math.MathUtils.clamp
 import com.acornui.math.Rectangle
 import com.acornui.math.Vector2
 import com.acornui.math.minOf4
+import com.acornui.reflect.observable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import com.acornui.string.isLetterOrDigit2
@@ -369,8 +370,8 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	val changed: Signal<() -> Unit>
 		get() = _changed
 
-	var editable by Delegates.observable(true) { _, _, new ->
-		textCursor.visible = new
+	var editable by observable(true) {
+		textCursor.visible = it
 	}
 
 	var maxLength: Int? = null

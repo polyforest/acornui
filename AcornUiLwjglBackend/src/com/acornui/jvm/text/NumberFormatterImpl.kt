@@ -25,6 +25,7 @@ import com.acornui.core.i18n.Locale
 import com.acornui.core.text.NumberFormatType
 import com.acornui.core.text.NumberFormatter
 import com.acornui.logging.Log
+import com.acornui.reflect.observable
 import java.text.NumberFormat
 import java.util.*
 import kotlin.properties.Delegates
@@ -84,9 +85,8 @@ class NumberFormatterImpl(override val injector: Injector) : NumberFormatter, Sc
 	}
 
 	private fun <T> watched(initial: T): ReadWriteProperty<Any?, T> {
-		return Delegates.observable(initial) {
-			meta, old, new ->
-			if (old != new) formatter = null
+		return observable(initial) {
+			formatter = null
 		}
 	}
 }

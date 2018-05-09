@@ -24,6 +24,7 @@ import com.acornui.core.i18n.I18n
 import com.acornui.core.i18n.Locale
 import com.acornui.core.text.NumberFormatType
 import com.acornui.core.text.NumberFormatter
+import com.acornui.reflect.observable
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 
@@ -73,9 +74,8 @@ class NumberFormatterImpl(override val injector: Injector) : NumberFormatter, Sc
 	}
 
 	private fun <T> watched(initial: T): ReadWriteProperty<Any?, T> {
-		return Delegates.observable(initial) {
-			meta, old, new ->
-			if (old != new) formatter = null
+		return observable(initial) {
+			formatter = null
 		}
 	}
 }

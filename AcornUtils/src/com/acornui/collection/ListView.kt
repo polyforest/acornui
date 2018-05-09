@@ -1,6 +1,7 @@
 package com.acornui.collection
 
 import com.acornui.core.Disposable
+import com.acornui.reflect.observable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import com.acornui.signal.Signal2
@@ -56,7 +57,7 @@ class ListView<E>() : ObservableList<E>, Disposable {
 	 * If set, this list will be reduced to elements passing the given filter function.
 	 * Changing this will dispatch a [reset] signal.
 	 */
-	var filter by Delegates.observable<Filter<E>?>(null) { _, _, _ ->
+	var filter by observable<Filter<E>?>(null) {
 		dirty()
 		Unit
 	}
@@ -66,7 +67,7 @@ class ListView<E>() : ObservableList<E>, Disposable {
 	 * Changing this will dispatch a [reset] signal.
 	 * Example: listView.sortComparator = { o1, o2 -> o1.compareTo(o2) }
 	 */
-	var sortComparator by Delegates.observable<SortComparator<E>?>(null) { _, _, _ ->
+	var sortComparator by observable<SortComparator<E>?>(null) {
 		dirty()
 		Unit
 	}

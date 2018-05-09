@@ -48,9 +48,9 @@ import com.acornui.core.text.ToStringFormatter
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.observe.bind
+import com.acornui.reflect.observable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
-import kotlin.properties.Delegates
 
 // TODO: delegate focus to input
 
@@ -132,9 +132,8 @@ open class OptionsList<E : Any>(
 		}
 	}
 
-	var editable: Boolean by Delegates.observable(true) {
-		_, _, new ->
-		textInput.editable = new
+	var editable: Boolean by observable(true) {
+		textInput.editable = it
 	}
 
 	private var background: UiComponent? = null

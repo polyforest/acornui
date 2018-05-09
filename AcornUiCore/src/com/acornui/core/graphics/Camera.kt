@@ -23,6 +23,7 @@ import com.acornui.core.di.DKey
 import com.acornui.math.*
 import com.acornui.observe.ModTagRo
 import com.acornui.observe.ModTagImpl
+import com.acornui.reflect.observable
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 
@@ -546,9 +547,8 @@ abstract class CameraBase : Camera {
 	}
 
 	protected fun <T> bindable(initial: T): ReadWriteProperty<Any?, T> {
-		return Delegates.observable(initial) {
-			meta, old, new ->
-			if (old != new) dirty()
+		return observable(initial) {
+			dirty()
 		}
 	}
 }

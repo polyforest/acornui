@@ -32,6 +32,7 @@ import com.acornui.core.text.DateTimeFormatStyle.SHORT
 import com.acornui.core.text.DateTimeFormatStyle.DEFAULT
 import com.acornui.core.text.DateTimeFormatter
 import com.acornui.js.time.DateImpl
+import com.acornui.reflect.observable
 
 class DateTimeFormatterImpl(override val injector: Injector) : DateTimeFormatter, Scoped {
 
@@ -84,9 +85,8 @@ class DateTimeFormatterImpl(override val injector: Injector) : DateTimeFormatter
 
 
 	private fun <T> watched(initial: T): ReadWriteProperty<Any?, T> {
-		return Delegates.observable(initial) {
-			meta, old, new ->
-			if (old != new) formatter = null
+		return observable(initial) {
+			formatter = null
 		}
 	}
 }

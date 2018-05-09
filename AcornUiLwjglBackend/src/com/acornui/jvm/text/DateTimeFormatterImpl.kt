@@ -22,15 +22,15 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.i18n.I18n
 import com.acornui.core.i18n.Locale
-import com.acornui.core.time.Date
 import com.acornui.core.text.DateTimeFormatStyle
 import com.acornui.core.text.DateTimeFormatType
 import com.acornui.core.text.DateTimeFormatter
+import com.acornui.core.time.Date
 import com.acornui.jvm.time.DateImpl
 import com.acornui.logging.Log
+import com.acornui.reflect.observable
 import java.text.DateFormat
 import java.util.*
-import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 import java.util.Locale as JvmLocale
 
@@ -86,9 +86,8 @@ class DateTimeFormatterImpl(override val injector: Injector) : DateTimeFormatter
 	}
 
 	private fun <T> watched(initial: T): ReadWriteProperty<Any?, T> {
-		return Delegates.observable(initial) {
-			meta, old, new ->
-			if (old != new) formatter = null
+		return observable(initial) {
+			formatter = null
 		}
 	}
 }

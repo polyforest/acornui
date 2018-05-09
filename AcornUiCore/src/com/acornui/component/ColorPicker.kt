@@ -19,6 +19,7 @@ import com.acornui.graphics.ColorRo
 import com.acornui.graphics.Hsv
 import com.acornui.graphics.HsvRo
 import com.acornui.math.*
+import com.acornui.reflect.observable
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
@@ -167,13 +168,10 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 
 	val style = bind(ColorPaletteStyle())
 
-	var showAlphaPicker by Delegates.observable(false, {
-		prop, old, new ->
-		if (old != new) {
-			alphaRect.visible = new
-			alphaValueIndicator?.visible = new
-			invalidateLayout()
-		}
+	var showAlphaPicker by observable(false, {
+		alphaRect.visible = it
+		alphaValueIndicator?.visible = it
+		invalidateLayout()
 	})
 
 	private var background: UiComponent? = null

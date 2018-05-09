@@ -31,13 +31,10 @@ import com.acornui.core.userInfo
 import com.acornui.factory.LazyInstance
 import com.acornui.factory.disposeInstance
 import com.acornui.math.Bounds
+import com.acornui.reflect.observable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
-import kotlin.collections.lastIndex
 import kotlin.collections.set
-import kotlin.properties.Delegates
 
 
 /**
@@ -154,12 +151,12 @@ open class Button(
 		}
 	}
 
-	open var disabled: Boolean by Delegates.observable(false) { _, _, newValue ->
-		interactivityMode = if (newValue) InteractivityMode.NONE else InteractivityMode.ALL
+	open var disabled: Boolean by observable(false) {
+		interactivityMode = if (it) InteractivityMode.NONE else InteractivityMode.ALL
 		refreshState()
 	}
 
-	override var toggled: Boolean by Delegates.observable(false) { _, _, _ -> refreshState() }
+	override var toggled: Boolean by observable(false) { refreshState() }
 
 	protected open fun refreshState() {
 		currentState(calculateButtonState())

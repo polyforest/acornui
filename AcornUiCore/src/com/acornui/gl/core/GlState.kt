@@ -30,7 +30,7 @@ import com.acornui.math.IntRectangle
 import com.acornui.math.IntRectangleRo
 import com.acornui.math.Matrix4
 import com.acornui.math.Matrix4Ro
-import kotlin.properties.Delegates
+import com.acornui.reflect.observable
 
 /**
  * GlState stores OpenGl state information necessary for knowing whether basic operations can be batched.
@@ -190,9 +190,9 @@ class GlState(
 	 * Returns whether scissoring is currently enabled.
 	 * @see scissor
 	 */
-	var scissorEnabled: Boolean by Delegates.observable(false) { prop, old, new ->
+	var scissorEnabled: Boolean by observable(false) {
 		batch.flush(true)
-		if (new)
+		if (it)
 			gl.enable(Gl20.SCISSOR_TEST)
 		else
 			gl.disable(Gl20.SCISSOR_TEST)
