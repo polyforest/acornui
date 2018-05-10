@@ -1,7 +1,6 @@
 package com.acornui.jvm.loader
 
 import com.acornui.async.Deferred
-import com.acornui.async.Work
 import com.acornui.core.Bandwidth
 import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
@@ -12,8 +11,8 @@ import java.io.InputStream
 import java.net.URL
 
 abstract class JvmAssetLoaderBase<T>(
-		override final val path: String,
-		override final val type: AssetType<T>,
+		final override val path: String,
+		final override val type: AssetType<T>,
 		protected val workScheduler: WorkScheduler<T>
 ) : AssetLoader<T> {
 
@@ -60,7 +59,7 @@ abstract class JvmAssetLoaderBase<T>(
 			return bytesTotal.toFloat() * Bandwidth.downBpsInv
 		}
 
-	suspend override fun await(): T {
+	override suspend fun await(): T {
 		if (!initialized) throw Exception("Subclass must call init()")
 		return work.await()
 	}
@@ -74,4 +73,4 @@ abstract class JvmAssetLoaderBase<T>(
 	}
 }
 
-typealias WorkScheduler<T> = (work: Work<T>) -> Deferred<T>
+typealias WorkScheduler<T> = (work: () -> T) -> Deferred<T>

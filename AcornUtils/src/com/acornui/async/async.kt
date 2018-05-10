@@ -20,6 +20,7 @@ import com.acornui.collection.ArrayList
 import com.acornui.collection.copy
 import com.acornui.collection.mapTo
 import com.acornui.collection.poll
+import com.acornui.core.Disposable
 import kotlin.coroutines.experimental.*
 
 /**
@@ -41,14 +42,46 @@ fun <T> async(work: Work<T>): Deferred<T> = AsyncWorker(work)
  */
 class BasicContinuationImpl(
 		override val context: CoroutineContext = EmptyCoroutineContext
-) : Continuation<Unit> {
+) : Continuation<Unit>, Disposable {
+
+	init {
+		PendingDisposablesRegistry.register(this)
+	}
 
 	override fun resume(value: Unit) {
+		PendingDisposablesRegistry.unregister(this)
 	}
 
 	override fun resumeWithException(exception: Throwable) {
 		//println("Coroutine failed: $exception")
+		PendingDisposablesRegistry.unregister(this)
 		throw exception
+	}
+
+	override fun dispose() {
+		resumeWithException(CancellationException("Application disposed"))
+	}
+}
+
+object PendingDisposablesRegistry {
+
+	private val allPending = HashMap<Disposable, Unit>()
+
+	fun register(continuation: Disposable) {
+		allPending[continuation] = Unit
+	}
+
+	fun unregister(continuation: Disposable) {
+		allPending.remove(continuation)
+	}
+
+	/**
+	 * Cancels all currently active continuations.
+	 */
+	fun dispose() {
+		for (continuation in allPending.keys) {
+			continuation.dispose()
+		}
 	}
 }
 
@@ -82,6 +115,7 @@ interface CancelableDeferred<out T> : Deferred<T> {
 }
 
 open class CancellationException(message: String = "Aborted") : Throwable(message)
+open class TimeoutException(timeout: Float, message: String = "Timed out after $timeout seconds") : Throwable(message)
 
 /**
  * Invokes a callback when the deferred value has been computed successfully. This callback will not be invoked on
@@ -94,7 +128,8 @@ fun <T> Deferred<T>.then(callback: (result: T) -> Unit) {
 		try {
 			result = await()
 			successful = true
-		} catch (t: Throwable) {}
+		} catch (t: Throwable) {
+		}
 		@Suppress("UNCHECKED_CAST")
 		if (successful)
 			callback(result as T)
@@ -153,8 +188,7 @@ private class AsyncWorker<T>(work: Work<T>) : Deferred<T> {
 	override suspend fun await(): T {
 		@Suppress("UNCHECKED_CAST")
 		return when (status) {
-			DeferredStatus.PENDING -> suspendCoroutine {
-				cont: Continuation<T> ->
+			DeferredStatus.PENDING -> suspendCoroutine { cont: Continuation<T> ->
 				children.add(cont)
 			}
 			DeferredStatus.FAILED -> throw error!!
@@ -218,8 +252,7 @@ open class Promise<T> : Deferred<T> {
 		}
 	}
 
-	override suspend fun await(): T = suspendCoroutine {
-		cont: Continuation<T> ->
+	override suspend fun await(): T = suspendCoroutine { cont: Continuation<T> ->
 		@Suppress("UNCHECKED_CAST")
 		when (_status) {
 			Status.PENDING -> continuations.add(cont)

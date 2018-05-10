@@ -17,6 +17,7 @@
 package com.acornui.jvm
 
 import com.acornui.assertionsEnabled
+import com.acornui.async.Promise
 import com.acornui.async.async
 import com.acornui.async.launch
 import com.acornui.browser.decodeUriComponent2
@@ -108,7 +109,17 @@ open class JvmHeadlessApplication(
 		set(Files, FilesImpl(manifest))
 	}
 
-	private fun <T> ioWorkScheduler(): WorkScheduler<T> = { async(it) }
+	private fun <T> ioWorkScheduler(): WorkScheduler<T> = {
+		object : Promise<T>() {
+			init {
+				try {
+					success(it())
+				} catch (e: Throwable) {
+					fail(e)
+				}
+			}
+		}
+	}
 
 	protected open val assetManager by BootTask {
 		val loaders = HashMap<AssetType<*>, LoaderFactory<*>>()
