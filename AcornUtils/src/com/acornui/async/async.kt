@@ -42,24 +42,13 @@ fun <T> async(work: Work<T>): Deferred<T> = AsyncWorker(work)
  */
 class BasicContinuationImpl(
 		override val context: CoroutineContext = EmptyCoroutineContext
-) : Continuation<Unit>, Disposable {
-
-	init {
-		PendingDisposablesRegistry.register(this)
-	}
+) : Continuation<Unit> {
 
 	override fun resume(value: Unit) {
-		PendingDisposablesRegistry.unregister(this)
 	}
 
 	override fun resumeWithException(exception: Throwable) {
-		//println("Coroutine failed: $exception")
-		PendingDisposablesRegistry.unregister(this)
 		throw exception
-	}
-
-	override fun dispose() {
-		resumeWithException(CancellationException("Application disposed"))
 	}
 }
 
