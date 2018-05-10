@@ -27,8 +27,6 @@ import com.acornui.file.FileIoManager
 import com.acornui.file.FileReaderWriter
 import com.acornui.io.NativeBuffer
 
-
-
 private fun checkResult(result: Int, path: PointerBuffer): String? = when (result) {
 	NFD_OKAY -> {
 		val str = path.getStringUTF8(0)
@@ -81,7 +79,7 @@ class JvmFileIoManager : FileIoManager {
 
 		try {
 			pathStr = checkResult(
-					prompt(filterList, defaultPath, pathPtr),
+					prompt(filterList, verifyWindowsPath(defaultPath), pathPtr),
 					pathPtr
 			)
 		} finally {
@@ -94,7 +92,7 @@ class JvmFileIoManager : FileIoManager {
 		val pathSet = NFDPathSet.calloc()
 		val pathList = mutableListOf<String>()
 		try {
-			val result = NFD_OpenDialogMultiple(filterList, defaultPath, pathSet)
+			val result = NFD_OpenDialogMultiple(filterList, verifyWindowsPath(defaultPath), pathSet)
 			@Suppress("UNUSED_EXPRESSION")
 			when (result) {
 				NFD_OKAY -> {
@@ -112,6 +110,14 @@ class JvmFileIoManager : FileIoManager {
 			NFD_PathSet_Free(pathSet)
 		}
 		return if (pathList.isEmpty()) null else pathList
+	}
+
+	private fun verifyWindowsPath(path: String): String {
+		// Windows file picker throws error if defaultPath contains forward slash
+		return if (System.getProperty("os.name")?.startsWith("Windows", true) == true && path.contains('/'))
+			""
+		else
+			path
 	}
 }
 
@@ -135,16 +141,20 @@ class JvmFileReaderWriter(private var path: String) : FileReaderWriter {
 		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 	}
 
-	override suspend fun saveToFileAsString(extension: String?, defaultPath: String?, value: String): Boolean {
-		if (!path.endsWith(".$extension", true)) {
-			path += ".$extension"
-			file = File(path)
+	override suspend fun saveToFileAsString(extension: String?, value: String): Boolean {
+		var thisExtension = extension
+		if (thisExtension != null && thisExtension != "") {
+			if (!thisExtension.startsWith('.')) thisExtension = ".$thisExtension"
+			if (!path.endsWith(thisExtension, true)) {
+				path += thisExtension
+				file = File(path)
+			}
 		}
 		file.writeText(value)
 		return true
 	}
 
-	override suspend fun saveToFileAsBinary(extension: String, defaultPath: String, value: NativeBuffer<Byte>): Boolean {
+	override suspend fun saveToFileAsBinary(extension: String, value: NativeBuffer<Byte>): Boolean {
 		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 	}
 }

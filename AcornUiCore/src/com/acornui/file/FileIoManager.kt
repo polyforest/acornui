@@ -39,6 +39,6 @@ interface FileReaderWriter {
 	suspend fun readAsString(): String?
 	suspend fun readAsBinary(): NativeBuffer<Byte>?
 
-	suspend fun saveToFileAsString(extension: String? = null, defaultPath: String? = null, value: String): Boolean
-	suspend fun saveToFileAsBinary(extension: String, defaultPath: String, value: NativeBuffer<Byte>): Boolean
+	suspend fun saveToFileAsString(extension: String? = null, value: String): Boolean
+	suspend fun saveToFileAsBinary(extension: String, value: NativeBuffer<Byte>): Boolean
 }

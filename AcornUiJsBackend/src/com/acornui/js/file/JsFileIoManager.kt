@@ -29,7 +29,6 @@ import org.w3c.files.get
 import org.w3c.files.FileReader as JsFileApiReader
 import kotlin.browser.document
 
-
 @Suppress("NOTHING_TO_INLINE")
 private inline fun NOTSUPPORTED(reason: String = "Platform does not allow file saving to local disk.") : Nothing =
 		throw NotImplementedError("Operation is not implemented: $reason")
@@ -149,11 +148,11 @@ class JsFileReaderWriter(private val file: File) : FileReaderWriter {
 		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 	}
 
-	override suspend fun saveToFileAsString(extension: String?, defaultPath: String?, value: String): Boolean {
+	override suspend fun saveToFileAsString(extension: String?, value: String): Boolean {
 		NOTSUPPORTED()
 	}
 
-	override suspend fun saveToFileAsBinary(extension: String, defaultPath: String, value: NativeBuffer<Byte>): Boolean {
+	override suspend fun saveToFileAsBinary(extension: String, value: NativeBuffer<Byte>): Boolean {
 		NOTSUPPORTED()
 	}
 
