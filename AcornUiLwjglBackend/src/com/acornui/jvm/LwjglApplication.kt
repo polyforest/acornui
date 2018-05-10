@@ -168,6 +168,8 @@ open class LwjglApplication : ApplicationBase() {
 				Thread.sleep(10L)
 			}
 		}
+
+		//System.exit(-1)
 	}
 
 	protected open fun initializeConfig(config: AppConfig) {
@@ -268,7 +270,7 @@ open class LwjglApplication : ApplicationBase() {
 		set(FocusManager, FocusManagerImpl())
 	}
 
-	private fun <T> ioWorkScheduler(timeDriver: TimeDriver): WorkScheduler<T> = { asyncThread(timeDriver, it) }
+	private fun <T> ioWorkScheduler(timeDriver: TimeDriver): WorkScheduler<T> = { asyncThread(timeDriver, work = it) }
 
 	protected open val assetManagerTask by BootTask {
 		val gl20 = get(Gl20)

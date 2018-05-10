@@ -16,41 +16,70 @@
 
 package com.acornui.jvm
 
-import com.acornui.async.*
+import com.acornui.async.Deferred
+import com.acornui.async.PendingAsyncRegistry
+import com.acornui.async.Promise
+import com.acornui.async.TimeoutException
+import com.acornui.core.Disposable
+import com.acornui.core.UpdatableChildBase
 import com.acornui.core.time.TimeDriver
-import com.acornui.core.time.enterFrame
+import java.util.concurrent.Callable
 import java.util.concurrent.Executors
+import java.util.concurrent.Future
 
-private val executor = Executors.newSingleThreadExecutor()
+private val executor by lazy {
+	val e = Executors.newSingleThreadExecutor()
+	val d = object : Disposable {
+		override fun dispose() {
+			e.shutdownNow()
+			PendingAsyncRegistry.unregister(this)
+		}
+	}
+	PendingAsyncRegistry.register(d)
+	e
+}
 
-fun <T> asyncThread(timeDriver: TimeDriver, work: Work<T>): Deferred<T> {
-
-	// TODO:
+fun <T> asyncThread(timeDriver: TimeDriver, timeout: Float = 60f, work: () -> T): Deferred<T> {
 
 //	return async(work)
+	return object : Promise<T>(), Deferred<T>, Disposable {
 
-	return object : Promise<T>(), Deferred<T> {
+		private var future: Future<T>
 
 		init {
-			executor.submit {
-				var result: T? = null
-				var error: Throwable? = null
-				try {
-					launch {
-						result = work()
+			val r = this
+			PendingAsyncRegistry.register(this)
+			future = executor.submit(Callable<T> { work() })
+
+			val watcher = object : UpdatableChildBase() {
+				private var timeRemaining = timeout
+
+				override fun update(stepTime: Float) {
+					if (future.isDone) {
+						remove()
+						try {
+							success(future.get())
+						} catch (e: Throwable) {
+							fail(e)
+						}
+						PendingAsyncRegistry.unregister(r)
+					} else {
+						timeRemaining -= stepTime
+						if (timeRemaining < 0f) {
+							remove()
+							fail(TimeoutException(timeout))
+							PendingAsyncRegistry.unregister(r)
+						}
 					}
-				} catch (e: Throwable) {
-					error = e
-				}
-				enterFrame(timeDriver, 1) {
-					// On the next frame, invoke the failure callback in the UI thread.
-					@Suppress("UNCHECKED_CAST")
-					if (error != null)
-						fail(error as Throwable)
-					else
-						success(result as T)
 				}
 			}
+
+			timeDriver.addChild(watcher)
+		}
+
+		override fun dispose() {
+			future.cancel(true)
+			PendingAsyncRegistry.unregister(this)
 		}
 	}
 }

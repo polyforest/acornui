@@ -26,7 +26,6 @@ abstract class JvmHttpRequest<out T>(timeDriver: TimeDriver, requestData: UrlReq
 	init {
 		work = asyncThread(timeDriver) {
 			// TODO: cookies
-
 			val urlStr = if (requestData.method == UrlRequestMethod.GET && requestData.variables != null)
 				requestData.url + "?" + requestData.variables!!.toQueryString() else requestData.url
 			val url = URL(urlStr)

@@ -16,10 +16,7 @@
 
 package com.acornui.core
 
-import com.acornui.async.Deferred
-import com.acornui.async.async
-import com.acornui.async.awaitAll
-import com.acornui.async.launch
+import com.acornui.async.*
 import com.acornui.component.Stage
 import com.acornui.core.di.Bootstrap
 import com.acornui.core.di.DKey
@@ -83,5 +80,6 @@ abstract class ApplicationBase : Disposable {
 			bootstrap.dispose()
 			Log.info("Application disposed")
 		}
+		PendingAsyncRegistry.dispose()
 	}
 }
