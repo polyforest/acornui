@@ -94,7 +94,7 @@ abstract class JvmHttpRequest<out T>(timeDriver: TimeDriver, requestData: UrlReq
 		}
 	}
 
-	suspend override fun await(): T = work.await()
+	override suspend fun await(): T = work.await()
 
 	override fun cancel() {}
 

@@ -58,7 +58,7 @@ class DomTextureLoader(override val path: String, override val estimatedBytesTot
 		}
 	}
 
-	suspend override fun await(): Texture = work.await()
+	override suspend fun await(): Texture = work.await()
 
 	override fun cancel() {}
 }
