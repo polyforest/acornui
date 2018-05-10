@@ -16,10 +16,7 @@
 
 package com.acornui.js.html
 
-import com.acornui.component.BoxStyle
-import com.acornui.component.HtmlComponent
-import com.acornui.component.UiComponentImpl
-import com.acornui.component.ValidationFlags
+import com.acornui.component.*
 import com.acornui.component.text.TextField
 import com.acornui.core.di.Owned
 import com.acornui.js.dom.component.DomComponent
@@ -61,9 +58,28 @@ class JsHtmlComponent(owner: Owned, private val rootElement: HTMLElement) : UiCo
 			component.element.innerHTML = value
 		}
 
+	override fun updateLayoutEnabled() {
+		super.updateLayoutEnabled()
+		var v = true
+		parentWalk {
+			if (!it.visible) {
+				v = false
+				false
+			} else {
+				true
+			}
+		}
+		component.visible = v
+	}
+
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		component.setSize(explicitWidth, explicitHeight)
 		out.set(component.bounds)
+	}
+
+	override fun updateConcatenatedColorTransform() {
+		super.updateConcatenatedColorTransform()
+		component.setColorTint(colorTint)
 	}
 
 	override fun updateConcatenatedTransform() {
