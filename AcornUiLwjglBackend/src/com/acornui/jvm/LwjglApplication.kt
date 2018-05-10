@@ -62,7 +62,7 @@ import com.acornui.core.text.NumberFormatter
 import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.TimeDriverImpl
 import com.acornui.core.time.time
-import com.acornui.file.FileReadWriteManager
+import com.acornui.file.FileIoManager
 import com.acornui.gl.component.*
 import com.acornui.gl.component.text.*
 import com.acornui.gl.core.Gl20
@@ -73,7 +73,7 @@ import com.acornui.jvm.audio.OpenAlAudioManager
 import com.acornui.jvm.audio.OpenAlMusicLoader
 import com.acornui.jvm.audio.OpenAlSoundLoader
 import com.acornui.jvm.cursor.JvmCursorManager
-import com.acornui.jvm.files.JvmFileReadWriteManager
+import com.acornui.jvm.files.JvmFileIoManager
 import com.acornui.jvm.graphics.GlfwWindowImpl
 import com.acornui.jvm.graphics.JvmGl20Debug
 import com.acornui.jvm.graphics.JvmTextureLoader
@@ -324,7 +324,7 @@ open class LwjglApplication : ApplicationBase() {
 	}
 
 	protected open val fileReadWriteManagerTask by BootTask {
-		set(FileReadWriteManager, JvmFileReadWriteManager())
+		set(FileIoManager, JvmFileIoManager())
 	}
 
 	/**
