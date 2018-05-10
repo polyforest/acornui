@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit
 
 import kotlin.text.Regex
 
-val TXT_EXTENSIONS = arrayOf("name", "txt", "xml", "kt", "kts", "java", "json", "iml", "js", "html", "php", "css")
+val txtExtensions = arrayOf("name", "txt", "xml", "kt", "kts", "java", "json", "iml", "js", "html", "php", "css")
 
 println("Rename project ${args.joinToString(", ")}")
 if (args.size != 2) error("Usage: path/sourceFolder path/destFolder")
@@ -40,8 +40,8 @@ if (!sourceDir.exists()) error("source '$source' does not exist.")
 if (destinationDir.exists()) error("Destination already exists.")
 println("Copying to destination: ${destinationDir.absolutePath}")
 
-val templateName = sourceDir.name
-val newProjectName = destinationDir.name
+val templateName: String = sourceDir.name
+val newProjectName: String = destinationDir.name
 val replacements = ArrayList<Pair<String, String>>()
 replacements.add(Pair(templateName, newProjectName))
 replacements.add(Pair(templateName.toLowerCase(), newProjectName.toLowerCase()))
@@ -74,7 +74,7 @@ while (openList.isNotEmpty()) {
 		val newFile = File(destination, newName)
 		newFile.parentFile.mkdirs()
 
-		if (TXT_EXTENSIONS.contains(src.extension.toLowerCase())) {
+		if (txtExtensions.contains(src.extension.toLowerCase())) {
 			val text = src.readText()
 			val newText = text.replaceList(replacements)
 			newFile.writeText(newText)
@@ -106,7 +106,7 @@ fun error(msg: String) {
 }
 
 fun String.runCommand(workingDir: File = File(".")): String? {
-	try {
+	return try {
 		val parts = this.split("\\s".toRegex())
 		val proc = ProcessBuilder(*parts.toTypedArray())
 				.directory(workingDir)
@@ -115,9 +115,9 @@ fun String.runCommand(workingDir: File = File(".")): String? {
 				.start()
 
 		proc.waitFor(60, TimeUnit.MINUTES)
-		return proc.inputStream.bufferedReader().readText()
+		proc.inputStream.bufferedReader().readText()
 	} catch(e: IOException) {
 		e.printStackTrace()
-		return null
+		null
 	}
 }
