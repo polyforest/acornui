@@ -3,12 +3,14 @@ package com.acornui.component
 import com.acornui.component.layout.HAlign
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.VAlign
-import com.acornui.component.layout.algorithm.*
+import com.acornui.component.layout.algorithm.HorizontalLayoutContainer
+import com.acornui.component.layout.algorithm.LayoutDataProvider
+import com.acornui.component.layout.algorithm.hGroup
+import com.acornui.component.layout.algorithm.scaleBox
 import com.acornui.component.scroll.scrollArea
 import com.acornui.component.style.*
 import com.acornui.core.di.Owned
 import com.acornui.core.graphics.Scaling
-import com.acornui.core.input.interaction.ClickInteraction
 import com.acornui.core.input.interaction.ClickInteractionRo
 import com.acornui.core.input.interaction.click
 import com.acornui.factory.LazyInstance

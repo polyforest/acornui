@@ -18,10 +18,10 @@ class JsPersistence(private val currentVersion: Version) : Persistence {
 	init {
 		if (!storageAllowed) println("Storage not allowed.")
 		val versionStr = getItem("__version")
-		if (versionStr == null)
-			_version = null
+		_version = if (versionStr == null)
+			null
 		else
-			_version = Version.fromStr(versionStr)
+			Version.fromStr(versionStr)
 	}
 
 	override val allowed: Boolean
