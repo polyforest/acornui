@@ -18,49 +18,52 @@ package com.acornui.js.file
 
 import com.acornui.async.Promise
 import com.acornui.async.launch
-import com.acornui.file.FileIoManager
-import com.acornui.file.FileReaderWriter
+import com.acornui.file.*
 import com.acornui.io.NativeBuffer
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.Node
 import org.w3c.dom.events.Event
-import org.w3c.files.File
+import org.w3c.files.File as DomFile
 import org.w3c.files.get
 import org.w3c.files.FileReader as JsFileApiReader
 import kotlin.browser.document
+import kotlin.browser.window
 
 @Suppress("NOTHING_TO_INLINE")
-private inline fun NOTSUPPORTED(reason: String = "Platform does not allow file saving to local disk.") : Nothing =
+private inline fun NOTSUPPORTED(reason: String = "Platform does not allow file saving to local disk."): Nothing =
 		throw NotImplementedError("Operation is not implemented: $reason")
 
 private fun normalizeExtensions(extensions: String?): String? {
-	// TODO: Test that duplicates don't cause issues
+	// If this is Safari, default to all file types.
+	val ua = window.navigator.userAgent
+	if (ua.contains("Safari/") && !ua.contains("Chrome/", true) && !ua.contains("Chromium", true))
+		return ""
 	// Remove NFD extension filter groups
 	return extensions?.replace(';', ',')
 }
 
 class JsFileIoManager : FileIoManager {
+
 	override val saveSupported: Boolean = false
+	private var filePicker: HTMLInputElement? = null
 
-	private var filePicker: HTMLInputElement? = createFilePicker()
-
-	private var fileReaderWriters: List<FileReaderWriter>? = null
-	private fun changeHandler(onSuccess: (Any?) -> Unit) : (Event) -> Unit = {
+	private fun changeHandler(onSuccess: (Any?) -> Unit): (Event) -> Unit = {
 		val fileList = filePicker?.files
-		fileReaderWriters = if (fileList == null || fileList.length == 0) {
+		val fileReaders = if (fileList == null || fileList.length == 0) {
 			null
 		} else {
-			val tempList = mutableListOf<FileReaderWriter>()
+			val tempList = mutableListOf<JsFileReader>()
 			for (i in 0..fileList.length - 1) {
-				tempList.add(JsFileReaderWriter(fileList[i] ?: continue))
+				tempList.add(JsFileReader(fileList[i] ?: continue))
 			}
 			tempList
 		}
-		if (filePicker?.multiple != null && filePicker!!.multiple)
-			onSuccess(fileReaderWriters)
+		if (filePicker?.multiple == true)
+			onSuccess(fileReaders)
 		else
-			onSuccess(fileReaderWriters?.get(0) as FileReaderWriter)
+			onSuccess(fileReaders?.get(0))
 	}
+
 	private fun createFilePicker(): HTMLInputElement {
 		if (document.body == null) {
 			document.createElement("body").also { document.appendChild(it) }
@@ -75,46 +78,54 @@ class JsFileIoManager : FileIoManager {
 		return newFilePicker
 	}
 
-	private fun getFileReaders(extensions: String?, onSuccess: (Any?) -> Unit) {
-		// TODO:  Test this as "" might cause the user to not be able to select anything
-		filePicker?.accept = normalizeExtensions(extensions) ?: ""
-		filePicker?.onchange = changeHandler(onSuccess)
-		fileReaderWriters = null
-
-		filePicker?.click()
-	}
-
-	override fun pickFileForOpen(extensions: String?, defaultPath: String, onSuccess: (FileReaderWriter?) -> Unit) {
-		@Suppress("UNCHECKED_CAST")
-		getFileReaders(extensions, onSuccess as (Any?) -> Unit)
-	}
-
-	override fun pickFilesForOpen(extensions: String?, defaultPath: String, onSuccess: (List<FileReaderWriter>?) -> Unit) {
-		filePicker?.multiple = true
-		@Suppress("UNCHECKED_CAST")
-		getFileReaders(extensions, onSuccess as (Any?) -> Unit)
-	}
-
-	override fun pickFileForSave(extensions: String, defaultPath: String, onSuccess: (FileReaderWriter?) -> Unit) {
-		NOTSUPPORTED()
-	}
-
-	override fun dispose() {
+	private fun destroyFilePicker() {
 		val body = document.body
 		if (body != null && body.contains(filePicker)) {
 			body.removeChild(filePicker as Node)
 			filePicker = null
 		}
 	}
+
+	private fun getFileReaders(extensions: String?, onSuccess: (Any?) -> Unit) {
+		// TODO:  Test this as "" might cause the user to not be able to select anything
+		filePicker?.accept = normalizeExtensions(extensions) ?: ""
+		filePicker?.onchange = changeHandler(onSuccess)
+
+		filePicker?.click()
+		// Always clear the list before the change event fires to normalize cancel
+		onSuccess(null)
+	}
+
+	override fun pickFileForOpen(extensions: String?, defaultPath: String, onSuccess: (FileReader?) -> Unit) {
+		destroyFilePicker()
+		filePicker = createFilePicker()
+		@Suppress("UNCHECKED_CAST")
+		getFileReaders(extensions, onSuccess as (Any?) -> Unit)
+	}
+
+	override fun pickFilesForOpen(extensions: String?, defaultPath: String, onSuccess: (List<FileReader>?) -> Unit) {
+		destroyFilePicker()
+		filePicker = createFilePicker()
+		filePicker?.multiple = true
+		@Suppress("UNCHECKED_CAST")
+		getFileReaders(extensions, onSuccess as (Any?) -> Unit)
+	}
+
+	override fun pickFileForSave(extensions: String, defaultPath: String, onSuccess: (FileWriter?) -> Unit) {
+		NOTSUPPORTED()
+	}
+
+	override fun dispose() {
+		destroyFilePicker()
+	}
 }
 
-class JsFileReaderWriter(private val file: File) : FileReaderWriter {
-	override val name: String = file.name
-	override val size: Long = file.size.toLong()
-	override val lastModified: Long = file.lastModified.toLong()
+class JsFileReader(val file: DomFile) : FileReader {
 
+	override val name = file.name
+	override val size = file.size.toLong()
+	override val lastModified = file.lastModified.toLong()
 	private val reader: JsFileApiReader = JsFileApiReader()
-	private val contents: Promise<String> = getContentsPromise()
 
 	private fun getContentsPromise() =
 			object : Promise<String>() {
@@ -124,29 +135,27 @@ class JsFileReaderWriter(private val file: File) : FileReaderWriter {
 							success(reader.result as String)
 						}
 						reader.onerror = { _: Event ->
-							val error: dynamic = reader.error
-							var msg: String = when(error.code) {
-								error.ENCODING_ERR -> "Encoding error"
-								error.NOT_FOUND_ERR -> "File not found"
-								error.NOT_READABLE_ERR -> "File could not be read"
-								error.SECURITY_ERR -> "File has a security issue"
-								else -> "File cannot be opened due to the following error"
-							}
-							msg = "$msg: ${error.code}"
-							fail(Exception(msg))
+							fail(Exception(reader.error.toString()))
 						}
+						reader.readAsText(file)
 					}
 				}
 			}
 
 	override suspend fun readAsString(): String? {
-		reader.readAsText(file)
-		return contents.await()
+		return getContentsPromise().await()
 	}
 
 	override suspend fun readAsBinary(): NativeBuffer<Byte>? {
 		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 	}
+}
+
+class JsFileWriter(file: DomFile) : FileWriter {
+
+	override val name: String = file.name
+	override val size = file.size.toLong()
+	override val lastModified = file.lastModified.toLong()
 
 	override suspend fun saveToFileAsString(extension: String?, value: String): Boolean {
 		NOTSUPPORTED()
@@ -155,5 +164,4 @@ class JsFileReaderWriter(private val file: File) : FileReaderWriter {
 	override suspend fun saveToFileAsBinary(extension: String, value: NativeBuffer<Byte>): Boolean {
 		NOTSUPPORTED()
 	}
-
 }

@@ -20,24 +20,33 @@ import com.acornui.core.Disposable
 import com.acornui.core.di.DKey
 import com.acornui.io.NativeBuffer
 
-interface FileIoManager: Disposable {
+interface FileIoManager : Disposable {
+
 	val saveSupported: Boolean
 
-	fun pickFileForOpen(extensions: String?, defaultPath: String, onSuccess: (FileReaderWriter?) -> Unit)
-	fun pickFilesForOpen(extensions: String?, defaultPath: String, onSuccess: (List<FileReaderWriter>?) -> Unit)
+	fun pickFileForOpen(extensions: String?, defaultPath: String, onSuccess: (FileReader?) -> Unit)
+	fun pickFilesForOpen(extensions: String?, defaultPath: String, onSuccess: (List<FileReader>?) -> Unit)
 
-	fun pickFileForSave(extensions: String, defaultPath: String, onSuccess: (FileReaderWriter?) -> Unit)
+	fun pickFileForSave(extensions: String, defaultPath: String, onSuccess: (FileWriter?) -> Unit)
 
 	companion object : DKey<FileIoManager>
 }
 
-interface FileReaderWriter {
+interface FileReader {
+
 	val name: String
 	val size: Long
 	val lastModified: Long
 
 	suspend fun readAsString(): String?
 	suspend fun readAsBinary(): NativeBuffer<Byte>?
+}
+
+interface FileWriter {
+
+	val name: String
+	val size: Long
+	val lastModified: Long
 
 	suspend fun saveToFileAsString(extension: String? = null, value: String): Boolean
 	suspend fun saveToFileAsBinary(extension: String, value: NativeBuffer<Byte>): Boolean
