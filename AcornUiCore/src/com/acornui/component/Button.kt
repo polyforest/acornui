@@ -113,9 +113,17 @@ open class Button(
 
 	private val clickHandler = { event: ClickInteractionRo ->
 		if (toggleOnClick) {
-			toggled = !toggled
-			_toggledChanged.dispatch(this)
+			setUserToggled(!toggled)
 		}
+	}
+
+	/**
+	 * Sets the toggled value and dispatches a toggled changed signal.
+	 */
+	fun setUserToggled(value: Boolean) {
+		toggled = value
+		_toggledChanged.dispatch(this)
+
 	}
 
 	init {
