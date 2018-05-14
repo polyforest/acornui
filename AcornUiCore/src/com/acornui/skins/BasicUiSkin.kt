@@ -140,6 +140,10 @@ open class BasicUiSkin(
 		val textAreaStyle = TextFlowStyle()
 		textAreaStyle.multiline = true
 		target.addStyleRule(textAreaStyle, withAncestor(TextArea))
+
+		val errorMessageStyle = CharStyle()
+		errorMessageStyle.colorTint = Color.RED
+		target.addStyleRule(errorMessageStyle, StyleSelectors.errorMessage)
 	}
 
 	protected open fun Scoped.loadBitmapFonts() {
@@ -968,6 +972,7 @@ object StyleSelectors {
 	val headingStyle = styleTag()
 	val subHeadingStyle = styleTag()
 	val themeRect = styleTag()
+	val errorMessage = styleTag()
 }
 
 /**
