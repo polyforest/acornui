@@ -25,6 +25,7 @@ interface Persistence : Clearable {
 	fun key(index: Int): String?
 
 	fun getItem(key: String): String?
+	fun containsItem(key: String): Boolean = getItem(key) != null
 	fun setItem(key: String, value: String)
 	fun removeItem(key: String)
 	override fun clear()
