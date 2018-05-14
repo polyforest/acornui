@@ -19,10 +19,13 @@ package com.acornui.core.popup
 import com.acornui.collection.Clearable
 import com.acornui.collection.find2
 import com.acornui.collection.sortedInsertionIndex
-import com.acornui.component.*
+import com.acornui.component.Closeable
+import com.acornui.component.InteractivityMode
+import com.acornui.component.UiComponent
 import com.acornui.component.layout.LayoutContainerImpl
 import com.acornui.component.layout.algorithm.CanvasLayout
 import com.acornui.component.layout.algorithm.CanvasLayoutData
+import com.acornui.component.rect
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.component.style.styleTag
@@ -32,7 +35,6 @@ import com.acornui.core.di.inject
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.focusFirst
 import com.acornui.core.input.Ascii
-import com.acornui.core.input.interaction.KeyInteraction
 import com.acornui.core.input.interaction.KeyInteractionRo
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.keyDown

@@ -71,7 +71,7 @@ interface FocusManager : Disposable {
 	 * @see Focusable.focus
 	 * @see Focusable.blur
 	 */
-	fun focused(value: Focusable?): FocusChangeResult
+	fun focused(value: Focusable?)
 
 	/**
 	 * Clears the current focus.

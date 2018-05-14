@@ -69,15 +69,14 @@ open class FocusManagerImpl : FocusManager {
 
 	private val rootMouseDownHandler = {
 		event: MouseInteractionRo ->
-		event.target.parentWalk {
-			if (it is Focusable && it.focusEnabled) {
-				val changed = focused(it)
-				if (changed == FocusChangeResult.CANCELED) {
-					event.preventDefault()
+		if (!event.defaultPrevented()) {
+			event.target.parentWalk {
+				if (it is Focusable && it.focusEnabled) {
+					focused(it)
+					false // break
+				} else {
+					true
 				}
-				false // break
-			} else {
-				true
 			}
 		}
 		Unit
@@ -110,13 +109,20 @@ open class FocusManagerImpl : FocusManager {
 		focused(null)
 	}
 
-	override fun focused(value: Focusable?): FocusChangeResult {
+	private var pendingFocusable: Focusable? = null
+
+	override fun focused(value: Focusable?) {
+		if (focusedChanging.isDispatching || focusedChanged.isDispatching) {
+			pendingFocusable = value
+			return
+		}
 		val newValue = if (value?.isActive == true) value else root
 		val oldFocused = _focused
-		if (oldFocused == newValue) return FocusChangeResult.UNCHANGED
+		if (oldFocused == newValue)
+			return focusPending()
 		focusedChanging.dispatch(oldFocused, newValue, focusedChangingCancel.reset())
 		if (focusedChangingCancel.canceled())
-			return FocusChangeResult.CANCELED
+			return focusPending()
 		unhighlightFocused()
 		_focused?.deactivated?.remove(focusedDeactivatedHandler)
 
@@ -131,7 +137,15 @@ open class FocusManagerImpl : FocusManager {
 		onFocusedChanged(oldFocused, newValue)
 
 		focusedChanged.dispatch(oldFocused, _focused)
-		return FocusChangeResult.CHANGED
+		focusPending()
+	}
+
+	private fun focusPending() {
+		if (pendingFocusable != null) {
+			val next = pendingFocusable
+			pendingFocusable = null
+			focused(next)
+		}
 	}
 
 	protected open fun onFocusedChanged(oldFocused: Focusable?, value: Focusable?) {
@@ -256,6 +270,8 @@ open class FocusManagerImpl : FocusManager {
 
 	override fun dispose() {
 		unhighlightFocused()
+		pendingFocusable = null
+		_focused = null
 		_focused?.deactivated?.remove(focusedDeactivatedHandler)
 		focusedChanged.dispose()
 		focusedChanging.dispose()
