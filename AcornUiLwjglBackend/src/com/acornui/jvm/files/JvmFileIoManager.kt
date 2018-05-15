@@ -77,6 +77,9 @@ class JvmFileIoManager : FileIoManager {
 
 	private fun String.toExtension(): String = trim().substringAfter('.')
 
+	private val String.extension: String
+		get() = substringAfterLast('.', "")
+
 	override fun dispose() {}
 
 	private fun filePrompt(filterList: String?, defaultPath: String, prompt: (String?, String, PointerBuffer?) -> Int): String? {
