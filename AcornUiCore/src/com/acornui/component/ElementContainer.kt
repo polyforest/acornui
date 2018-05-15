@@ -3,6 +3,8 @@
 package com.acornui.component
 
 import com.acornui._assert
+import com.acornui.collection.ConcurrentList
+import com.acornui.collection.ConcurrentListImpl
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.math.Bounds
@@ -103,7 +105,7 @@ open class ElementContainerImpl<T : UiComponent>(
 	// Element methods.
 	//-------------------------------------------------------------------------------------------------
 
-	protected val _elements = ArrayList<T>()
+	protected val _elements = ConcurrentListImpl<T>()
 	override val elements: List<T>
 		get() = _elements
 
@@ -176,18 +178,18 @@ open class ElementContainerImpl<T : UiComponent>(
 	 */
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		if (explicitWidth != null && explicitHeight != null) return // Use explicit dimensions.
-		for (i in 0.._elements.lastIndex) {
-			val it = _elements[i]
-			if (it.shouldLayout) {
+		_elements.iterate { element ->
+			if (element.shouldLayout) {
 				if (explicitWidth == null) {
-					if (it.right > out.width)
-						out.width = it.right
+					if (element.right > out.width)
+						out.width = element.right
 				}
 				if (explicitHeight == null) {
-					if (it.bottom > out.height)
-						out.height = it.bottom
+					if (element.bottom > out.height)
+						out.height = element.bottom
 				}
 			}
+			true
 		}
 	}
 
@@ -195,7 +197,7 @@ open class ElementContainerImpl<T : UiComponent>(
 	 * Disposes this container and all its children.
 	 */
 	override fun dispose() {
-		_elements.clear()
+		clearElements(dispose = false)
 		super.dispose()
 	}
 }

@@ -156,13 +156,9 @@ open class ActiveList<E>(initialCapacity: Int) : Clearable, MutableObservableLis
 		return wrapped.lastIndexOf(element)
 	}
 
-	override fun concurrentIterator(): MutableConcurrentListIterator<E> {
-		return MutableConcurrentListIteratorImpl(this)
-	}
+	override fun concurrentIterator(): MutableConcurrentListIterator<E> = MutableConcurrentListIteratorImpl(this)
 
-	override fun iterator(): MutableConcurrentListIterator<E> {
-		return MutableConcurrentListIteratorImpl(this)
-	}
+	override fun iterator(): MutableConcurrentListIterator<E> = MutableConcurrentListIteratorImpl(this)
 
 	override fun listIterator(): MutableConcurrentListIterator<E> {
 		return MutableConcurrentListIteratorImpl(this)

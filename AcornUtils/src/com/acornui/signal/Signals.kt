@@ -21,6 +21,11 @@ import com.acornui.core.Disposable
 interface Signal<in T : Any> {
 
 	/**
+	 * Returns true if this signal is currently dispatching.
+	 */
+	val isDispatching: Boolean
+
+	/**
 	 * True if the signal has handlers.
 	 */
 	fun isNotEmpty(): Boolean
@@ -135,7 +140,7 @@ abstract class SignalBase<T : Any> : Signal<T>, Disposable {
 		cursor = 999999999
 	}
 
-	val isDispatching: Boolean
+	override val isDispatching: Boolean
 		get() = cursor != -1
 
 	/**

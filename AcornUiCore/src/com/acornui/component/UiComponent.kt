@@ -38,6 +38,7 @@ import com.acornui.core.input.InteractionType
 import com.acornui.core.input.InteractivityManager
 import com.acornui.core.input.MouseState
 import com.acornui.core.time.TimeDriver
+import com.acornui.function.as1
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.*
@@ -256,7 +257,6 @@ open class UiComponentImpl(
 		if (_isActive)
 			throw IllegalStateException("Already active")
 		_isActive = true
-		onActivated()
 		_activated.dispatch(this)
 	}
 
@@ -268,7 +268,6 @@ open class UiComponentImpl(
 		if (!_isActive)
 			throw IllegalStateException("Not active")
 		_isActive = false
-		onDeactivated()
 		_deactivated.dispatch(this)
 	}
 
@@ -407,6 +406,9 @@ open class UiComponentImpl(
 				addNode(INTERACTIVITY_MODE, r::updateInheritedInteractivityMode)
 			}
 		}
+
+		_activated.add(this::onActivated.as1)
+		_deactivated.add(this::onDeactivated.as1)
 	}
 
 	private fun ownerDisposedHandler(owner: Owned) {

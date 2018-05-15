@@ -18,10 +18,9 @@
 
 package com.acornui.collection
 
-import com.acornui.core.Disposable
 import com.acornui.signal.Signal
 
-interface ObservableList<out E> : List<E> {
+interface ObservableList<out E> : ConcurrentList<E> {
 
 	/**
 	 * Dispatched when an element has been added.
@@ -48,23 +47,6 @@ interface ObservableList<out E> : List<E> {
 	 */
 	val reset: Signal<() -> Unit>
 
-	fun iterate(body: (E) -> Boolean, reversed: Boolean) {
-		if (reversed) iterateReversed(body)
-		else iterate(body)
-	}
-
-	/**
-	 * Performs an iteration without allocation.
-	 */
-	fun iterate(body: (E) -> Boolean)
-
-	/**
-	 * Performs an iteration in reverse without allocation.
-	 */
-	fun iterateReversed(body: (E) -> Boolean)
-
-	fun concurrentIterator(): ConcurrentListIterator<E>
-
 	/**
 	 * Notifies that an element has changed. This will dispatch a [modified] signal.
 	 * Note: This is not in MutableObservableList because an element of an ObservableList may still be modified without
@@ -73,9 +55,7 @@ interface ObservableList<out E> : List<E> {
 	fun notifyElementModified(index: Int)
 }
 
-interface MutableObservableList<E> : ObservableList<E>, MutableList<E> {
-
-	override fun concurrentIterator(): MutableConcurrentListIterator<E>
+interface MutableObservableList<E> : ObservableList<E>, MutableConcurrentList<E> {
 
 	/**
 	 * Updates this list without invoking signals on each change. When the [inner] method has completed, a [reset]
@@ -83,149 +63,6 @@ interface MutableObservableList<E> : ObservableList<E>, MutableList<E> {
 	 */
 	fun batchUpdate(inner: () -> Unit)
 
-}
-
-/**
- * A ConcurrentListIterator watches concurrent add and remove changes on the list and moves the cursor logically
- * so that items are neither skipped nor repeated.
- */
-interface ConcurrentListIterator<out E> : Clearable, ListIterator<E>, Iterable<E>, Disposable {
-	fun iterate(body: (E) -> Boolean)
-	fun iterateReversed(body: (E) -> Boolean)
-}
-
-open class ConcurrentListIteratorImpl<out E>(
-		private val list: ObservableList<E>
-) : ConcurrentListIterator<E> {
-
-	/**
-	 * Index of next element to return
-	 */
-	var cursor: Int = 0
-
-	/**
-	 * Index of last element returned; -1 if no such
-	 */
-	protected var lastRet: Int = -1
-
-	private val addedHandler = {
-		index: Int, _: E ->
-		if (cursor > index) cursor++
-		if (lastRet > index) lastRet++
-	}
-
-	private val removedHandler = {
-		index: Int, _: E ->
-		if (cursor > index) cursor--
-		if (lastRet > index) lastRet--
-	}
-
-	init {
-		list.added.add(addedHandler)
-		list.removed.add(removedHandler)
-	}
-
-	override fun hasNext(): Boolean {
-		return cursor < list.size
-	}
-
-	override fun next(): E {
-		val i = cursor
-		if (i >= list.size)
-			throw NoSuchElementException()
-		cursor = i + 1
-		lastRet = i
-		return list[i]
-	}
-
-	override fun nextIndex(): Int {
-		return cursor
-	}
-
-	override fun hasPrevious(): Boolean {
-		return cursor > 0
-	}
-
-	override fun previous(): E {
-		val i = cursor - 1
-		if (i < 0)
-			throw NoSuchElementException()
-		cursor = i
-		lastRet = i
-		return list[i]
-	}
-
-	override fun previousIndex(): Int {
-		return cursor - 1
-	}
-
-	override fun clear() {
-		cursor = 0
-		lastRet = -1
-	}
-
-	override fun iterator(): Iterator<E> {
-		return this
-	}
-
-	override fun iterate(body: (E) -> Boolean) {
-		clear()
-		while (hasNext()) {
-			val shouldContinue = body(next())
-			if (!shouldContinue) break
-		}
-	}
-
-	override fun iterateReversed(body: (E) -> Boolean) {
-		clear()
-		cursor = list.size
-		while (hasPrevious()) {
-			val shouldContinue = body(previous())
-			if (!shouldContinue) break
-		}
-	}
-
-	override fun dispose() {
-		list.added.remove(addedHandler)
-		list.removed.remove(removedHandler)
-	}
-}
-
-interface MutableConcurrentListIterator<E> : ConcurrentListIterator<E>, MutableListIterator<E>, MutableIterable<E>
-
-/**
- * A ConcurrentListIterator watches concurrent changes on the list and moves the cursor logically
- * so that items are neither skipped nor repeated.
- */
-open class MutableConcurrentListIteratorImpl<E>(
-		private val list: MutableObservableList<E>
-) : ConcurrentListIteratorImpl<E>(list), MutableConcurrentListIterator<E> {
-
-	override fun iterator(): MutableIterator<E> {
-		return this
-	}
-
-	override fun remove() {
-		if (lastRet < 0)
-			throw NoSuchElementException()
-
-		list.removeAt(lastRet)
-		cursor = lastRet
-		lastRet = -1
-	}
-
-	override fun set(element: E) {
-		if (lastRet < 0)
-			throw IllegalStateException()
-		list[lastRet] = element
-	}
-
-	override fun add(element: E) {
-		val i = cursor
-		list.add(i, element)
-		cursor = i + 1
-		lastRet = -1
-	}
 }
 
 fun <E> ObservableList<E>.bindUniqueAssertion() {

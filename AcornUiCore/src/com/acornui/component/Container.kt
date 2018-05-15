@@ -17,6 +17,7 @@
 package com.acornui.component
 
 import com.acornui._assert
+import com.acornui.collection.ConcurrentListImpl
 import com.acornui.core.ParentRo
 import com.acornui.core.di.*
 import com.acornui.graphics.ColorRo
@@ -43,7 +44,7 @@ open class ContainerImpl(
 
 	private val nativeContainer = native
 
-	protected val _children = ArrayList<UiComponent>()
+	protected val _children = ConcurrentListImpl<UiComponent>()
 	override val children: List<UiComponentRo>
 		get() = _children
 
@@ -148,11 +149,10 @@ open class ContainerImpl(
 
 	override fun onActivated() {
 		super.onActivated()
-		for (i in 0.._children.lastIndex) {
-			val child = _children[i]
-			if (!child.isActive) {
+		_children.iterate { child ->
+			if (!child.isActive)
 				child.activate()
-			}
+			true
 		}
 	}
 
@@ -172,8 +172,9 @@ open class ContainerImpl(
 		val flagsToCascade = flagsInvalidated and cascadingFlags
 		if (flagsToCascade > 0) {
 			// This component has flags that have been invalidated that must cascade down to the children.
-			for (i in 0.._children.lastIndex) {
-				_children[i].invalidate(flagsToCascade)
+			_children.iterate { child ->
+				child.invalidate(flagsToCascade)
+				true
 			}
 		}
 	}
@@ -181,25 +182,25 @@ open class ContainerImpl(
 	override fun update() {
 		super.update()
 
-		for (i in 0.._children.lastIndex) {
-			_children[i].update()
+		_children.iterate { child ->
+			child.update()
+			true
 		}
 	}
 
 	override fun draw(viewport: MinMaxRo) {
 		for (i in 0.._children.lastIndex) {
 			val child = _children[i]
-			if (child.visible) {
+			if (child.visible)
 				child.render(viewport)
-			}
 		}
 	}
 
 	override fun onDeactivated() {
-		for (i in 0.._children.lastIndex) {
-			val child = _children[i]
+		_children.iterate { child ->
 			if (child.isActive)
 				child.deactivate()
+			true
 		}
 	}
 
@@ -285,8 +286,9 @@ open class ContainerImpl(
 	 * this layout.
 	 */
 	private fun validateChildBubblingFlags() {
-		for (i in 0.._children.lastIndex) {
-			_children[i].validate(layoutInvalidatingFlags)
+		_children.iterate { child ->
+			child.validate(layoutInvalidatingFlags)
+			true
 		}
 	}
 
