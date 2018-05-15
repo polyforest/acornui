@@ -266,12 +266,34 @@ class NonDeferred<out T>(val value: T) : Deferred<T> {
 	}
 }
 
+/**
+ * Awaits all deferred values, populating a list with the results.
+ */
 suspend fun <T> List<Deferred<T>>.awaitAll(): List<T> {
 	val copy = copy() // Copy the list so that it can't mutate in-between awaits.
 	return ArrayList(copy.size, { copy[it].await() })
 }
 
+/**
+ * Like awaitAll but the values will be null if await fails.
+ */
+suspend fun <T> List<Deferred<T>>.awaitAllChecked(): List<T?> {
+	val copy = copy() // Copy the list so that it can't mutate in-between awaits.
+	return ArrayList(copy.size, { copy[it].awaitOrNull() })
+}
+
+/**
+ * Like awaitAll but the values will be null if await fails.
+ */
 suspend fun <K, V> Map<K, Deferred<V>>.awaitAll(): Map<K, V> {
 	// Copy the map so that it can't mutate in-between awaits.
 	return copy().mapTo { key, value -> key to value.await() }
+}
+
+/**
+ * Awaits all deferred values, populating a map with the results.
+ */
+suspend fun <K, V> Map<K, Deferred<V>>.awaitAllChecked(): Map<K, V?> {
+	// Copy the map so that it can't mutate in-between awaits.
+	return copy().mapTo { key, value -> key to value.awaitOrNull() }
 }
