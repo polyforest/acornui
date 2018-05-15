@@ -69,7 +69,7 @@ class JvmFileIoManager : FileIoManager {
 	}
 
 	private fun List<FileFilterGroup>.toFilterListStr(): String? {
-		//if (System.getProperty("os.name")?.startsWith("MAC", true) == true) return joinToString(",") { it.toFilterListStr() } // TODO: Uncomment out if Issue #37 is real.
+		if (System.getProperty("os.name")?.startsWith("MAC", true) == true) return null // Issue #36
 		return joinToString(";") { it.toFilterListStr() }
 	}
 
