@@ -16,15 +16,20 @@
 
 package com.acornui.jvm.files
 
-import java.io.File as JavaFile
+import com.acornui.core.io.BufferFactory
+import com.acornui.file.FileFilterGroup
+import com.acornui.file.FileIoManager
+import com.acornui.file.FileReader
+import com.acornui.file.FileWriter
 import org.lwjgl.PointerBuffer
 import org.lwjgl.system.MemoryUtil.memFree
 import org.lwjgl.system.MemoryUtil.memAllocPointer
 import org.lwjgl.util.nfd.NativeFileDialog
 import org.lwjgl.util.nfd.NativeFileDialog.*
 import org.lwjgl.util.nfd.NFDPathSet
-import com.acornui.file.*
 import com.acornui.io.NativeBuffer
+import com.acornui.io.toByteArray
+import java.io.File
 
 private fun checkResult(result: Int, path: PointerBuffer): String? = when (result) {
 	NFD_OKAY -> {
@@ -37,38 +42,43 @@ private fun checkResult(result: Int, path: PointerBuffer): String? = when (resul
 	-> throw Exception(NFD_GetError())
 }
 
-private fun normalizeExtensions(extensions: String?): String? {
-	// TODO: returning null for MAC due to:  https://github.com/PolyForest/Acorn/issues/37
-	return if (extensions == null || System.getProperty("os.name")?.startsWith("MAC", true) == true)
-		null
-	else
-		extensions.split(';').map {
-			it.split(',')  // Deserialize
-					.filter { it.startsWith('.') }  // Remove anything that isn't an extension type with STOP prefix (.)
-					.map { it.removePrefix(".") }
-		}  // Strip extension STOP prefix (.)
-				.filter { it.isNotEmpty() }  // Remove empty filter groups
-				.joinToString(";") { it.joinToString(",") }  // Serialize
-}
-
 class JvmFileIoManager : FileIoManager {
 
 	override val saveSupported: Boolean = true
 
-	override fun pickFileForOpen(extensions: String?, defaultPath: String, onSuccess: (FileReader?) -> Unit) {
-		val filePath = filePrompt(normalizeExtensions(extensions), defaultPath, NativeFileDialog::NFD_OpenDialog)
+	override fun pickFileForOpen(fileFilterGroups: List<FileFilterGroup>?, defaultPath: String, onSuccess: (FileReader?) -> Unit) {
+		val filePath = filePrompt(fileFilterGroups?.toFilterListStr(), defaultPath, NativeFileDialog::NFD_OpenDialog)
 		onSuccess(filePath?.let { JvmFileReader(it) })
 	}
 
-	override fun pickFilesForOpen(extensions: String?, defaultPath: String, onSuccess: (List<FileReader>?) -> Unit) {
-		val filePaths = openMultiplePrompt(normalizeExtensions(extensions), defaultPath)
+	override fun pickFilesForOpen(fileFilterGroups: List<FileFilterGroup>?, defaultPath: String, onSuccess: (List<FileReader>?) -> Unit) {
+		val filePaths = openMultiplePrompt(fileFilterGroups?.toFilterListStr(), defaultPath)
 		onSuccess(filePaths?.let { it.map { JvmFileReader(it) } })
 	}
 
-	override fun pickFileForSave(extensions: String, defaultPath: String, onSuccess: (FileWriter?) -> Unit) {
-		val filePath = filePrompt(normalizeExtensions(extensions), defaultPath, NativeFileDialog::NFD_SaveDialog)
-		onSuccess(filePath?.let { JvmFileWriter(it) })
+	override fun pickFileForSave(fileFilterGroups: List<FileFilterGroup>?, defaultPath: String, defaultExtension: String?, onSuccess: (FileWriter?) -> Unit) {
+		val filePath = filePrompt(fileFilterGroups?.toFilterListStr(), defaultPath, NativeFileDialog::NFD_SaveDialog) ?: return onSuccess(null)
+
+		val filePathWithExtension = if (defaultExtension == null) {
+			filePath
+		} else {
+			val ext = defaultExtension.toExtension()
+			if (filePath.endsWith(ext, true)) filePath else "$filePath.$ext"
+		}
+		onSuccess(JvmFileWriter(File(filePathWithExtension)))
 	}
+
+	private fun List<FileFilterGroup>.toFilterListStr(): String? {
+		//if (System.getProperty("os.name")?.startsWith("MAC", true) == true) return joinToString(",") { it.toFilterListStr() } // TODO: Uncomment out if Issue #37 is real.
+		return joinToString(";") { it.toFilterListStr() }
+	}
+
+	private fun FileFilterGroup.toFilterListStr(): String = extensions.joinToString(",") { it.toExtension() }
+
+	private fun String.toExtension(): String = trim().substringAfter('.')
+
+	private val String.extension: String
+		get() = substringAfterLast('.', "")
 
 	override fun dispose() {}
 
@@ -78,7 +88,7 @@ class JvmFileIoManager : FileIoManager {
 
 		try {
 			pathStr = checkResult(
-					prompt(filterList, verifyWindowsPath(defaultPath), pathPtr),
+					prompt(filterList, File(defaultPath).absolutePath, pathPtr),
 					pathPtr
 			)
 		} finally {
@@ -92,7 +102,7 @@ class JvmFileIoManager : FileIoManager {
 		val pathList = mutableListOf<String>()
 
 		try {
-			val result = NFD_OpenDialogMultiple(filterList, verifyWindowsPath(defaultPath), pathSet)
+			val result = NFD_OpenDialogMultiple(filterList, File(defaultPath).absolutePath, pathSet)
 			@Suppress("UNUSED_EXPRESSION")
 			when (result) {
 				NFD_OKAY -> {
@@ -111,14 +121,6 @@ class JvmFileIoManager : FileIoManager {
 		}
 		return if (pathList.isEmpty()) null else pathList
 	}
-
-	private fun verifyWindowsPath(path: String): String {
-		// Windows file picker throws error if defaultPath contains forward slash
-		return if (System.getProperty("os.name")?.startsWith("Windows", true) == true && path.contains('/'))
-			""
-		else
-			path
-	}
 }
 
 class JvmFileReader(private var path: String) : FileReader {
@@ -129,7 +131,7 @@ class JvmFileReader(private var path: String) : FileReader {
 		get() = file.length()
 	override val lastModified: Long
 		get() = file.lastModified()
-	private var file = JavaFile(path)
+	private var file = File(path)
 		set(value) {
 			path = value.path
 			field = value
@@ -140,11 +142,18 @@ class JvmFileReader(private var path: String) : FileReader {
 	}
 
 	override suspend fun readAsBinary(): NativeBuffer<Byte>? {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+		// TODO: There could be some utility here.
+		val bytes = file.readBytes()
+		val buffer = BufferFactory.instance.byteBuffer(bytes.size)
+		for (i in 0..bytes.lastIndex) {
+			buffer.put(bytes[i])
+		}
+		buffer.flip()
+		return buffer
 	}
 }
 
-class JvmFileWriter(private var path: String) : FileWriter {
+class JvmFileWriter(private val file: File) : FileWriter {
 
 	override val name: String
 		get() = file.name
@@ -152,26 +161,12 @@ class JvmFileWriter(private var path: String) : FileWriter {
 		get() = file.length()
 	override val lastModified: Long
 		get() = file.lastModified()
-	private var file = JavaFile(path)
-		set(value) {
-			path = value.path
-			field = value
-		}
 
-	override suspend fun saveToFileAsString(extension: String?, value: String): Boolean {
-		if (extension != null && extension != "") {
-			var thisExtension = extension
-
-			if (!thisExtension.startsWith('.')) thisExtension = ".$thisExtension"
-			if (!path.endsWith(thisExtension, true)) {
-				file = JavaFile(path + thisExtension)
-			}
-		}
+	override suspend fun saveToFileAsString(value: String) {
 		file.writeText(value)
-		return true
 	}
 
-	override suspend fun saveToFileAsBinary(extension: String, value: NativeBuffer<Byte>): Boolean {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	override suspend fun saveToFileAsBinary(value: NativeBuffer<Byte>) {
+		file.writeBytes(value.toByteArray())
 	}
 }

@@ -30,17 +30,8 @@ import kotlin.browser.document
 import kotlin.browser.window
 
 @Suppress("NOTHING_TO_INLINE")
-private inline fun NOTSUPPORTED(reason: String = "Platform does not allow file saving to local disk."): Nothing =
+private inline fun notSupported(reason: String = "Platform does not allow file saving to local disk."): Nothing =
 		throw NotImplementedError("Operation is not implemented: $reason")
-
-private fun normalizeExtensions(extensions: String?): String? {
-	// If this is Safari, default to all file types.
-	val ua = window.navigator.userAgent
-	if (ua.contains("Safari/") && !ua.contains("Chrome/", true) && !ua.contains("Chromium", true))
-		return ""
-	// Remove NFD extension filter groups
-	return extensions?.replace(';', ',')
-}
 
 class JsFileIoManager : FileIoManager {
 
@@ -86,9 +77,9 @@ class JsFileIoManager : FileIoManager {
 		}
 	}
 
-	private fun getFileReaders(extensions: String?, onSuccess: (Any?) -> Unit) {
+	private fun getFileReaders(fileFilterGroups: List<FileFilterGroup>?, onSuccess: (Any?) -> Unit) {
 		// TODO:  Test this as "" might cause the user to not be able to select anything
-		filePicker?.accept = normalizeExtensions(extensions) ?: ""
+		filePicker?.accept = fileFilterGroups?.toFilterListStr() ?: ""
 		filePicker?.onchange = changeHandler(onSuccess)
 
 		filePicker?.click()
@@ -96,23 +87,35 @@ class JsFileIoManager : FileIoManager {
 		onSuccess(null)
 	}
 
-	override fun pickFileForOpen(extensions: String?, defaultPath: String, onSuccess: (FileReader?) -> Unit) {
+	private fun List<FileFilterGroup>.toFilterListStr(): String? {
+		// If this is Safari, default to all file types.
+		val ua = window.navigator.userAgent
+		if (ua.contains("Safari/") && !ua.contains("Chrome/", true) && !ua.contains("Chromium", true))
+			return ""
+		return joinToString(",") { it.toFilterListStr() }
+	}
+
+	private fun FileFilterGroup.toFilterListStr(): String = extensions.joinToString(",") { it.toExtension() }
+
+	private fun String.toExtension(): String = "." + trim().substringAfter('.')
+
+	override fun pickFileForOpen(fileFilterGroups: List<FileFilterGroup>?, defaultPath: String, onSuccess: (FileReader?) -> Unit) {
 		destroyFilePicker()
 		filePicker = createFilePicker()
 		@Suppress("UNCHECKED_CAST")
-		getFileReaders(extensions, onSuccess as (Any?) -> Unit)
+		getFileReaders(fileFilterGroups, onSuccess as (Any?) -> Unit)
 	}
 
-	override fun pickFilesForOpen(extensions: String?, defaultPath: String, onSuccess: (List<FileReader>?) -> Unit) {
+	override fun pickFilesForOpen(fileFilterGroups: List<FileFilterGroup>?, defaultPath: String, onSuccess: (List<FileReader>?) -> Unit) {
 		destroyFilePicker()
 		filePicker = createFilePicker()
 		filePicker?.multiple = true
 		@Suppress("UNCHECKED_CAST")
-		getFileReaders(extensions, onSuccess as (Any?) -> Unit)
+		getFileReaders(fileFilterGroups, onSuccess as (Any?) -> Unit)
 	}
 
-	override fun pickFileForSave(extensions: String, defaultPath: String, onSuccess: (FileWriter?) -> Unit) {
-		NOTSUPPORTED()
+	override fun pickFileForSave(fileFilterGroups: List<FileFilterGroup>?, defaultPath: String, defaultExtension: String?, onSuccess: (FileWriter?) -> Unit) {
+		notSupported()
 	}
 
 	override fun dispose() {
@@ -157,11 +160,11 @@ class JsFileWriter(file: DomFile) : FileWriter {
 	override val size = file.size.toLong()
 	override val lastModified = file.lastModified.toLong()
 
-	override suspend fun saveToFileAsString(extension: String?, value: String): Boolean {
-		NOTSUPPORTED()
+	override suspend fun saveToFileAsString(value: String) {
+		notSupported()
 	}
 
-	override suspend fun saveToFileAsBinary(extension: String, value: NativeBuffer<Byte>): Boolean {
-		NOTSUPPORTED()
+	override suspend fun saveToFileAsBinary(value: NativeBuffer<Byte>) {
+		notSupported()
 	}
 }

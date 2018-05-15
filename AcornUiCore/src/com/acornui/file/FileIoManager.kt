@@ -22,15 +22,26 @@ import com.acornui.io.NativeBuffer
 
 interface FileIoManager : Disposable {
 
+	/**
+	 * If false, [pickFileForSave] will fail.
+	 */
 	val saveSupported: Boolean
 
-	fun pickFileForOpen(extensions: String?, defaultPath: String, onSuccess: (FileReader?) -> Unit)
-	fun pickFilesForOpen(extensions: String?, defaultPath: String, onSuccess: (List<FileReader>?) -> Unit)
+	fun pickFileForOpen(fileFilterGroups: List<FileFilterGroup>?, defaultPath: String, onSuccess: (FileReader?) -> Unit)
+	fun pickFilesForOpen(fileFilterGroups: List<FileFilterGroup>?, defaultPath: String, onSuccess: (List<FileReader>?) -> Unit)
 
-	fun pickFileForSave(extensions: String, defaultPath: String, onSuccess: (FileWriter?) -> Unit)
+	fun pickFileForSave(fileFilterGroups: List<FileFilterGroup>?, defaultPath: String, defaultExtension: String? = null, onSuccess: (FileWriter?) -> Unit)
 
 	companion object : DKey<FileIoManager>
 }
+
+/**
+ * A list of extension groups to filter for when picking files.
+ * @param extensions The list of extensions in this group.
+ */
+data class FileFilterGroup(
+		val extensions: List<String>
+)
 
 interface FileReader {
 
@@ -48,6 +59,6 @@ interface FileWriter {
 	val size: Long
 	val lastModified: Long
 
-	suspend fun saveToFileAsString(extension: String? = null, value: String): Boolean
-	suspend fun saveToFileAsBinary(extension: String, value: NativeBuffer<Byte>): Boolean
+	suspend fun saveToFileAsString(value: String)
+	suspend fun saveToFileAsBinary(value: NativeBuffer<Byte>)
 }
