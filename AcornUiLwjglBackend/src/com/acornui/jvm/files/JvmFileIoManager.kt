@@ -46,18 +46,18 @@ class JvmFileIoManager : FileIoManager {
 
 	override val saveSupported: Boolean = true
 
-	override fun pickFileForOpen(fileFilterGroups: List<FileFilterGroup>?, defaultPath: String, onSuccess: (FileReader?) -> Unit) {
-		val filePath = filePrompt(fileFilterGroups?.toFilterListStr(), defaultPath, NativeFileDialog::NFD_OpenDialog)
-		onSuccess(filePath?.let { JvmFileReader(it) })
+	override fun pickFileForOpen(fileFilterGroups: List<FileFilterGroup>?, onSuccess: (FileReader?) -> Unit) {
+		val filePath = filePrompt(fileFilterGroups?.toFilterListStr(), NativeFileDialog::NFD_OpenDialog)
+		onSuccess(filePath?.let { JvmFileReader(File(it)) })
 	}
 
-	override fun pickFilesForOpen(fileFilterGroups: List<FileFilterGroup>?, defaultPath: String, onSuccess: (List<FileReader>?) -> Unit) {
-		val filePaths = openMultiplePrompt(fileFilterGroups?.toFilterListStr(), defaultPath)
-		onSuccess(filePaths?.let { it.map { JvmFileReader(it) } })
+	override fun pickFilesForOpen(fileFilterGroups: List<FileFilterGroup>?, onSuccess: (List<FileReader>?) -> Unit) {
+		val filePaths = openMultiplePrompt(fileFilterGroups?.toFilterListStr())
+		onSuccess(filePaths?.let { it.map { JvmFileReader(File(it)) } })
 	}
 
-	override fun pickFileForSave(fileFilterGroups: List<FileFilterGroup>?, defaultPath: String, defaultExtension: String?, onSuccess: (FileWriter?) -> Unit) {
-		val filePath = filePrompt(fileFilterGroups?.toFilterListStr(), defaultPath, NativeFileDialog::NFD_SaveDialog) ?: return onSuccess(null)
+	override fun pickFileForSave(fileFilterGroups: List<FileFilterGroup>?, defaultExtension: String?, onSuccess: (FileWriter?) -> Unit) {
+		val filePath = filePrompt(fileFilterGroups?.toFilterListStr(), NativeFileDialog::NFD_SaveDialog) ?: return onSuccess(null)
 
 		val filePathWithExtension = if (defaultExtension == null) {
 			filePath
@@ -79,13 +79,13 @@ class JvmFileIoManager : FileIoManager {
 
 	override fun dispose() {}
 
-	private fun filePrompt(filterList: String?, defaultPath: String, prompt: (String?, String, PointerBuffer?) -> Int): String? {
+	private fun filePrompt(filterList: String?, prompt: (String?, String?, PointerBuffer?) -> Int): String? {
 		val pathPtr = memAllocPointer(1)
 		val pathStr: String?
 
 		try {
 			pathStr = checkResult(
-					prompt(filterList, File(defaultPath).absolutePath, pathPtr),
+					prompt(filterList, null, pathPtr),
 					pathPtr
 			)
 		} finally {
@@ -94,12 +94,12 @@ class JvmFileIoManager : FileIoManager {
 		return pathStr
 	}
 
-	private fun openMultiplePrompt(filterList: String?, defaultPath: String): List<String>? {
+	private fun openMultiplePrompt(filterList: String?): List<String>? {
 		val pathSet = NFDPathSet.calloc()
 		val pathList = mutableListOf<String>()
 
 		try {
-			val result = NFD_OpenDialogMultiple(filterList, File(defaultPath).absolutePath, pathSet)
+			val result = NFD_OpenDialogMultiple(filterList, null, pathSet)
 			@Suppress("UNUSED_EXPRESSION")
 			when (result) {
 				NFD_OKAY -> {
@@ -120,7 +120,7 @@ class JvmFileIoManager : FileIoManager {
 	}
 }
 
-class JvmFileReader(private var path: String) : FileReader {
+class JvmFileReader(private val file: File) : FileReader {
 
 	override val name: String
 		get() = file.name
@@ -128,11 +128,6 @@ class JvmFileReader(private var path: String) : FileReader {
 		get() = file.length()
 	override val lastModified: Long
 		get() = file.lastModified()
-	private var file = File(path)
-		set(value) {
-			path = value.path
-			field = value
-		}
 
 	override suspend fun readAsString(): String? {
 		return file.readText()

@@ -99,14 +99,14 @@ class JsFileIoManager : FileIoManager {
 
 	private fun String.toExtension(): String = "." + trim().substringAfter('.')
 
-	override fun pickFileForOpen(fileFilterGroups: List<FileFilterGroup>?, defaultPath: String, onSuccess: (FileReader?) -> Unit) {
+	override fun pickFileForOpen(fileFilterGroups: List<FileFilterGroup>?, onSuccess: (FileReader?) -> Unit) {
 		destroyFilePicker()
 		filePicker = createFilePicker()
 		@Suppress("UNCHECKED_CAST")
 		getFileReaders(fileFilterGroups, onSuccess as (Any?) -> Unit)
 	}
 
-	override fun pickFilesForOpen(fileFilterGroups: List<FileFilterGroup>?, defaultPath: String, onSuccess: (List<FileReader>?) -> Unit) {
+	override fun pickFilesForOpen(fileFilterGroups: List<FileFilterGroup>?, onSuccess: (List<FileReader>?) -> Unit) {
 		destroyFilePicker()
 		filePicker = createFilePicker()
 		filePicker?.multiple = true
@@ -114,7 +114,7 @@ class JsFileIoManager : FileIoManager {
 		getFileReaders(fileFilterGroups, onSuccess as (Any?) -> Unit)
 	}
 
-	override fun pickFileForSave(fileFilterGroups: List<FileFilterGroup>?, defaultPath: String, defaultExtension: String?, onSuccess: (FileWriter?) -> Unit) {
+	override fun pickFileForSave(fileFilterGroups: List<FileFilterGroup>?, defaultExtension: String?, onSuccess: (FileWriter?) -> Unit) {
 		notSupported()
 	}
 

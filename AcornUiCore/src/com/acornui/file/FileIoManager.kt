@@ -27,10 +27,10 @@ interface FileIoManager : Disposable {
 	 */
 	val saveSupported: Boolean
 
-	fun pickFileForOpen(fileFilterGroups: List<FileFilterGroup>?, defaultPath: String, onSuccess: (FileReader?) -> Unit)
-	fun pickFilesForOpen(fileFilterGroups: List<FileFilterGroup>?, defaultPath: String, onSuccess: (List<FileReader>?) -> Unit)
+	fun pickFileForOpen(fileFilterGroups: List<FileFilterGroup>? = null, onSuccess: (FileReader?) -> Unit)
+	fun pickFilesForOpen(fileFilterGroups: List<FileFilterGroup>? = null, onSuccess: (List<FileReader>?) -> Unit)
 
-	fun pickFileForSave(fileFilterGroups: List<FileFilterGroup>?, defaultPath: String, defaultExtension: String? = null, onSuccess: (FileWriter?) -> Unit)
+	fun pickFileForSave(fileFilterGroups: List<FileFilterGroup>? = null, defaultExtension: String? = null, onSuccess: (FileWriter?) -> Unit)
 
 	companion object : DKey<FileIoManager>
 }
