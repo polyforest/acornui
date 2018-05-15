@@ -20,6 +20,9 @@ import com.acornui.async.Promise
 import com.acornui.async.launch
 import com.acornui.file.*
 import com.acornui.io.NativeBuffer
+import com.acornui.js.io.JsByteBuffer
+import org.khronos.webgl.ArrayBuffer
+import org.khronos.webgl.Uint8Array
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.Node
 import org.w3c.dom.events.Event
@@ -38,21 +41,26 @@ class JsFileIoManager : FileIoManager {
 	override val saveSupported: Boolean = false
 	private var filePicker: HTMLInputElement? = null
 
-	private fun changeHandler(onSuccess: (Any?) -> Unit): (Event) -> Unit = {
-		val fileList = filePicker?.files
-		val fileReaders = if (fileList == null || fileList.length == 0) {
-			null
-		} else {
-			val tempList = mutableListOf<JsFileReader>()
-			for (i in 0..fileList.length - 1) {
-				tempList.add(JsFileReader(fileList[i] ?: continue))
+	private fun changeHandler(onSuccess: (Any) -> Unit): (Event) -> Unit = {
+		val filePicker = filePicker
+		if (filePicker != null) {
+			val fileList = filePicker.files
+			val fileReaders = if (fileList == null || fileList.length == 0) {
+				null
+			} else {
+				val tempList = mutableListOf<JsFileReader>()
+				for (i in 0..fileList.length - 1) {
+					tempList.add(JsFileReader(fileList[i] ?: continue))
+				}
+				tempList
 			}
-			tempList
+			if (fileReaders != null) {
+				if (filePicker.multiple)
+					onSuccess(fileReaders)
+				else
+					onSuccess(fileReaders[0])
+			}
 		}
-		if (filePicker?.multiple == true)
-			onSuccess(fileReaders)
-		else
-			onSuccess(fileReaders?.get(0))
 	}
 
 	private fun createFilePicker(): HTMLInputElement {
@@ -77,14 +85,12 @@ class JsFileIoManager : FileIoManager {
 		}
 	}
 
-	private fun getFileReaders(fileFilterGroups: List<FileFilterGroup>?, onSuccess: (Any?) -> Unit) {
+	private fun getFileReaders(fileFilterGroups: List<FileFilterGroup>?, onSuccess: (Any) -> Unit) {
 		// TODO:  Test this as "" might cause the user to not be able to select anything
-		filePicker?.accept = fileFilterGroups?.toFilterListStr() ?: ""
-		filePicker?.onchange = changeHandler(onSuccess)
-
-		filePicker?.click()
-		// Always clear the list before the change event fires to normalize cancel
-		onSuccess(null)
+		val filePicker = filePicker ?: throw IllegalStateException("Internal error: filePicker not created")
+		filePicker.accept = fileFilterGroups?.toFilterListStr() ?: ""
+		filePicker.onchange = changeHandler(onSuccess)
+		filePicker.click()
 	}
 
 	private fun List<FileFilterGroup>.toFilterListStr(): String? {
@@ -97,14 +103,14 @@ class JsFileIoManager : FileIoManager {
 
 	private fun FileFilterGroup.toFilterListStr(): String = extensions.joinToString(",") { ".$it" }
 
-	override fun pickFileForOpen(fileFilterGroups: List<FileFilterGroup>?, onSuccess: (FileReader?) -> Unit) {
+	override fun pickFileForOpen(fileFilterGroups: List<FileFilterGroup>?, onSuccess: (FileReader) -> Unit) {
 		destroyFilePicker()
 		filePicker = createFilePicker()
 		@Suppress("UNCHECKED_CAST")
 		getFileReaders(fileFilterGroups, onSuccess as (Any?) -> Unit)
 	}
 
-	override fun pickFilesForOpen(fileFilterGroups: List<FileFilterGroup>?, onSuccess: (List<FileReader>?) -> Unit) {
+	override fun pickFilesForOpen(fileFilterGroups: List<FileFilterGroup>?, onSuccess: (List<FileReader>) -> Unit) {
 		destroyFilePicker()
 		filePicker = createFilePicker()
 		filePicker?.multiple = true
@@ -112,7 +118,7 @@ class JsFileIoManager : FileIoManager {
 		getFileReaders(fileFilterGroups, onSuccess as (Any?) -> Unit)
 	}
 
-	override fun pickFileForSave(fileFilterGroups: List<FileFilterGroup>?, defaultExtension: String?, onSuccess: (FileWriter?) -> Unit) {
+	override fun pickFileForSave(fileFilterGroups: List<FileFilterGroup>?, defaultExtension: String?, onSuccess: (FileWriter) -> Unit) {
 		notSupported()
 	}
 
@@ -126,43 +132,38 @@ class JsFileReader(val file: DomFile) : FileReader {
 	override val name = file.name
 	override val size = file.size.toLong()
 	override val lastModified = file.lastModified.toLong()
-	private val reader: JsFileApiReader = JsFileApiReader()
+	private val reader = JsFileApiReader()
 
-	private fun getContentsPromise() =
-			object : Promise<String>() {
-				init {
-					launch {
-						reader.onload = { _: Event ->
-							success(reader.result as String)
-						}
-						reader.onerror = { _: Event ->
-							fail(Exception(reader.error.toString()))
-						}
-						reader.readAsText(file)
+	override suspend fun readAsString(): String {
+		return object : Promise<String>() {
+			init {
+				launch {
+					reader.onload = { _: Event ->
+						success(reader.result as String)
 					}
+					reader.onerror = { _: Event ->
+						fail(Exception(reader.error.toString()))
+					}
+					reader.readAsText(file)
 				}
 			}
-
-	override suspend fun readAsString(): String? {
-		return getContentsPromise().await()
+		}.await()
 	}
 
-	override suspend fun readAsBinary(): NativeBuffer<Byte>? {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-	}
-}
-
-class JsFileWriter(file: DomFile) : FileWriter {
-
-	override val name: String = file.name
-	override val size = file.size.toLong()
-	override val lastModified = file.lastModified.toLong()
-
-	override suspend fun saveToFileAsString(value: String) {
-		notSupported()
-	}
-
-	override suspend fun saveToFileAsBinary(value: NativeBuffer<Byte>) {
-		notSupported()
+	override suspend fun readAsBinary(): NativeBuffer<Byte> {
+		return object : Promise<NativeBuffer<Byte>>() {
+			init {
+				launch {
+					reader.onload = { _: Event ->
+						val byteBuffer = JsByteBuffer(Uint8Array(reader.result as ArrayBuffer))
+						success(byteBuffer)
+					}
+					reader.onerror = { _: Event ->
+						fail(Exception(reader.error.toString()))
+					}
+					reader.readAsArrayBuffer(file)
+				}
+			}
+		}.await()
 	}
 }

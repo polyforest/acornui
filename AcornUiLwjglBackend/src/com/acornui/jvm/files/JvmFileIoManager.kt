@@ -46,18 +46,20 @@ class JvmFileIoManager : FileIoManager {
 
 	override val saveSupported: Boolean = true
 
-	override fun pickFileForOpen(fileFilterGroups: List<FileFilterGroup>?, onSuccess: (FileReader?) -> Unit) {
+	override fun pickFileForOpen(fileFilterGroups: List<FileFilterGroup>?, onSuccess: (FileReader) -> Unit) {
 		val filePath = filePrompt(fileFilterGroups?.toFilterListStr(), NativeFileDialog::NFD_OpenDialog)
-		onSuccess(filePath?.let { JvmFileReader(File(it)) })
+		if (filePath != null)
+			onSuccess(JvmFileReader(File(filePath)))
 	}
 
-	override fun pickFilesForOpen(fileFilterGroups: List<FileFilterGroup>?, onSuccess: (List<FileReader>?) -> Unit) {
+	override fun pickFilesForOpen(fileFilterGroups: List<FileFilterGroup>?, onSuccess: (List<FileReader>) -> Unit) {
 		val filePaths = openMultiplePrompt(fileFilterGroups?.toFilterListStr())
-		onSuccess(filePaths?.let { it.map { JvmFileReader(File(it)) } })
+		if (filePaths != null)
+			onSuccess(filePaths.map { JvmFileReader(File(it)) })
 	}
 
-	override fun pickFileForSave(fileFilterGroups: List<FileFilterGroup>?, defaultExtension: String?, onSuccess: (FileWriter?) -> Unit) {
-		val filePath = filePrompt(fileFilterGroups?.toFilterListStr(), NativeFileDialog::NFD_SaveDialog) ?: return onSuccess(null)
+	override fun pickFileForSave(fileFilterGroups: List<FileFilterGroup>?, defaultExtension: String?, onSuccess: (FileWriter) -> Unit) {
+		val filePath = filePrompt(fileFilterGroups?.toFilterListStr(), NativeFileDialog::NFD_SaveDialog) ?: return
 
 		val filePathWithExtension = if (defaultExtension == null) {
 			filePath
@@ -129,11 +131,11 @@ class JvmFileReader(private val file: File) : FileReader {
 	override val lastModified: Long
 		get() = file.lastModified()
 
-	override suspend fun readAsString(): String? {
+	override suspend fun readAsString(): String {
 		return file.readText()
 	}
 
-	override suspend fun readAsBinary(): NativeBuffer<Byte>? {
+	override suspend fun readAsBinary(): NativeBuffer<Byte> {
 		// TODO: There could be some utility here.
 		val bytes = file.readBytes()
 		val buffer = BufferFactory.instance.byteBuffer(bytes.size)

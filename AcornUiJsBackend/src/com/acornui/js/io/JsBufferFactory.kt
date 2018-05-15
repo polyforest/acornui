@@ -60,8 +60,8 @@ class JsByteBuffer(private val buffer: Uint8Array) : BufferBase<Byte>(buffer.len
 
 	override val native: Any
 		get() {
-			if (_limit == _capacity) return buffer
-			else return buffer.subarray(0, _limit)
+			return if (_limit == _capacity) buffer
+			else buffer.subarray(0, _limit)
 		}
 }
 
