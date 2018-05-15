@@ -73,6 +73,7 @@ class DataBinding<T>(initialValue: T) : Disposable {
  * Mirrors changes from two data binding objects. If one changes, the other will be set.
  */
 fun <T> DataBinding<T>.mirror(other: DataBinding<T>): Disposable {
+	if (this === other) throw IllegalArgumentException("Cannot mirror to self")
 	val a = bind {
 		other.value = it
 	}
