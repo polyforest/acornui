@@ -27,19 +27,29 @@ class DataBinding<T>(initialValue: T) : Disposable {
 			_changed.dispatch(old, value)
 		}
 
+	fun change(callback: (T) -> T) {
+		value = callback(value)
+	}
+
 	/**
 	 * When the data has changed, the callback will be invoked.
 	 * If the data has been set, the callback will be invoked immediately.
 	 *
 	 * If you need to know the old value as well, use the [changed] signal.
 	 */
-	fun bind(callback: (T) -> Unit) {
+	fun bind(callback: (T) -> Unit): Disposable {
 		val handler: DataChangeHandler<T> = { _, new: T ->
 			callback(new)
 		}
 		_wrapped[callback] = handler
 		_changed.add(handler)
 		callback(_value)
+
+		return object : Disposable {
+			override fun dispose() {
+				remove(callback)
+			}
+		}
 	}
 
 	/**
@@ -62,12 +72,18 @@ class DataBinding<T>(initialValue: T) : Disposable {
 /**
  * Mirrors changes from two data binding objects. If one changes, the other will be set.
  */
-fun <T> DataBinding<T>.mirror(other: DataBinding<T>) {
-	bind {
+fun <T> DataBinding<T>.mirror(other: DataBinding<T>): Disposable {
+	val a = bind {
 		other.value = it
 	}
-	other.bind {
+	val b = other.bind {
 		value = it
+	}
+	return object : Disposable {
+		override fun dispose() {
+			a.dispose()
+			b.dispose()
+		}
 	}
 }
 

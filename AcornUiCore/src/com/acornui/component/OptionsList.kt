@@ -143,7 +143,9 @@ open class OptionsList<E : Any>(
 
 	private val dataScroller = vDataScroller<E> {
 		keyDown().add(this@OptionsList::keyDownHandler)
-		selection.changed.add { _, _ ->
+		selection.changed.add { _, newSelection ->
+			val value = newSelection.firstOrNull()
+			textInput.text = if (value == null) "" else formatter.format(value)
 			this@OptionsList.focusFirst()
 			close()
 			_changed.dispatch()

@@ -613,6 +613,12 @@ fun <E> List<E>.replaceAt(index: Int, newValue: E): List<E> {
 	return newList
 }
 
+fun <E> List<E>.replaceFirstWhere(newValue: E, predicate: (E) -> Boolean): List<E> {
+	val index = indexOfFirst2(0, lastIndex, predicate)
+	return if (index == -1) copy()
+	else replaceAt(index, newValue)
+}
+
 /**
  * Clones this list, replacing the given range with the new elements.
  * @param startIndex The starting index of the replacement.

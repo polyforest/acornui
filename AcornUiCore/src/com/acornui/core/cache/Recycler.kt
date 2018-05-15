@@ -18,7 +18,6 @@ package com.acornui.core.cache
 
 import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
-import com.acornui.collection.removeFirst
 import com.acornui.component.ItemRendererRo
 
 /**
@@ -28,19 +27,45 @@ import com.acornui.component.ItemRendererRo
  * @param factory Used to create new item renderers as needed. [configure] will be called after factory to configure
  * the new element.
  * @param configure Used to configure the element.
+ * @param disposer Used to dispose the element.
+ * @param equality If set, uses custom equality rules. This guides how to know whether an item can be recycled or not.
  */
 fun <E, T : ItemRendererRo<E>> recycle(
 		data: List<E>?,
 		existingElements: MutableList<T>,
-		factory: () -> T,
+		factory: (item: E, index: Int) -> T,
 		configure: (element: T, item: E, index: Int) -> Unit,
-		disposer: (element: T) -> Unit
+		disposer: (element: T) -> Unit,
+		equality: (a: E?, b: E?) -> Boolean = { a, b -> a == b }
+) = recycle(data, existingElements, factory, configure, disposer, { it.data }, equality)
+
+
+/**
+ * Recycles a list of item renderers, creating or disposing renderers only as needed.
+ * @param data The updated list of data items.
+ * @param existingElements The stale list of item renderers. This will be modified to reflect the new item renderers.
+ * @param factory Used to create new item renderers as needed. [configure] will be called after factory to configure
+ * the new element.
+ * @param configure Used to configure the element.
+ * @param disposer Used to dispose the element.
+ * @param retriever Returns the current data value for the given element.
+ * @param equality If set, uses custom equality rules. This guides how to know whether an item can be recycled or not.
+ */
+fun <E, T> recycle(
+		data: List<E>?,
+		existingElements: MutableList<T>,
+		factory: (item: E, index: Int) -> T,
+		configure: (element: T, item: E, index: Int) -> Unit,
+		disposer: (element: T) -> Unit,
+		retriever: (element: T) -> E?,
+		equality: (a: E?, b: E?) -> Boolean = { a, b -> a == b }
 ) {
 	val unused = arrayListObtain<T>()
 	val neededCount = (data?.size ?: 0) - existingElements.size
 	for (i in 0..existingElements.lastIndex) {
 		val existingElement = existingElements[i]
-		if (unused.size >= neededCount && (data == null || data.find { it == existingElement.data } == null)) {
+		val item = retriever(existingElement)
+		if (unused.size >= neededCount && (data == null || data.find { equality(it, item) } == null)) {
 			disposer(existingElement)
 		} else {
 			unused.add(existingElement)
@@ -50,10 +75,23 @@ fun <E, T : ItemRendererRo<E>> recycle(
 	if (data != null) {
 		for (i in 0..data.lastIndex) {
 			val item = data[i]
-			val element = unused.removeFirst { it.data == item } ?: factory()
+			val foundIndex = unused.indexOfFirst { equality(retriever(it), item) }
+			val element = if (foundIndex == -1) {
+				factory(item, i)
+			} else {
+				unused.removeAt(foundIndex)
+			}
 			configure(element, item, i)
 			existingElements.add(element)
 		}
 	}
 	arrayListPool.free(unused)
+}
+
+/**
+ * Recycles [data] list into [other] list. It is similar to [List.mapTo] except reuses elements instead of generating
+ * every time.
+ */
+fun <E1, E2> recycle(data: List<E1>?, other: MutableList<E2>, factory: (E1) -> E2, compare: (E2, E1) -> Boolean) {
+	recycle(data, other, { e, index -> factory(e) }, { e1, e2, index -> }, {}, { element -> data?.find { compare(element, it) } } )
 }
