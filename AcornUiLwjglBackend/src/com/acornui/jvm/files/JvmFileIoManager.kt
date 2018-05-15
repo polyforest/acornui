@@ -62,7 +62,7 @@ class JvmFileIoManager : FileIoManager {
 		val filePathWithExtension = if (defaultExtension == null) {
 			filePath
 		} else {
-			val ext = defaultExtension.toExtension()
+			val ext = defaultExtension.normalizeExtension()
 			if (filePath.endsWith(ext, true)) filePath else "$filePath.$ext"
 		}
 		onSuccess(JvmFileWriter(File(filePathWithExtension)))
@@ -73,9 +73,9 @@ class JvmFileIoManager : FileIoManager {
 		return joinToString(";") { it.toFilterListStr() }
 	}
 
-	private fun FileFilterGroup.toFilterListStr(): String = extensions.joinToString(",") { it.toExtension() }
+	private fun FileFilterGroup.toFilterListStr(): String = extensions.joinToString(",")
 
-	private fun String.toExtension(): String = trim().substringAfter('.')
+	private fun String.normalizeExtension(): String = substringAfter('.').trim()
 
 	override fun dispose() {}
 

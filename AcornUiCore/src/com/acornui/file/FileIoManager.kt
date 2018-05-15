@@ -39,9 +39,11 @@ interface FileIoManager : Disposable {
  * A list of extension groups to filter for when picking files.
  * @param extensions The list of extensions in this group.
  */
-data class FileFilterGroup(
-		val extensions: List<String>
-)
+class FileFilterGroup(
+		extensions: List<String>
+) {
+	val extensions: List<String> = extensions.map { it.substringAfter(".").trim() }
+}
 
 interface FileReader {
 

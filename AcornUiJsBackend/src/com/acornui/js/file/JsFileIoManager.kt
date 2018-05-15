@@ -95,9 +95,7 @@ class JsFileIoManager : FileIoManager {
 		return joinToString(",") { it.toFilterListStr() }
 	}
 
-	private fun FileFilterGroup.toFilterListStr(): String = extensions.joinToString(",") { it.toExtension() }
-
-	private fun String.toExtension(): String = "." + trim().substringAfter('.')
+	private fun FileFilterGroup.toFilterListStr(): String = extensions.joinToString(",") { ".$it" }
 
 	override fun pickFileForOpen(fileFilterGroups: List<FileFilterGroup>?, onSuccess: (FileReader?) -> Unit) {
 		destroyFilePicker()
