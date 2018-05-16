@@ -36,6 +36,8 @@ import com.acornui.core.graphics.AtlasRegionData
 import com.acornui.gl.core.Vertex
 import com.acornui.graphics.Color
 import com.acornui.math.MathUtils
+import com.acornui.math.Vector3
+import com.acornui.math.Vector3Ro
 import com.esotericsoftware.spine.Slot
 import com.esotericsoftware.spine.data.attachments.RegionAttachmentData
 
@@ -50,7 +52,7 @@ open class RegionAttachment(
 	private val color: Color = Color()
 
 	// TL, TR, BR, BL
-	private val worldVertices = Array(4, { Vertex() })
+	private val worldVertices = Array(4, { Vertex(normal = Vector3.NEG_Z.copy()) })
 	private val offset = FloatArray(8)
 
 	init {

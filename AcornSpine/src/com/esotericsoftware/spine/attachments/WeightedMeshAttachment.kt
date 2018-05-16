@@ -35,6 +35,7 @@ import com.acornui.core.graphics.AtlasPageData
 import com.acornui.core.graphics.AtlasRegionData
 import com.acornui.gl.core.Vertex
 import com.acornui.graphics.Color
+import com.acornui.math.Vector3
 import com.esotericsoftware.spine.Slot
 import com.esotericsoftware.spine.data.attachments.WeightedMeshAttachmentData
 
@@ -65,12 +66,14 @@ class WeightedMeshAttachment(
 			if (region.isRotated) {
 				Vertex(
 						u = u + regionUVs[it * 2 + 1] * width,
-						v = v + height - regionUVs[it * 2] * height
+						v = v + height - regionUVs[it * 2] * height,
+						normal = Vector3.NEG_Z.copy()
 				)
 			} else {
 				Vertex(
 						u = u + regionUVs[it * 2] * width,
-						v = v + regionUVs[it * 2 + 1] * height
+						v = v + regionUVs[it * 2 + 1] * height,
+						normal = Vector3.NEG_Z.copy()
 				)
 			}
 		}

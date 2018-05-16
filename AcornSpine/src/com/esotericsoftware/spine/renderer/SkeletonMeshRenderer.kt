@@ -34,7 +34,6 @@ import com.acornui.core.graphics.Texture
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.Vertex
 import com.acornui.graphics.ColorRo
-import com.acornui.math.Vector3
 import com.esotericsoftware.spine.Skeleton
 import com.esotericsoftware.spine.attachments.MeshAttachment
 import com.esotericsoftware.spine.attachments.RegionAttachment
