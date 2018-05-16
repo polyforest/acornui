@@ -461,13 +461,25 @@ inline fun <E, C : MutableCollection<in E>> List<E>.filterTo2(destination: C, pr
 	return destination
 }
 
+@Deprecated("renamed to first2", ReplaceWith("this.firstOrNull2(startIndex, predicate)"))
+inline fun <E> List<E>.find2(startIndex: Int = 0, predicate: (E) -> Boolean): E? = this.first2(startIndex, predicate)
+
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  * Does not cause allocation.
  */
-inline fun <E> List<E>.find2(startIndex: Int = 0, predicate: (E) -> Boolean): E? {
+inline fun <E> List<E>.firstOrNull2(startIndex: Int = 0, predicate: (E) -> Boolean): E? {
 	val index = indexOfFirst2(startIndex, lastIndex, predicate)
 	return if (index == -1) null else this[index]
+}
+
+/**
+ * Returns the first element matching the given [predicate], or throws an exception if no such element was found.
+ * Does not cause allocation.
+ */
+inline fun <E> List<E>.first2(startIndex: Int = 0, predicate: (E) -> Boolean): E? {
+	val index = indexOfFirst2(startIndex, lastIndex, predicate)
+	return if (index == -1) throw Exception("Element not found matching predicate") else this[index]
 }
 
 /**
