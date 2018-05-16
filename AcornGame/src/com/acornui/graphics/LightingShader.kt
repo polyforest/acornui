@@ -86,7 +86,7 @@ float getShadowDepth(const in vec2 coord) {
 }
 
 vec3 getDirectionalColor() {
-	float cosTheta = clamp(dot(v_normal, u_directionalLightDir), 0.05, 1.0);
+	float cosTheta = clamp(dot(v_normal, -u_directionalLightDir), 0.05, 1.0);
 	if (u_shadowsEnabled == 0 || u_directional.rgb == vec3(0.0)) return cosTheta * u_directional.rgb;
 	float visibility = 0.0;
 	float shadow = getShadowDepth(v_directionalShadowCoord.xy);
