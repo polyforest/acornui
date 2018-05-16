@@ -47,12 +47,8 @@ import com.acornui.core.input.wheel
 import com.acornui.math.*
 import com.acornui.math.MathUtils.clamp
 import com.acornui.observe.IndexBinding
-import com.acornui.observe.bind
 import com.acornui.observe.bindIndex
-import com.acornui.signal.Cancel
-import com.acornui.signal.Signal
-import com.acornui.signal.Signal1
-import com.acornui.signal.Signal2
+import com.acornui.signal.*
 import kotlin.properties.ObservableProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty

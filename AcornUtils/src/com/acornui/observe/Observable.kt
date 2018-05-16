@@ -16,13 +16,21 @@
 
 package com.acornui.observe
 
+import com.acornui.signal.Bindable
 import com.acornui.signal.Signal
 
-interface Observable {
+interface Observable : Bindable {
 
 	/**
 	 * Dispatched when this object has changed.
 	 */
 	val changed: Signal<(Observable) -> Unit>
 
+	override fun addBinding(callback: () -> Unit) {
+		changed.addBinding(callback)
+	}
+
+	override fun removeBinding(callback: () -> Unit) {
+		changed.removeBinding(callback)
+	}
 }

@@ -21,56 +21,6 @@ package com.acornui.observe
 import com.acornui.collection.ObservableList
 import com.acornui.core.Disposable
 
-
-/**
- * Watches the observable list, on any change (add, remove, change, or reset) the callback will be invoked.
- * @return Returns an object that can be disposed to unbind.
- */
-fun <E> ObservableList<E>.bind(callback: () -> Unit): Disposable = ObservableListBinding(this, callback)
-
-/**
- * Watches an observable list, invoking a callback whenever it has changed.
- * The callback will also be called on initialization.
- */
-private class ObservableListBinding<out E>(
-		private val list: ObservableList<E>,
-		private val callback: () -> Unit
-) : Disposable {
-
-	init {
-		list.added.add(this::addedHandler)
-		list.removed.add(this::removedHandler)
-		list.changed.add(this::changedHandler)
-		list.modified.add(this::elementModifiedHandler)
-		list.reset.add(callback)
-		callback()
-	}
-
-	private fun addedHandler(index: Int, element: E) {
-		callback()
-	}
-
-	private fun removedHandler(index: Int, element: E) {
-		callback()
-	}
-
-	private fun changedHandler(index: Int, old: E, new: E) {
-		callback()
-	}
-
-	private fun elementModifiedHandler(index: Int, element: E) {
-		callback()
-	}
-
-	override fun dispose() {
-		list.added.remove(this::addedHandler)
-		list.removed.remove(this::removedHandler)
-		list.changed.remove(this::changedHandler)
-		list.modified.remove(this::elementModifiedHandler)
-		list.reset.remove(callback)
-	}
-}
-
 /**
  * Returns a binding that tracks an index within the target list.
  */

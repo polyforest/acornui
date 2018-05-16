@@ -47,10 +47,10 @@ import com.acornui.core.text.StringFormatter
 import com.acornui.core.text.ToStringFormatter
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
-import com.acornui.observe.bind
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
+import com.acornui.signal.bind
 
 // TODO: delegate focus to input
 

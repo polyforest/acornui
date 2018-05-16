@@ -18,9 +18,12 @@
 
 package com.acornui.collection
 
+import com.acornui.function.as2
+import com.acornui.function.as3
+import com.acornui.signal.Bindable
 import com.acornui.signal.Signal
 
-interface ObservableList<out E> : ConcurrentList<E> {
+interface ObservableList<out E> : ConcurrentList<E>, Bindable {
 
 	/**
 	 * Dispatched when an element has been added.
@@ -53,6 +56,22 @@ interface ObservableList<out E> : ConcurrentList<E> {
 	 * modifying the list itself.
 	 */
 	fun notifyElementModified(index: Int)
+
+	override fun addBinding(callback: () -> Unit) {
+		added.add(callback.as2)
+		removed.add(callback.as2)
+		changed.add(callback.as3)
+		modified.add(callback.as2)
+		reset.add(callback)
+	}
+
+	override fun removeBinding(callback: () -> Unit) {
+		added.remove(callback.as2)
+		removed.remove(callback.as2)
+		changed.remove(callback.as3)
+		modified.remove(callback.as2)
+		reset.remove(callback)
+	}
 }
 
 interface MutableObservableList<E> : ObservableList<E>, MutableConcurrentList<E> {

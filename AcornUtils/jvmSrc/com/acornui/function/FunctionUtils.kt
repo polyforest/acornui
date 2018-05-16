@@ -88,3 +88,39 @@ data class FWrapper6(private val inner: () -> Unit) : (Any?, Any?, Any?, Any?, A
 		inner()
 	}
 }
+
+/**
+ * Converts a method with zero parameters to a method with seven (unused) parameters.
+ */
+val (() -> Unit).as7: FWrapper7
+	get() = FWrapper7(this)
+
+data class FWrapper7(private val inner: () -> Unit) : (Any?, Any?, Any?, Any?, Any?, Any?, Any?) -> Unit {
+	override operator fun invoke(p1: Any?, p2: Any?, p3: Any?, p4: Any?, p5: Any?, p6: Any?, p7: Any?) {
+		inner()
+	}
+}
+
+/**
+ * Converts a method with zero parameters to a method with eight (unused) parameters.
+ */
+val (() -> Unit).as8: FWrapper8
+	get() = FWrapper8(this)
+
+data class FWrapper8(private val inner: () -> Unit) : (Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?) -> Unit {
+	override operator fun invoke(p1: Any?, p2: Any?, p3: Any?, p4: Any?, p5: Any?, p6: Any?, p7: Any?, p8: Any?) {
+		inner()
+	}
+}
+
+/**
+ * Converts a method with zero parameters to a method with nine (unused) parameters.
+ */
+val (() -> Unit).as9: FWrapper9
+	get() = FWrapper9(this)
+
+data class FWrapper9(private val inner: () -> Unit) : (Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?) -> Unit {
+	override operator fun invoke(p1: Any?, p2: Any?, p3: Any?, p4: Any?, p5: Any?, p6: Any?, p7: Any?, p8: Any?, p9: Any?) {
+		inner()
+	}
+}

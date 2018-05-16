@@ -10,7 +10,7 @@ import com.acornui.collection.find2
 import com.acornui.collection.removeFirst
 import com.acornui.core.Disposable
 import com.acornui.observe.Observable
-import com.acornui.observe.bind
+import com.acornui.signal.bind
 
 interface StyleableRo {
 
