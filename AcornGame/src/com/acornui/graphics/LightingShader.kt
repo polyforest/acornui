@@ -5,7 +5,7 @@ import com.acornui.gl.core.DEFAULT_SHADER_HEADER
 import com.acornui.gl.core.ShaderProgram
 import com.acornui.gl.core.ShaderProgramBase
 
-val PACK_FLOAT: String = """
+const val PACK_FLOAT: String = """
 vec4 packFloat(const in float value) {
 	const vec4 bit_shift = vec4(256.0 * 256.0 * 256.0, 256.0 * 256.0, 256.0, 1.0);
 	const vec4 bit_mask  = vec4(0.0, 1.0 / 256.0, 1.0 / 256.0, 1.0 / 256.0);

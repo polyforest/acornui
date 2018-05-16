@@ -93,6 +93,9 @@ class ParticleEffectComponent(
 		effect = value
 	}
 
+	val effectInstance: ParticleEffectInstanceVo?
+		get() = _effect?.effectInstance
+
 	override fun draw(viewport: MinMaxRo) {
 		val effect = _effect ?: return
 		glState.camera(camera, concatenatedTransform)
@@ -107,7 +110,7 @@ class ParticleEffectComponent(
 
 class LoadedParticleEffect(
 
-		effectInstance: ParticleEffectInstanceVo,
+		val effectInstance: ParticleEffectInstanceVo,
 
 		private val renderers: List<ParticleEmitterRenderer>,
 

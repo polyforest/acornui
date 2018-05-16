@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("MemberVisibilityCanBePrivate", "unused")
+
 package com.acornui.particle
 
 
@@ -29,7 +31,7 @@ class ParticleEffectInstanceVo(
 
 ) {
 
-	val _position = Vector3()
+	private val _position = Vector3()
 
 	val position: Vector3Ro
 		get() = _position

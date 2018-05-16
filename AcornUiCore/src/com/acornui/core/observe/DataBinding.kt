@@ -1,4 +1,4 @@
-package com.acornui.core.immutable
+package com.acornui.core.observe
 
 import com.acornui.core.Disposable
 import com.acornui.core.di.Owned
@@ -62,6 +62,14 @@ class DataBinding<T>(initialValue: T) : Disposable {
 			_changed.remove(handler)
 		}
 	}
+
+//	override fun watch(callback: () -> Unit) {
+//		bind(callback.as1)
+//	}
+//
+//	override fun unwatch(callback: () -> Unit) {
+//		remove(callback.as1)
+//	}
 
 	override fun dispose() {
 		_changed.dispose()
