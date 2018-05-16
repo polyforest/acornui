@@ -28,7 +28,9 @@ import com.acornui.io.NativeBuffer
  */
 interface FileIoManager : Disposable {
 
-	/** If false, [pickFileForSave] will fail. */
+	/**
+	 * If false, [pickFileForSave] will fail.
+	 */
 	val saveSupported: Boolean
 
 	/**
@@ -81,16 +83,26 @@ class FileFilterGroup(
  */
 interface FileReader {
 
-	/** Name of the file including aboslute path (JS excludes path for security purposes) */
+	/**
+	 * Name of the file including aboslute path (JS excludes path for security purposes)
+	 */
 	val name: String
-	/** Size of the file in bytes */
+	/**
+	 * Size of the file in bytes
+	 */
 	val size: Long
-	/** Last date the file was modified as the number of milliseconds since the Unix Epoch */
+	/**
+	 * Last date the file was modified as the number of milliseconds since the Unix Epoch
+	 */
 	val lastModified: Long
 
-	/** Read file ([name]) from disk as a String */
+	/**
+	 * Read file ([name]) from disk as a String
+	 */
 	suspend fun readAsString(): String
-	/** Read file ([name]) from disk binary */
+	/**
+	 * Read file ([name]) from disk binary
+	 */
 	suspend fun readAsBinary(): NativeBuffer<Byte>
 }
 
@@ -101,15 +113,25 @@ interface FileReader {
  */
 interface FileWriter {
 
-	/** Name of the file including absolute path */
+	/**
+	 * Name of the file including absolute path
+	 */
 	val name: String
-	/** Size of the file in bytes */
+	/**
+	 * Size of the file in bytes
+	 */
 	val size: Long
-	/** Last date the file was modified as the number of milliseconds since the Unix Epoch */
+	/**
+	 * Last date the file was modified as the number of milliseconds since the Unix Epoch
+	 */
 	val lastModified: Long
 
-	/** Write file ([name]) to disk as a String */
+	/**
+	 * Write file ([name]) to disk as a String
+	 */
 	suspend fun saveToFileAsString(value: String)
-	/** Write file ([name]) to disk as binary */
+	/**
+	 * Write file ([name]) to disk as binary
+	 */
 	suspend fun saveToFileAsBinary(value: NativeBuffer<Byte>)
 }
