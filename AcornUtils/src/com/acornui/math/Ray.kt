@@ -21,6 +21,7 @@ package com.acornui.math
 import com.acornui.collection.Clearable
 import com.acornui.collection.ClearableObjectPool
 import com.acornui.core.notCloseTo
+import com.acornui.math.MathUtils.FLOAT_ROUNDING_ERROR
 
 interface RayRo {
 
@@ -231,7 +232,7 @@ data class Ray(
 		val denom = direction.dot(plane.normal)
 		return if (denom != 0f) {
 			val t = -(origin.dot(plane.normal) + plane.d) / denom
-			if (t < 0) return false
+			if (t < 0f) return false
 			out?.set(origin)?.add(v3_0.set(direction).scl(t))
 			true
 		} else if (plane.testPoint(origin) === PlaneSide.ON_PLANE) {
@@ -269,7 +270,7 @@ data class Ray(
 		val u = (dot11 * dot02 - dot01 * dot12) / denom
 		val v = (dot00 * dot12 - dot01 * dot02) / denom
 
-		return if (u >= 0f && v >= 0f && u + v <= 1f) {
+		return if (u >= -FLOAT_ROUNDING_ERROR && v >= -FLOAT_ROUNDING_ERROR && u + v <= 1f + FLOAT_ROUNDING_ERROR) {
 			out?.set(v3_3)
 			true
 		} else {
