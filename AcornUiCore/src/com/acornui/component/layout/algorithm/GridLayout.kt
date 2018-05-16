@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package com.acornui.component.layout.algorithm
 
 import com.acornui.collection.*
@@ -58,7 +60,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 	private val rowOccupancy = ArrayList<Int>()
 
 	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, props: GridLayoutStyle, out: SizeConstraints) {
-		var minWidth: Float = 0f
+		var minWidth = 0f
 		for (c in props.columns) {
 			if (c.minWidth != null) minWidth += c.minWidth!!
 		}
@@ -133,8 +135,8 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 					notFlexible = false
 					break
 				} else {
-					if (columnPreferredWidths[colIndex] == null) availableSpanWidth = null
-					else availableSpanWidth = availableSpanWidth!! + columnPreferredWidths[colIndex]!! + props.horizontalGap
+					availableSpanWidth = if (columnPreferredWidths[colIndex] == null) null
+					else availableSpanWidth!! + columnPreferredWidths[colIndex]!! + props.horizontalGap
 				}
 			}
 			if (notFlexible) {
@@ -194,7 +196,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 				val layoutData = element.layoutData as GridLayoutData?
 				val colSpan = layoutData?.colSpan ?: 1
 				var flexible = false
-				var availableSpanWidth: Float = 0f
+				var availableSpanWidth = 0f
 				for (i in colIndex..colIndex + colSpan - 1) {
 					val col = props.columns[i]
 					if (col.getIsFlexible())
@@ -241,7 +243,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 			val layoutData = element.layoutData as GridLayoutData?
 
 			val colSpan = layoutData?.colSpan ?: 1
-			var measuredSpanWidth: Float = 0f
+			var measuredSpanWidth = 0f
 			for (i in colIndex..colIndex + colSpan - 1) {
 				measuredSpanWidth += _measuredColWidths[i] + props.horizontalGap
 			}
@@ -253,7 +255,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 			}
 
 			val rowSpan = layoutData?.rowSpan ?: 1
-			var measuredSpanHeight: Float = 0f
+			var measuredSpanHeight = 0f
 			for (i in rowIndex..rowIndex + rowSpan - 1) {
 				measuredSpanHeight += _measuredRowHeights[i] + props.verticalGap
 			}
@@ -326,7 +328,7 @@ class GridColumn : Observable {
 	/**
 	 * @see getIsFlexible
 	 */
-	var flexible: Boolean? by bindable<Boolean?>(null)
+	var flexible: Boolean? by bindable(null)
 
 	/**
 	 * A flexible column will flex its size to fit within the available bounds of the container.

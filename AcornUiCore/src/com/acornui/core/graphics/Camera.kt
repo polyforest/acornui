@@ -16,15 +16,16 @@
 * limitations under the License.
 */
 
+@file:Suppress("PropertyName", "MemberVisibilityCanBePrivate", "unused")
+
 package com.acornui.core.graphics
 
 import com.acornui.core.Disposable
 import com.acornui.core.di.DKey
 import com.acornui.math.*
-import com.acornui.observe.ModTagRo
 import com.acornui.observe.ModTagImpl
+import com.acornui.observe.ModTagRo
 import com.acornui.reflect.observable
-import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 
 interface CameraRo {
@@ -555,7 +556,7 @@ abstract class CameraBase : Camera {
 
 fun Window.autoCenterCamera(camera: Camera): Disposable {
 	val windowResizedHandler = {
-		newWidth: Float, newHeight: Float, isUserInteraction: Boolean ->
+		_: Float, _: Float, _: Boolean ->
 		centerCamera(camera)
 	}
 	sizeChanged.add(windowResizedHandler)
@@ -569,7 +570,6 @@ fun Window.autoCenterCamera(camera: Camera): Disposable {
 
 /**
  * Centers the camera to this window.
- * [Camera.update] must be called after this.
  */
 fun Window.centerCamera(camera: Camera) {
 	val width = maxOf(1f, width)
