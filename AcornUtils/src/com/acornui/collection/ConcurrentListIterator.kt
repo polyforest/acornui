@@ -138,10 +138,6 @@ open class ConcurrentListIteratorImpl<out E>(
 		cursor = Int.MAX_VALUE
 	}
 
-	init {
-
-	}
-
 	override fun hasNext(): Boolean {
 		return cursor < list.size
 	}

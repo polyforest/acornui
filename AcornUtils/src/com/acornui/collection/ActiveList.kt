@@ -158,14 +158,12 @@ open class ActiveList<E>(initialCapacity: Int) : Clearable, MutableObservableLis
 
 	override fun concurrentIterator(): MutableConcurrentListIterator<E> = MutableConcurrentListIteratorImpl(this)
 
-	override fun iterator(): MutableConcurrentListIterator<E> = MutableConcurrentListIteratorImpl(this)
+	override fun iterator(): MutableListIterator<E> = MutableListIteratorImpl(this)
 
-	override fun listIterator(): MutableConcurrentListIterator<E> {
-		return MutableConcurrentListIteratorImpl(this)
-	}
+	override fun listIterator(): MutableListIterator<E> = MutableListIteratorImpl(this)
 
-	override fun listIterator(index: Int): MutableConcurrentListIterator<E> {
-		val iterator = MutableConcurrentListIteratorImpl(this)
+	override fun listIterator(index: Int): MutableListIterator<E> {
+		val iterator = MutableListIteratorImpl(this)
 		iterator.cursor = index
 		return iterator
 	}

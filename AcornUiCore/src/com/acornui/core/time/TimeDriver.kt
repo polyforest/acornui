@@ -39,7 +39,7 @@ open class TimeDriverImpl : TimeDriver, Disposable {
 
 	override var parent: Parent<out ChildRo>? = null
 	private val _children = ActiveList<UpdatableChild>()
-	private val childIterator = _children.iterator()
+	private val childIterator = _children.concurrentIterator()
 
 	override fun update(stepTime: Float) {
 		iterateChildren {

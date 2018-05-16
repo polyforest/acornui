@@ -52,12 +52,12 @@ class ConcurrentListImpl<E> : MutableListBase<E>(), MutableConcurrentList<E> {
 
 	override fun concurrentIterator(): MutableConcurrentListIterator<E> = ConcurrentListImplIterator(this, iteratorStack)
 
-	override fun iterator(): MutableConcurrentListIterator<E> = ConcurrentListImplIterator(this, iteratorStack)
+	override fun iterator(): MutableListIterator<E> = MutableListIteratorImpl(this)
 
-	override fun listIterator(): MutableConcurrentListIterator<E> = ConcurrentListImplIterator(this, iteratorStack)
+	override fun listIterator(): MutableListIterator<E> = MutableListIteratorImpl(this)
 
-	override fun listIterator(index: Int): MutableConcurrentListIterator<E> {
-		val iterator = ConcurrentListImplIterator(this, iteratorStack)
+	override fun listIterator(index: Int): MutableListIterator<E> {
+		val iterator = MutableListIteratorImpl(this)
 		iterator.cursor = index
 		return iterator
 	}
