@@ -1,6 +1,5 @@
 package com.acornui.collection
 
-import com.acornui.math.MathUtils
 import com.acornui.test.assertListEquals
 import com.acornui.test.benchmark
 import org.junit.Test

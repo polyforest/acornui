@@ -42,7 +42,8 @@ class MathUtilsTest {
 		}
 	}
 
-	@Test fun sinSpeed() {
+//	@Test
+	fun sinSpeed() {
 		val utilsSpeed = benchmark {
 			var x = -7f
 			while (x <= 7f) {
@@ -66,7 +67,8 @@ class MathUtilsTest {
 		}
 	}
 
-	@Test fun tanSpeed() {
+//	@Test
+	fun tanSpeed() {
 		val utilsSpeed = benchmark {
 			var x = -7f
 			while (x <= 7f) {

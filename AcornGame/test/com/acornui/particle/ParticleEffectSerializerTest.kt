@@ -17,12 +17,21 @@
 package com.acornui.particle
 
 import com.acornui.core.graphics.BlendMode
+import com.acornui.core.time.time
 import com.acornui.math.Easing
 import com.acornui.serialization.JsonSerializer
+import com.acornui.test.MockTimeProvider
+import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class ParticleEffectSerializerTest {
+
+
+	@Before
+	fun setUp() {
+		time = MockTimeProvider()
+	}
 
 	@Test
 	fun serializeToFro() {

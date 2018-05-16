@@ -133,7 +133,7 @@ internal object Atan2 {
 @Suppress("NOTHING_TO_INLINE")
 object MathUtils {
 
-	val nanoToSec: Float = 1 / 1000000000f
+	const val nanoToSec: Float = 1f / 1000000000f
 
 	// ---
 	const val FLOAT_ROUNDING_ERROR: Float = 0.000001f // 32 bits

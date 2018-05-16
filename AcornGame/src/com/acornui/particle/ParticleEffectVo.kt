@@ -244,6 +244,7 @@ object ParticleEmitterSerializer : From<ParticleEmitterVo>, To<ParticleEmitterVo
 
 	override fun read(reader: Reader): ParticleEmitterVo {
 		return ParticleEmitterVo(
+				id = reader.string("id")!!,
 				name = reader.string("name")!!,
 				enabled = reader.bool("enabled") ?: true,
 				loops = reader.bool("loops") ?: true,
@@ -260,6 +261,7 @@ object ParticleEmitterSerializer : From<ParticleEmitterVo>, To<ParticleEmitterVo
 	}
 
 	override fun ParticleEmitterVo.write(writer: Writer) {
+		writer.string("id", id)
 		writer.string("blendMode", blendMode.name)
 		writer.int("count", count)
 		writer.obj("duration", duration, EmitterDurationSerializer)
