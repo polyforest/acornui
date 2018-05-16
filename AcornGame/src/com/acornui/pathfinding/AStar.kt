@@ -19,6 +19,7 @@ package com.acornui.pathfinding
 import com.acornui.collection.BinaryHeap
 import com.acornui.collection.BinaryHeapNode
 import com.acornui.math.MathUtils
+import kotlin.math.abs
 
 open class AStar(
 		val width: Int,
@@ -58,7 +59,7 @@ open class AStar(
 			nodes[index] = root
 		}
 		closestNode = root
-		closestDistance = MathUtils.abs(startX - targetX) + MathUtils.abs(startY - targetY)
+		closestDistance = abs(startX - targetX) + abs(startY - targetY)
 		root.parent = null
 		root.pathCost = 0
 		open.add(root, 0f)
@@ -105,7 +106,7 @@ open class AStar(
 		if ((x != targetX || y != targetY) && !isValid(x, y)) return
 
 		val pathCost = parent.pathCost + cost
-		val distance = MathUtils.abs(x - targetX) + MathUtils.abs(y - targetY)
+		val distance = abs(x - targetX) + abs(y - targetY)
 		if (distance > closestDistance * MAX_DEVIATION_PERCENT + MAX_DEVIATION) {
 			return  // We've deviated too far from the closest node we've found so far.
 		}

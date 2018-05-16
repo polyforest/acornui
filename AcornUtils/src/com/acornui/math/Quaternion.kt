@@ -19,6 +19,10 @@
 package com.acornui.math
 
 import com.acornui.core.closeTo
+import kotlin.math.abs
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 interface QuaternionRo {
 
@@ -246,14 +250,14 @@ data class Quaternion(
 	 */
 	fun setEulerAnglesRad(yaw: Float, pitch: Float, roll: Float): Quaternion {
 		val hr = roll * 0.5f
-		val shr = MathUtils.sin(hr)
-		val chr = MathUtils.cos(hr)
+		val shr = sin(hr)
+		val chr = cos(hr)
 		val hp = pitch * 0.5f
-		val shp = MathUtils.sin(hp)
-		val chp = MathUtils.cos(hp)
+		val shp = sin(hp)
+		val chp = cos(hp)
 		val hy = yaw * 0.5f
-		val shy = MathUtils.sin(hy)
-		val chy = MathUtils.cos(hy)
+		val shy = sin(hy)
+		val chy = cos(hy)
 		val chy_shp = chy * shp
 		val shy_chp = shy * chp
 		val chy_chp = chy * chp
@@ -281,7 +285,7 @@ data class Quaternion(
 	 */
 	override fun getRollRad(): Float {
 		val pole = getGimbalPole()
-		return if (pole == 0) MathUtils.atan2(2f * (w * z + y * x), 1f - 2f * (x * x + z * z)) else pole.toFloat() * 2f * MathUtils.atan2(y, w)
+		return if (pole == 0) atan2(1f - 2f * (x * x + z * z), 2f * (w * z + y * x)) else pole.toFloat() * 2f * atan2(w, y)
 	}
 
 	/**
@@ -298,7 +302,7 @@ data class Quaternion(
 	 * @return the rotation around the y axis in radians (between -PI and +PI)
 	 */
 	override fun getYawRad(): Float {
-		return if (getGimbalPole() == 0) MathUtils.atan2(2f * (y * w + x * z), 1f - 2f * (y * y + x * x)) else 0f
+		return if (getGimbalPole() == 0) atan2(1f - 2f * (y * y + x * x), 2f * (y * w + x * z)) else 0f
 	}
 
 	/**
@@ -490,8 +494,8 @@ data class Quaternion(
 		if (d == 0f) return idt()
 		d = 1f / d
 		val l_ang = radians
-		val l_sin = MathUtils.sin(l_ang / 2.0f)
-		val l_cos = MathUtils.cos(l_ang / 2.0f)
+		val l_sin = sin(l_ang / 2.0f)
+		val l_cos = cos(l_ang / 2.0f)
 		return this.set(d * x * l_sin, d * y * l_sin, d * z * l_sin, l_cos).nor()
 	}
 
@@ -671,11 +675,11 @@ data class Quaternion(
 			// Get the angle between the 2 quaternions,
 			// and then store the sin() of that angle
 			val angle = MathUtils.acos(absDot)
-			val invSinTheta = 1f / MathUtils.sin(angle)
+			val invSinTheta = 1f / sin(angle)
 
 			// Calculate the scale for q1 and q2, according to the angle and its sine value
-			scale0 = (MathUtils.sin((1f - alpha) * angle) * invSinTheta)
-			scale1 = (MathUtils.sin(alpha * angle) * invSinTheta)
+			scale0 = (sin((1f - alpha) * angle) * invSinTheta)
+			scale1 = (sin(alpha * angle) * invSinTheta)
 		}
 
 		if (dot < 0f) scale1 = -scale1
@@ -744,14 +748,14 @@ data class Quaternion(
 
 		//Calculate coefficient of basis elements
 		val coeff: Float
-		if (MathUtils.abs(theta) < 0.001f)
+		if (abs(theta) < 0.001f)
 		//If theta is small enough, use the limit of sin(alpha*theta) / sin(theta) instead of actual value
 			coeff = normExp * alpha / norm
 		else
-			coeff = normExp * MathUtils.sin(alpha * theta) / (norm * MathUtils.sin(theta))
+			coeff = normExp * sin(alpha * theta) / (norm * sin(theta))
 
 		//Write results
-		w = normExp * MathUtils.cos(alpha * theta)
+		w = normExp * cos(alpha * theta)
 		x *= coeff
 		y *= coeff
 		z *= coeff

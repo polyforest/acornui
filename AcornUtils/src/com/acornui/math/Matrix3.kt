@@ -19,6 +19,9 @@
 package com.acornui.math
 
 import com.acornui.collection.copy
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 interface Matrix3Ro {
 
@@ -280,8 +283,8 @@ data class Matrix3(
 	 */
 	fun rotate(radians: Float): Matrix3 {
 		if (radians == 0f) return this
-		val cos = MathUtils.cos(radians)
-		val sin = MathUtils.sin(radians)
+		val cos = cos(radians)
+		val sin = sin(radians)
 
 		tmp[M00] = cos
 		tmp[M10] = sin
@@ -311,7 +314,7 @@ data class Matrix3(
 	}
 
 	override fun getRotation(): Float {
-		return MathUtils.atan2(values[M10], values[M00])
+		return atan2(values[M00], values[M10])
 	}
 
 	/**
