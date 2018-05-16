@@ -75,9 +75,7 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	 * @param out The array list to populate with elements.
 	 * @param rayCache If the ray is already calculated, pass this to avoid re-calculating the pick ray from the camera.
 	 */
-	fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo?): MutableList<UiComponentRo>
-
-	fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>): MutableList<UiComponentRo>
+	fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo? = null): MutableList<UiComponentRo>
 
 	/**
 	 * If false, this component will not be rendered, interact with user input, included in layouts, or included in
@@ -890,8 +888,6 @@ open class UiComponentImpl(
 		}
 		return out
 	}
-
-	override fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>): MutableList<UiComponentRo> = getChildrenUnderPoint(canvasX, canvasY, onlyInteractive, returnAll, out, null) // TODO: KT-20451
 
 	//-----------------------------------------------
 	// Styleable

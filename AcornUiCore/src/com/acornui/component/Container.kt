@@ -230,7 +230,7 @@ open class ContainerImpl(
 		val ray = rayCache ?: camera.getPickRay(canvasX, canvasY, 0f, 0f, window.width, window.height, rayTmp)
 		if (interactivityMode == InteractivityMode.ALWAYS || intersectsGlobalRay(ray)) {
 			if ((returnAll || out.isEmpty())) {
-				iterateChildrenReversed { child: UiComponentRo ->
+				_children.iterateReversed { child ->
 					val childRayCache = if (child.camera === camera) ray else null
 					child.getChildrenUnderPoint(canvasX, canvasY, onlyInteractive, returnAll, out, childRayCache)
 					// Continue iterating if we haven't found an intersecting child yet, or if returnAll is true.

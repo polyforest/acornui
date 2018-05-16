@@ -124,10 +124,10 @@ object BuildUtil {
 	}
 
 	private fun getTarget(target: String): Targets? {
-		try {
-			return Targets.valueOf(target.toUpperCase())
+		return try {
+			Targets.valueOf(target.toUpperCase())
 		} catch (e: Throwable) {
-			return null
+			null
 		}
 	}
 

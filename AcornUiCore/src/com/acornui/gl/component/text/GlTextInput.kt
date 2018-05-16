@@ -6,7 +6,10 @@ import com.acornui.async.launch
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.component.layout.setSize
-import com.acornui.component.scroll.*
+import com.acornui.component.scroll.ClampedScrollModel
+import com.acornui.component.scroll.ScrollPolicy
+import com.acornui.component.scroll.scrollArea
+import com.acornui.component.scroll.scrollTo
 import com.acornui.component.style.set
 import com.acornui.component.text.*
 import com.acornui.core.Disposable
@@ -47,7 +50,6 @@ import com.acornui.reflect.observable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import com.acornui.string.isLetterOrDigit2
-import kotlin.properties.Delegates
 
 open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 
