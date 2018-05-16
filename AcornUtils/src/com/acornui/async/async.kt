@@ -55,12 +55,15 @@ class BasicContinuationImpl(
 object PendingDisposablesRegistry {
 
 	private val allPending = HashMap<Disposable, Unit>()
+	private var isDisposing = false
 
 	fun register(continuation: Disposable) {
+		if (isDisposing) throw IllegalStateException("Cannot add a disposable to the registry on dispose.")
 		allPending[continuation] = Unit
 	}
 
 	fun unregister(continuation: Disposable) {
+		if (isDisposing) return
 		allPending.remove(continuation)
 	}
 
@@ -68,6 +71,8 @@ object PendingDisposablesRegistry {
 	 * Cancels all currently active continuations.
 	 */
 	fun dispose() {
+		if (isDisposing) return
+		isDisposing = true
 		for (continuation in allPending.keys) {
 			continuation.dispose()
 		}
