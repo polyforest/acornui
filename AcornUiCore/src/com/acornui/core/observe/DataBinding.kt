@@ -3,8 +3,10 @@ package com.acornui.core.observe
 import com.acornui.core.Disposable
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
+import com.acornui.signal.Bindable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal2
+import com.acornui.signal.plus
 
 class DataBinding<T>(initialValue: T) : Disposable {
 
@@ -63,18 +65,22 @@ class DataBinding<T>(initialValue: T) : Disposable {
 		}
 	}
 
-//	override fun watch(callback: () -> Unit) {
-//		bind(callback.as1)
-//	}
-//
-//	override fun unwatch(callback: () -> Unit) {
-//		remove(callback.as1)
-//	}
-
 	override fun dispose() {
 		_changed.dispose()
 		_wrapped.clear()
 	}
+}
+
+private fun DataBinding<Any?>.plus(other: DataBinding<Any?>): Bindable {
+	return changed + other.changed
+}
+
+private fun DataBinding<Any?>.plus(other: Bindable): Bindable {
+	return changed + other
+}
+
+private fun Bindable.plus(other: DataBinding<Any?>): Bindable {
+	return this + other.changed
 }
 
 /**

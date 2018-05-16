@@ -45,3 +45,18 @@ val (() -> Unit).as6: (Any?, Any?, Any?, Any?, Any?, Any?) -> Unit
 	get() {
 		return this.asDynamic()
 	}
+
+val (() -> Unit).as7: (Any?, Any?, Any?, Any?, Any?, Any?, Any?) -> Unit
+	get() {
+		return this.asDynamic()
+	}
+
+val (() -> Unit).as8: (Any?, Any?, Any?, Any?, Any?, Any?, Any?) -> Unit
+	get() {
+		return this.asDynamic()
+	}
+
+val (() -> Unit).as9: (Any?, Any?, Any?, Any?, Any?, Any?, Any?) -> Unit
+	get() {
+		return this.asDynamic()
+	}

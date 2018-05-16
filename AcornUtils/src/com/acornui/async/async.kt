@@ -58,7 +58,7 @@ object PendingDisposablesRegistry {
 	private var isDisposing = false
 
 	fun register(continuation: Disposable) {
-		if (isDisposing) throw IllegalStateException("Cannot add a disposable to the registry on dispose.")
+		if (isDisposing) throw IllegalStateException("Cannot addBinding a disposable to the registry on dispose.")
 		allPending[continuation] = Unit
 	}
 

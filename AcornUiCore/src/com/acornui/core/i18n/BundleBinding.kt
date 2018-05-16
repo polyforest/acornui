@@ -19,7 +19,7 @@ package com.acornui.core.i18n
 import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
-import com.acornui.signal.SignalBinding
+import com.acornui.signal.SignalHandlerSet
 
 /**
  * A `BundleBinding` object loads an [I18nBundle] object, then allows changed handlers to be added as a set, which
@@ -27,21 +27,21 @@ import com.acornui.signal.SignalBinding
  */
 class BundleBinding(override val injector: Injector, bundleName: String) : Scoped, Disposable {
 
-	private val signalBinding: SignalBinding<(I18nBundle) -> Unit>
+	private val signalHandlerSet: SignalHandlerSet<(I18nBundle) -> Unit>
 	private val bundle: I18nBundle
 
 	init {
 		bundle = loadBundle(bundleName)
-		signalBinding = SignalBinding(bundle.changed)
+		signalHandlerSet = SignalHandlerSet(bundle.changed)
 	}
 
 	operator fun invoke(callback: (I18nBundle) -> Unit) {
-		signalBinding.add(callback)
+		signalHandlerSet.add(callback)
 		callback(bundle)
 	}
 
 	override fun dispose() {
-		signalBinding.dispose()
+		signalHandlerSet.dispose()
 	}
 }
 

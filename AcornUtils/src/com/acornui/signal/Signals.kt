@@ -17,8 +17,9 @@
 package com.acornui.signal
 
 import com.acornui.core.Disposable
+import com.acornui.function.*
 
-interface Signal<in T : Any> {
+interface Signal<in T : Any> : Bindable {
 
 	/**
 	 * Returns true if this signal is currently dispatching.
@@ -203,42 +204,72 @@ abstract class SignalBase<T : Any> : Signal<T>, Disposable {
 
 class Signal0 : SignalBase<() -> Unit>() {
 	fun dispatch() = dispatch { it() }
+
+	override fun addBinding(callback: () -> Unit) = add(callback)
+	override fun removeBinding(callback: () -> Unit) = remove(callback)
 }
 
 class Signal1<P1> : SignalBase<(P1) -> Unit>() {
 	fun dispatch(p1: P1) = dispatch { it(p1) }
+
+	override fun addBinding(callback: () -> Unit) = add(callback.as1)
+	override fun removeBinding(callback: () -> Unit) = remove(callback.as1)
 }
 
 class Signal2<P1, P2> : SignalBase<(P1, P2) -> Unit>() {
 	fun dispatch(p1: P1, p2: P2) = dispatch { it(p1, p2) }
+
+	override fun addBinding(callback: () -> Unit) = add(callback.as2)
+	override fun removeBinding(callback: () -> Unit) = remove(callback.as2)
 }
 
 class Signal3<P1, P2, P3> : SignalBase<(P1, P2, P3) -> Unit>() {
 	fun dispatch(p1: P1, p2: P2, p3: P3) = dispatch { it(p1, p2, p3) }
+
+	override fun addBinding(callback: () -> Unit) = add(callback.as3)
+	override fun removeBinding(callback: () -> Unit) = remove(callback.as3)
 }
 
 class Signal4<P1, P2, P3, P4> : SignalBase<(P1, P2, P3, P4) -> Unit>() {
 	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4) = dispatch { it(p1, p2, p3, p4) }
+
+	override fun addBinding(callback: () -> Unit) = add(callback.as4)
+	override fun removeBinding(callback: () -> Unit) = remove(callback.as4)
 }
 
 class Signal5<P1, P2, P3, P4, P5> : SignalBase<(P1, P2, P3, P4, P5) -> Unit>() {
 	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5) = dispatch { it(p1, p2, p3, p4, p5) }
+
+	override fun addBinding(callback: () -> Unit) = add(callback.as5)
+	override fun removeBinding(callback: () -> Unit) = remove(callback.as5)
 }
 
 class Signal6<P1, P2, P3, P4, P5, P6> : SignalBase<(P1, P2, P3, P4, P5, P6) -> Unit>() {
 	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6) = dispatch { it(p1, p2, p3, p4, p5, p6) }
+
+	override fun addBinding(callback: () -> Unit) = add(callback.as6)
+	override fun removeBinding(callback: () -> Unit) = remove(callback.as6)
 }
 
 class Signal7<P1, P2, P3, P4, P5, P6, P7> : SignalBase<(P1, P2, P3, P4, P5, P6, P7) -> Unit>() {
 	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7) = dispatch { it(p1, p2, p3, p4, p5, p6, p7) }
+
+	override fun addBinding(callback: () -> Unit) = add(callback.as7)
+	override fun removeBinding(callback: () -> Unit) = remove(callback.as7)
 }
 
 class Signal8<P1, P2, P3, P4, P5, P6, P7, P8> : SignalBase<(P1, P2, P3, P4, P5, P6, P7, P8) -> Unit>() {
 	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7, p8: P8) = dispatch { it(p1, p2, p3, p4, p5, p6, p7, p8) }
+
+	override fun addBinding(callback: () -> Unit) = add(callback.as8)
+	override fun removeBinding(callback: () -> Unit) = remove(callback.as8)
 }
 
 class Signal9<P1, P2, P3, P4, P5, P6, P7, P8, P9> : SignalBase<(P1, P2, P3, P4, P5, P6, P7, P8, P9) -> Unit>() {
 	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7, p8: P8, p9: P9) = dispatch { it(p1, p2, p3, p4, p5, p6, p7, p8, p9) }
+
+	override fun addBinding(callback: () -> Unit) = add(callback.as9)
+	override fun removeBinding(callback: () -> Unit) = remove(callback.as9)
 }
 
 interface Stoppable {
@@ -281,4 +312,7 @@ open class StoppableSignalImpl<P1 : Stoppable> : SignalBase<(P1) -> Unit>(), Sto
 		it(p1)
 		if (p1.isStopped()) halt()
 	}
+
+	override fun addBinding(callback: () -> Unit) = add(callback.as1)
+	override fun removeBinding(callback: () -> Unit) = remove(callback.as1)
 }

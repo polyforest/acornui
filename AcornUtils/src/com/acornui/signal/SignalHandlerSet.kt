@@ -22,7 +22,7 @@ import com.acornui.core.Disposable
 /**
  * A Signal binding is a delegate to a [Signal] object, and allows the handlers to be removed as a set.
  */
-class SignalBinding<in T : Any>(private val signal: Signal<T>) : Clearable, Disposable {
+class SignalHandlerSet<in T : Any>(private val signal: Signal<T>) : Clearable, Disposable {
 
 	private val handlers = ArrayList<T>()
 
