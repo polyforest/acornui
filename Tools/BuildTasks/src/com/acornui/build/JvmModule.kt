@@ -109,7 +109,6 @@ open class JvmModule(
 		config.jdk = "http://cdn.azul.com/zulu/bin/zulu8.21.0.1-jdk8.0.131-linux_x64.tar.gz"
 		config.outDir = File("out-linux64")
 		Packr().pack(config)
-
 	}
 
 	protected open fun createBasePackrConfig(): PackrConfig {
