@@ -76,6 +76,8 @@ class FileFilterGroup(
 
 /**
  * An object that holds metadata properties for a picked file and allows for asynchronous reading of that file from disk.
+ *
+ * File reading (String and binary) is limited to files that are 2mb in size.
  */
 interface FileReader {
 
@@ -94,6 +96,8 @@ interface FileReader {
 
 /**
  * An object that holds metadata properties for a picked file and allows for asynchronous writing of that file to disk.
+ *
+ * File writing (String and binary) is limited to files that are 2mb in size.
  */
 interface FileWriter {
 
