@@ -29,6 +29,7 @@ import com.acornui.gl.core.ShaderBatch
 import com.acornui.gl.core.scissor
 import com.acornui.graphics.Color
 import com.acornui.math.*
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 object StencilUtil {
@@ -183,5 +184,5 @@ fun UiComponent.scissorLocal(x: Float, y: Float, width: Float, height: Float, in
 
 	val glState = inject(GlState)
 	val window = inject(Window)
-	glState.scissor(minOf(sX1, sX2).roundToInt(), (window.height - maxOf(sY1, sY2)).roundToInt(), MathUtils.abs(sX2 - sX1).roundToInt(), MathUtils.abs(sY2 - sY1).roundToInt(), inner)
+	glState.scissor(minOf(sX1, sX2).roundToInt(), (window.height - maxOf(sY1, sY2)).roundToInt(), abs(sX2 - sX1).roundToInt(), abs(sY2 - sY1).roundToInt(), inner)
 }

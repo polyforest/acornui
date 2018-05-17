@@ -22,6 +22,9 @@ import com.acornui.gl.core.GlState
 import com.acornui.gl.core.pushQuadIndices
 import com.acornui.graphics.ColorRo
 import com.acornui.math.*
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * A Sprite represents a Quad region of a Texture. It can be drawn.
@@ -90,9 +93,9 @@ class Sprite {
 		get() {
 			val t = texture ?: return 0f
 			return if (isRotated) {
-				t.height.toFloat() * MathUtils.abs(v2 - v)
+				t.height.toFloat() * abs(v2 - v)
 			} else {
-				t.width.toFloat() * MathUtils.abs(u2 - u)
+				t.width.toFloat() * abs(u2 - u)
 			}
 		}
 
@@ -100,9 +103,9 @@ class Sprite {
 		get() {
 			val t = texture ?: return 0f
 			return if (isRotated) {
-				t.width.toFloat() * MathUtils.abs(u2 - u)
+				t.width.toFloat() * abs(u2 - u)
 			} else {
-				t.height.toFloat() * MathUtils.abs(v2 - v)
+				t.height.toFloat() * abs(v2 - v)
 			}
 		}
 
@@ -173,8 +176,8 @@ class Sprite {
 			bX = x + width - originX
 			bY = y + height - originY
 		} else {
-			val cos = MathUtils.cos(rotation)
-			val sin = MathUtils.sin(rotation)
+			val cos = cos(rotation)
+			val sin = sin(rotation)
 			aX = cos * -originX - sin * -originY + x
 			aY = sin * -originX + cos * -originY + y
 			bX = cos * (-originX + width) - sin * -originY + x

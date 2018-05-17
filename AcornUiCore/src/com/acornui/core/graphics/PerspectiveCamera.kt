@@ -23,6 +23,8 @@ import com.acornui.math.MathUtils
 import com.acornui.math.Matrix4
 import com.acornui.math.Vector2
 import com.acornui.math.Vector3
+import kotlin.math.abs
+import kotlin.math.tan
 
 /**
  * @author nbilyk
@@ -39,7 +41,7 @@ open class PerspectiveCamera : CameraBase() {
 
 	override fun updateViewProjection() {
 		val aspect = viewportWidth / viewportHeight
-		_projection.setToProjection(MathUtils.abs(near), MathUtils.abs(far), fieldOfView, aspect)
+		_projection.setToProjection(abs(near), abs(far), fieldOfView, aspect)
 		_view.setToLookAt(position, tmp.set(position).add(direction), up)
 		_combined.set(_projection)
 		_combined.mul(_view)
@@ -48,7 +50,7 @@ open class PerspectiveCamera : CameraBase() {
 	override fun moveToLookAtRect(x: Float, y: Float, width: Float, height: Float, scaling: Scaling) {
 		scaling.apply(viewportWidth, viewportHeight, width, height, tmp2)
 		val (newW, newH) = tmp2
-		val distance = (newH * 0.5f) / MathUtils.tan(fieldOfView * 0.5f)
+		val distance = (newH * 0.5f) / tan(fieldOfView * 0.5f)
 		moveToLookAtPoint(x + newW * 0.5f, y + newH * 0.5f, 0f, distance)
 	}
 }

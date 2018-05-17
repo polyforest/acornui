@@ -20,6 +20,7 @@ package com.acornui.math
 
 import com.acornui.collection.ArrayList
 import com.acornui.collection.copy
+import kotlin.math.abs
 
 interface Matrix4Ro {
 
@@ -731,7 +732,7 @@ data class Matrix4(
 	 */
 	override fun getScaleX(): Float {
 		return if ((MathUtils.isZero(values[4]) && MathUtils.isZero(values[8])))
-			MathUtils.abs(values[0])
+			abs(values[0])
 		else
 			MathUtils.sqrt(getScaleXSquared())
 	}
@@ -741,7 +742,7 @@ data class Matrix4(
 	 */
 	override fun getScaleY(): Float {
 		return if ((MathUtils.isZero(values[1]) && MathUtils.isZero(values[9])))
-			MathUtils.abs(values[5])
+			abs(values[5])
 		else
 			MathUtils.sqrt(getScaleYSquared())
 	}
@@ -751,7 +752,7 @@ data class Matrix4(
 	 */
 	override fun getScaleZ(): Float {
 		return if ((MathUtils.isZero(values[2]) && MathUtils.isZero(values[6])))
-			MathUtils.abs(values[10])
+			abs(values[10])
 		else
 			MathUtils.sqrt(getScaleZSquared())
 	}

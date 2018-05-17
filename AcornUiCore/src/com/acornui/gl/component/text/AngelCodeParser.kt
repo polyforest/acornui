@@ -21,6 +21,7 @@ import com.acornui.math.IntRectangle
 import com.acornui.math.MathUtils
 import com.acornui.string.StringParser
 import com.acornui.core.replace2
+import kotlin.math.abs
 
 /**
  * http://www.angelcode.com/products/bmfont/doc/file_format.html
@@ -39,7 +40,7 @@ object AngelCodeParser : Decorator<String, BitmapFontData> {
 		parser.consumeString("info")
 		val face = parseQuotedStringProp(parser, "face")
 
-		val size = MathUtils.abs(parseIntProp(parser, "size"))
+		val size = abs(parseIntProp(parser, "size"))
 		val isBold = parseBoolProp(parser, "bold")
 		val isItalic = parseBoolProp(parser, "italic")
 

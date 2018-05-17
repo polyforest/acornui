@@ -19,6 +19,7 @@ package com.acornui.math
 import com.acornui.test.assertClose
 import com.acornui.test.benchmark
 import org.junit.Test
+import kotlin.math.tan
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
@@ -30,15 +31,15 @@ class MathUtilsTest {
 	@Test fun sin() {
 		var x = -7f
 		while (x <= 7f) {
-			assertClose(Math.sin(x.toDouble()).toFloat(), MathUtils.sin(x), 0.01f)
+			assertClose(Math.sin(x.toDouble()).toFloat(), kotlin.math.sin(x), 0.01f)
 			x += 0.01f
 		}
 
 		// Test that the common angles match more precisely.
-		MathUtils.sin(0f)
+		kotlin.math.sin(0f)
 		for (i in 0..16) {
 			val theta = i * PI2 / 16
-			assertClose(Math.sin(theta.toDouble()).toFloat(), MathUtils.sin(theta), 0.000001f)
+			assertClose(Math.sin(theta.toDouble()).toFloat(), kotlin.math.sin(theta), 0.000001f)
 		}
 	}
 
@@ -47,7 +48,7 @@ class MathUtilsTest {
 		val utilsSpeed = benchmark {
 			var x = -7f
 			while (x <= 7f) {
-				MathUtils.sin(x)
+				kotlin.math.sin(x)
 				x += 0.01f
 			}
 		}
@@ -72,7 +73,7 @@ class MathUtilsTest {
 		val utilsSpeed = benchmark {
 			var x = -7f
 			while (x <= 7f) {
-				MathUtils.tan(x)
+				tan(x)
 				x += 0.01f
 			}
 		}
@@ -96,7 +97,7 @@ class MathUtilsTest {
 	@Test fun cos() {
 		var x = -7f
 		while (x <= 7f) {
-			assertClose(Math.cos(x.toDouble()).toFloat(), MathUtils.cos(x), 0.01f)
+			assertClose(Math.cos(x.toDouble()).toFloat(), kotlin.math.cos(x), 0.01f)
 			x += 0.01f
 		}
 	}
@@ -114,7 +115,7 @@ class MathUtilsTest {
 		while (x <= 7f) {
 			var y = -7f
 			while (y <= 7f) {
-				assertClose(Math.atan2(x.toDouble(), y.toDouble()).toFloat(), MathUtils.atan2(x, y), 0.01f)
+				assertClose(Math.atan2(x.toDouble(), y.toDouble()).toFloat(), kotlin.math.atan2(x, y), 0.01f)
 				y += 0.1f
 			}
 			x += 0.1f

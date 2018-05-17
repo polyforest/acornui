@@ -15,6 +15,9 @@ import com.acornui.gl.core.GlState
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.*
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 
 open class GlRect(
 		owner: Owned
@@ -134,7 +137,7 @@ open class GlRect(
 
 					for (i in 0..segments) {
 						val theta = PI * 0.5f * (i.toFloat() / segments)
-						pushVertex(anchorX - MathUtils.cos(theta) * topLeftX, anchorY - MathUtils.sin(theta) * topLeftY, 0f, colorTint)
+						pushVertex(anchorX - cos(theta) * topLeftX, anchorY - sin(theta) * topLeftY, 0f, colorTint)
 						if (i > 0) {
 							pushIndex(n)
 							pushIndex(n + i)
@@ -151,7 +154,7 @@ open class GlRect(
 
 					for (i in 0..segments) {
 						val theta = PI * 0.5f * (i.toFloat() / segments)
-						pushVertex(anchorX + MathUtils.cos(theta) * topRightX, anchorY - MathUtils.sin(theta) * topRightY, 0f, colorTint)
+						pushVertex(anchorX + cos(theta) * topRightX, anchorY - sin(theta) * topRightY, 0f, colorTint)
 						if (i > 0) {
 							pushIndex(n)
 							pushIndex(n + i + 1)
@@ -168,7 +171,7 @@ open class GlRect(
 
 					for (i in 0..segments) {
 						val theta = PI * 0.5f * (i.toFloat() / segments)
-						pushVertex(anchorX + MathUtils.cos(theta) * bottomRightX, anchorY + MathUtils.sin(theta) * bottomRightY, 0f, colorTint)
+						pushVertex(anchorX + cos(theta) * bottomRightX, anchorY + sin(theta) * bottomRightY, 0f, colorTint)
 						if (i > 0) {
 							pushIndex(n)
 							pushIndex(n + i)
@@ -185,7 +188,7 @@ open class GlRect(
 
 					for (i in 0..segments) {
 						val theta = PI * 0.5f * (i.toFloat() / segments)
-						pushVertex(anchorX - MathUtils.cos(theta) * bottomLeftX, anchorY + MathUtils.sin(theta) * bottomLeftY, 0f, colorTint)
+						pushVertex(anchorX - cos(theta) * bottomLeftX, anchorY + sin(theta) * bottomLeftY, 0f, colorTint)
 						if (i > 0) {
 							pushIndex(n)
 							pushIndex(n + i + 1)
@@ -276,9 +279,9 @@ open class GlRect(
 			val linearGradient = style.linearGradient!!
 			gradient.buildMesh {
 				val angle = linearGradient.getAngle(w, h) - PI * 0.5f
-				val a = MathUtils.cos(angle) * w
-				val b = MathUtils.sin(angle) * h
-				val len = MathUtils.abs(a) + MathUtils.abs(b)
+				val a = cos(angle) * w
+				val b = sin(angle) * h
+				val len = abs(a) + abs(b)
 				val thickness = MathUtils.sqrt(w * w + h * h)
 
 				var pixel = 0f
@@ -356,8 +359,8 @@ open class GlRect(
 			for (i in 0..segments) {
 				val theta = PI * 0.5f * (i.toFloat() / segments)
 				val color = if (i < segments shr 1) color1 else color2
-				pushVertex(outerX2 - MathUtils.cos(theta) * outerW, outerY1 + MathUtils.sin(theta) * outerH, 0f, color)
-				pushVertex(innerX2 - MathUtils.cos(theta) * innerW, innerY1 + MathUtils.sin(theta) * innerH, 0f, color)
+				pushVertex(outerX2 - cos(theta) * outerW, outerY1 + sin(theta) * outerH, 0f, color)
+				pushVertex(innerX2 - cos(theta) * innerW, innerY1 + sin(theta) * innerH, 0f, color)
 				if (i > 0) {
 					pushIndex(n)
 					pushIndex(n + 1)

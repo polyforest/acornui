@@ -18,6 +18,8 @@ package com.acornui.math
 
 import com.acornui.collection.scl
 import com.acornui.collection.sortedInsertionIndex
+import kotlin.math.cos
+import kotlin.math.sin
 
 
 /**
@@ -115,11 +117,11 @@ open class Elastic(val value: Float, val power: Float, bounces: Int, val scale: 
 		var a = alpha
 		if (a <= 0.5f) {
 			a *= 2f
-			return MathUtils.pow(value, (power * (a - 1f))) * MathUtils.sin(a * bounces) * scale / 2f
+			return MathUtils.pow(value, (power * (a - 1f))) * sin(a * bounces) * scale / 2f
 		}
 		a = 1f - a
 		a *= 2f
-		return 1f - MathUtils.pow(value, (power * (a - 1f))) * MathUtils.sin((a) * bounces) * scale / 2f
+		return 1f - MathUtils.pow(value, (power * (a - 1f))) * sin((a) * bounces) * scale / 2f
 	}
 }
 
@@ -127,7 +129,7 @@ open class Elastic(val value: Float, val power: Float, bounces: Int, val scale: 
 class ElasticIn(value: Float, power: Float, bounces: Int, scale: Float) : Elastic(value, power, bounces, scale) {
 
 	override fun apply(alpha: Float): Float {
-		return MathUtils.pow(value, (power * (alpha - 1f))) * MathUtils.sin(alpha * bounces) * scale
+		return MathUtils.pow(value, (power * (alpha - 1f))) * sin(alpha * bounces) * scale
 	}
 }
 
@@ -136,7 +138,7 @@ class ElasticOut(value: Float, power: Float, bounces: Int, scale: Float) : Elast
 	override fun apply(alpha: Float): Float {
 		var a = alpha
 		a = 1f - a
-		return (1f - MathUtils.pow(value, (power * (a - 1f))) * MathUtils.sin(a * bounces) * scale)
+		return (1f - MathUtils.pow(value, (power * (a - 1f))) * sin(a * bounces) * scale)
 	}
 }
 
@@ -203,19 +205,19 @@ object Fade : Interpolation {
 
 object Sine : Interpolation {
 	override fun apply(alpha: Float): Float {
-		return (1f - MathUtils.cos(alpha * PI)) / 2f
+		return (1f - cos(alpha * PI)) / 2f
 	}
 }
 
 object SineIn : Interpolation {
 	override fun apply(alpha: Float): Float {
-		return 1f - MathUtils.cos(alpha * PI / 2f)
+		return 1f - cos(alpha * PI / 2f)
 	}
 }
 
 object SineOut : Interpolation {
 	override fun apply(alpha: Float): Float {
-		return MathUtils.sin(alpha * PI / 2f)
+		return sin(alpha * PI / 2f)
 	}
 }
 

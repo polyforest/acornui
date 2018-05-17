@@ -19,11 +19,12 @@ package com.acornui.core
 import com.acornui.core.time.time
 import com.acornui.math.MathUtils
 import com.acornui.string.toRadix
+import kotlin.math.abs
 
 object UidUtil {
 
 	fun createUid(): String {
-		return MathUtils.abs(time.nowMs().toInt()).toRadix(36) + (Math.random() * INT_MAX_VALUE).toInt().toRadix(36)
+		return abs(time.nowMs().toInt()).toRadix(36) + (Math.random() * INT_MAX_VALUE).toInt().toRadix(36)
 	}
 
 }

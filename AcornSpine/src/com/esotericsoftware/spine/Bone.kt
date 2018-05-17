@@ -35,6 +35,9 @@ import com.acornui.math.MathUtils
 import com.acornui.math.Matrix3
 import com.acornui.math.Vector2
 import com.esotericsoftware.spine.data.BoneData
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 class Bone : Updatable {
 	val data: BoneData
@@ -87,8 +90,8 @@ class Bone : Updatable {
 		appliedScaleX = scaleX
 		appliedScaleY = scaleY
 
-		var cos = MathUtils.cos(rotation * MathUtils.degRad)
-		var sin = MathUtils.sin(rotation * MathUtils.degRad)
+		var cos = cos(rotation * MathUtils.degRad)
+		var sin = sin(rotation * MathUtils.degRad)
 		var la = cos * scaleX
 		var lb = -sin * scaleY
 		var lc = sin * scaleX
@@ -140,8 +143,8 @@ class Bone : Updatable {
 				pc = 0f
 				pd = 1f
 				do {
-					cos = MathUtils.cos(parent!!.appliedRotation * MathUtils.degRad)
-					sin = MathUtils.sin(parent.appliedRotation * MathUtils.degRad)
+					cos = cos(parent!!.appliedRotation * MathUtils.degRad)
+					sin = sin(parent.appliedRotation * MathUtils.degRad)
 					var temp = pa * cos + pb * sin
 					pb = pa * -sin + pb * cos
 					pa = temp
@@ -164,8 +167,8 @@ class Bone : Updatable {
 				pd = 1f
 				do {
 					var r = parent!!.appliedRotation
-					cos = MathUtils.cos(r * MathUtils.degRad)
-					sin = MathUtils.sin(r * MathUtils.degRad)
+					cos = cos(r * MathUtils.degRad)
+					sin = sin(r * MathUtils.degRad)
 					val psx = parent.appliedScaleX
 					val psy = parent.appliedScaleY
 					val za = cos * psx
@@ -180,8 +183,8 @@ class Bone : Updatable {
 					pc = temp
 
 					if (psx < 0) r = -r
-					cos = MathUtils.cos(-r * MathUtils.degRad)
-					sin = MathUtils.sin(-r * MathUtils.degRad)
+					cos = cos(-r * MathUtils.degRad)
+					sin = sin(-r * MathUtils.degRad)
 					temp = pa * cos + pb * sin
 					pb = pa * -sin + pb * cos
 					pa = temp
@@ -223,10 +226,10 @@ class Bone : Updatable {
 	}
 
 	val worldRotationX: Float
-		get() = MathUtils.atan2(c, a) * MathUtils.radDeg
+		get() = atan2(c, a) * MathUtils.radDeg
 
 	val worldRotationY: Float
-		get() = MathUtils.atan2(d, b) * MathUtils.radDeg
+		get() = atan2(d, b) * MathUtils.radDeg
 
 	val worldScaleX: Float
 		get() = MathUtils.sqrt((a * a + b * b)) * worldSignX

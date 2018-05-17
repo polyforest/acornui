@@ -21,6 +21,10 @@ package com.acornui.math
 import com.acornui.collection.ClearableObjectPool
 import com.acornui.collection.Clearable
 import com.acornui.serialization.*
+import kotlin.math.abs
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * A read-only view into a Vector2
@@ -263,7 +267,7 @@ data class Vector2(
 	override fun manhattanDst(v: Vector2Ro): Float {
 		val x_d = v.x - x
 		val y_d = v.y - y
-		return MathUtils.abs(x_d) + MathUtils.abs(y_d)
+		return abs(x_d) + abs(y_d)
 	}
 
 	fun limit(limit: Float): Vector2 {
@@ -326,7 +330,7 @@ data class Vector2(
 	 *         (typically counter-clockwise)
 	 */
 	override fun angleRad(): Float {
-		return MathUtils.atan2(y, x)
+		return atan2(y, x)
 	}
 
 	/**
@@ -334,7 +338,7 @@ data class Vector2(
 	 *         (typically counter-clockwise.)
 	 */
 	override fun angleRad(reference: Vector2Ro): Float {
-		return MathUtils.atan2(crs(reference), dot(reference))
+		return atan2(crs(reference), dot(reference))
 	}
 
 	/**
@@ -353,8 +357,8 @@ data class Vector2(
 	 * @param radians the angle in radians
 	 */
 	fun rotateRad(radians: Float): Vector2 {
-		val cos = MathUtils.cos(radians)
-		val sin = MathUtils.sin(radians)
+		val cos = cos(radians)
+		val sin = sin(radians)
 
 		val newX = this.x * cos - this.y * sin
 		val newY = this.x * sin + this.y * cos
@@ -385,8 +389,8 @@ data class Vector2(
 
 	override fun epsilonEquals(other: Vector2Ro?, epsilon: Float): Boolean {
 		if (other == null) return false
-		if (MathUtils.abs(other.x - x) > epsilon) return false
-		if (MathUtils.abs(other.y - y) > epsilon) return false
+		if (abs(other.x - x) > epsilon) return false
+		if (abs(other.y - y) > epsilon) return false
 		return true
 	}
 
@@ -395,8 +399,8 @@ data class Vector2(
 	 * @return whether the vectors are the same.
 	 */
 	override fun epsilonEquals(x: Float, y: Float, epsilon: Float): Boolean {
-		if (MathUtils.abs(x - this.x) > epsilon) return false
-		if (MathUtils.abs(y - this.y) > epsilon) return false
+		if (abs(x - this.x) > epsilon) return false
+		if (abs(y - this.y) > epsilon) return false
 		return true
 	}
 
@@ -405,7 +409,7 @@ data class Vector2(
 	}
 
 	override fun isUnit(margin: Float): Boolean {
-		return MathUtils.abs(len2() - 1f) < margin
+		return abs(len2() - 1f) < margin
 	}
 
 	override fun isZero(): Boolean {

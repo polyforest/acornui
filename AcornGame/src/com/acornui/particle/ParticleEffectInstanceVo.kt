@@ -24,6 +24,8 @@ import com.acornui.core.userInfo
 import com.acornui.graphics.Color
 import com.acornui.math.*
 import com.acornui.serialization.*
+import kotlin.math.cos
+import kotlin.math.sin
 
 class ParticleEffectInstanceVo(
 
@@ -299,7 +301,7 @@ class ParticleVo {
 //					position.add(tmpVec.x * forwardVelocity, tmpVec.y * forwardVelocity, tmpVec.z * forwardVelocity)
 				} else {
 					val theta = forwardDirection.z
-					position.add(MathUtils.cos(theta) * forwardVelocity, MathUtils.sin(theta) * forwardVelocity, 0f)
+					position.add(cos(theta) * forwardVelocity, sin(theta) * forwardVelocity, 0f)
 				}
 
 			}

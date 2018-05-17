@@ -4,6 +4,8 @@ import com.acornui.core.Disposable
 import com.acornui.math.MathUtils
 import com.acornui.math.PI
 import com.acornui.signal.Signal
+import kotlin.math.cos
+import kotlin.math.sin
 
 interface SoundFactory : Disposable {
 
@@ -170,5 +172,5 @@ enum class MusicReadyState {
  * @param value -1
  */
 fun Sound.setPanning(value: Float) {
-	setPosition(MathUtils.cos((value - 1f) * PI / 2f), 0f, MathUtils.sin((value + 1f) * PI / 2f))
+	setPosition(cos((value - 1f) * PI / 2f), 0f, sin((value + 1f) * PI / 2f))
 }

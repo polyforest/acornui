@@ -49,6 +49,7 @@ import com.acornui.math.MathUtils.clamp
 import com.acornui.observe.IndexBinding
 import com.acornui.observe.bindIndex
 import com.acornui.signal.*
+import kotlin.math.abs
 import kotlin.properties.ObservableProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -906,7 +907,7 @@ class DataGrid<E>(
 	 */
 	private fun adjustColumnWidths(delta: Float, update: Boolean): Float {
 		var d = delta
-		while (MathUtils.abs(d) > 0.01f && columnsWithSpace.isNotEmpty()) {
+		while (abs(d) > 0.01f && columnsWithSpace.isNotEmpty()) {
 			val wInc = d / columnsWithSpace.size
 			var n = columnsWithSpace.size
 			var i = 0

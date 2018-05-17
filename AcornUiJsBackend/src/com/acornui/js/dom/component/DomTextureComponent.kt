@@ -32,6 +32,7 @@ import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
 import org.w3c.dom.HTMLDivElement
 import kotlin.browser.document
+import kotlin.math.abs
 
 // TODO: Support rotate
 open class DomTextureComponent(
@@ -160,13 +161,13 @@ open class DomTextureComponent(
 		if (_isUv) {
 			regionX = _region[0] * t.width
 			regionY = _region[1] * t.height
-			regionW = MathUtils.abs(_region[2] - _region[0]) * t.width
-			regionH = MathUtils.abs(_region[3] - _region[1]) * t.height
+			regionW = abs(_region[2] - _region[0]) * t.width
+			regionH = abs(_region[3] - _region[1]) * t.height
 		} else {
 			regionX = _region[0]
 			regionY = _region[1]
-			regionW = MathUtils.abs(_region[2] - _region[0])
-			regionH = MathUtils.abs(_region[3] - _region[1])
+			regionW = abs(_region[2] - _region[0])
+			regionH = abs(_region[3] - _region[1])
 		}
 
 		val url = _texture!!.src

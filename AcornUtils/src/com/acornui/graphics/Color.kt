@@ -23,6 +23,7 @@ import com.acornui.math.MathUtils
 import com.acornui.serialization.*
 import com.acornui.serialization.Writer
 import com.acornui.string.toRadix
+import kotlin.math.abs
 
 interface ColorRo {
 
@@ -84,7 +85,7 @@ interface ColorRo {
 			}
 			if (out.h < 0f) out.h += 360f
 			if (out.h >= 360f) out.h -= 360f
-			out.s = d / (1f - MathUtils.abs(2 * out.l - 1f))
+			out.s = d / (1f - abs(2 * out.l - 1f))
 		}
 		return out
 	}
@@ -525,8 +526,8 @@ class Hsl(
 
 	fun toRgb(out: Color): Color {
 		out.a = a
-		val c = (1f - MathUtils.abs(2f * l - 1f)) * s
-		val x = c * (1f - MathUtils.abs((h / 60f) % 2f - 1f))
+		val c = (1f - abs(2f * l - 1f)) * s
+		val x = c * (1f - abs((h / 60f) % 2f - 1f))
 		val m = l - c / 2f
 		if (h < 60f) {
 			out.r = c + m
@@ -605,7 +606,7 @@ interface HsvRo {
 	fun toRgb(out: Color = Color()): Color {
 		out.a = a
 		val c = v * s
-		val x = c * (1f - MathUtils.abs((h / 60f) % 2f - 1f))
+		val x = c * (1f - abs((h / 60f) % 2f - 1f))
 		val m = v - c
 		if (h < 60f) {
 			out.r = c + m
