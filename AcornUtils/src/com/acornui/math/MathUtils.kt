@@ -26,104 +26,6 @@ const val E: Float = 2.7182818f
 const val TO_DEG = 180f / PI
 const val TO_RAD = PI / 180f
 
-internal object TrigLookup {
-	const val SIN_BITS = 14 // 16KB. Adjust for accuracy.
-	const val SIN_MASK = (-1 shl SIN_BITS).inv()
-	const val SIN_COUNT = SIN_MASK + 1
-
-	const val radFull = PI * 2
-
-	const val radToIndex = SIN_COUNT.toFloat() / radFull
-
-	val table = FloatArray(SIN_COUNT)
-
-	init {
-
-		for (i in 1..SIN_COUNT - 1) {
-			table[i] = Math.sin(((i.toFloat() + 0.5f) / SIN_COUNT.toFloat() * radFull).toDouble()).toFloat()
-		}
-
-		for (i in 0..16) {
-			val theta = i * PI2 / 16
-			table[(theta * radToIndex).toInt() and SIN_MASK] = Math.sin(theta.toDouble()).toFloat()
-		}
-	}
-
-	/**
-	 * Returns the sine in radians from a lookup table.
-	 */
-	fun sin(radians: Float): Float {
-		return table[(radians * radToIndex).toInt() and SIN_MASK]
-	}
-
-	/**
-	 * Returns the cosine in radians from a lookup table.
-	 */
-	fun cos(radians: Float): Float {
-		return table[((radians + PI / 2f) * radToIndex).toInt() and SIN_MASK]
-	}
-
-	/**
-	 * Returns the tan in radians from a lookup table.
-	 */
-	fun tan(radians: Float): Float {
-		return sin(radians) / cos(radians)
-	}
-}
-
-internal object Atan2 {
-
-	private val ATAN2_BITS = 7 // Adjust for accuracy.
-	private val ATAN2_BITS2 = ATAN2_BITS shl 1
-	private val ATAN2_MASK = (-1 shl ATAN2_BITS2).inv()
-	private val ATAN2_COUNT = ATAN2_MASK + 1
-	private val ATAN2_DIM = Math.sqrt(ATAN2_COUNT.toDouble()).toInt()
-	private val INV_ATAN2_DIM_MINUS_1 = 1f / (ATAN2_DIM.toFloat() - 1f)
-
-	internal val table = FloatArray(ATAN2_COUNT)
-
-	init {
-		for (i in 0..ATAN2_DIM - 1) {
-			for (j in 0..ATAN2_DIM - 1) {
-				val x0 = i.toFloat() / ATAN2_DIM.toFloat()
-				val y0 = j.toFloat() / ATAN2_DIM.toFloat()
-				table[j * ATAN2_DIM + i] = Math.atan2(y0.toDouble(), x0.toDouble()).toFloat()
-			}
-		}
-	}
-
-	/**
-	 * Returns atan2 in radians from a lookup table.
-	 */
-	fun atan2(y: Float, x: Float): Float {
-		var yVar = y
-		var xVar = x
-		val add: Float
-		val mul: Float
-		if (xVar < 0) {
-			if (yVar < 0) {
-				yVar = -yVar
-				mul = 1.0f
-			} else
-				mul = -1f
-			xVar = -xVar
-			add = -PI
-		} else {
-			if (yVar < 0) {
-				yVar = -yVar
-				mul = -1f
-			} else
-				mul = 1f
-			add = 0f
-		}
-		val invDiv = 1 / ((if (xVar < yVar) yVar else xVar) * INV_ATAN2_DIM_MINUS_1)
-
-		val xi = (xVar * invDiv).toInt()
-		val yi = (yVar * invDiv).toInt()
-		return (Atan2.table[yi * ATAN2_DIM + xi] + add) * mul
-	}
-}
-
 /**
  * Utility and fast math functions.
  *
@@ -151,26 +53,26 @@ object MathUtils {
 	/**
 	 * Returns the sine in radians from a lookup table.
 	 */
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.sin(radians)"))
-	fun sin(radians: Float): Float = TrigLookup.sin(radians)
+	@Deprecated("Use native math", ReplaceWith("kotlin.math.sin(radians)"), DeprecationLevel.ERROR)
+	fun sin(radians: Float): Float = throw Exception()
 
 	/**
 	 * Returns the cosine in radians from a lookup table.
 	 */
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.cos(radians)"))
-	fun cos(radians: Float): Float = TrigLookup.cos(radians)
+	@Deprecated("Use native math", ReplaceWith("kotlin.math.cos(radians)"), DeprecationLevel.ERROR)
+	fun cos(radians: Float): Float = throw Exception()
 
 	/**
 	 * Returns the tan in radians from a lookup table.
 	 * Throws DivideByZero exception when cos(radians) == 0
 	 */
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.tan(radians)"))
-	fun tan(radians: Float): Float = TrigLookup.tan(radians)
+	@Deprecated("Use native math", ReplaceWith("kotlin.math.tan(radians)"), DeprecationLevel.ERROR)
+	fun tan(radians: Float): Float = throw Exception()
 
 	// ---
 
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.atan2(y, x)"))
-	fun atan2(y: Float, x: Float): Float = Atan2.atan2(y, x)
+	@Deprecated("Use native math", ReplaceWith("kotlin.math.atan2(y, x)"), DeprecationLevel.ERROR)
+	fun atan2(y: Float, x: Float): Float = throw Exception()
 
 	// ---
 
@@ -323,22 +225,22 @@ object MathUtils {
 
 	// ---
 
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.abs(value)"))
+	@Deprecated("Use native math", ReplaceWith("kotlin.math.abs(value)"), DeprecationLevel.ERROR)
 	inline fun abs(value: Float): Float {
 		return if (value < 0f) -value else value
 	}
 
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.abs(value)"))
+	@Deprecated("Use native math", ReplaceWith("kotlin.math.abs(value)"), DeprecationLevel.ERROR)
 	inline fun abs(value: Double): Double {
 		return if (value < 0f) -value else value
 	}
 
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.abs(value)"))
+	@Deprecated("Use native math", ReplaceWith("kotlin.math.abs(value)"), DeprecationLevel.ERROR)
 	inline fun abs(value: Int): Int {
 		return if (value < 0f) -value else value
 	}
 
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.abs(value)"))
+	@Deprecated("Use native math", ReplaceWith("kotlin.math.abs(value)"), DeprecationLevel.ERROR)
 	inline fun abs(value: Long): Long {
 		return if (value < 0f) -value else value
 	}
