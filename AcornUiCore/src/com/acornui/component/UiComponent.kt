@@ -19,6 +19,8 @@
 package com.acornui.component
 
 import com.acornui.assertionsEnabled
+import com.acornui.async.Deferred
+import com.acornui.async.Work
 import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
 import com.acornui.component.layout.LayoutData
@@ -252,7 +254,7 @@ open class UiComponentImpl(
 
 	final override fun activate() {
 		if (_isDisposed)
-			throw IllegalStateException("Disposed")
+			throw DisposedException()
 		if (_isActive)
 			throw IllegalStateException("Already active")
 		_isActive = true
@@ -263,7 +265,7 @@ open class UiComponentImpl(
 
 	final override fun deactivate() {
 		if (_isDisposed)
-			throw IllegalStateException("Disposed")
+			throw DisposedException()
 		if (!_isActive)
 			throw IllegalStateException("Not active")
 		_isActive = false
@@ -1408,7 +1410,7 @@ open class UiComponentImpl(
 
 	override fun dispose() {
 		if (_isDisposed)
-			throw IllegalStateException("Already disposed")
+			throw DisposedException()
 		if (isActive) deactivate()
 		_disposed.dispatch(this)
 		_disposed.dispose()

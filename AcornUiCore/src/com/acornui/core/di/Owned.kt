@@ -1,6 +1,9 @@
 package com.acornui.core.di
 
+import com.acornui.async.Deferred
+import com.acornui.async.Work
 import com.acornui.core.Disposable
+import com.acornui.core.DisposedException
 import com.acornui.core.Lifecycle
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
@@ -12,6 +15,11 @@ import com.acornui.signal.Signal1
 interface Owned : Scoped {
 
 	/**
+	 * Returns true if this [Owned] object has been disposed.
+	 */
+	val isDisposed: Boolean
+
+	/**
 	 * Dispatched then this object has been disposed.
 	 */
 	val disposed: Signal<(Owned) -> Unit>
@@ -20,6 +28,32 @@ interface Owned : Scoped {
 	 * The creator of this instance.
 	 */
 	val owner: Owned?
+
+	//----------------------------------------------
+	// Async utility
+	//----------------------------------------------
+
+	/**
+	 * Wraps [com.acornui.async.async] with a check that will fail the task if this object is disposed.
+	 *
+	 * Example usage:
+	 * ```
+	 * async {
+	 *   delay(3f)
+	 * } then {
+	 *   println("I'm done!")
+	 * } catch {
+	 *   println("I failed.")
+	 * }
+	 * ```
+	 */
+	fun <T> async(work: Work<T>): Deferred<T> = com.acornui.async.async {
+		val result = work()
+		if (isDisposed) {
+			throw DisposedException()
+		}
+		result
+	}
 
 }
 
@@ -30,6 +64,7 @@ fun Owned.createScope(vararg dependenciesList: DependencyPair<*>): Owned {
 fun Owned.createScope(dependenciesList: List<DependencyPair<*>>): Owned {
 	val r = this
 	return object : Owned {
+		override val isDisposed: Boolean = false
 		override val disposed: Signal<(Owned) -> Unit>
 			get() = r.disposed
 		override val owner: Owned?
@@ -70,11 +105,17 @@ class OwnedImpl(
 		override val owner: Owned? = null
 ) : Owned, Disposable {
 
+	private var _isDisposed = false
+	override val isDisposed: Boolean
+		get() = _isDisposed
+
 	private val _disposed = Signal1<Owned>()
 	override val disposed: Signal<(Owned) -> Unit>
 		get() = _disposed
 
 	override fun dispose() {
+		if (_isDisposed) throw DisposedException()
+		_isDisposed = true
 		_disposed.dispatch(this)
 		_disposed.dispose()
 	}

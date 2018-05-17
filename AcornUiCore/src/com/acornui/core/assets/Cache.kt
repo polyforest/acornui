@@ -2,6 +2,7 @@ package com.acornui.core.assets
 
 import com.acornui.collection.MutableListIteratorImpl
 import com.acornui.core.Disposable
+import com.acornui.core.DisposedException
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
@@ -190,7 +191,7 @@ class CachedGroupImpl(
 	}
 
 	override fun dispose() {
-		if (isDisposed) throw Exception("Already disposed")
+		if (isDisposed) throw DisposedException()
 		isDisposed = true
 		for (i in 0..keys.lastIndex) {
 			cache.refDec(keys[i])

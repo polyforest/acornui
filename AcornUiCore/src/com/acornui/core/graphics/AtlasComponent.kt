@@ -17,8 +17,10 @@
 package com.acornui.core.graphics
 
 import com.acornui.async.Deferred
-import com.acornui.async.async
+import com.acornui.async.catch
+import com.acornui.async.then
 import com.acornui.collection.Clearable
+import com.acornui.collection.tuple
 import com.acornui.component.*
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.core.assets.CachedGroup
@@ -59,15 +61,23 @@ class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
 	 * Sets the region of the atlas component.
 	 * @param atlasPath The atlas json file.
 	 * @param regionName The name of the region within the atlas.
+	 *
+	 * This load can be canceled using [clear].
 	 */
-	fun setRegion(atlasPath: String, regionName: String): Deferred<Unit> = async {
+	fun setRegion(atlasPath: String, regionName: String): Deferred<Pair<Texture, AtlasRegionData>> {
 		clear()
 		group = cachedGroup()
-		val atlasData = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group!!).await()
-		val (page, region) = atlasData.findRegion(regionName) ?: throw Exception("Region '$regionName' not found in atlas.")
-		val texture = loadAndCacheAtlasPage(atlasPath, page, group!!).await()
-		setRegionAndTexture(texture, region)
-		Unit
+		return async {
+			val atlasData = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group!!).await()
+			val (page, region) = atlasData.findRegion(regionName) ?: throw Exception("Region '$regionName' not found in atlas.")
+			val texture = loadAndCacheAtlasPage(atlasPath, page, group!!).await()
+			texture tuple region
+		} then {
+			texture, region ->
+			setRegionAndTexture(texture, region)
+		} catch {
+			// Your custom error handling if you want it
+		}
 	}
 
 	val ninePatchComponent: NinePatchComponent?

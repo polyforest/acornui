@@ -2,7 +2,7 @@
 
 package com.acornui.gl.component.text
 
-import com.acornui.async.launch
+import com.acornui.async.then
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.component.layout.setSize
@@ -483,11 +483,11 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		host.clipboardPaste().add {
 			if (editable && !it.defaultPrevented()) {
 				it.handled = true
-				launch {
-					var str = it.getItemByType(ClipboardItemType.PLAIN_TEXT)
-					if (str != null) {
-						str = str.replace("\r", "")
-						replaceSelection(str, CommandGroup())
+				async {
+					it.getItemByType(ClipboardItemType.PLAIN_TEXT)
+				} then {
+					if (it != null) {
+						replaceSelection(it.replace("\r", ""), CommandGroup())
 						currentGroup = CommandGroup()
 						_input.dispatch()
 					}

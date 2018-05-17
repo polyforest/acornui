@@ -87,7 +87,7 @@ abstract class LifecycleBase : Lifecycle {
 
 	final override fun activate() {
 		if (_isDisposed)
-			throw IllegalStateException("Disposed")
+			throw DisposedException()
 		if (_isActive)
 			throw IllegalStateException("Already active")
 		_isActive = true
@@ -98,7 +98,7 @@ abstract class LifecycleBase : Lifecycle {
 	protected open fun onActivated() {}
 
 	final override fun deactivate() {
-		if (_isDisposed) throw IllegalStateException("Disposed")
+		if (_isDisposed) throw DisposedException()
 		if (!_isActive) throw IllegalStateException("Not active")
 		_isActive = false
 		onDeactivated()
@@ -110,7 +110,7 @@ abstract class LifecycleBase : Lifecycle {
 
 	override fun dispose() {
 		if (_isDisposed)
-			throw IllegalStateException("Already disposed")
+			throw DisposedException()
 		if (_isDisposing) return
 		_isDisposing = true
 		if (isActive) {
@@ -147,3 +147,5 @@ abstract class UpdatableChildBase : UpdatableChild {
 	override var parent: Parent<UpdatableChild>? = null
 
 }
+
+class DisposedException : IllegalStateException("This component has been disposed")

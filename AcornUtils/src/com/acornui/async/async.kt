@@ -16,10 +16,7 @@
 
 package com.acornui.async
 
-import com.acornui.collection.ArrayList
-import com.acornui.collection.copy
-import com.acornui.collection.mapTo
-import com.acornui.collection.poll
+import com.acornui.collection.*
 import com.acornui.core.Disposable
 import kotlin.coroutines.experimental.*
 
@@ -115,7 +112,7 @@ open class TimeoutException(timeout: Float, message: String = "Timed out after $
  * Invokes a callback when the deferred value has been computed successfully. This callback will not be invoked on
  * failure.
  */
-fun <T> Deferred<T>.then(callback: (result: T) -> Unit) {
+infix fun <T> Deferred<T>.then(callback: (result: T) -> Unit): Deferred<T> {
 	launch {
 		var successful = false
 		var result: T? = null
@@ -128,12 +125,25 @@ fun <T> Deferred<T>.then(callback: (result: T) -> Unit) {
 		if (successful)
 			callback(result as T)
 	}
+	return this
+}
+
+infix fun <A, B> Deferred<Pair<A, B>>.then(callback: (result: A, B) -> Unit): Deferred<Pair<A, B>> {
+	return then<Pair<A, B>> { callback(it.first, it.second) }
+}
+
+infix fun <A, B, C> Deferred<Triple<A, B, C>>.then(callback: (result: A, B, C) -> Unit): Deferred<Triple<A, B, C>> {
+	return then<Triple<A, B, C>> { callback(it.first, it.second, it.third) }
+}
+
+infix fun <A, B, C, D> Deferred<Tuple4<A, B, C, D>>.then(callback: (result: A, B, C, D) -> Unit): Deferred<Tuple4<A, B, C, D>> {
+	return then<Tuple4<A, B, C, D>> { callback(it.first, it.second, it.third, it.fourth) }
 }
 
 /**
  * Invokes a callback when this deferred object has failed to produce a result.
  */
-fun <T> Deferred<T>.catch(callback: (Throwable) -> Unit) {
+infix fun <T> Deferred<T>.catch(callback: (Throwable) -> Unit): Deferred<T> {
 	launch {
 		try {
 			await()
@@ -141,6 +151,7 @@ fun <T> Deferred<T>.catch(callback: (Throwable) -> Unit) {
 			callback(t)
 		}
 	}
+	return this
 }
 
 @Suppress("AddVarianceModifier")
