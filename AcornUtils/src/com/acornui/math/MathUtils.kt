@@ -26,7 +26,6 @@ const val E: Float = 2.7182818f
 const val TO_DEG = 180f / PI
 const val TO_RAD = PI / 180f
 
-@Deprecated("Use native math")
 internal object TrigLookup {
 	const val SIN_BITS = 14 // 16KB. Adjust for accuracy.
 	const val SIN_MASK = (-1 shl SIN_BITS).inv()
@@ -39,6 +38,7 @@ internal object TrigLookup {
 	val table = FloatArray(SIN_COUNT)
 
 	init {
+
 		for (i in 1..SIN_COUNT - 1) {
 			table[i] = Math.sin(((i.toFloat() + 0.5f) / SIN_COUNT.toFloat() * radFull).toDouble()).toFloat()
 		}
@@ -151,25 +151,21 @@ object MathUtils {
 	/**
 	 * Returns the sine in radians from a lookup table.
 	 */
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.sin(radians)"))
 	fun sin(radians: Float): Float = TrigLookup.sin(radians)
 
 	/**
 	 * Returns the cosine in radians from a lookup table.
 	 */
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.cos(radians)"))
 	fun cos(radians: Float): Float = TrigLookup.cos(radians)
 
 	/**
 	 * Returns the tan in radians from a lookup table.
 	 * Throws DivideByZero exception when cos(radians) == 0
 	 */
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.tan(radians)"))
 	fun tan(radians: Float): Float = TrigLookup.tan(radians)
 
 	// ---
 
-	@Deprecated("use native math", ReplaceWith("kotlin.math.atan2(x, y)"))
 	fun atan2(y: Float, x: Float): Float = Atan2.atan2(y, x)
 
 	// ---
@@ -323,22 +319,18 @@ object MathUtils {
 
 	// ---
 
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.abs(value)"))
 	inline fun abs(value: Float): Float {
 		return if (value < 0f) -value else value
 	}
 
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.abs(value)"))
 	inline fun abs(value: Double): Double {
 		return if (value < 0f) -value else value
 	}
 
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.abs(value)"))
 	inline fun abs(value: Int): Int {
 		return if (value < 0f) -value else value
 	}
 
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.abs(value)"))
 	inline fun abs(value: Long): Long {
 		return if (value < 0f) -value else value
 	}
@@ -348,7 +340,7 @@ object MathUtils {
 	 * @param tolerance represent an upper bound below which the value is considered zero.
 	 */
 	fun isZero(value: Float, tolerance: Float = FLOAT_ROUNDING_ERROR): Boolean {
-		return kotlin.math.abs(value.toDouble()) <= tolerance
+		return abs(value.toDouble()) <= tolerance
 	}
 
 	/**
@@ -356,7 +348,7 @@ object MathUtils {
 	 * @param tolerance represent an upper bound below which the value is considered zero.
 	 */
 	fun isZero(value: Double, tolerance: Float = FLOAT_ROUNDING_ERROR): Boolean {
-		return kotlin.math.abs(value) <= tolerance
+		return abs(value) <= tolerance
 	}
 
 	/**
@@ -365,7 +357,7 @@ object MathUtils {
 	 * @param b the second value.
 	 */
 	fun isEqual(a: Float, b: Float): Boolean {
-		return kotlin.math.abs(a - b) <= FLOAT_ROUNDING_ERROR
+		return abs(a - b) <= FLOAT_ROUNDING_ERROR
 	}
 
 	/**
@@ -375,7 +367,7 @@ object MathUtils {
 	 * @param tolerance represent an upper bound below which the two values are considered equal.
 	 */
 	fun isEqual(a: Float, b: Float, tolerance: Float): Boolean {
-		return kotlin.math.abs(a - b) <= tolerance
+		return abs(a - b) <= tolerance
 	}
 
 	/**
@@ -583,13 +575,13 @@ object MathUtils {
 				val theta: Float = acos(r / sqrt(q3))
 				val qSqrt: Float = sqrt(q)
 
-				out.add(-2f * qSqrt * kotlin.math.cos(theta / 3f) - b / 3f)
-				out.add(-2f * qSqrt * kotlin.math.cos((theta + 2f * PI) / 3f) - b / 3f)
-				out.add(-2f * qSqrt * kotlin.math.cos((theta + 4f * PI) / 3f) - b / 3f)
+				out.add(-2f * qSqrt * cos(theta / 3f) - b / 3f)
+				out.add(-2f * qSqrt * cos((theta + 2f * PI) / 3f) - b / 3f)
+				out.add(-2f * qSqrt * cos((theta + 4f * PI) / 3f) - b / 3f)
 			}
 		} else {
 			// one real root
-			val tmp: Float = pow(sqrt(-diff) + kotlin.math.abs(r), 1f / 3f)
+			val tmp: Float = pow(sqrt(-diff) + abs(r), 1f / 3f)
 			val rSign = if (r > 0f) 1f else if (r < 0f) -1f else 0f
 			out.add(-rSign * (tmp + q / tmp) - b / 3f)
 		}

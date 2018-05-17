@@ -9,7 +9,6 @@ import com.acornui.graphics.ColorRo
 import com.acornui.graphics.color
 import com.acornui.math.*
 import com.acornui.serialization.*
-import kotlin.math.atan2
 
 open class BoxStyle : StyleBase() {
 
@@ -156,13 +155,13 @@ enum class GradientDirection {
 
 	fun getAngle(width: Float, height: Float): Float {
 		return when (this) {
-			TOP_LEFT -> atan2(width, -height)
+			TOP_LEFT -> MathUtils.atan2(-height, width)
 			TOP -> 0f
-			TOP_RIGHT -> atan2(width, height)
+			TOP_RIGHT -> MathUtils.atan2(height, width)
 			RIGHT -> 0.5f * PI
-			BOTTOM_RIGHT -> atan2(-width, height)
+			BOTTOM_RIGHT -> MathUtils.atan2(height, -width)
 			BOTTOM -> PI
-			BOTTOM_LEFT -> atan2(-width, -height)
+			BOTTOM_LEFT -> MathUtils.atan2(-height, -width)
 			LEFT -> 1.5f * PI
 			ANGLE -> 0f
 		}

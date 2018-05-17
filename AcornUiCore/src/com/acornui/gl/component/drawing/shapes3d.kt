@@ -3,8 +3,6 @@ package com.acornui.gl.component.drawing
 import com.acornui.math.MathUtils
 import com.acornui.math.PI2
 import com.acornui.math.Vector3
-import kotlin.math.cos
-import kotlin.math.sin
 
 private val v1_3 = Vector3() // Careful for KT-14116, private package member names cannot clash.
 
@@ -27,8 +25,8 @@ fun cylinder(width: Float, height: Float, depth: Float, segments: Int = 180, ini
 
 		for (i in 0..segments) {
 			val theta = i.toFloat() / segments * PI2
-			val cos = cos(theta)
-			val sin = sin(theta)
+			val cos = MathUtils.cos(theta)
+			val sin = MathUtils.sin(theta)
 			val x = (cos + 1f) * hW
 			val y = (sin + 1f) * hH
 

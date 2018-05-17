@@ -2,8 +2,6 @@ package com.acornui.gl.component.drawing
 
 import com.acornui._assert
 import com.acornui.math.*
-import kotlin.math.cos
-import kotlin.math.sin
 
 private val v1 = Vector2()
 private val v2 = Vector2()
@@ -182,7 +180,7 @@ fun oval(width: Float, height: Float, segments: Int = 180, init: MeshData.() -> 
 }
 
 fun calculateOvalPoint(theta: Float, width: Float, height: Float, out: Vector2) {
-	out.set((cos(theta) + 1f) * width * 0.5f, (sin(theta) + 1f) * height * 0.5f)
+	out.set((MathUtils.cos(theta) + 1f) * width * 0.5f, (MathUtils.sin(theta) + 1f) * height * 0.5f)
 }
 
 fun curvedRect(w: Float, h: Float, corners: Corners, segments: Int = 30, init: MeshData.() -> Unit = {}): MeshData {
@@ -270,7 +268,7 @@ fun curvedRect(w: Float, h: Float, corners: Corners, segments: Int = 30, init: M
 
 			for (i in 0..segments) {
 				val theta = PI * 0.5f * (i.toFloat() / segments)
-				pushVertex(anchorX - cos(theta) * topLeftX, anchorY - sin(theta) * topLeftY, 0f, colorTint)
+				pushVertex(anchorX - MathUtils.cos(theta) * topLeftX, anchorY - MathUtils.sin(theta) * topLeftY, 0f, colorTint)
 				if (i > 0) {
 					pushIndex(n)
 					pushIndex(n + i)
@@ -287,7 +285,7 @@ fun curvedRect(w: Float, h: Float, corners: Corners, segments: Int = 30, init: M
 
 			for (i in 0..segments) {
 				val theta = PI * 0.5f * (i.toFloat() / segments)
-				pushVertex(anchorX + cos(theta) * topRightX, anchorY - sin(theta) * topRightY, 0f, colorTint)
+				pushVertex(anchorX + MathUtils.cos(theta) * topRightX, anchorY - MathUtils.sin(theta) * topRightY, 0f, colorTint)
 				if (i > 0) {
 					pushIndex(n)
 					pushIndex(n + i)
@@ -304,7 +302,7 @@ fun curvedRect(w: Float, h: Float, corners: Corners, segments: Int = 30, init: M
 
 			for (i in 0..segments) {
 				val theta = PI * 0.5f * (i.toFloat() / segments)
-				pushVertex(anchorX + cos(theta) * bottomRightX, anchorY + sin(theta) * bottomRightY, 0f, colorTint)
+				pushVertex(anchorX + MathUtils.cos(theta) * bottomRightX, anchorY + MathUtils.sin(theta) * bottomRightY, 0f, colorTint)
 				if (i > 0) {
 					pushIndex(n)
 					pushIndex(n + i)
@@ -321,7 +319,7 @@ fun curvedRect(w: Float, h: Float, corners: Corners, segments: Int = 30, init: M
 
 			for (i in 0..segments) {
 				val theta = PI * 0.5f * (i.toFloat() / segments)
-				pushVertex(anchorX - cos(theta) * bottomLeftX, anchorY + sin(theta) * bottomLeftY, 0f, colorTint)
+				pushVertex(anchorX - MathUtils.cos(theta) * bottomLeftX, anchorY + MathUtils.sin(theta) * bottomLeftY, 0f, colorTint)
 				if (i > 0) {
 					pushIndex(n)
 					pushIndex(n + i)

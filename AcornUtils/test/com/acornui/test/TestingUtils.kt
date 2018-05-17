@@ -20,7 +20,6 @@ import com.acornui.collection.toList
 import com.acornui.core.closeTo
 import com.acornui.math.*
 import org.junit.Test
-import kotlin.math.abs
 
 import kotlin.test.assertFails
 import kotlin.test.fail
@@ -194,7 +193,7 @@ class TestUtils {
 }
 
 fun assertClose(expected: Float, actual: Float, margin: Float = 0.0001f) {
-	val difference = abs(expected - actual)
+	val difference = MathUtils.abs(expected - actual)
 	if (difference > margin) {
 		fail("expected: $expected actual: $actual difference $difference is greater than allowed: $margin ")
 	}

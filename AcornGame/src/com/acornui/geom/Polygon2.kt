@@ -5,9 +5,6 @@ import com.acornui.collection.addAll2
 import com.acornui.collection.copy
 import com.acornui.math.*
 import com.acornui.serialization.*
-import kotlin.math.abs
-import kotlin.math.cos
-import kotlin.math.sin
 
 fun Polygon2(vertices: List<Float>): Polygon2 {
 	val p = Polygon2(vertices.size)
@@ -307,7 +304,7 @@ class Polygon2(initialCapacity: Int = 16) : Polygon2Ro {
 				}
 				if (mTd != null) {
 					val dist = min0 - max1
-					val distAbs = abs(dist)
+					val distAbs = MathUtils.abs(dist)
 					if (distAbs < shortestDistAbs) {
 						shortestDistAbs = distAbs
 						mTd.set(vAxis).scl(dist)
@@ -381,8 +378,8 @@ fun basicPolygon(sides: Int = 3, radius: Float = 100f): Polygon2 {
 	val vertices = poly.vertices
 	for (i in 0..sides - 1) {
 		val theta = (i * rot) + (PI - rot) * 0.5f
-		vertices.add(cos(theta) * radius)
-		vertices.add(sin(theta) * radius)
+		vertices.add(MathUtils.cos(theta) * radius)
+		vertices.add(MathUtils.sin(theta) * radius)
 	}
 	return poly
 }

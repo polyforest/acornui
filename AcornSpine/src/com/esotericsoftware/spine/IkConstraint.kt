@@ -36,10 +36,6 @@ import com.acornui.core.INT_MAX_VALUE
 import com.acornui.math.MathUtils
 import com.acornui.math.PI
 import com.esotericsoftware.spine.data.IkConstraintData
-import kotlin.math.abs
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
 
 
 class IkConstraint : Updatable {
@@ -98,7 +94,7 @@ class IkConstraint : Updatable {
 		fun apply(bone: Bone, targetX: Float, targetY: Float, alpha: Float) {
 			val parentRotation = if (bone.parent == null) 0f else bone.parent.worldRotationX
 			val rotation = bone.rotation
-			var rotationIK = atan2(targetX - bone.worldX, targetY - bone.worldY) * MathUtils.radDeg - parentRotation
+			var rotationIK = MathUtils.atan2(targetY - bone.worldY, targetX - bone.worldX) * MathUtils.radDeg - parentRotation
 			if (bone.worldSignX != bone.worldSignY != (bone.skeleton.flipX != bone.skeleton.flipY)) rotationIK = 360 - rotationIK
 			if (rotationIK > 180f)
 				rotationIK -= 360f
@@ -134,7 +130,7 @@ class IkConstraint : Updatable {
 			val cx = child.x
 			var cy = child.y
 			var csx = child.appliedScaleX
-			val u = abs(psx - psy) <= 0.0001f
+			val u = MathUtils.abs(psx - psy) <= 0.0001f
 			if (!u && cy != 0f) {
 				child.worldX = parent.a * cx + parent.worldX
 				child.worldY = parent.c * cx + parent.worldY
@@ -186,12 +182,12 @@ class IkConstraint : Updatable {
 					else if (cos > 1) cos = 1f
 					a2 = MathUtils.acos(cos) * bendDir
 					val a = l1 + l2 * cos
-					val o = l2 * sin(a2)
-					a1 = atan2(tx * a + ty * o, ty * a - tx * o)
+					val o = l2 * MathUtils.sin(a2)
+					a1 = MathUtils.atan2(ty * a - tx * o, tx * a + ty * o)
 				} else {
 					val a = psx * l2
 					val b = psy * l2
-					val ta = atan2(tx, ty)
+					val ta = MathUtils.atan2(ty, tx)
 					val aa = a * a
 					val bb = b * b
 					val ll = l1 * l1
@@ -206,11 +202,11 @@ class IkConstraint : Updatable {
 						q = -(c1 + q) / 2
 						val r0 = q / c2
 						val r1 = c0 / q
-						val r = if (abs(r0) < abs(r1)) r0 else r1
+						val r = if (MathUtils.abs(r0) < MathUtils.abs(r1)) r0 else r1
 						if (r * r <= dd) {
 							val y = MathUtils.sqrt(dd - r * r) * bendDir
-							a1 = ta - atan2(r, y)
-							a2 = atan2((r - l1) / psx, y / psy)
+							a1 = ta - MathUtils.atan2(y, r)
+							a2 = MathUtils.atan2(y / psy, (r - l1) / psx)
 							break
 						}
 					}
@@ -237,8 +233,8 @@ class IkConstraint : Updatable {
 						minX = x
 					}
 					val angle = MathUtils.acos(-a * l1 / (aa - bb))
-					x = a * cos(angle) + l1
-					val y = b * sin(angle)
+					x = a * MathUtils.cos(angle) + l1
+					val y = b * MathUtils.sin(angle)
 					dist = x * x + y * y
 					if (dist < minDist) {
 						minAngle = angle
@@ -253,17 +249,17 @@ class IkConstraint : Updatable {
 						maxY = y
 					}
 					if (dd <= (minDist + maxDist) / 2) {
-						a1 = ta - atan2(minX, minY * bendDir)
+						a1 = ta - MathUtils.atan2(minY * bendDir, minX)
 						a2 = minAngle * bendDir
 					} else {
-						a1 = ta - atan2(maxX, maxY * bendDir)
+						a1 = ta - MathUtils.atan2(maxY * bendDir, maxX)
 						a2 = maxAngle * bendDir
 					}
 				}
 				break
 			}
 
-			val o = atan2(cx, cy) * s2
+			val o = MathUtils.atan2(cy, cx) * s2
 			a1 = (a1 - o) * MathUtils.radDeg + os1
 			a2 = (a2 + o) * MathUtils.radDeg * s2 + os2
 			if (a1 > 180f)

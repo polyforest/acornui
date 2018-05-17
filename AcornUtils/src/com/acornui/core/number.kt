@@ -17,7 +17,6 @@
 package com.acornui.core
 
 import com.acornui.math.*
-import kotlin.math.abs
 
 /**
  * A constant holding the maximum value a {@code long} can
@@ -128,15 +127,15 @@ fun Float.round(): Float {
 }
 
 fun Float.notCloseTo(other: Float, tolerance: Float = 0.0001f): Boolean {
-	return abs(this - other) > tolerance
+	return MathUtils.abs(this - other) > tolerance
 }
 
 fun Float.closeTo(other: Float, tolerance: Float = 0.0001f): Boolean {
-	return abs(this - other) <= tolerance
+	return MathUtils.abs(this - other) <= tolerance
 }
 
 fun Double.closeTo(other: Double, tolerance: Double = 0.0001): Boolean {
-	return abs(this - other) <= tolerance
+	return MathUtils.abs(this - other) <= tolerance
 }
 
 fun Boolean.toInt(): Int {

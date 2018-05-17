@@ -40,8 +40,6 @@ import com.acornui.math.Vector3
 import com.acornui.math.Vector3Ro
 import com.esotericsoftware.spine.Slot
 import com.esotericsoftware.spine.data.attachments.RegionAttachmentData
-import kotlin.math.cos
-import kotlin.math.sin
 
 /**
  * Attachment that displays a texture region.
@@ -111,8 +109,8 @@ open class RegionAttachment(
 		localX2 *= scaleX
 		localY2 *= scaleY
 		val rotation = data.rotation
-		val cos = cos(rotation * MathUtils.degRad)
-		val sin = sin(rotation * MathUtils.degRad)
+		val cos = MathUtils.cos(rotation * MathUtils.degRad)
+		val sin = MathUtils.sin(rotation * MathUtils.degRad)
 		val x = data.x
 		val y = data.y
 		val localXCos = localX * cos + x

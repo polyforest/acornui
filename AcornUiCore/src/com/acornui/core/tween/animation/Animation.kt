@@ -28,7 +28,6 @@ import com.acornui.core.tween.*
 import com.acornui.graphics.Color
 import com.acornui.logging.Log
 import com.acornui.math.*
-import kotlin.math.tan
 
 /**
  * A UI Component representing an animation library item.
@@ -175,7 +174,7 @@ private class LayerTween(override val duration: Float, layer: Layer, private val
 			quat.setEulerAnglesRad(rotation.y, rotation.x, rotation.z)
 			transform.rotate(quat)
 		}
-		transform.shearZ(tan(shearXZ), tan(shearYZ))
+		transform.shearZ(MathUtils.tan(shearXZ), MathUtils.tan(shearYZ))
 		transform.scale(scale)
 
 		transform.translate(-origin.x, -origin.y, -origin.z)

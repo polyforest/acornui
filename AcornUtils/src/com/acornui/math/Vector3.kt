@@ -21,9 +21,6 @@ package com.acornui.math
 import com.acornui.collection.Clearable
 import com.acornui.collection.ClearableObjectPool
 import com.acornui.serialization.*
-import kotlin.math.abs
-import kotlin.math.cos
-import kotlin.math.sin
 
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
@@ -482,7 +479,7 @@ data class Vector3 (
 	}
 
 	override fun isUnit(margin: Float): Boolean {
-		return abs(len2() - 1f) < margin
+		return MathUtils.abs(len2() - 1f) < margin
 	}
 
 	override fun isZero(): Boolean {
@@ -561,14 +558,14 @@ data class Vector3 (
 		// theta = angle between this vector and result
 		val theta = theta0 * alpha
 
-		val st = sin(theta)
+		val st = MathUtils.sin(theta)
 		val tx = target.x - x * dot
 		val ty = target.y - y * dot
 		val tz = target.z - z * dot
 		val l2 = tx * tx + ty * ty + tz * tz
 		val dl = st * (if ((l2 < 0.0001f)) 1f else 1f / MathUtils.sqrt(l2))
 
-		return scl(cos(theta)).add(tx * dl, ty * dl, tz * dl).nor()
+		return scl(MathUtils.cos(theta)).add(tx * dl, ty * dl, tz * dl).nor()
 	}
 
 	fun limit(limit: Float): Vector3 {
@@ -593,9 +590,9 @@ data class Vector3 (
 
 	override fun closeTo(other: Vector3Ro?, epsilon: Float): Boolean {
 		if (other == null) return false
-		if (abs(other.x - x) > epsilon) return false
-		if (abs(other.y - y) > epsilon) return false
-		if (abs(other.z - z) > epsilon) return false
+		if (MathUtils.abs(other.x - x) > epsilon) return false
+		if (MathUtils.abs(other.y - y) > epsilon) return false
+		if (MathUtils.abs(other.z - z) > epsilon) return false
 		return true
 	}
 
@@ -604,9 +601,9 @@ data class Vector3 (
 	 * @return whether the vectors are the same.
 	 */
 	override fun closeTo(x: Float, y: Float, z: Float, epsilon: Float): Boolean {
-		if (abs(x - this.x) > epsilon) return false
-		if (abs(y - this.y) > epsilon) return false
-		if (abs(z - this.z) > epsilon) return false
+		if (MathUtils.abs(x - this.x) > epsilon) return false
+		if (MathUtils.abs(y - this.y) > epsilon) return false
+		if (MathUtils.abs(z - this.z) > epsilon) return false
 		return true
 	}
 

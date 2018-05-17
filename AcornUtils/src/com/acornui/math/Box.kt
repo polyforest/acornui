@@ -18,8 +18,6 @@
 
 package com.acornui.math
 
-import kotlin.math.abs
-
 interface BoxRo {
 
 	val min: Vector3Ro
@@ -394,13 +392,13 @@ data class Box(
 
 		// test using SAT (separating axis theorem)
 
-		val lX = abs(center.x - b.center.x)
+		val lX = MathUtils.abs(center.x - b.center.x)
 		val sumX = (dimensions.x * 0.5f) + (b.dimensions.x * 0.5f)
 
-		val lY = abs(center.y - b.center.y)
+		val lY = MathUtils.abs(center.y - b.center.y)
 		val sumY = (dimensions.y * 0.5f) + (b.dimensions.y * 0.5f)
 
-		val lZ = abs(center.z - b.center.z)
+		val lZ = MathUtils.abs(center.z - b.center.z)
 		val sumZ = (dimensions.z * 0.5f) + (b.dimensions.z * 0.5f)
 
 		return (lX <= sumX && lY <= sumY && lZ <= sumZ)
