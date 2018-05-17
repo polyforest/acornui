@@ -116,7 +116,7 @@ class Matrix4Test {
 	@Test
 	fun setFromEulerAnglesRad() {
 		m1.setFromEulerAnglesRad(3f, 62f, 23f)
-		assertListEquals(arrayListOf(0.61562574f, -0.5700127f, -0.5441419f, 0.0f, -0.782292f, -0.35881627f, -0.50918555f, 0.0f, 0.094995186f, 0.73914564f, -0.6668129f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f), m1.values)
+		assertListEquals(arrayListOf(0.61562574f, -0.5700127f, -0.5441419f, 0.0f, -0.782292f, -0.35881627f, -0.50918555f, 0.0f, 0.094995186f, 0.73914564f, -0.6668129f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f), m1.values, comparator = {a, b -> a.closeTo(b, 0.01f)})
 	}
 
 	@Test
@@ -241,7 +241,7 @@ class Matrix4Test {
 	@Test
 	fun rotate2() {
 		m1.rotate(3f, -23f, 1f, 3.23f)
-		assertListEquals(listOf(-8.751207f, -18.508787f, -18.365849f, -23.04679f, 13.779734f, 11.132234f, 17.437412f, 28.595972f, -19.812506f, -101.43224f, -73.84195f, -20.152323f, 11f, 25f, 41f, 43f), m1.values, { a, b -> a.closeTo(b) })
+		assertListEquals(listOf(-8.74778f, -18.490776f, -18.35281f, -23.043419f, 13.780127f, 11.134449f, 17.438988f, 28.59626f, -19.81375f, -101.43531f, -73.84483f, -20.155771f, 11.0f, 25.0f, 41.0f, 43.0f), m1.values, { a, b -> a.closeTo(b) })
 	}
 
 	@Test
@@ -295,4 +295,8 @@ class Matrix4Test {
 	}
 
 
+}
+
+private fun <E> List<E>.printF() {
+	println(joinToString("f, ") + "f")
 }
