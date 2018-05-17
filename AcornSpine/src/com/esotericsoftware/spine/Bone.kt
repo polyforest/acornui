@@ -38,6 +38,7 @@ import com.esotericsoftware.spine.data.BoneData
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 class Bone : Updatable {
 	val data: BoneData
@@ -232,10 +233,10 @@ class Bone : Updatable {
 		get() = atan2(d, b) * MathUtils.radDeg
 
 	val worldScaleX: Float
-		get() = MathUtils.sqrt((a * a + b * b)) * worldSignX
+		get() = sqrt((a * a + b * b)) * worldSignX
 
 	val worldScaleY: Float
-		get() = MathUtils.sqrt((c * c + d * d)) * worldSignY
+		get() = sqrt((c * c + d * d)) * worldSignY
 
 	fun getWorldTransform(out: Matrix3): Matrix3 {
 		val values = out.values

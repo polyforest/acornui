@@ -21,12 +21,12 @@ package com.acornui.gl.core
 import com.acornui.core.di.DKey
 import com.acornui.core.graphics.Texture
 import com.acornui.core.io.BufferFactory
-import com.acornui.core.round
 import com.acornui.graphics.ColorRo
 import com.acornui.io.NativeBuffer
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.Vector2
 import com.acornui.math.Vector3
+import kotlin.math.round
 
 interface Gl20 {
 
@@ -1209,7 +1209,7 @@ interface GlActiveInfoRef {
 interface GlUniformLocationRef
 
 fun Gl20.scissor(x: Float, y: Float, width: Float, height: Float) {
-	scissor(x.round().toInt(), y.round().toInt(), width.round().toInt(), height.round().toInt())
+	scissor(round(x).toInt(), round(y).toInt(), round(width).toInt(), round(height).toInt())
 }
 
 private val matrixValuesBuffer: NativeBuffer<Float> by lazy { BufferFactory.instance.floatBuffer(16) }

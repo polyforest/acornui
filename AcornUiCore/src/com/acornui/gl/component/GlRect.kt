@@ -18,6 +18,7 @@ import com.acornui.math.*
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 open class GlRect(
 		owner: Owned
@@ -282,7 +283,7 @@ open class GlRect(
 				val a = cos(angle) * w
 				val b = sin(angle) * h
 				val len = abs(a) + abs(b)
-				val thickness = MathUtils.sqrt(w * w + h * h)
+				val thickness = sqrt(w * w + h * h)
 
 				var pixel = 0f
 				var n = 2

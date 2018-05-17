@@ -37,7 +37,6 @@ import com.acornui.core.floor
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.input.interaction.DragAttachment
 import com.acornui.core.input.interaction.DragInteraction
-import com.acornui.core.round
 import com.acornui.core.selection.Selectable
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionRange
@@ -46,12 +45,11 @@ import com.acornui.gl.core.pushQuadIndices
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.Bounds
-import com.acornui.math.MathUtils.floor
-import com.acornui.math.MathUtils.round
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Vector3
 import com.acornui.math.ceil
 import com.acornui.string.isBreaking
+import kotlin.math.round
 
 /**
  * A TextField implementation for the OpenGL back-ends.
@@ -695,7 +693,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 			part.x = x
 
 			if (part.clearsTabstop) {
-				val tabIndex = floor(x / tabSize) + 1
+				val tabIndex = kotlin.math.floor(x / tabSize).toInt() + 1
 				var w = tabIndex * tabSize - x
 				// I'm not sure what standard text flows do for this, but if the tab size is too small, skip to
 				// the next tabstop.
@@ -786,7 +784,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 			val remainingSpace = availableWidth - lineWidth
 			flowStyle.padding.left + when (flowStyle.horizontalAlign) {
 				FlowHAlign.LEFT -> 0f
-				FlowHAlign.CENTER -> (remainingSpace * 0.5f).round()
+				FlowHAlign.CENTER -> round(remainingSpace * 0.5f)
 				FlowHAlign.RIGHT -> remainingSpace
 				FlowHAlign.JUSTIFY -> 0f
 			}
@@ -827,7 +825,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 
 			val yOffset = when (flowStyle.verticalAlign) {
 				FlowVAlign.TOP -> 0f
-				FlowVAlign.MIDDLE -> round((line.height - part.lineHeight) * 0.5f).toFloat()
+				FlowVAlign.MIDDLE -> round((line.height - part.lineHeight) * 0.5f + 0.00001f)
 				FlowVAlign.BOTTOM -> line.height - part.lineHeight
 				FlowVAlign.BASELINE -> line.baseline - part.baseline
 			}
@@ -845,8 +843,8 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 			yVal.compareTo(line.bottom)
 		}
 		val line = _lines[lineIndex]
-		return textElements.sortedInsertionIndex(x, line.startIndex, line.endIndex, comparator = { x, part ->
-			if (part.clearsLine && flowStyle.multiline) -1 else x.compareTo(part.x + part.width / 2f)
+		return textElements.sortedInsertionIndex(x, line.startIndex, line.endIndex, comparator = { xVal, part ->
+			if (part.clearsLine && flowStyle.multiline) -1 else xVal.compareTo(part.x + part.width / 2f)
 		})
 	}
 

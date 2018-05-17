@@ -20,6 +20,9 @@
 
 package com.acornui.math
 
+import kotlin.math.floor
+import kotlin.math.pow
+
 const val PI: Float = 3.1415927f
 const val PI2: Float = PI * 2f
 const val E: Float = 2.7182818f
@@ -189,8 +192,8 @@ object MathUtils {
 	fun randomTriangular(min: Float, max: Float, mode: Float): Float {
 		val u = rng.nextFloat()
 		val d = max - min
-		if (u <= (mode - min) / d) return min + MathUtils.sqrt(u * d * (mode - min))
-		return max - MathUtils.sqrt((1 - u) * d * (max - mode))
+		if (u <= (mode - min) / d) return min + kotlin.math.sqrt(u * d * (mode - min))
+		return max - kotlin.math.sqrt((1 - u) * d * (max - mode))
 	}
 
 	// ---
@@ -332,30 +335,37 @@ object MathUtils {
 
 	// TODO: deprecate what's now in kotlin native math
 
+	@Deprecated("Use native math", ReplaceWith("kotlin.math.ceil(v).toInt()"), DeprecationLevel.ERROR)
 	inline fun ceil(v: Float): Int {
 		return Math.ceil(v.toDouble()).toInt()
 	}
 
+	@Deprecated("Use native math", ReplaceWith("kotlin.math.floor(v).toInt()"), DeprecationLevel.ERROR)
 	inline fun floor(v: Float): Int {
 		return Math.floor(v.toDouble()).toInt()
 	}
 
+	@Deprecated("Use native math", ReplaceWith("kotlin.math.round(v).toInt()"), DeprecationLevel.ERROR)
 	inline fun round(v: Float): Int {
 		return Math.round(v.toDouble()).toInt()
 	}
 
+	@Deprecated("Use native math", ReplaceWith("kotlin.math.sqrt(v)"), DeprecationLevel.ERROR)
 	inline fun sqrt(v: Float): Float {
 		return Math.sqrt(v.toDouble()).toFloat()
 	}
 
+	@Deprecated("Use native math", ReplaceWith("a.pow(b)", "kotlin.math.pow"), DeprecationLevel.ERROR)
 	inline fun pow(a: Float, b: Float): Float {
 		return Math.pow(a.toDouble(), b.toDouble()).toFloat()
 	}
 
+	@Deprecated("Use native math", ReplaceWith("kotlin.math.acos(v)"), DeprecationLevel.ERROR)
 	inline fun acos(v: Float): Float {
 		return Math.acos(v.toDouble()).toFloat()
 	}
 
+	@Deprecated("Use native math", ReplaceWith("kotlin.math.asin(v)"), DeprecationLevel.ERROR)
 	inline fun asin(v: Float): Float {
 		return Math.asin(v.toDouble()).toFloat()
 	}
@@ -440,7 +450,7 @@ object MathUtils {
 			out.add(-b / (2f * a))
 		} else {
 			val aa = -b / (2f * a)
-			val tmp = sqrt(q) / (2f * a)
+			val tmp = kotlin.math.sqrt(q) / (2f * a)
 			out.add(aa - tmp)
 			out.add(aa + tmp)
 		}
@@ -482,8 +492,8 @@ object MathUtils {
 				out.add(0f)
 			} else {
 				// three real roots
-				val theta: Float = acos(r / sqrt(q3))
-				val qSqrt: Float = sqrt(q)
+				val theta: Float = kotlin.math.acos(r / kotlin.math.sqrt(q3))
+				val qSqrt: Float = kotlin.math.sqrt(q)
 
 				out.add(-2f * qSqrt * kotlin.math.cos(theta / 3f) - b / 3f)
 				out.add(-2f * qSqrt * kotlin.math.cos((theta + 2f * PI) / 3f) - b / 3f)
@@ -491,7 +501,7 @@ object MathUtils {
 			}
 		} else {
 			// one real root
-			val tmp: Float = pow(sqrt(-diff) + kotlin.math.abs(r), 1f / 3f)
+			val tmp: Float = (kotlin.math.sqrt(-diff) + kotlin.math.abs(r)).pow(1f / 3f)
 			val rSign = if (r > 0f) 1f else if (r < 0f) -1f else 0f
 			out.add(-rSign * (tmp + q / tmp) - b / 3f)
 		}
@@ -506,7 +516,7 @@ object MathUtils {
 		if (snap <= 0) return value
 		var v = value - offset
 		v /= snap
-		v = MathUtils.round(v).toFloat()
+		v = kotlin.math.round(v)
 		v *= snap
 		return v + offset
 	}
@@ -515,7 +525,7 @@ object MathUtils {
 		if (snap <= 0) return value
 		var v = value - offset
 		v /= snap
-		v = MathUtils.floor(v).toFloat()
+		v = kotlin.math.floor(v)
 		v *= snap
 		return v + offset
 	}
@@ -524,21 +534,21 @@ object MathUtils {
 		if (snap <= 0) return value
 		var v = value - offset
 		v /= snap
-		v = MathUtils.ceil(v).toFloat()
+		v = kotlin.math.ceil(v)
 		v *= snap
 		return v + offset
 	}
 }
 
 inline fun Float.ceil(): Int {
-	return MathUtils.ceil(this)
+	return kotlin.math.ceil(this).toInt()
 }
 
 /**
  * Returns the fraction of this float.
  */
 inline fun Float.fpart(): Float {
-	return this - MathUtils.floor(this).toFloat()
+	return this - floor(this)
 }
 
 inline fun <T : Comparable<T>> maxOf4(a: T, b: T, c: T, d: T): T {

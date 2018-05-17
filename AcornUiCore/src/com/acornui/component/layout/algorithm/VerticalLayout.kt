@@ -25,6 +25,7 @@ import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
+import kotlin.math.floor
 
 class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> {
 
@@ -98,7 +99,7 @@ class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> 
 				if (props.verticalAlign == VAlign.BOTTOM) {
 					y += d
 				} else if (props.verticalAlign == VAlign.MIDDLE) {
-					y += MathUtils.floor(d * 0.5f)
+					y += floor(d * 0.5f).toInt()
 				}
 			}
 		}

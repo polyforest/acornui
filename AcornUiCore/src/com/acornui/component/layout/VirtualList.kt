@@ -18,6 +18,8 @@ import com.acornui.function.as2
 import com.acornui.function.as3
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
+import kotlin.math.ceil
+import kotlin.math.floor
 
 
 interface VirtualLayoutContainer<S, out T : LayoutData> : Container {
@@ -308,7 +310,7 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 
 		// Starting at the set position, render as many items as we can until we go out of bounds,
 		// then go back to the beginning and reverse direction until we go out of bounds again.
-		val currentIndex = if (isReversed) MathUtils.ceil(startIndex) else MathUtils.floor(startIndex)
+		val currentIndex = if (isReversed) ceil(startIndex).toInt() else floor(startIndex).toInt()
 		layoutElements(explicitWidth, explicitHeight, currentIndex, startIndex, isReversed, previousElement = null, laidOutRenderers = laidOutRenderers)
 
 		val first = if (isReversed) laidOutRenderers.lastOrNull() else laidOutRenderers.firstOrNull()

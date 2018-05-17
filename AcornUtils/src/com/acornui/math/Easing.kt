@@ -19,7 +19,9 @@ package com.acornui.math
 import com.acornui.collection.scl
 import com.acornui.collection.sortedInsertionIndex
 import kotlin.math.cos
+import kotlin.math.pow
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 
 /**
@@ -54,22 +56,22 @@ class Constant(private val value: Float) : Interpolation {
 class Pow(private val power: Int) : Interpolation {
 
 	override fun apply(alpha: Float): Float {
-		if (alpha <= 0.5f) return MathUtils.pow((alpha * 2f), power.toFloat()) / 2f
-		return MathUtils.pow(((alpha - 1f) * 2f), power.toFloat()) / (if (power % 2 == 0) -2f else 2f) + 1f
+		if (alpha <= 0.5f) return (alpha * 2f).pow(power.toFloat()) / 2f
+		return ((alpha - 1f) * 2f).pow(power.toFloat()) / (if (power % 2 == 0) -2f else 2f) + 1f
 	}
 }
 
 class PowIn(private val power: Int) : Interpolation {
 
 	override fun apply(alpha: Float): Float {
-		return MathUtils.pow(alpha, power.toFloat())
+		return alpha.pow(power.toFloat())
 	}
 }
 
 class PowOut(private val power: Int) : Interpolation {
 
 	override fun apply(alpha: Float): Float {
-		return MathUtils.pow((alpha - 1f), power.toFloat()) * (if (power % 2 == 0) -1f else 1f) + 1f
+		return (alpha - 1f).pow(power.toFloat()) * (if (power % 2 == 0) -1f else 1f) + 1f
 	}
 }
 
@@ -77,7 +79,7 @@ class PowOut(private val power: Int) : Interpolation {
 
 open class Exp(val value: Float, val power: Float) : Interpolation {
 
-	val min: Float = MathUtils.pow(value, -power)
+	val min: Float = value.pow(-power)
 	val scale: Float
 
 	init {
@@ -85,22 +87,22 @@ open class Exp(val value: Float, val power: Float) : Interpolation {
 	}
 
 	override fun apply(alpha: Float): Float {
-		if (alpha <= 0.5f) return (MathUtils.pow(value, power * (alpha * 2f - 1f)) - min) * scale / 2f
-		return (2f - (MathUtils.pow(value, -power * (alpha * 2f - 1f)) - min) * scale) / 2f
+		if (alpha <= 0.5f) return (value.pow(power * (alpha * 2f - 1f)) - min) * scale / 2f
+		return (2f - (value.pow(-power * (alpha * 2f - 1f)) - min) * scale) / 2f
 	}
 }
 
 class ExpIn(value: Float, power: Float) : Exp(value, power) {
 
 	override fun apply(alpha: Float): Float {
-		return (MathUtils.pow(value, power * (alpha - 1f)) - min) * scale
+		return (value.pow(power * (alpha - 1f)) - min) * scale
 	}
 }
 
 class ExpOut(value: Float, power: Float) : Exp(value, power) {
 
 	override fun apply(alpha: Float): Float {
-		return 1f - (MathUtils.pow(value, (-power * alpha)) - min) * scale
+		return 1f - (value.pow((-power * alpha)) - min) * scale
 	}
 }
 
@@ -117,11 +119,11 @@ open class Elastic(val value: Float, val power: Float, bounces: Int, val scale: 
 		var a = alpha
 		if (a <= 0.5f) {
 			a *= 2f
-			return MathUtils.pow(value, (power * (a - 1f))) * sin(a * bounces) * scale / 2f
+			return value.pow((power * (a - 1f))) * sin(a * bounces) * scale / 2f
 		}
 		a = 1f - a
 		a *= 2f
-		return 1f - MathUtils.pow(value, (power * (a - 1f))) * sin((a) * bounces) * scale / 2f
+		return 1f - value.pow((power * (a - 1f))) * sin((a) * bounces) * scale / 2f
 	}
 }
 
@@ -129,7 +131,7 @@ open class Elastic(val value: Float, val power: Float, bounces: Int, val scale: 
 class ElasticIn(value: Float, power: Float, bounces: Int, scale: Float) : Elastic(value, power, bounces, scale) {
 
 	override fun apply(alpha: Float): Float {
-		return MathUtils.pow(value, (power * (alpha - 1f))) * sin(alpha * bounces) * scale
+		return value.pow((power * (alpha - 1f))) * sin(alpha * bounces) * scale
 	}
 }
 
@@ -138,7 +140,7 @@ class ElasticOut(value: Float, power: Float, bounces: Int, scale: Float) : Elast
 	override fun apply(alpha: Float): Float {
 		var a = alpha
 		a = 1f - a
-		return (1f - MathUtils.pow(value, (power * (a - 1f))) * sin(a * bounces) * scale)
+		return (1f - value.pow((power * (a - 1f))) * sin(a * bounces) * scale)
 	}
 }
 
@@ -226,18 +228,18 @@ object Circle : Interpolation {
 		var a = MathUtils.clamp(alpha, 0f, 1f)
 		if (a <= 0.5f) {
 			a *= 2f
-			return (1 - MathUtils.sqrt(1 - a * a)) / 2f
+			return (1 - sqrt(1 - a * a)) / 2f
 		}
 		a--
 		a *= 2f
-		return (MathUtils.sqrt(1f - a * a) + 1f) / 2f
+		return (sqrt(1f - a * a) + 1f) / 2f
 	}
 }
 
 object CircleIn : Interpolation {
 	override fun apply(alpha: Float): Float {
 		val a = MathUtils.clamp(alpha, 0f, 1f)
-		return 1 - MathUtils.sqrt((1f - a * a))
+		return 1 - sqrt((1f - a * a))
 	}
 }
 
@@ -245,7 +247,7 @@ object CircleOut : Interpolation {
 	override fun apply(alpha: Float): Float {
 		var a = MathUtils.clamp(alpha, 0f, 1f)
 		a--
-		return MathUtils.sqrt(1f - a * a)
+		return sqrt(1f - a * a)
 	}
 }
 
@@ -338,7 +340,7 @@ class BounceInPlace(
 		var r = 1f
 		decays = FloatArray(bounces, { val prev = r; r *= restitution; prev })
 
-		intervals = FloatArray(bounces, { MathUtils.sqrt(decays[it]) })
+		intervals = FloatArray(bounces, { sqrt(decays[it]) })
 		intervals.scl(1f / intervals.sum())
 	}
 

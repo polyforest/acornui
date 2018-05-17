@@ -47,6 +47,7 @@ import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
 import com.acornui.signal.StoppableSignal
 import kotlin.collections.set
+import kotlin.math.round
 
 @DslMarker
 @Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE)
@@ -1080,7 +1081,7 @@ open class UiComponentImpl(
 
 	override fun moveTo(x: Float, y: Float, z: Float) {
 		// Round after a small, but obscure offset, to avoid flip-flopping around the common case of 0.5f
-		setPosition((x - 0.0136f).round(), (y - 0.0136f).round(), z)
+		setPosition(round(x - 0.0136f), round(y - 0.0136f), z)
 	}
 
 	override fun moveTo(x: Float, y: Float) = moveTo(x, y, 0f) // TODO: KT-20451

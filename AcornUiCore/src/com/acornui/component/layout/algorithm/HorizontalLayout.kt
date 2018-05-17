@@ -25,6 +25,7 @@ import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
+import kotlin.math.floor
 
 class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayoutData> {
 
@@ -98,7 +99,7 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 				if (props.horizontalAlign == HAlign.RIGHT) {
 					x += d
 				} else if (props.horizontalAlign == HAlign.CENTER) {
-					x += MathUtils.floor(d * 0.5f)
+					x += floor(d * 0.5f).toInt()
 				}
 			}
 		}

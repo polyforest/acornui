@@ -18,7 +18,6 @@
 
 package com.acornui.js.dom.component
 
-import com.acornui.collection.find2
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.layout.setSize
@@ -133,7 +132,7 @@ class DomTextInput(
 
 	private fun refreshSelection() {
 		if (!isActive) return // IE has a problem setting the selection range on elements not yet active.
-		val new = selectionManager.selection.find2 { it.target == this }
+		val new = selectionManager.selection.find2 { it: SelectionRange -> it.target == this }
 		try {
 			inputElement.setSelectionRange(new?.startIndex ?: 0, new?.endIndex ?: 0)
 		} catch (e: Throwable) {

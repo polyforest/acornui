@@ -21,10 +21,7 @@ package com.acornui.math
 import com.acornui.collection.ClearableObjectPool
 import com.acornui.collection.Clearable
 import com.acornui.serialization.*
-import kotlin.math.abs
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
+import kotlin.math.*
 
 /**
  * A read-only view into a Vector2
@@ -127,7 +124,7 @@ data class Vector2(
 	constructor(other: Vector2Ro) : this(other.x, other.y)
 
 	override fun len(): Float {
-		return MathUtils.sqrt((x * x + y * y))
+		return sqrt((x * x + y * y))
 	}
 
 	override fun len2(): Float {
@@ -230,7 +227,7 @@ data class Vector2(
 	override fun dst(v: Vector2Ro): Float {
 		val x_d = v.x - x
 		val y_d = v.y - y
-		return MathUtils.sqrt(x_d * x_d + y_d * y_d)
+		return sqrt(x_d * x_d + y_d * y_d)
 	}
 
 	/**
@@ -241,7 +238,7 @@ data class Vector2(
 	override fun dst(x: Float, y: Float): Float {
 		val x_d = x - this.x
 		val y_d = y - this.y
-		return MathUtils.sqrt((x_d * x_d + y_d * y_d))
+		return sqrt((x_d * x_d + y_d * y_d))
 	}
 
 	override fun dst2(v: Vector2Ro): Float {
@@ -482,7 +479,7 @@ data class Vector2(
 		val ZERO: Vector2Ro = Vector2(0f, 0f)
 
 		fun len(x: Float, y: Float): Float {
-			return MathUtils.sqrt((x * x + y * y))
+			return sqrt((x * x + y * y))
 		}
 
 		fun len2(x: Float, y: Float): Float {
@@ -496,7 +493,7 @@ data class Vector2(
 		fun dst(x1: Float, y1: Float, x2: Float, y2: Float): Float {
 			val x_d = x2 - x1
 			val y_d = y2 - y1
-			return MathUtils.sqrt((x_d * x_d + y_d * y_d))
+			return sqrt((x_d * x_d + y_d * y_d))
 		}
 
 		fun dst2(x1: Float, y1: Float, x2: Float, y2: Float): Float {

@@ -17,7 +17,7 @@
 package com.acornui.core.popup
 
 import com.acornui.collection.Clearable
-import com.acornui.collection.find2
+import com.acornui.collection.firstOrNull2
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.Closeable
 import com.acornui.component.InteractivityMode
@@ -68,7 +68,7 @@ interface PopUpManager : Clearable {
 	 * Removes the pop-up with the given component.
 	 */
 	fun removePopUp(child: UiComponent) {
-		val info = currentPopUps.find2 { it.child == child }
+		val info = currentPopUps.firstOrNull2 { it: PopUpInfo<*> -> it.child == child }
 		if (info != null)
 			removePopUp(info)
 	}

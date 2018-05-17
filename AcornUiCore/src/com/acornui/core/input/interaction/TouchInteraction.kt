@@ -10,6 +10,7 @@ import com.acornui.core.input.InteractionType
 import com.acornui.math.MathUtils
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
+import kotlin.math.sqrt
 
 interface TouchInteractionRo : InteractionEventRo {
 
@@ -168,7 +169,7 @@ interface TouchRo {
 	fun dst(other: TouchRo): Float {
 		val xD = other.canvasX - canvasX
 		val yD = other.canvasY - canvasY
-		return MathUtils.sqrt((xD * xD + yD * yD))
+		return sqrt((xD * xD + yD * yD))
 	}
 }
 
@@ -229,7 +230,7 @@ class Touch : TouchRo, Clearable {
 	fun dst(other: Touch): Float {
 		val xD = other.canvasX - canvasX
 		val yD = other.canvasY - canvasY
-		return MathUtils.sqrt((xD * xD + yD * yD))
+		return sqrt((xD * xD + yD * yD))
 	}
 
 	override fun clear() {

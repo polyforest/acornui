@@ -29,8 +29,8 @@ import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
 import com.acornui.core.floor
-import com.acornui.core.round
 import com.acornui.math.*
+import kotlin.math.round
 
 /**
  * A layout where the elements are placed left to right, then wraps before reaching the explicit width of the container.
@@ -127,7 +127,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 			val remainingSpace = availableWidth - lineWidth
 			props.padding.left + when (props.horizontalAlign) {
 				FlowHAlign.LEFT -> 0f
-				FlowHAlign.CENTER -> (remainingSpace * 0.5f).round()
+				FlowHAlign.CENTER -> round(remainingSpace * 0.5f)
 				FlowHAlign.RIGHT -> remainingSpace
 				FlowHAlign.JUSTIFY -> 0f
 			}
@@ -163,7 +163,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 			val layoutData = element.layoutData as FlowLayoutData?
 			val yOffset = when (layoutData?.verticalAlign ?: props.verticalAlign) {
 				FlowVAlign.TOP -> 0f
-				FlowVAlign.MIDDLE -> MathUtils.round((line.height - element.height) * 0.5f).toFloat()
+				FlowVAlign.MIDDLE -> round((line.height - element.height) * 0.5f)
 				FlowVAlign.BOTTOM -> (line.height - element.height)
 				FlowVAlign.BASELINE -> (line.baseline - (layoutData?.baseline ?: element.height))
 			}

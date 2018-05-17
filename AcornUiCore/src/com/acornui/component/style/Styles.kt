@@ -4,10 +4,7 @@ package com.acornui.component.style
 
 import com.acornui._assert
 import com.acornui.assertionsEnabled
-import com.acornui.collection.ActiveList
-import com.acornui.collection.addSorted
-import com.acornui.collection.find2
-import com.acornui.collection.removeFirst
+import com.acornui.collection.*
 import com.acornui.core.Disposable
 import com.acornui.observe.Observable
 import com.acornui.signal.bind
@@ -126,7 +123,7 @@ class StylesImpl(private val host: Styleable) : Disposable {
 
 	fun <T : Style> watch(style: T, priority: Float, callback: (T) -> Unit) {
 		if (assertionsEnabled)
-			_assert(styleValidators.find2 { it.style === style } != null, "A style object is being watched without being bound. Use `val yourStyle = bind(YourStyle())`.")
+			_assert(styleValidators.firstOrNull2 { it: StyleValidator -> it.style === style } != null, "A style object is being watched without being bound. Use `val yourStyle = bind(YourStyle())`.")
 		val watcher = StyleWatcher(style, priority, callback)
 		styleWatchers.addSorted(watcher)
 	}

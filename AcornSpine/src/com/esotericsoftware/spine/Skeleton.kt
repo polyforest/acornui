@@ -187,7 +187,7 @@ class Skeleton(val data: SkeletonData, val atlas: TextureAtlasData) : Clearable 
 	}
 
 	fun findBone(boneName: String): Bone? {
-		return bones.find2 { it.data.name == boneName }
+		return bones.firstOrNull2 { it: Bone -> it.data.name == boneName }
 	}
 
 	/**
@@ -202,7 +202,7 @@ class Skeleton(val data: SkeletonData, val atlas: TextureAtlasData) : Clearable 
 	}
 
 	fun findSlot(slotName: String): Slot? {
-		return slots.find2 { it.data.name == slotName }
+		return slots.firstOrNull2 { it: Slot -> it.data.name == slotName }
 	}
 
 	/**
@@ -273,7 +273,7 @@ class Skeleton(val data: SkeletonData, val atlas: TextureAtlasData) : Clearable 
 	}
 
 	fun findIkConstraint(constraintName: String): IkConstraint? {
-		return ikConstraints.find2 { it.data.name == constraintName }
+		return ikConstraints.firstOrNull2 { it: IkConstraint -> it.data.name == constraintName }
 	}
 
 	/**
@@ -284,7 +284,7 @@ class Skeleton(val data: SkeletonData, val atlas: TextureAtlasData) : Clearable 
 	}
 
 	fun findTransformConstraint(constraintName: String): TransformConstraint? {
-		return transformConstraints.find2 { it.data.name == constraintName }
+		return transformConstraints.firstOrNull2 { it: TransformConstraint -> it.data.name == constraintName }
 	}
 
 	/**

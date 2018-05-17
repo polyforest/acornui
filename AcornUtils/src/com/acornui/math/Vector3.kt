@@ -21,9 +21,7 @@ package com.acornui.math
 import com.acornui.collection.Clearable
 import com.acornui.collection.ClearableObjectPool
 import com.acornui.serialization.*
-import kotlin.math.abs
-import kotlin.math.cos
-import kotlin.math.sin
+import kotlin.math.*
 
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
@@ -257,7 +255,7 @@ data class Vector3 (
 	}
 
 	override fun len(): Float {
-		return MathUtils.sqrt(x * x + y * y + z * z)
+		return sqrt(x * x + y * y + z * z)
 	}
 
 	/**
@@ -283,7 +281,7 @@ data class Vector3 (
 		val a = vector.x - x
 		val b = vector.y - y
 		val c = vector.z - z
-		return MathUtils.sqrt(a * a + b * b + c * c)
+		return sqrt(a * a + b * b + c * c)
 	}
 
 	/**
@@ -293,7 +291,7 @@ data class Vector3 (
 		val a = x - this.x
 		val b = y - this.y
 		val c = z - this.z
-		return MathUtils.sqrt(a * a + b * b + c * c)
+		return sqrt(a * a + b * b + c * c)
 	}
 
 	override fun dst2(point: Vector3Ro): Float {
@@ -320,7 +318,7 @@ data class Vector3 (
 	fun nor(): Vector3 {
 		val len2 = this.len2()
 		if (len2 == 0f || len2 == 1f) return this
-		return this.scl(1f / MathUtils.sqrt(len2))
+		return this.scl(1f / sqrt(len2))
 	}
 
 	override fun dot(vector: Vector3Ro): Float {
@@ -557,7 +555,7 @@ data class Vector3 (
 		if (dot > 0.9995f || dot < -0.9995f) return lerp(target, alpha)
 
 		// theta0 = angle between input vectors
-		val theta0 = MathUtils.acos(dot)
+		val theta0 = acos(dot)
 		// theta = angle between this vector and result
 		val theta = theta0 * alpha
 
@@ -566,7 +564,7 @@ data class Vector3 (
 		val ty = target.y - y * dot
 		val tz = target.z - z * dot
 		val l2 = tx * tx + ty * ty + tz * tz
-		val dl = st * (if ((l2 < 0.0001f)) 1f else 1f / MathUtils.sqrt(l2))
+		val dl = st * (if ((l2 < 0.0001f)) 1f else 1f / sqrt(l2))
 
 		return scl(cos(theta)).add(tx * dl, ty * dl, tz * dl).nor()
 	}
@@ -637,7 +635,7 @@ data class Vector3 (
 		 * @return The euclidian length
 		 */
 		fun len(x: Float, y: Float, z: Float): Float {
-			return MathUtils.sqrt(x * x + y * y + z * z)
+			return sqrt(x * x + y * y + z * z)
 		}
 
 		/**
@@ -654,7 +652,7 @@ data class Vector3 (
 			val a = x2 - x1
 			val b = y2 - y1
 			val c = z2 - z1
-			return MathUtils.sqrt(a * a + b * b + c * c)
+			return sqrt(a * a + b * b + c * c)
 		}
 
 		/**

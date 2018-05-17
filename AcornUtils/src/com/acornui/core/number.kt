@@ -18,6 +18,7 @@ package com.acornui.core
 
 import com.acornui.math.*
 import kotlin.math.abs
+import kotlin.math.round
 
 /**
  * A constant holding the maximum value a {@code long} can
@@ -123,8 +124,9 @@ fun Float.floor(): Float {
 	return toInt().toFloat()
 }
 
+@Deprecated("Use native math", ReplaceWith("kotlin.math.round(this)"), DeprecationLevel.ERROR)
 fun Float.round(): Float {
-	return MathUtils.round(this).toFloat()
+	return round(this)
 }
 
 fun Float.notCloseTo(other: Float, tolerance: Float = 0.0001f): Boolean {

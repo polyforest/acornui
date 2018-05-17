@@ -17,110 +17,13 @@
 package com.acornui.math
 
 import com.acornui.test.assertClose
-import com.acornui.test.benchmark
 import org.junit.Test
-import kotlin.math.tan
 import kotlin.test.assertEquals
-import kotlin.test.fail
 
 /**
  * @author nbilyk
  */
 class MathUtilsTest {
-
-	@Test fun sin() {
-		var x = -7f
-		while (x <= 7f) {
-			assertClose(Math.sin(x.toDouble()).toFloat(), kotlin.math.sin(x), 0.01f)
-			x += 0.01f
-		}
-
-		// Test that the common angles match more precisely.
-		kotlin.math.sin(0f)
-		for (i in 0..16) {
-			val theta = i * PI2 / 16
-			assertClose(Math.sin(theta.toDouble()).toFloat(), kotlin.math.sin(theta), 0.000001f)
-		}
-	}
-
-//	@Test
-	fun sinSpeed() {
-		val utilsSpeed = benchmark {
-			var x = -7f
-			while (x <= 7f) {
-				kotlin.math.sin(x)
-				x += 0.01f
-			}
-		}
-		println("MathUtils.sin speed: $utilsSpeed")
-
-		val nativeSpeed = benchmark {
-			var x = -7.0
-			while (x <= 7.0) {
-				Math.sin(x)
-				x += 0.01
-			}
-		}
-		println("Math.sin speed: $nativeSpeed")
-
-		if (utilsSpeed * 1.5f > nativeSpeed) {
-			fail("MathUtils.sin not fast enough $utilsSpeed $nativeSpeed")
-		}
-	}
-
-//	@Test
-	fun tanSpeed() {
-		val utilsSpeed = benchmark {
-			var x = -7f
-			while (x <= 7f) {
-				tan(x)
-				x += 0.01f
-			}
-		}
-		println("MathUtils.tan speed: $utilsSpeed")
-
-		val nativeSpeed = benchmark {
-			var x = -7.0
-			while (x <= 7.0) {
-				Math.tan(x)
-				x += 0.01
-			}
-		}
-		println("Math.tan speed: $nativeSpeed")
-
-		if (utilsSpeed * 2.0f > nativeSpeed) {
-			fail("MathUtils.tan not fast enough")
-		}
-	}
-
-
-	@Test fun cos() {
-		var x = -7f
-		while (x <= 7f) {
-			assertClose(Math.cos(x.toDouble()).toFloat(), kotlin.math.cos(x), 0.01f)
-			x += 0.01f
-		}
-	}
-
-	@Test fun acos() {
-		var x = -7f
-		while (x <= 7f) {
-			assertClose(Math.acos(x.toDouble()).toFloat(), MathUtils.acos(x), 0.01f)
-			x += 0.01f
-		}
-	}
-
-	@Test fun atan2() {
-		var x = -7f
-		while (x <= 7f) {
-			var y = -7f
-			while (y <= 7f) {
-				assertClose(Math.atan2(x.toDouble(), y.toDouble()).toFloat(), kotlin.math.atan2(x, y), 0.01f)
-				y += 0.1f
-			}
-			x += 0.1f
-		}
-	}
 
 	@Test fun clamp() {
 		assertEquals(3, MathUtils.clamp(3, 0, 4))

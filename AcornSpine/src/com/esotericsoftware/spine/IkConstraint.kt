@@ -36,10 +36,7 @@ import com.acornui.core.INT_MAX_VALUE
 import com.acornui.math.MathUtils
 import com.acornui.math.PI
 import com.esotericsoftware.spine.data.IkConstraintData
-import kotlin.math.abs
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
+import kotlin.math.*
 
 
 class IkConstraint : Updatable {
@@ -172,7 +169,7 @@ class IkConstraint : Updatable {
 				dx = (x * d - y * b) * invDet - px
 				dy = (y * a - x * c) * invDet - py
 			}
-			val l1 = MathUtils.sqrt((dx * dx + dy * dy))
+			val l1 = sqrt((dx * dx + dy * dy))
 			var l2 = child.data.length * csx
 			var a1: Float
 			var a2: Float
@@ -184,7 +181,7 @@ class IkConstraint : Updatable {
 					if (cos < -1)
 						cos = -1f
 					else if (cos > 1) cos = 1f
-					a2 = MathUtils.acos(cos) * bendDir
+					a2 = acos(cos) * bendDir
 					val a = l1 + l2 * cos
 					val o = l2 * sin(a2)
 					a1 = atan2(ty * a - tx * o, tx * a + ty * o)
@@ -201,14 +198,14 @@ class IkConstraint : Updatable {
 					val c2 = bb - aa
 					val d = c1 * c1 - 4f * c2 * c0
 					if (d >= 0) {
-						var q = MathUtils.sqrt(d)
+						var q = sqrt(d)
 						if (c1 < 0) q = -q
 						q = -(c1 + q) / 2
 						val r0 = q / c2
 						val r1 = c0 / q
 						val r = if (abs(r0) < abs(r1)) r0 else r1
 						if (r * r <= dd) {
-							val y = MathUtils.sqrt(dd - r * r) * bendDir
+							val y = sqrt(dd - r * r) * bendDir
 							a1 = ta - atan2(y, r)
 							a2 = atan2(y / psy, (r - l1) / psx)
 							break
@@ -236,7 +233,7 @@ class IkConstraint : Updatable {
 						minDist = dist
 						minX = x
 					}
-					val angle = MathUtils.acos(-a * l1 / (aa - bb))
+					val angle = acos(-a * l1 / (aa - bb))
 					x = a * cos(angle) + l1
 					val y = b * sin(angle)
 					dist = x * x + y * y

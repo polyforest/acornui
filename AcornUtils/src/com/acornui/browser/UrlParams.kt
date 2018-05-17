@@ -1,7 +1,7 @@
 package com.acornui.browser
 
 import com.acornui.collection.Clearable
-import com.acornui.collection.find2
+import com.acornui.collection.firstOrNull2
 import com.acornui.collection.indexOfFirst2
 
 import kotlin.properties.Delegates
@@ -80,7 +80,7 @@ class UrlParamsImpl() : Clearable, UrlParams {
 	}
 
 	override fun get(name: String): String? {
-		return _items.find2 { it.first == name }?.second
+		return _items.firstOrNull2 { it: Pair<String, String> -> it.first == name }?.second
 	}
 
 	override fun getAll(name: String): List<String> {
@@ -101,7 +101,7 @@ class UrlParamsImpl() : Clearable, UrlParams {
 	}
 
 	override fun contains(name: String): Boolean {
-		return _items.find2 { it.first == name } != null
+		return _items.firstOrNull2 { it: Pair<String, String> -> it.first == name } != null
 	}
 
 	override fun clear() {

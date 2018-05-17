@@ -3,7 +3,7 @@ package com.acornui.core.i18n
 import com.acornui._assert
 import com.acornui.action.Decorator
 import com.acornui.async.then
-import com.acornui.collection.find2
+import com.acornui.collection.firstOrNull2
 import com.acornui.core.*
 import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.load
@@ -281,7 +281,7 @@ object PropertiesDecorator : Decorator<String, Map<String, String>> {
  */
 fun Scoped.chooseLocale(supported: List<Locale>): Locale? {
 	val i18n = inject(I18n)
-	return i18n.currentLocales.find2 { supported.contains(it) }
+	return i18n.currentLocales.firstOrNull2 { it: Locale -> supported.contains(it) }
 }
 
 

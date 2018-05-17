@@ -20,6 +20,7 @@ import com.acornui.core.Disposable
 import com.acornui.math.MathUtils
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
+import kotlin.math.round
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 
@@ -96,7 +97,7 @@ interface ClampedScrollModelRo : ScrollModelRo {
 		if (snap <= 0) return value
 		var v = value - min
 		v /= snap
-		v = MathUtils.round(v).toFloat()
+		v = round(v)
 		v *= snap
 		return v + min
 	}
