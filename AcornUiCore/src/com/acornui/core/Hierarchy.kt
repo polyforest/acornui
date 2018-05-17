@@ -18,8 +18,10 @@
 
 package com.acornui.core
 
-import com.acornui.collection.cyclicListObtain
-import com.acornui.collection.cyclicListPool
+import com.acornui.collection.arrayListObtain
+import com.acornui.collection.arrayListPool
+import com.acornui.collection.pop
+import com.acornui.collection.shift
 
 
 /**
@@ -246,7 +248,7 @@ enum class TreeWalk {
  * @param callback The callback to invoke on each child.
  */
 inline fun <reified T> T.childWalkLevelOrder(callback: (T) -> TreeWalk, reversed: Boolean) {
-	val openList = cyclicListObtain<Any?>()
+	val openList = arrayListObtain<Any?>()
 	openList.add(this)
 	loop@ while (openList.isNotEmpty()) {
 		val next = openList.shift()
@@ -267,7 +269,7 @@ inline fun <reified T> T.childWalkLevelOrder(callback: (T) -> TreeWalk, reversed
 			}, reversed)
 		}
 	}
-	cyclicListPool.free(openList)
+	arrayListPool.free(openList)
 }
 
 inline fun <reified T> T.childWalkLevelOrder(callback: (T) -> TreeWalk) {
@@ -314,7 +316,7 @@ inline fun <reified T> T.findLastChildLevelOrder(callback: (T) -> Boolean): T? {
  * @param callback The callback to invoke on each child.
  */
 inline fun <reified T> T.childWalkPreOrder(callback: (T) -> TreeWalk, reversed: Boolean) {
-	val openList = cyclicListObtain<Any?>()
+	val openList = arrayListObtain<Any?>()
 	openList.add(this)
 	loop@ while (openList.isNotEmpty()) {
 		val next = openList.pop()
@@ -335,7 +337,7 @@ inline fun <reified T> T.childWalkPreOrder(callback: (T) -> TreeWalk, reversed: 
 			}, !reversed)
 		}
 	}
-	cyclicListPool.free(openList)
+	arrayListPool.free(openList)
 }
 
 inline fun <reified T> T.childWalkPreOrder(callback: (T) -> TreeWalk) {

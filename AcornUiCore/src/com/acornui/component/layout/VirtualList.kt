@@ -218,7 +218,7 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 	/**
 	 * All renderers, null and non-null.
 	 */
-	private val _activeRenderers = CyclicList<ListRenderer>()
+	private val _activeRenderers = ArrayList<ListRenderer>()
 
 	/**
 	 * Returns a list of currently active renderers, both null and non-null.

@@ -97,6 +97,31 @@ fun <E> MutableList<E>.poll(): E {
 	return removeAt(0)
 }
 
+fun <E> MutableList<E>.shift(): E {
+	return removeAt(0)
+}
+
+fun <E> MutableList<E>.unshift(element: E) {
+	return add(0, element)
+}
+
+
+/**
+ * Shifts this list so that [delta] becomes the new zero.
+ *
+ * E.g. if this list is   [0, 1, 2, 3, 4, 5] shift(3) will change the list to be [3, 4, 5, 0, 1, 2].
+ *
+ */
+fun <E> MutableList<E>.shiftAll(delta: Int) {
+	if (delta == 0) return
+	var delta2 = delta
+	if (delta2 < 0)
+		delta2 += size
+	val copy = copy()
+	arrayCopy(copy, delta2, this, 0, size - delta2)
+	arrayCopy(copy, 0, this, size - delta2, delta2)
+}
+
 @Suppress("BASE_WITH_NULLABLE_UPPER_BOUND") fun <T> List<T>.peek(): T? {
 	return if (isEmpty()) null
 	else this[lastIndex]

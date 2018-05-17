@@ -77,11 +77,11 @@ class IndexedCache<E>(val pool: Pool<E>) : ListBase<E>() {
 
 	override fun get(index: Int): E = current[index]
 
-	private var current = CyclicList<E>()
-	private var currentIndices = CyclicList<Int>()
+	private var current = ArrayList<E>()
+	private var currentIndices = ArrayList<Int>()
 
-	private var obtained = CyclicList<E>()
-	private var obtainedIndices = CyclicList<Int>()
+	private var obtained = ArrayList<E>()
+	private var obtainedIndices = ArrayList<Int>()
 
 	/**
 	 * Obtains an element.

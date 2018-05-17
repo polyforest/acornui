@@ -211,20 +211,23 @@ fun assertClose(expected: Vector2Ro, actual: Vector2Ro, margin: Float = 0.0001f)
 	assertClose(expected.y, actual.y, margin)
 }
 
-inline fun benchmark(call: () -> Unit): Float = benchmark(1000, call)
-
 /**
- * Calls the given function repeatedly for 200ms.
- * Returns the average amount of time each call took.
+ * Returns the median amount of time each call took, in milliseconds.
  */
-inline fun benchmark(iter: Int, call: () -> Unit): Float {
-	val startTime = System.nanoTime()
-	for (i in 0..iter - 1) {
-		call()
+fun benchmark(iterations: Int = 1000, testCount: Int = 10, warmCount: Int = 2, call: () -> Unit): Float {
+	val results = ArrayList<Float>(testCount)
+	for (i in 0..testCount + warmCount - 1) {
+		val startTime = System.nanoTime()
+		for (j in 0..iterations - 1) {
+			call()
+		}
+		if (i < warmCount) continue
+		val endTime = System.nanoTime()
+		val elapsed = (endTime - startTime) / 1e6.toFloat()
+		results.add(elapsed / iterations.toFloat())
 	}
-	val endTime = System.nanoTime()
-	val elapsed = (endTime - startTime) / 1e6.toFloat()
-	return elapsed / iter.toFloat()
+	results.sort()
+	return results[results.size / 2]
 }
 
 

@@ -24,6 +24,7 @@ import com.acornui.component.style.StyleTag
 import com.acornui.core.di.Owned
 import com.acornui.math.Bounds
 import com.acornui.math.Vector2
+import kotlin.math.round
 
 open class HScrollBar(
 		owner: Owned
@@ -86,7 +87,7 @@ open class HScrollBar(
 
 		val minX = minTrack()
 		val maxX = maxTrack()
-		val w = Math.round(maxX - minX + 0.000001f) - thumb.width
+		val w = round(maxX - minX + 0.000001f) - thumb.width
 		thumb.moveTo(p * w + minX, 0f)
 	}
 

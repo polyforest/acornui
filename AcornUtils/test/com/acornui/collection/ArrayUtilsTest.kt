@@ -16,6 +16,7 @@
 
 package com.acornui.collection
 
+import com.acornui.test.assertListEquals
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -49,5 +50,15 @@ class ArrayUtilsTest {
 		assertEquals(4, arr.sortedInsertionIndex(7, comparator = comparator))
 		assertEquals(5, arr.sortedInsertionIndex(8, comparator = comparator))
 		assertEquals(5, arr.sortedInsertionIndex(9, comparator = comparator))
+	}
+
+	@Test fun shiftAll() {
+		val list = ArrayList<Int>(16)
+		list.addAll(0, 1, 2, 3, 4, 5, 6)
+		list.shiftAll(3)
+		assertListEquals(listOf(3, 4, 5, 6, 0, 1, 2), list)
+
+		list.shiftAll(-3)
+		assertListEquals(listOf(0, 1, 2, 3, 4, 5, 6), list)
 	}
 }

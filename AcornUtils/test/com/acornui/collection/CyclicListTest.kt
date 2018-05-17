@@ -183,47 +183,48 @@ class CyclicListTest {
 
 	@Test fun speedTest() {
 		val n = 1_000
-		val list = CyclicList<Int>(n)
-		val cyclicListSpeed = benchmark(100) {
+		val cyclicListSpeed = benchmark(10) {
+			val list = CyclicList<Int>(n)
 			for (i in 0..n - 1) {
 				list.unshift(i)
 			}
-		}
-		val list2 = ArrayList<Int>(n)
-		val arrayListSpeed = benchmark(100) {
-			for (i in 0..n - 1) {
-				list2.add(0, i)
-			}
-		}
-		if (cyclicListSpeed * 10f > arrayListSpeed) {
-			fail("CyclicList unshift not fast enough. $cyclicListSpeed $arrayListSpeed")
-		}
-
-		val cyclicListSpeed2 = benchmark(100) {
 			for (i in 0..n - 1) {
 				list.shift()
 			}
 		}
-		val arrayListSpeed2 = benchmark(100) {
+		val arrayListSpeed = benchmark(10) {
+			val list = ArrayList<Int>(n)
 			for (i in 0..n - 1) {
-				list2.removeAt(0)
+				list.add(0, i)
+			}
+			for (i in 0..n - 1) {
+				list.removeAt(0)
 			}
 		}
-		if (cyclicListSpeed2 * 10f > arrayListSpeed2) {
-			fail("CyclicList shift not fast enough. $cyclicListSpeed2 $arrayListSpeed2")
+		println("Shift and unshift speed CyclicList: ${cyclicListSpeed}ms ArrayList: ${arrayListSpeed}ms")
+		if (cyclicListSpeed * 1.5f > arrayListSpeed) {
+			fail("CyclicList not fast enough. $cyclicListSpeed $arrayListSpeed")
 		}
 
-		val cyclicListSpeed3 = benchmark(100) {
+		val cyclicListSpeed3 = benchmark(10) {
+			val list = CyclicList<Int>(n)
 			for (i in 0..n - 1) {
 				list.add(i)
 			}
-		}
-		val arrayListSpeed3 = benchmark(100) {
-			for (i in 0..n - 1) {
-				list2.add(i)
+			for (i in n - 1 downTo 0) {
+				list.removeAt(i)
 			}
 		}
-		println("1 $cyclicListSpeed3 2 $arrayListSpeed3")
+		val arrayListSpeed3 = benchmark(10) {
+			val list = ArrayList<Int>(n)
+			for (i in 0..n - 1) {
+				list.add(i)
+			}
+			for (i in n - 1 downTo 0) {
+				list.removeAt(i)
+			}
+		}
+		println("Add and remove speed CyclicList: ${cyclicListSpeed3}ms ArrayList: ${arrayListSpeed3}ms")
 
 	}
 
@@ -235,7 +236,6 @@ class CyclicListTest {
 
 		list.shiftAll(-3)
 		assertListEquals(listOf(0, 1, 2, 3, 4, 5, 6), list)
-
 	}
 
 

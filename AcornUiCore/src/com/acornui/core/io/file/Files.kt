@@ -16,7 +16,7 @@
 
 package com.acornui.core.io.file
 
-import com.acornui.collection.CyclicList
+import com.acornui.collection.ArrayList
 import com.acornui.collection.poll
 import com.acornui.collection.pop
 import com.acornui.core.di.DKey
@@ -261,7 +261,7 @@ private class FilesTopDownSequence(private val root: Directory, private val maxD
 
 	override fun iterator(): Iterator<FileEntry> = object : Iterator<FileEntry> {
 
-		private val openList = CyclicList<Directory>()
+		private val openList = ArrayList<Directory>()
 		private val files = ArrayList<FileEntry>()
 		private var fileIndex = 0
 
