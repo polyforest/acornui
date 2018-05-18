@@ -17,7 +17,7 @@
 package com.acornui.core.input.interaction
 
 import com.acornui.component.InteractiveElementRo
-import com.acornui.component.UiComponent
+import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.component.stage
 import com.acornui.core.Disposable
@@ -28,6 +28,7 @@ import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.callLater
 import com.acornui.core.time.enterFrame
 import com.acornui.math.Vector2
+import com.acornui.math.Vector2Ro
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 
@@ -35,7 +36,7 @@ import com.acornui.signal.Signal1
  * A behavior for a touch down, touch move, then touch up on a target UiComponent.
  */
 class DragAttachment(
-		val target: UiComponent,
+		val target: UiComponentRo,
 
 		/**
 		 * The manhattan distance between the start drag position and the current position before dragging will begin.
@@ -65,7 +66,7 @@ class DragAttachment(
 	/**
 	 * Dispatched when the drag has passed the [affordance] distance.
 	 */
-	val dragStart: Signal<(DragInteraction) -> Unit>
+	val dragStart: Signal<(DragInteractionRo) -> Unit>
 		get() = _dragStart
 
 	private val _drag = Signal1<DragInteraction>()
@@ -74,7 +75,7 @@ class DragAttachment(
 	 * Dispatched on each move during a drag.
 	 * This will not be dispatched if the target is not on the stage.
 	 */
-	val drag: Signal<(DragInteraction) -> Unit>
+	val drag: Signal<(DragInteractionRo) -> Unit>
 		get() = _drag
 
 	private val _dragEnd = Signal1<DragInteraction>()
@@ -82,7 +83,7 @@ class DragAttachment(
 	/**
 	 * Dispatched when the drag has completed.
 	 */
-	val dragEnd: Signal<(DragInteraction) -> Unit>
+	val dragEnd: Signal<(DragInteractionRo) -> Unit>
 		get() = _dragEnd
 
 	private val position = Vector2()
@@ -142,7 +143,6 @@ class DragAttachment(
 		event.handled = true
 		setIsWatchingMouse(false)
 		setIsDragging(false)
-		Unit
 	}
 
 	/**
@@ -260,7 +260,7 @@ class DragAttachment(
 		}
 	}
 
-	private fun dispatchDragEvent(type: InteractionType<DragInteraction>, signal: Signal1<DragInteraction>) {
+	private fun dispatchDragEvent(type: InteractionType<DragInteractionRo>, signal: Signal1<DragInteraction>) {
 		dragEvent.clear()
 		dragEvent.target = target
 		dragEvent.currentTarget = target
@@ -318,24 +318,50 @@ class DragAttachment(
 	}
 }
 
-class DragInteraction : InteractionEventBase() {
+interface DragInteractionRo : InteractionEventRo {
 
-	var startElement: InteractiveElementRo? = null
+	val startElement: InteractiveElementRo?
 
 	/**
 	 * The starting position (in window coordinates) for the drag.
 	 */
-	val startPosition: Vector2 = Vector2()
+	val startPosition: Vector2Ro
 
 	/**
 	 * The starting position relative to the startElement for the drag.
 	 */
-	val startPositionLocal: Vector2 = Vector2()
+	val startPositionLocal: Vector2Ro
 
 	/**
 	 * The current position (in window coordinates).
 	 */
-	val position: Vector2 = Vector2()
+	val position: Vector2Ro
+
+	/**
+	 * The current position, local to the target element.
+	 * Note that this value is calculated, and not cached.
+	 */
+	val positionLocal: Vector2Ro
+}
+
+class DragInteraction : InteractionEventBase(), DragInteractionRo {
+
+	override var startElement: InteractiveElementRo? = null
+
+	/**
+	 * The starting position (in window coordinates) for the drag.
+	 */
+	override val startPosition: Vector2 = Vector2()
+
+	/**
+	 * The starting position relative to the startElement for the drag.
+	 */
+	override val startPositionLocal: Vector2 = Vector2()
+
+	/**
+	 * The current position (in window coordinates).
+	 */
+	override val position: Vector2 = Vector2()
 
 	private val _positionLocal = Vector2()
 
@@ -343,7 +369,7 @@ class DragInteraction : InteractionEventBase() {
 	 * The current position, local to the target element.
 	 * Note that this value is calculated, and not cached.
 	 */
-	val positionLocal: Vector2
+	override val positionLocal: Vector2
 		get() {
 			return currentTarget.windowToLocal(_positionLocal.set(position))
 		}
@@ -356,34 +382,34 @@ class DragInteraction : InteractionEventBase() {
 	}
 
 	companion object {
-		val DRAG_START = InteractionType<DragInteraction>("dragStart")
-		val DRAG = InteractionType<DragInteraction>("drag")
-		val DRAG_END = InteractionType<DragInteraction>("dragEnd")
+		val DRAG_START = InteractionType<DragInteractionRo>("dragStart")
+		val DRAG = InteractionType<DragInteractionRo>("drag")
+		val DRAG_END = InteractionType<DragInteractionRo>("dragEnd")
 	}
 
 }
 
-fun UiComponent.dragAttachment(affordance: Float = DragAttachment.DEFAULT_AFFORDANCE): DragAttachment {
+fun UiComponentRo.dragAttachment(affordance: Float = DragAttachment.DEFAULT_AFFORDANCE): DragAttachment {
 	return createOrReuseAttachment(DragAttachment, { DragAttachment(this, affordance) })
 }
 
 /**
  * @see DragAttachment.dragStart
  */
-fun UiComponent.dragStart(): Signal<(DragInteraction) -> Unit> {
+fun UiComponentRo.dragStart(): Signal<(DragInteractionRo) -> Unit> {
 	return dragAttachment().dragStart
 }
 
 /**
  * @see DragAttachment.drag
  */
-fun UiComponent.drag(): Signal<(DragInteraction) -> Unit> {
+fun UiComponentRo.drag(): Signal<(DragInteractionRo) -> Unit> {
 	return dragAttachment().drag
 }
 
 /**
  * @see DragAttachment.dragEnd
  */
-fun UiComponent.dragEnd(): Signal<(DragInteraction) -> Unit> {
+fun UiComponentRo.dragEnd(): Signal<(DragInteractionRo) -> Unit> {
 	return dragAttachment().dragEnd
 }

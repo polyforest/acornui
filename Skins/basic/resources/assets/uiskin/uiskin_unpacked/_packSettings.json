@@ -1,5 +1,5 @@
 {
-  "alphaThreshold": 0,
+  "alphaThreshold": 0, 
   "filterMag": "NEAREST",
   "filterMin": "LINEAR_MIPMAP_LINEAR",
   "pixelType": "UNSIGNED_BYTE",

@@ -93,11 +93,21 @@ fun <E> MutableList<E>.pop(): E {
 	return removeAt(size - 1)
 }
 
+fun <E> MutableList<E>.popOrNull(): E? {
+	if (isEmpty()) return null
+	return removeAt(size - 1)
+}
+
 fun <E> MutableList<E>.poll(): E {
 	return removeAt(0)
 }
 
 fun <E> MutableList<E>.shift(): E {
+	return removeAt(0)
+}
+
+fun <E> MutableList<E>.shiftOrNull(): E? {
+	if (isEmpty()) return null
 	return removeAt(0)
 }
 

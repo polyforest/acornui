@@ -23,7 +23,7 @@ import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.floor
-import com.acornui.core.input.interaction.DragInteraction
+import com.acornui.core.input.interaction.DragInteractionRo
 import com.acornui.core.input.interaction.drag
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
@@ -59,7 +59,7 @@ open class HDivider(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		}
 	}
 
-	private fun dividerDragHandler(event: DragInteraction) {
+	private fun dividerDragHandler(event: DragInteractionRo) {
 		mousePosition(_mouse)
 		split(_mouse.x / width)
 	}

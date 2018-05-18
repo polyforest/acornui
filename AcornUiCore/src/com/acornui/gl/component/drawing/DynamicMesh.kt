@@ -201,7 +201,16 @@ open class DynamicMeshComponent(
 			TreeWalk.CONTINUE
 		}
 		_boundingBox.update()
-		out.ext(_boundingBox.max.x, _boundingBox.max.y)
+		if (explicitWidth == null) {
+			out.ext(_boundingBox.max.x, 0f)
+		} else {
+			out.width = explicitWidth
+		}
+		if (explicitHeight == null) {
+			out.ext(_boundingBox.max.y, 0f)
+		} else {
+			out.height = explicitHeight
+		}
 	}
 
 	private var globalPrimitiveIndex = 0

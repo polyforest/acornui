@@ -36,7 +36,7 @@ import com.acornui.core.di.inject
 import com.acornui.core.floor
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.input.interaction.DragAttachment
-import com.acornui.core.input.interaction.DragInteraction
+import com.acornui.core.input.interaction.DragInteractionRo
 import com.acornui.core.selection.Selectable
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionRange
@@ -132,12 +132,12 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 		invalidate(TextValidationFlags.SELECTION)
 	}
 
-	private fun dragHandler(event: DragInteraction) {
+	private fun dragHandler(event: DragInteractionRo) {
 		if (!charStyle.selectable) return
 		selectionManager.selection = getNewSelection(event) ?: emptyList()
 	}
 
-	private fun getNewSelection(event: DragInteraction): List<SelectionRange>? {
+	private fun getNewSelection(event: DragInteractionRo): List<SelectionRange>? {
 		val contents = _contents
 		val p1 = event.startPositionLocal
 		val p2 = event.positionLocal

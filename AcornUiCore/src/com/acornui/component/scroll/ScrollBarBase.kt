@@ -128,19 +128,19 @@ abstract class ScrollBarBase(owner: Owned) : ContainerImpl(owner) {
 		scrollModel.value = newValue
 	}
 
-	private fun trackDragHandler(event: DragInteraction) {
+	private fun trackDragHandler(event: DragInteractionRo) {
 		positionTmp.set(event.position)
 		windowToLocal(positionTmp)
 		val newValue = getModelValue(positionTmp)
 		scrollModel.value = (newValue)
 	}
 
-	private fun dragStartHandler(event: DragInteraction) {
+	private fun dragStartHandler(event: DragInteractionRo) {
 		val thumb = thumb!!
 		mousePosition(thumbOffset).sub(thumb.x, thumb.y)
 	}
 
-	private fun thumbDragHandler(event: DragInteraction) {
+	private fun thumbDragHandler(event: DragInteractionRo) {
 		mousePosition(positionTmp).sub(thumbOffset)
 		scrollModel.rawValue = getModelValue(positionTmp)
 	}

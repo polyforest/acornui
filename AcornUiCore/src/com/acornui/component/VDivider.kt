@@ -18,12 +18,15 @@ package com.acornui.component
 
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.clampHeight
-import com.acornui.component.style.*
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleTag
+import com.acornui.component.style.StyleType
+import com.acornui.component.style.noSkin
 import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.floor
-import com.acornui.core.input.interaction.DragInteraction
+import com.acornui.core.input.interaction.DragInteractionRo
 import com.acornui.core.input.interaction.drag
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
@@ -60,7 +63,7 @@ open class VDivider(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		}
 	}
 
-	private fun dividerDragHandler(event: DragInteraction) {
+	private fun dividerDragHandler(event: DragInteractionRo) {
 		mousePosition(_mouse)
 		split(_mouse.y / height)
 	}

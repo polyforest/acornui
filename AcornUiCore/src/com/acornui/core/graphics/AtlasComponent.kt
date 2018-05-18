@@ -36,7 +36,7 @@ import com.acornui.math.Bounds
  *
  * @author nbilyk
  */
-class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
+open class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
 
 	private var region: AtlasRegionData? = null
 	private var texture: Texture? = null

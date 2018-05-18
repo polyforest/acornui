@@ -29,7 +29,6 @@ import com.acornui.core.time.enterFrame
 import com.acornui.core.time.time
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.Vector2
-import com.acornui.math.Vector2.Companion
 import com.acornui.signal.StoppableSignal
 import com.acornui.signal.StoppableSignalImpl
 
@@ -56,7 +55,7 @@ class TossScroller(
 	/**
 	 *  Dispatched when the toss has begun.
 	 */
-	val tossStart: StoppableSignal<DragInteraction>
+	val tossStart: StoppableSignal<DragInteractionRo>
 		get() = _tossStart
 
 	private val _toss = StoppableSignalImpl<DragInteraction>()
@@ -64,7 +63,7 @@ class TossScroller(
 	/**
 	 *  Dispatched every frame the toss is being updated.
 	 */
-	val toss: StoppableSignal<DragInteraction>
+	val toss: StoppableSignal<DragInteractionRo>
 		get() = _toss
 
 	private val _tossEnd = StoppableSignalImpl<DragInteraction>()
@@ -72,7 +71,7 @@ class TossScroller(
 	/**
 	 * Dispatched when the toss has ended.
 	 */
-	val tossEnd: StoppableSignal<DragInteraction>
+	val tossEnd: StoppableSignal<DragInteractionRo>
 		get() = _tossEnd
 
 	private val velocity = Vector2()
@@ -91,7 +90,7 @@ class TossScroller(
 	private val diff = Vector2()
 
 	private val dragStartHandler = {
-		event: DragInteraction ->
+		event: DragInteractionRo ->
 		stop()
 		startPosition.set(event.startPosition)
 		position.set(event.position)
@@ -134,7 +133,7 @@ class TossScroller(
 	}
 
 	private val dragHandler = {
-		event: DragInteraction ->
+		event: DragInteractionRo ->
 		position.set(event.position)
 		dispatchDragEvent(TOSS, _toss)
 		Unit
@@ -150,7 +149,7 @@ class TossScroller(
 	}
 
 	private val dragEndHandler = {
-		event: DragInteraction ->
+		event: DragInteractionRo ->
 		pushHistory()
 		// Calculate the velocity.
 		if (historyPoints.size >= 2) {
@@ -244,13 +243,13 @@ class TossScrollModelBinding(
 	private var matrix: Matrix4Ro? = null
 
 	private val tossStartHandler = {
-		_: DragInteraction ->
+		_: DragInteractionRo ->
 		modelStart.set(hScrollModel.value, vScrollModel.value)
 		matrix = tossScroller.target.concatenatedTransformInv
 	}
 
 	private val changedHandler = {
-		event: DragInteraction ->
+		event: DragInteractionRo ->
 		val cM = matrix!!
 		diffPixels.set(event.startPosition).sub(event.position)
 		cM.rot(diffPixels)
