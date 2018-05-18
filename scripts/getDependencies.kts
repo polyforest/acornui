@@ -8,6 +8,7 @@ if (!File(acornUiHome).exists()) throw Exception("ACORNUI_HOME '$acornUiHome' do
 
 val repo = "http://repo1.maven.org/maven2"
 val lwjglVersion = "3.1.6"
+val dokkaVersion = "0.9.9"
 
 dependency("$repo/com/bladecoder/packr/packr/2.1/packr-2.1", "Tools/BuildTasks")
 dependency("$repo/com/google/code/gson/gson/2.7/gson-2.7", "Tools/BuildTasks")
@@ -31,6 +32,8 @@ for (extension in extensions) {
 }
 dependency("$repo/org/jcraft/jorbis/0.0.17/jorbis-0.0.17", "AcornUiLwjglBackend")
 dependency("$repo/com/badlogicgames/jlayer/jlayer/1.0.2-gdx/jlayer-1.0.2-gdx", "AcornUiLwjglBackend")
+
+runtimeDependency("https://dl.bintray.com/kotlin/dokka/org/jetbrains/dokka/dokka-fatjar/$dokkaVersion/dokka-fatjar-$dokkaVersion", "Tools/BuildTasks")
 
 val junitVersion = "4.12"
 testDependency("$repo/junit/junit/$junitVersion/junit-$junitVersion")
