@@ -191,7 +191,6 @@ open class DynamicMeshComponent(
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		_boundingBox.inf()
 		if (data.children.isEmpty() && data.vertices.isEmpty()) return
-		out.clear()
 
 		data.childWalkPreOrder { primitive ->
 			for (j in 0..primitive.vertices.lastIndex) {
@@ -201,16 +200,8 @@ open class DynamicMeshComponent(
 			TreeWalk.CONTINUE
 		}
 		_boundingBox.update()
-		if (explicitWidth == null) {
-			out.ext(_boundingBox.max.x, 0f)
-		} else {
-			out.width = explicitWidth
-		}
-		if (explicitHeight == null) {
-			out.ext(0f, _boundingBox.max.y)
-		} else {
-			out.height = explicitHeight
-		}
+		out.width = explicitWidth ?: maxOf(0f, _boundingBox.max.x)
+		out.height = explicitHeight ?: maxOf(0f, _boundingBox.max.y)
 	}
 
 	private var globalPrimitiveIndex = 0
