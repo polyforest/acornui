@@ -273,7 +273,7 @@ open class BasicUiSkin(
 	}
 
 	protected open fun numericStepperStyle() {
-		val stepperPad = Pad(left = 4f, right = 4f, top = 3f, bottom = 3f)
+		val stepperPad = Pad(left = 4f, right = 4f, top = 4f, bottom = 4f)
 		target.populateButtonStyle(NumericStepper.STEP_UP_STYLE, { iconButtonSkin(it, "UpArrowStepper", Corners(topLeft = 0f, topRight = theme.borderRadius, bottomLeft = 0f, bottomRight = 0f), borderThickness = Pad(theme.strokeThickness), padding = stepperPad) })
 		target.populateButtonStyle(NumericStepper.STEP_DOWN_STYLE, { iconButtonSkin(it, "DownArrowStepper", Corners(topLeft = 0f, topRight = 0f, bottomLeft = 0f, bottomRight = theme.borderRadius), borderThickness = Pad(theme.strokeThickness), padding = stepperPad) })
 	}

@@ -545,4 +545,11 @@ object Easing {
 		return null
 	}
 
+	/**
+	 * Returns a list of the currently registered interpolations.
+	 */
+	fun getRegistered(): List<Interpolation> {
+		return registry.values.toList()
+	}
+
 }

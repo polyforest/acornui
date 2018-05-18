@@ -143,7 +143,7 @@ class ParticleEmitterInstance(
 
 		emitter.emissionRate.apply(emissionRateValue, alpha)
 		emitter.particleLifeExpectancy.apply(lifeExpectancyValue, alpha)
-		if (_currentTime < endTime) {
+		if (_currentTime < _duration && _currentTime > 0f) {
 			// Create new particles if the accumulator surpasses 1.
 			accumulator += emissionRateValue.current * stepTime
 			if (accumulator > 1f) {
