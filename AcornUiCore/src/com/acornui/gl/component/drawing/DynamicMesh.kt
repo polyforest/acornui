@@ -189,9 +189,9 @@ open class DynamicMeshComponent(
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		out.clear()
 		_boundingBox.inf()
 		if (data.children.isEmpty() && data.vertices.isEmpty()) return
+		out.clear()
 
 		data.childWalkPreOrder { primitive ->
 			for (j in 0..primitive.vertices.lastIndex) {
@@ -207,7 +207,7 @@ open class DynamicMeshComponent(
 			out.width = explicitWidth
 		}
 		if (explicitHeight == null) {
-			out.ext(_boundingBox.max.y, 0f)
+			out.ext(0f, _boundingBox.max.y)
 		} else {
 			out.height = explicitHeight
 		}
