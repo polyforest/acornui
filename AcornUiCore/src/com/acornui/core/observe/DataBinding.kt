@@ -68,15 +68,15 @@ class DataBinding<T>(initialValue: T) : Disposable {
 	}
 }
 
-private fun DataBinding<Any?>.plus(other: DataBinding<Any?>): Bindable {
+infix fun <S, T> DataBinding<S>.or(other: DataBinding<T>): Bindable {
 	return changed or other.changed
 }
 
-private fun DataBinding<Any?>.plus(other: Bindable): Bindable {
+infix fun <T> DataBinding<T>.or(other: Bindable): Bindable {
 	return changed or other
 }
 
-private fun Bindable.plus(other: DataBinding<Any?>): Bindable {
+infix fun <T> Bindable.or(other: DataBinding<T>): Bindable {
 	return this or other.changed
 }
 
