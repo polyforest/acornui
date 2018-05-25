@@ -159,8 +159,8 @@ open class GlScrollArea(
 			// Size target without scrolling.
 			contents.setSize(explicitWidth, explicitHeight)
 		}
-		var needsHScrollBar = allowHScrolling && (requireHScrolling || contents.width > explicitWidth!!)
-		var needsVScrollBar = allowVScrolling && (requireVScrolling || contents.height > explicitHeight!!)
+		var needsHScrollBar = allowHScrolling && (requireHScrolling || contents.width > explicitWidth!! + 0.1f)
+		var needsVScrollBar = allowVScrolling && (requireVScrolling || contents.height > explicitHeight!! + 0.1f)
 		val vScrollBarW = vScrollBar.minWidth ?: 0f
 		val hScrollBarH = hScrollBar.minHeight ?: 0f
 
@@ -170,7 +170,7 @@ open class GlScrollArea(
 		} else if (needsHScrollBar) {
 			// Needs horizontal scroll bar.
 			contents.setSize(explicitWidth, if (explicitHeight == null) null else explicitHeight - hScrollBarH)
-			needsVScrollBar = allowVScrolling && (requireVScrolling || contents.height > contents.explicitHeight!!)
+			needsVScrollBar = allowVScrolling && (requireVScrolling || contents.height > contents.explicitHeight!! + 0.1f)
 			if (needsVScrollBar) {
 				// Adding the horizontal scroll bar causes the vertical scroll bar to be needed.
 				contents.setSize(explicitWidth!! - vScrollBarW, explicitHeight!! - hScrollBarH)
@@ -178,7 +178,7 @@ open class GlScrollArea(
 		} else if (needsVScrollBar) {
 			// Needs vertical scroll bar.
 			contents.setSize(if (explicitWidth == null) null else explicitWidth - vScrollBarW, explicitHeight)
-			needsHScrollBar = allowHScrolling && (requireHScrolling || contents.width > contents.explicitWidth!!)
+			needsHScrollBar = allowHScrolling && (requireHScrolling || contents.width > contents.explicitWidth!! + 0.1f)
 			if (needsHScrollBar) {
 				// Adding the vertical scroll bar causes the horizontal scroll bar to be needed.
 				contents.setSize(explicitWidth!! - vScrollBarW, explicitHeight!! - hScrollBarH)
