@@ -65,27 +65,23 @@ interface TextureComponent : UiComponent {
 	 * Sets the region of the texture to display.
 	 */
 	fun setRegion(x: Float, y: Float, width: Float, height: Float)
-
-	companion object {
-		val FACTORY_KEY = dKey<(owner: Owned) -> TextureComponent>()
-	}
 }
 
-fun Owned.textureC(init: ComponentInit<TextureComponent> = {}): TextureComponent {
-	val textureComponent = injector.inject(TextureComponent.FACTORY_KEY)(this)
+fun Owned.textureC(init: ComponentInit<GlTextureComponent> = {}): GlTextureComponent {
+	val textureComponent = GlTextureComponent(this)
 	textureComponent.init()
 	return textureComponent
 }
 
-fun Owned.textureC(path: String, init: ComponentInit<TextureComponent> = {}): TextureComponent {
-	val textureComponent = injector.inject(TextureComponent.FACTORY_KEY)(this)
+fun Owned.textureC(path: String, init: ComponentInit<GlTextureComponent> = {}): GlTextureComponent {
+	val textureComponent = GlTextureComponent(this)
 	textureComponent.path = path
 	textureComponent.init()
 	return textureComponent
 }
 
-fun Owned.textureC(texture: Texture, init: ComponentInit<TextureComponent> = {}): TextureComponent {
-	val textureComponent = injector.inject(TextureComponent.FACTORY_KEY)(this)
+fun Owned.textureC(texture: Texture, init: ComponentInit<GlTextureComponent> = {}): GlTextureComponent {
+	val textureComponent = GlTextureComponent(this)
 	textureComponent.texture = texture
 	textureComponent.init()
 	return textureComponent

@@ -27,7 +27,6 @@ import com.acornui.component.scroll.ClampedScrollModel
 import com.acornui.component.scroll.ScrollPolicy
 import com.acornui.component.style.*
 import com.acornui.core.di.Owned
-import com.acornui.core.di.dKey
 import com.acornui.core.focus.Focusable
 import com.acornui.core.mvc.CommandGroup
 import com.acornui.core.mvc.invokeCommand
@@ -86,13 +85,11 @@ interface TextField : UiComponent, Labelable, SelectableComponent, Styleable {
 			text = value
 		}
 
-	companion object : StyleTag {
-		val FACTORY_KEY = dKey<(owner: Owned) -> TextField>()
-	}
+	companion object : StyleTag
 }
 
-fun Owned.editableText(init: ComponentInit<EditableTextField> = {}): EditableTextField {
-	val t = injector.inject(EditableTextField.FACTORY_KEY)(this)
+fun Owned.editableText(init: ComponentInit<GlEditableTextField> = {}): GlEditableTextField {
+	val t = GlEditableTextField(this)
 	t.init()
 	return t
 }
@@ -106,8 +103,8 @@ var TextField.selectable: Boolean
 /**
  * Creates a [TextField] implementation with the provided text content.
  */
-fun Owned.text(text: String, init: ComponentInit<TextField> = {}): TextField {
-	val t = injector.inject(TextField.FACTORY_KEY)(this)
+fun Owned.text(text: String, init: ComponentInit<GlTextField> = {}): GlTextField {
+	val t = GlTextField(this)
 	t.text = text
 	t.init()
 	return t
@@ -116,8 +113,8 @@ fun Owned.text(text: String, init: ComponentInit<TextField> = {}): TextField {
 /**
  * Creates a [TextField] implementation.
  */
-fun Owned.text(init: ComponentInit<TextField> = {}): TextField {
-	val t = injector.inject(TextField.FACTORY_KEY)(this)
+fun Owned.text(init: ComponentInit<GlTextField> = {}): GlTextField {
+	val t = GlTextField(this)
 	t.init()
 	return t
 }
@@ -290,9 +287,7 @@ interface TextInput : Focusable, SelectableComponent, Styleable, Clearable {
 	 */
 	var allowTab: Boolean
 
-	companion object : StyleTag {
-		val FACTORY_KEY = dKey<(owner: Owned) -> TextInput>()
-	}
+	companion object : StyleTag
 }
 
 /**
@@ -338,9 +333,7 @@ interface TextArea : TextInput {
 	val contentsWidth: Float
 	val contentsHeight: Float
 
-	companion object : StyleTag {
-		val FACTORY_KEY = dKey<(owner: Owned) -> TextArea>()
-	}
+	companion object : StyleTag
 }
 
 var TextArea.selectable: Boolean
@@ -350,14 +343,14 @@ var TextArea.selectable: Boolean
 	}
 
 
-fun Owned.textInput(init: ComponentInit<TextInput> = {}): TextInput {
-	val t = injector.inject(TextInput.FACTORY_KEY)(this)
+fun Owned.textInput(init: ComponentInit<GlTextInput> = {}): GlTextInput {
+	val t = GlTextInput(this)
 	t.init()
 	return t
 }
 
-fun Owned.textArea(init: ComponentInit<TextArea> = {}): TextArea {
-	val t = injector.inject(TextArea.FACTORY_KEY)(this)
+fun Owned.textArea(init: ComponentInit<GlTextArea> = {}): GlTextArea {
+	val t = GlTextArea(this)
 	t.init()
 	return t
 }

@@ -978,8 +978,8 @@ object StyleSelectors {
 /**
  * A shortcut to creating a text field with the [StyleSelectors.headingStyle] tag.
  */
-fun Owned.heading(text: String = "", init: ComponentInit<TextField> = {}): TextField {
-	val t = injector.inject(TextField.FACTORY_KEY)(this)
+fun Owned.heading(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField {
+	val t = GlTextField(this)
 	t.styleTags.add(StyleSelectors.headingStyle)
 	t.text = text
 	t.init()
@@ -989,8 +989,8 @@ fun Owned.heading(text: String = "", init: ComponentInit<TextField> = {}): TextF
 /**
  * A shortcut to creating a text field with the [StyleSelectors.subHeadingStyle] tag.
  */
-fun Owned.subHeading(text: String = "", init: ComponentInit<TextField> = {}): TextField {
-	val t = injector.inject(TextField.FACTORY_KEY)(this)
+fun Owned.subHeading(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField {
+	val t = GlTextField(this)
 	t.styleTags.add(StyleSelectors.subHeadingStyle)
 	t.text = text
 	t.init()

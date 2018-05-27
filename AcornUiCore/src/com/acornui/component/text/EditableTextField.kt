@@ -1,11 +1,9 @@
 package com.acornui.component.text
 
 import com.acornui.component.BoxStyle
-import com.acornui.component.scroll.ScrollPolicy
 import com.acornui.component.scroll.ClampedScrollModel
+import com.acornui.component.scroll.ScrollPolicy
 import com.acornui.component.style.StyleTag
-import com.acornui.core.di.Owned
-import com.acornui.core.di.dKey
 import com.acornui.core.focus.Focusable
 import com.acornui.graphics.Color
 
@@ -29,9 +27,7 @@ interface EditableTextField : Focusable, TextField {
 
 	val textCommander: TextCommander
 
-	companion object : StyleTag {
-		val FACTORY_KEY = dKey<(owner: Owned) -> EditableTextField>()
-	}
+	companion object : StyleTag
 }
 
 interface TextCommander {

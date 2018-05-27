@@ -16,12 +16,8 @@
 
 package com.acornui.component.scroll
 
-import com.acornui.component.ComponentInit
-import com.acornui.component.ElementContainer
-import com.acornui.component.UiComponent
+import com.acornui.component.*
 import com.acornui.core.di.Owned
-import com.acornui.core.di.dKey
-import com.acornui.component.ScrollRectStyle
 import com.acornui.math.RectangleRo
 
 interface ScrollRect : ElementContainer<UiComponent> {
@@ -38,13 +34,10 @@ interface ScrollRect : ElementContainer<UiComponent> {
 
 	fun scrollTo(x: Float, y: Float)
 
-	companion object {
-		val FACTORY_KEY = dKey<(owner: Owned) -> ScrollRect>()
-	}
 }
 
-fun Owned.scrollRect(init: ComponentInit<ScrollRect> = {}): ScrollRect {
-	val s = injector.inject(ScrollRect.FACTORY_KEY).invoke(this)
+fun Owned.scrollRect(init: ComponentInit<GlScrollRect> = {}): GlScrollRect {
+	val s = GlScrollRect(this)
 	s.init()
 	return s
 }

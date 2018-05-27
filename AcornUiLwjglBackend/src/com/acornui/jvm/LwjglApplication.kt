@@ -21,11 +21,12 @@ import com.acornui.async.launch
 import com.acornui.browser.decodeUriComponent2
 import com.acornui.browser.encodeUriComponent2
 import com.acornui.component.*
-import com.acornui.component.scroll.ScrollArea
-import com.acornui.component.scroll.ScrollRect
-import com.acornui.component.text.*
+import com.acornui.component.text.BitmapFontRegistry
 import com.acornui.core.*
-import com.acornui.core.assets.*
+import com.acornui.core.assets.AssetManager
+import com.acornui.core.assets.AssetManagerImpl
+import com.acornui.core.assets.AssetType
+import com.acornui.core.assets.LoaderFactory
 import com.acornui.core.audio.AudioManager
 import com.acornui.core.cursor.CursorManager
 import com.acornui.core.di.*
@@ -328,14 +329,6 @@ open class LwjglApplication : ApplicationBase() {
 	protected open val componentsTask by BootTask {
 		set(NativeComponent.FACTORY_KEY, { NativeComponentDummy })
 		set(NativeContainer.FACTORY_KEY, { NativeContainerDummy })
-		set(TextField.FACTORY_KEY, ::GlTextField)
-		set(EditableTextField.FACTORY_KEY, ::GlEditableTextField)
-		set(TextInput.FACTORY_KEY, ::GlTextInput)
-		set(TextArea.FACTORY_KEY, ::GlTextArea)
-		set(TextureComponent.FACTORY_KEY, ::GlTextureComponent)
-		set(ScrollArea.FACTORY_KEY, ::GlScrollArea)
-		set(ScrollRect.FACTORY_KEY, ::GlScrollRect)
-		set(Rect.FACTORY_KEY, ::GlRect)
 
 		set(HtmlComponent.FACTORY_KEY, {
 			object : UiComponentImpl(it), HtmlComponent {
@@ -440,7 +433,7 @@ class JvmApplicationRunner(
 		/**
 		 * The maximum number of update() calls before a render is required.
 		 */
-		private val MAX_FRAME_SKIP = 10
+		private const val MAX_FRAME_SKIP = 10
 	}
 
 }

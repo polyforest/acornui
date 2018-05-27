@@ -18,12 +18,6 @@ package com.acornui.js.gl
 
 import com.acornui.async.launch
 import com.acornui.component.*
-import com.acornui.component.scroll.ScrollArea
-import com.acornui.component.scroll.ScrollRect
-import com.acornui.component.text.EditableTextField
-import com.acornui.component.text.TextArea
-import com.acornui.component.text.TextField
-import com.acornui.component.text.TextInput
 import com.acornui.core.AppConfig
 import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.LoaderFactory
@@ -32,10 +26,6 @@ import com.acornui.core.di.dKey
 import com.acornui.core.di.own
 import com.acornui.core.focus.FakeFocusMouse
 import com.acornui.core.graphics.Window
-import com.acornui.component.text.GlEditableTextField
-import com.acornui.component.text.GlTextArea
-import com.acornui.component.text.GlTextField
-import com.acornui.component.text.GlTextInput
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.js.JsApplicationBase
@@ -114,14 +104,6 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 	override val componentsTask  by BootTask {
 		set(NativeComponent.FACTORY_KEY, { _ -> NativeComponentDummy })
 		set(NativeContainer.FACTORY_KEY, { _ -> NativeContainerDummy })
-		set(TextField.FACTORY_KEY, ::GlTextField)
-		set(EditableTextField.FACTORY_KEY, ::GlEditableTextField)
-		set(TextInput.FACTORY_KEY, ::GlTextInput)
-		set(TextArea.FACTORY_KEY, ::GlTextArea)
-		set(TextureComponent.FACTORY_KEY, ::GlTextureComponent)
-		set(ScrollArea.FACTORY_KEY, ::GlScrollArea)
-		set(ScrollRect.FACTORY_KEY, ::GlScrollRect)
-		set(Rect.FACTORY_KEY, ::GlRect)
 
 		val root = document.getElementById(rootId) as HTMLElement
 		set(HtmlComponent.FACTORY_KEY, { JsHtmlComponent(it, root) })

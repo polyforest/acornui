@@ -20,10 +20,12 @@ import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.*
 import com.acornui.core.di.Owned
-import com.acornui.core.di.dKey
 import com.acornui.core.tween.Tween
 import com.acornui.core.tween.createPropertyTween
-import com.acornui.math.*
+import com.acornui.math.Corners
+import com.acornui.math.CornersRo
+import com.acornui.math.Interpolation
+import com.acornui.math.RectangleRo
 
 interface ScrollArea : LayoutDataProvider<StackLayoutData>, ElementContainer<UiComponent> {
 
@@ -53,8 +55,6 @@ interface ScrollArea : LayoutDataProvider<StackLayoutData>, ElementContainer<UiC
 	override fun createLayoutData(): StackLayoutData = StackLayoutData()
 
 	companion object : StyleTag {
-		val FACTORY_KEY = dKey<(owner: Owned) -> ScrollArea>()
-
 		val VBAR_STYLE = styleTag()
 		val HBAR_STYLE = styleTag()
 
@@ -104,8 +104,8 @@ fun ScrollPolicy.toCssString(): String {
 	}
 }
 
-fun Owned.scrollArea(init: ComponentInit<ScrollArea> = {}): ScrollArea {
-	val s = injector.inject(ScrollArea.FACTORY_KEY).invoke(this)
+fun Owned.scrollArea(init: ComponentInit<GlScrollArea> = {}): GlScrollArea {
+	val s = GlScrollArea(this)
 	s.init()
 	return s
 }
