@@ -26,6 +26,12 @@ fun <E> List<E>.copy(): MutableList<E> {
 	return newList
 }
 
+fun <E> Collection<E>.copy(): MutableList<E> {
+	val newList = ArrayList<E>(size)
+	newList.addAll(this)
+	return newList
+}
+
 /**
  * Adds all the items in the [other] list that this list does not already contain.
  * This uses List as opposed to Iterable to avoid allocation.

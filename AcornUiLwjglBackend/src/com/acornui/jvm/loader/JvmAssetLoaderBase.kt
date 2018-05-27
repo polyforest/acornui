@@ -4,6 +4,7 @@ import com.acornui.async.Deferred
 import com.acornui.core.Bandwidth
 import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
+import com.acornui.core.audio.SoundFactory
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -58,6 +59,14 @@ abstract class JvmAssetLoaderBase<T>(
 		get() {
 			return bytesTotal.toFloat() * Bandwidth.downBpsInv
 		}
+
+	override val status: Deferred.Status
+		get() = work.status
+	override val result: T
+		get() = work.result
+	override val error: Throwable
+		get() = work.error
+
 
 	override suspend fun await(): T {
 		if (!initialized) throw Exception("Subclass must call init()")

@@ -16,6 +16,7 @@
 
 package com.acornui.js.dom
 
+import com.acornui.async.Deferred
 import com.acornui.async.Promise
 import com.acornui.async.launch
 import com.acornui.core.assets.AssetLoader
@@ -57,6 +58,13 @@ class DomTextureLoader(override val path: String, override val estimatedBytesTot
 			}
 		}
 	}
+
+	override val status: Deferred.Status
+		get() = work.status
+	override val result: Texture
+		get() = work.result
+	override val error: Throwable
+		get() = work.error
 
 	override suspend fun await(): Texture = work.await()
 

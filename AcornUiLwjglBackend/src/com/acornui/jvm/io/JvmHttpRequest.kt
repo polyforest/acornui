@@ -94,6 +94,13 @@ abstract class JvmHttpRequest<out T>(timeDriver: TimeDriver, requestData: UrlReq
 		}
 	}
 
+	override val status: Deferred.Status
+		get() = work.status
+	override val result: T
+		get() = work.result
+	override val error: Throwable
+		get() = work.error
+
 	override suspend fun await(): T = work.await()
 
 	override fun cancel() {}

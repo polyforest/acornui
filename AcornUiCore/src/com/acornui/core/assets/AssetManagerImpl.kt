@@ -16,6 +16,7 @@
 
 package com.acornui.core.assets
 
+import com.acornui.async.Deferred
 import com.acornui.async.awaitOrNull
 import com.acornui.async.launch
 import com.acornui.browser.appendParam
@@ -98,7 +99,15 @@ private class FailedLoader<T>(
 
 	override fun cancel() {}
 
+	override val status: Deferred.Status
+		get() = Deferred.Status.FAILED
+	override val result: T
+		get() {
+			throw Exception("status is not SUCCESSFUL")
+		}
+	override val error: Throwable = AssetLoadingException(path, type)
+
 	override suspend fun await(): T {
-		throw AssetLoadingException(path, type)
+		throw error
 	}
 }

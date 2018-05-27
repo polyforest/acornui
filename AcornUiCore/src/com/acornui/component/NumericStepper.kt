@@ -11,12 +11,10 @@ import com.acornui.component.text.textInput
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.core.input.Ascii
-import com.acornui.core.input.interaction.KeyInteractionRo
 import com.acornui.core.input.interaction.enableDownRepeat
 import com.acornui.core.input.keyDown
 import com.acornui.core.input.mouseDown
 import com.acornui.core.text.StringFormatter
-import com.acornui.core.text.ToStringFormatter
 import com.acornui.core.text.numberFormatter
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
@@ -86,7 +84,7 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		}
 	}
 
-	val stepUpButton = +button {
+	private val stepUpButton = +button {
 		styleTags.add(STEP_UP_STYLE)
 		mouseDown().add {
 			userChange(value + step)
@@ -94,7 +92,7 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		enableDownRepeat()
 	}
 
-	val stepDownButton = +button {
+	private val stepDownButton = +button {
 		styleTags.add(STEP_DOWN_STYLE)
 		mouseDown().add {
 			userChange(value - step)
@@ -114,17 +112,15 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 			invalidate(ValidationFlags.PROPERTIES)
 		}
 
-	private val keyDownHandler = { e: KeyInteractionRo ->
-		if (e.keyCode == Ascii.UP) {
-			userChange(value + step)
-		} else if (e.keyCode == Ascii.DOWN) {
-			userChange(value - step)
-		}
-	}
-
 	init {
 		styleTags.add(NumericStepper)
-		keyDown().add(keyDownHandler)
+		keyDown().add { e ->
+			if (e.keyCode == Ascii.UP) {
+				userChange(value + step)
+			} else if (e.keyCode == Ascii.DOWN) {
+				userChange(value - step)
+			}
+		}
 	}
 
 	/**

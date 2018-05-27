@@ -1,5 +1,6 @@
 package com.acornui.jvm.audio
 
+import com.acornui.async.Deferred
 import com.acornui.core.assets.AssetType
 import com.acornui.core.audio.SoundFactory
 import com.acornui.jvm.loader.JvmAssetLoaderBase

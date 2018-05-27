@@ -19,6 +19,7 @@ package com.acornui.async
 import com.acornui.collection.*
 import com.acornui.core.Disposable
 import kotlin.coroutines.experimental.*
+import com.acornui.async.Deferred.Status
 
 /**
  * Launches a new coroutine on this same thread.
@@ -82,6 +83,28 @@ interface Deferred<out T> {
 	 * Suspends the co-routine until the result is calculated.
 	 */
 	suspend fun await(): T
+
+	val status: Status
+
+	/**
+	 * Returns the result if and only if [status] is [Status.SUCCESSFUL]. If status is pending or failed, this will
+	 * throw an exception.
+	 * @see await
+	 */
+	val result: T
+
+	/**
+	 * Returns the result if and only if [status] is [Status.FAILED]. If status is pending or successful, this will
+	 * throw an exception.
+	 * @see await
+	 */
+	val error: Throwable
+
+	enum class Status {
+		PENDING,
+		SUCCESSFUL,
+		FAILED
+	}
 }
 
 /**
@@ -94,6 +117,11 @@ suspend fun <T> Deferred<T>.awaitOrNull(): T? {
 		null
 	}
 }
+
+/**
+ * If [Deferred.status] is [Status.SUCCESSFUL] this will return the result. Otherwise, null.
+ */
+fun <T> Deferred<T>.resultOrNull(): T? = if (status == Status.SUCCESSFUL) result else null
 
 interface CancelableDeferred<out T> : Deferred<T> {
 
@@ -157,30 +185,46 @@ infix fun <T> Deferred<T>.catch(callback: (Throwable) -> Unit): Deferred<T> {
 @Suppress("AddVarianceModifier")
 private class AsyncWorker<T>(work: Work<T>) : Deferred<T> {
 
-	private var status = DeferredStatus.PENDING
-	private var result: T? = null
-	private var error: Throwable? = null
+	private var _status = Status.PENDING
+	override val status: Status
+		get() = _status
+
+	private var _result: T? = null
+	override val result: T
+		get() {
+			if (_status != Status.SUCCESSFUL) throw Exception("status is not SUCCESSFUL")
+			@Suppress("UNCHECKED_CAST")
+			return _result as T
+		}
+
+	private var _error: Throwable? = null
+	override val error: Throwable
+		get() {
+			if (_status != Status.FAILED) throw Exception("status is not FAILED")
+			return _error as Throwable
+		}
+
 	private val children = ArrayList<Continuation<T>>()
 
 	init {
 		launch {
 			try {
-				result = work()
-				status = DeferredStatus.SUCCESSFUL
+				_result = work()
+				_status = Status.SUCCESSFUL
 			} catch (e: Throwable) {
-				error = e
-				status = DeferredStatus.FAILED
+				_error = e
+				_status = Status.FAILED
 			}
 			@Suppress("UNCHECKED_CAST")
-			when (status) {
-				DeferredStatus.SUCCESSFUL -> {
-					val r = result as T
+			when (_status) {
+				Status.SUCCESSFUL -> {
+					val r = _result as T
 					while (children.isNotEmpty()) {
 						children.poll().resume(r)
 					}
 				}
-				DeferredStatus.FAILED -> {
-					val e = error as Throwable
+				Status.FAILED -> {
+					val e = _error as Throwable
 					while (children.isNotEmpty()) {
 						children.poll().resumeWithException(e)
 					}
@@ -192,19 +236,13 @@ private class AsyncWorker<T>(work: Work<T>) : Deferred<T> {
 
 	override suspend fun await(): T {
 		@Suppress("UNCHECKED_CAST")
-		return when (status) {
-			DeferredStatus.PENDING -> suspendCoroutine { cont: Continuation<T> ->
+		return when (_status) {
+			Status.PENDING -> suspendCoroutine { cont: Continuation<T> ->
 				children.add(cont)
 			}
-			DeferredStatus.FAILED -> throw error!!
-			else -> result as T
+			Status.FAILED -> throw _error!!
+			else -> _result as T
 		}
-	}
-
-	private enum class DeferredStatus {
-		PENDING,
-		SUCCESSFUL,
-		FAILED
 	}
 }
 
@@ -224,16 +262,23 @@ class LateValue<T> : Promise<T>() {
 open class Promise<T> : Deferred<T> {
 
 	private var _status = Status.PENDING
-	protected val status: Status
+	override val status: Status
 		get() = _status
 
 	private var _result: T? = null
-	protected val result: T?
-		get() = _result
+	@Suppress("UNCHECKED_CAST")
+	override val result: T
+		get() {
+			if (_status != Status.SUCCESSFUL) throw Exception("status is not SUCCESSFUL.")
+			return _result as T
+		}
 
 	private var _error: Throwable? = null
-	private val error: Throwable?
-		get() = _error
+	override val error: Throwable
+		get() {
+			if (_status != Status.FAILED) throw Exception("status is not FAILED.")
+			return _error as Throwable
+		}
 
 	private val continuations = ArrayList<Continuation<T>>()
 
@@ -265,21 +310,27 @@ open class Promise<T> : Deferred<T> {
 			Status.FAILED -> cont.resumeWithException(_error as Throwable)
 		}
 	}
-
-	enum class Status {
-		PENDING,
-		SUCCESSFUL,
-		FAILED
-	}
 }
 
 /**
  * A deferred implementation that doesn't have any asynchronous work to do.
  */
 class NonDeferred<out T>(val value: T) : Deferred<T> {
+
 	override suspend fun await(): T {
 		return value
 	}
+
+	override val status: Status
+		get() = Status.SUCCESSFUL
+
+	override val result: T
+		get() = value
+
+	override val error: Throwable
+		get() {
+			throw Exception("status is not FAILED")
+		}
 }
 
 /**

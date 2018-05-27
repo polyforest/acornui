@@ -58,7 +58,14 @@ class WebGlTextureLoader(
 		}
 	}
 
-	suspend override fun await(): Texture = work.await()
+	override val status: Deferred.Status
+		get() = work.status
+	override val result: Texture
+		get() = work.result
+	override val error: Throwable
+		get() = work.error
+
+	override suspend fun await(): Texture = work.await()
 
 	override fun cancel() {
 	}

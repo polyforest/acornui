@@ -24,13 +24,13 @@ class OpenAlMusicLoader(
 
 	override var estimatedBytesTotal: Int = 0
 
-
 	init {
 		launch {
 			val extension = path.extension()
 			if (!MusicDecoders.hasDecoder(extension)) throw Exception("No decoder found for music extension: $extension")
 
 			val inputStreamFactory: () -> InputStream
+			@Suppress("LiftReturnOrAssignment")
 			if (path.startsWith("http:", ignoreCase = true) || path.startsWith("https:", ignoreCase = true)) {
 				inputStreamFactory = { URL(path).openStream() }
 			} else {

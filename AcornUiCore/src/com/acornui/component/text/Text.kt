@@ -32,6 +32,8 @@ import com.acornui.core.focus.Focusable
 import com.acornui.core.mvc.CommandGroup
 import com.acornui.core.mvc.invokeCommand
 import com.acornui.core.selection.SelectableComponent
+import com.acornui.gl.component.text.FontStyle
+import com.acornui.gl.component.text.FontStyleRo
 import com.acornui.gl.component.text.ReplaceTextRangeCommand
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
@@ -174,6 +176,14 @@ class CharStyle : StyleBase() {
 	var selectable by prop(true)
 
 	companion object : StyleType<CharStyle>
+}
+
+fun CharStyle.toFontStyle(out: FontStyle = FontStyle()): FontStyle {
+	out.face = face
+	out.size = size
+	out.bold = bold
+	out.italic = italic
+	return out
 }
 
 object CharStyleSerializer : To<CharStyle>, From<CharStyle> {

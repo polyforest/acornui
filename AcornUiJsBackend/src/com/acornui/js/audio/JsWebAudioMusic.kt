@@ -10,7 +10,7 @@ import org.w3c.dom.HTMLMediaElement
 
 class JsWebAudioMusic(
 		private val audioManager: AudioManager,
-		private val context: AudioContext,
+		context: AudioContext,
 		private val element: HTMLMediaElement
 ) : Music {
 
@@ -88,7 +88,7 @@ class JsWebAudioMusic(
 
 	override var currentTime: Float
 		get() = element.currentTime.toFloat()
-		set(value: Float) {
+		set(value) {
 			element.currentTime = value.toDouble()
 		}
 

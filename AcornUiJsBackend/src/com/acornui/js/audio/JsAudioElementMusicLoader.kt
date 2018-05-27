@@ -16,6 +16,7 @@
 
 package com.acornui.js.audio
 
+import com.acornui.async.Deferred
 import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
 import com.acornui.core.audio.AudioManager
@@ -43,7 +44,14 @@ class JsAudioElementMusicLoader(
 
 	private val music = JsAudioElementMusic(audioManager, Audio(path))
 
-	suspend override fun await(): Music = music
+	override val status: Deferred.Status = Deferred.Status.SUCCESSFUL
+	override val result: Music = music
+	override val error: Throwable
+		get() {
+			throw Exception("status is not FAILED")
+		}
+
+	override suspend fun await(): Music = music
 
 	override fun cancel() {
 	}

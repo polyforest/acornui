@@ -19,6 +19,7 @@ package com.acornui.js.loader
 /**
  * @author nbilyk
  */
+import com.acornui.async.Deferred
 import com.acornui.core.Bandwidth
 import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
@@ -43,6 +44,13 @@ class JsTextLoader(
 
 	override val secondsTotal: Float
 		get() = if (request.secondsTotal <= 0f) estimatedBytesTotal * Bandwidth.downBpsInv else request.secondsTotal
+
+	override val status: Deferred.Status
+		get() = request.status
+	override val result: String
+		get() = request.result
+	override val error: Throwable
+		get() = request.error
 
 	override suspend fun await(): String = request.await()
 

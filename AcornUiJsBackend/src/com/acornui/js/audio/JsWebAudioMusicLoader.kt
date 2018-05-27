@@ -16,6 +16,7 @@
 
 package com.acornui.js.audio
 
+import com.acornui.async.Deferred
 import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
 import com.acornui.core.audio.AudioManager
@@ -48,10 +49,20 @@ class JsWebAudioMusicLoader(
 		element.load()
 	}
 
-	suspend override fun await(): Music {
+	override val status: Deferred.Status
+		get() = Deferred.Status.SUCCESSFUL
+
+	override val result: Music by lazy {
 		if (!audioContextSupported) throw Exception("Audio not supported in this browser.")
-		return JsWebAudioMusic(audioManager, JsAudioContext.instance, element)
+		JsWebAudioMusic(audioManager, JsAudioContext.instance, element)
 	}
+
+	override val error: Throwable
+		get() {
+			throw Exception("status is not FAILED")
+		}
+
+	override suspend fun await(): Music = result
 
 	override fun cancel() {
 	}

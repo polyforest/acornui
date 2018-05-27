@@ -61,7 +61,14 @@ class JsWebAudioSoundLoader(
 		}
 	}
 
-	suspend override fun await(): SoundFactory = work.await()
+	override val status: Deferred.Status
+		get() = work.status
+	override val result: SoundFactory
+		get() = work.result
+	override val error: Throwable
+		get() = work.error
+
+	override suspend fun await(): SoundFactory = work.await()
 
 	override fun cancel() = fileLoader.cancel()
 }

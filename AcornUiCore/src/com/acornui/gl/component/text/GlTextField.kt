@@ -16,6 +16,8 @@
 
 package com.acornui.gl.component.text
 
+import com.acornui.async.launch
+import com.acornui.async.resultOrNull
 import com.acornui.collection.*
 import com.acornui.component.*
 import com.acornui.component.layout.Positionable
@@ -28,6 +30,7 @@ import com.acornui.component.style.*
 import com.acornui.component.text.CharStyle
 import com.acornui.component.text.TextField
 import com.acornui.component.text.TextFlowStyle
+import com.acornui.component.text.toFontStyle
 import com.acornui.core.Disposable
 import com.acornui.core.cursor.RollOverCursor
 import com.acornui.core.cursor.StandardCursors
@@ -109,7 +112,6 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 		addStyleRule(flowStyle)
 		addStyleRule(charStyle)
 		styleTags.add(TextField)
-		BitmapFontRegistry.fontRegistered.add(this::fontRegisteredHandler)
 
 		watch(charStyle) {
 			refreshCursor()
@@ -122,6 +124,12 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 			} else {
 				_drag?.dispose()
 				_drag = null
+			}
+
+			launch {
+				val fontStyle = charStyle.toFontStyle()
+				BitmapFontRegistry.getFont(fontStyle)?.await()
+				invalidateStyles()
 			}
 		}
 		validation.addNode(TextValidationFlags.SELECTION, ValidationFlags.HIERARCHY_ASCENDING, this::updateSelection)
@@ -167,10 +175,6 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 			contents(_textContents)
 		}
 
-	private fun fontRegisteredHandler(registeredFont: BitmapFont) {
-		invalidateStyles()
-	}
-
 	private fun updateSelection() {
 		_contents.setSelection(0, selectionManager.selection.filter { it.target == selectionTarget })
 	}
@@ -181,8 +185,8 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 		contents.setPosition(0f, 0f)
 		out.set(contents.bounds)
 
-		val minHeight = flowStyle.padding.expandHeight(BitmapFontRegistry.getFont(charStyle)?.data?.lineHeight?.toFloat())
-				?: 0f
+		val font = BitmapFontRegistry.getFont(charStyle.toFontStyle(tmpFontStyle))?.resultOrNull()
+		val minHeight = flowStyle.padding.expandHeight(font?.data?.lineHeight?.toFloat()) ?: 0f
 		if (out.height < minHeight) out.height = minHeight
 
 		if (contents.allowClipping) {
@@ -197,7 +201,6 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 
 	override fun dispose() {
 		super.dispose()
-		BitmapFontRegistry.fontRegistered.remove(this::fontRegisteredHandler)
 		_selectionCursor?.dispose()
 		_selectionCursor = null
 		selectionManager.selectionChanged.remove(this::selectionChangedHandler)
@@ -205,6 +208,9 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 		_drag = null
 	}
 
+	companion object {
+		private val tmpFontStyle = FontStyle()
+	}
 }
 
 object TextValidationFlags {
@@ -295,7 +301,8 @@ open class TextSpanElementImpl : TextSpanElement, ElementParent<TextElement>, St
 
 	override fun validateStyles() {
 		styles.validateStyles()
-		tfCharStyle.font = BitmapFontRegistry.getFont(charStyle)
+		val font = BitmapFontRegistry.getFont(charStyle.toFontStyle(tmpFontStyle))?.resultOrNull()
+		tfCharStyle.font = font
 		tfCharStyle.underlined = charStyle.underlined
 		tfCharStyle.strikeThrough = charStyle.strikeThrough
 		tfCharStyle.lineThickness = charStyle.lineThickness
@@ -389,7 +396,8 @@ open class TextSpanElementImpl : TextSpanElement, ElementParent<TextElement>, St
 		tfCharStyle.backgroundColor.set(concatenatedColorTint).mul(charStyle.backgroundColor)
 	}
 
-	init {
+	companion object {
+		private val tmpFontStyle = FontStyle()
 	}
 }
 

@@ -2,6 +2,7 @@
 
 package com.acornui.gl.component.text
 
+import com.acornui.async.resultOrNull
 import com.acornui.async.then
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LineInfoRo
@@ -470,8 +471,8 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		}
 
 		host.char().add {
-			if (editable) {
-				val font = BitmapFontRegistry.getFont(host.charStyle)
+			if (editable && !it.defaultPrevented()) {
+				val font = getFont(host.charStyle)?.resultOrNull()
 				if (font?.glyphs?.containsKey(it.char) == true && it.char != '\n' && it.char != '\r') {
 					it.handled = true
 					replaceSelection(it.char.toString())
@@ -551,13 +552,17 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		}
 
 		host.undo().add {
-			_input.dispatch()
-			_changed.dispatch()
+			if (!it.defaultPrevented()) {
+				_input.dispatch()
+				_changed.dispatch()
+			}
 		}
 
 		host.redo().add {
-			_input.dispatch()
-			_changed.dispatch()
+			if (!it.defaultPrevented()) {
+				_input.dispatch()
+				_changed.dispatch()
+			}
 		}
 	}
 
@@ -582,6 +587,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private var column = -1
 
 	private fun keyDownHandler(event: KeyInteractionRo) {
+		if (event.defaultPrevented()) return
 		clearGroup()
 		resetCursorBlink()
 
