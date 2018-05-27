@@ -20,7 +20,7 @@ import com.acornui.core.LifecycleBase
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
-import com.acornui.gl.component.Sprite
+import com.acornui.component.Sprite
 import com.acornui.gl.core.GlState
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo

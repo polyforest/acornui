@@ -32,11 +32,10 @@ import com.acornui.core.di.dKey
 import com.acornui.core.di.own
 import com.acornui.core.focus.FakeFocusMouse
 import com.acornui.core.graphics.Window
-import com.acornui.gl.component.*
-import com.acornui.gl.component.text.GlEditableTextField
-import com.acornui.gl.component.text.GlTextArea
-import com.acornui.gl.component.text.GlTextField
-import com.acornui.gl.component.text.GlTextInput
+import com.acornui.component.text.GlEditableTextField
+import com.acornui.component.text.GlTextArea
+import com.acornui.component.text.GlTextField
+import com.acornui.component.text.GlTextInput
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.js.JsApplicationBase

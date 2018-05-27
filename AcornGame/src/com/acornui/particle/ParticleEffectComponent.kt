@@ -26,7 +26,7 @@ import com.acornui.core.di.inject
 import com.acornui.core.graphics.TextureAtlasDataSerializer
 import com.acornui.core.graphics.loadAndCacheAtlasPage
 import com.acornui.core.time.onTick
-import com.acornui.gl.component.Sprite
+import com.acornui.component.Sprite
 import com.acornui.gl.core.GlState
 import com.acornui.graphics.ColorRo
 import com.acornui.math.MinMaxRo

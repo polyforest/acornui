@@ -32,9 +32,6 @@ import com.acornui.core.focus.Focusable
 import com.acornui.core.mvc.CommandGroup
 import com.acornui.core.mvc.invokeCommand
 import com.acornui.core.selection.SelectableComponent
-import com.acornui.gl.component.text.FontStyle
-import com.acornui.gl.component.text.FontStyleRo
-import com.acornui.gl.component.text.ReplaceTextRangeCommand
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.graphics.color

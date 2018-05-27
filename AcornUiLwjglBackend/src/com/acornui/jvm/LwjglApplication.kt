@@ -23,10 +23,7 @@ import com.acornui.browser.encodeUriComponent2
 import com.acornui.component.*
 import com.acornui.component.scroll.ScrollArea
 import com.acornui.component.scroll.ScrollRect
-import com.acornui.component.text.EditableTextField
-import com.acornui.component.text.TextArea
-import com.acornui.component.text.TextField
-import com.acornui.component.text.TextInput
+import com.acornui.component.text.*
 import com.acornui.core.*
 import com.acornui.core.assets.*
 import com.acornui.core.audio.AudioManager
@@ -63,8 +60,6 @@ import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.TimeDriverImpl
 import com.acornui.core.time.time
 import com.acornui.file.FileIoManager
-import com.acornui.gl.component.*
-import com.acornui.gl.component.text.*
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.io.file.FilesManifestSerializer

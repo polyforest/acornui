@@ -19,7 +19,7 @@ package com.acornui.gl.core
 import com.acornui.collection.Clearable
 import com.acornui.core.Disposable
 import com.acornui.core.io.BufferFactory
-import com.acornui.gl.component.drawing.DrawElementsCall
+import com.acornui.component.drawing.DrawElementsCall
 import com.acornui.graphics.ColorRo
 import com.acornui.io.NativeBuffer
 import com.acornui.math.Vector3Ro
