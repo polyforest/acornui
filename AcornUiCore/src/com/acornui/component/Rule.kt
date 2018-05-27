@@ -1,6 +1,5 @@
 package com.acornui.component
 
-import com.acornui._assert
 import com.acornui.component.style.*
 import com.acornui.core.di.Owned
 import com.acornui.math.Bounds

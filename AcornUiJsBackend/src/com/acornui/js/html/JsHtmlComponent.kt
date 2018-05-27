@@ -41,7 +41,6 @@ class JsHtmlComponent(owner: Owned, private val rootElement: HTMLElement) : UiCo
 		watch(boxStyle) {
 			it.applyCss(component.element)
 			it.applyBox(component)
-			invalidate(ValidationFlags.LAYOUT)
 		}
 
 		component.element.style.setProperty("position", "absolute")
@@ -91,21 +90,19 @@ class JsHtmlComponent(owner: Owned, private val rootElement: HTMLElement) : UiCo
 		super.updateConcatenatedTransform()
 		component.setTransform(concatenatedTransform)
 	}
-
-
 }
 
 
 private class DomComponent(
 		val element: HTMLElement = document.createElement("div") as HTMLElement
-) : NativeComponent {
+) {
 
 	val padding: Pad = Pad(0f)
 	val border: Pad = Pad(0f)
 	val margin: Pad = Pad(0f)
 
 	private var _interactivityEnabled: Boolean = true
-	override var interactivityEnabled: Boolean
+	var interactivityEnabled: Boolean
 		get() = _interactivityEnabled
 		set(value) {
 			_interactivityEnabled = value
@@ -121,7 +118,7 @@ private class DomComponent(
 
 	private var _visible: Boolean = true
 
-	override var visible: Boolean
+	var visible: Boolean
 		get() = _visible
 		set(value) {
 			if (_visible == value) return
@@ -141,7 +138,7 @@ private class DomComponent(
 	private var explicitWidth: Float? = null
 	private var explicitHeight: Float? = null
 
-	override val bounds: BoundsRo
+	val bounds: BoundsRo
 		get() {
 			if (explicitWidth == null) {
 				_bounds.width = element.offsetWidth.toFloat() + marginW
@@ -160,7 +157,7 @@ private class DomComponent(
 	private var _width: String? = null
 	private var _height: String? = null
 
-	override fun setSize(width: Float?, height: Float?) {
+	fun setSize(width: Float?, height: Float?) {
 		if (explicitWidth == width && explicitHeight == height) return // no-op
 		explicitWidth = width
 		explicitHeight = height
@@ -197,7 +194,7 @@ private class DomComponent(
 
 	private var wasSimpleTranslate: Boolean = true
 
-	override fun setTransform(value: Matrix4Ro) {
+	fun setTransform(value: Matrix4Ro) {
 		if (wasSimpleTranslate) {
 			element.style.removeProperty("left")
 			element.style.removeProperty("top")
@@ -206,7 +203,7 @@ private class DomComponent(
 		element.style.transform = "matrix3d(${value.values.joinToString(",")})"
 	}
 
-	override fun setSimpleTranslate(x: Float, y: Float) {
+	fun setSimpleTranslate(x: Float, y: Float) {
 		if (!wasSimpleTranslate) {
 			element.style.removeProperty("transform")
 			wasSimpleTranslate = true
@@ -215,14 +212,14 @@ private class DomComponent(
 		element.style.left = "${x}px"
 	}
 
-	override fun setConcatenatedTransform(value: Matrix4Ro) {
+	fun setConcatenatedTransform(value: Matrix4Ro) {
 	}
 
-	override fun setColorTint(value: ColorRo) {
+	fun setColorTint(value: ColorRo) {
 		element.style.opacity = value.a.toString()
 	}
 
-	override fun setConcatenatedColorTint(value: ColorRo) {
+	fun setConcatenatedColorTint(value: ColorRo) {
 	}
 
 	fun blur() {
@@ -243,7 +240,7 @@ private class DomComponent(
 		}
 	}
 
-	override fun dispose() {
+	fun dispose() {
 	}
 }
 

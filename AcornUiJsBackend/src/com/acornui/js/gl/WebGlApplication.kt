@@ -102,9 +102,6 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 	 * The last chance to set dependencies on the application scope.
 	 */
 	override val componentsTask  by BootTask {
-		set(NativeComponent.FACTORY_KEY, { _ -> NativeComponentDummy })
-		set(NativeContainer.FACTORY_KEY, { _ -> NativeContainerDummy })
-
 		val root = document.getElementById(rootId) as HTMLElement
 		set(HtmlComponent.FACTORY_KEY, { JsHtmlComponent(it, root) })
 	}

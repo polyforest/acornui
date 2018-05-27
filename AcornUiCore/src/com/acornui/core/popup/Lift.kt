@@ -184,7 +184,6 @@ private class LiftStack(owner: Owned) : StackLayoutContainer(owner) {
 
 	override fun updateTransform() {
 		_transform.set(_externalTransform)
-		native.setTransform(_transform)
 	}
 
 }

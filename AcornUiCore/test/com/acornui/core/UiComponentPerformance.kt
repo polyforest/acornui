@@ -17,7 +17,6 @@
 package com.acornui.core
 
 import com.acornui.component.UiComponentImpl
-import com.acornui.test.MockInjector
 import com.acornui.test.MockInjector.owner
 import com.acornui.test.benchmark
 import org.junit.Test

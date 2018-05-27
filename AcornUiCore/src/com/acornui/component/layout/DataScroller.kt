@@ -1,7 +1,6 @@
 package com.acornui.component.layout
 
 import com.acornui.collection.ObservableList
-import com.acornui.collection.disposeAndClear
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.virtual.ItemRendererOwner
 import com.acornui.component.layout.algorithm.virtual.VirtualLayoutAlgorithm

@@ -327,9 +327,6 @@ open class LwjglApplication : ApplicationBase() {
 	 * The last chance to set dependencies on the application scope.
 	 */
 	protected open val componentsTask by BootTask {
-		set(NativeComponent.FACTORY_KEY, { NativeComponentDummy })
-		set(NativeContainer.FACTORY_KEY, { NativeContainerDummy })
-
 		set(HtmlComponent.FACTORY_KEY, {
 			object : UiComponentImpl(it), HtmlComponent {
 

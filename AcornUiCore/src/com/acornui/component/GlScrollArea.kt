@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2018 Poly Forest
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package com.acornui.component
 
-import com.acornui.component.*
 import com.acornui.component.scroll.*
 import com.acornui.core.di.Owned
 import com.acornui.core.floor

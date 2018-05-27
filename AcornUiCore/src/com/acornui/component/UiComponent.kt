@@ -19,8 +19,6 @@
 package com.acornui.component
 
 import com.acornui.assertionsEnabled
-import com.acornui.async.Deferred
-import com.acornui.async.Work
 import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
 import com.acornui.component.layout.LayoutData
@@ -177,8 +175,6 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 
 	override var includeInLayout: Boolean
 
-	fun onAncestorVisibleChanged(uiComponent: UiComponent, value: Boolean)
-
 	/**
 	 * If set, when the layout is validated, if there was no explicit width,
 	 * this value will be used instead.
@@ -219,12 +215,10 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
  *
  * @param owner The creator of this component. This is used for dependency injection, style inheritance, and when
  * the owner has been disposed, this component will then be disposed.
- * @param native Some back-ends (like DomApplication) will create native components that the acorn display hierarchy
  * controls.
  */
 open class UiComponentImpl(
-		final override val owner: Owned,
-		final override val native: NativeComponent = owner.inject(NativeComponent.FACTORY_KEY)(owner)
+		final override val owner: Owned
 ) : UiComponent {
 
 	final override val injector = owner.injector
@@ -275,11 +269,6 @@ open class UiComponentImpl(
 	protected open fun onDeactivated() {
 	}
 
-	/**
-	 * If true, the native component will be auto-sized to the measured bounds from updateLayout.
-	 */
-	protected var nativeAutoSize = true
-
 	protected val window = inject(Window)
 	protected val mouse = inject(MouseState)
 	protected val assets = inject(AssetManager)
@@ -326,7 +315,6 @@ open class UiComponentImpl(
 	protected var _explicitWidth: Float? = null
 	protected var _explicitHeight: Float? = null
 	protected var _layoutData: LayoutData? = null
-	protected var _includeInLayout: Boolean = true
 	protected val _explicitSizeConstraints: SizeConstraints = SizeConstraints()
 	protected val _sizeConstraints: SizeConstraints = SizeConstraints()
 
@@ -382,9 +370,6 @@ open class UiComponentImpl(
 	protected val _colorTint: Color = Color.WHITE.copy()
 	protected val _concatenatedColorTint: Color = Color.WHITE.copy()
 
-	// UiComponent properties
-	protected var _visible: Boolean = true
-
 	// ChildRo properties
 	override var parent: ContainerRo? = null
 
@@ -438,28 +423,8 @@ open class UiComponentImpl(
 	// UiComponent
 	//-----------------------------------------------
 
-	final override var visible: Boolean
-		get() {
-			return _visible
-		}
-		set(value) {
-			if (_visible == value) return
-			_visible = value
-			native.visible = value
-			if (value) {
-				childWalkLevelOrder<UiComponent> {
-					// This is only necessary because browsers cannot measure elements with `display: none`.
-					// Otherwise we would just invalidate this component's HIERARCHY_ASCENDING.
-					it.onAncestorVisibleChanged(this, value)
-					TreeWalk.CONTINUE
-				}
-			}
-			invalidate(ValidationFlags.LAYOUT_ENABLED)
-		}
-
-	override fun onAncestorVisibleChanged(uiComponent: UiComponent, value: Boolean) {
-	}
-
+	final override var visible: Boolean by validationProp(true, ValidationFlags.LAYOUT_ENABLED)
+	
 	//-----------------------------------------------
 	// LayoutElement
 	//-----------------------------------------------
@@ -563,18 +528,10 @@ open class UiComponentImpl(
 
 	override val shouldLayout: Boolean
 		get() {
-			return _includeInLayout && _visible
+			return includeInLayout && visible
 		}
 
-	final override var includeInLayout: Boolean
-		get() {
-			return _includeInLayout
-		}
-		set(value) {
-			if (_includeInLayout == value) return
-			_includeInLayout = value
-			invalidate(ValidationFlags.LAYOUT_ENABLED)
-		}
+	final override var includeInLayout: Boolean by validationProp(true, ValidationFlags.LAYOUT_ENABLED)
 
 	override fun isRendered(): Boolean {
 		if (!isActive) return false
@@ -718,9 +675,6 @@ open class UiComponentImpl(
 		updateLayout(w, h, _bounds)
 		if (assertionsEnabled && (_bounds.width.isNaN() || _bounds.height.isNaN()))
 			throw Exception("Bounding measurements should not be NaN")
-
-		if (nativeAutoSize)
-			native.setSize(_bounds.width, _bounds.height)
 	}
 
 	/**
@@ -852,7 +806,6 @@ open class UiComponentImpl(
 	 * Do not call this directly, use `validate(ValidationFlags.CONCATENATED_COLOR_TRANSFORM)`
 	 */
 	protected open fun updateColorTransform() {
-		native.setColorTint(_colorTint)
 	}
 
 	protected open fun updateConcatenatedColorTransform() {
@@ -862,15 +815,12 @@ open class UiComponentImpl(
 		} else {
 			_concatenatedColorTint.set(p.concatenatedColorTint).mul(_colorTint)
 		}
-		native.setConcatenatedColorTint(_concatenatedColorTint)
 	}
 
 	protected open fun updateInheritedInteractivityMode() {
 		_inheritedInteractivityMode = _interactivityMode
 		if (parent?.inheritedInteractivityMode == InteractivityMode.NONE)
 			_inheritedInteractivityMode = InteractivityMode.NONE
-
-		native.interactivityEnabled = _inheritedInteractivityMode == InteractivityMode.ALL
 	}
 
 	protected open fun updateHierarchyAscending() {}
@@ -884,7 +834,7 @@ open class UiComponentImpl(
 	private val rayTmp = Ray()
 
 	override fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo?): MutableList<UiComponentRo> {
-		if (!_visible || (onlyInteractive && !interactivityEnabled)) return out
+		if (!visible || (onlyInteractive && !interactivityEnabled)) return out
 		val ray = rayCache ?: camera.getPickRay(canvasX, canvasY, 0f, 0f, window.width, window.height, rayTmp)
 		if (intersectsGlobalRay(ray)) {
 			out.add(this)
@@ -1278,13 +1228,11 @@ open class UiComponentImpl(
 	protected open fun updateTransform() {
 		if (_customTransform != null) {
 			_transform.set(_customTransform!!)
-			native.setTransform(_transform)
 			return
 		}
 		_transform.idt()
 		if (isSimpleTranslate) {
 			_transform.trn(_position.x - _origin.x, _position.y - _origin.y, 0f)
-			native.setSimpleTranslate(_position.x - _origin.x, _position.y - _origin.y)
 		} else {
 			_transform.trn(_position)
 			if (!_rotation.isZero()) {
@@ -1294,7 +1242,6 @@ open class UiComponentImpl(
 			_transform.scale(_scale)
 			if (!_origin.isZero())
 				_transform.translate(-_origin.x, -_origin.y, -_origin.z)
-			native.setTransform(_transform)
 		}
 	}
 
@@ -1316,7 +1263,6 @@ open class UiComponentImpl(
 			_concatenatedTransform.set(_transform)
 		}
 		_concatenatedTransformInvIsValid = false
-		native.setConcatenatedTransform(_concatenatedTransform)
 	}
 
 	/**
@@ -1444,94 +1390,10 @@ open class UiComponentImpl(
 			(i as? Disposable)?.dispose()
 		}
 		_attachments.clear()
-		native.dispose()
 	}
 
 	companion object {
 		private val quat: Quaternion = Quaternion()
-	}
-}
-
-interface NativeComponent : Disposable {
-
-	var interactivityEnabled: Boolean
-
-	/**
-	 * Sets the visibility of this component.
-	 */
-	var visible: Boolean
-
-	/**
-	 * Return the actual bounds of the component.
-	 * This is typically either the explicit dimensions, if they were set, or the measured dimensions.
-	 */
-	val bounds: BoundsRo
-
-	/**
-	 * Sets the explicit dimensions of this component. Null values represent using measured dimensions.
-	 */
-	fun setSize(width: Float?, height: Float?)
-
-	/**
-	 * Sets the transformation matrix.
-	 * Do not use both this method and [setSimpleTranslate]
-	 */
-	fun setTransform(value: Matrix4Ro)
-
-	/**
-	 * An alternate to [setTransform] that applies only a simple translation.
-	 * Do not use both this method and [setTransform]
-	 */
-	fun setSimpleTranslate(x: Float, y: Float)
-
-	/**
-	 * Sets the concatenated global transformation matrix.
-	 */
-	fun setConcatenatedTransform(value: Matrix4Ro)
-
-	/**
-	 * Sets the color tint.
-	 */
-	fun setColorTint(value: ColorRo)
-
-	/**
-	 * Sets the combined global color tint.
-	 */
-	fun setConcatenatedColorTint(value: ColorRo)
-
-	companion object {
-		val FACTORY_KEY = dKey<(owner: Owned) -> NativeComponent>()
-	}
-}
-
-object NativeComponentDummy : NativeComponent {
-
-	override var interactivityEnabled: Boolean = true
-
-	override var visible: Boolean = true
-
-	override val bounds: BoundsRo
-		get() = throw UnsupportedOperationException("NativeComponentDummy does not have bounds.")
-
-	override fun setSize(width: Float?, height: Float?) {
-	}
-
-	override fun setTransform(value: Matrix4Ro) {
-	}
-
-	override fun setSimpleTranslate(x: Float, y: Float) {
-	}
-
-	override fun setConcatenatedTransform(value: Matrix4Ro) {
-	}
-
-	override fun setColorTint(value: ColorRo) {
-	}
-
-	override fun setConcatenatedColorTint(value: ColorRo) {
-	}
-
-	override fun dispose() {
 	}
 }
 

@@ -20,7 +20,6 @@ import com.acornui._assert
 import com.acornui.collection.ConcurrentListImpl
 import com.acornui.core.ParentRo
 import com.acornui.core.di.*
-import com.acornui.graphics.ColorRo
 import com.acornui.math.*
 
 import kotlin.properties.Delegates
@@ -38,11 +37,8 @@ interface Container : UiComponent, ContainerRo
  * @author nbilyk
  */
 open class ContainerImpl(
-		owner: Owned,
-		native: NativeContainer = owner.inject(NativeContainer.FACTORY_KEY)(owner)
-) : UiComponentImpl(owner, native), Container {
-
-	private val nativeContainer = native
+		owner: Owned
+) : UiComponentImpl(owner), Container {
 
 	protected val _children = ConcurrentListImpl<UiComponent>()
 	override val children: List<UiComponentRo>
@@ -74,7 +70,6 @@ open class ContainerImpl(
 
 		child.parent = this
 		_children.add(index, child)
-		nativeContainer.addChild(child.native, index)
 		child.invalidated.add(this::childInvalidatedHandler)
 		child.disposed.add(this::childDisposedHandler)
 
@@ -129,7 +124,6 @@ open class ContainerImpl(
 		if (child.isActive) {
 			child.deactivate()
 		}
-		nativeContainer.removeChild(index)
 		invalidate(bubblingFlags)
 		child.invalidate(cascadingFlags)
 
@@ -311,55 +305,6 @@ open class ContainerImpl(
 				ValidationFlags.LAYOUT or
 				ValidationFlags.LAYOUT_ENABLED
 	}
-}
-
-interface NativeContainer : NativeComponent {
-
-	fun addChild(native: NativeComponent, index: Int)
-
-	fun removeChild(index: Int)
-
-	companion object {
-		val FACTORY_KEY: DKey<(owner: Owned) -> NativeContainer> = dKey()
-	}
-}
-
-object NativeContainerDummy : NativeContainer {
-
-	override var interactivityEnabled: Boolean = true
-
-	override var visible: Boolean = true
-
-	override val bounds: BoundsRo
-		get() = throw UnsupportedOperationException("NativeComponentDummy does not have bounds.")
-
-	override fun setSize(width: Float?, height: Float?) {
-	}
-
-	override fun setTransform(value: Matrix4Ro) {
-	}
-
-	override fun setSimpleTranslate(x: Float, y: Float) {
-	}
-
-	override fun setConcatenatedTransform(value: Matrix4Ro) {
-	}
-
-	override fun setColorTint(value: ColorRo) {
-	}
-
-	override fun setConcatenatedColorTint(value: ColorRo) {
-	}
-
-	override fun dispose() {
-	}
-
-	override fun addChild(native: NativeComponent, index: Int) {
-	}
-
-	override fun removeChild(index: Int) {
-	}
-
 }
 
 fun Owned.container(init: ComponentInit<ElementContainerImpl<UiComponent>> = {}): ElementContainerImpl<UiComponent> {

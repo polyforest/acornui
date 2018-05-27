@@ -22,7 +22,6 @@ import com.acornui.component.layout.algorithm.LayoutAlgorithm
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.Style
 import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
 import com.acornui.core.focus.Focusable
 import com.acornui.math.Bounds
 
@@ -37,9 +36,8 @@ interface LayoutContainer<S, out T : LayoutData> : LayoutDataProvider<T>, Elemen
 open class LayoutContainerImpl<S : Style, out U : LayoutData>(
 		owner: Owned,
 		override val layoutAlgorithm: LayoutAlgorithm<S, U>,
-		style: S,
-		native: NativeContainer = owner.inject(NativeContainer.FACTORY_KEY).invoke(owner)
-) : ElementContainerImpl<UiComponent>(owner, native), LayoutContainer<S, U>, Focusable {
+		style: S
+) : ElementContainerImpl<UiComponent>(owner), LayoutContainer<S, U>, Focusable {
 
 	override var focusEnabled: Boolean = false // Layout containers by default are not focusable.
 	override var focusOrder: Float = 0f

@@ -3,10 +3,8 @@
 package com.acornui.component
 
 import com.acornui._assert
-import com.acornui.collection.ConcurrentList
 import com.acornui.collection.ConcurrentListImpl
 import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
 import com.acornui.math.Bounds
 
 interface ElementParentRo<out T> {
@@ -97,9 +95,8 @@ interface ElementContainer<T : UiComponent> : ElementContainerRo<T>, ElementPare
  * @author nbilyk
  */
 open class ElementContainerImpl<T : UiComponent>(
-		owner: Owned,
-		native: NativeContainer = owner.inject(NativeContainer.FACTORY_KEY)(owner)
-) : ContainerImpl(owner, native), ElementContainer<T>, Container {
+		owner: Owned
+) : ContainerImpl(owner), ElementContainer<T>, Container {
 
 	//-------------------------------------------------------------------------------------------------
 	// Element methods.

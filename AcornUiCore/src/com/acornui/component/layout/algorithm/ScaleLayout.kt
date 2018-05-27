@@ -27,7 +27,6 @@ import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.math.Vector2
-import com.acornui.math.Vector2.Companion
 
 /**
  * This layout will scale and position its elements to fit the provided dimensions of the box.

@@ -28,8 +28,6 @@ import com.acornui.signal.StoppableSignal
 
 interface InteractiveElementRo : LayoutElementRo, CameraElementRo, AttachmentHolder, Owned {
 
-	val native: NativeComponent
-
 	/**
 	 * If false, interaction will be blocked on this element.
 	 * This value is calculated based on the [inheritedInteractivityMode] property.

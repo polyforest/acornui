@@ -23,7 +23,6 @@ import com.acornui.reflect.observable
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
-import kotlin.properties.Delegates
 
 open class ColorPicker(owner: Owned) : ContainerImpl(owner), Focusable {
 

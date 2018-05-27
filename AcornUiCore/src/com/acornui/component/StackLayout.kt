@@ -22,7 +22,6 @@ import com.acornui.component.layout.algorithm.LayoutAlgorithm
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
 import com.acornui.core.floor
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
@@ -125,7 +124,7 @@ open class StackLayoutStyle : StyleBase() {
 	companion object : StyleType<StackLayoutStyle>
 }
 
-open class StackLayoutContainer(owner: Owned, native: NativeContainer = owner.inject(NativeContainer.FACTORY_KEY).invoke(owner)) : LayoutContainerImpl<StackLayoutStyle, StackLayoutData>(owner, StackLayout(), StackLayoutStyle(), native)
+open class StackLayoutContainer(owner: Owned) : LayoutContainerImpl<StackLayoutStyle, StackLayoutData>(owner, StackLayout(), StackLayoutStyle())
 
 fun Owned.stack(init: ComponentInit<StackLayoutContainer> = {}): StackLayoutContainer {
 	val s = StackLayoutContainer(this)
