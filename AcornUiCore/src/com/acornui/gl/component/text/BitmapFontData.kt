@@ -57,7 +57,22 @@ data class BitmapFontData(
 		 */
 		val pageH: Int
 
-)
+) {
+
+	/**
+	 * Returns the glyph associated with the provided [char]. If the glyph is not found, if the [char] is whitespace,
+	 * an empty glyph will be returned. If the glyph is not found and is not whitespace, a missing glyph placeholder
+	 * will be returned.
+	 */
+	fun getGlyphSafe(char: Char): GlyphData {
+		val existing = glyphs[char]
+		if (existing != null) return existing
+		if (char.isWhitespace()) {
+			return glyphs[0.toChar()]!!
+		}
+		return glyphs[char] ?: glyphs[(-1).toChar()]!!
+	}
+}
 
 data class BitmapFontPageData(
 		val id: Int,
@@ -107,4 +122,23 @@ data class GlyphData(
 		return kerning[ch] ?: 0
 	}
 
+}
+
+/**
+ * Measures the width of a line with this font.
+ * Does not consider line breaks.
+ */
+fun BitmapFontData.measureLineWidth(text: String): Int {
+	var x = 0
+	var previousGlyph: GlyphData? = null
+	for (i in 0..text.lastIndex) {
+		val char = text[i]
+		val glyph = getGlyphSafe(char)
+		if (previousGlyph != null) {
+			x += previousGlyph.kerning[char] ?: 0
+		}
+		x += glyph.advanceX
+		previousGlyph = glyph
+	}
+	return x
 }

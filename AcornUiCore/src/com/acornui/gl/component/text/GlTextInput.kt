@@ -64,10 +64,10 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 	final override val boxStyle = bind(BoxStyle())
 	protected val editableText = addChild(EditableText(this))
 
-	override val charStyle: CharStyle
+	final override val charStyle: CharStyle
 		get() = editableText.charStyle
 
-	override val flowStyle: TextFlowStyle
+	final override val flowStyle: TextFlowStyle
 		get() = editableText.flowStyle
 
 	override val input: Signal<() -> Unit>
@@ -131,11 +131,36 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 		}
 	}
 
+	private var defaultWidthFromText: String? = null
+
+	/**
+	 * Sets this text input's default width to fit the character 'M' repeated [textLength] times.
+	 * If this text input has been given either an explicit width, or a [defaultWidth], this will have no effect.
+	 */
+	fun setSizeToFit(textLength: Int) = setSizeToFit("M".repeat2(textLength))
+
+	/**
+	 * Sets this text input's default width to fit the given text line.
+	 * If this text input has been given either an explicit width, or a [defaultWidth], this will have no effect.
+	 */
+	fun setSizeToFit(text: String?) {
+		defaultWidthFromText = text
+		invalidateLayout()
+	}
+
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val pad = boxStyle.padding
 		val margin = boxStyle.margin
-		val w = margin.reduceWidth2(pad.reduceWidth2(explicitWidth ?: textInputStyle.defaultWidth))
 		val h = margin.reduceHeight(pad.reduceHeight(explicitHeight))
+
+		val w = if (explicitWidth == null && defaultWidthFromText != null) {
+			val fontStyle = charStyle.toFontStyle()
+			val font = BitmapFontRegistry.getFont(fontStyle)
+			font?.resultOrNull()?.data?.measureLineWidth(defaultWidthFromText!!)?.toFloat() ?: 0f
+		} else {
+			margin.reduceWidth2(pad.reduceWidth2(explicitWidth ?: textInputStyle.defaultWidth))
+		}
+
 		editableText.setSize(w, h)
 		editableText.setPosition(margin.left + pad.left, margin.top + pad.top)
 		out.set(explicitWidth ?: textInputStyle.defaultWidth, explicitHeight
