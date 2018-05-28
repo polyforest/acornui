@@ -20,6 +20,7 @@ import com.acornui.collection.Clearable
 import com.acornui.serialization.*
 
 interface CornersRo {
+
 	val topLeft: Vector2Ro
 	val topRight: Vector2Ro
 	val bottomRight: Vector2Ro
@@ -29,8 +30,8 @@ interface CornersRo {
 		return topLeft.x <= 0f && topLeft.y <= 0f && topRight.x <= 0f && topRight.y <= 0f && bottomRight.x <= 0f && bottomRight.y <= 0f && bottomLeft.x <= 0f && bottomLeft.y <= 0f
 	}
 
-	fun copy(): Corners {
-		return Corners(topLeft, topRight, bottomRight, bottomLeft)
+	fun copy(topLeft: Vector2Ro = this.topLeft, topRight: Vector2Ro = this.topRight, bottomRight: Vector2Ro = this.bottomRight, bottomLeft: Vector2Ro = this.bottomLeft): Corners {
+		return Corners(topLeft.copy(), topRight.copy(), bottomRight.copy(), bottomLeft.copy())
 	}
 
 }

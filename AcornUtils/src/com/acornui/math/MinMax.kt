@@ -53,6 +53,13 @@ interface MinMaxRo {
 		return value
 	}
 
+	fun copy(xMin: Float = this.xMin,
+			 xMax: Float = this.xMax,
+			 yMin: Float = this.yMin,
+			 yMax: Float = this.yMax): MinMax {
+		return MinMax(xMin, yMin, xMax, yMax)
+	}
+
 	companion object {
 
 		/**
@@ -67,7 +74,7 @@ interface MinMaxRo {
 	}
 }
 
-data class MinMax(
+class MinMax(
 		override var xMin: Float = Float.POSITIVE_INFINITY,
 		override var yMin: Float = Float.POSITIVE_INFINITY,
 		override var xMax: Float = Float.NEGATIVE_INFINITY,
@@ -150,4 +157,27 @@ data class MinMax(
 		ext(other.xMin, other.yMin)
 		ext(other.xMax, other.yMax)
 	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+
+		other as MinMaxRo
+
+		if (xMin != other.xMin) return false
+		if (yMin != other.yMin) return false
+		if (xMax != other.xMax) return false
+		if (yMax != other.yMax) return false
+
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = xMin.hashCode()
+		result = 31 * result + yMin.hashCode()
+		result = 31 * result + xMax.hashCode()
+		result = 31 * result + yMax.hashCode()
+		return result
+	}
+
+
 }

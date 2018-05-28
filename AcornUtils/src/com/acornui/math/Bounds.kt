@@ -11,9 +11,13 @@ interface BoundsRo {
 	val height: Float
 	fun isEmpty(): Boolean
 	fun isNotEmpty(): Boolean
+
+	fun copy(width: Float = this.width, height: Float = this.height): Bounds {
+		return Bounds(width, height)
+	}
 }
 
-data class Bounds(
+class Bounds(
 		override var width: Float = 0f,
 		override var height: Float = 0f
 ) : Clearable, BoundsRo {
@@ -58,6 +62,21 @@ data class Bounds(
 	fun free() {
 		pool.free(this)
 	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		other as BoundsRo
+		if (width != other.width) return false
+		if (height != other.height) return false
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = width.hashCode()
+		result = 31 * result + height.hashCode()
+		return result
+	}
+
 
 	companion object {
 

@@ -17,9 +17,13 @@ interface VertexRo {
 	val colorTint: ColorRo
 	val u: Float
 	val v: Float
+
+	fun copy(position: Vector3Ro = this.position, normal: Vector3Ro = this.normal, colorTint: ColorRo = this.colorTint, u: Float = this.u, v: Float = this.v): Vertex {
+		return Vertex(position.copy(), normal.copy(), colorTint.copy(), u, v)
+	}
 }
 
-data class Vertex(
+class Vertex(
 		override val position: Vector3 = Vector3(),
 		override val normal: Vector3 = Vector3(),
 		override val colorTint: Color = Color.WHITE.copy(),
@@ -46,6 +50,29 @@ data class Vertex(
 		u = other.u
 		v = other.v
 		return this
+	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+
+		other as VertexRo
+
+		if (position != other.position) return false
+		if (normal != other.normal) return false
+		if (colorTint != other.colorTint) return false
+		if (u != other.u) return false
+		if (v != other.v) return false
+
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = position.hashCode()
+		result = 31 * result + normal.hashCode()
+		result = 31 * result + colorTint.hashCode()
+		result = 31 * result + u.hashCode()
+		result = 31 * result + v.hashCode()
+		return result
 	}
 
 	companion object {

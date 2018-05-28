@@ -54,7 +54,7 @@ interface Matrix3Ro {
  *
  * @author mzechner
  */
-data class Matrix3(
+class Matrix3(
 
 		override val values: MutableList<Float> = arrayListOf(
 				1f, 0f, 0f,
@@ -383,6 +383,18 @@ data class Matrix3(
 		values[M21] = v21
 		return this
 	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		other as Matrix3Ro
+		if (values != other.values) return false
+		return true
+	}
+
+	override fun hashCode(): Int {
+		return values.hashCode()
+	}
+
 
 	companion object {
 

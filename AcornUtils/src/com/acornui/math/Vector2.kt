@@ -99,7 +99,7 @@ interface Vector2Ro {
 	fun hasSameDirection(vector: Vector2Ro): Boolean
 	fun hasOppositeDirection(vector: Vector2Ro): Boolean
 
-	fun copy(): Vector2 {
+	fun copy(x: Float = this.x, y: Float = this.y): Vector2 {
 		return Vector2(x, y)
 	}
 }
@@ -108,7 +108,7 @@ interface Vector2Ro {
  * Encapsulates a 2D vector. Allows chaining methods by returning a reference to itself
  * @author badlogicgames@gmail.com
  */
-data class Vector2(
+class Vector2(
 
 		/**
 		 * The x-component of this vector
@@ -471,6 +471,23 @@ data class Vector2(
 	fun free() {
 		pool.free(this)
 	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		other as Vector2Ro
+
+		if (x != other.x) return false
+		if (y != other.y) return false
+
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = x.hashCode()
+		result = 31 * result + y.hashCode()
+		return result
+	}
+
 
 	companion object {
 

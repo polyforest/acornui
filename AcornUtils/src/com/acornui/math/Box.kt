@@ -100,6 +100,10 @@ interface BoxRo {
 	fun contains(v: Vector3Ro): Boolean
 
 	fun contains(x: Float, y: Float, z: Float): Boolean
+
+	fun copy(min: Vector3Ro = this.min, max: Vector3Ro = this.max): Box {
+		return Box(min.copy(), max.copy())
+	}
 }
 
 /**
@@ -108,7 +112,7 @@ interface BoxRo {
  *
  * @author badlogicgames@gmail.com, Xoppa
  */
-data class Box(
+class Box(
 		override val min: Vector3 = Vector3(),
 		override val max: Vector3 = Vector3()
 ) : BoxRo {
@@ -235,8 +239,7 @@ data class Box(
 	fun set(minimum: Vector3Ro, maximum: Vector3Ro): Box {
 		min.set(if (minimum.x < maximum.x) minimum.x else maximum.x, if (minimum.y < maximum.y) minimum.y else maximum.y, if (minimum.z < maximum.z) minimum.z else maximum.z)
 		max.set(if (minimum.x > maximum.x) minimum.x else maximum.x, if (minimum.y > maximum.y) minimum.y else maximum.y, if (minimum.z > maximum.z) minimum.z else maximum.z)
-		_center.set(min).add(max).scl(0.5f)
-		_dimensions.set(max).sub(min)
+		update()
 		return this
 	}
 
@@ -491,6 +494,24 @@ data class Box(
 	fun ext(x: Float, y: Float, z: Float): Box {
 		return set(min.set(minOf(min.x, x), minOf(min.y, y), minOf(min.z, z)), max.set(maxOf(max.x, x), maxOf(max.y, y), maxOf(max.z, z)))
 	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+
+		other as BoxRo
+
+		if (min != other.min) return false
+		if (max != other.max) return false
+
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = min.hashCode()
+		result = 31 * result + max.hashCode()
+		return result
+	}
+
 
 	companion object {
 

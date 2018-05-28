@@ -174,9 +174,9 @@ open class StyleProp<T>(val defaultValue: T) : ReadWriteProperty<Style, T> {
 	@Suppress("unchecked_cast")
 	override fun getValue(thisRef: Style, property: KProperty<*>): T {
 		return if (thisRef.explicit.containsKey(property.name)) {
-			thisRef.explicit[property.name]!! as T
+			thisRef.explicit[property.name] as T
 		} else if (thisRef.calculated.containsKey(property.name)) {
-			thisRef.calculated[property.name]!! as T
+			thisRef.calculated[property.name] as T
 		} else {
 			defaultValue
 		}

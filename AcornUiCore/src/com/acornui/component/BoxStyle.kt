@@ -251,12 +251,13 @@ object ColorStopSerializer : To<ColorStopRo>, From<ColorStop> {
 }
 
 interface BorderColorsRo {
+
 	val top: ColorRo
 	val right: ColorRo
 	val bottom: ColorRo
 	val left: ColorRo
 
-	fun copy(): BorderColors {
+	fun copy(top: ColorRo = this.top, right: ColorRo = this.right, bottom: ColorRo = this.bottom, left: ColorRo = this.left): BorderColors {
 		return BorderColors(top.copy(), right.copy(), bottom.copy(), left.copy())
 	}
 }

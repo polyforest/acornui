@@ -17,6 +17,7 @@
 package com.acornui.math
 
 import com.acornui.core.closeTo
+import com.acornui.test.assertClose
 import com.acornui.test.assertListEquals
 import org.junit.Before
 import org.junit.Test
@@ -67,12 +68,12 @@ class Matrix3Test {
 
 	@Test
 	fun prj() {
-		assertEquals(Vector2(34.5f, 18.02f), m1.prj(Vector2(3f, 2.5f)))
+		assertClose(Vector2(34.5f, 18.02f), m1.prj(Vector2(3f, 2.5f)))
 	}
 
 	@Test
 	fun det() {
-		assertEquals(-156.34009f, m1.det())
+		assertClose(-156.34009f, m1.det())
 	}
 
 	@Test
@@ -138,24 +139,24 @@ class Matrix3Test {
 		m1.rotate(-PI / 2f)
 		assertListEquals(listOf(0.3f, 0.7f, 1.4f, 13f, 5.9f, 0.1f, 1.1f, 1.17f, 23f), m1.values, { a, b -> a.closeTo(b) })
 		m1.rotate(2.131f)
-		assertListEquals(listOf(10.8542795f, 4.6266203f, -0.6590531f, -7.16063f, -3.7275176f, -1.2392131f, 1.1f, 1.17f, 23.0f), m1.values)
+		assertListEquals(listOf(10.853501f, 4.6262155f, -0.65918756f, -7.1618085f, -3.7280197f, -1.2391415f, 1.1f, 1.17f, 23.0f), m1.values, { a, b -> a.closeTo(b) })
 	}
 
 	@Test
 	fun getTranslation() {
-		assertEquals(Vector2(1.1f, 1.17f), m1.getTranslation(Vector2()))
+		assertClose(Vector2(1.1f, 1.17f), m1.getTranslation(Vector2()))
 	}
 
 	@Test
 	fun getScale() {
-		assertEquals(Vector2(13.003461f, 5.9413805f), m1.getScale(Vector2()))
+		assertClose(Vector2(13.003461f, 5.9413805f), m1.getScale(Vector2()))
 	}
 
 	@Test
 	fun getRotation() {
-		assertEquals(1.168759f, m1.getRotation())
+		assertClose(1.1659045f, m1.getRotation())
 		m1.rotate(PI)
-		assertEquals(-1.9728338f, m1.getRotation())
+		assertClose(-1.9756892f, m1.getRotation())
 	}
 
 	@Test

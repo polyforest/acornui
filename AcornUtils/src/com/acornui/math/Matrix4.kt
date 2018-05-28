@@ -156,7 +156,7 @@ interface Matrix4Ro {
  *
  * @author badlogicgames@gmail.com
  */
-data class Matrix4(
+class Matrix4(
 
 		override val values: MutableList<Float> = arrayListOf(
 				1f, 0f, 0f, 0f,
@@ -959,6 +959,8 @@ data class Matrix4(
 		return vec
 	}
 
+
+
 	companion object {
 
 		private val tmp = ArrayList(16, { 0f })
@@ -1133,5 +1135,16 @@ data class Matrix4(
 		values[5] = tmp1
 
 		return this
+	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		other as Matrix4Ro
+		if (values != other.values) return false
+		return true
+	}
+
+	override fun hashCode(): Int {
+		return values.hashCode()
 	}
 }

@@ -66,7 +66,7 @@ interface IntRectangleRo {
 	val area: Int
 	val perimeter: Int
 
-	fun copy(): IntRectangle {
+	fun copy(x: Int = this.x, y: Int = this.y, width: Int = this.width, height: Int = this.height): IntRectangle {
 		return IntRectangle(x, y, width, height)
 	}
 }
@@ -74,7 +74,7 @@ interface IntRectangleRo {
 /**
  * An x,y,width,height set of integers.
  */
-data class IntRectangle(
+class IntRectangle(
 		override var x: Int = 0,
 		override var y: Int = 0,
 		override var width: Int = 0,
@@ -263,6 +263,25 @@ data class IntRectangle(
 		width *= scalar
 		height *= scalar
 	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		other as IntRectangleRo
+		if (x != other.x) return false
+		if (y != other.y) return false
+		if (width != other.width) return false
+		if (height != other.height) return false
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = x
+		result = 31 * result + y
+		result = 31 * result + width
+		result = 31 * result + height
+		return result
+	}
+
 
 	companion object {
 		private val pool = ClearableObjectPool { IntRectangle() }

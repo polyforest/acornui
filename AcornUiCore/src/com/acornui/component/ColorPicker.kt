@@ -20,9 +20,7 @@ import com.acornui.graphics.Hsv
 import com.acornui.graphics.HsvRo
 import com.acornui.math.*
 import com.acornui.reflect.observable
-import com.acornui.signal.Cancel
-import com.acornui.signal.Signal2
-import com.acornui.signal.Signal3
+import com.acornui.signal.*
 
 open class ColorPicker(owner: Owned) : ContainerImpl(owner), Focusable {
 
@@ -41,14 +39,10 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner), Focusable {
 		onClosed = this@ColorPicker::close
 	}
 
-	val userChanged: Signal3<HsvRo, HsvRo, Cancel>
-		get() = colorPalette.userChanged
-	val changed: Signal2<HsvRo, HsvRo>
+	val changed: Signal<() -> Unit>
 		get() = colorPalette.changed
 
-	private val stageMouseDownHandler = {
-		event: MouseInteractionRo ->
-
+	private val stageMouseDownHandler = { event: MouseInteractionRo ->
 		if (!event.target.isDescendantOf(colorPalette) && !event.target.isDescendantOf(this)) {
 			close()
 		}
@@ -58,12 +52,14 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner), Focusable {
 		get() = colorPalette.color
 		set(value) {
 			colorPalette.color = value
+			colorSwatch.style.backgroundColor = value
 		}
 
 	var value: HsvRo
 		get() = colorPalette.value
 		set(value) {
 			colorPalette.value = value
+			colorSwatch.style.backgroundColor = value.toRgb(tmpColor)
 		}
 
 	private val tmpColor = Color()
@@ -82,8 +78,7 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner), Focusable {
 		})
 
 		colorPalette.changed.add {
-			old, new ->
-			colorSwatch.style.backgroundColor = new.toRgb(tmpColor)
+			colorSwatch.style.backgroundColor = value.toRgb(tmpColor)
 		}
 
 		watch(style) {
@@ -119,8 +114,8 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner), Focusable {
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val s = style
 		val padding = s.padding
-		val w = explicitWidth ?: s.defaultSwatchWidth + padding.left + padding.right
-		val h = explicitHeight ?: s.defaultSwatchHeight + padding.top + padding.bottom
+		val w = explicitWidth ?: s.defaultSwatchWidth+padding.left+padding.right
+		val h = explicitHeight ?: s.defaultSwatchHeight+padding.top+padding.bottom
 
 		colorSwatch.setSize(padding.reduceWidth(w), padding.reduceHeight(h))
 		colorSwatch.moveTo(padding.left, padding.top)
@@ -162,8 +157,9 @@ fun Owned.colorPicker(init: ComponentInit<ColorPicker> = {}): ColorPicker {
 
 class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 
-	val userChanged = own(Signal3<HsvRo, HsvRo, Cancel>())
-	val changed = own(Signal2<HsvRo, HsvRo>())
+	private val _changed = own(Signal0())
+	val changed: Signal<() -> Unit>
+		get() = _changed
 
 	val style = bind(ColorPaletteStyle())
 
@@ -207,15 +203,11 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 		}
 	})
 
-	private val cancel = Cancel()
-
 	private fun userChange(value: Hsv) {
 		val oldValue = _value
 		if (oldValue == value) return
-		userChanged.dispatch(oldValue, value, cancel)
-		if (!cancel.canceled()) {
-			this.value = value
-		}
+		this.value = value
+		_changed.dispatch()
 	}
 
 	val valueRect = addChild(rect {
@@ -254,7 +246,6 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 			val oldValue = _value
 			if (oldValue == value) return
 			_value = value.copy()
-			changed.dispatch(oldValue, value)
 			invalidate(COLORS)
 		}
 
@@ -295,8 +286,8 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 		val s = style
 		val padding = s.padding
 
-		val w = explicitWidth ?: s.defaultPaletteWidth + s.brightnessWidth + s.gap + padding.left + padding.right
-		val h = explicitHeight ?: s.defaultPaletteHeight + padding.top + padding.bottom
+		val w = explicitWidth ?: s.defaultPaletteWidth+s.brightnessWidth+s.gap+padding.left+padding.right
+		val h = explicitHeight ?: s.defaultPaletteHeight+padding.top+padding.bottom
 
 		hueRect.setSize(w - padding.right - padding.left - s.gap - s.brightnessWidth, h - padding.top - padding.bottom)
 		hueRect.moveTo(padding.left, padding.top)
@@ -358,8 +349,7 @@ open class ColorPickerWithText(owner: Owned) : HorizontalLayoutContainer(owner) 
 
 	val colorPicker = +colorPicker {
 		changed.add {
-			old, new ->
-			textInput.text = new.toRgb(color.copy()).toRgbString()
+			textInput.text = value.toRgb(color.copy()).toRgbString()
 		}
 	}
 }

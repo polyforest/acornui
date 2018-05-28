@@ -101,7 +101,7 @@ class AcornTexturePacker(
 				} else ImageMetadata()
 
 				var rgbData = rgbLoader.await()
-				val padding: IntArray
+				val padding: List<Int>
 				if (settings.stripWhitespace && rgbData.hasAlpha) {
 					padding = rgbData.calculateWhitespace(settings.alphaThreshold)
 					if (padding.sum() > 0) {
@@ -109,7 +109,7 @@ class AcornTexturePacker(
 						rgbData = rgbData.copySubRgbData(padding[0], padding[1], rgbData.width - padding[0] - padding[2], rgbData.height - padding[1] - padding[3])
 					}
 				} else {
-					padding = intArrayOf(0, 0, 0, 0)
+					padding = listOf(0, 0, 0, 0)
 				}
 				if (rgbData.width != 0 && rgbData.height != 0) {
 					val imageSource = SourceImageData(
@@ -131,7 +131,7 @@ class AcornTexturePacker(
 	 * models.
 	 */
 	private fun createPackedPages(imageSources: List<SourceImageData>, packedRectanglePages: List<PackerPageData>, settings: TexturePackerSettingsData): PackedTextureData {
-		val packedTextureData = PackedTextureData(List(packedRectanglePages.size, {
+		return PackedTextureData(List(packedRectanglePages.size, {
 			val packedRectanglePage: PackerPageData = packedRectanglePages[it]
 
 			// Create the RgbData
@@ -167,11 +167,10 @@ class AcornTexturePacker(
 
 			Pair(pageRgbData, atlasPage)
 		}), settings)
-		return packedTextureData
 	}
 
 	companion object {
-		private val IMAGE_METADATA_EXTENSION = ".meta.json"
+		private const val IMAGE_METADATA_EXTENSION = ".meta.json"
 	}
 }
 
@@ -185,13 +184,12 @@ data class PackedTextureData(
 /**
  * A representation of the image bitmap data, and its corresponding metadata.
  */
-@Suppress("ArrayInDataClass")
 private data class SourceImageData(
 		val path: String,
 		val relativePath: String,
 		val rgbData: RgbData,
 		val metadata: ImageMetadata,
-		val padding: IntArray)
+		val padding: List<Int>)
 
 /**
  * A rectangle for the RectanglePacker to position and rotate.
@@ -294,7 +292,7 @@ interface RectanglePacker {
  * threshold.
  * @param alphaThreshold 0f means the pixels must be fully transparent to be stripped, 1f will strip everything.
  */
-private fun RgbData.calculateWhitespace(alphaThreshold: Float): IntArray {
+private fun RgbData.calculateWhitespace(alphaThreshold: Float): List<Int> {
 	var left = 0
 	for (x in 0..width - 1) {
 		var passes = true
@@ -346,5 +344,5 @@ private fun RgbData.calculateWhitespace(alphaThreshold: Float): IntArray {
 		if (passes) bottom++
 		else break
 	}
-	return intArrayOf(left, top, right, bottom)
+	return listOf(left, top, right, bottom)
 }

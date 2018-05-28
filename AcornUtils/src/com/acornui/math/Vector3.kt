@@ -113,7 +113,7 @@ interface Vector3Ro {
 	 */
 	fun closeTo(x: Float, y: Float, z: Float, epsilon: Float = 0.0001f): Boolean
 
-	fun copy(): Vector3 {
+	fun copy(x: Float = this.x, y: Float = this.y, z: Float = this.z): Vector3 {
 		return Vector3(x, y, z)
 	}
 
@@ -123,7 +123,7 @@ interface Vector3Ro {
  * Encapsulates a 3D vector. Allows chaining operations by returning a reference to itself in all modification methods.
  * @author badlogicgames@gmail.com
  */
-data class Vector3 (
+class Vector3 (
 
 		/**
 		 * The x-component of this vector
@@ -618,6 +618,25 @@ data class Vector3 (
 	fun free() {
 		pool.free(this)
 	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		other as Vector3Ro
+
+		if (x != other.x) return false
+		if (y != other.y) return false
+		if (z != other.z) return false
+
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = x.hashCode()
+		result = 31 * result + y.hashCode()
+		result = 31 * result + z.hashCode()
+		return result
+	}
+
 
 	companion object {
 		val X: Vector3Ro = Vector3(1f, 0f, 0f)

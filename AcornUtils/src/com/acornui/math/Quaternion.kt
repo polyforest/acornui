@@ -182,6 +182,14 @@ interface QuaternionRo {
 				w.closeTo(other.w, epsilon)
 	}
 
+	fun copy(x: Float = this.x,
+			 y: Float = this.y,
+			 z: Float = this.z,
+			 w: Float = this.w
+	): Quaternion {
+		return Quaternion(x, y, z, w)
+	}
+
 	companion object {
 		private val tmp1 = Quaternion(0f, 0f, 0f, 0f)
 		private val tmp2 = Quaternion(0f, 0f, 0f, 0f)
@@ -196,7 +204,7 @@ interface QuaternionRo {
  * @author vesuvio
  * @author xoppa */
 
-data class Quaternion(
+class Quaternion(
 		override var x: Float = 0f,
 		override var y: Float = 0f,
 		override var z: Float = 0f,
@@ -901,10 +909,28 @@ data class Quaternion(
 		return getAngleAroundRad(axis.x, axis.y, axis.z)
 	}
 
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		other as QuaternionRo
+		if (x != other.x) return false
+		if (y != other.y) return false
+		if (z != other.z) return false
+		if (w != other.w) return false
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = x.hashCode()
+		result = 31 * result + y.hashCode()
+		result = 31 * result + z.hashCode()
+		result = 31 * result + w.hashCode()
+		return result
+	}
+
+
 	companion object {
 
 		private val tmp1 = Quaternion(0f, 0f, 0f, 0f)
-		private val tmp2 = Quaternion(0f, 0f, 0f, 0f)
 
 		/**
 		 * @return the euclidian length of the specified quaternion

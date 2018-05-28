@@ -28,18 +28,16 @@ import com.acornui.serialization.floatArray
 data class ImageMetadata(
 
 		/**
-		 * Used for 9 patches. An int array of left, top, right, bottom
+		 * Used for 9 patches. A float array of left, top, right, bottom
 		 */
-		val splits: FloatArray? = null
+		val splits: List<Float>? = null
 
-) {
-
-}
+)
 
 object ImageMetadataSerializer : From<ImageMetadata> {
 	override fun read(reader: Reader): ImageMetadata {
 		return ImageMetadata(
-				splits = reader.floatArray("splits")
+				splits = reader.floatArray("splits")?.toList()
 		)
 	}
 }

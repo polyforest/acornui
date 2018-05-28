@@ -28,10 +28,6 @@ interface PadRo {
 	val bottom: Float
 	val left: Float
 
-	fun copy(top: Float? = null, right: Float? = null, bottom: Float? = null, left: Float? = null): Pad {
-		return Pad(top ?: this.top, right ?: this.right, bottom ?: this.bottom, left ?: this.left)
-	}
-
 	fun reduceWidth(width: Float?): Float? {
 		if (width == null) return null
 		return width - left - right
@@ -70,6 +66,10 @@ interface PadRo {
 
 	fun toCssString(): String {
 		return "${top}px ${right}px ${bottom}px ${left}px"
+	}
+
+	fun copy(top: Float = this.top, right: Float = this.right, bottom: Float = this.bottom, left: Float = this.left): Pad {
+		return Pad(top, right, bottom, left)
 	}
 }
 

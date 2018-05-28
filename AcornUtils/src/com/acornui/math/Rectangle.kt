@@ -104,9 +104,13 @@ interface RectangleRo {
 
 	fun area(): Float
 	fun perimeter(): Float
+
+	fun copy(x: Float = this.x, y: Float = this.y, width: Float = this.width, height: Float = this.height): Rectangle {
+		return Rectangle(x, y, width, height)
+	}
 }
 
-data class Rectangle(
+class Rectangle(
 		override var x: Float = 0f,
 		override var y: Float = 0f,
 		override var width: Float = 0f,
@@ -434,6 +438,28 @@ data class Rectangle(
 		width *= scalar
 		height *= scalar
 	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+
+		other as RectangleRo
+
+		if (x != other.x) return false
+		if (y != other.y) return false
+		if (width != other.width) return false
+		if (height != other.height) return false
+
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = x.hashCode()
+		result = 31 * result + y.hashCode()
+		result = 31 * result + width.hashCode()
+		result = 31 * result + height.hashCode()
+		return result
+	}
+
 
 	companion object {
 		private val pool = ClearableObjectPool { Rectangle() }

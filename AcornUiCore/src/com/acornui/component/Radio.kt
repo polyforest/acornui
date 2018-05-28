@@ -23,7 +23,7 @@ import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.core.input.interaction.click
 import com.acornui.signal.Signal
-import com.acornui.signal.Signal2
+import com.acornui.signal.Signal0
 
 
 open class RadioButton<out T>(
@@ -62,8 +62,8 @@ class RadioGroup<T>(val owner: Owned) : Disposable {
 		owner.own(this)
 	}
 
-	private val _changed = Signal2<RadioButton<T>?, RadioButton<T>?>()
-	val changed: Signal<(RadioButton<T>?, RadioButton<T>?) -> Unit>
+	private val _changed = Signal0()
+	val changed: Signal<() -> Unit>
 		get() = _changed
 
 	private val _radioButtons = ArrayList<RadioButton<T>>()
@@ -73,6 +73,7 @@ class RadioGroup<T>(val owner: Owned) : Disposable {
 	@Suppress("UNCHECKED_CAST")
 	private val selectedChangedHandler: (Button) -> Unit = {
 		selectedButton = it as RadioButton<T>
+		_changed.dispatch()
 	}
 
 	@Suppress("UNCHECKED_CAST")
@@ -98,11 +99,9 @@ class RadioGroup<T>(val owner: Owned) : Disposable {
 		get() = _selectedButton
 		set(value) {
 			if (_selectedButton == value) return
-			val old = _selectedButton
 			_selectedButton?.toggled = false
 			_selectedButton = value
 			_selectedButton?.toggled = true
-			_changed.dispatch(old, value)
 		}
 
 	var selectedData: T?

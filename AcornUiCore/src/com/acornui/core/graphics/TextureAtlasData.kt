@@ -128,7 +128,6 @@ object AtlasPageSerializer : To<AtlasPageData>, From<AtlasPageData> {
 /**
  * A model representing a region within an atlas page.
  */
-@Suppress("ArrayInDataClass") // Lazy
 data class AtlasRegionData(
 
 		/**
@@ -149,14 +148,14 @@ data class AtlasRegionData(
 		/**
 		 * Used for 9 patches. An float array of left, top, right, bottom
 		 */
-		val splits: FloatArray? = null,
+		val splits: List<Float>? = null,
 
 		/**
 		 * The whitespace padding stripped from the original image, that should be added by the component.
 		 * An int array of left, top, right, bottom
 		 * The padding values will not be rotated.
 		 */
-		var padding: IntArray = intArrayOf(0, 0, 0, 0)
+		var padding: List<Int> = listOf(0, 0, 0, 0)
 ) {
 
 	/**
@@ -164,10 +163,10 @@ data class AtlasRegionData(
 	 */
 	val originalWidth: Int
 		get() {
-			if (isRotated)
-				return padding[0] + padding[2] + bounds.height
+			return if (isRotated)
+				padding[0] + padding[2] + bounds.height
 			else
-				return padding[0] + padding[2] + bounds.width
+				padding[0] + padding[2] + bounds.width
 		}
 
 	/**
@@ -175,10 +174,10 @@ data class AtlasRegionData(
 	 */
 	val originalHeight: Int
 		get() {
-			if (isRotated)
-				return padding[1] + padding[3] + bounds.width
+			return if (isRotated)
+				padding[1] + padding[3] + bounds.width
 			else
-				return padding[1] + padding[3] + bounds.height
+				padding[1] + padding[3] + bounds.height
 		}
 
 	/**
@@ -201,8 +200,8 @@ object AtlasRegionDataSerializer : To<AtlasRegionData>, From<AtlasRegionData> {
 				name = reader.string("name") ?: "",
 				isRotated = reader.bool("isRotated") ?: false,
 				bounds = reader.obj("bounds", IntRectangleSerializer)!!,
-				splits = reader.floatArray("splits"),
-				padding = reader.intArray("padding") ?: intArrayOf(0, 0, 0, 0)
+				splits = reader.floatArray("splits")?.toList(),
+				padding = reader.intArray("padding")?.toList() ?: listOf(0, 0, 0, 0)
 		)
 	}
 
@@ -210,7 +209,7 @@ object AtlasRegionDataSerializer : To<AtlasRegionData>, From<AtlasRegionData> {
 		writer.string("name", name)
 		writer.bool("isRotated", isRotated)
 		writer.obj("bounds", bounds, IntRectangleSerializer)
-		if (splits != null) writer.floatArray("splits", splits)
-		writer.intArray("padding", padding)
+		if (splits != null) writer.floatArray("splits", splits.toFloatArray())
+		writer.intArray("padding", padding.toIntArray())
 	}
 }

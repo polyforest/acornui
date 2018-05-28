@@ -148,7 +148,11 @@ open class BasicUiSkin(
 
 	protected open fun Scoped.loadBitmapFonts() {
 		val group = cachedGroup()
-		loadFontFromAtlas(theme.textStyle.toFontStyle(), "assets/uiskin/verdana_14.fnt", theme.atlasPath, group)
+		val fontStyle = theme.textStyle.toFontStyle()
+		loadFontFromAtlas(fontStyle, "assets/uiskin/verdana_14.fnt", theme.atlasPath, group)
+		loadFontFromAtlas(fontStyle.copy(bold = true), "assets/uiskin/verdana_14_bold.fnt", theme.atlasPath, group)
+		loadFontFromAtlas(fontStyle.copy(italic = true), "assets/uiskin/verdana_14_italic.fnt", theme.atlasPath, group)
+		loadFontFromAtlas(fontStyle.copy(bold = true, italic = true), "assets/uiskin/verdana_14_bold_italic.fnt", theme.atlasPath, group)
 		loadFontFromAtlas(theme.headingStyle.toFontStyle(), "assets/uiskin/verdana_14_bold.fnt", theme.atlasPath, group)
 	}
 

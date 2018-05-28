@@ -200,7 +200,7 @@ open class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
 	}
 
 	companion object {
-		private val EMPTY_SPLITS = floatArrayOf(0f, 0f, 0f, 0f)
+		private val EMPTY_SPLITS = listOf(0f, 0f, 0f, 0f)
 	}
 }
 

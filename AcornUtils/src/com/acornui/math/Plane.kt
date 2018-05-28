@@ -49,12 +49,12 @@ interface PlaneRo {
 	fun testPoint(point: Vector3Ro): PlaneSide {
 		val dist = normal.dot(point) + d
 
-		if (dist == 0f)
-			return PlaneSide.ON_PLANE
+		return if (dist == 0f)
+			PlaneSide.ON_PLANE
 		else if (dist < 0)
-			return PlaneSide.BACK
+			PlaneSide.BACK
 		else
-			return PlaneSide.FRONT
+			PlaneSide.FRONT
 	}
 
 	/**
@@ -69,12 +69,12 @@ interface PlaneRo {
 	fun testPoint(x: Float, y: Float, z: Float): PlaneSide {
 		val dist = normal.dot(x, y, z) + d
 
-		if (dist == 0f)
-			return PlaneSide.ON_PLANE
+		return if (dist == 0f)
+			PlaneSide.ON_PLANE
 		else if (dist < 0)
-			return PlaneSide.BACK
+			PlaneSide.BACK
 		else
-			return PlaneSide.FRONT
+			PlaneSide.FRONT
 	}
 
 	/**
@@ -102,12 +102,12 @@ interface PlaneRo {
 		val m = r.direction.dot(normal)
 		if (m == 0f) return false // Ray is parallel to the plane
 		val t = -(r.origin.dot(normal) + d) / m
-		if (t >= 0) {
+		return if (t >= 0) {
 			if (out != null) out.set(r.direction).scl(t).add(r.origin)
-			return true
+			true
 		} else {
 			// If t < 0, the plane is behind the ray.
-			return false
+			false
 		}
 	}
 
@@ -119,6 +119,10 @@ interface PlaneRo {
 		out.set(t * -normal.x + out.x, t * -normal.y + out.y, t * -normal.z + out.z)
 		return out
 	}
+
+	fun copy(normal: Vector3Ro = this.normal, d: Float = this.d): Plane {
+		return Plane(normal.copy(), d)
+	}
 }
 
 /**
@@ -126,7 +130,7 @@ interface PlaneRo {
  *
  * @author badlogicgames@gmail.com
  */
-data class Plane(
+class Plane(
 		override val normal: Vector3 = Vector3(),
 		override var d: Float = 0f
 ) : Clearable, PlaneRo {
@@ -192,6 +196,21 @@ data class Plane(
 		normal.clear()
 		d = 0f
 	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		other as PlaneRo
+		if (normal != other.normal) return false
+		if (d != other.d) return false
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = normal.hashCode()
+		result = 31 * result + d.hashCode()
+		return result
+	}
+
 
 	companion object {
 		private val pool = ClearableObjectPool { Plane() }

@@ -73,7 +73,7 @@ interface RayRo {
 	 */
 	fun intersects(v1: Vector3Ro, v2: Vector3Ro, v3: Vector3Ro, out: Vector3? = null): Boolean
 
-	fun copy(): Ray {
+	fun copy(origin: Vector3Ro = this.origin, direction: Vector3Ro = this.direction): Ray {
 		val r = Ray(origin.copy(), direction.copy())
 		r.update()
 		return r
@@ -86,7 +86,7 @@ interface RayRo {
  *
  * @author badlogicgames@gmail.com
  */
-data class Ray(
+class Ray(
 		override val origin: Vector3 = Vector3(),
 		override val direction: Vector3 = Vector3()
 ) : Clearable, RayRo {
@@ -284,6 +284,22 @@ data class Ray(
 		directionInv.clear()
 	}
 
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		other as RayRo
+		if (origin != other.origin) return false
+		if (direction != other.direction) return false
+		if (directionInv != other.directionInv) return false
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = origin.hashCode()
+		result = 31 * result + direction.hashCode()
+		result = 31 * result + directionInv.hashCode()
+		return result
+	}
+
 	companion object {
 
 		private var tmpVec = Vector3()
@@ -307,12 +323,16 @@ interface Ray2Ro {
 	val direction: Vector2Ro
 
 	fun intersects(ray: Ray2Ro, out: Vector2): Boolean
+
+	fun copy(origin: Vector2Ro = this.origin, direction: Vector2Ro = this.direction): Ray2 {
+		return Ray2(origin.copy(), direction.copy())
+	}
 }
 
 /**
  * A 2d ray.
  */
-data class Ray2(
+class Ray2(
 		override val origin: Vector2 = Vector2(),
 		override val direction: Vector2 = Vector2()
 ) : Clearable, Ray2Ro {
@@ -329,6 +349,20 @@ data class Ray2(
 	override fun clear() {
 		origin.clear()
 		direction.clear()
+	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		other as Ray2Ro
+		if (origin != other.origin) return false
+		if (direction != other.direction) return false
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = origin.hashCode()
+		result = 31 * result + direction.hashCode()
+		return result
 	}
 
 	companion object {
@@ -372,5 +406,6 @@ data class Ray2(
 				false
 			}
 		}
+
 	}
 }
