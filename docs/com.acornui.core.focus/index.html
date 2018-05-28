@@ -16,7 +16,7 @@
 <p><a href="-fake-focus-mouse/index.html">FakeFocusMouse</a></p>
 </td>
 <td>
-<code><span class="keyword">class </span><span class="identifier">FakeFocusMouse</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code>
+<code><span class="keyword">class </span><span class="identifier">FakeFocusMouse</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">, </span><a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
 <p>Dispatches mouse events when using SPACE or ENTER key presses on the focused element.</p>
 </td>
 </tr>
@@ -25,7 +25,7 @@
 <p><a href="-focus-attachment/index.html">FocusAttachment</a></p>
 </td>
 <td>
-<code><span class="keyword">class </span><span class="identifier">FocusAttachment</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+<code><span class="keyword">class </span><span class="identifier">FocusAttachment</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -49,7 +49,7 @@ ancestor.</p>
 <p><a href="-focus-manager/index.html">FocusManager</a></p>
 </td>
 <td>
-<code><span class="keyword">interface </span><span class="identifier">FocusManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+<code><span class="keyword">interface </span><span class="identifier">FocusManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -99,7 +99,7 @@ If no focusable element is found, null is returned.</p>
 <p><a href="blurred.html">blurred</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">.</span><span class="identifier">blurred</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">fun </span><a href="-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">.</span><span class="identifier">blurred</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.signal/-signal/index.html"><span class="identifier">Signal</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
@@ -127,7 +127,7 @@ If no focusable element is found, null is returned.</p>
 <p><a href="focused.html">focused</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">.</span><span class="identifier">focused</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">fun </span><a href="-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">.</span><span class="identifier">focused</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.signal/-signal/index.html"><span class="identifier">Signal</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>

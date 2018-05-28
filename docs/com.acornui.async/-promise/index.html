@@ -1,0 +1,141 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Promise - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.async</a>&nbsp;/&nbsp;<a href="./index.html">Promise</a><br/>
+<br/>
+<h1>Promise</h1>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Promise</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">Promise</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="error.html">error</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">error</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html"><span class="identifier">Throwable</span></a></code>
+<p>Returns the result if and only if <a href="../-deferred/status.html">status</a> is <a href="../-deferred/-status/-f-a-i-l-e-d.html">Status.FAILED</a>. If status is pending or successful, this will
+throw an exception.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="result.html">result</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">result</span><span class="symbol">: </span><a href="index.html#T"><span class="identifier">T</span></a></code>
+<p>Returns the result if and only if <a href="../-deferred/status.html">status</a> is <a href="../-deferred/-status/-s-u-c-c-e-s-s-f-u-l.html">Status.SUCCESSFUL</a>. If status is pending or failed, this will
+throw an exception.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="status.html">status</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">status</span><span class="symbol">: </span><a href="../-deferred/-status/index.html"><span class="identifier">Status</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="await.html">await</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">await</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="index.html#T"><span class="identifier">T</span></a></code>
+<p>Suspends the co-routine until the result is calculated.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="fail.html">fail</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">fail</span><span class="symbol">(</span><span class="identifier" id="com.acornui.async.Promise$fail(kotlin.Throwable)/error">error</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html"><span class="identifier">Throwable</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="success.html">success</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">success</span><span class="symbol">(</span><span class="identifier" id="com.acornui.async.Promise$success(com.acornui.async.Promise.T)/result">result</span><span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../await-or-null.html">awaitOrNull</a></p>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="../await-or-null.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">awaitOrNull</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../await-or-null.html#T"><span class="identifier">T</span></a><span class="symbol">?</span></code>
+<p>Wraps await in a try/catch block, returning null if there was an exception.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../catch.html">catch</a></p>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="../catch.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">catch</span><span class="symbol">(</span><span class="identifier" id="com.acornui.async$catch(com.acornui.async.Deferred((com.acornui.async.catch.T)), kotlin.Function1((kotlin.Throwable, kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html"><span class="identifier">Throwable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="../catch.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Invokes a callback when this deferred object has failed to produce a result.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../result-or-null.html">resultOrNull</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="../result-or-null.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">resultOrNull</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../result-or-null.html#T"><span class="identifier">T</span></a><span class="symbol">?</span></code>
+<p>If <a href="../-deferred/status.html">Deferred.status</a> is <a href="../-deferred/-status/-s-u-c-c-e-s-s-f-u-l.html">Status.SUCCESSFUL</a> this will return the result. Otherwise, null.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../then.html">then</a></p>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="../then.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">then</span><span class="symbol">(</span><span class="identifier" id="com.acornui.async$then(com.acornui.async.Deferred((com.acornui.async.then.T)), kotlin.Function1((com.acornui.async.then.T, kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="identifier">result</span><span class="symbol">:</span>&nbsp;<a href="../then.html#T"><span class="identifier">T</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="../then.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Invokes a callback when the deferred value has been computed successfully. This callback will not be invoked on
+failure.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-late-value/index.html">LateValue</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">LateValue</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Promise</span></a><span class="symbol">&lt;</span><a href="../-late-value/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>A promise with exposed <a href="../-late-value/set-value.html">setValue</a> and <a href="../-late-value/set-error.html">setError</a> to defer to the <a href="success.html">success</a> and <a href="fail.html">fail</a> methods.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

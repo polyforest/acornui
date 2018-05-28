@@ -1,0 +1,144 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ColorRo - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.graphics</a>&nbsp;/&nbsp;<a href="./index.html">ColorRo</a><br/>
+<br/>
+<h1>ColorRo</h1>
+<code><span class="keyword">interface </span><span class="identifier">ColorRo</span></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="a.html">a</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">a</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="b.html">b</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">b</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="g.html">g</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">g</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="r.html">r</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">r</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="close-to.html">closeTo</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">closeTo</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.ColorRo$closeTo(com.acornui.graphics.ColorRo, kotlin.Float)/other">other</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ColorRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.ColorRo$closeTo(com.acornui.graphics.ColorRo, kotlin.Float)/tolerance">tolerance</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0.0001f<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if each of the channels is close to the other color within the given tolerance.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="copy.html">copy</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">copy</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-color/index.html"><span class="identifier">Color</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="minus.html">minus</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">operator</span> <span class="keyword">fun </span><span class="identifier">minus</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.ColorRo$minus(com.acornui.graphics.ColorRo)/color">color</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ColorRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-color/index.html"><span class="identifier">Color</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="plus.html">plus</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">operator</span> <span class="keyword">fun </span><span class="identifier">plus</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.ColorRo$plus(com.acornui.graphics.ColorRo)/color">color</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ColorRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-color/index.html"><span class="identifier">Color</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="times.html">times</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">operator</span> <span class="keyword">fun </span><span class="identifier">times</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.ColorRo$times(kotlin.Float)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-color/index.html"><span class="identifier">Color</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="to-css-string.html">toCssString</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toCssString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>rgba(255, 255, 255, 1)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="to-hsl.html">toHsl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toHsl</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.ColorRo$toHsl(com.acornui.graphics.Hsl)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-hsl/index.html"><span class="identifier">Hsl</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-hsl/index.html"><span class="identifier">Hsl</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="to-hsv.html">toHsv</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toHsv</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.ColorRo$toHsv(com.acornui.graphics.Hsv)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-hsv/index.html"><span class="identifier">Hsv</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-hsv/index.html"><span class="identifier">Hsv</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="to-rgb-string.html">toRgbString</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toRgbString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>RRGGBB</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="to-rgba-string.html">toRgbaString</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toRgbaString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>RRGGBBAA</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-color/index.html">Color</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Color</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ColorRo</span></a><span class="symbol">, </span><a href="../../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code>
+<p>A color class, holding the r, g, b and alpha component as floats in the range <a href="#">0,1</a>. All methods perform clamping on the
+internal values after execution.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

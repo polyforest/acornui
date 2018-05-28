@@ -1,0 +1,22 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Vector3.untransform - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="index.html">Vector3</a>&nbsp;/&nbsp;<a href="./untransform.html">untransform</a><br/>
+<br/>
+<h1>untransform</h1>
+<a name="com.acornui.math.Vector3$untransform(com.acornui.math.Matrix4Ro)"></a>
+<code><span class="keyword">fun </span><span class="identifier">untransform</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$untransform(com.acornui.math.Matrix4Ro)/matrix">matrix</span><span class="symbol">:</span>&nbsp;<a href="../-matrix4-ro/index.html"><span class="identifier">Matrix4Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="index.html"><span class="identifier">Vector3</span></a></code>
+<p>Translates this vector in the direction opposite to the translation of the matrix and the multiplies this vector by the
+transpose of the first three columns of the matrix. Note: only works for translation and rotation, does not work for
+scaling. For those, use {@link #mul(Matrix4)} with {@link Matrix4#inv()}.</p>
+<h3>Parameters</h3>
+<p><a name="matrix"></a>
+<code>matrix</code> - The transformation matrix</p>
+<p><strong>Return</strong><br/>
+The vector for chaining</p>
+</BODY>
+</HTML>

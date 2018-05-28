@@ -8,7 +8,7 @@
 <a href="../index.html">com.acornui.core.assets</a>&nbsp;/&nbsp;<a href="./index.html">AssetManager</a><br/>
 <br/>
 <h1>AssetManager</h1>
-<code><span class="keyword">interface </span><span class="identifier">AssetManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span><span class="symbol">, </span><span class="identifier">Progress</span></code>
+<code><span class="keyword">interface </span><span class="identifier">AssetManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a><span class="symbol">, </span><a href="../../com.acornui.action/-progress/index.html"><span class="identifier">Progress</span></a></code>
 <p><strong>Author</strong><br/>
 nbilyk</p>
 <h3>Types</h3>
@@ -38,7 +38,7 @@ nbilyk</p>
 <p><a href="current-loaders-changed.html">currentLoadersChanged</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">currentLoadersChanged</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">currentLoadersChanged</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal/index.html"><span class="identifier">Signal</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched when the current loaders list has changed.</p>
 </td>
 </tr>
@@ -47,14 +47,30 @@ nbilyk</p>
 <p><a href="seconds-loaded.html">secondsLoaded</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">secondsLoaded</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">secondsLoaded</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The number of seconds currently loaded.</p>
+</td>
 </tr>
 <tr>
 <td>
 <p><a href="seconds-total.html">secondsTotal</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">secondsTotal</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">secondsTotal</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The total number of seconds estimated to load.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.action/-progress/percent-loaded.html">percentLoaded</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">percentLoaded</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
 </tr>
 </tbody>
 </table>
@@ -70,6 +86,21 @@ nbilyk</p>
 <p>Loads an asset.
 To cancel the loading, call <code>cancel</code> on the return value.
 To await the result, create a coroutine, and call 'await'.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-disposable/dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Prepares this object for garbage collection.
+A disposed object should no longer be used or referenced.</p>
 </td>
 </tr>
 </tbody>

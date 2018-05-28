@@ -1,0 +1,752 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.math - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.math</a><br/>
+<br/>
+<h2>Package com.acornui.math</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-basic-bounce/index.html">BasicBounce</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">BasicBounce</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-bezier/index.html">Bezier</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Bezier</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-bezier-segment/index.html">BezierSegment</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">BezierSegment</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-bounce-in-place/index.html">BounceInPlace</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">BounceInPlace</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code>
+<p>Parabolic arcs from 0 to <a href="-bounce-in-place/restitution.html">restitution</a>^i and back, <a href="-bounce-in-place/bounces.html">bounces</a> number of times.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-bounds/index.html">Bounds</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Bounds</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="-bounds-ro/index.html"><span class="identifier">BoundsRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-bounds-ro/index.html">BoundsRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">BoundsRo</span></code>
+<p>A read-only interface to a <a href="-bounds/index.html">Bounds</a> object.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-box/index.html">Box</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Box</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-box-ro/index.html"><span class="identifier">BoxRo</span></a></code>
+<p>Encapsulates an axis aligned bounding box represented by a minimum and a maximum Vector. Additionally you can query for the
+bounding box's center, dimensions and corner points.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-box-ro/index.html">BoxRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">BoxRo</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-circle/index.html">Circle</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">Circle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-circle-in/index.html">CircleIn</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">CircleIn</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-circle-out/index.html">CircleOut</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">CircleOut</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-clamp/index.html">Clamp</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Clamp</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code>
+<p>Clamps the inner interpolation to start at <a href="-clamp/start-alpha.html">startAlpha</a> and end at <a href="-clamp/end-alpha.html">endAlpha</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-color-transformation/index.html">ColorTransformation</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ColorTransformation</span></code>
+<p>Shaders may support a color transformation matrix.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-constant/index.html">Constant</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Constant</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-corners/index.html">Corners</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Corners</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-corners-ro/index.html"><span class="identifier">CornersRo</span></a><span class="symbol">, </span><a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code>
+<p>A representation of corner float values, for example in corner radius.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-corners-ro/index.html">CornersRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">CornersRo</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-corners-serializer/index.html">CornersSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">CornersSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.serialization/-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="-corners-ro/index.html"><span class="identifier">CornersRo</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.serialization/-from/index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="-corners/index.html"><span class="identifier">Corners</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-easing/index.html">Easing</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">Easing</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-elastic/index.html">Elastic</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Elastic</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-elastic-in/index.html">ElasticIn</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ElasticIn</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-elastic/index.html"><span class="identifier">Elastic</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-elastic-out/index.html">ElasticOut</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ElasticOut</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-elastic/index.html"><span class="identifier">Elastic</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-exp/index.html">Exp</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Exp</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-exp-in/index.html">ExpIn</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ExpIn</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-exp/index.html"><span class="identifier">Exp</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-exp-out/index.html">ExpOut</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ExpOut</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-exp/index.html"><span class="identifier">Exp</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-fade/index.html">Fade</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">Fade</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-frustum/index.html">Frustum</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Frustum</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-frustum-ro/index.html"><span class="identifier">FrustumRo</span></a></code>
+<p>A truncated rectangular pyramid. Used to define the viewable region and its projection onto the screen.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-frustum-ro/index.html">FrustumRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">FrustumRo</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-geom-utils/index.html">GeomUtils</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">GeomUtils</span></code>
+<p>Contains a few intersection calculation utilities.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-int-rectangle/index.html">IntRectangle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">IntRectangle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-int-rectangle-ro/index.html"><span class="identifier">IntRectangleRo</span></a><span class="symbol">, </span><a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code>
+<p>An x,y,width,height set of integers.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-int-rectangle-ro/index.html">IntRectangleRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">IntRectangleRo</span></code>
+<p>The read-only interface to <a href="-int-rectangle/index.html">IntRectangle</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-int-rectangle-serializer/index.html">IntRectangleSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">IntRectangleSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.serialization/-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="-int-rectangle-ro/index.html"><span class="identifier">IntRectangleRo</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.serialization/-from/index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="-int-rectangle/index.html"><span class="identifier">IntRectangle</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-interpolation/index.html">Interpolation</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Interpolation</span></code>
+<p>Takes a linear value in the range of 0-1 and outputs an interpolated value.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-linear/index.html">Linear</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">Linear</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-math-utils/index.html">MathUtils</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">MathUtils</span></code>
+<p>Utility and fast math functions.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-matrix3/index.html">Matrix3</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Matrix3</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-matrix3-ro/index.html"><span class="identifier">Matrix3Ro</span></a></code>
+<p>A 3x3 column major matrix; useful for 2D
+transforms.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-matrix3-ro/index.html">Matrix3Ro</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Matrix3Ro</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-matrix4/index.html">Matrix4</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Matrix4</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-matrix4-ro/index.html"><span class="identifier">Matrix4Ro</span></a></code>
+<p>Encapsulates a column major 4 by 4 matrix. Like
+the {@link Vector3} class it allows the chaining of methods by returning a reference to itself. For example:</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-matrix4-ro/index.html">Matrix4Ro</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Matrix4Ro</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-min-max/index.html">MinMax</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">MinMax</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-min-max-ro/index.html"><span class="identifier">MinMaxRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-min-max-ro/index.html">MinMaxRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">MinMaxRo</span></code>
+<p>A MinMax object represents a minimum and maximum cartesian point.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-pad/index.html">Pad</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Pad</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-pad-ro/index.html"><span class="identifier">PadRo</span></a><span class="symbol">, </span><a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code>
+<p>A representation of margins or padding.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-pad-ro/index.html">PadRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">PadRo</span></code>
+<p>A read-only interface to <a href="-pad/index.html">Pad</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-pad-serializer/index.html">PadSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">PadSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.serialization/-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="-pad-ro/index.html"><span class="identifier">PadRo</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.serialization/-from/index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="-pad/index.html"><span class="identifier">Pad</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-plane/index.html">Plane</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Plane</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="-plane-ro/index.html"><span class="identifier">PlaneRo</span></a></code>
+<p>A plane defined via a unit length normal and the distance from the origin, as you learned in your math class.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-plane-ro/index.html">PlaneRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">PlaneRo</span></code>
+<p>The read-only interface to <a href="-plane/index.html">Plane</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-plane-side/index.html">PlaneSide</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">PlaneSide</span></code>
+<p>Enum specifying on which side a point lies respective to the plane and it's normal. {@link PlaneSide#Front} is the side to
+which the normal points.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-pow/index.html">Pow</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Pow</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-pow-in/index.html">PowIn</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">PowIn</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-pow-out/index.html">PowOut</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">PowOut</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-quaternion/index.html">Quaternion</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Quaternion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-quaternion-ro/index.html"><span class="identifier">QuaternionRo</span></a></code>
+<p>A simple Quaternion class. (May be an oxymoron)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-quaternion-ro/index.html">QuaternionRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">QuaternionRo</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-random/index.html">Random</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Random</span></code>
+<p>A Random number generator</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-range2/index.html">Range2</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Range2</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-comparable/index.html"><span class="identifier">Comparable</span></a><span class="symbol">&lt;</span><a href="-range2/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="-range2-ro/index.html"><span class="identifier">Range2Ro</span></a><span class="symbol">&lt;</span><a href="-range2/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>A 2D range describing optional min and max boundaries.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-range2-ro/index.html">Range2Ro</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Range2Ro</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-comparable/index.html"><span class="identifier">Comparable</span></a><span class="symbol">&lt;</span><a href="-range2-ro/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-ray/index.html">Ray</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Ray</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="-ray-ro/index.html"><span class="identifier">RayRo</span></a></code>
+<p>Encapsulates a ray having a starting position and a unit length direction.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-ray2/index.html">Ray2</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Ray2</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="-ray2-ro/index.html"><span class="identifier">Ray2Ro</span></a></code>
+<p>A 2d ray.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-ray2-ro/index.html">Ray2Ro</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Ray2Ro</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-ray-ro/index.html">RayRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">RayRo</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-rectangle/index.html">Rectangle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Rectangle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="-rectangle-ro/index.html"><span class="identifier">RectangleRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-rectangle-ro/index.html">RectangleRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">RectangleRo</span></code>
+<p>A read-only interface to <a href="-rectangle/index.html">Rectangle</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-rectangle-serializer/index.html">RectangleSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">RectangleSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.serialization/-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="-rectangle/index.html"><span class="identifier">Rectangle</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.serialization/-from/index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="-rectangle/index.html"><span class="identifier">Rectangle</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-repeat/index.html">Repeat</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Repeat</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code>
+<p>Repeats the inner interpolation <a href="-repeat/repetitions.html">repetitions</a> times.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-reverse/index.html">Reverse</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Reverse</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-sine/index.html">Sine</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">Sine</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-sine-in/index.html">SineIn</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">SineIn</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-sine-out/index.html">SineOut</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">SineOut</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-stepped/index.html">Stepped</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">Stepped</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code>
+<p>Jumps from 0f to 1f without interpolation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-swing/index.html">Swing</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Swing</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-swing-in/index.html">SwingIn</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">SwingIn</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-swing-out/index.html">SwingOut</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">SwingOut</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-to-fro/index.html">ToFro</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ToFro</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-vector2/index.html">Vector2</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Vector2</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a></code>
+<p>Encapsulates a 2D vector. Allows chaining methods by returning a reference to itself</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-vector2-ro/index.html">Vector2Ro</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Vector2Ro</span></code>
+<p>A read-only view into a Vector2</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-vector2-serializer/index.html">Vector2Serializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">Vector2Serializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.serialization/-from/index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.serialization/-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a><span class="symbol">?</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-vector3/index.html">Vector3</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Vector3</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a></code>
+<p>Encapsulates a 3D vector. Allows chaining operations by returning a reference to itself in all modification methods.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-vector3-ro/index.html">Vector3Ro</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Vector3Ro</span></code>
+<p>A read-only view into Vector3</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-vector3-serializer/index.html">Vector3Serializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">Vector3Serializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.serialization/-from/index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.serialization/-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">?</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-yo-yo/index.html">YoYo</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">YoYo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interpolation/index.html"><span class="identifier">Interpolation</span></a></code>
+<p>Applies an inner interpolation, <a href="-yo-yo/repetitions.html">repetitions</a> times forward, then reversed.
+This is equivalent to using <a href="-repeat/index.html">Repeat</a> with inner <a href="-to-fro/index.html">ToFro</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extensions for External Classes</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="kotlin.-float/index.html">kotlin.Float</a></p>
+</td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-e.html">E</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">E</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-p-i.html">PI</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">PI</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-p-i2.html">PI2</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">PI2</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-t-o_-d-e-g.html">TO_DEG</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">TO_DEG</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-t-o_-r-a-d.html">TO_RAD</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">TO_RAD</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="grayscale.html">grayscale</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-color-transformation/index.html"><span class="identifier">ColorTransformation</span></a><span class="symbol">.</span><span class="identifier">grayscale</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-color-transformation/index.html"><span class="identifier">ColorTransformation</span></a></code>
+<p>Sets this color transformation to a grayscale transform.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="invert.html">invert</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-color-transformation/index.html"><span class="identifier">ColorTransformation</span></a><span class="symbol">.</span><span class="identifier">invert</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-color-transformation/index.html"><span class="identifier">ColorTransformation</span></a></code>
+<p>Sets this color transformation to an invert transform.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="max-of4.html">maxOf4</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-comparable/index.html"><span class="identifier">Comparable</span></a><span class="symbol">&lt;</span><a href="max-of4.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span> <span class="identifier">maxOf4</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math$maxOf4(com.acornui.math.maxOf4.T, com.acornui.math.maxOf4.T, com.acornui.math.maxOf4.T, com.acornui.math.maxOf4.T)/a">a</span><span class="symbol">:</span>&nbsp;<a href="max-of4.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math$maxOf4(com.acornui.math.maxOf4.T, com.acornui.math.maxOf4.T, com.acornui.math.maxOf4.T, com.acornui.math.maxOf4.T)/b">b</span><span class="symbol">:</span>&nbsp;<a href="max-of4.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math$maxOf4(com.acornui.math.maxOf4.T, com.acornui.math.maxOf4.T, com.acornui.math.maxOf4.T, com.acornui.math.maxOf4.T)/c">c</span><span class="symbol">:</span>&nbsp;<a href="max-of4.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math$maxOf4(com.acornui.math.maxOf4.T, com.acornui.math.maxOf4.T, com.acornui.math.maxOf4.T, com.acornui.math.maxOf4.T)/d">d</span><span class="symbol">:</span>&nbsp;<a href="max-of4.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="max-of4.html#T"><span class="identifier">T</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="min-of4.html">minOf4</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-comparable/index.html"><span class="identifier">Comparable</span></a><span class="symbol">&lt;</span><a href="min-of4.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span> <span class="identifier">minOf4</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math$minOf4(com.acornui.math.minOf4.T, com.acornui.math.minOf4.T, com.acornui.math.minOf4.T, com.acornui.math.minOf4.T)/a">a</span><span class="symbol">:</span>&nbsp;<a href="min-of4.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math$minOf4(com.acornui.math.minOf4.T, com.acornui.math.minOf4.T, com.acornui.math.minOf4.T, com.acornui.math.minOf4.T)/b">b</span><span class="symbol">:</span>&nbsp;<a href="min-of4.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math$minOf4(com.acornui.math.minOf4.T, com.acornui.math.minOf4.T, com.acornui.math.minOf4.T, com.acornui.math.minOf4.T)/c">c</span><span class="symbol">:</span>&nbsp;<a href="min-of4.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math$minOf4(com.acornui.math.minOf4.T, com.acornui.math.minOf4.T, com.acornui.math.minOf4.T, com.acornui.math.minOf4.T)/d">d</span><span class="symbol">:</span>&nbsp;<a href="min-of4.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="min-of4.html#T"><span class="identifier">T</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="sepia.html">sepia</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-color-transformation/index.html"><span class="identifier">ColorTransformation</span></a><span class="symbol">.</span><span class="identifier">sepia</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-color-transformation/index.html"><span class="identifier">ColorTransformation</span></a></code>
+<p>Sets this color transformation to a sepia transform.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="vector2.html">vector2</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.serialization/-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">vector2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math$vector2(com.acornui.serialization.Writer, com.acornui.math.Vector2Ro)/v">v</span><span class="symbol">:</span>&nbsp;<a href="-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../com.acornui.serialization/-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">vector2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math$vector2(com.acornui.serialization.Writer, kotlin.String, com.acornui.math.Vector2Ro)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math$vector2(com.acornui.serialization.Writer, kotlin.String, com.acornui.math.Vector2Ro)/v">v</span><span class="symbol">:</span>&nbsp;<a href="-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../com.acornui.serialization/-reader/index.html"><span class="identifier">Reader</span></a><span class="symbol">.</span><span class="identifier">vector2</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">?</span></code><br/>
+<code><span class="keyword">fun </span><a href="../com.acornui.serialization/-reader/index.html"><span class="identifier">Reader</span></a><span class="symbol">.</span><span class="identifier">vector2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math$vector2(com.acornui.serialization.Reader, kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="vector3.html">vector3</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.serialization/-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">vector3</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math$vector3(com.acornui.serialization.Writer, com.acornui.math.Vector3Ro)/v">v</span><span class="symbol">:</span>&nbsp;<a href="-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../com.acornui.serialization/-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">vector3</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math$vector3(com.acornui.serialization.Writer, kotlin.String, com.acornui.math.Vector3Ro)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math$vector3(com.acornui.serialization.Writer, kotlin.String, com.acornui.math.Vector3Ro)/v">v</span><span class="symbol">:</span>&nbsp;<a href="-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../com.acornui.serialization/-reader/index.html"><span class="identifier">Reader</span></a><span class="symbol">.</span><span class="identifier">vector3</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">?</span></code><br/>
+<code><span class="keyword">fun </span><a href="../com.acornui.serialization/-reader/index.html"><span class="identifier">Reader</span></a><span class="symbol">.</span><span class="identifier">vector3</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math$vector3(com.acornui.serialization.Reader, kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

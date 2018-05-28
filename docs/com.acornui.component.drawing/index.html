@@ -1,0 +1,289 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.component.drawing - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.component.drawing</a><br/>
+<br/>
+<h2>Package com.acornui.component.drawing</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-cap-builder/index.html">CapBuilder</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">CapBuilder</span></code>
+<p>An interface for building a mesh for a line cap.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-cap-style/index.html">CapStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">CapStyle</span></code>
+<p>A registration of mesh builders for supported cap styles.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-draw-elements-call/index.html">DrawElementsCall</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DrawElementsCall</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-dynamic-mesh-component/index.html">DynamicMeshComponent</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">DynamicMeshComponent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-ui-component-impl/index.html"><span class="identifier">UiComponentImpl</span></a><span class="symbol">, </span><a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code>
+<p>A UiComponent for drawing <a href="-mesh-data/index.html">MeshData</a>.
+This component should be for dynamic meshes with few vertices. Use <a href="-static-mesh/index.html">StaticMesh</a> when displaying static
+3d meshes with many vertices.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-fill-style/index.html">FillStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">FillStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-line-style/index.html">LineStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">LineStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-mesh-data/index.html">MeshData</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">MeshData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-parent/index.html"><span class="identifier">Parent</span></a><span class="symbol">&lt;</span><a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-mesh-intersection-type/index.html">MeshIntersectionType</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">MeshIntersectionType</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-miter-cap/index.html">MiterCap</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">MiterCap</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-cap-builder/index.html"><span class="identifier">CapBuilder</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-no-cap/index.html">NoCap</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">NoCap</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-cap-builder/index.html"><span class="identifier">CapBuilder</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-static-mesh/index.html">StaticMesh</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">StaticMesh</span></code>
+<p>Feeds mesh data to index and vertex buffers, and can <a href="-static-mesh/render.html">render</a> static mesh data.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-static-mesh-component/index.html">StaticMeshComponent</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">StaticMeshComponent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-ui-component-impl/index.html"><span class="identifier">UiComponentImpl</span></a></code>
+<p>A UiComponent for drawing static <a href="-mesh-data/index.html">MeshData</a> with uniforms for model and color transformation.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-q-u-a-d_-i-n-d-i-c-e-s.html">QUAD_INDICES</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">QUAD_INDICES</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int-array/index.html"><span class="identifier">IntArray</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-t-r-i-a-n-g-l-e_-i-n-d-i-c-e-s.html">TRIANGLE_INDICES</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">TRIANGLE_INDICES</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int-array/index.html"><span class="identifier">IntArray</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="fill-style.html">fillStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">fillStyle</span><span class="symbol">: </span><a href="-fill-style/index.html"><span class="identifier">FillStyle</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="line-style.html">lineStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">lineStyle</span><span class="symbol">: </span><a href="-line-style/index.html"><span class="identifier">LineStyle</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="box.html">box</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">box</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$box(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$box(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$box(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/depth">depth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$box(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="calculate-oval-point.html">calculateOvalPoint</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">calculateOvalPoint</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$calculateOvalPoint(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Vector2)/theta">theta</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$calculateOvalPoint(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Vector2)/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$calculateOvalPoint(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Vector2)/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$calculateOvalPoint(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Vector2)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="circle.html">circle</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">circle</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$circle(kotlin.Float, kotlin.Int, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/radius">radius</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$circle(kotlin.Float, kotlin.Int, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/segments">segments</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$circle(kotlin.Float, kotlin.Int, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a></code>
+<p>Draws a circle.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="curved-rect.html">curvedRect</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">curvedRect</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$curvedRect(kotlin.Float, kotlin.Float, com.acornui.math.Corners, kotlin.Int, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/w">w</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$curvedRect(kotlin.Float, kotlin.Float, com.acornui.math.Corners, kotlin.Int, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/h">h</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$curvedRect(kotlin.Float, kotlin.Float, com.acornui.math.Corners, kotlin.Int, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/corners">corners</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-corners/index.html"><span class="identifier">Corners</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$curvedRect(kotlin.Float, kotlin.Float, com.acornui.math.Corners, kotlin.Int, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/segments">segments</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;30<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$curvedRect(kotlin.Float, kotlin.Float, com.acornui.math.Corners, kotlin.Int, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="cylinder.html">cylinder</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">cylinder</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$cylinder(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Int, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$cylinder(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Int, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$cylinder(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Int, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/depth">depth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$cylinder(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Int, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/segments">segments</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;180<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$cylinder(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Int, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a></code>
+<p>Creates a 3d cylinder mesh (only fills)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="dynamic-mesh-c.html">dynamicMeshC</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">dynamicMeshC</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$dynamicMeshC(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.drawing.DynamicMeshComponent, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-dynamic-mesh-component/index.html"><span class="identifier">DynamicMeshComponent</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-dynamic-mesh-component/index.html"><span class="identifier">DynamicMeshComponent</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="fill-quad.html">fillQuad</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">fillQuad</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$fillQuad(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2)/v1">v1</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$fillQuad(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2)/v2">v2</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$fillQuad(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2)/v3">v3</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$fillQuad(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2)/v4">v4</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a></code>
+<p>Fills a quadrilateral with the specified fill style.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="fill-triangle.html">fillTriangle</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">fillTriangle</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$fillTriangle(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2)/v1">v1</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$fillTriangle(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2)/v2">v2</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$fillTriangle(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2)/v3">v3</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="line.html">line</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">line</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$line(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/x1">x1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$line(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/y1">y1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$line(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/x2">x2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$line(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/y2">y2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$line(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/controlA">controlA</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$line(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/controlB">controlB</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$line(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/controlAThickness">controlAThickness</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;lineStyle.thickness<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$line(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/controlBThickness">controlBThickness</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;lineStyle.thickness<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$line(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">line</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$line(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/p1">p1</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$line(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/p2">p2</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$line(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/controlA">controlA</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$line(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/controlB">controlB</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$line(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/controlAThickness">controlAThickness</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;lineStyle.thickness<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$line(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/controlBThickness">controlBThickness</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;lineStyle.thickness<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$line(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="mesh-data.html">meshData</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">meshData</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$meshData(kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="oval.html">oval</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">oval</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$oval(kotlin.Float, kotlin.Float, kotlin.Int, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$oval(kotlin.Float, kotlin.Float, kotlin.Int, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$oval(kotlin.Float, kotlin.Float, kotlin.Int, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/segments">segments</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;180<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$oval(kotlin.Float, kotlin.Float, kotlin.Int, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a></code>
+<p>Draws an oval.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="quad.html">quad</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">quad</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$quad(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/x1">x1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$quad(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/y1">y1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$quad(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/x2">x2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$quad(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/y2">y2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$quad(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/x3">x3</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$quad(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/y3">y3</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$quad(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/x4">x4</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$quad(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/y4">y4</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$quad(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">quad</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$quad(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/v1">v1</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$quad(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/v2">v2</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$quad(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/v3">v3</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$quad(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/v4">v4</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$quad(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="rect.html">rect</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">rect</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$rect(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$rect(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$rect(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/w">w</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$rect(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/h">h</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$rect(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="rotate.html">rotate</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a><span class="symbol">.</span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$rotate(com.acornui.component.drawing.MeshData, kotlin.Float, kotlin.Float, kotlin.Float)/yaw">yaw</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$rotate(com.acornui.component.drawing.MeshData, kotlin.Float, kotlin.Float, kotlin.Float)/pitch">pitch</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$rotate(com.acornui.component.drawing.MeshData, kotlin.Float, kotlin.Float, kotlin.Float)/roll">roll</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="static-mesh.html">staticMesh</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">staticMesh</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$staticMesh(kotlin.Function1((com.acornui.component.drawing.StaticMesh, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-static-mesh/index.html"><span class="identifier">StaticMesh</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-static-mesh/index.html"><span class="identifier">StaticMesh</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="static-mesh-c.html">staticMeshC</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">staticMeshC</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$staticMeshC(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.drawing.StaticMeshComponent, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-static-mesh-component/index.html"><span class="identifier">StaticMeshComponent</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-static-mesh-component/index.html"><span class="identifier">StaticMeshComponent</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">staticMeshC</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$staticMeshC(com.acornui.core.di.Owned, com.acornui.component.drawing.StaticMesh, kotlin.Function1((com.acornui.component.drawing.StaticMeshComponent, kotlin.Unit)))/mesh">mesh</span><span class="symbol">:</span>&nbsp;<a href="-static-mesh/index.html"><span class="identifier">StaticMesh</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$staticMeshC(com.acornui.core.di.Owned, com.acornui.component.drawing.StaticMesh, kotlin.Function1((com.acornui.component.drawing.StaticMeshComponent, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-static-mesh-component/index.html"><span class="identifier">StaticMeshComponent</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-static-mesh-component/index.html"><span class="identifier">StaticMeshComponent</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="transform.html">transform</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a><span class="symbol">.</span><span class="identifier">transform</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$transform(com.acornui.component.drawing.MeshData, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/position">position</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a>&nbsp;<span class="symbol">=</span>&nbsp;Vector3.ZERO<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$transform(com.acornui.component.drawing.MeshData, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/scale">scale</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a>&nbsp;<span class="symbol">=</span>&nbsp;Vector3.ONE<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$transform(com.acornui.component.drawing.MeshData, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/rotation">rotation</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a>&nbsp;<span class="symbol">=</span>&nbsp;Vector3.ZERO<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$transform(com.acornui.component.drawing.MeshData, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/origin">origin</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a>&nbsp;<span class="symbol">=</span>&nbsp;Vector3.ZERO<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="triangle.html">triangle</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">triangle</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$triangle(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/x1">x1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$triangle(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/y1">y1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$triangle(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/x2">x2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$triangle(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/y2">y2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$triangle(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/x3">x3</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$triangle(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/y3">y3</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$triangle(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">triangle</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$triangle(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/v1">v1</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$triangle(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/v2">v2</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$triangle(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/v3">v3</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$triangle(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, kotlin.Function1((com.acornui.component.drawing.MeshData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-mesh-data/index.html"><span class="identifier">MeshData</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,27 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Random.nextLong - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="index.html">Random</a>&nbsp;/&nbsp;<a href="./next-long.html">nextLong</a><br/>
+<br/>
+<h1>nextLong</h1>
+<a name="com.acornui.math.Random$nextLong()"></a>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">nextLong</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
+<p>Returns the next pseudo-random, uniformly distributed {@code long} value from this random number generator's sequence.
+Subclasses should override this, as this is used by all other methods.</p>
+<a name="com.acornui.math.Random$nextLong(kotlin.Long)"></a>
+<code><span class="keyword">fun </span><span class="identifier">nextLong</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Random$nextLong(kotlin.Long)/n">n</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
+<p>Returns a pseudo-random, uniformly distributed {@code long} value between 0 (inclusive) and the specified value
+(exclusive), drawn from this random number generator's sequence. The algorithm used to generate the value
+guarantees that the result is uniform, provided that the sequence of 64-bit values produced by this generator is.
+This implementation uses {@link #nextLong()} internally.</p>
+<h3>Parameters</h3>
+<p><a name="n"></a>
+<code>n</code> - the positive bound on the random number to be returned.</p>
+<p><strong>Return</strong><br/>
+the next pseudo-random {@code long} value between {@code 0} (inclusive) and {@code n} (exclusive).</p>
+</BODY>
+</HTML>

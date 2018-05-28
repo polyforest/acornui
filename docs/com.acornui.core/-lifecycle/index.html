@@ -8,7 +8,7 @@
 <a href="../index.html">com.acornui.core</a>&nbsp;/&nbsp;<a href="./index.html">Lifecycle</a><br/>
 <br/>
 <h1>Lifecycle</h1>
-<code><span class="keyword">interface </span><span class="identifier">Lifecycle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-lifecycle-ro/index.html"><span class="identifier">LifecycleRo</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code>
+<code><span class="keyword">interface </span><span class="identifier">Lifecycle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-lifecycle-ro/index.html"><span class="identifier">LifecycleRo</span></a><span class="symbol">, </span><a href="../-disposable/index.html"><span class="identifier">Disposable</span></a></code>
 <h3>Inherited Properties</h3>
 <table>
 <tbody>
@@ -17,7 +17,7 @@
 <p><a href="../-lifecycle-ro/activated.html">activated</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">activated</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-lifecycle-ro/index.html"><span class="identifier">LifecycleRo</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">activated</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal/index.html"><span class="identifier">Signal</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-lifecycle-ro/index.html"><span class="identifier">LifecycleRo</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched then this object has been activated.</p>
 </td>
 </tr>
@@ -26,7 +26,7 @@
 <p><a href="../-lifecycle-ro/deactivated.html">deactivated</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">deactivated</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-lifecycle-ro/index.html"><span class="identifier">LifecycleRo</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">deactivated</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal/index.html"><span class="identifier">Signal</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-lifecycle-ro/index.html"><span class="identifier">LifecycleRo</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched then this object has been deactivated.</p>
 </td>
 </tr>
@@ -35,7 +35,7 @@
 <p><a href="../-lifecycle-ro/disposed.html">disposed</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">disposed</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-lifecycle-ro/index.html"><span class="identifier">LifecycleRo</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">disposed</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal/index.html"><span class="identifier">Signal</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-lifecycle-ro/index.html"><span class="identifier">LifecycleRo</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched then this object has been disposed.</p>
 </td>
 </tr>
@@ -78,6 +78,21 @@
 <td>
 <code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">deactivate</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
 <p>Invoke when this object is no longer active.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-disposable/dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Prepares this object for garbage collection.
+A disposed object should no longer be used or referenced.</p>
 </td>
 </tr>
 </tbody>

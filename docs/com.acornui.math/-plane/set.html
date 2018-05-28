@@ -1,0 +1,50 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Plane.set - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="index.html">Plane</a>&nbsp;/&nbsp;<a href="./set.html">set</a><br/>
+<br/>
+<h1>set</h1>
+<a name="com.acornui.math.Plane$set(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)"></a>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Plane$set(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/point1">point1</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Plane$set(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/point2">point2</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Plane$set(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/point3">point3</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the plane normal and distance to the origin based on the three given points which are considered to be on the plane.
+The normal is calculated via a cross product between (point1-point2)x(point2-point3)</p>
+<h3>Parameters</h3>
+<p><a name="point1"></a>
+<code>point1</code> - </p>
+<p><a name="point2"></a>
+<code>point2</code> - </p>
+<p><a name="point3"></a>
+<code>point3</code> - </p>
+<a name="com.acornui.math.Plane$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)"></a>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Plane$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/nx">nx</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Plane$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/ny">ny</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Plane$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/nz">nz</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Plane$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/d">d</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the plane normal and distance</p>
+<h3>Parameters</h3>
+<p><a name="nx"></a>
+<code>nx</code> - normal x-component</p>
+<p><a name="ny"></a>
+<code>ny</code> - normal y-component</p>
+<p><a name="nz"></a>
+<code>nz</code> - normal z-component</p>
+<p><a name="d"></a>
+<code>d</code> - distance to origin</p>
+<a name="com.acornui.math.Plane$set(com.acornui.math.Vector3Ro, com.acornui.math.Vector3)"></a>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Plane$set(com.acornui.math.Vector3Ro, com.acornui.math.Vector3)/point">point</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Plane$set(com.acornui.math.Vector3Ro, com.acornui.math.Vector3)/normal">normal</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the plane to the given point and normal.</p>
+<h3>Parameters</h3>
+<p><a name="point"></a>
+<code>point</code> - the point on the plane</p>
+<p><a name="normal"></a>
+<code>normal</code> - the normal of the plane</p>
+<a name="com.acornui.math.Plane$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)"></a>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Plane$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/pointX">pointX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Plane$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/pointY">pointY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Plane$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/pointZ">pointZ</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Plane$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/norX">norX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Plane$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/norY">norY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Plane$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/norZ">norZ</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><a name="com.acornui.math.Plane$set(com.acornui.math.PlaneRo)"></a>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Plane$set(com.acornui.math.PlaneRo)/plane">plane</span><span class="symbol">:</span>&nbsp;<a href="../-plane-ro/index.html"><span class="identifier">PlaneRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets this plane from the given plane</p>
+<h3>Parameters</h3>
+<p><a name="plane"></a>
+<code>plane</code> - the plane</p>
+</BODY>
+</HTML>

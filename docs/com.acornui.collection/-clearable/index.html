@@ -1,0 +1,447 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Clearable - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.collection</a>&nbsp;/&nbsp;<a href="./index.html">Clearable</a><br/>
+<br/>
+<h1>Clearable</h1>
+<code><span class="keyword">interface </span><span class="identifier">Clearable</span></code>
+<p>An interface for objects that can be reset to their original state.</p>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Clears this instance back to its original state.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-active-list/index.html">ActiveList</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ActiveList</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../-mutable-observable-list/index.html"><span class="identifier">MutableObservableList</span></a><span class="symbol">&lt;</span><a href="../-active-list/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
+<p>A list that allows for modification during iteration when using special iteration methods.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-array-iterator/index.html">ArrayIterator</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ArrayIterator</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list-iterator/index.html"><span class="identifier">ListIterator</span></a><span class="symbol">&lt;</span><a href="../-array-iterator/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="../-array-iterator/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code>
+<p>An iterator object for a simple Array.
+Use this wrapper when using an Array where an Iterable is needed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.graphics/-atlas-component/index.html">AtlasComponent</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">AtlasComponent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-container-impl/index.html"><span class="identifier">ContainerImpl</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Clearable</span></a></code>
+<p>A UiComponent that draws a region from a texture atlas.
+This component will create a NinePatchComponent or a TextureComponent, and apply all virtual padding as defined by
+the loaded AtlasRegionData.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-binary-heap/index.html">BinaryHeap</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">BinaryHeap</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-binary-heap-node/index.html"><span class="identifier">BinaryHeapNode</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.text/-bitmap-font-registry/index.html">BitmapFontRegistry</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">BitmapFontRegistry</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.math/-bounds/index.html">Bounds</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Bounds</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.math/-bounds-ro/index.html"><span class="identifier">BoundsRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.graphics/-color/index.html">Color</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Color</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.graphics/-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Clearable</span></a></code>
+<p>A color class, holding the r, g, b and alpha component as floats in the range <a href="#">0,1</a>. All methods perform clamping on the
+internal values after execution.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-concurrent-list-iterator/index.html">ConcurrentListIterator</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ConcurrentListIterator</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list-iterator/index.html"><span class="identifier">ListIterator</span></a><span class="symbol">&lt;</span><a href="../-concurrent-list-iterator/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="../-concurrent-list-iterator/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
+<p>A ConcurrentListIterator watches concurrent add and remove changes on the list and moves the cursor logically
+so that items are neither skipped nor repeated.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.math/-corners/index.html">Corners</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Corners</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-corners-ro/index.html"><span class="identifier">CornersRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Clearable</span></a></code>
+<p>A representation of corner float values, for example in corner radius.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-dual-hash-map/index.html">DualHashMap</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DualHashMap</span><span class="symbol">&lt;</span><span class="identifier">J</span><span class="symbol">, </span><span class="identifier">K</span><span class="symbol">, </span><span class="identifier">V</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a></code>
+<p>A dual-key map.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.drawing/-dynamic-mesh-component/index.html">DynamicMeshComponent</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">DynamicMeshComponent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component-impl/index.html"><span class="identifier">UiComponentImpl</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Clearable</span></a></code>
+<p>A UiComponent for drawing <a href="../../com.acornui.component.drawing/-mesh-data/index.html">MeshData</a>.
+This component should be for dynamic meshes with few vertices. Use <a href="../../com.acornui.component.drawing/-static-mesh/index.html">StaticMesh</a> when displaying static
+3d meshes with many vertices.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-entry/index.html">Entry</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Entry</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.drawing/-fill-style/index.html">FillStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">FillStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.graphics/-hsl/index.html">Hsl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Hsl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.graphics/-hsl-ro/index.html"><span class="identifier">HslRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Clearable</span></a></code>
+<p>Hue saturation luminance</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.graphics/-hsv/index.html">Hsv</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Hsv</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.graphics/-hsv-ro/index.html"><span class="identifier">HsvRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Clearable</span></a></code>
+<p>Hue saturation value</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.math/-int-rectangle/index.html">IntRectangle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">IntRectangle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-int-rectangle-ro/index.html"><span class="identifier">IntRectangleRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Clearable</span></a></code>
+<p>An x,y,width,height set of integers.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event/index.html">InteractionEvent</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">InteractionEvent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.input/-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Clearable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout.algorithm/-line-info/index.html">LineInfo</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">LineInfo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.component.layout.algorithm/-line-info-ro/index.html"><span class="identifier">LineInfoRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.drawing/-line-style/index.html">LineStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">LineStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-linked-list/index.html">LinkedList</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">LinkedList</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="../-linked-list/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">Clearable</span></a></code>
+<p>A minimal, but optimized linked list.
+Linked lists theoretically have faster insert and delete than array lists, but in practice, this is not always true
+due to lower level optimizations around arrays.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-list-iterator-impl/index.html">ListIteratorImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ListIteratorImpl</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list-iterator/index.html"><span class="identifier">ListIterator</span></a><span class="symbol">&lt;</span><a href="../-list-iterator-impl/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="../-list-iterator-impl/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code>
+<p>An iterator object for a simple List.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.drawing/-mesh-data/index.html">MeshData</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">MeshData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-parent/index.html"><span class="identifier">Parent</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component.drawing/-mesh-data/index.html"><span class="identifier">MeshData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">Clearable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.observe/-mod-tag-watch/index.html">ModTagWatch</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ModTagWatch</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.request/-multipart-form-data/index.html">MultipartFormData</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">MultipartFormData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.core.request/-multipart-form-data-ro/index.html"><span class="identifier">MultipartFormDataRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-mutable-list-base/index.html">MutableListBase</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">MutableListBase</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-list-base/index.html"><span class="identifier">ListBase</span></a><span class="symbol">&lt;</span><a href="../-mutable-list-base/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../-mutable-list-base/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.nav/-navigation-manager/index.html">NavigationManager</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">NavigationManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-options-list/index.html">OptionsList</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">OptionsList</span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-container-impl/index.html"><span class="identifier">ContainerImpl</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.core.focus/-focus-container/index.html"><span class="identifier">FocusContainer</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.math/-pad/index.html">Pad</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Pad</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-pad-ro/index.html"><span class="identifier">PadRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Clearable</span></a></code>
+<p>A representation of margins or padding.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.persistance/-persistence/index.html">Persistence</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Persistence</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.math/-plane/index.html">Plane</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Plane</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.math/-plane-ro/index.html"><span class="identifier">PlaneRo</span></a></code>
+<p>A plane defined via a unit length normal and the distance from the origin, as you learned in your math class.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.popup/-pop-up-manager/index.html">PopUpManager</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">PopUpManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-propagation/index.html">Propagation</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Propagation</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.input/-propagation-ro/index.html"><span class="identifier">PropagationRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Clearable</span></a></code>
+<p>Given a ladder of propagation, <a href="../../com.acornui.core.input/-propagation/stop-propagation.html">stopPropagation</a> stops the sequence from reaching the next rung, and
+<a href="../../com.acornui.core.input/-propagation/stop-immediate-propagation.html">stopImmediatePropagation</a> stops the sequence from reaching the next rung and stops the sequence from continuing
+on the current rung.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-quad-tree/index.html">QuadTree</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">QuadTree</span><span class="symbol">&lt;</span><span class="identifier">K</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-comparable/index.html"><span class="identifier">Comparable</span></a><span class="symbol">&lt;</span><a href="../-quad-tree/index.html#K"><span class="identifier">K</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">V</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.math/-range2/index.html">Range2</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Range2</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-comparable/index.html"><span class="identifier">Comparable</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.math/-range2/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.math/-range2-ro/index.html"><span class="identifier">Range2Ro</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.math/-range2/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>A 2D range describing optional min and max boundaries.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.math/-ray/index.html">Ray</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Ray</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.math/-ray-ro/index.html"><span class="identifier">RayRo</span></a></code>
+<p>Encapsulates a ray having a starting position and a unit length direction.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.math/-ray2/index.html">Ray2</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Ray2</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.math/-ray2-ro/index.html"><span class="identifier">Ray2Ro</span></a></code>
+<p>A 2d ray.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.math/-rectangle/index.html">Rectangle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Rectangle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.math/-rectangle-ro/index.html"><span class="identifier">RectangleRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.behavior/-selection/index.html">Selection</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Selection</span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.behavior/-selection-ro/index.html"><span class="identifier">SelectionRo</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.behavior/-selection/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">Clearable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.selection/-selection-manager/index.html">SelectionManager</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">SelectionManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Clearable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.signal/-signal-handler-set/index.html">SignalHandlerSet</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">SignalHandlerSet</span><span class="symbol">&lt;</span><span class="keyword">in</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
+<p>A Signal binding is a delegate to a <a href="../../com.acornui.signal/-signal/index.html">Signal</a> object, and allows the handlers to be removed as a set.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-size-constraints/index.html">SizeConstraints</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">SizeConstraints</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.component.layout/-size-constraints-ro/index.html"><span class="identifier">SizeConstraintsRo</span></a></code>
+<p>An object representing the minimum and maximum dimensions of an object.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.gl.core/-static-shader-batch-impl/index.html">StaticShaderBatchImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">StaticShaderBatchImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.gl.core/-shader-batch/index.html"><span class="identifier">ShaderBatch</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
+<p>A static shader batch will remember the draw calls, allowing the batch to be rendered without needing to buffer data
+at a later time.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/-style/index.html">Style</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Style</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.style/-style-ro/index.html"><span class="identifier">StyleRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Clearable</span></a></code>
+<p>Readable-writable styles.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.text/-text-input/index.html">TextInput</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">TextInput</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.focus/-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">, </span><a href="../../com.acornui.core.selection/-selectable-component.html"><span class="identifier">SelectableComponent</span></a><span class="symbol">, </span><a href="../../com.acornui.component.style/-styleable/index.html"><span class="identifier">Styleable</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Clearable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.text/-tf-char/index.html">TfChar</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TfChar</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.text/-text-element/index.html"><span class="identifier">TextElement</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Clearable</span></a></code>
+<p>Represents a single character, typically within a <a href="../../com.acornui.component.text/-text-span-element/index.html">TextSpanElement</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-touch/index.html">Touch</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Touch</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.input.interaction/-touch-ro/index.html"><span class="identifier">TouchRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Clearable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.browser/-url-params-impl/index.html">UrlParamsImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">UrlParamsImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.browser/-url-params/index.html"><span class="identifier">UrlParams</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.math/-vector2/index.html">Vector2</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Vector2</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.math/-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a></code>
+<p>Encapsulates a 2D vector. Allows chaining methods by returning a reference to itself</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.math/-vector3/index.html">Vector3</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Vector3</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.math/-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a></code>
+<p>Encapsulates a 3D vector. Allows chaining operations by returning a reference to itself in all modification methods.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.gl.core/-vertex/index.html">Vertex</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Vertex</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.gl.core/-vertex-ro/index.html"><span class="identifier">VertexRo</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

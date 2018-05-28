@@ -8,7 +8,7 @@
 <a href="../index.html">com.acornui.component.scroll</a>&nbsp;/&nbsp;<a href="./index.html">TossScroller</a><br/>
 <br/>
 <h1>TossScroller</h1>
-<code><span class="keyword">class </span><span class="identifier">TossScroller</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<code><span class="keyword">class </span><span class="identifier">TossScroller</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
 <p>A toss scroller lets you grab a target component, and update <a href="../-scroll-model-ro/index.html">ScrollModelRo</a> objects by dragging it.</p>
 <h3>Constructors</h3>
 <table>
@@ -66,7 +66,7 @@ still finish as if the drag were immediately released. Use <a href="stop.html">s
 <p><a href="toss.html">toss</a></p>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">toss</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-drag-interaction/index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">val </span><span class="identifier">toss</span><span class="symbol">: </span><a href="../../com.acornui.signal/-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-drag-interaction-ro/index.html"><span class="identifier">DragInteractionRo</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched every frame the toss is being updated.</p>
 </td>
 </tr>
@@ -75,7 +75,7 @@ still finish as if the drag were immediately released. Use <a href="stop.html">s
 <p><a href="toss-end.html">tossEnd</a></p>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">tossEnd</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-drag-interaction/index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">val </span><span class="identifier">tossEnd</span><span class="symbol">: </span><a href="../../com.acornui.signal/-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-drag-interaction-ro/index.html"><span class="identifier">DragInteractionRo</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched when the toss has ended.</p>
 </td>
 </tr>
@@ -84,7 +84,7 @@ still finish as if the drag were immediately released. Use <a href="stop.html">s
 <p><a href="toss-start.html">tossStart</a></p>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">tossStart</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-drag-interaction/index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">val </span><span class="identifier">tossStart</span><span class="symbol">: </span><a href="../../com.acornui.signal/-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-drag-interaction-ro/index.html"><span class="identifier">DragInteractionRo</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched when the toss has begun.</p>
 </td>
 </tr>
@@ -98,7 +98,10 @@ still finish as if the drag were immediately released. Use <a href="stop.html">s
 <p><a href="dispose.html">dispose</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Prepares this object for garbage collection.
+A disposed object should no longer be used or referenced.</p>
+</td>
 </tr>
 <tr>
 <td>

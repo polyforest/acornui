@@ -8,7 +8,7 @@
 <a href="../index.html">com.acornui.core.input</a>&nbsp;/&nbsp;<a href="./index.html">InteractionEventRo</a><br/>
 <br/>
 <h1>InteractionEventRo</h1>
-<code><span class="keyword">interface </span><span class="identifier">InteractionEventRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Stoppable</span></code>
+<code><span class="keyword">interface </span><span class="identifier">InteractionEventRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.signal/-stoppable/index.html"><span class="identifier">Stoppable</span></a></code>
 <h3>Properties</h3>
 <table>
 <tbody>
@@ -70,6 +70,18 @@
 </tr>
 </tbody>
 </table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.signal/-stoppable/is-stopped.html">isStopped</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">isStopped</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+</tbody>
+</table>
 <h3>Companion Object Properties</h3>
 <table>
 <tbody>
@@ -108,10 +120,17 @@
 </tr>
 <tr>
 <td>
+<p><a href="../../com.acornui.core.input.interaction/-drag-interaction-ro/index.html">DragInteractionRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">DragInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">InteractionEventRo</span></a></code></td>
+</tr>
+<tr>
+<td>
 <p><a href="../-interaction-event/index.html">InteractionEvent</a></p>
 </td>
 <td>
-<code><span class="keyword">interface </span><span class="identifier">InteractionEvent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">InteractionEventRo</span></a><span class="symbol">, </span><span class="identifier">Clearable</span></code></td>
+<code><span class="keyword">interface </span><span class="identifier">InteractionEvent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">InteractionEventRo</span></a><span class="symbol">, </span><a href="../../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code></td>
 </tr>
 <tr>
 <td>

@@ -18,7 +18,7 @@
 <p><a href="-init-.html">&lt;init&gt;</a></p>
 </td>
 <td>
-<code><span class="identifier">TimelineTween</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween.TimelineTween$<init>(com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean)/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween.TimelineTween$<init>(com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean)/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween.TimelineTween$<init>(com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean)/loop">loop</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span></code>
+<code><span class="identifier">TimelineTween</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween.TimelineTween$<init>(com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean)/ease">ease</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-interpolation/index.html"><span class="identifier">Interpolation</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween.TimelineTween$<init>(com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean)/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween.TimelineTween$<init>(com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean)/loop">loop</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span></code>
 <p>A Tween timeline that allows for a sequence of tweens.</p>
 </td>
 </tr>
@@ -78,7 +78,7 @@
 <p><a href="../-tween-base/_completed.html">_completed</a></p>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">_completed</span><span class="symbol">: </span><span class="identifier">Signal1</span><span class="symbol">&lt;</span><a href="../-tween/index.html"><span class="identifier">Tween</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">val </span><span class="identifier">_completed</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal1/index.html"><span class="identifier">Signal1</span></a><span class="symbol">&lt;</span><a href="../-tween/index.html"><span class="identifier">Tween</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
@@ -102,7 +102,7 @@ is enabled.</p>
 <p><a href="../-tween-base/completed.html">completed</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">completed</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-tween/index.html"><span class="identifier">Tween</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">completed</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal/index.html"><span class="identifier">Signal</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-tween/index.html"><span class="identifier">Tween</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched when the play head has scrubbed past a boundary, either 0f or <a href="../-tween/duration.html">duration</a>. If looping is enabled, this
 will not be invoked unless <a href="../-tween/allow-completion.html">allowCompletion</a> is called.</p>
 </td>
@@ -121,7 +121,7 @@ will not be invoked unless <a href="../-tween/allow-completion.html">allowComple
 <p><a href="../-tween-base/ease.html">ease</a></p>
 </td>
 <td>
-<code><span class="keyword">var </span><span class="identifier">ease</span><span class="symbol">: </span><span class="identifier">Interpolation</span></code></td>
+<code><span class="keyword">var </span><span class="identifier">ease</span><span class="symbol">: </span><a href="../../com.acornui.math/-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
 </tr>
 <tr>
 <td>

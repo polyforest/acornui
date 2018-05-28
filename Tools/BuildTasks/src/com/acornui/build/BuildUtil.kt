@@ -21,6 +21,7 @@ import com.acornui.logging.Log
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import java.io.File
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 
 object BuildUtil {
@@ -183,17 +184,39 @@ object BuildUtil {
 		val acornUiWebDocs = File(ACORNUI_WEBDIST_PATH, "docs")
 		acornUiWebDocs.mkdir()
 
+		var sources: Set<File> = setOf()
+		var classpath: Set<String> = System.getProperty("java.class.path").split(PATH_SEPARATOR).toSet()
+
 		ACORNUI_DOCS.clean()
 		selectedModules.walkDependenciesBottomUp {
 			if (it.hasJvm) {
 				it.buildJvm()
 				it.deployJvm()
 			}
+
+			sources += it.sources
+
+			val libraryFiles = ArrayList<String>()
+			for (i in it.moduleDependencies) {
+				libraryFiles.add(i.jvmJar.absolutePath)
+			}
+			classpath += libraryFiles
 		}
-		selectedModules.map(Module::document)
+		val jar = "Tools/BuildTasks/externalLib/runtime/dokka-fatjar-0.9.17.jar"
+		val cmd = arrayOf("java", "-jar", jar, "-src", sources.joinToString(PATH_SEPARATOR), "-output", "docs", "-classpath", classpath.joinToString(PATH_SEPARATOR))
+		cmd.runCommand()
 
 		acornUiWebDocs.clean()
 		ACORNUI_DOCS.copyRecursively(acornUiWebDocs)
+	}
+
+	private fun Array<String>.runCommand(workingDir: File = File(".")) {
+		ProcessBuilder(*this)
+				.directory(workingDir)
+				.redirectOutput(ProcessBuilder.Redirect.INHERIT)
+				.redirectError(ProcessBuilder.Redirect.INHERIT)
+				.start()
+				.waitFor(60, TimeUnit.MINUTES)
 	}
 
 	private fun List<Module>.walkDependenciesBottomUp(callback: (Module) -> Unit) {

@@ -1,0 +1,531 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.collection - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.collection</a><br/>
+<br/>
+<h2>Package com.acornui.collection</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-active-list/index.html">ActiveList</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ActiveList</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="-mutable-observable-list/index.html"><span class="identifier">MutableObservableList</span></a><span class="symbol">&lt;</span><a href="-active-list/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
+<p>A list that allows for modification during iteration when using special iteration methods.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-array-iterator/index.html">ArrayIterator</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ArrayIterator</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list-iterator/index.html"><span class="identifier">ListIterator</span></a><span class="symbol">&lt;</span><a href="-array-iterator/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="-array-iterator/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code>
+<p>An iterator object for a simple Array.
+Use this wrapper when using an Array where an Iterable is needed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-binary-heap/index.html">BinaryHeap</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">BinaryHeap</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-binary-heap-node/index.html"><span class="identifier">BinaryHeapNode</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-clearable/index.html"><span class="identifier">Clearable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-binary-heap-node/index.html">BinaryHeapNode</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">BinaryHeapNode</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-clearable/index.html">Clearable</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Clearable</span></code>
+<p>An interface for objects that can be reset to their original state.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-clearable-object-pool/index.html">ClearableObjectPool</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ClearableObjectPool</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-object-pool/index.html"><span class="identifier">ObjectPool</span></a><span class="symbol">&lt;</span><a href="-clearable-object-pool/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>An ObjectPool implementation that resets the objects as they go back into the pool.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-concat-list/index.html">ConcatList</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ConcatList</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-list-base/index.html"><span class="identifier">ListBase</span></a><span class="symbol">&lt;</span><a href="-concat-list/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-concurrent-list/index.html">ConcurrentList</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ConcurrentList</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="-concurrent-list/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-concurrent-list-impl/index.html">ConcurrentListImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ConcurrentListImpl</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-mutable-list-base/index.html"><span class="identifier">MutableListBase</span></a><span class="symbol">&lt;</span><a href="-concurrent-list-impl/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="-mutable-concurrent-list/index.html"><span class="identifier">MutableConcurrentList</span></a><span class="symbol">&lt;</span><a href="-concurrent-list-impl/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-concurrent-list-iterator/index.html">ConcurrentListIterator</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ConcurrentListIterator</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list-iterator/index.html"><span class="identifier">ListIterator</span></a><span class="symbol">&lt;</span><a href="-concurrent-list-iterator/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="-concurrent-list-iterator/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
+<p>A ConcurrentListIterator watches concurrent add and remove changes on the list and moves the cursor logically
+so that items are neither skipped nor repeated.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-concurrent-list-iterator-impl/index.html">ConcurrentListIteratorImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ConcurrentListIteratorImpl</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-concurrent-list-iterator/index.html"><span class="identifier">ConcurrentListIterator</span></a><span class="symbol">&lt;</span><a href="-concurrent-list-iterator-impl/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-dual-hash-map/index.html">DualHashMap</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DualHashMap</span><span class="symbol">&lt;</span><span class="identifier">J</span><span class="symbol">, </span><span class="identifier">K</span><span class="symbol">, </span><span class="identifier">V</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-clearable/index.html"><span class="identifier">Clearable</span></a></code>
+<p>A dual-key map.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-entry/index.html">Entry</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Entry</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-clearable/index.html"><span class="identifier">Clearable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-limited-pool-impl/index.html">LimitedPoolImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">LimitedPoolImpl</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-pool/index.html"><span class="identifier">Pool</span></a><span class="symbol">&lt;</span><a href="-limited-pool-impl/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>A Pool implementation that doesn't allow more than <a href="-limited-pool-impl/size.html">size</a> instances to be created. Once
+the capacity has been exceeded, active objects will be cleared and recycled.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-linked-list/index.html">LinkedList</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">LinkedList</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="-linked-list/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="-clearable/index.html"><span class="identifier">Clearable</span></a></code>
+<p>A minimal, but optimized linked list.
+Linked lists theoretically have faster insert and delete than array lists, but in practice, this is not always true
+due to lower level optimizations around arrays.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-list-base/index.html">ListBase</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">ListBase</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="-list-base/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code>
+<p>Provides a partial implementation of the List interface.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-list-iterator-impl/index.html">ListIteratorImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ListIteratorImpl</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list-iterator/index.html"><span class="identifier">ListIterator</span></a><span class="symbol">&lt;</span><a href="-list-iterator-impl/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="-list-iterator-impl/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code>
+<p>An iterator object for a simple List.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-list-transform/index.html">ListTransform</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ListTransform</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">, </span><span class="identifier">R</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-list-base/index.html"><span class="identifier">ListBase</span></a><span class="symbol">&lt;</span><a href="-list-transform/index.html#R"><span class="identifier">R</span></a><span class="symbol">&gt;</span></code>
+<p>Creates a wrapper to a target list that maps the elements on retrieval.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-list-view/index.html">ListView</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ListView</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-observable-list/index.html"><span class="identifier">ObservableList</span></a><span class="symbol">&lt;</span><a href="-list-view/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
+<p>ListView is a read-only wrapper to an ObservableList that will allow filtering and sorting
+without modifying the original list.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-mutable-concurrent-list/index.html">MutableConcurrentList</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">MutableConcurrentList</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-concurrent-list/index.html"><span class="identifier">ConcurrentList</span></a><span class="symbol">&lt;</span><a href="-mutable-concurrent-list/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="-mutable-concurrent-list/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-mutable-concurrent-list-iterator.html">MutableConcurrentListIterator</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">MutableConcurrentListIterator</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-concurrent-list-iterator/index.html"><span class="identifier">ConcurrentListIterator</span></a><span class="symbol">&lt;</span><a href="-mutable-concurrent-list-iterator.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list-iterator/index.html"><span class="identifier">MutableListIterator</span></a><span class="symbol">&lt;</span><a href="-mutable-concurrent-list-iterator.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-iterable/index.html"><span class="identifier">MutableIterable</span></a><span class="symbol">&lt;</span><a href="-mutable-concurrent-list-iterator.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-mutable-concurrent-list-iterator-impl/index.html">MutableConcurrentListIteratorImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">MutableConcurrentListIteratorImpl</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-concurrent-list-iterator-impl/index.html"><span class="identifier">ConcurrentListIteratorImpl</span></a><span class="symbol">&lt;</span><a href="-mutable-concurrent-list-iterator-impl/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="-mutable-concurrent-list-iterator.html"><span class="identifier">MutableConcurrentListIterator</span></a><span class="symbol">&lt;</span><a href="-mutable-concurrent-list-iterator-impl/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code>
+<p>A ConcurrentListIterator watches concurrent changes on the list and moves the cursor logically
+so that items are neither skipped nor repeated.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-mutable-list-base/index.html">MutableListBase</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">MutableListBase</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-list-base/index.html"><span class="identifier">ListBase</span></a><span class="symbol">&lt;</span><a href="-mutable-list-base/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="-mutable-list-base/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-mutable-list-iterator-impl/index.html">MutableListIteratorImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">MutableListIteratorImpl</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-list-iterator-impl/index.html"><span class="identifier">ListIteratorImpl</span></a><span class="symbol">&lt;</span><a href="-mutable-list-iterator-impl/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list-iterator/index.html"><span class="identifier">MutableListIterator</span></a><span class="symbol">&lt;</span><a href="-mutable-list-iterator-impl/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-mutable-observable-list/index.html">MutableObservableList</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">MutableObservableList</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-observable-list/index.html"><span class="identifier">ObservableList</span></a><span class="symbol">&lt;</span><a href="-mutable-observable-list/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="-mutable-concurrent-list/index.html"><span class="identifier">MutableConcurrentList</span></a><span class="symbol">&lt;</span><a href="-mutable-observable-list/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-mutable-sub-list/index.html">MutableSubList</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">MutableSubList</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-mutable-list-base/index.html"><span class="identifier">MutableListBase</span></a><span class="symbol">&lt;</span><a href="-mutable-sub-list/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-object-pool/index.html">ObjectPool</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ObjectPool</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-pool/index.html"><span class="identifier">Pool</span></a><span class="symbol">&lt;</span><a href="-object-pool/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-observable-concat-list/index.html">ObservableConcatList</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ObservableConcatList</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-list-base/index.html"><span class="identifier">ListBase</span></a><span class="symbol">&lt;</span><a href="-observable-concat-list/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="-observable-list/index.html"><span class="identifier">ObservableList</span></a><span class="symbol">&lt;</span><a href="-observable-concat-list/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-observable-list/index.html">ObservableList</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ObservableList</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-concurrent-list/index.html"><span class="identifier">ConcurrentList</span></a><span class="symbol">&lt;</span><a href="-observable-list/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.signal/-bindable/index.html"><span class="identifier">Bindable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-observable-list-mapping/index.html">ObservableListMapping</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ObservableListMapping</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">, </span><span class="identifier">V</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-list-base/index.html"><span class="identifier">ListBase</span></a><span class="symbol">&lt;</span><a href="-observable-list-mapping/index.html#V"><span class="identifier">V</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="-observable-list-mapping/index.html#V"><span class="identifier">V</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
+<p>Binds to a target observable list, keeping a parallel list of values created from a factory.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-pool/index.html">Pool</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Pool</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-quad-tree/index.html">QuadTree</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">QuadTree</span><span class="symbol">&lt;</span><span class="identifier">K</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-comparable/index.html"><span class="identifier">Comparable</span></a><span class="symbol">&lt;</span><a href="-quad-tree/index.html#K"><span class="identifier">K</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">V</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-clearable/index.html"><span class="identifier">Clearable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-sub-list/index.html">SubList</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">SubList</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-list-base/index.html"><span class="identifier">ListBase</span></a><span class="symbol">&lt;</span><a href="-sub-list/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-tuple4/index.html">Tuple4</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Tuple4</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">A</span><span class="symbol">, </span><span class="keyword">out</span>&nbsp;<span class="identifier">B</span><span class="symbol">, </span><span class="keyword">out</span>&nbsp;<span class="identifier">C</span><span class="symbol">, </span><span class="keyword">out</span>&nbsp;<span class="identifier">D</span><span class="symbol">&gt;</span></code>
+<p>Represents four values</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-watched-elements-active-list/index.html">WatchedElementsActiveList</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">WatchedElementsActiveList</span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.observe/-observable/index.html"><span class="identifier">Observable</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-active-list/index.html"><span class="identifier">ActiveList</span></a><span class="symbol">&lt;</span><a href="-watched-elements-active-list/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Type Aliases</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-filter.html">Filter</a></p>
+</td>
+<td>
+<code><span class="keyword">typealias </span><span class="identifier">Filter</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;<span class="symbol">(</span><a href="-filter.html#E"><span class="identifier">E</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-sort-comparator.html">SortComparator</a></p>
+</td>
+<td>
+<code><span class="keyword">typealias </span><span class="identifier">SortComparator</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;<span class="symbol">(</span><span class="identifier">o1</span><span class="symbol">:</span>&nbsp;<a href="-sort-comparator.html#E"><span class="identifier">E</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">o2</span><span class="symbol">:</span>&nbsp;<a href="-sort-comparator.html#E"><span class="identifier">E</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extensions for External Classes</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="kotlin.-array/index.html">kotlin.Array</a></p>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="kotlin.-float-array/index.html">kotlin.FloatArray</a></p>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="kotlin.-pair/index.html">kotlin.Pair</a></p>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="kotlin.-triple/index.html">kotlin.Triple</a></p>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="kotlin.collections.-collection/index.html">kotlin.collections.Collection</a></p>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="kotlin.collections.-iterable/index.html">kotlin.collections.Iterable</a></p>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="kotlin.collections.-iterator/index.html">kotlin.collections.Iterator</a></p>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="kotlin.collections.-list/index.html">kotlin.collections.List</a></p>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="kotlin.collections.-map/index.html">kotlin.collections.Map</a></p>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="kotlin.collections.-mutable-list/index.html">kotlin.collections.MutableList</a></p>
+</td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="array-list-pool.html">arrayListPool</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">arrayListPool</span><span class="symbol">: </span><a href="-object-pool/index.html"><span class="identifier">ObjectPool</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="map-pool.html">mapPool</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">mapPool</span><span class="symbol">: </span><a href="-object-pool/index.html"><span class="identifier">ObjectPool</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">,</span>&nbsp;<span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-array-list.html">ArrayList</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <span class="identifier">ArrayList</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$ArrayList(kotlin.Int, kotlin.Function1((kotlin.Int, com.acornui.collection.ArrayList.E)))/size">size</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$ArrayList(kotlin.Int, kotlin.Function1((kotlin.Int, com.acornui.collection.ArrayList.E)))/factory">factory</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="identifier">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="-array-list.html#E"><span class="identifier">E</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-array-list/index.html"><span class="identifier">ArrayList</span></a><span class="symbol">&lt;</span><a href="-array-list.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-concurrent-list-iterator-impl.html">ConcurrentListIteratorImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <span class="identifier">ConcurrentListIteratorImpl</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$ConcurrentListIteratorImpl(com.acornui.collection.ObservableList((com.acornui.collection.ConcurrentListIteratorImpl.E)))/list">list</span><span class="symbol">:</span>&nbsp;<a href="-observable-list/index.html"><span class="identifier">ObservableList</span></a><span class="symbol">&lt;</span><a href="-concurrent-list-iterator-impl.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="-concurrent-list-iterator/index.html"><span class="identifier">ConcurrentListIterator</span></a><span class="symbol">&lt;</span><a href="-concurrent-list-iterator-impl.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-mutable-concurrent-list-iterator-impl.html">MutableConcurrentListIteratorImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <span class="identifier">MutableConcurrentListIteratorImpl</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$MutableConcurrentListIteratorImpl(com.acornui.collection.MutableObservableList((com.acornui.collection.MutableConcurrentListIteratorImpl.E)))/list">list</span><span class="symbol">:</span>&nbsp;<a href="-mutable-observable-list/index.html"><span class="identifier">MutableObservableList</span></a><span class="symbol">&lt;</span><a href="-mutable-concurrent-list-iterator-impl.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="-mutable-concurrent-list-iterator.html"><span class="identifier">MutableConcurrentListIterator</span></a><span class="symbol">&lt;</span><a href="-mutable-concurrent-list-iterator-impl.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="active-list-of.html">activeListOf</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <span class="identifier">activeListOf</span><span class="symbol">(</span><span class="keyword">vararg</span> <span class="identifier" id="com.acornui.collection$activeListOf(kotlin.Array((com.acornui.collection.activeListOf.E)))/elements">elements</span><span class="symbol">:</span>&nbsp;<a href="active-list-of.html#E"><span class="identifier">E</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-active-list/index.html"><span class="identifier">ActiveList</span></a><span class="symbol">&lt;</span><a href="active-list-of.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="array-copy.html">arrayCopy</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <span class="identifier">arrayCopy</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$arrayCopy(kotlin.Array((com.acornui.collection.arrayCopy.E)), kotlin.Int, kotlin.Array((com.acornui.collection.arrayCopy.E)), kotlin.Int, kotlin.Int)/src">src</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><span class="identifier">Array</span></a><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<a href="array-copy.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$arrayCopy(kotlin.Array((com.acornui.collection.arrayCopy.E)), kotlin.Int, kotlin.Array((com.acornui.collection.arrayCopy.E)), kotlin.Int, kotlin.Int)/srcPos">srcPos</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$arrayCopy(kotlin.Array((com.acornui.collection.arrayCopy.E)), kotlin.Int, kotlin.Array((com.acornui.collection.arrayCopy.E)), kotlin.Int, kotlin.Int)/dest">dest</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><span class="identifier">Array</span></a><span class="symbol">&lt;</span><a href="array-copy.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$arrayCopy(kotlin.Array((com.acornui.collection.arrayCopy.E)), kotlin.Int, kotlin.Array((com.acornui.collection.arrayCopy.E)), kotlin.Int, kotlin.Int)/destPos">destPos</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">, </span><span class="identifier" id="com.acornui.collection$arrayCopy(kotlin.Array((com.acornui.collection.arrayCopy.E)), kotlin.Int, kotlin.Array((com.acornui.collection.arrayCopy.E)), kotlin.Int, kotlin.Int)/length">length</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;src.size<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">arrayCopy</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$arrayCopy(kotlin.FloatArray, kotlin.Int, kotlin.FloatArray, kotlin.Int, kotlin.Int)/src">src</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float-array/index.html"><span class="identifier">FloatArray</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$arrayCopy(kotlin.FloatArray, kotlin.Int, kotlin.FloatArray, kotlin.Int, kotlin.Int)/srcPos">srcPos</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$arrayCopy(kotlin.FloatArray, kotlin.Int, kotlin.FloatArray, kotlin.Int, kotlin.Int)/dest">dest</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float-array/index.html"><span class="identifier">FloatArray</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$arrayCopy(kotlin.FloatArray, kotlin.Int, kotlin.FloatArray, kotlin.Int, kotlin.Int)/destPos">destPos</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">, </span><span class="identifier" id="com.acornui.collection$arrayCopy(kotlin.FloatArray, kotlin.Int, kotlin.FloatArray, kotlin.Int, kotlin.Int)/length">length</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;src.size<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">arrayCopy</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$arrayCopy(kotlin.IntArray, kotlin.Int, kotlin.IntArray, kotlin.Int, kotlin.Int)/src">src</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int-array/index.html"><span class="identifier">IntArray</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$arrayCopy(kotlin.IntArray, kotlin.Int, kotlin.IntArray, kotlin.Int, kotlin.Int)/srcPos">srcPos</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$arrayCopy(kotlin.IntArray, kotlin.Int, kotlin.IntArray, kotlin.Int, kotlin.Int)/dest">dest</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int-array/index.html"><span class="identifier">IntArray</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$arrayCopy(kotlin.IntArray, kotlin.Int, kotlin.IntArray, kotlin.Int, kotlin.Int)/destPos">destPos</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">, </span><span class="identifier" id="com.acornui.collection$arrayCopy(kotlin.IntArray, kotlin.Int, kotlin.IntArray, kotlin.Int, kotlin.Int)/length">length</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;src.size<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <span class="identifier">arrayCopy</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$arrayCopy(kotlin.collections.List((com.acornui.collection.arrayCopy.E)), kotlin.Int, kotlin.collections.MutableList((com.acornui.collection.arrayCopy.E)), kotlin.Int, kotlin.Int)/src">src</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="array-copy.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$arrayCopy(kotlin.collections.List((com.acornui.collection.arrayCopy.E)), kotlin.Int, kotlin.collections.MutableList((com.acornui.collection.arrayCopy.E)), kotlin.Int, kotlin.Int)/srcPos">srcPos</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$arrayCopy(kotlin.collections.List((com.acornui.collection.arrayCopy.E)), kotlin.Int, kotlin.collections.MutableList((com.acornui.collection.arrayCopy.E)), kotlin.Int, kotlin.Int)/dest">dest</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="array-copy.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$arrayCopy(kotlin.collections.List((com.acornui.collection.arrayCopy.E)), kotlin.Int, kotlin.collections.MutableList((com.acornui.collection.arrayCopy.E)), kotlin.Int, kotlin.Int)/destPos">destPos</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">, </span><span class="identifier" id="com.acornui.collection$arrayCopy(kotlin.collections.List((com.acornui.collection.arrayCopy.E)), kotlin.Int, kotlin.collections.MutableList((com.acornui.collection.arrayCopy.E)), kotlin.Int, kotlin.Int)/length">length</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;src.size<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="array-list2.html">arrayList2</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <span class="identifier">arrayList2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$arrayList2(kotlin.Array((com.acornui.collection.arrayList2.E)))/array">array</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><span class="identifier">Array</span></a><span class="symbol">&lt;</span><a href="array-list2.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-array-list/index.html"><span class="identifier">ArrayList</span></a><span class="symbol">&lt;</span><a href="array-list2.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="array-list-obtain.html">arrayListObtain</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <span class="identifier">arrayListObtain</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="array-list-obtain.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code>
+<p>Obtains a mutable list from the <a href="array-list-pool.html">arrayListPool</a>. Be sure to call <code>arrayListPool.free(v)</code> when it's no longer used.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="assert-unique.html">assertUnique</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <a href="-observable-list/index.html"><span class="identifier">ObservableList</span></a><span class="symbol">&lt;</span><a href="assert-unique.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">assertUnique</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="bind-unique-assertion.html">bindUniqueAssertion</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <a href="-observable-list/index.html"><span class="identifier">ObservableList</span></a><span class="symbol">&lt;</span><a href="bind-unique-assertion.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">bindUniqueAssertion</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a><span class="symbol">&gt;</span> <a href="-pool/index.html"><span class="identifier">Pool</span></a><span class="symbol">&lt;</span><a href="clear.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><s><span class="identifier">clear</span></s><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$clear(com.acornui.collection.Pool((com.acornui.collection.clear.T)), kotlin.Boolean)/dispose">dispose</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="concat.html">concat</a></p>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="-observable-list/index.html"><span class="identifier">ObservableList</span></a><span class="symbol">&lt;</span><a href="concat.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">concat</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$concat(com.acornui.collection.ObservableList((com.acornui.collection.concat.T)), com.acornui.collection.ObservableList((com.acornui.collection.concat.T)))/other">other</span><span class="symbol">:</span>&nbsp;<a href="-observable-list/index.html"><span class="identifier">ObservableList</span></a><span class="symbol">&lt;</span><a href="concat.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="-observable-list/index.html"><span class="identifier">ObservableList</span></a><span class="symbol">&lt;</span><a href="concat.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="dispose-and-clear.html">disposeAndClear</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a><span class="symbol">&gt;</span> <a href="-pool/index.html"><span class="identifier">Pool</span></a><span class="symbol">&lt;</span><a href="dispose-and-clear.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">disposeAndClear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Disposes each object in this pool, then clears them from this list.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="limited-pool.html">limitedPool</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">&gt;</span> <span class="identifier">limitedPool</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$limitedPool(kotlin.Int, kotlin.Function0((com.acornui.collection.limitedPool.T)))/size">size</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$limitedPool(kotlin.Int, kotlin.Function0((com.acornui.collection.limitedPool.T)))/create">create</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="limited-pool.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-limited-pool-impl/index.html"><span class="identifier">LimitedPoolImpl</span></a><span class="symbol">&lt;</span><a href="limited-pool.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="sort.html">sort</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-comparable/index.html"><span class="identifier">Comparable</span></a><span class="symbol">&lt;</span><a href="sort.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span> <a href="-list-view/index.html"><span class="identifier">ListView</span></a><span class="symbol">&lt;</span><a href="sort.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">sort</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="tuple.html">tuple</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">A</span><span class="symbol">, </span><span class="identifier">B</span><span class="symbol">, </span><span class="identifier">C</span><span class="symbol">&gt;</span> <span class="identifier">tuple</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$tuple(com.acornui.collection.tuple.A, com.acornui.collection.tuple.B, com.acornui.collection.tuple.C)/first">first</span><span class="symbol">:</span>&nbsp;<a href="tuple.html#A"><span class="identifier">A</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$tuple(com.acornui.collection.tuple.A, com.acornui.collection.tuple.B, com.acornui.collection.tuple.C)/second">second</span><span class="symbol">:</span>&nbsp;<a href="tuple.html#B"><span class="identifier">B</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$tuple(com.acornui.collection.tuple.A, com.acornui.collection.tuple.B, com.acornui.collection.tuple.C)/third">third</span><span class="symbol">:</span>&nbsp;<a href="tuple.html#C"><span class="identifier">C</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-triple/index.html"><span class="identifier">Triple</span></a><span class="symbol">&lt;</span><a href="tuple.html#A"><span class="identifier">A</span></a><span class="symbol">,</span>&nbsp;<a href="tuple.html#B"><span class="identifier">B</span></a><span class="symbol">,</span>&nbsp;<a href="tuple.html#C"><span class="identifier">C</span></a><span class="symbol">&gt;</span></code><br/>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">A</span><span class="symbol">, </span><span class="identifier">B</span><span class="symbol">, </span><span class="identifier">C</span><span class="symbol">, </span><span class="identifier">D</span><span class="symbol">&gt;</span> <span class="identifier">tuple</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$tuple(com.acornui.collection.tuple.A, com.acornui.collection.tuple.B, com.acornui.collection.tuple.C, com.acornui.collection.tuple.D)/first">first</span><span class="symbol">:</span>&nbsp;<a href="tuple.html#A"><span class="identifier">A</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$tuple(com.acornui.collection.tuple.A, com.acornui.collection.tuple.B, com.acornui.collection.tuple.C, com.acornui.collection.tuple.D)/second">second</span><span class="symbol">:</span>&nbsp;<a href="tuple.html#B"><span class="identifier">B</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$tuple(com.acornui.collection.tuple.A, com.acornui.collection.tuple.B, com.acornui.collection.tuple.C, com.acornui.collection.tuple.D)/third">third</span><span class="symbol">:</span>&nbsp;<a href="tuple.html#C"><span class="identifier">C</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$tuple(com.acornui.collection.tuple.A, com.acornui.collection.tuple.B, com.acornui.collection.tuple.C, com.acornui.collection.tuple.D)/fourth">fourth</span><span class="symbol">:</span>&nbsp;<a href="tuple.html#D"><span class="identifier">D</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-tuple4/index.html"><span class="identifier">Tuple4</span></a><span class="symbol">&lt;</span><a href="tuple.html#A"><span class="identifier">A</span></a><span class="symbol">,</span>&nbsp;<a href="tuple.html#B"><span class="identifier">B</span></a><span class="symbol">,</span>&nbsp;<a href="tuple.html#C"><span class="identifier">C</span></a><span class="symbol">,</span>&nbsp;<a href="tuple.html#D"><span class="identifier">D</span></a><span class="symbol">&gt;</span></code><br/>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">A</span><span class="symbol">, </span><span class="identifier">B</span><span class="symbol">&gt;</span> <a href="tuple.html#A"><span class="identifier">A</span></a><span class="symbol">.</span><span class="identifier">tuple</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$tuple(com.acornui.collection.tuple.A, com.acornui.collection.tuple.B)/second">second</span><span class="symbol">:</span>&nbsp;<a href="tuple.html#B"><span class="identifier">B</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-pair/index.html"><span class="identifier">Pair</span></a><span class="symbol">&lt;</span><a href="tuple.html#A"><span class="identifier">A</span></a><span class="symbol">,</span>&nbsp;<a href="tuple.html#B"><span class="identifier">B</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

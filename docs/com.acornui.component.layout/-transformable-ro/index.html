@@ -17,7 +17,7 @@
 <p><a href="concatenated-transform.html">concatenatedTransform</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">concatenatedTransform</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">concatenatedTransform</span><span class="symbol">: </span><a href="../../com.acornui.math/-matrix4-ro/index.html"><span class="identifier">Matrix4Ro</span></a></code>
 <p>The global transform of this component, of all ancestor transforms multiplied together.
 Do not modify this matrix directly, it will be overwritten on a TRANSFORM validation.</p>
 </td>
@@ -27,7 +27,7 @@ Do not modify this matrix directly, it will be overwritten on a TRANSFORM valida
 <p><a href="concatenated-transform-inv.html">concatenatedTransformInv</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">concatenatedTransformInv</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">concatenatedTransformInv</span><span class="symbol">: </span><a href="../../com.acornui.math/-matrix4-ro/index.html"><span class="identifier">Matrix4Ro</span></a></code>
 <p>Returns the inverse concatenated transformation matrix.
 Note that this is a heavy operation and should be used judiciously. It is not part of the normal validation
 cycle.</p>
@@ -38,7 +38,7 @@ cycle.</p>
 <p><a href="custom-transform.html">customTransform</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">customTransform</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span><span class="symbol">?</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">customTransform</span><span class="symbol">: </span><a href="../../com.acornui.math/-matrix4-ro/index.html"><span class="identifier">Matrix4Ro</span></a><span class="symbol">?</span></code>
 <p>If this is not null, this custom transformation matrix will be used. Note that if this is set, all properties
 that would otherwise generate the transformation matrix are no longer applicable.
 <a href="scale-x.html">scaleX</a>, <a href="scale-y.html">scaleY</a>, <a href="rotation-x.html">scaleZ</a>, <a href="rotation-y.html">rotationY</a>, <a href="rotation.html">rotation</a>,
@@ -115,7 +115,7 @@ that would otherwise generate the transformation matrix are no longer applicable
 <p><a href="transform.html">transform</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">transform</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">transform</span><span class="symbol">: </span><a href="../../com.acornui.math/-matrix4-ro/index.html"><span class="identifier">Matrix4Ro</span></a></code>
 <p>This component's transformation matrix.
 Responsible for 3d positioning, scaling, rotation, etc.</p>
 </td>
@@ -130,7 +130,7 @@ Responsible for 3d positioning, scaling, rotation, etc.</p>
 <p><a href="../-positionable-ro/position.html">position</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">position</span><span class="symbol">: </span><span class="identifier">Vector3Ro</span></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">position</span><span class="symbol">: </span><a href="../../com.acornui.math/-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -163,7 +163,7 @@ Responsible for 3d positioning, scaling, rotation, etc.</p>
 <p><a href="convert-coord.html">convertCoord</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">convertCoord</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$convertCoord(com.acornui.math.Vector3, com.acornui.component.layout.TransformableRo)/coord">coord</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.TransformableRo$convertCoord(com.acornui.math.Vector3, com.acornui.component.layout.TransformableRo)/targetCoordSpace">targetCoordSpace</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TransformableRo</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector3</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">convertCoord</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$convertCoord(com.acornui.math.Vector3, com.acornui.component.layout.TransformableRo)/coord">coord</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.TransformableRo$convertCoord(com.acornui.math.Vector3, com.acornui.component.layout.TransformableRo)/targetCoordSpace">targetCoordSpace</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TransformableRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.math/-vector3/index.html"><span class="identifier">Vector3</span></a></code>
 <p>Converts a coordinate from this Transformable's coordinate space to the target coordinate space.</p>
 </td>
 </tr>
@@ -172,10 +172,10 @@ Responsible for 3d positioning, scaling, rotation, etc.</p>
 <p><a href="global-to-local.html">globalToLocal</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">globalToLocal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$globalToLocal(com.acornui.math.Vector3)/globalCoord">globalCoord</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector3</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">globalToLocal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$globalToLocal(com.acornui.math.Vector3)/globalCoord">globalCoord</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.math/-vector3/index.html"><span class="identifier">Vector3</span></a></code>
 <p>Converts a coordinate from global coordinate space to local coordinate space.
 This will modify the provided coord parameter.</p>
-<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">globalToLocal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$globalToLocal(com.acornui.math.Ray)/ray">ray</span><span class="symbol">:</span>&nbsp;<span class="identifier">Ray</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Ray</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">globalToLocal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$globalToLocal(com.acornui.math.Ray)/ray">ray</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-ray/index.html"><span class="identifier">Ray</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.math/-ray/index.html"><span class="identifier">Ray</span></a></code>
 <p>Converts a ray from global coordinate space to local coordinate space.
 This will modify the provided ray parameter.</p>
 </td>
@@ -185,10 +185,10 @@ This will modify the provided ray parameter.</p>
 <p><a href="local-to-global.html">localToGlobal</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">localToGlobal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$localToGlobal(com.acornui.math.Vector3)/localCoord">localCoord</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector3</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">localToGlobal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$localToGlobal(com.acornui.math.Vector3)/localCoord">localCoord</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.math/-vector3/index.html"><span class="identifier">Vector3</span></a></code>
 <p>Converts a coordinate from local coordinate space to global coordinate space.
 This will modify the provided coord parameter.</p>
-<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">localToGlobal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$localToGlobal(com.acornui.math.Ray)/ray">ray</span><span class="symbol">:</span>&nbsp;<span class="identifier">Ray</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Ray</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">localToGlobal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$localToGlobal(com.acornui.math.Ray)/ray">ray</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-ray/index.html"><span class="identifier">Ray</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.math/-ray/index.html"><span class="identifier">Ray</span></a></code>
 <p>Converts a ray from local coordinate space to global coordinate space.
 This will modify the provided ray parameter.</p>
 </td>
@@ -198,7 +198,7 @@ This will modify the provided ray parameter.</p>
 <p><a href="ray-to-plane.html">rayToPlane</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">rayToPlane</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$rayToPlane(com.acornui.math.RayRo, com.acornui.math.Vector2)/ray">ray</span><span class="symbol">:</span>&nbsp;<span class="identifier">RayRo</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.TransformableRo$rayToPlane(com.acornui.math.RayRo, com.acornui.math.Vector2)/out">out</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector2</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">rayToPlane</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$rayToPlane(com.acornui.math.RayRo, com.acornui.math.Vector2)/ray">ray</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-ray-ro/index.html"><span class="identifier">RayRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.TransformableRo$rayToPlane(com.acornui.math.RayRo, com.acornui.math.Vector2)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
 <p>Calculates the intersection coordinates of the provided Ray (in local coordinate space) and this layout
 element's plane.</p>
 </td>

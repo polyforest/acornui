@@ -40,7 +40,7 @@ such as drag and drop, toss scrolling, user interaction.</p>
 <p><a href="-border-colors-serializer/index.html">BorderColorsSerializer</a></p>
 </td>
 <td>
-<code><span class="keyword">object </span><span class="identifier">BorderColorsSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">To</span><span class="symbol">&lt;</span><a href="-border-colors-ro/index.html"><span class="identifier">BorderColorsRo</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">From</span><span class="symbol">&lt;</span><a href="-border-colors/index.html"><span class="identifier">BorderColors</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">object </span><span class="identifier">BorderColorsSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.serialization/-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="-border-colors-ro/index.html"><span class="identifier">BorderColorsRo</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.serialization/-from/index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="-border-colors/index.html"><span class="identifier">BorderColors</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
@@ -54,7 +54,7 @@ such as drag and drop, toss scrolling, user interaction.</p>
 <p><a href="-box-style-serializer/index.html">BoxStyleSerializer</a></p>
 </td>
 <td>
-<code><span class="keyword">object </span><span class="identifier">BoxStyleSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">To</span><span class="symbol">&lt;</span><a href="-box-style/index.html"><span class="identifier">BoxStyle</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">From</span><span class="symbol">&lt;</span><a href="-box-style/index.html"><span class="identifier">BoxStyle</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">object </span><span class="identifier">BoxStyleSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.serialization/-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="-box-style/index.html"><span class="identifier">BoxStyle</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.serialization/-from/index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="-box-style/index.html"><span class="identifier">BoxStyle</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
@@ -174,7 +174,7 @@ such as drag and drop, toss scrolling, user interaction.</p>
 <p><a href="-color-stop-serializer/index.html">ColorStopSerializer</a></p>
 </td>
 <td>
-<code><span class="keyword">object </span><span class="identifier">ColorStopSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">To</span><span class="symbol">&lt;</span><a href="-color-stop-ro/index.html"><span class="identifier">ColorStopRo</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">From</span><span class="symbol">&lt;</span><a href="-color-stop/index.html"><span class="identifier">ColorStop</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">object </span><span class="identifier">ColorStopSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.serialization/-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="-color-stop-ro/index.html"><span class="identifier">ColorStopRo</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.serialization/-from/index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="-color-stop/index.html"><span class="identifier">ColorStop</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
@@ -277,6 +277,54 @@ element to a child element container.</p>
 </td>
 <td>
 <code><span class="keyword">interface </span><span class="identifier">ElementParentRo</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl-filter/index.html">GlFilter</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">GlFilter</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-stack-layout-container/index.html"><span class="identifier">StackLayoutContainer</span></a></code>
+<p>Draws the contents to a framebuffer with the specified shader, then draws to screen.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl-rect/index.html">GlRect</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">GlRect</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-container-impl/index.html"><span class="identifier">ContainerImpl</span></a><span class="symbol">, </span><a href="-rect/index.html"><span class="identifier">Rect</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl-scroll-area/index.html">GlScrollArea</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">GlScrollArea</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-element-container-impl/index.html"><span class="identifier">ElementContainerImpl</span></a><span class="symbol">&lt;</span><a href="-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.component.scroll/-scroll-area/index.html"><span class="identifier">ScrollArea</span></a></code>
+<p>A container with scrolling.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl-scroll-rect/index.html">GlScrollRect</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">GlScrollRect</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-element-container-impl/index.html"><span class="identifier">ElementContainerImpl</span></a><span class="symbol">&lt;</span><a href="-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.component.scroll/-scroll-rect/index.html"><span class="identifier">ScrollRect</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl-stage-impl/index.html">GlStageImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">GlStageImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-stage/index.html"><span class="identifier">Stage</span></a><span class="symbol">, </span><a href="-element-container-impl/index.html"><span class="identifier">ElementContainerImpl</span></a><span class="symbol">&lt;</span><a href="-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.core.focus/-focus-container/index.html"><span class="identifier">FocusContainer</span></a><span class="symbol">, </span><a href="../com.acornui.core.focus/-focusable/index.html"><span class="identifier">Focusable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl-texture-component/index.html">GlTextureComponent</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">GlTextureComponent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-ui-component-impl/index.html"><span class="identifier">UiComponentImpl</span></a><span class="symbol">, </span><a href="-texture-component/index.html"><span class="identifier">TextureComponent</span></a></code>
+<p>A UiComponent representing a single Texture.</p>
+</td>
 </tr>
 <tr>
 <td>
@@ -414,35 +462,7 @@ See commonInteractions.kt</p>
 <p><a href="-linear-gradient-serializer/index.html">LinearGradientSerializer</a></p>
 </td>
 <td>
-<code><span class="keyword">object </span><span class="identifier">LinearGradientSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">To</span><span class="symbol">&lt;</span><a href="-linear-gradient-ro/index.html"><span class="identifier">LinearGradientRo</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">From</span><span class="symbol">&lt;</span><a href="-linear-gradient/index.html"><span class="identifier">LinearGradient</span></a><span class="symbol">&gt;</span></code></td>
-</tr>
-<tr>
-<td>
-<p><a href="-native-component/index.html">NativeComponent</a></p>
-</td>
-<td>
-<code><span class="keyword">interface </span><span class="identifier">NativeComponent</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
-</tr>
-<tr>
-<td>
-<p><a href="-native-component-dummy/index.html">NativeComponentDummy</a></p>
-</td>
-<td>
-<code><span class="keyword">object </span><span class="identifier">NativeComponentDummy</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-native-component/index.html"><span class="identifier">NativeComponent</span></a></code></td>
-</tr>
-<tr>
-<td>
-<p><a href="-native-container/index.html">NativeContainer</a></p>
-</td>
-<td>
-<code><span class="keyword">interface </span><span class="identifier">NativeContainer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-native-component/index.html"><span class="identifier">NativeComponent</span></a></code></td>
-</tr>
-<tr>
-<td>
-<p><a href="-native-container-dummy/index.html">NativeContainerDummy</a></p>
-</td>
-<td>
-<code><span class="keyword">object </span><span class="identifier">NativeContainerDummy</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-native-container/index.html"><span class="identifier">NativeContainer</span></a></code></td>
+<code><span class="keyword">object </span><span class="identifier">LinearGradientSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.serialization/-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="-linear-gradient-ro/index.html"><span class="identifier">LinearGradientRo</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.serialization/-from/index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="-linear-gradient/index.html"><span class="identifier">LinearGradient</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
@@ -487,7 +507,7 @@ It contains no data, and is not toggleable.</p>
 <p><a href="-options-list/index.html">OptionsList</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">OptionsList</span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-container-impl/index.html"><span class="identifier">ContainerImpl</span></a><span class="symbol">, </span><span class="identifier">Clearable</span><span class="symbol">, </span><a href="../com.acornui.core.focus/-focus-container/index.html"><span class="identifier">FocusContainer</span></a></code></td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">OptionsList</span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-container-impl/index.html"><span class="identifier">ContainerImpl</span></a><span class="symbol">, </span><a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../com.acornui.core.focus/-focus-container/index.html"><span class="identifier">FocusContainer</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -538,7 +558,7 @@ It contains no data, and is not toggleable.</p>
 <p><a href="-radio-group/index.html">RadioGroup</a></p>
 </td>
 <td>
-<code><span class="keyword">class </span><span class="identifier">RadioGroup</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+<code><span class="keyword">class </span><span class="identifier">RadioGroup</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -587,7 +607,14 @@ It contains no data, and is not toggleable.</p>
 <p><a href="-rule-style-serializer/index.html">RuleStyleSerializer</a></p>
 </td>
 <td>
-<code><span class="keyword">object </span><span class="identifier">RuleStyleSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">To</span><span class="symbol">&lt;</span><a href="-rule-style/index.html"><span class="identifier">RuleStyle</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">From</span><span class="symbol">&lt;</span><a href="-rule-style/index.html"><span class="identifier">RuleStyle</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">object </span><span class="identifier">RuleStyleSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.serialization/-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="-rule-style/index.html"><span class="identifier">RuleStyle</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.serialization/-from/index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="-rule-style/index.html"><span class="identifier">RuleStyle</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-scroll-rect-style/index.html">ScrollRectStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ScrollRectStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -604,6 +631,15 @@ It contains no data, and is not toggleable.</p>
 </td>
 <td>
 <code><span class="keyword">class </span><span class="identifier">SimpleItemRendererStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-sprite/index.html">Sprite</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Sprite</span></code>
+<p>A Sprite represents a Quad region of a Texture. It can be drawn.</p>
+</td>
 </tr>
 <tr>
 <td>
@@ -656,6 +692,13 @@ It contains no data, and is not toggleable.</p>
 </td>
 <td>
 <code><span class="keyword">class </span><span class="identifier">StageStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-stencil-util/index.html">StencilUtil</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">StencilUtil</span></code></td>
 </tr>
 <tr>
 <td>
@@ -727,7 +770,7 @@ It contains no data, and is not toggleable.</p>
 <p><a href="-tree-node/index.html">TreeNode</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">TreeNode</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-parent/index.html"><span class="identifier">Parent</span></a><span class="symbol">&lt;</span><a href="-tree-node/index.html"><span class="identifier">TreeNode</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">Observable</span></code>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">TreeNode</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-parent/index.html"><span class="identifier">Parent</span></a><span class="symbol">&lt;</span><a href="-tree-node/index.html"><span class="identifier">TreeNode</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.observe/-observable/index.html"><span class="identifier">Observable</span></a></code>
 <p>A simple data model representing the most rudimentary tree node.</p>
 </td>
 </tr>
@@ -852,7 +895,7 @@ guaranteed to be valid first.</p>
 <p><a href="-linear-gradient.html">LinearGradient</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">LinearGradient</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$LinearGradient(com.acornui.component.GradientDirection, kotlin.Array((com.acornui.graphics.ColorRo)))/direction">direction</span><span class="symbol">:</span>&nbsp;<a href="-gradient-direction/index.html"><span class="identifier">GradientDirection</span></a><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="com.acornui.component$LinearGradient(com.acornui.component.GradientDirection, kotlin.Array((com.acornui.graphics.ColorRo)))/colors">colors</span><span class="symbol">:</span>&nbsp;<span class="identifier">ColorRo</span><span class="symbol">)</span><span class="symbol">: </span><a href="-linear-gradient/index.html"><span class="identifier">LinearGradient</span></a></code>
+<code><span class="keyword">fun </span><span class="identifier">LinearGradient</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$LinearGradient(com.acornui.component.GradientDirection, kotlin.Array((com.acornui.graphics.ColorRo)))/direction">direction</span><span class="symbol">:</span>&nbsp;<a href="-gradient-direction/index.html"><span class="identifier">GradientDirection</span></a><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="com.acornui.component$LinearGradient(com.acornui.component.GradientDirection, kotlin.Array((com.acornui.graphics.ColorRo)))/colors">colors</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.graphics/-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-linear-gradient/index.html"><span class="identifier">LinearGradient</span></a></code>
 <p>Creates a linear gradient where the color stops are distributed evenly for the given colors.</p>
 <code><span class="keyword">fun </span><span class="identifier">LinearGradient</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$LinearGradient(com.acornui.component.GradientDirection, kotlin.Array((com.acornui.component.ColorStopRo)))/direction">direction</span><span class="symbol">:</span>&nbsp;<a href="-gradient-direction/index.html"><span class="identifier">GradientDirection</span></a><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="com.acornui.component$LinearGradient(com.acornui.component.GradientDirection, kotlin.Array((com.acornui.component.ColorStopRo)))/colorStops">colorStops</span><span class="symbol">:</span>&nbsp;<a href="-color-stop-ro/index.html"><span class="identifier">ColorStopRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-linear-gradient/index.html"><span class="identifier">LinearGradient</span></a></code><br/>
 <code><span class="keyword">fun </span><span class="identifier">LinearGradient</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$LinearGradient(kotlin.Float, kotlin.Array((com.acornui.component.ColorStopRo)))/angle">angle</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="com.acornui.component$LinearGradient(kotlin.Float, kotlin.Array((com.acornui.component.ColorStopRo)))/colorStops">colorStops</span><span class="symbol">:</span>&nbsp;<a href="-color-stop-ro/index.html"><span class="identifier">ColorStopRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-linear-gradient/index.html"><span class="identifier">LinearGradient</span></a></code></td>
@@ -948,7 +991,7 @@ guaranteed to be valid first.</p>
 <p><a href="create-or-reuse.html">createOrReuse</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.input/-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a><span class="symbol">&gt;</span> <a href="-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">createOrReuse</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$createOrReuse(com.acornui.component.UiComponentRo, com.acornui.core.input.InteractionType((com.acornui.component.createOrReuse.T)), kotlin.Boolean)/type">type</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="create-or-reuse.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component$createOrReuse(com.acornui.component.UiComponentRo, com.acornui.core.input.InteractionType((com.acornui.component.createOrReuse.T)), kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="create-or-reuse.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.input/-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a><span class="symbol">&gt;</span> <a href="-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">createOrReuse</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$createOrReuse(com.acornui.component.UiComponentRo, com.acornui.core.input.InteractionType((com.acornui.component.createOrReuse.T)), kotlin.Boolean)/type">type</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="create-or-reuse.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component$createOrReuse(com.acornui.component.UiComponentRo, com.acornui.core.input.InteractionType((com.acornui.component.createOrReuse.T)), kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.signal/-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="create-or-reuse.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
 <p>Creates or reuses a stoppable signal for the specified interaction type.
 This should be used in the same style you see in CommonInteractions.kt</p>
 </td>
@@ -1097,7 +1140,7 @@ This will return true if X === Y</p>
 </td>
 <td>
 <code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">optionsList</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$optionsList(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.OptionsList((com.acornui.component.optionsList.E)), kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-options-list/index.html"><span class="identifier">OptionsList</span></a><span class="symbol">&lt;</span><a href="options-list.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-options-list/index.html"><span class="identifier">OptionsList</span></a><span class="symbol">&lt;</span><a href="options-list.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code><br/>
-<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">optionsList</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$optionsList(com.acornui.core.di.Owned, com.acornui.collection.ObservableList((com.acornui.component.optionsList.E)), kotlin.Function1((com.acornui.component.layout.algorithm.LayoutDataProvider((com.acornui.component.layout.algorithm.VerticalLayoutData)), com.acornui.component.layout.ListItemRenderer((com.acornui.component.optionsList.E)))), kotlin.Function1((com.acornui.component.OptionsList((com.acornui.component.optionsList.E)), kotlin.Unit)))/data">data</span><span class="symbol">:</span>&nbsp;<span class="identifier">ObservableList</span><span class="symbol">&lt;</span><a href="options-list.html#E"><span class="identifier">E</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component$optionsList(com.acornui.core.di.Owned, com.acornui.collection.ObservableList((com.acornui.component.optionsList.E)), kotlin.Function1((com.acornui.component.layout.algorithm.LayoutDataProvider((com.acornui.component.layout.algorithm.VerticalLayoutData)), com.acornui.component.layout.ListItemRenderer((com.acornui.component.optionsList.E)))), kotlin.Function1((com.acornui.component.OptionsList((com.acornui.component.optionsList.E)), kotlin.Unit)))/rendererFactory">rendererFactory</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.layout.algorithm/-layout-data-provider/index.html"><span class="identifier">LayoutDataProvider</span></a><span class="symbol">&lt;</span><a href="../com.acornui.component.layout.algorithm/-vertical-layout-data/index.html"><span class="identifier">VerticalLayoutData</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="../com.acornui.component.layout/-list-item-renderer.html"><span class="identifier">ListItemRenderer</span></a><span class="symbol">&lt;</span><a href="options-list.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{ simpleItemRenderer() }<span class="symbol">, </span><span class="identifier" id="com.acornui.component$optionsList(com.acornui.core.di.Owned, com.acornui.collection.ObservableList((com.acornui.component.optionsList.E)), kotlin.Function1((com.acornui.component.layout.algorithm.LayoutDataProvider((com.acornui.component.layout.algorithm.VerticalLayoutData)), com.acornui.component.layout.ListItemRenderer((com.acornui.component.optionsList.E)))), kotlin.Function1((com.acornui.component.OptionsList((com.acornui.component.optionsList.E)), kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-options-list/index.html"><span class="identifier">OptionsList</span></a><span class="symbol">&lt;</span><a href="options-list.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-options-list/index.html"><span class="identifier">OptionsList</span></a><span class="symbol">&lt;</span><a href="options-list.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code><br/>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">optionsList</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$optionsList(com.acornui.core.di.Owned, com.acornui.collection.ObservableList((com.acornui.component.optionsList.E)), kotlin.Function1((com.acornui.component.layout.algorithm.LayoutDataProvider((com.acornui.component.layout.algorithm.VerticalLayoutData)), com.acornui.component.layout.ListItemRenderer((com.acornui.component.optionsList.E)))), kotlin.Function1((com.acornui.component.OptionsList((com.acornui.component.optionsList.E)), kotlin.Unit)))/data">data</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.collection/-observable-list/index.html"><span class="identifier">ObservableList</span></a><span class="symbol">&lt;</span><a href="options-list.html#E"><span class="identifier">E</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component$optionsList(com.acornui.core.di.Owned, com.acornui.collection.ObservableList((com.acornui.component.optionsList.E)), kotlin.Function1((com.acornui.component.layout.algorithm.LayoutDataProvider((com.acornui.component.layout.algorithm.VerticalLayoutData)), com.acornui.component.layout.ListItemRenderer((com.acornui.component.optionsList.E)))), kotlin.Function1((com.acornui.component.OptionsList((com.acornui.component.optionsList.E)), kotlin.Unit)))/rendererFactory">rendererFactory</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.layout.algorithm/-layout-data-provider/index.html"><span class="identifier">LayoutDataProvider</span></a><span class="symbol">&lt;</span><a href="../com.acornui.component.layout.algorithm/-vertical-layout-data/index.html"><span class="identifier">VerticalLayoutData</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="../com.acornui.component.layout/-list-item-renderer.html"><span class="identifier">ListItemRenderer</span></a><span class="symbol">&lt;</span><a href="options-list.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{ simpleItemRenderer() }<span class="symbol">, </span><span class="identifier" id="com.acornui.component$optionsList(com.acornui.core.di.Owned, com.acornui.collection.ObservableList((com.acornui.component.optionsList.E)), kotlin.Function1((com.acornui.component.layout.algorithm.LayoutDataProvider((com.acornui.component.layout.algorithm.VerticalLayoutData)), com.acornui.component.layout.ListItemRenderer((com.acornui.component.optionsList.E)))), kotlin.Function1((com.acornui.component.OptionsList((com.acornui.component.optionsList.E)), kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-options-list/index.html"><span class="identifier">OptionsList</span></a><span class="symbol">&lt;</span><a href="options-list.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-options-list/index.html"><span class="identifier">OptionsList</span></a><span class="symbol">&lt;</span><a href="options-list.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code><br/>
 <code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">optionsList</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$optionsList(com.acornui.core.di.Owned, kotlin.collections.List((com.acornui.component.optionsList.E)), kotlin.Function1((com.acornui.component.layout.algorithm.LayoutDataProvider((com.acornui.component.layout.algorithm.VerticalLayoutData)), com.acornui.component.layout.ListItemRenderer((com.acornui.component.optionsList.E)))), kotlin.Function1((com.acornui.component.OptionsList((com.acornui.component.optionsList.E)), kotlin.Unit)))/data">data</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="options-list.html#E"><span class="identifier">E</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component$optionsList(com.acornui.core.di.Owned, kotlin.collections.List((com.acornui.component.optionsList.E)), kotlin.Function1((com.acornui.component.layout.algorithm.LayoutDataProvider((com.acornui.component.layout.algorithm.VerticalLayoutData)), com.acornui.component.layout.ListItemRenderer((com.acornui.component.optionsList.E)))), kotlin.Function1((com.acornui.component.OptionsList((com.acornui.component.optionsList.E)), kotlin.Unit)))/rendererFactory">rendererFactory</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.layout.algorithm/-layout-data-provider/index.html"><span class="identifier">LayoutDataProvider</span></a><span class="symbol">&lt;</span><a href="../com.acornui.component.layout.algorithm/-vertical-layout-data/index.html"><span class="identifier">VerticalLayoutData</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="../com.acornui.component.layout/-list-item-renderer.html"><span class="identifier">ListItemRenderer</span></a><span class="symbol">&lt;</span><a href="options-list.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{ simpleItemRenderer() }<span class="symbol">, </span><span class="identifier" id="com.acornui.component$optionsList(com.acornui.core.di.Owned, kotlin.collections.List((com.acornui.component.optionsList.E)), kotlin.Function1((com.acornui.component.layout.algorithm.LayoutDataProvider((com.acornui.component.layout.algorithm.VerticalLayoutData)), com.acornui.component.layout.ListItemRenderer((com.acornui.component.optionsList.E)))), kotlin.Function1((com.acornui.component.OptionsList((com.acornui.component.optionsList.E)), kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-options-list/index.html"><span class="identifier">OptionsList</span></a><span class="symbol">&lt;</span><a href="options-list.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-options-list/index.html"><span class="identifier">OptionsList</span></a><span class="symbol">&lt;</span><a href="options-list.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
@@ -1144,7 +1187,7 @@ This will return true if X === Y</p>
 <p><a href="rect.html">rect</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">rect</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$rect(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.Rect, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-rect/index.html"><span class="identifier">Rect</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-rect/index.html"><span class="identifier">Rect</span></a></code></td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">rect</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$rect(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.GlRect, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-gl-rect/index.html"><span class="identifier">GlRect</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-gl-rect/index.html"><span class="identifier">GlRect</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -1159,6 +1202,19 @@ This will return true if X === Y</p>
 </td>
 <td>
 <code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">rowBackground</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$rowBackground(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.RowBackgroundImpl, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-row-background-impl/index.html"><span class="identifier">RowBackgroundImpl</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-row-background-impl/index.html"><span class="identifier">RowBackgroundImpl</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="scissor-local.html">scissorLocal</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">.</span><span class="identifier">scissorLocal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$scissorLocal(com.acornui.component.UiComponent, kotlin.Function0((kotlin.Unit)))/inner">inner</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Calls scissorLocal with the default rectangle of 0, 0, width, height</p>
+<code><span class="keyword">fun </span><a href="-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">.</span><span class="identifier">scissorLocal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$scissorLocal(com.acornui.component.UiComponent, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function0((kotlin.Unit)))/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component$scissorLocal(com.acornui.component.UiComponent, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function0((kotlin.Unit)))/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component$scissorLocal(com.acornui.component.UiComponent, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function0((kotlin.Unit)))/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component$scissorLocal(com.acornui.component.UiComponent, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function0((kotlin.Unit)))/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component$scissorLocal(com.acornui.component.UiComponent, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function0((kotlin.Unit)))/inner">inner</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Wraps the <a href="scissor-local.html#com.acornui.component$scissorLocal(com.acornui.component.UiComponent, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Function0((kotlin.Unit)))/inner">inner</a> call in a scissor rectangle.
+The coordinates will be converted to global automatically.
+Note that this will not work properly for rotated components.</p>
+</td>
 </tr>
 <tr>
 <td>
@@ -1193,9 +1249,9 @@ This will return true if X === Y</p>
 <p><a href="texture-c.html">textureC</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">textureC</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$textureC(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.TextureComponent, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-texture-component/index.html"><span class="identifier">TextureComponent</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-texture-component/index.html"><span class="identifier">TextureComponent</span></a></code><br/>
-<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">textureC</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$textureC(com.acornui.core.di.Owned, kotlin.String, kotlin.Function1((com.acornui.component.TextureComponent, kotlin.Unit)))/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component$textureC(com.acornui.core.di.Owned, kotlin.String, kotlin.Function1((com.acornui.component.TextureComponent, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-texture-component/index.html"><span class="identifier">TextureComponent</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-texture-component/index.html"><span class="identifier">TextureComponent</span></a></code><br/>
-<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">textureC</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$textureC(com.acornui.core.di.Owned, com.acornui.core.graphics.Texture, kotlin.Function1((com.acornui.component.TextureComponent, kotlin.Unit)))/texture">texture</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.graphics/-texture/index.html"><span class="identifier">Texture</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component$textureC(com.acornui.core.di.Owned, com.acornui.core.graphics.Texture, kotlin.Function1((com.acornui.component.TextureComponent, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-texture-component/index.html"><span class="identifier">TextureComponent</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-texture-component/index.html"><span class="identifier">TextureComponent</span></a></code></td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">textureC</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$textureC(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.GlTextureComponent, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-gl-texture-component/index.html"><span class="identifier">GlTextureComponent</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-gl-texture-component/index.html"><span class="identifier">GlTextureComponent</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">textureC</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$textureC(com.acornui.core.di.Owned, kotlin.String, kotlin.Function1((com.acornui.component.GlTextureComponent, kotlin.Unit)))/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component$textureC(com.acornui.core.di.Owned, kotlin.String, kotlin.Function1((com.acornui.component.GlTextureComponent, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-gl-texture-component/index.html"><span class="identifier">GlTextureComponent</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-gl-texture-component/index.html"><span class="identifier">GlTextureComponent</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">textureC</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$textureC(com.acornui.core.di.Owned, com.acornui.core.graphics.Texture, kotlin.Function1((com.acornui.component.GlTextureComponent, kotlin.Unit)))/texture">texture</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.graphics/-texture/index.html"><span class="identifier">Texture</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component$textureC(com.acornui.core.di.Owned, com.acornui.core.graphics.Texture, kotlin.Function1((com.acornui.component.GlTextureComponent, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-gl-texture-component/index.html"><span class="identifier">GlTextureComponent</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-gl-texture-component/index.html"><span class="identifier">GlTextureComponent</span></a></code></td>
 </tr>
 <tr>
 <td>

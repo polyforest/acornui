@@ -1,0 +1,139 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ColorTransformation - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="./index.html">ColorTransformation</a><br/>
+<br/>
+<h1>ColorTransformation</h1>
+<code><span class="keyword">class </span><span class="identifier">ColorTransformation</span></code>
+<p>Shaders may support a color transformation matrix.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">ColorTransformation</span><span class="symbol">(</span><span class="symbol">)</span></code>
+<p>Shaders may support a color transformation matrix.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="offset.html">offset</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">offset</span><span class="symbol">: </span><a href="../../com.acornui.graphics/-color/index.html"><span class="identifier">Color</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="transform-values.html">transformValues</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">transformValues</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="idt.html">idt</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">idt</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">ColorTransformation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="mul.html">mul</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">mul</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.ColorTransformation$mul(com.acornui.graphics.ColorRo)/value">value</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.graphics/-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">ColorTransformation</span></a></code>
+<p>Multiplies the tint by the given color.</p>
+<code><span class="keyword">fun </span><span class="identifier">mul</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.ColorTransformation$mul(com.acornui.math.ColorTransformation)/value">value</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ColorTransformation</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">ColorTransformation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="offset.html">offset</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">offset</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.ColorTransformation$offset(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/r">r</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.math.ColorTransformation$offset(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/g">g</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.math.ColorTransformation$offset(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/b">b</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.math.ColorTransformation$offset(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/a">a</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">ColorTransformation</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">offset</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.ColorTransformation$offset(com.acornui.graphics.ColorRo)/value">value</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.graphics/-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">ColorTransformation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="set.html">set</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.ColorTransformation$set(com.acornui.math.ColorTransformation)/other">other</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ColorTransformation</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">ColorTransformation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="tint.html">tint</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">tint</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.ColorTransformation$tint(com.acornui.graphics.Color)/value">value</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.graphics/-color/index.html"><span class="identifier">Color</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">ColorTransformation</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">tint</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.ColorTransformation$tint(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/r">r</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;1f<span class="symbol">, </span><span class="identifier" id="com.acornui.math.ColorTransformation$tint(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/g">g</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;1f<span class="symbol">, </span><span class="identifier" id="com.acornui.math.ColorTransformation$tint(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/b">b</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;1f<span class="symbol">, </span><span class="identifier" id="com.acornui.math.ColorTransformation$tint(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/a">a</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;1f<span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">ColorTransformation</span></a></code>
+<p>Sets the tint to the given color.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-i-d-e-n-t-i-t-y.html">IDENTITY</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">IDENTITY</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">ColorTransformation</span></a></code>
+<p>Do NOT modify this color transformation, it represents the untransformed matrix and offset.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../grayscale.html">grayscale</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ColorTransformation</span></a><span class="symbol">.</span><span class="identifier">grayscale</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">ColorTransformation</span></a></code>
+<p>Sets this color transformation to a grayscale transform.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../invert.html">invert</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ColorTransformation</span></a><span class="symbol">.</span><span class="identifier">invert</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">ColorTransformation</span></a></code>
+<p>Sets this color transformation to an invert transform.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../sepia.html">sepia</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ColorTransformation</span></a><span class="symbol">.</span><span class="identifier">sepia</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">ColorTransformation</span></a></code>
+<p>Sets this color transformation to a sepia transform.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -58,7 +58,7 @@ before being recycled.</p>
 <p><a href="padding.html">padding</a></p>
 </td>
 <td>
-<code><span class="keyword">var </span><span class="identifier">padding</span><span class="symbol">: </span><span class="identifier">PadRo</span></code>
+<code><span class="keyword">var </span><span class="identifier">padding</span><span class="symbol">: </span><a href="../../com.acornui.math/-pad-ro/index.html"><span class="identifier">PadRo</span></a></code>
 <p>The Padding object with left, bottom, top, and right padding.</p>
 </td>
 </tr>
@@ -97,7 +97,9 @@ before being recycled.</p>
 <p><a href="../../com.acornui.component.style/-style-base/changed.html">changed</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">changed</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">changed</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal/index.html"><span class="identifier">Signal</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<p>Dispatched when this object has changed.</p>
+</td>
 </tr>
 <tr>
 <td>
@@ -113,7 +115,7 @@ before being recycled.</p>
 <p><a href="../../com.acornui.component.style/-style-base/mod-tag.html">modTag</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">modTag</span><span class="symbol">: </span><span class="identifier">ModTagImpl</span></code>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">modTag</span><span class="symbol">: </span><a href="../../com.acornui.observe/-mod-tag-impl/index.html"><span class="identifier">ModTagImpl</span></a></code>
 <p>When either the explicit or calculated values change, the mod tag is incremented.</p>
 </td>
 </tr>
@@ -127,14 +129,19 @@ before being recycled.</p>
 <p><a href="../../com.acornui.component.style/-style-base/clear.html">clear</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Clears this instance back to its original state.</p>
+</td>
 </tr>
 <tr>
 <td>
 <p><a href="../../com.acornui.component.style/-style-base/dispose.html">dispose</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Prepares this object for garbage collection.
+A disposed object should no longer be used or referenced.</p>
+</td>
 </tr>
 <tr>
 <td>
@@ -171,6 +178,34 @@ This should only be invoked if the explicit values have changed.</p>
 </td>
 <td>
 <code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">extends</span><span class="symbol">: </span><a href="../../com.acornui.component.style/-style-type/index.html"><span class="identifier">StyleType</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.signal/bind.html">bind</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.signal/-bindable/index.html"><span class="identifier">Bindable</span></a><span class="symbol">.</span><span class="identifier">bind</span><span class="symbol">(</span><span class="identifier" id="com.acornui.signal$bind(com.acornui.signal.Bindable, kotlin.Function0((kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
+<p>Adds a callback and invokes it immediately.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.observe/or.html">or</a></p>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../../com.acornui.signal/-bindable/index.html"><span class="identifier">Bindable</span></a><span class="symbol">.</span><span class="identifier">or</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.observe$or(com.acornui.signal.Bindable, com.acornui.core.observe.DataBinding((com.acornui.core.observe.or.T)))/other">other</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.observe/-data-binding/index.html"><span class="identifier">DataBinding</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.observe/or.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.signal/-bindable/index.html"><span class="identifier">Bindable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.signal/or.html">or</a></p>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><a href="../../com.acornui.signal/-bindable/index.html"><span class="identifier">Bindable</span></a><span class="symbol">.</span><span class="identifier">or</span><span class="symbol">(</span><span class="identifier" id="com.acornui.signal$or(com.acornui.signal.Bindable, com.acornui.signal.Bindable)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.signal/-bindable/index.html"><span class="identifier">Bindable</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.signal/-bindable/index.html"><span class="identifier">Bindable</span></a></code></td>
 </tr>
 </tbody>
 </table>

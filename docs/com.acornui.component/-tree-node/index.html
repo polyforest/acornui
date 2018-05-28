@@ -8,7 +8,7 @@
 <a href="../index.html">com.acornui.component</a>&nbsp;/&nbsp;<a href="./index.html">TreeNode</a><br/>
 <br/>
 <h1>TreeNode</h1>
-<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">TreeNode</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-parent/index.html"><span class="identifier">Parent</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">TreeNode</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">Observable</span></code>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">TreeNode</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-parent/index.html"><span class="identifier">Parent</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">TreeNode</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../../com.acornui.observe/-observable/index.html"><span class="identifier">Observable</span></a></code>
 <p>A simple data model representing the most rudimentary tree node.</p>
 <h3>Constructors</h3>
 <table>
@@ -32,7 +32,9 @@
 <p><a href="changed.html">changed</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">changed</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><span class="identifier">Observable</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">changed</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal/index.html"><span class="identifier">Signal</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../../com.acornui.observe/-observable/index.html"><span class="identifier">Observable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<p>Dispatched when this object has changed.</p>
+</td>
 </tr>
 <tr>
 <td>
@@ -113,6 +115,16 @@
 </tr>
 <tr>
 <td>
+<p><a href="../../com.acornui.observe/-observable/add-binding.html">addBinding</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addBinding</span><span class="symbol">(</span><span class="identifier" id="com.acornui.observe.Observable$addBinding(kotlin.Function0((kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Adds a callback.
+Does not invoke the callback immediately.</p>
+</td>
+</tr>
+<tr>
+<td>
 <p><a href="../../com.acornui.core/-parent/add-child.html">addChild</a></p>
 </td>
 <td>
@@ -143,6 +155,15 @@
 <td>
 <code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clearChildren</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
 <p>Removes all the children and optionally disposes them (default).</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.observe/-observable/remove-binding.html">removeBinding</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">removeBinding</span><span class="symbol">(</span><span class="identifier" id="com.acornui.observe.Observable$removeBinding(kotlin.Function0((kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Removes a callback.</p>
 </td>
 </tr>
 <tr>
@@ -180,6 +201,15 @@
 </tr>
 <tr>
 <td>
+<p><a href="../../com.acornui.signal/bind.html">bind</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.signal/-bindable/index.html"><span class="identifier">Bindable</span></a><span class="symbol">.</span><span class="identifier">bind</span><span class="symbol">(</span><span class="identifier" id="com.acornui.signal$bind(com.acornui.signal.Bindable, kotlin.Function0((kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
+<p>Adds a callback and invokes it immediately.</p>
+</td>
+</tr>
+<tr>
+<td>
 <p><a href="../../com.acornui.core/is-after.html">isAfter</a></p>
 </td>
 <td>
@@ -213,6 +243,20 @@ This will return true if X === Y</p>
 </td>
 <td>
 <code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">isDescendantOf</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$isDescendantOf(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/ancestor">ancestor</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.observe/or.html">or</a></p>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../../com.acornui.signal/-bindable/index.html"><span class="identifier">Bindable</span></a><span class="symbol">.</span><span class="identifier">or</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.observe$or(com.acornui.signal.Bindable, com.acornui.core.observe.DataBinding((com.acornui.core.observe.or.T)))/other">other</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.observe/-data-binding/index.html"><span class="identifier">DataBinding</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.observe/or.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.signal/-bindable/index.html"><span class="identifier">Bindable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.signal/or.html">or</a></p>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><a href="../../com.acornui.signal/-bindable/index.html"><span class="identifier">Bindable</span></a><span class="symbol">.</span><span class="identifier">or</span><span class="symbol">(</span><span class="identifier" id="com.acornui.signal$or(com.acornui.signal.Bindable, com.acornui.signal.Bindable)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.signal/-bindable/index.html"><span class="identifier">Bindable</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.signal/-bindable/index.html"><span class="identifier">Bindable</span></a></code></td>
 </tr>
 <tr>
 <td>

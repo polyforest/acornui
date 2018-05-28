@@ -1,0 +1,226 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Interpolation - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="./index.html">Interpolation</a><br/>
+<br/>
+<h1>Interpolation</h1>
+<code><span class="keyword">interface </span><span class="identifier">Interpolation</span></code>
+<p>Takes a linear value in the range of 0-1 and outputs an interpolated value.</p>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="apply.html">apply</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">apply</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Interpolation$apply(kotlin.Float)/alpha">alpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code><code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">apply</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Interpolation$apply(kotlin.Float, kotlin.Float, kotlin.Float)/start">start</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Interpolation$apply(kotlin.Float, kotlin.Float, kotlin.Float)/end">end</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Interpolation$apply(kotlin.Float, kotlin.Float, kotlin.Float)/alpha">alpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Calculates the interpolation and applies that to the range <a href="#">start,end</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-basic-bounce/index.html">BasicBounce</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">BasicBounce</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-bezier/index.html">Bezier</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Bezier</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-bounce-in-place/index.html">BounceInPlace</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">BounceInPlace</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code>
+<p>Parabolic arcs from 0 to <a href="../-bounce-in-place/restitution.html">restitution</a>^i and back, <a href="../-bounce-in-place/bounces.html">bounces</a> number of times.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-circle/index.html">Circle</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">Circle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-circle-in/index.html">CircleIn</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">CircleIn</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-circle-out/index.html">CircleOut</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">CircleOut</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-clamp/index.html">Clamp</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Clamp</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code>
+<p>Clamps the inner interpolation to start at <a href="../-clamp/start-alpha.html">startAlpha</a> and end at <a href="../-clamp/end-alpha.html">endAlpha</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-constant/index.html">Constant</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Constant</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-elastic/index.html">Elastic</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Elastic</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-exp/index.html">Exp</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Exp</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-fade/index.html">Fade</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">Fade</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-linear/index.html">Linear</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">Linear</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-pow/index.html">Pow</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Pow</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-pow-in/index.html">PowIn</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">PowIn</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-pow-out/index.html">PowOut</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">PowOut</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-repeat/index.html">Repeat</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Repeat</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code>
+<p>Repeats the inner interpolation <a href="../-repeat/repetitions.html">repetitions</a> times.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-reverse/index.html">Reverse</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Reverse</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-sine/index.html">Sine</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">Sine</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-sine-in/index.html">SineIn</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">SineIn</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-sine-out/index.html">SineOut</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">SineOut</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-stepped/index.html">Stepped</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">Stepped</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code>
+<p>Jumps from 0f to 1f without interpolation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-swing/index.html">Swing</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Swing</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-swing-in/index.html">SwingIn</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">SwingIn</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-swing-out/index.html">SwingOut</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">SwingOut</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-to-fro/index.html">ToFro</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ToFro</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-yo-yo/index.html">YoYo</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">YoYo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Interpolation</span></a></code>
+<p>Applies an inner interpolation, <a href="../-yo-yo/repetitions.html">repetitions</a> times forward, then reversed.
+This is equivalent to using <a href="../-repeat/index.html">Repeat</a> with inner <a href="../-to-fro/index.html">ToFro</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

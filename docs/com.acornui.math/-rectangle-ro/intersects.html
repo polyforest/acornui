@@ -1,0 +1,47 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>RectangleRo.intersects - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="index.html">RectangleRo</a>&nbsp;/&nbsp;<a href="./intersects.html">intersects</a><br/>
+<br/>
+<h1>intersects</h1>
+<a name="com.acornui.math.RectangleRo$intersects(kotlin.Float, kotlin.Float)"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.RectangleRo$intersects(kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.RectangleRo$intersects(kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<h3>Parameters</h3>
+<p><a name="x"></a>
+<code>x</code> - point x coordinate</p>
+<p><a name="y"></a>
+<code>y</code> - point y coordinate</p>
+<p><strong>Return</strong><br/>
+whether the point is contained in the rectangle</p>
+<a name="com.acornui.math.RectangleRo$intersects(com.acornui.math.Vector2)"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.RectangleRo$intersects(com.acornui.math.Vector2)/point">point</span><span class="symbol">:</span>&nbsp;<a href="../-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<h3>Parameters</h3>
+<p><a name="point"></a>
+<code>point</code> - The coordinates vector</p>
+<p><strong>Return</strong><br/>
+whether the point is contained in the rectangle</p>
+<a name="com.acornui.math.RectangleRo$intersects(com.acornui.math.Ray, com.acornui.math.Vector3)"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.RectangleRo$intersects(com.acornui.math.Ray, com.acornui.math.Vector3)/r">r</span><span class="symbol">:</span>&nbsp;<a href="../-ray/index.html"><span class="identifier">Ray</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.RectangleRo$intersects(com.acornui.math.Ray, com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Does an intersection test with a Ray (in the same coordinate space)</p>
+<h3>Parameters</h3>
+<p><a name="r"></a>
+<code>r</code> - The ray to check against.</p>
+<p><a name="out"></a>
+<code>out</code> - If provided, will be set to the intersection position if there was one.</p>
+<p><strong>Return</strong><br/>
+Returns true if the ray intersects this Rectangle.</p>
+<a name="com.acornui.math.RectangleRo$intersects(com.acornui.math.RectangleRo)"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.RectangleRo$intersects(com.acornui.math.RectangleRo)/r">r</span><span class="symbol">:</span>&nbsp;<a href="index.html"><span class="identifier">RectangleRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<h3>Parameters</h3>
+<p><a name="r"></a>
+<code>r</code> - the other {@link Rectangle}</p>
+<p><strong>Return</strong><br/>
+whether this rectangle overlaps the other rectangle.</p>
+<a name="com.acornui.math.RectangleRo$intersects(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.RectangleRo$intersects(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/xVal">xVal</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.RectangleRo$intersects(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/yVal">yVal</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.RectangleRo$intersects(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/widthVal">widthVal</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.RectangleRo$intersects(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/heightVal">heightVal</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+</BODY>
+</HTML>

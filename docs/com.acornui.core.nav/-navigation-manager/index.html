@@ -8,7 +8,7 @@
 <a href="../index.html">com.acornui.core.nav</a>&nbsp;/&nbsp;<a href="./index.html">NavigationManager</a><br/>
 <br/>
 <h1>NavigationManager</h1>
-<code><span class="keyword">interface </span><span class="identifier">NavigationManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Clearable</span><span class="symbol">, </span><span class="identifier">Disposable</span></code>
+<code><span class="keyword">interface </span><span class="identifier">NavigationManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
 <h3>Types</h3>
 <table>
 <tbody>
@@ -29,7 +29,7 @@
 <p><a href="changed.html">changed</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">changed</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-nav-event/index.html"><span class="identifier">NavEvent</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">changed</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal/index.html"><span class="identifier">Signal</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-nav-event/index.html"><span class="identifier">NavEvent</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -41,7 +41,9 @@
 <p><a href="clear.html">clear</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Clears this instance back to its original state.</p>
+</td>
 </tr>
 <tr>
 <td>
@@ -80,6 +82,21 @@ baz/foo?param1=a&param2=b/bar?param1=a&param2=b</p>
 <td>
 <code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">push</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.nav.NavigationManager$push(com.acornui.core.nav.NavNode)/node">node</span><span class="symbol">:</span>&nbsp;<a href="../-nav-node/index.html"><span class="identifier">NavNode</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
 <code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">push</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.nav.NavigationManager$push(kotlin.Array((com.acornui.core.nav.NavNode)))/nodes">nodes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><span class="identifier">Array</span></a><span class="symbol">&lt;</span><a href="../-nav-node/index.html"><span class="identifier">NavNode</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-disposable/dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Prepares this object for garbage collection.
+A disposed object should no longer be used or referenced.</p>
+</td>
 </tr>
 </tbody>
 </table>

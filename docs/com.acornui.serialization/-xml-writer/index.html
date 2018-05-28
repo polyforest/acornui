@@ -1,0 +1,340 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>XmlWriter - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.serialization</a>&nbsp;/&nbsp;<a href="./index.html">XmlWriter</a><br/>
+<br/>
+<h1>XmlWriter</h1>
+<code><span class="keyword">class </span><span class="identifier">XmlWriter</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-writer/index.html"><span class="identifier">Writer</span></a></code>
+<p>A simple XML writer</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">XmlWriter</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization.XmlWriter$<init>(java.lang.StringBuilder, kotlin.String, kotlin.String, kotlin.String)/builder">builder</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/-string-builder/index.html"><span class="identifier">StringBuilder</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization.XmlWriter$<init>(java.lang.StringBuilder, kotlin.String, kotlin.String, kotlin.String)/indentStr">indentStr</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization.XmlWriter$<init>(java.lang.StringBuilder, kotlin.String, kotlin.String, kotlin.String)/tabStr">tabStr</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization.XmlWriter$<init>(java.lang.StringBuilder, kotlin.String, kotlin.String, kotlin.String)/returnStr">returnStr</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span></code>
+<p>A simple XML writer</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="builder.html">builder</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">builder</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/-string-builder/index.html"><span class="identifier">StringBuilder</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="indent-str.html">indentStr</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">indentStr</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="return-str.html">returnStr</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">returnStr</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="tab-str.html">tabStr</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">tabStr</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="array.html">array</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">array</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization.XmlWriter$array(kotlin.Boolean, kotlin.Function1((com.acornui.serialization.Writer, kotlin.Unit)))/complex">complex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization.XmlWriter$array(kotlin.Boolean, kotlin.Function1((com.acornui.serialization.Writer, kotlin.Unit)))/contents">contents</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="bool.html">bool</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">bool</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization.XmlWriter$bool(kotlin.Boolean)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="char.html">char</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">char</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization.XmlWriter$char(kotlin.Char)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html"><span class="identifier">Char</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="double.html">double</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">double</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization.XmlWriter$double(kotlin.Double)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html"><span class="identifier">Double</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="element.html">element</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">element</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="float.html">float</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">float</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization.XmlWriter$float(kotlin.Float)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="int.html">int</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">int</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization.XmlWriter$int(kotlin.Int)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="long.html">long</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">long</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization.XmlWriter$long(kotlin.Long)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="obj.html">obj</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">obj</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization.XmlWriter$obj(kotlin.Boolean, kotlin.Function1((com.acornui.serialization.Writer, kotlin.Unit)))/complex">complex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization.XmlWriter$obj(kotlin.Boolean, kotlin.Function1((com.acornui.serialization.Writer, kotlin.Unit)))/contents">contents</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="property.html">property</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">property</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization.XmlWriter$property(kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="string.html">string</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">string</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization.XmlWriter$string(kotlin.String)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="write-null.html">writeNull</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">writeNull</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../array.html">array</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">array</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$array(com.acornui.serialization.Writer, kotlin.Array((com.acornui.serialization.array.T)), com.acornui.serialization.To((com.acornui.serialization.array.T)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><span class="identifier">Array</span></a><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<a href="../array.html#T"><span class="identifier">T</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$array(com.acornui.serialization.Writer, kotlin.Array((com.acornui.serialization.array.T)), com.acornui.serialization.To((com.acornui.serialization.array.T)))/to">to</span><span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../array.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">array</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$array(com.acornui.serialization.Writer, kotlin.collections.Iterable((com.acornui.serialization.array.T)), com.acornui.serialization.To((com.acornui.serialization.array.T)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="../array.html#T"><span class="identifier">T</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$array(com.acornui.serialization.Writer, kotlin.collections.Iterable((com.acornui.serialization.array.T)), com.acornui.serialization.To((com.acornui.serialization.array.T)))/to">to</span><span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../array.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">array</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$array(com.acornui.serialization.Writer, kotlin.collections.Iterable((kotlin.String)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">array</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$array(com.acornui.serialization.Writer, kotlin.String, kotlin.Array((com.acornui.serialization.array.T)), com.acornui.serialization.To((com.acornui.serialization.array.T)))/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$array(com.acornui.serialization.Writer, kotlin.String, kotlin.Array((com.acornui.serialization.array.T)), com.acornui.serialization.To((com.acornui.serialization.array.T)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><span class="identifier">Array</span></a><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<a href="../array.html#T"><span class="identifier">T</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$array(com.acornui.serialization.Writer, kotlin.String, kotlin.Array((com.acornui.serialization.array.T)), com.acornui.serialization.To((com.acornui.serialization.array.T)))/to">to</span><span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../array.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">array</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$array(com.acornui.serialization.Writer, kotlin.String, kotlin.collections.Iterable((com.acornui.serialization.array.T)), com.acornui.serialization.To((com.acornui.serialization.array.T)))/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$array(com.acornui.serialization.Writer, kotlin.String, kotlin.collections.Iterable((com.acornui.serialization.array.T)), com.acornui.serialization.To((com.acornui.serialization.array.T)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="../array.html#T"><span class="identifier">T</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$array(com.acornui.serialization.Writer, kotlin.String, kotlin.collections.Iterable((com.acornui.serialization.array.T)), com.acornui.serialization.To((com.acornui.serialization.array.T)))/to">to</span><span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../array.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../bool.html">bool</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">bool</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$bool(com.acornui.serialization.Writer, kotlin.String, kotlin.Boolean)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$bool(com.acornui.serialization.Writer, kotlin.String, kotlin.Boolean)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../bool-array.html">boolArray</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">boolArray</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$boolArray(com.acornui.serialization.Writer, kotlin.BooleanArray)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean-array/index.html"><span class="identifier">BooleanArray</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">boolArray</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$boolArray(com.acornui.serialization.Writer, kotlin.String, kotlin.BooleanArray)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$boolArray(com.acornui.serialization.Writer, kotlin.String, kotlin.BooleanArray)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean-array/index.html"><span class="identifier">BooleanArray</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../char.html">char</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">char</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$char(com.acornui.serialization.Writer, kotlin.String, kotlin.Char)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$char(com.acornui.serialization.Writer, kotlin.String, kotlin.Char)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html"><span class="identifier">Char</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../char-array.html">charArray</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">charArray</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$charArray(com.acornui.serialization.Writer, kotlin.CharArray)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char-array/index.html"><span class="identifier">CharArray</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">charArray</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$charArray(com.acornui.serialization.Writer, kotlin.String, kotlin.CharArray)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$charArray(com.acornui.serialization.Writer, kotlin.String, kotlin.CharArray)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char-array/index.html"><span class="identifier">CharArray</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.graphics/color.html">color</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">color</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics$color(com.acornui.serialization.Writer, com.acornui.graphics.ColorRo)/color">color</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.graphics/-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">color</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics$color(com.acornui.serialization.Writer, kotlin.String, com.acornui.graphics.ColorRo)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics$color(com.acornui.serialization.Writer, kotlin.String, com.acornui.graphics.ColorRo)/color">color</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.graphics/-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../double.html">double</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">double</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$double(com.acornui.serialization.Writer, kotlin.String, kotlin.Double)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$double(com.acornui.serialization.Writer, kotlin.String, kotlin.Double)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html"><span class="identifier">Double</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../double-array.html">doubleArray</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">doubleArray</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$doubleArray(com.acornui.serialization.Writer, kotlin.DoubleArray)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double-array/index.html"><span class="identifier">DoubleArray</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">doubleArray</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$doubleArray(com.acornui.serialization.Writer, kotlin.String, kotlin.DoubleArray)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$doubleArray(com.acornui.serialization.Writer, kotlin.String, kotlin.DoubleArray)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double-array/index.html"><span class="identifier">DoubleArray</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../enum.html">enum</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">enum</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$enum(com.acornui.serialization.Writer, kotlin.Enum((kotlin.Enum(()))))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-enum/index.html"><span class="identifier">Enum</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">enum</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$enum(com.acornui.serialization.Writer, kotlin.String, kotlin.Enum((kotlin.Enum(()))))/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$enum(com.acornui.serialization.Writer, kotlin.String, kotlin.Enum((kotlin.Enum(()))))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-enum/index.html"><span class="identifier">Enum</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../float.html">float</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">float</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$float(com.acornui.serialization.Writer, kotlin.String, kotlin.Float)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$float(com.acornui.serialization.Writer, kotlin.String, kotlin.Float)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../float-array.html">floatArray</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">floatArray</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$floatArray(com.acornui.serialization.Writer, kotlin.FloatArray)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float-array/index.html"><span class="identifier">FloatArray</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">floatArray</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$floatArray(com.acornui.serialization.Writer, kotlin.String, kotlin.FloatArray)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$floatArray(com.acornui.serialization.Writer, kotlin.String, kotlin.FloatArray)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float-array/index.html"><span class="identifier">FloatArray</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../int.html">int</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">int</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$int(com.acornui.serialization.Writer, kotlin.String, kotlin.Int)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$int(com.acornui.serialization.Writer, kotlin.String, kotlin.Int)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../int-array.html">intArray</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">intArray</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$intArray(com.acornui.serialization.Writer, kotlin.IntArray)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int-array/index.html"><span class="identifier">IntArray</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">intArray</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$intArray(com.acornui.serialization.Writer, kotlin.String, kotlin.IntArray)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$intArray(com.acornui.serialization.Writer, kotlin.String, kotlin.IntArray)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int-array/index.html"><span class="identifier">IntArray</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../long.html">long</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">long</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$long(com.acornui.serialization.Writer, kotlin.String, kotlin.Long)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$long(com.acornui.serialization.Writer, kotlin.String, kotlin.Long)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../long-array.html">longArray</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">longArray</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$longArray(com.acornui.serialization.Writer, kotlin.LongArray)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long-array/index.html"><span class="identifier">LongArray</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">longArray</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$longArray(com.acornui.serialization.Writer, kotlin.String, kotlin.LongArray)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$longArray(com.acornui.serialization.Writer, kotlin.String, kotlin.LongArray)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long-array/index.html"><span class="identifier">LongArray</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../map.html">map</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">map</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$map(com.acornui.serialization.Writer, kotlin.collections.Map((kotlin.String, com.acornui.serialization.map.T)), com.acornui.serialization.To((com.acornui.serialization.map.T)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="../map.html#T"><span class="identifier">T</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$map(com.acornui.serialization.Writer, kotlin.collections.Map((kotlin.String, com.acornui.serialization.map.T)), com.acornui.serialization.To((com.acornui.serialization.map.T)))/to">to</span><span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../map.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">map</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$map(com.acornui.serialization.Writer, kotlin.collections.Map((kotlin.String, com.acornui.serialization.map.T)), kotlin.Function2((com.acornui.serialization.map.T, com.acornui.serialization.Writer, kotlin.Unit)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="../map.html#T"><span class="identifier">T</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$map(com.acornui.serialization.Writer, kotlin.collections.Map((kotlin.String, com.acornui.serialization.map.T)), kotlin.Function2((com.acornui.serialization.map.T, com.acornui.serialization.Writer, kotlin.Unit)))/writeProp">writeProp</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../map.html#T"><span class="identifier">T</span></a><span class="symbol">,</span>&nbsp;<a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">map</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$map(com.acornui.serialization.Writer, kotlin.String, kotlin.collections.Map((kotlin.String, com.acornui.serialization.map.T)), com.acornui.serialization.To((com.acornui.serialization.map.T)))/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$map(com.acornui.serialization.Writer, kotlin.String, kotlin.collections.Map((kotlin.String, com.acornui.serialization.map.T)), com.acornui.serialization.To((com.acornui.serialization.map.T)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="../map.html#T"><span class="identifier">T</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$map(com.acornui.serialization.Writer, kotlin.String, kotlin.collections.Map((kotlin.String, com.acornui.serialization.map.T)), com.acornui.serialization.To((com.acornui.serialization.map.T)))/to">to</span><span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../map.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../obj.html">obj</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">obj</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$obj(com.acornui.serialization.Writer, com.acornui.serialization.obj.T, com.acornui.serialization.To((com.acornui.serialization.obj.T)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="../obj.html#T"><span class="identifier">T</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$obj(com.acornui.serialization.Writer, com.acornui.serialization.obj.T, com.acornui.serialization.To((com.acornui.serialization.obj.T)))/to">to</span><span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../obj.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">obj</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$obj(com.acornui.serialization.Writer, kotlin.String, kotlin.Boolean, kotlin.Function1((com.acornui.serialization.Writer, kotlin.Unit)))/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$obj(com.acornui.serialization.Writer, kotlin.String, kotlin.Boolean, kotlin.Function1((com.acornui.serialization.Writer, kotlin.Unit)))/complex">complex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$obj(com.acornui.serialization.Writer, kotlin.String, kotlin.Boolean, kotlin.Function1((com.acornui.serialization.Writer, kotlin.Unit)))/contents">contents</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">obj</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$obj(com.acornui.serialization.Writer, kotlin.String, com.acornui.serialization.obj.T, com.acornui.serialization.To((com.acornui.serialization.obj.T)))/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$obj(com.acornui.serialization.Writer, kotlin.String, com.acornui.serialization.obj.T, com.acornui.serialization.To((com.acornui.serialization.obj.T)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="../obj.html#T"><span class="identifier">T</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$obj(com.acornui.serialization.Writer, kotlin.String, com.acornui.serialization.obj.T, com.acornui.serialization.To((com.acornui.serialization.obj.T)))/to">to</span><span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../obj.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../sparse-array.html">sparseArray</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">sparseArray</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$sparseArray(com.acornui.serialization.Writer, kotlin.Array((com.acornui.serialization.sparseArray.T)), com.acornui.serialization.To((com.acornui.serialization.sparseArray.T)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><span class="identifier">Array</span></a><span class="symbol">&lt;</span><a href="../sparse-array.html#T"><span class="identifier">T</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$sparseArray(com.acornui.serialization.Writer, kotlin.Array((com.acornui.serialization.sparseArray.T)), com.acornui.serialization.To((com.acornui.serialization.sparseArray.T)))/to">to</span><span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../sparse-array.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Writes a sparse array in the following format:
+<a href="#">size,indexN,objectN,...</a></p>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">sparseArray</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$sparseArray(com.acornui.serialization.Writer, kotlin.String, kotlin.Array((com.acornui.serialization.sparseArray.T)), com.acornui.serialization.To((com.acornui.serialization.sparseArray.T)))/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$sparseArray(com.acornui.serialization.Writer, kotlin.String, kotlin.Array((com.acornui.serialization.sparseArray.T)), com.acornui.serialization.To((com.acornui.serialization.sparseArray.T)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><span class="identifier">Array</span></a><span class="symbol">&lt;</span><a href="../sparse-array.html#T"><span class="identifier">T</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$sparseArray(com.acornui.serialization.Writer, kotlin.String, kotlin.Array((com.acornui.serialization.sparseArray.T)), com.acornui.serialization.To((com.acornui.serialization.sparseArray.T)))/to">to</span><span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../sparse-array.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../string.html">string</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">string</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$string(com.acornui.serialization.Writer, kotlin.String, kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$string(com.acornui.serialization.Writer, kotlin.String, kotlin.String)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../string-array.html">stringArray</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">stringArray</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$stringArray(com.acornui.serialization.Writer, kotlin.Array((kotlin.String)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><span class="identifier">Array</span></a><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">stringArray</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization$stringArray(com.acornui.serialization.Writer, kotlin.String, kotlin.Array((kotlin.String)))/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization$stringArray(com.acornui.serialization.Writer, kotlin.String, kotlin.Array((kotlin.String)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><span class="identifier">Array</span></a><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/style-property.html">styleProperty</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">styleProperty</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style$styleProperty(com.acornui.serialization.Writer, com.acornui.component.style.Style, kotlin.String)/style">style</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.style/-style/index.html"><span class="identifier">Style</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.style$styleProperty(com.acornui.serialization.Writer, com.acornui.component.style.Style, kotlin.String)/id">id</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">?</span></code>
+<p>Returns a writer for the style's property if and only if that property is explicitly set.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.math/vector2.html">vector2</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">vector2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math$vector2(com.acornui.serialization.Writer, com.acornui.math.Vector2Ro)/v">v</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">vector2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math$vector2(com.acornui.serialization.Writer, kotlin.String, com.acornui.math.Vector2Ro)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math$vector2(com.acornui.serialization.Writer, kotlin.String, com.acornui.math.Vector2Ro)/v">v</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.math/vector3.html">vector3</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">vector3</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math$vector3(com.acornui.serialization.Writer, com.acornui.math.Vector3Ro)/v">v</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">vector3</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math$vector3(com.acornui.serialization.Writer, kotlin.String, com.acornui.math.Vector3Ro)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math$vector3(com.acornui.serialization.Writer, kotlin.String, com.acornui.math.Vector3Ro)/v">v</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

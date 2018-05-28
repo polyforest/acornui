@@ -1,0 +1,76 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>BitmapFontRegistry - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.text</a>&nbsp;/&nbsp;<a href="./index.html">BitmapFontRegistry</a><br/>
+<br/>
+<h1>BitmapFontRegistry</h1>
+<code><span class="keyword">object </span><span class="identifier">BitmapFontRegistry</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Clears this instance back to its original state.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="contains-font.html">containsFont</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">containsFont</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text.BitmapFontRegistry$containsFont(com.acornui.component.text.FontStyleRo)/fontStyle">fontStyle</span><span class="symbol">:</span>&nbsp;<a href="../-font-style-ro/index.html"><span class="identifier">FontStyleRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this registry contains the given font.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Prepares this object for garbage collection.
+A disposed object should no longer be used or referenced.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-font.html">getFont</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getFont</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text.BitmapFontRegistry$getFont(com.acornui.component.text.FontStyleRo, kotlin.Boolean)/fontStyle">fontStyle</span><span class="symbol">:</span>&nbsp;<a href="../-font-style-ro/index.html"><span class="identifier">FontStyleRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text.BitmapFontRegistry$getFont(com.acornui.component.text.FontStyleRo, kotlin.Boolean)/warnOnNotFound">warnOnNotFound</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;true<span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.async/-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="../-bitmap-font/index.html"><span class="identifier">BitmapFont</span></a><span class="symbol">&gt;</span><span class="symbol">?</span></code>
+<p>Returns the font registered to the given style. Throws an exception if the font is not registered.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="register.html">register</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">register</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text.BitmapFontRegistry$register(com.acornui.component.text.FontStyleRo, com.acornui.async.Deferred((com.acornui.component.text.BitmapFont)))/fontStyle">fontStyle</span><span class="symbol">:</span>&nbsp;<a href="../-font-style-ro/index.html"><span class="identifier">FontStyleRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text.BitmapFontRegistry$register(com.acornui.component.text.FontStyleRo, com.acornui.async.Deferred((com.acornui.component.text.BitmapFont)))/bitmapFont">bitmapFont</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.async/-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="../-bitmap-font/index.html"><span class="identifier">BitmapFont</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Registers a font loader to a font style.
+If the loaded font does not match the style used as the key, a warning will be logged.
+The loaded texture pages will have their use counts incremented via <a href="../../com.acornui.core.graphics/-texture/ref-inc.html">Texture.refInc</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="unregister.html">unregister</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">unregister</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text.BitmapFontRegistry$unregister(com.acornui.component.text.FontStyleRo)/fontStyle">fontStyle</span><span class="symbol">:</span>&nbsp;<a href="../-font-style-ro/index.html"><span class="identifier">FontStyleRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Unregisters a font loader that was registered via <a href="register.html">register</a>.
+The texture pages will have their use counts decremented via <a href="../../com.acornui.core.graphics/-texture/ref-dec.html">Texture.refDec</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

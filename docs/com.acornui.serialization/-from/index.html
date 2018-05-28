@@ -1,0 +1,213 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>From - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.serialization</a>&nbsp;/&nbsp;<a href="./index.html">From</a><br/>
+<br/>
+<h1>From</h1>
+<code><span class="keyword">interface </span><span class="identifier">From</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span></code>
+<p>The serialization interface to read from a <a href="../-reader/index.html">Reader</a> object, producing a new instance.</p>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="read.html">read</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">read</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization.From$read(com.acornui.serialization.Reader)/reader">reader</span><span class="symbol">:</span>&nbsp;<a href="../-reader/index.html"><span class="identifier">Reader</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="index.html#T"><span class="identifier">T</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.tween.animation/-animation-bundle-serializer/index.html">AnimationBundleSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">AnimationBundleSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.tween.animation/-animation-bundle/index.html"><span class="identifier">AnimationBundle</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.tween.animation/-animation-easing-serializer/index.html">AnimationEasingSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">AnimationEasingSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.tween.animation/-animation-easing/index.html"><span class="identifier">AnimationEasing</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.tween.animation/-animation-library-item-serializer/index.html">AnimationLibraryItemSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">AnimationLibraryItemSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.tween.animation/-animation-library-item/index.html"><span class="identifier">AnimationLibraryItem</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.tween.animation/-atlas-library-item-serializer/index.html">AtlasLibraryItemSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">AtlasLibraryItemSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.tween.animation/-atlas-library-item/index.html"><span class="identifier">AtlasLibraryItem</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.graphics/-atlas-page-serializer/index.html">AtlasPageSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">AtlasPageSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.graphics/-atlas-page-data/index.html"><span class="identifier">AtlasPageData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.graphics/-atlas-page-data/index.html"><span class="identifier">AtlasPageData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.graphics/-atlas-region-data-serializer/index.html">AtlasRegionDataSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">AtlasRegionDataSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.graphics/-atlas-region-data/index.html"><span class="identifier">AtlasRegionData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.graphics/-atlas-region-data/index.html"><span class="identifier">AtlasRegionData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-border-colors-serializer/index.html">BorderColorsSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">BorderColorsSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-border-colors-ro/index.html"><span class="identifier">BorderColorsRo</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-border-colors/index.html"><span class="identifier">BorderColors</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-box-style-serializer/index.html">BoxStyleSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">BoxStyleSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-box-style/index.html"><span class="identifier">BoxStyle</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-box-style/index.html"><span class="identifier">BoxStyle</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.text/-char-style-serializer/index.html">CharStyleSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">CharStyleSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component.text/-char-style/index.html"><span class="identifier">CharStyle</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component.text/-char-style/index.html"><span class="identifier">CharStyle</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-color-stop-serializer/index.html">ColorStopSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">ColorStopSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-color-stop-ro/index.html"><span class="identifier">ColorStopRo</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-color-stop/index.html"><span class="identifier">ColorStop</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.math/-corners-serializer/index.html">CornersSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">CornersSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.math/-corners-ro/index.html"><span class="identifier">CornersRo</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.math/-corners/index.html"><span class="identifier">Corners</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.io.file/-files-manifest-serializer/index.html">FilesManifestSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">FilesManifestSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.io.file/-files-manifest/index.html"><span class="identifier">FilesManifest</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.io.file/-files-manifest/index.html"><span class="identifier">FilesManifest</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.tween.animation/-image-library-item-serializer/index.html">ImageLibraryItemSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">ImageLibraryItemSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.tween.animation/-image-library-item/index.html"><span class="identifier">ImageLibraryItem</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.math/-int-rectangle-serializer/index.html">IntRectangleSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">IntRectangleSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.math/-int-rectangle-ro/index.html"><span class="identifier">IntRectangleRo</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.math/-int-rectangle/index.html"><span class="identifier">IntRectangle</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.tween.animation/-key-frame-serializer/index.html">KeyFrameSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">KeyFrameSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.tween.animation/-key-frame/index.html"><span class="identifier">KeyFrame</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.tween.animation/-layer-serializer/index.html">LayerSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">LayerSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.tween.animation/-layer/index.html"><span class="identifier">Layer</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-linear-gradient-serializer/index.html">LinearGradientSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">LinearGradientSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-linear-gradient-ro/index.html"><span class="identifier">LinearGradientRo</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-linear-gradient/index.html"><span class="identifier">LinearGradient</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.io.file/-manifest-entry-serializer/index.html">ManifestEntrySerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">ManifestEntrySerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.io.file/-manifest-entry/index.html"><span class="identifier">ManifestEntry</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.io.file/-manifest-entry/index.html"><span class="identifier">ManifestEntry</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.math/-pad-serializer/index.html">PadSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">PadSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.math/-pad-ro/index.html"><span class="identifier">PadRo</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.math/-pad/index.html"><span class="identifier">Pad</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.tween.animation/-prop-serializer/index.html">PropSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">PropSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.tween.animation/-prop/index.html"><span class="identifier">Prop</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.math/-rectangle-serializer/index.html">RectangleSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">RectangleSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.math/-rectangle/index.html"><span class="identifier">Rectangle</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.math/-rectangle/index.html"><span class="identifier">Rectangle</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-rule-style-serializer/index.html">RuleStyleSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">RuleStyleSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-rule-style/index.html"><span class="identifier">RuleStyle</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-rule-style/index.html"><span class="identifier">RuleStyle</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.graphics/-texture-atlas-data-serializer/index.html">TextureAtlasDataSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">TextureAtlasDataSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.graphics/-texture-atlas-data/index.html"><span class="identifier">TextureAtlasData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.graphics/-texture-atlas-data/index.html"><span class="identifier">TextureAtlasData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.tween.animation/-timeline-serializer/index.html">TimelineSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">TimelineSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.tween.animation/-timeline/index.html"><span class="identifier">Timeline</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.math/-vector2-serializer/index.html">Vector2Serializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">Vector2Serializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.math/-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a><span class="symbol">?</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.math/-vector3-serializer/index.html">Vector3Serializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">Vector3Serializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.math/-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.math/-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">?</span><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

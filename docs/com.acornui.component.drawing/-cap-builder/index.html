@@ -1,0 +1,48 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>CapBuilder - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.drawing</a>&nbsp;/&nbsp;<a href="./index.html">CapBuilder</a><br/>
+<br/>
+<h1>CapBuilder</h1>
+<code><span class="keyword">interface </span><span class="identifier">CapBuilder</span></code>
+<p>An interface for building a mesh for a line cap.</p>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="create-cap.html">createCap</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">createCap</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing.CapBuilder$createCap(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.component.drawing.MeshData, com.acornui.component.drawing.LineStyle, kotlin.Float, kotlin.Boolean)/p1">p1</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.CapBuilder$createCap(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.component.drawing.MeshData, com.acornui.component.drawing.LineStyle, kotlin.Float, kotlin.Boolean)/p2">p2</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.CapBuilder$createCap(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.component.drawing.MeshData, com.acornui.component.drawing.LineStyle, kotlin.Float, kotlin.Boolean)/control">control</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.CapBuilder$createCap(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.component.drawing.MeshData, com.acornui.component.drawing.LineStyle, kotlin.Float, kotlin.Boolean)/meshData">meshData</span><span class="symbol">:</span>&nbsp;<a href="../-mesh-data/index.html"><span class="identifier">MeshData</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.CapBuilder$createCap(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.component.drawing.MeshData, com.acornui.component.drawing.LineStyle, kotlin.Float, kotlin.Boolean)/lineStyle">lineStyle</span><span class="symbol">:</span>&nbsp;<a href="../-line-style/index.html"><span class="identifier">LineStyle</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.CapBuilder$createCap(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.component.drawing.MeshData, com.acornui.component.drawing.LineStyle, kotlin.Float, kotlin.Boolean)/controlLineThickness">controlLineThickness</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.CapBuilder$createCap(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.component.drawing.MeshData, com.acornui.component.drawing.LineStyle, kotlin.Float, kotlin.Boolean)/clockwise">clockwise</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Creates a cap for a line. The cap must end with two vertices to be used as the endpoints of the p1-p2 line.
+The cap should be for the <a href="create-cap.html#com.acornui.component.drawing.CapBuilder$createCap(com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.component.drawing.MeshData, com.acornui.component.drawing.LineStyle, kotlin.Float, kotlin.Boolean)/p1">p1</a> endpoint.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-miter-cap/index.html">MiterCap</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">MiterCap</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">CapBuilder</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-no-cap/index.html">NoCap</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">NoCap</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">CapBuilder</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

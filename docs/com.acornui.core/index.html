@@ -25,7 +25,7 @@
 <p><a href="-application-base/index.html">ApplicationBase</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">ApplicationBase</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">ApplicationBase</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-disposable/index.html"><span class="identifier">Disposable</span></a></code>
 <p>Utilities for boot tasks in an application.</p>
 </td>
 </tr>
@@ -49,6 +49,13 @@
 </tr>
 <tr>
 <td>
+<p><a href="-disposable/index.html">Disposable</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
 <p><a href="-gl-config/index.html">GlConfig</a></p>
 </td>
 <td>
@@ -59,7 +66,7 @@
 <p><a href="-lifecycle/index.html">Lifecycle</a></p>
 </td>
 <td>
-<code><span class="keyword">interface </span><span class="identifier">Lifecycle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-lifecycle-ro/index.html"><span class="identifier">LifecycleRo</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code></td>
+<code><span class="keyword">interface </span><span class="identifier">Lifecycle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-lifecycle-ro/index.html"><span class="identifier">LifecycleRo</span></a><span class="symbol">, </span><a href="-disposable/index.html"><span class="identifier">Disposable</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -183,9 +190,106 @@ but it must be type checked against a <a href="-parent-ro/index.html">ParentRo</
 </tr>
 </tbody>
 </table>
+<h3>Extensions for External Classes</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="kotlin.-array/index.html">kotlin.Array</a></p>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="kotlin.-boolean/index.html">kotlin.Boolean</a></p>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="kotlin.-char-sequence/index.html">kotlin.CharSequence</a></p>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="kotlin.-double/index.html">kotlin.Double</a></p>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="kotlin.-float/index.html">kotlin.Float</a></p>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="kotlin.-int/index.html">kotlin.Int</a></p>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="kotlin.-number/index.html">kotlin.Number</a></p>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="kotlin.-string/index.html">kotlin.String</a></p>
+</td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
 <h3>Properties</h3>
 <table>
 <tbody>
+<tr>
+<td>
+<p><a href="-i-n-t_-m-a-x_-v-a-l-u-e.html">INT_MAX_VALUE</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">INT_MAX_VALUE</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-i-n-t_-m-i-n_-v-a-l-u-e.html">INT_MIN_VALUE</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">INT_MIN_VALUE</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-l-o-n-g_-m-a-x_-v-a-l-u-e.html">LONG_MAX_VALUE</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">LONG_MAX_VALUE</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
+<p>A constant holding the maximum value a {@code long} can
+have, 253-1.
+Note: This is 53 bits instead of 63 for the sake of JavaScript Number.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-l-o-n-g_-m-i-n_-v-a-l-u-e.html">LONG_MIN_VALUE</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">LONG_MIN_VALUE</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
+<p>A constant holding the minimum value a {@code long} can
+have, -253.
+Note: This is 53 bits instead of 63 for the sake of JavaScript Number.</p>
+</td>
+</tr>
 <tr>
 <td>
 <p><a href="config.html">config</a></p>
@@ -193,6 +297,16 @@ but it must be type checked against a <a href="-parent-ro/index.html">ParentRo</
 <td>
 <code><span class="keyword">val </span><a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">config</span><span class="symbol">: </span><a href="-app-config/index.html"><span class="identifier">AppConfig</span></a></code>
 <p>A convenient way to get the scoped AppConfig.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="line-separator.html">lineSeparator</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">lineSeparator</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>May be set by the back-ends.
+JVM sets to System.lineSeparator()</p>
 </td>
 </tr>
 <tr>
@@ -209,6 +323,16 @@ but it must be type checked against a <a href="-parent-ro/index.html">ParentRo</
 <h3>Functions</h3>
 <table>
 <tbody>
+<tr>
+<td>
+<p><a href="add-backslashes.html">addBackslashes</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addBackslashes</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$addBackslashes(kotlin.String)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>Adds a backslash before the following characters:
+t, b, n, r, ', ", \, $</p>
+</td>
+</tr>
 <tr>
 <td>
 <p><a href="ancestry.html">ancestry</a></p>
@@ -264,6 +388,13 @@ Traverses this parent's hierarchy from top to bottom, breadth first, invoking a 
 </tr>
 <tr>
 <td>
+<p><a href="compare-to.html">compareTo</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">A</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-comparable/index.html"><span class="identifier">Comparable</span></a><span class="symbol">&lt;</span><a href="compare-to.html#A"><span class="identifier">A</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span> <a href="compare-to.html#A"><span class="identifier">A</span></a><span class="symbol">?</span><span class="symbol">.</span><span class="identifier">compareTo</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$compareTo(com.acornui.core.compareTo.A, com.acornui.core.compareTo.A)/other">other</span><span class="symbol">:</span>&nbsp;<a href="compare-to.html#A"><span class="identifier">A</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
 <p><a href="find-child-level-order.html">findChildLevelOrder</a></p>
 </td>
 <td>
@@ -297,6 +428,20 @@ The tree traversal will be pre-order.</p>
 </td>
 <td>
 <code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="find-last-child-pre-order.html#T"><span class="identifier">T</span></a><span class="symbol">.</span><span class="identifier">findLastChildPreOrder</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$findLastChildPreOrder(com.acornui.core.findLastChildPreOrder.T, kotlin.Function1((com.acornui.core.findLastChildPreOrder.T, kotlin.Boolean)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="find-last-child-pre-order.html#T"><span class="identifier">T</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="find-last-child-pre-order.html#T"><span class="identifier">T</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="html-entities.html">htmlEntities</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">htmlEntities</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$htmlEntities(kotlin.String)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="html-entities-decode.html">htmlEntitiesDecode</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">htmlEntitiesDecode</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$htmlEntitiesDecode(kotlin.String)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -363,6 +508,16 @@ This will return true if X === Y</p>
 </td>
 <td>
 <code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">&gt;</span> <a href="previous-sibling.html#T"><span class="identifier">T</span></a><span class="symbol">.</span><span class="identifier">previousSibling</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="previous-sibling.html#T"><span class="identifier">T</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="remove-backslashes.html">removeBackslashes</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">removeBackslashes</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$removeBackslashes(kotlin.String)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>Converts backslash escapes into their corresponding characters.
+\t, \b, \n, \r, \', \", \\, \/, \$, \uFF00</p>
+</td>
 </tr>
 <tr>
 <td>

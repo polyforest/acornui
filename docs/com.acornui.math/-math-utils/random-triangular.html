@@ -1,0 +1,46 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>MathUtils.randomTriangular - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="index.html">MathUtils</a>&nbsp;/&nbsp;<a href="./random-triangular.html">randomTriangular</a><br/>
+<br/>
+<h1>randomTriangular</h1>
+<a name="com.acornui.math.MathUtils$randomTriangular()"></a>
+<code><span class="keyword">fun </span><span class="identifier">randomTriangular</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Returns a triangularly distributed random number between -1.0 (exclusive) and 1.0 (exclusive), where values around zero are
+more likely.
+This is an optimized version of {@link #randomTriangular(float, float, float) randomTriangular(-1, 1, 0)}</p>
+<a name="com.acornui.math.MathUtils$randomTriangular(kotlin.Float)"></a>
+<code><span class="keyword">fun </span><span class="identifier">randomTriangular</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.MathUtils$randomTriangular(kotlin.Float)/max">max</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Returns a triangularly distributed random number between {@code -max} (exclusive) and {@code max} (exclusive), where values
+around zero are more likely.
+This is an optimized version of {@link #randomTriangular(float, float, float) randomTriangular(-max, max, 0)}</p>
+<h3>Parameters</h3>
+<p><a name="max"></a>
+<code>max</code> - the upper limit</p>
+<a name="com.acornui.math.MathUtils$randomTriangular(kotlin.Float, kotlin.Float)"></a>
+<code><span class="keyword">fun </span><span class="identifier">randomTriangular</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.MathUtils$randomTriangular(kotlin.Float, kotlin.Float)/min">min</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.MathUtils$randomTriangular(kotlin.Float, kotlin.Float)/max">max</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Returns a triangularly distributed random number between {@code min} (inclusive) and {@code max} (exclusive), where the
+<code>mode</code> argument defaults to the midpoint between the bounds, giving a symmetric distribution.</p>
+<p>This method is equivalent of <a href="#">randomTriangularmin,max,max-min * .5f</a></p>
+<h3>Parameters</h3>
+<p><a name="min"></a>
+<code>min</code> - the lower limit</p>
+<p><a name="max"></a>
+<code>max</code> - the upper limit</p>
+<a name="com.acornui.math.MathUtils$randomTriangular(kotlin.Float, kotlin.Float, kotlin.Float)"></a>
+<code><span class="keyword">fun </span><span class="identifier">randomTriangular</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.MathUtils$randomTriangular(kotlin.Float, kotlin.Float, kotlin.Float)/min">min</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.MathUtils$randomTriangular(kotlin.Float, kotlin.Float, kotlin.Float)/max">max</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.MathUtils$randomTriangular(kotlin.Float, kotlin.Float, kotlin.Float)/mode">mode</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Returns a triangularly distributed random number between {@code min} (inclusive) and {@code max} (exclusive), where values
+around {@code mode} are more likely.</p>
+<h3>Parameters</h3>
+<p><a name="min"></a>
+<code>min</code> - the lower limit</p>
+<p><a name="max"></a>
+<code>max</code> - the upper limit</p>
+<p><a name="mode"></a>
+<code>mode</code> - the point around which the values are more likely</p>
+</BODY>
+</HTML>

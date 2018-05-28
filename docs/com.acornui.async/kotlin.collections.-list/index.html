@@ -1,0 +1,34 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.async.kotlin.collections.List - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.async</a>&nbsp;/&nbsp;<a href="./index.html">kotlin.collections.List</a><br/>
+<br/>
+<h3>Extensions for kotlin.collections.List</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="await-all.html">awaitAll</a></p>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="await-all.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">awaitAll</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="await-all.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Awaits all deferred values, populating a list with the results.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="await-all-checked.html">awaitAllChecked</a></p>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="await-all-checked.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">awaitAllChecked</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="await-all-checked.html#T"><span class="identifier">T</span></a><span class="symbol">?</span><span class="symbol">&gt;</span></code>
+<p>Like awaitAll but the values will be null if await fails.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

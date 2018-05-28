@@ -1,0 +1,27 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>WriteBuffer.limit - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.io</a>&nbsp;/&nbsp;<a href="index.html">WriteBuffer</a>&nbsp;/&nbsp;<a href="./limit.html">limit</a><br/>
+<br/>
+<h1>limit</h1>
+<a name="com.acornui.io.WriteBuffer$limit(kotlin.Int)"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">limit</span><span class="symbol">(</span><span class="identifier" id="com.acornui.io.WriteBuffer$limit(kotlin.Int)/newLimit">newLimit</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-buffer/index.html"><span class="identifier">Buffer</span></a></code>
+<p>Sets the limit of this buffer.</p>
+<p>If the current position in the buffer is in excess of
+<a href="limit.html#com.acornui.io.WriteBuffer$limit(kotlin.Int)/newLimit">newLimit</a> then, on returning from this call, it will have
+been adjusted to be equivalent to <code>newLimit</code>. If the mark
+is set and is greater than the new limit, then it is cleared.</p>
+<h3>Parameters</h3>
+<p><a name="newLimit"></a>
+<code>newLimit</code> - the new limit, must not be negative and not greater than <a href="#">getCapacity</a>.</p>
+<h3>Exceptions</h3>
+<p><a name="IllegalArgumentException"></a>
+<code>IllegalArgumentException</code> - if <code>newLimit</code> is invalid.</p>
+<p><strong>Return</strong><br/>
+this buffer.</p>
+</BODY>
+</HTML>

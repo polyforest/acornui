@@ -8,7 +8,7 @@
 <a href="../index.html">com.acornui.core.input</a>&nbsp;/&nbsp;<a href="./index.html">InteractivityManager</a><br/>
 <br/>
 <h1>InteractivityManager</h1>
-<code><span class="keyword">interface </span><span class="identifier">InteractivityManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<code><span class="keyword">interface </span><span class="identifier">InteractivityManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
 <p>A manager that feeds user input as events to layout elements.</p>
 <p><strong>Author</strong><br/>
 nbilyk</p>
@@ -45,7 +45,7 @@ a bubbling event up to the stage.</p>
 <p><a href="get-signal.html">getSignal</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a><span class="symbol">&gt;</span> <span class="identifier">getSignal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.InteractivityManager$getSignal(com.acornui.component.UiComponentRo, com.acornui.core.input.InteractionType((com.acornui.core.input.InteractivityManager.getSignal.T)), kotlin.Boolean)/host">host</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.InteractivityManager$getSignal(com.acornui.component.UiComponentRo, com.acornui.core.input.InteractionType((com.acornui.core.input.InteractivityManager.getSignal.T)), kotlin.Boolean)/type">type</span><span class="symbol">:</span>&nbsp;<a href="../-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="get-signal.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.InteractivityManager$getSignal(com.acornui.component.UiComponentRo, com.acornui.core.input.InteractionType((com.acornui.core.input.InteractivityManager.getSignal.T)), kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="get-signal.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a><span class="symbol">&gt;</span> <span class="identifier">getSignal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.InteractivityManager$getSignal(com.acornui.component.UiComponentRo, com.acornui.core.input.InteractionType((com.acornui.core.input.InteractivityManager.getSignal.T)), kotlin.Boolean)/host">host</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.InteractivityManager$getSignal(com.acornui.component.UiComponentRo, com.acornui.core.input.InteractionType((com.acornui.core.input.InteractivityManager.getSignal.T)), kotlin.Boolean)/type">type</span><span class="symbol">:</span>&nbsp;<a href="../-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="get-signal.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.InteractivityManager$getSignal(com.acornui.component.UiComponentRo, com.acornui.core.input.InteractionType((com.acornui.core.input.InteractivityManager.getSignal.T)), kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.signal/-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="get-signal.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
 <p>Produces a new Signal for the specified interaction type.</p>
 </td>
 </tr>
@@ -56,6 +56,21 @@ a bubbling event up to the stage.</p>
 <td>
 <code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">init</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.InteractivityManager$init(com.acornui.component.UiComponentRo)/root">root</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
 <p>Initializes the interactivity manager with the root element for dispatching.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-disposable/dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Prepares this object for garbage collection.
+A disposed object should no longer be used or referenced.</p>
 </td>
 </tr>
 </tbody>

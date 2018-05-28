@@ -1,0 +1,107 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>GlyphData - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.text</a>&nbsp;/&nbsp;<a href="./index.html">GlyphData</a><br/>
+<br/>
+<h1>GlyphData</h1>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">GlyphData</span></code>
+<p>Represents a single character in a font page.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">GlyphData</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text.GlyphData$<init>(kotlin.Char, com.acornui.math.IntRectangleRo, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.collections.Map((kotlin.Char, kotlin.Int)))/char">char</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html"><span class="identifier">Char</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text.GlyphData$<init>(kotlin.Char, com.acornui.math.IntRectangleRo, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.collections.Map((kotlin.Char, kotlin.Int)))/region">region</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-int-rectangle-ro/index.html"><span class="identifier">IntRectangleRo</span></a>&nbsp;<span class="symbol">=</span>&nbsp;IntRectangle()<span class="symbol">, </span><span class="identifier" id="com.acornui.component.text.GlyphData$<init>(kotlin.Char, com.acornui.math.IntRectangleRo, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.collections.Map((kotlin.Char, kotlin.Int)))/offsetX">offsetX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">, </span><span class="identifier" id="com.acornui.component.text.GlyphData$<init>(kotlin.Char, com.acornui.math.IntRectangleRo, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.collections.Map((kotlin.Char, kotlin.Int)))/offsetY">offsetY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">, </span><span class="identifier" id="com.acornui.component.text.GlyphData$<init>(kotlin.Char, com.acornui.math.IntRectangleRo, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.collections.Map((kotlin.Char, kotlin.Int)))/advanceX">advanceX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">, </span><span class="identifier" id="com.acornui.component.text.GlyphData$<init>(kotlin.Char, com.acornui.math.IntRectangleRo, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.collections.Map((kotlin.Char, kotlin.Int)))/page">page</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">, </span><span class="identifier" id="com.acornui.component.text.GlyphData$<init>(kotlin.Char, com.acornui.math.IntRectangleRo, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.collections.Map((kotlin.Char, kotlin.Int)))/kerning">kerning</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html"><span class="identifier">Char</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;HashMap()<span class="symbol">)</span></code>
+<p>Represents a single character in a font page.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="advance-x.html">advanceX</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">advanceX</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>How much the current position should be advanced after drawing the character.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="char.html">char</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">char</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html"><span class="identifier">Char</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="kerning.html">kerning</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">kerning</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html"><span class="identifier">Char</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">&gt;</span></code>
+<p>Kerning pairs.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="offset-x.html">offsetX</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">offsetX</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>How much the current position should be offset when copying the image from the texture to the screen.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="offset-y.html">offsetY</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">offsetY</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>How much the current position should be offset when copying the image from the texture to the screen.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="page.html">page</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">page</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The index to the texture page that holds this glyph.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="region.html">region</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">region</span><span class="symbol">: </span><a href="../../com.acornui.math/-int-rectangle-ro/index.html"><span class="identifier">IntRectangleRo</span></a></code>
+<p>The x, y, width, height bounds within the original image.
+The <a href="../-glyph/index.html">Glyph</a> object contains the region in the final, packed image.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="get-kerning.html">getKerning</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getKerning</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text.GlyphData$getKerning(kotlin.Char)/ch">ch</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html"><span class="identifier">Char</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

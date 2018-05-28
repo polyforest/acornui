@@ -1,0 +1,131 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Ray2 - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="./index.html">Ray2</a><br/>
+<br/>
+<h1>Ray2</h1>
+<code><span class="keyword">class </span><span class="identifier">Ray2</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../-ray2-ro/index.html"><span class="identifier">Ray2Ro</span></a></code>
+<p>A 2d ray.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">Ray2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Ray2$<init>(com.acornui.math.Vector2, com.acornui.math.Vector2)/origin">origin</span><span class="symbol">:</span>&nbsp;<a href="../-vector2/index.html"><span class="identifier">Vector2</span></a>&nbsp;<span class="symbol">=</span>&nbsp;Vector2()<span class="symbol">, </span><span class="identifier" id="com.acornui.math.Ray2$<init>(com.acornui.math.Vector2, com.acornui.math.Vector2)/direction">direction</span><span class="symbol">:</span>&nbsp;<a href="../-vector2/index.html"><span class="identifier">Vector2</span></a>&nbsp;<span class="symbol">=</span>&nbsp;Vector2()<span class="symbol">)</span></code>
+<p>A 2d ray.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="direction.html">direction</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">direction</span><span class="symbol">: </span><a href="../-vector2/index.html"><span class="identifier">Vector2</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="origin.html">origin</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">origin</span><span class="symbol">: </span><a href="../-vector2/index.html"><span class="identifier">Vector2</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Clears this instance back to its original state.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="equals.html">equals</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">equals</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Ray2$equals(kotlin.Any)/other">other</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="free.html">free</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><s><span class="identifier">free</span></s><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="hash-code.html">hashCode</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">hashCode</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="intersects.html">intersects</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Ray2$intersects(com.acornui.math.Ray2Ro, com.acornui.math.Vector2)/ray">ray</span><span class="symbol">:</span>&nbsp;<a href="../-ray2-ro/index.html"><span class="identifier">Ray2Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Ray2$intersects(com.acornui.math.Ray2Ro, com.acornui.math.Vector2)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-ray2-ro/copy.html">copy</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">copy</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Ray2Ro$copy(com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro)/origin">origin</span><span class="symbol">:</span>&nbsp;<a href="../-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.origin<span class="symbol">, </span><span class="identifier" id="com.acornui.math.Ray2Ro$copy(com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro)/direction">direction</span><span class="symbol">:</span>&nbsp;<a href="../-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.direction<span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Ray2</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="free.html">free</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">free</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Ray2.Companion$free(com.acornui.math.Ray2)/obj">obj</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Ray2</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="intersects.html">intersects</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Ray2.Companion$intersects(com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro)/start1">start1</span><span class="symbol">:</span>&nbsp;<a href="../-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Ray2.Companion$intersects(com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro)/direction1">direction1</span><span class="symbol">:</span>&nbsp;<a href="../-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Ray2.Companion$intersects(com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro)/start2">start2</span><span class="symbol">:</span>&nbsp;<a href="../-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Ray2.Companion$intersects(com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro)/direction2">direction2</span><span class="symbol">:</span>&nbsp;<a href="../-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Intersect two 2D Rays and return the scalar parameter of the first ray at the intersection point.
+You can get the intersection point by: Vector2 point(direction1).scl(scalar).add(start1)
+For more information, check: http://stackoverflow.com/a/565282/1091440</p>
+<code><span class="keyword">fun </span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Ray2.Companion$intersects(com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2)/start1">start1</span><span class="symbol">:</span>&nbsp;<a href="../-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Ray2.Companion$intersects(com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2)/direction1">direction1</span><span class="symbol">:</span>&nbsp;<a href="../-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Ray2.Companion$intersects(com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2)/start2">start2</span><span class="symbol">:</span>&nbsp;<a href="../-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Ray2.Companion$intersects(com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2)/direction2">direction2</span><span class="symbol">:</span>&nbsp;<a href="../-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Ray2.Companion$intersects(com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2Ro, com.acornui.math.Vector2)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="obtain.html">obtain</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">obtain</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Ray2</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

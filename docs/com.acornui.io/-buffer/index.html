@@ -1,0 +1,131 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Buffer - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.io</a>&nbsp;/&nbsp;<a href="./index.html">Buffer</a><br/>
+<br/>
+<h1>Buffer</h1>
+<code><span class="keyword">interface </span><span class="identifier">Buffer</span></code>
+<p>An interface common to <a href="../-read-buffer/index.html">ReadBuffer</a> and <a href="../-write-buffer/index.html">WriteBuffer</a>
+These methods manipulate the <a href="#">getPosition</a> and <a href="mark.html">mark</a> cursors.</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="capacity.html">capacity</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">capacity</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The capacity of this buffer. This typically will never change.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="has-remaining.html">hasRemaining</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">hasRemaining</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Indicates if there are elements remaining in this buffer, that is if
+{@code position &lt; limit}.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="limit.html">limit</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">limit</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Returns the limit of this buffer.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="position.html">position</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">position</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The position of this buffer.
+If the mark is set and it is greater than the new position, then it is
+cleared.
+Must be not negative and not greater than limit.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="remaining.html">remaining</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">remaining</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Returns the number of remaining elements in this buffer, that is
+{@code limit - position}.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="flip.html">flip</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">flip</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Buffer</span></a></code>
+<p>Flips this buffer.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="mark.html">mark</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">mark</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Buffer</span></a></code>
+<p>Marks the current position, so that the position may return to this point
+later by calling <code>reset()</code>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="reset.html">reset</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">reset</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Buffer</span></a></code>
+<p>Resets the position of this buffer to the <code>mark</code>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="rewind.html">rewind</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">rewind</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Buffer</span></a></code>
+<p>Rewinds this buffer.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-read-buffer/index.html">ReadBuffer</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ReadBuffer</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Buffer</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-write-buffer/index.html">WriteBuffer</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">WriteBuffer</span><span class="symbol">&lt;</span><span class="keyword">in</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Buffer</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

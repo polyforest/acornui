@@ -38,7 +38,7 @@ nbilyk</p>
 <p><a href="current-loaders-changed.html">currentLoadersChanged</a></p>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">currentLoadersChanged</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">val </span><span class="identifier">currentLoadersChanged</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal/index.html"><span class="identifier">Signal</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched when the current loaders list has changed.</p>
 </td>
 </tr>
@@ -52,14 +52,18 @@ nbilyk</p>
 <p><a href="../-asset-manager/seconds-loaded.html">secondsLoaded</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">secondsLoaded</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">secondsLoaded</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The number of seconds currently loaded.</p>
+</td>
 </tr>
 <tr>
 <td>
 <p><a href="../-asset-manager/seconds-total.html">secondsTotal</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">secondsTotal</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">secondsTotal</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The total number of seconds estimated to load.</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -71,7 +75,10 @@ nbilyk</p>
 <p><a href="dispose.html">dispose</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Prepares this object for garbage collection.
+A disposed object should no longer be used or referenced.</p>
+</td>
 </tr>
 <tr>
 <td>

@@ -37,7 +37,7 @@
 <p><a href="-framebuffer/index.html">Framebuffer</a></p>
 </td>
 <td>
-<code><span class="keyword">class </span><span class="identifier">Framebuffer</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+<code><span class="keyword">class </span><span class="identifier">Framebuffer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -102,7 +102,7 @@
 <p><a href="-gl-state/index.html">GlState</a></p>
 </td>
 <td>
-<code><span class="keyword">class </span><span class="identifier">GlState</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<code><span class="keyword">class </span><span class="identifier">GlState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
 <p>GlState stores OpenGl state information necessary for knowing whether basic operations can be batched.</p>
 </td>
 </tr>
@@ -151,7 +151,7 @@ implementation.</p>
 <p><a href="-shader-batch/index.html">ShaderBatch</a></p>
 </td>
 <td>
-<code><span class="keyword">interface </span><span class="identifier">ShaderBatch</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span><span class="symbol">, </span><a href="-vertex-feed/index.html"><span class="identifier">VertexFeed</span></a><span class="symbol">, </span><a href="-index-feed/index.html"><span class="identifier">IndexFeed</span></a></code>
+<code><span class="keyword">interface </span><span class="identifier">ShaderBatch</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a><span class="symbol">, </span><a href="-vertex-feed/index.html"><span class="identifier">VertexFeed</span></a><span class="symbol">, </span><a href="-index-feed/index.html"><span class="identifier">IndexFeed</span></a></code>
 <p>A <a href="-shader-batch/index.html">ShaderBatch</a> is good for reducing draw calls by combining opengl buffer and draw calls.
 This is used in conjunction with <a href="-gl-state/index.html">GlState</a>, which keeps track of changes that would require a flip.</p>
 </td>
@@ -161,14 +161,14 @@ This is used in conjunction with <a href="-gl-state/index.html">GlState</a>, whi
 <p><a href="-shader-batch-impl/index.html">ShaderBatchImpl</a></p>
 </td>
 <td>
-<code><span class="keyword">class </span><span class="identifier">ShaderBatchImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-shader-batch/index.html"><span class="identifier">ShaderBatch</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code></td>
+<code><span class="keyword">class </span><span class="identifier">ShaderBatchImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-shader-batch/index.html"><span class="identifier">ShaderBatch</span></a><span class="symbol">, </span><a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="-shader-program/index.html">ShaderProgram</a></p>
 </td>
 <td>
-<code><span class="keyword">interface </span><span class="identifier">ShaderProgram</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+<code><span class="keyword">interface </span><span class="identifier">ShaderProgram</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -182,7 +182,7 @@ This is used in conjunction with <a href="-gl-state/index.html">GlState</a>, whi
 <p><a href="-static-shader-batch-impl/index.html">StaticShaderBatchImpl</a></p>
 </td>
 <td>
-<code><span class="keyword">class </span><span class="identifier">StaticShaderBatchImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-shader-batch/index.html"><span class="identifier">ShaderBatch</span></a><span class="symbol">, </span><span class="identifier">Clearable</span><span class="symbol">, </span><span class="identifier">Disposable</span></code>
+<code><span class="keyword">class </span><span class="identifier">StaticShaderBatchImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-shader-batch/index.html"><span class="identifier">ShaderBatch</span></a><span class="symbol">, </span><a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
 <p>A static shader batch will remember the draw calls, allowing the batch to be rendered without needing to buffer data
 at a later time.</p>
 </td>
@@ -234,7 +234,7 @@ at a later time.</p>
 <p><a href="-vertex/index.html">Vertex</a></p>
 </td>
 <td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Vertex</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Clearable</span><span class="symbol">, </span><a href="-vertex-ro/index.html"><span class="identifier">VertexRo</span></a></code></td>
+<code><span class="keyword">class </span><span class="identifier">Vertex</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="-vertex-ro/index.html"><span class="identifier">VertexRo</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -348,7 +348,7 @@ May be used for such things as debugging or profiling.</p>
 <p><a href="uniform-matrix4fv.html">uniformMatrix4fv</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="-gl20/index.html"><span class="identifier">Gl20</span></a><span class="symbol">.</span><span class="identifier">uniformMatrix4fv</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core$uniformMatrix4fv(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlUniformLocationRef, kotlin.Boolean, com.acornui.math.Matrix4Ro)/location">location</span><span class="symbol">:</span>&nbsp;<a href="-gl-uniform-location-ref.html"><span class="identifier">GlUniformLocationRef</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$uniformMatrix4fv(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlUniformLocationRef, kotlin.Boolean, com.acornui.math.Matrix4Ro)/transpose">transpose</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$uniformMatrix4fv(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlUniformLocationRef, kotlin.Boolean, com.acornui.math.Matrix4Ro)/value">value</span><span class="symbol">:</span>&nbsp;<span class="identifier">Matrix4Ro</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="-gl20/index.html"><span class="identifier">Gl20</span></a><span class="symbol">.</span><span class="identifier">uniformMatrix4fv</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core$uniformMatrix4fv(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlUniformLocationRef, kotlin.Boolean, com.acornui.math.Matrix4Ro)/location">location</span><span class="symbol">:</span>&nbsp;<a href="-gl-uniform-location-ref.html"><span class="identifier">GlUniformLocationRef</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$uniformMatrix4fv(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlUniformLocationRef, kotlin.Boolean, com.acornui.math.Matrix4Ro)/transpose">transpose</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$uniformMatrix4fv(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlUniformLocationRef, kotlin.Boolean, com.acornui.math.Matrix4Ro)/value">value</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.math/-matrix4-ro/index.html"><span class="identifier">Matrix4Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
 <code><span class="keyword">fun </span><a href="-gl20/index.html"><span class="identifier">Gl20</span></a><span class="symbol">.</span><span class="identifier">uniformMatrix4fv</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core$uniformMatrix4fv(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlUniformLocationRef, kotlin.Boolean, kotlin.collections.List((kotlin.Float)))/location">location</span><span class="symbol">:</span>&nbsp;<a href="-gl-uniform-location-ref.html"><span class="identifier">GlUniformLocationRef</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$uniformMatrix4fv(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlUniformLocationRef, kotlin.Boolean, kotlin.collections.List((kotlin.Float)))/transpose">transpose</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$uniformMatrix4fv(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlUniformLocationRef, kotlin.Boolean, kotlin.collections.List((kotlin.Float)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
 </tr>
 </tbody>

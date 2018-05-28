@@ -8,7 +8,7 @@
 <a href="../index.html">com.acornui.core.input.interaction</a>&nbsp;/&nbsp;<a href="./index.html">DragAttachment</a><br/>
 <br/>
 <h1>DragAttachment</h1>
-<code><span class="keyword">class </span><span class="identifier">DragAttachment</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<code><span class="keyword">class </span><span class="identifier">DragAttachment</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
 <p>A behavior for a touch down, touch move, then touch up on a target UiComponent.</p>
 <h3>Constructors</h3>
 <table>
@@ -18,7 +18,7 @@
 <p><a href="-init-.html">&lt;init&gt;</a></p>
 </td>
 <td>
-<code><span class="identifier">DragAttachment</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction.DragAttachment$<init>(com.acornui.component.UiComponent, kotlin.Float)/target">target</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.interaction.DragAttachment$<init>(com.acornui.component.UiComponent, kotlin.Float)/affordance">affordance</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;DEFAULT_AFFORDANCE<span class="symbol">)</span></code>
+<code><span class="identifier">DragAttachment</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction.DragAttachment$<init>(com.acornui.component.UiComponentRo, kotlin.Float)/target">target</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.interaction.DragAttachment$<init>(com.acornui.component.UiComponentRo, kotlin.Float)/affordance">affordance</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;DEFAULT_AFFORDANCE<span class="symbol">)</span></code>
 <p>A behavior for a touch down, touch move, then touch up on a target UiComponent.</p>
 </td>
 </tr>
@@ -41,7 +41,7 @@
 <p><a href="drag.html">drag</a></p>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">drag</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-drag-interaction/index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">val </span><span class="identifier">drag</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal/index.html"><span class="identifier">Signal</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-drag-interaction-ro/index.html"><span class="identifier">DragInteractionRo</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched on each move during a drag.
 This will not be dispatched if the target is not on the stage.</p>
 </td>
@@ -51,7 +51,7 @@ This will not be dispatched if the target is not on the stage.</p>
 <p><a href="drag-end.html">dragEnd</a></p>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">dragEnd</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-drag-interaction/index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">val </span><span class="identifier">dragEnd</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal/index.html"><span class="identifier">Signal</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-drag-interaction-ro/index.html"><span class="identifier">DragInteractionRo</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched when the drag has completed.</p>
 </td>
 </tr>
@@ -60,7 +60,7 @@ This will not be dispatched if the target is not on the stage.</p>
 <p><a href="drag-start.html">dragStart</a></p>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">dragStart</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-drag-interaction/index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">val </span><span class="identifier">dragStart</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal/index.html"><span class="identifier">Signal</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-drag-interaction-ro/index.html"><span class="identifier">DragInteractionRo</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched when the drag has passed the <a href="affordance.html">affordance</a> distance.</p>
 </td>
 </tr>
@@ -87,7 +87,7 @@ This will not be dispatched if the target is not on the stage.</p>
 <p><a href="target.html">target</a></p>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">target</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a></code></td>
+<code><span class="keyword">val </span><span class="identifier">target</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a></code></td>
 </tr>
 </tbody>
 </table>
@@ -99,7 +99,10 @@ This will not be dispatched if the target is not on the stage.</p>
 <p><a href="dispose.html">dispose</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Prepares this object for garbage collection.
+A disposed object should no longer be used or referenced.</p>
+</td>
 </tr>
 <tr>
 <td>

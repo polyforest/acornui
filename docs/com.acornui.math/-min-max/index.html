@@ -1,0 +1,193 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>MinMax - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="./index.html">MinMax</a><br/>
+<br/>
+<h1>MinMax</h1>
+<code><span class="keyword">class </span><span class="identifier">MinMax</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-min-max-ro/index.html"><span class="identifier">MinMaxRo</span></a></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">MinMax</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.MinMax$<init>(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/xMin">xMin</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;Float.POSITIVE_INFINITY<span class="symbol">, </span><span class="identifier" id="com.acornui.math.MinMax$<init>(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/yMin">yMin</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;Float.POSITIVE_INFINITY<span class="symbol">, </span><span class="identifier" id="com.acornui.math.MinMax$<init>(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/xMax">xMax</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;Float.NEGATIVE_INFINITY<span class="symbol">, </span><span class="identifier" id="com.acornui.math.MinMax$<init>(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/yMax">yMax</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;Float.NEGATIVE_INFINITY<span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="height.html">height</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">height</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="width.html">width</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">width</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="x-max.html">xMax</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">xMax</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="x-min.html">xMin</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">xMin</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="y-max.html">yMax</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">yMax</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="y-min.html">yMin</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">yMin</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="equals.html">equals</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">equals</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.MinMax$equals(kotlin.Any)/other">other</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="ext.html">ext</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">ext</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.MinMax$ext(kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.MinMax$ext(kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Expands this value to include the given point.</p>
+<code><span class="keyword">fun </span><span class="identifier">ext</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.MinMax$ext(com.acornui.math.MinMaxRo)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-min-max-ro/index.html"><span class="identifier">MinMaxRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Expands this value to include the given <a href="../-min-max-ro/index.html">MinMaxRo</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="hash-code.html">hashCode</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">hashCode</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="inf.html">inf</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">inf</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="inflate.html">inflate</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">inflate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.MinMax$inflate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/left">left</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.MinMax$inflate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/top">top</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.MinMax$inflate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/right">right</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.MinMax$inflate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/bottom">bottom</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Increases this value by the given deltas.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="intersection.html">intersection</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">intersection</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.MinMax$intersection(com.acornui.math.MinMaxRo)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-min-max-ro/index.html"><span class="identifier">MinMaxRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets this value to be the intersection of this and <a href="intersection.html#com.acornui.math.MinMax$intersection(com.acornui.math.MinMaxRo)/other">other</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="scl.html">scl</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">scl</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.MinMax$scl(kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.MinMax$scl(kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Scales this value by the given scalars.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set.html">set</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.MinMax$set(com.acornui.math.MinMaxRo)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-min-max-ro/index.html"><span class="identifier">MinMaxRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">MinMax</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.MinMax$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/xMin">xMin</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.MinMax$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/yMin">yMin</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.MinMax$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/xMax">xMax</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.MinMax$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/yMax">yMax</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">MinMax</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-min-max-ro/clamp-point.html">clampPoint</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clampPoint</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.MinMaxRo$clampPoint(com.acornui.math.Vector2)/value">value</span><span class="symbol">:</span>&nbsp;<a href="../-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector2/index.html"><span class="identifier">Vector2</span></a></code>
+<p>Clamps a 2d vector to these bounds.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-min-max-ro/contains.html">contains</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">contains</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.MinMaxRo$contains(kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.MinMaxRo$contains(kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-min-max-ro/copy.html">copy</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">copy</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.MinMaxRo$copy(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/xMin">xMin</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.xMin<span class="symbol">, </span><span class="identifier" id="com.acornui.math.MinMaxRo$copy(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/xMax">xMax</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.xMax<span class="symbol">, </span><span class="identifier" id="com.acornui.math.MinMaxRo$copy(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/yMin">yMin</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.yMin<span class="symbol">, </span><span class="identifier" id="com.acornui.math.MinMaxRo$copy(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/yMax">yMax</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.yMax<span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">MinMax</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-min-max-ro/intersects.html">intersects</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.MinMaxRo$intersects(com.acornui.math.MinMaxRo)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-min-max-ro/index.html"><span class="identifier">MinMaxRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-min-max-ro/is-empty.html">isEmpty</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">isEmpty</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-min-max-ro/is-not-empty.html">isNotEmpty</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">isNotEmpty</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

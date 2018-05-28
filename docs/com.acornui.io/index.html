@@ -1,0 +1,140 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.io - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.io</a><br/>
+<br/>
+<h2>Package com.acornui.io</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-array-list-buffer/index.html">ArrayListBuffer</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ArrayListBuffer</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-buffer-base/index.html"><span class="identifier">BufferBase</span></a><span class="symbol">&lt;</span><a href="-array-list-buffer/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="-read-write-buffer.html"><span class="identifier">ReadWriteBuffer</span></a><span class="symbol">&lt;</span><a href="-array-list-buffer/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>A Buffer interface wrapping a <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html">MutableList</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-buffer/index.html">Buffer</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Buffer</span></code>
+<p>An interface common to <a href="-read-buffer/index.html">ReadBuffer</a> and <a href="-write-buffer/index.html">WriteBuffer</a>
+These methods manipulate the <a href="#">getPosition</a> and <a href="-buffer/mark.html">mark</a> cursors.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-buffer-base/index.html">BufferBase</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">BufferBase</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-read-write-buffer.html"><span class="identifier">ReadWriteBuffer</span></a><span class="symbol">&lt;</span><a href="-buffer-base/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-native-buffer/index.html">NativeBuffer</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">NativeBuffer</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-read-write-buffer.html"><span class="identifier">ReadWriteBuffer</span></a><span class="symbol">&lt;</span><a href="-native-buffer/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-read-buffer/index.html">ReadBuffer</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ReadBuffer</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-buffer/index.html"><span class="identifier">Buffer</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-read-write-buffer.html">ReadWriteBuffer</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ReadWriteBuffer</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-read-buffer/index.html"><span class="identifier">ReadBuffer</span></a><span class="symbol">&lt;</span><a href="-read-write-buffer.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="-write-buffer/index.html"><span class="identifier">WriteBuffer</span></a><span class="symbol">&lt;</span><a href="-read-write-buffer.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-wrapped-array-buffer/index.html">WrappedArrayBuffer</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">WrappedArrayBuffer</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-buffer-base/index.html"><span class="identifier">BufferBase</span></a><span class="symbol">&lt;</span><a href="-wrapped-array-buffer/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="-read-write-buffer.html"><span class="identifier">ReadWriteBuffer</span></a><span class="symbol">&lt;</span><a href="-wrapped-array-buffer/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>A Buffer implementation wrapping a simple array.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-write-buffer/index.html">WriteBuffer</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">WriteBuffer</span><span class="symbol">&lt;</span><span class="keyword">in</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-buffer/index.html"><span class="identifier">Buffer</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Exceptions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-buffer-overflow-exception/index.html">BufferOverflowException</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">BufferOverflowException</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html"><span class="identifier">Throwable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-buffer-underflow-exception/index.html">BufferUnderflowException</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">BufferUnderflowException</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html"><span class="identifier">Throwable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-invalid-mark-exception/index.html">InvalidMarkException</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">InvalidMarkException</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html"><span class="identifier">Throwable</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="to-byte-array.html">toByteArray</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-read-buffer/index.html"><span class="identifier">ReadBuffer</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte/index.html"><span class="identifier">Byte</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">toByteArray</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html"><span class="identifier">ByteArray</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="to-float-array.html">toFloatArray</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-read-buffer/index.html"><span class="identifier">ReadBuffer</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">toFloatArray</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float-array/index.html"><span class="identifier">FloatArray</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="write.html">write</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.math/-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">.</span><span class="identifier">write</span><span class="symbol">(</span><span class="identifier" id="com.acornui.io$write(com.acornui.math.Vector3, com.acornui.io.WriteBuffer((kotlin.Float)))/buffer">buffer</span><span class="symbol">:</span>&nbsp;<a href="-write-buffer/index.html"><span class="identifier">WriteBuffer</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">.</span><span class="identifier">write</span><span class="symbol">(</span><span class="identifier" id="com.acornui.io$write(com.acornui.math.Vector2, com.acornui.io.WriteBuffer((kotlin.Float)))/buffer">buffer</span><span class="symbol">:</span>&nbsp;<a href="-write-buffer/index.html"><span class="identifier">WriteBuffer</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="write-unpacked.html">writeUnpacked</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.graphics/-color/index.html"><span class="identifier">Color</span></a><span class="symbol">.</span><span class="identifier">writeUnpacked</span><span class="symbol">(</span><span class="identifier" id="com.acornui.io$writeUnpacked(com.acornui.graphics.Color, com.acornui.io.WriteBuffer((kotlin.Float)))/buffer">buffer</span><span class="symbol">:</span>&nbsp;<a href="-write-buffer/index.html"><span class="identifier">WriteBuffer</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

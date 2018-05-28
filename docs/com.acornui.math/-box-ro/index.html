@@ -1,0 +1,209 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>BoxRo - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="./index.html">BoxRo</a><br/>
+<br/>
+<h1>BoxRo</h1>
+<code><span class="keyword">interface </span><span class="identifier">BoxRo</span></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="center.html">center</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">center</span><span class="symbol">: </span><a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="depth.html">depth</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">depth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="dimensions.html">dimensions</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">dimensions</span><span class="symbol">: </span><a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="height.html">height</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">height</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="max.html">max</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">max</span><span class="symbol">: </span><a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="min.html">min</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">min</span><span class="symbol">: </span><a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="width.html">width</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">width</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="contains.html">contains</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">contains</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.BoxRo$contains(com.acornui.math.BoxRo)/b">b</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">BoxRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns whether the given bounding box is contained in this bounding box.</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">contains</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.BoxRo$contains(com.acornui.math.Vector3Ro)/v">v</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns whether the given vector is contained in this bounding box.</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">contains</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.BoxRo$contains(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.BoxRo$contains(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.BoxRo$contains(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="copy.html">copy</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">copy</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.BoxRo$copy(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/min">min</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.min<span class="symbol">, </span><span class="identifier" id="com.acornui.math.BoxRo$copy(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/max">max</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.max<span class="symbol">)</span><span class="symbol">: </span><a href="../-box/index.html"><span class="identifier">Box</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-corner000.html">getCorner000</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getCorner000</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.BoxRo$getCorner000(com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector3/index.html"><span class="identifier">Vector3</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-corner001.html">getCorner001</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getCorner001</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.BoxRo$getCorner001(com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector3/index.html"><span class="identifier">Vector3</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-corner010.html">getCorner010</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getCorner010</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.BoxRo$getCorner010(com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector3/index.html"><span class="identifier">Vector3</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-corner011.html">getCorner011</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getCorner011</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.BoxRo$getCorner011(com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector3/index.html"><span class="identifier">Vector3</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-corner100.html">getCorner100</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getCorner100</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.BoxRo$getCorner100(com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector3/index.html"><span class="identifier">Vector3</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-corner101.html">getCorner101</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getCorner101</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.BoxRo$getCorner101(com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector3/index.html"><span class="identifier">Vector3</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-corner110.html">getCorner110</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getCorner110</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.BoxRo$getCorner110(com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector3/index.html"><span class="identifier">Vector3</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-corner111.html">getCorner111</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getCorner111</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.BoxRo$getCorner111(com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector3/index.html"><span class="identifier">Vector3</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-corners.html">getCorners</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getCorners</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.BoxRo$getCorners(kotlin.collections.List((com.acornui.math.Vector3)))/corners">corners</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-dimensions.html">getDimensions</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getDimensions</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.BoxRo$getDimensions(com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector3/index.html"><span class="identifier">Vector3</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-max.html">getMax</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getMax</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.BoxRo$getMax(com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector3/index.html"><span class="identifier">Vector3</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-min.html">getMin</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getMin</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.BoxRo$getMin(com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector3/index.html"><span class="identifier">Vector3</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="intersects.html">intersects</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.BoxRo$intersects(com.acornui.math.BoxRo)/b">b</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">BoxRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns whether the given bounding box is intersecting this bounding box (at least one point in).</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.BoxRo$intersects(com.acornui.math.RayRo, com.acornui.math.Vector3)/r">r</span><span class="symbol">:</span>&nbsp;<a href="../-ray-ro/index.html"><span class="identifier">RayRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.BoxRo$intersects(com.acornui.math.RayRo, com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Calculates whether or not the given Ray intersects with this Box.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="is-valid.html">isValid</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">isValid</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns whether this bounding box is valid. This means that {@link #max} is greater than {@link #min}.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-box/index.html">Box</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Box</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">BoxRo</span></a></code>
+<p>Encapsulates an axis aligned bounding box represented by a minimum and a maximum Vector. Additionally you can query for the
+bounding box's center, dimensions and corner points.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

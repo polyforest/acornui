@@ -1,0 +1,22 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Signal.add - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.signal</a>&nbsp;/&nbsp;<a href="index.html">Signal</a>&nbsp;/&nbsp;<a href="./add.html">add</a><br/>
+<br/>
+<h1>add</h1>
+<a name="com.acornui.signal.Signal$add(com.acornui.signal.Signal.T)"></a>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">add</span><span class="symbol">(</span><span class="identifier" id="com.acornui.signal.Signal$add(com.acornui.signal.Signal.T)/handler">handler</span><span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><a name="com.acornui.signal.Signal$add(com.acornui.signal.Signal.T, kotlin.Boolean)"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">add</span><span class="symbol">(</span><span class="identifier" id="com.acornui.signal.Signal$add(com.acornui.signal.Signal.T, kotlin.Boolean)/handler">handler</span><span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.signal.Signal$add(com.acornui.signal.Signal.T, kotlin.Boolean)/isOnce">isOnce</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Adds a handler to this signal.</p>
+<p>If this signal is currently dispatching, the added handler will not be dispatched until the next dispatch call.</p>
+<h3>Parameters</h3>
+<p><a name="handler"></a>
+<code>handler</code> - The callback that will be invoked when dispatch() is called on the signal.</p>
+<p><a name="isOnce"></a>
+<code>isOnce</code> - A flag, where if true, will cause the handler to be removed immediately after the next dispatch.</p>
+</BODY>
+</HTML>

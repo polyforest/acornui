@@ -8,7 +8,7 @@
 <a href="../index.html">com.acornui.file</a>&nbsp;/&nbsp;<a href="./index.html">FileIoManager</a><br/>
 <br/>
 <h1>FileIoManager</h1>
-<code><span class="keyword">interface </span><span class="identifier">FileIoManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<code><span class="keyword">interface </span><span class="identifier">FileIoManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
 <p>An object which allows for selecting file(s) with native pickers for the purposes of reading or writing to disk.</p>
 <p><strong>See Also</strong><br/>
 <p><a href="../-file-reader/index.html">FileReader</a></p>
@@ -68,6 +68,21 @@
 <td>
 <code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">pickFilesForOpen</span><span class="symbol">(</span><span class="identifier" id="com.acornui.file.FileIoManager$pickFilesForOpen(kotlin.collections.List((com.acornui.file.FileFilterGroup)), kotlin.Function1((kotlin.collections.List((com.acornui.file.FileReader)), kotlin.Unit)))/fileFilterGroups">fileFilterGroups</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-file-filter-group/index.html"><span class="identifier">FileFilterGroup</span></a><span class="symbol">&gt;</span><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="com.acornui.file.FileIoManager$pickFilesForOpen(kotlin.collections.List((com.acornui.file.FileFilterGroup)), kotlin.Function1((kotlin.collections.List((com.acornui.file.FileReader)), kotlin.Unit)))/onSuccess">onSuccess</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-file-reader/index.html"><span class="identifier">FileReader</span></a><span class="symbol">&gt;</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
 <p>Invokes native file picker to select multiple files for opening from disk <a href="pick-files-for-open.html#com.acornui.file.FileIoManager$pickFilesForOpen(kotlin.collections.List((com.acornui.file.FileFilterGroup)), kotlin.Function1((kotlin.collections.List((com.acornui.file.FileReader)), kotlin.Unit)))/onSuccess">onSuccess</a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-disposable/dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Prepares this object for garbage collection.
+A disposed object should no longer be used or referenced.</p>
 </td>
 </tr>
 </tbody>

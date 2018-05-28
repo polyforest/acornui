@@ -1,0 +1,426 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Quaternion - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="./index.html">Quaternion</a><br/>
+<br/>
+<h1>Quaternion</h1>
+<code><span class="keyword">class </span><span class="identifier">Quaternion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-quaternion-ro/index.html"><span class="identifier">QuaternionRo</span></a></code>
+<p>A simple Quaternion class. (May be an oxymoron)</p>
+<p><strong>Author</strong><br/>
+badlogicgames@gmail.com</p>
+<p><strong>Author</strong><br/>
+vesuvio</p>
+<p><strong>Author</strong><br/>
+xoppa</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">Quaternion</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$<init>(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$<init>(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$<init>(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$<init>(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/w">w</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;1f<span class="symbol">)</span></code>
+<p>A simple Quaternion class. (May be an oxymoron)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="w.html">w</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">w</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="x.html">x</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">x</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="y.html">y</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">y</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="z.html">z</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">z</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="add.html">add</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">add</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$add(com.acornui.math.QuaternionRo)/quaternion">quaternion</span><span class="symbol">:</span>&nbsp;<a href="../-quaternion-ro/index.html"><span class="identifier">QuaternionRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">add</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$add(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/qx">qx</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$add(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/qy">qy</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$add(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/qz">qz</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$add(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/qw">qw</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Add the x,y,z,w components of the passed in quaternion to the ones of this quaternion</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="conjugate.html">conjugate</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">conjugate</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Conjugate the quaternion.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="dot.html">dot</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dot</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$dot(com.acornui.math.QuaternionRo)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-quaternion-ro/index.html"><span class="identifier">QuaternionRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">dot</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$dot(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$dot(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$dot(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$dot(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/w">w</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Get the dot product between this and the other quaternion (commutative).</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="equals.html">equals</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">equals</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$equals(kotlin.Any)/other">other</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="exp.html">exp</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">exp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$exp(kotlin.Float)/alpha">alpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Calculates (this quaternion)^alpha where alpha is a real number and stores the result in this quaternion.
+See http://en.wikipedia.org/wiki/Quaternion#Exponential.2C_logarithm.2C_and_power</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-angle-around-rad.html">getAngleAroundRad</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getAngleAroundRad</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$getAngleAroundRad(kotlin.Float, kotlin.Float, kotlin.Float)/axisX">axisX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$getAngleAroundRad(kotlin.Float, kotlin.Float, kotlin.Float)/axisY">axisY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$getAngleAroundRad(kotlin.Float, kotlin.Float, kotlin.Float)/axisZ">axisZ</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">getAngleAroundRad</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$getAngleAroundRad(com.acornui.math.Vector3)/axis">axis</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Get the angle in radians of the rotation around the specified axis. The axis must be normalized.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-angle-rad.html">getAngleRad</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getAngleRad</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Get the angle in radians of the rotation this quaternion represents. Does not normalize the quaternion. Use
+{@link #getAxisAngleRad(Vector3)} to get both the axis and the angle of this rotation. Use
+{@link #getAngleAroundRad(Vector3)} to get the angle around a specific axis.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-axis-angle-rad.html">getAxisAngleRad</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getAxisAngleRad</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$getAxisAngleRad(com.acornui.math.Vector3)/axis">axis</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Get the axis-angle representation of the rotation in radians. The supplied vector will receive the axis (x, y and z values)
+of the rotation and the value returned is the angle in radians around that axis. Note that this method will alter the
+supplied vector, the existing value of the vector is ignored.  This will normalize this quaternion if needed. The
+received axis is a unit vector. However, if this is an identity quaternion (no rotation), then the length of the axis may be
+zero.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-gimbal-pole.html">getGimbalPole</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getGimbalPole</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Get the pole of the gimbal lock, if any.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-pitch-rad.html">getPitchRad</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getPitchRad</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Get the pitch euler angle in radians, which is the rotation around the x axis. Requires that this quaternion is normalized.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-roll-rad.html">getRollRad</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getRollRad</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Get the roll euler angle in radians, which is the rotation around the z axis. Requires that this quaternion is normalized.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-swing-twist.html">getSwingTwist</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getSwingTwist</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$getSwingTwist(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Quaternion, com.acornui.math.Quaternion)/axisX">axisX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$getSwingTwist(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Quaternion, com.acornui.math.Quaternion)/axisY">axisY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$getSwingTwist(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Quaternion, com.acornui.math.Quaternion)/axisZ">axisZ</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$getSwingTwist(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Quaternion, com.acornui.math.Quaternion)/swing">swing</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Quaternion</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$getSwingTwist(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Quaternion, com.acornui.math.Quaternion)/twist">twist</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Quaternion</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">getSwingTwist</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$getSwingTwist(com.acornui.math.Vector3, com.acornui.math.Quaternion, com.acornui.math.Quaternion)/axis">axis</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$getSwingTwist(com.acornui.math.Vector3, com.acornui.math.Quaternion, com.acornui.math.Quaternion)/swing">swing</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Quaternion</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$getSwingTwist(com.acornui.math.Vector3, com.acornui.math.Quaternion, com.acornui.math.Quaternion)/twist">twist</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Quaternion</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Get the swing rotation and twist rotation for the specified axis. The twist rotation represents the rotation around the
+specified axis. The swing rotation represents the rotation of the specified axis itself, which is the rotation around an
+axis perpendicular to the specified axis.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-yaw-rad.html">getYawRad</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getYawRad</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Get the yaw euler angle in radians, which is the rotation around the y axis. Requires that this quaternion is normalized.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="hash-code.html">hashCode</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">hashCode</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="idt.html">idt</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">idt</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Sets the quaternion to an identity Quaternion</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="is-identity.html">isIdentity</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">isIdentity</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">isIdentity</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$isIdentity(kotlin.Float)/tolerance">tolerance</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="len.html">len</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">len</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="len2.html">len2</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">len2</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="mul.html">mul</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">mul</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$mul(com.acornui.math.QuaternionRo)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-quaternion-ro/index.html"><span class="identifier">QuaternionRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">mul</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$mul(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$mul(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$mul(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$mul(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/w">w</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Multiplies this quaternion with another one in the form of this = this * other</p>
+<code><span class="keyword">fun </span><span class="identifier">mul</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$mul(kotlin.Float)/scalar">scalar</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Multiplies the components of this quaternion with the given scalar.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="mul-left.html">mulLeft</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">mulLeft</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$mulLeft(com.acornui.math.QuaternionRo)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-quaternion-ro/index.html"><span class="identifier">QuaternionRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">mulLeft</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$mulLeft(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$mulLeft(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$mulLeft(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$mulLeft(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/w">w</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Multiplies this quaternion with another one in the form of this = other * this</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="nor.html">nor</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">nor</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Normalizes this quaternion to unit length</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="plus.html">plus</a></p>
+</td>
+<td>
+<code><span class="keyword">operator</span> <span class="keyword">fun </span><span class="identifier">plus</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$plus(com.acornui.math.QuaternionRo)/quaternion">quaternion</span><span class="symbol">:</span>&nbsp;<a href="../-quaternion-ro/index.html"><span class="identifier">QuaternionRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="set.html">set</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/w">w</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Sets the components of the quaternion</p>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$set(com.acornui.math.QuaternionRo)/quaternion">quaternion</span><span class="symbol">:</span>&nbsp;<a href="../-quaternion-ro/index.html"><span class="identifier">QuaternionRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Sets the quaternion components from the given quaternion.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set-euler-angles-rad.html">setEulerAnglesRad</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">setEulerAnglesRad</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$setEulerAnglesRad(kotlin.Float, kotlin.Float, kotlin.Float)/yaw">yaw</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setEulerAnglesRad(kotlin.Float, kotlin.Float, kotlin.Float)/pitch">pitch</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setEulerAnglesRad(kotlin.Float, kotlin.Float, kotlin.Float)/roll">roll</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Sets the quaternion to the given euler angles in radians.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set-from-axes.html">setFromAxes</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">setFromAxes</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxes(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/xx">xx</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxes(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/xy">xy</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxes(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/xz">xz</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxes(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/yx">yx</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxes(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/yy">yy</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxes(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/yz">yz</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxes(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/zx">zx</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxes(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/zy">zy</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxes(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/zz">zz</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">setFromAxes</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxes(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/xx">xx</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxes(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/xy">xy</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxes(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/xz">xz</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxes(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/yx">yx</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxes(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/yy">yy</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxes(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/yz">yz</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxes(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/zx">zx</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxes(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/zy">zy</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxes(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/zz">zz</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxes(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/normalizeAxes">normalizeAxes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="set-from-axis.html">setFromAxis</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">setFromAxis</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxis(com.acornui.math.Vector3Ro, kotlin.Float)/axis">axis</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxis(com.acornui.math.Vector3Ro, kotlin.Float)/radians">radians</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">setFromAxis</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxis(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxis(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxis(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromAxis(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/radians">radians</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Sets the quaternion components from the given axis and angle around that axis.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set-from-cross.html">setFromCross</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">setFromCross</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$setFromCross(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/v1">v1</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromCross(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/v2">v2</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">setFromCross</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$setFromCross(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x1">x1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromCross(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y1">y1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromCross(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z1">z1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromCross(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x2">x2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromCross(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y2">y2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromCross(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z2">z2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Set this quaternion to the rotation between two vectors.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set-from-matrix.html">setFromMatrix</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">setFromMatrix</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$setFromMatrix(com.acornui.math.Matrix4, kotlin.Boolean)/matrix">matrix</span><span class="symbol">:</span>&nbsp;<a href="../-matrix4/index.html"><span class="identifier">Matrix4</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromMatrix(com.acornui.math.Matrix4, kotlin.Boolean)/normalizeAxes">normalizeAxes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">setFromMatrix</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$setFromMatrix(kotlin.Boolean, com.acornui.math.Matrix3)/normalizeAxes">normalizeAxes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$setFromMatrix(kotlin.Boolean, com.acornui.math.Matrix3)/matrix">matrix</span><span class="symbol">:</span>&nbsp;<a href="../-matrix3/index.html"><span class="identifier">Matrix3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Sets the Quaternion from the given matrix, optionally removing any scaling.</p>
+<code><span class="keyword">fun </span><span class="identifier">setFromMatrix</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$setFromMatrix(com.acornui.math.Matrix3)/matrix">matrix</span><span class="symbol">:</span>&nbsp;<a href="../-matrix3/index.html"><span class="identifier">Matrix3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Sets the Quaternion from the given rotation matrix, which must not contain scaling.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="slerp.html">slerp</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">slerp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$slerp(com.acornui.math.QuaternionRo, kotlin.Float)/end">end</span><span class="symbol">:</span>&nbsp;<a href="../-quaternion-ro/index.html"><span class="identifier">QuaternionRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$slerp(com.acornui.math.QuaternionRo, kotlin.Float)/alpha">alpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Spherical linear interpolation between this quaternion and the other quaternion, based on the alpha value in the range
+<a href="#">0,1</a>. Taken from. Taken from Bones framework for JPCT, see http://www.aptalkarga.com/bones/</p>
+<code><span class="keyword">fun </span><span class="identifier">slerp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$slerp(kotlin.Array((com.acornui.math.Quaternion)))/q">q</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><span class="identifier">Array</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">Quaternion</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Spherical linearly interpolates multiple quaternions and stores the result in this Quaternion.
+Will not destroy the data previously inside the elements of q.
+result = (q_1^w_1)<em>(q2^w2)</em> ... *(q_n^w_n) where w_i=1/n.</p>
+<code><span class="keyword">fun </span><span class="identifier">slerp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$slerp(kotlin.Array((com.acornui.math.Quaternion)), kotlin.FloatArray)/q">q</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><span class="identifier">Array</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">Quaternion</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$slerp(kotlin.Array((com.acornui.math.Quaternion)), kotlin.FloatArray)/w">w</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float-array/index.html"><span class="identifier">FloatArray</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Spherical linearly interpolates multiple quaternions by the given weights and stores the result in this Quaternion.
+Will not destroy the data previously inside the elements of q or w.
+result = (q_1^w_1)<em>(q2^w2)</em> ... *(q_n^w_n) where the sum of w_i is 1.
+Lists must be equal in length.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="times.html">times</a></p>
+</td>
+<td>
+<code><span class="keyword">operator</span> <span class="keyword">fun </span><span class="identifier">times</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$times(com.acornui.math.QuaternionRo)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-quaternion-ro/index.html"><span class="identifier">QuaternionRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">times</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$times(kotlin.Float)/scalar">scalar</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="to-string.html">toString</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">toString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-quaternion-ro/close-to.html">closeTo</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">closeTo</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.QuaternionRo$closeTo(com.acornui.math.QuaternionRo, kotlin.Float)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-quaternion-ro/index.html"><span class="identifier">QuaternionRo</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.math.QuaternionRo$closeTo(com.acornui.math.QuaternionRo, kotlin.Float)/epsilon">epsilon</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0.0001f<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-quaternion-ro/copy.html">copy</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">copy</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.QuaternionRo$copy(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.x<span class="symbol">, </span><span class="identifier" id="com.acornui.math.QuaternionRo$copy(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.y<span class="symbol">, </span><span class="identifier" id="com.acornui.math.QuaternionRo$copy(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.z<span class="symbol">, </span><span class="identifier" id="com.acornui.math.QuaternionRo$copy(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/w">w</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.w<span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Quaternion</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-quaternion-ro/transform.html">transform</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">transform</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.QuaternionRo$transform(com.acornui.math.Vector3)/v">v</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector3/index.html"><span class="identifier">Vector3</span></a></code>
+<p>Transforms the given vector using this quaternion</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="dot.html">dot</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dot</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion.Companion$dot(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x1">x1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion.Companion$dot(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y1">y1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion.Companion$dot(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z1">z1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion.Companion$dot(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/w1">w1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion.Companion$dot(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x2">x2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion.Companion$dot(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y2">y2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion.Companion$dot(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z2">z2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion.Companion$dot(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/w2">w2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Get the dot product between the two quaternions (commutative).</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="len.html">len</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">len</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion.Companion$len(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion.Companion$len(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion.Companion$len(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion.Companion$len(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/w">w</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="len2.html">len2</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">len2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion.Companion$len2(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion.Companion$len2(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion.Companion$len2(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion.Companion$len2(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/w">w</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

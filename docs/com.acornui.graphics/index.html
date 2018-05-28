@@ -1,0 +1,90 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.graphics - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.graphics</a><br/>
+<br/>
+<h2>Package com.acornui.graphics</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-color/index.html">Color</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Color</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">, </span><a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code>
+<p>A color class, holding the r, g, b and alpha component as floats in the range <a href="#">0,1</a>. All methods perform clamping on the
+internal values after execution.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-color-ro/index.html">ColorRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ColorRo</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-hsl/index.html">Hsl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Hsl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-hsl-ro/index.html"><span class="identifier">HslRo</span></a><span class="symbol">, </span><a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code>
+<p>Hue saturation luminance</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-hsl-ro/index.html">HslRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">HslRo</span></code>
+<p>A read-only representation of an Hsl value.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-hsv/index.html">Hsv</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Hsv</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-hsv-ro/index.html"><span class="identifier">HsvRo</span></a><span class="symbol">, </span><a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code>
+<p>Hue saturation value</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-hsv-ro/index.html">HsvRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">HsvRo</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-color.html">Color</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">Color</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics$Color(kotlin.Long)/rgba">rgba</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-color/index.html"><span class="identifier">Color</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="color.html">color</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.serialization/-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">color</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics$color(com.acornui.serialization.Writer, com.acornui.graphics.ColorRo)/color">color</span><span class="symbol">:</span>&nbsp;<a href="-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../com.acornui.serialization/-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">color</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics$color(com.acornui.serialization.Writer, kotlin.String, com.acornui.graphics.ColorRo)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics$color(com.acornui.serialization.Writer, kotlin.String, com.acornui.graphics.ColorRo)/color">color</span><span class="symbol">:</span>&nbsp;<a href="-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../com.acornui.serialization/-reader/index.html"><span class="identifier">Reader</span></a><span class="symbol">.</span><span class="identifier">color</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-color/index.html"><span class="identifier">Color</span></a><span class="symbol">?</span></code><br/>
+<code><span class="keyword">fun </span><a href="../com.acornui.serialization/-reader/index.html"><span class="identifier">Reader</span></a><span class="symbol">.</span><span class="identifier">color</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics$color(com.acornui.serialization.Reader, kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-color/index.html"><span class="identifier">Color</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

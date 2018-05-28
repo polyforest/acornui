@@ -1,0 +1,156 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ReadBuffer - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.io</a>&nbsp;/&nbsp;<a href="./index.html">ReadBuffer</a><br/>
+<br/>
+<h1>ReadBuffer</h1>
+<code><span class="keyword">interface </span><span class="identifier">ReadBuffer</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-buffer/index.html"><span class="identifier">Buffer</span></a></code>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-buffer/capacity.html">capacity</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">capacity</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The capacity of this buffer. This typically will never change.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-buffer/has-remaining.html">hasRemaining</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">hasRemaining</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Indicates if there are elements remaining in this buffer, that is if
+{@code position &lt; limit}.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-buffer/limit.html">limit</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">limit</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Returns the limit of this buffer.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-buffer/position.html">position</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">position</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The position of this buffer.
+If the mark is set and it is greater than the new position, then it is
+cleared.
+Must be not negative and not greater than limit.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-buffer/remaining.html">remaining</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">remaining</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Returns the number of remaining elements in this buffer, that is
+{@code limit - position}.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="get.html">get</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">get</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="index.html#T"><span class="identifier">T</span></a></code>
+<p>Retrieves the element at the current <code>position()</code>
+The position marker is incremented.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-buffer/flip.html">flip</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">flip</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-buffer/index.html"><span class="identifier">Buffer</span></a></code>
+<p>Flips this buffer.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-buffer/mark.html">mark</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">mark</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-buffer/index.html"><span class="identifier">Buffer</span></a></code>
+<p>Marks the current position, so that the position may return to this point
+later by calling <code>reset()</code>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-buffer/reset.html">reset</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">reset</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-buffer/index.html"><span class="identifier">Buffer</span></a></code>
+<p>Resets the position of this buffer to the <code>mark</code>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-buffer/rewind.html">rewind</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">rewind</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-buffer/index.html"><span class="identifier">Buffer</span></a></code>
+<p>Rewinds this buffer.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../to-byte-array.html">toByteArray</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ReadBuffer</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte/index.html"><span class="identifier">Byte</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">toByteArray</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html"><span class="identifier">ByteArray</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../to-float-array.html">toFloatArray</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">ReadBuffer</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">toFloatArray</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float-array/index.html"><span class="identifier">FloatArray</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-read-write-buffer.html">ReadWriteBuffer</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ReadWriteBuffer</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ReadBuffer</span></a><span class="symbol">&lt;</span><a href="../-read-write-buffer.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../-write-buffer/index.html"><span class="identifier">WriteBuffer</span></a><span class="symbol">&lt;</span><a href="../-read-write-buffer.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

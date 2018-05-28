@@ -199,8 +199,8 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	 * viewport, you may use [MinMaxRo.POSITIVE_INFINITY]. This is used in order to potentially avoid drawing things
 	 * the user cannot see. (Due to the screen size, stencil buffers, or scissors)
 	 *
-	 * You may convert the screen coordinate viewport to local coordinates via [windowToLocal], but in general it is
-	 * faster to convert the local coordinates to screen coordinates [localToWindow], as no matrix inversion is
+	 * You may convert the screen coordinate viewport to local coordinates via [UiComponentImpl.windowToLocal], but in general it is
+	 * faster to convert the local coordinates to screen coordinates [UiComponentImpl.localToWindow], as no matrix inversion is
 	 * required.
 	 */
 	fun render(viewport: MinMaxRo)

@@ -1,0 +1,57 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Matrix4.rotate - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="index.html">Matrix4</a>&nbsp;/&nbsp;<a href="./rotate.html">rotate</a><br/>
+<br/>
+<h1>rotate</h1>
+<a name="com.acornui.math.Matrix4$rotate(com.acornui.math.Vector3Ro, kotlin.Float)"></a>
+<code><span class="keyword">fun </span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$rotate(com.acornui.math.Vector3Ro, kotlin.Float)/axis">axis</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$rotate(com.acornui.math.Vector3Ro, kotlin.Float)/radians">radians</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Postmultiplies this matrix with a (counter-clockwise) rotation matrix. Postmultiplication is also used by OpenGL ES' 1.x
+glTranslate/glRotate/glScale.</p>
+<h3>Parameters</h3>
+<p><a name="axis"></a>
+<code>axis</code> - The vector axis to rotate around.</p>
+<p><a name="radians"></a>
+<code>radians</code> - The angle in radians.</p>
+<p><strong>Return</strong><br/>
+This matrix for the purpose of chaining methods together.</p>
+<a name="com.acornui.math.Matrix4$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)"></a>
+<code><span class="keyword">fun </span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/axisX">axisX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/axisY">axisY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/axisZ">axisZ</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/radians">radians</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Postmultiplies this matrix with a (counter-clockwise) rotation matrix. Postmultiplication is also used by OpenGL ES' 1.x
+glTranslate/glRotate/glScale</p>
+<h3>Parameters</h3>
+<p><a name="axisX"></a>
+<code>axisX</code> - The x-axis component of the vector to rotate around.</p>
+<p><a name="axisY"></a>
+<code>axisY</code> - The y-axis component of the vector to rotate around.</p>
+<p><a name="axisZ"></a>
+<code>axisZ</code> - The z-axis component of the vector to rotate around.</p>
+<p><a name="radians"></a>
+<code>radians</code> - The angle in radians</p>
+<p><strong>Return</strong><br/>
+This matrix for the purpose of chaining methods together.</p>
+<a name="com.acornui.math.Matrix4$rotate(com.acornui.math.QuaternionRo)"></a>
+<code><span class="keyword">fun </span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$rotate(com.acornui.math.QuaternionRo)/rotation">rotation</span><span class="symbol">:</span>&nbsp;<a href="../-quaternion-ro/index.html"><span class="identifier">QuaternionRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Postmultiplies this matrix with a (counter-clockwise) rotation matrix. Postmultiplication is also used by OpenGL ES' 1.x
+glTranslate/glRotate/glScale.</p>
+<h3>Parameters</h3>
+<p><a name="rotation"></a>
+<code>rotation</code> - </p>
+<p><strong>Return</strong><br/>
+This matrix for the purpose of chaining methods together.</p>
+<a name="com.acornui.math.Matrix4$rotate(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)"></a>
+<code><span class="keyword">fun </span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$rotate(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/v1">v1</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$rotate(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/v2">v2</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Postmultiplies this matrix by the rotation between two vectors.</p>
+<h3>Parameters</h3>
+<p><a name="v1"></a>
+<code>v1</code> - The base vector</p>
+<p><a name="v2"></a>
+<code>v2</code> - The target vector</p>
+<p><strong>Return</strong><br/>
+This matrix for the purpose of chaining methods together</p>
+</BODY>
+</HTML>

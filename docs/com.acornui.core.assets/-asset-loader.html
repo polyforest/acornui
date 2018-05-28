@@ -8,7 +8,7 @@
 <a href="index.html">com.acornui.core.assets</a>&nbsp;/&nbsp;<a href="./-asset-loader.html">AssetLoader</a><br/>
 <br/>
 <h1>AssetLoader</h1>
-<code><span class="keyword">interface </span><span class="identifier">AssetLoader</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-asset-loader-ro/index.html"><span class="identifier">AssetLoaderRo</span></a><span class="symbol">&lt;</span><a href="-asset-loader.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">CancelableDeferred</span><span class="symbol">&lt;</span><a href="-asset-loader.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">interface </span><span class="identifier">AssetLoader</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-asset-loader-ro/index.html"><span class="identifier">AssetLoaderRo</span></a><span class="symbol">&lt;</span><a href="-asset-loader.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.async/-cancelable-deferred/index.html"><span class="identifier">CancelableDeferred</span></a><span class="symbol">&lt;</span><a href="-asset-loader.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
 <p>An asset loader that exposes an API capable of mutation.</p>
 <h3>Inherited Properties</h3>
 <table>
@@ -39,6 +39,63 @@
 <td>
 <code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">type</span><span class="symbol">: </span><a href="-asset-type/index.html"><span class="identifier">AssetType</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span></code>
 <p>The asset type this loader represents.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../com.acornui.async/-cancelable-deferred/cancel.html">cancel</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">cancel</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Cancels the operation if it is currently in progress.
+This may throw a <a href="../com.acornui.async/-cancellation-exception/index.html">CancellationException</a> on <a href="../com.acornui.async/-deferred/await.html">await</a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../com.acornui.async/await-or-null.html">awaitOrNull</a></p>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../com.acornui.async/-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="../com.acornui.async/await-or-null.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">awaitOrNull</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.async/await-or-null.html#T"><span class="identifier">T</span></a><span class="symbol">?</span></code>
+<p>Wraps await in a try/catch block, returning null if there was an exception.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../com.acornui.async/catch.html">catch</a></p>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../com.acornui.async/-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="../com.acornui.async/catch.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">catch</span><span class="symbol">(</span><span class="identifier" id="com.acornui.async$catch(com.acornui.async.Deferred((com.acornui.async.catch.T)), kotlin.Function1((kotlin.Throwable, kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html"><span class="identifier">Throwable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.async/-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="../com.acornui.async/catch.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Invokes a callback when this deferred object has failed to produce a result.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../com.acornui.async/result-or-null.html">resultOrNull</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../com.acornui.async/-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="../com.acornui.async/result-or-null.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">resultOrNull</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.async/result-or-null.html#T"><span class="identifier">T</span></a><span class="symbol">?</span></code>
+<p>If <a href="../com.acornui.async/-deferred/status.html">Deferred.status</a> is <a href="../com.acornui.async/-deferred/-status/-s-u-c-c-e-s-s-f-u-l.html">Status.SUCCESSFUL</a> this will return the result. Otherwise, null.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../com.acornui.async/then.html">then</a></p>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../com.acornui.async/-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="../com.acornui.async/then.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">then</span><span class="symbol">(</span><span class="identifier" id="com.acornui.async$then(com.acornui.async.Deferred((com.acornui.async.then.T)), kotlin.Function1((com.acornui.async.then.T, kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="identifier">result</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.async/then.html#T"><span class="identifier">T</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.async/-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="../com.acornui.async/then.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Invokes a callback when the deferred value has been computed successfully. This callback will not be invoked on
+failure.</p>
 </td>
 </tr>
 </tbody>

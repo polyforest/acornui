@@ -8,7 +8,7 @@
 <a href="../index.html">com.acornui.gl.core</a>&nbsp;/&nbsp;<a href="./index.html">GlState</a><br/>
 <br/>
 <h1>GlState</h1>
-<code><span class="keyword">class </span><span class="identifier">GlState</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<code><span class="keyword">class </span><span class="identifier">GlState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
 <p>GlState stores OpenGl state information necessary for knowing whether basic operations can be batched.</p>
 <p><strong>Author</strong><br/>
 nbilyk</p>
@@ -124,21 +124,24 @@ The acorn texture packer will optionally add this white pixel.</p>
 <p><a href="camera.html">camera</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">camera</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$camera(com.acornui.core.graphics.CameraRo, com.acornui.math.Matrix4Ro)/camera">camera</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.graphics/-camera-ro/index.html"><span class="identifier">CameraRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.GlState$camera(com.acornui.core.graphics.CameraRo, com.acornui.math.Matrix4Ro)/model">model</span><span class="symbol">:</span>&nbsp;<span class="identifier">Matrix4Ro</span>&nbsp;<span class="symbol">=</span>&nbsp;Matrix4.IDENTITY<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">fun </span><span class="identifier">camera</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$camera(com.acornui.core.graphics.CameraRo, com.acornui.math.Matrix4Ro)/camera">camera</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.graphics/-camera-ro/index.html"><span class="identifier">CameraRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.GlState$camera(com.acornui.core.graphics.CameraRo, com.acornui.math.Matrix4Ro)/model">model</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-matrix4-ro/index.html"><span class="identifier">Matrix4Ro</span></a>&nbsp;<span class="symbol">=</span>&nbsp;Matrix4.IDENTITY<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="dispose.html">dispose</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Prepares this object for garbage collection.
+A disposed object should no longer be used or referenced.</p>
+</td>
 </tr>
 <tr>
 <td>
 <p><a href="get-scissor.html">getScissor</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">getScissor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$getScissor(com.acornui.math.IntRectangle)/out">out</span><span class="symbol">:</span>&nbsp;<span class="identifier">IntRectangle</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">IntRectangle</span></code>
+<code><span class="keyword">fun </span><span class="identifier">getScissor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$getScissor(com.acornui.math.IntRectangle)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-int-rectangle/index.html"><span class="identifier">IntRectangle</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.math/-int-rectangle/index.html"><span class="identifier">IntRectangle</span></a></code>
 <p>Gets the current scissor rectangle.</p>
 </td>
 </tr>
@@ -163,14 +166,14 @@ The acorn texture packer will optionally add this white pixel.</p>
 <p><a href="proj-trans.html">projTrans</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">projTrans</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$projTrans(com.acornui.math.Matrix4Ro)/value">value</span><span class="symbol">:</span>&nbsp;<span class="identifier">Matrix4Ro</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">fun </span><span class="identifier">projTrans</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$projTrans(com.acornui.math.Matrix4Ro)/value">value</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-matrix4-ro/index.html"><span class="identifier">Matrix4Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="scissor.html">scissor</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">scissor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$scissor(com.acornui.math.IntRectangleRo)/value">value</span><span class="symbol">:</span>&nbsp;<span class="identifier">IntRectangleRo</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">scissor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$scissor(com.acornui.math.IntRectangleRo)/value">value</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-int-rectangle-ro/index.html"><span class="identifier">IntRectangleRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
 <code><span class="keyword">fun </span><span class="identifier">scissor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$scissor(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.GlState$scissor(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.GlState$scissor(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.GlState$scissor(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
 </tr>
 <tr>

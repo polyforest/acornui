@@ -8,7 +8,7 @@
 <a href="../index.html">com.acornui.core.assets</a>&nbsp;/&nbsp;<a href="./index.html">Cache</a><br/>
 <br/>
 <h1>Cache</h1>
-<code><span class="keyword">interface </span><span class="identifier">Cache</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<code><span class="keyword">interface </span><span class="identifier">Cache</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
 <h3>Types</h3>
 <table>
 <tbody>
@@ -58,7 +58,7 @@ and adds the new value to the cache.</p>
 <td>
 <code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">refDec</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets.Cache$refDec(com.acornui.core.assets.CacheKey((kotlin.Any)))/key">key</span><span class="symbol">:</span>&nbsp;<a href="../-cache-key.html"><span class="identifier">CacheKey</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
 <p>Decrements the use count for the cache value with the given key.
-If the use count reaches zero, the cache value will be removed and if it's <a href="#">Disposable</a>, disposed.</p>
+If the use count reaches zero, the cache value will be removed and if it's <a href="../../com.acornui.core/-disposable/index.html">Disposable</a>, disposed.</p>
 </td>
 </tr>
 <tr>
@@ -76,6 +76,21 @@ If the use count reaches zero, the cache value will be removed and if it's <a hr
 </td>
 <td>
 <code><span class="keyword">abstract</span> <span class="keyword">operator</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets.Cache$set(com.acornui.core.assets.CacheKey((com.acornui.core.assets.Cache.set.T)), com.acornui.core.assets.Cache.set.T)/key">key</span><span class="symbol">:</span>&nbsp;<a href="../-cache-key.html"><span class="identifier">CacheKey</span></a><span class="symbol">&lt;</span><a href="set.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets.Cache$set(com.acornui.core.assets.CacheKey((com.acornui.core.assets.Cache.set.T)), com.acornui.core.assets.Cache.set.T)/value">value</span><span class="symbol">:</span>&nbsp;<a href="set.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-disposable/dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Prepares this object for garbage collection.
+A disposed object should no longer be used or referenced.</p>
+</td>
 </tr>
 </tbody>
 </table>

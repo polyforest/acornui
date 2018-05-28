@@ -8,7 +8,7 @@
 <a href="../index.html">com.acornui.core.input.interaction</a>&nbsp;/&nbsp;<a href="./index.html">DragInteraction</a><br/>
 <br/>
 <h1>DragInteraction</h1>
-<code><span class="keyword">class </span><span class="identifier">DragInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.input/-interaction-event-base/index.html"><span class="identifier">InteractionEventBase</span></a></code>
+<code><span class="keyword">class </span><span class="identifier">DragInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.input/-interaction-event-base/index.html"><span class="identifier">InteractionEventBase</span></a><span class="symbol">, </span><a href="../-drag-interaction-ro/index.html"><span class="identifier">DragInteractionRo</span></a></code>
 <h3>Constructors</h3>
 <table>
 <tbody>
@@ -29,7 +29,7 @@
 <p><a href="position.html">position</a></p>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">position</span><span class="symbol">: </span><span class="identifier">Vector2</span></code>
+<code><span class="keyword">val </span><span class="identifier">position</span><span class="symbol">: </span><a href="../../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a></code>
 <p>The current position (in window coordinates).</p>
 </td>
 </tr>
@@ -38,7 +38,7 @@
 <p><a href="position-local.html">positionLocal</a></p>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">positionLocal</span><span class="symbol">: </span><span class="identifier">Vector2</span></code>
+<code><span class="keyword">val </span><span class="identifier">positionLocal</span><span class="symbol">: </span><a href="../../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a></code>
 <p>The current position, local to the target element.
 Note that this value is calculated, and not cached.</p>
 </td>
@@ -55,7 +55,7 @@ Note that this value is calculated, and not cached.</p>
 <p><a href="start-position.html">startPosition</a></p>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">startPosition</span><span class="symbol">: </span><span class="identifier">Vector2</span></code>
+<code><span class="keyword">val </span><span class="identifier">startPosition</span><span class="symbol">: </span><a href="../../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a></code>
 <p>The starting position (in window coordinates) for the drag.</p>
 </td>
 </tr>
@@ -64,7 +64,7 @@ Note that this value is calculated, and not cached.</p>
 <p><a href="start-position-local.html">startPositionLocal</a></p>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">startPositionLocal</span><span class="symbol">: </span><span class="identifier">Vector2</span></code>
+<code><span class="keyword">val </span><span class="identifier">startPositionLocal</span><span class="symbol">: </span><a href="../../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a></code>
 <p>The starting position relative to the startElement for the drag.</p>
 </td>
 </tr>
@@ -120,7 +120,9 @@ Note that this value is calculated, and not cached.</p>
 <p><a href="clear.html">clear</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Clears this instance back to its original state.</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -162,21 +164,21 @@ Note that this value is calculated, and not cached.</p>
 <p><a href="-d-r-a-g.html">DRAG</a></p>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">DRAG</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">val </span><span class="identifier">DRAG</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="../-drag-interaction-ro/index.html"><span class="identifier">DragInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="-d-r-a-g_-e-n-d.html">DRAG_END</a></p>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">DRAG_END</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">val </span><span class="identifier">DRAG_END</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="../-drag-interaction-ro/index.html"><span class="identifier">DragInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="-d-r-a-g_-s-t-a-r-t.html">DRAG_START</a></p>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">DRAG_START</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">val </span><span class="identifier">DRAG_START</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="../-drag-interaction-ro/index.html"><span class="identifier">DragInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 </tbody>
 </table>

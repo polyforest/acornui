@@ -1,0 +1,541 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Disposable - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core</a>&nbsp;/&nbsp;<a href="./index.html">Disposable</a><br/>
+<br/>
+<h1>Disposable</h1>
+<code><span class="keyword">interface </span><span class="identifier">Disposable</span></code>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Prepares this object for garbage collection.
+A disposed object should no longer be used or referenced.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/-active-list/index.html">ActiveList</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ActiveList</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.collection/-mutable-observable-list/index.html"><span class="identifier">MutableObservableList</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/-active-list/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>A list that allows for modification during iteration when using special iteration methods.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-application-base/index.html">ApplicationBase</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">ApplicationBase</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>Utilities for boot tasks in an application.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.assets/-asset-manager/index.html">AssetManager</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">AssetManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a><span class="symbol">, </span><a href="../../com.acornui.action/-progress/index.html"><span class="identifier">Progress</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.audio/-audio-device/index.html">AudioDevice</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">AudioDevice</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>Encapsulates an audio device in mono or stereo mode. Use the <a href="#">.writeSamples</a> and
+<a href="#">.writeSamples</a> methods to write float or 16-bit signed short PCM data directly to the audio device.
+Stereo samples are interleaved in the order left channel sample, right channel sample. The <a href="#">.dispose</a> method must be
+called when this AudioDevice is no longer needed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.audio/-audio-manager-impl/index.html">AudioManagerImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">AudioManagerImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-updatable-child-base/index.html"><span class="identifier">UpdatableChildBase</span></a><span class="symbol">, </span><a href="../../com.acornui.core.audio/-audio-manager/index.html"><span class="identifier">AudioManager</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.text/-bitmap-font-registry/index.html">BitmapFontRegistry</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">BitmapFontRegistry</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-bootstrap/index.html">Bootstrap</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Bootstrap</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.i18n/-bundle-binding/index.html">BundleBinding</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">BundleBinding</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>A <code>BundleBinding</code> object loads an <a href="../../com.acornui.core.i18n/-i18n-bundle/index.html">I18nBundle</a> object, then allows changed handlers to be added as a set, which
+are then removed upon <a href="../../com.acornui.core.i18n/-bundle-binding/dispose.html">dispose</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.assets/-cache/index.html">Cache</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Cache</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.assets/-cached-group/index.html">CachedGroup</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">CachedGroup</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.time/-callback-wrapper/index.html">CallbackWrapper</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">CallbackWrapper</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-click-dispatcher/index.html">ClickDispatcher</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">ClickDispatcher</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>Watches the stage for mouse and touch events that constitute a 'click', then dispatches the click event on the
+interactivity manager.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.mvc/-command-dispatcher-impl/index.html">CommandDispatcherImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">CommandDispatcherImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.mvc/-command-dispatcher/index.html"><span class="identifier">CommandDispatcher</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.mvc/-commander/index.html">Commander</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Commander</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>A commander provides utility to listening to the command dispatcher, and allows for all callbacks to be
+unregistered via the commander's dispose method.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/-concurrent-list-iterator/index.html">ConcurrentListIterator</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ConcurrentListIterator</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list-iterator/index.html"><span class="identifier">ListIterator</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/-concurrent-list-iterator/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/-concurrent-list-iterator/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>A ConcurrentListIterator watches concurrent add and remove changes on the list and moves the cursor logically
+so that items are neither skipped nor repeated.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-context-menu-manager/index.html">ContextMenuManager</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ContextMenuManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.observe/-data-binding/index.html">DataBinding</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DataBinding</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-down-repeat/index.html">DownRepeat</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DownRepeat</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-drag-attachment/index.html">DragAttachment</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DragAttachment</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>A behavior for a touch down, touch move, then touch up on a target UiComponent.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.focus/-fake-focus-mouse/index.html">FakeFocusMouse</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">FakeFocusMouse</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>Dispatches mouse events when using SPACE or ENTER key presses on the focused element.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.file/-file-io-manager/index.html">FileIoManager</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">FileIoManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>An object which allows for selecting file(s) with native pickers for the purposes of reading or writing to disk.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.focus/-focus-attachment/index.html">FocusAttachment</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">FocusAttachment</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.focus/-focus-manager/index.html">FocusManager</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">FocusManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.gl.core/-framebuffer/index.html">Framebuffer</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Framebuffer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.gl.core/-gl-state/index.html">GlState</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">GlState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>GlState stores OpenGl state information necessary for knowing whether basic operations can be batched.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.i18n/-i18n-bundle-impl/index.html">I18nBundleImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">I18nBundleImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.i18n/-i18n-bundle/index.html"><span class="identifier">I18nBundle</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.i18n/-i18n-impl/index.html">I18nImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">I18nImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.i18n/-i18n/index.html"><span class="identifier">I18n</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.observe/-index-binding/index.html">IndexBinding</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">IndexBinding</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>Watches an observable list, updating an index when the list changes.
+This can be useful if the source list contains non-unique elements and you need to follow the changing index of
+a specific element in the list.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interactivity-manager/index.html">InteractivityManager</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">InteractivityManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>A manager that feeds user input as events to layout elements.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-key-state/index.html">KeyState</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">KeyState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-lifecycle/index.html">Lifecycle</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Lifecycle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-lifecycle-ro/index.html"><span class="identifier">LifecycleRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/-list-view/index.html">ListView</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ListView</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/-observable-list/index.html"><span class="identifier">ObservableList</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/-list-view/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>ListView is a read-only wrapper to an ObservableList that will allow filtering and sorting
+without modifying the original list.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-mouse-state/index.html">MouseState</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">MouseState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>Tracks the mouse position and whether or not the mouse is over the canvas.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.audio/-music/index.html">Music</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Music</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>An interface for controlling a progressive-download music file.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.nav/-nav-binding/index.html">NavBinding</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">NavBinding</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>A NavBinding watches the <a href="../../com.acornui.core.nav/-navigation-manager/index.html">NavigationManager</a> and invokes signals when the path section at the host's depth changes.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.nav/-navigation-manager/index.html">NavigationManager</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">NavigationManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/-observable-concat-list/index.html">ObservableConcatList</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ObservableConcatList</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/-list-base/index.html"><span class="identifier">ListBase</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/-observable-concat-list/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../../com.acornui.collection/-observable-list/index.html"><span class="identifier">ObservableList</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/-observable-concat-list/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/-observable-list-mapping/index.html">ObservableListMapping</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ObservableListMapping</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">, </span><span class="identifier">V</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/-list-base/index.html"><span class="identifier">ListBase</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/-observable-list-mapping/index.html#V"><span class="identifier">V</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/-observable-list-mapping/index.html#V"><span class="identifier">V</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>Binds to a target observable list, keeping a parallel list of values created from a factory.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-owned-impl/index.html">OwnedImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">OwnedImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>Factory methods for components typically don't have separated <a href="../../com.acornui.core.di/-owned-impl/owner.html">owner</a> and <a href="../../com.acornui.core.di/-owned-impl/injector.html">injector</a> parameters. This
+implementation can be used to have a different dependency injector than what the owner uses.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-radio-group/index.html">RadioGroup</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">RadioGroup</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.cursor/-roll-over-cursor/index.html">RollOverCursor</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">RollOverCursor</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>An attachment that changes the cursor on roll over.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.scroll/-scroll-model-impl/index.html">ScrollModelImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ScrollModelImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.scroll/-clamped-scroll-model/index.html"><span class="identifier">ClampedScrollModel</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>A model representation of the scrolling values</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.behavior/-selection-base/index.html">SelectionBase</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">SelectionBase</span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.behavior/-selection/index.html"><span class="identifier">Selection</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.behavior/-selection-base/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>An object for tracking selection state.
+This is typically paired with a selection controller.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.selection/-selection-manager/index.html">SelectionManager</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">SelectionManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a><span class="symbol">, </span><a href="../../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.gl.core/-shader-batch/index.html">ShaderBatch</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ShaderBatch</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a><span class="symbol">, </span><a href="../../com.acornui.gl.core/-vertex-feed/index.html"><span class="identifier">VertexFeed</span></a><span class="symbol">, </span><a href="../../com.acornui.gl.core/-index-feed/index.html"><span class="identifier">IndexFeed</span></a></code>
+<p>A <a href="../../com.acornui.gl.core/-shader-batch/index.html">ShaderBatch</a> is good for reducing draw calls by combining opengl buffer and draw calls.
+This is used in conjunction with <a href="../../com.acornui.gl.core/-gl-state/index.html">GlState</a>, which keeps track of changes that would require a flip.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.gl.core/-shader-batch-impl/index.html">ShaderBatchImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ShaderBatchImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.gl.core/-shader-batch/index.html"><span class="identifier">ShaderBatch</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.gl.core/-shader-program/index.html">ShaderProgram</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ShaderProgram</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.signal/-signal-base/index.html">SignalBase</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">SignalBase</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.signal/-signal/index.html"><span class="identifier">Signal</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.signal/-signal-base/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>Signals are a way to implement an observer relationship for a single event.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.signal/-signal-handler-set/index.html">SignalHandlerSet</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">SignalHandlerSet</span><span class="symbol">&lt;</span><span class="keyword">in</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>A Signal binding is a delegate to a <a href="../../com.acornui.signal/-signal/index.html">Signal</a> object, and allows the handlers to be removed as a set.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.audio/-sound/index.html">Sound</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Sound</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>An interface for controlling an in-memory sound clip.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.audio/-sound-factory/index.html">SoundFactory</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">SoundFactory</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.mvc/-state-command-history/index.html">StateCommandHistory</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">StateCommandHistory</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.gl.core/-static-shader-batch-impl/index.html">StaticShaderBatchImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">StaticShaderBatchImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.gl.core/-shader-batch/index.html"><span class="identifier">ShaderBatch</span></a><span class="symbol">, </span><a href="../../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>A static shader batch will remember the draw calls, allowing the batch to be rendered without needing to buffer data
+at a later time.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/-style-base/index.html">StyleBase</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">StyleBase</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.style/-style/index.html"><span class="identifier">Style</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>The base class for a typical <a href="../../com.acornui.component.style/-style/index.html">Style</a> implementation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/-styles-impl/index.html">StylesImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">StylesImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.text/-text-element/index.html">TextElement</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">TextElement</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.text/-text-element-ro/index.html"><span class="identifier">TextElementRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.time/-time-driver-impl/index.html">TimeDriverImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">TimeDriverImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.time/-time-driver/index.html"><span class="identifier">TimeDriver</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.scroll/-toss-scroll-model-binding/index.html">TossScrollModelBinding</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TossScrollModelBinding</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.scroll/-toss-scroller/index.html">TossScroller</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TossScroller</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>A toss scroller lets you grab a target component, and update <a href="../../com.acornui.component.scroll/-scroll-model-ro/index.html">ScrollModelRo</a> objects by dragging it.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.tween/-tween-driver/index.html">TweenDriver</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TweenDriver</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-updatable-child-base/index.html"><span class="identifier">UpdatableChildBase</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code>
+<p>A tween driver will update a single tween, then remove and recycle itself when the tween is completed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-undo-dispatcher/index.html">UndoDispatcher</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">UndoDispatcher</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.graphics/-window/index.html">Window</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Window</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

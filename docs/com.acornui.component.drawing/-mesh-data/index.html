@@ -1,0 +1,368 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>MeshData - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.drawing</a>&nbsp;/&nbsp;<a href="./index.html">MeshData</a><br/>
+<br/>
+<h1>MeshData</h1>
+<code><span class="keyword">class </span><span class="identifier">MeshData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-parent/index.html"><span class="identifier">Parent</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">MeshData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">MeshData</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="blend-mode.html">blendMode</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">blendMode</span><span class="symbol">: </span><a href="../../com.acornui.core.graphics/-blend-mode/index.html"><span class="identifier">BlendMode</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="children.html">children</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">children</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-array-list/index.html"><span class="identifier">ArrayList</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">MeshData</span></a><span class="symbol">&gt;</span></code>
+<p>Returns a read-only list of the children.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="draw-mode.html">drawMode</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">drawMode</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Must be one of <a href="../../com.acornui.gl.core/-gl20/-companion/-p-o-i-n-t-s.html">Gl20.POINTS</a>, <a href="../../com.acornui.gl.core/-gl20/-companion/-l-i-n-e_-s-t-r-i-p.html">Gl20.LINE_STRIP</a>, <a href="../../com.acornui.gl.core/-gl20/-companion/-l-i-n-e_-l-o-o-p.html">Gl20.LINE_LOOP</a>, <a href="../../com.acornui.gl.core/-gl20/-companion/-l-i-n-e-s.html">Gl20.LINES</a>, <a href="../../com.acornui.gl.core/-gl20/-companion/-t-r-i-a-n-g-l-e_-s-t-r-i-p.html">Gl20.TRIANGLE_STRIP</a>,
+<a href="../../com.acornui.gl.core/-gl20/-companion/-t-r-i-a-n-g-l-e_-f-a-n.html">Gl20.TRIANGLE_FAN</a>, or <a href="../../com.acornui.gl.core/-gl20/-companion/-t-r-i-a-n-g-l-e-s.html">Gl20.TRIANGLES</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="flush-batch.html">flushBatch</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">flushBatch</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If this is true, this node will flush any batched operations before and after a render.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="highest-index.html">highestIndex</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">highestIndex</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="indices.html">indices</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">indices</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-array-list/index.html"><span class="identifier">ArrayList</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="parent.html">parent</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">parent</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">MeshData</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="texture.html">texture</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">texture</span><span class="symbol">: </span><a href="../../com.acornui.core.graphics/-texture/index.html"><span class="identifier">Texture</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="vertices.html">vertices</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">vertices</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-array-list/index.html"><span class="identifier">ArrayList</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.gl.core/-vertex/index.html"><span class="identifier">Vertex</span></a><span class="symbol">&gt;</span></code>
+<p>Vertices are added by reference, not value; they do not need to be cloned.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="add-child.html">addChild</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">MeshData</span></a><span class="symbol">&gt;</span> <span class="identifier">addChild</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing.MeshData$addChild(kotlin.Int, com.acornui.component.drawing.MeshData.addChild.S)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.MeshData$addChild(kotlin.Int, com.acornui.component.drawing.MeshData.addChild.S)/child">child</span><span class="symbol">:</span>&nbsp;<a href="add-child.html#S"><span class="identifier">S</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="add-child.html#S"><span class="identifier">S</span></a></code>
+<p>Adds the specified child to this container.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Clears this instance back to its original state.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="color-transform.html">colorTransform</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">colorTransform</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing.MeshData$colorTransform(com.acornui.graphics.ColorRo)/colorTint">colorTint</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.graphics/-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Multiply the vertices colorTint property by <a href="color-transform.html#com.acornui.component.drawing.MeshData$colorTransform(com.acornui.graphics.ColorRo)/colorTint">colorTint</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="push-index.html">pushIndex</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">pushIndex</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing.MeshData$pushIndex(kotlin.Int)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Pushes a single index, updating the <a href="highest-index.html">highestIndex</a> property.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="push-indices.html">pushIndices</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">pushIndices</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing.MeshData$pushIndices(kotlin.IntArray)/arr">arr</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int-array/index.html"><span class="identifier">IntArray</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Pushes a set of indices relative to the highest index.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="push-vertex.html">pushVertex</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">pushVertex</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing.MeshData$pushVertex(com.acornui.math.Vector2Ro, com.acornui.component.drawing.FillStyle)/position">position</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.MeshData$pushVertex(com.acornui.math.Vector2Ro, com.acornui.component.drawing.FillStyle)/fillStyle">fillStyle</span><span class="symbol">:</span>&nbsp;<a href="../-fill-style/index.html"><span class="identifier">FillStyle</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">pushVertex</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing.MeshData$pushVertex(com.acornui.math.Vector2Ro, kotlin.Float, com.acornui.component.drawing.FillStyle)/position">position</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.MeshData$pushVertex(com.acornui.math.Vector2Ro, kotlin.Float, com.acornui.component.drawing.FillStyle)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.MeshData$pushVertex(com.acornui.math.Vector2Ro, kotlin.Float, com.acornui.component.drawing.FillStyle)/fillStyle">fillStyle</span><span class="symbol">:</span>&nbsp;<a href="../-fill-style/index.html"><span class="identifier">FillStyle</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">pushVertex</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing.MeshData$pushVertex(com.acornui.math.Vector3Ro, com.acornui.component.drawing.FillStyle)/position">position</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.MeshData$pushVertex(com.acornui.math.Vector3Ro, com.acornui.component.drawing.FillStyle)/fillStyle">fillStyle</span><span class="symbol">:</span>&nbsp;<a href="../-fill-style/index.html"><span class="identifier">FillStyle</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">pushVertex</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing.MeshData$pushVertex(com.acornui.math.Vector3Ro, com.acornui.component.drawing.FillStyle, com.acornui.math.Vector3Ro)/position">position</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.MeshData$pushVertex(com.acornui.math.Vector3Ro, com.acornui.component.drawing.FillStyle, com.acornui.math.Vector3Ro)/fillStyle">fillStyle</span><span class="symbol">:</span>&nbsp;<a href="../-fill-style/index.html"><span class="identifier">FillStyle</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.MeshData$pushVertex(com.acornui.math.Vector3Ro, com.acornui.component.drawing.FillStyle, com.acornui.math.Vector3Ro)/normal">normal</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">pushVertex</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing.MeshData$pushVertex(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float, com.acornui.math.Vector3Ro)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.MeshData$pushVertex(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float, com.acornui.math.Vector3Ro)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.MeshData$pushVertex(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float, com.acornui.math.Vector3Ro)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.MeshData$pushVertex(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float, com.acornui.math.Vector3Ro)/colorTint">colorTint</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.graphics/-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.MeshData$pushVertex(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float, com.acornui.math.Vector3Ro)/u">u</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.MeshData$pushVertex(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float, com.acornui.math.Vector3Ro)/v">v</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.MeshData$pushVertex(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float, com.acornui.math.Vector3Ro)/normal">normal</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a>&nbsp;<span class="symbol">=</span>&nbsp;Vector3.NEG_Z<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="remove.html">remove</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">remove</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="remove-child.html">removeChild</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">removeChild</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing.MeshData$removeChild(kotlin.Int)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">MeshData</span></a></code>
+<p>Removes a child at the given index from this container.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="scl.html">scl</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">scl</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing.MeshData$scl(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;1f<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.MeshData$scl(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;1f<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.MeshData$scl(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;1f<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Scales the vertices by the given multipliers.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="transform.html">transform</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">transform</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing.MeshData$transform(com.acornui.math.Matrix4)/value">value</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-matrix4/index.html"><span class="identifier">Matrix4</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Transform the vertices by the given matrix.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="trn.html">trn</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">trn</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing.MeshData$trn(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.MeshData$trn(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.MeshData$trn(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Translate the vertices by the given deltas.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="unary-minus.html">unaryMinus</a></p>
+</td>
+<td>
+<code><span class="keyword">operator</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">P</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">MeshData</span></a><span class="symbol">&gt;</span> <a href="unary-minus.html#P"><span class="identifier">P</span></a><span class="symbol">.</span><span class="identifier">unaryMinus</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="unary-minus.html#P"><span class="identifier">P</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="unary-plus.html">unaryPlus</a></p>
+</td>
+<td>
+<code><span class="keyword">operator</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">P</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">MeshData</span></a><span class="symbol">&gt;</span> <a href="unary-plus.html#P"><span class="identifier">P</span></a><span class="symbol">.</span><span class="identifier">unaryPlus</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="unary-plus.html#P"><span class="identifier">P</span></a></code>
+<p>Syntax sugar for addChild.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-parent/add-all-children.html">addAllChildren</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addAllChildren</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.Parent$addAllChildren(kotlin.collections.Iterable((com.acornui.core.Parent.T)))/children">children</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addAllChildren</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.Parent$addAllChildren(kotlin.Int, kotlin.collections.Iterable((com.acornui.core.Parent.T)))/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.Parent$addAllChildren(kotlin.Int, kotlin.collections.Iterable((com.acornui.core.Parent.T)))/children">children</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addAllChildren</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.Parent$addAllChildren(kotlin.Array((com.acornui.core.Parent.T)))/children">children</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><span class="identifier">Array</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addAllChildren</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.Parent$addAllChildren(kotlin.Int, kotlin.Array((com.acornui.core.Parent.T)))/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.Parent$addAllChildren(kotlin.Int, kotlin.Array((com.acornui.core.Parent.T)))/children">children</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><span class="identifier">Array</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-parent/add-child.html">addChild</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span> <span class="identifier">addChild</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.Parent$addChild(com.acornui.core.Parent.addChild.S)/child">child</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-parent/add-child.html#S"><span class="identifier">S</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core/-parent/add-child.html#S"><span class="identifier">S</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-parent/add-child-after.html">addChildAfter</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addChildAfter</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.Parent$addChildAfter(com.acornui.core.Parent.T, com.acornui.core.Parent.T)/child">child</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.Parent$addChildAfter(com.acornui.core.Parent.T, com.acornui.core.Parent.T)/after">after</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Adds a child after the provided element.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-parent/add-child-before.html">addChildBefore</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addChildBefore</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.Parent$addChildBefore(com.acornui.core.Parent.T, com.acornui.core.Parent.T)/child">child</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.Parent$addChildBefore(com.acornui.core.Parent.T, com.acornui.core.Parent.T)/before">before</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Adds a child after the provided element.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-parent/clear-children.html">clearChildren</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clearChildren</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Removes all the children and optionally disposes them (default).</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-parent/remove-child.html">removeChild</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">removeChild</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.Parent$removeChild(com.acornui.core.Parent.T)/child">child</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Removes a child from this container.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/ancestry.html">ancestry</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">ancestry</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$ancestry(com.acornui.core.ChildRo, kotlin.collections.MutableList((com.acornui.core.ChildRo)))/out">out</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">&gt;</span></code>
+<p>Populates an ArrayList with a ChildRo's ancestry.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/ancestry-count.html">ancestryCount</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">ancestryCount</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Returns the lineage count. 0 if this child is the stage, or is the stage, 1 if the stage is the parent,
+2 if the stage is the grandparent, 3 if the stage is the great grandparent, and so on.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/is-after.html">isAfter</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">isAfter</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$isAfter(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this ChildRo is after the <a href="../../com.acornui.core/is-after.html#com.acornui.core$isAfter(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/other">other</a> ChildRo. This considers the parent to come before the child.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/is-ancestor-of.html">isAncestorOf</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">isAncestorOf</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$isAncestorOf(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/child">child</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this <a href="../../com.acornui.core/-child-ro/index.html">ChildRo</a> is the ancestor of the given <a href="../../com.acornui.core/is-ancestor-of.html#com.acornui.core$isAncestorOf(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/child">child</a>.
+X is considered to be an ancestor of Y if doing a parent walk starting from Y, X is then reached.
+This will return true if X === Y</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/is-before.html">isBefore</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">isBefore</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$isBefore(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this ChildRo is before the <a href="../../com.acornui.core/is-before.html#com.acornui.core$isBefore(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/other">other</a> ChildRo. This considers the parent to come before the child.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/is-descendant-of.html">isDescendantOf</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">isDescendantOf</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$isDescendantOf(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/ancestor">ancestor</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/parent-walk.html">parentWalk</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">parentWalk</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$parentWalk(com.acornui.core.ChildRo, kotlin.Function1((com.acornui.core.ChildRo, kotlin.Boolean)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/root.html">root</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">root</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../rotate.html">rotate</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">MeshData</span></a><span class="symbol">.</span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$rotate(com.acornui.component.drawing.MeshData, kotlin.Float, kotlin.Float, kotlin.Float)/yaw">yaw</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$rotate(com.acornui.component.drawing.MeshData, kotlin.Float, kotlin.Float, kotlin.Float)/pitch">pitch</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$rotate(com.acornui.component.drawing.MeshData, kotlin.Float, kotlin.Float, kotlin.Float)/roll">roll</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../transform.html">transform</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">MeshData</span></a><span class="symbol">.</span><span class="identifier">transform</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing$transform(com.acornui.component.drawing.MeshData, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/position">position</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a>&nbsp;<span class="symbol">=</span>&nbsp;Vector3.ZERO<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$transform(com.acornui.component.drawing.MeshData, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/scale">scale</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a>&nbsp;<span class="symbol">=</span>&nbsp;Vector3.ONE<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$transform(com.acornui.component.drawing.MeshData, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/rotation">rotation</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a>&nbsp;<span class="symbol">=</span>&nbsp;Vector3.ZERO<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing$transform(com.acornui.component.drawing.MeshData, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/origin">origin</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a>&nbsp;<span class="symbol">=</span>&nbsp;Vector3.ZERO<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

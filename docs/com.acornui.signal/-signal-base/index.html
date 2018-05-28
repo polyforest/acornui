@@ -1,0 +1,291 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>SignalBase - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.signal</a>&nbsp;/&nbsp;<a href="./index.html">SignalBase</a><br/>
+<br/>
+<h1>SignalBase</h1>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">SignalBase</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-signal/index.html"><span class="identifier">Signal</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
+<p>Signals are a way to implement an observer relationship for a single event.</p>
+<p>The expected concurrent behavior for a handler adding or removing is as follows:</p>
+<p>If a handler is added within a handler, the new handler will be invoked in the current iteration.
+If a handler is removed within a handler, the removed handler will not be invoked in the current iteration.</p>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">SignalBase</span><span class="symbol">(</span><span class="symbol">)</span></code>
+<p>Signals are a way to implement an observer relationship for a single event.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="cursor.html">cursor</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">cursor</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="handlers.html">handlers</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">handlers</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-array-list/index.html"><span class="identifier">ArrayList</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="is-dispatching.html">isDispatching</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">isDispatching</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this signal is currently dispatching.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="is-onces.html">isOnces</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">isOnces</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-array-list/index.html"><span class="identifier">ArrayList</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="add.html">add</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">add</span><span class="symbol">(</span><span class="identifier" id="com.acornui.signal.SignalBase$add(com.acornui.signal.SignalBase.T, kotlin.Boolean)/handler">handler</span><span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.signal.SignalBase$add(com.acornui.signal.SignalBase.T, kotlin.Boolean)/isOnce">isOnce</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Adds a handler to this signal.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="contains.html">contains</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">contains</span><span class="symbol">(</span><span class="identifier" id="com.acornui.signal.SignalBase$contains(com.acornui.signal.SignalBase.T)/handler">handler</span><span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if the handler is currently in the list.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="dispatch.html">dispatch</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dispatch</span><span class="symbol">(</span><span class="identifier" id="com.acornui.signal.SignalBase$dispatch(kotlin.Function1((com.acornui.signal.SignalBase.T, kotlin.Unit)))/executor">executor</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Calls executor on each handler in this signal.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Prepares this object for garbage collection.
+A disposed object should no longer be used or referenced.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="halt.html">halt</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">halt</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Immediately halts the current dispatch.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="is-empty.html">isEmpty</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">isEmpty</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>True if the signal has no handlers.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="is-not-empty.html">isNotEmpty</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">isNotEmpty</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>True if the signal has handlers.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="remove.html">remove</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">remove</span><span class="symbol">(</span><span class="identifier" id="com.acornui.signal.SignalBase$remove(com.acornui.signal.SignalBase.T)/handler">handler</span><span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Removes the given handler from the list.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="remove-at.html">removeAt</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">removeAt</span><span class="symbol">(</span><span class="identifier" id="com.acornui.signal.SignalBase$removeAt(kotlin.Int)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-signal/add.html">add</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">add</span><span class="symbol">(</span><span class="identifier" id="com.acornui.signal.Signal$add(com.acornui.signal.Signal.T)/handler">handler</span><span class="symbol">:</span>&nbsp;<a href="../-signal/index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-signal/add-once.html">addOnce</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addOnce</span><span class="symbol">(</span><span class="identifier" id="com.acornui.signal.Signal$addOnce(com.acornui.signal.Signal.T)/handler">handler</span><span class="symbol">:</span>&nbsp;<a href="../-signal/index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../bind.html">bind</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-bindable/index.html"><span class="identifier">Bindable</span></a><span class="symbol">.</span><span class="identifier">bind</span><span class="symbol">(</span><span class="identifier" id="com.acornui.signal$bind(com.acornui.signal.Bindable, kotlin.Function0((kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
+<p>Adds a callback and invokes it immediately.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.observe/or.html">or</a></p>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../-bindable/index.html"><span class="identifier">Bindable</span></a><span class="symbol">.</span><span class="identifier">or</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.observe$or(com.acornui.signal.Bindable, com.acornui.core.observe.DataBinding((com.acornui.core.observe.or.T)))/other">other</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.observe/-data-binding/index.html"><span class="identifier">DataBinding</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.observe/or.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-bindable/index.html"><span class="identifier">Bindable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../or.html">or</a></p>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><a href="../-bindable/index.html"><span class="identifier">Bindable</span></a><span class="symbol">.</span><span class="identifier">or</span><span class="symbol">(</span><span class="identifier" id="com.acornui.signal$or(com.acornui.signal.Bindable, com.acornui.signal.Bindable)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-bindable/index.html"><span class="identifier">Bindable</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-bindable/index.html"><span class="identifier">Bindable</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-signal0/index.html">Signal0</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Signal0</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">SignalBase</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-signal1/index.html">Signal1</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Signal1</span><span class="symbol">&lt;</span><span class="identifier">P1</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">SignalBase</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-signal1/index.html#P1"><span class="identifier">P1</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-signal2/index.html">Signal2</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Signal2</span><span class="symbol">&lt;</span><span class="identifier">P1</span><span class="symbol">, </span><span class="identifier">P2</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">SignalBase</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-signal2/index.html#P1"><span class="identifier">P1</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal2/index.html#P2"><span class="identifier">P2</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-signal3/index.html">Signal3</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Signal3</span><span class="symbol">&lt;</span><span class="identifier">P1</span><span class="symbol">, </span><span class="identifier">P2</span><span class="symbol">, </span><span class="identifier">P3</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">SignalBase</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-signal3/index.html#P1"><span class="identifier">P1</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal3/index.html#P2"><span class="identifier">P2</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal3/index.html#P3"><span class="identifier">P3</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-signal4/index.html">Signal4</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Signal4</span><span class="symbol">&lt;</span><span class="identifier">P1</span><span class="symbol">, </span><span class="identifier">P2</span><span class="symbol">, </span><span class="identifier">P3</span><span class="symbol">, </span><span class="identifier">P4</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">SignalBase</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-signal4/index.html#P1"><span class="identifier">P1</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal4/index.html#P2"><span class="identifier">P2</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal4/index.html#P3"><span class="identifier">P3</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal4/index.html#P4"><span class="identifier">P4</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-signal5/index.html">Signal5</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Signal5</span><span class="symbol">&lt;</span><span class="identifier">P1</span><span class="symbol">, </span><span class="identifier">P2</span><span class="symbol">, </span><span class="identifier">P3</span><span class="symbol">, </span><span class="identifier">P4</span><span class="symbol">, </span><span class="identifier">P5</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">SignalBase</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-signal5/index.html#P1"><span class="identifier">P1</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal5/index.html#P2"><span class="identifier">P2</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal5/index.html#P3"><span class="identifier">P3</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal5/index.html#P4"><span class="identifier">P4</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal5/index.html#P5"><span class="identifier">P5</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-signal6/index.html">Signal6</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Signal6</span><span class="symbol">&lt;</span><span class="identifier">P1</span><span class="symbol">, </span><span class="identifier">P2</span><span class="symbol">, </span><span class="identifier">P3</span><span class="symbol">, </span><span class="identifier">P4</span><span class="symbol">, </span><span class="identifier">P5</span><span class="symbol">, </span><span class="identifier">P6</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">SignalBase</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-signal6/index.html#P1"><span class="identifier">P1</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal6/index.html#P2"><span class="identifier">P2</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal6/index.html#P3"><span class="identifier">P3</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal6/index.html#P4"><span class="identifier">P4</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal6/index.html#P5"><span class="identifier">P5</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal6/index.html#P6"><span class="identifier">P6</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-signal7/index.html">Signal7</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Signal7</span><span class="symbol">&lt;</span><span class="identifier">P1</span><span class="symbol">, </span><span class="identifier">P2</span><span class="symbol">, </span><span class="identifier">P3</span><span class="symbol">, </span><span class="identifier">P4</span><span class="symbol">, </span><span class="identifier">P5</span><span class="symbol">, </span><span class="identifier">P6</span><span class="symbol">, </span><span class="identifier">P7</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">SignalBase</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-signal7/index.html#P1"><span class="identifier">P1</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal7/index.html#P2"><span class="identifier">P2</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal7/index.html#P3"><span class="identifier">P3</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal7/index.html#P4"><span class="identifier">P4</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal7/index.html#P5"><span class="identifier">P5</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal7/index.html#P6"><span class="identifier">P6</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal7/index.html#P7"><span class="identifier">P7</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-signal8/index.html">Signal8</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Signal8</span><span class="symbol">&lt;</span><span class="identifier">P1</span><span class="symbol">, </span><span class="identifier">P2</span><span class="symbol">, </span><span class="identifier">P3</span><span class="symbol">, </span><span class="identifier">P4</span><span class="symbol">, </span><span class="identifier">P5</span><span class="symbol">, </span><span class="identifier">P6</span><span class="symbol">, </span><span class="identifier">P7</span><span class="symbol">, </span><span class="identifier">P8</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">SignalBase</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-signal8/index.html#P1"><span class="identifier">P1</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal8/index.html#P2"><span class="identifier">P2</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal8/index.html#P3"><span class="identifier">P3</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal8/index.html#P4"><span class="identifier">P4</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal8/index.html#P5"><span class="identifier">P5</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal8/index.html#P6"><span class="identifier">P6</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal8/index.html#P7"><span class="identifier">P7</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal8/index.html#P8"><span class="identifier">P8</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-signal9/index.html">Signal9</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Signal9</span><span class="symbol">&lt;</span><span class="identifier">P1</span><span class="symbol">, </span><span class="identifier">P2</span><span class="symbol">, </span><span class="identifier">P3</span><span class="symbol">, </span><span class="identifier">P4</span><span class="symbol">, </span><span class="identifier">P5</span><span class="symbol">, </span><span class="identifier">P6</span><span class="symbol">, </span><span class="identifier">P7</span><span class="symbol">, </span><span class="identifier">P8</span><span class="symbol">, </span><span class="identifier">P9</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">SignalBase</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-signal9/index.html#P1"><span class="identifier">P1</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal9/index.html#P2"><span class="identifier">P2</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal9/index.html#P3"><span class="identifier">P3</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal9/index.html#P4"><span class="identifier">P4</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal9/index.html#P5"><span class="identifier">P5</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal9/index.html#P6"><span class="identifier">P6</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal9/index.html#P7"><span class="identifier">P7</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal9/index.html#P8"><span class="identifier">P8</span></a><span class="symbol">,</span>&nbsp;<a href="../-signal9/index.html#P9"><span class="identifier">P9</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-stoppable-signal-impl/index.html">StoppableSignalImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">StoppableSignalImpl</span><span class="symbol">&lt;</span><span class="identifier">P1</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-stoppable/index.html"><span class="identifier">Stoppable</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">SignalBase</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-stoppable-signal-impl/index.html#P1"><span class="identifier">P1</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="../-stoppable-signal-impl/index.html#P1"><span class="identifier">P1</span></a><span class="symbol">&gt;</span></code>
+<p>A signal where the single argument has the ability to halt the signal.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,30 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>GlStageImpl.render - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component</a>&nbsp;/&nbsp;<a href="index.html">GlStageImpl</a>&nbsp;/&nbsp;<a href="./render.html">render</a><br/>
+<br/>
+<h1>render</h1>
+<a name="com.acornui.component.GlStageImpl$render(com.acornui.math.MinMaxRo)"></a>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">render</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.GlStageImpl$render(com.acornui.math.MinMaxRo)/viewport">viewport</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-min-max-ro/index.html"><span class="identifier">MinMaxRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Overrides <a href="../-ui-component/render.html">UiComponent.render</a></p>
+<p>Overrides <a href="../-ui-component-impl/render.html">UiComponentImpl.render</a></p>
+<p>Renders any graphics.
+<a href="../-ui-component/render.html">render</a> does not check the <a href="../-ui-component/visible.html">visible</a> flag; that is the responsibility of the caller.</p>
+<h3>Parameters</h3>
+<p><a name="viewport"></a>
+<code>viewport</code> - 
+<p>The visible viewport (in screen coordinates.) If you wish to render a component with a boundless
+viewport, you may use <a href="../../com.acornui.math/-min-max-ro/-p-o-s-i-t-i-v-e_-i-n-f-i-n-i-t-y.html">MinMaxRo.POSITIVE_INFINITY</a>. This is used in order to potentially avoid drawing things
+the user cannot see. (Due to the screen size, stencil buffers, or scissors)</p>
+
+
+<p>You may convert the screen coordinate viewport to local coordinates via <a href="../-ui-component-impl/window-to-local.html">UiComponentImpl.windowToLocal</a>, but in general it is
+faster to convert the local coordinates to screen coordinates <a href="../-ui-component-impl/local-to-window.html">UiComponentImpl.localToWindow</a>, as no matrix inversion is
+required.</p>
+</p>
+</BODY>
+</HTML>

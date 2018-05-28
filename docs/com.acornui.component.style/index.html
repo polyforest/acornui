@@ -93,7 +93,7 @@
 <p><a href="-style/index.html">Style</a></p>
 </td>
 <td>
-<code><span class="keyword">interface </span><span class="identifier">Style</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style-ro/index.html"><span class="identifier">StyleRo</span></a><span class="symbol">, </span><span class="identifier">Clearable</span></code>
+<code><span class="keyword">interface </span><span class="identifier">Style</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style-ro/index.html"><span class="identifier">StyleRo</span></a><span class="symbol">, </span><a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code>
 <p>Readable-writable styles.</p>
 </td>
 </tr>
@@ -102,7 +102,7 @@
 <p><a href="-style-base/index.html">StyleBase</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">StyleBase</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style/index.html"><span class="identifier">Style</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">StyleBase</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style/index.html"><span class="identifier">Style</span></a><span class="symbol">, </span><a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
 <p>The base class for a typical <a href="-style/index.html">Style</a> implementation.</p>
 </td>
 </tr>
@@ -134,7 +134,7 @@
 <p><a href="-style-ro/index.html">StyleRo</a></p>
 </td>
 <td>
-<code><span class="keyword">interface </span><span class="identifier">StyleRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Observable</span></code>
+<code><span class="keyword">interface </span><span class="identifier">StyleRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.observe/-observable/index.html"><span class="identifier">Observable</span></a></code>
 <p>A Style object contains maps of style properties.</p>
 </td>
 </tr>
@@ -206,7 +206,7 @@ objects are applied.</p>
 <p><a href="-styles-impl/index.html">StylesImpl</a></p>
 </td>
 <td>
-<code><span class="keyword">class </span><span class="identifier">StylesImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+<code><span class="keyword">class </span><span class="identifier">StylesImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -222,13 +222,6 @@ objects are applied.</p>
 <h3>Extensions for External Classes</h3>
 <table>
 <tbody>
-<tr>
-<td>
-<p><a href="com.acornui.serialization.-writer/index.html">com.acornui.serialization.Writer</a></p>
-</td>
-<td>
-</td>
-</tr>
 <tr>
 <td>
 <p><a href="kotlin.collections.-list/index.html">kotlin.collections.List</a></p>
@@ -305,6 +298,15 @@ objects are applied.</p>
 <td>
 <code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style/index.html"><span class="identifier">Style</span></a><span class="symbol">&gt;</span> <a href="set.html#T"><span class="identifier">T</span></a><span class="symbol">.</span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style$set(com.acornui.component.style.set.T, com.acornui.component.style.set.T)/other">other</span><span class="symbol">:</span>&nbsp;<a href="set.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
 <p>Sets this style to match that of the other style.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="style-property.html">styleProperty</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.serialization/-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">.</span><span class="identifier">styleProperty</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style$styleProperty(com.acornui.serialization.Writer, com.acornui.component.style.Style, kotlin.String)/style">style</span><span class="symbol">:</span>&nbsp;<a href="-style/index.html"><span class="identifier">Style</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.style$styleProperty(com.acornui.serialization.Writer, com.acornui.component.style.Style, kotlin.String)/id">id</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.serialization/-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">?</span></code>
+<p>Returns a writer for the style's property if and only if that property is explicitly set.</p>
 </td>
 </tr>
 <tr>

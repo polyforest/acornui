@@ -1,0 +1,104 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ReadWriteBuffer - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="index.html">com.acornui.io</a>&nbsp;/&nbsp;<a href="./-read-write-buffer.html">ReadWriteBuffer</a><br/>
+<br/>
+<h1>ReadWriteBuffer</h1>
+<code><span class="keyword">interface </span><span class="identifier">ReadWriteBuffer</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-read-buffer/index.html"><span class="identifier">ReadBuffer</span></a><span class="symbol">&lt;</span><a href="-read-write-buffer.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="-write-buffer/index.html"><span class="identifier">WriteBuffer</span></a><span class="symbol">&lt;</span><a href="-read-write-buffer.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-write-buffer/clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-buffer/index.html"><span class="identifier">Buffer</span></a></code>
+<p>Clears this buffer.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-write-buffer/fill.html">fill</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">fill</span><span class="symbol">(</span><span class="identifier" id="com.acornui.io.WriteBuffer$fill(com.acornui.io.WriteBuffer.T)/value">value</span><span class="symbol">:</span>&nbsp;<a href="-write-buffer/index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Fills the buffer with the given value.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-read-buffer/get.html">get</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">get</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-read-buffer/index.html#T"><span class="identifier">T</span></a></code>
+<p>Retrieves the element at the current <code>position()</code>
+The position marker is incremented.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-write-buffer/limit.html">limit</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">limit</span><span class="symbol">(</span><span class="identifier" id="com.acornui.io.WriteBuffer$limit(kotlin.Int)/newLimit">newLimit</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-buffer/index.html"><span class="identifier">Buffer</span></a></code>
+<p>Sets the limit of this buffer.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-write-buffer/put.html">put</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">put</span><span class="symbol">(</span><span class="identifier" id="com.acornui.io.WriteBuffer$put(com.acornui.io.WriteBuffer.T)/value">value</span><span class="symbol">:</span>&nbsp;<a href="-write-buffer/index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Puts the provided element at the current <code>position()</code>.
+The position marker is incremented.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">put</span><span class="symbol">(</span><span class="identifier" id="com.acornui.io.WriteBuffer$put(com.acornui.io.ReadBuffer((com.acornui.io.WriteBuffer.T)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="-read-buffer/index.html"><span class="identifier">ReadBuffer</span></a><span class="symbol">&lt;</span><a href="-write-buffer/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">put</span><span class="symbol">(</span><span class="identifier" id="com.acornui.io.WriteBuffer$put(kotlin.collections.Iterable((com.acornui.io.WriteBuffer.T)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="-write-buffer/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">put</span><span class="symbol">(</span><span class="identifier" id="com.acornui.io.WriteBuffer$put(kotlin.collections.Iterator((com.acornui.io.WriteBuffer.T)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterator/index.html"><span class="identifier">Iterator</span></a><span class="symbol">&lt;</span><a href="-write-buffer/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-array-list-buffer/index.html">ArrayListBuffer</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ArrayListBuffer</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-buffer-base/index.html"><span class="identifier">BufferBase</span></a><span class="symbol">&lt;</span><a href="-array-list-buffer/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./-read-write-buffer.html"><span class="identifier">ReadWriteBuffer</span></a><span class="symbol">&lt;</span><a href="-array-list-buffer/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>A Buffer interface wrapping a <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html">MutableList</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-buffer-base/index.html">BufferBase</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">BufferBase</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./-read-write-buffer.html"><span class="identifier">ReadWriteBuffer</span></a><span class="symbol">&lt;</span><a href="-buffer-base/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-native-buffer/index.html">NativeBuffer</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">NativeBuffer</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./-read-write-buffer.html"><span class="identifier">ReadWriteBuffer</span></a><span class="symbol">&lt;</span><a href="-native-buffer/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-wrapped-array-buffer/index.html">WrappedArrayBuffer</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">WrappedArrayBuffer</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-buffer-base/index.html"><span class="identifier">BufferBase</span></a><span class="symbol">&lt;</span><a href="-wrapped-array-buffer/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./-read-write-buffer.html"><span class="identifier">ReadWriteBuffer</span></a><span class="symbol">&lt;</span><a href="-wrapped-array-buffer/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>A Buffer implementation wrapping a simple array.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,16 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>observable - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="index.html">com.acornui.reflect</a>&nbsp;/&nbsp;<a href="./observable.html">observable</a><br/>
+<br/>
+<h1>observable</h1>
+<a name="com.acornui.reflect$observable(com.acornui.reflect.observable.T, kotlin.Function1((com.acornui.reflect.observable.T, kotlin.Unit)))"></a>
+<code><span class="keyword">inline</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <span class="identifier">observable</span><span class="symbol">(</span><span class="identifier" id="com.acornui.reflect$observable(com.acornui.reflect.observable.T, kotlin.Function1((com.acornui.reflect.observable.T, kotlin.Unit)))/initialValue">initialValue</span><span class="symbol">:</span>&nbsp;<a href="observable.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="keyword">crossinline</span> <span class="identifier" id="com.acornui.reflect$observable(com.acornui.reflect.observable.T, kotlin.Function1((com.acornui.reflect.observable.T, kotlin.Unit)))/onChange">onChange</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="identifier">newValue</span><span class="symbol">:</span>&nbsp;<a href="observable.html#T"><span class="identifier">T</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.properties/-read-write-property/index.html"><span class="identifier">ReadWriteProperty</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">,</span>&nbsp;<a href="observable.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Similar to Delegates.observable, except vetoes when oldValue == newValue and onChange only takes newValue as a
+parameter.</p>
+</BODY>
+</HTML>

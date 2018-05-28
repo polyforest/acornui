@@ -1,0 +1,99 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ClearableObjectPool - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.collection</a>&nbsp;/&nbsp;<a href="./index.html">ClearableObjectPool</a><br/>
+<br/>
+<h1>ClearableObjectPool</h1>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ClearableObjectPool</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-object-pool/index.html"><span class="identifier">ObjectPool</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>An ObjectPool implementation that resets the objects as they go back into the pool.</p>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">ClearableObjectPool</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.ClearableObjectPool$<init>(kotlin.Function0((com.acornui.collection.ClearableObjectPool.T)))/create">create</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span></code><code><span class="identifier">ClearableObjectPool</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.ClearableObjectPool$<init>(kotlin.Int, kotlin.Function0((com.acornui.collection.ClearableObjectPool.T)))/initialCapacity">initialCapacity</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection.ClearableObjectPool$<init>(kotlin.Int, kotlin.Function0((com.acornui.collection.ClearableObjectPool.T)))/create">create</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span></code>
+<p>An ObjectPool implementation that resets the objects as they go back into the pool.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="free.html">free</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">free</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.ClearableObjectPool$free(com.acornui.collection.ClearableObjectPool.T)/obj">obj</span><span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Returns an object back to the pool.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-object-pool/clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Clears the free objects from this Pool.
+If the objects are disposable, consider using <a href="../dispose-and-clear.html">disposeAndClear</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-object-pool/for-each.html">forEach</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">forEach</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.ObjectPool$forEach(kotlin.Function1((com.acornui.collection.ObjectPool.T, kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../-object-pool/index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Iterates over each item in the pool, invoking the provided callback.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-object-pool/obtain.html">obtain</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">obtain</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-object-pool/index.html#T"><span class="identifier">T</span></a></code>
+<p>Takes an object from the pool if there is one, or constructs a new object from the factory provided
+to this Pool's constructor.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a><span class="symbol">&gt;</span> <a href="../-pool/index.html"><span class="identifier">Pool</span></a><span class="symbol">&lt;</span><a href="../clear.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><s><span class="identifier">clear</span></s><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$clear(com.acornui.collection.Pool((com.acornui.collection.clear.T)), kotlin.Boolean)/dispose">dispose</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../dispose-and-clear.html">disposeAndClear</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a><span class="symbol">&gt;</span> <a href="../-pool/index.html"><span class="identifier">Pool</span></a><span class="symbol">&lt;</span><a href="../dispose-and-clear.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">disposeAndClear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Disposes each object in this pool, then clears them from this list.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

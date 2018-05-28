@@ -1,0 +1,86 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>DualHashMap - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.collection</a>&nbsp;/&nbsp;<a href="./index.html">DualHashMap</a><br/>
+<br/>
+<h1>DualHashMap</h1>
+<code><span class="keyword">class </span><span class="identifier">DualHashMap</span><span class="symbol">&lt;</span><span class="identifier">J</span><span class="symbol">, </span><span class="identifier">K</span><span class="symbol">, </span><span class="identifier">V</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-clearable/index.html"><span class="identifier">Clearable</span></a></code>
+<p>A dual-key map.</p>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">DualHashMap</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.DualHashMap$<init>(kotlin.Boolean)/removeEmptyInnerMaps">removeEmptyInnerMaps</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span></code>
+<p>A dual-key map.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="map.html">map</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">map</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="index.html#J"><span class="identifier">J</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-hash-map/index.html"><span class="identifier">HashMap</span></a><span class="symbol">&lt;</span><a href="index.html#K"><span class="identifier">K</span></a><span class="symbol">,</span>&nbsp;<a href="index.html#V"><span class="identifier">V</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="remove-empty-inner-maps.html">removeEmptyInnerMaps</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">removeEmptyInnerMaps</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Clears this instance back to its original state.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get.html">get</a></p>
+</td>
+<td>
+<code><span class="keyword">operator</span> <span class="keyword">fun </span><span class="identifier">get</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.DualHashMap$get(com.acornui.collection.DualHashMap.J, com.acornui.collection.DualHashMap.K)/key1">key1</span><span class="symbol">:</span>&nbsp;<a href="index.html#J"><span class="identifier">J</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection.DualHashMap$get(com.acornui.collection.DualHashMap.J, com.acornui.collection.DualHashMap.K)/key2">key2</span><span class="symbol">:</span>&nbsp;<a href="index.html#K"><span class="identifier">K</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="index.html#V"><span class="identifier">V</span></a><span class="symbol">?</span></code><br/>
+<code><span class="keyword">operator</span> <span class="keyword">fun </span><span class="identifier">get</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.DualHashMap$get(com.acornui.collection.DualHashMap.J)/key1">key1</span><span class="symbol">:</span>&nbsp;<a href="index.html#J"><span class="identifier">J</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="index.html#K"><span class="identifier">K</span></a><span class="symbol">,</span>&nbsp;<a href="index.html#V"><span class="identifier">V</span></a><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="put.html">put</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">put</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.DualHashMap$put(com.acornui.collection.DualHashMap.J, com.acornui.collection.DualHashMap.K, com.acornui.collection.DualHashMap.V)/key1">key1</span><span class="symbol">:</span>&nbsp;<a href="index.html#J"><span class="identifier">J</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection.DualHashMap$put(com.acornui.collection.DualHashMap.J, com.acornui.collection.DualHashMap.K, com.acornui.collection.DualHashMap.V)/key2">key2</span><span class="symbol">:</span>&nbsp;<a href="index.html#K"><span class="identifier">K</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection.DualHashMap$put(com.acornui.collection.DualHashMap.J, com.acornui.collection.DualHashMap.K, com.acornui.collection.DualHashMap.V)/value">value</span><span class="symbol">:</span>&nbsp;<a href="index.html#V"><span class="identifier">V</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="remove.html">remove</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">remove</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.DualHashMap$remove(com.acornui.collection.DualHashMap.J)/key">key</span><span class="symbol">:</span>&nbsp;<a href="index.html#J"><span class="identifier">J</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="index.html#K"><span class="identifier">K</span></a><span class="symbol">,</span>&nbsp;<a href="index.html#V"><span class="identifier">V</span></a><span class="symbol">&gt;</span><span class="symbol">?</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">remove</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.DualHashMap$remove(com.acornui.collection.DualHashMap.J, com.acornui.collection.DualHashMap.K)/key1">key1</span><span class="symbol">:</span>&nbsp;<a href="index.html#J"><span class="identifier">J</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection.DualHashMap$remove(com.acornui.collection.DualHashMap.J, com.acornui.collection.DualHashMap.K)/key2">key2</span><span class="symbol">:</span>&nbsp;<a href="index.html#K"><span class="identifier">K</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="index.html#V"><span class="identifier">V</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

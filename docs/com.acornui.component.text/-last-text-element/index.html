@@ -1,0 +1,178 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>LastTextElement - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.text</a>&nbsp;/&nbsp;<a href="./index.html">LastTextElement</a><br/>
+<br/>
+<h1>LastTextElement</h1>
+<code><span class="keyword">class </span><span class="identifier">LastTextElement</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-text-element-ro/index.html"><span class="identifier">TextElementRo</span></a></code>
+<p>A placeholder for the last text element in a span. This is useful for calculating the text cursor placement.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">LastTextElement</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text.LastTextElement$<init>(com.acornui.component.text.TextFlow)/flow">flow</span><span class="symbol">:</span>&nbsp;<a href="../-text-flow/index.html"><span class="identifier">TextFlow</span></a><span class="symbol">)</span></code>
+<p>A placeholder for the last text element in a span. This is useful for calculating the text cursor placement.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="char.html">char</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">char</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html"><span class="identifier">Char</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="clears-line.html">clearsLine</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">clearsLine</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true, this element will cause the line to break after this element.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="clears-tabstop.html">clearsTabstop</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">clearsTabstop</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true, the tabstop should be cleared after placing this element.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="explicit-width.html">explicitWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">explicitWidth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>If set, this part should be drawn to fit this width.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="is-breaking.html">isBreaking</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">isBreaking</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true, this part is a good word break. (The part after this part may be placed on the next line).</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="overhangs.html">overhangs</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">overhangs</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true, this part will not cause a wrap.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="text-parent.html">textParent</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">textParent</span><span class="symbol">: </span><a href="../-text-span-element/index.html"><span class="identifier">TextSpanElement</span></a><span class="symbol">?</span></code>
+<p>Set by the TextSpanElement when this is part is added.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="x.html">x</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">x</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="x-advance.html">xAdvance</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">xAdvance</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The amount of horizontal space to advance after this part.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="y.html">y</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">y</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-text-element-ro/width.html">width</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">width</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The explicit width, if it's set, or the xAdvance.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="get-kerning.html">getKerning</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getKerning</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text.LastTextElement$getKerning(com.acornui.component.text.TextElementRo)/next">next</span><span class="symbol">:</span>&nbsp;<a href="../-text-element-ro/index.html"><span class="identifier">TextElementRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Returns the amount of horizontal space to offset this part from the next part.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../baseline.html">baseline</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="../-text-element-ro/index.html"><span class="identifier">TextElementRo</span></a><span class="symbol">.</span><span class="identifier">baseline</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../line-height.html">lineHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="../-text-element-ro/index.html"><span class="identifier">TextElementRo</span></a><span class="symbol">.</span><span class="identifier">lineHeight</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../text-field-x.html">textFieldX</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="../-text-element-ro/index.html"><span class="identifier">TextElementRo</span></a><span class="symbol">.</span><span class="identifier">textFieldX</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../text-field-y.html">textFieldY</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="../-text-element-ro/index.html"><span class="identifier">TextElementRo</span></a><span class="symbol">.</span><span class="identifier">textFieldY</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

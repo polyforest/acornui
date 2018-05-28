@@ -1,0 +1,46 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Quaternion.slerp - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="index.html">Quaternion</a>&nbsp;/&nbsp;<a href="./slerp.html">slerp</a><br/>
+<br/>
+<h1>slerp</h1>
+<a name="com.acornui.math.Quaternion$slerp(com.acornui.math.QuaternionRo, kotlin.Float)"></a>
+<code><span class="keyword">fun </span><span class="identifier">slerp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$slerp(com.acornui.math.QuaternionRo, kotlin.Float)/end">end</span><span class="symbol">:</span>&nbsp;<a href="../-quaternion-ro/index.html"><span class="identifier">QuaternionRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$slerp(com.acornui.math.QuaternionRo, kotlin.Float)/alpha">alpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Spherical linear interpolation between this quaternion and the other quaternion, based on the alpha value in the range
+<a href="#">0,1</a>. Taken from. Taken from Bones framework for JPCT, see http://www.aptalkarga.com/bones/</p>
+<h3>Parameters</h3>
+<p><a name="end"></a>
+<code>end</code> - the end quaternion</p>
+<p><a name="alpha"></a>
+<code>alpha</code> - alpha in the range <a href="#">0,1</a></p>
+<p><strong>Return</strong><br/>
+this quaternion for chaining</p>
+<a name="com.acornui.math.Quaternion$slerp(kotlin.Array((com.acornui.math.Quaternion)))"></a>
+<code><span class="keyword">fun </span><span class="identifier">slerp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$slerp(kotlin.Array((com.acornui.math.Quaternion)))/q">q</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><span class="identifier">Array</span></a><span class="symbol">&lt;</span><a href="index.html"><span class="identifier">Quaternion</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Spherical linearly interpolates multiple quaternions and stores the result in this Quaternion.
+Will not destroy the data previously inside the elements of q.
+result = (q_1^w_1)<em>(q2^w2)</em> ... *(q_n^w_n) where w_i=1/n.</p>
+<h3>Parameters</h3>
+<p><a name="q"></a>
+<code>q</code> - List of quaternions</p>
+<p><strong>Return</strong><br/>
+This quaternion for chaining</p>
+<a name="com.acornui.math.Quaternion$slerp(kotlin.Array((com.acornui.math.Quaternion)), kotlin.FloatArray)"></a>
+<code><span class="keyword">fun </span><span class="identifier">slerp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Quaternion$slerp(kotlin.Array((com.acornui.math.Quaternion)), kotlin.FloatArray)/q">q</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><span class="identifier">Array</span></a><span class="symbol">&lt;</span><a href="index.html"><span class="identifier">Quaternion</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Quaternion$slerp(kotlin.Array((com.acornui.math.Quaternion)), kotlin.FloatArray)/w">w</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float-array/index.html"><span class="identifier">FloatArray</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Spherical linearly interpolates multiple quaternions by the given weights and stores the result in this Quaternion.
+Will not destroy the data previously inside the elements of q or w.
+result = (q_1^w_1)<em>(q2^w2)</em> ... *(q_n^w_n) where the sum of w_i is 1.
+Lists must be equal in length.</p>
+<h3>Parameters</h3>
+<p><a name="q"></a>
+<code>q</code> - List of quaternions</p>
+<p><a name="w"></a>
+<code>w</code> - List of weights</p>
+<p><strong>Return</strong><br/>
+This quaternion for chaining</p>
+</BODY>
+</HTML>

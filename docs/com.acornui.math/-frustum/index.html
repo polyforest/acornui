@@ -1,0 +1,123 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Frustum - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="./index.html">Frustum</a><br/>
+<br/>
+<h1>Frustum</h1>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Frustum</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-frustum-ro/index.html"><span class="identifier">FrustumRo</span></a></code>
+<p>A truncated rectangular pyramid. Used to define the viewable region and its projection onto the screen.</p>
+<p><strong>See Also</strong><br/>
+<p><a href="#">Camera</a></p>
+</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">Frustum</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Frustum$<init>(kotlin.collections.MutableList((com.acornui.math.Plane)))/planes">planes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../-plane/index.html"><span class="identifier">Plane</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;ArrayList(6, { Plane(Vector3(), 0f) })<span class="symbol">)</span></code>
+<p>A truncated rectangular pyramid. Used to define the viewable region and its projection onto the screen.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="plane-points.html">planePoints</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">planePoints</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-array-list/index.html"><span class="identifier">ArrayList</span></a><span class="symbol">&lt;</span><a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">&gt;</span></code>
+<p>Eight points making up the near and far clipping "rectangles". order is counter clockwise, starting at bottom left</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="planes.html">planes</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">planes</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../-plane/index.html"><span class="identifier">Plane</span></a><span class="symbol">&gt;</span></code>
+<p>The six clipping planes, near, far, left, right, top, bottom</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="bounds-in-frustum.html">boundsInFrustum</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">boundsInFrustum</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Frustum$boundsInFrustum(com.acornui.math.BoxRo)/bounds">bounds</span><span class="symbol">:</span>&nbsp;<a href="../-box-ro/index.html"><span class="identifier">BoxRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns whether the given {@link BoundingBox} is in the frustum.</p>
+<code><span class="keyword">fun </span><span class="identifier">boundsInFrustum</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Frustum$boundsInFrustum(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/center">center</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Frustum$boundsInFrustum(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/dimensions">dimensions</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">boundsInFrustum</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Frustum$boundsInFrustum(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Frustum$boundsInFrustum(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Frustum$boundsInFrustum(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Frustum$boundsInFrustum(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/halfWidth">halfWidth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Frustum$boundsInFrustum(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/halfHeight">halfHeight</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Frustum$boundsInFrustum(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/halfDepth">halfDepth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns whether the given bounding box is in the frustum.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="point-in-frustum.html">pointInFrustum</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">pointInFrustum</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Frustum$pointInFrustum(com.acornui.math.Vector3Ro)/point">point</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">pointInFrustum</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Frustum$pointInFrustum(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Frustum$pointInFrustum(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Frustum$pointInFrustum(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns whether the point is in the frustum.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="sphere-in-frustum.html">sphereInFrustum</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">sphereInFrustum</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Frustum$sphereInFrustum(com.acornui.math.Vector3Ro, kotlin.Float)/center">center</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Frustum$sphereInFrustum(com.acornui.math.Vector3Ro, kotlin.Float)/radius">radius</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">sphereInFrustum</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Frustum$sphereInFrustum(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Frustum$sphereInFrustum(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Frustum$sphereInFrustum(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Frustum$sphereInFrustum(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/radius">radius</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns whether the given sphere is in the frustum.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="sphere-in-frustum-without-near-far.html">sphereInFrustumWithoutNearFar</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">sphereInFrustumWithoutNearFar</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Frustum$sphereInFrustumWithoutNearFar(com.acornui.math.Vector3, kotlin.Float)/center">center</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Frustum$sphereInFrustumWithoutNearFar(com.acornui.math.Vector3, kotlin.Float)/radius">radius</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">sphereInFrustumWithoutNearFar</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Frustum$sphereInFrustumWithoutNearFar(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Frustum$sphereInFrustumWithoutNearFar(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Frustum$sphereInFrustumWithoutNearFar(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Frustum$sphereInFrustumWithoutNearFar(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/radius">radius</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns whether the given sphere is in the frustum not checking whether it is behind the near and far clipping plane.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="update.html">update</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">update</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Frustum$update(com.acornui.math.Matrix4Ro)/inverseProjectionView">inverseProjectionView</span><span class="symbol">:</span>&nbsp;<a href="../-matrix4-ro/index.html"><span class="identifier">Matrix4Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Updates the clipping plane's based on the given inverse combined projection and view matrix, e.g. from an
+{@link OrthographicCamera} or {@link PerspectiveCamera}.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="clip-space-plane-points.html">clipSpacePlanePoints</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">clipSpacePlanePoints</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

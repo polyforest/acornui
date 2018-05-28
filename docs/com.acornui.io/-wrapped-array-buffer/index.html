@@ -1,0 +1,186 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>WrappedArrayBuffer - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.io</a>&nbsp;/&nbsp;<a href="./index.html">WrappedArrayBuffer</a><br/>
+<br/>
+<h1>WrappedArrayBuffer</h1>
+<code><span class="keyword">class </span><span class="identifier">WrappedArrayBuffer</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-buffer-base/index.html"><span class="identifier">BufferBase</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../-read-write-buffer.html"><span class="identifier">ReadWriteBuffer</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>A Buffer implementation wrapping a simple array.</p>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">WrappedArrayBuffer</span><span class="symbol">(</span><span class="identifier" id="com.acornui.io.WrappedArrayBuffer$<init>(kotlin.Array((com.acornui.io.WrappedArrayBuffer.T)), kotlin.Int)/array">array</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><span class="identifier">Array</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.io.WrappedArrayBuffer$<init>(kotlin.Array((com.acornui.io.WrappedArrayBuffer.T)), kotlin.Int)/arrayOffset">arrayOffset</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">)</span></code>
+<p>A Buffer implementation wrapping a simple array.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-buffer-base/_capacity.html">_capacity</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">_capacity</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The capacity of this buffer, which never changes.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-buffer-base/_limit.html">_limit</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">_limit</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p><code>limit - 1</code> is the last element that can be read or written.
+Limit must be no less than zero and no greater than <code>capacity</code>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-buffer-base/_mark.html">_mark</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">_mark</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Mark is where position will be set when <code>reset()</code> is called.
+Mark is not set by default. Mark is always no less than zero and no
+greater than <code>position</code>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-buffer-base/_position.html">_position</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">_position</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The current position of this buffer. Position is always no less than zero
+and no greater than <code>limit</code>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-buffer-base/capacity.html">capacity</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">capacity</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-buffer-base/has-remaining.html">hasRemaining</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">hasRemaining</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-buffer-base/limit.html">limit</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">limit</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-buffer-base/position.html">position</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">position</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="get.html">get</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">get</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="index.html#T"><span class="identifier">T</span></a></code>
+<p>Retrieves the element at the current <code>position()</code>
+The position marker is incremented.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="put.html">put</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">put</span><span class="symbol">(</span><span class="identifier" id="com.acornui.io.WrappedArrayBuffer$put(com.acornui.io.WrappedArrayBuffer.T)/value">value</span><span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Puts the provided element at the current <code>position()</code>.
+The position marker is incremented.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-buffer-base/clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-buffer/index.html"><span class="identifier">Buffer</span></a></code>
+<p>Clears this buffer.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-buffer-base/flip.html">flip</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">flip</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-buffer/index.html"><span class="identifier">Buffer</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-buffer-base/limit.html">limit</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">limit</span><span class="symbol">(</span><span class="identifier" id="com.acornui.io.BufferBase$limit(kotlin.Int)/newLimit">newLimit</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-buffer/index.html"><span class="identifier">Buffer</span></a></code>
+<p>Sets the limit of this buffer.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-buffer-base/mark.html">mark</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">mark</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-buffer/index.html"><span class="identifier">Buffer</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-buffer-base/reset.html">reset</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">reset</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-buffer/index.html"><span class="identifier">Buffer</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-buffer-base/rewind.html">rewind</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">rewind</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-buffer/index.html"><span class="identifier">Buffer</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-buffer-base/to-string.html">toString</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

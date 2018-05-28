@@ -1,0 +1,91 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>QuadTree - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.collection</a>&nbsp;/&nbsp;<a href="./index.html">QuadTree</a><br/>
+<br/>
+<h1>QuadTree</h1>
+<code><span class="keyword">class </span><span class="identifier">QuadTree</span><span class="symbol">&lt;</span><span class="identifier">K</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-comparable/index.html"><span class="identifier">Comparable</span></a><span class="symbol">&lt;</span><a href="index.html#K"><span class="identifier">K</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">V</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-clearable/index.html"><span class="identifier">Clearable</span></a></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">QuadTree</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="add.html">add</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">add</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.QuadTree$add(com.acornui.collection.QuadTree.V, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K)/value">value</span><span class="symbol">:</span>&nbsp;<a href="index.html#V"><span class="identifier">V</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection.QuadTree$add(com.acornui.collection.QuadTree.V, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K)/x">x</span><span class="symbol">:</span>&nbsp;<a href="index.html#K"><span class="identifier">K</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection.QuadTree$add(com.acornui.collection.QuadTree.V, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K)/y">y</span><span class="symbol">:</span>&nbsp;<a href="index.html#K"><span class="identifier">K</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Clears this instance back to its original state.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="contains.html">contains</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">contains</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.QuadTree$contains(com.acornui.collection.QuadTree.V, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K)/value">value</span><span class="symbol">:</span>&nbsp;<a href="index.html#V"><span class="identifier">V</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection.QuadTree$contains(com.acornui.collection.QuadTree.V, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K)/x">x</span><span class="symbol">:</span>&nbsp;<a href="index.html#K"><span class="identifier">K</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection.QuadTree$contains(com.acornui.collection.QuadTree.V, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K)/y">y</span><span class="symbol">:</span>&nbsp;<a href="index.html#K"><span class="identifier">K</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if there is a node with the given <a href="contains.html#com.acornui.collection.QuadTree$contains(com.acornui.collection.QuadTree.V, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K)/value">value</a>, <a href="contains.html#com.acornui.collection.QuadTree$contains(com.acornui.collection.QuadTree.V, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K)/x">x</a>, and <a href="contains.html#com.acornui.collection.QuadTree$contains(com.acornui.collection.QuadTree.V, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K)/y">y</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="is-empty.html">isEmpty</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">isEmpty</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="is-not-empty.html">isNotEmpty</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">isNotEmpty</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="iterate.html">iterate</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">iterate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.QuadTree$iterate(com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, kotlin.Function1((com.acornui.collection.QuadTree.V, kotlin.Boolean)))/xMin">xMin</span><span class="symbol">:</span>&nbsp;<a href="index.html#K"><span class="identifier">K</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection.QuadTree$iterate(com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, kotlin.Function1((com.acornui.collection.QuadTree.V, kotlin.Boolean)))/yMin">yMin</span><span class="symbol">:</span>&nbsp;<a href="index.html#K"><span class="identifier">K</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection.QuadTree$iterate(com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, kotlin.Function1((com.acornui.collection.QuadTree.V, kotlin.Boolean)))/xMax">xMax</span><span class="symbol">:</span>&nbsp;<a href="index.html#K"><span class="identifier">K</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection.QuadTree$iterate(com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, kotlin.Function1((com.acornui.collection.QuadTree.V, kotlin.Boolean)))/yMax">yMax</span><span class="symbol">:</span>&nbsp;<a href="index.html#K"><span class="identifier">K</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection.QuadTree$iterate(com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, kotlin.Function1((com.acornui.collection.QuadTree.V, kotlin.Boolean)))/inner">inner</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="index.html#V"><span class="identifier">V</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">iterate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.QuadTree$iterate(kotlin.Function1((com.acornui.collection.QuadTree.V, kotlin.Boolean)))/inner">inner</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="index.html#V"><span class="identifier">V</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="remove.html">remove</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">remove</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.QuadTree$remove(com.acornui.collection.QuadTree.V, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K)/value">value</span><span class="symbol">:</span>&nbsp;<a href="index.html#V"><span class="identifier">V</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection.QuadTree$remove(com.acornui.collection.QuadTree.V, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K)/x">x</span><span class="symbol">:</span>&nbsp;<a href="index.html#K"><span class="identifier">K</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection.QuadTree$remove(com.acornui.collection.QuadTree.V, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K)/y">y</span><span class="symbol">:</span>&nbsp;<a href="index.html#K"><span class="identifier">K</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="update.html">update</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">update</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.QuadTree$update(com.acornui.collection.QuadTree.V, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K)/value">value</span><span class="symbol">:</span>&nbsp;<a href="index.html#V"><span class="identifier">V</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection.QuadTree$update(com.acornui.collection.QuadTree.V, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K)/oldX">oldX</span><span class="symbol">:</span>&nbsp;<a href="index.html#K"><span class="identifier">K</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection.QuadTree$update(com.acornui.collection.QuadTree.V, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K)/oldY">oldY</span><span class="symbol">:</span>&nbsp;<a href="index.html#K"><span class="identifier">K</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection.QuadTree$update(com.acornui.collection.QuadTree.V, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K)/newX">newX</span><span class="symbol">:</span>&nbsp;<a href="index.html#K"><span class="identifier">K</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection.QuadTree$update(com.acornui.collection.QuadTree.V, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K, com.acornui.collection.QuadTree.K)/newY">newY</span><span class="symbol">:</span>&nbsp;<a href="index.html#K"><span class="identifier">K</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

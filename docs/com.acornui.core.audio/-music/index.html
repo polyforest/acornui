@@ -8,7 +8,7 @@
 <a href="../index.html">com.acornui.core.audio</a>&nbsp;/&nbsp;<a href="./index.html">Music</a><br/>
 <br/>
 <h1>Music</h1>
-<code><span class="keyword">interface </span><span class="identifier">Music</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<code><span class="keyword">interface </span><span class="identifier">Music</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
 <p>An interface for controlling a progressive-download music file.</p>
 <h3>Properties</h3>
 <table>
@@ -78,7 +78,7 @@
 <p><a href="ready-state-changed.html">readyStateChanged</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">readyStateChanged</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">readyStateChanged</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal/index.html"><span class="identifier">Signal</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
@@ -138,6 +138,21 @@ when it's stopped or paused.</p>
 </tr>
 </tbody>
 </table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-disposable/dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Prepares this object for garbage collection.
+A disposed object should no longer be used or referenced.</p>
+</td>
+</tr>
+</tbody>
+</table>
 <h3>Extension Functions</h3>
 <table>
 <tbody>
@@ -146,7 +161,7 @@ when it's stopped or paused.</p>
 <p><a href="../tween-volume.html">tweenVolume</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">Music</span></a><span class="symbol">.</span><span class="identifier">tweenVolume</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.audio$tweenVolume(com.acornui.core.audio.Music, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.audio$tweenVolume(com.acornui.core.audio.Music, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.audio$tweenVolume(com.acornui.core.audio.Music, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/toVolume">toVolume</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.audio$tweenVolume(com.acornui.core.audio.Music, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.tween/-tween/index.html"><span class="identifier">Tween</span></a></code></td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">Music</span></a><span class="symbol">.</span><span class="identifier">tweenVolume</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.audio$tweenVolume(com.acornui.core.audio.Music, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.audio$tweenVolume(com.acornui.core.audio.Music, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/ease">ease</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-interpolation/index.html"><span class="identifier">Interpolation</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.audio$tweenVolume(com.acornui.core.audio.Music, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/toVolume">toVolume</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.audio$tweenVolume(com.acornui.core.audio.Music, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.tween/-tween/index.html"><span class="identifier">Tween</span></a></code></td>
 </tr>
 </tbody>
 </table>

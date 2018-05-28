@@ -25,7 +25,7 @@
 <p><a href="-interaction-event/index.html">InteractionEvent</a></p>
 </td>
 <td>
-<code><span class="keyword">interface </span><span class="identifier">InteractionEvent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a><span class="symbol">, </span><span class="identifier">Clearable</span></code></td>
+<code><span class="keyword">interface </span><span class="identifier">InteractionEvent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a><span class="symbol">, </span><a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -41,7 +41,7 @@
 <p><a href="-interaction-event-ro/index.html">InteractionEventRo</a></p>
 </td>
 <td>
-<code><span class="keyword">interface </span><span class="identifier">InteractionEventRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Stoppable</span></code></td>
+<code><span class="keyword">interface </span><span class="identifier">InteractionEventRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.signal/-stoppable/index.html"><span class="identifier">Stoppable</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -55,7 +55,7 @@
 <p><a href="-interactivity-manager/index.html">InteractivityManager</a></p>
 </td>
 <td>
-<code><span class="keyword">interface </span><span class="identifier">InteractivityManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<code><span class="keyword">interface </span><span class="identifier">InteractivityManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
 <p>A manager that feeds user input as events to layout elements.</p>
 </td>
 </tr>
@@ -80,7 +80,7 @@
 <p><a href="-key-state/index.html">KeyState</a></p>
 </td>
 <td>
-<code><span class="keyword">interface </span><span class="identifier">KeyState</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+<code><span class="keyword">interface </span><span class="identifier">KeyState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -96,7 +96,7 @@
 <p><a href="-mouse-state/index.html">MouseState</a></p>
 </td>
 <td>
-<code><span class="keyword">interface </span><span class="identifier">MouseState</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<code><span class="keyword">interface </span><span class="identifier">MouseState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
 <p>Tracks the mouse position and whether or not the mouse is over the canvas.</p>
 </td>
 </tr>
@@ -105,7 +105,7 @@
 <p><a href="-propagation/index.html">Propagation</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Propagation</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-propagation-ro/index.html"><span class="identifier">PropagationRo</span></a><span class="symbol">, </span><span class="identifier">Clearable</span></code>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Propagation</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-propagation-ro/index.html"><span class="identifier">PropagationRo</span></a><span class="symbol">, </span><a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code>
 <p>Given a ladder of propagation, <a href="-propagation/stop-propagation.html">stopPropagation</a> stops the sequence from reaching the next rung, and
 <a href="-propagation/stop-immediate-propagation.html">stopImmediatePropagation</a> stops the sequence from reaching the next rung and stops the sequence from continuing
 on the current rung.</p>
@@ -135,7 +135,7 @@ on the current rung.</p>
 <p><a href="char.html">char</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">char</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$char(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-char-interaction-ro/index.html"><span class="identifier">CharInteractionRo</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">char</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$char(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.signal/-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-char-interaction-ro/index.html"><span class="identifier">CharInteractionRo</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched when a character has been inputted while this interactive element has focus.</p>
 </td>
 </tr>
@@ -144,28 +144,28 @@ on the current rung.</p>
 <p><a href="clipboard-copy.html">clipboardCopy</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">clipboardCopy</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$clipboardCopy(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-copy-interaction-ro/index.html"><span class="identifier">CopyInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">clipboardCopy</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$clipboardCopy(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.signal/-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-copy-interaction-ro/index.html"><span class="identifier">CopyInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="clipboard-cut.html">clipboardCut</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">clipboardCut</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$clipboardCut(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-copy-interaction-ro/index.html"><span class="identifier">CopyInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">clipboardCut</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$clipboardCut(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.signal/-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-copy-interaction-ro/index.html"><span class="identifier">CopyInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="clipboard-paste.html">clipboardPaste</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">clipboardPaste</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$clipboardPaste(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-paste-interaction-ro/index.html"><span class="identifier">PasteInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">clipboardPaste</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$clipboardPaste(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.signal/-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-paste-interaction-ro/index.html"><span class="identifier">PasteInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="key-down.html">keyDown</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">keyDown</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$keyDown(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-key-interaction-ro/index.html"><span class="identifier">KeyInteractionRo</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">keyDown</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$keyDown(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.signal/-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-key-interaction-ro/index.html"><span class="identifier">KeyInteractionRo</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched when a key has been pressed while this interactive element has focus.</p>
 </td>
 </tr>
@@ -174,7 +174,7 @@ on the current rung.</p>
 <p><a href="key-up.html">keyUp</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">keyUp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$keyUp(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-key-interaction-ro/index.html"><span class="identifier">KeyInteractionRo</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">keyUp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$keyUp(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.signal/-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-key-interaction-ro/index.html"><span class="identifier">KeyInteractionRo</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched when a key has been released while this interactive element has focus.</p>
 </td>
 </tr>
@@ -183,7 +183,7 @@ on the current rung.</p>
 <p><a href="mouse-down.html">mouseDown</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">mouseDown</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$mouseDown(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-mouse-interaction-ro/index.html"><span class="identifier">MouseInteractionRo</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">mouseDown</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$mouseDown(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.signal/-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-mouse-interaction-ro/index.html"><span class="identifier">MouseInteractionRo</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched when the mouse or touch is pressed down on this element.</p>
 </td>
 </tr>
@@ -192,7 +192,7 @@ on the current rung.</p>
 <p><a href="mouse-move.html">mouseMove</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">mouseMove</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$mouseMove(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-mouse-interaction-ro/index.html"><span class="identifier">MouseInteractionRo</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">mouseMove</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$mouseMove(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.signal/-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-mouse-interaction-ro/index.html"><span class="identifier">MouseInteractionRo</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched when the mouse or touch has moved within the bounds of this element.</p>
 </td>
 </tr>
@@ -201,7 +201,7 @@ on the current rung.</p>
 <p><a href="mouse-out.html">mouseOut</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">mouseOut</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$mouseOut(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-mouse-interaction-ro/index.html"><span class="identifier">MouseInteractionRo</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">mouseOut</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$mouseOut(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.signal/-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-mouse-interaction-ro/index.html"><span class="identifier">MouseInteractionRo</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched when the mouse has moved off of this target. This will not trigger for touch surface interaction.</p>
 </td>
 </tr>
@@ -210,7 +210,7 @@ on the current rung.</p>
 <p><a href="mouse-over.html">mouseOver</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">mouseOver</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$mouseOver(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-mouse-interaction-ro/index.html"><span class="identifier">MouseInteractionRo</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">mouseOver</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$mouseOver(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.signal/-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-mouse-interaction-ro/index.html"><span class="identifier">MouseInteractionRo</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched when the mouse is moved over this target. This will not trigger for touch surface interaction.</p>
 </td>
 </tr>
@@ -219,7 +219,7 @@ on the current rung.</p>
 <p><a href="mouse-up.html">mouseUp</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">mouseUp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$mouseUp(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-mouse-interaction-ro/index.html"><span class="identifier">MouseInteractionRo</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">mouseUp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$mouseUp(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.signal/-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-mouse-interaction-ro/index.html"><span class="identifier">MouseInteractionRo</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched when the mouse or touch is released from this element.</p>
 </td>
 </tr>
@@ -228,35 +228,35 @@ on the current rung.</p>
 <p><a href="touch-cancel.html">touchCancel</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">touchCancel</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$touchCancel(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-touch-interaction-ro/index.html"><span class="identifier">TouchInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">touchCancel</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$touchCancel(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.signal/-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-touch-interaction-ro/index.html"><span class="identifier">TouchInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="touch-end.html">touchEnd</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">touchEnd</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$touchEnd(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-touch-interaction-ro/index.html"><span class="identifier">TouchInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">touchEnd</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$touchEnd(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.signal/-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-touch-interaction-ro/index.html"><span class="identifier">TouchInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="touch-move.html">touchMove</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">touchMove</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$touchMove(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-touch-interaction-ro/index.html"><span class="identifier">TouchInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">touchMove</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$touchMove(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.signal/-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-touch-interaction-ro/index.html"><span class="identifier">TouchInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="touch-start.html">touchStart</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">touchStart</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$touchStart(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-touch-interaction-ro/index.html"><span class="identifier">TouchInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">touchStart</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$touchStart(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.signal/-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-touch-interaction-ro/index.html"><span class="identifier">TouchInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="wheel.html">wheel</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">wheel</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$wheel(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-wheel-interaction-ro/index.html"><span class="identifier">WheelInteractionRo</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">wheel</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input$wheel(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.signal/-stoppable-signal.html"><span class="identifier">StoppableSignal</span></a><span class="symbol">&lt;</span><a href="../com.acornui.core.input.interaction/-wheel-interaction-ro/index.html"><span class="identifier">WheelInteractionRo</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched when the mouse wheel has been scrolled.</p>
 </td>
 </tr>

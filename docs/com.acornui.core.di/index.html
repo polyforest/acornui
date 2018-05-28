@@ -16,7 +16,7 @@
 <p><a href="-bootstrap/index.html">Bootstrap</a></p>
 </td>
 <td>
-<code><span class="keyword">class </span><span class="identifier">Bootstrap</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+<code><span class="keyword">class </span><span class="identifier">Bootstrap</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -70,7 +70,7 @@ This is used for dependency injection, styling, and organization.</p>
 <p><a href="-owned-impl/index.html">OwnedImpl</a></p>
 </td>
 <td>
-<code><span class="keyword">class </span><span class="identifier">OwnedImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code>
+<code><span class="keyword">class </span><span class="identifier">OwnedImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">, </span><a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
 <p>Factory methods for components typically don't have separated <a href="-owned-impl/owner.html">owner</a> and <a href="-owned-impl/injector.html">injector</a> parameters. This
 implementation can be used to have a different dependency injector than what the owner uses.</p>
 </td>
@@ -125,7 +125,7 @@ implementation can be used to have a different dependency injector than what the
 <p><a href="own.html">own</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span><span class="symbol">&gt;</span> <a href="-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">own</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di$own(com.acornui.core.di.Owned, com.acornui.core.di.own.T)/target">target</span><span class="symbol">:</span>&nbsp;<a href="own.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="own.html#T"><span class="identifier">T</span></a></code>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a><span class="symbol">&gt;</span> <a href="-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">own</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di$own(com.acornui.core.di.Owned, com.acornui.core.di.own.T)/target">target</span><span class="symbol">:</span>&nbsp;<a href="own.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="own.html#T"><span class="identifier">T</span></a></code>
 <p>When this object is disposed, the target will also be disposed.</p>
 </td>
 </tr>

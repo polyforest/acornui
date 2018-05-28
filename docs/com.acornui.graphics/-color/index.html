@@ -1,0 +1,495 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Color - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.graphics</a>&nbsp;/&nbsp;<a href="./index.html">Color</a><br/>
+<br/>
+<h1>Color</h1>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Color</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">, </span><a href="../../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code>
+<p>A color class, holding the r, g, b and alpha component as floats in the range <a href="#">0,1</a>. All methods perform clamping on the
+internal values after execution.</p>
+<p><strong>Author</strong><br/>
+mzechner</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">Color</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color$<init>(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/r">r</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color$<init>(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/g">g</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color$<init>(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/b">b</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color$<init>(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/a">a</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span></code>
+<p>A color class, holding the r, g, b and alpha component as floats in the range <a href="#">0,1</a>. All methods perform clamping on the
+internal values after execution.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="a.html">a</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">a</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="b.html">b</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">b</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="g.html">g</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">g</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="r.html">r</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">r</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="add.html">add</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">add</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color$add(com.acornui.graphics.ColorRo)/color">color</span><span class="symbol">:</span>&nbsp;<a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code>
+<p>Adds the given color to this color.</p>
+<code><span class="keyword">fun </span><span class="identifier">add</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color$add(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/r">r</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color$add(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/g">g</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color$add(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/b">b</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color$add(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/a">a</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code>
+<p>Adds the given color component values to this Color's values.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="clamp.html">clamp</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clamp</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code>
+<p>Clamps this Color's components to a valid range <a href="#">0-1</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets this color to CLEAR</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="invert.html">invert</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">invert</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="lerp.html">lerp</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">lerp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color$lerp(com.acornui.graphics.ColorRo, kotlin.Float)/target">target</span><span class="symbol">:</span>&nbsp;<a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color$lerp(com.acornui.graphics.ColorRo, kotlin.Float)/t">t</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">lerp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color$lerp(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/r">r</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color$lerp(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/g">g</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color$lerp(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/b">b</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color$lerp(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/a">a</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color$lerp(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/t">t</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code>
+<p>Linearly interpolates between this color and the target color by t which is in the range <a href="#">0,1</a>. The result is stored in this
+color.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="mul.html">mul</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">mul</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color$mul(com.acornui.graphics.ColorRo)/color">color</span><span class="symbol">:</span>&nbsp;<a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code>
+<p>Multiplies the this color and the given color</p>
+<code><span class="keyword">fun </span><span class="identifier">mul</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color$mul(kotlin.Float)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code>
+<p>Multiplies all components of this Color with the given value.</p>
+<code><span class="keyword">fun </span><span class="identifier">mul</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color$mul(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/r">r</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color$mul(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/g">g</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color$mul(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/b">b</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color$mul(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/a">a</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code>
+<p>Multiplies this Color's color components by the given ones.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="premultiply-alpha.html">premultiplyAlpha</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">premultiplyAlpha</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code>
+<p>Multiplies the RGB values by the alpha.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set.html">set</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color$set(com.acornui.graphics.ColorRo)/color">color</span><span class="symbol">:</span>&nbsp;<a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code>
+<p>Sets this color to the given color.</p>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/r">r</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/g">g</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/b">b</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/a">a</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code>
+<p>Sets this Color's component values.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set888.html">set888</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">set888</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color$set888(kotlin.Int)/rgb">rgb</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code>
+<p>Sets this color's component values through an integer representation.
+16777215 - white</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set8888.html">set8888</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">set8888</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color$set8888(kotlin.Long)/rgba">rgba</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code>
+<p>Sets this color's component values through an integer representation.
+4294967295 - white</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="sub.html">sub</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">sub</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color$sub(com.acornui.graphics.ColorRo)/color">color</span><span class="symbol">:</span>&nbsp;<a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code>
+<p>Subtracts the given color from this color</p>
+<code><span class="keyword">fun </span><span class="identifier">sub</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color$sub(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/r">r</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color$sub(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/g">g</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color$sub(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/b">b</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color$sub(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/a">a</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code>
+<p>Subtracts the given values from this Color's component values.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-color-ro/close-to.html">closeTo</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">closeTo</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.ColorRo$closeTo(com.acornui.graphics.ColorRo, kotlin.Float)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.ColorRo$closeTo(com.acornui.graphics.ColorRo, kotlin.Float)/tolerance">tolerance</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0.0001f<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if each of the channels is close to the other color within the given tolerance.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-color-ro/copy.html">copy</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">copy</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-color-ro/minus.html">minus</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">operator</span> <span class="keyword">fun </span><span class="identifier">minus</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.ColorRo$minus(com.acornui.graphics.ColorRo)/color">color</span><span class="symbol">:</span>&nbsp;<a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-color-ro/plus.html">plus</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">operator</span> <span class="keyword">fun </span><span class="identifier">plus</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.ColorRo$plus(com.acornui.graphics.ColorRo)/color">color</span><span class="symbol">:</span>&nbsp;<a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-color-ro/times.html">times</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">operator</span> <span class="keyword">fun </span><span class="identifier">times</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.ColorRo$times(kotlin.Float)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-color-ro/to-css-string.html">toCssString</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toCssString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>rgba(255, 255, 255, 1)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-color-ro/to-hsl.html">toHsl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toHsl</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.ColorRo$toHsl(com.acornui.graphics.Hsl)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-hsl/index.html"><span class="identifier">Hsl</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-hsl/index.html"><span class="identifier">Hsl</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-color-ro/to-hsv.html">toHsv</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toHsv</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.ColorRo$toHsv(com.acornui.graphics.Hsv)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-hsv/index.html"><span class="identifier">Hsv</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-hsv/index.html"><span class="identifier">Hsv</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-color-ro/to-rgb-string.html">toRgbString</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toRgbString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>RRGGBB</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-color-ro/to-rgba-string.html">toRgbaString</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toRgbaString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>RRGGBBAA</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-b-l-a-c-k.html">BLACK</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">BLACK</span><span class="symbol">: </span><a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-b-l-u-e.html">BLUE</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">BLUE</span><span class="symbol">: </span><a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-b-r-o-w-n.html">BROWN</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">BROWN</span><span class="symbol">: </span><a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-c-l-e-a-r.html">CLEAR</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">CLEAR</span><span class="symbol">: </span><a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-c-y-a-n.html">CYAN</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">CYAN</span><span class="symbol">: </span><a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-d-a-r-k_-g-r-a-y.html">DARK_GRAY</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">DARK_GRAY</span><span class="symbol">: </span><a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-g-r-a-y.html">GRAY</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">GRAY</span><span class="symbol">: </span><a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-g-r-e-e-n.html">GREEN</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">GREEN</span><span class="symbol">: </span><a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-l-i-g-h-t_-b-l-u-e.html">LIGHT_BLUE</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">LIGHT_BLUE</span><span class="symbol">: </span><a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-l-i-g-h-t_-g-r-a-y.html">LIGHT_GRAY</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">LIGHT_GRAY</span><span class="symbol">: </span><a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-m-a-g-e-n-t-a.html">MAGENTA</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">MAGENTA</span><span class="symbol">: </span><a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-m-a-r-o-o-n.html">MAROON</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">MAROON</span><span class="symbol">: </span><a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-n-a-v-y.html">NAVY</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">NAVY</span><span class="symbol">: </span><a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-o-l-i-v-e.html">OLIVE</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">OLIVE</span><span class="symbol">: </span><a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-o-r-a-n-g-e.html">ORANGE</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">ORANGE</span><span class="symbol">: </span><a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-p-i-n-k.html">PINK</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">PINK</span><span class="symbol">: </span><a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-p-u-r-p-l-e.html">PURPLE</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">PURPLE</span><span class="symbol">: </span><a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-r-e-d.html">RED</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">RED</span><span class="symbol">: </span><a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-t-e-a-l.html">TEAL</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">TEAL</span><span class="symbol">: </span><a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-w-h-i-t-e.html">WHITE</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">WHITE</span><span class="symbol">: </span><a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-y-e-l-l-o-w.html">YELLOW</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">YELLOW</span><span class="symbol">: </span><a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="from8888-str.html">from8888Str</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">from8888Str</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color.Companion$from8888Str(kotlin.String)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="from888-str.html">from888Str</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">from888Str</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color.Companion$from888Str(kotlin.String)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="from-css-str.html">fromCssStr</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">fromCssStr</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color.Companion$fromCssStr(kotlin.String)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code>
+<p>From rgb(255, 255, 255) or rgba(255, 255, 255, 1)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="from-rgba-str.html">fromRgbaStr</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">fromRgbaStr</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color.Companion$fromRgbaStr(kotlin.String)/hex">hex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code>
+<p>Returns a new color from a hex string with the format RRGGBBAA.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="from-str.html">fromStr</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">fromStr</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color.Companion$fromStr(kotlin.String)/str">str</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Color</span></a></code>
+<p>Returns a new color from a hex string with one of the following formats:
+RRGGBBAA,
+0xRRGGBBAA,
+rgb(255, 255, 255),
+rgba(255, 255, 255, 255),
+or #RRGGBBAA.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="rgb888.html">rgb888</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">rgb888</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color.Companion$rgb888(kotlin.Float, kotlin.Float, kotlin.Float)/r">r</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color.Companion$rgb888(kotlin.Float, kotlin.Float, kotlin.Float)/g">g</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color.Companion$rgb888(kotlin.Float, kotlin.Float, kotlin.Float)/b">b</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">rgb888</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color.Companion$rgb888(com.acornui.graphics.ColorRo)/color">color</span><span class="symbol">:</span>&nbsp;<a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="rgba8888.html">rgba8888</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">rgba8888</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color.Companion$rgba8888(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/r">r</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color.Companion$rgba8888(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/g">g</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color.Companion$rgba8888(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/b">b</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.graphics.Color.Companion$rgba8888(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/a">a</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">rgba8888</span><span class="symbol">(</span><span class="identifier" id="com.acornui.graphics.Color.Companion$rgba8888(com.acornui.graphics.ColorRo)/color">color</span><span class="symbol">:</span>&nbsp;<a href="../-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.io/write-unpacked.html">writeUnpacked</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">Color</span></a><span class="symbol">.</span><span class="identifier">writeUnpacked</span><span class="symbol">(</span><span class="identifier" id="com.acornui.io$writeUnpacked(com.acornui.graphics.Color, com.acornui.io.WriteBuffer((kotlin.Float)))/buffer">buffer</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.io/-write-buffer/index.html"><span class="identifier">WriteBuffer</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

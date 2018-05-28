@@ -1,0 +1,61 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>JsonSerializer - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.serialization</a>&nbsp;/&nbsp;<a href="./index.html">JsonSerializer</a><br/>
+<br/>
+<h1>JsonSerializer</h1>
+<code><span class="keyword">object </span><span class="identifier">JsonSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-serializer/index.html"><span class="identifier">Serializer</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span></code>
+<p>A factory that provides a Reader and Writer for JSON</p>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="read.html">read</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">read</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization.JsonSerializer$read(kotlin.String)/data">data</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-reader/index.html"><span class="identifier">Reader</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="write.html">write</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">write</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization.JsonSerializer$write(kotlin.Function1((com.acornui.serialization.Writer, kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">write</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization.JsonSerializer$write(kotlin.Function1((com.acornui.serialization.Writer, kotlin.Unit)), kotlin.String, kotlin.String)/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../-writer/index.html"><span class="identifier">Writer</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization.JsonSerializer$write(kotlin.Function1((com.acornui.serialization.Writer, kotlin.Unit)), kotlin.String, kotlin.String)/tabStr">tabStr</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization.JsonSerializer$write(kotlin.Function1((com.acornui.serialization.Writer, kotlin.Unit)), kotlin.String, kotlin.String)/returnStr">returnStr</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <span class="identifier">write</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization.JsonSerializer$write(com.acornui.serialization.JsonSerializer.write.E, com.acornui.serialization.To((com.acornui.serialization.JsonSerializer.write.E)), kotlin.String, kotlin.String)/value">value</span><span class="symbol">:</span>&nbsp;<a href="write.html#E"><span class="identifier">E</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization.JsonSerializer$write(com.acornui.serialization.JsonSerializer.write.E, com.acornui.serialization.To((com.acornui.serialization.JsonSerializer.write.E)), kotlin.String, kotlin.String)/to">to</span><span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="write.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization.JsonSerializer$write(com.acornui.serialization.JsonSerializer.write.E, com.acornui.serialization.To((com.acornui.serialization.JsonSerializer.write.E)), kotlin.String, kotlin.String)/tabStr">tabStr</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization.JsonSerializer$write(com.acornui.serialization.JsonSerializer.write.E, com.acornui.serialization.To((com.acornui.serialization.JsonSerializer.write.E)), kotlin.String, kotlin.String)/returnStr">returnStr</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-serializer/read.html">read</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <span class="identifier">read</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization.Serializer$read(com.acornui.serialization.Serializer.T, com.acornui.serialization.From((com.acornui.serialization.Serializer.read.E)))/data">data</span><span class="symbol">:</span>&nbsp;<a href="../-serializer/index.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization.Serializer$read(com.acornui.serialization.Serializer.T, com.acornui.serialization.From((com.acornui.serialization.Serializer.read.E)))/factory">factory</span><span class="symbol">:</span>&nbsp;<a href="../-from/index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="../-serializer/read.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-serializer/read.html#E"><span class="identifier">E</span></a></code>
+<p>Creates a Reader for the specified data, and passes it to the out object.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-serializer/write.html">write</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <span class="identifier">write</span><span class="symbol">(</span><span class="identifier" id="com.acornui.serialization.Serializer$write(com.acornui.serialization.Serializer.write.E, com.acornui.serialization.To((com.acornui.serialization.Serializer.write.E)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="../-serializer/write.html#E"><span class="identifier">E</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.serialization.Serializer$write(com.acornui.serialization.Serializer.write.E, com.acornui.serialization.To((com.acornui.serialization.Serializer.write.E)))/to">to</span><span class="symbol">:</span>&nbsp;<a href="../-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="../-serializer/write.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-serializer/index.html#T"><span class="identifier">T</span></a></code>
+<p>Creates a Writer and passes it to the given To value.
+Returns the data the Serializer produced.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

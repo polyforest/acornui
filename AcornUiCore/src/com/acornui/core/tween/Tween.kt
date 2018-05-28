@@ -275,7 +275,7 @@ class TweenImpl(duration: Float, ease: Interpolation, delay: Float, loop: Boolea
 	 *
 	 * After a tween has been stopped, all references to this instance should be forgotten; it will be recycled.
 	 *
-	 * Use [finish] to first set this tween's progress to 100% and stop.
+	 * Use [Tween.finish] to first set this tween's progress to 100% and stop.
 	 */
 	override fun complete() {
 		_completed.dispatch(this)

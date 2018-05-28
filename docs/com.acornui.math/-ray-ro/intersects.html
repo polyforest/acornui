@@ -1,0 +1,42 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>RayRo.intersects - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="index.html">RayRo</a>&nbsp;/&nbsp;<a href="./intersects.html">intersects</a><br/>
+<br/>
+<h1>intersects</h1>
+<a name="com.acornui.math.RayRo$intersects(com.acornui.math.RayRo, com.acornui.math.Vector3)"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.RayRo$intersects(com.acornui.math.RayRo, com.acornui.math.Vector3)/ray">ray</span><span class="symbol">:</span>&nbsp;<a href="index.html"><span class="identifier">RayRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.RayRo$intersects(com.acornui.math.RayRo, com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>http://math.stackexchange.com/questions/270767/find-intersection-of-two-3d-lines</p>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<a name="com.acornui.math.RayRo$intersects(com.acornui.math.PlaneRo, com.acornui.math.Vector3)"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.RayRo$intersects(com.acornui.math.PlaneRo, com.acornui.math.Vector3)/plane">plane</span><span class="symbol">:</span>&nbsp;<a href="../-plane-ro/index.html"><span class="identifier">PlaneRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.RayRo$intersects(com.acornui.math.PlaneRo, com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Intersects a <a href="../-ray/index.html">Ray</a> and a <a href="../-plane/index.html">Plane</a>. The intersection point is stored in <a href="intersects.html#com.acornui.math.RayRo$intersects(com.acornui.math.PlaneRo, com.acornui.math.Vector3)/out">out</a> in the case an intersection is
+present.</p>
+<h3>Parameters</h3>
+<p><a name="plane"></a>
+<code>plane</code> - The plane</p>
+<p><a name="out"></a>
+<code>out</code> - The vector the intersection point is written to (optional)</p>
+<p><strong>Return</strong><br/>
+True if an intersection is present.</p>
+<a name="com.acornui.math.RayRo$intersects(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3)"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.RayRo$intersects(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3)/v1">v1</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.RayRo$intersects(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3)/v2">v2</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.RayRo$intersects(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3)/v3">v3</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.RayRo$intersects(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Intersect a <a href="../-ray/index.html">Ray</a> and a triangle, returning the intersection point in intersection.</p>
+<h3>Parameters</h3>
+<p><a name="v1"></a>
+<code>v1</code> - The first vertex of the triangle</p>
+<p><a name="v2"></a>
+<code>v2</code> - The second vertex of the triangle</p>
+<p><a name="v3"></a>
+<code>v3</code> - The third vertex of the triangle</p>
+<p><a name="out"></a>
+<code>out</code> - The intersection point (optional)</p>
+<p><strong>Return</strong><br/>
+True in case an intersection is present.</p>
+</BODY>
+</HTML>

@@ -1,0 +1,38 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Matrix3.set - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="index.html">Matrix3</a>&nbsp;/&nbsp;<a href="./set.html">set</a><br/>
+<br/>
+<h1>set</h1>
+<a name="com.acornui.math.Matrix3$set(com.acornui.math.Matrix3Ro)"></a>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix3$set(com.acornui.math.Matrix3Ro)/mat">mat</span><span class="symbol">:</span>&nbsp;<a href="../-matrix3-ro/index.html"><span class="identifier">Matrix3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="index.html"><span class="identifier">Matrix3</span></a></code>
+<p>Copies the values from the provided matrix to this matrix.</p>
+<h3>Parameters</h3>
+<p><a name="mat"></a>
+<code>mat</code> - The matrix to copy.</p>
+<p><strong>Return</strong><br/>
+This matrix for the purposes of chaining.</p>
+<a name="com.acornui.math.Matrix3$set(com.acornui.math.Matrix4Ro)"></a>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix3$set(com.acornui.math.Matrix4Ro)/mat">mat</span><span class="symbol">:</span>&nbsp;<a href="../-matrix4-ro/index.html"><span class="identifier">Matrix4Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="index.html"><span class="identifier">Matrix3</span></a></code>
+<p>Sets this 3x3 matrix to the top left 3x3 corner of the provided 4x4 matrix.</p>
+<h3>Parameters</h3>
+<p><a name="mat"></a>
+<code>mat</code> - The matrix whose top left corner will be copied. This matrix will not be modified.</p>
+<p><strong>Return</strong><br/>
+This matrix for the purpose of chaining operations.</p>
+<a name="com.acornui.math.Matrix3$set(kotlin.collections.List((kotlin.Float)))"></a>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix3$set(kotlin.collections.List((kotlin.Float)))/values">values</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="index.html"><span class="identifier">Matrix3</span></a></code>
+<p>Sets the matrix to the given matrix as a float array. The float array must have at least 9 elements; the first
+9 will be copied.</p>
+<h3>Parameters</h3>
+<p><a name="values"></a>
+<code>values</code> - The matrix, in float form, that is to be copied. Remember that this matrix is in &lt;a
+    href="http://en.wikipedia.org/wiki/Row-major_order#Column-major_order"&gt;column major order.</p>
+<p><strong>Return</strong><br/>
+This matrix for the purpose of chaining methods together.</p>
+</BODY>
+</HTML>

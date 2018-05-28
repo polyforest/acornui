@@ -1,0 +1,303 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>TextSpanElementImpl - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.text</a>&nbsp;/&nbsp;<a href="./index.html">TextSpanElementImpl</a><br/>
+<br/>
+<h1>TextSpanElementImpl</h1>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">TextSpanElementImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-text-span-element/index.html"><span class="identifier">TextSpanElement</span></a><span class="symbol">, </span><a href="../../com.acornui.component/-element-parent/index.html"><span class="identifier">ElementParent</span></a><span class="symbol">&lt;</span><a href="../-text-element/index.html"><span class="identifier">TextElement</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../../com.acornui.component.style/-styleable/index.html"><span class="identifier">Styleable</span></a></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">TextSpanElementImpl</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="baseline.html">baseline</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">baseline</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>If the <a href="../-text-flow-style/index.html">TextFlowStyle</a> vertical alignment is BASELINE, this property will be used to vertically align the
+elements.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="bubbling-flags.html">bubblingFlags</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">bubblingFlags</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="char-style.html">charStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">charStyle</span><span class="symbol">: </span><a href="../-char-style/index.html"><span class="identifier">CharStyle</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="elements.html">elements</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">elements</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-text-element/index.html"><span class="identifier">TextElement</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="line-height.html">lineHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">lineHeight</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The height of the text line.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="space-size.html">spaceSize</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">spaceSize</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The size of a space.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="style-parent.html">styleParent</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">styleParent</span><span class="symbol">: </span><a href="../../com.acornui.component.style/-styleable-ro/index.html"><span class="identifier">StyleableRo</span></a><span class="symbol">?</span></code>
+<p>The next ancestor of this styleable component.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="style-rules.html">styleRules</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">styleRules</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component.style/-style-rule/index.html"><span class="identifier">StyleRule</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code>
+<p>A list of style rules that will be queried in determining calculated values for bound style objects.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="style-tags.html">styleTags</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">styleTags</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component.style/-style-tag/index.html"><span class="identifier">StyleTag</span></a><span class="symbol">&gt;</span></code>
+<p>The current <a href="../../com.acornui.component.style/-style-tag/index.html">StyleTag</a> objects added. This list must be unique.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="styles.html">styles</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">styles</span><span class="symbol">: </span><a href="../../com.acornui.component.style/-styles-impl/index.html"><span class="identifier">StylesImpl</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="text.html">text</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">text</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>A utility variable that when set, clears/disposes the current elements and replaces them with the new text.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="text-parent.html">textParent</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">textParent</span><span class="symbol">: </span><a href="../-text-node-ro/index.html"><span class="identifier">TextNodeRo</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="add-element.html">addElement</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-text-element/index.html"><span class="identifier">TextElement</span></a><span class="symbol">&gt;</span> <span class="identifier">addElement</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text.TextSpanElementImpl$addElement(kotlin.Int, com.acornui.component.text.TextSpanElementImpl.addElement.S)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text.TextSpanElementImpl$addElement(kotlin.Int, com.acornui.component.text.TextSpanElementImpl.addElement.S)/element">element</span><span class="symbol">:</span>&nbsp;<a href="add-element.html#S"><span class="identifier">S</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="add-element.html#S"><span class="identifier">S</span></a></code>
+<p>Adds an element to this container. Unlike children, adding element to an <a href="../../com.acornui.component/-element-container.html">ElementContainer</a> where the element
+has already been added, the element will be removed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="char.html">char</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">char</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text.TextSpanElementImpl$char(kotlin.Char)/char">char</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html"><span class="identifier">Char</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-text-element/index.html"><span class="identifier">TextElement</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="clear-elements.html">clearElements</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clearElements</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text.TextSpanElementImpl$clearElements(kotlin.Boolean)/dispose">dispose</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Clears all elements in this span.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-rules-by-type.html">getRulesByType</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.style/-style-ro/index.html"><span class="identifier">StyleRo</span></a><span class="symbol">&gt;</span> <span class="identifier">getRulesByType</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text.TextSpanElementImpl$getRulesByType(com.acornui.component.style.StyleType((com.acornui.component.text.TextSpanElementImpl.getRulesByType.T)), kotlin.collections.MutableList((com.acornui.component.style.StyleRule((com.acornui.component.text.TextSpanElementImpl.getRulesByType.T)))))/type">type</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.style/-style-type/index.html"><span class="identifier">StyleType</span></a><span class="symbol">&lt;</span><a href="get-rules-by-type.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text.TextSpanElementImpl$getRulesByType(com.acornui.component.style.StyleType((com.acornui.component.text.TextSpanElementImpl.getRulesByType.T)), kotlin.collections.MutableList((com.acornui.component.style.StyleRule((com.acornui.component.text.TextSpanElementImpl.getRulesByType.T)))))/out">out</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component.style/-style-rule/index.html"><span class="identifier">StyleRule</span></a><span class="symbol">&lt;</span><a href="get-rules-by-type.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="invalidate-styles.html">invalidateStyles</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">invalidateStyles</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="remove-element.html">removeElement</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">removeElement</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text.TextSpanElementImpl$removeElement(kotlin.Int)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-text-element/index.html"><span class="identifier">TextElement</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="unary-plus.html">unaryPlus</a></p>
+</td>
+<td>
+<code><span class="keyword">operator</span> <span class="keyword">fun </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html"><span class="identifier">Char</span></a><span class="symbol">?</span><span class="symbol">.</span><span class="identifier">unaryPlus</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">operator</span> <span class="keyword">fun </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">.</span><span class="identifier">unaryPlus</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="validate-char-style.html">validateCharStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">validateCharStyle</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text.TextSpanElementImpl$validateCharStyle(com.acornui.graphics.ColorRo)/concatenatedColorTint">concatenatedColorTint</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.graphics/-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="validate-styles.html">validateStyles</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">validateStyles</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-element-parent/add-element.html">addElement</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-element-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span> <span class="identifier">addElement</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.ElementParent$addElement(com.acornui.component.ElementParent.addElement.S)/child">child</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-element-parent/add-element.html#S"><span class="identifier">S</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.component/-element-parent/add-element.html#S"><span class="identifier">S</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-element-parent/add-element-after.html">addElementAfter</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addElementAfter</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.ElementParent$addElementAfter(com.acornui.component.ElementParent.T, com.acornui.component.ElementParent.T)/element">element</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-element-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.ElementParent$addElementAfter(com.acornui.component.ElementParent.T, com.acornui.component.ElementParent.T)/after">after</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-element-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Adds an element after the provided element.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-element-parent/add-element-before.html">addElementBefore</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addElementBefore</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.ElementParent$addElementBefore(com.acornui.component.ElementParent.T, com.acornui.component.ElementParent.T)/element">element</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-element-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.ElementParent$addElementBefore(com.acornui.component.ElementParent.T, com.acornui.component.ElementParent.T)/before">before</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-element-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Adds an element before the provided element.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-element-parent/add-optional-element.html">addOptionalElement</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-element-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span> <span class="identifier">addOptionalElement</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.ElementParent$addOptionalElement(com.acornui.component.ElementParent.addOptionalElement.S)/child">child</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-element-parent/add-optional-element.html#S"><span class="identifier">S</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.component/-element-parent/add-optional-element.html#S"><span class="identifier">S</span></a><span class="symbol">?</span></code><br/>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-element-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span> <span class="identifier">addOptionalElement</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.ElementParent$addOptionalElement(kotlin.Int, com.acornui.component.ElementParent.addOptionalElement.S)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.ElementParent$addOptionalElement(kotlin.Int, com.acornui.component.ElementParent.addOptionalElement.S)/child">child</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-element-parent/add-optional-element.html#S"><span class="identifier">S</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.component/-element-parent/add-optional-element.html#S"><span class="identifier">S</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-element-parent/remove-element.html">removeElement</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">removeElement</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.ElementParent$removeElement(com.acornui.component.ElementParent.T)/element">element</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-element-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-element-parent/unary-minus.html">unaryMinus</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">operator</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">P</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-element-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span> <a href="../../com.acornui.component/-element-parent/unary-minus.html#P"><span class="identifier">P</span></a><span class="symbol">.</span><span class="identifier">unaryMinus</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.component/-element-parent/unary-minus.html#P"><span class="identifier">P</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-element-parent/unary-plus.html">unaryPlus</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">operator</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">P</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-element-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span> <a href="../../com.acornui.component/-element-parent/unary-plus.html#P"><span class="identifier">P</span></a><span class="symbol">.</span><span class="identifier">unaryPlus</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.component/-element-parent/unary-plus.html#P"><span class="identifier">P</span></a></code>
+<p>Syntax sugar for addElement.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../text-field-x.html">textFieldX</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="../-text-span-element-ro/index.html"><span class="identifier">TextSpanElementRo</span></a><span class="symbol">&lt;</span><a href="../-text-element-ro/index.html"><span class="identifier">TextElementRo</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">textFieldX</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../text-field-y.html">textFieldY</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="../-text-span-element-ro/index.html"><span class="identifier">TextSpanElementRo</span></a><span class="symbol">&lt;</span><a href="../-text-element-ro/index.html"><span class="identifier">TextElementRo</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">textFieldY</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/add-style-rule.html">addStyleRule</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.component.style/-styleable/index.html"><span class="identifier">Styleable</span></a><span class="symbol">.</span><span class="identifier">addStyleRule</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style$addStyleRule(com.acornui.component.style.Styleable, com.acornui.component.style.StyleRo, com.acornui.component.style.StyleFilter, kotlin.Float)/style">style</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.style/-style-ro/index.html"><span class="identifier">StyleRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.style$addStyleRule(com.acornui.component.style.Styleable, com.acornui.component.style.StyleRo, com.acornui.component.style.StyleFilter, kotlin.Float)/filter">filter</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.style/-style-filter/index.html"><span class="identifier">StyleFilter</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.style$addStyleRule(com.acornui.component.style.Styleable, com.acornui.component.style.StyleRo, com.acornui.component.style.StyleFilter, kotlin.Float)/priority">priority</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../../com.acornui.component.style/-styleable/index.html"><span class="identifier">Styleable</span></a><span class="symbol">.</span><span class="identifier">addStyleRule</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style$addStyleRule(com.acornui.component.style.Styleable, com.acornui.component.style.StyleRo, kotlin.Float)/style">style</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.style/-style-ro/index.html"><span class="identifier">StyleRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.style$addStyleRule(com.acornui.component.style.Styleable, com.acornui.component.style.StyleRo, kotlin.Float)/priority">priority</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/walk-styleable-ancestry.html">walkStyleableAncestry</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.component.style/-styleable-ro/index.html"><span class="identifier">StyleableRo</span></a><span class="symbol">.</span><span class="identifier">walkStyleableAncestry</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style$walkStyleableAncestry(com.acornui.component.style.StyleableRo, kotlin.Function1((com.acornui.component.style.StyleableRo, kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../../com.acornui.component.style/-styleable-ro/index.html"><span class="identifier">StyleableRo</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,557 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Vector3 - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="./index.html">Vector3</a><br/>
+<br/>
+<h1>Vector3</h1>
+<code><span class="keyword">class </span><span class="identifier">Vector3</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a></code>
+<p>Encapsulates a 3D vector. Allows chaining operations by returning a reference to itself in all modification methods.</p>
+<p><strong>Author</strong><br/>
+badlogicgames@gmail.com</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">Vector3</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$<init>(com.acornui.math.Vector2Ro, kotlin.Float)/vector">vector</span><span class="symbol">:</span>&nbsp;<a href="../-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$<init>(com.acornui.math.Vector2Ro, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span></code><code><span class="identifier">Vector3</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$<init>(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$<init>(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$<init>(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span></code>
+<p>Encapsulates a 3D vector. Allows chaining operations by returning a reference to itself in all modification methods.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="x.html">x</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">x</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The x-component of this vector</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="y.html">y</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">y</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The y-component of this vector</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="z.html">z</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">z</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The z-component of this vector</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="add.html">add</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">add</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$add(com.acornui.math.Vector3Ro)/vector">vector</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code><code><span class="keyword">fun </span><span class="identifier">add</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$add(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$add(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$add(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code>
+<p>Adds the given vector to this component</p>
+<code><span class="keyword">fun </span><span class="identifier">add</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$add(kotlin.Float)/values">values</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code>
+<p>Adds the given value to all three components of the vector.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="clamp.html">clamp</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clamp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$clamp(kotlin.Float, kotlin.Float)/min">min</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$clamp(kotlin.Float, kotlin.Float)/max">max</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Clears this instance back to its original state.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="close-to.html">closeTo</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">closeTo</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$closeTo(com.acornui.math.Vector3Ro, kotlin.Float)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$closeTo(com.acornui.math.Vector3Ro, kotlin.Float)/epsilon">epsilon</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code><code><span class="keyword">fun </span><span class="identifier">closeTo</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$closeTo(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$closeTo(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$closeTo(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$closeTo(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/epsilon">epsilon</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Compares this vector with the other vector, using the supplied epsilon for fuzzy equality testing.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="crs.html">crs</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">crs</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$crs(com.acornui.math.Vector3Ro)/vector">vector</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">crs</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$crs(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$crs(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$crs(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code>
+<p>Sets this vector to the cross product between it and the other vector.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="dot.html">dot</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dot</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$dot(com.acornui.math.Vector3Ro)/vector">vector</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code><code><span class="keyword">fun </span><span class="identifier">dot</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$dot(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$dot(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$dot(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Returns the dot product between this and the given vector.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="dst.html">dst</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dst</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$dst(com.acornui.math.Vector3Ro)/vector">vector</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">dst</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$dst(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$dst(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$dst(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="dst2.html">dst2</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dst2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$dst2(com.acornui.math.Vector3Ro)/point">point</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code><code><span class="keyword">fun </span><span class="identifier">dst2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$dst2(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$dst2(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$dst2(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Returns the squared distance between this point and the given point</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="equals.html">equals</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">equals</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$equals(kotlin.Any)/other">other</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="free.html">free</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><s><span class="identifier">free</span></s><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="has-opposite-direction.html">hasOppositeDirection</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">hasOppositeDirection</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$hasOppositeDirection(com.acornui.math.Vector3Ro)/vector">vector</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="has-same-direction.html">hasSameDirection</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">hasSameDirection</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$hasSameDirection(com.acornui.math.Vector3Ro)/vector">vector</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="hash-code.html">hashCode</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">hashCode</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="idt.html">idt</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">idt</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$idt(com.acornui.math.Vector3Ro)/vector">vector</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="interpolate.html">interpolate</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">interpolate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$interpolate(com.acornui.math.Vector3Ro, kotlin.Float, com.acornui.math.Interpolation)/target">target</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$interpolate(com.acornui.math.Vector3Ro, kotlin.Float, com.acornui.math.Interpolation)/alpha">alpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$interpolate(com.acornui.math.Vector3Ro, kotlin.Float, com.acornui.math.Interpolation)/interpolator">interpolator</span><span class="symbol">:</span>&nbsp;<a href="../-interpolation/index.html"><span class="identifier">Interpolation</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="is-collinear.html">isCollinear</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">isCollinear</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$isCollinear(com.acornui.math.Vector3Ro, kotlin.Float)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$isCollinear(com.acornui.math.Vector3Ro, kotlin.Float)/epsilon">epsilon</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">isCollinear</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$isCollinear(com.acornui.math.Vector3Ro)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="is-collinear-opposite.html">isCollinearOpposite</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">isCollinearOpposite</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$isCollinearOpposite(com.acornui.math.Vector3Ro, kotlin.Float)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$isCollinearOpposite(com.acornui.math.Vector3Ro, kotlin.Float)/epsilon">epsilon</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">isCollinearOpposite</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$isCollinearOpposite(com.acornui.math.Vector3Ro)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="is-on-line.html">isOnLine</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">isOnLine</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$isOnLine(com.acornui.math.Vector3Ro, kotlin.Float)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$isOnLine(com.acornui.math.Vector3Ro, kotlin.Float)/epsilon">epsilon</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">isOnLine</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$isOnLine(com.acornui.math.Vector3Ro)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="is-perpendicular.html">isPerpendicular</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">isPerpendicular</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$isPerpendicular(com.acornui.math.Vector3Ro)/vector">vector</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">isPerpendicular</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$isPerpendicular(com.acornui.math.Vector3Ro, kotlin.Float)/vector">vector</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$isPerpendicular(com.acornui.math.Vector3Ro, kotlin.Float)/epsilon">epsilon</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="is-unit.html">isUnit</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">isUnit</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$isUnit(kotlin.Float)/margin">margin</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="is-zero.html">isZero</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">isZero</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">isZero</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$isZero(kotlin.Float)/margin">margin</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="len.html">len</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">len</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code><code><span class="keyword">fun </span><span class="identifier">len</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$len(kotlin.Float)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code>
+<p>Scales this vector so that the length is equal to the provided value.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="len2.html">len2</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">len2</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="lerp.html">lerp</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">lerp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$lerp(com.acornui.math.Vector3Ro, kotlin.Float)/target">target</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$lerp(com.acornui.math.Vector3Ro, kotlin.Float)/alpha">alpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="limit.html">limit</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">limit</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$limit(kotlin.Float)/limit">limit</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="mul.html">mul</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">mul</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$mul(com.acornui.math.Matrix4Ro)/matrix">matrix</span><span class="symbol">:</span>&nbsp;<a href="../-matrix4-ro/index.html"><span class="identifier">Matrix4Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code>
+<p>Left-multiplies the vector by the given matrix, assuming the fourth (w) component of the vector is 1.</p>
+<code><span class="keyword">fun </span><span class="identifier">mul</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$mul(com.acornui.math.Matrix3Ro)/matrix">matrix</span><span class="symbol">:</span>&nbsp;<a href="../-matrix3-ro/index.html"><span class="identifier">Matrix3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code>
+<p>Left-multiplies the vector by the given matrix.</p>
+<code><span class="keyword">fun </span><span class="identifier">mul</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$mul(com.acornui.math.QuaternionRo)/quat">quat</span><span class="symbol">:</span>&nbsp;<a href="../-quaternion-ro/index.html"><span class="identifier">QuaternionRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code>
+<p>Multiplies the vector by the given {@link Quaternion}.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="mul4x3.html">mul4x3</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">mul4x3</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$mul4x3(kotlin.collections.List((kotlin.Float)))/matrix">matrix</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code>
+<p>Left-multiplies the vector by the given 4x3 column major matrix. The matrix should be composed by a 3x3 matrix representing
+rotation and scale plus a 1x3 matrix representing the translation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="nor.html">nor</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">nor</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="random.html">random</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">random</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="rot.html">rot</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">rot</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$rot(com.acornui.math.Matrix4Ro)/matrix">matrix</span><span class="symbol">:</span>&nbsp;<a href="../-matrix4-ro/index.html"><span class="identifier">Matrix4Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code>
+<p>Multiplies this vector by the first three columns of the matrix, essentially only applying rotation and scaling.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="rotate.html">rotate</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/radians">radians</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/axisX">axisX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/axisY">axisY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/axisZ">axisZ</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$rotate(kotlin.Float, com.acornui.math.Vector3Ro)/radians">radians</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$rotate(kotlin.Float, com.acornui.math.Vector3Ro)/axis">axis</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code>
+<p>Rotates this vector by the given angle in radians around the given axis.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="scl.html">scl</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">scl</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$scl(kotlin.Float)/scalar">scalar</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">scl</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$scl(com.acornui.math.Vector3Ro)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code><code><span class="keyword">fun </span><span class="identifier">scl</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$scl(kotlin.Float, kotlin.Float, kotlin.Float)/vx">vx</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$scl(kotlin.Float, kotlin.Float, kotlin.Float)/vy">vy</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$scl(kotlin.Float, kotlin.Float, kotlin.Float)/vz">vz</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code>
+<p>Scales this vector by the given values</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set.html">set</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$set(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$set(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$set(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code>
+<p>Sets the vector to the given components</p>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$set(com.acornui.math.Vector3Ro)/vector">vector</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code><code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$set(kotlin.FloatArray)/values">values</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float-array/index.html"><span class="identifier">FloatArray</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code>
+<p>Sets the components from the array. The array must have at least 3 elements</p>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$set(com.acornui.math.Vector2Ro, kotlin.Float)/vector">vector</span><span class="symbol">:</span>&nbsp;<a href="../-vector2-ro/index.html"><span class="identifier">Vector2Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$set(com.acornui.math.Vector2Ro, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code>
+<p>Sets the components of the given vector and z-component</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="slerp.html">slerp</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">slerp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$slerp(com.acornui.math.Vector3Ro, kotlin.Float)/target">target</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$slerp(com.acornui.math.Vector3Ro, kotlin.Float)/alpha">alpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code>
+<p>Spherically interpolates between this vector and the target vector by alpha which is in the range <a href="#">0,1</a>. The result is
+stored in this vector.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="sub.html">sub</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">sub</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$sub(com.acornui.math.Vector3Ro)/a_vec">a_vec</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code><code><span class="keyword">fun </span><span class="identifier">sub</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$sub(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$sub(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3$sub(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code>
+<p>Subtracts the other vector from this vector.</p>
+<code><span class="keyword">fun </span><span class="identifier">sub</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$sub(kotlin.Float)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code>
+<p>Subtracts the given value from all components of this vector</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="tra-mul.html">traMul</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">traMul</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$traMul(com.acornui.math.Matrix4Ro)/matrix">matrix</span><span class="symbol">:</span>&nbsp;<a href="../-matrix4-ro/index.html"><span class="identifier">Matrix4Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code>
+<p>Multiplies the vector by the transpose of the given matrix, assuming the fourth (w) component of the vector is 1.</p>
+<code><span class="keyword">fun </span><span class="identifier">traMul</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$traMul(com.acornui.math.Matrix3Ro)/matrix">matrix</span><span class="symbol">:</span>&nbsp;<a href="../-matrix3-ro/index.html"><span class="identifier">Matrix3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code>
+<p>Multiplies the vector by the transpose of the given matrix.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="unrotate.html">unrotate</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">unrotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$unrotate(com.acornui.math.Matrix4Ro)/matrix">matrix</span><span class="symbol">:</span>&nbsp;<a href="../-matrix4-ro/index.html"><span class="identifier">Matrix4Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code>
+<p>Multiplies this vector by the transpose of the first three columns of the matrix. Note: only works for translation and
+rotation, does not work for scaling. For those, use {@link #rot(Matrix4)} with {@link Matrix4#inv()}.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="untransform.html">untransform</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">untransform</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3$untransform(com.acornui.math.Matrix4Ro)/matrix">matrix</span><span class="symbol">:</span>&nbsp;<a href="../-matrix4-ro/index.html"><span class="identifier">Matrix4Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code>
+<p>Translates this vector in the direction opposite to the translation of the matrix and the multiplies this vector by the
+transpose of the first three columns of the matrix. Note: only works for translation and rotation, does not work for
+scaling. For those, use {@link #mul(Matrix4)} with {@link Matrix4#inv()}.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-vector3-ro/component1.html">component1</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">operator</span> <span class="keyword">fun </span><span class="identifier">component1</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-vector3-ro/component2.html">component2</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">operator</span> <span class="keyword">fun </span><span class="identifier">component2</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-vector3-ro/component3.html">component3</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">operator</span> <span class="keyword">fun </span><span class="identifier">component3</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-vector3-ro/copy.html">copy</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">copy</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3Ro$copy(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.x<span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3Ro$copy(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.y<span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3Ro$copy(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.z<span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-n-e-g_-x.html">NEG_X</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">NEG_X</span><span class="symbol">: </span><a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-n-e-g_-y.html">NEG_Y</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">NEG_Y</span><span class="symbol">: </span><a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-n-e-g_-z.html">NEG_Z</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">NEG_Z</span><span class="symbol">: </span><a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-o-n-e.html">ONE</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">ONE</span><span class="symbol">: </span><a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-x.html">X</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">X</span><span class="symbol">: </span><a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-y.html">Y</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">Y</span><span class="symbol">: </span><a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-z.html">Z</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">Z</span><span class="symbol">: </span><a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-z-e-r-o.html">ZERO</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">ZERO</span><span class="symbol">: </span><a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="dot.html">dot</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dot</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3.Companion$dot(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x1">x1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3.Companion$dot(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y1">y1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3.Companion$dot(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z1">z1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3.Companion$dot(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x2">x2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3.Companion$dot(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y2">y2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3.Companion$dot(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z2">z2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="dst.html">dst</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dst</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3.Companion$dst(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x1">x1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3.Companion$dst(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y1">y1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3.Companion$dst(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z1">z1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3.Companion$dst(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x2">x2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3.Companion$dst(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y2">y2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3.Companion$dst(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z2">z2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="dst2.html">dst2</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dst2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3.Companion$dst2(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x1">x1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3.Companion$dst2(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y1">y1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3.Companion$dst2(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z1">z1</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3.Companion$dst2(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x2">x2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3.Companion$dst2(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y2">y2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3.Companion$dst2(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z2">z2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="free.html">free</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">free</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3.Companion$free(com.acornui.math.Vector3)/obj">obj</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="len.html">len</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">len</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3.Companion$len(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3.Companion$len(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3.Companion$len(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="len2.html">len2</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">len2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Vector3.Companion$len2(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3.Companion$len2(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Vector3.Companion$len2(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="obtain.html">obtain</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">obtain</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Vector3</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.io/write.html">write</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">Vector3</span></a><span class="symbol">.</span><span class="identifier">write</span><span class="symbol">(</span><span class="identifier" id="com.acornui.io$write(com.acornui.math.Vector3, com.acornui.io.WriteBuffer((kotlin.Float)))/buffer">buffer</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.io/-write-buffer/index.html"><span class="identifier">WriteBuffer</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

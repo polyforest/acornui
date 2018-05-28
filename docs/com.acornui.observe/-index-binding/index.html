@@ -1,0 +1,80 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>IndexBinding - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.observe</a>&nbsp;/&nbsp;<a href="./index.html">IndexBinding</a><br/>
+<br/>
+<h1>IndexBinding</h1>
+<code><span class="keyword">class </span><span class="identifier">IndexBinding</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
+<p>Watches an observable list, updating an index when the list changes.
+This can be useful if the source list contains non-unique elements and you need to follow the changing index of
+a specific element in the list.</p>
+<p>If the index watched is removed or changed, the binding will be disposed.
+If the list is reset,</p>
+<h3>Parameters</h3>
+<p><a name="list"></a>
+<code>list</code> - The source list to observe.</p>
+<p><a name="index"></a>
+<code>index</code> - The index of the element to track.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">IndexBinding</span><span class="symbol">(</span><span class="identifier" id="com.acornui.observe.IndexBinding$<init>(com.acornui.collection.ObservableList((com.acornui.observe.IndexBinding.E)), kotlin.Int, kotlin.Boolean)/list">list</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/-observable-list/index.html"><span class="identifier">ObservableList</span></a><span class="symbol">&lt;</span><a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.observe.IndexBinding$<init>(com.acornui.collection.ObservableList((com.acornui.observe.IndexBinding.E)), kotlin.Int, kotlin.Boolean)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.observe.IndexBinding$<init>(com.acornui.collection.ObservableList((com.acornui.observe.IndexBinding.E)), kotlin.Int, kotlin.Boolean)/recoverOnReset">recoverOnReset</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;true<span class="symbol">)</span></code>
+<p>Watches an observable list, updating an index when the list changes.
+This can be useful if the source list contains non-unique elements and you need to follow the changing index of
+a specific element in the list.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="element.html">element</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">element</span><span class="symbol">: </span><a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="--index--.html">index</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">index</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="recover-on-reset.html">recoverOnReset</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">recoverOnReset</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Prepares this object for garbage collection.
+A disposed object should no longer be used or referenced.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

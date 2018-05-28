@@ -1,0 +1,260 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>TextNodeRo - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.text</a>&nbsp;/&nbsp;<a href="./index.html">TextNodeRo</a><br/>
+<br/>
+<h1>TextNodeRo</h1>
+<code><span class="keyword">interface </span><span class="identifier">TextNodeRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-validatable/index.html"><span class="identifier">Validatable</span></a><span class="symbol">, </span><a href="../../com.acornui.component.style/-styleable-ro/index.html"><span class="identifier">StyleableRo</span></a><span class="symbol">, </span><a href="../../com.acornui.component.layout/-positionable-ro/index.html"><span class="identifier">PositionableRo</span></a></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="multiline.html">multiline</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">multiline</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>True if this node allows \n characters.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="placeholder.html">placeholder</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">placeholder</span><span class="symbol">: </span><a href="../-text-element-ro/index.html"><span class="identifier">TextElementRo</span></a></code>
+<p>A virtual text element to indicate the position of the next element within this node.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="size.html">size</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">size</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The total number of text elements this node contains (hierarchical).</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="text-parent.html">textParent</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">textParent</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">TextNodeRo</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-validatable/invalid-flags.html">invalidFlags</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">invalidFlags</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The currently invalid flags.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-validatable/invalidated.html">invalidated</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">invalidated</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal/index.html"><span class="identifier">Signal</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../../com.acornui.component/-validatable/index.html"><span class="identifier">Validatable</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<p>Dispatched when this component has been invalidated.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-positionable-ro/position.html">position</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">position</span><span class="symbol">: </span><a href="../../com.acornui.math/-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/-styleable-ro/style-parent.html">styleParent</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">styleParent</span><span class="symbol">: </span><a href="../../com.acornui.component.style/-styleable-ro/index.html"><span class="identifier">StyleableRo</span></a><span class="symbol">?</span></code>
+<p>The next ancestor of this styleable component.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/-styleable-ro/style-rules.html">styleRules</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">styleRules</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component.style/-style-rule/index.html"><span class="identifier">StyleRule</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code>
+<p>A list of style rules that will be queried in determining calculated values for bound style objects.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/-styleable-ro/style-tags.html">styleTags</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">styleTags</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component.style/-style-tag/index.html"><span class="identifier">StyleTag</span></a><span class="symbol">&gt;</span></code>
+<p>The current <a href="../../com.acornui.component.style/-style-tag/index.html">StyleTag</a> objects added. This list must be unique.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-positionable-ro/x.html">x</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">x</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-positionable-ro/y.html">y</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">y</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-positionable-ro/z.html">z</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">z</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="get-line-at.html">getLineAt</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getLineAt</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text.TextNodeRo$getLineAt(kotlin.Int)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.component.layout.algorithm/-line-info-ro/index.html"><span class="identifier">LineInfoRo</span></a><span class="symbol">?</span></code>
+<p>Returns the line at the given index.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-selection-index.html">getSelectionIndex</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getSelectionIndex</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text.TextNodeRo$getSelectionIndex(kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text.TextNodeRo$getSelectionIndex(kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-text-element-at.html">getTextElementAt</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getTextElementAt</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text.TextNodeRo$getTextElementAt(kotlin.Int)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-text-element-ro/index.html"><span class="identifier">TextElementRo</span></a></code>
+<p>Returns the text element at the given index.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="to-string.html">toString</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">toString</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text.TextNodeRo$toString(java.lang.StringBuilder)/builder">builder</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/-string-builder/index.html"><span class="identifier">StringBuilder</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Writes this node's contents to a string builder.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/-styleable-ro/get-rules-by-type.html">getRulesByType</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.style/-style-ro/index.html"><span class="identifier">StyleRo</span></a><span class="symbol">&gt;</span> <span class="identifier">getRulesByType</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style.StyleableRo$getRulesByType(com.acornui.component.style.StyleType((com.acornui.component.style.StyleableRo.getRulesByType.T)), kotlin.collections.MutableList((com.acornui.component.style.StyleRule((com.acornui.component.style.StyleableRo.getRulesByType.T)))))/type">type</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.style/-style-type/index.html"><span class="identifier">StyleType</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component.style/-styleable-ro/get-rules-by-type.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.style.StyleableRo$getRulesByType(com.acornui.component.style.StyleType((com.acornui.component.style.StyleableRo.getRulesByType.T)), kotlin.collections.MutableList((com.acornui.component.style.StyleRule((com.acornui.component.style.StyleableRo.getRulesByType.T)))))/out">out</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component.style/-style-rule/index.html"><span class="identifier">StyleRule</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component.style/-styleable-ro/get-rules-by-type.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-validatable/invalidate.html">invalidate</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">invalidate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.Validatable$invalidate(kotlin.Int)/flags">flags</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Invalidates the given flag.
+Returns a bit mask representing the flags newly invalidated.
+Dispatches <a href="../../com.acornui.component/-validatable/invalidated.html">invalidated</a> with the newly invalidated flags.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/-styleable-ro/invalidate-styles.html">invalidateStyles</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">invalidateStyles</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-validatable/validate.html">validate</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">validate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.Validatable$validate(kotlin.Int)/flags">flags</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Validates the specified flags for this component.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">validate</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/invalidate-layout.html">invalidateLayout</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.component/-validatable/index.html"><span class="identifier">Validatable</span></a><span class="symbol">.</span><span class="identifier">invalidateLayout</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/invalidate-properties.html">invalidateProperties</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.component/-validatable/index.html"><span class="identifier">Validatable</span></a><span class="symbol">.</span><span class="identifier">invalidateProperties</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/invalidate-size.html">invalidateSize</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.component/-validatable/index.html"><span class="identifier">Validatable</span></a><span class="symbol">.</span><span class="identifier">invalidateSize</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/validation-prop.html">validationProp</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../../com.acornui.component/-validatable/index.html"><span class="identifier">Validatable</span></a><span class="symbol">.</span><span class="identifier">validationProp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$validationProp(com.acornui.component.Validatable, com.acornui.component.validationProp.T, kotlin.Int)/initialValue">initialValue</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/validation-prop.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component$validationProp(com.acornui.component.Validatable, com.acornui.component.validationProp.T, kotlin.Int)/flags">flags</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.properties/-read-write-property/index.html"><span class="identifier">ReadWriteProperty</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">,</span>&nbsp;<a href="../../com.acornui.component/validation-prop.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/walk-styleable-ancestry.html">walkStyleableAncestry</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.component.style/-styleable-ro/index.html"><span class="identifier">StyleableRo</span></a><span class="symbol">.</span><span class="identifier">walkStyleableAncestry</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style$walkStyleableAncestry(com.acornui.component.style.StyleableRo, kotlin.Function1((com.acornui.component.style.StyleableRo, kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../../com.acornui.component.style/-styleable-ro/index.html"><span class="identifier">StyleableRo</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-text-node/index.html">TextNode</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">TextNode</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TextNodeRo</span></a><span class="symbol">, </span><a href="../../com.acornui.component.layout/-positionable/index.html"><span class="identifier">Positionable</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,103 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Clamp - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="./index.html">Clamp</a><br/>
+<br/>
+<h1>Clamp</h1>
+<code><span class="keyword">class </span><span class="identifier">Clamp</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-interpolation/index.html"><span class="identifier">Interpolation</span></a></code>
+<p>Clamps the inner interpolation to start at <a href="start-alpha.html">startAlpha</a> and end at <a href="end-alpha.html">endAlpha</a>.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">Clamp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Clamp$<init>(com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/inner">inner</span><span class="symbol">:</span>&nbsp;<a href="../-interpolation/index.html"><span class="identifier">Interpolation</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Clamp$<init>(com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/startAlpha">startAlpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.math.Clamp$<init>(com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/endAlpha">endAlpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;1f<span class="symbol">)</span></code>
+<p>Clamps the inner interpolation to start at <a href="start-alpha.html">startAlpha</a> and end at <a href="end-alpha.html">endAlpha</a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="end-alpha.html">endAlpha</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">endAlpha</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="inner.html">inner</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">inner</span><span class="symbol">: </span><a href="../-interpolation/index.html"><span class="identifier">Interpolation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="start-alpha.html">startAlpha</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">startAlpha</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="apply.html">apply</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">apply</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Clamp$apply(kotlin.Float)/alpha">alpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-interpolation/apply.html">apply</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">apply</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Interpolation$apply(kotlin.Float, kotlin.Float, kotlin.Float)/start">start</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Interpolation$apply(kotlin.Float, kotlin.Float, kotlin.Float)/end">end</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Interpolation$apply(kotlin.Float, kotlin.Float, kotlin.Float)/alpha">alpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Calculates the interpolation and applies that to the range <a href="#">start,end</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="clamp.html">clamp</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clamp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Clamp.Companion$clamp(kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/innerDuration">innerDuration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Clamp.Companion$clamp(kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/inner">inner</span><span class="symbol">:</span>&nbsp;<a href="../-interpolation/index.html"><span class="identifier">Interpolation</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Clamp.Companion$clamp(kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/delayStart">delayStart</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Clamp.Companion$clamp(kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/delayEnd">delayEnd</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-interpolation/index.html"><span class="identifier">Interpolation</span></a></code>
+<p>A clamp by seconds instead of alpha values.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="delay.html">delay</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">delay</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Clamp.Companion$delay(kotlin.Float, com.acornui.math.Interpolation, kotlin.Float)/innerDuration">innerDuration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Clamp.Companion$delay(kotlin.Float, com.acornui.math.Interpolation, kotlin.Float)/inner">inner</span><span class="symbol">:</span>&nbsp;<a href="../-interpolation/index.html"><span class="identifier">Interpolation</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Clamp.Companion$delay(kotlin.Float, com.acornui.math.Interpolation, kotlin.Float)/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-interpolation/index.html"><span class="identifier">Interpolation</span></a></code>
+<p>A timed delay of <a href="delay.html#com.acornui.math.Clamp.Companion$delay(kotlin.Float, com.acornui.math.Interpolation, kotlin.Float)/delay">delay</a> seconds.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

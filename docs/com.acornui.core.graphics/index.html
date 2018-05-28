@@ -16,7 +16,7 @@
 <p><a href="-atlas-component/index.html">AtlasComponent</a></p>
 </td>
 <td>
-<code><span class="keyword">class </span><span class="identifier">AtlasComponent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-container-impl/index.html"><span class="identifier">ContainerImpl</span></a><span class="symbol">, </span><span class="identifier">Clearable</span></code>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">AtlasComponent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-container-impl/index.html"><span class="identifier">ContainerImpl</span></a><span class="symbol">, </span><a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code>
 <p>A UiComponent that draws a region from a texture atlas.
 This component will create a NinePatchComponent or a TextureComponent, and apply all virtual padding as defined by
 the loaded AtlasRegionData.</p>
@@ -36,14 +36,14 @@ the loaded AtlasRegionData.</p>
 <p><a href="-atlas-page-decorator/index.html">AtlasPageDecorator</a></p>
 </td>
 <td>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">AtlasPageDecorator</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Decorator</span><span class="symbol">&lt;</span><a href="-texture/index.html"><span class="identifier">Texture</span></a><span class="symbol">,</span>&nbsp;<a href="-texture/index.html"><span class="identifier">Texture</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">AtlasPageDecorator</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.action/-decorator/index.html"><span class="identifier">Decorator</span></a><span class="symbol">&lt;</span><a href="-texture/index.html"><span class="identifier">Texture</span></a><span class="symbol">,</span>&nbsp;<a href="-texture/index.html"><span class="identifier">Texture</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="-atlas-page-serializer/index.html">AtlasPageSerializer</a></p>
 </td>
 <td>
-<code><span class="keyword">object </span><span class="identifier">AtlasPageSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">To</span><span class="symbol">&lt;</span><a href="-atlas-page-data/index.html"><span class="identifier">AtlasPageData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">From</span><span class="symbol">&lt;</span><a href="-atlas-page-data/index.html"><span class="identifier">AtlasPageData</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">object </span><span class="identifier">AtlasPageSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.serialization/-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="-atlas-page-data/index.html"><span class="identifier">AtlasPageData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.serialization/-from/index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="-atlas-page-data/index.html"><span class="identifier">AtlasPageData</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
@@ -59,7 +59,7 @@ the loaded AtlasRegionData.</p>
 <p><a href="-atlas-region-data-serializer/index.html">AtlasRegionDataSerializer</a></p>
 </td>
 <td>
-<code><span class="keyword">object </span><span class="identifier">AtlasRegionDataSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">To</span><span class="symbol">&lt;</span><a href="-atlas-region-data/index.html"><span class="identifier">AtlasRegionData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">From</span><span class="symbol">&lt;</span><a href="-atlas-region-data/index.html"><span class="identifier">AtlasRegionData</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">object </span><span class="identifier">AtlasRegionDataSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.serialization/-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="-atlas-region-data/index.html"><span class="identifier">AtlasRegionData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.serialization/-from/index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="-atlas-region-data/index.html"><span class="identifier">AtlasRegionData</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
@@ -158,26 +158,14 @@ This is because acorn does not flip the y when unpacking the texture.</p>
 <p><a href="-texture-atlas-data-serializer/index.html">TextureAtlasDataSerializer</a></p>
 </td>
 <td>
-<code><span class="keyword">object </span><span class="identifier">TextureAtlasDataSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">To</span><span class="symbol">&lt;</span><a href="-texture-atlas-data/index.html"><span class="identifier">TextureAtlasData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">From</span><span class="symbol">&lt;</span><a href="-texture-atlas-data/index.html"><span class="identifier">TextureAtlasData</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">object </span><span class="identifier">TextureAtlasDataSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.serialization/-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="-texture-atlas-data/index.html"><span class="identifier">TextureAtlasData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.serialization/-from/index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="-texture-atlas-data/index.html"><span class="identifier">TextureAtlasData</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="-window/index.html">Window</a></p>
 </td>
 <td>
-<code><span class="keyword">interface </span><span class="identifier">Window</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
-</tr>
-</tbody>
-</table>
-<h3>Extensions for External Classes</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<p><a href="com.acornui.math.-matrix4/index.html">com.acornui.math.Matrix4</a></p>
-</td>
-<td>
-</td>
+<code><span class="keyword">interface </span><span class="identifier">Window</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code></td>
 </tr>
 </tbody>
 </table>
@@ -197,7 +185,7 @@ This is because acorn does not flip the y when unpacking the texture.</p>
 <p><a href="auto-center-camera.html">autoCenterCamera</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="-window/index.html"><span class="identifier">Window</span></a><span class="symbol">.</span><span class="identifier">autoCenterCamera</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics$autoCenterCamera(com.acornui.core.graphics.Window, com.acornui.core.graphics.Camera)/camera">camera</span><span class="symbol">:</span>&nbsp;<a href="-camera/index.html"><span class="identifier">Camera</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Disposable</span></code></td>
+<code><span class="keyword">fun </span><a href="-window/index.html"><span class="identifier">Window</span></a><span class="symbol">.</span><span class="identifier">autoCenterCamera</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics$autoCenterCamera(com.acornui.core.graphics.Window, com.acornui.core.graphics.Camera)/camera">camera</span><span class="symbol">:</span>&nbsp;<a href="-camera/index.html"><span class="identifier">Camera</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -222,7 +210,7 @@ This is because acorn does not flip the y when unpacking the texture.</p>
 <p><a href="load-and-cache-atlas-page.html">loadAndCacheAtlasPage</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">loadAndCacheAtlasPage</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics$loadAndCacheAtlasPage(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.graphics.AtlasPageData, com.acornui.core.assets.CachedGroup)/atlasPath">atlasPath</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$loadAndCacheAtlasPage(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.graphics.AtlasPageData, com.acornui.core.assets.CachedGroup)/page">page</span><span class="symbol">:</span>&nbsp;<a href="-atlas-page-data/index.html"><span class="identifier">AtlasPageData</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$loadAndCacheAtlasPage(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.graphics.AtlasPageData, com.acornui.core.assets.CachedGroup)/group">group</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.assets/-cached-group/index.html"><span class="identifier">CachedGroup</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Deferred</span><span class="symbol">&lt;</span><a href="-texture/index.html"><span class="identifier">Texture</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">loadAndCacheAtlasPage</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics$loadAndCacheAtlasPage(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.graphics.AtlasPageData, com.acornui.core.assets.CachedGroup)/atlasPath">atlasPath</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$loadAndCacheAtlasPage(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.graphics.AtlasPageData, com.acornui.core.assets.CachedGroup)/page">page</span><span class="symbol">:</span>&nbsp;<a href="-atlas-page-data/index.html"><span class="identifier">AtlasPageData</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$loadAndCacheAtlasPage(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.graphics.AtlasPageData, com.acornui.core.assets.CachedGroup)/group">group</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.assets/-cached-group/index.html"><span class="identifier">CachedGroup</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.async/-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="-texture/index.html"><span class="identifier">Texture</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
@@ -244,6 +232,17 @@ This is because acorn does not flip the y when unpacking the texture.</p>
 </td>
 <td>
 <code><span class="keyword">fun </span><span class="identifier">rgbData</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics$rgbData(kotlin.Int, kotlin.Int, kotlin.Boolean, kotlin.Function1((com.acornui.core.graphics.RgbData, kotlin.Unit)))/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$rgbData(kotlin.Int, kotlin.Int, kotlin.Boolean, kotlin.Function1((com.acornui.core.graphics.RgbData, kotlin.Unit)))/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$rgbData(kotlin.Int, kotlin.Int, kotlin.Boolean, kotlin.Function1((com.acornui.core.graphics.RgbData, kotlin.Unit)))/hasAlpha">hasAlpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;true<span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$rgbData(kotlin.Int, kotlin.Int, kotlin.Boolean, kotlin.Function1((com.acornui.core.graphics.RgbData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-rgb-data/index.html"><span class="identifier">RgbData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-rgb-data/index.html"><span class="identifier">RgbData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="set-to-projection.html">setToProjection</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.math/-matrix4/index.html"><span class="identifier">Matrix4</span></a><span class="symbol">.</span><span class="identifier">setToProjection</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics$setToProjection(com.acornui.math.Matrix4, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/near">near</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$setToProjection(com.acornui.math.Matrix4, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/far">far</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$setToProjection(com.acornui.math.Matrix4, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/fovy">fovy</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$setToProjection(com.acornui.math.Matrix4, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/aspectRatio">aspectRatio</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.math/-matrix4/index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Sets the matrix to a projection matrix with a near- and far plane, a field of view in degrees and an aspect ratio. Note that
+the field of view specified is the angle in degrees for the height, the field of view for the width will be calculated
+according to the aspect ratio.</p>
+</td>
 </tr>
 <tr>
 <td>

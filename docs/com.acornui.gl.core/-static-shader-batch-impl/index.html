@@ -8,7 +8,7 @@
 <a href="../index.html">com.acornui.gl.core</a>&nbsp;/&nbsp;<a href="./index.html">StaticShaderBatchImpl</a><br/>
 <br/>
 <h1>StaticShaderBatchImpl</h1>
-<code><span class="keyword">class </span><span class="identifier">StaticShaderBatchImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-shader-batch/index.html"><span class="identifier">ShaderBatch</span></a><span class="symbol">, </span><span class="identifier">Clearable</span><span class="symbol">, </span><span class="identifier">Disposable</span></code>
+<code><span class="keyword">class </span><span class="identifier">StaticShaderBatchImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-shader-batch/index.html"><span class="identifier">ShaderBatch</span></a><span class="symbol">, </span><a href="../../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
 <p>A static shader batch will remember the draw calls, allowing the batch to be rendered without needing to buffer data
 at a later time.</p>
 <p><strong>Author</strong><br/>
@@ -90,14 +90,19 @@ This will be -1 if no indices have been pushed.</p>
 <p><a href="clear.html">clear</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Clears this instance back to its original state.</p>
+</td>
 </tr>
 <tr>
 <td>
 <p><a href="dispose.html">dispose</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Prepares this object for garbage collection.
+A disposed object should no longer be used or referenced.</p>
+</td>
 </tr>
 <tr>
 <td>
@@ -123,7 +128,7 @@ Components typically do not need to use this directly, only <a href="../-shader-
 <p><a href="put-vertex.html">putVertex</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">putVertex</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.StaticShaderBatchImpl$putVertex(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/position">position</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3Ro</span><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.StaticShaderBatchImpl$putVertex(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/normal">normal</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3Ro</span><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.StaticShaderBatchImpl$putVertex(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/colorTint">colorTint</span><span class="symbol">:</span>&nbsp;<span class="identifier">ColorRo</span><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.StaticShaderBatchImpl$putVertex(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/u">u</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.StaticShaderBatchImpl$putVertex(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/v">v</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">fun </span><span class="identifier">putVertex</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.StaticShaderBatchImpl$putVertex(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/position">position</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.StaticShaderBatchImpl$putVertex(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/normal">normal</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.StaticShaderBatchImpl$putVertex(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/colorTint">colorTint</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.graphics/-color-ro/index.html"><span class="identifier">ColorRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.StaticShaderBatchImpl$putVertex(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/u">u</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.StaticShaderBatchImpl$putVertex(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/v">v</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
 </tr>
 <tr>
 <td>

@@ -1,0 +1,109 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>PlaneRo - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="./index.html">PlaneRo</a><br/>
+<br/>
+<h1>PlaneRo</h1>
+<code><span class="keyword">interface </span><span class="identifier">PlaneRo</span></code>
+<p>The read-only interface to <a href="../-plane/index.html">Plane</a></p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="d.html">d</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">d</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="normal.html">normal</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">normal</span><span class="symbol">: </span><a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="copy.html">copy</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">copy</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.PlaneRo$copy(com.acornui.math.Vector3Ro, kotlin.Float)/normal">normal</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.normal<span class="symbol">, </span><span class="identifier" id="com.acornui.math.PlaneRo$copy(com.acornui.math.Vector3Ro, kotlin.Float)/d">d</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.d<span class="symbol">)</span><span class="symbol">: </span><a href="../-plane/index.html"><span class="identifier">Plane</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="distance.html">distance</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">distance</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.PlaneRo$distance(com.acornui.math.Vector3Ro)/vec">vec</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Calculates the shortest signed distance between the plane and the given point.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="intersects.html">intersects</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.PlaneRo$intersects(com.acornui.math.Ray, com.acornui.math.Vector3)/r">r</span><span class="symbol">:</span>&nbsp;<a href="../-ray/index.html"><span class="identifier">Ray</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.PlaneRo$intersects(com.acornui.math.Ray, com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Calculates the intersection of this Plane with the provided Ray.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="is-front-facing.html">isFrontFacing</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">isFrontFacing</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.PlaneRo$isFrontFacing(com.acornui.math.Vector3Ro)/direction">direction</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns whether the plane is facing the direction vector. Think of the direction vector as the direction a camera looks in.
+This method will return true if the front side of the plane determined by its normal faces the camera.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="prj.html">prj</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">prj</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.PlaneRo$prj(com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector3/index.html"><span class="identifier">Vector3</span></a></code>
+<p>Projects the given point onto this Plane.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="test-point.html">testPoint</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">testPoint</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.PlaneRo$testPoint(com.acornui.math.Vector3Ro)/point">point</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-plane-side/index.html"><span class="identifier">PlaneSide</span></a></code>
+<p>Returns on which side the given point lies relative to the plane and its normal. PlaneSide.Front refers to the
+side the plane normal points to.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">testPoint</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.PlaneRo$testPoint(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.PlaneRo$testPoint(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.PlaneRo$testPoint(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-plane-side/index.html"><span class="identifier">PlaneSide</span></a></code>
+<p>Returns on which side the given point lies relative to the plane and its normal. PlaneSide.Front refers to the side the
+plane normal points to.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-plane/index.html">Plane</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Plane</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">PlaneRo</span></a></code>
+<p>A plane defined via a unit length normal and the distance from the origin, as you learned in your math class.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

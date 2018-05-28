@@ -8,7 +8,7 @@
 <a href="../index.html">com.acornui.core.cache</a>&nbsp;/&nbsp;<a href="./index.html">IndexedCache</a><br/>
 <br/>
 <h1>IndexedCache</h1>
-<code><span class="keyword">class </span><span class="identifier">IndexedCache</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">ListBase</span><span class="symbol">&lt;</span><a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">class </span><span class="identifier">IndexedCache</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/-list-base/index.html"><span class="identifier">ListBase</span></a><span class="symbol">&lt;</span><a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code>
 <p>A layer between item reuse and an object pool that first seeks an item from the same index.
 It is to reduce the amount of changes a pooled item may need to make.</p>
 <p>To use this class, make a series of <a href="obtain.html">obtain</a> calls to grab recycled elements, call <a href="for-each-unused.html">forEachUnused</a> to iterate over
@@ -40,7 +40,7 @@ flip()
 <p><a href="-init-.html">&lt;init&gt;</a></p>
 </td>
 <td>
-<code><span class="identifier">IndexedCache</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.cache.IndexedCache$<init>(kotlin.Function0((com.acornui.core.cache.IndexedCache.E)))/factory">factory</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">)</span></code><code><span class="identifier">IndexedCache</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.cache.IndexedCache$<init>(com.acornui.collection.Pool((com.acornui.core.cache.IndexedCache.E)))/pool">pool</span><span class="symbol">:</span>&nbsp;<span class="identifier">Pool</span><span class="symbol">&lt;</span><a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span></code>
+<code><span class="identifier">IndexedCache</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.cache.IndexedCache$<init>(kotlin.Function0((com.acornui.core.cache.IndexedCache.E)))/factory">factory</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">)</span></code><code><span class="identifier">IndexedCache</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.cache.IndexedCache$<init>(com.acornui.collection.Pool((com.acornui.core.cache.IndexedCache.E)))/pool">pool</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/-pool/index.html"><span class="identifier">Pool</span></a><span class="symbol">&lt;</span><a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span></code>
 <p>A layer between item reuse and an object pool that first seeks an item from the same index.
 It is to reduce the amount of changes a pooled item may need to make.</p>
 </td>
@@ -74,7 +74,7 @@ the last <a href="obtain.html">obtain</a> set.</p>
 <p><a href="pool.html">pool</a></p>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">pool</span><span class="symbol">: </span><span class="identifier">Pool</span><span class="symbol">&lt;</span><a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">val </span><span class="identifier">pool</span><span class="symbol">: </span><a href="../../com.acornui.collection/-pool/index.html"><span class="identifier">Pool</span></a><span class="symbol">&lt;</span><a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
@@ -84,6 +84,18 @@ the last <a href="obtain.html">obtain</a> set.</p>
 <code><span class="keyword">val </span><span class="identifier">size</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
 <p>The size of this list. This will be updated after a <a href="flip.html">flip</a></p>
 </td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/-list-base/last-index.html">lastIndex</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">lastIndex</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
 </tr>
 </tbody>
 </table>
@@ -146,17 +158,153 @@ This algorithm attempts to obtain an element with the same index that was cached
 </tr>
 </tbody>
 </table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/-list-base/contains.html">contains</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">contains</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.ListBase$contains(com.acornui.collection.ListBase.E)/element">element</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/-list-base/index.html#E"><span class="identifier">E</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/-list-base/contains-all.html">containsAll</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">containsAll</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.ListBase$containsAll(kotlin.collections.Collection((com.acornui.collection.ListBase.E)))/elements">elements</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-collection/index.html"><span class="identifier">Collection</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/-list-base/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/-list-base/index-of.html">indexOf</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">indexOf</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.ListBase$indexOf(com.acornui.collection.ListBase.E)/element">element</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/-list-base/index.html#E"><span class="identifier">E</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/-list-base/is-empty.html">isEmpty</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">isEmpty</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/-list-base/iterator.html">iterator</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">iterator</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterator/index.html"><span class="identifier">Iterator</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/-list-base/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/-list-base/last-index-of.html">lastIndexOf</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">lastIndexOf</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.ListBase$lastIndexOf(com.acornui.collection.ListBase.E)/element">element</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/-list-base/index.html#E"><span class="identifier">E</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/-list-base/list-iterator.html">listIterator</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">listIterator</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list-iterator/index.html"><span class="identifier">ListIterator</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/-list-base/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code><br/>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">listIterator</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.ListBase$listIterator(kotlin.Int)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list-iterator/index.html"><span class="identifier">ListIterator</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/-list-base/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/-list-base/sub-list.html">subList</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">subList</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection.ListBase$subList(kotlin.Int, kotlin.Int)/fromIndex">fromIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection.ListBase$subList(kotlin.Int, kotlin.Int)/toIndex">toIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/-list-base/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
 <h3>Extension Functions</h3>
 <table>
 <tbody>
 <tr>
 <td>
+<p><a href="../../com.acornui.collection/kotlin.collections.-list/concat.html">concat</a></p>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/concat.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">concat</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$concat(kotlin.collections.List((com.acornui.collection.concat.T)), kotlin.collections.List((com.acornui.collection.concat.T)))/other">other</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/concat.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/concat.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/kotlin.collections.-list/count2.html">count2</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/count2.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">count2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$count2(kotlin.collections.List((com.acornui.collection.count2.E)), kotlin.Int, kotlin.Int, kotlin.Function1((com.acornui.collection.count2.E, kotlin.Boolean)))/startIndex">startIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">, </span><span class="identifier" id="com.acornui.collection$count2(kotlin.collections.List((com.acornui.collection.count2.E)), kotlin.Int, kotlin.Int, kotlin.Function1((com.acornui.collection.count2.E, kotlin.Boolean)))/lastIndex">lastIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.lastIndex<span class="symbol">, </span><span class="identifier" id="com.acornui.collection$count2(kotlin.collections.List((com.acornui.collection.count2.E)), kotlin.Int, kotlin.Int, kotlin.Function1((com.acornui.collection.count2.E, kotlin.Boolean)))/predicate">predicate</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../../com.acornui.collection/kotlin.collections.-list/count2.html#E"><span class="identifier">E</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Returns the number of elements matching the given <a href="../../com.acornui.collection/kotlin.collections.-list/count2.html#com.acornui.collection$count2(kotlin.collections.List((com.acornui.collection.count2.E)), kotlin.Int, kotlin.Int, kotlin.Function1((com.acornui.collection.count2.E, kotlin.Boolean)))/predicate">predicate</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
 <p><a href="../dispose-and-clear.html">disposeAndClear</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span><span class="symbol">&gt;</span> <a href="./index.html"><span class="identifier">IndexedCache</span></a><span class="symbol">&lt;</span><a href="../dispose-and-clear.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">disposeAndClear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a><span class="symbol">&gt;</span> <a href="./index.html"><span class="identifier">IndexedCache</span></a><span class="symbol">&lt;</span><a href="../dispose-and-clear.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">disposeAndClear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
 <p>Disposes each instance in the cache and pool.</p>
 </td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/kotlin.collections.-list/filter-to2.html">filterTo2</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">, </span><span class="identifier">C</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-collection/index.html"><span class="identifier">MutableCollection</span></a><span class="symbol">&lt;</span><span class="keyword">in</span>&nbsp;<a href="../../com.acornui.collection/kotlin.collections.-list/filter-to2.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/filter-to2.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">filterTo2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$filterTo2(kotlin.collections.List((com.acornui.collection.filterTo2.E)), com.acornui.collection.filterTo2.C, kotlin.Function1((com.acornui.collection.filterTo2.E, kotlin.Boolean)))/destination">destination</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/kotlin.collections.-list/filter-to2.html#C"><span class="identifier">C</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$filterTo2(kotlin.collections.List((com.acornui.collection.filterTo2.E)), com.acornui.collection.filterTo2.C, kotlin.Function1((com.acornui.collection.filterTo2.E, kotlin.Boolean)))/predicate">predicate</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../../com.acornui.collection/kotlin.collections.-list/filter-to2.html#E"><span class="identifier">E</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.collection/kotlin.collections.-list/filter-to2.html#C"><span class="identifier">C</span></a></code>
+<p>Appends all elements matching the given <a href="../../com.acornui.collection/kotlin.collections.-list/filter-to2.html#com.acornui.collection$filterTo2(kotlin.collections.List((com.acornui.collection.filterTo2.E)), com.acornui.collection.filterTo2.C, kotlin.Function1((com.acornui.collection.filterTo2.E, kotlin.Boolean)))/predicate">predicate</a> to the given <a href="../../com.acornui.collection/kotlin.collections.-list/filter-to2.html#com.acornui.collection$filterTo2(kotlin.collections.List((com.acornui.collection.filterTo2.E)), com.acornui.collection.filterTo2.C, kotlin.Function1((com.acornui.collection.filterTo2.E, kotlin.Boolean)))/destination">destination</a>.
+Does not cause allocation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/kotlin.collections.-list/find2.html">find2</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/find2.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><s><span class="identifier">find2</span></s><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$find2(kotlin.collections.List((com.acornui.collection.find2.E)), kotlin.Int, kotlin.Function1((com.acornui.collection.find2.E, kotlin.Boolean)))/startIndex">startIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">, </span><span class="identifier" id="com.acornui.collection$find2(kotlin.collections.List((com.acornui.collection.find2.E)), kotlin.Int, kotlin.Function1((com.acornui.collection.find2.E, kotlin.Boolean)))/predicate">predicate</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../../com.acornui.collection/kotlin.collections.-list/find2.html#E"><span class="identifier">E</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.collection/kotlin.collections.-list/find2.html#E"><span class="identifier">E</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/kotlin.collections.-list/first2.html">first2</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/first2.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">first2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$first2(kotlin.collections.List((com.acornui.collection.first2.E)), kotlin.Int, kotlin.Function1((com.acornui.collection.first2.E, kotlin.Boolean)))/startIndex">startIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">, </span><span class="identifier" id="com.acornui.collection$first2(kotlin.collections.List((com.acornui.collection.first2.E)), kotlin.Int, kotlin.Function1((com.acornui.collection.first2.E, kotlin.Boolean)))/predicate">predicate</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../../com.acornui.collection/kotlin.collections.-list/first2.html#E"><span class="identifier">E</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.collection/kotlin.collections.-list/first2.html#E"><span class="identifier">E</span></a><span class="symbol">?</span></code>
+<p>Returns the first element matching the given <a href="../../com.acornui.collection/kotlin.collections.-list/first2.html#com.acornui.collection$first2(kotlin.collections.List((com.acornui.collection.first2.E)), kotlin.Int, kotlin.Function1((com.acornui.collection.first2.E, kotlin.Boolean)))/predicate">predicate</a>, or throws an exception if no such element was found.
+Does not cause allocation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/kotlin.collections.-list/first-or-null2.html">firstOrNull2</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/first-or-null2.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">firstOrNull2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$firstOrNull2(kotlin.collections.List((com.acornui.collection.firstOrNull2.E)), kotlin.Int, kotlin.Function1((com.acornui.collection.firstOrNull2.E, kotlin.Boolean)))/startIndex">startIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">, </span><span class="identifier" id="com.acornui.collection$firstOrNull2(kotlin.collections.List((com.acornui.collection.firstOrNull2.E)), kotlin.Int, kotlin.Function1((com.acornui.collection.firstOrNull2.E, kotlin.Boolean)))/predicate">predicate</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../../com.acornui.collection/kotlin.collections.-list/first-or-null2.html#E"><span class="identifier">E</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.collection/kotlin.collections.-list/first-or-null2.html#E"><span class="identifier">E</span></a><span class="symbol">?</span></code>
+<p>Returns the first element matching the given <a href="../../com.acornui.collection/kotlin.collections.-list/first-or-null2.html#com.acornui.collection$firstOrNull2(kotlin.collections.List((com.acornui.collection.firstOrNull2.E)), kotlin.Int, kotlin.Function1((com.acornui.collection.firstOrNull2.E, kotlin.Boolean)))/predicate">predicate</a>, or <code>null</code> if no such element was found.
+Does not cause allocation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/kotlin.collections.-list/for-each2.html">forEach2</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/for-each2.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">forEach2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$forEach2(kotlin.collections.List((com.acornui.collection.forEach2.E)), kotlin.Function1((com.acornui.collection.forEach2.E, kotlin.Unit)))/action">action</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../../com.acornui.collection/kotlin.collections.-list/for-each2.html#E"><span class="identifier">E</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/kotlin.collections.-list/for-each-reversed2.html">forEachReversed2</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/for-each-reversed2.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">forEachReversed2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$forEachReversed2(kotlin.collections.List((com.acornui.collection.forEachReversed2.E)), kotlin.Function1((com.acornui.collection.forEachReversed2.E, kotlin.Unit)))/action">action</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../../com.acornui.collection/kotlin.collections.-list/for-each-reversed2.html#E"><span class="identifier">E</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/kotlin.collections.-iterable/hash-code-iterable.html">hashCodeIterable</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-iterable/hash-code-iterable.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">hashCodeIterable</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -169,11 +317,119 @@ This algorithm attempts to obtain an element with the same index that was cached
 </tr>
 <tr>
 <td>
+<p><a href="../../com.acornui.collection/kotlin.collections.-list/index-of-first2.html">indexOfFirst2</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/index-of-first2.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">indexOfFirst2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$indexOfFirst2(kotlin.collections.List((com.acornui.collection.indexOfFirst2.E)), kotlin.Int, kotlin.Int, kotlin.Function1((com.acornui.collection.indexOfFirst2.E, kotlin.Boolean)))/startIndex">startIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">, </span><span class="identifier" id="com.acornui.collection$indexOfFirst2(kotlin.collections.List((com.acornui.collection.indexOfFirst2.E)), kotlin.Int, kotlin.Int, kotlin.Function1((com.acornui.collection.indexOfFirst2.E, kotlin.Boolean)))/lastIndex">lastIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.lastIndex<span class="symbol">, </span><span class="identifier" id="com.acornui.collection$indexOfFirst2(kotlin.collections.List((com.acornui.collection.indexOfFirst2.E)), kotlin.Int, kotlin.Int, kotlin.Function1((com.acornui.collection.indexOfFirst2.E, kotlin.Boolean)))/predicate">predicate</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../../com.acornui.collection/kotlin.collections.-list/index-of-first2.html#E"><span class="identifier">E</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Returns index of the first element matching the given <a href="../../com.acornui.collection/kotlin.collections.-list/index-of-first2.html#com.acornui.collection$indexOfFirst2(kotlin.collections.List((com.acornui.collection.indexOfFirst2.E)), kotlin.Int, kotlin.Int, kotlin.Function1((com.acornui.collection.indexOfFirst2.E, kotlin.Boolean)))/predicate">predicate</a>, or -1 if this list does not contain such element.
+The search goes starting from startIndex to lastIndex</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/kotlin.collections.-list/index-of-last2.html">indexOfLast2</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/index-of-last2.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">indexOfLast2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$indexOfLast2(kotlin.collections.List((com.acornui.collection.indexOfLast2.E)), kotlin.Int, kotlin.Int, kotlin.Function1((com.acornui.collection.indexOfLast2.E, kotlin.Boolean)))/lastIndex">lastIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.lastIndex<span class="symbol">, </span><span class="identifier" id="com.acornui.collection$indexOfLast2(kotlin.collections.List((com.acornui.collection.indexOfLast2.E)), kotlin.Int, kotlin.Int, kotlin.Function1((com.acornui.collection.indexOfLast2.E, kotlin.Boolean)))/startIndex">startIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">, </span><span class="identifier" id="com.acornui.collection$indexOfLast2(kotlin.collections.List((com.acornui.collection.indexOfLast2.E)), kotlin.Int, kotlin.Int, kotlin.Function1((com.acornui.collection.indexOfLast2.E, kotlin.Boolean)))/predicate">predicate</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../../com.acornui.collection/kotlin.collections.-list/index-of-last2.html#E"><span class="identifier">E</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Returns index of the last element matching the given <a href="../../com.acornui.collection/kotlin.collections.-list/index-of-last2.html#com.acornui.collection$indexOfLast2(kotlin.collections.List((com.acornui.collection.indexOfLast2.E)), kotlin.Int, kotlin.Int, kotlin.Function1((com.acornui.collection.indexOfLast2.E, kotlin.Boolean)))/predicate">predicate</a>, or -1 if this list does not contain such element.
+The search goes in reverse starting from lastIndex downTo startIndex</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/kotlin.collections.-list/is-reverse-sorted.html">isReverseSorted</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-comparable/index.html"><span class="identifier">Comparable</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/is-reverse-sorted.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/is-reverse-sorted.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">isReverseSorted</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this list is currently descendingly sorted.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/kotlin.collections.-list/is-sorted.html">isSorted</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-comparable/index.html"><span class="identifier">Comparable</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/is-sorted.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/is-sorted.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">isSorted</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this list is currently sorted.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/kotlin.collections.-list/peek.html">peek</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/peek.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">peek</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.collection/kotlin.collections.-list/peek.html#T"><span class="identifier">T</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
 <p><a href="../remove-and-flip.html">removeAndFlip</a></p>
 </td>
 <td>
 <code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span> <a href="./index.html"><span class="identifier">IndexedCache</span></a><span class="symbol">&lt;</span><a href="../remove-and-flip.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">removeAndFlip</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.cache$removeAndFlip(com.acornui.core.cache.IndexedCache((com.acornui.core.cache.removeAndFlip.E)), com.acornui.component.ElementContainer((com.acornui.component.UiComponent)))/parent">parent</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-element-container.html"><span class="identifier">ElementContainer</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
 <p>Removes all unused cache instances from the given container before flipping.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/kotlin.collections.-list/replace-at.html">replaceAt</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/replace-at.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">replaceAt</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$replaceAt(kotlin.collections.List((com.acornui.collection.replaceAt.E)), kotlin.Int, com.acornui.collection.replaceAt.E)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$replaceAt(kotlin.collections.List((com.acornui.collection.replaceAt.E)), kotlin.Int, com.acornui.collection.replaceAt.E)/newValue">newValue</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/kotlin.collections.-list/replace-at.html#E"><span class="identifier">E</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/replace-at.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code>
+<p>Clones this list, replacing the value at the given index with the new value.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/kotlin.collections.-list/replace-first-where.html">replaceFirstWhere</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/replace-first-where.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">replaceFirstWhere</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$replaceFirstWhere(kotlin.collections.List((com.acornui.collection.replaceFirstWhere.E)), com.acornui.collection.replaceFirstWhere.E, kotlin.Function1((com.acornui.collection.replaceFirstWhere.E, kotlin.Boolean)))/newValue">newValue</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/kotlin.collections.-list/replace-first-where.html#E"><span class="identifier">E</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$replaceFirstWhere(kotlin.collections.List((com.acornui.collection.replaceFirstWhere.E)), com.acornui.collection.replaceFirstWhere.E, kotlin.Function1((com.acornui.collection.replaceFirstWhere.E, kotlin.Boolean)))/predicate">predicate</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../../com.acornui.collection/kotlin.collections.-list/replace-first-where.html#E"><span class="identifier">E</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/replace-first-where.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/kotlin.collections.-list/replace-range.html">replaceRange</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/replace-range.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">replaceRange</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$replaceRange(kotlin.collections.List((com.acornui.collection.replaceRange.E)), kotlin.Int, kotlin.Int, kotlin.collections.List((com.acornui.collection.replaceRange.E)))/startIndex">startIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$replaceRange(kotlin.collections.List((com.acornui.collection.replaceRange.E)), kotlin.Int, kotlin.Int, kotlin.collections.List((com.acornui.collection.replaceRange.E)))/endIndex">endIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;startIndex<span class="symbol">, </span><span class="identifier" id="com.acornui.collection$replaceRange(kotlin.collections.List((com.acornui.collection.replaceRange.E)), kotlin.Int, kotlin.Int, kotlin.collections.List((com.acornui.collection.replaceRange.E)))/newElements">newElements</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/replace-range.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/replace-range.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code>
+<p>Clones this list, replacing the given range with the new elements.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/kotlin.collections.-list/sorted-insertion-index.html">sortedInsertionIndex</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-comparable/index.html"><span class="identifier">Comparable</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/sorted-insertion-index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/sorted-insertion-index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">sortedInsertionIndex</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$sortedInsertionIndex(kotlin.collections.List((com.acornui.collection.sortedInsertionIndex.E)), com.acornui.collection.sortedInsertionIndex.E, kotlin.Int, kotlin.Int, kotlin.Boolean)/element">element</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/kotlin.collections.-list/sorted-insertion-index.html#E"><span class="identifier">E</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$sortedInsertionIndex(kotlin.collections.List((com.acornui.collection.sortedInsertionIndex.E)), com.acornui.collection.sortedInsertionIndex.E, kotlin.Int, kotlin.Int, kotlin.Boolean)/fromIndex">fromIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">, </span><span class="identifier" id="com.acornui.collection$sortedInsertionIndex(kotlin.collections.List((com.acornui.collection.sortedInsertionIndex.E)), com.acornui.collection.sortedInsertionIndex.E, kotlin.Int, kotlin.Int, kotlin.Boolean)/toIndex">toIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;size<span class="symbol">, </span><span class="identifier" id="com.acornui.collection$sortedInsertionIndex(kotlin.collections.List((com.acornui.collection.sortedInsertionIndex.E)), com.acornui.collection.sortedInsertionIndex.E, kotlin.Int, kotlin.Int, kotlin.Boolean)/matchForwards">matchForwards</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;true<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Given a sorted list of comparable objects, this finds the insertion index of the given element.
+If there are equal elements, the insertion index returned will be after.</p>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">K</span><span class="symbol">, </span><span class="identifier">E</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/sorted-insertion-index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">sortedInsertionIndex</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$sortedInsertionIndex(kotlin.collections.List((com.acornui.collection.sortedInsertionIndex.E)), com.acornui.collection.sortedInsertionIndex.K, kotlin.Int, kotlin.Int, kotlin.Boolean, kotlin.Function2((com.acornui.collection.sortedInsertionIndex.K, com.acornui.collection.sortedInsertionIndex.E, kotlin.Int)))/element">element</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/kotlin.collections.-list/sorted-insertion-index.html#K"><span class="identifier">K</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.collection$sortedInsertionIndex(kotlin.collections.List((com.acornui.collection.sortedInsertionIndex.E)), com.acornui.collection.sortedInsertionIndex.K, kotlin.Int, kotlin.Int, kotlin.Boolean, kotlin.Function2((com.acornui.collection.sortedInsertionIndex.K, com.acornui.collection.sortedInsertionIndex.E, kotlin.Int)))/fromIndex">fromIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">, </span><span class="identifier" id="com.acornui.collection$sortedInsertionIndex(kotlin.collections.List((com.acornui.collection.sortedInsertionIndex.E)), com.acornui.collection.sortedInsertionIndex.K, kotlin.Int, kotlin.Int, kotlin.Boolean, kotlin.Function2((com.acornui.collection.sortedInsertionIndex.K, com.acornui.collection.sortedInsertionIndex.E, kotlin.Int)))/toIndex">toIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;size<span class="symbol">, </span><span class="identifier" id="com.acornui.collection$sortedInsertionIndex(kotlin.collections.List((com.acornui.collection.sortedInsertionIndex.E)), com.acornui.collection.sortedInsertionIndex.K, kotlin.Int, kotlin.Int, kotlin.Boolean, kotlin.Function2((com.acornui.collection.sortedInsertionIndex.K, com.acornui.collection.sortedInsertionIndex.E, kotlin.Int)))/matchForwards">matchForwards</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;true<span class="symbol">, </span><span class="identifier" id="com.acornui.collection$sortedInsertionIndex(kotlin.collections.List((com.acornui.collection.sortedInsertionIndex.E)), com.acornui.collection.sortedInsertionIndex.K, kotlin.Int, kotlin.Int, kotlin.Boolean, kotlin.Function2((com.acornui.collection.sortedInsertionIndex.K, com.acornui.collection.sortedInsertionIndex.E, kotlin.Int)))/comparator">comparator</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../../com.acornui.collection/kotlin.collections.-list/sorted-insertion-index.html#K"><span class="identifier">K</span></a><span class="symbol">,</span>&nbsp;<a href="../../com.acornui.collection/kotlin.collections.-list/sorted-insertion-index.html#E"><span class="identifier">E</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/kotlin.collections.-list/sub-list.html">subList</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/sub-list.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">subList</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$subList(kotlin.collections.List((com.acornui.collection.subList.E)), kotlin.Int)/size">size</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/sub-list.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code>
+<p>Returns a view of the portion of this list between the specified 0 and <a href="../../com.acornui.collection/kotlin.collections.-list/sub-list.html#com.acornui.collection$subList(kotlin.collections.List((com.acornui.collection.subList.E)), kotlin.Int)/size">size</a> (exclusive).
+The returned list is backed by this list, so non-structural changes in the returned list are reflected in this list.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/kotlin.collections.-list/sum-by2.html">sumBy2</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/sum-by2.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">sumBy2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$sumBy2(kotlin.collections.List((com.acornui.collection.sumBy2.E)), kotlin.Function1((com.acornui.collection.sumBy2.E, kotlin.Int)))/selector">selector</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../../com.acornui.collection/kotlin.collections.-list/sum-by2.html#E"><span class="identifier">E</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Returns the sum of all values produced by <a href="../../com.acornui.collection/kotlin.collections.-list/sum-by2.html#com.acornui.collection$sumBy2(kotlin.collections.List((com.acornui.collection.sumBy2.E)), kotlin.Function1((com.acornui.collection.sumBy2.E, kotlin.Int)))/selector">selector</a> function applied to each element in the collection.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.collection/kotlin.collections.-list/sum-by-float2.html">sumByFloat2</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span> <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.collection/kotlin.collections.-list/sum-by-float2.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">sumByFloat2</span><span class="symbol">(</span><span class="identifier" id="com.acornui.collection$sumByFloat2(kotlin.collections.List((com.acornui.collection.sumByFloat2.E)), kotlin.Function1((com.acornui.collection.sumByFloat2.E, kotlin.Float)))/selector">selector</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../../com.acornui.collection/kotlin.collections.-list/sum-by-float2.html#E"><span class="identifier">E</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Returns the sum of all values produced by <a href="../../com.acornui.collection/kotlin.collections.-list/sum-by-float2.html#com.acornui.collection$sumByFloat2(kotlin.collections.List((com.acornui.collection.sumByFloat2.E)), kotlin.Function1((com.acornui.collection.sumByFloat2.E, kotlin.Float)))/selector">selector</a> function applied to each element in the collection.</p>
 </td>
 </tr>
 </tbody>

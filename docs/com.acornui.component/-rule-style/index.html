@@ -60,7 +60,7 @@
 <p><a href="../-box-style/background-color.html">backgroundColor</a></p>
 </td>
 <td>
-<code><span class="keyword">var </span><span class="identifier">backgroundColor</span><span class="symbol">: </span><span class="identifier">ColorRo</span></code></td>
+<code><span class="keyword">var </span><span class="identifier">backgroundColor</span><span class="symbol">: </span><a href="../../com.acornui.graphics/-color-ro/index.html"><span class="identifier">ColorRo</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -74,14 +74,14 @@
 <p><a href="../-box-style/border-radius.html">borderRadius</a></p>
 </td>
 <td>
-<code><span class="keyword">var </span><span class="identifier">borderRadius</span><span class="symbol">: </span><span class="identifier">CornersRo</span></code></td>
+<code><span class="keyword">var </span><span class="identifier">borderRadius</span><span class="symbol">: </span><a href="../../com.acornui.math/-corners-ro/index.html"><span class="identifier">CornersRo</span></a></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="../-box-style/border-thickness.html">borderThickness</a></p>
 </td>
 <td>
-<code><span class="keyword">var </span><span class="identifier">borderThickness</span><span class="symbol">: </span><span class="identifier">PadRo</span></code></td>
+<code><span class="keyword">var </span><span class="identifier">borderThickness</span><span class="symbol">: </span><a href="../../com.acornui.math/-pad-ro/index.html"><span class="identifier">PadRo</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -95,14 +95,14 @@
 <p><a href="../-box-style/margin.html">margin</a></p>
 </td>
 <td>
-<code><span class="keyword">var </span><span class="identifier">margin</span><span class="symbol">: </span><span class="identifier">PadRo</span></code></td>
+<code><span class="keyword">var </span><span class="identifier">margin</span><span class="symbol">: </span><a href="../../com.acornui.math/-pad-ro/index.html"><span class="identifier">PadRo</span></a></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="../-box-style/padding.html">padding</a></p>
 </td>
 <td>
-<code><span class="keyword">var </span><span class="identifier">padding</span><span class="symbol">: </span><span class="identifier">PadRo</span></code></td>
+<code><span class="keyword">var </span><span class="identifier">padding</span><span class="symbol">: </span><a href="../../com.acornui.math/-pad-ro/index.html"><span class="identifier">PadRo</span></a></code></td>
 </tr>
 </tbody>
 </table>
@@ -115,6 +115,34 @@
 </td>
 <td>
 <code><span class="keyword">val </span><span class="identifier">extends</span><span class="symbol">: </span><a href="../../com.acornui.component.style/-style-type/index.html"><span class="identifier">StyleType</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.signal/bind.html">bind</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.signal/-bindable/index.html"><span class="identifier">Bindable</span></a><span class="symbol">.</span><span class="identifier">bind</span><span class="symbol">(</span><span class="identifier" id="com.acornui.signal$bind(com.acornui.signal.Bindable, kotlin.Function0((kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code>
+<p>Adds a callback and invokes it immediately.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.observe/or.html">or</a></p>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../../com.acornui.signal/-bindable/index.html"><span class="identifier">Bindable</span></a><span class="symbol">.</span><span class="identifier">or</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.observe$or(com.acornui.signal.Bindable, com.acornui.core.observe.DataBinding((com.acornui.core.observe.or.T)))/other">other</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.observe/-data-binding/index.html"><span class="identifier">DataBinding</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.observe/or.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.signal/-bindable/index.html"><span class="identifier">Bindable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.signal/or.html">or</a></p>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><a href="../../com.acornui.signal/-bindable/index.html"><span class="identifier">Bindable</span></a><span class="symbol">.</span><span class="identifier">or</span><span class="symbol">(</span><span class="identifier" id="com.acornui.signal$or(com.acornui.signal.Bindable, com.acornui.signal.Bindable)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.signal/-bindable/index.html"><span class="identifier">Bindable</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.signal/-bindable/index.html"><span class="identifier">Bindable</span></a></code></td>
 </tr>
 </tbody>
 </table>

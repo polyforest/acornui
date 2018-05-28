@@ -1,0 +1,93 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>FillStyle - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.drawing</a>&nbsp;/&nbsp;<a href="./index.html">FillStyle</a><br/>
+<br/>
+<h1>FillStyle</h1>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">FillStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">FillStyle</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.drawing.FillStyle$<init>(com.acornui.graphics.Color, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.core.graphics.Texture, kotlin.Boolean)/colorTint">colorTint</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.graphics/-color/index.html"><span class="identifier">Color</span></a>&nbsp;<span class="symbol">=</span>&nbsp;Color.WHITE.copy()<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.FillStyle$<init>(com.acornui.graphics.Color, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.core.graphics.Texture, kotlin.Boolean)/uvDir">uvDir</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a>&nbsp;<span class="symbol">=</span>&nbsp;Vector2(1f, 1f)<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.FillStyle$<init>(com.acornui.graphics.Color, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.core.graphics.Texture, kotlin.Boolean)/uvOffset">uvOffset</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a>&nbsp;<span class="symbol">=</span>&nbsp;Vector2()<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.FillStyle$<init>(com.acornui.graphics.Color, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.core.graphics.Texture, kotlin.Boolean)/texture">texture</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.graphics/-texture/index.html"><span class="identifier">Texture</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="com.acornui.component.drawing.FillStyle$<init>(com.acornui.graphics.Color, com.acornui.math.Vector2, com.acornui.math.Vector2, com.acornui.core.graphics.Texture, kotlin.Boolean)/isVisible">isVisible</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;true<span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="color-tint.html">colorTint</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">colorTint</span><span class="symbol">: </span><a href="../../com.acornui.graphics/-color/index.html"><span class="identifier">Color</span></a></code>
+<p>The colorTint is multiplied against the texture color.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="is-transparent.html">isTransparent</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">isTransparent</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this fill is completely transparent.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="is-visible.html">isVisible</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">isVisible</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="texture.html">texture</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">texture</span><span class="symbol">: </span><a href="../../com.acornui.core.graphics/-texture/index.html"><span class="identifier">Texture</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="uv-dir.html">uvDir</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">uvDir</span><span class="symbol">: </span><a href="../../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a></code>
+<p>The u,v coordinates take are calculated by:
+uv = position * uvDir + uvOffset</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="uv-offset.html">uvOffset</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">uvOffset</span><span class="symbol">: </span><a href="../../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Clears this instance back to its original state.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

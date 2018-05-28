@@ -1,0 +1,100 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>RayRo - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="./index.html">RayRo</a><br/>
+<br/>
+<h1>RayRo</h1>
+<code><span class="keyword">interface </span><span class="identifier">RayRo</span></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="direction.html">direction</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">direction</span><span class="symbol">: </span><a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="direction-inv.html">directionInv</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">directionInv</span><span class="symbol">: </span><a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a></code>
+<p>1f / direction
+Mutable owners must call <a href="../-ray/update.html">Ray.update</a> before this is valid.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="origin.html">origin</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">origin</span><span class="symbol">: </span><a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="copy.html">copy</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">copy</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.RayRo$copy(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/origin">origin</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.origin<span class="symbol">, </span><span class="identifier" id="com.acornui.math.RayRo$copy(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/direction">direction</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a>&nbsp;<span class="symbol">=</span>&nbsp;this.direction<span class="symbol">)</span><span class="symbol">: </span><a href="../-ray/index.html"><span class="identifier">Ray</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-end-point.html">getEndPoint</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getEndPoint</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.RayRo$getEndPoint(kotlin.Float, com.acornui.math.Vector3)/distance">distance</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.RayRo$getEndPoint(kotlin.Float, com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector3/index.html"><span class="identifier">Vector3</span></a></code>
+<p>Returns the endpoint given the distance. This is calculated as origin + distance * direction.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-point-at-z.html">getPointAtZ</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getPointAtZ</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.RayRo$getPointAtZ(kotlin.Float, com.acornui.math.Vector2)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.RayRo$getPointAtZ(kotlin.Float, com.acornui.math.Vector2)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector2/index.html"><span class="identifier">Vector2</span></a></code>
+<p>Returns the endpoint when projecting towards the xy plane at <a href="get-point-at-z.html#com.acornui.math.RayRo$getPointAtZ(kotlin.Float, com.acornui.math.Vector2)/z">z</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="intersects.html">intersects</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.RayRo$intersects(com.acornui.math.RayRo, com.acornui.math.Vector3)/ray">ray</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">RayRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.RayRo$intersects(com.acornui.math.RayRo, com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>http://math.stackexchange.com/questions/270767/find-intersection-of-two-3d-lines</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.RayRo$intersects(com.acornui.math.PlaneRo, com.acornui.math.Vector3)/plane">plane</span><span class="symbol">:</span>&nbsp;<a href="../-plane-ro/index.html"><span class="identifier">PlaneRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.RayRo$intersects(com.acornui.math.PlaneRo, com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Intersects a <a href="../-ray/index.html">Ray</a> and a <a href="../-plane/index.html">Plane</a>. The intersection point is stored in <a href="intersects.html#com.acornui.math.RayRo$intersects(com.acornui.math.PlaneRo, com.acornui.math.Vector3)/out">out</a> in the case an intersection is
+present.</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.RayRo$intersects(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3)/v1">v1</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.RayRo$intersects(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3)/v2">v2</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.RayRo$intersects(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3)/v3">v3</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.RayRo$intersects(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Intersect a <a href="../-ray/index.html">Ray</a> and a triangle, returning the intersection point in intersection.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-ray/index.html">Ray</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Ray</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">RayRo</span></a></code>
+<p>Encapsulates a ray having a starting position and a unit length direction.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

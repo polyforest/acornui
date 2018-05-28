@@ -1,0 +1,73 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Progress - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.action</a>&nbsp;/&nbsp;<a href="./index.html">Progress</a><br/>
+<br/>
+<h1>Progress</h1>
+<code><span class="keyword">interface </span><span class="identifier">Progress</span></code>
+<p>An interface indicating something that takes time to complete.</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="percent-loaded.html">percentLoaded</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">percentLoaded</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="seconds-loaded.html">secondsLoaded</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">secondsLoaded</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The number of seconds currently loaded.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="seconds-total.html">secondsTotal</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">secondsTotal</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The total number of seconds estimated to load.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.assets/-asset-loader-ro/index.html">AssetLoaderRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">AssetLoaderRo</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.async/-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.assets/-asset-loader-ro/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">Progress</span></a></code>
+<p>AssetLoader is a read-only interface that represents a loading asset. It has progress and a value for a final result.
+It is used by the asset manager.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.assets/-asset-manager/index.html">AssetManager</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">AssetManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Progress</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.request/-request.html">Request</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Request</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Progress</span></a><span class="symbol">, </span><a href="../../com.acornui.async/-cancelable-deferred/index.html"><span class="identifier">CancelableDeferred</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.request/-request.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

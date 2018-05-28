@@ -1,0 +1,24 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>QuaternionRo.getAxisAngleRad - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="index.html">QuaternionRo</a>&nbsp;/&nbsp;<a href="./get-axis-angle-rad.html">getAxisAngleRad</a><br/>
+<br/>
+<h1>getAxisAngleRad</h1>
+<a name="com.acornui.math.QuaternionRo$getAxisAngleRad(com.acornui.math.Vector3)"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getAxisAngleRad</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.QuaternionRo$getAxisAngleRad(com.acornui.math.Vector3)/axis">axis</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Get the axis-angle representation of the rotation in radians. The supplied vector will receive the axis (x, y and z values)
+of the rotation and the value returned is the angle in radians around that axis. Note that this method will alter the
+supplied vector, the existing value of the vector is ignored.  This will normalize this quaternion if needed. The
+received axis is a unit vector. However, if this is an identity quaternion (no rotation), then the length of the axis may be
+zero.</p>
+<h3>Parameters</h3>
+<p><a name="axis"></a>
+<code>axis</code> - vector which will receive the axis</p>
+<p><strong>Return</strong><br/>
+the angle in radians</p>
+</BODY>
+</HTML>

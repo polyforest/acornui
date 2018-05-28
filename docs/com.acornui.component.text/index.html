@@ -13,6 +13,52 @@
 <tbody>
 <tr>
 <td>
+<p><a href="-angel-code-parser/index.html">AngelCodeParser</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">AngelCodeParser</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.action/-decorator/index.html"><span class="identifier">Decorator</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="-bitmap-font-data/index.html"><span class="identifier">BitmapFontData</span></a><span class="symbol">&gt;</span></code>
+<p>http://www.angelcode.com/products/bmfont/doc/file_format.html</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-bitmap-font/index.html">BitmapFont</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">BitmapFont</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-bitmap-font-data/index.html">BitmapFontData</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">BitmapFontData</span></code>
+<p>Data representing a bitmap font.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-bitmap-font-page-data/index.html">BitmapFontPageData</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">BitmapFontPageData</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-bitmap-font-registry/index.html">BitmapFontRegistry</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">BitmapFontRegistry</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a><span class="symbol">, </span><a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-change-selection-command/index.html">ChangeSelectionCommand</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ChangeSelectionCommand</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.mvc/-state-command/index.html"><span class="identifier">StateCommand</span></a></code></td>
+</tr>
+<tr>
+<td>
 <p><a href="-char-style/index.html">CharStyle</a></p>
 </td>
 <td>
@@ -25,7 +71,7 @@
 <p><a href="-char-style-serializer/index.html">CharStyleSerializer</a></p>
 </td>
 <td>
-<code><span class="keyword">object </span><span class="identifier">CharStyleSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">To</span><span class="symbol">&lt;</span><a href="-char-style/index.html"><span class="identifier">CharStyle</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">From</span><span class="symbol">&lt;</span><a href="-char-style/index.html"><span class="identifier">CharStyle</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">object </span><span class="identifier">CharStyleSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.serialization/-to/index.html"><span class="identifier">To</span></a><span class="symbol">&lt;</span><a href="-char-style/index.html"><span class="identifier">CharStyle</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.serialization/-from/index.html"><span class="identifier">From</span></a><span class="symbol">&lt;</span><a href="-char-style/index.html"><span class="identifier">CharStyle</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
@@ -36,6 +82,93 @@
 <p>An EditableTextField is a TextField that allows its content to be edited. This is different from TextArea in that
 this component allows mixed content as opposed to plain text.</p>
 </td>
+</tr>
+<tr>
+<td>
+<p><a href="-font-style/index.html">FontStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">FontStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-font-style-ro/index.html"><span class="identifier">FontStyleRo</span></a></code>
+<p>A data class representing the criteria for what separates a bitmap font set.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-font-style-ro/index.html">FontStyleRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">FontStyleRo</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl-editable-text-field/index.html">GlEditableTextField</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">GlEditableTextField</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-container-impl/index.html"><span class="identifier">ContainerImpl</span></a><span class="symbol">, </span><a href="-editable-text-field/index.html"><span class="identifier">EditableTextField</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl-text-area/index.html">GlTextArea</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">GlTextArea</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-container-impl/index.html"><span class="identifier">ContainerImpl</span></a><span class="symbol">, </span><a href="-text-area/index.html"><span class="identifier">TextArea</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl-text-commander/index.html">GlTextCommander</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">GlTextCommander</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl-text-field/index.html">GlTextField</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">GlTextField</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-container-impl/index.html"><span class="identifier">ContainerImpl</span></a><span class="symbol">, </span><a href="-text-field/index.html"><span class="identifier">TextField</span></a></code>
+<p>A TextField implementation for the OpenGL back-ends.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl-text-input/index.html">GlTextInput</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">GlTextInput</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-container-impl/index.html"><span class="identifier">ContainerImpl</span></a><span class="symbol">, </span><a href="-text-input/index.html"><span class="identifier">TextInput</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-glyph/index.html">Glyph</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Glyph</span></code>
+<p>The data required to render a glyph inside of a texture.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-glyph-data/index.html">GlyphData</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">GlyphData</span></code>
+<p>Represents a single character in a font page.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-last-text-element/index.html">LastTextElement</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">LastTextElement</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-text-element-ro/index.html"><span class="identifier">TextElementRo</span></a></code>
+<p>A placeholder for the last text element in a span. This is useful for calculating the text cursor placement.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-replace-text-range-command/index.html">ReplaceTextRangeCommand</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ReplaceTextRangeCommand</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.mvc/-state-command/index.html"><span class="identifier">StateCommand</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -69,10 +202,36 @@ this component allows mixed content as opposed to plain text.</p>
 </tr>
 <tr>
 <td>
+<p><a href="-text-element/index.html">TextElement</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">TextElement</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-text-element-ro/index.html"><span class="identifier">TextElementRo</span></a><span class="symbol">, </span><a href="../com.acornui.core/-disposable/index.html"><span class="identifier">Disposable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-text-element-ro/index.html">TextElementRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">TextElementRo</span></code>
+<p>The smallest unit that can be inside of a TextField.
+This can be a single character, or a more complex object.</p>
+</td>
+</tr>
+<tr>
+<td>
 <p><a href="-text-field/index.html">TextField</a></p>
 </td>
 <td>
 <code><span class="keyword">interface </span><span class="identifier">TextField</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">, </span><a href="../com.acornui.component/-labelable/index.html"><span class="identifier">Labelable</span></a><span class="symbol">, </span><a href="../com.acornui.core.selection/-selectable-component.html"><span class="identifier">SelectableComponent</span></a><span class="symbol">, </span><a href="../com.acornui.component.style/-styleable/index.html"><span class="identifier">Styleable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-text-flow/index.html">TextFlow</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TextFlow</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-ui-component-impl/index.html"><span class="identifier">UiComponentImpl</span></a><span class="symbol">, </span><a href="-text-node-component/index.html"><span class="identifier">TextNodeComponent</span></a><span class="symbol">, </span><a href="../com.acornui.component/-element-parent/index.html"><span class="identifier">ElementParent</span></a><span class="symbol">&lt;</span><a href="-text-span-element/index.html"><span class="identifier">TextSpanElement</span></a><span class="symbol">&gt;</span></code>
+<p>A TextFlow component is a container of styleable text spans, to be used inside of a TextField.</p>
+</td>
 </tr>
 <tr>
 <td>
@@ -86,7 +245,7 @@ this component allows mixed content as opposed to plain text.</p>
 <p><a href="-text-input/index.html">TextInput</a></p>
 </td>
 <td>
-<code><span class="keyword">interface </span><span class="identifier">TextInput</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.focus/-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">, </span><a href="../com.acornui.core.selection/-selectable-component.html"><span class="identifier">SelectableComponent</span></a><span class="symbol">, </span><a href="../com.acornui.component.style/-styleable/index.html"><span class="identifier">Styleable</span></a><span class="symbol">, </span><span class="identifier">Clearable</span></code></td>
+<code><span class="keyword">interface </span><span class="identifier">TextInput</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.focus/-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">, </span><a href="../com.acornui.core.selection/-selectable-component.html"><span class="identifier">SelectableComponent</span></a><span class="symbol">, </span><a href="../com.acornui.component.style/-styleable/index.html"><span class="identifier">Styleable</span></a><span class="symbol">, </span><a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -95,11 +254,92 @@ this component allows mixed content as opposed to plain text.</p>
 <td>
 <code><span class="keyword">class </span><span class="identifier">TextInputStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a></code></td>
 </tr>
+<tr>
+<td>
+<p><a href="-text-node/index.html">TextNode</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">TextNode</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-text-node-ro/index.html"><span class="identifier">TextNodeRo</span></a><span class="symbol">, </span><a href="../com.acornui.component.layout/-positionable/index.html"><span class="identifier">Positionable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-text-node-component/index.html">TextNodeComponent</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">TextNodeComponent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-text-node/index.html"><span class="identifier">TextNode</span></a><span class="symbol">, </span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a></code>
+<p>A component that can be set as content to a text field.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-text-node-ro/index.html">TextNodeRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">TextNodeRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-validatable/index.html"><span class="identifier">Validatable</span></a><span class="symbol">, </span><a href="../com.acornui.component.style/-styleable-ro/index.html"><span class="identifier">StyleableRo</span></a><span class="symbol">, </span><a href="../com.acornui.component.layout/-positionable-ro/index.html"><span class="identifier">PositionableRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-text-span-element/index.html">TextSpanElement</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">TextSpanElement</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-text-span-element-ro/index.html"><span class="identifier">TextSpanElementRo</span></a><span class="symbol">&lt;</span><a href="-text-element/index.html"><span class="identifier">TextElement</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-text-span-element-impl/index.html">TextSpanElementImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">TextSpanElementImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-text-span-element/index.html"><span class="identifier">TextSpanElement</span></a><span class="symbol">, </span><a href="../com.acornui.component/-element-parent/index.html"><span class="identifier">ElementParent</span></a><span class="symbol">&lt;</span><a href="-text-element/index.html"><span class="identifier">TextElement</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.component.style/-styleable/index.html"><span class="identifier">Styleable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-text-span-element-ro/index.html">TextSpanElementRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">TextSpanElementRo</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-text-element-ro/index.html"><span class="identifier">TextElementRo</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-element-parent-ro/index.html"><span class="identifier">ElementParentRo</span></a><span class="symbol">&lt;</span><a href="-text-span-element-ro/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-text-validation-flags/index.html">TextValidationFlags</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">TextValidationFlags</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-tf-char/index.html">TfChar</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TfChar</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-text-element/index.html"><span class="identifier">TextElement</span></a><span class="symbol">, </span><a href="../com.acornui.collection/-clearable/index.html"><span class="identifier">Clearable</span></a></code>
+<p>Represents a single character, typically within a <a href="-text-span-element/index.html">TextSpanElement</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-tf-char-style/index.html">TfCharStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TfCharStyle</span></code></td>
+</tr>
 </tbody>
 </table>
 <h3>Properties</h3>
 <table>
 <tbody>
+<tr>
+<td>
+<p><a href="baseline.html">baseline</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="-text-element-ro/index.html"><span class="identifier">TextElementRo</span></a><span class="symbol">.</span><span class="identifier">baseline</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="line-height.html">lineHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="-text-element-ro/index.html"><span class="identifier">TextElementRo</span></a><span class="symbol">.</span><span class="identifier">lineHeight</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
 <tr>
 <td>
 <p><a href="selectable.html">selectable</a></p>
@@ -108,6 +348,22 @@ this component allows mixed content as opposed to plain text.</p>
 <code><span class="keyword">var </span><a href="-text-field/index.html"><span class="identifier">TextField</span></a><span class="symbol">.</span><span class="identifier">selectable</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code><br/>
 <code><span class="keyword">var </span><a href="-text-input/index.html"><span class="identifier">TextInput</span></a><span class="symbol">.</span><span class="identifier">selectable</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code><br/>
 <code><span class="keyword">var </span><a href="-text-area/index.html"><span class="identifier">TextArea</span></a><span class="symbol">.</span><span class="identifier">selectable</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="text-field-x.html">textFieldX</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="-text-element-ro/index.html"><span class="identifier">TextElementRo</span></a><span class="symbol">.</span><span class="identifier">textFieldX</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code><br/>
+<code><span class="keyword">val </span><a href="-text-span-element-ro/index.html"><span class="identifier">TextSpanElementRo</span></a><span class="symbol">&lt;</span><a href="-text-element-ro/index.html"><span class="identifier">TextElementRo</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">textFieldX</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="text-field-y.html">textFieldY</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="-text-element-ro/index.html"><span class="identifier">TextElementRo</span></a><span class="symbol">.</span><span class="identifier">textFieldY</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code><br/>
+<code><span class="keyword">val </span><a href="-text-span-element-ro/index.html"><span class="identifier">TextSpanElementRo</span></a><span class="symbol">&lt;</span><a href="-text-element-ro/index.html"><span class="identifier">TextElementRo</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">textFieldY</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
 </tr>
 </tbody>
 </table>
@@ -119,7 +375,7 @@ this component allows mixed content as opposed to plain text.</p>
 <p><a href="back-color.html">backColor</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">backColor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$backColor(com.acornui.component.text.TextCommander, com.acornui.graphics.Color)/color">color</span><span class="symbol">:</span>&nbsp;<span class="identifier">Color</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">backColor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$backColor(com.acornui.component.text.TextCommander, com.acornui.graphics.Color)/color">color</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.graphics/-color/index.html"><span class="identifier">Color</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -161,7 +417,7 @@ this component allows mixed content as opposed to plain text.</p>
 <p><a href="editable-text.html">editableText</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">editableText</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$editableText(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.text.EditableTextField, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-editable-text-field/index.html"><span class="identifier">EditableTextField</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-editable-text-field/index.html"><span class="identifier">EditableTextField</span></a></code></td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">editableText</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$editableText(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.text.GlEditableTextField, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-gl-editable-text-field/index.html"><span class="identifier">GlEditableTextField</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-gl-editable-text-field/index.html"><span class="identifier">GlEditableTextField</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -189,7 +445,7 @@ this component allows mixed content as opposed to plain text.</p>
 <p><a href="fore-color.html">foreColor</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">foreColor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$foreColor(com.acornui.component.text.TextCommander, com.acornui.graphics.Color)/color">color</span><span class="symbol">:</span>&nbsp;<span class="identifier">Color</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">foreColor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$foreColor(com.acornui.component.text.TextCommander, com.acornui.graphics.Color)/color">color</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.graphics/-color/index.html"><span class="identifier">Color</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -200,10 +456,19 @@ this component allows mixed content as opposed to plain text.</p>
 </tr>
 <tr>
 <td>
+<p><a href="get-font.html">getFont</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getFont</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$getFont(com.acornui.component.text.CharStyle, kotlin.Boolean)/charStyle">charStyle</span><span class="symbol">:</span>&nbsp;<a href="-char-style/index.html"><span class="identifier">CharStyle</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text$getFont(com.acornui.component.text.CharStyle, kotlin.Boolean)/warnOnNotFound">warnOnNotFound</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;true<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.async/-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="-bitmap-font/index.html"><span class="identifier">BitmapFont</span></a><span class="symbol">&gt;</span><span class="symbol">?</span></code>
+<p>Retrieves the bitmap font based on the char style.</p>
+</td>
+</tr>
+<tr>
+<td>
 <p><a href="hilite-color.html">hiliteColor</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">hiliteColor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$hiliteColor(com.acornui.component.text.TextCommander, com.acornui.graphics.Color)/color">color</span><span class="symbol">:</span>&nbsp;<span class="identifier">Color</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">hiliteColor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$hiliteColor(com.acornui.component.text.TextCommander, com.acornui.graphics.Color)/color">color</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.graphics/-color/index.html"><span class="identifier">Color</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -298,6 +563,34 @@ this component allows mixed content as opposed to plain text.</p>
 </tr>
 <tr>
 <td>
+<p><a href="load-font-from-atlas.html">loadFontFromAtlas</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">loadFontFromAtlas</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$loadFontFromAtlas(com.acornui.core.di.Scoped, com.acornui.component.text.FontStyleRo, kotlin.String, kotlin.String, com.acornui.core.assets.CachedGroup)/fontStyle">fontStyle</span><span class="symbol">:</span>&nbsp;<a href="-font-style-ro/index.html"><span class="identifier">FontStyleRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text$loadFontFromAtlas(com.acornui.core.di.Scoped, com.acornui.component.text.FontStyleRo, kotlin.String, kotlin.String, com.acornui.core.assets.CachedGroup)/fntPath">fntPath</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text$loadFontFromAtlas(com.acornui.core.di.Scoped, com.acornui.component.text.FontStyleRo, kotlin.String, kotlin.String, com.acornui.core.assets.CachedGroup)/atlasPath">atlasPath</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text$loadFontFromAtlas(com.acornui.core.di.Scoped, com.acornui.component.text.FontStyleRo, kotlin.String, kotlin.String, com.acornui.core.assets.CachedGroup)/group">group</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.assets/-cached-group/index.html"><span class="identifier">CachedGroup</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.async/-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="-bitmap-font/index.html"><span class="identifier">BitmapFont</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="load-font-from-dir.html">loadFontFromDir</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">loadFontFromDir</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$loadFontFromDir(com.acornui.core.di.Owned, com.acornui.component.text.FontStyleRo, kotlin.String)/fontStyle">fontStyle</span><span class="symbol">:</span>&nbsp;<a href="-font-style-ro/index.html"><span class="identifier">FontStyleRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text$loadFontFromDir(com.acornui.core.di.Owned, com.acornui.component.text.FontStyleRo, kotlin.String)/fntPath">fntPath</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.async/-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="-bitmap-font/index.html"><span class="identifier">BitmapFont</span></a><span class="symbol">&gt;</span></code>
+<p>An overload of <a href="load-font-from-dir.html">loadFontFromDir</a> where the images directory is assumed to be the parent directory of the font data file.</p>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">loadFontFromDir</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$loadFontFromDir(com.acornui.core.di.Owned, com.acornui.component.text.FontStyleRo, kotlin.String, kotlin.String)/fontStyle">fontStyle</span><span class="symbol">:</span>&nbsp;<a href="-font-style-ro/index.html"><span class="identifier">FontStyleRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text$loadFontFromDir(com.acornui.core.di.Owned, com.acornui.component.text.FontStyleRo, kotlin.String, kotlin.String)/fntPath">fntPath</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text$loadFontFromDir(com.acornui.core.di.Owned, com.acornui.component.text.FontStyleRo, kotlin.String, kotlin.String)/imagesDir">imagesDir</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.async/-deferred/index.html"><span class="identifier">Deferred</span></a><span class="symbol">&lt;</span><a href="-bitmap-font/index.html"><span class="identifier">BitmapFont</span></a><span class="symbol">&gt;</span></code>
+<p>Loads a font where the images are standalone files in the specified directory.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="measure-line-width.html">measureLineWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-bitmap-font-data/index.html"><span class="identifier">BitmapFontData</span></a><span class="symbol">.</span><span class="identifier">measureLineWidth</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$measureLineWidth(com.acornui.component.text.BitmapFontData, kotlin.String)/text">text</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Measures the width of a line with this font.
+Does not consider line breaks.</p>
+</td>
+</tr>
+<tr>
+<td>
 <p><a href="outdent.html">outdent</a></p>
 </td>
 <td>
@@ -322,7 +615,7 @@ this component allows mixed content as opposed to plain text.</p>
 <p><a href="query-color.html">queryColor</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">queryColor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$queryColor(com.acornui.component.text.TextCommander, com.acornui.component.text.TextCommand)/command">command</span><span class="symbol">:</span>&nbsp;<a href="-text-command/index.html"><span class="identifier">TextCommand</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Color</span></code></td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">queryColor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$queryColor(com.acornui.component.text.TextCommander, com.acornui.component.text.TextCommand)/command">command</span><span class="symbol">:</span>&nbsp;<a href="-text-command/index.html"><span class="identifier">TextCommand</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.graphics/-color/index.html"><span class="identifier">Color</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -365,6 +658,13 @@ text.substring(0, startIndex) + newText + text.substring(endIndex, text.length)<
 </tr>
 <tr>
 <td>
+<p><a href="span.html">span</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">span</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$span(kotlin.Function1((com.acornui.component.text.TextSpanElement, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-text-span-element/index.html"><span class="identifier">TextSpanElement</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-text-span-element-impl/index.html"><span class="identifier">TextSpanElementImpl</span></a></code></td>
+</tr>
+<tr>
+<td>
 <p><a href="strike-through.html">strikeThrough</a></p>
 </td>
 <td>
@@ -396,9 +696,9 @@ text.substring(0, startIndex) + newText + text.substring(endIndex, text.length)<
 <p><a href="text.html">text</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">text</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$text(com.acornui.core.di.Owned, kotlin.String, kotlin.Function1((com.acornui.component.text.TextField, kotlin.Unit)))/text">text</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text$text(com.acornui.core.di.Owned, kotlin.String, kotlin.Function1((com.acornui.component.text.TextField, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-text-field/index.html"><span class="identifier">TextField</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-text-field/index.html"><span class="identifier">TextField</span></a></code>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">text</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$text(com.acornui.core.di.Owned, kotlin.String, kotlin.Function1((com.acornui.component.text.GlTextField, kotlin.Unit)))/text">text</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text$text(com.acornui.core.di.Owned, kotlin.String, kotlin.Function1((com.acornui.component.text.GlTextField, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-gl-text-field/index.html"><span class="identifier">GlTextField</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-gl-text-field/index.html"><span class="identifier">GlTextField</span></a></code>
 <p>Creates a <a href="-text-field/index.html">TextField</a> implementation with the provided text content.</p>
-<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">text</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$text(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.text.TextField, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-text-field/index.html"><span class="identifier">TextField</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-text-field/index.html"><span class="identifier">TextField</span></a></code>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">text</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$text(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.text.GlTextField, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-gl-text-field/index.html"><span class="identifier">GlTextField</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-gl-text-field/index.html"><span class="identifier">GlTextField</span></a></code>
 <p>Creates a <a href="-text-field/index.html">TextField</a> implementation.</p>
 </td>
 </tr>
@@ -407,14 +707,21 @@ text.substring(0, startIndex) + newText + text.substring(endIndex, text.length)<
 <p><a href="text-area.html">textArea</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">textArea</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$textArea(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.text.TextArea, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-text-area/index.html"><span class="identifier">TextArea</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-text-area/index.html"><span class="identifier">TextArea</span></a></code></td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">textArea</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$textArea(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.text.GlTextArea, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-gl-text-area/index.html"><span class="identifier">GlTextArea</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-gl-text-area/index.html"><span class="identifier">GlTextArea</span></a></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="text-input.html">textInput</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">textInput</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$textInput(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.text.TextInput, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-text-input/index.html"><span class="identifier">TextInput</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-text-input/index.html"><span class="identifier">TextInput</span></a></code></td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">textInput</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$textInput(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.text.GlTextInput, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-gl-text-input/index.html"><span class="identifier">GlTextInput</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-gl-text-input/index.html"><span class="identifier">GlTextInput</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="to-font-style.html">toFontStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-char-style/index.html"><span class="identifier">CharStyle</span></a><span class="symbol">.</span><span class="identifier">toFontStyle</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$toFontStyle(com.acornui.component.text.CharStyle, com.acornui.component.text.FontStyle)/out">out</span><span class="symbol">:</span>&nbsp;<a href="-font-style/index.html"><span class="identifier">FontStyle</span></a>&nbsp;<span class="symbol">=</span>&nbsp;FontStyle()<span class="symbol">)</span><span class="symbol">: </span><a href="-font-style/index.html"><span class="identifier">FontStyle</span></a></code></td>
 </tr>
 <tr>
 <td>

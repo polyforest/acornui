@@ -30,7 +30,7 @@
 <p><a href="mouse-down.html">mouseDown</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">mouseDown</span><span class="symbol">: </span><span class="identifier">Signal1</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-mouse-interaction/index.html"><span class="identifier">MouseInteraction</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">mouseDown</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal1/index.html"><span class="identifier">Signal1</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-mouse-interaction/index.html"><span class="identifier">MouseInteraction</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched when the user has pressed down (either via mouse or touch)
 Do not keep a reference to this event, it will be recycled.</p>
 </td>
@@ -40,7 +40,7 @@ Do not keep a reference to this event, it will be recycled.</p>
 <p><a href="mouse-move.html">mouseMove</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">mouseMove</span><span class="symbol">: </span><span class="identifier">Signal1</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-mouse-interaction/index.html"><span class="identifier">MouseInteraction</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">mouseMove</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal1/index.html"><span class="identifier">Signal1</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-mouse-interaction/index.html"><span class="identifier">MouseInteraction</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched when the user has moved their mouse, or pressed down on a touch surface and moved.</p>
 </td>
 </tr>
@@ -49,7 +49,7 @@ Do not keep a reference to this event, it will be recycled.</p>
 <p><a href="mouse-up.html">mouseUp</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">mouseUp</span><span class="symbol">: </span><span class="identifier">Signal1</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-mouse-interaction/index.html"><span class="identifier">MouseInteraction</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">mouseUp</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal1/index.html"><span class="identifier">Signal1</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-mouse-interaction/index.html"><span class="identifier">MouseInteraction</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched when the user has released from a touch down (either via mouse or touch)
 Do not keep a reference to this event, it will be recycled.</p>
 </td>
@@ -59,7 +59,7 @@ Do not keep a reference to this event, it will be recycled.</p>
 <p><a href="mouse-wheel.html">mouseWheel</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">mouseWheel</span><span class="symbol">: </span><span class="identifier">Signal1</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-wheel-interaction/index.html"><span class="identifier">WheelInteraction</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">mouseWheel</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal1/index.html"><span class="identifier">Signal1</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-wheel-interaction/index.html"><span class="identifier">WheelInteraction</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched when the user has used the mouse wheel.</p>
 </td>
 </tr>
@@ -68,28 +68,28 @@ Do not keep a reference to this event, it will be recycled.</p>
 <p><a href="touch-cancel.html">touchCancel</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">touchCancel</span><span class="symbol">: </span><span class="identifier">Signal1</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-touch-interaction/index.html"><span class="identifier">TouchInteraction</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">touchCancel</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal1/index.html"><span class="identifier">Signal1</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-touch-interaction/index.html"><span class="identifier">TouchInteraction</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="touch-end.html">touchEnd</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">touchEnd</span><span class="symbol">: </span><span class="identifier">Signal1</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-touch-interaction/index.html"><span class="identifier">TouchInteraction</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">touchEnd</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal1/index.html"><span class="identifier">Signal1</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-touch-interaction/index.html"><span class="identifier">TouchInteraction</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="touch-move.html">touchMove</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">touchMove</span><span class="symbol">: </span><span class="identifier">Signal1</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-touch-interaction/index.html"><span class="identifier">TouchInteraction</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">touchMove</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal1/index.html"><span class="identifier">Signal1</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-touch-interaction/index.html"><span class="identifier">TouchInteraction</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
 <p><a href="touch-start.html">touchStart</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">touchStart</span><span class="symbol">: </span><span class="identifier">Signal1</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-touch-interaction/index.html"><span class="identifier">TouchInteraction</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">touchStart</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal1/index.html"><span class="identifier">Signal1</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-touch-interaction/index.html"><span class="identifier">TouchInteraction</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -101,7 +101,7 @@ Do not keep a reference to this event, it will be recycled.</p>
 <p><a href="../-mouse-state/over-canvas-changed.html">overCanvasChanged</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">overCanvasChanged</span><span class="symbol">: </span><span class="identifier">Signal1</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">overCanvasChanged</span><span class="symbol">: </span><a href="../../com.acornui.signal/-signal1/index.html"><span class="identifier">Signal1</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">&gt;</span></code>
 <p>Dispatched when the mouse has entered or left the canvas.
 Note: This is not 100% reliable in most browsers.</p>
 </td>
@@ -141,7 +141,7 @@ Note: This is not 100% reliable in most browsers.</p>
 <p><a href="../-mouse-state/mouse-position.html">mousePosition</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">mousePosition</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.MouseState$mousePosition(com.acornui.math.Vector2)/out">out</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector2</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector2</span></code>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">mousePosition</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.MouseState$mousePosition(com.acornui.math.Vector2)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.math/-vector2/index.html"><span class="identifier">Vector2</span></a></code>
 <p>Sets the <a href="../-mouse-state/mouse-position.html#com.acornui.core.input.MouseState$mousePosition(com.acornui.math.Vector2)/out">out</a> vector to the current canvas position.</p>
 </td>
 </tr>

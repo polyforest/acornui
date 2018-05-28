@@ -1,0 +1,125 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>BitmapFontData - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.text</a>&nbsp;/&nbsp;<a href="./index.html">BitmapFontData</a><br/>
+<br/>
+<h1>BitmapFontData</h1>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">BitmapFontData</span></code>
+<p>Data representing a bitmap font.</p>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">BitmapFontData</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text.BitmapFontData$<init>(com.acornui.component.text.FontStyleRo, kotlin.collections.List((com.acornui.component.text.BitmapFontPageData)), kotlin.collections.Map((kotlin.Char, com.acornui.component.text.GlyphData)), kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/fontStyle">fontStyle</span><span class="symbol">:</span>&nbsp;<a href="../-font-style-ro/index.html"><span class="identifier">FontStyleRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text.BitmapFontData$<init>(com.acornui.component.text.FontStyleRo, kotlin.collections.List((com.acornui.component.text.BitmapFontPageData)), kotlin.collections.Map((kotlin.Char, com.acornui.component.text.GlyphData)), kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/pages">pages</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-bitmap-font-page-data/index.html"><span class="identifier">BitmapFontPageData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text.BitmapFontData$<init>(com.acornui.component.text.FontStyleRo, kotlin.collections.List((com.acornui.component.text.BitmapFontPageData)), kotlin.collections.Map((kotlin.Char, com.acornui.component.text.GlyphData)), kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/glyphs">glyphs</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html"><span class="identifier">Char</span></a><span class="symbol">,</span>&nbsp;<a href="../-glyph-data/index.html"><span class="identifier">GlyphData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text.BitmapFontData$<init>(com.acornui.component.text.FontStyleRo, kotlin.collections.List((com.acornui.component.text.BitmapFontPageData)), kotlin.collections.Map((kotlin.Char, com.acornui.component.text.GlyphData)), kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/lineHeight">lineHeight</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text.BitmapFontData$<init>(com.acornui.component.text.FontStyleRo, kotlin.collections.List((com.acornui.component.text.BitmapFontPageData)), kotlin.collections.Map((kotlin.Char, com.acornui.component.text.GlyphData)), kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/baseline">baseline</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text.BitmapFontData$<init>(com.acornui.component.text.FontStyleRo, kotlin.collections.List((com.acornui.component.text.BitmapFontPageData)), kotlin.collections.Map((kotlin.Char, com.acornui.component.text.GlyphData)), kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/pageW">pageW</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text.BitmapFontData$<init>(com.acornui.component.text.FontStyleRo, kotlin.collections.List((com.acornui.component.text.BitmapFontPageData)), kotlin.collections.Map((kotlin.Char, com.acornui.component.text.GlyphData)), kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/pageH">pageH</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span></code>
+<p>Data representing a bitmap font.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="baseline.html">baseline</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">baseline</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The baseline is the line upon which most letters "sit" and below which descenders extend.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="font-style.html">fontStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">fontStyle</span><span class="symbol">: </span><a href="../-font-style-ro/index.html"><span class="identifier">FontStyleRo</span></a></code>
+<p>The style of the glyphs packed in this font. (font face, size, bold, italic)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="glyphs.html">glyphs</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">glyphs</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html"><span class="identifier">Char</span></a><span class="symbol">,</span>&nbsp;<a href="../-glyph-data/index.html"><span class="identifier">GlyphData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="line-height.html">lineHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">lineHeight</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The distance from one line of text to the next.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="page-h.html">pageH</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">pageH</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The height of the texture pages.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="page-w.html">pageW</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">pageW</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The width of the texture pages.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="pages.html">pages</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">pages</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-bitmap-font-page-data/index.html"><span class="identifier">BitmapFontPageData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="get-glyph-safe.html">getGlyphSafe</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getGlyphSafe</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text.BitmapFontData$getGlyphSafe(kotlin.Char)/char">char</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html"><span class="identifier">Char</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-glyph-data/index.html"><span class="identifier">GlyphData</span></a></code>
+<p>Returns the glyph associated with the provided <a href="get-glyph-safe.html#com.acornui.component.text.BitmapFontData$getGlyphSafe(kotlin.Char)/char">char</a>. If the glyph is not found, if the <a href="get-glyph-safe.html#com.acornui.component.text.BitmapFontData$getGlyphSafe(kotlin.Char)/char">char</a> is whitespace,
+an empty glyph will be returned. If the glyph is not found and is not whitespace, a missing glyph placeholder
+will be returned.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../measure-line-width.html">measureLineWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">BitmapFontData</span></a><span class="symbol">.</span><span class="identifier">measureLineWidth</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$measureLineWidth(com.acornui.component.text.BitmapFontData, kotlin.String)/text">text</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Measures the width of a line with this font.
+Does not consider line breaks.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,66 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>StringTokenizer - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.string</a>&nbsp;/&nbsp;<a href="./index.html">StringTokenizer</a><br/>
+<br/>
+<h1>StringTokenizer</h1>
+<code><span class="keyword">class </span><span class="identifier">StringTokenizer</span></code>
+<h3>Parameters</h3>
+<p><a name="str"></a>
+<code>str</code> - </p>
+<p><a name="delimiters"></a>
+<code>delimiters</code> - </p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">StringTokenizer</span><span class="symbol">(</span><span class="identifier" id="com.acornui.string.StringTokenizer$<init>(kotlin.String, kotlin.String)/str">str</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.string.StringTokenizer$<init>(kotlin.String, kotlin.String)/delimiters">delimiters</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;" \t\n\r"<span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="count-tokens.html">countTokens</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">countTokens</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Calculates the number of times that this tokenizer's
+<code>nextToken</code> method can be called before it generates an
+exception. The current position is not advanced.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="has-more-tokens.html">hasMoreTokens</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">hasMoreTokens</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Tests if there are more tokens available from this tokenizer's string.
+If this method returns true, then a subsequent call to
+nextToken with no argument will successfully return a token.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="next-token.html">nextToken</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">nextToken</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>Returns the next token from this string tokenizer.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

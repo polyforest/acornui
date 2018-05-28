@@ -1,0 +1,593 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Matrix4 - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.math</a>&nbsp;/&nbsp;<a href="./index.html">Matrix4</a><br/>
+<br/>
+<h1>Matrix4</h1>
+<code><span class="keyword">class </span><span class="identifier">Matrix4</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-matrix4-ro/index.html"><span class="identifier">Matrix4Ro</span></a></code>
+<p>Encapsulates a column major 4 by 4 matrix. Like
+the {@link Vector3} class it allows the chaining of methods by returning a reference to itself. For example:</p>
+<p><strong>Author</strong><br/>
+badlogicgames@gmail.com</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">Matrix4</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$<init>(kotlin.collections.MutableList((kotlin.Float)))/values">values</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;arrayListOf(
+				1f, 0f, 0f, 0f,
+				0f, 1f, 0f, 0f,
+				0f, 0f, 1f, 0f,
+				0f, 0f, 0f, 1f)<span class="symbol">)</span></code>
+<p>Encapsulates a column major 4 by 4 matrix. Like
+the {@link Vector3} class it allows the chaining of methods by returning a reference to itself. For example:</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="translation-x.html">translationX</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">translationX</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The x translation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="translation-y.html">translationY</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">translationY</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The y translation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="translation-z.html">translationZ</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">translationZ</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The z translation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="values.html">values</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">values</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="det.html">det</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">det</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="det3x3.html">det3x3</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">det3x3</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="equals.html">equals</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">equals</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$equals(kotlin.Any)/other">other</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="extract4x3-matrix.html">extract4x3Matrix</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">extract4x3Matrix</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$extract4x3Matrix(kotlin.collections.MutableList((kotlin.Float)))/out">out</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span></code>
+<p>Copies the 4x3 upper-left sub-matrix into float array. The destination array is supposed to be a column major matrix.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-rotation.html">getRotation</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getRotation</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$getRotation(com.acornui.math.Quaternion, kotlin.Boolean)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-quaternion/index.html"><span class="identifier">Quaternion</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$getRotation(com.acornui.math.Quaternion, kotlin.Boolean)/normalizeAxes">normalizeAxes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-quaternion/index.html"><span class="identifier">Quaternion</span></a></code>
+<p>Gets the rotation of this matrix.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-scale.html">getScale</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getScale</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$getScale(com.acornui.math.Vector3)/scale">scale</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector3/index.html"><span class="identifier">Vector3</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-scale-x.html">getScaleX</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getScaleX</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-scale-x-squared.html">getScaleXSquared</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getScaleXSquared</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-scale-y.html">getScaleY</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getScaleY</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-scale-y-squared.html">getScaleYSquared</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getScaleYSquared</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-scale-z.html">getScaleZ</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getScaleZ</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-scale-z-squared.html">getScaleZSquared</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getScaleZSquared</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-translation.html">getTranslation</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getTranslation</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$getTranslation(com.acornui.math.Vector3)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector3/index.html"><span class="identifier">Vector3</span></a></code>
+<p>Sets the provided position Vector3 with the translation of this Matrix</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="hash-code.html">hashCode</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">hashCode</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="idt.html">idt</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">idt</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Sets the matrix to an identity matrix.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="inv.html">inv</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">inv</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Inverts the matrix. Stores the result in this matrix.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="mul.html">mul</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">mul</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$mul(com.acornui.math.Matrix4Ro)/matrix">matrix</span><span class="symbol">:</span>&nbsp;<a href="../-matrix4-ro/index.html"><span class="identifier">Matrix4Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Postmultiplies this matrix with the given matrix, storing the result in this matrix. For example:</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="mul-left.html">mulLeft</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">mulLeft</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$mulLeft(com.acornui.math.Matrix4Ro)/matrix">matrix</span><span class="symbol">:</span>&nbsp;<a href="../-matrix4-ro/index.html"><span class="identifier">Matrix4Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Premultiplies this matrix with the given matrix, storing the result in this matrix. For example:</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="prj.html">prj</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">prj</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$prj(com.acornui.math.Vector3)/vec">vec</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector3/index.html"><span class="identifier">Vector3</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">prj</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$prj(com.acornui.math.Vector2)/vec">vec</span><span class="symbol">:</span>&nbsp;<a href="../-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector2/index.html"><span class="identifier">Vector2</span></a></code>
+<p>Multiplies the vector with this matrix, performing a division by w.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="rot.html">rot</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">rot</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$rot(com.acornui.math.Vector3)/vec">vec</span><span class="symbol">:</span>&nbsp;<a href="../-vector3/index.html"><span class="identifier">Vector3</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector3/index.html"><span class="identifier">Vector3</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">rot</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$rot(com.acornui.math.Vector2)/vec">vec</span><span class="symbol">:</span>&nbsp;<a href="../-vector2/index.html"><span class="identifier">Vector2</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-vector2/index.html"><span class="identifier">Vector2</span></a></code>
+<p>Multiplies the vector with the top most 3x3 sub-matrix of this matrix.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="rotate.html">rotate</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$rotate(com.acornui.math.Vector3Ro, kotlin.Float)/axis">axis</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$rotate(com.acornui.math.Vector3Ro, kotlin.Float)/radians">radians</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$rotate(com.acornui.math.QuaternionRo)/rotation">rotation</span><span class="symbol">:</span>&nbsp;<a href="../-quaternion-ro/index.html"><span class="identifier">QuaternionRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Postmultiplies this matrix with a (counter-clockwise) rotation matrix. Postmultiplication is also used by OpenGL ES' 1.x
+glTranslate/glRotate/glScale.</p>
+<code><span class="keyword">fun </span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/axisX">axisX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/axisY">axisY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/axisZ">axisZ</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/radians">radians</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Postmultiplies this matrix with a (counter-clockwise) rotation matrix. Postmultiplication is also used by OpenGL ES' 1.x
+glTranslate/glRotate/glScale</p>
+<code><span class="keyword">fun </span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$rotate(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/v1">v1</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$rotate(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/v2">v2</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Postmultiplies this matrix by the rotation between two vectors.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="scale.html">scale</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">scale</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$scale(com.acornui.math.Vector3Ro)/scale">scale</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">scale</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$scale(kotlin.Float, kotlin.Float, kotlin.Float)/scaleX">scaleX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$scale(kotlin.Float, kotlin.Float, kotlin.Float)/scaleY">scaleY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$scale(kotlin.Float, kotlin.Float, kotlin.Float)/scaleZ">scaleZ</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Postmultiplies this matrix with a scale matrix.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="scl.html">scl</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">scl</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$scl(com.acornui.math.Vector3Ro)/scale">scale</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">scl</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$scl(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$scl(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$scl(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">scl</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$scl(kotlin.Float)/scale">scale</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="set.html">set</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$set(com.acornui.math.Matrix4Ro)/matrix">matrix</span><span class="symbol">:</span>&nbsp;<a href="../-matrix4-ro/index.html"><span class="identifier">Matrix4Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Sets this matrix to the given matrix.</p>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.collections.List((kotlin.Float)))/values">values</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Sets the matrix to the given matrix as a float array. The float array must have at least 16 elements; the first 16 will be
+copied.</p>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$set(com.acornui.math.QuaternionRo)/quaternion">quaternion</span><span class="symbol">:</span>&nbsp;<a href="../-quaternion-ro/index.html"><span class="identifier">QuaternionRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/quaternionX">quaternionX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/quaternionY">quaternionY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/quaternionZ">quaternionZ</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/quaternionW">quaternionW</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Sets the matrix to a rotation matrix representing the quaternion.</p>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$set(com.acornui.math.Vector3Ro, com.acornui.math.QuaternionRo)/position">position</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(com.acornui.math.Vector3Ro, com.acornui.math.QuaternionRo)/orientation">orientation</span><span class="symbol">:</span>&nbsp;<a href="../-quaternion-ro/index.html"><span class="identifier">QuaternionRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Set this matrix to the specified translation and rotation.</p>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/translationX">translationX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/translationY">translationY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/translationZ">translationZ</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/quaternionX">quaternionX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/quaternionY">quaternionY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/quaternionZ">quaternionZ</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/quaternionW">quaternionW</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/translationX">translationX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/translationY">translationY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/translationZ">translationZ</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/quaternionX">quaternionX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/quaternionY">quaternionY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/quaternionZ">quaternionZ</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/quaternionW">quaternionW</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/scaleX">scaleX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/scaleY">scaleY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/scaleZ">scaleZ</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Sets the matrix to a rotation matrix representing the translation and quaternion.</p>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$set(com.acornui.math.Vector3Ro, com.acornui.math.Quaternion, com.acornui.math.Vector3Ro)/position">position</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(com.acornui.math.Vector3Ro, com.acornui.math.Quaternion, com.acornui.math.Vector3Ro)/orientation">orientation</span><span class="symbol">:</span>&nbsp;<a href="../-quaternion/index.html"><span class="identifier">Quaternion</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(com.acornui.math.Vector3Ro, com.acornui.math.Quaternion, com.acornui.math.Vector3Ro)/scale">scale</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Set this matrix to the specified translation, rotation and scale.</p>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$set(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/xAxis">xAxis</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/yAxis">yAxis</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/zAxis">zAxis</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$set(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/pos">pos</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Sets the four columns of the matrix which correspond to the x-, y- and z-axis of the vector space this matrix creates as
+well as the 4th column representing the translation of any point that is multiplied by this matrix.</p>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$set(com.acornui.math.Matrix3Ro)/mat">mat</span><span class="symbol">:</span>&nbsp;<a href="../-matrix3-ro/index.html"><span class="identifier">Matrix3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Sets this matrix to the given 3x3 matrix. The third column of this matrix is set to (0,0,1,0).</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set-from-euler-angles-rad.html">setFromEulerAnglesRad</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">setFromEulerAnglesRad</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$setFromEulerAnglesRad(kotlin.Float, kotlin.Float, kotlin.Float)/yaw">yaw</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$setFromEulerAnglesRad(kotlin.Float, kotlin.Float, kotlin.Float)/pitch">pitch</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$setFromEulerAnglesRad(kotlin.Float, kotlin.Float, kotlin.Float)/roll">roll</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Sets this matrix to a rotation matrix from the given euler angles.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set-to-global.html">setToGlobal</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">setToGlobal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$setToGlobal(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/position">position</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$setToGlobal(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/forward">forward</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$setToGlobal(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/up">up</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="set-to-look-at.html">setToLookAt</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">setToLookAt</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$setToLookAt(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/direction">direction</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$setToLookAt(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/up">up</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Sets the matrix to a look at matrix with a direction and an up vector. Multiply with a translation matrix to get a camera
+model view matrix.</p>
+<code><span class="keyword">fun </span><span class="identifier">setToLookAt</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$setToLookAt(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/position">position</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$setToLookAt(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/target">target</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$setToLookAt(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro)/up">up</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Sets this matrix to a look at matrix with the given position, target and up vector.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set-translation.html">setTranslation</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">setTranslation</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$setTranslation(com.acornui.math.Vector3Ro)/vector">vector</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">setTranslation</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$setTranslation(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$setTranslation(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$setTranslation(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Sets the 4th column to the translation vector.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="shear-z.html">shearZ</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">shearZ</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$shearZ(kotlin.Float, kotlin.Float)/shearXZ">shearXZ</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$shearZ(kotlin.Float, kotlin.Float)/shearYZ">shearYZ</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Postmultiplies this matrix by a shear matrix on the z axis.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="to-normal-matrix.html">toNormalMatrix</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">toNormalMatrix</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>removes the translational part and transposes the matrix.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="to-string.html">toString</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">toString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="tra.html">tra</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">tra</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Transposes the matrix.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="translate.html">translate</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">translate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$translate(com.acornui.math.Vector3Ro)/translation">translation</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Postmultiplies this matrix by a translation matrix. Postmultiplication is also used by OpenGL ES'
+glTranslate/glRotate/glScale</p>
+<code><span class="keyword">fun </span><span class="identifier">translate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$translate(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$translate(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$translate(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Postmultiplies this matrix by a translation matrix. Postmultiplication is also used by OpenGL ES' 1.x
+glTranslate/glRotate/glScale.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="trn.html">trn</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">trn</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$trn(com.acornui.math.Vector3Ro)/vector">vector</span><span class="symbol">:</span>&nbsp;<a href="../-vector3-ro/index.html"><span class="identifier">Vector3Ro</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">trn</span><span class="symbol">(</span><span class="identifier" id="com.acornui.math.Matrix4$trn(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$trn(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.math.Matrix4$trn(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Adds a translational component to the matrix in the 4th column. The other columns are untouched.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-matrix4-ro/copy.html">copy</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">copy</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Copies this matrix. Note that the <a href="../-matrix4-ro/values.html">values</a> list will be copied as well and the new Matrix will not back the
+same list.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-i-d-e-n-t-i-t-y.html">IDENTITY</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">IDENTITY</span><span class="symbol">: </span><a href="../-matrix4-ro/index.html"><span class="identifier">Matrix4Ro</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-m00.html">M00</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">M00</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>XX: Typically the unrotated X component for scaling, also the cosine of the angle when rotated on the Y and/or Z axis. On
+Vector3 multiplication this value is multiplied with the source X component and added to the target X component.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-m01.html">M01</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">M01</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>XY: Typically the negative sine of the angle when rotated on the Z axis. On Vector3 multiplication this value is multiplied
+with the source Y component and added to the target X component.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-m02.html">M02</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">M02</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>XZ: Typically the sine of the angle when rotated on the Y axis. On Vector3 multiplication this value is multiplied with the
+source Z component and added to the target X component.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-m03.html">M03</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">M03</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>XW: Typically the translation of the X component. On Vector3 multiplication this value is added to the target X component.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-m10.html">M10</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">M10</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>YX: Typically the sine of the angle when rotated on the Z axis. On Vector3 multiplication this value is multiplied with the
+source X component and added to the target Y component.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-m11.html">M11</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">M11</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>YY: Typically the unrotated Y component for scaling, also the cosine of the angle when rotated on the X and/or Z axis. On
+Vector3 multiplication this value is multiplied with the source Y component and added to the target Y component.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-m12.html">M12</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">M12</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>YZ: Typically the negative sine of the angle when rotated on the X axis. On Vector3 multiplication this value is multiplied
+with the source Z component and added to the target Y component.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-m13.html">M13</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">M13</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>YW: Typically the translation of the Y component. On Vector3 multiplication this value is added to the target Y component.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-m20.html">M20</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">M20</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>ZX: Typically the negative sine of the angle when rotated on the Y axis. On Vector3 multiplication this value is multiplied
+with the source X component and added to the target Z component.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-m21.html">M21</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">M21</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>ZY: Typical the sine of the angle when rotated on the X axis. On Vector3 multiplication this value is multiplied with the
+source Y component and added to the target Z component.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-m22.html">M22</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">M22</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>ZZ: Typically the unrotated Z component for scaling, also the cosine of the angle when rotated on the X and/or Y axis. On
+Vector3 multiplication this value is multiplied with the source Z component and added to the target Z component.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-m23.html">M23</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">M23</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>ZW: Typically the translation of the Z component. On Vector3 multiplication this value is added to the target Z component.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-m30.html">M30</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">M30</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>WX: Typically the value zero. On Vector3 multiplication this value is ignored.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-m31.html">M31</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">M31</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>WY: Typically the value zero. On Vector3 multiplication this value is ignored.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-m32.html">M32</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">M32</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>WZ: Typically the value zero. On Vector3 multiplication this value is ignored.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-m33.html">M33</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">M33</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>WW: Typically the value one. On Vector3 multiplication this value is ignored.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.graphics/set-to-projection.html">setToProjection</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">Matrix4</span></a><span class="symbol">.</span><span class="identifier">setToProjection</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics$setToProjection(com.acornui.math.Matrix4, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/near">near</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$setToProjection(com.acornui.math.Matrix4, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/far">far</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$setToProjection(com.acornui.math.Matrix4, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/fovy">fovy</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$setToProjection(com.acornui.math.Matrix4, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/aspectRatio">aspectRatio</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Matrix4</span></a></code>
+<p>Sets the matrix to a projection matrix with a near- and far plane, a field of view in degrees and an aspect ratio. Note that
+the field of view specified is the angle in degrees for the height, the field of view for the width will be calculated
+according to the aspect ratio.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>
