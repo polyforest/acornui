@@ -1,0 +1,112 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>InteractivityManager - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.input</a>&nbsp;/&nbsp;<a href="./index.html">InteractivityManager</a><br/>
+<br/>
+<h1>InteractivityManager</h1>
+<code><span class="keyword">interface </span><span class="identifier">InteractivityManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<p>A manager that feeds user input as events to layout elements.</p>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">InteractivityManager</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="dispatch.html">dispatch</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">dispatch</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.InteractivityManager$dispatch(kotlin.Float, kotlin.Float, com.acornui.core.input.InteractionEvent, kotlin.Boolean, kotlin.Boolean)/canvasX">canvasX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.InteractivityManager$dispatch(kotlin.Float, kotlin.Float, com.acornui.core.input.InteractionEvent, kotlin.Boolean, kotlin.Boolean)/canvasY">canvasY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.InteractivityManager$dispatch(kotlin.Float, kotlin.Float, com.acornui.core.input.InteractionEvent, kotlin.Boolean, kotlin.Boolean)/event">event</span><span class="symbol">:</span>&nbsp;<a href="../-interaction-event/index.html"><span class="identifier">InteractionEvent</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.InteractivityManager$dispatch(kotlin.Float, kotlin.Float, com.acornui.core.input.InteractionEvent, kotlin.Boolean, kotlin.Boolean)/useCapture">useCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;true<span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.InteractivityManager$dispatch(kotlin.Float, kotlin.Float, com.acornui.core.input.InteractionEvent, kotlin.Boolean, kotlin.Boolean)/useBubble">useBubble</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;true<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Dispatches an interaction for the layout element at the given stage position.</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">dispatch</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.InteractivityManager$dispatch(com.acornui.component.UiComponentRo, com.acornui.core.input.InteractionEvent, kotlin.Boolean, kotlin.Boolean)/target">target</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.InteractivityManager$dispatch(com.acornui.component.UiComponentRo, com.acornui.core.input.InteractionEvent, kotlin.Boolean, kotlin.Boolean)/event">event</span><span class="symbol">:</span>&nbsp;<a href="../-interaction-event/index.html"><span class="identifier">InteractionEvent</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.InteractivityManager$dispatch(com.acornui.component.UiComponentRo, com.acornui.core.input.InteractionEvent, kotlin.Boolean, kotlin.Boolean)/useCapture">useCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;true<span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.InteractivityManager$dispatch(com.acornui.component.UiComponentRo, com.acornui.core.input.InteractionEvent, kotlin.Boolean, kotlin.Boolean)/useBubble">useBubble</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;true<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Dispatches an interaction for a single interactive element.
+This will first dispatch a capture event from the stage down to the given target, and then
+a bubbling event up to the stage.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-signal.html">getSignal</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a><span class="symbol">&gt;</span> <span class="identifier">getSignal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.InteractivityManager$getSignal(com.acornui.component.UiComponentRo, com.acornui.core.input.InteractionType((com.acornui.core.input.InteractivityManager.getSignal.T)), kotlin.Boolean)/host">host</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.InteractivityManager$getSignal(com.acornui.component.UiComponentRo, com.acornui.core.input.InteractionType((com.acornui.core.input.InteractivityManager.getSignal.T)), kotlin.Boolean)/type">type</span><span class="symbol">:</span>&nbsp;<a href="../-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="get-signal.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.InteractivityManager$getSignal(com.acornui.component.UiComponentRo, com.acornui.core.input.InteractionType((com.acornui.core.input.InteractivityManager.getSignal.T)), kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="get-signal.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Produces a new Signal for the specified interaction type.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="init.html">init</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">init</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.InteractivityManager$init(com.acornui.component.UiComponentRo)/root">root</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Initializes the interactivity manager with the root element for dispatching.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-d-key/extends.html">extends</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">extends</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-d-key/factory.html">factory</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">factory</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di.DKey$factory(com.acornui.core.di.Injector)/injector">injector</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-injector/index.html"><span class="identifier">Injector</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-d-key/index.html#T"><span class="identifier">T</span></a><span class="symbol">?</span></code>
+<p>A dependency key has an optional factory method, where if it provides a non-null value, the
+dependency doesn't need to be set before use, and the factory method will produce the default implementation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-d-key/to.html">to</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">infix</span> <span class="keyword">fun </span><span class="identifier">to</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di.DKey$to(com.acornui.core.di.DKey.T)/value">value</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-d-key/index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-dependency-pair/index.html"><span class="identifier">DependencyPair</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.di/-d-key/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-interactivity-manager-impl/index.html">InteractivityManagerImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">InteractivityManagerImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">InteractivityManager</span></a></code>
+<p>An implementation of InteractivityManager</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

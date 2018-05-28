@@ -1,0 +1,350 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.component.style - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.component.style</a><br/>
+<br/>
+<h2>Package com.acornui.component.style</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-always-filter/index.html">AlwaysFilter</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">AlwaysFilter</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style-filter/index.html"><span class="identifier">StyleFilter</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-ancestor-style-filter/index.html">AncestorStyleFilter</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">AncestorStyleFilter</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style-filter/index.html"><span class="identifier">StyleFilter</span></a></code>
+<p>Any ancestor passes the given child filter.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-and-style-filter/index.html">AndStyleFilter</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">AndStyleFilter</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style-filter/index.html"><span class="identifier">StyleFilter</span></a></code>
+<p>Returns the target if both <a href="#">operandA</a> or <a href="#">operandB</a> passes.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-and-then-style-filter/index.html">AndThenStyleFilter</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">AndThenStyleFilter</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style-filter/index.html"><span class="identifier">StyleFilter</span></a></code>
+<p>If <a href="#">operandA</a> passes, <a href="#">operandB</a> will be executed with the result from <a href="#">operandA</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-cascading-style-calculator/index.html">CascadingStyleCalculator</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">CascadingStyleCalculator</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style-calculator/index.html"><span class="identifier">StyleCalculator</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-noop-style/index.html">NoopStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">NoopStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style-base/index.html"><span class="identifier">StyleBase</span></a><span class="symbol">, </span><a href="-style-type/index.html"><span class="identifier">StyleType</span></a><span class="symbol">&lt;</span><a href="-noop-style/index.html"><span class="identifier">NoopStyle</span></a><span class="symbol">&gt;</span></code>
+<p>A Style object with no style properties.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-not-style-filter/index.html">NotStyleFilter</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">NotStyleFilter</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style-filter/index.html"><span class="identifier">StyleFilter</span></a></code>
+<p>Returns the target if <a href="#">operand</a> does not pass.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-or-style-filter/index.html">OrStyleFilter</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">OrStyleFilter</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style-filter/index.html"><span class="identifier">StyleFilter</span></a></code>
+<p>Returns the target if either <a href="#">operandA</a> or <a href="#">operandB</a> passes.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-parent-style-filter/index.html">ParentStyleFilter</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ParentStyleFilter</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style-filter/index.html"><span class="identifier">StyleFilter</span></a></code>
+<p>The direct parent passes the given child filter.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-style/index.html">Style</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Style</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style-ro/index.html"><span class="identifier">StyleRo</span></a><span class="symbol">, </span><span class="identifier">Clearable</span></code>
+<p>Readable-writable styles.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-style-base/index.html">StyleBase</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">StyleBase</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style/index.html"><span class="identifier">Style</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code>
+<p>The base class for a typical <a href="-style/index.html">Style</a> implementation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-style-calculator/index.html">StyleCalculator</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">StyleCalculator</span></code>
+<p>A style calculator is responsible for setting the calculated values</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-style-filter/index.html">StyleFilter</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">StyleFilter</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-style-prop/index.html">StyleProp</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">StyleProp</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.properties/-read-write-property/index.html"><span class="identifier">ReadWriteProperty</span></a><span class="symbol">&lt;</span><a href="-style/index.html"><span class="identifier">Style</span></a><span class="symbol">,</span>&nbsp;<a href="-style-prop/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-style-ro/index.html">StyleRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">StyleRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Observable</span></code>
+<p>A Style object contains maps of style properties.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-style-rule/index.html">StyleRule</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">StyleRule</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style-ro/index.html"><span class="identifier">StyleRo</span></a><span class="symbol">&gt;</span></code>
+<p>Holds a style object with explicit values that will be applied to the calculated values of the target style object
+when the filter passes.
+Entries will be applied in the order from deepest child to highest ancestor (the stage).</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-style-rule-debug-info/index.html">StyleRuleDebugInfo</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">StyleRuleDebugInfo</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-style-tag/index.html">StyleTag</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">StyleTag</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style-filter/index.html"><span class="identifier">StyleFilter</span></a></code>
+<p>Style tags are markers placed on the display hierarchy that are used for filtering which styles from <a href="-style-rule/index.html">StyleRule</a>
+objects are applied.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-style-type/index.html">StyleType</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">StyleType</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style-ro/index.html"><span class="identifier">StyleRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-style-validator/index.html">StyleValidator</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">StyleValidator</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-style-watcher/index.html">StyleWatcher</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">StyleWatcher</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style-ro/index.html"><span class="identifier">StyleRo</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-comparable/index.html"><span class="identifier">Comparable</span></a><span class="symbol">&lt;</span><a href="-style-watcher/index.html"><span class="identifier">StyleWatcher</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-styleable/index.html">Styleable</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Styleable</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-styleable-ro/index.html"><span class="identifier">StyleableRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-styleable-ro/index.html">StyleableRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">StyleableRo</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-styles-impl/index.html">StylesImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">StylesImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-target-style-filter/index.html">TargetStyleFilter</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TargetStyleFilter</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style-filter/index.html"><span class="identifier">StyleFilter</span></a></code>
+<p>The target contains the given tag.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extensions for External Classes</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="com.acornui.serialization.-writer/index.html">com.acornui.serialization.Writer</a></p>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="kotlin.collections.-list/index.html">kotlin.collections.List</a></p>
+</td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="no-skin.html">noSkin</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">noSkin</span><span class="symbol">: </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a></code>
+<p>Used as a placeholder for skin part factories that need to be declared in the skin.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="no-skin-optional.html">noSkinOptional</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">noSkinOptional</span><span class="symbol">: </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="add-style-rule.html">addStyleRule</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-styleable/index.html"><span class="identifier">Styleable</span></a><span class="symbol">.</span><span class="identifier">addStyleRule</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style$addStyleRule(com.acornui.component.style.Styleable, com.acornui.component.style.StyleRo, com.acornui.component.style.StyleFilter, kotlin.Float)/style">style</span><span class="symbol">:</span>&nbsp;<a href="-style-ro/index.html"><span class="identifier">StyleRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.style$addStyleRule(com.acornui.component.style.Styleable, com.acornui.component.style.StyleRo, com.acornui.component.style.StyleFilter, kotlin.Float)/filter">filter</span><span class="symbol">:</span>&nbsp;<a href="-style-filter/index.html"><span class="identifier">StyleFilter</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.style$addStyleRule(com.acornui.component.style.Styleable, com.acornui.component.style.StyleRo, com.acornui.component.style.StyleFilter, kotlin.Float)/priority">priority</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="-styleable/index.html"><span class="identifier">Styleable</span></a><span class="symbol">.</span><span class="identifier">addStyleRule</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style$addStyleRule(com.acornui.component.style.Styleable, com.acornui.component.style.StyleRo, kotlin.Float)/style">style</span><span class="symbol">:</span>&nbsp;<a href="-style-ro/index.html"><span class="identifier">StyleRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.style$addStyleRule(com.acornui.component.style.Styleable, com.acornui.component.style.StyleRo, kotlin.Float)/priority">priority</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="and.html">and</a></p>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><a href="-style-filter/index.html"><span class="identifier">StyleFilter</span></a><span class="symbol">.</span><span class="identifier">and</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style$and(com.acornui.component.style.StyleFilter, com.acornui.component.style.StyleFilter)/other">other</span><span class="symbol">:</span>&nbsp;<a href="-style-filter/index.html"><span class="identifier">StyleFilter</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-style-filter/index.html"><span class="identifier">StyleFilter</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="and-then.html">andThen</a></p>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><a href="-style-filter/index.html"><span class="identifier">StyleFilter</span></a><span class="symbol">.</span><span class="identifier">andThen</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style$andThen(com.acornui.component.style.StyleFilter, com.acornui.component.style.StyleFilter)/other">other</span><span class="symbol">:</span>&nbsp;<a href="-style-filter/index.html"><span class="identifier">StyleFilter</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-and-then-style-filter/index.html"><span class="identifier">AndThenStyleFilter</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="not.html">not</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">not</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style$not(com.acornui.component.style.StyleFilter)/target">target</span><span class="symbol">:</span>&nbsp;<a href="-style-filter/index.html"><span class="identifier">StyleFilter</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-style-filter/index.html"><span class="identifier">StyleFilter</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="or.html">or</a></p>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><a href="-style-filter/index.html"><span class="identifier">StyleFilter</span></a><span class="symbol">.</span><span class="identifier">or</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style$or(com.acornui.component.style.StyleFilter, com.acornui.component.style.StyleFilter)/other">other</span><span class="symbol">:</span>&nbsp;<a href="-style-filter/index.html"><span class="identifier">StyleFilter</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-or-style-filter/index.html"><span class="identifier">OrStyleFilter</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="set.html">set</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-style/index.html"><span class="identifier">Style</span></a><span class="symbol">&gt;</span> <a href="set.html#T"><span class="identifier">T</span></a><span class="symbol">.</span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style$set(com.acornui.component.style.set.T, com.acornui.component.style.set.T)/other">other</span><span class="symbol">:</span>&nbsp;<a href="set.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets this style to match that of the other style.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="style-tag.html">styleTag</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">styleTag</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-style-tag/index.html"><span class="identifier">StyleTag</span></a></code>
+<p>Constructs a new StyleTag object.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="walk-inheritance.html">walkInheritance</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-style-type/index.html"><span class="identifier">StyleType</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">walkInheritance</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style$walkInheritance(com.acornui.component.style.StyleType((com.acornui.component.style.StyleRo)), kotlin.Function1((com.acornui.component.style.StyleType((com.acornui.component.style.StyleRo)), kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="-style-type/index.html"><span class="identifier">StyleType</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="walk-styleable-ancestry.html">walkStyleableAncestry</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-styleable-ro/index.html"><span class="identifier">StyleableRo</span></a><span class="symbol">.</span><span class="identifier">walkStyleableAncestry</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style$walkStyleableAncestry(com.acornui.component.style.StyleableRo, kotlin.Function1((com.acornui.component.style.StyleableRo, kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="-styleable-ro/index.html"><span class="identifier">StyleableRo</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="with-ancestor.html">withAncestor</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">withAncestor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style$withAncestor(com.acornui.component.style.StyleFilter)/operand">operand</span><span class="symbol">:</span>&nbsp;<a href="-style-filter/index.html"><span class="identifier">StyleFilter</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-ancestor-style-filter/index.html"><span class="identifier">AncestorStyleFilter</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="with-parent.html">withParent</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">withParent</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style$withParent(com.acornui.component.style.StyleFilter)/operand">operand</span><span class="symbol">:</span>&nbsp;<a href="-style-filter/index.html"><span class="identifier">StyleFilter</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-parent-style-filter/index.html"><span class="identifier">ParentStyleFilter</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

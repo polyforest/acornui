@@ -1,0 +1,74 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ColorStopRo - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component</a>&nbsp;/&nbsp;<a href="./index.html">ColorStopRo</a><br/>
+<br/>
+<h1>ColorStopRo</h1>
+<code><span class="keyword">interface </span><span class="identifier">ColorStopRo</span></code>
+<p>A read only interface to <a href="../-color-stop/index.html">ColorStop</a></p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="color.html">color</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">color</span><span class="symbol">: </span><span class="identifier">ColorRo</span></code>
+<p>The color value at this stop.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="percent.html">percent</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">percent</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code>
+<p>The percent towards the end position of the gradient. This number is absolute, not relative to
+the previous color stop.
+If neither <a href="pixels.html">pixels</a> or <a href="percent.html">percent</a> is set, this stop will be halfway between the previous stop and the next.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="pixels.html">pixels</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">pixels</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code>
+<p>The number of pixels towards the end position of the gradient. This number is absolute, not relative to
+the previous color stop.
+If neither <a href="pixels.html">pixels</a> or <a href="percent.html">percent</a> is set, this stop will be halfway between the previous stop and the next.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="to-css-string.html">toCssString</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toCssString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-color-stop/index.html">ColorStop</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ColorStop</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ColorStopRo</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

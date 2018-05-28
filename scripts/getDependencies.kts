@@ -8,7 +8,7 @@ if (!File(acornUiHome).exists()) throw Exception("ACORNUI_HOME '$acornUiHome' do
 
 val repo = "http://repo1.maven.org/maven2"
 val lwjglVersion = "3.1.6"
-val dokkaVersion = "0.9.9"
+val dokkaVersion = "0.9.17"
 
 dependency("$repo/com/bladecoder/packr/packr/2.1/packr-2.1", "Tools/BuildTasks")
 dependency("$repo/com/google/code/gson/gson/2.7/gson-2.7", "Tools/BuildTasks")

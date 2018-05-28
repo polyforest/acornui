@@ -1,0 +1,147 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ShaderBatchImpl - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.gl.core</a>&nbsp;/&nbsp;<a href="./index.html">ShaderBatchImpl</a><br/>
+<br/>
+<h1>ShaderBatchImpl</h1>
+<code><span class="keyword">class </span><span class="identifier">ShaderBatchImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-shader-batch/index.html"><span class="identifier">ShaderBatch</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">ShaderBatchImpl</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.ShaderBatchImpl$<init>(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlState, kotlin.Int, kotlin.Int)/gl">gl</span><span class="symbol">:</span>&nbsp;<a href="../-gl20/index.html"><span class="identifier">Gl20</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.ShaderBatchImpl$<init>(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlState, kotlin.Int, kotlin.Int)/glState">glState</span><span class="symbol">:</span>&nbsp;<a href="../-gl-state/index.html"><span class="identifier">GlState</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.ShaderBatchImpl$<init>(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlState, kotlin.Int, kotlin.Int)/maxIndices">maxIndices</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;32767<span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.ShaderBatchImpl$<init>(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlState, kotlin.Int, kotlin.Int)/maxVertexComponents">maxVertexComponents</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;32767 * 16<span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="current-draw-mode.html">currentDrawMode</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">currentDrawMode</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="highest-index.html">highestIndex</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">highestIndex</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-short/index.html"><span class="identifier">Short</span></a></code>
+<p>Returns the currently highest index pushed.
+This will be -1 if no indices have been pushed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="max-indices.html">maxIndices</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">maxIndices</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="max-vertex-components.html">maxVertexComponents</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">maxVertexComponents</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="render-count.html">renderCount</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">renderCount</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The number of times the batch has been flushed since the last <a href="../-shader-batch/reset-render-count.html">resetRenderCount</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="vertex-attributes.html">vertexAttributes</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">vertexAttributes</span><span class="symbol">: </span><a href="../-vertex-attributes/index.html"><span class="identifier">VertexAttributes</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="begin.html">begin</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">begin</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.ShaderBatchImpl$begin(kotlin.Int)/drawMode">drawMode</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Begins a new shape.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="flush.html">flush</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">flush</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.ShaderBatchImpl$flush(kotlin.Boolean)/force">force</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Flushes the batch if the buffer is past an internal threshold.
+Components typically do not need to use this directly, only <a href="../-shader-batch/begin.html">begin</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="put-index.html">putIndex</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">putIndex</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.ShaderBatchImpl$putIndex(kotlin.Short)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-short/index.html"><span class="identifier">Short</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the index at the current buffer position.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="put-vertex.html">putVertex</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">putVertex</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.ShaderBatchImpl$putVertex(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/position">position</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3Ro</span><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.ShaderBatchImpl$putVertex(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/normal">normal</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3Ro</span><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.ShaderBatchImpl$putVertex(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/colorTint">colorTint</span><span class="symbol">:</span>&nbsp;<span class="identifier">ColorRo</span><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.ShaderBatchImpl$putVertex(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/u">u</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.ShaderBatchImpl$putVertex(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/v">v</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="reset-render-count.html">resetRenderCount</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">resetRenderCount</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Resets the number of times the batch has been flushed. This is typically done at the beginning of the frame.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../push-quad-indices.html">pushQuadIndices</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-index-feed/index.html"><span class="identifier">IndexFeed</span></a><span class="symbol">.</span><span class="identifier">pushQuadIndices</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

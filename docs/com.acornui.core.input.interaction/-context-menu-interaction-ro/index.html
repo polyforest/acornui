@@ -1,0 +1,110 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ContextMenuInteractionRo - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.input.interaction</a>&nbsp;/&nbsp;<a href="./index.html">ContextMenuInteractionRo</a><br/>
+<br/>
+<h1>ContextMenuInteractionRo</h1>
+<code><span class="keyword">interface </span><span class="identifier">ContextMenuInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.input/-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a></code>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-ro/current-target.html">currentTarget</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">currentTarget</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-ro/handled.html">handled</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">handled</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>True if this event was used in an interaction.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-ro/propagation.html">propagation</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">propagation</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-propagation-ro/index.html"><span class="identifier">PropagationRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-ro/target.html">target</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">target</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-ro/type.html">type</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">type</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input/-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="add-menu-group.html">addMenuGroup</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">addMenuGroup</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction.ContextMenuInteractionRo$addMenuGroup(com.acornui.core.input.interaction.ContextMenuGroup, kotlin.Float)/group">group</span><span class="symbol">:</span>&nbsp;<a href="../-context-menu-group/index.html"><span class="identifier">ContextMenuGroup</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.interaction.ContextMenuInteractionRo$addMenuGroup(com.acornui.core.input.interaction.ContextMenuGroup, kotlin.Float)/priority">priority</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-ro/default-prevented.html">defaultPrevented</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">defaultPrevented</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-ro/prevent-default.html">preventDefault</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">preventDefault</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-c-o-n-t-e-x-t_-m-e-n-u.html">CONTEXT_MENU</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">CONTEXT_MENU</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">ContextMenuInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-context-menu-interaction/index.html">ContextMenuInteraction</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ContextMenuInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.input/-interaction-event-base/index.html"><span class="identifier">InteractionEventBase</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">ContextMenuInteractionRo</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,182 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>RgbData - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.graphics</a>&nbsp;/&nbsp;<a href="./index.html">RgbData</a><br/>
+<br/>
+<h1>RgbData</h1>
+<code><span class="keyword">class </span><span class="identifier">RgbData</span></code>
+<p>A trait for reading pixel data.
+Note: Unlike global coordinates, rgb pixel x,y coordinates are top-left of the image, not bottom-left.
+This is because acorn does not flip the y when unpacking the texture.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">RgbData</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.RgbData$<init>(kotlin.Int, kotlin.Int, kotlin.Boolean)/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.RgbData$<init>(kotlin.Int, kotlin.Int, kotlin.Boolean)/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.RgbData$<init>(kotlin.Int, kotlin.Int, kotlin.Boolean)/hasAlpha">hasAlpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span></code>
+<p>A trait for reading pixel data.
+Note: Unlike global coordinates, rgb pixel x,y coordinates are top-left of the image, not bottom-left.
+This is because acorn does not flip the y when unpacking the texture.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="bytes.html">bytes</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">bytes</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html"><span class="identifier">ByteArray</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="has-alpha.html">hasAlpha</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">hasAlpha</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="height.html">height</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">height</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="last-index.html">lastIndex</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">lastIndex</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="num-bands.html">numBands</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">numBands</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="scan-size.html">scanSize</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">scanSize</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="width.html">width</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">width</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="copy-sub-rgb-data.html">copySubRgbData</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">copySubRgbData</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.RgbData$copySubRgbData(com.acornui.math.Rectangle)/region">region</span><span class="symbol">:</span>&nbsp;<span class="identifier">Rectangle</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">RgbData</span></a></code><code><span class="keyword">fun </span><span class="identifier">copySubRgbData</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.RgbData$copySubRgbData(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/sourceX">sourceX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.RgbData$copySubRgbData(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/sourceY">sourceY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.RgbData$copySubRgbData(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.RgbData$copySubRgbData(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">RgbData</span></a></code>
+<p>Creates a new RgbData object with the pixels set to the sub-region specified.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="fill-rect.html">fillRect</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">fillRect</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.RgbData$fillRect(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, com.acornui.graphics.ColorRo)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.RgbData$fillRect(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, com.acornui.graphics.ColorRo)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.RgbData$fillRect(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, com.acornui.graphics.ColorRo)/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.RgbData$fillRect(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, com.acornui.graphics.ColorRo)/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.RgbData$fillRect(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, com.acornui.graphics.ColorRo)/color">color</span><span class="symbol">:</span>&nbsp;<span class="identifier">ColorRo</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Fills the supplied area a solid color.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="flood.html">flood</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">flood</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.RgbData$flood(com.acornui.graphics.ColorRo)/color">color</span><span class="symbol">:</span>&nbsp;<span class="identifier">ColorRo</span>&nbsp;<span class="symbol">=</span>&nbsp;Color.CLEAR<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Fills the entire rgb data with a single color.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get.html">get</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">get</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.RgbData$get(kotlin.Int)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte/index.html"><span class="identifier">Byte</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-alpha.html">getAlpha</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getAlpha</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.RgbData$getAlpha(kotlin.Int, kotlin.Int)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.RgbData$getAlpha(kotlin.Int, kotlin.Int)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Returns a 0-1 alpha value for the given pixel. If hasAlpha is false, 1f will be returned.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-pixel.html">getPixel</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getPixel</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.RgbData$getPixel(kotlin.Int, kotlin.Int, com.acornui.graphics.Color)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.RgbData$getPixel(kotlin.Int, kotlin.Int, com.acornui.graphics.Color)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.RgbData$getPixel(kotlin.Int, kotlin.Int, com.acornui.graphics.Color)/out">out</span><span class="symbol">:</span>&nbsp;<span class="identifier">Color</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Color</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="rotate90-c-c-w.html">rotate90CCW</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">rotate90CCW</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Rotates the image 90 degrees clockwise.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="rotate90-c-w.html">rotate90CW</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">rotate90CW</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Rotates the image 90 degrees clockwise.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set.html">set</a></p>
+</td>
+<td>
+<code><span class="keyword">operator</span> <span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.RgbData$set(kotlin.Int, kotlin.Byte)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.RgbData$set(kotlin.Int, kotlin.Byte)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte/index.html"><span class="identifier">Byte</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="set-pixel.html">setPixel</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">setPixel</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.RgbData$setPixel(kotlin.Int, kotlin.Int, com.acornui.graphics.ColorRo)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.RgbData$setPixel(kotlin.Int, kotlin.Int, com.acornui.graphics.ColorRo)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.RgbData$setPixel(kotlin.Int, kotlin.Int, com.acornui.graphics.ColorRo)/color">color</span><span class="symbol">:</span>&nbsp;<span class="identifier">ColorRo</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Writes the color to the provided location.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set-rect.html">setRect</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">setRect</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.RgbData$setRect(kotlin.Int, kotlin.Int, com.acornui.core.graphics.RgbData, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/destX">destX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.RgbData$setRect(kotlin.Int, kotlin.Int, com.acornui.core.graphics.RgbData, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/destY">destY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.RgbData$setRect(kotlin.Int, kotlin.Int, com.acornui.core.graphics.RgbData, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/source">source</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">RgbData</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.RgbData$setRect(kotlin.Int, kotlin.Int, com.acornui.core.graphics.RgbData, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/sourceX">sourceX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.RgbData$setRect(kotlin.Int, kotlin.Int, com.acornui.core.graphics.RgbData, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/sourceY">sourceY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.RgbData$setRect(kotlin.Int, kotlin.Int, com.acornui.core.graphics.RgbData, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;source.width - sourceX<span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.RgbData$setRect(kotlin.Int, kotlin.Int, com.acornui.core.graphics.RgbData, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;source.height - sourceY<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

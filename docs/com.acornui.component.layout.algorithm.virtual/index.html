@@ -1,0 +1,92 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.component.layout.algorithm.virtual - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.component.layout.algorithm.virtual</a><br/>
+<br/>
+<h2>Package com.acornui.component.layout.algorithm.virtual</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-item-renderer-owner.html">ItemRendererOwner</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ItemRendererOwner</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.layout/-layout-data/index.html"><span class="identifier">LayoutData</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">, </span><a href="../com.acornui.component.layout.algorithm/-layout-data-provider/index.html"><span class="identifier">LayoutDataProvider</span></a><span class="symbol">&lt;</span><a href="-item-renderer-owner.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-virtual-horizontal-layout/index.html">VirtualHorizontalLayout</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">VirtualHorizontalLayout</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-virtual-layout-algorithm/index.html"><span class="identifier">VirtualLayoutAlgorithm</span></a><span class="symbol">&lt;</span><a href="-virtual-horizontal-layout-style/index.html"><span class="identifier">VirtualHorizontalLayoutStyle</span></a><span class="symbol">,</span>&nbsp;<a href="../com.acornui.component.layout.algorithm/-horizontal-layout-data/index.html"><span class="identifier">HorizontalLayoutData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-virtual-horizontal-layout-style/index.html">VirtualHorizontalLayoutStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">VirtualHorizontalLayoutStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-virtual-layout-algorithm/index.html">VirtualLayoutAlgorithm</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">VirtualLayoutAlgorithm</span><span class="symbol">&lt;</span><span class="keyword">in</span>&nbsp;<span class="identifier">S</span><span class="symbol">, </span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.layout/-layout-data/index.html"><span class="identifier">LayoutData</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.layout.algorithm/-layout-data-provider/index.html"><span class="identifier">LayoutDataProvider</span></a><span class="symbol">&lt;</span><a href="-virtual-layout-algorithm/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>A Virtualized layout algorithm is a type of layout that is only given a single layout element to size and position
+at a time.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-virtual-layout-direction/index.html">VirtualLayoutDirection</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">VirtualLayoutDirection</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-virtual-vertical-layout/index.html">VirtualVerticalLayout</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">VirtualVerticalLayout</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-virtual-layout-algorithm/index.html"><span class="identifier">VirtualLayoutAlgorithm</span></a><span class="symbol">&lt;</span><a href="-virtual-vertical-layout-style/index.html"><span class="identifier">VirtualVerticalLayoutStyle</span></a><span class="symbol">,</span>&nbsp;<a href="../com.acornui.component.layout.algorithm/-vertical-layout-data/index.html"><span class="identifier">VerticalLayoutData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-virtual-vertical-layout-style/index.html">VirtualVerticalLayoutStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">VirtualVerticalLayoutStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="h-data-scroller.html">hDataScroller</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">hDataScroller</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual$hDataScroller(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.layout.DataScroller((com.acornui.component.layout.algorithm.virtual.hDataScroller.E, com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle, com.acornui.component.layout.algorithm.HorizontalLayoutData)), kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="../com.acornui.component.layout/-data-scroller/index.html"><span class="identifier">DataScroller</span></a><span class="symbol">&lt;</span><a href="h-data-scroller.html#E"><span class="identifier">E</span></a><span class="symbol">,</span>&nbsp;<a href="-virtual-horizontal-layout-style/index.html"><span class="identifier">VirtualHorizontalLayoutStyle</span></a><span class="symbol">,</span>&nbsp;<a href="../com.acornui.component.layout.algorithm/-horizontal-layout-data/index.html"><span class="identifier">HorizontalLayoutData</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.component.layout/-data-scroller/index.html"><span class="identifier">DataScroller</span></a><span class="symbol">&lt;</span><a href="h-data-scroller.html#E"><span class="identifier">E</span></a><span class="symbol">,</span>&nbsp;<a href="-virtual-horizontal-layout-style/index.html"><span class="identifier">VirtualHorizontalLayoutStyle</span></a><span class="symbol">,</span>&nbsp;<a href="../com.acornui.component.layout.algorithm/-horizontal-layout-data/index.html"><span class="identifier">HorizontalLayoutData</span></a><span class="symbol">&gt;</span></code>
+<p>Creates a virtualized data scroller with a horizontal layout.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="v-data-scroller.html">vDataScroller</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">vDataScroller</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual$vDataScroller(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.layout.DataScroller((com.acornui.component.layout.algorithm.virtual.vDataScroller.E, com.acornui.component.layout.algorithm.virtual.VirtualVerticalLayoutStyle, com.acornui.component.layout.algorithm.VerticalLayoutData)), kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="../com.acornui.component.layout/-data-scroller/index.html"><span class="identifier">DataScroller</span></a><span class="symbol">&lt;</span><a href="v-data-scroller.html#E"><span class="identifier">E</span></a><span class="symbol">,</span>&nbsp;<a href="-virtual-vertical-layout-style/index.html"><span class="identifier">VirtualVerticalLayoutStyle</span></a><span class="symbol">,</span>&nbsp;<a href="../com.acornui.component.layout.algorithm/-vertical-layout-data/index.html"><span class="identifier">VerticalLayoutData</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.component.layout/-data-scroller/index.html"><span class="identifier">DataScroller</span></a><span class="symbol">&lt;</span><a href="v-data-scroller.html#E"><span class="identifier">E</span></a><span class="symbol">,</span>&nbsp;<a href="-virtual-vertical-layout-style/index.html"><span class="identifier">VirtualVerticalLayoutStyle</span></a><span class="symbol">,</span>&nbsp;<a href="../com.acornui.component.layout.algorithm/-vertical-layout-data/index.html"><span class="identifier">VerticalLayoutData</span></a><span class="symbol">&gt;</span></code>
+<p>Creates a virtualized data scroller with a vertical layout.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

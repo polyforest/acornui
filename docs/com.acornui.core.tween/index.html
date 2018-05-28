@@ -1,0 +1,225 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.core.tween - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.core.tween</a><br/>
+<br/>
+<h2>Package com.acornui.core.tween</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-callback-tween/index.html">CallbackTween</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">CallbackTween</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-tween-base/index.html"><span class="identifier">TweenBase</span></a></code>
+<p>A Tween that does nothing but invoke callbacks when the play head scrubs through the requested time.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-timeline-tween/index.html">TimelineTween</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TimelineTween</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-tween-base/index.html"><span class="identifier">TweenBase</span></a></code>
+<p>A Tween timeline that allows for a sequence of tweens.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-tween/index.html">Tween</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Tween</span></code>
+<p>A Tween is an object representing an interpolation over time.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-tween-base/index.html">TweenBase</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">TweenBase</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-tween/index.html"><span class="identifier">Tween</span></a></code>
+<p>A standard base class for tweens. It handles the signals, easing, and looping. Just override <a href="-tween-base/update-to-time.html">updateToTime</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-tween-driver/index.html">TweenDriver</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TweenDriver</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-updatable-child-base/index.html"><span class="identifier">UpdatableChildBase</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code>
+<p>A tween driver will update a single tween, then remove and recycle itself when the tween is completed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-tween-impl/index.html">TweenImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TweenImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-tween-base/index.html"><span class="identifier">TweenBase</span></a></code>
+<p>A tween instance with pooling.
+Use <a href="#">tween</a> to obtain a new Tween instance.
+Pooled tweens are recycled on completion. (See <a href="-tween-base/completed.html">completed</a> signal)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-tween-registry/index.html">TweenRegistry</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">TweenRegistry</span></code>
+<p>A registry of tweens by their target and property so that tweens can be canceled and overwritten.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="create-property-tween.html">createPropertyTween</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">createPropertyTween</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween$createPropertyTween(kotlin.Any, kotlin.String, kotlin.Float, com.acornui.math.Interpolation, kotlin.Function0((kotlin.Float)), kotlin.Function1((kotlin.Float, kotlin.Unit)), kotlin.Float, kotlin.Float, kotlin.Boolean)/target">target</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$createPropertyTween(kotlin.Any, kotlin.String, kotlin.Float, com.acornui.math.Interpolation, kotlin.Function0((kotlin.Float)), kotlin.Function1((kotlin.Float, kotlin.Unit)), kotlin.Float, kotlin.Float, kotlin.Boolean)/property">property</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$createPropertyTween(kotlin.Any, kotlin.String, kotlin.Float, com.acornui.math.Interpolation, kotlin.Function0((kotlin.Float)), kotlin.Function1((kotlin.Float, kotlin.Unit)), kotlin.Float, kotlin.Float, kotlin.Boolean)/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$createPropertyTween(kotlin.Any, kotlin.String, kotlin.Float, com.acornui.math.Interpolation, kotlin.Function0((kotlin.Float)), kotlin.Function1((kotlin.Float, kotlin.Unit)), kotlin.Float, kotlin.Float, kotlin.Boolean)/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$createPropertyTween(kotlin.Any, kotlin.String, kotlin.Float, com.acornui.math.Interpolation, kotlin.Function0((kotlin.Float)), kotlin.Function1((kotlin.Float, kotlin.Unit)), kotlin.Float, kotlin.Float, kotlin.Boolean)/getter">getter</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$createPropertyTween(kotlin.Any, kotlin.String, kotlin.Float, com.acornui.math.Interpolation, kotlin.Function0((kotlin.Float)), kotlin.Function1((kotlin.Float, kotlin.Unit)), kotlin.Float, kotlin.Float, kotlin.Boolean)/setter">setter</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$createPropertyTween(kotlin.Any, kotlin.String, kotlin.Float, com.acornui.math.Interpolation, kotlin.Function0((kotlin.Float)), kotlin.Function1((kotlin.Float, kotlin.Unit)), kotlin.Float, kotlin.Float, kotlin.Boolean)/targetValue">targetValue</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$createPropertyTween(kotlin.Any, kotlin.String, kotlin.Float, com.acornui.math.Interpolation, kotlin.Function0((kotlin.Float)), kotlin.Function1((kotlin.Float, kotlin.Unit)), kotlin.Float, kotlin.Float, kotlin.Boolean)/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$createPropertyTween(kotlin.Any, kotlin.String, kotlin.Float, com.acornui.math.Interpolation, kotlin.Function0((kotlin.Float)), kotlin.Function1((kotlin.Float, kotlin.Unit)), kotlin.Float, kotlin.Float, kotlin.Boolean)/loop">loop</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="-tween/index.html"><span class="identifier">Tween</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="drive.html">drive</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-tween/index.html"><span class="identifier">Tween</span></a><span class="symbol">&gt;</span> <a href="drive.html#T"><span class="identifier">T</span></a><span class="symbol">.</span><span class="identifier">drive</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween$drive(com.acornui.core.tween.drive.T, com.acornui.core.time.TimeDriver)/timeDriver">timeDriver</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.time/-time-driver/index.html"><span class="identifier">TimeDriver</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="drive.html#T"><span class="identifier">T</span></a></code>
+<p>Creates a tween driver and updates the tween forward until completion.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="drive-tween.html">driveTween</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-tween/index.html"><span class="identifier">Tween</span></a><span class="symbol">&gt;</span> <a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">driveTween</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween$driveTween(com.acornui.core.di.Scoped, com.acornui.core.tween.driveTween.T)/tween">tween</span><span class="symbol">:</span>&nbsp;<a href="drive-tween.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="drive-tween.html#T"><span class="identifier">T</span></a></code>
+<p>Creates a tween driver and updates the tween forward until completion.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="kill-tween.html">killTween</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">killTween</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween$killTween(kotlin.Any, kotlin.String, kotlin.Boolean)/target">target</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$killTween(kotlin.Any, kotlin.String, kotlin.Boolean)/property">property</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$killTween(kotlin.Any, kotlin.String, kotlin.Boolean)/finish">finish</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;true<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">killTween</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween$killTween(kotlin.Any, kotlin.Boolean)/target">target</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$killTween(kotlin.Any, kotlin.Boolean)/finish">finish</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;true<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="relative-tween.html">relativeTween</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">relativeTween</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween$relativeTween(kotlin.Float, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function0((kotlin.Float)), kotlin.Function1((kotlin.Float, kotlin.Unit)))/delta">delta</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$relativeTween(kotlin.Float, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function0((kotlin.Float)), kotlin.Function1((kotlin.Float, kotlin.Unit)))/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$relativeTween(kotlin.Float, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function0((kotlin.Float)), kotlin.Function1((kotlin.Float, kotlin.Unit)))/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$relativeTween(kotlin.Float, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function0((kotlin.Float)), kotlin.Function1((kotlin.Float, kotlin.Unit)))/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$relativeTween(kotlin.Float, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function0((kotlin.Float)), kotlin.Function1((kotlin.Float, kotlin.Unit)))/loop">loop</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$relativeTween(kotlin.Float, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function0((kotlin.Float)), kotlin.Function1((kotlin.Float, kotlin.Unit)))/getter">getter</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$relativeTween(kotlin.Float, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function0((kotlin.Float)), kotlin.Function1((kotlin.Float, kotlin.Unit)))/setter">setter</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-tween/index.html"><span class="identifier">Tween</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="timeline-tween.html">timelineTween</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">timelineTween</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween$timelineTween(com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean)/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span>&nbsp;<span class="symbol">=</span>&nbsp;Easing.linear<span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$timelineTween(com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean)/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$timelineTween(com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean)/loop">loop</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="-timeline-tween/index.html"><span class="identifier">TimelineTween</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="to-from-tween.html">toFromTween</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">toFromTween</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween$toFromTween(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function1((kotlin.Float, kotlin.Unit)))/start">start</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$toFromTween(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function1((kotlin.Float, kotlin.Unit)))/end">end</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$toFromTween(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function1((kotlin.Float, kotlin.Unit)))/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$toFromTween(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function1((kotlin.Float, kotlin.Unit)))/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$toFromTween(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function1((kotlin.Float, kotlin.Unit)))/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$toFromTween(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function1((kotlin.Float, kotlin.Unit)))/loop">loop</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$toFromTween(kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function1((kotlin.Float, kotlin.Unit)))/setter">setter</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-tween/index.html"><span class="identifier">Tween</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="tween.html">tween</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">tween</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween$tween(kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function2((kotlin.Float, , kotlin.Unit)))/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tween(kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function2((kotlin.Float, , kotlin.Unit)))/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tween(kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function2((kotlin.Float, , kotlin.Unit)))/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tween(kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function2((kotlin.Float, , kotlin.Unit)))/loop">loop</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tween(kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function2((kotlin.Float, , kotlin.Unit)))/tween">tween</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="identifier">previousAlpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">currentAlpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-tween/index.html"><span class="identifier">Tween</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="tween-alpha.html">tweenAlpha</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">.</span><span class="identifier">tweenAlpha</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween$tweenAlpha(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenAlpha(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenAlpha(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/toAlpha">toAlpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenAlpha(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="-tween/index.html"><span class="identifier">Tween</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="tween-call.html">tweenCall</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">tweenCall</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween$tweenCall(kotlin.Float, kotlin.Function0((kotlin.Unit)))/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenCall(kotlin.Float, kotlin.Function0((kotlin.Unit)))/setter">setter</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-tween/index.html"><span class="identifier">Tween</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="tween-rotation.html">tweenRotation</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">.</span><span class="identifier">tweenRotation</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween$tweenRotation(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenRotation(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenRotation(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/toRotation">toRotation</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenRotation(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="-tween/index.html"><span class="identifier">Tween</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="tween-rotation-x.html">tweenRotationX</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">.</span><span class="identifier">tweenRotationX</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween$tweenRotationX(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenRotationX(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenRotationX(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/toRotationX">toRotationX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenRotationX(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="-tween/index.html"><span class="identifier">Tween</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="tween-rotation-y.html">tweenRotationY</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">.</span><span class="identifier">tweenRotationY</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween$tweenRotationY(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenRotationY(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenRotationY(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/toRotationY">toRotationY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenRotationY(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="-tween/index.html"><span class="identifier">Tween</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="tween-scale-x.html">tweenScaleX</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">.</span><span class="identifier">tweenScaleX</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween$tweenScaleX(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenScaleX(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenScaleX(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/toScaleX">toScaleX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenScaleX(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="-tween/index.html"><span class="identifier">Tween</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="tween-scale-y.html">tweenScaleY</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">.</span><span class="identifier">tweenScaleY</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween$tweenScaleY(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenScaleY(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenScaleY(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/toScaleY">toScaleY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenScaleY(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="-tween/index.html"><span class="identifier">Tween</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="tween-tint.html">tweenTint</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">.</span><span class="identifier">tweenTint</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween$tweenTint(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, com.acornui.graphics.Color, kotlin.Float)/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenTint(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, com.acornui.graphics.Color, kotlin.Float)/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenTint(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, com.acornui.graphics.Color, kotlin.Float)/toTint">toTint</span><span class="symbol">:</span>&nbsp;<span class="identifier">Color</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenTint(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, com.acornui.graphics.Color, kotlin.Float)/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="-tween/index.html"><span class="identifier">Tween</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="tween-x.html">tweenX</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">.</span><span class="identifier">tweenX</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween$tweenX(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenX(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenX(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/toX">toX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenX(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="-tween/index.html"><span class="identifier">Tween</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="tween-y.html">tweenY</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">.</span><span class="identifier">tweenY</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween$tweenY(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenY(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenY(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/toY">toY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenY(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="-tween/index.html"><span class="identifier">Tween</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="tween-z.html">tweenZ</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">.</span><span class="identifier">tweenZ</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween$tweenZ(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenZ(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenZ(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/toZ">toZ</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween$tweenZ(com.acornui.component.UiComponent, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="-tween/index.html"><span class="identifier">Tween</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

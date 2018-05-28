@@ -1,0 +1,25 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>NavBinding.navigate - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.nav</a>&nbsp;/&nbsp;<a href="index.html">NavBinding</a>&nbsp;/&nbsp;<a href="./navigate.html">navigate</a><br/>
+<br/>
+<h1>navigate</h1>
+<a name="com.acornui.core.nav.NavBinding$navigate(kotlin.String, kotlin.collections.Map((kotlin.String, )))"></a>
+<code><span class="keyword">fun </span><span class="identifier">navigate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.nav.NavBinding$navigate(kotlin.String, kotlin.collections.Map((kotlin.String, )))/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;defaultPath<span class="symbol">, </span><span class="identifier" id="com.acornui.core.nav.NavBinding$navigate(kotlin.String, kotlin.collections.Map((kotlin.String, )))/params">params</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;hashMapOf()<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<a name="com.acornui.core.nav.NavBinding$navigate(com.acornui.core.nav.NavNode)"></a>
+<code><span class="keyword">fun </span><span class="identifier">navigate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.nav.NavBinding$navigate(com.acornui.core.nav.NavNode)/node">node</span><span class="symbol">:</span>&nbsp;<a href="../-nav-node/index.html"><span class="identifier">NavNode</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><a name="com.acornui.core.nav.NavBinding$navigate(kotlin.String)"></a>
+<code><span class="keyword">fun </span><span class="identifier">navigate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.nav.NavBinding$navigate(kotlin.String)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the path as a url string.
+This should be in the form of</p>
+<p>Absolute:
+/foo?param1=val1&param2=val2/bar?param1=val1
+Relative:
+./foo?param1=val1&param2=val2/bar?param1=val1
+foo?param1=val1&param2=val2/bar?param1=val1
+../../foo?param1=val1&param2=val2/bar?param1=val1</p>
+</BODY>
+</HTML>

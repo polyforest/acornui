@@ -1,0 +1,98 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>GridColumn - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.layout.algorithm</a>&nbsp;/&nbsp;<a href="./index.html">GridColumn</a><br/>
+<br/>
+<h1>GridColumn</h1>
+<code><span class="keyword">class </span><span class="identifier">GridColumn</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Observable</span></code>
+<p>A GridColumn contains column properties for the <a href="../-grid-layout/index.html">GridLayout</a></p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">GridColumn</span><span class="symbol">(</span><span class="symbol">)</span></code>
+<p>A GridColumn contains column properties for the <a href="../-grid-layout/index.html">GridLayout</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="changed.html">changed</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">changed</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><span class="identifier">Observable</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="flexible.html">flexible</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">flexible</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="h-align.html">hAlign</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">hAlign</span><span class="symbol">: </span><a href="../../com.acornui.component.layout/-h-align/index.html"><span class="identifier">HAlign</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="min-width.html">minWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">minWidth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="width.html">width</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">width</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="width-percent.html">widthPercent</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">widthPercent</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="get-is-flexible.html">getIsFlexible</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getIsFlexible</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>A flexible column will flex its size to fit within the available bounds of the container.
+A column is considered flexible first considering the <a href="flexible.html">flexible</a> flag, and if that is not set,
+then it goes by if <a href="width-percent.html">widthPercent</a> is set.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-preferred-width.html">getPreferredWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getPreferredWidth</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm.GridColumn$getPreferredWidth(kotlin.Float)/availableWidth">availableWidth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

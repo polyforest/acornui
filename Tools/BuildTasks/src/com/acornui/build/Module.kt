@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 import java.util.jar.Attributes
 import java.util.jar.Manifest
@@ -240,6 +241,20 @@ abstract class Module(
 		dist.deleteRecursively()
 	}
 
+	open fun document() {
+		val libraryFiles = ArrayList<String>()
+		for (i in moduleDependencies) {
+			libraryFiles.add(i.jvmJar.absolutePath)
+		}
+		expandLibraryDependencies(jvmLibraryDependencies, libraryFiles)
+
+		val dokka = "Tools/BuildTasks/externalLib/runtime/dokka-fatjar-0.9.17.jar"
+		val classpath = System.getProperty("java.class.path") + PATH_SEPARATOR + libraryFiles.joinToString(PATH_SEPARATOR)
+		val cmd = arrayOf("java", "-jar", dokka, sources.joinToString(PATH_SEPARATOR), "-output",
+				BuildUtil.ACORNUI_DOCS.absolutePath, "-classpath", classpath)
+		cmd.runCommand()
+	}
+
 	override fun toString(): String {
 		return "[Module name=$name]"
 	}
@@ -275,6 +290,15 @@ abstract class Module(
 			exclude[this] = true
 			callback(this)
 		}
+	}
+
+	fun Array<String>.runCommand(workingDir: File = File(".")) {
+		ProcessBuilder(*this)
+				.directory(workingDir)
+				.redirectOutput(ProcessBuilder.Redirect.INHERIT)
+				.redirectError(ProcessBuilder.Redirect.INHERIT)
+				.start()
+				.waitFor(60, TimeUnit.MINUTES)
 	}
 
 	companion object {

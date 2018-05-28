@@ -1,0 +1,378 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>StyleBase - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.style</a>&nbsp;/&nbsp;<a href="./index.html">StyleBase</a><br/>
+<br/>
+<h1>StyleBase</h1>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">StyleBase</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-style/index.html"><span class="identifier">Style</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code>
+<p>The base class for a typical <a href="../-style/index.html">Style</a> implementation.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">StyleBase</span><span class="symbol">(</span><span class="symbol">)</span></code>
+<p>The base class for a typical <a href="../-style/index.html">Style</a> implementation.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="calculated.html">calculated</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">calculated</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-hash-map/index.html"><span class="identifier">HashMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">&gt;</span></code>
+<p>The style properties, as calculated by a <a href="../-style-calculator/index.html">StyleCalculator</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="changed.html">changed</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">changed</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="./index.html"><span class="identifier">StyleBase</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="explicit.html">explicit</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">explicit</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-hash-map/index.html"><span class="identifier">HashMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">&gt;</span></code>
+<p>The style properties, if they were explicitly set.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="mod-tag.html">modTag</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">modTag</span><span class="symbol">: </span><span class="identifier">ModTagImpl</span></code>
+<p>When either the explicit or calculated values change, the mod tag is incremented.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="notify-changed.html">notifyChanged</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">notifyChanged</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Dispatches a <a href="../-style/changed.html">changed</a> signal.
+This should only be invoked if the explicit values have changed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="prop.html">prop</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">P</span><span class="symbol">&gt;</span> <span class="identifier">prop</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style.StyleBase$prop(com.acornui.component.style.StyleBase.prop.P)/defaultValue">defaultValue</span><span class="symbol">:</span>&nbsp;<a href="prop.html#P"><span class="identifier">P</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-style-prop/index.html"><span class="identifier">StyleProp</span></a><span class="symbol">&lt;</span><a href="prop.html#P"><span class="identifier">P</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="to-string.html">toString</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-box-style/index.html">BoxStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">BoxStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-button-style/index.html">ButtonStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ButtonStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.text/-char-style/index.html">CharStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">CharStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code>
+<p>The glyph characteristics.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-color-palette-style/index.html">ColorPaletteStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ColorPaletteStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-color-picker-style/index.html">ColorPickerStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ColorPickerStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-context-menu-style/index.html">ContextMenuStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ContextMenuStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.datagrid/-data-grid-style/index.html">DataGridStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DataGridStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-data-scroller-style/index.html">DataScrollerStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DataScrollerStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-default-tree-item-renderer-style/index.html">DefaultTreeItemRendererStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">DefaultTreeItemRendererStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-divider-style/index.html">DividerStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DividerStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-down-repeat-style/index.html">DownRepeatStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DownRepeatStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout.algorithm/-flow-layout-style/index.html">FlowLayoutStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">FlowLayoutStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout.algorithm/-grid-layout-style/index.html">GridLayoutStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">GridLayoutStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-heading-group-style/index.html">HeadingGroupStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">HeadingGroupStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout.algorithm/-horizontal-layout-style/index.html">HorizontalLayoutStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">HorizontalLayoutStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-noop-style/index.html">NoopStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">NoopStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a><span class="symbol">, </span><a href="../-style-type/index.html"><span class="identifier">StyleType</span></a><span class="symbol">&lt;</span><a href="../-noop-style/index.html"><span class="identifier">NoopStyle</span></a><span class="symbol">&gt;</span></code>
+<p>A Style object with no style properties.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-null-renderer-style/index.html">NullRendererStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">NullRendererStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-numeric-stepper-style/index.html">NumericStepperStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">NumericStepperStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-options-list-style/index.html">OptionsListStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">OptionsListStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-panel-style/index.html">PanelStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">PanelStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.popup/-pop-up-manager-style/index.html">PopUpManagerStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">PopUpManagerStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-progress-bar-rect-style/index.html">ProgressBarRectStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ProgressBarRectStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-row-background-style/index.html">RowBackgroundStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">RowBackgroundStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout.algorithm/-scale-layout-style/index.html">ScaleLayoutStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ScaleLayoutStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.scroll/-scroll-area-style/index.html">ScrollAreaStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ScrollAreaStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.scroll/-scroll-bar-style/index.html">ScrollBarStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ScrollBarStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.gl.component/-scroll-rect-style/index.html">ScrollRectStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ScrollRectStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-simple-item-renderer-style/index.html">SimpleItemRendererStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">SimpleItemRendererStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-stack-layout-style/index.html">StackLayoutStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">StackLayoutStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-stage-style/index.html">StageStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">StageStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-tab-navigator-style/index.html">TabNavigatorStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TabNavigatorStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.text/-text-flow-style/index.html">TextFlowStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TextFlowStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.text/-text-input-style/index.html">TextInputStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TextInputStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout.algorithm/-vertical-layout-style/index.html">VerticalLayoutStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">VerticalLayoutStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout.algorithm.virtual/-virtual-horizontal-layout-style/index.html">VirtualHorizontalLayoutStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">VirtualHorizontalLayoutStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout.algorithm.virtual/-virtual-vertical-layout-style/index.html">VirtualVerticalLayoutStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">VirtualVerticalLayoutStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-window-panel-style/index.html">WindowPanelStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">WindowPanelStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

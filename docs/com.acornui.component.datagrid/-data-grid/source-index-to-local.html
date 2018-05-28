@@ -1,0 +1,23 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>DataGrid.sourceIndexToLocal - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.datagrid</a>&nbsp;/&nbsp;<a href="index.html">DataGrid</a>&nbsp;/&nbsp;<a href="./source-index-to-local.html">sourceIndexToLocal</a><br/>
+<br/>
+<h1>sourceIndexToLocal</h1>
+<a name="com.acornui.component.datagrid.DataGrid$sourceIndexToLocal(kotlin.Int)"></a>
+<code><span class="keyword">fun </span><span class="identifier">sourceIndexToLocal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.DataGrid$sourceIndexToLocal(kotlin.Int)/sourceIndex">sourceIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-row-location/index.html"><span class="identifier">RowLocation</span></a><span class="symbol">&lt;</span><a href="-cell-location/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">?</span></code>
+<p>Given an index within the <a href="data.html">data</a> list, this will return a <a href="-row-location/index.html">RowLocation</a> object representing the local position
+which takes into account filtering, sorting, and grouping.
+This will return null if the element is filtered out.</p>
+<p>Note - If the groups do not provide unique filtering, this method returns the first group found where the
+element is not filtered out.</p>
+<h3>Parameters</h3>
+<p><a name="sourceIndex"></a>
+<code>sourceIndex</code> - The index of the element within <a href="data.html">data</a> to convert. This should be between 0 and
+<code>data.lastIndex</code> (inclusive)</p>
+</BODY>
+</HTML>

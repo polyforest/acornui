@@ -1,0 +1,35 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Gl20.texImage2Db - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.gl.core</a>&nbsp;/&nbsp;<a href="index.html">Gl20</a>&nbsp;/&nbsp;<a href="./tex-image2-db.html">texImage2Db</a><br/>
+<br/>
+<h1>texImage2Db</h1>
+<a name="com.acornui.gl.core.Gl20$texImage2Db(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, com.acornui.io.NativeBuffer((kotlin.Byte)))"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">texImage2Db</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.Gl20$texImage2Db(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, com.acornui.io.NativeBuffer((kotlin.Byte)))/target">target</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.Gl20$texImage2Db(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, com.acornui.io.NativeBuffer((kotlin.Byte)))/level">level</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.Gl20$texImage2Db(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, com.acornui.io.NativeBuffer((kotlin.Byte)))/internalFormat">internalFormat</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.Gl20$texImage2Db(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, com.acornui.io.NativeBuffer((kotlin.Byte)))/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.Gl20$texImage2Db(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, com.acornui.io.NativeBuffer((kotlin.Byte)))/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.Gl20$texImage2Db(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, com.acornui.io.NativeBuffer((kotlin.Byte)))/border">border</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.Gl20$texImage2Db(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, com.acornui.io.NativeBuffer((kotlin.Byte)))/format">format</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.Gl20$texImage2Db(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, com.acornui.io.NativeBuffer((kotlin.Byte)))/type">type</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.Gl20$texImage2Db(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, com.acornui.io.NativeBuffer((kotlin.Byte)))/pixels">pixels</span><span class="symbol">:</span>&nbsp;<span class="identifier">NativeBuffer</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte/index.html"><span class="identifier">Byte</span></a><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Specifies the size and data of the bound texture in the active texture unit (set through activeTexture() and bindTexture).</p>
+<h3>Parameters</h3>
+<p><a name="target"></a>
+<code>target</code> - must be one of TEXTURE_2D, TEXTURE_CUBE_MAP_POSITIVE_X, TEXTURE_CUBE_MAP_NEGATIVE_X, TEXTURE_CUBE_MAP_POSITIVE_Y, TEXTURE_CUBE_MAP_NEGATIVE_Y, TEXTURE_CUBE_MAP_POSITIVE_Z, or TEXTURE_CUBE_MAP_NEGATIVE_Z.</p>
+<p><a name="level"></a>
+<code>level</code> - is the mipmap level (0 is base level).</p>
+<p><a name="internalFormat"></a>
+<code>internalFormat</code> - must be one of ALPHA, LUMINANCE, LUMINANCE_ALPHA, RGB, or RGBA.</p>
+<p><a name="width"></a>
+<code>width</code> - the size of the texture.</p>
+<p><a name="height"></a>
+<code>height</code> - </p>
+<p><a name="border"></a>
+<code>border</code> - must be 0.</p>
+<p><a name="format"></a>
+<code>format</code> - must match internalFormat.</p>
+<p><a name="type"></a>
+<code>type</code> - must be one of UNSIGNED_BYTE, UNSIGNED_SHORT_5_6_5, UNSIGNED_SHORT_4_4_4_4, or UNSIGNED_5_5_5_1;</p>
+<p><a name="pixels"></a>
+<code>pixels</code> - is the data to load into the texture. May be null to allocate the texture without data.
+The loaded data is affected by the pixelStorei() options. You can also use copyTexSubImage2D or texSubImage2D to initialize the texture.</p>
+</BODY>
+</HTML>

@@ -1,0 +1,256 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Transformable - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.layout</a>&nbsp;/&nbsp;<a href="./index.html">Transformable</a><br/>
+<br/>
+<h1>Transformable</h1>
+<code><span class="keyword">interface </span><span class="identifier">Transformable</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-transformable-ro/index.html"><span class="identifier">TransformableRo</span></a><span class="symbol">, </span><a href="../-positionable/index.html"><span class="identifier">Positionable</span></a></code>
+<p>The API for reading and modifying a component's 3d transformation.</p>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="custom-transform.html">customTransform</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">customTransform</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span><span class="symbol">?</span></code>
+<p>If this is not null, this custom transformation matrix will be used. Note that if this is set, all properties
+that would otherwise generate the transformation matrix are no longer applicable.
+<a href="../-transformable-ro/scale-x.html">scaleX</a>, <a href="../-transformable-ro/scale-y.html">scaleY</a>, <a href="../-transformable-ro/rotation-x.html">scaleZ</a>, <a href="../-transformable-ro/rotation-y.html">rotationY</a>, <a href="../-transformable-ro/rotation.html">rotation</a>,
+<a href="../-transformable-ro/origin-x.html">originX</a>, <a href="../-transformable-ro/origin-y.html">originY</a>, <a href="../-transformable-ro/origin-z.html">originZ</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="origin-x.html">originX</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">originX</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="origin-y.html">originY</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">originY</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="origin-z.html">originZ</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">originZ</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="rotation.html">rotation</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">rotation</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Rotation around the Z axis</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="rotation-x.html">rotationX</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">rotationX</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="rotation-y.html">rotationY</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">rotationY</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="scale-x.html">scaleX</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">scaleX</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="scale-y.html">scaleY</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">scaleY</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="scale-z.html">scaleZ</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">scaleZ</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-transformable-ro/concatenated-transform.html">concatenatedTransform</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">concatenatedTransform</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span></code>
+<p>The global transform of this component, of all ancestor transforms multiplied together.
+Do not modify this matrix directly, it will be overwritten on a TRANSFORM validation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-transformable-ro/concatenated-transform-inv.html">concatenatedTransformInv</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">concatenatedTransformInv</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span></code>
+<p>Returns the inverse concatenated transformation matrix.
+Note that this is a heavy operation and should be used judiciously. It is not part of the normal validation
+cycle.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-transformable-ro/transform.html">transform</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">transform</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span></code>
+<p>This component's transformation matrix.
+Responsible for 3d positioning, scaling, rotation, etc.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="set-origin.html">setOrigin</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setOrigin</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Transformable$setOrigin(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setOrigin(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setOrigin(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setOrigin</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Transformable$setOrigin(kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setOrigin(kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="set-rotation.html">setRotation</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setRotation</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Transformable$setRotation(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setRotation(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setRotation(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="set-scaling.html">setScaling</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setScaling</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Transformable$setScaling(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setScaling(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setScaling(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setScaling</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Transformable$setScaling(kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setScaling(kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-transformable-ro/convert-coord.html">convertCoord</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">convertCoord</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$convertCoord(com.acornui.math.Vector3, com.acornui.component.layout.TransformableRo)/coord">coord</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.TransformableRo$convertCoord(com.acornui.math.Vector3, com.acornui.component.layout.TransformableRo)/targetCoordSpace">targetCoordSpace</span><span class="symbol">:</span>&nbsp;<a href="../-transformable-ro/index.html"><span class="identifier">TransformableRo</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector3</span></code>
+<p>Converts a coordinate from this Transformable's coordinate space to the target coordinate space.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-transformable-ro/global-to-local.html">globalToLocal</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">globalToLocal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$globalToLocal(com.acornui.math.Vector3)/globalCoord">globalCoord</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector3</span></code>
+<p>Converts a coordinate from global coordinate space to local coordinate space.
+This will modify the provided coord parameter.</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">globalToLocal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$globalToLocal(com.acornui.math.Ray)/ray">ray</span><span class="symbol">:</span>&nbsp;<span class="identifier">Ray</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Ray</span></code>
+<p>Converts a ray from global coordinate space to local coordinate space.
+This will modify the provided ray parameter.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-transformable-ro/local-to-global.html">localToGlobal</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">localToGlobal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$localToGlobal(com.acornui.math.Vector3)/localCoord">localCoord</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector3</span></code>
+<p>Converts a coordinate from local coordinate space to global coordinate space.
+This will modify the provided coord parameter.</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">localToGlobal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$localToGlobal(com.acornui.math.Ray)/ray">ray</span><span class="symbol">:</span>&nbsp;<span class="identifier">Ray</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Ray</span></code>
+<p>Converts a ray from local coordinate space to global coordinate space.
+This will modify the provided ray parameter.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-positionable/move-to.html">moveTo</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">moveTo</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Positionable$moveTo(com.acornui.math.Vector3Ro)/value">value</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3Ro</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">moveTo</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Positionable$moveTo(kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Positionable$moveTo(kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">moveTo</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Positionable$moveTo(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Positionable$moveTo(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Positionable$moveTo(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the position of this component, rounding the x and y coordinates.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-transformable-ro/ray-to-plane.html">rayToPlane</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">rayToPlane</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$rayToPlane(com.acornui.math.RayRo, com.acornui.math.Vector2)/ray">ray</span><span class="symbol">:</span>&nbsp;<span class="identifier">RayRo</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.TransformableRo$rayToPlane(com.acornui.math.RayRo, com.acornui.math.Vector2)/out">out</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector2</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Calculates the intersection coordinates of the provided Ray (in local coordinate space) and this layout
+element's plane.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-positionable/set-position.html">setPosition</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setPosition</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Positionable$setPosition(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Positionable$setPosition(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Positionable$setPosition(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the position of this component. (Without rounding)</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setPosition</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Positionable$setPosition(kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Positionable$setPosition(kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setPosition</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Positionable$setPosition(com.acornui.math.Vector3Ro)/value">value</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3Ro</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-camera-element/index.html">CameraElement</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">CameraElement</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-camera-element-ro/index.html"><span class="identifier">CameraElementRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Transformable</span></a></code>
+<p>A transformable element that is viewed via a Camera.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-layout-element/index.html">LayoutElement</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">LayoutElement</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-layout-element-ro/index.html"><span class="identifier">LayoutElementRo</span></a><span class="symbol">, </span><a href="../-basic-layout-element/index.html"><span class="identifier">BasicLayoutElement</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Transformable</span></a></code>
+<p>A LayoutElement is a Transformable component that can be used in layout algorithms.
+It has features responsible for providing explicit dimensions, and returning measured dimensions.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

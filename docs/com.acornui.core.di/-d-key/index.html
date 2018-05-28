@@ -1,0 +1,270 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>DKey - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.di</a>&nbsp;/&nbsp;<a href="./index.html">DKey</a><br/>
+<br/>
+<h1>DKey</h1>
+<code><span class="keyword">interface </span><span class="identifier">DKey</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code>
+<p>A DependencyKey is a marker interface indicating an object representing a key of a specific dependency type.</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="extends.html">extends</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">extends</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="factory.html">factory</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">factory</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di.DKey$factory(com.acornui.core.di.Injector)/injector">injector</span><span class="symbol">:</span>&nbsp;<a href="../-injector/index.html"><span class="identifier">Injector</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">?</span></code>
+<p>A dependency key has an optional factory method, where if it provides a non-null value, the
+dependency doesn't need to be set before use, and the factory method will produce the default implementation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="to.html">to</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">infix</span> <span class="keyword">fun </span><span class="identifier">to</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di.DKey$to(com.acornui.core.di.DKey.T)/value">value</span><span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-dependency-pair/index.html"><span class="identifier">DependencyPair</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-stage/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-stage/index.html"><span class="identifier">Stage</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../../com.acornui.component.style/-style-tag/index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-app-config/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core/-app-config/index.html"><span class="identifier">AppConfig</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-user-info/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core/-user-info/index.html"><span class="identifier">UserInfo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.assets/-asset-manager/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.assets/-asset-manager/index.html"><span class="identifier">AssetManager</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.assets/-cache/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.assets/-cache/index.html"><span class="identifier">Cache</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.audio/-audio-manager-ro/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.audio/-audio-manager-ro/index.html"><span class="identifier">AudioManagerRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.audio/-audio-manager/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.audio/-audio-manager/index.html"><span class="identifier">AudioManager</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.cursor/-cursor-manager/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.cursor/-cursor-manager/index.html"><span class="identifier">CursorManager</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.focus/-focus-manager/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.focus/-focus-manager/index.html"><span class="identifier">FocusManager</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.graphics/-camera/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.graphics/-camera/index.html"><span class="identifier">Camera</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.graphics/-window/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.graphics/-window/index.html"><span class="identifier">Window</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.i18n/-i18n/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.i18n/-i18n/index.html"><span class="identifier">I18n</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interactivity-manager/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input/-interactivity-manager/index.html"><span class="identifier">InteractivityManager</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-key-state/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input/-key-state/index.html"><span class="identifier">KeyState</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-key-input/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input/-key-input/index.html"><span class="identifier">KeyInput</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-mouse-state/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input/-mouse-state/index.html"><span class="identifier">MouseState</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-mouse-input/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input/-mouse-input/index.html"><span class="identifier">MouseInput</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.io.file/-files/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.io.file/-files/index.html"><span class="identifier">Files</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.mvc/-command-dispatcher/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.mvc/-command-dispatcher/index.html"><span class="identifier">CommandDispatcher</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.mvc/-state-command-history/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.mvc/-state-command-history/index.html"><span class="identifier">StateCommandHistory</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.nav/-navigation-manager/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.nav/-navigation-manager/index.html"><span class="identifier">NavigationManager</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.persistance/-persistence/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.persistance/-persistence/index.html"><span class="identifier">Persistence</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.popup/-pop-up-manager/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.popup/-pop-up-manager/index.html"><span class="identifier">PopUpManager</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.request/-rest-service-factory/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.request/-rest-service-factory/index.html"><span class="identifier">RestServiceFactory</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.selection/-selection-manager/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.selection/-selection-manager/index.html"><span class="identifier">SelectionManager</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.time/-time-driver/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.time/-time-driver/index.html"><span class="identifier">TimeDriver</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.file/-file-io-manager/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.file/-file-io-manager/index.html"><span class="identifier">FileIoManager</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.gl.core/-gl20/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.gl.core/-gl20/index.html"><span class="identifier">Gl20</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.gl.core/-gl-state/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.gl.core/-gl-state/index.html"><span class="identifier">GlState</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.skins/-theme/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.skins/-theme/index.html"><span class="identifier">Theme</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-dependency-key-impl/index.html">DependencyKeyImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><s><span class="identifier">DependencyKeyImpl</span></s><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../-dependency-key-impl/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

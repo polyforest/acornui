@@ -1,0 +1,243 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>AudioManagerImpl - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.audio</a>&nbsp;/&nbsp;<a href="./index.html">AudioManagerImpl</a><br/>
+<br/>
+<h1>AudioManagerImpl</h1>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">AudioManagerImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-updatable-child-base/index.html"><span class="identifier">UpdatableChildBase</span></a><span class="symbol">, </span><a href="../-audio-manager/index.html"><span class="identifier">AudioManager</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">AudioManagerImpl</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.audio.AudioManagerImpl$<init>(kotlin.Int)/simultaneousSounds">simultaneousSounds</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;8<span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="active-musics.html">activeMusics</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">activeMusics</span><span class="symbol">: </span><span class="identifier">ActiveList</span><span class="symbol">&lt;</span><a href="../-music/index.html"><span class="identifier">Music</span></a><span class="symbol">&gt;</span></code>
+<p>The current active musics being played.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="active-sounds.html">activeSounds</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">activeSounds</span><span class="symbol">: </span><span class="identifier">ActiveList</span><span class="symbol">&lt;</span><a href="../-sound/index.html"><span class="identifier">Sound</span></a><span class="symbol">&gt;</span></code>
+<p>The current active sounds being played.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="music-volume.html">musicVolume</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">musicVolume</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The global music gain. 0-1</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="simultaneous-sounds.html">simultaneousSounds</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">simultaneousSounds</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="sound-sources.html">soundSources</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">soundSources</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-array-list/index.html"><span class="identifier">ArrayList</span></a><span class="symbol">&lt;</span><a href="../-sound-factory/index.html"><span class="identifier">SoundFactory</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="sound-volume.html">soundVolume</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">soundVolume</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The global sound gain. 0-1</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-updatable-child-base/parent.html">parent</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">parent</span><span class="symbol">: </span><a href="../../com.acornui.core/-parent/index.html"><span class="identifier">Parent</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core/-updatable-child/index.html"><span class="identifier">UpdatableChild</span></a><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="register-music.html">registerMusic</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">registerMusic</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.audio.AudioManagerImpl$registerMusic(com.acornui.core.audio.Music)/music">music</span><span class="symbol">:</span>&nbsp;<a href="../-music/index.html"><span class="identifier">Music</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="register-sound.html">registerSound</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">registerSound</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.audio.AudioManagerImpl$registerSound(com.acornui.core.audio.Sound)/sound">sound</span><span class="symbol">:</span>&nbsp;<a href="../-sound/index.html"><span class="identifier">Sound</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="register-sound-source.html">registerSoundSource</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">registerSoundSource</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.audio.AudioManagerImpl$registerSoundSource(com.acornui.core.audio.SoundFactory)/soundSource">soundSource</span><span class="symbol">:</span>&nbsp;<a href="../-sound-factory/index.html"><span class="identifier">SoundFactory</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="unregister-music.html">unregisterMusic</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">unregisterMusic</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.audio.AudioManagerImpl$unregisterMusic(com.acornui.core.audio.Music)/music">music</span><span class="symbol">:</span>&nbsp;<a href="../-music/index.html"><span class="identifier">Music</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="unregister-sound.html">unregisterSound</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">unregisterSound</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.audio.AudioManagerImpl$unregisterSound(com.acornui.core.audio.Sound)/sound">sound</span><span class="symbol">:</span>&nbsp;<a href="../-sound/index.html"><span class="identifier">Sound</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="unregister-sound-source.html">unregisterSoundSource</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">unregisterSoundSource</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.audio.AudioManagerImpl$unregisterSoundSource(com.acornui.core.audio.SoundFactory)/soundSource">soundSource</span><span class="symbol">:</span>&nbsp;<a href="../-sound-factory/index.html"><span class="identifier">SoundFactory</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="update.html">update</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">update</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.audio.AudioManagerImpl$update(kotlin.Float)/stepTime">stepTime</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Updates this object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-audio-manager/can-play-sound.html">canPlaySound</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">canPlaySound</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.audio.AudioManager$canPlaySound(kotlin.Float)/priority">priority</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>A quick check to ensure this sound can be played given the priority of the current active sounds.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/ancestry.html">ancestry</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">ancestry</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$ancestry(com.acornui.core.ChildRo, kotlin.collections.MutableList((com.acornui.core.ChildRo)))/out">out</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">&gt;</span></code>
+<p>Populates an ArrayList with a ChildRo's ancestry.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/ancestry-count.html">ancestryCount</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">ancestryCount</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Returns the lineage count. 0 if this child is the stage, or is the stage, 1 if the stage is the parent,
+2 if the stage is the grandparent, 3 if the stage is the great grandparent, and so on.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/is-after.html">isAfter</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">isAfter</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$isAfter(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this ChildRo is after the <a href="../../com.acornui.core/is-after.html#com.acornui.core$isAfter(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/other">other</a> ChildRo. This considers the parent to come before the child.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/is-ancestor-of.html">isAncestorOf</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">isAncestorOf</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$isAncestorOf(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/child">child</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this <a href="../../com.acornui.core/-child-ro/index.html">ChildRo</a> is the ancestor of the given <a href="../../com.acornui.core/is-ancestor-of.html#com.acornui.core$isAncestorOf(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/child">child</a>.
+X is considered to be an ancestor of Y if doing a parent walk starting from Y, X is then reached.
+This will return true if X === Y</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/is-before.html">isBefore</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">isBefore</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$isBefore(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this ChildRo is before the <a href="../../com.acornui.core/is-before.html#com.acornui.core$isBefore(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/other">other</a> ChildRo. This considers the parent to come before the child.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/is-descendant-of.html">isDescendantOf</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">isDescendantOf</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$isDescendantOf(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/ancestor">ancestor</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/parent-walk.html">parentWalk</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">parentWalk</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$parentWalk(com.acornui.core.ChildRo, kotlin.Function1((com.acornui.core.ChildRo, kotlin.Boolean)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/root.html">root</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">root</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

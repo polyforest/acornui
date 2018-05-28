@@ -1,0 +1,443 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.component.text - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.component.text</a><br/>
+<br/>
+<h2>Package com.acornui.component.text</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-char-style/index.html">CharStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">CharStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a></code>
+<p>The glyph characteristics.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-char-style-serializer/index.html">CharStyleSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">CharStyleSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">To</span><span class="symbol">&lt;</span><a href="-char-style/index.html"><span class="identifier">CharStyle</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">From</span><span class="symbol">&lt;</span><a href="-char-style/index.html"><span class="identifier">CharStyle</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-editable-text-field/index.html">EditableTextField</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">EditableTextField</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.focus/-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">, </span><a href="-text-field/index.html"><span class="identifier">TextField</span></a></code>
+<p>An EditableTextField is a TextField that allows its content to be edited. This is different from TextArea in that
+this component allows mixed content as opposed to plain text.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-restrict-patterns/index.html">RestrictPatterns</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">RestrictPatterns</span></code>
+<p>Common text restrict patterns.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-text-area/index.html">TextArea</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">TextArea</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-text-input/index.html"><span class="identifier">TextInput</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-text-command/index.html">TextCommand</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">TextCommand</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-text-commander/index.html">TextCommander</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">TextCommander</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-text-field/index.html">TextField</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">TextField</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">, </span><a href="../com.acornui.component/-labelable/index.html"><span class="identifier">Labelable</span></a><span class="symbol">, </span><a href="../com.acornui.core.selection/-selectable-component.html"><span class="identifier">SelectableComponent</span></a><span class="symbol">, </span><a href="../com.acornui.component.style/-styleable/index.html"><span class="identifier">Styleable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-text-flow-style/index.html">TextFlowStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TextFlowStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-text-input/index.html">TextInput</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">TextInput</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.focus/-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">, </span><a href="../com.acornui.core.selection/-selectable-component.html"><span class="identifier">SelectableComponent</span></a><span class="symbol">, </span><a href="../com.acornui.component.style/-styleable/index.html"><span class="identifier">Styleable</span></a><span class="symbol">, </span><span class="identifier">Clearable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-text-input-style/index.html">TextInputStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TextInputStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="selectable.html">selectable</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><a href="-text-field/index.html"><span class="identifier">TextField</span></a><span class="symbol">.</span><span class="identifier">selectable</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code><br/>
+<code><span class="keyword">var </span><a href="-text-input/index.html"><span class="identifier">TextInput</span></a><span class="symbol">.</span><span class="identifier">selectable</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code><br/>
+<code><span class="keyword">var </span><a href="-text-area/index.html"><span class="identifier">TextArea</span></a><span class="symbol">.</span><span class="identifier">selectable</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="back-color.html">backColor</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">backColor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$backColor(com.acornui.component.text.TextCommander, com.acornui.graphics.Color)/color">color</span><span class="symbol">:</span>&nbsp;<span class="identifier">Color</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="bold.html">bold</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">bold</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="char-style.html">charStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">charStyle</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$charStyle(kotlin.Function1((com.acornui.component.text.CharStyle, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-char-style/index.html"><span class="identifier">CharStyle</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-char-style/index.html"><span class="identifier">CharStyle</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="copy.html">copy</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">copy</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="create-link.html">createLink</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">createLink</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$createLink(com.acornui.component.text.TextCommander, kotlin.String)/uri">uri</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="cut.html">cut</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">cut</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="editable-text.html">editableText</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">editableText</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$editableText(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.text.EditableTextField, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-editable-text-field/index.html"><span class="identifier">EditableTextField</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-editable-text-field/index.html"><span class="identifier">EditableTextField</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="exec.html">exec</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">exec</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$exec(com.acornui.component.text.TextCommander, com.acornui.component.text.TextCommand, kotlin.String)/command">command</span><span class="symbol">:</span>&nbsp;<a href="-text-command/index.html"><span class="identifier">TextCommand</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text$exec(com.acornui.component.text.TextCommander, com.acornui.component.text.TextCommand, kotlin.String)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;""<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="font-name.html">fontName</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">fontName</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$fontName(com.acornui.component.text.TextCommander, kotlin.String)/fontName">fontName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="font-size.html">fontSize</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">fontSize</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$fontSize(com.acornui.component.text.TextCommander, kotlin.Int)/fontSize">fontSize</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="fore-color.html">foreColor</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">foreColor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$foreColor(com.acornui.component.text.TextCommander, com.acornui.graphics.Color)/color">color</span><span class="symbol">:</span>&nbsp;<span class="identifier">Color</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="format-block.html">formatBlock</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">formatBlock</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$formatBlock(com.acornui.component.text.TextCommander, kotlin.String)/blockTag">blockTag</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="hilite-color.html">hiliteColor</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">hiliteColor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$hiliteColor(com.acornui.component.text.TextCommander, com.acornui.graphics.Color)/color">color</span><span class="symbol">:</span>&nbsp;<span class="identifier">Color</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="indent.html">indent</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">indent</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="insert-horizontal-rule.html">insertHorizontalRule</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">insertHorizontalRule</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="insert-html.html">insertHtml</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">insertHtml</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$insertHtml(com.acornui.component.text.TextCommander, kotlin.String)/html">html</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="insert-image.html">insertImage</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">insertImage</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$insertImage(com.acornui.component.text.TextCommander, kotlin.String)/imageSource">imageSource</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="insert-ordered-list.html">insertOrderedList</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">insertOrderedList</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="insert-paragraph.html">insertParagraph</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">insertParagraph</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="insert-text.html">insertText</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">insertText</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$insertText(com.acornui.component.text.TextCommander, kotlin.String)/text">text</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="insert-unordered-list.html">insertUnorderedList</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">insertUnorderedList</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="italic.html">italic</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">italic</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="justify-center.html">justifyCenter</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">justifyCenter</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="justify-full.html">justifyFull</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">justifyFull</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="justify-left.html">justifyLeft</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">justifyLeft</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="justify-right.html">justifyRight</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">justifyRight</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="outdent.html">outdent</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">outdent</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="paste.html">paste</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">paste</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="query-bool.html">queryBool</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">queryBool</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$queryBool(com.acornui.component.text.TextCommander, com.acornui.component.text.TextCommand)/command">command</span><span class="symbol">:</span>&nbsp;<a href="-text-command/index.html"><span class="identifier">TextCommand</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="query-color.html">queryColor</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">queryColor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$queryColor(com.acornui.component.text.TextCommander, com.acornui.component.text.TextCommand)/command">command</span><span class="symbol">:</span>&nbsp;<a href="-text-command/index.html"><span class="identifier">TextCommand</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Color</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="query-string.html">queryString</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">queryString</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$queryString(com.acornui.component.text.TextCommander, com.acornui.component.text.TextCommand)/command">command</span><span class="symbol">:</span>&nbsp;<a href="-text-command/index.html"><span class="identifier">TextCommand</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="redo.html">redo</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">redo</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="remove-format.html">removeFormat</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">removeFormat</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="replace-text-range.html">replaceTextRange</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-input/index.html"><span class="identifier">TextInput</span></a><span class="symbol">.</span><span class="identifier">replaceTextRange</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$replaceTextRange(com.acornui.component.text.TextInput, kotlin.Int, kotlin.Int, kotlin.String, com.acornui.core.mvc.CommandGroup)/startIndex">startIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text$replaceTextRange(com.acornui.component.text.TextInput, kotlin.Int, kotlin.Int, kotlin.String, com.acornui.core.mvc.CommandGroup)/endIndex">endIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text$replaceTextRange(com.acornui.component.text.TextInput, kotlin.Int, kotlin.Int, kotlin.String, com.acornui.core.mvc.CommandGroup)/newText">newText</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text$replaceTextRange(com.acornui.component.text.TextInput, kotlin.Int, kotlin.Int, kotlin.String, com.acornui.core.mvc.CommandGroup)/group">group</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.mvc/-command-group/index.html"><span class="identifier">CommandGroup</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Replaces the given range with the provided text.
+This is functionally the same as:
+text.substring(0, startIndex) + newText + text.substring(endIndex, text.length)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="select-all.html">selectAll</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">selectAll</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="strike-through.html">strikeThrough</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">strikeThrough</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="style-with-c-s-s.html">styleWithCSS</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">styleWithCSS</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$styleWithCSS(com.acornui.component.text.TextCommander, kotlin.Boolean)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="subscript.html">subscript</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">subscript</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="superscript.html">superscript</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">superscript</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="text.html">text</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">text</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$text(com.acornui.core.di.Owned, kotlin.String, kotlin.Function1((com.acornui.component.text.TextField, kotlin.Unit)))/text">text</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text$text(com.acornui.core.di.Owned, kotlin.String, kotlin.Function1((com.acornui.component.text.TextField, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-text-field/index.html"><span class="identifier">TextField</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-text-field/index.html"><span class="identifier">TextField</span></a></code>
+<p>Creates a <a href="-text-field/index.html">TextField</a> implementation with the provided text content.</p>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">text</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$text(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.text.TextField, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-text-field/index.html"><span class="identifier">TextField</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-text-field/index.html"><span class="identifier">TextField</span></a></code>
+<p>Creates a <a href="-text-field/index.html">TextField</a> implementation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="text-area.html">textArea</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">textArea</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$textArea(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.text.TextArea, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-text-area/index.html"><span class="identifier">TextArea</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-text-area/index.html"><span class="identifier">TextArea</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="text-input.html">textInput</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">textInput</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$textInput(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.text.TextInput, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-text-input/index.html"><span class="identifier">TextInput</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-text-input/index.html"><span class="identifier">TextInput</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="underline.html">underline</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">underline</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="undo.html">undo</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">undo</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="unlink.html">unlink</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-text-commander/index.html"><span class="identifier">TextCommander</span></a><span class="symbol">.</span><span class="identifier">unlink</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

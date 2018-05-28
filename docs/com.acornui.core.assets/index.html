@@ -1,0 +1,237 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.core.assets - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.core.assets</a><br/>
+<br/>
+<h2>Package com.acornui.core.assets</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-asset-loader.html">AssetLoader</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">AssetLoader</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-asset-loader-ro/index.html"><span class="identifier">AssetLoaderRo</span></a><span class="symbol">&lt;</span><a href="-asset-loader.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">CancelableDeferred</span><span class="symbol">&lt;</span><a href="-asset-loader.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>An asset loader that exposes an API capable of mutation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-asset-loader-ro/index.html">AssetLoaderRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">AssetLoaderRo</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Deferred</span><span class="symbol">&lt;</span><a href="-asset-loader-ro/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">Progress</span></code>
+<p>AssetLoader is a read-only interface that represents a loading asset. It has progress and a value for a final result.
+It is used by the asset manager.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-asset-manager/index.html">AssetManager</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">AssetManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span><span class="symbol">, </span><span class="identifier">Progress</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-asset-manager-impl/index.html">AssetManagerImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">AssetManagerImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-asset-manager/index.html"><span class="identifier">AssetManager</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-asset-type/index.html">AssetType</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">AssetType</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code>
+<p>AssetType represents the type of asset an AssetLoader will load.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-cache/index.html">Cache</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Cache</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-cache-impl/index.html">CacheImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">CacheImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-cache/index.html"><span class="identifier">Cache</span></a></code>
+<p>A key-value store that keeps track of references. When references reach zero, the cached asset will be disposed
+in the future.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-cache-key.html">CacheKey</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">CacheKey</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-cached-group/index.html">CachedGroup</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">CachedGroup</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-cached-group-impl/index.html">CachedGroupImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">CachedGroupImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-cached-group/index.html"><span class="identifier">CachedGroup</span></a></code>
+<p>A caching group tracks a list of keys to refDec when the group is disposed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-json-decorator/index.html">JsonDecorator</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">JsonDecorator</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">R</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Decorator</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="-json-decorator/index.html#R"><span class="identifier">R</span></a><span class="symbol">&gt;</span></code>
+<p>The JsonDecorator will deserialize a string. Its factory must be a singleton and produce no side-effects.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-loading-queue-busy-watch/index.html">LoadingQueueBusyWatch</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">LoadingQueueBusyWatch</span></code>
+<p>A utility to watch the loading queue for status changes, creating a busy cursor when it's loading something.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Exceptions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-asset-loading-exception/index.html">AssetLoadingException</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">AssetLoadingException</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html"><span class="identifier">Throwable</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Type Aliases</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-loader-factory.html">LoaderFactory</a></p>
+</td>
+<td>
+<code><span class="keyword">typealias </span><span class="identifier">LoaderFactory</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;<span class="symbol">(</span><span class="identifier">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">estimatedBytesTotal</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="-asset-loader.html"><span class="identifier">AssetLoader</span></a><span class="symbol">&lt;</span><a href="-loader-factory.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="seconds-remaining.html">secondsRemaining</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="-asset-manager/index.html"><span class="identifier">AssetManager</span></a><span class="symbol">.</span><span class="identifier">secondsRemaining</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="await-all.html">awaitAll</a></p>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><a href="-asset-manager/index.html"><span class="identifier">AssetManager</span></a><span class="symbol">.</span><span class="identifier">awaitAll</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Waits until there are no currently active loaders.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="cached-group.html">cachedGroup</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">cachedGroup</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-cached-group/index.html"><span class="identifier">CachedGroup</span></a></code>
+<p>Constructs a new <a href="-cached-group/index.html">CachedGroup</a> object with the current scope's <a href="-cache/index.html">Cache</a> manager.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="json-decorator.html">jsonDecorator</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">R</span><span class="symbol">&gt;</span> <a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">jsonDecorator</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets$jsonDecorator(com.acornui.core.di.Scoped, com.acornui.serialization.From((com.acornui.core.assets.jsonDecorator.R)))/factory">factory</span><span class="symbol">:</span>&nbsp;<span class="identifier">From</span><span class="symbol">&lt;</span><a href="json-decorator.html#R"><span class="identifier">R</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Decorator</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="json-decorator.html#R"><span class="identifier">R</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="load.html">load</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">load</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets$load(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.load.T)))/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$load(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.load.T)))/type">type</span><span class="symbol">:</span>&nbsp;<a href="-asset-type/index.html"><span class="identifier">AssetType</span></a><span class="symbol">&lt;</span><a href="load.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="-asset-loader-ro/index.html"><span class="identifier">AssetLoaderRo</span></a><span class="symbol">&lt;</span><a href="load.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Uses the scope's asset manager to load the given resource.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="load-and-cache.html">loadAndCache</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">loadAndCache</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.core.assets.CachedGroup)/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.core.assets.CachedGroup)/type">type</span><span class="symbol">:</span>&nbsp;<a href="-asset-type/index.html"><span class="identifier">AssetType</span></a><span class="symbol">&lt;</span><a href="load-and-cache.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.core.assets.CachedGroup)/group">group</span><span class="symbol">:</span>&nbsp;<a href="-cached-group/index.html"><span class="identifier">CachedGroup</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Deferred</span><span class="symbol">&lt;</span><a href="load-and-cache.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Loads the given file and caches the result.
+Subsequent calls to <a href="load-and-cache.html">loadAndCache</a> with the same <a href="load-and-cache.html#com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.core.assets.CachedGroup)/path">path</a> and <a href="load-and-cache.html#com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.core.assets.CachedGroup)/type">type</a> will return the same <a href="#">Deferred</a> instance.</p>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">, </span><span class="identifier">R</span><span class="symbol">&gt;</span> <a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">loadAndCache</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.action.Decorator((com.acornui.core.assets.loadAndCache.T, com.acornui.core.assets.loadAndCache.R)), com.acornui.core.assets.CachedGroup)/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.action.Decorator((com.acornui.core.assets.loadAndCache.T, com.acornui.core.assets.loadAndCache.R)), com.acornui.core.assets.CachedGroup)/type">type</span><span class="symbol">:</span>&nbsp;<a href="-asset-type/index.html"><span class="identifier">AssetType</span></a><span class="symbol">&lt;</span><a href="load-and-cache.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.action.Decorator((com.acornui.core.assets.loadAndCache.T, com.acornui.core.assets.loadAndCache.R)), com.acornui.core.assets.CachedGroup)/decorator">decorator</span><span class="symbol">:</span>&nbsp;<span class="identifier">Decorator</span><span class="symbol">&lt;</span><a href="load-and-cache.html#T"><span class="identifier">T</span></a><span class="symbol">,</span>&nbsp;<a href="load-and-cache.html#R"><span class="identifier">R</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.action.Decorator((com.acornui.core.assets.loadAndCache.T, com.acornui.core.assets.loadAndCache.R)), com.acornui.core.assets.CachedGroup)/group">group</span><span class="symbol">:</span>&nbsp;<a href="-cached-group/index.html"><span class="identifier">CachedGroup</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Deferred</span><span class="symbol">&lt;</span><a href="load-and-cache.html#R"><span class="identifier">R</span></a><span class="symbol">&gt;</span></code><br/>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">, </span><span class="identifier">R</span><span class="symbol">&gt;</span> <span class="identifier">loadAndCache</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets$loadAndCache(com.acornui.core.assets.AssetManager, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.action.Decorator((com.acornui.core.assets.loadAndCache.T, com.acornui.core.assets.loadAndCache.R)), com.acornui.core.assets.CachedGroup)/assetManager">assetManager</span><span class="symbol">:</span>&nbsp;<a href="-asset-manager/index.html"><span class="identifier">AssetManager</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$loadAndCache(com.acornui.core.assets.AssetManager, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.action.Decorator((com.acornui.core.assets.loadAndCache.T, com.acornui.core.assets.loadAndCache.R)), com.acornui.core.assets.CachedGroup)/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$loadAndCache(com.acornui.core.assets.AssetManager, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.action.Decorator((com.acornui.core.assets.loadAndCache.T, com.acornui.core.assets.loadAndCache.R)), com.acornui.core.assets.CachedGroup)/type">type</span><span class="symbol">:</span>&nbsp;<a href="-asset-type/index.html"><span class="identifier">AssetType</span></a><span class="symbol">&lt;</span><a href="load-and-cache.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$loadAndCache(com.acornui.core.assets.AssetManager, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.action.Decorator((com.acornui.core.assets.loadAndCache.T, com.acornui.core.assets.loadAndCache.R)), com.acornui.core.assets.CachedGroup)/decorator">decorator</span><span class="symbol">:</span>&nbsp;<span class="identifier">Decorator</span><span class="symbol">&lt;</span><a href="load-and-cache.html#T"><span class="identifier">T</span></a><span class="symbol">,</span>&nbsp;<a href="load-and-cache.html#R"><span class="identifier">R</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$loadAndCache(com.acornui.core.assets.AssetManager, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.action.Decorator((com.acornui.core.assets.loadAndCache.T, com.acornui.core.assets.loadAndCache.R)), com.acornui.core.assets.CachedGroup)/group">group</span><span class="symbol">:</span>&nbsp;<a href="-cached-group/index.html"><span class="identifier">CachedGroup</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Deferred</span><span class="symbol">&lt;</span><a href="load-and-cache.html#R"><span class="identifier">R</span></a><span class="symbol">&gt;</span></code>
+<p>Loads the given file, applies a decorator to the results, and caches the final value.
+Subsequent calls to <a href="load-and-cache.html">loadAndCache</a> with the same <a href="load-and-cache.html#com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.action.Decorator((com.acornui.core.assets.loadAndCache.T, com.acornui.core.assets.loadAndCache.R)), com.acornui.core.assets.CachedGroup)/path">path</a>, <a href="load-and-cache.html#com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.action.Decorator((com.acornui.core.assets.loadAndCache.T, com.acornui.core.assets.loadAndCache.R)), com.acornui.core.assets.CachedGroup)/type">type</a>, and <a href="load-and-cache.html#com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.action.Decorator((com.acornui.core.assets.loadAndCache.T, com.acornui.core.assets.loadAndCache.R)), com.acornui.core.assets.CachedGroup)/decorator">decorator</a> will return the same <a href="#">Deferred</a> instance.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="load-and-cache-json.html">loadAndCacheJson</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">R</span><span class="symbol">&gt;</span> <a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">loadAndCacheJson</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets$loadAndCacheJson(com.acornui.core.di.Scoped, kotlin.String, com.acornui.serialization.From((com.acornui.core.assets.loadAndCacheJson.R)), com.acornui.core.assets.CachedGroup)/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$loadAndCacheJson(com.acornui.core.di.Scoped, kotlin.String, com.acornui.serialization.From((com.acornui.core.assets.loadAndCacheJson.R)), com.acornui.core.assets.CachedGroup)/factory">factory</span><span class="symbol">:</span>&nbsp;<span class="identifier">From</span><span class="symbol">&lt;</span><a href="load-and-cache-json.html#R"><span class="identifier">R</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$loadAndCacheJson(com.acornui.core.di.Scoped, kotlin.String, com.acornui.serialization.From((com.acornui.core.assets.loadAndCacheJson.R)), com.acornui.core.assets.CachedGroup)/group">group</span><span class="symbol">:</span>&nbsp;<a href="-cached-group/index.html"><span class="identifier">CachedGroup</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Deferred</span><span class="symbol">&lt;</span><a href="load-and-cache-json.html#R"><span class="identifier">R</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="load-json.html">loadJson</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">loadJson</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets$loadJson(com.acornui.core.di.Scoped, kotlin.String, com.acornui.serialization.From((com.acornui.core.assets.loadJson.T)))/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$loadJson(com.acornui.core.di.Scoped, kotlin.String, com.acornui.serialization.From((com.acornui.core.assets.loadJson.T)))/factory">factory</span><span class="symbol">:</span>&nbsp;<span class="identifier">From</span><span class="symbol">&lt;</span><a href="load-json.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Deferred</span><span class="symbol">&lt;</span><a href="load-json.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Loads a json file, then parses it into the target.
+This is not cached.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="loading-queue-busy-watch.html">loadingQueueBusyWatch</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">loadingQueueBusyWatch</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-loading-queue-busy-watch/index.html"><span class="identifier">LoadingQueueBusyWatch</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="on-loaders-empty.html">onLoadersEmpty</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-asset-manager/index.html"><span class="identifier">AssetManager</span></a><span class="symbol">.</span><span class="identifier">onLoadersEmpty</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets$onLoadersEmpty(com.acornui.core.assets.AssetManager, kotlin.Function0((kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

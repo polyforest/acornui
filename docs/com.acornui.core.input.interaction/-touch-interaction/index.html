@@ -1,0 +1,104 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>TouchInteraction - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.input.interaction</a>&nbsp;/&nbsp;<a href="./index.html">TouchInteraction</a><br/>
+<br/>
+<h1>TouchInteraction</h1>
+<code><span class="keyword">class </span><span class="identifier">TouchInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-touch-interaction-ro/index.html"><span class="identifier">TouchInteractionRo</span></a><span class="symbol">, </span><a href="../../com.acornui.core.input/-interaction-event-base/index.html"><span class="identifier">InteractionEventBase</span></a></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">TouchInteraction</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="changed-touches.html">changedTouches</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">changedTouches</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-array-list/index.html"><span class="identifier">ArrayList</span></a><span class="symbol">&lt;</span><a href="../-touch/index.html"><span class="identifier">Touch</span></a><span class="symbol">&gt;</span></code>
+<p>A list of all the Touch objects representing individual points of contact whose states changed between the
+previous touch event and this one.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="target-touches.html">targetTouches</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">targetTouches</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-array-list/index.html"><span class="identifier">ArrayList</span></a><span class="symbol">&lt;</span><a href="../-touch/index.html"><span class="identifier">Touch</span></a><span class="symbol">&gt;</span></code>
+<p>A list of all the Touch objects that are both currently in contact with the touch surface and were also started
+on the same element that is the target of the event.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="timestamp.html">timestamp</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">timestamp</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
+<p>The number of milliseconds from the Unix epoch.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="touches.html">touches</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">touches</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-array-list/index.html"><span class="identifier">ArrayList</span></a><span class="symbol">&lt;</span><a href="../-touch/index.html"><span class="identifier">Touch</span></a><span class="symbol">&gt;</span></code>
+<p>A list of all the Touch objects representing all current points of contact with the surface, regardless of
+target or changed status.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="clear-touches.html">clearTouches</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clearTouches</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="localize.html">localize</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">localize</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction.TouchInteraction$localize(com.acornui.component.UiComponentRo)/currentTarget">currentTarget</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Changes the local properties of this interaction to be relative to the given target. (Such as touch x, y)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set.html">set</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction.TouchInteraction$set(com.acornui.core.input.interaction.TouchInteractionRo)/event">event</span><span class="symbol">:</span>&nbsp;<a href="../-touch-interaction-ro/index.html"><span class="identifier">TouchInteractionRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

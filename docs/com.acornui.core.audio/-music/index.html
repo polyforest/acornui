@@ -1,0 +1,154 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Music - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.audio</a>&nbsp;/&nbsp;<a href="./index.html">Music</a><br/>
+<br/>
+<h1>Music</h1>
+<code><span class="keyword">interface </span><span class="identifier">Music</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<p>An interface for controlling a progressive-download music file.</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="current-time.html">currentTime</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">currentTime</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Indicates the current playback time (in seconds). Setting this will seek to the new time.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="duration.html">duration</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">duration</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="is-paused.html">isPaused</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">isPaused</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if the music is not playing and is not at current time 0f</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="is-playing.html">isPlaying</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">isPlaying</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this music is playing, or false if it's stopped or paused.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="loop.html">loop</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">loop</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true, the music will loop.
+(Default false)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="on-completed.html">onCompleted</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">onCompleted</span><span class="symbol">: </span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Dispatched when the music has completed playing.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="ready-state.html">readyState</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">readyState</span><span class="symbol">: </span><a href="../-music-ready-state/index.html"><span class="identifier">MusicReadyState</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="ready-state-changed.html">readyStateChanged</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">readyStateChanged</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="volume.html">volume</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">volume</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>0f-1f</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="pause.html">pause</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">pause</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="play.html">play</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">play</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="stop.html">stop</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">stop</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Stops the music, setting the <a href="current-time.html">currentTime</a> to 0f. This is not the same as <a href="../-sound/index.html">Sound</a>; the music is not disposed
+when it's stopped or paused.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="toggle.html">toggle</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toggle</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Toggles the playing status.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="update.html">update</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">update</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Updates this object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../tween-volume.html">tweenVolume</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">Music</span></a><span class="symbol">.</span><span class="identifier">tweenVolume</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.audio$tweenVolume(com.acornui.core.audio.Music, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.audio$tweenVolume(com.acornui.core.audio.Music, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.audio$tweenVolume(com.acornui.core.audio.Music, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/toVolume">toVolume</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.audio$tweenVolume(com.acornui.core.audio.Music, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.tween/-tween/index.html"><span class="identifier">Tween</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

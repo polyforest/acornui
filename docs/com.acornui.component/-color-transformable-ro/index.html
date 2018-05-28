@@ -1,0 +1,67 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ColorTransformableRo - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component</a>&nbsp;/&nbsp;<a href="./index.html">ColorTransformableRo</a><br/>
+<br/>
+<h1>ColorTransformableRo</h1>
+<code><span class="keyword">interface </span><span class="identifier">ColorTransformableRo</span></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="alpha.html">alpha</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">alpha</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="color-tint.html">colorTint</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">colorTint</span><span class="symbol">: </span><span class="identifier">ColorRo</span></code>
+<p>The color tint of this component.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="concatenated-color-tint.html">concatenatedColorTint</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">concatenatedColorTint</span><span class="symbol">: </span><span class="identifier">ColorRo</span></code>
+<p>The color multiplier of this component and all ancestor color tints multiplied together.
+Do not set this directly, it will be overwritten on a <a href="../-validation-flags/-c-o-n-c-a-t-e-n-a-t-e-d_-c-o-l-o-r_-t-r-a-n-s-f-o-r-m.html">ValidationFlags.CONCATENATED_COLOR_TRANSFORM</a> validation.
+Retrieving this value validates <a href="../-validation-flags/-c-o-n-c-a-t-e-n-a-t-e-d_-c-o-l-o-r_-t-r-a-n-s-f-o-r-m.html">ValidationFlags.CONCATENATED_COLOR_TRANSFORM</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-color-transformable/index.html">ColorTransformable</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ColorTransformable</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ColorTransformableRo</span></a></code>
+<p>A trait for objects that can have a color transformation applied.
+The final pixel color value for the default shader is <a href="#">colorTint * pixel</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-ui-component-ro/index.html">UiComponentRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">UiComponentRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-lifecycle-ro/index.html"><span class="identifier">LifecycleRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">ColorTransformableRo</span></a><span class="symbol">, </span><a href="../-interactive-element-ro/index.html"><span class="identifier">InteractiveElementRo</span></a><span class="symbol">, </span><a href="../-validatable/index.html"><span class="identifier">Validatable</span></a><span class="symbol">, </span><a href="../../com.acornui.component.style/-styleable-ro/index.html"><span class="identifier">StyleableRo</span></a><span class="symbol">, </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,78 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Propagation - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.input</a>&nbsp;/&nbsp;<a href="./index.html">Propagation</a><br/>
+<br/>
+<h1>Propagation</h1>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Propagation</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-propagation-ro/index.html"><span class="identifier">PropagationRo</span></a><span class="symbol">, </span><span class="identifier">Clearable</span></code>
+<p>Given a ladder of propagation, <a href="stop-propagation.html">stopPropagation</a> stops the sequence from reaching the next rung, and
+<a href="stop-immediate-propagation.html">stopImmediatePropagation</a> stops the sequence from reaching the next rung and stops the sequence from continuing
+on the current rung.</p>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">Propagation</span><span class="symbol">(</span><span class="symbol">)</span></code>
+<p>Given a ladder of propagation, <a href="stop-propagation.html">stopPropagation</a> stops the sequence from reaching the next rung, and
+<a href="stop-immediate-propagation.html">stopImmediatePropagation</a> stops the sequence from reaching the next rung and stops the sequence from continuing
+on the current rung.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="immediate-propagation-stopped.html">immediatePropagationStopped</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">immediatePropagationStopped</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="propagation-stopped.html">propagationStopped</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">propagationStopped</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="stop-immediate-propagation.html">stopImmediatePropagation</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">stopImmediatePropagation</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Immediately stops execution of the sequence, neither progressing further, or finishing the current level.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="stop-propagation.html">stopPropagation</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">stopPropagation</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Stops the sequence from going to the next level, but will continue along the current level.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

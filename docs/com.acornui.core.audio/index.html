@@ -1,0 +1,110 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.core.audio - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.core.audio</a><br/>
+<br/>
+<h2>Package com.acornui.core.audio</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-audio-device/index.html">AudioDevice</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">AudioDevice</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<p>Encapsulates an audio device in mono or stereo mode. Use the <a href="#">.writeSamples</a> and
+<a href="#">.writeSamples</a> methods to write float or 16-bit signed short PCM data directly to the audio device.
+Stereo samples are interleaved in the order left channel sample, right channel sample. The <a href="#">.dispose</a> method must be
+called when this AudioDevice is no longer needed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-audio-manager/index.html">AudioManager</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">AudioManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-audio-manager-ro/index.html"><span class="identifier">AudioManagerRo</span></a><span class="symbol">, </span><a href="../com.acornui.core/-updatable-child/index.html"><span class="identifier">UpdatableChild</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-audio-manager-impl/index.html">AudioManagerImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">AudioManagerImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-updatable-child-base/index.html"><span class="identifier">UpdatableChildBase</span></a><span class="symbol">, </span><a href="-audio-manager/index.html"><span class="identifier">AudioManager</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-audio-manager-ro/index.html">AudioManagerRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">AudioManagerRo</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-dummy-audio-device/index.html">DummyAudioDevice</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">DummyAudioDevice</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-audio-device/index.html"><span class="identifier">AudioDevice</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-music/index.html">Music</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Music</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<p>An interface for controlling a progressive-download music file.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-music-ready-state/index.html">MusicReadyState</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">MusicReadyState</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-sound/index.html">Sound</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Sound</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<p>An interface for controlling an in-memory sound clip.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-sound-factory/index.html">SoundFactory</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">SoundFactory</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="set-panning.html">setPanning</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-sound/index.html"><span class="identifier">Sound</span></a><span class="symbol">.</span><span class="identifier">setPanning</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.audio$setPanning(com.acornui.core.audio.Sound, kotlin.Float)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the audio's position so that</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="tween-volume.html">tweenVolume</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-music/index.html"><span class="identifier">Music</span></a><span class="symbol">.</span><span class="identifier">tweenVolume</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.audio$tweenVolume(com.acornui.core.audio.Music, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.audio$tweenVolume(com.acornui.core.audio.Music, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.audio$tweenVolume(com.acornui.core.audio.Music, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/toVolume">toVolume</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.audio$tweenVolume(com.acornui.core.audio.Music, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.core.tween/-tween/index.html"><span class="identifier">Tween</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

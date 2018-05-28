@@ -1,0 +1,218 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>TimeDriver - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.time</a>&nbsp;/&nbsp;<a href="./index.html">TimeDriver</a><br/>
+<br/>
+<h1>TimeDriver</h1>
+<code><span class="keyword">interface </span><span class="identifier">TimeDriver</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-parent/index.html"><span class="identifier">Parent</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core/-updatable-child/index.html"><span class="identifier">UpdatableChild</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../../com.acornui.core/-updatable/index.html"><span class="identifier">Updatable</span></a></code>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">TimeDriver</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-parent/add-all-children.html">addAllChildren</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addAllChildren</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.Parent$addAllChildren(kotlin.collections.Iterable((com.acornui.core.Parent.T)))/children">children</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addAllChildren</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.Parent$addAllChildren(kotlin.Int, kotlin.collections.Iterable((com.acornui.core.Parent.T)))/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.Parent$addAllChildren(kotlin.Int, kotlin.collections.Iterable((com.acornui.core.Parent.T)))/children">children</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addAllChildren</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.Parent$addAllChildren(kotlin.Array((com.acornui.core.Parent.T)))/children">children</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><span class="identifier">Array</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addAllChildren</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.Parent$addAllChildren(kotlin.Int, kotlin.Array((com.acornui.core.Parent.T)))/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.Parent$addAllChildren(kotlin.Int, kotlin.Array((com.acornui.core.Parent.T)))/children">children</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><span class="identifier">Array</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-parent/add-child.html">addChild</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span> <span class="identifier">addChild</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.Parent$addChild(com.acornui.core.Parent.addChild.S)/child">child</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-parent/add-child.html#S"><span class="identifier">S</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core/-parent/add-child.html#S"><span class="identifier">S</span></a></code><code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span> <span class="identifier">addChild</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.Parent$addChild(kotlin.Int, com.acornui.core.Parent.addChild.S)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.Parent$addChild(kotlin.Int, com.acornui.core.Parent.addChild.S)/child">child</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-parent/add-child.html#S"><span class="identifier">S</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core/-parent/add-child.html#S"><span class="identifier">S</span></a></code>
+<p>Adds the specified child to this container.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-parent/add-child-after.html">addChildAfter</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addChildAfter</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.Parent$addChildAfter(com.acornui.core.Parent.T, com.acornui.core.Parent.T)/child">child</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.Parent$addChildAfter(com.acornui.core.Parent.T, com.acornui.core.Parent.T)/after">after</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Adds a child after the provided element.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-parent/add-child-before.html">addChildBefore</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addChildBefore</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.Parent$addChildBefore(com.acornui.core.Parent.T, com.acornui.core.Parent.T)/child">child</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.Parent$addChildBefore(com.acornui.core.Parent.T, com.acornui.core.Parent.T)/before">before</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Adds a child after the provided element.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-parent/clear-children.html">clearChildren</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clearChildren</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Removes all the children and optionally disposes them (default).</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-parent/remove-child.html">removeChild</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">removeChild</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.Parent$removeChild(com.acornui.core.Parent.T)/child">child</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Removes a child from this container.</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">removeChild</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.Parent$removeChild(kotlin.Int)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core/-parent/index.html#T"><span class="identifier">T</span></a></code>
+<p>Removes a child at the given index from this container.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-updatable/update.html">update</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">update</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.Updatable$update(kotlin.Float)/stepTime">stepTime</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Updates this object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-d-key/extends.html">extends</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">extends</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-d-key/factory.html">factory</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">factory</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di.DKey$factory(com.acornui.core.di.Injector)/injector">injector</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-injector/index.html"><span class="identifier">Injector</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-d-key/index.html#T"><span class="identifier">T</span></a><span class="symbol">?</span></code>
+<p>A dependency key has an optional factory method, where if it provides a non-null value, the
+dependency doesn't need to be set before use, and the factory method will produce the default implementation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-d-key/to.html">to</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">infix</span> <span class="keyword">fun </span><span class="identifier">to</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di.DKey$to(com.acornui.core.di.DKey.T)/value">value</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-d-key/index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-dependency-pair/index.html"><span class="identifier">DependencyPair</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.di/-d-key/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/ancestry.html">ancestry</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">ancestry</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$ancestry(com.acornui.core.ChildRo, kotlin.collections.MutableList((com.acornui.core.ChildRo)))/out">out</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">&gt;</span></code>
+<p>Populates an ArrayList with a ChildRo's ancestry.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/ancestry-count.html">ancestryCount</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">ancestryCount</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Returns the lineage count. 0 if this child is the stage, or is the stage, 1 if the stage is the parent,
+2 if the stage is the grandparent, 3 if the stage is the great grandparent, and so on.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/is-after.html">isAfter</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">isAfter</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$isAfter(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this ChildRo is after the <a href="../../com.acornui.core/is-after.html#com.acornui.core$isAfter(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/other">other</a> ChildRo. This considers the parent to come before the child.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/is-ancestor-of.html">isAncestorOf</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">isAncestorOf</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$isAncestorOf(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/child">child</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this <a href="../../com.acornui.core/-child-ro/index.html">ChildRo</a> is the ancestor of the given <a href="../../com.acornui.core/is-ancestor-of.html#com.acornui.core$isAncestorOf(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/child">child</a>.
+X is considered to be an ancestor of Y if doing a parent walk starting from Y, X is then reached.
+This will return true if X === Y</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/is-before.html">isBefore</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">isBefore</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$isBefore(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this ChildRo is before the <a href="../../com.acornui.core/is-before.html#com.acornui.core$isBefore(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/other">other</a> ChildRo. This considers the parent to come before the child.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/is-descendant-of.html">isDescendantOf</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">isDescendantOf</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$isDescendantOf(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/ancestor">ancestor</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/parent-walk.html">parentWalk</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">parentWalk</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$parentWalk(com.acornui.core.ChildRo, kotlin.Function1((com.acornui.core.ChildRo, kotlin.Boolean)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/root.html">root</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">root</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-time-driver-impl/index.html">TimeDriverImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">TimeDriverImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TimeDriver</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,142 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.core.i18n - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.core.i18n</a><br/>
+<br/>
+<h2>Package com.acornui.core.i18n</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-bundle-binding/index.html">BundleBinding</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">BundleBinding</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code>
+<p>A <code>BundleBinding</code> object loads an <a href="-i18n-bundle/index.html">I18nBundle</a> object, then allows changed handlers to be added as a set, which
+are then removed upon <a href="-bundle-binding/dispose.html">dispose</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-i18n/index.html">I18n</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">I18n</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-i18n-bundle/index.html">I18nBundle</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">I18nBundle</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-i18n-bundle-impl/index.html">I18nBundleImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">I18nBundleImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-i18n-bundle/index.html"><span class="identifier">I18nBundle</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-i18n-impl/index.html">I18nImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">I18nImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-i18n/index.html"><span class="identifier">I18n</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-locale/index.html">Locale</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Locale</span></code>
+<p>An object representing a locale key.
+In the future, this may be parsed into lang, region, variant, etc.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-properties-decorator/index.html">PropertiesDecorator</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">PropertiesDecorator</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Decorator</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="i18n-fallback-path.html">i18nFallbackPath</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">i18nFallbackPath</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>The tokenized path for the fallback property files. This will be used if there was no matching locale.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="i18n-path.html">i18nPath</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">i18nPath</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>The tokenized path for property files for a specific locale.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="choose-locale.html">chooseLocale</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">chooseLocale</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.i18n$chooseLocale(com.acornui.core.di.Scoped, kotlin.collections.List((com.acornui.core.i18n.Locale)))/supported">supported</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="-locale/index.html"><span class="identifier">Locale</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="-locale/index.html"><span class="identifier">Locale</span></a><span class="symbol">?</span></code>
+<p>This will iterate over the <a href="-i18n/current-locales.html">I18n.currentLocales</a> list, returning the first locale that is contained in
+the provided <a href="choose-locale.html#com.acornui.core.i18n$chooseLocale(com.acornui.core.di.Scoped, kotlin.collections.List((com.acornui.core.i18n.Locale)))/supported">supported</a> list. Or null if there is no match.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="i18n.html">i18n</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">i18n</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.i18n$i18n(com.acornui.core.di.Scoped, kotlin.String)/bundleName">bundleName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-bundle-binding/index.html"><span class="identifier">BundleBinding</span></a></code>
+<p>Invokes the callback when this bundle has changed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="load-bundle.html">loadBundle</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">loadBundle</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.i18n$loadBundle(com.acornui.core.di.Scoped, kotlin.String, kotlin.String, kotlin.String)/bundleName">bundleName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.i18n$loadBundle(com.acornui.core.di.Scoped, kotlin.String, kotlin.String, kotlin.String)/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;i18nPath<span class="symbol">, </span><span class="identifier" id="com.acornui.core.i18n$loadBundle(com.acornui.core.di.Scoped, kotlin.String, kotlin.String, kotlin.String)/defaultPath">defaultPath</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;i18nFallbackPath<span class="symbol">)</span><span class="symbol">: </span><a href="-i18n-bundle/index.html"><span class="identifier">I18nBundle</span></a></code>
+<p>Loads a resource bundle at the given path for the <a href="-i18n/current-locales.html">I18n.currentLocales</a>. When the current locale changes, the new
+bundle will be automatically loaded.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="load-bundle-for-locale.html">loadBundleForLocale</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">loadBundleForLocale</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.i18n$loadBundleForLocale(com.acornui.core.di.Scoped, com.acornui.core.i18n.Locale, kotlin.String, kotlin.String)/locale">locale</span><span class="symbol">:</span>&nbsp;<a href="-locale/index.html"><span class="identifier">Locale</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.i18n$loadBundleForLocale(com.acornui.core.di.Scoped, com.acornui.core.i18n.Locale, kotlin.String, kotlin.String)/bundleName">bundleName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.i18n$loadBundleForLocale(com.acornui.core.di.Scoped, com.acornui.core.i18n.Locale, kotlin.String, kotlin.String)/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;i18nPath<span class="symbol">)</span><span class="symbol">: </span><a href="-i18n-bundle/index.html"><span class="identifier">I18nBundle</span></a></code>
+<p>Loads a resource bundle for the specified locale and bundle. Unlike <a href="load-bundle.html">loadBundle</a>, this will not be bound to
+<a href="-i18n/current-locales.html">I18n.currentLocales</a>.</p>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">loadBundleForLocale</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.i18n$loadBundleForLocale(com.acornui.core.di.Scoped, kotlin.collections.List((com.acornui.core.i18n.Locale)), kotlin.String, kotlin.String)/locales">locales</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="-locale/index.html"><span class="identifier">Locale</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.i18n$loadBundleForLocale(com.acornui.core.di.Scoped, kotlin.collections.List((com.acornui.core.i18n.Locale)), kotlin.String, kotlin.String)/bundleName">bundleName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.i18n$loadBundleForLocale(com.acornui.core.di.Scoped, kotlin.collections.List((com.acornui.core.i18n.Locale)), kotlin.String, kotlin.String)/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;i18nPath<span class="symbol">)</span><span class="symbol">: </span><a href="-i18n-bundle/index.html"><span class="identifier">I18nBundle</span></a></code>
+<p>Loads a resource bundle for the specified locale chain and bundle. Unlike <a href="load-bundle.html">loadBundle</a>, this will not be bound to
+<a href="-i18n/current-locales.html">I18n.currentLocales</a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

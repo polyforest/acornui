@@ -1,0 +1,136 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>I18n - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.i18n</a>&nbsp;/&nbsp;<a href="./index.html">I18n</a><br/>
+<br/>
+<h1>I18n</h1>
+<code><span class="keyword">interface </span><span class="identifier">I18n</span></code>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">I18n</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="current-locale-changed.html">currentLocaleChanged</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">currentLocaleChanged</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><span class="identifier">oldLocale</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-locale/index.html"><span class="identifier">Locale</span></a><span class="symbol">&gt;</span><span class="symbol">,</span>&nbsp;<span class="identifier">newLocale</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-locale/index.html"><span class="identifier">Locale</span></a><span class="symbol">&gt;</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="current-locales.html">currentLocales</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">currentLocales</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-locale/index.html"><span class="identifier">Locale</span></a><span class="symbol">&gt;</span></code>
+<p>The locale chain. This is an ordered list of locales to try when binding to resource bundles or formatting.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="get-bundle.html">getBundle</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getBundle</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.i18n.I18n$getBundle(kotlin.String)/bundleName">bundleName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-i18n-bundle/index.html"><span class="identifier">I18nBundle</span></a></code>
+<p>Returns a localization bundle for the given bundle name.
+This bundle will be for the <a href="current-locales.html">currentLocales</a>, and will notify changes when <a href="current-locale-changed.html">currentLocaleChanged</a> has dispatched.</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getBundle</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.i18n.I18n$getBundle(kotlin.collections.List((com.acornui.core.i18n.Locale)), kotlin.String)/locales">locales</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-locale/index.html"><span class="identifier">Locale</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.i18n.I18n$getBundle(kotlin.collections.List((com.acornui.core.i18n.Locale)), kotlin.String)/bundleName">bundleName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-i18n-bundle/index.html"><span class="identifier">I18nBundle</span></a></code>
+<p>Returns a localization bundle for the given bundle name and locales.
+Use this if you wish to get localization values for a specific locale chain, as opposed to the current locale.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set-bundle-values.html">setBundleValues</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setBundleValues</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.i18n.I18n$setBundleValues(com.acornui.core.i18n.Locale, kotlin.String, kotlin.collections.Map((kotlin.String, )))/locale">locale</span><span class="symbol">:</span>&nbsp;<a href="../-locale/index.html"><span class="identifier">Locale</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.i18n.I18n$setBundleValues(com.acornui.core.i18n.Locale, kotlin.String, kotlin.collections.Map((kotlin.String, )))/bundleName">bundleName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.i18n.I18n$setBundleValues(com.acornui.core.i18n.Locale, kotlin.String, kotlin.collections.Map((kotlin.String, )))/values">values</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the bundle values. This will trigger <a href="../-i18n-bundle/changed.html">I18nBundle.changed</a> signals on the bundles with the same name.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-u-n-d-e-f-i-n-e-d.html">UNDEFINED</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">UNDEFINED</span><span class="symbol">: </span><a href="../-locale/index.html"><span class="identifier">Locale</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-d-key/extends.html">extends</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">extends</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="factory.html">factory</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">factory</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.i18n.I18n.Companion$factory(com.acornui.core.di.Injector)/injector">injector</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-injector/index.html"><span class="identifier">Injector</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">I18n</span></a><span class="symbol">?</span></code>
+<p>A dependency key has an optional factory method, where if it provides a non-null value, the
+dependency doesn't need to be set before use, and the factory method will produce the default implementation.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-d-key/to.html">to</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">infix</span> <span class="keyword">fun </span><span class="identifier">to</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di.DKey$to(com.acornui.core.di.DKey.T)/value">value</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-d-key/index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-dependency-pair/index.html"><span class="identifier">DependencyPair</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.di/-d-key/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-i18n-impl/index.html">I18nImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">I18nImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">I18n</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,184 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>DragInteraction - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.input.interaction</a>&nbsp;/&nbsp;<a href="./index.html">DragInteraction</a><br/>
+<br/>
+<h1>DragInteraction</h1>
+<code><span class="keyword">class </span><span class="identifier">DragInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.input/-interaction-event-base/index.html"><span class="identifier">InteractionEventBase</span></a></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">DragInteraction</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="position.html">position</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">position</span><span class="symbol">: </span><span class="identifier">Vector2</span></code>
+<p>The current position (in window coordinates).</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="position-local.html">positionLocal</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">positionLocal</span><span class="symbol">: </span><span class="identifier">Vector2</span></code>
+<p>The current position, local to the target element.
+Note that this value is calculated, and not cached.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="start-element.html">startElement</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">startElement</span><span class="symbol">: </span><a href="../../com.acornui.component/-interactive-element-ro/index.html"><span class="identifier">InteractiveElementRo</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="start-position.html">startPosition</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">startPosition</span><span class="symbol">: </span><span class="identifier">Vector2</span></code>
+<p>The starting position (in window coordinates) for the drag.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="start-position-local.html">startPositionLocal</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">startPositionLocal</span><span class="symbol">: </span><span class="identifier">Vector2</span></code>
+<p>The starting position relative to the startElement for the drag.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-base/current-target.html">currentTarget</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">currentTarget</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-base/handled.html">handled</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">handled</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>True if this event was used in an interaction.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-base/propagation.html">propagation</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">propagation</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-propagation/index.html"><span class="identifier">Propagation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-base/target.html">target</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">target</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-base/type.html">type</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">type</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input/-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-base/default-prevented.html">defaultPrevented</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">defaultPrevented</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-base/localize.html">localize</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">localize</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.InteractionEventBase$localize(com.acornui.component.UiComponentRo)/currentTarget">currentTarget</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Changes the local properties of this interaction to be relative to the given target. (Such as touch x, y)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-base/prevent-default.html">preventDefault</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">preventDefault</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Flags this event to indicate that default behavior should be ignored.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-d-r-a-g.html">DRAG</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">DRAG</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-d-r-a-g_-e-n-d.html">DRAG_END</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">DRAG_END</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-d-r-a-g_-s-t-a-r-t.html">DRAG_START</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">DRAG_START</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

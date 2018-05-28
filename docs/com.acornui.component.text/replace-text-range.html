@@ -1,0 +1,30 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>replaceTextRange - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="index.html">com.acornui.component.text</a>&nbsp;/&nbsp;<a href="./replace-text-range.html">replaceTextRange</a><br/>
+<br/>
+<h1>replaceTextRange</h1>
+<a name="com.acornui.component.text$replaceTextRange(com.acornui.component.text.TextInput, kotlin.Int, kotlin.Int, kotlin.String, com.acornui.core.mvc.CommandGroup)"></a>
+<code><span class="keyword">fun </span><a href="-text-input/index.html"><span class="identifier">TextInput</span></a><span class="symbol">.</span><span class="identifier">replaceTextRange</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.text$replaceTextRange(com.acornui.component.text.TextInput, kotlin.Int, kotlin.Int, kotlin.String, com.acornui.core.mvc.CommandGroup)/startIndex">startIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text$replaceTextRange(com.acornui.component.text.TextInput, kotlin.Int, kotlin.Int, kotlin.String, com.acornui.core.mvc.CommandGroup)/endIndex">endIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text$replaceTextRange(com.acornui.component.text.TextInput, kotlin.Int, kotlin.Int, kotlin.String, com.acornui.core.mvc.CommandGroup)/newText">newText</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.text$replaceTextRange(com.acornui.component.text.TextInput, kotlin.Int, kotlin.Int, kotlin.String, com.acornui.core.mvc.CommandGroup)/group">group</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.mvc/-command-group/index.html"><span class="identifier">CommandGroup</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Replaces the given range with the provided text.
+This is functionally the same as:
+text.substring(0, startIndex) + newText + text.substring(endIndex, text.length)</p>
+<h3>Parameters</h3>
+<p><a name="startIndex"></a>
+<code>startIndex</code> - The starting character index for the replacement. (Inclusive)</p>
+<p><a name="endIndex"></a>
+<code>endIndex</code> - 
+<p>The ending character index for the replacement. (Exclusive)</p>
+
+
+<p>E.g.
++text("Hello World") {
+replaceTextRange(1, 5, "i") // Hi World
+}</p>
+</p>
+</BODY>
+</HTML>

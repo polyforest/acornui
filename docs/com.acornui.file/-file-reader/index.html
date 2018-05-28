@@ -1,0 +1,70 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>FileReader - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.file</a>&nbsp;/&nbsp;<a href="./index.html">FileReader</a><br/>
+<br/>
+<h1>FileReader</h1>
+<code><span class="keyword">interface </span><span class="identifier">FileReader</span></code>
+<p>An object that holds metadata properties for a picked file and allows for asynchronous reading of that file from disk.</p>
+<p>File reading (String and binary) is limited to files that are 2mb in size.</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="last-modified.html">lastModified</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">lastModified</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
+<p>Last date the file was modified as the number of milliseconds since the Unix Epoch</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="name.html">name</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">name</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>Name of the file including aboslute path (JS excludes path for security purposes)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="size.html">size</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">size</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
+<p>Size of the file in bytes</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="read-as-binary.html">readAsBinary</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">readAsBinary</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">NativeBuffer</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte/index.html"><span class="identifier">Byte</span></a><span class="symbol">&gt;</span></code>
+<p>Read file (<a href="name.html">name</a>) from disk binary</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="read-as-string.html">readAsString</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">readAsString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>Read file (<a href="name.html">name</a>) from disk as a String</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

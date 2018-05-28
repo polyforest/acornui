@@ -1,0 +1,169 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Touch - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.input.interaction</a>&nbsp;/&nbsp;<a href="./index.html">Touch</a><br/>
+<br/>
+<h1>Touch</h1>
+<code><span class="keyword">class </span><span class="identifier">Touch</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-touch-ro/index.html"><span class="identifier">TouchRo</span></a><span class="symbol">, </span><span class="identifier">Clearable</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">Touch</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="canvas-x.html">canvasX</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">canvasX</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The x position of the mouse event relative to the root canvas.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="canvas-y.html">canvasY</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">canvasY</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The y position of the mouse event relative to the root canvas.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="current-target.html">currentTarget</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">currentTarget</span><span class="symbol">: </span><a href="../../com.acornui.component/-interactive-element-ro/index.html"><span class="identifier">InteractiveElementRo</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="local-x.html">localX</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">localX</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The x position of the mouse event relative to the <a href="current-target.html">currentTarget</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="local-y.html">localY</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">localY</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The y position of the mouse event relative to the <a href="current-target.html">currentTarget</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="radius-x.html">radiusX</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">radiusX</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="radius-y.html">radiusY</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">radiusY</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="rotation-angle.html">rotationAngle</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">rotationAngle</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="target.html">target</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">target</span><span class="symbol">: </span><a href="../../com.acornui.component/-interactive-element-ro/index.html"><span class="identifier">InteractiveElementRo</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="dst.html">dst</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dst</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction.Touch$dst(com.acornui.core.input.interaction.Touch)/other">other</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Touch</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The distance of this touch point to the other touch point (in canvas coordinates)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="free.html">free</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">free</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="localize.html">localize</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">localize</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction.Touch$localize(com.acornui.component.InteractiveElementRo)/currentTarget">currentTarget</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-interactive-element-ro/index.html"><span class="identifier">InteractiveElementRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="set.html">set</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction.Touch$set(com.acornui.core.input.interaction.TouchRo)/otherTouch">otherTouch</span><span class="symbol">:</span>&nbsp;<a href="../-touch-ro/index.html"><span class="identifier">TouchRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-touch-ro/dst.html">dst</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">dst</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction.TouchRo$dst(com.acornui.core.input.interaction.TouchRo)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-touch-ro/index.html"><span class="identifier">TouchRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The distance of this touch point to the other touch point (in canvas coordinates)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="obtain.html">obtain</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">obtain</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Touch</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

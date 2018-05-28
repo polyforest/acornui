@@ -16,6 +16,7 @@
 
 package com.acornui.build
 
+import com.acornui.build.util.clean
 import com.acornui.logging.Log
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import java.io.File
@@ -42,6 +43,8 @@ object BuildUtil {
 	var ACORNUI_HOME_PATH: String = System.getenv()["ACORNUI_HOME"] ?: throw Exception("Environment variable ACORNUI_HOME must be set.")
 	var ACORNUI_DIST: File = File(ACORNUI_HOME_PATH, "dist")
 	var ACORNUI_OUT: File = File(ACORNUI_HOME_PATH, "out")
+	private val ACORNUI_WEBDIST_PATH: String = System.getenv()["ACORNWEBDIST_HOME"] ?: throw Exception("Environment variable ACORNSEBDIST_HOME must be set.")
+	val ACORNUI_DOCS: File = File(ACORNUI_HOME_PATH, "docs")
 
 	init {
 		if (!File(ACORNUI_HOME_PATH).exists()) throw Exception("ACORNUI_HOME: '$ACORNUI_HOME_PATH' does not exist.")
@@ -77,7 +80,7 @@ object BuildUtil {
 
 		val target = getTarget(argMap.get("target", default = Targets.BUILD.name))
 		if (target == null) {
-			println("Usage: -target=[build|clean|deploy|exe] -modules=[moduleName1,moduleName2|all] [-js] [-jvm]")
+			println("Usage: -target=[build|clean|documentation|deploy|exe] -modules=[moduleName1,moduleName2|all] [-js] [-jvm]")
 			System.exit(-1)
 		}
 		println("Target $target")
@@ -108,6 +111,9 @@ object BuildUtil {
 			}
 			Targets.ASSETS -> {
 				assets(selectedModules, js, jvm)
+			}
+			Targets.DOCUMENTATION -> {
+				documentation(selectedModules)
 			}
 			Targets.BUILD -> {
 				build(selectedModules, js, jvm)
@@ -172,6 +178,24 @@ object BuildUtil {
 		}
 	}
 
+	private fun documentation(selectedModules: List<Module>) {
+		if (!File(ACORNUI_WEBDIST_PATH).exists()) throw Exception("ACORNWEBDIST_HOME: '$ACORNUI_WEBDIST_PATH' does not exist.")
+		val acornUiWebDocs = File(ACORNUI_WEBDIST_PATH, "docs")
+		acornUiWebDocs.mkdir()
+
+		ACORNUI_DOCS.clean()
+		selectedModules.walkDependenciesBottomUp {
+			if (it.hasJvm) {
+				it.buildJvm()
+				it.deployJvm()
+			}
+		}
+		selectedModules.map(Module::document)
+
+		acornUiWebDocs.clean()
+		ACORNUI_DOCS.copyRecursively(acornUiWebDocs)
+	}
+
 	private fun List<Module>.walkDependenciesBottomUp(callback: (Module) -> Unit) {
 		val exclude = HashMap<Module, Boolean>()
 		map {
@@ -186,6 +210,7 @@ object BuildUtil {
 enum class Targets {
 	CLEAN,
 	ASSETS,
+	DOCUMENTATION,
 	BUILD,
 	DEPLOY,
 	WIN32,

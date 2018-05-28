@@ -1,0 +1,76 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.core.io - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.core.io</a><br/>
+<br/>
+<h2>Package com.acornui.core.io</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-buffer-factory/index.html">BufferFactory</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">BufferFactory</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-j-s-o-n_-k-e-y.html">JSON_KEY</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">JSON_KEY</span><span class="symbol">: </span><a href="../com.acornui.core.di/-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><span class="identifier">Serializer</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-x-m-l_-k-e-y.html">XML_KEY</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">XML_KEY</span><span class="symbol">: </span><a href="../com.acornui.core.di/-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><span class="identifier">Serializer</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="parse-json.html">parseJson</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">parseJson</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.io$parseJson(com.acornui.core.di.Scoped, kotlin.String, com.acornui.serialization.From((com.acornui.core.io.parseJson.T)))/json">json</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.io$parseJson(com.acornui.core.di.Scoped, kotlin.String, com.acornui.serialization.From((com.acornui.core.io.parseJson.T)))/factory">factory</span><span class="symbol">:</span>&nbsp;<span class="identifier">From</span><span class="symbol">&lt;</span><a href="parse-json.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="parse-json.html#T"><span class="identifier">T</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="parse-xml.html">parseXml</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">parseXml</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.io$parseXml(com.acornui.core.di.Scoped, kotlin.String, com.acornui.serialization.From((com.acornui.core.io.parseXml.T)))/json">json</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.io$parseXml(com.acornui.core.di.Scoped, kotlin.String, com.acornui.serialization.From((com.acornui.core.io.parseXml.T)))/factory">factory</span><span class="symbol">:</span>&nbsp;<span class="identifier">From</span><span class="symbol">&lt;</span><a href="parse-xml.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="parse-xml.html#T"><span class="identifier">T</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="to-json.html">toJson</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">toJson</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.io$toJson(com.acornui.core.di.Scoped, com.acornui.core.io.toJson.T, com.acornui.serialization.To((com.acornui.core.io.toJson.T)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="to-json.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.io$toJson(com.acornui.core.di.Scoped, com.acornui.core.io.toJson.T, com.acornui.serialization.To((com.acornui.core.io.toJson.T)))/factory">factory</span><span class="symbol">:</span>&nbsp;<span class="identifier">To</span><span class="symbol">&lt;</span><a href="to-json.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="to-xml.html">toXml</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">toXml</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.io$toXml(com.acornui.core.di.Scoped, com.acornui.core.io.toXml.T, com.acornui.serialization.To((com.acornui.core.io.toXml.T)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="to-xml.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.io$toXml(com.acornui.core.di.Scoped, com.acornui.core.io.toXml.T, com.acornui.serialization.To((com.acornui.core.io.toXml.T)))/factory">factory</span><span class="symbol">:</span>&nbsp;<span class="identifier">To</span><span class="symbol">&lt;</span><a href="to-xml.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

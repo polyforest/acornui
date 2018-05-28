@@ -1,0 +1,76 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>LinearGradient - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component</a>&nbsp;/&nbsp;<a href="./index.html">LinearGradient</a><br/>
+<br/>
+<h1>LinearGradient</h1>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">LinearGradient</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-linear-gradient-ro/index.html"><span class="identifier">LinearGradientRo</span></a></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">LinearGradient</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.LinearGradient$<init>(com.acornui.component.GradientDirection, kotlin.Float, kotlin.collections.MutableList((com.acornui.component.ColorStopRo)))/direction">direction</span><span class="symbol">:</span>&nbsp;<a href="../-gradient-direction/index.html"><span class="identifier">GradientDirection</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.LinearGradient$<init>(com.acornui.component.GradientDirection, kotlin.Float, kotlin.collections.MutableList((com.acornui.component.ColorStopRo)))/angle">angle</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.LinearGradient$<init>(com.acornui.component.GradientDirection, kotlin.Float, kotlin.collections.MutableList((com.acornui.component.ColorStopRo)))/colorStops">colorStops</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../-color-stop-ro/index.html"><span class="identifier">ColorStopRo</span></a><span class="symbol">&gt;</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="angle.html">angle</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">angle</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>In radians, angles start pointing towards top, rotating clockwise.
+PI / 2 is pointing to the right, PI is pointing to bottom, 3 / 2f * PI is pointing to right.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="color-stops.html">colorStops</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">colorStops</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../-color-stop-ro/index.html"><span class="identifier">ColorStopRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="direction.html">direction</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">direction</span><span class="symbol">: </span><a href="../-gradient-direction/index.html"><span class="identifier">GradientDirection</span></a></code>
+<p>The direction the gradient should go. If direction is <a href="../-gradient-direction/-a-n-g-l-e.html">GradientDirection.ANGLE</a>, then the <a href="../-linear-gradient-ro/angle.html">angle</a> property
+will be used.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-linear-gradient-ro/get-angle.html">getAngle</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getAngle</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.LinearGradientRo$getAngle(kotlin.Float, kotlin.Float)/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.LinearGradientRo$getAngle(kotlin.Float, kotlin.Float)/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-linear-gradient-ro/to-css-string.html">toCssString</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toCssString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

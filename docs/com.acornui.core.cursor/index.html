@@ -1,0 +1,98 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.core.cursor - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.core.cursor</a><br/>
+<br/>
+<h2>Package com.acornui.core.cursor</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-cursor.html">Cursor</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Cursor</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-lifecycle/index.html"><span class="identifier">Lifecycle</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-cursor-manager/index.html">CursorManager</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">CursorManager</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-cursor-manager-base/index.html">CursorManagerBase</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">CursorManagerBase</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-cursor-manager/index.html"><span class="identifier">CursorManager</span></a></code>
+<p>A <a href="-cursor-manager/index.html">CursorManager</a> implementation without the platform-specific cursor factory methods.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-cursor-priority/index.html">CursorPriority</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">CursorPriority</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-cursor-reference/index.html">CursorReference</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">CursorReference</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-comparable/index.html"><span class="identifier">Comparable</span></a><span class="symbol">&lt;</span><a href="-cursor-reference/index.html"><span class="identifier">CursorReference</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-roll-over-cursor/index.html">RollOverCursor</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">RollOverCursor</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<p>An attachment that changes the cursor on roll over.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-standard-cursors/index.html">StandardCursors</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">StandardCursors</span></code>
+<p>A suite of cursors that standard components should be able to rely on existing.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="busy-cursor.html">busyCursor</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">busyCursor</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-cursor-reference/index.html"><span class="identifier">CursorReference</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="clear-cursor.html">clearCursor</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">clearCursor</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="cursor.html">cursor</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">cursor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.cursor$cursor(com.acornui.component.UiComponentRo, com.acornui.core.cursor.Cursor, kotlin.Float)/cursor">cursor</span><span class="symbol">:</span>&nbsp;<a href="-cursor.html"><span class="identifier">Cursor</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.cursor$cursor(com.acornui.component.UiComponentRo, com.acornui.core.cursor.Cursor, kotlin.Float)/priority">priority</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;CursorPriority.ACTIVE<span class="symbol">)</span><span class="symbol">: </span><a href="-roll-over-cursor/index.html"><span class="identifier">RollOverCursor</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,109 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.core.nav - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.core.nav</a><br/>
+<br/>
+<h2>Package com.acornui.core.nav</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-nav-bindable.html">NavBindable</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">NavBindable</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">, </span><a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-nav-binding/index.html">NavBinding</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">NavBinding</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<p>A NavBinding watches the <a href="-navigation-manager/index.html">NavigationManager</a> and invokes signals when the path section at the host's depth changes.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-nav-binding-event/index.html">NavBindingEvent</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">NavBindingEvent</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-nav-event/index.html">NavEvent</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">NavEvent</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-nav-event-impl/index.html">NavEventImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">NavEventImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-nav-event/index.html"><span class="identifier">NavEvent</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-nav-node/index.html">NavNode</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">NavNode</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-navigation-manager/index.html">NavigationManager</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">NavigationManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Clearable</span><span class="symbol">, </span><span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-navigation-manager-impl/index.html">NavigationManagerImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">NavigationManagerImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-navigation-manager/index.html"><span class="identifier">NavigationManager</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="bind-to-path.html">bindToPath</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-button/index.html"><span class="identifier">Button</span></a><span class="symbol">.</span><span class="identifier">bindToPath</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.nav$bindToPath(com.acornui.component.Button, com.acornui.core.nav.NavBinding, kotlin.String)/nav">nav</span><span class="symbol">:</span>&nbsp;<a href="-nav-binding/index.html"><span class="identifier">NavBinding</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.nav$bindToPath(com.acornui.component.Button, com.acornui.core.nav.NavBinding, kotlin.String)/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="nav-add-element.html">navAddElement</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-element-container.html"><span class="identifier">ElementContainer</span></a><span class="symbol">&lt;</span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">navAddElement</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.nav$navAddElement(com.acornui.component.ElementContainer((com.acornui.component.UiComponent)), com.acornui.core.nav.NavBinding, kotlin.String, com.acornui.component.UiComponent)/nav">nav</span><span class="symbol">:</span>&nbsp;<a href="-nav-binding/index.html"><span class="identifier">NavBinding</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.nav$navAddElement(com.acornui.component.ElementContainer((com.acornui.component.UiComponent)), com.acornui.core.nav.NavBinding, kotlin.String, com.acornui.component.UiComponent)/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.nav$navAddElement(com.acornui.component.ElementContainer((com.acornui.component.UiComponent)), com.acornui.core.nav.NavBinding, kotlin.String, com.acornui.component.UiComponent)/component">component</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-element-container.html"><span class="identifier">ElementContainer</span></a><span class="symbol">&lt;</span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">navAddElement</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.nav$navAddElement(com.acornui.component.ElementContainer((com.acornui.component.UiComponent)), com.acornui.core.nav.NavBinding, kotlin.String, kotlin.Boolean, kotlin.Boolean, kotlin.Function1((com.acornui.core.di.Owned, com.acornui.component.UiComponent)))/nav">nav</span><span class="symbol">:</span>&nbsp;<a href="-nav-binding/index.html"><span class="identifier">NavBinding</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.nav$navAddElement(com.acornui.component.ElementContainer((com.acornui.component.UiComponent)), com.acornui.core.nav.NavBinding, kotlin.String, kotlin.Boolean, kotlin.Boolean, kotlin.Function1((com.acornui.core.di.Owned, com.acornui.component.UiComponent)))/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.nav$navAddElement(com.acornui.component.ElementContainer((com.acornui.component.UiComponent)), com.acornui.core.nav.NavBinding, kotlin.String, kotlin.Boolean, kotlin.Boolean, kotlin.Function1((com.acornui.core.di.Owned, com.acornui.component.UiComponent)))/showPreloader">showPreloader</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;true<span class="symbol">, </span><span class="identifier" id="com.acornui.core.nav$navAddElement(com.acornui.component.ElementContainer((com.acornui.component.UiComponent)), com.acornui.core.nav.NavBinding, kotlin.String, kotlin.Boolean, kotlin.Boolean, kotlin.Function1((com.acornui.core.di.Owned, com.acornui.component.UiComponent)))/disposeOnRemove">disposeOnRemove</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">, </span><span class="identifier" id="com.acornui.core.nav$navAddElement(com.acornui.component.ElementContainer((com.acornui.component.UiComponent)), com.acornui.core.nav.NavBinding, kotlin.String, kotlin.Boolean, kotlin.Boolean, kotlin.Function1((com.acornui.core.di.Owned, com.acornui.component.UiComponent)))/factory">factory</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="nav-binding.html">navBinding</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-nav-bindable.html"><span class="identifier">NavBindable</span></a><span class="symbol">.</span><span class="identifier">navBinding</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.nav$navBinding(com.acornui.core.nav.NavBindable, kotlin.String)/defaultPath">defaultPath</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-nav-binding/index.html"><span class="identifier">NavBinding</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="navigate.html">navigate</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">navigate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.nav$navigate(com.acornui.core.di.Scoped, kotlin.String)/absolutePath">absolutePath</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

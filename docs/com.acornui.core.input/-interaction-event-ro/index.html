@@ -1,0 +1,154 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>InteractionEventRo - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.input</a>&nbsp;/&nbsp;<a href="./index.html">InteractionEventRo</a><br/>
+<br/>
+<h1>InteractionEventRo</h1>
+<code><span class="keyword">interface </span><span class="identifier">InteractionEventRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Stoppable</span></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="current-target.html">currentTarget</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">currentTarget</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="handled.html">handled</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">handled</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>True if this event was used in an interaction.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="propagation.html">propagation</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">propagation</span><span class="symbol">: </span><a href="../-propagation-ro/index.html"><span class="identifier">PropagationRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="target.html">target</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">target</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="type.html">type</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">type</span><span class="symbol">: </span><a href="../-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">InteractionEventRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="default-prevented.html">defaultPrevented</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">defaultPrevented</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="prevent-default.html">preventDefault</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">preventDefault</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-u-n-k-n-o-w-n.html">UNKNOWN</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">UNKNOWN</span><span class="symbol">: </span><a href="../-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">InteractionEventRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-char-interaction-ro/index.html">CharInteractionRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">CharInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">InteractionEventRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-context-menu-interaction-ro/index.html">ContextMenuInteractionRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ContextMenuInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">InteractionEventRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-copy-interaction-ro/index.html">CopyInteractionRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">CopyInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">InteractionEventRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-interaction-event/index.html">InteractionEvent</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">InteractionEvent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">InteractionEventRo</span></a><span class="symbol">, </span><span class="identifier">Clearable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-key-interaction-ro/index.html">KeyInteractionRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">KeyInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">InteractionEventRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-mouse-interaction-ro/index.html">MouseInteractionRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">MouseInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">InteractionEventRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-paste-interaction-ro/index.html">PasteInteractionRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">PasteInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">InteractionEventRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-touch-interaction-ro/index.html">TouchInteractionRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">TouchInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">InteractionEventRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-undo-interaction-ro/index.html">UndoInteractionRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">UndoInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">InteractionEventRo</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

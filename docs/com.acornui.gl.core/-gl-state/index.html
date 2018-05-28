@@ -1,0 +1,250 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>GlState - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.gl.core</a>&nbsp;/&nbsp;<a href="./index.html">GlState</a><br/>
+<br/>
+<h1>GlState</h1>
+<code><span class="keyword">class </span><span class="identifier">GlState</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<p>GlState stores OpenGl state information necessary for knowing whether basic operations can be batched.</p>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">GlState</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">GlState</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$<init>(com.acornui.gl.core.Gl20)/gl">gl</span><span class="symbol">:</span>&nbsp;<a href="../-gl20/index.html"><span class="identifier">Gl20</span></a><span class="symbol">)</span></code>
+<p>GlState stores OpenGl state information necessary for knowing whether basic operations can be batched.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="batch.html">batch</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">batch</span><span class="symbol">: </span><a href="../-shader-batch/index.html"><span class="identifier">ShaderBatch</span></a></code>
+<p>The shader batch, used by gl backend acorn components.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="blend-mode.html">blendMode</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">blendMode</span><span class="symbol">: </span><a href="../../com.acornui.core.graphics/-blend-mode/index.html"><span class="identifier">BlendMode</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="blending-enabled.html">blendingEnabled</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">blendingEnabled</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>A global override to disable blending. Useful if the shader doesn't support blending.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="premultiplied-alpha.html">premultipliedAlpha</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">premultipliedAlpha</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="scissor-enabled.html">scissorEnabled</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">scissorEnabled</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns whether scissoring is currently enabled.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="shader.html">shader</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">shader</span><span class="symbol">: </span><a href="../-shader-program/index.html"><span class="identifier">ShaderProgram</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="white-pixel.html">whitePixel</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">whitePixel</span><span class="symbol">: </span><a href="../../com.acornui.core.graphics/-texture/index.html"><span class="identifier">Texture</span></a></code>
+<p>To reduce batch flushing from switching back and forth from a texture to a single white pixel, as is the case
+in mesh drawings, a texture can declare that its 0,0 pixel is white.
+The acorn texture packer will optionally add this white pixel.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="active-texture.html">activeTexture</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">activeTexture</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$activeTexture(kotlin.Int)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="blend-mode.html">blendMode</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">blendMode</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$blendMode(com.acornui.core.graphics.BlendMode, kotlin.Boolean)/blendMode">blendMode</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.graphics/-blend-mode/index.html"><span class="identifier">BlendMode</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.GlState$blendMode(com.acornui.core.graphics.BlendMode, kotlin.Boolean)/premultipliedAlpha">premultipliedAlpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="camera.html">camera</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">camera</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$camera(com.acornui.core.graphics.CameraRo, com.acornui.math.Matrix4Ro)/camera">camera</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.graphics/-camera-ro/index.html"><span class="identifier">CameraRo</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.GlState$camera(com.acornui.core.graphics.CameraRo, com.acornui.math.Matrix4Ro)/model">model</span><span class="symbol">:</span>&nbsp;<span class="identifier">Matrix4Ro</span>&nbsp;<span class="symbol">=</span>&nbsp;Matrix4.IDENTITY<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-scissor.html">getScissor</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getScissor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$getScissor(com.acornui.math.IntRectangle)/out">out</span><span class="symbol">:</span>&nbsp;<span class="identifier">IntRectangle</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">IntRectangle</span></code>
+<p>Gets the current scissor rectangle.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-texture.html">getTexture</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getTexture</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$getTexture(kotlin.Int)/unit">unit</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.graphics/-texture/index.html"><span class="identifier">Texture</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="model.html">model</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">model</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$model(kotlin.collections.List((kotlin.Float)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Applies the given matrix as the model transformation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="proj-trans.html">projTrans</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">projTrans</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$projTrans(com.acornui.math.Matrix4Ro)/value">value</span><span class="symbol">:</span>&nbsp;<span class="identifier">Matrix4Ro</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="scissor.html">scissor</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">scissor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$scissor(com.acornui.math.IntRectangleRo)/value">value</span><span class="symbol">:</span>&nbsp;<span class="identifier">IntRectangleRo</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">scissor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$scissor(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.GlState$scissor(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.GlState$scissor(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.GlState$scissor(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="set-texture.html">setTexture</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">setTexture</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$setTexture(com.acornui.core.graphics.Texture, kotlin.Int)/texture">texture</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.graphics/-texture/index.html"><span class="identifier">Texture</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.GlState$setTexture(com.acornui.core.graphics.Texture, kotlin.Int)/unit">unit</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="unset-texture.html">unsetTexture</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">unsetTexture</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$unsetTexture(com.acornui.core.graphics.Texture)/texture">texture</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.graphics/-texture/index.html"><span class="identifier">Texture</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>For any unit where this texture is bound, unbind it.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="view-projection.html">viewProjection</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">viewProjection</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.GlState$viewProjection(kotlin.collections.List((kotlin.Float)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Applies the given matrix as the view-projection transformation.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-d-key/extends.html">extends</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">extends</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-d-key/factory.html">factory</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">factory</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di.DKey$factory(com.acornui.core.di.Injector)/injector">injector</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-injector/index.html"><span class="identifier">Injector</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-d-key/index.html#T"><span class="identifier">T</span></a><span class="symbol">?</span></code>
+<p>A dependency key has an optional factory method, where if it provides a non-null value, the
+dependency doesn't need to be set before use, and the factory method will produce the default implementation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-d-key/to.html">to</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">infix</span> <span class="keyword">fun </span><span class="identifier">to</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di.DKey$to(com.acornui.core.di.DKey.T)/value">value</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-d-key/index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-dependency-pair/index.html"><span class="identifier">DependencyPair</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.di/-d-key/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../scissor.html">scissor</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">GlState</span></a><span class="symbol">.</span><span class="identifier">scissor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core$scissor(com.acornui.gl.core.GlState, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Function0((kotlin.Unit)))/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$scissor(com.acornui.gl.core.GlState, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Function0((kotlin.Unit)))/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$scissor(com.acornui.gl.core.GlState, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Function0((kotlin.Unit)))/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$scissor(com.acornui.gl.core.GlState, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Function0((kotlin.Unit)))/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$scissor(com.acornui.gl.core.GlState, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Function0((kotlin.Unit)))/inner">inner</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

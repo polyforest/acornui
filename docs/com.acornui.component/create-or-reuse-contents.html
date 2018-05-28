@@ -1,0 +1,17 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>createOrReuseContents - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="index.html">com.acornui.component</a>&nbsp;/&nbsp;<a href="./create-or-reuse-contents.html">createOrReuseContents</a><br/>
+<br/>
+<h1>createOrReuseContents</h1>
+<a name="com.acornui.component$createOrReuseContents(com.acornui.component.ElementContainer((com.acornui.component.UiComponent)), kotlin.Function1((com.acornui.core.di.Owned, com.acornui.component.createOrReuseContents.T)))"></a>
+<code><span class="keyword">inline</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="keyword">reified</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span> <a href="-element-container.html"><span class="identifier">ElementContainer</span></a><span class="symbol">&lt;</span><a href="-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">createOrReuseContents</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$createOrReuseContents(com.acornui.component.ElementContainer((com.acornui.component.UiComponent)), kotlin.Function1((com.acornui.core.di.Owned, com.acornui.component.createOrReuseContents.T)))/factory">factory</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="create-or-reuse-contents.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="create-or-reuse-contents.html#T"><span class="identifier">T</span></a></code>
+<p>Given a factory method that produces a new element <a href="create-or-reuse-contents.html#T">T</a>, if this element container already
+contains an element of that type, it will be reused. Otherwise, the previous contents will be disposed and
+the factory will generate new contents.</p>
+</BODY>
+</HTML>

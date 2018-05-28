@@ -1,0 +1,75 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>AudioDevice - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.audio</a>&nbsp;/&nbsp;<a href="./index.html">AudioDevice</a><br/>
+<br/>
+<h1>AudioDevice</h1>
+<code><span class="keyword">interface </span><span class="identifier">AudioDevice</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<p>Encapsulates an audio device in mono or stereo mode. Use the <a href="#">.writeSamples</a> and
+<a href="#">.writeSamples</a> methods to write float or 16-bit signed short PCM data directly to the audio device.
+Stereo samples are interleaved in the order left channel sample, right channel sample. The <a href="#">.dispose</a> method must be
+called when this AudioDevice is no longer needed.</p>
+<p><strong>Author</strong><br/>
+badlogicgames@gmail.com</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="is-mono.html">isMono</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">isMono</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="latency.html">latency</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">latency</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="set-volume.html">setVolume</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setVolume</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.audio.AudioDevice$setVolume(kotlin.Float)/volume">volume</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the volume in the range <a href="#">0,1</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="write-samples.html">writeSamples</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">writeSamples</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.audio.AudioDevice$writeSamples(kotlin.ShortArray, kotlin.Int, kotlin.Int)/samples">samples</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-short-array/index.html"><span class="identifier">ShortArray</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.audio.AudioDevice$writeSamples(kotlin.ShortArray, kotlin.Int, kotlin.Int)/offset">offset</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.audio.AudioDevice$writeSamples(kotlin.ShortArray, kotlin.Int, kotlin.Int)/numSamples">numSamples</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Writes the array of 16-bit signed PCM samples to the audio device and blocks until they have been processed.</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">writeSamples</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.audio.AudioDevice$writeSamples(kotlin.FloatArray, kotlin.Int, kotlin.Int)/samples">samples</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float-array/index.html"><span class="identifier">FloatArray</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.audio.AudioDevice$writeSamples(kotlin.FloatArray, kotlin.Int, kotlin.Int)/offset">offset</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.audio.AudioDevice$writeSamples(kotlin.FloatArray, kotlin.Int, kotlin.Int)/numSamples">numSamples</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Writes the array of float PCM samples to the audio device and blocks until they have been processed.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-dummy-audio-device/index.html">DummyAudioDevice</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">DummyAudioDevice</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">AudioDevice</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

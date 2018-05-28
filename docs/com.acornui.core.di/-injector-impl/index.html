@@ -1,0 +1,70 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>InjectorImpl - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.di</a>&nbsp;/&nbsp;<a href="./index.html">InjectorImpl</a><br/>
+<br/>
+<h1>InjectorImpl</h1>
+<code><span class="keyword">class </span><span class="identifier">InjectorImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-injector/index.html"><span class="identifier">Injector</span></a></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">InjectorImpl</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di.InjectorImpl$<init>(com.acornui.core.di.Injector, kotlin.collections.List((com.acornui.core.di.DependencyPair((kotlin.Any)))))/parent">parent</span><span class="symbol">:</span>&nbsp;<a href="../-injector/index.html"><span class="identifier">Injector</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.di.InjectorImpl$<init>(com.acornui.core.di.Injector, kotlin.collections.List((com.acornui.core.di.DependencyPair((kotlin.Any)))))/dependenciesList">dependenciesList</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-dependency-pair/index.html"><span class="identifier">DependencyPair</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="contains-key.html">containsKey</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">containsKey</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di.InjectorImpl$containsKey(com.acornui.core.di.DKey((kotlin.Any)))/key">key</span><span class="symbol">:</span>&nbsp;<a href="../-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this injector contains a dependency with the given key.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="inject-optional.html">injectOptional</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <span class="identifier">injectOptional</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di.InjectorImpl$injectOptional(com.acornui.core.di.DKey((com.acornui.core.di.InjectorImpl.injectOptional.T)))/key">key</span><span class="symbol">:</span>&nbsp;<a href="../-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="inject-optional.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="inject-optional.html#T"><span class="identifier">T</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-injector/inject.html">inject</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <span class="identifier">inject</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di.Injector$inject(com.acornui.core.di.DKey((com.acornui.core.di.Injector.inject.T)))/key">key</span><span class="symbol">:</span>&nbsp;<a href="../-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../-injector/inject.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-injector/inject.html#T"><span class="identifier">T</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../plus.html">plus</a></p>
+</td>
+<td>
+<code><span class="keyword">operator</span> <span class="keyword">fun </span><a href="../-injector/index.html"><span class="identifier">Injector</span></a><span class="symbol">.</span><span class="identifier">plus</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di$plus(com.acornui.core.di.Injector, kotlin.collections.List((com.acornui.core.di.DependencyPair((kotlin.Any)))))/dependenciesList">dependenciesList</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-dependency-pair/index.html"><span class="identifier">DependencyPair</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-injector/index.html"><span class="identifier">Injector</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

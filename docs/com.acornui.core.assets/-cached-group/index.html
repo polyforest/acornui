@@ -1,0 +1,55 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>CachedGroup - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.assets</a>&nbsp;/&nbsp;<a href="./index.html">CachedGroup</a><br/>
+<br/>
+<h1>CachedGroup</h1>
+<code><span class="keyword">interface </span><span class="identifier">CachedGroup</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="cache.html">cache</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">cache</span><span class="symbol">: </span><a href="../-cache/index.html"><span class="identifier">Cache</span></a></code>
+<p>The cache instance this group uses.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="add.html">add</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">add</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets.CachedGroup$add(com.acornui.core.assets.CacheKey((kotlin.Any)))/key">key</span><span class="symbol">:</span>&nbsp;<a href="../-cache-key.html"><span class="identifier">CacheKey</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Adds a key to be tracked.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-cached-group-impl/index.html">CachedGroupImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">CachedGroupImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">CachedGroup</span></a></code>
+<p>A caching group tracks a list of keys to refDec when the group is disposed.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

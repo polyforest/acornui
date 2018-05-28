@@ -1,0 +1,317 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>DataGridStyle - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.datagrid</a>&nbsp;/&nbsp;<a href="./index.html">DataGridStyle</a><br/>
+<br/>
+<h1>DataGridStyle</h1>
+<code><span class="keyword">class </span><span class="identifier">DataGridStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a></code>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.style/-style-type/index.html"><span class="identifier">StyleType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">DataGridStyle</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">DataGridStyle</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="always-show-header.html">alwaysShowHeader</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">alwaysShowHeader</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true, the current group header will always be shown.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="background.html">background</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">background</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a></code>
+<p>The background of the data grid. This will be sized to the measured bounds of the grid.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="border-radius.html">borderRadius</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">borderRadius</span><span class="symbol">: </span><span class="identifier">Corners</span></code>
+<p>Used for clipping, this should match that of the background border radius.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="border-thickness.html">borderThickness</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">borderThickness</span><span class="symbol">: </span><span class="identifier">Pad</span></code>
+<p>Used for clipping, this should match that of the background border thickness.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="cell-padding.html">cellPadding</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">cellPadding</span><span class="symbol">: </span><span class="identifier">Pad</span></code>
+<p>The padding around the body cells.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="cell-v-align.html">cellVAlign</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">cellVAlign</span><span class="symbol">: </span><a href="../../com.acornui.component.layout/-v-align/index.html"><span class="identifier">VAlign</span></a></code>
+<p>The vertical alignment of the body cells.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="default-column-width.html">defaultColumnWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">defaultColumnWidth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Used if a column has no set width or widthPercent.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="header-cell-background.html">headerCellBackground</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">headerCellBackground</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a></code>
+<p>The skin part used as the background to each header cell.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="header-cell-gap.html">headerCellGap</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">headerCellGap</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The gap between the header cell and the sort arrow (if there is one).</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="header-cell-h-align.html">headerCellHAlign</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">headerCellHAlign</span><span class="symbol">: </span><a href="../../com.acornui.component.layout/-h-align/index.html"><span class="identifier">HAlign</span></a></code>
+<p>The horizontal alignment of the header cells.
+Note that this does not affect text alignment. To change the cell's text alignment, set the text field's
+flowStyle horizontalAlign property. This can be done universally by setting a style rule for
+<a href="../-data-grid/-companion/-h-e-a-d-e-r_-c-e-l-l.html">DataGrid.HEADER_CELL</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="header-cell-padding.html">headerCellPadding</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">headerCellPadding</span><span class="symbol">: </span><span class="identifier">Pad</span></code>
+<p>The padding around the header cells.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="header-cell-v-align.html">headerCellVAlign</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">headerCellVAlign</span><span class="symbol">: </span><a href="../../com.acornui.component.layout/-v-align/index.html"><span class="identifier">VAlign</span></a></code>
+<p>The vertical alignment of the header cells.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="header-divider.html">headerDivider</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">headerDivider</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">?</span></code>
+<p>The divider between the header and the body.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="header-sort-arrow-v-align.html">headerSortArrowVAlign</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">headerSortArrowVAlign</span><span class="symbol">: </span><a href="../../com.acornui.component.layout/-v-align/index.html"><span class="identifier">VAlign</span></a></code>
+<p>The vertical alignment of the sort arrows.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="resize-handle-width.html">resizeHandleWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">resizeHandleWidth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The width of the column resize handles.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="row-background.html">rowBackground</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">rowBackground</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="../../com.acornui.component/-row-background/index.html"><span class="identifier">RowBackground</span></a></code>
+<p>The background for each row.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="sort-down-arrow.html">sortDownArrow</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">sortDownArrow</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a></code>
+<p>The skin part for the down sort arrow.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="sort-up-arrow.html">sortUpArrow</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">sortUpArrow</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a></code>
+<p>The skin part for the down up arrow.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="type.html">type</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">type</span><span class="symbol">: </span><a href="-companion.html"><span class="identifier">DataGridStyle.Companion</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="vertical-divider.html">verticalDivider</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">verticalDivider</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a></code>
+<p>The skin part for the down sort arrow.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/-style-base/calculated.html">calculated</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">calculated</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-hash-map/index.html"><span class="identifier">HashMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">&gt;</span></code>
+<p>The style properties, as calculated by a <a href="../../com.acornui.component.style/-style-calculator/index.html">StyleCalculator</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/-style-base/changed.html">changed</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">changed</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/-style-base/explicit.html">explicit</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">explicit</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-hash-map/index.html"><span class="identifier">HashMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">&gt;</span></code>
+<p>The style properties, if they were explicitly set.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/-style-base/mod-tag.html">modTag</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">modTag</span><span class="symbol">: </span><span class="identifier">ModTagImpl</span></code>
+<p>When either the explicit or calculated values change, the mod tag is incremented.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/-style-base/clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/-style-base/dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/-style-base/notify-changed.html">notifyChanged</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">notifyChanged</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Dispatches a <a href="../../com.acornui.component.style/-style/changed.html">changed</a> signal.
+This should only be invoked if the explicit values have changed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/-style-base/prop.html">prop</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">P</span><span class="symbol">&gt;</span> <span class="identifier">prop</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style.StyleBase$prop(com.acornui.component.style.StyleBase.prop.P)/defaultValue">defaultValue</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.style/-style-base/prop.html#P"><span class="identifier">P</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.component.style/-style-prop/index.html"><span class="identifier">StyleProp</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component.style/-style-base/prop.html#P"><span class="identifier">P</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/-style-base/to-string.html">toString</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.style/-style-type/extends.html">extends</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">extends</span><span class="symbol">: </span><a href="../../com.acornui.component.style/-style-type/index.html"><span class="identifier">StyleType</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

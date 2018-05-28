@@ -20,9 +20,6 @@ import java.io.File
 
 fun main(args: Array<String>) {
 	val allModules = ArrayList(ALL_ACORNUI_MODULES)
-	generateModules(File("Examples/BasicExample"), allModules, skin = "basic")
-	generateModules(File("Examples/StarField"), allModules, skin = null)
-	generateModules(File("Examples/HelloDom"), allModules, skin = null)
 
 	BuildUtil.execute(allModules, args)
 }

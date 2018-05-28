@@ -1,0 +1,303 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>DataGridColumn - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.datagrid</a>&nbsp;/&nbsp;<a href="./index.html">DataGridColumn</a><br/>
+<br/>
+<h1>DataGridColumn</h1>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">DataGridColumn</span><span class="symbol">&lt;</span><span class="keyword">in</span>&nbsp;<span class="identifier">RowData</span><span class="symbol">, </span><span class="identifier">CellData</span><span class="symbol">&gt;</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">DataGridColumn</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="cell-h-align.html">cellHAlign</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">cellHAlign</span><span class="symbol">: </span><a href="../../com.acornui.component.layout/-h-align/index.html"><span class="identifier">HAlign</span></a><span class="symbol">?</span></code>
+<p>The horizontal alignment of the body cells.
+If this is not set, the data grid's style will be used.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="cell-interactivity-mode.html">cellInteractivityMode</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">cellInteractivityMode</span><span class="symbol">: </span><a href="../../com.acornui.component/-interactivity-mode/index.html"><span class="identifier">InteractivityMode</span></a></code>
+<p>The cell's interactivity mode. This should be <a href="../../com.acornui.component/-interactivity-mode/-n-o-n-e.html">InteractivityMode.NONE</a> unless the cell has something
+special that's interactive.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="cell-v-align.html">cellVAlign</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">cellVAlign</span><span class="symbol">: </span><a href="../../com.acornui.component.layout/-v-align/index.html"><span class="identifier">VAlign</span></a><span class="symbol">?</span></code>
+<p>The vertical alignment of the body cells.
+If this is not set, the data grid's style will be used.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="changed.html">changed</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">changed</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="./index.html"><span class="identifier">DataGridColumn</span></a><span class="symbol">&lt;</span><a href="index.html#RowData"><span class="identifier">RowData</span></a><span class="symbol">,</span>&nbsp;<a href="index.html#CellData"><span class="identifier">CellData</span></a><span class="symbol">&gt;</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="editable.html">editable</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">editable</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true, elements in this column can be edited.
+If this is true, <a href="create-editor-cell.html">createEditorCell</a> must be implemented.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="flexible.html">flexible</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">flexible</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">?</span></code>
+<p>A flexible column will flex its size to fit within the available bounds of the container.
+A column is considered flexible if:
+Neither <a href="width.html">width</a> or <a href="width-percent.html">widthPercent</a> have been set, <a href="flexible.html">flexible</a> is true, or <a href="flexible.html">flexible</a> is null and <a href="resizable.html">resizable</a> is
+true and <a href="width-percent.html">widthPercent</a> is not null.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="footer-cell-interactivity-mode.html">footerCellInteractivityMode</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">footerCellInteractivityMode</span><span class="symbol">: </span><a href="../../com.acornui.component/-interactivity-mode/index.html"><span class="identifier">InteractivityMode</span></a></code>
+<p>The footer cell's interactivity mode. This should be <a href="../../com.acornui.component/-interactivity-mode/-n-o-n-e.html">InteractivityMode.NONE</a> unless the cell has something
+special that's interactive.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="header-cell-h-align.html">headerCellHAlign</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">headerCellHAlign</span><span class="symbol">: </span><a href="../../com.acornui.component.layout/-h-align/index.html"><span class="identifier">HAlign</span></a><span class="symbol">?</span></code>
+<p>The horizontal alignment of the header cells.
+If this is not set, the data grid's style will be used.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="header-cell-interactivity-mode.html">headerCellInteractivityMode</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">headerCellInteractivityMode</span><span class="symbol">: </span><a href="../../com.acornui.component/-interactivity-mode/index.html"><span class="identifier">InteractivityMode</span></a></code>
+<p>The header cell interactivity mode. This should be <a href="../../com.acornui.component/-interactivity-mode/-n-o-n-e.html">InteractivityMode.NONE</a> unless the header cell has something
+special that's interactive.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="header-cell-v-align.html">headerCellVAlign</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">headerCellVAlign</span><span class="symbol">: </span><a href="../../com.acornui.component.layout/-v-align/index.html"><span class="identifier">VAlign</span></a><span class="symbol">?</span></code>
+<p>The vertical alignment of the header cells.
+If this is not set, the data grid's style will be used.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="min-width.html">minWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">minWidth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="reorderable.html">reorderable</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">reorderable</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true, the column can be reordered (moved) by the user.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="resizable.html">resizable</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">resizable</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true, this column can be resized by the user.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="sortable.html">sortable</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">sortable</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true, the column can be sorted by the user.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="visible.html">visible</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">visible</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If false, this column will not be shown.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="width.html">width</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">width</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="width-percent.html">widthPercent</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">widthPercent</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="compare-rows.html">compareRows</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">compareRows</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.DataGridColumn$compareRows(com.acornui.component.datagrid.DataGridColumn.RowData, com.acornui.component.datagrid.DataGridColumn.RowData)/row1">row1</span><span class="symbol">:</span>&nbsp;<a href="index.html#RowData"><span class="identifier">RowData</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.datagrid.DataGridColumn$compareRows(com.acornui.component.datagrid.DataGridColumn.RowData, com.acornui.component.datagrid.DataGridColumn.RowData)/row2">row2</span><span class="symbol">:</span>&nbsp;<a href="index.html#RowData"><span class="identifier">RowData</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="create-cell.html">createCell</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">createCell</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.DataGridColumn$createCell(com.acornui.core.di.Owned)/owner">owner</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-data-grid-cell/index.html"><span class="identifier">DataGridCell</span></a><span class="symbol">&lt;</span><a href="index.html#CellData"><span class="identifier">CellData</span></a><span class="symbol">&gt;</span></code>
+<p>Constructs a new cell for this column.
+The cell is cached, so this method should not return inconsistent results.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="create-editor-cell.html">createEditorCell</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">createEditorCell</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.DataGridColumn$createEditorCell(com.acornui.core.di.Owned)/owner">owner</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-data-grid-editor-cell/index.html"><span class="identifier">DataGridEditorCell</span></a><span class="symbol">&lt;</span><a href="index.html#CellData"><span class="identifier">CellData</span></a><span class="symbol">&gt;</span></code>
+<p>Constructs a new editor cell.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="create-footer-row-cell.html">createFooterRowCell</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">createFooterRowCell</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.DataGridColumn$createFooterRowCell(com.acornui.core.di.Owned, com.acornui.collection.ObservableList((com.acornui.component.datagrid.DataGridColumn.RowData)))/owner">owner</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.datagrid.DataGridColumn$createFooterRowCell(com.acornui.core.di.Owned, com.acornui.collection.ObservableList((com.acornui.component.datagrid.DataGridColumn.RowData)))/list">list</span><span class="symbol">:</span>&nbsp;<span class="identifier">ObservableList</span><span class="symbol">&lt;</span><a href="index.html#RowData"><span class="identifier">RowData</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a></code>
+<p>Constructs a new footer cell for this column.
+This should be overriden if <a href="#">DataGrid.showFooterRow</a> or any group's <a href="../-data-grid-group/show-footer.html">DataGridGroup.showFooter</a> property is true.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="create-header-cell.html">createHeaderCell</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">createHeaderCell</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.DataGridColumn$createHeaderCell(com.acornui.core.di.Owned)/owner">owner</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a></code>
+<p>Constructs a new header cell to be placed at the top of the grid. This should not include the header background
+or sorting arrows.
+The cell is cached, so this method should not return inconsistent results.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-cell-data.html">getCellData</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getCellData</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.DataGridColumn$getCellData(com.acornui.component.datagrid.DataGridColumn.RowData)/row">row</span><span class="symbol">:</span>&nbsp;<a href="index.html#RowData"><span class="identifier">RowData</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="index.html#CellData"><span class="identifier">CellData</span></a></code>
+<p>Retrieves the column value from the given row.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-is-flexible.html">getIsFlexible</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getIsFlexible</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-preferred-width.html">getPreferredWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getPreferredWidth</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.DataGridColumn$getPreferredWidth(kotlin.Float)/availableWidth">availableWidth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="set-cell-data.html">setCellData</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setCellData</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.DataGridColumn$setCellData(com.acornui.component.datagrid.DataGridColumn.RowData, com.acornui.component.datagrid.DataGridColumn.CellData)/row">row</span><span class="symbol">:</span>&nbsp;<a href="index.html#RowData"><span class="identifier">RowData</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.datagrid.DataGridColumn$setCellData(com.acornui.component.datagrid.DataGridColumn.RowData, com.acornui.component.datagrid.DataGridColumn.CellData)/value">value</span><span class="symbol">:</span>&nbsp;<a href="index.html#CellData"><span class="identifier">CellData</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the column value.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="toggle-visible.html">toggleVisible</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">toggleVisible</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-float-column/index.html">FloatColumn</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">FloatColumn</span><span class="symbol">&lt;</span><span class="keyword">in</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DataGridColumn</span></a><span class="symbol">&lt;</span><a href="../-float-column/index.html#E"><span class="identifier">E</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-int-column/index.html">IntColumn</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">IntColumn</span><span class="symbol">&lt;</span><span class="keyword">in</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DataGridColumn</span></a><span class="symbol">&lt;</span><a href="../-int-column/index.html#E"><span class="identifier">E</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-string-column/index.html">StringColumn</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">StringColumn</span><span class="symbol">&lt;</span><span class="keyword">in</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">DataGridColumn</span></a><span class="symbol">&lt;</span><a href="../-string-column/index.html#E"><span class="identifier">E</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

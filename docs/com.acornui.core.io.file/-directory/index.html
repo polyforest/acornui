@@ -1,0 +1,146 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Directory - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.io.file</a>&nbsp;/&nbsp;<a href="./index.html">Directory</a><br/>
+<br/>
+<h1>Directory</h1>
+<code><span class="keyword">class </span><span class="identifier">Directory</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-comparable/index.html"><span class="identifier">Comparable</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">Directory</span></a><span class="symbol">&gt;</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">Directory</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.io.file.Directory$<init>(kotlin.String, com.acornui.core.io.file.Directory, kotlin.collections.Map((kotlin.String, com.acornui.core.io.file.Directory)), kotlin.collections.Map((kotlin.String, com.acornui.core.io.file.FileEntry)))/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.io.file.Directory$<init>(kotlin.String, com.acornui.core.io.file.Directory, kotlin.collections.Map((kotlin.String, com.acornui.core.io.file.Directory)), kotlin.collections.Map((kotlin.String, com.acornui.core.io.file.FileEntry)))/parent">parent</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Directory</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.io.file.Directory$<init>(kotlin.String, com.acornui.core.io.file.Directory, kotlin.collections.Map((kotlin.String, com.acornui.core.io.file.Directory)), kotlin.collections.Map((kotlin.String, com.acornui.core.io.file.FileEntry)))/directories">directories</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="./index.html"><span class="identifier">Directory</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.io.file.Directory$<init>(kotlin.String, com.acornui.core.io.file.Directory, kotlin.collections.Map((kotlin.String, com.acornui.core.io.file.Directory)), kotlin.collections.Map((kotlin.String, com.acornui.core.io.file.FileEntry)))/files">files</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="../-file-entry/index.html"><span class="identifier">FileEntry</span></a><span class="symbol">&gt;</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="depth.html">depth</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">depth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="directories.html">directories</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">directories</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="./index.html"><span class="identifier">Directory</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="files.html">files</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">files</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="../-file-entry/index.html"><span class="identifier">FileEntry</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="name.html">name</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">name</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="parent.html">parent</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">parent</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Directory</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="path.html">path</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">path</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="total-files.html">totalFiles</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">totalFiles</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Returns the total number of files in this directory (recursive).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="compare-to.html">compareTo</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">compareTo</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.io.file.Directory$compareTo(com.acornui.core.io.file.Directory)/other">other</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Directory</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-dir.html">getDir</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getDir</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.io.file.Directory$getDir(kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Directory</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-file.html">getFile</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getFile</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.io.file.Directory$getFile(kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-file-entry/index.html"><span class="identifier">FileEntry</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="map-directories.html">mapDirectories</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><s><span class="identifier">mapDirectories</span></s><span class="symbol">(</span><span class="identifier" id="com.acornui.core.io.file.Directory$mapDirectories(kotlin.Function1((com.acornui.core.io.file.Directory, kotlin.Boolean)), kotlin.Int)/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="./index.html"><span class="identifier">Directory</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.io.file.Directory$mapDirectories(kotlin.Function1((com.acornui.core.io.file.Directory, kotlin.Boolean)), kotlin.Int)/maxDepth">maxDepth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;100<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Recursively invokes a callback on all descendant directories in this directory.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="map-files.html">mapFiles</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><s><span class="identifier">mapFiles</span></s><span class="symbol">(</span><span class="identifier" id="com.acornui.core.io.file.Directory$mapFiles(kotlin.Function1((com.acornui.core.io.file.FileEntry, kotlin.Boolean)), kotlin.Int)/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../-file-entry/index.html"><span class="identifier">FileEntry</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.io.file.Directory$mapFiles(kotlin.Function1((com.acornui.core.io.file.FileEntry, kotlin.Boolean)), kotlin.Int)/maxDepth">maxDepth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;100<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Recursively invokes a callback on all descendant files in this directory.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="relative-path.html">relativePath</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">relativePath</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.io.file.Directory$relativePath(com.acornui.core.io.file.FileEntry)/file">file</span><span class="symbol">:</span>&nbsp;<a href="../-file-entry/index.html"><span class="identifier">FileEntry</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="walk-directories-top-down.html">walkDirectoriesTopDown</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">walkDirectoriesTopDown</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.io.file.Directory$walkDirectoriesTopDown(kotlin.Int)/maxDepth">maxDepth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;100<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence/index.html"><span class="identifier">Sequence</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">Directory</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="walk-files-top-down.html">walkFilesTopDown</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">walkFilesTopDown</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.io.file.Directory$walkFilesTopDown(kotlin.Int)/maxDepth">maxDepth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;100<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence/index.html"><span class="identifier">Sequence</span></a><span class="symbol">&lt;</span><a href="../-file-entry/index.html"><span class="identifier">FileEntry</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

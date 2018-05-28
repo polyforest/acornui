@@ -1,0 +1,117 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Hotkey - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.input.interaction</a>&nbsp;/&nbsp;<a href="./index.html">Hotkey</a><br/>
+<br/>
+<h1>Hotkey</h1>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Hotkey</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">Hotkey</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction.Hotkey$<init>(kotlin.Int, com.acornui.core.input.interaction.KeyLocation, kotlin.Boolean, kotlin.Boolean, kotlin.Boolean, kotlin.Boolean)/keyCode">keyCode</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.interaction.Hotkey$<init>(kotlin.Int, com.acornui.core.input.interaction.KeyLocation, kotlin.Boolean, kotlin.Boolean, kotlin.Boolean, kotlin.Boolean)/location">location</span><span class="symbol">:</span>&nbsp;<a href="../-key-location/index.html"><span class="identifier">KeyLocation</span></a>&nbsp;<span class="symbol">=</span>&nbsp;KeyLocation.UNKNOWN<span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.interaction.Hotkey$<init>(kotlin.Int, com.acornui.core.input.interaction.KeyLocation, kotlin.Boolean, kotlin.Boolean, kotlin.Boolean, kotlin.Boolean)/altKey">altKey</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.interaction.Hotkey$<init>(kotlin.Int, com.acornui.core.input.interaction.KeyLocation, kotlin.Boolean, kotlin.Boolean, kotlin.Boolean, kotlin.Boolean)/ctrlKey">ctrlKey</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.interaction.Hotkey$<init>(kotlin.Int, com.acornui.core.input.interaction.KeyLocation, kotlin.Boolean, kotlin.Boolean, kotlin.Boolean, kotlin.Boolean)/metaKey">metaKey</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.interaction.Hotkey$<init>(kotlin.Int, com.acornui.core.input.interaction.KeyLocation, kotlin.Boolean, kotlin.Boolean, kotlin.Boolean, kotlin.Boolean)/shiftKey">shiftKey</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="alt-key.html">altKey</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">altKey</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>True if the Alt key was active when the KeyboardEvent was generated.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="ctrl-key.html">ctrlKey</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">ctrlKey</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>True if the Control key was active when the KeyboardEvent was generated.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="key-code.html">keyCode</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">keyCode</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The ascii keyCode.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="label.html">label</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">label</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="location.html">location</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">location</span><span class="symbol">: </span><a href="../-key-location/index.html"><span class="identifier">KeyLocation</span></a></code>
+<p>The location of the key.
+If there is only one location for the related key, it will have a location of STANDARD.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="meta-key.html">metaKey</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">metaKey</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>True if the Meta key, (or Command key on OS X) was active when the KeyboardEvent was generated.
+Also called the "super" key.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="shift-key.html">shiftKey</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">shiftKey</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>True if the Shift key was active when the KeyboardEvent was generated.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="matches.html">matches</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">matches</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction.Hotkey$matches(com.acornui.core.input.interaction.KeyInteractionRo)/interaction">interaction</span><span class="symbol">:</span>&nbsp;<a href="../-key-interaction-ro/index.html"><span class="identifier">KeyInteractionRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../bind.html">bind</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">Hotkey</span></a><span class="symbol">.</span><span class="identifier">bind</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction$bind(com.acornui.core.input.interaction.Hotkey, com.acornui.component.UiComponent, kotlin.Function1((com.acornui.core.input.interaction.KeyInteractionRo, kotlin.Unit)))/component">component</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.interaction$bind(com.acornui.core.input.interaction.Hotkey, com.acornui.component.UiComponent, kotlin.Function1((com.acornui.core.input.interaction.KeyInteractionRo, kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../-key-interaction-ro/index.html"><span class="identifier">KeyInteractionRo</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

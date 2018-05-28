@@ -1,0 +1,111 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>CameraElement - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component</a>&nbsp;/&nbsp;<a href="./index.html">CameraElement</a><br/>
+<br/>
+<h1>CameraElement</h1>
+<code><span class="keyword">interface </span><span class="identifier">CameraElement</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-camera-element-ro/index.html"><span class="identifier">CameraElementRo</span></a><span class="symbol">, </span><a href="../../com.acornui.component.layout/-transformable/index.html"><span class="identifier">Transformable</span></a></code>
+<p>A transformable element that is viewed via a Camera.</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="camera-override.html">cameraOverride</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">cameraOverride</span><span class="symbol">: </span><a href="../../com.acornui.core.graphics/-camera-ro/index.html"><span class="identifier">CameraRo</span></a><span class="symbol">?</span></code>
+<p>Overrides the camera to be used for this component (and its children).
+Set to null to switch back to the inherited camera.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-camera-element-ro/camera.html">camera</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">camera</span><span class="symbol">: </span><a href="../../com.acornui.core.graphics/-camera-ro/index.html"><span class="identifier">CameraRo</span></a></code>
+<p>Returns the camera to be used for this component.
+camera.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-camera-element-ro/local-to-window.html">localToWindow</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">localToWindow</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.CameraElementRo$localToWindow(com.acornui.math.Vector3)/localCoord">localCoord</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector3</span></code>
+<p>Converts a local coordinate to window coordinates.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">localToWindow</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.CameraElementRo$localToWindow(com.acornui.math.MinMax)/minMax">minMax</span><span class="symbol">:</span>&nbsp;<span class="identifier">MinMax</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">MinMax</span></code>
+<p>Converts a bounding rectangle from local to window coordinates.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-transformable/set-origin.html">setOrigin</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setOrigin</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Transformable$setOrigin(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setOrigin(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setOrigin(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setOrigin</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Transformable$setOrigin(kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setOrigin(kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-transformable/set-rotation.html">setRotation</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setRotation</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Transformable$setRotation(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setRotation(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setRotation(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-transformable/set-scaling.html">setScaling</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setScaling</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Transformable$setScaling(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setScaling(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setScaling(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setScaling</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Transformable$setScaling(kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setScaling(kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-element-ro/window-to-local.html">windowToLocal</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">windowToLocal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.CameraElementRo$windowToLocal(com.acornui.math.Vector2)/windowCoord">windowCoord</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector2</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector2</span></code>
+<p>Converts a 2d coordinate relative to the window into local coordinate space.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">windowToLocal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.CameraElementRo$windowToLocal(com.acornui.math.MinMax)/minMax">minMax</span><span class="symbol">:</span>&nbsp;<span class="identifier">MinMax</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">MinMax</span></code>
+<p>Converts a bounding rectangle from window to local coordinates.
+Warning: this does require a matrix inversion calculation, which is a fairly expensive operation.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-interactive-element/index.html">InteractiveElement</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">InteractiveElement</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-interactive-element-ro/index.html"><span class="identifier">InteractiveElementRo</span></a><span class="symbol">, </span><a href="../../com.acornui.component.layout/-layout-element/index.html"><span class="identifier">LayoutElement</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">CameraElement</span></a></code>
+<p>InteractiveElement provides a way to add and use signals for interaction events.
+To use interaction signals, use their respective extension function.
+See commonInteractions.kt</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

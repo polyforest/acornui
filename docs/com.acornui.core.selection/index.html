@@ -1,0 +1,86 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.core.selection - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.core.selection</a><br/>
+<br/>
+<h2>Package com.acornui.core.selection</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-selectable.html">Selectable</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Selectable</span></code>
+<p>A marker interface indicating that an object can have selection ranges set in the <a href="-selection-manager/index.html">SelectionManager</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-selectable-component.html">SelectableComponent</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">SelectableComponent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">, </span><a href="-selectable.html"><span class="identifier">Selectable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-selection-manager/index.html">SelectionManager</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">SelectionManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span><span class="symbol">, </span><span class="identifier">Clearable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-selection-manager-impl/index.html">SelectionManagerImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">SelectionManagerImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-selection-manager/index.html"><span class="identifier">SelectionManager</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-selection-range/index.html">SelectionRange</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">SelectionRange</span></code>
+<p>An object representing a range of selected elements.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="contains.html">contains</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-selection-manager/index.html"><span class="identifier">SelectionManager</span></a><span class="symbol">.</span><span class="identifier">contains</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.selection$contains(com.acornui.core.selection.SelectionManager, com.acornui.core.selection.Selectable, kotlin.Int)/target">target</span><span class="symbol">:</span>&nbsp;<a href="-selectable.html"><span class="identifier">Selectable</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.selection$contains(com.acornui.core.selection.SelectionManager, com.acornui.core.selection.Selectable, kotlin.Int)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="select-all.html">selectAll</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-selectable-component.html"><span class="identifier">SelectableComponent</span></a><span class="symbol">.</span><span class="identifier">selectAll</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the current selection to this component with the range 0 to MAX_VALUE</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="unselect.html">unselect</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-selectable-component.html"><span class="identifier">SelectableComponent</span></a><span class="symbol">.</span><span class="identifier">unselect</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the current selection to exclude this component.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

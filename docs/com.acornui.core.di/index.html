@@ -1,0 +1,149 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.core.di - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.core.di</a><br/>
+<br/>
+<h2>Package com.acornui.core.di</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-bootstrap/index.html">Bootstrap</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Bootstrap</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-d-key/index.html">DKey</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">DKey</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code>
+<p>A DependencyKey is a marker interface indicating an object representing a key of a specific dependency type.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-dependency-key-impl/index.html">DependencyKeyImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><s><span class="identifier">DependencyKeyImpl</span></s><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="-dependency-key-impl/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-dependency-pair/index.html">DependencyPair</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">DependencyPair</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-injector/index.html">Injector</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Injector</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-injector-impl/index.html">InjectorImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">InjectorImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-injector/index.html"><span class="identifier">Injector</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-owned/index.html">Owned</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Owned</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-scoped/index.html"><span class="identifier">Scoped</span></a></code>
+<p>When an <a href="-owned/index.html">Owned</a> object is created, the creator is its owner.
+This is used for dependency injection, styling, and organization.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-owned-impl/index.html">OwnedImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">OwnedImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code>
+<p>Factory methods for components typically don't have separated <a href="-owned-impl/owner.html">owner</a> and <a href="-owned-impl/injector.html">injector</a> parameters. This
+implementation can be used to have a different dependency injector than what the owner uses.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-scoped/index.html">Scoped</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Scoped</span></code>
+<p>A scoped object has a dependency injector.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="create-scope.html">createScope</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">createScope</span><span class="symbol">(</span><span class="keyword">vararg</span> <span class="identifier" id="com.acornui.core.di$createScope(com.acornui.core.di.Owned, kotlin.Array((com.acornui.core.di.DependencyPair((kotlin.Any)))))/dependenciesList">dependenciesList</span><span class="symbol">:</span>&nbsp;<a href="-dependency-pair/index.html"><span class="identifier">DependencyPair</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="-owned/index.html"><span class="identifier">Owned</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">createScope</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di$createScope(com.acornui.core.di.Owned, kotlin.collections.List((com.acornui.core.di.DependencyPair((kotlin.Any)))))/dependenciesList">dependenciesList</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="-dependency-pair/index.html"><span class="identifier">DependencyPair</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="-owned/index.html"><span class="identifier">Owned</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="d-key.html">dKey</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <span class="identifier">dKey</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="d-key.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Creates a dependency key with the given factory function.</p>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="d-key.html#SuperKey"><span class="identifier">SuperKey</span></a><span class="symbol">, </span><span class="identifier">SuperKey</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <span class="identifier">dKey</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di$dKey(com.acornui.core.di.DKey((com.acornui.core.di.dKey.SuperKey)))/extends">extends</span><span class="symbol">:</span>&nbsp;<a href="-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="d-key.html#SuperKey"><span class="identifier">SuperKey</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="d-key.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="inject.html">inject</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <a href="-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">inject</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di$inject(com.acornui.core.di.Scoped, com.acornui.core.di.DKey((com.acornui.core.di.inject.T)))/key">key</span><span class="symbol">:</span>&nbsp;<a href="-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="inject.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="inject.html#T"><span class="identifier">T</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="inject-optional.html">injectOptional</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <a href="-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">injectOptional</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di$injectOptional(com.acornui.core.di.Scoped, com.acornui.core.di.DKey((com.acornui.core.di.injectOptional.T)))/key">key</span><span class="symbol">:</span>&nbsp;<a href="-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="inject-optional.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="inject-optional.html#T"><span class="identifier">T</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="own.html">own</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span><span class="symbol">&gt;</span> <a href="-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">own</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di$own(com.acornui.core.di.Owned, com.acornui.core.di.own.T)/target">target</span><span class="symbol">:</span>&nbsp;<a href="own.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="own.html#T"><span class="identifier">T</span></a></code>
+<p>When this object is disposed, the target will also be disposed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="owns.html">owns</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">owns</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di$owns(com.acornui.core.di.Owned, com.acornui.core.di.Owned)/other">other</span><span class="symbol">:</span>&nbsp;<a href="-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="plus.html">plus</a></p>
+</td>
+<td>
+<code><span class="keyword">operator</span> <span class="keyword">fun </span><a href="-injector/index.html"><span class="identifier">Injector</span></a><span class="symbol">.</span><span class="identifier">plus</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di$plus(com.acornui.core.di.Injector, kotlin.collections.List((com.acornui.core.di.DependencyPair((kotlin.Any)))))/dependenciesList">dependenciesList</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="-dependency-pair/index.html"><span class="identifier">DependencyPair</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="-injector/index.html"><span class="identifier">Injector</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

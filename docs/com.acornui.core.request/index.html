@@ -1,0 +1,118 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.core.request - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.core.request</a><br/>
+<br/>
+<h2>Package com.acornui.core.request</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-byte-array-form-item/index.html">ByteArrayFormItem</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ByteArrayFormItem</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-form-data-item/index.html"><span class="identifier">FormDataItem</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-form-data-item/index.html">FormDataItem</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">FormDataItem</span></code>
+<p>A marker interface for items that can be in the list of <a href="-multipart-form-data/items.html">MultipartFormData.items</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-multipart-form-data/index.html">MultipartFormData</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">MultipartFormData</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Clearable</span><span class="symbol">, </span><a href="-multipart-form-data-ro/index.html"><span class="identifier">MultipartFormDataRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-multipart-form-data-ro/index.html">MultipartFormDataRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">MultipartFormDataRo</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-request.html">Request</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Request</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Progress</span><span class="symbol">, </span><span class="identifier">CancelableDeferred</span><span class="symbol">&lt;</span><a href="-request.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-rest-service-factory/index.html">RestServiceFactory</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">RestServiceFactory</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-string-form-item/index.html">StringFormItem</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">StringFormItem</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-form-data-item/index.html"><span class="identifier">FormDataItem</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-url-request-data/index.html">UrlRequestData</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">UrlRequestData</span></code>
+<p>A model with the necessary information to make an http request.
+This is also used for file requests.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-url-request-method/index.html">UrlRequestMethod</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">UrlRequestMethod</span></code>
+<p>The possible values for UrlRequest.method</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Exceptions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-response-exception/index.html">ResponseException</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ResponseException</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html"><span class="identifier">Throwable</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="create-binary-request.html">createBinaryRequest</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">createBinaryRequest</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.request$createBinaryRequest(com.acornui.core.di.Scoped, com.acornui.core.request.UrlRequestData)/requestData">requestData</span><span class="symbol">:</span>&nbsp;<a href="-url-request-data/index.html"><span class="identifier">UrlRequestData</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-request.html"><span class="identifier">Request</span></a><span class="symbol">&lt;</span><span class="identifier">NativeBuffer</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte/index.html"><span class="identifier">Byte</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="create-text-request.html">createTextRequest</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">createTextRequest</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.request$createTextRequest(com.acornui.core.di.Scoped, com.acornui.core.request.UrlRequestData)/requestData">requestData</span><span class="symbol">:</span>&nbsp;<a href="-url-request-data/index.html"><span class="identifier">UrlRequestData</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-request.html"><span class="identifier">Request</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

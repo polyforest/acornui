@@ -1,0 +1,129 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ShaderProgramBase - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.gl.core</a>&nbsp;/&nbsp;<a href="./index.html">ShaderProgramBase</a><br/>
+<br/>
+<h1>ShaderProgramBase</h1>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">ShaderProgramBase</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-shader-program/index.html"><span class="identifier">ShaderProgram</span></a></code>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">ShaderProgramBase</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.ShaderProgramBase$<init>(com.acornui.gl.core.Gl20, kotlin.String, kotlin.String, kotlin.collections.Map((kotlin.Int, kotlin.String)))/gl">gl</span><span class="symbol">:</span>&nbsp;<a href="../-gl20/index.html"><span class="identifier">Gl20</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.ShaderProgramBase$<init>(com.acornui.gl.core.Gl20, kotlin.String, kotlin.String, kotlin.collections.Map((kotlin.Int, kotlin.String)))/vertexShaderSrc">vertexShaderSrc</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.ShaderProgramBase$<init>(com.acornui.gl.core.Gl20, kotlin.String, kotlin.String, kotlin.collections.Map((kotlin.Int, kotlin.String)))/fragmentShaderSrc">fragmentShaderSrc</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.ShaderProgramBase$<init>(com.acornui.gl.core.Gl20, kotlin.String, kotlin.String, kotlin.collections.Map((kotlin.Int, kotlin.String)))/vertexAttributes">vertexAttributes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;hashMapOf(
+				Pair(VertexAttributeUsage.POSITION, ShaderProgram.A_POSITION),
+				Pair(VertexAttributeUsage.NORMAL, ShaderProgram.A_NORMAL),
+				Pair(VertexAttributeUsage.COLOR_TINT, ShaderProgram.A_COLOR_TINT),
+				Pair(VertexAttributeUsage.TEXTURE_COORD, ShaderProgram.A_TEXTURE_COORD + "0")
+		)<span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="_program.html">_program</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">_program</span><span class="symbol">: </span><a href="../-gl-program-ref.html"><span class="identifier">GlProgramRef</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="gl.html">gl</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">gl</span><span class="symbol">: </span><a href="../-gl20/index.html"><span class="identifier">Gl20</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="program.html">program</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">program</span><span class="symbol">: </span><a href="../-gl-program-ref.html"><span class="identifier">GlProgramRef</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="bind.html">bind</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">bind</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-attribute-location.html">getAttributeLocation</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getAttributeLocation</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.ShaderProgramBase$getAttributeLocation(kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-attribute-location-by-usage.html">getAttributeLocationByUsage</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getAttributeLocationByUsage</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.ShaderProgramBase$getAttributeLocationByUsage(kotlin.Int)/usage">usage</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-uniform-location.html">getUniformLocation</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getUniformLocation</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.ShaderProgramBase$getUniformLocation(kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-gl-uniform-location-ref.html"><span class="identifier">GlUniformLocationRef</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="unbind.html">unbind</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">unbind</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-shader-program/get-required-uniform-location.html">getRequiredUniformLocation</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getRequiredUniformLocation</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.ShaderProgram$getRequiredUniformLocation(kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-gl-uniform-location-ref.html"><span class="identifier">GlUniformLocationRef</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-default-shader-program/index.html">DefaultShaderProgram</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DefaultShaderProgram</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ShaderProgramBase</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

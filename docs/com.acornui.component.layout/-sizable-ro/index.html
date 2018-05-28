@@ -1,0 +1,88 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>SizableRo - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.layout</a>&nbsp;/&nbsp;<a href="./index.html">SizableRo</a><br/>
+<br/>
+<h1>SizableRo</h1>
+<code><span class="keyword">interface </span><span class="identifier">SizableRo</span></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="bounds.html">bounds</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">bounds</span><span class="symbol">: </span><span class="identifier">BoundsRo</span></code>
+<p>The measured bounds of this component.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="explicit-height.html">explicitHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">explicitHeight</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code>
+<p>The explicit height, as set by height(value)
+Typically one would use <a href="height.html">height</a> in order to retrieve the explicit or measured height.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="explicit-width.html">explicitWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">explicitWidth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code>
+<p>The explicit width, as set by width(value)
+Typically one would use <a href="width.html">width</a> in order to retrieve the explicit or measured width.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="height.html">height</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">height</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Returns the measured height.
+If layout is invalid, this will invoke a layout validation.
+This is the same as <code>bounds.height</code></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="width.html">width</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">width</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Returns the measured width.
+If layout is invalid, this will invoke a layout validation.
+This is the same as <code>bounds.width</code></p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-basic-layout-element-ro/index.html">BasicLayoutElementRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">BasicLayoutElementRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">SizableRo</span></a><span class="symbol">, </span><a href="../-positionable-ro/index.html"><span class="identifier">PositionableRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-sizable/index.html">Sizable</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Sizable</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">SizableRo</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

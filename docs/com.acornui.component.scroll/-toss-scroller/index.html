@@ -1,0 +1,153 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>TossScroller - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.scroll</a>&nbsp;/&nbsp;<a href="./index.html">TossScroller</a><br/>
+<br/>
+<h1>TossScroller</h1>
+<code><span class="keyword">class </span><span class="identifier">TossScroller</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<p>A toss scroller lets you grab a target component, and update <a href="../-scroll-model-ro/index.html">ScrollModelRo</a> objects by dragging it.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">TossScroller</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.scroll.TossScroller$<init>(com.acornui.component.UiComponent, kotlin.Float, com.acornui.core.input.interaction.DragAttachment)/target">target</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.scroll.TossScroller$<init>(com.acornui.component.UiComponent, kotlin.Float, com.acornui.core.input.interaction.DragAttachment)/dampening">dampening</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;TossScroller.DEFAULT_DAMPENING<span class="symbol">, </span><span class="identifier" id="com.acornui.component.scroll.TossScroller$<init>(com.acornui.component.UiComponent, kotlin.Float, com.acornui.core.input.interaction.DragAttachment)/dragAttachment">dragAttachment</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.input.interaction/-drag-attachment/index.html"><span class="identifier">DragAttachment</span></a>&nbsp;<span class="symbol">=</span>&nbsp;target.dragAttachment(TossScroller.minTossDistance)<span class="symbol">)</span></code>
+<p>A toss scroller lets you grab a target component, and update <a href="../-scroll-model-ro/index.html">ScrollModelRo</a> objects by dragging it.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="dampening.html">dampening</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">dampening</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Dampening affects how quickly the toss velocity will slow to a stop.
+Make this number 0 &lt; dampening &lt; 1.  Where 1 will go forever, and 0 will prevent any momentum.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="drag-attachment.html">dragAttachment</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">dragAttachment</span><span class="symbol">: </span><a href="../../com.acornui.core.input.interaction/-drag-attachment/index.html"><span class="identifier">DragAttachment</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="enabled.html">enabled</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">enabled</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Enables or disables this toss scroller. If this is set to false in the middle of a toss, the toss will
+still finish as if the drag were immediately released. Use <a href="stop.html">stop</a> to halt the current velocity.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="target.html">target</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">target</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="toss.html">toss</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">toss</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-drag-interaction/index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">&gt;</span></code>
+<p>Dispatched every frame the toss is being updated.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="toss-end.html">tossEnd</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">tossEnd</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-drag-interaction/index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">&gt;</span></code>
+<p>Dispatched when the toss has ended.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="toss-start.html">tossStart</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">tossStart</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-drag-interaction/index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">&gt;</span></code>
+<p>Dispatched when the toss has begun.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="stop.html">stop</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">stop</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-d-e-f-a-u-l-t_-d-a-m-p-e-n-i-n-g.html">DEFAULT_DAMPENING</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">DEFAULT_DAMPENING</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-t-o-s-s.html">TOSS</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">TOSS</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-drag-interaction/index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-t-o-s-s_-e-n-d.html">TOSS_END</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">TOSS_END</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-drag-interaction/index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-t-o-s-s_-s-t-a-r-t.html">TOSS_START</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">TOSS_START</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input.interaction/-drag-interaction/index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="min-toss-distance.html">minTossDistance</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">minTossDistance</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

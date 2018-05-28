@@ -1,0 +1,23 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Gl20.blendFuncSeparate - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.gl.core</a>&nbsp;/&nbsp;<a href="index.html">Gl20</a>&nbsp;/&nbsp;<a href="./blend-func-separate.html">blendFuncSeparate</a><br/>
+<br/>
+<h1>blendFuncSeparate</h1>
+<a name="com.acornui.gl.core.Gl20$blendFuncSeparate(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">blendFuncSeparate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.Gl20$blendFuncSeparate(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/srcRGB">srcRGB</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.Gl20$blendFuncSeparate(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/dstRGB">dstRGB</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.Gl20$blendFuncSeparate(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/srcAlpha">srcAlpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.Gl20$blendFuncSeparate(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int)/dstAlpha">dstAlpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Adjusts the newly rendered pixel color and alpha (src) and existing framebuffer color and alpha in the
+framebuffer (dst) before being combined using blendEquationSeparate(). srcRGB, dstRGB, srcAlpha, and dstAlpha
+must be one of ZERO, ONE, SRC_COLOR, ONE_MINUS_SRC_COLOR, DST_COLOR, ONE_MINUS_DST_COLOR, SRC_ALPHA,
+ONE_MINUS_SRC_ALPHA, DST_ALPHA, ONE_MINUS_DST_ALPHA, CONSTANT_COLOR, ONE_MINUS_CONSTANT_COLOR, CONSTANT_ALPHA,
+ONE_MINUS_CONSTANT_ALPHA, or SRC_ALPHA_SATURATE srcRGB and srcAlpha default to ONE. dstRGB and dstAlpha
+default to NONE. For traditional alpha blending, use: gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA,
+gl.ONE, gl.ZERO). For premultiplied alpha blending, use: gl.blendFuncSeparate(gl.ONE, gl.ONE_MINUS_SRC_ALPHA,
+gl.ONE, gl.ZERO). Use getParameter(gl.BLEND_SRC_RGB), getParameter(gl.BLEND_DST_RGB),
+getParameter(gl.BLEND_SRC_ALPHA), and getParameter(gl.BLEND_DST_ALPHA) to get the current values.</p>
+</BODY>
+</HTML>

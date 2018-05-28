@@ -1,0 +1,70 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>FileWriter - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.file</a>&nbsp;/&nbsp;<a href="./index.html">FileWriter</a><br/>
+<br/>
+<h1>FileWriter</h1>
+<code><span class="keyword">interface </span><span class="identifier">FileWriter</span></code>
+<p>An object that holds metadata properties for a picked file and allows for asynchronous writing of that file to disk.</p>
+<p>File writing (String and binary) is limited to files that are 2mb in size.</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="last-modified.html">lastModified</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">lastModified</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
+<p>Last date the file was modified as the number of milliseconds since the Unix Epoch</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="name.html">name</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">name</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>Name of the file including absolute path</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="size.html">size</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">size</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
+<p>Size of the file in bytes</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="save-to-file-as-binary.html">saveToFileAsBinary</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">saveToFileAsBinary</span><span class="symbol">(</span><span class="identifier" id="com.acornui.file.FileWriter$saveToFileAsBinary(com.acornui.io.NativeBuffer((kotlin.Byte)))/value">value</span><span class="symbol">:</span>&nbsp;<span class="identifier">NativeBuffer</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte/index.html"><span class="identifier">Byte</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Write file (<a href="name.html">name</a>) to disk as binary</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="save-to-file-as-string.html">saveToFileAsString</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">saveToFileAsString</span><span class="symbol">(</span><span class="identifier" id="com.acornui.file.FileWriter$saveToFileAsString(kotlin.String)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Write file (<a href="name.html">name</a>) to disk as a String</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

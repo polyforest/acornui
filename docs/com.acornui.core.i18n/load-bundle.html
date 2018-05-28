@@ -1,0 +1,34 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>loadBundle - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="index.html">com.acornui.core.i18n</a>&nbsp;/&nbsp;<a href="./load-bundle.html">loadBundle</a><br/>
+<br/>
+<h1>loadBundle</h1>
+<a name="com.acornui.core.i18n$loadBundle(com.acornui.core.di.Scoped, kotlin.String, kotlin.String, kotlin.String)"></a>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">loadBundle</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.i18n$loadBundle(com.acornui.core.di.Scoped, kotlin.String, kotlin.String, kotlin.String)/bundleName">bundleName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.i18n$loadBundle(com.acornui.core.di.Scoped, kotlin.String, kotlin.String, kotlin.String)/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;i18nPath<span class="symbol">, </span><span class="identifier" id="com.acornui.core.i18n$loadBundle(com.acornui.core.di.Scoped, kotlin.String, kotlin.String, kotlin.String)/defaultPath">defaultPath</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;i18nFallbackPath<span class="symbol">)</span><span class="symbol">: </span><a href="-i18n-bundle/index.html"><span class="identifier">I18nBundle</span></a></code>
+<p>Loads a resource bundle at the given path for the <a href="-i18n/current-locales.html">I18n.currentLocales</a>. When the current locale changes, the new
+bundle will be automatically loaded.</p>
+<h3>Parameters</h3>
+<p><a name="path"></a>
+<code>path</code> - The path to the properties file to load.
+This may have the tokens:
+{locale} which will be replaced by <a href="-i18n/current-locales.html">I18n.currentLocales</a>.
+{bundleName} which will be replaced by <a href="load-bundle.html#com.acornui.core.i18n$loadBundle(com.acornui.core.di.Scoped, kotlin.String, kotlin.String, kotlin.String)/bundleName">bundleName</a>.</p>
+<p><a name="defaultPath"></a>
+<code>defaultPath</code> - 
+<p>The path to the default properties to load. The default properties is used as a back-up if the
+locale isn't found.</p>
+
+
+<p>This method loads the bundle for the current locale, as set by <a href="-i18n/current-locales.html">I18n.currentLocales</a>. When the current locale changes,
+a new load will take place.</p>
+
+
+<p>This may be called multiple times safely without re-loading the data.</p>
+</p>
+</BODY>
+</HTML>

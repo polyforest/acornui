@@ -1,0 +1,105 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>StylesImpl - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.style</a>&nbsp;/&nbsp;<a href="./index.html">StylesImpl</a><br/>
+<br/>
+<h1>StylesImpl</h1>
+<code><span class="keyword">class </span><span class="identifier">StylesImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">StylesImpl</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style.StylesImpl$<init>(com.acornui.component.style.Styleable)/host">host</span><span class="symbol">:</span>&nbsp;<a href="../-styleable/index.html"><span class="identifier">Styleable</span></a><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="style-rules.html">styleRules</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">styleRules</span><span class="symbol">: </span><span class="identifier">ActiveList</span><span class="symbol">&lt;</span><a href="../-style-rule/index.html"><span class="identifier">StyleRule</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="style-tags.html">styleTags</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">styleTags</span><span class="symbol">: </span><span class="identifier">ActiveList</span><span class="symbol">&lt;</span><a href="../-style-tag/index.html"><span class="identifier">StyleTag</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="bind.html">bind</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-style/index.html"><span class="identifier">Style</span></a><span class="symbol">&gt;</span> <span class="identifier">bind</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style.StylesImpl$bind(com.acornui.component.style.StylesImpl.bind.T, com.acornui.component.style.StyleCalculator)/style">style</span><span class="symbol">:</span>&nbsp;<a href="bind.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.style.StylesImpl$bind(com.acornui.component.style.StylesImpl.bind.T, com.acornui.component.style.StyleCalculator)/calculator">calculator</span><span class="symbol">:</span>&nbsp;<a href="../-style-calculator/index.html"><span class="identifier">StyleCalculator</span></a>&nbsp;<span class="symbol">=</span>&nbsp;CascadingStyleCalculator<span class="symbol">)</span><span class="symbol">: </span><a href="bind.html#T"><span class="identifier">T</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-rules-by-type.html">getRulesByType</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-style-ro/index.html"><span class="identifier">StyleRo</span></a><span class="symbol">&gt;</span> <span class="identifier">getRulesByType</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style.StylesImpl$getRulesByType(com.acornui.component.style.StyleType((com.acornui.component.style.StylesImpl.getRulesByType.T)), kotlin.collections.MutableList((com.acornui.component.style.StyleRule((com.acornui.component.style.StylesImpl.getRulesByType.T)))))/type">type</span><span class="symbol">:</span>&nbsp;<a href="../-style-type/index.html"><span class="identifier">StyleType</span></a><span class="symbol">&lt;</span><a href="get-rules-by-type.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.style.StylesImpl$getRulesByType(com.acornui.component.style.StyleType((com.acornui.component.style.StylesImpl.getRulesByType.T)), kotlin.collections.MutableList((com.acornui.component.style.StyleRule((com.acornui.component.style.StylesImpl.getRulesByType.T)))))/out">out</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../-style-rule/index.html"><span class="identifier">StyleRule</span></a><span class="symbol">&lt;</span><a href="get-rules-by-type.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="style-changed-handler.html">styleChangedHandler</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">styleChangedHandler</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style.StylesImpl$styleChangedHandler(com.acornui.observe.Observable)/o">o</span><span class="symbol">:</span>&nbsp;<span class="identifier">Observable</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="unbind.html">unbind</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">unbind</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style.StylesImpl$unbind(com.acornui.component.style.StyleRo)/style">style</span><span class="symbol">:</span>&nbsp;<a href="../-style-ro/index.html"><span class="identifier">StyleRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="unwatch.html">unwatch</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">unwatch</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style.StylesImpl$unwatch(com.acornui.component.style.Style)/style">style</span><span class="symbol">:</span>&nbsp;<a href="../-style/index.html"><span class="identifier">Style</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="validate-styles.html">validateStyles</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">validateStyles</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="watch.html">watch</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-style/index.html"><span class="identifier">Style</span></a><span class="symbol">&gt;</span> <span class="identifier">watch</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style.StylesImpl$watch(com.acornui.component.style.StylesImpl.watch.T, kotlin.Float, kotlin.Function1((com.acornui.component.style.StylesImpl.watch.T, kotlin.Unit)))/style">style</span><span class="symbol">:</span>&nbsp;<a href="watch.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.style.StylesImpl$watch(com.acornui.component.style.StylesImpl.watch.T, kotlin.Float, kotlin.Function1((com.acornui.component.style.StylesImpl.watch.T, kotlin.Unit)))/priority">priority</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.style.StylesImpl$watch(com.acornui.component.style.StylesImpl.watch.T, kotlin.Float, kotlin.Function1((com.acornui.component.style.StylesImpl.watch.T, kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="watch.html#T"><span class="identifier">T</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

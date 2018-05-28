@@ -1,0 +1,96 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.core.popup - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.core.popup</a><br/>
+<br/>
+<h2>Package com.acornui.core.popup</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-alert-window/index.html">AlertWindow</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">AlertWindow</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-window-panel/index.html"><span class="identifier">WindowPanel</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-lift/index.html">Lift</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Lift</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-element-container-impl/index.html"><span class="identifier">ElementContainerImpl</span></a><span class="symbol">&lt;</span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.component.layout/-layout-container/index.html"><span class="identifier">LayoutContainer</span></a><span class="symbol">&lt;</span><a href="../com.acornui.component/-stack-layout-style/index.html"><span class="identifier">StackLayoutStyle</span></a><span class="symbol">,</span>&nbsp;<a href="../com.acornui.component/-stack-layout-data/index.html"><span class="identifier">StackLayoutData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.core.focus/-focusable/index.html"><span class="identifier">Focusable</span></a></code>
+<p>The Lift component will place its elements as children in the pop up layer, automatically transforming the children
+to match transformation as if they were part of this component's display hierarchy.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-pop-up-info/index.html">PopUpInfo</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">PopUpInfo</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-pop-up-manager/index.html">PopUpManager</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">PopUpManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Clearable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-pop-up-manager-impl/index.html">PopUpManagerImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">PopUpManagerImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.layout/-layout-container-impl/index.html"><span class="identifier">LayoutContainerImpl</span></a><span class="symbol">&lt;</span><a href="-pop-up-manager-style/index.html"><span class="identifier">PopUpManagerStyle</span></a><span class="symbol">,</span>&nbsp;<a href="../com.acornui.component.layout.algorithm/-canvas-layout-data/index.html"><span class="identifier">CanvasLayoutData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="-pop-up-manager/index.html"><span class="identifier">PopUpManager</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-pop-up-manager-style/index.html">PopUpManagerStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">PopUpManagerStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="add-pop-up.html">addPopUp</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span> <a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">addPopUp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.popup$addPopUp(com.acornui.core.di.Owned, com.acornui.core.popup.PopUpInfo((com.acornui.core.popup.addPopUp.T)))/popUpInfo">popUpInfo</span><span class="symbol">:</span>&nbsp;<a href="-pop-up-info/index.html"><span class="identifier">PopUpInfo</span></a><span class="symbol">&lt;</span><a href="add-pop-up.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="add-pop-up.html#T"><span class="identifier">T</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="alert.html">alert</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">alert</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.popup$alert(com.acornui.core.di.Owned, kotlin.String, kotlin.String)/title">title</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.popup$alert(com.acornui.core.di.Owned, kotlin.String, kotlin.String)/message">message</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-pop-up-info/index.html"><span class="identifier">PopUpInfo</span></a><span class="symbol">&lt;</span><a href="-alert-window/index.html"><span class="identifier">AlertWindow</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="lift.html">lift</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">lift</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.popup$lift(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.core.popup.Lift, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-lift/index.html"><span class="identifier">Lift</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="-lift/index.html"><span class="identifier">Lift</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="remove-pop-up.html">removePopUp</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">removePopUp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.popup$removePopUp(com.acornui.core.di.Owned, com.acornui.core.popup.PopUpInfo((com.acornui.component.UiComponent)))/popUpInfo">popUpInfo</span><span class="symbol">:</span>&nbsp;<a href="-pop-up-info/index.html"><span class="identifier">PopUpInfo</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">removePopUp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.popup$removePopUp(com.acornui.core.di.Owned, com.acornui.component.UiComponent)/popUpInfoChild">popUpInfoChild</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

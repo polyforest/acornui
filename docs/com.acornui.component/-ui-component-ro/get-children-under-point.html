@@ -1,0 +1,30 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>UiComponentRo.getChildrenUnderPoint - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component</a>&nbsp;/&nbsp;<a href="index.html">UiComponentRo</a>&nbsp;/&nbsp;<a href="./get-children-under-point.html">getChildrenUnderPoint</a><br/>
+<br/>
+<h1>getChildrenUnderPoint</h1>
+<a name="com.acornui.component.UiComponentRo$getChildrenUnderPoint(kotlin.Float, kotlin.Float, kotlin.Boolean, kotlin.Boolean, kotlin.collections.MutableList((com.acornui.component.UiComponentRo)), com.acornui.math.RayRo)"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getChildrenUnderPoint</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.UiComponentRo$getChildrenUnderPoint(kotlin.Float, kotlin.Float, kotlin.Boolean, kotlin.Boolean, kotlin.collections.MutableList((com.acornui.component.UiComponentRo)), com.acornui.math.RayRo)/canvasX">canvasX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.UiComponentRo$getChildrenUnderPoint(kotlin.Float, kotlin.Float, kotlin.Boolean, kotlin.Boolean, kotlin.collections.MutableList((com.acornui.component.UiComponentRo)), com.acornui.math.RayRo)/canvasY">canvasY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.UiComponentRo$getChildrenUnderPoint(kotlin.Float, kotlin.Float, kotlin.Boolean, kotlin.Boolean, kotlin.collections.MutableList((com.acornui.component.UiComponentRo)), com.acornui.math.RayRo)/onlyInteractive">onlyInteractive</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.UiComponentRo$getChildrenUnderPoint(kotlin.Float, kotlin.Float, kotlin.Boolean, kotlin.Boolean, kotlin.collections.MutableList((com.acornui.component.UiComponentRo)), com.acornui.math.RayRo)/returnAll">returnAll</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.UiComponentRo$getChildrenUnderPoint(kotlin.Float, kotlin.Float, kotlin.Boolean, kotlin.Boolean, kotlin.collections.MutableList((com.acornui.component.UiComponentRo)), com.acornui.math.RayRo)/out">out</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.UiComponentRo$getChildrenUnderPoint(kotlin.Float, kotlin.Float, kotlin.Boolean, kotlin.Boolean, kotlin.collections.MutableList((com.acornui.component.UiComponentRo)), com.acornui.math.RayRo)/rayCache">rayCache</span><span class="symbol">:</span>&nbsp;<span class="identifier">RayRo</span><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">&gt;</span></code>
+<p>Given a screen position, casts a ray in the direction of the camera, populating the <a href="get-children-under-point.html#com.acornui.component.UiComponentRo$getChildrenUnderPoint(kotlin.Float, kotlin.Float, kotlin.Boolean, kotlin.Boolean, kotlin.collections.MutableList((com.acornui.component.UiComponentRo)), com.acornui.math.RayRo)/out">out</a> list with the
+components that intersect the ray.</p>
+<h3>Parameters</h3>
+<p><a name="canvasX"></a>
+<code>canvasX</code> - The x coordinate relative to the canvas.</p>
+<p><a name="canvasY"></a>
+<code>canvasY</code> - The y coordinate relative to the canvas.</p>
+<p><a name="onlyInteractive"></a>
+<code>onlyInteractive</code> - If true, only elements whose interactivity is enabled will be returned.</p>
+<p><a name="returnAll"></a>
+<code>returnAll</code> - If true, all intersecting elements will be added to <a href="get-children-under-point.html#com.acornui.component.UiComponentRo$getChildrenUnderPoint(kotlin.Float, kotlin.Float, kotlin.Boolean, kotlin.Boolean, kotlin.collections.MutableList((com.acornui.component.UiComponentRo)), com.acornui.math.RayRo)/out">out</a>, if false, only the top-most element.
+The top-most element is determined by child index, not z value.</p>
+<p><a name="out"></a>
+<code>out</code> - The array list to populate with elements.</p>
+<p><a name="rayCache"></a>
+<code>rayCache</code> - If the ray is already calculated, pass this to avoid re-calculating the pick ray from the camera.</p>
+</BODY>
+</HTML>

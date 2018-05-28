@@ -1,0 +1,177 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>TouchInteractionRo - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.input.interaction</a>&nbsp;/&nbsp;<a href="./index.html">TouchInteractionRo</a><br/>
+<br/>
+<h1>TouchInteractionRo</h1>
+<code><span class="keyword">interface </span><span class="identifier">TouchInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.input/-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="changed-touches.html">changedTouches</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">changedTouches</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-touch-ro/index.html"><span class="identifier">TouchRo</span></a><span class="symbol">&gt;</span></code>
+<p>A list of all the Touch objects representing individual points of contact whose states changed between the
+previous touch event and this one.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="target-touches.html">targetTouches</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">targetTouches</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-touch-ro/index.html"><span class="identifier">TouchRo</span></a><span class="symbol">&gt;</span></code>
+<p>A list of all the Touch objects that are both currently in contact with the touch surface and were also started
+on the same element that is the target of the event.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="timestamp.html">timestamp</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">timestamp</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
+<p>The number of milliseconds from the Unix epoch.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="touches.html">touches</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">touches</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-touch-ro/index.html"><span class="identifier">TouchRo</span></a><span class="symbol">&gt;</span></code>
+<p>A list of all the Touch objects representing all current points of contact with the surface, regardless of
+target or changed status.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-ro/current-target.html">currentTarget</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">currentTarget</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-ro/handled.html">handled</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">handled</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>True if this event was used in an interaction.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-ro/propagation.html">propagation</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">propagation</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-propagation-ro/index.html"><span class="identifier">PropagationRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-ro/target.html">target</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">target</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-ro/type.html">type</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">type</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.input/-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-ro/default-prevented.html">defaultPrevented</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">defaultPrevented</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input/-interaction-event-ro/prevent-default.html">preventDefault</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">preventDefault</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-t-o-u-c-h_-c-a-n-c-e-l.html">TOUCH_CANCEL</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">TOUCH_CANCEL</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">TouchInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-t-o-u-c-h_-e-n-d.html">TOUCH_END</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">TOUCH_END</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">TouchInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-t-o-u-c-h_-e-n-t-e-r.html">TOUCH_ENTER</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">TOUCH_ENTER</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">TouchInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-t-o-u-c-h_-l-e-a-v-e.html">TOUCH_LEAVE</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">TOUCH_LEAVE</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">TouchInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-t-o-u-c-h_-m-o-v-e.html">TOUCH_MOVE</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">TOUCH_MOVE</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">TouchInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-t-o-u-c-h_-s-t-a-r-t.html">TOUCH_START</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">TOUCH_START</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">TouchInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-touch-interaction/index.html">TouchInteraction</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TouchInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TouchInteractionRo</span></a><span class="symbol">, </span><a href="../../com.acornui.core.input/-interaction-event-base/index.html"><span class="identifier">InteractionEventBase</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

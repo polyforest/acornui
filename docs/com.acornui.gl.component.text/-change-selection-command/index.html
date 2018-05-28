@@ -1,0 +1,95 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ChangeSelectionCommand - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.gl.component.text</a>&nbsp;/&nbsp;<a href="./index.html">ChangeSelectionCommand</a><br/>
+<br/>
+<h1>ChangeSelectionCommand</h1>
+<code><span class="keyword">class </span><span class="identifier">ChangeSelectionCommand</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.mvc/-state-command/index.html"><span class="identifier">StateCommand</span></a></code>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.mvc/-command-type.html"><span class="identifier">CommandType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">ChangeSelectionCommand</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">ChangeSelectionCommand</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.component.text.ChangeSelectionCommand$<init>(kotlin.Any, kotlin.collections.List((com.acornui.core.selection.SelectionRange)), kotlin.collections.List((com.acornui.core.selection.SelectionRange)), com.acornui.core.mvc.CommandGroup)/target">target</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.text.ChangeSelectionCommand$<init>(kotlin.Any, kotlin.collections.List((com.acornui.core.selection.SelectionRange)), kotlin.collections.List((com.acornui.core.selection.SelectionRange)), com.acornui.core.mvc.CommandGroup)/oldSelection">oldSelection</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.selection/-selection-range/index.html"><span class="identifier">SelectionRange</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.text.ChangeSelectionCommand$<init>(kotlin.Any, kotlin.collections.List((com.acornui.core.selection.SelectionRange)), kotlin.collections.List((com.acornui.core.selection.SelectionRange)), com.acornui.core.mvc.CommandGroup)/newSelection">newSelection</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.selection/-selection-range/index.html"><span class="identifier">SelectionRange</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.text.ChangeSelectionCommand$<init>(kotlin.Any, kotlin.collections.List((com.acornui.core.selection.SelectionRange)), kotlin.collections.List((com.acornui.core.selection.SelectionRange)), com.acornui.core.mvc.CommandGroup)/group">group</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.mvc/-command-group/index.html"><span class="identifier">CommandGroup</span></a><span class="symbol">?</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="group.html">group</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">group</span><span class="symbol">: </span><a href="../../com.acornui.core.mvc/-command-group/index.html"><span class="identifier">CommandGroup</span></a><span class="symbol">?</span></code>
+<p>If set, undo/redo actions will continue until the group no longer matches.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="new-selection.html">newSelection</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">newSelection</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.selection/-selection-range/index.html"><span class="identifier">SelectionRange</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="old-selection.html">oldSelection</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">oldSelection</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.selection/-selection-range/index.html"><span class="identifier">SelectionRange</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="target.html">target</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">target</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="type.html">type</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">type</span><span class="symbol">: </span><a href="-companion.html"><span class="identifier">ChangeSelectionCommand.Companion</span></a></code>
+<p>The identifier that allows handlers to observe the desired command. Typically the command's companion object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="reverse.html">reverse</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">reverse</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.mvc/-command/index.html"><span class="identifier">Command</span></a></code>
+<p>Creates the command that represents the undoing of this command.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

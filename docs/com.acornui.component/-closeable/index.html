@@ -1,0 +1,51 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Closeable - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component</a>&nbsp;/&nbsp;<a href="./index.html">Closeable</a><br/>
+<br/>
+<h1>Closeable</h1>
+<code><span class="keyword">interface </span><span class="identifier">Closeable</span></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="closed.html">closed</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">closed</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="./index.html"><span class="identifier">Closeable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="closing.html">closing</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">closing</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="./index.html"><span class="identifier">Closeable</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">Cancel</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-panel/index.html">Panel</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Panel</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-element-container-impl/index.html"><span class="identifier">ElementContainerImpl</span></a><span class="symbol">&lt;</span><a href="../-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">Closeable</span></a><span class="symbol">, </span><a href="../../com.acornui.component.layout.algorithm/-layout-data-provider/index.html"><span class="identifier">LayoutDataProvider</span></a><span class="symbol">&lt;</span><a href="../-stack-layout-data/index.html"><span class="identifier">StackLayoutData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-window-panel/index.html">WindowPanel</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">WindowPanel</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-element-container-impl/index.html"><span class="identifier">ElementContainerImpl</span></a><span class="symbol">&lt;</span><a href="../-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../-labelable/index.html"><span class="identifier">Labelable</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Closeable</span></a><span class="symbol">, </span><a href="../../com.acornui.component.layout.algorithm/-layout-data-provider/index.html"><span class="identifier">LayoutDataProvider</span></a><span class="symbol">&lt;</span><a href="../-stack-layout-data/index.html"><span class="identifier">StackLayoutData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,23 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>WrappedGl20.blendEquationSeparate - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.gl.core</a>&nbsp;/&nbsp;<a href="index.html">WrappedGl20</a>&nbsp;/&nbsp;<a href="./blend-equation-separate.html">blendEquationSeparate</a><br/>
+<br/>
+<h1>blendEquationSeparate</h1>
+<a name="com.acornui.gl.core.WrappedGl20$blendEquationSeparate(kotlin.Int, kotlin.Int)"></a>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">blendEquationSeparate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.WrappedGl20$blendEquationSeparate(kotlin.Int, kotlin.Int)/modeRGB">modeRGB</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.WrappedGl20$blendEquationSeparate(kotlin.Int, kotlin.Int)/modeAlpha">modeAlpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Overrides <a href="../-gl20/blend-equation-separate.html">Gl20.blendEquationSeparate</a></p>
+<p>Sets how the newly rendered pixel color and alpha (src) is combined with the existing framebuffer color and
+alpha (dst) before storing in the framebuffer.
+modeRGB and modeAlpha must be one of FUNC_ADD, FUNC_SUBTRACT, or FUNC_REVERSE_SUBTRACT. If the mode is FUNC_ADD,
+the destination color will be src + dst. If the mode is FUNC_SUBTRACT, the destination color will be src - dst.
+If the mode is FUNC_REVERSE_SUBTRACT, the destination color will be dst - src. Both modeRGB and modeAlpha
+default to FUNC_ADD. Use getParameter(gl.BLEND_EQUATION_RGB) and getParameter(gl.BLEND_EQUATION_ALPHA) to get
+the current values. See blendFuncSeparate() for how src and dst are computed. Blending must be enabled with
+enable(BLEND).</p>
+</BODY>
+</HTML>

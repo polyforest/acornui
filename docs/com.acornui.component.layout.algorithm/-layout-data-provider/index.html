@@ -1,0 +1,110 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>LayoutDataProvider - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.layout.algorithm</a>&nbsp;/&nbsp;<a href="./index.html">LayoutDataProvider</a><br/>
+<br/>
+<h1>LayoutDataProvider</h1>
+<code><span class="keyword">interface </span><span class="identifier">LayoutDataProvider</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-layout-data/index.html"><span class="identifier">LayoutData</span></a><span class="symbol">&gt;</span></code>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="create-layout-data.html">createLayoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">createLayoutData</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="index.html#T"><span class="identifier">T</span></a></code>
+<p>A factory method to create a new layout data object for use in this layout.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="layout.html">layout</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">infix</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">R</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-layout-element/index.html"><span class="identifier">LayoutElement</span></a><span class="symbol">&gt;</span> <a href="layout.html#R"><span class="identifier">R</span></a><span class="symbol">.</span><span class="identifier">layout</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm.LayoutDataProvider$layout(com.acornui.component.layout.algorithm.LayoutDataProvider.layout.R, kotlin.Function1((com.acornui.component.layout.algorithm.LayoutDataProvider.T, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="layout.html#R"><span class="identifier">R</span></a></code>
+<p>Constructs a new layout data object and applies it to the receiver layout element.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-heading-group/index.html">HeadingGroup</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">HeadingGroup</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-element-container-impl/index.html"><span class="identifier">ElementContainerImpl</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../../com.acornui.component/-labelable/index.html"><span class="identifier">Labelable</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">LayoutDataProvider</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-stack-layout-data/index.html"><span class="identifier">StackLayoutData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout.algorithm.virtual/-item-renderer-owner.html">ItemRendererOwner</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ItemRendererOwner</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-layout-data/index.html"><span class="identifier">LayoutData</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">LayoutDataProvider</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component.layout.algorithm.virtual/-item-renderer-owner.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-layout-algorithm/index.html">LayoutAlgorithm</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">LayoutAlgorithm</span><span class="symbol">&lt;</span><span class="keyword">in</span>&nbsp;<span class="identifier">S</span><span class="symbol">, </span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-layout-data/index.html"><span class="identifier">LayoutData</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">LayoutDataProvider</span></a><span class="symbol">&lt;</span><a href="../-layout-algorithm/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>A LayoutAlgorithm implementation sizes and positions layout elements. This is typically paired with a
+LayoutContainer implementation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-layout-container/index.html">LayoutContainer</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">LayoutContainer</span><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">, </span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-layout-data/index.html"><span class="identifier">LayoutData</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">LayoutDataProvider</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component.layout/-layout-container/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../../com.acornui.component/-element-container.html"><span class="identifier">ElementContainer</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-panel/index.html">Panel</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Panel</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-element-container-impl/index.html"><span class="identifier">ElementContainerImpl</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../../com.acornui.component/-closeable/index.html"><span class="identifier">Closeable</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">LayoutDataProvider</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-stack-layout-data/index.html"><span class="identifier">StackLayoutData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.scroll/-scroll-area/index.html">ScrollArea</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ScrollArea</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">LayoutDataProvider</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-stack-layout-data/index.html"><span class="identifier">StackLayoutData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../../com.acornui.component/-element-container.html"><span class="identifier">ElementContainer</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-tab-navigator/index.html">TabNavigator</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">TabNavigator</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-container-impl/index.html"><span class="identifier">ContainerImpl</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">LayoutDataProvider</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-stack-layout-data/index.html"><span class="identifier">StackLayoutData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout.algorithm.virtual/-virtual-layout-algorithm/index.html">VirtualLayoutAlgorithm</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">VirtualLayoutAlgorithm</span><span class="symbol">&lt;</span><span class="keyword">in</span>&nbsp;<span class="identifier">S</span><span class="symbol">, </span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-layout-data/index.html"><span class="identifier">LayoutData</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">LayoutDataProvider</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component.layout.algorithm.virtual/-virtual-layout-algorithm/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>A Virtualized layout algorithm is a type of layout that is only given a single layout element to size and position
+at a time.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-window-panel/index.html">WindowPanel</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">WindowPanel</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-element-container-impl/index.html"><span class="identifier">ElementContainerImpl</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../../com.acornui.component/-labelable/index.html"><span class="identifier">Labelable</span></a><span class="symbol">, </span><a href="../../com.acornui.component/-closeable/index.html"><span class="identifier">Closeable</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">LayoutDataProvider</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-stack-layout-data/index.html"><span class="identifier">StackLayoutData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

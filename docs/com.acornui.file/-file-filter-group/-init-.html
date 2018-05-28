@@ -1,0 +1,19 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>FileFilterGroup.<init> - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.file</a>&nbsp;/&nbsp;<a href="index.html">FileFilterGroup</a>&nbsp;/&nbsp;<a href="./-init-.html">&lt;init&gt;</a><br/>
+<br/>
+<h1>&lt;init&gt;</h1>
+<a name="com.acornui.file.FileFilterGroup$&lt;init&gt;(kotlin.collections.List((kotlin.String)))"></a>
+<code><span class="identifier">FileFilterGroup</span><span class="symbol">(</span><span class="identifier" id="com.acornui.file.FileFilterGroup$<init>(kotlin.collections.List((kotlin.String)))/extensions">extensions</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span><span class="symbol">)</span></code>
+<p>A list of <a href="extensions.html">extensions</a> to filter for when picking files.</p>
+<p>An extension must <em>not</em> include the STOP character (e.g. ".txt", <em>not</em> "txt").</p>
+<p>For MAC and iOS (JVM and Safari), filtering defaults to all extensions due to underlying library limitations.
+For JS (sans Safari), all filter groups will be merged into a single filter group due to browser implementations.
+For JVM (sans MAC), each filter group will appear as a selection in the Options drop-down of the native picker.</p>
+</BODY>
+</HTML>

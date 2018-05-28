@@ -1,0 +1,167 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ClickInteractionRo - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.input.interaction</a>&nbsp;/&nbsp;<a href="./index.html">ClickInteractionRo</a><br/>
+<br/>
+<h1>ClickInteractionRo</h1>
+<code><span class="keyword">interface </span><span class="identifier">ClickInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-mouse-interaction-ro/index.html"><span class="identifier">MouseInteractionRo</span></a></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="count.html">count</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">count</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-mouse-interaction-ro/button.html">button</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">button</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-which-button/index.html"><span class="identifier">WhichButton</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-mouse-interaction-ro/canvas-x.html">canvasX</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">canvasX</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The x position of the mouse event relative to the root canvas.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-mouse-interaction-ro/canvas-y.html">canvasY</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">canvasY</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The y position of the mouse event relative to the root canvas.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-mouse-interaction-ro/is-fabricated.html">isFabricated</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">isFabricated</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true, this interaction was triggered from code, not real user input.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-mouse-interaction-ro/local-x.html">localX</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">localX</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The x position of the mouse event relative to the <a href="../../com.acornui.core.input/-interaction-event-ro/current-target.html">currentTarget</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-mouse-interaction-ro/local-y.html">localY</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">localY</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The y position of the mouse event relative to the <a href="../../com.acornui.core.input/-interaction-event-ro/current-target.html">currentTarget</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-mouse-interaction-ro/related-target.html">relatedTarget</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">relatedTarget</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">?</span></code>
+<p>On a mouse out interaction, the relatedTarget will be the new over target (or null if there isn't one)
+On a mouse over interaction, the relatedTarget will be the previous over target (or null if there wasn't one)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-mouse-interaction-ro/timestamp.html">timestamp</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">timestamp</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
+<p>The number of milliseconds from the Unix epoch.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-mouse-interaction-ro/velocity.html">velocity</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">velocity</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction.MouseInteractionRo$velocity(com.acornui.core.input.interaction.MouseInteractionRo)/previous">previous</span><span class="symbol">:</span>&nbsp;<a href="../-mouse-interaction-ro/index.html"><span class="identifier">MouseInteractionRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Calculates the average velocity in pixels per millisecond of this touch event compared to a previous touch event.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-b-a-c-k_-c-l-i-c-k.html">BACK_CLICK</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">BACK_CLICK</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">ClickInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-f-o-r-w-a-r-d_-c-l-i-c-k.html">FORWARD_CLICK</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">FORWARD_CLICK</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">ClickInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-l-e-f-t_-c-l-i-c-k.html">LEFT_CLICK</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">LEFT_CLICK</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">ClickInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-m-i-d-d-l-e_-c-l-i-c-k.html">MIDDLE_CLICK</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">MIDDLE_CLICK</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">ClickInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-r-i-g-h-t_-c-l-i-c-k.html">RIGHT_CLICK</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">RIGHT_CLICK</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">ClickInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-click-interaction/index.html">ClickInteraction</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ClickInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ClickInteractionRo</span></a><span class="symbol">, </span><a href="../-mouse-interaction/index.html"><span class="identifier">MouseInteraction</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

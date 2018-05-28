@@ -1,0 +1,97 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>DateTimeFormatter - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.text</a>&nbsp;/&nbsp;<a href="./index.html">DateTimeFormatter</a><br/>
+<br/>
+<h1>DateTimeFormatter</h1>
+<code><span class="keyword">interface </span><span class="identifier">DateTimeFormatter</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-string-formatter/index.html"><span class="identifier">StringFormatter</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.time/-date/index.html"><span class="identifier">Date</span></a><span class="symbol">&gt;</span></code>
+<p>This class formats dates into localized string representations.</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="date-style.html">dateStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">dateStyle</span><span class="symbol">: </span><a href="../-date-time-format-style/index.html"><span class="identifier">DateTimeFormatStyle</span></a></code>
+<p>The exact format of a date or time is dependent on the locale, and is platform specific, but this property will
+hint whether the format will be long form, medium form, or short form.
+The default is <a href="../-date-time-format-style/-d-e-f-a-u-l-t.html">DateTimeFormatStyle.DEFAULT</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="locales.html">locales</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">locales</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.i18n/-locale/index.html"><span class="identifier">Locale</span></a><span class="symbol">&gt;</span><span class="symbol">?</span></code>
+<p>The ordered locale chain to use for formatting. If this is left null, the user's current locale will be used.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="time-style.html">timeStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">timeStyle</span><span class="symbol">: </span><a href="../-date-time-format-style/index.html"><span class="identifier">DateTimeFormatStyle</span></a></code>
+<p>The exact format of a date or time is dependent on the locale, and is platform specific, but this property will
+hint whether the format will be long form, medium form, or short form.
+The default is <a href="../-date-time-format-style/-d-e-f-a-u-l-t.html">DateTimeFormatStyle.DEFAULT</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="time-zone.html">timeZone</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">timeZone</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code>
+<p>The timezone for formatting.
+The only values this is guaranteed to work with are "UTC" or null.
+Other values that will likely work based on browser or jvm implementation are the full TZ code
+<a href="https//en.wikipedia.org/wiki/List_of_tz_database_time_zones">https//en.wikipedia.org/wiki/List_of_tz_database_time_zones</a>
+For example, use "America/New_York" as opposed to "EST"
+If this is null, the user's timezone will be used.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="type.html">type</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">type</span><span class="symbol">: </span><a href="../-date-time-format-type/index.html"><span class="identifier">DateTimeFormatType</span></a></code>
+<p>Whether this should format the <a href="../../com.acornui.core.time/-date/index.html">Date</a> object as time, date, or date and time.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-string-formatter/format.html">format</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">format</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.text.StringFormatter$format(com.acornui.core.text.StringFormatter.T)/value">value</span><span class="symbol">:</span>&nbsp;<a href="../-string-formatter/index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-f-a-c-t-o-r-y_-k-e-y.html">FACTORY_KEY</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">FACTORY_KEY</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><span class="symbol">(</span><span class="identifier">injector</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-injector/index.html"><span class="identifier">Injector</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="./index.html"><span class="identifier">DateTimeFormatter</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

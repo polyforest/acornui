@@ -1,0 +1,20 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>CameraElementRo.windowToLocal - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component</a>&nbsp;/&nbsp;<a href="index.html">CameraElementRo</a>&nbsp;/&nbsp;<a href="./window-to-local.html">windowToLocal</a><br/>
+<br/>
+<h1>windowToLocal</h1>
+<a name="com.acornui.component.CameraElementRo$windowToLocal(com.acornui.math.Vector2)"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">windowToLocal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.CameraElementRo$windowToLocal(com.acornui.math.Vector2)/windowCoord">windowCoord</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector2</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector2</span></code>
+<p>Converts a 2d coordinate relative to the window into local coordinate space.</p>
+<p>Note: This is a heavy operation as it performs a Matrix4 inversion.</p>
+<a name="com.acornui.component.CameraElementRo$windowToLocal(com.acornui.math.MinMax)"></a>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">windowToLocal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.CameraElementRo$windowToLocal(com.acornui.math.MinMax)/minMax">minMax</span><span class="symbol">:</span>&nbsp;<span class="identifier">MinMax</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">MinMax</span></code>
+<p>Converts a bounding rectangle from window to local coordinates.
+Warning: this does require a matrix inversion calculation, which is a fairly expensive operation.</p>
+</BODY>
+</HTML>

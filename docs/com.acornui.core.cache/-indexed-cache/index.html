@@ -1,0 +1,182 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>IndexedCache - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.cache</a>&nbsp;/&nbsp;<a href="./index.html">IndexedCache</a><br/>
+<br/>
+<h1>IndexedCache</h1>
+<code><span class="keyword">class </span><span class="identifier">IndexedCache</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">ListBase</span><span class="symbol">&lt;</span><a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code>
+<p>A layer between item reuse and an object pool that first seeks an item from the same index.
+It is to reduce the amount of changes a pooled item may need to make.</p>
+<p>To use this class, make a series of <a href="obtain.html">obtain</a> calls to grab recycled elements, call <a href="for-each-unused.html">forEachUnused</a> to iterate over
+the elements that weren't obtained, then call <a href="flip.html">flip</a> to send unused elements back to the object pool, and make the
+obtained elements available for the next series.</p>
+<p>A set may look like this:</p>
+<pre><code>obtain(3)
+obtain(4)
+obtain(5)
+obtain(2)
+obtain(1)
+forEachUnused { ... } // Deactivate unused items
+flip()
+</code></pre>
+<p>A set pulling in reverse order should look like this:</p>
+<pre><code>obtain(5)
+obtain(4)
+obtain(3)
+obtain(6)
+obtain(7)
+forEachUnused { ... } // Deactivate unused items
+flip()
+</code></pre>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">IndexedCache</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.cache.IndexedCache$<init>(kotlin.Function0((com.acornui.core.cache.IndexedCache.E)))/factory">factory</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">)</span></code><code><span class="identifier">IndexedCache</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.cache.IndexedCache$<init>(com.acornui.collection.Pool((com.acornui.core.cache.IndexedCache.E)))/pool">pool</span><span class="symbol">:</span>&nbsp;<span class="identifier">Pool</span><span class="symbol">&lt;</span><a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span></code>
+<p>A layer between item reuse and an object pool that first seeks an item from the same index.
+It is to reduce the amount of changes a pooled item may need to make.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="obtained-size.html">obtainedSize</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">obtainedSize</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Returns the size of the obtained list.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="offset.html">offset</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">offset</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The current items are indexed in this list starting at index 0. This offset represents the lowest index used in
+the last <a href="obtain.html">obtain</a> set.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="pool.html">pool</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">pool</span><span class="symbol">: </span><span class="identifier">Pool</span><span class="symbol">&lt;</span><a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="size.html">size</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">size</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The size of this list. This will be updated after a <a href="flip.html">flip</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Clears the current cache values. Note that this does not clear the pool, nor does it move the current cache
+values into the pool.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="flip.html">flip</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">flip</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the items returned via <a href="obtain.html">obtain</a> to be used as the cached items for the next set.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="for-each-unused.html">forEachUnused</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">forEachUnused</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.cache.IndexedCache$forEachUnused(kotlin.Function2((kotlin.Int, com.acornui.core.cache.IndexedCache.E, kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="identifier">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">renderer</span><span class="symbol">:</span>&nbsp;<a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Iterates over each unused item still in the cache.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get.html">get</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">get</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.cache.IndexedCache$get(kotlin.Int)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="index.html#E"><span class="identifier">E</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-cached.html">getCached</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getCached</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.cache.IndexedCache$getCached(kotlin.Int)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="index.html#E"><span class="identifier">E</span></a></code>
+<p>Returns the cached element at the given index, if it exists.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="obtain.html">obtain</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">obtain</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.cache.IndexedCache$obtain(kotlin.Int)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="index.html#E"><span class="identifier">E</span></a></code>
+<p>Obtains an element.
+This algorithm attempts to obtain an element with the same index that was cached in the last obtain/flip set.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../dispose-and-clear.html">disposeAndClear</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span><span class="symbol">&gt;</span> <a href="./index.html"><span class="identifier">IndexedCache</span></a><span class="symbol">&lt;</span><a href="../dispose-and-clear.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">disposeAndClear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Disposes each instance in the cache and pool.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../hide-and-flip.html">hideAndFlip</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span> <a href="./index.html"><span class="identifier">IndexedCache</span></a><span class="symbol">&lt;</span><a href="../hide-and-flip.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">hideAndFlip</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets visible to false on all unused cache instances before flipping.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../remove-and-flip.html">removeAndFlip</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span> <a href="./index.html"><span class="identifier">IndexedCache</span></a><span class="symbol">&lt;</span><a href="../remove-and-flip.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">removeAndFlip</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.cache$removeAndFlip(com.acornui.core.cache.IndexedCache((com.acornui.core.cache.removeAndFlip.E)), com.acornui.component.ElementContainer((com.acornui.component.UiComponent)))/parent">parent</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-element-container.html"><span class="identifier">ElementContainer</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Removes all unused cache instances from the given container before flipping.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

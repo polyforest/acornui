@@ -1,0 +1,46 @@
+$dokka.format:html
+$dokka.linkExtension:html
+$dokka.location:com.acornui.component.style$prettyPrint(kotlin.collections.List((com.acornui.component.style.StyleRuleDebugInfo)))com.acornui.component.style/kotlin.collections.-list/pretty-print.html
+$dokka.location:com.acornui.component.style$styleProperty(com.acornui.serialization.Writer, com.acornui.component.style.Style, kotlin.String)com.acornui.component.style/com.acornui.serialization.-writer/style-property.html
+$dokka.location:com.acornui.core.graphics$setToProjection(com.acornui.math.Matrix4, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)com.acornui.core.graphics/com.acornui.math.-matrix4/set-to-projection.html
+com.acornui
+com.acornui.component
+com.acornui.component.datagrid
+com.acornui.component.layout
+com.acornui.component.layout.algorithm
+com.acornui.component.layout.algorithm.virtual
+com.acornui.component.scroll
+com.acornui.component.style
+com.acornui.component.text
+com.acornui.core
+com.acornui.core.assets
+com.acornui.core.audio
+com.acornui.core.behavior
+com.acornui.core.browser
+com.acornui.core.cache
+com.acornui.core.cursor
+com.acornui.core.di
+com.acornui.core.focus
+com.acornui.core.graphics
+com.acornui.core.i18n
+com.acornui.core.input
+com.acornui.core.input.interaction
+com.acornui.core.io
+com.acornui.core.io.file
+com.acornui.core.mvc
+com.acornui.core.nav
+com.acornui.core.observe
+com.acornui.core.persistance
+com.acornui.core.popup
+com.acornui.core.request
+com.acornui.core.selection
+com.acornui.core.text
+com.acornui.core.time
+com.acornui.core.tween
+com.acornui.core.tween.animation
+com.acornui.file
+com.acornui.gl.component
+com.acornui.gl.component.drawing
+com.acornui.gl.component.text
+com.acornui.gl.core
+com.acornui.skins

@@ -1,0 +1,21 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>WrappedGl20.framebufferTexture2D - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.gl.core</a>&nbsp;/&nbsp;<a href="index.html">WrappedGl20</a>&nbsp;/&nbsp;<a href="./framebuffer-texture2-d.html">framebufferTexture2D</a><br/>
+<br/>
+<h1>framebufferTexture2D</h1>
+<a name="com.acornui.gl.core.WrappedGl20$framebufferTexture2D(kotlin.Int, kotlin.Int, kotlin.Int, com.acornui.gl.core.GlTextureRef, kotlin.Int)"></a>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">framebufferTexture2D</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.WrappedGl20$framebufferTexture2D(kotlin.Int, kotlin.Int, kotlin.Int, com.acornui.gl.core.GlTextureRef, kotlin.Int)/target">target</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.WrappedGl20$framebufferTexture2D(kotlin.Int, kotlin.Int, kotlin.Int, com.acornui.gl.core.GlTextureRef, kotlin.Int)/attachment">attachment</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.WrappedGl20$framebufferTexture2D(kotlin.Int, kotlin.Int, kotlin.Int, com.acornui.gl.core.GlTextureRef, kotlin.Int)/textureTarget">textureTarget</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.WrappedGl20$framebufferTexture2D(kotlin.Int, kotlin.Int, kotlin.Int, com.acornui.gl.core.GlTextureRef, kotlin.Int)/texture">texture</span><span class="symbol">:</span>&nbsp;<a href="../-gl-texture-ref.html"><span class="identifier">GlTextureRef</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.WrappedGl20$framebufferTexture2D(kotlin.Int, kotlin.Int, kotlin.Int, com.acornui.gl.core.GlTextureRef, kotlin.Int)/level">level</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Overrides <a href="../-gl20/framebuffer-texture2-d.html">Gl20.framebufferTexture2D</a></p>
+<p>Specifies the texture to use as destination of rendering for the current framebuffer (set with the most recent bindFramebuffer() call).
+target must be FRAMEBUFFER.
+attachment determines what is rendered into renderbuffer. Pass COLOR_ATTACHMENT0 for color data, DEPTH_ATTACHMENT for depth data, or STENCIL_ATTACHMENT for stencil data.
+target must be one of TEXTURE_2D, TEXTURE_CUBE_MAP_POSITIVE_X, TEXTURE_CUBE_MAP_NEGATIVE_X, TEXTURE_CUBE_MAP_POSITIVE_Y, TEXTURE_CUBE_MAP_NEGATIVE_Y, TEXTURE_CUBE_MAP_POSITIVE_Z, or TEXTURE_CUBE_MAP_NEGATIVE_Z.
+texture the texture to store the rendered output.
+level must be 0.</p>
+</BODY>
+</HTML>

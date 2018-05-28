@@ -1,0 +1,25 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>UiComponentImpl.<init> - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component</a>&nbsp;/&nbsp;<a href="index.html">UiComponentImpl</a>&nbsp;/&nbsp;<a href="./-init-.html">&lt;init&gt;</a><br/>
+<br/>
+<h1>&lt;init&gt;</h1>
+<a name="com.acornui.component.UiComponentImpl$&lt;init&gt;(com.acornui.core.di.Owned, com.acornui.component.NativeComponent)"></a>
+<code><span class="identifier">UiComponentImpl</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.UiComponentImpl$<init>(com.acornui.core.di.Owned, com.acornui.component.NativeComponent)/owner">owner</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.UiComponentImpl$<init>(com.acornui.core.di.Owned, com.acornui.component.NativeComponent)/native">native</span><span class="symbol">:</span>&nbsp;<a href="../-native-component/index.html"><span class="identifier">NativeComponent</span></a>&nbsp;<span class="symbol">=</span>&nbsp;owner.inject(NativeComponent.FACTORY_KEY)(owner)<span class="symbol">)</span></code>
+<p>The base for every AcornUi component.
+UiComponent provides lifecycle, validation, interactivity, transformation, and layout.</p>
+<h3>Parameters</h3>
+<p><a name="owner"></a>
+<code>owner</code> - The creator of this component. This is used for dependency injection, style inheritance, and when
+the owner has been disposed, this component will then be disposed.</p>
+<p><a name="native"></a>
+<code>native</code> - Some back-ends (like DomApplication) will create native components that the acorn display hierarchy
+controls.</p>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+</BODY>
+</HTML>

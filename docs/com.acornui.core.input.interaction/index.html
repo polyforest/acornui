@@ -1,0 +1,450 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.core.input.interaction - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.core.input.interaction</a><br/>
+<br/>
+<h2>Package com.acornui.core.input.interaction</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-char-interaction/index.html">CharInteraction</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">CharInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.input/-interaction-event-base/index.html"><span class="identifier">InteractionEventBase</span></a><span class="symbol">, </span><a href="-char-interaction-ro/index.html"><span class="identifier">CharInteractionRo</span></a></code>
+<p>An event representing a character input.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-char-interaction-ro/index.html">CharInteractionRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">CharInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.input/-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-click-dispatcher/index.html">ClickDispatcher</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">ClickDispatcher</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code>
+<p>Watches the stage for mouse and touch events that constitute a 'click', then dispatches the click event on the
+interactivity manager.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-click-interaction/index.html">ClickInteraction</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ClickInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-click-interaction-ro/index.html"><span class="identifier">ClickInteractionRo</span></a><span class="symbol">, </span><a href="-mouse-interaction/index.html"><span class="identifier">MouseInteraction</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-click-interaction-ro/index.html">ClickInteractionRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ClickInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-mouse-interaction-ro/index.html"><span class="identifier">MouseInteractionRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-clipboard-file/index.html">ClipboardFile</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ClipboardFile</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-clipboard-item-type/index.html">ClipboardItemType</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ClipboardItemType</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-context-menu-group/index.html">ContextMenuGroup</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ContextMenuGroup</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-context-menu-interaction/index.html">ContextMenuInteraction</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ContextMenuInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.input/-interaction-event-base/index.html"><span class="identifier">InteractionEventBase</span></a><span class="symbol">, </span><a href="-context-menu-interaction-ro/index.html"><span class="identifier">ContextMenuInteractionRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-context-menu-interaction-ro/index.html">ContextMenuInteractionRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ContextMenuInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.input/-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-context-menu-item/index.html">ContextMenuItem</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ContextMenuItem</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-context-menu-manager/index.html">ContextMenuManager</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ContextMenuManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-context-menu-style/index.html">ContextMenuStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ContextMenuStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-context-menu-view/index.html">ContextMenuView</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ContextMenuView</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-container-impl/index.html"><span class="identifier">ContainerImpl</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-copy-interaction-ro/index.html">CopyInteractionRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">CopyInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.input/-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-down-repeat/index.html">DownRepeat</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DownRepeat</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-down-repeat-style/index.html">DownRepeatStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DownRepeatStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-drag-attachment/index.html">DragAttachment</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DragAttachment</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<p>A behavior for a touch down, touch move, then touch up on a target UiComponent.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-drag-interaction/index.html">DragInteraction</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DragInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.input/-interaction-event-base/index.html"><span class="identifier">InteractionEventBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-hotkey/index.html">Hotkey</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Hotkey</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-jvm-click-dispatcher/index.html">JvmClickDispatcher</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">JvmClickDispatcher</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-click-dispatcher/index.html"><span class="identifier">ClickDispatcher</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-key-interaction/index.html">KeyInteraction</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">KeyInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.input/-interaction-event-base/index.html"><span class="identifier">InteractionEventBase</span></a><span class="symbol">, </span><a href="-key-interaction-ro/index.html"><span class="identifier">KeyInteractionRo</span></a></code>
+<p>An event representing an interaction with the keyboard.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-key-interaction-ro/index.html">KeyInteractionRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">KeyInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.input/-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-key-location/index.html">KeyLocation</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">KeyLocation</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-mouse-interaction/index.html">MouseInteraction</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">MouseInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.input/-interaction-event-base/index.html"><span class="identifier">InteractionEventBase</span></a><span class="symbol">, </span><a href="-mouse-interaction-ro/index.html"><span class="identifier">MouseInteractionRo</span></a></code>
+<p>Representing a mouse event, as provided to <a href="../com.acornui.component/-interactive-element/index.html">InteractiveElement</a> objects by the <a href="#">InteractivityManager</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-mouse-interaction-ro/index.html">MouseInteractionRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">MouseInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.input/-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-mouse-up-outside/index.html">MouseUpOutside</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">MouseUpOutside</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">StoppableSignalImpl</span><span class="symbol">&lt;</span><a href="-mouse-interaction/index.html"><span class="identifier">MouseInteraction</span></a><span class="symbol">&gt;</span></code>
+<p>An interaction where the user touches down on a target, then releases outside of that target. (Including outside
+the canvas)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-paste-interaction-ro/index.html">PasteInteractionRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">PasteInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.input/-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-touch/index.html">Touch</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Touch</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-touch-ro/index.html"><span class="identifier">TouchRo</span></a><span class="symbol">, </span><span class="identifier">Clearable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-touch-interaction/index.html">TouchInteraction</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TouchInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-touch-interaction-ro/index.html"><span class="identifier">TouchInteractionRo</span></a><span class="symbol">, </span><a href="../com.acornui.core.input/-interaction-event-base/index.html"><span class="identifier">InteractionEventBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-touch-interaction-ro/index.html">TouchInteractionRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">TouchInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.input/-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-touch-ro/index.html">TouchRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">TouchRo</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-undo-dispatcher/index.html">UndoDispatcher</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">UndoDispatcher</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-undo-interaction/index.html">UndoInteraction</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">UndoInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-undo-interaction-ro/index.html"><span class="identifier">UndoInteractionRo</span></a><span class="symbol">, </span><a href="../com.acornui.core.input/-interaction-event-base/index.html"><span class="identifier">InteractionEventBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-undo-interaction-ro/index.html">UndoInteractionRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">UndoInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.input/-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-wheel-interaction/index.html">WheelInteraction</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">WheelInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-mouse-interaction/index.html"><span class="identifier">MouseInteraction</span></a><span class="symbol">, </span><a href="-wheel-interaction-ro/index.html"><span class="identifier">WheelInteractionRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-wheel-interaction-ro/index.html">WheelInteractionRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">WheelInteractionRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-mouse-interaction-ro/index.html"><span class="identifier">MouseInteractionRo</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="back-click.html">backClick</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">backClick</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction$backClick(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="-click-interaction-ro/index.html"><span class="identifier">ClickInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="bind.html">bind</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-hotkey/index.html"><span class="identifier">Hotkey</span></a><span class="symbol">.</span><span class="identifier">bind</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction$bind(com.acornui.core.input.interaction.Hotkey, com.acornui.component.UiComponent, kotlin.Function1((com.acornui.core.input.interaction.KeyInteractionRo, kotlin.Unit)))/component">component</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.interaction$bind(com.acornui.core.input.interaction.Hotkey, com.acornui.component.UiComponent, kotlin.Function1((com.acornui.core.input.interaction.KeyInteractionRo, kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="-key-interaction-ro/index.html"><span class="identifier">KeyInteractionRo</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="click.html">click</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">click</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction$click(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="-click-interaction-ro/index.html"><span class="identifier">ClickInteractionRo</span></a><span class="symbol">&gt;</span></code>
+<p>A click interaction is where there is a touch down event, then a touch up event on that same target.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="context-menu.html">contextMenu</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">contextMenu</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction$contextMenu(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="-context-menu-interaction-ro/index.html"><span class="identifier">ContextMenuInteractionRo</span></a><span class="symbol">&gt;</span></code>
+<p>Dispatched when the mouse or touch is pressed down on this element.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="disable-down-repeat.html">disableDownRepeat</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">disableDownRepeat</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="dispatch-click.html">dispatchClick</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">dispatchClick</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="down-repeat-enabled.html">downRepeatEnabled</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">downRepeatEnabled</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if the down repeat interaction is enabled on this <a href="../com.acornui.component/-ui-component/index.html">UiComponent</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="drag.html">drag</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">.</span><span class="identifier">drag</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="-drag-interaction/index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="drag-attachment.html">dragAttachment</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">.</span><span class="identifier">dragAttachment</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction$dragAttachment(com.acornui.component.UiComponent, kotlin.Float)/affordance">affordance</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;DragAttachment.DEFAULT_AFFORDANCE<span class="symbol">)</span><span class="symbol">: </span><a href="-drag-attachment/index.html"><span class="identifier">DragAttachment</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="drag-end.html">dragEnd</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">.</span><span class="identifier">dragEnd</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="-drag-interaction/index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="drag-start.html">dragStart</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">.</span><span class="identifier">dragStart</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="-drag-interaction/index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="enable-down-repeat.html">enableDownRepeat</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">enableDownRepeat</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-down-repeat/index.html"><span class="identifier">DownRepeat</span></a></code><code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">enableDownRepeat</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction$enableDownRepeat(com.acornui.component.UiComponentRo, kotlin.Float, kotlin.Float)/repeatDelay">repeatDelay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.interaction$enableDownRepeat(com.acornui.component.UiComponentRo, kotlin.Float, kotlin.Float)/repeatInterval">repeatInterval</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-down-repeat/index.html"><span class="identifier">DownRepeat</span></a></code>
+<p>Sets this component to dispatch a mouse down event repeatedly after holding down on the target.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="forward-click.html">forwardClick</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">forwardClick</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction$forwardClick(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="-click-interaction-ro/index.html"><span class="identifier">ClickInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="middle-click.html">middleClick</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">middleClick</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction$middleClick(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="-click-interaction-ro/index.html"><span class="identifier">ClickInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="mouse-up-outside.html">mouseUpOutside</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">mouseUpOutside</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="-mouse-interaction/index.html"><span class="identifier">MouseInteraction</span></a><span class="symbol">&gt;</span></code>
+<p>Dispatched when a touch down event has happened on this interactive element, and the next touch up event is not on
+on a different element. This does not have capture or bubble phases; a touchUpOutside event for a child does
+not necessarily mean a touchUpOutside event for its parent.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="redo.html">redo</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">redo</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction$redo(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="-undo-interaction-ro/index.html"><span class="identifier">UndoInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="right-click.html">rightClick</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">rightClick</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction$rightClick(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="-click-interaction-ro/index.html"><span class="identifier">ClickInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="roll-out.html">rollOut</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">rollOut</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction$rollOut(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="-mouse-interaction-ro/index.html"><span class="identifier">MouseInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="roll-over.html">rollOver</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">rollOver</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction$rollOver(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="-mouse-interaction-ro/index.html"><span class="identifier">MouseInteractionRo</span></a><span class="symbol">&gt;</span></code>
+<p>An interaction signal dispatched when this element has had the mouse move over the element, but unlike touchOver,
+this will not bubble, and therefore will not be fired if a child element has had a touchOver event.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="undo.html">undo</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">undo</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction$undo(com.acornui.component.UiComponentRo, kotlin.Boolean)/isCapture">isCapture</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StoppableSignal</span><span class="symbol">&lt;</span><a href="-undo-interaction-ro/index.html"><span class="identifier">UndoInteractionRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

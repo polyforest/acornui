@@ -1,0 +1,145 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>PopUpManager - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.popup</a>&nbsp;/&nbsp;<a href="./index.html">PopUpManager</a><br/>
+<br/>
+<h1>PopUpManager</h1>
+<code><span class="keyword">interface </span><span class="identifier">PopUpManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Clearable</span></code>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">PopUpManager</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="current-pop-ups.html">currentPopUps</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">currentPopUps</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-pop-up-info/index.html"><span class="identifier">PopUpInfo</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code>
+<p>Returns a list of the current pop-ups.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="view.html">view</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">view</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="add-pop-up.html">addPopUp</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span> <span class="identifier">addPopUp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.popup.PopUpManager$addPopUp(com.acornui.core.popup.PopUpInfo((com.acornui.core.popup.PopUpManager.addPopUp.T)))/popUpInfo">popUpInfo</span><span class="symbol">:</span>&nbsp;<a href="../-pop-up-info/index.html"><span class="identifier">PopUpInfo</span></a><span class="symbol">&lt;</span><a href="add-pop-up.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Adds the pop-up to the pop-up layer.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Clears the active pop-ups.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="remove-pop-up.html">removePopUp</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">removePopUp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.popup.PopUpManager$removePopUp(com.acornui.component.UiComponent)/child">child</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Removes the pop-up with the given component.</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span> <span class="identifier">removePopUp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.popup.PopUpManager$removePopUp(com.acornui.core.popup.PopUpInfo((com.acornui.core.popup.PopUpManager.removePopUp.T)))/popUpInfo">popUpInfo</span><span class="symbol">:</span>&nbsp;<a href="../-pop-up-info/index.html"><span class="identifier">PopUpInfo</span></a><span class="symbol">&lt;</span><a href="remove-pop-up.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="request-modal-close.html">requestModalClose</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">requestModalClose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Requests that the pop-ups starting from the last modal pop-up to be closed.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-m-o-d-a-l_-s-t-y-l-e.html">MODAL_STYLE</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">MODAL_STYLE</span><span class="symbol">: </span><a href="../../com.acornui.component.style/-style-tag/index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-d-key/extends.html">extends</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">extends</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-d-key/factory.html">factory</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">factory</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di.DKey$factory(com.acornui.core.di.Injector)/injector">injector</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-injector/index.html"><span class="identifier">Injector</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-d-key/index.html#T"><span class="identifier">T</span></a><span class="symbol">?</span></code>
+<p>A dependency key has an optional factory method, where if it provides a non-null value, the
+dependency doesn't need to be set before use, and the factory method will produce the default implementation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-d-key/to.html">to</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">infix</span> <span class="keyword">fun </span><span class="identifier">to</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di.DKey$to(com.acornui.core.di.DKey.T)/value">value</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-d-key/index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-dependency-pair/index.html"><span class="identifier">DependencyPair</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.di/-d-key/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-pop-up-manager-impl/index.html">PopUpManagerImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">PopUpManagerImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-layout-container-impl/index.html"><span class="identifier">LayoutContainerImpl</span></a><span class="symbol">&lt;</span><a href="../-pop-up-manager-style/index.html"><span class="identifier">PopUpManagerStyle</span></a><span class="symbol">,</span>&nbsp;<a href="../../com.acornui.component.layout.algorithm/-canvas-layout-data/index.html"><span class="identifier">CanvasLayoutData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">PopUpManager</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

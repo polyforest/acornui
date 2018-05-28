@@ -1,0 +1,146 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>BasicLayoutElementRo - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.layout</a>&nbsp;/&nbsp;<a href="./index.html">BasicLayoutElementRo</a><br/>
+<br/>
+<h1>BasicLayoutElementRo</h1>
+<code><span class="keyword">interface </span><span class="identifier">BasicLayoutElementRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-sizable-ro/index.html"><span class="identifier">SizableRo</span></a><span class="symbol">, </span><a href="../-positionable-ro/index.html"><span class="identifier">PositionableRo</span></a></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="bottom.html">bottom</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">bottom</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="layout-data.html">layoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">layoutData</span><span class="symbol">: </span><a href="../-layout-data/index.html"><span class="identifier">LayoutData</span></a><span class="symbol">?</span></code>
+<p>The layout data to be used in layout algorithms.
+Most layout containers have a special layout method that statically types the type of
+layout data that a component should have.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="right.html">right</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">right</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-sizable-ro/bounds.html">bounds</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">bounds</span><span class="symbol">: </span><span class="identifier">BoundsRo</span></code>
+<p>The measured bounds of this component.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-sizable-ro/explicit-height.html">explicitHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">explicitHeight</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code>
+<p>The explicit height, as set by height(value)
+Typically one would use <a href="../-sizable-ro/height.html">height</a> in order to retrieve the explicit or measured height.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-sizable-ro/explicit-width.html">explicitWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">explicitWidth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code>
+<p>The explicit width, as set by width(value)
+Typically one would use <a href="../-sizable-ro/width.html">width</a> in order to retrieve the explicit or measured width.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-sizable-ro/height.html">height</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">height</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Returns the measured height.
+If layout is invalid, this will invoke a layout validation.
+This is the same as <code>bounds.height</code></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-positionable-ro/position.html">position</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">position</span><span class="symbol">: </span><span class="identifier">Vector3Ro</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-sizable-ro/width.html">width</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">width</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Returns the measured width.
+If layout is invalid, this will invoke a layout validation.
+This is the same as <code>bounds.width</code></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-positionable-ro/x.html">x</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">x</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-positionable-ro/y.html">y</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">y</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-positionable-ro/z.html">z</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">z</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-basic-layout-element/index.html">BasicLayoutElement</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">BasicLayoutElement</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">BasicLayoutElementRo</span></a><span class="symbol">, </span><a href="../-sizable/index.html"><span class="identifier">Sizable</span></a><span class="symbol">, </span><a href="../-positionable/index.html"><span class="identifier">Positionable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-layout-element-ro/index.html">LayoutElementRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">LayoutElementRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">BasicLayoutElementRo</span></a><span class="symbol">, </span><a href="../-transformable-ro/index.html"><span class="identifier">TransformableRo</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

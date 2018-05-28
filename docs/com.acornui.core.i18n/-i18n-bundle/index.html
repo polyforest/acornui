@@ -1,0 +1,55 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>I18nBundle - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.i18n</a>&nbsp;/&nbsp;<a href="./index.html">I18nBundle</a><br/>
+<br/>
+<h1>I18nBundle</h1>
+<code><span class="keyword">interface </span><span class="identifier">I18nBundle</span></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="changed.html">changed</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">changed</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="./index.html"><span class="identifier">I18nBundle</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<p>Dispatched when the values of this bundle has changed. This may be after <a href="../-i18n/current-locales.html">I18n.currentLocales</a> has changed, or
+<a href="../-i18n/set-bundle-values.html">I18n.setBundleValues</a> has been called, providing values for this bundle and locale.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="get.html">get</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">operator</span> <span class="keyword">fun </span><span class="identifier">get</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.i18n.I18nBundle$get(kotlin.String)/key">key</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code>
+<p>Retrieves the i18n string with the given key for this bundle and current locale.
+This should typically only be called within an <a href="../i18n.html">i18n</a> callback.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-i18n-bundle-impl/index.html">I18nBundleImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">I18nBundleImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">I18nBundle</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

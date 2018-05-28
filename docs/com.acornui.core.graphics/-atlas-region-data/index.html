@@ -1,0 +1,116 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>AtlasRegionData - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.graphics</a>&nbsp;/&nbsp;<a href="./index.html">AtlasRegionData</a><br/>
+<br/>
+<h1>AtlasRegionData</h1>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">AtlasRegionData</span></code>
+<p>A model representing a region within an atlas page.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">AtlasRegionData</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.AtlasRegionData$<init>(kotlin.String, kotlin.Boolean, com.acornui.math.IntRectangleRo, kotlin.FloatArray, kotlin.IntArray)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.AtlasRegionData$<init>(kotlin.String, kotlin.Boolean, com.acornui.math.IntRectangleRo, kotlin.FloatArray, kotlin.IntArray)/isRotated">isRotated</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.AtlasRegionData$<init>(kotlin.String, kotlin.Boolean, com.acornui.math.IntRectangleRo, kotlin.FloatArray, kotlin.IntArray)/bounds">bounds</span><span class="symbol">:</span>&nbsp;<span class="identifier">IntRectangleRo</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.AtlasRegionData$<init>(kotlin.String, kotlin.Boolean, com.acornui.math.IntRectangleRo, kotlin.FloatArray, kotlin.IntArray)/splits">splits</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float-array/index.html"><span class="identifier">FloatArray</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.AtlasRegionData$<init>(kotlin.String, kotlin.Boolean, com.acornui.math.IntRectangleRo, kotlin.FloatArray, kotlin.IntArray)/padding">padding</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int-array/index.html"><span class="identifier">IntArray</span></a>&nbsp;<span class="symbol">=</span>&nbsp;intArrayOf(0, 0, 0, 0)<span class="symbol">)</span></code>
+<p>A model representing a region within an atlas page.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="bounds.html">bounds</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">bounds</span><span class="symbol">: </span><span class="identifier">IntRectangleRo</span></code>
+<p>The bounding rectangle of the region within the page.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="is-rotated.html">isRotated</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">isRotated</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>True if this region was rotated clockwise 90 degrees.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="name.html">name</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">name</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>The name of the region. This is typically the path of the image used to pack into the region.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="original-height.html">originalHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">originalHeight</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The original width of the image, before whitespace was stripped.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="original-width.html">originalWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">originalWidth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The original width of the image, before whitespace was stripped.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="packed-height.html">packedHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">packedHeight</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The packed height of the image, after whitespace was stripped.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="packed-width.html">packedWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">packedWidth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The packed width of the image, after whitespace was stripped.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="padding.html">padding</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">padding</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int-array/index.html"><span class="identifier">IntArray</span></a></code>
+<p>The whitespace padding stripped from the original image, that should be added by the component.
+An int array of left, top, right, bottom
+The padding values will not be rotated.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="splits.html">splits</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">splits</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float-array/index.html"><span class="identifier">FloatArray</span></a><span class="symbol">?</span></code>
+<p>Used for 9 patches. An float array of left, top, right, bottom</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

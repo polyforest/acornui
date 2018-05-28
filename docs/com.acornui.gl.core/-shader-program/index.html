@@ -1,0 +1,152 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ShaderProgram - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.gl.core</a>&nbsp;/&nbsp;<a href="./index.html">ShaderProgram</a><br/>
+<br/>
+<h1>ShaderProgram</h1>
+<code><span class="keyword">interface </span><span class="identifier">ShaderProgram</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="program.html">program</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">program</span><span class="symbol">: </span><a href="../-gl-program-ref.html"><span class="identifier">GlProgramRef</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="bind.html">bind</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">bind</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-attribute-location.html">getAttributeLocation</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getAttributeLocation</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.ShaderProgram$getAttributeLocation(kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-attribute-location-by-usage.html">getAttributeLocationByUsage</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getAttributeLocationByUsage</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.ShaderProgram$getAttributeLocationByUsage(kotlin.Int)/usage">usage</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-required-uniform-location.html">getRequiredUniformLocation</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getRequiredUniformLocation</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.ShaderProgram$getRequiredUniformLocation(kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-gl-uniform-location-ref.html"><span class="identifier">GlUniformLocationRef</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-uniform-location.html">getUniformLocation</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getUniformLocation</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.ShaderProgram$getUniformLocation(kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-gl-uniform-location-ref.html"><span class="identifier">GlUniformLocationRef</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="unbind.html">unbind</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">unbind</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-a_-c-o-l-o-r_-t-i-n-t.html">A_COLOR_TINT</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">A_COLOR_TINT</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-a_-n-o-r-m-a-l.html">A_NORMAL</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">A_NORMAL</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-a_-p-o-s-i-t-i-o-n.html">A_POSITION</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">A_POSITION</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-a_-t-e-x-t-u-r-e_-c-o-o-r-d.html">A_TEXTURE_COORD</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">A_TEXTURE_COORD</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-u_-c-o-l-o-r_-o-f-f-s-e-t.html">U_COLOR_OFFSET</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">U_COLOR_OFFSET</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-u_-c-o-l-o-r_-t-r-a-n-s.html">U_COLOR_TRANS</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">U_COLOR_TRANS</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-u_-m-o-d-e-l_-t-r-a-n-s.html">U_MODEL_TRANS</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">U_MODEL_TRANS</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-u_-p-r-o-j_-t-r-a-n-s.html">U_PROJ_TRANS</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">U_PROJ_TRANS</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-u_-t-e-x-t-u-r-e.html">U_TEXTURE</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">U_TEXTURE</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-shader-program-base/index.html">ShaderProgramBase</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">ShaderProgramBase</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ShaderProgram</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

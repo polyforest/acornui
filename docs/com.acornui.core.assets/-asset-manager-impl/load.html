@@ -1,0 +1,34 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>AssetManagerImpl.load - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.assets</a>&nbsp;/&nbsp;<a href="index.html">AssetManagerImpl</a>&nbsp;/&nbsp;<a href="./load.html">load</a><br/>
+<br/>
+<h1>load</h1>
+<a name="com.acornui.core.assets.AssetManagerImpl$load(kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.AssetManagerImpl.load.T)))"></a>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <span class="identifier">load</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets.AssetManagerImpl$load(kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.AssetManagerImpl.load.T)))/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets.AssetManagerImpl$load(kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.AssetManagerImpl.load.T)))/type">type</span><span class="symbol">:</span>&nbsp;<a href="../-asset-type/index.html"><span class="identifier">AssetType</span></a><span class="symbol">&lt;</span><a href="load.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-asset-loader.html"><span class="identifier">AssetLoader</span></a><span class="symbol">&lt;</span><a href="load.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Overrides <a href="../-asset-manager/load.html">AssetManager.load</a></p>
+<p>Loads an asset.
+To cancel the loading, call <code>cancel</code> on the return value.
+To await the result, create a coroutine, and call 'await'.</p>
+<pre><code>launch {
+   val a = load("foo.txt", AssetType.TEXT)
+   val b = load("bar.png", AssetType.TEXTURE)
+   val str = a.await()
+   val texture = b.await()
+}
+
+</code></pre>
+<h3>Parameters</h3>
+<p><a name="path"></a>
+<code>path</code> - The location of the asset.</p>
+<p><a name="type"></a>
+<code>type</code> - The type of asset the path represents. For common asset types, see <a href="../-asset-type/index.html">AssetType</a></p>
+<p><strong>See Also</strong><br/>
+<p><a href="../-asset-type/index.html">AssetType</a></p>
+</p>
+</BODY>
+</HTML>

@@ -1,0 +1,106 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Scaling - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.graphics</a>&nbsp;/&nbsp;<a href="./index.html">Scaling</a><br/>
+<br/>
+<h1>Scaling</h1>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">Scaling</span></code>
+<p>Describes the different scaling strategies.</p>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<h3>Enum Values</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-f-i-t.html">FIT</a></p>
+</td>
+<td>
+<p>Scales the source to fit the target while keeping the same aspect ratio. This may cause the source to be smaller than the
+target in one direction.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-f-i-l-l.html">FILL</a></p>
+</td>
+<td>
+<p>Scales the source to fill the target while keeping the same aspect ratio. This may cause the source to be larger than the
+target in one direction.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-f-i-l-l_-x.html">FILL_X</a></p>
+</td>
+<td>
+<p>Scales the source to fill the target in the x direction while keeping the same aspect ratio. This may cause the source to be
+smaller or larger than the target in the y direction.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-f-i-l-l_-y.html">FILL_Y</a></p>
+</td>
+<td>
+<p>Scales the source to fill the target in the y direction while keeping the same aspect ratio. This may cause the source to be
+smaller or larger than the target in the x direction.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-s-t-r-e-t-c-h.html">STRETCH</a></p>
+</td>
+<td>
+<p>Scales the source to fill the target. This may cause the source to not keep the same aspect ratio.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-s-t-r-e-t-c-h_-x.html">STRETCH_X</a></p>
+</td>
+<td>
+<p>Scales the source to fill the target in the x direction, without changing the y direction. This may cause the source to not
+keep the same aspect ratio.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-s-t-r-e-t-c-h_-y.html">STRETCH_Y</a></p>
+</td>
+<td>
+<p>Scales the source to fill the target in the y direction, without changing the x direction. This may cause the source to not
+keep the same aspect ratio.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-n-o-n-e.html">NONE</a></p>
+</td>
+<td>
+<p>The source is not scaled.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="apply.html">apply</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">apply</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.Scaling$apply(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Vector2)/sourceWidth">sourceWidth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Scaling$apply(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Vector2)/sourceHeight">sourceHeight</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Scaling$apply(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Vector2)/targetWidth">targetWidth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Scaling$apply(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Vector2)/targetHeight">targetHeight</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Scaling$apply(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Vector2)/out">out</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector2</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector2</span></code>
+<p>Applies the scaling strategy to the provided source and target dimensions.
+The result is stored in the out parameter, which is also the return value.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

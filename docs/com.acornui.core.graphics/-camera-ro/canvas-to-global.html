@@ -1,0 +1,32 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>CameraRo.canvasToGlobal - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.graphics</a>&nbsp;/&nbsp;<a href="index.html">CameraRo</a>&nbsp;/&nbsp;<a href="./canvas-to-global.html">canvasToGlobal</a><br/>
+<br/>
+<h1>canvasToGlobal</h1>
+<a name="com.acornui.core.graphics.CameraRo$canvasToGlobal(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">canvasToGlobal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraRo$canvasToGlobal(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/canvasCoords">canvasCoords</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$canvasToGlobal(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportX">viewportX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$canvasToGlobal(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportY">viewportY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$canvasToGlobal(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportWidth">viewportWidth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$canvasToGlobal(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportHeight">viewportHeight</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector3</span></code>
+<p>Translates a point given in screen coordinates to global space. It's the same as GLU gluUnProject, but
+does not rely on OpenGL. The x- and y-coordinate of vec are assumed to be in screen coordinates (origin is the
+top left corner, y pointing down, x pointing to the right) as reported by the canvas coordinates in
+input events. A z-coordinate of 0 will return a point on the near plane, a z-coordinate
+of 1 will return a point on the far plane. This method allows you to specify the viewport position and
+dimensions in the coordinate system expected by {@link GL20#glViewport(int, int, int, int)}, with the origin in
+the top left corner of the screen.</p>
+<h3>Parameters</h3>
+<p><a name="canvasCoords"></a>
+<code>canvasCoords</code> - the point in canvas coordinates (origin top left). This will be mutated.</p>
+<p><a name="viewportX"></a>
+<code>viewportX</code> - the coordinate of the bottom left corner of the viewport in glViewport coordinates.</p>
+<p><a name="viewportY"></a>
+<code>viewportY</code> - the coordinate of the bottom left corner of the viewport in glViewport coordinates.</p>
+<p><a name="viewportWidth"></a>
+<code>viewportWidth</code> - the width of the viewport in pixels</p>
+<p><a name="viewportHeight"></a>
+<code>viewportHeight</code> - the height of the viewport in pixels</p>
+</BODY>
+</HTML>

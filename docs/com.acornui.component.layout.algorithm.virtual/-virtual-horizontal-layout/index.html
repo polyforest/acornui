@@ -1,0 +1,88 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>VirtualHorizontalLayout - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.layout.algorithm.virtual</a>&nbsp;/&nbsp;<a href="./index.html">VirtualHorizontalLayout</a><br/>
+<br/>
+<h1>VirtualHorizontalLayout</h1>
+<code><span class="keyword">class </span><span class="identifier">VirtualHorizontalLayout</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-virtual-layout-algorithm/index.html"><span class="identifier">VirtualLayoutAlgorithm</span></a><span class="symbol">&lt;</span><a href="../-virtual-horizontal-layout-style/index.html"><span class="identifier">VirtualHorizontalLayoutStyle</span></a><span class="symbol">,</span>&nbsp;<a href="../../com.acornui.component.layout.algorithm/-horizontal-layout-data/index.html"><span class="identifier">HorizontalLayoutData</span></a><span class="symbol">&gt;</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">VirtualHorizontalLayout</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="direction.html">direction</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">direction</span><span class="symbol">: </span><a href="../-virtual-layout-direction/index.html"><span class="identifier">VirtualLayoutDirection</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="create-layout-data.html">createLayoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">createLayoutData</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.component.layout.algorithm/-horizontal-layout-data/index.html"><span class="identifier">HorizontalLayoutData</span></a></code>
+<p>A factory method to create a new layout data object for use in this layout.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-offset.html">getOffset</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getOffset</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$getOffset(kotlin.Float, kotlin.Float, com.acornui.component.layout.LayoutElement, kotlin.Int, kotlin.Int, kotlin.Boolean, com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle)/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$getOffset(kotlin.Float, kotlin.Float, com.acornui.component.layout.LayoutElement, kotlin.Int, kotlin.Int, kotlin.Boolean, com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle)/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$getOffset(kotlin.Float, kotlin.Float, com.acornui.component.layout.LayoutElement, kotlin.Int, kotlin.Int, kotlin.Boolean, com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle)/element">element</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-layout-element/index.html"><span class="identifier">LayoutElement</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$getOffset(kotlin.Float, kotlin.Float, com.acornui.component.layout.LayoutElement, kotlin.Int, kotlin.Int, kotlin.Boolean, com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$getOffset(kotlin.Float, kotlin.Float, com.acornui.component.layout.LayoutElement, kotlin.Int, kotlin.Int, kotlin.Boolean, com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle)/lastIndex">lastIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$getOffset(kotlin.Float, kotlin.Float, com.acornui.component.layout.LayoutElement, kotlin.Int, kotlin.Int, kotlin.Boolean, com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle)/isReversed">isReversed</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$getOffset(kotlin.Float, kotlin.Float, com.acornui.component.layout.LayoutElement, kotlin.Int, kotlin.Int, kotlin.Boolean, com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle)/props">props</span><span class="symbol">:</span>&nbsp;<a href="../-virtual-horizontal-layout-style/index.html"><span class="identifier">VirtualHorizontalLayoutStyle</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Given a renderer, returns the position offset of that item.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="measure.html">measure</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">measure</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$measure(kotlin.Float, kotlin.Float, kotlin.collections.List((com.acornui.component.layout.LayoutElement)), com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle, com.acornui.math.Bounds)/explicitWidth">explicitWidth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$measure(kotlin.Float, kotlin.Float, kotlin.collections.List((com.acornui.component.layout.LayoutElement)), com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle, com.acornui.math.Bounds)/explicitHeight">explicitHeight</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$measure(kotlin.Float, kotlin.Float, kotlin.collections.List((com.acornui.component.layout.LayoutElement)), com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle, com.acornui.math.Bounds)/elements">elements</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component.layout/-layout-element/index.html"><span class="identifier">LayoutElement</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$measure(kotlin.Float, kotlin.Float, kotlin.collections.List((com.acornui.component.layout.LayoutElement)), com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle, com.acornui.math.Bounds)/props">props</span><span class="symbol">:</span>&nbsp;<a href="../-virtual-horizontal-layout-style/index.html"><span class="identifier">VirtualHorizontalLayoutStyle</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$measure(kotlin.Float, kotlin.Float, kotlin.collections.List((com.acornui.component.layout.LayoutElement)), com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle, com.acornui.math.Bounds)/out">out</span><span class="symbol">:</span>&nbsp;<span class="identifier">Bounds</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Given a list of the elements laid out via <a href="../-virtual-layout-algorithm/update-layout-entry.html">updateLayoutEntry</a> this calculates the measured dimensions considering
+whitespace such as padding.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="should-show-renderer.html">shouldShowRenderer</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">shouldShowRenderer</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$shouldShowRenderer(kotlin.Float, kotlin.Float, com.acornui.component.layout.LayoutElement, com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle)/explicitWidth">explicitWidth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$shouldShowRenderer(kotlin.Float, kotlin.Float, com.acornui.component.layout.LayoutElement, com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle)/explicitHeight">explicitHeight</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$shouldShowRenderer(kotlin.Float, kotlin.Float, com.acornui.component.layout.LayoutElement, com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle)/element">element</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-layout-element/index.html"><span class="identifier">LayoutElement</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$shouldShowRenderer(kotlin.Float, kotlin.Float, com.acornui.component.layout.LayoutElement, com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle)/props">props</span><span class="symbol">:</span>&nbsp;<a href="../-virtual-horizontal-layout-style/index.html"><span class="identifier">VirtualHorizontalLayoutStyle</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if the layout element is in bounds.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="update-layout-entry.html">updateLayoutEntry</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">updateLayoutEntry</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$updateLayoutEntry(kotlin.Float, kotlin.Float, com.acornui.component.layout.LayoutElement, kotlin.Int, kotlin.Float, kotlin.Int, com.acornui.component.layout.LayoutElement, kotlin.Boolean, com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle)/explicitWidth">explicitWidth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$updateLayoutEntry(kotlin.Float, kotlin.Float, com.acornui.component.layout.LayoutElement, kotlin.Int, kotlin.Float, kotlin.Int, com.acornui.component.layout.LayoutElement, kotlin.Boolean, com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle)/explicitHeight">explicitHeight</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$updateLayoutEntry(kotlin.Float, kotlin.Float, com.acornui.component.layout.LayoutElement, kotlin.Int, kotlin.Float, kotlin.Int, com.acornui.component.layout.LayoutElement, kotlin.Boolean, com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle)/element">element</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-layout-element/index.html"><span class="identifier">LayoutElement</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$updateLayoutEntry(kotlin.Float, kotlin.Float, com.acornui.component.layout.LayoutElement, kotlin.Int, kotlin.Float, kotlin.Int, com.acornui.component.layout.LayoutElement, kotlin.Boolean, com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle)/currentIndex">currentIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$updateLayoutEntry(kotlin.Float, kotlin.Float, com.acornui.component.layout.LayoutElement, kotlin.Int, kotlin.Float, kotlin.Int, com.acornui.component.layout.LayoutElement, kotlin.Boolean, com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle)/startIndex">startIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$updateLayoutEntry(kotlin.Float, kotlin.Float, com.acornui.component.layout.LayoutElement, kotlin.Int, kotlin.Float, kotlin.Int, com.acornui.component.layout.LayoutElement, kotlin.Boolean, com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle)/lastIndex">lastIndex</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$updateLayoutEntry(kotlin.Float, kotlin.Float, com.acornui.component.layout.LayoutElement, kotlin.Int, kotlin.Float, kotlin.Int, com.acornui.component.layout.LayoutElement, kotlin.Boolean, com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle)/previousElement">previousElement</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-layout-element/index.html"><span class="identifier">LayoutElement</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$updateLayoutEntry(kotlin.Float, kotlin.Float, com.acornui.component.layout.LayoutElement, kotlin.Int, kotlin.Float, kotlin.Int, com.acornui.component.layout.LayoutElement, kotlin.Boolean, com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle)/isReversed">isReversed</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayout$updateLayoutEntry(kotlin.Float, kotlin.Float, com.acornui.component.layout.LayoutElement, kotlin.Int, kotlin.Float, kotlin.Int, com.acornui.component.layout.LayoutElement, kotlin.Boolean, com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle)/props">props</span><span class="symbol">:</span>&nbsp;<a href="../-virtual-horizontal-layout-style/index.html"><span class="identifier">VirtualHorizontalLayoutStyle</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sizes and positions the given layout element.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

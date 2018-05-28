@@ -1,0 +1,146 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Selection - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.behavior</a>&nbsp;/&nbsp;<a href="./index.html">Selection</a><br/>
+<br/>
+<h1>Selection</h1>
+<code><span class="keyword">interface </span><span class="identifier">Selection</span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-selection-ro/index.html"><span class="identifier">SelectionRo</span></a><span class="symbol">&lt;</span><a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">Clearable</span></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="changing.html">changing</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">changing</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">,</span>&nbsp;<span class="identifier">Cancel</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<p>Dispatched when an item's selection status is about to change via user input. This provides an opportunity to
+cancel the selection change.
+(oldSelected: List, newSelected: List, cancel)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="selected-item.html">selectedItem</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">selectedItem</span><span class="symbol">: </span><a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">?</span></code>
+<p>Gets the first selected item.
+If set, the selection is cleared and the selection will be the provided item if not null.
+Note: setting this does not invoke a <a href="changing.html">changing</a> or <a href="../-selection-ro/changed.html">changed</a> signal.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-selection-ro/changed.html">changed</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">changed</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-selection-ro/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-selection-ro/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<p>Dispatched when the selection status of an item has changed via user input.
+The handler should have the signature:
+oldSelected: List, newSelected: List</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-selection-ro/is-empty.html">isEmpty</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">isEmpty</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-selection-ro/is-not-empty.html">isNotEmpty</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">isNotEmpty</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-selection-ro/selected-items-count.html">selectedItemsCount</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">selectedItemsCount</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="select-all.html">selectAll</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">selectAll</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="set-selected-items.html">setSelectedItems</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setSelectedItems</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.behavior.Selection$setSelectedItems(kotlin.collections.Iterable((com.acornui.core.behavior.Selection.E)))/items">items</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-iterable/index.html"><span class="identifier">Iterable</span></a><span class="symbol">&lt;</span><a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-selection-ro/get-item-is-selected.html">getItemIsSelected</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getItemIsSelected</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.behavior.SelectionRo$getItemIsSelected(com.acornui.core.behavior.SelectionRo.E)/item">item</span><span class="symbol">:</span>&nbsp;<a href="../-selection-ro/index.html#E"><span class="identifier">E</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-selection-ro/get-selected-items.html">getSelectedItems</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getSelectedItems</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.behavior.SelectionRo$getSelectedItems(kotlin.Boolean, kotlin.collections.MutableList((com.acornui.core.behavior.SelectionRo.E)))/ordered">ordered</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.behavior.SelectionRo$getSelectedItems(kotlin.Boolean, kotlin.collections.MutableList((com.acornui.core.behavior.SelectionRo.E)))/out">out</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../-selection-ro/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../-selection-ro/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code>
+<p>Populates the <a href="../-selection-ro/get-selected-items.html#com.acornui.core.behavior.SelectionRo$getSelectedItems(kotlin.Boolean, kotlin.collections.MutableList((com.acornui.core.behavior.SelectionRo.E)))/out">out</a> list with the selected items.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getSelectedItems</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.behavior.SelectionRo$getSelectedItems(kotlin.collections.MutableList((com.acornui.core.behavior.SelectionRo.E)))/out">out</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../-selection-ro/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../-selection-ro/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code>
+<p>Populates the <a href="../-selection-ro/get-selected-items.html#com.acornui.core.behavior.SelectionRo$getSelectedItems(kotlin.collections.MutableList((com.acornui.core.behavior.SelectionRo.E)))/out">out</a> list with the selected items (unordered).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../deselect-not-containing.html">deselectNotContaining</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <a href="./index.html"><span class="identifier">Selection</span></a><span class="symbol">&lt;</span><a href="../deselect-not-containing.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">deselectNotContaining</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.behavior$deselectNotContaining(com.acornui.core.behavior.Selection((com.acornui.core.behavior.deselectNotContaining.E)), kotlin.collections.List((com.acornui.core.behavior.deselectNotContaining.E)))/list">list</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../deselect-not-containing.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-selection-base/index.html">SelectionBase</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">SelectionBase</span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Selection</span></a><span class="symbol">&lt;</span><a href="../-selection-base/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">Disposable</span></code>
+<p>An object for tracking selection state.
+This is typically paired with a selection controller.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

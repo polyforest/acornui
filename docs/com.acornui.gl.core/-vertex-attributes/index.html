@@ -1,0 +1,88 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>VertexAttributes - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.gl.core</a>&nbsp;/&nbsp;<a href="./index.html">VertexAttributes</a><br/>
+<br/>
+<h1>VertexAttributes</h1>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">VertexAttributes</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">VertexAttributes</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.VertexAttributes$<init>(kotlin.collections.List((com.acornui.gl.core.VertexAttribute)))/attributes">attributes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-vertex-attribute/index.html"><span class="identifier">VertexAttribute</span></a><span class="symbol">&gt;</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="attributes.html">attributes</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">attributes</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-vertex-attribute/index.html"><span class="identifier">VertexAttribute</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="stride.html">stride</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">stride</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The number of bytes per vertex.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="vertex-size.html">vertexSize</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">vertexSize</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The number of floats per vertex.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="bind.html">bind</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">bind</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.VertexAttributes$bind(com.acornui.gl.core.Gl20, com.acornui.gl.core.ShaderProgram)/gl">gl</span><span class="symbol">:</span>&nbsp;<a href="../-gl20/index.html"><span class="identifier">Gl20</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.VertexAttributes$bind(com.acornui.gl.core.Gl20, com.acornui.gl.core.ShaderProgram)/shaderProgram">shaderProgram</span><span class="symbol">:</span>&nbsp;<a href="../-shader-program/index.html"><span class="identifier">ShaderProgram</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-vertex.html">getVertex</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getVertex</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.VertexAttributes$getVertex(com.acornui.io.ReadBuffer((kotlin.Float)), com.acornui.gl.core.Vertex)/vertexData">vertexData</span><span class="symbol">:</span>&nbsp;<span class="identifier">ReadBuffer</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.VertexAttributes$getVertex(com.acornui.io.ReadBuffer((kotlin.Float)), com.acornui.gl.core.Vertex)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../-vertex/index.html"><span class="identifier">Vertex</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="put-vertex.html">putVertex</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">putVertex</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.VertexAttributes$putVertex(com.acornui.io.WriteBuffer((kotlin.Float)), com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/vertexData">vertexData</span><span class="symbol">:</span>&nbsp;<span class="identifier">WriteBuffer</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.VertexAttributes$putVertex(com.acornui.io.WriteBuffer((kotlin.Float)), com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/position">position</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3Ro</span><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.VertexAttributes$putVertex(com.acornui.io.WriteBuffer((kotlin.Float)), com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/normal">normal</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3Ro</span><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.VertexAttributes$putVertex(com.acornui.io.WriteBuffer((kotlin.Float)), com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/colorTint">colorTint</span><span class="symbol">:</span>&nbsp;<span class="identifier">ColorRo</span><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.VertexAttributes$putVertex(com.acornui.io.WriteBuffer((kotlin.Float)), com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/u">u</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.VertexAttributes$putVertex(com.acornui.io.WriteBuffer((kotlin.Float)), com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/v">v</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="unbind.html">unbind</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">unbind</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.VertexAttributes$unbind(com.acornui.gl.core.Gl20, com.acornui.gl.core.ShaderProgram)/gl">gl</span><span class="symbol">:</span>&nbsp;<a href="../-gl20/index.html"><span class="identifier">Gl20</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.VertexAttributes$unbind(com.acornui.gl.core.Gl20, com.acornui.gl.core.ShaderProgram)/shaderProgram">shaderProgram</span><span class="symbol">:</span>&nbsp;<a href="../-shader-program/index.html"><span class="identifier">ShaderProgram</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

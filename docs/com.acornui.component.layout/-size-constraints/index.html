@@ -1,0 +1,86 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>SizeConstraints - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.layout</a>&nbsp;/&nbsp;<a href="./index.html">SizeConstraints</a><br/>
+<br/>
+<h1>SizeConstraints</h1>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">SizeConstraints</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Clearable</span><span class="symbol">, </span><a href="../-size-constraints-ro/index.html"><span class="identifier">SizeConstraintsRo</span></a></code>
+<p>An object representing the minimum and maximum dimensions of an object.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">SizeConstraints</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.SizeConstraints$<init>(com.acornui.math.Range2((kotlin.Float)), com.acornui.math.Range2((kotlin.Float)))/width">width</span><span class="symbol">:</span>&nbsp;<span class="identifier">Range2</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;Range2()<span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.SizeConstraints$<init>(com.acornui.math.Range2((kotlin.Float)), com.acornui.math.Range2((kotlin.Float)))/height">height</span><span class="symbol">:</span>&nbsp;<span class="identifier">Range2</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;Range2()<span class="symbol">)</span></code>
+<p>An object representing the minimum and maximum dimensions of an object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="height.html">height</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">height</span><span class="symbol">: </span><span class="identifier">Range2</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span></code>
+<p>The minimum and maximum height.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="width.html">width</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">width</span><span class="symbol">: </span><span class="identifier">Range2</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span></code>
+<p>The minimum and maximum width.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="bound.html">bound</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">bound</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.SizeConstraints$bound(com.acornui.component.layout.SizeConstraintsRo)/sizeConstraints">sizeConstraints</span><span class="symbol">:</span>&nbsp;<a href="../-size-constraints-ro/index.html"><span class="identifier">SizeConstraintsRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Bound the width and height by another size constraints object.
+This will result in the following adjustment:
+width.min = max(widthA, widthB)
+height.min = max(heightA, heightB)
+width.max = min(widthA, widthB)
+height.max = min(heightA, heightB)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="set.html">set</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.SizeConstraints$set(com.acornui.component.layout.SizeConstraintsRo)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-size-constraints-ro/index.html"><span class="identifier">SizeConstraintsRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">SizeConstraints</span></a></code>
+<p>Sets this object to match the values of the <a href="set.html#com.acornui.component.layout.SizeConstraints$set(com.acornui.component.layout.SizeConstraintsRo)/other">other</a> object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

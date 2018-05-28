@@ -1,0 +1,52 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>SoundFactory - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.audio</a>&nbsp;/&nbsp;<a href="./index.html">SoundFactory</a><br/>
+<br/>
+<h1>SoundFactory</h1>
+<code><span class="keyword">interface </span><span class="identifier">SoundFactory</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="default-priority.html">defaultPriority</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">defaultPriority</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>New sounds from this sound source will be created with this priority unless explicitly specified with
+<a href="create-instance.html">createInstance</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="duration.html">duration</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">duration</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The duration of the sound, in seconds.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="create-instance.html">createInstance</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">createInstance</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-sound/index.html"><span class="identifier">Sound</span></a><span class="symbol">?</span></code>
+<p>Creates an in-memory audio clip instance.
+Returns null if the audio manager is already at-capacity with sounds that all have higher priority.</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">createInstance</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.audio.SoundFactory$createInstance(kotlin.Float)/priority">priority</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-sound/index.html"><span class="identifier">Sound</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

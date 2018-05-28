@@ -1,0 +1,113 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.core.mvc - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.core.mvc</a><br/>
+<br/>
+<h2>Package com.acornui.core.mvc</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-command/index.html">Command</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Command</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-command-dispatcher/index.html">CommandDispatcher</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">CommandDispatcher</span></code>
+<p>The command dispatcher is simply a scoped signal for dispatching and listening to Commands.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-command-dispatcher-impl/index.html">CommandDispatcherImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">CommandDispatcherImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-command-dispatcher/index.html"><span class="identifier">CommandDispatcher</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-command-group/index.html">CommandGroup</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">CommandGroup</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-command-type.html">CommandType</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">CommandType</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-command/index.html"><span class="identifier">Command</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-commander/index.html">Commander</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Commander</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<p>A commander provides utility to listening to the command dispatcher, and allows for all callbacks to be
+unregistered via the commander's dispose method.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-state-command/index.html">StateCommand</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">StateCommand</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-command/index.html"><span class="identifier">Command</span></a></code>
+<p>A Command that changes application state and can be undone.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-state-command-history/index.html">StateCommandHistory</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">StateCommandHistory</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="commander.html">commander</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">commander</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-commander/index.html"><span class="identifier">Commander</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="enable-undo-redo.html">enableUndoRedo</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">enableUndoRedo</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="invoke-command.html">invokeCommand</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">invokeCommand</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.mvc$invokeCommand(com.acornui.core.di.Scoped, com.acornui.core.mvc.Command)/command">command</span><span class="symbol">:</span>&nbsp;<a href="-command/index.html"><span class="identifier">Command</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="state-command-history.html">stateCommandHistory</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">stateCommandHistory</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-state-command-history/index.html"><span class="identifier">StateCommandHistory</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

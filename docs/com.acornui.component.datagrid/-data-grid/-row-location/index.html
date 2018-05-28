@@ -1,0 +1,255 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>DataGrid.RowLocation - </title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">com.acornui.component.datagrid</a>&nbsp;/&nbsp;<a href="../index.html">DataGrid</a>&nbsp;/&nbsp;<a href="./index.html">RowLocation</a><br/>
+<br/>
+<h1>RowLocation</h1>
+<code><span class="keyword">inner</span> <span class="keyword">class </span><span class="identifier">RowLocation</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span></code>
+<p>An object representing a row within the grid.
+This position includes header and footer rows.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">RowLocation</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.DataGrid.RowLocation$<init>(kotlin.Int)/position">position</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span></code><code><span class="identifier">RowLocation</span><span class="symbol">(</span><span class="symbol">)</span></code>
+<p>An object representing a row within the grid.
+This position includes header and footer rows.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="element.html">element</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">element</span><span class="symbol">: </span><a href="../-cell-location/index.html#E"><span class="identifier">E</span></a><span class="symbol">?</span></code>
+<p>The element. This may be null if this location represents a header or footer.
+It will be guaranteed to be not null if <a href="is-element-row.html">isElementRow</a> is true.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="group.html">group</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">group</span><span class="symbol">: </span><a href="../../-data-grid-group/index.html"><span class="identifier">DataGridGroup</span></a><span class="symbol">&lt;</span><a href="../-cell-location/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="group-index.html">groupIndex</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">groupIndex</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The index of this location's group. This corresponds to the grid's <a href="../groups.html">groups</a> list.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="group-position.html">groupPosition</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">groupPosition</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>groupPosition is the index within a group. It includes headers, footers, and list rows.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="has-next-row.html">hasNextRow</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">hasNextRow</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="has-previous-row.html">hasPreviousRow</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">hasPreviousRow</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="is-element-row.html">isElementRow</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">isElementRow</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if the <a href="group-position.html">groupPosition</a> represents an element and not a header or footer.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="is-footer.html">isFooter</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">isFooter</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if the <a href="group-position.html">groupPosition</a> represents a footer row.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="is-header.html">isHeader</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">isHeader</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if the <a href="group-position.html">groupPosition</a> represents a header row.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="is-valid.html">isValid</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">isValid</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this location is within bounds.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="position.html">position</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">position</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The row position within the grid.
+Reading this property is O(C)
+Writing this property is O(groups.size)
+Setting this property iterates over the groups, to increment or decrement, use <a href="has-next-row.html">hasNextRow</a>, <a href="move-to-next-row.html">moveToNextRow</a>,
+<a href="has-previous-row.html">hasPreviousRow</a>, and <a href="move-to-previous-row.html">moveToPreviousRow</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="row-index.html">rowIndex</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">rowIndex</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The index of the element within the group's filtered list.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="source-index.html">sourceIndex</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">sourceIndex</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The index of this row within the source <a href="../data.html">data</a> list.
+Note: This will return -1 if this row location doesn't represent an element. (That is, it's a header or
+footer row)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="copy.html">copy</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">copy</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">RowLocation</span></a><span class="symbol">&lt;</span><a href="../-cell-location/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="equals.html">equals</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">equals</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.DataGrid.RowLocation$equals(kotlin.Any)/other">other</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="hash-code.html">hashCode</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">hashCode</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="move-to-first-row.html">moveToFirstRow</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">moveToFirstRow</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Move the cursor so that <a href="move-to-next-row.html">moveToNextRow</a> will bring us to the first position.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="move-to-last-row.html">moveToLastRow</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">moveToLastRow</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Move the cursor so that <a href="move-to-previous-row.html">moveToPreviousRow</a> will bring us to the last position.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="move-to-next-row.html">moveToNextRow</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">moveToNextRow</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="move-to-next-row-until.html">moveToNextRowUntil</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">moveToNextRowUntil</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.DataGrid.RowLocation$moveToNextRowUntil(kotlin.Function1((com.acornui.component.datagrid.DataGrid.RowLocation((com.acornui.component.datagrid.DataGrid.E)), kotlin.Boolean)))/predicate">predicate</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="./index.html"><span class="identifier">RowLocation</span></a><span class="symbol">&lt;</span><a href="../-cell-location/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Calls <a href="move-to-next-row.html">moveToNextRow</a> until there are no more next rows, or the <a href="move-to-next-row-until.html#com.acornui.component.datagrid.DataGrid.RowLocation$moveToNextRowUntil(kotlin.Function1((com.acornui.component.datagrid.DataGrid.RowLocation((com.acornui.component.datagrid.DataGrid.E)), kotlin.Boolean)))/predicate">predicate</a> has returned true.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="move-to-previous-row.html">moveToPreviousRow</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">moveToPreviousRow</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="move-to-previous-row-until.html">moveToPreviousRowUntil</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">moveToPreviousRowUntil</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.DataGrid.RowLocation$moveToPreviousRowUntil(kotlin.Function1((com.acornui.component.datagrid.DataGrid.RowLocation((com.acornui.component.datagrid.DataGrid.E)), kotlin.Boolean)))/predicate">predicate</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="./index.html"><span class="identifier">RowLocation</span></a><span class="symbol">&lt;</span><a href="../-cell-location/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Calls <a href="move-to-previous-row.html">moveToPreviousRow</a> until there are no more previous rows, or the <a href="move-to-previous-row-until.html#com.acornui.component.datagrid.DataGrid.RowLocation$moveToPreviousRowUntil(kotlin.Function1((com.acornui.component.datagrid.DataGrid.RowLocation((com.acornui.component.datagrid.DataGrid.E)), kotlin.Boolean)))/predicate">predicate</a> has returned true.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set.html">set</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.DataGrid.RowLocation$set(com.acornui.component.datagrid.DataGrid.RowLocation((com.acornui.component.datagrid.DataGrid.E)))/other">other</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">RowLocation</span></a><span class="symbol">&lt;</span><a href="../-cell-location/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">RowLocation</span></a><span class="symbol">&lt;</span><a href="../-cell-location/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="to-string.html">toString</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-cell-location/index.html">CellLocation</a></p>
+</td>
+<td>
+<code><span class="keyword">inner</span> <span class="keyword">class </span><span class="identifier">CellLocation</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">RowLocation</span></a><span class="symbol">&lt;</span><a href="../-cell-location/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

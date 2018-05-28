@@ -1,0 +1,22 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>WrappedGl20.bindAttribLocation - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.gl.core</a>&nbsp;/&nbsp;<a href="index.html">WrappedGl20</a>&nbsp;/&nbsp;<a href="./bind-attrib-location.html">bindAttribLocation</a><br/>
+<br/>
+<h1>bindAttribLocation</h1>
+<a name="com.acornui.gl.core.WrappedGl20$bindAttribLocation(com.acornui.gl.core.GlProgramRef, kotlin.Int, kotlin.String)"></a>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">bindAttribLocation</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.WrappedGl20$bindAttribLocation(com.acornui.gl.core.GlProgramRef, kotlin.Int, kotlin.String)/program">program</span><span class="symbol">:</span>&nbsp;<a href="../-gl-program-ref.html"><span class="identifier">GlProgramRef</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.WrappedGl20$bindAttribLocation(com.acornui.gl.core.GlProgramRef, kotlin.Int, kotlin.String)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.WrappedGl20$bindAttribLocation(com.acornui.gl.core.GlProgramRef, kotlin.Int, kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Overrides <a href="../-gl20/bind-attrib-location.html">Gl20.bindAttribLocation</a></p>
+<p>Associates a number (location) with an attribute (a shader input such as vertex position) in program. Other
+Gl functions (such as enableVertexAttribArray() or vertexAttribPointer()) deal with an attribute location
+number instead of the name used in the program and bindAttribLocation is used to choose the number used for
+that attribute. Locations are automatically assigned if you do not call bindAttribLocation so this method is
+only necessary if you wish to assign a specific location for an attribute. Use getAttribLocation() to retrieve
+the automatically assigned location. bindAttribLocation() must be called before calling linkProgram(program) and
+location must be an integer in the range 0 to getParameter(gl.MAX_VERTEX_ATTRIBS) - 1.</p>
+</BODY>
+</HTML>

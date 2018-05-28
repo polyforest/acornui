@@ -1,0 +1,123 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>AssetManagerImpl - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.assets</a>&nbsp;/&nbsp;<a href="./index.html">AssetManagerImpl</a><br/>
+<br/>
+<h1>AssetManagerImpl</h1>
+<code><span class="keyword">class </span><span class="identifier">AssetManagerImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-asset-manager/index.html"><span class="identifier">AssetManager</span></a></code>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">AssetManagerImpl</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets.AssetManagerImpl$<init>(kotlin.String, com.acornui.core.io.file.Files, kotlin.collections.Map((com.acornui.core.assets.AssetType((kotlin.Any)), kotlin.Function2((kotlin.String, kotlin.Int, com.acornui.core.assets.AssetLoader(()))))), kotlin.Boolean)/rootPath">rootPath</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;""<span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets.AssetManagerImpl$<init>(kotlin.String, com.acornui.core.io.file.Files, kotlin.collections.Map((com.acornui.core.assets.AssetType((kotlin.Any)), kotlin.Function2((kotlin.String, kotlin.Int, com.acornui.core.assets.AssetLoader(()))))), kotlin.Boolean)/files">files</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.io.file/-files/index.html"><span class="identifier">Files</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets.AssetManagerImpl$<init>(kotlin.String, com.acornui.core.io.file.Files, kotlin.collections.Map((com.acornui.core.assets.AssetType((kotlin.Any)), kotlin.Function2((kotlin.String, kotlin.Int, com.acornui.core.assets.AssetLoader(()))))), kotlin.Boolean)/loaderFactories">loaderFactories</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="../-asset-type/index.html"><span class="identifier">AssetType</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">,</span>&nbsp;<a href="../-loader-factory.html"><span class="identifier">LoaderFactory</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets.AssetManagerImpl$<init>(kotlin.String, com.acornui.core.io.file.Files, kotlin.collections.Map((com.acornui.core.assets.AssetType((kotlin.Any)), kotlin.Function2((kotlin.String, kotlin.Int, com.acornui.core.assets.AssetLoader(()))))), kotlin.Boolean)/appendVersion">appendVersion</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="current-loaders.html">currentLoaders</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">currentLoaders</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-asset-loader-ro/index.html"><span class="identifier">AssetLoaderRo</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="current-loaders-changed.html">currentLoadersChanged</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">currentLoadersChanged</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<p>Dispatched when the current loaders list has changed.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-asset-manager/seconds-loaded.html">secondsLoaded</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">secondsLoaded</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-asset-manager/seconds-total.html">secondsTotal</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">secondsTotal</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="load.html">load</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <span class="identifier">load</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets.AssetManagerImpl$load(kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.AssetManagerImpl.load.T)))/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets.AssetManagerImpl$load(kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.AssetManagerImpl.load.T)))/type">type</span><span class="symbol">:</span>&nbsp;<a href="../-asset-type/index.html"><span class="identifier">AssetType</span></a><span class="symbol">&lt;</span><a href="load.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-asset-loader.html"><span class="identifier">AssetLoader</span></a><span class="symbol">&lt;</span><a href="load.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Loads an asset.
+To cancel the loading, call <code>cancel</code> on the return value.
+To await the result, create a coroutine, and call 'await'.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../seconds-remaining.html">secondsRemaining</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="../-asset-manager/index.html"><span class="identifier">AssetManager</span></a><span class="symbol">.</span><span class="identifier">secondsRemaining</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../await-all.html">awaitAll</a></p>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><a href="../-asset-manager/index.html"><span class="identifier">AssetManager</span></a><span class="symbol">.</span><span class="identifier">awaitAll</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Waits until there are no currently active loaders.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../on-loaders-empty.html">onLoadersEmpty</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-asset-manager/index.html"><span class="identifier">AssetManager</span></a><span class="symbol">.</span><span class="identifier">onLoadersEmpty</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets$onLoadersEmpty(com.acornui.core.assets.AssetManager, kotlin.Function0((kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,67 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>AttachmentHolder - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component</a>&nbsp;/&nbsp;<a href="./index.html">AttachmentHolder</a><br/>
+<br/>
+<h1>AttachmentHolder</h1>
+<code><span class="keyword">interface </span><span class="identifier">AttachmentHolder</span></code>
+<p>An AttachmentHolder can contain a map of arbitrary objects. This is used to attach reusable behaviors to components
+such as drag and drop, toss scrolling, user interaction.</p>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="get-attachment.html">getAttachment</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <span class="identifier">getAttachment</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.AttachmentHolder$getAttachment(kotlin.Any)/key">key</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="get-attachment.html#T"><span class="identifier">T</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="remove-attachment.html">removeAttachment</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <span class="identifier">removeAttachment</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.AttachmentHolder$removeAttachment(kotlin.Any)/key">key</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="remove-attachment.html#T"><span class="identifier">T</span></a><span class="symbol">?</span></code>
+<p>Removes an attachment added via <a href="set-attachment.html">setAttachment</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set-attachment.html">setAttachment</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setAttachment</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.AttachmentHolder$setAttachment(kotlin.Any, kotlin.Any)/key">key</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.AttachmentHolder$setAttachment(kotlin.Any, kotlin.Any)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../create-or-reuse-attachment.html">createOrReuseAttachment</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <a href="./index.html"><span class="identifier">AttachmentHolder</span></a><span class="symbol">.</span><span class="identifier">createOrReuseAttachment</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$createOrReuseAttachment(com.acornui.component.AttachmentHolder, kotlin.Any, kotlin.Function0((com.acornui.component.createOrReuseAttachment.T)))/key">key</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component$createOrReuseAttachment(com.acornui.component.AttachmentHolder, kotlin.Any, kotlin.Function0((com.acornui.component.createOrReuseAttachment.T)))/factory">factory</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="../create-or-reuse-attachment.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../create-or-reuse-attachment.html#T"><span class="identifier">T</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-interactive-element-ro/index.html">InteractiveElementRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">InteractiveElementRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-layout-element-ro/index.html"><span class="identifier">LayoutElementRo</span></a><span class="symbol">, </span><a href="../-camera-element-ro/index.html"><span class="identifier">CameraElementRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">AttachmentHolder</span></a><span class="symbol">, </span><a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

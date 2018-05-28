@@ -1,0 +1,179 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>InteractionEventBase - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.input</a>&nbsp;/&nbsp;<a href="./index.html">InteractionEventBase</a><br/>
+<br/>
+<h1>InteractionEventBase</h1>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">InteractionEventBase</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-interaction-event/index.html"><span class="identifier">InteractionEvent</span></a></code>
+<p>A convenient base class for <a href="../-interaction-event/index.html">InteractionEvent</a> implementations.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">InteractionEventBase</span><span class="symbol">(</span><span class="symbol">)</span></code>
+<p>A convenient base class for <a href="../-interaction-event/index.html">InteractionEvent</a> implementations.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="current-target.html">currentTarget</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">currentTarget</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="handled.html">handled</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">handled</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>True if this event was used in an interaction.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="propagation.html">propagation</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">propagation</span><span class="symbol">: </span><a href="../-propagation/index.html"><span class="identifier">Propagation</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="target.html">target</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">target</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="type.html">type</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">type</span><span class="symbol">: </span><a href="../-interaction-type/index.html"><span class="identifier">InteractionType</span></a><span class="symbol">&lt;</span><a href="../-interaction-event-ro/index.html"><span class="identifier">InteractionEventRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="default-prevented.html">defaultPrevented</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">defaultPrevented</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="localize.html">localize</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">localize</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.InteractionEventBase$localize(com.acornui.component.UiComponentRo)/currentTarget">currentTarget</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Changes the local properties of this interaction to be relative to the given target. (Such as touch x, y)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="prevent-default.html">preventDefault</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">preventDefault</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Flags this event to indicate that default behavior should be ignored.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-interaction-event/is-stopped.html">isStopped</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">isStopped</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-char-interaction/index.html">CharInteraction</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">CharInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">InteractionEventBase</span></a><span class="symbol">, </span><a href="../../com.acornui.core.input.interaction/-char-interaction-ro/index.html"><span class="identifier">CharInteractionRo</span></a></code>
+<p>An event representing a character input.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-context-menu-interaction/index.html">ContextMenuInteraction</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ContextMenuInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">InteractionEventBase</span></a><span class="symbol">, </span><a href="../../com.acornui.core.input.interaction/-context-menu-interaction-ro/index.html"><span class="identifier">ContextMenuInteractionRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-drag-interaction/index.html">DragInteraction</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DragInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">InteractionEventBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-key-interaction/index.html">KeyInteraction</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">KeyInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">InteractionEventBase</span></a><span class="symbol">, </span><a href="../../com.acornui.core.input.interaction/-key-interaction-ro/index.html"><span class="identifier">KeyInteractionRo</span></a></code>
+<p>An event representing an interaction with the keyboard.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-mouse-interaction/index.html">MouseInteraction</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">MouseInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">InteractionEventBase</span></a><span class="symbol">, </span><a href="../../com.acornui.core.input.interaction/-mouse-interaction-ro/index.html"><span class="identifier">MouseInteractionRo</span></a></code>
+<p>Representing a mouse event, as provided to <a href="../../com.acornui.component/-interactive-element/index.html">InteractiveElement</a> objects by the <a href="#">InteractivityManager</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-touch-interaction/index.html">TouchInteraction</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TouchInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.input.interaction/-touch-interaction-ro/index.html"><span class="identifier">TouchInteractionRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">InteractionEventBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-undo-interaction/index.html">UndoInteraction</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">UndoInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.input.interaction/-undo-interaction-ro/index.html"><span class="identifier">UndoInteractionRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">InteractionEventBase</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,240 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>CameraElementRo - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component</a>&nbsp;/&nbsp;<a href="./index.html">CameraElementRo</a><br/>
+<br/>
+<h1>CameraElementRo</h1>
+<code><span class="keyword">interface </span><span class="identifier">CameraElementRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-transformable-ro/index.html"><span class="identifier">TransformableRo</span></a></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="camera.html">camera</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">camera</span><span class="symbol">: </span><a href="../../com.acornui.core.graphics/-camera-ro/index.html"><span class="identifier">CameraRo</span></a></code>
+<p>Returns the camera to be used for this component.
+camera.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-transformable-ro/concatenated-transform.html">concatenatedTransform</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">concatenatedTransform</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span></code>
+<p>The global transform of this component, of all ancestor transforms multiplied together.
+Do not modify this matrix directly, it will be overwritten on a TRANSFORM validation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-transformable-ro/concatenated-transform-inv.html">concatenatedTransformInv</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">concatenatedTransformInv</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span></code>
+<p>Returns the inverse concatenated transformation matrix.
+Note that this is a heavy operation and should be used judiciously. It is not part of the normal validation
+cycle.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-transformable-ro/custom-transform.html">customTransform</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">customTransform</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span><span class="symbol">?</span></code>
+<p>If this is not null, this custom transformation matrix will be used. Note that if this is set, all properties
+that would otherwise generate the transformation matrix are no longer applicable.
+<a href="../../com.acornui.component.layout/-transformable-ro/scale-x.html">scaleX</a>, <a href="../../com.acornui.component.layout/-transformable-ro/scale-y.html">scaleY</a>, <a href="../../com.acornui.component.layout/-transformable-ro/rotation-x.html">scaleZ</a>, <a href="../../com.acornui.component.layout/-transformable-ro/rotation-y.html">rotationY</a>, <a href="../../com.acornui.component.layout/-transformable-ro/rotation.html">rotation</a>,
+<a href="../../com.acornui.component.layout/-transformable-ro/origin-x.html">originX</a>, <a href="../../com.acornui.component.layout/-transformable-ro/origin-y.html">originY</a>, <a href="../../com.acornui.component.layout/-transformable-ro/origin-z.html">originZ</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-transformable-ro/origin-x.html">originX</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">originX</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-transformable-ro/origin-y.html">originY</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">originY</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-transformable-ro/origin-z.html">originZ</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">originZ</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-transformable-ro/rotation.html">rotation</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">rotation</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Rotation around the Z axis</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-transformable-ro/rotation-x.html">rotationX</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">rotationX</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-transformable-ro/rotation-y.html">rotationY</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">rotationY</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-transformable-ro/scale-x.html">scaleX</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">scaleX</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-transformable-ro/scale-y.html">scaleY</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">scaleY</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-transformable-ro/scale-z.html">scaleZ</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">scaleZ</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-transformable-ro/transform.html">transform</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">transform</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span></code>
+<p>This component's transformation matrix.
+Responsible for 3d positioning, scaling, rotation, etc.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="local-to-window.html">localToWindow</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">localToWindow</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.CameraElementRo$localToWindow(com.acornui.math.Vector3)/localCoord">localCoord</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector3</span></code>
+<p>Converts a local coordinate to window coordinates.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">localToWindow</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.CameraElementRo$localToWindow(com.acornui.math.MinMax)/minMax">minMax</span><span class="symbol">:</span>&nbsp;<span class="identifier">MinMax</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">MinMax</span></code>
+<p>Converts a bounding rectangle from local to window coordinates.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="window-to-local.html">windowToLocal</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">windowToLocal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.CameraElementRo$windowToLocal(com.acornui.math.Vector2)/windowCoord">windowCoord</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector2</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector2</span></code>
+<p>Converts a 2d coordinate relative to the window into local coordinate space.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">windowToLocal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.CameraElementRo$windowToLocal(com.acornui.math.MinMax)/minMax">minMax</span><span class="symbol">:</span>&nbsp;<span class="identifier">MinMax</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">MinMax</span></code>
+<p>Converts a bounding rectangle from window to local coordinates.
+Warning: this does require a matrix inversion calculation, which is a fairly expensive operation.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-transformable-ro/convert-coord.html">convertCoord</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">convertCoord</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$convertCoord(com.acornui.math.Vector3, com.acornui.component.layout.TransformableRo)/coord">coord</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.TransformableRo$convertCoord(com.acornui.math.Vector3, com.acornui.component.layout.TransformableRo)/targetCoordSpace">targetCoordSpace</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-transformable-ro/index.html"><span class="identifier">TransformableRo</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector3</span></code>
+<p>Converts a coordinate from this Transformable's coordinate space to the target coordinate space.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-transformable-ro/global-to-local.html">globalToLocal</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">globalToLocal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$globalToLocal(com.acornui.math.Vector3)/globalCoord">globalCoord</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector3</span></code>
+<p>Converts a coordinate from global coordinate space to local coordinate space.
+This will modify the provided coord parameter.</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">globalToLocal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$globalToLocal(com.acornui.math.Ray)/ray">ray</span><span class="symbol">:</span>&nbsp;<span class="identifier">Ray</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Ray</span></code>
+<p>Converts a ray from global coordinate space to local coordinate space.
+This will modify the provided ray parameter.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-transformable-ro/local-to-global.html">localToGlobal</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">localToGlobal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$localToGlobal(com.acornui.math.Vector3)/localCoord">localCoord</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector3</span></code>
+<p>Converts a coordinate from local coordinate space to global coordinate space.
+This will modify the provided coord parameter.</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">localToGlobal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$localToGlobal(com.acornui.math.Ray)/ray">ray</span><span class="symbol">:</span>&nbsp;<span class="identifier">Ray</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Ray</span></code>
+<p>Converts a ray from local coordinate space to global coordinate space.
+This will modify the provided ray parameter.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-transformable-ro/ray-to-plane.html">rayToPlane</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">rayToPlane</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$rayToPlane(com.acornui.math.RayRo, com.acornui.math.Vector2)/ray">ray</span><span class="symbol">:</span>&nbsp;<span class="identifier">RayRo</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.TransformableRo$rayToPlane(com.acornui.math.RayRo, com.acornui.math.Vector2)/out">out</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector2</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Calculates the intersection coordinates of the provided Ray (in local coordinate space) and this layout
+element's plane.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-camera-element/index.html">CameraElement</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">CameraElement</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">CameraElementRo</span></a><span class="symbol">, </span><a href="../../com.acornui.component.layout/-transformable/index.html"><span class="identifier">Transformable</span></a></code>
+<p>A transformable element that is viewed via a Camera.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-interactive-element-ro/index.html">InteractiveElementRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">InteractiveElementRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-layout-element-ro/index.html"><span class="identifier">LayoutElementRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">CameraElementRo</span></a><span class="symbol">, </span><a href="../-attachment-holder/index.html"><span class="identifier">AttachmentHolder</span></a><span class="symbol">, </span><a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

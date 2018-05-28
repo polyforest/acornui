@@ -1,0 +1,167 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>WheelInteraction - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.input.interaction</a>&nbsp;/&nbsp;<a href="./index.html">WheelInteraction</a><br/>
+<br/>
+<h1>WheelInteraction</h1>
+<code><span class="keyword">class </span><span class="identifier">WheelInteraction</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-mouse-interaction/index.html"><span class="identifier">MouseInteraction</span></a><span class="symbol">, </span><a href="../-wheel-interaction-ro/index.html"><span class="identifier">WheelInteractionRo</span></a></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">WheelInteraction</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="delta-x.html">deltaX</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">deltaX</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="delta-y.html">deltaY</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">deltaY</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="delta-z.html">deltaZ</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">deltaZ</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-mouse-interaction/button.html">button</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">button</span><span class="symbol">: </span><a href="../../com.acornui.core.input/-which-button/index.html"><span class="identifier">WhichButton</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-mouse-interaction/canvas-x.html">canvasX</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">canvasX</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The x position of the mouse event relative to the root canvas.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-mouse-interaction/canvas-y.html">canvasY</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">canvasY</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The y position of the mouse event relative to the root canvas.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-mouse-interaction/is-fabricated.html">isFabricated</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">isFabricated</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true, this interaction was triggered from code, not real user input.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-mouse-interaction/local-x.html">localX</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">localX</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The x position of the mouse event relative to the <a href="../../com.acornui.core.input/-interaction-event-base/current-target.html">currentTarget</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-mouse-interaction/local-y.html">localY</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">localY</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The y position of the mouse event relative to the <a href="../../com.acornui.core.input/-interaction-event-base/current-target.html">currentTarget</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-mouse-interaction/related-target.html">relatedTarget</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">relatedTarget</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">?</span></code>
+<p>On a mouse out interaction, the relatedTarget will be the new over target (or null if there isn't one)
+On a mouse over interaction, the relatedTarget will be the previous over target (or null if there wasn't one)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-mouse-interaction/timestamp.html">timestamp</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">timestamp</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
+<p>The number of milliseconds from the Unix epoch.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="set.html">set</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction.WheelInteraction$set(com.acornui.core.input.interaction.WheelInteractionRo)/event">event</span><span class="symbol">:</span>&nbsp;<a href="../-wheel-interaction-ro/index.html"><span class="identifier">WheelInteractionRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-mouse-interaction/localize.html">localize</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">localize</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction.MouseInteraction$localize(com.acornui.component.UiComponentRo)/currentTarget">currentTarget</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Changes the local properties of this interaction to be relative to the given target. (Such as touch x, y)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-mouse-interaction/set.html">set</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction.MouseInteraction$set(com.acornui.core.input.interaction.MouseInteractionRo)/event">event</span><span class="symbol">:</span>&nbsp;<a href="../-mouse-interaction-ro/index.html"><span class="identifier">MouseInteractionRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

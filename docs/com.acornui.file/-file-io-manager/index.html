@@ -1,0 +1,110 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>FileIoManager - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.file</a>&nbsp;/&nbsp;<a href="./index.html">FileIoManager</a><br/>
+<br/>
+<h1>FileIoManager</h1>
+<code><span class="keyword">interface </span><span class="identifier">FileIoManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<p>An object which allows for selecting file(s) with native pickers for the purposes of reading or writing to disk.</p>
+<p><strong>See Also</strong><br/>
+<p><a href="../-file-reader/index.html">FileReader</a></p>
+<p><a href="../-file-writer/index.html">FileWriter</a></p>
+</p>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">FileIoManager</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="save-supported.html">saveSupported</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">saveSupported</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If false, <a href="pick-file-for-save.html">pickFileForSave</a> will fail.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="pick-file-for-open.html">pickFileForOpen</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">pickFileForOpen</span><span class="symbol">(</span><span class="identifier" id="com.acornui.file.FileIoManager$pickFileForOpen(kotlin.collections.List((com.acornui.file.FileFilterGroup)), kotlin.Function1((com.acornui.file.FileReader, kotlin.Unit)))/fileFilterGroups">fileFilterGroups</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-file-filter-group/index.html"><span class="identifier">FileFilterGroup</span></a><span class="symbol">&gt;</span><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="com.acornui.file.FileIoManager$pickFileForOpen(kotlin.collections.List((com.acornui.file.FileFilterGroup)), kotlin.Function1((com.acornui.file.FileReader, kotlin.Unit)))/onSuccess">onSuccess</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../-file-reader/index.html"><span class="identifier">FileReader</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Invokes native file picker to select a file for opening from disk <a href="pick-file-for-open.html#com.acornui.file.FileIoManager$pickFileForOpen(kotlin.collections.List((com.acornui.file.FileFilterGroup)), kotlin.Function1((com.acornui.file.FileReader, kotlin.Unit)))/onSuccess">onSuccess</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="pick-file-for-save.html">pickFileForSave</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">pickFileForSave</span><span class="symbol">(</span><span class="identifier" id="com.acornui.file.FileIoManager$pickFileForSave(kotlin.collections.List((com.acornui.file.FileFilterGroup)), kotlin.String, kotlin.Function1((com.acornui.file.FileWriter, kotlin.Unit)))/fileFilterGroups">fileFilterGroups</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-file-filter-group/index.html"><span class="identifier">FileFilterGroup</span></a><span class="symbol">&gt;</span><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="com.acornui.file.FileIoManager$pickFileForSave(kotlin.collections.List((com.acornui.file.FileFilterGroup)), kotlin.String, kotlin.Function1((com.acornui.file.FileWriter, kotlin.Unit)))/defaultExtension">defaultExtension</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="com.acornui.file.FileIoManager$pickFileForSave(kotlin.collections.List((com.acornui.file.FileFilterGroup)), kotlin.String, kotlin.Function1((com.acornui.file.FileWriter, kotlin.Unit)))/onSuccess">onSuccess</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../-file-writer/index.html"><span class="identifier">FileWriter</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Invokes native file picker to select an existing or new file for saving to disk <a href="pick-file-for-save.html#com.acornui.file.FileIoManager$pickFileForSave(kotlin.collections.List((com.acornui.file.FileFilterGroup)), kotlin.String, kotlin.Function1((com.acornui.file.FileWriter, kotlin.Unit)))/onSuccess">onSuccess</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="pick-files-for-open.html">pickFilesForOpen</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">pickFilesForOpen</span><span class="symbol">(</span><span class="identifier" id="com.acornui.file.FileIoManager$pickFilesForOpen(kotlin.collections.List((com.acornui.file.FileFilterGroup)), kotlin.Function1((kotlin.collections.List((com.acornui.file.FileReader)), kotlin.Unit)))/fileFilterGroups">fileFilterGroups</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-file-filter-group/index.html"><span class="identifier">FileFilterGroup</span></a><span class="symbol">&gt;</span><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="com.acornui.file.FileIoManager$pickFilesForOpen(kotlin.collections.List((com.acornui.file.FileFilterGroup)), kotlin.Function1((kotlin.collections.List((com.acornui.file.FileReader)), kotlin.Unit)))/onSuccess">onSuccess</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-file-reader/index.html"><span class="identifier">FileReader</span></a><span class="symbol">&gt;</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Invokes native file picker to select multiple files for opening from disk <a href="pick-files-for-open.html#com.acornui.file.FileIoManager$pickFilesForOpen(kotlin.collections.List((com.acornui.file.FileFilterGroup)), kotlin.Function1((kotlin.collections.List((com.acornui.file.FileReader)), kotlin.Unit)))/onSuccess">onSuccess</a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-d-key/extends.html">extends</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">extends</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-d-key/factory.html">factory</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">factory</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di.DKey$factory(com.acornui.core.di.Injector)/injector">injector</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-injector/index.html"><span class="identifier">Injector</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-d-key/index.html#T"><span class="identifier">T</span></a><span class="symbol">?</span></code>
+<p>A dependency key has an optional factory method, where if it provides a non-null value, the
+dependency doesn't need to be set before use, and the factory method will produce the default implementation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-d-key/to.html">to</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">infix</span> <span class="keyword">fun </span><span class="identifier">to</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di.DKey$to(com.acornui.core.di.DKey.T)/value">value</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-d-key/index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-dependency-pair/index.html"><span class="identifier">DependencyPair</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.di/-d-key/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

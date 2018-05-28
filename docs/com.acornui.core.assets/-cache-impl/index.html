@@ -1,0 +1,100 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>CacheImpl - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.assets</a>&nbsp;/&nbsp;<a href="./index.html">CacheImpl</a><br/>
+<br/>
+<h1>CacheImpl</h1>
+<code><span class="keyword">class </span><span class="identifier">CacheImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-cache/index.html"><span class="identifier">Cache</span></a></code>
+<p>A key-value store that keeps track of references. When references reach zero, the cached asset will be disposed
+in the future.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">CacheImpl</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets.CacheImpl$<init>(com.acornui.core.time.TimeDriver, kotlin.Int)/timeDriver">timeDriver</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.time/-time-driver/index.html"><span class="identifier">TimeDriver</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets.CacheImpl$<init>(com.acornui.core.time.TimeDriver, kotlin.Int)/gcFrames">gcFrames</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;500<span class="symbol">)</span></code>
+<p>A key-value store that keeps track of references. When references reach zero, the cached asset will be disposed
+in the future.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="contains-key.html">containsKey</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">containsKey</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets.CacheImpl$containsKey(com.acornui.core.assets.CacheKey((kotlin.Any)))/key">key</span><span class="symbol">:</span>&nbsp;<a href="../-cache-key.html"><span class="identifier">CacheKey</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get.html">get</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <span class="identifier">get</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets.CacheImpl$get(com.acornui.core.assets.CacheKey((com.acornui.core.assets.CacheImpl.get.T)))/key">key</span><span class="symbol">:</span>&nbsp;<a href="../-cache-key.html"><span class="identifier">CacheKey</span></a><span class="symbol">&lt;</span><a href="get.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="get.html#T"><span class="identifier">T</span></a><span class="symbol">?</span></code>
+<p>Retrieves the cache value for the given key.
+When cache items are retrieved, <a href="../-cache/ref-inc.html">refInc</a> should be used to indicate that it's in use.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="ref-dec.html">refDec</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">refDec</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets.CacheImpl$refDec(com.acornui.core.assets.CacheKey((kotlin.Any)))/key">key</span><span class="symbol">:</span>&nbsp;<a href="../-cache-key.html"><span class="identifier">CacheKey</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Decrements the use count for the cache value with the given key.
+If the use count reaches zero, the cache value will be removed and if it's <a href="#">Disposable</a>, disposed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="ref-inc.html">refInc</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">refInc</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets.CacheImpl$refInc(com.acornui.core.assets.CacheKey((kotlin.Any)))/key">key</span><span class="symbol">:</span>&nbsp;<a href="../-cache-key.html"><span class="identifier">CacheKey</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Increments the reference count for the cache value. This should be paired with <a href="../-cache/ref-dec.html">refDec</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set.html">set</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <span class="identifier">set</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets.CacheImpl$set(com.acornui.core.assets.CacheKey((com.acornui.core.assets.CacheImpl.set.T)), com.acornui.core.assets.CacheImpl.set.T)/key">key</span><span class="symbol">:</span>&nbsp;<a href="../-cache-key.html"><span class="identifier">CacheKey</span></a><span class="symbol">&lt;</span><a href="set.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets.CacheImpl$set(com.acornui.core.assets.CacheKey((com.acornui.core.assets.CacheImpl.set.T)), com.acornui.core.assets.CacheImpl.set.T)/value">value</span><span class="symbol">:</span>&nbsp;<a href="set.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-cache/get-or.html">getOr</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <span class="identifier">getOr</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets.Cache$getOr(com.acornui.core.assets.CacheKey((com.acornui.core.assets.Cache.getOr.T)), kotlin.Function0((com.acornui.core.assets.Cache.getOr.T)))/key">key</span><span class="symbol">:</span>&nbsp;<a href="../-cache-key.html"><span class="identifier">CacheKey</span></a><span class="symbol">&lt;</span><a href="../-cache/get-or.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets.Cache$getOr(com.acornui.core.assets.CacheKey((com.acornui.core.assets.Cache.getOr.T)), kotlin.Function0((com.acornui.core.assets.Cache.getOr.T)))/factory">factory</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="../-cache/get-or.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-cache/get-or.html#T"><span class="identifier">T</span></a></code>
+<p>Retrieves the cache value for the given key if it exists. Otherwise, constructs a new value via the <a href="../-cache/get-or.html#com.acornui.core.assets.Cache$getOr(com.acornui.core.assets.CacheKey((com.acornui.core.assets.Cache.getOr.T)), kotlin.Function0((com.acornui.core.assets.Cache.getOr.T)))/factory">factory</a>
+and adds the new value to the cache.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

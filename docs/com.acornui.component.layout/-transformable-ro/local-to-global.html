@@ -1,0 +1,30 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>TransformableRo.localToGlobal - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.layout</a>&nbsp;/&nbsp;<a href="index.html">TransformableRo</a>&nbsp;/&nbsp;<a href="./local-to-global.html">localToGlobal</a><br/>
+<br/>
+<h1>localToGlobal</h1>
+<a name="com.acornui.component.layout.TransformableRo$localToGlobal(com.acornui.math.Vector3)"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">localToGlobal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$localToGlobal(com.acornui.math.Vector3)/localCoord">localCoord</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector3</span></code>
+<p>Converts a coordinate from local coordinate space to global coordinate space.
+This will modify the provided coord parameter.</p>
+<h3>Parameters</h3>
+<p><a name="localCoord"></a>
+<code>localCoord</code> - The coordinate local to this Transformable. This will be mutated to become a global coordinate.</p>
+<p><strong>Return</strong><br/>
+Returns the coord</p>
+<a name="com.acornui.component.layout.TransformableRo$localToGlobal(com.acornui.math.Ray)"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">localToGlobal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$localToGlobal(com.acornui.math.Ray)/ray">ray</span><span class="symbol">:</span>&nbsp;<span class="identifier">Ray</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Ray</span></code>
+<p>Converts a ray from local coordinate space to global coordinate space.
+This will modify the provided ray parameter.</p>
+<h3>Parameters</h3>
+<p><a name="ray"></a>
+<code>ray</code> - The ray local to this Transformable. This will be mutated to become a global ray.</p>
+<p><strong>Return</strong><br/>
+Returns the ray</p>
+</BODY>
+</HTML>

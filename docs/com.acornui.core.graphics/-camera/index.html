@@ -1,0 +1,323 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Camera - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.graphics</a>&nbsp;/&nbsp;<a href="./index.html">Camera</a><br/>
+<br/>
+<h1>Camera</h1>
+<code><span class="keyword">interface </span><span class="identifier">Camera</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-camera-ro/index.html"><span class="identifier">CameraRo</span></a></code>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">Camera</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="far.html">far</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">far</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The far clipping plane distance, has to be positive</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="near.html">near</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">near</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The near clipping plane distance, has to be positive</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-camera-ro/aspect.html">aspect</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">aspect</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-ro/combined.html">combined</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">combined</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span></code>
+<p>The combined projection and view matrix.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-ro/direction.html">direction</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">direction</span><span class="symbol">: </span><span class="identifier">Vector3Ro</span></code>
+<p>The unit length direction vector of the camera</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-ro/frustum.html">frustum</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">frustum</span><span class="symbol">: </span><span class="identifier">FrustumRo</span></code>
+<p>The frustum</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-ro/inv-combined.html">invCombined</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">invCombined</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span></code>
+<p>The inverse combined projection and view matrix</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-ro/mod-tag.html">modTag</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">modTag</span><span class="symbol">: </span><span class="identifier">ModTagRo</span></code>
+<p>Incremented whenever something on this camera has changed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-ro/position.html">position</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">position</span><span class="symbol">: </span><span class="identifier">Vector3Ro</span></code>
+<p>The position of the camera</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-ro/projection.html">projection</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">projection</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span></code>
+<p>The projection matrix.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-ro/up.html">up</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">up</span><span class="symbol">: </span><span class="identifier">Vector3Ro</span></code>
+<p>The unit length up vector of the camera</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-ro/view.html">view</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">view</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span></code>
+<p>The view matrix.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-ro/viewport-height.html">viewportHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">viewportHeight</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The viewport height</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-ro/viewport-width.html">viewportWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">viewportWidth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The viewport width</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="move-to-look-at-point.html">moveToLookAtPoint</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">moveToLookAtPoint</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.Camera$moveToLookAtPoint(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Camera$moveToLookAtPoint(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Camera$moveToLookAtPoint(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Camera$moveToLookAtPoint(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/distance">distance</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;1.0f<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="move-to-look-at-rect.html">moveToLookAtRect</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">moveToLookAtRect</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.Camera$moveToLookAtRect(com.acornui.math.Rectangle, com.acornui.core.graphics.Scaling)/rect">rect</span><span class="symbol">:</span>&nbsp;<span class="identifier">Rectangle</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Camera$moveToLookAtRect(com.acornui.math.Rectangle, com.acornui.core.graphics.Scaling)/scaling">scaling</span><span class="symbol">:</span>&nbsp;<a href="../-scaling/index.html"><span class="identifier">Scaling</span></a>&nbsp;<span class="symbol">=</span>&nbsp;Scaling.FIT<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">moveToLookAtRect</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.Camera$moveToLookAtRect(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.core.graphics.Scaling)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Camera$moveToLookAtRect(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.core.graphics.Scaling)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Camera$moveToLookAtRect(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.core.graphics.Scaling)/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Camera$moveToLookAtRect(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.core.graphics.Scaling)/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Camera$moveToLookAtRect(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.core.graphics.Scaling)/scaling">scaling</span><span class="symbol">:</span>&nbsp;<a href="../-scaling/index.html"><span class="identifier">Scaling</span></a>&nbsp;<span class="symbol">=</span>&nbsp;Scaling.FIT<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Moves and/or zooms the camera to fit the given 2d bounding box into the viewport, maintaining the current
+direction.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="point-to-look-at.html">pointToLookAt</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">pointToLookAt</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.Camera$pointToLookAt(com.acornui.math.Vector3)/target">target</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">pointToLookAt</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.Camera$pointToLookAt(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Camera$pointToLookAt(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Camera$pointToLookAt(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Recalculates the direction of the camera to look at the point (x, y, z). This function assumes the up vector is
+normalized.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set-direction.html">setDirection</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setDirection</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.Camera$setDirection(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;direction.x<span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Camera$setDirection(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;direction.y<span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Camera$setDirection(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;direction.z<span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Camera$setDirection(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/keepUpOrthonormal">keepUpOrthonormal</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;true<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets this camera's direction.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setDirection</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.Camera$setDirection(com.acornui.math.Vector3Ro, kotlin.Boolean)/value">value</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3Ro</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Camera$setDirection(com.acornui.math.Vector3Ro, kotlin.Boolean)/keepUpOrthonormal">keepUpOrthonormal</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;true<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="set-position.html">setPosition</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setPosition</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.Camera$setPosition(com.acornui.math.Vector3Ro)/value">value</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3Ro</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setPosition</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.Camera$setPosition(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;position.x<span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Camera$setPosition(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;position.y<span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Camera$setPosition(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;position.z<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="set-up.html">setUp</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setUp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.Camera$setUp(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;up.x<span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Camera$setUp(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;up.y<span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Camera$setUp(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;up.z<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setUp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.Camera$setUp(com.acornui.math.Vector3Ro)/value">value</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3Ro</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="set-viewport.html">setViewport</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setViewport</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.Camera$setViewport(kotlin.Float, kotlin.Float)/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.Camera$setViewport(kotlin.Float, kotlin.Float)/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-camera-ro/canvas-to-global.html">canvasToGlobal</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">canvasToGlobal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraRo$canvasToGlobal(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/canvasCoords">canvasCoords</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$canvasToGlobal(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportX">viewportX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$canvasToGlobal(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportY">viewportY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$canvasToGlobal(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportWidth">viewportWidth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$canvasToGlobal(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportHeight">viewportHeight</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector3</span></code>
+<p>Translates a point given in screen coordinates to global space. It's the same as GLU gluUnProject, but
+does not rely on OpenGL. The x- and y-coordinate of vec are assumed to be in screen coordinates (origin is the
+top left corner, y pointing down, x pointing to the right) as reported by the canvas coordinates in
+input events. A z-coordinate of 0 will return a point on the near plane, a z-coordinate
+of 1 will return a point on the far plane. This method allows you to specify the viewport position and
+dimensions in the coordinate system expected by {@link GL20#glViewport(int, int, int, int)}, with the origin in
+the top left corner of the screen.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-ro/get-pick-ray.html">getPickRay</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getPickRay</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraRo$getPickRay(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Ray)/canvasX">canvasX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$getPickRay(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Ray)/canvasY">canvasY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$getPickRay(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Ray)/viewportX">viewportX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$getPickRay(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Ray)/viewportY">viewportY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$getPickRay(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Ray)/viewportWidth">viewportWidth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$getPickRay(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Ray)/viewportHeight">viewportHeight</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$getPickRay(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Ray)/out">out</span><span class="symbol">:</span>&nbsp;<span class="identifier">Ray</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Ray</span></code>
+<p>Creates a picking {@link Ray} from the coordinates given in global coordinates. The global coordinates origin
+is assumed to be in the top left corner, its y-axis pointing down, the x-axis  pointing to the right.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-ro/project.html">project</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">project</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraRo$project(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/globalCoords">globalCoords</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$project(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportX">viewportX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$project(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportY">viewportY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$project(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportWidth">viewportWidth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$project(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportHeight">viewportHeight</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector3</span></code>
+<p>Projects the {@link Vector3} given in global space to screen coordinates. The screen coordinate system has its
+origin in the top left, with the y-axis pointing downwards and the x-axis pointing to the right.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-d-key/extends.html">extends</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">extends</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-d-key/factory.html">factory</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">factory</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di.DKey$factory(com.acornui.core.di.Injector)/injector">injector</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-injector/index.html"><span class="identifier">Injector</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-d-key/index.html#T"><span class="identifier">T</span></a><span class="symbol">?</span></code>
+<p>A dependency key has an optional factory method, where if it provides a non-null value, the
+dependency doesn't need to be set before use, and the factory method will produce the default implementation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/-d-key/to.html">to</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">infix</span> <span class="keyword">fun </span><span class="identifier">to</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di.DKey$to(com.acornui.core.di.DKey.T)/value">value</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-d-key/index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-dependency-pair/index.html"><span class="identifier">DependencyPair</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.di/-d-key/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/intersects.html">intersects</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-camera-ro/index.html"><span class="identifier">CameraRo</span></a><span class="symbol">.</span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout$intersects(com.acornui.core.graphics.CameraRo, com.acornui.component.layout.LayoutElementRo)/element">element</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-layout-element-ro/index.html"><span class="identifier">LayoutElementRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if any part of the element's bounding rectangle can be seen by this camera.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-camera-base/index.html">CameraBase</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">CameraBase</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Camera</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

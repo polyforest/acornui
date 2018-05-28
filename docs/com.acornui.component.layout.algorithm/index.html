@@ -1,0 +1,361 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.component.layout.algorithm - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.component.layout.algorithm</a><br/>
+<br/>
+<h2>Package com.acornui.component.layout.algorithm</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-basic-layout-data/index.html">BasicLayoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">BasicLayoutData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.layout/-layout-data/index.html"><span class="identifier">LayoutData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-canvas-layout/index.html">CanvasLayout</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">CanvasLayout</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-layout-algorithm/index.html"><span class="identifier">LayoutAlgorithm</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">,</span>&nbsp;<a href="-canvas-layout-data/index.html"><span class="identifier">CanvasLayoutData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-canvas-layout-container/index.html">CanvasLayoutContainer</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">CanvasLayoutContainer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.layout/-layout-container-impl/index.html"><span class="identifier">LayoutContainerImpl</span></a><span class="symbol">&lt;</span><a href="../com.acornui.component.style/-noop-style/index.html"><span class="identifier">NoopStyle</span></a><span class="symbol">,</span>&nbsp;<a href="-canvas-layout-data/index.html"><span class="identifier">CanvasLayoutData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-canvas-layout-data/index.html">CanvasLayoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">CanvasLayoutData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-basic-layout-data/index.html"><span class="identifier">BasicLayoutData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-flow-h-align/index.html">FlowHAlign</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">FlowHAlign</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-flow-layout/index.html">FlowLayout</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">FlowLayout</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-layout-algorithm/index.html"><span class="identifier">LayoutAlgorithm</span></a><span class="symbol">&lt;</span><a href="-flow-layout-style/index.html"><span class="identifier">FlowLayoutStyle</span></a><span class="symbol">,</span>&nbsp;<a href="-flow-layout-data/index.html"><span class="identifier">FlowLayoutData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="-sequenced-layout/index.html"><span class="identifier">SequencedLayout</span></a><span class="symbol">&lt;</span><a href="-flow-layout-style/index.html"><span class="identifier">FlowLayoutStyle</span></a><span class="symbol">,</span>&nbsp;<a href="-flow-layout-data/index.html"><span class="identifier">FlowLayoutData</span></a><span class="symbol">&gt;</span></code>
+<p>A layout where the elements are placed left to right, then wraps before reaching the explicit width of the container.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-flow-layout-container/index.html">FlowLayoutContainer</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">FlowLayoutContainer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.layout/-layout-container-impl/index.html"><span class="identifier">LayoutContainerImpl</span></a><span class="symbol">&lt;</span><a href="-flow-layout-style/index.html"><span class="identifier">FlowLayoutStyle</span></a><span class="symbol">,</span>&nbsp;<a href="-flow-layout-data/index.html"><span class="identifier">FlowLayoutData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-flow-layout-data/index.html">FlowLayoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">FlowLayoutData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-basic-layout-data/index.html"><span class="identifier">BasicLayoutData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-flow-layout-style/index.html">FlowLayoutStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">FlowLayoutStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-flow-v-align/index.html">FlowVAlign</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">FlowVAlign</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-form-container/index.html">FormContainer</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">FormContainer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-grid-layout-container/index.html"><span class="identifier">GridLayoutContainer</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-grid-column/index.html">GridColumn</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">GridColumn</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Observable</span></code>
+<p>A GridColumn contains column properties for the <a href="-grid-layout/index.html">GridLayout</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-grid-layout/index.html">GridLayout</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">GridLayout</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-layout-algorithm/index.html"><span class="identifier">LayoutAlgorithm</span></a><span class="symbol">&lt;</span><a href="-grid-layout-style/index.html"><span class="identifier">GridLayoutStyle</span></a><span class="symbol">,</span>&nbsp;<a href="-grid-layout-data/index.html"><span class="identifier">GridLayoutData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-grid-layout-container/index.html">GridLayoutContainer</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">GridLayoutContainer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.layout/-layout-container-impl/index.html"><span class="identifier">LayoutContainerImpl</span></a><span class="symbol">&lt;</span><a href="-grid-layout-style/index.html"><span class="identifier">GridLayoutStyle</span></a><span class="symbol">,</span>&nbsp;<a href="-grid-layout-data/index.html"><span class="identifier">GridLayoutData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-grid-layout-data/index.html">GridLayoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">GridLayoutData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-basic-layout-data/index.html"><span class="identifier">BasicLayoutData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-grid-layout-style/index.html">GridLayoutStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">GridLayoutStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-horizontal-layout/index.html">HorizontalLayout</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">HorizontalLayout</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-layout-algorithm/index.html"><span class="identifier">LayoutAlgorithm</span></a><span class="symbol">&lt;</span><a href="-horizontal-layout-style/index.html"><span class="identifier">HorizontalLayoutStyle</span></a><span class="symbol">,</span>&nbsp;<a href="-horizontal-layout-data/index.html"><span class="identifier">HorizontalLayoutData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-horizontal-layout-container/index.html">HorizontalLayoutContainer</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">HorizontalLayoutContainer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.layout/-layout-container-impl/index.html"><span class="identifier">LayoutContainerImpl</span></a><span class="symbol">&lt;</span><a href="-horizontal-layout-style/index.html"><span class="identifier">HorizontalLayoutStyle</span></a><span class="symbol">,</span>&nbsp;<a href="-horizontal-layout-data/index.html"><span class="identifier">HorizontalLayoutData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-horizontal-layout-data/index.html">HorizontalLayoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">HorizontalLayoutData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-basic-layout-data/index.html"><span class="identifier">BasicLayoutData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-horizontal-layout-style/index.html">HorizontalLayoutStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">HorizontalLayoutStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-layout-algorithm/index.html">LayoutAlgorithm</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">LayoutAlgorithm</span><span class="symbol">&lt;</span><span class="keyword">in</span>&nbsp;<span class="identifier">S</span><span class="symbol">, </span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.layout/-layout-data/index.html"><span class="identifier">LayoutData</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-layout-data-provider/index.html"><span class="identifier">LayoutDataProvider</span></a><span class="symbol">&lt;</span><a href="-layout-algorithm/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>A LayoutAlgorithm implementation sizes and positions layout elements. This is typically paired with a
+LayoutContainer implementation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-layout-data-provider/index.html">LayoutDataProvider</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">LayoutDataProvider</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.layout/-layout-data/index.html"><span class="identifier">LayoutData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-line-info/index.html">LineInfo</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">LineInfo</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Clearable</span><span class="symbol">, </span><a href="-line-info-ro/index.html"><span class="identifier">LineInfoRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-line-info-ro/index.html">LineInfoRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">LineInfoRo</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-scale-box-layout-container/index.html">ScaleBoxLayoutContainer</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ScaleBoxLayoutContainer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.layout/-layout-container-impl/index.html"><span class="identifier">LayoutContainerImpl</span></a><span class="symbol">&lt;</span><a href="-scale-layout-style/index.html"><span class="identifier">ScaleLayoutStyle</span></a><span class="symbol">,</span>&nbsp;<a href="-scale-layout-data/index.html"><span class="identifier">ScaleLayoutData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-scale-layout/index.html">ScaleLayout</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">ScaleLayout</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-layout-algorithm/index.html"><span class="identifier">LayoutAlgorithm</span></a><span class="symbol">&lt;</span><a href="-scale-layout-style/index.html"><span class="identifier">ScaleLayoutStyle</span></a><span class="symbol">,</span>&nbsp;<a href="-scale-layout-data/index.html"><span class="identifier">ScaleLayoutData</span></a><span class="symbol">&gt;</span></code>
+<p>This layout will scale and position its elements to fit the provided dimensions of the box.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-scale-layout-data/index.html">ScaleLayoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ScaleLayoutData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-basic-layout-data/index.html"><span class="identifier">BasicLayoutData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-scale-layout-style/index.html">ScaleLayoutStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ScaleLayoutStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-sequenced-layout/index.html">SequencedLayout</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">SequencedLayout</span><span class="symbol">&lt;</span><span class="keyword">in</span>&nbsp;<span class="identifier">S</span><span class="symbol">, </span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.layout/-layout-data/index.html"><span class="identifier">LayoutData</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-layout-algorithm/index.html"><span class="identifier">LayoutAlgorithm</span></a><span class="symbol">&lt;</span><a href="-sequenced-layout/index.html#S"><span class="identifier">S</span></a><span class="symbol">,</span>&nbsp;<a href="-sequenced-layout/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>A sequenced layout is a layout where the the elements are laid out in a serial manner.
+This means that for elements {a, b, c}, b will always be spatially positioned between a and c.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-vertical-layout/index.html">VerticalLayout</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">VerticalLayout</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-layout-algorithm/index.html"><span class="identifier">LayoutAlgorithm</span></a><span class="symbol">&lt;</span><a href="-vertical-layout-style/index.html"><span class="identifier">VerticalLayoutStyle</span></a><span class="symbol">,</span>&nbsp;<a href="-vertical-layout-data/index.html"><span class="identifier">VerticalLayoutData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-vertical-layout-container/index.html">VerticalLayoutContainer</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">VerticalLayoutContainer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.layout/-layout-container-impl/index.html"><span class="identifier">LayoutContainerImpl</span></a><span class="symbol">&lt;</span><a href="-vertical-layout-style/index.html"><span class="identifier">VerticalLayoutStyle</span></a><span class="symbol">,</span>&nbsp;<a href="-vertical-layout-data/index.html"><span class="identifier">VerticalLayoutData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-vertical-layout-data/index.html">VerticalLayoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">VerticalLayoutData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-basic-layout-data/index.html"><span class="identifier">BasicLayoutData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-vertical-layout-style/index.html">VerticalLayoutStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">VerticalLayoutStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="form-label-style.html">formLabelStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">formLabelStyle</span><span class="symbol">: </span><a href="../com.acornui.component.style/-style-tag/index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="basic-layout-data.html">basicLayoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">basicLayoutData</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm$basicLayoutData(kotlin.Function1((com.acornui.component.layout.algorithm.BasicLayoutData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-basic-layout-data/index.html"><span class="identifier">BasicLayoutData</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-basic-layout-data/index.html"><span class="identifier">BasicLayoutData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="canvas.html">canvas</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">canvas</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm$canvas(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.layout.algorithm.CanvasLayoutContainer, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-canvas-layout-container/index.html"><span class="identifier">CanvasLayoutContainer</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-canvas-layout-container/index.html"><span class="identifier">CanvasLayoutContainer</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="canvas-layout-data.html">canvasLayoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">canvasLayoutData</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm$canvasLayoutData(kotlin.Function1((com.acornui.component.layout.algorithm.CanvasLayoutData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-canvas-layout-data/index.html"><span class="identifier">CanvasLayoutData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-canvas-layout-data/index.html"><span class="identifier">CanvasLayoutData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="flow.html">flow</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">flow</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm$flow(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.layout.algorithm.FlowLayoutContainer, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-flow-layout-container/index.html"><span class="identifier">FlowLayoutContainer</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-flow-layout-container/index.html"><span class="identifier">FlowLayoutContainer</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="form.html">form</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">form</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm$form(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.layout.algorithm.FormContainer, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-form-container/index.html"><span class="identifier">FormContainer</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-form-container/index.html"><span class="identifier">FormContainer</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="form-label.html">formLabel</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">formLabel</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm$formLabel(com.acornui.core.di.Owned, kotlin.String, kotlin.Function1((com.acornui.component.text.TextField, kotlin.Unit)))/text">text</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;""<span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm$formLabel(com.acornui.core.di.Owned, kotlin.String, kotlin.Function1((com.acornui.component.text.TextField, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="../com.acornui.component.text/-text-field/index.html"><span class="identifier">TextField</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.component.text/-text-field/index.html"><span class="identifier">TextField</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="grid.html">grid</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">grid</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm$grid(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.layout.algorithm.GridLayoutContainer, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-grid-layout-container/index.html"><span class="identifier">GridLayoutContainer</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-grid-layout-container/index.html"><span class="identifier">GridLayoutContainer</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="grid-column.html">gridColumn</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">gridColumn</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm$gridColumn(kotlin.Function1((com.acornui.component.layout.algorithm.GridColumn, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-grid-column/index.html"><span class="identifier">GridColumn</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-grid-column/index.html"><span class="identifier">GridColumn</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="grid-layout-data.html">gridLayoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">gridLayoutData</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm$gridLayoutData(kotlin.Function1((com.acornui.component.layout.algorithm.GridLayoutData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-grid-layout-data/index.html"><span class="identifier">GridLayoutData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-grid-layout-data/index.html"><span class="identifier">GridLayoutData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="h-group.html">hGroup</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">hGroup</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm$hGroup(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.layout.algorithm.HorizontalLayoutContainer, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-horizontal-layout-container/index.html"><span class="identifier">HorizontalLayoutContainer</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-horizontal-layout-container/index.html"><span class="identifier">HorizontalLayoutContainer</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="scale-box.html">scaleBox</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">scaleBox</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm$scaleBox(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.layout.algorithm.ScaleBoxLayoutContainer, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-scale-box-layout-container/index.html"><span class="identifier">ScaleBoxLayoutContainer</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-scale-box-layout-container/index.html"><span class="identifier">ScaleBoxLayoutContainer</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="v-group.html">vGroup</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">vGroup</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm$vGroup(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.layout.algorithm.VerticalLayoutContainer, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-vertical-layout-container/index.html"><span class="identifier">VerticalLayoutContainer</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-vertical-layout-container/index.html"><span class="identifier">VerticalLayoutContainer</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

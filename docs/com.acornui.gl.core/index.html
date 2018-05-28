@@ -1,0 +1,357 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.gl.core - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.gl.core</a><br/>
+<br/>
+<h2>Package com.acornui.gl.core</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-buffer-texture/index.html">BufferTexture</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">BufferTexture</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-gl-texture-base/index.html"><span class="identifier">GlTextureBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-buffer-usage/index.html">BufferUsage</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">BufferUsage</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-default-shader-program/index.html">DefaultShaderProgram</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DefaultShaderProgram</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-shader-program-base/index.html"><span class="identifier">ShaderProgramBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-framebuffer/index.html">Framebuffer</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Framebuffer</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-full-screen-framebuffer/index.html">FullScreenFramebuffer</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">FullScreenFramebuffer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a></code>
+<p>Wraps a frame buffer, keeping it the size of the screen.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl20/index.html">Gl20</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Gl20</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl-active-info-ref/index.html">GlActiveInfoRef</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">GlActiveInfoRef</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl-buffer-ref.html">GlBufferRef</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">GlBufferRef</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl-framebuffer-ref.html">GlFramebufferRef</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">GlFramebufferRef</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl-program-ref.html">GlProgramRef</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">GlProgramRef</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl-renderbuffer-ref.html">GlRenderbufferRef</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">GlRenderbufferRef</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl-shader-ref.html">GlShaderRef</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">GlShaderRef</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl-state/index.html">GlState</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">GlState</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<p>GlState stores OpenGl state information necessary for knowing whether basic operations can be batched.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl-texture-base/index.html">GlTextureBase</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">GlTextureBase</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.graphics/-texture/index.html"><span class="identifier">Texture</span></a></code>
+<p>Textures are provided by the AssetManager. The Renderer implementation will cast the Texture to the back-end's
+implementation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl-texture-ref.html">GlTextureRef</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">GlTextureRef</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-gl-uniform-location-ref.html">GlUniformLocationRef</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">GlUniformLocationRef</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-index-feed/index.html">IndexFeed</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">IndexFeed</span></code>
+<p>An <a href="-index-feed/index.html">IndexFeed</a> provides a way to push indices to an index buffer.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-rgb-texture/index.html">RgbTexture</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">RgbTexture</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-gl-texture-base/index.html"><span class="identifier">GlTextureBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-shader-batch/index.html">ShaderBatch</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ShaderBatch</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span><span class="symbol">, </span><a href="-vertex-feed/index.html"><span class="identifier">VertexFeed</span></a><span class="symbol">, </span><a href="-index-feed/index.html"><span class="identifier">IndexFeed</span></a></code>
+<p>A <a href="-shader-batch/index.html">ShaderBatch</a> is good for reducing draw calls by combining opengl buffer and draw calls.
+This is used in conjunction with <a href="-gl-state/index.html">GlState</a>, which keeps track of changes that would require a flip.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-shader-batch-impl/index.html">ShaderBatchImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ShaderBatchImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-shader-batch/index.html"><span class="identifier">ShaderBatch</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-shader-program/index.html">ShaderProgram</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ShaderProgram</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-shader-program-base/index.html">ShaderProgramBase</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">ShaderProgramBase</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-shader-program/index.html"><span class="identifier">ShaderProgram</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-static-shader-batch-impl/index.html">StaticShaderBatchImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">StaticShaderBatchImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-shader-batch/index.html"><span class="identifier">ShaderBatch</span></a><span class="symbol">, </span><span class="identifier">Clearable</span><span class="symbol">, </span><span class="identifier">Disposable</span></code>
+<p>A static shader batch will remember the draw calls, allowing the batch to be rendered without needing to buffer data
+at a later time.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-texture-mag-filter/index.html">TextureMagFilter</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">TextureMagFilter</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-texture-min-filter/index.html">TextureMinFilter</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">TextureMinFilter</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-texture-pixel-format/index.html">TexturePixelFormat</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">TexturePixelFormat</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-texture-pixel-type/index.html">TexturePixelType</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">TexturePixelType</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-texture-target/index.html">TextureTarget</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">TextureTarget</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-texture-wrap-mode/index.html">TextureWrapMode</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">TextureWrapMode</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-vertex/index.html">Vertex</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Vertex</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Clearable</span><span class="symbol">, </span><a href="-vertex-ro/index.html"><span class="identifier">VertexRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-vertex-attribute/index.html">VertexAttribute</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">VertexAttribute</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-vertex-attribute-usage/index.html">VertexAttributeUsage</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">VertexAttributeUsage</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-vertex-attributes/index.html">VertexAttributes</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">VertexAttributes</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-vertex-feed/index.html">VertexFeed</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">VertexFeed</span></code>
+<p>A <a href="-vertex-feed/index.html">VertexFeed</a> provides a way to push vertex information.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-vertex-ro/index.html">VertexRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">VertexRo</span></code>
+<p>A read-only interface to a vertex.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-wrapped-gl20/index.html">WrappedGl20</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">WrappedGl20</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-gl20/index.html"><span class="identifier">Gl20</span></a></code>
+<p>A class that wraps all Gl20 methods with a before() and after()
+May be used for such things as debugging or profiling.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Exceptions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-shader-compile-exception/index.html">ShaderCompileException</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ShaderCompileException</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html"><span class="identifier">Throwable</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-d-e-f-a-u-l-t_-s-h-a-d-e-r_-h-e-a-d-e-r.html">DEFAULT_SHADER_HEADER</a></p>
+</td>
+<td>
+<code><span class="keyword">const</span> <span class="keyword">val </span><span class="identifier">DEFAULT_SHADER_HEADER</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="standard-vertex-attributes.html">standardVertexAttributes</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">standardVertexAttributes</span><span class="symbol">: </span><a href="-vertex-attributes/index.html"><span class="identifier">VertexAttributes</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="push-quad-indices.html">pushQuadIndices</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-index-feed/index.html"><span class="identifier">IndexFeed</span></a><span class="symbol">.</span><span class="identifier">pushQuadIndices</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="rgb-texture.html">rgbTexture</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">rgbTexture</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core$rgbTexture(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlState, com.acornui.core.graphics.RgbData, kotlin.Function1((com.acornui.gl.core.RgbTexture, kotlin.Unit)))/gl">gl</span><span class="symbol">:</span>&nbsp;<a href="-gl20/index.html"><span class="identifier">Gl20</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$rgbTexture(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlState, com.acornui.core.graphics.RgbData, kotlin.Function1((com.acornui.gl.core.RgbTexture, kotlin.Unit)))/glState">glState</span><span class="symbol">:</span>&nbsp;<a href="-gl-state/index.html"><span class="identifier">GlState</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$rgbTexture(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlState, com.acornui.core.graphics.RgbData, kotlin.Function1((com.acornui.gl.core.RgbTexture, kotlin.Unit)))/rgbData">rgbData</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.graphics/-rgb-data/index.html"><span class="identifier">RgbData</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$rgbTexture(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlState, com.acornui.core.graphics.RgbData, kotlin.Function1((com.acornui.gl.core.RgbTexture, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-rgb-texture/index.html"><span class="identifier">RgbTexture</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-rgb-texture/index.html"><span class="identifier">RgbTexture</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="scissor.html">scissor</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-gl20/index.html"><span class="identifier">Gl20</span></a><span class="symbol">.</span><span class="identifier">scissor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core$scissor(com.acornui.gl.core.Gl20, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$scissor(com.acornui.gl.core.Gl20, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$scissor(com.acornui.gl.core.Gl20, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$scissor(com.acornui.gl.core.Gl20, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="-gl-state/index.html"><span class="identifier">GlState</span></a><span class="symbol">.</span><span class="identifier">scissor</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core$scissor(com.acornui.gl.core.GlState, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Function0((kotlin.Unit)))/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$scissor(com.acornui.gl.core.GlState, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Function0((kotlin.Unit)))/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$scissor(com.acornui.gl.core.GlState, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Function0((kotlin.Unit)))/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$scissor(com.acornui.gl.core.GlState, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Function0((kotlin.Unit)))/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$scissor(com.acornui.gl.core.GlState, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Function0((kotlin.Unit)))/inner">inner</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="uniform-matrix4fv.html">uniformMatrix4fv</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-gl20/index.html"><span class="identifier">Gl20</span></a><span class="symbol">.</span><span class="identifier">uniformMatrix4fv</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core$uniformMatrix4fv(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlUniformLocationRef, kotlin.Boolean, com.acornui.math.Matrix4Ro)/location">location</span><span class="symbol">:</span>&nbsp;<a href="-gl-uniform-location-ref.html"><span class="identifier">GlUniformLocationRef</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$uniformMatrix4fv(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlUniformLocationRef, kotlin.Boolean, com.acornui.math.Matrix4Ro)/transpose">transpose</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$uniformMatrix4fv(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlUniformLocationRef, kotlin.Boolean, com.acornui.math.Matrix4Ro)/value">value</span><span class="symbol">:</span>&nbsp;<span class="identifier">Matrix4Ro</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="-gl20/index.html"><span class="identifier">Gl20</span></a><span class="symbol">.</span><span class="identifier">uniformMatrix4fv</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core$uniformMatrix4fv(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlUniformLocationRef, kotlin.Boolean, kotlin.collections.List((kotlin.Float)))/location">location</span><span class="symbol">:</span>&nbsp;<a href="-gl-uniform-location-ref.html"><span class="identifier">GlUniformLocationRef</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$uniformMatrix4fv(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlUniformLocationRef, kotlin.Boolean, kotlin.collections.List((kotlin.Float)))/transpose">transpose</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core$uniformMatrix4fv(com.acornui.gl.core.Gl20, com.acornui.gl.core.GlUniformLocationRef, kotlin.Boolean, kotlin.collections.List((kotlin.Float)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

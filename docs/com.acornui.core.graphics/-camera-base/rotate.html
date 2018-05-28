@@ -1,0 +1,54 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>CameraBase.rotate - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.graphics</a>&nbsp;/&nbsp;<a href="index.html">CameraBase</a>&nbsp;/&nbsp;<a href="./rotate.html">rotate</a><br/>
+<br/>
+<h1>rotate</h1>
+<a name="com.acornui.core.graphics.CameraBase$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)"></a>
+<code><span class="keyword">fun </span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/radians">radians</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/axisX">axisX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/axisY">axisY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/axisZ">axisZ</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Rotates the direction and up vector of this camera by the given angle around the given axis. The direction and
+up vector will not be orthogonalized.</p>
+<h3>Parameters</h3>
+<p><a name="radians"></a>
+<code>radians</code> - the angle in radians</p>
+<p><a name="axisX"></a>
+<code>axisX</code> - the x-component of the axis</p>
+<p><a name="axisY"></a>
+<code>axisY</code> - the y-component of the axis</p>
+<p><a name="axisZ"></a>
+<code>axisZ</code> - the z-component of the axis</p>
+<a name="com.acornui.core.graphics.CameraBase$rotate(com.acornui.math.Vector3Ro, kotlin.Float)"></a>
+<code><span class="keyword">fun </span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$rotate(com.acornui.math.Vector3Ro, kotlin.Float)/axis">axis</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3Ro</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$rotate(com.acornui.math.Vector3Ro, kotlin.Float)/radians">radians</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Rotates the direction and up vector of this camera by the given angle around the given axis. The direction and up vector
+will not be orthogonalized.</p>
+<h3>Parameters</h3>
+<p><a name="axis"></a>
+<code>axis</code> - the axis to rotate around</p>
+<p><a name="radians"></a>
+<code>radians</code> - the angle</p>
+<a name="com.acornui.core.graphics.CameraBase$rotate(kotlin.Float)"></a>
+<code><span class="keyword">fun </span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$rotate(kotlin.Float)/radians">radians</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Rotates the camera by the given angle around the direction vector. The direction and up vector will not be orthogonalized.</p>
+<h3>Parameters</h3>
+<p><a name="radians"></a>
+<code>radians</code> - </p>
+<a name="com.acornui.core.graphics.CameraBase$rotate(com.acornui.math.Matrix4Ro)"></a>
+<code><span class="keyword">fun </span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$rotate(com.acornui.math.Matrix4Ro)/transform">transform</span><span class="symbol">:</span>&nbsp;<span class="identifier">Matrix4Ro</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Rotates the direction and up vector of this camera by the given rotation matrix. The direction and up vector will not be
+orthogonalized.</p>
+<h3>Parameters</h3>
+<p><a name="transform"></a>
+<code>transform</code> - The rotation matrix</p>
+<a name="com.acornui.core.graphics.CameraBase$rotate(com.acornui.math.QuaternionRo)"></a>
+<code><span class="keyword">fun </span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$rotate(com.acornui.math.QuaternionRo)/quat">quat</span><span class="symbol">:</span>&nbsp;<span class="identifier">QuaternionRo</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Rotates the direction and up vector of this camera by the given {@link Quaternion}. The direction and up vector will not be
+orthogonalized.</p>
+<h3>Parameters</h3>
+<p><a name="quat"></a>
+<code>quat</code> - The quaternion</p>
+</BODY>
+</HTML>

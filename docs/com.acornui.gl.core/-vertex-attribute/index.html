@@ -1,0 +1,87 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>VertexAttribute - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.gl.core</a>&nbsp;/&nbsp;<a href="./index.html">VertexAttribute</a><br/>
+<br/>
+<h1>VertexAttribute</h1>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">VertexAttribute</span></code>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">VertexAttribute</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.VertexAttribute$<init>(kotlin.Int, kotlin.Boolean, kotlin.Int, kotlin.Int)/numComponents">numComponents</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.VertexAttribute$<init>(kotlin.Int, kotlin.Boolean, kotlin.Int, kotlin.Int)/normalized">normalized</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.VertexAttribute$<init>(kotlin.Int, kotlin.Boolean, kotlin.Int, kotlin.Int)/type">type</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.VertexAttribute$<init>(kotlin.Int, kotlin.Boolean, kotlin.Int, kotlin.Int)/usage">usage</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="component-size.html">componentSize</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">componentSize</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The number of bytes per component.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="normalized.html">normalized</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">normalized</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true and <a href="type.html">type</a> is not <a href="../-gl20/-companion/-f-l-o-a-t.html">Gl20.FLOAT</a>, the data will be mapped to the range -1 to 1 for signed types and
+the range 0 to 1 for unsigned types.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="num-components.html">numComponents</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">numComponents</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The number of components this attribute has.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="size.html">size</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">size</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The total number of bytes for this vertex component. (<a href="num-components.html">numComponents</a> * <a href="component-size.html">componentSize</a>)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="type.html">type</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">type</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The OpenGL type of each component, e.g. <a href="../-gl20/-companion/-f-l-o-a-t.html">Gl20.FLOAT</a> or <a href="../-gl20/-companion/-u-n-s-i-g-n-e-d_-b-y-t-e.html">Gl20.UNSIGNED_BYTE</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="usage.html">usage</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">usage</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>How the property on the <a href="../-vertex/index.html">Vertex</a> matches to the <a href="../-shader-program/index.html">ShaderProgram</a> attribute.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

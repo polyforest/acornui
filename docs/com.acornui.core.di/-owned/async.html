@@ -1,0 +1,24 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Owned.async - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.di</a>&nbsp;/&nbsp;<a href="index.html">Owned</a>&nbsp;/&nbsp;<a href="./async.html">async</a><br/>
+<br/>
+<h1>async</h1>
+<a name="com.acornui.core.di.Owned$async(kotlin.SuspendFunction0((com.acornui.core.di.Owned.async.T)))"></a>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <span class="identifier">async</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di.Owned$async(kotlin.SuspendFunction0((com.acornui.core.di.Owned.async.T)))/work">work</span><span class="symbol">:</span>&nbsp;<span class="identifier">Work</span><span class="symbol">&lt;</span><a href="async.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Deferred</span><span class="symbol">&lt;</span><a href="async.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Wraps <a href="#">com.acornui.async.async</a> with a check that will fail the task if this object is disposed.</p>
+<p>Example usage:</p>
+<pre><code>async {
+  delay(3f)
+} then {
+  println("I'm done!")
+} catch {
+  println("I failed.")
+}
+</code></pre>
+</BODY>
+</HTML>

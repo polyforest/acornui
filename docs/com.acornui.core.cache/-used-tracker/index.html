@@ -1,0 +1,96 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>UsedTracker - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.cache</a>&nbsp;/&nbsp;<a href="./index.html">UsedTracker</a><br/>
+<br/>
+<h1>UsedTracker</h1>
+<code><span class="keyword">class </span><span class="identifier">UsedTracker</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span></code>
+<p>Similar to <a href="../-indexed-cache/index.html">IndexedCache</a>, to use this class, make a series of <a href="mark-used.html">markUsed</a> calls to indicate that an element was ued,
+then call <a href="for-each.html">forEach</a> to iterate over the elements that were marked last set, but weren't marked this set, then call
+<a href="flip.html">flip</a> to set the used elements as unused for the next set.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">UsedTracker</span><span class="symbol">(</span><span class="symbol">)</span></code>
+<p>Similar to <a href="../-indexed-cache/index.html">IndexedCache</a>, to use this class, make a series of <a href="mark-used.html">markUsed</a> calls to indicate that an element was ued,
+then call <a href="for-each.html">forEach</a> to iterate over the elements that were marked last set, but weren't marked this set, then call
+<a href="flip.html">flip</a> to set the used elements as unused for the next set.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="flip.html">flip</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">flip</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Clears the unused list and moves the current used list into the unused list.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="for-each.html">forEach</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">forEach</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.cache.UsedTracker$forEach(kotlin.Function1((com.acornui.core.cache.UsedTracker.E, kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="identifier">element</span><span class="symbol">:</span>&nbsp;<a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Iterates over the unused items.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="forget.html">forget</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">forget</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.cache.UsedTracker$forget(com.acornui.core.cache.UsedTracker.E)/element">element</span><span class="symbol">:</span>&nbsp;<a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Removes the given element from the unused list.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="mark-used.html">markUsed</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">markUsed</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.cache.UsedTracker$markUsed(com.acornui.core.cache.UsedTracker.E)/element">element</span><span class="symbol">:</span>&nbsp;<a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Marks an element as used. <a href="mark-used.html#com.acornui.core.cache.UsedTracker$markUsed(com.acornui.core.cache.UsedTracker.E)/element">element</a> will not be included in a <a href="for-each.html">forEach</a> call until after the next <a href="flip.html">flip</a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../hide-and-flip.html">hideAndFlip</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span> <a href="./index.html"><span class="identifier">UsedTracker</span></a><span class="symbol">&lt;</span><a href="../hide-and-flip.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">hideAndFlip</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets visible to false on all unused cache instances before flipping.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../remove-and-flip.html">removeAndFlip</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span> <a href="./index.html"><span class="identifier">UsedTracker</span></a><span class="symbol">&lt;</span><a href="../remove-and-flip.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">removeAndFlip</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.cache$removeAndFlip(com.acornui.core.cache.UsedTracker((com.acornui.core.cache.removeAndFlip.E)), com.acornui.component.ElementContainer((com.acornui.component.UiComponent)))/parent">parent</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-element-container.html"><span class="identifier">ElementContainer</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Removes all unused cache instances from the given container before flipping.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

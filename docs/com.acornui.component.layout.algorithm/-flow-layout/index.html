@@ -1,0 +1,85 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>FlowLayout - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.layout.algorithm</a>&nbsp;/&nbsp;<a href="./index.html">FlowLayout</a><br/>
+<br/>
+<h1>FlowLayout</h1>
+<code><span class="keyword">class </span><span class="identifier">FlowLayout</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-layout-algorithm/index.html"><span class="identifier">LayoutAlgorithm</span></a><span class="symbol">&lt;</span><a href="../-flow-layout-style/index.html"><span class="identifier">FlowLayoutStyle</span></a><span class="symbol">,</span>&nbsp;<a href="../-flow-layout-data/index.html"><span class="identifier">FlowLayoutData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../-sequenced-layout/index.html"><span class="identifier">SequencedLayout</span></a><span class="symbol">&lt;</span><a href="../-flow-layout-style/index.html"><span class="identifier">FlowLayoutStyle</span></a><span class="symbol">,</span>&nbsp;<a href="../-flow-layout-data/index.html"><span class="identifier">FlowLayoutData</span></a><span class="symbol">&gt;</span></code>
+<p>A layout where the elements are placed left to right, then wraps before reaching the explicit width of the container.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">FlowLayout</span><span class="symbol">(</span><span class="symbol">)</span></code>
+<p>A layout where the elements are placed left to right, then wraps before reaching the explicit width of the container.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="lines.html">lines</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">lines</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-line-info-ro/index.html"><span class="identifier">LineInfoRo</span></a><span class="symbol">&gt;</span></code>
+<p>The list of current lines. This is valid after a layout.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="calculate-size-constraints.html">calculateSizeConstraints</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">calculateSizeConstraints</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm.FlowLayout$calculateSizeConstraints(kotlin.collections.List((com.acornui.component.layout.LayoutElementRo)), com.acornui.component.layout.algorithm.FlowLayoutStyle, com.acornui.component.layout.SizeConstraints)/elements">elements</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component.layout/-layout-element-ro/index.html"><span class="identifier">LayoutElementRo</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.FlowLayout$calculateSizeConstraints(kotlin.collections.List((com.acornui.component.layout.LayoutElementRo)), com.acornui.component.layout.algorithm.FlowLayoutStyle, com.acornui.component.layout.SizeConstraints)/props">props</span><span class="symbol">:</span>&nbsp;<a href="../-flow-layout-style/index.html"><span class="identifier">FlowLayoutStyle</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.FlowLayout$calculateSizeConstraints(kotlin.collections.List((com.acornui.component.layout.LayoutElementRo)), com.acornui.component.layout.algorithm.FlowLayoutStyle, com.acornui.component.layout.SizeConstraints)/out">out</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-size-constraints/index.html"><span class="identifier">SizeConstraints</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Calculates the minimum and maximum dimensions of this layout.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="create-layout-data.html">createLayoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">createLayoutData</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-flow-layout-data/index.html"><span class="identifier">FlowLayoutData</span></a></code>
+<p>A factory method to create a new layout data object for use in this layout.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-element-insertion-index.html">getElementInsertionIndex</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getElementInsertionIndex</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm.FlowLayout$getElementInsertionIndex(kotlin.Float, kotlin.Float, kotlin.collections.List((com.acornui.component.layout.LayoutElement)), com.acornui.component.layout.algorithm.FlowLayoutStyle)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.FlowLayout$getElementInsertionIndex(kotlin.Float, kotlin.Float, kotlin.collections.List((com.acornui.component.layout.LayoutElement)), com.acornui.component.layout.algorithm.FlowLayoutStyle)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.FlowLayout$getElementInsertionIndex(kotlin.Float, kotlin.Float, kotlin.collections.List((com.acornui.component.layout.LayoutElement)), com.acornui.component.layout.algorithm.FlowLayoutStyle)/elements">elements</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component.layout/-layout-element/index.html"><span class="identifier">LayoutElement</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.FlowLayout$getElementInsertionIndex(kotlin.Float, kotlin.Float, kotlin.collections.List((com.acornui.component.layout.LayoutElement)), com.acornui.component.layout.algorithm.FlowLayoutStyle)/props">props</span><span class="symbol">:</span>&nbsp;<a href="../-flow-layout-style/index.html"><span class="identifier">FlowLayoutStyle</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Returns the index of the element at the given position.
+This assumes the elements were laid out via <a href="../-layout-algorithm/layout.html">layout</a>.
+the return value will be an index in the range of 0 to elements.size</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="layout.html">layout</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">layout</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm.FlowLayout$layout(kotlin.Float, kotlin.Float, kotlin.collections.List((com.acornui.component.layout.LayoutElement)), com.acornui.component.layout.algorithm.FlowLayoutStyle, com.acornui.math.Bounds)/explicitWidth">explicitWidth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.FlowLayout$layout(kotlin.Float, kotlin.Float, kotlin.collections.List((com.acornui.component.layout.LayoutElement)), com.acornui.component.layout.algorithm.FlowLayoutStyle, com.acornui.math.Bounds)/explicitHeight">explicitHeight</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.FlowLayout$layout(kotlin.Float, kotlin.Float, kotlin.collections.List((com.acornui.component.layout.LayoutElement)), com.acornui.component.layout.algorithm.FlowLayoutStyle, com.acornui.math.Bounds)/elements">elements</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component.layout/-layout-element/index.html"><span class="identifier">LayoutElement</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.FlowLayout$layout(kotlin.Float, kotlin.Float, kotlin.collections.List((com.acornui.component.layout.LayoutElement)), com.acornui.component.layout.algorithm.FlowLayoutStyle, com.acornui.math.Bounds)/props">props</span><span class="symbol">:</span>&nbsp;<a href="../-flow-layout-style/index.html"><span class="identifier">FlowLayoutStyle</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.algorithm.FlowLayout$layout(kotlin.Float, kotlin.Float, kotlin.collections.List((com.acornui.component.layout.LayoutElement)), com.acornui.component.layout.algorithm.FlowLayoutStyle, com.acornui.math.Bounds)/out">out</span><span class="symbol">:</span>&nbsp;<span class="identifier">Bounds</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sizes and positions the given layout elements.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

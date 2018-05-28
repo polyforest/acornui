@@ -1,0 +1,144 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.core.focus - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.core.focus</a><br/>
+<br/>
+<h2>Package com.acornui.core.focus</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-fake-focus-mouse/index.html">FakeFocusMouse</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">FakeFocusMouse</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code>
+<p>Dispatches mouse events when using SPACE or ENTER key presses on the focused element.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-focus-attachment/index.html">FocusAttachment</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">FocusAttachment</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-focus-change-result/index.html">FocusChangeResult</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">FocusChangeResult</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-focus-container/index.html">FocusContainer</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">FocusContainer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.layout/-layout-element-ro/index.html"><span class="identifier">LayoutElementRo</span></a></code>
+<p>A demarcation for focus order. That is, focus order is considered to be relative to the closest FocusContainer
+ancestor.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-focus-manager/index.html">FocusManager</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">FocusManager</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-focus-manager-impl/index.html">FocusManagerImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">FocusManagerImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-focus-manager/index.html"><span class="identifier">FocusManager</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-focusable/index.html">Focusable</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Focusable</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a></code>
+<p>An interface for a component that may be focused.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-simple-highlight/index.html">SimpleHighlight</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">SimpleHighlight</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-container-impl/index.html"><span class="identifier">ContainerImpl</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="first-focusable-child.html">firstFocusableChild</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="../com.acornui.component/-container.html"><span class="identifier">Container</span></a><span class="symbol">.</span><span class="identifier">firstFocusableChild</span><span class="symbol">: </span><a href="-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">?</span></code>
+<p>Finds the first focusable child in this container with focusEnabled == true.
+If no focusable element is found, null is returned.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="blurred.html">blurred</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">.</span><span class="identifier">blurred</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="fake-focus-mouse.html">fakeFocusMouse</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">fakeFocusMouse</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-fake-focus-mouse/index.html"><span class="identifier">FakeFocusMouse</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="focus-attachment.html">focusAttachment</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">.</span><span class="identifier">focusAttachment</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-focus-attachment/index.html"><span class="identifier">FocusAttachment</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="focus-first.html">focusFirst</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">.</span><span class="identifier">focusFirst</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="focused.html">focused</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">.</span><span class="identifier">focused</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="owns-focused.html">ownsFocused</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">.</span><span class="identifier">ownsFocused</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this component owns the currently focused element.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,53 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ElementParentRo - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component</a>&nbsp;/&nbsp;<a href="./index.html">ElementParentRo</a><br/>
+<br/>
+<h1>ElementParentRo</h1>
+<code><span class="keyword">interface </span><span class="identifier">ElementParentRo</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="elements.html">elements</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">elements</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-element-container-ro.html">ElementContainerRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ElementContainerRo</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-container-ro.html"><span class="identifier">ContainerRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">ElementParentRo</span></a><span class="symbol">&lt;</span><a href="../-element-container-ro.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-element-parent/index.html">ElementParent</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ElementParent</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ElementParentRo</span></a><span class="symbol">&lt;</span><a href="../-element-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>An element parent is an interface that externally exposes the ability to add and remove elements.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.gl.component.text/-text-span-element-ro/index.html">TextSpanElementRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">TextSpanElementRo</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.gl.component.text/-text-element-ro/index.html"><span class="identifier">TextElementRo</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ElementParentRo</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.gl.component.text/-text-span-element-ro/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,128 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>DragAttachment - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.input.interaction</a>&nbsp;/&nbsp;<a href="./index.html">DragAttachment</a><br/>
+<br/>
+<h1>DragAttachment</h1>
+<code><span class="keyword">class </span><span class="identifier">DragAttachment</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<p>A behavior for a touch down, touch move, then touch up on a target UiComponent.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">DragAttachment</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction.DragAttachment$<init>(com.acornui.component.UiComponent, kotlin.Float)/target">target</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.interaction.DragAttachment$<init>(com.acornui.component.UiComponent, kotlin.Float)/affordance">affordance</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;DEFAULT_AFFORDANCE<span class="symbol">)</span></code>
+<p>A behavior for a touch down, touch move, then touch up on a target UiComponent.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="affordance.html">affordance</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">affordance</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The manhattan distance between the start drag position and the current position before dragging will begin.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="drag.html">drag</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">drag</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-drag-interaction/index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<p>Dispatched on each move during a drag.
+This will not be dispatched if the target is not on the stage.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="drag-end.html">dragEnd</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">dragEnd</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-drag-interaction/index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<p>Dispatched when the drag has completed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="drag-start.html">dragStart</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">dragStart</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-drag-interaction/index.html"><span class="identifier">DragInteraction</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<p>Dispatched when the drag has passed the <a href="affordance.html">affordance</a> distance.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="enabled.html">enabled</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">enabled</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true, drag operations are enabled.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="is-dragging.html">isDragging</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">isDragging</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>The movement has passed the affordance, and is currently dragging.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="target.html">target</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">target</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="stop.html">stop</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">stop</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-d-e-f-a-u-l-t_-a-f-f-o-r-d-a-n-c-e.html">DEFAULT_AFFORDANCE</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">DEFAULT_AFFORDANCE</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The manhattan distance the target must be dragged before the dragStart and drag events begin.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

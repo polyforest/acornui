@@ -1,0 +1,25 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>FileIoManager.pickFileForSave - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.file</a>&nbsp;/&nbsp;<a href="index.html">FileIoManager</a>&nbsp;/&nbsp;<a href="./pick-file-for-save.html">pickFileForSave</a><br/>
+<br/>
+<h1>pickFileForSave</h1>
+<a name="com.acornui.file.FileIoManager$pickFileForSave(kotlin.collections.List((com.acornui.file.FileFilterGroup)), kotlin.String, kotlin.Function1((com.acornui.file.FileWriter, kotlin.Unit)))"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">pickFileForSave</span><span class="symbol">(</span><span class="identifier" id="com.acornui.file.FileIoManager$pickFileForSave(kotlin.collections.List((com.acornui.file.FileFilterGroup)), kotlin.String, kotlin.Function1((com.acornui.file.FileWriter, kotlin.Unit)))/fileFilterGroups">fileFilterGroups</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-file-filter-group/index.html"><span class="identifier">FileFilterGroup</span></a><span class="symbol">&gt;</span><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="com.acornui.file.FileIoManager$pickFileForSave(kotlin.collections.List((com.acornui.file.FileFilterGroup)), kotlin.String, kotlin.Function1((com.acornui.file.FileWriter, kotlin.Unit)))/defaultExtension">defaultExtension</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="com.acornui.file.FileIoManager$pickFileForSave(kotlin.collections.List((com.acornui.file.FileFilterGroup)), kotlin.String, kotlin.Function1((com.acornui.file.FileWriter, kotlin.Unit)))/onSuccess">onSuccess</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../-file-writer/index.html"><span class="identifier">FileWriter</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Invokes native file picker to select an existing or new file for saving to disk <a href="pick-file-for-save.html#com.acornui.file.FileIoManager$pickFileForSave(kotlin.collections.List((com.acornui.file.FileFilterGroup)), kotlin.String, kotlin.Function1((com.acornui.file.FileWriter, kotlin.Unit)))/onSuccess">onSuccess</a>.</p>
+<h3>Parameters</h3>
+<p><a name="fileFilterGroups"></a>
+<code>fileFilterGroups</code> - a list of groups of extensions to filter picking selection</p>
+<p><a name="defaultExtension"></a>
+<code>defaultExtension</code> - an extension to ensure is the suffix of the filename (e.g. 'filename' -&gt; 'filename.txt')</p>
+<p><a name="onSuccess"></a>
+<code>onSuccess</code> - callback using a <a href="../-file-writer/index.html">FileWriter</a> to be executed upon a successful pick</p>
+<p><strong>See Also</strong><br/>
+<p><a href="../-file-filter-group/index.html">FileFilterGroup</a></p>
+</p>
+</BODY>
+</HTML>

@@ -1,0 +1,83 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>SelectionManagerImpl - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.selection</a>&nbsp;/&nbsp;<a href="./index.html">SelectionManagerImpl</a><br/>
+<br/>
+<h1>SelectionManagerImpl</h1>
+<code><span class="keyword">class </span><span class="identifier">SelectionManagerImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-selection-manager/index.html"><span class="identifier">SelectionManager</span></a></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">SelectionManagerImpl</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="selection.html">selection</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">selection</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-selection-range/index.html"><span class="identifier">SelectionRange</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="selection-changed.html">selectionChanged</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">selectionChanged</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-selection-range/index.html"><span class="identifier">SelectionRange</span></a><span class="symbol">&gt;</span><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-selection-range/index.html"><span class="identifier">SelectionRange</span></a><span class="symbol">&gt;</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<p>Dispatched when the <a href="../-selection-manager/selection.html">selection</a> value changes.
+The handler should be (oldSelection: List, newSelection: List)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-selection-manager/clear.html">clear</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clear</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../contains.html">contains</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-selection-manager/index.html"><span class="identifier">SelectionManager</span></a><span class="symbol">.</span><span class="identifier">contains</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.selection$contains(com.acornui.core.selection.SelectionManager, com.acornui.core.selection.Selectable, kotlin.Int)/target">target</span><span class="symbol">:</span>&nbsp;<a href="../-selectable.html"><span class="identifier">Selectable</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.selection$contains(com.acornui.core.selection.SelectionManager, com.acornui.core.selection.Selectable, kotlin.Int)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

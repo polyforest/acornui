@@ -1,0 +1,135 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Sprite - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.gl.component</a>&nbsp;/&nbsp;<a href="./index.html">Sprite</a><br/>
+<br/>
+<h1>Sprite</h1>
+<code><span class="keyword">class </span><span class="identifier">Sprite</span></code>
+<p>A Sprite represents a Quad region of a Texture. It can be drawn.</p>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">Sprite</span><span class="symbol">(</span><span class="symbol">)</span></code>
+<p>A Sprite represents a Quad region of a Texture. It can be drawn.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="blend-mode.html">blendMode</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">blendMode</span><span class="symbol">: </span><a href="../../com.acornui.core.graphics/-blend-mode/index.html"><span class="identifier">BlendMode</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="is-rotated.html">isRotated</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">isRotated</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="natural-height.html">naturalHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">naturalHeight</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="natural-width.html">naturalWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">naturalWidth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="premultiplied-alpha.html">premultipliedAlpha</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">premultipliedAlpha</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="texture.html">texture</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">texture</span><span class="symbol">: </span><a href="../../com.acornui.core.graphics/-texture/index.html"><span class="identifier">Texture</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="draw.html">draw</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">draw</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.component.Sprite$draw(com.acornui.gl.core.GlState, com.acornui.graphics.ColorRo)/glState">glState</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.gl.core/-gl-state/index.html"><span class="identifier">GlState</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$draw(com.acornui.gl.core.GlState, com.acornui.graphics.ColorRo)/colorTint">colorTint</span><span class="symbol">:</span>&nbsp;<span class="identifier">ColorRo</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Draws this sprite.
+Remember to set the camera on the <a href="../../com.acornui.gl.core/-gl-state/index.html">GlState</a> object before drawing.
+If <a href="update-vertices.html">updateVertices</a> was used (and therefore no world transformation), that world transform matrix must be
+supplied to <a href="../../com.acornui.gl.core/-gl-state/camera.html">GlState.camera</a> first.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set-region.html">setRegion</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">setRegion</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.component.Sprite$setRegion(com.acornui.math.Rectangle)/bounds">bounds</span><span class="symbol">:</span>&nbsp;<span class="identifier">Rectangle</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">setRegion</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.component.Sprite$setRegion(com.acornui.math.IntRectangleRo)/bounds">bounds</span><span class="symbol">:</span>&nbsp;<span class="identifier">IntRectangleRo</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">setRegion</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.component.Sprite$setRegion(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$setRegion(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$setRegion(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$setRegion(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="set-uv.html">setUv</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">setUv</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.component.Sprite$setUv(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/u">u</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$setUv(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/v">v</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$setUv(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/u2">u2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$setUv(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/v2">v2</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="update-uv.html">updateUv</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">updateUv</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="update-vertices.html">updateVertices</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">updateVertices</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.component.Sprite$updateVertices(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$updateVertices(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$updateVertices(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$updateVertices(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$updateVertices(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$updateVertices(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/rotation">rotation</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$updateVertices(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/originX">originX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$updateVertices(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/originY">originY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Updates this Sprite's local vertices.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="update-world-vertices.html">updateWorldVertices</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">updateWorldVertices</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.component.Sprite$updateWorldVertices(com.acornui.math.Matrix4Ro, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/worldTransform">worldTransform</span><span class="symbol">:</span>&nbsp;<span class="identifier">Matrix4Ro</span><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$updateWorldVertices(com.acornui.math.Matrix4Ro, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$updateWorldVertices(com.acornui.math.Matrix4Ro, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$updateWorldVertices(com.acornui.math.Matrix4Ro, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$updateWorldVertices(com.acornui.math.Matrix4Ro, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$updateWorldVertices(com.acornui.math.Matrix4Ro, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$updateWorldVertices(com.acornui.math.Matrix4Ro, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/rotation">rotation</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$updateWorldVertices(com.acornui.math.Matrix4Ro, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/originX">originX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.Sprite$updateWorldVertices(com.acornui.math.Matrix4Ro, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/originY">originY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Updates this Sprite's local vertices and then multiplies them with the world transformation matrix.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

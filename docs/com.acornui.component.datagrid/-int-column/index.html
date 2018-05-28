@@ -1,0 +1,674 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>IntColumn - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.datagrid</a>&nbsp;/&nbsp;<a href="./index.html">IntColumn</a><br/>
+<br/>
+<h1>IntColumn</h1>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">IntColumn</span><span class="symbol">&lt;</span><span class="keyword">in</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-data-grid-column/index.html"><span class="identifier">DataGridColumn</span></a><span class="symbol">&lt;</span><a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">IntColumn</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.IntColumn$<init>(com.acornui.core.di.Injector)/injector">injector</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-injector/index.html"><span class="identifier">Injector</span></a><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="formatter.html">formatter</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">formatter</span><span class="symbol">: </span><a href="../../com.acornui.core.text/-number-formatter/index.html"><span class="identifier">NumberFormatter</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="injector.html">injector</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">injector</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-injector/index.html"><span class="identifier">Injector</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-data-grid-column/cell-h-align.html">cellHAlign</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">cellHAlign</span><span class="symbol">: </span><a href="../../com.acornui.component.layout/-h-align/index.html"><span class="identifier">HAlign</span></a><span class="symbol">?</span></code>
+<p>The horizontal alignment of the body cells.
+If this is not set, the data grid's style will be used.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/cell-interactivity-mode.html">cellInteractivityMode</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">cellInteractivityMode</span><span class="symbol">: </span><a href="../../com.acornui.component/-interactivity-mode/index.html"><span class="identifier">InteractivityMode</span></a></code>
+<p>The cell's interactivity mode. This should be <a href="../../com.acornui.component/-interactivity-mode/-n-o-n-e.html">InteractivityMode.NONE</a> unless the cell has something
+special that's interactive.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/cell-v-align.html">cellVAlign</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">cellVAlign</span><span class="symbol">: </span><a href="../../com.acornui.component.layout/-v-align/index.html"><span class="identifier">VAlign</span></a><span class="symbol">?</span></code>
+<p>The vertical alignment of the body cells.
+If this is not set, the data grid's style will be used.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/changed.html">changed</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">changed</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-data-grid-column/index.html"><span class="identifier">DataGridColumn</span></a><span class="symbol">&lt;</span><a href="../-data-grid-column/index.html#RowData"><span class="identifier">RowData</span></a><span class="symbol">,</span>&nbsp;<a href="../-data-grid-column/index.html#CellData"><span class="identifier">CellData</span></a><span class="symbol">&gt;</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/editable.html">editable</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">editable</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true, elements in this column can be edited.
+If this is true, <a href="../-data-grid-column/create-editor-cell.html">createEditorCell</a> must be implemented.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/flexible.html">flexible</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">flexible</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">?</span></code>
+<p>A flexible column will flex its size to fit within the available bounds of the container.
+A column is considered flexible if:
+Neither <a href="../-data-grid-column/width.html">width</a> or <a href="../-data-grid-column/width-percent.html">widthPercent</a> have been set, <a href="../-data-grid-column/flexible.html">flexible</a> is true, or <a href="../-data-grid-column/flexible.html">flexible</a> is null and <a href="../-data-grid-column/resizable.html">resizable</a> is
+true and <a href="../-data-grid-column/width-percent.html">widthPercent</a> is not null.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/footer-cell-interactivity-mode.html">footerCellInteractivityMode</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">footerCellInteractivityMode</span><span class="symbol">: </span><a href="../../com.acornui.component/-interactivity-mode/index.html"><span class="identifier">InteractivityMode</span></a></code>
+<p>The footer cell's interactivity mode. This should be <a href="../../com.acornui.component/-interactivity-mode/-n-o-n-e.html">InteractivityMode.NONE</a> unless the cell has something
+special that's interactive.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/header-cell-h-align.html">headerCellHAlign</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">headerCellHAlign</span><span class="symbol">: </span><a href="../../com.acornui.component.layout/-h-align/index.html"><span class="identifier">HAlign</span></a><span class="symbol">?</span></code>
+<p>The horizontal alignment of the header cells.
+If this is not set, the data grid's style will be used.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/header-cell-interactivity-mode.html">headerCellInteractivityMode</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">headerCellInteractivityMode</span><span class="symbol">: </span><a href="../../com.acornui.component/-interactivity-mode/index.html"><span class="identifier">InteractivityMode</span></a></code>
+<p>The header cell interactivity mode. This should be <a href="../../com.acornui.component/-interactivity-mode/-n-o-n-e.html">InteractivityMode.NONE</a> unless the header cell has something
+special that's interactive.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/header-cell-v-align.html">headerCellVAlign</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">headerCellVAlign</span><span class="symbol">: </span><a href="../../com.acornui.component.layout/-v-align/index.html"><span class="identifier">VAlign</span></a><span class="symbol">?</span></code>
+<p>The vertical alignment of the header cells.
+If this is not set, the data grid's style will be used.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/min-width.html">minWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">minWidth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/reorderable.html">reorderable</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">reorderable</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true, the column can be reordered (moved) by the user.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/resizable.html">resizable</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">resizable</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true, this column can be resized by the user.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/sortable.html">sortable</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">sortable</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true, the column can be sorted by the user.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/visible.html">visible</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">visible</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If false, this column will not be shown.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/width.html">width</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">width</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/width-percent.html">widthPercent</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">widthPercent</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="compare-rows.html">compareRows</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">compareRows</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.IntColumn$compareRows(com.acornui.component.datagrid.IntColumn.E, com.acornui.component.datagrid.IntColumn.E)/row1">row1</span><span class="symbol">:</span>&nbsp;<a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.datagrid.IntColumn$compareRows(com.acornui.component.datagrid.IntColumn.E, com.acornui.component.datagrid.IntColumn.E)/row2">row2</span><span class="symbol">:</span>&nbsp;<a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="create-cell.html">createCell</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">createCell</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.IntColumn$createCell(com.acornui.core.di.Owned)/owner">owner</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-data-grid-cell/index.html"><span class="identifier">DataGridCell</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">?</span><span class="symbol">&gt;</span></code>
+<p>Constructs a new cell for this column.
+The cell is cached, so this method should not return inconsistent results.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="create-editor-cell.html">createEditorCell</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">createEditorCell</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.IntColumn$createEditorCell(com.acornui.core.di.Owned)/owner">owner</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-data-grid-editor-cell/index.html"><span class="identifier">DataGridEditorCell</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">?</span><span class="symbol">&gt;</span></code>
+<p>Constructs a new editor cell.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-data-grid-column/create-footer-row-cell.html">createFooterRowCell</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">createFooterRowCell</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.DataGridColumn$createFooterRowCell(com.acornui.core.di.Owned, com.acornui.collection.ObservableList((com.acornui.component.datagrid.DataGridColumn.RowData)))/owner">owner</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.datagrid.DataGridColumn$createFooterRowCell(com.acornui.core.di.Owned, com.acornui.collection.ObservableList((com.acornui.component.datagrid.DataGridColumn.RowData)))/list">list</span><span class="symbol">:</span>&nbsp;<span class="identifier">ObservableList</span><span class="symbol">&lt;</span><a href="../-data-grid-column/index.html#RowData"><span class="identifier">RowData</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a></code>
+<p>Constructs a new footer cell for this column.
+This should be overriden if <a href="#">DataGrid.showFooterRow</a> or any group's <a href="../-data-grid-group/show-footer.html">DataGridGroup.showFooter</a> property is true.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/create-header-cell.html">createHeaderCell</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">createHeaderCell</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.DataGridColumn$createHeaderCell(com.acornui.core.di.Owned)/owner">owner</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a></code>
+<p>Constructs a new header cell to be placed at the top of the grid. This should not include the header background
+or sorting arrows.
+The cell is cached, so this method should not return inconsistent results.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/get-cell-data.html">getCellData</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getCellData</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.DataGridColumn$getCellData(com.acornui.component.datagrid.DataGridColumn.RowData)/row">row</span><span class="symbol">:</span>&nbsp;<a href="../-data-grid-column/index.html#RowData"><span class="identifier">RowData</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-data-grid-column/index.html#CellData"><span class="identifier">CellData</span></a></code>
+<p>Retrieves the column value from the given row.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/get-is-flexible.html">getIsFlexible</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getIsFlexible</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/get-preferred-width.html">getPreferredWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getPreferredWidth</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.DataGridColumn$getPreferredWidth(kotlin.Float)/availableWidth">availableWidth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/set-cell-data.html">setCellData</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setCellData</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.DataGridColumn$setCellData(com.acornui.component.datagrid.DataGridColumn.RowData, com.acornui.component.datagrid.DataGridColumn.CellData)/row">row</span><span class="symbol">:</span>&nbsp;<a href="../-data-grid-column/index.html#RowData"><span class="identifier">RowData</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.datagrid.DataGridColumn$setCellData(com.acornui.component.datagrid.DataGridColumn.RowData, com.acornui.component.datagrid.DataGridColumn.CellData)/value">value</span><span class="symbol">:</span>&nbsp;<a href="../-data-grid-column/index.html#CellData"><span class="identifier">CellData</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the column value.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-data-grid-column/toggle-visible.html">toggleVisible</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">toggleVisible</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/config.html">config</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">config</span><span class="symbol">: </span><a href="../../com.acornui.core/-app-config/index.html"><span class="identifier">AppConfig</span></a></code>
+<p>A convenient way to get the scoped AppConfig.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/stage.html">stage</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">stage</span><span class="symbol">: </span><a href="../../com.acornui.component/-stage/index.html"><span class="identifier">Stage</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.time/averaged-measure.html">averagedMeasure</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">averagedMeasure</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.time$averagedMeasure(com.acornui.core.di.Scoped, kotlin.Function0((kotlin.Unit)))/inner">inner</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Measures a block of code, accumulating the total time until printFrameMeasure() is called, which will then
+print the average execution time.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.assets/cached-group.html">cachedGroup</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">cachedGroup</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.assets/-cached-group/index.html"><span class="identifier">CachedGroup</span></a></code>
+<p>Constructs a new <a href="../../com.acornui.core.assets/-cached-group/index.html">CachedGroup</a> object with the current scope's <a href="../../com.acornui.core.assets/-cache/index.html">Cache</a> manager.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.time/call-later.html">callLater</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">callLater</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.time$callLater(com.acornui.core.di.Scoped, kotlin.Function0((kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.i18n/choose-locale.html">chooseLocale</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">chooseLocale</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.i18n$chooseLocale(com.acornui.core.di.Scoped, kotlin.collections.List((com.acornui.core.i18n.Locale)))/supported">supported</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.i18n/-locale/index.html"><span class="identifier">Locale</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.i18n/-locale/index.html"><span class="identifier">Locale</span></a><span class="symbol">?</span></code>
+<p>This will iterate over the <a href="../../com.acornui.core.i18n/-i18n/current-locales.html">I18n.currentLocales</a> list, returning the first locale that is contained in
+the provided <a href="../../com.acornui.core.i18n/choose-locale.html#com.acornui.core.i18n$chooseLocale(com.acornui.core.di.Scoped, kotlin.collections.List((com.acornui.core.i18n.Locale)))/supported">supported</a> list. Or null if there is no match.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.mvc/commander.html">commander</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">commander</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.mvc/-commander/index.html"><span class="identifier">Commander</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.request/create-binary-request.html">createBinaryRequest</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">createBinaryRequest</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.request$createBinaryRequest(com.acornui.core.di.Scoped, com.acornui.core.request.UrlRequestData)/requestData">requestData</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.request/-url-request-data/index.html"><span class="identifier">UrlRequestData</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.request/-request.html"><span class="identifier">Request</span></a><span class="symbol">&lt;</span><span class="identifier">NativeBuffer</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte/index.html"><span class="identifier">Byte</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.request/create-text-request.html">createTextRequest</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">createTextRequest</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.request$createTextRequest(com.acornui.core.di.Scoped, com.acornui.core.request.UrlRequestData)/requestData">requestData</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.request/-url-request-data/index.html"><span class="identifier">UrlRequestData</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.request/-request.html"><span class="identifier">Request</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.text/currency-formatter.html">currencyFormatter</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">currencyFormatter</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.text$currencyFormatter(com.acornui.core.di.Scoped, kotlin.String)/currencyCode">currencyCode</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.text/-number-formatter/index.html"><span class="identifier">NumberFormatter</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.text/date-formatter.html">dateFormatter</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">dateFormatter</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.text/-date-time-formatter/index.html"><span class="identifier">DateTimeFormatter</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.text/date-time-formatter.html">dateTimeFormatter</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">dateTimeFormatter</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.text/-date-time-formatter/index.html"><span class="identifier">DateTimeFormatter</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.time/delay.html">delay</a></p>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">delay</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.time$delay(com.acornui.core.di.Scoped, kotlin.Float)/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Suspends the coroutine for <a href="../../com.acornui.core.time/delay.html#com.acornui.core.time$delay(com.acornui.core.di.Scoped, kotlin.Float)/duration">duration</a> seconds.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.time/delayed-callback.html">delayedCallback</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">delayedCallback</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.time$delayedCallback(com.acornui.core.di.Scoped, kotlin.Float, kotlin.Function0((kotlin.Unit)))/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.time$delayedCallback(com.acornui.core.di.Scoped, kotlin.Float, kotlin.Function0((kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.time/-callback-wrapper/index.html"><span class="identifier">CallbackWrapper</span></a></code>
+<p>Returns a wrapper that when invoked, will call <a href="../../com.acornui.core.time/delayed-callback.html#com.acornui.core.time$delayedCallback(com.acornui.core.di.Scoped, kotlin.Float, kotlin.Function0((kotlin.Unit)))/callback">callback</a> after <a href="../../com.acornui.core.time/delayed-callback.html#com.acornui.core.time$delayedCallback(com.acornui.core.di.Scoped, kotlin.Float, kotlin.Function0((kotlin.Unit)))/duration">duration</a> seconds. Every consecutive
+invocation of the wrapper will reset this timer.
+Useful for things like auto-save after the user is done typing for a set amount of time.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.time/drive.html">drive</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">drive</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.time$drive(com.acornui.core.di.Scoped, kotlin.Function1((kotlin.Float, kotlin.Unit)))/update">update</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="identifier">stepTime</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core/-updatable-child/index.html"><span class="identifier">UpdatableChild</span></a></code>
+<p>Invokes the callback on every frame. This is similar to <a href="../../com.acornui.core.time/on-tick.html">onTick</a> except the receiver isn't watched for activation
+or disposal.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.tween/drive-tween.html">driveTween</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.tween/-tween/index.html"><span class="identifier">Tween</span></a><span class="symbol">&gt;</span> <a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">driveTween</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween$driveTween(com.acornui.core.di.Scoped, com.acornui.core.tween.driveTween.T)/tween">tween</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.tween/drive-tween.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.tween/drive-tween.html#T"><span class="identifier">T</span></a></code>
+<p>Creates a tween driver and updates the tween forward until completion.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.time/enter-frame.html">enterFrame</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">enterFrame</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.time$enterFrame(com.acornui.core.di.Scoped, kotlin.Int, kotlin.Function0((kotlin.Unit)))/repetitions">repetitions</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;-1<span class="symbol">, </span><span class="identifier" id="com.acornui.core.time$enterFrame(com.acornui.core.di.Scoped, kotlin.Int, kotlin.Function0((kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.focus/fake-focus-mouse.html">fakeFocusMouse</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">fakeFocusMouse</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.focus/-fake-focus-mouse/index.html"><span class="identifier">FakeFocusMouse</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.i18n/i18n.html">i18n</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">i18n</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.i18n$i18n(com.acornui.core.di.Scoped, kotlin.String)/bundleName">bundleName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.i18n/-bundle-binding/index.html"><span class="identifier">BundleBinding</span></a></code>
+<p>Invokes the callback when this bundle has changed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/inject.html">inject</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">inject</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di$inject(com.acornui.core.di.Scoped, com.acornui.core.di.DKey((com.acornui.core.di.inject.T)))/key">key</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.di/inject.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.di/inject.html#T"><span class="identifier">T</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.di/inject-optional.html">injectOptional</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">injectOptional</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.di$injectOptional(com.acornui.core.di.Scoped, com.acornui.core.di.DKey((com.acornui.core.di.injectOptional.T)))/key">key</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.di/inject-optional.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.di/inject-optional.html#T"><span class="identifier">T</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.text/int-formatter.html">intFormatter</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">intFormatter</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.text/-number-formatter/index.html"><span class="identifier">NumberFormatter</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.mvc/invoke-command.html">invokeCommand</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">invokeCommand</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.mvc$invokeCommand(com.acornui.core.di.Scoped, com.acornui.core.mvc.Command)/command">command</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.mvc/-command/index.html"><span class="identifier">Command</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.assets/json-decorator.html">jsonDecorator</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">R</span><span class="symbol">&gt;</span> <a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">jsonDecorator</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets$jsonDecorator(com.acornui.core.di.Scoped, com.acornui.serialization.From((com.acornui.core.assets.jsonDecorator.R)))/factory">factory</span><span class="symbol">:</span>&nbsp;<span class="identifier">From</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.assets/json-decorator.html#R"><span class="identifier">R</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Decorator</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="../../com.acornui.core.assets/json-decorator.html#R"><span class="identifier">R</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.time/limited-callback.html">limitedCallback</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">limitedCallback</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.time$limitedCallback(com.acornui.core.di.Scoped, kotlin.Float, kotlin.Function0((kotlin.Unit)))/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.time$limitedCallback(com.acornui.core.di.Scoped, kotlin.Float, kotlin.Function0((kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.time/-callback-wrapper/index.html"><span class="identifier">CallbackWrapper</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.assets/load.html">load</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">load</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets$load(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.load.T)))/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$load(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.load.T)))/type">type</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.assets/-asset-type/index.html"><span class="identifier">AssetType</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.assets/load.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.assets/-asset-loader-ro/index.html"><span class="identifier">AssetLoaderRo</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.assets/load.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Uses the scope's asset manager to load the given resource.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.assets/load-and-cache.html">loadAndCache</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">loadAndCache</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.core.assets.CachedGroup)/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.core.assets.CachedGroup)/type">type</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.assets/-asset-type/index.html"><span class="identifier">AssetType</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.assets/load-and-cache.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.core.assets.CachedGroup)/group">group</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.assets/-cached-group/index.html"><span class="identifier">CachedGroup</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Deferred</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.assets/load-and-cache.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Loads the given file and caches the result.
+Subsequent calls to <a href="../../com.acornui.core.assets/load-and-cache.html">loadAndCache</a> with the same <a href="../../com.acornui.core.assets/load-and-cache.html#com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.core.assets.CachedGroup)/path">path</a> and <a href="../../com.acornui.core.assets/load-and-cache.html#com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.core.assets.CachedGroup)/type">type</a> will return the same <a href="#">Deferred</a> instance.</p>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">, </span><span class="identifier">R</span><span class="symbol">&gt;</span> <a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">loadAndCache</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.action.Decorator((com.acornui.core.assets.loadAndCache.T, com.acornui.core.assets.loadAndCache.R)), com.acornui.core.assets.CachedGroup)/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.action.Decorator((com.acornui.core.assets.loadAndCache.T, com.acornui.core.assets.loadAndCache.R)), com.acornui.core.assets.CachedGroup)/type">type</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.assets/-asset-type/index.html"><span class="identifier">AssetType</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.assets/load-and-cache.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.action.Decorator((com.acornui.core.assets.loadAndCache.T, com.acornui.core.assets.loadAndCache.R)), com.acornui.core.assets.CachedGroup)/decorator">decorator</span><span class="symbol">:</span>&nbsp;<span class="identifier">Decorator</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.assets/load-and-cache.html#T"><span class="identifier">T</span></a><span class="symbol">,</span>&nbsp;<a href="../../com.acornui.core.assets/load-and-cache.html#R"><span class="identifier">R</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.action.Decorator((com.acornui.core.assets.loadAndCache.T, com.acornui.core.assets.loadAndCache.R)), com.acornui.core.assets.CachedGroup)/group">group</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.assets/-cached-group/index.html"><span class="identifier">CachedGroup</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Deferred</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.assets/load-and-cache.html#R"><span class="identifier">R</span></a><span class="symbol">&gt;</span></code>
+<p>Loads the given file, applies a decorator to the results, and caches the final value.
+Subsequent calls to <a href="../../com.acornui.core.assets/load-and-cache.html">loadAndCache</a> with the same <a href="../../com.acornui.core.assets/load-and-cache.html#com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.action.Decorator((com.acornui.core.assets.loadAndCache.T, com.acornui.core.assets.loadAndCache.R)), com.acornui.core.assets.CachedGroup)/path">path</a>, <a href="../../com.acornui.core.assets/load-and-cache.html#com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.action.Decorator((com.acornui.core.assets.loadAndCache.T, com.acornui.core.assets.loadAndCache.R)), com.acornui.core.assets.CachedGroup)/type">type</a>, and <a href="../../com.acornui.core.assets/load-and-cache.html#com.acornui.core.assets$loadAndCache(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.assets.AssetType((com.acornui.core.assets.loadAndCache.T)), com.acornui.action.Decorator((com.acornui.core.assets.loadAndCache.T, com.acornui.core.assets.loadAndCache.R)), com.acornui.core.assets.CachedGroup)/decorator">decorator</a> will return the same <a href="#">Deferred</a> instance.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.graphics/load-and-cache-atlas-page.html">loadAndCacheAtlasPage</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">loadAndCacheAtlasPage</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics$loadAndCacheAtlasPage(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.graphics.AtlasPageData, com.acornui.core.assets.CachedGroup)/atlasPath">atlasPath</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$loadAndCacheAtlasPage(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.graphics.AtlasPageData, com.acornui.core.assets.CachedGroup)/page">page</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.graphics/-atlas-page-data/index.html"><span class="identifier">AtlasPageData</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$loadAndCacheAtlasPage(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.graphics.AtlasPageData, com.acornui.core.assets.CachedGroup)/group">group</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.assets/-cached-group/index.html"><span class="identifier">CachedGroup</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Deferred</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.graphics/-texture/index.html"><span class="identifier">Texture</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.assets/load-and-cache-json.html">loadAndCacheJson</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">R</span><span class="symbol">&gt;</span> <a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">loadAndCacheJson</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets$loadAndCacheJson(com.acornui.core.di.Scoped, kotlin.String, com.acornui.serialization.From((com.acornui.core.assets.loadAndCacheJson.R)), com.acornui.core.assets.CachedGroup)/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$loadAndCacheJson(com.acornui.core.di.Scoped, kotlin.String, com.acornui.serialization.From((com.acornui.core.assets.loadAndCacheJson.R)), com.acornui.core.assets.CachedGroup)/factory">factory</span><span class="symbol">:</span>&nbsp;<span class="identifier">From</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.assets/load-and-cache-json.html#R"><span class="identifier">R</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$loadAndCacheJson(com.acornui.core.di.Scoped, kotlin.String, com.acornui.serialization.From((com.acornui.core.assets.loadAndCacheJson.R)), com.acornui.core.assets.CachedGroup)/group">group</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.assets/-cached-group/index.html"><span class="identifier">CachedGroup</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Deferred</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.assets/load-and-cache-json.html#R"><span class="identifier">R</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.i18n/load-bundle.html">loadBundle</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">loadBundle</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.i18n$loadBundle(com.acornui.core.di.Scoped, kotlin.String, kotlin.String, kotlin.String)/bundleName">bundleName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.i18n$loadBundle(com.acornui.core.di.Scoped, kotlin.String, kotlin.String, kotlin.String)/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;i18nPath<span class="symbol">, </span><span class="identifier" id="com.acornui.core.i18n$loadBundle(com.acornui.core.di.Scoped, kotlin.String, kotlin.String, kotlin.String)/defaultPath">defaultPath</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;i18nFallbackPath<span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.i18n/-i18n-bundle/index.html"><span class="identifier">I18nBundle</span></a></code>
+<p>Loads a resource bundle at the given path for the <a href="../../com.acornui.core.i18n/-i18n/current-locales.html">I18n.currentLocales</a>. When the current locale changes, the new
+bundle will be automatically loaded.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.i18n/load-bundle-for-locale.html">loadBundleForLocale</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">loadBundleForLocale</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.i18n$loadBundleForLocale(com.acornui.core.di.Scoped, com.acornui.core.i18n.Locale, kotlin.String, kotlin.String)/locale">locale</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.i18n/-locale/index.html"><span class="identifier">Locale</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.i18n$loadBundleForLocale(com.acornui.core.di.Scoped, com.acornui.core.i18n.Locale, kotlin.String, kotlin.String)/bundleName">bundleName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.i18n$loadBundleForLocale(com.acornui.core.di.Scoped, com.acornui.core.i18n.Locale, kotlin.String, kotlin.String)/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;i18nPath<span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.i18n/-i18n-bundle/index.html"><span class="identifier">I18nBundle</span></a></code>
+<p>Loads a resource bundle for the specified locale and bundle. Unlike <a href="../../com.acornui.core.i18n/load-bundle.html">loadBundle</a>, this will not be bound to
+<a href="../../com.acornui.core.i18n/-i18n/current-locales.html">I18n.currentLocales</a>.</p>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">loadBundleForLocale</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.i18n$loadBundleForLocale(com.acornui.core.di.Scoped, kotlin.collections.List((com.acornui.core.i18n.Locale)), kotlin.String, kotlin.String)/locales">locales</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.i18n/-locale/index.html"><span class="identifier">Locale</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.i18n$loadBundleForLocale(com.acornui.core.di.Scoped, kotlin.collections.List((com.acornui.core.i18n.Locale)), kotlin.String, kotlin.String)/bundleName">bundleName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.i18n$loadBundleForLocale(com.acornui.core.di.Scoped, kotlin.collections.List((com.acornui.core.i18n.Locale)), kotlin.String, kotlin.String)/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;i18nPath<span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.i18n/-i18n-bundle/index.html"><span class="identifier">I18nBundle</span></a></code>
+<p>Loads a resource bundle for the specified locale chain and bundle. Unlike <a href="../../com.acornui.core.i18n/load-bundle.html">loadBundle</a>, this will not be bound to
+<a href="../../com.acornui.core.i18n/-i18n/current-locales.html">I18n.currentLocales</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.gl.component.text/load-font-from-atlas.html">loadFontFromAtlas</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">loadFontFromAtlas</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.component.text$loadFontFromAtlas(com.acornui.core.di.Scoped, kotlin.String, kotlin.String, com.acornui.core.assets.CachedGroup)/fntPath">fntPath</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.text$loadFontFromAtlas(com.acornui.core.di.Scoped, kotlin.String, kotlin.String, com.acornui.core.assets.CachedGroup)/atlasPath">atlasPath</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.text$loadFontFromAtlas(com.acornui.core.di.Scoped, kotlin.String, kotlin.String, com.acornui.core.assets.CachedGroup)/group">group</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.assets/-cached-group/index.html"><span class="identifier">CachedGroup</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Deferred</span><span class="symbol">&lt;</span><a href="../../com.acornui.gl.component.text/-bitmap-font/index.html"><span class="identifier">BitmapFont</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.assets/load-json.html">loadJson</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">loadJson</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.assets$loadJson(com.acornui.core.di.Scoped, kotlin.String, com.acornui.serialization.From((com.acornui.core.assets.loadJson.T)))/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.assets$loadJson(com.acornui.core.di.Scoped, kotlin.String, com.acornui.serialization.From((com.acornui.core.assets.loadJson.T)))/factory">factory</span><span class="symbol">:</span>&nbsp;<span class="identifier">From</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.assets/load-json.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Deferred</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.assets/load-json.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Loads a json file, then parses it into the target.
+This is not cached.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.time/measure.html">measure</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">measure</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.time$measure(com.acornui.core.di.Scoped, kotlin.Function0((kotlin.Unit)))/inner">inner</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Measures the amount of time (in milliseconds) a block of code takes to execute.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.nav/navigate.html">navigate</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">navigate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.nav$navigate(com.acornui.core.di.Scoped, kotlin.String)/absolutePath">absolutePath</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.text/number-formatter.html">numberFormatter</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">numberFormatter</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.text/-number-formatter/index.html"><span class="identifier">NumberFormatter</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.time/parse-date.html">parseDate</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">parseDate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.time$parseDate(com.acornui.core.di.Scoped, kotlin.String)/dateStr">dateStr</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.time/-date/index.html"><span class="identifier">Date</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.io/parse-json.html">parseJson</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">parseJson</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.io$parseJson(com.acornui.core.di.Scoped, kotlin.String, com.acornui.serialization.From((com.acornui.core.io.parseJson.T)))/json">json</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.io$parseJson(com.acornui.core.di.Scoped, kotlin.String, com.acornui.serialization.From((com.acornui.core.io.parseJson.T)))/factory">factory</span><span class="symbol">:</span>&nbsp;<span class="identifier">From</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.io/parse-json.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.io/parse-json.html#T"><span class="identifier">T</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.io/parse-xml.html">parseXml</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">parseXml</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.io$parseXml(com.acornui.core.di.Scoped, kotlin.String, com.acornui.serialization.From((com.acornui.core.io.parseXml.T)))/json">json</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.io$parseXml(com.acornui.core.di.Scoped, kotlin.String, com.acornui.serialization.From((com.acornui.core.io.parseXml.T)))/factory">factory</span><span class="symbol">:</span>&nbsp;<span class="identifier">From</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.io/parse-xml.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.io/parse-xml.html#T"><span class="identifier">T</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.text/percent-formatter.html">percentFormatter</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">percentFormatter</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.text/-number-formatter/index.html"><span class="identifier">NumberFormatter</span></a></code>
+<p>Percent formatter will format a number as a percent value.
+E.g. 0.23 will be formatted as 23%</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.mvc/state-command-history.html">stateCommandHistory</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">stateCommandHistory</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.mvc/-state-command-history/index.html"><span class="identifier">StateCommandHistory</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.text/time-formatter.html">timeFormatter</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">timeFormatter</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core.text/-date-time-formatter/index.html"><span class="identifier">DateTimeFormatter</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.time/timer.html">timer</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">timer</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.time$timer(com.acornui.core.di.Scoped, kotlin.Float, kotlin.Int, kotlin.Float, kotlin.Function0((kotlin.Unit)))/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.time$timer(com.acornui.core.di.Scoped, kotlin.Float, kotlin.Int, kotlin.Float, kotlin.Function0((kotlin.Unit)))/repetitions">repetitions</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;1<span class="symbol">, </span><span class="identifier" id="com.acornui.core.time$timer(com.acornui.core.di.Scoped, kotlin.Float, kotlin.Int, kotlin.Float, kotlin.Function0((kotlin.Unit)))/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.core.time$timer(com.acornui.core.di.Scoped, kotlin.Float, kotlin.Int, kotlin.Float, kotlin.Function0((kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.io/to-json.html">toJson</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">toJson</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.io$toJson(com.acornui.core.di.Scoped, com.acornui.core.io.toJson.T, com.acornui.serialization.To((com.acornui.core.io.toJson.T)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.io/to-json.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.io$toJson(com.acornui.core.di.Scoped, com.acornui.core.io.toJson.T, com.acornui.serialization.To((com.acornui.core.io.toJson.T)))/factory">factory</span><span class="symbol">:</span>&nbsp;<span class="identifier">To</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.io/to-json.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.io/to-xml.html">toXml</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">toXml</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.io$toXml(com.acornui.core.di.Scoped, com.acornui.core.io.toXml.T, com.acornui.serialization.To((com.acornui.core.io.toXml.T)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.io/to-xml.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.io$toXml(com.acornui.core.di.Scoped, com.acornui.core.io.toXml.T, com.acornui.serialization.To((com.acornui.core.io.toXml.T)))/factory">factory</span><span class="symbol">:</span>&nbsp;<span class="identifier">To</span><span class="symbol">&lt;</span><a href="../../com.acornui.core.io/to-xml.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

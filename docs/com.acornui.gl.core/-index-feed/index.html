@@ -1,0 +1,72 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>IndexFeed - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.gl.core</a>&nbsp;/&nbsp;<a href="./index.html">IndexFeed</a><br/>
+<br/>
+<h1>IndexFeed</h1>
+<code><span class="keyword">interface </span><span class="identifier">IndexFeed</span></code>
+<p>An <a href="./index.html">IndexFeed</a> provides a way to push indices to an index buffer.</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="highest-index.html">highestIndex</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">highestIndex</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-short/index.html"><span class="identifier">Short</span></a></code>
+<p>Returns the currently highest index pushed.
+This will be -1 if no indices have been pushed.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="put-index.html">putIndex</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">putIndex</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.IndexFeed$putIndex(kotlin.Short)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-short/index.html"><span class="identifier">Short</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the index at the current buffer position.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">putIndex</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.IndexFeed$putIndex(kotlin.Int)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>For convenience, casts the index Int to a Short</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../push-quad-indices.html">pushQuadIndices</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">IndexFeed</span></a><span class="symbol">.</span><span class="identifier">pushQuadIndices</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-shader-batch/index.html">ShaderBatch</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ShaderBatch</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span><span class="symbol">, </span><a href="../-vertex-feed/index.html"><span class="identifier">VertexFeed</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">IndexFeed</span></a></code>
+<p>A <a href="../-shader-batch/index.html">ShaderBatch</a> is good for reducing draw calls by combining opengl buffer and draw calls.
+This is used in conjunction with <a href="../-gl-state/index.html">GlState</a>, which keeps track of changes that would require a flip.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

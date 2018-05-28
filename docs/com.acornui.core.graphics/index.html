@@ -1,0 +1,259 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.core.graphics - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.core.graphics</a><br/>
+<br/>
+<h2>Package com.acornui.core.graphics</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-atlas-component/index.html">AtlasComponent</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">AtlasComponent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-container-impl/index.html"><span class="identifier">ContainerImpl</span></a><span class="symbol">, </span><span class="identifier">Clearable</span></code>
+<p>A UiComponent that draws a region from a texture atlas.
+This component will create a NinePatchComponent or a TextureComponent, and apply all virtual padding as defined by
+the loaded AtlasRegionData.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-atlas-page-data/index.html">AtlasPageData</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">AtlasPageData</span></code>
+<p>Represents a single texture atlas page.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-atlas-page-decorator/index.html">AtlasPageDecorator</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">AtlasPageDecorator</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Decorator</span><span class="symbol">&lt;</span><a href="-texture/index.html"><span class="identifier">Texture</span></a><span class="symbol">,</span>&nbsp;<a href="-texture/index.html"><span class="identifier">Texture</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-atlas-page-serializer/index.html">AtlasPageSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">AtlasPageSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">To</span><span class="symbol">&lt;</span><a href="-atlas-page-data/index.html"><span class="identifier">AtlasPageData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">From</span><span class="symbol">&lt;</span><a href="-atlas-page-data/index.html"><span class="identifier">AtlasPageData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-atlas-region-data/index.html">AtlasRegionData</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">AtlasRegionData</span></code>
+<p>A model representing a region within an atlas page.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-atlas-region-data-serializer/index.html">AtlasRegionDataSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">AtlasRegionDataSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">To</span><span class="symbol">&lt;</span><a href="-atlas-region-data/index.html"><span class="identifier">AtlasRegionData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">From</span><span class="symbol">&lt;</span><a href="-atlas-region-data/index.html"><span class="identifier">AtlasRegionData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-blend-mode/index.html">BlendMode</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">BlendMode</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-camera/index.html">Camera</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Camera</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-camera-ro/index.html"><span class="identifier">CameraRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-camera-base/index.html">CameraBase</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">CameraBase</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-camera/index.html"><span class="identifier">Camera</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-camera-ro/index.html">CameraRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">CameraRo</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-orthographic-camera/index.html">OrthographicCamera</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">OrthographicCamera</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-camera-base/index.html"><span class="identifier">CameraBase</span></a></code>
+<p>A camera with orthographic projection.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-perspective-camera/index.html">PerspectiveCamera</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">PerspectiveCamera</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-camera-base/index.html"><span class="identifier">CameraBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-pop-up-specs/index.html">PopUpSpecs</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">PopUpSpecs</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-rgb-data/index.html">RgbData</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">RgbData</span></code>
+<p>A trait for reading pixel data.
+Note: Unlike global coordinates, rgb pixel x,y coordinates are top-left of the image, not bottom-left.
+This is because acorn does not flip the y when unpacking the texture.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-scaling/index.html">Scaling</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">Scaling</span></code>
+<p>Describes the different scaling strategies.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-sprite-animation/index.html">SpriteAnimation</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">SpriteAnimation</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-container-impl/index.html"><span class="identifier">ContainerImpl</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-texture/index.html">Texture</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Texture</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-texture-atlas-data/index.html">TextureAtlasData</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">TextureAtlasData</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-texture-atlas-data-serializer/index.html">TextureAtlasDataSerializer</a></p>
+</td>
+<td>
+<code><span class="keyword">object </span><span class="identifier">TextureAtlasDataSerializer</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">To</span><span class="symbol">&lt;</span><a href="-texture-atlas-data/index.html"><span class="identifier">TextureAtlasData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">From</span><span class="symbol">&lt;</span><a href="-texture-atlas-data/index.html"><span class="identifier">TextureAtlasData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-window/index.html">Window</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Window</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extensions for External Classes</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="com.acornui.math.-matrix4/index.html">com.acornui.math.Matrix4</a></p>
+</td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="atlas.html">atlas</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">atlas</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics$atlas(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.core.graphics.AtlasComponent, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-atlas-component/index.html"><span class="identifier">AtlasComponent</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-atlas-component/index.html"><span class="identifier">AtlasComponent</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">atlas</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics$atlas(com.acornui.core.di.Owned, kotlin.String, kotlin.String, kotlin.Function1((com.acornui.core.graphics.AtlasComponent, kotlin.Unit)))/atlasPath">atlasPath</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$atlas(com.acornui.core.di.Owned, kotlin.String, kotlin.String, kotlin.Function1((com.acornui.core.graphics.AtlasComponent, kotlin.Unit)))/region">region</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$atlas(com.acornui.core.di.Owned, kotlin.String, kotlin.String, kotlin.Function1((com.acornui.core.graphics.AtlasComponent, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-atlas-component/index.html"><span class="identifier">AtlasComponent</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-atlas-component/index.html"><span class="identifier">AtlasComponent</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="auto-center-camera.html">autoCenterCamera</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-window/index.html"><span class="identifier">Window</span></a><span class="symbol">.</span><span class="identifier">autoCenterCamera</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics$autoCenterCamera(com.acornui.core.graphics.Window, com.acornui.core.graphics.Camera)/camera">camera</span><span class="symbol">:</span>&nbsp;<a href="-camera/index.html"><span class="identifier">Camera</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="center-camera.html">centerCamera</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-window/index.html"><span class="identifier">Window</span></a><span class="symbol">.</span><span class="identifier">centerCamera</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics$centerCamera(com.acornui.core.graphics.Window, com.acornui.core.graphics.Camera)/camera">camera</span><span class="symbol">:</span>&nbsp;<a href="-camera/index.html"><span class="identifier">Camera</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Centers the camera to this window.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="contents-atlas.html">contentsAtlas</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-element-container.html"><span class="identifier">ElementContainer</span></a><span class="symbol">&lt;</span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">contentsAtlas</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics$contentsAtlas(com.acornui.component.ElementContainer((com.acornui.component.UiComponent)), kotlin.String, kotlin.String)/atlasPath">atlasPath</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$contentsAtlas(com.acornui.component.ElementContainer((com.acornui.component.UiComponent)), kotlin.String, kotlin.String)/region">region</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Creates a texture component and uses it as the contents</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="load-and-cache-atlas-page.html">loadAndCacheAtlasPage</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">loadAndCacheAtlasPage</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics$loadAndCacheAtlasPage(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.graphics.AtlasPageData, com.acornui.core.assets.CachedGroup)/atlasPath">atlasPath</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$loadAndCacheAtlasPage(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.graphics.AtlasPageData, com.acornui.core.assets.CachedGroup)/page">page</span><span class="symbol">:</span>&nbsp;<a href="-atlas-page-data/index.html"><span class="identifier">AtlasPageData</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$loadAndCacheAtlasPage(com.acornui.core.di.Scoped, kotlin.String, com.acornui.core.graphics.AtlasPageData, com.acornui.core.assets.CachedGroup)/group">group</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.assets/-cached-group/index.html"><span class="identifier">CachedGroup</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Deferred</span><span class="symbol">&lt;</span><a href="-texture/index.html"><span class="identifier">Texture</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="orthographic-camera.html">orthographicCamera</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">orthographicCamera</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics$orthographicCamera(com.acornui.core.di.Owned, kotlin.Boolean, kotlin.Function1((com.acornui.core.graphics.OrthographicCamera, kotlin.Unit)))/autoCenter">autoCenter</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$orthographicCamera(com.acornui.core.di.Owned, kotlin.Boolean, kotlin.Function1((com.acornui.core.graphics.OrthographicCamera, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-orthographic-camera/index.html"><span class="identifier">OrthographicCamera</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-orthographic-camera/index.html"><span class="identifier">OrthographicCamera</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="perspective-camera.html">perspectiveCamera</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">perspectiveCamera</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics$perspectiveCamera(com.acornui.core.di.Owned, kotlin.Boolean, kotlin.Function1((com.acornui.core.graphics.PerspectiveCamera, kotlin.Unit)))/autoCenter">autoCenter</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$perspectiveCamera(com.acornui.core.di.Owned, kotlin.Boolean, kotlin.Function1((com.acornui.core.graphics.PerspectiveCamera, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-perspective-camera/index.html"><span class="identifier">PerspectiveCamera</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-perspective-camera/index.html"><span class="identifier">PerspectiveCamera</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="rgb-data.html">rgbData</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">rgbData</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics$rgbData(kotlin.Int, kotlin.Int, kotlin.Boolean, kotlin.Function1((com.acornui.core.graphics.RgbData, kotlin.Unit)))/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$rgbData(kotlin.Int, kotlin.Int, kotlin.Boolean, kotlin.Function1((com.acornui.core.graphics.RgbData, kotlin.Unit)))/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$rgbData(kotlin.Int, kotlin.Int, kotlin.Boolean, kotlin.Function1((com.acornui.core.graphics.RgbData, kotlin.Unit)))/hasAlpha">hasAlpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;true<span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$rgbData(kotlin.Int, kotlin.Int, kotlin.Boolean, kotlin.Function1((com.acornui.core.graphics.RgbData, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-rgb-data/index.html"><span class="identifier">RgbData</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-rgb-data/index.html"><span class="identifier">RgbData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="sprite-animation.html">spriteAnimation</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">spriteAnimation</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics$spriteAnimation(com.acornui.core.di.Owned, kotlin.String, kotlin.String, kotlin.Int, kotlin.Int, kotlin.Function1((com.acornui.core.graphics.SpriteAnimation, kotlin.Unit)))/atlasPath">atlasPath</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$spriteAnimation(com.acornui.core.di.Owned, kotlin.String, kotlin.String, kotlin.Int, kotlin.Int, kotlin.Function1((com.acornui.core.graphics.SpriteAnimation, kotlin.Unit)))/regionName">regionName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$spriteAnimation(com.acornui.core.di.Owned, kotlin.String, kotlin.String, kotlin.Int, kotlin.Int, kotlin.Function1((com.acornui.core.graphics.SpriteAnimation, kotlin.Unit)))/startFrame">startFrame</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$spriteAnimation(com.acornui.core.di.Owned, kotlin.String, kotlin.String, kotlin.Int, kotlin.Int, kotlin.Function1((com.acornui.core.graphics.SpriteAnimation, kotlin.Unit)))/endFrame">endFrame</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;-1<span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics$spriteAnimation(com.acornui.core.di.Owned, kotlin.String, kotlin.String, kotlin.Int, kotlin.Int, kotlin.Function1((com.acornui.core.graphics.SpriteAnimation, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-sprite-animation/index.html"><span class="identifier">SpriteAnimation</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-sprite-animation/index.html"><span class="identifier">SpriteAnimation</span></a></code><br/>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">spriteAnimation</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics$spriteAnimation(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.core.graphics.SpriteAnimation, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-sprite-animation/index.html"><span class="identifier">SpriteAnimation</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-sprite-animation/index.html"><span class="identifier">SpriteAnimation</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,19 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>UiComponentImpl.cameraOverride - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component</a>&nbsp;/&nbsp;<a href="index.html">UiComponentImpl</a>&nbsp;/&nbsp;<a href="./camera-override.html">cameraOverride</a><br/>
+<br/>
+<h1>cameraOverride</h1>
+<a name="com.acornui.component.UiComponentImpl$cameraOverride"></a>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">cameraOverride</span><span class="symbol">: </span><a href="../../com.acornui.core.graphics/-camera-ro/index.html"><span class="identifier">CameraRo</span></a><span class="symbol">?</span></code>
+<p>Overrides <a href="../-camera-element/camera-override.html">CameraElement.cameraOverride</a></p>
+<p>Overrides the camera to be used for this component (and its children).
+Set to null to switch back to the inherited camera.</p>
+<p>Note that this does NOT request a render (so it is safe to call within a draw call).
+If this is set outside of a render, window.requestRender should be invoked.</p>
+</BODY>
+</HTML>

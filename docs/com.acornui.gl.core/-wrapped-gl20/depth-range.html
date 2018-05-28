@@ -1,0 +1,23 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>WrappedGl20.depthRange - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.gl.core</a>&nbsp;/&nbsp;<a href="index.html">WrappedGl20</a>&nbsp;/&nbsp;<a href="./depth-range.html">depthRange</a><br/>
+<br/>
+<h1>depthRange</h1>
+<a name="com.acornui.gl.core.WrappedGl20$depthRange(kotlin.Float, kotlin.Float)"></a>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">depthRange</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.WrappedGl20$depthRange(kotlin.Float, kotlin.Float)/zNear">zNear</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.WrappedGl20$depthRange(kotlin.Float, kotlin.Float)/zFar">zFar</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Overrides <a href="../-gl20/depth-range.html">Gl20.depthRange</a></p>
+<p>Sets how z values returned from the vertex shader are mapped to values to store in the depth buffer.
+This mapping is necessary because the vertex shader output z values will be clipped to the range -1 to 1 but the
+depth buffer stores depth values in the range 0 to 1.</p>
+<h3>Parameters</h3>
+<p><a name="zNear"></a>
+<code>zNear</code> - specifies what the vertex shader's -1 maps to in the depth buffer.</p>
+<p><a name="zFar"></a>
+<code>zFar</code> - specifies what the vertex shader's 1 maps to in the depth buffer. By default, zNear is 0 and zFar is 1.</p>
+</BODY>
+</HTML>

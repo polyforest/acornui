@@ -1,0 +1,243 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.component.scroll - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.component.scroll</a><br/>
+<br/>
+<h2>Package com.acornui.component.scroll</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-clamped-scroll-model/index.html">ClampedScrollModel</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ClampedScrollModel</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-clamped-scroll-model-ro/index.html"><span class="identifier">ClampedScrollModelRo</span></a><span class="symbol">, </span><a href="-scroll-model/index.html"><span class="identifier">ScrollModel</span></a></code>
+<p>A mutable scroll model with clamping.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-clamped-scroll-model-ro/index.html">ClampedScrollModelRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ClampedScrollModelRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-scroll-model-ro/index.html"><span class="identifier">ScrollModelRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-h-scroll-bar/index.html">HScrollBar</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">HScrollBar</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-scroll-bar-base/index.html"><span class="identifier">ScrollBarBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-h-slider/index.html">HSlider</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">HSlider</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-h-scroll-bar/index.html"><span class="identifier">HScrollBar</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-scroll-area/index.html">ScrollArea</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ScrollArea</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.layout.algorithm/-layout-data-provider/index.html"><span class="identifier">LayoutDataProvider</span></a><span class="symbol">&lt;</span><a href="../com.acornui.component/-stack-layout-data/index.html"><span class="identifier">StackLayoutData</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.component/-element-container.html"><span class="identifier">ElementContainer</span></a><span class="symbol">&lt;</span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-scroll-area-style/index.html">ScrollAreaStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ScrollAreaStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-scroll-bar-base/index.html">ScrollBarBase</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">ScrollBarBase</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-container-impl/index.html"><span class="identifier">ContainerImpl</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-scroll-bar-style/index.html">ScrollBarStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ScrollBarStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-scroll-model/index.html">ScrollModel</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ScrollModel</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-scroll-model-ro/index.html"><span class="identifier">ScrollModelRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-scroll-model-impl/index.html">ScrollModelImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ScrollModelImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-clamped-scroll-model/index.html"><span class="identifier">ClampedScrollModel</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code>
+<p>A model representation of the scrolling values</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-scroll-model-ro/index.html">ScrollModelRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ScrollModelRo</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-scroll-policy/index.html">ScrollPolicy</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">ScrollPolicy</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-scroll-rect/index.html">ScrollRect</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ScrollRect</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-element-container.html"><span class="identifier">ElementContainer</span></a><span class="symbol">&lt;</span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-toss-scroll-model-binding/index.html">TossScrollModelBinding</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TossScrollModelBinding</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-toss-scroller/index.html">TossScroller</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TossScroller</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<p>A toss scroller lets you grab a target component, and update <a href="-scroll-model-ro/index.html">ScrollModelRo</a> objects by dragging it.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-v-scroll-bar/index.html">VScrollBar</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">VScrollBar</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-scroll-bar-base/index.html"><span class="identifier">ScrollBarBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-v-slider/index.html">VSlider</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">VSlider</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-v-scroll-bar/index.html"><span class="identifier">VScrollBar</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-viewport-component/index.html">ViewportComponent</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ViewportComponent</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a></code>
+<p>A component with virtualization based on scrolling may implement this interface in order to virtualize the
+visible area.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="disable-toss-scrolling.html">disableTossScrolling</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">.</span><span class="identifier">disableTossScrolling</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="enable-toss-scrolling.html">enableTossScrolling</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">.</span><span class="identifier">enableTossScrolling</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.scroll$enableTossScrolling(com.acornui.component.UiComponent, kotlin.Float)/dampening">dampening</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;TossScroller.DEFAULT_DAMPENING<span class="symbol">)</span><span class="symbol">: </span><a href="-toss-scroller/index.html"><span class="identifier">TossScroller</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="h-scroll-bar.html">hScrollBar</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">hScrollBar</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.scroll$hScrollBar(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.scroll.HScrollBar, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-h-scroll-bar/index.html"><span class="identifier">HScrollBar</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-h-scroll-bar/index.html"><span class="identifier">HScrollBar</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="h-slider.html">hSlider</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">hSlider</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.scroll$hSlider(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.scroll.HSlider, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-h-slider/index.html"><span class="identifier">HSlider</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="-h-slider/index.html"><span class="identifier">HSlider</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="scroll-area.html">scrollArea</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">scrollArea</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.scroll$scrollArea(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.scroll.ScrollArea, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-scroll-area/index.html"><span class="identifier">ScrollArea</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-scroll-area/index.html"><span class="identifier">ScrollArea</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="scroll-rect.html">scrollRect</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">scrollRect</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.scroll$scrollRect(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.scroll.ScrollRect, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-scroll-rect/index.html"><span class="identifier">ScrollRect</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-scroll-rect/index.html"><span class="identifier">ScrollRect</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="scroll-to.html">scrollTo</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-scroll-area/index.html"><span class="identifier">ScrollArea</span></a><span class="symbol">.</span><span class="identifier">scrollTo</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.scroll$scrollTo(com.acornui.component.scroll.ScrollArea, com.acornui.math.RectangleRo)/bounds">bounds</span><span class="symbol">:</span>&nbsp;<span class="identifier">RectangleRo</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Scrolls the minimum distance to show the given bounding rectangle.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="to-css-string.html">toCssString</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-scroll-policy/index.html"><span class="identifier">ScrollPolicy</span></a><span class="symbol">.</span><span class="identifier">toCssString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="tween-scroll-x.html">tweenScrollX</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-scroll-area/index.html"><span class="identifier">ScrollArea</span></a><span class="symbol">.</span><span class="identifier">tweenScrollX</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.scroll$tweenScrollX(com.acornui.component.scroll.ScrollArea, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.scroll$tweenScrollX(com.acornui.component.scroll.ScrollArea, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.scroll$tweenScrollX(com.acornui.component.scroll.ScrollArea, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/toScrollX">toScrollX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.scroll$tweenScrollX(com.acornui.component.scroll.ScrollArea, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.core.tween/-tween/index.html"><span class="identifier">Tween</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="tween-scroll-y.html">tweenScrollY</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-scroll-area/index.html"><span class="identifier">ScrollArea</span></a><span class="symbol">.</span><span class="identifier">tweenScrollY</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.scroll$tweenScrollY(com.acornui.component.scroll.ScrollArea, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.scroll$tweenScrollY(com.acornui.component.scroll.ScrollArea, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.scroll$tweenScrollY(com.acornui.component.scroll.ScrollArea, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/toScrollY">toScrollY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.scroll$tweenScrollY(com.acornui.component.scroll.ScrollArea, kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Float)/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="../com.acornui.core.tween/-tween/index.html"><span class="identifier">Tween</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="v-scroll-bar.html">vScrollBar</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">vScrollBar</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.scroll$vScrollBar(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.scroll.VScrollBar, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-v-scroll-bar/index.html"><span class="identifier">VScrollBar</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-v-scroll-bar/index.html"><span class="identifier">VScrollBar</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="v-slider.html">vSlider</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">vSlider</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.scroll$vSlider(com.acornui.core.di.Owned, kotlin.Function1((com.acornui.component.scroll.VSlider, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-v-slider/index.html"><span class="identifier">VSlider</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="-v-slider/index.html"><span class="identifier">VSlider</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

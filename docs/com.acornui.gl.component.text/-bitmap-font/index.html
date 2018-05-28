@@ -1,0 +1,80 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>BitmapFont - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.gl.component.text</a>&nbsp;/&nbsp;<a href="./index.html">BitmapFont</a><br/>
+<br/>
+<h1>BitmapFont</h1>
+<code><span class="keyword">class </span><span class="identifier">BitmapFont</span></code>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">BitmapFont</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.component.text.BitmapFont$<init>(com.acornui.gl.component.text.BitmapFontData, kotlin.collections.List((com.acornui.core.graphics.Texture)), kotlin.collections.Map((kotlin.Char, com.acornui.gl.component.text.Glyph)), kotlin.Boolean)/data">data</span><span class="symbol">:</span>&nbsp;<a href="../-bitmap-font-data/index.html"><span class="identifier">BitmapFontData</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.text.BitmapFont$<init>(com.acornui.gl.component.text.BitmapFontData, kotlin.collections.List((com.acornui.core.graphics.Texture)), kotlin.collections.Map((kotlin.Char, com.acornui.gl.component.text.Glyph)), kotlin.Boolean)/pages">pages</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.graphics/-texture/index.html"><span class="identifier">Texture</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.text.BitmapFont$<init>(com.acornui.gl.component.text.BitmapFontData, kotlin.collections.List((com.acornui.core.graphics.Texture)), kotlin.collections.Map((kotlin.Char, com.acornui.gl.component.text.Glyph)), kotlin.Boolean)/glyphs">glyphs</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html"><span class="identifier">Char</span></a><span class="symbol">,</span>&nbsp;<a href="../-glyph/index.html"><span class="identifier">Glyph</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.component.text.BitmapFont$<init>(com.acornui.gl.component.text.BitmapFontData, kotlin.collections.List((com.acornui.core.graphics.Texture)), kotlin.collections.Map((kotlin.Char, com.acornui.gl.component.text.Glyph)), kotlin.Boolean)/premultipliedAlpha">premultipliedAlpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="data.html">data</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">data</span><span class="symbol">: </span><a href="../-bitmap-font-data/index.html"><span class="identifier">BitmapFontData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="glyphs.html">glyphs</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">glyphs</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html"><span class="identifier">Char</span></a><span class="symbol">,</span>&nbsp;<a href="../-glyph/index.html"><span class="identifier">Glyph</span></a><span class="symbol">?</span><span class="symbol">&gt;</span></code>
+<p>The glyph texture information.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="pages.html">pages</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">pages</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core.graphics/-texture/index.html"><span class="identifier">Texture</span></a><span class="symbol">&gt;</span></code>
+<p>The textures corresponding to <a href="../-glyph-data/page.html">GlyphData.page</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="premultiplied-alpha.html">premultipliedAlpha</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">premultipliedAlpha</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="get-glyph-safe.html">getGlyphSafe</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getGlyphSafe</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.component.text.BitmapFont$getGlyphSafe(kotlin.Char)/char">char</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html"><span class="identifier">Char</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-glyph/index.html"><span class="identifier">Glyph</span></a></code>
+<p>Returns the glyph associated with the provided <a href="get-glyph-safe.html#com.acornui.gl.component.text.BitmapFont$getGlyphSafe(kotlin.Char)/char">char</a>. If the glyph is not found, if the <a href="get-glyph-safe.html#com.acornui.gl.component.text.BitmapFont$getGlyphSafe(kotlin.Char)/char">char</a> is whitespace,
+an empty glyph will be returned. If the glyph is not found and is not whitespace, a missing glyph placeholder
+will be returned.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

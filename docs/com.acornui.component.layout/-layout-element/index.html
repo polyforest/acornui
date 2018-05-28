@@ -1,0 +1,219 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>LayoutElement - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.layout</a>&nbsp;/&nbsp;<a href="./index.html">LayoutElement</a><br/>
+<br/>
+<h1>LayoutElement</h1>
+<code><span class="keyword">interface </span><span class="identifier">LayoutElement</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-layout-element-ro/index.html"><span class="identifier">LayoutElementRo</span></a><span class="symbol">, </span><a href="../-basic-layout-element/index.html"><span class="identifier">BasicLayoutElement</span></a><span class="symbol">, </span><a href="../-transformable/index.html"><span class="identifier">Transformable</span></a></code>
+<p>A LayoutElement is a Transformable component that can be used in layout algorithms.
+It has features responsible for providing explicit dimensions, and returning measured dimensions.</p>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-layout-element-ro/explicit-size-constraints.html">explicitSizeConstraints</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">explicitSizeConstraints</span><span class="symbol">: </span><a href="../-size-constraints-ro/index.html"><span class="identifier">SizeConstraintsRo</span></a></code>
+<p>Returns the explicit size constraints.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-layout-element-ro/max-height.html">maxHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">maxHeight</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code>
+<p>Returns the maximum measured height.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-layout-element-ro/max-width.html">maxWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">maxWidth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code>
+<p>Returns the measured maximum width.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-layout-element-ro/min-height.html">minHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">minHeight</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code>
+<p>Returns the measured minimum height.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-layout-element-ro/min-width.html">minWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">minWidth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code>
+<p>Returns the measured minimum width.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-layout-element-ro/should-layout.html">shouldLayout</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">shouldLayout</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if visible and the includeInLayout flag is true. If this is false, this layout element will not
+be included in layout algorithms.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-layout-element-ro/size-constraints.html">sizeConstraints</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">sizeConstraints</span><span class="symbol">: </span><a href="../-size-constraints-ro/index.html"><span class="identifier">SizeConstraintsRo</span></a></code>
+<p>Returns the measured size constraints, bound by the explicit size constraints.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="max-height.html">maxHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">maxHeight</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.LayoutElement$maxHeight(kotlin.Float)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the maximum measured height.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="max-width.html">maxWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">maxWidth</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.LayoutElement$maxWidth(kotlin.Float)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the maximum measured width.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="min-height.html">minHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">minHeight</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.LayoutElement$minHeight(kotlin.Float)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the explicit minimum height.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="min-width.html">minWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">minWidth</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.LayoutElement$minWidth(kotlin.Float)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the explicit minimum width.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-layout-element-ro/contains-canvas-point.html">containsCanvasPoint</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">containsCanvasPoint</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.LayoutElementRo$containsCanvasPoint(kotlin.Float, kotlin.Float)/canvasX">canvasX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.LayoutElementRo$containsCanvasPoint(kotlin.Float, kotlin.Float)/canvasY">canvasY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Given a canvas position, casts a ray in the direction of the camera, and returns true if that ray intersects
+with this component. This will always return false if this element is not active (on the stage)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-layout-element-ro/intersects-global-ray.html">intersectsGlobalRay</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">intersectsGlobalRay</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.LayoutElementRo$intersectsGlobalRay(com.acornui.math.RayRo)/globalRay">globalRay</span><span class="symbol">:</span>&nbsp;<span class="identifier">RayRo</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this primitive intersects with the provided ray (in world coordinates)</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">intersectsGlobalRay</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.LayoutElementRo$intersectsGlobalRay(com.acornui.math.RayRo, com.acornui.math.Vector3)/globalRay">globalRay</span><span class="symbol">:</span>&nbsp;<span class="identifier">RayRo</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.LayoutElementRo$intersectsGlobalRay(com.acornui.math.RayRo, com.acornui.math.Vector3)/intersection">intersection</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this primitive intersects with the provided ray (in world coordinates)
+If there was an intersection, the intersection vector will be set to the intersection point.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-transformable/set-origin.html">setOrigin</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setOrigin</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Transformable$setOrigin(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setOrigin(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setOrigin(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setOrigin</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Transformable$setOrigin(kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setOrigin(kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-transformable/set-rotation.html">setRotation</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setRotation</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Transformable$setRotation(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setRotation(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setRotation(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-transformable/set-scaling.html">setScaling</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setScaling</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Transformable$setScaling(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setScaling(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setScaling(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setScaling</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Transformable$setScaling(kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Transformable$setScaling(kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../clamp-height.html">clampHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-layout-element-ro/index.html"><span class="identifier">LayoutElementRo</span></a><span class="symbol">.</span><span class="identifier">clampHeight</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout$clampHeight(com.acornui.component.layout.LayoutElementRo, kotlin.Float)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../clamp-width.html">clampWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-layout-element-ro/index.html"><span class="identifier">LayoutElementRo</span></a><span class="symbol">.</span><span class="identifier">clampWidth</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout$clampWidth(com.acornui.component.layout.LayoutElementRo, kotlin.Float)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../set-size.html">setSize</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">LayoutElement</span></a><span class="symbol">.</span><span class="identifier">setSize</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout$setSize(com.acornui.component.layout.LayoutElement, com.acornui.math.BoundsRo)/bounds">bounds</span><span class="symbol">:</span>&nbsp;<span class="identifier">BoundsRo</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-interactive-element/index.html">InteractiveElement</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">InteractiveElement</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-interactive-element-ro/index.html"><span class="identifier">InteractiveElementRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">LayoutElement</span></a><span class="symbol">, </span><a href="../../com.acornui.component/-camera-element/index.html"><span class="identifier">CameraElement</span></a></code>
+<p>InteractiveElement provides a way to add and use signals for interaction events.
+To use interaction signals, use their respective extension function.
+See commonInteractions.kt</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

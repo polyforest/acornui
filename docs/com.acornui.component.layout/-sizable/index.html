@@ -1,0 +1,114 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Sizable - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.layout</a>&nbsp;/&nbsp;<a href="./index.html">Sizable</a><br/>
+<br/>
+<h1>Sizable</h1>
+<code><span class="keyword">interface </span><span class="identifier">Sizable</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-sizable-ro/index.html"><span class="identifier">SizableRo</span></a></code>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-sizable-ro/bounds.html">bounds</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">bounds</span><span class="symbol">: </span><span class="identifier">BoundsRo</span></code>
+<p>The measured bounds of this component.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-sizable-ro/explicit-height.html">explicitHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">explicitHeight</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code>
+<p>The explicit height, as set by height(value)
+Typically one would use <a href="../-sizable-ro/height.html">height</a> in order to retrieve the explicit or measured height.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-sizable-ro/explicit-width.html">explicitWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">explicitWidth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code>
+<p>The explicit width, as set by width(value)
+Typically one would use <a href="../-sizable-ro/width.html">width</a> in order to retrieve the explicit or measured width.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-sizable-ro/height.html">height</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">height</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Returns the measured height.
+If layout is invalid, this will invoke a layout validation.
+This is the same as <code>bounds.height</code></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-sizable-ro/width.html">width</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">width</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>Returns the measured width.
+If layout is invalid, this will invoke a layout validation.
+This is the same as <code>bounds.width</code></p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="height.html">height</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">height</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Sizable$height(kotlin.Float)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the explicit height for this layout element. (A null value represents using the measured height)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set-size.html">setSize</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">setSize</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Sizable$setSize(kotlin.Float, kotlin.Float)/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.Sizable$setSize(kotlin.Float, kotlin.Float)/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Does the same thing as setting <a href="set-size.html#com.acornui.component.layout.Sizable$setSize(kotlin.Float, kotlin.Float)/width">width</a> and <a href="set-size.html#com.acornui.component.layout.Sizable$setSize(kotlin.Float, kotlin.Float)/height">height</a> individually, but may be more efficient depending on
+implementation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="width.html">width</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">width</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.Sizable$width(kotlin.Float)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the explicit width for this layout element. (A null value represents using the measured width)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-basic-layout-element/index.html">BasicLayoutElement</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">BasicLayoutElement</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-basic-layout-element-ro/index.html"><span class="identifier">BasicLayoutElementRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">Sizable</span></a><span class="symbol">, </span><a href="../-positionable/index.html"><span class="identifier">Positionable</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

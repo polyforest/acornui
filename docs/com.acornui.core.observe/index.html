@@ -1,0 +1,60 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.core.observe - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.core.observe</a><br/>
+<br/>
+<h2>Package com.acornui.core.observe</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-data-binding/index.html">DataBinding</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DataBinding</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Type Aliases</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-data-change-handler.html">DataChangeHandler</a></p>
+</td>
+<td>
+<code><span class="keyword">typealias </span><span class="identifier">DataChangeHandler</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;<span class="symbol">(</span><a href="-data-change-handler.html#T"><span class="identifier">T</span></a><span class="symbol">,</span>&nbsp;<a href="-data-change-handler.html#T"><span class="identifier">T</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>A handler for when a data binding has changed.
+oldValue, newValue</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="data-binding.html">dataBinding</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">dataBinding</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.observe$dataBinding(com.acornui.core.di.Owned, com.acornui.core.observe.dataBinding.T)/initialValue">initialValue</span><span class="symbol">:</span>&nbsp;<a href="data-binding.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-data-binding/index.html"><span class="identifier">DataBinding</span></a><span class="symbol">&lt;</span><a href="data-binding.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="mirror.html">mirror</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <a href="-data-binding/index.html"><span class="identifier">DataBinding</span></a><span class="symbol">&lt;</span><a href="mirror.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">.</span><span class="identifier">mirror</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.observe$mirror(com.acornui.core.observe.DataBinding((com.acornui.core.observe.mirror.T)), com.acornui.core.observe.DataBinding((com.acornui.core.observe.mirror.T)))/other">other</span><span class="symbol">:</span>&nbsp;<a href="-data-binding/index.html"><span class="identifier">DataBinding</span></a><span class="symbol">&lt;</span><a href="mirror.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Disposable</span></code>
+<p>Mirrors changes from two data binding objects. If one changes, the other will be set.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

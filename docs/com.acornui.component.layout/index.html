@@ -1,0 +1,268 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.acornui.component.layout - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">com.acornui.component.layout</a><br/>
+<br/>
+<h2>Package com.acornui.component.layout</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-basic-layout-element/index.html">BasicLayoutElement</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">BasicLayoutElement</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-basic-layout-element-ro/index.html"><span class="identifier">BasicLayoutElementRo</span></a><span class="symbol">, </span><a href="-sizable/index.html"><span class="identifier">Sizable</span></a><span class="symbol">, </span><a href="-positionable/index.html"><span class="identifier">Positionable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-basic-layout-element-ro/index.html">BasicLayoutElementRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">BasicLayoutElementRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-sizable-ro/index.html"><span class="identifier">SizableRo</span></a><span class="symbol">, </span><a href="-positionable-ro/index.html"><span class="identifier">PositionableRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-data-scroller/index.html">DataScroller</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DataScroller</span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">, </span><span class="keyword">out</span>&nbsp;<span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style/index.html"><span class="identifier">Style</span></a><span class="symbol">, </span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-layout-data/index.html"><span class="identifier">LayoutData</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-container-impl/index.html"><span class="identifier">ContainerImpl</span></a><span class="symbol">, </span><a href="../com.acornui.core.focus/-focusable/index.html"><span class="identifier">Focusable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-data-scroller-style/index.html">DataScrollerStyle</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DataScrollerStyle</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style-base/index.html"><span class="identifier">StyleBase</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-h-align/index.html">HAlign</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">HAlign</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-layout-container/index.html">LayoutContainer</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">LayoutContainer</span><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">, </span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-layout-data/index.html"><span class="identifier">LayoutData</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.layout.algorithm/-layout-data-provider/index.html"><span class="identifier">LayoutDataProvider</span></a><span class="symbol">&lt;</span><a href="-layout-container/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.component/-element-container.html"><span class="identifier">ElementContainer</span></a><span class="symbol">&lt;</span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-layout-container-impl/index.html">LayoutContainerImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">LayoutContainerImpl</span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style/index.html"><span class="identifier">Style</span></a><span class="symbol">, </span><span class="keyword">out</span>&nbsp;<span class="identifier">U</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-layout-data/index.html"><span class="identifier">LayoutData</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-element-container-impl/index.html"><span class="identifier">ElementContainerImpl</span></a><span class="symbol">&lt;</span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="-layout-container/index.html"><span class="identifier">LayoutContainer</span></a><span class="symbol">&lt;</span><a href="-layout-container-impl/index.html#S"><span class="identifier">S</span></a><span class="symbol">,</span>&nbsp;<a href="-layout-container-impl/index.html#U"><span class="identifier">U</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.core.focus/-focusable/index.html"><span class="identifier">Focusable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-layout-data/index.html">LayoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">LayoutData</span></code>
+<p>A class representing extra layout data, specific to use with LayoutAlgorithm objects.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-layout-element/index.html">LayoutElement</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">LayoutElement</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-layout-element-ro/index.html"><span class="identifier">LayoutElementRo</span></a><span class="symbol">, </span><a href="-basic-layout-element/index.html"><span class="identifier">BasicLayoutElement</span></a><span class="symbol">, </span><a href="-transformable/index.html"><span class="identifier">Transformable</span></a></code>
+<p>A LayoutElement is a Transformable component that can be used in layout algorithms.
+It has features responsible for providing explicit dimensions, and returning measured dimensions.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-layout-element-ro/index.html">LayoutElementRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">LayoutElementRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-basic-layout-element-ro/index.html"><span class="identifier">BasicLayoutElementRo</span></a><span class="symbol">, </span><a href="-transformable-ro/index.html"><span class="identifier">TransformableRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-list-item-renderer.html">ListItemRenderer</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ListItemRenderer</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-list-item-renderer-ro.html"><span class="identifier">ListItemRendererRo</span></a><span class="symbol">&lt;</span><a href="-list-item-renderer.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.component/-item-renderer/index.html"><span class="identifier">ItemRenderer</span></a><span class="symbol">&lt;</span><a href="-list-item-renderer.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.component/-toggleable/index.html"><span class="identifier">Toggleable</span></a><span class="symbol">, </span><a href="-list-renderer/index.html"><span class="identifier">ListRenderer</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-list-item-renderer-ro.html">ListItemRendererRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ListItemRendererRo</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">E</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-item-renderer-ro/index.html"><span class="identifier">ItemRendererRo</span></a><span class="symbol">&lt;</span><a href="-list-item-renderer-ro.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../com.acornui.component/-toggleable-ro/index.html"><span class="identifier">ToggleableRo</span></a><span class="symbol">, </span><a href="-list-renderer-ro/index.html"><span class="identifier">ListRendererRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-list-renderer/index.html">ListRenderer</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ListRenderer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-list-renderer-ro/index.html"><span class="identifier">ListRendererRo</span></a><span class="symbol">, </span><a href="../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-list-renderer-ro/index.html">ListRendererRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ListRendererRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-positionable/index.html">Positionable</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Positionable</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-positionable-ro/index.html"><span class="identifier">PositionableRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-positionable-ro/index.html">PositionableRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">PositionableRo</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-sizable/index.html">Sizable</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Sizable</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-sizable-ro/index.html"><span class="identifier">SizableRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-sizable-ro/index.html">SizableRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">SizableRo</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-size-constraints/index.html">SizeConstraints</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">SizeConstraints</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Clearable</span><span class="symbol">, </span><a href="-size-constraints-ro/index.html"><span class="identifier">SizeConstraintsRo</span></a></code>
+<p>An object representing the minimum and maximum dimensions of an object.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-size-constraints-ro/index.html">SizeConstraintsRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">SizeConstraintsRo</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-spacer/index.html">Spacer</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Spacer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-ui-component-impl/index.html"><span class="identifier">UiComponentImpl</span></a></code>
+<p>A component with no rendering, just used to take up whitespace.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-transformable/index.html">Transformable</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Transformable</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-transformable-ro/index.html"><span class="identifier">TransformableRo</span></a><span class="symbol">, </span><a href="-positionable/index.html"><span class="identifier">Positionable</span></a></code>
+<p>The API for reading and modifying a component's 3d transformation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-transformable-ro/index.html">TransformableRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">TransformableRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-positionable-ro/index.html"><span class="identifier">PositionableRo</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-v-align/index.html">VAlign</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">VAlign</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-virtual-layout-container/index.html">VirtualLayoutContainer</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">VirtualLayoutContainer</span><span class="symbol">&lt;</span><span class="identifier">S</span><span class="symbol">, </span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-layout-data/index.html"><span class="identifier">LayoutData</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-container.html"><span class="identifier">Container</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-virtual-list/index.html">VirtualList</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">VirtualList</span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">, </span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style/index.html"><span class="identifier">Style</span></a><span class="symbol">, </span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-layout-data/index.html"><span class="identifier">LayoutData</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-container-impl/index.html"><span class="identifier">ContainerImpl</span></a><span class="symbol">, </span><a href="../com.acornui.core.focus/-focus-container/index.html"><span class="identifier">FocusContainer</span></a><span class="symbol">, </span><a href="../com.acornui.component.layout.algorithm.virtual/-item-renderer-owner.html"><span class="identifier">ItemRendererOwner</span></a><span class="symbol">&lt;</span><a href="-virtual-list/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="-virtual-layout-container/index.html"><span class="identifier">VirtualLayoutContainer</span></a><span class="symbol">&lt;</span><a href="-virtual-list/index.html#S"><span class="identifier">S</span></a><span class="symbol">,</span>&nbsp;<a href="-virtual-list/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>A virtualized list of components, with no clipping or scrolling. This is a lower-level component, used by the <a href="-data-scroller/index.html">DataScroller</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-virtual-list-selection/index.html">VirtualListSelection</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">VirtualListSelection</span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.core.behavior/-selection-base/index.html"><span class="identifier">SelectionBase</span></a><span class="symbol">&lt;</span><a href="-virtual-list-selection/index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="clamp-height.html">clampHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-layout-element-ro/index.html"><span class="identifier">LayoutElementRo</span></a><span class="symbol">.</span><span class="identifier">clampHeight</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout$clampHeight(com.acornui.component.layout.LayoutElementRo, kotlin.Float)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="clamp-width.html">clampWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-layout-element-ro/index.html"><span class="identifier">LayoutElementRo</span></a><span class="symbol">.</span><span class="identifier">clampWidth</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout$clampWidth(com.acornui.component.layout.LayoutElementRo, kotlin.Float)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="intersects.html">intersects</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.graphics/-camera-ro/index.html"><span class="identifier">CameraRo</span></a><span class="symbol">.</span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout$intersects(com.acornui.core.graphics.CameraRo, com.acornui.component.layout.LayoutElementRo)/element">element</span><span class="symbol">:</span>&nbsp;<a href="-layout-element-ro/index.html"><span class="identifier">LayoutElementRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if any part of the element's bounding rectangle can be seen by this camera.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="set-size.html">setSize</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="-layout-element/index.html"><span class="identifier">LayoutElement</span></a><span class="symbol">.</span><span class="identifier">setSize</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout$setSize(com.acornui.component.layout.LayoutElement, com.acornui.math.BoundsRo)/bounds">bounds</span><span class="symbol">:</span>&nbsp;<span class="identifier">BoundsRo</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="spacer.html">spacer</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">spacer</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout$spacer(com.acornui.core.di.Owned, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.layout.Spacer, kotlin.Unit)))/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout$spacer(com.acornui.core.di.Owned, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.layout.Spacer, kotlin.Unit)))/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout$spacer(com.acornui.core.di.Owned, kotlin.Float, kotlin.Float, kotlin.Function1((com.acornui.component.layout.Spacer, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-spacer/index.html"><span class="identifier">Spacer</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-spacer/index.html"><span class="identifier">Spacer</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="virtual-list.html">virtualList</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">, </span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.style/-style/index.html"><span class="identifier">Style</span></a><span class="symbol">, </span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-layout-data/index.html"><span class="identifier">LayoutData</span></a><span class="symbol">&gt;</span> <a href="../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">.</span><span class="identifier">virtualList</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout$virtualList(com.acornui.core.di.Owned, com.acornui.component.layout.algorithm.virtual.VirtualLayoutAlgorithm((com.acornui.component.layout.virtualList.S, com.acornui.component.layout.virtualList.T)), com.acornui.component.layout.virtualList.S, kotlin.Function1((com.acornui.component.layout.VirtualList((com.acornui.component.layout.virtualList.E, com.acornui.component.layout.virtualList.S, com.acornui.component.layout.virtualList.T)), kotlin.Unit)))/layoutAlgorithm">layoutAlgorithm</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component.layout.algorithm.virtual/-virtual-layout-algorithm/index.html"><span class="identifier">VirtualLayoutAlgorithm</span></a><span class="symbol">&lt;</span><a href="virtual-list.html#S"><span class="identifier">S</span></a><span class="symbol">,</span>&nbsp;<a href="virtual-list.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout$virtualList(com.acornui.core.di.Owned, com.acornui.component.layout.algorithm.virtual.VirtualLayoutAlgorithm((com.acornui.component.layout.virtualList.S, com.acornui.component.layout.virtualList.T)), com.acornui.component.layout.virtualList.S, kotlin.Function1((com.acornui.component.layout.VirtualList((com.acornui.component.layout.virtualList.E, com.acornui.component.layout.virtualList.S, com.acornui.component.layout.virtualList.T)), kotlin.Unit)))/style">style</span><span class="symbol">:</span>&nbsp;<a href="virtual-list.html#S"><span class="identifier">S</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout$virtualList(com.acornui.core.di.Owned, com.acornui.component.layout.algorithm.virtual.VirtualLayoutAlgorithm((com.acornui.component.layout.virtualList.S, com.acornui.component.layout.virtualList.T)), com.acornui.component.layout.virtualList.S, kotlin.Function1((com.acornui.component.layout.VirtualList((com.acornui.component.layout.virtualList.E, com.acornui.component.layout.virtualList.S, com.acornui.component.layout.virtualList.T)), kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../com.acornui.component/-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="-virtual-list/index.html"><span class="identifier">VirtualList</span></a><span class="symbol">&lt;</span><a href="virtual-list.html#E"><span class="identifier">E</span></a><span class="symbol">,</span>&nbsp;<a href="virtual-list.html#S"><span class="identifier">S</span></a><span class="symbol">,</span>&nbsp;<a href="virtual-list.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="-virtual-list/index.html"><span class="identifier">VirtualList</span></a><span class="symbol">&lt;</span><a href="virtual-list.html#E"><span class="identifier">E</span></a><span class="symbol">,</span>&nbsp;<a href="virtual-list.html#S"><span class="identifier">S</span></a><span class="symbol">,</span>&nbsp;<a href="virtual-list.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

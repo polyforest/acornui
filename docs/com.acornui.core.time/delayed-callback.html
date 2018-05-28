@@ -1,0 +1,22 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>delayedCallback - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="index.html">com.acornui.core.time</a>&nbsp;/&nbsp;<a href="./delayed-callback.html">delayedCallback</a><br/>
+<br/>
+<h1>delayedCallback</h1>
+<a name="com.acornui.core.time$delayedCallback(com.acornui.core.di.Scoped, kotlin.Float, kotlin.Function0((kotlin.Unit)))"></a>
+<code><span class="keyword">fun </span><a href="../com.acornui.core.di/-scoped/index.html"><span class="identifier">Scoped</span></a><span class="symbol">.</span><span class="identifier">delayedCallback</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.time$delayedCallback(com.acornui.core.di.Scoped, kotlin.Float, kotlin.Function0((kotlin.Unit)))/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.time$delayedCallback(com.acornui.core.di.Scoped, kotlin.Float, kotlin.Function0((kotlin.Unit)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-callback-wrapper/index.html"><span class="identifier">CallbackWrapper</span></a></code>
+<p>Returns a wrapper that when invoked, will call <a href="delayed-callback.html#com.acornui.core.time$delayedCallback(com.acornui.core.di.Scoped, kotlin.Float, kotlin.Function0((kotlin.Unit)))/callback">callback</a> after <a href="delayed-callback.html#com.acornui.core.time$delayedCallback(com.acornui.core.di.Scoped, kotlin.Float, kotlin.Function0((kotlin.Unit)))/duration">duration</a> seconds. Every consecutive
+invocation of the wrapper will reset this timer.
+Useful for things like auto-save after the user is done typing for a set amount of time.</p>
+<h3>Parameters</h3>
+<p><a name="duration"></a>
+<code>duration</code> - The number of seconds before the <a href="delayed-callback.html#com.acornui.core.time$delayedCallback(com.acornui.core.di.Scoped, kotlin.Float, kotlin.Function0((kotlin.Unit)))/callback">callback</a> is invoked.</p>
+<p><a name="callback"></a>
+<code>callback</code> - The function to call after <a href="delayed-callback.html#com.acornui.core.time$delayedCallback(com.acornui.core.di.Scoped, kotlin.Float, kotlin.Function0((kotlin.Unit)))/duration">duration</a> seconds.</p>
+</BODY>
+</HTML>

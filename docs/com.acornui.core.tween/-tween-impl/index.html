@@ -1,0 +1,200 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>TweenImpl - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.tween</a>&nbsp;/&nbsp;<a href="./index.html">TweenImpl</a><br/>
+<br/>
+<h1>TweenImpl</h1>
+<code><span class="keyword">class </span><span class="identifier">TweenImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-tween-base/index.html"><span class="identifier">TweenBase</span></a></code>
+<p>A tween instance with pooling.
+Use <a href="#">tween</a> to obtain a new Tween instance.
+Pooled tweens are recycled on completion. (See <a href="../-tween-base/completed.html">completed</a> signal)</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">TweenImpl</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween.TweenImpl$<init>(kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function2((kotlin.Float, , kotlin.Unit)))/duration">duration</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween.TweenImpl$<init>(kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function2((kotlin.Float, , kotlin.Unit)))/ease">ease</span><span class="symbol">:</span>&nbsp;<span class="identifier">Interpolation</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween.TweenImpl$<init>(kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function2((kotlin.Float, , kotlin.Unit)))/delay">delay</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween.TweenImpl$<init>(kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function2((kotlin.Float, , kotlin.Unit)))/loop">loop</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween.TweenImpl$<init>(kotlin.Float, com.acornui.math.Interpolation, kotlin.Float, kotlin.Boolean, kotlin.Function2((kotlin.Float, , kotlin.Unit)))/tween">tween</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="identifier">previousAlpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">currentAlpha</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span></code>
+<p>A tween instance with pooling.
+Use <a href="#">tween</a> to obtain a new Tween instance.
+Pooled tweens are recycled on completion. (See <a href="../-tween-base/completed.html">completed</a> signal)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="duration.html">duration</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">duration</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The total duration of this tween, in seconds.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="duration-inv.html">durationInv</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">durationInv</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>1f / duration.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-tween-base/_completed.html">_completed</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">_completed</span><span class="symbol">: </span><span class="identifier">Signal1</span><span class="symbol">&lt;</span><a href="../-tween/index.html"><span class="identifier">Tween</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-tween-base/_current-time.html">_currentTime</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">_currentTime</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-tween-base/allow-completion.html">allowCompletion</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">allowCompletion</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If this is true, <a href="../-tween/completed.html">completed</a> will be dispatched when the play head scrubs past an endpoint regardless if looping
+is enabled.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-tween-base/completed.html">completed</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">completed</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-tween/index.html"><span class="identifier">Tween</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<p>Dispatched when the play head has scrubbed past a boundary, either 0f or <a href="../-tween/duration.html">duration</a>. If looping is enabled, this
+will not be invoked unless <a href="../-tween/allow-completion.html">allowCompletion</a> is called.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-tween-base/current-time.html">currentTime</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">currentTime</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The current time of the tween, in seconds.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-tween-base/ease.html">ease</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">ease</span><span class="symbol">: </span><span class="identifier">Interpolation</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-tween-base/loop-after.html">loopAfter</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">loopAfter</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true, when this tween's <a href="../-tween/current-time.html">currentTime</a> &gt;= <a href="../-tween/duration.html">duration</a>, it will loop back to zero.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-tween-base/loop-before.html">loopBefore</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">loopBefore</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true, when this tween's <a href="../-tween/current-time.html">currentTime</a> &lt;= 0f, it will loop back to <a href="../-tween/duration.html">duration</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-tween-base/paused.html">paused</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">paused</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true, <a href="../-tween/update.html">update</a> will not advance the current time.
+This does not affect directly changing the current time.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-tween-base/start-time.html">startTime</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">startTime</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>When the tween is rewound using <a href="../-tween/rewind.html">rewind</a>, the <a href="../-tween/current-time.html">currentTime</a> will be set to this value.
+This can be set to a negative value to indicate a delay.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="complete.html">complete</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">complete</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Removes this Tween from the time driver, and recycles this instance. This will leave this tween's progress
+as it is.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="update-to-time.html">updateToTime</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">updateToTime</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween.TweenImpl$updateToTime(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/lastTime">lastTime</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween.TweenImpl$updateToTime(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/newTime">newTime</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween.TweenImpl$updateToTime(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/apparentLastTime">apparentLastTime</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween.TweenImpl$updateToTime(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/apparentNewTime">apparentNewTime</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween.TweenImpl$updateToTime(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/jump">jump</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Updates the tween to the given time.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-tween-base/completion-check.html">completionCheck</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">completionCheck</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween.TweenBase$completionCheck(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/lastTime">lastTime</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween.TweenBase$completionCheck(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/time">time</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween.TweenBase$completionCheck(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/lastApparentTime">lastApparentTime</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween.TweenBase$completionCheck(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/apparentTime">apparentTime</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-tween-base/ease.html">ease</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">ease</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween.TweenBase$ease(kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-tween-base/set-current-time.html">setCurrentTime</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setCurrentTime</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween.TweenBase$setCurrentTime(kotlin.Float, kotlin.Boolean)/newTime">newTime</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.tween.TweenBase$setCurrentTime(kotlin.Float, kotlin.Boolean)/jump">jump</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the current time.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

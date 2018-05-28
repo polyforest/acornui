@@ -1,0 +1,248 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>FocusManagerImpl - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.focus</a>&nbsp;/&nbsp;<a href="./index.html">FocusManagerImpl</a><br/>
+<br/>
+<h1>FocusManagerImpl</h1>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">FocusManagerImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-focus-manager/index.html"><span class="identifier">FocusManager</span></a></code>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">FocusManagerImpl</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="_focusables-valid.html">_focusablesValid</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">_focusablesValid</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="_focused.html">_focused</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">_focused</span><span class="symbol">: </span><a href="../-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="_highlighted.html">_highlighted</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">_highlighted</span><span class="symbol">: </span><a href="../-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="_root.html">_root</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">_root</span><span class="symbol">: </span><a href="../-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="focusables.html">focusables</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">focusables</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-array-list/index.html"><span class="identifier">ArrayList</span></a><span class="symbol">&lt;</span><a href="../-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="focused-changed.html">focusedChanged</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">focusedChanged</span><span class="symbol">: </span><span class="identifier">Signal2</span><span class="symbol">&lt;</span><a href="../-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">?</span><span class="symbol">,</span>&nbsp;<a href="../-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">?</span><span class="symbol">&gt;</span></code>
+<p>Dispatched when the focused object changes.
+(oldFocusable, newFocusable)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="focused-changing.html">focusedChanging</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">focusedChanging</span><span class="symbol">: </span><span class="identifier">Signal3</span><span class="symbol">&lt;</span><a href="../-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">?</span><span class="symbol">,</span>&nbsp;<a href="../-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">?</span><span class="symbol">,</span>&nbsp;<span class="identifier">Cancel</span><span class="symbol">&gt;</span></code>
+<p>Dispatched when the focused object is about to change.
+(oldFocusable, newFocusable, cancel)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="focused-changing-cancel.html">focusedChangingCancel</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">focusedChangingCancel</span><span class="symbol">: </span><span class="identifier">Cancel</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="highlight.html">highlight</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">highlight</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">?</span></code>
+<p>This component will be provided to <a href="../-focusable/index.html">Focusable</a> objects as their highlight clip.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="highlight-is-changing.html">highlightIsChanging</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">highlightIsChanging</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="root.html">root</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">root</span><span class="symbol">: </span><a href="../-focusable/index.html"><span class="identifier">Focusable</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="focused.html">focused</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">focused</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">?</span></code>
+<p>Returns the currently focused element. This will be null if the root of the focus manager is being removed.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">focused</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.focus.FocusManagerImpl$focused(com.acornui.core.focus.Focusable)/value">value</span><span class="symbol">:</span>&nbsp;<a href="../-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the currently focused element.
+The provided focusable element may have <a href="../-focusable/focus-enabled.html">Focusable.focusEnabled</a> set to false; It will still be focused.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="highlight-focused.html">highlightFocused</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">highlightFocused</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="init.html">init</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">init</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.focus.FocusManagerImpl$init(com.acornui.core.focus.Focusable)/root">root</span><span class="symbol">:</span>&nbsp;<a href="../-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Initializes the focus manager with the given root focusable.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="iterate-focusables.html">iterateFocusables</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">iterateFocusables</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.focus.FocusManagerImpl$iterateFocusables(kotlin.Function1((com.acornui.core.focus.Focusable, kotlin.Boolean)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Iterates all focusable elements in order.
+If the callback returns false, the iteration will not continue.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="iterate-focusables-reversed.html">iterateFocusablesReversed</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">iterateFocusablesReversed</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.focus.FocusManagerImpl$iterateFocusablesReversed(kotlin.Function1((com.acornui.core.focus.Focusable, kotlin.Boolean)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Iterates all focusable elements in reverse order.
+If the callback returns false, the iteration will not continue.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="next-focusable.html">nextFocusable</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">nextFocusable</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-focusable/index.html"><span class="identifier">Focusable</span></a></code>
+<p>Returns the next enabled focusable element. If the current focus is null, this will be the root.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="on-focused-changed.html">onFocusedChanged</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">onFocusedChanged</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.focus.FocusManagerImpl$onFocusedChanged(com.acornui.core.focus.Focusable, com.acornui.core.focus.Focusable)/oldFocused">oldFocused</span><span class="symbol">:</span>&nbsp;<a href="../-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.focus.FocusManagerImpl$onFocusedChanged(com.acornui.core.focus.Focusable, com.acornui.core.focus.Focusable)/value">value</span><span class="symbol">:</span>&nbsp;<a href="../-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="previous-focusable.html">previousFocusable</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">previousFocusable</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-focusable/index.html"><span class="identifier">Focusable</span></a></code>
+<p>Returns the previous enabled focusable element.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="refresh-focus-order.html">refreshFocusOrder</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">refreshFocusOrder</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="unhighlight-focused.html">unhighlightFocused</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">unhighlightFocused</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-focus-manager/clear-focused.html">clearFocused</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">clearFocused</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Clears the current focus.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-focus-manager/focus-next.html">focusNext</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">focusNext</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets focus to the <a href="../-focus-manager/next-focusable.html">nextFocusable</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-focus-manager/focus-previous.html">focusPrevious</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">focusPrevious</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets focus to <a href="../-focus-manager/previous-focusable.html">previousFocusable</a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,108 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>DataGridGroup - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.datagrid</a>&nbsp;/&nbsp;<a href="./index.html">DataGridGroup</a><br/>
+<br/>
+<h1>DataGridGroup</h1>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">DataGridGroup</span><span class="symbol">&lt;</span><span class="identifier">E</span><span class="symbol">&gt;</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">DataGridGroup</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="changed.html">changed</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">changed</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="./index.html"><span class="identifier">DataGridGroup</span></a><span class="symbol">&lt;</span><a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="collapsed.html">collapsed</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">collapsed</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If true, this group will be collapsed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="filter.html">filter</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">filter</span><span class="symbol">: </span><span class="symbol">(</span><a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>The filter function for what rows will be shown below this group's header. The filter functions do not need
+to be mutually exclusive, but if they aren't, rows may be shown multiple times.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="show-footer.html">showFooter</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">showFooter</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If false, a footer row will not be shown.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="show-footer-when-collapsed.html">showFooterWhenCollapsed</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">showFooterWhenCollapsed</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If <a href="show-footer.html">showFooter</a> is true, and showFooterWhenCollapsed is true, a footer row will be displayed even when the group
+is collapsed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="show-header.html">showHeader</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">showHeader</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If false, a header row will not be shown.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="visible.html">visible</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">visible</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If false, this group, along with its header, will not be shown.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="create-header.html">createHeader</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">createHeader</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.datagrid.DataGridGroup$createHeader(com.acornui.core.di.Owned, com.acornui.collection.ObservableList((com.acornui.component.datagrid.DataGridGroup.E)))/owner">owner</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.datagrid.DataGridGroup$createHeader(com.acornui.core.di.Owned, com.acornui.collection.ObservableList((com.acornui.component.datagrid.DataGridGroup.E)))/list">list</span><span class="symbol">:</span>&nbsp;<span class="identifier">ObservableList</span><span class="symbol">&lt;</span><a href="index.html#E"><span class="identifier">E</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-data-grid-group-header/index.html"><span class="identifier">DataGridGroupHeader</span></a></code>
+<p>Creates a header to the group. This should not include background or collapse arrow.
+The header is cached, so this method should not return inconsistent results.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

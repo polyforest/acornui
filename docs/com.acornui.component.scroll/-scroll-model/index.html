@@ -1,0 +1,66 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ScrollModel - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.scroll</a>&nbsp;/&nbsp;<a href="./index.html">ScrollModel</a><br/>
+<br/>
+<h1>ScrollModel</h1>
+<code><span class="keyword">interface </span><span class="identifier">ScrollModel</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-scroll-model-ro/index.html"><span class="identifier">ScrollModelRo</span></a></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="raw-value.html">rawValue</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">rawValue</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The undecorated value.
+When this has changed, the <a href="../-scroll-model-ro/changed.html">changed</a> signal is dispatched.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="value.html">value</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">value</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The decorated value. Implementations may have clamping or snapping applied. Use <a href="../-scroll-model-ro/raw-value.html">rawValue</a> to set and retrieve an
+unbounded value.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-scroll-model-ro/changed.html">changed</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">changed</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-scroll-model-ro/index.html"><span class="identifier">ScrollModelRo</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<p>Dispatched when the value property has changed.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-clamped-scroll-model/index.html">ClampedScrollModel</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ClampedScrollModel</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-clamped-scroll-model-ro/index.html"><span class="identifier">ClampedScrollModelRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">ScrollModel</span></a></code>
+<p>A mutable scroll model with clamping.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

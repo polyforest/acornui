@@ -1,0 +1,42 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>VertexFeed - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.gl.core</a>&nbsp;/&nbsp;<a href="./index.html">VertexFeed</a><br/>
+<br/>
+<h1>VertexFeed</h1>
+<code><span class="keyword">interface </span><span class="identifier">VertexFeed</span></code>
+<p>A <a href="./index.html">VertexFeed</a> provides a way to push vertex information.</p>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="put-vertex.html">putVertex</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">putVertex</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.VertexFeed$putVertex(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/position">position</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3Ro</span><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.VertexFeed$putVertex(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/normal">normal</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3Ro</span><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.VertexFeed$putVertex(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/colorTint">colorTint</span><span class="symbol">:</span>&nbsp;<span class="identifier">ColorRo</span><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.VertexFeed$putVertex(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/u">u</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.VertexFeed$putVertex(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, com.acornui.graphics.ColorRo, kotlin.Float, kotlin.Float)/v">v</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">putVertex</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.VertexFeed$putVertex(com.acornui.gl.core.VertexRo)/vertex">vertex</span><span class="symbol">:</span>&nbsp;<a href="../-vertex-ro/index.html"><span class="identifier">VertexRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-shader-batch/index.html">ShaderBatch</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ShaderBatch</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">VertexFeed</span></a><span class="symbol">, </span><a href="../-index-feed/index.html"><span class="identifier">IndexFeed</span></a></code>
+<p>A <a href="../-shader-batch/index.html">ShaderBatch</a> is good for reducing draw calls by combining opengl buffer and draw calls.
+This is used in conjunction with <a href="../-gl-state/index.html">GlState</a>, which keeps track of changes that would require a flip.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

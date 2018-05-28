@@ -1,0 +1,208 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>CameraRo - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.graphics</a>&nbsp;/&nbsp;<a href="./index.html">CameraRo</a><br/>
+<br/>
+<h1>CameraRo</h1>
+<code><span class="keyword">interface </span><span class="identifier">CameraRo</span></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="aspect.html">aspect</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">aspect</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="combined.html">combined</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">combined</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span></code>
+<p>The combined projection and view matrix.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="direction.html">direction</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">direction</span><span class="symbol">: </span><span class="identifier">Vector3Ro</span></code>
+<p>The unit length direction vector of the camera</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="far.html">far</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">far</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The far clipping plane distance, has to be positive</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="frustum.html">frustum</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">frustum</span><span class="symbol">: </span><span class="identifier">FrustumRo</span></code>
+<p>The frustum</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="inv-combined.html">invCombined</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">invCombined</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span></code>
+<p>The inverse combined projection and view matrix</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="mod-tag.html">modTag</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">modTag</span><span class="symbol">: </span><span class="identifier">ModTagRo</span></code>
+<p>Incremented whenever something on this camera has changed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="near.html">near</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">near</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The near clipping plane distance, has to be positive</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="position.html">position</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">position</span><span class="symbol">: </span><span class="identifier">Vector3Ro</span></code>
+<p>The position of the camera</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="projection.html">projection</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">projection</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span></code>
+<p>The projection matrix.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="up.html">up</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">up</span><span class="symbol">: </span><span class="identifier">Vector3Ro</span></code>
+<p>The unit length up vector of the camera</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="view.html">view</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">view</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span></code>
+<p>The view matrix.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="viewport-height.html">viewportHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">viewportHeight</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The viewport height</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="viewport-width.html">viewportWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">viewportWidth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The viewport width</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="canvas-to-global.html">canvasToGlobal</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">canvasToGlobal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraRo$canvasToGlobal(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/canvasCoords">canvasCoords</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$canvasToGlobal(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportX">viewportX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$canvasToGlobal(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportY">viewportY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$canvasToGlobal(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportWidth">viewportWidth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$canvasToGlobal(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportHeight">viewportHeight</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector3</span></code>
+<p>Translates a point given in screen coordinates to global space. It's the same as GLU gluUnProject, but
+does not rely on OpenGL. The x- and y-coordinate of vec are assumed to be in screen coordinates (origin is the
+top left corner, y pointing down, x pointing to the right) as reported by the canvas coordinates in
+input events. A z-coordinate of 0 will return a point on the near plane, a z-coordinate
+of 1 will return a point on the far plane. This method allows you to specify the viewport position and
+dimensions in the coordinate system expected by {@link GL20#glViewport(int, int, int, int)}, with the origin in
+the top left corner of the screen.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-pick-ray.html">getPickRay</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getPickRay</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraRo$getPickRay(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Ray)/canvasX">canvasX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$getPickRay(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Ray)/canvasY">canvasY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$getPickRay(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Ray)/viewportX">viewportX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$getPickRay(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Ray)/viewportY">viewportY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$getPickRay(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Ray)/viewportWidth">viewportWidth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$getPickRay(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Ray)/viewportHeight">viewportHeight</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$getPickRay(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.math.Ray)/out">out</span><span class="symbol">:</span>&nbsp;<span class="identifier">Ray</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Ray</span></code>
+<p>Creates a picking {@link Ray} from the coordinates given in global coordinates. The global coordinates origin
+is assumed to be in the top left corner, its y-axis pointing down, the x-axis  pointing to the right.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="project.html">project</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">project</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraRo$project(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/globalCoords">globalCoords</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$project(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportX">viewportX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$project(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportY">viewportY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$project(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportWidth">viewportWidth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraRo$project(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportHeight">viewportHeight</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector3</span></code>
+<p>Projects the {@link Vector3} given in global space to screen coordinates. The screen coordinate system has its
+origin in the top left, with the y-axis pointing downwards and the x-axis pointing to the right.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/intersects.html">intersects</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="./index.html"><span class="identifier">CameraRo</span></a><span class="symbol">.</span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout$intersects(com.acornui.core.graphics.CameraRo, com.acornui.component.layout.LayoutElementRo)/element">element</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-layout-element-ro/index.html"><span class="identifier">LayoutElementRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if any part of the element's bounding rectangle can be seen by this camera.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-camera/index.html">Camera</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Camera</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">CameraRo</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

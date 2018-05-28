@@ -1,0 +1,24 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>NavigationManager.path - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.nav</a>&nbsp;/&nbsp;<a href="index.html">NavigationManager</a>&nbsp;/&nbsp;<a href="./path.html">path</a><br/>
+<br/>
+<h1>path</h1>
+<a name="com.acornui.core.nav.NavigationManager$path()"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">path</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-nav-node/index.html"><span class="identifier">NavNode</span></a><span class="symbol">&gt;</span></code>
+<p>Returns a clone of the current path.</p>
+<a name="com.acornui.core.nav.NavigationManager$path(kotlin.collections.List((com.acornui.core.nav.NavNode)))"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">path</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.nav.NavigationManager$path(kotlin.collections.List((com.acornui.core.nav.NavNode)))/path">path</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-nav-node/index.html"><span class="identifier">NavNode</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the current path.
+A <a href="changed.html">changed</a> signal will be invoked if the path has changed.</p>
+<a name="com.acornui.core.nav.NavigationManager$path(kotlin.String)"></a>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">path</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.nav.NavigationManager$path(kotlin.String)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the path as an absolute url string.
+This should be in the form of
+baz/foo?param1=a&param2=b/bar?param1=a&param2=b</p>
+</BODY>
+</HTML>

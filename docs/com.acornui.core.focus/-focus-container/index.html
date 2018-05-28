@@ -1,0 +1,181 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>FocusContainer - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.focus</a>&nbsp;/&nbsp;<a href="./index.html">FocusContainer</a><br/>
+<br/>
+<h1>FocusContainer</h1>
+<code><span class="keyword">interface </span><span class="identifier">FocusContainer</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-layout-element-ro/index.html"><span class="identifier">LayoutElementRo</span></a></code>
+<p>A demarcation for focus order. That is, focus order is considered to be relative to the closest FocusContainer
+ancestor.</p>
+<p>A focus container does not need to be focusable, although it can be.</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="focus-order.html">focusOrder</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">focusOrder</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The focus order weight. A higher number means descendant focusable elements will be focused later in the order
+than focusable elements descendant of a sibling focus container with a lower focus order.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-layout-element-ro/explicit-size-constraints.html">explicitSizeConstraints</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">explicitSizeConstraints</span><span class="symbol">: </span><a href="../../com.acornui.component.layout/-size-constraints-ro/index.html"><span class="identifier">SizeConstraintsRo</span></a></code>
+<p>Returns the explicit size constraints.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-layout-element-ro/max-height.html">maxHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">maxHeight</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code>
+<p>Returns the maximum measured height.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-layout-element-ro/max-width.html">maxWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">maxWidth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code>
+<p>Returns the measured maximum width.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-layout-element-ro/min-height.html">minHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">minHeight</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code>
+<p>Returns the measured minimum height.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-layout-element-ro/min-width.html">minWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">minWidth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code>
+<p>Returns the measured minimum width.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-layout-element-ro/should-layout.html">shouldLayout</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">shouldLayout</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if visible and the includeInLayout flag is true. If this is false, this layout element will not
+be included in layout algorithms.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-layout-element-ro/size-constraints.html">sizeConstraints</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">sizeConstraints</span><span class="symbol">: </span><a href="../../com.acornui.component.layout/-size-constraints-ro/index.html"><span class="identifier">SizeConstraintsRo</span></a></code>
+<p>Returns the measured size constraints, bound by the explicit size constraints.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-layout-element-ro/contains-canvas-point.html">containsCanvasPoint</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">containsCanvasPoint</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.LayoutElementRo$containsCanvasPoint(kotlin.Float, kotlin.Float)/canvasX">canvasX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.LayoutElementRo$containsCanvasPoint(kotlin.Float, kotlin.Float)/canvasY">canvasY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Given a canvas position, casts a ray in the direction of the camera, and returns true if that ray intersects
+with this component. This will always return false if this element is not active (on the stage)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-layout-element-ro/intersects-global-ray.html">intersectsGlobalRay</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">intersectsGlobalRay</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.LayoutElementRo$intersectsGlobalRay(com.acornui.math.RayRo)/globalRay">globalRay</span><span class="symbol">:</span>&nbsp;<span class="identifier">RayRo</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this primitive intersects with the provided ray (in world coordinates)</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">intersectsGlobalRay</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.LayoutElementRo$intersectsGlobalRay(com.acornui.math.RayRo, com.acornui.math.Vector3)/globalRay">globalRay</span><span class="symbol">:</span>&nbsp;<span class="identifier">RayRo</span><span class="symbol">, </span><span class="identifier" id="com.acornui.component.layout.LayoutElementRo$intersectsGlobalRay(com.acornui.math.RayRo, com.acornui.math.Vector3)/intersection">intersection</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this primitive intersects with the provided ray (in world coordinates)
+If there was an intersection, the intersection vector will be set to the intersection point.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/clamp-height.html">clampHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.component.layout/-layout-element-ro/index.html"><span class="identifier">LayoutElementRo</span></a><span class="symbol">.</span><span class="identifier">clampHeight</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout$clampHeight(com.acornui.component.layout.LayoutElementRo, kotlin.Float)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/clamp-width.html">clampWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.component.layout/-layout-element-ro/index.html"><span class="identifier">LayoutElementRo</span></a><span class="symbol">.</span><span class="identifier">clampWidth</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout$clampWidth(com.acornui.component.layout.LayoutElementRo, kotlin.Float)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.gl.component/-gl-stage-impl/index.html">GlStageImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">GlStageImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-stage/index.html"><span class="identifier">Stage</span></a><span class="symbol">, </span><a href="../../com.acornui.component/-element-container-impl/index.html"><span class="identifier">ElementContainerImpl</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">FocusContainer</span></a><span class="symbol">, </span><a href="../-focusable/index.html"><span class="identifier">Focusable</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-options-list/index.html">OptionsList</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">OptionsList</span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-container-impl/index.html"><span class="identifier">ContainerImpl</span></a><span class="symbol">, </span><span class="identifier">Clearable</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">FocusContainer</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-stage/index.html">Stage</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Stage</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-element-container.html"><span class="identifier">ElementContainer</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../../com.acornui.component/-stage-ro.html"><span class="identifier">StageRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">FocusContainer</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-virtual-list/index.html">VirtualList</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">VirtualList</span><span class="symbol">&lt;</span><span class="identifier">E</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">, </span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.style/-style/index.html"><span class="identifier">Style</span></a><span class="symbol">, </span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-layout-data/index.html"><span class="identifier">LayoutData</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-container-impl/index.html"><span class="identifier">ContainerImpl</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">FocusContainer</span></a><span class="symbol">, </span><a href="../../com.acornui.component.layout.algorithm.virtual/-item-renderer-owner.html"><span class="identifier">ItemRendererOwner</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component.layout/-virtual-list/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../../com.acornui.component.layout/-virtual-layout-container/index.html"><span class="identifier">VirtualLayoutContainer</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component.layout/-virtual-list/index.html#S"><span class="identifier">S</span></a><span class="symbol">,</span>&nbsp;<a href="../../com.acornui.component.layout/-virtual-list/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>A virtualized list of components, with no clipping or scrolling. This is a lower-level component, used by the <a href="../../com.acornui.component.layout/-data-scroller/index.html">DataScroller</a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

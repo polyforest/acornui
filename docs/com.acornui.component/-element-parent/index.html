@@ -1,0 +1,130 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ElementParent - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component</a>&nbsp;/&nbsp;<a href="./index.html">ElementParent</a><br/>
+<br/>
+<h1>ElementParent</h1>
+<code><span class="keyword">interface </span><span class="identifier">ElementParent</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-element-parent-ro/index.html"><span class="identifier">ElementParentRo</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>An element parent is an interface that externally exposes the ability to add and remove elements.</p>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-element-parent-ro/elements.html">elements</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">elements</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-element-parent-ro/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="add-element.html">addElement</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span> <span class="identifier">addElement</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.ElementParent$addElement(com.acornui.component.ElementParent.addElement.S)/child">child</span><span class="symbol">:</span>&nbsp;<a href="add-element.html#S"><span class="identifier">S</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="add-element.html#S"><span class="identifier">S</span></a></code><code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span> <span class="identifier">addElement</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.ElementParent$addElement(kotlin.Int, com.acornui.component.ElementParent.addElement.S)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.ElementParent$addElement(kotlin.Int, com.acornui.component.ElementParent.addElement.S)/element">element</span><span class="symbol">:</span>&nbsp;<a href="add-element.html#S"><span class="identifier">S</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="add-element.html#S"><span class="identifier">S</span></a></code>
+<p>Adds an element to this container. Unlike children, adding element to an <a href="../-element-container.html">ElementContainer</a> where the element
+has already been added, the element will be removed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="add-element-after.html">addElementAfter</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addElementAfter</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.ElementParent$addElementAfter(com.acornui.component.ElementParent.T, com.acornui.component.ElementParent.T)/element">element</span><span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.ElementParent$addElementAfter(com.acornui.component.ElementParent.T, com.acornui.component.ElementParent.T)/after">after</span><span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Adds an element after the provided element.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="add-element-before.html">addElementBefore</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">addElementBefore</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.ElementParent$addElementBefore(com.acornui.component.ElementParent.T, com.acornui.component.ElementParent.T)/element">element</span><span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.ElementParent$addElementBefore(com.acornui.component.ElementParent.T, com.acornui.component.ElementParent.T)/before">before</span><span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Adds an element before the provided element.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="add-optional-element.html">addOptionalElement</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span> <span class="identifier">addOptionalElement</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.ElementParent$addOptionalElement(com.acornui.component.ElementParent.addOptionalElement.S)/child">child</span><span class="symbol">:</span>&nbsp;<a href="add-optional-element.html#S"><span class="identifier">S</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="add-optional-element.html#S"><span class="identifier">S</span></a><span class="symbol">?</span></code><br/>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">S</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span> <span class="identifier">addOptionalElement</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.ElementParent$addOptionalElement(kotlin.Int, com.acornui.component.ElementParent.addOptionalElement.S)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.ElementParent$addOptionalElement(kotlin.Int, com.acornui.component.ElementParent.addOptionalElement.S)/child">child</span><span class="symbol">:</span>&nbsp;<a href="add-optional-element.html#S"><span class="identifier">S</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="add-optional-element.html#S"><span class="identifier">S</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="clear-elements.html">clearElements</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">clearElements</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.ElementParent$clearElements(kotlin.Boolean)/dispose">dispose</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;true<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="remove-element.html">removeElement</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">removeElement</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.ElementParent$removeElement(com.acornui.component.ElementParent.T)/element">element</span><span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code><br/>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">removeElement</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.ElementParent$removeElement(kotlin.Int)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="index.html#T"><span class="identifier">T</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="unary-minus.html">unaryMinus</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">operator</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">P</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span> <a href="unary-minus.html#P"><span class="identifier">P</span></a><span class="symbol">.</span><span class="identifier">unaryMinus</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="unary-minus.html#P"><span class="identifier">P</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="unary-plus.html">unaryPlus</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">operator</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">P</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span> <a href="unary-plus.html#P"><span class="identifier">P</span></a><span class="symbol">.</span><span class="identifier">unaryPlus</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="unary-plus.html#P"><span class="identifier">P</span></a></code>
+<p>Syntax sugar for addElement.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-element-container.html">ElementContainer</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ElementContainer</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-element-container-ro.html"><span class="identifier">ElementContainerRo</span></a><span class="symbol">&lt;</span><a href="../-element-container.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">ElementParent</span></a><span class="symbol">&lt;</span><a href="../-element-container.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../-ui-component/index.html"><span class="identifier">UiComponent</span></a></code>
+<p>An ElementContainer is a component that can be provided a list of components as part of its external API.
+It is up to this element container how to treat added elements. It may add them as children, it may provide the
+element to a child element container.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.gl.component.text/-text-flow/index.html">TextFlow</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TextFlow</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-ui-component-impl/index.html"><span class="identifier">UiComponentImpl</span></a><span class="symbol">, </span><a href="../../com.acornui.gl.component.text/-text-node-component/index.html"><span class="identifier">TextNodeComponent</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">ElementParent</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.gl.component.text/-text-span-element/index.html"><span class="identifier">TextSpanElement</span></a><span class="symbol">&gt;</span></code>
+<p>A TextFlow component is a container of styleable text spans, to be used inside of a TextField.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.gl.component.text/-text-span-element-impl/index.html">TextSpanElementImpl</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">TextSpanElementImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.gl.component.text/-text-span-element/index.html"><span class="identifier">TextSpanElement</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">ElementParent</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.gl.component.text/-text-element/index.html"><span class="identifier">TextElement</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="../../com.acornui.component.style/-styleable/index.html"><span class="identifier">Styleable</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

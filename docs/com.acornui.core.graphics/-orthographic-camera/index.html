@@ -1,0 +1,416 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>OrthographicCamera - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.graphics</a>&nbsp;/&nbsp;<a href="./index.html">OrthographicCamera</a><br/>
+<br/>
+<h1>OrthographicCamera</h1>
+<code><span class="keyword">class </span><span class="identifier">OrthographicCamera</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-camera-base/index.html"><span class="identifier">CameraBase</span></a></code>
+<p>A camera with orthographic projection.</p>
+<p><strong>Author</strong><br/>
+mzechner</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">OrthographicCamera</span><span class="symbol">(</span><span class="symbol">)</span></code>
+<p>A camera with orthographic projection.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="zoom.html">zoom</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">zoom</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The zoom of the camera.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-camera-base/_combined.html">_combined</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">_combined</span><span class="symbol">: </span><span class="identifier">Matrix4</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/_direction.html">_direction</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">_direction</span><span class="symbol">: </span><span class="identifier">Vector3</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/_frustum.html">_frustum</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">_frustum</span><span class="symbol">: </span><span class="identifier">Frustum</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/_inv-combined.html">_invCombined</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">_invCombined</span><span class="symbol">: </span><span class="identifier">Matrix4</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/_mod-tag.html">_modTag</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">_modTag</span><span class="symbol">: </span><span class="identifier">ModTagImpl</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/_position.html">_position</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">_position</span><span class="symbol">: </span><span class="identifier">Vector3</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/_projection.html">_projection</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">_projection</span><span class="symbol">: </span><span class="identifier">Matrix4</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/_up.html">_up</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">_up</span><span class="symbol">: </span><span class="identifier">Vector3</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/_view.html">_view</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">_view</span><span class="symbol">: </span><span class="identifier">Matrix4</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/combined.html">combined</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">combined</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span></code>
+<p>The combined projection and view matrix.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/direction.html">direction</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">direction</span><span class="symbol">: </span><span class="identifier">Vector3Ro</span></code>
+<p>The unit length direction vector of the camera</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/far.html">far</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">far</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The far clipping plane distance, has to be positive</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/frustum.html">frustum</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">frustum</span><span class="symbol">: </span><span class="identifier">FrustumRo</span></code>
+<p>The frustum</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/inv-combined.html">invCombined</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">invCombined</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span></code>
+<p>The inverse combined projection and view matrix</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/mod-tag.html">modTag</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">modTag</span><span class="symbol">: </span><span class="identifier">ModTagRo</span></code>
+<p>Incremented whenever something on this camera has changed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/near.html">near</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">near</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The near clipping plane distance, has to be positive</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/position.html">position</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">position</span><span class="symbol">: </span><span class="identifier">Vector3Ro</span></code>
+<p>The position of the camera</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/projection.html">projection</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">projection</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span></code>
+<p>The projection matrix</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/up.html">up</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">up</span><span class="symbol">: </span><span class="identifier">Vector3Ro</span></code>
+<p>The unit length up vector of the camera</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/view.html">view</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">view</span><span class="symbol">: </span><span class="identifier">Matrix4Ro</span></code>
+<p>The view matrix</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/viewport-height.html">viewportHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">viewportHeight</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The viewport height</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/viewport-width.html">viewportWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">viewportWidth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a></code>
+<p>The viewport width</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="move-to-look-at-rect.html">moveToLookAtRect</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">moveToLookAtRect</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.OrthographicCamera$moveToLookAtRect(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.core.graphics.Scaling)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.OrthographicCamera$moveToLookAtRect(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.core.graphics.Scaling)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.OrthographicCamera$moveToLookAtRect(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.core.graphics.Scaling)/width">width</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.OrthographicCamera$moveToLookAtRect(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.core.graphics.Scaling)/height">height</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.OrthographicCamera$moveToLookAtRect(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float, com.acornui.core.graphics.Scaling)/scaling">scaling</span><span class="symbol">:</span>&nbsp;<a href="../-scaling/index.html"><span class="identifier">Scaling</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Moves and/or zooms the camera to fit the given 2d bounding box into the viewport, maintaining the current
+direction.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="update-view-projection.html">updateViewProjection</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">updateViewProjection</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-camera-base/bindable.html">bindable</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <span class="identifier">bindable</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$bindable(com.acornui.core.graphics.CameraBase.bindable.T)/initial">initial</span><span class="symbol">:</span>&nbsp;<a href="../-camera-base/bindable.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.properties/-read-write-property/index.html"><span class="identifier">ReadWriteProperty</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">,</span>&nbsp;<a href="../-camera-base/bindable.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/canvas-to-global.html">canvasToGlobal</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">canvasToGlobal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$canvasToGlobal(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/canvasCoords">canvasCoords</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$canvasToGlobal(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportX">viewportX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$canvasToGlobal(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportY">viewportY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$canvasToGlobal(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportWidth">viewportWidth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$canvasToGlobal(com.acornui.math.Vector3, kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/viewportHeight">viewportHeight</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector3</span></code>
+<p>Translates a point given in screen coordinates to global space. It's the same as GLU gluUnProject, but
+does not rely on OpenGL. The x- and y-coordinate of vec are assumed to be in screen coordinates (origin is the
+top left corner, y pointing down, x pointing to the right) as reported by the canvas coordinates in
+input events. A z-coordinate of 0 will return a point on the near plane, a z-coordinate
+of 1 will return a point on the far plane. This method allows you to specify the viewport position and
+dimensions in the coordinate system expected by {@link GL20#glViewport(int, int, int, int)}, with the origin in
+the top left corner of the screen.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/dirty.html">dirty</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dirty</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/move-to-look-at-point.html">moveToLookAtPoint</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">moveToLookAtPoint</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$moveToLookAtPoint(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$moveToLookAtPoint(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$moveToLookAtPoint(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$moveToLookAtPoint(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/distance">distance</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Moves the position to the point where the camera is looking at the provided coordinates at a given distance.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/normalize-up.html">normalizeUp</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">normalizeUp</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Normalizes the up vector by first calculating the right vector via a cross product between direction and up, and then
+recalculating the up vector via a cross product between right and direction.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/point-to-look-at.html">pointToLookAt</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">pointToLookAt</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$pointToLookAt(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$pointToLookAt(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$pointToLookAt(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Recalculates the direction of the camera to look at the point (x, y, z).</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/rotate.html">rotate</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/radians">radians</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/axisX">axisX</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/axisY">axisY</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$rotate(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Float)/axisZ">axisZ</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Rotates the direction and up vector of this camera by the given angle around the given axis. The direction and
+up vector will not be orthogonalized.</p>
+<code><span class="keyword">fun </span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$rotate(com.acornui.math.Vector3Ro, kotlin.Float)/axis">axis</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3Ro</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$rotate(com.acornui.math.Vector3Ro, kotlin.Float)/radians">radians</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Rotates the direction and up vector of this camera by the given angle around the given axis. The direction and up vector
+will not be orthogonalized.</p>
+<code><span class="keyword">fun </span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$rotate(kotlin.Float)/radians">radians</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Rotates the camera by the given angle around the direction vector. The direction and up vector will not be orthogonalized.</p>
+<code><span class="keyword">fun </span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$rotate(com.acornui.math.Matrix4Ro)/transform">transform</span><span class="symbol">:</span>&nbsp;<span class="identifier">Matrix4Ro</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Rotates the direction and up vector of this camera by the given rotation matrix. The direction and up vector will not be
+orthogonalized.</p>
+<code><span class="keyword">fun </span><span class="identifier">rotate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$rotate(com.acornui.math.QuaternionRo)/quat">quat</span><span class="symbol">:</span>&nbsp;<span class="identifier">QuaternionRo</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Rotates the direction and up vector of this camera by the given {@link Quaternion}. The direction and up vector will not be
+orthogonalized.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/rotate-around.html">rotateAround</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">rotateAround</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$rotateAround(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, kotlin.Float)/point">point</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3Ro</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$rotateAround(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, kotlin.Float)/axis">axis</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3Ro</span><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$rotateAround(com.acornui.math.Vector3Ro, com.acornui.math.Vector3Ro, kotlin.Float)/radians">radians</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Rotates the direction and up vector of this camera by the given angle around the given axis, with the axis attached to given
+point. The direction and up vector will not be orthogonalized.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/set-direction.html">setDirection</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setDirection</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$setDirection(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$setDirection(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$setDirection(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$setDirection(kotlin.Float, kotlin.Float, kotlin.Float, kotlin.Boolean)/keepUpOrthonormal">keepUpOrthonormal</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the camera's direction, keeping the up vector orthonormal.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/set-position.html">setPosition</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setPosition</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$setPosition(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$setPosition(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$setPosition(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/set-up.html">setUp</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setUp</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$setUp(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$setUp(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$setUp(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/transform.html">transform</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">transform</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$transform(com.acornui.math.Matrix4Ro)/transform">transform</span><span class="symbol">:</span>&nbsp;<span class="identifier">Matrix4Ro</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Transform the position, direction and up vector by the given matrix</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/translate.html">translate</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">translate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$translate(kotlin.Float, kotlin.Float, kotlin.Float)/x">x</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$translate(kotlin.Float, kotlin.Float, kotlin.Float)/y">y</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.graphics.CameraBase$translate(kotlin.Float, kotlin.Float, kotlin.Float)/z">z</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0f<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Moves the camera by the given amount on each axis.</p>
+<code><span class="keyword">fun </span><span class="identifier">translate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$translate(com.acornui.math.Vector3Ro)/vec">vec</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3Ro</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">translate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.graphics.CameraBase$translate(com.acornui.math.Vector2Ro)/vec">vec</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector2Ro</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Moves the camera by the given vector.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/update-frustum.html">updateFrustum</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">updateFrustum</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-camera-base/update-inv-combined.html">updateInvCombined</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">updateInvCombined</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/intersects.html">intersects</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-camera-ro/index.html"><span class="identifier">CameraRo</span></a><span class="symbol">.</span><span class="identifier">intersects</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout$intersects(com.acornui.core.graphics.CameraRo, com.acornui.component.layout.LayoutElementRo)/element">element</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-layout-element-ro/index.html"><span class="identifier">LayoutElementRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if any part of the element's bounding rectangle can be seen by this camera.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

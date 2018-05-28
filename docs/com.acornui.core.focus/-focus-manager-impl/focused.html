@@ -1,0 +1,29 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>FocusManagerImpl.focused - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.focus</a>&nbsp;/&nbsp;<a href="index.html">FocusManagerImpl</a>&nbsp;/&nbsp;<a href="./focused.html">focused</a><br/>
+<br/>
+<h1>focused</h1>
+<a name="com.acornui.core.focus.FocusManagerImpl$focused()"></a>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">focused</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">?</span></code>
+<p>Overrides <a href="../-focus-manager/focused.html">FocusManager.focused</a></p>
+<p>Returns the currently focused element. This will be null if the root of the focus manager is being removed.</p>
+<a name="com.acornui.core.focus.FocusManagerImpl$focused(com.acornui.core.focus.Focusable)"></a>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">focused</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.focus.FocusManagerImpl$focused(com.acornui.core.focus.Focusable)/value">value</span><span class="symbol">:</span>&nbsp;<a href="../-focusable/index.html"><span class="identifier">Focusable</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Overrides <a href="../-focus-manager/focused.html">FocusManager.focused</a></p>
+<p>Sets the currently focused element.
+The provided focusable element may have <a href="../-focusable/focus-enabled.html">Focusable.focusEnabled</a> set to false; It will still be focused.</p>
+<h3>Parameters</h3>
+<p><a name="value"></a>
+<code>value</code> - The target to focus. If this is null, the manager's root will be focused. (This is typically the
+stage)</p>
+<p><strong>See Also</strong><br/>
+<p><a href="../-focusable/focus.html">Focusable.focus</a></p>
+<p><a href="../-focusable/blur.html">Focusable.blur</a></p>
+</p>
+</BODY>
+</HTML>

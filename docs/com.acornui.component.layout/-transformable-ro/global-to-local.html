@@ -1,0 +1,31 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>TransformableRo.globalToLocal - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.layout</a>&nbsp;/&nbsp;<a href="index.html">TransformableRo</a>&nbsp;/&nbsp;<a href="./global-to-local.html">globalToLocal</a><br/>
+<br/>
+<h1>globalToLocal</h1>
+<a name="com.acornui.component.layout.TransformableRo$globalToLocal(com.acornui.math.Vector3)"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">globalToLocal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$globalToLocal(com.acornui.math.Vector3)/globalCoord">globalCoord</span><span class="symbol">:</span>&nbsp;<span class="identifier">Vector3</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Vector3</span></code>
+<p>Converts a coordinate from global coordinate space to local coordinate space.
+This will modify the provided coord parameter.</p>
+<h3>Parameters</h3>
+<p><a name="globalCoord"></a>
+<code>globalCoord</code> - The coordinate in global space. This will be mutated to become a local coordinate.</p>
+<p><strong>Return</strong><br/>
+Returns the coord</p>
+<a name="com.acornui.component.layout.TransformableRo$globalToLocal(com.acornui.math.Ray)"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">globalToLocal</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.TransformableRo$globalToLocal(com.acornui.math.Ray)/ray">ray</span><span class="symbol">:</span>&nbsp;<span class="identifier">Ray</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Ray</span></code>
+<p>Converts a ray from global coordinate space to local coordinate space.
+This will modify the provided ray parameter.</p>
+<p>Note: This is a heavy operation as it performs a Matrix4 inversion.</p>
+<h3>Parameters</h3>
+<p><a name="ray"></a>
+<code>ray</code> - The ray in global space. This will be mutated to become a local coordinate.</p>
+<p><strong>Return</strong><br/>
+Returns the ray</p>
+</BODY>
+</HTML>

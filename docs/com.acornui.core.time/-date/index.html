@@ -1,0 +1,142 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Date - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.time</a>&nbsp;/&nbsp;<a href="./index.html">Date</a><br/>
+<br/>
+<h1>Date</h1>
+<code><span class="keyword">interface </span><span class="identifier">Date</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-comparable/index.html"><span class="identifier">Comparable</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">Date</span></a><span class="symbol">&gt;</span></code>
+<p><strong>Author</strong><br/>
+nbilyk</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="day-of-month.html">dayOfMonth</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">dayOfMonth</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The 1 indexed day of the month. 1st - 1, 31st - 31</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="day-of-week.html">dayOfWeek</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">dayOfWeek</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The day of the week (0-6) for the specified date.
+0 - Sunday, 6 - Saturday</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="hour.html">hour</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">hour</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Hour of the day using 24-hour clock.
+At 3:14:12.330 PM the hour is 15.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="is-leap-year.html">isLeapYear</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">isLeapYear</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this Date's year is a leap year.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="milli.html">milli</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">milli</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The millisecond within the second.
+At 3:14:12.330 PM the milli is 330.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="minute.html">minute</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">minute</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The minute within the hour.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="month.html">month</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">month</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The 0 indexed month. 0 - January, 11 - December</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="second.html">second</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">second</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The second within the minute.
+At 3:14:12.330 PM the second is 12.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="time.html">time</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">time</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
+<p>The time, in UTC milliseconds from the Unix epoch.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="year.html">year</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">year</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>The full 4 digit year.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="clone.html">clone</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">clone</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Date</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="compare-to.html">compareTo</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">compareTo</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.time.Date$compareTo(com.acornui.core.time.Date)/other">other</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Date</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="is-same-date.html">isSameDate</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">isSameDate</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.time.Date$isSameDate(com.acornui.core.time.Date)/o">o</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">Date</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if the two dates are the same day.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

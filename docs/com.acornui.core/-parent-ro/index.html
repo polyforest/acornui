@@ -1,0 +1,166 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ParentRo - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core</a>&nbsp;/&nbsp;<a href="./index.html">ParentRo</a><br/>
+<br/>
+<h1>ParentRo</h1>
+<code><span class="keyword">interface </span><span class="identifier">ParentRo</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-child-ro/index.html"><span class="identifier">ChildRo</span></a></code>
+<p>An abstract parent to children relationship of a parameterized type.
+Acorn hierarchies are conventionally
+A : B -&gt; B
+Where B is a child of A, and A is a sub-type of B.
+This means that when using recursion throughout the tree, all nodes can be considered to be a <a href="../-child-ro/index.html">ChildRo</a> of type B,
+but it must be type checked against a <a href="./index.html">ParentRo</a> of type A before continuing the traversal.</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="children.html">children</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">children</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Returns a read-only list of the children.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-child-ro/parent.html">parent</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">parent</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">ParentRo</span></a><span class="symbol">&lt;</span><a href="../-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="iterate-children.html">iterateChildren</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">iterateChildren</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.ParentRo$iterateChildren(kotlin.Function1((com.acornui.core.ParentRo.T, kotlin.Boolean)), kotlin.Boolean)/body">body</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.ParentRo$iterateChildren(kotlin.Function1((com.acornui.core.ParentRo.T, kotlin.Boolean)), kotlin.Boolean)/reversed">reversed</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Iterates over the children.
+It is up to the implementation how concurrent modification works.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">iterateChildren</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.ParentRo$iterateChildren(kotlin.Function1((com.acornui.core.ParentRo.T, kotlin.Boolean)))/body">body</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Iterates forward over the children.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="iterate-children-reversed.html">iterateChildrenReversed</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">iterateChildrenReversed</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.ParentRo$iterateChildrenReversed(kotlin.Function1((com.acornui.core.ParentRo.T, kotlin.Boolean)))/body">body</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Iterates backward over the children.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../ancestry.html">ancestry</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">ancestry</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$ancestry(com.acornui.core.ChildRo, kotlin.collections.MutableList((com.acornui.core.ChildRo)))/out">out</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">&gt;</span></code>
+<p>Populates an ArrayList with a ChildRo's ancestry.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../ancestry-count.html">ancestryCount</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">ancestryCount</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Returns the lineage count. 0 if this child is the stage, or is the stage, 1 if the stage is the parent,
+2 if the stage is the grandparent, 3 if the stage is the great grandparent, and so on.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../is-after.html">isAfter</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">isAfter</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$isAfter(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this ChildRo is after the <a href="../is-after.html#com.acornui.core$isAfter(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/other">other</a> ChildRo. This considers the parent to come before the child.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../is-ancestor-of.html">isAncestorOf</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">isAncestorOf</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$isAncestorOf(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/child">child</span><span class="symbol">:</span>&nbsp;<a href="../-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this <a href="../-child-ro/index.html">ChildRo</a> is the ancestor of the given <a href="../is-ancestor-of.html#com.acornui.core$isAncestorOf(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/child">child</a>.
+X is considered to be an ancestor of Y if doing a parent walk starting from Y, X is then reached.
+This will return true if X === Y</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../is-before.html">isBefore</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">isBefore</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$isBefore(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this ChildRo is before the <a href="../is-before.html#com.acornui.core$isBefore(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/other">other</a> ChildRo. This considers the parent to come before the child.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../is-descendant-of.html">isDescendantOf</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">isDescendantOf</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$isDescendantOf(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/ancestor">ancestor</span><span class="symbol">:</span>&nbsp;<a href="../-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../parent-walk.html">parentWalk</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">parentWalk</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$parentWalk(com.acornui.core.ChildRo, kotlin.Function1((com.acornui.core.ChildRo, kotlin.Boolean)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../root.html">root</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">root</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-child-ro/index.html"><span class="identifier">ChildRo</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-container-ro.html">ContainerRo</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">ContainerRo</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">ParentRo</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-parent/index.html">Parent</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Parent</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ParentRo</span></a><span class="symbol">&lt;</span><a href="../-parent/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>An interface to Parent that allows write access.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

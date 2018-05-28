@@ -1,0 +1,95 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ContextMenuItem - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.input.interaction</a>&nbsp;/&nbsp;<a href="./index.html">ContextMenuItem</a><br/>
+<br/>
+<h1>ContextMenuItem</h1>
+<code><span class="keyword">class </span><span class="identifier">ContextMenuItem</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">ContextMenuItem</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.input.interaction.ContextMenuItem$<init>(kotlin.String, com.acornui.component.UiComponent, kotlin.Char, kotlin.collections.List((com.acornui.core.input.interaction.ContextMenuGroup)), com.acornui.core.input.interaction.Hotkey, kotlin.Boolean, kotlin.Function0((kotlin.Unit)))/text">text</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.interaction.ContextMenuItem$<init>(kotlin.String, com.acornui.component.UiComponent, kotlin.Char, kotlin.collections.List((com.acornui.core.input.interaction.ContextMenuGroup)), com.acornui.core.input.interaction.Hotkey, kotlin.Boolean, kotlin.Function0((kotlin.Unit)))/icon">icon</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.interaction.ContextMenuItem$<init>(kotlin.String, com.acornui.component.UiComponent, kotlin.Char, kotlin.collections.List((com.acornui.core.input.interaction.ContextMenuGroup)), com.acornui.core.input.interaction.Hotkey, kotlin.Boolean, kotlin.Function0((kotlin.Unit)))/hotLetter">hotLetter</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html"><span class="identifier">Char</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.interaction.ContextMenuItem$<init>(kotlin.String, com.acornui.component.UiComponent, kotlin.Char, kotlin.collections.List((com.acornui.core.input.interaction.ContextMenuGroup)), com.acornui.core.input.interaction.Hotkey, kotlin.Boolean, kotlin.Function0((kotlin.Unit)))/children">children</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-context-menu-group/index.html"><span class="identifier">ContextMenuGroup</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;emptyList()<span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.interaction.ContextMenuItem$<init>(kotlin.String, com.acornui.component.UiComponent, kotlin.Char, kotlin.collections.List((com.acornui.core.input.interaction.ContextMenuGroup)), com.acornui.core.input.interaction.Hotkey, kotlin.Boolean, kotlin.Function0((kotlin.Unit)))/hotkey">hotkey</span><span class="symbol">:</span>&nbsp;<a href="../-hotkey/index.html"><span class="identifier">Hotkey</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.interaction.ContextMenuItem$<init>(kotlin.String, com.acornui.component.UiComponent, kotlin.Char, kotlin.collections.List((com.acornui.core.input.interaction.ContextMenuGroup)), com.acornui.core.input.interaction.Hotkey, kotlin.Boolean, kotlin.Function0((kotlin.Unit)))/enabled">enabled</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;true<span class="symbol">, </span><span class="identifier" id="com.acornui.core.input.interaction.ContextMenuItem$<init>(kotlin.String, com.acornui.component.UiComponent, kotlin.Char, kotlin.collections.List((com.acornui.core.input.interaction.ContextMenuGroup)), com.acornui.core.input.interaction.Hotkey, kotlin.Boolean, kotlin.Function0((kotlin.Unit)))/onSelected">onSelected</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="children.html">children</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">children</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-context-menu-group/index.html"><span class="identifier">ContextMenuGroup</span></a><span class="symbol">&gt;</span></code>
+<p>If not-empty, there will be a sub-menu for this menu item with the given groups.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="enabled.html">enabled</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">enabled</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>If false, the context menu item will be visible, but not selectable.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="hot-letter.html">hotLetter</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">hotLetter</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html"><span class="identifier">Char</span></a><span class="symbol">?</span></code>
+<p>If set, the first character this matches in the text will be underlined, and when this menu is open
+pressing this character will select this item.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="hotkey.html">hotkey</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">hotkey</span><span class="symbol">: </span><a href="../-hotkey/index.html"><span class="identifier">Hotkey</span></a><span class="symbol">?</span></code>
+<p>If set, this context menu item will display a hotkey string representation in the right column.
+This does not</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="icon.html">icon</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">icon</span><span class="symbol">: </span><a href="../../com.acornui.component/-ui-component/index.html"><span class="identifier">UiComponent</span></a><span class="symbol">?</span></code>
+<p>If set, this component will be displayed in the left column.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="on-selected.html">onSelected</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">onSelected</span><span class="symbol">: </span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>When this context menu item is selected, this callback will be invoked.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="text.html">text</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">text</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>The text to display in the middle column.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

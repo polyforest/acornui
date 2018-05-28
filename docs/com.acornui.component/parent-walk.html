@@ -1,0 +1,22 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>parentWalk - </title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="index.html">com.acornui.component</a>&nbsp;/&nbsp;<a href="./parent-walk.html">parentWalk</a><br/>
+<br/>
+<h1>parentWalk</h1>
+<a name="com.acornui.component$parentWalk(com.acornui.component.UiComponentRo, kotlin.Function1((com.acornui.component.UiComponentRo, kotlin.Boolean)))"></a>
+<code><span class="keyword">inline</span> <span class="keyword">fun </span><a href="-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">.</span><span class="identifier">parentWalk</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component$parentWalk(com.acornui.component.UiComponentRo, kotlin.Function1((com.acornui.component.UiComponentRo, kotlin.Boolean)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-ui-component-ro/index.html"><span class="identifier">UiComponentRo</span></a><span class="symbol">?</span></code>
+<p>Traverses this ChildRo's ancestry, invoking a callback on each parent up the chain.
+(including this object)</p>
+<h3>Parameters</h3>
+<p><a name="callback"></a>
+<code>callback</code> - The callback to invoke on each ancestor. If this callback returns true, iteration will continue,
+if it returns false, iteration will be halted.</p>
+<p><strong>Return</strong><br/>
+If <a href="parent-walk.html#com.acornui.component$parentWalk(com.acornui.component.UiComponentRo, kotlin.Function1((com.acornui.component.UiComponentRo, kotlin.Boolean)))/callback">callback</a> returned false, this method returns the element on which the iteration halted.</p>
+</BODY>
+</HTML>

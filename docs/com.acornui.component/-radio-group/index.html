@@ -1,0 +1,99 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>RadioGroup - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component</a>&nbsp;/&nbsp;<a href="./index.html">RadioGroup</a><br/>
+<br/>
+<h1>RadioGroup</h1>
+<code><span class="keyword">class </span><span class="identifier">RadioGroup</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Disposable</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">RadioGroup</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.RadioGroup$<init>(com.acornui.core.di.Owned)/owner">owner</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="changed.html">changed</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">changed</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><a href="../-radio-button/index.html"><span class="identifier">RadioButton</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">,</span>&nbsp;<a href="../-radio-button/index.html"><span class="identifier">RadioButton</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="owner.html">owner</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">owner</span><span class="symbol">: </span><a href="../../com.acornui.core.di/-owned/index.html"><span class="identifier">Owned</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="radio-buttons.html">radioButtons</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">radioButtons</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-radio-button/index.html"><span class="identifier">RadioButton</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="selected-button.html">selectedButton</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">selectedButton</span><span class="symbol">: </span><a href="../-radio-button/index.html"><span class="identifier">RadioButton</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="selected-data.html">selectedData</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">selectedData</span><span class="symbol">: </span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="radio-button.html">radioButton</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">radioButton</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.RadioGroup$radioButton(com.acornui.component.RadioGroup.T, kotlin.String, kotlin.Function1((com.acornui.component.RadioButton((com.acornui.component.RadioGroup.T)), kotlin.Unit)))/data">data</span><span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.RadioGroup$radioButton(com.acornui.component.RadioGroup.T, kotlin.String, kotlin.Function1((com.acornui.component.RadioButton((com.acornui.component.RadioGroup.T)), kotlin.Unit)))/label">label</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.RadioGroup$radioButton(com.acornui.component.RadioGroup.T, kotlin.String, kotlin.Function1((com.acornui.component.RadioButton((com.acornui.component.RadioGroup.T)), kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="../-radio-button/index.html"><span class="identifier">RadioButton</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="../-radio-button/index.html"><span class="identifier">RadioButton</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">radioButton</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.RadioGroup$radioButton(com.acornui.component.RadioGroup.T, kotlin.Function1((com.acornui.component.RadioButton((com.acornui.component.RadioGroup.T)), kotlin.Unit)))/data">data</span><span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.component.RadioGroup$radioButton(com.acornui.component.RadioGroup.T, kotlin.Function1((com.acornui.component.RadioButton((com.acornui.component.RadioGroup.T)), kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../-component-init.html"><span class="identifier">ComponentInit</span></a><span class="symbol">&lt;</span><a href="../-radio-button/index.html"><span class="identifier">RadioButton</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;{}<span class="symbol">)</span><span class="symbol">: </span><a href="../-radio-button/index.html"><span class="identifier">RadioButton</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="register.html">register</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">register</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.RadioGroup$register(com.acornui.component.RadioButton((com.acornui.component.RadioGroup.T)))/button">button</span><span class="symbol">:</span>&nbsp;<a href="../-radio-button/index.html"><span class="identifier">RadioButton</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="unregister.html">unregister</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">unregister</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.RadioGroup$unregister(com.acornui.component.RadioButton((com.acornui.component.RadioGroup.T)))/button">button</span><span class="symbol">:</span>&nbsp;<a href="../-radio-button/index.html"><span class="identifier">RadioButton</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

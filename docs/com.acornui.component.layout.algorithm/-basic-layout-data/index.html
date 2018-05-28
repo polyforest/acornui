@@ -1,0 +1,171 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>BasicLayoutData - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.layout.algorithm</a>&nbsp;/&nbsp;<a href="./index.html">BasicLayoutData</a><br/>
+<br/>
+<h1>BasicLayoutData</h1>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">BasicLayoutData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.component.layout/-layout-data/index.html"><span class="identifier">LayoutData</span></a></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">BasicLayoutData</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="_changed.html">_changed</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">_changed</span><span class="symbol">: </span><span class="identifier">Signal0</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="changed.html">changed</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">changed</span><span class="symbol">: </span><span class="identifier">Signal</span><span class="symbol">&lt;</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code>
+<p>Dispatched when a property in this layout data has changed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="height.html">height</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">height</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code>
+<p>The preferred width of this component.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="height-percent.html">heightPercent</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">heightPercent</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code>
+<p>If set, this object will be set to a percent-based height.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="width.html">width</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">width</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code>
+<p>The preferred height of this component.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="width-percent.html">widthPercent</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">widthPercent</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code>
+<p>If set, this object will be set to a percent-based width.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="bindable.html">bindable</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <span class="identifier">bindable</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm.BasicLayoutData$bindable(com.acornui.component.layout.algorithm.BasicLayoutData.bindable.T)/initial">initial</span><span class="symbol">:</span>&nbsp;<a href="bindable.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.properties/-read-write-property/index.html"><span class="identifier">ReadWriteProperty</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">,</span>&nbsp;<a href="bindable.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="fill.html">fill</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">fill</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets width and height to 100%</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-preferred-height.html">getPreferredHeight</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getPreferredHeight</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm.BasicLayoutData$getPreferredHeight(kotlin.Float)/availableHeight">availableHeight</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="get-preferred-width.html">getPreferredWidth</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getPreferredWidth</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.layout.algorithm.BasicLayoutData$getPreferredWidth(kotlin.Float)/availableWidth">availableWidth</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-canvas-layout-data/index.html">CanvasLayoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">CanvasLayoutData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">BasicLayoutData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-flow-layout-data/index.html">FlowLayoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">FlowLayoutData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">BasicLayoutData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-grid-layout-data/index.html">GridLayoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">GridLayoutData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">BasicLayoutData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-horizontal-layout-data/index.html">HorizontalLayoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">HorizontalLayoutData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">BasicLayoutData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-scale-layout-data/index.html">ScaleLayoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ScaleLayoutData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">BasicLayoutData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-stack-layout-data/index.html">StackLayoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">StackLayoutData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">BasicLayoutData</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../-vertical-layout-data/index.html">VerticalLayoutData</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">VerticalLayoutData</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">BasicLayoutData</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

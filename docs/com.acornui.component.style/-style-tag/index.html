@@ -1,0 +1,326 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>StyleTag - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component.style</a>&nbsp;/&nbsp;<a href="./index.html">StyleTag</a><br/>
+<br/>
+<h1>StyleTag</h1>
+<code><span class="keyword">interface </span><span class="identifier">StyleTag</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-style-filter/index.html"><span class="identifier">StyleFilter</span></a></code>
+<p>Style tags are markers placed on the display hierarchy that are used for filtering which styles from <a href="../-style-rule/index.html">StyleRule</a>
+objects are applied.</p>
+<p>A StyleTag may be used as a <a href="../-style-filter/index.html">StyleFilter</a>, with the default implementation passing the filter if the current target
+contains this tag.</p>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="invoke.html">invoke</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">invoke</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style.StyleTag$invoke(com.acornui.component.style.StyleableRo)/target">target</span><span class="symbol">:</span>&nbsp;<a href="../-styleable-ro/index.html"><span class="identifier">StyleableRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-styleable-ro/index.html"><span class="identifier">StyleableRo</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../and.html">and</a></p>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><a href="../-style-filter/index.html"><span class="identifier">StyleFilter</span></a><span class="symbol">.</span><span class="identifier">and</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style$and(com.acornui.component.style.StyleFilter, com.acornui.component.style.StyleFilter)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-style-filter/index.html"><span class="identifier">StyleFilter</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-style-filter/index.html"><span class="identifier">StyleFilter</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../and-then.html">andThen</a></p>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><a href="../-style-filter/index.html"><span class="identifier">StyleFilter</span></a><span class="symbol">.</span><span class="identifier">andThen</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style$andThen(com.acornui.component.style.StyleFilter, com.acornui.component.style.StyleFilter)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-style-filter/index.html"><span class="identifier">StyleFilter</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-and-then-style-filter/index.html"><span class="identifier">AndThenStyleFilter</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../or.html">or</a></p>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><a href="../-style-filter/index.html"><span class="identifier">StyleFilter</span></a><span class="symbol">.</span><span class="identifier">or</span><span class="symbol">(</span><span class="identifier" id="com.acornui.component.style$or(com.acornui.component.style.StyleFilter, com.acornui.component.style.StyleFilter)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../-style-filter/index.html"><span class="identifier">StyleFilter</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-or-style-filter/index.html"><span class="identifier">OrStyleFilter</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-button/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-checkbox/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-collapse-button/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-color-picker/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-color-palette/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-h-divider/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-heading-group/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-icon-button/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-null-renderer/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-numeric-stepper/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-options-list/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-panel/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-progress-bar-rect/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-radio-button/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-row-background/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-rule/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-simple-item-renderer/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-stage/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core.di/-d-key/index.html"><span class="identifier">DKey</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.component/-stage/index.html"><span class="identifier">Stage</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-tab-navigator/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-tree/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-default-tree-item-renderer/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-v-divider/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component/-window-panel/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.datagrid/-data-grid/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.datagrid/-data-grid-group-header/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout/-data-scroller/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.layout.algorithm/-form-container/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.scroll/-h-scroll-bar/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.scroll/-h-slider/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.scroll/-scroll-area/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.scroll/-v-scroll-bar/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.scroll/-v-slider/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.text/-editable-text-field/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.text/-text-field/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.text/-text-input/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.component.text/-text-area/-companion/index.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.input.interaction/-context-menu-view/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core.popup/-alert-window/-companion.html">Companion</a></p>
+</td>
+<td>
+<code><span class="keyword">companion</span> <span class="keyword">object </span><span class="identifier">Companion</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">StyleTag</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

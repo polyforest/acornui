@@ -1,0 +1,29 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>WrappedGl20.vertexAttribPointer - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.gl.core</a>&nbsp;/&nbsp;<a href="index.html">WrappedGl20</a>&nbsp;/&nbsp;<a href="./vertex-attrib-pointer.html">vertexAttribPointer</a><br/>
+<br/>
+<h1>vertexAttribPointer</h1>
+<a name="com.acornui.gl.core.WrappedGl20$vertexAttribPointer(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Boolean, kotlin.Int, kotlin.Int)"></a>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">vertexAttribPointer</span><span class="symbol">(</span><span class="identifier" id="com.acornui.gl.core.WrappedGl20$vertexAttribPointer(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Boolean, kotlin.Int, kotlin.Int)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.WrappedGl20$vertexAttribPointer(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Boolean, kotlin.Int, kotlin.Int)/size">size</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.WrappedGl20$vertexAttribPointer(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Boolean, kotlin.Int, kotlin.Int)/type">type</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.WrappedGl20$vertexAttribPointer(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Boolean, kotlin.Int, kotlin.Int)/normalized">normalized</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.WrappedGl20$vertexAttribPointer(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Boolean, kotlin.Int, kotlin.Int)/stride">stride</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">, </span><span class="identifier" id="com.acornui.gl.core.WrappedGl20$vertexAttribPointer(kotlin.Int, kotlin.Int, kotlin.Int, kotlin.Boolean, kotlin.Int, kotlin.Int)/offset">offset</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Overrides <a href="../-gl20/vertex-attrib-pointer.html">Gl20.vertexAttribPointer</a></p>
+<p>Defines the data for the specified shader attribute.</p>
+<h3>Parameters</h3>
+<p><a name="index"></a>
+<code>index</code> - is the location of the shader attribute. Use getAttribLocation() to get the location if you did not specify it explicitly with bindAttribLocation().</p>
+<p><a name="size"></a>
+<code>size</code> - is the number of components for each attribute and must be 1, 2, 3, or 4.</p>
+<p><a name="type"></a>
+<code>type</code> - must be one of BYTE, UNSIGNED_BYTE, SHORT, UNSIGNED_SHORT, or FLOAT.</p>
+<p><a name="normalized"></a>
+<code>normalized</code> - if true and dataType is not FLOAT, the data will be mapped to the range -1 to 1 for signed types and the range 0 to 1 for unsigned types.</p>
+<p><a name="stride"></a>
+<code>stride</code> - indicates the number of bytes between the consecutive attributes. If stride is 0, size * sizeof(dataType) will be used.</p>
+<p><a name="offset"></a>
+<code>offset</code> - is the number of bytes before the first attribute.</p>
+</BODY>
+</HTML>

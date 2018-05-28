@@ -1,0 +1,145 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>TweenDriver - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.core.tween</a>&nbsp;/&nbsp;<a href="./index.html">TweenDriver</a><br/>
+<br/>
+<h1>TweenDriver</h1>
+<code><span class="keyword">class </span><span class="identifier">TweenDriver</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-updatable-child-base/index.html"><span class="identifier">UpdatableChildBase</span></a><span class="symbol">, </span><span class="identifier">Disposable</span></code>
+<p>A tween driver will update a single tween, then remove and recycle itself when the tween is completed.</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="tween.html">tween</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">tween</span><span class="symbol">: </span><a href="../-tween/index.html"><span class="identifier">Tween</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/-updatable-child-base/parent.html">parent</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">var </span><span class="identifier">parent</span><span class="symbol">: </span><a href="../../com.acornui.core/-parent/index.html"><span class="identifier">Parent</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core/-updatable-child/index.html"><span class="identifier">UpdatableChild</span></a><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="dispose.html">dispose</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">dispose</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="update.html">update</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">update</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween.TweenDriver$update(kotlin.Float)/stepTime">stepTime</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html"><span class="identifier">Float</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Updates this object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="obtain.html">obtain</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">obtain</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core.tween.TweenDriver.Companion$obtain(com.acornui.core.tween.Tween)/tween">tween</span><span class="symbol">:</span>&nbsp;<a href="../-tween/index.html"><span class="identifier">Tween</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">TweenDriver</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/ancestry.html">ancestry</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">ancestry</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$ancestry(com.acornui.core.ChildRo, kotlin.collections.MutableList((com.acornui.core.ChildRo)))/out">out</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">&gt;</span></code>
+<p>Populates an ArrayList with a ChildRo's ancestry.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/ancestry-count.html">ancestryCount</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">ancestryCount</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code>
+<p>Returns the lineage count. 0 if this child is the stage, or is the stage, 1 if the stage is the parent,
+2 if the stage is the grandparent, 3 if the stage is the great grandparent, and so on.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/is-after.html">isAfter</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">isAfter</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$isAfter(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this ChildRo is after the <a href="../../com.acornui.core/is-after.html#com.acornui.core$isAfter(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/other">other</a> ChildRo. This considers the parent to come before the child.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/is-ancestor-of.html">isAncestorOf</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">isAncestorOf</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$isAncestorOf(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/child">child</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this <a href="../../com.acornui.core/-child-ro/index.html">ChildRo</a> is the ancestor of the given <a href="../../com.acornui.core/is-ancestor-of.html#com.acornui.core$isAncestorOf(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/child">child</a>.
+X is considered to be an ancestor of Y if doing a parent walk starting from Y, X is then reached.
+This will return true if X === Y</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/is-before.html">isBefore</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">isBefore</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$isBefore(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/other">other</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Returns true if this ChildRo is before the <a href="../../com.acornui.core/is-before.html#com.acornui.core$isBefore(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/other">other</a> ChildRo. This considers the parent to come before the child.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/is-descendant-of.html">isDescendantOf</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">isDescendantOf</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$isDescendantOf(com.acornui.core.ChildRo, com.acornui.core.ChildRo)/ancestor">ancestor</span><span class="symbol">:</span>&nbsp;<a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/parent-walk.html">parentWalk</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">parentWalk</span><span class="symbol">(</span><span class="identifier" id="com.acornui.core$parentWalk(com.acornui.core.ChildRo, kotlin.Function1((com.acornui.core.ChildRo, kotlin.Boolean)))/callback">callback</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.acornui.core/root.html">root</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a><span class="symbol">.</span><span class="identifier">root</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../com.acornui.core/-child-ro/index.html"><span class="identifier">ChildRo</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

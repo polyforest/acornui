@@ -1,0 +1,22 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ValidationTree.<init> - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.acornui.component</a>&nbsp;/&nbsp;<a href="index.html">ValidationTree</a>&nbsp;/&nbsp;<a href="./-init-.html">&lt;init&gt;</a><br/>
+<br/>
+<h1>&lt;init&gt;</h1>
+<a name="com.acornui.component.ValidationTree$&lt;init&gt;()"></a>
+<code><span class="identifier">ValidationTree</span><span class="symbol">(</span><span class="symbol">)</span></code>
+<p>A dependency graph of validation flags.
+When a flag is invalidated, all dependents are also invalidated. When a flag is validated, all dependencies are
+guaranteed to be valid first.</p>
+<p>The UI Component implementation will work in this way:
+UI Components will validate the validation tree top down, level order. When a component validates a flag such as
+layout, that component may require that a child component have a valid layout in order to determine its measured
+size. On retrieving the child component size, that child component may then validate its layout, thus effectively
+validating certain flags in a bottom-up manner.</p>
+</BODY>
+</HTML>
