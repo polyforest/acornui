@@ -222,24 +222,6 @@ private class DomComponent(
 	fun setConcatenatedColorTint(value: ColorRo) {
 	}
 
-	fun blur() {
-		element.removeAttribute("tabindex") // Must be all lowercase.
-		if (userInfo.isIe) {
-			setTimeout({element.blur()}, 100)
-		} else {
-			element.blur()
-		}
-	}
-
-	fun focus() {
-		element.setAttribute("tabindex", "0")
-		element.focus()
-		if (userInfo.isIe) {
-			// Because.. IE
-			setTimeout({element.focus()}, 100)
-		}
-	}
-
 	fun dispose() {
 	}
 }

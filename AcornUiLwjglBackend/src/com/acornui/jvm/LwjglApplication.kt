@@ -199,6 +199,8 @@ open class LwjglApplication : ApplicationBase() {
 				isOpenGl = true,
 				isDesktop = true,
 				isTouchDevice = false,
+				userAgent = "glfw",
+				platformStr = System.getProperty("os.name") ?: "unknown",
 				languages = listOf(Locale(LocaleJvm.getDefault().toLanguageTag()))
 		)
 		userInfo = u

@@ -16,7 +16,9 @@
 
 package com.acornui.jvm.files
 
+import com.acornui.core.Platform
 import com.acornui.core.io.BufferFactory
+import com.acornui.core.platform
 import com.acornui.file.FileFilterGroup
 import com.acornui.file.FileIoManager
 import com.acornui.file.FileReader
@@ -71,7 +73,7 @@ class JvmFileIoManager : FileIoManager {
 	}
 
 	private fun List<FileFilterGroup>.toFilterListStr(): String? {
-		if (System.getProperty("os.name")?.startsWith("MAC", true) == true) return null // Issue #36
+		if (platform == Platform.APPLE) return null // Issue #36
 		return joinToString(";") { it.toFilterListStr() }
 	}
 

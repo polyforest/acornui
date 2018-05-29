@@ -122,7 +122,7 @@ data class GlConfig(
 /**
  * A singleton reference to the user info. This does not need to be scoped; there can only be one machine.
  */
-var userInfo: UserInfo by Delegates.notNull<UserInfo>()
+var userInfo: UserInfo by Delegates.notNull()
 
 /**
  * Details about the user.
@@ -139,18 +139,21 @@ data class UserInfo(
 		val isBrowser: Boolean = false,
 		val isDesktop: Boolean = false,
 
-		/**
-		 * Because... I.E.
-		 */
-		val isIe: Boolean = false,
-
 		val isMobile: Boolean = false,
+
+		val userAgent: String,
+
+		/**
+		 * The operating system.
+		 * @see UserInfo.platform
+		 */
+		val platformStr: String,
 
 		val languages: List<Locale> = listOf()
 ) {
 
 	override fun toString(): String {
-		return "UserInfo(isOpenGl=$isOpenGl isTouchDevice=$isTouchDevice isBrowser=$isBrowser isIe=$isIe isMobile=$isMobile languages=${languages.joinToString(",")})"
+		return "UserInfo(isOpenGl=$isOpenGl isTouchDevice=$isTouchDevice isBrowser=$isBrowser isMobile=$isMobile languages=${languages.joinToString(",")})"
 	}
 
 	companion object : DKey<UserInfo>
@@ -174,6 +177,56 @@ object Bandwidth {
 	 */
 	val upBps: Float = 196608f
 
+}
+
+// TODO: isMac, isWindows, isLinux
+
+enum class Platform {
+	ANDROID,
+	APPLE,
+	BLACKBERRY,
+	PALM,
+	MICROSOFT,
+	UNIX,
+	POSIX_UNIX,
+	NINTENDO,
+	SONY,
+	SYMBIAN,
+	OTHER
+}
+
+val platform: Platform by lazy {
+	val p = userInfo.platformStr.toLowerCase()
+	if (p.contains("android")) {
+		Platform.ANDROID
+	} else if (p.containsAny("os/2", "pocket pc", "windows", "win16", "win32", "wince")) {
+		Platform.MICROSOFT
+	} else if (p.containsAny("iphone", "ipad", "ipod", "mac", "pike")) {
+		Platform.APPLE
+	} else if (p.containsAny("linux", "unix", "mpe/ix", "freebsd", "openbsd", "irix")) {
+		Platform.UNIX
+	} else if (p.containsAny("sunos", "sun os", "solaris", "hp-ux", "aix")) {
+		Platform.POSIX_UNIX
+	} else if (p.contains("nintendo")) {
+		Platform.NINTENDO
+	} else if (p.containsAny("palmos", "webos")) {
+		Platform.PALM
+	} else if (p.containsAny("playstation", "psp")) {
+		Platform.SONY
+	} else if (p.contains("blackberry")) {
+		Platform.BLACKBERRY
+	} else if (p.containsAny("nokia", "s60", "symbian")) {
+		Platform.SYMBIAN
+	} else {
+		Platform.OTHER
+	}
+}
+
+private fun String.containsAny(vararg string: String): Boolean {
+	for (s in string) {
+		if (this.contains(s)) return true
+	}
+	return false
 }
 
 /**

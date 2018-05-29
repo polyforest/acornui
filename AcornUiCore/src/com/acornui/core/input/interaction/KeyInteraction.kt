@@ -66,7 +66,6 @@ interface KeyInteractionRo : InteractionEventRo {
 	 */
 	val isRepeat: Boolean
 
-
 	/**
 	 * If true, this interaction was triggered from code, not user input.
 	 */

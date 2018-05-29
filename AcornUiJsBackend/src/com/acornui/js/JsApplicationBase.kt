@@ -183,17 +183,6 @@ Function.prototype.bind = function() {
 	}
 
 	protected open val userInfoTask by BootTask {
-		val ua = window.navigator.userAgent
-
-		val isIe = when {
-			ua.indexOf("MSIE ") >= 0 -> // IE 10 or older
-				true
-			ua.indexOf("Trident/") >= 0 -> // IE 11
-				true
-			else -> // Not IE
-				false
-		}
-
 		val isTouchDevice = js("""'ontouchstart' in window || !!navigator.maxTouchPoints;""") as? Boolean ?: false
 
 		val isMobile = js("""
@@ -211,7 +200,8 @@ Function.prototype.bind = function() {
 				isBrowser = true,
 				isOpenGl = isOpenGl,
 				isMobile = isMobile,
-				isIe = isIe,
+				userAgent = window.navigator.userAgent,
+				platformStr = window.navigator.platform,
 				languages = languages.map { Locale(it) }
 		)
 
