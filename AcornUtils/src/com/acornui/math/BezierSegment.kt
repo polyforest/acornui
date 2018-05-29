@@ -92,7 +92,7 @@ class BezierSegment(
 	companion object {
 
 		private fun getSingleValue(t: Float, a: Float, b: Float, c: Float, d: Float): Float {
-			return (t * t * (d - a) + 3f * (1f - t) * (t * (c - a) + (1 - t) * (b - a))) * t + a
+			return (t * t * (d - a) + 3f * (1f - t) * (t * (c - a) + (1f - t) * (b - a))) * t + a
 		}
 
 	}
