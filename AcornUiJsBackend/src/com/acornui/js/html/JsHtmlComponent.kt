@@ -16,12 +16,13 @@
 
 package com.acornui.js.html
 
-import com.acornui.component.*
+import com.acornui.component.BoxStyle
+import com.acornui.component.HtmlComponent
+import com.acornui.component.UiComponentImpl
+import com.acornui.component.parentWalk
 import com.acornui.component.text.TextField
 import com.acornui.core.di.Owned
-import com.acornui.core.userInfo
 import com.acornui.graphics.ColorRo
-import com.acornui.js.time.setTimeout
 import com.acornui.math.Bounds
 import com.acornui.math.BoundsRo
 import com.acornui.math.Matrix4Ro
@@ -83,12 +84,12 @@ class JsHtmlComponent(owner: Owned, private val rootElement: HTMLElement) : UiCo
 
 	override fun updateConcatenatedColorTransform() {
 		super.updateConcatenatedColorTransform()
-		component.setColorTint(colorTint)
+		component.setConcatenatedColorTint(concatenatedColorTint)
 	}
 
 	override fun updateConcatenatedTransform() {
 		super.updateConcatenatedTransform()
-		component.setTransform(concatenatedTransform)
+		component.setConcatenatedTransform(concatenatedTransform)
 	}
 }
 
@@ -192,37 +193,12 @@ private class DomComponent(
 	private val marginH: Float
 		get() = margin.top + margin.bottom
 
-	private var wasSimpleTranslate: Boolean = true
-
-	fun setTransform(value: Matrix4Ro) {
-		if (wasSimpleTranslate) {
-			element.style.removeProperty("left")
-			element.style.removeProperty("top")
-			wasSimpleTranslate = false
-		}
+	fun setConcatenatedTransform(value: Matrix4Ro) {
 		element.style.transform = "matrix3d(${value.values.joinToString(",")})"
 	}
 
-	fun setSimpleTranslate(x: Float, y: Float) {
-		if (!wasSimpleTranslate) {
-			element.style.removeProperty("transform")
-			wasSimpleTranslate = true
-		}
-		element.style.top = "${y}px"
-		element.style.left = "${x}px"
-	}
-
-	fun setConcatenatedTransform(value: Matrix4Ro) {
-	}
-
-	fun setColorTint(value: ColorRo) {
-		element.style.opacity = value.a.toString()
-	}
-
 	fun setConcatenatedColorTint(value: ColorRo) {
-	}
-
-	fun dispose() {
+		element.style.opacity = value.a.toString()
 	}
 }
 
