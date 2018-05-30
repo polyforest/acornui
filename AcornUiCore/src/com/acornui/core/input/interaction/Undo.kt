@@ -56,12 +56,12 @@ class UndoDispatcher(override val injector: Injector) : Scoped, Disposable {
 
 	private val keyDownHandler =  { e: KeyInteractionRo ->
 		if (!e.handled) {
-			if (e.ctrlKey && (e.keyCode == Ascii.Y || (e.shiftKey && e.keyCode == Ascii.Z))) {
+			if (e.commandPlat && (e.keyCode == Ascii.Y || (e.shiftKey && e.keyCode == Ascii.Z))) {
 				e.handled = true
 				event.clear()
 				event.type = UndoInteractionRo.REDO
 				interactivity.dispatch(focus.focused() ?: stage, event)
-			} else if (e.ctrlKey && e.keyCode == Ascii.Z) {
+			} else if (e.commandPlat && e.keyCode == Ascii.Z) {
 				e.handled = true
 				event.clear()
 				event.type = UndoInteractionRo.UNDO
@@ -71,7 +71,6 @@ class UndoDispatcher(override val injector: Injector) : Scoped, Disposable {
 	}
 
 	init {
-		// TODO: Mac
 		key.keyDown.add(keyDownHandler)
 	}
 

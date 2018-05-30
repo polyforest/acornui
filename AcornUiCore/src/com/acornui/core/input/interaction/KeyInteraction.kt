@@ -16,10 +16,12 @@
 
 package com.acornui.core.input.interaction
 
+import com.acornui.core.Platform
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.InteractionEventBase
 import com.acornui.core.input.InteractionEventRo
 import com.acornui.core.input.InteractionType
+import com.acornui.core.platform
 
 interface KeyInteractionRo : InteractionEventRo {
 
@@ -170,3 +172,9 @@ enum class KeyLocation {
 	NUMBER_PAD,
 	UNKNOWN
 }
+
+/**
+ * The command key on mac os, otherwise, the ctrl key.
+ */
+val KeyInteractionRo.commandPlat: Boolean
+	get() = if (platform == Platform.APPLE) metaKey else ctrlKey

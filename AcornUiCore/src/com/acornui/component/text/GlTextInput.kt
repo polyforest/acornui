@@ -35,10 +35,6 @@ import com.acornui.core.di.own
 import com.acornui.core.focus.blurred
 import com.acornui.core.focus.focused
 import com.acornui.core.input.*
-import com.acornui.core.input.interaction.ClipboardItemType
-import com.acornui.core.input.interaction.KeyInteractionRo
-import com.acornui.core.input.interaction.redo
-import com.acornui.core.input.interaction.undo
 import com.acornui.core.mvc.CommandGroup
 import com.acornui.core.mvc.commander
 import com.acornui.core.mvc.invokeCommand
@@ -55,6 +51,7 @@ import com.acornui.component.drawing.dynamicMeshC
 import com.acornui.component.drawing.fillStyle
 import com.acornui.component.drawing.lineStyle
 import com.acornui.component.drawing.quad
+import com.acornui.core.input.interaction.*
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.Bounds
@@ -669,7 +666,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			Ascii.HOME -> cursorHome(event)
 			Ascii.END -> cursorEnd(event)
 			Ascii.A -> {
-				if (event.ctrlKey) {
+				if (event.commandPlat) {
 					val n = contents.size
 					setSelection(listOf(SelectionRange(host, 0, n)))
 				}
@@ -693,7 +690,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		val sel = firstSelection ?: return
 		val n = contents.size
 		var i = clamp(sel.endIndex, 0, n)
-		if (event.ctrlKey) {
+		if (event.commandPlat) {
 			while (i > 0 && charAt(i - 1).charType() == 0) {
 				i--
 			}
@@ -710,7 +707,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		val sel = firstSelection ?: return
 		val n = contents.size
 		var i = clamp(sel.endIndex, 0, n)
-		if (event.ctrlKey) {
+		if (event.commandPlat) {
 			val startType = charAt(i++).charType()
 			while (i < n && charAt(i).charType() == startType) {
 				i++
@@ -773,7 +770,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private fun cursorHome(event: KeyInteractionRo) {
 		val sel = firstSelection ?: return
 		val line = contents.getLineAt(minOf(contents.size - 1, sel.endIndex)) ?: return
-		val metaKey = event.ctrlKey || event.metaKey
+		val metaKey = event.commandPlat
 		val toIndex = if (metaKey) 0 else line.startIndex
 		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else toIndex, toIndex))
 	}
@@ -782,7 +779,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		val sel = firstSelection ?: return
 		val line = contents.getLineAt(sel.endIndex) ?: return
 		val pos = lineEnd(line)
-		val metaKey = event.ctrlKey || event.metaKey
+		val metaKey = event.commandPlat
 		val toIndex = if (metaKey) contents.size else pos
 		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else toIndex, toIndex))
 	}

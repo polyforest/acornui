@@ -26,10 +26,7 @@ import com.acornui.core.input.Ascii
 import com.acornui.core.input.InteractionEventBase
 import com.acornui.core.input.InteractivityManager
 import com.acornui.core.input.KeyInput
-import com.acornui.core.input.interaction.ClipboardItemType
-import com.acornui.core.input.interaction.CopyInteractionRo
-import com.acornui.core.input.interaction.KeyInteractionRo
-import com.acornui.core.input.interaction.PasteInteractionRo
+import com.acornui.core.input.interaction.*
 import org.lwjgl.glfw.GLFW
 
 
@@ -51,15 +48,15 @@ class JvmClipboardDispatcher(
 	}
 
 	private fun keyDownHandler(e: KeyInteractionRo) {
-		if (e.ctrlKey && e.keyCode == Ascii.V) {
+		if (e.commandPlat && e.keyCode == Ascii.V) {
 			pasteEvent.clear()
 			pasteEvent.type = PasteInteractionRo.PASTE
 			interactivity.dispatch(focus.focused() ?: stage, pasteEvent)
-		} else if (e.ctrlKey && e.keyCode == Ascii.C) {
+		} else if (e.commandPlat && e.keyCode == Ascii.C) {
 			copyEvent.clear()
 			copyEvent.type = CopyInteractionRo.COPY
 			interactivity.dispatch(focus.focused() ?: stage, copyEvent)
-		} else if (e.ctrlKey && e.keyCode == Ascii.X) {
+		} else if (e.commandPlat && e.keyCode == Ascii.X) {
 			copyEvent.clear()
 			copyEvent.type = CopyInteractionRo.CUT
 			interactivity.dispatch(focus.focused() ?: stage, copyEvent)
