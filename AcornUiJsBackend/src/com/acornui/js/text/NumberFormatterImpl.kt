@@ -25,7 +25,6 @@ import com.acornui.core.i18n.Locale
 import com.acornui.core.text.NumberFormatType
 import com.acornui.core.text.NumberFormatter
 import com.acornui.reflect.observable
-import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 
 class NumberFormatterImpl(override val injector: Injector) : NumberFormatter, Scoped {

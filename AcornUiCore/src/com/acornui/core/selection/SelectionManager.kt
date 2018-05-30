@@ -8,6 +8,7 @@ import com.acornui.core.di.Injector
 import com.acornui.core.di.inject
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal2
+import kotlin.math.abs
 
 interface SelectionManager : Disposable, Clearable {
 
@@ -73,6 +74,9 @@ data class SelectionRange(
 
 	val min = minOf(startIndex, endIndex)
 	val max = maxOf(startIndex, endIndex)
+
+	val size: Int
+		get() = abs(endIndex - startIndex)
 
 	fun contains(index: Int): Boolean {
 		return index >= min && index < max

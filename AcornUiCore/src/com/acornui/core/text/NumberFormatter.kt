@@ -18,6 +18,8 @@ package com.acornui.core.text
 
 import com.acornui.core.di.*
 import com.acornui.core.i18n.Locale
+import com.acornui.math.fpart
+import kotlin.math.pow
 
 /**
  * This class formats numbers into localized string representations.

@@ -160,6 +160,12 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 		invalidateLayout()
 	}
 
+	override fun updateStyles() {
+		super.updateStyles()
+		// This class's styles are delegated from the editableText styles.
+		editableText.validate(ValidationFlags.STYLES)
+	}
+
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val pad = boxStyle.padding
 		val margin = boxStyle.margin
@@ -175,7 +181,7 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 
 		editableText.setSize(w, h)
 		editableText.setPosition(margin.left + pad.left, margin.top + pad.top)
-		out.set(explicitWidth ?: textInputStyle.defaultWidth, explicitHeight
+		out.set(explicitWidth ?: margin.expandHeight2(pad.expandHeight2(w)), explicitHeight
 				?: margin.expandHeight2(pad.expandHeight2(editableText.height)))
 		background.setSize(margin.reduceWidth2(out.width), margin.reduceHeight(out.height))
 		background.setPosition(margin.left, margin.top)
@@ -469,8 +475,10 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		textField.text = if (_password) _text.toPassword() else _text
 	}
 
-	val charStyle: CharStyle = textField.charStyle
-	val flowStyle: TextFlowStyle = textField.flowStyle
+	val charStyle: CharStyle
+		get() = textField.charStyle
+	val flowStyle: TextFlowStyle
+		get() = textField.flowStyle
 
 	/**
 	 * The mask to use as replacement characters when [password] is set to true.
@@ -601,6 +609,12 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 				_changed.dispatch()
 			}
 		}
+	}
+
+	override fun updateStyles() {
+		super.updateStyles()
+		// This class's styles are delegated from the textField styles.
+		textField.validate(ValidationFlags.STYLES)
 	}
 
 	override fun onActivated() {
@@ -861,8 +875,15 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	}
 
 	private fun replaceSelection(str: String, group: CommandGroup = currentGroup) {
-		val str2 = if (_restrictPatternRegex == null) str else str.replace(_restrictPatternRegex!!, "")
+		var str2 = if (_restrictPatternRegex == null) str else str.replace(_restrictPatternRegex!!, "")
 		val sel = firstSelection ?: return
+		val maxLength = maxLength
+		if (maxLength != null) {
+			val newSize = contentsSize + str2.length - sel.size
+			if (newSize > maxLength) {
+				str2 = str2.substring(0, maxOf(0, str2.length - newSize + maxLength))
+			}
+		}
 		replaceTextRange(sel.min, sel.max, str2, group)
 		val p = sel.min + str2.length
 		setSelection(listOf(SelectionRange(host, p, p)), group)

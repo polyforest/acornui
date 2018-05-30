@@ -14,12 +14,16 @@ import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.enableDownRepeat
 import com.acornui.core.input.keyDown
 import com.acornui.core.input.mouseDown
-import com.acornui.core.text.StringFormatter
+import com.acornui.core.text.NumberFormatter
 import com.acornui.core.text.numberFormatter
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
+import com.acornui.math.MathUtils.clamp
+import com.acornui.math.MathUtils.roundToNearest
+import com.acornui.math.fractionDigits
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
+import kotlin.properties.Delegates
 
 class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 
@@ -34,16 +38,28 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	val changed: Signal<(NumericStepper) -> Unit>
 		get() = _changed
 
-	private var _formatter: StringFormatter<Float> = numberFormatter()
+	val formatter: NumberFormatter = numberFormatter().apply {
+		useGrouping = false
+	}
 
-	var formatter: StringFormatter<Float>
-		get() = _formatter
-		set(value) {
-			_formatter = value
-			textInput.text = value.format(this.value)
-		}
+	var step: Float by Delegates.observable(1f) {
+		_, _, _ ->
+		refreshFormatterStep()
+	}
 
-	var step: Float = 1f
+	/**
+	 * When stepping, offset is added before rounding to the nearest step.
+	 */
+	var offset: Float by Delegates.observable(0f) {
+		_, _, _ ->
+		refreshFormatterStep()
+	}
+
+	private fun refreshFormatterStep() {
+		val fractionDigits = offset.fractionDigits + step.fractionDigits
+		formatter.minFractionDigits = fractionDigits
+		formatter.maxFractionDigits = fractionDigits
+	}
 
 	private var _max: Float = Float.POSITIVE_INFINITY
 
@@ -76,7 +92,7 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 			}
 		}
 
-	val textInput = +textInput {
+	private val textInput = +textInput {
 		restrictPattern = RestrictPatterns.FLOAT
 		changed.add {
 			val newValue = text.toFloatOrNull() ?: 0f
@@ -109,7 +125,13 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 			val newValue = MathUtils.clamp(value, _min, _max)
 			if (oldValue == newValue) return
 			_value = newValue
-			invalidate(ValidationFlags.PROPERTIES)
+			invalidateProperties()
+		}
+
+	var maxLength: Int?
+		get() = textInput.maxLength
+		set(value) {
+			textInput.maxLength = value
 		}
 
 	init {
@@ -121,6 +143,8 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 				userChange(value - step)
 			}
 		}
+
+		refreshFormatterStep()
 	}
 
 	/**
@@ -128,13 +152,26 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	 */
 	fun userChange(value: Float, min: Float = this.min, max: Float = this.max) {
 		val oldValue = _value
-		val newValue = MathUtils.clamp(value, min, max)
+		val newValue = roundToNearest(clamp(value, min, max), step, offset)
+		invalidateProperties()
 		if (oldValue == newValue) return
 		this.min = min
 		this.max = max
 		this.value = newValue
 		_changed.dispatch(this)
 	}
+
+	/**
+	 * Sets this stepper's text input's default width to fit the character 'M' repeated [textLength] times.
+	 * If this stepper has been given an explicit width, or a [defaultWidth], this will have no effect.
+	 */
+	fun setSizeToFit(textLength: Int) = textInput.setSizeToFit(textLength)
+
+	/**
+	 * Sets this text input's default width to fit the given text line.
+	 * If this stepper has been given an explicit width, or a [defaultWidth], this will have no effect.
+	 */
+	fun setSizeToFit(text: String?) = textInput.setSizeToFit(text)
 
 	override fun updateProperties() {
 		textInput.text = formatter.format(value)

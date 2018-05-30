@@ -16,8 +16,8 @@
 
 package com.acornui.component.text
 
-import com.acornui.async.launch
 import com.acornui.async.resultOrNull
+import com.acornui.async.then
 import com.acornui.collection.*
 import com.acornui.component.*
 import com.acornui.component.layout.Positionable
@@ -122,9 +122,10 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 				_drag = null
 			}
 
-			launch {
+			async {
 				val fontStyle = charStyle.toFontStyle()
 				BitmapFontRegistry.getFont(fontStyle)?.await()
+			} then  {
 				invalidateStyles()
 			}
 		}

@@ -551,6 +551,24 @@ inline fun Float.fpart(): Float {
 	return this - floor(this)
 }
 
+/**
+ * Gets the number of fraction digits for this value.
+ * E.g.  if this value is 1f, returns 0, if this value is 3.1f, returns 1.
+ * The max return value is 10.
+ */
+val Float.fractionDigits: Int
+	get() {
+		var m = 1f
+		for (i in 0..10) {
+			if ((this * m).fpart() == 0f) {
+				return i
+			}
+			m *= 10f
+		}
+		return 10
+	}
+
+
 inline fun <T : Comparable<T>> maxOf4(a: T, b: T, c: T, d: T): T {
 	return maxOf(maxOf(a, b), maxOf(c, d))
 }
