@@ -166,7 +166,7 @@ class GlfwWindowImpl(
 //			GLUtil.setupDebugMessageCallback()
 //		}
 
-		setSize(windowConfig.initialWidth, windowConfig.initialHeight, false)
+		setSize(windowConfig.initialWidth, windowConfig.initialHeight)
 
 		Log.info("Vendor: ${GL11.glGetString(GL11.GL_VENDOR)}")
 		Log.info("Supported GLSL language version: ${GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)}")
@@ -226,7 +226,9 @@ class GlfwWindowImpl(
 	override val scaleY: Float
 		get() = _scaleY
 
-	override fun setSize(width: Float, height: Float, isUserInteraction: Boolean) {
+	override fun setSize(width: Float, height: Float) = setSize(width, height, false)
+
+	private fun setSize(width: Float, height: Float, isUserInteraction: Boolean) {
 		if (_width == width && _height == height) return // no-op
 		GLFW.glfwSetWindowSize(windowId, width.toInt(), height.toInt())
 		updateSize(width, height, isUserInteraction)
@@ -287,7 +289,7 @@ class GlfwWindowImpl(
 				if (value) {
 					lastWidth = _width
 					lastHeight = _height
-					setSize(w.toFloat(), h.toFloat(), true)
+					setSize(w.toFloat(), h.toFloat(), isUserInteraction = false)
 					GLFW.glfwSetWindowMonitor(windowId, GLFW.glfwGetPrimaryMonitor(), 0, 0, w, h, r)
 				} else {
 					GLFW.glfwSetWindowMonitor(windowId, 0, ((w - lastWidth) * 0.5f).toInt(), ((h - lastHeight) * 0.5f).toInt(), lastWidth.toInt(), lastHeight.toInt(), 60)

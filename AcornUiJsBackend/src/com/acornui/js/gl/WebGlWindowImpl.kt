@@ -85,11 +85,11 @@ open class WebGlWindowImpl(
 
 	private val resizeHandler = {
 		event: Event ->
-		setSize(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat(), true)
+		setSize(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat())
 	}
 
 	init {
-		setSize(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat(), true)
+		setSize(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat())
 
 		window.addEventListener("resize", resizeHandler)
 		canvas.addEventListener("webglcontextrestored", webGlContextRestoredHandler)
@@ -165,7 +165,7 @@ open class WebGlWindowImpl(
 	override val scaleY: Float
 		get() = 1f
 
-	final override fun setSize(width: Float, height: Float, isUserInteraction: Boolean) {
+	final override fun setSize(width: Float, height: Float) {
 		if (_width == width && _height == height) return // no-op
 		_width = width
 		_height = height
@@ -173,7 +173,6 @@ open class WebGlWindowImpl(
 			canvas.style.width = "${_width.toInt()}px"
 			canvas.style.height = "${_height.toInt()}px"
 		}
-
 		sizeIsDirty = true
 		sizeChanged.dispatch(_width, _height, isUserInteraction)
 	}

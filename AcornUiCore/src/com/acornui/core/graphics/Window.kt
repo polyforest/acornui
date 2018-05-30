@@ -73,10 +73,8 @@ interface Window : Disposable {
 
 	/**
 	 * Sets the size of this window.
-	 * Note, cameras will only automatically center if [Camera.autoCenter] is true.
-	 * @see Camera.centerCamera
 	 */
-	fun setSize(width: Float, height: Float, isUserInteraction: Boolean)
+	fun setSize(width: Float, height: Float)
 
 	/**
 	 * Sets the window's opaque background color.

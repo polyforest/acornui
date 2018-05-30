@@ -16,11 +16,13 @@
 
 package com.acornui.gl.core
 
+import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Window
+import com.acornui.function.as3
 import com.acornui.graphics.Color
 import com.acornui.math.Matrix4
 import com.acornui.math.Vector3
@@ -28,27 +30,27 @@ import com.acornui.math.Vector3
 /**
  * Wraps a frame buffer, keeping it the size of the screen.
  */
-class FullScreenFramebuffer(override val injector: Injector, private val hasDepth: Boolean = false, private val hasStencil: Boolean = false) : Scoped {
+class FullScreenFramebuffer(override val injector: Injector, private val hasDepth: Boolean = false, private val hasStencil: Boolean = false) : Scoped, Disposable {
 
 	private val window = inject(Window)
-	private var frameBuffer = createFrameBuffer()
+	private var frameBuffer: Framebuffer? = null
+
+	private val tL = Vertex(Vector3(-1f, -1f, 0f), Vector3.NEG_Z.copy(), Color.WHITE.copy(), 0f, 0f)
+	private val tR = Vertex(Vector3(1f, -1f, 0f), Vector3.NEG_Z.copy(), Color.WHITE.copy(), 1f, 0f)
+	private val bR = Vertex(Vector3(1f, 1f, 0f), Vector3.NEG_Z.copy(), Color.WHITE.copy(), 1f, 1f)
+	private val bL = Vertex(Vector3(-1f, 1f, 0f), Vector3.NEG_Z.copy(), Color.WHITE.copy(), 0f, 1f)
 
 	init {
-		val windowResizedHandler = {
-			newWidth: Float, newHeight: Float, isUserInteraction: Boolean ->
-			resize()
-		}
-		window.sizeChanged.add(windowResizedHandler)
-	}
-
-	private fun createFrameBuffer(): Framebuffer? {
-		if (window.width <= 0f || window.height <= 0f) return null
-		return Framebuffer(injector, window.width.toInt(), window.height.toInt(), hasDepth, hasStencil)
+		window.sizeChanged.add(this::resize.as3)
+		resize()
 	}
 
 	private fun resize() {
+		val w = window.width.toInt()
+		val h = window.height.toInt()
+
 		frameBuffer?.dispose()
-		frameBuffer = createFrameBuffer()
+		frameBuffer = if (w <= 0 || h <= 0) null else Framebuffer(injector, w, h, hasDepth, hasStencil)
 	}
 
 	/**
@@ -67,11 +69,6 @@ class FullScreenFramebuffer(override val injector: Injector, private val hasDept
 
 	private val glState = inject(GlState)
 
-	private val tL = Vertex(Vector3(-1f, -1f, 0f), Vector3.NEG_Z.copy(), Color.WHITE.copy(), 0f, 0f)
-	private val tR = Vertex(Vector3(1f, -1f, 0f), Vector3.NEG_Z.copy(), Color.WHITE.copy(), 1f, 0f)
-	private val bR = Vertex(Vector3(1f, 1f, 0f), Vector3.NEG_Z.copy(), Color.WHITE.copy(), 1f, 1f)
-	private val bL = Vertex(Vector3(-1f, 1f, 0f), Vector3.NEG_Z.copy(), Color.WHITE.copy(), 0f, 1f)
-
 	/**
 	 * Renders the frame buffer to the screen.
 	 */
@@ -89,4 +86,8 @@ class FullScreenFramebuffer(override val injector: Injector, private val hasDept
 		batch.pushQuadIndices()
 	}
 
+	override fun dispose() {
+		window.sizeChanged.remove(this::resize.as3)
+		frameBuffer?.dispose()
+	}
 }
