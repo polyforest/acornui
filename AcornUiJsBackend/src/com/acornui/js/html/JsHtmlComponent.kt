@@ -180,7 +180,6 @@ private class DomComponent(
 	private val paddingH: Float
 		get() = padding.top + padding.bottom
 
-
 	private val borderW: Float
 		get() = border.left + border.right
 
