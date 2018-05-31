@@ -53,6 +53,7 @@ import com.acornui.signal.Signal0
 import com.acornui.signal.bind
 
 // TODO: delegate focus to input
+// TODO: open inline mode.
 
 open class OptionsList<E : Any>(
 		owner: Owned

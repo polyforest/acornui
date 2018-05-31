@@ -42,13 +42,18 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		useGrouping = false
 	}
 
+	/**
+	 * Sets the step size of the up and down buttons.
+	 * Setting this will also set the formatter fraction digits.
+	 */
 	var step: Float by Delegates.observable(1f) {
 		_, _, _ ->
 		refreshFormatterStep()
 	}
 
 	/**
-	 * When stepping, offset is added before rounding to the nearest step.
+	 * When stepping, offset is added before rounding to the nearest [step].
+	 * Setting this will also set the formatter fraction digits.
 	 */
 	var offset: Float by Delegates.observable(0f) {
 		_, _, _ ->
@@ -56,7 +61,7 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	}
 
 	private fun refreshFormatterStep() {
-		val fractionDigits = offset.fractionDigits + step.fractionDigits
+		val fractionDigits = maxOf(offset.fractionDigits, step.fractionDigits)
 		formatter.minFractionDigits = fractionDigits
 		formatter.maxFractionDigits = fractionDigits
 	}
@@ -132,6 +137,7 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		get() = textInput.maxLength
 		set(value) {
 			textInput.maxLength = value
+			if (value == null) setSizeToFit(null) else setSizeToFit(value)
 		}
 
 	init {
