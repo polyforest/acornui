@@ -76,8 +76,10 @@ open class ContainerImpl(
 		if (isActive) {
 			child.activate()
 		}
-		invalidate(bubblingFlags)
 		child.invalidate(cascadingFlags)
+		invalidate(bubblingFlags)
+		if (!isValidatingLayout) invalidate(ValidationFlags.SIZE_CONSTRAINTS)
+
 		return child
 	}
 
@@ -126,6 +128,7 @@ open class ContainerImpl(
 		}
 		invalidate(bubblingFlags)
 		child.invalidate(cascadingFlags)
+		if (!isValidatingLayout) invalidate(ValidationFlags.SIZE_CONSTRAINTS)
 
 		return child
 	}
@@ -183,6 +186,7 @@ open class ContainerImpl(
 	}
 
 	override fun draw(viewport: MinMaxRo) {
+		// The children list shouldn't be modified during a draw, so no reason to do a safe iteration here.
 		for (i in 0.._children.lastIndex) {
 			val child = _children[i]
 			if (child.visible)
@@ -197,12 +201,6 @@ open class ContainerImpl(
 			true
 		}
 	}
-
-	/**
-	 * The validation flags that, if a child has invalidated, will cause this container's size constraints and
-	 * layout to become invalidated.
-	 */
-	protected var layoutInvalidatingFlags = DEFAULT_INVALIDATING_FLAGS
 
 	/**
 	 * The validation flags that, if a child has invalidated, will cause the same flags on this container to become
@@ -255,9 +253,16 @@ open class ContainerImpl(
 		}
 	}
 
+	private val isValidatingLayout: Boolean
+		get() = validation.currentFlag == ValidationFlags.LAYOUT
+
 	protected open fun childInvalidatedHandler(child: UiComponentRo, flagsInvalidated: Int) {
-		if (flagsInvalidated and layoutInvalidatingFlags > 0) {
-			if (child.includeInLayout || flagsInvalidated and ValidationFlags.LAYOUT_ENABLED > 0) {
+		if (flagsInvalidated and child.layoutInvalidatingFlags > 0) {
+			// A child has invalidated a flag marked as layout invalidating.
+			if (!isValidatingLayout && (child.shouldLayout || flagsInvalidated and ValidationFlags.LAYOUT_ENABLED > 0)) {
+				// If we are currently within a layout validation, do not attempt another invalidation.
+				// If the child isn't laid out (invisible or includeInLayout is false), don't invalidate the layout
+				// unless shouldLayout has just changed.
 				invalidate(ValidationFlags.SIZE_CONSTRAINTS)
 			}
 		}
@@ -271,21 +276,6 @@ open class ContainerImpl(
 		removeChild(child)
 	}
 
-	init {
-		validation.addNode(ValidationFlags.RESERVED_1, ValidationFlags.LAYOUT, this::validateChildBubblingFlags)
-	}
-
-	/**
-	 * After this component's layout is validated, validate any remaining flags on the children that would invalidate
-	 * this layout.
-	 */
-	private fun validateChildBubblingFlags() {
-		_children.iterate { child ->
-			child.validate(layoutInvalidatingFlags)
-			true
-		}
-	}
-
 	//-----------------------------------------------------
 	// Disposable
 	//-----------------------------------------------------
@@ -297,13 +287,6 @@ open class ContainerImpl(
 	override fun dispose() {
 		clearChildren(dispose = false)
 		super.dispose()
-	}
-
-	companion object {
-		private const val DEFAULT_INVALIDATING_FLAGS = ValidationFlags.HIERARCHY_ASCENDING or
-				ValidationFlags.SIZE_CONSTRAINTS or
-				ValidationFlags.LAYOUT or
-				ValidationFlags.LAYOUT_ENABLED
 	}
 }
 

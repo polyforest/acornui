@@ -53,8 +53,6 @@ class StackLayout : LayoutAlgorithm<StackLayoutStyle, StackLayoutData> {
 			child.setSize(layoutData?.getPreferredWidth(childAvailableWidth), layoutData?.getPreferredHeight(childAvailableHeight))
 			child.moveTo(padding.left, padding.top)
 
-			child.moveTo(padding.left, padding.top)
-
 			if (explicitWidth != null) {
 				val remainingSpace = childAvailableWidth!! - child.width
 				if (remainingSpace > 0f) {

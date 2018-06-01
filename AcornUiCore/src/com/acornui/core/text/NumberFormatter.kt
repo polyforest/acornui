@@ -16,10 +16,11 @@
 
 package com.acornui.core.text
 
-import com.acornui.core.di.*
+import com.acornui.core.di.Injector
+import com.acornui.core.di.Scoped
+import com.acornui.core.di.dKey
+import com.acornui.core.di.inject
 import com.acornui.core.i18n.Locale
-import com.acornui.math.fpart
-import kotlin.math.pow
 
 /**
  * This class formats numbers into localized string representations.
@@ -66,12 +67,6 @@ enum class NumberFormatType {
 
 fun Scoped.numberFormatter(): NumberFormatter {
 	return inject(NumberFormatter.FACTORY_KEY)(injector)
-}
-
-fun Scoped.intFormatter(): NumberFormatter {
-	return numberFormatter().apply {
-		maxFractionDigits = 0
-	}
 }
 
 /**

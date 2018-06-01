@@ -125,7 +125,7 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 			async {
 				val fontStyle = charStyle.toFontStyle()
 				BitmapFontRegistry.getFont(fontStyle)?.await()
-			} then  {
+			} then {
 				invalidateStyles()
 			}
 		}
@@ -587,9 +587,9 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 	/**
 	 * A list of all the text elements within the child spans.
 	 */
-	private val textElements: List<TextElementRo>
+	private val textElements: List<TextElement>
 		get() {
-			validate(ValidationFlags.HIERARCHY_ASCENDING)
+			validate(TEXT_ELEMENTS)
 			return _textElements
 		}
 
@@ -604,6 +604,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 		get() = textElements.size
 
 	init {
+		validation.addNode(TEXT_ELEMENTS, ValidationFlags.HIERARCHY_ASCENDING, ValidationFlags.LAYOUT, this::updateTextElements)
 		validation.addNode(VERTICES, ValidationFlags.LAYOUT or ValidationFlags.STYLES, 0, this::updateVertices)
 		validation.addNode(CHAR_STYLE, ValidationFlags.CONCATENATED_COLOR_TRANSFORM or ValidationFlags.STYLES, 0, this::updateCharStyle)
 	}
@@ -622,21 +623,13 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 	// Element methods.
 	//-------------------------------------------------------------------------------------------------
 
-	/**
-	 * When an element is added or removed, these flags are invalidated.
-	 */
-	private val bubblingFlags =
-			ValidationFlags.HIERARCHY_ASCENDING or
-					ValidationFlags.LAYOUT or
-					ValidationFlags.SIZE_CONSTRAINTS
-
 	private val _elements = ArrayList<TextSpanElement>()
 	override val elements: List<TextSpanElement>
 		get() = _elements
 
 	override fun <S : TextSpanElement> addElement(index: Int, element: S): S {
 		var newIndex = index
-		val oldIndex = elements.indexOf(element)
+		val oldIndex = _elements.indexOf(element)
 		if (oldIndex != -1) {
 			if (newIndex == oldIndex) return element // Element was added in the same spot it previously was.
 			// Handle the case where after the element is removed, the new index needs to decrement to compensate.
@@ -645,7 +638,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 			removeElement(oldIndex)
 		}
 		_elements.add(newIndex, element)
-		invalidate(bubblingFlags)
+		invalidate(TEXT_ELEMENTS)
 		element.textParent = this
 		return element
 	}
@@ -653,17 +646,16 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 	override fun removeElement(index: Int): TextSpanElement {
 		val element = _elements.removeAt(index)
 		element.textParent = null
-		invalidate(bubblingFlags)
+		invalidate(TEXT_ELEMENTS)
 		return element
 	}
 
 	override fun clearElements(dispose: Boolean) {
 		_elements.clear()
-		invalidate(bubblingFlags)
+		invalidate(TEXT_ELEMENTS)
 	}
 
-	override fun updateHierarchyAscending() {
-		super.updateHierarchyAscending()
+	private fun updateTextElements() {
 		_textElements.clear()
 		for (i in 0.._elements.lastIndex) {
 			_textElements.addAll(_elements[i].elements)
@@ -867,10 +859,10 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 	}
 
 	override fun setSelection(rangeStart: Int, selection: List<SelectionRange>) {
-		validate(ValidationFlags.HIERARCHY_ASCENDING)
-		for (i in 0.._textElements.lastIndex) {
+		val textElements = textElements
+		for (i in 0..textElements.lastIndex) {
 			val selected = selection.indexOfFirst2 { it.contains(i + rangeStart) } != -1
-			_textElements[i].setSelected(selected)
+			textElements[i].setSelected(selected)
 		}
 	}
 
@@ -900,38 +892,37 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 		val y2 = localToWindow(tmp.set(_bounds.width, 0f, 0f)).y
 		if (y1 == y2) {
 			// This text field is axis aligned, we can check against the viewport without a matrix inversion.
-			val lineStart = _lines.sortedInsertionIndex(viewport.yMin - y1) {
-				viewPortY, line ->
+			val lineStart = _lines.sortedInsertionIndex(viewport.yMin - y1) { viewPortY, line ->
 				viewPortY.compareTo(line.bottom)
 			}
 			if (lineStart == -1)
 				return
 			val scaleY = concatenatedTransform.getScaleY()
-			val lineEnd = _lines.sortedInsertionIndex((viewport.yMax - y1) / scaleY) {
-				viewPortBottom, line ->
+			val lineEnd = _lines.sortedInsertionIndex((viewport.yMax - y1) / scaleY) { viewPortBottom, line ->
 				viewPortBottom.compareTo(line.y)
 			}
 			if (lineEnd <= lineStart)
 				return
 
 			glState.camera(camera, concatenatedTransform)
-			for (i in lineStart .. lineEnd - 1) {
+			for (i in lineStart..lineEnd - 1) {
 				val line = _lines[i]
-				for (j in line.startIndex .. line.endIndex - 1) {
+				for (j in line.startIndex..line.endIndex - 1) {
 					_textElements[j].render(glState)
 				}
 			}
 		} else {
 			glState.camera(camera, concatenatedTransform)
-			for (i in 0 .. _textElements.lastIndex) {
+			for (i in 0.._textElements.lastIndex) {
 				_textElements[i].render(glState)
 			}
 		}
 	}
 
 	companion object {
-		private const val VERTICES = 1 shl 16
-		private const val CHAR_STYLE = 1 shl 17
+		private const val TEXT_ELEMENTS = 1 shl 16
+		private const val VERTICES = 1 shl 17
+		private const val CHAR_STYLE = 1 shl 18
 		private val linesPool = ClearableObjectPool { LineInfo() }
 	}
 }

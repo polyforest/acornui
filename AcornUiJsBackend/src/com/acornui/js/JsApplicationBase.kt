@@ -281,7 +281,7 @@ Function.prototype.bind = function() {
 		set(AssetManager, AssetManagerImpl(config.rootPath, get(Files), loaders, appendVersion = true))
 	}
 
-	protected open fun addAssetLoaders(loaders: HashMap<AssetType<*>, LoaderFactory<*>>) {
+	protected open fun addAssetLoaders(loaders: MutableMap<AssetType<*>, LoaderFactory<*>>) {
 		loaders[AssetType.TEXT] = { path: String, estimatedBytesTotal: Int -> JsTextLoader(path, estimatedBytesTotal) }
 
 		// JS Audio doesn't need to be updated like OpenAL audio does, so we don't add it to the TimeDriver.

@@ -13,7 +13,6 @@ import com.acornui.core.input.interaction.MouseInteractionRo
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.interaction.dragAttachment
 import com.acornui.core.input.mouseDown
-import com.acornui.core.isDescendantOf
 import com.acornui.core.popup.lift
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
@@ -21,7 +20,8 @@ import com.acornui.graphics.Hsv
 import com.acornui.graphics.HsvRo
 import com.acornui.math.*
 import com.acornui.reflect.observable
-import com.acornui.signal.*
+import com.acornui.signal.Signal
+import com.acornui.signal.Signal0
 
 open class ColorPicker(owner: Owned) : ContainerImpl(owner), Focusable {
 
@@ -176,6 +176,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 	private var alphaValueIndicator: UiComponent? = null
 
 	val hueRect = addChild(rect {
+		includeInLayout = false
 		style.linearGradient = LinearGradient(GradientDirection.RIGHT,
 				Color(1f, 0f, 0f, 1f),
 				Color(1f, 1f, 0f, 1f),
@@ -188,6 +189,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 	})
 
 	val saturationRect = addChild(rect {
+		includeInLayout = false
 		style.linearGradient = LinearGradient(GradientDirection.BOTTOM,
 				Color(1f, 1f, 1f, 0f),
 				Color(1f, 1f, 1f, 1f)
@@ -212,6 +214,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 	}
 
 	val valueRect = addChild(rect {
+		includeInLayout = false
 		dragAttachment(0f).drag.add {
 			windowToLocal(tmpVec.set(it.position))
 			val p = MathUtils.clamp(tmpVec.y / height, 0f, 1f)
@@ -223,6 +226,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 	})
 
 	val alphaRect = addChild(rect {
+		includeInLayout = false
 		dragAttachment(0f).drag.add {
 			windowToLocal(tmpVec.set(it.position))
 			val p = MathUtils.clamp(tmpVec.y / height, 0f, 1f)

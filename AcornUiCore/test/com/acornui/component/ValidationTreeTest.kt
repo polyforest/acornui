@@ -1,5 +1,6 @@
 package com.acornui.component
 
+import com.acornui.assertionsEnabled
 import com.acornui.string.toRadix
 import org.junit.Before
 import org.junit.Test
@@ -22,6 +23,7 @@ class ValidationTreeTest {
 	private lateinit var n: ValidationTree
 
 	@Before fun before() {
+		assertionsEnabled = true
 		n = validationTree {
 			addNode(ONE, {})
 			addNode(TWO, ONE, {})
@@ -89,17 +91,25 @@ class ValidationTreeTest {
 
 		n.validate(FIVE)
 
-		n.assertIsValid(FIVE, EIGHT, FOUR)
+		n.assertIsValid(FIVE, EIGHT, FOUR, TWO)
 
 		n.invalidate(FIVE)
-		n.assertIsValid(EIGHT, FOUR)
+		n.assertIsValid(TWO, FOUR, EIGHT)
 		n.assertIsNotValid(FIVE)
 		n.invalidate(FOUR)
+		n.assertIsValid(TWO)
 		n.assertIsNotValid(FOUR, FIVE, EIGHT)
 
 		n.validate(EIGHT)
-		n.assertIsValid(FOUR, EIGHT)
+		n.assertIsValid(TWO, FOUR, EIGHT)
+		n.assertIsNotValid(FIVE)
 
+		n.validate(FIVE)
+		n.assertIsValid(TWO, FOUR, FIVE, EIGHT)
+
+		n.invalidate(EIGHT)
+		n.assertIsNotValid(FIVE, EIGHT)
+		n.assertIsValid(TWO, FOUR)
 	}
 
 	@Test fun dependencyAssertion() {
@@ -137,6 +147,14 @@ class ValidationTreeTest {
 
 		validation.invalidate(ValidationFlags.RESERVED_1)
 		assertFalse(validation.isValid(ValidationFlags.STYLES))
+	}
+
+	@Test fun dependenciesCanBeValidated() {
+		val t = validationTree {
+			addNode(ONE, { validate(TWO) })
+			addNode(TWO, 0, ONE, {})
+		}
+		t.validate()
 	}
 
 	private fun ValidationTree.assertIsValid(vararg flags: Int) {

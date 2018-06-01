@@ -67,45 +67,13 @@ open class DynamicMeshComponent(
 		}
 
 	private val glState = inject(GlState)
-
-	private var globalPrimitivesAreValid = false
-	private val _globalPrimitives = ArrayList<MutableList<Vertex>>()
-	private val globalPrimitives: List<List<Vertex>>
-		get() {
-			if (!globalPrimitivesAreValid) {
-				globalPrimitivesAreValid = true
-				clearGlobalPrimitives()
-				data.childWalkPreOrder { primitive ->
-					val globalPrimitive = arrayListObtain<Vertex>()
-					for (j in 0..primitive.vertices.lastIndex) {
-						val localVertex = primitive.vertices[j]
-						val globalVertex = Vertex.obtain()
-						globalVertex.u = localVertex.u
-						globalVertex.v = localVertex.v
-						globalPrimitive.add(globalVertex)
-					}
-					_globalPrimitives.add(globalPrimitive)
-					TreeWalk.CONTINUE
-				}
-			}
-			return _globalPrimitives
-
-		}
-
-	private fun clearGlobalPrimitives() {
-		for (i in 0.._globalPrimitives.lastIndex) {
-			for (j in 0.._globalPrimitives[i].lastIndex) {
-				_globalPrimitives[i][j].free()
-			}
-			arrayListPool.free(_globalPrimitives[i])
-		}
-		_globalPrimitives.clear()
-	}
+	private val globalPrimitives = ArrayList<MutableList<Vertex>>()
 
 	init {
-		validation.addNode(VERTEX_TRANSFORM, ValidationFlags.CONCATENATED_TRANSFORM, { validateGlobalTransform() })
-		validation.addNode(VERTEX_COLOR_TRANSFORM, ValidationFlags.CONCATENATED_COLOR_TRANSFORM, { validateGlobalColor() })
-		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.LAYOUT or ValidationFlags.CONCATENATED_TRANSFORM, {
+		validation.addNode(GLOBAL_PRIMITIVES, 0, ValidationFlags.CONCATENATED_TRANSFORM, this::updateGlobalPrimitives)
+		validation.addNode(VERTEX_TRANSFORM, GLOBAL_PRIMITIVES or ValidationFlags.CONCATENATED_TRANSFORM, this::updateGlobalTransform)
+		validation.addNode(VERTEX_COLOR_TRANSFORM, GLOBAL_PRIMITIVES or ValidationFlags.CONCATENATED_COLOR_TRANSFORM, this::updateGlobalColor)
+		validation.addNode(GLOBAL_BOUNDING_BOX, GLOBAL_PRIMITIVES or ValidationFlags.LAYOUT or ValidationFlags.CONCATENATED_TRANSFORM, {
 			_globalBoundingBox.set(_boundingBox).mul(concatenatedTransform)
 		})
 	}
@@ -115,20 +83,34 @@ open class DynamicMeshComponent(
 		lineStyle.clear()
 		data.clear()
 		data.inner()
-		invalidate(VERTEX_TRANSFORM or VERTEX_COLOR_TRANSFORM or ValidationFlags.LAYOUT)
-		globalPrimitivesAreValid = false
+		invalidate(GLOBAL_PRIMITIVES or ValidationFlags.LAYOUT)
 	}
 
 	override fun clear() {
 		data.clear()
-		invalidate(VERTEX_TRANSFORM or VERTEX_COLOR_TRANSFORM or ValidationFlags.LAYOUT)
-		globalPrimitivesAreValid = false
+		invalidate(GLOBAL_PRIMITIVES or VERTEX_TRANSFORM or VERTEX_COLOR_TRANSFORM or ValidationFlags.LAYOUT)
 	}
 
-	private fun validateGlobalTransform() {
-		var index = 0
+	private fun updateGlobalPrimitives() {
+		clearGlobalPrimitives()
 		data.childWalkPreOrder { primitive ->
-			val cT = concatenatedTransform
+			val globalPrimitive = arrayListObtain<Vertex>()
+			for (j in 0..primitive.vertices.lastIndex) {
+				val localVertex = primitive.vertices[j]
+				val globalVertex = Vertex.obtain()
+				globalVertex.u = localVertex.u
+				globalVertex.v = localVertex.v
+				globalPrimitive.add(globalVertex)
+			}
+			globalPrimitives.add(globalPrimitive)
+			TreeWalk.CONTINUE
+		}
+	}
+
+	private fun updateGlobalTransform() {
+		var index = 0
+		val cT = concatenatedTransform
+		data.childWalkPreOrder { primitive ->
 			val globalPrimitive = globalPrimitives[index++]
 			for (j in 0..primitive.vertices.lastIndex) {
 				val localVertex = primitive.vertices[j]
@@ -140,7 +122,7 @@ open class DynamicMeshComponent(
 		}
 	}
 
-	private fun validateGlobalColor() {
+	private fun updateGlobalColor() {
 		var index = 0
 		data.childWalkPreOrder { primitive ->
 			val cCt = concatenatedColorTint
@@ -154,13 +136,24 @@ open class DynamicMeshComponent(
 		}
 	}
 
+	private fun clearGlobalPrimitives() {
+		for (i in 0..globalPrimitives.lastIndex) {
+			for (j in 0..globalPrimitives[i].lastIndex) {
+				globalPrimitives[i][j].free()
+			}
+			arrayListPool.free(globalPrimitives[i])
+		}
+		globalPrimitives.clear()
+	}
+
+
 	/**
 	 * Overrides intersectsGlobalRay to check against each drawn triangle.
 	 */
 	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
-		validate(VERTEX_TRANSFORM or GLOBAL_BOUNDING_BOX)
-
-		if (!_globalBoundingBox.intersects(globalRay, intersection)) {
+		validate(VERTEX_TRANSFORM)
+		val globalBoundingBox = globalBoundingBox
+		if (!globalBoundingBox.intersects(globalRay, intersection)) {
 			return false
 		}
 		if (intersectionType == MeshIntersectionType.EXACT) {
@@ -236,8 +229,7 @@ open class DynamicMeshComponent(
 			batch.begin(meshData.drawMode)
 			glState.blendMode(meshData.blendMode, premultipliedAlpha = false)
 			for (j in 0..globalPrimitive.lastIndex) {
-				val v = globalPrimitive[j]
-				batch.putVertex(v.position, v.normal, v.colorTint, v.u, v.v)
+				batch.putVertex(globalPrimitive[j])
 			}
 			val n = batch.highestIndex + 1
 			for (j in 0..indices.lastIndex) {
@@ -259,9 +251,10 @@ open class DynamicMeshComponent(
 	}
 
 	companion object {
-		const val VERTEX_TRANSFORM = 1 shl 16
-		const val VERTEX_COLOR_TRANSFORM = 1 shl 17
-		private const val GLOBAL_BOUNDING_BOX = 1 shl 18
+		private const val GLOBAL_PRIMITIVES = 1 shl 16
+		private const val VERTEX_TRANSFORM = 1 shl 17
+		private const val VERTEX_COLOR_TRANSFORM = 1 shl 18
+		private const val GLOBAL_BOUNDING_BOX = 1 shl 19
 	}
 }
 

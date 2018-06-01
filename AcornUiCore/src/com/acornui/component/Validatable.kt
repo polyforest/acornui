@@ -56,9 +56,7 @@ interface Validatable {
 	 * @param flags A bit mask for which flags to validate. (Use -1 to validate all)
 	 * Example: validate(ValidationFlags.LAYOUT or ValidationFlags.PROPERTIES) to validate both layout an properties.
 	 */
-	fun validate(flags: Int)
-
-	fun validate() = validate(-1) // TODO: KT-20451
+	fun validate(flags: Int = -1)
 
 }
 
@@ -108,13 +106,25 @@ class ValidationTree {
 	private var currentIndex = -1
 
 	/**
-	 * The flags that have been validated in the current [validate] call.
+	 * Returns the current flag being validated, or -1 if there is not a current validation.
 	 */
-	private var currentValidation = 0
+	val currentFlag: Int
+		get() {
+			if (currentIndex == -1) return -1
+			return nodes[currentIndex].flag
+		}
 
-	private var _invalidFlags = -1
+	private var _invalidFlags = 0
 	val invalidFlags: Int
 		get() = _invalidFlags
+
+	private var _allFlags = 0
+
+	/**
+	 * All flags the added nodes represent.
+	 */
+	val allFlags: Int
+		get() = _allFlags
 
 	fun addNode(flag: Int, onValidate: () -> Unit) = addNode(flag, 0, 0, onValidate)
 
@@ -125,7 +135,7 @@ class ValidationTree {
 	 * @param dependencies If any of these dependencies become invalid, this node will also become invalid.
 	 */
 	fun addNode(flag: Int, dependencies: Int, dependants: Int, onValidate: () -> Unit) {
-		if (!MathUtils.isPowerOfTwo(flag)) throw IllegalArgumentException("flag ${flag.toRadix(2)} is not a power of 2.")
+		if (assertionsEnabled && !MathUtils.isPowerOfTwo(flag)) throw IllegalArgumentException("flag ${flag.toRadix(2)} is not a power of 2.")
 		val newNode = ValidationNode(flag, dependants or flag, dependencies or flag, onValidate)
 		var dependenciesNotFound = dependencies
 		var dependantsNotFound = dependants
@@ -137,20 +147,22 @@ class ValidationTree {
 			dependenciesNotFound = dependenciesNotFound and flagInv
 			dependantsNotFound = dependantsNotFound and flagInv
 			if (previousNode.validationMask and newNode.invalidationMask > 0) {
-				previousNode.validationMask = previousNode.validationMask or previousNode.validationMask
+				previousNode.validationMask = newNode.validationMask or previousNode.validationMask
 				newNode.invalidationMask = newNode.invalidationMask or previousNode.invalidationMask
 				if (insertIndex > i)
 					insertIndex = i
 			}
 			if (previousNode.invalidationMask and newNode.validationMask > 0) {
 				newNode.validationMask = newNode.validationMask or previousNode.validationMask
-				previousNode.invalidationMask = previousNode.invalidationMask or newNode.invalidationMask
+				previousNode.invalidationMask = newNode.invalidationMask or previousNode.invalidationMask
 				if (insertIndex <= i) {
 					throw Exception("Validation node cannot be added after dependency ${previousNode.flag.toRadix(2)} and before all dependants ${dependants.toRadix(2)}")
 				}
 			}
 		}
 		nodes.add(insertIndex, newNode)
+		_invalidFlags = _invalidFlags or newNode.flag
+		_allFlags = _allFlags or newNode.flag
 		if (dependantsNotFound != 0)
 			throw Exception("validation node added, but the dependant flags: ${dependantsNotFound.toRadix(2)} were not found.")
 		if (dependenciesNotFound != 0)
@@ -166,7 +178,15 @@ class ValidationTree {
 		var flagsInvalidated = 0
 		var flagsToInvalidate = flags and _invalidFlags.inv()
 		if (flagsToInvalidate == 0) return 0
-		for (i in currentIndex + 1..nodes.lastIndex) {
+		if (assertionsEnabled && currentIndex >= 0) {
+			// Cannot invalidate anything that is not dependent on the current node.
+			val currentNode = nodes[currentIndex]
+			val badFlags = flagsToInvalidate and (currentNode.validationMask and currentNode.flag.inv())
+			if (badFlags > 0) {
+				throw Exception("Cannot invalidate ${flags.toRadix(2)} while validating ${currentNode.flag.toRadix(2)}; The following invalidated flags are dependencies of the current node: ${badFlags.toRadix(2)}")
+			}
+		}
+		for (i in 0..nodes.lastIndex) {
 			val n = nodes[i]
 			if (!n.isValid) continue
 			if (flagsToInvalidate and n.flag > 0) {
@@ -191,6 +211,7 @@ class ValidationTree {
 		}
 		var flagsToValidate = flags and _invalidFlags
 		if (flagsToValidate == 0) return 0
+		var flagsValidated = 0
 		for (i in 0..nodes.lastIndex) {
 			currentIndex = i
 			val n = nodes[i]
@@ -198,22 +219,16 @@ class ValidationTree {
 				n.onValidate()
 				n.isValid = true
 				flagsToValidate = flagsToValidate or n.validationMask
-				currentValidation = currentValidation or n.flag
+				flagsValidated = flagsValidated or n.flag
+				_invalidFlags = _invalidFlags and n.flag.inv()
 			}
 		}
 		currentIndex = -1
-		_invalidFlags = _invalidFlags and currentValidation.inv()
-		val flagsValidated = currentValidation
-		currentValidation = 0
 		return flagsValidated
 	}
 
 	fun isValid(flag: Int): Boolean {
-		for (i in 0..nodes.lastIndex) {
-			val n = nodes[i]
-			if (n.flag == flag) return n.isValid
-		}
-		throw Exception("Validation node with the flag $flag not found.")
+		return _invalidFlags and flag == 0
 	}
 }
 

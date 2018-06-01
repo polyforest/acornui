@@ -466,8 +466,8 @@ object Easing {
 	val sineOut: Interpolation = SineOut
 
 	val elastic: Interpolation = Elastic(2f, 10f, 7, 1f)
-	val elasticIn: Interpolation = ElasticIn(2f, 10f, 7, 1f)
-	val elasticOut: Interpolation = ElasticOut(2f, 10f, 7, 1f)
+//	val elasticIn: Interpolation = ElasticIn(2f, 10f, 7, 1f)
+//	val elasticOut: Interpolation = ElasticOut(2f, 10f, 7, 1f)
 
 	val swing: Interpolation = Swing(1.5f)
 	val swingIn: Interpolation = SwingIn(2f)
@@ -512,8 +512,8 @@ object Easing {
 			"sineOut" to sineOut,
 
 			"elastic" to elastic,
-			"elasticIn" to elasticIn,
-			"elasticOut" to elasticOut,
+//			"elasticIn" to elasticIn,
+//			"elasticOut" to elasticOut,
 
 			"swing" to swing,
 			"swingIn" to swingIn,

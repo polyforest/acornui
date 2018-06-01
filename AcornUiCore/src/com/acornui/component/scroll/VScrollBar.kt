@@ -17,6 +17,7 @@
 package com.acornui.component.scroll
 
 import com.acornui.component.ComponentInit
+import com.acornui.component.InteractivityMode
 import com.acornui.component.UiComponent
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.algorithm.BasicLayoutData
@@ -37,7 +38,8 @@ open class VScrollBar(
 		val thumb = thumb!!
 		val minY = minTrack()
 		val maxY = maxTrack()
-		var pY = (position.y - minY) / (maxY - minY - thumb.height)
+		val denom = maxOf(0.001f, maxY - minY - thumb.height)
+		var pY = (position.y - minY) / denom
 		if (pY > 0.99f) pY = 1f
 		if (pY < 0.01f) pY = 0f
 		return pY * (scrollModel.max - scrollModel.min) + scrollModel.min
@@ -69,6 +71,8 @@ open class VScrollBar(
 		val scrollDiff = scrollModel.max - scrollModel.min
 		val thumbAvailable = maxTrack() - minTrack()
 		thumb.visible = thumbAvailable > maxOf(1f, (thumb.minHeight ?: 0f))
+		thumb.interactivityMode = if (scrollDiff > 0f) InteractivityMode.ALL else InteractivityMode.NONE
+		track.interactivityMode = thumb.interactivityMode
 		if (thumb.visible) {
 			val thumbHeight = (thumbAvailable * thumbAvailable) / maxOf(1f, thumbAvailable + scrollDiff * modelToPixels)
 			val thumbLd = thumb.layoutData as BasicLayoutData?

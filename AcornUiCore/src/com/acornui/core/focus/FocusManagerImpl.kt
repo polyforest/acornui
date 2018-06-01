@@ -33,7 +33,6 @@ import com.acornui.signal.Cancel
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
 
-
 /**
  * @author nbilyk
  */
@@ -93,12 +92,20 @@ open class FocusManagerImpl : FocusManager {
 			if (wasHighlighted) highlightFocused()
 		}
 
+	private val rootInvalidatedHandler = {
+		root: UiComponentRo, flags: Int ->
+		if (flags and ValidationFlags.HIERARCHY_ASCENDING > 0) {
+			_focusablesValid = false
+		}
+	}
+
 	override fun init(root: Focusable) {
 		_assert(_root == null, "Already initialized.")
 		_root = root
 		_focused = root
 		root.keyDown().add(rootKeyDownHandler)
 		root.mouseDown(isCapture = true).add(rootMouseDownHandler)
+		root.invalidated.add(rootInvalidatedHandler)
 	}
 
 	override fun focused(): Focusable? {
@@ -279,6 +286,7 @@ open class FocusManagerImpl : FocusManager {
 		if (root != null) {
 			root.keyDown().remove(rootKeyDownHandler)
 			root.mouseDown(isCapture = true).remove(rootMouseDownHandler)
+			root.invalidated.remove(rootInvalidatedHandler)
 			_root = null
 
 		}

@@ -80,14 +80,14 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutConta
 	init {
 		contents.invalidated.add {
 			child, flagsInvalidated ->
-			if (flagsInvalidated and layoutInvalidatingFlags > 0) {
-				if (child.includeInLayout || flagsInvalidated and ValidationFlags.HIERARCHY_ASCENDING > 0) {
+			if (flagsInvalidated and child.layoutInvalidatingFlags > 0) {
+				// A child has invalidated a flag marked as layout invalidating.
+				if (validation.currentFlag != ValidationFlags.LAYOUT && (child.shouldLayout || flagsInvalidated and ValidationFlags.LAYOUT_ENABLED > 0)) {
+					// If we are currently within a layout validation, do not attempt another invalidation.
+					// If the child isn't laid out (invisible or includeInLayout is false), don't invalidate the layout
+					// unless shouldLayout has just changed.
 					invalidate(ValidationFlags.SIZE_CONSTRAINTS)
 				}
-			}
-			val bubblingFlags = flagsInvalidated and bubblingFlags
-			if (bubblingFlags > 0) {
-				invalidate(bubblingFlags)
 			}
 			if (constrainToStage) invalidate(ValidationFlags.CONCATENATED_TRANSFORM)
 		}

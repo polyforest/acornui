@@ -68,7 +68,7 @@ class StylesImpl(private val host: Styleable) : Disposable {
 	private val styleWatchers = ArrayList<StyleWatcher<*>>()
 
 	init {
-		styleTags.bind(host::invalidateStyles)
+		styleTags.addBinding(host::invalidateStyles)
 		styleRules.added.add {
 			index, entry ->
 			add(entry)

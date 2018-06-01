@@ -49,11 +49,9 @@ interface InteractiveElementRo : LayoutElementRo, CameraElementRo, AttachmentHol
 
 	fun hasInteraction(): Boolean
 
-	fun <T: InteractionEventRo> hasInteraction(type: InteractionType<T>): Boolean
-	fun <T: InteractionEventRo> hasInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean
+	fun <T: InteractionEventRo> hasInteraction(type: InteractionType<T>, isCapture: Boolean = false): Boolean
 
-	fun <T: InteractionEventRo> getInteractionSignal(type: InteractionType<T>): StoppableSignal<T>?
-	fun <T: InteractionEventRo> getInteractionSignal(type: InteractionType<T>, isCapture: Boolean): StoppableSignal<T>?
+	fun <T: InteractionEventRo> getInteractionSignal(type: InteractionType<T>, isCapture: Boolean = false): StoppableSignal<T>?
 
 	/**
 	 * Sets the [out] vector to the local mouse coordinates.
@@ -66,11 +64,9 @@ interface InteractiveElementRo : LayoutElementRo, CameraElementRo, AttachmentHol
 	 */
 	fun mouseIsOver(): Boolean
 
-	fun <T: InteractionEventRo> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>)
-	fun <T: InteractionEventRo> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>, isCapture: Boolean)
+	fun <T: InteractionEventRo> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>, isCapture: Boolean = false)
 
-	fun <T: InteractionEventRo> removeInteractionSignal(type: InteractionType<T>)
-	fun <T: InteractionEventRo> removeInteractionSignal(type: InteractionType<T>, isCapture: Boolean)
+	fun <T: InteractionEventRo> removeInteractionSignal(type: InteractionType<T>, isCapture: Boolean = false)
 }
 
 /**

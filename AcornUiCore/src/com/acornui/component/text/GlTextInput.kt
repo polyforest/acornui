@@ -428,6 +428,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	var pageHeight: Float = 400f
 
 	private val textCursor = addChild(dynamicMeshC {
+		layoutInvalidatingFlags = ValidationFlags.LAYOUT // Allows us to toggle visibility on this cursor and not affect layout.
 		buildMesh {
 			lineStyle.isVisible = false
 			fillStyle.colorTint.set(Color.WHITE)

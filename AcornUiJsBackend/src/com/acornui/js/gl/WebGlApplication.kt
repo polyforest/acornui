@@ -89,7 +89,7 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 	protected open val textureLoaderTask by BootTask {
 	}
 
-	override fun addAssetLoaders(loaders: HashMap<AssetType<*>, LoaderFactory<*>>) {
+	override fun addAssetLoaders(loaders: MutableMap<AssetType<*>, LoaderFactory<*>>) {
 		super.addAssetLoaders(loaders)
 		launch {
 			val gl = get(Gl20)

@@ -153,8 +153,7 @@ interface Transformable : TransformableRo, Positionable {
 
 	override var scaleZ: Float
 
-	fun setScaling(x: Float, y: Float, z: Float)
-	fun setScaling(x: Float, y: Float)
+	fun setScaling(x: Float, y: Float, z: Float = 1f)
 
 	override var originX: Float
 
@@ -162,8 +161,7 @@ interface Transformable : TransformableRo, Positionable {
 
 	override var originZ: Float
 
-	fun setOrigin(x: Float, y: Float, z: Float)
-	fun setOrigin(x: Float, y: Float)
+	fun setOrigin(x: Float, y: Float, z: Float = 0f)
 
 }
 
@@ -188,14 +186,12 @@ interface Positionable : PositionableRo {
 	/**
 	 * Sets the position of this component, rounding the x and y coordinates.
 	 */
-	fun moveTo(x: Float, y: Float, z: Float)
-	fun moveTo(x: Float, y: Float)
+	fun moveTo(x: Float, y: Float, z: Float = 0f)
 
 	/**
 	 * Sets the position of this component. (Without rounding)
 	 */
-	fun setPosition(x: Float, y: Float, z: Float)
-	fun setPosition(x: Float, y: Float)
+	fun setPosition(x: Float, y: Float, z: Float = 0f)
 	fun setPosition(value: Vector3Ro)
 
 }

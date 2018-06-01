@@ -90,6 +90,11 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	val includeInLayout: Boolean
 
 	/**
+	 * The flags that, if invalidated, will invalidate the container's layout.
+	 */
+	val layoutInvalidatingFlags: Int
+
+	/**
 	 * Returns true if this component will be rendered. This will be true under the following conditions:
 	 * This component is on the stage.
 	 * This component and all of its ancestors are visible.
@@ -380,15 +385,15 @@ open class UiComponentImpl(
 			ValidationFlags.apply {
 				addNode(STYLES, r::updateStyles)
 				addNode(PROPERTIES, STYLES, r::updateProperties)
-				addNode(HIERARCHY_ASCENDING, PROPERTIES, r::updateHierarchyAscending)
-				addNode(HIERARCHY_DESCENDING, PROPERTIES, r::updateHierarchyDescending)
-				addNode(SIZE_CONSTRAINTS, HIERARCHY_DESCENDING or HIERARCHY_ASCENDING or PROPERTIES, r::validateSizeConstraints)
+				addNode(HIERARCHY_ASCENDING, r::updateHierarchyAscending)
+				addNode(HIERARCHY_DESCENDING, r::updateHierarchyDescending)
+				addNode(SIZE_CONSTRAINTS, PROPERTIES, r::validateSizeConstraints)
 				addNode(LAYOUT, SIZE_CONSTRAINTS, r::validateLayout)
 				addNode(LAYOUT_ENABLED, r::updateLayoutEnabled)
 				addNode(TRANSFORM, r::updateTransform)
-				addNode(CONCATENATED_TRANSFORM, HIERARCHY_DESCENDING or TRANSFORM, r::updateConcatenatedTransform)
+				addNode(CONCATENATED_TRANSFORM, TRANSFORM, r::updateConcatenatedTransform)
 				addNode(COLOR_TRANSFORM, r::updateColorTransform)
-				addNode(CONCATENATED_COLOR_TRANSFORM, HIERARCHY_DESCENDING or COLOR_TRANSFORM, r::updateConcatenatedColorTransform)
+				addNode(CONCATENATED_COLOR_TRANSFORM, COLOR_TRANSFORM, r::updateConcatenatedColorTransform)
 				addNode(INTERACTIVITY_MODE, r::updateInheritedInteractivityMode)
 			}
 		}
@@ -530,6 +535,8 @@ open class UiComponentImpl(
 		get() {
 			return includeInLayout && visible
 		}
+
+	override var layoutInvalidatingFlags: Int = DEFAULT_LAYOUT_INVALIDATING_FLAGS
 
 	final override var includeInLayout: Boolean by validationProp(true, ValidationFlags.LAYOUT_ENABLED)
 
@@ -696,12 +703,9 @@ open class UiComponentImpl(
 		return _captureSignals.isNotEmpty() || _bubbleSignals.isNotEmpty()
 	}
 
-	final override fun <T : InteractionEventRo> hasInteraction(type: InteractionType<T>) = hasInteraction(type, false) // TODO: KT-20451
 	final override fun <T : InteractionEventRo> hasInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean {
 		return getInteractionSignal<InteractionEventRo>(type, isCapture) != null
 	}
-
-	final override fun <T : InteractionEventRo> getInteractionSignal(type: InteractionType<T>) = getInteractionSignal(type, false) // TODO: KT-20451
 
 	@Suppress("UNCHECKED_CAST")
 	override fun <T : InteractionEventRo> getInteractionSignal(type: InteractionType<T>, isCapture: Boolean): StoppableSignal<T>? {
@@ -714,9 +718,7 @@ open class UiComponentImpl(
 		handlers[type] = signal
 	}
 
-	final override fun <T : InteractionEventRo> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>) = addInteractionSignal(type, signal, false) // TODO: KT-20451
 
-	final override fun <T : InteractionEventRo> removeInteractionSignal(type: InteractionType<T>) = removeInteractionSignal(type, false) // TODO: KT-20451
 	final override fun <T : InteractionEventRo> removeInteractionSignal(type: InteractionType<T>, isCapture: Boolean) {
 		val handlers = if (isCapture) _captureSignals else _bubbleSignals
 		handlers.remove(type)
@@ -1028,15 +1030,13 @@ open class UiComponentImpl(
 		return
 	}
 
-	override fun setPosition(x: Float, y: Float) = setPosition(x, y, 0f) // TODO: KT-20451
-	override fun setPosition(value: Vector3Ro) = setPosition(value.x, value.y, value.z) // TODO: KT-20451
+	override fun setPosition(value: Vector3Ro) = setPosition(value.x, value.y, value.z)
 
 	override fun moveTo(x: Float, y: Float, z: Float) {
 		// Round after a small, but obscure offset, to avoid flip-flopping around the common case of 0.5f
 		setPosition(round(x - 0.0136f), round(y - 0.0136f), z)
 	}
 
-	override fun moveTo(x: Float, y: Float) = moveTo(x, y, 0f) // TODO: KT-20451
 	override fun moveTo(value: Vector3Ro) = moveTo(value.x, value.y, value.z)
 
 	override var scaleX: Float
@@ -1084,8 +1084,6 @@ open class UiComponentImpl(
 		return
 	}
 
-	override fun setScaling(x: Float, y: Float) = setScaling(x, y, 1f) // TODO: KT-20451
-
 	override var originX: Float
 		get() = _origin.x
 		set(value) {
@@ -1116,8 +1114,6 @@ open class UiComponentImpl(
 		invalidate(ValidationFlags.TRANSFORM)
 		return
 	}
-
-	override fun setOrigin(x: Float, y: Float) = setOrigin(x, y, 0f) // TODO: KT-20451
 
 	/**
 	 * Converts a coordinate from local coordinate space to global coordinate space.
@@ -1394,6 +1390,10 @@ open class UiComponentImpl(
 
 	companion object {
 		private val quat: Quaternion = Quaternion()
+
+		private const val DEFAULT_LAYOUT_INVALIDATING_FLAGS = ValidationFlags.HIERARCHY_ASCENDING or
+				ValidationFlags.LAYOUT or
+				ValidationFlags.LAYOUT_ENABLED
 	}
 }
 
