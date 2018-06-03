@@ -108,7 +108,10 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	private val stepUpButton = +button {
 		styleTags.add(STEP_UP_STYLE)
 		mouseDown().add {
-			userChange(value + step)
+			if (!it.handled) {
+				it.handled = true
+				userChange(value + step)
+			}
 		}
 		enableDownRepeat()
 	}
@@ -116,7 +119,10 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	private val stepDownButton = +button {
 		styleTags.add(STEP_DOWN_STYLE)
 		mouseDown().add {
-			userChange(value - step)
+			if (!it.handled) {
+				it.handled = true
+				userChange(value - step)
+			}
 		}
 		enableDownRepeat()
 	}
@@ -143,10 +149,14 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	init {
 		styleTags.add(NumericStepper)
 		keyDown().add { e ->
-			if (e.keyCode == Ascii.UP) {
-				userChange(value + step)
-			} else if (e.keyCode == Ascii.DOWN) {
-				userChange(value - step)
+			if (!e.handled) {
+				if (e.keyCode == Ascii.UP) {
+					e.handled = true
+					userChange(value + step)
+				} else if (e.keyCode == Ascii.DOWN) {
+					e.handled = true
+					userChange(value - step)
+				}
 			}
 		}
 

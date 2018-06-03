@@ -59,6 +59,8 @@ data class ParticleEmitter(
 		 */
 		val count: Int,
 
+		val spawnLocation: ParticleSpawn,
+
 		/**
 		 * The rate of emissions, in particles per second.
 		 */
@@ -68,8 +70,6 @@ data class ParticleEmitter(
 		 * Calculates the life of a newly created particle.
 		 */
 		val particleLifeExpectancy: PropertyTimeline,
-
-		val spawnLocation: ParticleSpawn,
 
 		val blendMode: BlendMode,
 
@@ -217,32 +217,32 @@ object ParticleEmitterSerializer : From<ParticleEmitter>, To<ParticleEmitter> {
 				name = reader.string("name")!!,
 				enabled = reader.bool("enabled") ?: true,
 				loops = reader.bool("loops") ?: true,
+				blendMode = BlendMode.fromStr(reader.string("blendMode") ?: "normal")!!,
 				duration = reader.obj("duration", EmitterDurationVoSerializer)!!,
 				count = reader.int("count")!!,
-				emissionRate = reader.obj("emissionRate", PropertyTimelineSerializer)!!,
-				particleLifeExpectancy = reader.obj("particleLifeExpectancy", PropertyTimelineSerializer)!!,
 				spawnLocation = reader.obj("spawnLocation", ParticleSpawnSerializer)!!,
-				blendMode = BlendMode.fromStr(reader.string("blendMode") ?: "normal")!!,
-				premultipliedAlpha = reader.bool("premultipliedAlpha") ?: false,
+				emissionRate = reader.obj("emissionRate", PropertyTimelineSerializer)!!,
 				imageEntries = reader.arrayList("imageEntries", ParticleImageEntrySerializer)!!,
+				particleLifeExpectancy = reader.obj("particleLifeExpectancy", PropertyTimelineSerializer)!!,
+				premultipliedAlpha = reader.bool("premultipliedAlpha") ?: false,
 				propertyTimelines = reader.arrayList("propertyTimelines", PropertyTimelineSerializer)!!
 		)
 	}
 
 	override fun ParticleEmitter.write(writer: Writer) {
 		writer.string("id", id)
-		writer.string("blendMode", blendMode.name)
-		writer.int("count", count)
-		writer.obj("duration", duration, EmitterDurationVoSerializer)
-		writer.obj("emissionRate", emissionRate, PropertyTimelineSerializer)
-		writer.bool("enabled", enabled)
-		writer.array("imageEntries", imageEntries, ParticleImageEntrySerializer)
-		writer.bool("loops", loops)
 		writer.string("name", name)
+		writer.bool("enabled", enabled)
+		writer.bool("loops", loops)
+		writer.string("blendMode", blendMode.name)
+		writer.obj("duration", duration, EmitterDurationVoSerializer)
+		writer.int("count", count)
+		writer.obj("spawnLocation", spawnLocation, ParticleSpawnSerializer)
+		writer.obj("emissionRate", emissionRate, PropertyTimelineSerializer)
+		writer.array("imageEntries", imageEntries, ParticleImageEntrySerializer)
 		writer.obj("particleLifeExpectancy", particleLifeExpectancy, PropertyTimelineSerializer)
 		writer.bool("premultipliedAlpha", premultipliedAlpha)
 		writer.array("propertyTimelines", propertyTimelines, PropertyTimelineSerializer)
-		writer.obj("spawnLocation", spawnLocation, ParticleSpawnSerializer)
 	}
 }
 
