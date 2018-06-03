@@ -45,6 +45,7 @@ class LwjglKeyInput(private val window: Long) : KeyInput {
 	private val downMap: DualHashMap<Int, KeyLocation, Boolean> = DualHashMap()
 
 	init {
+		GLFW.glfwSetInputMode(window, GLFW.GLFW_LOCK_KEY_MODS, 1)
 		keyCodeMap = hashMapOf(
 				GLFW.GLFW_KEY_LEFT_SHIFT to (Ascii.SHIFT to KeyLocation.LEFT),
 				GLFW.GLFW_KEY_LEFT_CONTROL to (Ascii.CONTROL to KeyLocation.LEFT),
@@ -82,7 +83,7 @@ class LwjglKeyInput(private val window: Long) : KeyInput {
 				GLFW.GLFW_KEY_KP_MULTIPLY to (Ascii.MULTIPLY to KeyLocation.NUMBER_PAD),
 				GLFW.GLFW_KEY_KP_SUBTRACT to (Ascii.SUBTRACT to KeyLocation.NUMBER_PAD),
 				GLFW.GLFW_KEY_NUM_LOCK to (Ascii.NUM_LOCK to KeyLocation.NUMBER_PAD),
-				// TODO: GLFW currently has no way to distinguish numpad keys with numlock
+
 				GLFW.GLFW_KEY_KP_0 to (Ascii.INSERT to KeyLocation.NUMBER_PAD),
 				GLFW.GLFW_KEY_KP_1 to (Ascii.END to KeyLocation.NUMBER_PAD),
 				GLFW.GLFW_KEY_KP_2 to (Ascii.NUMPAD_2 to KeyLocation.NUMBER_PAD),
@@ -109,7 +110,7 @@ class LwjglKeyInput(private val window: Long) : KeyInput {
 
 		val fOffset = GLFW.GLFW_KEY_F1 - Ascii.F1
 		for (i in Ascii.F1 .. Ascii.F24) {
-			keyCodeMap.put(i + fOffset, i to KeyLocation.STANDARD)
+			keyCodeMap[i + fOffset] = i to KeyLocation.STANDARD
 		}
 	}
 
@@ -117,7 +118,10 @@ class LwjglKeyInput(private val window: Long) : KeyInput {
 
 		override fun invoke(window: kotlin.Long, key: kotlin.Int, scanCode: kotlin.Int, action: kotlin.Int, mods: kotlin.Int) {
 			keyEvent.clear()
-			if (keyCodeMap.containsKey(key)) {
+			if (key >= GLFW.GLFW_KEY_KP_0 && key <= GLFW.GLFW_KEY_KP_9 && (mods and GLFW.GLFW_MOD_NUM_LOCK > 0)) {
+				keyEvent.keyCode = Ascii.NUMPAD_0 + key - GLFW.GLFW_KEY_KP_0
+				keyEvent.location = KeyLocation.NUMBER_PAD
+			} else if (keyCodeMap.containsKey(key)) {
 				val (keyCode, location) = keyCodeMap[key]!!
 				keyEvent.keyCode = keyCode
 				keyEvent.location = location
