@@ -35,40 +35,38 @@ class ParticleEffectSerializerTest {
 
 	@Test
 	fun serializeToFro() {
-		val effect = ParticleEffectVo(emitters = listOf(
-				ParticleEmitterVo(
+		val effect = ParticleEffect(emitters = listOf(
+				ParticleEmitter(
 						name = "emitter1",
 						enabled = true,
 						loops = true,
 						duration = EmitterDuration(
-								durationMin = 3f,
-								durationMax = 5f,
-								durationEasing = Easing.linear,
-								delayBefore = 1f,
-								delayAfter = 2.5f
+								duration = FloatRange(3f, 5f),
+								delayBefore = FloatRange(1f),
+								delayAfter = FloatRange(2.5f)
 						),
 						count = 100,
-						emissionRate = PropertyTimeline("emissionRate", false, 3f, 10f, Easing.circle, 20f, 30f, Easing.linear, listOf(
+						emissionRate = PropertyTimeline("emissionRate", false, FloatRange(3f, 10f, Easing.circle), FloatRange(20f, 30f, Easing.linear), listOf(
 								TimelineValue(0.1f, 0.2f),
 								TimelineValue(0.3f, 0.4f)
 						)),
-						particleLifeExpectancy = PropertyTimeline("particleLifeExpectancy", true, 5f, 20f, Easing.elastic, 20f, 30f, Easing.exp5, listOf(
+						particleLifeExpectancy = PropertyTimeline("particleLifeExpectancy", true, FloatRange(5f, 20f, Easing.elastic), FloatRange(20f, 30f, Easing.exp5), listOf(
 								TimelineValue(0.7f, 0.2f),
 								TimelineValue(0.8f, 0.5f)
 						)),
-						spawnLocation = PointSpawn(3f, 5f, 2f),
+						spawnLocation = PointSpawn(FloatRange(3f, 4f), FloatRange(5f, 7f), FloatRange(2f, 6f)),
 						blendMode = BlendMode.NORMAL,
 						premultipliedAlpha = false,
 						imageEntries = mutableListOf(
 								ParticleImageEntry(0.1f, "particle.png")
 						),
 						propertyTimelines = mutableListOf(
-								PropertyTimeline("x", false, 15f, 25f, Easing.linear, 20f, 50f, Easing.exp5, listOf(
+								PropertyTimeline("x", false, FloatRange(15f, 25f, Easing.linear), FloatRange(20f, 50f, Easing.exp5), listOf(
 										TimelineValue(0.7f, 0.2f),
 										TimelineValue(0.8f, 0.5f),
 										TimelineValue(0.9f, 0.5f)
 								)),
-								PropertyTimeline("y", true, 5f, 20f, Easing.elastic, 20f, 30f, Easing.exp5, listOf())
+								PropertyTimeline("y", true, FloatRange(5f, 20f, Easing.elastic), FloatRange(20f, 30f, Easing.exp5), listOf())
 						)
 
 				)

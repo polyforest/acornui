@@ -18,12 +18,17 @@
 
 package com.acornui.core.graphics
 
+import com.acornui.collection.copy
 import com.acornui.gl.core.Gl20
 
 open class BlendMode(
 		val source: Int,
 		val sourcePma: Int,
 		val dest: Int,
+
+		/**
+		 * The name of the blend mode, used in debugging and serialization.
+		 */
 		val name: String
 ) {
 
@@ -35,17 +40,22 @@ open class BlendMode(
 		val INVERTED = BlendMode(Gl20.ONE_MINUS_DST_ALPHA, Gl20.ONE_MINUS_DST_ALPHA, Gl20.ONE_MINUS_SRC_ALPHA, "inverted")
 		val SCREEN = BlendMode(Gl20.ONE, Gl20.ONE, Gl20.ONE_MINUS_SRC_COLOR, "screen")
 
-		fun fromStr(name: String?): BlendMode? {
-			if (name == null) return null
-			return when (name.toLowerCase()) {
-				"none" -> NONE
-				"normal" -> NORMAL
-				"additive" -> ADDITIVE
-				"multiply" -> MULTIPLY
-				"inverted" -> INVERTED
-				"screen" -> SCREEN
-				else -> null
+		private val registry = HashMap<String, BlendMode>()
+
+		fun register(vararg blendModes: BlendMode) {
+			for (blendMode in blendModes) {
+				registry[blendMode.name] = blendMode
 			}
+		}
+
+		fun getRegistered(): List<BlendMode> {
+			return registry.values.copy()
+		}
+
+		fun fromStr(name: String?): BlendMode? = registry[name]
+
+		init {
+			register(NONE, NORMAL, ADDITIVE, MULTIPLY, INVERTED, SCREEN)
 		}
 	}
 

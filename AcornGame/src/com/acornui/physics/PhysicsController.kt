@@ -23,10 +23,10 @@ class PhysicsController(
 ) : Updatable, Scoped, Disposable {
 
 	private val cmd = commander()
-	private val physicsVos = ArrayList<PhysicsVo>()
+	private val physicsVos = ArrayList<Physics>()
 
 	init {
-		componentList(entities, cmd, physicsVos, PhysicsVo)
+		componentList(entities, cmd, physicsVos, Physics)
 	}
 
 	override fun update(stepTime: Float) {
@@ -52,7 +52,7 @@ class PhysicsController(
 	/**
 	 * Checks if the two entities are colliding, and if they are, resolves their collision.
 	 */
-	private fun checkCollision(pA: PhysicsVo, pB: PhysicsVo) {
+	private fun checkCollision(pA: Physics, pB: Physics) {
 		if (!pA.canCollide || !pB.canCollide || (pA.isFixed && pB.isFixed) || (pA.collideGroup != -1 && pA.collideGroup == pB.collideGroup)) return
 		val impactSpeed = collision.impactSpeed
 		posDelta.set(pA.position.x, pA.position.y).sub(pB.position.x, pB.position.y)
@@ -63,14 +63,14 @@ class PhysicsController(
 			tmpMat.trn(pA.position)
 			tmpMat.scl(pA.scale)
 			tmpMat.rotate(pA.rotation)
-			val perimA = pA.getSibling(PerimeterVo)!!.perimeter
+			val perimA = pA.getSibling(Perimeter)!!.perimeter
 			worldPerim1.set(perimA).mul(tmpMat).invalidate()
 
 			tmpMat.idt()
 			tmpMat.trn(pB.position)
 			tmpMat.scl(pB.scale)
 			tmpMat.rotate(pB.rotation)
-			val perimB = pB.getSibling(PerimeterVo)!!.perimeter
+			val perimB = pB.getSibling(Perimeter)!!.perimeter
 			worldPerim2.set(perimB).mul(tmpMat).invalidate()
 
 			if (worldPerim2.intersects(worldPerim1, mTd) && !mTd.isZero()) {

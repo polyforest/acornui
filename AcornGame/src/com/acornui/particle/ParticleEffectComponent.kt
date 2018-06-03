@@ -92,7 +92,7 @@ class ParticleEffectComponent(
 		effect = value
 	}
 
-	val effectInstance: ParticleEffectInstanceVo?
+	val effectInstance: ParticleEffectInstance?
 		get() = _effect?.effectInstance
 
 	override fun draw(viewport: MinMaxRo) {
@@ -109,7 +109,7 @@ class ParticleEffectComponent(
 
 class LoadedParticleEffect(
 
-		val effectInstance: ParticleEffectInstanceVo,
+		val effectInstance: ParticleEffectInstance,
 
 		private val renderers: List<ParticleEmitterRenderer>,
 
@@ -153,7 +153,7 @@ class LoadedParticleEffect(
 	}
 }
 
-suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffectVo, atlasPath: String, group: CachedGroup = cachedGroup()): LoadedParticleEffect {
+suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffect, atlasPath: String, group: CachedGroup = cachedGroup()): LoadedParticleEffect {
 	val atlasDataPromise = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group)
 	val atlasData = atlasDataPromise.await()
 	val emitterRenderers = ArrayList<ParticleEmitterRenderer>(particleEffect.emitters.size)

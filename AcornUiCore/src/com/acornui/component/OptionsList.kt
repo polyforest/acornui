@@ -28,6 +28,7 @@ import com.acornui.component.layout.algorithm.virtual.vDataScroller
 import com.acornui.component.scroll.ScrollModel
 import com.acornui.component.style.*
 import com.acornui.component.text.TextInput
+import com.acornui.component.text.selectable
 import com.acornui.component.text.textInput
 import com.acornui.core.Disposable
 import com.acornui.core.di.Owned
@@ -40,8 +41,9 @@ import com.acornui.core.focus.Focusable
 import com.acornui.core.focus.focusFirst
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.KeyInteractionRo
+import com.acornui.core.input.interaction.MouseInteractionRo
+import com.acornui.core.input.interaction.click
 import com.acornui.core.input.keyDown
-import com.acornui.core.input.mouseDown
 import com.acornui.core.popup.lift
 import com.acornui.core.text.StringFormatter
 import com.acornui.core.text.ToStringFormatter
@@ -135,6 +137,7 @@ open class OptionsList<E : Any>(
 
 	var editable: Boolean by observable(true) {
 		textInput.editable = it
+		textInput.selectable = it
 	}
 
 	private var background: UiComponent? = null
@@ -277,18 +280,24 @@ open class OptionsList<E : Any>(
 
 			downArrow?.dispose()
 			downArrow = addChild(it.downArrow(this))
-			downArrow!!.mouseDown().add {
+			downArrow!!.click().add {
 				// Using mouseDown instead of click because we close on blur (which is often via mouseDown).
-				open()
+				toggleOpen()
 			}
 			downArrow?.interactivityMode = if (_isOpen) InteractivityMode.NONE else InteractivityMode.ALL
+		}
+
+		click().add {
+			if (!editable) {
+				toggleOpen()
+			}
 		}
 
 		inject(FocusManager).focusedChanged.add(this::focusChangedHandler)
 	}
 
 	private fun focusChangedHandler(old: Focusable?, new: Focusable?) {
-		if (new == null || !owns(new)) {
+		if (owns(old) && !owns(new)) {
 			close()
 			_changed.dispatch()
 		}
@@ -417,17 +426,25 @@ open class OptionsList<E : Any>(
 		dataScroller.highlighted.clear()
 		addChild(listLift)
 		textInput.focus()
+//		stage.mouseDown(isCapture = true).add(stageMouseDownHandler)
 	}
 
 	fun close() {
 		if (!_isOpen) return
 		_isOpen = false
 		removeChild(listLift)
+//		stage.mouseDown(isCapture = true).remove(stageMouseDownHandler)
 	}
 
 	fun toggleOpen() {
 		if (_isOpen) close()
 		else open()
+	}
+
+	private val stageMouseDownHandler = { event: MouseInteractionRo ->
+		if (!owns(event.target)) {
+			close()
+		}
 	}
 
 	var text: String

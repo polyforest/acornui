@@ -8,7 +8,7 @@ import com.acornui.math.vector2
 import com.acornui.math.vector3
 import com.acornui.serialization.*
 
-class PhysicsVo : ComponentBase() {
+class Physics : ComponentBase() {
 
 	val position = Vector3()
 	val velocity = Vector2()
@@ -45,14 +45,14 @@ class PhysicsVo : ComponentBase() {
 	 */
 	var isFixed = false
 
-	override val type = PhysicsVo
+	override val type = Physics
 
-	companion object : SerializableComponentType<PhysicsVo> {
+	companion object : SerializableComponentType<Physics> {
 
-		override val name: String = "PhysicsVo"
+		override val name: String = "Physics"
 
-		override fun read(reader: Reader): PhysicsVo {
-			val o = PhysicsVo()
+		override fun read(reader: Reader): Physics {
+			val o = Physics()
 			o.acceleration.set(reader.vector2("acceleration")!!)
 			o.position.set(reader.vector3("position")!!)
 			o.rotation = reader.float("rotation")!!
@@ -68,7 +68,7 @@ class PhysicsVo : ComponentBase() {
 			return o
 		}
 
-		override fun PhysicsVo.write(writer: Writer) {
+		override fun Physics.write(writer: Writer) {
 			writer.vector2("acceleration", acceleration)
 			writer.vector3("position", position)
 			writer.float("rotation", rotation)
@@ -85,23 +85,23 @@ class PhysicsVo : ComponentBase() {
 	}
 }
 
-class PerimeterVo(
+class Perimeter(
 		val perimeter: Polygon2 = Polygon2()
 ) : ComponentBase() {
 
-	override val type = PerimeterVo
+	override val type = Perimeter
 
-	companion object : SerializableComponentType<PerimeterVo> {
-		override val name: String = "PerimeterVo"
+	companion object : SerializableComponentType<Perimeter> {
+		override val name: String = "Perimeter"
 
-		override fun read(reader: Reader): PerimeterVo {
-			val o = PerimeterVo(
+		override fun read(reader: Reader): Perimeter {
+			val o = Perimeter(
 					perimeter = reader.obj("perimeter", Polygon2)!!
 			)
 			return o
 		}
 
-		override fun PerimeterVo.write(writer: Writer) {
+		override fun Perimeter.write(writer: Writer) {
 			writer.obj("perimeter", perimeter, Polygon2)
 		}
 	}

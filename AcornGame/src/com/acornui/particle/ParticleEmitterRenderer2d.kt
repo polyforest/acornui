@@ -60,7 +60,7 @@ class ParticleEmitterRenderer2d(
 
 	private val finalColor = Color()
 
-	private fun ParticleVo.draw(concatenatedColorTint: ColorRo) {
+	private fun Particle.draw(concatenatedColorTint: ColorRo) {
 		val sprite = sprites.getOrNull(imageIndex) ?: return
 		sprite.blendMode = emitterInstance.emitter.blendMode
 		sprite.premultipliedAlpha = emitterInstance.emitter.premultipliedAlpha

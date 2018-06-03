@@ -18,7 +18,13 @@ package com.acornui.math
 
 import com.acornui.collection.Clearable
 
+/**
+ * A read-only view of a 2D range describing optional min and max boundaries.
+ *
+ * @author nbilyk
+ */
 interface Range2Ro<T: Comparable<T>> {
+
 	val min: T?
 	val max: T?
 
@@ -40,6 +46,8 @@ interface Range2Ro<T: Comparable<T>> {
 		if (max != null && value > max!!) return max!!
 		return value
 	}
+
+	fun copy(min: T? = this.min, max: T? = this.max): Range2<T> = Range2(min, max)
 }
 
 /**
@@ -47,7 +55,7 @@ interface Range2Ro<T: Comparable<T>> {
  *
  * @author nbilyk
  */
-data class Range2<T: Comparable<T>> (
+class Range2<T: Comparable<T>> (
 		override var min: T? = null,
 		override var max: T? = null
 ) : Clearable, Range2Ro<T> {
@@ -74,5 +82,20 @@ data class Range2<T: Comparable<T>> (
 		min = null
 		max = null
 	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		other as Range2Ro<*>
+		if (min != other.min) return false
+		if (max != other.max) return false
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = min?.hashCode() ?: 0
+		result = 31 * result + (max?.hashCode() ?: 0)
+		return result
+	}
+
 
 }

@@ -20,14 +20,17 @@ package com.acornui.particle
 
 
 import com.acornui.collection.ArrayList
+import com.acornui.collection.Clearable
 import com.acornui.core.userInfo
 import com.acornui.graphics.Color
-import com.acornui.math.*
+import com.acornui.math.Vector3
+import com.acornui.math.Vector3Ro
+import com.acornui.math.ceil
 import com.acornui.serialization.*
 import kotlin.math.cos
 import kotlin.math.sin
 
-class ParticleEffectInstanceVo(
+class ParticleEffectInstance(
 
 		val emitterInstances: List<ParticleEmitterInstance>
 
@@ -51,12 +54,12 @@ class ParticleEffectInstanceVo(
 
 class ParticleEmitterInstance(
 
-		val emitter: ParticleEmitterVo
+		val emitter: ParticleEmitter
 ) {
 
 	val position = Vector3()
 
-	val particles: List<ParticleVo>
+	val particles: List<Particle>
 
 	private val count = (emitter.count * maxParticlesScale).ceil()
 	private var _activeCount: Int = 0
@@ -90,6 +93,25 @@ class ParticleEmitterInstance(
 		get() = _currentTime
 
 	private var _duration = 0f
+
+	/**
+	 * The duration of this emitter.
+	 */
+	val duration: Float
+		get() = _duration
+
+	/**
+	 * The sum of the delay values and the duration.
+	 */
+	val totalTime: Float
+		get() = _delayBefore + _duration + _delayAfter
+
+	/**
+	 * The current progress of this emitter. This will be a value between 0f and 1f
+	 */
+	val progress: Float
+		get() = (_currentTime + _delayBefore) / totalTime
+
 	private var _durationInv = 0f
 
 	private var endTime: Float = 0f
@@ -110,7 +132,7 @@ class ParticleEmitterInstance(
 	init {
 		val propertyTimelines = emitter.propertyTimelines
 		particles = ArrayList(count, {
-			ParticleVo().apply {
+			Particle().apply {
 				for (i in 0..propertyTimelines.lastIndex) {
 					val timeline = propertyTimelines[i]
 					timelines.add(ParticleTimelineInstance(timeline))
@@ -169,15 +191,10 @@ class ParticleEmitterInstance(
 		}
 	}
 
-	private fun activateParticle(particle: ParticleVo) {
+	private fun activateParticle(particle: Particle) {
+		particle.clear()
 		particle.active = true
-		for (i in 0..particle.timelines.lastIndex) {
-			val prop = particle.timelines[i]
-			prop.timeline.reset(prop.value)
-			prop.setter(particle, prop.value.current)
-		}
 		emitter.spawnLocation.calculate(particle.position)
-		particle.life = 0f
 		particle.lifeExpectancy = lifeExpectancyValue.current
 		_activeCount++
 		accumulator--
@@ -215,10 +232,10 @@ class ParticleEmitterInstance(
 	}
 
 	fun rewind() {
-		_delayBefore = emitter.duration.delayBefore
-		_delayAfter = emitter.duration.delayAfter
+		_delayBefore = emitter.duration.delayBefore.getValue()
+		_delayAfter = emitter.duration.delayAfter.getValue()
 		_currentTime = -_delayBefore
-		_duration = emitter.duration.calculateDuration()
+		_duration = emitter.duration.duration.getValue()
 		_durationInv = 1f / _duration
 		endTime = _duration + _delayAfter
 		emitter.emissionRate.reset(emissionRateValue)
@@ -231,7 +248,7 @@ class ParticleEmitterInstance(
 
 }
 
-class ParticleVo {
+class Particle : Clearable {
 
 	var active = false
 
@@ -277,34 +294,50 @@ class ParticleVo {
 
 	val timelines: MutableList<ParticleTimelineInstance> = ArrayList()
 
-	//	private val tmpQuat = Quaternion()
-
 	fun update(stepTime: Float) {
 		life += stepTime
 		val alpha = life * _lifeExpectancyInv
 
 		for (i in 0..timelines.lastIndex) {
 			val prop = timelines[i]
+			val previous = prop.value.current
 			prop.timeline.apply(prop.value, alpha)
-			prop.setter(this, prop.value.current)
+			prop.updater(this, prop.value.current - previous)
 		}
 
 		position.add(velocity)
 		scale.add(scaleVelocity)
 		rotation.add(rotationalVelocity)
 		if (forwardVelocity != 0f) {
-			if (forwardDirection.z != 0f) {
-				if (forwardDirection.y != 0f || forwardDirection.x != 0f) {
-					// TODO: 3d forward direction.
-//					tmpQuat.setEulerAnglesRad(forwardDirection.y, forwardDirection.x, forwardDirection.z)
-//					tmpQuat.getAxisAngleRad(tmpVec)
-//					position.add(tmpVec.x * forwardVelocity, tmpVec.y * forwardVelocity, tmpVec.z * forwardVelocity)
-				} else {
-					val theta = forwardDirection.z
-					position.add(cos(theta) * forwardVelocity, sin(theta) * forwardVelocity, 0f)
-				}
-
+			if (forwardDirection.y != 0f || forwardDirection.x != 0f) {
+				// TODO: 3d forward direction.
+			} else if (forwardDirection.z != 0f) {
+				val theta = forwardDirection.z
+				position.add(cos(theta) * forwardVelocity, sin(theta) * forwardVelocity, 0f)
 			}
+		}
+	}
+
+	override fun clear() {
+		active = false
+		life = 0f
+		_lifeExpectancy = 0f
+		_lifeExpectancyInv = 0f
+		position.clear()
+		velocity.clear()
+		scale.set(1f, 1f, 1f)
+		scaleVelocity.clear()
+		rotation.clear()
+		rotationalVelocity.clear()
+		forwardDirection.clear()
+		forwardVelocity = 0f
+		colorTint.set(Color.WHITE)
+		origin.set(0.5f, 0.5f, 0.5f)
+		imageIndex = 0
+		for (i in 0..timelines.lastIndex) {
+			val prop = timelines[i]
+			prop.timeline.reset(prop.value)
+			prop.updater(this, prop.value.current)
 		}
 	}
 }
@@ -313,55 +346,58 @@ class ParticleTimelineInstance(
 		val timeline: PropertyTimeline
 ) {
 	val value = PropertyValue()
-	val setter: ParticleSetter = RegisteredParticleSetters.setters[timeline.name]
-			?: throw Exception("Could not find property setter with the name ${timeline.name}")
+
+
+	val updater: ParticleUpdater = RegisteredParticleSetters.updaters[timeline.name]
+			?: throw Exception("Could not find property updater with the name ${timeline.name}")
 }
 
-typealias ParticleSetter = (ParticleVo, Float) -> Unit
+
+typealias ParticleUpdater = (Particle, Float) -> Unit
 
 object RegisteredParticleSetters {
 
-	val setters: MutableMap<String, ParticleSetter> = hashMapOf(
+	val updaters: MutableMap<String, ParticleUpdater> = hashMapOf(
 
-			"x" to { target, v -> target.position.x = v },
-			"y" to { target, v -> target.position.y = v },
-			"z" to { target, v -> target.position.z = v },
+			"x" to { target, delta -> target.position.x += delta },
+			"y" to { target, delta -> target.position.y += delta },
+			"z" to { target, delta -> target.position.z += delta },
 
-			"velocityX" to { target, v -> target.velocity.x = v },
-			"velocityY" to { target, v -> target.velocity.y = v },
-			"velocityZ" to { target, v -> target.velocity.z = v },
+			"velocityX" to { target, delta -> target.velocity.x += delta },
+			"velocityY" to { target, delta -> target.velocity.y += delta },
+			"velocityZ" to { target, delta -> target.velocity.z += delta },
 
-			"originX" to { target, v -> target.origin.x = v },
-			"originY" to { target, v -> target.origin.y = v },
-			"originZ" to { target, v -> target.origin.z = v },
+			"originX" to { target, delta -> target.origin.x += delta },
+			"originY" to { target, delta -> target.origin.y += delta },
+			"originZ" to { target, delta -> target.origin.z += delta },
 
-			"scaleX" to { target, v -> target.scale.x = v },
-			"scaleY" to { target, v -> target.scale.y = v },
-			"scaleZ" to { target, v -> target.scale.z = v },
+			"scaleX" to { target, delta -> target.scale.x += delta },
+			"scaleY" to { target, delta -> target.scale.y += delta },
+			"scaleZ" to { target, delta -> target.scale.z += delta },
 
-			"scaleVelocityX" to { target, v -> target.scaleVelocity.x = v },
-			"scaleVelocityY" to { target, v -> target.scaleVelocity.y = v },
-			"scaleVelocityZ" to { target, v -> target.scaleVelocity.z = v },
+			"scaleVelocityX" to { target, delta -> target.scaleVelocity.x += delta },
+			"scaleVelocityY" to { target, delta -> target.scaleVelocity.y += delta },
+			"scaleVelocityZ" to { target, delta -> target.scaleVelocity.z += delta },
 
-			"rotationX" to { target, v -> target.rotation.x = v },
-			"rotationY" to { target, v -> target.rotation.y = v },
-			"rotationZ" to { target, v -> target.rotation.z = v },
+			"rotationX" to { target, delta -> target.rotation.x += delta },
+			"rotationY" to { target, delta -> target.rotation.y += delta },
+			"rotationZ" to { target, delta -> target.rotation.z += delta },
 
-			"rotationalVelocityX" to { target, v -> target.rotationalVelocity.x = v },
-			"rotationalVelocityY" to { target, v -> target.rotationalVelocity.y = v },
-			"rotationalVelocityZ" to { target, v -> target.rotationalVelocity.z = v },
+			"rotationalVelocityX" to { target, delta -> target.rotationalVelocity.x += delta },
+			"rotationalVelocityY" to { target, delta -> target.rotationalVelocity.y += delta },
+			"rotationalVelocityZ" to { target, delta -> target.rotationalVelocity.z += delta },
 
-			"forwardDirectionX" to { target, v -> target.forwardDirection.x = v },
-			"forwardDirectionY" to { target, v -> target.forwardDirection.y = v },
-			"forwardDirectionZ" to { target, v -> target.forwardDirection.z = v },
-			"forwardVelocity" to { target, v -> target.forwardVelocity = v },
+			"forwardDirectionX" to { target, delta -> target.forwardDirection.x += delta },
+			"forwardDirectionY" to { target, delta -> target.forwardDirection.y += delta },
+			"forwardDirectionZ" to { target, delta -> target.forwardDirection.z += delta },
+			"forwardVelocity" to { target, delta -> target.forwardVelocity += delta },
 
-			"colorR" to { target, v -> target.colorTint.r = v },
-			"colorG" to { target, v -> target.colorTint.g = v },
-			"colorB" to { target, v -> target.colorTint.b = v },
-			"colorA" to { target, v -> target.colorTint.a = v },
+			"colorR" to { target, delta -> target.colorTint.r += delta },
+			"colorG" to { target, delta -> target.colorTint.g += delta },
+			"colorB" to { target, delta -> target.colorTint.b += delta },
+			"colorA" to { target, delta -> target.colorTint.a += delta },
 
-			"imageIndex" to { target, v -> target.imageIndex = v.toInt() }
+			"imageIndex" to { target, delta -> target.imageIndex += delta.toInt() }
 
 	)
 
@@ -415,18 +451,26 @@ object ParticleSpawnRegistry {
 	fun getSerializer(name: String): ParticleSpawnSerializer<ParticleSpawn>? {
 		return nameToSerializers[name] as ParticleSpawnSerializer<ParticleSpawn>?
 	}
+
+	fun getSerializers(): List<ParticleSpawnSerializer<*>> {
+		return nameToSerializers.values.toList()
+	}
+
+	fun getSerializerTypes(): List<String> {
+		return nameToSerializers.keys.toList()
+	}
 }
 
 data class PointSpawn(
-		var x: Float,
-		var y: Float,
-		var z: Float
+		val x: FloatRange,
+		val y: FloatRange,
+		val z: FloatRange
 ) : ParticleSpawn {
 
 	override val type = TYPE
 
 	override fun calculate(out: Vector3): Vector3 {
-		out.set(x, y, z)
+		out.set(x.getValue(), y.getValue(), z.getValue())
 		return out
 	}
 
@@ -441,15 +485,15 @@ object PointSpawnSerializer : ParticleSpawnSerializer<PointSpawn> {
 
 	override fun read(reader: Reader): PointSpawn {
 		return PointSpawn(
-				reader.float("x") ?: 0f,
-				reader.float("y") ?: 0f,
-				reader.float("z") ?: 0f
+				reader.obj("x", FloatRangeSerializer)!!,
+				reader.obj("y", FloatRangeSerializer)!!,
+				reader.obj("z", FloatRangeSerializer)!!
 		)
 	}
 
 	override fun PointSpawn.write(writer: Writer) {
-		writer.float("x", x)
-		writer.float("y", y)
-		writer.float("z", z)
+		writer.obj("x", x, FloatRangeSerializer)
+		writer.obj("y", y, FloatRangeSerializer)
+		writer.obj("z", z, FloatRangeSerializer)
 	}
 }

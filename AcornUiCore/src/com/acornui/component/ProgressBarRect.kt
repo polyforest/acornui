@@ -42,6 +42,9 @@ class ProgressBarRect(owner: Owned) : ContainerImpl(owner) {
 
 	private var _progress: Float = 0f
 
+	/**
+	 * The current progress, between 0f and 1f
+	 */
 	var progress: Float
 		get() = _progress
 		set(value) {

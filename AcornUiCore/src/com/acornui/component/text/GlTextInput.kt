@@ -506,7 +506,8 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	init {
 		host.focused().add {
-			host.selectAll()
+			if (charStyle.selectable)
+				host.selectAll()
 			// todo: open mobile keyboard
 		}
 
@@ -930,7 +931,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private fun updateTextCursor() {
 		textField.validate(ValidationFlags.LAYOUT)
 
-		val textCursorVisible = if (!window.isActive) false else {
+		val textCursorVisible = if (!charStyle.selectable || !window.isActive) false else {
 			val sel = firstSelection
 			if (host.isFocused && sel != null) {
 				val rangeEnd = contents.size

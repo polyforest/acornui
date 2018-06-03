@@ -16,29 +16,27 @@
 
 package com.acornui.particle
 
+import com.acornui.collection.Clearable
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.core.UidUtil
 import com.acornui.core.graphics.BlendMode
-import com.acornui.math.Easing
-import com.acornui.math.Interpolation
-import com.acornui.math.MathUtils
 import com.acornui.serialization.*
 
-data class ParticleEffectVo(
+data class ParticleEffect(
 
-		val emitters: List<ParticleEmitterVo>
+		val emitters: List<ParticleEmitter>
 ) {
-	fun createInstance(): ParticleEffectInstanceVo {
+	fun createInstance(): ParticleEffectInstance {
 		val emitterInstances = ArrayList<ParticleEmitterInstance>(emitters.size)
 		for (i in 0..emitters.lastIndex) {
 			val emitterInstance = emitters[i].createInstance()
 			emitterInstances.add(emitterInstance)
 		}
-		return ParticleEffectInstanceVo(emitterInstances)
+		return ParticleEffectInstance(emitterInstances)
 	}
 }
 
-data class ParticleEmitterVo(
+data class ParticleEmitter(
 
 		val id: String = UidUtil.createUid(),
 
@@ -89,34 +87,20 @@ data class ParticleEmitterVo(
 data class EmitterDuration(
 
 		/**
-		 * The minimum number of seconds this emitter will create particles.
+		 * The number of seconds this emitter will create particles.
 		 */
-		val durationMin: Float,
-
-		/**
-		 * The maximum number of seconds this emitter will create particles.
-		 */
-		val durationMax: Float,
-
-		/**
-		 * The easing to apply when calculating the duration between [durationMin] and [durationMax]
-		 */
-		val durationEasing: Interpolation,
+		val duration: FloatRange,
 
 		/**
 		 * The time, in seconds, before the emitter begins.
 		 */
-		val delayBefore: Float,
+		val delayBefore: FloatRange,
 
 		/**
 		 * The time, in seconds, after completion before restarting.
 		 */
-		val delayAfter: Float
-) {
-	fun calculateDuration(): Float {
-		return durationEasing.apply(MathUtils.random()) * (durationMax - durationMin) + durationMin
-	}
-}
+		val delayAfter: FloatRange
+)
 
 data class ParticleImageEntry(
 		val time: Float,
@@ -132,23 +116,9 @@ data class PropertyTimeline(
 		 */
 		val relative: Boolean,
 
-		val lowMin: Float,
-		val lowMax: Float,
+		val low: FloatRange,
 
-		/**
-		 * When selecting a random value between [lowMin] and [lowMax], this easing is applied in order to
-		 * allow control over random distribution.
-		 */
-		val lowEasing: Interpolation,
-
-		val highMin: Float,
-		val highMax: Float,
-
-		/**
-		 * When selecting a random value between [highMin] and [highMax], this easing is applied in order to
-		 * allow control over random distribution.
-		 */
-		val highEasing: Interpolation,
+		val high: FloatRange,
 
 		/**
 		 * A list of control points for interpolated values. If this is empty, the low value will always be used.
@@ -157,12 +127,11 @@ data class PropertyTimeline(
 ) {
 
 	fun reset(target: PropertyValue) {
-		target.low = (lowMax - lowMin) * lowEasing.apply(MathUtils.random())
-		target.high = (highMax - highMin) * highEasing.apply(MathUtils.random())
+		target.low = low.getValue()
+		target.high = high.getValue()
 		if (relative) target.high += target.low
 		target.diff = target.high - target.low
-		target.current = target.high
-		apply(target,  0f)
+		target.current = target.low
 	}
 
 	private val comparator: (Float, TimelineValue) -> Int = {
@@ -229,26 +198,26 @@ class PropertyValue(
 		var current: Float = 0f
 )
 
-object ParticleEffectSerializer : From<ParticleEffectVo>, To<ParticleEffectVo> {
+object ParticleEffectSerializer : From<ParticleEffect>, To<ParticleEffect> {
 
-	override fun read(reader: Reader): ParticleEffectVo {
-		return ParticleEffectVo(reader.arrayList("emitters", ParticleEmitterSerializer)!!)
+	override fun read(reader: Reader): ParticleEffect {
+		return ParticleEffect(reader.arrayList("emitters", ParticleEmitterSerializer)!!)
 	}
 
-	override fun ParticleEffectVo.write(writer: Writer) {
+	override fun ParticleEffect.write(writer: Writer) {
 		writer.array("emitters", emitters, ParticleEmitterSerializer)
 	}
 }
 
-object ParticleEmitterSerializer : From<ParticleEmitterVo>, To<ParticleEmitterVo> {
+object ParticleEmitterSerializer : From<ParticleEmitter>, To<ParticleEmitter> {
 
-	override fun read(reader: Reader): ParticleEmitterVo {
-		return ParticleEmitterVo(
+	override fun read(reader: Reader): ParticleEmitter {
+		return ParticleEmitter(
 				id = reader.string("id")!!,
 				name = reader.string("name")!!,
 				enabled = reader.bool("enabled") ?: true,
 				loops = reader.bool("loops") ?: true,
-				duration = reader.obj("duration", EmitterDurationSerializer)!!,
+				duration = reader.obj("duration", EmitterDurationVoSerializer)!!,
 				count = reader.int("count")!!,
 				emissionRate = reader.obj("emissionRate", PropertyTimelineSerializer)!!,
 				particleLifeExpectancy = reader.obj("particleLifeExpectancy", PropertyTimelineSerializer)!!,
@@ -260,11 +229,11 @@ object ParticleEmitterSerializer : From<ParticleEmitterVo>, To<ParticleEmitterVo
 		)
 	}
 
-	override fun ParticleEmitterVo.write(writer: Writer) {
+	override fun ParticleEmitter.write(writer: Writer) {
 		writer.string("id", id)
 		writer.string("blendMode", blendMode.name)
 		writer.int("count", count)
-		writer.obj("duration", duration, EmitterDurationSerializer)
+		writer.obj("duration", duration, EmitterDurationVoSerializer)
 		writer.obj("emissionRate", emissionRate, PropertyTimelineSerializer)
 		writer.bool("enabled", enabled)
 		writer.array("imageEntries", imageEntries, ParticleImageEntrySerializer)
@@ -277,35 +246,27 @@ object ParticleEmitterSerializer : From<ParticleEmitterVo>, To<ParticleEmitterVo
 	}
 }
 
-object EmitterDurationSerializer : From<EmitterDuration>, To<EmitterDuration> {
+object EmitterDurationVoSerializer : From<EmitterDuration>, To<EmitterDuration> {
 
 	override fun read(reader: Reader): EmitterDuration {
-		val easingName = reader.string("durationEasing") ?: "linear"
 		return EmitterDuration(
-				durationMin = reader.float("durationMin")!!,
-				durationMax = reader.float("durationMax")!!,
-				durationEasing = Easing.fromString(easingName) ?: throw Exception("Unknown easing '$easingName'"),
-				delayBefore =  reader.float("delayBefore") ?: 0f,
-				delayAfter =  reader.float("delayAfter") ?: 0f
+				duration = reader.obj("duration", FloatRangeSerializer)!!,
+				delayBefore =  reader.obj("delayBefore", FloatRangeSerializer)!!,
+				delayAfter =  reader.obj("delayAfter", FloatRangeSerializer)!!
 
 		)
 	}
 
 	override fun EmitterDuration.write(writer: Writer) {
-		writer.float("delayAfter", delayAfter)
-		writer.float("delayBefore", delayBefore)
-		writer.string("durationEasing", Easing.toString(durationEasing))
-		writer.float("durationMax", durationMax)
-		writer.float("durationMin", durationMin)
+		writer.obj("duration", duration, FloatRangeSerializer)
+		writer.obj("delayBefore", delayBefore, FloatRangeSerializer)
+		writer.obj("delayAfter", delayAfter, FloatRangeSerializer)
 	}
 }
 
 object PropertyTimelineSerializer : From<PropertyTimeline>, To<PropertyTimeline> {
 
 	override fun read(reader: Reader): PropertyTimeline {
-		val lowEasingName = reader.string("lowEasing") ?: "linear"
-		val highEasingName = reader.string("highEasing") ?: "linear"
-
 		val timelineFloats = reader.floatArray("timeline") ?: floatArrayOf()
 		val timeline = ArrayList<TimelineValue>(timelineFloats.size shr 1)
 		for (i in 0..timelineFloats.lastIndex step 2) {
@@ -315,24 +276,16 @@ object PropertyTimelineSerializer : From<PropertyTimeline>, To<PropertyTimeline>
 		return PropertyTimeline(
 				name = reader.string("name")!!,
 				relative = reader.bool("relative") ?: false,
-				lowMin = reader.float("lowMin")!!,
-				lowMax = reader.float("lowMax")!!,
-				lowEasing = Easing.fromString(lowEasingName) ?: throw Exception("Unknown easing '$lowEasingName'"),
-				highMin = reader.float("highMin")!!,
-				highMax = reader.float("highMax")!!,
-				highEasing = Easing.fromString(highEasingName) ?: throw Exception("Unknown easing '$highEasingName'"),
+				low = reader.obj("min", FloatRangeSerializer)!!,
+				high = reader.obj("max", FloatRangeSerializer)!!,
 				timeline = timeline
 
 		)
 	}
 
 	override fun PropertyTimeline.write(writer: Writer) {
-		writer.string("highEasing", Easing.toString(highEasing))
-		writer.float("highMax", highMax)
-		writer.float("highMin", highMin)
-		writer.string("lowEasing", Easing.toString(lowEasing))
-		writer.float("lowMax", lowMax)
-		writer.float("lowMin", lowMin)
+		writer.obj("min", low, FloatRangeSerializer)
+		writer.obj("max", high, FloatRangeSerializer)
 		writer.string("name", name)
 		writer.bool("relative", relative)
 		val timelineFloats = FloatArray(timeline.size shl 1)
