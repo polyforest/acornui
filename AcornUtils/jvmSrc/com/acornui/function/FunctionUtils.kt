@@ -19,7 +19,7 @@ package com.acornui.function
 /**
  * Converts a method with zero parameters to a method with one (unused) parameter.
  */
-val (() -> Unit).as1: FWrapper1
+val (() -> Unit).as1: (Any?) -> Unit
 	get() = FWrapper1(this)
 
 data class FWrapper1(private val inner: () -> Unit) : (Any?) -> Unit {
@@ -31,7 +31,7 @@ data class FWrapper1(private val inner: () -> Unit) : (Any?) -> Unit {
 /**
  * Converts a method with zero parameters to a method with two (unused) parameters.
  */
-val (() -> Unit).as2: FWrapper2
+val (() -> Unit).as2: (Any?, Any?) -> Unit
 	get() = FWrapper2(this)
 
 data class FWrapper2(private val inner: () -> Unit) : (Any?, Any?) -> Unit {
@@ -44,7 +44,7 @@ data class FWrapper2(private val inner: () -> Unit) : (Any?, Any?) -> Unit {
 /**
  * Converts a method with zero parameters to a method with three (unused) parameters.
  */
-val (() -> Unit).as3: FWrapper3
+val (() -> Unit).as3: (Any?, Any?, Any?) -> Unit
 	get() = FWrapper3(this)
 
 data class FWrapper3(private val inner: () -> Unit) : (Any?, Any?, Any?) -> Unit {
@@ -56,7 +56,7 @@ data class FWrapper3(private val inner: () -> Unit) : (Any?, Any?, Any?) -> Unit
 /**
  * Converts a method with zero parameters to a method with four (unused) parameters.
  */
-val (() -> Unit).as4: FWrapper4
+val (() -> Unit).as4: (Any?, Any?, Any?, Any?) -> Unit
 	get() = FWrapper4(this)
 
 data class FWrapper4(private val inner: () -> Unit) : (Any?, Any?, Any?, Any?) -> Unit {
@@ -68,7 +68,7 @@ data class FWrapper4(private val inner: () -> Unit) : (Any?, Any?, Any?, Any?) -
 /**
  * Converts a method with zero parameters to a method with five (unused) parameters.
  */
-val (() -> Unit).as5: FWrapper5
+val (() -> Unit).as5: (Any?, Any?, Any?, Any?, Any?) -> Unit
 	get() = FWrapper5(this)
 
 data class FWrapper5(private val inner: () -> Unit) : (Any?, Any?, Any?, Any?, Any?) -> Unit {
@@ -80,7 +80,7 @@ data class FWrapper5(private val inner: () -> Unit) : (Any?, Any?, Any?, Any?, A
 /**
  * Converts a method with zero parameters to a method with six (unused) parameters.
  */
-val (() -> Unit).as6: FWrapper6
+val (() -> Unit).as6: (Any?, Any?, Any?, Any?, Any?, Any?) -> Unit
 	get() = FWrapper6(this)
 
 data class FWrapper6(private val inner: () -> Unit) : (Any?, Any?, Any?, Any?, Any?, Any?) -> Unit {
@@ -92,7 +92,7 @@ data class FWrapper6(private val inner: () -> Unit) : (Any?, Any?, Any?, Any?, A
 /**
  * Converts a method with zero parameters to a method with seven (unused) parameters.
  */
-val (() -> Unit).as7: FWrapper7
+val (() -> Unit).as7: (Any?, Any?, Any?, Any?, Any?, Any?, Any?) -> Unit
 	get() = FWrapper7(this)
 
 data class FWrapper7(private val inner: () -> Unit) : (Any?, Any?, Any?, Any?, Any?, Any?, Any?) -> Unit {
@@ -104,7 +104,7 @@ data class FWrapper7(private val inner: () -> Unit) : (Any?, Any?, Any?, Any?, A
 /**
  * Converts a method with zero parameters to a method with eight (unused) parameters.
  */
-val (() -> Unit).as8: FWrapper8
+val (() -> Unit).as8: (Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?) -> Unit
 	get() = FWrapper8(this)
 
 data class FWrapper8(private val inner: () -> Unit) : (Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?) -> Unit {
@@ -116,7 +116,7 @@ data class FWrapper8(private val inner: () -> Unit) : (Any?, Any?, Any?, Any?, A
 /**
  * Converts a method with zero parameters to a method with nine (unused) parameters.
  */
-val (() -> Unit).as9: FWrapper9
+val (() -> Unit).as9: (Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?) -> Unit
 	get() = FWrapper9(this)
 
 data class FWrapper9(private val inner: () -> Unit) : (Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?) -> Unit {
