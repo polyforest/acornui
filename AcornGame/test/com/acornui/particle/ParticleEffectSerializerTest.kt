@@ -57,10 +57,10 @@ class ParticleEffectSerializerTest {
 						spawnLocation = PointSpawn(FloatRange(3f, 4f), FloatRange(5f, 7f), FloatRange(2f, 6f)),
 						blendMode = BlendMode.NORMAL,
 						premultipliedAlpha = false,
-						imageEntries = mutableListOf(
+						imageEntries = listOf(
 								ParticleImageEntry(0.1f, "particle.png")
 						),
-						propertyTimelines = mutableListOf(
+						propertyTimelines = listOf(
 								PropertyTimeline("x", false, FloatRange(15f, 25f, Easing.linear), FloatRange(20f, 50f, Easing.exp5), listOf(
 										TimelineValue(0.7f, 0.2f),
 										TimelineValue(0.8f, 0.5f),

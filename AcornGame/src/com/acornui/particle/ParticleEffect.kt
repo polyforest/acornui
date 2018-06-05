@@ -16,7 +16,6 @@
 
 package com.acornui.particle
 
-import com.acornui.collection.Clearable
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.core.UidUtil
 import com.acornui.core.graphics.BlendMode
@@ -109,7 +108,7 @@ data class ParticleImageEntry(
 
 data class PropertyTimeline(
 
-		val name: String,
+		val property: String,
 
 		/**
 		 * If true, the final value will not be the high value, but the high + low
@@ -274,7 +273,7 @@ object PropertyTimelineSerializer : From<PropertyTimeline>, To<PropertyTimeline>
 		}
 
 		return PropertyTimeline(
-				name = reader.string("name")!!,
+				property = reader.string("property")!!,
 				relative = reader.bool("relative") ?: false,
 				low = reader.obj("min", FloatRangeSerializer)!!,
 				high = reader.obj("max", FloatRangeSerializer)!!,
@@ -286,7 +285,7 @@ object PropertyTimelineSerializer : From<PropertyTimeline>, To<PropertyTimeline>
 	override fun PropertyTimeline.write(writer: Writer) {
 		writer.obj("min", low, FloatRangeSerializer)
 		writer.obj("max", high, FloatRangeSerializer)
-		writer.string("name", name)
+		writer.string("property", property)
 		writer.bool("relative", relative)
 		val timelineFloats = FloatArray(timeline.size shl 1)
 		for (i in 0..timeline.lastIndex) {

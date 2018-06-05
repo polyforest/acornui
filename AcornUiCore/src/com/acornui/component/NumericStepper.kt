@@ -17,13 +17,12 @@ import com.acornui.core.input.mouseDown
 import com.acornui.core.text.NumberFormatter
 import com.acornui.core.text.numberFormatter
 import com.acornui.math.Bounds
-import com.acornui.math.MathUtils
 import com.acornui.math.MathUtils.clamp
 import com.acornui.math.MathUtils.roundToNearest
 import com.acornui.math.fractionDigits
+import com.acornui.reflect.observable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
-import kotlin.properties.Delegates
 
 class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 
@@ -44,26 +43,31 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 
 	/**
 	 * Sets the step size of the up and down buttons.
-	 * Setting this will also set the formatter fraction digits.
 	 */
-	var step: Float by Delegates.observable(1f) {
-		_, _, _ ->
-		refreshFormatterStep()
+	var step: Float by observable(1f) {
+		refreshFormatter()
+	}
+
+	/**
+	 * Sets the smallest fraction the user can set as a value.
+	 */
+	var minStep: Float by observable(0.01f) {
+		refreshFormatter()
 	}
 
 	/**
 	 * When stepping, offset is added before rounding to the nearest [step].
 	 * Setting this will also set the formatter fraction digits.
 	 */
-	var offset: Float by Delegates.observable(0f) {
-		_, _, _ ->
-		refreshFormatterStep()
+	var offset: Float by observable(0f) {
+		refreshFormatter()
 	}
 
-	private fun refreshFormatterStep() {
-		val fractionDigits = maxOf(offset.fractionDigits, step.fractionDigits)
-		formatter.minFractionDigits = fractionDigits
+	private fun refreshFormatter() {
+		val fractionDigits = maxOf(offset.fractionDigits, minStep.fractionDigits)
+		formatter.minFractionDigits = step.fractionDigits
 		formatter.maxFractionDigits = fractionDigits
+		invalidateProperties()
 	}
 
 	private var _max: Float = Float.POSITIVE_INFINITY
@@ -133,17 +137,19 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		get() = _value
 		set(value) {
 			val oldValue = _value
-			val newValue = MathUtils.clamp(value, _min, _max)
+			val newValue = roundToNearest(clamp(value, min, max), minStep, offset)
 			if (oldValue == newValue) return
 			_value = newValue
 			invalidateProperties()
 		}
 
+	/**
+	 * Sets the max character length of the input.
+	 */
 	var maxLength: Int?
 		get() = textInput.maxLength
 		set(value) {
 			textInput.maxLength = value
-			if (value == null) setSizeToFit(null) else setSizeToFit(value)
 		}
 
 	init {
@@ -160,21 +166,26 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 			}
 		}
 
-		refreshFormatterStep()
+		refreshFormatter()
 	}
 
 	/**
 	 * Sets the value and dispatches a [changed] signal.
+	 * @param value The new numeric value.
+	 * @param min The min clamp value. Default is [NumericStepper.min]
+	 * @param max The max clamp value. Default is [NumericStepper.max]
+	 *
+	 *
 	 */
 	fun userChange(value: Float, min: Float = this.min, max: Float = this.max) {
 		val oldValue = _value
-		val newValue = roundToNearest(clamp(value, min, max), step, offset)
-		invalidateProperties()
+		val newValue = roundToNearest(clamp(value, min, max), minStep, offset)
 		if (oldValue == newValue) return
 		this.min = min
 		this.max = max
 		this.value = newValue
 		_changed.dispatch(this)
+		invalidateProperties()
 	}
 
 	/**

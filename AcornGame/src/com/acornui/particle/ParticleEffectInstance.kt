@@ -110,7 +110,7 @@ class ParticleEmitterInstance(
 	 * The current progress of this emitter. This will be a value between 0f and 1f
 	 */
 	val progress: Float
-		get() = (_currentTime + _delayBefore) / totalTime
+		get() = (_currentTime + _delayBefore) / maxOf(0.001f, totalTime)
 
 	private var _durationInv = 0f
 
@@ -337,7 +337,7 @@ class Particle : Clearable {
 		for (i in 0..timelines.lastIndex) {
 			val prop = timelines[i]
 			prop.timeline.reset(prop.value)
-			prop.updater(this, prop.value.current)
+			prop.updater(this, prop.value.current - prop.getter(this))
 		}
 	}
 }
@@ -348,16 +348,63 @@ class ParticleTimelineInstance(
 	val value = PropertyValue()
 
 
-	val updater: ParticleUpdater = RegisteredParticleSetters.updaters[timeline.name]
-			?: throw Exception("Could not find property updater with the name ${timeline.name}")
+	val getter: ParticlePropertyGetter = RegisteredParticleSetters.getters[timeline.property]
+			?: throw Exception("Could not find property getter with the name ${timeline.property}")
+
+	val updater: ParticlePropertyUpdater = RegisteredParticleSetters.updaters[timeline.property]
+			?: throw Exception("Could not find property updater with the name ${timeline.property}")
 }
 
 
-typealias ParticleUpdater = (Particle, Float) -> Unit
+typealias ParticlePropertyUpdater = (Particle, Float) -> Unit
+typealias ParticlePropertyGetter = (Particle) -> Float
 
 object RegisteredParticleSetters {
 
-	val updaters: MutableMap<String, ParticleUpdater> = hashMapOf(
+	val getters: Map<String, ParticlePropertyGetter> = hashMapOf(
+
+			"x" to { target -> target.position.x },
+			"y" to { target -> target.position.y },
+			"z" to { target -> target.position.z },
+
+			"velocityX" to { target -> target.velocity.x },
+			"velocityY" to { target -> target.velocity.y },
+			"velocityZ" to { target -> target.velocity.z },
+
+			"originX" to { target -> target.origin.x },
+			"originY" to { target -> target.origin.y },
+			"originZ" to { target -> target.origin.z },
+
+			"scaleX" to { target -> target.scale.x },
+			"scaleY" to { target -> target.scale.y },
+			"scaleZ" to { target -> target.scale.z },
+
+			"scaleVelocityX" to { target -> target.scaleVelocity.x },
+			"scaleVelocityY" to { target -> target.scaleVelocity.y },
+			"scaleVelocityZ" to { target -> target.scaleVelocity.z },
+
+			"rotationX" to { target -> target.rotation.x },
+			"rotationY" to { target -> target.rotation.y },
+			"rotationZ" to { target -> target.rotation.z },
+
+			"rotationalVelocityX" to { target -> target.rotationalVelocity.x },
+			"rotationalVelocityY" to { target -> target.rotationalVelocity.y },
+			"rotationalVelocityZ" to { target -> target.rotationalVelocity.z },
+
+			"forwardDirectionX" to { target -> target.forwardDirection.x },
+			"forwardDirectionY" to { target -> target.forwardDirection.y },
+			"forwardDirectionZ" to { target -> target.forwardDirection.z },
+			"forwardVelocity" to { target -> target.forwardVelocity },
+
+			"colorR" to { target -> target.colorTint.r },
+			"colorG" to { target -> target.colorTint.g },
+			"colorB" to { target -> target.colorTint.b },
+			"colorA" to { target -> target.colorTint.a },
+
+			"imageIndex" to { target -> target.imageIndex.toFloat() }
+	)
+
+	val updaters: Map<String, ParticlePropertyUpdater> = hashMapOf(
 
 			"x" to { target, delta -> target.position.x += delta },
 			"y" to { target, delta -> target.position.y += delta },
@@ -398,7 +445,6 @@ object RegisteredParticleSetters {
 			"colorA" to { target, delta -> target.colorTint.a += delta },
 
 			"imageIndex" to { target, delta -> target.imageIndex += delta.toInt() }
-
 	)
 
 }

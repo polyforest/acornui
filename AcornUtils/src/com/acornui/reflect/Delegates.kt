@@ -33,3 +33,20 @@ inline fun <T> observable(initialValue: T, crossinline onChange: (newValue: T) -
 
 	override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) = onChange(newValue)
 }
+
+/**
+ * [observable] Except also invokes the [onChange] callback with [initialValue]
+ */
+inline fun <T> observableAndCall(initialValue: T, crossinline onChange: (newValue: T) -> Unit):
+		ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
+
+	override fun beforeChange(property: KProperty<*>, oldValue: T, newValue: T): Boolean {
+		return oldValue != newValue
+	}
+
+	override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) = onChange(newValue)
+
+	init {
+		onChange(initialValue)
+	}
+}

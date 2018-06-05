@@ -13,7 +13,6 @@ import com.acornui.core.behavior.deselectNotContaining
 import com.acornui.core.cache.IndexedCache
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
-import com.acornui.core.focus.FocusContainer
 import com.acornui.function.as2
 import com.acornui.function.as3
 import com.acornui.math.Bounds
@@ -37,7 +36,7 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 		owner: Owned,
 		override val layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
 		layoutStyle: S
-) : ContainerImpl(owner), FocusContainer, ItemRendererOwner<T>, VirtualLayoutContainer<S, T> {
+) : ContainerImpl(owner), ItemRendererOwner<T>, VirtualLayoutContainer<S, T> {
 
 	constructor(owner: Owned,
 				layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
@@ -68,8 +67,6 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 	override fun createLayoutData(): T {
 		return layoutAlgorithm.createLayoutData()
 	}
-
-	override var focusOrder: Float = 0f
 
 	private var _visiblePosition: Float? = null
 
