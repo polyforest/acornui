@@ -153,6 +153,9 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		}
 
 	init {
+		focusEnabled = true
+		isFocusContainer = true
+
 		styleTags.add(NumericStepper)
 		keyDown().add { e ->
 			if (!e.handled) {
