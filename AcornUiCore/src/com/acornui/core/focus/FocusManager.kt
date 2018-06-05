@@ -16,19 +16,17 @@
 
 package com.acornui.core.focus
 
-import com.acornui.component.Container
-import com.acornui.component.Stage
-import com.acornui.component.UiComponent
-import com.acornui.component.UiComponentRo
+import com.acornui.component.*
 import com.acornui.core.Disposable
+import com.acornui.core.TreeWalk
+import com.acornui.core.childWalkLevelOrder
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.di.owns
 import com.acornui.core.isAncestorOf
 import com.acornui.signal.Cancel
-import com.acornui.signal.Signal2
-import com.acornui.signal.Signal3
+import com.acornui.signal.Signal
 
 /**
  * @author nbilyk
@@ -44,13 +42,13 @@ interface FocusManager : Disposable {
 	 * Dispatched when the focused object is about to change.
 	 * (oldFocusable, newFocusable, cancel)
 	 */
-	val focusedChanging: Signal3<UiComponentRo?, UiComponentRo?, Cancel>
+	val focusedChanging: Signal<(UiComponentRo?, UiComponentRo?, Cancel) -> Unit>
 
 	/**
 	 * Dispatched when the focused object changes.
 	 * (oldFocusable, newFocusable)
 	 */
-	val focusedChanged: Signal2<UiComponentRo?, UiComponentRo?>
+	val focusedChanged: Signal<(UiComponentRo?, UiComponentRo?) -> Unit>
 
 	/**
 	 * This component will be used to highlight the focused element.
@@ -110,12 +108,17 @@ interface FocusManager : Disposable {
 
 	/**
 	 * Iterates all focusable elements in order.
+	 * This may return components that shouldn't be focused due to [UiComponentRo.visible] or
+	 * [UiComponentRo.focusEnabledInherited] flags. Use [UiComponentRo.canFocus] to check.
+	 *
 	 * If the callback returns false, the iteration will not continue.
 	 */
 	fun iterateFocusables(callback: (UiComponentRo) -> Boolean)
 
 	/**
 	 * Iterates all focusable elements in reverse order.
+	 *
+	 *
 	 * If the callback returns false, the iteration will not continue.
 	 */
 	fun iterateFocusablesReversed(callback: (UiComponentRo) -> Boolean)
@@ -147,7 +150,10 @@ interface Focusable : Scoped {
 	val focusOrder: Float
 
 	/**
-	 * If true, this is a demarcation for focus order on all Focusable descendants.
+	 * If true, this is component will be considered a focus container. That means -
+	 * - It is a demarcation for focus order on all Focusable descendants.
+	 * - It will not itself be part of the focus order. (It can still be focused manually)
+	 * - If focusEnabled is false, all children will be excluded from the focus order.
 	 */
 	val isFocusContainer: Boolean
 
@@ -163,33 +169,47 @@ interface Focusable : Scoped {
 }
 
 /**
+ * Returns true if this component has [Focusable.focusEnabled] and is not contained in a focus container
+ * ([Focusable.isFocusContainer]) that has [Focusable.focusEnabled] false.
+ */
+val UiComponentRo.focusEnabledInherited: Boolean
+	get() {
+		if (!focusEnabled) return false
+		var p = parent
+		while (p != null) {
+			if (p.isFocusContainer && !p.focusEnabled) return false
+			p = p.parent
+		}
+		return true
+	}
+
+/**
  * Finds the first focusable child in this container with focusEnabled == true.
  * If no focusable element is found, null is returned.
  */
-val Container.firstFocusableChild: UiComponentRo?
+val UiComponentRo.firstFocusableChild: UiComponentRo?
 	get() {
+		validateFocusOrder()
 		val focusManager = inject(FocusManager)
 		var found: UiComponentRo? = null
 		focusManager.iterateFocusables {
-			if (it.focusEnabled && it.isRendered() && it != this && isAncestorOf(it))
+			if (it != this && isAncestorOf(it) && it.canFocus)
 				found = it
 			found == null
 		}
 		return found
 	}
 
-fun UiComponent.focusFirst() {
+fun UiComponentRo.focusFirst() {
 	val focus = inject(FocusManager)
 	if (focusEnabled) focus()
-	else if (this is Container) {
+	else {
 		val firstFocusable = firstFocusableChild
 		if (firstFocusable == null) {
 			focus.clearFocused()
 		} else {
 			firstFocusable.focus()
 		}
-	} else {
-		focus.clearFocused()
 	}
 }
 
@@ -202,3 +222,39 @@ fun UiComponent.ownsFocused(): Boolean {
 	val focused = inject(FocusManager).focused()
 	return focused != null && owns(focused)
 }
+
+/**
+ * Validates the focus order for this component and all descendants.
+ */
+fun UiComponentRo.validateFocusOrder() {
+	childWalkLevelOrder {
+		it.validate(ValidationFlags.FOCUS_ORDER)
+		TreeWalk.CONTINUE
+	}
+}
+
+/**
+ * Sets focus to this element.
+ * Note that this does not matter if the component can actually be focused. To do a safe focus request,
+ * use [focusFirst].
+ * @see canFocus
+ */
+fun UiComponentRo.focus() {
+	inject(FocusManager).focused(this)
+}
+
+/**
+ * Removes focus from this element if it is currently focused.
+ */
+fun UiComponentRo.blur() {
+	val focusManager = inject(FocusManager)
+	if (focusManager.focused() == this)
+		focusManager.clearFocused()
+}
+
+/**
+ * Returns true if this component can be focused. This is dependent on the [focusEnabledInherited] and
+ * [UiComponentRo.isRendered] properties.
+ */
+val UiComponentRo.canFocus: Boolean
+	get() = focusEnabledInherited && isRendered()

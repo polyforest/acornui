@@ -36,7 +36,7 @@ import com.acornui.core.di.inject
 import com.acornui.core.di.own
 import com.acornui.core.di.owns
 import com.acornui.core.focus.FocusManager
-import com.acornui.core.focus.Focusable
+import com.acornui.core.focus.focus
 import com.acornui.core.focus.focusFirst
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.KeyInteractionRo
@@ -143,6 +143,7 @@ open class OptionsList<E : Any>(
 	private val dataView = ListView<E>()
 
 	private val dataScroller = vDataScroller<E> {
+		focusEnabled = true
 		keyDown().add(this@OptionsList::keyDownHandler)
 		selection.changed.add { _, newSelection ->
 			val value = newSelection.firstOrNull()
@@ -154,7 +155,6 @@ open class OptionsList<E : Any>(
 	}
 
 	private val listLift = lift {
-		focusEnabled = true
 		+dataScroller layout { fill() }
 		onClosed = {
 			close()
@@ -263,6 +263,9 @@ open class OptionsList<E : Any>(
 	}
 
 	init {
+		isFocusContainer = true
+		focusEnabled = true
+
 		styleTags.add(OptionsList)
 		maxItems = 10
 		addChild(textInput)
@@ -276,16 +279,22 @@ open class OptionsList<E : Any>(
 			background = addOptionalChild(0, it.background(this))
 
 			downArrow?.dispose()
-			downArrow = addChild(it.downArrow(this))
-			downArrow!!.click().add {
+			val downArrow = addChild(it.downArrow(this))
+			downArrow.focusEnabled = true
+			downArrow.click().add {
 				// Using mouseDown instead of click because we close on blur (which is often via mouseDown).
-				toggleOpen()
+				if (!it.handled) {
+					it.handled = true
+					toggleOpen()
+				}
 			}
-			downArrow?.interactivityMode = if (_isOpen) InteractivityMode.NONE else InteractivityMode.ALL
+			downArrow.interactivityMode = if (_isOpen) InteractivityMode.NONE else InteractivityMode.ALL
+			this.downArrow = downArrow
 		}
 
 		click().add {
-			if (!editable) {
+			if (!it.handled && !editable) {
+				it.handled = true
 				toggleOpen()
 			}
 		}

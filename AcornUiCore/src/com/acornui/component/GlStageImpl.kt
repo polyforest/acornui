@@ -18,7 +18,6 @@ package com.acornui.component
 
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
-import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.Focusable
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
@@ -34,14 +33,13 @@ open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(
 
 	private val gl = inject(Gl20)
 	private val glState = inject(GlState)
-	private val focus = inject(FocusManager)
 
 	init {
 		focusEnabled = true
 		interactivityMode = InteractivityMode.ALWAYS
 		styleTags.add(Stage)
 		interactivity.init(this)
-		focus.init(this)
+		focusManager.init(this)
 		watch(style) {
 			window.clearColor = it.backgroundColor
 		}

@@ -19,7 +19,6 @@ package com.acornui.core.popup
 import com.acornui.component.*
 import com.acornui.component.layout.LayoutContainer
 import com.acornui.core.di.Owned
-import com.acornui.core.focus.Focusable
 import com.acornui.math.Bounds
 import com.acornui.math.Matrix4
 import com.acornui.math.Vector2
@@ -50,7 +49,7 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutConta
 	 */
 	var priority: Float = 0f
 
-	var focusFirst = false
+	var focusFirst = true
 
 	var highlightFocused = true
 
@@ -60,6 +59,9 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutConta
 	override val style = contents.style
 
 	init {
+		focusEnabled = true
+		isFocusContainer = true
+
 		contents.invalidated.add {
 			child, flagsInvalidated ->
 			if (flagsInvalidated and child.layoutInvalidatingFlags > 0) {

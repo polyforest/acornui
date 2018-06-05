@@ -20,6 +20,7 @@ import com.acornui._assert
 import com.acornui.collection.poll
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
+import com.acornui.component.layout.DataScroller
 import com.acornui.core.di.owns
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.KeyInteractionRo
@@ -111,10 +112,9 @@ class FocusManagerImpl : FocusManager {
 	override fun invalidateFocusableOrder(value: UiComponentRo) {
 		if (!invalidFocusables.contains(value)) {
 			_focusables.remove(value)
-			if (value.isActive && value.focusEnabled)
+			if (value.isActive && value.focusEnabled && !value.isFocusContainer)
 				invalidFocusables.add(value)
 		}
-
 	}
 
 	private val focusOrder = ArrayList<Float>()
@@ -217,7 +217,7 @@ class FocusManagerImpl : FocusManager {
 			var j = index + i
 			if (j > focusables.lastIndex) j -= focusables.size
 			val element = focusables[j]
-			if (shouldFocus(element)) return element
+			if (element.canFocus) return element
 		}
 		return _focused ?: root
 	}
@@ -228,26 +228,22 @@ class FocusManagerImpl : FocusManager {
 			var j = index - i
 			if (j < 0) j += focusables.size
 			val element = focusables[j]
-			if (shouldFocus(element)) return element
+			if (element.canFocus) return element
 		}
 		return _focused ?: root
 	}
 
-	private fun shouldFocus(element: UiComponentRo): Boolean {
-		return element.focusEnabled && element.isRendered() && canClick(element)
-	}
-
-	private val midPoint: Vector3 = Vector3()
-
-	/**
-	 * If the center of the component is occluded by an interactive element, and therefore unlikely to be clickable,
-	 * we should skip this component in the focus order.
-	 */
-	private fun canClick(element: UiComponentRo): Boolean {
-		element.localToWindow(midPoint.set(element.width * element.scaleX * 0.5f, element.height * element.scaleY * 0.5f, 0f))
-		val topChild = root.getChildUnderPoint(midPoint.x, midPoint.y, onlyInteractive = true) ?: return false
-		return element.owns(topChild)
-	}
+//	private val midPoint: Vector3 = Vector3()
+//
+//	/**
+//	 * If the center of the component is occluded by an interactive element, and therefore unlikely to be clickable,
+//	 * we should skip this component in the focus order.
+//	 */
+//	private fun canClick(element: UiComponentRo): Boolean {
+//		element.localToWindow(midPoint.set(element.width * element.scaleX * 0.5f, element.height * element.scaleY * 0.5f, 0f))
+//		val topChild = root.getChildUnderPoint(midPoint.x, midPoint.y, onlyInteractive = true) ?: return false
+//		return element.owns(topChild)
+//	}
 
 	override fun iterateFocusables(callback: (UiComponentRo) -> Boolean) {
 		for (i in 0..focusables.lastIndex) {

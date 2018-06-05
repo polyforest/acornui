@@ -33,6 +33,7 @@ import com.acornui.core.di.own
 import com.acornui.core.di.owns
 import com.acornui.core.floor
 import com.acornui.core.focus.FocusManager
+import com.acornui.core.focus.focus
 import com.acornui.core.focus.focusFirst
 import com.acornui.core.focus.ownsFocused
 import com.acornui.core.input.Ascii

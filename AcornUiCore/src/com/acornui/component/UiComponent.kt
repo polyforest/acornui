@@ -31,6 +31,8 @@ import com.acornui.core.assets.AssetManager
 import com.acornui.core.di.*
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.Focusable
+import com.acornui.core.focus.blur
+import com.acornui.core.focus.focusEnabledInherited
 import com.acornui.core.graphics.Camera
 import com.acornui.core.graphics.CameraRo
 import com.acornui.core.graphics.Window
@@ -102,20 +104,6 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	 * This component does not have an alpha of 0f.
 	 */
 	fun isRendered(): Boolean
-
-	/**
-	 * Sets focus to this element.
-	 */
-	fun focus() {
-		inject(FocusManager).focused(this)
-	}
-
-	/**
-	 * Removes focus from this element.
-	 */
-	fun blur() {
-		inject(FocusManager).clearFocused()
-	}
 }
 
 /**
@@ -194,6 +182,10 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	override var visible: Boolean
 
 	override var includeInLayout: Boolean
+
+	override var focusEnabled: Boolean
+	override var focusOrder: Float
+	override var isFocusContainer: Boolean
 
 	/**
 	 * If set, when the layout is validated, if there was no explicit width,
@@ -353,7 +345,7 @@ open class UiComponentImpl(
 			if (value != _interactivityMode) {
 				_interactivityMode = value
 
-				val focused = focus.focused()
+				val focused = focusManager.focused()
 				when (value) {
 					InteractivityMode.NONE -> {
 						if (owns(focused)) {
@@ -397,7 +389,7 @@ open class UiComponentImpl(
 	final override var focusEnabled by validationProp(false, ValidationFlags.FOCUS_ORDER)
 	final override var focusOrder by validationProp(0f, ValidationFlags.FOCUS_ORDER)
 	final override var isFocusContainer by validationProp(false, ValidationFlags.FOCUS_ORDER)
-	private val focus = inject(FocusManager)
+	protected val focusManager = inject(FocusManager)
 
 	init {
 		owner.disposed.add(this::ownerDisposedHandler)
@@ -460,9 +452,10 @@ open class UiComponentImpl(
 	private var wasFocusEnabled: Boolean = false
 
 	protected open fun updateFocusOrder() {
-		if (focusEnabled || wasFocusEnabled) {
-			wasFocusEnabled = focusEnabled
-			focus.invalidateFocusableOrder(this)
+		val newFocusEnabled = focusEnabled && !isFocusContainer
+		if (newFocusEnabled || wasFocusEnabled) {
+			wasFocusEnabled = newFocusEnabled
+			focusManager.invalidateFocusableOrder(this)
 		}
 	}
 
