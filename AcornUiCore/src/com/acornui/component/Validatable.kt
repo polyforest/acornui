@@ -18,6 +18,7 @@ package com.acornui.component
 
 import com.acornui.assertionsEnabled
 import com.acornui.math.MathUtils
+import com.acornui.reflect.observable
 import com.acornui.signal.Signal
 import com.acornui.string.toRadix
 import kotlin.properties.Delegates
@@ -239,9 +240,7 @@ fun validationTree(init: ValidationTree.() -> Unit): ValidationTree {
 }
 
 fun <T> Validatable.validationProp(initialValue: T, flags: Int): ReadWriteProperty<Any, T> {
-	return Delegates.observable(initialValue, { prop, old, new ->
-		if (old != new) {
-			invalidate(flags)
-		}
-	})
+	return observable(initialValue) {
+		invalidate(flags)
+	}
 }

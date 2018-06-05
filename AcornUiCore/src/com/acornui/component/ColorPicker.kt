@@ -8,7 +8,6 @@ import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.core.di.owns
-import com.acornui.core.focus.Focusable
 import com.acornui.core.input.interaction.MouseInteractionRo
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.interaction.dragAttachment
@@ -23,11 +22,7 @@ import com.acornui.reflect.observable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 
-open class ColorPicker(owner: Owned) : ContainerImpl(owner), Focusable {
-
-	override var focusEnabled: Boolean = true
-	override var focusOrder: Float = 0f
-	override var highlight: UiComponent? by createSlot()
+open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 
 	val style = bind(ColorPickerStyle())
 
@@ -66,6 +61,7 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner), Focusable {
 	private val tmpColor = Color()
 
 	init {
+		focusEnabled = true
 		styleTags.add(ColorPicker)
 
 		click().add {
@@ -125,7 +121,6 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner), Focusable {
 		out.set(w, h)
 
 		colorPaletteLift.moveTo(0f, h)
-		highlight?.setSize(out.width, out.height)
 	}
 
 	override fun dispose() {

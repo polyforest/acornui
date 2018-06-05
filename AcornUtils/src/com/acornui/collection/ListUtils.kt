@@ -60,33 +60,6 @@ fun <E> MutableList<in E>.addAllUnique(other: Array<out E>) {
 }
 
 /**
- * Given a sorted list of comparable objects, this finds the insertion index of the given element.
- * If there are equal elements, the insertion index returned will be after.
- */
-fun <E : Comparable<E>> List<E>.sortedInsertionIndex(element: E, fromIndex: Int = 0, toIndex: Int = size, matchForwards: Boolean = true): Int {
-	var indexA = fromIndex
-	var indexB = toIndex
-
-	while (indexA < indexB) {
-		val midIndex = (indexA + indexB) ushr 1
-		val comparison = element.compareTo(this[midIndex])
-
-		if (comparison == 0) {
-			if (matchForwards) {
-				indexA = midIndex + 1
-			} else {
-				indexB = midIndex
-			}
-		} else if (comparison > 0) {
-			indexA = midIndex + 1
-		} else {
-			indexB = midIndex
-		}
-	}
-	return indexA
-}
-
-/**
  * @param element The element with which to calculate the insertion index.
  *
  * @param comparator A comparison function used to determine the sorting order of elements in the sorted
@@ -103,6 +76,43 @@ fun <E : Comparable<E>> List<E>.sortedInsertionIndex(element: E, fromIndex: Int 
 fun <K, E> List<E>.sortedInsertionIndex(element: K, fromIndex: Int = 0, toIndex: Int = size, matchForwards: Boolean = true, comparator: (K, E) -> Int): Int {
 	var indexA = fromIndex
 	var indexB = toIndex
+
+	if (indexA < indexB) {
+		val midIndex = toIndex - 1
+		val comparison = comparator(element, this[midIndex])
+		if (comparison == 0) {
+			if (matchForwards) {
+				indexA = midIndex + 1
+			} else {
+				indexB = midIndex
+			}
+		} else if (comparison > 0) {
+			indexA = midIndex + 1
+		} else {
+			indexB = midIndex
+		}
+	} else {
+		return indexA
+	}
+
+	if (indexA < indexB) {
+		val midIndex = 0
+		val comparison = comparator(element, this[midIndex])
+
+		if (comparison == 0) {
+			if (matchForwards) {
+				indexA = midIndex + 1
+			} else {
+				indexB = midIndex
+			}
+		} else if (comparison > 0) {
+			indexA = midIndex + 1
+		} else {
+			indexB = midIndex
+		}
+	} else {
+		return indexA
+	}
 
 	while (indexA < indexB) {
 		val midIndex = (indexA + indexB) ushr 1
@@ -121,6 +131,25 @@ fun <K, E> List<E>.sortedInsertionIndex(element: K, fromIndex: Int = 0, toIndex:
 		}
 	}
 	return indexA
+}
+
+/**
+ * Given a sorted list of comparable objects, this finds the insertion index of the given element.
+ * If there are equal elements, the insertion index returned will be after.
+ */
+fun <E : Comparable<E>> List<E>.sortedInsertionIndex(element: E, fromIndex: Int = 0, toIndex: Int = size, matchForwards: Boolean = true): Int {
+	return sortedInsertionIndex(element, fromIndex, toIndex, matchForwards, { o1, o2 -> o1.compareTo(o2) })
+}
+
+/**
+ * @param comparator A comparison function used to determine the sorting order of elements in the sorted
+ * list. A return value of 1 will insert later in the list, -1 will insert earlier in the list, and a return value of
+ * 0 will be later if [matchForwards] is true, or earlier if [matchForwards] is false.
+ *
+ * @param matchForwards If true, the returned index will be after comparisons of 0, if false, before.
+ */
+fun <E> List<E>.sortedInsertionIndex(fromIndex: Int = 0, toIndex: Int = size, matchForwards: Boolean = true, comparator: (E) -> Int): Int {
+	return sortedInsertionIndex(null, fromIndex, toIndex, matchForwards, { _, o2 -> comparator(o2) })
 }
 
 /**

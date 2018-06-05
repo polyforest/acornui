@@ -35,7 +35,6 @@ import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.di.own
 import com.acornui.core.di.owns
-import com.acornui.core.focus.FocusContainer
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.Focusable
 import com.acornui.core.focus.focusFirst
@@ -54,12 +53,12 @@ import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import com.acornui.signal.bind
 
-// TODO: delegate focus to input
+
 // TODO: open inline mode.
 
 open class OptionsList<E : Any>(
 		owner: Owned
-) : ContainerImpl(owner), Clearable, FocusContainer {
+) : ContainerImpl(owner), Clearable {
 
 	constructor(owner: Owned, data: List<E?>) : this(owner) {
 		data(data)
@@ -68,8 +67,6 @@ open class OptionsList<E : Any>(
 	constructor(owner: Owned, data: ObservableList<E?>) : this(owner) {
 		data(data)
 	}
-
-	override var focusOrder: Float = 0f
 
 	/**
 	 * If true, search sorting and item selection will be case insensitive.
@@ -296,7 +293,7 @@ open class OptionsList<E : Any>(
 		inject(FocusManager).focusedChanged.add(this::focusChangedHandler)
 	}
 
-	private fun focusChangedHandler(old: Focusable?, new: Focusable?) {
+	private fun focusChangedHandler(old: UiComponentRo?, new: UiComponentRo?) {
 		if (owns(old) && !owns(new)) {
 			close()
 			_changed.dispatch()

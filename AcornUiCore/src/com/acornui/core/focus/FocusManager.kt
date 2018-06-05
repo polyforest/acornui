@@ -17,15 +17,15 @@
 package com.acornui.core.focus
 
 import com.acornui.component.Container
-import com.acornui.component.layout.LayoutElement
+import com.acornui.component.Stage
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
-import com.acornui.component.layout.LayoutElementRo
 import com.acornui.core.Disposable
 import com.acornui.core.di.DKey
+import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.di.owns
-import com.acornui.core.parentWalk
+import com.acornui.core.isAncestorOf
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
@@ -38,29 +38,35 @@ interface FocusManager : Disposable {
 	/**
 	 * Initializes the focus manager with the given root focusable.
 	 */
-	fun init(root: Focusable)
+	fun init(root: Stage)
 
 	/**
 	 * Dispatched when the focused object is about to change.
 	 * (oldFocusable, newFocusable, cancel)
 	 */
-	val focusedChanging: Signal3<Focusable?, Focusable?, Cancel>
+	val focusedChanging: Signal3<UiComponentRo?, UiComponentRo?, Cancel>
 
 	/**
 	 * Dispatched when the focused object changes.
 	 * (oldFocusable, newFocusable)
 	 */
-	val focusedChanged: Signal2<Focusable?, Focusable?>
+	val focusedChanged: Signal2<UiComponentRo?, UiComponentRo?>
 
 	/**
-	 * This component will be provided to [Focusable] objects as their highlight clip.
+	 * This component will be used to highlight the focused element.
+	 * This component will be added to the stage provided during [init] and sized and positioned automatically.
 	 */
 	var highlight: UiComponent?
 
 	/**
+	 * Refreshes the focusable's order in the focus list.
+	 */
+	fun invalidateFocusableOrder(value: UiComponentRo)
+
+	/**
 	 * Returns the currently focused element. This will be null if the root of the focus manager is being removed.
 	 */
-	fun focused(): Focusable?
+	fun focused(): UiComponentRo?
 
 	/**
 	 * Sets the currently focused element.
@@ -68,10 +74,10 @@ interface FocusManager : Disposable {
 	 *
 	 * @param value The target to focus. If this is null, the manager's root will be focused. (This is typically the
 	 * stage)
-	 * @see Focusable.focus
-	 * @see Focusable.blur
+	 * @see UiComponentRo.focus
+	 * @see UiComponentRo.blur
 	 */
-	fun focused(value: Focusable?)
+	fun focused(value: UiComponentRo?)
 
 	/**
 	 * Clears the current focus.
@@ -88,7 +94,7 @@ interface FocusManager : Disposable {
 	/**
 	 * Returns the next enabled focusable element. If the current focus is null, this will be the root.
 	 */
-	fun nextFocusable(): Focusable
+	fun nextFocusable(): UiComponentRo
 
 	/**
 	 * Sets focus to [previousFocusable].
@@ -100,19 +106,19 @@ interface FocusManager : Disposable {
 	/**
 	 * Returns the previous enabled focusable element.
 	 */
-	fun previousFocusable(): Focusable
+	fun previousFocusable(): UiComponentRo
 
 	/**
 	 * Iterates all focusable elements in order.
 	 * If the callback returns false, the iteration will not continue.
 	 */
-	fun iterateFocusables(callback: (Focusable) -> Boolean)
+	fun iterateFocusables(callback: (UiComponentRo) -> Boolean)
 
 	/**
 	 * Iterates all focusable elements in reverse order.
 	 * If the callback returns false, the iteration will not continue.
 	 */
-	fun iterateFocusablesReversed(callback: (Focusable) -> Boolean)
+	fun iterateFocusablesReversed(callback: (UiComponentRo) -> Boolean)
 
 	fun unhighlightFocused()
 
@@ -121,67 +127,29 @@ interface FocusManager : Disposable {
 	companion object : DKey<FocusManager>
 }
 
-enum class FocusChangeResult {
-	UNCHANGED,
-	CHANGED,
-	CANCELED
-}
-
-/**
- * A demarcation for focus order. That is, focus order is considered to be relative to the closest FocusContainer
- * ancestor.
- *
- * A focus container does not need to be focusable, although it can be.
- */
-interface FocusContainer : LayoutElementRo {
-
-	/**
-	 * The focus order weight. A higher number means descendant focusable elements will be focused later in the order
-	 * than focusable elements descendant of a sibling focus container with a lower focus order.
-	 */
-	var focusOrder: Float
-
-}
-
 /**
  * An interface for a component that may be focused.
  */
-interface Focusable : UiComponentRo {
+interface Focusable : Scoped {
 
 	/**
 	 * True if this Focusable object may be focused.
 	 * If this is false, this element will be skipped in the focus order.
 	 */
-	var focusEnabled: Boolean
+	val focusEnabled: Boolean
 
 	/**
-	 * The focus order weight. A higher number means this component will be later in the order.
+	 * The focus order weight. This number is relative to the closest ancestor where [isFocusContainer] is true, if
+	 * there is one. A higher number means this component will be later in the order.
 	 * (An order of 1f will be focused before a Focusable component with the same parent with an order of 2f)
 	 * In the case of a tie, the order within the display graph (breadth-first) is used.
 	 */
 	val focusOrder: Float
 
 	/**
-	 * A UiComponent for rendering the focus highlight is passed to components where the focus manager
-	 * requests a highlight.
-	 * The focus highlighted component is then responsible for adding the highlight to the display graph and
-	 * sizing / positioning the component in its updateLayout, and rendering the component in its render.
+	 * If true, this is a demarcation for focus order on all Focusable descendants.
 	 */
-	var highlight: UiComponent?
-
-	/**
-	 * Sets focus to this element.
-	 */
-	fun focus() {
-		inject(FocusManager).focused(this)
-	}
-
-	/**
-	 * Removes focus from this element.
-	 */
-	fun blur() {
-		inject(FocusManager).clearFocused()
-	}
+	val isFocusContainer: Boolean
 
 	/**
 	 * Returns true if this component is currently in focus.
@@ -192,32 +160,18 @@ interface Focusable : UiComponentRo {
 		get() {
 			return this === inject(FocusManager).focused()
 		}
-
-	/**
-	 * Finds the first parent focus container.
-	 */
-	val parentFocusableContainer: FocusContainer?
-		get() {
-			parentWalk {
-				if (it != this && it is FocusContainer) {
-					return it
-				}
-				true
-			}
-			return null
-		}
 }
 
 /**
  * Finds the first focusable child in this container with focusEnabled == true.
  * If no focusable element is found, null is returned.
  */
-val Container.firstFocusableChild: Focusable?
+val Container.firstFocusableChild: UiComponentRo?
 	get() {
 		val focusManager = inject(FocusManager)
-		var found: Focusable? = null
+		var found: UiComponentRo? = null
 		focusManager.iterateFocusables {
-			if (it.focusEnabled && it != this && owns(it))
+			if (it.focusEnabled && it.isRendered() && it != this && isAncestorOf(it))
 				found = it
 			found == null
 		}
@@ -226,7 +180,7 @@ val Container.firstFocusableChild: Focusable?
 
 fun UiComponent.focusFirst() {
 	val focus = inject(FocusManager)
-	if (this is Focusable && focusEnabled) focus()
+	if (focusEnabled) focus()
 	else if (this is Container) {
 		val firstFocusable = firstFocusableChild
 		if (firstFocusable == null) {

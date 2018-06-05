@@ -69,10 +69,6 @@ open class Button(
 	private var _currentSkinPart: UiComponent? = null
 	private val _stateSkinMap = HashMap<ButtonState, LazyInstance<Owned, UiComponent?>>()
 
-	override var focusEnabled = true
-	override var focusOrder = 0f
-	override var highlight: UiComponent? by createSlot()
-
 	private val rollOverHandler = { event: MouseInteractionRo ->
 		_mouseIsOver = true
 		refreshState()
@@ -127,6 +123,7 @@ open class Button(
 	}
 
 	init {
+		focusEnabled = true
 		styleTags.add(Button)
 
 		// Mouse over / out handlers cause problems on mobile.
@@ -243,7 +240,6 @@ open class Button(
 			_currentSkinPart!!.setSize(explicitWidth, explicitHeight)
 			out.set(_currentSkinPart!!.bounds)
 		}
-		highlight?.setSize(out.width, out.height)
 	}
 
 	override fun dispose() {

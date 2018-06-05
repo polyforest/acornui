@@ -20,6 +20,9 @@ import com.acornui._assert
 import com.acornui.collection.ConcurrentListImpl
 import com.acornui.core.ParentRo
 import com.acornui.core.di.*
+import com.acornui.core.focus.FocusManager
+import com.acornui.core.focus.Focusable
+import com.acornui.function.as1
 import com.acornui.math.*
 
 import kotlin.properties.Delegates
@@ -153,6 +156,14 @@ open class ContainerImpl(
 		}
 	}
 
+	override fun onDeactivated() {
+		_children.iterate { child ->
+			if (child.isActive)
+				child.deactivate()
+			true
+		}
+	}
+
 	//-------------------------------------------------------------------------------------------------
 
 	/**
@@ -163,7 +174,8 @@ open class ContainerImpl(
 					ValidationFlags.HIERARCHY_DESCENDING or
 					ValidationFlags.CONCATENATED_COLOR_TRANSFORM or
 					ValidationFlags.CONCATENATED_TRANSFORM or
-					ValidationFlags.INTERACTIVITY_MODE
+					ValidationFlags.INTERACTIVITY_MODE or
+					ValidationFlags.FOCUS_ORDER
 
 	override fun onInvalidated(flagsInvalidated: Int) {
 		val flagsToCascade = flagsInvalidated and cascadingFlags
@@ -191,14 +203,6 @@ open class ContainerImpl(
 			val child = _children[i]
 			if (child.visible)
 				child.render(viewport)
-		}
-	}
-
-	override fun onDeactivated() {
-		_children.iterate { child ->
-			if (child.isActive)
-				child.deactivate()
-			true
 		}
 	}
 
@@ -247,9 +251,11 @@ open class ContainerImpl(
 	protected fun <T : UiComponent> createSlot(): ReadWriteProperty<Any?, T?> {
 		val placeholder = addChild(UiComponentImpl(this))
 		return Delegates.observable(null as T?) { _, oldValue, newValue ->
-			val index = children.indexOf(oldValue ?: placeholder)
-			removeChild(index)
-			addChild(index, newValue ?: placeholder)
+			if (oldValue !== newValue) {
+				val index = children.indexOf(oldValue ?: placeholder)
+				removeChild(index)
+				addChild(index, newValue ?: placeholder)
+			}
 		}
 	}
 

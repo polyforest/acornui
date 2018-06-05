@@ -20,6 +20,7 @@ import com.acornui._assert
 import com.acornui.collection.ClearableObjectPool
 import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
+import com.acornui.component.StageRo
 import com.acornui.component.UiComponentRo
 import com.acornui.component.ancestry
 import com.acornui.component.getChildUnderPoint
@@ -151,7 +152,7 @@ open class InteractivityManagerImpl(
 		charPool.free(char)
 	}
 
-	override fun init(root: UiComponentRo) {
+	override fun init(root: StageRo) {
 		_assert(_root == null, "Already initialized.")
 		_root = root
 		mouseInput.overCanvasChanged.add(this::overCanvasChangedHandler)

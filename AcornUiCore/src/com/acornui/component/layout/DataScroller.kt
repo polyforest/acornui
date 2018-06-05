@@ -33,10 +33,6 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 		val layoutStyle: S
 ) : ContainerImpl(owner), Focusable {
 
-	override var focusEnabled: Boolean = false // Layout containers by default are not focusable.
-	override var focusOrder: Float = 0f
-	override var highlight: UiComponent? by createSlot()
-
 	val style = bind(DataScrollerStyle())
 
 	private val bottomContents = addChild(virtualList<E, S, T>(layoutAlgorithm, layoutStyle) {
@@ -338,7 +334,6 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 		clipper.setPosition(pad.left, pad.top)
 
 		background?.setSize(out)
-		highlight?.setSize(out)
 	}
 
 	private fun updateRowBackgroundForRenderer(renderer: ListRendererRo): RowBackground {

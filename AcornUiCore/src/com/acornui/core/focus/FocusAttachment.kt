@@ -16,6 +16,7 @@
 
 package com.acornui.core.focus
 
+import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.core.Disposable
 import com.acornui.core.di.inject
@@ -52,14 +53,14 @@ class FocusAttachment(private val target: Focusable) : Disposable {
 	companion object
 }
 
-fun Focusable.focusAttachment(): FocusAttachment {
+fun UiComponentRo.focusAttachment(): FocusAttachment {
 	return createOrReuseAttachment(FocusAttachment, { FocusAttachment(this) })
 }
 
-fun Focusable.focused(): Signal<() -> Unit> {
+fun UiComponentRo.focused(): Signal<() -> Unit> {
 	return focusAttachment().focused
 }
 
-fun Focusable.blurred(): Signal<() -> Unit> {
+fun UiComponentRo.blurred(): Signal<() -> Unit> {
 	return focusAttachment().blurred
 }

@@ -33,7 +33,6 @@ import com.acornui.core.di.own
 import com.acornui.core.di.owns
 import com.acornui.core.floor
 import com.acornui.core.focus.FocusManager
-import com.acornui.core.focus.Focusable
 import com.acornui.core.focus.focusFirst
 import com.acornui.core.focus.ownsFocused
 import com.acornui.core.input.Ascii
@@ -44,8 +43,11 @@ import com.acornui.core.input.interaction.click
 import com.acornui.core.input.interaction.dragAttachment
 import com.acornui.core.input.keyDown
 import com.acornui.core.input.wheel
-import com.acornui.math.*
+import com.acornui.math.Bounds
+import com.acornui.math.Corners
 import com.acornui.math.MathUtils.clamp
+import com.acornui.math.Pad
+import com.acornui.math.Vector2
 import com.acornui.observe.IndexBinding
 import com.acornui.observe.bindIndex
 import com.acornui.signal.*
@@ -74,7 +76,7 @@ class DataGrid<E>(
 		 * This data is managed externally, and this data grid will not be responsible for disposal of this list.
 		 */
 		val data: ObservableList<E>
-) : ContainerImpl(owner), Focusable {
+) : ContainerImpl(owner) {
 
 	private val cellClickedCancel = Cancel()
 	private val _cellClicked = own(Signal2<CellLocation, Cancel>())
@@ -88,10 +90,6 @@ class DataGrid<E>(
 		get() = _cellClicked
 
 	val style = bind(DataGridStyle())
-
-	override var focusEnabled: Boolean = true
-	override var focusOrder: Float = 0f
-	override var highlight: UiComponent? by createSlot()
 
 	var hScrollPolicy: ScrollPolicy by validationProp(ScrollPolicy.OFF, COLUMNS_WIDTHS_VALIDATION or ValidationFlags.SIZE_CONSTRAINTS)
 	var vScrollPolicy: ScrollPolicy by validationProp(ScrollPolicy.AUTO, COLUMNS_WIDTHS_VALIDATION)
@@ -330,6 +328,7 @@ class DataGrid<E>(
 		}
 
 	init {
+		focusEnabled = true
 		styleTags.add(Companion)
 		if (assertionsEnabled) {
 			_columns.bindUniqueAssertion()
@@ -654,7 +653,7 @@ class DataGrid<E>(
 		editorCell = null
 	}
 
-	private fun focusChangedHandler(old: Focusable?, new: Focusable?) {
+	private fun focusChangedHandler(old: UiComponentRo?, new: UiComponentRo?) {
 		if (new == null || !owns(new)) {
 			disposeCellEditor()
 		}
@@ -1020,8 +1019,6 @@ class DataGrid<E>(
 		clipper.setPosition(pad.left, pad.top)
 
 		background?.setSize(out)
-		highlight?.setSize(out)
-
 		usedColumns.flip()
 	}
 

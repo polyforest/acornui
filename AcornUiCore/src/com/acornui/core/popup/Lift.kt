@@ -29,7 +29,7 @@ import com.acornui.math.Vector3
  * The Lift component will place its elements as children in the pop up layer, automatically transforming the children
  * to match transformation as if they were part of this component's display hierarchy.
  */
-class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutContainer<StackLayoutStyle, StackLayoutData>, Focusable {
+class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutContainer<StackLayoutStyle, StackLayoutData> {
 
 	override fun createLayoutData(): StackLayoutData = StackLayoutData()
 
@@ -58,24 +58,6 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutConta
 
 	override val layoutAlgorithm = contents.layoutAlgorithm
 	override val style = contents.style
-
-	override var focusEnabled: Boolean
-		get() = contents.focusEnabled
-		set(value) {
-			contents.focusEnabled = value
-		}
-
-	override var focusOrder: Float
-		get() = contents.focusOrder
-		set(value) {
-			contents.focusOrder = value
-		}
-
-	override var highlight: UiComponent?
-		get() = contents.highlight
-		set(value) {
-			contents.highlight = value
-		}
 
 	init {
 		contents.invalidated.add {

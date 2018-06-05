@@ -22,14 +22,13 @@ import com.acornui.component.style.StyleType
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
-import com.acornui.core.focus.FocusContainer
 import com.acornui.core.focus.Focusable
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 
 interface StageRo : ContainerRo, Focusable
 
-interface Stage : ElementContainer<UiComponent>, StageRo, FocusContainer {
+interface Stage : ElementContainer<UiComponent>, StageRo {
 
 	val style: StageStyle
 

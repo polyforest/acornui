@@ -18,7 +18,6 @@ package com.acornui.component
 
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
-import com.acornui.core.focus.FocusContainer
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.Focusable
 import com.acornui.gl.core.Gl20
@@ -29,7 +28,7 @@ import com.acornui.math.MinMaxRo
 /**
  * @author nbilyk
  */
-open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(owner), FocusContainer, Focusable {
+open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(owner), Focusable {
 
 	final override val style = bind(StageStyle())
 
@@ -37,19 +36,8 @@ open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(
 	private val glState = inject(GlState)
 	private val focus = inject(FocusManager)
 
-	/**
-	 * The stage may not be focusEnabled false; it is the default focus state.
-	 */
-	override var focusEnabled: Boolean
-		get(): Boolean = true
-		set(value) {
-			throw Exception("The stage must be focusable")
-		}
-
-	override var focusOrder: Float = 0f
-	override var highlight: UiComponent? = null // The stage is never highlighted, do nothing.
-
 	init {
+		focusEnabled = true
 		interactivityMode = InteractivityMode.ALWAYS
 		styleTags.add(Stage)
 		interactivity.init(this)
@@ -74,9 +62,11 @@ open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val w = window.width
 		val h = window.height
-		for (i in 0.._elements.lastIndex) {
+		_elements.iterate {
 			// Elements of the stage all are explicitly sized to the dimensions of the stage.
-			_elements[i].setSize(w, h)
+			if (it.shouldLayout)
+				it.setSize(w, h)
+			true
 		}
 		out.set(w, h)
 	}

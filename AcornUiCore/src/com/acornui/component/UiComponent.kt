@@ -30,6 +30,7 @@ import com.acornui.core.*
 import com.acornui.core.assets.AssetManager
 import com.acornui.core.di.*
 import com.acornui.core.focus.FocusManager
+import com.acornui.core.focus.Focusable
 import com.acornui.core.graphics.Camera
 import com.acornui.core.graphics.CameraRo
 import com.acornui.core.graphics.Window
@@ -55,7 +56,7 @@ annotation class ComponentDslMarker
 
 typealias ComponentInit<T> = (@ComponentDslMarker T).() -> Unit
 
-interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementRo, Validatable, StyleableRo, ChildRo {
+interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementRo, Validatable, StyleableRo, ChildRo, Focusable {
 
 	override val disposed: Signal<(UiComponentRo) -> Unit>
 	override val activated: Signal<(UiComponentRo) -> Unit>
@@ -101,6 +102,20 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	 * This component does not have an alpha of 0f.
 	 */
 	fun isRendered(): Boolean
+
+	/**
+	 * Sets focus to this element.
+	 */
+	fun focus() {
+		inject(FocusManager).focused(this)
+	}
+
+	/**
+	 * Removes focus from this element.
+	 */
+	fun blur() {
+		inject(FocusManager).clearFocused()
+	}
 }
 
 /**
@@ -233,13 +248,13 @@ open class UiComponentImpl(
 	//---------------------------------------------------------
 
 	private val _activated = Signal1<UiComponent>()
-	override val activated: Signal<(UiComponent) -> Unit>
+	final override val activated: Signal<(UiComponent) -> Unit>
 		get() = _activated
 	private val _deactivated = Signal1<UiComponent>()
-	override val deactivated: Signal<(UiComponent) -> Unit>
+	final override val deactivated: Signal<(UiComponent) -> Unit>
 		get() = _deactivated
 	private val _disposed = Signal1<UiComponent>()
-	override val disposed: Signal<(UiComponent) -> Unit>
+	final override val disposed: Signal<(UiComponent) -> Unit>
 		get() = _disposed
 
 	private var _isDisposed: Boolean = false
@@ -338,7 +353,7 @@ open class UiComponentImpl(
 			if (value != _interactivityMode) {
 				_interactivityMode = value
 
-				val focused = injectOptional(FocusManager)?.focused()
+				val focused = focus.focused()
 				when (value) {
 					InteractivityMode.NONE -> {
 						if (owns(focused)) {
@@ -378,6 +393,12 @@ open class UiComponentImpl(
 	// ChildRo properties
 	override var parent: ContainerRo? = null
 
+	// Focusable properties
+	final override var focusEnabled by validationProp(false, ValidationFlags.FOCUS_ORDER)
+	final override var focusOrder by validationProp(0f, ValidationFlags.FOCUS_ORDER)
+	final override var isFocusContainer by validationProp(false, ValidationFlags.FOCUS_ORDER)
+	private val focus = inject(FocusManager)
+
 	init {
 		owner.disposed.add(this::ownerDisposedHandler)
 		val r = this
@@ -395,10 +416,12 @@ open class UiComponentImpl(
 				addNode(COLOR_TRANSFORM, r::updateColorTransform)
 				addNode(CONCATENATED_COLOR_TRANSFORM, COLOR_TRANSFORM, r::updateConcatenatedColorTransform)
 				addNode(INTERACTIVITY_MODE, r::updateInheritedInteractivityMode)
+				addNode(FOCUS_ORDER, r::updateFocusOrder)
 			}
 		}
 
 		_activated.add(this::onActivated.as1)
+		_deactivated.add(this::updateFocusOrder.as1)
 		_deactivated.add(this::onDeactivated.as1)
 	}
 
@@ -430,6 +453,19 @@ open class UiComponentImpl(
 
 	final override var visible: Boolean by validationProp(true, ValidationFlags.LAYOUT_ENABLED)
 	
+	//-----------------------------------------------
+	// Focusable
+	//-----------------------------------------------
+
+	private var wasFocusEnabled: Boolean = false
+
+	protected open fun updateFocusOrder() {
+		if (focusEnabled || wasFocusEnabled) {
+			wasFocusEnabled = focusEnabled
+			focus.invalidateFocusableOrder(this)
+		}
+	}
+
 	//-----------------------------------------------
 	// LayoutElement
 	//-----------------------------------------------
@@ -730,7 +766,7 @@ open class UiComponentImpl(
 	}
 
 	final override fun setAttachment(key: Any, value: Any) {
-		_attachments.put(key, value)
+		_attachments[key] = value
 	}
 
 	/**

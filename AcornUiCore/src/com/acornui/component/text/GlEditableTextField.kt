@@ -18,7 +18,6 @@ package com.acornui.component.text
 
 import com.acornui.component.BoxStyle
 import com.acornui.component.ContainerImpl
-import com.acornui.component.UiComponent
 import com.acornui.component.scroll.ScrollModelImpl
 import com.acornui.component.scroll.ScrollPolicy
 import com.acornui.core.di.Owned
@@ -27,10 +26,6 @@ import com.acornui.math.Bounds
 
 @Suppress("LeakingThis")
 open class GlEditableTextField(owner: Owned) : ContainerImpl(owner), EditableTextField {
-
-	override var focusEnabled = true
-	override var focusOrder = 0f
-	override var highlight: UiComponent? by createSlot()
 
 	override val boxStyle: BoxStyle = bind(BoxStyle())
 	override val hScrollModel = ScrollModelImpl()
@@ -62,13 +57,13 @@ open class GlEditableTextField(owner: Owned) : ContainerImpl(owner), EditableTex
 //		}
 
 	init {
+		focusEnabled = true
 		styleTags.add(EditableTextField)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		textField.setSize(explicitWidth, explicitHeight)
 		out.set(textField.bounds)
-		highlight?.setSize(out.width, out.height)
 	}
 
 	override fun dispose() {

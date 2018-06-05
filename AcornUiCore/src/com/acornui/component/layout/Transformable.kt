@@ -95,6 +95,50 @@ interface TransformableRo : PositionableRo {
 	fun globalToLocal(ray: Ray): Ray
 
 	/**
+	 * Converts a bounding rectangle from local to global coordinates.
+	 */
+	fun localToGlobal(minMax: MinMax): MinMax {
+		val tmp1 =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)
+		val tmp2 =  Vector3.obtain().set(minMax.xMax, minMax.yMax, 0f)
+		val tmp =  Vector3.obtain()
+		minMax.inf()
+		localToGlobal(tmp.set(tmp1))
+		minMax.ext(tmp.x, tmp.y)
+		localToGlobal(tmp.set(tmp2.x, tmp1.y, 0f))
+		minMax.ext(tmp.x, tmp.y)
+		localToGlobal(tmp.set(tmp2))
+		minMax.ext(tmp.x, tmp.y)
+		localToGlobal(tmp.set(tmp1.x, tmp2.y, 0f))
+		minMax.ext(tmp.x, tmp.y)
+		Vector3.free(tmp1)
+		Vector3.free(tmp2)
+		Vector3.free(tmp)
+		return minMax
+	}
+
+	/**
+	 * Converts a bounding rectangle from global to local coordinates.
+	 */
+	fun globalToLocal(minMax: MinMax): MinMax {
+		val tmp1 =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)
+		val tmp2 =  Vector3.obtain().set(minMax.xMax, minMax.yMax, 0f)
+		val tmp =  Vector3.obtain()
+		minMax.inf()
+		globalToLocal(tmp.set(tmp1))
+		minMax.ext(tmp.x, tmp.y)
+		globalToLocal(tmp.set(tmp2.x, tmp1.y, 0f))
+		minMax.ext(tmp.x, tmp.y)
+		globalToLocal(tmp.set(tmp2))
+		minMax.ext(tmp.x, tmp.y)
+		globalToLocal(tmp.set(tmp1.x, tmp2.y, 0f))
+		minMax.ext(tmp.x, tmp.y)
+		Vector3.free(tmp1)
+		Vector3.free(tmp2)
+		Vector3.free(tmp)
+		return minMax
+	}
+
+	/**
 	 * Calculates the intersection coordinates of the provided Ray (in local coordinate space) and this layout
 	 * element's plane.
 	 * @return Returns true if the provided Ray intersects with this plane, or false if the Ray is parallel.

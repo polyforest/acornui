@@ -44,10 +44,11 @@ object ValidationFlags {
 
 	const val INTERACTIVITY_MODE: Int = 1 shl 11
 
-	const val RESERVED_1: Int = 1 shl 12
-	const val RESERVED_2: Int = 1 shl 13
-	const val RESERVED_3: Int = 1 shl 14
-	const val RESERVED_4: Int = 1 shl 15
+	const val FOCUS_ORDER: Int = 1 shl 12
+
+	const val RESERVED_1: Int = 1 shl 13
+	const val RESERVED_2: Int = 1 shl 14
+	const val RESERVED_3: Int = 1 shl 15
 }
 
 fun Validatable.invalidateSize() {

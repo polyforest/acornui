@@ -107,7 +107,6 @@ open class BasicUiSkin(
 
 	protected open fun focusStyle() {
 		val focusManager = inject(FocusManager)
-		focusManager.highlight = null
 		focusManager.highlight?.dispose()
 		val focusHighlight = SimpleHighlight(target, theme.atlasPath, "FocusRect")
 		focusHighlight.colorTint = theme.strokeToggled

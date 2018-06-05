@@ -17,6 +17,7 @@
 package com.acornui.core.input
 
 import com.acornui.collection.Clearable
+import com.acornui.component.StageRo
 import com.acornui.component.UiComponentRo
 import com.acornui.core.Disposable
 import com.acornui.core.di.DKey
@@ -32,7 +33,7 @@ interface InteractivityManager : Disposable {
 	/**
 	 * Initializes the interactivity manager with the root element for dispatching.
 	 */
-	fun init(root: UiComponentRo)
+	fun init(root: StageRo)
 
 	/**
 	 * Produces a new Signal for the specified interaction type.

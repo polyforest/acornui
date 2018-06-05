@@ -39,10 +39,6 @@ open class LayoutContainerImpl<S : Style, out U : LayoutData>(
 		style: S
 ) : ElementContainerImpl<UiComponent>(owner), LayoutContainer<S, U>, Focusable {
 
-	override var focusEnabled: Boolean = false // Layout containers by default are not focusable.
-	override var focusOrder: Float = 0f
-	override var highlight: UiComponent? by createSlot()
-
 	protected val elementsToLayout = ArrayList<LayoutElement>()
 
 	final override val style: S = bind(style)
@@ -63,7 +59,6 @@ open class LayoutContainerImpl<S : Style, out U : LayoutData>(
 			if (explicitWidth != null && explicitWidth > out.width) out.width = explicitWidth
 			if (explicitHeight != null && explicitHeight > out.height) out.height = explicitHeight
 		}
-		highlight?.setSize(out.width, out.height)
 	}
 
 }

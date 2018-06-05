@@ -17,17 +17,18 @@
 package com.acornui.core.focus
 
 import com.acornui._assert
-import com.acornui.collection.ObjectPool
+import com.acornui.collection.poll
+import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
-import com.acornui.component.layout.LayoutElementRo
-import com.acornui.core.LifecycleRo
 import com.acornui.core.di.owns
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.KeyInteractionRo
 import com.acornui.core.input.interaction.MouseInteractionRo
 import com.acornui.core.input.keyDown
 import com.acornui.core.input.mouseDown
-import com.acornui.core.parentWalk
+import com.acornui.core.isBefore
+import com.acornui.core.time.callLater
+import com.acornui.function.as2
 import com.acornui.math.Vector3
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal2
@@ -36,22 +37,26 @@ import com.acornui.signal.Signal3
 /**
  * @author nbilyk
  */
-open class FocusManagerImpl : FocusManager {
+class FocusManagerImpl : FocusManager {
 
-	protected var _root: Focusable? = null
-	protected val root: Focusable
+	private var _root: Stage? = null
+	private val root: Stage
 		get() = _root!!
 
-	protected val focusedChangingCancel: Cancel = Cancel()
-	override val focusedChanging: Signal3<Focusable?, Focusable?, Cancel> = Signal3()
-	override val focusedChanged: Signal2<Focusable?, Focusable?> = Signal2()
+	private val focusedChangingCancel: Cancel = Cancel()
+	override val focusedChanging: Signal3<UiComponentRo?, UiComponentRo?, Cancel> = Signal3()
+	override val focusedChanged: Signal2<UiComponentRo?, UiComponentRo?> = Signal2()
 
-	protected var _focused: Focusable? = null
-	protected var _highlighted: Focusable? = null
-	protected var _focusablesValid: Boolean = false
-	protected var focusables = ArrayList<Focusable>()
+	private var _focused: UiComponentRo? = null
+	private var _highlighted: UiComponentRo? = null
 
-	protected var highlightIsChanging: Boolean = false
+	private val invalidFocusables = ArrayList<UiComponentRo>()
+	private val _focusables = ArrayList<UiComponentRo>()
+	private val focusables: ArrayList<UiComponentRo>
+		get() {
+			if (invalidFocusables.isNotEmpty()) validateFocusables()
+			return _focusables
+		}
 
 	private val rootKeyDownHandler = {
 		event: KeyInteractionRo ->
@@ -69,13 +74,13 @@ open class FocusManagerImpl : FocusManager {
 	private val rootMouseDownHandler = {
 		event: MouseInteractionRo ->
 		if (!event.defaultPrevented()) {
-			event.target.parentWalk {
-				if (it is Focusable && it.focusEnabled) {
-					focused(it)
-					false // break
-				} else {
-					true
+			var p: UiComponentRo? = event.target
+			while (p != null) {
+				if (p.focusEnabled) {
+					focused(p)
+					break
 				}
+				p = p.parent
 			}
 		}
 		Unit
@@ -89,36 +94,92 @@ open class FocusManagerImpl : FocusManager {
 			val wasHighlighted = _highlighted != null
 			unhighlightFocused()
 			_highlight = value
+			if (value != null) {
+				value.includeInLayout = false
+			}
 			if (wasHighlighted) highlightFocused()
 		}
 
-	private val rootInvalidatedHandler = {
-		root: UiComponentRo, flags: Int ->
-		if (flags and ValidationFlags.HIERARCHY_ASCENDING > 0) {
-			_focusablesValid = false
-		}
-	}
-
-	override fun init(root: Focusable) {
+	override fun init(root: Stage) {
 		_assert(_root == null, "Already initialized.")
 		_root = root
 		_focused = root
 		root.keyDown().add(rootKeyDownHandler)
 		root.mouseDown(isCapture = true).add(rootMouseDownHandler)
-		root.invalidated.add(rootInvalidatedHandler)
 	}
 
-	override fun focused(): Focusable? {
+	override fun invalidateFocusableOrder(value: UiComponentRo) {
+		if (!invalidFocusables.contains(value)) {
+			_focusables.remove(value)
+			if (value.isActive && value.focusEnabled)
+				invalidFocusables.add(value)
+		}
+
+	}
+
+	private val focusOrder = ArrayList<Float>()
+	private val iFocusOrder = ArrayList<Float>()
+
+	private fun validateFocusables() {
+		while (invalidFocusables.isNotEmpty()) {
+			// Use poll instead of pop because the invalid focusables are more likely to be closer to already in order than not.
+			val focusable = invalidFocusables.poll()
+			if (!focusable.isActive || !focusable.focusEnabled) continue
+			if (_focusables.isEmpty()) {
+				// Trivial case
+				_focusables.add(focusable)
+			} else {
+				calculateFocusOrder(focusable, focusOrder)
+				val focusOrderComparator = {
+					it: UiComponentRo ->
+					calculateFocusOrder(it, iFocusOrder)
+					focusOrder.compareTo(iFocusOrder)
+				}
+				val indexA = _focusables.sortedInsertionIndex(matchForwards = false, comparator = focusOrderComparator)
+				val indexB = _focusables.sortedInsertionIndex(fromIndex = indexA, comparator = focusOrderComparator)
+				if (indexA >= indexB) {
+					_focusables.add(indexA, focusable)
+				} else {
+					val childOrderComparator = {
+						it: UiComponentRo ->
+						if (focusable.isBefore(it)) -1 else 1
+					}
+					val index = _focusables.sortedInsertionIndex(indexA, indexB, comparator = childOrderComparator)
+					_focusables.add(index, focusable)
+				}
+			}
+		}
+	}
+
+	private fun calculateFocusOrder(value: UiComponentRo, focusOrderOut: MutableList<Float>) {
+		focusOrderOut.clear()
+		if (!value.focusEnabled || !value.isActive) return
+		focusOrderOut.add(value.focusOrder)
+		var p: ContainerRo? = value.parent
+		while (p != null) {
+			if (p.isFocusContainer)
+				focusOrderOut.add(0, p.focusOrder)
+			p = p.parent
+		}
+		focusOrderOut.add(value.focusOrder)
+	}
+
+	private fun <T : Comparable<T>> List<T>.compareTo(other: List<T>): Int {
+		for (i in 0..minOf(lastIndex, other.lastIndex)) {
+			val r = this[i].compareTo(other[i])
+			if (r != 0)
+				return r
+		}
+		return 0
+	}
+
+	override fun focused(): UiComponentRo? {
 		return _focused
 	}
 
-	private val focusedDeactivatedHandler: (LifecycleRo) -> Unit = {
-		focused(null)
-	}
+	private var pendingFocusable: UiComponentRo? = null
 
-	private var pendingFocusable: Focusable? = null
-
-	override fun focused(value: Focusable?) {
+	override fun focused(value: UiComponentRo?) {
 		if (focusedChanging.isDispatching || focusedChanged.isDispatching) {
 			pendingFocusable = value
 			return
@@ -131,18 +192,13 @@ open class FocusManagerImpl : FocusManager {
 		if (focusedChangingCancel.canceled())
 			return focusPending()
 		unhighlightFocused()
-		_focused?.deactivated?.remove(focusedDeactivatedHandler)
 
-		if (!newValue.isActive) {
+		_focused = if (!newValue.isActive) {
 			// Only happens when the root is being removed.
-			_focused = null
+			null
 		} else {
-			_focused = newValue
-			_assert(_focused!!.isActive)
-			newValue.deactivated.add(focusedDeactivatedHandler)
+			newValue
 		}
-		onFocusedChanged(oldFocused, newValue)
-
 		focusedChanged.dispatch(oldFocused, _focused)
 		focusPending()
 	}
@@ -155,12 +211,7 @@ open class FocusManagerImpl : FocusManager {
 		}
 	}
 
-	protected open fun onFocusedChanged(oldFocused: Focusable?, value: Focusable?) {
-	}
-
-	override fun nextFocusable(): Focusable {
-		refreshFocusOrder()
-
+	override fun nextFocusable(): UiComponentRo {
 		val index = focusables.indexOf(_focused)
 		for (i in 1..focusables.lastIndex) {
 			var j = index + i
@@ -171,9 +222,7 @@ open class FocusManagerImpl : FocusManager {
 		return _focused ?: root
 	}
 
-	override fun previousFocusable(): Focusable {
-		refreshFocusOrder()
-
+	override fun previousFocusable(): UiComponentRo {
 		val index = focusables.indexOf(_focused)
 		for (i in 1..focusables.lastIndex) {
 			var j = index - i
@@ -184,7 +233,7 @@ open class FocusManagerImpl : FocusManager {
 		return _focused ?: root
 	}
 
-	private fun shouldFocus(element: Focusable): Boolean {
+	private fun shouldFocus(element: UiComponentRo): Boolean {
 		return element.focusEnabled && element.isRendered() && canClick(element)
 	}
 
@@ -194,22 +243,20 @@ open class FocusManagerImpl : FocusManager {
 	 * If the center of the component is occluded by an interactive element, and therefore unlikely to be clickable,
 	 * we should skip this component in the focus order.
 	 */
-	private fun canClick(element: Focusable): Boolean {
+	private fun canClick(element: UiComponentRo): Boolean {
 		element.localToWindow(midPoint.set(element.width * element.scaleX * 0.5f, element.height * element.scaleY * 0.5f, 0f))
 		val topChild = root.getChildUnderPoint(midPoint.x, midPoint.y, onlyInteractive = true) ?: return false
 		return element.owns(topChild)
 	}
 
-	override fun iterateFocusables(callback: (Focusable) -> Boolean) {
-		refreshFocusOrder()
+	override fun iterateFocusables(callback: (UiComponentRo) -> Boolean) {
 		for (i in 0..focusables.lastIndex) {
 			val shouldContinue = callback(focusables[i])
 			if (!shouldContinue) break
 		}
 	}
 
-	override fun iterateFocusablesReversed(callback: (Focusable) -> Boolean) {
-		refreshFocusOrder()
+	override fun iterateFocusablesReversed(callback: (UiComponentRo) -> Boolean) {
 		for (i in focusables.lastIndex downTo 0) {
 			val shouldContinue = callback(focusables[i])
 			if (!shouldContinue) break
@@ -217,116 +264,51 @@ open class FocusManagerImpl : FocusManager {
 	}
 
 	override fun unhighlightFocused() {
-		highlightIsChanging = true
-		_highlighted?.highlight = null
+		if (_highlight != null) {
+			_highlight?.visible = false
+			root.removeElement(_highlight!!)
+		}
+		_highlighted?.invalidated?.remove(this::highlightedInvalidatedHandler.as2)
 		_highlighted = null
-		highlightIsChanging = false
 	}
 
 	override fun highlightFocused() {
-		highlightIsChanging = true
-		_highlighted = focused()
-		_highlight?.moveTo(0f, 0f)
-		_highlighted?.highlight = _highlight
-		highlightIsChanging = false
+		if (_focused != _root) {
+			_highlighted = _focused
+			if (_highlighted != null) {
+				_highlight?.visible = true
+				_highlighted!!.invalidated.add(this::highlightedInvalidatedHandler.as2)
+			}
+			highlightedInvalidatedHandler()
+		}
 	}
 
-	protected open fun refreshFocusOrder() {
-		if (_focusablesValid) return
-		_focusablesValid = true
-		focusables.clear()
-		val rootNode = FocusNode.obtain()
-		buildFocusTree(rootNode, root)
-		rootNode.flatten(focusables)
-		rootNode.free()
+	private fun highlightedInvalidatedHandler() {
+		root.callLater(this::updateHighlight)
 	}
 
-	/**
-	 * Does a depth-first traversal over the display graph.
-	 */
-	private fun buildFocusTree(parent: FocusNode, layoutElement: LayoutElementRo) {
-		val newParent: FocusNode
-		if (layoutElement is FocusContainer) {
-			val newNode = FocusNode.obtain()
-			newNode.focusOrder = layoutElement.focusOrder
-			newNode.focusable = layoutElement as? Focusable // Not all FocusContainer elements are Focusable
-			newNode.childIndex = parent.children.size
-			parent.children.add(newNode)
-			newParent = newNode
-		} else if (layoutElement is Focusable) {
-			val newNode = FocusNode.obtain()
-			newNode.focusOrder = layoutElement.focusOrder
-			newNode.focusable = layoutElement
-			newNode.childIndex = parent.children.size
-			parent.children.add(newNode)
-			newParent = parent
-		} else {
-			newParent = parent
-		}
-
-		if (layoutElement is Container) {
-			layoutElement.iterateChildren {
-				buildFocusTree(newParent, it)
-				true
-			}
-			if (layoutElement is FocusContainer) {
-				newParent.children.sort()
-			}
-		}
+	private fun updateHighlight() {
+		val highlighted = _highlighted ?: return
+		val highlight = _highlight ?: return
+		root.addElement(highlight)
+		highlight.setSize(highlighted.width, highlighted.height)
+		highlight.customTransform = highlighted.concatenatedTransform
 	}
 
 	override fun dispose() {
 		unhighlightFocused()
+		highlight = null
 		pendingFocusable = null
 		_focused = null
-		_focused?.deactivated?.remove(focusedDeactivatedHandler)
 		focusedChanged.dispose()
 		focusedChanging.dispose()
 		val root = _root
 		if (root != null) {
 			root.keyDown().remove(rootKeyDownHandler)
 			root.mouseDown(isCapture = true).remove(rootMouseDownHandler)
-			root.invalidated.remove(rootInvalidatedHandler)
 			_root = null
 
 		}
 	}
 
-}
-
-private class FocusNode private constructor() : Comparable<FocusNode> {
-
-	var childIndex: Int = 0
-	var focusOrder: Float = 0f
-	var focusable: Focusable? = null
-	val children: MutableList<FocusNode> = ArrayList()
-
-	override fun compareTo(other: FocusNode): Int {
-		if (focusOrder == other.focusOrder) return childIndex.compareTo(other.childIndex)
-		return focusOrder.compareTo(other.focusOrder)
-	}
-
-	fun flatten(list: MutableList<Focusable>) {
-		// If the parent FocusContainer is itself Focusable, it is ordered before its children.
-		if (focusable != null) list.add(focusable!!)
-		for (i in 0..children.lastIndex) {
-			children[i].flatten(list)
-		}
-	}
-
-	fun free() {
-		for (i in 0..children.lastIndex) {
-			children[i].free()
-		}
-		children.clear()
-		pool.free(this)
-	}
-
-	companion object {
-		private val pool = ObjectPool { FocusNode() }
-
-		fun obtain(): FocusNode {
-			return pool.obtain()
-		}
-	}
 }

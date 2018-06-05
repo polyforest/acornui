@@ -68,10 +68,6 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 
 	protected val background = addChild(rect())
 
-	override var focusEnabled: Boolean = true
-	override var focusOrder: Float = 0f
-	override var highlight: UiComponent? by createSlot()
-
 	final override val textInputStyle = bind(TextInputStyle())
 	final override val boxStyle = bind(BoxStyle())
 	protected val editableText = addChild(EditableText(this))
@@ -131,6 +127,7 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 		}
 
 	init {
+		focusEnabled = true
 		styleTags.add(TextInput)
 		watch(boxStyle) {
 			background.style.set(it)
@@ -185,8 +182,6 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 				?: margin.expandHeight2(pad.expandHeight2(editableText.height)))
 		background.setSize(margin.reduceWidth2(out.width), margin.reduceHeight(out.height))
 		background.setPosition(margin.left, margin.top)
-		highlight?.setSize(background.bounds)
-		highlight?.setPosition(margin.left, margin.top)
 	}
 
 	override fun clear() {
@@ -198,10 +193,6 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 
 	private val background = addChild(rect())
-
-	override var focusEnabled: Boolean = true
-	override var focusOrder: Float = 0f
-	override var highlight: UiComponent? by createSlot()
 
 	override val textInputStyle = bind(TextInputStyle())
 	override val boxStyle = bind(BoxStyle())
@@ -297,6 +288,7 @@ class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 	private val rect = Rectangle()
 
 	init {
+		focusEnabled = true
 		styleTags.add(TextInput)
 		styleTags.add(TextArea)
 		watch(boxStyle) {
@@ -389,8 +381,6 @@ class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 		out.set(explicitWidth ?: textInputStyle.defaultWidth, explicitHeight ?: margin.expandHeight2(scroller.height))
 		background.setSize(margin.reduceWidth2(out.width), margin.reduceHeight(out.height))
 		background.setPosition(margin.left, margin.top)
-		highlight?.setSize(background.bounds)
-		highlight?.setPosition(margin.left, margin.top)
 	}
 
 	override fun clear() {
