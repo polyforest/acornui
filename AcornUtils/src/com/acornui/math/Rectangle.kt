@@ -39,9 +39,9 @@ interface RectangleRo {
 	
 	/**
 	 * return the Vector2 with coordinates of this rectangle
-	 * @param position The Vector2
+	 * @param out The Vector2
 	 */
-	fun getPosition(position: Vector2): Vector2
+	fun getPosition(out: Vector2): Vector2
 
 	/**
 	 * @return the Vector2 with size of this rectangle
@@ -60,7 +60,7 @@ interface RectangleRo {
 	 * @param point The coordinates vector
 	 * @return whether the point is contained in the rectangle
 	 */
-	fun intersects(point: Vector2): Boolean
+	fun intersects(point: Vector2Ro): Boolean
 
 	/**
 	 * Does an intersection test with a Ray (in the same coordinate space)
@@ -68,7 +68,7 @@ interface RectangleRo {
 	 * @param out If provided, will be set to the intersection position if there was one.
 	 * @return Returns true if the ray intersects this Rectangle.
 	 */
-	fun intersects(r: Ray, out: Vector3? = null): Boolean
+	fun intersects(r: RayRo, out: Vector3? = null): Boolean
 
 	/**
 	 * @param rectangle the other {@link Rectangle}.
@@ -85,16 +85,16 @@ interface RectangleRo {
 	fun intersects(xVal: Float, yVal: Float, widthVal: Float, heightVal: Float): Boolean
 	/**
 	 * Calculates the aspect ratio ( width / height ) of this rectangle
-	 * @return the aspect ratio of this rectangle. Returns 0 if height is 0 to avoid ArithmeticException
+	 * @return the aspect ratio of this rectangle. Returns 0 if height is 0 to avoid NaN
 	 */
 	fun getAspectRatio(): Float
 
 	/**
 	 * Calculates the center of the rectangle. Results are located in the given Vector2
-	 * @param vector the Vector2 to use
-	 * @return the given vector with results stored inside
+	 * @param out the Vector2 to use
+	 * @return the given out with results stored inside
 	 */
-	fun getCenter(vector: Vector2): Vector2
+	fun getCenter(out: Vector2): Vector2
 
 	/**
 	 * Returns true if this rectangle's bounds can contain the given dimensions
@@ -166,11 +166,11 @@ class Rectangle(
 	}
 
 	/**
-	 * return the Vector2 with coordinates of this rectangle
-	 * @param position The Vector2
+	 * @return the Vector2 with coordinates of this rectangle
+	 * @param out The Vector2
 	 */
-	override fun getPosition(position: Vector2): Vector2 {
-		return position.set(x, y)
+	override fun getPosition(out: Vector2): Vector2 {
+		return out.set(x, y)
 	}
 
 	/**
@@ -232,7 +232,7 @@ class Rectangle(
 	 * @param point The coordinates vector
 	 * @return whether the point is contained in the rectangle
 	 */
-	override fun intersects(point: Vector2): Boolean {
+	override fun intersects(point: Vector2Ro): Boolean {
 		return intersects(point.x, point.y)
 	}
 
@@ -242,7 +242,7 @@ class Rectangle(
 	 * @param out If provided, will be set to the intersection position if there was one.
 	 * @return Returns true if the ray intersects this Rectangle.
 	 */
-	override fun intersects(r: Ray, out: Vector3?): Boolean {
+	override fun intersects(r: RayRo, out: Vector3?): Boolean {
 		if (r.direction.z == 0f) return false
 		val m = -r.origin.z * r.directionInv.z
 		if (m < 0) return false // Intersection (if there is one) is behind the ray.
@@ -296,23 +296,14 @@ class Rectangle(
 		return this
 	}
 
-	/**
-	 * Calculates the aspect ratio ( width / height ) of this rectangle
-	 * @return the aspect ratio of this rectangle. Returns 0 if height is 0 to avoid ArithmeticException
-	 */
 	override fun getAspectRatio(): Float {
 		return if (height == 0f) 0f else width / height
 	}
 
-	/**
-	 * Calculates the center of the rectangle. Results are located in the given Vector2
-	 * @param vector the Vector2 to use
-	 * @return the given vector with results stored inside
-	 */
-	override fun getCenter(vector: Vector2): Vector2 {
-		vector.x = x + width * 0.5f
-		vector.y = y + height * 0.5f
-		return vector
+	override fun getCenter(out: Vector2): Vector2 {
+		out.x = x + width * 0.5f
+		out.y = y + height * 0.5f
+		return out
 	}
 
 	/**
@@ -331,7 +322,7 @@ class Rectangle(
 	 * @param position the position
 	 * @return this for chaining
 	 */
-	fun setCenter(position: Vector2): Rectangle {
+	fun setCenter(position: Vector2Ro): Rectangle {
 		setPosition(position.x - width * 0.5f, position.y - height * 0.5f)
 		return this
 	}
@@ -342,7 +333,7 @@ class Rectangle(
 	 * @param rect the other rectangle to fit this rectangle around
 	 * @return this rectangle for chaining
 	 */
-	fun fitOutside(rect: Rectangle): Rectangle {
+	fun fitOutside(rect: RectangleRo): Rectangle {
 		val ratio = getAspectRatio()
 
 		if (ratio > rect.getAspectRatio()) {
@@ -363,7 +354,7 @@ class Rectangle(
 	 * @param rect the other rectangle to fit this rectangle inside
 	 * @return this rectangle for chaining
 	 */
-	fun fitInside(rect: Rectangle): Rectangle {
+	fun fitInside(rect: RectangleRo): Rectangle {
 		val ratio = getAspectRatio()
 
 		if (ratio < rect.getAspectRatio()) {
@@ -471,9 +462,9 @@ class Rectangle(
 	}
 }
 
-object RectangleSerializer : To<Rectangle>, From<Rectangle> {
+object RectangleSerializer : To<RectangleRo>, From<Rectangle> {
 
-	override fun Rectangle.write(writer: Writer) {
+	override fun RectangleRo.write(writer: Writer) {
 		writer.float("x", x)
 		writer.float("y", y)
 		writer.float("width", width)
