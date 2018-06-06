@@ -58,7 +58,7 @@ interface ScrollArea : LayoutDataProvider<StackLayoutData>, ElementContainer<UiC
 		/**
 		 * The validation flag used for scrolling.
 		 */
-		val SCROLLING: Int = 1 shl 16
+		const val SCROLLING: Int = 1 shl 16
 	}
 }
 
@@ -147,21 +147,4 @@ class ScrollAreaStyle : StyleBase() {
 	var borderRadius: CornersRo by prop(Corners())
 
 	companion object : StyleType<ScrollAreaStyle>
-}
-
-/**
- * A component with virtualization based on scrolling may implement this interface in order to virtualize the
- * visible area.
- */
-interface ViewportComponent : UiComponent {
-
-	/**
-	 * Sets this component's visible area. The coordinates should be relative to this component.
-	 */
-	fun viewport(x: Float, y: Float, width: Float, height: Float)
-
-	/**
-	 * This entire component will be considered visible.
-	 */
-	fun clearViewport()
 }
