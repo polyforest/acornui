@@ -460,6 +460,9 @@ class Rectangle(
 		return result
 	}
 
+	override fun toString(): String {
+		return "Rectangle(x=$x, y=$y, width=$width, height=$height)"
+	}
 
 	companion object {
 		private val pool = ClearableObjectPool { Rectangle() }

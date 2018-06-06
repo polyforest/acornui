@@ -488,6 +488,9 @@ class Vector2(
 		return result
 	}
 
+	override fun toString(): String {
+		return "Vector2(x=$x, y=$y)"
+	}
 
 	companion object {
 

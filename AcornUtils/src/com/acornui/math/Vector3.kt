@@ -637,6 +637,9 @@ class Vector3 (
 		return result
 	}
 
+	override fun toString(): String {
+		return "Vector3(x=$x, y=$y, z=$z)"
+	}
 
 	companion object {
 		val X: Vector3Ro = Vector3(1f, 0f, 0f)

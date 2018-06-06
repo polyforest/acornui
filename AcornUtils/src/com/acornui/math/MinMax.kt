@@ -118,6 +118,13 @@ class MinMax(
 		yMax += bottom
 	}
 
+	/**
+	 * Increases this value by the given padding values.
+	 */
+	fun inflate(pad: PadRo) {
+		inflate(pad.left, pad.top, pad.right, pad.bottom)
+	}
+
 	override val width: Float
 		get() = xMax - xMin
 
@@ -179,5 +186,8 @@ class MinMax(
 		return result
 	}
 
+	override fun toString(): String {
+		return "MinMax(xMin=$xMin, yMin=$yMin, xMax=$xMax, yMax=$yMax)"
+	}
 
 }
