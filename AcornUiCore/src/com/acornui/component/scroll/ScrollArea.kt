@@ -95,7 +95,6 @@ fun ScrollArea.scrollTo(bounds: RectangleRo) {
  * Scrolls the minimum distance to show the given bounding MinMax.
  */
 fun ScrollArea.scrollTo(bounds: MinMaxRo) {
-	println(bounds)
 	validate(ValidationFlags.LAYOUT)
 	if (bounds.xMin < hScrollModel.value)
 		hScrollModel.value = bounds.xMin
