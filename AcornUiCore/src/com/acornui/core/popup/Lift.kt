@@ -51,7 +51,7 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutConta
 
 	var focusFirst = true
 
-	var highlightFocused = true
+	var highlightFocused = false
 
 	private val contents = LiftStack(this)
 

@@ -94,6 +94,8 @@ open class GlScrollArea(
 		scrollRect.wheel().add(wheelHandler)
 		addChild(scrollRect)
 
+		hScrollBar.layoutInvalidatingFlags = ValidationFlags.SIZE_CONSTRAINTS
+		vScrollBar.layoutInvalidatingFlags = ValidationFlags.SIZE_CONSTRAINTS
 		addChild(hScrollBar)
 		addChild(vScrollBar)
 
@@ -110,21 +112,19 @@ open class GlScrollArea(
 		}
 	}
 
-	/**
-	 * The scroll bar layout is a little unique in this scroll area -- we layout based on the size constraints, not
-	 * the size. This is for performance optimization reasons.
-	 * Use case -
-	 * When the user uses the scroll bar, the scroll bar layout is invalidated, but this scroll area doesn't care
-	 * because we're going off of minWidth/minHeight.
-	 *
-	 * We also cannot just set includeInLayout to false for the scroll bars, because we do care about when their size
-	 * constraints have changed.
-	 */
-	override fun childInvalidatedHandler(child: UiComponentRo, flagsInvalidated: Int) {
-		if (child == vScrollBar || child == hScrollBar) {
-			// TODO: handle certain scroll bar invalidations
-		} else {
-			super.childInvalidatedHandler(child, flagsInvalidated)
+	override fun onActivated() {
+		super.onActivated()
+		focusManager.focusedChanged.add(this::focusChangedHandler)
+	}
+
+	override fun onDeactivated() {
+		super.onDeactivated()
+		focusManager.focusedChanged.remove(this::focusChangedHandler)
+	}
+
+	private fun focusChangedHandler(old: UiComponentRo?, new: UiComponentRo?) {
+		if (new != null && isAncestorOf(new)) {
+			scrollTo(new)
 		}
 	}
 

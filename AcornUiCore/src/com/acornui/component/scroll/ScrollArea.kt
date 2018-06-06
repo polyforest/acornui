@@ -22,10 +22,7 @@ import com.acornui.component.style.*
 import com.acornui.core.di.Owned
 import com.acornui.core.tween.Tween
 import com.acornui.core.tween.createPropertyTween
-import com.acornui.math.Corners
-import com.acornui.math.CornersRo
-import com.acornui.math.Interpolation
-import com.acornui.math.RectangleRo
+import com.acornui.math.*
 
 interface ScrollArea : LayoutDataProvider<StackLayoutData>, ElementContainer<UiComponent> {
 
@@ -65,6 +62,18 @@ interface ScrollArea : LayoutDataProvider<StackLayoutData>, ElementContainer<UiC
 	}
 }
 
+private val tmpBounds = MinMax()
+
+fun ScrollArea.scrollTo(target: UiComponentRo, pad: PadRo = Pad(10f)) {
+	tmpBounds.set(0f, 0f, target.width, target.height)
+	target.localToGlobal(tmpBounds)
+	globalToLocal(tmpBounds)
+	tmpBounds.yMin += vScrollModel.value
+	tmpBounds.yMax += vScrollModel.value
+	tmpBounds.inflate(pad)
+	scrollTo(tmpBounds)
+}
+
 /**
  * Scrolls the minimum distance to show the given bounding rectangle.
  */
@@ -80,6 +89,24 @@ fun ScrollArea.scrollTo(bounds: RectangleRo) {
 	val contentsSetH = contentsHeight - vScrollModel.max
 	if (bounds.bottom > vScrollModel.value + contentsSetH)
 		vScrollModel.value = bounds.bottom - contentsSetH
+}
+
+/**
+ * Scrolls the minimum distance to show the given bounding MinMax.
+ */
+fun ScrollArea.scrollTo(bounds: MinMaxRo) {
+	println(bounds)
+	validate(ValidationFlags.LAYOUT)
+	if (bounds.xMin < hScrollModel.value)
+		hScrollModel.value = bounds.xMin
+	if (bounds.yMin < vScrollModel.value)
+		vScrollModel.value = bounds.yMin
+	val contentsSetW = contentsWidth - hScrollModel.max
+	if (bounds.xMax > hScrollModel.value + contentsSetW)
+		hScrollModel.value = bounds.xMax - contentsSetW
+	val contentsSetH = contentsHeight - vScrollModel.max
+	if (bounds.yMax > vScrollModel.value + contentsSetH)
+		vScrollModel.value = bounds.yMax - contentsSetH
 }
 
 fun ScrollArea.tweenScrollX(duration: Float, ease: Interpolation, toScrollX: Float, delay: Float = 0f): Tween {

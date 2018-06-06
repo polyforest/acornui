@@ -114,6 +114,11 @@ class FocusManagerImpl : FocusManager {
 			_focusables.remove(value)
 			if (value.isActive && value.focusEnabled && !value.isFocusContainer)
 				invalidFocusables.add(value)
+			else {
+				if (_focused === value) {
+					focused(null)
+				}
+			}
 		}
 	}
 

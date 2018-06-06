@@ -257,4 +257,4 @@ fun UiComponentRo.blur() {
  * [UiComponentRo.isRendered] properties.
  */
 val UiComponentRo.canFocus: Boolean
-	get() = focusEnabledInherited && isRendered()
+	get() = focusEnabledInherited && isRendered() && interactivityEnabled
