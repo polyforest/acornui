@@ -193,7 +193,7 @@ val UiComponentRo.firstFocusableChild: UiComponentRo?
 		val focusManager = inject(FocusManager)
 		var found: UiComponentRo? = null
 		focusManager.iterateFocusables {
-			if (it != this && isAncestorOf(it) && it.canFocus)
+			if (it != this && isAncestorOf(it) && it.canFocus && !it.isFocusContainer)
 				found = it
 			found == null
 		}

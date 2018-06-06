@@ -19,9 +19,10 @@ package com.acornui.core.focus
 import com.acornui._assert
 import com.acornui.collection.poll
 import com.acornui.collection.sortedInsertionIndex
-import com.acornui.component.*
-import com.acornui.component.layout.DataScroller
-import com.acornui.core.di.owns
+import com.acornui.component.ContainerRo
+import com.acornui.component.Stage
+import com.acornui.component.UiComponent
+import com.acornui.component.UiComponentRo
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.KeyInteractionRo
 import com.acornui.core.input.interaction.MouseInteractionRo
@@ -30,7 +31,6 @@ import com.acornui.core.input.mouseDown
 import com.acornui.core.isBefore
 import com.acornui.core.time.callLater
 import com.acornui.function.as2
-import com.acornui.math.Vector3
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
@@ -232,18 +232,6 @@ class FocusManagerImpl : FocusManager {
 		}
 		return _focused ?: root
 	}
-
-//	private val midPoint: Vector3 = Vector3()
-//
-//	/**
-//	 * If the center of the component is occluded by an interactive element, and therefore unlikely to be clickable,
-//	 * we should skip this component in the focus order.
-//	 */
-//	private fun canClick(element: UiComponentRo): Boolean {
-//		element.localToWindow(midPoint.set(element.width * element.scaleX * 0.5f, element.height * element.scaleY * 0.5f, 0f))
-//		val topChild = root.getChildUnderPoint(midPoint.x, midPoint.y, onlyInteractive = true) ?: return false
-//		return element.owns(topChild)
-//	}
 
 	override fun iterateFocusables(callback: (UiComponentRo) -> Boolean) {
 		for (i in 0..focusables.lastIndex) {
