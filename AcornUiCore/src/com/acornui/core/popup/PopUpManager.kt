@@ -19,29 +19,28 @@ package com.acornui.core.popup
 import com.acornui.collection.Clearable
 import com.acornui.collection.firstOrNull2
 import com.acornui.collection.sortedInsertionIndex
-import com.acornui.component.Closeable
-import com.acornui.component.InteractivityMode
-import com.acornui.component.UiComponent
+import com.acornui.component.*
 import com.acornui.component.layout.LayoutContainerImpl
 import com.acornui.component.layout.algorithm.CanvasLayout
 import com.acornui.component.layout.algorithm.CanvasLayoutData
-import com.acornui.component.rect
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.component.style.styleTag
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
-import com.acornui.core.focus.FocusManager
-import com.acornui.core.focus.focusFirst
+import com.acornui.core.di.owns
+import com.acornui.core.focus.*
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.KeyInteractionRo
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.keyDown
+import com.acornui.core.isAncestorOf
 import com.acornui.core.tween.Tween
 import com.acornui.core.tween.drive
 import com.acornui.core.tween.tweenAlpha
 import com.acornui.math.Easing
+import com.acornui.signal.Cancel
 
 interface PopUpManager : Clearable {
 
@@ -174,9 +173,17 @@ class PopUpManagerImpl(private val root: UiComponent) : LayoutContainerImpl<PopU
 		val last = _currentPopUps.lastOrNull()
 		if (last != null) {
 			if (last.focusFirst) {
-				last.child.focusFirst()
-				if (last.highlightFocused)
-					inject(FocusManager).highlightFocused()
+				val firstFocusable = last.child.firstFocusableChild
+				if (firstFocusable == null) modalFill.focus()
+				else {
+					firstFocusable.focus()
+					if (last.highlightFocused)
+						inject(FocusManager).highlightFocused()
+				}
+			} else {
+				if (last.isModal) {
+					modalFill.focus()
+				}
 			}
 		}
 		refreshModalBlocker()
@@ -241,8 +248,41 @@ class PopUpManagerImpl(private val root: UiComponent) : LayoutContainerImpl<PopU
 	init {
 		root.keyDown().add(rootKeyDownHandler)
 
-		// The pop up container should not intercept user interaction, unless it is modal.
 		interactivityMode = InteractivityMode.CHILDREN
+	}
+
+	override fun onActivated() {
+		super.onActivated()
+		focusManager.focusedChanging.add(this::focusChangingHandler)
+	}
+
+	override fun onDeactivated() {
+		super.onDeactivated()
+		focusManager.focusedChanging.remove(this::focusChangingHandler)
+	}
+
+	private fun focusChangingHandler(old: UiComponentRo?, new: UiComponentRo?, cancel: Cancel) {
+		if (_currentPopUps.isEmpty() || new === modalFill) return
+		if (new == null) {
+			modalFill.focus()
+			cancel.cancel()
+			return
+		}
+		// Prevent focusing anything below the modal layer.
+		val lastModalIndex = _currentPopUps.indexOfLast { it.isModal }
+		if (lastModalIndex == -1) return // no modals
+		var validFocusChange = false
+		for (i in _currentPopUps.lastIndex downTo lastModalIndex) {
+			if (_currentPopUps[i].child.isAncestorOf(new)) {
+				validFocusChange = true
+				break
+			}
+		}
+		if (!validFocusChange) {
+			val firstFocusableChild = _currentPopUps[lastModalIndex].child.firstFocusableChild
+			if (firstFocusableChild == null) modalFill.focus() else firstFocusableChild.focus()
+			cancel.cancel()
+		}
 	}
 
 	override fun requestModalClose() {

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package com.acornui.jvm
 
 import com.acornui.assertionsEnabled
@@ -110,7 +112,7 @@ open class LwjglApplication : ApplicationBase() {
 	// If accessing the window id, use bootstrap.on(Window) { }
 	private var _windowId: Long = -1L
 
-	private suspend fun getWindowId(): Long {
+	protected suspend fun getWindowId(): Long {
 		get(Window) // Ensure that the Window has been set.
 		return _windowId
 	}

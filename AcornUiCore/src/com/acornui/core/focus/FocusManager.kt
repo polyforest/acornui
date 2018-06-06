@@ -189,7 +189,8 @@ val UiComponentRo.focusEnabledInherited: Boolean
  */
 val UiComponentRo.firstFocusableChild: UiComponentRo?
 	get() {
-		validateFocusOrder()
+		validate() // To ensure styles and therefore skin parts get created.
+		validateFocusOrder() // To child walk and update the focus order for all descendants.
 		val focusManager = inject(FocusManager)
 		var found: UiComponentRo? = null
 		focusManager.iterateFocusables {
