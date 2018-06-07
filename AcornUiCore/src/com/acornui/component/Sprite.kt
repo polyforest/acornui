@@ -158,7 +158,7 @@ class Sprite {
 	 * @param x translation
 	 * @param y translation
 	 * @param z translation
-	 * @param rotation The rotation around the Z axis in radians.
+	 * @param rotation The rotation around the Z axis in radians. If y-axis is pointing down, this will be clockwise.
 	 * @param originX The x point of the rectangle that will be 0,0
 	 * @param originY The y point of the rectangle that will be 0,0
 	 */
@@ -166,27 +166,34 @@ class Sprite {
 		this.width = width
 		this.height = height
 		// Transform vertex coordinates from local to global
-		val aX: Float
-		val aY: Float
-		val bX: Float
-		val bY: Float
 		if (rotation == 0f) {
-			aX = x - originX
-			aY = y - originY
-			bX = x + width - originX
-			bY = y + height - originY
+			val aX = x - originX
+			val aY = y - originY
+			val bX = x + width - originX
+			val bY = y + height - originY
+			vertexPoints[0].set(aX, aY, z)
+			vertexPoints[1].set(bX, aY, z)
+			vertexPoints[2].set(bX, bY, z)
+			vertexPoints[3].set(aX, bY, z)
 		} else {
+			// (cos x - sin y, sin x + cos y)
+
 			val cos = cos(rotation)
 			val sin = sin(rotation)
-			aX = cos * -originX - sin * -originY + x
-			aY = sin * -originX + cos * -originY + y
-			bX = cos * (-originX + width) - sin * -originY + x
-			bY = sin * (-originX + width) + cos * (-originY + height) + y
+
+			var x1: Float
+			var y1: Float
+
+			x1 = -originX
+			y1 = -originY
+			vertexPoints[0].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
+			x1 = -originX + width
+			vertexPoints[1].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
+			y1 = -originY + height
+			vertexPoints[2].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
+			x1 = -originX
+			vertexPoints[3].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
 		}
-		vertexPoints[0].set(aX, aY, z)
-		vertexPoints[1].set(bX, aY, z)
-		vertexPoints[2].set(bX, bY, z)
-		vertexPoints[3].set(aX, bY, z)
 		normal.set(Vector3.NEG_Z)
 	}
 
