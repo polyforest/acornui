@@ -177,8 +177,6 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	 * @param value The new numeric value.
 	 * @param min The min clamp value. Default is [NumericStepper.min]
 	 * @param max The max clamp value. Default is [NumericStepper.max]
-	 *
-	 *
 	 */
 	fun userChange(value: Float, min: Float = this.min, max: Float = this.max) {
 		val oldValue = _value

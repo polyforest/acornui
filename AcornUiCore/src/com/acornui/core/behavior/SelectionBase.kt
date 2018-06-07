@@ -71,13 +71,27 @@ interface Selection<E : Any> : SelectionRo<E>, Clearable {
 	val changing: Signal<(List<E>, List<E>, Cancel) -> Unit>
 
 	/**
-	 * Gets the first selected item.
+	 * Gets/sets the first selected item.
 	 * If set, the selection is cleared and the selection will be the provided item if not null.
 	 * Note: setting this does not invoke a [changing] or [changed] signal.
 	 */
 	override var selectedItem: E?
 
-	fun setSelectedItems(items: Iterable<E>)
+	/**
+	 * Sets the selected items.
+	 * Note: setting this does not invoke a [changing] or [changed] signal.
+	 * @see setSelectedItemsUser
+	 */
+	fun setSelectedItems(items: List<E>)
+
+	/**
+	 * Sets the selected items and invokes [changing] and [changed] signals.
+	 */
+	fun setSelectedItemsUser(items: List<E>)
+
+	/**
+	 * Selects all items. Does not dispatch signals.
+	 */
 	fun selectAll()
 
 }
@@ -150,7 +164,7 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 		return _selectedMap[item] ?: false
 	}
 
-	override fun setSelectedItems(items: Iterable<E>) {
+	override fun setSelectedItems(items: List<E>) {
 		val oldSelection = _selectedMap.keys.toList()
 		_selectedMap.clear()
 		_selectedMap.putAll(items.map { it to true })
@@ -160,18 +174,18 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 	/**
 	 * The user has changed the selection. This will invoke the [changing] and [changed] signals.
 	 */
-	fun setSelectedItemsUser(newSelection: List<E>) {
+	override fun setSelectedItemsUser(items: List<E>) {
 		val previousSelection = _selectedMap.keys.toList()
-		if (previousSelection == newSelection) return // no-op
+		if (previousSelection == items) return // no-op
 		if (changing.isNotEmpty()) {
-			_changing.dispatch(previousSelection, newSelection, cancel.reset())
+			_changing.dispatch(previousSelection, items, cancel.reset())
 			if (cancel.canceled()) return
 		}
-		setSelectedItems(newSelection)
-		_changed.dispatch(previousSelection, newSelection)
+		setSelectedItems(items)
+		_changed.dispatch(previousSelection, items)
 	}
 
-	protected abstract fun onSelectionChanged(oldSelection: Iterable<E>, newSelection: Iterable<E>)
+	protected abstract fun onSelectionChanged(oldSelection: List<E>, newSelection: List<E>)
 
 	override fun clear() {
 		setSelectedItems(emptyList())
@@ -195,6 +209,6 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 fun <E : Any> Selection<E>.deselectNotContaining(list: List<E>) {
 	val tmp = arrayListObtain<E>()
 	val current = getSelectedItems(false, tmp)
-	setSelectedItems(current.intersect(list))
+	setSelectedItems(current.intersect(list).toList())
 	arrayListPool.free(tmp)
 }

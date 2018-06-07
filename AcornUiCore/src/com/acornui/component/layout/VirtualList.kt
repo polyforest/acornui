@@ -452,7 +452,7 @@ class VirtualListSelection<E : Any>(private val activeRenderers: List<ListItemRe
 		}
 	}
 
-	override fun onSelectionChanged(oldSelection: Iterable<E>, newSelection: Iterable<E>) {
+	override fun onSelectionChanged(oldSelection: List<E>, newSelection: List<E>) {
 		activeRenderers.forEach2 {
 			it.toggled = getItemIsSelected(it.data!!)
 		}

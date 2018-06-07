@@ -395,7 +395,7 @@ private class DataScrollerSelection<E : Any>(
 		}
 	}
 
-	override fun onSelectionChanged(oldSelection: Iterable<E>, newSelection: Iterable<E>) {
+	override fun onSelectionChanged(oldSelection: List<E>, newSelection: List<E>) {
 		listA.selection.setSelectedItems(newSelection)
 		listB.selection.setSelectedItems(newSelection)
 		for (e in oldSelection - newSelection) {
@@ -423,7 +423,7 @@ private class DataScrollerHighlight<E : Any>(private val rowMap: Map<E, RowBackg
 		}
 	}
 
-	override fun onSelectionChanged(oldSelection: Iterable<E>, newSelection: Iterable<E>) {
+	override fun onSelectionChanged(oldSelection: List<E>, newSelection: List<E>) {
 		for (e in oldSelection - newSelection) {
 			rowMap[e]?.highlighted = false
 		}
