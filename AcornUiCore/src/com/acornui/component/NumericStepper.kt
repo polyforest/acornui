@@ -83,7 +83,6 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 			if (_value > _max) {
 				this.value = _max
 			}
-			textInput.maxLength = newMax.toString().length
 		}
 
 	private var _min: Float = Float.NEGATIVE_INFINITY
@@ -181,12 +180,12 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	fun userChange(value: Float, min: Float = this.min, max: Float = this.max) {
 		val oldValue = _value
 		val newValue = roundToNearest(clamp(value, min, max), minStep, offset)
+		invalidateProperties() // When the user has committed a value, re-format.
 		if (oldValue == newValue) return
 		this.min = min
 		this.max = max
 		this.value = newValue
 		_changed.dispatch(this)
-		invalidateProperties()
 	}
 
 	/**

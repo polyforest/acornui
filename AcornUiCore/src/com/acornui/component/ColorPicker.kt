@@ -8,10 +8,8 @@ import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.core.di.owns
-import com.acornui.core.input.interaction.MouseInteractionRo
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.interaction.dragAttachment
-import com.acornui.core.input.mouseDown
 import com.acornui.core.popup.lift
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
@@ -38,8 +36,8 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 	val changed: Signal<() -> Unit>
 		get() = colorPalette.changed
 
-	private val stageMouseDownHandler = { event: MouseInteractionRo ->
-		if (!owns(event.target)) {
+	private val focusChangedHandler = { old: UiComponentRo?, new: UiComponentRo? ->
+		if (!owns(new)) {
 			close()
 		}
 	}
@@ -84,29 +82,20 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 		}
 	}
 
-	private var _isOpen = false
-
-	val isOpen: Boolean
-		get() = _isOpen
-
-	fun open() {
-		if (_isOpen) return
-		_isOpen = true
-		addChild(colorPaletteLift)
-		stage.mouseDown(isCapture = true).add(stageMouseDownHandler)
+	var isOpen by observable(false) {
+		if (it) {
+			addChild(colorPaletteLift)
+			focusManager.focusedChanged.add(focusChangedHandler)
+		} else {
+			removeChild(colorPaletteLift)
+			focusManager.focusedChanged.remove(focusChangedHandler)
+		}
 	}
 
-	fun close() {
-		if (!_isOpen) return
-		_isOpen = false
-		removeChild(colorPaletteLift)
-		stage.mouseDown(isCapture = true).remove(stageMouseDownHandler)
-	}
 
-	fun toggleOpen() {
-		if (_isOpen) close()
-		else open()
-	}
+	fun open() { isOpen = true }
+	fun close() { isOpen = false }
+	fun toggleOpen() { isOpen = !isOpen }
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val s = style
@@ -250,6 +239,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 		}
 
 	init {
+		focusEnabled = true
 		styleTags.add(ColorPalette)
 		watch(style) {
 			background?.dispose()

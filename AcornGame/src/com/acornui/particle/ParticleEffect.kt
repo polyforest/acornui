@@ -18,8 +18,11 @@ package com.acornui.particle
 
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.core.UidUtil
+import com.acornui.core.closeTo
 import com.acornui.core.graphics.BlendMode
+import com.acornui.math.MathUtils
 import com.acornui.serialization.*
+import kotlin.math.abs
 
 data class ParticleEffect(
 
@@ -163,9 +166,33 @@ data class PropertyTimeline(
 			timeB = timelineEntry.time
 			valueB = timelineEntry.value
 		}
-		val valueAlpha = (alpha - timeA) / (timeB - timeA)
-		val valueValue = (valueB - valueA) * valueAlpha + valueA
-		target.current = valueValue * target.diff + target.low
+		if (timeB - timeA < MathUtils.FLOAT_ROUNDING_ERROR) {
+			target.current = valueB * target.diff + target.low
+		} else {
+			val valueAlpha = (alpha - timeA) / (timeB - timeA)
+			val valueValue = (valueB - valueA) * valueAlpha + valueA
+			target.current = valueValue * target.diff + target.low
+		}
+
+	}
+
+	fun getValueCloseToTime(time: Float, affordance: Float = 0.02f): TimelineValue? {
+		val closest = getValueClosestToTime(time) ?: return null
+		return if (closest.time.closeTo(time, affordance)) closest else null
+	}
+
+	fun getValueClosestToTime(time: Float, startIndex: Int = 0, endIndex: Int = timeline.size): TimelineValue? {
+		var closestDelta: Float = Float.MAX_VALUE
+		var closestValue: TimelineValue? = null
+		for (i in maxOf(0, startIndex) .. minOf(timeline.size, endIndex) - 1) {
+			val iValue = timeline[i]
+			val delta = abs(time - iValue.time)
+			if (delta < closestDelta) {
+				closestDelta = delta
+				closestValue = iValue
+			}
+		}
+		return closestValue
 	}
 }
 

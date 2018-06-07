@@ -28,7 +28,6 @@ import com.acornui.logging.Log
 import com.acornui.reflect.observable
 import java.text.NumberFormat
 import java.util.*
-import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 import java.util.Locale as JvmLocale
 
