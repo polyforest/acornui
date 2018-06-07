@@ -271,7 +271,6 @@ class Particle : Clearable {
 	val velocity = Vector3()
 
 	val scale = Vector3(1f, 1f, 1f)
-	val scaleVelocity = Vector3()
 
 	val rotation = Vector3()
 	val rotationalVelocity = Vector3()
@@ -306,7 +305,6 @@ class Particle : Clearable {
 		}
 
 		position.add(velocity)
-		scale.add(scaleVelocity)
 		rotation.add(rotationalVelocity)
 		if (forwardVelocity != 0f) {
 			if (forwardDirection.y != 0f || forwardDirection.x != 0f) {
@@ -326,7 +324,6 @@ class Particle : Clearable {
 		position.clear()
 		velocity.clear()
 		scale.set(1f, 1f, 1f)
-		scaleVelocity.clear()
 		rotation.clear()
 		rotationalVelocity.clear()
 		forwardDirection.clear()
@@ -379,10 +376,6 @@ object RegisteredParticleSetters {
 			"scaleY" to { target -> target.scale.y },
 			"scaleZ" to { target -> target.scale.z },
 
-			"scaleVelocityX" to { target -> target.scaleVelocity.x },
-			"scaleVelocityY" to { target -> target.scaleVelocity.y },
-			"scaleVelocityZ" to { target -> target.scaleVelocity.z },
-
 			"rotationX" to { target -> target.rotation.x },
 			"rotationY" to { target -> target.rotation.y },
 			"rotationZ" to { target -> target.rotation.z },
@@ -421,10 +414,6 @@ object RegisteredParticleSetters {
 			"scaleX" to { target, delta -> target.scale.x += delta },
 			"scaleY" to { target, delta -> target.scale.y += delta },
 			"scaleZ" to { target, delta -> target.scale.z += delta },
-
-			"scaleVelocityX" to { target, delta -> target.scaleVelocity.x += delta },
-			"scaleVelocityY" to { target, delta -> target.scaleVelocity.y += delta },
-			"scaleVelocityZ" to { target, delta -> target.scaleVelocity.z += delta },
 
 			"rotationX" to { target, delta -> target.rotation.x += delta },
 			"rotationY" to { target, delta -> target.rotation.y += delta },
