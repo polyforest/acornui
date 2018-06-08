@@ -68,13 +68,11 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 		return _canvasY
 	}
 
-	private val mouseEnterHandler = {
-		jsEvent: Event ->
+	private val mouseEnterHandler = { jsEvent: Event ->
 		overCanvas(true)
 	}
 
-	private val mouseLeaveHandler = {
-		jsEvent: Event ->
+	private val mouseLeaveHandler = { jsEvent: Event ->
 		overCanvas(false)
 	}
 
@@ -88,8 +86,7 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 		overCanvasChanged.dispatch(value)
 	}
 
-	private val touchStartHandler = {
-		jsEvent: Event ->
+	private val touchStartHandler = { jsEvent: Event ->
 		populateTouchEvent(jsEvent as TouchEvent)
 		touchStart.dispatch(touchEvent)
 		if (jsEvent.cancelable && touchEvent.defaultPrevented())
@@ -97,8 +94,7 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 
 	}
 
-	private val touchMoveHandler = {
-		jsEvent: Event ->
+	private val touchMoveHandler = { jsEvent: Event ->
 
 		// Dispatch a mouse move event for the touch move. (Duck punch!)
 		populateTouchEvent(jsEvent as TouchEvent)
@@ -108,8 +104,7 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 			jsEvent.preventDefault()
 	}
 
-	private val touchEndHandler = {
-		jsEvent: Event ->
+	private val touchEndHandler = { jsEvent: Event ->
 
 		populateTouchEvent(jsEvent as TouchEvent)
 		touchEnd.dispatch(touchEvent)
@@ -118,8 +113,7 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 			jsEvent.preventDefault()
 	}
 
-	private val touchCancelHandler = {
-		jsEvent: Event ->
+	private val touchCancelHandler = { jsEvent: Event ->
 
 		populateTouchEvent(jsEvent as TouchEvent)
 		touchCancel.dispatch(touchEvent)
@@ -128,8 +122,7 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 			jsEvent.preventDefault()
 	}
 
-	private val mouseMoveHandler = {
-		jsEvent: Event ->
+	private val mouseMoveHandler = { jsEvent: Event ->
 		populateMouseEvent(jsEvent as MouseEvent)
 		mouseEvent.button = WhichButton.UNKNOWN
 
@@ -138,8 +131,7 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 			jsEvent.preventDefault()
 	}
 
-	private val mouseDownHandler = {
-		jsEvent: Event ->
+	private val mouseDownHandler = { jsEvent: Event ->
 		populateMouseEvent(jsEvent as MouseEvent)
 
 		downMap[mouseEvent.button] = true
@@ -148,8 +140,7 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 			jsEvent.preventDefault()
 	}
 
-	private val mouseUpHandler = {
-		jsEvent: Event ->
+	private val mouseUpHandler = { jsEvent: Event ->
 		populateMouseEvent(jsEvent as MouseEvent)
 
 		downMap[mouseEvent.button] = false
@@ -158,8 +149,7 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 			jsEvent.preventDefault()
 	}
 
-	private val mouseWheelHandler = {
-		jsEvent: Event ->
+	private val mouseWheelHandler = { jsEvent: Event ->
 		if (jsEvent is WheelEvent) {
 			wheelEvent.clear()
 			wheelEvent.timestamp = jsEvent.timeStamp.toLong()
@@ -218,17 +208,20 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 	private fun TouchInteraction.set(jsEvent: TouchEvent) {
 		timestamp = jsEvent.timeStamp.toLong()
 		clearTouches()
-		for (targetTouch in jsEvent.targetTouches) {
+		for (i in 0..jsEvent.targetTouches.lastIndex) {
+			val targetTouch = jsEvent.targetTouches[i]
 			val t = Touch.obtain()
 			t.set(targetTouch)
 			targetTouches.add(t)
 		}
-		for (changedTouch in jsEvent.changedTouches) {
+		for (i in 0..jsEvent.changedTouches.lastIndex) {
+			val changedTouch = jsEvent.changedTouches[i]
 			val t = Touch.obtain()
 			t.set(changedTouch)
 			changedTouches.add(t)
 		}
-		for (touch in jsEvent.touches) {
+		for (i in 0..jsEvent.touches.lastIndex) {
+			val touch = jsEvent.touches[i]
 			val t = Touch.obtain()
 			t.set(touch)
 			touches.add(t)

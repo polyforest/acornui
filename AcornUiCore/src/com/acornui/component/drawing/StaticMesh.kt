@@ -29,6 +29,7 @@ import com.acornui.core.di.inject
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
 import com.acornui.core.io.BufferFactory
+import com.acornui.core.iterateChildren
 import com.acornui.gl.core.*
 import com.acornui.io.NativeBuffer
 import com.acornui.math.*

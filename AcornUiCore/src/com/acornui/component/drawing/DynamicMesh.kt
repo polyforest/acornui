@@ -29,6 +29,7 @@ import com.acornui.core.childWalkPreOrder
 import com.acornui.core.childWalkPreOrderReversed
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
+import com.acornui.core.iterateChildren
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.Vertex
@@ -46,7 +47,8 @@ open class DynamicMeshComponent(
 		owner: Owned
 ) : UiComponentImpl(owner), Clearable {
 
-	private val data: MeshData = MeshData()
+	@PublishedApi
+	internal val data: MeshData = MeshData()
 
 	var intersectionType = MeshIntersectionType.BOUNDING_BOX
 
@@ -78,7 +80,7 @@ open class DynamicMeshComponent(
 		})
 	}
 
-	fun buildMesh(inner: MeshData.() -> Unit) {
+	inline fun buildMesh(inner: MeshData.() -> Unit) {
 		fillStyle.clear()
 		lineStyle.clear()
 		data.clear()
@@ -139,7 +141,7 @@ open class DynamicMeshComponent(
 	private fun clearGlobalPrimitives() {
 		for (i in 0..globalPrimitives.lastIndex) {
 			for (j in 0..globalPrimitives[i].lastIndex) {
-				globalPrimitives[i][j].free()
+				Vertex.free(globalPrimitives[i][j])
 			}
 			arrayListPool.free(globalPrimitives[i])
 		}
@@ -251,10 +253,10 @@ open class DynamicMeshComponent(
 	}
 
 	companion object {
-		private const val GLOBAL_PRIMITIVES = 1 shl 16
-		private const val VERTEX_TRANSFORM = 1 shl 17
-		private const val VERTEX_COLOR_TRANSFORM = 1 shl 18
-		private const val GLOBAL_BOUNDING_BOX = 1 shl 19
+		const val GLOBAL_PRIMITIVES = 1 shl 16
+		const val VERTEX_TRANSFORM = 1 shl 17
+		const val VERTEX_COLOR_TRANSFORM = 1 shl 18
+		const val GLOBAL_BOUNDING_BOX = 1 shl 19
 	}
 }
 

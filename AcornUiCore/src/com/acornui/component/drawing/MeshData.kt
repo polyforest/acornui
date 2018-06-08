@@ -138,7 +138,7 @@ class MeshData : Parent<MeshData>, Clearable {
 	}
 
 	fun pushVertex(x: Float, y: Float, z: Float, colorTint: ColorRo, u: Float = 0f, v: Float = 0f, normal: Vector3Ro = Vector3.NEG_Z) {
-		val localV = Vertex()
+		val localV = Vertex.obtain()
 		localV.normal.set(normal)
 		localV.position.set(x, y, z)
 		localV.colorTint.set(colorTint)
@@ -148,6 +148,7 @@ class MeshData : Parent<MeshData>, Clearable {
 	}
 
 	override fun clear() {
+		Vertex.freeAll(vertices)
 		vertices.clear()
 		indices.clear()
 		drawMode = Gl20.TRIANGLES

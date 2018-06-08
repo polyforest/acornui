@@ -6,7 +6,6 @@ import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
-import kotlin.properties.Delegates
 
 /**
  * ListView is a read-only wrapper to an ObservableList that will allow filtering and sorting
@@ -51,7 +50,7 @@ class ListView<E>() : ObservableList<E>, Disposable {
 
 	private var isDirty: Boolean = true
 
-	private val iteratorPool = ClearableObjectPool { ConcurrentListIteratorImpl(this) }
+	val iteratorPool = ClearableObjectPool { ConcurrentListIteratorImpl(this) }
 
 	/**
 	 * If set, this list will be reduced to elements passing the given filter function.
@@ -277,7 +276,12 @@ class ListView<E>() : ObservableList<E>, Disposable {
 		return ConcurrentListIteratorImpl(this)
 	}
 
-	override fun iterate(body: (E) -> Boolean) {
+	inline fun iterate(body: (E) -> Boolean, reversed: Boolean) {
+		if (reversed) iterateReversed(body)
+		else iterate(body)
+	}
+
+	inline fun iterate(body: (E) -> Boolean) {
 		val iterator = iteratorPool.obtain()
 		while (iterator.hasNext()) {
 			val shouldContinue = body(iterator.next())
@@ -286,7 +290,7 @@ class ListView<E>() : ObservableList<E>, Disposable {
 		iteratorPool.free(iterator)
 	}
 
-	override fun iterateReversed(body: (E) -> Boolean) {
+	inline fun iterateReversed(body: (E) -> Boolean) {
 		val iterator = iteratorPool.obtain()
 		iterator.cursor = size
 		while (iterator.hasPrevious()) {

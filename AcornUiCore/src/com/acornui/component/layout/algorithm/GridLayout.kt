@@ -61,7 +61,8 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 
 	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, props: GridLayoutStyle, out: SizeConstraints) {
 		var minWidth = 0f
-		for (c in props.columns) {
+		for (i in 0..props.columns.lastIndex) {
+			val c = props.columns[i]
 			if (c.minWidth != null) minWidth += c.minWidth!!
 		}
 		out.width.min = minWidth

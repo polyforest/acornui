@@ -167,7 +167,7 @@ class ParticleEmitterInstance(
 		emitter.particleLifeExpectancy.apply(lifeExpectancyValue, alpha)
 		if (_currentTime < _duration && _currentTime > 0f) {
 			// Create new particles if the accumulator surpasses 1.
-			accumulator += emissionRateValue.current * stepTime
+			accumulator += emissionRateValue.current * maxParticlesScale *  stepTime
 			if (accumulator > 1f) {
 				for (i in 0..particles.lastIndex) {
 					val particle = particles[i]

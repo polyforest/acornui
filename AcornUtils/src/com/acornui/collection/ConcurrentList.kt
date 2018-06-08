@@ -20,7 +20,8 @@ class ConcurrentListImpl<E> : MutableListBase<E>(), MutableConcurrentList<E> {
 
 	private val iteratorStack = ArrayList<ConcurrentListImplIterator<E>>()
 	private val list = ArrayList<E>()
-	private val iteratorPool = ClearableObjectPool { ConcurrentListImplIterator(this, iteratorStack) }
+
+	val iteratorPool = ClearableObjectPool { ConcurrentListImplIterator(this, iteratorStack) }
 
 	override fun add(index: Int, element: E) {
 		list.add(index, element)
@@ -62,7 +63,17 @@ class ConcurrentListImpl<E> : MutableListBase<E>(), MutableConcurrentList<E> {
 		return iterator
 	}
 
-	override fun iterate(body: (E) -> Boolean) {
+	inline fun iterate(body: (E) -> Boolean, reversed: Boolean) {
+		if (reversed) iterateReversed(body)
+		else iterate(body)
+	}
+
+	inline fun iterate(body: (E) -> Boolean) {
+		if (size == 0) return
+		else if (size == 1) {
+			body(this[0])
+			return
+		}
 		val iterator = iteratorPool.obtain()
 		while (iterator.hasNext()) {
 			val shouldContinue = body(iterator.next())
@@ -71,7 +82,12 @@ class ConcurrentListImpl<E> : MutableListBase<E>(), MutableConcurrentList<E> {
 		iteratorPool.free(iterator)
 	}
 
-	override fun iterateReversed(body: (E) -> Boolean) {
+	inline fun iterateReversed(body: (E) -> Boolean) {
+		if (size == 0) return
+		else if (size == 1) {
+			body(this[0])
+			return
+		}
 		val iterator = iteratorPool.obtain()
 		iterator.cursor = size
 		while (iterator.hasPrevious()) {
@@ -82,7 +98,7 @@ class ConcurrentListImpl<E> : MutableListBase<E>(), MutableConcurrentList<E> {
 	}
 }
 
-private class ConcurrentListImplIterator<E>(
+class ConcurrentListImplIterator<E>(
 		target: MutableList<E>,
 		private val stack: MutableList<ConcurrentListImplIterator<E>>
 ) : MutableConcurrentListIteratorImpl<E>(target) {

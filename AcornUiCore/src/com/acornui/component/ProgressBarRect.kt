@@ -25,8 +25,13 @@ class ProgressBarRect(owner: Owned) : ContainerImpl(owner) {
 
 	val style = bind(ProgressBarRectStyle())
 
-	val backRect = addChild(rect())
-	val frontRect = addChild(rect())
+	val backRect = addChild(rect {
+		includeInLayout = false
+	})
+
+	val frontRect = addChild(rect{
+		includeInLayout = false
+	})
 
 	init {
 		styleTags.add(ProgressBarRect)

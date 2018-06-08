@@ -33,7 +33,7 @@ interface ChildRo {
 
 }
 
-fun <T: ChildRo> T.previousSibling(): T? {
+fun <T : ChildRo> T.previousSibling(): T? {
 	@Suppress("UNCHECKED_CAST")
 	val p = parent as? ParentRo<T> ?: return null
 	val c = p.children
@@ -66,36 +66,17 @@ interface ParentRo<out T> : ChildRo {
 	 */
 	val children: List<T>
 
-		/**
-	 * Iterates over the children.
-	 * It is up to the implementation how concurrent modification works.
-	 */
-	fun iterateChildren(body: (T) -> Boolean, reversed: Boolean) {
-		if (reversed) {
-			iterateChildrenReversed(body)
-		} else {
-			iterateChildren(body)
-		}
-	}
+}
 
-	/**
-	 * Iterates forward over the children.
-	 */
-	fun iterateChildren(body: (T) -> Boolean) {
-		val c = children
-		for (i in 0..c.lastIndex) {
-			val shouldContinue = body(c[i])
+inline fun <T> ParentRo<T>.iterateChildren(reversed: Boolean = false, body: (child: T) -> Boolean) {
+	if (reversed) {
+		for (i in children.lastIndex downTo 0) {
+			val shouldContinue = body(children[i])
 			if (!shouldContinue) break
 		}
-	}
-
-	/**
-	 * Iterates backward over the children.
-	 */
-	fun iterateChildrenReversed(body: (T) -> Boolean) {
-		val c = children
-		for (i in c.lastIndex downTo 0) {
-			val shouldContinue = body(c[i])
+	} else {
+		for (i in 0..children.lastIndex) {
+			val shouldContinue = body(children[i])
 			if (!shouldContinue) break
 		}
 	}
@@ -263,10 +244,10 @@ inline fun <reified T> T.childWalkLevelOrder(callback: (T) -> TreeWalk, reversed
 				else -> {
 				}
 			}
-			(next as? ParentRo<*>)?.iterateChildren({
+			(next as? ParentRo<*>)?.iterateChildren(reversed) {
 				openList.add(it)
 				true
-			}, reversed)
+			}
 		}
 	}
 	arrayListPool.free(openList)
@@ -331,10 +312,10 @@ inline fun <reified T> T.childWalkPreOrder(callback: (T) -> TreeWalk, reversed: 
 				else -> {
 				}
 			}
-			(next as? ParentRo<*>)?.iterateChildren({
+			(next as? ParentRo<*>)?.iterateChildren(!reversed) {
 				openList.add(it)
 				true
-			}, !reversed)
+			}
 		}
 	}
 	arrayListPool.free(openList)
@@ -453,11 +434,9 @@ fun ChildRo.root(): ChildRo {
 fun ChildRo.isBefore(other: ChildRo): Boolean {
 	if (this === other) throw Exception("this == other")
 	var a = this
-	parentWalk {
-		parentA ->
+	parentWalk { parentA ->
 		var b = this
-		other.parentWalk {
-			parentB ->
+		other.parentWalk { parentB ->
 			if (parentA === parentB) {
 				val children = (parentA as ParentRo<*>).children
 				val indexA = children.indexOf(a)
@@ -479,11 +458,9 @@ fun ChildRo.isBefore(other: ChildRo): Boolean {
 fun ChildRo.isAfter(other: ChildRo): Boolean {
 	if (this === other) throw Exception("this === other")
 	var a = this
-	parentWalk {
-		parentA ->
+	parentWalk { parentA ->
 		var b = this
-		other.parentWalk {
-			parentB ->
+		other.parentWalk { parentB ->
 			if (parentA === parentB) {
 				val children = (parentA as ParentRo<*>).children
 				val indexA = children.indexOf(a)

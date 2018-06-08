@@ -56,7 +56,7 @@ class Constant(private val value: Float) : Interpolation {
 class Pow(private val power: Int) : Interpolation {
 
 	override fun apply(alpha: Float): Float {
-		if (alpha <= 0.5f) return (alpha * 2f).pow(power.toFloat()) / 2f
+		if (alpha <= 0.5f) return (alpha * 2f).pow(power.toFloat()) * 0.5f
 		return ((alpha - 1f) * 2f).pow(power.toFloat()) / (if (power % 2 == 0) -2f else 2f) + 1f
 	}
 }
@@ -87,8 +87,8 @@ open class Exp(val value: Float, val power: Float) : Interpolation {
 	}
 
 	override fun apply(alpha: Float): Float {
-		if (alpha <= 0.5f) return (value.pow(power * (alpha * 2f - 1f)) - min) * scale / 2f
-		return (2f - (value.pow(-power * (alpha * 2f - 1f)) - min) * scale) / 2f
+		if (alpha <= 0.5f) return (value.pow(power * (alpha * 2f - 1f)) - min) * scale * 0.5f
+		return (2f - (value.pow(-power * (alpha * 2f - 1f)) - min) * scale) * 0.5f
 	}
 }
 
@@ -119,11 +119,11 @@ open class Elastic(val value: Float, val power: Float, bounces: Int, val scale: 
 		var a = alpha
 		if (a <= 0.5f) {
 			a *= 2f
-			return value.pow((power * (a - 1f))) * sin(a * bounces) * scale / 2f
+			return value.pow((power * (a - 1f))) * sin(a * bounces) * scale * 0.5f
 		}
 		a = 1f - a
 		a *= 2f
-		return 1f - value.pow((power * (a - 1f))) * sin((a) * bounces) * scale / 2f
+		return 1f - value.pow((power * (a - 1f))) * sin((a) * bounces) * scale * 0.5f
 	}
 }
 
@@ -156,11 +156,11 @@ open class Swing(scale: Float) : Interpolation {
 		var a = alpha
 		if (a <= 0.5f) {
 			a *= 2f
-			return a * a * ((scale + 1f) * a - scale) / 2f
+			return a * a * ((scale + 1f) * a - scale) * 0.5f
 		}
 		a--
 		a *= 2f
-		return a * a * ((scale + 1f) * a + scale) / 2f + 1f
+		return a * a * ((scale + 1f) * a + scale) * 0.5f + 1f
 	}
 }
 
@@ -207,39 +207,53 @@ object Fade : Interpolation {
 
 object Sine : Interpolation {
 	override fun apply(alpha: Float): Float {
-		return (1f - cos(alpha * PI)) / 2f
+		return (1f - cos(alpha * PI)) * 0.5f
 	}
 }
 
 object SineIn : Interpolation {
 	override fun apply(alpha: Float): Float {
-		return 1f - cos(alpha * PI / 2f)
+		return 1f - cos(alpha * PI * 0.5f)
 	}
 }
 
 object SineOut : Interpolation {
 	override fun apply(alpha: Float): Float {
-		return sin(alpha * PI / 2f)
+		return sin(alpha * PI * 0.5f)
 	}
 }
 
 object Circle : Interpolation {
 	override fun apply(alpha: Float): Float {
 		var a = MathUtils.clamp(alpha, 0f, 1f)
-		if (a <= 0.5f) {
+		return if (a <= 0.5f) {
 			a *= 2f
-			return (1 - sqrt(1 - a * a)) / 2f
+			(1f - sqrt(1f - a * a)) * 0.5f
+		} else {
+			a--
+			a *= 2f
+			(sqrt(1f - a * a) + 1f) * 0.5f
 		}
-		a--
-		a *= 2f
-		return (sqrt(1f - a * a) + 1f) / 2f
+	}
+}
+
+object CircleInverse : Interpolation {
+	override fun apply(alpha: Float): Float {
+		var a = MathUtils.clamp(alpha, 0f, 1f) * 2f
+		return if (a <= 1f) {
+			a--
+			sqrt(1f - a * a) * 0.5f
+		} else {
+			a--
+			-sqrt(1f - a * a) * 0.5f + 1f
+		}
 	}
 }
 
 object CircleIn : Interpolation {
 	override fun apply(alpha: Float): Float {
 		val a = MathUtils.clamp(alpha, 0f, 1f)
-		return 1 - sqrt((1f - a * a))
+		return 1f - sqrt(1f - a * a)
 	}
 }
 
@@ -458,6 +472,7 @@ object Easing {
 	val exp5Out: Interpolation = ExpOut(2f, 5f)
 
 	val circle: Interpolation = Circle
+	val circleInverse: Interpolation = CircleInverse
 	val circleIn: Interpolation = CircleIn
 	val circleOut: Interpolation = CircleOut
 
@@ -504,6 +519,7 @@ object Easing {
 			"exp5Out" to exp5Out,
 
 			"circle" to circle,
+			"circleInverse" to circleInverse,
 			"circleIn" to circleIn,
 			"circleOut" to circleOut,
 

@@ -20,21 +20,6 @@ import com.acornui.core.Disposable
 
 interface ConcurrentList<out E> : List<E> {
 
-	fun iterate(body: (E) -> Boolean, reversed: Boolean) {
-		if (reversed) iterateReversed(body)
-		else iterate(body)
-	}
-
-	/**
-	 * Performs an iteration without allocation.
-	 */
-	fun iterate(body: (E) -> Boolean)
-
-	/**
-	 * Performs an iteration in reverse without allocation.
-	 */
-	fun iterateReversed(body: (E) -> Boolean)
-
 	fun concurrentIterator(): ConcurrentListIterator<E>
 }
 
@@ -50,12 +35,32 @@ interface MutableConcurrentList<E> : ConcurrentList<E>, MutableList<E> {
 interface ConcurrentListIterator<out E> : Clearable, ListIterator<E>, Iterable<E>, Disposable {
 
 	/**
+	 * The size of the list.
+	 */
+	val size: Int
+
+	/**
 	 * The current cursor index.
 	 */
 	var cursor: Int
 
-	fun iterate(body: (E) -> Boolean)
-	fun iterateReversed(body: (E) -> Boolean)
+}
+
+inline fun <E> ConcurrentListIterator<E>.iterate(body: (E) -> Boolean) {
+	clear()
+	while (hasNext()) {
+		val shouldContinue = body(next())
+		if (!shouldContinue) break
+	}
+}
+
+inline fun <E> ConcurrentListIterator<E>.iterateReversed(body: (E) -> Boolean) {
+	clear()
+	cursor = size
+	while (hasPrevious()) {
+		val shouldContinue = body(previous())
+		if (!shouldContinue) break
+	}
 }
 
 fun <E> ConcurrentListIteratorImpl(
@@ -113,6 +118,9 @@ private open class WatchedMutableConcurrentListIteratorImpl<E>(private val impl:
 open class ConcurrentListIteratorImpl<out E>(
 		private val list: List<E>
 ) : ConcurrentListIterator<E> {
+
+	override val size: Int
+		get() = list.size
 
 	/**
 	 * Index of next element to return
@@ -179,23 +187,6 @@ open class ConcurrentListIteratorImpl<out E>(
 
 	override fun iterator(): Iterator<E> {
 		return this
-	}
-
-	override fun iterate(body: (E) -> Boolean) {
-		clear()
-		while (hasNext()) {
-			val shouldContinue = body(next())
-			if (!shouldContinue) break
-		}
-	}
-
-	override fun iterateReversed(body: (E) -> Boolean) {
-		clear()
-		cursor = list.size
-		while (hasPrevious()) {
-			val shouldContinue = body(previous())
-			if (!shouldContinue) break
-		}
 	}
 
 	override fun dispose() {

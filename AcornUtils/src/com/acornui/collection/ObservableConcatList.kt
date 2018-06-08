@@ -44,8 +44,6 @@ class ObservableConcatList<out E>(private val listA: ObservableList<E>, private 
 	override val reset: Signal<() -> Unit>
 		get() = _reset
 
-	private val iteratorPool = ClearableObjectPool { ConcurrentListIteratorImpl(this) }
-
 	override val size: Int
 		get() = listA.size + listB.size
 
@@ -102,25 +100,6 @@ class ObservableConcatList<out E>(private val listA: ObservableList<E>, private 
 		val newList = ArrayList<E>(size)
 		newList.addAll(this)
 		return newList
-	}
-
-	override fun iterate(body: (E) -> Boolean) {
-		val iterator = iteratorPool.obtain()
-		while (iterator.hasNext()) {
-			val shouldContinue = body(iterator.next())
-			if (!shouldContinue) break
-		}
-		iteratorPool.free(iterator)
-	}
-
-	override fun iterateReversed(body: (E) -> Boolean) {
-		val iterator = iteratorPool.obtain()
-		iterator.cursor = size
-		while (iterator.hasPrevious()) {
-			val shouldContinue = body(iterator.previous())
-			if (!shouldContinue) break
-		}
-		iteratorPool.free(iterator)
 	}
 
 	override fun concurrentIterator(): ConcurrentListIterator<E> {

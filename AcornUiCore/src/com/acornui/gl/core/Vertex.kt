@@ -39,6 +39,7 @@ class Vertex(
 		v = 0f
 	}
 
+	@Deprecated("Use Vertex.free", ReplaceWith("Vertex.free(this)"))
 	fun free() {
 		pool.free(this)
 	}
@@ -108,6 +109,14 @@ class Vertex(
 			vertex.u = u
 			vertex.v = v
 			return vertex
+		}
+
+		fun free(vertex: Vertex) {
+			pool.free(vertex)
+		}
+
+		fun freeAll(list: List<Vertex>) {
+			pool.freeAll(list)
 		}
 	}
 }
