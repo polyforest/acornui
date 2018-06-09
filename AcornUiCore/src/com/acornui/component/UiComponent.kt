@@ -344,7 +344,6 @@ open class UiComponentImpl(
 		set(value) {
 			if (value != _interactivityMode) {
 				_interactivityMode = value
-
 				val focused = focusManager.focused()
 				when (value) {
 					InteractivityMode.NONE -> {

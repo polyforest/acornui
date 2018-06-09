@@ -71,8 +71,8 @@ open class VScrollBar(
 		val scrollDiff = scrollModel.max - scrollModel.min
 		val thumbAvailable = maxTrack() - minTrack()
 		thumb.visible = thumbAvailable > maxOf(1f, (thumb.minHeight ?: 0f))
-		thumb.interactivityMode = if (scrollDiff > 0f) InteractivityMode.ALL else InteractivityMode.NONE
-		track.interactivityMode = thumb.interactivityMode
+		thumb.interactivityMode = if (style.pageMode && scrollDiff > 0f) InteractivityMode.ALL else InteractivityMode.NONE
+		track.interactivityMode = if (scrollDiff > 0f) InteractivityMode.ALL else InteractivityMode.NONE
 		if (thumb.visible) {
 			val thumbHeight = (thumbAvailable * thumbAvailable) / maxOf(1f, thumbAvailable + scrollDiff * modelToPixels)
 			val thumbLd = thumb.layoutData as BasicLayoutData?

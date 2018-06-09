@@ -72,7 +72,8 @@ abstract class ScrollBarBase(owner: Owned) : ContainerImpl(owner) {
 		watch(style) {
 			track?.dispose()
 			track = addChild(it.track(this))
-			track!!.cursor(StandardCursors.HAND)
+			val track = track!!
+			track.cursor(StandardCursors.HAND)
 
 			decrementButton?.dispose()
 			decrementButton = addChild(it.decrementButton(this))
@@ -86,15 +87,16 @@ abstract class ScrollBarBase(owner: Owned) : ContainerImpl(owner) {
 			thumb = addChild(it.thumb(this))
 			val thumb = thumb!!
 			thumb.alpha = oldThumbAlpha
+			thumb.cursor(StandardCursors.HAND)
 			if (it.pageMode) {
-				track!!.mouseDown().add(this::trackPressHandler)
+				track.mouseDown().add(this::trackPressHandler)
 				val thumbDrag = thumb.dragAttachment(0f)
 				thumbDrag.dragStart.add(this::dragStartHandler)
 				thumbDrag.drag.add(this::thumbDragHandler)
 			} else {
 				thumb.interactivityMode = InteractivityMode.NONE
-				track!!.dragAttachment(0f)
-				track!!.drag().add(this::trackDragHandler)
+				track.dragAttachment(0f)
+				track.drag().add(this::trackDragHandler)
 			}
 			thumb.mouseOver().add { activeAnim() }
 		}
@@ -132,7 +134,7 @@ abstract class ScrollBarBase(owner: Owned) : ContainerImpl(owner) {
 		positionTmp.set(event.position)
 		windowToLocal(positionTmp)
 		val newValue = getModelValue(positionTmp)
-		scrollModel.value = (newValue)
+		scrollModel.value = newValue
 	}
 
 	private fun dragStartHandler(event: DragInteractionRo) {

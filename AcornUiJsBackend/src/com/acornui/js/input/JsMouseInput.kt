@@ -28,7 +28,6 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.events.WheelEvent
-import kotlin.browser.document
 import kotlin.browser.window
 
 /**
@@ -224,13 +223,6 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 			val touch = jsEvent.touches[i]
 			val t = Touch.obtain()
 			t.set(touch)
-			touches.add(t)
-		}
-		// TODO: TEMP
-		if (jsEvent.metaKey && jsEvent.touches.isNotEmpty()) {
-			val t = Touch.obtain()
-			t.set(jsEvent.touches.first())
-			t.canvasX += 50f
 			touches.add(t)
 		}
 	}

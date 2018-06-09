@@ -41,6 +41,7 @@ import com.acornui.core.popup.PopUpManager
 import com.acornui.core.userInfo
 import com.acornui.component.ScrollRectStyle
 import com.acornui.component.text.loadFontFromAtlas
+import com.acornui.core.input.mouseDown
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.*
