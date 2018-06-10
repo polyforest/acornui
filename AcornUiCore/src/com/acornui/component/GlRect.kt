@@ -414,9 +414,9 @@ private fun fitSize(value: Float, other: Float, max: Float): Float {
 	val v1 = if (value < 0f) 0f else value
 	val v2 = if (other < 0f) 0f else other
 	val total = v1 + v2
-	if (total > max) {
-		return v1 * max / total
+	return if (total > max) {
+		v1 * max / total
 	} else {
-		return v1
+		v1
 	}
 }

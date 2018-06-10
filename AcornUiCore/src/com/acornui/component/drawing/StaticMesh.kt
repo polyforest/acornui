@@ -18,10 +18,12 @@ package com.acornui.component.drawing
 
 import com.acornui._assert
 import com.acornui.assertionsEnabled
-import com.acornui.collection.ObjectPool
+import com.acornui.collection.Clearable
+import com.acornui.collection.ClearableObjectPool
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.ValidationFlags
+import com.acornui.component.drawing.DrawElementsCall.Companion
 import com.acornui.core.TreeWalk
 import com.acornui.core.childWalkLevelOrder
 import com.acornui.core.di.Owned
@@ -236,7 +238,7 @@ class StaticMesh {
 
 		// Recycle the draw calls.
 		for (i in 0..drawCalls.lastIndex) {
-			drawCalls[i].free()
+			DrawElementsCall.free(drawCalls[i])
 		}
 		drawCalls.clear()
 
@@ -394,7 +396,7 @@ class StaticMesh {
 
 }
 
-class DrawElementsCall private constructor() {
+class DrawElementsCall private constructor() : Clearable {
 
 	var texture: Texture? = null
 	var blendMode = BlendMode.NORMAL
@@ -403,7 +405,7 @@ class DrawElementsCall private constructor() {
 	var count = 0
 	var offset = 0
 
-	fun reset() {
+	override fun clear() {
 		texture = null
 		blendMode = BlendMode.NORMAL
 		premultipliedAlpha = false
@@ -412,16 +414,15 @@ class DrawElementsCall private constructor() {
 		offset = 0
 	}
 
-	fun free() {
-		reset()
-		pool.free(this)
-	}
-
 	companion object {
-		private val pool = ObjectPool { DrawElementsCall() }
+		private val pool = ClearableObjectPool { DrawElementsCall() }
 
 		fun obtain(): DrawElementsCall {
 			return pool.obtain()
+		}
+
+		fun free(call: DrawElementsCall) {
+			pool.free(call)
 		}
 	}
 }

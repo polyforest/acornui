@@ -32,7 +32,6 @@ import com.acornui.core.di.*
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.Focusable
 import com.acornui.core.focus.blur
-import com.acornui.core.focus.focusEnabledInherited
 import com.acornui.core.graphics.Camera
 import com.acornui.core.graphics.CameraRo
 import com.acornui.core.graphics.Window

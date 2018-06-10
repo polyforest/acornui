@@ -20,6 +20,7 @@ import com.acornui.collection.Clearable
 import com.acornui.core.Disposable
 import com.acornui.core.io.BufferFactory
 import com.acornui.component.drawing.DrawElementsCall
+import com.acornui.component.drawing.DrawElementsCall.Companion
 import com.acornui.graphics.ColorRo
 import com.acornui.io.NativeBuffer
 import com.acornui.math.Vector3Ro
@@ -91,7 +92,7 @@ class StaticShaderBatchImpl(
 	override fun clear() {
 		// Recycle the draw calls.
 		for (i in 0..drawCalls.lastIndex) {
-			drawCalls[i].free()
+			DrawElementsCall.free(drawCalls[i])
 		}
 		drawCalls.clear()
 		indices.clear()
