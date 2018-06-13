@@ -231,9 +231,13 @@ class GlState(
 			viewProjection(camera.combined.values)
 			model(model.values)
 		} else {
-			_mvp.set(camera.combined)
-			if (model !== Matrix4.IDENTITY) _mvp.mul(model)
-			viewProjection(_mvp.values)
+			if (model === Matrix4.IDENTITY) {
+				viewProjection(camera.combined.values)
+			} else {
+				_mvp.set(camera.combined)
+				_mvp.mul(model)
+				viewProjection(_mvp.values)
+			}
 		}
 	}
 

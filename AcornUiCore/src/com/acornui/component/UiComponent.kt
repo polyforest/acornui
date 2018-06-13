@@ -309,12 +309,7 @@ open class UiComponentImpl(
 	protected val _scale: Vector3 = Vector3(1f, 1f, 1f)
 	protected val _origin: Vector3 = Vector3(0f, 0f, 0f)
 
-	private var _cameraOverride: CameraRo? = null
-	override var cameraOverride: CameraRo?
-		get() = _cameraOverride
-		set(value) {
-			_cameraOverride = value
-		}
+	override var cameraOverride: CameraRo? by validationProp(null, ValidationFlags.CAMERA)
 
 	/**
 	 * True if no scaling or rotation has been applied.
@@ -407,6 +402,7 @@ open class UiComponentImpl(
 				addNode(CONCATENATED_COLOR_TRANSFORM, COLOR_TRANSFORM, r::updateConcatenatedColorTransform)
 				addNode(INTERACTIVITY_MODE, r::updateInheritedInteractivityMode)
 				addNode(FOCUS_ORDER, r::updateFocusOrder)
+				addNode(CAMERA, r::updateCamera)
 			}
 		}
 
@@ -454,6 +450,14 @@ open class UiComponentImpl(
 		if (newFocusEnabled || wasFocusEnabled) {
 			wasFocusEnabled = newFocusEnabled
 			focusManager.invalidateFocusableOrder(this)
+		}
+	}
+
+	protected open fun updateCamera() {
+		_camera = if (cameraOverride == null) {
+			parent?.camera ?: defaultCamera
+		} else {
+			cameraOverride!!
 		}
 	}
 
@@ -1288,14 +1292,15 @@ open class UiComponentImpl(
 		_concatenatedTransformInvIsValid = false
 	}
 
+	private var _camera: CameraRo = defaultCamera
+
 	/**
 	 * Returns the camera to be used for this component.
 	 */
 	override val camera: CameraRo
 		get() {
-			if (cameraOverride != null) return cameraOverride!!
-			val p = parent
-			return p?.camera ?: defaultCamera
+			validate(ValidationFlags.CAMERA)
+			return _camera
 		}
 
 	//-----------------------------------------------

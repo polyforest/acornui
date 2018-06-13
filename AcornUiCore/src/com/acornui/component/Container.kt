@@ -175,7 +175,8 @@ open class ContainerImpl(
 					ValidationFlags.CONCATENATED_COLOR_TRANSFORM or
 					ValidationFlags.CONCATENATED_TRANSFORM or
 					ValidationFlags.INTERACTIVITY_MODE or
-					ValidationFlags.FOCUS_ORDER
+					ValidationFlags.FOCUS_ORDER or
+					ValidationFlags.CAMERA
 
 	override fun onInvalidated(flagsInvalidated: Int) {
 		val flagsToCascade = flagsInvalidated and cascadingFlags
