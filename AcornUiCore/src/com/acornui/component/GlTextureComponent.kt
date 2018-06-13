@@ -46,7 +46,7 @@ open class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureCom
 	private val sprite = Sprite()
 
 	init {
-		validation.addNode(1 shl 16, ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM or ValidationFlags.CONCATENATED_TRANSFORM) { validateVertices() }
+		validation.addNode(1 shl 16, ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM or ValidationFlags.CONCATENATED_TRANSFORM) { updateVertices() }
 	}
 
 	constructor (owner: Owned, path: String) : this(owner) {
@@ -92,16 +92,11 @@ open class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureCom
 		if (isActive) {
 			sprite.texture?.refInc()
 		}
-		invalidate(ValidationFlags.LAYOUT)
+		invalidateLayout()
 	}
 
-	override var isRotated: Boolean
+	override val isRotated: Boolean
 		get() = sprite.isRotated
-		set(value) {
-			if (sprite.isRotated == value) return
-			sprite.isRotated = value
-			invalidate(ValidationFlags.LAYOUT)
-		}
 
 	override var blendMode: BlendMode
 		get() = sprite.blendMode
@@ -121,13 +116,13 @@ open class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureCom
 		sprite.texture?.refDec()
 	}
 
-	override fun setUv(u: Float, v: Float, u2: Float, v2: Float) {
-		sprite.setUv(u, v, u2, v2)
+	override fun setUv(u: Float, v: Float, u2: Float, v2: Float, isRotated: Boolean) {
+		sprite.setUv(u, v, u2, v2, isRotated)
 		invalidate(ValidationFlags.LAYOUT)
 	}
 
-	override fun setRegion(x: Float, y: Float, width: Float, height: Float) {
-		sprite.setRegion(x, y, width, height)
+	override fun setRegion(x: Float, y: Float, width: Float, height: Float, isRotated: Boolean) {
+		sprite.setRegion(x, y, width, height, isRotated)
 		invalidate(ValidationFlags.LAYOUT)
 	}
 
@@ -137,7 +132,7 @@ open class GlTextureComponent(owner: Owned) : UiComponentImpl(owner), TextureCom
 		out.height = explicitHeight ?: sprite.naturalHeight
 	}
 
-	private fun validateVertices() {
+	private fun updateVertices() {
 		sprite.updateWorldVertices(concatenatedTransform, width, height, z = 0f)
 	}
 

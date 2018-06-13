@@ -83,7 +83,7 @@ class FullScreenFramebuffer(override val injector: Injector, private val hasDept
 		batch.putVertex(tR)
 		batch.putVertex(bR)
 		batch.putVertex(bL)
-		batch.pushQuadIndices()
+		batch.putQuadIndices()
 	}
 
 	override fun dispose() {

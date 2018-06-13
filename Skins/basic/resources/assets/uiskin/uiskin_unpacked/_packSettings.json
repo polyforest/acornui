@@ -1,7 +1,7 @@
 {
   "alphaThreshold": 0, 
-  "filterMag": "NEAREST",
-  "filterMin": "LINEAR_MIPMAP_LINEAR",
+  "filterMag": "LINEAR",
+  "filterMin": "LINEAR",
   "pixelType": "UNSIGNED_BYTE",
   "pixelFormat": "RGBA",
   "compressionExtension": "png",
@@ -12,7 +12,7 @@
   "premultipliedAlpha": false,
   "stripWhitespace": true,
   "algorithmSettings" : {
-    "allowRotation": false,
+    "allowRotation": true,
     "paddingX": 2,
     "paddingY": 2,
     "pageMaxHeight": 1024,

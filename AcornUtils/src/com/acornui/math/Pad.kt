@@ -38,6 +38,8 @@ interface PadRo {
 		return height - top - bottom
 	}
 
+	// TODO: we might be able to overload the nullable floats now.
+
 	fun reduceWidth2(width: Float): Float {
 		return width - left - right
 	}

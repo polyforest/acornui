@@ -17,7 +17,6 @@
 package com.acornui.component
 
 import com.acornui.core.di.Owned
-import com.acornui.core.di.dKey
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
 import com.acornui.math.IntRectangleRo
@@ -38,7 +37,7 @@ interface TextureComponent : UiComponent {
 	/**
 	 * If true, the texture's region is rotated.
 	 */
-	var isRotated: Boolean
+	val isRotated: Boolean
 
 	/**
 	 * Only applicable for GL backends, sets the blend mode for this component.
@@ -48,23 +47,23 @@ interface TextureComponent : UiComponent {
 	/**
 	 * Sets the region of the texture to display.
 	 */
-	fun setRegion(region: RectangleRo) {
-		setRegion(region.x, region.y, region.width, region.height)
+	fun setRegion(region: RectangleRo, isRotated: Boolean = false) {
+		setRegion(region.x, region.y, region.width, region.height, isRotated)
 	}
 
-	fun setRegion(region: IntRectangleRo) {
-		setRegion(region.x.toFloat(), region.y.toFloat(), region.width.toFloat(), region.height.toFloat())
+	fun setRegion(region: IntRectangleRo, isRotated: Boolean = false) {
+		setRegion(region.x.toFloat(), region.y.toFloat(), region.width.toFloat(), region.height.toFloat(), isRotated)
 	}
 
 	/**
 	 * Sets the UV coordinates of the image to display.
 	 */
-	fun setUv(u: Float, v: Float, u2: Float, v2: Float)
+	fun setUv(u: Float, v: Float, u2: Float, v2: Float, isRotated: Boolean = false)
 
 	/**
 	 * Sets the region of the texture to display.
 	 */
-	fun setRegion(x: Float, y: Float, width: Float, height: Float)
+	fun setRegion(x: Float, y: Float, width: Float, height: Float, isRotated: Boolean = false)
 }
 
 fun Owned.textureC(init: ComponentInit<GlTextureComponent> = {}): GlTextureComponent {

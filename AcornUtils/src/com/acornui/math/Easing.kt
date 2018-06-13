@@ -265,6 +265,13 @@ object CircleOut : Interpolation {
 	}
 }
 
+object Hermite : Interpolation {
+
+	override fun apply(alpha: Float): Float {
+		return alpha * alpha * (3f - 2f * alpha)
+	}
+}
+
 //----------------------------------------
 // Wrapper classes
 //----------------------------------------
@@ -488,6 +495,8 @@ object Easing {
 	val swingIn: Interpolation = SwingIn(2f)
 	val swingOut: Interpolation = SwingOut(2f)
 
+	val hermite: Interpolation = Hermite
+
 	private val registry = mutableMapOf(
 			"stepped" to stepped,
 			"linear" to linear,
@@ -533,7 +542,9 @@ object Easing {
 
 			"swing" to swing,
 			"swingIn" to swingIn,
-			"swingOut" to swingOut
+			"swingOut" to swingOut,
+
+			"hermite" to hermite
 	)
 
 	/**

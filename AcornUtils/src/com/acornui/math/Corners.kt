@@ -37,7 +37,7 @@ interface CornersRo {
 }
 
 /**
- * A representation of corner float values, for example in corner radius.
+ * A representation of corner radii.
  *
  * @author nbilyk
  */

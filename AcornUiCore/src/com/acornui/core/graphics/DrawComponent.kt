@@ -16,8 +16,11 @@
 
 package com.acornui.core.graphics
 
+import com.acornui.component.TextureComponent
 import com.acornui.component.UiComponent
+import com.acornui.component.textureC
 import com.acornui.core.config
+import com.acornui.core.di.Owned
 import com.acornui.core.di.Scoped
 import com.acornui.gl.core.Framebuffer
 import com.acornui.gl.core.TextureMagFilter
@@ -31,13 +34,16 @@ fun Scoped.rasterize(target: UiComponent, hasDepth: Boolean = config.gl.depth, h
 		throw Exception("rasterize should be called only on orphan components.")
 
 	target.update()
-	val w = target.width
-	val h = target.height
+	val bounds = MinMax()
+	bounds.set(0f, 0f, target.width, target.height)
+	target.localToGlobal(bounds)
+	val w = bounds.width
+	val h = bounds.height
 	if (w <= 0f || h <= 0f) throw Exception("Cannot rasterize a component with an empty width or height.")
 	val framebuffer = Framebuffer(injector, MathUtils.nextPowerOfTwo(w.ceil()), MathUtils.nextPowerOfTwo(h.ceil()), hasDepth, hasStencil)
 	target.cameraOverride = FramebufferOrthographicCamera().apply {
 		setViewport(framebuffer.width.toFloat(), framebuffer.height.toFloat())
-
+		setPosition(position.x + bounds.xMin, position.y + bounds.yMin)
 	}
 	framebuffer.texture.filterMag = TextureMagFilter.LINEAR
 	framebuffer.texture.filterMin = TextureMinFilter.LINEAR_MIPMAP_NEAREST
@@ -46,7 +52,14 @@ fun Scoped.rasterize(target: UiComponent, hasDepth: Boolean = config.gl.depth, h
 	target.render(MinMax(0f, 0f, w, h))
 	framebuffer.end()
 
-	return Rasterized(framebuffer.texture, w / framebuffer.width.toFloat(), h / framebuffer.height.toFloat())
+	return Rasterized(framebuffer.texture, w / framebuffer.width.toFloat(), h / framebuffer.height.toFloat(), -bounds.xMin, -bounds.yMin)
 }
 
-class Rasterized(val texture: Texture, val u: Float, val v: Float)
+class Rasterized(val texture: Texture, val u: Float, val v: Float, val originX: Float, val originY: Float) {
+	fun createTextureComponent(owner: Owned): TextureComponent {
+		return owner.textureC(texture) {
+			setUv(0f, 0f, u, v, isRotated = false)
+			setOrigin(originX, originY)
+		}
+	}
+}

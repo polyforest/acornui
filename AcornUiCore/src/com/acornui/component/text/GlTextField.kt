@@ -40,7 +40,7 @@ import com.acornui.core.selection.Selectable
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionRange
 import com.acornui.gl.core.GlState
-import com.acornui.gl.core.pushQuadIndices
+import com.acornui.gl.core.putQuadIndices
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.Bounds
@@ -1111,7 +1111,7 @@ class TfChar private constructor() : TextElement, Clearable {
 			batch.putVertex(backgroundVertices[2], normal, backgroundColor, 0f, 0f)
 			// Bottom left
 			batch.putVertex(backgroundVertices[3], normal, backgroundColor, 0f, 0f)
-			batch.pushQuadIndices()
+			batch.putQuadIndices()
 		}
 
 		if (style.underlined || style.strikeThrough) {
@@ -1127,7 +1127,7 @@ class TfChar private constructor() : TextElement, Clearable {
 			batch.putVertex(lineVertices[2], normal, fontColor, 0f, 0f)
 			// Bottom left
 			batch.putVertex(lineVertices[3], normal, fontColor, 0f, 0f)
-			batch.pushQuadIndices()
+			batch.putQuadIndices()
 		}
 
 		if (u == u2 || v == v2 || glyph.width <= 0f || glyph.height <= 0f) return // Nothing to draw
@@ -1155,7 +1155,7 @@ class TfChar private constructor() : TextElement, Clearable {
 			batch.putVertex(charVertices[3], normal, fontColor, u, v2)
 		}
 
-		batch.pushQuadIndices()
+		batch.putQuadIndices()
 	}
 
 	override fun dispose() {

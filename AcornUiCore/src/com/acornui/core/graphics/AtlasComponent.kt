@@ -116,8 +116,7 @@ open class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
 				_textureC = _textureComponent
 			}
 			val t = _textureComponent!!
-			t.isRotated = region.isRotated
-			t.setRegion(region.bounds)
+			t.setRegion(region.bounds, region.isRotated)
 		} else {
 			if (_textureComponent != null) {
 				_textureComponent!!.dispose()

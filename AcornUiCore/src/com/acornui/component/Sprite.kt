@@ -19,7 +19,7 @@ package com.acornui.component
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
 import com.acornui.gl.core.GlState
-import com.acornui.gl.core.pushQuadIndices
+import com.acornui.gl.core.putQuadIndices
 import com.acornui.graphics.ColorRo
 import com.acornui.math.*
 import kotlin.math.abs
@@ -35,8 +35,11 @@ class Sprite {
 
 	var texture: Texture? = null
 	var blendMode: BlendMode = BlendMode.NORMAL
-	var isRotated: Boolean = false
 	var premultipliedAlpha: Boolean = false
+
+	private var _isRotated: Boolean = false
+	val isRotated: Boolean
+		get() = _isRotated
 
 	/**
 	 * Either represents uv values, or pixel coordinates, depending on _isUv
@@ -52,31 +55,30 @@ class Sprite {
 
 	private val normal = Vector3()
 
-	init {
-	}
-
-	fun setUv(u: Float, v: Float, u2: Float, v2: Float) {
+	fun setUv(u: Float, v: Float, u2: Float, v2: Float, isRotated: Boolean) {
 		region[0] = u
 		region[1] = v
 		region[2] = u2
 		region[3] = v2
 		isUv = true
+		_isRotated = isRotated
 	}
 
-	fun setRegion(bounds: Rectangle) {
-		setRegion(bounds.x, bounds.y, bounds.width, bounds.height)
+	fun setRegion(bounds: Rectangle, isRotated: Boolean) {
+		setRegion(bounds.x, bounds.y, bounds.width, bounds.height, isRotated)
 	}
 
-	fun setRegion(bounds: IntRectangleRo) {
-		setRegion(bounds.x.toFloat(), bounds.y.toFloat(), bounds.width.toFloat(), bounds.height.toFloat())
+	fun setRegion(bounds: IntRectangleRo, isRotated: Boolean) {
+		setRegion(bounds.x.toFloat(), bounds.y.toFloat(), bounds.width.toFloat(), bounds.height.toFloat(), isRotated)
 	}
 
-	fun setRegion(x: Float, y: Float, width: Float, height: Float) {
+	fun setRegion(x: Float, y: Float, width: Float, height: Float, isRotated: Boolean) {
 		region[0] = x
 		region[1] = y
 		region[2] = width + x
 		region[3] = height + y
 		isUv = false
+		_isRotated = isRotated
 	}
 
 	private var u: Float = 0f
@@ -229,6 +231,6 @@ class Sprite {
 			// Bottom left
 			batch.putVertex(vertexPoints[3], normal, colorTint, u, v2)
 		}
-		batch.pushQuadIndices()
+		batch.putQuadIndices()
 	}
 }

@@ -41,7 +41,6 @@ import com.acornui.core.popup.PopUpManager
 import com.acornui.core.userInfo
 import com.acornui.component.ScrollRectStyle
 import com.acornui.component.text.loadFontFromAtlas
-import com.acornui.core.input.mouseDown
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.*
@@ -63,7 +62,7 @@ open class BasicUiSkin(
 		target.populateButtonStyle(CollapseButton, { collapseButtonSkin(theme, it) })
 		target.populateButtonStyle(RadioButton, { radioButtonSkin(theme, it) })
 		target.populateButtonStyle(StyleSelectors.cbNoLabelStyle, { checkboxNoLabelSkin(theme, it) })
-		target.populateButtonStyle(IconButton, { iconButtonSkin(theme, it) })
+		target.populateButtonStyle(IconButton, { iconButtonSkin(it) })
 
 		stageStyle()
 		popUpStyle()
@@ -278,8 +277,8 @@ open class BasicUiSkin(
 
 	protected open fun numericStepperStyle() {
 		val stepperPad = Pad(left = 4f, right = 4f, top = 4f, bottom = 4f)
-		target.populateButtonStyle(NumericStepper.STEP_UP_STYLE, { iconButtonSkin(it, "UpArrowStepper", Corners(topLeft = 0f, topRight = theme.borderRadius, bottomLeft = 0f, bottomRight = 0f), borderThickness = Pad(theme.strokeThickness), padding = stepperPad) })
-		target.populateButtonStyle(NumericStepper.STEP_DOWN_STYLE, { iconButtonSkin(it, "DownArrowStepper", Corners(topLeft = 0f, topRight = 0f, bottomLeft = 0f, bottomRight = theme.borderRadius), borderThickness = Pad(theme.strokeThickness), padding = stepperPad) })
+		target.populateButtonStyle(NumericStepper.STEP_UP_STYLE, { iconButtonSkin(it, "UpArrowStepper", padding = stepperPad) })
+		target.populateButtonStyle(NumericStepper.STEP_DOWN_STYLE, { iconButtonSkin(it, "DownArrowStepper", padding = stepperPad) })
 	}
 
 	protected open fun scrollAreaStyle() {
@@ -640,8 +639,8 @@ fun populateButtonStyle(buttonStyle: ButtonStyle, skinPartFactory: (ButtonState)
 	return buttonStyle
 }
 
-fun iconButtonSkin(buttonState: ButtonState, icon: String, borderRadius: Corners, borderThickness: PadRo, padding: PadRo = Pad(5f)): Owned.() -> UiComponent = {
-	val texture = buttonTexture(buttonState, borderRadius, borderThickness)
+fun iconButtonSkin(buttonState: ButtonState, icon: String, padding: PadRo = Pad(5f)): Owned.() -> UiComponent = {
+	val texture = buttonTexture(buttonState)
 	val skinPart = IconButtonSkinPart(this, texture, padding)
 	val theme = inject(Theme)
 	skinPart.contentsAtlas(theme.atlasPath, icon)
@@ -649,7 +648,7 @@ fun iconButtonSkin(buttonState: ButtonState, icon: String, borderRadius: Corners
 }
 
 fun labelButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> UiComponent = {
-	val texture = buttonTexture(buttonState, Corners(theme.borderRadius), Pad(theme.strokeThickness))
+	val texture = buttonTexture(buttonState)
 	LabelButtonSkinPart(this, texture)
 }
 
@@ -661,8 +660,8 @@ fun tabButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> UiCompone
 /**
  * A convenience function to create a button skin part.
  */
-fun iconButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> UiComponent = {
-	val texture = buttonTexture(buttonState, Corners(theme.borderRadius), Pad(theme.strokeThickness))
+fun iconButtonSkin(buttonState: ButtonState): Owned.() -> UiComponent = {
+	val texture = buttonTexture(buttonState)
 	IconButtonSkinPart(this, texture)
 }
 
@@ -741,6 +740,22 @@ fun radioButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> Checkbo
 			height = 18f
 		}
 	}
+}
+
+fun Owned.buttonTexture(buttonState: ButtonState) = stack {
+	val theme = inject(Theme)
+	val fillRegion = when (buttonState) {
+		ButtonState.TOGGLED_UP, ButtonState.UP -> "Button_up"
+		ButtonState.TOGGLED_OVER, ButtonState.OVER -> "Button_over"
+		ButtonState.TOGGLED_DOWN, ButtonState.DOWN -> "Button_down"
+		ButtonState.DISABLED -> "Button_disabled"
+	}
+	+atlas(theme.atlasPath, fillRegion) {
+		colorTint = if (buttonState == ButtonState.DISABLED) theme.fillDisabled else theme.fillHighlight
+	} layout { fill() }
+	+atlas(theme.atlasPath, "CurvedStroke") {
+		colorTint = if (buttonState == ButtonState.DISABLED) theme.strokeDisabled else if (buttonState.toggled) theme.strokeToggled else theme.stroke
+	} layout { fill() }
 }
 
 fun Owned.buttonTexture(buttonState: ButtonState, borderRadius: CornersRo, borderThickness: PadRo, isTab: Boolean = false): CanvasLayoutContainer = canvas {
@@ -835,7 +850,7 @@ open class CheckboxSkinPart(
 open class LabelButtonSkinPart(
 		owner: Owned,
 		val texture: UiComponent,
-		val padding: Pad = Pad(5f, 5f, 5f, 5f)
+		val padding: Pad = Pad(left = 4f, top = 3f, right = 4f, bottom = 4f) // Set so that a label button's height matches a text input's height with the default font.
 ) : ElementContainerImpl<UiComponent>(owner), Labelable {
 
 	val textField: TextField = text()
@@ -854,20 +869,14 @@ open class LabelButtonSkinPart(
 			textField.label = value
 		}
 
-	override fun updateSizeConstraints(out: SizeConstraints) {
-		texture.setSize(null, null)
-		out.width.min = texture.width
-		out.height.min = texture.height
-	}
-
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val textWidth = padding.reduceWidth(explicitWidth)
 		textField.setSize(textWidth, null)
-		textField.moveTo(padding.left, padding.top)
-		val w = explicitWidth ?: maxOf(minWidth ?: 0f, textField.width + padding.left + padding.right)
-		var h = maxOf(minHeight ?: 0f, textField.height + padding.top + padding.bottom)
+		val w = explicitWidth ?: maxOf(minWidth ?: 0f, padding.expandWidth2(textField.width))
+		var h = maxOf(minHeight ?: 0f, padding.expandHeight2(textField.height))
 		if (explicitHeight != null && explicitHeight > h) h = explicitHeight
 		texture.setSize(w, h)
+		textField.moveTo((padding.reduceWidth2(w) - textField.width) * 0.5f + padding.left, (padding.reduceHeight2(h) - textField.height) * 0.5f + padding.top)
 		out.set(texture.bounds)
 	}
 }

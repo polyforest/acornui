@@ -159,8 +159,24 @@ interface IndexFeed {
 
 }
 
+fun IndexFeed.putIndices(value: List<Int>) {
+	val n = highestIndex + 1
+	for (i in 0..value.lastIndex) {
+		putIndex(n + value[i])
+	}
+}
 
-fun IndexFeed.pushQuadIndices() {
+fun IndexFeed.putIndices(value: IntArray) {
+	val n = highestIndex + 1
+	for (i in 0..value.lastIndex) {
+		putIndex(n + value[i])
+	}
+}
+
+@Deprecated("Renamed to putQuadIndices", ReplaceWith("putQuadIndices"))
+fun IndexFeed.pushQuadIndices() = putQuadIndices()
+
+fun IndexFeed.putQuadIndices() {
 	val n = highestIndex + 1
 	putIndex(n + 0)
 	putIndex(n + 1)

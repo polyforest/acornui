@@ -170,8 +170,7 @@ suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffect, atlasPath:
 
 			val sprite = Sprite()
 			sprite.texture = texture
-			sprite.isRotated = region.isRotated
-			sprite.setRegion(region.bounds)
+			sprite.setRegion(region.bounds, region.isRotated)
 			sprite.updateUv()
 			sprites.add(sprite)
 		}
@@ -198,8 +197,7 @@ suspend fun Scoped.loadParticleEffect(pDataPath: String, atlasPath: String, grou
 
 			val sprite = Sprite()
 			sprite.texture = texture
-			sprite.isRotated = region.isRotated
-			sprite.setRegion(region.bounds)
+			sprite.setRegion(region.bounds, region.isRotated)
 			sprite.updateUv()
 			sprites.add(sprite)
 		}
