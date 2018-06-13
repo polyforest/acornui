@@ -137,15 +137,15 @@ class Matrix3(
 
 	fun prj(vec: Vector2): Vector2 {
 		val mat = values
-		val x = (vec.x * mat[0] + vec.y * mat[3] + mat[6])
-		val y = (vec.x * mat[1] + vec.y * mat[4] + mat[7])
+		val x = (vec.x * mat[M00] + vec.y * mat[M01] + mat[M02])
+		val y = (vec.x * mat[M10] + vec.y * mat[M11] + mat[M12])
 		vec.x = x
 		vec.y = y
 		return vec
 	}
 
 	override fun toString(): String {
-		return "[" + values[0] + "|" + values[3] + "|" + values[6] + "]\n" + "[" + values[1] + "|" + values[4] + "|" + values[7] + "]\n" + "[" + values[2] + "|" + values[5] + "|" + values[8] + "]"
+		return "[" + values[M00] + "|" + values[M01] + "|" + values[M02] + "]\n" + "[" + values[M10] + "|" + values[M11] + "|" + values[M12] + "]\n" + "[" + values[M20] + "|" + values[M21] + "|" + values[M22] + "]"
 	}
 
 	/**
@@ -207,13 +207,13 @@ class Matrix3(
 	 * @return This matrix for the purpose of chaining operations.
 	 */
 	fun set(mat: Matrix4Ro): Matrix3 {
-		values[M00] = mat.values[0]
-		values[M10] = mat.values[1]
-		values[M20] = mat.values[2]
-		values[M01] = mat.values[4]
-		values[M11] = mat.values[5]
-		values[M21] = mat.values[6]
-		values[M02] = mat.values[8]
+		values[M00] = mat.values[M00]
+		values[M10] = mat.values[M10]
+		values[M20] = mat.values[M20]
+		values[M01] = mat.values[M11]
+		values[M11] = mat.values[M21]
+		values[M21] = mat.values[M02]
+		values[M02] = mat.values[M22]
 		values[M12] = mat.values[9]
 		values[M22] = mat.values[10]
 		return this
@@ -238,8 +238,8 @@ class Matrix3(
 	 * Sets this matrix to have the given translation.
 	 */
 	fun setTranslation(x: Float, y: Float): Matrix3 {
-		values[6] = x
-		values[7] = y
+		values[M02] = x
+		values[M12] = y
 		return this
 	}
 
@@ -250,8 +250,8 @@ class Matrix3(
 	 * @return This matrix for the purpose of chaining.
 	 */
 	fun trn(x: Float, y: Float): Matrix3 {
-		values[6] += x
-		values[7] += y
+		values[M02] += x
+		values[M12] += y
 		return this
 	}
 
@@ -261,8 +261,8 @@ class Matrix3(
 	 * @return This matrix for the purpose of chaining.
 	 */
 	fun trn(vector: Vector2): Matrix3 {
-		values[6] += vector.x
-		values[7] += vector.y
+		values[M02] += vector.x
+		values[M12] += vector.y
 		return this
 	}
 
@@ -423,27 +423,27 @@ class Matrix3(
 		 * @param matB The float array representing the second matrix. Must have at least 9 elements.
 		 */
 		private fun mul(matA: FloatList, matB: List<Float>) {
-			val v00 = matA[0] * matB[0] + matA[3] * matB[1] + matA[6] * matB[2]
-			val v01 = matA[0] * matB[3] + matA[3] * matB[4] + matA[6] * matB[5]
-			val v02 = matA[0] * matB[6] + matA[3] * matB[7] + matA[6] * matB[8]
+			val v00 = matA[M00] * matB[M00] + matA[M01] * matB[M10] + matA[M02] * matB[M20]
+			val v01 = matA[M00] * matB[M01] + matA[M01] * matB[M11] + matA[M02] * matB[M21]
+			val v02 = matA[M00] * matB[M02] + matA[M01] * matB[M12] + matA[M02] * matB[M22]
 
-			val v10 = matA[1] * matB[0] + matA[4] * matB[1] + matA[7] * matB[2]
-			val v11 = matA[1] * matB[3] + matA[4] * matB[4] + matA[7] * matB[5]
-			val v12 = matA[1] * matB[6] + matA[4] * matB[7] + matA[7] * matB[8]
+			val v10 = matA[M10] * matB[M00] + matA[M11] * matB[M10] + matA[M12] * matB[M20]
+			val v11 = matA[M10] * matB[M01] + matA[M11] * matB[M11] + matA[M12] * matB[M21]
+			val v12 = matA[M10] * matB[M02] + matA[M11] * matB[M12] + matA[M12] * matB[M22]
 
-			val v20 = matA[2] * matB[0] + matA[5] * matB[1] + matA[8] * matB[2]
-			val v21 = matA[2] * matB[3] + matA[5] * matB[4] + matA[8] * matB[5]
-			val v22 = matA[2] * matB[6] + matA[5] * matB[7] + matA[8] * matB[8]
+			val v20 = matA[M20] * matB[M00] + matA[M21] * matB[M10] + matA[M22] * matB[M20]
+			val v21 = matA[M20] * matB[M01] + matA[M21] * matB[M11] + matA[M22] * matB[M21]
+			val v22 = matA[M20] * matB[M02] + matA[M21] * matB[M12] + matA[M22] * matB[M22]
 
-			matA[0] = v00
-			matA[1] = v10
-			matA[2] = v20
-			matA[3] = v01
-			matA[4] = v11
-			matA[5] = v21
-			matA[6] = v02
-			matA[7] = v12
-			matA[8] = v22
+			matA[M00] = v00
+			matA[M10] = v10
+			matA[M20] = v20
+			matA[M01] = v01
+			matA[M11] = v11
+			matA[M21] = v21
+			matA[M02] = v02
+			matA[M12] = v12
+			matA[M22] = v22
 		}
 	}
 
