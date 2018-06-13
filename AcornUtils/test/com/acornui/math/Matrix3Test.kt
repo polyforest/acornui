@@ -98,7 +98,7 @@ class Matrix3Test {
 
 	@Test
 	fun set2() {
-		val m3 = Matrix4(arrayListOf(
+		val m3 = Matrix4(floatArrayOf(
 				3f, 5f, 6f, 13f,
 				17f, 23f, 27f, 35f,
 				19f, 101f, 73f, 19f,

@@ -16,7 +16,7 @@
 
 package com.acornui.gl.core
 
-import com.acornui.collection.ArrayList
+import com.acornui.collection.FloatList
 import com.acornui.collection.arrayCopy
 import com.acornui.core.Disposable
 import com.acornui.core.di.DKey
@@ -278,7 +278,7 @@ private class MatrixCache(
 		private val gl: Gl20,
 		private val name: String) {
 
-	private val values = ArrayList(16, { 0f })
+	private val values = FloatList(FloatArray(16))
 	private var _shader: ShaderProgram? = null
 
 	/**

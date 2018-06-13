@@ -26,6 +26,7 @@ object KotlinMonkeyPatcher {
 	fun optimizeProductionCode(src: String, file: File? = null): String {
 		var result = src
 		result = simplifyArrayListGet(result)
+		result = simplifyArrayListSet(result)
 		result = stripCce(result)
 		result = stripRangeCheck(result)
 		return result
@@ -53,6 +54,16 @@ object KotlinMonkeyPatcher {
 	private fun simplifyArrayListGet(src: String): String {
 		return Regex("""ArrayList\.prototype\.get_za3lpa\$[\s]*=[\s]*function[\s]*\(index\)[\s]*\{([^}]+)};""").replace(src, {
 			"""ArrayList.prototype.get_za3lpa$ = function(index) { return this.array_hd7ov6${'$'}_0[index] };"""
+		})
+	}
+
+	private fun simplifyArrayListSet(src: String): String {
+		return Regex("""ArrayList\.prototype\.set_wxm5ur\$[\s]*=[\s]*function[\s]*\(index, element\)[\s]*\{([^}]+)};""").replace(src, {
+			"""ArrayList.prototype.set_wxm5ur${'$'} = function (index, element) {
+			  var previous = this.array_hd7ov6${'$'}_0[index];
+			  this.array_hd7ov6${'$'}_0[index] = element;
+			  return previous;
+			};"""
 		})
 	}
 }

@@ -18,7 +18,7 @@
 
 package com.acornui.math
 
-import com.acornui.collection.copy
+import com.acornui.collection.FloatList
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -44,7 +44,7 @@ interface Matrix3Ro {
 	 * same list.
 	 */
 	fun copy(): Matrix3 {
-		return Matrix3(values.copy())
+		return Matrix3(FloatList(values.toFloatArray()))
 	}
 }
 
@@ -56,13 +56,14 @@ interface Matrix3Ro {
  */
 class Matrix3(
 
-		override val values: MutableList<Float> = arrayListOf(
+		override val values: FloatList = FloatList(floatArrayOf(
 				1f, 0f, 0f,
 				0f, 1f, 0f,
-				0f, 0f, 1f)
+				0f, 0f, 1f))
 ) : Matrix3Ro {
 
-	constructor (m00:Float, m10:Float, m20:Float, m01:Float, m11:Float, m21:Float, m02:Float, m12:Float, m22:Float) : this(arrayListOf(m00, m10, m20, m01, m11, m21, m02, m12, m22))
+	constructor (m00:Float, m10:Float, m20:Float, m01:Float, m11:Float, m21:Float, m02:Float, m12:Float, m22:Float) : this(floatArrayOf(m00, m10, m20, m01, m11, m21, m02, m12, m22))
+	constructor(values: FloatArray) : this(FloatList(values))
 
 	/**
 	 * Sets this matrix to the identity matrix
@@ -398,7 +399,7 @@ class Matrix3(
 
 	companion object {
 
-		private val tmp = arrayListOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+		private val tmp = FloatList(floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f))
 
 		val IDENTITY: Matrix3Ro = Matrix3()
 
@@ -421,7 +422,7 @@ class Matrix3(
 		 * @param matA The float array representing the first matrix. Must have at least 9 elements.
 		 * @param matB The float array representing the second matrix. Must have at least 9 elements.
 		 */
-		private fun mul(matA: MutableList<Float>, matB: List<Float>) {
+		private fun mul(matA: FloatList, matB: List<Float>) {
 			val v00 = matA[0] * matB[0] + matA[3] * matB[1] + matA[6] * matB[2]
 			val v01 = matA[0] * matB[3] + matA[3] * matB[4] + matA[6] * matB[5]
 			val v02 = matA[0] * matB[6] + matA[3] * matB[7] + matA[6] * matB[8]

@@ -16,6 +16,7 @@
 
 package com.acornui.math
 
+import com.acornui.collection.FloatList
 import com.acornui.collection.arrayCopy
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
@@ -30,7 +31,7 @@ class ColorTransformation {
 	private val _mat = Matrix4()
 	private val _offset = Color()
 
-	val transformValues: MutableList<Float>
+	val transformValues: FloatList
 		get() = _mat.values
 
 	var offset: Color
@@ -112,7 +113,7 @@ class ColorTransformation {
  * Sets this color transformation to a sepia transform.
  */
 fun ColorTransformation.sepia(): ColorTransformation {
-	arrayCopy(listOf(
+	arrayCopy(floatArrayOf(
 			0.769f, 0.686f, 0.534f, 0.0f,
 			0.393f, 0.349f, 0.272f, 0.0f,
 			0.189f, 0.168f, 0.131f, 0.0f,
@@ -126,7 +127,7 @@ fun ColorTransformation.sepia(): ColorTransformation {
  * Sets this color transformation to a grayscale transform.
  */
 fun ColorTransformation.grayscale(): ColorTransformation {
-	arrayCopy(listOf(
+	arrayCopy(floatArrayOf(
 			0.33f, 0.33f, 0.33f, 0.0f,
 			0.59f, 0.59f, 0.59f, 0.0f,
 			0.11f, 0.11f, 0.11f, 0.0f,
@@ -140,7 +141,7 @@ fun ColorTransformation.grayscale(): ColorTransformation {
  * Sets this color transformation to an invert transform.
  */
 fun ColorTransformation.invert(): ColorTransformation {
-	arrayCopy(listOf(
+	arrayCopy(floatArrayOf(
 			-1.0f, 0.0f, 0.0f, 0.0f,
 			0.0f, -1.0f, 0.0f, 0.0f,
 			0.0f, 0.0f, -1.0f, 0.0f,

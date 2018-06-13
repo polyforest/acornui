@@ -32,13 +32,13 @@ class Matrix4Test {
 
 	@Before
 	fun setUp() {
-		m1 = Matrix4(arrayListOf(
+		m1 = Matrix4(floatArrayOf(
 				3f, 5f, 6f, 13f,
 				17f, 23f, 27f, 35f,
 				19f, 101f, 73f, 19f,
 				11f, 25f, 41f, 43f))
 
-		m2 = Matrix4(arrayListOf(
+		m2 = Matrix4(floatArrayOf(
 				9f, 4f, 77f, 65f,
 				44f, 36f, 16f, 98f,
 				26f, 3f, 9f, 27f,
