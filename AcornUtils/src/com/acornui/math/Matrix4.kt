@@ -18,12 +18,13 @@
 
 package com.acornui.math
 
-import com.acornui.collection.ArrayList
 import com.acornui.collection.FloatList
 import kotlin.math.abs
 import kotlin.math.sqrt
 
 interface Matrix4Ro {
+
+	val mode: MatrixMode
 
 	val values: List<Float>
 
@@ -31,11 +32,6 @@ interface Matrix4Ro {
 	 * @return The determinant of this matrix
 	 */
 	fun det(): Float
-
-	/**
-	 * @return The determinant of the 3x3 upper left matrix
-	 */
-	fun det3x3(): Float
 
 	/**
 	 * The x translation.
@@ -110,14 +106,6 @@ interface Matrix4Ro {
 	fun prj(vec: Vector3): Vector3
 
 	/**
-	 * Multiplies the vector with this matrix, performing a division by w.
-	 *
-	 * @param vec the vector.
-	 * @return Returns the vec for chaining.
-	 */
-	fun prj(vec: Vector2): Vector2
-
-	/**
 	 * Multiplies the vector with the top most 3x3 sub-matrix of this matrix.
 	 * @return Returns the vec for chaining.
 	 */
@@ -128,13 +116,6 @@ interface Matrix4Ro {
 	 * @return Returns the vec for chaining.
 	 */
 	fun rot(vec: Vector2): Vector2
-
-	/**
-	 * Copies the 4x3 upper-left sub-matrix into float array. The destination array is supposed to be a column major matrix.
-	 * @param out the destination matrix
-	 * @return Returns the [out] parameter.
-	 */
-	fun extract4x3Matrix(out: MutableList<Float>): MutableList<Float>
 
 	/**
 	 * Copies this matrix. Note that the [values] list will be copied as well and the new Matrix will not back the
@@ -169,6 +150,26 @@ class Matrix4(
 
 	constructor(values: FloatArray) : this(FloatList(values))
 
+	private var _mode: MatrixMode = MatrixMode.IDENTITY
+
+	override val mode: MatrixMode
+		get() = _mode
+
+	init {
+		refreshMode()
+	}
+
+	private fun refreshMode() {
+		if (values[M03] != 0f || values[M13] != 0f || values[M23] != 0f) _mode = MatrixMode.TRANSLATION
+		if (values[M00] != 1f || values[M11] != 1f || values[M22] != 1f || values[M33] != 1f) _mode = MatrixMode.SCALE
+		if (values[M01] != 0f || values[M02] != 0f ||
+				values[M10] != 0f || values[M12] != 0f ||
+				values[M20] != 0f || values[M21] != 0f ||
+				values[M30] != 0f || values[M31] != 0f || values[M32] != 0f
+		) _mode = MatrixMode.FULL
+		//_mode = MatrixMode.FULL
+	}
+
 	/**
 	 * Sets this matrix to the given matrix.
 	 *
@@ -177,7 +178,11 @@ class Matrix4(
 
 	 */
 	fun set(matrix: Matrix4Ro): Matrix4 {
-		return this.set(matrix.values)
+		for (i in 0..16 - 1) {
+			values[i] = matrix.values[i]
+		}
+		_mode = matrix.mode
+		return this
 	}
 
 	/**
@@ -192,6 +197,7 @@ class Matrix4(
 		for (i in 0..16 - 1) {
 			this.values[i] = values[i]
 		}
+		refreshMode()
 		return this
 	}
 
@@ -273,6 +279,8 @@ class Matrix4(
 		values[M31] = 0f
 		values[M32] = 0f
 		values[M33] = 1f
+
+		_mode = MatrixMode.FULL
 		return this
 	}
 
@@ -335,6 +343,8 @@ class Matrix4(
 		values[M31] = 0f
 		values[M32] = 0f
 		values[M33] = 1f
+
+		_mode = MatrixMode.FULL
 		return this
 	}
 
@@ -364,6 +374,8 @@ class Matrix4(
 		values[M31] = 0f
 		values[M32] = 0f
 		values[M33] = 1f
+
+		_mode = MatrixMode.FULL
 		return this
 	}
 
@@ -377,6 +389,9 @@ class Matrix4(
 		values[M03] += vector.x
 		values[M13] += vector.y
 		values[M23] += vector.z
+
+		if (_mode == MatrixMode.IDENTITY)
+			_mode = MatrixMode.TRANSLATION
 		return this
 	}
 
@@ -393,6 +408,9 @@ class Matrix4(
 		values[M03] += x
 		values[M13] += y
 		values[M23] += z
+
+		if (_mode == MatrixMode.IDENTITY)
+			_mode = MatrixMode.TRANSLATION
 		return this
 	}
 
@@ -408,7 +426,187 @@ class Matrix4(
 
 	 */
 	fun mul(matrix: Matrix4Ro): Matrix4 {
-		mul(values, matrix.values)
+		val matA = values
+		val matB = matrix.values
+		when (matrix.mode) {
+			MatrixMode.IDENTITY -> {}
+			MatrixMode.TRANSLATION -> {
+				when (_mode) {
+					MatrixMode.IDENTITY -> {
+						matA[M03] = matB[M03]
+						matA[M13] = matB[M13]
+						matA[M23] = matB[M23]
+						_mode = MatrixMode.TRANSLATION
+					}
+					MatrixMode.TRANSLATION -> {
+						matA[M03] += matB[M03]
+						matA[M13] += matB[M13]
+						matA[M23] += matB[M23]
+					}
+					MatrixMode.SCALE -> {
+						val v03 = matA[M00] * matB[M03] + matA[M03]
+						val v13 = matA[M11] * matB[M13] + matA[M13]
+						val v23 = matA[M22] * matB[M23] + matA[M23]
+						val v33 = matA[M30] * matB[M03] + matA[M33]
+
+						matA[M03] = v03
+						matA[M13] = v13
+						matA[M23] = v23
+						matA[M33] = v33
+					}
+					MatrixMode.FULL -> {
+						val v03 = matA[M00] * matB[M03] + matA[M01] * matB[M13] + matA[M02] * matB[M23] + matA[M03]
+						val v13 = matA[M10] * matB[M03] + matA[M11] * matB[M13] + matA[M12] * matB[M23] + matA[M13]
+						val v23 = matA[M20] * matB[M03] + matA[M21] * matB[M13] + matA[M22] * matB[M23] + matA[M23]
+						val v33 = matA[M30] * matB[M03] + matA[M31] * matB[M13] + matA[M32] * matB[M23] + matA[M33]
+
+						matA[M03] = v03
+						matA[M13] = v13
+						matA[M23] = v23
+						matA[M33] = v33
+					}
+				}
+			}
+
+			MatrixMode.SCALE -> {
+				when (_mode) {
+					MatrixMode.IDENTITY -> {
+						matA[M00] = matB[M00]
+						matA[M03] = matB[M03]
+
+						matA[M11] = matB[M11]
+						matA[M13] = matB[M13]
+
+						matA[M22] = matB[M22]
+						matA[M23] = matB[M23]
+
+						matA[M33] = matB[M33]
+						_mode = MatrixMode.SCALE
+					}
+					MatrixMode.TRANSLATION -> {
+						matA[M00] = matB[M00]
+						matA[M03] = matB[M03] + matA[M03]
+
+						matA[M11] = matB[M11]
+						matA[M13] = matB[M13] + matA[M13]
+
+						matA[M22] = matB[M22]
+						matA[M23] = matB[M23] + matA[M23]
+
+						matA[M33] = matB[M33]
+						_mode = MatrixMode.SCALE
+					}
+					MatrixMode.SCALE -> {
+						val v00 = matA[M00] * matB[M00]
+						val v03 = matA[M00] * matB[M03] + matA[M03] * matB[M33]
+
+						val v11 = matA[M11] * matB[M11]
+						val v13 = matA[M11] * matB[M13] + matA[M13] * matB[M33]
+
+						val v22 = matA[M22] * matB[M22]
+						val v23 = matA[M22] * matB[M23] + matA[M23] * matB[M33]
+
+						val v33 = matA[M33] * matB[M33]
+
+						matA[M00] = v00
+						matA[M03] = v03
+
+						matA[M11] = v11
+						matA[M13] = v13
+
+						matA[M22] = v22
+						matA[M23] = v23
+
+						matA[M33] = v33
+					}
+					MatrixMode.FULL -> {
+						val v00 = matA[M00] * matB[M00]
+						val v01 = matA[M01] * matB[M11]
+						val v02 = matA[M02] * matB[M22]
+						val v03 = matA[M00] * matB[M03] + matA[M01] * matB[M13] + matA[M02] * matB[M23] + matA[M03] * matB[M33]
+
+						val v10 = matA[M10] * matB[M00]
+						val v11 = matA[M11] * matB[M11]
+						val v12 = matA[M12] * matB[M22]
+						val v13 = matA[M10] * matB[M03] + matA[M11] * matB[M13] + matA[M12] * matB[M23] + matA[M13] * matB[M33]
+
+						val v20 = matA[M20] * matB[M00]
+						val v21 = matA[M21] * matB[M11]
+						val v22 = matA[M22] * matB[M22]
+						val v23 = matA[M20] * matB[M03] + matA[M21] * matB[M13] + matA[M22] * matB[M23] + matA[M23] * matB[M33]
+
+						val v30 = matA[M30] * matB[M00]
+						val v31 = matA[M31] * matB[M11]
+						val v32 = matA[M32] * matB[M22]
+						val v33 = matA[M30] * matB[M03] + matA[M31] * matB[M13] + matA[M32] * matB[M23] + matA[M33] * matB[M33]
+
+						matA[M00] = v00
+						matA[M01] = v01
+						matA[M02] = v02
+						matA[M03] = v03
+
+						matA[M10] = v10
+						matA[M11] = v11
+						matA[M12] = v12
+						matA[M13] = v13
+
+						matA[M20] = v20
+						matA[M21] = v21
+						matA[M22] = v22
+						matA[M23] = v23
+
+						matA[M30] = v30
+						matA[M31] = v31
+						matA[M32] = v32
+						matA[M33] = v33
+					}
+				}
+			}
+
+			MatrixMode.FULL -> {
+				val v00 = matA[M00] * matB[M00] + matA[M01] * matB[M10] + matA[M02] * matB[M20] + matA[M03] * matB[M30]
+				val v01 = matA[M00] * matB[M01] + matA[M01] * matB[M11] + matA[M02] * matB[M21] + matA[M03] * matB[M31]
+				val v02 = matA[M00] * matB[M02] + matA[M01] * matB[M12] + matA[M02] * matB[M22] + matA[M03] * matB[M32]
+				val v03 = matA[M00] * matB[M03] + matA[M01] * matB[M13] + matA[M02] * matB[M23] + matA[M03] * matB[M33]
+
+				val v10 = matA[M10] * matB[M00] + matA[M11] * matB[M10] + matA[M12] * matB[M20] + matA[M13] * matB[M30]
+				val v11 = matA[M10] * matB[M01] + matA[M11] * matB[M11] + matA[M12] * matB[M21] + matA[M13] * matB[M31]
+				val v12 = matA[M10] * matB[M02] + matA[M11] * matB[M12] + matA[M12] * matB[M22] + matA[M13] * matB[M32]
+				val v13 = matA[M10] * matB[M03] + matA[M11] * matB[M13] + matA[M12] * matB[M23] + matA[M13] * matB[M33]
+
+				val v20 = matA[M20] * matB[M00] + matA[M21] * matB[M10] + matA[M22] * matB[M20] + matA[M23] * matB[M30]
+				val v21 = matA[M20] * matB[M01] + matA[M21] * matB[M11] + matA[M22] * matB[M21] + matA[M23] * matB[M31]
+				val v22 = matA[M20] * matB[M02] + matA[M21] * matB[M12] + matA[M22] * matB[M22] + matA[M23] * matB[M32]
+				val v23 = matA[M20] * matB[M03] + matA[M21] * matB[M13] + matA[M22] * matB[M23] + matA[M23] * matB[M33]
+
+				val v30 = matA[M30] * matB[M00] + matA[M31] * matB[M10] + matA[M32] * matB[M20] + matA[M33] * matB[M30]
+				val v31 = matA[M30] * matB[M01] + matA[M31] * matB[M11] + matA[M32] * matB[M21] + matA[M33] * matB[M31]
+				val v32 = matA[M30] * matB[M02] + matA[M31] * matB[M12] + matA[M32] * matB[M22] + matA[M33] * matB[M32]
+				val v33 = matA[M30] * matB[M03] + matA[M31] * matB[M13] + matA[M32] * matB[M23] + matA[M33] * matB[M33]
+
+				matA[M00] = v00
+				matA[M01] = v01
+				matA[M02] = v02
+				matA[M03] = v03
+
+				matA[M10] = v10
+				matA[M11] = v11
+				matA[M12] = v12
+				matA[M13] = v13
+
+				matA[M20] = v20
+				matA[M21] = v21
+				matA[M22] = v22
+				matA[M23] = v23
+
+				matA[M30] = v30
+				matA[M31] = v31
+				matA[M32] = v32
+				matA[M33] = v33
+
+				_mode = MatrixMode.FULL
+			}
+		}
 		return this
 	}
 
@@ -424,33 +622,8 @@ class Matrix4(
 	 */
 	fun mulLeft(matrix: Matrix4Ro): Matrix4 {
 		tmpMat.set(matrix)
-		mul(tmpMat.values, this.values)
+		tmpMat.mul(this)
 		return set(tmpMat)
-	}
-
-	/**
-	 * Transposes the matrix.
-	 *
-	 * @return This matrix for the purpose of chaining methods together.
-	 */
-	fun tra(): Matrix4 {
-		tmp[M00] = values[M00]
-		tmp[M01] = values[M10]
-		tmp[M02] = values[M20]
-		tmp[M03] = values[M30]
-		tmp[M10] = values[M01]
-		tmp[M11] = values[M11]
-		tmp[M12] = values[M21]
-		tmp[M13] = values[M31]
-		tmp[M20] = values[M02]
-		tmp[M21] = values[M12]
-		tmp[M22] = values[M22]
-		tmp[M23] = values[M32]
-		tmp[M30] = values[M03]
-		tmp[M31] = values[M13]
-		tmp[M32] = values[M23]
-		tmp[M33] = values[M33]
-		return set(tmp)
 	}
 
 	/**
@@ -475,6 +648,7 @@ class Matrix4(
 		values[M31] = 0f
 		values[M32] = 0f
 		values[M33] = 1f
+		_mode = MatrixMode.IDENTITY
 		return this
 	}
 
@@ -485,6 +659,9 @@ class Matrix4(
 	 * @throws RuntimeException if the matrix is singular (not invertible)
 	 */
 	fun inv(): Matrix4 {
+		if (_mode == MatrixMode.IDENTITY) return this
+		// TODO: mode
+
 		val lDet = det()
 		if (lDet == 0f) throw RuntimeException("non-invertible matrix")
 		val invDet = 1f / lDet
@@ -527,14 +704,8 @@ class Matrix4(
 	 * @return The determinant of this matrix
 	 */
 	override fun det(): Float {
+		// TODO: mode
 		return values[M30] * values[M21] * values[M12] * values[M03] - values[M20] * values[M31] * values[M12] * values[M03] - values[M30] * values[M11] * values[M22] * values[M03] + values[M10] * values[M31] * values[M22] * values[M03] + values[M20] * values[M11] * values[M32] * values[M03] - values[M10] * values[M21] * values[M32] * values[M03] - values[M30] * values[M21] * values[M02] * values[M13] + values[M20] * values[M31] * values[M02] * values[M13] + values[M30] * values[M01] * values[M22] * values[M13] - values[M00] * values[M31] * values[M22] * values[M13] - values[M20] * values[M01] * values[M32] * values[M13] + values[M00] * values[M21] * values[M32] * values[M13] + values[M30] * values[M11] * values[M02] * values[M23] - values[M10] * values[M31] * values[M02] * values[M23] - values[M30] * values[M01] * values[M12] * values[M23] + values[M00] * values[M31] * values[M12] * values[M23] + values[M10] * values[M01] * values[M32] * values[M23] - values[M00] * values[M11] * values[M32] * values[M23] - values[M20] * values[M11] * values[M02] * values[M33] + values[M10] * values[M21] * values[M02] * values[M33] + values[M20] * values[M01] * values[M12] * values[M33] - values[M00] * values[M21] * values[M12] * values[M33] - values[M10] * values[M01] * values[M22] * values[M33] + values[M00] * values[M11] * values[M22] * values[M33]
-	}
-
-	/**
-	 * @return The determinant of the 3x3 upper left matrix
-	 */
-	override fun det3x3(): Float {
-		return values[M00] * values[M11] * values[M22] + values[M01] * values[M12] * values[M20] + values[M02] * values[M10] * values[M21] - values[M00] * values[M12] * values[M21] - values[M01] * values[M10] * values[M22] - values[M02] * values[M11] * values[M20]
 	}
 
 	/**
@@ -543,12 +714,7 @@ class Matrix4(
 	 * @param vector The translation vector
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
-	fun setTranslation(vector: Vector3Ro): Matrix4 {
-		values[M03] = vector.x
-		values[M13] = vector.y
-		values[M23] = vector.z
-		return this
-	}
+	fun setTranslation(vector: Vector3Ro): Matrix4 = setTranslation(vector.x, vector.y, vector.z)
 
 	/**
 	 * Sets the 4th column to the translation vector.
@@ -562,6 +728,8 @@ class Matrix4(
 		values[M03] = x
 		values[M13] = y
 		values[M23] = z
+		if (_mode == MatrixMode.IDENTITY)
+			_mode = MatrixMode.TRANSLATION
 		return this
 	}
 
@@ -603,6 +771,7 @@ class Matrix4(
 		values[M20] = -l_vez.x
 		values[M21] = -l_vez.y
 		values[M22] = -l_vez.z
+		_mode = MatrixMode.FULL
 		return this
 	}
 
@@ -618,6 +787,7 @@ class Matrix4(
 		tmpVec.set(target).sub(position)
 		setToLookAt(tmpVec, up)
 		translate(-position.x, -position.y, -position.z)
+		_mode = MatrixMode.FULL
 
 		return this
 	}
@@ -627,7 +797,7 @@ class Matrix4(
 		right.set(tmpForward).crs(up).nor()
 		tmpUp.set(right).crs(tmpForward).nor()
 
-		this.set(right, tmpUp, tmpForward.scl(-1f), position)
+		set(right, tmpUp, tmpForward.scl(-1f), position)
 		return this
 	}
 
@@ -656,27 +826,20 @@ class Matrix4(
 		values[M13] = mat.values[M31]
 		values[M23] = 0f
 		values[M33] = mat.values[M02]
+		refreshMode()
 		return this
 	}
 
-	fun scl(scale: Vector3Ro): Matrix4 {
-		values[M00] *= scale.x
-		values[M11] *= scale.y
-		values[M22] *= scale.z
-		return this
-	}
+	fun scl(scale: Vector3Ro): Matrix4 = scl(scale.x, scale.y, scale.z)
+
+	fun scl(scale: Float): Matrix4 = scl(scale, scale, scale)
 
 	fun scl(x: Float, y: Float, z: Float): Matrix4 {
 		values[M00] *= x
 		values[M11] *= y
 		values[M22] *= z
-		return this
-	}
-
-	fun scl(scale: Float): Matrix4 {
-		values[M00] *= scale
-		values[M11] *= scale
-		values[M22] *= scale
+		if (_mode.ordinal < MatrixMode.SCALE.ordinal)
+			_mode = MatrixMode.SCALE
 		return this
 	}
 
@@ -734,30 +897,33 @@ class Matrix4(
 	 * @return the scale factor on the X axis (non-negative)
 	 */
 	override fun getScaleX(): Float {
-		return if ((MathUtils.isZero(values[M01]) && MathUtils.isZero(values[M02])))
-			abs(values[M00])
-		else
-			sqrt(getScaleXSquared())
+		return when (_mode) {
+			MatrixMode.TRANSLATION, MatrixMode.IDENTITY -> 1f
+			MatrixMode.SCALE -> abs(values[M00])
+			MatrixMode.FULL -> sqrt(getScaleXSquared())
+		}
 	}
 
 	/**
 	 * @return the scale factor on the Y axis (non-negative)
 	 */
 	override fun getScaleY(): Float {
-		return if ((MathUtils.isZero(values[M10]) && MathUtils.isZero(values[M12])))
-			abs(values[M11])
-		else
-			sqrt(getScaleYSquared())
+		return when (_mode) {
+			MatrixMode.TRANSLATION, MatrixMode.IDENTITY -> 1f
+			MatrixMode.SCALE -> abs(values[M11])
+			MatrixMode.FULL -> sqrt(getScaleYSquared())
+		}
 	}
 
 	/**
 	 * @return the scale factor on the X axis (non-negative)
 	 */
 	override fun getScaleZ(): Float {
-		return if ((MathUtils.isZero(values[M20]) && MathUtils.isZero(values[M21])))
-			abs(values[M22])
-		else
-			sqrt(getScaleZSquared())
+		return when (_mode) {
+			MatrixMode.TRANSLATION, MatrixMode.IDENTITY -> 1f
+			MatrixMode.SCALE -> abs(values[M22])
+			MatrixMode.FULL -> sqrt(getScaleZSquared())
+		}
 	}
 
 	/**
@@ -769,24 +935,12 @@ class Matrix4(
 	}
 
 	/**
-	 * removes the translational part and transposes the matrix.
-	 */
-	fun toNormalMatrix(): Matrix4 {
-		values[M03] = 0f
-		values[M13] = 0f
-		values[M23] = 0f
-		return inv().tra()
-	}
-
-	/**
 	 * Postmultiplies this matrix by a translation matrix. Postmultiplication is also used by OpenGL ES'
 	 * glTranslate/glRotate/glScale
 	 * @param translation
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
-	fun translate(translation: Vector3Ro): Matrix4 {
-		return translate(translation.x, translation.y, translation.z)
-	}
+	fun translate(translation: Vector3Ro): Matrix4 = translate(translation.x, translation.y, translation.z)
 
 	/**
 	 * Postmultiplies this matrix by a translation matrix. Postmultiplication is also used by OpenGL ES' 1.x
@@ -797,15 +951,36 @@ class Matrix4(
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun translate(x: Float = 0f, y: Float = 0f, z: Float = 0f): Matrix4 {
-		val matA = values
-		val v03 = matA[M00] * x + matA[M01] * y + matA[M02] * z + matA[M03]
-		val v13 = matA[M10] * x + matA[M11] * y + matA[M12] * z + matA[M13]
-		val v23 = matA[M20] * x + matA[M21] * y + matA[M22] * z + matA[M23]
-		val v33 = matA[M30] * x + matA[M31] * y + matA[M32] * z + matA[M33]
-		matA[M03] = v03
-		matA[M13] = v13
-		matA[M23] = v23
-		matA[M33] = v33
+		val mat = values
+		when (_mode) {
+			MatrixMode.IDENTITY -> {
+				_mode = MatrixMode.TRANSLATION
+				mat[M03] += x
+				mat[M13] += y
+				mat[M23] += z
+			}
+			MatrixMode.TRANSLATION -> {
+				mat[M03] += x
+				mat[M13] += y
+				mat[M23] += z
+			}
+			MatrixMode.SCALE -> {
+				mat[M03] += mat[M00] * x
+				mat[M13] += mat[M11] * y
+				mat[M23] += mat[M22] * z
+			}
+			MatrixMode.FULL -> {
+				val v03 = mat[M00] * x + mat[M01] * y + mat[M02] * z + mat[M03]
+				val v13 = mat[M10] * x + mat[M11] * y + mat[M12] * z + mat[M13]
+				val v23 = mat[M20] * x + mat[M21] * y + mat[M22] * z + mat[M23]
+				val v33 = mat[M30] * x + mat[M31] * y + mat[M32] * z + mat[M33]
+				mat[M03] = v03
+				mat[M13] = v13
+				mat[M23] = v23
+				mat[M33] = v33
+			}
+		}
+
 		return this
 	}
 
@@ -839,6 +1014,16 @@ class Matrix4(
 	}
 
 	/**
+	 * Postmultiplies this matrix by the rotation between two vectors.
+	 * @param v1 The base vector
+	 * @param v2 The target vector
+	 * @return This matrix for the purpose of chaining methods together
+	 */
+	fun rotate(v1: Vector3Ro, v2: Vector3Ro): Matrix4 {
+		return rotate(quat.setFromCross(v1, v2))
+	}
+
+	/**
 	 * Postmultiplies this matrix with a (counter-clockwise) rotation matrix. Postmultiplication is also used by OpenGL ES' 1.x
 	 * glTranslate/glRotate/glScale.
 	 *
@@ -847,18 +1032,8 @@ class Matrix4(
 	 */
 	fun rotate(rotation: QuaternionRo): Matrix4 {
 		tmpMat.set(rotation)
-		mul(values, tmpMat.values)
+		mul(tmpMat)
 		return this
-	}
-
-	/**
-	 * Postmultiplies this matrix by the rotation between two vectors.
-	 * @param v1 The base vector
-	 * @param v2 The target vector
-	 * @return This matrix for the purpose of chaining methods together
-	 */
-	fun rotate(v1: Vector3Ro, v2: Vector3Ro): Matrix4 {
-		return rotate(quat.setFromCross(v1, v2))
 	}
 
 	/**
@@ -873,29 +1048,11 @@ class Matrix4(
 	 */
 	fun scale(scaleX: Float, scaleY: Float, scaleZ: Float): Matrix4 {
 		if (scaleX == 1f && scaleY == 1f && scaleZ == 1f) return this
+		if (_mode.ordinal < MatrixMode.SCALE.ordinal)
+			_mode = MatrixMode.SCALE
 		tmpMat.idt()
 		tmpMat.scl(scaleX, scaleY, scaleZ)
 		return mul(tmpMat)
-	}
-
-	/**
-	 * Copies the 4x3 upper-left sub-matrix into float array. The destination array is supposed to be a column major matrix.
-	 * @param out the destination matrix
-	 */
-	override fun extract4x3Matrix(out: MutableList<Float>): MutableList<Float> {
-		out[M00] = values[M00]
-		out[M10] = values[M10]
-		out[M20] = values[M20]
-		out[M30] = values[M01]
-		out[M01] = values[M11]
-		out[M11] = values[M21]
-		out[M21] = values[M02]
-		out[M31] = values[M12]
-		out[M02] = values[M22]
-		out[M12] = values[M03]
-		out[M22] = values[M13]
-		out[M32] = values[M23]
-		return out
 	}
 
 	/**
@@ -906,29 +1063,30 @@ class Matrix4(
 	 */
 	override fun prj(vec: Vector3): Vector3 {
 		val mat = values
-		val inv_w = 1.0f / (vec.x * mat[M30] + vec.y * mat[M31] + vec.z * mat[M32] + mat[M33])
-		val x = (vec.x * mat[M00] + vec.y * mat[M01] + vec.z * mat[M02] + mat[M03]) * inv_w
-		val y = (vec.x * mat[M10] + vec.y * mat[M11] + vec.z * mat[M12] + mat[M13]) * inv_w
-		val z = (vec.x * mat[M20] + vec.y * mat[M21] + vec.z * mat[M22] + mat[M23]) * inv_w
-		vec.x = x
-		vec.y = y
-		vec.z = z
-		return vec
-	}
-
-	/**
-	 * Multiplies the vector with this matrix, performing a division by w.
-	 *
-	 * @param vec the vector.
-	 * @return Returns the vec for chaining.
-	 */
-	override fun prj(vec: Vector2): Vector2 {
-		val mat = values
-		val invW = 1.0f / (vec.x * mat[M30] + vec.y * mat[M31] + mat[M33])
-		val x = (vec.x * mat[M00] + vec.y * mat[M01] + mat[M03]) * invW
-		val y = (vec.x * mat[M10] + vec.y * mat[M11] + mat[M13]) * invW
-		vec.x = x
-		vec.y = y
+		when (_mode) {
+			MatrixMode.IDENTITY -> {
+			}
+			MatrixMode.TRANSLATION -> {
+				vec.x += mat[M03]
+				vec.y += mat[M13]
+				vec.z += mat[M23]
+			}
+			MatrixMode.SCALE -> {
+				val invW = 1.0f / mat[M33]
+				vec.x = (vec.x * mat[M00] + mat[M03]) * invW
+				vec.y = (vec.y * mat[M11] + mat[M13]) * invW
+				vec.z = (vec.z * mat[M22] + mat[M23]) * invW
+			}
+			MatrixMode.FULL -> {
+				val invW = 1.0f / (vec.x * mat[M30] + vec.y * mat[M31] + vec.z * mat[M32] + mat[M33])
+				val x = (vec.x * mat[M00] + vec.y * mat[M01] + vec.z * mat[M02] + mat[M03]) * invW
+				val y = (vec.x * mat[M10] + vec.y * mat[M11] + vec.z * mat[M12] + mat[M13]) * invW
+				val z = (vec.x * mat[M20] + vec.y * mat[M21] + vec.z * mat[M22] + mat[M23]) * invW
+				vec.x = x
+				vec.y = y
+				vec.z = z
+			}
+		}
 		return vec
 	}
 
@@ -938,12 +1096,25 @@ class Matrix4(
 	 */
 	override fun rot(vec: Vector3): Vector3 {
 		val mat = values
-		val x = vec.x * mat[M00] + vec.y * mat[M01] + vec.z * mat[M02]
-		val y = vec.x * mat[M10] + vec.y * mat[M11] + vec.z * mat[M12]
-		val z = vec.x * mat[M20] + vec.y * mat[M21] + vec.z * mat[M22]
-		vec.x = x
-		vec.y = y
-		vec.z = z
+		when (_mode) {
+			MatrixMode.IDENTITY -> {
+			}
+			MatrixMode.TRANSLATION -> {
+			}
+			MatrixMode.SCALE -> {
+				vec.x *= mat[M00]
+				vec.y *= mat[M11]
+				vec.z *= mat[M22]
+			}
+			MatrixMode.FULL -> {
+				val x = vec.x * mat[M00] + vec.y * mat[M01] + vec.z * mat[M02]
+				val y = vec.x * mat[M10] + vec.y * mat[M11] + vec.z * mat[M12]
+				val z = vec.x * mat[M20] + vec.y * mat[M21] + vec.z * mat[M22]
+				vec.x = x
+				vec.y = y
+				vec.z = z
+			}
+		}
 		return vec
 	}
 
@@ -954,14 +1125,66 @@ class Matrix4(
 	 */
 	override fun rot(vec: Vector2): Vector2 {
 		val mat = values
-		val x = vec.x * mat[M00] + vec.y * mat[M01]
-		val y = vec.x * mat[M10] + vec.y * mat[M11]
-		vec.x = x
-		vec.y = y
+		when (_mode) {
+			MatrixMode.IDENTITY -> {
+			}
+			MatrixMode.TRANSLATION -> {
+			}
+			MatrixMode.SCALE -> {
+				vec.x *= mat[M00]
+				vec.y *= mat[M11]
+			}
+			MatrixMode.FULL -> {
+				val x = vec.x * mat[M00] + vec.y * mat[M01]
+				val y = vec.x * mat[M10] + vec.y * mat[M11]
+				vec.x = x
+				vec.y = y
+			}
+		}
 		return vec
 	}
 
+	// TODO: support shearing on Y and Z axes
 
+	/**
+	 * Postmultiplies this matrix by a shear matrix on the z axis.
+	 * @param shearXZ The shear in x direction.
+	 * @param shearYZ The shear in y direction.
+	 * @return This matrix for the purpose of chaining.
+	 */
+	fun shearZ(shearXZ: Float = 0f, shearYZ: Float = 0f): Matrix4 {
+		var tmp0 = values[M00] + shearYZ * values[M01]
+		var tmp1 = values[M01] + shearXZ * values[M00]
+		values[M00] = tmp0
+		values[M01] = tmp1
+
+		tmp0 = values[M10] + shearYZ * values[M11]
+		tmp1 = values[M11] + shearXZ * values[M10]
+		values[M10] = tmp0
+		values[M11] = tmp1
+		_mode = MatrixMode.FULL
+
+		return this
+	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		other as Matrix4Ro
+		if (_mode != other.mode) return false
+		return when (_mode) {
+			MatrixMode.IDENTITY -> true
+			MatrixMode.TRANSLATION -> {
+				values[M03] == other.values[M03] &&
+						values[M13] == other.values[M13] &&
+						values[M23] == other.values[M23]
+			}
+			MatrixMode.SCALE, MatrixMode.FULL -> values == other.values
+		}
+	}
+
+	override fun hashCode(): Int {
+		return values.hashCode()
+	}
 
 	companion object {
 
@@ -1072,80 +1295,28 @@ class Matrix4(
 		private val right = Vector3()
 		private val tmpForward = Vector3()
 		private val tmpUp = Vector3()
-
-		private fun mul(matA: FloatList, matB: List<Float>) {
-			val v00 = matA[M00] * matB[M00] + matA[M01] * matB[M10] + matA[M02] * matB[M20] + matA[M03] * matB[M30]
-			val v01 = matA[M00] * matB[M01] + matA[M01] * matB[M11] + matA[M02] * matB[M21] + matA[M03] * matB[M31]
-			val v02 = matA[M00] * matB[M02] + matA[M01] * matB[M12] + matA[M02] * matB[M22] + matA[M03] * matB[M32]
-			val v03 = matA[M00] * matB[M03] + matA[M01] * matB[M13] + matA[M02] * matB[M23] + matA[M03] * matB[M33]
-
-			val v10 = matA[M10] * matB[M00] + matA[M11] * matB[M10] + matA[M12] * matB[M20] + matA[M13] * matB[M30]
-			val v11 = matA[M10] * matB[M01] + matA[M11] * matB[M11] + matA[M12] * matB[M21] + matA[M13] * matB[M31]
-			val v12 = matA[M10] * matB[M02] + matA[M11] * matB[M12] + matA[M12] * matB[M22] + matA[M13] * matB[M32]
-			val v13 = matA[M10] * matB[M03] + matA[M11] * matB[M13] + matA[M12] * matB[M23] + matA[M13] * matB[M33]
-
-			val v20 = matA[M20] * matB[M00] + matA[M21] * matB[M10] + matA[M22] * matB[M20] + matA[M23] * matB[M30]
-			val v21 = matA[M20] * matB[M01] + matA[M21] * matB[M11] + matA[M22] * matB[M21] + matA[M23] * matB[M31]
-			val v22 = matA[M20] * matB[M02] + matA[M21] * matB[M12] + matA[M22] * matB[M22] + matA[M23] * matB[M32]
-			val v23 = matA[M20] * matB[M03] + matA[M21] * matB[M13] + matA[M22] * matB[M23] + matA[M23] * matB[M33]
-
-			val v30 = matA[M30] * matB[M00] + matA[M31] * matB[M10] + matA[M32] * matB[M20] + matA[M33] * matB[M30]
-			val v31 = matA[M30] * matB[M01] + matA[M31] * matB[M11] + matA[M32] * matB[M21] + matA[M33] * matB[M31]
-			val v32 = matA[M30] * matB[M02] + matA[M31] * matB[M12] + matA[M32] * matB[M22] + matA[M33] * matB[M32]
-			val v33 = matA[M30] * matB[M03] + matA[M31] * matB[M13] + matA[M32] * matB[M23] + matA[M33] * matB[M33]
-
-			matA[M00] = v00
-			matA[M01] = v01
-			matA[M02] = v02
-			matA[M03] = v03
-
-			matA[M10] = v10
-			matA[M11] = v11
-			matA[M12] = v12
-			matA[M13] = v13
-
-			matA[M20] = v20
-			matA[M21] = v21
-			matA[M22] = v22
-			matA[M23] = v23
-
-			matA[M30] = v30
-			matA[M31] = v31
-			matA[M32] = v32
-			matA[M33] = v33
-		}
 	}
 
-	// TODO: support shearing on Y and Z axes
+}
+
+enum class MatrixMode {
+
+	IDENTITY,
 
 	/**
-	 * Postmultiplies this matrix by a shear matrix on the z axis.
-	 * @param shearXZ The shear in x direction.
-	 * @param shearYZ The shear in y direction.
-	 * @return This matrix for the purpose of chaining.
+	 * Identity except for translation components. That is: M03, M13, and M23
 	 */
-	fun shearZ(shearXZ: Float = 0f, shearYZ: Float = 0f): Matrix4 {
-		var tmp0 = values[M00] + shearYZ * values[M01]
-		var tmp1 = values[M01] + shearXZ * values[M00]
-		values[M00] = tmp0
-		values[M01] = tmp1
+	TRANSLATION,
 
-		tmp0 = values[M10] + shearYZ * values[M11]
-		tmp1 = values[M11] + shearXZ * values[M10]
-		values[M10] = tmp0
-		values[M11] = tmp1
+	/**
+	 * Identity except for translation and scale components. That is: M03, M13, M23, M00, M11, M22, and M33
+	 */
+	SCALE,
 
-		return this
-	}
+	FULL
+}
 
-	override fun equals(other: Any?): Boolean {
-		if (this === other) return true
-		other as Matrix4Ro
-		if (values != other.values) return false
-		return true
-	}
-
-	override fun hashCode(): Int {
-		return values.hashCode()
-	}
+private fun maxOf(modeA: MatrixMode, modeB: MatrixMode): MatrixMode {
+	return if (modeA.ordinal > modeB.ordinal) modeA
+	else modeB
 }

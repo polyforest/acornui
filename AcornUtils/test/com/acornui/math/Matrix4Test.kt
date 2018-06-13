@@ -16,7 +16,6 @@
 
 package com.acornui.math
 
-import com.acornui.collection.ArrayList
 import com.acornui.core.closeTo
 import com.acornui.test.assertListEquals
 import org.junit.Before
@@ -29,6 +28,8 @@ class Matrix4Test {
 
 	private lateinit var m1: Matrix4
 	private lateinit var m2: Matrix4
+	private lateinit var m3: Matrix4
+	private lateinit var m4: Matrix4
 
 	@Before
 	fun setUp() {
@@ -43,6 +44,18 @@ class Matrix4Test {
 				44f, 36f, 16f, 98f,
 				26f, 3f, 9f, 27f,
 				43f, 87f, 38f, 75f))
+
+		m3 = Matrix4(floatArrayOf(
+				5f, 0f, 0f, 15f,
+				0f, 6f, 0f, 78f,
+				0f, 0f, -9f, 37f,
+				0f, 0f, 0f, 75f))
+
+		m4 = Matrix4(floatArrayOf(
+				1f, 0f, 0f, -17f,
+				0f, 1f, 0f, 45f,
+				0f, 0f, 1f, 23f,
+				0f, 0f, 0f, 1f))
 	}
 
 	@Test
@@ -79,12 +92,6 @@ class Matrix4Test {
 	}
 
 	@Test
-	fun tra() {
-		m1.tra()
-		assertListEquals(arrayListOf(3.0f, 17.0f, 19.0f, 11.0f, 5.0f, 23.0f, 101.0f, 25.0f, 6.0f, 27.0f, 73.0f, 41.0f, 13.0f, 35.0f, 19.0f, 43.0f), m1.values)
-	}
-
-	@Test
 	fun idt() {
 		m1.idt()
 		assertEquals(Matrix4.IDENTITY, m1)
@@ -100,11 +107,6 @@ class Matrix4Test {
 	fun det() {
 		m1.det()
 		assertListEquals(arrayListOf(3.0f, 5.0f, 6.0f, 13.0f, 17.0f, 23.0f, 27.0f, 35.0f, 19.0f, 101.0f, 73.0f, 19.0f, 11.0f, 25.0f, 41.0f, 43.0f), m1.values)
-	}
-
-	@Test
-	fun det3x3() {
-		assertEquals(896f, m1.det3x3())
 	}
 
 	@Test
@@ -207,12 +209,6 @@ class Matrix4Test {
 	}
 
 	@Test
-	fun toNormalMatrix() {
-		m1.toNormalMatrix()
-		assertListEquals(arrayListOf(-1.1696428f, -0.8125f, 1.4285713f, 0.0f, 0.2689732f, 0.1171875f, -0.23214285f, 0.0f, -0.0033482143f, 0.0234375f, -0.017857142f, 0.0f, 0.13616072f, 0.13989826f, -0.23504983f, 0.023255814f), m1.values)
-	}
-
-	@Test
 	fun translate() {
 		m1.translate(3f, 23f, 44f)
 		assertListEquals(arrayListOf(3.0f, 5.0f, 6.0f, 13.0f, 17.0f, 23.0f, 27.0f, 35.0f, 19.0f, 101.0f, 73.0f, 19.0f, 1247.0f, 5013.0f, 3892.0f, 1723.0f), m1.values)
@@ -257,23 +253,19 @@ class Matrix4Test {
 	}
 
 	@Test
-	fun extract4x3Matrix() {
-		assertListEquals(listOf(3.0f, 5.0f, 6.0f, 17.0f, 23.0f, 27.0f, 19.0f, 101.0f, 73.0f, 11.0f, 25.0f, 41.0f), m1.extract4x3Matrix(ArrayList(12, { 0f })))
-	}
-
-	@Test
 	fun prj() {
 		assertEquals(Vector3(0.90207374f, 4.524194f, 3.3231566f), m1.prj(Vector3(3f, 6f, 76f)))
-	}
-
-	@Test
-	fun prj1() {
-		assertEquals(Vector2(0.4178082f, 0.60958904f), m1.prj(Vector2(3f, 6f)))
+		assertEquals(Vector3(x=0.0044117644f, y=0.010588235f, z=-0.20117646f), m3.prj(Vector3(3f, 6f, 76f)))
+		assertEquals(Vector3(x=0.0015243902f, y=0.0030487804f, z=0.038617887f), m4.prj(Vector3(3f, 6f, 76f)))
+		assertEquals(Vector3(3f, 6f, 76f), Matrix4.IDENTITY.prj(Vector3(3f, 6f, 76f)))
 	}
 
 	@Test
 	fun rot() {
+		assertEquals(Vector3(3f, 6f, 76f), Matrix4.IDENTITY.rot(Vector3(3f, 6f, 76f)))
 		assertEquals(Vector3(1555f, 7829f, 5728f), m1.rot(Vector3(3f, 6f, 76f)))
+		assertEquals(Vector3(15f, 36f, -684f), m3.rot(Vector3(3f, 6f, 76f)))
+		assertEquals(Vector3(3f, 6f, 76f), m4.rot(Vector3(3f, 6f, 76f)))
 	}
 
 	@Test
