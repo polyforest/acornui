@@ -155,6 +155,7 @@ open class OptionsList<E : Any>(
 	}
 
 	private val listLift = lift {
+		focusFirst = false
 		+dataScroller layout { fill() }
 		onClosed = {
 			close()
@@ -432,25 +433,17 @@ open class OptionsList<E : Any>(
 		dataScroller.highlighted.clear()
 		addChild(listLift)
 		textInput.focus()
-//		stage.mouseDown(isCapture = true).add(stageMouseDownHandler)
 	}
 
 	fun close() {
 		if (!_isOpen) return
 		_isOpen = false
 		removeChild(listLift)
-//		stage.mouseDown(isCapture = true).remove(stageMouseDownHandler)
 	}
 
 	fun toggleOpen() {
 		if (_isOpen) close()
 		else open()
-	}
-
-	private val stageMouseDownHandler = { event: MouseInteractionRo ->
-		if (!owns(event.target)) {
-			close()
-		}
 	}
 
 	var text: String

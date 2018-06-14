@@ -16,8 +16,7 @@
 
 package com.acornui.core.cache
 
-import com.acornui.collection.arrayListObtain
-import com.acornui.collection.arrayListPool
+import com.acornui.collection.copy
 import com.acornui.component.ItemRendererRo
 
 /**
@@ -41,7 +40,11 @@ fun <E, T : ItemRendererRo<E>> recycle(
 
 
 /**
- * Recycles a list of item renderers, creating or disposing renderers only as needed.
+ * Recycles a list of item renderers, creating or disposing renderers only when there is no data match.
+ *
+ * The [factory] and [disposer] methods may use an [com.acornui.collection.ObjectPool] to handle the case where there
+ * is no data match, but there would still like to be recycling.
+ *
  * @param data The updated list of data items.
  * @param existingElements The stale list of item renderers. This will be modified to reflect the new item renderers.
  * @param factory Used to create new item renderers as needed. [configure] will be called after factory to configure
@@ -60,32 +63,37 @@ fun <E, T> recycle(
 		retriever: (element: T) -> E?,
 		equality: (a: E?, b: E?) -> Boolean = { a, b -> a == b }
 ) {
-	val unused = arrayListObtain<T>()
-	val neededCount = (data?.size ?: 0) - existingElements.size
-	for (i in 0..existingElements.lastIndex) {
-		val existingElement = existingElements[i]
-		val item = retriever(existingElement)
-		if (unused.size >= neededCount && (data == null || data.find { equality(it, item) } == null)) {
-			disposer(existingElement)
+
+	// Dispose items not found in the new data list first, so that the disposer can potentially pool those items to be
+	// retrieved again immediately in the factory.
+	val remainingData = data?.copy()
+	val toRecycle = existingElements.copy()
+	val iterator = toRecycle.iterator()
+	while (iterator.hasNext()) {
+		val next = iterator.next()
+		val index = remainingData?.indexOfFirst { equality(retriever(next), it) } ?: -1
+		if (index == -1) {
+			disposer(next)
+			iterator.remove()
 		} else {
-			unused.add(existingElement)
+			remainingData?.removeAt(index)
 		}
 	}
+
 	existingElements.clear()
 	if (data != null) {
 		for (i in 0..data.lastIndex) {
 			val item = data[i]
-			val foundIndex = unused.indexOfFirst { equality(retriever(it), item) }
+			val foundIndex = toRecycle.indexOfFirst { equality(retriever(it), item) }
 			val element = if (foundIndex == -1) {
 				factory(item, i)
 			} else {
-				unused.removeAt(foundIndex)
+				toRecycle.removeAt(foundIndex)
 			}
 			configure(element, item, i)
 			existingElements.add(element)
 		}
 	}
-	arrayListPool.free(unused)
 }
 
 /**

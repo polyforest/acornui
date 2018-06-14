@@ -548,7 +548,6 @@ class Matrix4() : Matrix4Ro {
 	 *
 	 * @param matrix The other matrix to multiply by.
 	 * @return This matrix for the purpose of chaining operations together.
-
 	 */
 	fun mul(matrix: Matrix4Ro): Matrix4 {
 		val matA = _values
