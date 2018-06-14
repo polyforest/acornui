@@ -43,10 +43,7 @@ import com.acornui.gl.core.GlState
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
-import com.acornui.math.Bounds
-import com.acornui.math.MinMaxRo
-import com.acornui.math.Vector3
-import com.acornui.math.ceil
+import com.acornui.math.*
 import com.acornui.string.isBreaking
 import kotlin.math.round
 
@@ -479,7 +476,7 @@ interface TextElement : TextElementRo, Disposable {
 	/**
 	 * Finalizes the vertices for rendering.
 	 */
-	fun validateVertices(leftClip: Float, topClip: Float, rightClip: Float, bottomClip: Float)
+	fun validateVertices(transform: Matrix4Ro, leftClip: Float, topClip: Float, rightClip: Float, bottomClip: Float)
 
 	/**
 	 * Draws this element.
@@ -605,7 +602,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 
 	init {
 		validation.addNode(TEXT_ELEMENTS, ValidationFlags.HIERARCHY_ASCENDING, ValidationFlags.LAYOUT, this::updateTextElements)
-		validation.addNode(VERTICES, ValidationFlags.LAYOUT or ValidationFlags.STYLES, 0, this::updateVertices)
+		validation.addNode(VERTICES, ValidationFlags.LAYOUT or ValidationFlags.STYLES or ValidationFlags.CONCATENATED_TRANSFORM, 0, this::updateVertices)
 		validation.addNode(CHAR_STYLE, ValidationFlags.CONCATENATED_COLOR_TRANSFORM or ValidationFlags.STYLES, 0, this::updateCharStyle)
 	}
 
@@ -854,7 +851,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 		val rightClip = w - padding.right
 		val bottomClip = h - padding.bottom
 		for (i in 0.._textElements.lastIndex) {
-			_textElements[i].validateVertices(leftClip, topClip, rightClip, bottomClip)
+			_textElements[i].validateVertices(concatenatedTransform, leftClip, topClip, rightClip, bottomClip)
 		}
 	}
 
@@ -904,7 +901,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 			if (lineEnd <= lineStart)
 				return
 
-			glState.camera(camera, concatenatedTransform)
+			glState.camera(camera)
 			for (i in lineStart..lineEnd - 1) {
 				val line = _lines[i]
 				for (j in line.startIndex..line.endIndex - 1) {
@@ -973,7 +970,7 @@ class TfChar private constructor() : TextElement, Clearable {
 	 * A cache of the vertex positions in world space.
 	 */
 	private val charVertices: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
-	private val normal = Vector3.NEG_Z
+	private val normal = Vector3()
 
 	private val backgroundVertices: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
 
@@ -1004,7 +1001,7 @@ class TfChar private constructor() : TextElement, Clearable {
 		}
 	}
 
-	override fun validateVertices(leftClip: Float, topClip: Float, rightClip: Float, bottomClip: Float) {
+	override fun validateVertices(transform: Matrix4Ro, leftClip: Float, topClip: Float, rightClip: Float, bottomClip: Float) {
 		val style = style ?: return
 		val x = x
 		val y = y
@@ -1061,16 +1058,16 @@ class TfChar private constructor() : TextElement, Clearable {
 		v2 = regionB / textureH
 
 		// Transform vertex coordinates from local to global
-		charVertices[0].set(charL, charT, 0f)
-		charVertices[1].set(charR, charT, 0f)
-		charVertices[2].set(charR, charB, 0f)
-		charVertices[3].set(charL, charB, 0f)
+		transform.prj(charVertices[0].set(charL, charT, 0f))
+		transform.prj(charVertices[1].set(charR, charT, 0f))
+		transform.prj(charVertices[2].set(charR, charB, 0f))
+		transform.prj(charVertices[3].set(charL, charB, 0f))
 
 		// Background vertices
-		backgroundVertices[0].set(bgL, bgT, 0f)
-		backgroundVertices[1].set(bgR, bgT, 0f)
-		backgroundVertices[2].set(bgR, bgB, 0f)
-		backgroundVertices[3].set(bgL, bgB, 0f)
+		transform.prj(backgroundVertices[0].set(bgL, bgT, 0f))
+		transform.prj(backgroundVertices[1].set(bgR, bgT, 0f))
+		transform.prj(backgroundVertices[2].set(bgR, bgB, 0f))
+		transform.prj(backgroundVertices[3].set(bgL, bgB, 0f))
 
 		if (style.underlined || style.strikeThrough) {
 			var lineL = x
@@ -1086,11 +1083,13 @@ class TfChar private constructor() : TextElement, Clearable {
 			var lineB = lineT + style.lineThickness
 			if (lineB > bottomClip) lineB = bottomClip
 
-			lineVertices[0].set(lineL, lineT, 0f)
-			lineVertices[1].set(lineR, lineT, 0f)
-			lineVertices[2].set(lineR, lineB, 0f)
-			lineVertices[3].set(lineL, lineB, 0f)
+			transform.prj(lineVertices[0].set(lineL, lineT, 0f))
+			transform.prj(lineVertices[1].set(lineR, lineT, 0f))
+			transform.prj(lineVertices[2].set(lineR, lineB, 0f))
+			transform.prj(lineVertices[3].set(lineL, lineB, 0f))
 		}
+
+		transform.rot(normal.set(Vector3.NEG_Z)).nor()
 	}
 
 	override fun render(glState: GlState) {

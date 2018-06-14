@@ -158,7 +158,6 @@ private class LiftStack(owner: Owned) : StackLayoutContainer(owner) {
 
 	init {
 		includeInLayout = false
-		isSimpleTranslate = false
 	}
 
 	fun setExternalTransform(value: Matrix4) {

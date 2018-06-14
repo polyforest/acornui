@@ -21,6 +21,7 @@ package com.acornui.math
 import com.acornui.collection.FloatList
 import kotlin.math.abs
 import kotlin.math.sqrt
+import kotlin.math.tan
 
 interface Matrix4Ro {
 
@@ -137,18 +138,24 @@ interface Matrix4Ro {
  *
  * @author badlogicgames@gmail.com
  */
-class Matrix4(
+class Matrix4() : Matrix4Ro {
 
-		override val values: FloatList = FloatList(floatArrayOf(
-				1f, 0f, 0f, 0f,
-				0f, 1f, 0f, 0f,
-				0f, 0f, 1f, 0f,
-				0f, 0f, 0f, 1f))
+	private val _values: FloatList = FloatList(floatArrayOf(
+			1f, 0f, 0f, 0f,
+			0f, 1f, 0f, 0f,
+			0f, 0f, 1f, 0f,
+			0f, 0f, 0f, 1f))
 
+	override val values: List<Float>
+		get() = _values
 
-) : Matrix4Ro {
+	constructor(values: FloatArray) : this() {
+		set(values)
+	}
 
-	constructor(values: FloatArray) : this(FloatList(values))
+	constructor(values: FloatList) : this() {
+		set(values)
+	}
 
 	private var _mode: MatrixMode = MatrixMode.IDENTITY
 
@@ -160,6 +167,7 @@ class Matrix4(
 	}
 
 	private fun refreshMode() {
+		val values = _values
 		if (values[M03] != 0f || values[M13] != 0f || values[M23] != 0f) _mode = MatrixMode.TRANSLATION
 		if (values[M00] != 1f || values[M11] != 1f || values[M22] != 1f || values[M33] != 1f) _mode = MatrixMode.SCALE
 		if (values[M01] != 0f || values[M02] != 0f ||
@@ -179,7 +187,7 @@ class Matrix4(
 	 */
 	fun set(matrix: Matrix4Ro): Matrix4 {
 		for (i in 0..16 - 1) {
-			values[i] = matrix.values[i]
+			_values[i] = matrix.values[i]
 		}
 		_mode = matrix.mode
 		return this
@@ -195,7 +203,15 @@ class Matrix4(
 	 */
 	fun set(values: List<Float>): Matrix4 {
 		for (i in 0..16 - 1) {
-			this.values[i] = values[i]
+			this._values[i] = values[i]
+		}
+		refreshMode()
+		return this
+	}
+
+	fun set(values: FloatArray): Matrix4 {
+		for (i in 0..16 - 1) {
+			this._values[i] = values[i]
 		}
 		refreshMode()
 		return this
@@ -259,6 +275,7 @@ class Matrix4(
 		val yy = quaternionY * ys
 		val yz = quaternionY * zs
 		val zz = quaternionZ * zs
+		val values = _values
 
 		values[M00] = (1f - (yy + zz))
 		values[M01] = (xy - wz)
@@ -323,6 +340,7 @@ class Matrix4(
 		val yy = quaternionY * ys
 		val yz = quaternionY * zs
 		val zz = quaternionZ * zs
+		val values = _values
 
 		values[M00] = scaleX * (1f - (yy + zz))
 		values[M01] = scaleY * (xy - wz)
@@ -358,6 +376,7 @@ class Matrix4(
 	 * @param pos The translation vector.
 	 */
 	fun set(xAxis: Vector3Ro, yAxis: Vector3Ro, zAxis: Vector3Ro, pos: Vector3Ro): Matrix4 {
+		val values = _values
 		values[M00] = xAxis.x
 		values[M01] = xAxis.y
 		values[M02] = xAxis.z
@@ -375,7 +394,88 @@ class Matrix4(
 		values[M32] = 0f
 		values[M33] = 1f
 
+		refreshMode()
+		return this
+	}
+
+
+	/**
+	 * Sets the matrix to an orthographic projection like glOrtho (http://www.opengl.org/sdk/docs/man/xhtml/glOrtho.xml) following
+	 * the OpenGL equivalent
+	 *
+	 * @param left The left clipping plane
+	 * @param right The right clipping plane
+	 * @param bottom The bottom clipping plane
+	 * @param top The top clipping plane
+	 * @param near The near clipping plane
+	 * @param far The far clipping plane
+	 * @return This matrix for the purpose of chaining methods together.
+	 */
+	fun setToOrtho(left: Float, right: Float, bottom: Float, top: Float, near: Float, far: Float): Matrix4 {
+		val values = _values
+		val xOrth = 2f / (right - left)
+		val yOrth = 2f / (top - bottom)
+		val zOrth = -2f / (far - near)
+
+		val tx = -(right + left) / (right - left)
+		val ty = -(top + bottom) / (top - bottom)
+		val tz = -(far + near) / (far - near)
+
+		values[M00] = xOrth
+		values[M10] = 0f
+		values[M20] = 0f
+		values[M30] = 0f
+		values[M01] = 0f
+		values[M11] = yOrth
+		values[M21] = 0f
+		values[M31] = 0f
+		values[M02] = 0f
+		values[M12] = 0f
+		values[M22] = zOrth
+		values[M32] = 0f
+		values[M03] = tx
+		values[M13] = ty
+		values[M23] = tz
+		values[M33] = 1f
+		_mode = MatrixMode.SCALE
+
+		return this
+	}
+
+	/**
+	 * Sets the matrix to a projection matrix with a near- and far plane, a field of view in degrees and an aspect ratio. Note that
+	 * the field of view specified is the angle in degrees for the height, the field of view for the width will be calculated
+	 * according to the aspect ratio.
+	 *
+	 * @param near The near plane
+	 * @param far The far plane
+	 * @param fovy The field of view of the height in radians
+	 * @param aspectRatio The "width over height" aspect ratio
+	 * @return This matrix for the purpose of chaining methods together.
+	 */
+	fun setToProjection(near: Float, far: Float, fovy: Float, aspectRatio: Float): Matrix4 {
+		val values = _values
+		val lFd = 1f / tan(fovy / 2f)
+		val lA1 = (far + near) / (near - far)
+		val lA2 = (2f * far * near) / (near - far)
+		values[M00] = lFd / aspectRatio
+		values[M10] = 0f
+		values[M20] = 0f
+		values[M30] = 0f
+		values[M01] = 0f
+		values[M11] = lFd
+		values[M21] = 0f
+		values[M31] = 0f
+		values[M02] = 0f
+		values[M12] = 0f
+		values[M22] = lA1
+		values[M32] = -1f
+		values[M03] = 0f
+		values[M13] = 0f
+		values[M23] = lA2
+		values[M33] = 0f
 		_mode = MatrixMode.FULL
+
 		return this
 	}
 
@@ -386,6 +486,7 @@ class Matrix4(
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun trn(vector: Vector3Ro): Matrix4 {
+		val values = _values
 		values[M03] += vector.x
 		values[M13] += vector.y
 		values[M23] += vector.z
@@ -405,6 +506,7 @@ class Matrix4(
 
 	 */
 	fun trn(x: Float, y: Float, z: Float): Matrix4 {
+		val values = _values
 		values[M03] += x
 		values[M13] += y
 		values[M23] += z
@@ -426,10 +528,11 @@ class Matrix4(
 
 	 */
 	fun mul(matrix: Matrix4Ro): Matrix4 {
-		val matA = values
+		val matA = _values
 		val matB = matrix.values
 		when (matrix.mode) {
-			MatrixMode.IDENTITY -> {}
+			MatrixMode.IDENTITY -> {
+			}
 			MatrixMode.TRANSLATION -> {
 				when (_mode) {
 					MatrixMode.IDENTITY -> {
@@ -632,6 +735,7 @@ class Matrix4(
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun idt(): Matrix4 {
+		val values = _values
 		values[M00] = 1f
 		values[M01] = 0f
 		values[M02] = 0f
@@ -659,44 +763,72 @@ class Matrix4(
 	 * @throws RuntimeException if the matrix is singular (not invertible)
 	 */
 	fun inv(): Matrix4 {
-		if (_mode == MatrixMode.IDENTITY) return this
-		// TODO: mode
-
-		val lDet = det()
-		if (lDet == 0f) throw RuntimeException("non-invertible matrix")
-		val invDet = 1f / lDet
-		tmp[M00] = values[M12] * values[M23] * values[M31] - values[M13] * values[M22] * values[M31] + values[M13] * values[M21] * values[M32] - values[M11] * values[M23] * values[M32] - values[M12] * values[M21] * values[M33] + values[M11] * values[M22] * values[M33]
-		tmp[M01] = values[M03] * values[M22] * values[M31] - values[M02] * values[M23] * values[M31] - values[M03] * values[M21] * values[M32] + values[M01] * values[M23] * values[M32] + values[M02] * values[M21] * values[M33] - values[M01] * values[M22] * values[M33]
-		tmp[M02] = values[M02] * values[M13] * values[M31] - values[M03] * values[M12] * values[M31] + values[M03] * values[M11] * values[M32] - values[M01] * values[M13] * values[M32] - values[M02] * values[M11] * values[M33] + values[M01] * values[M12] * values[M33]
-		tmp[M03] = values[M03] * values[M12] * values[M21] - values[M02] * values[M13] * values[M21] - values[M03] * values[M11] * values[M22] + values[M01] * values[M13] * values[M22] + values[M02] * values[M11] * values[M23] - values[M01] * values[M12] * values[M23]
-		tmp[M10] = values[M13] * values[M22] * values[M30] - values[M12] * values[M23] * values[M30] - values[M13] * values[M20] * values[M32] + values[M10] * values[M23] * values[M32] + values[M12] * values[M20] * values[M33] - values[M10] * values[M22] * values[M33]
-		tmp[M11] = values[M02] * values[M23] * values[M30] - values[M03] * values[M22] * values[M30] + values[M03] * values[M20] * values[M32] - values[M00] * values[M23] * values[M32] - values[M02] * values[M20] * values[M33] + values[M00] * values[M22] * values[M33]
-		tmp[M12] = values[M03] * values[M12] * values[M30] - values[M02] * values[M13] * values[M30] - values[M03] * values[M10] * values[M32] + values[M00] * values[M13] * values[M32] + values[M02] * values[M10] * values[M33] - values[M00] * values[M12] * values[M33]
-		tmp[M13] = values[M02] * values[M13] * values[M20] - values[M03] * values[M12] * values[M20] + values[M03] * values[M10] * values[M22] - values[M00] * values[M13] * values[M22] - values[M02] * values[M10] * values[M23] + values[M00] * values[M12] * values[M23]
-		tmp[M20] = values[M11] * values[M23] * values[M30] - values[M13] * values[M21] * values[M30] + values[M13] * values[M20] * values[M31] - values[M10] * values[M23] * values[M31] - values[M11] * values[M20] * values[M33] + values[M10] * values[M21] * values[M33]
-		tmp[M21] = values[M03] * values[M21] * values[M30] - values[M01] * values[M23] * values[M30] - values[M03] * values[M20] * values[M31] + values[M00] * values[M23] * values[M31] + values[M01] * values[M20] * values[M33] - values[M00] * values[M21] * values[M33]
-		tmp[M22] = values[M01] * values[M13] * values[M30] - values[M03] * values[M11] * values[M30] + values[M03] * values[M10] * values[M31] - values[M00] * values[M13] * values[M31] - values[M01] * values[M10] * values[M33] + values[M00] * values[M11] * values[M33]
-		tmp[M23] = values[M03] * values[M11] * values[M20] - values[M01] * values[M13] * values[M20] - values[M03] * values[M10] * values[M21] + values[M00] * values[M13] * values[M21] + values[M01] * values[M10] * values[M23] - values[M00] * values[M11] * values[M23]
-		tmp[M30] = values[M12] * values[M21] * values[M30] - values[M11] * values[M22] * values[M30] - values[M12] * values[M20] * values[M31] + values[M10] * values[M22] * values[M31] + values[M11] * values[M20] * values[M32] - values[M10] * values[M21] * values[M32]
-		tmp[M31] = values[M01] * values[M22] * values[M30] - values[M02] * values[M21] * values[M30] + values[M02] * values[M20] * values[M31] - values[M00] * values[M22] * values[M31] - values[M01] * values[M20] * values[M32] + values[M00] * values[M21] * values[M32]
-		tmp[M32] = values[M02] * values[M11] * values[M30] - values[M01] * values[M12] * values[M30] - values[M02] * values[M10] * values[M31] + values[M00] * values[M12] * values[M31] + values[M01] * values[M10] * values[M32] - values[M00] * values[M11] * values[M32]
-		tmp[M33] = values[M01] * values[M12] * values[M20] - values[M02] * values[M11] * values[M20] + values[M02] * values[M10] * values[M21] - values[M00] * values[M12] * values[M21] - values[M01] * values[M10] * values[M22] + values[M00] * values[M11] * values[M22]
-		values[M00] = tmp[M00] * invDet
-		values[M01] = tmp[M01] * invDet
-		values[M02] = tmp[M02] * invDet
-		values[M03] = tmp[M03] * invDet
-		values[M10] = tmp[M10] * invDet
-		values[M11] = tmp[M11] * invDet
-		values[M12] = tmp[M12] * invDet
-		values[M13] = tmp[M13] * invDet
-		values[M20] = tmp[M20] * invDet
-		values[M21] = tmp[M21] * invDet
-		values[M22] = tmp[M22] * invDet
-		values[M23] = tmp[M23] * invDet
-		values[M30] = tmp[M30] * invDet
-		values[M31] = tmp[M31] * invDet
-		values[M32] = tmp[M32] * invDet
-		values[M33] = tmp[M33] * invDet
+		val values = _values
+		when (_mode) {
+			MatrixMode.IDENTITY -> {}
+			MatrixMode.TRANSLATION -> {
+				values[M03] = -values[M03]
+				values[M13] = -values[M13]
+				values[M23] = -values[M23]
+			}
+			MatrixMode.SCALE -> {
+				val lDet = det()
+				if (lDet == 0f) throw RuntimeException("non-invertible matrix")
+				val invDet = 1f / lDet
+				tmp[M00] = values[M11] * values[M22] * values[M33]
+				tmp[M03] = -values[M03] * values[M11] * values[M22]
+				tmp[M11] = values[M00] * values[M22] * values[M33]
+				tmp[M13] = -values[M00] * values[M13] * values[M22]
+				tmp[M22] = values[M00] * values[M11] * values[M33]
+				tmp[M23] = -values[M00] * values[M11] * values[M23]
+				tmp[M33] = values[M00] * values[M11] * values[M22]
+				
+				values[M00] = tmp[M00] * invDet
+				values[M03] = tmp[M03] * invDet
+				values[M11] = tmp[M11] * invDet
+				values[M13] = tmp[M13] * invDet
+				values[M22] = tmp[M22] * invDet
+				values[M23] = tmp[M23] * invDet
+				values[M33] = tmp[M33] * invDet
+			}
+			MatrixMode.FULL -> {
+				val lDet = det()
+				if (lDet == 0f) throw RuntimeException("non-invertible matrix")
+				val invDet = 1f / lDet
+				tmp[M00] = values[M12] * values[M23] * values[M31] - values[M13] * values[M22] * values[M31] + values[M13] * values[M21] * values[M32] - values[M11] * values[M23] * values[M32] - values[M12] * values[M21] * values[M33] + values[M11] * values[M22] * values[M33]
+				tmp[M01] = values[M03] * values[M22] * values[M31] - values[M02] * values[M23] * values[M31] - values[M03] * values[M21] * values[M32] + values[M01] * values[M23] * values[M32] + values[M02] * values[M21] * values[M33] - values[M01] * values[M22] * values[M33]
+				tmp[M02] = values[M02] * values[M13] * values[M31] - values[M03] * values[M12] * values[M31] + values[M03] * values[M11] * values[M32] - values[M01] * values[M13] * values[M32] - values[M02] * values[M11] * values[M33] + values[M01] * values[M12] * values[M33]
+				tmp[M03] = values[M03] * values[M12] * values[M21] - values[M02] * values[M13] * values[M21] - values[M03] * values[M11] * values[M22] + values[M01] * values[M13] * values[M22] + values[M02] * values[M11] * values[M23] - values[M01] * values[M12] * values[M23]
+				tmp[M10] = values[M13] * values[M22] * values[M30] - values[M12] * values[M23] * values[M30] - values[M13] * values[M20] * values[M32] + values[M10] * values[M23] * values[M32] + values[M12] * values[M20] * values[M33] - values[M10] * values[M22] * values[M33]
+				tmp[M11] = values[M02] * values[M23] * values[M30] - values[M03] * values[M22] * values[M30] + values[M03] * values[M20] * values[M32] - values[M00] * values[M23] * values[M32] - values[M02] * values[M20] * values[M33] + values[M00] * values[M22] * values[M33]
+				tmp[M12] = values[M03] * values[M12] * values[M30] - values[M02] * values[M13] * values[M30] - values[M03] * values[M10] * values[M32] + values[M00] * values[M13] * values[M32] + values[M02] * values[M10] * values[M33] - values[M00] * values[M12] * values[M33]
+				tmp[M13] = values[M02] * values[M13] * values[M20] - values[M03] * values[M12] * values[M20] + values[M03] * values[M10] * values[M22] - values[M00] * values[M13] * values[M22] - values[M02] * values[M10] * values[M23] + values[M00] * values[M12] * values[M23]
+				tmp[M20] = values[M11] * values[M23] * values[M30] - values[M13] * values[M21] * values[M30] + values[M13] * values[M20] * values[M31] - values[M10] * values[M23] * values[M31] - values[M11] * values[M20] * values[M33] + values[M10] * values[M21] * values[M33]
+				tmp[M21] = values[M03] * values[M21] * values[M30] - values[M01] * values[M23] * values[M30] - values[M03] * values[M20] * values[M31] + values[M00] * values[M23] * values[M31] + values[M01] * values[M20] * values[M33] - values[M00] * values[M21] * values[M33]
+				tmp[M22] = values[M01] * values[M13] * values[M30] - values[M03] * values[M11] * values[M30] + values[M03] * values[M10] * values[M31] - values[M00] * values[M13] * values[M31] - values[M01] * values[M10] * values[M33] + values[M00] * values[M11] * values[M33]
+				tmp[M23] = values[M03] * values[M11] * values[M20] - values[M01] * values[M13] * values[M20] - values[M03] * values[M10] * values[M21] + values[M00] * values[M13] * values[M21] + values[M01] * values[M10] * values[M23] - values[M00] * values[M11] * values[M23]
+				tmp[M30] = values[M12] * values[M21] * values[M30] - values[M11] * values[M22] * values[M30] - values[M12] * values[M20] * values[M31] + values[M10] * values[M22] * values[M31] + values[M11] * values[M20] * values[M32] - values[M10] * values[M21] * values[M32]
+				tmp[M31] = values[M01] * values[M22] * values[M30] - values[M02] * values[M21] * values[M30] + values[M02] * values[M20] * values[M31] - values[M00] * values[M22] * values[M31] - values[M01] * values[M20] * values[M32] + values[M00] * values[M21] * values[M32]
+				tmp[M32] = values[M02] * values[M11] * values[M30] - values[M01] * values[M12] * values[M30] - values[M02] * values[M10] * values[M31] + values[M00] * values[M12] * values[M31] + values[M01] * values[M10] * values[M32] - values[M00] * values[M11] * values[M32]
+				tmp[M33] = values[M01] * values[M12] * values[M20] - values[M02] * values[M11] * values[M20] + values[M02] * values[M10] * values[M21] - values[M00] * values[M12] * values[M21] - values[M01] * values[M10] * values[M22] + values[M00] * values[M11] * values[M22]
+				values[M00] = tmp[M00] * invDet
+				values[M01] = tmp[M01] * invDet
+				values[M02] = tmp[M02] * invDet
+				values[M03] = tmp[M03] * invDet
+				values[M10] = tmp[M10] * invDet
+				values[M11] = tmp[M11] * invDet
+				values[M12] = tmp[M12] * invDet
+				values[M13] = tmp[M13] * invDet
+				values[M20] = tmp[M20] * invDet
+				values[M21] = tmp[M21] * invDet
+				values[M22] = tmp[M22] * invDet
+				values[M23] = tmp[M23] * invDet
+				values[M30] = tmp[M30] * invDet
+				values[M31] = tmp[M31] * invDet
+				values[M32] = tmp[M32] * invDet
+				values[M33] = tmp[M33] * invDet
+			}
+		}
 		return this
 	}
 
@@ -704,8 +836,41 @@ class Matrix4(
 	 * @return The determinant of this matrix
 	 */
 	override fun det(): Float {
-		// TODO: mode
-		return values[M30] * values[M21] * values[M12] * values[M03] - values[M20] * values[M31] * values[M12] * values[M03] - values[M30] * values[M11] * values[M22] * values[M03] + values[M10] * values[M31] * values[M22] * values[M03] + values[M20] * values[M11] * values[M32] * values[M03] - values[M10] * values[M21] * values[M32] * values[M03] - values[M30] * values[M21] * values[M02] * values[M13] + values[M20] * values[M31] * values[M02] * values[M13] + values[M30] * values[M01] * values[M22] * values[M13] - values[M00] * values[M31] * values[M22] * values[M13] - values[M20] * values[M01] * values[M32] * values[M13] + values[M00] * values[M21] * values[M32] * values[M13] + values[M30] * values[M11] * values[M02] * values[M23] - values[M10] * values[M31] * values[M02] * values[M23] - values[M30] * values[M01] * values[M12] * values[M23] + values[M00] * values[M31] * values[M12] * values[M23] + values[M10] * values[M01] * values[M32] * values[M23] - values[M00] * values[M11] * values[M32] * values[M23] - values[M20] * values[M11] * values[M02] * values[M33] + values[M10] * values[M21] * values[M02] * values[M33] + values[M20] * values[M01] * values[M12] * values[M33] - values[M00] * values[M21] * values[M12] * values[M33] - values[M10] * values[M01] * values[M22] * values[M33] + values[M00] * values[M11] * values[M22] * values[M33]
+		val values = _values
+		return when (_mode) {
+			MatrixMode.IDENTITY, MatrixMode.TRANSLATION -> {
+				1f
+			}
+			MatrixMode.SCALE -> {
+				values[M00] * values[M11] * values[M22] * values[M33]
+			}
+			MatrixMode.FULL -> {
+				values[M30] * values[M21] * values[M12] * values[M03] -
+						values[M20] * values[M31] * values[M12] * values[M03] -
+						values[M30] * values[M11] * values[M22] * values[M03] +
+						values[M10] * values[M31] * values[M22] * values[M03] +
+						values[M20] * values[M11] * values[M32] * values[M03] -
+						values[M10] * values[M21] * values[M32] * values[M03] -
+						values[M30] * values[M21] * values[M02] * values[M13] +
+						values[M20] * values[M31] * values[M02] * values[M13] +
+						values[M30] * values[M01] * values[M22] * values[M13] -
+						values[M00] * values[M31] * values[M22] * values[M13] -
+						values[M20] * values[M01] * values[M32] * values[M13] +
+						values[M00] * values[M21] * values[M32] * values[M13] +
+						values[M30] * values[M11] * values[M02] * values[M23] -
+						values[M10] * values[M31] * values[M02] * values[M23] -
+						values[M30] * values[M01] * values[M12] * values[M23] +
+						values[M00] * values[M31] * values[M12] * values[M23] +
+						values[M10] * values[M01] * values[M32] * values[M23] -
+						values[M00] * values[M11] * values[M32] * values[M23] -
+						values[M20] * values[M11] * values[M02] * values[M33] +
+						values[M10] * values[M21] * values[M02] * values[M33] +
+						values[M20] * values[M01] * values[M12] * values[M33] -
+						values[M00] * values[M21] * values[M12] * values[M33] -
+						values[M10] * values[M01] * values[M22] * values[M33] +
+						values[M00] * values[M11] * values[M22] * values[M33]
+			}
+		}
 	}
 
 	/**
@@ -725,9 +890,9 @@ class Matrix4(
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun setTranslation(x: Float, y: Float, z: Float): Matrix4 {
-		values[M03] = x
-		values[M13] = y
-		values[M23] = z
+		_values[M03] = x
+		_values[M13] = y
+		_values[M23] = z
 		if (_mode == MatrixMode.IDENTITY)
 			_mode = MatrixMode.TRANSLATION
 		return this
@@ -762,15 +927,15 @@ class Matrix4(
 		l_vex.crs(up).nor()
 		l_vey.set(l_vex).crs(l_vez).nor()
 		idt()
-		values[M00] = l_vex.x
-		values[M01] = l_vex.y
-		values[M02] = l_vex.z
-		values[M10] = l_vey.x
-		values[M11] = l_vey.y
-		values[M12] = l_vey.z
-		values[M20] = -l_vez.x
-		values[M21] = -l_vez.y
-		values[M22] = -l_vez.z
+		_values[M00] = l_vex.x
+		_values[M01] = l_vex.y
+		_values[M02] = l_vex.z
+		_values[M10] = l_vey.x
+		_values[M11] = l_vey.y
+		_values[M12] = l_vey.z
+		_values[M20] = -l_vez.x
+		_values[M21] = -l_vez.y
+		_values[M22] = -l_vez.z
 		_mode = MatrixMode.FULL
 		return this
 	}
@@ -787,8 +952,7 @@ class Matrix4(
 		tmpVec.set(target).sub(position)
 		setToLookAt(tmpVec, up)
 		translate(-position.x, -position.y, -position.z)
-		_mode = MatrixMode.FULL
-
+		refreshMode() // TODO: we could go off the inputs
 		return this
 	}
 
@@ -802,6 +966,7 @@ class Matrix4(
 	}
 
 	override fun toString(): String {
+		val values = _values
 		return "[" + values[M00] + "|" + values[M01] + "|" + values[M02] + "|" + values[M03] + "]\n" + "[" + values[M10] + "|" + values[M11] + "|" + values[M12] + "|" + values[M13] + "]\n" + "[" + values[M20] + "|" + values[M21] + "|" + values[M22] + "|" + values[M23] + "]\n" + "[" + values[M30] + "|" + values[M31] + "|" + values[M32] + "|" + values[M33] + "]\n"
 	}
 
@@ -810,6 +975,7 @@ class Matrix4(
 	 * @param mat the matrix
 	 */
 	fun set(mat: Matrix3Ro): Matrix4 {
+		val values = _values
 		values[M00] = mat.values[M00]
 		values[M10] = mat.values[M10]
 		values[M20] = mat.values[M20]
@@ -835,27 +1001,28 @@ class Matrix4(
 	fun scl(scale: Float): Matrix4 = scl(scale, scale, scale)
 
 	fun scl(x: Float, y: Float, z: Float): Matrix4 {
-		values[M00] *= x
-		values[M11] *= y
-		values[M22] *= z
+		_values[M00] *= x
+		_values[M11] *= y
+		_values[M22] *= z
 		if (_mode.ordinal < MatrixMode.SCALE.ordinal)
 			_mode = MatrixMode.SCALE
 		return this
 	}
 
 	override val translationX: Float
-		get() = values[M03]
+		get() = _values[M03]
 
 	override val translationY: Float
-		get() = values[M13]
+		get() = _values[M13]
 
 	override val translationZ: Float
-		get() = values[M23]
+		get() = _values[M23]
 
 	/**
 	 * Sets the provided position Vector3 with the translation of this Matrix
 	 */
 	override fun getTranslation(out: Vector3): Vector3 {
+		val values = _values
 		out.x = values[M03]
 		out.y = values[M13]
 		out.z = values[M23]
@@ -876,6 +1043,7 @@ class Matrix4(
 	 * @return the squared scale factor on the X axis
 	 */
 	override fun getScaleXSquared(): Float {
+		val values = _values
 		return values[M00] * values[M00] + values[M01] * values[M01] + values[M02] * values[M02]
 	}
 
@@ -883,6 +1051,7 @@ class Matrix4(
 	 * @return the squared scale factor on the Y axis
 	 */
 	override fun getScaleYSquared(): Float {
+		val values = _values
 		return values[M10] * values[M10] + values[M11] * values[M11] + values[M12] * values[M12]
 	}
 
@@ -890,6 +1059,7 @@ class Matrix4(
 	 * @return the squared scale factor on the Z axis
 	 */
 	override fun getScaleZSquared(): Float {
+		val values = _values
 		return values[M20] * values[M20] + values[M21] * values[M21] + values[M22] * values[M22]
 	}
 
@@ -951,7 +1121,7 @@ class Matrix4(
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun translate(x: Float = 0f, y: Float = 0f, z: Float = 0f): Matrix4 {
-		val mat = values
+		val mat = _values
 		when (_mode) {
 			MatrixMode.IDENTITY -> {
 				_mode = MatrixMode.TRANSLATION
@@ -1062,7 +1232,7 @@ class Matrix4(
 	 * @return Returns the vec for chaining.
 	 */
 	override fun prj(vec: Vector3): Vector3 {
-		val mat = values
+		val mat = _values
 		when (_mode) {
 			MatrixMode.IDENTITY -> {
 			}
@@ -1095,7 +1265,7 @@ class Matrix4(
 	 * @return Returns the vec for chaining.
 	 */
 	override fun rot(vec: Vector3): Vector3 {
-		val mat = values
+		val mat = _values
 		when (_mode) {
 			MatrixMode.IDENTITY -> {
 			}
@@ -1124,7 +1294,7 @@ class Matrix4(
 	 * @return Returns the vec for chaining.
 	 */
 	override fun rot(vec: Vector2): Vector2 {
-		val mat = values
+		val mat = _values
 		when (_mode) {
 			MatrixMode.IDENTITY -> {
 			}
@@ -1153,15 +1323,15 @@ class Matrix4(
 	 * @return This matrix for the purpose of chaining.
 	 */
 	fun shearZ(shearXZ: Float = 0f, shearYZ: Float = 0f): Matrix4 {
-		var tmp0 = values[M00] + shearYZ * values[M01]
-		var tmp1 = values[M01] + shearXZ * values[M00]
-		values[M00] = tmp0
-		values[M01] = tmp1
+		var tmp0 = _values[M00] + shearYZ * _values[M01]
+		var tmp1 = _values[M01] + shearXZ * _values[M00]
+		_values[M00] = tmp0
+		_values[M01] = tmp1
 
-		tmp0 = values[M10] + shearYZ * values[M11]
-		tmp1 = values[M11] + shearXZ * values[M10]
-		values[M10] = tmp0
-		values[M11] = tmp1
+		tmp0 = _values[M10] + shearYZ * _values[M11]
+		tmp1 = _values[M11] + shearXZ * _values[M10]
+		_values[M10] = tmp0
+		_values[M11] = tmp1
 		_mode = MatrixMode.FULL
 
 		return this
@@ -1174,16 +1344,16 @@ class Matrix4(
 		return when (_mode) {
 			MatrixMode.IDENTITY -> true
 			MatrixMode.TRANSLATION -> {
-				values[M03] == other.values[M03] &&
-						values[M13] == other.values[M13] &&
-						values[M23] == other.values[M23]
+				_values[M03] == other.values[M03] &&
+						_values[M13] == other.values[M13] &&
+						_values[M23] == other.values[M23]
 			}
-			MatrixMode.SCALE, MatrixMode.FULL -> values == other.values
+			MatrixMode.SCALE, MatrixMode.FULL -> _values == other.values
 		}
 	}
 
 	override fun hashCode(): Int {
-		return values.hashCode()
+		return _values.hashCode()
 	}
 
 	companion object {
@@ -1283,7 +1453,7 @@ class Matrix4(
 
 		val IDENTITY: Matrix4Ro = Matrix4()
 
-		private val quat: Quaternion = Quaternion()
+		private val quat = Quaternion()
 
 		private val l_vez = Vector3()
 		private val l_vex = Vector3()

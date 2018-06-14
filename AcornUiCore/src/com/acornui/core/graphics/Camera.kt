@@ -178,6 +178,7 @@ interface Camera : CameraRo {
 	override var far: Float
 
 	fun setViewport(width: Float, height: Float) {
+		if (width <= 0f || height <= 0f) throw IllegalArgumentException("width and height must be > 0f")
 		viewportWidth = width
 		viewportHeight = height
 	}
@@ -572,8 +573,8 @@ fun Window.autoCenterCamera(camera: Camera): Disposable {
  * Centers the camera to this window.
  */
 fun Window.centerCamera(camera: Camera) {
-	val width = maxOf(1f, width)
-	val height = maxOf(1f, height)
-	camera.setViewport(width, height)
-	camera.moveToLookAtRect(0f, 0f, width, height)
+	if (width > 0f && height > 0f && (camera.viewportWidth != width || camera.viewportHeight != height)) {
+		camera.setViewport(width, height)
+		camera.moveToLookAtRect(0f, 0f, width, height)
+	}
 }

@@ -257,20 +257,22 @@ class NinePatchComponent(owner: Owned) : ContainerImpl(owner) {
 
 		val c = concatenatedColorTint
 		val normal = Vector3.NEG_Z
-		val splitLeftU = _splitLeft / texture.width
-		val splitRightU = _splitRight / texture.width
-		val splitTopV = _splitTop / texture.height
-		val splitBottomV = _splitBottom / texture.height
+
 
 		if (isRotated) {
+			val splitLeftV = _splitLeft / texture.height
+			val splitRightV = _splitRight / texture.height
+			val splitTopU = _splitTop / texture.width
+			val splitBottomU = _splitBottom / texture.width
+
 			val colV0 = v
-			val colV1 = v + splitTopV
-			val colV2 = v2 - splitBottomV
+			val colV1 = v + splitLeftV
+			val colV2 = v2 - splitRightV
 			val colV3 = v2
 
 			val rowU0 = u2
-			val rowU1 = u2 - splitLeftU
-			val rowU2 = u + splitRightU
+			val rowU1 = u2 - splitTopU
+			val rowU2 = u + splitBottomU
 			val rowU3 = u
 
 			// u, v = u2, v
@@ -302,6 +304,11 @@ class NinePatchComponent(owner: Owned) : ContainerImpl(owner) {
 			batch.putVertex(globalPositions[14], normal, c, rowU3, colV2)
 			batch.putVertex(globalPositions[15], normal, c, rowU3, colV3)
 		} else {
+			val splitLeftU = _splitLeft / texture.width
+			val splitRightU = _splitRight / texture.width
+			val splitTopV = _splitTop / texture.height
+			val splitBottomV = _splitBottom / texture.height
+
 			val colU0 = u
 			val colU1 = u + splitLeftU
 			val colU2 = u2 - splitRightU

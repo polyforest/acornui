@@ -300,21 +300,16 @@ open class UiComponentImpl(
 	protected var validation: ValidationTree
 
 	// Transformable properties
-	protected val _transform: Matrix4 = Matrix4()
-	protected val _concatenatedTransform: Matrix4 = Matrix4()
-	protected val _concatenatedTransformInv: Matrix4 = Matrix4()
-	protected var _concatenatedTransformInvIsValid: Boolean = false
-	protected val _position: Vector3 = Vector3(0f, 0f, 0f)
+	protected val _transform = Matrix4()
+	protected val _concatenatedTransform = Matrix4()
+	protected val _concatenatedTransformInv = Matrix4()
+	protected var _concatenatedTransformInvIsValid = false
+	protected val _position = Vector3(0f, 0f, 0f)
 	protected val _rotation = Vector3(0f, 0f, 0f)
-	protected val _scale: Vector3 = Vector3(1f, 1f, 1f)
-	protected val _origin: Vector3 = Vector3(0f, 0f, 0f)
+	protected val _scale = Vector3(1f, 1f, 1f)
+	protected val _origin = Vector3(0f, 0f, 0f)
 
 	override var cameraOverride: CameraRo? by validationProp(null, ValidationFlags.CAMERA)
-
-	/**
-	 * True if no scaling or rotation has been applied.
-	 */
-	protected var isSimpleTranslate: Boolean = true
 
 	// LayoutElement properties
 	protected var _bounds = Bounds()
@@ -962,7 +957,6 @@ open class UiComponentImpl(
 	override var customTransform: Matrix4Ro?
 		get() = _customTransform
 		set(value) {
-			isSimpleTranslate = false
 			_customTransform = value
 			invalidate(ValidationFlags.TRANSFORM)
 		}
@@ -973,9 +967,6 @@ open class UiComponentImpl(
 		set(value) {
 			if (_rotation.x == value) return
 			_rotation.x = value
-			if (isSimpleTranslate && value != 0f) {
-				isSimpleTranslate = false
-			}
 			invalidate(ValidationFlags.TRANSFORM)
 			return
 		}
@@ -985,9 +976,6 @@ open class UiComponentImpl(
 		set(value) {
 			if (_rotation.y == value) return
 			_rotation.y = value
-			if (isSimpleTranslate && value != 0f) {
-				isSimpleTranslate = false
-			}
 			invalidate(ValidationFlags.TRANSFORM)
 			return
 		}
@@ -1000,18 +988,12 @@ open class UiComponentImpl(
 		set(value) {
 			if (_rotation.z == value) return
 			_rotation.z = value
-			if (isSimpleTranslate && value != 0f) {
-				isSimpleTranslate = false
-			}
 			invalidate(ValidationFlags.TRANSFORM)
 		}
 
 	override fun setRotation(x: Float, y: Float, z: Float) {
 		if (_rotation.x == x && _rotation.y == y && _rotation.z == z) return
 		_rotation.set(x, y, z)
-		if (isSimpleTranslate && (x != 0f || y != 0f || z != 0f)) {
-			isSimpleTranslate = false
-		}
 		invalidate(ValidationFlags.TRANSFORM)
 		return
 	}
@@ -1041,8 +1023,6 @@ open class UiComponentImpl(
 		set(value) {
 			if (value == _position.z) return
 			_position.z = value
-			if (isSimpleTranslate && value != 0f)
-				isSimpleTranslate = false
 			invalidate(ValidationFlags.TRANSFORM)
 		}
 
@@ -1055,8 +1035,6 @@ open class UiComponentImpl(
 	override fun setPosition(x: Float, y: Float, z: Float) {
 		if (x == _position.x && y == _position.y && z == _position.z) return
 		_position.set(x, y, z)
-		if (isSimpleTranslate && z != 0f)
-			isSimpleTranslate = false
 		invalidate(ValidationFlags.TRANSFORM)
 		return
 	}
@@ -1076,8 +1054,6 @@ open class UiComponentImpl(
 			val v = maxOf(0.000001f, value)
 			if (_scale.x == v) return
 			_scale.x = v
-			if (isSimpleTranslate && v != 1f)
-				isSimpleTranslate = false
 			invalidate(ValidationFlags.TRANSFORM)
 		}
 
@@ -1087,8 +1063,6 @@ open class UiComponentImpl(
 			val v = maxOf(0.000001f, value)
 			if (_scale.y == v) return
 			_scale.y = v
-			if (isSimpleTranslate && v != 1f)
-				isSimpleTranslate = false
 			invalidate(ValidationFlags.TRANSFORM)
 		}
 
@@ -1098,8 +1072,6 @@ open class UiComponentImpl(
 			val v = maxOf(0.000001f, value)
 			if (_scale.z == v) return
 			_scale.z = v
-			if (isSimpleTranslate && v != 1f)
-				isSimpleTranslate = false
 			invalidate(ValidationFlags.TRANSFORM)
 		}
 
@@ -1109,8 +1081,6 @@ open class UiComponentImpl(
 		val z2 = maxOf(0.000001f, z)
 		if (_scale.x == x2 && _scale.y == y2 && _scale.z == z2) return
 		_scale.set(x2, y2, z2)
-		if (isSimpleTranslate && (x2 != 1f || y2 != 1f || z2 != 1f))
-			isSimpleTranslate = false
 		invalidate(ValidationFlags.TRANSFORM)
 		return
 	}
@@ -1153,14 +1123,7 @@ open class UiComponentImpl(
 	 * @return Returns the coord
 	 */
 	override fun localToGlobal(localCoord: Vector3): Vector3 {
-		if (isSimpleTranslate) {
-			val v = concatenatedTransform.values
-			localCoord.x += v[12]
-			localCoord.y += v[13]
-			localCoord.z += v[14]
-		} else {
-			concatenatedTransform.prj(localCoord)
-		}
+		concatenatedTransform.prj(localCoord)
 		return localCoord
 	}
 
@@ -1258,18 +1221,15 @@ open class UiComponentImpl(
 			return
 		}
 		_transform.idt()
-		if (isSimpleTranslate) {
-			_transform.trn(_position.x - _origin.x, _position.y - _origin.y, 0f)
-		} else {
-			_transform.trn(_position)
-			if (!_rotation.isZero()) {
-				quat.setEulerAnglesRad(_rotation.y, _rotation.x, _rotation.z)
-				_transform.rotate(quat)
-			}
-			_transform.scale(_scale)
-			if (!_origin.isZero())
-				_transform.translate(-_origin.x, -_origin.y, -_origin.z)
+		_transform.trn(_position)
+		if (!_rotation.isZero()) {
+			quat.setEulerAnglesRad(_rotation.y, _rotation.x, _rotation.z)
+			_transform.rotate(quat)
 		}
+		_transform.scale(_scale)
+		if (!_origin.isZero())
+			_transform.translate(-_origin.x, -_origin.y, -_origin.z)
+
 	}
 
 	/**
@@ -1281,11 +1241,7 @@ open class UiComponentImpl(
 	protected open fun updateConcatenatedTransform() {
 		val p = parent
 		if (p != null) {
-			if (isSimpleTranslate) {
-				_concatenatedTransform.set(p.concatenatedTransform).translate(_position.x - _origin.x, _position.y - _origin.y, _position.z - _origin.z)
-			} else {
-				_concatenatedTransform.set(p.concatenatedTransform).mul(_transform)
-			}
+			_concatenatedTransform.set(p.concatenatedTransform).mul(_transform)
 		} else {
 			_concatenatedTransform.set(_transform)
 		}

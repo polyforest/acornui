@@ -71,48 +71,6 @@ fun Owned.orthographicCamera(autoCenter: Boolean = false, init: OrthographicCame
 	return p
 }
 
-/**
- * Sets the matrix to an orthographic projection like glOrtho (http://www.opengl.org/sdk/docs/man/xhtml/glOrtho.xml) following
- * the OpenGL equivalent
- *
- * @param left The left clipping plane
- * @param right The right clipping plane
- * @param bottom The bottom clipping plane
- * @param top The top clipping plane
- * @param near The near clipping plane
- * @param far The far clipping plane
- * @return This matrix for the purpose of chaining methods together.
- */
-private fun Matrix4.setToOrtho(left: Float, right: Float, bottom: Float, top: Float, near: Float, far: Float): Matrix4 {
-	idt()
-	val x_orth = 2f / (right - left)
-	val y_orth = 2f / (top - bottom)
-	val z_orth = -2f / (far - near)
-
-	val tx = -(right + left) / (right - left)
-	val ty = -(top + bottom) / (top - bottom)
-	val tz = -(far + near) / (far - near)
-
-	values[0] = x_orth
-	values[1] = 0f
-	values[2] = 0f
-	values[3] = 0f
-	values[4] = 0f
-	values[5] = y_orth
-	values[6] = 0f
-	values[7] = 0f
-	values[8] = 0f
-	values[9] = 0f
-	values[10] = z_orth
-	values[11] = 0f
-	values[12] = tx
-	values[13] = ty
-	values[14] = tz
-	values[15] = 1f
-
-	return this
-}
-
 class FramebufferOrthographicCamera : CameraBase() {
 
 	/**
