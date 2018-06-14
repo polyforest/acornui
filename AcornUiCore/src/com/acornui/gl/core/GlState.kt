@@ -16,7 +16,6 @@
 
 package com.acornui.gl.core
 
-import com.acornui.collection.FloatList
 import com.acornui.collection.arrayCopy
 import com.acornui.core.Disposable
 import com.acornui.core.di.DKey
@@ -26,10 +25,7 @@ import com.acornui.core.graphics.Texture
 import com.acornui.core.graphics.rgbData
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
-import com.acornui.math.IntRectangle
-import com.acornui.math.IntRectangleRo
-import com.acornui.math.Matrix4
-import com.acornui.math.Matrix4Ro
+import com.acornui.math.*
 import com.acornui.reflect.observable
 
 /**
@@ -228,32 +224,30 @@ class GlState(
 	fun camera(camera: CameraRo, model: Matrix4Ro = Matrix4.IDENTITY) {
 		val hasModel = _shader!!.getUniformLocation(ShaderProgram.U_MODEL_TRANS) != null
 		if (hasModel) {
-			viewProjection(camera.combined.values)
-			model(model.values)
+			viewProjection(camera.combined)
+			model(model)
 		} else {
-			if (model === Matrix4.IDENTITY) {
-				viewProjection(camera.combined.values)
+			if (model.mode == MatrixMode.IDENTITY) {
+				viewProjection(camera.combined)
 			} else {
 				_mvp.set(camera.combined)
 				_mvp.mul(model)
-				viewProjection(_mvp.values)
+				viewProjection(_mvp)
 			}
 		}
 	}
 
-	fun projTrans(value: Matrix4Ro) = viewProjection(value.values)
-
 	/**
 	 * Applies the given matrix as the view-projection transformation.
 	 */
-	fun viewProjection(value: List<Float>) {
+	fun viewProjection(value: Matrix4Ro) {
 		viewProjectionCache.set(value, _shader!!, batch)
 	}
 
 	/**
 	 * Applies the given matrix as the model transformation.
 	 */
-	fun model(value: List<Float>) {
+	fun model(value: Matrix4Ro) {
 		modelCache.set(value, _shader!!, batch)
 	}
 
@@ -278,18 +272,18 @@ private class MatrixCache(
 		private val gl: Gl20,
 		private val name: String) {
 
-	private val values = FloatList(FloatArray(16))
+	private val _cached = Matrix4()
 	private var _shader: ShaderProgram? = null
 
 	/**
 	 * Applies the given matrix as the model transformation.
 	 */
-	fun set(value: List<Float>, shader: ShaderProgram, batch: ShaderBatch) {
+	fun set(value: Matrix4Ro, shader: ShaderProgram, batch: ShaderBatch) {
 		val uniform = shader.getUniformLocation(name) ?: return
-		if (_shader != shader || value != values) {
+		if (_shader != shader || value != _cached) {
 			batch.flush(true)
 			_shader = shader
-			arrayCopy(value, 0, values)
+			_cached.set(value)
 			gl.uniformMatrix4fv(uniform, false, value)
 		}
 	}

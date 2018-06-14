@@ -75,8 +75,8 @@ class FullScreenFramebuffer(override val injector: Injector, private val hasDept
 	fun render() {
 		val frameBuffer = frameBuffer ?: return
 		glState.setTexture(frameBuffer.texture)
-		glState.viewProjection(Matrix4.IDENTITY.values)
-		glState.model(Matrix4.IDENTITY.values)
+		glState.viewProjection(Matrix4.IDENTITY)
+		glState.model(Matrix4.IDENTITY)
 		glState.blendMode(BlendMode.NORMAL, false)
 		val batch = glState.batch
 		batch.putVertex(tL)

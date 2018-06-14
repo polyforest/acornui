@@ -154,6 +154,8 @@ class Sprite {
 
 	/**
 	 * Updates this Sprite's local vertices.
+	 * If this is used directly, [updateWorldVertices] should not be used, and the [GlState.camera] method should
+	 * be supplied with the world transformation matrix.
 	 *
 	 * @param width The width of the sprite.
 	 * @param height The height of the sprite.
@@ -183,11 +185,8 @@ class Sprite {
 			val cos = cos(rotation)
 			val sin = sin(rotation)
 
-			var x1: Float
-			var y1: Float
-
-			x1 = -originX
-			y1 = -originY
+			var x1: Float = -originX
+			var y1: Float = -originY
 			vertexPoints[0].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
 			x1 = -originX + width
 			vertexPoints[1].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)

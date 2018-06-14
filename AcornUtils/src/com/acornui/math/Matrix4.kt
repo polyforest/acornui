@@ -181,15 +181,38 @@ class Matrix4() : Matrix4Ro {
 	/**
 	 * Sets this matrix to the given matrix.
 	 *
-	 * @param matrix The matrix that is to be copied. (The given matrix is not modified)
+	 * @param other The matrix that is to be copied. (The given matrix is not modified)
 	 * @return This matrix for the purpose of chaining methods together.
 
 	 */
-	fun set(matrix: Matrix4Ro): Matrix4 {
-		for (i in 0..16 - 1) {
-			_values[i] = matrix.values[i]
+	fun set(other: Matrix4Ro): Matrix4 {
+		val mode = _mode
+		if (mode == other.mode && mode != MatrixMode.FULL) {
+			when (mode) {
+				MatrixMode.IDENTITY -> {
+				}
+				MatrixMode.TRANSLATION -> {
+					_values[M03] = other.values[M03]
+					_values[M13] = other.values[M13]
+					_values[M23] = other.values[M23]
+				}
+				MatrixMode.SCALE -> {
+					_values[M03] = other.values[M03]
+					_values[M13] = other.values[M13]
+					_values[M23] = other.values[M23]
+					_values[M00] = other.values[M00]
+					_values[M11] = other.values[M11]
+					_values[M22] = other.values[M22]
+					_values[M33] = other.values[M33]
+				}
+				MatrixMode.FULL -> throw Exception("Unreachable")
+			}
+		} else {
+			for (i in 0..16 - 1) {
+				_values[i] = other.values[i]
+			}
+			_mode = other.mode
 		}
-		_mode = matrix.mode
 		return this
 	}
 
@@ -765,7 +788,8 @@ class Matrix4() : Matrix4Ro {
 	fun inv(): Matrix4 {
 		val values = _values
 		when (_mode) {
-			MatrixMode.IDENTITY -> {}
+			MatrixMode.IDENTITY -> {
+			}
 			MatrixMode.TRANSLATION -> {
 				values[M03] = -values[M03]
 				values[M13] = -values[M13]
@@ -782,7 +806,7 @@ class Matrix4() : Matrix4Ro {
 				tmp[M22] = values[M00] * values[M11] * values[M33]
 				tmp[M23] = -values[M00] * values[M11] * values[M23]
 				tmp[M33] = values[M00] * values[M11] * values[M22]
-				
+
 				values[M00] = tmp[M00] * invDet
 				values[M03] = tmp[M03] * invDet
 				values[M11] = tmp[M11] * invDet
@@ -1348,7 +1372,16 @@ class Matrix4() : Matrix4Ro {
 						_values[M13] == other.values[M13] &&
 						_values[M23] == other.values[M23]
 			}
-			MatrixMode.SCALE, MatrixMode.FULL -> _values == other.values
+			MatrixMode.SCALE -> {
+				_values[M03] == other.values[M03] &&
+						_values[M13] == other.values[M13] &&
+						_values[M23] == other.values[M23] &&
+						_values[M00] == other.values[M00] &&
+						_values[M11] == other.values[M11] &&
+						_values[M22] == other.values[M22] &&
+						_values[M33] == other.values[M33]
+			}
+			MatrixMode.FULL -> _values == other.values
 		}
 	}
 

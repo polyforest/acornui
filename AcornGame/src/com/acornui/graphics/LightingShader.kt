@@ -205,8 +205,7 @@ void main() {
 }
 
 """
-) {
-}
+)
 
 class DirectionalShadowShader(gl: Gl20, useModel: Boolean) : ShaderProgramBase(
 		gl, vertexShaderSrc = """
