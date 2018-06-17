@@ -63,13 +63,14 @@ interface Vector2Ro {
 	 * @return the angle in radians of this vector (point) relative to the x-axis. Angles are towards the positive y-axis.
 	 *         (typically counter-clockwise)
 	 */
-	fun angleRad(): Float
+	val angle: Float
+		get() = atan2(y, x)
 
 	/**
 	 * @return the angle in radians of this vector (point) relative to the given vector. Angles are towards the positive y-axis.
 	 *         (typically counter-clockwise.)
 	 */
-	fun angleRad(reference: Vector2Ro): Float
+	fun angle(reference: Vector2Ro): Float
 
 	/**
 	 * Sets the angle of the vector in radians relative to the x-axis, towards the positive y-axis (typically counter-clockwise).
@@ -98,6 +99,22 @@ interface Vector2Ro {
 	fun isPerpendicular(vector: Vector2Ro, epsilon: Float): Boolean
 	fun hasSameDirection(vector: Vector2Ro): Boolean
 	fun hasOppositeDirection(vector: Vector2Ro): Boolean
+
+	operator fun plus(other: Vector2Ro): Vector2 {
+		return Vector2(x + other.x, y + other.y)
+	}
+
+	operator fun minus(other: Vector2Ro): Vector2 {
+		return Vector2(x - other.x, y - other.y)
+	}
+
+	operator fun times(other: Vector2Ro): Vector2 {
+		return Vector2(x * other.x, y * other.y)
+	}
+
+	operator fun times(other: Float): Vector2 {
+		return Vector2(x * other, y * other)
+	}
 
 	fun copy(x: Float = this.x, y: Float = this.y): Vector2 {
 		return Vector2(x, y)
@@ -323,18 +340,10 @@ class Vector2(
 	}
 
 	/**
-	 * @return the angle in radians of this vector (point) relative to the x-axis. Angles are towards the positive y-axis.
-	 *         (typically counter-clockwise)
-	 */
-	override fun angleRad(): Float {
-		return atan2(y, x)
-	}
-
-	/**
 	 * @return the angle in radians of this vector (point) relative to the given vector. Angles are towards the positive y-axis.
 	 *         (typically counter-clockwise.)
 	 */
-	override fun angleRad(reference: Vector2Ro): Float {
+	override fun angle(reference: Vector2Ro): Float {
 		return atan2(crs(reference), dot(reference))
 	}
 

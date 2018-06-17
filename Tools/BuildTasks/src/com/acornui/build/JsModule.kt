@@ -150,6 +150,8 @@ open class JsModule(
 		val compilerArgs = K2JSDceArguments().apply {
 			outputDirectory = File(dest, libDir).absolutePath
 			freeArgs = sources.toStringList()
+			devMode = false
+			printReachabilityInfo = true
 		}
 		val exitCode = K2JSDce().exec(BasicMessageCollector(verbose = verbose), Services.EMPTY, compilerArgs)
 		if (exitCode != ExitCode.OK) System.exit(exitCode.code)

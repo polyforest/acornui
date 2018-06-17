@@ -137,6 +137,10 @@ class MeshData : Parent<MeshData>, Clearable {
 		pushVertex(position.x, position.y, position.z, fillStyle.colorTint, u, v, normal)
 	}
 
+	fun pushVertex(position: Vector3Ro, colorTint: ColorRo, u: Float = 0f, v: Float = 0f, normal: Vector3Ro = Vector3.NEG_Z) {
+		pushVertex(position.x, position.y, position.z, colorTint, u, v, normal)
+	}
+
 	fun pushVertex(x: Float, y: Float, z: Float, colorTint: ColorRo, u: Float = 0f, v: Float = 0f, normal: Vector3Ro = Vector3.NEG_Z) {
 		val localV = Vertex.obtain()
 		localV.normal.set(normal)

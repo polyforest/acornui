@@ -113,6 +113,22 @@ interface Vector3Ro {
 	 */
 	fun closeTo(x: Float, y: Float, z: Float, epsilon: Float = 0.0001f): Boolean
 
+	operator fun plus(other: Vector3Ro): Vector3 {
+		return Vector3(x + other.x, y + other.y, z + other.z)
+	}
+
+	operator fun minus(other: Vector3Ro): Vector3 {
+		return Vector3(x - other.x, y - other.y, z - other.z)
+	}
+
+	operator fun times(other: Vector3Ro): Vector3 {
+		return Vector3(x * other.x, y * other.y, z * other.z)
+	}
+
+	operator fun times(other: Float): Vector3 {
+		return Vector3(x * other, y * other, z * other)
+	}
+
 	fun copy(x: Float = this.x, y: Float = this.y, z: Float = this.z): Vector3 {
 		return Vector3(x, y, z)
 	}

@@ -1987,8 +1987,8 @@ class DataGrid<E>(
 		/**
 		 * The validation flag for column widths.
 		 */
-		private val COLUMNS_WIDTHS_VALIDATION = 1 shl 16
-		private val COLUMNS_VISIBLE_VALIDATION = 1 shl 17
+		private const val COLUMNS_WIDTHS_VALIDATION = 1 shl 16
+		private const val COLUMNS_VISIBLE_VALIDATION = 1 shl 17
 
 		private const val COL_INDEX_KEY = "columnIndex"
 

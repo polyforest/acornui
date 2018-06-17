@@ -112,6 +112,10 @@ vec3 getPointColor() {
 	float attenuation;
 	float distance;
 	float shadow;
+	float testZ;
+
+	float bias = 0.002;
+	float maxD = unpackFloat(vec4(0.0, 0.0, 1.0, 1.0));
 
 	for (int i = 0; i < $numPointLights; i++) {
 		pointLight = u_pointLights[i];
@@ -119,6 +123,7 @@ vec3 getPointColor() {
 			lightToPixel = v_worldPosition.xyz - pointLight.position;
 			lightToPixelN = normalize(lightToPixel);
 			distance = length(lightToPixel) / pointLight.radius;
+			testZ = distance - bias;
 
 			attenuation = 1.0 - clamp(distance, 0.0, 1.0);
 			float cosTheta = clamp(dot(v_normal, -1.0 * lightToPixelN), 0.0, 1.0);
@@ -128,7 +133,8 @@ vec3 getPointColor() {
 			} else {
 				${if (numShadowPointLights > 0) """
 				shadow = unpackFloat(textureCube(u_pointLightShadowMaps[i], lightToPixelN));
-				if (shadow >= distance - .002) {
+
+				if (testZ >= maxD || shadow >= testZ) {
 					pointColor += cosTheta * pointLight.color * attenuation * attenuation;
 				}
 				""" else ""}

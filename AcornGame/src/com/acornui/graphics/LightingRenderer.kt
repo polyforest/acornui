@@ -171,12 +171,14 @@ class LightingRenderer(
 					gl.framebufferTexture2D(Gl20.FRAMEBUFFER, Gl20.COLOR_ATTACHMENT0,
 							Gl20.TEXTURE_CUBE_MAP_POSITIVE_X + j, pointLightShadowMap.textureHandle!!, 0)
 					gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT)
-					glState.scissor(1, 1, pointShadowsFbo.width - 2, pointShadowsFbo.height - 2) {
+					if (pointLight.shadowSidesEnabled[j]) {
+
 						pointLightCamera.update(pointLight, j)
 						gl.uniformMatrix4fv(u_pointLightMvp, false, pointLightCamera.camera.combined)
 						renderOcclusion()
+
+						glState.batch.flush(true)
 					}
-					glState.batch.flush(true)
 				}
 			}
 		}

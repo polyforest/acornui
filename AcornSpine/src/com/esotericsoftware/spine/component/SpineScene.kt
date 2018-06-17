@@ -115,12 +115,6 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 		}
 	}
 
-	//--------------------------------------------
-
-	override fun dispose() {
-		super.dispose()
-
-	}
 }
 
 fun Owned.spineScene(init: ComponentInit<SpineScene> = {}): SpineScene {

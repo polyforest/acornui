@@ -17,6 +17,11 @@ class PointLight : Clearable {
 	var radius = 0f
 
 	/**
+	 * positive x, negative x, positive y, negative y, positive z, negative z
+	 */
+	val shadowSidesEnabled = booleanArrayOf(true, true, true, true, true, true)
+
+	/**
 	 * Sets this point light to match the properties of [other] point light.
 	 * @return Returns this point light for chaining.
 	 */
