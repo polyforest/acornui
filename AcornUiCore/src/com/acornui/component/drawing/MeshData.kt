@@ -1,6 +1,7 @@
 package com.acornui.component.drawing
 
 import com.acornui.collection.Clearable
+import com.acornui.collection.addAll
 import com.acornui.core.Parent
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
@@ -109,6 +110,13 @@ class MeshData : Parent<MeshData>, Clearable {
 		}
 	}
 
+	fun pushIndices(arr: List<Int>) {
+		val n: Int = highestIndex + 1
+		for (i in 0..arr.lastIndex) {
+			pushIndex(arr[i] + n)
+		}
+	}
+
 	fun pushVertex(position: Vector2Ro, fillStyle: FillStyle) {
 		tmpUv.set(position).scl(fillStyle.uvDir).add(fillStyle.uvOffset)
 		val u = tmpUv.x
@@ -201,6 +209,29 @@ class MeshData : Parent<MeshData>, Clearable {
 
 	fun remove() {
 		parent?.removeChild(this)
+	}
+
+	/**
+	 * Creates a deep copy of this mesh data.
+	 */
+	fun copy(): MeshData {
+		val r = this
+		return meshData {
+			for (vertex in r.vertices) {
+				vertices.add(vertex.copy())
+			}
+			indices.addAll(r.indices)
+			drawMode = r.drawMode
+			blendMode = r.blendMode
+			highestIndex = r.highestIndex
+			flushBatch = r.flushBatch
+
+			for (i in 0..r.children.lastIndex) {
+				val child = r.children[i].copy()
+				child.parent = this
+				children.add(child)
+			}
+		}
 	}
 
 	companion object {

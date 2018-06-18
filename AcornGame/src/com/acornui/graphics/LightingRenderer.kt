@@ -236,8 +236,8 @@ class LightingRenderer(
 
 	companion object {
 
-		private val DIRECTIONAL_SHADOW_UNIT = 1
-		private val POINT_SHADOW_UNIT = 2
+		private const val DIRECTIONAL_SHADOW_UNIT = 1
+		private const val POINT_SHADOW_UNIT = 2
 	}
 }
 

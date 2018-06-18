@@ -77,6 +77,9 @@ class Bounds(
 		return result
 	}
 
+	override fun toString(): String {
+		return "Bounds(width=$width, height=$height)"
+	}
 
 	companion object {
 
