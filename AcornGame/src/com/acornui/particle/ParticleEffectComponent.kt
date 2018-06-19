@@ -153,36 +153,37 @@ class LoadedParticleEffect(
 	}
 }
 
+typealias SpriteResolver = suspend (emitter: ParticleEmitter, imageEntry: ParticleImageEntry) -> Sprite
+
+suspend fun Scoped.loadParticleEffect(pDataPath: String, atlasPath: String, group: CachedGroup = cachedGroup()): LoadedParticleEffect {
+	loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group) // Start the atlas loading and parsing in parallel.
+	val particleEffect = loadAndCacheJson(pDataPath, ParticleEffectSerializer, group).await()
+	return loadParticleEffect(particleEffect, atlasPath, group)
+}
+
 suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffect, atlasPath: String, group: CachedGroup = cachedGroup()): LoadedParticleEffect {
 	val atlasDataPromise = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group)
 	val atlasData = atlasDataPromise.await()
-	val emitterRenderers = ArrayList<ParticleEmitterRenderer>(particleEffect.emitters.size)
-	val effectInstance = particleEffect.createInstance()
 
-	for (emitterInstance in effectInstance.emitterInstances) {
-		val emitter = emitterInstance.emitter
-		val sprites = ArrayList<Sprite>(emitter.imageEntries.size)
-		for (i in 0..emitter.imageEntries.lastIndex) {
-			val imagePath = emitter.imageEntries[i].path
+	val spriteResolver: SpriteResolver = { _, imageEntry ->
+		val (page, region) = atlasData.findRegion(imageEntry.path)
+				?: throw Exception("Could not find $imageEntry.path in the atlas $atlasPath")
+		val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
 
-			val (page, region) = atlasData.findRegion(imagePath) ?: throw Exception("Could not find $imagePath in the atlas $atlasPath")
-			val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
-
-			val sprite = Sprite()
-			sprite.texture = texture
-			sprite.setRegion(region.bounds, region.isRotated)
-			sprite.updateUv()
-			sprites.add(sprite)
-		}
-		emitterRenderers.add(ParticleEmitterRenderer2d(injector, emitterInstance, sprites))
+		val sprite = Sprite()
+		sprite.texture = texture
+		sprite.setRegion(region.bounds, region.isRotated)
+		sprite.updateUv()
+		sprite
 	}
-	return LoadedParticleEffect(effectInstance, emitterRenderers, group)
+	return loadParticleEffect(particleEffect, group, spriteResolver)
 }
 
-suspend fun Scoped.loadParticleEffect(pDataPath: String, atlasPath: String, group: CachedGroup = cachedGroup()): LoadedParticleEffect {
-	val atlasDataPromise = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group)
-	val particleEffect = loadAndCacheJson(pDataPath, ParticleEffectSerializer, group).await()
-	val atlasData = atlasDataPromise.await()
+/**
+ * Given a particle effect and a sprite resolver, creates a particle effect instance, and requests a [Sprite] for every
+ * emitter.
+ */
+suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffect, group: CachedGroup = cachedGroup(), spriteResolver: SpriteResolver): LoadedParticleEffect {
 	val emitterRenderers = ArrayList<ParticleEmitterRenderer>(particleEffect.emitters.size)
 	val effectInstance = particleEffect.createInstance()
 
@@ -190,15 +191,7 @@ suspend fun Scoped.loadParticleEffect(pDataPath: String, atlasPath: String, grou
 		val emitter = emitterInstance.emitter
 		val sprites = ArrayList<Sprite>(emitter.imageEntries.size)
 		for (i in 0..emitter.imageEntries.lastIndex) {
-			val imagePath = emitter.imageEntries[i].path
-
-			val (page, region) = atlasData.findRegion(imagePath) ?: throw Exception("Could not find $imagePath in the atlas $atlasPath")
-			val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
-
-			val sprite = Sprite()
-			sprite.texture = texture
-			sprite.setRegion(region.bounds, region.isRotated)
-			sprite.updateUv()
+			val sprite = spriteResolver(emitter, emitter.imageEntries[i])
 			sprites.add(sprite)
 		}
 		emitterRenderers.add(ParticleEmitterRenderer2d(injector, emitterInstance, sprites))
