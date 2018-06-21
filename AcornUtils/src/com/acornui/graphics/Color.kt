@@ -19,8 +19,7 @@ package com.acornui.graphics
 
 import com.acornui.collection.Clearable
 import com.acornui.core.closeTo
-import com.acornui.math.MathUtils
-import com.acornui.serialization.*
+import com.acornui.serialization.Reader
 import com.acornui.serialization.Writer
 import com.acornui.string.toRadix
 import kotlin.math.abs
@@ -275,6 +274,21 @@ data class Color(
 	 * @see [rgba8888]
 	 */
 	fun set8888(rgba: Long): Color {
+		r = ((rgba and 0xff000000).ushr(24)).toFloat() / 255f
+		g = ((rgba and 0x00ff0000).ushr(16)).toFloat() / 255f
+		b = ((rgba and 0x0000ff00).ushr(8)).toFloat() / 255f
+		a = ((rgba and 0x000000ff)).toFloat() / 255f
+		return this
+	}
+
+	/**
+	 * Sets this color's component values through an integer representation.
+	 * 4294967295 - white
+	 *
+	 * @return this Color for chaining
+	 * @see [rgba8888]
+	 */
+	fun set8888(rgba: Int): Color {
 		r = ((rgba and -16777216).ushr(24)).toFloat() / 255f
 		g = ((rgba and 0x00ff0000).ushr(16)).toFloat() / 255f
 		b = ((rgba and 0x0000ff00).ushr(8)).toFloat() / 255f
@@ -435,10 +449,10 @@ data class Color(
 		 * @see [toRgbaString]
 		 */
 		fun fromStr(str: String): Color {
-			if (str.startsWith("0x")) return fromRgbaStr(str.substring(2))
-			else if (str.startsWith("#")) return fromRgbaStr(str.substring(1))
-			else if (str.startsWith("rgb", ignoreCase = true)) return fromCssStr(str)
-			else return fromRgbaStr(str)
+			return if (str.startsWith("0x")) fromRgbaStr(str.substring(2))
+			else if (str.startsWith("#")) fromRgbaStr(str.substring(1))
+			else if (str.startsWith("rgb", ignoreCase = true)) fromCssStr(str)
+			else fromRgbaStr(str)
 		}
 
 		fun from8888Str(value: String): Color {

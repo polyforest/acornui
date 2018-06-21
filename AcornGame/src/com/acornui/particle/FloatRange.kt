@@ -18,13 +18,13 @@ package com.acornui.particle
 
 import com.acornui.math.Easing
 import com.acornui.math.Interpolation
-import com.acornui.math.MathUtils
+import com.acornui.math.MathUtils.random
 import com.acornui.serialization.*
 
 data class FloatRange(val min: Float, val max: Float = min, val easing: Interpolation = Easing.linear) {
 
 	fun getValue(): Float {
-		return easing.apply(MathUtils.random()) * (max - min) + min
+		return easing.apply(random()) * (max - min) + min
 	}
 
 	companion object {

@@ -32,7 +32,6 @@
 
 package com.esotericsoftware.spine
 
-import com.acornui.core.INT_MAX_VALUE
 import com.acornui.math.MathUtils
 import com.acornui.math.PI
 import com.esotericsoftware.spine.data.IkConstraintData
@@ -212,7 +211,7 @@ class IkConstraint : Updatable {
 						}
 					}
 					var minAngle = 0f
-					var minDist = INT_MAX_VALUE.toFloat()
+					var minDist = Int.MAX_VALUE.toFloat()
 					var minX = 0f
 					var minY = 0f
 					var maxAngle = 0f

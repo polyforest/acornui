@@ -79,6 +79,9 @@ data class ParticleEmitter(
 
 		val imageEntries: List<ParticleImageEntry>,
 
+		/**
+		 * Timelines relative to the particle life.
+		 */
 		val propertyTimelines: List<PropertyTimeline>
 ) {
 	fun createInstance(): ParticleEmitterInstance {
@@ -111,6 +114,8 @@ data class ParticleImageEntry(
 
 data class PropertyTimeline(
 
+		val id: String = UidUtil.createUid(),
+
 		val property: String,
 
 		/**
@@ -125,7 +130,13 @@ data class PropertyTimeline(
 		/**
 		 * A list of control points for interpolated values. If this is empty, the low value will always be used.
 		 */
-		val timeline: List<TimelineValue>
+		val timeline: List<TimelineValue>,
+
+		/**
+		 * If true, relative to the particle's lifespan, if false, relative to the emitter duration.
+		 */
+		val useParticleLife: Boolean
+
 ) {
 
 	fun reset(target: PropertyValue) {
@@ -136,8 +147,7 @@ data class PropertyTimeline(
 		target.current = target.low
 	}
 
-	private val comparator: (Float, TimelineValue) -> Int = {
-		time, element ->
+	private val comparator: (Float, TimelineValue) -> Int = { time, element ->
 		time.compareTo(element.time)
 	}
 
@@ -184,7 +194,7 @@ data class PropertyTimeline(
 	fun getValueClosestToTime(time: Float, startIndex: Int = 0, endIndex: Int = timeline.size): TimelineValue? {
 		var closestDelta: Float = Float.MAX_VALUE
 		var closestValue: TimelineValue? = null
-		for (i in maxOf(0, startIndex) .. minOf(timeline.size, endIndex) - 1) {
+		for (i in maxOf(0, startIndex)..minOf(timeline.size, endIndex) - 1) {
 			val iValue = timeline[i]
 			val delta = abs(time - iValue.time)
 			if (delta < closestDelta) {
@@ -193,6 +203,14 @@ data class PropertyTimeline(
 			}
 		}
 		return closestValue
+	}
+
+	/**
+	 * Returns true if this timeline doesn't affect the property and can be ignored.
+	 */
+	fun isDefault(): Boolean {
+		val defaultValue = RegisteredParticleSetters.offsets[property] ?: 0f
+		return (timeline.isEmpty() && low.min == low.max && low.min == defaultValue)
 	}
 }
 
@@ -277,8 +295,8 @@ object EmitterDurationVoSerializer : From<EmitterDuration>, To<EmitterDuration> 
 	override fun read(reader: Reader): EmitterDuration {
 		return EmitterDuration(
 				duration = reader.obj("duration", FloatRangeSerializer)!!,
-				delayBefore =  reader.obj("delayBefore", FloatRangeSerializer)!!,
-				delayAfter =  reader.obj("delayAfter", FloatRangeSerializer)!!
+				delayBefore = reader.obj("delayBefore", FloatRangeSerializer)!!,
+				delayAfter = reader.obj("delayAfter", FloatRangeSerializer)!!
 
 		)
 	}
@@ -300,16 +318,18 @@ object PropertyTimelineSerializer : From<PropertyTimeline>, To<PropertyTimeline>
 		}
 
 		return PropertyTimeline(
+				id = reader.string("id") ?: UidUtil.createUid(),
 				property = reader.string("property")!!,
 				relative = reader.bool("relative") ?: false,
 				low = reader.obj("min", FloatRangeSerializer)!!,
 				high = reader.obj("max", FloatRangeSerializer)!!,
-				timeline = timeline
-
+				timeline = timeline,
+				useParticleLife = reader.bool("useParticleLife") ?: true
 		)
 	}
 
 	override fun PropertyTimeline.write(writer: Writer) {
+		writer.string("id", id)
 		writer.obj("min", low, FloatRangeSerializer)
 		writer.obj("max", high, FloatRangeSerializer)
 		writer.string("property", property)
@@ -322,6 +342,7 @@ object PropertyTimelineSerializer : From<PropertyTimeline>, To<PropertyTimeline>
 			timelineFloats[j + 1] = t.value
 		}
 		writer.floatArray("timeline", timelineFloats)
+		writer.bool("useParticleLife", useParticleLife)
 	}
 }
 

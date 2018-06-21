@@ -32,7 +32,6 @@
 package com.esotericsoftware.spine
 
 import com.acornui.collection.*
-import com.acornui.core.INT_MAX_VALUE
 import com.acornui.core.INT_MIN_VALUE
 import com.acornui.core.graphics.TextureAtlasData
 import com.acornui.gl.core.Vertex
@@ -295,8 +294,8 @@ class Skeleton(val data: SkeletonData, val atlas: TextureAtlasData) : Clearable 
 	 */
 	fun getBounds(offset: Vector2, size: Bounds) {
 		val drawOrder = this.drawOrder
-		var minX = INT_MAX_VALUE.toFloat()
-		var minY = INT_MAX_VALUE.toFloat()
+		var minX = Int.MAX_VALUE.toFloat()
+		var minY = Int.MAX_VALUE.toFloat()
 		var maxX = INT_MIN_VALUE.toFloat()
 		var maxY = INT_MIN_VALUE.toFloat()
 		var i = 0

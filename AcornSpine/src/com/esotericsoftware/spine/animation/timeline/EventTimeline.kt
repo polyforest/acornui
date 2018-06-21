@@ -31,7 +31,6 @@
 
 package com.esotericsoftware.spine.animation.timeline
 
-import com.acornui.core.INT_MAX_VALUE
 import com.esotericsoftware.spine.Skeleton
 import com.esotericsoftware.spine.SpineEvent
 import com.esotericsoftware.spine.animation.Animation
@@ -68,7 +67,7 @@ class EventTimeline(
 
 		if (lastTime > time) {
 			// Fire events after last time for looped animations.
-			apply(skeleton, lastTime, INT_MAX_VALUE.toFloat(), events, alpha)
+			apply(skeleton, lastTime, Int.MAX_VALUE.toFloat(), events, alpha)
 			lastTime = -1f
 		} else if (lastTime >= frames[frameCount - 1])
 		// Last time is after last frame.

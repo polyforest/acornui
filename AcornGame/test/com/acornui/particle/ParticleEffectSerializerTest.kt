@@ -16,6 +16,7 @@
 
 package com.acornui.particle
 
+import com.acornui.core.UidUtil
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.time.time
 import com.acornui.math.Easing
@@ -46,14 +47,14 @@ class ParticleEffectSerializerTest {
 								delayAfter = FloatRange(2.5f)
 						),
 						count = 100,
-						emissionRate = PropertyTimeline("emissionRate", false, FloatRange(3f, 10f, Easing.circle), FloatRange(20f, 30f, Easing.linear), listOf(
+						emissionRate = PropertyTimeline(UidUtil.createUid(), "emissionRate", false, FloatRange(3f, 10f, Easing.circle), FloatRange(20f, 30f, Easing.linear), listOf(
 								TimelineValue(0.1f, 0.2f),
 								TimelineValue(0.3f, 0.4f)
-						)),
-						particleLifeExpectancy = PropertyTimeline("particleLifeExpectancy", true, FloatRange(5f, 20f, Easing.elastic), FloatRange(20f, 30f, Easing.exp5), listOf(
+						), true),
+						particleLifeExpectancy = PropertyTimeline(UidUtil.createUid(), "particleLifeExpectancy", true, FloatRange(5f, 20f, Easing.elastic), FloatRange(20f, 30f, Easing.exp5), listOf(
 								TimelineValue(0.7f, 0.2f),
 								TimelineValue(0.8f, 0.5f)
-						)),
+						), true),
 						spawnLocation = PointSpawn(FloatRange(3f, 4f), FloatRange(5f, 7f), FloatRange(2f, 6f)),
 						blendMode = BlendMode.NORMAL,
 						premultipliedAlpha = false,
@@ -61,12 +62,12 @@ class ParticleEffectSerializerTest {
 								ParticleImageEntry(0.1f, "particle.png")
 						),
 						propertyTimelines = listOf(
-								PropertyTimeline("x", false, FloatRange(15f, 25f, Easing.linear), FloatRange(20f, 50f, Easing.exp5), listOf(
+								PropertyTimeline(UidUtil.createUid(), "x", false, FloatRange(15f, 25f, Easing.linear), FloatRange(20f, 50f, Easing.exp5), listOf(
 										TimelineValue(0.7f, 0.2f),
 										TimelineValue(0.8f, 0.5f),
 										TimelineValue(0.9f, 0.5f)
-								)),
-								PropertyTimeline("y", true, FloatRange(5f, 20f, Easing.elastic), FloatRange(20f, 30f, Easing.exp5), listOf())
+								), true),
+								PropertyTimeline(UidUtil.createUid(), "y", true, FloatRange(5f, 20f, Easing.elastic), FloatRange(20f, 30f, Easing.exp5), listOf(), true)
 						)
 
 				)

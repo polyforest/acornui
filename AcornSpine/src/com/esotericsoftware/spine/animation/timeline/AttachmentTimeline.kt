@@ -31,7 +31,6 @@
 
 package com.esotericsoftware.spine.animation.timeline
 
-import com.acornui.core.INT_MAX_VALUE
 import com.esotericsoftware.spine.Skeleton
 import com.esotericsoftware.spine.SpineEvent
 import com.esotericsoftware.spine.animation.Animation
@@ -55,7 +54,7 @@ class AttachmentTimeline(
 		var lastTime = lastTime
 		val frames = this.frames
 		if (time < frames[0]) {
-			if (lastTime > time) apply(skeleton, lastTime, INT_MAX_VALUE.toFloat(), null, 0f)
+			if (lastTime > time) apply(skeleton, lastTime, Int.MAX_VALUE.toFloat(), null, 0f)
 			return
 		} else if (lastTime > time)
 			lastTime = -1f

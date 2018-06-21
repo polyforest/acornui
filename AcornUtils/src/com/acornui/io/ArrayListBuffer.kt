@@ -18,13 +18,11 @@ package com.acornui.io
 
 import com.acornui.collection.addOrSet
 
-import com.acornui.core.*
-
 /**
  * A Buffer interface wrapping a [MutableList]
  * @author nbilyk
  */
-class ArrayListBuffer<T>(private val array: MutableList<T>, private val arrayOffset:Int = 0, capacity:Int = INT_MAX_VALUE) : BufferBase<T>(capacity), ReadWriteBuffer<T> {
+class ArrayListBuffer<T>(private val array: MutableList<T>, private val arrayOffset:Int = 0, capacity:Int = Int.MAX_VALUE) : BufferBase<T>(capacity), ReadWriteBuffer<T> {
 
 	override fun get(): T {
 		if (_position >= _limit) {

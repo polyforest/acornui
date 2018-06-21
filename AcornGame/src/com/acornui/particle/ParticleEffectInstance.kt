@@ -23,6 +23,7 @@ import com.acornui.collection.ArrayList
 import com.acornui.collection.Clearable
 import com.acornui.core.userInfo
 import com.acornui.graphics.Color
+import com.acornui.math.MathUtils.clamp
 import com.acornui.math.Vector3
 import com.acornui.math.Vector3Ro
 import com.acornui.math.ceil
@@ -130,13 +131,10 @@ class ParticleEmitterInstance(
 		get() = _isComplete
 
 	init {
-		val propertyTimelines = emitter.propertyTimelines
+
 		particles = ArrayList(count, {
 			Particle().apply {
-				for (i in 0..propertyTimelines.lastIndex) {
-					val timeline = propertyTimelines[i]
-					timelines.add(ParticleTimelineInstance(timeline))
-				}
+				emitter.propertyTimelines.mapTo(timelines) { ParticleTimelineInstance(it) }
 			}
 		})
 
@@ -167,7 +165,7 @@ class ParticleEmitterInstance(
 		emitter.particleLifeExpectancy.apply(lifeExpectancyValue, alpha)
 		if (_currentTime < _duration && _currentTime > 0f) {
 			// Create new particles if the accumulator surpasses 1.
-			accumulator += emissionRateValue.current * maxParticlesScale *  stepTime
+			accumulator += emissionRateValue.current * maxParticlesScale * stepTime
 			if (accumulator > 1f) {
 				for (i in 0..particles.lastIndex) {
 					val particle = particles[i]
@@ -179,10 +177,11 @@ class ParticleEmitterInstance(
 			}
 		}
 
+		val alphaClamped = clamp(alpha, 0f, 1f)
 		for (i in 0..particles.lastIndex) {
 			val particle = particles[i]
 			if (particle.active) {
-				particle.update(stepTime)
+				particle.update(stepTime, alphaClamped)
 				if (particle.life > particle.lifeExpectancy) {
 					particle.active = false
 					_activeCount--
@@ -279,6 +278,7 @@ class Particle : Clearable {
 	 * pitch, yaw, and roll values in radians.
 	 */
 	val forwardDirection = Vector3()
+	val forwardDirectionVelocity = Vector3()
 	var forwardVelocity = 0f
 
 	val colorTint: Color = Color.WHITE.copy()
@@ -293,19 +293,20 @@ class Particle : Clearable {
 
 	val timelines: MutableList<ParticleTimelineInstance> = ArrayList()
 
-	fun update(stepTime: Float) {
+	fun update(stepTime: Float, emitterAlphaClamped: Float) {
 		life += stepTime
 		val alpha = life * _lifeExpectancyInv
 
 		for (i in 0..timelines.lastIndex) {
 			val prop = timelines[i]
 			val previous = prop.value.current
-			prop.timeline.apply(prop.value, alpha)
+			prop.timeline.apply(prop.value, if (prop.timeline.useParticleLife) alpha else emitterAlphaClamped)
 			prop.updater(this, prop.value.current - previous)
 		}
 
 		position.add(velocity)
 		rotation.add(rotationalVelocity)
+		forwardDirection.add(forwardDirectionVelocity)
 		if (forwardVelocity != 0f) {
 			if (forwardDirection.y != 0f || forwardDirection.x != 0f) {
 				// TODO: 3d forward direction.
@@ -327,14 +328,15 @@ class Particle : Clearable {
 		rotation.clear()
 		rotationalVelocity.clear()
 		forwardDirection.clear()
+		forwardDirectionVelocity.clear()
 		forwardVelocity = 0f
 		colorTint.set(Color.WHITE)
 		origin.set(0.5f, 0.5f, 0.5f)
 		imageIndex = 0
 		for (i in 0..timelines.lastIndex) {
-			val prop = timelines[i]
-			prop.timeline.reset(prop.value)
-			prop.updater(this, prop.value.current - prop.getter(this))
+			val timelineInstance = timelines[i]
+			timelineInstance.timeline.reset(timelineInstance.value)
+			timelineInstance.updater(this, timelineInstance.value.current - timelineInstance.offset)
 		}
 	}
 }
@@ -344,9 +346,7 @@ class ParticleTimelineInstance(
 ) {
 	val value = PropertyValue()
 
-
-	val getter: ParticlePropertyGetter = RegisteredParticleSetters.getters[timeline.property]
-			?: throw Exception("Could not find property getter with the name ${timeline.property}")
+	val offset = RegisteredParticleSetters.offsets[timeline.property] ?: 0f
 
 	val updater: ParticlePropertyUpdater = RegisteredParticleSetters.updaters[timeline.property]
 			?: throw Exception("Could not find property updater with the name ${timeline.property}")
@@ -354,47 +354,23 @@ class ParticleTimelineInstance(
 
 
 typealias ParticlePropertyUpdater = (Particle, Float) -> Unit
-typealias ParticlePropertyGetter = (Particle) -> Float
 
 object RegisteredParticleSetters {
 
-	val getters: Map<String, ParticlePropertyGetter> = hashMapOf(
+	val offsets = hashMapOf(
+			"scale" to 1f,
+			"scaleX" to 1f,
+			"scaleY" to 1f,
+			"scaleZ" to 1f,
 
-			"x" to { target -> target.position.x },
-			"y" to { target -> target.position.y },
-			"z" to { target -> target.position.z },
+			"originX" to 0.5f,
+			"originY" to 0.5f,
+			"originZ" to 0.5f,
 
-			"velocityX" to { target -> target.velocity.x },
-			"velocityY" to { target -> target.velocity.y },
-			"velocityZ" to { target -> target.velocity.z },
-
-			"originX" to { target -> target.origin.x },
-			"originY" to { target -> target.origin.y },
-			"originZ" to { target -> target.origin.z },
-
-			"scaleX" to { target -> target.scale.x },
-			"scaleY" to { target -> target.scale.y },
-			"scaleZ" to { target -> target.scale.z },
-
-			"rotationX" to { target -> target.rotation.x },
-			"rotationY" to { target -> target.rotation.y },
-			"rotationZ" to { target -> target.rotation.z },
-
-			"rotationalVelocityX" to { target -> target.rotationalVelocity.x },
-			"rotationalVelocityY" to { target -> target.rotationalVelocity.y },
-			"rotationalVelocityZ" to { target -> target.rotationalVelocity.z },
-
-			"forwardDirectionX" to { target -> target.forwardDirection.x },
-			"forwardDirectionY" to { target -> target.forwardDirection.y },
-			"forwardDirectionZ" to { target -> target.forwardDirection.z },
-			"forwardVelocity" to { target -> target.forwardVelocity },
-
-			"colorR" to { target -> target.colorTint.r },
-			"colorG" to { target -> target.colorTint.g },
-			"colorB" to { target -> target.colorTint.b },
-			"colorA" to { target -> target.colorTint.a },
-
-			"imageIndex" to { target -> target.imageIndex.toFloat() }
+			"colorR" to 1f,
+			"colorG" to 1f,
+			"colorB" to 1f,
+			"colorA" to 1f
 	)
 
 	val updaters: Map<String, ParticlePropertyUpdater> = hashMapOf(
@@ -411,6 +387,7 @@ object RegisteredParticleSetters {
 			"originY" to { target, delta -> target.origin.y += delta },
 			"originZ" to { target, delta -> target.origin.z += delta },
 
+			"scale" to { target, delta -> target.scale.x += delta; target.scale.y += delta; target.scale.z += delta },
 			"scaleX" to { target, delta -> target.scale.x += delta },
 			"scaleY" to { target, delta -> target.scale.y += delta },
 			"scaleZ" to { target, delta -> target.scale.z += delta },
@@ -423,9 +400,16 @@ object RegisteredParticleSetters {
 			"rotationalVelocityY" to { target, delta -> target.rotationalVelocity.y += delta },
 			"rotationalVelocityZ" to { target, delta -> target.rotationalVelocity.z += delta },
 
-			"forwardDirectionX" to { target, delta -> target.forwardDirection.x += delta },
+			"forwardDirectionX" to { target, delta ->
+				target.forwardDirection.x += delta
+			},
 			"forwardDirectionY" to { target, delta -> target.forwardDirection.y += delta },
 			"forwardDirectionZ" to { target, delta -> target.forwardDirection.z += delta },
+
+			"forwardDirectionVelocityZ" to { target, delta ->
+				target.forwardDirectionVelocity.z += delta
+			},
+
 			"forwardVelocity" to { target, delta -> target.forwardVelocity += delta },
 
 			"colorR" to { target, delta -> target.colorTint.r += delta },

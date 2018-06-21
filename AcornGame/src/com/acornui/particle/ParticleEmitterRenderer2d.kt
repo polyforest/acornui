@@ -68,7 +68,7 @@ class ParticleEmitterRenderer2d(
 		val w = sprite.naturalWidth * scale.x
 		val h = sprite.naturalHeight * scale.y
 		val emitterPosition = emitterInstance.position
-		sprite.updateVertices(w, h, position.x + emitterPosition.x, position.y + emitterPosition.y, position.z + emitterPosition.z, rotation.z, w * origin.x, h * origin.y)
+		sprite.updateVertices(w, h, position.x + emitterPosition.x, position.y + emitterPosition.y, position.z + emitterPosition.z, rotation.z + forwardDirection.z, w * origin.x, h * origin.y)
 		sprite.draw(glState, finalColor.set(colorTint).mul(concatenatedColorTint))
 	}
 
