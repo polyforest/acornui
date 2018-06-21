@@ -225,8 +225,6 @@ interface Positionable : PositionableRo {
 
 	override val position: Vector3Ro
 
-	fun moveTo(value: Vector3Ro)
-
 	/**
 	 * Sets the position of this component, rounding the x and y coordinates.
 	 */
@@ -236,6 +234,8 @@ interface Positionable : PositionableRo {
 	 * Sets the position of this component. (Without rounding)
 	 */
 	fun setPosition(x: Float, y: Float, z: Float = 0f)
-	fun setPosition(value: Vector3Ro)
 
 }
+
+fun Positionable.moveTo(value: Vector3Ro) = moveTo(value.x, value.y, value.z)
+fun Positionable.setPosition(value: Vector3Ro) = setPosition(value.x, value.y, value.z)

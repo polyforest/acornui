@@ -1039,14 +1039,10 @@ open class UiComponentImpl(
 		return
 	}
 
-	override fun setPosition(value: Vector3Ro) = setPosition(value.x, value.y, value.z)
-
-	override fun moveTo(x: Float, y: Float, z: Float) {
+	final override fun moveTo(x: Float, y: Float, z: Float) {
 		// Round after a small, but obscure offset, to avoid flip-flopping around the common case of 0.5f
 		setPosition(round(x - 0.0136f), round(y - 0.0136f), z)
 	}
-
-	override fun moveTo(value: Vector3Ro) = moveTo(value.x, value.y, value.z)
 
 	override var scaleX: Float
 		get() = _scale.x
