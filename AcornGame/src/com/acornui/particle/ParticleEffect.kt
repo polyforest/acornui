@@ -16,13 +16,9 @@
 
 package com.acornui.particle
 
-import com.acornui.collection.sortedInsertionIndex
 import com.acornui.core.UidUtil
-import com.acornui.core.closeTo
 import com.acornui.core.graphics.BlendMode
-import com.acornui.math.MathUtils
 import com.acornui.serialization.*
-import kotlin.math.abs
 
 data class ParticleEffect(
 
@@ -66,12 +62,12 @@ data class ParticleEmitter(
 		/**
 		 * The rate of emissions, in particles per second.
 		 */
-		val emissionRate: PropertyTimeline,
+		val emissionRate: FloatTimeline,
 
 		/**
 		 * Calculates the life of a newly created particle.
 		 */
-		val particleLifeExpectancy: PropertyTimeline,
+		val particleLifeExpectancy: FloatTimeline,
 
 		val blendMode: BlendMode,
 
@@ -82,7 +78,7 @@ data class ParticleEmitter(
 		/**
 		 * Timelines relative to the particle life.
 		 */
-		val propertyTimelines: List<PropertyTimeline>
+		val propertyTimelines: List<FloatTimeline>
 ) {
 	fun createInstance(): ParticleEmitterInstance {
 		return ParticleEmitterInstance(this)
@@ -112,135 +108,6 @@ data class ParticleImageEntry(
 		val path: String
 )
 
-data class PropertyTimeline(
-
-		val id: String = UidUtil.createUid(),
-
-		val property: String,
-
-		/**
-		 * If true, the final value will not be the high value, but the high + low
-		 */
-		val relative: Boolean,
-
-		val low: FloatRange,
-
-		val high: FloatRange,
-
-		/**
-		 * A list of control points for interpolated values. If this is empty, the low value will always be used.
-		 */
-		val timeline: List<TimelineValue>,
-
-		/**
-		 * If true, relative to the particle's lifespan, if false, relative to the emitter duration.
-		 */
-		val useParticleLife: Boolean
-
-) {
-
-	fun reset(target: PropertyValue) {
-		target.low = low.getValue()
-		target.high = high.getValue()
-		if (relative) target.high += target.low
-		target.diff = target.high - target.low
-		target.current = target.low
-	}
-
-	private val comparator: (Float, TimelineValue) -> Int = { time, element ->
-		time.compareTo(element.time)
-	}
-
-	fun apply(target: PropertyValue, alpha: Float) {
-		val n = timeline.size
-		if (n == 0) return
-		val timelineIndex = timeline.sortedInsertionIndex(alpha, matchForwards = true, comparator = comparator) - 1
-		val timeA: Float
-		val valueA: Float
-		if (timelineIndex < 0) {
-			timeA = 0f
-			valueA = timeline.first().value
-		} else {
-			val timelineEntry = timeline[timelineIndex]
-			timeA = timelineEntry.time
-			valueA = timelineEntry.value
-		}
-
-		val timeB: Float
-		val valueB: Float
-		if (timelineIndex >= n - 1) {
-			timeB = 1f
-			valueB = timeline.last().value
-		} else {
-			val timelineEntry = timeline[timelineIndex + 1]
-			timeB = timelineEntry.time
-			valueB = timelineEntry.value
-		}
-		if (timeB - timeA < MathUtils.FLOAT_ROUNDING_ERROR) {
-			target.current = valueB * target.diff + target.low
-		} else {
-			val valueAlpha = (alpha - timeA) / (timeB - timeA)
-			val valueValue = (valueB - valueA) * valueAlpha + valueA
-			target.current = valueValue * target.diff + target.low
-		}
-
-	}
-
-	fun getValueCloseToTime(time: Float, affordance: Float = 0.02f): TimelineValue? {
-		val closest = getValueClosestToTime(time) ?: return null
-		return if (closest.time.closeTo(time, affordance)) closest else null
-	}
-
-	fun getValueClosestToTime(time: Float, startIndex: Int = 0, endIndex: Int = timeline.size): TimelineValue? {
-		var closestDelta: Float = Float.MAX_VALUE
-		var closestValue: TimelineValue? = null
-		for (i in maxOf(0, startIndex)..minOf(timeline.size, endIndex) - 1) {
-			val iValue = timeline[i]
-			val delta = abs(time - iValue.time)
-			if (delta < closestDelta) {
-				closestDelta = delta
-				closestValue = iValue
-			}
-		}
-		return closestValue
-	}
-
-	/**
-	 * Returns true if this timeline doesn't affect the property and can be ignored.
-	 */
-	fun isDefault(): Boolean {
-		val defaultValue = RegisteredParticleSetters.offsets[property] ?: 0f
-		return (timeline.isEmpty() && low.min == low.max && low.min == defaultValue)
-	}
-}
-
-/**
- * Represents the range value at the given time.
- */
-data class TimelineValue(
-
-		/**
-		 * A value of 0f - 1f indicating the current progress of this particle where the [value] will be used.
-		 */
-		val time: Float,
-
-		/**
-		 * A value of 0f - 1f indicating the interpolation of the low to high value.
-		 */
-		val value: Float
-) : Comparable<TimelineValue> {
-
-	override fun compareTo(other: TimelineValue): Int {
-		return time.compareTo(other.time)
-	}
-}
-
-class PropertyValue(
-		var low: Float = 0f,
-		var high: Float = 0f,
-		var diff: Float = 0f,
-		var current: Float = 0f
-)
 
 object ParticleEffectSerializer : From<ParticleEffect>, To<ParticleEffect> {
 
@@ -257,7 +124,6 @@ object ParticleEmitterSerializer : From<ParticleEmitter>, To<ParticleEmitter> {
 
 	override fun read(reader: Reader): ParticleEmitter {
 		return ParticleEmitter(
-				id = reader.string("id")!!,
 				name = reader.string("name")!!,
 				enabled = reader.bool("enabled") ?: true,
 				loops = reader.bool("loops") ?: true,
@@ -265,16 +131,15 @@ object ParticleEmitterSerializer : From<ParticleEmitter>, To<ParticleEmitter> {
 				duration = reader.obj("duration", EmitterDurationVoSerializer)!!,
 				count = reader.int("count")!!,
 				spawnLocation = reader.obj("spawnLocation", ParticleSpawnSerializer)!!,
-				emissionRate = reader.obj("emissionRate", PropertyTimelineSerializer)!!,
+				emissionRate = reader.obj("emissionRate", FloatTimelineSerializer)!!,
 				imageEntries = reader.arrayList("imageEntries", ParticleImageEntrySerializer)!!,
-				particleLifeExpectancy = reader.obj("particleLifeExpectancy", PropertyTimelineSerializer)!!,
+				particleLifeExpectancy = reader.obj("particleLifeExpectancy", FloatTimelineSerializer)!!,
 				premultipliedAlpha = reader.bool("premultipliedAlpha") ?: false,
-				propertyTimelines = reader.arrayList("propertyTimelines", PropertyTimelineSerializer)!!
+				propertyTimelines = reader.arrayList("propertyTimelines", FloatTimelineSerializer)!!
 		)
 	}
 
 	override fun ParticleEmitter.write(writer: Writer) {
-		writer.string("id", id)
 		writer.string("name", name)
 		writer.bool("enabled", enabled)
 		writer.bool("loops", loops)
@@ -282,11 +147,11 @@ object ParticleEmitterSerializer : From<ParticleEmitter>, To<ParticleEmitter> {
 		writer.obj("duration", duration, EmitterDurationVoSerializer)
 		writer.int("count", count)
 		writer.obj("spawnLocation", spawnLocation, ParticleSpawnSerializer)
-		writer.obj("emissionRate", emissionRate, PropertyTimelineSerializer)
+		writer.obj("emissionRate", emissionRate, FloatTimelineSerializer)
 		writer.array("imageEntries", imageEntries, ParticleImageEntrySerializer)
-		writer.obj("particleLifeExpectancy", particleLifeExpectancy, PropertyTimelineSerializer)
+		writer.obj("particleLifeExpectancy", particleLifeExpectancy, FloatTimelineSerializer)
 		writer.bool("premultipliedAlpha", premultipliedAlpha)
-		writer.array("propertyTimelines", propertyTimelines, PropertyTimelineSerializer)
+		writer.array("propertyTimelines", propertyTimelines, FloatTimelineSerializer)
 	}
 }
 
@@ -305,44 +170,6 @@ object EmitterDurationVoSerializer : From<EmitterDuration>, To<EmitterDuration> 
 		writer.obj("duration", duration, FloatRangeSerializer)
 		writer.obj("delayBefore", delayBefore, FloatRangeSerializer)
 		writer.obj("delayAfter", delayAfter, FloatRangeSerializer)
-	}
-}
-
-object PropertyTimelineSerializer : From<PropertyTimeline>, To<PropertyTimeline> {
-
-	override fun read(reader: Reader): PropertyTimeline {
-		val timelineFloats = reader.floatArray("timeline") ?: floatArrayOf()
-		val timeline = ArrayList<TimelineValue>(timelineFloats.size shr 1)
-		for (i in 0..timelineFloats.lastIndex step 2) {
-			timeline.add(TimelineValue(timelineFloats[i], timelineFloats[i + 1]))
-		}
-
-		return PropertyTimeline(
-				id = reader.string("id") ?: UidUtil.createUid(),
-				property = reader.string("property")!!,
-				relative = reader.bool("relative") ?: false,
-				low = reader.obj("min", FloatRangeSerializer)!!,
-				high = reader.obj("max", FloatRangeSerializer)!!,
-				timeline = timeline,
-				useParticleLife = reader.bool("useParticleLife") ?: true
-		)
-	}
-
-	override fun PropertyTimeline.write(writer: Writer) {
-		writer.string("id", id)
-		writer.obj("min", low, FloatRangeSerializer)
-		writer.obj("max", high, FloatRangeSerializer)
-		writer.string("property", property)
-		writer.bool("relative", relative)
-		val timelineFloats = FloatArray(timeline.size shl 1)
-		for (i in 0..timeline.lastIndex) {
-			val j = i shl 1
-			val t = timeline[i]
-			timelineFloats[j] = t.time
-			timelineFloats[j + 1] = t.value
-		}
-		writer.floatArray("timeline", timelineFloats)
-		writer.bool("useParticleLife", useParticleLife)
 	}
 }
 

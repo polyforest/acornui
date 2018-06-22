@@ -133,9 +133,7 @@ class ParticleEmitterInstance(
 	init {
 
 		particles = ArrayList(count, {
-			Particle().apply {
-				emitter.propertyTimelines.mapTo(timelines) { ParticleTimelineInstance(it) }
-			}
+			Particle(timelineInstances = emitter.propertyTimelines.map { FloatTimelineInstance(it) })
 		})
 
 		rewind()
@@ -247,7 +245,9 @@ class ParticleEmitterInstance(
 
 }
 
-class Particle : Clearable {
+class Particle(
+		val timelineInstances: List<TimelineInstance>
+) : Clearable {
 
 	var active = false
 
@@ -291,17 +291,13 @@ class Particle : Clearable {
 
 	var imageIndex = 0
 
-	val timelines: MutableList<ParticleTimelineInstance> = ArrayList()
-
 	fun update(stepTime: Float, emitterAlphaClamped: Float) {
 		life += stepTime
 		val alpha = life * _lifeExpectancyInv
+		val alphaClamped = clamp(alpha, 0f, 1f)
 
-		for (i in 0..timelines.lastIndex) {
-			val prop = timelines[i]
-			val previous = prop.value.current
-			prop.timeline.apply(prop.value, if (prop.timeline.useParticleLife) alpha else emitterAlphaClamped)
-			prop.updater(this, prop.value.current - previous)
+		for (i in 0..timelineInstances.lastIndex) {
+			timelineInstances[i].apply(this, alphaClamped, emitterAlphaClamped)
 		}
 
 		position.add(velocity)
@@ -333,25 +329,42 @@ class Particle : Clearable {
 		colorTint.set(Color.WHITE)
 		origin.set(0.5f, 0.5f, 0.5f)
 		imageIndex = 0
-		for (i in 0..timelines.lastIndex) {
-			val timelineInstance = timelines[i]
-			timelineInstance.timeline.reset(timelineInstance.value)
-			timelineInstance.updater(this, timelineInstance.value.current - timelineInstance.offset)
+
+		// Set all properties to the low value.
+		for (i in 0..timelineInstances.lastIndex) {
+			timelineInstances[i].reset(this)
 		}
 	}
 }
 
-class ParticleTimelineInstance(
-		val timeline: PropertyTimeline
-) {
-	val value = PropertyValue()
-
-	val offset = RegisteredParticleSetters.offsets[timeline.property] ?: 0f
-
-	val updater: ParticlePropertyUpdater = RegisteredParticleSetters.updaters[timeline.property]
-			?: throw Exception("Could not find property updater with the name ${timeline.property}")
+interface TimelineInstance {
+	fun apply(particle: Particle, particleAlphaClamped: Float, emitterAlphaClamped: Float)
+	fun reset(particle: Particle)
 }
 
+class FloatTimelineInstance(
+		private val timeline: FloatTimeline
+) : TimelineInstance {
+
+	private val value = PropertyValue()
+
+	private val offset = RegisteredParticleSetters.offsets[timeline.property] ?: 0f
+
+	private val updater: ParticlePropertyUpdater = RegisteredParticleSetters.updaters[timeline.property]
+			?: throw Exception("Could not find property updater with the name ${timeline.property}")
+
+	override fun apply(particle: Particle, particleAlphaClamped: Float, emitterAlphaClamped: Float) {
+		if (timeline.timeline.isEmpty()) return
+		val previous = value.current
+		timeline.apply(value, if (timeline.useParticleLife) particleAlphaClamped else emitterAlphaClamped)
+		updater(particle, value.current - previous)
+	}
+
+	override fun reset(particle: Particle) {
+		timeline.reset(value)
+		updater(particle, value.current - offset)
+	}
+}
 
 typealias ParticlePropertyUpdater = (Particle, Float) -> Unit
 

@@ -21,7 +21,11 @@ import com.acornui.math.Interpolation
 import com.acornui.math.MathUtils.random
 import com.acornui.serialization.*
 
-data class FloatRange(val min: Float, val max: Float = min, val easing: Interpolation = Easing.linear) {
+data class FloatRange(
+		val min: Float,
+		val max: Float = min,
+		val easing: Interpolation = Easing.linear
+) {
 
 	fun getValue(): Float {
 		return easing.apply(random()) * (max - min) + min
@@ -32,18 +36,15 @@ data class FloatRange(val min: Float, val max: Float = min, val easing: Interpol
 	}
 }
 
-
 object FloatRangeSerializer : From<FloatRange>, To<FloatRange> {
 
 	override fun read(reader: Reader): FloatRange {
 		val easingName = reader.string("easing") ?: "linear"
 
-
 		return FloatRange(
 				min = reader.float("min")!!,
 				max = reader.float("max")!!,
 				easing = Easing.fromString(easingName) ?: throw Exception("Unknown easing '$easingName'")
-
 		)
 	}
 
