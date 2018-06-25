@@ -338,8 +338,10 @@ class Particle(
 }
 
 interface TimelineInstance {
+
 	fun apply(particle: Particle, particleAlphaClamped: Float, emitterAlphaClamped: Float)
 	fun reset(particle: Particle)
+
 }
 
 fun timelineInstance(timeline: PropertyTimeline<*>): TimelineInstance {

@@ -21,6 +21,8 @@ import com.acornui.serialization.*
 
 data class FloatTimeline(
 
+		override val id: Int = PropertyTimeline.nextId(),
+
 		override val property: String,
 
 		/**

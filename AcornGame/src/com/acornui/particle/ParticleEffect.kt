@@ -194,17 +194,3 @@ object ParticleImageEntrySerializer : From<ParticleImageEntry>, To<ParticleImage
 		writer.float("time", time)
 	}
 }
-
-object PropertyTimelineSerializer : From<PropertyTimeline<*>>, To<PropertyTimeline<*>> {
-
-	override fun read(reader: Reader): PropertyTimeline<*> {
-		val property = reader.string("property")
-		return if (property == "color") ColorTimelineSerializer.read(reader)
-		else FloatTimelineSerializer.read(reader)
-	}
-
-	override fun PropertyTimeline<*>.write(writer: Writer) {
-		if (property == "color") ColorTimelineSerializer.write2(this as ColorTimeline, writer)
-		else FloatTimelineSerializer.write2(this as FloatTimeline, writer)
-	}
-}

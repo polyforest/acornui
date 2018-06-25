@@ -23,6 +23,8 @@ import com.acornui.serialization.*
 
 data class ColorTimeline(
 
+		override val id: Int = PropertyTimeline.nextId(),
+
 		override val property: String,
 
 		override val timeline: List<TimelineValue<ColorRo>>,

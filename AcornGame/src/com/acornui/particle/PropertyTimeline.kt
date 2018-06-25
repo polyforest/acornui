@@ -18,9 +18,12 @@ package com.acornui.particle
 
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.core.closeTo
+import com.acornui.serialization.*
 import kotlin.math.abs
 
 interface PropertyTimeline<T> {
+
+	val id: Int
 
 	val property: String
 
@@ -44,6 +47,14 @@ interface PropertyTimeline<T> {
 		}
 		return closestValue
 	}
+
+	companion object {
+		private var _nextId = 0
+
+		fun nextId(): Int {
+			return ++_nextId
+		}
+	}
 }
 
 data class TimelineValue<T>(val time: Float, val value: T) : Comparable<TimelineValue<T>> {
@@ -59,4 +70,18 @@ private val comparator: (Float, TimelineValue<*>) -> Int = { time, element ->
 
 fun List<TimelineValue<*>>.getIndexOfTime(time: Float): Int {
 	return sortedInsertionIndex(time, matchForwards = true, comparator = comparator)
+}
+
+object PropertyTimelineSerializer : From<PropertyTimeline<*>>, To<PropertyTimeline<*>> {
+
+	override fun read(reader: Reader): PropertyTimeline<*> {
+		val property = reader.string("property")
+		return if (property == "color") ColorTimelineSerializer.read(reader)
+		else FloatTimelineSerializer.read(reader)
+	}
+
+	override fun PropertyTimeline<*>.write(writer: Writer) {
+		if (property == "color") ColorTimelineSerializer.write2(this as ColorTimeline, writer)
+		else FloatTimelineSerializer.write2(this as FloatTimeline, writer)
+	}
 }
