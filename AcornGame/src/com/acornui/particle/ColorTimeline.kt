@@ -87,9 +87,9 @@ object ColorTimelineSerializer : From<ColorTimeline>, To<ColorTimeline> {
 
 	override fun ColorTimeline.write(writer: Writer) {
 		writer.string("property", property)
-		val timelineFloats = FloatArray(timeline.size shl 1)
+		val timelineFloats = FloatArray(timeline.size shl 2)
 		for (i in 0..timeline.lastIndex) {
-			val j = i * 4
+			val j = i shl 2
 			val t = timeline[i]
 			timelineFloats[j] = t.time
 			timelineFloats[j + 1] = t.value.r
