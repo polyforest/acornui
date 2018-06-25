@@ -133,7 +133,7 @@ class ParticleEmitterInstance(
 	init {
 
 		particles = ArrayList(count, {
-			Particle(timelineInstances = emitter.propertyTimelines.map { FloatTimelineInstance(it) })
+			Particle(timelineInstances = emitter.propertyTimelines.map { timelineInstance(it) })
 		})
 
 		rewind()
@@ -342,6 +342,11 @@ interface TimelineInstance {
 	fun reset(particle: Particle)
 }
 
+fun timelineInstance(timeline: PropertyTimeline<*>): TimelineInstance {
+	return if (timeline.property == "color") ColorTimelineInstance(timeline as ColorTimeline)
+	else FloatTimelineInstance(timeline as FloatTimeline)
+}
+
 class FloatTimelineInstance(
 		private val timeline: FloatTimeline
 ) : TimelineInstance {
@@ -363,6 +368,27 @@ class FloatTimelineInstance(
 	override fun reset(particle: Particle) {
 		timeline.reset(value)
 		updater(particle, value.current - offset)
+	}
+}
+
+class ColorTimelineInstance(
+		private val timeline: ColorTimeline
+) : TimelineInstance {
+
+	private val previous = Color.WHITE.copy()
+	private val value = Color.WHITE.copy()
+
+	override fun apply(particle: Particle, particleAlphaClamped: Float, emitterAlphaClamped: Float) {
+		previous.set(value)
+		timeline.apply(value, if (timeline.useParticleLife) particleAlphaClamped else emitterAlphaClamped)
+		particle.colorTint.r += value.r - previous.r
+		particle.colorTint.g += value.g - previous.g
+		particle.colorTint.b += value.b - previous.b
+	}
+
+	override fun reset(particle: Particle) {
+		value.set(Color.WHITE)
+		particle.colorTint.set(Color.WHITE)
 	}
 }
 

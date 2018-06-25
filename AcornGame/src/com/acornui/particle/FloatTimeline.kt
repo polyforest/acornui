@@ -21,7 +21,7 @@ import com.acornui.serialization.*
 
 data class FloatTimeline(
 
-		val property: String,
+		override val property: String,
 
 		/**
 		 * If true, the final value will not be the high value, but the high + low

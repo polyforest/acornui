@@ -76,9 +76,14 @@ data class ParticleEmitter(
 		val imageEntries: List<ParticleImageEntry>,
 
 		/**
+		 * If true, the forward direction affects the rotation.
+		 */
+		val orientToForwardDirection: Boolean,
+
+		/**
 		 * Timelines relative to the particle life.
 		 */
-		val propertyTimelines: List<FloatTimeline>
+		val propertyTimelines: List<PropertyTimeline<*>>
 ) {
 	fun createInstance(): ParticleEmitterInstance {
 		return ParticleEmitterInstance(this)
@@ -127,15 +132,16 @@ object ParticleEmitterSerializer : From<ParticleEmitter>, To<ParticleEmitter> {
 				name = reader.string("name")!!,
 				enabled = reader.bool("enabled") ?: true,
 				loops = reader.bool("loops") ?: true,
-				blendMode = BlendMode.fromStr(reader.string("blendMode") ?: "normal")!!,
 				duration = reader.obj("duration", EmitterDurationVoSerializer)!!,
 				count = reader.int("count")!!,
 				spawnLocation = reader.obj("spawnLocation", ParticleSpawnSerializer)!!,
 				emissionRate = reader.obj("emissionRate", FloatTimelineSerializer)!!,
-				imageEntries = reader.arrayList("imageEntries", ParticleImageEntrySerializer)!!,
 				particleLifeExpectancy = reader.obj("particleLifeExpectancy", FloatTimelineSerializer)!!,
+				blendMode = BlendMode.fromStr(reader.string("blendMode") ?: "normal")!!,
 				premultipliedAlpha = reader.bool("premultipliedAlpha") ?: false,
-				propertyTimelines = reader.arrayList("propertyTimelines", FloatTimelineSerializer)!!
+				imageEntries = reader.arrayList("imageEntries", ParticleImageEntrySerializer)!!,
+				orientToForwardDirection = reader.bool("orientToForwardDirection") ?: false,
+				propertyTimelines = reader.arrayList("propertyTimelines", PropertyTimelineSerializer)!!
 		)
 	}
 
@@ -143,15 +149,16 @@ object ParticleEmitterSerializer : From<ParticleEmitter>, To<ParticleEmitter> {
 		writer.string("name", name)
 		writer.bool("enabled", enabled)
 		writer.bool("loops", loops)
-		writer.string("blendMode", blendMode.name)
 		writer.obj("duration", duration, EmitterDurationVoSerializer)
 		writer.int("count", count)
 		writer.obj("spawnLocation", spawnLocation, ParticleSpawnSerializer)
 		writer.obj("emissionRate", emissionRate, FloatTimelineSerializer)
-		writer.array("imageEntries", imageEntries, ParticleImageEntrySerializer)
 		writer.obj("particleLifeExpectancy", particleLifeExpectancy, FloatTimelineSerializer)
+		writer.string("blendMode", blendMode.name)
 		writer.bool("premultipliedAlpha", premultipliedAlpha)
-		writer.array("propertyTimelines", propertyTimelines, FloatTimelineSerializer)
+		writer.array("imageEntries", imageEntries, ParticleImageEntrySerializer)
+		writer.bool("orientToForwardDirection", orientToForwardDirection)
+		writer.array("propertyTimelines", propertyTimelines, PropertyTimelineSerializer)
 	}
 }
 
@@ -185,5 +192,19 @@ object ParticleImageEntrySerializer : From<ParticleImageEntry>, To<ParticleImage
 	override fun ParticleImageEntry.write(writer: Writer) {
 		writer.string("path", path)
 		writer.float("time", time)
+	}
+}
+
+object PropertyTimelineSerializer : From<PropertyTimeline<*>>, To<PropertyTimeline<*>> {
+
+	override fun read(reader: Reader): PropertyTimeline<*> {
+		val property = reader.string("property")
+		return if (property == "color") ColorTimelineSerializer.read(reader)
+		else FloatTimelineSerializer.read(reader)
+	}
+
+	override fun PropertyTimeline<*>.write(writer: Writer) {
+		if (property == "color") ColorTimelineSerializer.write2(this as ColorTimeline, writer)
+		else FloatTimelineSerializer.write2(this as FloatTimeline, writer)
 	}
 }

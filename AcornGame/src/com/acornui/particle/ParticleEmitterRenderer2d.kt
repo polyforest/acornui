@@ -24,6 +24,7 @@ import com.acornui.component.Sprite
 import com.acornui.gl.core.GlState
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
+import com.acornui.math.PI
 
 class ParticleEmitterRenderer2d(
 		override val injector: Injector,
@@ -62,14 +63,18 @@ class ParticleEmitterRenderer2d(
 
 	private fun Particle.draw(concatenatedColorTint: ColorRo) {
 		val sprite = sprites.getOrNull(imageIndex) ?: return
-		sprite.blendMode = emitterInstance.emitter.blendMode
-		sprite.premultipliedAlpha = emitterInstance.emitter.premultipliedAlpha
+		val emitter = emitterInstance.emitter
+		sprite.blendMode = emitter.blendMode
+		sprite.premultipliedAlpha = emitter.premultipliedAlpha
 
 		val w = sprite.naturalWidth * scale.x
 		val h = sprite.naturalHeight * scale.y
 		val emitterPosition = emitterInstance.position
-		sprite.updateVertices(w, h, position.x + emitterPosition.x, position.y + emitterPosition.y, position.z + emitterPosition.z, rotation.z + forwardDirection.z, w * origin.x, h * origin.y)
+		val rotationZ = if (emitter.orientToForwardDirection) rotation.z + forwardDirection.z + HALF_PI else rotation.z
+		sprite.updateVertices(w, h, position.x + emitterPosition.x, position.y + emitterPosition.y, position.z + emitterPosition.z, rotationZ, w * origin.x, h * origin.y)
 		sprite.draw(glState, finalColor.set(colorTint).mul(concatenatedColorTint))
 	}
 
 }
+
+private const val HALF_PI: Float = PI * 0.5f

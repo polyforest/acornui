@@ -17,28 +17,29 @@
 package com.acornui.particle
 
 import com.acornui.graphics.Color
+import com.acornui.graphics.ColorRo
 import com.acornui.math.MathUtils
 import com.acornui.serialization.*
 
 data class ColorTimeline(
 
-		val property: String,
+		override val property: String,
 
-		override val timeline: List<TimelineValue<Color>>,
+		override val timeline: List<TimelineValue<ColorRo>>,
 
 		/**
 		 * If true, relative to the particle's lifespan, if false, relative to the emitter duration.
 		 */
 		val useParticleLife: Boolean
 
-) : PropertyTimeline<Color> {
+) : PropertyTimeline<ColorRo> {
 
 	fun apply(target: Color, alpha: Float) {
 		val n = timeline.size
 		if (n == 0) return
 		val timelineIndex = timeline.getIndexOfTime(alpha) - 1
 		val timeA: Float
-		val valueA: Color
+		val valueA: ColorRo
 		if (timelineIndex < 0) {
 			timeA = 0f
 			valueA = timeline[0].value
@@ -49,7 +50,7 @@ data class ColorTimeline(
 		}
 
 		val timeB: Float
-		val valueB: Color
+		val valueB: ColorRo
 		if (timelineIndex >= n - 1) {
 			timeB = 1f
 			valueB = timeline[timeline.lastIndex].value
@@ -72,7 +73,7 @@ object ColorTimelineSerializer : From<ColorTimeline>, To<ColorTimeline> {
 
 	override fun read(reader: Reader): ColorTimeline {
 		val timelineFloats = reader.floatArray("timeline") ?: floatArrayOf()
-		val timeline = ArrayList<TimelineValue<Color>>(timelineFloats.size shr 1)
+		val timeline = ArrayList<TimelineValue<ColorRo>>(timelineFloats.size shr 1)
 		for (i in 0..timelineFloats.lastIndex step 4) {
 			timeline.add(TimelineValue(timelineFloats[i], Color(timelineFloats[i + 1], timelineFloats[i + 2], timelineFloats[i + 3], 1f)))
 		}

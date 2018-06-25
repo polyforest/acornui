@@ -64,8 +64,8 @@ fun <E, T> recycle(
 		equality: (a: E?, b: E?) -> Boolean = { a, b -> a == b }
 ) {
 
-	// Dispose items not found in the new data list first, so that the disposer can potentially pool those items to be
-	// retrieved again immediately in the factory.
+	// Dispose items not found in the new data list first, so that the disposer can potentially pool those elements to
+	// be retrieved again immediately in the factory.
 	val remainingData = data?.copy()
 	val toRecycle = existingElements.copy()
 	val iterator = toRecycle.iterator()

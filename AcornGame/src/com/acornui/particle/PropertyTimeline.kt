@@ -22,6 +22,8 @@ import kotlin.math.abs
 
 interface PropertyTimeline<T> {
 
+	val property: String
+
 	val timeline: List<TimelineValue<T>>
 
 	fun getValueCloseToTime(time: Float, affordance: Float = 0.02f): TimelineValue<T>? {

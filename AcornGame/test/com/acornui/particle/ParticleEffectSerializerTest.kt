@@ -60,6 +60,7 @@ class ParticleEffectSerializerTest {
 						imageEntries = listOf(
 								ParticleImageEntry(0.1f, "particle.png")
 						),
+						orientToForwardDirection = false,
 						propertyTimelines = listOf(
 								FloatTimeline("x", false, FloatRange(15f, 25f, Easing.linear), FloatRange(20f, 50f, Easing.exp5), listOf(
 										TimelineValue(0.7f, 0.2f),
