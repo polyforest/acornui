@@ -13,7 +13,7 @@ data class Version(
 		val major: Int,
 		val minor: Int,
 		val patch: Int,
-		val build: Int
+		val build: Int = 0
 ) : Comparable<Version> {
 
 	override fun compareTo(other: Version): Int {

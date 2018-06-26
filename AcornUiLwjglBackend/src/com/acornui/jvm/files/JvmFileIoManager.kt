@@ -22,7 +22,6 @@ import com.acornui.core.platform
 import com.acornui.file.FileFilterGroup
 import com.acornui.file.FileIoManager
 import com.acornui.file.FileReader
-import com.acornui.file.FileWriter
 import org.lwjgl.PointerBuffer
 import org.lwjgl.system.MemoryUtil.memFree
 import org.lwjgl.system.MemoryUtil.memAllocPointer
@@ -49,7 +48,7 @@ class JvmFileIoManager : FileIoManager {
 	override val saveSupported: Boolean = true
 
 	override fun pickFileForOpen(fileFilterGroups: List<FileFilterGroup>?, onSuccess: (FileReader) -> Unit) {
-		val filePath = filePrompt(fileFilterGroups?.toFilterListStr(), NativeFileDialog::NFD_OpenDialog)
+		val filePath = filePrompt(fileFilterGroups?.toFilterListStr(), null, NativeFileDialog::NFD_OpenDialog)
 		if (filePath != null)
 			onSuccess(JvmFileReader(File(filePath)))
 	}
@@ -60,8 +59,8 @@ class JvmFileIoManager : FileIoManager {
 			onSuccess(filePaths.map { JvmFileReader(File(it)) })
 	}
 
-	override fun pickFileForSave(fileFilterGroups: List<FileFilterGroup>?, defaultExtension: String?, onSuccess: (FileWriter) -> Unit) {
-		val filePath = filePrompt(fileFilterGroups?.toFilterListStr(), NativeFileDialog::NFD_SaveDialog) ?: return
+	private fun pickFileForSave(fileFilterGroups: List<FileFilterGroup>?, defaultFilename: String?, defaultExtension: String?): File? {
+		val filePath = filePrompt(fileFilterGroups?.toFilterListStr(), defaultFilename, NativeFileDialog::NFD_SaveDialog) ?: return null
 
 		val filePathWithExtension = if (defaultExtension == null) {
 			filePath
@@ -69,7 +68,15 @@ class JvmFileIoManager : FileIoManager {
 			val ext = defaultExtension.normalizeExtension()
 			if (filePath.endsWith(ext, true)) filePath else "$filePath.$ext"
 		}
-		onSuccess(JvmFileWriter(File(filePathWithExtension)))
+		return File(filePathWithExtension)
+	}
+
+	override fun saveText(text: String, fileFilterGroups: List<FileFilterGroup>?, defaultFilename: String, defaultExtension: String?) {
+		pickFileForSave(fileFilterGroups, defaultFilename, defaultExtension)?.writeText(text)
+	}
+
+	override fun saveBinary(data: NativeBuffer<Byte>, fileFilterGroups: List<FileFilterGroup>?, defaultFilename: String, defaultExtension: String?) {
+		pickFileForSave(fileFilterGroups, defaultFilename, defaultExtension)?.writeBytes(data.toByteArray())
 	}
 
 	private fun List<FileFilterGroup>.toFilterListStr(): String? {
@@ -83,13 +90,13 @@ class JvmFileIoManager : FileIoManager {
 
 	override fun dispose() {}
 
-	private fun filePrompt(filterList: String?, prompt: (String?, String?, PointerBuffer?) -> Int): String? {
+	private fun filePrompt(filterList: String?, filename: String?, prompt: (String?, String?, PointerBuffer?) -> Int): String? {
 		val pathPtr = memAllocPointer(1)
 		val pathStr: String?
 
 		try {
 			pathStr = checkResult(
-					prompt(filterList, null, pathPtr),
+					prompt(filterList, filename, pathPtr),
 					pathPtr
 			)
 		} finally {
@@ -146,23 +153,5 @@ class JvmFileReader(private val file: File) : FileReader {
 		}
 		buffer.flip()
 		return buffer
-	}
-}
-
-class JvmFileWriter(private val file: File) : FileWriter {
-
-	override val name: String
-		get() = file.name
-	override val size: Long
-		get() = file.length()
-	override val lastModified: Long
-		get() = file.lastModified()
-
-	override suspend fun saveToFileAsString(value: String) {
-		file.writeText(value)
-	}
-
-	override suspend fun saveToFileAsBinary(value: NativeBuffer<Byte>) {
-		file.writeBytes(value.toByteArray())
 	}
 }

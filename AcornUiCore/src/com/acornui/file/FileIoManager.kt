@@ -50,13 +50,28 @@ interface FileIoManager : Disposable {
 	fun pickFilesForOpen(fileFilterGroups: List<FileFilterGroup>? = null, onSuccess: (List<FileReader>) -> Unit)
 
 	/**
-	 * Invokes native file picker to select an existing or new file for saving to disk [onSuccess].
+	 * Saves the given text contents to disk. This will invoke a native file picker.
+	 *
 	 * @param fileFilterGroups a list of groups of extensions to filter picking selection
-	 * @param defaultExtension an extension to ensure is the suffix of the filename (e.g. 'filename' -> 'filename.txt')
-	 * @param onSuccess callback using a [FileWriter] to be executed upon a successful pick
+	 * @param defaultFilename The default file name to save.
+	 * @param defaultExtension If set, an extension to ensure the suffix of the filename
+	 * (e.g. 'filename' -> 'filename.txt')
+	 *
 	 * @see FileFilterGroup
 	 */
-	fun pickFileForSave(fileFilterGroups: List<FileFilterGroup>? = null, defaultExtension: String? = null, onSuccess: (FileWriter) -> Unit)
+	fun saveText(text: String, fileFilterGroups: List<FileFilterGroup>? = null, defaultFilename: String, defaultExtension: String? = null)
+
+	/**
+	 * Saves the given binary contents to disk. This will invoke a native file picker.
+	 *
+	 * @param data The binary data to save.
+	 * @param fileFilterGroups a list of groups of extensions to filter picking selection
+	 * @param defaultFilename The default file name to save.
+	 * @param defaultExtension If set, an extension to ensure the suffix of the filename
+	 * (e.g. 'filename' -> 'filename.txt')
+	 * @see FileFilterGroup
+	 */
+	fun saveBinary(data: NativeBuffer<Byte>, fileFilterGroups: List<FileFilterGroup>? = null, defaultFilename: String, defaultExtension: String? = null)
 
 	companion object : DKey<FileIoManager>
 }
@@ -104,34 +119,4 @@ interface FileReader {
 	 * Read file ([name]) from disk binary
 	 */
 	suspend fun readAsBinary(): NativeBuffer<Byte>
-}
-
-/**
- * An object that holds metadata properties for a picked file and allows for asynchronous writing of that file to disk.
- *
- * File writing (String and binary) is limited to files that are 2mb in size.
- */
-interface FileWriter {
-
-	/**
-	 * Name of the file including absolute path
-	 */
-	val name: String
-	/**
-	 * Size of the file in bytes
-	 */
-	val size: Long
-	/**
-	 * Last date the file was modified as the number of milliseconds since the Unix Epoch
-	 */
-	val lastModified: Long
-
-	/**
-	 * Write file ([name]) to disk as a String
-	 */
-	suspend fun saveToFileAsString(value: String)
-	/**
-	 * Write file ([name]) to disk as binary
-	 */
-	suspend fun saveToFileAsBinary(value: NativeBuffer<Byte>)
 }

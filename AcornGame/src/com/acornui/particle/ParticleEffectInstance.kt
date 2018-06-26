@@ -27,7 +27,6 @@ import com.acornui.math.MathUtils.clamp
 import com.acornui.math.Vector3
 import com.acornui.math.Vector3Ro
 import com.acornui.math.ceil
-import com.acornui.serialization.*
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -191,7 +190,6 @@ class ParticleEmitterInstance(
 	private fun activateParticle(particle: Particle) {
 		particle.clear()
 		particle.active = true
-		emitter.spawnLocation.calculate(particle.position)
 		particle.lifeExpectancy = lifeExpectancyValue.current
 		_activeCount++
 		accumulator--
@@ -363,7 +361,7 @@ class FloatTimelineInstance(
 	override fun apply(particle: Particle, particleAlphaClamped: Float, emitterAlphaClamped: Float) {
 		if (timeline.timeline.isEmpty()) return
 		val previous = value.current
-		timeline.apply(value, if (timeline.useParticleLife) particleAlphaClamped else emitterAlphaClamped)
+		timeline.apply(value, if (timeline.useEmitterDuration) emitterAlphaClamped else particleAlphaClamped)
 		updater(particle, value.current - previous)
 	}
 
@@ -382,7 +380,7 @@ class ColorTimelineInstance(
 
 	override fun apply(particle: Particle, particleAlphaClamped: Float, emitterAlphaClamped: Float) {
 		previous.set(value)
-		timeline.apply(value, if (timeline.useParticleLife) particleAlphaClamped else emitterAlphaClamped)
+		timeline.apply(value, if (timeline.useEmitterDuration) emitterAlphaClamped else particleAlphaClamped)
 		particle.colorTint.r += value.r - previous.r
 		particle.colorTint.g += value.g - previous.g
 		particle.colorTint.b += value.b - previous.b
@@ -461,99 +459,4 @@ object RegisteredParticleSetters {
 			"imageIndex" to { target, delta -> target.imageIndex += delta.toInt() }
 	)
 
-}
-
-interface ParticleSpawn {
-
-	val type: String
-
-	/**
-	 * Calculates a new particle spawn position.
-	 * @out The vector to populate.
-	 * @return Returns the [out] parameter.
-	 */
-	fun calculate(out: Vector3): Vector3
-}
-
-interface ParticleSpawnSerializer<T : ParticleSpawn> : To<T>, From<T> {
-
-	val type: String
-
-	companion object : From<ParticleSpawn>, To<ParticleSpawn> {
-
-		override fun read(reader: Reader): ParticleSpawn {
-			val type = reader.string("type") ?: "point"
-			val factory = ParticleSpawnRegistry.getSerializer(type) ?: throw Exception("Unknown spawn type $type")
-			return factory.read(reader)
-		}
-
-		override fun ParticleSpawn.write(writer: Writer) {
-			writer.string("type", type)
-			val factory = ParticleSpawnRegistry.getSerializer(type) ?: throw Exception("Unknown spawn type $type")
-			factory.write2(this, writer)
-		}
-	}
-}
-
-object ParticleSpawnRegistry {
-
-	private val nameToSerializers: MutableMap<String, ParticleSpawnSerializer<*>> = HashMap()
-
-	init {
-		addSerializer(PointSpawnSerializer)
-	}
-
-	fun <T : ParticleSpawn> addSerializer(serializer: ParticleSpawnSerializer<T>) {
-		nameToSerializers[serializer.type] = serializer
-	}
-
-	@Suppress("UNCHECKED_CAST")
-	fun getSerializer(name: String): ParticleSpawnSerializer<ParticleSpawn>? {
-		return nameToSerializers[name] as ParticleSpawnSerializer<ParticleSpawn>?
-	}
-
-	fun getSerializers(): List<ParticleSpawnSerializer<*>> {
-		return nameToSerializers.values.toList()
-	}
-
-	fun getSerializerTypes(): List<String> {
-		return nameToSerializers.keys.toList()
-	}
-}
-
-data class PointSpawn(
-		val x: FloatRange,
-		val y: FloatRange,
-		val z: FloatRange
-) : ParticleSpawn {
-
-	override val type = TYPE
-
-	override fun calculate(out: Vector3): Vector3 {
-		out.set(x.getValue(), y.getValue(), z.getValue())
-		return out
-	}
-
-	companion object {
-		const val TYPE = "point"
-	}
-}
-
-object PointSpawnSerializer : ParticleSpawnSerializer<PointSpawn> {
-
-	override val type = PointSpawn.TYPE
-
-	override fun read(reader: Reader): PointSpawn {
-		return PointSpawn(
-				reader.obj("x", FloatRangeSerializer)!!,
-				reader.obj("y", FloatRangeSerializer)!!,
-				reader.obj("z", FloatRangeSerializer)!!
-		)
-	}
-
-	override fun PointSpawn.write(writer: Writer) {
-		writer.obj("x", x, FloatRangeSerializer)
-		writer.obj("y", y, FloatRangeSerializer)
-		writer.obj("z", z, FloatRangeSerializer)
-	}
 }

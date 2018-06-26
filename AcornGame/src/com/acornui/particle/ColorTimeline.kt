@@ -30,9 +30,10 @@ data class ColorTimeline(
 		override val timeline: List<TimelineValue<ColorRo>>,
 
 		/**
-		 * If true, relative to the particle's lifespan, if false, relative to the emitter duration.
+		 * If true, relative to the emitter duration, if false, relative to the particle's lifespan.
+		 * This property is only used in particle property timelines.
 		 */
-		val useParticleLife: Boolean
+		val useEmitterDuration: Boolean
 
 ) : PropertyTimeline<ColorRo> {
 
@@ -83,7 +84,7 @@ object ColorTimelineSerializer : From<ColorTimeline>, To<ColorTimeline> {
 		return ColorTimeline(
 				property = reader.string("property")!!,
 				timeline = timeline,
-				useParticleLife = reader.bool("useParticleLife") ?: true
+				useEmitterDuration = reader.bool("useEmitterDuration") ?: false
 		)
 	}
 
@@ -99,6 +100,7 @@ object ColorTimelineSerializer : From<ColorTimeline>, To<ColorTimeline> {
 			timelineFloats[j + 3] = t.value.b
 		}
 		writer.floatArray("timeline", timelineFloats)
-		writer.bool("useParticleLife", useParticleLife)
+		if (useEmitterDuration)
+			writer.bool("useEmitterDuration", useEmitterDuration)
 	}
 }

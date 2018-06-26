@@ -17,6 +17,7 @@
 package com.acornui.particle
 
 import com.acornui.core.UidUtil
+import com.acornui.core.Version
 import com.acornui.core.graphics.BlendMode
 import com.acornui.serialization.*
 
@@ -56,8 +57,6 @@ data class ParticleEmitter(
 		 * The maximum number of particles to create.
 		 */
 		val count: Int,
-
-		val spawnLocation: ParticleSpawn,
 
 		/**
 		 * The rate of emissions, in particles per second.
@@ -116,11 +115,16 @@ data class ParticleImageEntry(
 
 object ParticleEffectSerializer : From<ParticleEffect>, To<ParticleEffect> {
 
+	val serializationVersion = Version(0, 2, 0)
+
 	override fun read(reader: Reader): ParticleEffect {
+		val version = Version.fromStr(reader.string("version") ?: "0.2.0.0")
+		if (!version.isApiCompatible(serializationVersion)) throw Exception("Cannot read from version ${version.toVersionString()}")
 		return ParticleEffect(reader.arrayList("emitters", ParticleEmitterSerializer)!!)
 	}
 
 	override fun ParticleEffect.write(writer: Writer) {
+		writer.string("version", serializationVersion.toVersionString())
 		writer.array("emitters", emitters, ParticleEmitterSerializer)
 	}
 }
@@ -134,7 +138,6 @@ object ParticleEmitterSerializer : From<ParticleEmitter>, To<ParticleEmitter> {
 				loops = reader.bool("loops") ?: true,
 				duration = reader.obj("duration", EmitterDurationVoSerializer)!!,
 				count = reader.int("count")!!,
-				spawnLocation = reader.obj("spawnLocation", ParticleSpawnSerializer)!!,
 				emissionRate = reader.obj("emissionRate", FloatTimelineSerializer)!!,
 				particleLifeExpectancy = reader.obj("particleLifeExpectancy", FloatTimelineSerializer)!!,
 				blendMode = BlendMode.fromStr(reader.string("blendMode") ?: "normal")!!,
@@ -151,7 +154,6 @@ object ParticleEmitterSerializer : From<ParticleEmitter>, To<ParticleEmitter> {
 		writer.bool("loops", loops)
 		writer.obj("duration", duration, EmitterDurationVoSerializer)
 		writer.int("count", count)
-		writer.obj("spawnLocation", spawnLocation, ParticleSpawnSerializer)
 		writer.obj("emissionRate", emissionRate, FloatTimelineSerializer)
 		writer.obj("particleLifeExpectancy", particleLifeExpectancy, FloatTimelineSerializer)
 		writer.string("blendMode", blendMode.name)

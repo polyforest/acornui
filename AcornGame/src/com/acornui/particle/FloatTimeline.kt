@@ -42,7 +42,7 @@ data class FloatTimeline(
 		/**
 		 * If true, relative to the particle's lifespan, if false, relative to the emitter duration.
 		 */
-		val useParticleLife: Boolean
+		val useEmitterDuration: Boolean
 
 ) : PropertyTimeline<Float> {
 
@@ -112,7 +112,7 @@ object FloatTimelineSerializer : From<FloatTimeline>, To<FloatTimeline> {
 				low = reader.obj("min", FloatRangeSerializer)!!,
 				high = reader.obj("max", FloatRangeSerializer)!!,
 				timeline = timeline,
-				useParticleLife = reader.bool("useParticleLife") ?: true
+				useEmitterDuration = reader.bool("useEmitterDuration") ?: false
 		)
 	}
 
@@ -129,6 +129,7 @@ object FloatTimelineSerializer : From<FloatTimeline>, To<FloatTimeline> {
 			timelineFloats[j + 1] = t.value
 		}
 		writer.floatArray("timeline", timelineFloats)
-		writer.bool("useParticleLife", useParticleLife)
+		if (useEmitterDuration)
+			writer.bool("useEmitterDuration", useEmitterDuration)
 	}
 }

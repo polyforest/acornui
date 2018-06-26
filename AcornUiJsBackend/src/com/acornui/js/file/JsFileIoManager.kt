@@ -18,19 +18,25 @@ package com.acornui.js.file
 
 import com.acornui.async.Promise
 import com.acornui.async.launch
-import com.acornui.file.*
+import com.acornui.file.FileFilterGroup
+import com.acornui.file.FileIoManager
+import com.acornui.file.FileReader
 import com.acornui.io.NativeBuffer
 import com.acornui.js.io.JsByteBuffer
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Uint8Array
+import org.w3c.dom.HTMLAnchorElement
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.Node
 import org.w3c.dom.events.Event
-import org.w3c.files.File as DomFile
+import org.w3c.dom.url.URL
+import org.w3c.files.Blob
+import org.w3c.files.BlobPropertyBag
 import org.w3c.files.get
-import org.w3c.files.FileReader as JsFileApiReader
 import kotlin.browser.document
 import kotlin.browser.window
+import org.w3c.files.File as DomFile
+import org.w3c.files.FileReader as JsFileApiReader
 
 @Suppress("NOTHING_TO_INLINE")
 private inline fun notSupported(reason: String = "Platform does not allow file saving to local disk."): Nothing =
@@ -38,7 +44,7 @@ private inline fun notSupported(reason: String = "Platform does not allow file s
 
 class JsFileIoManager : FileIoManager {
 
-	override val saveSupported: Boolean = false
+	override val saveSupported: Boolean = true
 	private var filePicker: HTMLInputElement? = null
 
 	private fun changeHandler(onSuccess: (Any) -> Unit): (Event) -> Unit = {
@@ -118,8 +124,32 @@ class JsFileIoManager : FileIoManager {
 		getFileReaders(fileFilterGroups, onSuccess as (Any?) -> Unit)
 	}
 
-	override fun pickFileForSave(fileFilterGroups: List<FileFilterGroup>?, defaultExtension: String?, onSuccess: (FileWriter) -> Unit) {
-		notSupported()
+	override fun saveText(text: String, fileFilterGroups: List<FileFilterGroup>?, defaultFilename: String, defaultExtension: String?) {
+		saveData(text, defaultFilename)
+	}
+
+	override fun saveBinary(data: NativeBuffer<Byte>, fileFilterGroups: List<FileFilterGroup>?, defaultFilename: String, defaultExtension: String?) {
+		saveData(data.native, defaultFilename)
+	}
+
+	private fun saveData(data: Any, defaultFilename: String) {
+		val file = Blob(arrayOf(data), BlobPropertyBag(type = "application/octet-stream"))
+		val nav = window.navigator.asDynamic()
+		@Suppress("UnsafeCastFromDynamic")
+		if (nav.msSaveOrOpenBlob) // IE10+
+			nav.msSaveOrOpenBlob(file, defaultFilename)
+		else { // Others
+			val a = document.createElement("a") as HTMLAnchorElement
+			val url = URL.createObjectURL(file)
+			a.href = url
+			a.download = defaultFilename
+			document.body?.appendChild(a)
+			a.click()
+			window.setTimeout({
+				document.body?.removeChild(a)
+				URL.revokeObjectURL(url)
+			}, 0)
+		}
 	}
 
 	override fun dispose() {
