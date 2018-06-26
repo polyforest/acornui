@@ -295,7 +295,7 @@ interface WriteBuffer<in T> : Buffer {
 	 * been adjusted to be equivalent to `newLimit`. If the mark
 	 * is set and is greater than the new limit, then it is cleared.
 	 *
-	 * @param newLimit the new limit, must not be negative and not greater than [getCapacity].
+	 * @param newLimit the new limit, must not be negative and not greater than [capacity].
 	 * @return this buffer.
 	 * @exception IllegalArgumentException if `newLimit` is invalid.
 	 */
