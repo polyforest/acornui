@@ -16,11 +16,10 @@
 
 package com.acornui.async
 
+import com.acornui.async.Deferred.Status
 import com.acornui.collection.*
 import com.acornui.core.Disposable
 import kotlin.coroutines.experimental.*
-import com.acornui.async.Deferred.Status
-import com.acornui.logging.Log
 
 /**
  * Launches a new coroutine on this same thread.

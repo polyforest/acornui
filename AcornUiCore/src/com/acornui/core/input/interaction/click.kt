@@ -22,6 +22,7 @@ import com.acornui.core.di.inject
 import com.acornui.core.input.InteractionType
 import com.acornui.core.input.InteractivityManager
 import com.acornui.core.input.WhichButton
+import com.acornui.core.time.callLater
 import com.acornui.core.time.time
 import com.acornui.signal.StoppableSignal
 
@@ -88,4 +89,14 @@ fun UiComponentRo.dispatchClick() {
 	fakeClickEvent.timestamp = time.nowMs()
 	fakeClickEvent.count = 1
 	inject(InteractivityManager).dispatch(this, fakeClickEvent)
+}
+
+private val clickHandler = { event: ClickInteractionRo ->
+	event.handled = true
+	event.preventDefault()
+}
+
+fun UiComponentRo.clickHandledForAFrame() {
+	click().add(clickHandler)
+	callLater { click().remove(clickHandler) }
 }

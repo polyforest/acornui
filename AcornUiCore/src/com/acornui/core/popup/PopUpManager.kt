@@ -29,10 +29,10 @@ import com.acornui.component.style.styleTag
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
-import com.acornui.core.di.owns
 import com.acornui.core.focus.*
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.KeyInteractionRo
+import com.acornui.core.input.interaction.clickHandledForAFrame
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.keyDown
 import com.acornui.core.isAncestorOf
@@ -161,7 +161,10 @@ class PopUpManagerImpl(private val root: UiComponent) : LayoutContainerImpl<PopU
 	private val modalFill = +rect {
 		styleTags.add(PopUpManager.MODAL_STYLE)
 		visible = false
-		click().add { requestModalClose() }
+		click().add {
+			if (!it.handled)
+				requestModalClose()
+		}
 	} layout {
 		fill()
 	}
@@ -208,6 +211,8 @@ class PopUpManagerImpl(private val root: UiComponent) : LayoutContainerImpl<PopU
 			showingModal = shouldShowModal
 			if (shouldShowModal) {
 				tween?.complete()
+				// Often pop-ups are added via mouse down. Do not allow a click() on the modal blocker for one frame.
+				modalFill.clickHandledForAFrame()
 				modalFill.visible = true
 				modalFill.alpha = 0f
 				tween = modalFill.tweenAlpha(s.modalEaseInDuration, s.modalEaseIn, 1f).drive(timeDriver)

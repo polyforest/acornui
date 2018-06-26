@@ -167,7 +167,7 @@ suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffect, atlasPath:
 
 	val spriteResolver: SpriteResolver = { _, imageEntry ->
 		val (page, region) = atlasData.findRegion(imageEntry.path)
-				?: throw Exception("Could not find $imageEntry.path in the atlas $atlasPath")
+				?: throw Exception("Could not find \"${imageEntry.path}\" in the atlas $atlasPath")
 		val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
 
 		val sprite = Sprite()
