@@ -18,21 +18,26 @@
 
 package com.acornui.component.layout.algorithm
 
-import com.acornui.collection.*
+import com.acornui.collection.ActiveList
+import com.acornui.collection.addAll
+import com.acornui.collection.addOrSet
+import com.acornui.collection.fill
 import com.acornui.component.ComponentInit
 import com.acornui.component.layout.*
-import com.acornui.component.style.*
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleTag
+import com.acornui.component.style.StyleType
+import com.acornui.component.style.styleTag
 import com.acornui.component.text.TextField
 import com.acornui.component.text.text
 import com.acornui.core.di.Owned
 import com.acornui.math.Bounds
-import com.acornui.math.MathUtils
+import com.acornui.math.MathUtils.clamp
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.observe.Observable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
-
 import kotlin.properties.ObservableProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -131,7 +136,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 			var availableSpanWidth: Float? = 0f
 			// If any column an element spans across is percent-based, it is considered flexible.
 			for (i in colIndex..colIndex + colSpan - 1) {
-				val col = props.columns[colIndex]
+				val col = props.columns[i]
 				if (childAvailableWidth != null && col.getIsFlexible()) {
 					notFlexible = false
 					break
@@ -179,7 +184,10 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 			}
 
 			inflexibleWidth -= props.horizontalGap
-			val colScale = if (flexibleWidth > 0f) MathUtils.clamp((childAvailableWidth - inflexibleWidth) / flexibleWidth, 0f, if (props.allowScaleUp) 10000f else 1f) else 1f
+			val colScale = if (flexibleWidth > 0f)
+				clamp((childAvailableWidth - inflexibleWidth) / flexibleWidth, 0f, if (props.allowScaleUp) 10000f else 1f)
+			else 1f
+
 			for (i in 0..props.columns.lastIndex) {
 				val col = props.columns[i]
 				if (col.getIsFlexible()) {
