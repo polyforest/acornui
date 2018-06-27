@@ -23,6 +23,7 @@ import com.acornui.gl.core.TexturePixelFormat
 import com.acornui.jvm.graphics.JvmImageUtils
 import com.acornui.serialization.Serializer
 import com.acornui.core.replaceTokens
+import com.acornui.serialization.write
 import com.acornui.texturepacker.PackedTextureData
 import java.io.File
 

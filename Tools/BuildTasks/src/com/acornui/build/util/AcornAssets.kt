@@ -24,6 +24,7 @@ import com.acornui.io.file.FilesManifestSerializer
 import com.acornui.jvm.JvmHeadlessApplication
 import com.acornui.jvm.io.file.ManifestUtil
 import com.acornui.serialization.JsonSerializer
+import com.acornui.serialization.write
 import com.acornui.texturepacker.jvm.TexturePackerUtil
 import java.io.File
 

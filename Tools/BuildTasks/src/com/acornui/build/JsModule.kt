@@ -20,6 +20,7 @@ import com.acornui.build.util.*
 import com.acornui.io.file.FilesManifestSerializer
 import com.acornui.jvm.io.file.ManifestUtil
 import com.acornui.serialization.JsonSerializer
+import com.acornui.serialization.write
 import com.google.javascript.jscomp.*
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments

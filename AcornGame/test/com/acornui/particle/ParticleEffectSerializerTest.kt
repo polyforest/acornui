@@ -20,6 +20,7 @@ import com.acornui.core.graphics.BlendMode
 import com.acornui.core.time.time
 import com.acornui.math.Easing
 import com.acornui.serialization.JsonSerializer
+import com.acornui.serialization.write
 import com.acornui.test.MockTimeProvider
 import org.junit.Before
 import org.junit.Test

@@ -40,14 +40,14 @@ object JsonSerializer : Serializer<String> {
 		callback(writer)
 		return buffer.toString()
 	}
+}
 
-	fun <E> write(value: E, to: To<E>, tabStr: String, returnStr: String): String {
-		return write({
-			it.obj(true) {
-				to.write2(value, it)
-			}
-		}, tabStr, returnStr)
-	}
+fun <E> JsonSerializer.write(value: E, to: To<E>, tabStr: String, returnStr: String): String {
+	return write({
+		it.obj(true) {
+			to.write2(value, it)
+		}
+	}, tabStr, returnStr)
 }
 
 /**

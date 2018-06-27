@@ -22,6 +22,7 @@ import com.acornui.core.di.inject
 import com.acornui.serialization.From
 import com.acornui.serialization.Serializer
 import com.acornui.serialization.To
+import com.acornui.serialization.write
 
 val JSON_KEY = dKey<Serializer<String>>()
 
