@@ -21,7 +21,7 @@ import com.acornui.async.launch
 import com.acornui.file.FileFilterGroup
 import com.acornui.file.FileIoManager
 import com.acornui.file.FileReader
-import com.acornui.io.NativeBuffer
+import com.acornui.io.ReadWriteBuffer
 import com.acornui.js.io.JsByteBuffer
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Uint8Array
@@ -37,10 +37,6 @@ import kotlin.browser.document
 import kotlin.browser.window
 import org.w3c.files.File as DomFile
 import org.w3c.files.FileReader as JsFileApiReader
-
-@Suppress("NOTHING_TO_INLINE")
-private inline fun notSupported(reason: String = "Platform does not allow file saving to local disk."): Nothing =
-		throw NotImplementedError("Operation is not implemented: $reason")
 
 class JsFileIoManager : FileIoManager {
 
@@ -128,7 +124,7 @@ class JsFileIoManager : FileIoManager {
 		saveData(text, defaultFilename)
 	}
 
-	override fun saveBinary(data: NativeBuffer<Byte>, fileFilterGroups: List<FileFilterGroup>?, defaultFilename: String, defaultExtension: String?) {
+	override fun saveBinary(data: ReadWriteBuffer<Byte>, fileFilterGroups: List<FileFilterGroup>?, defaultFilename: String, defaultExtension: String?) {
 		saveData(data.native, defaultFilename)
 	}
 
@@ -180,8 +176,8 @@ class JsFileReader(val file: DomFile) : FileReader {
 		}.await()
 	}
 
-	override suspend fun readAsBinary(): NativeBuffer<Byte> {
-		return object : Promise<NativeBuffer<Byte>>() {
+	override suspend fun readAsBinary(): ReadWriteBuffer<Byte> {
+		return object : Promise<ReadWriteBuffer<Byte>>() {
 			init {
 				launch {
 					reader.onload = { _: Event ->

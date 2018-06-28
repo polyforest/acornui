@@ -22,7 +22,7 @@ import com.acornui.io.*
  * Wraps a JVM buffer with the abstract Acorn Buffer interface.
  * This is so we can use both JVM and JS buffers via the same abstraction.
  */
-abstract class JvmBuffer<T>(private val _buffer: java.nio.Buffer) : NativeBuffer<T> {
+abstract class JvmBuffer<T>(private val _buffer: java.nio.Buffer) : ReadWriteNativeBuffer<T> {
 
 	override fun clear(): Buffer {
 		_buffer.clear()
@@ -83,7 +83,9 @@ abstract class JvmBuffer<T>(private val _buffer: java.nio.Buffer) : NativeBuffer
 		}
 }
 
-class ByteBuffer(private val buffer: java.nio.ByteBuffer) : JvmBuffer<Byte>(buffer) {
+class JvmByteBuffer(private val buffer: java.nio.ByteBuffer) : JvmBuffer<Byte>(buffer), ReadWriteNativeByteBuffer {
+
+	override val dataSize: Int = 1
 
 	override fun get(): Byte {
 		return buffer.get()
@@ -95,9 +97,41 @@ class ByteBuffer(private val buffer: java.nio.ByteBuffer) : JvmBuffer<Byte>(buff
 
 	override val native: java.nio.ByteBuffer
 		get() = buffer
+
+	override fun getShort(): Short = buffer.short
+
+	override fun getInt(): Int = buffer.int
+
+	override fun getFloat(): Float = buffer.float
+
+	override fun getDouble(): Double = buffer.double
+
+	override fun getLong(): Long = buffer.long
+
+	override fun putShort(value: Short) {
+		buffer.putShort(value)
+	}
+
+	override fun putInt(value: Int) {
+		buffer.putInt(value)
+	}
+
+	override fun putFloat(value: Float) {
+		buffer.putFloat(value)
+	}
+
+	override fun putDouble(value: Double) {
+		buffer.putDouble(value)
+	}
+
+	override fun putLong(value: Long) {
+		buffer.putLong(value)
+	}
 }
 
-class ShortBuffer(private val buffer: java.nio.ShortBuffer) : JvmBuffer<Short>(buffer) {
+class JvmShortBuffer(private val buffer: java.nio.ShortBuffer) : JvmBuffer<Short>(buffer) {
+
+	override val dataSize: Int = 2
 
 	override fun get(): Short {
 		return buffer.get()
@@ -109,9 +143,12 @@ class ShortBuffer(private val buffer: java.nio.ShortBuffer) : JvmBuffer<Short>(b
 
 	override val native: java.nio.ShortBuffer
 		get() = buffer
+
 }
 
-class IntBuffer(private val buffer: java.nio.IntBuffer) : JvmBuffer<Int>(buffer) {
+class JvmIntBuffer(private val buffer: java.nio.IntBuffer) : JvmBuffer<Int>(buffer) {
+
+	override val dataSize: Int = 4
 
 	override fun get(): Int {
 		return buffer.get()
@@ -125,7 +162,9 @@ class IntBuffer(private val buffer: java.nio.IntBuffer) : JvmBuffer<Int>(buffer)
 		get() = buffer
 }
 
-class FloatBuffer(private val buffer: java.nio.FloatBuffer) : JvmBuffer<Float>(buffer) {
+class JvmFloatBuffer(private val buffer: java.nio.FloatBuffer) : JvmBuffer<Float>(buffer) {
+
+	override val dataSize: Int = 4
 
 	override fun get(): Float {
 		return buffer.get()
@@ -139,7 +178,9 @@ class FloatBuffer(private val buffer: java.nio.FloatBuffer) : JvmBuffer<Float>(b
 		get() = buffer
 }
 
-class DoubleBuffer(private val buffer: java.nio.DoubleBuffer) : JvmBuffer<Double>(buffer) {
+class JvmDoubleBuffer(private val buffer: java.nio.DoubleBuffer) : JvmBuffer<Double>(buffer) {
+
+	override val dataSize: Int = 8
 
 	override fun get(): Double {
 		return buffer.get()

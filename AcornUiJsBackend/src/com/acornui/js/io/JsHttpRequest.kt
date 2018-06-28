@@ -4,7 +4,7 @@ import com.acornui.async.Promise
 import com.acornui.core.Bandwidth
 import com.acornui.core.di.Injector
 import com.acornui.core.request.*
-import com.acornui.io.NativeBuffer
+import com.acornui.io.ReadByteBuffer
 import com.acornui.logging.Log
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Uint8Array
@@ -96,8 +96,8 @@ class JsArrayBufferRequest(requestData: UrlRequestData) : JsHttpRequest<ArrayBuf
 	}
 }
 
-class JsBinaryRequest(requestData: UrlRequestData) : JsHttpRequest<NativeBuffer<Byte>>(requestData, XMLHttpRequestResponseType.ARRAYBUFFER) {
-	override fun process(httpRequest: XMLHttpRequest): NativeBuffer<Byte> {
+class JsBinaryRequest(requestData: UrlRequestData) : JsHttpRequest<ReadByteBuffer>(requestData, XMLHttpRequestResponseType.ARRAYBUFFER) {
+	override fun process(httpRequest: XMLHttpRequest): ReadByteBuffer {
 		return JsByteBuffer(Uint8Array(httpRequest.response!! as ArrayBuffer))
 	}
 }
@@ -114,7 +114,7 @@ object JsRestServiceFactory : RestServiceFactory {
 		return JsTextRequest(requestData)
 	}
 
-	override fun createBinaryRequest(injector: Injector, requestData: UrlRequestData): Request<NativeBuffer<Byte>> {
+	override fun createBinaryRequest(injector: Injector, requestData: UrlRequestData): Request<ReadByteBuffer> {
 		return JsBinaryRequest(requestData)
 	}
 }

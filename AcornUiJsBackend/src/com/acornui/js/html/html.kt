@@ -36,9 +36,3 @@ fun Node.owns(element: Node): Boolean {
 	}
 	return false
 }
-
-@Suppress("UNCHECKED_CAST")
-fun <T, R> T.unsafeCast(): R {
-	return this as R
-}
-

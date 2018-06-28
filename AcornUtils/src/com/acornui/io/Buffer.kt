@@ -16,21 +16,18 @@
 
 package com.acornui.io
 
-import com.acornui.math.*
-import com.acornui.graphics.*
-
-abstract class BufferBase<T>(
+abstract class BufferBase(
 		/**
 		 * The capacity of this buffer, which never changes.
 		 */
-		protected val _capacity: Int
-) : ReadWriteBuffer<T> {
+		final override val capacity: Int
+) : Buffer {
 
 	/**
 	 * `limit - 1` is the last element that can be read or written.
 	 * Limit must be no less than zero and no greater than `capacity`.
 	 */
-	protected var _limit: Int = 0
+	protected var _limit: Int = capacity
 
 	/**
 	 * Mark is where position will be set when `reset()` is called.
@@ -46,16 +43,15 @@ abstract class BufferBase<T>(
 	protected var _position = 0
 
 	init {
-		if (_capacity < 0) {
-			throw IllegalArgumentException("capacity < 0: " + _capacity)
+		if (capacity < 0) {
+			throw IllegalArgumentException("capacity < 0: $capacity")
 		}
-		_limit = _capacity
 	}
 
-	override fun clear(): Buffer {
+	fun clear(): Buffer {
 		_position = 0
 		_mark = UNSET_MARK
-		_limit = _capacity
+		_limit = capacity
 		return this
 	}
 
@@ -71,19 +67,14 @@ abstract class BufferBase<T>(
 			return _position < _limit
 		}
 
-	override val capacity: Int
-		get() {
-			return _capacity
-		}
-
 	override val limit: Int
 		get() {
 			return _limit
 		}
 
-	override fun limit(newLimit: Int): Buffer {
-		if (newLimit < 0 || newLimit > _capacity) {
-			throw IllegalArgumentException("Bad limit (capacity $_capacity): $newLimit")
+	fun limit(newLimit: Int): Buffer {
+		if (newLimit < 0 || newLimit > capacity) {
+			throw IllegalArgumentException("Bad limit (capacity $capacity): $newLimit")
 		}
 		_limit = newLimit
 		if (_position > newLimit) {
@@ -109,10 +100,11 @@ abstract class BufferBase<T>(
 				throw IllegalArgumentException("Bad position (limit $_limit): $value")
 			}
 			_position = value
-			if ((_mark != UNSET_MARK) && (_mark > _position)) {
+			if (_mark != UNSET_MARK && _mark > _position) {
 				_mark = UNSET_MARK
 			}
 		}
+
 	override fun reset(): Buffer {
 		if (_mark == UNSET_MARK) {
 			throw InvalidMarkException("Mark not set")
@@ -127,8 +119,24 @@ abstract class BufferBase<T>(
 		return this
 	}
 
+
+	/**
+	 * Checks the current position against the limit, throwing a [BufferUnderflowException] if it is not smaller than
+	 * the limit, and then increments the position.
+	 * @param inc The position delta. Should be positive.
+	 *
+	 * @return The current position value, before it is incremented
+	 */
+	protected fun nextPosition(inc: Int = 1): Int {
+		if (_limit - _position < inc)
+			throw BufferUnderflowException()
+		val p = _position
+		_position += inc
+		return p
+	}
+
 	override fun toString(): String {
-		return "[position=$_position,limit=$_limit,capacity=$_capacity]"
+		return "BufferBase(capacity=$capacity, limit=$_limit, position=$_position)"
 	}
 
 	companion object {
@@ -136,17 +144,17 @@ abstract class BufferBase<T>(
 		/**
 		 * `UNSET_MARK` means the mark has not been set.
 		 */
-		val UNSET_MARK = -1
+		const val UNSET_MARK = -1
 	}
 }
 
 class InvalidMarkException(message: String) : Throwable(message)
-class BufferUnderflowException() : Throwable()
-class BufferOverflowException() : Throwable()
+class BufferUnderflowException : Throwable()
+class BufferOverflowException : Throwable()
 
 /**
  * An interface common to [ReadBuffer] and [WriteBuffer]
- * These methods manipulate the [getPosition] and [mark] cursors.
+ * These methods manipulate the [position] and [mark] cursors.
  */
 interface Buffer {
 
@@ -233,11 +241,26 @@ interface Buffer {
 interface ReadBuffer<out T> : Buffer {
 
 	/**
+	 * The number of bytes each element represents.
+	 */
+	val dataSize: Int
+
+	/**
 	 * Retrieves the element at the current `position()`
-	 * The position marker is incremented.
+	 * The position marker is incremented by the data size.
 	 */
 	fun get(): T
 
+}
+
+interface ReadByteBuffer : ReadBuffer<Byte> {
+
+	fun getChar(): Char = getShort().toChar()
+	fun getShort(): Short
+	fun getInt(): Int
+	fun getFloat(): Float
+	fun getDouble(): Double
+	fun getLong(): Long
 }
 
 interface WriteBuffer<in T> : Buffer {
@@ -247,33 +270,6 @@ interface WriteBuffer<in T> : Buffer {
 	 * The position marker is incremented.
 	 */
 	fun put(value: T)
-
-	fun put(value: ReadBuffer<T>) {
-		while (value.hasRemaining) {
-			put(value.get())
-		}
-	}
-
-	fun put(value: Iterable<T>) {
-		for (i in value) {
-			put(i)
-		}
-	}
-
-	fun put(value: Iterator<T>) {
-		while (value.hasNext()) {
-			put(value.next())
-		}
-	}
-
-	/**
-	 * Fills the buffer with the given value.
-	 */
-	fun fill(value: T) {
-		for (i in position..limit - 1) {
-			put(value)
-		}
-	}
 
 	/**
 	 * Clears this buffer.
@@ -302,53 +298,56 @@ interface WriteBuffer<in T> : Buffer {
 	fun limit(newLimit: Int): Buffer
 }
 
-interface ReadWriteBuffer<T> : ReadBuffer<T>, WriteBuffer<T>
+fun <T> WriteBuffer<T>.put(value: ReadBuffer<T>) {
+	while (value.hasRemaining) {
+		put(value.get())
+	}
+}
 
-interface NativeBuffer<T> : ReadWriteBuffer<T> {
+fun <T> WriteBuffer<T>.put(value: Iterable<T>) {
+	for (i in value) {
+		put(i)
+	}
+}
+
+fun <T> WriteBuffer<T>.put(value: Iterator<T>) {
+	while (value.hasNext()) {
+		put(value.next())
+	}
+}
+
+/**
+ * Fills the buffer with the given value.
+ */
+fun <T> WriteBuffer<T>.fill(value: T) {
+	for (i in position..limit - 1) {
+		put(value)
+	}
+}
+
+interface WriteByteBuffer : WriteBuffer<Byte> {
+
+	fun putChar(value: Char) = putShort(value.toShort())
+	fun putShort(value: Short)
+	fun putInt(value: Int)
+	fun putFloat(value: Float)
+	fun putDouble(value: Double)
+	fun putLong(value: Long)
+}
+
+interface ReadWriteBuffer<T> : ReadBuffer<T>, WriteBuffer<T>
+interface ReadWriteByteBuffer : ReadWriteBuffer<Byte>, WriteByteBuffer, ReadByteBuffer
+
+// TODO: Endianness
+
+interface NativeBuffer<T> : ReadBuffer<T> {
 
 	/**
 	 * Returns the underlying native implementation of this Buffer. For JVM it will be an nio.Buffer object, for
-	 * js it will be a TypedArray
+	 * js it will be an ArrayBuffer
 	 */
 	val native: Any
 }
 
-// Common buffer read/write utility
-
-fun Vector3.write(buffer: WriteBuffer<Float>) {
-	buffer.put(x)
-	buffer.put(y)
-	buffer.put(z)
-}
-
-fun Vector2.write(buffer: WriteBuffer<Float>) {
-	buffer.put(x)
-	buffer.put(y)
-}
-
-fun Color.writeUnpacked(buffer: WriteBuffer<Float>) {
-	buffer.put(r)
-	buffer.put(g)
-	buffer.put(b)
-	buffer.put(a)
-}
-
-fun ReadBuffer<Float>.toFloatArray(): FloatArray {
-	mark()
-	val floats = FloatArray(limit - position)
-	var i = 0
-	while (hasRemaining)
-		floats[i++] = get()
-	reset()
-	return floats
-}
-
-fun ReadBuffer<Byte>.toByteArray(): ByteArray {
-	mark()
-	val bytes = ByteArray(limit - position)
-	var i = 0
-	while (hasRemaining)
-		bytes[i++] = get()
-	reset()
-	return bytes
-}
+interface ReadWriteNativeBuffer<T> : NativeBuffer<T>, ReadWriteBuffer<T>
+interface ReadWriteNativeByteBuffer : NativeBuffer<Byte>, ReadWriteByteBuffer

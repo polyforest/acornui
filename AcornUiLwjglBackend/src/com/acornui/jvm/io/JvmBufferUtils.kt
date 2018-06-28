@@ -16,12 +16,16 @@
 
 package com.acornui.jvm.io
 
+import java.io.Closeable
+import java.io.InputStream
+import java.io.OutputStream
 import java.nio.*
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
 import java.nio.ShortBuffer
 import java.nio.DoubleBuffer
+import java.nio.charset.Charset
 
 /**
  * @author nbilyk
@@ -56,5 +60,20 @@ object JvmBufferUtil {
 		val result = ByteBuffer.allocateDirect(value.size shl 3).order(ByteOrder.nativeOrder()).asDoubleBuffer()
 		result.put(value).flip()
 		return result
+	}
+}
+
+fun InputStream.readTextAndClose(charset: Charset = Charsets.UTF_8): String {
+	return bufferedReader(charset).use { it.readText() }
+}
+
+fun OutputStream.writeTextAndClose(string: String, charset: Charset = Charsets.UTF_8) {
+	bufferedWriter(charset).use { it.write(string); it.flush() }
+}
+
+fun Closeable.closeQuietly() {
+	try {
+		close()
+	} catch (ignore: Throwable) {
 	}
 }

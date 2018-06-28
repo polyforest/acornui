@@ -24,7 +24,9 @@ import com.acornui.core.di.DKey
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
-import com.acornui.io.NativeBuffer
+import com.acornui.io.ReadBuffer
+import com.acornui.io.ReadByteBuffer
+import com.acornui.io.ReadWriteBuffer
 
 /**
  * A model with the necessary information to make an http request.
@@ -69,7 +71,7 @@ object UrlRequestMethod {
 interface RestServiceFactory {
 
 	fun createTextRequest(injector: Injector, requestData: UrlRequestData): Request<String>
-	fun createBinaryRequest(injector: Injector, requestData: UrlRequestData): Request<NativeBuffer<Byte>>
+	fun createBinaryRequest(injector: Injector, requestData: UrlRequestData): Request<ReadByteBuffer>
 
 	companion object : DKey<RestServiceFactory>
 }
@@ -80,7 +82,7 @@ fun Scoped.createTextRequest(requestData: UrlRequestData): Request<String> {
 	return inject(RestServiceFactory).createTextRequest(injector, requestData)
 }
 
-fun Scoped.createBinaryRequest(requestData: UrlRequestData): Request<NativeBuffer<Byte>> {
+fun Scoped.createBinaryRequest(requestData: UrlRequestData): Request<ReadByteBuffer> {
 	return inject(RestServiceFactory).createBinaryRequest(injector, requestData)
 }
 
@@ -101,7 +103,7 @@ class MultipartFormData : Clearable, MultipartFormDataRo {
 	override val items: List<FormDataItem>
 		get() = _items
 
-	fun append(name: String, value: NativeBuffer<Byte>, filename: String? = null) {
+	fun append(name: String, value: ReadBuffer<Byte>, filename: String? = null) {
 		_items.add(ByteArrayFormItem(name, value, filename))
 	}
 
@@ -123,7 +125,7 @@ interface FormDataItem {
 
 class ByteArrayFormItem(
 		override val name: String,
-		val value: NativeBuffer<Byte>,
+		val value: ReadBuffer<Byte>,
 		val filename: String?
 ) : FormDataItem
 

@@ -58,8 +58,8 @@ class JsonNode(private val source: String,
 			   toIndex: Int
 ) : Reader {
 
-	private val _properties: HashMap<String, Reader> = HashMap()
-	private val _elements: MutableList<Reader> = ArrayList()
+	private var _properties: Map<String, Reader> = emptyMap()
+	private var _elements: List<Reader> = emptyList()
 
 	private var isParsed: Boolean = false
 	private val fromIndex: Int
@@ -89,6 +89,19 @@ class JsonNode(private val source: String,
 		if (source.isEmpty()) return
 		val isObject = source[fromIndex] == '{'
 		if (!isObject && source[fromIndex] != '[') return
+
+		// Set the _properties and _elements values only if necessary.
+		val properties: MutableMap<String, Reader>?
+		val elements: MutableList<Reader>?
+		if (isObject) {
+			properties = HashMap()
+			elements = null
+			_properties = properties
+		} else {
+			properties = null
+			elements = ArrayList()
+			_elements = elements
+		}
 		marker = fromIndex + 1
 		val tagStack: MutableList<Char> = ArrayList()
 
@@ -150,9 +163,9 @@ class JsonNode(private val source: String,
 				}
 				if (!tagStack.isEmpty()) throw Exception("Expected ${tagStack.peek()}, but reached end of stream")
 				if (isObject) {
-					_properties[identifier!!.toString()] = JsonNode(source, valueStartIndex, marker)
+					properties!![identifier!!.toString()] = JsonNode(source, valueStartIndex, marker)
 				} else {
-					_elements.add(JsonNode(source, valueStartIndex, marker))
+					elements!!.add(JsonNode(source, valueStartIndex, marker))
 				}
 			} else {
 				if (isObject) throw Exception("Expected \", but instead found: ${source.subSequence(marker, marker + 20)}")
@@ -167,17 +180,7 @@ class JsonNode(private val source: String,
 		}
 	}
 
-	override fun contains(name: String): Boolean {
-		parseObject()
-		return _properties.contains(name)
-	}
-
-	override fun contains(index: Int): Boolean {
-		parseObject()
-		return index < _elements.size
-	}
-
-	override fun properties(): HashMap<String, Reader> {
+	override fun properties(): Map<String, Reader> {
 		parseObject()
 		return _properties
 	}
@@ -194,6 +197,11 @@ class JsonNode(private val source: String,
 
 	override val isNull: Boolean
 		get() = subStr.equalsStr("null")
+
+	override fun byte(): Byte? {
+		if (isNull) return null
+		return subStr.toString().toByteOrNull()
+	}
 
 	override fun bool(): Boolean? {
 		if (isNull) return null
@@ -267,6 +275,11 @@ class JsonWriter(
 			builder.append(",$returnStr")
 		builder.append(indentStr)
 		return JsonWriter(builder, indentStr, tabStr, returnStr)
+	}
+
+	override fun byte(value: Byte?) {
+		if (value == null) return writeNull()
+		builder.append(value)
 	}
 
 	override fun bool(value: Boolean?) {

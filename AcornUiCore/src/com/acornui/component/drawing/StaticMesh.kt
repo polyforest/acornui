@@ -23,7 +23,6 @@ import com.acornui.collection.ClearableObjectPool
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.ValidationFlags
-import com.acornui.component.drawing.DrawElementsCall.Companion
 import com.acornui.core.TreeWalk
 import com.acornui.core.childWalkLevelOrder
 import com.acornui.core.di.Owned
@@ -33,7 +32,7 @@ import com.acornui.core.graphics.Texture
 import com.acornui.core.io.BufferFactory
 import com.acornui.core.iterateChildren
 import com.acornui.gl.core.*
-import com.acornui.io.NativeBuffer
+import com.acornui.io.ReadWriteNativeBuffer
 import com.acornui.math.*
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
@@ -132,7 +131,7 @@ open class StaticMeshComponent(
 
 		private val localRay = Ray()
 
-		private val GLOBAL_BOUNDING_BOX = 1 shl 16
+		private const val GLOBAL_BOUNDING_BOX = 1 shl 16
 	}
 }
 
@@ -165,10 +164,10 @@ class StaticMesh {
 	val boundingBox = Box()
 
 	private var indicesBuffer: GlBufferRef? = null
-	private var indices: NativeBuffer<Short>? = null
+	private var indices: ReadWriteNativeBuffer<Short>? = null
 
 	private var vertexComponentsBuffer: GlBufferRef? = null
-	private var vertexComponents: NativeBuffer<Float>? = null
+	private var vertexComponents: ReadWriteNativeBuffer<Float>? = null
 
 	private var drawCall = DrawElementsCall.obtain()
 	private val drawCalls = arrayListOf(drawCall)

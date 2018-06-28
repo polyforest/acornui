@@ -2,10 +2,7 @@ package com.acornui.core.browser
 
 import com.acornui.browser.UrlParams
 import com.acornui.browser.UrlParamsImpl
-import com.acornui.collection.Clearable
 import com.acornui.core.graphics.PopUpSpecs
-import com.acornui.io.NativeBuffer
-
 
 
 interface Location {

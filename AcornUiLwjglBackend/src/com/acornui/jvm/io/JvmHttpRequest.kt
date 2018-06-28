@@ -2,16 +2,19 @@ package com.acornui.jvm.io
 
 import com.acornui.async.Deferred
 import com.acornui.core.di.Injector
+import com.acornui.core.io.BufferFactory
 import com.acornui.core.request.*
 import com.acornui.core.time.TimeDriver
-import com.acornui.io.NativeBuffer
+import com.acornui.io.ReadByteBuffer
 import com.acornui.io.toByteArray
 import com.acornui.jvm.asyncThread
 import com.acornui.logging.Log
+import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
+import java.nio.ByteBuffer
 import java.util.*
 
 
@@ -110,6 +113,7 @@ abstract class JvmHttpRequest<out T>(timeDriver: TimeDriver, requestData: UrlReq
 }
 
 object JvmRestServiceFactory : RestServiceFactory {
+
 	override fun createTextRequest(injector: Injector, requestData: UrlRequestData): Request<String> {
 		return object : JvmHttpRequest<String>(injector.inject(TimeDriver), requestData) {
 			override fun process(inputStream: InputStream): String {
@@ -118,10 +122,13 @@ object JvmRestServiceFactory : RestServiceFactory {
 		}
 	}
 
-	override fun createBinaryRequest(injector: Injector, requestData: UrlRequestData): Request<NativeBuffer<Byte>> {
-		return object : JvmHttpRequest<NativeBuffer<Byte>>(injector.inject(TimeDriver), requestData) {
-			override fun process(inputStream: InputStream): NativeBuffer<Byte> {
-				TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	override fun createBinaryRequest(injector: Injector, requestData: UrlRequestData): Request<ReadByteBuffer> {
+		return object : JvmHttpRequest<ReadByteBuffer>(injector.inject(TimeDriver), requestData) {
+			override fun process(inputStream: InputStream): ReadByteBuffer {
+				val byteArray = inputStream.use {
+					it.readAllBytes()
+				}
+				return JvmByteBuffer(ByteBuffer.wrap(byteArray))
 			}
 		}
 	}

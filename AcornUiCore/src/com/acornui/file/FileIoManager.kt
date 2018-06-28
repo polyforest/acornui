@@ -18,13 +18,13 @@ package com.acornui.file
 
 import com.acornui.core.Disposable
 import com.acornui.core.di.DKey
-import com.acornui.io.NativeBuffer
+import com.acornui.io.ReadWriteBuffer
+import com.acornui.io.ReadWriteByteBuffer
 
 /**
  * An object which allows for selecting file(s) with native pickers for the purposes of reading or writing to disk.
  *
  * @see FileReader
- * @see FileWriter
  */
 interface FileIoManager : Disposable {
 
@@ -36,7 +36,7 @@ interface FileIoManager : Disposable {
 	/**
 	 * Invokes native file picker to select a file for opening from disk [onSuccess].
 	 * @param fileFilterGroups a list of groups of extensions to filter picking selection
-	 * @param onSuccess callback using a [FileWriter] to be executed upon a successful pick
+	 * @param onSuccess callback using a [FileReader] to be executed upon a successful pick
 	 * @see FileFilterGroup
 	 */
 	fun pickFileForOpen(fileFilterGroups: List<FileFilterGroup>? = null, onSuccess: (FileReader) -> Unit)
@@ -44,7 +44,7 @@ interface FileIoManager : Disposable {
 	/**
 	 * Invokes native file picker to select multiple files for opening from disk [onSuccess].
 	 * @param fileFilterGroups a list of groups of extensions to filter picking selection
-	 * @param onSuccess callback using a list of [FileWriter]s to be executed upon a successful pick
+	 * @param onSuccess callback using a list of [FileReader]s to be executed upon a successful pick
 	 * @see FileFilterGroup
 	 */
 	fun pickFilesForOpen(fileFilterGroups: List<FileFilterGroup>? = null, onSuccess: (List<FileReader>) -> Unit)
@@ -71,7 +71,7 @@ interface FileIoManager : Disposable {
 	 * (e.g. 'filename' -> 'filename.txt')
 	 * @see FileFilterGroup
 	 */
-	fun saveBinary(data: NativeBuffer<Byte>, fileFilterGroups: List<FileFilterGroup>? = null, defaultFilename: String, defaultExtension: String? = null)
+	fun saveBinary(data: ReadWriteBuffer<Byte>, fileFilterGroups: List<FileFilterGroup>? = null, defaultFilename: String, defaultExtension: String? = null)
 
 	companion object : DKey<FileIoManager>
 }
@@ -118,5 +118,5 @@ interface FileReader {
 	/**
 	 * Read file ([name]) from disk binary
 	 */
-	suspend fun readAsBinary(): NativeBuffer<Byte>
+	suspend fun readAsBinary(): ReadWriteBuffer<Byte>
 }

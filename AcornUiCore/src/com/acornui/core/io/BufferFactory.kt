@@ -16,19 +16,22 @@
 
 package com.acornui.core.io
 
-import com.acornui.io.NativeBuffer
+import com.acornui.io.ReadWriteNativeBuffer
+import com.acornui.io.ReadWriteNativeByteBuffer
+
+// TODO: When we migrate to new build system, switch this factory with expects/actual
 
 /**
  * @author nbilyk
  */
 interface BufferFactory {
-	fun byteBuffer(capacity: Int): NativeBuffer<Byte>
-	fun shortBuffer(capacity: Int): NativeBuffer<Short>
-	fun intBuffer(capacity: Int): NativeBuffer<Int>
-	//	public fun longBuffer(capacity: Int): NativeBuffer<Long>  // JS doesn't seem to have an Int64Array
-	fun floatBuffer(capacity: Int): NativeBuffer<Float>
+	fun byteBuffer(capacity: Int): ReadWriteNativeByteBuffer
+	fun shortBuffer(capacity: Int): ReadWriteNativeBuffer<Short>
+	fun intBuffer(capacity: Int): ReadWriteNativeBuffer<Int>
+	//	public fun longBuffer(capacity: Int): ReadWriteNativeBuffer<Long>  // JS doesn't seem to have an Int64Array
+	fun floatBuffer(capacity: Int): ReadWriteNativeBuffer<Float>
 
-	fun doubleBuffer(capacity: Int): NativeBuffer<Double>
+	fun doubleBuffer(capacity: Int): ReadWriteNativeBuffer<Double>
 
 	companion object {
 		lateinit var instance: BufferFactory

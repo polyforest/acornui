@@ -19,7 +19,6 @@ package com.acornui.js.gl
 import com.acornui.core.graphics.Texture
 import com.acornui.gl.core.*
 import com.acornui.io.NativeBuffer
-import com.acornui.js.html.unsafeCast
 import org.khronos.webgl.*
 
 /**
@@ -383,11 +382,13 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 	}
 
 	override fun texImage2Db(target: Int, level: Int, internalFormat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: NativeBuffer<Byte>?) {
-		context.texImage2D(target, level, internalFormat, width, height, border, format, type, pixels?.native.unsafeCast())
+		@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
+		context.texImage2D(target, level, internalFormat, width, height, border, format, type, pixels?.native as ArrayBufferView?)
 	}
 
 	override fun texImage2Df(target: Int, level: Int, internalFormat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: NativeBuffer<Float>?) {
-		context.texImage2D(target, level, internalFormat, width, height, border, format, type, pixels?.native.unsafeCast() )
+		@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
+		context.texImage2D(target, level, internalFormat, width, height, border, format, type, pixels?.native as ArrayBufferView?)
 	}
 
 	override fun texImage2D(target: Int, level: Int, internalFormat: Int, format: Int, type: Int, texture: Texture) {
@@ -601,12 +602,12 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 
 }
 
-class WebGlProgramRef(val o: WebGLProgram) : GlProgramRef {}
-class WebGlShaderRef(val o: WebGLShader) : GlShaderRef {}
-class WebGlBufferRef(val o: WebGLBuffer) : GlBufferRef {}
-class WebGlFramebufferRef(val o: WebGLFramebuffer) : GlFramebufferRef {}
-class WebGlRenderbufferRef(val o: WebGLRenderbuffer) : GlRenderbufferRef {}
-class WebGlTextureRef(val o: WebGLTexture) : GlTextureRef {}
+class WebGlProgramRef(val o: WebGLProgram) : GlProgramRef
+class WebGlShaderRef(val o: WebGLShader) : GlShaderRef
+class WebGlBufferRef(val o: WebGLBuffer) : GlBufferRef
+class WebGlFramebufferRef(val o: WebGLFramebuffer) : GlFramebufferRef
+class WebGlRenderbufferRef(val o: WebGLRenderbuffer) : GlRenderbufferRef
+class WebGlTextureRef(val o: WebGLTexture) : GlTextureRef
 class WebGlActiveInfoRef(val o: WebGLActiveInfo) : GlActiveInfoRef {
 	override var name: String
 		get() = o.name
@@ -625,7 +626,7 @@ class WebGlActiveInfoRef(val o: WebGLActiveInfo) : GlActiveInfoRef {
 		}
 }
 
-class WebGlUniformLocationRef(val o: WebGLUniformLocation) : GlUniformLocationRef {}
+class WebGlUniformLocationRef(val o: WebGLUniformLocation) : GlUniformLocationRef
 
 class WebGl20Debug(private val context: WebGLRenderingContext) : WrappedGl20(WebGl20(context), {}, after = {
 	val errorCode = context.getError()
@@ -642,5 +643,4 @@ class WebGl20Debug(private val context: WebGLRenderingContext) : WrappedGl20(Web
 			throw Exception("GL Error: $msg")
 		}
 	}
-}) {
-}
+})

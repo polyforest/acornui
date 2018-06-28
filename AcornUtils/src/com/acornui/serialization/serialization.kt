@@ -51,12 +51,19 @@ fun <E, T> Serializer<T>.write(value: E, to: To<E>): T {
 interface Reader {
 
 	val isNull: Boolean
-	fun contains(name: String): Boolean
-	fun contains(index: Int): Boolean
+
+	fun contains(name: String): Boolean {
+		return properties().contains(name)
+	}
+
+	fun contains(index: Int): Boolean {
+		return index < elements().size
+	}
 
 	operator fun get(name: String): Reader? = properties()[name]
 	operator fun get(index: Int): Reader? = elements()[index]
 
+	fun byte(): Byte?
 	fun bool(): Boolean?
 	fun int(): Int?
 	fun string(): String?
@@ -263,6 +270,7 @@ interface Writer {
 	fun element(): Writer
 
 	fun writeNull()
+	fun byte(value: Byte?)
 	fun bool(value: Boolean?)
 	fun string(value: String?)
 	fun int(value: Int?)
@@ -500,6 +508,7 @@ class StringNode(val str: String) : Reader {
 	override fun contains(name: String): Boolean = false
 	override fun contains(index: Int): Boolean = false
 	override fun bool(): Boolean? = null
+	override fun byte(): Byte? = null
 	override fun int(): Int? = null
 	override fun string(): String = str
 	override fun short(): Short? = null
@@ -516,6 +525,7 @@ object NullNode : Reader {
 	override fun contains(name: String): Boolean = false
 	override fun contains(index: Int): Boolean = false
 	override fun bool(): Boolean? = null
+	override fun byte(): Byte? = null
 	override fun int(): Int? = null
 	override fun string(): String? = null
 	override fun short(): Short? = null

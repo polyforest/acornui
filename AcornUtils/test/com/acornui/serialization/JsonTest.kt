@@ -18,7 +18,6 @@ package com.acornui.serialization
 
 import com.acornui.test.assertListEquals
 import com.acornui.test.benchmark
-import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -299,7 +298,7 @@ class JsonTest {
 	}
 }
 
-data class PersonData(
+private data class PersonData(
 		val name: String,
 		val birthDate: Int,
 		val married: Boolean,
@@ -308,7 +307,7 @@ data class PersonData(
 ) {
 }
 
-object PersonDataSerializer : To<PersonData> {
+private object PersonDataSerializer : To<PersonData> {
 
 	override fun PersonData.write(writer: Writer) {
 		writer.string("name", name)

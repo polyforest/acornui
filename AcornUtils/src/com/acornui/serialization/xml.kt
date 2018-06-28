@@ -204,6 +204,11 @@ class XmlNode(
 		return subStr.equalsStr("true") || subStr.equalsStr("1")
 	}
 
+	override fun byte(): Byte? {
+		if (isNull) return null
+		return subStr.toString().toByteOrNull()
+	}
+
 	override fun char(): Char? {
 		if (isNull) return null
 		return subStr.charAt(1)
@@ -302,6 +307,11 @@ class XmlWriter(
 		if (value == null) return writeNull()
 		if (value) builder.append("true")
 		else builder.append("false")
+	}
+
+	override fun byte(value: Byte?) {
+		if (value == null) return writeNull()
+		builder.append(value)
 	}
 
 	override fun string(value: String?) {
