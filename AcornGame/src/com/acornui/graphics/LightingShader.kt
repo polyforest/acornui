@@ -27,7 +27,7 @@ class LightingShader(gl: Gl20, numPointLights: Int, numShadowPointLights: Int, u
 		gl, vertexShaderSrc = """
 $DEFAULT_SHADER_HEADER
 
-attribute vec4 a_position;
+attribute vec3 a_position;
 attribute vec3 a_normal;
 attribute vec4 a_colorTint;
 attribute vec2 a_texCoord0;
@@ -43,7 +43,7 @@ varying vec2 v_texCoord;
 varying vec4 v_directionalShadowCoord;
 
 void main() {
-	${if (useModel) "v_worldPosition = u_modelTrans * a_position; v_normal = normalize(mat3(u_modelTrans) * a_normal);" else "v_worldPosition = a_position; v_normal = a_normal;"}
+	${if (useModel) "v_worldPosition = u_modelTrans * vec4(a_position, 1.0); v_normal = normalize(mat3(u_modelTrans) * a_normal);" else "v_worldPosition = vec4(a_position, 1.0); v_normal = a_normal;"}
 	v_colorTint = a_colorTint;
 	v_texCoord = a_texCoord0;
 	gl_Position =  u_projTrans * v_worldPosition;
@@ -173,7 +173,7 @@ class PointShadowShader(gl: Gl20, useModel: Boolean) : ShaderProgramBase(
 		gl, vertexShaderSrc = """
 $DEFAULT_SHADER_HEADER
 
-attribute vec4 a_position;
+attribute vec3 a_position;
 attribute vec4 a_colorTint;
 attribute vec2 a_texCoord0;
 
@@ -187,7 +187,7 @@ varying vec2 v_texCoord;
 void main() {
 	v_colorTint = a_colorTint;
 	v_texCoord = a_texCoord0;
-	${if (useModel) "v_worldPosition = u_modelTrans * a_position;" else "v_worldPosition = a_position;"}
+	${if (useModel) "v_worldPosition = u_modelTrans * vec4(a_position, 1.0);" else "v_worldPosition = vec4(a_position, 1.0);"}
 	gl_Position = u_pointLightMvp * v_worldPosition;
 }
 """, fragmentShaderSrc = """
@@ -217,7 +217,7 @@ class DirectionalShadowShader(gl: Gl20, useModel: Boolean) : ShaderProgramBase(
 		gl, vertexShaderSrc = """
 $DEFAULT_SHADER_HEADER
 
-attribute vec4 a_position;
+attribute vec3 a_position;
 attribute vec4 a_colorTint;
 attribute vec2 a_texCoord0;
 
@@ -230,7 +230,7 @@ varying vec2 v_texCoord;
 void main() {
 	v_colorTint = a_colorTint;
 	v_texCoord = a_texCoord0;
-	${if (useModel) "vec4 worldPosition = u_modelTrans * a_position;" else "vec4 worldPosition = a_position;"}
+	${if (useModel) "vec4 worldPosition = u_modelTrans * vec4(a_position, 1.0);" else "vec4 worldPosition = vec4(a_position, 1.0);"}
 	gl_Position = u_directionalLightMvp * worldPosition;
 }
 """, fragmentShaderSrc = """

@@ -147,7 +147,7 @@ class DefaultShaderProgram(gl: Gl20) : ShaderProgramBase (
 
 $DEFAULT_SHADER_HEADER
 
-attribute vec4 a_position;
+attribute vec3 a_position;
 attribute vec4 a_colorTint;
 attribute vec2 a_texCoord0;
 
@@ -159,7 +159,7 @@ varying vec2 v_texCoord;
 void main() {
 	v_colorTint = a_colorTint;
 	v_texCoord = a_texCoord0;
-	gl_Position =  u_projTrans * a_position;
+	gl_Position =  u_projTrans * vec4(a_position, 1.0);
 }""",
 		fragmentShaderSrc = """
 

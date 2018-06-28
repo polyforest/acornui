@@ -54,8 +54,9 @@ class ParticleEmitterRenderer2d(
 		val particles = emitterInstance.particles
 		for (i in 0..particles.lastIndex) {
 			val particle = particles[i]
-			if (particle.active)
+			if (particle.active) {
 				particle.draw(concatenatedColorTint)
+			}
 		}
 	}
 
@@ -64,8 +65,6 @@ class ParticleEmitterRenderer2d(
 	private fun Particle.draw(concatenatedColorTint: ColorRo) {
 		val sprite = sprites.getOrNull(imageIndex) ?: return
 		val emitter = emitterInstance.emitter
-		sprite.blendMode = emitter.blendMode
-		sprite.premultipliedAlpha = emitter.premultipliedAlpha
 
 		val w = sprite.naturalWidth * scale.x
 		val h = sprite.naturalHeight * scale.y

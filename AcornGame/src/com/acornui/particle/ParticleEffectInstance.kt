@@ -388,7 +388,7 @@ class ColorTimelineInstance(
 
 	override fun reset(particle: Particle) {
 		value.set(Color.WHITE)
-		particle.colorTint.set(Color.WHITE)
+		particle.colorTint.set(1f, 1f, 1f, particle.colorTint.a)
 	}
 }
 

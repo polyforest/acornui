@@ -16,6 +16,12 @@
 
 package com.acornui.core.serialization
 
+import com.acornui.async.Deferred
+import com.acornui.async.async
+import com.acornui.core.assets.AssetManager
+import com.acornui.core.assets.AssetType
+import com.acornui.core.di.Scoped
+import com.acornui.core.di.inject
 import com.acornui.core.io.BufferFactory
 import com.acornui.io.*
 import com.acornui.serialization.*
@@ -342,4 +348,9 @@ fun <T> parseBinary(binary: ReadNativeByteBuffer, factory: From<T>): T {
 
 fun <T> toBinary(value: T, factory: To<T>): ReadNativeByteBuffer {
 	return BinarySerializer.write(value, factory)
+}
+
+fun <T> Scoped.loadBinary(path:String, factory: From<T>): Deferred<T> = async {
+	val binary = inject(AssetManager).load(path, AssetType.BINARY)
+	BinarySerializer.read(binary.await(), factory)
 }

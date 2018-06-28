@@ -27,6 +27,7 @@ import com.acornui.core.graphics.TextureAtlasDataSerializer
 import com.acornui.core.graphics.loadAndCacheAtlasPage
 import com.acornui.core.time.onTick
 import com.acornui.component.Sprite
+import com.acornui.core.serialization.loadBinary
 import com.acornui.gl.core.GlState
 import com.acornui.graphics.ColorRo
 import com.acornui.math.MinMaxRo
@@ -157,7 +158,12 @@ typealias SpriteResolver = suspend (emitter: ParticleEmitter, imageEntry: Partic
 
 suspend fun Scoped.loadParticleEffect(pDataPath: String, atlasPath: String, group: CachedGroup = cachedGroup()): LoadedParticleEffect {
 	loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group) // Start the atlas loading and parsing in parallel.
-	val particleEffect = loadAndCacheJson(pDataPath, ParticleEffectSerializer, group).await()
+	val particleEffect = if (pDataPath.endsWith("bin", ignoreCase = true)) {
+		// Binary
+		loadBinary(pDataPath, ParticleEffectSerializer).await()
+	} else {
+		loadJson(pDataPath, ParticleEffectSerializer).await()
+	}
 	return loadParticleEffect(particleEffect, atlasPath, group)
 }
 
@@ -165,12 +171,14 @@ suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffect, atlasPath:
 	val atlasDataPromise = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group)
 	val atlasData = atlasDataPromise.await()
 
-	val spriteResolver: SpriteResolver = { _, imageEntry ->
+	val spriteResolver: SpriteResolver = { emitter, imageEntry ->
 		val (page, region) = atlasData.findRegion(imageEntry.path)
 				?: throw Exception("Could not find \"${imageEntry.path}\" in the atlas $atlasPath")
 		val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
 
 		val sprite = Sprite()
+		sprite.blendMode = emitter.blendMode
+		sprite.premultipliedAlpha = emitter.premultipliedAlpha
 		sprite.texture = texture
 		sprite.setRegion(region.bounds, region.isRotated)
 		sprite.updateUv()
