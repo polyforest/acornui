@@ -1,6 +1,5 @@
 package com.acornui.jvm.audio
 
-import com.acornui.async.Deferred
 import com.acornui.core.assets.AssetType
 import com.acornui.core.audio.SoundFactory
 import com.acornui.jvm.loader.JvmAssetLoaderBase
@@ -18,8 +17,8 @@ open class OpenAlSoundLoader(
 		init()
 	}
 
-	override fun create(fis: InputStream): SoundFactory {
-		val data = SoundDecoders.decode(path.extension(), fis)
+	override fun create(inputStream: InputStream): SoundFactory {
+		val data = SoundDecoders.decode(path.extension(), inputStream)
 		return OpenAlSoundFactory(audioManager, data.pcm, data.channels, data.sampleRate)
 	}
 

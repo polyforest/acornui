@@ -24,9 +24,8 @@ import com.acornui.core.di.DKey
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
-import com.acornui.io.ReadBuffer
 import com.acornui.io.ReadByteBuffer
-import com.acornui.io.ReadWriteBuffer
+import com.acornui.io.ReadNativeByteBuffer
 
 /**
  * A model with the necessary information to make an http request.
@@ -103,7 +102,7 @@ class MultipartFormData : Clearable, MultipartFormDataRo {
 	override val items: List<FormDataItem>
 		get() = _items
 
-	fun append(name: String, value: ReadBuffer<Byte>, filename: String? = null) {
+	fun append(name: String, value: ReadNativeByteBuffer, filename: String? = null) {
 		_items.add(ByteArrayFormItem(name, value, filename))
 	}
 
@@ -125,7 +124,7 @@ interface FormDataItem {
 
 class ByteArrayFormItem(
 		override val name: String,
-		val value: ReadBuffer<Byte>,
+		val value: ReadNativeByteBuffer,
 		val filename: String?
 ) : FormDataItem
 

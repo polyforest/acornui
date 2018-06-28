@@ -18,8 +18,7 @@ package com.acornui.file
 
 import com.acornui.core.Disposable
 import com.acornui.core.di.DKey
-import com.acornui.io.ReadWriteBuffer
-import com.acornui.io.ReadWriteByteBuffer
+import com.acornui.io.*
 
 /**
  * An object which allows for selecting file(s) with native pickers for the purposes of reading or writing to disk.
@@ -71,7 +70,7 @@ interface FileIoManager : Disposable {
 	 * (e.g. 'filename' -> 'filename.txt')
 	 * @see FileFilterGroup
 	 */
-	fun saveBinary(data: ReadWriteBuffer<Byte>, fileFilterGroups: List<FileFilterGroup>? = null, defaultFilename: String, defaultExtension: String? = null)
+	fun saveBinary(data: NativeBuffer<Byte>, fileFilterGroups: List<FileFilterGroup>? = null, defaultFilename: String, defaultExtension: String? = null)
 
 	companion object : DKey<FileIoManager>
 }
@@ -118,5 +117,5 @@ interface FileReader {
 	/**
 	 * Read file ([name]) from disk binary
 	 */
-	suspend fun readAsBinary(): ReadWriteBuffer<Byte>
+	suspend fun readAsBinary(): ReadNativeByteBuffer
 }

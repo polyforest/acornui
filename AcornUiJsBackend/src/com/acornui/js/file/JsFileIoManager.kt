@@ -21,6 +21,9 @@ import com.acornui.async.launch
 import com.acornui.file.FileFilterGroup
 import com.acornui.file.FileIoManager
 import com.acornui.file.FileReader
+import com.acornui.io.NativeBuffer
+import com.acornui.io.ReadBuffer
+import com.acornui.io.ReadNativeByteBuffer
 import com.acornui.io.ReadWriteBuffer
 import com.acornui.js.io.JsByteBuffer
 import org.khronos.webgl.ArrayBuffer
@@ -124,7 +127,7 @@ class JsFileIoManager : FileIoManager {
 		saveData(text, defaultFilename)
 	}
 
-	override fun saveBinary(data: ReadWriteBuffer<Byte>, fileFilterGroups: List<FileFilterGroup>?, defaultFilename: String, defaultExtension: String?) {
+	override fun saveBinary(data: NativeBuffer<Byte>, fileFilterGroups: List<FileFilterGroup>?, defaultFilename: String, defaultExtension: String?) {
 		saveData(data.native, defaultFilename)
 	}
 
@@ -176,8 +179,8 @@ class JsFileReader(val file: DomFile) : FileReader {
 		}.await()
 	}
 
-	override suspend fun readAsBinary(): ReadWriteBuffer<Byte> {
-		return object : Promise<ReadWriteBuffer<Byte>>() {
+	override suspend fun readAsBinary(): ReadNativeByteBuffer {
+		return object : Promise<ReadNativeByteBuffer>() {
 			init {
 				launch {
 					reader.onload = { _: Event ->

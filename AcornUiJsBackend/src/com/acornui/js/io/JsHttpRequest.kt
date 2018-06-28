@@ -5,6 +5,7 @@ import com.acornui.core.Bandwidth
 import com.acornui.core.di.Injector
 import com.acornui.core.request.*
 import com.acornui.io.ReadByteBuffer
+import com.acornui.io.ReadNativeByteBuffer
 import com.acornui.logging.Log
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Uint8Array
@@ -96,8 +97,8 @@ class JsArrayBufferRequest(requestData: UrlRequestData) : JsHttpRequest<ArrayBuf
 	}
 }
 
-class JsBinaryRequest(requestData: UrlRequestData) : JsHttpRequest<ReadByteBuffer>(requestData, XMLHttpRequestResponseType.ARRAYBUFFER) {
-	override fun process(httpRequest: XMLHttpRequest): ReadByteBuffer {
+class JsBinaryRequest(requestData: UrlRequestData) : JsHttpRequest<ReadNativeByteBuffer>(requestData, XMLHttpRequestResponseType.ARRAYBUFFER) {
+	override fun process(httpRequest: XMLHttpRequest): ReadNativeByteBuffer {
 		return JsByteBuffer(Uint8Array(httpRequest.response!! as ArrayBuffer))
 	}
 }

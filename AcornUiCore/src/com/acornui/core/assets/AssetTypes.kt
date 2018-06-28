@@ -20,6 +20,7 @@ import com.acornui.core.audio.Music
 import com.acornui.core.audio.SoundFactory
 import com.acornui.core.graphics.RgbData
 import com.acornui.core.graphics.Texture
+import com.acornui.io.ReadNativeByteBuffer
 
 /**
  * AssetType represents the type of asset an AssetLoader will load.
@@ -36,8 +37,7 @@ data class AssetType<T>(val name: String) {
 		 */
 		val TEXT: AssetType<String> = AssetType("text")
 
-		// Currently only available on the JS backend.
-		val BINARY:AssetType<ByteArray> = AssetType("binary")
+		val BINARY:AssetType<ReadNativeByteBuffer> = AssetType("binary")
 
 		val TEXTURE: AssetType<Texture> = AssetType("texture")
 

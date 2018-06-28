@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2018 Nicholas Bilyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,24 +17,27 @@
 package com.acornui.jvm.loader
 
 import com.acornui.core.assets.AssetType
+import com.acornui.io.ReadNativeByteBuffer
+import com.acornui.jvm.io.JvmByteBuffer
 import java.io.InputStream
-import java.nio.charset.Charset
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
-open class JvmTextLoader(
+open class JvmBinaryLoader(
 		path: String,
-		private val charset: Charset,
-		workScheduler: WorkScheduler<String>
-) : JvmAssetLoaderBase<String>(path, AssetType.TEXT, workScheduler) {
+		workScheduler: WorkScheduler<ReadNativeByteBuffer>
+) : JvmAssetLoaderBase<ReadNativeByteBuffer>(path, AssetType.BINARY, workScheduler) {
 
 	init {
 		init()
 	}
 
-	override fun create(inputStream: InputStream): String {
-		val size = if (bytesTotal <= 0) DEFAULT_BUFFER_SIZE else bytesTotal
-		val bytes = inputStream.use {
-			it.readBytes(size)
+	override fun create(inputStream: InputStream): ReadNativeByteBuffer {
+		val byteArray = inputStream.use {
+			it.readAllBytes()
 		}
-		return bytes.toString(charset)
+		val buffer = ByteBuffer.wrap(byteArray)
+		buffer.order(ByteOrder.LITTLE_ENDIAN)
+		return JvmByteBuffer(buffer)
 	}
 }

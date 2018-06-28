@@ -22,8 +22,7 @@ import com.acornui.core.platform
 import com.acornui.file.FileFilterGroup
 import com.acornui.file.FileIoManager
 import com.acornui.file.FileReader
-import com.acornui.io.ReadWriteBuffer
-import com.acornui.io.toByteArray
+import com.acornui.io.*
 import org.lwjgl.PointerBuffer
 import org.lwjgl.system.MemoryUtil.memAllocPointer
 import org.lwjgl.system.MemoryUtil.memFree
@@ -75,7 +74,7 @@ class JvmFileIoManager : FileIoManager {
 		pickFileForSave(fileFilterGroups, defaultFilename, defaultExtension)?.writeText(text)
 	}
 
-	override fun saveBinary(data: ReadWriteBuffer<Byte>, fileFilterGroups: List<FileFilterGroup>?, defaultFilename: String, defaultExtension: String?) {
+	override fun saveBinary(data: NativeBuffer<Byte>, fileFilterGroups: List<FileFilterGroup>?, defaultFilename: String, defaultExtension: String?) {
 		pickFileForSave(fileFilterGroups, defaultFilename, defaultExtension)?.writeBytes(data.toByteArray())
 	}
 
@@ -144,7 +143,7 @@ class JvmFileReader(private val file: File) : FileReader {
 		return file.readText()
 	}
 
-	override suspend fun readAsBinary(): ReadWriteBuffer<Byte> {
+	override suspend fun readAsBinary(): ReadNativeByteBuffer {
 		// TODO: There could be some utility here.
 		val bytes = file.readBytes()
 		val buffer = BufferFactory.instance.byteBuffer(bytes.size)

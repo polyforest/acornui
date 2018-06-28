@@ -48,7 +48,7 @@ abstract class JvmAssetLoaderBase<T>(
 		}
 	}
 
-	abstract fun create(fis: InputStream): T
+	abstract fun create(inputStream: InputStream): T
 
 	override val secondsLoaded: Float
 		get() {

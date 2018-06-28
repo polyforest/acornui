@@ -41,8 +41,8 @@ open class JvmTextureLoader(
 		init()
 	}
 
-	override fun create(fis: InputStream): Texture {
-		return JvmTexture(gl, glState, createImageData(fis))
+	override fun create(inputStream: InputStream): Texture {
+		return JvmTexture(gl, glState, createImageData(inputStream))
 	}
 }
 
@@ -55,8 +55,8 @@ open class JvmRgbDataLoader(
 		init()
 	}
 
-	override fun create(fis: InputStream): RgbData {
-		return createImageData(fis)
+	override fun create(inputStream: InputStream): RgbData {
+		return createImageData(inputStream)
 	}
 }
 

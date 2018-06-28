@@ -61,20 +61,39 @@ fun ReadBuffer<Byte>.toByteArray(): ByteArray {
 	return bytes
 }
 
-fun ReadByteBuffer.getString(): String {
+fun ReadByteBuffer.getString8(): String {
 	val builder = StringBuilder()
 	val stop: Char = 0.toChar()
 	while (true) {
-		val char = getChar()
+		val char = getChar8()
 		if (char == stop) break
 		else builder.append(char)
 	}
 	return builder.toString()
 }
 
-fun WriteByteBuffer.putString(value: String) {
-	for (i in 0..value.lastIndex) {
-		putChar(value[i])
+fun ReadByteBuffer.getString16(): String {
+	val builder = StringBuilder()
+	val stop: Char = 0.toChar()
+	while (true) {
+		val char = getChar16()
+		if (char == stop) break
+		else builder.append(char)
 	}
-	putChar(0.toChar())
+	return builder.toString()
+}
+
+
+fun WriteByteBuffer.putString8(value: String) {
+	for (i in 0..value.lastIndex) {
+		putChar8(value[i])
+	}
+	putChar8(0.toChar())
+}
+
+fun WriteByteBuffer.putString16(value: String) {
+	for (i in 0..value.lastIndex) {
+		putChar16(value[i])
+	}
+	putChar16(0.toChar())
 }

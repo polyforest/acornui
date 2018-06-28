@@ -2,19 +2,18 @@ package com.acornui.jvm.io
 
 import com.acornui.async.Deferred
 import com.acornui.core.di.Injector
-import com.acornui.core.io.BufferFactory
 import com.acornui.core.request.*
 import com.acornui.core.time.TimeDriver
 import com.acornui.io.ReadByteBuffer
 import com.acornui.io.toByteArray
 import com.acornui.jvm.asyncThread
 import com.acornui.logging.Log
-import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.util.*
 
 
@@ -128,7 +127,9 @@ object JvmRestServiceFactory : RestServiceFactory {
 				val byteArray = inputStream.use {
 					it.readAllBytes()
 				}
-				return JvmByteBuffer(ByteBuffer.wrap(byteArray))
+				val buffer = ByteBuffer.wrap(byteArray)
+				buffer.order(ByteOrder.LITTLE_ENDIAN)
+				return JvmByteBuffer(buffer)
 			}
 		}
 	}

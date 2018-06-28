@@ -255,7 +255,8 @@ interface ReadBuffer<out T> : Buffer {
 
 interface ReadByteBuffer : ReadBuffer<Byte> {
 
-	fun getChar(): Char = getShort().toChar()
+	fun getChar8(): Char = get().toChar()
+	fun getChar16(): Char = getShort().toChar()
 	fun getShort(): Short
 	fun getInt(): Int
 	fun getFloat(): Float
@@ -327,7 +328,8 @@ fun <T> WriteBuffer<T>.fill(value: T) {
 
 interface WriteByteBuffer : WriteBuffer<Byte> {
 
-	fun putChar(value: Char) = putShort(value.toShort())
+	fun putChar8(value: Char) = put(value.toByte())
+	fun putChar16(value: Char) = putShort(value.toShort())
 	fun putShort(value: Short)
 	fun putInt(value: Int)
 	fun putFloat(value: Float)
@@ -349,5 +351,6 @@ interface NativeBuffer<T> : ReadBuffer<T> {
 	val native: Any
 }
 
+interface ReadNativeByteBuffer : NativeBuffer<Byte>, ReadByteBuffer
 interface ReadWriteNativeBuffer<T> : NativeBuffer<T>, ReadWriteBuffer<T>
-interface ReadWriteNativeByteBuffer : NativeBuffer<Byte>, ReadWriteByteBuffer
+interface ReadWriteNativeByteBuffer : ReadNativeByteBuffer, ReadWriteByteBuffer

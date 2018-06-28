@@ -49,6 +49,7 @@ class JsBufferFactory : BufferFactory {
 class JsByteBuffer(private val bufferView: Uint8Array) : BufferBase(bufferView.length), ReadWriteNativeByteBuffer {
 
 	private val dataView = DataView(bufferView.buffer)
+	private val littleEndian = true
 
 	override fun get(): Byte {
 		return bufferView[nextPosition()]
@@ -66,39 +67,39 @@ class JsByteBuffer(private val bufferView: Uint8Array) : BufferBase(bufferView.l
 
 	override val dataSize: Int = 1
 
-	override fun getShort(): Short = dataView.getInt16(nextPosition(2))
+	override fun getShort(): Short = dataView.getInt16(nextPosition(2), littleEndian)
 
-	override fun getInt(): Int = dataView.getInt32(nextPosition(4))
+	override fun getInt(): Int = dataView.getInt32(nextPosition(4), littleEndian)
 
-	override fun getFloat(): Float = dataView.getFloat32(nextPosition(4))
+	override fun getFloat(): Float = dataView.getFloat32(nextPosition(4), littleEndian)
 
-	override fun getDouble(): Double = dataView.getFloat64(nextPosition(8))
+	override fun getDouble(): Double = dataView.getFloat64(nextPosition(8), littleEndian)
 
 	override fun getLong(): Long {
-		val int1 = dataView.getInt32(nextPosition(4))
-		val int2 = dataView.getInt32(nextPosition(4))
+		val int1 = dataView.getInt32(nextPosition(4), littleEndian)
+		val int2 = dataView.getInt32(nextPosition(4), littleEndian)
 		return (int1.toLong() shl 16) or (int2.toLong())
 	}
 
 	override fun putShort(value: Short) {
-		dataView.setInt16(nextPosition(2), value)
+		dataView.setInt16(nextPosition(2), value, littleEndian)
 	}
 
 	override fun putInt(value: Int) {
-		dataView.setInt32(nextPosition(4), value)
+		dataView.setInt32(nextPosition(4), value, littleEndian)
 	}
 
 	override fun putFloat(value: Float) {
-		dataView.setFloat32(nextPosition(4), value)
+		dataView.setFloat32(nextPosition(4), value, littleEndian)
 	}
 
 	override fun putDouble(value: Double) {
-		dataView.setFloat64(nextPosition(8), value)
+		dataView.setFloat64(nextPosition(8), value, littleEndian)
 	}
 
 	override fun putLong(value: Long) {
-		dataView.setInt32(nextPosition(4), (value shr 16).toInt())
-		dataView.setInt32(nextPosition(4), (value and 0xFFFFFFFF).toInt())
+		dataView.setInt32(nextPosition(4), (value shr 16).toInt(), littleEndian)
+		dataView.setInt32(nextPosition(4), (value and 0xFFFFFFFF).toInt(), littleEndian)
 	}
 }
 

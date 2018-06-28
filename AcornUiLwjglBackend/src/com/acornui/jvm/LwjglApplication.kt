@@ -81,6 +81,7 @@ import com.acornui.jvm.input.JvmMouseInput
 import com.acornui.jvm.input.LwjglKeyInput
 import com.acornui.jvm.io.JvmBufferFactory
 import com.acornui.jvm.io.JvmRestServiceFactory
+import com.acornui.jvm.loader.JvmBinaryLoader
 import com.acornui.jvm.loader.JvmTextLoader
 import com.acornui.jvm.loader.WorkScheduler
 import com.acornui.jvm.persistance.LwjglPersistence
@@ -280,6 +281,7 @@ open class LwjglApplication : ApplicationBase() {
 		val loaders = HashMap<AssetType<*>, LoaderFactory<*>>()
 		loaders[AssetType.TEXTURE] = { path, _ -> JvmTextureLoader(path, gl20, glState, ioWorkScheduler(timeDriver)) }
 		loaders[AssetType.TEXT] = { path, _ -> JvmTextLoader(path, Charsets.UTF_8, ioWorkScheduler(timeDriver)) }
+		loaders[AssetType.BINARY] = { path, _ -> JvmBinaryLoader(path, ioWorkScheduler(timeDriver)) }
 
 		// Audio
 		try {

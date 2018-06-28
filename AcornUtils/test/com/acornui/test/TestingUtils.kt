@@ -229,6 +229,3 @@ fun benchmark(iterations: Int = 1000, testCount: Int = 10, warmCount: Int = 2, c
 	results.sort()
 	return results[results.size / 2]
 }
-
-
-

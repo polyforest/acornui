@@ -71,6 +71,7 @@ import com.acornui.js.input.JsKeyInput
 import com.acornui.js.input.JsMouseInput
 import com.acornui.js.io.JsBufferFactory
 import com.acornui.js.io.JsRestServiceFactory
+import com.acornui.js.loader.JsBinaryLoader
 import com.acornui.js.loader.JsTextLoader
 import com.acornui.js.persistance.JsPersistence
 import com.acornui.js.text.DateTimeFormatterImpl
@@ -283,6 +284,7 @@ Function.prototype.bind = function() {
 
 	protected open fun addAssetLoaders(loaders: MutableMap<AssetType<*>, LoaderFactory<*>>) {
 		loaders[AssetType.TEXT] = { path: String, estimatedBytesTotal: Int -> JsTextLoader(path, estimatedBytesTotal) }
+		loaders[AssetType.BINARY] = { path: String, estimatedBytesTotal: Int -> JsBinaryLoader(path, estimatedBytesTotal) }
 
 		// JS Audio doesn't need to be updated like OpenAL audio does, so we don't add it to the TimeDriver.
 		val audioManager = AudioManagerImpl()
