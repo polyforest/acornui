@@ -25,10 +25,10 @@ data class ParticleEffect(
 
 		val emitters: List<ParticleEmitter>
 ) {
-	fun createInstance(): ParticleEffectInstance {
+	fun createInstance(maxParticlesScale: Float): ParticleEffectInstance {
 		val emitterInstances = ArrayList<ParticleEmitterInstance>(emitters.size)
 		for (i in 0..emitters.lastIndex) {
-			val emitterInstance = emitters[i].createInstance()
+			val emitterInstance = emitters[i].createInstance(maxParticlesScale)
 			emitterInstances.add(emitterInstance)
 		}
 		return ParticleEffectInstance(emitterInstances)
@@ -84,8 +84,8 @@ data class ParticleEmitter(
 		 */
 		val propertyTimelines: List<PropertyTimeline<*>>
 ) {
-	fun createInstance(): ParticleEmitterInstance {
-		return ParticleEmitterInstance(this)
+	fun createInstance(maxParticlesScale: Float): ParticleEmitterInstance {
+		return ParticleEmitterInstance(this, maxParticlesScale)
 	}
 }
 

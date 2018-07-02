@@ -54,7 +54,9 @@ class ParticleEffectInstance(
 
 class ParticleEmitterInstance(
 
-		val emitter: ParticleEmitter
+		val emitter: ParticleEmitter,
+
+		val maxParticlesScale: Float
 ) {
 
 	val position = Vector3()
@@ -235,10 +237,6 @@ class ParticleEmitterInstance(
 		endTime = _duration + _delayAfter
 		emitter.emissionRate.reset(emissionRateValue)
 		emitter.particleLifeExpectancy.reset(lifeExpectancyValue)
-	}
-
-	companion object {
-		var maxParticlesScale: Float = if (userInfo.isMobile) 0.5f else 1f
 	}
 
 }

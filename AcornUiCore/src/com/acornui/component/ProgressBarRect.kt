@@ -64,8 +64,8 @@ class ProgressBarRect(owner: Owned) : ContainerImpl(owner) {
 	fun watch(target: Progress) {
 		_watched?.dispose()
 		_watched = onTick {
-			if (target.secondsTotal == 0f) targetP = 0f
-			else targetP = target.secondsLoaded / target.secondsTotal
+			targetP = if (target.secondsTotal == 0f) 0f
+			else target.secondsLoaded / target.secondsTotal
 			progress += (targetP - progress) * 0.1f
 		}
 	}

@@ -57,9 +57,9 @@ class ParticleEffectComponent(
 	 * @param disposeOld If true, the old effect will be disposed and cached files decremented.
 	 * @return Returns a deferred loaded particle effect in order to handle the wait.
 	 */
-	fun load(pDataPath: String, atlasPath: String, disposeOld: Boolean = true) = async {
+	fun load(pDataPath: String, atlasPath: String, disposeOld: Boolean = true, maxParticlesScale: Float = 1f) = async {
 		val oldEffect = _effect
-		effect = loadParticleEffect(pDataPath, atlasPath)
+		effect = loadParticleEffect(pDataPath, atlasPath, maxParticlesScale = maxParticlesScale)
 		if (disposeOld)
 			oldEffect?.dispose() // Dispose after load in order to reuse cached files.
 		effect!!
@@ -156,7 +156,7 @@ class LoadedParticleEffect(
 
 typealias SpriteResolver = suspend (emitter: ParticleEmitter, imageEntry: ParticleImageEntry) -> Sprite
 
-suspend fun Scoped.loadParticleEffect(pDataPath: String, atlasPath: String, group: CachedGroup = cachedGroup()): LoadedParticleEffect {
+suspend fun Scoped.loadParticleEffect(pDataPath: String, atlasPath: String, group: CachedGroup = cachedGroup(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
 	loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group) // Start the atlas loading and parsing in parallel.
 	val particleEffect = if (pDataPath.endsWith("bin", ignoreCase = true)) {
 		// Binary
@@ -164,10 +164,10 @@ suspend fun Scoped.loadParticleEffect(pDataPath: String, atlasPath: String, grou
 	} else {
 		loadJson(pDataPath, ParticleEffectSerializer).await()
 	}
-	return loadParticleEffect(particleEffect, atlasPath, group)
+	return loadParticleEffect(particleEffect, atlasPath, group, maxParticlesScale)
 }
 
-suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffect, atlasPath: String, group: CachedGroup = cachedGroup()): LoadedParticleEffect {
+suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffect, atlasPath: String, group: CachedGroup = cachedGroup(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
 	val atlasDataPromise = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group)
 	val atlasData = atlasDataPromise.await()
 
@@ -184,16 +184,16 @@ suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffect, atlasPath:
 		sprite.updateUv()
 		sprite
 	}
-	return loadParticleEffect(particleEffect, group, spriteResolver)
+	return loadParticleEffect(particleEffect, group, spriteResolver, maxParticlesScale)
 }
 
 /**
  * Given a particle effect and a sprite resolver, creates a particle effect instance, and requests a [Sprite] for every
  * emitter.
  */
-suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffect, group: CachedGroup = cachedGroup(), spriteResolver: SpriteResolver): LoadedParticleEffect {
+suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffect, group: CachedGroup = cachedGroup(), spriteResolver: SpriteResolver, maxParticlesScale: Float = 1f): LoadedParticleEffect {
 	val emitterRenderers = ArrayList<ParticleEmitterRenderer>(particleEffect.emitters.size)
-	val effectInstance = particleEffect.createInstance()
+	val effectInstance = particleEffect.createInstance(maxParticlesScale)
 
 	for (emitterInstance in effectInstance.emitterInstances) {
 		val emitter = emitterInstance.emitter
@@ -224,9 +224,9 @@ fun Owned.particleEffectComponent(init: ParticleEffectComponent.() -> Unit = {})
 	return p
 }
 
-fun Owned.particleEffectComponent(pDataPath: String, atlasPath: String, init: ParticleEffectComponent.() -> Unit = {}): ParticleEffectComponent {
+fun Owned.particleEffectComponent(pDataPath: String, atlasPath: String, maxParticlesScale: Float = 1f, init: ParticleEffectComponent.() -> Unit = {}): ParticleEffectComponent {
 	val p = ParticleEffectComponent(this)
-	p.load(pDataPath, atlasPath)
+	p.load(pDataPath, atlasPath, maxParticlesScale = maxParticlesScale)
 	p.init()
 	return p
 }
