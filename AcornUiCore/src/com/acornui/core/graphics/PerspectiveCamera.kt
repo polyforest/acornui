@@ -25,6 +25,8 @@ import com.acornui.math.Vector3
 import kotlin.math.abs
 import kotlin.math.tan
 
+// TODO: yDown, toggle
+
 /**
  * @author nbilyk
  */
@@ -38,10 +40,18 @@ open class PerspectiveCamera : CameraBase() {
 	private val tmp = Vector3()
 	private val tmp2: Vector2 = Vector2()
 
-	override fun updateViewProjection() {
+	protected open fun updateProjection() {
 		val aspect = viewportWidth / viewportHeight
 		_projection.setToProjection(abs(near), abs(far), fieldOfView, aspect)
+	}
+
+	protected open fun updateView() {
 		_view.setToLookAt(position, tmp.set(position).add(direction), up)
+	}
+
+	override fun updateViewProjection() {
+		updateProjection()
+		updateView()
 		_combined.set(_projection)
 		_combined.mul(_view)
 	}

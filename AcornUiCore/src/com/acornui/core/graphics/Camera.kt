@@ -178,9 +178,8 @@ interface Camera : CameraRo {
 	override var far: Float
 
 	fun setViewport(width: Float, height: Float) {
-		if (width <= 0f || height <= 0f) throw IllegalArgumentException("width and height must be > 0f")
-		viewportWidth = width
-		viewportHeight = height
+		viewportWidth = maxOf(1f, width)
+		viewportHeight = maxOf(1f, height)
 	}
 
 	fun pointToLookAt(target: Vector3) = pointToLookAt(target.x, target.y, target.z)

@@ -3,6 +3,8 @@ package com.acornui.graphics
 
 import com.acornui.core.graphics.Texture
 import com.acornui.gl.core.*
+import com.acornui.logging.Log
+import com.acornui.math.MathUtils
 
 /**
  * Wraps a standard OpenGL ES Cube map. Must be disposed when it is no longer used.
@@ -18,7 +20,8 @@ class CubeMap(
 		negativeZ: Texture,
 
 		gl: Gl20,
-		glState: GlState
+		glState: GlState,
+		private val writeMode: Boolean = false
 ) : GlTextureBase(gl, glState) {
 
 	private val sides = arrayOf(positiveX, negativeX, positiveY, negativeY, positiveZ, negativeZ)
@@ -63,11 +66,18 @@ class CubeMap(
 			val side = sides[i]
 			side.target = TextureTarget.VALUES[i + firstSideOrdinal]
 
-			// TODO: The cubemap shouldn't force the creation like this:
 			side.textureHandle = gl.createTexture()
-			gl.texImage2Db(side.target.value, 0, pixelFormat.value, side.width, side.height, 0, pixelFormat.value, pixelType.value, null)
+			if (writeMode) gl.texImage2Db(side.target.value, 0, pixelFormat.value, side.width, side.height, 0, pixelFormat.value, pixelType.value, null)
+			else gl.texImage2D(side.target.value, 0, side.pixelFormat.value, side.pixelFormat.value, side.pixelType.value, side)
 		}
-//		gl.texImage2Db(target.value, 0, pixelFormat.value, _width, _height, 0, pixelFormat.value, pixelType.value, null)
+		if (filterMin.useMipMap) {
+			if (!supportsNpot() && (!MathUtils.isPowerOfTwo(width) || !MathUtils.isPowerOfTwo(height))) {
+				Log.warn("MipMaps cannot be generated for non power of two textures (${width}x$height)")
+				gl.texParameteri(target.value, Gl20.TEXTURE_MIN_FILTER, TextureMinFilter.LINEAR.value)
+			} else {
+				gl.generateMipmap(target.value)
+			}
+		}
 	}
 
 	override fun delete() {

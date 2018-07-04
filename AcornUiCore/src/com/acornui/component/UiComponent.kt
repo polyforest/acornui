@@ -352,7 +352,7 @@ open class UiComponentImpl(
 		}
 
 	override val interactivityEnabled: Boolean
-		get() = inheritedInteractivityMode == InteractivityMode.ALL
+		get() = inheritedInteractivityMode == InteractivityMode.ALL || inheritedInteractivityMode == InteractivityMode.ALWAYS
 
 	override fun <T : InteractionEventRo> handlesInteraction(type: InteractionType<T>): Boolean {
 		return handlesInteraction(type, true) || handlesInteraction(type, false)
@@ -864,7 +864,7 @@ open class UiComponentImpl(
 	override fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo?): MutableList<UiComponentRo> {
 		if (!visible || (onlyInteractive && !interactivityEnabled)) return out
 		val ray = rayCache ?: camera.getPickRay(canvasX, canvasY, 0f, 0f, window.width, window.height, rayTmp)
-		if (intersectsGlobalRay(ray)) {
+		if (interactivityMode == InteractivityMode.ALWAYS || intersectsGlobalRay(ray)) {
 			out.add(this)
 		}
 		return out

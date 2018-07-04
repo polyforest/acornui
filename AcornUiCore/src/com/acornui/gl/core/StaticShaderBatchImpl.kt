@@ -21,7 +21,6 @@ import com.acornui.component.drawing.DrawElementsCall
 import com.acornui.core.Disposable
 import com.acornui.core.io.BufferFactory
 import com.acornui.graphics.ColorRo
-import com.acornui.io.ReadWriteNativeBuffer
 import com.acornui.math.Vector3Ro
 
 

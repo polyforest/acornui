@@ -317,6 +317,18 @@ fun <T> WriteBuffer<T>.put(value: Iterator<T>) {
 	}
 }
 
+fun WriteBuffer<Float>.put(value: FloatArray) {
+	for (i in 0..value.lastIndex) {
+		put(value[i])
+	}
+}
+
+fun WriteBuffer<Short>.put(value: ShortArray) {
+	for (i in 0..value.lastIndex) {
+		put(value[i])
+	}
+}
+
 /**
  * Fills the buffer with the given value.
  */

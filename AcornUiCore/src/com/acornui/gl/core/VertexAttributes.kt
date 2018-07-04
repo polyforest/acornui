@@ -111,15 +111,15 @@ data class VertexAttribute(
 
 	init {
 		if (numComponents < 1 || numComponents > 4) throw IllegalArgumentException("numComponents must be between 1 and 4")
-		when (type) {
+		componentSize = when (type) {
 			Gl20.FLOAT, Gl20.INT, Gl20.UNSIGNED_INT -> {
-				componentSize = 4
+				4
 			}
 			Gl20.SHORT, Gl20.UNSIGNED_SHORT -> {
-				componentSize = 2
+				2
 			}
 			Gl20.BYTE, Gl20.UNSIGNED_BYTE -> {
-				componentSize = 1
+				1
 			}
 			else -> throw Exception("Unknown attribute type.")
 		}
@@ -128,8 +128,8 @@ data class VertexAttribute(
 }
 
 object VertexAttributeUsage {
-	val POSITION = 0
-	val NORMAL = 1
-	val COLOR_TINT = 2
-	val TEXTURE_COORD = 3
+	const val POSITION = 0
+	const val NORMAL = 1
+	const val COLOR_TINT = 2
+	const val TEXTURE_COORD = 3
 }

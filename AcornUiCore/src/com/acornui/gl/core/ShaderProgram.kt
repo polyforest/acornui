@@ -40,16 +40,16 @@ interface ShaderProgram : Disposable {
 
 	companion object {
 		// Some naming conventions for attributes and uniforms:
-		val A_POSITION: String = "a_position"
-		val A_NORMAL: String = "a_normal"
-		val A_COLOR_TINT: String = "a_colorTint"
-		val A_TEXTURE_COORD: String = "a_texCoord"
+		const val A_POSITION: String = "a_position"
+		const val A_NORMAL: String = "a_normal"
+		const val A_COLOR_TINT: String = "a_colorTint"
+		const val A_TEXTURE_COORD: String = "a_texCoord"
 
-		val U_PROJ_TRANS: String = "u_projTrans"
-		val U_MODEL_TRANS: String = "u_modelTrans"
-		val U_COLOR_TRANS: String = "u_colorTrans"
-		val U_COLOR_OFFSET: String = "u_colorOffset"
-		val U_TEXTURE: String = "u_texture"
+		const val U_PROJ_TRANS: String = "u_projTrans"
+		const val U_MODEL_TRANS: String = "u_modelTrans"
+		const val U_COLOR_TRANS: String = "u_colorTrans"
+		const val U_COLOR_OFFSET: String = "u_colorOffset"
+		const val U_TEXTURE: String = "u_texture"
 	}
 
 }
@@ -62,10 +62,10 @@ abstract class ShaderProgramBase(
 		vertexShaderSrc: String,
 		fragmentShaderSrc: String,
 		private val vertexAttributes: Map<Int, String> = hashMapOf(
-				Pair(VertexAttributeUsage.POSITION, ShaderProgram.A_POSITION),
-				Pair(VertexAttributeUsage.NORMAL, ShaderProgram.A_NORMAL),
-				Pair(VertexAttributeUsage.COLOR_TINT, ShaderProgram.A_COLOR_TINT),
-				Pair(VertexAttributeUsage.TEXTURE_COORD, ShaderProgram.A_TEXTURE_COORD + "0")
+				VertexAttributeUsage.POSITION to ShaderProgram.A_POSITION,
+				VertexAttributeUsage.NORMAL to ShaderProgram.A_NORMAL,
+				VertexAttributeUsage.COLOR_TINT to ShaderProgram.A_COLOR_TINT,
+				VertexAttributeUsage.TEXTURE_COORD to ShaderProgram.A_TEXTURE_COORD + "0"
 		)
 ) : ShaderProgram {
 
