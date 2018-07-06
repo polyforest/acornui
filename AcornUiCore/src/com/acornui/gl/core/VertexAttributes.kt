@@ -112,15 +112,9 @@ data class VertexAttribute(
 	init {
 		if (numComponents < 1 || numComponents > 4) throw IllegalArgumentException("numComponents must be between 1 and 4")
 		componentSize = when (type) {
-			Gl20.FLOAT, Gl20.INT, Gl20.UNSIGNED_INT -> {
-				4
-			}
-			Gl20.SHORT, Gl20.UNSIGNED_SHORT -> {
-				2
-			}
-			Gl20.BYTE, Gl20.UNSIGNED_BYTE -> {
-				1
-			}
+			Gl20.FLOAT, Gl20.INT, Gl20.UNSIGNED_INT -> 4
+			Gl20.SHORT, Gl20.UNSIGNED_SHORT -> 2
+			Gl20.BYTE, Gl20.UNSIGNED_BYTE -> 1
 			else -> throw Exception("Unknown attribute type.")
 		}
 		size = componentSize * numComponents

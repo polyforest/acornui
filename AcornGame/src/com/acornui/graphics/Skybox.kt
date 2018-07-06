@@ -42,19 +42,19 @@ class Skybox(owner: Owned, private val yDown: Boolean = true) : UiComponentImpl(
 	/**
 	 * Loads the skybox as images.
 	 */
-	fun load(right: String,
-			 left: String,
-			 top: String,
-			 bottom: String,
-			 back: String,
-			 front: String) {
+	fun load(positiveX: String,
+			 negativeX: String,
+			 positiveY: String,
+			 negativeY: String,
+			 positiveZ: String,
+			 negativeZ: String) {
 		launch {
-			val pX = assets.load(right, AssetType.TEXTURE)
-			val nX = assets.load(left, AssetType.TEXTURE)
-			val pY = assets.load(top, AssetType.TEXTURE)
-			val nY = assets.load(bottom, AssetType.TEXTURE)
-			val pZ = assets.load(back, AssetType.TEXTURE)
-			val nZ = assets.load(front, AssetType.TEXTURE)
+			val pX = assets.load(positiveX, AssetType.TEXTURE)
+			val nX = assets.load(negativeX, AssetType.TEXTURE)
+			val pY = assets.load(positiveY, AssetType.TEXTURE)
+			val nY = assets.load(negativeY, AssetType.TEXTURE)
+			val pZ = assets.load(positiveZ, AssetType.TEXTURE)
+			val nZ = assets.load(negativeZ, AssetType.TEXTURE)
 
 			load(pX.await(), nX.await(), pY.await(), nY.await(), pZ.await(), nZ.await())
 		}
@@ -88,47 +88,47 @@ class Skybox(owner: Owned, private val yDown: Boolean = true) : UiComponentImpl(
 
 	private val vertices = floatArrayOf(
 			// positions
-			-1.0f, 1.0f, -1.0f,
-			-1.0f, -1.0f, -1.0f,
-			1.0f, -1.0f, -1.0f,
-			1.0f, -1.0f, -1.0f,
-			1.0f, 1.0f, -1.0f,
-			-1.0f, 1.0f, -1.0f,
+			-1f, 1f, -1f,
+			-1f, -1f, -1f,
+			1f, -1f, -1f,
+			1f, -1f, -1f,
+			1f, 1f, -1f,
+			-1f, 1f, -1f,
 
-			-1.0f, -1.0f, 1.0f,
-			-1.0f, -1.0f, -1.0f,
-			-1.0f, 1.0f, -1.0f,
-			-1.0f, 1.0f, -1.0f,
-			-1.0f, 1.0f, 1.0f,
-			-1.0f, -1.0f, 1.0f,
+			-1f, -1f, 1f,
+			-1f, -1f, -1f,
+			-1f, 1f, -1f,
+			-1f, 1f, -1f,
+			-1f, 1f, 1f,
+			-1f, -1f, 1f,
 
-			1.0f, -1.0f, -1.0f,
-			1.0f, -1.0f, 1.0f,
-			1.0f, 1.0f, 1.0f,
-			1.0f, 1.0f, 1.0f,
-			1.0f, 1.0f, -1.0f,
-			1.0f, -1.0f, -1.0f,
+			1f, -1f, -1f,
+			1f, -1f, 1f,
+			1f, 1f, 1f,
+			1f, 1f, 1f,
+			1f, 1f, -1f,
+			1f, -1f, -1f,
 
-			-1.0f, -1.0f, 1.0f,
-			-1.0f, 1.0f, 1.0f,
-			1.0f, 1.0f, 1.0f,
-			1.0f, 1.0f, 1.0f,
-			1.0f, -1.0f, 1.0f,
-			-1.0f, -1.0f, 1.0f,
+			-1f, -1f, 1f,
+			-1f, 1f, 1f,
+			1f, 1f, 1f,
+			1f, 1f, 1f,
+			1f, -1f, 1f,
+			-1f, -1f, 1f,
 
-			-1.0f, 1.0f, -1.0f,
-			1.0f, 1.0f, -1.0f,
-			1.0f, 1.0f, 1.0f,
-			1.0f, 1.0f, 1.0f,
-			-1.0f, 1.0f, 1.0f,
-			-1.0f, 1.0f, -1.0f,
+			-1f, 1f, -1f,
+			1f, 1f, -1f,
+			1f, 1f, 1f,
+			1f, 1f, 1f,
+			-1f, 1f, 1f,
+			-1f, 1f, -1f,
 
-			-1.0f, -1.0f, -1.0f,
-			-1.0f, -1.0f, 1.0f,
-			1.0f, -1.0f, -1.0f,
-			1.0f, -1.0f, -1.0f,
-			-1.0f, -1.0f, 1.0f,
-			1.0f, -1.0f, 1.0f
+			-1f, -1f, -1f,
+			-1f, -1f, 1f,
+			1f, -1f, -1f,
+			1f, -1f, -1f,
+			-1f, -1f, 1f,
+			1f, -1f, 1f
 	)
 
 	private val vertexComponents = floatBuffer(vertices.size)
