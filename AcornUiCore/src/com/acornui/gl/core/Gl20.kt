@@ -21,6 +21,7 @@ package com.acornui.gl.core
 import com.acornui.core.di.DKey
 import com.acornui.core.graphics.Texture
 import com.acornui.core.io.BufferFactory
+import com.acornui.core.io.floatBuffer
 import com.acornui.graphics.ColorRo
 import com.acornui.io.NativeBuffer
 import com.acornui.math.Matrix4Ro
@@ -1212,7 +1213,7 @@ fun Gl20.scissor(x: Float, y: Float, width: Float, height: Float) {
 	scissor(round(x).toInt(), round(y).toInt(), round(width).toInt(), round(height).toInt())
 }
 
-private val matrixValuesBuffer by lazy { BufferFactory.instance.floatBuffer(16) }
+private val matrixValuesBuffer by lazy { floatBuffer(16) }
 fun Gl20.uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: Matrix4Ro) = uniformMatrix4fv(location, transpose, value.values)
 fun Gl20.uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: List<Float>) {
 	val buffer = matrixValuesBuffer

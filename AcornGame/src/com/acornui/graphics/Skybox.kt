@@ -24,7 +24,7 @@ import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
-import com.acornui.core.io.BufferFactory
+import com.acornui.core.io.floatBuffer
 import com.acornui.gl.core.*
 import com.acornui.io.put
 import com.acornui.math.Matrix4
@@ -131,7 +131,7 @@ class Skybox(owner: Owned, private val yDown: Boolean = true) : UiComponentImpl(
 			1.0f, -1.0f, 1.0f
 	)
 
-	private val vertexComponents = BufferFactory.instance.floatBuffer(vertices.size)
+	private val vertexComponents = floatBuffer(vertices.size)
 
 	init {
 		vertexComponents.put(vertices)

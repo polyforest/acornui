@@ -19,7 +19,8 @@ package com.acornui.gl.core
 import com.acornui._assert
 import com.acornui.assertionsEnabled
 import com.acornui.core.Disposable
-import com.acornui.core.io.BufferFactory
+import com.acornui.core.io.resizableFloatBuffer
+import com.acornui.core.io.resizableShortBuffer
 import com.acornui.graphics.ColorRo
 import com.acornui.math.Vector3Ro
 
@@ -47,8 +48,8 @@ class ShaderBatchImpl(
 	 */
 	private var _drawMode: Int = Gl20.TRIANGLES
 
-	private val indices = BufferFactory.instance.shortBuffer(maxIndices)
-	private val vertexComponents = BufferFactory.instance.floatBuffer(maxVertexComponents)
+	private val indices = resizableShortBuffer(2048)
+	private val vertexComponents = resizableFloatBuffer(2048 * 16)
 	private var _highestIndex: Short = -1
 
 	override val currentDrawMode: Int

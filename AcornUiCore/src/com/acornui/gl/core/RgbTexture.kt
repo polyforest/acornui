@@ -18,6 +18,7 @@ package com.acornui.gl.core
 
 import com.acornui.core.graphics.RgbData
 import com.acornui.core.io.BufferFactory
+import com.acornui.core.io.byteBuffer
 
 class RgbTexture(
 		gl: Gl20,
@@ -35,7 +36,7 @@ class RgbTexture(
 		get() = _rgbData
 
 	override fun uploadTexture() {
-		val buffer = BufferFactory.instance.byteBuffer(_rgbData.bytes.size)
+		val buffer = byteBuffer(_rgbData.bytes.size)
 		for (i in 0.._rgbData.bytes.lastIndex) {
 			buffer.put(_rgbData.bytes[i])
 		}

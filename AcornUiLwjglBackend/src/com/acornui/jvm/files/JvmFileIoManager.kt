@@ -18,6 +18,7 @@ package com.acornui.jvm.files
 
 import com.acornui.core.Platform
 import com.acornui.core.io.BufferFactory
+import com.acornui.core.io.byteBuffer
 import com.acornui.core.platform
 import com.acornui.file.FileFilterGroup
 import com.acornui.file.FileIoManager
@@ -146,7 +147,7 @@ class JvmFileReader(private val file: File) : FileReader {
 	override suspend fun readAsBinary(): ReadNativeByteBuffer {
 		// TODO: There could be some utility here.
 		val bytes = file.readBytes()
-		val buffer = BufferFactory.instance.byteBuffer(bytes.size)
+		val buffer = byteBuffer(bytes.size)
 		for (i in 0..bytes.lastIndex) {
 			buffer.put(bytes[i])
 		}

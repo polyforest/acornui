@@ -95,7 +95,7 @@ open class StaticMeshComponent(
 	 * Overrides intersectsGlobalRay to check against each drawn triangle.
 	 */
 	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
-		if (mesh == null) return false
+		val mesh = mesh ?: return false
 		validate(GLOBAL_BOUNDING_BOX)
 
 		if (!globalBoundingBox.intersects(globalRay, intersection)) {
@@ -103,7 +103,7 @@ open class StaticMeshComponent(
 		}
 		if (intersectionType == MeshIntersectionType.EXACT) {
 			globalToLocal(localRay.set(globalRay))
-			if (!mesh!!.intersects(localRay, intersection)) {
+			if (!mesh.intersects(localRay, intersection)) {
 				return false
 			}
 		}
@@ -304,7 +304,7 @@ class StaticMesh {
 	}
 
 	private fun checkDrawCall(texture: Texture?, blendMode: BlendMode, premultipliedAlpha: Boolean, mode: Int): Boolean {
-		if (drawCall.texture != texture ||
+		return if (drawCall.texture != texture ||
 				drawCall.blendMode != blendMode ||
 				drawCall.premultipliedAlpha != premultipliedAlpha ||
 				drawCall.mode != mode) {
@@ -313,13 +313,13 @@ class StaticMesh {
 			drawCall.blendMode = blendMode
 			drawCall.premultipliedAlpha = premultipliedAlpha
 			drawCall.mode = mode
-			return true
+			true
 		} else {
-			return false
+			false
 		}
 	}
 
-	fun intersects(localRay: Ray, intersection: Vector3): Boolean {
+	fun intersects(localRay: RayRo, intersection: Vector3): Boolean {
 		val vertexData = vertexComponents ?: return false
 		val indices = indices ?: return false
 		vertexData.rewind()

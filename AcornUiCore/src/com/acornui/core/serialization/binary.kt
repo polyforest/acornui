@@ -23,6 +23,7 @@ import com.acornui.core.assets.AssetType
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.io.BufferFactory
+import com.acornui.core.io.byteBuffer
 import com.acornui.io.*
 import com.acornui.serialization.*
 
@@ -56,7 +57,7 @@ object BinarySerializer : Serializer<ReadNativeByteBuffer> {
 		val binaryWriter = BinaryWriter(propertyIndex)
 		callback(binaryWriter)
 
-		val data = BufferFactory.instance.byteBuffer(calculateHeaderSize(propertyIndex) + binaryWriter.calculateSize())
+		val data = byteBuffer(calculateHeaderSize(propertyIndex) + binaryWriter.calculateSize())
 		writeHeader(data, propertyIndex)
 		binaryWriter.write(data)
 		data.flip()

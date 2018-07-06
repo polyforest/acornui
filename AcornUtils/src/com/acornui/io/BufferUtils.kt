@@ -17,21 +17,21 @@
 package com.acornui.io
 
 import com.acornui.graphics.ColorRo
-import com.acornui.math.Vector2
-import com.acornui.math.Vector3
+import com.acornui.math.Vector2Ro
+import com.acornui.math.Vector3Ro
 
 
 // Common buffer read/write utility
 
-fun Vector3.write(buffer: WriteBuffer<Float>) {
-	buffer.put(x)
-	buffer.put(y)
-	buffer.put(z)
+fun WriteBuffer<Float>.putVector3(value: Vector3Ro) {
+	put(value.x)
+	put(value.y)
+	put(value.z)
 }
 
-fun Vector2.write(buffer: WriteBuffer<Float>) {
-	buffer.put(x)
-	buffer.put(y)
+fun WriteBuffer<Float>.putVector2(value: Vector2Ro) {
+	put(value.x)
+	put(value.y)
 }
 
 fun ColorRo.writeUnpacked(buffer: WriteBuffer<Float>) {
@@ -41,26 +41,64 @@ fun ColorRo.writeUnpacked(buffer: WriteBuffer<Float>) {
 	buffer.put(a)
 }
 
-fun ReadBuffer<Float>.toFloatArray(): FloatArray {
-	mark()
-	val floats = FloatArray(limit - position)
-	var i = 0
-	while (hasRemaining)
-		floats[i++] = get()
-	reset()
-	return floats
-}
-
+/**
+ * Converts the bytes from the current position until the limit into a ByteArray.
+ */
 fun ReadBuffer<Byte>.toByteArray(): ByteArray {
-	mark()
 	val bytes = ByteArray(limit - position)
 	var i = 0
 	while (hasRemaining)
 		bytes[i++] = get()
-	reset()
 	return bytes
 }
 
+/**
+ * Converts the shorts from the current position until the limit into a ShortArray.
+ */
+fun ReadBuffer<Short>.toShortArray(): ShortArray {
+	val bytes = ShortArray(limit - position)
+	var i = 0
+	while (hasRemaining)
+		bytes[i++] = get()
+	return bytes
+}
+
+/**
+ * Converts the ints from the current position until the limit into a IntArray.
+ */
+fun ReadBuffer<Int>.toIntArray(): IntArray {
+	val bytes = IntArray(limit - position)
+	var i = 0
+	while (hasRemaining)
+		bytes[i++] = get()
+	return bytes
+}
+
+/**
+ * Converts the floats from the current position until the limit into a FloatArray.
+ */
+fun ReadBuffer<Float>.toFloatArray(): FloatArray {
+	val floats = FloatArray(limit - position)
+	var i = 0
+	while (hasRemaining)
+		floats[i++] = get()
+	return floats
+}
+
+/**
+ * Converts the doubles from the current position until the limit into a DoubleArray.
+ */
+fun ReadBuffer<Double>.toDoubleArray(): DoubleArray {
+	val doubles = DoubleArray(limit - position)
+	var i = 0
+	while (hasRemaining)
+		doubles[i++] = get()
+	return doubles
+}
+
+/**
+ * Reads a UTF-8 string from the byte buffer.
+ */
 fun ReadByteBuffer.getString8(): String {
 	val builder = StringBuilder()
 	val stop: Char = 0.toChar()
@@ -72,6 +110,9 @@ fun ReadByteBuffer.getString8(): String {
 	return builder.toString()
 }
 
+/**
+ * Reads a UTF-16 string from the byte buffer.
+ */
 fun ReadByteBuffer.getString16(): String {
 	val builder = StringBuilder()
 	val stop: Char = 0.toChar()
@@ -83,7 +124,9 @@ fun ReadByteBuffer.getString16(): String {
 	return builder.toString()
 }
 
-
+/**
+ * Writes a UTF-8 string to the byte buffer.
+ */
 fun WriteByteBuffer.putString8(value: String) {
 	for (i in 0..value.lastIndex) {
 		putChar8(value[i])
@@ -91,6 +134,9 @@ fun WriteByteBuffer.putString8(value: String) {
 	putChar8(0.toChar())
 }
 
+/**
+ * Writes a UTF-16 string to the byte buffer.
+ */
 fun WriteByteBuffer.putString16(value: String) {
 	for (i in 0..value.lastIndex) {
 		putChar16(value[i])

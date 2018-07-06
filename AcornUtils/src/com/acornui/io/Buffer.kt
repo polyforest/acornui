@@ -27,20 +27,20 @@ abstract class BufferBase(
 	 * `limit - 1` is the last element that can be read or written.
 	 * Limit must be no less than zero and no greater than `capacity`.
 	 */
-	protected var _limit: Int = capacity
+	protected open var _limit: Int = capacity
 
 	/**
 	 * Mark is where position will be set when `reset()` is called.
 	 * Mark is not set by default. Mark is always no less than zero and no
 	 * greater than `position`.
 	 */
-	protected var _mark = UNSET_MARK
+	protected open var _mark = UNSET_MARK
 
 	/**
 	 * The current position of this buffer. Position is always no less than zero
 	 * and no greater than `limit`.
 	 */
-	protected var _position = 0
+	protected open var _position = 0
 
 	init {
 		if (capacity < 0) {
@@ -63,16 +63,12 @@ abstract class BufferBase(
 	}
 
 	override val hasRemaining: Boolean
-		get() {
-			return _position < _limit
-		}
+		get() = _position < _limit
 
 	override val limit: Int
-		get() {
-			return _limit
-		}
+		get() = _limit
 
-	fun limit(newLimit: Int): Buffer {
+	open fun limit(newLimit: Int): Buffer {
 		if (newLimit < 0 || newLimit > capacity) {
 			throw IllegalArgumentException("Bad limit (capacity $capacity): $newLimit")
 		}
@@ -365,4 +361,4 @@ interface NativeBuffer<T> : ReadBuffer<T> {
 
 interface ReadNativeByteBuffer : NativeBuffer<Byte>, ReadByteBuffer
 interface ReadWriteNativeBuffer<T> : NativeBuffer<T>, ReadWriteBuffer<T>
-interface ReadWriteNativeByteBuffer : ReadNativeByteBuffer, ReadWriteByteBuffer
+interface ReadWriteNativeByteBuffer : ReadNativeByteBuffer, ReadWriteByteBuffer, ReadWriteNativeBuffer<Byte>
