@@ -752,11 +752,38 @@ class Matrix4() : Matrix4Ro {
 	}
 
 	/**
+	 * Transposes the matrix.
+	 *
+	 * @return This matrix for the purpose of chaining methods together.
+	 */
+	fun tra(): Matrix4 {
+		if (_mode == MatrixMode.IDENTITY) return this
+		tmp[M00] = values[M00]
+		tmp[M01] = values[M10]
+		tmp[M02] = values[M20]
+		tmp[M03] = values[M30]
+		tmp[M10] = values[M01]
+		tmp[M11] = values[M11]
+		tmp[M12] = values[M21]
+		tmp[M13] = values[M31]
+		tmp[M20] = values[M02]
+		tmp[M21] = values[M12]
+		tmp[M22] = values[M22]
+		tmp[M23] = values[M32]
+		tmp[M30] = values[M03]
+		tmp[M31] = values[M13]
+		tmp[M32] = values[M23]
+		tmp[M33] = values[M33]
+		return set(tmp)
+	}
+
+	/**
 	 * Sets the matrix to an identity matrix.
 	 *
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun idt(): Matrix4 {
+		if (_mode == MatrixMode.IDENTITY) return this
 		val values = _values
 		values[M00] = 1f
 		values[M01] = 0f

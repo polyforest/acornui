@@ -84,81 +84,59 @@ object MathUtils {
 	/**
 	 * Returns a random number between 0 (inclusive) and the specified value (inclusive).
 	 */
-	fun random(range: Int): Int {
-		return rng.nextInt(range + 1)
-	}
+	fun random(range: Int): Int = rng.random(range)
 
 	/**
 	 * Returns a random number between start (inclusive) and end (inclusive).
 	 */
-	fun random(start: Int, end: Int): Int {
-		return start + rng.nextInt(end - start + 1)
-	}
+	fun random(start: Int, end: Int): Int = rng.random(start, end)
 
 	/**
 	 * Returns a random number between 0 (inclusive) and the specified value (inclusive).
 	 */
-	fun random(range: Long): Long {
-		return (rng.nextDouble() * range.toDouble()).toLong()
-	}
+	fun random(range: Long): Long = rng.random(range)
 
 	/**
 	 * Returns a random number between start (inclusive) and end (inclusive).
 	 */
-	fun random(start: Long, end: Long): Long {
-		return start + (rng.nextDouble() * (end - start).toDouble()).toLong()
-	}
+	fun random(start: Long, end: Long): Long = rng.random(start, end)
 
 	/**
 	 * Returns a random boolean value.
 	 */
-	fun randomBoolean(): Boolean {
-		return rng.nextBoolean()
-	}
+	fun randomBoolean(): Boolean = rng.nextBoolean()
 
 	/**
 	 * Returns true if a random value between 0 and 1 is less than the specified value.
 	 */
-	fun randomBoolean(chance: Float): Boolean {
-		return random() < chance
-	}
+	fun randomBoolean(chance: Float): Boolean = rng.randomBoolean(chance)
 
 	/**
 	 * Returns random number between 0.0 (inclusive) and 1.0 (exclusive).
 	 */
-	fun random(): Float {
-		return rng.nextFloat()
-	}
+	fun random(): Float = rng.nextFloat()
 
 	/**
 	 * Returns a random number between 0 (inclusive) and the specified value (exclusive).
 	 */
-	fun random(range: Float): Float {
-		return rng.nextFloat() * range
-	}
+	fun random(range: Float): Float = rng.random(range)
 
 	/**
 	 * Returns a random number between start (inclusive) and end (exclusive).
 	 */
-	fun random(start: Float, end: Float): Float {
-		return start + rng.nextFloat() * (end - start)
-	}
+	fun random(start: Float, end: Float): Float = rng.random(start, end)
 
 	/**
 	 * Returns -1 or 1, randomly.
 	 */
-	fun randomSign(): Int {
-		return 1 or (rng.nextInt() shr 31)
-	}
+	fun randomSign(): Int = rng.randomSign()
 
 	/**
 	 * Returns a triangularly distributed random number between -1.0 (exclusive) and 1.0 (exclusive), where values around zero are
 	 * more likely.
 	 * This is an optimized version of {@link #randomTriangular(float, float, float) randomTriangular(-1, 1, 0)}
 	 */
-	fun randomTriangular(): Float {
-		return rng.nextFloat() - rng.nextFloat()
-	}
+	fun randomTriangular(): Float = rng.randomTriangular()
 
 	/**
 	 * Returns a triangularly distributed random number between {@code -max} (exclusive) and {@code max} (exclusive), where values
@@ -166,9 +144,7 @@ object MathUtils {
 	 * This is an optimized version of {@link #randomTriangular(float, float, float) randomTriangular(-max, max, 0)}
 	 * @param max the upper limit
 	 */
-	fun randomTriangular(max: Float): Float {
-		return (rng.nextFloat() - rng.nextFloat()) * max
-	}
+	fun randomTriangular(max: Float): Float = rng.randomTriangular(max)
 
 	/**
 	 * Returns a triangularly distributed random number between {@code min} (inclusive) and {@code max} (exclusive), where the
@@ -178,9 +154,7 @@ object MathUtils {
 	 * @param min the lower limit
 	 * @param max the upper limit
 	 */
-	fun randomTriangular(min: Float, max: Float): Float {
-		return randomTriangular(min, max, (max - min) * 0.5f)
-	}
+	fun randomTriangular(min: Float, max: Float): Float = rng.randomTriangular(min, max)
 
 	/**
 	 * Returns a triangularly distributed random number between {@code min} (inclusive) and {@code max} (exclusive), where values
@@ -189,12 +163,7 @@ object MathUtils {
 	 * @param max the upper limit
 	 * @param mode the point around which the values are more likely
 	 */
-	fun randomTriangular(min: Float, max: Float, mode: Float): Float {
-		val u = rng.nextFloat()
-		val d = max - min
-		if (u <= (mode - min) / d) return min + kotlin.math.sqrt(u * d * (mode - min))
-		return max - kotlin.math.sqrt((1 - u) * d * (max - mode))
-	}
+	fun randomTriangular(min: Float, max: Float, mode: Float): Float = rng.randomTriangular(min, max, mode)
 
 	// ---
 

@@ -198,3 +198,104 @@ open class Random(var seed0: Long = 0, var seed1: Long = 0) {
 	}
 
 }
+
+/**
+ * Returns a random number between 0 (inclusive) and the specified value (inclusive).
+ */
+fun Random.random(range: Int): Int {
+	return nextInt(range + 1)
+}
+
+/**
+ * Returns a random number between start (inclusive) and end (inclusive).
+ */
+fun Random.random(start: Int, end: Int): Int {
+	return start + nextInt(end - start + 1)
+}
+
+/**
+ * Returns a random number between 0 (inclusive) and the specified value (inclusive).
+ */
+fun Random.random(range: Long): Long {
+	return (nextDouble() * range.toDouble()).toLong()
+}
+
+/**
+ * Returns a random number between start (inclusive) and end (inclusive).
+ */
+fun Random.random(start: Long, end: Long): Long {
+	return start + (nextDouble() * (end - start).toDouble()).toLong()
+}
+
+/**
+ * Returns true if a random value between 0 and 1 is less than the specified value.
+ */
+fun Random.randomBoolean(chance: Float): Boolean {
+	return nextFloat() < chance
+}
+
+/**
+ * Returns a random number between 0 (inclusive) and the specified value (exclusive).
+ */
+fun Random.random(range: Float): Float {
+	return nextFloat() * range
+}
+
+/**
+ * Returns a random number between start (inclusive) and end (exclusive).
+ */
+fun Random.random(start: Float, end: Float): Float {
+	return start + nextFloat() * (end - start)
+}
+
+/**
+ * Returns -1 or 1, randomly.
+ */
+fun Random.randomSign(): Int {
+	return 1 or (nextInt() shr 31)
+}
+
+/**
+ * Returns a triangularly distributed random number between -1.0 (exclusive) and 1.0 (exclusive), where values around zero are
+ * more likely.
+ * This is an optimized version of {@link #randomTriangular(float, float, float) randomTriangular(-1, 1, 0)}
+ */
+fun Random.randomTriangular(): Float {
+	return nextFloat() - nextFloat()
+}
+
+/**
+ * Returns a triangularly distributed random number between {@code -max} (exclusive) and {@code max} (exclusive), where values
+ * around zero are more likely.
+ * This is an optimized version of {@link #randomTriangular(float, float, float) randomTriangular(-max, max, 0)}
+ * @param max the upper limit
+ */
+fun Random.randomTriangular(max: Float): Float {
+	return (nextFloat() - nextFloat()) * max
+}
+
+/**
+ * Returns a triangularly distributed random number between {@code min} (inclusive) and {@code max} (exclusive), where the
+ * `mode` argument defaults to the midpoint between the bounds, giving a symmetric distribution.
+ *
+ * This method is equivalent of [randomTriangular(min, max, (max - min) * .5f)]
+ * @param min the lower limit
+ * @param max the upper limit
+ */
+fun Random.randomTriangular(min: Float, max: Float): Float {
+	return randomTriangular(min, max, (max - min) * 0.5f)
+}
+
+/**
+ * Returns a triangularly distributed random number between {@code min} (inclusive) and {@code max} (exclusive), where values
+ * around {@code mode} are more likely.
+ * @param min the lower limit
+ * @param max the upper limit
+ * @param mode the point around which the values are more likely
+ */
+fun Random.randomTriangular(min: Float, max: Float, mode: Float): Float {
+	val u = nextFloat()
+	val d = max - min
+	if (u <= (mode - min) / d) return min + kotlin.math.sqrt(u * d * (mode - min))
+	return max - kotlin.math.sqrt((1 - u) * d * (max - mode))
+}

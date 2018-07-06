@@ -1,7 +1,6 @@
 package com.acornui.component.drawing
 
 import com.acornui.collection.Clearable
-import com.acornui.collection.addAll
 import com.acornui.core.Parent
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
@@ -40,16 +39,33 @@ class MeshData : Parent<MeshData>, Clearable {
 	var highestIndex = -1
 
 	/**
-	 * Transform the vertices by the given matrix.
+	 * Transform the vertices by the given matrix, and the normals by the inverse-transpose of that matrix.
 	 */
-	fun transform(value: Matrix4) {
+	fun transform(value: Matrix4Ro) {
+		transformVertices(value)
+		tmpMat.set(value).setTranslation(0f, 0f, 0f).inv().tra()
+		transformNormals(tmpMat)
+	}
+
+	fun transformVertices(value: Matrix4Ro) {
 		for (i in 0..vertices.lastIndex) {
 			val vertex = vertices[i]
 			value.prj(vertex.position)
-			value.rot(vertex.normal)
 		}
 		for (i in 0..children.lastIndex) {
-			children[i].transform(value)
+			children[i].transformVertices(value)
+		}
+	}
+
+	/**
+	 * Multiplies the normals by the given matrix.
+	 */
+	fun transformNormals(value: Matrix4Ro) {
+		for (i in 0..vertices.lastIndex) {
+			value.rot(vertices[i].normal).nor()
+		}
+		for (i in 0..children.lastIndex) {
+			children[i].transformNormals(value)
 		}
 	}
 
@@ -70,12 +86,19 @@ class MeshData : Parent<MeshData>, Clearable {
 	 * Scales the vertices by the given multipliers.
 	 */
 	fun scl(x: Float = 1f, y: Float = 1f, z: Float = 1f) {
-		for (i in 0..vertices.lastIndex) {
-			val vertex = vertices[i]
-			vertex.position.scl(x, y, z)
-		}
-		for (i in 0..children.lastIndex) {
-			children[i].scl(x, y, z)
+		if (x == y && x == z) {
+			// No need to manipulate the normals.
+			for (i in 0..vertices.lastIndex) {
+				val vertex = vertices[i]
+				vertex.position.scl(x, y, z)
+			}
+			for (i in 0..children.lastIndex) {
+				children[i].scl(x, y, z)
+			}
+		} else {
+			mat.idt()
+			mat.scl(x, y, z)
+			transform(mat)
 		}
 	}
 
@@ -236,17 +259,19 @@ class MeshData : Parent<MeshData>, Clearable {
 
 	companion object {
 		private val tmpUv = Vector2()
-}
+		private val tmpMat = Matrix4()
+	}
 }
 
 private val mat = Matrix4()
 private val quat = Quaternion()
 
 fun MeshData.rotate(yaw: Float = 0f, pitch: Float = 0f, roll: Float = 0f) {
-	mat.idt()
 	quat.setEulerAnglesRad(yaw, pitch, roll)
-	mat.rotate(quat)
-	transform(mat)
+	mat.set(quat)
+	// For just a rotation matrix, we don't need to calculate the inverse-transpose to change the normals.
+	transformVertices(mat)
+	transformNormals(mat)
 }
 
 fun MeshData.transform(position: Vector3Ro = Vector3.ZERO, scale: Vector3Ro = Vector3.ONE, rotation: Vector3Ro = Vector3.ZERO, origin: Vector3Ro = Vector3.ZERO) {

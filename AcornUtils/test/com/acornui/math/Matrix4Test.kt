@@ -286,6 +286,20 @@ class Matrix4Test {
 		assertListEquals(copy.values, m1.values)
 	}
 
+	@Test
+	fun tra() {
+		val rotationMat = m1.copy()
+		rotationMat.set(Quaternion().setFromAxis(Vector3.Y, 0.25f))
+
+		val tra = rotationMat.copy()
+		tra.tra()
+
+		val inv = rotationMat.copy()
+		inv.inv()
+
+		assertEquals(tra, inv)
+	}
+
 
 }
 
