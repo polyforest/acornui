@@ -78,7 +78,7 @@ class LightingRenderer(
 		gl.uniform2f(lightingShader.getRequiredUniformLocation("poissonDisk[2]"), -0.09418410f, -0.92938870f)
 		gl.uniform2f(lightingShader.getRequiredUniformLocation("poissonDisk[3]"), 0.34495938f, 0.29387760f)
 
-		val modelUniform = glState.shader!!.getUniformLocation(ShaderProgram.U_MODEL_TRANS)
+		val modelUniform = glState.shader!!.getUniformLocation(CommonShaderUniforms.U_MODEL_TRANS)
 		if (modelUniform != null) gl.uniformMatrix4fv(modelUniform, false, Matrix4())
 
 		gl.uniform2f(lightingShaderUniforms.u_resolutionInv, 1.0f / directionalShadowsResolution.toFloat(), 1.0f / directionalShadowsResolution.toFloat())

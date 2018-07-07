@@ -42,8 +42,8 @@ class GlState(
 	 */
 	private val defaultShader: ShaderProgram = DefaultShaderProgram(gl)
 
-	private val viewProjectionCache = MatrixCache(gl, ShaderProgram.U_PROJ_TRANS)
-	private val modelCache = MatrixCache(gl, ShaderProgram.U_MODEL_TRANS)
+	private val viewProjectionCache = MatrixCache(gl, CommonShaderUniforms.U_PROJ_TRANS)
+	private val modelCache = MatrixCache(gl, CommonShaderUniforms.U_MODEL_TRANS)
 
 	private var _activeTexture: Int = -1
 
@@ -222,7 +222,7 @@ class GlState(
 	private val _mvp = Matrix4()
 
 	fun camera(camera: CameraRo, model: Matrix4Ro = Matrix4.IDENTITY) {
-		val hasModel = _shader!!.getUniformLocation(ShaderProgram.U_MODEL_TRANS) != null
+		val hasModel = _shader!!.getUniformLocation(CommonShaderUniforms.U_MODEL_TRANS) != null
 		if (hasModel) {
 			viewProjection(camera.combined)
 			model(model)

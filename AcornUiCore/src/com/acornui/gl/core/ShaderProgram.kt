@@ -37,21 +37,24 @@ interface ShaderProgram : Disposable {
 
 	fun bind()
 	fun unbind()
+}
 
-	companion object {
-		// Some naming conventions for attributes and uniforms:
-		const val A_POSITION: String = "a_position"
-		const val A_NORMAL: String = "a_normal"
-		const val A_COLOR_TINT: String = "a_colorTint"
-		const val A_TEXTURE_COORD: String = "a_texCoord"
+object CommonShaderAttributes {
 
-		const val U_PROJ_TRANS: String = "u_projTrans"
-		const val U_MODEL_TRANS: String = "u_modelTrans"
-		const val U_COLOR_TRANS: String = "u_colorTrans"
-		const val U_COLOR_OFFSET: String = "u_colorOffset"
-		const val U_TEXTURE: String = "u_texture"
-	}
+	const val A_POSITION: String = "a_position"
+	const val A_NORMAL: String = "a_normal"
+	const val A_COLOR_TINT: String = "a_colorTint"
+	const val A_TEXTURE_COORD: String = "a_texCoord"
+}
 
+object CommonShaderUniforms {
+
+	const val U_PROJ_TRANS: String = "u_projTrans"
+	const val U_MODEL_TRANS: String = "u_modelTrans"
+	const val U_COLOR_TRANS: String = "u_colorTrans"
+	const val U_COLOR_OFFSET: String = "u_colorOffset"
+	const val U_TEXTURE: String = "u_texture"
+	const val U_TEXTURE_NORMAL: String = "u_textureNormal"
 }
 
 /**
@@ -62,10 +65,10 @@ abstract class ShaderProgramBase(
 		vertexShaderSrc: String,
 		fragmentShaderSrc: String,
 		private val vertexAttributes: Map<Int, String> = hashMapOf(
-				VertexAttributeUsage.POSITION to ShaderProgram.A_POSITION,
-				VertexAttributeUsage.NORMAL to ShaderProgram.A_NORMAL,
-				VertexAttributeUsage.COLOR_TINT to ShaderProgram.A_COLOR_TINT,
-				VertexAttributeUsage.TEXTURE_COORD to ShaderProgram.A_TEXTURE_COORD + "0"
+				VertexAttributeUsage.POSITION to CommonShaderAttributes.A_POSITION,
+				VertexAttributeUsage.NORMAL to CommonShaderAttributes.A_NORMAL,
+				VertexAttributeUsage.COLOR_TINT to CommonShaderAttributes.A_COLOR_TINT,
+				VertexAttributeUsage.TEXTURE_COORD to CommonShaderAttributes.A_TEXTURE_COORD + "0"
 		)
 ) : ShaderProgram {
 
@@ -178,7 +181,7 @@ void main() {
 
 	override fun bind() {
 		super.bind()
-		gl.uniform1i(getUniformLocation(ShaderProgram.U_TEXTURE)!!, 0)  // set the fragment shader's texture to unit 0
+		gl.uniform1i(getUniformLocation(CommonShaderUniforms.U_TEXTURE)!!, 0)  // set the fragment shader's texture to unit 0
 	}
 
 }

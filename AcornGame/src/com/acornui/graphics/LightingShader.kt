@@ -1,9 +1,6 @@
 package com.acornui.graphics
 
-import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.DEFAULT_SHADER_HEADER
-import com.acornui.gl.core.ShaderProgram
-import com.acornui.gl.core.ShaderProgramBase
+import com.acornui.gl.core.*
 
 const val PACK_FLOAT: String = """
 vec4 packFloat(const in float value) {
@@ -254,7 +251,7 @@ void main() {
 
 	override fun bind() {
 		super.bind()
-		gl.uniform1i(getUniformLocation(ShaderProgram.U_TEXTURE)!!, 0);  // set the fragment shader's texture to unit 0
+		gl.uniform1i(getUniformLocation(CommonShaderUniforms.U_TEXTURE)!!, 0);  // set the fragment shader's texture to unit 0
 	}
 
 }

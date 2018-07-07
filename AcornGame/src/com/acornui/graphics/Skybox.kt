@@ -227,11 +227,11 @@ void main() {
 
 """,
 		vertexAttributes = hashMapOf(
-				VertexAttributeUsage.POSITION to ShaderProgram.A_POSITION
+				VertexAttributeUsage.POSITION to CommonShaderAttributes.A_POSITION
 		)) {
 
 	override fun bind() {
 		super.bind()
-		gl.uniform1i(getUniformLocation(ShaderProgram.U_TEXTURE)!!, 0)  // set the fragment shader's texture to unit 0
+		gl.uniform1i(getUniformLocation(CommonShaderUniforms.U_TEXTURE)!!, 0)  // set the fragment shader's texture to unit 0
 	}
 }
