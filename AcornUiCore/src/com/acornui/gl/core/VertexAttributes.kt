@@ -121,9 +121,15 @@ data class VertexAttribute(
 	}
 }
 
+/**
+ * An enumeration of vertex attribute usages.
+ * Custom vertex attribute usages should start at 16.
+ */
 object VertexAttributeUsage {
 	const val POSITION = 0
 	const val NORMAL = 1
 	const val COLOR_TINT = 2
 	const val TEXTURE_COORD = 3
+	const val TANGENT = 4
+	const val BITANGENT = 5
 }

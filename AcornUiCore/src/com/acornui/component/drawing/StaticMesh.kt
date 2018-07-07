@@ -29,7 +29,8 @@ import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
-import com.acornui.core.io.BufferFactory
+import com.acornui.core.io.floatBuffer
+import com.acornui.core.io.shortBuffer
 import com.acornui.core.iterateChildren
 import com.acornui.gl.core.*
 import com.acornui.io.ReadWriteNativeBuffer
@@ -244,11 +245,12 @@ class StaticMesh {
 		drawCall = DrawElementsCall.obtain()
 		drawCalls.add(drawCall)
 
-		indices = BufferFactory.instance.shortBuffer(indicesL)
-		vertexComponents = BufferFactory.instance.floatBuffer(verticesL * vertexAttributes.vertexSize)
+		indices = shortBuffer(indicesL)
+		vertexComponents = floatBuffer(verticesL * vertexAttributes.vertexSize)
 		boundingBox.inf()
 		populateMeshData(meshData)
 		boundingBox.update()
+		// Mark the limits of the buffers so they can be rewound.
 		indices!!.flip()
 		vertexComponents!!.flip()
 		_changed.dispatch()
