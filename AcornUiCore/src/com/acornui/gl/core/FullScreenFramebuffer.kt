@@ -23,7 +23,6 @@ import com.acornui.core.di.inject
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Window
 import com.acornui.function.as3
-import com.acornui.graphics.Color
 import com.acornui.math.Matrix4
 import com.acornui.math.Vector3
 
@@ -35,10 +34,10 @@ class FullScreenFramebuffer(override val injector: Injector, private val hasDept
 	private val window = inject(Window)
 	private var frameBuffer: Framebuffer? = null
 
-	private val tL = Vertex(Vector3(-1f, -1f, 0f), Vector3.NEG_Z.copy(), Color.WHITE.copy(), 0f, 0f)
-	private val tR = Vertex(Vector3(1f, -1f, 0f), Vector3.NEG_Z.copy(), Color.WHITE.copy(), 1f, 0f)
-	private val bR = Vertex(Vector3(1f, 1f, 0f), Vector3.NEG_Z.copy(), Color.WHITE.copy(), 1f, 1f)
-	private val bL = Vertex(Vector3(-1f, 1f, 0f), Vector3.NEG_Z.copy(), Color.WHITE.copy(), 0f, 1f)
+	private val tL = Vector3(-1f, -1f, 0f)
+	private val tR = Vector3(1f, -1f, 0f)
+	private val bR = Vector3(1f, 1f, 0f)
+	private val bL = Vector3(-1f, 1f, 0f)
 
 	init {
 		window.sizeChanged.add(this::resize.as3)

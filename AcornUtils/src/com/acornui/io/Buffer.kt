@@ -124,10 +124,10 @@ abstract class BufferBase(
 	 * @return The current position value, before it is incremented
 	 */
 	protected fun nextPosition(inc: Int = 1): Int {
-		if (_limit - _position < inc)
+		if (limit - position < inc)
 			throw BufferUnderflowException()
-		val p = _position
-		_position += inc
+		val p = position
+		position = p + inc
 		return p
 	}
 
@@ -350,7 +350,7 @@ interface ReadWriteByteBuffer : ReadWriteBuffer<Byte>, WriteByteBuffer, ReadByte
 
 // TODO: Endianness
 
-interface NativeBuffer<T> : ReadBuffer<T> {
+interface NativeReadBuffer<T> : ReadBuffer<T> {
 
 	/**
 	 * Returns the underlying native implementation of this Buffer. For JVM it will be an nio.Buffer object, for
@@ -359,6 +359,6 @@ interface NativeBuffer<T> : ReadBuffer<T> {
 	val native: Any
 }
 
-interface ReadNativeByteBuffer : NativeBuffer<Byte>, ReadByteBuffer
-interface ReadWriteNativeBuffer<T> : NativeBuffer<T>, ReadWriteBuffer<T>
-interface ReadWriteNativeByteBuffer : ReadNativeByteBuffer, ReadWriteByteBuffer, ReadWriteNativeBuffer<Byte>
+interface NativeReadByteBuffer : NativeReadBuffer<Byte>, ReadByteBuffer
+interface NativeReadWriteBuffer<T> : NativeReadBuffer<T>, ReadWriteBuffer<T>
+interface NativeReadWriteByteBuffer : NativeReadByteBuffer, ReadWriteByteBuffer, NativeReadWriteBuffer<Byte>

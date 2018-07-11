@@ -18,7 +18,7 @@ package com.acornui.js.gl
 
 import com.acornui.core.graphics.Texture
 import com.acornui.gl.core.*
-import com.acornui.io.NativeBuffer
+import com.acornui.io.NativeReadBuffer
 import org.khronos.webgl.*
 
 /**
@@ -78,23 +78,23 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.bufferData(target, size, usage)
 	}
 
-	override fun bufferDatabv(target: Int, data: NativeBuffer<Byte>, usage: Int) {
+	override fun bufferDatabv(target: Int, data: NativeReadBuffer<Byte>, usage: Int) {
 		context.bufferData(target, data.native as BufferDataSource, usage)
 	}
 
-	override fun bufferDatafv(target: Int, data: NativeBuffer<Float>, usage: Int) {
+	override fun bufferDatafv(target: Int, data: NativeReadBuffer<Float>, usage: Int) {
 		context.bufferData(target, data.native as BufferDataSource, usage)
 	}
 
-	override fun bufferDatasv(target: Int, data: NativeBuffer<Short>, usage: Int) {
+	override fun bufferDatasv(target: Int, data: NativeReadBuffer<Short>, usage: Int) {
 		context.bufferData(target, data.native as BufferDataSource, usage)
 	}
 
-	override fun bufferSubDatafv(target: Int, offset: Int, data: NativeBuffer<Float>) {
+	override fun bufferSubDatafv(target: Int, offset: Int, data: NativeReadBuffer<Float>) {
 		context.bufferSubData(target, offset, data.native as BufferDataSource)
 	}
 
-	override fun bufferSubDatasv(target: Int, offset: Int, data: NativeBuffer<Short>) {
+	override fun bufferSubDatasv(target: Int, offset: Int, data: NativeReadBuffer<Short>) {
 		context.bufferSubData(target, offset, data.native as BufferDataSource)
 	}
 
@@ -337,7 +337,7 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.polygonOffset(factor, units)
 	}
 
-	override fun readPixels(x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: NativeBuffer<Byte>) {
+	override fun readPixels(x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: NativeReadBuffer<Byte>) {
 		context.readPixels(x, y, width, height, format, type, pixels.native as ArrayBufferView)
 	}
 
@@ -381,12 +381,12 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.stencilOpSeparate(face, fail, zfail, zpass)
 	}
 
-	override fun texImage2Db(target: Int, level: Int, internalFormat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: NativeBuffer<Byte>?) {
+	override fun texImage2Db(target: Int, level: Int, internalFormat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: NativeReadBuffer<Byte>?) {
 		@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 		context.texImage2D(target, level, internalFormat, width, height, border, format, type, pixels?.native as ArrayBufferView?)
 	}
 
-	override fun texImage2Df(target: Int, level: Int, internalFormat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: NativeBuffer<Float>?) {
+	override fun texImage2Df(target: Int, level: Int, internalFormat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: NativeReadBuffer<Float>?) {
 		@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 		context.texImage2D(target, level, internalFormat, width, height, border, format, type, pixels?.native as ArrayBufferView?)
 	}
@@ -411,7 +411,7 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.uniform1f((location as WebGlUniformLocationRef).o, x)
 	}
 
-	override fun uniform1fv(location: GlUniformLocationRef, v: NativeBuffer<Float>) {
+	override fun uniform1fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
 		context.uniform1fv((location as WebGlUniformLocationRef).o, v.native as Float32Array)
 	}
 
@@ -419,7 +419,7 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.uniform1i((location as WebGlUniformLocationRef).o, x)
 	}
 
-	override fun uniform1iv(location: GlUniformLocationRef, v: NativeBuffer<Int>) {
+	override fun uniform1iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
 		context.uniform1iv((location as WebGlUniformLocationRef).o, v.native as Int32Array)
 	}
 
@@ -427,7 +427,7 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.uniform2f((location as WebGlUniformLocationRef).o, x, y)
 	}
 
-	override fun uniform2fv(location: GlUniformLocationRef, v: NativeBuffer<Float>) {
+	override fun uniform2fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
 		context.uniform2fv((location as WebGlUniformLocationRef).o, v.native as Float32Array)
 	}
 
@@ -435,7 +435,7 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.uniform2i((location as WebGlUniformLocationRef).o, x, y)
 	}
 
-	override fun uniform2iv(location: GlUniformLocationRef, v: NativeBuffer<Int>) {
+	override fun uniform2iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
 		context.uniform2iv((location as WebGlUniformLocationRef).o, v.native as Int32Array)
 	}
 
@@ -443,7 +443,7 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.uniform3f((location as WebGlUniformLocationRef).o, x, y, z)
 	}
 
-	override fun uniform3fv(location: GlUniformLocationRef, v: NativeBuffer<Float>) {
+	override fun uniform3fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
 		context.uniform3fv((location as WebGlUniformLocationRef).o, v.native as Float32Array)
 	}
 
@@ -451,7 +451,7 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.uniform3i((location as WebGlUniformLocationRef).o, x, y, z)
 	}
 
-	override fun uniform3iv(location: GlUniformLocationRef, v: NativeBuffer<Int>) {
+	override fun uniform3iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
 		context.uniform3iv((location as WebGlUniformLocationRef).o, v.native as Int32Array)
 	}
 
@@ -459,7 +459,7 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.uniform4f((location as WebGlUniformLocationRef).o, x, y, z, w)
 	}
 
-	override fun uniform4fv(location: GlUniformLocationRef, v: NativeBuffer<Float>) {
+	override fun uniform4fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
 		context.uniform4fv((location as WebGlUniformLocationRef).o, v.native as Float32Array)
 	}
 
@@ -467,19 +467,19 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.uniform4i((location as WebGlUniformLocationRef).o, x, y, z, w)
 	}
 
-	override fun uniform4iv(location: GlUniformLocationRef, v: NativeBuffer<Int>) {
+	override fun uniform4iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
 		context.uniform4iv((location as WebGlUniformLocationRef).o, v.native as Int32Array)
 	}
 
-	override fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeBuffer<Float>) {
+	override fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>) {
 		context.uniformMatrix2fv((location as WebGlUniformLocationRef).o, transpose, value.native as Float32Array)
 	}
 
-	override fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeBuffer<Float>) {
+	override fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>) {
 		context.uniformMatrix3fv((location as WebGlUniformLocationRef).o, transpose, value.native as Float32Array)
 	}
 
-	override fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeBuffer<Float>) {
+	override fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>) {
 		context.uniformMatrix4fv((location as WebGlUniformLocationRef).o, transpose, value.native as Float32Array)
 	}
 
@@ -495,7 +495,7 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.vertexAttrib1f(index, x)
 	}
 
-	override fun vertexAttrib1fv(index: Int, values: NativeBuffer<Float>) {
+	override fun vertexAttrib1fv(index: Int, values: NativeReadBuffer<Float>) {
 		context.vertexAttrib1fv(index, values.native as Float32Array)
 	}
 
@@ -503,7 +503,7 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.vertexAttrib2f(index, x, y)
 	}
 
-	override fun vertexAttrib2fv(index: Int, values: NativeBuffer<Float>) {
+	override fun vertexAttrib2fv(index: Int, values: NativeReadBuffer<Float>) {
 		context.vertexAttrib2fv(index, values.native as Float32Array)
 	}
 
@@ -511,7 +511,7 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.vertexAttrib3f(index, x, y, z)
 	}
 
-	override fun vertexAttrib3fv(index: Int, values: NativeBuffer<Float>) {
+	override fun vertexAttrib3fv(index: Int, values: NativeReadBuffer<Float>) {
 		context.vertexAttrib3fv(index, values.native as Float32Array)
 	}
 
@@ -519,7 +519,7 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.vertexAttrib4f(index, x, y, z, w)
 	}
 
-	override fun vertexAttrib4fv(index: Int, values: NativeBuffer<Float>) {
+	override fun vertexAttrib4fv(index: Int, values: NativeReadBuffer<Float>) {
 		context.vertexAttrib4fv(index, values.native as Float32Array)
 	}
 

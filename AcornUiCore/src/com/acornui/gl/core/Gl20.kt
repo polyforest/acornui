@@ -20,10 +20,9 @@ package com.acornui.gl.core
 
 import com.acornui.core.di.DKey
 import com.acornui.core.graphics.Texture
-import com.acornui.core.io.BufferFactory
 import com.acornui.core.io.floatBuffer
 import com.acornui.graphics.ColorRo
-import com.acornui.io.NativeBuffer
+import com.acornui.io.NativeReadBuffer
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.Vector2
 import com.acornui.math.Vector3
@@ -544,27 +543,27 @@ interface Gl20 {
 	/**
 	 * Creates and initializes a buffer object's data store
 	 */
-	fun bufferDatabv(target: Int, data: NativeBuffer<Byte>, usage: Int)
+	fun bufferDatabv(target: Int, data: NativeReadBuffer<Byte>, usage: Int)
 
 	/**
 	 * Creates and initializes a buffer object's data store
 	 */
-	fun bufferDatafv(target: Int, data: NativeBuffer<Float>, usage: Int)
+	fun bufferDatafv(target: Int, data: NativeReadBuffer<Float>, usage: Int)
 
 	/**
 	 * Creates and initializes a buffer object's data store
 	 */
-	fun bufferDatasv(target: Int, data: NativeBuffer<Short>, usage: Int)
+	fun bufferDatasv(target: Int, data: NativeReadBuffer<Short>, usage: Int)
 
 	/**
 	 * Updates a subset of a buffer object's data store
 	 */
-	fun bufferSubDatafv(target: Int, offset: Int, data: NativeBuffer<Float>)
+	fun bufferSubDatafv(target: Int, offset: Int, data: NativeReadBuffer<Float>)
 
 	/**
 	 * Updates a subset of a buffer object's data store
 	 */
-	fun bufferSubDatasv(target: Int, offset: Int, data: NativeBuffer<Short>)
+	fun bufferSubDatasv(target: Int, offset: Int, data: NativeReadBuffer<Short>)
 
 	/**
 	 * Returns one of the following to indicate the current status of the framebuffer: FRAMEBUFFER_COMPLETE,
@@ -903,7 +902,7 @@ interface Gl20 {
 	 * Note: If the window is obscured and the frame buffer being read is not an off-screen buffer, the data may contain
 	 * garbage.
 	 */
-	fun readPixels(x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: NativeBuffer<Byte>)
+	fun readPixels(x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: NativeReadBuffer<Byte>)
 
 	fun renderbufferStorage(target: Int, internalFormat: Int, width: Int, height: Int)
 
@@ -942,7 +941,7 @@ interface Gl20 {
 	 * @param pixels is the data to load into the texture. May be null to allocate the texture without data.
 	 * The loaded data is affected by the pixelStorei() options. You can also use copyTexSubImage2D or texSubImage2D to initialize the texture.
 	 */
-	fun texImage2Db(target: Int, level: Int, internalFormat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: NativeBuffer<Byte>?)
+	fun texImage2Db(target: Int, level: Int, internalFormat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: NativeReadBuffer<Byte>?)
 
 	/**
 	 * Specifies the size and data of the bound texture in the active texture unit (set through activeTexture() and bindTexture).
@@ -957,7 +956,7 @@ interface Gl20 {
 	 * @param pixels is the data to load into the texture. May be null to allocate the texture without data.
 	 * The loaded data is affected by the pixelStorei() options. You can also use copyTexSubImage2D or texSubImage2D to initialize the texture.
 	 */
-	fun texImage2Df(target: Int, level: Int, internalFormat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: NativeBuffer<Float>?)
+	fun texImage2Df(target: Int, level: Int, internalFormat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: NativeReadBuffer<Float>?)
 
 	/**
 	 * Specifies the data for the bound texture in the active texture unit (set through activeTexture() and bindTexture).
@@ -991,47 +990,47 @@ interface Gl20 {
 
 	fun uniform1f(location: GlUniformLocationRef, x: Float)
 
-	fun uniform1fv(location: GlUniformLocationRef, v: NativeBuffer<Float>)
+	fun uniform1fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>)
 
 	fun uniform1i(location: GlUniformLocationRef, x: Int)
 
-	fun uniform1iv(location: GlUniformLocationRef, v: NativeBuffer<Int>)
+	fun uniform1iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>)
 
 	fun uniform2f(location: GlUniformLocationRef, x: Float, y: Float)
 	fun uniform2f(location: GlUniformLocationRef, v: Vector2) = uniform2f(location, v.x, v.y)
 
-	fun uniform2fv(location: GlUniformLocationRef, v: NativeBuffer<Float>)
+	fun uniform2fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>)
 
 	fun uniform2i(location: GlUniformLocationRef, x: Int, y: Int)
 
-	fun uniform2iv(location: GlUniformLocationRef, v: NativeBuffer<Int>)
+	fun uniform2iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>)
 
 	fun uniform3f(location: GlUniformLocationRef, x: Float, y: Float, z: Float)
 	fun uniform3f(location: GlUniformLocationRef, v: Vector3) = uniform3f(location, v.x, v.y, v.z)
 	fun uniform3f(location: GlUniformLocationRef, c: ColorRo) = uniform3f(location, c.r, c.g, c.b)
 
-	fun uniform3fv(location: GlUniformLocationRef, v: NativeBuffer<Float>)
+	fun uniform3fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>)
 
 	fun uniform3i(location: GlUniformLocationRef, x: Int, y: Int, z: Int)
 
-	fun uniform3iv(location: GlUniformLocationRef, v: NativeBuffer<Int>)
+	fun uniform3iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>)
 
 	fun uniform4f(location: GlUniformLocationRef, x: Float, y: Float, z: Float, w: Float)
 	fun uniform4f(location: GlUniformLocationRef, color: ColorRo) {
 		uniform4f(location, color.r, color.g, color.b, color.a)
 	}
 
-	fun uniform4fv(location: GlUniformLocationRef, v: NativeBuffer<Float>)
+	fun uniform4fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>)
 
 	fun uniform4i(location: GlUniformLocationRef, x: Int, y: Int, z: Int, w: Int)
 
-	fun uniform4iv(location: GlUniformLocationRef, v: NativeBuffer<Int>)
+	fun uniform4iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>)
 
-	fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeBuffer<Float>)
+	fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>)
 
-	fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeBuffer<Float>)
+	fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>)
 
-	fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeBuffer<Float>)
+	fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>)
 
 	fun useProgram(program: GlProgramRef?)
 
@@ -1039,19 +1038,19 @@ interface Gl20 {
 
 	fun vertexAttrib1f(index: Int, x: Float)
 
-	fun vertexAttrib1fv(index: Int, values: NativeBuffer<Float>)
+	fun vertexAttrib1fv(index: Int, values: NativeReadBuffer<Float>)
 
 	fun vertexAttrib2f(index: Int, x: Float, y: Float)
 
-	fun vertexAttrib2fv(index: Int, values: NativeBuffer<Float>)
+	fun vertexAttrib2fv(index: Int, values: NativeReadBuffer<Float>)
 
 	fun vertexAttrib3f(index: Int, x: Float, y: Float, z: Float)
 
-	fun vertexAttrib3fv(index: Int, values: NativeBuffer<Float>)
+	fun vertexAttrib3fv(index: Int, values: NativeReadBuffer<Float>)
 
 	fun vertexAttrib4f(index: Int, x: Float, y: Float, z: Float, w: Float)
 
-	fun vertexAttrib4fv(index: Int, values: NativeBuffer<Float>)
+	fun vertexAttrib4fv(index: Int, values: NativeReadBuffer<Float>)
 
 	/**
 	 * Defines the data for the specified shader attribute.

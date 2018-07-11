@@ -33,10 +33,12 @@ package com.esotericsoftware.spine.attachments
 
 import com.acornui.core.graphics.AtlasPageData
 import com.acornui.core.graphics.AtlasRegionData
-import com.acornui.gl.core.Vertex
 import com.acornui.graphics.Color
-import com.acornui.math.Vector3
 import com.esotericsoftware.spine.Slot
+import com.esotericsoftware.spine.component.SpineVertexUtils.colorOffset
+import com.esotericsoftware.spine.component.SpineVertexUtils.positionOffset
+import com.esotericsoftware.spine.component.SpineVertexUtils.vertexSize
+import com.esotericsoftware.spine.component.SpineVertexUtils.textureCoordOffset
 import com.esotericsoftware.spine.data.attachments.MeshAttachmentData
 
 /**
@@ -48,7 +50,7 @@ class MeshAttachment(
 		val region: AtlasRegionData
 ) : FfdAttachment {
 
-	val worldVertices: Array<Vertex>
+	private val worldVertices: MutableList<Float>
 	private val color = Color()
 
 //	var inheritFfd: Boolean = false
@@ -61,28 +63,29 @@ class MeshAttachment(
 		val height = bounds.height / page.height.toFloat()
 
 		val regionUVs = data.regionUVs
-		worldVertices = Array(regionUVs.size / 2) {
-			if (region.isRotated) {
-				Vertex(
-						u = u + regionUVs[it * 2 + 1] * width,
-						v = v + height - regionUVs[it * 2] * height,
-						normal = Vector3.NEG_Z.copy()
-				)
-			} else {
-				Vertex(
-						u = u + regionUVs[it * 2] * width,
-						v = v + regionUVs[it * 2 + 1] * height,
-						normal = Vector3.NEG_Z.copy()
-				)
+		worldVertices = ArrayList(regionUVs.size / 2 * vertexSize)
+		var i = textureCoordOffset
+		val n = worldVertices.size
+		var uvIndex = 0
+		if (region.isRotated) {
+			while (i < n) {
+				worldVertices[i + 1] = v + height - regionUVs[uvIndex++] * height
+				worldVertices[i] = u + regionUVs[uvIndex++] * width
+				i += vertexSize
+			}
+		} else {
+			while (i < n) {
+				worldVertices[i] = u + regionUVs[uvIndex++] * width
+				worldVertices[i + 1] = v + regionUVs[uvIndex++] * height
+				i += vertexSize
 			}
 		}
-
 	}
 
 	/**
 	 * @return The updated world vertices.
 	 */
-	fun updateWorldVertices(slot: Slot): Array<Vertex> {
+	fun updateWorldVertices(slot: Slot): List<Float> {
 		val skeleton = slot.skeleton
 		color.set(skeleton.color).mul(slot.color).mul(data.color)
 
@@ -98,8 +101,9 @@ class MeshAttachment(
 		val m01 = bone.b
 		val m10 = bone.c
 		val m11 = bone.d
-		for (i in 0..worldVertices.lastIndex) {
-			val vertex = worldVertices[i]
+		var i = 0
+		val n = worldVertices.size
+		while (i < n) {
 			val vx: Float
 			val vy: Float
 			if (useSlotVertices) {
@@ -109,10 +113,14 @@ class MeshAttachment(
 				vx = vertices[i * 2]
 				vy = vertices[i * 2 + 1]
 			}
-			vertex.position.x = vx * m00 + vy * m01 + x
-			vertex.position.y = vx * m10 + vy * m11 + y
-			vertex.position.z = 0f
-			vertex.colorTint.set(color)
+			worldVertices[i + positionOffset + 0] = vx * m00 + vy * m01 + x
+			worldVertices[i + positionOffset + 1] = vx * m10 + vy * m11 + y
+
+			worldVertices[i + colorOffset + 0] = color.r
+			worldVertices[i + colorOffset + 1] = color.g
+			worldVertices[i + colorOffset + 2] = color.b
+			worldVertices[i + colorOffset + 3] = color.a
+			i += vertexSize
 		}
 		return worldVertices
 	}

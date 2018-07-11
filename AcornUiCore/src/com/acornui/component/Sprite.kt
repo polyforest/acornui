@@ -20,6 +20,7 @@ import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.putQuadIndices
+import com.acornui.gl.core.putVertex
 import com.acornui.graphics.ColorRo
 import com.acornui.math.*
 import kotlin.math.abs

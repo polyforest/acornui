@@ -16,32 +16,27 @@
 
 package com.acornui.component.drawing
 
-import com.acornui._assert
-import com.acornui.assertionsEnabled
 import com.acornui.collection.Clearable
 import com.acornui.collection.ClearableObjectPool
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.ValidationFlags
-import com.acornui.core.TreeWalk
-import com.acornui.core.childWalkLevelOrder
+import com.acornui.component.validationProp
+import com.acornui.core.Disposable
+import com.acornui.core.di.Injector
 import com.acornui.core.di.Owned
+import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
-import com.acornui.core.io.floatBuffer
-import com.acornui.core.io.shortBuffer
-import com.acornui.core.iterateChildren
 import com.acornui.gl.core.*
-import com.acornui.io.ReadWriteNativeBuffer
 import com.acornui.math.*
-import com.acornui.signal.Signal
-import com.acornui.signal.Signal0
 
 /**
- * A UiComponent for drawing static [MeshData] with uniforms for model and color transformation.
+ * A UiComponent for drawing static [MeshRegion] with uniforms for model and color transformation.
  *
  * @author nbilyk
+ *
  */
 open class StaticMeshComponent(
 		owner: Owned
@@ -50,46 +45,22 @@ open class StaticMeshComponent(
 	var intersectionType = MeshIntersectionType.BOUNDING_BOX
 
 	private val glState = inject(GlState)
-	private val gl = inject(Gl20)
 
 	private val globalBoundingBox = Box()
 
-	private val meshChangedHandler = {
-		invalidate(ValidationFlags.LAYOUT)
-		Unit
-	}
-
-	private var _mesh: StaticMesh? = null
-
-	var mesh: StaticMesh?
-		get() = _mesh
-		set(value) {
-			_mesh?.changed?.remove(meshChangedHandler)
-			if (isActive)
-				_mesh?.refDec(gl)
-			_mesh = value
-			if (isActive)
-				_mesh?.refInc(gl)
-			_mesh?.changed?.add(meshChangedHandler)
-			invalidate(ValidationFlags.LAYOUT)
-		}
+	var mesh: StaticMesh? by validationProp(null, ValidationFlags.LAYOUT)
 
 	init {
-		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.CONCATENATED_TRANSFORM or ValidationFlags.LAYOUT, {
-			if (mesh != null) {
-				globalBoundingBox.set(mesh!!.boundingBox).mul(concatenatedTransform)
-			} else {
-				globalBoundingBox.inf()
-			}
-		})
+		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.CONCATENATED_TRANSFORM or ValidationFlags.LAYOUT, this::updateGlobalBoundingBox)
 	}
 
-	override fun onActivated() {
-		_mesh?.refInc(gl)
-	}
-
-	override fun onDeactivated() {
-		_mesh?.refDec(gl)
+	private fun updateGlobalBoundingBox() {
+		val mesh = mesh
+		if (mesh != null) {
+			globalBoundingBox.set(mesh.boundingBox).mul(concatenatedTransform)
+		} else {
+			globalBoundingBox.inf()
+		}
 	}
 
 	/**
@@ -113,11 +84,11 @@ open class StaticMeshComponent(
 
 	override fun draw(viewport: MinMaxRo) {
 		val mesh = mesh ?: return
+		glState.batch.flush(true)
 		glState.camera(camera, concatenatedTransform) // Use the concatenated transform as the model matrix.
-		mesh.render(gl, glState)
+		mesh.render()
 	}
 
-	// TODO: test
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val boundingBox = mesh?.boundingBox ?: return
 		out.ext(boundingBox.max.x, boundingBox.max.y)
@@ -142,206 +113,86 @@ fun Owned.staticMeshC(init: ComponentInit<StaticMeshComponent> = {}): StaticMesh
 	return s
 }
 
-fun Owned.staticMeshC(mesh: StaticMesh, init: ComponentInit<StaticMeshComponent> = {}): StaticMeshComponent {
-	val s = StaticMeshComponent(this)
-	s.init()
-	s.mesh = mesh
-	return s
-}
-
-
 /**
  * Feeds mesh data to index and vertex buffers, and can [render] static mesh data.
  *
  * @author nbilyk
  */
-class StaticMesh {
+class StaticMesh(
+		override val injector: Injector,
+		val vertexAttributes: VertexAttributes = standardVertexAttributes
+) : Scoped, Disposable, Clearable {
 
-	private val _changed = Signal0()
-	val changed: Signal<() -> Unit>
-		get() = _changed
+	private val gl = inject(Gl20)
+	private val glState = inject(GlState)
 
-	var vertexAttributes: VertexAttributes = standardVertexAttributes
-	val boundingBox = Box()
+	private val _boundingBox = Box()
+	val boundingBox: BoxRo
+		get() = _boundingBox
 
-	private var indicesBuffer: GlBufferRef? = null
-	private var indices: ReadWriteNativeBuffer<Short>? = null
-
-	private var vertexComponentsBuffer: GlBufferRef? = null
-	private var vertexComponents: ReadWriteNativeBuffer<Float>? = null
-
-	private var drawCall = DrawElementsCall.obtain()
-	private val drawCalls = arrayListOf(drawCall)
-
-	private var refCount = 0
-	private var needsUpload = false
+	private val batch = StaticShaderBatchImpl(gl, glState, vertexAttributes)
 
 	init {
-	}
-
-	/**
-	 * Increments the number of places this Mesh is used. When the number of references becomes non-zero,
-	 * the buffers will be created.
-	 */
-	fun refInc(gl: Gl20) {
-		if (refCount++ == 0) {
-			create(gl)
-		}
-	}
-
-	/**
-	 * Decrements the number of places this Mesh is used. If the count reaches zero, the mesh's buffers will be deleted.
-	 */
-	fun refDec(gl: Gl20) {
-		if (--refCount == 0) {
-			delete(gl)
-		}
-	}
-
-	private fun create(gl: Gl20) {
-		indicesBuffer = gl.createBuffer()
-		vertexComponentsBuffer = gl.createBuffer()
-	}
-
-	private fun delete(gl: Gl20) {
-		needsUpload = true
-		if (indicesBuffer != null) {
-			gl.deleteBuffer(indicesBuffer!!)
-			indicesBuffer = null
-		}
-		if (vertexComponentsBuffer != null) {
-			gl.deleteBuffer(vertexComponentsBuffer!!)
-			vertexComponentsBuffer = null
-		}
+		val positionAttribute = vertexAttributes.getAttributeByUsage(VertexAttributeUsage.POSITION) ?: throw IllegalArgumentException("A static mesh must at least have a position attribute.")
+		if (positionAttribute.numComponents != 3) throw IllegalArgumentException("position must be 3 components.")
 	}
 
 	/**
 	 * Resets the line and fill styles
 	 */
-	inline fun buildMesh(inner: MeshData.() -> Unit) {
-		fillStyle.clear()
-		lineStyle.clear()
-		val meshData = MeshData()
-		meshData.inner()
-		feed(meshData)
+	fun buildMesh(inner: MeshRegion.() -> Unit) {
+		MeshBuilderStyle.clear()
+		val previousBatch = glState.batch
+		glState.batch = batch
+		batch.begin()
+		glState.blendMode(BlendMode.NORMAL, false)
+		glState.setTexture(null)
+		meshData(batch) {
+			inner()
+		}
+		batch.flush(true)
+		batch.resetRenderCount()
+		glState.batch = previousBatch
+		updateBoundingBox()
 	}
 
-	fun feed(meshData: MeshData) {
-		needsUpload = true
-		var indicesL = 0
-		var verticesL = 0
-		meshData.childWalkLevelOrder {
-			indicesL += it.indices.size
-			verticesL += it.vertices.size
-			TreeWalk.CONTINUE
+	private fun updateBoundingBox() {
+		_boundingBox.inf()
+		val c = vertexAttributes.getAttributeByUsage(VertexAttributeUsage.POSITION)!!.numComponents
+		batch.iterateVertexAttribute(VertexAttributeUsage.POSITION) {
+			val x = it.get()
+			val y = it.get()
+			val z = if (c >= 3) it.get() else 0f
+			_boundingBox.ext(x, y, z)
 		}
-
-		// Recycle the draw calls.
-		for (i in 0..drawCalls.lastIndex) {
-			DrawElementsCall.free(drawCalls[i])
-		}
-		drawCalls.clear()
-
-		drawCall = DrawElementsCall.obtain()
-		drawCalls.add(drawCall)
-
-		indices = shortBuffer(indicesL)
-		vertexComponents = floatBuffer(verticesL * vertexAttributes.vertexSize)
-		boundingBox.inf()
-		populateMeshData(meshData)
-		boundingBox.update()
-		// Mark the limits of the buffers so they can be rewound.
-		indices!!.flip()
-		vertexComponents!!.flip()
-		_changed.dispatch()
+		_boundingBox.update()
 	}
 
-	private fun populateMeshData(meshData: MeshData) {
-		val indices = meshData.indices
-		val vertices = meshData.vertices
-
-		if (meshData.flushBatch)
-			nextDrawCall()
-
-		if (indices.isNotEmpty()) {
-			checkDrawCall(meshData.texture, meshData.blendMode, false, meshData.drawMode)
-			drawCall.count += indices.size
-
-			if (assertionsEnabled) {
-				if (meshData.drawMode == Gl20.LINES) {
-					_assert(indices.size % 2 == 0, { "indices size ${indices.size} not evenly divisible by 2" })
-				} else if (meshData.drawMode == Gl20.TRIANGLES) {
-					_assert(indices.size % 3 == 0, { "indices size ${indices.size} not evenly divisible by 3" })
-				}
-				_assert(vertices.isNotEmpty(), "Indices pushed with no vertices.")
-			}
-
-			val vertexComponents = vertexComponents!!
-			val n = vertexComponents.position / vertexAttributes.vertexSize
-			for (j in 0..vertices.lastIndex) {
-				val v = vertices[j]
-				vertexAttributes.putVertex(vertexComponents, v.position, v.normal, v.colorTint, v.u, v.v)
-				boundingBox.ext(v.position, update = false)
-			}
-			for (j in 0..indices.lastIndex) {
-				val index = (n + indices[j]).toShort()
-				this.indices!!.put(index)
-			}
-		}
-		meshData.iterateChildren {
-			populateMeshData(it)
-			true
-		}
-		if (meshData.flushBatch)
-			nextDrawCall()
-	}
-
-	private fun nextDrawCall() {
-		if (drawCall.count != 0) {
-			val e = drawCall.offset + drawCall.count
-			drawCall = DrawElementsCall.obtain()
-			drawCall.offset = e
-			drawCalls.add(drawCall)
-		}
-	}
-
-	private fun checkDrawCall(texture: Texture?, blendMode: BlendMode, premultipliedAlpha: Boolean, mode: Int): Boolean {
-		return if (drawCall.texture != texture ||
-				drawCall.blendMode != blendMode ||
-				drawCall.premultipliedAlpha != premultipliedAlpha ||
-				drawCall.mode != mode) {
-			nextDrawCall()
-			drawCall.texture = texture
-			drawCall.blendMode = blendMode
-			drawCall.premultipliedAlpha = premultipliedAlpha
-			drawCall.mode = mode
-			true
-		} else {
-			false
-		}
-	}
+	override fun clear() = batch.clear()
 
 	fun intersects(localRay: RayRo, intersection: Vector3): Boolean {
-		val vertexData = vertexComponents ?: return false
-		val indices = indices ?: return false
-		vertexData.rewind()
-		indices.rewind()
-
+		val vertexComponents = batch.vertexComponents
+		val indices = batch.indices
 		val vertexAttributes = vertexAttributes
 		val vertexSize = vertexAttributes.vertexSize
-		for (i in drawCalls.lastIndex downTo 0) {
-			val drawCall = drawCalls[i]
+		val positionOffset = vertexAttributes.getOffsetByUsage(VertexAttributeUsage.POSITION) ?: return false
+
+		vertexComponents.rewind()
+		indices.rewind()
+
+		for (i in batch.drawCalls.lastIndex downTo 0) {
+			val drawCall = batch.drawCalls[i]
 			if (drawCall.count != 0) {
 				indices.position = drawCall.offset
 				if (drawCall.mode == Gl20.TRIANGLES) {
 					for (j in 0..drawCall.count - 1 step 3) {
-						vertexData.position = indices.get() * vertexSize
-						vertexAttributes.getVertex(vertexData, v0)
-						vertexData.position = indices.get() * vertexSize
-						vertexAttributes.getVertex(vertexData, v1)
-						vertexData.position = indices.get() * vertexSize
-						vertexAttributes.getVertex(vertexData, v2)
-						if (localRay.intersects(v0.position, v1.position, v2.position, intersection)) {
+						vertexComponents.position = indices.get() * vertexSize + positionOffset
+						v0.set(vertexComponents.get(), vertexComponents.get(), vertexComponents.get())
+						vertexComponents.position = indices.get() * vertexSize + positionOffset
+						v1.set(vertexComponents.get(), vertexComponents.get(), vertexComponents.get())
+						vertexComponents.position = indices.get() * vertexSize + positionOffset
+						v2.set(vertexComponents.get(), vertexComponents.get(), vertexComponents.get())
+						if (localRay.intersects(v0, v1, v2, intersection)) {
 							return true
 						}
 					}
@@ -353,58 +204,38 @@ class StaticMesh {
 		return false
 	}
 
-	fun render(gl: Gl20, glState: GlState) {
-		if (drawCalls.isEmpty()) return
-
-		val indices = indices ?: return // Return if no indices to render.
-		val vertexComponents = vertexComponents ?: return
-
-		gl.bindBuffer(Gl20.ARRAY_BUFFER, vertexComponentsBuffer)
-		gl.bindBuffer(Gl20.ELEMENT_ARRAY_BUFFER, indicesBuffer)
-		vertexAttributes.bind(gl, glState.shader!!)
-
-		if (needsUpload) {
-			needsUpload = false
-
-			indices.rewind()
-			gl.bufferData(Gl20.ELEMENT_ARRAY_BUFFER, indices.limit shl 1, Gl20.DYNAMIC_DRAW) // Allocate
-			gl.bufferDatasv(Gl20.ELEMENT_ARRAY_BUFFER, indices, Gl20.DYNAMIC_DRAW) // Upload
-
-			vertexComponents.rewind()
-			gl.bufferData(Gl20.ARRAY_BUFFER, vertexComponents.limit shl 2, Gl20.DYNAMIC_DRAW) // Allocate
-			gl.bufferDatafv(Gl20.ARRAY_BUFFER, vertexComponents, Gl20.DYNAMIC_DRAW) // Upload
-		}
-
-		for (i in 0..drawCalls.lastIndex) {
-			val drawCall = drawCalls[i]
-			if (drawCall.count != 0) {
-				glState.blendMode(drawCall.blendMode, drawCall.premultipliedAlpha)
-				glState.setTexture(drawCall.texture ?: glState.whitePixel)
-				gl.drawElements(drawCall.mode, drawCall.count, Gl20.UNSIGNED_SHORT, drawCall.offset shl 1)
-			}
-		}
-
-		vertexAttributes.unbind(gl, glState.shader!!)
-		gl.bindBuffer(Gl20.ARRAY_BUFFER, null)
-		gl.bindBuffer(Gl20.ELEMENT_ARRAY_BUFFER, null)
+	fun render() {
+		batch.render()
 	}
-	
+
+	override fun dispose() {
+		batch.dispose()
+	}
+
 	companion object {
-		private val v0 = Vertex()
-		private val v1 = Vertex()
-		private val v2 = Vertex()
+		private val v0 = Vector3()
+		private val v1 = Vector3()
+		private val v2 = Vector3()
 	}
-
 }
 
-class DrawElementsCall private constructor() : Clearable {
+interface DrawElementsCallRo {
+	val texture: Texture?
+	val blendMode: BlendMode
+	val premultipliedAlpha: Boolean
+	val mode: Int
+	val count: Int
+	val offset: Int
+}
 
-	var texture: Texture? = null
-	var blendMode = BlendMode.NORMAL
-	var premultipliedAlpha = false
-	var mode = Gl20.TRIANGLES
-	var count = 0
-	var offset = 0
+class DrawElementsCall private constructor() : Clearable, DrawElementsCallRo {
+
+	override var texture: Texture? = null
+	override var blendMode = BlendMode.NORMAL
+	override var premultipliedAlpha = false
+	override var mode = Gl20.TRIANGLES
+	override var count = 0
+	override var offset = 0
 
 	override fun clear() {
 		texture = null
@@ -425,11 +256,15 @@ class DrawElementsCall private constructor() : Clearable {
 		fun free(call: DrawElementsCall) {
 			pool.free(call)
 		}
+
+		fun freeAll(calls: List<DrawElementsCall>) {
+			pool.freeAll(calls)
+		}
 	}
 }
 
-fun staticMesh(init: StaticMesh.() -> Unit = {}): StaticMesh {
-	val m = StaticMesh()
+fun Scoped.staticMesh(init: StaticMesh.() -> Unit = {}): StaticMesh {
+	val m = StaticMesh(injector)
 	m.init()
 	return m
 }

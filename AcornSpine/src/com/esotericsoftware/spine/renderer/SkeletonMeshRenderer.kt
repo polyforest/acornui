@@ -32,7 +32,7 @@ package com.esotericsoftware.spine.renderer
 
 import com.acornui.core.graphics.Texture
 import com.acornui.gl.core.GlState
-import com.acornui.gl.core.Vertex
+import com.acornui.gl.core.putIndex
 import com.acornui.graphics.ColorRo
 import com.esotericsoftware.spine.Skeleton
 import com.esotericsoftware.spine.attachments.MeshAttachment
@@ -40,6 +40,10 @@ import com.esotericsoftware.spine.attachments.RegionAttachment
 import com.esotericsoftware.spine.attachments.SkeletonAttachment
 import com.esotericsoftware.spine.attachments.WeightedMeshAttachment
 import com.esotericsoftware.spine.component.LoadedSkeleton
+import com.esotericsoftware.spine.component.SpineVertexUtils.colorOffset
+import com.esotericsoftware.spine.component.SpineVertexUtils.positionOffset
+import com.esotericsoftware.spine.component.SpineVertexUtils.vertexSize
+import com.esotericsoftware.spine.component.SpineVertexUtils.textureCoordOffset
 
 object SkeletonMeshRenderer : SkeletonRenderer {
 
@@ -49,7 +53,7 @@ object SkeletonMeshRenderer : SkeletonRenderer {
 		val skin = skeleton.currentSkin ?: skeleton.defaultSkin ?: return // No skin to render.
 		val loadedSkin = loadedSkeleton.loadedSkins[skin.data.name] ?: return // Skin not loaded.
 
-		var vertices: Array<Vertex>? = null
+		var vertices: List<Float>? = null
 		var triangles: ShortArray? = null
 		val drawOrder = skeleton.drawOrder
 		var i = 0
@@ -102,11 +106,27 @@ object SkeletonMeshRenderer : SkeletonRenderer {
 				glState.blendMode(slot.data.blendMode, premultipliedAlpha = false)
 				glState.setTexture(texture)
 				batch.begin()
-				val v = vertices!!
-				for (j in 0..v.lastIndex) {
-					val vertex = v[j]
-					vertex.colorTint.mul(concatenatedColorTint)
-					batch.putVertex(vertex)
+				run {
+					val v = vertices!!
+					var j = 0
+					val verticesL = vertices.size
+					while (j < verticesL) {
+						batch.putVertex(
+								positionX = v[j + positionOffset],
+								positionY = v[j + positionOffset + 1],
+								positionZ = 0f,
+								normalX = 0f,
+								normalY = 0f,
+								normalZ = -1f,
+								colorR = v[j + colorOffset] * concatenatedColorTint.r,
+								colorG = v[j + colorOffset + 1] * concatenatedColorTint.g,
+								colorB = v[j + colorOffset + 2] * concatenatedColorTint.b,
+								colorA = v[j + colorOffset + 3] * concatenatedColorTint.a,
+								u = v[j + textureCoordOffset],
+								v = v[j + textureCoordOffset + 1]
+						)
+						j += vertexSize
+					}
 				}
 				val t = triangles!!
 				val highestIndex = batch.highestIndex + 1

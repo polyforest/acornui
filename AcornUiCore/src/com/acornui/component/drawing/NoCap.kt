@@ -16,7 +16,9 @@
 
 package com.acornui.component.drawing
 
+import com.acornui.gl.core.putVertex
 import com.acornui.math.Vector2
+import com.acornui.math.Vector2Ro
 
 /**
  * @author nbilyk
@@ -26,18 +28,17 @@ object NoCap : CapBuilder {
 	private val perpLine = Vector2()
 	private val dirLine = Vector2()
 
-
-	override fun createCap(p1: Vector2, p2: Vector2, control: Vector2?, meshData: MeshData, lineStyle: LineStyle, controlLineThickness: Float, clockwise: Boolean) {
+	override fun createCap(p1: Vector2Ro, p2: Vector2Ro, control: Vector2Ro?, meshRegion: MeshRegion, lineStyle: LineStyle, controlLineThickness: Float, clockwise: Boolean) {
 		val t = (if (clockwise) lineStyle.thickness else -lineStyle.thickness) * 0.5f
 		// Cap A
 		dirLine.set(p2).sub(p1).nor()
 
 		// OUTER
 		perpLine.set(dirLine.y, -dirLine.x).scl(t).add(p1)
-		meshData.pushVertex(perpLine, -0.001f, lineStyle.fillStyle)
+		meshRegion.putVertex(perpLine, -0.001f, colorTint = lineStyle.colorTint)
 
 		// INNER
 		perpLine.set(-dirLine.y, dirLine.x).scl(t).add(p1)
-		meshData.pushVertex(perpLine, -0.001f, lineStyle.fillStyle)
+		meshRegion.putVertex(perpLine, -0.001f, colorTint = lineStyle.colorTint)
 	}
 }

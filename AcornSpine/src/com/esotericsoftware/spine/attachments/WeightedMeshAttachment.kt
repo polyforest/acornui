@@ -33,10 +33,12 @@ package com.esotericsoftware.spine.attachments
 
 import com.acornui.core.graphics.AtlasPageData
 import com.acornui.core.graphics.AtlasRegionData
-import com.acornui.gl.core.Vertex
 import com.acornui.graphics.Color
-import com.acornui.math.Vector3
 import com.esotericsoftware.spine.Slot
+import com.esotericsoftware.spine.component.SpineVertexUtils
+import com.esotericsoftware.spine.component.SpineVertexUtils.colorOffset
+import com.esotericsoftware.spine.component.SpineVertexUtils.positionOffset
+import com.esotericsoftware.spine.component.SpineVertexUtils.vertexSize
 import com.esotericsoftware.spine.data.attachments.WeightedMeshAttachmentData
 
 // TODO: nb, inheritFfd
@@ -51,7 +53,7 @@ class WeightedMeshAttachment(
 
 //	var inheritFfd: Boolean = false
 
-	private val worldVertices: Array<Vertex>
+	private val worldVertices: MutableList<Float>
 	private val color = Color()
 
 	init {
@@ -62,29 +64,29 @@ class WeightedMeshAttachment(
 		val height = bounds.height / page.height.toFloat()
 
 		val regionUVs = data.regionUVs
-		worldVertices = Array(regionUVs.size / 2) {
-			if (region.isRotated) {
-				Vertex(
-						u = u + regionUVs[it * 2 + 1] * width,
-						v = v + height - regionUVs[it * 2] * height,
-						normal = Vector3.NEG_Z.copy()
-				)
-			} else {
-				Vertex(
-						u = u + regionUVs[it * 2] * width,
-						v = v + regionUVs[it * 2 + 1] * height,
-						normal = Vector3.NEG_Z.copy()
-				)
+		worldVertices = ArrayList(regionUVs.size / 2 * SpineVertexUtils.vertexSize)
+		var i = SpineVertexUtils.textureCoordOffset
+		val n = worldVertices.size
+		var uvIndex = 0
+		if (region.isRotated) {
+			while (i < n) {
+				worldVertices[i + 1] = v + height - regionUVs[uvIndex++] * height
+				worldVertices[i] = u + regionUVs[uvIndex++] * width
+				i += SpineVertexUtils.vertexSize
+			}
+		} else {
+			while (i < n) {
+				worldVertices[i] = u + regionUVs[uvIndex++] * width
+				worldVertices[i + 1] = v + regionUVs[uvIndex++] * height
+				i += SpineVertexUtils.vertexSize
 			}
 		}
-
-
 	}
 
 	/**
 	 * @return The updated world vertices.
 	 */
-	fun updateWorldVertices(slot: Slot): Array<Vertex> {
+	fun updateWorldVertices(slot: Slot): List<Float> {
 		val skeleton = slot.skeleton
 		color.set(skeleton.color).mul(slot.color).mul(data.color)
 
@@ -114,11 +116,13 @@ class WeightedMeshAttachment(
 					v++
 					b += 3
 				}
-				val vertex = worldVertices[w++]
-				vertex.position.x = wx + x
-				vertex.position.y = wy + y
-				vertex.position.z = 0f
-				vertex.colorTint.set(color)
+				worldVertices[w + positionOffset] = wx + x
+				worldVertices[w + positionOffset + 1] = wy + y
+				worldVertices[w + colorOffset] = color.r
+				worldVertices[w + colorOffset + 1] = color.g
+				worldVertices[w + colorOffset + 2] = color.b
+				worldVertices[w + colorOffset + 3] = color.a
+				w += vertexSize
 			}
 		} else {
 			var w = 0
@@ -140,11 +144,13 @@ class WeightedMeshAttachment(
 					b += 3
 					f += 2
 				}
-				val vertex = worldVertices[w++]
-				vertex.position.x = wx + x
-				vertex.position.y = wy + y
-				vertex.position.z = 0f
-				vertex.colorTint.set(color)
+				worldVertices[w + positionOffset] = wx + x
+				worldVertices[w + positionOffset + 1] = wy + y
+				worldVertices[w + colorOffset] = color.r
+				worldVertices[w + colorOffset + 1] = color.g
+				worldVertices[w + colorOffset + 2] = color.b
+				worldVertices[w + colorOffset + 3] = color.a
+				w += vertexSize
 			}
 		}
 		return worldVertices

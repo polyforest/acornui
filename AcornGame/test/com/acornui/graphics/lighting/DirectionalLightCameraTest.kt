@@ -55,6 +55,7 @@ class DirectionalLightCameraTest {
 			if (!isGood)
 				fail("clip space not in view.")
 			bounds.ext(tmp)
+			bounds.update()
 		}
 		isGood = isGood && (bounds.dimensions.x > 1.99f && bounds.dimensions.y > 1.99f && bounds.dimensions.z > 1.99f)
 		assertTrue(isGood)

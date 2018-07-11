@@ -25,7 +25,7 @@ import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
 import com.acornui.core.request.Request
 import com.acornui.core.request.UrlRequestData
-import com.acornui.io.ReadNativeByteBuffer
+import com.acornui.io.NativeReadByteBuffer
 import com.acornui.js.io.JsBinaryRequest
 
 /**
@@ -35,10 +35,10 @@ import com.acornui.js.io.JsBinaryRequest
 class JsBinaryLoader(
 		override val path: String,
 		override val estimatedBytesTotal: Int = 0,
-		private val request: Request<ReadNativeByteBuffer> = JsBinaryRequest(UrlRequestData(path))
-) : AssetLoader<ReadNativeByteBuffer> {
+		private val request: Request<NativeReadByteBuffer> = JsBinaryRequest(UrlRequestData(path))
+) : AssetLoader<NativeReadByteBuffer> {
 
-	override val type: AssetType<ReadNativeByteBuffer> = AssetType.BINARY
+	override val type: AssetType<NativeReadByteBuffer> = AssetType.BINARY
 
 	override val secondsLoaded: Float
 		get() = request.secondsLoaded
@@ -48,12 +48,12 @@ class JsBinaryLoader(
 
 	override val status: Deferred.Status
 		get() = request.status
-	override val result: ReadNativeByteBuffer
+	override val result: NativeReadByteBuffer
 		get() = request.result
 	override val error: Throwable
 		get() = request.error
 
-	override suspend fun await(): ReadNativeByteBuffer = request.await()
+	override suspend fun await(): NativeReadByteBuffer = request.await()
 
 	override fun cancel() = request.cancel()
 }

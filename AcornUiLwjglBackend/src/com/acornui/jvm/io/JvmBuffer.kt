@@ -22,7 +22,7 @@ import com.acornui.io.*
  * Wraps a JVM buffer with the abstract Acorn Buffer interface.
  * This is so we can use both JVM and JS buffers via the same abstraction.
  */
-abstract class JvmBuffer<T>(private val _buffer: java.nio.Buffer) : ReadWriteNativeBuffer<T> {
+abstract class JvmBuffer<T>(private val _buffer: java.nio.Buffer) : NativeReadWriteBuffer<T> {
 
 	override fun clear(): Buffer {
 		_buffer.clear()
@@ -83,7 +83,7 @@ abstract class JvmBuffer<T>(private val _buffer: java.nio.Buffer) : ReadWriteNat
 		}
 }
 
-class JvmByteBuffer(private val buffer: java.nio.ByteBuffer) : JvmBuffer<Byte>(buffer), ReadWriteNativeByteBuffer {
+class JvmByteBuffer(private val buffer: java.nio.ByteBuffer) : JvmBuffer<Byte>(buffer), NativeReadWriteByteBuffer {
 
 	override val dataSize: Int = 1
 

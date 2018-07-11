@@ -40,5 +40,4 @@ data class SlotData(
 		val color: Color,
 		val attachmentName: String?,
 		val blendMode: BlendMode
-) {
-}
+)

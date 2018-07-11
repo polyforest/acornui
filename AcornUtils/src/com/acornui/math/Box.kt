@@ -264,7 +264,7 @@ class Box(
 	fun set(points: Array<Vector3Ro>): Box {
 		inf()
 		for (i in 0..points.lastIndex)
-			_ext(points[i])
+			ext(points[i])
 		update()
 		return this
 	}
@@ -278,7 +278,7 @@ class Box(
 	fun set(points: List<Vector3Ro>): Box {
 		inf()
 		for (i in 0..points.lastIndex)
-			_ext(points[i])
+			ext(points[i])
 		update()
 		return this
 	}
@@ -301,20 +301,24 @@ class Box(
 	 * @param point The vector
 	 * @return This bounding box for chaining.
 	 */
-	fun ext(point: Vector3Ro, update: Boolean = true): Box {
-		_ext(point)
-		if (update)
-			update()
-		return this
-	}
+	fun ext(point: Vector3Ro): Box = ext(point.x, point.y, point.z)
 
-	private fun _ext(point: Vector3Ro) {
-		if (point.x < min.x) min.x = point.x
-		if (point.y < min.y) min.y = point.y
-		if (point.z < min.z) min.z = point.z
-		if (point.x > max.x) max.x = point.x
-		if (point.y > max.y) max.y = point.y
-		if (point.z > max.z) max.z = point.z
+	/**
+	 * Extends the bounding box by the given vector.
+	 *
+	 * @param x The x-coordinate
+	 * @param y The y-coordinate
+	 * @param z The z-coordinate
+	 * @return This bounding box for chaining.
+	 */
+	fun ext(x: Float, y: Float, z: Float): Box {
+		if (x < min.x) min.x = x
+		if (y < min.y) min.y = y
+		if (z < min.z) min.z = z
+		if (x > max.x) max.x = x
+		if (y > max.y) max.y = y
+		if (z > max.z) max.z = z
+		return this
 	}
 
 	/**
@@ -346,15 +350,15 @@ class Box(
 		val v = tmpVec3
 		val min = bounds.min
 		val max = bounds.max
-		_ext(v.set(min.x, min.y, min.z).mul(transform))
-		_ext(v.set(min.x, max.y, min.z).mul(transform))
-		_ext(v.set(max.x, min.y, min.z).mul(transform))
-		_ext(v.set(max.x, max.y, min.z).mul(transform))
+		ext(v.set(min.x, min.y, min.z).mul(transform))
+		ext(v.set(min.x, max.y, min.z).mul(transform))
+		ext(v.set(max.x, min.y, min.z).mul(transform))
+		ext(v.set(max.x, max.y, min.z).mul(transform))
 		if (min.z != max.z) {
-			_ext(v.set(min.x, min.y, max.z).mul(transform))
-			_ext(v.set(min.x, max.y, max.z).mul(transform))
-			_ext(v.set(max.x, min.y, max.z).mul(transform))
-			_ext(v.set(max.x, max.y, max.z).mul(transform))
+			ext(v.set(min.x, min.y, max.z).mul(transform))
+			ext(v.set(min.x, max.y, max.z).mul(transform))
+			ext(v.set(max.x, min.y, max.z).mul(transform))
+			ext(v.set(max.x, max.y, max.z).mul(transform))
 		}
 		update()
 		return this
@@ -375,14 +379,14 @@ class Box(
 		val y1 = max.y
 		val z1 = max.z
 		inf()
-		_ext(transform.prj(tmpVec3.set(x0, y0, z0)))
-		_ext(transform.prj(tmpVec3.set(x1, y0, z0)))
-		_ext(transform.prj(tmpVec3.set(x1, y1, z0)))
-		_ext(transform.prj(tmpVec3.set(x0, y1, z0)))
-		_ext(transform.prj(tmpVec3.set(x0, y0, z1)))
-		_ext(transform.prj(tmpVec3.set(x1, y0, z1)))
-		_ext(transform.prj(tmpVec3.set(x1, y1, z1)))
-		_ext(transform.prj(tmpVec3.set(x0, y1, z1)))
+		ext(transform.prj(tmpVec3.set(x0, y0, z0)))
+		ext(transform.prj(tmpVec3.set(x1, y0, z0)))
+		ext(transform.prj(tmpVec3.set(x1, y1, z0)))
+		ext(transform.prj(tmpVec3.set(x0, y1, z0)))
+		ext(transform.prj(tmpVec3.set(x0, y0, z1)))
+		ext(transform.prj(tmpVec3.set(x1, y0, z1)))
+		ext(transform.prj(tmpVec3.set(x1, y1, z1)))
+		ext(transform.prj(tmpVec3.set(x0, y1, z1)))
 		update()
 		return this
 	}
@@ -481,18 +485,6 @@ class Box(
 
 	override fun toString(): String {
 		return "[$min|$max]"
-	}
-
-	/**
-	 * Extends the bounding box by the given vector.
-	 *
-	 * @param x The x-coordinate
-	 * @param y The y-coordinate
-	 * @param z The z-coordinate
-	 * @return This bounding box for chaining.
-	 */
-	fun ext(x: Float, y: Float, z: Float): Box {
-		return set(min.set(minOf(min.x, x), minOf(min.y, y), minOf(min.z, z)), max.set(maxOf(max.x, x), maxOf(max.y, y), maxOf(max.z, z)))
 	}
 
 	override fun equals(other: Any?): Boolean {

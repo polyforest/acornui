@@ -18,7 +18,7 @@ package com.acornui.gl.core
 
 import com.acornui.core.graphics.Texture
 import com.acornui.graphics.ColorRo
-import com.acornui.io.NativeBuffer
+import com.acornui.io.NativeReadBuffer
 
 /**
  * A class that wraps all Gl20 methods with a before() and after()
@@ -105,31 +105,31 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun bufferDatabv(target: Int, data: NativeBuffer<Byte>, usage: Int) {
+	override fun bufferDatabv(target: Int, data: NativeReadBuffer<Byte>, usage: Int) {
 		before()
 		wrapped.bufferDatabv(target, data, usage)
 		after()
 	}
 
-	override fun bufferDatafv(target: Int, data: NativeBuffer<Float>, usage: Int) {
+	override fun bufferDatafv(target: Int, data: NativeReadBuffer<Float>, usage: Int) {
 		before()
 		wrapped.bufferDatafv(target, data, usage)
 		after()
 	}
 
-	override fun bufferDatasv(target: Int, data: NativeBuffer<Short>, usage: Int) {
+	override fun bufferDatasv(target: Int, data: NativeReadBuffer<Short>, usage: Int) {
 		before()
 		wrapped.bufferDatasv(target, data, usage)
 		after()
 	}
 
-	override fun bufferSubDatafv(target: Int, offset: Int, data: NativeBuffer<Float>) {
+	override fun bufferSubDatafv(target: Int, offset: Int, data: NativeReadBuffer<Float>) {
 		before()
 		wrapped.bufferSubDatafv(target, offset, data)
 		after()
 	}
 
-	override fun bufferSubDatasv(target: Int, offset: Int, data: NativeBuffer<Short>) {
+	override fun bufferSubDatasv(target: Int, offset: Int, data: NativeReadBuffer<Short>) {
 		before()
 		wrapped.bufferSubDatasv(target, offset, data)
 		after()
@@ -505,7 +505,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun readPixels(x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: NativeBuffer<Byte>) {
+	override fun readPixels(x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: NativeReadBuffer<Byte>) {
 		before()
 		wrapped.readPixels(x, y, width, height, format, type, pixels)
 		after()
@@ -571,13 +571,13 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun texImage2Db(target: Int, level: Int, internalFormat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: NativeBuffer<Byte>?) {
+	override fun texImage2Db(target: Int, level: Int, internalFormat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: NativeReadBuffer<Byte>?) {
 		before()
 		wrapped.texImage2Db(target, level, internalFormat, width, height, border, format, type, pixels)
 		after()
 	}
 
-	override fun texImage2Df(target: Int, level: Int, internalFormat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: NativeBuffer<Float>?) {
+	override fun texImage2Df(target: Int, level: Int, internalFormat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: NativeReadBuffer<Float>?) {
 		before()
 		wrapped.texImage2Df(target, level, internalFormat, width, height, border, format, type, pixels)
 		after()
@@ -613,7 +613,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform1fv(location: GlUniformLocationRef, v: NativeBuffer<Float>) {
+	override fun uniform1fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
 		before()
 		wrapped.uniform1fv(location, v)
 		after()
@@ -625,7 +625,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform1iv(location: GlUniformLocationRef, v: NativeBuffer<Int>) {
+	override fun uniform1iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
 		before()
 		wrapped.uniform1iv(location, v)
 		after()
@@ -637,7 +637,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform2fv(location: GlUniformLocationRef, v: NativeBuffer<Float>) {
+	override fun uniform2fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
 		before()
 		wrapped.uniform2fv(location, v)
 		after()
@@ -649,7 +649,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform2iv(location: GlUniformLocationRef, v: NativeBuffer<Int>) {
+	override fun uniform2iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
 		before()
 		wrapped.uniform2iv(location, v)
 		after()
@@ -661,7 +661,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform3fv(location: GlUniformLocationRef, v: NativeBuffer<Float>) {
+	override fun uniform3fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
 		before()
 		wrapped.uniform3fv(location, v)
 		after()
@@ -673,7 +673,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform3iv(location: GlUniformLocationRef, v: NativeBuffer<Int>) {
+	override fun uniform3iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
 		before()
 		wrapped.uniform3iv(location, v)
 		after()
@@ -685,7 +685,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform4fv(location: GlUniformLocationRef, v: NativeBuffer<Float>) {
+	override fun uniform4fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
 		before()
 		wrapped.uniform4fv(location, v)
 		after()
@@ -697,25 +697,25 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform4iv(location: GlUniformLocationRef, v: NativeBuffer<Int>) {
+	override fun uniform4iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
 		before()
 		wrapped.uniform4iv(location, v)
 		after()
 	}
 
-	override fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeBuffer<Float>) {
+	override fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>) {
 		before()
 		wrapped.uniformMatrix2fv(location, transpose, value)
 		after()
 	}
 
-	override fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeBuffer<Float>) {
+	override fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>) {
 		before()
 		wrapped.uniformMatrix3fv(location, transpose, value)
 		after()
 	}
 
-	override fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeBuffer<Float>) {
+	override fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>) {
 		before()
 		wrapped.uniformMatrix4fv(location, transpose, value)
 		after()
@@ -739,7 +739,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun vertexAttrib1fv(index: Int, values: NativeBuffer<Float>) {
+	override fun vertexAttrib1fv(index: Int, values: NativeReadBuffer<Float>) {
 		before()
 		wrapped.vertexAttrib1fv(index, values)
 		after()
@@ -751,7 +751,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun vertexAttrib2fv(index: Int, values: NativeBuffer<Float>) {
+	override fun vertexAttrib2fv(index: Int, values: NativeReadBuffer<Float>) {
 		before()
 		wrapped.vertexAttrib2fv(index, values)
 		after()
@@ -763,7 +763,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun vertexAttrib3fv(index: Int, values: NativeBuffer<Float>) {
+	override fun vertexAttrib3fv(index: Int, values: NativeReadBuffer<Float>) {
 		before()
 		wrapped.vertexAttrib3fv(index, values)
 		after()
@@ -775,7 +775,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun vertexAttrib4fv(index: Int, values: NativeBuffer<Float>) {
+	override fun vertexAttrib4fv(index: Int, values: NativeReadBuffer<Float>) {
 		before()
 		wrapped.vertexAttrib4fv(index, values)
 		after()

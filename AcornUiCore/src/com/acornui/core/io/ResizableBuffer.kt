@@ -19,7 +19,10 @@ package com.acornui.core.io
 import com.acornui.io.*
 import com.acornui.math.ceil
 
-open class ResizableBuffer<T, S : ReadWriteNativeBuffer<T>>(initialCapacity: Int = 16, private val factory: (newCapacity: Int) -> S) : ReadWriteNativeBuffer<T>, BufferBase(Int.MAX_VALUE) {
+open class ResizableBuffer<T, S : NativeReadWriteBuffer<T>>(initialCapacity: Int = 16, private val factory: (newCapacity: Int) -> S) : NativeReadWriteBuffer<T> {
+
+	private var _limit = Int.MAX_VALUE
+	private var _mark = BufferBase.UNSET_MARK
 
 	private var _wrapped: S = factory(initialCapacity)
 	protected val wrapped: S
@@ -28,42 +31,88 @@ open class ResizableBuffer<T, S : ReadWriteNativeBuffer<T>>(initialCapacity: Int
 	override val dataSize: Int
 		get() = _wrapped.dataSize
 
-	override var _position: Int
+	override val native: Any
+		get() = _wrapped.native
+
+	override fun flip(): Buffer {
+		_limit = position
+		_wrapped.flip()
+		return this
+	}
+
+	override val hasRemaining: Boolean
+		get() = position < _limit
+
+	override val capacity: Int = Int.MAX_VALUE
+
+	override val limit: Int
+		get() = _limit
+
+	override fun mark(): Buffer {
+		_mark = position
+		return this
+	}
+
+	override var position: Int
 		get() = _wrapped.position
 		set(value) {
 			_wrapped.position = value
 		}
 
+	override fun reset(): Buffer {
+		if (_mark == BufferBase.UNSET_MARK) {
+			throw InvalidMarkException("Mark not set")
+		}
+		position = _mark
+		return this
+	}
+
+	override fun rewind(): Buffer {
+		_mark = BufferBase.UNSET_MARK
+		position = 0
+		return this
+	}
+
 	override fun get(): T = _wrapped.get()
 
 	override fun put(value: T) {
 		if (position >= _wrapped.capacity) {
-			resize((_wrapped.capacity * 1.75f).ceil())
+			resize((_wrapped.capacity * 1.75f).ceil(), _limit)
 		}
 		_wrapped.put(value)
 	}
 
+	override fun clear(): Buffer {
+		_wrapped.clear()
+		_mark = BufferBase.UNSET_MARK
+		_limit = Int.MAX_VALUE
+		_wrapped.limit(_wrapped.capacity)
+		return this
+	}
+
 	override fun limit(newLimit: Int): Buffer {
 		if (newLimit > _wrapped.capacity) {
-			resize((newLimit * 1.75f).ceil())
+			resize((newLimit * 1.75f).ceil(), newLimit)
 		}
-		_wrapped.limit(minOf(_wrapped.capacity, newLimit))
-		return super.limit(newLimit)
+		_limit = newLimit
+		_wrapped.limit(newLimit)
+		return this
 	}
 
-	private fun resize(newCapacity: Int) {
+	private fun resize(newCapacity: Int, newLimit: Int) {
 		val newWrapped = factory(newCapacity)
+		val p = _wrapped.position
+		_wrapped.limit(_wrapped.capacity)
+		_wrapped.rewind()
 		newWrapped.put(_wrapped)
-		newWrapped.position = _wrapped.position
-		newWrapped.limit(minOf(newCapacity, limit))
+		newWrapped.limit(minOf(newCapacity, newLimit))
+		newWrapped.position = p
+		_limit = newLimit
 		_wrapped = newWrapped
 	}
-
-	override val native: Any
-		get() = _wrapped.native
 }
 
-class ResizableByteBuffer(initialCapacity: Int = 16) : ResizableBuffer<Byte, ReadWriteNativeByteBuffer>(initialCapacity, { it -> BufferFactory.instance.byteBuffer(it) }), ReadWriteNativeByteBuffer {
+class ResizableByteBuffer(initialCapacity: Int = 16) : ResizableBuffer<Byte, NativeReadWriteByteBuffer>(initialCapacity, { it -> BufferFactory.instance.byteBuffer(it) }), NativeReadWriteByteBuffer {
 
 	override fun getShort(): Short = wrapped.getShort()
 

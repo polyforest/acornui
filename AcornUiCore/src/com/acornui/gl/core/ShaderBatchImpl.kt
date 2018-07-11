@@ -19,23 +19,22 @@ package com.acornui.gl.core
 import com.acornui._assert
 import com.acornui.assertionsEnabled
 import com.acornui.core.Disposable
+import com.acornui.core.io.floatBuffer
 import com.acornui.core.io.resizableFloatBuffer
 import com.acornui.core.io.resizableShortBuffer
-import com.acornui.graphics.ColorRo
-import com.acornui.math.Vector3Ro
-
+import com.acornui.core.io.shortBuffer
 
 /**
+ *
  * @author nbilyk
  */
 class ShaderBatchImpl(
 		private val gl: Gl20,
 		private val glState: GlState,
 		val maxIndices: Int = 32767,
-		val maxVertexComponents: Int = 32767 * 16
+		val maxVertexComponents: Int = 32767 * 16,
+		override val vertexAttributes: VertexAttributes = standardVertexAttributes
 ) : ShaderBatch, Disposable {
-
-	var vertexAttributes: VertexAttributes = standardVertexAttributes
 
 	private var _renderCount = 0
 
@@ -49,11 +48,8 @@ class ShaderBatchImpl(
 	private var _drawMode: Int = Gl20.TRIANGLES
 
 	private val indices = resizableShortBuffer(2048)
-	private val vertexComponents = resizableFloatBuffer(2048 * 16)
+	private val vertexComponents = resizableFloatBuffer(2048 * vertexAttributes.vertexSize)
 	private var _highestIndex: Short = -1
-
-	override val currentDrawMode: Int
-		get() = _drawMode
 
 	override fun resetRenderCount() {
 		_renderCount = 0
@@ -73,11 +69,6 @@ class ShaderBatchImpl(
 		gl.bindBuffer(Gl20.ARRAY_BUFFER, vertexComponentsBuffer)
 		gl.bindBuffer(Gl20.ELEMENT_ARRAY_BUFFER, indicesBuffer)
 		vertexAttributes.bind(gl, glState.shader!!)
-	}
-
-	private fun allocate() {
-		gl.bufferData(Gl20.ARRAY_BUFFER, vertexComponents.capacity shl 2, Gl20.DYNAMIC_DRAW)
-		gl.bufferData(Gl20.ELEMENT_ARRAY_BUFFER, indices.capacity shl 1, Gl20.DYNAMIC_DRAW)
 	}
 
 	private fun unbind() {
@@ -143,8 +134,19 @@ class ShaderBatchImpl(
 			return _highestIndex
 		}
 
-	override fun putVertex(position: Vector3Ro, normal: Vector3Ro, colorTint: ColorRo, u: Float, v: Float) {
-		vertexAttributes.putVertex(vertexComponents, position, normal, colorTint, u, v)
+	override fun putVertexComponent(value: Float) {
+		vertexComponents.put(value)
+	}
+
+	/**
+	 * Converts the properties position, normal, colorTint, textureCoord into the expected vertex component order for
+	 * this batch.
+	 * @see vertexAttributes
+	 */
+	private val adapter = StandardAttributesAdapter(this)
+
+	override fun putVertex(positionX: Float, positionY: Float, positionZ: Float, normalX: Float, normalY: Float, normalZ: Float, colorR: Float, colorG: Float, colorB: Float, colorA: Float, u: Float, v: Float) {
+		adapter.putVertex(positionX, positionY, positionZ, normalX, normalY, normalZ, colorR, colorG, colorB, colorA, u, v)
 	}
 
 	override fun dispose() {

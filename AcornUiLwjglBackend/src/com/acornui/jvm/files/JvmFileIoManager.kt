@@ -17,7 +17,6 @@
 package com.acornui.jvm.files
 
 import com.acornui.core.Platform
-import com.acornui.core.io.BufferFactory
 import com.acornui.core.io.byteBuffer
 import com.acornui.core.platform
 import com.acornui.file.FileFilterGroup
@@ -75,7 +74,7 @@ class JvmFileIoManager : FileIoManager {
 		pickFileForSave(fileFilterGroups, defaultFilename, defaultExtension)?.writeText(text)
 	}
 
-	override fun saveBinary(data: NativeBuffer<Byte>, fileFilterGroups: List<FileFilterGroup>?, defaultFilename: String, defaultExtension: String?) {
+	override fun saveBinary(data: NativeReadBuffer<Byte>, fileFilterGroups: List<FileFilterGroup>?, defaultFilename: String, defaultExtension: String?) {
 		pickFileForSave(fileFilterGroups, defaultFilename, defaultExtension)?.writeBytes(data.toByteArray())
 	}
 
@@ -144,7 +143,7 @@ class JvmFileReader(private val file: File) : FileReader {
 		return file.readText()
 	}
 
-	override suspend fun readAsBinary(): ReadNativeByteBuffer {
+	override suspend fun readAsBinary(): NativeReadByteBuffer {
 		// TODO: There could be some utility here.
 		val bytes = file.readBytes()
 		val buffer = byteBuffer(bytes.size)

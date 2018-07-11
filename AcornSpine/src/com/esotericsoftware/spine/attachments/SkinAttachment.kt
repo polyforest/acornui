@@ -31,5 +31,4 @@
 
 package com.esotericsoftware.spine.attachments
 
-interface SkinAttachment {
-}
+interface SkinAttachment

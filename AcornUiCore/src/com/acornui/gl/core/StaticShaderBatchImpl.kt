@@ -18,12 +18,10 @@ package com.acornui.gl.core
 
 import com.acornui.collection.Clearable
 import com.acornui.component.drawing.DrawElementsCall
+import com.acornui.component.drawing.DrawElementsCallRo
 import com.acornui.core.Disposable
-import com.acornui.core.io.floatBuffer
-import com.acornui.core.io.shortBuffer
-import com.acornui.graphics.ColorRo
-import com.acornui.math.Vector3Ro
-
+import com.acornui.core.io.resizableFloatBuffer
+import com.acornui.core.io.resizableShortBuffer
 
 /**
  * A static shader batch will remember the draw calls, allowing the batch to be rendered without needing to buffer data
@@ -33,38 +31,34 @@ import com.acornui.math.Vector3Ro
 class StaticShaderBatchImpl(
 		private val gl: Gl20,
 		val glState: GlState,
-		maxIndices: Int = 32767,
-		maxVertexComponents: Int = 32767 * 16
-) : ShaderBatch, Clearable, Disposable {
-
-	var vertexAttributes: VertexAttributes = standardVertexAttributes
+		override val vertexAttributes: VertexAttributes = standardVertexAttributes
+) : StaticShaderBatch, Clearable, Disposable {
 
 	private val vertexComponentsBuffer: GlBufferRef = gl.createBuffer()
 	private val indicesBuffer: GlBufferRef = gl.createBuffer()
 
-	private val drawCalls = ArrayList<DrawElementsCall>()
+	private val _drawCalls = ArrayList<DrawElementsCall>()
+	override val drawCalls: List<DrawElementsCallRo>
+		get() = _drawCalls
 
 	/**
 	 * The draw mode if no indices are supplied.
 	 * Possible values are: POINTS, LINE_STRIP, LINE_LOOP, LINES, TRIANGLE_STRIP, TRIANGLE_FAN, or TRIANGLES.
 	 */
-	private var _drawMode: Int = Gl20.TRIANGLES
+	private var drawMode: Int = Gl20.TRIANGLES
 
-	private val indices = shortBuffer(maxIndices)
-	private val vertexComponents = floatBuffer(maxVertexComponents)
+	override val indices = resizableShortBuffer()
+	override val vertexComponents = resizableFloatBuffer()
 	private var _highestIndex: Short = -1
 
 	private var needsUpload = false
-
-	override val currentDrawMode: Int
-		get() = _drawMode
 
 	override fun resetRenderCount() {
 	}
 
 	override val renderCount: Int
 		get() {
-			return drawCalls.size
+			return _drawCalls.size
 		}
 
 	private fun bind() {
@@ -80,20 +74,18 @@ class StaticShaderBatchImpl(
 	}
 
 	override fun begin(drawMode: Int) {
-		if (_drawMode == drawMode) {
+		if (this.drawMode == drawMode) {
 			flush(false)
 		} else {
 			flush(true)
-			_drawMode = drawMode
+			this.drawMode = drawMode
 		}
 	}
 
 	override fun clear() {
 		// Recycle the draw calls.
-		for (i in 0..drawCalls.lastIndex) {
-			DrawElementsCall.free(drawCalls[i])
-		}
-		drawCalls.clear()
+		DrawElementsCall.freeAll(_drawCalls)
+		_drawCalls.clear()
 		indices.clear()
 		vertexComponents.clear()
 		_highestIndex = -1
@@ -101,7 +93,7 @@ class StaticShaderBatchImpl(
 
 	override fun flush(force: Boolean) {
 		if (!force) return
-		val lastDrawCall = drawCalls.lastOrNull()
+		val lastDrawCall = _drawCalls.lastOrNull()
 		val offset = if (lastDrawCall == null) 0 else lastDrawCall.offset + lastDrawCall.count
 		val count = indices.position - offset
 		if (count <= 0) return // Nothing to draw.
@@ -112,16 +104,15 @@ class StaticShaderBatchImpl(
 		drawCall.texture = glState.getTexture(0)
 		drawCall.blendMode = glState.blendMode
 		drawCall.premultipliedAlpha = glState.premultipliedAlpha
-		drawCall.mode = _drawMode
-		drawCalls.add(drawCall)
+		drawCall.mode = drawMode
+		_drawCalls.add(drawCall)
 		needsUpload = true
 	}
 
-	fun render() {
-		if (drawCalls.isEmpty()) return
+	override fun render() {
+		if (_drawCalls.isEmpty()) return
 
 		bind()
-
 		if (needsUpload) {
 			needsUpload = false
 
@@ -134,8 +125,8 @@ class StaticShaderBatchImpl(
 			gl.bufferDatafv(Gl20.ARRAY_BUFFER, vertexComponents, Gl20.DYNAMIC_DRAW) // Upload
 		}
 
-		for (i in 0..drawCalls.lastIndex) {
-			val drawCall = drawCalls[i]
+		for (i in 0.._drawCalls.lastIndex) {
+			val drawCall = _drawCalls[i]
 			glState.setTexture(drawCall.texture ?: glState.whitePixel)
 			glState.blendMode(drawCall.blendMode, drawCall.premultipliedAlpha)
 			gl.drawElements(drawCall.mode, drawCall.count, Gl20.UNSIGNED_SHORT, drawCall.offset shl 1)
@@ -153,8 +144,19 @@ class StaticShaderBatchImpl(
 		if (index > _highestIndex) _highestIndex = index
 	}
 
-	override fun putVertex(position: Vector3Ro, normal: Vector3Ro, colorTint: ColorRo, u: Float, v: Float) {
-		vertexAttributes.putVertex(vertexComponents, position, normal, colorTint, u, v)
+	override fun putVertexComponent(value: Float) {
+		vertexComponents.put(value)
+	}
+
+	/**
+	 * Converts the properties position, normal, colorTint, textureCoord into the expected vertex component order for
+	 * this batch.
+	 * @see vertexAttributes
+	 */
+	private val adapter = StandardAttributesAdapter(this)
+
+	override fun putVertex(positionX: Float, positionY: Float, positionZ: Float, normalX: Float, normalY: Float, normalZ: Float, colorR: Float, colorG: Float, colorB: Float, colorA: Float, u: Float, v: Float) {
+		adapter.putVertex(positionX, positionY, positionZ, normalX, normalY, normalZ, colorR, colorG, colorB, colorA, u, v)
 	}
 
 	override fun dispose() {

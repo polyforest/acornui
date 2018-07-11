@@ -16,8 +16,8 @@
 
 package com.acornui.core.io
 
-import com.acornui.io.ReadWriteNativeBuffer
-import com.acornui.io.ReadWriteNativeByteBuffer
+import com.acornui.io.NativeReadWriteBuffer
+import com.acornui.io.NativeReadWriteByteBuffer
 
 // TODO: When we migrate to new build system, switch this factory with expects/actual
 
@@ -25,33 +25,33 @@ import com.acornui.io.ReadWriteNativeByteBuffer
  * @author nbilyk
  */
 interface BufferFactory {
-	fun byteBuffer(capacity: Int): ReadWriteNativeByteBuffer
-	fun shortBuffer(capacity: Int): ReadWriteNativeBuffer<Short>
-	fun intBuffer(capacity: Int): ReadWriteNativeBuffer<Int>
-	fun floatBuffer(capacity: Int): ReadWriteNativeBuffer<Float>
-	fun doubleBuffer(capacity: Int): ReadWriteNativeBuffer<Double>
+	fun byteBuffer(capacity: Int): NativeReadWriteByteBuffer
+	fun shortBuffer(capacity: Int): NativeReadWriteBuffer<Short>
+	fun intBuffer(capacity: Int): NativeReadWriteBuffer<Int>
+	fun floatBuffer(capacity: Int): NativeReadWriteBuffer<Float>
+	fun doubleBuffer(capacity: Int): NativeReadWriteBuffer<Double>
 
 	companion object {
 		lateinit var instance: BufferFactory
 	}
 }
 
-fun byteBuffer(capacity: Int): ReadWriteNativeByteBuffer {
+fun byteBuffer(capacity: Int): NativeReadWriteByteBuffer {
 	return BufferFactory.instance.byteBuffer(capacity)
 }
 
-fun shortBuffer(capacity: Int): ReadWriteNativeBuffer<Short> {
+fun shortBuffer(capacity: Int): NativeReadWriteBuffer<Short> {
 	return BufferFactory.instance.shortBuffer(capacity)
 }
 
-fun intBuffer(capacity: Int): ReadWriteNativeBuffer<Int> {
+fun intBuffer(capacity: Int): NativeReadWriteBuffer<Int> {
 	return BufferFactory.instance.intBuffer(capacity)
 }
-fun floatBuffer(capacity: Int): ReadWriteNativeBuffer<Float> {
+fun floatBuffer(capacity: Int): NativeReadWriteBuffer<Float> {
 	return BufferFactory.instance.floatBuffer(capacity)
 }
 
-fun doubleBuffer(capacity: Int): ReadWriteNativeBuffer<Double> {
+fun doubleBuffer(capacity: Int): NativeReadWriteBuffer<Double> {
 	return BufferFactory.instance.doubleBuffer(capacity)
 }
 
@@ -59,18 +59,18 @@ fun resizableByteBuffer(initialCapacity: Int = 16): ResizableByteBuffer {
 	return ResizableByteBuffer(initialCapacity)
 }
 
-fun resizableShortBuffer(initialCapacity: Int = 16): ResizableBuffer<Short, ReadWriteNativeBuffer<Short>> {
-	return ResizableBuffer(initialCapacity) { BufferFactory.instance.shortBuffer(it) }
+fun resizableShortBuffer(initialCapacity: Int = 16): ResizableBuffer<Short, NativeReadWriteBuffer<Short>> {
+	return ResizableBuffer(initialCapacity, factory = { BufferFactory.instance.shortBuffer(it) })
 }
 
-fun resizableIntBuffer(initialCapacity: Int = 16): ResizableBuffer<Int, ReadWriteNativeBuffer<Int>> {
-	return ResizableBuffer(initialCapacity) { BufferFactory.instance.intBuffer(it) }
+fun resizableIntBuffer(initialCapacity: Int = 16): ResizableBuffer<Int, NativeReadWriteBuffer<Int>> {
+	return ResizableBuffer(initialCapacity, factory = { BufferFactory.instance.intBuffer(it) })
 }
 
-fun resizableFloatBuffer(initialCapacity: Int = 16): ResizableBuffer<Float, ReadWriteNativeBuffer<Float>> {
-	return ResizableBuffer(initialCapacity) { BufferFactory.instance.floatBuffer(it) }
+fun resizableFloatBuffer(initialCapacity: Int = 16): ResizableBuffer<Float, NativeReadWriteBuffer<Float>> {
+	return ResizableBuffer(initialCapacity, factory = { BufferFactory.instance.floatBuffer(it) })
 }
 
-fun resizableDoubleBuffer(initialCapacity: Int = 16): ResizableBuffer<Double, ReadWriteNativeBuffer<Double>> {
-	return ResizableBuffer(initialCapacity) { BufferFactory.instance.doubleBuffer(it) }
+fun resizableDoubleBuffer(initialCapacity: Int = 16): ResizableBuffer<Double, NativeReadWriteBuffer<Double>> {
+	return ResizableBuffer(initialCapacity, factory = { BufferFactory.instance.doubleBuffer(it) })
 }

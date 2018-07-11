@@ -40,16 +40,20 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-class Bone : Updatable {
-	val data: BoneData
-	val skeleton: Skeleton
-	val parent: Bone?
+class Bone(
+		val data: BoneData,
+		val skeleton: Skeleton,
+		val parent: Bone?
+) : Updatable {
+
 	var x: Float = 0f
 	var y: Float = 0f
+
 	/** Returns the forward kinetics rotation.  */
 	var rotation: Float = 0f
 	var scaleX: Float = 0f
 	var scaleY: Float = 0f
+
 	internal var appliedRotation: Float = 0f
 	internal var appliedScaleX: Float = 0f
 	internal var appliedScaleY: Float = 0f
@@ -70,13 +74,6 @@ class Bone : Updatable {
 		internal set
 	var worldSignY: Float = 0f
 		internal set
-
-	constructor(data: BoneData, skeleton: Skeleton, parent: Bone?) {
-		this.data = data
-		this.skeleton = skeleton
-		this.parent = parent
-		setToSetupPose()
-	}
 
 	/** Same as [.updateWorldTransform]. This method exists for Bone to implement [Updatable].  */
 	override fun update() {
@@ -275,5 +272,9 @@ class Bone : Updatable {
 
 	override fun toString(): String {
 		return "Bone(name=\"${data.name}\")"
+	}
+
+	init {
+		setToSetupPose()
 	}
 }

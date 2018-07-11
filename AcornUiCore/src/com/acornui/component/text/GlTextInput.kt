@@ -22,7 +22,6 @@ import com.acornui.async.resultOrNull
 import com.acornui.async.then
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LineInfoRo
-import com.acornui.component.layout.setSize
 import com.acornui.component.scroll.ClampedScrollModel
 import com.acornui.component.scroll.ScrollPolicy
 import com.acornui.component.scroll.scrollArea
@@ -35,6 +34,7 @@ import com.acornui.core.di.own
 import com.acornui.core.focus.blurred
 import com.acornui.core.focus.focused
 import com.acornui.core.input.*
+import com.acornui.core.input.interaction.*
 import com.acornui.core.mvc.CommandGroup
 import com.acornui.core.mvc.commander
 import com.acornui.core.mvc.invokeCommand
@@ -47,11 +47,6 @@ import com.acornui.core.time.delayedCallback
 import com.acornui.core.time.enterFrame
 import com.acornui.core.time.onTick
 import com.acornui.function.as1
-import com.acornui.component.drawing.dynamicMeshC
-import com.acornui.component.drawing.fillStyle
-import com.acornui.component.drawing.lineStyle
-import com.acornui.component.drawing.quad
-import com.acornui.core.input.interaction.*
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.Bounds
@@ -63,6 +58,9 @@ import com.acornui.reflect.observable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import com.acornui.string.isLetterOrDigit2
+
+// TODO: Reduce this. instead of boxStyle, use a background component
+// TODO: instead of cursor component, just use 4 vertices
 
 open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 
@@ -417,13 +415,10 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	var pageHeight: Float = 400f
 
-	private val textCursor = addChild(dynamicMeshC {
+	private val textCursor = addChild(rect {
 		layoutInvalidatingFlags = ValidationFlags.LAYOUT // Allows us to toggle visibility on this cursor and not affect layout.
-		buildMesh {
-			lineStyle.isVisible = false
-			fillStyle.colorTint.set(Color.WHITE)
-			+quad(-1f, 0f, 1f, 0f, 1f, 1f, -1f, 1f)
-		}
+		setOrigin(1f, 0f)
+		setSize(2f, 2f)
 		colorTint = Color.CLEAR
 	})
 

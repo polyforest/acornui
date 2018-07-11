@@ -29,7 +29,7 @@ import com.acornui.math.*
 import com.acornui.reflect.observable
 
 /**
- * GlState stores OpenGl state information necessary for knowing whether basic operations can be batched.
+ * GlState stores OpenGl state information necessary for knowing whether basic draw calls can be batched.
  *
  * @author nbilyk
  */

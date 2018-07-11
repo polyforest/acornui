@@ -17,10 +17,6 @@
 package com.acornui.gl.core
 
 import com.acornui.core.Disposable
-import com.acornui.graphics.ColorRo
-import com.acornui.io.ReadBuffer
-import com.acornui.io.WriteBuffer
-import com.acornui.math.Vector3Ro
 
 
 interface ShaderProgram : Disposable {
@@ -186,47 +182,12 @@ void main() {
 
 }
 
-val standardVertexAttributes = object : VertexAttributes(listOf(
+val standardVertexAttributes = VertexAttributes(listOf(
 		VertexAttribute(3, false, Gl20.FLOAT, VertexAttributeUsage.POSITION),
 		VertexAttribute(3, false, Gl20.FLOAT, VertexAttributeUsage.NORMAL),
 		VertexAttribute(4, false, Gl20.FLOAT, VertexAttributeUsage.COLOR_TINT),
 		VertexAttribute(2, false, Gl20.FLOAT, VertexAttributeUsage.TEXTURE_COORD))
-) {
-
-	override fun getVertex(vertexData: ReadBuffer<Float>, out: Vertex) {
-		vertexData.apply {
-			out.position.x = get()
-			out.position.y = get()
-			out.position.z = get()
-			out.normal.x = get()
-			out.normal.y = get()
-			out.normal.z = get()
-			out.colorTint.r = get()
-			out.colorTint.g = get()
-			out.colorTint.b = get()
-			out.colorTint.a = get()
-			out.u = get()
-			out.v = get()
-		}
-	}
-
-	override fun putVertex(vertexData: WriteBuffer<Float>, position: Vector3Ro, normal: Vector3Ro, colorTint: ColorRo, u: Float, v: Float) {
-		vertexData.apply {
-			put(position.x)
-			put(position.y)
-			put(position.z)
-			put(normal.x)
-			put(normal.y)
-			put(normal.z)
-			put(colorTint.r)
-			put(colorTint.g)
-			put(colorTint.b)
-			put(colorTint.a)
-			put(u)
-			put(v)
-		}
-	}
-}
+)
 
 const val DEFAULT_SHADER_HEADER: String = """
 #ifdef GL_ES

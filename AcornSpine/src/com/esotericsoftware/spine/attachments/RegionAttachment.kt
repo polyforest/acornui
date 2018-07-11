@@ -33,12 +33,15 @@ package com.esotericsoftware.spine.attachments
 
 import com.acornui.core.graphics.AtlasPageData
 import com.acornui.core.graphics.AtlasRegionData
-import com.acornui.gl.core.Vertex
 import com.acornui.graphics.Color
 import com.acornui.math.MathUtils
-import com.acornui.math.Vector3
-import com.acornui.math.Vector3Ro
 import com.esotericsoftware.spine.Slot
+import com.esotericsoftware.spine.component.SpineVertexUtils.colorOffset
+import com.esotericsoftware.spine.component.SpineVertexUtils.getUPos
+import com.esotericsoftware.spine.component.SpineVertexUtils.getVPos
+import com.esotericsoftware.spine.component.SpineVertexUtils.getXPos
+import com.esotericsoftware.spine.component.SpineVertexUtils.getYPos
+import com.esotericsoftware.spine.component.SpineVertexUtils.vertexSize
 import com.esotericsoftware.spine.data.attachments.RegionAttachmentData
 import kotlin.math.cos
 import kotlin.math.sin
@@ -54,7 +57,7 @@ open class RegionAttachment(
 	private val color: Color = Color()
 
 	// TL, TR, BR, BL
-	private val worldVertices = Array(4, { Vertex(normal = Vector3.NEG_Z.copy()) })
+	private val worldVertices = ArrayList<Float>(vertexSize * 4)
 	private val offset = FloatArray(8)
 
 	init {
@@ -64,23 +67,23 @@ open class RegionAttachment(
 		val pageW = page.width.toFloat()
 		val pageH = page.height.toFloat()
 		if (region.isRotated) {
-			vertices[0].u = bounds.right / pageW
-			vertices[0].v = bounds.y / pageH
-			vertices[1].u = bounds.right / pageW
-			vertices[1].v = bounds.bottom / pageH
-			vertices[2].u = bounds.x / pageW
-			vertices[2].v = bounds.bottom / pageH
-			vertices[3].u = bounds.x / pageW
-			vertices[3].v = bounds.y / pageH
+			vertices[getUPos(0)] = bounds.right / pageW
+			vertices[getVPos(0)] = bounds.y / pageH
+			vertices[getUPos(1)] = bounds.right / pageW
+			vertices[getVPos(1)] = bounds.bottom / pageH
+			vertices[getUPos(2)] = bounds.x / pageW
+			vertices[getVPos(2)] = bounds.bottom / pageH
+			vertices[getUPos(3)] = bounds.x / pageW
+			vertices[getVPos(3)] = bounds.y / pageH
 		} else {
-			vertices[0].u = bounds.x / pageW
-			vertices[0].v = bounds.y / pageH
-			vertices[1].u = bounds.right / pageW
-			vertices[1].v = bounds.y / pageH
-			vertices[2].u = bounds.right / pageW
-			vertices[2].v = bounds.bottom / pageH
-			vertices[3].u = bounds.x / pageW
-			vertices[3].v = bounds.bottom / pageH
+			vertices[getUPos(0)] = bounds.x / pageW
+			vertices[getVPos(0)] = bounds.y / pageH
+			vertices[getUPos(1)] = bounds.right / pageW
+			vertices[getVPos(1)] = bounds.y / pageH
+			vertices[getUPos(2)] = bounds.right / pageW
+			vertices[getVPos(2)] = bounds.bottom / pageH
+			vertices[getUPos(3)] = bounds.x / pageW
+			vertices[getVPos(3)] = bounds.bottom / pageH
 		}
 
 		updateOffset()
@@ -137,10 +140,8 @@ open class RegionAttachment(
 	/**
 	 * @return The updated world vertices.
 	 */
-	open fun updateWorldVertices(slot: Slot): Array<Vertex> {
+	open fun updateWorldVertices(slot: Slot): List<Float> {
 		val skeleton = slot.skeleton
-
-		color.set(skeleton.color).mul(slot.color).mul(data.color)
 
 		val vertices = this.worldVertices
 		val offset = this.offset
@@ -156,48 +157,48 @@ open class RegionAttachment(
 
 		offsetX = offset[ULX]
 		offsetY = offset[ULY]
-		val v0 = vertices[0]
-		v0.position.x = offsetX * m00 + offsetY * m01 + x // ul
-		v0.position.y = offsetX * m10 + offsetY * m11 + y
-		v0.position.z = 0f
-		v0.colorTint.set(color)
+		vertices[getXPos(0)] = offsetX * m00 + offsetY * m01 + x // ul
+		vertices[getYPos(0)] = offsetX * m10 + offsetY * m11 + y
 
 		offsetX = offset[URX]
 		offsetY = offset[URY]
-		val v1 = vertices[1]
-		v1.position.x = offsetX * m00 + offsetY * m01 + x // ur
-		v1.position.y = offsetX * m10 + offsetY * m11 + y
-		v1.position.z = 0f
-		v1.colorTint.set(color)
+		vertices[getXPos(1)] = offsetX * m00 + offsetY * m01 + x // ur
+		vertices[getYPos(1)] = offsetX * m10 + offsetY * m11 + y
 
 		offsetX = offset[BRX]
 		offsetY = offset[BRY]
-		val v2 = vertices[2]
-		v2.position.x = offsetX * m00 + offsetY * m01 + x // br
-		v2.position.y = offsetX * m10 + offsetY * m11 + y
-		v2.position.z = 0f
-		v2.colorTint.set(color)
+		vertices[getXPos(2)] = offsetX * m00 + offsetY * m01 + x // br
+		vertices[getYPos(2)] = offsetX * m10 + offsetY * m11 + y
 
 		offsetX = offset[BLX]
 		offsetY = offset[BLY]
-		val v3 = vertices[3]
-		v3.position.x = offsetX * m00 + offsetY * m01 + x // bl
-		v3.position.y = offsetX * m10 + offsetY * m11 + y
-		v3.position.z = 0f
-		v3.colorTint.set(color)
+		vertices[getXPos(3)] = offsetX * m00 + offsetY * m01 + x // bl
+		vertices[getYPos(3)] = offsetX * m10 + offsetY * m11 + y
 
+		run {
+			// Update color
+			color.set(skeleton.color).mul(slot.color).mul(data.color)
+			var i = colorOffset
+			while (i < vertices.size) {
+				vertices[i + 0] = color.r
+				vertices[i + 1] = color.g
+				vertices[i + 2] = color.b
+				vertices[i + 3] = color.a
+				i += vertexSize
+			}
+		}
 
 		return vertices
 	}
 
 	companion object {
-		val BLX = 0
-		val BLY = 1
-		val ULX = 2
-		val ULY = 3
-		val URX = 4
-		val URY = 5
-		val BRX = 6
-		val BRY = 7
+		const val BLX = 0
+		const val BLY = 1
+		const val ULX = 2
+		const val ULY = 3
+		const val URX = 4
+		const val URY = 5
+		const val BRX = 6
+		const val BRY = 7
 	}
 }

@@ -17,11 +17,24 @@
 package com.acornui.io
 
 import com.acornui.graphics.ColorRo
+import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
+import com.acornui.math.Vector3
 import com.acornui.math.Vector3Ro
 
 
 // Common buffer read/write utility
+
+fun ReadBuffer<Float>.getVector3(out: Vector3) {
+	out.x = get()
+	out.y = get()
+	out.z = get()
+}
+
+fun ReadBuffer<Float>.getVector2(out: Vector2) {
+	out.x = get()
+	out.y = get()
+}
 
 fun WriteBuffer<Float>.putVector3(value: Vector3Ro) {
 	put(value.x)

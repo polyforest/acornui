@@ -16,6 +16,7 @@
 
 package com.acornui.component.drawing
 
+import com.acornui.gl.core.putVertex
 import com.acornui.math.*
 
 /**
@@ -29,9 +30,9 @@ object MiterCap : CapBuilder {
 	private val dirControl = Vector2()
 	private val joinedPoint = Vector2()
 
-	override fun createCap(p1: Vector2, p2: Vector2, control: Vector2?, meshData: MeshData, lineStyle: LineStyle, controlLineThickness: Float, clockwise: Boolean) {
+	override fun createCap(p1: Vector2Ro, p2: Vector2Ro, control: Vector2Ro?, meshRegion: MeshRegion, lineStyle: LineStyle, controlLineThickness: Float, clockwise: Boolean) {
 		if (control == null) {
-			NoCap.createCap(p1, p2, null, meshData, lineStyle, controlLineThickness, clockwise)
+			NoCap.createCap(p1, p2, null, meshRegion, lineStyle, controlLineThickness, clockwise)
 			return
 		}
 		val t = (if (clockwise) lineStyle.thickness else -lineStyle.thickness) * 0.5f
@@ -45,13 +46,13 @@ object MiterCap : CapBuilder {
 		perpControl.set(dirControl.y, -dirControl.x).scl(t2).add(p1)
 		Ray2.intersects(perpLine, dirLine, perpControl, dirControl, joinedPoint)
 
-		meshData.pushVertex(joinedPoint, -0.001f, lineStyle.fillStyle)
+		meshRegion.putVertex(joinedPoint, -0.001f, colorTint = lineStyle.colorTint)
 
 		// INNER
 		perpLine.set(-dirLine.y, dirLine.x).scl(t).add(p1)
 		perpControl.set(-dirControl.y, dirControl.x).scl(t2).add(p1)
 		Ray2.intersects(perpLine, dirLine, perpControl, dirControl, joinedPoint)
 
-		meshData.pushVertex(joinedPoint, -0.001f, lineStyle.fillStyle)
+		meshRegion.putVertex(joinedPoint, -0.001f, colorTint = lineStyle.colorTint)
 	}
 }

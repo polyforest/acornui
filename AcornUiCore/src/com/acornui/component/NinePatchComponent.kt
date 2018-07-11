@@ -27,6 +27,7 @@ import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.putIndices
+import com.acornui.gl.core.putVertex
 import com.acornui.math.Bounds
 import com.acornui.math.IntRectangleRo
 import com.acornui.math.MinMaxRo

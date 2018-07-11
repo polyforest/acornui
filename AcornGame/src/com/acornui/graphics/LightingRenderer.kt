@@ -104,7 +104,6 @@ class LightingRenderer(
 
 		renderWorld()
 		glState.batch.flush(true)
-
 		glState.shader = previousShader
 	}
 

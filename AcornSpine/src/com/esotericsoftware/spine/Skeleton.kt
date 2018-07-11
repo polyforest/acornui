@@ -32,9 +32,7 @@
 package com.esotericsoftware.spine
 
 import com.acornui.collection.*
-import com.acornui.core.INT_MIN_VALUE
 import com.acornui.core.graphics.TextureAtlasData
-import com.acornui.gl.core.Vertex
 import com.acornui.graphics.Color
 import com.acornui.math.Bounds
 import com.acornui.math.Vector2
@@ -43,6 +41,8 @@ import com.esotericsoftware.spine.attachments.MeshAttachment
 import com.esotericsoftware.spine.attachments.RegionAttachment
 import com.esotericsoftware.spine.attachments.SkinAttachment
 import com.esotericsoftware.spine.attachments.WeightedMeshAttachment
+import com.esotericsoftware.spine.component.SpineVertexUtils.positionOffset
+import com.esotericsoftware.spine.component.SpineVertexUtils.vertexSize
 import com.esotericsoftware.spine.data.SkeletonData
 
 
@@ -296,30 +296,31 @@ class Skeleton(val data: SkeletonData, val atlas: TextureAtlasData) : Clearable 
 		val drawOrder = this.drawOrder
 		var minX = Int.MAX_VALUE.toFloat()
 		var minY = Int.MAX_VALUE.toFloat()
-		var maxX = INT_MIN_VALUE.toFloat()
-		var maxY = INT_MIN_VALUE.toFloat()
+		var maxX = Int.MIN_VALUE.toFloat()
+		var maxY = Int.MIN_VALUE.toFloat()
 		var i = 0
 		val n = drawOrder.size
 		while (i < n) {
 			val slot = drawOrder[i]
-			var vertices: Array<Vertex>? = null
 			val attachment = slot.attachment
-			if (attachment is RegionAttachment) {
-				vertices = attachment.updateWorldVertices(slot)
+			val vertices: List<Float>? = if (attachment is RegionAttachment) {
+				attachment.updateWorldVertices(slot)
 			} else if (attachment is MeshAttachment) {
-				vertices = attachment.updateWorldVertices(slot)
+				attachment.updateWorldVertices(slot)
 			} else if (attachment is WeightedMeshAttachment) {
-				vertices = attachment.updateWorldVertices(slot)
-			}
+				attachment.updateWorldVertices(slot)
+			} else null
 			if (vertices != null) {
-				for (j in 0..vertices.lastIndex) {
-					val vertex = vertices[j]
-					val x = vertex.position.x
-					val y = vertex.position.y
+				var j = positionOffset
+				val n = vertices.lastIndex
+				while (j < n) {
+					val x = vertices[j]
+					val y = vertices[j + 1]
 					minX = minOf(minX, x)
 					minY = minOf(minY, y)
 					maxX = maxOf(maxX, x)
 					maxY = maxOf(maxY, y)
+					j += vertexSize
 				}
 			}
 			i++

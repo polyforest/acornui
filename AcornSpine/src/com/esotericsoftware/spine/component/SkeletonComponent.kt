@@ -17,8 +17,8 @@
 package com.esotericsoftware.spine.component
 
 import com.acornui.component.ComponentInit
-import com.acornui.gl.core.GlState
-import com.acornui.gl.core.Vertex
+import com.acornui.gl.core.*
+import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.*
 import com.esotericsoftware.spine.Skeleton
@@ -29,6 +29,7 @@ import com.esotericsoftware.spine.attachments.MeshAttachment
 import com.esotericsoftware.spine.attachments.RegionAttachment
 import com.esotericsoftware.spine.attachments.SkeletonAttachment
 import com.esotericsoftware.spine.attachments.WeightedMeshAttachment
+import com.esotericsoftware.spine.component.SpineVertexUtils.positionOffset
 import com.esotericsoftware.spine.renderer.SkeletonMeshRenderer
 import com.esotericsoftware.spine.renderer.SkeletonRenderer
 
@@ -131,28 +132,71 @@ open class SkeletonComponent(
 	private val v2 = Vector2()
 	private val v3 = Vector2()
 
-	private fun intersects(x: Float, y: Float, vertices: Array<Vertex>, triangles: ShortArray): Boolean {
+	private fun intersects(x: Float, y: Float, vertices: List<Float>, triangles: ShortArray): Boolean {
 		bounds.inf()
 		pt.set(x, y)
-		for (i in 0..vertices.lastIndex) {
-			val p = vertices[i].position
-			bounds.ext(p.x, p.y)
+
+		run {
+			var i = positionOffset
+			val n = vertices.size
+			val vertexSize = spineVertexAttributes.vertexSize
+			while (i < n) {
+				bounds.ext(vertices[i], vertices[i + 1])
+				i += vertexSize
+			}
 		}
 		if (!bounds.contains(x, y))
 			return false
 
 		for (i in 0..triangles.lastIndex step 3) {
-			val p1 = vertices[triangles[i].toInt()].position
-			v1.set(p1.x, p1.y)
-			val p2 = vertices[triangles[i + 1].toInt()].position
-			v2.set(p2.x, p2.y)
-			val p3 = vertices[triangles[i + 2].toInt()].position
-			v3.set(p3.x, p3.y)
+			SpineVertexUtils.getPosition(vertices, triangles[i], v1)
+			SpineVertexUtils.getPosition(vertices, triangles[i + 1], v2)
+			SpineVertexUtils.getPosition(vertices, triangles[i + 2], v3)
 			if (GeomUtils.intersectPointTriangle(pt, v1, v2, v3)) {
 				return true
 			}
 		}
 		return false
+	}
+}
+
+val spineVertexAttributes: VertexAttributes = VertexAttributes(listOf(
+		VertexAttribute(2, false, Gl20.FLOAT, VertexAttributeUsage.POSITION),
+		VertexAttribute(4, false, Gl20.FLOAT, VertexAttributeUsage.COLOR_TINT),
+		VertexAttribute(2, false, Gl20.FLOAT, VertexAttributeUsage.TEXTURE_COORD))
+)
+
+object SpineVertexUtils {
+
+	val positionOffset = spineVertexAttributes.getOffsetByUsage(VertexAttributeUsage.POSITION)!!
+	val colorOffset = spineVertexAttributes.getOffsetByUsage(VertexAttributeUsage.COLOR_TINT)!!
+	val textureCoordOffset = spineVertexAttributes.getOffsetByUsage(VertexAttributeUsage.TEXTURE_COORD)!!
+	val vertexSize = spineVertexAttributes.vertexSize
+
+	fun getPosition(vertexComponents: List<Float>, vertexIndex: Short, out: Vector2) {
+		val p = vertexIndex * vertexSize + positionOffset
+		out.set(vertexComponents[p], vertexComponents[p + 1])
+	}
+
+	fun getColor(vertexComponents: List<Float>, vertexIndex: Short, out: Color) {
+		val p = vertexIndex * vertexSize + colorOffset
+		out.set(vertexComponents[p], vertexComponents[p + 1], vertexComponents[p + 2], vertexComponents[p + 3])
+	}
+
+	fun getUPos(index: Int): Int {
+		return index * vertexSize + textureCoordOffset
+	}
+
+	fun getVPos(index: Int): Int {
+		return index * vertexSize + textureCoordOffset + 1
+	}
+
+	fun getXPos(index: Int): Int {
+		return index * vertexSize + positionOffset
+	}
+
+	fun getYPos(index: Int): Int {
+		return index * vertexSize + positionOffset + 1
 	}
 
 

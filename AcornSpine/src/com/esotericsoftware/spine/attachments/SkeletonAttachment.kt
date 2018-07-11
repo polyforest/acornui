@@ -34,7 +34,7 @@ package com.esotericsoftware.spine.attachments
 import com.esotericsoftware.spine.Skeleton
 
 /** Attachment that displays a skeleton.  */
-class SkeletonAttachment() : SkinAttachment {
+class SkeletonAttachment : SkinAttachment {
 
 	var skeleton: Skeleton? = null
 }

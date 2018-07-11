@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Poly Forest
+ * Copyright 2018 Nicholas Bilyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package com.acornui.component
+package com.acornui.filter
 
+import com.acornui.component.Sprite
+import com.acornui.component.StackLayoutContainer
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.gl.core.Framebuffer

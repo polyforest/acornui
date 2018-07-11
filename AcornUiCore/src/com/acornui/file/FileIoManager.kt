@@ -70,7 +70,7 @@ interface FileIoManager : Disposable {
 	 * (e.g. 'filename' -> 'filename.txt')
 	 * @see FileFilterGroup
 	 */
-	fun saveBinary(data: NativeBuffer<Byte>, fileFilterGroups: List<FileFilterGroup>? = null, defaultFilename: String, defaultExtension: String? = null)
+	fun saveBinary(data: NativeReadBuffer<Byte>, fileFilterGroups: List<FileFilterGroup>? = null, defaultFilename: String, defaultExtension: String? = null)
 
 	companion object : DKey<FileIoManager>
 }
@@ -117,5 +117,5 @@ interface FileReader {
 	/**
 	 * Read file ([name]) from disk binary
 	 */
-	suspend fun readAsBinary(): ReadNativeByteBuffer
+	suspend fun readAsBinary(): NativeReadByteBuffer
 }

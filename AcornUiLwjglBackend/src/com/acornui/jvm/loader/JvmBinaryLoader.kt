@@ -17,7 +17,7 @@
 package com.acornui.jvm.loader
 
 import com.acornui.core.assets.AssetType
-import com.acornui.io.ReadNativeByteBuffer
+import com.acornui.io.NativeReadByteBuffer
 import com.acornui.jvm.io.JvmByteBuffer
 import java.io.InputStream
 import java.nio.ByteBuffer
@@ -25,14 +25,14 @@ import java.nio.ByteOrder
 
 open class JvmBinaryLoader(
 		path: String,
-		workScheduler: WorkScheduler<ReadNativeByteBuffer>
-) : JvmAssetLoaderBase<ReadNativeByteBuffer>(path, AssetType.BINARY, workScheduler) {
+		workScheduler: WorkScheduler<NativeReadByteBuffer>
+) : JvmAssetLoaderBase<NativeReadByteBuffer>(path, AssetType.BINARY, workScheduler) {
 
 	init {
 		init()
 	}
 
-	override fun create(inputStream: InputStream): ReadNativeByteBuffer {
+	override fun create(inputStream: InputStream): NativeReadByteBuffer {
 		val byteArray = inputStream.use {
 			it.readAllBytes()
 		}

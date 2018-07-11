@@ -97,7 +97,7 @@ class DirectionalLightCamera {
 			lastClipSpace[i].set(clipSpace[i]) // For no-op check.
 			viewCam.invCombined.prj(tmp.set(clipSpace[i])) // Convert the screen boundary to world space.
 			view.prj(tmp) // Project with the light's direction.
-			bounds.ext(tmp, update = false)
+			bounds.ext(tmp)
 		}
 		bounds.update()
 

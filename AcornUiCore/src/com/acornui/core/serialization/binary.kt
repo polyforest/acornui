@@ -22,7 +22,6 @@ import com.acornui.core.assets.AssetManager
 import com.acornui.core.assets.AssetType
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
-import com.acornui.core.io.BufferFactory
 import com.acornui.core.io.byteBuffer
 import com.acornui.io.*
 import com.acornui.serialization.*
@@ -31,9 +30,9 @@ import com.acornui.serialization.*
  * A factory that provides a Reader and Writer for ReadBuffer<Byte>
  * @author nbilyk
  */
-object BinarySerializer : Serializer<ReadNativeByteBuffer> {
+object BinarySerializer : Serializer<NativeReadByteBuffer> {
 
-	override fun read(data: ReadNativeByteBuffer): Reader {
+	override fun read(data: NativeReadByteBuffer): Reader {
 		data.rewind()
 		readMarker(data)
 		return BinaryReader(data, readPropertyIndex(data))
@@ -52,7 +51,7 @@ object BinarySerializer : Serializer<ReadNativeByteBuffer> {
 		return list
 	}
 
-	override fun write(callback: (Writer) -> Unit): ReadNativeByteBuffer {
+	override fun write(callback: (Writer) -> Unit): NativeReadByteBuffer {
 		val propertyIndex = ArrayList<String>()
 		val binaryWriter = BinaryWriter(propertyIndex)
 		callback(binaryWriter)
@@ -343,11 +342,11 @@ object BinaryType {
 	const val OBJECT: Byte = 12
 }
 
-fun <T> parseBinary(binary: ReadNativeByteBuffer, factory: From<T>): T {
+fun <T> parseBinary(binary: NativeReadByteBuffer, factory: From<T>): T {
 	return BinarySerializer.read(binary, factory)
 }
 
-fun <T> toBinary(value: T, factory: To<T>): ReadNativeByteBuffer {
+fun <T> toBinary(value: T, factory: To<T>): NativeReadByteBuffer {
 	return BinarySerializer.write(value, factory)
 }
 

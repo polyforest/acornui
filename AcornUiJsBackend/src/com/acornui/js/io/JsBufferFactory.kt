@@ -25,28 +25,28 @@ import org.khronos.webgl.*
  */
 class JsBufferFactory : BufferFactory {
 
-	override fun byteBuffer(capacity: Int): ReadWriteNativeByteBuffer {
+	override fun byteBuffer(capacity: Int): NativeReadWriteByteBuffer {
 		return JsByteBuffer(Uint8Array(capacity))
 	}
 
-	override fun shortBuffer(capacity: Int): ReadWriteNativeBuffer<Short> {
+	override fun shortBuffer(capacity: Int): NativeReadWriteBuffer<Short> {
 		return JsShortBuffer(Uint16Array(capacity))
 	}
 
-	override fun intBuffer(capacity: Int): ReadWriteNativeBuffer<Int> {
+	override fun intBuffer(capacity: Int): NativeReadWriteBuffer<Int> {
 		return JsIntBuffer(Uint32Array(capacity))
 	}
 
-	override fun floatBuffer(capacity: Int): ReadWriteNativeBuffer<Float> {
+	override fun floatBuffer(capacity: Int): NativeReadWriteBuffer<Float> {
 		return JsFloatBuffer(Float32Array(capacity))
 	}
 
-	override fun doubleBuffer(capacity: Int): ReadWriteNativeBuffer<Double> {
+	override fun doubleBuffer(capacity: Int): NativeReadWriteBuffer<Double> {
 		return JsDoubleBuffer(Float64Array(capacity))
 	}
 }
 
-class JsByteBuffer(private val bufferView: Uint8Array) : BufferBase(bufferView.length), ReadWriteNativeByteBuffer {
+class JsByteBuffer(private val bufferView: Uint8Array) : BufferBase(bufferView.length), NativeReadWriteByteBuffer {
 
 	private val dataView = DataView(bufferView.buffer)
 	private val littleEndian = true
@@ -103,7 +103,7 @@ class JsByteBuffer(private val bufferView: Uint8Array) : BufferBase(bufferView.l
 	}
 }
 
-class JsShortBuffer(private val bufferView: Uint16Array) : BufferBase(bufferView.byteLength), ReadWriteNativeBuffer<Short> {
+class JsShortBuffer(private val bufferView: Uint16Array) : BufferBase(bufferView.length), NativeReadWriteBuffer<Short> {
 
 	override val dataSize: Int = 2
 
@@ -123,7 +123,7 @@ class JsShortBuffer(private val bufferView: Uint16Array) : BufferBase(bufferView
 }
 
 
-class JsIntBuffer(private val bufferView: Uint32Array) : BufferBase(bufferView.length), ReadWriteNativeBuffer<Int> {
+class JsIntBuffer(private val bufferView: Uint32Array) : BufferBase(bufferView.length), NativeReadWriteBuffer<Int> {
 
 	override val dataSize: Int = 4
 
@@ -142,7 +142,7 @@ class JsIntBuffer(private val bufferView: Uint32Array) : BufferBase(bufferView.l
 		}
 }
 
-class JsFloatBuffer(private val bufferView: Float32Array) : BufferBase(bufferView.length), ReadWriteNativeBuffer<Float> {
+class JsFloatBuffer(private val bufferView: Float32Array) : BufferBase(bufferView.length), NativeReadWriteBuffer<Float> {
 
 	override val dataSize: Int = 4
 
@@ -161,7 +161,7 @@ class JsFloatBuffer(private val bufferView: Float32Array) : BufferBase(bufferVie
 		}
 }
 
-class JsDoubleBuffer(private val bufferView: Float64Array) : BufferBase(bufferView.length), ReadWriteNativeBuffer<Double> {
+class JsDoubleBuffer(private val bufferView: Float64Array) : BufferBase(bufferView.length), NativeReadWriteBuffer<Double> {
 
 	override val dataSize: Int = 8
 

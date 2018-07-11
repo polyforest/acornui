@@ -29,6 +29,10 @@ interface Matrix4Ro {
 
 	val values: List<Float>
 
+	operator fun get(index:Int): Float {
+		return values[index]
+	}
+
 	/**
 	 * @return The determinant of this matrix
 	 */
@@ -164,6 +168,10 @@ class Matrix4() : Matrix4Ro {
 
 	init {
 		refreshMode()
+	}
+
+	operator fun set(index:Int, value: Float) {
+		_values[index] = value
 	}
 
 	private fun refreshMode() {

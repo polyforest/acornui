@@ -16,20 +16,24 @@
 
 package com.acornui.gl.core
 
-import com.acornui.core.Disposable
+import com.acornui.component.drawing.DrawElementsCallRo
+import com.acornui.graphics.Color
+import com.acornui.graphics.ColorRo
+import com.acornui.io.ReadBuffer
+import com.acornui.io.ReadWriteBuffer
+import com.acornui.math.Vector2Ro
+import com.acornui.math.Vector3
+import com.acornui.math.Vector3Ro
 
 /**
- * A [ShaderBatch] is good for reducing draw calls by combining opengl buffer and draw calls.
- * This is used in conjunction with [GlState], which keeps track of changes that would require a flip.
+ * A [ShaderBatch] writes to index and vertex buffers, handling when new draw calls need to be made.
  */
-interface ShaderBatch : Disposable, VertexFeed, IndexFeed {
+interface ShaderBatch : VertexFeed, IndexFeed {
 
 	/**
 	 * Resets the number of times the batch has been flushed. This is typically done at the beginning of the frame.
 	 */
 	fun resetRenderCount()
-
-	val currentDrawMode: Int
 
 	/**
 	 * The number of times the batch has been flushed since the last [resetRenderCount]
@@ -45,10 +49,61 @@ interface ShaderBatch : Disposable, VertexFeed, IndexFeed {
 
 	/**
 	 * Flushes the batch if the buffer is past an internal threshold.
-	 * Components typically do not need to use this directly, only [begin].
+	 * Use `flush(force = true)` when something has changed (such as setting a uniform or GL property) that would
+	 * require a new draw.
 	 *
 	 * @param force Flushes the batch regardless of current threshold.
 	 */
 	fun flush(force: Boolean = false)
 
+	/**
+	 * A way to push a 'standard' UI vertex.
+	 * This will be adapted to fit this batch's [vertexAttributes]
+	 * Note that this will push a full vertex even if the standard vertex is missing components in [vertexAttributes].
+	 * Those missing components will be pushed as 0f.
+	 */
+	fun putVertex(positionX: Float, positionY: Float, positionZ: Float, normalX: Float, normalY: Float, normalZ: Float, colorR: Float, colorG: Float, colorB: Float, colorA: Float, u: Float, v: Float)
+
+}
+
+// Utility methods for putting vertices.
+
+fun ShaderBatch.putVertex(position: Vector2Ro, z: Float = 0f, normal: Vector3Ro = Vector3.NEG_Z, colorTint: ColorRo = Color.WHITE, u: Float = 0f, v: Float = 0f) {
+	putVertex(position.x, position.y, z, normal, colorTint, u, v)
+}
+
+fun ShaderBatch.putVertex(position: Vector3Ro, normal: Vector3Ro, colorTint: ColorRo) {
+	putVertex(position.x, position.y, position.z, normal, colorTint, 0f, 0f)
+}
+
+fun ShaderBatch.putVertex(position: Vector3Ro, normal: Vector3Ro = Vector3.NEG_Z, colorTint: ColorRo = Color.WHITE, u: Float = 0f, v: Float = 0f) {
+	putVertex(position.x, position.y, position.z, normal.x, normal.y, normal.z, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u, v)
+}
+
+fun ShaderBatch.putVertex(positionX: Float, positionY: Float, positionZ: Float, normal: Vector3Ro = Vector3.NEG_Z, colorTint: ColorRo = Color.WHITE, u: Float = 0f, v: Float = 0f) {
+	putVertex(positionX, positionY, positionZ, normal.x, normal.y, normal.z, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u, v)
+}
+
+/**
+ * A static shader batch keeps the buffers and draw calls for future renders.
+ */
+interface StaticShaderBatch : ShaderBatch {
+
+	val indices: ReadBuffer<Short>
+	val vertexComponents: ReadWriteBuffer<Float>
+	val drawCalls: List<DrawElementsCallRo>
+
+	fun render()
+}
+
+inline fun StaticShaderBatch.iterateVertexAttribute(usage: Int, startPosition: Int = 0, inner: (ReadWriteBuffer<Float>) -> Unit) {
+	val offset = vertexAttributes.getOffsetByUsage(usage) ?: return
+	val p = vertexComponents.position
+	var i = startPosition + offset
+	while (i < p) {
+		vertexComponents.position = i
+		inner(vertexComponents)
+		i += vertexAttributes.vertexSize
+	}
+	vertexComponents.position = p
 }

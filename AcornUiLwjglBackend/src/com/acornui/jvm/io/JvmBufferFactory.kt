@@ -17,8 +17,8 @@
 package com.acornui.jvm.io
 
 import com.acornui.core.io.BufferFactory
-import com.acornui.io.ReadWriteNativeBuffer
-import com.acornui.io.ReadWriteNativeByteBuffer
+import com.acornui.io.NativeReadWriteBuffer
+import com.acornui.io.NativeReadWriteByteBuffer
 import org.lwjgl.BufferUtils
 
 /**
@@ -26,23 +26,23 @@ import org.lwjgl.BufferUtils
  */
 class JvmBufferFactory : BufferFactory {
 
-	override fun byteBuffer(capacity: Int): ReadWriteNativeByteBuffer {
+	override fun byteBuffer(capacity: Int): NativeReadWriteByteBuffer {
 		return JvmByteBuffer(BufferUtils.createByteBuffer(capacity))
 	}
 
-	override fun shortBuffer(capacity: Int): ReadWriteNativeBuffer<Short> {
+	override fun shortBuffer(capacity: Int): NativeReadWriteBuffer<Short> {
 		return JvmShortBuffer(BufferUtils.createShortBuffer(capacity))
 	}
 
-	override fun intBuffer(capacity: Int): ReadWriteNativeBuffer<Int> {
+	override fun intBuffer(capacity: Int): NativeReadWriteBuffer<Int> {
 		return JvmIntBuffer(BufferUtils.createIntBuffer(capacity))
 	}
 
-	override fun floatBuffer(capacity: Int): ReadWriteNativeBuffer<Float> {
+	override fun floatBuffer(capacity: Int): NativeReadWriteBuffer<Float> {
 		return JvmFloatBuffer(BufferUtils.createFloatBuffer(capacity))
 	}
 
-	override fun doubleBuffer(capacity: Int): ReadWriteNativeBuffer<Double> {
+	override fun doubleBuffer(capacity: Int): NativeReadWriteBuffer<Double> {
 		return JvmDoubleBuffer(BufferUtils.createDoubleBuffer(capacity))
 	}
 

@@ -16,14 +16,10 @@
 
 package com.acornui.component
 
+import com.acornui.component.drawing.*
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
-import com.acornui.component.drawing.MeshData
-import com.acornui.component.drawing.QUAD_INDICES
-import com.acornui.component.drawing.dynamicMeshC
-import com.acornui.component.drawing.transform
-import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.GlState
+import com.acornui.gl.core.*
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.*
@@ -40,25 +36,30 @@ open class GlRect(
 
 	var segments = 40
 
-	private val fill = addChild(dynamicMeshC())
-	private val gradient = addChild(dynamicMeshC())
-	private val stroke = addChild(dynamicMeshC())
-
-	init {
-		fill.interactivityMode = InteractivityMode.NONE
-		gradient.interactivityMode = InteractivityMode.NONE
-		stroke.interactivityMode = InteractivityMode.NONE
-	}
+	private val fill = staticMesh()
+	private val gradient = staticMesh()
+	private val stroke = staticMesh()
+	private val fillC = addChild(staticMeshC {
+		mesh = fill
+		interactivityMode = InteractivityMode.NONE
+	})
+	private val gradientC = addChild(staticMeshC {
+		mesh = gradient
+		interactivityMode = InteractivityMode.NONE
+	})
+	private val strokeC = addChild(staticMeshC {
+		mesh = stroke
+		interactivityMode = InteractivityMode.NONE
+	})
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val margin = style.margin
 		val w = (explicitWidth ?: 0f) - margin.right - margin.left
 		val h = (explicitHeight ?: 0f) - margin.top - margin.bottom
-		if (w <= 0f || h <= 0f) {
-			fill.clear()
-			stroke.clear()
-			return
-		}
+		fill.clear()
+		stroke.clear()
+		gradient.clear()
+		if (w <= 0f || h <= 0f) return
 
 		val corners = style.borderRadius
 		val topLeftX = fitSize(corners.topLeft.x, corners.topRight.x, w)
@@ -71,90 +72,91 @@ open class GlRect(
 		val bottomLeftY = fitSize(corners.bottomLeft.y, corners.topLeft.y, h)
 
 		fill.buildMesh {
-			val colorTint = if (style.linearGradient == null) style.backgroundColor else Color.WHITE
-			if (colorTint.a > 0f) {
+			// If we have a linear gradient, fill with white; we will be using the fill as a mask inside draw.
+			val tint = if (style.linearGradient == null) style.backgroundColor else Color.WHITE
+			if (tint.a > 0f) {
 				run {
 					// Middle vertical strip
 					val left = maxOf(topLeftX, bottomLeftX)
 					val right = w - maxOf(topRightX, bottomRightX)
 					if (right > left) {
-						pushVertex(left, 0f, 0f, colorTint)
-						pushVertex(right, 0f, 0f, colorTint)
-						pushVertex(right, h, 0f, colorTint)
-						pushVertex(left, h, 0f, colorTint)
-						pushIndices(QUAD_INDICES)
+						putVertex(left, 0f, 0f, colorTint = tint)
+						putVertex(right, 0f, 0f, colorTint = tint)
+						putVertex(right, h, 0f, colorTint = tint)
+						putVertex(left, h, 0f, colorTint = tint)
+						putIndices(QUAD_INDICES)
 					}
 				}
 				if (topLeftX > 0f || bottomLeftX > 0f) {
 					// Left vertical strip
 					val leftW = maxOf(topLeftX, bottomLeftX)
-					pushVertex(0f, topLeftY, 0f, colorTint)
-					pushVertex(leftW, topLeftY, 0f, colorTint)
-					pushVertex(leftW, h - bottomLeftY, 0f, colorTint)
-					pushVertex(0f, h - bottomLeftY, 0f, colorTint)
-					pushIndices(QUAD_INDICES)
+					putVertex(0f, topLeftY, 0f, colorTint = tint)
+					putVertex(leftW, topLeftY, 0f, colorTint = tint)
+					putVertex(leftW, h - bottomLeftY, 0f, colorTint = tint)
+					putVertex(0f, h - bottomLeftY, 0f, colorTint = tint)
+					putIndices(QUAD_INDICES)
 				}
 				if (topRightX > 0f || bottomRightX > 0f) {
 					// Right vertical strip
 					val rightW = maxOf(topRightX, bottomRightX)
-					pushVertex(w - rightW, topRightY, 0f, colorTint)
-					pushVertex(w, topRightY, 0f, colorTint)
-					pushVertex(w, h - bottomRightY, 0f, colorTint)
-					pushVertex(w - rightW, h - bottomRightY, 0f, colorTint)
-					pushIndices(QUAD_INDICES)
+					putVertex(w - rightW, topRightY, 0f, colorTint = tint)
+					putVertex(w, topRightY, 0f, colorTint = tint)
+					putVertex(w, h - bottomRightY, 0f, colorTint = tint)
+					putVertex(w - rightW, h - bottomRightY, 0f, colorTint = tint)
+					putIndices(QUAD_INDICES)
 				}
 				if (topLeftX < bottomLeftX) {
 					// Vertical slice to the right of top left corner
 					val anchorX = topLeftX
 					val anchorY = topLeftY
-					pushVertex(anchorX, 0f, 0f, colorTint)
-					pushVertex(maxOf(topLeftX, bottomLeftX), 0f, 0f, colorTint)
-					pushVertex(maxOf(topLeftX, bottomLeftX), anchorY, 0f, colorTint)
-					pushVertex(anchorX, anchorY, 0f, colorTint)
-					pushIndices(QUAD_INDICES)
+					putVertex(anchorX, 0f, 0f, colorTint = tint)
+					putVertex(maxOf(topLeftX, bottomLeftX), 0f, 0f, colorTint = tint)
+					putVertex(maxOf(topLeftX, bottomLeftX), anchorY, 0f, colorTint = tint)
+					putVertex(anchorX, anchorY, 0f, colorTint = tint)
+					putIndices(QUAD_INDICES)
 				} else if (topLeftX > bottomLeftX) {
 					// Vertical slice to the right of bottom left corner
 					val anchorX = bottomLeftX
 					val anchorY = h - bottomLeftY
-					pushVertex(anchorX, anchorY, 0f, colorTint)
-					pushVertex(maxOf(topLeftX, bottomLeftX), anchorY, 0f, colorTint)
-					pushVertex(maxOf(topLeftX, bottomLeftX), h, 0f, colorTint)
-					pushVertex(anchorX, h, 0f, colorTint)
-					pushIndices(QUAD_INDICES)
+					putVertex(anchorX, anchorY, 0f, colorTint = tint)
+					putVertex(maxOf(topLeftX, bottomLeftX), anchorY, 0f, colorTint = tint)
+					putVertex(maxOf(topLeftX, bottomLeftX), h, 0f, colorTint = tint)
+					putVertex(anchorX, h, 0f, colorTint = tint)
+					putIndices(QUAD_INDICES)
 				}
 				if (topRightX < bottomRightX) {
 					// Vertical slice to the left of top right corner
 					val anchorX = w - maxOf(topRightX, bottomRightX)
 					val anchorY = topRightY
-					pushVertex(anchorX, 0f, 0f, colorTint)
-					pushVertex(w - topRightX, 0f, 0f, colorTint)
-					pushVertex(w - topRightX, anchorY, 0f, colorTint)
-					pushVertex(anchorX, anchorY, 0f, colorTint)
-					pushIndices(QUAD_INDICES)
+					putVertex(anchorX, 0f, 0f, colorTint = tint)
+					putVertex(w - topRightX, 0f, 0f, colorTint = tint)
+					putVertex(w - topRightX, anchorY, 0f, colorTint = tint)
+					putVertex(anchorX, anchorY, 0f, colorTint = tint)
+					putIndices(QUAD_INDICES)
 				} else if (topRightX > bottomRightX) {
 					// Vertical slice to the left of bottom right corner
 					val anchorX = w - maxOf(topRightX, bottomRightX)
 					val anchorY = h - bottomRightY
-					pushVertex(anchorX, anchorY, 0f, colorTint)
-					pushVertex(w - bottomRightX, anchorY, 0f, colorTint)
-					pushVertex(w - bottomRightX, h, 0f, colorTint)
-					pushVertex(anchorX, h, 0f, colorTint)
-					pushIndices(QUAD_INDICES)
+					putVertex(anchorX, anchorY, 0f, colorTint = tint)
+					putVertex(w - bottomRightX, anchorY, 0f, colorTint = tint)
+					putVertex(w - bottomRightX, h, 0f, colorTint = tint)
+					putVertex(anchorX, h, 0f, colorTint = tint)
+					putIndices(QUAD_INDICES)
 				}
 
 				if (topLeftX > 0f && topLeftY > 0f) {
 					val n = highestIndex + 1
 					val anchorX = topLeftX
 					val anchorY = topLeftY
-					pushVertex(anchorX, anchorY, 0f, colorTint) // Anchor
+					putVertex(anchorX, anchorY, 0f, colorTint = tint) // Anchor
 
 					for (i in 0..segments) {
 						val theta = PI * 0.5f * (i.toFloat() / segments)
-						pushVertex(anchorX - cos(theta) * topLeftX, anchorY - sin(theta) * topLeftY, 0f, colorTint)
+						putVertex(anchorX - cos(theta) * topLeftX, anchorY - sin(theta) * topLeftY, 0f, colorTint = tint)
 						if (i > 0) {
-							pushIndex(n)
-							pushIndex(n + i)
-							pushIndex(n + i + 1)
+							putIndex(n)
+							putIndex(n + i)
+							putIndex(n + i + 1)
 						}
 					}
 				}
@@ -163,15 +165,15 @@ open class GlRect(
 					val n = highestIndex + 1
 					val anchorX = w - topRightX
 					val anchorY = topRightY
-					pushVertex(anchorX, anchorY, 0f, colorTint) // Anchor
+					putVertex(anchorX, anchorY, 0f, colorTint = tint) // Anchor
 
 					for (i in 0..segments) {
 						val theta = PI * 0.5f * (i.toFloat() / segments)
-						pushVertex(anchorX + cos(theta) * topRightX, anchorY - sin(theta) * topRightY, 0f, colorTint)
+						putVertex(anchorX + cos(theta) * topRightX, anchorY - sin(theta) * topRightY, 0f, colorTint = tint)
 						if (i > 0) {
-							pushIndex(n)
-							pushIndex(n + i + 1)
-							pushIndex(n + i)
+							putIndex(n)
+							putIndex(n + i + 1)
+							putIndex(n + i)
 						}
 					}
 				}
@@ -180,15 +182,15 @@ open class GlRect(
 					val n = highestIndex + 1
 					val anchorX = w - bottomRightX
 					val anchorY = h - bottomRightY
-					pushVertex(anchorX, anchorY, 0f, colorTint) // Anchor
+					putVertex(anchorX, anchorY, 0f, colorTint = tint) // Anchor
 
 					for (i in 0..segments) {
 						val theta = PI * 0.5f * (i.toFloat() / segments)
-						pushVertex(anchorX + cos(theta) * bottomRightX, anchorY + sin(theta) * bottomRightY, 0f, colorTint)
+						putVertex(anchorX + cos(theta) * bottomRightX, anchorY + sin(theta) * bottomRightY, 0f, colorTint = tint)
 						if (i > 0) {
-							pushIndex(n)
-							pushIndex(n + i)
-							pushIndex(n + i + 1)
+							putIndex(n)
+							putIndex(n + i)
+							putIndex(n + i + 1)
 						}
 					}
 				}
@@ -197,15 +199,15 @@ open class GlRect(
 					val n = highestIndex + 1
 					val anchorX = bottomLeftX
 					val anchorY = h - bottomLeftY
-					pushVertex(anchorX, anchorY, 0f, colorTint) // Anchor
+					putVertex(anchorX, anchorY, 0f, colorTint = tint) // Anchor
 
 					for (i in 0..segments) {
 						val theta = PI * 0.5f * (i.toFloat() / segments)
-						pushVertex(anchorX - cos(theta) * bottomLeftX, anchorY + sin(theta) * bottomLeftY, 0f, colorTint)
+						putVertex(anchorX - cos(theta) * bottomLeftX, anchorY + sin(theta) * bottomLeftY, 0f, colorTint = tint)
 						if (i > 0) {
-							pushIndex(n)
-							pushIndex(n + i + 1)
-							pushIndex(n + i)
+							putIndex(n)
+							putIndex(n + i + 1)
+							putIndex(n + i)
 						}
 					}
 				}
@@ -233,11 +235,11 @@ open class GlRect(
 				val left = topLeftX
 				val right = w - topRightX
 				if (right > left) {
-					pushVertex(left, 0f, 0f, borderColor.top)
-					pushVertex(right, 0f, 0f, borderColor.top)
-					pushVertex(w - innerTopRightX, topBorder, 0f, borderColor.top)
-					pushVertex(innerTopLeftX, topBorder, 0f, borderColor.top)
-					pushIndices(QUAD_INDICES)
+					putVertex(left, 0f, 0f, colorTint = borderColor.top)
+					putVertex(right, 0f, 0f, colorTint = borderColor.top)
+					putVertex(w - innerTopRightX, topBorder, 0f, colorTint = borderColor.top)
+					putVertex(innerTopLeftX, topBorder, 0f, colorTint = borderColor.top)
+					putIndices(QUAD_INDICES)
 				}
 			}
 
@@ -246,11 +248,11 @@ open class GlRect(
 				val bottom = h - bottomRightY
 				val right = w
 				if (bottom > top) {
-					pushVertex(right, top, 0f, borderColor.right)
-					pushVertex(right, bottom, 0f, borderColor.right)
-					pushVertex(right - rightBorder, h - innerBottomRightY, 0f, borderColor.right)
-					pushVertex(right - rightBorder, innerTopRightY, 0f, borderColor.right)
-					pushIndices(QUAD_INDICES)
+					putVertex(right, top, 0f, colorTint = borderColor.right)
+					putVertex(right, bottom, 0f, colorTint = borderColor.right)
+					putVertex(right - rightBorder, h - innerBottomRightY, 0f, colorTint = borderColor.right)
+					putVertex(right - rightBorder, innerTopRightY, 0f, colorTint = borderColor.right)
+					putIndices(QUAD_INDICES)
 				}
 			}
 
@@ -259,11 +261,11 @@ open class GlRect(
 				val right = w - bottomRightX
 				val bottom = h
 				if (right > left) {
-					pushVertex(right, bottom, 0f, borderColor.bottom)
-					pushVertex(left, bottom, 0f, borderColor.bottom)
-					pushVertex(innerBottomLeftX, bottom - bottomBorder, 0f, borderColor.bottom)
-					pushVertex(w - innerBottomRightX, bottom - bottomBorder, 0f, borderColor.bottom)
-					pushIndices(QUAD_INDICES)
+					putVertex(right, bottom, 0f, colorTint = borderColor.bottom)
+					putVertex(left, bottom, 0f, colorTint = borderColor.bottom)
+					putVertex(innerBottomLeftX, bottom - bottomBorder, 0f, colorTint = borderColor.bottom)
+					putVertex(w - innerBottomRightX, bottom - bottomBorder, 0f, colorTint = borderColor.bottom)
+					putIndices(QUAD_INDICES)
 				}
 			}
 
@@ -271,11 +273,11 @@ open class GlRect(
 				val top = topLeftY
 				val bottom = h - bottomLeftY
 				if (bottom > top) {
-					pushVertex(0f, bottom, 0f, borderColor.left)
-					pushVertex(0f, top, 0f, borderColor.left)
-					pushVertex(leftBorder, innerTopLeftY, 0f, borderColor.left)
-					pushVertex(leftBorder, h - innerBottomLeftY, 0f, borderColor.left)
-					pushIndices(QUAD_INDICES)
+					putVertex(0f, bottom, 0f, colorTint = borderColor.left)
+					putVertex(0f, top, 0f, colorTint = borderColor.left)
+					putVertex(leftBorder, innerTopLeftY, 0f, colorTint = borderColor.left)
+					putVertex(leftBorder, h - innerBottomLeftY, 0f, colorTint = borderColor.left)
+					putIndices(QUAD_INDICES)
 				}
 			}
 
@@ -287,7 +289,6 @@ open class GlRect(
 			trn(margin.left, margin.top)
 		}
 
-		gradient.clear()
 		if (style.linearGradient != null) {
 			val linearGradient = style.linearGradient!!
 			gradient.buildMesh {
@@ -299,8 +300,8 @@ open class GlRect(
 
 				var pixel = 0f
 				var n = 2
-				pushVertex(0f, 0f, 0f, linearGradient.colorStops[0].color)
-				pushVertex(0f, thickness, 0f, linearGradient.colorStops[0].color)
+				putVertex(0f, 0f, 0f, colorTint = linearGradient.colorStops[0].color)
+				putVertex(0f, thickness, 0f, colorTint = linearGradient.colorStops[0].color)
 				val numColorStops = linearGradient.colorStops.size
 				for (i in 0..numColorStops - 1) {
 					val colorStop = linearGradient.colorStops[i]
@@ -329,16 +330,16 @@ open class GlRect(
 						pixel += (nextKnownPixel - pixel) / (1f + nextKnownJ.toFloat() - i.toFloat())
 					}
 					if (pixel > 0f) {
-						pushVertex(pixel, 0f, 0f, colorStop.color)
-						pushVertex(pixel, thickness, 0f, colorStop.color)
+						putVertex(pixel, 0f, 0f, colorTint = colorStop.color)
+						putVertex(pixel, thickness, 0f, colorTint = colorStop.color)
 
 						if (i > 0) {
-							pushIndex(n)
-							pushIndex(n + 1)
-							pushIndex(n - 1)
-							pushIndex(n - 1)
-							pushIndex(n - 2)
-							pushIndex(n)
+							putIndex(n)
+							putIndex(n + 1)
+							putIndex(n - 1)
+							putIndex(n - 1)
+							putIndex(n - 2)
+							putIndex(n)
 						}
 						n += 2
 					}
@@ -346,14 +347,14 @@ open class GlRect(
 
 				if (pixel < len) {
 					val lastColor = linearGradient.colorStops.last().color
-					pushVertex(len, 0f, 0f, lastColor)
-					pushVertex(len, thickness, 0f, lastColor)
-					pushIndex(n)
-					pushIndex(n + 1)
-					pushIndex(n - 1)
-					pushIndex(n - 1)
-					pushIndex(n - 2)
-					pushIndex(n)
+					putVertex(len, 0f, 0f, colorTint = lastColor)
+					putVertex(len, thickness, 0f, colorTint = lastColor)
+					putIndex(n)
+					putIndex(n + 1)
+					putIndex(n - 1)
+					putIndex(n - 1)
+					putIndex(n - 2)
+					putIndex(n)
 				}
 
 				transform(position = Vector3(margin.left + w * 0.5f, margin.top + h * 0.5f), rotation = Vector3(z = angle), origin = Vector3(len * 0.5f, thickness * 0.5f))
@@ -361,7 +362,7 @@ open class GlRect(
 		}
 	}
 
-	private fun MeshData.borderCorner(outerX1: Float, outerY1: Float, outerX2: Float, outerY2: Float, innerX1: Float, innerY1: Float, innerX2: Float, innerY2: Float, color1: ColorRo, color2: ColorRo) {
+	private fun MeshRegion.borderCorner(outerX1: Float, outerY1: Float, outerX2: Float, outerY2: Float, innerX1: Float, innerY1: Float, innerX2: Float, innerY2: Float, color1: ColorRo, color2: ColorRo) {
 		if (color1.a <= 0f && color2.a <= 0f) return
 		val outerW = outerX2 - outerX1
 		val outerH = outerY2 - outerY1
@@ -372,15 +373,15 @@ open class GlRect(
 			for (i in 0..segments) {
 				val theta = PI * 0.5f * (i.toFloat() / segments)
 				val color = if (i < segments shr 1) color1 else color2
-				pushVertex(outerX2 - cos(theta) * outerW, outerY1 + sin(theta) * outerH, 0f, color)
-				pushVertex(innerX2 - cos(theta) * innerW, innerY1 + sin(theta) * innerH, 0f, color)
+				putVertex(outerX2 - cos(theta) * outerW, outerY1 + sin(theta) * outerH, 0f, colorTint = color)
+				putVertex(innerX2 - cos(theta) * innerW, innerY1 + sin(theta) * innerH, 0f, colorTint = color)
 				if (i > 0) {
-					pushIndex(n)
-					pushIndex(n + 1)
-					pushIndex(n - 1)
-					pushIndex(n - 1)
-					pushIndex(n - 2)
-					pushIndex(n)
+					putIndex(n)
+					putIndex(n + 1)
+					putIndex(n - 1)
+					putIndex(n - 1)
+					putIndex(n - 2)
+					putIndex(n)
 				}
 				n += 2
 			}
@@ -393,19 +394,19 @@ open class GlRect(
 	override fun draw(viewport: MinMaxRo) {
 		if (style.linearGradient != null) {
 			StencilUtil.mask(glState.batch, gl, {
-				if (fill.visible) fill.render(viewport)
+				if (fillC.visible)
+					fillC.render(viewport)
 			}) {
-				if (gradient.visible)
-					gradient.render(viewport)
-				if (stroke.visible)
-					stroke.render(viewport)
+				if (gradientC.visible)
+					gradientC.render(viewport)
+				if (strokeC.visible)
+					strokeC.render(viewport)
 			}
 		} else {
 			super.draw(viewport)
 		}
 	}
 }
-
 
 /**
  * Proportionally scales value to fit in max if `value + other > max`
