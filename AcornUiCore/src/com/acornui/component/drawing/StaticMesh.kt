@@ -105,7 +105,8 @@ open class StaticMeshComponent(
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val boundingBox = mesh?.boundingBox ?: return
-		out.ext(boundingBox.max.x, boundingBox.max.y)
+		if (explicitWidth == null) out.width = boundingBox.max.x
+		if (explicitHeight == null) out.height = boundingBox.max.y
 	}
 
 	override fun dispose() {
