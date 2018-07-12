@@ -16,7 +16,6 @@
 
 package com.acornui.gl.core
 
-import com.acornui.collection.arrayCopy
 import com.acornui.core.Disposable
 import com.acornui.core.di.DKey
 import com.acornui.core.graphics.BlendMode
@@ -224,15 +223,15 @@ class GlState(
 	fun camera(camera: CameraRo, model: Matrix4Ro = Matrix4.IDENTITY) {
 		val hasModel = _shader!!.getUniformLocation(CommonShaderUniforms.U_MODEL_TRANS) != null
 		if (hasModel) {
-			viewProjection(camera.combined)
-			model(model)
+			viewProjection = camera.combined
+			this.model = model
 		} else {
-			if (model.mode == MatrixMode.IDENTITY) {
-				viewProjection(camera.combined)
+			viewProjection = if (model.mode == MatrixMode.IDENTITY) {
+				camera.combined
 			} else {
 				_mvp.set(camera.combined)
 				_mvp.mul(model)
-				viewProjection(_mvp)
+				_mvp
 			}
 		}
 	}
@@ -240,16 +239,64 @@ class GlState(
 	/**
 	 * Applies the given matrix as the view-projection transformation.
 	 */
+	@Deprecated("Use property")
 	fun viewProjection(value: Matrix4Ro) {
 		viewProjectionCache.set(value, _shader!!, batch)
 	}
 
 	/**
-	 * Applies the given matrix as the model transformation.
+	 * Applies the given matrix as the view-projection transformation.
 	 */
+	var viewProjection: Matrix4Ro
+		get() = viewProjectionCache.value
+		set(value) {
+			viewProjectionCache.set(value, _shader!!, batch)
+		}
+
+	private var _colorTransformationIsSet = false
+	private var _colorTransformation = ColorTransformation()
+
+	/**
+	 * Applies the given matrix as the view-projection transformation.
+	 */
+	var colorTransformation: ColorTransformationRo?
+		get() = if (_colorTransformationIsSet) _colorTransformation else null
+		set(value) {
+			batch.flush(true)
+			val useColorTransU = _shader!!.getUniformLocation(CommonShaderUniforms.U_USE_COLOR_TRANS)
+			if (useColorTransU != null) {
+				if (value == null) {
+					_colorTransformationIsSet = false
+					gl.uniform1i(useColorTransU, 0)
+				} else {
+					_colorTransformationIsSet = true
+					_colorTransformation.set(value)
+					gl.uniform1i(useColorTransU, 1)
+
+					val colorTransU = _shader!!.getRequiredUniformLocation(CommonShaderUniforms.U_COLOR_TRANS)
+					gl.uniformMatrix4fv(colorTransU, false, value.matrix)
+
+					val colorOffsetU = _shader!!.getRequiredUniformLocation(CommonShaderUniforms.U_COLOR_OFFSET)
+					gl.uniform4f(colorOffsetU, value.offset)
+				}
+			}
+		}
+
+
+	@Deprecated("Use property")
 	fun model(value: Matrix4Ro) {
 		modelCache.set(value, _shader!!, batch)
 	}
+
+	/**
+	 * Applies the given matrix as the model transformation.
+	 */
+	var model: Matrix4Ro
+		get() = modelCache.value
+		set(value) {
+			modelCache.set(value, _shader!!, batch)
+		}
+
 
 	init {
 		shader = defaultShader
@@ -272,7 +319,10 @@ private class MatrixCache(
 		private val gl: Gl20,
 		private val name: String) {
 
-	private val _cached = Matrix4()
+	private val _value = Matrix4()
+	val value: Matrix4Ro
+		get() = _value
+
 	private var _shader: ShaderProgram? = null
 
 	/**
@@ -280,10 +330,10 @@ private class MatrixCache(
 	 */
 	fun set(value: Matrix4Ro, shader: ShaderProgram, batch: ShaderBatch) {
 		val uniform = shader.getUniformLocation(name) ?: return
-		if (_shader != shader || value != _cached) {
+		if (_shader != shader || value != _value) {
 			batch.flush(true)
 			_shader = shader
-			_cached.set(value)
+			_value.set(value)
 			gl.uniformMatrix4fv(uniform, false, value)
 		}
 	}
@@ -294,6 +344,9 @@ private class ColorCache(
 		private val name: String) {
 
 	private val _value = Color()
+	val value: ColorRo
+		get() = _value
+
 	private var _shader: ShaderProgram? = null
 
 	fun set(value: ColorRo, shader: ShaderProgram, batch: ShaderBatch) {

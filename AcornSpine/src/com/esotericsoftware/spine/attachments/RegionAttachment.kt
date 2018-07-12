@@ -31,6 +31,7 @@
 
 package com.esotericsoftware.spine.attachments
 
+import com.acornui.collection.ArrayList
 import com.acornui.core.graphics.AtlasPageData
 import com.acornui.core.graphics.AtlasRegionData
 import com.acornui.graphics.Color
@@ -57,7 +58,7 @@ open class RegionAttachment(
 	private val color: Color = Color()
 
 	// TL, TR, BR, BL
-	private val worldVertices = ArrayList<Float>(vertexSize * 4)
+	private val worldVertices = ArrayList(vertexSize * 4) { 0f }
 	private val offset = FloatArray(8)
 
 	init {

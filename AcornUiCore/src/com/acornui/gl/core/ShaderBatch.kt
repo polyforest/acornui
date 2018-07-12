@@ -43,7 +43,7 @@ interface ShaderBatch : VertexFeed, IndexFeed {
 	/**
 	 * Begins a new shape.
 	 *
-	 * This will flip the previous buffers if necessary.
+	 * This will flush the previous buffers if necessary.
 	 */
 	fun begin(drawMode: Int = Gl20.TRIANGLES)
 

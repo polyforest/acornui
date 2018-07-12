@@ -179,7 +179,7 @@ class Skybox(owner: Owned, private val yDown: Boolean = true) : UiComponentImpl(
 		gl.frontFace(Gl20.CW)
 		gl.cullFace(Gl20.BACK)
 
-		glState.viewProjection(viewProjection)
+		glState.viewProjection = viewProjection
 
 		gl.bindBuffer(Gl20.ARRAY_BUFFER, vertexComponentsBuffer)
 		val attributeLocation = shader.getAttributeLocationByUsage(VertexAttributeUsage.POSITION)

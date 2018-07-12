@@ -31,6 +31,7 @@
 
 package com.esotericsoftware.spine.attachments
 
+import com.acornui.collection.ArrayList
 import com.acornui.core.graphics.AtlasPageData
 import com.acornui.core.graphics.AtlasRegionData
 import com.acornui.graphics.Color
@@ -63,7 +64,7 @@ class MeshAttachment(
 		val height = bounds.height / page.height.toFloat()
 
 		val regionUVs = data.regionUVs
-		worldVertices = ArrayList(regionUVs.size / 2 * vertexSize)
+		worldVertices = ArrayList(regionUVs.size / 2 * vertexSize) { 0f }
 		var i = textureCoordOffset
 		val n = worldVertices.size
 		var uvIndex = 0
@@ -103,15 +104,16 @@ class MeshAttachment(
 		val m11 = bone.d
 		var i = 0
 		val n = worldVertices.size
+		var vIndex = 0
 		while (i < n) {
 			val vx: Float
 			val vy: Float
 			if (useSlotVertices) {
-				vx = slotVertices[i * 2]
-				vy = slotVertices[i * 2 + 1]
+				vx = slotVertices[vIndex * 2]
+				vy = slotVertices[vIndex * 2 + 1]
 			} else {
-				vx = vertices[i * 2]
-				vy = vertices[i * 2 + 1]
+				vx = vertices[vIndex * 2]
+				vy = vertices[vIndex * 2 + 1]
 			}
 			worldVertices[i + positionOffset + 0] = vx * m00 + vy * m01 + x
 			worldVertices[i + positionOffset + 1] = vx * m10 + vy * m11 + y
@@ -121,6 +123,7 @@ class MeshAttachment(
 			worldVertices[i + colorOffset + 2] = color.b
 			worldVertices[i + colorOffset + 3] = color.a
 			i += vertexSize
+			vIndex++
 		}
 		return worldVertices
 	}

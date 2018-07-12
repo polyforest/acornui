@@ -252,6 +252,10 @@ interface LineInfoRo {
 class LineInfo : Clearable, LineInfoRo {
 
 	override var startIndex: Int = 0
+
+	/**
+	 * The end index of the line. (exclusive)
+	 */
 	override var endIndex: Int = 0
 	override var x: Float = 0f
 	override var y: Float = 0f

@@ -137,13 +137,17 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 
 	private fun dragHandler(event: DragInteractionRo) {
 		if (!charStyle.selectable) return
-		selectionManager.selection = getNewSelection(event) ?: emptyList()
+		if (!event.handled) {
+			event.handled = true
+			selectionManager.selection = getNewSelection(event) ?: emptyList()
+		}
 	}
 
 	private fun getNewSelection(event: DragInteractionRo): List<SelectionRange>? {
 		val contents = _contents
 		val p1 = event.startPositionLocal
 		val p2 = event.positionLocal
+
 		val p1A = contents.getSelectionIndex(p1.x, p1.y)
 		val p2A = contents.getSelectionIndex(p2.x, p2.y)
 		return listOf(SelectionRange(selectionTarget, p1A, p2A))
@@ -453,6 +457,13 @@ interface TextElementRo {
 	 */
 	val overhangs: Boolean
 }
+
+
+val TextElementRo.right: Float
+	get() = x + width
+
+val TextElementRo.bottom: Float
+	get() = y + lineHeight
 
 interface TextElement : TextElementRo, Disposable {
 
@@ -838,9 +849,9 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 			yVal.compareTo(line.bottom)
 		}
 		val line = _lines[lineIndex]
-		return textElements.sortedInsertionIndex(x, line.startIndex, line.endIndex, comparator = { xVal, part ->
-			if (part.clearsLine && flowStyle.multiline) -1 else xVal.compareTo(part.x + part.width / 2f)
-		})
+		return textElements.sortedInsertionIndex(x, line.startIndex, line.endIndex) { xVal, part ->
+			if (part.clearsLine && flowStyle.multiline) -1 else xVal.compareTo(part.x + part.width * 0.5f)
+		}
 	}
 
 	private fun updateVertices() {

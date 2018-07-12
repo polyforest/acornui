@@ -69,6 +69,11 @@ uniform vec3 u_directionalLightDir;
 uniform sampler2D u_texture;
 uniform sampler2D u_directionalShadowMap;
 
+uniform bool u_useColorTrans;
+uniform mat4 u_colorTrans;
+uniform vec4 u_colorOffset;
+
+
 // Point lights
 uniform PointLight u_pointLights[$numPointLights];
 ${if (numShadowPointLights > 0) "uniform samplerCube u_pointLightShadowMaps[$numShadowPointLights];" else ""}
@@ -148,18 +153,14 @@ void main() {
 
 	vec4 diffuseColor = v_colorTint * texture2D(u_texture, v_texCoord);
 
-	vec3 final = clamp(u_ambient.rgb + directional + point, 0.0, 1.3) * diffuseColor.rgb;
-	gl_FragColor = vec4(final, diffuseColor.a);
+	vec4 final = vec4(clamp(u_ambient.rgb + directional + point, 0.0, 1.3) * diffuseColor.rgb, diffuseColor.a);
+	if (u_useColorTrans) {
+		gl_FragColor = u_colorTrans * final + u_colorOffset;
+	} else {
+		gl_FragColor = final;
+	}
+
 	if (gl_FragColor.a < 0.01) discard;
-
-	// Debug
-	//gl_FragColor *= 0.0000000000001;
-	//gl_FragColor += texture2D(u_directionalShadowMap, v_directionalShadowCoord.xy / v_directionalShadowCoord.w);
-
-	//float shadow = unpackFloat(texture2D(u_directionalShadowMap, v_directionalShadowCoord.xy));
-	//gl_FragColor += vec4(vec3(shadow), 1.0);
-	//gl_FragColor += vec4(vec3(unpackFloat(texture2D(u_directionalShadowMap, gl_FragCoord.xy * u_resolutionInv))), 1.0);
-	//gl_FragColor += vec4(vec3(unpackFloat(texture2D(u_pointShadowMap, vec2(gl_FragCoord.x * u_resolutionInv.x), 0.0))), 1.0);
 }
 
 

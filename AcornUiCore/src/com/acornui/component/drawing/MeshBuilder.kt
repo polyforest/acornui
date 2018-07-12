@@ -283,12 +283,14 @@ enum class MeshIntersectionType {
 
 fun meshData(batch: StaticShaderBatch, init: MeshRegion.() -> Unit = {}) {
 	val p = MeshRegion.obtain(batch)
+	p.begin()
 	p.init()
 	MeshRegion.free(p)
 }
 
 fun MeshRegion.meshData(init: MeshRegion.() -> Unit = {}) {
 	val p = MeshRegion.obtain(batch)
+	p.begin()
 	p.init()
 	MeshRegion.free(p)
 }

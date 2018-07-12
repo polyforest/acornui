@@ -47,8 +47,11 @@ class ShaderBatchImpl(
 	 */
 	private var _drawMode: Int = Gl20.TRIANGLES
 
-	private val indices = resizableShortBuffer(2048)
-	private val vertexComponents = resizableFloatBuffer(2048 * vertexAttributes.vertexSize)
+//	private val indices = resizableShortBuffer(2048)
+//	private val vertexComponents = resizableFloatBuffer(2048 * vertexAttributes.vertexSize)
+
+	private val indices = shortBuffer(maxIndices)
+	private val vertexComponents = floatBuffer(maxVertexComponents)
 	private var _highestIndex: Short = -1
 
 	override fun resetRenderCount() {

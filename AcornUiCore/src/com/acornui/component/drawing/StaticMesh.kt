@@ -29,7 +29,9 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
+import com.acornui.filter.colorTransformationFilter
 import com.acornui.gl.core.*
+import com.acornui.graphics.Color
 import com.acornui.math.*
 
 /**
@@ -50,8 +52,11 @@ open class StaticMeshComponent(
 
 	var mesh: StaticMesh? by validationProp(null, ValidationFlags.LAYOUT)
 
+	private val colorTransformationFilter = colorTransformationFilter()
+
 	init {
 		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.CONCATENATED_TRANSFORM or ValidationFlags.LAYOUT, this::updateGlobalBoundingBox)
+		renderFilters.add(colorTransformationFilter)
 	}
 
 	private fun updateGlobalBoundingBox() {
@@ -80,6 +85,15 @@ open class StaticMeshComponent(
 			}
 		}
 		return true
+	}
+
+	override fun updateConcatenatedColorTransform() {
+		super.updateConcatenatedColorTransform()
+
+		colorTransformationFilter.enabled = _concatenatedColorTint != Color.WHITE
+		if (colorTransformationFilter.enabled) {
+			colorTransformationFilter.colorTransformation.tint(_concatenatedColorTint)
+		}
 	}
 
 	override fun draw(viewport: MinMaxRo) {

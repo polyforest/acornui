@@ -31,6 +31,7 @@
 
 package com.esotericsoftware.spine.attachments
 
+import com.acornui.collection.ArrayList
 import com.acornui.core.graphics.AtlasPageData
 import com.acornui.core.graphics.AtlasRegionData
 import com.acornui.graphics.Color
@@ -64,7 +65,7 @@ class WeightedMeshAttachment(
 		val height = bounds.height / page.height.toFloat()
 
 		val regionUVs = data.regionUVs
-		worldVertices = ArrayList(regionUVs.size / 2 * SpineVertexUtils.vertexSize)
+		worldVertices = ArrayList(regionUVs.size / 2 * SpineVertexUtils.vertexSize) { 0f }
 		var i = SpineVertexUtils.textureCoordOffset
 		val n = worldVertices.size
 		var uvIndex = 0

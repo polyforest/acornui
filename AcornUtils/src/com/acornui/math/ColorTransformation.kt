@@ -20,7 +20,7 @@ import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 
 interface ColorTransformationRo {
-	val mat: Matrix4Ro
+	val matrix: Matrix4Ro
 	val offset: ColorRo
 }
 
@@ -29,13 +29,13 @@ interface ColorTransformationRo {
  */
 class ColorTransformation : ColorTransformationRo {
 
-	private val _mat = Matrix4()
+	private val _matrix = Matrix4()
 	private val _offset = Color()
 
-	override var mat: Matrix4Ro
-		get() = _mat
+	override var matrix: Matrix4Ro
+		get() = _matrix
 		set(value) {
-			_mat.set(value)
+			_matrix.set(value)
 		}
 
 	override var offset: ColorRo
@@ -53,14 +53,14 @@ class ColorTransformation : ColorTransformationRo {
 	 * Sets the transformation matrix values.
 	 */
 	fun setTransformValues(values: FloatArray) {
-		_mat.set(values)
+		_matrix.set(values)
 	}
 
 	/**
 	 * Sets the transformation matrix values.
 	 */
 	fun setTransformValues(values: List<Float>) {
-		_mat.set(values)
+		_matrix.set(values)
 	}
 
 	/**
@@ -72,15 +72,15 @@ class ColorTransformation : ColorTransformationRo {
 	 * Multiplies the tint by the given color.
 	 */
 	fun mul(r: Float = 1f, g: Float = 1f, b: Float = 1f, a: Float = 1f): ColorTransformation {
-		_mat[Matrix4.M00] *= r
-		_mat[Matrix4.M11] *= g
-		_mat[Matrix4.M22] *= b
-		_mat[Matrix4.M33] *= a
+		_matrix[Matrix4.M00] *= r
+		_matrix[Matrix4.M11] *= g
+		_matrix[Matrix4.M22] *= b
+		_matrix[Matrix4.M33] *= a
 		return this
 	}
 
 	fun mul(value: ColorTransformationRo): ColorTransformation {
-		_mat.mul(value.mat)
+		_matrix.mul(value.matrix)
 		_offset.add(value.offset)
 		return this
 	}
@@ -94,22 +94,22 @@ class ColorTransformation : ColorTransformationRo {
 	 * Sets the tint to the given color.
 	 */
 	fun tint(r: Float = 1f, g: Float = 1f, b: Float = 1f, a: Float = 1f): ColorTransformation {
-		_mat[Matrix4.M00] = r
-		_mat[Matrix4.M11] = g
-		_mat[Matrix4.M22] = b
-		_mat[Matrix4.M33] = a
+		_matrix[Matrix4.M00] = r
+		_matrix[Matrix4.M11] = g
+		_matrix[Matrix4.M22] = b
+		_matrix[Matrix4.M33] = a
 		return this
 	}
 
 	fun idt(): ColorTransformation {
-		_mat.idt()
+		_matrix.idt()
 		_offset.clear()
 		return this
 	}
 
-	fun set(other: ColorTransformation): ColorTransformation {
-		_mat.set(other._mat)
-		_offset.set(other._offset)
+	fun set(other: ColorTransformationRo): ColorTransformation {
+		_matrix.set(other.matrix)
+		_offset.set(other.offset)
 		return this
 	}
 

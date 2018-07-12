@@ -49,6 +49,7 @@ object CommonShaderUniforms {
 	const val U_MODEL_TRANS: String = "u_modelTrans"
 	const val U_COLOR_TRANS: String = "u_colorTrans"
 	const val U_COLOR_OFFSET: String = "u_colorOffset"
+	const val U_USE_COLOR_TRANS: String = "u_useColorTrans"
 	const val U_TEXTURE: String = "u_texture"
 	const val U_TEXTURE_NORMAL: String = "u_textureNormal"
 }
@@ -169,8 +170,17 @@ varying HIGH_P vec2 v_texCoord;
 
 uniform sampler2D u_texture;
 
+uniform bool u_useColorTrans;
+uniform mat4 u_colorTrans;
+uniform vec4 u_colorOffset;
+
 void main() {
-	gl_FragColor = v_colorTint * texture2D(u_texture, v_texCoord);
+	vec4 final = v_colorTint * texture2D(u_texture, v_texCoord);
+	if (u_useColorTrans) {
+		gl_FragColor = u_colorTrans * final + u_colorOffset;
+	} else {
+		gl_FragColor = final;
+	}
 	if (gl_FragColor.a < 0.01) discard;
 }"""
 ) {

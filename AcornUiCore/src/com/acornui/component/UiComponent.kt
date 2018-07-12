@@ -40,6 +40,7 @@ import com.acornui.core.input.InteractionType
 import com.acornui.core.input.InteractivityManager
 import com.acornui.core.input.MouseState
 import com.acornui.core.time.TimeDriver
+import com.acornui.filter.RenderFilter
 import com.acornui.function.as1
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
@@ -181,6 +182,8 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	override var visible: Boolean
 
 	override var includeInLayout: Boolean
+
+	val renderFilters: MutableList<RenderFilter>
 
 	override var focusEnabled: Boolean
 	override var focusOrder: Float
@@ -565,6 +568,8 @@ open class UiComponentImpl(
 	override var layoutInvalidatingFlags: Int = DEFAULT_LAYOUT_INVALIDATING_FLAGS
 
 	final override var includeInLayout: Boolean by validationProp(true, ValidationFlags.LAYOUT_ENABLED)
+
+	final override val renderFilters: MutableList<RenderFilter> = ArrayList()
 
 	override fun isRendered(): Boolean {
 		if (!isActive) return false
@@ -1299,7 +1304,23 @@ open class UiComponentImpl(
 		// Nothing visible.
 		if (_concatenatedColorTint.a <= 0f)
 			return
-		draw(viewport)
+		val renderFiltersL = renderFilters.size
+		if (renderFiltersL == 0) {
+			draw(viewport)
+		} else {
+			var i = renderFiltersL
+			while (--i >= 0) {
+				val filter = renderFilters[i]
+				if (filter.enabled)
+					filter.begin(viewport, this)
+			}
+			draw(viewport)
+			while (++i < renderFiltersL) {
+				val filter = renderFilters[i]
+				if (filter.enabled)
+					filter.end()
+			}
+		}
 	}
 
 	private val viewportTmpMinMax = MinMax()
