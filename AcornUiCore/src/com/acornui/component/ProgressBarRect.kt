@@ -37,9 +37,9 @@ class ProgressBarRect(owner: Owned) : ContainerImpl(owner) {
 		styleTags.add(ProgressBarRect)
 		watch(style) {
 			backRect.style.backgroundColor = it.bgColor
-			backRect.style.borderColor = it.borderColor
-			backRect.style.borderThickness = it.borderThickness
-			backRect.style.borderRadius = it.borderRadius
+			backRect.style.borderColors = it.borderColors
+			backRect.style.borderThicknesses = it.borderThickness
+			backRect.style.borderRadii = it.borderRadius
 
 			frontRect.style.backgroundColor = it.fillColor
 		}
@@ -99,7 +99,7 @@ class ProgressBarRectStyle : StyleBase() {
 	var defaultHeight by prop(6f)
 	var borderThickness: PadRo by prop(Pad(2f))
 	var borderRadius: CornersRo by prop(Corners())
-	var borderColor: BorderColorsRo by prop(BorderColors(Color.BLUE))
+	var borderColors: BorderColorsRo by prop(BorderColors(Color.BLUE))
 	var bgColor: ColorRo by prop(Color.GREEN.copy())
 	var fillColor: ColorRo by prop(Color.RED.copy())
 

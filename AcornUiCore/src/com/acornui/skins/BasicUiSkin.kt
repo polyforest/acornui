@@ -125,8 +125,8 @@ open class BasicUiSkin(
 		val textInputBoxStyle = BoxStyle()
 		textInputBoxStyle.apply {
 			backgroundColor = theme.inputFill
-			borderColor = BorderColors(theme.stroke)
-			borderThickness = Pad(theme.strokeThickness)
+			borderColors = BorderColors(theme.stroke)
+			borderThicknesses = Pad(theme.strokeThickness)
 			padding = Pad(theme.strokeThickness + 2f)
 		}
 		target.addStyleRule(textInputBoxStyle, TextInput)
@@ -161,9 +161,9 @@ open class BasicUiSkin(
 			rect {
 				style.apply {
 					backgroundColor = theme.panelBgColor
-					borderThickness = Pad(theme.strokeThickness)
-					borderRadius = Corners(theme.borderRadius)
-					borderColor = BorderColors(theme.stroke)
+					borderThicknesses = Pad(theme.strokeThickness)
+					borderRadii = Corners(theme.borderRadius)
+					borderColors = BorderColors(theme.stroke)
 				}
 			}
 		}
@@ -180,11 +180,11 @@ open class BasicUiSkin(
 						val borderRadius = Corners(theme.borderRadius)
 						borderRadius.topLeft.clear()
 						borderRadius.topRight.clear()
-						this.borderRadius = borderRadius
+						this.borderRadii = borderRadius
 						val borderThickness = Pad(theme.strokeThickness)
 						borderThickness.top = 0f
-						this.borderThickness = borderThickness
-						borderColor = BorderColors(theme.stroke)
+						this.borderThicknesses = borderThickness
+						borderColors = BorderColors(theme.stroke)
 					}
 				}
 			}
@@ -195,9 +195,9 @@ open class BasicUiSkin(
 						val borderRadius = Corners(theme.borderRadius)
 						borderRadius.bottomLeft.clear()
 						borderRadius.bottomRight.clear()
-						this.borderRadius = borderRadius
-						borderThickness = Pad(theme.strokeThickness)
-						borderColor = BorderColors(theme.stroke)
+						this.borderRadii = borderRadius
+						borderThicknesses = Pad(theme.strokeThickness)
+						borderColors = BorderColors(theme.stroke)
 					}
 				}
 			}
@@ -215,9 +215,9 @@ open class BasicUiSkin(
 		headingGroupStyle.background = {
 			rect {
 				style.backgroundColor = theme.panelBgColor
-				style.borderThickness = Pad(theme.strokeThickness)
-				style.borderColor = BorderColors(theme.stroke)
-				style.borderRadius = Corners(theme.borderRadius)
+				style.borderThicknesses = Pad(theme.strokeThickness)
+				style.borderColors = BorderColors(theme.stroke)
+				style.borderRadii = Corners(theme.borderRadius)
 			}
 		}
 		headingGroupStyle.headingPadding.bottom = 0f
@@ -234,8 +234,8 @@ open class BasicUiSkin(
 	protected open fun themeRectStyle() {
 		val themeRect = BoxStyle()
 		themeRect.backgroundColor = theme.fill
-		themeRect.borderColor = BorderColors(theme.stroke)
-		themeRect.borderThickness = Pad(theme.strokeThickness)
+		themeRect.borderColors = BorderColors(theme.stroke)
+		themeRect.borderThicknesses = Pad(theme.strokeThickness)
 		target.addStyleRule(themeRect, StyleSelectors.themeRect)
 	}
 
@@ -262,16 +262,16 @@ open class BasicUiSkin(
 
 		val ruleStyle = RuleStyle()
 		ruleStyle.thickness = 2f
-		ruleStyle.borderColor = BorderColors(Color(1f, 1f, 1f, 0.7f))
+		ruleStyle.borderColors = BorderColors(Color(1f, 1f, 1f, 0.7f))
 		ruleStyle.backgroundColor = theme.stroke
 		target.addStyleRule(ruleStyle)
 
 		val vRuleStyle = RuleStyle()
-		vRuleStyle.borderThickness = Pad().set(right = 1f)
+		vRuleStyle.borderThicknesses = Pad().set(right = 1f)
 		target.addStyleRule(vRuleStyle, Rule.VERTICAL_STYLE)
 
 		val hRuleStyle = RuleStyle()
-		hRuleStyle.borderThickness = Pad().set(bottom = 1f)
+		hRuleStyle.borderThicknesses = Pad().set(bottom = 1f)
 		target.addStyleRule(hRuleStyle, Rule.HORIZONTAL_STYLE)
 	}
 
@@ -337,7 +337,7 @@ open class BasicUiSkin(
 
 	private fun progressBarStyle() {
 		val s = ProgressBarRectStyle()
-		s.borderColor = BorderColors(theme.stroke)
+		s.borderColors = BorderColors(theme.stroke)
 		s.borderRadius = Corners(0f)
 		s.borderThickness = Pad(theme.strokeThickness)
 		s.fillColor = theme.fill
@@ -362,8 +362,8 @@ open class BasicUiSkin(
 			rect {
 				style.apply {
 					backgroundColor = theme.fillShine
-					borderThickness = Pad(top = 0f, right = 0f, bottom = 0f, left = 4f)
-					borderColor = BorderColors(Color(0f, 0f, 0f, 0.4f))
+					borderThicknesses = Pad(top = 0f, right = 0f, bottom = 0f, left = 4f)
+					borderColors = BorderColors(Color(0f, 0f, 0f, 0.4f))
 				}
 				enableDownRepeat()
 				layoutData = basicLayoutData {
@@ -389,8 +389,8 @@ open class BasicUiSkin(
 			rect {
 				style.apply {
 					backgroundColor = theme.fillShine
-					borderThickness = Pad(top = 0f, right = 0f, bottom = 4f, left = 0f)
-					borderColor = BorderColors(Color(0f, 0f, 0f, 0.4f))
+					borderThicknesses = Pad(top = 0f, right = 0f, bottom = 4f, left = 0f)
+					borderColors = BorderColors(Color(0f, 0f, 0f, 0.4f))
 				}
 				enableDownRepeat()
 				layoutData = basicLayoutData {
@@ -409,7 +409,7 @@ open class BasicUiSkin(
 			background = {
 				rect {
 					styleTags.add(StyleSelectors.themeRect)
-					style.borderRadius = Corners(theme.borderRadius)
+					style.borderRadii = Corners(theme.borderRadius)
 				}
 			}
 			hueSaturationIndicator = {
@@ -430,7 +430,7 @@ open class BasicUiSkin(
 		target.addStyleRule(colorPickerStyle, ColorPicker)
 
 		val colorSwatchStyle = BoxStyle()
-		colorSwatchStyle.borderRadius = Corners(theme.borderRadius)
+		colorSwatchStyle.borderRadii = Corners(theme.borderRadius)
 		target.addStyleRule(colorSwatchStyle, ColorPicker.COLOR_SWATCH_STYLE)
 	}
 
@@ -441,8 +441,8 @@ open class BasicUiSkin(
 			rect {
 				style.apply {
 					backgroundColor = theme.panelBgColor
-					borderThickness = Pad(theme.strokeThickness)
-					borderColor = BorderColors(theme.stroke)
+					borderThicknesses = Pad(theme.strokeThickness)
+					borderColors = BorderColors(theme.stroke)
 				}
 			}
 		}
@@ -467,9 +467,9 @@ open class BasicUiSkin(
 				rect {
 					style.apply {
 						backgroundColor = theme.inputFill
-						borderThickness = Pad(theme.strokeThickness)
-						borderRadius = Corners(0f)
-						borderColor = BorderColors(theme.stroke)
+						borderThicknesses = Pad(theme.strokeThickness)
+						borderRadii = Corners(0f)
+						borderColors = BorderColors(theme.stroke)
 					}
 				}
 			}
@@ -483,9 +483,9 @@ open class BasicUiSkin(
 				rect {
 					style.apply {
 						backgroundColor = theme.panelBgColor
-						borderThickness = pad
-						borderRadius = Corners(0f, 0f, theme.borderRadius, theme.borderRadius)
-						borderColor = BorderColors(theme.stroke)
+						borderThicknesses = pad
+						borderRadii = Corners(0f, 0f, theme.borderRadius, theme.borderRadius)
+						borderColors = BorderColors(theme.stroke)
 					}
 				}
 			}
@@ -500,7 +500,7 @@ open class BasicUiSkin(
 		val textInputBoxStyle = BoxStyle()
 		textInputBoxStyle.apply {
 			backgroundColor = Color.CLEAR
-			borderThickness = Pad(0f)
+			borderThicknesses = Pad(0f)
 		}
 		target.addStyleRule(textInputBoxStyle, withAncestor(OptionsList) and TextInput)
 	}
@@ -511,9 +511,9 @@ open class BasicUiSkin(
 			rect {
 				style.apply {
 					backgroundColor = theme.fill
-					borderThickness = Pad(theme.strokeThickness)
-					borderColor = BorderColors(theme.stroke)
-					borderRadius = Corners(theme.borderRadius)
+					borderThicknesses = Pad(theme.strokeThickness)
+					borderColors = BorderColors(theme.stroke)
+					borderRadii = Corners(theme.borderRadius)
 				}
 			}
 		}
@@ -555,8 +555,8 @@ open class BasicUiSkin(
 		dataGridGroupHeaderStyle.background = {
 			rect {
 				style.backgroundColor = theme.controlBarBgColor
-				style.borderThickness = Pad(0f, 0f, 1f, 0f)
-				style.borderColor = BorderColors(theme.stroke)
+				style.borderThicknesses = Pad(0f, 0f, 1f, 0f)
+				style.borderColors = BorderColors(theme.stroke)
 			}
 		}
 		dataGridGroupHeaderStyle.padding = Pad(6f)
@@ -722,7 +722,7 @@ fun radioButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> Checkbo
 	if (buttonState.toggled) {
 		val filledCircle = rect {
 			style.margin = Pad(4f)
-			style.borderRadius = Corners(1000f)
+			style.borderRadii = Corners(1000f)
 			style.backgroundColor = Color.DARK_GRAY.copy()
 			layoutData = radio.createLayoutData().apply {
 				fill()
@@ -763,13 +763,13 @@ fun Owned.buttonTexture(buttonState: ButtonState, borderRadius: CornersRo, borde
 	+rect {
 		style.apply {
 			backgroundColor = getButtonFillColor(buttonState)
-			borderColor = BorderColors(getButtonStrokeColor(buttonState))
+			borderColors = BorderColors(getButtonStrokeColor(buttonState))
 			val bT = borderThickness.copy()
 			if (isTab && buttonState.toggled) {
 				bT.bottom = 0f
 			}
-			this.borderThickness = bT
-			this.borderRadius = borderRadius
+			this.borderThicknesses = bT
+			this.borderRadii = borderRadius
 		}
 	} layout { widthPercent = 1f; heightPercent = 1f }
 	when (buttonState) {
@@ -781,7 +781,7 @@ fun Owned.buttonTexture(buttonState: ButtonState, borderRadius: CornersRo, borde
 				style.apply {
 					margin = Pad(top = borderThickness.top, right = borderThickness.right, bottom = 0f, left = borderThickness.left)
 					backgroundColor = theme.fillShine
-					this.borderRadius = Corners(
+					this.borderRadii = Corners(
 							topLeft = Vector2(borderRadius.topLeft.x - borderThickness.left, borderRadius.topLeft.y - borderThickness.top),
 							topRight = Vector2(borderRadius.topRight.x - borderThickness.right, borderRadius.topRight.y - borderThickness.top),
 							bottomLeft = Vector2(), bottomRight = Vector2()
@@ -799,7 +799,7 @@ fun Owned.buttonTexture(buttonState: ButtonState, borderRadius: CornersRo, borde
 				style.apply {
 					margin = Pad(top = 0f, right = borderThickness.right, bottom = borderThickness.bottom, left = borderThickness.left)
 					backgroundColor = theme.fillShine
-					this.borderRadius = Corners(
+					this.borderRadii = Corners(
 							topLeft = Vector2(), topRight = Vector2(),
 							bottomLeft = Vector2(borderRadius.bottomLeft.x - borderThickness.left, borderRadius.bottomLeft.y - borderThickness.bottom),
 							bottomRight = Vector2(borderRadius.bottomRight.x - borderThickness.right, borderRadius.bottomRight.y - borderThickness.bottom)

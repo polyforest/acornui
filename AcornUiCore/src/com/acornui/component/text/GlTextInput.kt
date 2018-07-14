@@ -291,7 +291,7 @@ class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
 		styleTags.add(TextArea)
 		watch(boxStyle) {
 			scroller.stackStyle.padding = it.padding
-			scroller.style.borderRadius = it.borderRadius
+			scroller.style.borderRadius = it.borderRadii
 			background.style.set(it)
 		}
 		watch(textInputStyle) {

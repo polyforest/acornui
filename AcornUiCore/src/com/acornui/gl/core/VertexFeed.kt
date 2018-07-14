@@ -54,6 +54,13 @@ fun IndexFeed.putIndices(value: IntArray) {
 	}
 }
 
+fun IndexFeed.putIndices(value: ShortArray) {
+	val n = highestIndex + 1
+	for (i in 0..value.lastIndex) {
+		putIndex(n + value[i])
+	}
+}
+
 @Deprecated("Renamed to putQuadIndices", ReplaceWith("putQuadIndices"))
 fun IndexFeed.pushQuadIndices() = putQuadIndices()
 

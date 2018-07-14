@@ -17,9 +17,26 @@ open class BoxStyle : StyleBase() {
 
 	var linearGradient: LinearGradientRo? by prop<LinearGradientRo?>(null)
 	var backgroundColor: ColorRo by prop(Color.CLEAR)
-	var borderColor: BorderColorsRo by prop(BorderColors())
-	var borderThickness: PadRo by prop(Pad())
-	var borderRadius: CornersRo by prop(Corners())
+	var borderColors: BorderColorsRo by prop(BorderColors())
+
+	@Deprecated("Renamed to borderThicknesses", ReplaceWith("borderThicknesses"))
+	var borderThickness: PadRo
+		get() = borderThicknesses
+		set(value) {
+			borderThicknesses = value
+		}
+
+	var borderThicknesses: PadRo by prop(Pad())
+
+	@Deprecated("Renamed to borderRadii", ReplaceWith("borderRadii"))
+	var borderRadus: CornersRo
+		get() = borderRadii
+		set(value) {
+			borderRadii = value
+		}
+
+	var borderRadii: CornersRo by prop(Corners())
+
 	var margin: PadRo by prop(Pad())
 	var padding: PadRo by prop(Pad())
 
@@ -31,9 +48,9 @@ object BoxStyleSerializer : To<BoxStyle>, From<BoxStyle> {
 	override fun BoxStyle.write(writer: Writer) {
 		writer.styleProperty(this, "linearGradient")?.obj(linearGradient, LinearGradientSerializer)
 		writer.styleProperty(this, "backgroundColor")?.color(backgroundColor)
-		writer.styleProperty(this, "borderColor")?.obj(borderColor, BorderColorsSerializer)
-		writer.styleProperty(this, "borderThickness")?.obj(borderThickness, PadSerializer)
-		writer.styleProperty(this, "borderRadius")?.obj(borderRadius, CornersSerializer)
+		writer.styleProperty(this, "borderColors")?.obj(borderColors, BorderColorsSerializer)
+		writer.styleProperty(this, "borderThicknesses")?.obj(borderThicknesses, PadSerializer)
+		writer.styleProperty(this, "borderRadii")?.obj(borderRadii, CornersSerializer)
 		writer.styleProperty(this, "margin")?.obj(margin, PadSerializer)
 	}
 
@@ -46,9 +63,9 @@ object BoxStyleSerializer : To<BoxStyle>, From<BoxStyle> {
 	fun read(reader: Reader, boxStyle: BoxStyle) {
 		reader.contains("linearGradient") { boxStyle.linearGradient = it.obj(LinearGradientSerializer) }
 		reader.contains("backgroundColor") { boxStyle.backgroundColor = it.color()!! }
-		reader.contains("borderColor") { boxStyle.borderColor = it.obj(BorderColorsSerializer)!! }
-		reader.contains("borderThickness") { boxStyle.borderThickness = it.obj(PadSerializer)!! }
-		reader.contains("borderRadius") { boxStyle.borderRadius = it.obj(CornersSerializer)!! }
+		reader.contains("borderColors") { boxStyle.borderColors = it.obj(BorderColorsSerializer)!! }
+		reader.contains("borderThicknesses") { boxStyle.borderThicknesses = it.obj(PadSerializer)!! }
+		reader.contains("borderRadii") { boxStyle.borderRadii = it.obj(CornersSerializer)!! }
 		reader.contains("margin") { boxStyle.margin = it.obj(PadSerializer)!! }
 	}
 }
@@ -283,12 +300,22 @@ data class BorderColors(
 		return this
 	}
 
-	fun set(other: BorderColors): BorderColors {
+	fun set(other: BorderColorsRo): BorderColors {
 		top.set(other.top)
 		right.set(other.right)
 		bottom.set(other.bottom)
 		left.set(other.left)
 		return this
+	}
+
+	/**
+	 * Multiplies all border colors by the given value.
+	 */
+	fun mul(value: ColorRo) {
+		top.mul(value)
+		right.mul(value)
+		bottom.mul(value)
+		left.mul(value)
 	}
 }
 

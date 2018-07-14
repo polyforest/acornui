@@ -98,7 +98,7 @@ class GlScrollRect(
 
 	init {
 		watch(style) {
-			maskClip.style.borderRadius = it.borderRadius
+			maskClip.style.borderRadii = it.borderRadius
 		}
 	}
 

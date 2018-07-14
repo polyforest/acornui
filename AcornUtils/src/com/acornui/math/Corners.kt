@@ -27,7 +27,7 @@ interface CornersRo {
 	val bottomLeft: Vector2Ro
 
 	fun isEmpty(): Boolean {
-		return topLeft.x <= 0f && topLeft.y <= 0f && topRight.x <= 0f && topRight.y <= 0f && bottomRight.x <= 0f && bottomRight.y <= 0f && bottomLeft.x <= 0f && bottomLeft.y <= 0f
+		return topLeft.isZero() && topRight.isZero() && bottomRight.isZero() && bottomLeft.isZero()
 	}
 
 	fun copy(topLeft: Vector2Ro = this.topLeft, topRight: Vector2Ro = this.topRight, bottomRight: Vector2Ro = this.bottomRight, bottomLeft: Vector2Ro = this.bottomLeft): Corners {

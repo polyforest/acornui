@@ -212,7 +212,7 @@ fun CSSStyleDeclaration.userSelect(value: Boolean) {
 
 private fun BoxStyle.applyBox(native: DomComponent) {
 	native.margin.set(margin)
-	native.border.set(borderThickness)
+	native.border.set(borderThicknesses)
 	native.padding.set(padding)
 }
 
@@ -227,19 +227,19 @@ private fun BoxStyle.applyCss(element: HTMLElement) {
 			removeProperty("background-color")
 			background = gradient.toCssString()
 		}
-		val bC = it.borderColor
+		val bC = it.borderColors
 		borderTopColor = bC.top.toCssString()
 		borderRightColor = bC.right.toCssString()
 		borderBottomColor = bC.bottom.toCssString()
 		borderLeftColor = bC.left.toCssString()
 
-		val b = it.borderThickness
+		val b = it.borderThicknesses
 		borderLeftWidth = "${b.left}px"
 		borderTopWidth = "${b.top}px"
 		borderRightWidth = "${b.right}px"
 		borderBottomWidth = "${b.bottom}px"
 
-		val c = it.borderRadius
+		val c = it.borderRadii
 		borderTopLeftRadius = "${c.topLeft.x}px ${c.topLeft.y}px"
 		borderTopRightRadius = "${c.topRight.x}px ${c.topRight.y}px"
 		borderBottomRightRadius = "${c.bottomRight.x}px ${c.bottomRight.y}px"

@@ -28,6 +28,9 @@ interface PadRo {
 	val bottom: Float
 	val left: Float
 
+	fun isEmpty(): Boolean = top == 0f && right == 0f && bottom == 0f && left == 0f
+	fun isNotEmpty(): Boolean = !isEmpty()
+
 	fun reduceWidth(width: Float?): Float? {
 		if (width == null) return null
 		return width - left - right
