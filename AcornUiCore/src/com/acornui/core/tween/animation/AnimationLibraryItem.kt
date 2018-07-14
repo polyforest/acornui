@@ -16,6 +16,7 @@
 
 package com.acornui.core.tween.animation
 
+import com.acornui.collection.sortedInsertionIndex
 import com.acornui.math.Vector2Ro
 
 /**
@@ -66,14 +67,30 @@ data class Timeline(
 		 * A map of label name to times.
 		 */
 		val labels: Map<String, Float>
-)
+) {
+
+	/**
+	 * The times of the labels, in ascending order.
+	 */
+	val labelTimes by lazy {
+		labels.values.sorted()
+	}
+}
 
 data class Layer(
 		val name: String,
 		val symbolName: String,
 		val visible: Boolean,
 		val keyFrames: List<KeyFrame>
-)
+) {
+
+	fun getKeyFrameIndexAtTime(time: Float): Int {
+		return keyFrames.sortedInsertionIndex(time) {
+			t, frame ->
+			t.compareTo(frame.time)
+		}
+	}
+}
 
 data class KeyFrame(
 		val time: Float,

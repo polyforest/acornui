@@ -19,10 +19,10 @@ package com.acornui.gl.core
 import com.acornui._assert
 import com.acornui.assertionsEnabled
 import com.acornui.core.Disposable
-import com.acornui.core.io.floatBuffer
+import com.acornui.core.di.Scoped
+import com.acornui.core.di.inject
 import com.acornui.core.io.resizableFloatBuffer
 import com.acornui.core.io.resizableShortBuffer
-import com.acornui.core.io.shortBuffer
 
 /**
  *
@@ -31,9 +31,7 @@ import com.acornui.core.io.shortBuffer
 class ShaderBatchImpl(
 		private val gl: Gl20,
 		private val glState: GlState,
-		val maxIndices: Int = 32767,
-		val maxVertexComponents: Int = 32767 * 16,
-		override val vertexAttributes: VertexAttributes = standardVertexAttributes
+		override val vertexAttributes: VertexAttributes
 ) : ShaderBatch, Disposable {
 
 	private var _renderCount = 0
@@ -47,11 +45,8 @@ class ShaderBatchImpl(
 	 */
 	private var _drawMode: Int = Gl20.TRIANGLES
 
-//	private val indices = resizableShortBuffer(2048)
-//	private val vertexComponents = resizableFloatBuffer(2048 * vertexAttributes.vertexSize)
-
-	private val indices = shortBuffer(maxIndices)
-	private val vertexComponents = floatBuffer(maxVertexComponents)
+	private val indices = resizableShortBuffer(2048)
+	private val vertexComponents = resizableFloatBuffer(4096)
 	private var _highestIndex: Short = -1
 
 	override fun resetRenderCount() {
@@ -97,7 +92,7 @@ class ShaderBatchImpl(
 			return
 		}
 
-		if (!force && indicesL < maxIndices * 0.75f && vertexComponentsL < maxVertexComponents * 0.75f) return
+		if (!force && highestIndex < Short.MAX_VALUE * 0.75f) return
 		if (assertionsEnabled) {
 			// If assertions are enabled, check that we have rational vertex and index counts.
 			val vertexSize = vertexAttributes.vertexSize
@@ -133,9 +128,7 @@ class ShaderBatchImpl(
 	}
 
 	override val highestIndex: Short
-		get() {
-			return _highestIndex
-		}
+		get() = _highestIndex
 
 	override fun putVertexComponent(value: Float) {
 		vertexComponents.put(value)
@@ -156,4 +149,8 @@ class ShaderBatchImpl(
 		gl.deleteBuffer(vertexComponentsBuffer)
 		gl.deleteBuffer(indicesBuffer)
 	}
+}
+
+fun Scoped.shaderBatch(vertexAttributes: VertexAttributes) : ShaderBatchImpl {
+	return ShaderBatchImpl(inject(Gl20), inject(GlState), vertexAttributes)
 }

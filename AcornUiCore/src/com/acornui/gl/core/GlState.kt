@@ -48,7 +48,7 @@ class GlState(
 
 	private val _boundTextures: Array<Texture?> = Array(30, { null })
 
-	private var _batch: ShaderBatch = ShaderBatchImpl(gl, this)
+	private var _batch: ShaderBatch = ShaderBatchImpl(gl, this, uiVertexAttributes)
 
 	/**
 	 * The shader batch, used by gl backend acorn components.

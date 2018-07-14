@@ -50,6 +50,9 @@ class LightingRenderer(
 
 	var allowShadows: Boolean = true
 
+	private val shadowsBatch = shaderBatch(uiVertexAttributes)
+	private val lightingBatch = shaderBatch(standardVertexAttributes)
+
 	//--------------------------------------------
 	// DrivableComponent methods
 	//--------------------------------------------
@@ -102,8 +105,11 @@ class LightingRenderer(
 		}
 		prepareLightingShader(ambientLight, directionalLight, pointLights)
 
+		val previousBatch = glState.batch
+		glState.batch = lightingBatch
 		renderWorld()
 		glState.batch.flush(true)
+		glState.batch = previousBatch
 		glState.shader = previousShader
 	}
 
@@ -117,7 +123,8 @@ class LightingRenderer(
 	 */
 	private fun renderOcclusion(camera: CameraRo, directionalLight: DirectionalLight, pointLights: List<PointLight>, renderOcclusion: () -> Unit) {
 		val previousBlendingEnabled = glState.blendingEnabled
-		glState.batch.flush(true)
+		val previousBatch = glState.batch
+		glState.batch = shadowsBatch
 		glState.blendingEnabled = false
 		gl.enable(Gl20.DEPTH_TEST)
 		gl.depthFunc(Gl20.LESS)
@@ -128,6 +135,7 @@ class LightingRenderer(
 		// Reset the gl properties
 		gl.disable(Gl20.DEPTH_TEST)
 		glState.blendingEnabled = previousBlendingEnabled
+		glState.batch = previousBatch
 	}
 
 	private fun directionalLightShadows(camera: CameraRo, directionalLight: DirectionalLight, renderOcclusion: () -> Unit) {

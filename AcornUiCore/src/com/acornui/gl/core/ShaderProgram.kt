@@ -192,6 +192,12 @@ void main() {
 
 }
 
+val uiVertexAttributes = VertexAttributes(listOf(
+		VertexAttribute(3, false, Gl20.FLOAT, VertexAttributeUsage.POSITION),
+		VertexAttribute(4, false, Gl20.FLOAT, VertexAttributeUsage.COLOR_TINT),
+		VertexAttribute(2, false, Gl20.FLOAT, VertexAttributeUsage.TEXTURE_COORD))
+)
+
 val standardVertexAttributes = VertexAttributes(listOf(
 		VertexAttribute(3, false, Gl20.FLOAT, VertexAttributeUsage.POSITION),
 		VertexAttribute(3, false, Gl20.FLOAT, VertexAttributeUsage.NORMAL),

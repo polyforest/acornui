@@ -31,7 +31,7 @@ import com.acornui.core.io.resizableShortBuffer
 class StaticShaderBatchImpl(
 		private val gl: Gl20,
 		val glState: GlState,
-		override val vertexAttributes: VertexAttributes = standardVertexAttributes
+		override val vertexAttributes: VertexAttributes
 ) : StaticShaderBatch, Clearable, Disposable {
 
 	private val vertexComponentsBuffer: GlBufferRef = gl.createBuffer()
