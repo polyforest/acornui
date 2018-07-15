@@ -75,7 +75,7 @@ open class GlRect(
 		watch(style) {
 			simpleMode = it.borderRadii.isEmpty() && it.linearGradient == null
 		}
-		validation.addNode(ValidationFlags.RESERVED_1, ValidationFlags.STYLES or ValidationFlags.CONCATENATED_TRANSFORM or ValidationFlags.LAYOUT, this::updateSimpleModeVertices)
+		validation.addNode(ValidationFlags.RESERVED_1, ValidationFlags.STYLES or ValidationFlags.CONCATENATED_TRANSFORM or ValidationFlags.LAYOUT or ValidationFlags.CONCATENATED_COLOR_TRANSFORM, this::updateSimpleModeVertices)
 	}
 
 
