@@ -420,6 +420,17 @@ open class GlRect(
 		}
 	}
 
+	override fun updateConcatenatedColorTransform() {
+		super.updateConcatenatedColorTransform()
+
+		if (simpleMode) {
+			simpleModeObj.apply {
+				fillColor.set(style.backgroundColor).mul(_concatenatedColorTint)
+				borderColors.set(style.borderColors).mul(_concatenatedColorTint)
+			}
+		}
+	}
+
 	private fun updateSimpleModeVertices() {
 		if (!simpleMode) return
 		simpleModeObj.apply {
@@ -429,8 +440,6 @@ open class GlRect(
 			if (w <= 0f || h <= 0f) return
 			val cT = _concatenatedTransform
 
-			fillColor.set(style.backgroundColor).mul(_concatenatedColorTint)
-			borderColors.set(style.borderColors).mul(_concatenatedColorTint)
 			val borderThicknesses = style.borderThicknesses
 
 			val innerX = margin.left + borderThicknesses.left
