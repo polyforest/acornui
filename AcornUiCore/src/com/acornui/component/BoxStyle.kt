@@ -17,6 +17,14 @@ open class BoxStyle : StyleBase() {
 
 	var linearGradient: LinearGradientRo? by prop<LinearGradientRo?>(null)
 	var backgroundColor: ColorRo by prop(Color.CLEAR)
+
+	@Deprecated("Renamed to borderColors", ReplaceWith("borderColors"))
+	var borderColor: BorderColorsRo
+		get() = borderColors
+		set(value) {
+			borderColors = value
+		}
+
 	var borderColors: BorderColorsRo by prop(BorderColors())
 
 	@Deprecated("Renamed to borderThicknesses", ReplaceWith("borderThicknesses"))
@@ -29,7 +37,7 @@ open class BoxStyle : StyleBase() {
 	var borderThicknesses: PadRo by prop(Pad())
 
 	@Deprecated("Renamed to borderRadii", ReplaceWith("borderRadii"))
-	var borderRadus: CornersRo
+	var borderRadius: CornersRo
 		get() = borderRadii
 		set(value) {
 			borderRadii = value

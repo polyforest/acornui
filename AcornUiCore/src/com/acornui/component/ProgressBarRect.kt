@@ -38,8 +38,8 @@ class ProgressBarRect(owner: Owned) : ContainerImpl(owner) {
 		watch(style) {
 			backRect.style.backgroundColor = it.bgColor
 			backRect.style.borderColors = it.borderColors
-			backRect.style.borderThicknesses = it.borderThickness
-			backRect.style.borderRadii = it.borderRadius
+			backRect.style.borderThicknesses = it.borderThicknesses
+			backRect.style.borderRadii = it.borderRadii
 
 			frontRect.style.backgroundColor = it.fillColor
 		}
@@ -77,10 +77,10 @@ class ProgressBarRect(owner: Owned) : ContainerImpl(owner) {
 
 		backRect.setSize(w, h)
 
-		val fillMaxW = s.borderThickness.reduceWidth2(w)
-		val fillH = s.borderThickness.reduceHeight2(h)
+		val fillMaxW = s.borderThicknesses.reduceWidth2(w)
+		val fillH = s.borderThicknesses.reduceHeight2(h)
 		frontRect.setSize(fillMaxW * _progress, fillH)
-		frontRect.setPosition(s.borderThickness.left, s.borderThickness.top)
+		frontRect.setPosition(s.borderThicknesses.left, s.borderThicknesses.top)
 		out.set(w, h)
 	}
 
@@ -97,8 +97,8 @@ class ProgressBarRectStyle : StyleBase() {
 
 	var defaultWidth by prop(100f)
 	var defaultHeight by prop(6f)
-	var borderThickness: PadRo by prop(Pad(2f))
-	var borderRadius: CornersRo by prop(Corners())
+	var borderThicknesses: PadRo by prop(Pad(2f))
+	var borderRadii: CornersRo by prop(Corners())
 	var borderColors: BorderColorsRo by prop(BorderColors(Color.BLUE))
 	var bgColor: ColorRo by prop(Color.GREEN.copy())
 	var fillColor: ColorRo by prop(Color.RED.copy())

@@ -338,8 +338,8 @@ open class BasicUiSkin(
 	private fun progressBarStyle() {
 		val s = ProgressBarRectStyle()
 		s.borderColors = BorderColors(theme.stroke)
-		s.borderRadius = Corners(0f)
-		s.borderThickness = Pad(theme.strokeThickness)
+		s.borderRadii = Corners(0f)
+		s.borderThicknesses = Pad(theme.strokeThickness)
 		s.fillColor = theme.fill
 		s.bgColor = Color(0f, 0f, 0f, 0.2f)
 		target.addStyleRule(s, ProgressBarRect)
