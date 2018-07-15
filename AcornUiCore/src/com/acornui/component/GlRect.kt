@@ -435,8 +435,8 @@ open class GlRect(
 		if (!simpleMode) return
 		simpleModeObj.apply {
 			val margin = style.margin
-			val w = margin.reduceWidth2(explicitWidth ?: 0f)
-			val h = margin.reduceHeight2(explicitHeight ?: 0f)
+			val w = margin.reduceWidth2(width)
+			val h = margin.reduceHeight2(height)
 			if (w <= 0f || h <= 0f) return
 			val cT = _concatenatedTransform
 
