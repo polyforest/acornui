@@ -61,7 +61,7 @@ abstract class ShaderProgramBase(
 		val gl: Gl20,
 		vertexShaderSrc: String,
 		fragmentShaderSrc: String,
-		private val vertexAttributes: Map<Int, String> = hashMapOf(
+		private val vertexAttributes: Map<Int, String> = mapOf(
 				VertexAttributeUsage.POSITION to CommonShaderAttributes.A_POSITION,
 				VertexAttributeUsage.NORMAL to CommonShaderAttributes.A_NORMAL,
 				VertexAttributeUsage.COLOR_TINT to CommonShaderAttributes.A_COLOR_TINT,
@@ -69,7 +69,7 @@ abstract class ShaderProgramBase(
 		)
 ) : ShaderProgram {
 
-	protected val _program: GlProgramRef = gl.createProgram()
+	private val _program: GlProgramRef = gl.createProgram()
 	private val vertexShader: GlShaderRef
 	private val fragmentShader: GlShaderRef
 
@@ -142,7 +142,7 @@ abstract class ShaderProgramBase(
 class ShaderCompileException(message: String) : Throwable(message)
 
 
-class DefaultShaderProgram(gl: Gl20) : ShaderProgramBase (
+class DefaultShaderProgram(gl: Gl20) : ShaderProgramBase(
 		gl, vertexShaderSrc = """
 
 $DEFAULT_SHADER_HEADER
@@ -182,7 +182,11 @@ void main() {
 		gl_FragColor = final;
 	}
 	if (gl_FragColor.a < 0.01) discard;
-}"""
+}""",
+		vertexAttributes = mapOf(
+				VertexAttributeUsage.POSITION to CommonShaderAttributes.A_POSITION,
+				VertexAttributeUsage.COLOR_TINT to CommonShaderAttributes.A_COLOR_TINT,
+				VertexAttributeUsage.TEXTURE_COORD to CommonShaderAttributes.A_TEXTURE_COORD + "0")
 ) {
 
 	override fun bind() {
