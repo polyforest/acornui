@@ -158,10 +158,10 @@ class StaticMesh(
 	fun buildMesh(inner: MeshRegion.() -> Unit) {
 		MeshBuilderStyle.clear()
 		val previousBatch = glState.batch
+		glState.setTexture(glState.whitePixel)
 		glState.batch = batch
 		batch.begin()
 		glState.blendMode(BlendMode.NORMAL, false)
-		glState.setTexture(null)
 		meshData(batch) {
 			inner()
 		}

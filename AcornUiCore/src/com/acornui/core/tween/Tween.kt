@@ -148,10 +148,10 @@ interface Tween {
 	 * Given the current time, returns the looped or clamped time.
 	 */
 	fun apparentTime(value: Float): Float {
-		if (loopAfter && value >= duration || loopBefore && value <= 0f) {
-			return MathUtils.mod(value, duration)
+		return if (loopAfter && value >= duration || loopBefore && value <= 0f) {
+			MathUtils.mod(value, duration)
 		} else {
-			return MathUtils.clamp(value, 0f, duration)
+			MathUtils.clamp(value, 0f, duration)
 		}
 	}
 
