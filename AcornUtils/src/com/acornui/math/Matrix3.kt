@@ -303,6 +303,24 @@ class Matrix3(
 		return this
 	}
 
+	/**
+	 * Transposes the matrix.
+	 *
+	 * @return This matrix for the purpose of chaining methods together.
+	 */
+	fun tra(): Matrix3 {
+		tmp[M00] = values[M00]
+		tmp[M01] = values[M10]
+		tmp[M02] = values[M20]
+		tmp[M10] = values[M01]
+		tmp[M11] = values[M11]
+		tmp[M12] = values[M21]
+		tmp[M20] = values[M02]
+		tmp[M21] = values[M12]
+		tmp[M22] = values[M22]
+		return set(tmp)
+	}
+
 	override fun getTranslation(out: Vector2): Vector2 {
 		out.x = values[M02]
 		out.y = values[M12]
