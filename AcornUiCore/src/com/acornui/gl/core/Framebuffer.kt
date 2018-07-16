@@ -89,7 +89,7 @@ class Framebuffer(
 	private var previousFrameBuffer: Framebuffer? = null
 
 	fun begin() {
-		glState.batch.flush(true)
+		glState.batch.flush()
 		previousFrameBuffer = currentFrameBuffer
 		currentFrameBuffer = this
 		gl.bindFramebuffer(Gl20.FRAMEBUFFER, framebufferHandle)
@@ -97,7 +97,7 @@ class Framebuffer(
 	}
 
 	fun end() {
-		glState.batch.flush(true)
+		glState.batch.flush()
 		val gl = gl
 		if (previousFrameBuffer == null) {
 			gl.bindFramebuffer(Gl20.FRAMEBUFFER, null)

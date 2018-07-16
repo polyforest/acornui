@@ -55,7 +55,7 @@ class MeshRegion private constructor() : Clearable, ShaderBatch {
 
 	override fun begin(drawMode: Int) = batch.begin(drawMode)
 
-	override fun flush(force: Boolean) = batch.flush(force)
+	override fun flush() = batch.flush()
 
 	override fun putVertex(positionX: Float, positionY: Float, positionZ: Float, normalX: Float, normalY: Float, normalZ: Float, colorR: Float, colorG: Float, colorB: Float, colorA: Float, u: Float, v: Float) = batch.putVertex(positionX, positionY, positionZ, normalX, normalY, normalZ, colorR, colorG, colorB, colorA, u, v)
 

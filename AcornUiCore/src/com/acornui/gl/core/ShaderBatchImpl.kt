@@ -77,22 +77,21 @@ class ShaderBatchImpl(
 
 	override fun begin(drawMode: Int) {
 		if (_drawMode == drawMode) {
-			flush(false)
+			if (highestIndex < Short.MAX_VALUE * 0.75f) return
+			flush()
 		} else {
-			flush(true)
+			flush()
 			_drawMode = drawMode
 		}
 	}
 
-	override fun flush(force: Boolean) {
+	override fun flush() {
 		val vertexComponentsL = vertexComponents.position
 		val indicesL = indices.position
 		if (vertexComponentsL == 0) {
 			_assert (indicesL == 0, "Indices pushed, but no vertices")
 			return
 		}
-
-		if (!force && highestIndex < Short.MAX_VALUE * 0.75f) return
 		if (assertionsEnabled) {
 			// If assertions are enabled, check that we have rational vertex and index counts.
 			val vertexSize = vertexAttributes.vertexSize

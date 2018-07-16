@@ -72,7 +72,7 @@ open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(
 	override fun render(viewport: MinMaxRo) {
 		glState.batch.resetRenderCount()
 		super.render(viewport)
-		glState.batch.flush(true)
+		glState.batch.flush()
 	}
 
 	override fun onDeactivated() {

@@ -36,7 +36,7 @@ object StencilUtil {
 	var depth = -1
 
 	inline fun mask(batch: ShaderBatch, gl: Gl20, renderMask: () -> Unit, renderContents: () -> Unit) {
-		batch.flush(true)
+		batch.flush()
 		depth++
 		if (depth >= 65535) throw IllegalStateException("There may not be more than 65535 nested masks.")
 		if (depth == 0) {
@@ -46,7 +46,7 @@ object StencilUtil {
 		gl.stencilFunc(Gl20.ALWAYS, 0, 0.inv())
 		gl.stencilOp(Gl20.INCR, Gl20.INCR, Gl20.INCR)
 		renderMask()
-		batch.flush(true)
+		batch.flush()
 
 		gl.colorMask(true, true, true, true)
 		gl.stencilFunc(Gl20.EQUAL, depth + 1, 0.inv())
@@ -54,13 +54,13 @@ object StencilUtil {
 
 		renderContents()
 
-		batch.flush(true)
+		batch.flush()
 		gl.colorMask(false, false, false, false)
 		gl.stencilFunc(Gl20.ALWAYS, 0, 0.inv())
 		gl.stencilOp(Gl20.DECR, Gl20.DECR, Gl20.DECR)
 		renderMask()
 
-		batch.flush(true)
+		batch.flush()
 		gl.colorMask(true, true, true, true)
 		gl.stencilFunc(Gl20.EQUAL, depth, 0.inv())
 		gl.stencilOp(Gl20.KEEP, Gl20.KEEP, Gl20.KEEP)

@@ -41,20 +41,16 @@ interface ShaderBatch : VertexFeed, IndexFeed {
 	val renderCount: Int
 
 	/**
-	 * Begins a new shape.
-	 *
-	 * This will flush the previous buffers if necessary.
+	 * Marks the beginning of a new batch. This will flush the batch if the buffers are past an internal threshold.
 	 */
 	fun begin(drawMode: Int = Gl20.TRIANGLES)
 
 	/**
-	 * Flushes the batch if the buffer is past an internal threshold.
-	 * Use `flush(force = true)` when something has changed (such as setting a uniform or GL property) that would
-	 * require a new draw.
-	 *
-	 * @param force Flushes the batch regardless of current threshold.
+	 * Flushes this batch.
+	 * Call this method when something has changed (such as setting a uniform or GL property) that would require a
+	 * new draw.
 	 */
-	fun flush(force: Boolean = false)
+	fun flush()
 
 	/**
 	 * A way to push a 'standard' UI vertex.

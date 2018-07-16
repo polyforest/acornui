@@ -101,14 +101,14 @@ class LightingRenderer(
 
 		if (allowShadows) {
 			renderOcclusion(camera, directionalLight, pointLights, renderOcclusion)
-			glState.batch.flush(true)
+			glState.batch.flush()
 		}
 		prepareLightingShader(ambientLight, directionalLight, pointLights)
 
 		val previousBatch = glState.batch
 		glState.batch = lightingBatch
 		renderWorld()
-		glState.batch.flush(true)
+		glState.batch.flush()
 		glState.batch = previousBatch
 		glState.shader = previousShader
 	}
@@ -147,7 +147,7 @@ class LightingRenderer(
 		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT)
 		if (directionalLight.color != Color.BLACK) {
 			glState.scissor(1, 1, directionalShadowsFbo.width - 2, directionalShadowsFbo.height - 2) {
-				glState.batch.flush(true)
+				glState.batch.flush()
 				if (directionalLightCamera.update(directionalLight.direction, camera)) {
 					gl.uniformMatrix4fv(directionalShadowMapShader.getRequiredUniformLocation("u_directionalLightMvp"), false, directionalLightCamera.combined)
 				}
@@ -184,7 +184,7 @@ class LightingRenderer(
 						gl.uniformMatrix4fv(u_pointLightMvp, false, pointLightCamera.camera.combined)
 						renderOcclusion()
 
-						glState.batch.flush(true)
+						glState.batch.flush()
 					}
 				}
 			}

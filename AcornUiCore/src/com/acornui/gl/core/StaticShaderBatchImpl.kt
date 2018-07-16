@@ -26,6 +26,9 @@ import com.acornui.core.io.resizableShortBuffer
 /**
  * A static shader batch will remember the draw calls, allowing the batch to be rendered without needing to buffer data
  * at a later time.
+ *
+ * The max index for a static shader batch is [Short.MAX_VALUE].
+ *
  * @author nbilyk
  */
 class StaticShaderBatchImpl(
@@ -74,10 +77,8 @@ class StaticShaderBatchImpl(
 	}
 
 	override fun begin(drawMode: Int) {
-		if (this.drawMode == drawMode) {
-			flush(false)
-		} else {
-			flush(true)
+		if (this.drawMode != drawMode) {
+			flush()
 			this.drawMode = drawMode
 		}
 	}
@@ -91,8 +92,7 @@ class StaticShaderBatchImpl(
 		_highestIndex = -1
 	}
 
-	override fun flush(force: Boolean) {
-		if (!force) return
+	override fun flush() {
 		val lastDrawCall = _drawCalls.lastOrNull()
 		val offset = if (lastDrawCall == null) 0 else lastDrawCall.offset + lastDrawCall.count
 		val count = indices.position - offset
@@ -111,7 +111,6 @@ class StaticShaderBatchImpl(
 
 	override fun render() {
 		if (_drawCalls.isEmpty()) return
-
 		bind()
 		if (needsUpload) {
 			needsUpload = false

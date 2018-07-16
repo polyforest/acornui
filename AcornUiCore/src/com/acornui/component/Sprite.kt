@@ -209,8 +209,8 @@ class Sprite {
 		if (texture == null || colorTint.a <= 0f || width == 0f || height == 0f) return // Nothing to draw
 		val batch = glState.batch
 		glState.setTexture(texture)
-		batch.begin()
 		glState.blendMode(blendMode, premultipliedAlpha)
+		batch.begin()
 
 		if (isRotated) {
 			// Top left

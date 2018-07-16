@@ -57,7 +57,7 @@ class GlState(
 		get() = _batch
 		set(value) {
 			if (_batch == value) return
-			_batch.flush(true)
+			_batch.flush()
 			_batch = value
 		}
 
@@ -96,7 +96,7 @@ class GlState(
 	fun setTexture(texture: Texture? = null, unit: Int = 0) {
 		val previous: Texture? = _boundTextures[unit]
 		if (previous == texture && _activeTexture == unit) return
-		batch.flush(true)
+		batch.flush()
 		_whitePixel = if (unit == 0 && texture?.hasWhitePixel == true) texture else null
 		activeTexture(unit)
 		_boundTextures[unit] = texture
@@ -130,7 +130,7 @@ class GlState(
 		get() = _shader
 		set(value) {
 			if (_shader == value) return
-			batch.flush(true)
+			batch.flush()
 			_shader?.unbind()
 			_shader = value
 			_shader?.bind()
@@ -152,7 +152,7 @@ class GlState(
 		get() = _blendingEnabled
 		set(value) {
 			if (_blendingEnabled == value) return
-			batch.flush(true)
+			batch.flush()
 			_blendingEnabled = value
 			refreshBlendMode()
 		}
@@ -165,7 +165,7 @@ class GlState(
 
 	fun blendMode(blendMode: BlendMode, premultipliedAlpha: Boolean) {
 		if (_blendMode == blendMode && _premultipliedAlpha == premultipliedAlpha) return
-		batch.flush(true)
+		batch.flush()
 		_blendMode = blendMode
 		_premultipliedAlpha = premultipliedAlpha
 		if (!_blendingEnabled) return
@@ -186,7 +186,7 @@ class GlState(
 	 * @see scissor
 	 */
 	var scissorEnabled: Boolean by observable(false) {
-		batch.flush(true)
+		batch.flush()
 		if (it)
 			gl.enable(Gl20.SCISSOR_TEST)
 		else
@@ -212,7 +212,7 @@ class GlState(
 
 	fun scissor(x: Int, y: Int, width: Int, height: Int) {
 		if (_scissor.x != x || _scissor.y != y || _scissor.width != width || _scissor.height != height) {
-			batch.flush(true)
+			batch.flush()
 			_scissor.set(x, y, width, height)
 			gl.scissor(x, y, width, height)
 		}
@@ -262,7 +262,7 @@ class GlState(
 	var colorTransformation: ColorTransformationRo?
 		get() = if (_colorTransformationIsSet) _colorTransformation else null
 		set(value) {
-			batch.flush(true)
+			batch.flush()
 			val useColorTransU = _shader!!.getUniformLocation(CommonShaderUniforms.U_USE_COLOR_TRANS)
 			if (useColorTransU != null) {
 				if (value == null) {
@@ -331,7 +331,7 @@ private class MatrixCache(
 	fun set(value: Matrix4Ro, shader: ShaderProgram, batch: ShaderBatch) {
 		val uniform = shader.getUniformLocation(name) ?: return
 		if (_shader != shader || value != _value) {
-			batch.flush(true)
+			batch.flush()
 			_shader = shader
 			_value.set(value)
 			gl.uniformMatrix4fv(uniform, false, value)
@@ -352,7 +352,7 @@ private class ColorCache(
 	fun set(value: ColorRo, shader: ShaderProgram, batch: ShaderBatch) {
 		val uniform = shader.getUniformLocation(name) ?: return
 		if (_shader != shader || value != _value) {
-			batch.flush(true)
+			batch.flush()
 			_shader = shader
 			_value.set(value)
 			gl.uniform4f(uniform, value)

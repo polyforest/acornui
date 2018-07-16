@@ -98,7 +98,7 @@ open class StaticMeshComponent(
 
 	override fun draw(viewport: MinMaxRo) {
 		val mesh = mesh ?: return
-		glState.batch.flush(true)
+		glState.batch.flush()
 		glState.camera(camera, concatenatedTransform) // Use the concatenated transform as the model matrix.
 		mesh.render()
 	}
@@ -165,7 +165,7 @@ class StaticMesh(
 		meshData(batch) {
 			inner()
 		}
-		batch.flush(true)
+		batch.flush()
 		batch.resetRenderCount()
 		glState.batch = previousBatch
 		updateBoundingBox()
