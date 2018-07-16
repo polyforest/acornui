@@ -288,13 +288,22 @@ class GlState(
 		modelCache.set(value, _shader!!, batch)
 	}
 
+	private val tmpMat = Matrix3()
+
 	/**
 	 * Applies the given matrix as the model transformation.
 	 */
 	var model: Matrix4Ro
 		get() = modelCache.value
 		set(value) {
-			modelCache.set(value, _shader!!, batch)
+			val changed = modelCache.set(value, _shader!!, batch)
+			if (changed) {
+				val hasNormalTrans = _shader!!.getUniformLocation(CommonShaderUniforms.U_NORMAL_TRANS)
+				if (hasNormalTrans != null) {
+					tmpMat.set(value).inv().tra()
+					gl.uniformMatrix3fv(hasNormalTrans, false, tmpMat)
+				}
+			}
 		}
 
 
@@ -328,14 +337,16 @@ private class MatrixCache(
 	/**
 	 * Applies the given matrix as the model transformation.
 	 */
-	fun set(value: Matrix4Ro, shader: ShaderProgram, batch: ShaderBatch) {
-		val uniform = shader.getUniformLocation(name) ?: return
+	fun set(value: Matrix4Ro, shader: ShaderProgram, batch: ShaderBatch): Boolean {
+		val uniform = shader.getUniformLocation(name) ?: return false
 		if (_shader != shader || value != _value) {
 			batch.flush()
 			_shader = shader
 			_value.set(value)
 			gl.uniformMatrix4fv(uniform, false, value)
+			return true
 		}
+		return false
 	}
 }
 
