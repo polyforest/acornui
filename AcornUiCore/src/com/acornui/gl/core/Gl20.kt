@@ -23,6 +23,7 @@ import com.acornui.core.graphics.Texture
 import com.acornui.core.io.floatBuffer
 import com.acornui.graphics.ColorRo
 import com.acornui.io.NativeReadBuffer
+import com.acornui.math.Matrix3Ro
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.Vector2
 import com.acornui.math.Vector3
@@ -1222,4 +1223,15 @@ fun Gl20.uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, va
 	}
 	buffer.flip()
 	uniformMatrix4fv(location, transpose, buffer)
+}
+
+fun Gl20.uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: Matrix3Ro) = uniformMatrix3fv(location, transpose, value.values)
+fun Gl20.uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: List<Float>) {
+	val buffer = matrixValuesBuffer
+	buffer.clear()
+	for (i in 0..value.lastIndex) {
+		buffer.put(value[i])
+	}
+	buffer.flip()
+	uniformMatrix3fv(location, transpose, buffer)
 }
