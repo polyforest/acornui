@@ -126,6 +126,9 @@ class GlState(
 	 */
 	private var _shader: ShaderProgram? = null
 
+	/**
+	 * Sets the shader program.  If this is being changed, it should be set before [camera].
+	 */
 	var shader: ShaderProgram?
 		get() = _shader
 		set(value) {
@@ -223,7 +226,11 @@ class GlState(
 	fun camera(camera: CameraRo, model: Matrix4Ro = Matrix4.IDENTITY) {
 		val hasModel = _shader!!.getUniformLocation(CommonShaderUniforms.U_MODEL_TRANS) != null
 		if (hasModel) {
-			viewProjection = camera.combined
+			if (viewProjectionCache.set(camera.combined, _shader!!, batch)) {
+				_shader!!.getUniformLocation(CommonShaderUniforms.U_VIEW_TRANS)?.let {
+					gl.uniformMatrix4fv(it, false, camera.view)
+				}
+			}
 			this.model = model
 		} else {
 			viewProjection = if (model.mode == MatrixMode.IDENTITY) {
@@ -300,12 +307,11 @@ class GlState(
 			if (changed) {
 				val hasNormalTrans = _shader!!.getUniformLocation(CommonShaderUniforms.U_NORMAL_TRANS)
 				if (hasNormalTrans != null) {
-					tmpMat.set(value).inv().tra()
+					tmpMat.set(value).setTranslation(0f, 0f).inv().tra()
 					gl.uniformMatrix3fv(hasNormalTrans, false, tmpMat)
 				}
 			}
 		}
-
 
 	init {
 		shader = defaultShader

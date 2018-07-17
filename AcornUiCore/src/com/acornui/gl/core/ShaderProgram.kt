@@ -39,6 +39,8 @@ object CommonShaderAttributes {
 
 	const val A_POSITION: String = "a_position"
 	const val A_NORMAL: String = "a_normal"
+	const val A_TANGENT: String = "a_tangent"
+	const val A_BITANGENT: String = "a_bitangent"
 	const val A_COLOR_TINT: String = "a_colorTint"
 	const val A_TEXTURE_COORD: String = "a_texCoord"
 }
@@ -47,6 +49,8 @@ object CommonShaderUniforms {
 
 	const val U_PROJ_TRANS: String = "u_projTrans"
 	const val U_MODEL_TRANS: String = "u_modelTrans"
+	const val U_VIEW_TRANS: String = "u_viewTrans"
+	const val U_NORMAL_TRANS: String = "u_normalTrans"
 	const val U_COLOR_TRANS: String = "u_colorTrans"
 	const val U_COLOR_OFFSET: String = "u_colorOffset"
 	const val U_USE_COLOR_TRANS: String = "u_useColorTrans"

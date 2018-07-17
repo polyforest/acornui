@@ -1,51 +1,91 @@
+/*
+ * Copyright 2018 Nicholas Bilyk
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.acornui.graphics
 
 import com.acornui.gl.core.*
 
-const val PACK_FLOAT: String = """
-vec4 packFloat(const in float value) {
-	const vec4 bit_shift = vec4(256.0 * 256.0 * 256.0, 256.0 * 256.0, 256.0, 1.0);
-	const vec4 bit_mask  = vec4(0.0, 1.0 / 256.0, 1.0 / 256.0, 1.0 / 256.0);
-	vec4 res = fract(value * bit_shift);
-	res -= res.xxyz * bit_mask;
-	return res;
-}
-"""
-
-const val UNPACK_FLOAT: String = """
-float unpackFloat(const in vec4 rgba_depth) {
-	const vec4 bit_shift = vec4(1.0/(256.0*256.0*256.0), 1.0/(256.0*256.0), 1.0/256.0, 1.0);
-	float depth = dot(rgba_depth, bit_shift);
-	return depth;
-}
-"""
-
-class LightingShader(gl: Gl20, numPointLights: Int, numShadowPointLights: Int) : ShaderProgramBase(
+class LightingShaderWithNormalMap(gl: Gl20, numPointLights: Int, numShadowPointLights: Int) : ShaderProgramBase(
 		gl, vertexShaderSrc = """
 $DEFAULT_SHADER_HEADER
 
+struct PointLight {
+	float radius;
+	vec3 position;
+	vec3 color;
+};
+
 attribute vec3 a_position;
 attribute vec3 a_normal;
+attribute vec3 a_tangent;
+attribute vec3 a_bitangent;
 attribute vec4 a_colorTint;
 attribute vec2 a_texCoord0;
 
 uniform mat4 u_projTrans;
+uniform mat3 u_normalTrans;
 uniform mat4 u_modelTrans;
 uniform mat4 u_directionalLightMvp;
+uniform vec3 u_directionalLightDir;
+uniform PointLight u_pointLights[$numPointLights];
 
 varying vec4 v_worldPosition;
-varying vec3 v_normal;
 varying vec4 v_colorTint;
 varying vec2 v_texCoord;
+varying vec3 v_tsDirectionalLightDir;
 varying vec4 v_directionalShadowCoord;
+varying vec3 v_pointLightDirectionsTs[$numPointLights];
+
+mat3 transpose(in mat3 mat) {
+    vec3 i0 = mat[0];
+    vec3 i1 = mat[1];
+    vec3 i2 = mat[2];
+
+    return mat3(
+        vec3(i0.x, i1.x, i2.x),
+        vec3(i0.y, i1.y, i2.y),
+        vec3(i0.z, i1.z, i2.z)
+    );
+}
 
 void main() {
-	v_worldPosition = u_modelTrans * vec4(a_position, 1.0);
-	v_normal = normalize(mat3(u_modelTrans) * a_normal);
 	v_colorTint = a_colorTint;
 	v_texCoord = a_texCoord0;
+	v_worldPosition = u_modelTrans * vec4(a_position, 1.0);
+
+	vec3 t = normalize(u_normalTrans * vec3(1.0, 0.0, 0.0));
+    vec3 b = normalize(u_normalTrans * vec3(0.0, 0.0, -1.0));
+    vec3 n = normalize(u_normalTrans * vec3(0.0, -1.0, 0.0));
+
+	//vec3 t = normalize(u_normalTrans * a_tangent);
+    //vec3 b = normalize(u_normalTrans * a_bitangent);
+    //vec3 n = normalize(u_normalTrans * a_normal);
+    mat3 tbn = transpose(mat3(t, b, n));
+
 	gl_Position =  u_projTrans * v_worldPosition;
+	v_tsDirectionalLightDir = tbn * u_directionalLightDir;
 	v_directionalShadowCoord = u_directionalLightMvp * v_worldPosition;
+
+	PointLight pointLight;
+	for (int i = 0; i < $numPointLights; i++) {
+		pointLight = u_pointLights[i];
+		if (pointLight.radius > 1.0) {
+			v_pointLightDirectionsTs[i] = normalize(tbn * (pointLight.position - v_worldPosition.xyz));
+		}
+	}
 }
 """, fragmentShaderSrc = """
 $DEFAULT_SHADER_HEADER
@@ -57,23 +97,23 @@ struct PointLight {
 };
 
 varying vec4 v_worldPosition;
-varying vec3 v_normal;
 varying vec4 v_colorTint;
-varying vec4 v_directionalShadowCoord;
 varying vec2 v_texCoord;
+varying vec3 v_tsDirectionalLightDir;
+varying vec4 v_directionalShadowCoord;
+varying vec3 v_pointLightDirectionsTs[$numPointLights];
 
 uniform int u_shadowsEnabled;
 uniform vec2 u_resolutionInv;
 uniform vec4 u_ambient;
 uniform vec4 u_directional;
-uniform vec3 u_directionalLightDir;
 uniform sampler2D u_texture;
+uniform sampler2D u_textureNormal;
 uniform sampler2D u_directionalShadowMap;
 
 uniform bool u_useColorTrans;
 uniform mat4 u_colorTrans;
 uniform vec4 u_colorOffset;
-
 
 // Point lights
 uniform PointLight u_pointLights[$numPointLights];
@@ -88,8 +128,8 @@ float getShadowDepth(const in vec2 coord) {
 	return unpackFloat(c);
 }
 
-vec3 getDirectionalColor() {
-	float cosTheta = clamp(dot(v_normal, -u_directionalLightDir), 0.05, 1.0);
+vec3 getDirectionalColor(vec3 normal) {
+	float cosTheta = clamp(dot(normal, -v_tsDirectionalLightDir), 0.05, 1.0);
 	if (u_shadowsEnabled == 0 || u_directional.rgb == vec3(0.0)) return cosTheta * u_directional.rgb;
 	float visibility = 0.0;
 	float shadow = getShadowDepth(v_directionalShadowCoord.xy);
@@ -107,7 +147,7 @@ vec3 getDirectionalColor() {
 	return visibility * cosTheta * u_directional.rgb;
 }
 
-vec3 getPointColor() {
+vec3 getPointColor(vec3 normal) {
 	vec3 pointColor = vec3(0.0);
 	PointLight pointLight;
 	vec3 lightToPixel;
@@ -129,7 +169,7 @@ vec3 getPointColor() {
 			testZ = distance - bias;
 
 			attenuation = 1.0 - clamp(distance, 0.0, 1.0);
-			float cosTheta = clamp(dot(v_normal, -1.0 * lightToPixelN), 0.0, 1.0);
+			float cosTheta = clamp(dot(normal, normalize(v_pointLightDirectionsTs[i])), 0.0, 1.0);
 
 			if (u_shadowsEnabled == 0 || i >= $numShadowPointLights) {
 				pointColor += cosTheta * pointLight.color * attenuation * attenuation;
@@ -149,8 +189,9 @@ vec3 getPointColor() {
 }
 
 void main() {
-	vec3 directional = getDirectionalColor();
-	vec3 point = getPointColor();
+	vec3 normal = normalize(texture2D(u_textureNormal, v_texCoord).rgb * 2.0 - 1.0);
+	vec3 directional = getDirectionalColor(normal);
+	vec3 point = getPointColor(normal);
 
 	vec4 diffuseColor = v_colorTint * texture2D(u_texture, v_texCoord);
 
@@ -165,8 +206,15 @@ void main() {
 }
 
 
-"""
-) {
+""",
+		vertexAttributes = mapOf(
+VertexAttributeUsage.POSITION to CommonShaderAttributes.A_POSITION,
+VertexAttributeUsage.NORMAL to CommonShaderAttributes.A_NORMAL,
+VertexAttributeUsage.TANGENT to CommonShaderAttributes.A_TANGENT,
+VertexAttributeUsage.BITANGENT to CommonShaderAttributes.A_BITANGENT,
+VertexAttributeUsage.COLOR_TINT to CommonShaderAttributes.A_COLOR_TINT,
+VertexAttributeUsage.TEXTURE_COORD to CommonShaderAttributes.A_TEXTURE_COORD + "0"
+)) {
 
 	private var isFirst = true
 
@@ -182,94 +230,4 @@ void main() {
 			gl.uniform2f(getRequiredUniformLocation("poissonDisk[3]"), 0.34495938f, 0.29387760f)
 		}
 	}
-}
-
-class PointShadowShader(gl: Gl20) : ShaderProgramBase(
-		gl, vertexShaderSrc = """
-$DEFAULT_SHADER_HEADER
-
-attribute vec3 a_position;
-attribute vec4 a_colorTint;
-attribute vec2 a_texCoord0;
-
-uniform mat4 u_pointLightMvp;
-uniform mat4 u_modelTrans;
-
-varying vec4 v_worldPosition;
-varying vec4 v_colorTint;
-varying vec2 v_texCoord;
-
-void main() {
-	v_colorTint = a_colorTint;
-	v_texCoord = a_texCoord0;
-	v_worldPosition = u_modelTrans * vec4(a_position, 1.0);
-	gl_Position = u_pointLightMvp * v_worldPosition;
-}
-""", fragmentShaderSrc = """
-$DEFAULT_SHADER_HEADER
-
-uniform vec3 u_lightPosition;
-uniform float u_lightRadius;
-varying vec4 v_colorTint;
-varying vec2 v_texCoord;
-
-uniform sampler2D u_texture;
-
-varying vec4 v_worldPosition;
-
-$PACK_FLOAT
-
-void main() {
-	vec4 diffuse = v_colorTint * texture2D(u_texture, v_texCoord);
-	if (diffuse.a < 0.2) discard;
-	gl_FragColor = packFloat(length(v_worldPosition.xyz - u_lightPosition) / u_lightRadius);
-}
-
-"""
-)
-
-class DirectionalShadowShader(gl: Gl20) : ShaderProgramBase(
-		gl, vertexShaderSrc = """
-$DEFAULT_SHADER_HEADER
-
-attribute vec3 a_position;
-attribute vec4 a_colorTint;
-attribute vec2 a_texCoord0;
-
-uniform mat4 u_directionalLightMvp;
-uniform mat4 u_modelTrans;
-
-varying vec4 v_colorTint;
-varying vec2 v_texCoord;
-
-void main() {
-	v_colorTint = a_colorTint;
-	v_texCoord = a_texCoord0;
-	vec4 worldPosition = u_modelTrans * vec4(a_position, 1.0);
-	gl_Position = u_directionalLightMvp * worldPosition;
-}
-""", fragmentShaderSrc = """
-$DEFAULT_SHADER_HEADER
-
-varying vec4 v_colorTint;
-varying vec2 v_texCoord;
-
-uniform sampler2D u_texture;
-
-$PACK_FLOAT
-
-void main() {
-	vec4 diffuse = v_colorTint * texture2D(u_texture, v_texCoord);
-	if (diffuse.a < 0.2) discard;
-	gl_FragColor = packFloat(gl_FragCoord.z);
-}
-
-"""
-) {
-
-	override fun bind() {
-		super.bind()
-		gl.uniform1i(getUniformLocation(CommonShaderUniforms.U_TEXTURE)!!, 0);  // set the fragment shader's texture to unit 0
-	}
-
 }

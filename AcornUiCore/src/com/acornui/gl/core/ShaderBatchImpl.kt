@@ -45,6 +45,7 @@ class ShaderBatchImpl(
 	 */
 	private var _drawMode: Int = Gl20.TRIANGLES
 
+
 	private val indices = resizableShortBuffer(2048)
 	private val vertexComponents = resizableFloatBuffer(4096)
 	private var _highestIndex: Short = -1
