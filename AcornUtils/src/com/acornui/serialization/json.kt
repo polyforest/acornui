@@ -18,6 +18,7 @@ package com.acornui.serialization
 
 import com.acornui.collection.peek
 import com.acornui.collection.pop
+import com.acornui.core.isWhitespace2
 import com.acornui.string.SubString
 import com.acornui.core.replace2
 import com.acornui.core.removeBackslashes
@@ -70,10 +71,10 @@ class JsonNode(private val source: String,
 		// Trim leading and trailing whitespace.
 		var fromTrimmed = fromIndex
 		var toTrimmed = toIndex
-		while (fromTrimmed < toTrimmed && source[fromTrimmed].isWhitespace()) {
+		while (fromTrimmed < toTrimmed && source[fromTrimmed].isWhitespace2()) {
 			fromTrimmed++
 		}
-		while (fromTrimmed < toTrimmed && source[toTrimmed - 1].isWhitespace()) {
+		while (fromTrimmed < toTrimmed && source[toTrimmed - 1].isWhitespace2()) {
 			toTrimmed--
 		}
 		this.fromIndex = fromTrimmed
@@ -175,7 +176,7 @@ class JsonNode(private val source: String,
 	}
 
 	private fun consumeWhitespace() {
-		while (marker < toIndex && source[marker].isWhitespace()) {
+		while (marker < toIndex && source[marker].isWhitespace2()) {
 			marker++
 		}
 	}

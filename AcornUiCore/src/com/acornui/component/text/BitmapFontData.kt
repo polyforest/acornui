@@ -16,6 +16,7 @@
 
 package com.acornui.component.text
 
+import com.acornui.core.isWhitespace2
 import com.acornui.math.IntRectangle
 import com.acornui.math.IntRectangleRo
 
@@ -65,7 +66,7 @@ data class BitmapFontData(
 	fun getGlyphSafe(char: Char): GlyphData {
 		val existing = glyphs[char]
 		if (existing != null) return existing
-		if (char.isWhitespace()) {
+		if (char.isWhitespace2()) {
 			return glyphs[0.toChar()]!!
 		}
 		return glyphs[char] ?: glyphs[(-1).toChar()]!!

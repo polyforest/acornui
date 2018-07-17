@@ -16,6 +16,8 @@
 
 package com.acornui.string
 
+import com.acornui.core.isWhitespace2
+
 /**
  * SubString is class allowing you to make a reference to a substring of a target String without a memory copy.
  *
@@ -279,10 +281,10 @@ class SubString(
 fun SubString.trim(): SubString {
 	var fromTrimmed = 0
 	var toTrimmed = length
-	while (fromTrimmed < toTrimmed && charAt(fromTrimmed).isWhitespace()) {
+	while (fromTrimmed < toTrimmed && charAt(fromTrimmed).isWhitespace2()) {
 		fromTrimmed++
 	}
-	while (fromTrimmed < toTrimmed && charAt(toTrimmed - 1).isWhitespace()) {
+	while (fromTrimmed < toTrimmed && charAt(toTrimmed - 1).isWhitespace2()) {
 		toTrimmed--
 	}
 	return subSequence(fromTrimmed, toTrimmed)

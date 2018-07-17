@@ -16,6 +16,8 @@
 
 package com.acornui.string
 
+import com.acornui.core.isWhitespace2
+
 /**
  * @author nbilyk
  */
@@ -28,7 +30,7 @@ class StringParser(val data: String) {
 	val length: Int = data.length
 
 	fun white(): String {
-		return getString { it.isWhitespace() }
+		return getString { it.isWhitespace2() }
 	}
 
 	fun getBoolean(): Boolean? {
@@ -66,7 +68,7 @@ class StringParser(val data: String) {
 		while (p < length) {
 			val it = data[p]
 			if (quoteStart == null) {
-				if (it.isWhitespace()) {
+				if (it.isWhitespace2()) {
 				} else if (it == '"' || it == '\'') {
 					quoteStart = it
 				} else {

@@ -35,6 +35,7 @@ import com.acornui.core.focus.blurred
 import com.acornui.core.focus.focused
 import com.acornui.core.input.*
 import com.acornui.core.input.interaction.*
+import com.acornui.core.isWhitespace2
 import com.acornui.core.mvc.CommandGroup
 import com.acornui.core.mvc.commander
 import com.acornui.core.mvc.invokeCommand
@@ -728,7 +729,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private fun Char?.charType(): Int {
 		if (this == null) return -1
 		return when {
-			isWhitespace() -> 0
+			isWhitespace2() -> 0
 			isLetterOrDigit2() -> 1
 			else -> 2
 		}

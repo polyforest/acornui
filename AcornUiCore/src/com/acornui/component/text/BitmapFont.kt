@@ -30,6 +30,7 @@ import com.acornui.core.graphics.AtlasPageDecorator
 import com.acornui.core.graphics.Texture
 import com.acornui.core.graphics.TextureAtlasDataSerializer
 import com.acornui.core.io.file.Files
+import com.acornui.core.isWhitespace2
 import com.acornui.logging.Log
 import com.acornui.math.IntRectangle
 import com.acornui.math.IntRectangleRo
@@ -63,7 +64,7 @@ class BitmapFont(
 	fun getGlyphSafe(char: Char): Glyph {
 		val existing = glyphs[char]
 		if (existing != null) return existing
-		if (char.isWhitespace()) {
+		if (char.isWhitespace2()) {
 			return glyphs[0.toChar()]!!
 		}
 		return glyphs[char] ?: glyphs[(-1).toChar()]!!

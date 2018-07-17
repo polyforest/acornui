@@ -229,12 +229,45 @@ fun addBackslashes(value: String): String {
 }
 
 fun String.compareTo2(other: String, ignoreCase: Boolean = false): Int {
-	if (ignoreCase)
-		return toLowerCase().compareTo(other.toLowerCase())
+	return if (ignoreCase)
+		toLowerCase().compareTo(other.toLowerCase())
 	else
-		return compareTo(other)
+		compareTo(other)
 }
 
 fun String.toUnderscoreCase(): String {
 	return replace(Regex("([a-z])([A-Z]+)"), "$1_$2").toLowerCase()
+}
+
+private val whitespaceChars = mapOf(
+		0x0009.toChar() to true,
+		0x000A.toChar() to true,
+		0x000B.toChar() to true,
+		0x000C.toChar() to true,
+		0x000D.toChar() to true,
+		0x0020.toChar() to true,
+		0x0085.toChar() to true,
+		0x00A0.toChar() to true,
+		0x1680.toChar() to true,
+		0x180E.toChar() to true,
+		0x2000.toChar() to true,
+		0x2001.toChar() to true,
+		0x2002.toChar() to true,
+		0x2003.toChar() to true,
+		0x2004.toChar() to true,
+		0x2005.toChar() to true,
+		0x2006.toChar() to true,
+		0x2007.toChar() to true,
+		0x2008.toChar() to true,
+		0x2009.toChar() to true,
+		0x200A.toChar() to true,
+		0x2028.toChar() to true,
+		0x2029.toChar() to true,
+		0x202F.toChar() to true,
+		0x205F.toChar() to true,
+		0x3000.toChar() to true
+)
+
+fun Char.isWhitespace2(): Boolean {
+	return whitespaceChars.containsKey(this)
 }
