@@ -61,19 +61,19 @@ class TouchInteraction : TouchInteractionRo, InteractionEventBase() {
 	 * A list of all the Touch objects that are both currently in contact with the touch surface and were also started
 	 * on the same element that is the target of the event.
 	 */
-	override val targetTouches = ArrayList<Touch>()
+	override val targetTouches: MutableList<Touch> = ArrayList()
 
 	/**
 	 * A list of all the Touch objects representing individual points of contact whose states changed between the
 	 * previous touch event and this one.
 	 */
-	override val changedTouches = ArrayList<Touch>()
+	override val changedTouches: MutableList<Touch> = ArrayList()
 
 	/**
 	 * A list of all the Touch objects representing all current points of contact with the surface, regardless of
 	 * target or changed status.
 	 */
-	override val touches = ArrayList<Touch>()
+	override val touches: MutableList<Touch> = ArrayList()
 
 	override fun localize(currentTarget: UiComponentRo) {
 		super.localize(currentTarget)
@@ -153,6 +153,8 @@ interface TouchRo {
 	val target: InteractiveElementRo?
 	val currentTarget: InteractiveElementRo?
 
+	val identifier: Int
+
 	/**
 	 * The x position of the mouse event relative to the [currentTarget].
 	 */
@@ -191,6 +193,8 @@ class Touch : TouchRo, Clearable {
 
 	override var target: InteractiveElementRo? = null
 	override var currentTarget: InteractiveElementRo? = null
+
+	override var identifier: Int = -1
 
 	private var _localPositionIsValid = false
 	private val _localPosition: Vector2 = Vector2()
@@ -241,6 +245,7 @@ class Touch : TouchRo, Clearable {
 		rotationAngle = 0f
 		target = null
 		currentTarget = null
+		identifier = -1
 		_localPositionIsValid = false
 	}
 
@@ -252,6 +257,7 @@ class Touch : TouchRo, Clearable {
 		rotationAngle = otherTouch.rotationAngle
 		target = otherTouch.target
 		currentTarget = otherTouch.currentTarget
+		identifier = otherTouch.identifier
 		_localPositionIsValid = false
 	}
 

@@ -50,6 +50,7 @@ class DragAttachment(
 
 	private var watchingMouse = false
 	private var watchingTouch = false
+	private var touchId = -1
 
 	private var _isDragging = false
 
@@ -168,6 +169,7 @@ class DragAttachment(
 			event.handled = true
 			startElement = event.target
 			val t = event.touches.first()
+			touchId = t.identifier
 			startPosition.set(t.canvasX, t.canvasY)
 			position.set(startPosition)
 			startPositionLocal.set(t.localX, t.localY)
@@ -191,7 +193,7 @@ class DragAttachment(
 	}
 
 	private fun allowTouchEnd(event: TouchInteractionRo): Boolean {
-		return event.touches.isEmpty()
+		return event.touches.find { it.identifier == touchId } == null
 	}
 
 	private fun setWatchingTouch(value: Boolean) {
@@ -216,6 +218,7 @@ class DragAttachment(
 
 	private fun stageTouchEndHandler(event: TouchInteractionRo) {
 		if (allowTouchEnd(event)) {
+			touchId = -1
 			event.handled = true
 			setWatchingTouch(false)
 			setIsDragging(false)

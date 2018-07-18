@@ -199,7 +199,7 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 	private fun populateTouchEvent(jsEvent: TouchEvent) {
 		touchEvent.clear()
 		touchEvent.set(jsEvent)
-		val firstTouch = touchEvent.changedTouches.first()
+		val firstTouch = touchEvent.touches.firstOrNull() ?: return
 		_canvasX = firstTouch.canvasX
 		_canvasY = firstTouch.canvasY
 	}
@@ -230,6 +230,7 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 	private fun Touch.set(jsTouch: com.acornui.js.html.Touch) {
 		canvasX = jsTouch.clientX.toFloat() - root.offsetLeft.toFloat()
 		canvasY = jsTouch.clientY.toFloat() - root.offsetTop.toFloat()
+		identifier = jsTouch.identifier
 	}
 
 	override fun dispose() {
