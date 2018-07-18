@@ -44,8 +44,8 @@ interface CameraRo {
 	 * Creates a picking {@link Ray} from the coordinates given in global coordinates. The global coordinates origin
 	 * is assumed to be in the top left corner, its y-axis pointing down, the x-axis  pointing to the right.
 	 *
-	 * @param viewportX the coordinate of the bottom left corner of the viewport in glViewport coordinates.
-	 * @param viewportY the coordinate of the bottom left corner of the viewport in glViewport coordinates.
+	 * @param viewportX the x coordinate of the bottom left corner of the viewport in glViewport coordinates.
+	 * @param viewportY the y coordinate of the bottom left corner of the viewport in glViewport coordinates.
 	 * @param viewportWidth the width of the viewport in pixels
 	 * @param viewportHeight the height of the viewport in pixels
 	 * @return The [out] parameter. The Ray will be in global coordinate space.

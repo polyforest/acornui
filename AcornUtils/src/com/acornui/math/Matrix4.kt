@@ -964,7 +964,7 @@ class Matrix4() : Matrix4Ro {
 	 * @return This matrix
 	 */
 	fun setFromEulerAnglesRad(yaw: Float, pitch: Float, roll: Float): Matrix4 {
-		quat.setEulerAnglesRad(yaw, pitch, roll)
+		quat.setEulerAngles(pitch, yaw, roll)
 		return set(quat)
 	}
 

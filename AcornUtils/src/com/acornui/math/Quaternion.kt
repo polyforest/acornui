@@ -44,19 +44,19 @@ interface QuaternionRo {
 	 * Get the roll euler angle in radians, which is the rotation around the z axis. Requires that this quaternion is normalized.
 	 * @return the rotation around the z axis in radians (between -PI and +PI)
 	 */
-	fun getRollRad(): Float
+	fun getRoll(): Float
 
 	/**
 	 * Get the pitch euler angle in radians, which is the rotation around the x axis. Requires that this quaternion is normalized.
 	 * @return the rotation around the x axis in radians (between -(PI/2) and +(PI/2))
 	 */
-	fun getPitchRad(): Float
+	fun getPitch(): Float
 
 	/**
 	 * Get the yaw euler angle in radians, which is the rotation around the y axis. Requires that this quaternion is normalized.
 	 * @return the rotation around the y axis in radians (between -PI and +PI)
 	 */
-	fun getYawRad(): Float
+	fun getYaw(): Float
 
 	/**
 	 * @return the length of this quaternion without square root
@@ -102,15 +102,15 @@ interface QuaternionRo {
 	 * @see <a href="http://en.wikipedia.org/wiki/Axis%E2%80%93angle_representation">wikipedia</a>
 	 * @see <a href="http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToAngle">calculation</a>
 	 */
-	fun getAxisAngleRad(axis: Vector3): Float
+	fun getAxisAngle(axis: Vector3): Float
 
 	/**
 	 * Get the angle in radians of the rotation this quaternion represents. Does not normalize the quaternion. Use
-	 * {@link #getAxisAngleRad(Vector3)} to get both the axis and the angle of this rotation. Use
-	 * {@link #getAngleAroundRad(Vector3)} to get the angle around a specific axis.
+	 * {@link #getAxisAngle(Vector3)} to get both the axis and the angle of this rotation. Use
+	 * {@link #getAngleAround(Vector3)} to get the angle around a specific axis.
 	 * @return the angle in radians of the rotation
 	 */
-	fun getAngleRad(): Float
+	fun getAngle(): Float
 
 	/**
 	 * Get the swing rotation and twist rotation for the specified axis. The twist rotation represents the rotation around the
@@ -140,7 +140,7 @@ interface QuaternionRo {
 	 * @param twist will receive the twist rotation: the rotation around the specified axis
 	 * @see <a href="http://www.euclideanspace.com/maths/geometry/rotations/for/decomposition">calculation</a>
 	 */
-	fun getSwingTwist(axis: Vector3, swing: Quaternion, twist: Quaternion)
+	fun getSwingTwist(axis: Vector3Ro, swing: Quaternion, twist: Quaternion)
 
 	/**
 	 * Get the angle in radians of the rotation around the specified axis. The axis must be normalized.
@@ -149,14 +149,16 @@ interface QuaternionRo {
 	 * @param axisZ the z component of the normalized axis for which to get the angle
 	 * @return the angle in radians of the rotation around the specified axis
 	 */
-	fun getAngleAroundRad(axisX: Float, axisY: Float, axisZ: Float): Float
+	fun getAngleAround(axisX: Float, axisY: Float, axisZ: Float): Float
 
 	/**
 	 * Get the angle in radians of the rotation around the specified axis. The axis must be normalized.
 	 * @param axis the normalized axis for which to get the angle
 	 * @return the angle in radians of the rotation around the specified axis
 	 */
-	fun getAngleAroundRad(axis: Vector3): Float
+	fun getAngleAround(axis: Vector3Ro): Float {
+		return getAngleAround(axis.x, axis.y, axis.z)
+	}
 
 	/**
 	 * Transforms the given vector using this quaternion
@@ -249,12 +251,12 @@ class Quaternion(
 
 	/**
 	 * Sets the quaternion to the given euler angles in radians.
-	 * @param yaw the rotation around the y axis in radians
 	 * @param pitch the rotation around the x axis in radians
+	 * @param yaw the rotation around the y axis in radians
 	 * @param roll the rotation around the z axis in radians
 	 * @return this quaternion
 	 */
-	fun setEulerAnglesRad(yaw: Float, pitch: Float, roll: Float): Quaternion {
+	fun setEulerAngles(pitch: Float, yaw: Float, roll: Float): Quaternion {
 		val hr = roll * 0.5f
 		val shr = sin(hr)
 		val chr = cos(hr)
@@ -289,7 +291,7 @@ class Quaternion(
 	 * Get the roll euler angle in radians, which is the rotation around the z axis. Requires that this quaternion is normalized.
 	 * @return the rotation around the z axis in radians (between -PI and +PI)
 	 */
-	override fun getRollRad(): Float {
+	override fun getRoll(): Float {
 		val pole = getGimbalPole()
 		return if (pole == 0) atan2(2f * (w * z + y * x), 1f - 2f * (x * x + z * z)) else pole.toFloat() * 2f * atan2(y, w)
 	}
@@ -298,7 +300,7 @@ class Quaternion(
 	 * Get the pitch euler angle in radians, which is the rotation around the x axis. Requires that this quaternion is normalized.
 	 * @return the rotation around the x axis in radians (between -(PI/2) and +(PI/2))
 	 */
-	override fun getPitchRad(): Float {
+	override fun getPitch(): Float {
 		val pole = getGimbalPole()
 		return if (pole == 0) asin(clamp(2f * (w * x - z * y), -1f, 1f)) else pole.toFloat() * PI * 0.5f
 	}
@@ -307,7 +309,7 @@ class Quaternion(
 	 * Get the yaw euler angle in radians, which is the rotation around the y axis. Requires that this quaternion is normalized.
 	 * @return the rotation around the y axis in radians (between -PI and +PI)
 	 */
-	override fun getYawRad(): Float {
+	override fun getYaw(): Float {
 		return if (getGimbalPole() == 0) atan2(2f * (y * w + x * z), 1f - 2f * (y * y + x * x)) else 0f
 	}
 
@@ -500,30 +502,23 @@ class Quaternion(
 		if (d == 0f) return idt()
 		d = 1f / d
 		val l_ang = radians
-		val l_sin = sin(l_ang / 2.0f)
-		val l_cos = cos(l_ang / 2.0f)
+		val l_sin = sin(l_ang / 2f)
+		val l_cos = cos(l_ang / 2f)
 		return this.set(d * x * l_sin, d * y * l_sin, d * z * l_sin, l_cos).nor()
 	}
 
 	/**
 	 * Sets the Quaternion from the given matrix, optionally removing any scaling.
 	 */
-	fun setFromMatrix(matrix: Matrix4, normalizeAxes: Boolean = false): Quaternion {
-		return setFromAxes(matrix.values[0], matrix.values[4], matrix.values[8], matrix.values[1], matrix.values[5], matrix.values[9], matrix.values[2], matrix.values[6], matrix.values[10], normalizeAxes)
+	fun setFromMatrix(matrix: Matrix4Ro, normalizeAxes: Boolean = false): Quaternion {
+		return setFromAxes(matrix.values[Matrix4.M00], matrix.values[Matrix4.M01], matrix.values[Matrix4.M02], matrix.values[Matrix4.M10], matrix.values[Matrix4.M11], matrix.values[Matrix4.M12], matrix.values[Matrix4.M20], matrix.values[Matrix4.M21], matrix.values[Matrix4.M22], normalizeAxes)
 	}
 
 	/**
 	 * Sets the Quaternion from the given matrix, optionally removing any scaling.
 	 */
-	fun setFromMatrix(normalizeAxes: Boolean, matrix: Matrix3): Quaternion {
+	fun setFromMatrix(matrix: Matrix3Ro, normalizeAxes: Boolean = false): Quaternion {
 		return setFromAxes(matrix.values[Matrix3.M00], matrix.values[Matrix3.M01], matrix.values[Matrix3.M02], matrix.values[Matrix3.M10], matrix.values[Matrix3.M11], matrix.values[Matrix3.M12], matrix.values[Matrix3.M20], matrix.values[Matrix3.M21], matrix.values[Matrix3.M22], normalizeAxes)
-	}
-
-	/**
-	 * Sets the Quaternion from the given rotation matrix, which must not contain scaling.
-	 */
-	fun setFromMatrix(matrix: Matrix3): Quaternion {
-		return setFromMatrix(false, matrix)
 	}
 
 	/**
@@ -708,9 +703,9 @@ class Quaternion(
 	 * @param q List of quaternions
 	 * @return This quaternion for chaining
 	 */
-	fun slerp(q: Array<Quaternion>): Quaternion {
+	fun slerp(q: Array<QuaternionRo>): Quaternion {
 		//Calculate exponents and multiply everything from left to right
-		val w = 1.0f / q.size.toFloat()
+		val w = 1f / q.size.toFloat()
 		set(q[0]).exp(w)
 		for (i in 1..q.lastIndex)
 			mul(tmp1.set(q[i]).exp(w))
@@ -727,7 +722,7 @@ class Quaternion(
 	 * @param w List of weights
 	 * @return This quaternion for chaining
 	 */
-	fun slerp(q: Array<Quaternion>, w: FloatArray): Quaternion {
+	fun slerp(q: Array<QuaternionRo>, w: FloatArray): Quaternion {
 
 		//Calculate exponents and multiply everything from left to right
 		set(q[0]).exp(w[0])
@@ -822,7 +817,7 @@ class Quaternion(
 	 * @see <a href="http://en.wikipedia.org/wiki/Axis%E2%80%93angle_representation">wikipedia</a>
 	 * @see <a href="http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToAngle">calculation</a>
 	 */
-	override fun getAxisAngleRad(axis: Vector3): Float {
+	override fun getAxisAngle(axis: Vector3): Float {
 		if (this.w > 1f) this.nor() // if w>1 acos and sqrt will produce errors, this cant happen if quaternion is normalised
 		val angle = (2f * acos(this.w))
 		val s = sqrt((1f - this.w * this.w)) // assuming quaternion normalised then w is less than 1, so term always positive.
@@ -843,12 +838,12 @@ class Quaternion(
 
 	/**
 	 * Get the angle in radians of the rotation this quaternion represents. Does not normalize the quaternion. Use
-	 * {@link #getAxisAngleRad(Vector3)} to get both the axis and the angle of this rotation. Use
-	 * {@link #getAngleAroundRad(Vector3)} to get the angle around a specific axis.
+	 * {@link #getAxisAngle(Vector3)} to get both the axis and the angle of this rotation. Use
+	 * {@link #getAngleAround(Vector3)} to get the angle around a specific axis.
 	 * @return the angle in radians of the rotation
 	 */
-	override fun getAngleRad(): Float {
-		return (2.0 * acos((if ((this.w > 1)) (this.w / len()) else this.w))).toFloat()
+	override fun getAngle(): Float {
+		return (2f * acos((if ((this.w > 1f)) (this.w / len()) else this.w)))
 	}
 
 	/**
@@ -883,7 +878,7 @@ class Quaternion(
 	 * @param twist will receive the twist rotation: the rotation around the specified axis
 	 * @see <a href="http://www.euclideanspace.com/maths/geometry/rotations/for/decomposition">calculation</a>
 	 */
-	override fun getSwingTwist(axis: Vector3, swing: Quaternion, twist: Quaternion) {
+	override fun getSwingTwist(axis: Vector3Ro, swing: Quaternion, twist: Quaternion) {
 		getSwingTwist(axis.x, axis.y, axis.z, swing, twist)
 	}
 
@@ -894,19 +889,10 @@ class Quaternion(
 	 * @param axisZ the z component of the normalized axis for which to get the angle
 	 * @return the angle in radians of the rotation around the specified axis
 	 */
-	override fun getAngleAroundRad(axisX: Float, axisY: Float, axisZ: Float): Float {
+	override fun getAngleAround(axisX: Float, axisY: Float, axisZ: Float): Float {
 		val d = Vector3.dot(this.x, this.y, this.z, axisX, axisY, axisZ)
 		val l2 = Quaternion.len2(axisX * d, axisY * d, axisZ * d, this.w)
-		return if (MathUtils.isZero(l2)) 0f else (2.0 * acos(MathUtils.clamp((this.w / sqrt(l2)), -1f, 1f))).toFloat()
-	}
-
-	/**
-	 * Get the angle in radians of the rotation around the specified axis. The axis must be normalized.
-	 * @param axis the normalized axis for which to get the angle
-	 * @return the angle in radians of the rotation around the specified axis
-	 */
-	override fun getAngleAroundRad(axis: Vector3): Float {
-		return getAngleAroundRad(axis.x, axis.y, axis.z)
+		return if (MathUtils.isZero(l2)) 0f else (2f * acos(MathUtils.clamp((this.w / sqrt(l2)), -1f, 1f)))
 	}
 
 	override fun equals(other: Any?): Boolean {

@@ -73,3 +73,10 @@ fun IndexFeed.putQuadIndices() {
 	putIndex(n + 3)
 	putIndex(n + 0)
 }
+
+fun IndexFeed.putTriangleIndices() {
+	val n = highestIndex + 1
+	putIndex(n + 0)
+	putIndex(n + 1)
+	putIndex(n + 2)
+}

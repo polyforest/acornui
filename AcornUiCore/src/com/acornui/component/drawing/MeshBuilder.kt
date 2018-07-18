@@ -174,7 +174,7 @@ private val mat = Matrix4()
 private val quat = Quaternion()
 
 fun MeshRegion.rotate(yaw: Float = 0f, pitch: Float = 0f, roll: Float = 0f) {
-	quat.setEulerAnglesRad(yaw, pitch, roll)
+	quat.setEulerAngles(pitch, yaw, roll)
 	mat.set(quat)
 	// For just a rotation matrix, we don't need to calculate the inverse-transpose to change the normals.
 	transformVertices(mat)
@@ -186,7 +186,7 @@ fun MeshRegion.transform(position: Vector3Ro = Vector3.ZERO, scale: Vector3Ro = 
 	mat.trn(position)
 	mat.scl(scale)
 	if (!rotation.isZero()) {
-		quat.setEulerAnglesRad(rotation.y, rotation.x, rotation.z)
+		quat.setEulerAngles(rotation.x, rotation.y, rotation.z)
 		mat.rotate(quat)
 	}
 	if (!origin.isZero())

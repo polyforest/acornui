@@ -157,7 +157,7 @@ vec3 getPointColor(vec3 normal) {
 	float shadow;
 	float testZ;
 
-	float bias = -0.0005;
+	float bias = -0.005;
 	float maxD = unpackFloat(vec4(0.0, 0.0, 1.0, 1.0));
 
 	for (int i = 0; i < $numPointLights; i++) {

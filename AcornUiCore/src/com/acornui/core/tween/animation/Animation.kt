@@ -172,7 +172,7 @@ private class LayerTween(override val duration: Float, layer: Layer, private val
 		transform.idt()
 		transform.trn(position)
 		if (!rotation.isZero()) {
-			quat.setEulerAnglesRad(rotation.y, rotation.x, rotation.z)
+			quat.setEulerAngles(rotation.x, rotation.y, rotation.z)
 			transform.rotate(quat)
 		}
 		transform.shearZ(tan(shearXZ), tan(shearYZ))

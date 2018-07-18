@@ -1224,7 +1224,7 @@ open class UiComponentImpl(
 		_transform.idt()
 		_transform.trn(_position)
 		if (!_rotation.isZero()) {
-			quat.setEulerAnglesRad(_rotation.y, _rotation.x, _rotation.z)
+			quat.setEulerAngles(_rotation.x, _rotation.y, _rotation.z)
 			_transform.rotate(quat)
 		}
 		_transform.scale(_scale)
