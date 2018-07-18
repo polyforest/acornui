@@ -16,6 +16,7 @@
 
 package com.acornui.component
 
+import com.acornui.core.AppConfig
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.focus.Focusable
@@ -40,6 +41,7 @@ open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(
 		styleTags.add(Stage)
 		interactivity.init(this)
 		focusManager.init(this)
+		style.backgroundColor = inject(AppConfig).window.backgroundColor
 		watch(style) {
 			window.clearColor = it.backgroundColor
 		}

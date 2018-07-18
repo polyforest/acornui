@@ -63,6 +63,16 @@ class GlfwWindowImpl(
 
 	val windowId: Long
 
+	private var _clearColor = Color.CLEAR.copy()
+
+	override var clearColor: ColorRo
+		get() = _clearColor
+		set(value) {
+			_clearColor.set(value)
+			gl.clearColor(value)
+			requestRender()
+		}
+
 	init {
 		if (debug)
 			GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_DEBUG_CONTEXT, GLFW.GLFW_TRUE)
@@ -168,6 +178,8 @@ class GlfwWindowImpl(
 
 		setSize(windowConfig.initialWidth, windowConfig.initialHeight)
 
+		clearColor = windowConfig.backgroundColor
+
 		Log.info("Vendor: ${GL11.glGetString(GL11.GL_VENDOR)}")
 		Log.info("Supported GLSL language version: ${GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)}")
 	}
@@ -177,16 +189,6 @@ class GlfwWindowImpl(
 		_scaleY = scaleY
 		scaleChanged.dispatch(scaleX, scaleY)
 	}
-
-	private var _clearColor = Color.CLEAR.copy()
-
-	override var clearColor: ColorRo
-		get() = _clearColor
-		set(value) {
-			_clearColor.set(value)
-			gl.clearColor(value)
-			requestRender()
-		}
 
 	private var _isVisible: Boolean = true
 

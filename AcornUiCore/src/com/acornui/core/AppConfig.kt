@@ -20,6 +20,8 @@ import com.acornui.core.di.DKey
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.i18n.Locale
+import com.acornui.graphics.Color
+import com.acornui.graphics.ColorRo
 import kotlin.properties.Delegates
 
 /**
@@ -86,7 +88,12 @@ data class WindowConfig(
 		/**
 		 * The initial height of the window (For JS backends, set the width style on the root div instead).
 		 */
-		val initialHeight: Float = 600f
+		val initialHeight: Float = 600f,
+
+		/**
+		 * The initial background color.
+		 */
+		val backgroundColor: ColorRo = Color.BLACK
 
 )
 

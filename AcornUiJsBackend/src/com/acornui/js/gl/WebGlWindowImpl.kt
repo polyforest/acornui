@@ -36,7 +36,7 @@ import kotlin.browser.window
 /**
  * @author nbilyk
  */
-open class WebGlWindowImpl(
+class WebGlWindowImpl(
 		private val canvas: HTMLCanvasElement,
 		config: WindowConfig,
 		private val gl: Gl20) : Window {
@@ -74,19 +74,29 @@ open class WebGlWindowImpl(
 	}
 
 	private val blurHandler = {
-		event: Event ->
+		_: Event ->
 		isActive(false)
 	}
 
 	private val focusHandler = {
-		event: Event ->
+		_: Event ->
 		isActive(true)
 	}
 
 	private val resizeHandler = {
-		event: Event ->
+		_: Event ->
 		setSize(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat(), true)
 	}
+
+	private var _clearColor = Color.CLEAR.copy()
+
+	override var clearColor: ColorRo
+		get() = _clearColor
+		set(value) {
+			_clearColor.set(value)
+			gl.clearColor(value)
+			requestRender()
+		}
 
 	init {
 		setSize(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat(), true)
@@ -101,6 +111,9 @@ open class WebGlWindowImpl(
 			document.title = config.title
 
 		watchForVisibilityChanges()
+
+		clearColor = config.backgroundColor
+		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
 	}
 
 	private fun watchForVisibilityChanges() {
@@ -178,16 +191,6 @@ open class WebGlWindowImpl(
 		sizeIsDirty = true
 		sizeChanged.dispatch(_width, _height, isUserInteraction)
 	}
-
-	private var _clearColor = Color.CLEAR.copy()
-
-	override var clearColor: ColorRo
-		get() = _clearColor
-		set(value) {
-			_clearColor.set(value)
-			gl.clearColor(value)
-			requestRender()
-		}
 
 	override var continuousRendering: Boolean = false
 	private var _renderRequested: Boolean = true
