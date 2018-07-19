@@ -41,6 +41,7 @@ import com.acornui.core.popup.PopUpManager
 import com.acornui.core.userInfo
 import com.acornui.component.ScrollRectStyle
 import com.acornui.component.text.loadFontFromAtlas
+import com.acornui.core.AppConfig
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.*
@@ -55,16 +56,20 @@ open class BasicUiSkin(
 
 	open fun apply() {
 		target.styleRules.clear()
+		theme.apply {
+			bgColor = inject(AppConfig).window.backgroundColor
+			evenRowBgColor = bgColor + Color(0x03030300)
+			oddRowBgColor = bgColor - Color(0x03030300)
+		}
 		initTheme()
 
-		target.populateButtonStyle(Button, { labelButtonSkin(theme, it) })
-		target.populateButtonStyle(Checkbox, { checkboxSkin(theme, it) })
-		target.populateButtonStyle(CollapseButton, { collapseButtonSkin(theme, it) })
-		target.populateButtonStyle(RadioButton, { radioButtonSkin(theme, it) })
-		target.populateButtonStyle(StyleSelectors.cbNoLabelStyle, { checkboxNoLabelSkin(theme, it) })
-		target.populateButtonStyle(IconButton, { iconButtonSkin(it) })
+		target.populateButtonStyle(Button) { labelButtonSkin(theme, it) }
+		target.populateButtonStyle(Checkbox) { checkboxSkin(theme, it) }
+		target.populateButtonStyle(CollapseButton) { collapseButtonSkin(theme, it) }
+		target.populateButtonStyle(RadioButton) { radioButtonSkin(theme, it) }
+		target.populateButtonStyle(StyleSelectors.cbNoLabelStyle) { checkboxNoLabelSkin(theme, it) }
+		target.populateButtonStyle(IconButton) { iconButtonSkin(it) }
 
-		stageStyle()
 		popUpStyle()
 		focusStyle()
 		textStyle()
@@ -91,12 +96,6 @@ open class BasicUiSkin(
 	}
 
 	open fun initTheme() {
-	}
-
-	protected open fun stageStyle() {
-		val stageStyle = StageStyle()
-		stageStyle.backgroundColor = theme.bgColor
-		target.addStyleRule(stageStyle)
 	}
 
 	protected open fun popUpStyle() {
@@ -244,9 +243,9 @@ open class BasicUiSkin(
 		tabNavStyle.background = { rect { styleTags.add(StyleSelectors.themeRect) } }
 		target.addStyleRule(tabNavStyle, TabNavigator)
 
-		target.populateButtonStyle(TabNavigator.DEFAULT_TAB_STYLE, { tabButtonSkin(theme, it) })
-		target.populateButtonStyle(TabNavigator.DEFAULT_TAB_STYLE_FIRST, { tabButtonSkin(theme, it) })
-		target.populateButtonStyle(TabNavigator.DEFAULT_TAB_STYLE_LAST, { tabButtonSkin(theme, it) })
+		target.populateButtonStyle(TabNavigator.DEFAULT_TAB_STYLE) { tabButtonSkin(theme, it) }
+		target.populateButtonStyle(TabNavigator.DEFAULT_TAB_STYLE_FIRST) { tabButtonSkin(theme, it) }
+		target.populateButtonStyle(TabNavigator.DEFAULT_TAB_STYLE_LAST) { tabButtonSkin(theme, it) }
 	}
 
 	protected open fun dividerStyle() {
@@ -277,8 +276,8 @@ open class BasicUiSkin(
 
 	protected open fun numericStepperStyle() {
 		val stepperPad = Pad(left = 4f, right = 4f, top = 4f, bottom = 4f)
-		target.populateButtonStyle(NumericStepper.STEP_UP_STYLE, { iconButtonSkin(it, "UpArrowStepper", padding = stepperPad) })
-		target.populateButtonStyle(NumericStepper.STEP_DOWN_STYLE, { iconButtonSkin(it, "DownArrowStepper", padding = stepperPad) })
+		target.populateButtonStyle(NumericStepper.STEP_UP_STYLE) { iconButtonSkin(it, "UpArrowStepper", padding = stepperPad) }
+		target.populateButtonStyle(NumericStepper.STEP_DOWN_STYLE) { iconButtonSkin(it, "DownArrowStepper", padding = stepperPad) }
 	}
 
 	protected open fun scrollAreaStyle() {
@@ -299,7 +298,7 @@ open class BasicUiSkin(
 		val thumb: Owned.() -> UiComponent = {
 			button {
 				focusEnabled = false
-				populateButtonStyle(style, {
+				populateButtonStyle(style) {
 					{
 						rect {
 							style.backgroundColor = Color(0f, 0f, 0f, 0.6f)
@@ -307,7 +306,7 @@ open class BasicUiSkin(
 							minHeight(size)
 						}
 					}
-				})
+				}
 			}
 		}
 
@@ -915,6 +914,10 @@ fun Owned.getButtonStrokeColor(buttonState: ButtonState): ColorRo {
 }
 
 class Theme {
+
+	/**
+	 * This will be set to AppConfig.window.backgroundColor
+	 */
 	var bgColor: ColorRo = Color(0xF1F2F3FF)
 	var panelBgColor: ColorRo = Color(0xE7EDF1FF)
 

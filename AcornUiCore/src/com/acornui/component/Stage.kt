@@ -16,32 +16,15 @@
 
 package com.acornui.component
 
-import com.acornui.component.style.StyleBase
-import com.acornui.component.style.StyleTag
-import com.acornui.component.style.StyleType
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.focus.Focusable
-import com.acornui.graphics.Color
-import com.acornui.graphics.ColorRo
 
 interface StageRo : ContainerRo, Focusable
 
 interface Stage : ElementContainer<UiComponent>, StageRo {
-
-	val style: StageStyle
-
-	companion object : DKey<Stage>, StyleTag
-}
-
-class StageStyle : StyleBase() {
-
-	override val type: StyleType<StageStyle> = StageStyle
-
-	var backgroundColor: ColorRo by prop(Color.WHITE)
-
-	companion object : StyleType<StageStyle>
+	companion object : DKey<Stage>
 }
 
 val Scoped.stage: Stage

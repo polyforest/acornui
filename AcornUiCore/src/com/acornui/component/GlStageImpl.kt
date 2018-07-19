@@ -16,7 +16,6 @@
 
 package com.acornui.component
 
-import com.acornui.core.AppConfig
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.focus.Focusable
@@ -30,21 +29,14 @@ import com.acornui.math.MinMaxRo
  */
 open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(owner), Focusable {
 
-	final override val style = bind(StageStyle())
-
 	private val gl = inject(Gl20)
 	private val glState = inject(GlState)
 
 	init {
 		focusEnabled = true
 		interactivityMode = InteractivityMode.ALWAYS
-		styleTags.add(Stage)
 		interactivity.init(this)
 		focusManager.init(this)
-		style.backgroundColor = inject(AppConfig).window.backgroundColor
-		watch(style) {
-			window.clearColor = it.backgroundColor
-		}
 	}
 
 	protected open val windowResizedHandler: (Float, Float, Boolean) -> Unit = {

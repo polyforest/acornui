@@ -249,6 +249,9 @@ class Quaternion(
 		return "[$x|$y|$z|$w]"
 	}
 
+	@Deprecated("Use setEulerAngles(pitch, yaw, roll)", ReplaceWith("setEulerAngles(pitch, yaw, roll)"), DeprecationLevel.ERROR)
+	fun setEulerAnglesRad(yaw: Float, pitch: Float, roll: Float): Quaternion = setEulerAngles(pitch, yaw, roll)
+
 	/**
 	 * Sets the quaternion to the given euler angles in radians.
 	 * @param pitch the rotation around the x axis in radians
