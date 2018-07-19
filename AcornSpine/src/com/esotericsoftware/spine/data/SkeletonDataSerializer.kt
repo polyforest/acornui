@@ -40,9 +40,8 @@ object SkeletonDataSerializer : From<SkeletonData> {
 		val ikConstraints = reader.array2("ik", IkConstraintDataSerializer) ?: arrayOf()
 
 		val skins = HashMap<String, SkinData>()
-		reader["skins"]!!.forEach {
-			skinName, reader ->
-			val attachments = SkinAttachmentSerializer.read(reader)
+		reader["skins"]!!.forEach { skinName, iReader ->
+			val attachments = SkinAttachmentSerializer.read(iReader)
 			skins[skinName] = SkinData(skinName, attachments)
 		}
 
@@ -104,11 +103,9 @@ object SpineEventDefaultsSerializer : From<SpineEventDefaults> {
 object SkinAttachmentSerializer : From<Map<SkinDataKey, SkinAttachmentData>> {
 	override fun read(reader: Reader): Map<SkinDataKey, SkinAttachmentData> {
 		val attachments = HashMap<SkinDataKey, SkinAttachmentData>()
-		reader.forEach {
-			slotName, reader ->
-			reader.forEach {
-				attachmentName, reader ->
-				val attachment = SkinAttachmentDataSerializer.read(reader)
+		reader.forEach { slotName, iReader ->
+			iReader.forEach { attachmentName, jReader ->
+				val attachment = SkinAttachmentDataSerializer.read(jReader)
 				attachments[SkinDataKey(slotName, attachmentName)] = attachment
 			}
 		}
@@ -122,7 +119,7 @@ object IkConstraintDataSerializer : From<IkConstraintData> {
 		val name = reader.string("name")!!
 		val targetName = reader.string("target")!!
 		val boneNames = reader.stringArray("bones")!!.filterNotNull().toTypedArray()
-		val bendDirection = if (reader.bool("bendPositive") ?: true) 1 else -1
+		val bendDirection = if (reader.bool("bendPositive") != false) 1 else -1
 		val mix = reader.float("mix") ?: 1f
 		return IkConstraintData(
 				name,
@@ -151,64 +148,58 @@ object AnimationDataSerializer : From<AnimationData> {
 	override fun read(reader: Reader): AnimationData {
 		val slotTimelines = HashMap<String, ArrayList<TimelineData>>()
 		val slotsReader = reader["slots"]
-		slotsReader?.forEach {
-			slotName, reader ->
+		slotsReader?.forEach { slotName, iReader ->
 			val list = ArrayList<TimelineData>()
 			slotTimelines[slotName] = list
-			if (reader.contains("attachment")) {
+			if (iReader.contains("attachment")) {
 				list.add(AttachmentTimelineData(
-						frames = (reader.array2("attachment", AttachmentFrameDataSerializer)!!).toList()
+						frames = (iReader.array2("attachment", AttachmentFrameDataSerializer)!!).toList()
 				))
 			}
-			if (reader.contains("color")) {
+			if (iReader.contains("color")) {
 				list.add(ColorTimelineData(
-						frames = (reader.array2("color", ColorFrameDataSerializer)!!).toList()
+						frames = (iReader.array2("color", ColorFrameDataSerializer)!!).toList()
 				))
 			}
 		}
 
 		val boneTimelines = HashMap<String, ArrayList<CurvedTimelineData>>()
 		val bonesReader = reader["bones"]
-		bonesReader?.forEach {
-			boneName, reader ->
+		bonesReader?.forEach { boneName, iReader ->
 			val list = ArrayList<CurvedTimelineData>()
 			boneTimelines[boneName] = list
-			if (reader.contains("rotate")) {
+			if (iReader.contains("rotate")) {
 				list.add(RotateTimelineData(
-						frames = (reader.array2("rotate", RotateFrameDataSerializer)!!).toList()
+						frames = (iReader.array2("rotate", RotateFrameDataSerializer)!!).toList()
 				))
 			}
-			if (reader.contains("scale")) {
+			if (iReader.contains("scale")) {
 				list.add(ScaleTimelineData(
-						frames = (reader.array2("scale", ScaleFrameDataSerializer)!!).toList()
+						frames = (iReader.array2("scale", ScaleFrameDataSerializer)!!).toList()
 				))
 			}
-			if (reader.contains("translate")) {
+			if (iReader.contains("translate")) {
 				list.add(TranslateTimelineData(
-						frames = (reader.array2("translate", TranslateFrameDataSerializer)!!).toList()
+						frames = (iReader.array2("translate", TranslateFrameDataSerializer)!!).toList()
 				))
 			}
 		}
 
 		val ikConstraintTimelines = HashMap<String, IkConstraintTimelineData>()
 		val ikReader = reader["ik"]
-		ikReader?.forEach {
-			ikName, reader ->
+		ikReader?.forEach { ikName, iReader ->
 			ikConstraintTimelines[ikName] = IkConstraintTimelineData(
-					frames = (reader.array2(IkConstraintFrameDataSerializer)!!).toList()
+					frames = (iReader.array2(IkConstraintFrameDataSerializer)!!).toList()
 			)
 		}
 
 		val ffdTimelines = HashMap<FfdtKey, FfdTimelineData>()
 		val ffdReader = reader["ffd"]
-		ffdReader?.forEach {
-			skinName, reader ->
+		ffdReader?.forEach { skinName, iReader ->
 
-			reader.forEach {
-				slotName, reader ->
+			iReader.forEach { slotName, jReader ->
 
-				reader.forEach {
-					attachmentName, reader ->
+				jReader.forEach { attachmentName, reader ->
 
 					ffdTimelines[FfdtKey(skinName, slotName, attachmentName)] = FfdTimelineData(
 							frames = (reader.array2(FfdFrameDataSerializer)!!).toList()
@@ -219,19 +210,19 @@ object AnimationDataSerializer : From<AnimationData> {
 
 		val drawOrderReader = reader["drawOrder"]
 		val drawOrderTimeline: DrawOrderTimelineData?
-		if (drawOrderReader != null) {
-			drawOrderTimeline = DrawOrderTimelineData(
+		drawOrderTimeline = if (drawOrderReader != null) {
+			DrawOrderTimelineData(
 					frames = (drawOrderReader.array2(DrawOrderFrameDataSerializer)!!).toList()
 			)
-		} else drawOrderTimeline = null
+		} else null
 
 		val eventReader = reader["events"]
 		val eventTimeline: EventTimelineData?
-		if (eventReader != null) {
-			eventTimeline = EventTimelineData(
+		eventTimeline = if (eventReader != null) {
+			EventTimelineData(
 					frames = (eventReader.array2(EventFrameDataSerializer)!!).toList()
 			)
-		} else eventTimeline = null
+		} else null
 
 		return AnimationData(
 				slotTimelines = slotTimelines,
@@ -251,7 +242,7 @@ object SlotDataSerializer : From<SlotData> {
 		return SlotData(
 				name = reader.string("name")!!,
 				boneName = reader.string("bone")!!,
-				color = Color.Companion.fromStr(reader.string("color") ?: "ffffffff"),
+				color = Color.fromStr(reader.string("color") ?: "ffffffff"),
 				attachmentName = reader.string("attachment"),
 				blendMode = BlendMode.fromStr((reader.string("blend"))) ?: BlendMode.NORMAL
 		)
@@ -360,12 +351,11 @@ object IkConstraintFrameDataSerializer : From<IkConstraintFrameData> {
 
 object RotateFrameDataSerializer : From<RotateFrameData> {
 	override fun read(reader: Reader): RotateFrameData {
-		val fD = RotateFrameData(
+		return RotateFrameData(
 				time = reader.float("time")!!,
 				angle = reader.float("angle")!!,
 				curve = CurveDataSerializer.read(reader)
 		)
-		return fD
 	}
 }
 
@@ -476,8 +466,8 @@ object WeightedMeshAttachmentDataSerializer : From<WeightedMeshAttachmentData> {
 		}
 
 		return WeightedMeshAttachmentData(
-				bones = IntArray(bones.size, {bones[it]}),
-				weights = FloatArray(weights.size, {weights[it]}),
+				bones = IntArray(bones.size) { bones[it] },
+				weights = FloatArray(weights.size) { weights[it] },
 				regionUVs = uvs,
 				triangles = reader.shortArray("triangles")!!,
 				color = Color.fromStr(reader.string("color") ?: "FFFFFFFF"),
