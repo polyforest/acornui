@@ -16,12 +16,10 @@
 
 package com.acornui.component.drawing
 
+import com.acornui._assert
 import com.acornui.collection.Clearable
 import com.acornui.collection.ClearableObjectPool
-import com.acornui.component.ComponentInit
-import com.acornui.component.UiComponentImpl
-import com.acornui.component.ValidationFlags
-import com.acornui.component.validationProp
+import com.acornui.component.*
 import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Owned
@@ -50,7 +48,17 @@ open class StaticMeshComponent(
 
 	private val globalBoundingBox = Box()
 
-	var mesh: StaticMesh? by validationProp(null, ValidationFlags.LAYOUT)
+	private var _mesh: StaticMesh? = null
+	var mesh: StaticMesh?
+		get() = _mesh
+		set(value) {
+			if (_mesh === value) return
+			_mesh = value
+			if (isActive) {
+				value?.activate()
+			}
+			invalidateLayout()
+		}
 
 	private val colorTransformationFilter = colorTransformationFilter()
 
@@ -94,6 +102,16 @@ open class StaticMeshComponent(
 		if (colorTransformationFilter.enabled) {
 			colorTransformationFilter.colorTransformation.tint(_concatenatedColorTint)
 		}
+	}
+
+	override fun onActivated() {
+		super.onActivated()
+		mesh?.activate()
+	}
+
+	override fun onDeactivated() {
+		super.onDeactivated()
+		mesh?.deactivate()
 	}
 
 	override fun draw(viewport: MinMaxRo) {
@@ -146,10 +164,30 @@ class StaticMesh(
 		get() = _boundingBox
 
 	private val batch = StaticShaderBatchImpl(gl, glState, vertexAttributes)
+	private var _isActive = false
+
+	val isActive: Boolean
+		get() = _isActive
 
 	init {
 		val positionAttribute = vertexAttributes.getAttributeByUsage(VertexAttributeUsage.POSITION) ?: throw IllegalArgumentException("A static mesh must at least have a position attribute.")
 		if (positionAttribute.numComponents != 3) throw IllegalArgumentException("position must be 3 components.")
+	}
+
+	fun activate() {
+		_assert(!_isActive, "Already active")
+		_isActive = true
+		for (i in 0..batch.drawCalls.lastIndex) {
+			(batch.drawCalls[i].texture ?: glState.whitePixel).refInc()
+		}
+	}
+
+	fun deactivate() {
+		_assert(_isActive, "Already active")
+		_isActive = false
+		for (i in 0..batch.drawCalls.lastIndex) {
+			(batch.drawCalls[i].texture ?: glState.whitePixel).refDec()
+		}
 	}
 
 	/**
@@ -167,6 +205,11 @@ class StaticMesh(
 		}
 		batch.flush()
 		batch.resetRenderCount()
+		if (isActive) {
+			for (i in 0..batch.drawCalls.lastIndex) {
+				(batch.drawCalls[i].texture ?: glState.whitePixel).refInc()
+			}
+		}
 		glState.batch = previousBatch
 		updateBoundingBox()
 	}
@@ -224,6 +267,8 @@ class StaticMesh(
 	}
 
 	override fun dispose() {
+		if (isActive)
+			deactivate()
 		batch.dispose()
 	}
 

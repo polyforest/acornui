@@ -19,12 +19,10 @@ package com.acornui.component
 import com.acornui._assert
 import com.acornui.collection.ConcurrentListImpl
 import com.acornui.core.ParentRo
-import com.acornui.core.di.*
-import com.acornui.core.focus.FocusManager
-import com.acornui.core.focus.Focusable
-import com.acornui.function.as1
-import com.acornui.math.*
-
+import com.acornui.core.di.Owned
+import com.acornui.math.MinMaxRo
+import com.acornui.math.Ray
+import com.acornui.math.RayRo
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 
