@@ -72,16 +72,17 @@ class FullScreenFramebuffer(override val injector: Injector, private val hasDept
 	 * Renders the frame buffer to the screen.
 	 */
 	fun render() {
+		val batch = glState.batch
 		val frameBuffer = frameBuffer ?: return
 		glState.setTexture(frameBuffer.texture)
 		glState.viewProjection = Matrix4.IDENTITY
 		glState.model = Matrix4.IDENTITY
 		glState.blendMode(BlendMode.NORMAL, false)
-		val batch = glState.batch
-		batch.putVertex(tL)
-		batch.putVertex(tR)
-		batch.putVertex(bR)
-		batch.putVertex(bL)
+		batch.begin()
+		batch.putVertex(tL, u = 0f, v = 0f)
+		batch.putVertex(tR, u = 1f, v = 0f)
+		batch.putVertex(bR, u = 1f, v = 1f)
+		batch.putVertex(bL, u = 0f, v = 1f)
 		batch.putQuadIndices()
 	}
 
