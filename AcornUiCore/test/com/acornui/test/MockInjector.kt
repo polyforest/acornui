@@ -21,6 +21,7 @@ import com.acornui.core.di.Injector
 import com.acornui.core.di.InjectorImpl
 import com.acornui.core.di.Owned
 import com.acornui.core.di.OwnedImpl
+import com.acornui.core.focus.FocusManager
 import com.acornui.core.graphics.Camera
 import com.acornui.core.graphics.Window
 import com.acornui.core.input.InteractivityManager
@@ -58,6 +59,7 @@ object MockInjector {
 				AssetManager to  Mockito.mock(AssetManager::class.java),
 				InteractivityManager to  Mockito.mock(InteractivityManager::class.java),
 				Camera to  Mockito.mock(Camera::class.java),
+				FocusManager to  Mockito.mock(FocusManager::class.java),
 				JSON_KEY to json
 		))
 		time = MockTimeProvider()
