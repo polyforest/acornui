@@ -267,3 +267,37 @@ fun FloatArray.scl(scalar: Float) {
 		this[i] *= scalar
 	}
 }
+
+/**
+ * Returns the index of the largest value in this list.
+ */
+fun IntArray.indexOfMax(): Int {
+	if (isEmpty()) return -1
+	var max = this[0]
+	var maxIndex = 0
+	for (i in 1..lastIndex) {
+		val e = this[i]
+		if (max < e) {
+			max = e
+			maxIndex = i
+		}
+	}
+	return maxIndex
+}
+
+/**
+ * Returns the index of the largest value in this list.
+ */
+fun IntArray.indexOfMin(): Int {
+	if (isEmpty()) return -1
+	var min = this[0]
+	var minIndex = 0
+	for (i in 1..lastIndex) {
+		val e = this[i]
+		if (min > e) {
+			min = e
+			minIndex = i
+		}
+	}
+	return minIndex
+}

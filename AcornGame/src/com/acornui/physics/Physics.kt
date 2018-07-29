@@ -2,6 +2,7 @@ package com.acornui.physics
 import com.acornui.ecs.ComponentBase
 import com.acornui.ecs.SerializableComponentType
 import com.acornui.geom.Polygon2
+import com.acornui.geom.Polygon2Serializer
 import com.acornui.math.Vector2
 import com.acornui.math.Vector3
 import com.acornui.math.vector2
@@ -96,13 +97,13 @@ class Perimeter(
 
 		override fun read(reader: Reader): Perimeter {
 			val o = Perimeter(
-					perimeter = reader.obj("perimeter", Polygon2)!!
+					perimeter = reader.obj("perimeter", Polygon2Serializer)!!
 			)
 			return o
 		}
 
 		override fun Perimeter.write(writer: Writer) {
-			writer.obj("perimeter", perimeter, Polygon2)
+			writer.obj("perimeter", perimeter, Polygon2Serializer)
 		}
 	}
 }

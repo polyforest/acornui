@@ -54,6 +54,13 @@ fun IndexFeed.putIndices(value: IntArray) {
 	}
 }
 
+fun IndexFeed.putIndicesReversed(value: IntArray) {
+	val n = highestIndex + 1
+	for (i in 0..value.lastIndex) {
+		putIndex(n + value[value.lastIndex - i])
+	}
+}
+
 fun IndexFeed.putIndices(value: ShortArray) {
 	val n = highestIndex + 1
 	for (i in 0..value.lastIndex) {
@@ -71,6 +78,16 @@ fun IndexFeed.putQuadIndices() {
 	putIndex(n + 2)
 	putIndex(n + 2)
 	putIndex(n + 3)
+	putIndex(n + 0)
+}
+
+fun IndexFeed.putCcwQuadIndices() {
+	val n = highestIndex + 1
+	putIndex(n + 0)
+	putIndex(n + 3)
+	putIndex(n + 2)
+	putIndex(n + 2)
+	putIndex(n + 1)
 	putIndex(n + 0)
 }
 

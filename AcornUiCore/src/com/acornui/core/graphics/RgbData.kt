@@ -81,7 +81,7 @@ class RgbData(
 		out.g = _bytes[i++].toFloatRange()
 		out.b = _bytes[i++].toFloatRange()
 		if (hasAlpha) {
-			out.a = _bytes[i] / 255f
+			out.a = _bytes[i].toFloatRange()
 		} else {
 			out.a = 1f
 		}

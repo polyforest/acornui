@@ -27,6 +27,7 @@ import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.putIndices
+import com.acornui.gl.core.putIndicesReversed
 import com.acornui.gl.core.putVertex
 import com.acornui.math.Bounds
 import com.acornui.math.IntRectangleRo
@@ -37,7 +38,7 @@ import com.acornui.reflect.observable
 /**
  * @author nbilyk
  */
-class NinePatchComponent(owner: Owned) : ContainerImpl(owner) {
+class NinePatchComponent(owner: Owned) : UiComponentImpl(owner) {
 
 	private var _isRotated: Boolean = false
 
@@ -62,6 +63,11 @@ class NinePatchComponent(owner: Owned) : ContainerImpl(owner) {
 	private var _naturalHeight: Float = 0f
 
 	private var _texture: Texture? = null
+
+	/**
+	 * If true, the normal and indices will be reversed.
+	 */
+	var useAsBackFace: Boolean = false
 
 	var blendMode: BlendMode by observable(BlendMode.NORMAL) { window.requestRender() }
 
@@ -257,8 +263,7 @@ class NinePatchComponent(owner: Owned) : ContainerImpl(owner) {
 		batch.begin()
 
 		val c = concatenatedColorTint
-		val normal = Vector3.NEG_Z
-
+		val normal = if (useAsBackFace) Vector3.Z else Vector3.NEG_Z
 
 		if (isRotated) {
 			val splitLeftV = _splitLeft / texture.height
@@ -344,7 +349,7 @@ class NinePatchComponent(owner: Owned) : ContainerImpl(owner) {
 			batch.putVertex(globalPositions[14], normal, c, colU2, rowV3)
 			batch.putVertex(globalPositions[15], normal, c, colU3, rowV3)
 		}
-		batch.putIndices(indices)
+		if (useAsBackFace) batch.putIndicesReversed(indices) else batch.putIndices(indices)
 	}
 }
 

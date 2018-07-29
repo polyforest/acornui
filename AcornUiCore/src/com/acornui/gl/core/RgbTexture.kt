@@ -16,8 +16,9 @@
 
 package com.acornui.gl.core
 
+import com.acornui.core.di.Scoped
+import com.acornui.core.di.inject
 import com.acornui.core.graphics.RgbData
-import com.acornui.core.io.BufferFactory
 import com.acornui.core.io.byteBuffer
 
 class RgbTexture(
@@ -46,8 +47,14 @@ class RgbTexture(
 }
 
 
-fun rgbTexture(gl: Gl20, glState: GlState, rgbData: RgbData, init: RgbTexture.() -> Unit): RgbTexture {
+fun rgbTexture(gl: Gl20, glState: GlState, rgbData: RgbData, init: RgbTexture.() -> Unit = {}): RgbTexture {
 	val r = RgbTexture(gl, glState, rgbData)
+	r.init()
+	return r
+}
+
+fun Scoped.rgbTexture(rgbData: RgbData, init: RgbTexture.() -> Unit = {}): RgbTexture {
+	val r = RgbTexture(inject(Gl20), inject(GlState), rgbData)
 	r.init()
 	return r
 }

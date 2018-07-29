@@ -16,33 +16,142 @@
 
 package com.acornui.component
 
+import com.acornui.async.then
+import com.acornui.core.assets.AssetType
+import com.acornui.core.assets.CachedGroup
+import com.acornui.core.assets.cachedGroup
+import com.acornui.core.assets.loadAndCache
 import com.acornui.core.di.Owned
+import com.acornui.core.di.inject
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
+import com.acornui.gl.core.GlState
+import com.acornui.math.Bounds
 import com.acornui.math.IntRectangleRo
+import com.acornui.math.MinMaxRo
 import com.acornui.math.RectangleRo
 
-interface TextureComponent : UiComponent {
+/**
+ * A UiComponent representing a single Texture.
+ *
+ * Example:
+ * val textureComponent = TextureComponent()
+ * textureComponent.path("images/image128.jpg")
+ * D.stage.addChild(textureComponent)
+ *
+ * @author nbilyk
+ */
+open class TextureComponent(owner: Owned) : UiComponentImpl(owner) {
+
+	private val glState = inject(GlState)
+
+	private val sprite = Sprite()
+
+	/**
+	 * If true, the normal and indices will be reversed.
+	 */
+	var useAsBackFace: Boolean
+		get() = sprite.useAsBackFace
+		set(value) {
+			sprite.useAsBackFace = value
+		}
+
+	init {
+		validation.addNode(1 shl 16, ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM or ValidationFlags.CONCATENATED_TRANSFORM) { updateVertices() }
+	}
+
+	constructor (owner: Owned, path: String) : this(owner) {
+		this.path = path
+	}
+
+	constructor (owner: Owned, texture: Texture) : this(owner) {
+		this.texture = texture
+	}
+
+	private var cached: CachedGroup? = null
+
+	private var _path: String? = null
 
 	/**
 	 * Loads a texture from the given path.
 	 */
 	var path: String?
+		get() = _path
+		set(value) {
+			if (_path == value) return
+			cached?.dispose()
+			cached = cachedGroup()
+			if (value != null) {
+				loadAndCache(value, AssetType.TEXTURE, cached!!).then {
+					_setTexture(it)
+				}
+			} else {
+				_setTexture(null)
+			}
+		}
 
 	/**
 	 * Sets the texture directly, as opposed to loading a Texture from the asset manager.
 	 */
 	var texture: Texture?
+		get() = sprite.texture
+		set(value) {
+			path = null
+			_setTexture(value)
+		}
+
+	protected open fun _setTexture(value: Texture?) {
+		if (sprite.texture == value) return
+		val oldTexture = sprite.texture
+		if (isActive) {
+			oldTexture?.refDec()
+		}
+		sprite.texture = value
+		if (isActive) {
+			sprite.texture?.refInc()
+		}
+		invalidateLayout()
+	}
 
 	/**
 	 * If true, the texture's region is rotated.
 	 */
 	val isRotated: Boolean
+		get() = sprite.isRotated
+
+	var blendMode: BlendMode
+		get() = sprite.blendMode
+		set(value) {
+			if (sprite.blendMode == value) return
+			sprite.blendMode = value
+			window.requestRender()
+		}
+
+	override fun onActivated() {
+		super.onActivated()
+		sprite.texture?.refInc()
+	}
+
+	override fun onDeactivated() {
+		super.onDeactivated()
+		sprite.texture?.refDec()
+	}
 
 	/**
-	 * Only applicable for GL backends, sets the blend mode for this component.
+	 * Sets the UV coordinates of the image to display.
 	 */
-	var blendMode: BlendMode
+	fun setUv(u: Float, v: Float, u2: Float, v2: Float, isRotated: Boolean = false) {
+		sprite.setUv(u, v, u2, v2, isRotated)
+		invalidate(ValidationFlags.LAYOUT)
+	}
+
+	/**
+	 * Sets the region of the texture to display.
+	 */
+	fun setRegion(x: Float, y: Float, width: Float, height: Float, isRotated: Boolean = false) {
+		sprite.setRegion(x, y, width, height, isRotated)
+		invalidate(ValidationFlags.LAYOUT)
+	}
 
 	/**
 	 * Sets the region of the texture to display.
@@ -55,32 +164,42 @@ interface TextureComponent : UiComponent {
 		setRegion(region.x.toFloat(), region.y.toFloat(), region.width.toFloat(), region.height.toFloat(), isRotated)
 	}
 
-	/**
-	 * Sets the UV coordinates of the image to display.
-	 */
-	fun setUv(u: Float, v: Float, u2: Float, v2: Float, isRotated: Boolean = false)
+	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+		sprite.updateUv()
+		out.width = explicitWidth ?: sprite.naturalWidth
+		out.height = explicitHeight ?: sprite.naturalHeight
+	}
 
-	/**
-	 * Sets the region of the texture to display.
-	 */
-	fun setRegion(x: Float, y: Float, width: Float, height: Float, isRotated: Boolean = false)
+	private fun updateVertices() {
+		sprite.updateWorldVertices(concatenatedTransform, width, height, z = 0f)
+	}
+
+	override fun draw(viewport: MinMaxRo) {
+		glState.camera(camera)
+		sprite.draw(glState, concatenatedColorTint)
+	}
+
+	override fun dispose() {
+		path = null
+		super.dispose()
+	}
 }
 
-fun Owned.textureC(init: ComponentInit<GlTextureComponent> = {}): GlTextureComponent {
-	val textureComponent = GlTextureComponent(this)
+fun Owned.textureC(init: ComponentInit<TextureComponent> = {}): TextureComponent {
+	val textureComponent = TextureComponent(this)
 	textureComponent.init()
 	return textureComponent
 }
 
-fun Owned.textureC(path: String, init: ComponentInit<GlTextureComponent> = {}): GlTextureComponent {
-	val textureComponent = GlTextureComponent(this)
+fun Owned.textureC(path: String, init: ComponentInit<TextureComponent> = {}): TextureComponent {
+	val textureComponent = TextureComponent(this)
 	textureComponent.path = path
 	textureComponent.init()
 	return textureComponent
 }
 
-fun Owned.textureC(texture: Texture, init: ComponentInit<GlTextureComponent> = {}): GlTextureComponent {
-	val textureComponent = GlTextureComponent(this)
+fun Owned.textureC(texture: Texture, init: ComponentInit<TextureComponent> = {}): TextureComponent {
+	val textureComponent = TextureComponent(this)
 	textureComponent.texture = texture
 	textureComponent.init()
 	return textureComponent

@@ -115,9 +115,15 @@ class Polygon2(initialCapacity: Int = 16) : Polygon2Ro {
 		vertices.add(y)
 	}
 
-	fun set(other: Polygon2): Polygon2 {
+	fun set(other: Polygon2Ro): Polygon2 {
 		vertices.clear()
 		vertices.addAll2(other.vertices)
+		return this
+	}
+
+	fun setVertices(newVertices: List<Float>): Polygon2 {
+		vertices.clear()
+		vertices.addAll2(newVertices)
 		return this
 	}
 
@@ -125,13 +131,13 @@ class Polygon2(initialCapacity: Int = 16) : Polygon2Ro {
 	 * Left multiplies the vertex points by the given matrix.
 	 */
 	fun mul(mat: Matrix3Ro): Polygon2 {
-		val vals = mat.values
-		val m0 = vals[0]
-		val m1 = vals[1]
-		val m3 = vals[3]
-		val m4 = vals[4]
-		val m6 = vals[6]
-		val m7 = vals[7]
+		val values = mat.values
+		val m0 = values[0]
+		val m1 = values[1]
+		val m3 = values[3]
+		val m4 = values[4]
+		val m6 = values[6]
+		val m7 = values[7]
 
 		for (i in 0..vertices.lastIndex step 2) {
 			val x = vertices[i]
@@ -258,14 +264,14 @@ class Polygon2(initialCapacity: Int = 16) : Polygon2Ro {
 		contactB.set(tmp)
 	}
 
-	companion object : To<Polygon2>, From<Polygon2> {
+	companion object {
 
 		private val tmp = Vector2()
 		private val mTd2 = Vector2()
 
 		private val supportA = FloatArray(4)
 		private val supportB = FloatArray(4)
-		private val sortedEdgeVertices = Array(4, { SortedPoint() })
+		private val sortedEdgeVertices = Array(4) { SortedPoint() }
 
 		private val vAxis = Vector2()
 
@@ -274,7 +280,7 @@ class Polygon2(initialCapacity: Int = 16) : Polygon2Ro {
 		 * Thanks to: http://www.sevenson.com.au/actionscript/sat/
 		 * @param mTd Will be set to the minimum translation distance to resolve the collision.
 		 */
-		private fun sat(pA: List<Float>, pB: List<Float>, shortestDistAbs: Float, mTd: Vector2?): Boolean {
+		fun sat(pA: List<Float>, pB: List<Float>, shortestDistAbs: Float, mTd: Vector2?): Boolean {
 			@Suppress("NAME_SHADOWING")
 			var shortestDistAbs = shortestDistAbs
 			// Loop through all of the axis on the first polygon
@@ -353,25 +359,64 @@ class Polygon2(initialCapacity: Int = 16) : Polygon2Ro {
 			}
 
 			return count
-
 		}
 
-		//-----------------------------------------
-		// Serialization
-		//-----------------------------------------
+		/**
+		 * Takes a list of points, and removes points that are on the same line as its neighbors.
+		 */
+		fun simplifyShape(vertices: List<Float>, stride: Int = 2, offset: Int = 0): List<Float> {
+			if (vertices.isEmpty()) return emptyList()
 
-		override fun Polygon2.write(writer: Writer) {
-			writer.floatArray("vertices", vertices.toFloatArray())
-		}
+			// Skip midpoints that are part of a straight line.
+			val out = ArrayList<Float>()
+			val n = vertices.size / stride
 
-		override fun read(reader: Reader): Polygon2 {
-			val vertices = reader.floatArray("vertices")!!
-			val p = Polygon2(vertices.size)
-			p.vertices.addAll2(vertices.toList())
-			return p
+			var i = 0
+			var wasOnline = false
+			var couldSimplify = false
+			while (i < n) {
+				val x = vertices[i * stride + offset]
+				val y = vertices[i * stride + offset + 1]
+				var isOnLine = false
+				if (!wasOnline && i > 0 && i < n - 1) {
+					// Check if this vertex is on a straight line.
+					val x1 = vertices[(i - 1) * stride + offset]
+					val y1 = vertices[(i - 1) * stride + offset + 1]
+					val x2 = vertices[(i + 1) * stride + offset]
+					val y2 = vertices[(i + 1) * stride + offset + 1]
+					val dst1 = Vector2.len(x2 - x1, y2 - y1)
+
+					isOnLine = abs((x2 - x1) * (y - y1) - (y2 - y1) * (x - x1)) / dst1 < 0.8f
+				}
+				if (!isOnLine) {
+					for (j in i * stride until (i + 1) * stride) {
+						out.add(vertices[j])
+					}
+				} else {
+					couldSimplify = true
+				}
+				wasOnline = isOnLine
+				i++
+			}
+			return if (couldSimplify) simplifyShape(out, stride, offset)
+			else out
 		}
 	}
 
+}
+
+object Polygon2Serializer : To<Polygon2Ro>, From<Polygon2> {
+
+	override fun Polygon2Ro.write(writer: Writer) {
+		writer.floatArray("vertices", vertices.toFloatArray())
+	}
+
+	override fun read(reader: Reader): Polygon2 {
+		val vertices = reader.floatArray("vertices")!!
+		val p = Polygon2(vertices.size)
+		p.vertices.addAll2(vertices.toList())
+		return p
+	}
 }
 
 fun basicPolygon(sides: Int = 3, radius: Float = 100f): Polygon2 {

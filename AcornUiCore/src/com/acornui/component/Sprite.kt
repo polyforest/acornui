@@ -19,6 +19,7 @@ package com.acornui.component
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
 import com.acornui.gl.core.GlState
+import com.acornui.gl.core.putCcwQuadIndices
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putVertex
 import com.acornui.graphics.ColorRo
@@ -33,6 +34,11 @@ import kotlin.math.sin
  * @author nbilyk
  */
 class Sprite {
+
+	/**
+	 * If true, the normal and indices will be reversed.
+	 */
+	var useAsBackFace = false
 
 	var texture: Texture? = null
 	var blendMode: BlendMode = BlendMode.NORMAL
@@ -196,7 +202,7 @@ class Sprite {
 			x1 = -originX
 			vertexPoints[3].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
 		}
-		normal.set(Vector3.NEG_Z)
+		normal.set(if (useAsBackFace) Vector3.Z else Vector3.NEG_Z)
 	}
 
 	/**
@@ -231,6 +237,7 @@ class Sprite {
 			// Bottom left
 			batch.putVertex(vertexPoints[3], normal, colorTint, u, v2)
 		}
-		batch.putQuadIndices()
+		if (useAsBackFace) batch.putCcwQuadIndices()
+		else batch.putQuadIndices()
 	}
 }

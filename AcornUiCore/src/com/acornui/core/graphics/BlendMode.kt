@@ -21,6 +21,10 @@ package com.acornui.core.graphics
 import com.acornui.collection.copy
 import com.acornui.gl.core.Gl20
 
+
+/**
+ * The blend mode determines how fragments are added to existing screen fragments.
+ */
 open class BlendMode(
 		val source: Int,
 		val sourcePma: Int,

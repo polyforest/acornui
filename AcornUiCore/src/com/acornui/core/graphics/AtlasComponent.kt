@@ -95,6 +95,19 @@ open class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
 			_ninePatchComponent?.blendMode = value
 		}
 
+	private var _useAsBackFace: Boolean = false
+
+	/**
+	 * If true, the normal and indices will be reversed.
+	 */
+	var useAsBackFace: Boolean
+		get() = _useAsBackFace
+		set(value) {
+			_useAsBackFace = value
+			_textureComponent?.useAsBackFace = value
+			_ninePatchComponent?.useAsBackFace = value
+		}
+
 	private fun clearRegionAndTexture() {
 		_ninePatchComponent?.dispose()
 		_ninePatchComponent = null
@@ -113,6 +126,7 @@ open class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
 			if (_textureComponent == null) {
 				_textureComponent = addChild(textureC())
 				_textureComponent?.blendMode = _blendMode
+				_textureComponent?.useAsBackFace = _useAsBackFace
 				_textureC = _textureComponent
 			}
 			val t = _textureComponent!!
@@ -125,6 +139,7 @@ open class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
 			if (_ninePatchComponent == null) {
 				_ninePatchComponent = addChild(ninePatch())
 				_ninePatchComponent?.blendMode = _blendMode
+				_ninePatchComponent?.useAsBackFace = _useAsBackFace
 				_textureC = _ninePatchComponent
 			}
 			val t = _ninePatchComponent!!
@@ -220,5 +235,5 @@ fun Owned.atlas(atlasPath: String, region: String, init: ComponentInit<AtlasComp
  * Creates a texture component and uses it as the contents
  */
 fun ElementContainer<UiComponent>.contentsAtlas(atlasPath: String, region: String) {
-	createOrReuseContents({ atlas() }).setRegion(atlasPath, region)
+	createOrReuseContents { atlas() }.setRegion(atlasPath, region)
 }

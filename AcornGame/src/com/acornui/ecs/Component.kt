@@ -40,7 +40,7 @@ abstract class ComponentBase : Component {
 	 */
 	override var parentEntity: Entity? = null
 
-	open protected val requiredSiblings: Array<SerializableComponentType<*>> = emptyArray()
+	protected open val requiredSiblings: Array<SerializableComponentType<*>> = emptyArray()
 
 	override fun assertValid(): Boolean {
 		for (i in 0..requiredSiblings.lastIndex) {
