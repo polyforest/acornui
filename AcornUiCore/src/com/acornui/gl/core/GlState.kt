@@ -46,7 +46,7 @@ class GlState(
 
 	private var _activeTexture: Int = -1
 
-	private val _boundTextures: Array<Texture?> = Array(30, { null })
+	private val _boundTextures: Array<Texture?> = Array(30) { null }
 
 	private var _batch: ShaderBatch = ShaderBatchImpl(gl, this, uiVertexAttributes)
 
@@ -219,16 +219,13 @@ class GlState(
 			gl.disable(Gl20.SCISSOR_TEST)
 	}
 
-	private var _framebuffer: GlFramebufferRef? = null
-	var framebuffer: GlFramebufferRef?
-		get() = _framebuffer
-		set(value) {
-			if (_framebuffer == value) return
-			batch.flush()
-			_framebuffer = value
-			gl.bindFramebuffer(Gl20.FRAMEBUFFER, value)
-		}
-
+	/**
+	 * Sets the current framebuffer.
+	 */
+	var framebuffer: GlFramebufferRef? by observable<GlFramebufferRef?>(null) {
+		batch.flush()
+		gl.bindFramebuffer(Gl20.FRAMEBUFFER, it)
+	}
 
 	/**
 	 * We must copy the set scissor instead of maintaining a reference in case the reference is mutated.
