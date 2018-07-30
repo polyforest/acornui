@@ -371,6 +371,7 @@ open class LwjglGl20 : Gl20 {
 	override fun readPixels(x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: NativeReadBuffer<Byte>) {
 		val pixelsBuffer = pixels.native as ByteBuffer
 		GL11.glReadPixels(x, y, width, height, format, type, pixelsBuffer)
+		pixels.rewind()
 	}
 
 	override fun renderbufferStorage(target: Int, internalFormat: Int, width: Int, height: Int) {

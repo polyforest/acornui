@@ -16,13 +16,14 @@
 
 package com.acornui.js.gl
 
-import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.GlState
-import com.acornui.gl.core.GlTextureBase
+import com.acornui.core.graphics.BlendMode
+import com.acornui.core.graphics.RgbData
+import com.acornui.core.io.BufferFactory
+import com.acornui.gl.core.*
+import com.acornui.math.Matrix4
 import org.w3c.dom.HTMLImageElement
 import kotlin.browser.document
 
-// todo: https://stackoverflow.com/questions/13626606/read-pixels-from-a-webgl-texture
 /**
  * @author nbilyk
  */
@@ -42,4 +43,38 @@ class WebGlTexture(
 		get() {
 			return image.naturalHeight
 		}
+
+	private val _rgbData by lazy {
+		// Creates a temporary frame buffer, draws the image to that, uses gl readPixels to get the data, then disposes.
+		val batch = glState.batch
+		val previousShader = glState.shader
+		refInc()
+		val framebuffer = Framebuffer(gl, glState, width, height, false, false)
+		framebuffer.begin()
+		glState.viewProjection = Matrix4.IDENTITY
+		glState.setTexture(this)
+		glState.blendMode(BlendMode.NORMAL, false)
+		batch.putVertex(-1f, -1f, 0f, u = 0f, v = 0f)
+		batch.putVertex(1f, -1f, 0f, u = 1f, v = 0f)
+		batch.putVertex(1f, 1f, 0f, u = 1f, v = 1f)
+		batch.putVertex(-1f, 1f, 0f, u = 0f, v = 1f)
+		batch.putQuadIndices()
+		batch.flush()
+		val pixelData = BufferFactory.instance.byteBuffer(width * height * 4)
+		gl.readPixels(0, 0, width, height, Gl20.RGBA, Gl20.UNSIGNED_BYTE, pixelData)
+		framebuffer.end()
+		glState.shader = previousShader
+		framebuffer.dispose()
+		val rgbData = RgbData(width, height, true)
+		val bytes = rgbData.bytes
+		var i = 0
+		while (pixelData.hasRemaining) {
+			bytes[i++] = pixelData.get()
+		}
+		refDec()
+		rgbData
+	}
+
+	override val rgbData: RgbData
+		get() = _rgbData
 }

@@ -19,23 +19,27 @@ package com.acornui.gl.core
 import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
 import com.acornui.core.graphics.Texture
-import com.acornui.core.graphics.Window
+import com.acornui.math.IntRectangle
 
 /**
  * @author nbilyk
  */
 class Framebuffer(
-		injector: Injector,
+		private val gl: Gl20,
+		private val glState: GlState,
 		val width: Int = 0,
 		val height: Int = 0,
 		val hasDepth: Boolean = false,
 		val hasStencil: Boolean = false,
-		val texture: Texture = BufferTexture(injector.inject(Gl20), injector.inject(GlState), width, height)
+		val texture: Texture = BufferTexture(gl, glState, width, height)
 ) : Disposable {
 
-	private val gl = injector.inject(Gl20)
-	private val glState = injector.inject(GlState)
-	private val window = injector.inject(Window)
+	constructor(injector: Injector,
+				width: Int = 0,
+				height: Int = 0,
+				hasDepth: Boolean = false,
+				hasStencil: Boolean = false,
+				texture: Texture = BufferTexture(injector.inject(Gl20), injector.inject(GlState), width, height)) : this(injector.inject(Gl20), injector.inject(GlState), width, height, hasDepth, hasStencil, texture)
 
 	private val framebufferHandle: GlFramebufferRef
 	private val depthbufferHandle: GlRenderbufferRef?
@@ -81,33 +85,27 @@ class Framebuffer(
 				Gl20.FRAMEBUFFER_UNSUPPORTED ->
 					throw IllegalStateException("framebuffer couldn't be constructed: unsupported combination of formats")
 				else ->
-					throw IllegalStateException("framebuffer couldn't be constructed: unknown error " + result)
+					throw IllegalStateException("framebuffer couldn't be constructed: unknown error $result")
 			}
 		}
 	}
 
-	private var previousFrameBuffer: Framebuffer? = null
+	private var previousFramebuffer: GlFramebufferRef? = null
+	private val previousViewport = IntRectangle()
 
 	fun begin() {
 		glState.batch.flush()
-		previousFrameBuffer = currentFrameBuffer
-		currentFrameBuffer = this
-		gl.bindFramebuffer(Gl20.FRAMEBUFFER, framebufferHandle)
-		gl.viewport(0, 0, width, height)
+		previousFramebuffer = glState.framebuffer
+		glState.framebuffer = framebufferHandle
+		glState.getViewport(previousViewport)
+		glState.viewport(0, 0, width, height)
 	}
 
 	fun end() {
 		glState.batch.flush()
-		val gl = gl
-		if (previousFrameBuffer == null) {
-			gl.bindFramebuffer(Gl20.FRAMEBUFFER, null)
-			gl.viewport(0, 0, (window.width * window.scaleX).toInt(), (window.height * window.scaleY).toInt())
-		} else {
-			gl.bindFramebuffer(Gl20.FRAMEBUFFER, previousFrameBuffer!!.framebufferHandle)
-			gl.viewport(0, 0, previousFrameBuffer!!.width, previousFrameBuffer!!.height)
-		}
-		currentFrameBuffer = previousFrameBuffer
-		previousFrameBuffer = null
+		glState.framebuffer = previousFramebuffer
+		glState.viewport(previousViewport)
+		previousFramebuffer = null
 	}
 
 	private fun delete() {
@@ -123,10 +121,6 @@ class Framebuffer(
 	override fun dispose() {
 		delete()
 		texture.refDec()
-	}
-
-	companion object {
-		var currentFrameBuffer: Framebuffer? = null
 	}
 
 }

@@ -82,6 +82,7 @@ class GlState(
 	/**
 	 * @see Gl20.activeTexture
 	 */
+	@Suppress("MemberVisibilityCanBePrivate")
 	fun activeTexture(value: Int) {
 		if (value < 0 || value > 30) throw IllegalArgumentException("Texture index must be between 0 and 30")
 		if (_activeTexture == value) return
@@ -184,6 +185,28 @@ class GlState(
 		}
 	}
 
+	//----------------------------------------------------
+
+	private var _viewport = IntRectangle()
+
+	/**
+	 * Gets the current viewport.
+	 * @param out Sets this rectangle to the current viewport.
+	 * @return Returns the [out] parameter.
+	 */
+	fun getViewport(out: IntRectangle): IntRectangle {
+		return out.set(_viewport)
+	}
+
+	fun viewport(value: IntRectangleRo) = viewport(value.x, value.y, value.width, value.height)
+
+	fun viewport(x: Int, y: Int, width: Int, height: Int) {
+		if (_viewport.x == x && _viewport.y == y && _viewport.width == width && _viewport.height == height) return
+		_viewport.set(x, y, width, height)
+		_batch.flush()
+		gl.viewport(x, y, width, height)
+	}
+
 	/**
 	 * Returns whether scissoring is currently enabled.
 	 * @see scissor
@@ -195,6 +218,16 @@ class GlState(
 		else
 			gl.disable(Gl20.SCISSOR_TEST)
 	}
+
+	private var _framebuffer: GlFramebufferRef? = null
+	var framebuffer: GlFramebufferRef?
+		get() = _framebuffer
+		set(value) {
+			if (_framebuffer == value) return
+			batch.flush()
+			_framebuffer = value
+			gl.bindFramebuffer(Gl20.FRAMEBUFFER, value)
+		}
 
 
 	/**

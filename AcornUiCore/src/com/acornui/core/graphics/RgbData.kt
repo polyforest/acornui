@@ -38,8 +38,6 @@ class RgbData(
 
 		val hasAlpha: Boolean) {
 
-	private val INV_BYTE = 1f / 255f
-
 	private var _width = width
 	private var _height = height
 
@@ -94,8 +92,7 @@ class RgbData(
 	fun getAlpha(x: Int, y: Int): Float {
 		if (!hasAlpha) return 1f
 		val i = y * _scanSize + x * numBands
-		val alpha = _bytes[i + 3].toFloatRange()
-		return alpha
+		return _bytes[i + 3].toFloatRange()
 	}
 
 	/**
@@ -176,7 +173,7 @@ class RgbData(
 	 */
 	fun rotate90CW() {
 		val newScanSize: Int = _height * numBands
-		val newBytes: ByteArray = ByteArray(_width * _height * numBands);
+		val newBytes = ByteArray(_width * _height * numBands);
 		for (y in 0.._height - 1) {
 			val x2 = _height - 1 - y
 			for (x in 0.._width - 1) {
@@ -196,7 +193,7 @@ class RgbData(
 	 */
 	fun rotate90CCW() {
 		val newScanSize: Int = _height * numBands
-		val newBytes: ByteArray = ByteArray(_width * _height * numBands);
+		val newBytes = ByteArray(_width * _height * numBands);
 		for (y in 0.._height - 1) {
 			val x2 = y
 			for (x in 0.._width - 1) {
@@ -225,6 +222,9 @@ class RgbData(
 		return (this.toInt() and 0xFF) * INV_BYTE
 	}
 
+	companion object {
+		private const val INV_BYTE = 1f / 255f
+	}
 }
 
 fun rgbData(width: Int, height: Int, hasAlpha: Boolean = true, init: RgbData.()->Unit): RgbData {
