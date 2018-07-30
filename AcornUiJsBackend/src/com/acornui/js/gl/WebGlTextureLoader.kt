@@ -24,6 +24,8 @@ import com.acornui.core.assets.AssetType
 import com.acornui.core.graphics.Texture
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
+import org.w3c.dom.url.URL
+import kotlin.browser.window
 
 /**
  * An asset loader for textures (images).
@@ -47,6 +49,9 @@ class WebGlTextureLoader(
 		init {
 			val jsTexture = WebGlTexture(gl, glState)
 			jsTexture.image.src = path
+			if (path.startsWith("http", ignoreCase = true) && URL(path).origin !== window.location.origin) {
+				jsTexture.image.crossOrigin = ""
+			}
 
 			jsTexture.image.onload = {
 				success(jsTexture)
