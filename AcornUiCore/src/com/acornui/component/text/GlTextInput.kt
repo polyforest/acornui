@@ -417,6 +417,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	var pageHeight: Float = 400f
 
 	private val textCursor = addChild(rect {
+		style.backgroundColor = Color.WHITE
 		layoutInvalidatingFlags = ValidationFlags.LAYOUT // Allows us to toggle visibility on this cursor and not affect layout.
 		setOrigin(1f, 0f)
 		setSize(2f, 2f)
