@@ -26,13 +26,20 @@ import com.acornui.core.input.interaction.click
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.signal.Cancel
+import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
 
 open class WindowPanel(owner: Owned) : ElementContainerImpl<UiComponent>(owner), Labelable, Closeable, LayoutDataProvider<StackLayoutData> {
 
-	override val closing = own(Signal2<Closeable, Cancel>())
-	override val closed = own(Signal1<Closeable>())
+	private val _closing = own(Signal2<Closeable, Cancel>())
+	override val closing: Signal<(Closeable, Cancel) -> Unit>
+		get() = _closing
+
+	private val _closed = own(Signal1<Closeable>())
+	override val closed: Signal<(Closeable) -> Unit>
+		get() = _closed
+
 	protected val cancel = Cancel()
 
 	val style = bind(WindowPanelStyle())
@@ -77,9 +84,9 @@ open class WindowPanel(owner: Owned) : ElementContainerImpl<UiComponent>(owner),
 	}
 
 	open fun close() {
-		closing.dispatch(this, cancel.reset())
+		_closing.dispatch(this, cancel.reset())
 		if (!cancel.canceled()) {
-			closed.dispatch(this)
+			_closed.dispatch(this)
 		}
 	}
 
