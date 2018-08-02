@@ -31,9 +31,13 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.css.CSSStyleDeclaration
 import kotlin.browser.document
 
-class JsHtmlComponent(owner: Owned, private val rootElement: HTMLElement) : UiComponentImpl(owner), HtmlComponent {
+class JsHtmlComponent(
+		owner: Owned,
+		private val rootElement: HTMLElement,
+		val element: HTMLElement = document.createElement("div") as HTMLElement
+) : UiComponentImpl(owner), HtmlComponent {
 
-	private val component = DomComponent()
+	private val component = DomComponent(element)
 	override val boxStyle = bind(BoxStyle())
 
 	init {
@@ -94,7 +98,7 @@ class JsHtmlComponent(owner: Owned, private val rootElement: HTMLElement) : UiCo
 }
 
 
-private class DomComponent(
+class DomComponent(
 		val element: HTMLElement = document.createElement("div") as HTMLElement
 ) {
 

@@ -21,7 +21,6 @@ package com.acornui.particle
 
 import com.acornui.collection.ArrayList
 import com.acornui.collection.Clearable
-import com.acornui.core.userInfo
 import com.acornui.graphics.Color
 import com.acornui.math.MathUtils.clamp
 import com.acornui.math.Vector3
@@ -50,6 +49,37 @@ class ParticleEffectInstance(
 			emitterInstances[i].position.add(xD, yD, zD)
 		}
 	}
+
+	/**
+	 * Rewinds all emitters.
+	 * @see ParticleEmitterInstance.rewind
+	 */
+	fun rewind() {
+		for (i in 0..emitterInstances.lastIndex) {
+			emitterInstances[i].rewind()
+		}
+	}
+
+	/**
+	 * Stops all emitters
+	 * @see ParticleEmitterInstance.stop
+	 */
+	fun stop(allowCompletion: Boolean) {
+		for (i in 0..emitterInstances.lastIndex) {
+			emitterInstances[i].stop(allowCompletion)
+		}
+	}
+
+	/**
+	 * Resets all emitters.
+	 * @see ParticleEmitterInstance.reset
+	 */
+	fun reset() {
+		for (i in 0..emitterInstances.lastIndex) {
+			emitterInstances[i].reset()
+		}
+	}
+
 }
 
 class ParticleEmitterInstance(
@@ -132,10 +162,9 @@ class ParticleEmitterInstance(
 		get() = _isComplete
 
 	init {
-
-		particles = ArrayList(count, {
+		particles = ArrayList(count) {
 			Particle(timelineInstances = emitter.propertyTimelines.map { timelineInstance(it) })
-		})
+		}
 
 		rewind()
 	}
@@ -208,10 +237,11 @@ class ParticleEmitterInstance(
 		accumulator = 0f
 	}
 
+	/**
+	 * Clears the current particles, resets current state, and rewinds.
+	 */
 	fun reset() {
 		clearParticles()
-		_isComplete = false
-		loops = emitter.loops
 		rewind()
 	}
 
@@ -228,7 +258,13 @@ class ParticleEmitterInstance(
 		}
 	}
 
+	/**
+	 * Rewinds the emitter to the beginning.
+	 * This will not clear current particles, but current particles will be affected for emitter duration timelines.
+	 */
 	fun rewind() {
+		_isComplete = false
+		loops = emitter.loops
 		_delayBefore = emitter.duration.delayBefore.getValue()
 		_delayAfter = emitter.duration.delayAfter.getValue()
 		_currentTime = -_delayBefore

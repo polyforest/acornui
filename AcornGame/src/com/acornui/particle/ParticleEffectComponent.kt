@@ -38,6 +38,11 @@ class ParticleEffectComponent(
 
 	private val glState = inject(GlState)
 
+	/**
+	 * If true, the effect will automatically play when loaded.
+	 */
+	var autoPlay = true
+
 	init {
 		interactivityMode = InteractivityMode.NONE
 
@@ -83,6 +88,8 @@ class ParticleEffectComponent(
 			val oldValue = _effect
 			if (oldValue == value) return
 			_effect = value
+			if (!autoPlay)
+				value?.effectInstance?.stop(false)
 			if (isActive) {
 				value?.refInc()
 				oldValue?.refDec()
@@ -117,7 +124,7 @@ class LoadedParticleEffect(
 		/**
 		 * The cached group the particle effect used to load all the files.
 		 */
-		private val group: CachedGroup
+		private val cachedGroup: CachedGroup
 ) : Updatable, Disposable {
 
 	private val emitterInstances = effectInstance.emitterInstances
@@ -144,7 +151,7 @@ class LoadedParticleEffect(
 	}
 
 	override fun dispose() {
-		group.dispose()
+		cachedGroup.dispose()
 	}
 
 	fun render(concatenatedColorTint: ColorRo) {
