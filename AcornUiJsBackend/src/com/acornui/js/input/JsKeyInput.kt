@@ -45,33 +45,36 @@ class JsKeyInput(
 
 	private val keyDownHandler = {
 		jsEvent: Event ->
-		jsEvent as KeyboardEvent
-		keyEvent.clear()
-		populateKeyEvent(jsEvent)
-		if (!jsEvent.repeat) {
-			downMap.put(keyEvent.keyCode, keyEvent.location, true)
+		if (jsEvent is KeyboardEvent) {
+			keyEvent.clear()
+			populateKeyEvent(jsEvent)
+			if (!jsEvent.repeat) {
+				downMap.put(keyEvent.keyCode, keyEvent.location, true)
+			}
+			keyDown.dispatch(keyEvent)
+			if (keyEvent.defaultPrevented()) jsEvent.preventDefault()
 		}
-		keyDown.dispatch(keyEvent)
-		if (keyEvent.defaultPrevented()) jsEvent.preventDefault()
 	}
 
 	private val keyUpHandler = {
 		jsEvent: Event ->
-		jsEvent as KeyboardEvent
-		keyEvent.clear()
-		populateKeyEvent(jsEvent)
-		downMap[keyEvent.keyCode]?.clear() // Browsers give incorrect key location properties on key up.
-		keyUp.dispatch(keyEvent)
-		if (keyEvent.defaultPrevented()) jsEvent.preventDefault()
+		if (jsEvent is KeyboardEvent) {
+			keyEvent.clear()
+			populateKeyEvent(jsEvent)
+			downMap[keyEvent.keyCode]?.clear() // Browsers give incorrect key location properties on key up.
+			keyUp.dispatch(keyEvent)
+			if (keyEvent.defaultPrevented()) jsEvent.preventDefault()
+		}
 	}
 
 	private val keyPressHandler = {
 		jsEvent: Event ->
-		jsEvent as KeyboardEvent
-		charEvent.clear()
-		charEvent.char = jsEvent.charCode.toChar()
-		char.dispatch(charEvent)
-		if (charEvent.defaultPrevented()) jsEvent.preventDefault()
+		if (jsEvent is KeyboardEvent) {
+			charEvent.clear()
+			charEvent.char = jsEvent.charCode.toChar()
+			char.dispatch(charEvent)
+			if (charEvent.defaultPrevented()) jsEvent.preventDefault()
+		}
 	}
 
 	private val rootBlurHandler = {
@@ -98,10 +101,10 @@ class JsKeyInput(
 	}
 
 	override fun keyIsDown(keyCode: Int, location: KeyLocation): Boolean {
-		if (location == KeyLocation.UNKNOWN) {
-			return downMap[keyCode]?.isNotEmpty() ?: false
+		return if (location == KeyLocation.UNKNOWN) {
+			downMap[keyCode]?.isNotEmpty() ?: false
 		} else {
-			return downMap[keyCode, location] ?: false
+			downMap[keyCode, location] ?: false
 		}
 	}
 
@@ -115,13 +118,13 @@ class JsKeyInput(
 		char.dispose()
 	}
 
-	fun locationFromInt(location: Int): KeyLocation {
-		when (location) {
-			0 -> return KeyLocation.STANDARD
-			1 -> return KeyLocation.LEFT
-			2 -> return KeyLocation.RIGHT
-			3 -> return KeyLocation.NUMBER_PAD
-			else -> return KeyLocation.UNKNOWN
+	private fun locationFromInt(location: Int): KeyLocation {
+		return when (location) {
+			0 -> KeyLocation.STANDARD
+			1 -> KeyLocation.LEFT
+			2 -> KeyLocation.RIGHT
+			3 -> KeyLocation.NUMBER_PAD
+			else -> KeyLocation.UNKNOWN
 		}
 	}
 }

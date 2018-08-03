@@ -119,6 +119,7 @@ open class JsModule(
 
 		if (minimize) dce(dest)
 		if (optimize) optimize(dest)
+		//if (minimize) uglify(dest)
 
 		val manifest = ManifestUtil.createManifest(File(dest, "lib/"), dest)
 		val filesJs = File(dest, "lib/files.js")

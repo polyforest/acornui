@@ -125,7 +125,7 @@ Function.prototype.bind = function() {
 		encodeUriComponent2 = ::encodeURIComponent
 		decodeUriComponent2 = ::decodeURIComponent
 
-		window.onbeforeunload = { dispose(); null }
+		window.onbeforeunload = { dispose(); undefined }
 	}
 
 	fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {

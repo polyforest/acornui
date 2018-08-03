@@ -59,15 +59,18 @@ class FocusManagerImpl : FocusManager {
 			return _focusables
 		}
 
+	private var isDisposed: Boolean = false
+
 	private val rootKeyDownHandler = {
 		event: KeyInteractionRo ->
 		if (!event.defaultPrevented() && event.keyCode == Ascii.TAB) {
-			event.preventDefault()
+			val previousFocused = focused()
 			if (event.shiftKey) focusPrevious()
 			else focusNext()
 			highlightFocused()
+			if (previousFocused != focused())
+				event.preventDefault() // Prevent the browser's default tab interactivity if we've handled it.
 		} else if (!event.defaultPrevented() && event.keyCode == Ascii.ESCAPE) {
-			event.preventDefault()
 			clearFocused()
 		}
 	}
@@ -285,6 +288,8 @@ class FocusManagerImpl : FocusManager {
 	}
 
 	override fun dispose() {
+		_assert(!isDisposed, "Already disposed.")
+		isDisposed = true
 		unhighlightFocused()
 		highlight = null
 		pendingFocusable = null

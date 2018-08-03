@@ -81,11 +81,6 @@ abstract class Module(
 	 */
 	var mainClass: String? = null
 
-	/**
-	 * The module type for JS output.
-	 */
-	var moduleKind = ModuleKind.AMD
-
 	init {
 		if (!baseDir.exists()) throw Exception("${baseDir.absolutePath} does not exist.")
 	}
@@ -135,7 +130,7 @@ abstract class Module(
 			expandLibraryDependencies(jsLibraryDependencies, libraryFiles)
 			val compilerArgs = K2JSCompilerArguments().apply {
 				//coroutinesWarn = false
-				moduleKind = this@Module.moduleKind.name.toLowerCase()
+				moduleKind = Module.moduleKind.name.toLowerCase()
 				outputFile = File(outJs, "$name.js").absolutePath
 				sourceMap = true
 				metaInfo = true
@@ -278,6 +273,11 @@ abstract class Module(
 	}
 
 	companion object {
+
+		/**
+		 * The module type for JS output.
+		 */
+		var moduleKind = ModuleKind.AMD
 
 		var verbose: Boolean = false
 

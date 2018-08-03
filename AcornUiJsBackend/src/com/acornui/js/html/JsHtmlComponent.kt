@@ -16,17 +16,16 @@
 
 package com.acornui.js.html
 
-import com.acornui.component.BoxStyle
-import com.acornui.component.HtmlComponent
-import com.acornui.component.UiComponentImpl
-import com.acornui.component.parentWalk
+import com.acornui.component.*
 import com.acornui.component.text.TextField
 import com.acornui.core.di.Owned
+import com.acornui.core.focus.Focusable
 import com.acornui.graphics.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.BoundsRo
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.Pad
+import com.acornui.signal.Cancel
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.css.CSSStyleDeclaration
 import kotlin.browser.document
@@ -40,6 +39,13 @@ class JsHtmlComponent(
 	private val component = DomComponent(element)
 	override val boxStyle = bind(BoxStyle())
 
+	private val focusedChangingHandler = {
+		oldFocusable: Focusable?, newFocusable: Focusable?, cancel: Cancel ->
+		if (oldFocusable == this) {
+			cancel.cancel()
+		}
+	}
+
 	init {
 		styleTags.add(TextField)
 
@@ -48,15 +54,18 @@ class JsHtmlComponent(
 			it.applyBox(component)
 		}
 
+		element.style.opacity = "0"
 		component.element.style.setProperty("position", "absolute")
 	}
 
 	override fun onActivated() {
 		super.onActivated()
 		rootElement.appendChild(component.element)
+		focusManager.focusedChanging.add(focusedChangingHandler)
 	}
 
 	override fun onDeactivated() {
+		focusManager.focusedChanging.remove(focusedChangingHandler)
 		super.onDeactivated()
 		rootElement.removeChild(component.element)
 	}
