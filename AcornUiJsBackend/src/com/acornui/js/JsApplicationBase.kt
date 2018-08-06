@@ -168,8 +168,10 @@ Function.prototype.bind = function() {
 		}
 
 		// Uncaught exception handler
+		val prevOnError = window.onerror
 		window.onerror = {
 			message, source, lineNo, colNo, error ->
+			prevOnError?.invoke(message, source, lineNo, colNo, error)
 			val msg = "Error: $message $lineNo $source $colNo $error"
 			Log.error(msg)
 			if (finalConfig.debug)
