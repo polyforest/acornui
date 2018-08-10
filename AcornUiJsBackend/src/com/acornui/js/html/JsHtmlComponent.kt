@@ -32,7 +32,6 @@ import kotlin.browser.document
 
 class JsHtmlComponent(
 		owner: Owned,
-		private val rootElement: HTMLElement,
 		val element: HTMLElement = document.createElement("div") as HTMLElement
 ) : UiComponentImpl(owner), HtmlComponent {
 
@@ -60,14 +59,14 @@ class JsHtmlComponent(
 
 	override fun onActivated() {
 		super.onActivated()
-		rootElement.appendChild(component.element)
+		component.element.style.display = "block"
 		focusManager.focusedChanging.add(focusedChangingHandler)
 	}
 
 	override fun onDeactivated() {
 		focusManager.focusedChanging.remove(focusedChangingHandler)
 		super.onDeactivated()
-		rootElement.removeChild(component.element)
+		component.element.style.display = "none"
 	}
 
 	override var html: String

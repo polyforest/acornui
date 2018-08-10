@@ -25,6 +25,8 @@ import com.acornui.core.di.Owned
 import com.acornui.core.di.dKey
 import com.acornui.core.di.own
 import com.acornui.core.focus.FakeFocusMouse
+import com.acornui.core.focus.FocusManager
+import com.acornui.core.focus.FocusManagerImpl
 import com.acornui.core.graphics.Window
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
@@ -102,8 +104,20 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 	 * The last chance to set dependencies on the application scope.
 	 */
 	override val componentsTask  by BootTask {
-		val root = document.getElementById(rootId) as HTMLElement
-		set(HtmlComponent.FACTORY_KEY, { JsHtmlComponent(it, root) })
+		set(HtmlComponent.FACTORY_KEY, { JsHtmlComponent(it) })
+	}
+
+	override val focusManagerTask by BootTask {
+		// When the focused element changes, make sure the document's active element is the canvas.
+		val canvas = get(CANVAS)
+		val focusManager = FocusManagerImpl()
+		focusManager.focusedChanged.add {
+			old, new ->
+			if (new != null) {
+				canvas.focus()
+			}
+		}
+		set(FocusManager, focusManager)
 	}
 
 	override suspend fun createStage(owner: Owned): Stage {
