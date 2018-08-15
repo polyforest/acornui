@@ -24,7 +24,14 @@ class LightingRenderer(
 		private val pointShadowMapShader: ShaderProgram = PointShadowShader(injector.inject(Gl20)),
 
 		directionalShadowsResolution: Int = 1024,
-		pointShadowsResolution: Int = 1024
+		pointShadowsResolution: Int = 1024,
+
+		/**
+		 * True if the shadow frame buffers should use the stencil and depth attachment.
+		 * Note that if this is true, the stencil buffer will only work if the GL_OES_packed_depth_stencil or
+		 * GL_EXT_packed_depth_stencil extension is true.
+		 */
+		hasStencil: Boolean = false
 ) : Scoped, Disposable {
 
 	var directionalShadowUnit = 1
@@ -34,12 +41,12 @@ class LightingRenderer(
 	private val glState = inject(GlState)
 	private val window = inject(Window)
 
-	private val directionalShadowsFbo = Framebuffer(injector, directionalShadowsResolution, directionalShadowsResolution, hasDepth = true)
+	private val directionalShadowsFbo = Framebuffer(injector, directionalShadowsResolution, directionalShadowsResolution, hasDepth = true, hasStencil = hasStencil)
 	val directionalLightCamera = DirectionalLightCamera()
 
 	// Point lights
 	private val pointLightShadowMaps: Array<CubeMap>
-	private val pointShadowsFbo = Framebuffer(injector, pointShadowsResolution, pointShadowsResolution, hasDepth = true)
+	private val pointShadowsFbo = Framebuffer(injector, pointShadowsResolution, pointShadowsResolution, hasDepth = true, hasStencil = hasStencil)
 	private val pointLightCamera = PointLightCamera(window, pointShadowsResolution.toFloat())
 
 	private val bias = Matrix4().apply {
@@ -64,7 +71,7 @@ class LightingRenderer(
 		// Point lights.
 		pointShadowsFbo.begin()
 		pointLightShadowMaps = Array(numShadowPointLights) {
-			val sides = Array(6, { BufferTexture(gl, glState, pointShadowsResolution, pointShadowsResolution) })
+			val sides = Array(6) { BufferTexture(gl, glState, pointShadowsResolution, pointShadowsResolution) }
 			val cubeMap = CubeMap(sides[0], sides[1], sides[2], sides[3], sides[4], sides[5], gl, glState, writeMode = true)
 			cubeMap.refInc()
 			cubeMap

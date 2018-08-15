@@ -90,7 +90,7 @@ class ShaderBatchImpl(
 		val vertexComponentsL = vertexComponents.position
 		val indicesL = indices.position
 		if (vertexComponentsL == 0) {
-			_assert (indicesL == 0, "Indices pushed, but no vertices")
+			_assert(indicesL == 0, "Indices pushed, but no vertices")
 			return
 		}
 		if (assertionsEnabled) {
@@ -151,6 +151,6 @@ class ShaderBatchImpl(
 	}
 }
 
-fun Scoped.shaderBatch(vertexAttributes: VertexAttributes) : ShaderBatchImpl {
+fun Scoped.shaderBatch(vertexAttributes: VertexAttributes): ShaderBatchImpl {
 	return ShaderBatchImpl(inject(Gl20), inject(GlState), vertexAttributes)
 }

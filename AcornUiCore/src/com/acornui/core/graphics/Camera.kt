@@ -182,7 +182,7 @@ interface Camera : CameraRo {
 		viewportHeight = maxOf(1f, height)
 	}
 
-	fun pointToLookAt(target: Vector3) = pointToLookAt(target.x, target.y, target.z)
+	fun pointToLookAt(target: Vector3Ro) = pointToLookAt(target.x, target.y, target.z)
 
 	/**
 	 * Recalculates the direction of the camera to look at the point (x, y, z). This function assumes the up vector is
@@ -196,7 +196,7 @@ interface Camera : CameraRo {
 
 	fun moveToLookAtPoint(x: Float, y: Float, z: Float, distance: Float = 1.0f)
 
-	fun moveToLookAtRect(rect: Rectangle, scaling: Scaling = Scaling.FIT) = moveToLookAtRect(rect.x, rect.y, rect.width, rect.height, scaling)
+	fun moveToLookAtRect(rect: RectangleRo, scaling: Scaling = Scaling.FIT) = moveToLookAtRect(rect.x, rect.y, rect.width, rect.height, scaling)
 
 	/**
 	 * Moves and/or zooms the camera to fit the given 2d bounding box into the viewport, maintaining the current
@@ -532,7 +532,6 @@ abstract class CameraBase : Camera {
 	private fun validateFrustum() {
 		if (frustumIsValid) return
 		frustumIsValid = true
-		validateInvCombined()
 		updateFrustum()
 	}
 
@@ -544,14 +543,13 @@ abstract class CameraBase : Camera {
 	}
 
 	protected open fun updateFrustum() {
-		_frustum.update(_invCombined)
+		_frustum.update(invCombined)
 	}
 
-	protected fun <T> bindable(initial: T): ReadWriteProperty<Any?, T> {
-		return observable(initial) {
-			dirty()
-		}
+	protected fun <T> bindable(initial: T): ReadWriteProperty<Any?, T> = observable(initial) {
+		dirty()
 	}
+
 }
 
 fun Window.autoCenterCamera(camera: Camera): Disposable {

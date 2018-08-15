@@ -22,7 +22,6 @@ package com.acornui.core.graphics
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.di.own
-import com.acornui.math.Matrix4
 import com.acornui.math.Vector2
 import com.acornui.math.Vector3
 

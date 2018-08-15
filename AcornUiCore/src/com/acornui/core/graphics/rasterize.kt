@@ -29,6 +29,11 @@ import com.acornui.math.MathUtils
 import com.acornui.math.MinMax
 import com.acornui.math.ceil
 
+// TODO: reconsider overriding the camera and adding to the new Scene component.
+
+/**
+ * Does a one time rasterization of the given target to a texture.
+ */
 fun Scoped.rasterize(target: UiComponent, hasDepth: Boolean = config.gl.depth, hasStencil: Boolean = config.gl.stencil): Rasterized {
 	if (target.parent != null)
 		throw Exception("rasterize should be called only on orphan components.")
@@ -48,9 +53,9 @@ fun Scoped.rasterize(target: UiComponent, hasDepth: Boolean = config.gl.depth, h
 	framebuffer.texture.filterMag = TextureMagFilter.LINEAR
 	framebuffer.texture.filterMin = TextureMinFilter.LINEAR_MIPMAP_NEAREST
 
-	framebuffer.begin()
-	target.render(MinMax(0f, 0f, w, h))
-	framebuffer.end()
+	framebuffer.drawTo {
+		target.render(MinMax(0f, 0f, w, h))
+	}
 
 	return Rasterized(framebuffer.texture, w / framebuffer.width.toFloat(), h / framebuffer.height.toFloat(), -bounds.xMin, -bounds.yMin)
 }
