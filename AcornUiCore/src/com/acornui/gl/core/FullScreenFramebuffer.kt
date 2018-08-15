@@ -16,6 +16,7 @@
 
 package com.acornui.gl.core
 
+import com.acornui.component.ComponentInit
 import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
@@ -23,47 +24,55 @@ import com.acornui.core.di.inject
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Window
 import com.acornui.function.as3
+import com.acornui.graphics.Color
+import com.acornui.graphics.ColorRo
 import com.acornui.math.Matrix4
-import com.acornui.math.Vector3
 
 /**
  * Wraps a frame buffer, keeping it the size of the screen.
  */
-class FullScreenFramebuffer(override val injector: Injector, private val hasDepth: Boolean = false, private val hasStencil: Boolean = false) : Scoped, Disposable {
+class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean = false, hasStencil: Boolean = false) : Scoped, Disposable {
 
 	private val window = inject(Window)
-	private var frameBuffer: Framebuffer? = null
+	private val frameBuffer = ResizeableFrameBuffer(injector, window.width.toInt(), window.height.toInt(), hasDepth, hasStencil)
 
-	private val tL = Vector3(-1f, -1f, 0f)
-	private val tR = Vector3(1f, -1f, 0f)
-	private val bR = Vector3(1f, 1f, 0f)
-	private val bL = Vector3(-1f, 1f, 0f)
+	var blendMode: BlendMode
+		get() = frameBuffer.blendMode
+		set(value) {
+			frameBuffer.blendMode = value
+		}
 
 	init {
 		window.sizeChanged.add(this::resize.as3)
-		resize()
+		frameBuffer.updateWorldVertices(Matrix4.IDENTITY, 2f, 2f, -1f, -1f)
 	}
 
 	private fun resize() {
-		val w = window.width.toInt()
-		val h = window.height.toInt()
-
-		frameBuffer?.dispose()
-		frameBuffer = if (w <= 0 || h <= 0) null else Framebuffer(injector, w, h, hasDepth, hasStencil)
+		frameBuffer.setSize(window.width.toInt(), window.height.toInt())
 	}
 
 	/**
 	 * Begins drawing to the frame buffer.
 	 */
 	fun begin() {
-		frameBuffer?.begin()
+		frameBuffer.begin()
 	}
 
 	/**
 	 * Ends drawing to the frame buffer.
 	 */
 	fun end() {
-		frameBuffer?.end()
+		frameBuffer.end()
+	}
+
+	/**
+	 * Sugar to wrap the inner method in [begin] and [end] calls.
+	 * Note that this does not call gl clear for you.
+	 */
+	inline fun drawTo(inner: ()->Unit) {
+		begin()
+		inner()
+		end()
 	}
 
 	private val glState = inject(GlState)
@@ -71,23 +80,20 @@ class FullScreenFramebuffer(override val injector: Injector, private val hasDept
 	/**
 	 * Renders the frame buffer to the screen.
 	 */
-	fun render() {
-		val batch = glState.batch
-		val frameBuffer = frameBuffer ?: return
-		glState.setTexture(frameBuffer.texture)
+	fun render(colorTint: ColorRo = Color.WHITE) {
 		glState.viewProjection = Matrix4.IDENTITY
 		glState.model = Matrix4.IDENTITY
-		glState.blendMode(BlendMode.NORMAL, false)
-		batch.begin()
-		batch.putVertex(tL, u = 0f, v = 0f)
-		batch.putVertex(tR, u = 1f, v = 0f)
-		batch.putVertex(bR, u = 1f, v = 1f)
-		batch.putVertex(bL, u = 0f, v = 1f)
-		batch.putQuadIndices()
+		frameBuffer.render(colorTint)
 	}
 
 	override fun dispose() {
 		window.sizeChanged.remove(this::resize.as3)
-		frameBuffer?.dispose()
+		frameBuffer.dispose()
 	}
+}
+
+fun Scoped.fullScreenFramebuffer(hasDepth: Boolean = false, hasStencil: Boolean = false, init: ComponentInit<FullScreenFramebuffer> = {}): FullScreenFramebuffer {
+	val f = FullScreenFramebuffer(injector, hasDepth, hasStencil)
+	f.init()
+	return f
 }

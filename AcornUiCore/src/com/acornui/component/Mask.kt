@@ -162,7 +162,7 @@ class ScrollRectStyle : StyleBase() {
 /**
  * Calls scissorLocal with the default rectangle of 0, 0, width, height
  */
-fun UiComponent.scissorLocal(inner: () -> Unit) {
+fun UiComponentRo.scissorLocal(inner: () -> Unit) {
 	scissorLocal(0f, 0f, width, height, inner)
 }
 
@@ -171,7 +171,7 @@ fun UiComponent.scissorLocal(inner: () -> Unit) {
  * The coordinates will be converted to global automatically.
  * Note that this will not work properly for rotated components.
  */
-fun UiComponent.scissorLocal(x: Float, y: Float, width: Float, height: Float, inner: () -> Unit) {
+fun UiComponentRo.scissorLocal(x: Float, y: Float, width: Float, height: Float, inner: () -> Unit) {
 	val tmp = Vector3.obtain()
 	localToWindow(tmp.set(x, y, 0f))
 	val sX1 = tmp.x
@@ -182,6 +182,8 @@ fun UiComponent.scissorLocal(x: Float, y: Float, width: Float, height: Float, in
 	Vector3.free(tmp)
 
 	val glState = inject(GlState)
-	val window = inject(Window)
-	glState.scissor(minOf(sX1, sX2).roundToInt(), (window.height - maxOf(sY1, sY2)).roundToInt(), abs(sX2 - sX1).roundToInt(), abs(sY2 - sY1).roundToInt(), inner)
+	val intR = IntRectangle.obtain()
+	val h = glState.getViewport(intR).height
+	glState.scissor(minOf(sX1, sX2).roundToInt(), (h - maxOf(sY1, sY2)).roundToInt(), abs(sX2 - sX1).roundToInt(), abs(sY2 - sY1).roundToInt(), inner)
+	IntRectangle.free(intR)
 }

@@ -19,6 +19,7 @@ package com.acornui.gl.core
 import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
 import com.acornui.core.graphics.Texture
+import com.acornui.logging.Log
 import com.acornui.math.IntRectangle
 
 /**
@@ -29,10 +30,22 @@ class Framebuffer(
 		private val glState: GlState,
 		val width: Int = 0,
 		val height: Int = 0,
-		val hasDepth: Boolean = false,
-		val hasStencil: Boolean = false,
+		hasDepth: Boolean = false,
+		hasStencil: Boolean = false,
 		val texture: Texture = BufferTexture(gl, glState, width, height)
 ) : Disposable {
+
+	/**
+	 * True if the depth render attachment was created.
+	 */
+	val hasDepth: Boolean
+
+	/**
+	 * True if the stencil render attachment was created.
+	 */
+	val hasStencil: Boolean
+
+	private val _viewport = IntRectangle(0, 0, width, height)
 
 	constructor(injector: Injector,
 				width: Int = 0,
@@ -44,28 +57,54 @@ class Framebuffer(
 	private val framebufferHandle: GlFramebufferRef
 	private val depthbufferHandle: GlRenderbufferRef?
 	private val stencilbufferHandle: GlRenderbufferRef?
+	private val depthStencilbufferHandle: GlRenderbufferRef?
 
 	init {
 		if (width <= 0 || height <= 0) throw IllegalArgumentException("width or height cannot be less than zero.")
+		if (hasDepth && hasStencil) {
+			if (allowDepthAndStencil(gl)) {
+				this.hasDepth = true
+				this.hasStencil = true
+			} else {
+				Log.warn("No GL_OES_packed_depth_stencil or GL_EXT_packed_depth_stencil extension, ignoring depth")
+				this.hasDepth = false
+				this.hasStencil = true
+			}
+
+		} else {
+			this.hasDepth = hasDepth
+			this.hasStencil = hasStencil
+		}
+
 		texture.refInc()
 		framebufferHandle = gl.createFramebuffer()
 		gl.bindFramebuffer(Gl20.FRAMEBUFFER, framebufferHandle)
 		gl.framebufferTexture2D(Gl20.FRAMEBUFFER, Gl20.COLOR_ATTACHMENT0, Gl20.TEXTURE_2D, texture.textureHandle!!, 0)
-		if (hasDepth) {
-			depthbufferHandle = gl.createRenderbuffer()
-			gl.bindRenderbuffer(Gl20.RENDERBUFFER, depthbufferHandle)
-			gl.renderbufferStorage(Gl20.RENDERBUFFER, Gl20.DEPTH_COMPONENT16, width, height)
-			gl.framebufferRenderbuffer(Gl20.FRAMEBUFFER, Gl20.DEPTH_ATTACHMENT, Gl20.RENDERBUFFER, depthbufferHandle)
+		if (this.hasDepth && this.hasStencil) {
+				depthStencilbufferHandle = gl.createRenderbuffer()
+				depthbufferHandle = null
+				stencilbufferHandle = null
+				gl.bindRenderbuffer(Gl20.RENDERBUFFER, depthStencilbufferHandle)
+				gl.renderbufferStorage(Gl20.RENDERBUFFER, Gl20.DEPTH_STENCIL, width, height)
+				gl.framebufferRenderbuffer(Gl20.FRAMEBUFFER, Gl20.DEPTH_STENCIL_ATTACHMENT, Gl20.RENDERBUFFER, depthStencilbufferHandle)
 		} else {
-			depthbufferHandle = null
-		}
-		if (hasStencil) {
-			stencilbufferHandle = gl.createRenderbuffer()
-			gl.bindRenderbuffer(Gl20.RENDERBUFFER, stencilbufferHandle)
-			gl.renderbufferStorage(Gl20.RENDERBUFFER, Gl20.STENCIL_INDEX8, width, height)
-			gl.framebufferRenderbuffer(Gl20.FRAMEBUFFER, Gl20.STENCIL_ATTACHMENT, Gl20.RENDERBUFFER, stencilbufferHandle)
-		} else {
-			stencilbufferHandle = null
+			depthStencilbufferHandle = null
+			if (this.hasDepth) {
+				depthbufferHandle = gl.createRenderbuffer()
+				gl.bindRenderbuffer(Gl20.RENDERBUFFER, depthbufferHandle)
+				gl.renderbufferStorage(Gl20.RENDERBUFFER, Gl20.DEPTH_COMPONENT16, width, height)
+				gl.framebufferRenderbuffer(Gl20.FRAMEBUFFER, Gl20.DEPTH_ATTACHMENT, Gl20.RENDERBUFFER, depthbufferHandle)
+			} else {
+				depthbufferHandle = null
+			}
+			if (this.hasStencil) {
+				stencilbufferHandle = gl.createRenderbuffer()
+				gl.bindRenderbuffer(Gl20.RENDERBUFFER, stencilbufferHandle)
+				gl.renderbufferStorage(Gl20.RENDERBUFFER, Gl20.STENCIL_INDEX8, width, height)
+				gl.framebufferRenderbuffer(Gl20.FRAMEBUFFER, Gl20.STENCIL_ATTACHMENT, Gl20.RENDERBUFFER, stencilbufferHandle)
+			} else {
+				stencilbufferHandle = null
+			}
 		}
 
 		val result = gl.checkFramebufferStatus(Gl20.FRAMEBUFFER)
@@ -74,7 +113,6 @@ class Framebuffer(
 
 		if (result != Gl20.FRAMEBUFFER_COMPLETE) {
 			delete()
-
 			when (result) {
 				Gl20.FRAMEBUFFER_INCOMPLETE_ATTACHMENT ->
 					throw IllegalStateException("framebuffer couldn't be constructed: incomplete attachment")
@@ -90,7 +128,14 @@ class Framebuffer(
 		}
 	}
 
+	/**
+	 * When this frame buffer is bound, this will be the viewport.
+	 */
+	fun setViewport(x: Int, y: Int, width: Int, height: Int) {
+		_viewport.set(x, y, width, height)
+	}
 	private var previousFramebuffer: GlFramebufferRef? = null
+
 	private val previousViewport = IntRectangle()
 
 	fun begin() {
@@ -98,7 +143,7 @@ class Framebuffer(
 		previousFramebuffer = glState.framebuffer
 		glState.framebuffer = framebufferHandle
 		glState.getViewport(previousViewport)
-		glState.viewport(0, 0, width, height)
+		glState.viewport(_viewport)
 	}
 
 	fun end() {
@@ -108,6 +153,15 @@ class Framebuffer(
 		previousFramebuffer = null
 	}
 
+	/**
+	 * Sugar to wrap the inner method in [begin] and [end] calls.
+	 */
+	inline fun drawTo(inner: ()->Unit) {
+		begin()
+		inner()
+		end()
+	}
+
 	private fun delete() {
 		if (depthbufferHandle != null) {
 			gl.deleteRenderbuffer(depthbufferHandle)
@@ -115,12 +169,27 @@ class Framebuffer(
 		if (stencilbufferHandle != null) {
 			gl.deleteRenderbuffer(stencilbufferHandle)
 		}
+		if (depthStencilbufferHandle != null) {
+			gl.deleteRenderbuffer(depthStencilbufferHandle)
+		}
 		gl.deleteFramebuffer(framebufferHandle)
 	}
 
 	override fun dispose() {
 		delete()
 		texture.refDec()
+	}
+
+	companion object {
+
+		/**
+		 * Returns true if Framebuffers support the packed depth and stencil attachment.
+		 */
+		fun allowDepthAndStencil(gl: Gl20): Boolean {
+			val extensions = gl.getSupportedExtensions()
+			return extensions.contains("GL_OES_packed_depth_stencil") || extensions.contains("GL_EXT_packed_depth_stencil")
+		}
+
 	}
 
 }

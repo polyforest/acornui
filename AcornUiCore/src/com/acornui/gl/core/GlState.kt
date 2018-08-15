@@ -253,6 +253,15 @@ class GlState(
 
 	private val _mvp = Matrix4()
 
+	/**
+	 * Sets the [GlState.viewProjection] and [GlState.model] matrices.
+	 * This will set the gl uniforms u_modelTrans (if exists), u_viewTrans (if exists), u_projTrans
+	 * The shader should have the following uniforms:
+	 * u_projTrans - Either MVP or VP if u_modelTrans is present.
+	 * u_modelTrans (optional) - M
+	 * u_viewTrans (optional) - V
+	 *
+	 */
 	fun camera(camera: CameraRo, model: Matrix4Ro = Matrix4.IDENTITY) {
 		val hasModel = _shader!!.getUniformLocation(CommonShaderUniforms.U_MODEL_TRANS) != null
 		if (hasModel) {
@@ -271,14 +280,6 @@ class GlState(
 				_mvp
 			}
 		}
-	}
-
-	/**
-	 * Applies the given matrix as the view-projection transformation.
-	 */
-	@Deprecated("Use property")
-	fun viewProjection(value: Matrix4Ro) {
-		viewProjectionCache.set(value, _shader!!, batch)
 	}
 
 	/**
@@ -320,11 +321,6 @@ class GlState(
 		}
 
 
-	@Deprecated("Use property")
-	fun model(value: Matrix4Ro) {
-		modelCache.set(value, _shader!!, batch)
-	}
-
 	private val tmpMat = Matrix3()
 
 	/**
@@ -356,7 +352,6 @@ class GlState(
 	}
 
 	companion object : DKey<GlState>
-
 
 }
 
@@ -409,12 +404,20 @@ private class ColorCache(
 
 
 inline fun GlState.scissor(x: Int, y: Int, width: Int, height: Int, inner: () -> Unit) {
-	val oldRect = getScissor(IntRectangle.obtain())
+	val oldScissor = getScissor(IntRectangle.obtain())
 	val oldEnabled = scissorEnabled
 	scissorEnabled = true
 	scissor(x, y, width, height)
 	inner()
 	scissorEnabled = oldEnabled
-	scissor(oldRect)
-	IntRectangle.free(oldRect)
+	scissor(oldScissor)
+	IntRectangle.free(oldScissor)
+}
+
+inline fun GlState.viewport(x: Int, y: Int, width: Int, height: Int, inner: () -> Unit) {
+	val oldViewport = getViewport(IntRectangle.obtain())
+	viewport(x, y, width, height)
+	inner()
+	viewport(oldViewport)
+	IntRectangle.free(oldViewport)
 }

@@ -7,6 +7,8 @@ import com.acornui.math.*
 import com.acornui.observe.ModTagWatch
 
 /**
+ * An orthographic projection in the direction of the light, clipped to only what the view camera can see.
+ *
  * @author nbilyk
  */
 class DirectionalLightCamera {
@@ -19,12 +21,15 @@ class DirectionalLightCamera {
 
 	private val viewCamWatch = ModTagWatch()
 
-	val view = Matrix4()
-	val combined = Matrix4()
+	private val view = Matrix4()
+
+	private val _combined = Matrix4()
+	val combined: Matrix4Ro
+		get() = _combined
 
 	private val direction = Vector3(0f, 0f, 1f)
 	private val up = Vector3(0f, -1f, 0f)
-	private val lastClipSpace = Array(8, { Vector3() })
+	private val lastClipSpace = Array(8) { Vector3() }
 
 	private val bounds = Box()
 	private val tmp = Vector3()
@@ -101,10 +106,10 @@ class DirectionalLightCamera {
 		}
 		bounds.update()
 
-		combined.idt()
-		combined.scl(2f / bounds.dimensions.x, 2f / bounds.dimensions.y, -2f / bounds.dimensions.z)
-		combined.translate(-bounds.center.x, -bounds.center.y, -bounds.center.z)
-		combined.mul(view)
+		_combined.idt()
+		_combined.scl(2f / bounds.dimensions.x, 2f / bounds.dimensions.y, -2f / bounds.dimensions.z)
+		_combined.translate(-bounds.center.x, -bounds.center.y, -bounds.center.z)
+		_combined.mul(view)
 		return true
 	}
 

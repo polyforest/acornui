@@ -46,7 +46,7 @@ class OrthographicCamera : CameraBase() {
 	}
 
 	override fun updateViewProjection() {
-		_projection.setToOrtho(zoom * -viewportWidth / 2f, zoom * viewportWidth / 2f, zoom * -viewportHeight / 2f, zoom * viewportHeight / 2f, near, far)
+		_projection.setToOrtho(zoom * -viewportWidth * 0.5f, zoom * viewportWidth * 0.5f, zoom * -viewportHeight * 0.5f, zoom * viewportHeight * 0.5f, near, far)
 		_view.setToLookAt(position, tmp.set(position).add(direction), up)
 		_combined.set(_projection)
 		_combined.mul(_view)
@@ -85,7 +85,7 @@ class FramebufferOrthographicCamera : CameraBase() {
 	}
 
 	override fun updateViewProjection() {
-		_projection.setToOrtho(zoom * -viewportWidth / 2f, zoom * viewportWidth / 2f, zoom * viewportHeight / 2f, zoom * -viewportHeight / 2f, near, far)
+		_projection.setToOrtho(zoom * -viewportWidth * 0.5f, zoom * viewportWidth * 0.5f, zoom * viewportHeight * 0.5f, zoom * -viewportHeight * 0.5f, near, far)
 		_projection.trn(-1f, -1f, 0f)
 		_view.setToLookAt(position, tmp.set(position).add(direction), up)
 		_combined.set(_projection)
