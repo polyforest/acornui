@@ -20,6 +20,7 @@ import com.acornui.component.layout.Transformable
 import com.acornui.component.layout.TransformableRo
 import com.acornui.core.graphics.CameraRo
 import com.acornui.math.MinMax
+import com.acornui.math.RectangleRo
 import com.acornui.math.Vector2
 import com.acornui.math.Vector3
 
@@ -48,6 +49,11 @@ interface CameraElementRo : TransformableRo {
 	 * camera.
 	 */
 	val camera: CameraRo
+
+	/**
+	 * Returns the viewport to be used for this component.
+	 */
+	val viewport: RectangleRo
 }
 
 /**
@@ -64,7 +70,7 @@ interface CameraElement : CameraElementRo, Transformable {
 }
 
 /**
- * Converts a bounding rectangle from local to window coordinates.
+ * Converts a bounding rectangle from local to canvas coordinates.
  */
 fun CameraElementRo.localToCanvas(minMax: MinMax): MinMax {
 	val tmp1 =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)
@@ -86,7 +92,7 @@ fun CameraElementRo.localToCanvas(minMax: MinMax): MinMax {
 }
 
 /**
- * Converts a bounding rectangle from window to local coordinates.
+ * Converts a bounding rectangle from canvas to local coordinates.
  * Warning: this does require a matrix inversion calculation, which is a fairly expensive operation.
  */
 fun CameraElementRo.canvasToLocal(minMax: MinMax): MinMax {

@@ -20,6 +20,7 @@ import com.acornui.core.Disposable
 import com.acornui.core.browser.Location
 import com.acornui.core.di.DKey
 import com.acornui.graphics.ColorRo
+import com.acornui.math.RectangleRo
 import com.acornui.signal.Signal
 
 

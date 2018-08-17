@@ -108,6 +108,10 @@ interface RectangleRo {
 	fun copy(x: Float = this.x, y: Float = this.y, width: Float = this.width, height: Float = this.height): Rectangle {
 		return Rectangle(x, y, width, height)
 	}
+
+	companion object {
+		val EMPTY = Rectangle()
+	}
 }
 
 class Rectangle(

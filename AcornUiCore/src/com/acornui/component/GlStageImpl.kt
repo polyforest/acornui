@@ -20,11 +20,18 @@ import com.acornui.core.di.Owned
 import com.acornui.core.focus.Focusable
 import com.acornui.math.Bounds
 import com.acornui.math.MinMaxRo
+import com.acornui.math.Rectangle
+import com.acornui.math.RectangleRo
 
 /**
  * @author nbilyk
  */
 open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(owner), Focusable {
+
+	private val _viewport = Rectangle()
+
+	override val viewport: RectangleRo
+		get() = _viewport
 
 	init {
 		focusEnabled = true
@@ -36,6 +43,7 @@ open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(
 	protected open val windowResizedHandler: (Float, Float, Boolean) -> Unit = {
 		newWidth: Float, newHeight: Float, isUserInteraction: Boolean ->
 		glState.setViewport(0, 0, (newWidth * window.scaleX).toInt(), (newHeight * window.scaleY).toInt())
+		_viewport.set(0f, 0f, newWidth, newHeight)
 		invalidate(ValidationFlags.LAYOUT)
 	}
 

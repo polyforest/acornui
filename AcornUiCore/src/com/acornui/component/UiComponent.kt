@@ -32,10 +32,7 @@ import com.acornui.core.di.*
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.Focusable
 import com.acornui.core.focus.blur
-import com.acornui.core.graphics.Camera
-import com.acornui.core.graphics.CameraRo
-import com.acornui.core.graphics.Window
-import com.acornui.core.graphics.getPickRay
+import com.acornui.core.graphics.*
 import com.acornui.core.input.InteractionEventRo
 import com.acornui.core.input.InteractionType
 import com.acornui.core.input.InteractivityManager
@@ -212,9 +209,11 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	/**
 	 * Renders any graphics.
 	 * [render] does not check the [visible] flag; that is the responsibility of the caller.
-	 * @param clip The visible region (in screen coordinates.) If you wish to render a component with a no
+	 * @param clip The visible region (in viewport coordinates.) If you wish to render a component with a no
 	 * clipping, you may use [MinMaxRo.POSITIVE_INFINITY]. This is used in order to potentially avoid drawing things
 	 * the user cannot see. (Due to the screen size, stencil buffers, or scissors)
+	 *
+	 * Canvas coordinates are 0,0 top left, and bottom right is the canvas width/height without dpi scaling.
 	 *
 	 * You may convert the window coordinate clip region to local coordinates via [canvasToLocal], but in general it is
 	 * faster to convert the local coordinates to window coordinates [localToCanvas], as no matrix inversion is
@@ -296,13 +295,14 @@ open class UiComponentImpl(
 
 	private val defaultCamera = inject(Camera)
 
-	private val _viewport = IntRectangle()
+	private var _viewport: RectangleRo = RectangleRo.EMPTY
 
 	/**
-	 * Returns the viewport this component was last rendered. (Typically the full window rect)
+	 * Returns the viewport (in canvas coordinates, not screen coordinates) this component will use for UI.
+	 * (Typically the full window rect, but may change if part of a Scene)
 	 */
-	protected open val viewport: IntRectangleRo
-		get() = _viewport.set(0, 0, window.width.toInt(), window.height.toInt())
+	override val viewport: RectangleRo
+		get() = _viewport
 
 	// Validatable Properties
 	private val _invalidated = own(Signal2<UiComponent, Int>())
@@ -440,7 +440,7 @@ open class UiComponentImpl(
 
 	override fun localToCanvas(localCoord: Vector3): Vector3 {
 		localToGlobal(localCoord)
-		camera.project(localCoord, 0f, 0f, window.width, window.height)
+		camera.project(localCoord, viewport)
 		return localCoord
 	}
 
@@ -464,12 +464,16 @@ open class UiComponentImpl(
 		}
 	}
 
+	/**
+	 * Updates the camera and viewport.
+	 */
 	protected open fun updateCamera() {
 		_camera = if (cameraOverride == null) {
 			parent?.camera ?: defaultCamera
 		} else {
 			cameraOverride!!
 		}
+		_viewport = parent?.viewport ?: stage.viewport
 	}
 
 	//-----------------------------------------------
@@ -479,7 +483,7 @@ open class UiComponentImpl(
 	override fun containsCanvasPoint(canvasX: Float, canvasY: Float): Boolean {
 		if (!isActive) return false
 		val ray = Ray.obtain()
-		camera.getPickRay(canvasX, canvasY, 0f, 0f, window.width, window.height, ray)
+		camera.getPickRay(canvasX, canvasY, viewport, ray)
 		val b = intersectsGlobalRay(ray)
 		Ray.free(ray)
 		return b
@@ -881,7 +885,7 @@ open class UiComponentImpl(
 
 	override fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo?): MutableList<UiComponentRo> {
 		if (!visible || (onlyInteractive && !interactivityEnabled)) return out
-		val ray = rayCache ?: camera.getPickRay(canvasX, canvasY, 0f, 0f, window.width, window.height, rayTmp)
+		val ray = rayCache ?: camera.getPickRay(canvasX, canvasY, viewport, rayTmp)
 		if (interactivityMode == InteractivityMode.ALWAYS || intersectsGlobalRay(ray)) {
 			out.add(this)
 		}
@@ -1175,26 +1179,6 @@ open class UiComponentImpl(
 	override fun globalToLocal(ray: Ray): Ray {
 		ray.mul(concatenatedTransformInv)
 		return ray
-	}
-
-	/**
-	 * Calculates the intersection coordinates of the provided Ray (in local coordinate space) and this layout
-	 * element's plane.
-	 * @return Returns true if the provided Ray intersects with this plane, or false if the Ray is parallel.
-	 */
-	override fun rayToPlane(ray: RayRo, out: Vector2): Boolean {
-		if (ray.direction.z == 0f) return false
-		val m = -ray.origin.z * ray.directionInv.z
-		out.x = ray.origin.x + m * ray.direction.x
-		out.y = ray.origin.y + m * ray.direction.y
-		return true
-	}
-
-	/**
-	 * Converts a coordinate from this Transformable's coordinate space to the target coordinate space.
-	 */
-	override fun convertCoord(coord: Vector3, targetCoordSpace: TransformableRo): Vector3 {
-		return targetCoordSpace.globalToLocal(localToGlobal(coord))
 	}
 
 	/**

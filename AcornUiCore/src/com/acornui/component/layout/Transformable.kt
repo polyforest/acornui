@@ -143,12 +143,13 @@ interface TransformableRo : PositionableRo {
 	 * element's plane.
 	 * @return Returns true if the provided Ray intersects with this plane, or false if the Ray is parallel.
 	 */
-	fun rayToPlane(ray: RayRo, out: Vector2): Boolean
-
-	/**
-	 * Converts a coordinate from this Transformable's coordinate space to the target coordinate space.
-	 */
-	fun convertCoord(coord: Vector3, targetCoordSpace: TransformableRo): Vector3
+	fun rayToPlane(ray: RayRo, out: Vector2): Boolean {
+		if (ray.direction.z == 0f) return false
+		val m = -ray.origin.z * ray.directionInv.z
+		out.x = ray.origin.x + m * ray.direction.x
+		out.y = ray.origin.y + m * ray.direction.y
+		return true
+	}
 
 	/**
 	 * The global transform of this component, of all ancestor transforms multiplied together.
@@ -208,6 +209,11 @@ interface Transformable : TransformableRo, Positionable {
 	fun setOrigin(x: Float, y: Float, z: Float = 0f)
 
 }
+
+/**
+ * Converts a coordinate from this Transformable's coordinate space to the target coordinate space.
+ */
+fun Transformable.convertCoord(coord: Vector3, targetCoordSpace: TransformableRo): Vector3 = targetCoordSpace.globalToLocal(localToGlobal(coord))
 
 interface PositionableRo {
 	val x: Float

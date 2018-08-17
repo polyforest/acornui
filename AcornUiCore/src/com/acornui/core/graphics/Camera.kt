@@ -120,9 +120,6 @@ interface CameraRo {
 	 */
 	var viewportHeight: Float
 
-	val aspect: Float
-		get() = viewportWidth / viewportHeight
-
 	/**
 	 * The frustum
 	 */
@@ -148,11 +145,14 @@ interface CameraRo {
 
 }
 
-fun CameraRo.getPickRay(canvasX: Float, canvasY: Float, viewport: MinMaxRo, out: Ray): Ray = getPickRay(canvasX, canvasY, viewport.xMin, viewport.yMin, viewport.width, viewport.height, out)
+val CameraRo.aspect: Float
+	get() = viewportWidth / viewportHeight
 
-fun CameraRo.getPickRay(canvasX: Float, canvasY: Float, viewport: IntRectangleRo, out: Ray): Ray = getPickRay(canvasX, canvasY, viewport.x.toFloat(), viewport.y.toFloat(), viewport.width.toFloat(), viewport.height.toFloat(), out)
+fun CameraRo.getPickRay(canvasX: Float, canvasY: Float, viewport: MinMaxRo, out: Ray): Ray = getPickRay(canvasX, canvasY, viewport.xMin, viewport.yMin, viewport.width, viewport.height, out)
+fun CameraRo.getPickRay(canvasX: Float, canvasY: Float, viewport: RectangleRo, out: Ray): Ray = getPickRay(canvasX, canvasY, viewport.x, viewport.y, viewport.width, viewport.height, out)
 
 fun CameraRo.project(globalCoords: Vector3, viewport: MinMaxRo): Vector3 = project(globalCoords, viewport.xMin, viewport.yMin, viewport.width, viewport.height)
+fun CameraRo.project(globalCoords: Vector3, viewport: RectangleRo): Vector3 = project(globalCoords, viewport.x, viewport.y, viewport.width, viewport.height)
 
 interface Camera : CameraRo {
 
