@@ -353,7 +353,7 @@ class DataGrid<E>(
 			columnDividersContents.clearElements(dispose = true)
 			columnDividersHeader.clearElements(dispose = true)
 
-			clipper.style.borderRadius = Corners().set(it.borderRadius).deflate(it.borderThickness)
+			clipper.style.borderRadii = Corners().set(it.borderRadius).deflate(it.borderThickness)
 			background?.dispose()
 			background = addChild(0, it.background(this))
 
@@ -469,7 +469,7 @@ class DataGrid<E>(
 	fun getCellFromPosition(canvasX: Float, canvasY: Float): CellLocation {
 		validate(ValidationFlags.LAYOUT)
 		val p = tmp
-		windowToLocal(p.set(canvasX, canvasY))
+		canvasToLocal(p.set(canvasX, canvasY))
 		val columnIndex = if (p.x < 0 || p.x > width) -1 else columnPositions.sortedInsertionIndex(p.x + hScrollModel.value) - 1
 		val headerHeight = headerCells.height
 		if (firstVisibleColumn == -1 || p.y < headerHeight || p.y > height) return CellLocation(-1, columnIndex)
@@ -1433,7 +1433,7 @@ class DataGrid<E>(
 
 		drag.drag.add {
 			columnMoveIndicator.setPosition(it.currentTarget.x + (it.position.x - it.startPosition.x), 0f)
-			val localP = headerCells.windowToLocal(Vector2.obtain().set(it.position))
+			val localP = headerCells.canvasToLocal(Vector2.obtain().set(it.position))
 
 			val currX = localP.x + hScrollModel.value
 			var index = columnPositions.sortedInsertionIndex(currX)
@@ -1449,7 +1449,7 @@ class DataGrid<E>(
 			columnMoveIndicator.visible = false
 			columnInsertionIndicator.visible = false
 
-			val localP = headerCells.windowToLocal(Vector2.obtain().set(it.position))
+			val localP = headerCells.canvasToLocal(Vector2.obtain().set(it.position))
 
 			val fromIndex = it.currentTarget.getAttachment<Int>(COL_INDEX_KEY)!!
 			val currX = localP.x + hScrollModel.value
@@ -1512,7 +1512,7 @@ class DataGrid<E>(
 
 		drag.drag.add {
 			val column = _columns[columnIndex]
-			val localP = columnResizeHandles.windowToLocal(Vector2.obtain().set(it.position))
+			val localP = columnResizeHandles.canvasToLocal(Vector2.obtain().set(it.position))
 
 			val availableWidth = style.borderThickness.reduceWidth(explicitWidth)
 			var newWidth: Float = maxOf(column.minWidth, localP.x - colResizeStartX)

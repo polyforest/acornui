@@ -492,7 +492,7 @@ open class BasicUiSkin(
 		target.styleRules.add(StyleRule(dataScrollerStyle, withAncestor(OptionsList)))
 
 		val scrollRectStyle = ScrollRectStyle().apply {
-			borderRadius = Corners(0f, 0f, 0f, theme.borderRadius - theme.strokeThickness)
+			borderRadii = Corners(0f, 0f, 0f, theme.borderRadius - theme.strokeThickness)
 		}
 		target.styleRules.add(StyleRule(scrollRectStyle, withAncestor(OptionsList)))
 

@@ -223,8 +223,6 @@ interface Positionable : PositionableRo {
 	override var y: Float
 	override var z: Float
 
-	override val position: Vector3Ro
-
 	/**
 	 * Sets the position of this component, rounding the x and y coordinates.
 	 */

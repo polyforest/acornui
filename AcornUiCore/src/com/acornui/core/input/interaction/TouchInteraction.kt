@@ -7,7 +7,6 @@ import com.acornui.component.UiComponentRo
 import com.acornui.core.input.InteractionEventBase
 import com.acornui.core.input.InteractionEventRo
 import com.acornui.core.input.InteractionType
-import com.acornui.math.MathUtils
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
 import kotlin.math.sqrt
@@ -206,7 +205,7 @@ class Touch : TouchRo, Clearable {
 		if (!_localPositionIsValid) {
 			_localPositionIsValid = true
 			_localPosition.set(canvasX, canvasY)
-			currentTarget!!.windowToLocal(_localPosition)
+			currentTarget!!.canvasToLocal(_localPosition)
 		}
 		return _localPosition
 	}

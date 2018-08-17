@@ -198,9 +198,15 @@ class GlState(
 		return out.set(_viewport)
 	}
 
-	fun viewport(value: IntRectangleRo) = viewport(value.x, value.y, value.width, value.height)
+	/**
+	 * @see Gl20.viewport
+	 */
+	fun setViewport(value: IntRectangleRo) = setViewport(value.x, value.y, value.width, value.height)
 
-	fun viewport(x: Int, y: Int, width: Int, height: Int) {
+	/**
+	 * @see Gl20.viewport
+	 */
+	fun setViewport(x: Int, y: Int, width: Int, height: Int) {
 		if (_viewport.x == x && _viewport.y == y && _viewport.width == width && _viewport.height == height) return
 		_viewport.set(x, y, width, height)
 		_batch.flush()
@@ -209,7 +215,7 @@ class GlState(
 
 	/**
 	 * Returns whether scissoring is currently enabled.
-	 * @see scissor
+	 * @see setScissor
 	 */
 	var scissorEnabled: Boolean by observable(false) {
 		batch.flush()
@@ -241,9 +247,9 @@ class GlState(
 		return out.set(_scissor)
 	}
 
-	fun scissor(value: IntRectangleRo) = scissor(value.x, value.y, value.width, value.height)
+	fun setScissor(value: IntRectangleRo) = setScissor(value.x, value.y, value.width, value.height)
 
-	fun scissor(x: Int, y: Int, width: Int, height: Int) {
+	fun setScissor(x: Int, y: Int, width: Int, height: Int) {
 		if (_scissor.x != x || _scissor.y != y || _scissor.width != width || _scissor.height != height) {
 			batch.flush()
 			_scissor.set(x, y, width, height)
@@ -402,22 +408,27 @@ private class ColorCache(
 	}
 }
 
-
-inline fun GlState.scissor(x: Int, y: Int, width: Int, height: Int, inner: () -> Unit) {
+/**
+ * @see Gl20.setScissor
+ */
+inline fun GlState.setScissor(x: Int, y: Int, width: Int, height: Int, inner: () -> Unit) {
 	val oldScissor = getScissor(IntRectangle.obtain())
 	val oldEnabled = scissorEnabled
 	scissorEnabled = true
-	scissor(x, y, width, height)
+	setScissor(x, y, width, height)
 	inner()
 	scissorEnabled = oldEnabled
-	scissor(oldScissor)
+	setScissor(oldScissor)
 	IntRectangle.free(oldScissor)
 }
 
-inline fun GlState.viewport(x: Int, y: Int, width: Int, height: Int, inner: () -> Unit) {
+/**
+ * @see Gl20.viewport
+ */
+inline fun GlState.setViewport(x: Int, y: Int, width: Int, height: Int, inner: () -> Unit) {
 	val oldViewport = getViewport(IntRectangle.obtain())
-	viewport(x, y, width, height)
+	setViewport(x, y, width, height)
 	inner()
-	viewport(oldViewport)
+	setViewport(oldViewport)
 	IntRectangle.free(oldViewport)
 }

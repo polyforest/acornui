@@ -22,10 +22,8 @@ import com.acornui.core.assets.CachedGroup
 import com.acornui.core.assets.cachedGroup
 import com.acornui.core.assets.loadAndCache
 import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
-import com.acornui.gl.core.GlState
 import com.acornui.math.Bounds
 import com.acornui.math.IntRectangleRo
 import com.acornui.math.MinMaxRo
@@ -42,8 +40,6 @@ import com.acornui.math.RectangleRo
  * @author nbilyk
  */
 open class TextureComponent(owner: Owned) : UiComponentImpl(owner) {
-
-	private val glState = inject(GlState)
 
 	private val sprite = Sprite()
 
@@ -174,7 +170,7 @@ open class TextureComponent(owner: Owned) : UiComponentImpl(owner) {
 		sprite.updateWorldVertices(concatenatedTransform, width, height, z = 0f)
 	}
 
-	override fun draw(viewport: MinMaxRo) {
+	override fun draw(clip: MinMaxRo) {
 		glState.camera(camera)
 		sprite.draw(glState, concatenatedColorTint)
 	}

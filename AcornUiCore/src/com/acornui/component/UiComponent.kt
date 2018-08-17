@@ -35,6 +35,7 @@ import com.acornui.core.focus.blur
 import com.acornui.core.graphics.Camera
 import com.acornui.core.graphics.CameraRo
 import com.acornui.core.graphics.Window
+import com.acornui.core.graphics.getPickRay
 import com.acornui.core.input.InteractionEventRo
 import com.acornui.core.input.InteractionType
 import com.acornui.core.input.InteractivityManager
@@ -42,6 +43,8 @@ import com.acornui.core.input.MouseState
 import com.acornui.core.time.TimeDriver
 import com.acornui.filter.RenderFilter
 import com.acornui.function.as1
+import com.acornui.gl.core.Gl20
+import com.acornui.gl.core.GlState
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.*
@@ -209,15 +212,15 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	/**
 	 * Renders any graphics.
 	 * [render] does not check the [visible] flag; that is the responsibility of the caller.
-	 * @param viewport The visible viewport (in screen coordinates.) If you wish to render a component with a boundless
-	 * viewport, you may use [MinMaxRo.POSITIVE_INFINITY]. This is used in order to potentially avoid drawing things
+	 * @param clip The visible region (in screen coordinates.) If you wish to render a component with a no
+	 * clipping, you may use [MinMaxRo.POSITIVE_INFINITY]. This is used in order to potentially avoid drawing things
 	 * the user cannot see. (Due to the screen size, stencil buffers, or scissors)
 	 *
-	 * You may convert the screen coordinate viewport to local coordinates via [windowToLocal], but in general it is
-	 * faster to convert the local coordinates to screen coordinates [localToWindow], as no matrix inversion is
+	 * You may convert the window coordinate clip region to local coordinates via [canvasToLocal], but in general it is
+	 * faster to convert the local coordinates to window coordinates [localToCanvas], as no matrix inversion is
 	 * required.
 	 */
-	fun render(viewport: MinMaxRo)
+	fun render(clip: MinMaxRo)
 
 }
 
@@ -288,8 +291,18 @@ open class UiComponentImpl(
 	protected val assets = inject(AssetManager)
 	protected val interactivity = inject(InteractivityManager)
 	protected val timeDriver = inject(TimeDriver)
+	protected val gl = inject(Gl20)
+	protected val glState = inject(GlState)
 
 	private val defaultCamera = inject(Camera)
+
+	private val _viewport = IntRectangle()
+
+	/**
+	 * Returns the viewport this component was last rendered. (Typically the full window rect)
+	 */
+	protected open val viewport: IntRectangleRo
+		get() = _viewport.set(0, 0, window.width.toInt(), window.height.toInt())
 
 	// Validatable Properties
 	private val _invalidated = own(Signal2<UiComponent, Int>())
@@ -417,15 +430,15 @@ open class UiComponentImpl(
 	// CameraElement
 	//-----------------------------------------------
 
-	override fun windowToLocal(windowCoord: Vector2): Vector2 {
+	override fun canvasToLocal(canvasCoord: Vector2): Vector2 {
 		val ray = Ray.obtain()
-		globalToLocal(camera.getPickRay(windowCoord.x, windowCoord.y, 0f, 0f, window.width, window.height, ray))
-		rayToPlane(ray, windowCoord)
+		globalToLocal(camera.getPickRay(canvasCoord.x, canvasCoord.y, viewport, ray))
+		rayToPlane(ray, canvasCoord)
 		Ray.free(ray)
-		return windowCoord
+		return canvasCoord
 	}
 
-	override fun localToWindow(localCoord: Vector3): Vector3 {
+	override fun localToCanvas(localCoord: Vector3): Vector3 {
 		localToGlobal(localCoord)
 		camera.project(localCoord, 0f, 0f, window.width, window.height)
 		return localCoord
@@ -777,7 +790,7 @@ open class UiComponentImpl(
 	 * @return Returns the [out] vector.
 	 */
 	override fun mousePosition(out: Vector2): Vector2 {
-		windowToLocal(mouse.mousePosition(out))
+		canvasToLocal(mouse.mousePosition(out))
 		return out
 	}
 
@@ -1300,21 +1313,21 @@ open class UiComponentImpl(
 	// Renderable
 	//-----------------------------------------------
 
-	override fun render(viewport: MinMaxRo) {
+	override fun render(clip: MinMaxRo) {
 		// Nothing visible.
 		if (_concatenatedColorTint.a <= 0f)
 			return
 		val renderFiltersL = renderFilters.size
 		if (renderFiltersL == 0) {
-			draw(viewport)
+			draw(clip)
 		} else {
 			var i = renderFiltersL
 			while (--i >= 0) {
 				val filter = renderFilters[i]
 				if (filter.enabled)
-					filter.begin(viewport, this)
+					filter.begin(clip, this)
 			}
-			draw(viewport)
+			draw(clip)
 			while (++i < renderFiltersL) {
 				val filter = renderFilters[i]
 				if (filter.enabled)
@@ -1324,14 +1337,13 @@ open class UiComponentImpl(
 	}
 
 	private val viewportTmpMinMax = MinMax()
-	private val viewportTmpVec = Vector3()
 
 	/**
 	 * Returns true if the given viewport in local coordinates intersects with the viewport in screen coordinates.
 	 * This does not perform a validation if the transformation is currently invalid.
 	 */
 	fun isInViewport(local: MinMaxRo, viewport: MinMaxRo): Boolean {
-		localToWindow(viewportTmpMinMax.set(local))
+		localToCanvas(viewportTmpMinMax.set(local))
 		return viewport.intersects(viewportTmpMinMax)
 	}
 
@@ -1341,14 +1353,14 @@ open class UiComponentImpl(
 	 * This does not perform a validation if the layout or transformation is currently invalid.
 	 */
 	fun isBoundsInViewport(viewport: MinMaxRo): Boolean {
-		localToWindow(viewportTmpMinMax.set(0f, 0f, _bounds.width, _bounds.height))
+		localToCanvas(viewportTmpMinMax.set(0f, 0f, _bounds.width, _bounds.height))
 		return viewport.intersects(viewportTmpMinMax)
 	}
 
 	/**
 	 * The core drawing method for this component.
 	 */
-	protected open fun draw(viewport: MinMaxRo) {
+	protected open fun draw(clip: MinMaxRo) {
 	}
 
 	//-----------------------------------------------

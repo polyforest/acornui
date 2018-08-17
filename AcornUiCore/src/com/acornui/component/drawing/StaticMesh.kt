@@ -16,10 +16,12 @@
 
 package com.acornui.component.drawing
 
-import com.acornui._assert
 import com.acornui.collection.Clearable
 import com.acornui.collection.ClearableObjectPool
-import com.acornui.component.*
+import com.acornui.component.ComponentInit
+import com.acornui.component.UiComponentImpl
+import com.acornui.component.ValidationFlags
+import com.acornui.component.invalidateLayout
 import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Owned
@@ -44,19 +46,16 @@ open class StaticMeshComponent(
 
 	var intersectionType = MeshIntersectionType.BOUNDING_BOX
 
-	private val glState = inject(GlState)
-
 	private val globalBoundingBox = Box()
 
 	private var _mesh: StaticMesh? = null
 	var mesh: StaticMesh?
 		get() = _mesh
 		set(value) {
+			if (isActive) _mesh?.refDec()
 			if (_mesh === value) return
 			_mesh = value
-			if (isActive) {
-				value?.activate()
-			}
+			if (isActive) value?.refInc()
 			invalidateLayout()
 		}
 
@@ -106,15 +105,15 @@ open class StaticMeshComponent(
 
 	override fun onActivated() {
 		super.onActivated()
-		mesh?.activate()
+		mesh?.refInc()
 	}
 
 	override fun onDeactivated() {
 		super.onDeactivated()
-		mesh?.deactivate()
+		mesh?.refDec()
 	}
 
-	override fun draw(viewport: MinMaxRo) {
+	override fun draw(clip: MinMaxRo) {
 		val mesh = mesh ?: return
 		glState.batch.flush()
 		glState.camera(camera, concatenatedTransform) // Use the concatenated transform as the model matrix.
@@ -164,29 +163,31 @@ class StaticMesh(
 		get() = _boundingBox
 
 	private val batch = StaticShaderBatchImpl(gl, glState, vertexAttributes)
-	private var _isActive = false
-
-	val isActive: Boolean
-		get() = _isActive
+	private val textures = ArrayList<Texture>()
+	private val oldTextures = ArrayList<Texture>()
 
 	init {
 		val positionAttribute = vertexAttributes.getAttributeByUsage(VertexAttributeUsage.POSITION) ?: throw IllegalArgumentException("A static mesh must at least have a position attribute.")
 		if (positionAttribute.numComponents != 3) throw IllegalArgumentException("position must be 3 components.")
 	}
 
-	fun activate() {
-		_assert(!_isActive, "Already active")
-		_isActive = true
-		for (i in 0..batch.drawCalls.lastIndex) {
-			(batch.drawCalls[i].texture ?: glState.whitePixel).refInc()
+	private var refCount = 0
+
+	fun refInc() {
+		if (refCount == 0) {
+			for (i in 0..textures.lastIndex) {
+				textures[i].refInc()
+			}
 		}
+		refCount++
 	}
 
-	fun deactivate() {
-		_assert(_isActive, "Already active")
-		_isActive = false
-		for (i in 0..batch.drawCalls.lastIndex) {
-			(batch.drawCalls[i].texture ?: glState.whitePixel).refDec()
+	fun refDec() {
+		refCount--
+		if (refCount == 0) {
+			for (i in 0..textures.lastIndex) {
+				textures[i].refDec()
+			}
 		}
 	}
 
@@ -194,6 +195,9 @@ class StaticMesh(
 	 * Resets the line and fill styles
 	 */
 	fun buildMesh(inner: MeshRegion.() -> Unit) {
+		if (refCount > 0) {
+			oldTextures.addAll(textures)
+		}
 		MeshBuilderStyle.clear()
 		val previousBatch = glState.batch
 		glState.setTexture(glState.whitePixel)
@@ -205,10 +209,21 @@ class StaticMesh(
 		}
 		batch.flush()
 		batch.resetRenderCount()
-		if (isActive) {
-			for (i in 0..batch.drawCalls.lastIndex) {
-				(batch.drawCalls[i].texture ?: glState.whitePixel).refInc()
+		textures.clear()
+		for (i in 0..batch.drawCalls.lastIndex) {
+			// Keeps track of the textures used so we can reference count them.
+			val texture = batch.drawCalls[i].texture ?: glState.whitePixel
+			if (!textures.contains(texture))
+				textures.add(texture)
+		}
+		if (refCount > 0) {
+			for (i in 0..textures.lastIndex) {
+				textures[i].refInc()
 			}
+			for (i in 0..oldTextures.lastIndex) {
+				oldTextures[i].refDec()
+			}
+			oldTextures.clear()
 		}
 		glState.batch = previousBatch
 		updateBoundingBox()
@@ -267,8 +282,6 @@ class StaticMesh(
 	}
 
 	override fun dispose() {
-		if (isActive)
-			deactivate()
 		batch.dispose()
 	}
 

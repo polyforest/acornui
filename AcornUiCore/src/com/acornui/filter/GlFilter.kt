@@ -19,10 +19,8 @@ package com.acornui.filter
 import com.acornui.component.Sprite
 import com.acornui.component.StackLayoutContainer
 import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
 import com.acornui.gl.core.Framebuffer
 import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.GlState
 import com.acornui.gl.core.ShaderProgram
 import com.acornui.math.*
 
@@ -45,16 +43,13 @@ class GlFilter(
 	
 	var maxSize = 1024
 
-	private val gl = inject(Gl20)
-	private val glState = inject(GlState)
-
 	private var framebuffer: Framebuffer? = null
 	//private val framebuffer = Framebuffer(injector, directionalShadowsResolution, directionalShadowsResolution, hasStencil = true, hasDepth = false)
 
 	private val tempTransform = Matrix4()
 	private val sprite = Sprite()
 	
-	override fun draw(viewport: MinMaxRo) {
+	override fun draw(clip: MinMaxRo) {
 		tempTransform.set(_concatenatedTransform)
 		
 		
@@ -68,7 +63,7 @@ class GlFilter(
 		framebuffer!!.begin()
 
 		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
-		super.draw(viewport)
+		super.draw(clip)
 		framebuffer.end()
 
 		glState.shader = shader

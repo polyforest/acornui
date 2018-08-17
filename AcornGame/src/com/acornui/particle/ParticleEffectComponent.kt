@@ -17,26 +17,26 @@
 package com.acornui.particle
 
 import com.acornui.component.InteractivityMode
+import com.acornui.component.Sprite
 import com.acornui.component.UiComponentImpl
-import com.acornui.core.*
-import com.acornui.core.assets.*
+import com.acornui.core.Disposable
+import com.acornui.core.Updatable
+import com.acornui.core.assets.CachedGroup
+import com.acornui.core.assets.cachedGroup
+import com.acornui.core.assets.loadAndCacheJson
+import com.acornui.core.assets.loadJson
 import com.acornui.core.di.Owned
 import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
 import com.acornui.core.graphics.TextureAtlasDataSerializer
 import com.acornui.core.graphics.loadAndCacheAtlasPage
-import com.acornui.core.time.onTick
-import com.acornui.component.Sprite
 import com.acornui.core.serialization.loadBinary
-import com.acornui.gl.core.GlState
+import com.acornui.core.time.onTick
 import com.acornui.graphics.ColorRo
 import com.acornui.math.MinMaxRo
 
 class ParticleEffectComponent(
 		owner: Owned
 ) : UiComponentImpl(owner) {
-
-	private val glState = inject(GlState)
 
 	/**
 	 * If true, the effect will automatically play when loaded.
@@ -103,7 +103,7 @@ class ParticleEffectComponent(
 	val effectInstance: ParticleEffectInstance?
 		get() = _effect?.effectInstance
 
-	override fun draw(viewport: MinMaxRo) {
+	override fun draw(clip: MinMaxRo) {
 		val effect = _effect ?: return
 		glState.camera(camera, concatenatedTransform)
 		effect.render(concatenatedColorTint)

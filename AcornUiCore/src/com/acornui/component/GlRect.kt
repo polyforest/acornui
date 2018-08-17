@@ -18,12 +18,17 @@ package com.acornui.component
 
 import com.acornui.component.drawing.*
 import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
 import com.acornui.core.graphics.BlendMode
-import com.acornui.gl.core.*
+import com.acornui.gl.core.putIndex
+import com.acornui.gl.core.putIndices
+import com.acornui.gl.core.putQuadIndices
+import com.acornui.gl.core.putVertex
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
-import com.acornui.math.*
+import com.acornui.math.Bounds
+import com.acornui.math.MinMaxRo
+import com.acornui.math.PI
+import com.acornui.math.Vector3
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
@@ -464,10 +469,7 @@ open class GlRect(
 		}
 	}
 
-	private val glState = inject(GlState)
-	private val gl = inject(Gl20)
-
-	override fun draw(viewport: MinMaxRo) {
+	override fun draw(clip: MinMaxRo) {
 		if (bounds.isEmpty()) return
 		if (simpleMode) {
 			simpleModeObj.apply {
@@ -525,16 +527,16 @@ open class GlRect(
 				complexModeObj.apply {
 					StencilUtil.mask(glState.batch, gl, {
 						if (fillC.visible)
-							fillC.render(viewport)
+							fillC.render(clip)
 					}) {
 						if (gradientC.visible)
-							gradientC.render(viewport)
+							gradientC.render(clip)
 						if (strokeC.visible)
-							strokeC.render(viewport)
+							strokeC.render(clip)
 					}
 				}
 			} else {
-				super.draw(viewport)
+				super.draw(clip)
 			}
 		}
 	}

@@ -909,6 +909,10 @@ interface Gl20 {
 
 	fun sampleCoverage(value: Float, invert: Boolean)
 
+	/**
+	 * Defines a rectangle, called the scissor box, in screen coordinates. The first two arguments, x and y, specify
+	 * the lower left corner of the box. width and height specify the width and height of the box.
+	 */
 	fun scissor(x: Int, y: Int, width: Int, height: Int)
 
 	fun shaderSource(shader: GlShaderRef, source: String)
@@ -1065,7 +1069,7 @@ interface Gl20 {
 	fun vertexAttribPointer(index: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Int)
 
 	/**
-	 * Specifies the affine transformation of x and y from normalized device coordinates to window coordinates.
+	 * Specifies the affine transformation of x and y from normalized device coordinates to screen coordinates.
 	 *
 	 * Note - if the current frame buffer is the window, the width and height should be multiplied by
 	 * [com.acornui.core.graphics.Window.scaleX] and [com.acornui.core.graphics.Window.scaleY]
@@ -1209,7 +1213,7 @@ interface GlActiveInfoRef {
 
 interface GlUniformLocationRef
 
-fun Gl20.scissor(x: Float, y: Float, width: Float, height: Float) {
+fun Gl20.setScissor(x: Float, y: Float, width: Float, height: Float) {
 	scissor(round(x).toInt(), round(y).toInt(), round(width).toInt(), round(height).toInt())
 }
 

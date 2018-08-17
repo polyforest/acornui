@@ -21,7 +21,6 @@ import com.acornui.component.InteractivityMode
 import com.acornui.component.UiComponentImpl
 import com.acornui.core.assets.AssetType
 import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
 import com.acornui.core.io.floatBuffer
@@ -33,9 +32,6 @@ import com.acornui.math.Vector3
 import com.acornui.observe.ModTagWatch
 
 class Skybox(owner: Owned, private val yDown: Boolean = true) : UiComponentImpl(owner) {
-
-	private val gl = inject(Gl20)
-	private val glState = inject(GlState)
 
 	private val shader = SkyboxShader(gl)
 
@@ -159,7 +155,7 @@ class Skybox(owner: Owned, private val yDown: Boolean = true) : UiComponentImpl(
 	private val viewProjection = Matrix4()
 	private val modTag = ModTagWatch()
 
-	override fun draw(viewport: MinMaxRo) {
+	override fun draw(clip: MinMaxRo) {
 		// TODO: Should we account for this component's transform?
 		val cubeMap = cubeMap ?: return
 		glState.setTexture(cubeMap)

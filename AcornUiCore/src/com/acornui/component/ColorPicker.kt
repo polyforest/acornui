@@ -181,7 +181,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 		cursor(StandardCursors.CROSSHAIR)
 
 		dragAttachment(0f).drag.add {
-			windowToLocal(tmpVec.set(it.position))
+			canvasToLocal(tmpVec.set(it.position))
 			tmpHSV.set(_value)
 			tmpHSV.h = 360f * MathUtils.clamp(tmpVec.x / width, 0f, 1f)
 			tmpHSV.s = 1f - MathUtils.clamp(tmpVec.y / height, 0f, 1f)
@@ -200,7 +200,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 	val valueRect = addChild(rect {
 		includeInLayout = false
 		dragAttachment(0f).drag.add {
-			windowToLocal(tmpVec.set(it.position))
+			canvasToLocal(tmpVec.set(it.position))
 			val p = MathUtils.clamp(tmpVec.y / height, 0f, 1f)
 
 			tmpHSV.set(_value)
@@ -212,7 +212,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 	val alphaRect = addChild(rect {
 		includeInLayout = false
 		dragAttachment(0f).drag.add {
-			windowToLocal(tmpVec.set(it.position))
+			canvasToLocal(tmpVec.set(it.position))
 			val p = MathUtils.clamp(tmpVec.y / height, 0f, 1f)
 
 			tmpHSV.set(_value)

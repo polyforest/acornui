@@ -21,11 +21,10 @@ import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
-import com.acornui.core.graphics.Window
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.ShaderBatch
-import com.acornui.gl.core.scissor
+import com.acornui.gl.core.setScissor
 import com.acornui.graphics.Color
 import com.acornui.math.*
 import kotlin.math.abs
@@ -85,10 +84,6 @@ class GlScrollRect(
 		interactivityMode = InteractivityMode.NONE
 	})
 
-	private val gl = inject(Gl20)
-
-	private val glState = inject(GlState)
-
 	private val _contentBounds = Rectangle()
 	override val contentBounds: RectangleRo
 		get() {
@@ -98,7 +93,7 @@ class GlScrollRect(
 
 	init {
 		watch(style) {
-			maskClip.style.borderRadii = it.borderRadius
+			maskClip.style.borderRadii = it.borderRadii
 		}
 	}
 
@@ -117,8 +112,8 @@ class GlScrollRect(
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val w = explicitWidth ?: 100f
 		val h = explicitHeight ?: 100f
-		val borderRadius = style.borderRadius
-		if (borderRadius.isEmpty()) {
+		val borderRadii = style.borderRadii
+		if (borderRadii.isEmpty()) {
 			// An optimized case where we can just scale the mask instead of recreating the mesh.
 			maskClip.setSize(1f, 1f)
 			maskClip.setScaling(w, h)
@@ -134,18 +129,18 @@ class GlScrollRect(
 		return maskClip.intersectsGlobalRay(globalRay, intersection)
 	}
 
-	private val localViewport = MinMax()
+	private val contentsClip = MinMax()
 
-	override fun draw(viewport: MinMaxRo) {
+	override fun draw(clip: MinMaxRo) {
 		StencilUtil.mask(glState.batch, gl, {
 			if (maskClip.visible) {
-				maskClip.render(viewport)
+				maskClip.render(clip)
 			}
 		}) {
-			localToWindow(localViewport.set(0f, 0f, _bounds.width, _bounds.height))
-			localViewport.intersection(viewport)
+			localToCanvas(contentsClip.set(0f, 0f, _bounds.width, _bounds.height))
+			contentsClip.intersection(clip)
 
-			contents.render(localViewport)
+			contents.render(contentsClip)
 		}
 	}
 }
@@ -153,7 +148,7 @@ class GlScrollRect(
 class ScrollRectStyle : StyleBase() {
 
 	override val type: StyleType<ScrollRectStyle> = Companion
-	var borderRadius: CornersRo by prop(Corners())
+	var borderRadii: CornersRo by prop(Corners())
 
 	companion object : StyleType<ScrollRectStyle>
 }
@@ -168,15 +163,15 @@ fun UiComponentRo.scissorLocal(inner: () -> Unit) {
 
 /**
  * Wraps the [inner] call in a scissor rectangle.
- * The coordinates will be converted to global automatically.
+ * The local coordinates will be converted to gl window coordinates automatically.
  * Note that this will not work properly for rotated components.
  */
 fun UiComponentRo.scissorLocal(x: Float, y: Float, width: Float, height: Float, inner: () -> Unit) {
 	val tmp = Vector3.obtain()
-	localToWindow(tmp.set(x, y, 0f))
+	localToCanvas(tmp.set(x, y, 0f))
 	val sX1 = tmp.x
 	val sY1 = tmp.y
-	localToWindow(tmp.set(width, height, 0f))
+	localToCanvas(tmp.set(width, height, 0f))
 	val sX2 = tmp.x
 	val sY2 = tmp.y
 	Vector3.free(tmp)
@@ -184,6 +179,6 @@ fun UiComponentRo.scissorLocal(x: Float, y: Float, width: Float, height: Float, 
 	val glState = inject(GlState)
 	val intR = IntRectangle.obtain()
 	val h = glState.getViewport(intR).height
-	glState.scissor(minOf(sX1, sX2).roundToInt(), (h - maxOf(sY1, sY2)).roundToInt(), abs(sX2 - sX1).roundToInt(), abs(sY2 - sY1).roundToInt(), inner)
+	glState.setScissor(minOf(sX1, sX2).roundToInt(), (h - maxOf(sY1, sY2)).roundToInt(), abs(sX2 - sX1).roundToInt(), abs(sY2 - sY1).roundToInt(), inner)
 	IntRectangle.free(intR)
 }

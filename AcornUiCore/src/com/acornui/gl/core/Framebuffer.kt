@@ -143,13 +143,13 @@ class Framebuffer(
 		previousFramebuffer = glState.framebuffer
 		glState.framebuffer = framebufferHandle
 		glState.getViewport(previousViewport)
-		glState.viewport(_viewport)
+		glState.setViewport(_viewport)
 	}
 
 	fun end() {
 		glState.batch.flush()
 		glState.framebuffer = previousFramebuffer
-		glState.viewport(previousViewport)
+		glState.setViewport(previousViewport)
 		previousFramebuffer = null
 	}
 

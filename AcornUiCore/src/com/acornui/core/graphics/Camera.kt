@@ -59,7 +59,7 @@ interface CameraRo {
 	}
 
 	/**
-	 * Projects the {@link Vector3} given in global space to screen coordinates. The screen coordinate system has its
+	 * Projects the {@link Vector3} given in global space to window coordinates. The window coordinate system has its
 	 * origin in the top left, with the y-axis pointing downwards and the x-axis pointing to the right.
 	 *
 	 * @param viewportX the coordinate of the top left corner of the viewport in glViewport coordinates.
@@ -134,13 +134,10 @@ interface CameraRo {
 	val invCombined: Matrix4Ro
 
 	/**
-	 * Translates a point given in screen coordinates to global space. It's the same as GLU gluUnProject, but
-	 * does not rely on OpenGL. The x- and y-coordinate of vec are assumed to be in screen coordinates (origin is the
-	 * top left corner, y pointing down, x pointing to the right) as reported by the canvas coordinates in
-	 * input events. A z-coordinate of 0 will return a point on the near plane, a z-coordinate
-	 * of 1 will return a point on the far plane. This method allows you to specify the viewport position and
-	 * dimensions in the coordinate system expected by {@link GL20#glViewport(int, int, int, int)}, with the origin in
-	 * the top left corner of the screen.
+	 * Translates a point given in window coordinates to global space. The x- and y-coordinate of vec are assumed to be
+	 * in window coordinates (origin is the top left corner, y pointing down, x pointing to the right) as reported by
+	 * the canvas coordinates in input events. A z-coordinate of 0 will return a point on the near plane, a z-coordinate
+	 * of 1 will return a point on the far plane.
 	 * @param canvasCoords the point in canvas coordinates (origin top left). This will be mutated.
 	 * @param viewportX the coordinate of the bottom left corner of the viewport in glViewport coordinates.
 	 * @param viewportY the coordinate of the bottom left corner of the viewport in glViewport coordinates.
@@ -150,6 +147,12 @@ interface CameraRo {
 	fun canvasToGlobal(canvasCoords: Vector3, viewportX: Float, viewportY: Float, viewportWidth: Float, viewportHeight: Float): Vector3
 
 }
+
+fun CameraRo.getPickRay(canvasX: Float, canvasY: Float, viewport: MinMaxRo, out: Ray): Ray = getPickRay(canvasX, canvasY, viewport.xMin, viewport.yMin, viewport.width, viewport.height, out)
+
+fun CameraRo.getPickRay(canvasX: Float, canvasY: Float, viewport: IntRectangleRo, out: Ray): Ray = getPickRay(canvasX, canvasY, viewport.x.toFloat(), viewport.y.toFloat(), viewport.width.toFloat(), viewport.height.toFloat(), out)
+
+fun CameraRo.project(globalCoords: Vector3, viewport: MinMaxRo): Vector3 = project(globalCoords, viewport.xMin, viewport.yMin, viewport.width, viewport.height)
 
 interface Camera : CameraRo {
 
@@ -162,6 +165,7 @@ interface Camera : CameraRo {
 	 * vector remain orthonormal.
 	 */
 	fun setDirection(x: Float = direction.x, y: Float = direction.y, z: Float = direction.z, keepUpOrthonormal: Boolean = true)
+
 	fun setDirection(value: Vector3Ro, keepUpOrthonormal: Boolean = true) = setDirection(value.x, value.y, value.z, keepUpOrthonormal)
 
 	fun setUp(x: Float = up.x, y: Float = up.y, z: Float = up.z)
@@ -553,8 +557,7 @@ abstract class CameraBase : Camera {
 }
 
 fun Window.autoCenterCamera(camera: Camera): Disposable {
-	val windowResizedHandler = {
-		_: Float, _: Float, _: Boolean ->
+	val windowResizedHandler = { _: Float, _: Float, _: Boolean ->
 		centerCamera(camera)
 	}
 	sizeChanged.add(windowResizedHandler)

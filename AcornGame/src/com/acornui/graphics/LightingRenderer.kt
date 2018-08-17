@@ -119,7 +119,7 @@ class LightingRenderer(
 		gl.clearColor(Color.BLUE) // Blue represents a z / w depth of 1.0. (The camera's far position)
 		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT)
 		if (directionalLight.color != Color.BLACK) {
-			glState.scissor(1, 1, directionalShadowsFbo.width - 2, directionalShadowsFbo.height - 2) {
+			glState.setScissor(1, 1, directionalShadowsFbo.width - 2, directionalShadowsFbo.height - 2) {
 				if (directionalLightCamera.update(directionalLight.direction, camera)) {
 					gl.uniformMatrix4fv(directionalShadowMapShader.getRequiredUniformLocation("u_directionalLightMvp"), false, directionalLightCamera.combined)
 				}

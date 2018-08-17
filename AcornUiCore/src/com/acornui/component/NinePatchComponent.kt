@@ -22,10 +22,8 @@ import com.acornui.core.assets.CachedGroup
 import com.acornui.core.assets.cachedGroup
 import com.acornui.core.assets.loadAndCache
 import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
-import com.acornui.gl.core.GlState
 import com.acornui.gl.core.putIndices
 import com.acornui.gl.core.putIndicesReversed
 import com.acornui.gl.core.putVertex
@@ -81,7 +79,6 @@ class NinePatchComponent(owner: Owned) : UiComponentImpl(owner) {
 	//    8   9   10  11
 	//    12  13  14  15
 
-	private val glState = inject(GlState)
 	private val indices = intArrayOf(0, 1, 5, 5, 4, 0, 1, 2, 6, 6, 5, 1, 2, 3, 7, 7, 6, 2, 4, 5, 9, 9, 8, 4, 5, 6, 10, 10, 9, 5, 6, 7, 11, 11, 10, 6, 8, 9, 13, 13, 12, 8, 9, 10, 14, 14, 13, 9, 10, 11, 15, 15, 14, 10)
 
 	private val columns = FloatArray(4)
@@ -252,7 +249,7 @@ class NinePatchComponent(owner: Owned) : UiComponentImpl(owner) {
 		}
 	}
 
-	override fun draw(viewport: MinMaxRo) {
+	override fun draw(clip: MinMaxRo) {
 		val texture = texture
 		if (texture == null || width <= 0f || height <= 0f) return
 		glState.camera(camera)

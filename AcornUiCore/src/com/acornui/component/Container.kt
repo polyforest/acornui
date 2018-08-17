@@ -196,12 +196,12 @@ open class ContainerImpl(
 		}
 	}
 
-	override fun draw(viewport: MinMaxRo) {
+	override fun draw(clip: MinMaxRo) {
 		// The children list shouldn't be modified during a draw, so no reason to do a safe iteration here.
 		for (i in 0.._children.lastIndex) {
 			val child = _children[i]
 			if (child.visible)
-				child.render(viewport)
+				child.render(clip)
 		}
 	}
 

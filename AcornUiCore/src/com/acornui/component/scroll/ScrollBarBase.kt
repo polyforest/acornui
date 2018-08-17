@@ -132,7 +132,7 @@ abstract class ScrollBarBase(owner: Owned) : ContainerImpl(owner) {
 
 	private fun trackDragHandler(event: DragInteractionRo) {
 		positionTmp.set(event.position)
-		windowToLocal(positionTmp)
+		canvasToLocal(positionTmp)
 		val newValue = getModelValue(positionTmp)
 		scrollModel.value = newValue
 	}

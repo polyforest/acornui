@@ -30,57 +30,18 @@ interface CameraElementRo : TransformableRo {
 	 *
 	 * Note: This is a heavy operation as it performs a Matrix4 inversion.
 	 */
-	fun windowToLocal(windowCoord: Vector2): Vector2
+	fun canvasToLocal(canvasCoord: Vector2): Vector2
+
+	@Deprecated("use canvasToLocal", ReplaceWith("canvasToLocal(windowCoord)"), DeprecationLevel.ERROR)
+	fun windowToLocal(windowCoord: Vector2): Vector2 = canvasToLocal(windowCoord)
 
 	/**
 	 * Converts a local coordinate to window coordinates.
 	 */
-	fun localToWindow(localCoord: Vector3): Vector3
+	fun localToCanvas(localCoord: Vector3): Vector3
 
-	/**
-	 * Converts a bounding rectangle from local to window coordinates.
-	 */
-	fun localToWindow(minMax: MinMax): MinMax {
-		val tmp1 =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)
-		val tmp2 =  Vector3.obtain().set(minMax.xMax, minMax.yMax, 0f)
-		val tmp =  Vector3.obtain()
-		minMax.inf()
-		localToWindow(tmp.set(tmp1))
-		minMax.ext(tmp.x, tmp.y)
-		localToWindow(tmp.set(tmp2.x, tmp1.y, 0f))
-		minMax.ext(tmp.x, tmp.y)
-		localToWindow(tmp.set(tmp2))
-		minMax.ext(tmp.x, tmp.y)
-		localToWindow(tmp.set(tmp1.x, tmp2.y, 0f))
-		minMax.ext(tmp.x, tmp.y)
-		Vector3.free(tmp1)
-		Vector3.free(tmp2)
-		Vector3.free(tmp)
-		return minMax
-	}
-
-	/**
-	 * Converts a bounding rectangle from window to local coordinates.
-	 * Warning: this does require a matrix inversion calculation, which is a fairly expensive operation.
-	 */
-	fun windowToLocal(minMax: MinMax): MinMax {
-		val tmp1 =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)
-		val tmp2 =  Vector3.obtain().set(minMax.xMax, minMax.yMax, 0f)
-		val tmp =  Vector2.obtain()
-		minMax.inf()
-		windowToLocal(tmp.set(tmp1.x, tmp1.y))
-		minMax.ext(tmp.x, tmp.y)
-		windowToLocal(tmp.set(tmp2.x, tmp1.y))
-		minMax.ext(tmp.x, tmp.y)
-		windowToLocal(tmp.set(tmp2.x, tmp2.y))
-		minMax.ext(tmp.x, tmp.y)
-		windowToLocal(tmp.set(tmp1.x, tmp2.y))
-		minMax.ext(tmp.x, tmp.y)
-		Vector3.free(tmp1)
-		Vector3.free(tmp2)
-		Vector2.free(tmp)
-		return minMax
-	}
+	@Deprecated("use localToCanvas", ReplaceWith("localToCanvas(localCoord)"), DeprecationLevel.ERROR)
+	fun localToWindow(localCoord: Vector3): Vector3 = localToCanvas(localCoord)
 
 	/**
 	 * Returns the camera to be used for this component.
@@ -97,9 +58,52 @@ interface CameraElement : CameraElementRo, Transformable {
 	/**
 	 * Overrides the camera to be used for this component (and its children).
 	 * Set to null to switch back to the inherited camera.
-	 *
-	 * Note that this does NOT request a render (so it is safe to call within a draw call).
-	 * If this is set outside of a render, window.requestRender should be invoked.
 	 */
 	var cameraOverride: CameraRo?
+
+}
+
+/**
+ * Converts a bounding rectangle from local to window coordinates.
+ */
+fun CameraElementRo.localToCanvas(minMax: MinMax): MinMax {
+	val tmp1 =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)
+	val tmp2 =  Vector3.obtain().set(minMax.xMax, minMax.yMax, 0f)
+	val tmp =  Vector3.obtain()
+	minMax.inf()
+	localToCanvas(tmp.set(tmp1))
+	minMax.ext(tmp.x, tmp.y)
+	localToCanvas(tmp.set(tmp2.x, tmp1.y, 0f))
+	minMax.ext(tmp.x, tmp.y)
+	localToCanvas(tmp.set(tmp2))
+	minMax.ext(tmp.x, tmp.y)
+	localToCanvas(tmp.set(tmp1.x, tmp2.y, 0f))
+	minMax.ext(tmp.x, tmp.y)
+	Vector3.free(tmp1)
+	Vector3.free(tmp2)
+	Vector3.free(tmp)
+	return minMax
+}
+
+/**
+ * Converts a bounding rectangle from window to local coordinates.
+ * Warning: this does require a matrix inversion calculation, which is a fairly expensive operation.
+ */
+fun CameraElementRo.canvasToLocal(minMax: MinMax): MinMax {
+	val tmp1 =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)
+	val tmp2 =  Vector3.obtain().set(minMax.xMax, minMax.yMax, 0f)
+	val tmp =  Vector2.obtain()
+	minMax.inf()
+	canvasToLocal(tmp.set(tmp1.x, tmp1.y))
+	minMax.ext(tmp.x, tmp.y)
+	canvasToLocal(tmp.set(tmp2.x, tmp1.y))
+	minMax.ext(tmp.x, tmp.y)
+	canvasToLocal(tmp.set(tmp2.x, tmp2.y))
+	minMax.ext(tmp.x, tmp.y)
+	canvasToLocal(tmp.set(tmp1.x, tmp2.y))
+	minMax.ext(tmp.x, tmp.y)
+	Vector3.free(tmp1)
+	Vector3.free(tmp2)
+	Vector2.free(tmp)
+	return minMax
 }

@@ -19,9 +19,7 @@ package com.esotericsoftware.spine.component
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponentImpl
 import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
 import com.acornui.core.time.onTick
-import com.acornui.gl.core.GlState
 import com.acornui.math.MinMaxRo
 
 
@@ -32,8 +30,6 @@ import com.acornui.math.MinMaxRo
 class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 
 	var flipY = true
-
-	private val glState = inject(GlState)
 
 	private val _children = ArrayList<SkeletonComponent>()
 
@@ -105,7 +101,7 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 		window.requestRender()
 	}
 
-	override fun draw(viewport: MinMaxRo) {
+	override fun draw(clip: MinMaxRo) {
 		val concatenatedTransform = concatenatedTransform
 		glState.camera(camera, concatenatedTransform)
 		val concatenatedColorTint = concatenatedColorTint

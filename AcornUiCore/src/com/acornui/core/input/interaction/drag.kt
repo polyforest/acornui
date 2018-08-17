@@ -374,7 +374,7 @@ class DragInteraction : InteractionEventBase(), DragInteractionRo {
 	 */
 	override val positionLocal: Vector2
 		get() {
-			return currentTarget.windowToLocal(_positionLocal.set(position))
+			return currentTarget.canvasToLocal(_positionLocal.set(position))
 		}
 
 	override fun clear() {

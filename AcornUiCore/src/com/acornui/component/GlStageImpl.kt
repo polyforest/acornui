@@ -17,10 +17,7 @@
 package com.acornui.component
 
 import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
 import com.acornui.core.focus.Focusable
-import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.GlState
 import com.acornui.math.Bounds
 import com.acornui.math.MinMaxRo
 
@@ -28,9 +25,6 @@ import com.acornui.math.MinMaxRo
  * @author nbilyk
  */
 open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(owner), Focusable {
-
-	private val gl = inject(Gl20)
-	private val glState = inject(GlState)
 
 	init {
 		focusEnabled = true
@@ -41,7 +35,7 @@ open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(
 
 	protected open val windowResizedHandler: (Float, Float, Boolean) -> Unit = {
 		newWidth: Float, newHeight: Float, isUserInteraction: Boolean ->
-		glState.viewport(0, 0, (newWidth * window.scaleX).toInt(), (newHeight * window.scaleY).toInt())
+		glState.setViewport(0, 0, (newWidth * window.scaleX).toInt(), (newHeight * window.scaleY).toInt())
 		invalidate(ValidationFlags.LAYOUT)
 	}
 
@@ -63,9 +57,9 @@ open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(
 		out.set(w, h)
 	}
 
-	override fun render(viewport: MinMaxRo) {
+	override fun render(clip: MinMaxRo) {
 		glState.batch.resetRenderCount()
-		super.render(viewport)
+		super.render(clip)
 		glState.batch.flush()
 	}
 
