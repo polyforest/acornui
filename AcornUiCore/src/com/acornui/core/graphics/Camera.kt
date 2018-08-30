@@ -68,7 +68,8 @@ interface CameraRo {
 	 * @param viewportHeight the height of the viewport in pixels
 	 */
 	fun project(globalCoords: Vector3, viewportX: Float, viewportY: Float, viewportWidth: Float, viewportHeight: Float): Vector3 {
-		combined.prj(globalCoords)
+		combined.prj(globalCoords) // Global coords become clip coords.
+		// Convert clip coords to canvas coords.
 		globalCoords.x = viewportWidth * (globalCoords.x + 1f) * 0.5f + viewportX
 		globalCoords.y = viewportHeight * (-globalCoords.y + 1f) * 0.5f + viewportY
 		globalCoords.z = (globalCoords.z + 1f) * 0.5f

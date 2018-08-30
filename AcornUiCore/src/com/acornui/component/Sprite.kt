@@ -161,7 +161,7 @@ class Sprite {
 
 	/**
 	 * Updates this Sprite's local vertices.
-	 * If this is used directly, [updateWorldVertices] should not be used, and the [GlState.camera] method should
+	 * If this is used directly, [updateWorldVertices] should not be used, and the [GlState.setCamera] method should
 	 * be supplied with the world transformation matrix.
 	 *
 	 * @param width The width of the sprite.
@@ -209,7 +209,7 @@ class Sprite {
 	 * Draws this sprite.
 	 * Remember to set the camera on the [GlState] object before drawing.
 	 * If [updateVertices] was used (and therefore no world transformation), that world transform matrix must be
-	 * supplied to [GlState.camera] first.
+	 * supplied to [GlState.setCamera] first.
 	 */
 	fun draw(glState: GlState, colorTint: ColorRo) {
 		if (texture == null || colorTint.a <= 0f || width == 0f || height == 0f) return // Nothing to draw

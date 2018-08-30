@@ -116,7 +116,7 @@ open class StaticMeshComponent(
 	override fun draw(clip: MinMaxRo) {
 		val mesh = mesh ?: return
 		glState.batch.flush()
-		glState.camera(camera, concatenatedTransform) // Use the concatenated transform as the model matrix.
+		glState.setCamera(camera, concatenatedTransform) // Use the concatenated transform as the model matrix.
 		mesh.render()
 	}
 

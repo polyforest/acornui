@@ -37,11 +37,6 @@ interface LayoutElementRo : BasicLayoutElementRo, TransformableRo {
 
 	/**
 	 * Returns true if this primitive intersects with the provided ray (in world coordinates)
-	 */
-	fun intersectsGlobalRay(globalRay: RayRo): Boolean
-
-	/**
-	 * Returns true if this primitive intersects with the provided ray (in world coordinates)
 	 * If there was an intersection, the intersection vector will be set to the intersection point.
 	 *
 	 * @param globalRay The ray (in world coordinates) to cast.
@@ -80,6 +75,15 @@ interface LayoutElementRo : BasicLayoutElementRo, TransformableRo {
 	 */
 	val maxHeight: Float?
 }
+
+private val tmpVec = Vector3()
+
+/**
+ * Returns true if this primitive intersects with the provided ray (in world coordinates)
+ *
+ * @return Returns true if the ray intersects with the bounding box of this layout element.
+ */
+fun LayoutElementRo.intersectsGlobalRay(globalRay: RayRo): Boolean = intersectsGlobalRay(globalRay, tmpVec)
 
 fun LayoutElementRo.clampWidth(value: Float?): Float? {
 	return sizeConstraints.width.clamp(value)

@@ -134,23 +134,23 @@ class Framebuffer(
 	fun setViewport(x: Int, y: Int, width: Int, height: Int) {
 		_viewport.set(x, y, width, height)
 	}
-	private var previousFramebuffer: GlFramebufferRef? = null
+	private var previousFramebuffer = FrameBufferInfo()
 
 	private val previousViewport = IntRectangle()
 
 	fun begin() {
 		glState.batch.flush()
-		previousFramebuffer = glState.framebuffer
-		glState.framebuffer = framebufferHandle
+		glState.getFramebuffer(previousFramebuffer)
+		glState.setFramebuffer(framebufferHandle, width, height, 1f, 1f)
 		glState.getViewport(previousViewport)
 		glState.setViewport(_viewport)
 	}
 
 	fun end() {
 		glState.batch.flush()
-		glState.framebuffer = previousFramebuffer
+		glState.setFramebuffer(previousFramebuffer)
 		glState.setViewport(previousViewport)
-		previousFramebuffer = null
+		previousFramebuffer.clear()
 	}
 
 	/**

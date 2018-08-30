@@ -252,7 +252,7 @@ class NinePatchComponent(owner: Owned) : UiComponentImpl(owner) {
 	override fun draw(clip: MinMaxRo) {
 		val texture = texture
 		if (texture == null || width <= 0f || height <= 0f) return
-		glState.camera(camera)
+		glState.setCamera(camera)
 		glState.setTexture(texture)
 		glState.blendMode(blendMode, premultipliedAlpha = false)
 

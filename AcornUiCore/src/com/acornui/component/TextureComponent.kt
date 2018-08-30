@@ -171,7 +171,7 @@ open class TextureComponent(owner: Owned) : UiComponentImpl(owner) {
 	}
 
 	override fun draw(clip: MinMaxRo) {
-		glState.camera(camera)
+		glState.setCamera(camera)
 		sprite.draw(glState, concatenatedColorTint)
 	}
 

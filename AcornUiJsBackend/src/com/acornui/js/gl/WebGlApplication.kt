@@ -85,7 +85,7 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 	}
 
 	protected open val glStateTask by BootTask {
-		set(GlState, GlState(get(Gl20)))
+		set(GlState, GlState(get(Gl20), get(Window)))
 	}
 
 	protected open val textureLoaderTask by BootTask {

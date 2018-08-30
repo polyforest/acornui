@@ -436,7 +436,6 @@ class Rectangle(
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
-
 		other as RectangleRo
 
 		if (x != other.x) return false

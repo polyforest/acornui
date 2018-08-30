@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2015 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import com.acornui.collection.arrayListPool
 import com.acornui.component.layout.LayoutData
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.SizeConstraintsRo
-import com.acornui.component.layout.TransformableRo
+import com.acornui.component.layout.intersectsGlobalRay
 import com.acornui.component.style.*
 import com.acornui.core.*
 import com.acornui.core.assets.AssetManager
@@ -51,6 +51,7 @@ import com.acornui.signal.Signal2
 import com.acornui.signal.StoppableSignal
 import kotlin.collections.set
 import kotlin.math.round
+import kotlin.properties.Delegates
 
 @DslMarker
 @Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE)
@@ -295,13 +296,12 @@ open class UiComponentImpl(
 
 	private val defaultCamera = inject(Camera)
 
-	private var _viewport: RectangleRo = RectangleRo.EMPTY
+	protected var _viewport: RectangleRo = RectangleRo.EMPTY
 
 	/**
-	 * Returns the viewport (in canvas coordinates, not screen coordinates) this component will use for UI.
-	 * (Typically the full window rect, but may change if part of a Scene)
+	 * Returns the viewport (in canvas coordinates, not gl window coordinates) this component will use for UI.
 	 */
-	override val viewport: RectangleRo
+	final override val viewport: RectangleRo
 		get() = _viewport
 
 	// Validatable Properties
@@ -331,7 +331,6 @@ open class UiComponentImpl(
 	protected var _bounds = Bounds()
 	protected var _explicitWidth: Float? = null
 	protected var _explicitHeight: Float? = null
-	protected var _layoutData: LayoutData? = null
 	protected val _explicitSizeConstraints: SizeConstraints = SizeConstraints()
 	protected val _sizeConstraints: SizeConstraints = SizeConstraints()
 
@@ -395,6 +394,8 @@ open class UiComponentImpl(
 	final override var isFocusContainer by validationProp(false, ValidationFlags.FOCUS_ORDER)
 	protected val focusManager = inject(FocusManager)
 
+	private val rayTmp = Ray()
+
 	init {
 		owner.disposed.add(this::ownerDisposedHandler)
 		val r = this
@@ -414,6 +415,7 @@ open class UiComponentImpl(
 				addNode(INTERACTIVITY_MODE, r::updateInheritedInteractivityMode)
 				addNode(FOCUS_ORDER, r::updateFocusOrder)
 				addNode(CAMERA, r::updateCamera)
+				addNode(VIEWPORT, r::updateViewport)
 			}
 		}
 
@@ -431,10 +433,8 @@ open class UiComponentImpl(
 	//-----------------------------------------------
 
 	override fun canvasToLocal(canvasCoord: Vector2): Vector2 {
-		val ray = Ray.obtain()
-		globalToLocal(camera.getPickRay(canvasCoord.x, canvasCoord.y, viewport, ray))
-		rayToPlane(ray, canvasCoord)
-		Ray.free(ray)
+		globalToLocal(camera.getPickRay(canvasCoord.x, canvasCoord.y, viewport, rayTmp))
+		rayToPlane(rayTmp, canvasCoord)
 		return canvasCoord
 	}
 
@@ -465,7 +465,7 @@ open class UiComponentImpl(
 	}
 
 	/**
-	 * Updates the camera and viewport.
+	 * Updates the camera.
 	 */
 	protected open fun updateCamera() {
 		_camera = if (cameraOverride == null) {
@@ -473,6 +473,12 @@ open class UiComponentImpl(
 		} else {
 			cameraOverride!!
 		}
+	}
+
+	/**
+	 * Sets the viewport rectangle.
+	 */
+	protected open fun updateViewport() {
 		_viewport = parent?.viewport ?: stage.viewport
 	}
 
@@ -487,13 +493,6 @@ open class UiComponentImpl(
 		val b = intersectsGlobalRay(ray)
 		Ray.free(ray)
 		return b
-	}
-
-	override fun intersectsGlobalRay(globalRay: RayRo): Boolean {
-		val v = Vector3.obtain()
-		val ret = intersectsGlobalRay(globalRay, v)
-		Vector3.free(v)
-		return ret
 	}
 
 	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
@@ -582,7 +581,7 @@ open class UiComponentImpl(
 			return includeInLayout && visible
 		}
 
-	override var layoutInvalidatingFlags: Int = DEFAULT_LAYOUT_INVALIDATING_FLAGS
+	override var layoutInvalidatingFlags: Int = defaultLayoutInvalidatingFlags
 
 	final override var includeInLayout: Boolean by validationProp(true, ValidationFlags.LAYOUT_ENABLED)
 
@@ -604,21 +603,12 @@ open class UiComponentImpl(
 		Unit
 	}
 
-	override var layoutData: LayoutData?
-		get() {
-			return _layoutData
-		}
-		set(value) {
-			if (_layoutData == value) return
-			if (_layoutData != null) {
-				_layoutData!!.changed.remove(this::layoutDataChangedHandler)
-			}
-			_layoutData = value
-			if (_layoutData != null) {
-				_layoutData!!.changed.add(this::layoutDataChangedHandler)
-			}
-			invalidate(ValidationFlags.LAYOUT)
-		}
+	override var layoutData: LayoutData? by Delegates.observable<LayoutData?>(null) {
+		_, old, new ->
+		old?.changed?.remove(this::layoutDataChangedHandler)
+		new?.changed?.add(this::layoutDataChangedHandler)
+		invalidate(ValidationFlags.LAYOUT)
+	}
 
 	/**
 	 * Returns the measured size constraints, bound by the explicit size constraints.
@@ -881,10 +871,9 @@ open class UiComponentImpl(
 	// Interactivity utility methods
 	//-----------------------------------------------
 
-	private val rayTmp = Ray()
-
 	override fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo?): MutableList<UiComponentRo> {
 		if (!visible || (onlyInteractive && !interactivityEnabled)) return out
+		
 		val ray = rayCache ?: camera.getPickRay(canvasX, canvasY, viewport, rayTmp)
 		if (interactivityMode == InteractivityMode.ALWAYS || intersectsGlobalRay(ray)) {
 			out.add(this)
@@ -1392,9 +1381,18 @@ open class UiComponentImpl(
 	companion object {
 		private val quat: Quaternion = Quaternion()
 
-		private const val DEFAULT_LAYOUT_INVALIDATING_FLAGS = ValidationFlags.HIERARCHY_ASCENDING or
+		var defaultLayoutInvalidatingFlags = ValidationFlags.HIERARCHY_ASCENDING or
 				ValidationFlags.LAYOUT or
 				ValidationFlags.LAYOUT_ENABLED
+
+		var defaultCascadingFlags = ValidationFlags.HIERARCHY_DESCENDING or
+				ValidationFlags.STYLES or
+				ValidationFlags.CONCATENATED_COLOR_TRANSFORM or
+				ValidationFlags.CONCATENATED_TRANSFORM or
+				ValidationFlags.INTERACTIVITY_MODE or
+				ValidationFlags.FOCUS_ORDER or
+				ValidationFlags.CAMERA or
+				ValidationFlags.VIEWPORT
 	}
 }
 

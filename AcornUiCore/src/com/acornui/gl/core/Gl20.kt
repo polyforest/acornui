@@ -1071,7 +1071,7 @@ interface Gl20 {
 	/**
 	 * Specifies the affine transformation of x and y from normalized device coordinates to screen coordinates.
 	 *
-	 * Note - if the current frame buffer is the window, the width and height should be multiplied by
+	 * Note - if the current frame buffer is the window, the values should be multiplied by
 	 * [com.acornui.core.graphics.Window.scaleX] and [com.acornui.core.graphics.Window.scaleY]
 	 *
 	 * @param x Specify the lower left corner of the viewport rectangle, in pixels. The initial value is (0,0).

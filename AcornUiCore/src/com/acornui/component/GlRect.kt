@@ -475,7 +475,7 @@ open class GlRect(
 			simpleModeObj.apply {
 				val batch = glState.batch
 				glState.setTexture(glState.whitePixel)
-				glState.camera(camera)
+				glState.setCamera(camera)
 				glState.blendMode(BlendMode.NORMAL, false)
 				batch.begin()
 				if (fillColor.a > 0f) {

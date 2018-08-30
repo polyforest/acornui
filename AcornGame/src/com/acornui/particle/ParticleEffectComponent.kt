@@ -105,7 +105,7 @@ class ParticleEffectComponent(
 
 	override fun draw(clip: MinMaxRo) {
 		val effect = _effect ?: return
-		glState.camera(camera, concatenatedTransform)
+		glState.setCamera(camera, concatenatedTransform)
 		effect.render(concatenatedColorTint)
 	}
 

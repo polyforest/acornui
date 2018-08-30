@@ -282,6 +282,10 @@ class IntRectangle(
 		return result
 	}
 
+	override fun toString(): String {
+		return "IntRectangle(x=$x, y=$y, width=$width, height=$height)"
+	}
+
 
 	companion object {
 		private val pool = ClearableObjectPool { IntRectangle() }

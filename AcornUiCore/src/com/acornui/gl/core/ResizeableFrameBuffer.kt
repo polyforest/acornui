@@ -100,7 +100,7 @@ class ResizeableFrameBuffer(override val injector: Injector, initialWidth: Int, 
 
 	/**
 	 * Renders the frame buffer to the screen.
-	 * Be sure to set [GlState.camera] before this call.
+	 * Be sure to set [GlState.setCamera] before this call.
 	 */
 	fun render(colorTint: ColorRo = Color.WHITE) {
 		sprite.draw(glState, colorTint)

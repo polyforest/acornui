@@ -21,10 +21,7 @@ import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
-import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.GlState
-import com.acornui.gl.core.ShaderBatch
-import com.acornui.gl.core.setScissor
+import com.acornui.gl.core.*
 import com.acornui.graphics.Color
 import com.acornui.math.*
 import kotlin.math.abs
@@ -178,7 +175,13 @@ fun UiComponentRo.scissorLocal(x: Float, y: Float, width: Float, height: Float, 
 
 	val glState = inject(GlState)
 	val intR = IntRectangle.obtain()
-	val h = glState.getViewport(intR).height
-	glState.setScissor(minOf(sX1, sX2).roundToInt(), (h - maxOf(sY1, sY2)).roundToInt(), abs(sX2 - sX1).roundToInt(), abs(sY2 - sY1).roundToInt(), inner)
+	glState.getViewport(intR)
+	glState.setScissor(
+			minOf(sX1, sX2).roundToInt(),
+			(intR.height - maxOf(sY1, sY2)).roundToInt(),
+			abs(sX2 - sX1).roundToInt(),
+			abs(sY2 - sY1).roundToInt(),
+			inner
+	)
 	IntRectangle.free(intR)
 }

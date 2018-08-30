@@ -24,6 +24,7 @@ import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.js.window.JsLocation
 import com.acornui.logging.Log
+import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
@@ -41,17 +42,27 @@ class WebGlWindowImpl(
 		config: WindowConfig,
 		private val gl: Gl20) : Window {
 
-	override val isActiveChanged: Signal1<Boolean> = Signal1()
-	override val isVisibleChanged: Signal1<Boolean> = Signal1()
-	override val sizeChanged: Signal3<Float, Float, Boolean> = Signal3()
-	override val scaleChanged: Signal2<Float, Float> = Signal2()
+	private val _isActiveChanged: Signal1<Boolean> = Signal1()
+	override val isActiveChanged: Signal<(Boolean) -> Unit>
+		get() = _isActiveChanged
+
+	private val _isVisibleChanged: Signal1<Boolean> = Signal1()
+	override val isVisibleChanged: Signal<(Boolean) -> Unit>
+		get() = _isVisibleChanged
+
+	private val _sizeChanged: Signal3<Float, Float, Boolean> = Signal3()
+	override val sizeChanged: Signal<(Float, Float, Boolean) -> Unit>
+		get() = _sizeChanged
+
+	private val _scaleChanged: Signal2<Float, Float> = Signal2()
+	override val scaleChanged: Signal<(Float, Float) -> Unit>
+		get() = _scaleChanged
 
 	private var _width: Float = 0f
 	private var _height: Float = 0f
 	private var sizeIsDirty: Boolean = true
 
 	// Visibility properties
-	private var _isVisible: Boolean = true
 	private var hiddenProp: String? = null
 	private val hiddenPropEventMap = hashMapOf(
 			"hidden" to "visibilitychange",
@@ -59,32 +70,27 @@ class WebGlWindowImpl(
 			"webkitHidden" to "webkitvisibilitychange",
 			"msHidden" to "msvisibilitychange")
 
-	private val visibilityChangeHandler = {
-		event: Event? ->
-		isVisible(document[hiddenProp!!] != true)
+	private val visibilityChangeHandler = { event: Event? ->
+		isVisible = document[hiddenProp!!] != true
 	}
 
 	// TODO: Study context loss
 	// getExtension( 'WEBGL_lose_context' ).loseContext();
-	private val webGlContextRestoredHandler = {
-		event: Event ->
+	private val webGlContextRestoredHandler = { event: Event ->
 		//		event.preventDefault()
 		Log.info("WebGL context lost")
 		requestRender()
 	}
 
-	private val blurHandler = {
-		_: Event ->
-		isActive(false)
+	private val blurHandler = { _: Event ->
+		isActive = false
 	}
 
-	private val focusHandler = {
-		_: Event ->
-		isActive(true)
+	private val focusHandler = { _: Event ->
+		isActive = true
 	}
 
-	private val resizeHandler = {
-		_: Event ->
+	private val resizeHandler = { _: Event ->
 		setSize(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat(), true)
 	}
 
@@ -140,28 +146,23 @@ class WebGlWindowImpl(
 		}
 	}
 
-	override fun isVisible(): Boolean {
-		return _isVisible
-	}
-
-	private fun isVisible(value: Boolean) {
-		if (_isVisible == value) return
-		_isVisible = value
-		isVisibleChanged.dispatch(value)
-	}
-
-	private var _isActive: Boolean = true
-
-	override val isActive: Boolean
-		get() {
-			return _isActive
+	private var _isVisible: Boolean = true
+	override var isVisible: Boolean
+		get() = _isVisible
+		set(value) {
+			if (_isVisible == value) return
+			_isVisible = value
+			_isVisibleChanged.dispatch(value)
 		}
 
-	private fun isActive(value: Boolean) {
-		if (_isActive == value) return
-		_isActive = value
-		isActiveChanged.dispatch(value)
-	}
+	private var _isActive: Boolean = true
+	override var isActive: Boolean
+		get() = _isActive
+		set(value) {
+			if (_isActive == value) return
+			_isActive = value
+			_isActiveChanged.dispatch(value)
+		}
 
 	override val width: Float
 		get() {
@@ -178,7 +179,7 @@ class WebGlWindowImpl(
 	override val scaleY: Float
 		get() = 1f
 
-	final override fun setSize(width: Float, height: Float) = setSize(width, height, false)
+	override fun setSize(width: Float, height: Float) = setSize(width, height, false)
 
 	private fun setSize(width: Float, height: Float, isUserInteraction: Boolean) {
 		if (_width == width && _height == height) return // no-op
@@ -189,7 +190,7 @@ class WebGlWindowImpl(
 			canvas.style.height = "${_height.toInt()}px"
 		}
 		sizeIsDirty = true
-		sizeChanged.dispatch(_width, _height, isUserInteraction)
+		_sizeChanged.dispatch(_width, _height, isUserInteraction)
 	}
 
 	override var continuousRendering: Boolean = false
@@ -247,7 +248,8 @@ class WebGlWindowImpl(
 		get() = _location
 
 	override fun dispose() {
-		sizeChanged.dispose()
+		_sizeChanged.dispose()
+		_isVisibleChanged.dispose()
 
 		window.removeEventListener("resize", resizeHandler)
 		canvas.removeEventListener("webglcontextlost", webGlContextRestoredHandler)

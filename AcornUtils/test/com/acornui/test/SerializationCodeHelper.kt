@@ -1,6 +1,7 @@
 package com.acornui.test
 
 
+import com.acornui.core.toUnderscoreCase
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
@@ -44,39 +45,48 @@ object SerializationCodeHelper {
 		var readProperties = ""
 		var constructorParams = ""
 		for (i in kClass.declaredMemberProperties) {
-			val s = i.returnType.toString()
-			val iName = i.name
-			val isConstructorParam = paramNames.contains(iName)
+			var type = i.returnType.toString()
+			var isNullable = false
+			if (type.endsWith("?")) {
+				isNullable = true
+				type = type.substring(0, type.length - 1)
+			}
+
+			val kotlinName = i.name
+			val jsonName = i.name.toUnderscoreCase()
+			val isConstructorParam = paramNames.contains(kotlinName)
 			val writeStr: String
-			val readStr: String
-			if (simpleMap.containsKey(s)) {
-				writeStr =  "writer.${simpleMap[s]}(\"$iName\", $iName)"
-				readStr = "$iName = reader.${simpleMap[s]}(\"$iName\")!!"
-			} else if (s.startsWith("kotlin.Array")) {
-				val eType = s.substring("kotlin.Array".length + 1, s.length - 1)
+			var readStr: String
+			if (simpleMap.containsKey(type)) {
+				writeStr =  "writer.${simpleMap[type]}(\"$jsonName\", $kotlinName)"
+				readStr = "$kotlinName = reader.${simpleMap[type]}(\"$jsonName\")"
+			} else if (type.startsWith("kotlin.Array")) {
+				val eType = type.substring("kotlin.Array".length + 1, type.length - 1)
 				val eSimpleType = eType.substringAfterLast('.').trimEnd('?')
-				writeStr =  "writer.array(\"$iName\", $iName, ${eSimpleType}Serializer)"
-				readStr = "$iName = reader.array2(\"$iName\", ${eSimpleType}Serializer)!!"
-			} else if (s.startsWith("java.util.ArrayList")) {
-				val eType = s.substring("java.util.ArrayList".length + 1, s.length - 1)
+				writeStr =  "writer.array(\"$jsonName\", $kotlinName, ${eSimpleType}Serializer)"
+				readStr = "$kotlinName = reader.array2(\"$jsonName\", ${eSimpleType}Serializer)"
+			} else if (type.startsWith("java.util.ArrayList")) {
+				val eType = type.substring("java.util.ArrayList".length + 1, type.length - 1)
 				val eSimpleType = eType.substringAfterLast('.').trimEnd('?')
-				writeStr =  "writer.array(\"$iName\", $iName, ${eSimpleType}Serializer)"
-				readStr = "$iName = reader.arrayList(\"$iName\", ${eSimpleType}Serializer)!!"
-			} else if (s.startsWith("kotlin.collections.MutableList")) {
-				val eType = s.substring("kotlin.collections.MutableList".length + 1, s.length - 1)
+				writeStr =  "writer.array(\"$jsonName\", $kotlinName, ${eSimpleType}Serializer)"
+				readStr = "$kotlinName = reader.arrayList(\"$jsonName\", ${eSimpleType}Serializer)"
+			} else if (type.startsWith("kotlin.collections.MutableList")) {
+				val eType = type.substring("kotlin.collections.MutableList".length + 1, type.length - 1)
 				val eSimpleType = eType.substringAfterLast('.').trimEnd('?')
-				writeStr =  "writer.array(\"$iName\", $iName, ${eSimpleType}Serializer)"
-				readStr = "$iName = reader.arrayList(\"$iName\", ${eSimpleType}Serializer)!!"
+				writeStr =  "writer.array(\"$jsonName\", $kotlinName, ${eSimpleType}Serializer)"
+				readStr = "$kotlinName = reader.arrayList(\"$jsonName\", ${eSimpleType}Serializer)"
 			} else {
-				var t = s
+				var t = type
 				val genericI = t.indexOf("<")
 				if (genericI != -1) {
 					t = t.substring(0, genericI)
 				}
 				t = t.substringAfterLast('.').trimEnd('?')
-				writeStr =  "writer.obj(\"$iName\", $iName, ${t}Serializer)"
-				readStr = "$iName = reader.obj(\"$iName\", ${t}Serializer)!!"
+				writeStr =  "writer.obj(\"$jsonName\", $kotlinName, ${t}Serializer)"
+				readStr = "$kotlinName = reader.obj(\"$jsonName\", ${t}Serializer)"
 			}
+			if (!isNullable)
+				readStr += "!!"
 			if (isConstructorParam) {
 				if (constructorParams.isNotEmpty()) constructorParams += ","
 				constructorParams += "\n\t\t\t$readStr"

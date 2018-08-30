@@ -237,7 +237,7 @@ open class LwjglApplication : ApplicationBase() {
 
 	protected open val glStateTask by BootTask {
 		get(Window) // Shaders need a window to be created first.
-		set(GlState, GlState(get(Gl20)))
+		set(GlState, GlState(get(Gl20), get(Window)))
 	}
 
 	protected open val mouseInputTask by BootTask {

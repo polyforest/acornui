@@ -72,5 +72,5 @@ fun UiComponentRo.clearCursor() {
 }
 
 fun UiComponentRo.cursor(cursor: Cursor, priority: Float = CursorPriority.ACTIVE): RollOverCursor {
-	return createOrReuseAttachment(RollOverCursor, { RollOverCursor(this, cursor, priority) })
+	return createOrReuseAttachment(RollOverCursor) { RollOverCursor(this, cursor, priority) }
 }

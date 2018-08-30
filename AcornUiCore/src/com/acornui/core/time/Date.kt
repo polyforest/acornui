@@ -16,6 +16,11 @@
 
 package com.acornui.core.time
 
+import com.acornui.serialization.From
+import com.acornui.serialization.Reader
+import com.acornui.serialization.To
+import com.acornui.serialization.Writer
+
 /**
  * @author nbilyk
  */
@@ -103,4 +108,14 @@ enum class Era {
 	 * Common era (Anno domini)
 	 */
 	CE
+}
+
+// TODO:
+object DateSerializer : To<Date?>, From<Date?> {
+	override fun read(reader: Reader): Date? {
+		return null
+	}
+
+	override fun Date?.write(writer: Writer) {
+	}
 }

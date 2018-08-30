@@ -18,8 +18,10 @@ package com.acornui.component
 
 import com.acornui._assert
 import com.acornui.collection.ConcurrentListImpl
+import com.acornui.component.layout.intersectsGlobalRay
 import com.acornui.core.ParentRo
 import com.acornui.core.di.Owned
+import com.acornui.core.graphics.getPickRay
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Ray
 import com.acornui.math.RayRo
@@ -167,14 +169,7 @@ open class ContainerImpl(
 	/**
 	 * These flags, when invalidated, will cascade down to this container's children.
 	 */
-	protected var cascadingFlags =
-			ValidationFlags.STYLES or
-					ValidationFlags.HIERARCHY_DESCENDING or
-					ValidationFlags.CONCATENATED_COLOR_TRANSFORM or
-					ValidationFlags.CONCATENATED_TRANSFORM or
-					ValidationFlags.INTERACTIVITY_MODE or
-					ValidationFlags.FOCUS_ORDER or
-					ValidationFlags.CAMERA
+	protected var cascadingFlags = defaultCascadingFlags
 
 	override fun onInvalidated(flagsInvalidated: Int) {
 		val flagsToCascade = flagsInvalidated and cascadingFlags
@@ -222,7 +217,7 @@ open class ContainerImpl(
 
 	override fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo?): MutableList<UiComponentRo> {
 		if (!visible || (onlyInteractive && inheritedInteractivityMode == InteractivityMode.NONE)) return out
-		val ray = rayCache ?: camera.getPickRay(canvasX, canvasY, 0f, 0f, window.width, window.height, rayTmp)
+		val ray = rayCache ?: camera.getPickRay(canvasX, canvasY, viewport, rayTmp)
 		if (interactivityMode == InteractivityMode.ALWAYS || intersectsGlobalRay(ray)) {
 			if ((returnAll || out.isEmpty())) {
 				_children.iterateReversed { child ->

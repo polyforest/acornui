@@ -912,7 +912,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 			if (lineEnd <= lineStart)
 				return
 
-			glState.camera(camera)
+			glState.setCamera(camera)
 			for (i in lineStart..lineEnd - 1) {
 				val line = _lines[i]
 				for (j in line.startIndex..line.endIndex - 1) {
@@ -920,7 +920,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 				}
 			}
 		} else {
-			glState.camera(camera)
+			glState.setCamera(camera)
 			for (i in 0.._textElements.lastIndex) {
 				_textElements[i].render(glState)
 			}

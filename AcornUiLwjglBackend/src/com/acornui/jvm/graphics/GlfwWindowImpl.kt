@@ -38,6 +38,7 @@ import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL20
 import org.lwjgl.system.MemoryStack.stackPush
 import org.lwjgl.system.MemoryUtil
+import kotlin.properties.Delegates
 
 
 /**
@@ -100,7 +101,7 @@ class GlfwWindowImpl(
 
 		GLFW.glfwSetWindowIconifyCallback(windowId) {
 			_, iconified ->
-			isVisible(!iconified)
+			isVisible = !iconified
 			requestRender()
 		}
 
@@ -116,7 +117,7 @@ class GlfwWindowImpl(
 
 		GLFW.glfwSetWindowFocusCallback(windowId) {
 			_, focused ->
-			isActive(focused)
+			isActive = focused
 		}
 
 		// Get the thread stack and push a new frame
@@ -190,29 +191,14 @@ class GlfwWindowImpl(
 		scaleChanged.dispatch(scaleX, scaleY)
 	}
 
-	private var _isVisible: Boolean = true
-
-	override fun isVisible(): Boolean {
-		return _isVisible
+	override var isVisible: Boolean by Delegates.observable(true) {
+		prop, old, new ->
+		isVisibleChanged.dispatch(new)
 	}
 
-	private fun isVisible(value: Boolean) {
-		if (_isVisible == value) return
-		_isVisible = value
-		isVisibleChanged.dispatch(value)
-	}
-
-	private var _isActive: Boolean = true
-
-	override val isActive: Boolean
-		get() {
-			return _isActive
-		}
-
-	private fun isActive(value: Boolean) {
-		if (_isActive == value) return
-		_isActive = value
-		isActiveChanged.dispatch(value)
+	override var isActive: Boolean by Delegates.observable(true) {
+		prop, old, new ->
+		isActiveChanged.dispatch(new)
 		sizeChanged.dispatch(_width, _height, false)
 	}
 

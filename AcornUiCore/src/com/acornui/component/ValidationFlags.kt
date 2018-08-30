@@ -47,9 +47,9 @@ object ValidationFlags {
 	const val FOCUS_ORDER: Int = 1 shl 12
 
 	const val CAMERA: Int = 1 shl 13
+	const val VIEWPORT: Int = 1 shl 14
 
-	const val RESERVED_1: Int = 1 shl 14
-	const val RESERVED_2: Int = 1 shl 15
+	const val RESERVED_1: Int = 1 shl 15
 }
 
 fun Validatable.invalidateSize() {

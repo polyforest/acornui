@@ -21,17 +21,12 @@ import com.acornui.core.focus.Focusable
 import com.acornui.math.Bounds
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Rectangle
-import com.acornui.math.RectangleRo
+import kotlin.math.roundToInt
 
 /**
  * @author nbilyk
  */
 open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(owner), Focusable {
-
-	private val _viewport = Rectangle()
-
-	override val viewport: RectangleRo
-		get() = _viewport
 
 	init {
 		focusEnabled = true
@@ -40,11 +35,26 @@ open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(
 		focusManager.init(this)
 	}
 
+	/**
+	 * It is not normal to set gl state within an event handler, but because this is the Stage, we can safely set
+	 * certain properties and expect them to act as the first values in the stack.
+	 *
+	 * Also note that event handlers can never be called within a render.
+	 */
 	protected open val windowResizedHandler: (Float, Float, Boolean) -> Unit = {
 		newWidth: Float, newHeight: Float, isUserInteraction: Boolean ->
-		glState.setViewport(0, 0, (newWidth * window.scaleX).toInt(), (newHeight * window.scaleY).toInt())
-		_viewport.set(0f, 0f, newWidth, newHeight)
-		invalidate(ValidationFlags.LAYOUT)
+		val w = (newWidth * window.scaleX).roundToInt()
+		val h = (newHeight * window.scaleY).roundToInt()
+		glState.setViewport(0, 0, w, h)
+		glState.setFramebuffer(null, w, h, window.scaleX, window.scaleY)
+		invalidate(ValidationFlags.LAYOUT or ValidationFlags.VIEWPORT)
+	}
+
+	private val stageViewport = Rectangle()
+
+	override fun updateViewport() {
+		// Updated in window resize.
+		_viewport = stageViewport.set(0f, 0f, window.width, window.height)
 	}
 
 	override fun onActivated() {

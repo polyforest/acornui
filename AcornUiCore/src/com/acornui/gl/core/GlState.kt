@@ -18,10 +18,7 @@ package com.acornui.gl.core
 
 import com.acornui.core.Disposable
 import com.acornui.core.di.DKey
-import com.acornui.core.graphics.BlendMode
-import com.acornui.core.graphics.CameraRo
-import com.acornui.core.graphics.Texture
-import com.acornui.core.graphics.rgbData
+import com.acornui.core.graphics.*
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.*
@@ -33,7 +30,8 @@ import com.acornui.reflect.observable
  * @author nbilyk
  */
 class GlState(
-		private val gl: Gl20
+		private val gl: Gl20,
+		window: Window
 ) : Disposable {
 
 	/**
@@ -128,7 +126,7 @@ class GlState(
 	private var _shader: ShaderProgram? = null
 
 	/**
-	 * Sets the shader program.  If this is being changed, it should be set before [camera].
+	 * Sets the shader program.  If this is being changed, it should be set before [setCamera].
 	 */
 	var shader: ShaderProgram?
 		get() = _shader
@@ -190,7 +188,9 @@ class GlState(
 	private var _viewport = IntRectangle()
 
 	/**
-	 * Gets the current viewport.
+	 * Gets the current viewport in gl window coordinates. (0,0 is bottom left, width, height includes dpi scaling)
+	 * This is not to be confused with UiComponent.viewport, which is in canvas coordinates.
+	 *
 	 * @param out Sets this rectangle to the current viewport.
 	 * @return Returns the [out] parameter.
 	 */
@@ -201,15 +201,10 @@ class GlState(
 	/**
 	 * @see Gl20.viewport
 	 */
-	fun setViewport(value: IntRectangleRo) = setViewport(value.x, value.y, value.width, value.height)
-
-	/**
-	 * @see Gl20.viewport
-	 */
 	fun setViewport(x: Int, y: Int, width: Int, height: Int) {
 		if (_viewport.x == x && _viewport.y == y && _viewport.width == width && _viewport.height == height) return
-		_viewport.set(x, y, width, height)
 		_batch.flush()
+		_viewport.set(x, y, width, height)
 		gl.viewport(x, y, width, height)
 	}
 
@@ -225,12 +220,25 @@ class GlState(
 			gl.disable(Gl20.SCISSOR_TEST)
 	}
 
+	private val _framebuffer = FrameBufferInfo(null, (window.width * window.scaleX).toInt(), (window.height * window.scaleY).toInt(), window.scaleX, window.scaleY)
+
 	/**
-	 * Sets the current framebuffer.
+	 * Gets the current framebuffer, populating the [out] parameter.
 	 */
-	var framebuffer: GlFramebufferRef? by observable<GlFramebufferRef?>(null) {
+	fun getFramebuffer(out: FrameBufferInfo) = out.set(_framebuffer)
+
+	/**
+	 * Sets the current framebuffer and some information about it.
+	 */
+	fun setFramebuffer(framebuffer: GlFramebufferRef?,
+					   width: Int,
+					   height: Int,
+					   scaleX: Float,
+					   scaleY: Float) {
+		if (_framebuffer.equals(framebuffer, width, height, scaleX, scaleY)) return
 		batch.flush()
-		gl.bindFramebuffer(Gl20.FRAMEBUFFER, it)
+		_framebuffer.set(framebuffer, width, height, scaleX, scaleY)
+		gl.bindFramebuffer(Gl20.FRAMEBUFFER, framebuffer)
 	}
 
 	/**
@@ -247,8 +255,6 @@ class GlState(
 		return out.set(_scissor)
 	}
 
-	fun setScissor(value: IntRectangleRo) = setScissor(value.x, value.y, value.width, value.height)
-
 	fun setScissor(x: Int, y: Int, width: Int, height: Int) {
 		if (_scissor.x != x || _scissor.y != y || _scissor.width != width || _scissor.height != height) {
 			batch.flush()
@@ -259,6 +265,10 @@ class GlState(
 
 	private val _mvp = Matrix4()
 
+
+	@Deprecated("use setCamera", ReplaceWith("setCamera(camera, model)"))
+	fun camera(camera: CameraRo, model: Matrix4Ro = Matrix4.IDENTITY) = setCamera(camera, model)
+
 	/**
 	 * Sets the [GlState.viewProjection] and [GlState.model] matrices.
 	 * This will set the gl uniforms u_modelTrans (if exists), u_viewTrans (if exists), u_projTrans
@@ -268,7 +278,7 @@ class GlState(
 	 * u_viewTrans (optional) - V
 	 *
 	 */
-	fun camera(camera: CameraRo, model: Matrix4Ro = Matrix4.IDENTITY) {
+	fun setCamera(camera: CameraRo, model: Matrix4Ro = Matrix4.IDENTITY) {
 		val hasModel = _shader!!.getUniformLocation(CommonShaderUniforms.U_MODEL_TRANS) != null
 		if (hasModel) {
 			if (viewProjectionCache.set(camera.combined, _shader!!, batch)) {
@@ -422,6 +432,7 @@ inline fun GlState.setScissor(x: Int, y: Int, width: Int, height: Int, inner: ()
 	IntRectangle.free(oldScissor)
 }
 
+
 /**
  * @see Gl20.viewport
  */
@@ -432,3 +443,12 @@ inline fun GlState.setViewport(x: Int, y: Int, width: Int, height: Int, inner: (
 	setViewport(oldViewport)
 	IntRectangle.free(oldViewport)
 }
+
+/**
+ * @see Gl20.viewport
+ */
+fun GlState.setViewport(value: IntRectangleRo) = setViewport(value.x, value.y, value.width, value.height)
+
+fun GlState.setScissor(value: IntRectangleRo) = setScissor(value.x, value.y, value.width, value.height)
+
+fun GlState.setFramebuffer(value: FrameBufferInfoRo) = setFramebuffer(value.framebuffer, value.width, value.height, value.scaleX, value.scaleY)
