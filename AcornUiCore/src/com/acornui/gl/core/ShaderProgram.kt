@@ -214,6 +214,7 @@ val standardVertexAttributes = VertexAttributes(listOf(
 )
 
 const val DEFAULT_SHADER_HEADER: String = """
+#version 100
 #ifdef GL_ES
 #define LOW_P lowp
 #define MED_P mediump
