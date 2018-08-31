@@ -48,6 +48,7 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 
 	private val globalPosition = Vector3()
 	private val globalScale = Vector3()
+	private val _clip = MinMax()
 
 	private val cam = orthographicCamera(autoCenter = false)
 
@@ -136,6 +137,7 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		val x = topLeft.x.roundToInt()
 		val y = topLeft.y.roundToInt()
 		_viewport = sceneViewport.set(x, y, bottomRight.x.roundToInt() - x, bottomRight.y.roundToInt() - y)
+		_clip.set(_viewport.x, _viewport.y, _viewport.right, _viewport.bottom)
 	}
 
 	private val oldGlViewport = IntRectangle()
@@ -145,10 +147,7 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		glState.getFramebuffer(frameBuffer)
 		glState.getViewport(oldGlViewport)
 		frameBuffer.glViewport(glState, viewport)
-
-		// TODO: we can probably bound the draw viewport.
-		super.draw(MinMaxRo.POSITIVE_INFINITY)
-
+		super.draw(_clip)
 		glState.setViewport(oldGlViewport)
 	}
 
