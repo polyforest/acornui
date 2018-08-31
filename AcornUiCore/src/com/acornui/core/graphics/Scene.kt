@@ -20,7 +20,11 @@ package com.acornui.core.graphics
 
 import com.acornui.component.*
 import com.acornui.core.di.Owned
-import com.acornui.gl.core.*
+import com.acornui.core.di.inject
+import com.acornui.gl.core.FrameBufferInfo
+import com.acornui.gl.core.FrameBufferInfoRo
+import com.acornui.gl.core.GlState
+import com.acornui.gl.core.setViewport
 import com.acornui.math.*
 import kotlin.math.round
 import kotlin.math.roundToInt
@@ -37,13 +41,25 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	 */
 	private var superViewport: RectangleRo = RectangleRo.EMPTY
 
+	/**
+	 * The camera this scene would have rendered with had we not overriden.
+	 */
+	private var superCamera: CameraRo = inject(Camera)
+
 	private val globalPosition = Vector3()
 	private val globalScale = Vector3()
 
+	private val cam = orthographicCamera(autoCenter = false)
+
 	init {
 		validation.addNode(1 shl 16, ValidationFlags.LAYOUT or ValidationFlags.CONCATENATED_TRANSFORM or ValidationFlags.CAMERA or ValidationFlags.VIEWPORT, this::updateViewport2)
+		cameraOverride = cam
 	}
 
+	override fun updateCamera() {
+		super.updateCamera()
+		superCamera = parent?.camera ?: inject(Camera)
+	}
 
 	override var rotationX: Float
 		get() = super.rotationX
@@ -87,6 +103,8 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		out.set(explicitWidth ?: window.width, explicitHeight ?: window.height)
+		cam.setViewport(out.width, out.height)
+		cam.moveToLookAtRect(0f, 0f, out.width, out.height)
 	}
 
 	override fun updateConcatenatedTransform() {
@@ -110,8 +128,7 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 
 	private fun updateViewport2() {
 		superViewport = parent?.viewport ?: stage.viewport
-		val camera = camera
-		if (camera.combined.mode == MatrixMode.FULL)
+		if (superCamera.combined.mode == MatrixMode.FULL)
 			throw Exception("Scene components cannot be rotated, even via their camera.")
 
 		localToCanvas2(topLeft.set(0f, 0f, 0f))
@@ -152,7 +169,7 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	 */
 	private fun localToCanvas2(localCoord: Vector3): Vector3 {
 		localToGlobal2(localCoord)
-		camera.project(localCoord, superViewport)
+		superCamera.project(localCoord, superViewport)
 		return localCoord
 	}
 

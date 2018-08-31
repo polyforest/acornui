@@ -221,7 +221,7 @@ open class ContainerImpl(
 		if (interactivityMode == InteractivityMode.ALWAYS || intersectsGlobalRay(ray)) {
 			if ((returnAll || out.isEmpty())) {
 				_children.iterateReversed { child ->
-					val childRayCache = if (child.camera === camera) ray else null
+					val childRayCache = if (child.camera === camera && child.viewport === viewport) ray else null
 					child.getChildrenUnderPoint(canvasX, canvasY, onlyInteractive, returnAll, out, childRayCache)
 					// Continue iterating if we haven't found an intersecting child yet, or if returnAll is true.
 					returnAll || out.isEmpty()

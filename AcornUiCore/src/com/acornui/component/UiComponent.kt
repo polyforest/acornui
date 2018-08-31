@@ -302,7 +302,10 @@ open class UiComponentImpl(
 	 * Returns the viewport (in canvas coordinates, not gl window coordinates) this component will use for UI.
 	 */
 	final override val viewport: RectangleRo
-		get() = _viewport
+		get() {
+			validate(ValidationFlags.VIEWPORT)
+			return _viewport
+		}
 
 	// Validatable Properties
 	private val _invalidated = own(Signal2<UiComponent, Int>())
