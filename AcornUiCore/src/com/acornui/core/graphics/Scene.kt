@@ -110,17 +110,20 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 
 	override fun updateConcatenatedTransform() {
 		val pCT = parent?.concatenatedTransform ?: Matrix4.IDENTITY
-		if (pCT.mode == MatrixMode.FULL)
+		if (pCT.mode == MatrixMode.FULL) {
 			throw Exception("A Scene must not be rotated.")
-		pCT.getTranslation(globalPosition).add(position)
-		if (globalPosition.z != 0f)
-			throw UnsupportedOperationException("Cannot set z translation on Scene")
-		globalPosition.x = round(globalPosition.x)
-		globalPosition.y = round(globalPosition.y)
+		}
 		pCT.getScale(globalScale).scl(_scale)
 		if (globalScale.x < 0f || globalScale.y < 0f) {
 			throw Exception("A Scene cannot have negative scaling.")
 		}
+
+		pCT.getTranslation(globalPosition).add(position).sub(_origin.x * globalScale.x, _origin.y * globalScale.y, 0f)
+		if (globalPosition.z != 0f)
+			throw UnsupportedOperationException("Cannot set z translation on Scene")
+		globalPosition.x = round(globalPosition.x)
+		globalPosition.y = round(globalPosition.y)
+
 	}
 
 	private val topLeft = Vector3()

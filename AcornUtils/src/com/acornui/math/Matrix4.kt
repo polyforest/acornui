@@ -1381,6 +1381,7 @@ class Matrix4() : Matrix4Ro {
 	 * @return This matrix for the purpose of chaining.
 	 */
 	fun shearZ(shearXZ: Float = 0f, shearYZ: Float = 0f): Matrix4 {
+		if (shearXZ == 0f && shearYZ == 0f) return this
 		var tmp0 = _values[M00] + shearYZ * _values[M01]
 		var tmp1 = _values[M01] + shearXZ * _values[M00]
 		_values[M00] = tmp0
