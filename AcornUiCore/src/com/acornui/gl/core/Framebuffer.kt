@@ -19,6 +19,7 @@ package com.acornui.gl.core
 import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
 import com.acornui.core.graphics.Texture
+import com.acornui.core.userInfo
 import com.acornui.logging.Log
 import com.acornui.math.IntRectangle
 
@@ -186,6 +187,7 @@ class Framebuffer(
 		 * Returns true if Framebuffers support the packed depth and stencil attachment.
 		 */
 		fun allowDepthAndStencil(gl: Gl20): Boolean {
+			if (userInfo.isBrowser) return true
 			val extensions = gl.getSupportedExtensions()
 			return extensions.contains("GL_OES_packed_depth_stencil") || extensions.contains("GL_EXT_packed_depth_stencil")
 		}
