@@ -28,11 +28,14 @@ import kotlin.math.roundToInt
  */
 open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(owner), Focusable {
 
+	private val stageViewport = Rectangle()
+
 	init {
 		focusEnabled = true
 		interactivityMode = InteractivityMode.ALWAYS
 		interactivity.init(this)
 		focusManager.init(this)
+		_viewport = stageViewport
 	}
 
 	/**
@@ -50,11 +53,8 @@ open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(
 		invalidate(ValidationFlags.LAYOUT or ValidationFlags.VIEWPORT)
 	}
 
-	private val stageViewport = Rectangle()
-
 	override fun updateViewport() {
-		// Updated in window resize.
-		_viewport = stageViewport.set(0f, 0f, window.width, window.height)
+		stageViewport.set(0f, 0f, window.width, window.height)
 	}
 
 	override fun onActivated() {

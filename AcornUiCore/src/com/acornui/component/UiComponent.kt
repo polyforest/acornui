@@ -482,7 +482,7 @@ open class UiComponentImpl(
 	 * Sets the viewport rectangle.
 	 */
 	protected open fun updateViewport() {
-		_viewport = parent?.viewport ?: stage.viewport
+		_viewport = parent?.viewport ?: RectangleRo.EMPTY
 	}
 
 	//-----------------------------------------------

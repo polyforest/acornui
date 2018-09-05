@@ -5,7 +5,7 @@
     <output-test url="file://$ACORNUI_HOME$/out/jvm/test/AcornUiJsBackend" />
     <exclude-output />
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src" type="kotlin-source" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -14,3 +14,4 @@
     <orderEntry type="module" module-name="AcornUiCore" />
   </component>
 </module>
+
