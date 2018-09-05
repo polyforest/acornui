@@ -72,7 +72,7 @@ open class ActiveList<E>(initialCapacity: Int) : Clearable, MutableObservableLis
 	override fun removeAll(elements: Collection<E>): Boolean {
 		var changed = false
 		for (i in elements) {
-			changed = changed && remove(i)
+			changed = changed || remove(i)
 		}
 		return changed
 	}
