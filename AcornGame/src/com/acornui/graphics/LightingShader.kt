@@ -76,7 +76,7 @@ uniform vec4 u_colorOffset;
 
 
 // Point lights
-uniform PointLight u_pointLights[$numPointLights];
+${if (numPointLights > 0) "uniform PointLight u_pointLights[$numPointLights];" else ""}
 ${if (numShadowPointLights > 0) "uniform samplerCube u_pointLightShadowMaps[$numShadowPointLights];" else ""}
 
 uniform vec2 poissonDisk[4];
@@ -108,6 +108,7 @@ vec3 getDirectionalColor() {
 }
 
 vec3 getPointColor() {
+${if (numPointLights > 0) """
 	vec3 pointColor = vec3(0.0);
 	PointLight pointLight;
 	vec3 lightToPixel;
@@ -146,6 +147,7 @@ vec3 getPointColor() {
 	}
 
 	return pointColor;
+	""" else "return vec3(0.0);"}
 }
 
 void main() {
