@@ -26,13 +26,15 @@ import com.acornui.math.BoundsRo
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.Pad
 import com.acornui.signal.Cancel
+import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.css.CSSStyleDeclaration
 import kotlin.browser.document
 
 class JsHtmlComponent(
 		owner: Owned,
-		val element: HTMLElement = document.createElement("div") as HTMLElement
+		private val rootElement: HTMLElement,
+		element: HTMLElement = document.createElement("div") as HTMLElement
 ) : UiComponentImpl(owner), HtmlComponent {
 
 	private val component = DomComponent(element)
@@ -45,28 +47,34 @@ class JsHtmlComponent(
 		}
 	}
 
+	private var parentElement: Element
+
 	init {
 		styleTags.add(TextField)
 
 		watch(boxStyle) {
-			it.applyCss(component.element)
+			it.applyCss(element)
 			it.applyBox(component)
 		}
 
+		parentElement = element.parentElement ?: rootElement
+		if (parentElement.contains(element))
+			parentElement.removeChild(element)
+		element.style.display = "block"
 		element.style.opacity = "0"
-		component.element.style.setProperty("position", "absolute")
+		element.style.setProperty("position", "absolute")
 	}
 
 	override fun onActivated() {
 		super.onActivated()
-		component.element.style.display = "block"
 		focusManager.focusedChanging.add(focusedChangingHandler)
+		parentElement.appendChild(component.element)
 	}
 
 	override fun onDeactivated() {
 		focusManager.focusedChanging.remove(focusedChangingHandler)
 		super.onDeactivated()
-		component.element.style.display = "none"
+		parentElement.removeChild(component.element)
 	}
 
 	override var html: String
