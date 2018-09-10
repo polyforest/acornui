@@ -1075,6 +1075,7 @@ class TfChar private constructor() : TextElement, Clearable {
 		transform.prj(charVertices[3].set(charL, charB, 0f))
 
 		// Background vertices
+		// FIXME: #59 update bg vertices to handle kerning.  (Use semi-transparent background color to see problem)
 		transform.prj(backgroundVertices[0].set(bgL, bgT, 0f))
 		transform.prj(backgroundVertices[1].set(bgR, bgT, 0f))
 		transform.prj(backgroundVertices[2].set(bgR, bgB, 0f))
