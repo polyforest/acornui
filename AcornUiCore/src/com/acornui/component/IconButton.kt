@@ -9,9 +9,11 @@ import com.acornui.component.text.text
 import com.acornui.core.di.Owned
 import com.acornui.core.graphics.atlas
 import com.acornui.core.graphics.contentsAtlas
+import com.acornui.core.round
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
+import kotlin.math.round
 
 class IconButton(
 		owner: Owned
@@ -165,7 +167,7 @@ open class IconButtonSkinPart(
 		} else {
 			icon.x = (padding.left)
 		}
-		textField.x = (icon.x + icon.width + hGap)
+		textField.x = round(icon.x + icon.width + hGap)
 
 		val yOffset = if (childAvailableHeight == null) padding.top else (childAvailableHeight - contentHeight) * 0.5f + padding.top
 
@@ -176,11 +178,11 @@ open class IconButtonSkinPart(
 			}
 			VAlign.MIDDLE -> {
 				icon.y = yOffset + (contentHeight - icon.height) * 0.5f
-				textField.y = yOffset + (contentHeight - textField.height) * 0.5f
+				textField.y = round((yOffset + (contentHeight - textField.height) * 0.5f))
 			}
 			VAlign.BOTTOM -> {
 				icon.y = yOffset + (contentHeight - icon.height)
-				textField.y = yOffset + (contentHeight - textField.height)
+				textField.y = round(yOffset + (contentHeight - textField.height))
 			}
 		}
 	}
