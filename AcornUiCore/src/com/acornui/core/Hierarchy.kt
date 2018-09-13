@@ -228,7 +228,7 @@ enum class TreeWalk {
  * @param reversed If true, the last child will be added to the queue first.
  * @param callback The callback to invoke on each child.
  */
-inline fun <reified T> T.childWalkLevelOrder(callback: (T) -> TreeWalk, reversed: Boolean) {
+inline fun <reified T : ChildRo> T.childWalkLevelOrder(callback: (T) -> TreeWalk, reversed: Boolean) {
 	val openList = arrayListObtain<Any?>()
 	openList.add(this)
 	loop@ while (openList.isNotEmpty()) {
@@ -253,11 +253,11 @@ inline fun <reified T> T.childWalkLevelOrder(callback: (T) -> TreeWalk, reversed
 	arrayListPool.free(openList)
 }
 
-inline fun <reified T> T.childWalkLevelOrder(callback: (T) -> TreeWalk) {
+inline fun <reified T : ChildRo> T.childWalkLevelOrder(callback: (T) -> TreeWalk) {
 	childWalkLevelOrder(callback, false)
 }
 
-inline fun <reified T> T.childWalkLevelOrderReversed(callback: (T) -> TreeWalk) {
+inline fun <reified T : ChildRo> T.childWalkLevelOrderReversed(callback: (T) -> TreeWalk) {
 	childWalkLevelOrder(callback, true)
 }
 
@@ -266,7 +266,7 @@ inline fun <reified T> T.childWalkLevelOrderReversed(callback: (T) -> TreeWalk) 
  * the matching condition.
  * The tree traversal will be level-order.
  */
-inline fun <reified T> T.findChildLevelOrder(callback: (T) -> Boolean, reversed: Boolean): T? {
+inline fun <reified T : ChildRo> T.findChildLevelOrder(callback: (T) -> Boolean, reversed: Boolean): T? {
 	var foundItem: T? = null
 	childWalkLevelOrder({
 		if (callback(it)) {
@@ -279,11 +279,11 @@ inline fun <reified T> T.findChildLevelOrder(callback: (T) -> Boolean, reversed:
 	return foundItem
 }
 
-inline fun <reified T> T.findChildLevelOrder(callback: (T) -> Boolean): T? {
+inline fun <reified T : ChildRo> T.findChildLevelOrder(callback: (T) -> Boolean): T? {
 	return findChildLevelOrder(callback, reversed = false)
 }
 
-inline fun <reified T> T.findLastChildLevelOrder(callback: (T) -> Boolean): T? {
+inline fun <reified T : ChildRo> T.findLastChildLevelOrder(callback: (T) -> Boolean): T? {
 	return findChildLevelOrder(callback, reversed = true)
 }
 
@@ -296,7 +296,7 @@ inline fun <reified T> T.findLastChildLevelOrder(callback: (T) -> Boolean): T? {
  *
  * @param callback The callback to invoke on each child.
  */
-inline fun <reified T> T.childWalkPreOrder(callback: (T) -> TreeWalk, reversed: Boolean) {
+inline fun <reified T: ChildRo> T.childWalkPreOrder(callback: (T) -> TreeWalk, reversed: Boolean) {
 	val openList = arrayListObtain<Any?>()
 	openList.add(this)
 	loop@ while (openList.isNotEmpty()) {
@@ -321,11 +321,11 @@ inline fun <reified T> T.childWalkPreOrder(callback: (T) -> TreeWalk, reversed: 
 	arrayListPool.free(openList)
 }
 
-inline fun <reified T> T.childWalkPreOrder(callback: (T) -> TreeWalk) {
+inline fun <reified T: ChildRo> T.childWalkPreOrder(callback: (T) -> TreeWalk) {
 	childWalkPreOrder(callback, false)
 }
 
-inline fun <reified T> T.childWalkPreOrderReversed(callback: (T) -> TreeWalk) {
+inline fun <reified T: ChildRo> T.childWalkPreOrderReversed(callback: (T) -> TreeWalk) {
 	childWalkPreOrder(callback, true)
 }
 
@@ -334,7 +334,7 @@ inline fun <reified T> T.childWalkPreOrderReversed(callback: (T) -> TreeWalk) {
  * the matching condition.
  * The tree traversal will be pre-order.
  */
-inline fun <reified T> T.findChildPreOrder(callback: (T) -> Boolean, reversed: Boolean): T? {
+inline fun <reified T: ChildRo> T.findChildPreOrder(callback: (T) -> Boolean, reversed: Boolean): T? {
 	var foundItem: T? = null
 	childWalkPreOrder({
 		if (callback(it)) {
@@ -347,11 +347,11 @@ inline fun <reified T> T.findChildPreOrder(callback: (T) -> Boolean, reversed: B
 	return foundItem
 }
 
-inline fun <reified T> T.findChildPreOrder(callback: (T) -> Boolean): T? {
+inline fun <reified T: ChildRo> T.findChildPreOrder(callback: (T) -> Boolean): T? {
 	return findChildPreOrder(callback, reversed = false)
 }
 
-inline fun <reified T> T.findLastChildPreOrder(callback: (T) -> Boolean): T? {
+inline fun <reified T: ChildRo> T.findLastChildPreOrder(callback: (T) -> Boolean): T? {
 	return findChildPreOrder(callback, reversed = true)
 }
 
