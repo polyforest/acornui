@@ -265,7 +265,7 @@ class StaticMesh(
 						v1.set(vertexComponents.get(), vertexComponents.get(), vertexComponents.get())
 						vertexComponents.position = indices.get() * vertexSize + positionOffset
 						v2.set(vertexComponents.get(), vertexComponents.get(), vertexComponents.get())
-						if (localRay.intersects(v0, v1, v2, intersection)) {
+						if (localRay.intersectsTriangle(v0, v1, v2, intersection)) {
 							return true
 						}
 					}

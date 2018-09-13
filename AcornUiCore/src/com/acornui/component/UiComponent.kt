@@ -513,8 +513,8 @@ open class UiComponentImpl(
 		localToGlobal(bottomRight)
 		localToGlobal(bottomLeft)
 
-		val intersects = globalRay.intersects(topLeft, topRight, bottomRight, intersection) ||
-				globalRay.intersects(topLeft, bottomLeft, bottomRight, intersection)
+		val intersects = globalRay.intersectsTriangle(topLeft, topRight, bottomRight, intersection) ||
+				globalRay.intersectsTriangle(topLeft, bottomLeft, bottomRight, intersection)
 
 		Vector3.free(topLeft)
 		Vector3.free(topRight)
@@ -684,7 +684,7 @@ open class UiComponentImpl(
 	 * If set, when the layout is validated, if there was no explicit height,
 	 * this height will be used instead.
 	 */
-	override var defaultHeight: Float? by validationProp(null, ValidationFlags.LAYOUT)
+	final override var defaultHeight: Float? by validationProp(null, ValidationFlags.LAYOUT)
 
 	/**
 	 * Does the same thing as setting width and height individually.

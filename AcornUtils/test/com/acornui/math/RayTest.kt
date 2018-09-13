@@ -36,7 +36,7 @@ class RayTest {
 			val r2 = Ray(Vector3(5f, 5f, 5f), Vector3(5f, 5f, -2f))
 
 			val out = Vector3()
-			r1.intersects(r2, out)
+			r1.intersectsRay(r2, out)
 			assertEquals(Vector3(6.25f, 6.25f, 4.5f), out)
 		}
 
@@ -45,7 +45,7 @@ class RayTest {
 			val r2 = Ray(Vector3(6f, 8f, 2f), Vector3(6f, 7f, 4f))
 
 			val out = Vector3()
-			r1.intersects(r2, out)
+			r1.intersectsRay(r2, out)
 			assertEquals(Vector3(9f, 11.5f, 4f), out)
 		}
 
@@ -54,7 +54,7 @@ class RayTest {
 			val r2 = Ray(Vector3(0f, 0f, 30f), Vector3(1f, 0f, 0f))
 
 			val out = Vector3()
-			assertTrue(r1.intersects(r2, out))
+			assertTrue(r1.intersectsRay(r2, out))
 			assertEquals(Vector3(10f, 0f, 30f), out)
 		}
 
@@ -63,7 +63,7 @@ class RayTest {
 			val r2 = Ray(Vector3(0f, 0f, 30f), Vector3(1f, 0f, 0f))
 
 			val out = Vector3()
-			assertTrue(r1.intersects(r2, out))
+			assertTrue(r1.intersectsRay(r2, out))
 			assertEquals(Vector3(30f, 0f, 30f), out)
 		}
 	}
@@ -73,7 +73,7 @@ class RayTest {
 			val r1 = Ray(Vector3(1f, 2f, -20f), Vector3(0f, 0f, 1f))
 
 			val out = Vector3()
-			assertTrue(r1.intersects(Vector3(0f, 0f, 0f), Vector3(10f, 10f, 0f), Vector3(0f, 10f, 0f), out))
+			assertTrue(r1.intersectsTriangle(Vector3(0f, 0f, 0f), Vector3(10f, 10f, 0f), Vector3(0f, 10f, 0f), out))
 			assertEquals(Vector3(1f, 2f, 0f), out)
 		}
 
@@ -81,7 +81,7 @@ class RayTest {
 			val r1 = Ray(Vector3(-20f, 2f, 1f), Vector3(1f, 0f, 0f))
 
 			val out = Vector3()
-			assertTrue(r1.intersects(Vector3(0f, 0f, 0f), Vector3(0f, 10f, 10f), Vector3(0f, 10f, 0f), out))
+			assertTrue(r1.intersectsTriangle(Vector3(0f, 0f, 0f), Vector3(0f, 10f, 10f), Vector3(0f, 10f, 0f), out))
 			assertEquals(Vector3(0f, 2f, 1f), out)
 		}
 
@@ -89,7 +89,7 @@ class RayTest {
 			val r1 = Ray(Vector3(-20f, 2f, 1f), Vector3(-1f, 0f, 0f))
 
 			val out = Vector3()
-			assertFalse(r1.intersects(Vector3(0f, 0f, 0f), Vector3(0f, 10f, 10f), Vector3(0f, 10f, 0f), out))
+			assertFalse(r1.intersectsTriangle(Vector3(0f, 0f, 0f), Vector3(0f, 10f, 10f), Vector3(0f, 10f, 0f), out))
 		}
 	}
 }

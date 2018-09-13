@@ -22,6 +22,7 @@ import com.acornui.collection.Clearable
 import com.acornui.collection.ClearableObjectPool
 import com.acornui.core.notCloseTo
 import com.acornui.math.MathUtils.FLOAT_ROUNDING_ERROR
+import kotlin.math.sqrt
 
 interface RayRo {
 
@@ -52,7 +53,10 @@ interface RayRo {
 	 * http://math.stackexchange.com/questions/270767/find-intersection-of-two-3d-lines
 	 * @author nbilyk
 	 */
-	fun intersects(ray: RayRo, out: Vector3? = null): Boolean
+	fun intersectsRay(ray: RayRo, out: Vector3? = null): Boolean
+
+	@Deprecated("use intersectsRay", ReplaceWith("intersectsRay(ray, out)"))
+	fun intersects(ray: RayRo, out: Vector3? = null): Boolean = intersectsRay(ray, out)
 
 	/**
 	 * Intersects a [Ray] and a [Plane]. The intersection point is stored in [out] in the case an intersection is
@@ -61,7 +65,10 @@ interface RayRo {
 	 * @param out The vector the intersection point is written to (optional)
 	 * @return True if an intersection is present.
 	 */
-	fun intersects(plane: PlaneRo, out: Vector3?): Boolean
+	fun intersectsPlane(plane: PlaneRo, out: Vector3?): Boolean
+
+	@Deprecated("use intersectsPlane", ReplaceWith("intersectsPlane(plane, out)"))
+	fun intersects(plane: PlaneRo, out: Vector3?): Boolean = intersectsPlane(plane, out)
 
 	/**
 	 * Intersect a [Ray] and a triangle, returning the intersection point in intersection.
@@ -71,7 +78,20 @@ interface RayRo {
 	 * @param out The intersection point (optional)
 	 * @return True in case an intersection is present.
 	 */
-	fun intersects(v1: Vector3Ro, v2: Vector3Ro, v3: Vector3Ro, out: Vector3? = null): Boolean
+	fun intersectsTriangle(v1: Vector3Ro, v2: Vector3Ro, v3: Vector3Ro, out: Vector3? = null): Boolean
+
+	@Deprecated("use intersectsTriangle", ReplaceWith("intersectsTriangle(v1, v2, v3, out)"))
+	fun intersects(v1: Vector3Ro, v2: Vector3Ro, v3: Vector3Ro, out: Vector3? = null): Boolean = intersectsTriangle(v1, v2, v3, out)
+
+	/** Intersects a [Ray] and a sphere, returning the intersection point in intersection.
+	 *
+	 * @param ray The ray, the direction component must be normalized before calling this method
+	 * @param center The center of the sphere
+	 * @param radius The radius of the sphere
+	 * @param intersection The intersection point (optional, can be null)
+	 * @return Whether an intersection is present.
+	 */
+	fun intersectSphere(center: Vector3Ro, radius: Float, intersection: Vector3? = null): Boolean
 
 	fun copy(origin: Vector3Ro = this.origin, direction: Vector3Ro = this.direction): Ray {
 		val r = Ray(origin.copy(), direction.copy())
@@ -188,7 +208,7 @@ class Ray(
 	 * http://math.stackexchange.com/questions/270767/find-intersection-of-two-3d-lines
 	 * @author nbilyk
 	 */
-	override fun intersects(ray: RayRo, out: Vector3?): Boolean {
+	override fun intersectsRay(ray: RayRo, out: Vector3?): Boolean {
 		if (this.origin == ray.origin) {
 			out?.set(origin)
 			return true
@@ -228,7 +248,7 @@ class Ray(
 	 * @param out The vector the intersection point is written to (optional)
 	 * @return True if an intersection is present.
 	 */
-	override fun intersects(plane: PlaneRo, out: Vector3?): Boolean {
+	override fun intersectsPlane(plane: PlaneRo, out: Vector3?): Boolean {
 		val denom = direction.dot(plane.normal)
 		return if (denom != 0f) {
 			val t = -(origin.dot(plane.normal) + plane.d) / denom
@@ -250,9 +270,9 @@ class Ray(
 	 * @param out The intersection point (optional)
 	 * @return True in case an intersection is present.
 	 */
-	override fun intersects(v1: Vector3Ro, v2: Vector3Ro, v3: Vector3Ro, out: Vector3?): Boolean {
+	override fun intersectsTriangle(v1: Vector3Ro, v2: Vector3Ro, v3: Vector3Ro, out: Vector3?): Boolean {
 		plane.set(v1, v2, v3)
-		if (!intersects(plane, v3_3)) return false
+		if (!intersectsPlane(plane, v3_3)) return false
 
 		v3_0.set(v3).sub(v1)
 		v3_1.set(v2).sub(v1)
@@ -276,6 +296,17 @@ class Ray(
 		} else {
 			false
 		}
+	}
+
+	override fun intersectSphere(center: Vector3Ro, radius: Float, intersection: Vector3?): Boolean  {
+		val len = direction.dot(center.x - origin.x, center.y - origin.y, center.z - origin.z)
+		if (len < 0f) return false // Behind the ray
+		val dst2 = center.dst2(origin.x + direction.x * len, origin.y + direction.y * len,
+				origin.z + direction.z * len)
+		val r2 = radius * radius
+		if (dst2 > r2) return false
+		intersection?.set(direction)?.scl(len - sqrt(r2 - dst2))?.add(origin)
+		return true
 	}
 
 	override fun clear() {
