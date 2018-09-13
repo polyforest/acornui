@@ -1089,7 +1089,7 @@ class TfChar private constructor() : TextElement, Clearable {
 			var lineT = y + if (style.strikeThrough) {
 				(baseline / 2f).floor()
 			} else {
-				baseline
+				baseline + 1f
 			}
 			if (lineT < topClip) lineT = topClip
 			var lineB = lineT + style.lineThickness
