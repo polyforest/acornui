@@ -210,17 +210,17 @@ inline fun <reified T> Reader.arrayWithNulls(name: String, itemFactory: From<T>)
 
 inline fun <reified T> Reader.arrayWithNulls(itemFactory: From<T>): Array<T?>? {
 	val e = elements()
-	return Array(e.size, {
+	return Array(e.size) {
 		val itR = e[it]
 		if (itR.isNull) null else itemFactory.read(itR)
-	})
+	}
 }
 
 fun <E> Reader.arrayList(name: String, itemFactory: From<E>): ArrayList<E>? = get(name)?.arrayList(itemFactory)
 
 fun <E> Reader.arrayList(itemFactory: From<E>): ArrayList<E> {
 	val e = elements()
-	val list = ArrayList<E>(maxOf(16, e.size))
+	val list = ArrayList<E>(e.size)
 	for (i in 0..e.lastIndex) {
 		list.add(itemFactory.read(e[i]))
 	}

@@ -43,9 +43,9 @@ interface NavigationManager : Clearable, Disposable {
 	 */
 	fun path(value: String) {
 		val split = value.split("/")
-		val nodes = List(split.size, {
+		val nodes = List(split.size) {
 			NavNode.fromStr(split[it])
-		})
+		}
 		path(nodes)
 	}
 
@@ -313,9 +313,9 @@ class NavBinding(
 				val oldPath = expandedPath
 				relativeTo = oldPath.subList(0, oldPath.size - up)
 			}
-			val nodes = Array(split.size - up, {
+			val nodes = Array(split.size - up) {
 				NavNode.fromStr(split[it + up])
-			})
+			}
 			navManager.path(relativeTo + nodes)
 		}
 	}
@@ -327,18 +327,18 @@ class NavBinding(
 		get() {
 			if (depth < 0) throw Exception("This binding is not currently active.")
 			val fullPath = navManager.path()
-			return (fullPath + List(maxOf(0, depth - fullPath.lastIndex), { NavNode("") })).toMutableList()
+			return (fullPath + List(maxOf(0, depth - fullPath.lastIndex)) { NavNode("") }).toMutableList()
 		}
 
 	/**
 	 * Invokes a callback when the path at this component's depth has changed to the given value
 	 */
 	fun bindPathEnter(path: String?, callback: () -> Unit) {
-		changed.add({
+		changed.add {
 			event ->
 			if (event.newPath == path)
 				callback()
-		})
+		}
 		if (this.path == path)
 			callback()
 	}
@@ -347,23 +347,23 @@ class NavBinding(
 	 * Invokes a callback when the path at this component's depth has changed from the given value
 	 */
 	fun bindPathExit(path: String?, callback: () -> Unit) {
-		changed.add({
+		changed.add {
 			event: NavBindingEvent ->
 			if (event.oldPath == path) callback()
-		})
+		}
 	}
 
 	/**
 	 * Invokes a callback when the specified parameter at this component's depth has changed.
 	 */
 	fun bindParam(key: String, callback: (oldValue: String?, newValue: String?) -> Unit) {
-		changed.add({
+		changed.add {
 			event: NavBindingEvent ->
 			val oldValue = event.oldParams[key]
 			val newValue = event.newParams[key]
 			if (oldValue != newValue)
 				callback(oldValue, newValue)
-		})
+		}
 	}
 
 	override fun dispose() {
