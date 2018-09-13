@@ -766,6 +766,7 @@ class Matrix4() : Matrix4Ro {
 	 */
 	fun tra(): Matrix4 {
 		if (_mode == MatrixMode.IDENTITY) return this
+		val tmp = tmp
 		tmp[M00] = values[M00]
 		tmp[M01] = values[M10]
 		tmp[M02] = values[M20]
@@ -817,10 +818,11 @@ class Matrix4() : Matrix4Ro {
 	 * Inverts the matrix. Stores the result in this matrix.
 	 *
 	 * @return This matrix for the purpose of chaining methods together.
-	 * @throws RuntimeException if the matrix is singular (not invertible)
+	 * @throws Exception if the matrix is singular (not invertible)
 	 */
 	fun inv(): Matrix4 {
 		val values = _values
+		val tmp = tmp
 		when (_mode) {
 			MatrixMode.IDENTITY -> {
 			}
@@ -831,7 +833,7 @@ class Matrix4() : Matrix4Ro {
 			}
 			MatrixMode.SCALE -> {
 				val lDet = det()
-				if (lDet == 0f) throw RuntimeException("non-invertible matrix")
+				if (lDet == 0f) throw Exception("non-invertible matrix")
 				val invDet = 1f / lDet
 				tmp[M00] = values[M11] * values[M22] * values[M33]
 				tmp[M03] = -values[M03] * values[M11] * values[M22]
@@ -851,7 +853,7 @@ class Matrix4() : Matrix4Ro {
 			}
 			MatrixMode.FULL -> {
 				val lDet = det()
-				if (lDet == 0f) throw RuntimeException("non-invertible matrix")
+				if (lDet == 0f) throw Exception("non-invertible matrix")
 				val invDet = 1f / lDet
 				tmp[M00] = values[M12] * values[M23] * values[M31] - values[M13] * values[M22] * values[M31] + values[M13] * values[M21] * values[M32] - values[M11] * values[M23] * values[M32] - values[M12] * values[M21] * values[M33] + values[M11] * values[M22] * values[M33]
 				tmp[M01] = values[M03] * values[M22] * values[M31] - values[M02] * values[M23] * values[M31] - values[M03] * values[M21] * values[M32] + values[M01] * values[M23] * values[M32] + values[M02] * values[M21] * values[M33] - values[M01] * values[M22] * values[M33]
