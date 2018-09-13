@@ -353,16 +353,19 @@ class Vector2(
 	 */
 	override fun setAngleRad(radians: Float): Vector2 {
 		this.set(len(), 0f)
-		this.rotateRad(radians)
+		this.rotate(radians)
 
 		return this
 	}
+
+	@Deprecated("use rotate", ReplaceWith("rotate(radians)"))
+	fun rotateRad(radians: Float): Vector2 = rotate(radians)
 
 	/**
 	 * Rotates the Vector2 by the given angle, counter-clockwise assuming the y-axis points up.
 	 * @param radians the angle in radians
 	 */
-	fun rotateRad(radians: Float): Vector2 {
+	fun rotate(radians: Float): Vector2 {
 		val cos = cos(radians)
 		val sin = sin(radians)
 
