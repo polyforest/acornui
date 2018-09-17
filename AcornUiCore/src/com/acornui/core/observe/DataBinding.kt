@@ -27,6 +27,7 @@ class DataBinding<T>(initialValue: T) : Disposable {
 		}
 
 	fun change(callback: (T) -> T) {
+		if (_changed.isDispatching) return
 		value = callback(value)
 	}
 

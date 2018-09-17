@@ -663,15 +663,20 @@ fun <E> List<E>.replaceAt(index: Int, newValue: E): List<E> {
  */
 fun <E> List<E>.replace(oldValue: E, newValue: E): List<E> {
 	val newList = ArrayList<E>(size)
+	var found = false
 	for (i in 0..lastIndex) {
-		newList.add(if (this[i] === oldValue) newValue else this[i])
+		newList.add(if (this[i] === oldValue) {
+			found = true
+			newValue
+		} else this[i])
 	}
+	if (!found) throw Exception("Could not find $oldValue")
 	return newList
 }
 
 fun <E> List<E>.replaceFirstWhere(newValue: E, predicate: (E) -> Boolean): List<E> {
 	val index = indexOfFirst2(0, lastIndex, predicate)
-	return if (index == -1) copy()
+	return if (index == -1) throw Exception("Could not find a value matching the predicate")
 	else replaceAt(index, newValue)
 }
 
