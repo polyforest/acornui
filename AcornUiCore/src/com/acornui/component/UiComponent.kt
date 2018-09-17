@@ -606,7 +606,7 @@ open class UiComponentImpl(
 		Unit
 	}
 
-	override var layoutData: LayoutData? by Delegates.observable<LayoutData?>(null) {
+	final override var layoutData: LayoutData? by Delegates.observable<LayoutData?>(null) {
 		_, old, new ->
 		old?.changed?.remove(this::layoutDataChangedHandler)
 		new?.changed?.add(this::layoutDataChangedHandler)

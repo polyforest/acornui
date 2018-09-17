@@ -43,11 +43,21 @@ interface ElementParent<T> : ElementParentRo<T> {
 	}
 
 	/**
-	 * Adds an element to this container. Unlike children, adding element to an [ElementContainer] where the element
+	 * Adds an external element to this container at the given index.
+	 * Unlike children, adding element to an [ElementContainer] where the element
 	 * has already been added, the element will be removed.
+	 *
+	 * @param index The index at which to add the element. This must be between 0 and `elements.size`
+	 * @throws IndexOutOfBoundsException
 	 */
 	fun <S : T> addElement(index: Int, element: S): S
 
+	/**
+	 * Removes the given element.
+	 *
+	 * @param element The element to remove.
+	 * @return Returns true if the element existed in the elements list and was removed.
+	 */
 	fun removeElement(element: T?): Boolean {
 		if (element == null) return false
 		val index = elements.indexOf(element)
@@ -56,6 +66,11 @@ interface ElementParent<T> : ElementParentRo<T> {
 		return true
 	}
 
+	/**
+	 * Removes the external element at the given index.
+	 * @param index Must be between 0 and `elements.lastindex`
+	 * @return Returns the removed element.
+	 */
 	fun removeElement(index: Int): T
 
 	fun clearElements(dispose: Boolean = true)
@@ -103,7 +118,7 @@ open class ElementContainerImpl<T : UiComponent>(
 	//-------------------------------------------------------------------------------------------------
 
 	protected val _elements = ConcurrentListImpl<T>()
-	override val elements: List<T>
+	final override val elements: List<T>
 		get() = _elements
 
 	override fun <S : T> addElement(index: Int, element: S): S {
