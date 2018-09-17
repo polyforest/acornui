@@ -209,7 +209,7 @@ open class ElementContainerImpl<T : UiComponent>(
 	 * Disposes this container and all its children.
 	 */
 	override fun dispose() {
-		clearElements(dispose = false)
+		clearElements(dispose = false) // The elements this container owns will be disposed in the disposed signal.
 		super.dispose()
 	}
 }

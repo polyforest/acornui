@@ -26,7 +26,21 @@ class LazyInstance<out R, out T>(
 		_instance = null
 		_created = false
 	}
+}
 
+/**
+ * Creates a LazyInstance object that isn't lazy. Can be used to coerce an instance in places that expect laziness.
+ */
+fun <R, T> R.lazyInstance(instance: T): LazyInstance<R, T> {
+	val notReallyLazyInstance= LazyInstance(this) { instance }
+	notReallyLazyInstance.instance // Mark as created
+	return notReallyLazyInstance
+}
+
+fun <R, T> R.lazyInstance(factory: R.() -> T): LazyInstance<R, T> {
+	val notReallyLazyInstance= LazyInstance(this, factory)
+	notReallyLazyInstance.instance // Mark as created
+	return notReallyLazyInstance
 }
 
 fun <R, T : Disposable?> LazyInstance<R, T>.disposeInstance() {

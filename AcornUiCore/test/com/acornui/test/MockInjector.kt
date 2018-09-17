@@ -38,11 +38,11 @@ import org.mockito.Mockito
 
 object MockInjector {
 
-	val owner: Owned by lazy { OwnedImpl(create()) }
+	val owner: Owned by lazy { OwnedImpl(injector = create()) }
 
 	@Deprecated("", ReplaceWith("owner"))
 	fun createOwner(): Owned {
-		return OwnedImpl(create())
+		return OwnedImpl(injector = create())
 	}
 
 	fun create(): Injector {

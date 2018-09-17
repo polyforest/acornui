@@ -658,6 +658,17 @@ fun <E> List<E>.replaceAt(index: Int, newValue: E): List<E> {
 	return newList
 }
 
+/**
+ * Clones this list, replacing values that identity equals [oldValue] with [newValue].
+ */
+fun <E> List<E>.replace(oldValue: E, newValue: E): List<E> {
+	val newList = ArrayList<E>(size)
+	for (i in 0..lastIndex) {
+		newList.add(if (this[i] === oldValue) newValue else this[i])
+	}
+	return newList
+}
+
 fun <E> List<E>.replaceFirstWhere(newValue: E, predicate: (E) -> Boolean): List<E> {
 	val index = indexOfFirst2(0, lastIndex, predicate)
 	return if (index == -1) copy()

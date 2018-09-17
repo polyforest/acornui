@@ -23,6 +23,7 @@ import com.acornui.component.ContainerRo
 import com.acornui.component.Stage
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
+import com.acornui.core.DisposedException
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.KeyInteractionRo
 import com.acornui.core.input.interaction.MouseInteractionRo
@@ -288,7 +289,7 @@ class FocusManagerImpl : FocusManager {
 	}
 
 	override fun dispose() {
-		_assert(!isDisposed, "Already disposed.")
+		if (isDisposed) throw DisposedException()
 		isDisposed = true
 		unhighlightFocused()
 		highlight = null
