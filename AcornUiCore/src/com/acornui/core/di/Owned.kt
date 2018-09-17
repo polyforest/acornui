@@ -100,10 +100,20 @@ fun <T : Disposable> Owned.own(target: T): T {
  * Factory methods for components typically don't have separated [owner] and [injector] parameters. This
  * implementation can be used to have a different dependency injector than what the owner uses.
  */
-class OwnedImpl(
-		override val injector: Injector,
-		override val owner: Owned? = null
+open class OwnedImpl(
+		final override val owner: Owned?,
+		final override val injector: Injector
 ) : Owned, Disposable {
+
+	/**
+	 * Constructs this OwnedImpl with no owner and the provided injector.
+	 */
+	constructor(injector: Injector) : this(null, injector)
+
+	/**
+	 * Constructs this OwnedImpl with the same injector as the owner.
+	 */
+	constructor(owner: Owned) : this(owner, owner.injector)
 
 	private var _isDisposed = false
 	override val isDisposed: Boolean
@@ -113,9 +123,19 @@ class OwnedImpl(
 	override val disposed: Signal<(Owned) -> Unit>
 		get() = _disposed
 
+	private val ownerDisposedHandler = {
+		owner: Owned ->
+		dispose()
+	}
+
+	init {
+		owner?.disposed?.add(ownerDisposedHandler)
+	}
+
 	override fun dispose() {
 		if (_isDisposed) throw DisposedException()
 		_isDisposed = true
+		owner?.disposed?.remove(ownerDisposedHandler)
 		_disposed.dispatch(this)
 		_disposed.dispose()
 	}
