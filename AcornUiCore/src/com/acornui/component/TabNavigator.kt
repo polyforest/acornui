@@ -139,15 +139,29 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 		return this
 	}
 
+	/**
+	 * Adds the tab to the given index. If the tab is already added, it will be removed first and added to the new
+	 * index.
+	 */
 	fun <T : TabNavigatorTab> addTab(index: Int, tab: T): T {
 		if (tab.isDisposed) throw Exception("Tab is disposed.")
-		if (index == 0) {
+		var newIndex = index
+		val oldIndex = tabs.indexOf(tab)
+		if (oldIndex != -1) {
+			if (newIndex == oldIndex) return tab // Element was added in the same spot it previously was.
+			// Handle the case where after the element is removed, the new index needs to decrement to compensate.
+			if (oldIndex < newIndex)
+				newIndex--
+			removeTab(oldIndex)
+		}
+
+		if (newIndex == 0) {
 			if (_tabs.size > 0) {
 				_tabs[0].button.styleTags.remove(DEFAULT_TAB_STYLE_FIRST)
 			}
 			tab.button.styleTags.add(DEFAULT_TAB_STYLE_FIRST)
 		}
-		if (index == tabs.size) {
+		if (newIndex == tabs.size) {
 			if (_tabs.size > 0) {
 				_tabs.last().button.styleTags.remove(DEFAULT_TAB_STYLE_LAST)
 			}
@@ -155,10 +169,10 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 		}
 		tab.button.styleTags.add(DEFAULT_TAB_STYLE)
 
+		_tabs.add(newIndex, tab)
+		tabBar.addElement(newIndex, tab.button)
 		tab.button.click().add(tabClickHandler)
 
-		_tabs.add(index, tab)
-		tabBar.addElement(index, tab.button)
 		updateSelectedTab()
 		tab.disposed.add(this::tabDisposedHandler)
 		return tab
@@ -292,6 +306,9 @@ class TabNavigatorTabImpl<S : Button, T : UiComponent>(
 ) : OwnedImpl(owner), TabNavigatorTab {
 	override val button: S = buttonFactory()
 	override val content: LazyInstance<Owned, T> = lazyInstance(contentFactory)
+
+	val instance: T
+		get() = content.instance
 }
 
 class TabNavigatorStyle : StyleBase() {

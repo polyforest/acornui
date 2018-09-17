@@ -660,6 +660,7 @@ fun <E> List<E>.replaceAt(index: Int, newValue: E): List<E> {
 
 /**
  * Clones this list, replacing values that identity equals [oldValue] with [newValue].
+ * @throws Exception Throws exception when [oldValue] was not found.
  */
 fun <E> List<E>.replace(oldValue: E, newValue: E): List<E> {
 	val newList = ArrayList<E>(size)
