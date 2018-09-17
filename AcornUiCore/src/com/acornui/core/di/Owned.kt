@@ -2,6 +2,7 @@ package com.acornui.core.di
 
 import com.acornui.async.Deferred
 import com.acornui.async.Work
+import com.acornui.component.ComponentInit
 import com.acornui.core.Disposable
 import com.acornui.core.DisposedException
 import com.acornui.core.Lifecycle
@@ -61,9 +62,9 @@ fun Owned.createScope(vararg dependenciesList: DependencyPair<*>): Owned {
 	return createScope(dependenciesList.toList())
 }
 
-fun Owned.createScope(dependenciesList: List<DependencyPair<*>>): Owned {
+fun Owned.createScope(dependenciesList: List<DependencyPair<*>>, init: ComponentInit<Owned> = {}): Owned {
 	val r = this
-	return object : Owned {
+	val o = object : Owned {
 		override val isDisposed: Boolean = false
 		override val disposed: Signal<(Owned) -> Unit>
 			get() = r.disposed
@@ -71,6 +72,8 @@ fun Owned.createScope(dependenciesList: List<DependencyPair<*>>): Owned {
 			get() = r
 		override val injector: Injector = r.injector + dependenciesList
 	}
+	o.init()
+	return o
 }
 
 fun Owned.owns(other: Owned?): Boolean {
