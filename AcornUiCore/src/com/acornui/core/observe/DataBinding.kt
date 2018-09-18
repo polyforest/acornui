@@ -5,18 +5,41 @@ import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.signal.*
 
-class DataBinding<T>(initialValue: T) : Disposable {
+interface DataBindingRo<T> {
+
+	/**
+	 * Dispatched when the data binding [value] has changed.
+	 * The handler signature will be (oldValue, newValue)->Unit
+	 */
+	val changed: Signal<(T, T) -> Unit>
+
+	val value: T
+
+	/**
+	 * Immediately, and when the data has changed, the callback will be invoked.
+	 *
+	 * If you need to know the old value as well, use the [changed] signal.
+	 */
+	fun bind(callback: (T) -> Unit): Disposable
+
+	/**
+	 * Removes the callback handler that was added via [bind].
+	 */
+	fun remove(callback: (T) -> Unit)
+}
+
+class DataBinding<T>(initialValue: T) : DataBindingRo<T>, Disposable {
 
 	private val _changed = Signal2<T, T>()
 
-	val changed: Signal<(T, T) -> Unit>
+	override val changed: Signal<(T, T) -> Unit>
 		get() = _changed
 
 	private val _wrapped = HashMap<(T) -> Unit, DataChangeHandler<T>>()
 
 	private var _value: T = initialValue
 
-	var value: T
+	override var value: T
 		get() = _value
 		set(value) {
 			if (_changed.isDispatching) return
@@ -31,13 +54,7 @@ class DataBinding<T>(initialValue: T) : Disposable {
 		value = callback(value)
 	}
 
-	/**
-	 * When the data has changed, the callback will be invoked.
-	 * If the data has been set, the callback will be invoked immediately.
-	 *
-	 * If you need to know the old value as well, use the [changed] signal.
-	 */
-	fun bind(callback: (T) -> Unit): Disposable {
+	override fun bind(callback: (T) -> Unit): Disposable {
 		val handler: DataChangeHandler<T> = { _, new: T ->
 			callback(new)
 		}
@@ -52,10 +69,7 @@ class DataBinding<T>(initialValue: T) : Disposable {
 		}
 	}
 
-	/**
-	 * Removes the callback handler that was added via [bind].
-	 */
-	fun remove(callback: (T) -> Unit) {
+	override fun remove(callback: (T) -> Unit) {
 		val handler = _wrapped[callback]
 		if (handler != null) {
 			_wrapped.remove(callback)

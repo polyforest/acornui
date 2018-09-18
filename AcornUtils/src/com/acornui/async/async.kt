@@ -156,6 +156,20 @@ infix fun <T> Deferred<T>.then(callback: (result: T) -> Unit): Deferred<T> {
 	return this
 }
 
+/**
+ * Invokes a callback when the deferred value has been either been computed successfully or failed.
+ */
+infix fun <T> Deferred<T>.finally(callback: (result: T?) -> Unit): Deferred<T> {
+	launch {
+		var result: T? = null
+		try {
+			result = await()
+		} catch (t: Throwable) {}
+		callback(result)
+	}
+	return this
+}
+
 infix fun <A, B> Deferred<Pair<A, B>>.then(callback: (result: A, B) -> Unit): Deferred<Pair<A, B>> {
 	return then<Pair<A, B>> { callback(it.first, it.second) }
 }

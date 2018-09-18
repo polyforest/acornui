@@ -8,7 +8,7 @@ import kotlin.reflect.full.primaryConstructor
 
 object SerializationCodeHelper {
 
-	fun print(kClass: KClass<*>) {
+	fun print(kClass: KClass<*>, jsonUsesUndercase: Boolean = false) {
 
 		val simpleName = kClass.simpleName
 
@@ -53,7 +53,7 @@ object SerializationCodeHelper {
 			}
 
 			val kotlinName = i.name
-			val jsonName = i.name.toUnderscoreCase()
+			val jsonName = if (jsonUsesUndercase) i.name.toUnderscoreCase() else i.name
 			val isConstructorParam = paramNames.contains(kotlinName)
 			val writeStr: String
 			var readStr: String

@@ -58,8 +58,8 @@ interface Owned : Scoped {
 
 }
 
-fun Owned.createScope(vararg dependenciesList: DependencyPair<*>): Owned {
-	return createScope(dependenciesList.toList())
+fun Owned.createScope(vararg dependenciesList: DependencyPair<*>, init: ComponentInit<Owned> = {}): Owned {
+	return createScope(dependenciesList.toList(), init)
 }
 
 fun Owned.createScope(dependenciesList: List<DependencyPair<*>>, init: ComponentInit<Owned> = {}): Owned {
