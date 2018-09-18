@@ -167,7 +167,7 @@ abstract class ParentBase<T : ParentBase<T>> : Parent<T> {
 
 	override var parent: ParentRo<ChildRo>? = null
 
-	protected val _children = ArrayList<T>()
+	protected val _children: MutableList<T> = ArrayList()
 	override val children: List<T>
 		get() = _children
 
@@ -430,9 +430,10 @@ fun ChildRo.root(): ChildRo {
 
 /**
  * Returns true if this ChildRo is before the [other] ChildRo. This considers the parent to come before the child.
+ * @throws Exception If [other] does not have a common ancestor.
  */
 fun ChildRo.isBefore(other: ChildRo): Boolean {
-	if (this === other) throw Exception("this == other")
+	if (this === other) throw Exception("this === other")
 	var a = this
 	parentWalk { parentA ->
 		var b = this
@@ -454,6 +455,7 @@ fun ChildRo.isBefore(other: ChildRo): Boolean {
 
 /**
  * Returns true if this ChildRo is after the [other] ChildRo. This considers the parent to come before the child.
+ * @throws Exception If [other] does not have a common ancestor.
  */
 fun ChildRo.isAfter(other: ChildRo): Boolean {
 	if (this === other) throw Exception("this === other")

@@ -24,13 +24,9 @@ import com.acornui.math.Bounds
 
 class CanvasLayout : LayoutAlgorithm<Any, CanvasLayoutData> {
 
-	//-----------------------------------
-	// Getters / setters
-	//-----------------------------------
-
 	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, props: Any, out: SizeConstraints) {
-		var minWidth: Float = 0f
-		var minHeight: Float = 0f
+		var minWidth = 0f
+		var minHeight = 0f
 		for (i in 0..elements.lastIndex) {
 			val element = elements[i]
 			val sC = element.sizeConstraints
@@ -60,25 +56,23 @@ class CanvasLayout : LayoutAlgorithm<Any, CanvasLayoutData> {
 				element.moveTo(0f, 0f)
 				out.ext(element.width, element.height)
 			} else {
-				val x: Float
-				val y: Float
-				if (layoutData.left != null) {
-					x = layoutData.left!!
+				val x: Float = if (layoutData.left != null) {
+					layoutData.left!!
 				} else if (layoutData.right != null) {
-					x = w - layoutData.right!! - element.width
+					w - layoutData.right!! - element.width
 				} else if (layoutData.horizontalCenter != null) {
-					x = (w - element.width) * 0.5f + layoutData.horizontalCenter!!
+					(w - element.width) * 0.5f + layoutData.horizontalCenter!!
 				} else {
-					x = 0f
+					0f
 				}
-				if (layoutData.top != null) {
-					y = layoutData.top!!
+				val y: Float = if (layoutData.top != null) {
+					layoutData.top!!
 				} else if (layoutData.bottom != null) {
-					y = h - layoutData.bottom!! - element.height
+					h - layoutData.bottom!! - element.height
 				} else if (layoutData.verticalCenter != null) {
-					y = (h - element.height) * 0.5f + layoutData.verticalCenter!!
+					(h - element.height) * 0.5f + layoutData.verticalCenter!!
 				} else {
-					y = 0f
+					0f
 				}
 				element.moveTo(x, y)
 				out.ext(element.right + (layoutData.right ?: 0f), element.bottom + (layoutData.bottom ?: 0f))
