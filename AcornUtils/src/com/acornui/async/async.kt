@@ -176,7 +176,7 @@ infix fun <T> Deferred<T>.catch(callback: (Throwable) -> Unit): Deferred<T> {
 		try {
 			await()
 		} catch (t: Throwable) {
-			callback(t.cause as Throwable)
+			callback(t.cause ?: t)
 		}
 	}
 	return this

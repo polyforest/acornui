@@ -21,38 +21,28 @@ import com.acornui.serialization.Reader
 import com.acornui.serialization.To
 import com.acornui.serialization.Writer
 
-/**
- * @author nbilyk
- */
-interface Date : Comparable<Date> {
-
+interface DateRo : Comparable<DateRo> {
 
 	/**
 	 * The time, in UTC milliseconds from the Unix epoch.
 	 */
-	var time: Long
+	val time: Long
 
 	/**
 	 * The full 4 digit year.
 	 */
-	var year: Int
-
-	/**
-	 * Returns true if this Date's year is a leap year.
-	 */
-	val isLeapYear: Boolean
-		get() = DateUtil.isLeapYear(year)
+	val year: Int
 
 	/**
 	 * The 0 indexed month. 0 - January, 11 - December
 	 * @see Months
 	 */
-	var month: Int
+	val month: Int
 
 	/**
 	 * The 1 indexed day of the month. 1st - 1, 31st - 31
 	 */
-	var dayOfMonth: Int
+	val dayOfMonth: Int
 
 	/**
 	 * The day of the week (0-6) for the specified date.
@@ -64,37 +54,69 @@ interface Date : Comparable<Date> {
 	 * Hour of the day using 24-hour clock.
 	 * At 3:14:12.330 PM the hour is 15.
 	 */
-	var hour: Int
+	val hour: Int
 
 	/**
 	 * The minute within the hour.
 	 */
-	var minute: Int
+	val minute: Int
 
 	/**
 	 * The second within the minute.
 	 * At 3:14:12.330 PM the second is 12.
 	 */
-	var second: Int
+	val second: Int
 
 	/**
 	 * The millisecond within the second.
 	 * At 3:14:12.330 PM the milli is 330.
 	 */
-	var milli: Int
+	val milli: Int
 
 	/**
-	 * Returns true if the two dates are the same day.
+	 * Returns a mutable copy of this date.
 	 */
-	fun isSameDate(o: Date): Boolean {
-		return this.dayOfMonth == o.dayOfMonth && this.month == o.month && this.year == o.year
-	}
+	fun clone(): Date
 
-	override fun compareTo(other: Date): Int {
+	override fun compareTo(other: DateRo): Int {
 		return time.compareTo(other.time)
 	}
+}
 
-	fun clone(): Date
+/**
+ * Returns true if the two dates are the same day.
+ */
+fun DateRo.isSameDate(o: DateRo): Boolean {
+	return this.dayOfMonth == o.dayOfMonth && this.month == o.month && this.year == o.year
+}
+
+/**
+ * Returns true if this Date's year is a leap year.
+ */
+val DateRo.isLeapYear: Boolean
+	get() = DateUtil.isLeapYear(year)
+
+/**
+ * @author nbilyk
+ */
+interface Date : DateRo {
+
+	override var time: Long
+
+	override var year: Int
+
+	override var month: Int
+
+	override var dayOfMonth: Int
+
+	override var hour: Int
+
+	override var minute: Int
+
+	override var second: Int
+
+	override var milli: Int
+
 }
 
 enum class Era {

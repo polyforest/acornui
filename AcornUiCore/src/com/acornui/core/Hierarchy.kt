@@ -18,10 +18,7 @@
 
 package com.acornui.core
 
-import com.acornui.collection.arrayListObtain
-import com.acornui.collection.arrayListPool
-import com.acornui.collection.pop
-import com.acornui.collection.shift
+import com.acornui.collection.*
 
 
 /**
@@ -356,8 +353,8 @@ inline fun <reified T: ChildRo> T.findLastChildPreOrder(callback: (T) -> Boolean
 }
 
 /**
- * Returns the lineage count. 0 if this child is the stage, or is the stage, 1 if the stage is the parent,
- * 2 if the stage is the grandparent, 3 if the stage is the great grandparent, and so on.
+ * Returns the lineage count. 0 if this child is the root, 1 if the root is the parent,
+ * 2 if the root is the grandparent, 3 if the root is the great grandparent, and so on.
  */
 fun ChildRo.ancestryCount(): Int {
 	var count = 0
@@ -367,6 +364,30 @@ fun ChildRo.ancestryCount(): Int {
 		p = p.parent
 	}
 	return count
+}
+
+/**
+ * Returns the maximum [ancestryCount] for any descendant node.
+ */
+fun ChildRo.maxDepth(): Int {
+	@Suppress("UNCHECKED_CAST")
+	val calculatedMap = mapPool.obtain() as MutableMap<ChildRo, Int>
+	var max = 0
+	childWalkPreOrder {
+		val p = it.parent
+		if (p == null) {
+			calculatedMap[it] = 0
+		} else {
+			val v = calculatedMap[p]!! + 1
+			calculatedMap[it] = v
+			if (v > max) {
+				max = v
+			}
+		}
+		TreeWalk.CONTINUE
+	}
+	mapPool.free(calculatedMap)
+	return max
 }
 
 /**
