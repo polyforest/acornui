@@ -136,7 +136,7 @@ fun <K, E> List<E>.sortedInsertionIndex(element: K, fromIndex: Int = 0, toIndex:
  * If there are equal elements, the insertion index returned will be after.
  */
 fun <E : Comparable<E>> List<E>.sortedInsertionIndex(element: E, fromIndex: Int = 0, toIndex: Int = size, matchForwards: Boolean = true): Int {
-	return sortedInsertionIndex(element, fromIndex, toIndex, matchForwards, { o1, o2 -> o1.compareTo(o2) })
+	return sortedInsertionIndex(element, fromIndex, toIndex, matchForwards) { o1, o2 -> o1.compareTo(o2) }
 }
 
 /**
@@ -147,7 +147,7 @@ fun <E : Comparable<E>> List<E>.sortedInsertionIndex(element: E, fromIndex: Int 
  * @param matchForwards If true, the returned index will be after comparisons of 0, if false, before.
  */
 fun <E> List<E>.sortedInsertionIndex(fromIndex: Int = 0, toIndex: Int = size, matchForwards: Boolean = true, comparator: (E) -> Int): Int {
-	return sortedInsertionIndex(null, fromIndex, toIndex, matchForwards, { _, o2 -> comparator(o2) })
+	return sortedInsertionIndex(null, fromIndex, toIndex, matchForwards) { _, o2 -> comparator(o2) }
 }
 
 /**

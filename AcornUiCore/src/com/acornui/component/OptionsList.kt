@@ -40,9 +40,9 @@ import com.acornui.core.focus.focus
 import com.acornui.core.focus.focusFirst
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.KeyInteractionRo
-import com.acornui.core.input.interaction.MouseInteractionRo
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.keyDown
+import com.acornui.core.popup.PopUpManager
 import com.acornui.core.popup.lift
 import com.acornui.core.text.StringFormatter
 import com.acornui.core.text.ToStringFormatter
@@ -431,6 +431,7 @@ open class OptionsList<E : Any>(
 		if (_isOpen) return
 		_isOpen = true
 		dataScroller.highlighted.clear()
+		listLift.priority = inject(PopUpManager).currentPopUps.lastOrNull()?.priority ?: 0f
 		addChild(listLift)
 		textInput.focus()
 	}

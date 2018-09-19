@@ -88,7 +88,7 @@ fun Scoped.createBinaryRequest(requestData: UrlRequestData): Request<ReadByteBuf
 open class ResponseException(val status: Short, message: String?, val detail: String) : Throwable(message) {
 
 	override fun toString(): String {
-		return "ResponseException(status=$status, message=$message)"
+		return "ResponseException(status=$status, message=$message, detail=$detail)"
 	}
 }
 

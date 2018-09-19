@@ -33,6 +33,7 @@ import com.acornui.core.isBefore
 import com.acornui.core.time.callLater
 import com.acornui.function.as2
 import com.acornui.signal.Cancel
+import com.acornui.signal.Signal
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
 
@@ -46,8 +47,12 @@ class FocusManagerImpl : FocusManager {
 		get() = _root!!
 
 	private val focusedChangingCancel: Cancel = Cancel()
-	override val focusedChanging: Signal3<UiComponentRo?, UiComponentRo?, Cancel> = Signal3()
-	override val focusedChanged: Signal2<UiComponentRo?, UiComponentRo?> = Signal2()
+	private val _focusedChanging: Signal3<UiComponentRo?, UiComponentRo?, Cancel> = Signal3()
+	override val focusedChanging: Signal<(UiComponentRo?, UiComponentRo?, Cancel) -> Unit>
+		get() = _focusedChanging
+	private val _focusedChanged: Signal2<UiComponentRo?, UiComponentRo?> = Signal2()
+	override val focusedChanged: Signal<(UiComponentRo?, UiComponentRo?)->Unit>
+		get() = _focusedChanged
 
 	private var _focused: UiComponentRo? = null
 	private var _highlighted: UiComponentRo? = null
@@ -56,14 +61,14 @@ class FocusManagerImpl : FocusManager {
 	private val _focusables = ArrayList<UiComponentRo>()
 	private val focusables: ArrayList<UiComponentRo>
 		get() {
-			if (invalidFocusables.isNotEmpty()) validateFocusables()
+			if (invalidFocusables.isNotEmpty())
+				validateFocusables()
 			return _focusables
 		}
 
 	private var isDisposed: Boolean = false
 
-	private val rootKeyDownHandler = {
-		event: KeyInteractionRo ->
+	private val rootKeyDownHandler = { event: KeyInteractionRo ->
 		if (!event.defaultPrevented() && event.keyCode == Ascii.TAB) {
 			val previousFocused = focused()
 			if (event.shiftKey) focusPrevious()
@@ -76,8 +81,7 @@ class FocusManagerImpl : FocusManager {
 		}
 	}
 
-	private val rootMouseDownHandler = {
-		event: MouseInteractionRo ->
+	private val rootMouseDownHandler = { event: MouseInteractionRo ->
 		if (!event.defaultPrevented()) {
 			var p: UiComponentRo? = event.target
 			while (p != null) {
@@ -126,8 +130,29 @@ class FocusManagerImpl : FocusManager {
 		}
 	}
 
+	// Temp variables for the focus order comparison so they don't need to be recalculated for the subject.
+	private lateinit var focusable: UiComponentRo
 	private val focusOrder = ArrayList<Float>()
 	private val iFocusOrder = ArrayList<Float>()
+
+	private fun focusOrderComparator(it: UiComponentRo): Int {
+		calculateFocusOrder(it, iFocusOrder)
+		val f = focusOrder.compareTo(iFocusOrder)
+		return if (f != 0) f
+		else {
+			// The explicit focus order chain is equivalent.
+			if (focusable.isBefore(it)) -1 else 1
+		}
+	}
+
+	private fun <T : Comparable<T>> List<T>.compareTo(other: List<T>): Int {
+		for (i in 0..minOf(lastIndex, other.lastIndex)) {
+			val r = this[i].compareTo(other[i])
+			if (r != 0)
+				return r
+		}
+		return size.compareTo(other.size)
+	}
 
 	private fun validateFocusables() {
 		while (invalidFocusables.isNotEmpty()) {
@@ -139,23 +164,9 @@ class FocusManagerImpl : FocusManager {
 				_focusables.add(focusable)
 			} else {
 				calculateFocusOrder(focusable, focusOrder)
-				val focusOrderComparator = {
-					it: UiComponentRo ->
-					calculateFocusOrder(it, iFocusOrder)
-					focusOrder.compareTo(iFocusOrder)
-				}
-				val indexA = _focusables.sortedInsertionIndex(matchForwards = false, comparator = focusOrderComparator)
-				val indexB = _focusables.sortedInsertionIndex(fromIndex = indexA, comparator = focusOrderComparator)
-				if (indexA >= indexB) {
-					_focusables.add(indexA, focusable)
-				} else {
-					val childOrderComparator = {
-						it: UiComponentRo ->
-						if (focusable.isBefore(it)) -1 else 1
-					}
-					val index = _focusables.sortedInsertionIndex(indexA, indexB, comparator = childOrderComparator)
-					_focusables.add(index, focusable)
-				}
+				this.focusable = focusable
+				val indexA = _focusables.sortedInsertionIndex(comparator = this::focusOrderComparator)
+				_focusables.add(indexA, focusable)
 			}
 		}
 	}
@@ -173,15 +184,6 @@ class FocusManagerImpl : FocusManager {
 		focusOrderOut.add(value.focusOrder)
 	}
 
-	private fun <T : Comparable<T>> List<T>.compareTo(other: List<T>): Int {
-		for (i in 0..minOf(lastIndex, other.lastIndex)) {
-			val r = this[i].compareTo(other[i])
-			if (r != 0)
-				return r
-		}
-		return 0
-	}
-
 	override fun focused(): UiComponentRo? {
 		return _focused
 	}
@@ -189,7 +191,7 @@ class FocusManagerImpl : FocusManager {
 	private var pendingFocusable: UiComponentRo? = null
 
 	override fun focused(value: UiComponentRo?) {
-		if (focusedChanging.isDispatching || focusedChanged.isDispatching) {
+		if (_focusedChanging.isDispatching || _focusedChanged.isDispatching) {
 			pendingFocusable = value
 			return
 		}
@@ -197,7 +199,7 @@ class FocusManagerImpl : FocusManager {
 		val oldFocused = _focused
 		if (oldFocused == newValue)
 			return focusPending()
-		focusedChanging.dispatch(oldFocused, newValue, focusedChangingCancel.reset())
+		_focusedChanging.dispatch(oldFocused, newValue, focusedChangingCancel.reset())
 		if (focusedChangingCancel.canceled())
 			return focusPending()
 		unhighlightFocused()
@@ -208,7 +210,7 @@ class FocusManagerImpl : FocusManager {
 		} else {
 			newValue
 		}
-		focusedChanged.dispatch(oldFocused, _focused)
+		_focusedChanged.dispatch(oldFocused, _focused)
 		focusPending()
 	}
 
@@ -221,7 +223,7 @@ class FocusManagerImpl : FocusManager {
 	}
 
 	override fun nextFocusable(): UiComponentRo {
-		val index = focusables.indexOf(_focused)
+		val index = focusables.indexOf(_focused ?: root)
 		for (i in 1..focusables.lastIndex) {
 			var j = index + i
 			if (j > focusables.lastIndex) j -= focusables.size
@@ -232,7 +234,7 @@ class FocusManagerImpl : FocusManager {
 	}
 
 	override fun previousFocusable(): UiComponentRo {
-		val index = focusables.indexOf(_focused)
+		val index = focusables.indexOf(_focused ?: root)
 		for (i in 1..focusables.lastIndex) {
 			var j = index - i
 			if (j < 0) j += focusables.size
@@ -295,8 +297,8 @@ class FocusManagerImpl : FocusManager {
 		highlight = null
 		pendingFocusable = null
 		_focused = null
-		focusedChanged.dispose()
-		focusedChanging.dispose()
+		_focusedChanged.dispose()
+		_focusedChanging.dispose()
 		val root = _root
 		if (root != null) {
 			root.keyDown().remove(rootKeyDownHandler)

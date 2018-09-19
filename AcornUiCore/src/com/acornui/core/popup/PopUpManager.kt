@@ -262,8 +262,9 @@ class PopUpManagerImpl(private val root: UiComponent) : LayoutContainerImpl<PopU
 	}
 
 	override fun onDeactivated() {
-		super.onDeactivated()
+		// Must be before super.onDeactivated or the focus change prevention will get tsuck.
 		focusManager.focusedChanging.remove(this::focusChangingHandler)
+		super.onDeactivated()
 	}
 
 	private fun focusChangingHandler(old: UiComponentRo?, new: UiComponentRo?, cancel: Cancel) {

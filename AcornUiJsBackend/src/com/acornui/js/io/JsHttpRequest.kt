@@ -45,7 +45,7 @@ abstract class JsHttpRequest<T>(
 					val result = process(httpRequest)
 					success(result)
 				} else {
-					fail(ResponseException(httpRequest.status, httpRequest.statusText, httpRequest.response as? String ?: ""))
+					fail(ResponseException(httpRequest.status, httpRequest.statusText, httpRequest.response?.toString() ?: ""))
 				}
 			}
 		}

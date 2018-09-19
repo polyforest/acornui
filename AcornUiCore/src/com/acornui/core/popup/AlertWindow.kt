@@ -31,13 +31,13 @@ class AlertWindow(owner: Owned) : WindowPanel(owner) {
 	companion object : StyleTag
 }
 
-fun Owned.alert(title: String, message: String): PopUpInfo<AlertWindow> {
+fun Owned.alert(title: String, message: String, priority: Float = 1f): PopUpInfo<AlertWindow> {
 	val alertWindow = AlertWindow(this)
 	alertWindow.label = title
 	alertWindow.apply {
 		+text(message)
 	}
-	val info = PopUpInfo(alertWindow, isModal = true, priority = 1f, dispose = true)
+	val info = PopUpInfo(alertWindow, isModal = true, priority = priority, dispose = true)
 	inject(PopUpManager).addPopUp(info)
 	return info
 }

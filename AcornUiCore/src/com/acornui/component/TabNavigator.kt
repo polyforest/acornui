@@ -220,8 +220,7 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 	}
 
 	fun setTabLabel(index: Int, newLabel: String) {
-		val tab = _tabs.getOrNull(index) ?: throw IndexOutOfBoundsException(index)
-		tab.button.label = newLabel.orSpace()
+		_tabs[index].button.label = newLabel.orSpace()
 	}
 
 	fun clearTabs(dispose: Boolean = true) {

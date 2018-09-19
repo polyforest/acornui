@@ -46,7 +46,7 @@ abstract class JvmHttpRequest<out T>(timeDriver: TimeDriver, requestData: UrlReq
 					error = ResponseException(status.toShort(), "", errorMsg)
 				}
 			} catch (e: Throwable) {
-				error = (e)
+				error = e
 			} finally {
 				con.disconnect()
 			}

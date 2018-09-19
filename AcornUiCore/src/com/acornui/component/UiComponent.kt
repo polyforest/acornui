@@ -459,7 +459,7 @@ open class UiComponentImpl(
 
 	private var wasFocusEnabled: Boolean = false
 
-	protected open fun updateFocusOrder() {
+	private fun updateFocusOrder() {
 		val newFocusEnabled = focusEnabled && !isFocusContainer
 		if (newFocusEnabled || wasFocusEnabled) {
 			wasFocusEnabled = newFocusEnabled

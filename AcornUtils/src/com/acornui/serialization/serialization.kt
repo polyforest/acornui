@@ -173,11 +173,11 @@ fun Reader.doubleArray(): DoubleArray? {
 fun Reader.stringArray(): Array<String?>? {
 	if (isNull) return null
 	val elements = elements()
-	return Array(elements.size, {
+	return Array(elements.size) {
 		val element = elements[it]
 		if (element.isNull) null
 		else element.string()
-	})
+	}
 }
 
 fun Reader.shortArray(): ShortArray? {
@@ -198,9 +198,9 @@ inline fun <reified T> Reader.array2(name: String, itemFactory: From<T>): Array<
 
 inline fun <reified T> Reader.array2(itemFactory: From<T>): Array<T>? {
 	val e = elements()
-	return Array(e.size, {
+	return Array(e.size) {
 		itemFactory.read(e[it])
-	})
+	}
 }
 
 /**
@@ -288,24 +288,24 @@ interface Writer {
 fun <T> Writer.map(value: Map<String, T?>?, to: To<T>) {
 	if (value == null) writeNull()
 	else {
-		obj(true, {
+		obj(true) {
 			for (entry in value) {
 				val p = it.property(entry.key)
 				if (entry.value == null) p.writeNull()
 				else {
-					p.obj(true, {
+					p.obj(true) {
 						to.write2(entry.value!!, it)
-					})
+					}
 				}
 			}
-		})
+		}
 	}
 }
 
 fun <T> Writer.map(value: Map<String, T?>?, writeProp: (T, Writer) -> Unit) {
 	if (value == null) writeNull()
 	else {
-		obj(true, {
+		obj(true) {
 			for (entry in value) {
 				val p = it.property(entry.key)
 				val v = entry.value
@@ -314,16 +314,16 @@ fun <T> Writer.map(value: Map<String, T?>?, writeProp: (T, Writer) -> Unit) {
 					writeProp(v, p)
 				}
 			}
-		})
+		}
 	}
 }
 
 fun <T> Writer.obj(value: T?, to: To<T>) {
 	if (value == null) writeNull()
 	else {
-		obj(true, {
+		obj(true) {
 			to.write2(value, it)
-		})
+		}
 	}
 }
 
@@ -335,28 +335,28 @@ fun <T : Any> Writer.array(value: Array<out T?>?, to: To<T>) {
 fun <T : Any> Writer.array(value: Iterable<T?>?, to: To<T>) {
 	if (value == null) writeNull()
 	else {
-		array(true, {
+		array(true) {
 			for (v in value) {
 				if (v == null) it.element().writeNull()
 				else {
-					it.element().obj(true, {
+					it.element().obj(true) {
 						to.write2(v, it)
-					})
+					}
 				}
 			}
-		})
+		}
 	}
 }
 
 fun Writer.array(value: Iterable<String?>?) {
 	if (value == null) writeNull()
 	else {
-		array(true, {
+		array(true) {
 			for (v in value) {
 				if (v == null) it.element().writeNull()
 				else it.element().string(v)
 			}
-		})
+		}
 	}
 }
 
@@ -367,95 +367,95 @@ fun Writer.array(value: Iterable<String?>?) {
 fun <T : Any> Writer.sparseArray(value: Array<T?>?, to: To<T>) {
 	if (value == null) writeNull()
 	else {
-		array(true, {
+		array(true) {
 			it.element().int(value.size)
 			for (i in 0..value.lastIndex) {
 				val v = value[i]
 				if (v != null) {
 					it.element().int(i)
-					it.element().obj(true, {
+					it.element().obj(true) {
 						to.write2(v, it)
-					})
+					}
 				}
 			}
-		})
+		}
 	}
 }
 
 fun Writer.boolArray(value: BooleanArray?) {
 	if (value == null) writeNull()
 	else {
-		array(false, {
+		array(false) {
 			for (b in value) {
 				it.element().bool(b)
 			}
-		})
+		}
 	}
 }
 
 fun Writer.stringArray(value: Array<out String?>?) {
 	if (value == null) writeNull()
 	else {
-		array(false, {
+		array(false) {
 			for (i in value) {
 				it.element().string(i)
 			}
-		})
+		}
 	}
 }
 
 fun Writer.intArray(value: IntArray?) {
 	if (value == null) writeNull()
 	else {
-		array(false, {
+		array(false) {
 			for (i in value) {
 				it.element().int(i)
 			}
-		})
+		}
 	}
 }
 
 fun Writer.longArray(value: LongArray?) {
 	if (value == null) writeNull()
 	else {
-		array(false, {
+		array(false) {
 			for (i in value) {
 				it.element().long(i)
 			}
-		})
+		}
 	}
 }
 
 fun Writer.floatArray(value: FloatArray?) {
 	if (value == null) writeNull()
 	else {
-		array(false, {
+		array(false) {
 			for (i in value) {
 				it.element().float(i)
 			}
-		})
+		}
 	}
 }
 
 fun Writer.doubleArray(value: DoubleArray?) {
 	if (value == null) writeNull()
 	else {
-		array(false, {
+		array(false) {
 			for (i in value) {
 				it.element().double(i)
 			}
-		})
+		}
 	}
 }
 
 fun Writer.charArray(value: CharArray?) {
 	if (value == null) writeNull()
 	else {
-		array(false, {
+		array(false) {
 			for (i in value) {
 				it.element().char(i)
 			}
-		})
+		}
 	}
 }
 
