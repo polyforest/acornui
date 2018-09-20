@@ -119,6 +119,11 @@ interface Vector2Ro {
 	fun copy(x: Float = this.x, y: Float = this.y): Vector2 {
 		return Vector2(x, y)
 	}
+
+	/**
+	 * Creates a Vector3 with the given z component.
+	 */
+	fun toVec3(z: Float = 0f): Vector3 = Vector3(x, y, z)
 }
 
 /**

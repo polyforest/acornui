@@ -133,6 +133,11 @@ interface Vector3Ro {
 		return Vector3(x, y, z)
 	}
 
+	/**
+	 * Drops the z component and converts to a Vector2.
+	 */
+	fun toVec2(): Vector2 = Vector2(x, y)
+
 }
 
 /**
