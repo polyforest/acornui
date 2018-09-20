@@ -139,6 +139,8 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 		return this
 	}
 
+	fun <T : TabNavigatorTab> addTab(tab: T): T = addTab(tabs.size, tab)
+
 	/**
 	 * Adds the tab to the given index. If the tab is already added, it will be removed first and added to the new
 	 * index.
@@ -293,18 +295,20 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 	}
 }
 
-interface TabNavigatorTab : Owned, Disposable {
+interface TabNavigatorTab : Owned, Disposable, LayoutDataProvider<StackLayoutData> {
 	val button: Button
 	val content: LazyInstance<Owned, UiComponent>
 }
 
 class TabNavigatorTabImpl<S : Button, T : UiComponent>(
 		owner: Owned,
-		buttonFactory: Owned.() -> S,
-		contentFactory: Owned.() -> T
+		buttonFactory: TabNavigatorTab.() -> S,
+		contentFactory: TabNavigatorTab.() -> T
 ) : OwnedImpl(owner), TabNavigatorTab {
 	override val button: S = buttonFactory()
-	override val content: LazyInstance<Owned, T> = lazyInstance(contentFactory)
+	override val content: LazyInstance<TabNavigatorTab, T> = lazyInstance(contentFactory)
+
+	override fun createLayoutData(): StackLayoutData = StackLayoutData()
 
 	val instance: T
 		get() = content.instance
@@ -333,9 +337,9 @@ class TabNavigatorStyle : StyleBase() {
 }
 
 
-fun <S : Button, T : UiComponent> Owned.tab(buttonFactory: Owned.() -> S, contentFactory: Owned.() -> T) = TabNavigatorTabImpl(this, buttonFactory, contentFactory)
+fun <S : Button, T : UiComponent> Owned.tab(buttonFactory: (@ComponentDslMarker TabNavigatorTab).() -> S, contentFactory: (@ComponentDslMarker TabNavigatorTab).() -> T) = TabNavigatorTabImpl(this, buttonFactory, contentFactory)
 
-fun <T : UiComponent> Owned.tab(label: String, contentFactory: Owned.() -> T) = tab({ button(label.orSpace()) }, contentFactory)
+fun <T : UiComponent> Owned.tab(label: String, contentFactory: (@ComponentDslMarker TabNavigatorTab).() -> T) = tab({ button(label.orSpace()) }, contentFactory)
 
 fun Owned.tabNavigator(init: ComponentInit<TabNavigator> = {}): TabNavigator {
 	val t = TabNavigator(this)
