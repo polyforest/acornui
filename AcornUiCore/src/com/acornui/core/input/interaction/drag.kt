@@ -393,7 +393,7 @@ class DragInteraction : InteractionEventBase(), DragInteractionRo {
 }
 
 fun UiComponentRo.dragAttachment(affordance: Float = DragAttachment.DEFAULT_AFFORDANCE): DragAttachment {
-	return createOrReuseAttachment(DragAttachment, { DragAttachment(this, affordance) })
+	return createOrReuseAttachment(DragAttachment) { DragAttachment(this, affordance) }
 }
 
 /**
