@@ -69,7 +69,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 
 		for (i in 0..elements.lastIndex) {
 			val element = elements[i]
-			val layoutData = element.layoutData as FlowLayoutData?
+			val layoutData = element.layoutDataCast
 			element.setSize(layoutData?.getPreferredWidth(availableWidth), layoutData?.getPreferredHeight(availableHeight))
 			if (availableWidth != null && element.width > availableWidth) {
 				element.width(availableWidth)
@@ -160,7 +160,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 		for (j in line.startIndex..line.endIndex - 1) {
 			val element = elements[j]
 
-			val layoutData = element.layoutData as FlowLayoutData?
+			val layoutData = element.layoutDataCast
 			val yOffset = when (layoutData?.verticalAlign ?: props.verticalAlign) {
 				FlowVAlign.TOP -> 0f
 				FlowVAlign.MIDDLE -> round((line.height - element.height) * 0.5f)

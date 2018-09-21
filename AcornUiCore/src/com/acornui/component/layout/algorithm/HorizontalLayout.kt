@@ -62,7 +62,7 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 		var flexibleWidth = 0f
 		for (i in 0..elements.lastIndex) {
 			val element = elements[i]
-			val layoutData = element.layoutData as HorizontalLayoutData?
+			val layoutData = element.layoutDataCast
 			if (childAvailableWidth == null || layoutData?.widthPercent == null) {
 				val w = layoutData?.getPreferredWidth(childAvailableWidth)
 				val h = layoutData?.getPreferredHeight(childAvailableHeight)
@@ -81,7 +81,7 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 			val scale = if (flexibleWidth > 0) MathUtils.clamp((childAvailableWidth - inflexibleWidth) / flexibleWidth, 0f, 1f) else 1f
 			for (i in 0..elements.lastIndex) {
 				val element = elements[i]
-				val layoutData = element.layoutData as HorizontalLayoutData?
+				val layoutData = element.layoutDataCast
 				if (layoutData?.widthPercent != null) {
 					val h = layoutData.getPreferredHeight(childAvailableHeight)
 					val w = scale * layoutData.widthPercent!! * childAvailableWidth
@@ -105,7 +105,7 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 		}
 		for (i in 0..elements.lastIndex) {
 			val element = elements[i]
-			val layoutData = element.layoutData as HorizontalLayoutData?
+			val layoutData = element.layoutDataCast
 			val y = when (layoutData?.verticalAlign ?: props.verticalAlign) {
 				VAlign.TOP -> padding.top
 				VAlign.MIDDLE -> (maxHeight - element.height) * 0.5f + padding.top

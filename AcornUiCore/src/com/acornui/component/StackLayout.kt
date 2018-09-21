@@ -49,7 +49,7 @@ class StackLayout : LayoutAlgorithm<StackLayoutStyle, StackLayoutData> {
 
 		for (i in 0..elements.lastIndex) {
 			val child = elements[i]
-			val layoutData = child.layoutData as StackLayoutData?
+			val layoutData = child.layoutDataCast
 			child.setSize(layoutData?.getPreferredWidth(childAvailableWidth), layoutData?.getPreferredHeight(childAvailableHeight))
 			child.moveTo(padding.left, padding.top)
 

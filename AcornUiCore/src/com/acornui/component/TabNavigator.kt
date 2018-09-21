@@ -146,6 +146,7 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 	 * index.
 	 */
 	fun <T : TabNavigatorTab> addTab(index: Int, tab: T): T {
+		// TODO: Handle tab reorder without removal.
 		if (tab.isDisposed) throw Exception("Tab is disposed.")
 		var newIndex = index
 		val oldIndex = tabs.indexOf(tab)

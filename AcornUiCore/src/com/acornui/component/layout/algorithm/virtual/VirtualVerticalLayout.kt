@@ -51,7 +51,7 @@ class VirtualVerticalLayout : VirtualLayoutAlgorithm<VirtualVerticalLayoutStyle,
 		val childAvailableHeight = padding.reduceHeight(explicitHeight)
 
 		// Size the element
-		val layoutData = element.layoutData as VerticalLayoutData?
+		val layoutData = element.layoutDataCast
 		val w = layoutData?.getPreferredWidth(childAvailableWidth)
 		val h = layoutData?.getPreferredHeight(childAvailableHeight)
 		element.setSize(w, h)

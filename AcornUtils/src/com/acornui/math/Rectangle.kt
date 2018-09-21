@@ -121,17 +121,29 @@ class Rectangle(
 		override var height: Float = 0f
 ) : Clearable, RectangleRo {
 
-	override val left: Float
+	override var left: Float
 		get() = x
+		set(value) {
+			x = value
+		}
 
-	override val top: Float
+	override var top: Float
 		get() = y
+		set(value) {
+			y = value
+		}
 
-	override val right: Float
+	override var right: Float
 		get() = x + width
+		set(value) {
+			width = value - x
+		}
 
-	override val bottom: Float
+	override var bottom: Float
 		get() = y + height
+		set(value) {
+			height = value - y
+		}
 
 	override fun isEmpty(): Boolean {
 		return width == 0f || height == 0f

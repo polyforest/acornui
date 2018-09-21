@@ -73,7 +73,8 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 		out.width.min = minWidth
 	}
 
-	internal fun cellWalk(elements: List<BasicLayoutElement>, props: GridLayoutStyle, callback: CellFilter) {
+	// TODO: can be private once unit tests support private methods
+	internal fun cellWalk(elements: List<LayoutElement>, props: GridLayoutStyle, callback: CellFilter) {
 		var colIndex = 0
 		var rowIndex = 0
 
@@ -84,7 +85,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 			val e = elements[i]
 			callback(e, rowIndex, colIndex)
 
-			val layoutData = e.layoutData as GridLayoutData?
+			val layoutData = e.layoutDataCast
 			val colSpan = layoutData?.colSpan ?: 1
 			val rowSpan = layoutData?.rowSpan ?: 1
 
@@ -130,7 +131,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 		// Size inflexible cells.
 		cellWalk(elements, props) {
 			element, rowIndex, colIndex ->
-			val layoutData = element.layoutData as GridLayoutData?
+			val layoutData = element.layoutDataCast
 			val colSpan = layoutData?.colSpan ?: 1
 			var notFlexible = true
 			var availableSpanWidth: Float? = 0f
@@ -153,7 +154,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 
 				val rowSpan = layoutData?.rowSpan ?: 1
 				val h = (element.height - (rowSpan - 1) * props.verticalGap) / rowSpan
-				_measuredRowHeights.fill(rowIndex + rowSpan, { props.rowHeight ?: 0f })
+				_measuredRowHeights.fill(rowIndex + rowSpan) { props.rowHeight ?: 0f }
 				for (i in rowIndex..rowIndex + rowSpan - 1) {
 					_measuredRowHeights[i] = maxOf(_measuredRowHeights[i], h)
 				}
@@ -202,7 +203,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 		if (childAvailableWidth != null) {
 			cellWalk(elements, props) {
 				element, rowIndex, colIndex ->
-				val layoutData = element.layoutData as GridLayoutData?
+				val layoutData = element.layoutDataCast
 				val colSpan = layoutData?.colSpan ?: 1
 				var flexible = false
 				var availableSpanWidth = 0f
@@ -220,7 +221,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 
 					val rowSpan = layoutData?.rowSpan ?: 1
 					val h = (element.height - (rowSpan - 1) * props.verticalGap) / rowSpan
-					_measuredRowHeights.fill(rowIndex + rowSpan, { props.rowHeight ?: 0f })
+					_measuredRowHeights.fill(rowIndex + rowSpan) { props.rowHeight ?: 0f }
 					for (i in rowIndex..rowIndex + rowSpan - 1) {
 						_measuredRowHeights[i] = maxOf(_measuredRowHeights[i], h)
 					}
@@ -317,7 +318,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 	}
 }
 
-private typealias CellFilter = (element: BasicLayoutElement, rowIndex: Int, colIndex: Int) -> Unit
+private typealias CellFilter = GridLayout.(element: LayoutElement, rowIndex: Int, colIndex: Int) -> Unit
 
 
 /**

@@ -18,6 +18,7 @@ package com.acornui.component.layout.algorithm.virtual
 
 import com.acornui.component.layout.LayoutData
 import com.acornui.component.layout.LayoutElement
+import com.acornui.component.layout.LayoutElementRo
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.core.di.Owned
 import com.acornui.math.Bounds
@@ -81,6 +82,13 @@ interface VirtualLayoutAlgorithm<in S, out T : LayoutData> : LayoutDataProvider<
 	 * Returns true if the layout element is in bounds.
 	 */
 	fun shouldShowRenderer(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElement, props: S): Boolean
+
+	/**
+	 * A utility method to get the layout data automatically cast to the type it is expected to be.
+	 */
+	@Suppress("UNCHECKED_CAST")
+	val LayoutElementRo.layoutDataCast: T?
+		get() = this.layoutData as T?
 
 }
 

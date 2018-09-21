@@ -47,7 +47,7 @@ object ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 
 		for (i in 0..elements.lastIndex) {
 			val child = elements[i]
-			val layoutData = child.layoutData as ScaleLayoutData?
+			val layoutData = child.layoutDataCast
 			child.setSize(layoutData?.getPreferredWidth(childAvailableWidth), layoutData?.getPreferredHeight(childAvailableHeight))
 			val w = maxOf(1f, child.width) // Don't allow the width/height to be 0 for divide by zero reasons.
 			val h = maxOf(1f, child.height)

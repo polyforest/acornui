@@ -47,6 +47,12 @@ interface LayoutAlgorithm<in S, out T : LayoutData> : LayoutDataProvider<T> {
 	 */
 	fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, props: S, out: Bounds)
 
+	/**
+	 * A utility method to get the layout data automatically cast to the type it is expected to be.
+	 */
+	@Suppress("UNCHECKED_CAST")
+	val LayoutElementRo.layoutDataCast: T?
+		get() = this.layoutData as T?
 }
 
 interface LayoutDataProvider<out T : LayoutData> {

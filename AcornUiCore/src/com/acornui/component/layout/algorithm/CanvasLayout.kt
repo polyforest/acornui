@@ -30,7 +30,7 @@ class CanvasLayout : LayoutAlgorithm<Any, CanvasLayoutData> {
 		for (i in 0..elements.lastIndex) {
 			val element = elements[i]
 			val sC = element.sizeConstraints
-			val layoutData = element.layoutData as CanvasLayoutData?
+			val layoutData = element.layoutDataCast
 			minWidth = maxOf((sC.width.min ?: 0f) + (layoutData?.left ?: 0f) + (layoutData?.right ?: 0f) + (layoutData?.horizontalCenter ?: 0f), minWidth)
 			minHeight = maxOf((sC.height.min ?: 0f) + (layoutData?.top ?: 0f) + (layoutData?.bottom ?: 0f) + (layoutData?.verticalCenter ?: 0f), minHeight)
 		}
@@ -44,13 +44,13 @@ class CanvasLayout : LayoutAlgorithm<Any, CanvasLayoutData> {
 
 		for (i in 0..elements.lastIndex) {
 			val element = elements[i]
-			val layoutData = element.layoutData as CanvasLayoutData?
+			val layoutData = element.layoutDataCast
 			element.setSize(layoutData?.getPreferredWidth(explicitWidth), layoutData?.getPreferredHeight(explicitHeight))
 		}
 
 		for (i in 0..elements.lastIndex) {
 			val element = elements[i]
-			val layoutData = element.layoutData as CanvasLayoutData?
+			val layoutData = element.layoutDataCast
 
 			if (layoutData == null) {
 				element.moveTo(0f, 0f)

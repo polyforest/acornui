@@ -349,7 +349,7 @@ interface DragInteractionRo : InteractionEventRo {
 	val startElement: InteractiveElementRo?
 
 	/**
-	 * The starting position (in window coordinates) for the drag.
+	 * The starting position (in canvas coordinates) for the drag.
 	 */
 	val startPosition: Vector2Ro
 
@@ -359,7 +359,7 @@ interface DragInteractionRo : InteractionEventRo {
 	val startPositionLocal: Vector2Ro
 
 	/**
-	 * The current position (in window coordinates).
+	 * The current position (in canvas coordinates).
 	 */
 	val position: Vector2Ro
 
