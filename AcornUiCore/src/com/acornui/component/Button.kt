@@ -206,7 +206,6 @@ open class Button(
 		val newSkinPart = newState.backupWalk { _stateSkinMap[newState]?.instance }
 		val previousSkinPart = _currentSkinPart
 		if (previousSkinPart == newSkinPart) return
-		newSkinPart?.interactivityMode = InteractivityMode.NONE
 		_currentSkinPart = newSkinPart
 		if (newSkinPart is Labelable) {
 			newSkinPart.label = _label

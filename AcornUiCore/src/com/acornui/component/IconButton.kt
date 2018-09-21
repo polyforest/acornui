@@ -10,6 +10,8 @@ import com.acornui.core.di.Owned
 import com.acornui.core.graphics.atlas
 import com.acornui.core.graphics.contentsAtlas
 import com.acornui.math.Bounds
+import com.acornui.math.MathUtils
+import com.acornui.math.MathUtils.roundToNearest
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import kotlin.math.round
@@ -111,13 +113,18 @@ fun Owned.iconButton(atlasPath: String, regions: Map<ButtonState, String>, init:
 open class IconButtonSkinPart(
 		owner: Owned,
 		private val texture: UiComponent,
-		private val padding: PadRo = Pad(5f, 5f, 5f, 5f),
-		private val hGap: Float = 5f,
+		private val padding: PadRo = Pad(4f),
+		private val hGap: Float = 4f,
 
 		/**
 		 * The vertical alignment between the icon and the label.
 		 */
-		private val vAlign: VAlign = VAlign.MIDDLE
+		private val vAlign: VAlign = VAlign.MIDDLE,
+
+		/**
+		 * If false, the icon will be on the right instead of left.
+		 */
+		private val iconOnLeft: Boolean = true
 ) : ElementContainerImpl<UiComponent>(owner), Labelable {
 
 	private val icon: Image
@@ -126,7 +133,9 @@ open class IconButtonSkinPart(
 	init {
 		addChild(texture)
 		icon = addChild(image())
-		textField = addChild(text())
+		textField = addChild(text {
+			interactivityMode = InteractivityMode.NONE
+		})
 	}
 
 	override var label: String
@@ -153,36 +162,51 @@ open class IconButtonSkinPart(
 		val childAvailableHeight = padding.reduceHeight(explicitHeight)
 		val textWidth = if (childAvailableWidth == null) null else childAvailableWidth - icon.width - hGap
 		textField.setSize(textWidth, childAvailableHeight)
-		val contentWidth = if (label == "") icon.width else icon.width + hGap + textField.width
-		val contentHeight = if (label == "") icon.height else maxOf(textField.height, icon.height)
+		val contentWidth = roundToNearest(if (label == "") icon.width else icon.width + hGap + textField.width, 2f)
+		val contentHeight = roundToNearest(if (label == "") icon.height else maxOf(textField.height, icon.height), 2f)
 		val w = maxOf(contentWidth + padding.left + padding.right, explicitWidth ?: 4f)
 		val h = maxOf(contentHeight + padding.top + padding.bottom, explicitHeight ?: 4f)
 
 		texture.setSize(w, h)
 		out.set(w, h)
 
-		if (childAvailableWidth != null) {
-			icon.x = ((childAvailableWidth - contentWidth) * 0.5f + padding.left)
+		val iconX: Float
+		val textFieldX: Float
+		if (iconOnLeft) {
+			iconX = if (childAvailableWidth != null) {
+				(childAvailableWidth - contentWidth) * 0.5f + padding.left
+			} else {
+				padding.left
+			}
+			textFieldX = round(iconX + icon.width + hGap)
 		} else {
-			icon.x = (padding.left)
+			textFieldX = if (childAvailableWidth != null) {
+				(childAvailableWidth - contentWidth) * 0.5f + padding.left
+			} else {
+				padding.left
+			}
+			iconX = textFieldX + textField.width + hGap
 		}
-		textField.x = round(icon.x + icon.width + hGap)
 
 		val yOffset = if (childAvailableHeight == null) padding.top else (childAvailableHeight - contentHeight) * 0.5f + padding.top
 
+		val iconY: Float
+		val textFieldY: Float
 		when (vAlign) {
 			VAlign.TOP -> {
-				icon.y = yOffset
-				textField.y = yOffset
+				iconY = yOffset
+				textFieldY = yOffset
 			}
 			VAlign.MIDDLE -> {
-				icon.y = yOffset + (contentHeight - icon.height) * 0.5f
-				textField.y = round((yOffset + (contentHeight - textField.height) * 0.5f))
+				iconY = yOffset + (contentHeight - icon.height) * 0.5f
+				textFieldY = (yOffset + (contentHeight - textField.height) * 0.5f)
 			}
 			VAlign.BOTTOM -> {
-				icon.y = yOffset + (contentHeight - icon.height)
-				textField.y = round(yOffset + (contentHeight - textField.height))
+				iconY = yOffset + (contentHeight - icon.height)
+				textFieldY = yOffset + (contentHeight - textField.height)
 			}
 		}
+		icon.moveTo(iconX, iconY)
+		textField.moveTo(textFieldX, textFieldY)
 	}
 }
