@@ -96,8 +96,8 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutConta
 		removePopUp(contents)
 	}
 
-	override fun onElementAdded(index: Int, element: UiComponent) {
-		contents.addElement(index, element)
+	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {
+		contents.addElement(newIndex, element)
 	}
 
 	override fun onElementRemoved(index: Int, element: UiComponent) {

@@ -27,8 +27,8 @@ import com.acornui.core.graphics.contentsAtlas
  */
 open class Image(owner: Owned) : ScaleBoxLayoutContainer(owner) {
 
-	override fun onElementAdded(index: Int, element: UiComponent) {
-		super.onElementAdded(index, element)
+	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {
+		super.onElementAdded(oldIndex, newIndex, element)
 		if (element.layoutData !is ScaleLayoutData) {
 			val layoutData = ScaleLayoutData()
 			layoutData.maxScaleX = 1f

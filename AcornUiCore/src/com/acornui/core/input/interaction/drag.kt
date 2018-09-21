@@ -91,6 +91,7 @@ class DragAttachment(
 	private val startPosition = Vector2()
 	private val startPositionLocal = Vector2()
 	private var startElement: InteractiveElementRo? = null
+	private var isTouch: Boolean = false
 	private var _enterFrame: Disposable? = null
 
 	private fun targetDeactivatedHandler(c: LifecycleRo) {
@@ -128,6 +129,8 @@ class DragAttachment(
 
 	private fun mouseDownHandler(event: MouseInteractionRo) {
 		if (!watchingMouse && !watchingTouch && allowMouseStart(event)) {
+			isTouch = false
+			touchId = -1
 			setIsWatchingMouse(true)
 			event.handled = true
 			startElement = event.target
@@ -165,7 +168,8 @@ class DragAttachment(
 
 	private fun touchStartHandler(event: TouchInteractionRo) {
 		if (!watchingMouse && !watchingTouch && allowTouchStart(event)) {
-			setWatchingTouch(true)
+			isTouch = true
+			setIsWatchingTouch(true)
 			event.handled = true
 			startElement = event.target
 			val t = event.touches.first()
@@ -196,7 +200,7 @@ class DragAttachment(
 		return event.touches.find { it.identifier == touchId } == null
 	}
 
-	private fun setWatchingTouch(value: Boolean) {
+	private fun setIsWatchingTouch(value: Boolean) {
 		if (watchingTouch == value) return
 		watchingTouch = value
 		if (value) {
@@ -220,7 +224,7 @@ class DragAttachment(
 		if (allowTouchEnd(event)) {
 			touchId = -1
 			event.handled = true
-			setWatchingTouch(false)
+			setIsWatchingTouch(false)
 			setIsDragging(false)
 		}
 		Unit
@@ -272,6 +276,8 @@ class DragAttachment(
 		dragEvent.startPosition.set(startPosition)
 		dragEvent.startPositionLocal.set(startPositionLocal)
 		dragEvent.position.set(position)
+		dragEvent.isTouch = isTouch
+		dragEvent.touchId = touchId
 		signal.dispatch(dragEvent)
 	}
 
@@ -290,8 +296,25 @@ class DragAttachment(
 
 	fun stop() {
 		setIsWatchingMouse(false)
-		setWatchingTouch(false)
+		setIsWatchingTouch(false)
 		setIsDragging(false)
+	}
+
+	/**
+	 * Forces the drag operation to begin.
+	 * This can be a way to transfer a drag operation from one component to another.
+	 */
+	fun start(event: DragInteractionRo) {
+		stop()
+		startElement = event.startElement
+		startPosition.set(event.startPosition)
+		startPositionLocal.set(event.startPositionLocal)
+		position.set(event.position)
+		isTouch = event.isTouch
+		touchId = event.touchId
+		if (isTouch) setIsWatchingTouch(true)
+		else setIsWatchingMouse(true)
+		setIsDragging(true)
 	}
 
 	init {
@@ -345,43 +368,45 @@ interface DragInteractionRo : InteractionEventRo {
 	 * Note that this value is calculated, and not cached.
 	 */
 	val positionLocal: Vector2Ro
+
+	/**
+	 * True if initialized from a touch interaction, false if mouse.
+	 */
+	val isTouch: Boolean
+
+	/**
+	 * If [isTouch] is true, this is the touch id the drag started from.
+	 */
+	val touchId: Int
 }
 
 class DragInteraction : InteractionEventBase(), DragInteractionRo {
 
 	override var startElement: InteractiveElementRo? = null
 
-	/**
-	 * The starting position (in window coordinates) for the drag.
-	 */
 	override val startPosition: Vector2 = Vector2()
 
-	/**
-	 * The starting position relative to the startElement for the drag.
-	 */
 	override val startPositionLocal: Vector2 = Vector2()
 
-	/**
-	 * The current position (in window coordinates).
-	 */
 	override val position: Vector2 = Vector2()
 
 	private val _positionLocal = Vector2()
 
-	/**
-	 * The current position, local to the target element.
-	 * Note that this value is calculated, and not cached.
-	 */
 	override val positionLocal: Vector2
 		get() {
 			return currentTarget.canvasToLocal(_positionLocal.set(position))
 		}
+
+	override var isTouch: Boolean = false
+	override var touchId: Int = -1
 
 	override fun clear() {
 		super.clear()
 		startPosition.clear()
 		position.clear()
 		startElement = null
+		isTouch = false
+		touchId = -1
 	}
 
 	companion object {

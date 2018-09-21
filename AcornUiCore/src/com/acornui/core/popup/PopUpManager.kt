@@ -18,6 +18,7 @@ package com.acornui.core.popup
 
 import com.acornui.collection.Clearable
 import com.acornui.collection.firstOrNull2
+import com.acornui.collection.indexOfFirst2
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
 import com.acornui.component.layout.LayoutContainerImpl
@@ -85,7 +86,7 @@ interface PopUpManager : Clearable {
 	}
 }
 
-class PopUpInfo<T : UiComponent>(
+data class PopUpInfo<T : UiComponent>(
 
 		/**
 		 * The child to add when the pop-up is activated.
@@ -104,19 +105,19 @@ class PopUpInfo<T : UiComponent>(
 		val priority: Float = 0f,
 
 		/**
-		 * If true, the pop-up will be disposed on removal.
+		 * If true, the pop-up [child] will be disposed on removal.
 		 */
-		var dispose: Boolean = false,
+		val dispose: Boolean = false,
 
 		/**
 		 * If true, when the pop-up is displayed, the first focusable element will be focused.
 		 */
-		var focusFirst: Boolean = true,
+		val focusFirst: Boolean = true,
 
 		/**
 		 * If true and [focusFirst] is true, when the first focusable element is focused, it will also be highlighted.
 		 */
-		var highlightFocused: Boolean = false,
+		val highlightFocused: Boolean = false,
 
 		/**
 		 * When a close is requested via clicking on the modal screen, the callback determines if the close succeeds.
@@ -307,9 +308,15 @@ class PopUpManagerImpl(private val root: UiComponent) : LayoutContainerImpl<PopU
 
 	override fun <T : UiComponent> addPopUp(popUpInfo: PopUpInfo<T>) {
 		val child = popUpInfo.child
-		if (child.parent != null) throw Exception("The pop-up must be removed before adding.")
-		if (child is Closeable) {
-			child.closed.add(childClosedHandler)
+		if (child.isActive) {
+			val oldIndex = _currentPopUps.indexOfFirst2 { it.child == child }
+			if (oldIndex == -1)
+				throw Exception("The pop-up must be removed from external container before adding.")
+			_currentPopUps.removeAt(oldIndex)
+		} else {
+			if (child is Closeable) {
+				child.closed.add(childClosedHandler)
+			}
 		}
 		val index = _currentPopUps.sortedInsertionIndex(popUpInfo) { a, b -> a.priority.compareTo(b.priority) }
 		_currentPopUps.add(index, popUpInfo)

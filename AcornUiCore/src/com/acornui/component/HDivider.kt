@@ -64,8 +64,8 @@ open class HDivider(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		split(_mouse.x / width)
 	}
 
-	override fun onElementAdded(index: Int, element: UiComponent) {
-		super.onElementAdded(index, element)
+	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {
+		super.onElementAdded(oldIndex, newIndex, element)
 		refreshParts()
 	}
 

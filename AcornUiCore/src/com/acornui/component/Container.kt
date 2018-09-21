@@ -47,6 +47,9 @@ open class ContainerImpl(
 	override val children: List<UiComponentRo>
 		get() = _children
 
+	/**
+	 * Adds a child to the last index.
+	 */
 	protected fun <T : UiComponent> addChild(child: T): T {
 		return addChild(_children.size, child)
 	}
@@ -62,11 +65,21 @@ open class ContainerImpl(
 
 	/**
 	 * Adds the specified child to this container.
-	 * @param index The index of where to insert the child. By default this is the end of the list.
+	 * @param index The index of where to insert the child.
 	 */
 	protected fun <T : UiComponent> addChild(index: Int, child: T): T {
 		_assert(!isDisposed, "This Container is disposed.")
 		_assert(!child.isDisposed, "Added child is disposed.")
+		if (child.parent == this) {
+			// Reorder child.
+			val oldIndex = _children.indexOf(child)
+			val newIndex = if (index > oldIndex) index - 1 else index
+			_children.removeAt(oldIndex)
+			_children.add(newIndex, child)
+			child.invalidate(ValidationFlags.FOCUS_ORDER) // TODO: make this less specific.
+			invalidate(bubblingFlags)
+			return child
+		}
 		_assert(child.parent == null, "Remove child first.")
 		if (index < 0 || index > _children.size)
 			throw Exception("index is out of bounds.")

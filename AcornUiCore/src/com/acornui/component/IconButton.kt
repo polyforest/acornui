@@ -9,7 +9,6 @@ import com.acornui.component.text.text
 import com.acornui.core.di.Owned
 import com.acornui.core.graphics.atlas
 import com.acornui.core.graphics.contentsAtlas
-import com.acornui.core.round
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
@@ -36,7 +35,7 @@ class IconButton(
 		refreshContents()
 	}
 
-	override fun onElementAdded(index: Int, element: UiComponent) {
+	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {
 		if (elements.size > 1) throw Exception("Icon buttons can only have one child.")
 		refreshContents()
 	}
@@ -136,8 +135,8 @@ open class IconButtonSkinPart(
 			textField.text = value
 		}
 
-	override fun onElementAdded(index: Int, element: UiComponent) {
-		icon.addElement(index, element)
+	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {
+		icon.addElement(newIndex, element)
 	}
 
 	override fun onElementRemoved(index: Int, element: UiComponent) {

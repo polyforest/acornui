@@ -129,11 +129,12 @@ open class ElementContainerImpl<T : UiComponent>(
 			// Handle the case where after the element is removed, the new index needs to decrement to compensate.
 			if (oldIndex < newIndex)
 				newIndex--
-			removeElement(oldIndex)
+			_elements.removeAt(oldIndex)
+		} else {
+			element.disposed.add(this::elementDisposedHandler)
 		}
 		_elements.add(newIndex, element)
-		element.disposed.add(this::elementDisposedHandler)
-		onElementAdded(newIndex, element)
+		onElementAdded(oldIndex, newIndex, element)
 		return element
 	}
 
@@ -150,17 +151,17 @@ open class ElementContainerImpl<T : UiComponent>(
 	 *
 	 * private val otherContainer = addChild(container())
 	 *
-	 * override fun onElementAdded(index: Int, child: T) { otherContainer.addElement(child) }
-	 * override fun onElementRemoved(index: Int, child: T) { otherContainer.removeElement(child) }
+	 * override fun onElementAdded(oldIndex: Int, newIndex: Int, child: T) { otherContainer.addElement(newIndex, child) }
+	 * override fun onElementRemoved(index: Int, child: T) { otherContainer.removeElement(index) }
 	 */
-	protected open fun onElementAdded(index: Int, element: T) {
-		if (index == elements.size - 1) {
+	protected open fun onElementAdded(oldIndex: Int, newIndex: Int, element: T) {
+		if (newIndex == elements.size - 1) {
 			addChild(element)
-		} else if (index == 0) {
-			val nextElement = _elements[index + 1]
+		} else if (newIndex == 0) {
+			val nextElement = _elements[newIndex + 1]
 			addChildBefore(element, nextElement)
 		} else {
-			val previousElement = _elements[index - 1]
+			val previousElement = _elements[newIndex - 1]
 			addChildAfter(element, previousElement)
 		}
 	}
