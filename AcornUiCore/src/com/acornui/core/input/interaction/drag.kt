@@ -409,6 +409,11 @@ class DragInteraction : InteractionEventBase(), DragInteractionRo {
 		touchId = -1
 	}
 
+	override fun toString(): String {
+		return "DragInteraction(startElement=$startElement, startPosition=$startPosition, position=$position, isTouch=$isTouch, touchId=$touchId)"
+	}
+
+
 	companion object {
 		val DRAG_START = InteractionType<DragInteractionRo>("dragStart")
 		val DRAG = InteractionType<DragInteractionRo>("drag")
