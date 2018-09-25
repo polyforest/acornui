@@ -129,8 +129,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 		}
 
 		// Size inflexible cells.
-		cellWalk(elements, props) {
-			element, rowIndex, colIndex ->
+		cellWalk(elements, props) { element, rowIndex, colIndex ->
 			val layoutData = element.layoutDataCast
 			val colSpan = layoutData?.colSpan ?: 1
 			var notFlexible = true
@@ -201,8 +200,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 		// Size flexible cells.
 		// All columns are guaranteed to have preferred widths set at this point.
 		if (childAvailableWidth != null) {
-			cellWalk(elements, props) {
-				element, rowIndex, colIndex ->
+			cellWalk(elements, props) { element, rowIndex, colIndex ->
 				val layoutData = element.layoutDataCast
 				val colSpan = layoutData?.colSpan ?: 1
 				var flexible = false
@@ -236,8 +234,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 		var y = props.padding.top
 		var lastRowIndex = 0
 
-		cellWalk(elements, props) {
-			element, rowIndex, colIndex ->
+		cellWalk(elements, props) { element, rowIndex, colIndex ->
 
 			if (rowIndex != lastRowIndex) {
 				x = props.padding.left

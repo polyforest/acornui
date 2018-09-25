@@ -655,15 +655,19 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 				_input.dispatch()
 			}
 			Ascii.ENTER, Ascii.RETURN -> {
-				event.handled = true
 				val sel = firstSelection
 				val multiline = if (sel == null || sel.min >= contents.size) null else textField.contents.getTextElementAt(sel.min).textParent?.textParent?.multiline
 
 				if (multiline ?: flowStyle.multiline) {
+					event.handled = true
 					replaceSelection("\n")
 					_input.dispatch()
 				} else {
-					_changed.dispatch()
+					if (_changed.isNotEmpty()) {
+						// Only mark the key event as handled if there are change handlers.
+						event.handled = true
+						_changed.dispatch()
+					}
 				}
 			}
 			Ascii.HOME -> cursorHome(event)

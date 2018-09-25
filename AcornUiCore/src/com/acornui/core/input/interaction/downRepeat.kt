@@ -97,7 +97,7 @@ fun UiComponentRo.downRepeatEnabled(): Boolean {
 }
 
 fun UiComponentRo.enableDownRepeat(): DownRepeat {
-	return createOrReuseAttachment(DownRepeat, { DownRepeat(this) })
+	return createOrReuseAttachment(DownRepeat) { DownRepeat(this) }
 }
 
 /**

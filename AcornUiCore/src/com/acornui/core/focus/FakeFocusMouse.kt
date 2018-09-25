@@ -1,6 +1,8 @@
 package com.acornui.core.focus
 
 import com.acornui.component.UiComponentRo
+import com.acornui.component.createOrReuseAttachment
+import com.acornui.component.parentWalk
 import com.acornui.component.stage
 import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
@@ -24,45 +26,68 @@ class FakeFocusMouse(
 	private var downKey: Int? = null
 	private var downElement: UiComponentRo? = null
 
-	private val keyDownHandler = {
-		event: KeyInteractionRo ->
+	private val keyDownHandler = { event: KeyInteractionRo ->
 		if (!event.handled) {
-			val f = focus.focused()
-			if (f != null) {
-				val isRepeat = event.isRepeat && downKey == event.keyCode && f.downRepeatEnabled()
-				if ((downKey == null || isRepeat) && event.keyCode == Ascii.SPACE || event.keyCode == Ascii.RETURN) {
+			val target = getTarget(event)
+			if (target != null) {
+				val isRepeat = event.isRepeat && downKey == event.keyCode && target.downRepeatEnabled()
+				if ((downKey == null || isRepeat) && event.keyCode == Ascii.SPACE || event.keyCode == Ascii.RETURN || event.keyCode == Ascii.ENTER) {
 					event.handled = true
 					downKey = event.keyCode
-					downElement = focus.focused()
-					dispatchFakeMouseEvent(MouseInteractionRo.MOUSE_DOWN)
+					downElement = target
+					dispatchFakeMouseEvent(target, MouseInteractionRo.MOUSE_DOWN)
 				}
 			}
 		}
 	}
 
-	private val keyUpHandler = {
-		event: KeyInteractionRo ->
-		if (!event.handled && event.keyCode == downKey) {
-			event.handled = true
-			dispatchFakeMouseEvent(MouseInteractionRo.MOUSE_UP)
+	private val keyUpHandler = { event: KeyInteractionRo ->
+		if (event.keyCode == downKey) {
 			downKey = null
-	 		if (downElement == focus.focused()) {
-				downElement!!.dispatchClick()
-				downElement = null
+
+			val downElement = downElement!!
+			this.downElement = null
+			dispatchFakeMouseEvent(downElement, MouseInteractionRo.MOUSE_UP)
+			if (!event.handled && getTarget(event) == focus.focused()) {
+				downElement.dispatchClick()
 			}
+			event.handled = true
 		}
 	}
 
-	private fun dispatchFakeMouseEvent(type: InteractionType<MouseInteractionRo>) {
-		val f = focus.focused()
-		if (f != null) {
-			fakeMouseEvent.clear()
-			fakeMouseEvent.isFabricated = true
-			fakeMouseEvent.type = type
-			fakeMouseEvent.button = WhichButton.LEFT
-			fakeMouseEvent.timestamp = time.nowMs()
-			interactivity.dispatch(f, fakeMouseEvent)
+	private fun dispatchFakeMouseEvent(target: UiComponentRo, type: InteractionType<MouseInteractionRo>) {
+		fakeMouseEvent.clear()
+		fakeMouseEvent.isFabricated = true
+		fakeMouseEvent.type = type
+		fakeMouseEvent.button = WhichButton.LEFT
+		fakeMouseEvent.timestamp = time.nowMs()
+		interactivity.dispatch(target, fakeMouseEvent)
+	}
+
+	private fun getTarget(event: KeyInteractionRo): UiComponentRo? {
+		val focused = focus.focused() ?: return null
+		var target: UiComponentRo = focused
+		focused.parentWalk {
+			if (it.click().isNotEmpty()) {
+				// If a parent has a click handler, use the focused element, don't continue to check for an
+				// EnterTarget attachment.
+				false
+			} else {
+				val attachment = it.getAttachment<EnterTarget>(EnterTarget)
+				if (attachment != null) {
+					if (attachment.filter(event)) {
+						target = attachment.target
+						false
+					} else {
+						true
+					}
+				} else {
+					true
+				}
+			}
+
 		}
+		return target
 	}
 
 	init {
@@ -78,4 +103,28 @@ class FakeFocusMouse(
 
 fun Scoped.fakeFocusMouse(): FakeFocusMouse {
 	return FakeFocusMouse(injector)
+}
+
+/**
+ * The target for when ENTER or RETURN is pressed.
+ */
+class EnterTarget(val target: UiComponentRo, val filter: (KeyInteractionRo) -> Boolean) {
+
+	companion object
+}
+
+/**
+ * The FakeFocusMouse by default will respond to ENTER or RETURN key presses and fabricate MOUSE_DOWN and MOUSE_UP
+ * events on the focused element.  If the enter target is set on an ancestor of the focused element, that target will
+ * be used instead.
+ */
+fun UiComponentRo.enterTarget(target: UiComponentRo, filter: (KeyInteractionRo) -> Boolean = { !it.handled && it.keyCode != Ascii.SPACE }): Disposable {
+	createOrReuseAttachment(EnterTarget) {
+		EnterTarget(target, filter)
+	}
+	return object : Disposable {
+		override fun dispose() {
+			removeAttachment<EnterTarget>(EnterTarget)
+		}
+	}
 }
