@@ -4,10 +4,13 @@ package com.acornui.component.style
 
 import com.acornui._assert
 import com.acornui.assertionsEnabled
-import com.acornui.collection.*
+import com.acornui.collection.ActiveList
+import com.acornui.collection.addSorted
+import com.acornui.collection.firstOrNull2
+import com.acornui.collection.removeFirst
 import com.acornui.core.Disposable
+import com.acornui.core.DisposedException
 import com.acornui.observe.Observable
-import com.acornui.signal.bind
 
 interface StyleableRo {
 
@@ -67,6 +70,8 @@ class StylesImpl(private val host: Styleable) : Disposable {
 	private val styleValidators = ArrayList<StyleValidator>()
 	private val styleWatchers = ArrayList<StyleWatcher<*>>()
 
+	private var isDisposed = false
+
 	init {
 		styleTags.addBinding(host::invalidateStyles)
 		styleRules.added.add {
@@ -110,6 +115,7 @@ class StylesImpl(private val host: Styleable) : Disposable {
 	}
 
 	fun <T : Style> bind(style: T, calculator: StyleCalculator = CascadingStyleCalculator): T {
+		if (isDisposed) throw DisposedException()
 		style.changed.add(this::styleChangedHandler)
 		styleValidators.add(StyleValidator(style, calculator))
 		host.invalidateStyles()
@@ -122,6 +128,7 @@ class StylesImpl(private val host: Styleable) : Disposable {
 	}
 
 	fun <T : Style> watch(style: T, priority: Float, callback: (T) -> Unit) {
+		if (isDisposed) return
 		if (assertionsEnabled)
 			_assert(styleValidators.firstOrNull2 { it: StyleValidator -> it.style === style } != null, "A style object is being watched without being bound. Use `val yourStyle = bind(YourStyle())`.")
 		val watcher = StyleWatcher(style, priority, callback)
@@ -141,14 +148,17 @@ class StylesImpl(private val host: Styleable) : Disposable {
 		}
 	}
 
-	fun styleChangedHandler(o: Observable) {
+	private fun styleChangedHandler(o: Observable) {
 		host.invalidateStyles()
 	}
 
 	override fun dispose() {
+		if (isDisposed) throw DisposedException()
+		isDisposed = true
 		for (i in 0..styleValidators.lastIndex) {
 			styleValidators[i].style.changed.remove(this::styleChangedHandler)
 		}
+		styleWatchers.clear()
 		styleValidators.clear()
 		styleTags.dispose()
 		styleRules.dispose()

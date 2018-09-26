@@ -287,6 +287,8 @@ interface TextInput : Focusable, SelectableComponent, Styleable, Clearable {
 	 */
 	var allowTab: Boolean
 
+	// TODO: add prompt
+
 	companion object : StyleTag
 }
 

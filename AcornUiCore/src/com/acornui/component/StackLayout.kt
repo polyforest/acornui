@@ -44,48 +44,31 @@ class StackLayout : LayoutAlgorithm<StackLayoutStyle, StackLayoutData> {
 
 	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, props: StackLayoutStyle, out: Bounds) {
 		val padding = props.padding
-		val childAvailableWidth: Float? = padding.reduceWidth(explicitWidth)
-		val childAvailableHeight: Float? = padding.reduceHeight(explicitHeight)
+		val childAvailableWidth = padding.reduceWidth(explicitWidth)
+		val childAvailableHeight = padding.reduceHeight(explicitHeight)
 
 		for (i in 0..elements.lastIndex) {
 			val child = elements[i]
 			val layoutData = child.layoutDataCast
 			child.setSize(layoutData?.getPreferredWidth(childAvailableWidth), layoutData?.getPreferredHeight(childAvailableHeight))
-			child.moveTo(padding.left, padding.top)
 
-			if (explicitWidth != null) {
-				val remainingSpace = childAvailableWidth!! - child.width
-				if (remainingSpace > 0f) {
-					when (layoutData?.horizontalAlign ?: props.horizontalAlign) {
-						HAlign.LEFT -> {
-						}
-						HAlign.CENTER -> {
-							val halfSpace = (remainingSpace * 0.5f).floor()
-							child.x = halfSpace + padding.left
-						}
-						HAlign.RIGHT -> {
-							child.x = remainingSpace + padding.left
-						}
-					}
+			val childX = padding.left + if (explicitWidth == null) 0f else run {
+				val remainingSpace = maxOf(0f, childAvailableWidth!! - child.width)
+				when (layoutData?.horizontalAlign ?: props.horizontalAlign) {
+					HAlign.LEFT -> 0f
+					HAlign.CENTER -> remainingSpace * 0.5f
+					HAlign.RIGHT -> remainingSpace
 				}
 			}
-			if (explicitHeight != null) {
-				val remainingSpace = childAvailableHeight!! - child.height
-				if (remainingSpace > 0f) {
-					when (layoutData?.verticalAlign ?: props.verticalAlign) {
-						VAlign.TOP -> {
-						}
-						VAlign.MIDDLE -> {
-							val halfSpace = (remainingSpace * 0.5f).floor()
-							child.y = halfSpace + padding.top
-						}
-						VAlign.BOTTOM -> {
-							child.y = remainingSpace + padding.top
-						}
-					}
+			val childY = padding.top + if (explicitHeight == null) 0f else run {
+				val remainingSpace = maxOf(0f, childAvailableHeight!! - child.height)
+				when (layoutData?.verticalAlign ?: props.verticalAlign) {
+					VAlign.TOP -> 0f
+					VAlign.MIDDLE -> remainingSpace * 0.5f
+					VAlign.BOTTOM -> remainingSpace
 				}
 			}
-
+			child.moveTo(childX, childY)
 			out.ext(padding.expandWidth2(child.width), padding.expandHeight2(child.height))
 		}
 	}
@@ -113,7 +96,7 @@ open class StackLayoutData : BasicLayoutData() {
 
 open class StackLayoutStyle : StyleBase() {
 
-	override val type = Companion
+	override val type: StyleType<StackLayoutStyle> = Companion
 
 	var padding: PadRo by prop(Pad())
 	var verticalAlign by prop(VAlign.TOP)

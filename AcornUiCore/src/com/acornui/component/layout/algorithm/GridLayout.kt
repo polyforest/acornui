@@ -321,6 +321,7 @@ private typealias CellFilter = GridLayout.(element: LayoutElement, rowIndex: Int
 /**
  * A GridColumn contains column properties for the [GridLayout]
  */
+// FIXME: Grid columns, despite being observable, are not observed by a grid.
 class GridColumn : Observable {
 
 	private val _changed = Signal1<Observable>()
@@ -404,7 +405,7 @@ open class GridLayoutStyle : StyleBase() {
 	/**
 	 * The columns for the grid to use.
 	 */
-	val columns: MutableList<GridColumn> = ActiveList()
+	val columns: MutableList<GridColumn> = ArrayList()
 
 	companion object : StyleType<GridLayoutStyle>
 }

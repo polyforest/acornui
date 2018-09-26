@@ -122,7 +122,7 @@ open class OptionsList<E : Any>(
 			textInput.text = if (value == null) "" else formatter.format(value)
 		}
 
-	private val textInput: TextInput = textInput {
+	private val textInput = textInput {
 		input.add {
 			dataView.dirty()  // Most data views will change based on the text input.
 			open()
@@ -135,6 +135,8 @@ open class OptionsList<E : Any>(
 	var editable: Boolean by observable(true) {
 		textInput.editable = it
 		textInput.selectable = it
+		downArrow?.focusEnabled = it
+		downArrow?.interactivityMode = if (it) InteractivityMode.ALL else InteractivityMode.NONE
 	}
 
 	private var background: UiComponent? = null
@@ -281,7 +283,8 @@ open class OptionsList<E : Any>(
 
 			downArrow?.dispose()
 			val downArrow = addChild(it.downArrow(this))
-			downArrow.focusEnabled = true
+			downArrow.focusEnabled = editable
+			downArrow.interactivityMode = if (editable) InteractivityMode.ALL else InteractivityMode.NONE
 			downArrow.click().add {
 				// Using mouseDown instead of click because we close on blur (which is often via mouseDown).
 				if (!it.handled) {
@@ -289,7 +292,6 @@ open class OptionsList<E : Any>(
 					toggleOpen()
 				}
 			}
-			downArrow.interactivityMode = if (_isOpen) InteractivityMode.NONE else InteractivityMode.ALL
 			this.downArrow = downArrow
 		}
 

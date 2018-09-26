@@ -119,7 +119,6 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 				_drag?.dispose()
 				_drag = null
 			}
-
 			async {
 				val fontStyle = charStyle.toFontStyle()
 				BitmapFontRegistry.getFont(fontStyle)?.await()

@@ -1274,6 +1274,7 @@ open class UiComponentImpl(
 	 * Example: validate(ValidationFlags.LAYOUT or ValidationFlags.PROPERTIES) to validate both layout an properties.
 	 */
 	override fun validate(flags: Int) {
+		if (isDisposed) return
 		validation.validate(flags)
 	}
 
