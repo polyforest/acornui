@@ -19,11 +19,12 @@ package com.acornui.core.text
 import com.acornui.core.di.*
 import com.acornui.core.i18n.Locale
 import com.acornui.core.time.Date
+import com.acornui.core.time.DateRo
 
 /**
  * This class formats dates into localized string representations.
  */
-interface DateTimeFormatter : StringFormatter<Date> {
+interface DateTimeFormatter : StringFormatter<DateRo>, StringParser<Date> {
 
 	/**
 	 * Whether this should format the [Date] object as time, date, or date and time.
@@ -45,7 +46,7 @@ interface DateTimeFormatter : StringFormatter<Date> {
 	var dateStyle: DateTimeFormatStyle
 
 	/**
-	 * The timezone for formatting.
+	 * The time zone for formatting.
 	 * The only values this is guaranteed to work with are "UTC" or null.
 	 * Other values that will likely work based on browser or jvm implementation are the full TZ code
 	 * [https://en.wikipedia.org/wiki/List_of_tz_database_time_zones]
@@ -80,20 +81,29 @@ enum class DateTimeFormatType {
 	DATE_TIME
 }
 
-fun Scoped.dateFormatter(): DateTimeFormatter {
+fun Scoped.dateFormatter(init: DateTimeFormatter.() -> Unit = {}): DateTimeFormatter {
 	return inject(DateTimeFormatter.FACTORY_KEY)(injector).apply {
 		type = DateTimeFormatType.DATE
+		init()
 	}
 }
 
-fun Scoped.dateTimeFormatter(): DateTimeFormatter {
+fun Scoped.dateTimeFormatter(init: DateTimeFormatter.() -> Unit = {}): DateTimeFormatter {
 	return inject(DateTimeFormatter.FACTORY_KEY)(injector).apply {
 		type = DateTimeFormatType.DATE_TIME
+		init()
 	}
 }
 
-fun Scoped.timeFormatter(): DateTimeFormatter {
+fun Scoped.timeFormatter(init: DateTimeFormatter.() -> Unit = {}): DateTimeFormatter {
 	return inject(DateTimeFormatter.FACTORY_KEY)(injector).apply {
 		type = DateTimeFormatType.TIME
+		init()
 	}
 }
+
+fun Scoped.dateParser(): DateTimeFormatter = dateFormatter()
+
+fun Scoped.dateTimeParser(): DateTimeFormatter = dateTimeFormatter()
+
+fun Scoped.timeParser(): DateTimeFormatter = timeFormatter()

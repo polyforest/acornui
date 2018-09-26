@@ -25,11 +25,55 @@ interface TimeProvider {
 
 	/**
 	 * Returns a new date object with the time set.
-	 * @time The time as UTC milliseconds from the epoch.
+	 * @param time The time as UTC milliseconds from the epoch.
 	 */
 	fun date(time: Long): Date {
 		val date = now()
 		date.time = time
+		return date
+	}
+
+	/**
+	 * Returns a new date object with the time set.
+	 * @param fullYear The full year according to local time.  (e.g. 1999, not 99)
+	 * @param month The 0 indexed month according to local time. 0 - January, 11 - December
+	 * @param dayOfMonth The 1 indexed day of the month according to local time. 1st - 1, 31st - 31
+	 * @param hour Hour of the day using 24-hour clock according to local time.
+	 * @param minute The minute within the hour according to local time.
+	 * @param second The second within the minute according to local time.
+	 * @param milli The millisecond within the second according to local time.
+	 */
+	fun date(fullYear: Int, month: Int, dayOfMonth: Int = 0, hour: Int = 0, minute: Int = 0, second: Int = 0, milli: Int = 0): Date {
+		val date = now()
+		date.fullYear = fullYear
+		date.monthIndex = month
+		date.dayOfMonth = dayOfMonth
+		date.hour = hour
+		date.minute = minute
+		date.second = second
+		date.milli = milli
+		return date
+	}
+
+	/**
+	 * Returns a new date object with the time set according to universal time.
+	 * @param fullYear The full year according to universal time.  (e.g. 1999, not 99)
+	 * @param month The 0 indexed month according to universal time. 0 - January, 11 - December
+	 * @param dayOfMonth The 1 indexed day of the month according to universal time. 1st - 1, 31st - 31
+	 * @param hour Hour of the day using 24-hour clock according to universal time.
+	 * @param minute The minute within the hour according to universal time.
+	 * @param second The second within the minute according to universal time.
+	 * @param milli The millisecond within the second according to universal time.
+	 */
+	fun utcDate(fullYear: Int, month: Int, dayOfMonth: Int = 0, hour: Int = 0, minute: Int = 0, second: Int = 0, milli: Int = 0): Date {
+		val date = now()
+		date.utcFullYear = fullYear
+		date.utcMonthIndex = month
+		date.utcDayOfMonth = dayOfMonth
+		date.utcHour = hour
+		date.utcMinute = minute
+		date.utcSecond = second
+		date.utcMilli = milli
 		return date
 	}
 

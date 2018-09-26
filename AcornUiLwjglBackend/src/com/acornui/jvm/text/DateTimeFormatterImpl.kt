@@ -26,10 +26,12 @@ import com.acornui.core.text.DateTimeFormatStyle
 import com.acornui.core.text.DateTimeFormatType
 import com.acornui.core.text.DateTimeFormatter
 import com.acornui.core.time.Date
+import com.acornui.core.time.DateRo
 import com.acornui.jvm.time.DateImpl
 import com.acornui.logging.Log
 import com.acornui.reflect.observable
 import java.text.DateFormat
+import java.text.ParseException
 import java.util.*
 import kotlin.properties.ReadWriteProperty
 import java.util.Locale as JvmLocale
@@ -43,28 +45,32 @@ class DateTimeFormatterImpl(override val injector: Injector) : DateTimeFormatter
 	override var locales: List<Locale>? by watched(null)
 
 	private var lastLocales: List<Locale> = listOf()
-	private var formatter: DateFormat? = null
+	private var _formatter: DateFormat? = null
+	private val formatter: DateFormat
+		get() {
+			if (locales == null && lastLocales != inject(I18n).currentLocales) {
+				_formatter = null
+				lastLocales = inject(I18n).currentLocales.copy()
+			}
+			if (_formatter == null) {
+				val locales = locales ?: lastLocales
+				for (locale in locales) {
+					val jvmLocale = java.util.Locale.Builder().setLanguageTag(locale.value).build()
+					_formatter = getFormatterForLocale(jvmLocale)
+					if (_formatter != null) break
+				}
+				if (_formatter == null) {
+					Log.warn("Could not create a date formatter for the current language chain.")
+					_formatter = getFormatterForLocale(java.util.Locale.getDefault())
+				}
+				_formatter!!.timeZone = if (timeZone == null) TimeZone.getDefault() else TimeZone.getTimeZone(timeZone)
+			}
+			return _formatter!!
+		}
 
-	override fun format(value: Date): String {
+	override fun format(value: DateRo): String {
 		value as DateImpl
-		if (locales == null && lastLocales != inject(I18n).currentLocales) {
-			formatter = null
-			lastLocales = inject(I18n).currentLocales.copy()
-		}
-		if (formatter == null) {
-			val locales = locales ?: lastLocales
-			for (locale in locales) {
-				val jvmLocale = java.util.Locale.Builder().setLanguageTag(locale.value).build()
-				formatter = getFormatterForLocale(jvmLocale)
-				if (formatter != null) break
-			}
-			if (formatter == null) {
-				Log.warn("Could not create a date formatter for the current language chain.")
-				formatter = getFormatterForLocale(java.util.Locale.getDefault())
-			}
-			formatter!!.timeZone = if (timeZone == null) TimeZone.getDefault() else TimeZone.getTimeZone(timeZone)
-		}
-		return formatter!!.format(value.date.time)
+		return formatter.format(value.time)
 	}
 
 	private fun getFormatterForLocale(jvmLocale: java.util.Locale): DateFormat {
@@ -87,7 +93,18 @@ class DateTimeFormatterImpl(override val injector: Injector) : DateTimeFormatter
 
 	private fun <T> watched(initial: T): ReadWriteProperty<Any?, T> {
 		return observable(initial) {
-			formatter = null
+			_formatter = null
+		}
+	}
+
+	override fun parse(value: String): Date? {
+		return try {
+			val date = formatter.parse(value)
+			val d = DateImpl()
+			d.time = date.time
+			d
+		} catch (e: ParseException) {
+			null
 		}
 	}
 }

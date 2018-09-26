@@ -23,7 +23,7 @@ import com.acornui.core.time.Date
  */
 class DateImpl : Date {
 
-	val date = js("new Date();")
+	internal val date = js("new Date();")
 
 	override var time: Long
 		get() {
@@ -34,7 +34,7 @@ class DateImpl : Date {
 			date.setTime(t)
 		}
 
-	override var year: Int
+	override var fullYear: Int
 		get() {
 			return date.getFullYear()
 		}
@@ -42,7 +42,7 @@ class DateImpl : Date {
 			date.setFullYear(value)
 		}
 
-	override var month: Int
+	override var monthIndex: Int
 		get() = date.getMonth()
 		set(value) {
 			date.setMonth(value)
@@ -82,13 +82,61 @@ class DateImpl : Date {
 			date.setMilliseconds(value)
 		}
 
-	override fun clone(): Date {
+	override var utcFullYear: Int
+		get() {
+			return date.getUTCFullYear()
+		}
+		set(value) {
+			date.setUTCFullYear(value)
+		}
+
+	override var utcMonthIndex: Int
+		get() = date.getUTCMonth()
+		set(value) {
+			date.setUTCMonth(value)
+		}
+
+	override var utcDayOfMonth: Int
+		get() = date.getUTCDate()
+		set(value) {
+			date.setUTCDate(value)
+		}
+
+	override val utcDayOfWeek: Int
+		get() = date.getUTCDay()
+
+
+	override var utcHour: Int
+		get() = date.getUTCHours()
+		set(value) {
+			date.setUTCHours(value)
+		}
+
+	override var utcMinute: Int
+		get() = date.getUTCMinutes()
+		set(value) {
+			date.setUTCMinutes(value)
+		}
+
+	override var utcSecond: Int
+		get() = date.getUTCSeconds()
+		set(value) {
+			date.setUTCSeconds(value)
+		}
+
+	override var utcMilli: Int
+		get() = date.getUTCMilliseconds()
+		set(value) {
+			date.setUTCMilliseconds(value)
+		}
+
+	override fun copy(): Date {
 		val newDate = DateImpl()
 		newDate.time = time
 		return newDate
 	}
 
 	override fun toString(): String {
-		return date.toString()
+		return "Date($time)"
 	}
 }

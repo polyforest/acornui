@@ -22,17 +22,14 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.i18n.I18n
 import com.acornui.core.i18n.Locale
-import com.acornui.core.time.Date
+import com.acornui.core.text.DateTimeFormatStyle.*
 import com.acornui.core.text.DateTimeFormatType
-import kotlin.properties.Delegates
-import kotlin.properties.ReadWriteProperty
-import com.acornui.core.text.DateTimeFormatStyle.FULL
-import com.acornui.core.text.DateTimeFormatStyle.LONG
-import com.acornui.core.text.DateTimeFormatStyle.SHORT
-import com.acornui.core.text.DateTimeFormatStyle.DEFAULT
 import com.acornui.core.text.DateTimeFormatter
+import com.acornui.core.time.Date
+import com.acornui.core.time.DateRo
 import com.acornui.js.time.DateImpl
 import com.acornui.reflect.observable
+import kotlin.properties.ReadWriteProperty
 
 class DateTimeFormatterImpl(override val injector: Injector) : DateTimeFormatter, Scoped {
 
@@ -43,50 +40,73 @@ class DateTimeFormatterImpl(override val injector: Injector) : DateTimeFormatter
 	override var locales: List<Locale>? by watched(null)
 
 	private var lastLocales: List<Locale> = listOf()
-	private var formatter: dynamic = null
-
-	override fun format(value: Date): String {
-		value as DateImpl
-		if (locales == null && lastLocales != inject(I18n).currentLocales) {
-			formatter = null
-			lastLocales = inject(I18n).currentLocales.copy()
-		}
-		if (formatter == null) {
-			val locales = (locales ?: lastLocales).map { it.value }
-			val JsDateTimeFormat = js("Intl.DateTimeFormat")
-			val options = js("({})")
-			if (timeZone != null) {
-				options.timeZone = timeZone
+	private var _formatter: dynamic = null
+	private val formatter: dynamic
+		get() {
+			if (locales == null && lastLocales != inject(I18n).currentLocales) {
+				_formatter = null
+				lastLocales = inject(I18n).currentLocales.copy()
 			}
-			if (type == DateTimeFormatType.TIME || type == DateTimeFormatType.DATE_TIME) {
-				if (timeStyle == FULL || timeStyle == LONG)
-					options.timeZoneName = "short"
-				options.hour = "numeric"
-				options.minute = "numeric"
-				if (timeStyle != SHORT) options.second = "numeric"
-			}
-			if (type == DateTimeFormatType.DATE || type == DateTimeFormatType.DATE_TIME) {
-				if (dateStyle == FULL) options.weekday = "long"
-				options.day = "numeric"
-				options.month = when (dateStyle) {
-					FULL -> "long"
-					LONG -> "short"
-					else -> "numeric"
+			if (_formatter == null) {
+				val locales = (locales ?: lastLocales).map { it.value }
+				val JsDateTimeFormat = js("Intl.DateTimeFormat")
+				val options = js("({})")
+				if (timeZone != null) {
+					options.timeZone = timeZone
 				}
-				options.year = if (dateStyle == SHORT) "2-digit" else "numeric"
+				if (type == DateTimeFormatType.TIME || type == DateTimeFormatType.DATE_TIME) {
+					if (timeStyle == FULL || timeStyle == LONG)
+						options.timeZoneName = "short"
+					options.hour = "numeric"
+					options.minute = "numeric"
+					if (timeStyle != SHORT) options.second = "numeric"
+				}
+				if (type == DateTimeFormatType.DATE || type == DateTimeFormatType.DATE_TIME) {
+					if (dateStyle == FULL) options.weekday = "long"
+					options.day = "numeric"
+					options.month = when (dateStyle) {
+						FULL -> "long"
+						LONG -> "short"
+						else -> "numeric"
+					}
+					options.year = if (dateStyle == SHORT) "2-digit" else "numeric"
+				}
+
+				_formatter = JsDateTimeFormat(locales.toTypedArray(), options)
 			}
-
-			formatter = JsDateTimeFormat(locales.joinToString(","), options)
-
+			return _formatter!!
 		}
 
+	override fun format(value: DateRo): String {
+		value as DateImpl
 		return formatter!!.format(value.date)
 	}
 
+	override fun parse(value: String): Date? {
+		val date = js("new Date(Date.UTC(1110, 11, 12, 13, 14, 15, 16));")
+		val regex = Regex("[^0-9]")
+		val localizedOrder = (formatter!!.format(date) as String).replace(regex, " ").split(" ")
+		val numberParts = value.replace(regex, " ").split(" ")
+		if (localizedOrder.size != numberParts.size) return null
+		val newDate = DateImpl()
+		for (i in 0..numberParts.lastIndex) {
+			val num = numberParts[i].toInt()
+			when (localizedOrder[i]) {
+				"1110" -> newDate.fullYear = num
+				"11" -> newDate.monthIndex = num
+				"12" -> newDate.dayOfMonth = num
+				"13" -> newDate.hour = num
+				"14" -> newDate.minute = num
+				"15" -> newDate.second = num
+				"16" -> newDate.milli = num
+			}
+		}
+		return newDate
+	}
 
 	private fun <T> watched(initial: T): ReadWriteProperty<Any?, T> {
 		return observable(initial) {
-			formatter = null
+			_formatter = null
 		}
 	}
 }

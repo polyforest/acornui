@@ -24,59 +24,100 @@ import com.acornui.serialization.Writer
 interface DateRo : Comparable<DateRo> {
 
 	/**
-	 * The time, in UTC milliseconds from the Unix epoch.
+	 * The numeric value of the specified date as the number of milliseconds since January 1, 1970,
+	 * 00:00:00 UTC (negative for prior times).
 	 */
 	val time: Long
 
 	/**
-	 * The full 4 digit year.
+	 * The full year according to local time.  (e.g. 1999, not 99)
 	 */
-	val year: Int
+	val fullYear: Int
 
 	/**
-	 * The 0 indexed month. 0 - January, 11 - December
+	 * The [fullYear] according to universal time.
+	 */
+	val utcFullYear: Int
+
+	/**
+	 * The 0 indexed month according to local time. 0 - January, 11 - December
 	 * @see Months
 	 */
-	val month: Int
+	val monthIndex: Int
 
 	/**
-	 * The 1 indexed day of the month. 1st - 1, 31st - 31
+	 * The [monthIndex] according to universal time.
+	 */
+	val utcMonthIndex: Int
+
+	/**
+	 * The 1 indexed day of the month according to local time. 1st - 1, 31st - 31
 	 */
 	val dayOfMonth: Int
 
 	/**
-	 * The day of the week (0-6) for the specified date.
+	 * The [dayOfMonth] according to universal time.
+	 */
+	val utcDayOfMonth: Int
+
+	/**
+	 * The day of the week (0-6) according to local time.
 	 * 0 - Sunday, 6 - Saturday
 	 */
 	val dayOfWeek: Int
 
 	/**
-	 * Hour of the day using 24-hour clock.
+	 * The [dayOfWeek] according to universal time.
+	 */
+	val utcDayOfWeek: Int
+
+	/**
+	 * Hour of the day using 24-hour clock according to local time.
 	 * At 3:14:12.330 PM the hour is 15.
 	 */
 	val hour: Int
 
 	/**
-	 * The minute within the hour.
+	 * The [hour] according to universal time.
+	 */
+	val utcHour: Int
+
+	/**
+	 * The minute within the hour according to local time.
 	 */
 	val minute: Int
 
 	/**
-	 * The second within the minute.
+	 * The [minute] according to universal time.
+	 */
+	val utcMinute: Int
+
+	/**
+	 * The second within the minute according to local time.
 	 * At 3:14:12.330 PM the second is 12.
 	 */
 	val second: Int
 
 	/**
-	 * The millisecond within the second.
+	 * The [second] according to universal time.
+	 */
+	val utcSecond: Int
+
+	/**
+	 * The millisecond within the second according to local time.
 	 * At 3:14:12.330 PM the milli is 330.
 	 */
 	val milli: Int
 
 	/**
+	 * The [milli] according to universal time.
+	 */
+	val utcMilli: Int
+
+	/**
 	 * Returns a mutable copy of this date.
 	 */
-	fun clone(): Date
+	fun copy(): Date
 
 	override fun compareTo(other: DateRo): Int {
 		return time.compareTo(other.time)
@@ -87,35 +128,44 @@ interface DateRo : Comparable<DateRo> {
  * Returns true if the two dates are the same day.
  */
 fun DateRo.isSameDate(o: DateRo): Boolean {
-	return this.dayOfMonth == o.dayOfMonth && this.month == o.month && this.year == o.year
+	return this.dayOfMonth == o.dayOfMonth && this.monthIndex == o.monthIndex && this.fullYear == o.fullYear
 }
 
 /**
  * Returns true if this Date's year is a leap year.
  */
 val DateRo.isLeapYear: Boolean
-	get() = DateUtil.isLeapYear(year)
+	get() = DateUtil.isLeapYear(fullYear)
 
 /**
+ * A Date object.
+ * To convert this date to a string, use [com.acornui.core.text.DateTimeFormatter]
  * @author nbilyk
  */
 interface Date : DateRo {
 
 	override var time: Long
 
-	override var year: Int
+	override var fullYear: Int
+	override var utcFullYear: Int
 
-	override var month: Int
+	override var monthIndex: Int
+	override var utcMonthIndex: Int
 
 	override var dayOfMonth: Int
+	override var utcDayOfMonth: Int
 
 	override var hour: Int
+	override var utcHour: Int
 
 	override var minute: Int
+	override var utcMinute: Int
 
 	override var second: Int
+	override var utcSecond: Int
 
 	override var milli: Int
+	override var utcMilli: Int
 
 }
 

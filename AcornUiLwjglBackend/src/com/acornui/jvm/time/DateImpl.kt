@@ -17,6 +17,7 @@
 package com.acornui.jvm.time
 
 import com.acornui.core.time.Date
+import java.time.ZoneOffset
 import java.util.*
 
 
@@ -25,84 +26,137 @@ import java.util.*
  */
 class DateImpl : Date {
 
-	val date = Calendar.getInstance()
+	private var localDateIsValid = true
+	private var utcDateIsValid = false
+
+	private val _date = Calendar.getInstance()
+	private val date: Calendar
+		get() {
+			if (!localDateIsValid) {
+				localDateIsValid = true
+				_date.time = _dateUtc.time
+			}
+			utcDateIsValid = false
+			return _date
+		}
+
+	private val _dateUtc by lazy { Calendar.getInstance(TimeZone.getTimeZone(ZoneOffset.UTC)) }
+	private val dateUtc: Calendar
+		get() {
+			// The UTC methods first mirror the local date's time, then returns that date.
+			if (!utcDateIsValid) {
+				utcDateIsValid = true
+				_dateUtc.time = _date.time
+			}
+			localDateIsValid = false
+			return _dateUtc
+		}
 
 	override var time: Long
-		get() {
-			return date.timeInMillis
-		}
+		get() = date.timeInMillis
 		set(value) {
 			date.timeInMillis = value
 		}
 
-	override var year: Int
-		get() {
-			return date.get(Calendar.YEAR)
-		}
+	override var fullYear: Int
+		get() = date.get(Calendar.YEAR)
 		set(value) {
 			date.set(Calendar.YEAR, value)
 		}
 
-	override var month: Int
+	override var utcFullYear: Int
 		get() {
-			return date.get(Calendar.MONTH)
+			return dateUtc.get(Calendar.YEAR)
 		}
+		set(value) {
+			dateUtc.set(Calendar.YEAR, value)
+		}
+
+	override var monthIndex: Int
+		get() = date.get(Calendar.MONTH)
 		set(value) {
 			date.set(Calendar.MONTH, value)
 		}
 
-	override var dayOfMonth: Int
-		get() {
-			return date.get(Calendar.DAY_OF_MONTH)
+	override var utcMonthIndex: Int
+		get() = dateUtc.get(Calendar.MONTH)
+		set(value) {
+			dateUtc.set(Calendar.MONTH, value)
 		}
+
+	override var dayOfMonth: Int
+		get() = date.get(Calendar.DAY_OF_MONTH)
 		set(value) {
 			date.set(Calendar.DAY_OF_MONTH, value)
 		}
 
-	override val dayOfWeek: Int
-		get() {
-			return date.get(Calendar.DAY_OF_WEEK) - Calendar.SUNDAY
+	override var utcDayOfMonth: Int
+		get() = dateUtc.get(Calendar.DAY_OF_MONTH)
+		set(value) {
+			dateUtc.set(Calendar.DAY_OF_MONTH, value)
 		}
 
+	override val dayOfWeek: Int
+		get() = date.get(Calendar.DAY_OF_WEEK) - Calendar.SUNDAY
+
+	override val utcDayOfWeek: Int
+		get() = dateUtc.get(Calendar.DAY_OF_WEEK) - Calendar.SUNDAY
+
 	override var hour: Int
-		get() {
-			return date.get(Calendar.HOUR_OF_DAY)
-		}
+		get() = date.get(Calendar.HOUR_OF_DAY)
 		set(value) {
 			date.set(Calendar.HOUR_OF_DAY, value)
 		}
 
-	override var minute: Int
-		get() {
-			return date.get(Calendar.MINUTE)
+	override var utcHour: Int
+		get() = dateUtc.get(Calendar.HOUR_OF_DAY)
+		set(value) {
+			dateUtc.set(Calendar.HOUR_OF_DAY, value)
 		}
+
+	override var minute: Int
+		get() = date.get(Calendar.MINUTE)
 		set(value) {
 			date.set(Calendar.MINUTE, value)
 		}
 
-	override var second: Int
-		get() {
-			return date.get(Calendar.SECOND)
+	override var utcMinute: Int
+		get() = dateUtc.get(Calendar.MINUTE)
+		set(value) {
+			dateUtc.set(Calendar.MINUTE, value)
 		}
+
+	override var second: Int
+		get() = date.get(Calendar.SECOND)
 		set(value) {
 			date.set(Calendar.SECOND, value)
 		}
 
-	override var milli: Int
-		get() {
-			return date.get(Calendar.MILLISECOND)
+	override var utcSecond: Int
+		get() = dateUtc.get(Calendar.SECOND)
+		set(value) {
+			dateUtc.set(Calendar.SECOND, value)
 		}
+
+	override var milli: Int
+		get() = date.get(Calendar.MILLISECOND)
 		set(value) {
 			date.set(Calendar.MILLISECOND, value)
 		}
 
-	override fun clone(): Date {
+	override var utcMilli: Int
+		get() = dateUtc.get(Calendar.MILLISECOND)
+		set(value) {
+			dateUtc.set(Calendar.MILLISECOND, value)
+		}
+
+	override fun copy(): Date {
 		val newDate = DateImpl()
 		newDate.time = time
 		return newDate
 	}
 
 	override fun toString(): String {
-		return date.toString()
+		return "Date($time)"
 	}
 }

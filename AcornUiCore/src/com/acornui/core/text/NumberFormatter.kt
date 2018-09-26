@@ -25,7 +25,7 @@ import com.acornui.core.i18n.Locale
 /**
  * This class formats numbers into localized string representations.
  */
-interface NumberFormatter : StringFormatter<Number?> {
+interface NumberFormatter : StringFormatter<Number?>, StringParser<Double> {
 
 	var type: NumberFormatType
 
@@ -53,6 +53,12 @@ interface NumberFormatter : StringFormatter<Number?> {
 	 * See [https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#Locale_identification_and_negotiation]
 	 */
 	var locales: List<Locale>?
+
+	override fun parse(value: String): Double? {
+		val thousandSeparator = format(1111).replace("1", "")
+		val decimalSeparator = format(1.1).replace("1", ".")
+		return value.replace(thousandSeparator, "").replace(decimalSeparator, ".").toDoubleOrNull()
+	}
 
 	companion object {
 		val FACTORY_KEY = dKey<(injector: Injector) -> NumberFormatter>()
