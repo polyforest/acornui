@@ -32,6 +32,7 @@ import com.acornui.logging.Log
 import com.acornui.reflect.observable
 import java.text.DateFormat
 import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.properties.ReadWriteProperty
 import java.util.Locale as JvmLocale
@@ -78,6 +79,19 @@ class DateTimeFormatterImpl(override val injector: Injector) : DateTimeFormatter
 			DateTimeFormatType.DATE -> DateFormat.getDateInstance(dateStyle.toInt(), jvmLocale)
 			DateTimeFormatType.TIME -> DateFormat.getTimeInstance(timeStyle.toInt(), jvmLocale)
 			DateTimeFormatType.DATE_TIME -> DateFormat.getDateTimeInstance(dateStyle.toInt(), timeStyle.toInt(), jvmLocale)
+			DateTimeFormatType.MONTH -> SimpleDateFormat(when (dateStyle) {
+				DateTimeFormatStyle.FULL -> "MMMMM"
+				DateTimeFormatStyle.LONG -> "MMM"
+				DateTimeFormatStyle.MEDIUM -> "MM"
+				DateTimeFormatStyle.SHORT -> "M"
+				DateTimeFormatStyle.DEFAULT -> "MM"
+			})
+			DateTimeFormatType.WEEKDAY -> SimpleDateFormat(when (dateStyle) {
+				DateTimeFormatStyle.FULL, DateTimeFormatStyle.LONG -> "EEEEE"
+				DateTimeFormatStyle.MEDIUM -> "EEE"
+				DateTimeFormatStyle.SHORT -> "EE"
+				DateTimeFormatStyle.DEFAULT -> "EE"
+			})
 		}
 	}
 

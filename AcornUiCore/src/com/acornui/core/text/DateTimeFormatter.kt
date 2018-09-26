@@ -77,6 +77,8 @@ enum class DateTimeFormatStyle {
 
 enum class DateTimeFormatType {
 	DATE,
+	MONTH,
+	WEEKDAY,
 	TIME,
 	DATE_TIME
 }

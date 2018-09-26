@@ -70,6 +70,18 @@ class DateTimeFormatterImpl(override val injector: Injector) : DateTimeFormatter
 						else -> "numeric"
 					}
 					options.year = if (dateStyle == SHORT) "2-digit" else "numeric"
+				} else if (type == DateTimeFormatType.MONTH) {
+					options.month = when (dateStyle) {
+						FULL -> "long"
+						LONG -> "short"
+						else -> "numeric"
+					}
+				} else if (type == DateTimeFormatType.WEEKDAY) {
+					options.weekday = when (dateStyle) {
+						FULL, LONG -> "long"
+						MEDIUM, SHORT -> "short"
+						DEFAULT -> "long"
+					}
 				}
 
 				_formatter = JsDateTimeFormat(locales.toTypedArray(), options)
