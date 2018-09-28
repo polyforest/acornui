@@ -332,7 +332,7 @@ Function.prototype.bind = function() {
 	}
 
 	protected open val textFormattersTask by BootTask {
-		val i18n = get(I18n)
+		get(UserInfo)
 		numberFormatterProvider = { NumberFormatterImpl() }
 		dateTimeFormatterProvider = { DateTimeFormatterImpl() }
 	}

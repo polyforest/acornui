@@ -75,6 +75,6 @@ fun Scoped.bundleBinding(bundleName: String): BundleBinding {
 /**
  * Invokes the callback when this bundle has changed.
  */
-fun Owned.i18n(bundleName: String) : BundleBinding {
-	return own(BundleBinding(injector, bundleName))
+fun Scoped.i18n(bundleName: String) : BundleBinding {
+	return BundleBinding(injector, bundleName)
 }
