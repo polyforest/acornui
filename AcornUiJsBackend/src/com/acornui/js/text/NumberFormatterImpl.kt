@@ -17,17 +17,15 @@
 package com.acornui.js.text
 
 import com.acornui.collection.copy
-import com.acornui.core.di.Injector
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
 import com.acornui.core.i18n.I18n
 import com.acornui.core.i18n.Locale
 import com.acornui.core.text.NumberFormatType
 import com.acornui.core.text.NumberFormatter
+import com.acornui.core.userInfo
 import com.acornui.reflect.observable
 import kotlin.properties.ReadWriteProperty
 
-class NumberFormatterImpl(override val injector: Injector) : NumberFormatter, Scoped {
+class NumberFormatterImpl() : NumberFormatter {
 
 	override var type by watched(NumberFormatType.NUMBER)
 	override var locales: List<Locale>? by watched(null)
@@ -42,13 +40,11 @@ class NumberFormatterImpl(override val injector: Injector) : NumberFormatter, Sc
 	private var lastLocales: List<Locale> = listOf()
 	private var formatter: dynamic = null
 
-	private val i18n = inject(I18n)
-
 	override fun format(value: Number?): String {
 		if (value == null) return ""
-		if (locales == null && lastLocales != i18n.currentLocales) {
+		if (locales == null && lastLocales != userInfo.currentLocale.value) {
 			formatter = null
-			lastLocales = i18n.currentLocales.copy()
+			lastLocales = userInfo.currentLocale.value.copy()
 		}
 		if (formatter == null) {
 			val locales = (locales ?: lastLocales).map { it.value }

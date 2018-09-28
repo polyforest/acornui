@@ -87,7 +87,7 @@ infix fun <S, T> DataBinding<S>.or(other: DataBinding<T>): Bindable {
 	return changed or other.changed
 }
 
-infix fun <T> DataBinding<T>.or(other: Bindable): Bindable {
+infix fun <T> DataBindingRo<T>.or(other: Bindable): Bindable {
 	return changed or other
 }
 

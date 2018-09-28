@@ -45,6 +45,11 @@ class SpriteAnimation(owner: Owned) : ContainerImpl(owner) {
 
 	var frameRate: Int = inject(AppConfig).frameRate
 
+	/**
+	 * If true, when the animation hits [endFrame] it will loop back to [startFrame]
+	 */
+	var loops = true
+
 	val stepTime: Float
 		get() = 1f / frameRate.toFloat()
 
@@ -70,8 +75,11 @@ class SpriteAnimation(owner: Owned) : ContainerImpl(owner) {
 					// Tick a frame
 					elapsed -= stepTime
 					frameClips[currentFrame - startFrame].visible = false // Hide the old frame clip.
-					if (++currentFrame > _endFrame) {
-						currentFrame = _startFrame
+					if (currentFrame >= _endFrame) {
+						if (loops)
+							currentFrame = _startFrame
+					} else {
+						currentFrame++
 					}
 					frameClips[currentFrame - startFrame].visible = true // Show the current frame clip.
 				}

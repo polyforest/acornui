@@ -17,13 +17,10 @@
 package com.acornui.jvm.text
 
 import com.acornui.collection.copy
-import com.acornui.core.di.Injector
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
-import com.acornui.core.i18n.I18n
 import com.acornui.core.i18n.Locale
 import com.acornui.core.text.NumberFormatType
 import com.acornui.core.text.NumberFormatter
+import com.acornui.core.userInfo
 import com.acornui.logging.Log
 import com.acornui.reflect.observable
 import java.text.NumberFormat
@@ -31,7 +28,7 @@ import java.util.*
 import kotlin.properties.ReadWriteProperty
 import java.util.Locale as JvmLocale
 
-class NumberFormatterImpl(override val injector: Injector) : NumberFormatter, Scoped {
+class NumberFormatterImpl() : NumberFormatter {
 
 	override var type by watched(NumberFormatType.NUMBER)
 	override var locales: List<Locale>? by watched(null)
@@ -48,9 +45,9 @@ class NumberFormatterImpl(override val injector: Injector) : NumberFormatter, Sc
 
 	override fun format(value: Number?): String {
 		if (value == null) return ""
-		if (locales == null && lastLocales != inject(I18n).currentLocales) {
+		if (locales == null && lastLocales != userInfo.currentLocale.value) {
 			formatter = null
-			lastLocales = inject(I18n).currentLocales.copy()
+			lastLocales = userInfo.currentLocale.value.copy()
 		}
 		if (formatter == null) {
 			val locales = locales ?: lastLocales

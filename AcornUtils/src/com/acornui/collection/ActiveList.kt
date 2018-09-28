@@ -200,6 +200,7 @@ open class ActiveList<E>(initialCapacity: Int) : Clearable, MutableObservableLis
 	}
 
 	override fun notifyElementModified(index: Int) {
+		if (index < 0 || index >= size) return
 		_modified.dispatch(index, get(index))
 	}
 

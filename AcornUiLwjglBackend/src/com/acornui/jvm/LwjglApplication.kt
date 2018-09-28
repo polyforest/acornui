@@ -39,6 +39,8 @@ import com.acornui.core.graphics.Camera
 import com.acornui.core.graphics.OrthographicCamera
 import com.acornui.core.graphics.Window
 import com.acornui.core.graphics.autoCenterCamera
+import com.acornui.core.i18n.I18n
+import com.acornui.core.i18n.I18nImpl
 import com.acornui.core.i18n.Locale
 import com.acornui.core.input.InteractivityManager
 import com.acornui.core.input.InteractivityManagerImpl
@@ -57,8 +59,8 @@ import com.acornui.core.popup.PopUpManagerImpl
 import com.acornui.core.request.RestServiceFactory
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionManagerImpl
-import com.acornui.core.text.DateTimeFormatter
-import com.acornui.core.text.NumberFormatter
+import com.acornui.core.text.dateTimeFormatterProvider
+import com.acornui.core.text.numberFormatterProvider
 import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.TimeDriverImpl
 import com.acornui.core.time.time
@@ -199,12 +201,11 @@ open class LwjglApplication : ApplicationBase() {
 	 */
 	protected open val userInfoTask by BootTask {
 		val u = UserInfo(
-				isOpenGl = true,
 				isDesktop = true,
 				isTouchDevice = false,
 				userAgent = "glfw",
 				platformStr = System.getProperty("os.name") ?: "unknown",
-				languages = listOf(Locale(LocaleJvm.getDefault().toLanguageTag()))
+				systemLocale = listOf(Locale(LocaleJvm.getDefault().toLanguageTag()))
 		)
 		userInfo = u
 		set(UserInfo, u)
@@ -320,9 +321,14 @@ open class LwjglApplication : ApplicationBase() {
 		set(Persistence, LwjglPersistence(config().version, config().window.title))
 	}
 
+	protected open val i18nTask by BootTask {
+		get(UserInfo)
+		set(I18n, I18nImpl())
+	}
+
 	protected open val formattersTask by BootTask {
-		set(NumberFormatter.FACTORY_KEY, { NumberFormatterImpl(it) })
-		set(DateTimeFormatter.FACTORY_KEY, { DateTimeFormatterImpl(it) })
+		numberFormatterProvider = { NumberFormatterImpl() }
+		dateTimeFormatterProvider = { DateTimeFormatterImpl() }
 	}
 
 	protected open val fileReadWriteManagerTask by BootTask {

@@ -118,8 +118,7 @@ open class BasicUiSkin(
 		target.addStyleRule(theme.formLabelStyle, withAncestor(formLabelStyle))
 		target.addStyleRule(charStyle { selectable = true }, withAncestor(TextInput) or withAncestor(TextArea))
 
-		if (userInfo.isOpenGl)
-			loadBitmapFonts()
+		loadBitmapFonts()
 
 		val textInputBoxStyle = BoxStyle()
 		textInputBoxStyle.apply {

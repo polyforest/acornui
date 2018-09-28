@@ -25,7 +25,10 @@ import com.acornui.browser.encodeUriComponent2
 import com.acornui.component.Stage
 import com.acornui.component.UiComponent
 import com.acornui.core.*
-import com.acornui.core.assets.*
+import com.acornui.core.assets.AssetManager
+import com.acornui.core.assets.AssetManagerImpl
+import com.acornui.core.assets.AssetType
+import com.acornui.core.assets.LoaderFactory
 import com.acornui.core.audio.AudioManager
 import com.acornui.core.audio.AudioManagerImpl
 import com.acornui.core.cursor.CursorManager
@@ -36,6 +39,8 @@ import com.acornui.core.graphics.Camera
 import com.acornui.core.graphics.OrthographicCamera
 import com.acornui.core.graphics.Window
 import com.acornui.core.graphics.autoCenterCamera
+import com.acornui.core.i18n.I18n
+import com.acornui.core.i18n.I18nImpl
 import com.acornui.core.i18n.Locale
 import com.acornui.core.input.InteractivityManager
 import com.acornui.core.input.InteractivityManagerImpl
@@ -53,8 +58,8 @@ import com.acornui.core.popup.PopUpManagerImpl
 import com.acornui.core.request.RestServiceFactory
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionManagerImpl
-import com.acornui.core.text.DateTimeFormatter
-import com.acornui.core.text.NumberFormatter
+import com.acornui.core.text.dateTimeFormatterProvider
+import com.acornui.core.text.numberFormatterProvider
 import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.TimeDriverImpl
 import com.acornui.core.time.time
@@ -92,8 +97,6 @@ import kotlin.coroutines.experimental.suspendCoroutine
  */
 @Suppress("unused")
 abstract class JsApplicationBase : ApplicationBase() {
-
-	protected abstract val isOpenGl: Boolean
 
 	private var frameDriver: JsApplicationRunner? = null
 
@@ -186,6 +189,7 @@ Function.prototype.bind = function() {
 	}
 
 	protected open val userInfoTask by BootTask {
+		// TODO: isTouchDevice isn't accurate on Mac (always true).
 		val isTouchDevice = js("""'ontouchstart' in window || !!navigator.maxTouchPoints;""") as? Boolean ?: false
 
 		val isMobile = js("""
@@ -194,18 +198,17 @@ Function.prototype.bind = function() {
   check;
 		""") as? Boolean ?: false
 
-		@Suppress("USELESS_ELVIS")
+		@Suppress("USELESS_ELVIS") // Kotlin bug - window.navigator.languages should be nullable
 		val languages = window.navigator.languages ?: arrayOf(window.navigator.language)
 
 		@Suppress("SENSELESS_COMPARISON") // window.navigator.languages can be null.
 		val uI = UserInfo(
 				isTouchDevice = isTouchDevice,
 				isBrowser = true,
-				isOpenGl = isOpenGl,
 				isMobile = isMobile,
 				userAgent = window.navigator.userAgent,
 				platformStr = window.navigator.platform,
-				languages = languages.map { Locale(it) }
+				systemLocale = languages.map { Locale(it) }
 		)
 
 		userInfo = uI
@@ -323,9 +326,15 @@ Function.prototype.bind = function() {
 		set(SelectionManager, SelectionManagerImpl())
 	}
 
+	protected open val i18nTask by BootTask {
+		get(UserInfo)
+		set(I18n, I18nImpl())
+	}
+
 	protected open val textFormattersTask by BootTask {
-		set(NumberFormatter.FACTORY_KEY, { NumberFormatterImpl(it) })
-		set(DateTimeFormatter.FACTORY_KEY, { DateTimeFormatterImpl(it) })
+		val i18n = get(I18n)
+		numberFormatterProvider = { NumberFormatterImpl() }
+		dateTimeFormatterProvider = { DateTimeFormatterImpl() }
 	}
 
 	protected open val fileIoManagerTask by BootTask {

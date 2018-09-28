@@ -36,17 +36,17 @@ interface TimeProvider {
 	/**
 	 * Returns a new date object with the time set.
 	 * @param fullYear The full year according to local time.  (e.g. 1999, not 99)
-	 * @param month The 0 indexed month according to local time. 0 - January, 11 - December
+	 * @param monthIndex The 0 indexed month according to local time. 0 - January, 11 - December
 	 * @param dayOfMonth The 1 indexed day of the month according to local time. 1st - 1, 31st - 31
 	 * @param hour Hour of the day using 24-hour clock according to local time.
 	 * @param minute The minute within the hour according to local time.
 	 * @param second The second within the minute according to local time.
 	 * @param milli The millisecond within the second according to local time.
 	 */
-	fun date(fullYear: Int, month: Int, dayOfMonth: Int = 0, hour: Int = 0, minute: Int = 0, second: Int = 0, milli: Int = 0): Date {
+	fun date(fullYear: Int, monthIndex: Int, dayOfMonth: Int = 0, hour: Int = 0, minute: Int = 0, second: Int = 0, milli: Int = 0): Date {
 		val date = now()
 		date.fullYear = fullYear
-		date.monthIndex = month
+		date.monthIndex = monthIndex
 		date.dayOfMonth = dayOfMonth
 		date.hour = hour
 		date.minute = minute

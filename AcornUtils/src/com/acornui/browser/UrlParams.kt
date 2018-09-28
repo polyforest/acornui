@@ -111,8 +111,8 @@ class UrlParamsImpl() : Clearable, UrlParams {
 }
 
 
-var encodeUriComponent2: (str: String)->String by Delegates.notNull()
-var decodeUriComponent2: (str: String)->String by Delegates.notNull()
+lateinit var encodeUriComponent2: (str: String)->String
+lateinit var decodeUriComponent2: (str: String)->String
 
 /**
  * Appends a url parameter to a url string, returning the new string.

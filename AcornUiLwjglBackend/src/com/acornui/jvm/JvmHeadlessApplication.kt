@@ -21,20 +21,21 @@ import com.acornui.async.Promise
 import com.acornui.async.launch
 import com.acornui.browser.decodeUriComponent2
 import com.acornui.browser.encodeUriComponent2
-import com.acornui.core.AppConfig
-import com.acornui.core.ApplicationBase
+import com.acornui.core.*
 import com.acornui.core.assets.AssetManager
 import com.acornui.core.assets.AssetManagerImpl
 import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.LoaderFactory
 import com.acornui.core.di.OwnedImpl
 import com.acornui.core.di.Scoped
+import com.acornui.core.i18n.I18n
+import com.acornui.core.i18n.I18nImpl
+import com.acornui.core.i18n.Locale
 import com.acornui.core.io.JSON_KEY
 import com.acornui.core.io.file.Files
 import com.acornui.core.io.file.FilesImpl
-import com.acornui.core.lineSeparator
-import com.acornui.core.text.DateTimeFormatter
-import com.acornui.core.text.NumberFormatter
+import com.acornui.core.text.dateTimeFormatterProvider
+import com.acornui.core.text.numberFormatterProvider
 import com.acornui.core.time.time
 import com.acornui.jvm.graphics.JvmRgbDataLoader
 import com.acornui.jvm.io.file.ManifestUtil
@@ -49,6 +50,7 @@ import com.acornui.serialization.JsonSerializer
 import java.io.File
 import java.net.URLDecoder
 import java.net.URLEncoder
+import java.util.*
 
 /**
  * A Headless application initializes utility dependencies, but does not create any windowing, graphics, or input.
@@ -93,11 +95,32 @@ open class JvmHeadlessApplication(
 	}
 
 	/**
+	 * Sets the UserInfo dependency.
+	 */
+	protected open val userInfoTask by BootTask {
+		val u = UserInfo(
+				isDesktop = true,
+				isTouchDevice = false,
+				userAgent = "headless",
+				platformStr = System.getProperty("os.name") ?: "unknown",
+				systemLocale = listOf(Locale(java.util.Locale.getDefault().toLanguageTag()))
+		)
+		userInfo = u
+		set(UserInfo, u)
+	}
+
+	protected open val i18nTask by BootTask {
+		get(UserInfo)
+		set(I18n, I18nImpl())
+	}
+
+	/**
 	 * Initializes number constants and methods
 	 */
 	protected open val formatterTask by BootTask {
-		set(NumberFormatter.FACTORY_KEY, { NumberFormatterImpl(it) })
-		set(DateTimeFormatter.FACTORY_KEY, { DateTimeFormatterImpl(it) })
+		get(UserInfo)
+		numberFormatterProvider = { NumberFormatterImpl() }
+		dateTimeFormatterProvider = { DateTimeFormatterImpl() }
 	}
 
 	protected open val jsonTask by BootTask {

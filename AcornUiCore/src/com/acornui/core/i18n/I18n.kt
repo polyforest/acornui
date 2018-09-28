@@ -1,68 +1,49 @@
 package com.acornui.core.i18n
 
-import com.acornui._assert
 import com.acornui.action.Decorator
 import com.acornui.async.then
 import com.acornui.collection.firstOrNull2
-import com.acornui.core.*
-import com.acornui.core.assets.AssetType
-import com.acornui.core.assets.load
+import com.acornui.core.Disposable
+import com.acornui.core.assets.*
 import com.acornui.core.di.DKey
-import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.io.file.Files
+import com.acornui.core.removeBackslashes
+import com.acornui.core.replace2
+import com.acornui.core.userInfo
+import com.acornui.observe.Observable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
-import com.acornui.signal.Signal2
 import com.acornui.string.StringParser
 
 interface I18n {
 
-	val currentLocaleChanged: Signal<(oldLocale: List<Locale>, newLocale: List<Locale>) -> Unit>
-
-	/**
-	 * The locale chain. This is an ordered list of locales to try when binding to resource bundles or formatting.
-	 */
-	var currentLocales: List<Locale>
-
 	/**
 	 * Returns a localization bundle for the given bundle name.
-	 * This bundle will be for the [currentLocales], and will notify changes when [currentLocaleChanged] has dispatched.
+	 * This bundle will be for the [com.acornui.core.UserInfo.currentLocale] locale chain.
 	 */
-	fun getBundle(bundleName: String): I18nBundle
+	fun getBundle(bundleName: String): I18nBundleRo
 
 	/**
 	 * Returns a localization bundle for the given bundle name and locales.
 	 * Use this if you wish to get localization values for a specific locale chain, as opposed to the current locale.
 	 * @param locales A prioritized list of the locales to which the bundle should be bound.
 	 */
-	fun getBundle(locales: List<Locale>, bundleName: String): I18nBundle
+	fun getBundle(locales: List<Locale>, bundleName: String): I18nBundleRo
 
 	/**
-	 * Sets the bundle values. This will trigger [I18nBundle.changed] signals on the bundles with the same name.
+	 * Sets the bundle values. This will trigger [I18nBundleRo.changed] signals on the bundles with the same name.
 	 */
 	fun setBundleValues(locale: Locale, bundleName: String, values: Map<String, String>)
 
 	companion object : DKey<I18n> {
 
-		override fun factory(injector: Injector): I18n? {
-			val i18n = I18nImpl()
-			i18n.currentLocales = userInfo.languages
-			return i18n
-		}
-
 		val UNDEFINED: Locale = Locale("und")
 	}
 }
 
-interface I18nBundle {
-
-	/**
-	 * Dispatched when the values of this bundle has changed. This may be after [I18n.currentLocales] has changed, or
-	 * [I18n.setBundleValues] has been called, providing values for this bundle and locale.
-	 */
-	val changed: Signal<(I18nBundle) -> Unit>
+interface I18nBundleRo : Observable {
 
 	/**
 	 * Retrieves the i18n string with the given key for this bundle and current locale.
@@ -82,30 +63,20 @@ class I18nImpl : I18n, Disposable {
 	private val _bundleValues = HashMap<Locale, MutableMap<String, Map<String, String>>>()
 	private val _bundles = HashMap<List<Locale>, MutableMap<String, I18nBundleImpl>>()
 
-	private val _currentLocaleChanged = Signal2<List<Locale>, List<Locale>>()
-	override val currentLocaleChanged: Signal<(oldLocale: List<Locale>, newLocale: List<Locale>) -> Unit>
-		get() = _currentLocaleChanged
+	private val currentLocaleBinding: Disposable
 
-	private var _currentLocale: List<Locale> = listOf()
-	override var currentLocales: List<Locale>
-		get() = _currentLocale
-		set(value) {
-			if (_currentLocale == value) return
-			_assert(value.isNotEmpty(), "currentLocales cannot be empty.")
-			val oldLocale = _currentLocale
-			_currentLocale = value
+	init {
+		_bundles[currentKey] = HashMap()
+
+		currentLocaleBinding = userInfo.currentLocale.bind {
 			val defaultBundles = _bundles[currentKey]!!
 			for (bundle in defaultBundles.values) {
 				bundle.notifyChanged()
 			}
-			_currentLocaleChanged.dispatch(oldLocale, value)
 		}
-
-	init {
-		_bundles[currentKey] = HashMap()
 	}
 
-	override fun getBundle(bundleName: String): I18nBundle {
+	override fun getBundle(bundleName: String): I18nBundleRo {
 		val bundles = _bundles[currentKey]!!
 		if (!bundles.contains(bundleName)) {
 			bundles[bundleName] = I18nBundleImpl(this, null, bundleName)
@@ -113,7 +84,7 @@ class I18nImpl : I18n, Disposable {
 		return bundles[bundleName]!!
 	}
 
-	override fun getBundle(locales: List<Locale>, bundleName: String): I18nBundle {
+	override fun getBundle(locales: List<Locale>, bundleName: String): I18nBundleRo {
 		if (!_bundles.contains(locales)) {
 			_bundles[locales] = HashMap()
 		}
@@ -142,18 +113,18 @@ class I18nImpl : I18n, Disposable {
 	}
 
 	fun getString(bundleName: String, key: String): String? {
-		return getString(currentLocales, bundleName, key)
+		return getString(userInfo.currentLocale.value, bundleName, key)
 	}
 
 	override fun dispose() {
-		_currentLocaleChanged.dispose()
+		currentLocaleBinding.dispose()
 	}
 }
 
-class I18nBundleImpl(private val i18n: I18nImpl, private val locales: List<Locale>?, private val bundleName: String) : I18nBundle, Disposable {
+class I18nBundleImpl(private val i18n: I18nImpl, private val locales: List<Locale>?, private val bundleName: String) : I18nBundleRo, Disposable {
 
-	private val _changed = Signal1<I18nBundle>()
-	override val changed: Signal<(I18nBundle) -> Unit>
+	private val _changed = Signal1<I18nBundleRo>()
+	override val changed: Signal<(I18nBundleRo) -> Unit>
 		get() = _changed
 
 	fun notifyChanged() {
@@ -181,49 +152,60 @@ var i18nPath = "assets/res/{bundleName}_{locale}.properties"
 var i18nFallbackPath = "assets/res/{bundleName}.properties"
 
 /**
- * Loads a resource bundle at the given path for the [I18n.currentLocales]. When the current locale changes, the new
- * bundle will be automatically loaded.
+ * Loads a resource bundle at the given path for the [com.acornui.core.UserInfo.currentLocale]. When the current locale
+ * changes, the new bundle will be automatically loaded.
  *
  * @param path The path to the properties file to load.
  * This may have the tokens:
- * {locale} which will be replaced by [I18n.currentLocales].
+ * {locale} which will be replaced by [com.acornui.core.UserInfo.currentLocale].
  * {bundleName} which will be replaced by [bundleName].
  * @param defaultPath The path to the default properties to load. The default properties is used as a back-up if the
  * locale isn't found.
  *
- * This method loads the bundle for the current locale, as set by [I18n.currentLocales]. When the current locale changes,
- * a new load will take place.
+ * This method loads the bundle for the current locale, as set by [com.acornui.core.UserInfo.currentLocale]. When the
+ * current locale changes, a new load will take place.
  *
  * This may be called multiple times safely without re-loading the data.
+ * To retrieve the bundle, use `i18n.getBundle(bundleName)`
  *
+ * @return Returns a disposer that can stop watching the current locale for changes and disposes the cached property
+ * files.
+ *
+ * @see I18n.getBundle
  */
-fun Scoped.loadBundle(bundleName: String, path: String = i18nPath, defaultPath: String = i18nFallbackPath): I18nBundle {
-	val i18n = inject(I18n)
-
-	_loadBundle(I18n.UNDEFINED, bundleName, path, defaultPath)
-	for (locale in i18n.currentLocales) {
-		_loadBundle(locale, bundleName, path, defaultPath)
-	}
-	i18n.currentLocaleChanged.add {
-		oldLocale, newLocale ->
-		for (locale in newLocale) {
-			_loadBundle(locale, bundleName, path, defaultPath)
+fun Scoped.loadBundle(
+		bundleName: String,
+		path: String = i18nPath,
+		defaultPath: String = i18nFallbackPath
+): Disposable {
+	val cachedGroup = cachedGroup()
+	_loadBundle(I18n.UNDEFINED, bundleName, path, defaultPath, cachedGroup)
+	val localeBinding = userInfo.currentLocale.bind {
+		for (locale in it) {
+			_loadBundle(locale, bundleName, path, defaultPath, cachedGroup)
 		}
 	}
-	return i18n.getBundle(bundleName)
+	return object : Disposable {
+		override fun dispose() {
+			localeBinding.dispose()
+			cachedGroup.dispose()
+		}
+	}
 }
 
 /**
  * Loads a resource bundle for the specified locale and bundle. Unlike [loadBundle], this will not be bound to
- * [I18n.currentLocales].
+ * [com.acornui.core.UserInfo.currentLocale].
  */
-fun Scoped.loadBundleForLocale(locale: Locale, bundleName: String, path: String = i18nPath): I18nBundle = loadBundleForLocale(listOf(locale), bundleName, path)
+fun Scoped.loadBundleForLocale(locale: Locale, bundleName: String, path: String = i18nPath): I18nBundleRo {
+	return loadBundleForLocale(listOf(locale), bundleName, path)
+}
 
 /**
  * Loads a resource bundle for the specified locale chain and bundle. Unlike [loadBundle], this will not be bound to
- * [I18n.currentLocales].
+ * [com.acornui.core.UserInfo.currentLocale].
  */
-fun Scoped.loadBundleForLocale(locales: List<Locale>, bundleName: String, path: String = i18nPath): I18nBundle {
+fun Scoped.loadBundleForLocale(locales: List<Locale>, bundleName: String, path: String = i18nPath): I18nBundleRo {
 	val i18n = inject(I18n)
 	for (locale in locales) {
 		val path2 = path.replace2("{locale}", locale.value).replace2("{bundleName}", bundleName)
@@ -234,7 +216,7 @@ fun Scoped.loadBundleForLocale(locales: List<Locale>, bundleName: String, path: 
 	return i18n.getBundle(locales, bundleName)
 }
 
-private fun Scoped._loadBundle(locale: Locale, bundleName: String, path: String, fallbackPath: String) {
+private fun Scoped._loadBundle(locale: Locale, bundleName: String, path: String, fallbackPath: String, cachedGroup: CachedGroup) {
 	val i18n = inject(I18n)
 	val path2 = if (locale == I18n.UNDEFINED) {
 		fallbackPath.replace2("{bundleName}", bundleName)
@@ -244,8 +226,8 @@ private fun Scoped._loadBundle(locale: Locale, bundleName: String, path: String,
 
 	// Only try to load the locale if we know it to exist.
 	if (inject(Files).getFile(path2) != null) {
-		load(path2, AssetType.TEXT).then {
-			i18n.setBundleValues(locale, bundleName, PropertiesDecorator.decorate(it))
+		loadAndCache(path2, AssetType.TEXT, PropertiesDecorator, cachedGroup).then {
+			i18n.setBundleValues(locale, bundleName, it)
 		}
 	}
 }
@@ -276,12 +258,11 @@ object PropertiesDecorator : Decorator<String, Map<String, String>> {
 
 /**
  *
- * This will iterate over the [I18n.currentLocales] list, returning the first locale that is contained in
- * the provided [supported] list. Or null if there is no match.
+ * This will iterate over the [com.acornui.core.UserInfo.currentLocale] list, returning the first locale that is
+ * contained in the provided [supported] list. Or null if there is no match.
  */
-fun Scoped.chooseLocale(supported: List<Locale>): Locale? {
-	val i18n = inject(I18n)
-	return i18n.currentLocales.firstOrNull2 { it: Locale -> supported.contains(it) }
+fun chooseLocale(supported: List<Locale>): Locale? {
+	return userInfo.currentLocale.value.firstOrNull2 { it: Locale -> supported.contains(it) }
 }
 
 

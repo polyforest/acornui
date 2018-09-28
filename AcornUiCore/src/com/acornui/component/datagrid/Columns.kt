@@ -27,8 +27,8 @@ import com.acornui.core.compareTo
 import com.acornui.core.compareTo2
 import com.acornui.core.di.*
 import com.acornui.core.selection.selectAll
-import com.acornui.core.text.NumberFormatter
-import com.acornui.core.text.numberFormatter
+import com.acornui.core.text.*
+import com.acornui.core.time.DateRo
 import com.acornui.math.Bounds
 import com.acornui.signal.Signal0
 
@@ -205,6 +205,75 @@ class StringEditorCell(owner: Owned) : ContainerImpl(owner), DataGridEditorCell<
 
 	override fun setData(value: String) {
 		input.text = value
+	}
+
+	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+		super.updateLayout(explicitWidth, explicitHeight, out)
+		input.setSize(explicitWidth, explicitHeight)
+		out.set(input.bounds)
+	}
+}
+
+
+abstract class DateColumn<in E>(override val injector: Injector) : DataGridColumn<E, DateRo?>(), Scoped {
+
+	val formatter = dateFormatter {
+		type = DateTimeFormatType.DATE
+		dateStyle = DateTimeFormatStyle.SHORT
+	}
+
+	val parser = dateParser()
+
+	init {
+		sortable = true
+	}
+
+	override fun createCell(owner: Owned): DataGridCell<DateRo?> = DateCell(owner, formatter)
+
+	override fun createEditorCell(owner: Owned): DataGridEditorCell<DateRo?> = DateEditorCell(owner, formatter, parser)
+
+	override fun compareRows(row1: E, row2: E): Int {
+		return getCellData(row1).compareTo(getCellData(row2))
+	}
+}
+
+class DateCell(owner: Owned, private val formatter: StringFormatter<DateRo>) : ContainerImpl(owner), DataGridCell<DateRo?> {
+
+	private val textField = addChild(text { selectable = false })
+
+
+	override fun setData(value: DateRo?) {
+		textField.label = if (value == null) "" else formatter.format(value)
+	}
+
+	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+		super.updateLayout(explicitWidth, explicitHeight, out)
+		textField.setSize(explicitWidth, explicitHeight)
+		out.set(textField.bounds)
+	}
+
+}
+
+class DateEditorCell(owner: Owned, private val formatter: StringFormatter<DateRo>, private val parser: StringParser<DateRo>) : ContainerImpl(owner), DataGridEditorCell<DateRo?> {
+
+	override val changed = own(Signal0())
+	private val input = addChild(textInput())
+
+	init {
+		input.changed.add(changed::dispatch)
+		input.selectAll()
+	}
+
+	override fun validateData(): Boolean {
+		return true
+	}
+
+	override fun getData(): DateRo? {
+		return parser.parse(input.text)
+	}
+
+	override fun setData(value: DateRo?) {
+		input.text = if (value == null) "" else formatter.format(value)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

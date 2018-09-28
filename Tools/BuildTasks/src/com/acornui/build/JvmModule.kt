@@ -119,6 +119,7 @@ open class JvmModule(
 		walkDependenciesBottomUp {
 			libraryFiles.add(it.jvmJar.absolutePath)
 			Module.expandLibraryDependencies(it.jvmLibraryDependencies, libraryFiles)
+			Module.expandLibraryDependencies(it.jvmRuntimeDependencies, libraryFiles)
 		}
 		libraryFiles.add(jvmJar.absolutePath)
 
@@ -126,7 +127,6 @@ open class JvmModule(
 		val indexB = cp.indexOf("kotlin-runtime.jar")
 		val indexA = cp.lastIndexOf(PATH_SEPARATOR, indexB) + 1
 		libraryFiles.add(cp.substring(indexA, indexB + "kotlin-runtime.jar".length))
-		Module.expandLibraryDependencies(jvmLibraryDependencies, libraryFiles)
 		config.classpath = libraryFiles
 		config.mainClass = mainClass!!
 		config.vmArgs = arrayListOf("-Xmx1G")

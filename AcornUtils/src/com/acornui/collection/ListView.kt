@@ -177,6 +177,7 @@ class ListView<E>() : ObservableList<E>, Disposable {
 
 	override fun notifyElementModified(index: Int) {
 		validate()
+		if (index < 0 || index >= size) return
 		if (observableWrapped != null) {
 			observableWrapped!!.notifyElementModified(local[index])
 		} else {

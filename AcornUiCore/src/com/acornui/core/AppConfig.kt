@@ -20,6 +20,7 @@ import com.acornui.core.di.DKey
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.i18n.Locale
+import com.acornui.core.observe.DataBinding
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import kotlin.properties.Delegates
@@ -136,11 +137,6 @@ var userInfo: UserInfo by Delegates.notNull()
  */
 data class UserInfo(
 
-		/**
-		 * True if the backend is an open gl backend.
-		 */
-		val isOpenGl: Boolean = false,
-
 		val isTouchDevice: Boolean = false,
 
 		val isBrowser: Boolean = false,
@@ -152,15 +148,29 @@ data class UserInfo(
 
 		/**
 		 * The operating system.
-		 * @see UserInfo.platform
 		 */
 		val platformStr: String,
 
-		val languages: List<Locale> = listOf()
+		/**
+		 * The locale chain supplied by the operating system.
+		 * @see currentLocale
+		 */
+		val systemLocale: List<Locale> = listOf()
 ) {
 
+	/**
+	 * The current Locale chain of the user. This may be set.
+	 */
+	val currentLocale = DataBinding(systemLocale)
+
+	init {
+		currentLocale.bind {
+			if (it.isEmpty()) throw Exception("currentLocale chain may not be empty.")
+		}
+	}
+
 	override fun toString(): String {
-		return "UserInfo(isOpenGl=$isOpenGl isTouchDevice=$isTouchDevice isBrowser=$isBrowser isMobile=$isMobile languages=${languages.joinToString(",")})"
+		return "UserInfo(isTouchDevice=$isTouchDevice isBrowser=$isBrowser isMobile=$isMobile languages=${systemLocale.joinToString(",")})"
 	}
 
 	companion object : DKey<UserInfo>

@@ -17,21 +17,17 @@
 package com.acornui.js.text
 
 import com.acornui.collection.copy
-import com.acornui.core.di.Injector
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
-import com.acornui.core.i18n.I18n
 import com.acornui.core.i18n.Locale
 import com.acornui.core.text.DateTimeFormatStyle.*
 import com.acornui.core.text.DateTimeFormatType
 import com.acornui.core.text.DateTimeFormatter
-import com.acornui.core.time.Date
 import com.acornui.core.time.DateRo
+import com.acornui.core.userInfo
 import com.acornui.js.time.DateImpl
 import com.acornui.reflect.observable
 import kotlin.properties.ReadWriteProperty
 
-class DateTimeFormatterImpl(override val injector: Injector) : DateTimeFormatter, Scoped {
+class DateTimeFormatterImpl : DateTimeFormatter {
 
 	override var type by watched(DateTimeFormatType.DATE_TIME)
 	override var timeStyle by watched(DEFAULT)
@@ -43,9 +39,9 @@ class DateTimeFormatterImpl(override val injector: Injector) : DateTimeFormatter
 	private var _formatter: dynamic = null
 	private val formatter: dynamic
 		get() {
-			if (locales == null && lastLocales != inject(I18n).currentLocales) {
+			if (locales == null && lastLocales != userInfo.currentLocale.value) {
 				_formatter = null
-				lastLocales = inject(I18n).currentLocales.copy()
+				lastLocales = userInfo.currentLocale.value.copy()
 			}
 			if (_formatter == null) {
 				val locales = (locales ?: lastLocales).map { it.value }
@@ -92,28 +88,6 @@ class DateTimeFormatterImpl(override val injector: Injector) : DateTimeFormatter
 	override fun format(value: DateRo): String {
 		value as DateImpl
 		return formatter!!.format(value.date)
-	}
-
-	override fun parse(value: String): Date? {
-		val date = js("new Date(Date.UTC(1110, 11, 12, 13, 14, 15, 16));")
-		val regex = Regex("[^0-9]")
-		val localizedOrder = (formatter!!.format(date) as String).replace(regex, " ").split(" ")
-		val numberParts = value.replace(regex, " ").split(" ")
-		if (localizedOrder.size != numberParts.size) return null
-		val newDate = DateImpl()
-		for (i in 0..numberParts.lastIndex) {
-			val num = numberParts[i].toInt()
-			when (localizedOrder[i]) {
-				"1110" -> newDate.fullYear = num
-				"11" -> newDate.monthIndex = num
-				"12" -> newDate.dayOfMonth = num
-				"13" -> newDate.hour = num
-				"14" -> newDate.minute = num
-				"15" -> newDate.second = num
-				"16" -> newDate.milli = num
-			}
-		}
-		return newDate
 	}
 
 	private fun <T> watched(initial: T): ReadWriteProperty<Any?, T> {

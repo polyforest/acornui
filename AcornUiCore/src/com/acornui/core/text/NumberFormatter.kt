@@ -16,11 +16,8 @@
 
 package com.acornui.core.text
 
-import com.acornui.core.di.Injector
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.dKey
-import com.acornui.core.di.inject
 import com.acornui.core.i18n.Locale
+import kotlin.properties.Delegates
 
 /**
  * This class formats numbers into localized string representations.
@@ -56,14 +53,12 @@ interface NumberFormatter : StringFormatter<Number?>, StringParser<Double> {
 
 	override fun parse(value: String): Double? {
 		val thousandSeparator = format(1111).replace("1", "")
-		val decimalSeparator = format(1.1).replace("1", ".")
+		val decimalSeparator = format(1.1).replace("1", "")
 		return value.replace(thousandSeparator, "").replace(decimalSeparator, ".").toDoubleOrNull()
 	}
-
-	companion object {
-		val FACTORY_KEY = dKey<(injector: Injector) -> NumberFormatter>()
-	}
 }
+
+lateinit var numberFormatterProvider: () -> NumberFormatter
 
 enum class NumberFormatType {
 	NUMBER,
@@ -71,15 +66,15 @@ enum class NumberFormatType {
 	PERCENT
 }
 
-fun Scoped.numberFormatter(): NumberFormatter {
-	return inject(NumberFormatter.FACTORY_KEY)(injector)
+fun numberFormatter(): NumberFormatter {
+	return numberFormatterProvider()
 }
 
 /**
  * @pstsm currencyCode the ISO 4217 code of the currency
  */
-fun Scoped.currencyFormatter(currencyCode: String): NumberFormatter {
-	return inject(NumberFormatter.FACTORY_KEY)(injector).apply {
+fun currencyFormatter(currencyCode: String): NumberFormatter {
+	return numberFormatterProvider().apply {
 		type = NumberFormatType.CURRENCY
 		minFractionDigits = 2
 		this.currencyCode = currencyCode
@@ -90,8 +85,8 @@ fun Scoped.currencyFormatter(currencyCode: String): NumberFormatter {
  * Percent formatter will format a number as a percent value.
  * E.g. 0.23 will be formatted as 23%
  */
-fun Scoped.percentFormatter(): NumberFormatter {
-	return inject(NumberFormatter.FACTORY_KEY)(injector).apply {
+fun percentFormatter(): NumberFormatter {
+	return numberFormatterProvider().apply {
 		type = NumberFormatType.PERCENT
 	}
 }

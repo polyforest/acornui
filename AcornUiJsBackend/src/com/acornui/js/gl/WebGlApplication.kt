@@ -46,8 +46,6 @@ import kotlin.dom.clear
 @Suppress("unused")
 open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 
-	override val isOpenGl = true
-
 	override val canvasTask by BootTask {
 		val rootElement = document.getElementById(rootId) ?: throw Exception("Could not find root canvas $rootId")
 		val root = rootElement as HTMLElement

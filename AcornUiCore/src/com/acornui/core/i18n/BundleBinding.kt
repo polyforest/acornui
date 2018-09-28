@@ -17,38 +17,64 @@
 package com.acornui.core.i18n
 
 import com.acornui.core.Disposable
-import com.acornui.core.di.Injector
-import com.acornui.core.di.Scoped
-import com.acornui.signal.SignalHandlerSet
+import com.acornui.core.di.*
+import com.acornui.signal.bind
 
 /**
- * A `BundleBinding` object loads an [I18nBundle] object, then allows changed handlers to be added as a set, which
- * are then removed upon [dispose].
+ * This class is responsible for tracking a set of callbacks and cached files for an [I18n] bundle.
+ * When this binding is disposed, the handlers are all removed and the cached file references are decremented.
  */
 class BundleBinding(override val injector: Injector, bundleName: String) : Scoped, Disposable {
 
-	private val signalHandlerSet: SignalHandlerSet<(I18nBundle) -> Unit>
-	private val bundle: I18nBundle
+	/**
+	 * The bundle this binding is watching.
+	 */
+	val bundle: I18nBundleRo = inject(I18n).getBundle(bundleName)
+
+	private var bundleLoader = loadBundle(bundleName)
+	private val callbacks = ArrayList<(I18nBundleRo) -> Unit>()
+
+	private val bundleBinding: Disposable
 
 	init {
-		bundle = loadBundle(bundleName)
-		signalHandlerSet = SignalHandlerSet(bundle.changed)
+		bundleBinding = bundle.bind {
+			for (i in 0..callbacks.lastIndex) {
+				callbacks[i].invoke(bundle)
+			}
+		}
 	}
 
-	operator fun invoke(callback: (I18nBundle) -> Unit) {
-		signalHandlerSet.add(callback)
+	@Deprecated("use bind", ReplaceWith("bind(callback)"))
+	operator fun invoke(callback: (I18nBundleRo) -> Unit) {
+		bind(callback)
+	}
+
+	fun bind(callback: (I18nBundleRo) -> Unit) {
+		callbacks.add(callback)
 		callback(bundle)
 	}
 
+	fun unbind(callback: (I18nBundleRo) -> Unit) {
+		callbacks.remove(callback)
+	}
+
 	override fun dispose() {
-		signalHandlerSet.dispose()
+		callbacks.clear()
+		bundleBinding.dispose()
+		bundleLoader.dispose()
 	}
 }
 
+/**
+ * Instantiates a bundle binding object.
+ */
+fun Scoped.bundleBinding(bundleName: String): BundleBinding {
+	return BundleBinding(injector, bundleName)
+}
 
 /**
  * Invokes the callback when this bundle has changed.
  */
-fun Scoped.i18n(bundleName: String) : BundleBinding {
-	return BundleBinding(injector, bundleName)
+fun Owned.i18n(bundleName: String) : BundleBinding {
+	return own(BundleBinding(injector, bundleName))
 }

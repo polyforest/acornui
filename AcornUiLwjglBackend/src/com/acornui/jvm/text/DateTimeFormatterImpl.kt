@@ -17,27 +17,22 @@
 package com.acornui.jvm.text
 
 import com.acornui.collection.copy
-import com.acornui.core.di.Injector
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
-import com.acornui.core.i18n.I18n
 import com.acornui.core.i18n.Locale
 import com.acornui.core.text.DateTimeFormatStyle
 import com.acornui.core.text.DateTimeFormatType
 import com.acornui.core.text.DateTimeFormatter
-import com.acornui.core.time.Date
 import com.acornui.core.time.DateRo
+import com.acornui.core.userInfo
 import com.acornui.jvm.time.DateImpl
 import com.acornui.logging.Log
 import com.acornui.reflect.observable
 import java.text.DateFormat
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.properties.ReadWriteProperty
 import java.util.Locale as JvmLocale
 
-class DateTimeFormatterImpl(override val injector: Injector) : DateTimeFormatter, Scoped {
+class DateTimeFormatterImpl : DateTimeFormatter {
 
 	override var type by watched(DateTimeFormatType.DATE_TIME)
 	override var timeStyle by watched(DateTimeFormatStyle.DEFAULT)
@@ -49,9 +44,9 @@ class DateTimeFormatterImpl(override val injector: Injector) : DateTimeFormatter
 	private var _formatter: DateFormat? = null
 	private val formatter: DateFormat
 		get() {
-			if (locales == null && lastLocales != inject(I18n).currentLocales) {
+			if (locales == null && lastLocales != userInfo.currentLocale.value) {
 				_formatter = null
-				lastLocales = inject(I18n).currentLocales.copy()
+				lastLocales = userInfo.currentLocale.value.copy()
 			}
 			if (_formatter == null) {
 				val locales = locales ?: lastLocales
@@ -108,17 +103,6 @@ class DateTimeFormatterImpl(override val injector: Injector) : DateTimeFormatter
 	private fun <T> watched(initial: T): ReadWriteProperty<Any?, T> {
 		return observable(initial) {
 			_formatter = null
-		}
-	}
-
-	override fun parse(value: String): Date? {
-		return try {
-			val date = formatter.parse(value)
-			val d = DateImpl()
-			d.time = date.time
-			d
-		} catch (e: ParseException) {
-			null
 		}
 	}
 }

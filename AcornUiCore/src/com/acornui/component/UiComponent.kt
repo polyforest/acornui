@@ -286,6 +286,7 @@ open class UiComponentImpl(
 	protected open fun onDeactivated() {
 	}
 
+	// Common dependencies
 	protected val window = inject(Window)
 	protected val mouse = inject(MouseState)
 	protected val assets = inject(AssetManager)

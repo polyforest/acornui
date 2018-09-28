@@ -71,6 +71,7 @@ abstract class Module(
 
 	var moduleDependencies = listOf<Module>()
 	var jvmLibraryDependencies = listOf(rel("lib"))
+	var jvmRuntimeDependencies = listOf(rel("externalLib/runtime"))
 	var jsLibraryDependencies = listOf<File>()
 	var sources = listOf(rel("src"))
 
