@@ -95,6 +95,9 @@ object Ascii {
 	const val F23: Int = 134
 	const val F24: Int = 135
 
+	const val LTR: Int = 8206
+	const val RTL: Int = 8207
+
 	// Modifiers
 	const val ALT: Int = 18
 	const val CONTROL: Int = 17

@@ -107,9 +107,9 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 		addStyleRule(charStyle)
 		styleTags.add(TextField)
 
-		watch(charStyle) {
+		watch(charStyle) { cS ->
 			refreshCursor()
-			if (it.selectable) {
+			if (cS.selectable) {
 				if (_drag == null) {
 					val d = DragAttachment(this, 0f)
 					d.drag.add(this::dragHandler)

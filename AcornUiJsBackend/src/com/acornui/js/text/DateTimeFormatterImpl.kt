@@ -87,7 +87,7 @@ class DateTimeFormatterImpl : DateTimeFormatter {
 
 	override fun format(value: DateRo): String {
 		value as DateImpl
-		return formatter!!.format(value.date)
+		return formatter!!.format(value.date) as String
 	}
 
 	private fun <T> watched(initial: T): ReadWriteProperty<Any?, T> {

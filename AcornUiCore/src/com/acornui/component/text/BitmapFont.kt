@@ -64,7 +64,7 @@ class BitmapFont(
 	fun getGlyphSafe(char: Char): Glyph {
 		val existing = glyphs[char]
 		if (existing != null) return existing
-		if (char.isWhitespace2()) {
+		if (char.isWhitespace2() || char.toInt() > 0xFF) {
 			return glyphs[0.toChar()]!!
 		}
 		return glyphs[char] ?: glyphs[(-1).toChar()]!!
