@@ -173,7 +173,13 @@ data class UserInfo(
 		return "UserInfo(isTouchDevice=$isTouchDevice isBrowser=$isBrowser isMobile=$isMobile languages=${systemLocale.joinToString(",")})"
 	}
 
-	companion object : DKey<UserInfo>
+	companion object : DKey<UserInfo> {
+
+		/**
+		 * The string [platformStr] is set to when the platform could not be determined.
+		 */
+		const val UNKNOWN_PLATFORM = "unknown"
+	}
 }
 
 /**

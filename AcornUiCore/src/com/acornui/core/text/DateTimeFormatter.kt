@@ -21,7 +21,6 @@ import com.acornui.core.i18n.Locale
 import com.acornui.core.time.Date
 import com.acornui.core.time.DateRo
 import com.acornui.core.time.time
-import kotlin.properties.Delegates
 
 /**
  * This class formats dates into localized string representations.

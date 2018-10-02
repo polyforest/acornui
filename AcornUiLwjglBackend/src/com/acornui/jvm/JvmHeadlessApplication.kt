@@ -102,7 +102,7 @@ open class JvmHeadlessApplication(
 				isDesktop = true,
 				isTouchDevice = false,
 				userAgent = "headless",
-				platformStr = System.getProperty("os.name") ?: "unknown",
+				platformStr = System.getProperty("os.name") ?: UserInfo.UNKNOWN_PLATFORM,
 				systemLocale = listOf(Locale(java.util.Locale.getDefault().toLanguageTag()))
 		)
 		userInfo = u
