@@ -35,16 +35,16 @@ class DateTimeFormatterImpl : DateTimeFormatter {
 	override var timeZone: String? by watched(null)
 	override var locales: List<Locale>? by watched(null)
 
-	private var lastLocales: List<Locale> = listOf()
+	private var currentUserLocales: List<Locale> = listOf()
 	private var _formatter: dynamic = null
 	private val formatter: dynamic
 		get() {
-			if (locales == null && lastLocales != userInfo.currentLocale.value) {
+			if (locales == null && currentUserLocales != userInfo.currentLocale.value) {
 				_formatter = null
-				lastLocales = userInfo.currentLocale.value.copy()
+				currentUserLocales = userInfo.currentLocale.value.copy()
 			}
 			if (_formatter == null) {
-				val locales = (locales ?: lastLocales).map { it.value }
+				val locales = (locales ?: currentUserLocales).map { it.value }
 				val JsDateTimeFormat = js("Intl.DateTimeFormat")
 				val options = js("({})")
 				if (timeZone != null) {

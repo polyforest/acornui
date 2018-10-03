@@ -46,9 +46,21 @@ interface DateRo : Comparable<DateRo> {
 	val monthIndex: Int
 
 	/**
+	 * The 1 indexed month according to local time.
+	 */
+	val month: Int
+		get() = monthIndex + 1
+
+	/**
 	 * The [monthIndex] according to universal time.
 	 */
 	val utcMonthIndex: Int
+
+	/**
+	 * The [month] according to universal time.
+	 */
+	val utcMonth: Int
+		get() = utcMonthIndex + 1
 
 	/**
 	 * The 1 indexed day of the month according to local time. 1st - 1, 31st - 31
@@ -115,6 +127,11 @@ interface DateRo : Comparable<DateRo> {
 	val utcMilli: Int
 
 	/**
+	 * The timezone offset from local time to GMT in minutes.
+	 */
+	val timezoneOffset: Int
+
+	/**
 	 * Returns a mutable copy of this date.
 	 */
 	fun copy(): Date
@@ -122,6 +139,7 @@ interface DateRo : Comparable<DateRo> {
 	override fun compareTo(other: DateRo): Int {
 		return time.compareTo(other.time)
 	}
+
 }
 
 /**
@@ -150,7 +168,18 @@ interface Date : DateRo {
 	override var utcFullYear: Int
 
 	override var monthIndex: Int
+	override var month: Int
+		get() = monthIndex + 1
+		set(value) {
+			monthIndex = value - 1
+		}
+
 	override var utcMonthIndex: Int
+	override var utcMonth: Int
+		get() = utcMonthIndex + 1
+		set(value) {
+			utcMonthIndex = value - 1
+		}
 
 	override var dayOfMonth: Int
 	override var utcDayOfMonth: Int
@@ -166,6 +195,56 @@ interface Date : DateRo {
 
 	override var milli: Int
 	override var utcMilli: Int
+
+	/**
+	 * A convenience function for setting the time of day on a Date object.
+	 */
+	fun setTimeOfDay(hour: Int, minute: Int, second: Int = 0, milli: Int = 0): Date {
+		this.hour = hour
+		this.minute = minute
+		this.second = second
+		this.milli = milli
+		return this
+	}
+
+	/**
+	 * A convenience function for setting the UTC time of day on a Date object.
+	 */
+	fun setUtcTimeOfDay(hour: Int, minute: Int, second: Int = 0, milli: Int = 0): Date {
+		this.utcHour = hour
+		this.utcMinute = minute
+		this.utcSecond = second
+		this.utcMilli = milli
+		return this
+	}
+
+	/**
+	 * A convenience function for setting the date on a Date object.
+	 */
+	fun setDate(fullYear: Int, month: Int, dayOfMonth: Int): Date {
+		this.fullYear = fullYear
+		this.month = month
+		this.dayOfMonth = dayOfMonth
+		return this
+	}
+
+	/**
+	 * A convenience function for setting the utc date on a Date object.
+	 */
+	fun setUtcDate(fullYear: Int, month: Int, dayOfMonth: Int): Date {
+		this.utcFullYear = fullYear
+		this.utcMonth = month
+		this.utcDayOfMonth = dayOfMonth
+		return this
+	}
+
+	/**
+	 * Sets this date object to match the time of the other date object.
+	 */
+	fun set(other: DateRo): Date {
+		this.time = other.time
+		return this
+	}
 
 }
 

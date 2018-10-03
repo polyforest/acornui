@@ -40,16 +40,16 @@ class DateTimeFormatterImpl : DateTimeFormatter {
 	override var timeZone: String? by watched(null)
 	override var locales: List<Locale>? by watched(null)
 
-	private var lastLocales: List<Locale> = listOf()
+	private var currentUserLocales: List<Locale> = listOf()
 	private var _formatter: DateFormat? = null
 	private val formatter: DateFormat
 		get() {
-			if (locales == null && lastLocales != userInfo.currentLocale.value) {
+			if (locales == null && currentUserLocales != userInfo.currentLocale.value) {
 				_formatter = null
-				lastLocales = userInfo.currentLocale.value.copy()
+				currentUserLocales = userInfo.currentLocale.value.copy()
 			}
 			if (_formatter == null) {
-				val locales = locales ?: lastLocales
+				val locales = locales ?: currentUserLocales
 				for (locale in locales) {
 					val jvmLocale = java.util.Locale.Builder().setLanguageTag(locale.value).build()
 					_formatter = getFormatterForLocale(jvmLocale)

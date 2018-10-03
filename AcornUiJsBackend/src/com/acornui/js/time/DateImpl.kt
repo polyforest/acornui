@@ -17,6 +17,8 @@
 package com.acornui.js.time
 
 import com.acornui.core.time.Date
+import com.acornui.core.time.DateRo
+import com.acornui.core.zeroPadding
 
 /**
  * @author nbilyk
@@ -130,13 +132,26 @@ class DateImpl : Date {
 			date.setUTCMilliseconds(value)
 		}
 
+	override val timezoneOffset: Int
+		get() = date.getTimezoneOffset()
+
 	override fun copy(): Date {
 		val newDate = DateImpl()
 		newDate.time = time
 		return newDate
 	}
 
+	override fun equals(other: Any?): Boolean {
+		if (other == null) return false
+		other as? DateRo ?: return false
+		return time == other.time
+	}
+
+	override fun hashCode(): Int {
+		return time.hashCode()
+	}
+
 	override fun toString(): String {
-		return "Date($time)"
+		return "Date($fullYear/$month/$dayOfMonth $hour:${minute.zeroPadding(2)}:${second.zeroPadding(2)}.$milli)"
 	}
 }

@@ -17,24 +17,13 @@
 package com.acornui.jvm.time
 
 import org.junit.Test
-import java.text.DateFormat
-import java.util.*
 
 
 class DateImplTest {
 
-	@Test fun era() {
-		val d = Calendar.getInstance()
-		println(d.timeZone)
-		//d.set(Calendar.YEAR, 0)
-		println(d.toString())
-		val formatter = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.forLanguageTag("de-DE"))
-//		val formatter = DateFormat.getTimeInstance(DateFormat.DEFAULT)
-//		val formatter = DateFormat.getDateInstance(DateFormat.DEFAULT)
-
-		//sdf.calendar = d
-		formatter.timeZone = TimeZone.getTimeZone("UTC")
-		val dateStr = formatter.format(d.time)
-		println(dateStr)
+	@Test fun testTimezone() {
+		val d = DateImpl()
+		println(d.timezoneOffset)
 	}
+
 }
