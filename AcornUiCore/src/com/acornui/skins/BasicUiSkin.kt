@@ -143,7 +143,7 @@ open class BasicUiSkin(
 		target.addStyleRule(errorMessageStyle, StyleSelectors.errorMessage)
 	}
 
-	protected open fun Scoped.loadBitmapFonts() {
+	protected open fun loadBitmapFonts() {
 		val group = cachedGroup()
 		val fontStyle = theme.textStyle.toFontStyle()
 		loadFontFromAtlas(fontStyle, "assets/uiskin/verdana_14.fnt", theme.atlasPath, group)

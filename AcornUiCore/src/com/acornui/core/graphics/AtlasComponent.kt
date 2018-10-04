@@ -75,8 +75,6 @@ open class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
 		} then {
 			texture, region ->
 			setRegionAndTexture(texture, region)
-		} catch {
-			// Your custom error handling if you want it
 		}
 	}
 

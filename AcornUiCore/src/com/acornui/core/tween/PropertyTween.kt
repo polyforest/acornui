@@ -29,9 +29,9 @@ object TweenRegistry {
 	}
 
 	fun register(target: Any, property: String, tween: Tween) {
-		tween.completed.addOnce({
+		tween.completed.addOnce {
 			TweenRegistry.unregister(target, property)
-		})
+		}
 		registry.put(target, property, tween)
 	}
 

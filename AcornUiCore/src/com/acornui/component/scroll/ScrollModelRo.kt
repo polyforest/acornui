@@ -145,12 +145,11 @@ class ScrollModelImpl(
 		get() = _changed
 
 	private fun bindable(initial: Float): ReadWriteProperty<Any?, Float> {
-		return Delegates.observable(initial, {
-			meta, old, new ->
+		return Delegates.observable(initial) { _, old, new ->
 			if (new.isNaN())
 				throw Exception("Cannot set scroll model to NaN")
-			if (old != new) _changed.dispatch(this)}
-		)
+			if (old != new) _changed.dispatch(this)
+		}
 	}
 
 	override var min by bindable(min)

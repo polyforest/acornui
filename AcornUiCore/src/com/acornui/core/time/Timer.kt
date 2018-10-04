@@ -122,22 +122,42 @@ fun timer(timeDriver: TimeDriver, duration: Float, repetitions: Int = 1, delay: 
  */
 internal class EnterFrame private constructor() : UpdatableChildBase(), Clearable, Disposable {
 
+	/**
+	 * How many frames before the callback begins to be invoked.
+	 * This should be greater than or equal to 1.
+	 */
+	var startFrame = 1
+
 	var isActive = false
+
+	/**
+	 * The number of times to invoke the callback.
+	 */
 	var repetitions: Int = 1
-	var currentRepetition: Int = 0
+
+	/**
+	 * The current frame.
+	 */
+	private var currentFrame: Int = 0
+
+	/**
+	 * The callback to invoke, starting at [startFrame] and continues for [repetitions].
+	 */
 	var callback: () -> Unit = NOOP
 
 	override fun update(stepTime: Float) {
-		++currentRepetition
-		callback()
-		if (repetitions >= 0 && currentRepetition >= repetitions) {
+		++currentFrame
+		if (currentFrame >= startFrame)
+			callback()
+		if (repetitions >= 0 && currentFrame - startFrame + 1 >= repetitions) {
 			dispose()
 		}
 	}
 
 	override fun clear() {
+		startFrame = 1
 		repetitions = 1
-		currentRepetition = 0
+		currentFrame = 0
 		callback = NOOP
 	}
 
@@ -154,10 +174,11 @@ internal class EnterFrame private constructor() : UpdatableChildBase(), Clearabl
 
 		private val pool = ClearableObjectPool { EnterFrame() }
 
-		internal fun obtain(timeDriver: TimeDriver, repetitions: Int = -1, callback: () -> Unit): Disposable {
+		internal fun obtain(timeDriver: TimeDriver, repetitions: Int = -1, startFrame: Int = 1, callback: () -> Unit): Disposable {
 			val e = pool.obtain()
 			e.callback = callback
 			e.repetitions = repetitions
+			e.startFrame = startFrame
 			e.isActive = true
 			timeDriver.addChild(e)
 			return e
@@ -166,18 +187,24 @@ internal class EnterFrame private constructor() : UpdatableChildBase(), Clearabl
 }
 
 fun Scoped.callLater(callback: () -> Unit): Disposable {
-	return enterFrame(1, callback)
+	return enterFrame(repetitions = 1, startFrame = 1, callback = callback)
 }
 
-fun callLater(timeDriver: TimeDriver, callback: () -> Unit): Disposable {
-	return enterFrame(timeDriver, 1, callback)
+fun callLater(timeDriver: TimeDriver, startFrame: Int = 1, callback: () -> Unit): Disposable {
+	return enterFrame(timeDriver, 1, startFrame, callback)
 }
 
 fun Scoped.enterFrame(repetitions: Int = -1, callback: () -> Unit): Disposable {
-	return enterFrame(inject(TimeDriver), repetitions, callback)
+	return enterFrame(inject(TimeDriver), repetitions, 1, callback)
 }
 
-fun enterFrame(timeDriver: TimeDriver, repetitions: Int = -1, callback: () -> Unit): Disposable {
+fun Scoped.enterFrame(repetitions: Int = -1, startFrame: Int = 1, callback: () -> Unit): Disposable {
+	return enterFrame(inject(TimeDriver), repetitions, startFrame, callback)
+}
+
+fun enterFrame(timeDriver: TimeDriver, repetitions: Int = -1, callback: () -> Unit): Disposable = enterFrame(timeDriver, repetitions, 1, callback)
+
+fun enterFrame(timeDriver: TimeDriver, repetitions: Int = -1, startFrame: Int = 1, callback: () -> Unit): Disposable {
 	if (repetitions == 0) throw IllegalArgumentException("repetitions argument may not be zero.")
-	return EnterFrame.obtain(timeDriver, repetitions, callback)
+	return EnterFrame.obtain(timeDriver, repetitions, startFrame, callback)
 }

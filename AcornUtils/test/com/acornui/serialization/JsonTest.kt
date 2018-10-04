@@ -173,7 +173,7 @@ class JsonTest {
 	"born": 1956,
 	"married": true,
 	"bools": [ true, true, false, false, true ],
-	"bools": [ 0, 1, 2, 3, 4 ],
+	"ints": [ 0, 1, 2, 3, 4 ],
 	"char": "a",
 	"double": 3.4,
 	"object": {
@@ -186,7 +186,7 @@ class JsonTest {
 			"born": 1982,
 			"married": true,
 			"bools": [ true, true, false, false, true ],
-			"bools": [ 0, 1, 2, 3, 4 ],
+			"ints": [ 0, 1, 2, 3, 4 ],
 			"char": "a",
 			"double": 3.4,
 			"object": {
@@ -199,7 +199,7 @@ class JsonTest {
 					"born": 2001,
 					"married": false,
 					"bools": [ true, true, false, false, true ],
-					"bools": [ 0, 1, 2, 3, 4 ],
+					"ints": [ 0, 1, 2, 3, 4 ],
 					"char": "a",
 					"double": 3.4,
 					"object": {
@@ -214,7 +214,7 @@ class JsonTest {
 					"born": 2001,
 					"married": false,
 					"bools": [ true, true, false, false, true ],
-					"bools": [ 0, 1, 2, 3, 4 ],
+					"ints": [ 0, 1, 2, 3, 4 ],
 					"char": "a",
 					"double": 3.4,
 					"object": {
@@ -231,7 +231,7 @@ class JsonTest {
 			"born": 1985,
 			"married": false,
 			"bools": [ true, true, false, false, true ],
-			"bools": [ 0, 1, 2, 3, 4 ],
+			"ints": [ 0, 1, 2, 3, 4 ],
 			"char": "a",
 			"double": 3.4,
 			"object": {
@@ -246,7 +246,7 @@ class JsonTest {
 			"born": 1987,
 			"married": true,
 			"bools": [ true, true, false, false, true ],
-			"bools": [ 0, 1, 2, 3, 4 ],
+			"ints": [ 0, 1, 2, 3, 4 ],
 			"char": "a",
 			"double": 3.4,
 			"object": {
@@ -261,7 +261,7 @@ class JsonTest {
 			"born": 1987,
 			"married": false,
 			"bools": [ true, true, false, false, true ],
-			"bools": [ 0, 1, 2, 3, 4 ],
+			"ints": [ 0, 1, 2, 3, 4 ],
 			"char": "a",
 			"double": 3.4,
 			"object": {
@@ -284,7 +284,7 @@ class JsonTest {
 	"born": 1956,
 	"married": true,
 	"bools": [ true, true, false, false, true ],
-	"bools": [ 0, 1, 2, 3, 4 ],
+	"ints": [ 0, 1, 2, 3, 4 ],
 	"char": "a",
 	"double": 3.4,
 	"object": {
@@ -314,13 +314,13 @@ private object PersonDataSerializer : To<PersonData> {
 		writer.int("born", birthDate)
 		writer.bool("married", married)
 		writer.boolArray("bools", booleanArrayOf(true, true, false, false, true))
-		writer.intArray("bools", intArrayOf(0, 1, 2, 3, 4))
+		writer.intArray("ints", intArrayOf(0, 1, 2, 3, 4))
 		writer.char("char", 'a')
 		writer.double("double", 3.4)
 		writer.obj("object", true) {
-			writer ->
-			writer.string("foo", "bar")
-			writer.stringArray("strings", arrayOf("test1", "test2"))
+			childWriter ->
+			childWriter.string("foo", "bar")
+			childWriter.stringArray("strings", arrayOf("test1", "test2"))
 		}
 
 		writer.array("children", children, PersonDataSerializer)
