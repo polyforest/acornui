@@ -65,7 +65,6 @@ class ResizeableFrameBuffer(override val injector: Injector, initialWidth: Int, 
 			val frameBuffer = this.frameBuffer!!
 			frameBuffer.setViewport(0, 0, width, height)
 			sprite.setUv(0f, 0f, width.toFloat() / frameBuffer.width.toFloat(), height.toFloat() / frameBuffer.height.toFloat(), isRotated = false)
-			sprite.updateUv()
 		}
 	}
 

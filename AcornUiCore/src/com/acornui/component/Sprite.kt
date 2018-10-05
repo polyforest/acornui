@@ -27,20 +27,25 @@ import com.acornui.math.*
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.properties.Delegates
 
 /**
  * A Sprite represents a Quad region of a Texture. It can be drawn.
  *
  * @author nbilyk
  */
-class Sprite : VertexDrawable {
+class Sprite : BasicDrawable {
 
 	/**
 	 * If true, the normal and indices will be reversed.
 	 */
 	var useAsBackFace = false
 
-	var texture: Texture? = null
+	var texture: Texture? by Delegates.observable<Texture?>(null) {
+		_, _, _ ->
+		updateUv()
+	}
+
 	var blendMode: BlendMode = BlendMode.NORMAL
 	var premultipliedAlpha: Boolean = false
 
@@ -69,6 +74,7 @@ class Sprite : VertexDrawable {
 		region[3] = v2
 		isUv = true
 		_isRotated = isRotated
+		updateUv()
 	}
 
 	fun setRegion(bounds: RectangleRo, isRotated: Boolean) {
@@ -86,6 +92,7 @@ class Sprite : VertexDrawable {
 		region[3] = height + y
 		isUv = false
 		_isRotated = isRotated
+		updateUv()
 	}
 
 	private var u: Float = 0f
@@ -118,7 +125,7 @@ class Sprite : VertexDrawable {
 			}
 		}
 
-	override fun updateUv() {
+	private fun updateUv() {
 		val t = texture ?: return
 
 		if (isUv) {

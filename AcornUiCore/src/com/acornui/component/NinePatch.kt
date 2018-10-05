@@ -46,8 +46,9 @@ import com.acornui.math.Vector3
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.properties.Delegates
 
-class NinePatch : VertexDrawable {
+class NinePatch : BasicDrawable {
 
 	private var _isRotated: Boolean = false
 
@@ -90,7 +91,10 @@ class NinePatch : VertexDrawable {
 	private val vertexPoints = Array(16) { Vector3() }
 	private val normal = Vector3()
 
-	var texture: Texture? = null
+	var texture: Texture? by Delegates.observable<Texture?>(null) {
+		_, _, _ ->
+		updateUv()
+	}
 
 	override val naturalWidth: Float
 		get() {
@@ -127,6 +131,7 @@ class NinePatch : VertexDrawable {
 		region[3] = height + y
 		_isRotated = isRotated
 		isUv = false
+		updateUv()
 	}
 
 	fun setUv(u: Float, v: Float, u2: Float, v2: Float, isRotated: Boolean) {
@@ -136,6 +141,7 @@ class NinePatch : VertexDrawable {
 		region[3] = v2
 		_isRotated = isRotated
 		isUv = true
+		updateUv()
 	}
 
 	val isRotated: Boolean
@@ -164,7 +170,7 @@ class NinePatch : VertexDrawable {
 	private var width: Float = 0f
 	private var height: Float = 0f
 
-	override fun updateUv() {
+	private fun updateUv() {
 		val t = texture ?: return
 
 		if (isUv) {

@@ -23,11 +23,11 @@ import com.acornui.math.MinMaxRo
 /**
  * @author nbilyk
  */
-abstract class VertexDrawableComponent(
+abstract class DrawableComponent(
 		owner: Owned
 ) : UiComponentImpl(owner) {
 
-	protected abstract val drawable: VertexDrawable?
+	protected abstract val drawable: BasicDrawable?
 
 	init {
 		validation.addNode(VERTICES, ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM or ValidationFlags.CONCATENATED_TRANSFORM) { updateVertices() }
@@ -39,9 +39,7 @@ abstract class VertexDrawableComponent(
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val drawable = drawable ?: return
-		drawable.updateUv()
-		out.width = explicitWidth ?: drawable.naturalWidth
-		out.height = explicitHeight ?: drawable.naturalHeight
+		out.set(explicitWidth ?: drawable.naturalWidth, explicitHeight ?: drawable.naturalHeight)
 	}
 
 	protected open fun updateVertices() {

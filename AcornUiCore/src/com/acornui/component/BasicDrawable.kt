@@ -20,16 +20,15 @@ import com.acornui.gl.core.GlState
 import com.acornui.graphics.ColorRo
 import com.acornui.math.Matrix4Ro
 
-interface VertexDrawable {
+interface BasicDrawable {
 
 	val naturalWidth: Float
 	val naturalHeight: Float
 
-	fun updateUv()
 	fun updateWorldVertices(worldTransform: Matrix4Ro, width: Float, height: Float, x: Float = 0f, y: Float = 0f, z: Float = 0f, rotation: Float = 0f, originX: Float = 0f, originY: Float = 0f)
 
 	/**
-	 * Updates this VertexDrawable's local vertices.
+	 * Updates this BasicDrawable's local vertices.
 	 * If this is used directly, [updateWorldVertices] should not be used, and the [GlState.setCamera] method should
 	 * be supplied with the world transformation matrix.
 	 *

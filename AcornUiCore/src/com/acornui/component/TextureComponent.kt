@@ -31,7 +31,7 @@ import com.acornui.math.RectangleRo
  * A UiComponent representing a single Texture.
  * @author nbilyk
  */
-open class TextureComponent(owner: Owned) : VertexDrawableComponent(owner) {
+open class TextureComponent(owner: Owned) : DrawableComponent(owner) {
 
 	override val drawable: Sprite = Sprite()
 	

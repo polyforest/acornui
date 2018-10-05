@@ -188,7 +188,6 @@ suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffect, atlasPath:
 		sprite.premultipliedAlpha = emitter.premultipliedAlpha
 		sprite.texture = texture
 		sprite.setRegion(region.bounds, region.isRotated)
-		sprite.updateUv()
 		sprite
 	}
 	return loadParticleEffect(particleEffect, group, spriteResolver, maxParticlesScale)

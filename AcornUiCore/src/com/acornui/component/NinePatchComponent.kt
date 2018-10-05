@@ -29,7 +29,7 @@ import com.acornui.math.IntRectangleRo
 /**
  * @author nbilyk
  */
-class NinePatchComponent(owner: Owned) : VertexDrawableComponent(owner) {
+class NinePatchComponent(owner: Owned) : DrawableComponent(owner) {
 
 	override val drawable: NinePatch = NinePatch()
 
