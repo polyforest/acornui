@@ -16,6 +16,8 @@
 
 package com.acornui.core.time
 
+import com.acornui.core.text.parseDate
+import com.acornui.core.zeroPadding
 import com.acornui.serialization.From
 import com.acornui.serialization.Reader
 import com.acornui.serialization.To
@@ -135,6 +137,13 @@ interface DateRo : Comparable<DateRo> {
 	 * Returns a mutable copy of this date.
 	 */
 	fun copy(): Date
+
+	/**
+	 * Outputs to the ISO-8601 standard. The format is: YYYY-MM-DDTHH:mm:ss.sssZ
+	 */
+	fun toIsoString(): String {
+		return "${utcFullYear.zeroPadding(4)}-${utcMonth.zeroPadding(2)}-${utcDayOfMonth.zeroPadding(2)}T${utcHour.zeroPadding(2)}:${utcMinute.zeroPadding(2)}:${utcSecond.zeroPadding(2)}.${utcMilli.zeroPadding(3)}Z"
+	}
 
 	override fun compareTo(other: DateRo): Int {
 		return time.compareTo(other.time)
@@ -263,12 +272,29 @@ enum class Era {
 	CE
 }
 
-// TODO:
-object DateSerializer : To<Date?>, From<Date?> {
-	override fun read(reader: Reader): Date? {
-		return null
-	}
 
-	override fun Date?.write(writer: Writer) {
-	}
+fun Reader.dateIso(): Date? = parseDate(string())
+fun Reader.dateIso(name: String): Date? = get(name)?.dateIso()
+fun Writer.dateIso(date: DateRo?) {
+	if (date == null) writeNull()
+	else string(date.toIsoString())
 }
+fun Writer.dateIso(name: String, date: DateRo?) = property(name).dateIso(date)
+
+/**
+ * Reads the date as a Long - the number of milliseconds from the Unix Epoch.
+ */
+fun Reader.dateTime(): Date? {
+	val t = long() ?: return null
+	return time.date(t)
+}
+fun Reader.dateTime(name: String): Date? = get(name)?.dateTime()
+
+/**
+ * Writes the date as a Long - the number of milliseconds from the Unix Epoch.
+ */
+fun Writer.dateTime(date: DateRo?) {
+	if (date == null) writeNull()
+	else long(date.time)
+}
+fun Writer.dateTime(name: String, date: DateRo?) = property(name).dateTime(date)

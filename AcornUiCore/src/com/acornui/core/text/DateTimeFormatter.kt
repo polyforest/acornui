@@ -18,9 +18,11 @@ package com.acornui.core.text
 
 import com.acornui.collection.indexOfFirst2
 import com.acornui.core.i18n.Locale
+import com.acornui.core.repeat2
 import com.acornui.core.time.Date
 import com.acornui.core.time.DateRo
 import com.acornui.core.time.time
+import com.acornui.core.zeroPadding
 
 /**
  * This class formats dates into localized string representations.
@@ -121,7 +123,7 @@ class DateTimeParser : StringParser<Date> {
 		val hour = result.groupValues[1].toInt() + if (isPm) 12 else 0
 		val minute = result.groupValues[2].toInt()
 		val second = result.groupValues[3].toIntOrNull() ?: 0
-		val milli = result.groupValues[4].toIntOrNull() ?: 0
+		val milli = result.groupValues[4].toTimeMilli()
 
 		val t = time.date(0)
 		if (timezoneOffset != null || isUtc) {
@@ -221,8 +223,30 @@ class DateTimeParser : StringParser<Date> {
 		}
 	}
 
+	/**
+	 * The date is first attempted to be parsed as ISO8601, and if that doesn't pass, it is broken down into
+	 * 3 optional segments. Date, Time, and Time Zone.
+	 */
 	override fun parse(value: String): Date? {
 		var str = value.trim()
+
+		// Try with an iso8601 format first.
+		val isoResult = iso8601Regex.matchEntire(value)
+		if (isoResult != null) {
+			val fullYear = isoResult.groupValues[1].toInt()
+			val month = isoResult.groupValues[2].toIntOrNull() ?: 1
+			val day = isoResult.groupValues[3].toIntOrNull() ?: 1
+			val hour = isoResult.groupValues[4].toIntOrNull() ?: 0
+			val minute = isoResult.groupValues[5].toIntOrNull() ?: 1
+			val second = isoResult.groupValues[6].toIntOrNull() ?: 0
+			val milli = isoResult.groupValues[7].toTimeMilli()
+			val sign = if (isoResult.groupValues[8] == "-") -1 else 1
+			val offsetHour = isoResult.groupValues[9].toIntOrNull() ?: 0
+			val offsetMinute = isoResult.groupValues[10].toIntOrNull() ?: 0
+
+			return time.utcDate(fullYear, month, day, hour, minute + sign * (offsetHour * 60 + offsetMinute), second, milli)
+		}
+
 		val ret = when (type) {
 			DateTimeFormatType.DATE -> {
 				val timeZoneOffset = parseTimezoneOffset(str)
@@ -266,6 +290,23 @@ class DateTimeParser : StringParser<Date> {
 	}
 
 	/**
+	 * "2" becomes 200
+	 * "02" becomes 20
+	 * "002" becomes 200
+	 * "200" becomes 200
+	 * "20" becomes 200
+	 */
+	private fun String.toTimeMilli(): Int {
+		val i = toIntOrNull() ?: return 0
+		return when (length) {
+			3 -> i
+			2 -> i * 10
+			1 -> i * 100
+			else -> throw Exception()
+		}
+	}
+
+	/**
 	 * If this string is blank, returns null, otherwise, returns this string.
 	 */
 	private fun String.notBlank(): String? {
@@ -273,10 +314,12 @@ class DateTimeParser : StringParser<Date> {
 	}
 
 	companion object {
+		private val iso8601Regex = Regex("""(\d{4})(?:-(\d{2}))?(?:-(\d{2}))?(?:T(\d{2}):(\d{2})(?::(\d{2}))?(?:\.(\d{0,3}))?(?:([+\-])(1[0-4]|0?[0-9]):?([0-5][0-9])|Z)?)?""", RegexOption.IGNORE_CASE)
+
 		private val timeDateSeparatorRegex = Regex("""[\s,]+""", RegexOption.IGNORE_CASE)
-		private val gmtOffsetRegex = Regex("""(?:gmt|utc|z)(?:([+-])(1[0-4]|0?[0-9])(?::?([0-5][0-9])?))?\s*$""", RegexOption.IGNORE_CASE)
-		private val time12Regex = Regex("""t?(1[0-2]|0?[0-9]):([0-5][0-9])(?::([0-5][0-9])(?:.([0-9]{3}))?)?\s?(am|pm)""", RegexOption.IGNORE_CASE)
-		private val time24Regex = Regex("""t?([2][0-3]|[0-1][0-9]|[0-9]):([0-5][0-9])(?::([0-5][0-9])(?:.([0-9]{3}))?)?""", RegexOption.IGNORE_CASE)
+		private val gmtOffsetRegex = Regex("""(?:gmt|utc|z)(?:([+\-])(1[0-4]|0?[0-9])(?::?([0-5][0-9])?))?\s*$""", RegexOption.IGNORE_CASE)
+		private val time12Regex = Regex("""t?(1[0-2]|0?[0-9]):([0-5][0-9])(?::([0-5][0-9])(?:.([0-9]{1,3}))?)?\s?(am|pm)""", RegexOption.IGNORE_CASE)
+		private val time24Regex = Regex("""t?([2][0-3]|[0-1][0-9]|[0-9]):([0-5][0-9])(?::([0-5][0-9])(?:.([0-9]{1,3}))?)?""", RegexOption.IGNORE_CASE)
 
 		private val yMDRegex = Regex("""d?(\d{4})([/.-])(1[0-2]|0?[1-9])\2([1-2]\d|3[0-1]|0?[1-9])""", RegexOption.IGNORE_CASE)
 		private val mDYRegex = Regex("""d?(1[0-2]|0?[1-9])([/.-])([1-2]\d|3[0-1]|0?[1-9])\2(\d{2}(?:\d{2})?)""", RegexOption.IGNORE_CASE)
@@ -369,43 +412,15 @@ fun parseWeekday(str: String, locales: List<Locale>? = null): Int? {
 private val parser by lazy { DateTimeParser() }
 
 /**
- * Parses a string into a date, with the time being 0:00:00.0000 according to either local time or universal time
- * depending on the [isUtc] flag.
- *
- * @param str The date string to parse. This may be any [DateTimeFormatStyle].
- * @param isUtc [DateTimeParser.isUtc]
- * @param locales [DateTimeParser.locales]
- */
-fun parseDate(str: String, isUtc: Boolean = false, locales: List<Locale>? = null): Date? {
-	parser.type = DateTimeFormatType.DATE
-	parser.isUtc = isUtc
-	parser.locales = locales
-	return parser.parse(str)
-}
-
-/**
- * Parses a string into a date-time.
- *
+ * Parses a string into a date-time either in local time or universal time depending on the [isUtc] flag.
  * @param str The date string to parse.
  * @param isUtc [DateTimeParser.isUtc]
  * @param locales [DateTimeParser.locales]
+ * @see DateTimeParser.parse
  */
-fun parseDateTime(str: String, isUtc: Boolean = false, locales: List<Locale>? = null): Date? {
+fun parseDate(str: String?, isUtc: Boolean = false, locales: List<Locale>? = null): Date? {
+	if (str == null) return null
 	parser.type = DateTimeFormatType.DATE_TIME
-	parser.isUtc = isUtc
-	parser.locales = locales
-	return parser.parse(str)
-}
-
-/**
- * Parses a string into a time, with the day being the unix epoch.
- *
- * @param str The date string to parse.
- * @param isUtc [DateTimeParser.isUtc]
- * @param locales [DateTimeParser.locales]
- */
-fun parseTime(str: String, isUtc: Boolean = false, locales: List<Locale>? = null): Date? {
-	parser.type = DateTimeFormatType.TIME
 	parser.isUtc = isUtc
 	parser.locales = locales
 	return parser.parse(str)

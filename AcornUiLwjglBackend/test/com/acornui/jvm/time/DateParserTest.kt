@@ -206,6 +206,12 @@ class DateParserTest {
 		assertEquals(time.utcDate(fullYear = 2048, month = 3, dayOfMonth = 11, hour = 5, minute = 33), parser.parse("3/11/48 5:33 GMT"))
 		assertEquals(time.utcDate(fullYear = 2048, month = 3, dayOfMonth = 11, hour = 5, minute = 33), parser.parse("3/11/48 5:33 Z"))
 		assertEquals(time.utcDate(fullYear = 2048, month = 3, dayOfMonth = 11, hour = 5, minute = 33), parser.parse("3/11/48 5:33 UTC"))
+		assertEquals(time.utcDate(fullYear = 2017, month = 3, dayOfMonth = 11, hour = 5 - 3, minute = 33 - 40), parser.parse("2017-3-11T5:33Z-340"))
+		assertEquals(time.utcDate(fullYear = 2017, month = 3, dayOfMonth = 11, hour = 5 - 1, minute = 33 - 20), parser.parse("2017-3-11T5:33Z-120"))
+		assertEquals(time.utcDate(fullYear = 2017, month = 3, dayOfMonth = 11, hour = 5 - 13, minute = 33 - 30), parser.parse("2017-03-11T05:33-1330"))
+		assertEquals(null, parser.parse("2017-3-11T5:33-1330")) // Iso format requires leading zeros.
+		assertEquals(null, parser.parse("17-3-11T5:33-1330")) // Two year dates not allowed in ISO format.
+
 		parser.yearIsOptional = true
 		parser.currentYear = 2018
 		assertEquals(time.utcDate(fullYear = 2018, month = 3, dayOfMonth = 11, hour = 5 + 13, minute = 33 + 30), parser.parse("3/11 5:33 GMT+13:30"))
@@ -215,10 +221,13 @@ class DateParserTest {
 		assertEquals(time.utcDate(fullYear = 2018, month = 3, dayOfMonth = 11, hour = 5 - 13, minute = 33 - 30), parser.parse("3/11T5:33Z-1330"))
 		assertEquals(time.utcDate(fullYear = 2018, month = 3, dayOfMonth = 11, hour = 5 - 3, minute = 33 - 40), parser.parse("3/11T5:33Z-340"))
 		assertEquals(time.utcDate(fullYear = 2018, month = 3, dayOfMonth = 11, hour = 5 - 1, minute = 33 - 20), parser.parse("3/11T5:33Z-120"))
-//		assertEquals(time.utcDate(fullYear = 2018, month = 3, dayOfMonth = 11, hour = 5 - 13, minute = 33 - 30), parser.parse("3/11T5:33-1330"))
-//		assertEquals(time.utcDate(fullYear = 1331, month = 3, dayOfMonth = 11, hour = 5 - 13, minute = 33 - 30), parser.parse("3-11-1331T5:33-1330"))
+		assertEquals(null, parser.parse("3-11T5:33-1330")) // Optional year not allowed in ISO format.
 		assertEquals(time.utcDate(fullYear = 2018, month = 3, dayOfMonth = 11, hour = 5, minute = 33), parser.parse("3/11 5:33Z"))
-//		assertEquals(time.utcDate(fullYear = 2018, month = 10, dayOfMonth = 5, hour = 14, minute = 15, second = 50), parser.parse("2018-10-05T14:15:50+00:00"))
+		assertEquals(time.utcDate(fullYear = 2018, month = 10, dayOfMonth = 5, hour = 14, minute = 15, second = 50), parser.parse("2018-10-05T14:15:50+00:00"))
 
+		for (i in 0..1000) {
+			val t = time.date((27513254 * i).toLong())
+			assertEquals(t, parser.parse(t.toIsoString()))
+		}
 	}
 }
