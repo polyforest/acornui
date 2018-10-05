@@ -108,7 +108,7 @@ class DateTimeParser : StringParser<Date> {
 	private fun parseTimezoneOffset(value: String): Pair<IntRange, Int>? {
 		val result = gmtOffsetRegex.find(value) ?: return null
 		val sign = if (result.groupValues[1] == "-") -1 else 1
-		val hour = result.groupValues[2].toInt()
+		val hour = result.groupValues[2].toIntOrNull() ?: 0
 		val minute = result.groupValues[3].toIntOrNull() ?: 0
 		return result.range to sign * (hour * 60 + minute)
 	}
@@ -229,10 +229,8 @@ class DateTimeParser : StringParser<Date> {
 				str -= timeZoneOffset?.first
 				val dR = parseDate(str, timeZoneOffset?.second) ?: return null
 				str -= dR.first
-				val d = dR.second
 				val tR = parseTime(str, 0) ?: return null
 				str -= tR.first
-				val t = tR.second
 				val separator = timeDateSeparatorRegex.find(str)
 				if (separator != null)
 					str -= separator.range
@@ -259,16 +257,16 @@ class DateTimeParser : StringParser<Date> {
 	}
 
 	companion object {
-		private val timeDateSeparatorRegex = Regex("""[\st,]+""", RegexOption.IGNORE_CASE)
-		private val gmtOffsetRegex = Regex("""(?:gmt|utc)([+-])(1[0-4]|0?[0-9])(?::([0-5][0-9]))?""", RegexOption.IGNORE_CASE)
-		private val time12Regex = Regex("""(1[0-2]|0?[0-9]):([0-5][0-9])(?::([0-5][0-9])(?:.([0-9]{3}))?)?\s?(am|pm)""", RegexOption.IGNORE_CASE)
-		private val time24Regex = Regex("""([2][0-3]|[0-1][0-9]|[0-9]):([0-5][0-9])(?::([0-5][0-9])(?:.([0-9]{3}))?)?""", RegexOption.IGNORE_CASE)
+		private val timeDateSeparatorRegex = Regex("""[\s,]+""", RegexOption.IGNORE_CASE)
+		private val gmtOffsetRegex = Regex("""(?:gmt|utc|z)(?:([+-])(1[0-4]|0?[0-9])(?::?([0-5][0-9])?))?\s*$""", RegexOption.IGNORE_CASE)
+		private val time12Regex = Regex("""t?(1[0-2]|0?[0-9]):([0-5][0-9])(?::([0-5][0-9])(?:.([0-9]{3}))?)?\s?(am|pm)""", RegexOption.IGNORE_CASE)
+		private val time24Regex = Regex("""t?([2][0-3]|[0-1][0-9]|[0-9]):([0-5][0-9])(?::([0-5][0-9])(?:.([0-9]{3}))?)?""", RegexOption.IGNORE_CASE)
 
-		private val yMDRegex = Regex("""(\d{4})([/.-])(1[0-2]|0?[1-9])\2([1-2]\d|3[0-1]|0?[1-9])""")
-		private val mDYRegex = Regex("""(1[0-2]|0?[1-9])([/.-])([1-2]\d|3[0-1]|0?[1-9])\2(\d{2}(?:\d{2})?)""")
-		private val dMYRegex = Regex("""([1-2]\d|3[0-1]|0?[1-9])([/.-])(1[0-2]|0?[1-9])\2(\d{2}(?:\d{2})?)""")
-		private val mDRegex = Regex("""(1[0-2]|0?[1-9])[/.-]([1-2]\d|3[0-1]|0?[1-9])""")
-		private val dMRegex = Regex("""([1-2]\d|3[0-1]|0?[1-9])[/.-](1[0-2]|0?[1-9])""")
+		private val yMDRegex = Regex("""d?(\d{4})([/.-])(1[0-2]|0?[1-9])\2([1-2]\d|3[0-1]|0?[1-9])""")
+		private val mDYRegex = Regex("""d?(1[0-2]|0?[1-9])([/.-])([1-2]\d|3[0-1]|0?[1-9])\2(\d{2}(?:\d{2})?)""")
+		private val dMYRegex = Regex("""d?([1-2]\d|3[0-1]|0?[1-9])([/.-])(1[0-2]|0?[1-9])\2(\d{2}(?:\d{2})?)""")
+		private val mDRegex = Regex("""d?(1[0-2]|0?[1-9])[/.-]([1-2]\d|3[0-1]|0?[1-9])""")
+		private val dMRegex = Regex("""d?([1-2]\d|3[0-1]|0?[1-9])[/.-](1[0-2]|0?[1-9])""")
 	}
 }
 

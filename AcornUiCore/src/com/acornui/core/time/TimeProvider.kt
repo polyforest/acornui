@@ -78,6 +78,32 @@ interface TimeProvider {
 	}
 
 	/**
+	 * Returns a date object where the time is set relative to the unix epoch, in local time.
+	 */
+	fun time(hour: Int, minute: Int, second: Int = 0, milli: Int = 0): Date {
+		val date = now()
+		date.time = 0
+		date.hour = hour
+		date.minute = minute
+		date.second = second
+		date.milli = milli
+		return date
+	}
+
+	/**
+	 * Returns a date object where the time is set relative to the unix epoch, in universal time.
+	 */
+	fun utcTime(hour: Int, minute: Int, second: Int = 0, milli: Int = 0): Date {
+		val date = now()
+		date.time = 0
+		date.utcHour = hour
+		date.utcMinute = minute
+		date.utcSecond = second
+		date.utcMilli = milli
+		return date
+	}
+
+	/**
 	 * Returns a Date representing the current system time.
 	 */
 	fun now(): Date

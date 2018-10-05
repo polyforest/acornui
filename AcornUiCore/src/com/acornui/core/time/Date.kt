@@ -198,6 +198,7 @@ interface Date : DateRo {
 
 	/**
 	 * A convenience function for setting the time of day on a Date object.
+	 * Note that if the time provided is beyond the range of a day, the date will change.
 	 */
 	fun setTimeOfDay(hour: Int, minute: Int, second: Int = 0, milli: Int = 0): Date {
 		this.hour = hour
@@ -209,6 +210,7 @@ interface Date : DateRo {
 
 	/**
 	 * A convenience function for setting the UTC time of day on a Date object.
+	 * Note that if the time provided is beyond the range of a day, the date will change.
 	 */
 	fun setUtcTimeOfDay(hour: Int, minute: Int, second: Int = 0, milli: Int = 0): Date {
 		this.utcHour = hour
