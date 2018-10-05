@@ -59,7 +59,7 @@ class DateParserTest {
 
 	@Test
 	fun parseDateOptionalYear() {
-		val currentYear = time.now().fullYear
+		val currentYear = 2018
 		val parser = DateTimeParser()
 		parser.yearIsOptional = true
 		parser.type = DateTimeFormatType.DATE
@@ -95,6 +95,9 @@ class DateParserTest {
 
 		assertEquals(null, parser.parse("July 13, 2014"))
 		assertEquals(time.date(2014, 7, 13), parser.parse("Juli 13, 2014"))
+		assertEquals(time.date(currentYear, 7, 13), parser.parse("Juli 13"))
+		parser.yearIsOptional = false
+		assertEquals(null, parser.parse("Juli 13"))
 	}
 
 	@Test

@@ -150,7 +150,13 @@ class DateTimeParser : StringParser<Date> {
 				val monthIndex = parseMonthIndex(mMDYRegexResult.groupValues[1], locales) ?: return null
 				month = monthIndex + 1
 				day = mMDYRegexResult.groupValues[2].toInt()
-				year = mMDYRegexResult.groupValues[3].toInt()
+				val yearCheck = mMDYRegexResult.groupValues[3].toIntOrNull()
+				year = if (yearCheck == null) {
+					if (!yearIsOptional) return null
+					currentYear
+				} else {
+					yearCheck
+				}
 				range = mMDYRegexResult.range
 			} else {
 				// Figure out whether based on locale month or day is expected to be first.
@@ -278,7 +284,7 @@ class DateTimeParser : StringParser<Date> {
 		private val mDRegex = Regex("""d?(1[0-2]|0?[1-9])[/.-]([1-2]\d|3[0-1]|0?[1-9])""", RegexOption.IGNORE_CASE)
 		private val dMRegex = Regex("""d?([1-2]\d|3[0-1]|0?[1-9])[/.-](1[0-2]|0?[1-9])""", RegexOption.IGNORE_CASE)
 
-		private val mMDYRegex = Regex("""\w*?[, ]*(\w*)[, ]+([1-2]\d|3[0-1]|0?[1-9])\w{0,3}[, ]+(\d{2}(?:\d{2})?)""", RegexOption.IGNORE_CASE)
+		private val mMDYRegex = Regex("""[^\d\W]*?[, ]*([^\d\W]+)[, ]+([1-2]\d|3[0-1]|0?[1-9])[^\d\W]{0,3}[, ]*(\d{2}(?:\d{2})?)?""", RegexOption.IGNORE_CASE)
 	}
 }
 
