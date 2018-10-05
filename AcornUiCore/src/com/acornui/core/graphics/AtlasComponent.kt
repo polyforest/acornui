@@ -17,12 +17,10 @@
 package com.acornui.core.graphics
 
 import com.acornui.async.Deferred
-import com.acornui.async.catch
 import com.acornui.async.then
 import com.acornui.collection.Clearable
 import com.acornui.collection.tuple
 import com.acornui.component.*
-import com.acornui.component.layout.SizeConstraints
 import com.acornui.core.assets.CachedGroup
 import com.acornui.core.assets.cachedGroup
 import com.acornui.core.assets.loadAndCacheJson
@@ -36,18 +34,16 @@ import com.acornui.math.Bounds
  *
  * @author nbilyk
  */
-open class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
+open class AtlasComponent(owner: Owned) : VertexDrawableComponent(owner), Clearable {
 
 	private var region: AtlasRegionData? = null
 	private var texture: Texture? = null
 
-	private var _textureComponent: TextureComponent? = null
-	private var _ninePatchComponent: NinePatchComponent? = null
+	override val drawable: VertexDrawable?
+		get() = _sprite ?: _ninePatch
 
-	/**
-	 * A reference to either [_textureComponent], or [_ninePatchComponent], depending if the region has a nine slice.
-	 */
-	private var _textureC: UiComponent? = null
+	private var _sprite: Sprite? = null
+	private var _ninePatch: NinePatch? = null
 
 	private var group: CachedGroup? = null
 
@@ -78,19 +74,19 @@ open class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
 		}
 	}
 
-	val ninePatchComponent: NinePatchComponent?
-		get() = _ninePatchComponent
+	val ninePatch: NinePatch?
+		get() = _ninePatch
 
-	val textureComponent: TextureComponent?
-		get() = _textureComponent
+	val sprite: Sprite?
+		get() = _sprite
 
 	private var _blendMode = BlendMode.NORMAL
 	var blendMode: BlendMode
 		get() = _blendMode
 		set(value) {
 			_blendMode = value
-			_textureComponent?.blendMode = value
-			_ninePatchComponent?.blendMode = value
+			_sprite?.blendMode = value
+			_ninePatch?.blendMode = value
 		}
 
 	private var _useAsBackFace: Boolean = false
@@ -102,45 +98,37 @@ open class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
 		get() = _useAsBackFace
 		set(value) {
 			_useAsBackFace = value
-			_textureComponent?.useAsBackFace = value
-			_ninePatchComponent?.useAsBackFace = value
+			_sprite?.useAsBackFace = value
+			_ninePatch?.useAsBackFace = value
 		}
 
 	private fun clearRegionAndTexture() {
-		_ninePatchComponent?.dispose()
-		_ninePatchComponent = null
-		_textureComponent?.dispose()
-		_textureComponent = null
-		_textureC = null
+		if (isActive) texture?.refDec()
+		texture = null
+		region = null
+		_ninePatch = null
+		_sprite = null
 		invalidateLayout()
 	}
 
 	private fun setRegionAndTexture(texture: Texture, region: AtlasRegionData) {
 		if (region.splits == null) {
-			if (_ninePatchComponent != null) {
-				_ninePatchComponent!!.dispose()
-				_ninePatchComponent = null
+			_ninePatch = null
+			if (_sprite == null) {
+				_sprite = Sprite()
+				_sprite?.blendMode = _blendMode
+				_sprite?.useAsBackFace = _useAsBackFace
 			}
-			if (_textureComponent == null) {
-				_textureComponent = addChild(textureC())
-				_textureComponent?.blendMode = _blendMode
-				_textureComponent?.useAsBackFace = _useAsBackFace
-				_textureC = _textureComponent
-			}
-			val t = _textureComponent!!
+			val t = _sprite!!
 			t.setRegion(region.bounds, region.isRotated)
 		} else {
-			if (_textureComponent != null) {
-				_textureComponent!!.dispose()
-				_textureComponent = null
+			_sprite = null
+			if (_ninePatch == null) {
+				_ninePatch = NinePatch()
+				_ninePatch?.blendMode = _blendMode
+				_ninePatch?.useAsBackFace = _useAsBackFace
 			}
-			if (_ninePatchComponent == null) {
-				_ninePatchComponent = addChild(ninePatch())
-				_ninePatchComponent?.blendMode = _blendMode
-				_ninePatchComponent?.useAsBackFace = _useAsBackFace
-				_textureC = _ninePatchComponent
-			}
-			val t = _ninePatchComponent!!
+			val t = _ninePatch!!
 			val splits = region.splits
 			t.split(
 					maxOf(0f, splits[0] - region.padding[0]),
@@ -150,28 +138,50 @@ open class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
 			)
 			t.setRegion(region.bounds, region.isRotated)
 		}
-		_textureComponent?.texture = texture
-		_ninePatchComponent?.texture = texture
+		_sprite?.texture = texture
+		_ninePatch?.texture = texture
 		this.region = region
+		val oldTexture = this.texture
 		this.texture = texture
+		if (isActive) {
+			oldTexture?.refDec()
+			texture.refInc()
+		}
+		invalidateLayout()
 	}
 
-	override fun updateSizeConstraints(out: SizeConstraints) {
-		if (_textureC == null) return
-		out.bound(_textureC!!.sizeConstraints)
+	override fun onActivated() {
+		super.onActivated()
+		texture?.refInc()
+	}
+
+	override fun onDeactivated() {
+		super.onDeactivated()
+		texture?.refDec()
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		val textureC = _textureC ?: return
+		drawable?.updateUv()
 		val region = region ?: return
-
 		val regionWidth = if (region.isRotated) region.bounds.height else region.bounds.width
 		val regionHeight = if (region.isRotated) region.bounds.width else region.bounds.height
+		val naturalWidth = region.padding[0] + regionWidth + region.padding[2]
+		val naturalHeight = region.padding[1] + regionHeight + region.padding[3]
+		out.set(explicitWidth ?: naturalWidth.toFloat(), explicitHeight ?: naturalHeight.toFloat())
+	}
+
+	override fun updateVertices() {
+		val explicitWidth = explicitWidth
+		val explicitHeight = explicitHeight
+
+		val drawable = drawable ?: return
+		val region = region ?: return
 
 		val paddingLeft = region.padding[0].toFloat()
 		val paddingTop = region.padding[1].toFloat()
 		val paddingRight = region.padding[2].toFloat()
 		val paddingBottom = region.padding[3].toFloat()
+
 
 		// Account for scaling with split regions if there are any.
 		val splits = region.splits ?: EMPTY_SPLITS
@@ -180,30 +190,25 @@ open class AtlasComponent(owner: Owned) : ContainerImpl(owner), Clearable {
 		val unscaledPadRight = minOf(paddingRight, splits[2])
 		val unscaledPadBottom = minOf(paddingBottom, splits[3])
 
+
 		val scaledPadLeft = paddingLeft - unscaledPadLeft
 		val scaledPadTop = paddingTop - unscaledPadTop
 		val scaledPadRight = paddingRight - unscaledPadRight
 		val scaledPadBottom = paddingBottom - unscaledPadBottom
 
-		val naturalWidth = paddingLeft + regionWidth + paddingRight
-		val naturalHeight = paddingBottom + regionHeight + paddingTop
 		val uH = splits[0] + splits[2]
 		val uV = splits[1] + splits[3]
-		val sX: Float = if (explicitWidth == null) 1f else (explicitWidth - uH) / (naturalWidth - uH)
-		val sY: Float = if (explicitHeight == null) 1f else (explicitHeight - uV) / (naturalHeight - uV)
+		val sX: Float = if (explicitWidth == null) 1f else (explicitWidth - uH) / (drawable.naturalWidth - uH)
+		val sY: Float = if (explicitHeight == null) 1f else (explicitHeight - uV) / (drawable.naturalHeight - uV)
 
 		val totalPadLeft = unscaledPadLeft + scaledPadLeft * sX
 		val totalPadTop = unscaledPadTop + scaledPadTop * sY
 		val totalPadRight = unscaledPadRight + scaledPadRight * sX
 		val totalPadBottom = unscaledPadBottom + scaledPadBottom * sY
 
-		textureC.setSize(
-				if (explicitWidth == null) null else explicitWidth - totalPadLeft - totalPadRight,
-				if (explicitHeight == null) null else explicitHeight - totalPadBottom - totalPadTop
-		)
-		textureC.setPosition(totalPadLeft, totalPadTop)
+		drawable.updateWorldVertices(concatenatedTransform, if (explicitWidth == null) drawable.naturalWidth else explicitWidth - totalPadLeft - totalPadRight,
+				if (explicitHeight == null) drawable.naturalHeight else explicitHeight - totalPadBottom - totalPadTop, x = totalPadLeft, y = totalPadTop)
 
-		out.set(explicitWidth ?: naturalWidth, explicitHeight ?: naturalHeight)
 	}
 
 	override fun dispose() {

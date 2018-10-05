@@ -33,7 +33,7 @@ import kotlin.math.sin
  *
  * @author nbilyk
  */
-class Sprite {
+class Sprite : VertexDrawable {
 
 	/**
 	 * If true, the normal and indices will be reversed.
@@ -71,7 +71,7 @@ class Sprite {
 		_isRotated = isRotated
 	}
 
-	fun setRegion(bounds: Rectangle, isRotated: Boolean) {
+	fun setRegion(bounds: RectangleRo, isRotated: Boolean) {
 		setRegion(bounds.x, bounds.y, bounds.width, bounds.height, isRotated)
 	}
 
@@ -98,7 +98,7 @@ class Sprite {
 	 */
 	private val vertexPoints: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
 
-	val naturalWidth: Float
+	override val naturalWidth: Float
 		get() {
 			val t = texture ?: return 0f
 			return if (isRotated) {
@@ -108,7 +108,7 @@ class Sprite {
 			}
 		}
 
-	val naturalHeight: Float
+	override val naturalHeight: Float
 		get() {
 			val t = texture ?: return 0f
 			return if (isRotated) {
@@ -118,7 +118,7 @@ class Sprite {
 			}
 		}
 
-	fun updateUv() {
+	override fun updateUv() {
 		val t = texture ?: return
 
 		if (isUv) {
@@ -150,7 +150,7 @@ class Sprite {
 	 * @param originX The x point of the rectangle that will be 0,0
 	 * @param originY The y point of the rectangle that will be 0,0
 	 */
-	fun updateWorldVertices(worldTransform: Matrix4Ro, width: Float, height: Float, x: Float = 0f, y: Float = 0f, z: Float = 0f, rotation: Float = 0f, originX: Float = 0f, originY: Float = 0f) {
+	override fun updateWorldVertices(worldTransform: Matrix4Ro, width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
 		updateVertices(width, height, x, y, z, rotation, originX, originY)
 		worldTransform.prj(vertexPoints[0])
 		worldTransform.prj(vertexPoints[1])
@@ -159,21 +159,7 @@ class Sprite {
 		worldTransform.rot(normal).nor()
 	}
 
-	/**
-	 * Updates this Sprite's local vertices.
-	 * If this is used directly, [updateWorldVertices] should not be used, and the [GlState.setCamera] method should
-	 * be supplied with the world transformation matrix.
-	 *
-	 * @param width The width of the sprite.
-	 * @param height The height of the sprite.
-	 * @param x translation
-	 * @param y translation
-	 * @param z translation
-	 * @param rotation The rotation around the Z axis in radians. If y-axis is pointing down, this will be clockwise.
-	 * @param originX The x point of the rectangle that will be 0,0
-	 * @param originY The y point of the rectangle that will be 0,0
-	 */
-	fun updateVertices(width: Float, height: Float, x: Float = 0f, y: Float = 0f, z: Float = 0f, rotation: Float = 0f, originX: Float = 0f, originY: Float = 0f) {
+	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
 		this.width = width
 		this.height = height
 		// Transform vertex coordinates from local to global
@@ -205,13 +191,7 @@ class Sprite {
 		normal.set(if (useAsBackFace) Vector3.Z else Vector3.NEG_Z)
 	}
 
-	/**
-	 * Draws this sprite.
-	 * Remember to set the camera on the [GlState] object before drawing.
-	 * If [updateVertices] was used (and therefore no world transformation), that world transform matrix must be
-	 * supplied to [GlState.setCamera] first.
-	 */
-	fun draw(glState: GlState, colorTint: ColorRo) {
+	override fun draw(glState: GlState, colorTint: ColorRo) {
 		if (texture == null || colorTint.a <= 0f || width == 0f || height == 0f) return // Nothing to draw
 		val batch = glState.batch
 		glState.setTexture(texture)

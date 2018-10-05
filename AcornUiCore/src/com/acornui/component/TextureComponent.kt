@@ -24,37 +24,38 @@ import com.acornui.core.assets.loadAndCache
 import com.acornui.core.di.Owned
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.graphics.Texture
-import com.acornui.math.Bounds
 import com.acornui.math.IntRectangleRo
-import com.acornui.math.MinMaxRo
 import com.acornui.math.RectangleRo
 
 /**
  * A UiComponent representing a single Texture.
- *
- * Example:
- * val textureComponent = TextureComponent()
- * textureComponent.path("images/image128.jpg")
- * D.stage.addChild(textureComponent)
- *
  * @author nbilyk
  */
-open class TextureComponent(owner: Owned) : UiComponentImpl(owner) {
+open class TextureComponent(owner: Owned) : VertexDrawableComponent(owner) {
 
-	private val sprite = Sprite()
-
+	override val drawable: Sprite = Sprite()
+	
 	/**
 	 * If true, the normal and indices will be reversed.
 	 */
 	var useAsBackFace: Boolean
-		get() = sprite.useAsBackFace
-		set(value) {
-			sprite.useAsBackFace = value
+		get() = drawable.useAsBackFace
+		set(value) { 
+			drawable.useAsBackFace = value
 		}
 
-	init {
-		validation.addNode(1 shl 16, ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM or ValidationFlags.CONCATENATED_TRANSFORM) { updateVertices() }
-	}
+	val naturalWidth: Float
+		get() = drawable.naturalWidth
+
+	val naturalHeight: Float
+		get() = drawable.naturalHeight
+
+	var blendMode: BlendMode
+		get() = drawable.blendMode
+		set(value) {
+			drawable.blendMode = value
+			window.requestRender()
+		}
 
 	constructor (owner: Owned, path: String) : this(owner) {
 		this.path = path
@@ -90,22 +91,20 @@ open class TextureComponent(owner: Owned) : UiComponentImpl(owner) {
 	 * Sets the texture directly, as opposed to loading a Texture from the asset manager.
 	 */
 	var texture: Texture?
-		get() = sprite.texture
+		get() = drawable.texture
 		set(value) {
 			path = null
 			_setTexture(value)
 		}
 
 	protected open fun _setTexture(value: Texture?) {
-		if (sprite.texture == value) return
-		val oldTexture = sprite.texture
-		if (isActive) {
+		if (drawable.texture == value) return
+		val oldTexture = drawable.texture
+		if (isActive)
 			oldTexture?.refDec()
-		}
-		sprite.texture = value
-		if (isActive) {
-			sprite.texture?.refInc()
-		}
+		drawable.texture = value
+		if (isActive)
+			drawable.texture?.refInc()
 		invalidateLayout()
 	}
 
@@ -113,31 +112,23 @@ open class TextureComponent(owner: Owned) : UiComponentImpl(owner) {
 	 * If true, the texture's region is rotated.
 	 */
 	val isRotated: Boolean
-		get() = sprite.isRotated
-
-	var blendMode: BlendMode
-		get() = sprite.blendMode
-		set(value) {
-			if (sprite.blendMode == value) return
-			sprite.blendMode = value
-			window.requestRender()
-		}
+		get() = drawable.isRotated
 
 	override fun onActivated() {
 		super.onActivated()
-		sprite.texture?.refInc()
+		drawable.texture?.refInc()
 	}
 
 	override fun onDeactivated() {
 		super.onDeactivated()
-		sprite.texture?.refDec()
+		drawable.texture?.refDec()
 	}
 
 	/**
 	 * Sets the UV coordinates of the image to display.
 	 */
 	fun setUv(u: Float, v: Float, u2: Float, v2: Float, isRotated: Boolean = false) {
-		sprite.setUv(u, v, u2, v2, isRotated)
+		drawable.setUv(u, v, u2, v2, isRotated)
 		invalidate(ValidationFlags.LAYOUT)
 	}
 
@@ -145,7 +136,7 @@ open class TextureComponent(owner: Owned) : UiComponentImpl(owner) {
 	 * Sets the region of the texture to display.
 	 */
 	fun setRegion(x: Float, y: Float, width: Float, height: Float, isRotated: Boolean = false) {
-		sprite.setRegion(x, y, width, height, isRotated)
+		drawable.setRegion(x, y, width, height, isRotated)
 		invalidate(ValidationFlags.LAYOUT)
 	}
 
@@ -158,21 +149,6 @@ open class TextureComponent(owner: Owned) : UiComponentImpl(owner) {
 
 	fun setRegion(region: IntRectangleRo, isRotated: Boolean = false) {
 		setRegion(region.x.toFloat(), region.y.toFloat(), region.width.toFloat(), region.height.toFloat(), isRotated)
-	}
-
-	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		sprite.updateUv()
-		out.width = explicitWidth ?: sprite.naturalWidth
-		out.height = explicitHeight ?: sprite.naturalHeight
-	}
-
-	private fun updateVertices() {
-		sprite.updateWorldVertices(concatenatedTransform, width, height, z = 0f)
-	}
-
-	override fun draw(clip: MinMaxRo) {
-		glState.setCamera(camera)
-		sprite.draw(glState, concatenatedColorTint)
 	}
 
 	override fun dispose() {

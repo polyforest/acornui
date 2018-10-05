@@ -34,10 +34,10 @@ open class SimpleHighlight(
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val w = explicitWidth ?: 0f
 		val h = explicitHeight ?: 0f
-		if (highlight.ninePatchComponent != null) {
+		if (highlight.ninePatch != null) {
 			// If the highlight is a nine patch, offset the highlight by the padding. This allows for the ability to
 			// curve around the highlighted target without cutting into it.
-			val nine = highlight.ninePatchComponent!!
+			val nine = highlight.ninePatch!!
 			highlight.setSize(w + nine.splitLeft + nine.splitRight, h + nine.splitTop + nine.splitBottom)
 			highlight.moveTo(-nine.splitLeft, -nine.splitTop)
 		} else {

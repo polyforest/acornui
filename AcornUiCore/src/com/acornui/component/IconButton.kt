@@ -10,7 +10,6 @@ import com.acornui.core.di.Owned
 import com.acornui.core.graphics.atlas
 import com.acornui.core.graphics.contentsAtlas
 import com.acornui.math.Bounds
-import com.acornui.math.MathUtils
 import com.acornui.math.MathUtils.roundToNearest
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
