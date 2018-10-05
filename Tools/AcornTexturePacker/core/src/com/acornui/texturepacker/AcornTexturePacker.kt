@@ -63,10 +63,10 @@ class AcornTexturePacker(
 		val imageSources = loadImageSources(root, settings)
 
 		// Create an array of PackerRectangle objects from the sources.
-		val rectangles = Array(imageSources.size, {
+		val rectangles = Array(imageSources.size) {
 			val imageSource = imageSources[it]
 			PackerRectangleData(IntRectangle(0, 0, imageSource.rgbData.width, imageSource.rgbData.height), false, it, imageSource.path)
-		})
+		}
 
 		// Calculate how the pages should be laid out.
 		val packedRectanglePages = packer.pack(ArrayIterator(rectangles))
@@ -131,7 +131,7 @@ class AcornTexturePacker(
 	 * models.
 	 */
 	private fun createPackedPages(imageSources: List<SourceImageData>, packedRectanglePages: List<PackerPageData>, settings: TexturePackerSettingsData): PackedTextureData {
-		return PackedTextureData(List(packedRectanglePages.size, {
+		return PackedTextureData(List(packedRectanglePages.size) {
 			val packedRectanglePage: PackerPageData = packedRectanglePages[it]
 
 			// Create the RgbData
@@ -151,7 +151,7 @@ class AcornTexturePacker(
 					premultipliedAlpha = settings.premultipliedAlpha,
 					filterMin = settings.filterMin,
 					filterMag = settings.filterMag,
-					regions = ArrayList(packedRectanglePage.regions.size, {
+					regions = ArrayList(packedRectanglePage.regions.size) {
 						val packerRegion = packedRectanglePage.regions[it]
 						val imageSource = imageSources[packerRegion.originalIndex]
 						AtlasRegionData(
@@ -161,12 +161,12 @@ class AcornTexturePacker(
 								splits = imageSource.metadata.splits,
 								padding = imageSource.padding
 						)
-					}),
+					},
 					hasWhitePixel = settings.algorithmSettings.addWhitePixel
 			)
 
 			Pair(pageRgbData, atlasPage)
-		}), settings)
+		}, settings)
 	}
 
 	companion object {
