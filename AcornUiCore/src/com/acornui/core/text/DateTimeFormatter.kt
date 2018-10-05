@@ -144,45 +144,55 @@ class DateTimeParser : StringParser<Date> {
 			day = result.groupValues[4].toInt()
 			range = result.range
 		} else {
-			// Figure out whether based on locale month or day is expected to be first.
-			val localeFormat = dateFormatter {
-				locales = this@DateTimeParser.locales
-				dateStyle = DateTimeFormatStyle.SHORT
-			}.format(time.date(fullYear = 1110, month = 7, dayOfMonth = 8))
-			val monthFirst = (localeFormat.indexOf("7") < localeFormat.indexOf("8"))
-			if (monthFirst) {
-				val mDYResult = mDYRegex.find(value)
-				if (mDYResult == null) {
-					if (yearIsOptional) {
-						// Try again without the year
-						val mDResult = mDRegex.find(value) ?: return null
-						month = mDResult.groupValues[1].toInt()
-						day = mDResult.groupValues[2].toInt()
-						year = currentYear
-						range = mDResult.range
-					} else return null
-				} else {
-					month = mDYResult.groupValues[1].toInt()
-					day = mDYResult.groupValues[3].toInt()
-					year = mDYResult.groupValues[4].toInt()
-					range = mDYResult.range
-				}
+			// Check for a written out date.
+			val mMDYRegexResult = mMDYRegex.find(value)
+			if (mMDYRegexResult != null) {
+				val monthIndex = parseMonthIndex(mMDYRegexResult.groupValues[1], locales) ?: return null
+				month = monthIndex + 1
+				day = mMDYRegexResult.groupValues[2].toInt()
+				year = mMDYRegexResult.groupValues[3].toInt()
+				range = mMDYRegexResult.range
 			} else {
-				val dMYResult = dMYRegex.find(value)
-				if (dMYResult == null) {
-					if (yearIsOptional) {
-						// Try again without the year
-						val dMResult = dMRegex.find(value) ?: return null
-						day = dMResult.groupValues[1].toInt()
-						month = dMResult.groupValues[2].toInt()
-						year = currentYear
-						range = dMResult.range
-					} else return null
+				// Figure out whether based on locale month or day is expected to be first.
+				val localeFormat = dateFormatter {
+					locales = this@DateTimeParser.locales
+					dateStyle = DateTimeFormatStyle.SHORT
+				}.format(time.date(fullYear = 1110, month = 7, dayOfMonth = 8))
+				val monthFirst = (localeFormat.indexOf("7") < localeFormat.indexOf("8"))
+				if (monthFirst) {
+					val mDYResult = mDYRegex.find(value)
+					if (mDYResult == null) {
+						if (yearIsOptional) {
+							// Try again without the year
+							val mDResult = mDRegex.find(value) ?: return null
+							month = mDResult.groupValues[1].toInt()
+							day = mDResult.groupValues[2].toInt()
+							year = currentYear
+							range = mDResult.range
+						} else return null
+					} else {
+						month = mDYResult.groupValues[1].toInt()
+						day = mDYResult.groupValues[3].toInt()
+						year = mDYResult.groupValues[4].toInt()
+						range = mDYResult.range
+					}
 				} else {
-					day = dMYResult.groupValues[1].toInt()
-					month = dMYResult.groupValues[3].toInt()
-					year = dMYResult.groupValues[4].toInt()
-					range = dMYResult.range
+					val dMYResult = dMYRegex.find(value)
+					if (dMYResult == null) {
+						if (yearIsOptional) {
+							// Try again without the year
+							val dMResult = dMRegex.find(value) ?: return null
+							day = dMResult.groupValues[1].toInt()
+							month = dMResult.groupValues[2].toInt()
+							year = currentYear
+							range = dMResult.range
+						} else return null
+					} else {
+						day = dMYResult.groupValues[1].toInt()
+						month = dMYResult.groupValues[3].toInt()
+						year = dMYResult.groupValues[4].toInt()
+						range = dMYResult.range
+					}
 				}
 			}
 		}
@@ -262,11 +272,13 @@ class DateTimeParser : StringParser<Date> {
 		private val time12Regex = Regex("""t?(1[0-2]|0?[0-9]):([0-5][0-9])(?::([0-5][0-9])(?:.([0-9]{3}))?)?\s?(am|pm)""", RegexOption.IGNORE_CASE)
 		private val time24Regex = Regex("""t?([2][0-3]|[0-1][0-9]|[0-9]):([0-5][0-9])(?::([0-5][0-9])(?:.([0-9]{3}))?)?""", RegexOption.IGNORE_CASE)
 
-		private val yMDRegex = Regex("""d?(\d{4})([/.-])(1[0-2]|0?[1-9])\2([1-2]\d|3[0-1]|0?[1-9])""")
-		private val mDYRegex = Regex("""d?(1[0-2]|0?[1-9])([/.-])([1-2]\d|3[0-1]|0?[1-9])\2(\d{2}(?:\d{2})?)""")
-		private val dMYRegex = Regex("""d?([1-2]\d|3[0-1]|0?[1-9])([/.-])(1[0-2]|0?[1-9])\2(\d{2}(?:\d{2})?)""")
-		private val mDRegex = Regex("""d?(1[0-2]|0?[1-9])[/.-]([1-2]\d|3[0-1]|0?[1-9])""")
-		private val dMRegex = Regex("""d?([1-2]\d|3[0-1]|0?[1-9])[/.-](1[0-2]|0?[1-9])""")
+		private val yMDRegex = Regex("""d?(\d{4})([/.-])(1[0-2]|0?[1-9])\2([1-2]\d|3[0-1]|0?[1-9])""", RegexOption.IGNORE_CASE)
+		private val mDYRegex = Regex("""d?(1[0-2]|0?[1-9])([/.-])([1-2]\d|3[0-1]|0?[1-9])\2(\d{2}(?:\d{2})?)""", RegexOption.IGNORE_CASE)
+		private val dMYRegex = Regex("""d?([1-2]\d|3[0-1]|0?[1-9])([/.-])(1[0-2]|0?[1-9])\2(\d{2}(?:\d{2})?)""", RegexOption.IGNORE_CASE)
+		private val mDRegex = Regex("""d?(1[0-2]|0?[1-9])[/.-]([1-2]\d|3[0-1]|0?[1-9])""", RegexOption.IGNORE_CASE)
+		private val dMRegex = Regex("""d?([1-2]\d|3[0-1]|0?[1-9])[/.-](1[0-2]|0?[1-9])""", RegexOption.IGNORE_CASE)
+
+		private val mMDYRegex = Regex("""\w*?[, ]*(\w*)[, ]+([1-2]\d|3[0-1]|0?[1-9])\w{0,3}[, ]+(\d{2}(?:\d{2})?)""", RegexOption.IGNORE_CASE)
 	}
 }
 
@@ -431,7 +443,7 @@ fun getMonths(longFormat: Boolean, locales: List<Locale>? = null): List<String> 
 	val d = time.date(0)
 	val list = ArrayList<String>(12)
 	val formatter = dateFormatter {
-		this.dateStyle = if (longFormat) DateTimeFormatStyle.FULL else DateTimeFormatStyle.SHORT
+		this.dateStyle = if (longFormat) DateTimeFormatStyle.FULL else DateTimeFormatStyle.LONG
 		this.locales = locales
 		type = DateTimeFormatType.MONTH
 	}

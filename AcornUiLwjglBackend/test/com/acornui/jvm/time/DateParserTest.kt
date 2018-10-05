@@ -86,10 +86,15 @@ class DateParserTest {
 		assertEquals(null, parser.parse("2/.6/2014"))
 		assertEquals(null, parser.parse("2/-6/2014"))
 
+		assertEquals(time.date(2014, 7, 13), parser.parse("July 13, 2014"))
+
 		parser.locales = listOf(Locale("de-DE"))
 		assertEquals(time.date(fullYear = currentYear, month = 12, dayOfMonth = 31), parser.parse("31/12"))
 		assertEquals(time.date(fullYear = 2014, month = 12, dayOfMonth = 31), parser.parse("31/12/2014"))
 		assertEquals(null, parser.parse("7/13/2014"))
+
+		assertEquals(null, parser.parse("July 13, 2014"))
+		assertEquals(time.date(2014, 7, 13), parser.parse("Juli 13, 2014"))
 	}
 
 	@Test
@@ -208,6 +213,7 @@ class DateParserTest {
 		assertEquals(time.utcDate(fullYear = 2018, month = 3, dayOfMonth = 11, hour = 5 - 3, minute = 33 - 40), parser.parse("3/11T5:33Z-340"))
 		assertEquals(time.utcDate(fullYear = 2018, month = 3, dayOfMonth = 11, hour = 5 - 1, minute = 33 - 20), parser.parse("3/11T5:33Z-120"))
 //		assertEquals(time.utcDate(fullYear = 2018, month = 3, dayOfMonth = 11, hour = 5 - 13, minute = 33 - 30), parser.parse("3/11T5:33-1330"))
+//		assertEquals(time.utcDate(fullYear = 1331, month = 3, dayOfMonth = 11, hour = 5 - 13, minute = 33 - 30), parser.parse("3-11-1331T5:33-1330"))
 		assertEquals(time.utcDate(fullYear = 2018, month = 3, dayOfMonth = 11, hour = 5, minute = 33), parser.parse("3/11 5:33Z"))
 //		assertEquals(time.utcDate(fullYear = 2018, month = 10, dayOfMonth = 5, hour = 14, minute = 15, second = 50), parser.parse("2018-10-05T14:15:50+00:00"))
 

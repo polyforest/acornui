@@ -80,13 +80,13 @@ class DateTimeFormatterImpl : DateTimeFormatter {
 				DateTimeFormatStyle.MEDIUM -> "MM"
 				DateTimeFormatStyle.SHORT -> "M"
 				DateTimeFormatStyle.DEFAULT -> "MM"
-			})
+			}, jvmLocale)
 			DateTimeFormatType.WEEKDAY -> SimpleDateFormat(when (dateStyle) {
 				DateTimeFormatStyle.FULL, DateTimeFormatStyle.LONG -> "EEEEE"
 				DateTimeFormatStyle.MEDIUM -> "EEE"
 				DateTimeFormatStyle.SHORT -> "EE"
 				DateTimeFormatStyle.DEFAULT -> "EE"
-			})
+			}, jvmLocale)
 		}
 	}
 
