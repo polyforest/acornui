@@ -7,8 +7,6 @@ import com.acornui.component.style.StyleTag
 import com.acornui.component.text.TextField
 import com.acornui.component.text.text
 import com.acornui.core.di.Owned
-import com.acornui.core.graphics.atlas
-import com.acornui.core.graphics.contentsAtlas
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.roundToNearest
 import com.acornui.math.Pad

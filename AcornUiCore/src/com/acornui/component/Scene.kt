@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 PolyForest
+ * Copyright 2018 Nicholas Bilyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,14 @@
 
 @file:Suppress("UNUSED_PARAMETER")
 
-package com.acornui.core.graphics
+package com.acornui.component
 
-import com.acornui.component.*
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
+import com.acornui.core.graphics.Camera
+import com.acornui.core.graphics.CameraRo
+import com.acornui.core.graphics.orthographicCamera
+import com.acornui.core.graphics.project
 import com.acornui.gl.core.FrameBufferInfo
 import com.acornui.gl.core.FrameBufferInfoRo
 import com.acornui.gl.core.GlState

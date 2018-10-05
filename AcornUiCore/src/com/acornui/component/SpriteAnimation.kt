@@ -1,16 +1,31 @@
-package com.acornui.core.graphics
+/*
+ * Copyright 2018 Nicholas Bilyk
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.acornui.component
 
 import com.acornui.async.then
 import com.acornui.collection.fill
-import com.acornui.component.ComponentInit
-import com.acornui.component.ContainerImpl
-import com.acornui.component.ValidationFlags
 import com.acornui.core.AppConfig
 import com.acornui.core.assets.CachedGroup
 import com.acornui.core.assets.cachedGroup
 import com.acornui.core.assets.loadAndCacheJson
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
+import com.acornui.core.graphics.AtlasRegionData
+import com.acornui.core.graphics.TextureAtlasDataSerializer
 import com.acornui.core.io.JSON_KEY
 import com.acornui.core.time.onTick
 import com.acornui.math.Bounds

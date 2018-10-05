@@ -32,8 +32,8 @@ import com.acornui.core.assets.cachedGroup
 import com.acornui.core.di.*
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.SimpleHighlight
-import com.acornui.core.graphics.atlas
-import com.acornui.core.graphics.contentsAtlas
+import com.acornui.component.atlas
+import com.acornui.component.contentsAtlas
 import com.acornui.core.input.interaction.ContextMenuStyle
 import com.acornui.core.input.interaction.ContextMenuView
 import com.acornui.core.input.interaction.enableDownRepeat

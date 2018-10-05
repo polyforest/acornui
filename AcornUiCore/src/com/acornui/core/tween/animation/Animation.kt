@@ -21,8 +21,8 @@ import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
 import com.acornui.core.Disposable
 import com.acornui.core.di.Owned
-import com.acornui.core.graphics.AtlasComponent
-import com.acornui.core.graphics.atlas
+import com.acornui.component.AtlasComponent
+import com.acornui.component.atlas
 import com.acornui.core.time.onTick
 import com.acornui.core.tween.*
 import com.acornui.graphics.Color

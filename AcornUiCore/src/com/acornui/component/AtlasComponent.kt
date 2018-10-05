@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2018 Nicholas Bilyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.acornui.core.graphics
+package com.acornui.component
 
 import com.acornui.async.Deferred
 import com.acornui.async.then
 import com.acornui.collection.Clearable
 import com.acornui.collection.tuple
-import com.acornui.component.*
 import com.acornui.core.assets.CachedGroup
 import com.acornui.core.assets.cachedGroup
 import com.acornui.core.assets.loadAndCacheJson
 import com.acornui.core.di.Owned
+import com.acornui.core.graphics.*
 import com.acornui.math.Bounds
 
 /**
