@@ -36,7 +36,11 @@ import com.acornui.math.Bounds
  */
 open class AtlasComponent(owner: Owned) : VertexDrawableComponent(owner), Clearable {
 
-	private var region: AtlasRegionData? = null
+	private var _region: AtlasRegionData? = null
+
+	val region: AtlasRegionData?
+		get() = _region
+
 	private var texture: Texture? = null
 
 	override val drawable: VertexDrawable?
@@ -74,12 +78,6 @@ open class AtlasComponent(owner: Owned) : VertexDrawableComponent(owner), Cleara
 		}
 	}
 
-	val ninePatch: NinePatch?
-		get() = _ninePatch
-
-	val sprite: Sprite?
-		get() = _sprite
-
 	private var _blendMode = BlendMode.NORMAL
 	var blendMode: BlendMode
 		get() = _blendMode
@@ -105,7 +103,7 @@ open class AtlasComponent(owner: Owned) : VertexDrawableComponent(owner), Cleara
 	private fun clearRegionAndTexture() {
 		if (isActive) texture?.refDec()
 		texture = null
-		region = null
+		_region = null
 		_ninePatch = null
 		_sprite = null
 		invalidateLayout()
@@ -140,7 +138,7 @@ open class AtlasComponent(owner: Owned) : VertexDrawableComponent(owner), Cleara
 		}
 		_sprite?.texture = texture
 		_ninePatch?.texture = texture
-		this.region = region
+		this._region = region
 		val oldTexture = this.texture
 		this.texture = texture
 		if (isActive) {
@@ -162,7 +160,7 @@ open class AtlasComponent(owner: Owned) : VertexDrawableComponent(owner), Cleara
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		drawable?.updateUv()
-		val region = region ?: return
+		val region = _region ?: return
 		val regionWidth = if (region.isRotated) region.bounds.height else region.bounds.width
 		val regionHeight = if (region.isRotated) region.bounds.width else region.bounds.height
 		val naturalWidth = region.padding[0] + regionWidth + region.padding[2]
@@ -175,7 +173,7 @@ open class AtlasComponent(owner: Owned) : VertexDrawableComponent(owner), Cleara
 		val explicitHeight = explicitHeight
 
 		val drawable = drawable ?: return
-		val region = region ?: return
+		val region = _region ?: return
 
 		val paddingLeft = region.padding[0].toFloat()
 		val paddingTop = region.padding[1].toFloat()
