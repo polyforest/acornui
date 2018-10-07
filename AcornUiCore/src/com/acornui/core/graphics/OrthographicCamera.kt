@@ -74,6 +74,7 @@ class FramebufferOrthographicCamera : CameraBase() {
 
 	/**
 	 * The zoom of the camera.
+	 * The camera will be able to see zoom * viewport pixels.
 	 */
 	var zoom: Float by bindable(1f)
 

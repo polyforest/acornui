@@ -77,7 +77,6 @@ class TossScroller(
 	private val velocity = Vector2()
 
 	private val event = DragInteraction()
-	private var startElement: InteractiveElementRo? = null
 	private val startPosition: Vector2 = Vector2()
 	private val position: Vector2 = Vector2()
 
@@ -94,7 +93,6 @@ class TossScroller(
 		stop()
 		startPosition.set(event.startPosition)
 		position.set(event.position)
-		startElement = event.startElement
 
 		clickPreventer = 5
 		clearHistory()
@@ -142,7 +140,6 @@ class TossScroller(
 	private fun dispatchDragEvent(type: InteractionType<DragInteraction>, signal: StoppableSignalImpl<DragInteraction>) {
 		event.clear()
 		event.type = type
-		event.startElement = startElement
 		event.startPosition.set(startPosition)
 		event.position.set(position)
 		signal.dispatch(event)
@@ -199,7 +196,6 @@ class TossScroller(
 			velocity.clear()
 			_timer?.dispose()
 			_timer = null
-			startElement = null
 			event.clear()
 		}
 	}
@@ -221,17 +217,17 @@ class TossScroller(
 		val TOSS = InteractionType<DragInteraction>("toss")
 		val TOSS_END = InteractionType<DragInteraction>("tossEnd")
 
-		val DEFAULT_DAMPENING: Float = 0.9f
-		private val MAX_HISTORY = 10
+		const val DEFAULT_DAMPENING: Float = 0.9f
+		private const val MAX_HISTORY = 10
 
 		var minTossDistance: Float = 7f
 	}
 }
 
 class TossScrollModelBinding(
-		val tossScroller: TossScroller,
-		val hScrollModel: ScrollModel,
-		val vScrollModel: ScrollModel
+		private val tossScroller: TossScroller,
+		private val hScrollModel: ScrollModel,
+		private val vScrollModel: ScrollModel
 ) : Disposable {
 
 	var modelToPixelsX: Float = 1f
@@ -273,7 +269,7 @@ class TossScrollModelBinding(
 }
 
 fun UiComponent.enableTossScrolling(dampening: Float = TossScroller.DEFAULT_DAMPENING): TossScroller {
-	return createOrReuseAttachment(TossScroller, { TossScroller(this, dampening) })
+	return createOrReuseAttachment(TossScroller) { TossScroller(this, dampening) }
 }
 
 fun UiComponent.disableTossScrolling() {

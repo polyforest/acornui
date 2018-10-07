@@ -242,4 +242,5 @@ interface Positionable : PositionableRo {
 }
 
 fun Positionable.moveTo(value: Vector3Ro) = moveTo(value.x, value.y, value.z)
+fun Positionable.moveTo(value: Vector2Ro) = moveTo(value.x, value.y)
 fun Positionable.setPosition(value: Vector3Ro) = setPosition(value.x, value.y, value.z)

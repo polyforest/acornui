@@ -2,7 +2,6 @@ package com.acornui.core.input.interaction
 
 import com.acornui.collection.Clearable
 import com.acornui.collection.ClearableObjectPool
-import com.acornui.component.InteractiveElementRo
 import com.acornui.component.UiComponentRo
 import com.acornui.core.input.InteractionEventBase
 import com.acornui.core.input.InteractionEventRo
@@ -17,12 +16,6 @@ interface TouchInteractionRo : InteractionEventRo {
 	 * The number of milliseconds from the Unix epoch.
 	 */
 	val timestamp: Long
-
-	/**
-	 * A list of all the Touch objects that are both currently in contact with the touch surface and were also started
-	 * on the same element that is the target of the event.
-	 */
-	val targetTouches: List<TouchRo>
 
 	/**
 	 * A list of all the Touch objects representing individual points of contact whose states changed between the
@@ -40,8 +33,6 @@ interface TouchInteractionRo : InteractionEventRo {
 
 		val TOUCH_START = InteractionType<TouchInteractionRo>("touchStart")
 		val TOUCH_MOVE = InteractionType<TouchInteractionRo>("touchMove")
-		val TOUCH_ENTER = InteractionType<TouchInteractionRo>("touchEnter")
-		val TOUCH_LEAVE = InteractionType<TouchInteractionRo>("touchLeave")
 		val TOUCH_END = InteractionType<TouchInteractionRo>("touchEnd")
 		val TOUCH_CANCEL = InteractionType<TouchInteractionRo>("touchCancel")
 
@@ -57,12 +48,6 @@ class TouchInteraction : TouchInteractionRo, InteractionEventBase() {
 	override var timestamp: Long = 0
 
 	/**
-	 * A list of all the Touch objects that are both currently in contact with the touch surface and were also started
-	 * on the same element that is the target of the event.
-	 */
-	override val targetTouches: MutableList<Touch> = ArrayList()
-
-	/**
 	 * A list of all the Touch objects representing individual points of contact whose states changed between the
 	 * previous touch event and this one.
 	 */
@@ -76,9 +61,6 @@ class TouchInteraction : TouchInteractionRo, InteractionEventBase() {
 
 	override fun localize(currentTarget: UiComponentRo) {
 		super.localize(currentTarget)
-		for (i in 0..targetTouches.lastIndex) {
-			targetTouches[i].localize(currentTarget)
-		}
 		for (i in 0..changedTouches.lastIndex) {
 			changedTouches[i].localize(currentTarget)
 		}
@@ -90,7 +72,6 @@ class TouchInteraction : TouchInteractionRo, InteractionEventBase() {
 	fun set(event: TouchInteractionRo) {
 		type = event.type
 		clearTouches()
-		targetTouches.addTouches(event.targetTouches)
 		changedTouches.addTouches(event.changedTouches)
 		touches.addTouches(event.touches)
 
@@ -98,20 +79,20 @@ class TouchInteraction : TouchInteractionRo, InteractionEventBase() {
 	}
 
 	fun clearTouches() {
-		clearTouches(targetTouches)
 		clearTouches(changedTouches)
 		clearTouches(touches)
 	}
 
 	private fun clearTouches(touches: MutableList<Touch>) {
 		for (i in 0..touches.lastIndex) {
-			touches[i].free()
+			Touch.free(touches[i])
 		}
 		touches.clear()
 	}
 
 	override fun clear() {
 		super.clear()
+		changedTouches.clear()
 		timestamp = 0L
 		clearTouches()
 	}
@@ -145,12 +126,7 @@ interface TouchRo {
 	 */
 	val canvasY: Float
 
-	val radiusX: Float
-	val radiusY: Float
-	val rotationAngle: Float
-
-	val target: InteractiveElementRo?
-	val currentTarget: InteractiveElementRo?
+	val currentTarget: UiComponentRo?
 
 	val identifier: Int
 
@@ -174,7 +150,7 @@ interface TouchRo {
 	}
 }
 
-class Touch : TouchRo, Clearable {
+class Touch private constructor(): TouchRo, Clearable {
 
 	/**
 	 * The x position of the mouse event relative to the root canvas.
@@ -186,12 +162,7 @@ class Touch : TouchRo, Clearable {
 	 */
 	override var canvasY: Float = 0f
 
-	override var radiusX: Float = 0f
-	override var radiusY: Float = 0f
-	override var rotationAngle: Float = 0f
-
-	override var target: InteractiveElementRo? = null
-	override var currentTarget: InteractiveElementRo? = null
+	override var currentTarget: UiComponentRo? = null
 
 	override var identifier: Int = -1
 
@@ -199,7 +170,7 @@ class Touch : TouchRo, Clearable {
 	private val _localPosition: Vector2 = Vector2()
 
 	/**
-	 * The position of the mouse event relative to the [target].
+	 * The position of the mouse event relative to the [currentTarget].
 	 */
 	private fun localPosition(): Vector2Ro {
 		if (!_localPositionIsValid) {
@@ -222,27 +193,14 @@ class Touch : TouchRo, Clearable {
 	override val localY: Float
 		get() = localPosition().y
 
-	fun localize(currentTarget: InteractiveElementRo) {
+	fun localize(currentTarget: UiComponentRo) {
 		this.currentTarget = currentTarget
 		_localPositionIsValid = false
-	}
-
-	/**
-	 * The distance of this touch point to the other touch point (in canvas coordinates)
-	 */
-	fun dst(other: Touch): Float {
-		val xD = other.canvasX - canvasX
-		val yD = other.canvasY - canvasY
-		return sqrt((xD * xD + yD * yD))
 	}
 
 	override fun clear() {
 		canvasX = 0f
 		canvasY = 0f
-		radiusX = 0f
-		radiusY = 0f
-		rotationAngle = 0f
-		target = null
 		currentTarget = null
 		identifier = -1
 		_localPositionIsValid = false
@@ -251,22 +209,15 @@ class Touch : TouchRo, Clearable {
 	fun set(otherTouch: TouchRo) {
 		canvasX = otherTouch.canvasX
 		canvasY = otherTouch.canvasY
-		radiusX = otherTouch.radiusX
-		radiusY = otherTouch.radiusY
-		rotationAngle = otherTouch.rotationAngle
-		target = otherTouch.target
 		currentTarget = otherTouch.currentTarget
 		identifier = otherTouch.identifier
 		_localPositionIsValid = false
-	}
-
-	fun free() {
-		pool.free(this)
 	}
 
 	companion object {
 
 		private val pool = ClearableObjectPool { Touch() }
 		fun obtain(): Touch = pool.obtain()
+		fun free(touch: Touch) = pool.free(touch)
 	}
 }

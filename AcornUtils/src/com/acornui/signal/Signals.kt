@@ -134,11 +134,10 @@ abstract class SignalBase<T : Any> : Signal<T>, Disposable {
 
 	/**
 	 * Immediately halts the current dispatch.
-	 * @throws Exception if this Signal is not currently dispatching.
 	 */
 	open fun halt() {
-		if (cursor == -1) throw Exception("This signal is not currently dispatching.")
-		cursor = 999999999
+		if (cursor != -1)
+			cursor = 999999999
 	}
 
 	override val isDispatching: Boolean

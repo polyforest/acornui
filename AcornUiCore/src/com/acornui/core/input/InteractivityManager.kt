@@ -81,8 +81,14 @@ interface InteractionEventRo : Stoppable {
 
 	val type: InteractionType<InteractionEventRo>
 
+	/**
+	 * The target that triggered the interaction.
+	 */
 	val target: UiComponentRo
 
+	/**
+	 * The current target. This is the element walked in the capture and bubble phases.
+	 */
 	val currentTarget: UiComponentRo
 
 	/**

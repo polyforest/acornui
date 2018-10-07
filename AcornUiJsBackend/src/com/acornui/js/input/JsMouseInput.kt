@@ -207,12 +207,6 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 	private fun TouchInteraction.set(jsEvent: TouchEvent) {
 		timestamp = jsEvent.timeStamp.toLong()
 		clearTouches()
-		for (i in 0..jsEvent.targetTouches.lastIndex) {
-			val targetTouch = jsEvent.targetTouches[i]
-			val t = Touch.obtain()
-			t.set(targetTouch)
-			targetTouches.add(t)
-		}
 		for (i in 0..jsEvent.changedTouches.lastIndex) {
 			val changedTouch = jsEvent.changedTouches[i]
 			val t = Touch.obtain()
@@ -265,14 +259,14 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 
 	companion object {
 		fun getWhichButton(i: Int): WhichButton {
-			when (i) {
-				-1 -> return WhichButton.UNKNOWN
-				0 -> return WhichButton.LEFT
-				1 -> return WhichButton.MIDDLE
-				2 -> return WhichButton.RIGHT
-				3 -> return WhichButton.BACK
-				4 -> return WhichButton.FORWARD
-				else -> return WhichButton.UNKNOWN
+			return when (i) {
+				-1 -> WhichButton.UNKNOWN
+				0 -> WhichButton.LEFT
+				1 -> WhichButton.MIDDLE
+				2 -> WhichButton.RIGHT
+				3 -> WhichButton.BACK
+				4 -> WhichButton.FORWARD
+				else -> WhichButton.UNKNOWN
 			}
 		}
 	}

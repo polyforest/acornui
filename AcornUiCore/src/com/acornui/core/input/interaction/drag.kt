@@ -16,7 +16,6 @@
 
 package com.acornui.core.input.interaction
 
-import com.acornui.component.InteractiveElementRo
 import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.component.stage
@@ -73,8 +72,7 @@ class DragAttachment(
 	private val _drag = Signal1<DragInteraction>()
 
 	/**
-	 * Dispatched on each move during a drag.
-	 * This will not be dispatched if the target is not on the stage.
+	 * Dispatched on each frame during a drag.
 	 */
 	val drag: Signal<(DragInteractionRo) -> Unit>
 		get() = _drag
@@ -83,6 +81,7 @@ class DragAttachment(
 
 	/**
 	 * Dispatched when the drag has completed.
+	 * This may either be from the mouse/touch ending, or the target deactivating.
 	 */
 	val dragEnd: Signal<(DragInteractionRo) -> Unit>
 		get() = _dragEnd
@@ -90,7 +89,6 @@ class DragAttachment(
 	private val position = Vector2()
 	private val startPosition = Vector2()
 	private val startPositionLocal = Vector2()
-	private var startElement: InteractiveElementRo? = null
 	private var isTouch: Boolean = false
 	private var _enterFrame: Disposable? = null
 
@@ -133,11 +131,10 @@ class DragAttachment(
 			touchId = -1
 			setIsWatchingMouse(true)
 			event.handled = true
-			startElement = event.target
 			startPosition.set(event.canvasX, event.canvasY)
 			position.set(startPosition)
 			startPositionLocal.set(event.localX, event.localY)
-			if (!_isDragging && allowMouseDragStart()) {
+			if (allowMouseDragStart()) {
 				setIsDragging(true)
 			}
 		}
@@ -171,13 +168,12 @@ class DragAttachment(
 			isTouch = true
 			setIsWatchingTouch(true)
 			event.handled = true
-			startElement = event.target
 			val t = event.touches.first()
 			touchId = t.identifier
 			startPosition.set(t.canvasX, t.canvasY)
 			position.set(startPosition)
 			startPositionLocal.set(t.localX, t.localY)
-			if (!_isDragging && allowTouchDragStart(event)) {
+			if (allowTouchDragStart(event)) {
 				setIsDragging(true)
 			}
 		}
@@ -227,7 +223,6 @@ class DragAttachment(
 			setIsWatchingTouch(false)
 			setIsDragging(false)
 		}
-		Unit
 	}
 
 	//--------------------------------------------------------------
@@ -261,7 +256,6 @@ class DragAttachment(
 				dispatchDragEvent(DragInteraction.DRAG, _drag)
 			}
 			dispatchDragEvent(DragInteraction.DRAG_END, _dragEnd)
-			startElement = null
 
 			target.callLater { stage.click(isCapture = true).remove(clickBlocker) }
 		}
@@ -272,7 +266,6 @@ class DragAttachment(
 		dragEvent.target = target
 		dragEvent.currentTarget = target
 		dragEvent.type = type
-		dragEvent.startElement = startElement
 		dragEvent.startPosition.set(startPosition)
 		dragEvent.startPositionLocal.set(startPositionLocal)
 		dragEvent.position.set(position)
@@ -306,7 +299,6 @@ class DragAttachment(
 	 */
 	fun start(event: DragInteractionRo) {
 		stop()
-		startElement = event.startElement
 		startPosition.set(event.startPosition)
 		startPositionLocal.set(event.startPositionLocal)
 		position.set(event.position)
@@ -339,14 +331,12 @@ class DragAttachment(
 		/**
 		 * The manhattan distance the target must be dragged before the dragStart and drag events begin.
 		 */
-		val DEFAULT_AFFORDANCE: Float = 5f
+		const val DEFAULT_AFFORDANCE: Float = 5f
 
 	}
 }
 
 interface DragInteractionRo : InteractionEventRo {
-
-	val startElement: InteractiveElementRo?
 
 	/**
 	 * The starting position (in canvas coordinates) for the drag.
@@ -354,7 +344,7 @@ interface DragInteractionRo : InteractionEventRo {
 	val startPosition: Vector2Ro
 
 	/**
-	 * The starting position relative to the startElement for the drag.
+	 * The starting position relative to the [target] element.
 	 */
 	val startPositionLocal: Vector2Ro
 
@@ -364,7 +354,7 @@ interface DragInteractionRo : InteractionEventRo {
 	val position: Vector2Ro
 
 	/**
-	 * The current position, local to the target element.
+	 * The current position, relative to the [target] element.
 	 * Note that this value is calculated, and not cached.
 	 */
 	val positionLocal: Vector2Ro
@@ -381,8 +371,6 @@ interface DragInteractionRo : InteractionEventRo {
 }
 
 class DragInteraction : InteractionEventBase(), DragInteractionRo {
-
-	override var startElement: InteractiveElementRo? = null
 
 	override val startPosition: Vector2 = Vector2()
 
@@ -404,13 +392,12 @@ class DragInteraction : InteractionEventBase(), DragInteractionRo {
 		super.clear()
 		startPosition.clear()
 		position.clear()
-		startElement = null
 		isTouch = false
 		touchId = -1
 	}
 
 	override fun toString(): String {
-		return "DragInteraction(startElement=$startElement, startPosition=$startPosition, position=$position, isTouch=$isTouch, touchId=$touchId)"
+		return "DragInteraction(startPosition=$startPosition, position=$position, isTouch=$isTouch, touchId=$touchId)"
 	}
 
 

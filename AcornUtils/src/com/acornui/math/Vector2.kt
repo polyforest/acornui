@@ -247,9 +247,9 @@ class Vector2(
 	}
 
 	override fun dst(v: Vector2Ro): Float {
-		val x_d = v.x - x
-		val y_d = v.y - y
-		return sqrt(x_d * x_d + y_d * y_d)
+		val xD = v.x - x
+		val yD = v.y - y
+		return sqrt(xD * xD + yD * yD)
 	}
 
 	/**
@@ -258,15 +258,15 @@ class Vector2(
 	 * @return the distance between this and the other vector
 	 */
 	override fun dst(x: Float, y: Float): Float {
-		val x_d = x - this.x
-		val y_d = y - this.y
-		return sqrt((x_d * x_d + y_d * y_d))
+		val xD = x - this.x
+		val yD = y - this.y
+		return sqrt((xD * xD + yD * yD))
 	}
 
 	override fun dst2(v: Vector2Ro): Float {
-		val x_d = v.x - x
-		val y_d = v.y - y
-		return x_d * x_d + y_d * y_d
+		val xD = v.x - x
+		val yD = v.y - y
+		return xD * xD + yD * yD
 	}
 
 	/**
@@ -275,18 +275,18 @@ class Vector2(
 	 * @return the squared distance between this and the other vector
 	 */
 	override fun dst2(x: Float, y: Float): Float {
-		val x_d = x - this.x
-		val y_d = y - this.y
-		return x_d * x_d + y_d * y_d
+		val xD = x - this.x
+		val yD = y - this.y
+		return xD * xD + yD * yD
 	}
 
 	/**
 	 * Returns the manhattan distance between this vector and the given vector.
 	 */
 	override fun manhattanDst(v: Vector2Ro): Float {
-		val x_d = v.x - x
-		val y_d = v.y - y
-		return abs(x_d) + abs(y_d)
+		val xD = v.x - x
+		val yD = v.y - y
+		return abs(xD) + abs(yD)
 	}
 
 	fun limit(limit: Float): Vector2 {
@@ -528,15 +528,21 @@ class Vector2(
 		}
 
 		fun dst(x1: Float, y1: Float, x2: Float, y2: Float): Float {
-			val x_d = x2 - x1
-			val y_d = y2 - y1
-			return sqrt((x_d * x_d + y_d * y_d))
+			val xD = x2 - x1
+			val yD = y2 - y1
+			return sqrt((xD * xD + yD * yD))
+		}
+
+		fun manhattanDst(x1: Float, y1: Float, x2: Float, y2: Float): Float {
+			val xD = x2 - x1
+			val yD = y2 - y1
+			return abs(xD) + abs(yD)
 		}
 
 		fun dst2(x1: Float, y1: Float, x2: Float, y2: Float): Float {
-			val x_d = x2 - x1
-			val y_d = y2 - y1
-			return x_d * x_d + y_d * y_d
+			val xD = x2 - x1
+			val yD = y2 - y1
+			return xD * xD + yD * yD
 		}
 
 		private val pool = ClearableObjectPool { Vector2() }
