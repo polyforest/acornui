@@ -890,27 +890,30 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 		}
 	}
 
-	private val tmp = Vector3()
+	private val tL = Vector3()
+	private val tR = Vector3()
 
 	override fun draw(clip: MinMaxRo) {
 		if (_lines.isEmpty())
 			return
-		val y1 = localToCanvas(tmp.set(0f, 0f, 0f)).y
-		val y2 = localToCanvas(tmp.set(_bounds.width, 0f, 0f)).y
-		if (y1 == y2) {
+		localToCanvas(tL.set(0f, 0f, 0f))
+		localToCanvas(tR.set(_bounds.width, 0f, 0f))
+
+		if (tL.y == tR.y) {
 			// This text field is axis aligned, we can check against the viewport without a matrix inversion.
-			val lineStart = _lines.sortedInsertionIndex(clip.yMin - y1) { viewPortY, line ->
-				viewPortY.compareTo(line.bottom)
+			val y = tL.y
+			if (tR.x < clip.xMin || tL.x > clip.xMax) return
+			val scaleY = concatenatedTransform.getScaleY()
+			val lineStart = _lines.sortedInsertionIndex((clip.yMin - y)) { viewPortY, line ->
+				viewPortY.compareTo(line.bottom / scaleY)
 			}
 			if (lineStart == -1)
 				return
-			val scaleY = concatenatedTransform.getScaleY()
-			val lineEnd = _lines.sortedInsertionIndex((clip.yMax - y1) / scaleY) { viewPortBottom, line ->
-				viewPortBottom.compareTo(line.y)
+			val lineEnd = _lines.sortedInsertionIndex((clip.yMax - y)) { viewPortBottom, line ->
+				viewPortBottom.compareTo(line.y / scaleY)
 			}
 			if (lineEnd <= lineStart)
 				return
-
 			glState.setCamera(camera)
 			for (i in lineStart..lineEnd - 1) {
 				val line = _lines[i]
