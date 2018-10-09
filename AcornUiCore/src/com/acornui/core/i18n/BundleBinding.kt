@@ -17,51 +17,53 @@
 package com.acornui.core.i18n
 
 import com.acornui.core.Disposable
-import com.acornui.core.di.*
-import com.acornui.signal.bind
+import com.acornui.core.di.Injector
+import com.acornui.core.di.Scoped
+import com.acornui.core.di.inject
+import com.acornui.observe.Observable
+import com.acornui.signal.Signal
+import com.acornui.signal.Signal1
 
 /**
  * This class is responsible for tracking a set of callbacks and cached files for an [I18n] bundle.
  * When this binding is disposed, the handlers are all removed and the cached file references are decremented.
  */
-class BundleBinding(override val injector: Injector, bundleName: String) : Scoped, Disposable {
+class BundleBinding(override val injector: Injector, bundleName: String) : Scoped, Disposable, I18nBundleRo {
+
+	private val _changed = Signal1<I18nBundleRo>()
+	override val changed: Signal<(I18nBundleRo) -> Unit>
+		get() = _changed
+
 
 	/**
 	 * The bundle this binding is watching.
 	 */
-	val bundle: I18nBundleRo = inject(I18n).getBundle(bundleName)
+	private val bundle: I18nBundleRo = inject(I18n).getBundle(bundleName)
 
 	private var bundleLoader = loadBundle(bundleName)
-	private val callbacks = ArrayList<(I18nBundleRo) -> Unit>()
-
-	private val bundleBinding: Disposable
 
 	init {
-		bundleBinding = bundle.bind {
-			for (i in 0..callbacks.lastIndex) {
-				callbacks[i].invoke(bundle)
-			}
+		bundle.changed.add(this::bundleChangedHandler)
+	}
+
+	fun bind(callback: (bundle: I18nBundleRo) -> Unit): Disposable {
+		_changed.add(callback)
+		callback(bundle)
+		return object : Disposable {
+			override fun dispose() = _changed.remove(callback)
 		}
 	}
 
-	@Deprecated("use bind", ReplaceWith("bind(callback)"))
-	operator fun invoke(callback: (I18nBundleRo) -> Unit) {
-		bind(callback)
+	private fun bundleChangedHandler(o: Observable) {
+		_changed.dispatch(this)
 	}
 
-	fun bind(callback: (I18nBundleRo) -> Unit) {
-		callbacks.add(callback)
-		callback(bundle)
-	}
-
-	fun unbind(callback: (I18nBundleRo) -> Unit) {
-		callbacks.remove(callback)
-	}
+	override fun get(key: String): String? = bundle[key]
 
 	override fun dispose() {
-		callbacks.clear()
-		bundleBinding.dispose()
+		bundle.changed.remove(this::bundleChangedHandler)
 		bundleLoader.dispose()
+		_changed.dispose()
 	}
 }
 
