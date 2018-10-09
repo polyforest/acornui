@@ -68,6 +68,8 @@ fun ScrollArea.scrollTo(target: UiComponentRo, pad: PadRo = Pad(10f)) {
 	tmpBounds.set(0f, 0f, target.width, target.height)
 	target.localToGlobal(tmpBounds)
 	globalToLocal(tmpBounds)
+	tmpBounds.xMin += hScrollModel.value
+	tmpBounds.xMax += hScrollModel.value
 	tmpBounds.yMin += vScrollModel.value
 	tmpBounds.yMax += vScrollModel.value
 	tmpBounds.inflate(pad)
