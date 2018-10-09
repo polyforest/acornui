@@ -68,7 +68,7 @@ open class BasicUiSkin(
 		target.populateButtonStyle(CollapseButton) { collapseButtonSkin(theme, it) }
 		target.populateButtonStyle(RadioButton) { radioButtonSkin(theme, it) }
 		target.populateButtonStyle(StyleSelectors.cbNoLabelStyle) { checkboxNoLabelSkin(theme, it) }
-		target.populateButtonStyle(IconButton) { iconButtonSkin(it) }
+		target.populateButtonStyle(IconButton) { iconButtonSkin(theme, it) }
 
 		popUpStyle()
 		focusStyle()
@@ -156,13 +156,13 @@ open class BasicUiSkin(
 	protected open fun panelStyle() {
 		val panelStyle = PanelStyle()
 		panelStyle.background = {
-			rect {
-				style.apply {
-					backgroundColor = theme.panelBgColor
-					borderThicknesses = Pad(theme.strokeThickness)
-					borderRadii = Corners(theme.borderRadius)
-					borderColors = BorderColors(theme.stroke)
-				}
+			stack {
+				+atlas(theme.atlasPath, "CurvedFill") {
+					colorTint = theme.panelBgColor
+				} layout { fill() }
+				+atlas(theme.atlasPath, "CurvedStroke") {
+					colorTint = theme.stroke
+				} layout { fill() }
 			}
 		}
 		target.addStyleRule(panelStyle, Panel)
@@ -647,20 +647,20 @@ fun iconButtonSkin(buttonState: ButtonState, icon: String, padding: PadRo = Pad(
 
 fun labelButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> UiComponent = {
 	val texture = buttonTexture(buttonState)
-	LabelButtonSkinPart(this, texture)
+	LabelButtonSkinPart(this, texture, theme.buttonPad)
 }
 
 fun tabButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> UiComponent = {
 	val texture = buttonTexture(buttonState, Corners(topLeft = theme.borderRadius, topRight = theme.borderRadius, bottomLeft = 0f, bottomRight = 0f), Pad(theme.strokeThickness), isTab = true)
-	LabelButtonSkinPart(this, texture)
+	LabelButtonSkinPart(this, texture, theme.buttonPad)
 }
 
 /**
  * A convenience function to create a button skin part.
  */
-fun iconButtonSkin(buttonState: ButtonState): Owned.() -> UiComponent = {
+fun iconButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> UiComponent = {
 	val texture = buttonTexture(buttonState)
-	IconButtonSkinPart(this, texture)
+	IconButtonSkinPart(this, texture, theme.buttonPad)
 }
 
 fun checkboxNoLabelSkin(theme: Theme, buttonState: ButtonState): Owned.() -> CheckboxSkinPart = {
@@ -749,7 +749,13 @@ fun Owned.buttonTexture(buttonState: ButtonState) = stack {
 		ButtonState.DISABLED -> "Button_disabled"
 	}
 	+atlas(theme.atlasPath, fillRegion) {
-		colorTint = if (buttonState == ButtonState.DISABLED) theme.fillDisabled else theme.fillHighlight
+		colorTint = when (buttonState) {
+			ButtonState.DISABLED -> theme.fillDisabled
+			ButtonState.UP, ButtonState.TOGGLED_UP -> theme.fill
+			ButtonState.OVER, ButtonState.TOGGLED_OVER -> theme.fillHighlight
+			ButtonState.DOWN, ButtonState.TOGGLED_DOWN -> theme.fill
+		}
+
 	} layout { fill() }
 	+atlas(theme.atlasPath, "CurvedStroke") {
 		colorTint = if (buttonState == ButtonState.DISABLED) theme.strokeDisabled else if (buttonState.toggled) theme.strokeToggled else theme.stroke
@@ -848,7 +854,7 @@ open class CheckboxSkinPart(
 open class LabelButtonSkinPart(
 		owner: Owned,
 		val texture: UiComponent,
-		val padding: Pad = Pad(left = 4f, top = 3f, right = 4f, bottom = 4f) // Set so that a label button's height matches a text input's height with the default font.
+		val padding: PadRo
 ) : ElementContainerImpl<UiComponent>(owner), Labelable {
 
 	val textField: TextField = text()
@@ -973,6 +979,8 @@ class Theme {
 
 	var toggledEvenRowBgColor: ColorRo = Color(0xFCFD7CFF)
 	var toggledOddRowBgColor: ColorRo = Color(0xFCFD7CFF)
+
+	var buttonPad: PadRo = Pad(4f)
 
 	var atlasPath = "assets/uiskin/uiskin.json"
 

@@ -104,11 +104,11 @@ abstract class CursorManagerBase : CursorManager {
 
 	private fun currentCursor(value: CursorReferenceImpl?) {
 		if (_currentCursor == value) return
-		if (_currentCursor?.cursor?.isActive ?: false) {
+		if (_currentCursor?.cursor?.isActive == true) {
 			_currentCursor?.cursor?.deactivate()
 		}
 		_currentCursor = value
-		if (!(_currentCursor?.cursor?.isActive ?: false)) {
+		if (_currentCursor?.cursor?.isActive != true) {
 			_currentCursor?.cursor?.activate()
 		}
 	}

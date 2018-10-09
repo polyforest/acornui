@@ -53,6 +53,8 @@ interface I18nBundleRo : Observable {
 
 }
 
+fun I18nBundleRo.getOrElse(key: String, default: String = "???") = get(key) ?: default
+
 class I18nImpl : I18n, Disposable {
 
 	private val currentKey = emptyList<Locale>()
