@@ -58,8 +58,6 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 
 		// Size inflexible elements first.
 		var maxHeight = childAvailableHeight ?: 0f
-		var inflexibleWidth = 0f
-		var flexibleWidth = 0f
 		for (i in 0..elements.lastIndex) {
 			val element = elements[i]
 			val layoutData = element.layoutDataCast
@@ -67,6 +65,22 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 				val w = layoutData?.getPreferredWidth(childAvailableWidth)
 				val h = layoutData?.getPreferredHeight(childAvailableHeight)
 				element.setSize(w, h)
+				if (element.height > maxHeight) maxHeight = element.height
+			}
+		}
+
+		// Size height flexible, but width inflexible second and measure the flexible/inflexible width.
+		var inflexibleWidth = 0f
+		var flexibleWidth = 0f
+		for (i in 0..elements.lastIndex) {
+			val element = elements[i]
+			val layoutData = element.layoutDataCast
+			if (childAvailableWidth == null || layoutData?.widthPercent == null) {
+				if (layoutData?.heightPercent == null) {
+					val w = layoutData?.getPreferredWidth(childAvailableWidth)
+					val h = layoutData?.getPreferredHeight(maxHeight)
+					element.setSize(w, h)
+				}
 				inflexibleWidth += element.width
 				if (element.height > maxHeight) maxHeight = element.height
 			} else {

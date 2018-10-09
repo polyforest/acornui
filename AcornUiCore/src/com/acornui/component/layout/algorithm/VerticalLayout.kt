@@ -58,15 +58,29 @@ class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> 
 
 		// Size inflexible elements first.
 		var maxWidth = childAvailableWidth ?: 0f
+		for (i in 0..elements.lastIndex) {
+			val element = elements[i]
+			val layoutData = element.layoutDataCast
+			if ((childAvailableHeight == null || layoutData?.heightPercent == null) && layoutData?.widthPercent == null) {
+				val w = layoutData?.getPreferredWidth(childAvailableWidth)
+				val h = layoutData?.getPreferredHeight(childAvailableHeight)
+				element.setSize(w, h)
+				if (element.width > maxWidth) maxWidth = element.width
+			}
+		}
+
+		// Size width flexible, but height inflexible second and measure the flexible/inflexible height.
 		var inflexibleHeight = 0f
 		var flexibleHeight = 0f
 		for (i in 0..elements.lastIndex) {
 			val element = elements[i]
 			val layoutData = element.layoutDataCast
 			if (childAvailableHeight == null || layoutData?.heightPercent == null) {
-				val w = layoutData?.getPreferredWidth(childAvailableWidth)
-				val h = layoutData?.getPreferredHeight(childAvailableHeight)
-				element.setSize(w, h)
+				if (layoutData?.widthPercent != null) {
+					val w = layoutData.getPreferredWidth(maxWidth)
+					val h = layoutData.getPreferredHeight(childAvailableHeight)
+					element.setSize(w, h)
+				}
 				inflexibleHeight += element.height
 				if (element.width > maxWidth) maxWidth = element.width
 			} else {

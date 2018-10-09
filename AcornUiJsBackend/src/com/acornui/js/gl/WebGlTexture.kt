@@ -32,7 +32,7 @@ class WebGlTexture(
 		glState: GlState
 ) : GlTextureBase(gl, glState) {
 
-	val image: HTMLImageElement = document.createElement("img") as HTMLImageElement
+	val image = document.createElement("img") as HTMLImageElement
 
 	override val width: Int
 		get() {

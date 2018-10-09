@@ -48,17 +48,18 @@ class WebGlTextureLoader(
 	private val work: Deferred<Texture> = object : Promise<Texture>() {
 		init {
 			val jsTexture = WebGlTexture(gl, glState)
-			jsTexture.image.src = path
 			if (path.startsWith("http", ignoreCase = true) && URL(path).origin !== window.location.origin) {
+				println("Setting cross origin for $path")
 				jsTexture.image.crossOrigin = ""
 			}
+			jsTexture.image.src = path
 
 			jsTexture.image.onload = {
 				success(jsTexture)
 			}
 			jsTexture.image.onerror = {
 				msg, url, lineNo, columnNo, error ->
-				fail(Exception(msg as String))
+				fail(Exception(msg?.toString() ?: "Unknown Error"))
 			}
 		}
 	}
