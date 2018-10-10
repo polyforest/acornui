@@ -928,7 +928,7 @@ class Theme {
 
 	private val brighten: ColorRo = Color(0x15151500)
 
-	var fill: ColorRo = Color(0xE3E9EAFF)
+	var fill: ColorRo = Color(0xF3F9FAFF)
 	var fillHighlight: ColorRo = fill + brighten
 	var fillDisabled: ColorRo = Color(0xCCCCCCFF)
 	var fillShine: ColorRo = Color(1f, 1f, 1f, 0.9f)
