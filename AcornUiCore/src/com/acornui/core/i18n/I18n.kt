@@ -220,18 +220,29 @@ fun Scoped.loadBundleForLocale(locales: List<Locale>, bundleName: String, path: 
 
 private fun Scoped._loadBundle(locale: Locale, bundleName: String, path: String, fallbackPath: String, cachedGroup: CachedGroup) {
 	val i18n = inject(I18n)
-	val path2 = if (locale == I18n.UNDEFINED) {
-		fallbackPath.replace2("{bundleName}", bundleName)
-	} else {
-		path.replace2("{locale}", locale.value).replace2("{bundleName}", bundleName)
-	}
+	val files = inject(Files)
+	for (localeToken in locale.toPathStrings()) {
+		val path2 = if (locale == I18n.UNDEFINED) {
+			fallbackPath.replace2("{bundleName}", bundleName)
+		} else {
+			path.replace2("{locale}", localeToken).replace2("{bundleName}", bundleName)
+		}
 
-	// Only try to load the locale if we know it to exist.
-	if (inject(Files).getFile(path2) != null) {
-		loadAndCache(path2, AssetType.TEXT, PropertiesDecorator, cachedGroup).then {
-			i18n.setBundleValues(locale, bundleName, it)
+		// Only try to load the locale if we know it to exist.
+		if (files.getFile(path2) != null) {
+			loadAndCache(path2, AssetType.TEXT, PropertiesDecorator, cachedGroup).then {
+				i18n.setBundleValues(locale, bundleName, it)
+			}
+			break
 		}
 	}
+}
+
+/**
+ * Provides a list of path tokens to try.  E.g. en-US, en_US
+ */
+private fun Locale.toPathStrings(): List<String> {
+	return listOf(value, value.replace("-", "_"))
 }
 
 object PropertiesDecorator : Decorator<String, Map<String, String>> {

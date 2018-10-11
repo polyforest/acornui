@@ -16,13 +16,12 @@
 
 package com.acornui.core.io.file
 
-import com.acornui.collection.ArrayList
 import com.acornui.collection.poll
 import com.acornui.collection.pop
 import com.acornui.core.di.DKey
-import com.acornui.io.file.FilesManifest
 import com.acornui.core.replace2
 import com.acornui.core.split2
+import com.acornui.io.file.FilesManifest
 
 
 interface Files {
