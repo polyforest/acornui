@@ -31,4 +31,5 @@
 ### Attribution:
 Some icons by [Yusuke Kamiyamane](http://p.yusukekamiyamane.com/). Licensed under a Creative Commons Attribution 3.0 License.
 
-https://polyforest.com
+**Acorn UI is a product of [Poly Forest, LLC](https://polyforest.com)**
+
