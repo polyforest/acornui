@@ -21,6 +21,8 @@ import com.acornui.core.isWhitespace2
 import com.acornui.core.replace2
 import com.acornui.string.SubString
 
+// TODO: WIP
+
 /**
  * A factory that provides a Reader and Writer for XML
  * @author nbilyk
