@@ -269,7 +269,7 @@ open class ContainerImpl(
 	private val isValidatingLayout: Boolean
 		get() = validation.currentFlag == ValidationFlags.LAYOUT
 
-	protected open fun childInvalidatedHandler(child: UiComponentRo, flagsInvalidated: Int) {
+	protected open fun childInvalidatedHandler(child: UiComponent, flagsInvalidated: Int) {
 		if (flagsInvalidated and child.layoutInvalidatingFlags > 0) {
 			// A child has invalidated a flag marked as layout invalidating.
 			if (!isValidatingLayout && (child.shouldLayout || flagsInvalidated and ValidationFlags.LAYOUT_ENABLED > 0)) {

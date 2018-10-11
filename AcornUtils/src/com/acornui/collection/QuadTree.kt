@@ -115,11 +115,11 @@ class QuadTree<K : Comparable<K>, V> : Clearable {
 	 * Traverses the tree to finds the parent of x, y
 	 */
 	private fun find(parent: Node?, x: K, y: K): Node? {
-		if (parent == null) return null
-		else if (x < parent.x && y < parent.y) return find(parent.nw, x, y) ?: parent
-		else if (x >= parent.x && y < parent.y) return find(parent.ne, x, y) ?: parent
-		else if (x >= parent.x && y >= parent.y) return find(parent.se, x, y) ?: parent
-		else return find(parent.sw, x, y) ?: parent
+		return if (parent == null) null
+		else if (x < parent.x && y < parent.y) find(parent.nw, x, y) ?: parent
+		else if (x >= parent.x && y < parent.y) find(parent.ne, x, y) ?: parent
+		else if (x >= parent.x && y >= parent.y) find(parent.se, x, y) ?: parent
+		else find(parent.sw, x, y) ?: parent
 	}
 
 	fun iterate(xMin: K, yMin: K, xMax: K, yMax: K, inner: (V) -> Boolean) {
