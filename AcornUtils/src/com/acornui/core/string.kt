@@ -19,10 +19,10 @@ package com.acornui.core
 /**
  * Replaces {0}, {1}, {2}, ... {n} with the values from the tokens array.
  */
-fun String.replaceTokens(vararg tokens: String): String {
+fun String.replaceTokens(vararg tokens: Any): String {
 	var str = this
 	for (i in 0..tokens.lastIndex) {
-		str = str.replace2("{$i}", tokens[i])
+		str = str.replace2("{$i}", tokens[i].toString())
 	}
 	return str
 }

@@ -440,8 +440,9 @@ data class Color(
 		private val clamped = Color()
 
 		/**
-		 * Returns a new color from a hex string with one of the following formats:
+		 * Returns a new color from a hex string with one of the following formats (alpha is optional):
 		 * RRGGBBAA,
+		 * #RRGGBBAA
 		 * 0xRRGGBBAA,
 		 * rgb(255, 255, 255),
 		 * rgba(255, 255, 255, 255),
