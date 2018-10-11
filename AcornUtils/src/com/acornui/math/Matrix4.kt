@@ -29,7 +29,7 @@ interface Matrix4Ro {
 
 	val values: List<Float>
 
-	operator fun get(index:Int): Float {
+	operator fun get(index: Int): Float {
 		return values[index]
 	}
 
@@ -170,7 +170,7 @@ class Matrix4() : Matrix4Ro {
 		refreshMode()
 	}
 
-	operator fun set(index:Int, value: Float) {
+	operator fun set(index: Int, value: Float) {
 		_values[index] = value
 	}
 
