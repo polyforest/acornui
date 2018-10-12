@@ -16,6 +16,7 @@
 
 package com.acornui.component.text
 
+import com.acornui.action.noopDecorator
 import com.acornui.async.Deferred
 import com.acornui.async.async
 import com.acornui.async.launch
@@ -164,10 +165,10 @@ class Glyph(
 /**
  * An overload of [loadFontFromDir] where the images directory is assumed to be the parent directory of the font data file.
  */
-fun Owned.loadFontFromDir(fontStyle: FontStyleRo, fntPath: String): Deferred<BitmapFont> {
+fun Scoped.loadFontFromDir(fontStyle: FontStyleRo, fntPath: String, group: CachedGroup): Deferred<BitmapFont> {
 	val files = inject(Files)
 	val fontFile = files.getFile(fntPath) ?: throw Exception("$fntPath not found.")
-	return loadFontFromDir(fontStyle, fntPath, fontFile.parent!!.path)
+	return loadFontFromDir(fontStyle, fntPath, fontFile.parent!!.path, group)
 }
 
 /**
@@ -176,14 +177,13 @@ fun Owned.loadFontFromDir(fontStyle: FontStyleRo, fntPath: String): Deferred<Bit
  * in the AngelCode format, but this can be changed by associating a different type of loader for the
  * BitmapFontData asset type.)
  * @param imagesDir The directory of images
+ * @param group The caching group, to allow the loaded assets to be disposed as one.
  */
-fun Owned.loadFontFromDir(fontStyle: FontStyleRo, fntPath: String, imagesDir: String): Deferred<BitmapFont> {
+fun Scoped.loadFontFromDir(fontStyle: FontStyleRo, fntPath: String, imagesDir: String, group: CachedGroup): Deferred<BitmapFont> {
 	val loader = async {
 		val files = inject(Files)
-		val assetManager = inject(AssetManager)
 		val dir = files.getDir(imagesDir) ?: throw Exception("Directory not found: $imagesDir")
-		val bitmapFontStr = assetManager.load(fntPath, AssetType.TEXT).await()
-		val bitmapFontData = AngelCodeParser.parse(bitmapFontStr)
+		val bitmapFontData = loadAndCache(fntPath, AssetType.TEXT, AngelCodeParser, group).await()
 
 		val n = bitmapFontData.pages.size
 		val pageTextures = ArrayList<Deferred<Texture>>()
@@ -191,7 +191,7 @@ fun Owned.loadFontFromDir(fontStyle: FontStyleRo, fntPath: String, imagesDir: St
 			val page = bitmapFontData.pages[i]
 			val imageFile = dir.getFile(page.imagePath)
 					?: throw Exception("Font image file not found: ${page.imagePath}")
-			pageTextures.add(assetManager.load(imageFile.path, AssetType.TEXTURE))
+			pageTextures.add(loadAndCache(imageFile.path, AssetType.TEXTURE, noopDecorator(), group))
 		}
 		// Finished loading the font and all its textures.
 		val glyphs = HashMap<Char, Glyph>()
@@ -219,6 +219,7 @@ fun Owned.loadFontFromDir(fontStyle: FontStyleRo, fntPath: String, imagesDir: St
 		)
 		font
 	}
+	Log.info("Font loaded $fontStyle")
 	BitmapFontRegistry.register(fontStyle, loader)
 	return loader
 }

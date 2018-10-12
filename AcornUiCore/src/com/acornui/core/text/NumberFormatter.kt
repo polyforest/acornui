@@ -66,18 +66,21 @@ enum class NumberFormatType {
 	PERCENT
 }
 
-fun numberFormatter(): NumberFormatter {
-	return numberFormatterProvider()
+fun numberFormatter(init: NumberFormatter.() -> Unit = {}): NumberFormatter {
+	val formatter = numberFormatterProvider()
+	formatter.init()
+	return formatter
 }
 
 /**
  * @pstsm currencyCode the ISO 4217 code of the currency
  */
-fun currencyFormatter(currencyCode: String): NumberFormatter {
+fun currencyFormatter(currencyCode: String, init: NumberFormatter.() -> Unit = {}): NumberFormatter {
 	return numberFormatterProvider().apply {
 		type = NumberFormatType.CURRENCY
 		minFractionDigits = 2
 		this.currencyCode = currencyCode
+		init()
 	}
 }
 
@@ -85,8 +88,9 @@ fun currencyFormatter(currencyCode: String): NumberFormatter {
  * Percent formatter will format a number as a percent value.
  * E.g. 0.23 will be formatted as 23%
  */
-fun percentFormatter(): NumberFormatter {
+fun percentFormatter(init: NumberFormatter.() -> Unit = {}): NumberFormatter {
 	return numberFormatterProvider().apply {
 		type = NumberFormatType.PERCENT
+		init()
 	}
 }

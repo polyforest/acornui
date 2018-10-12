@@ -32,9 +32,9 @@ open class GlScrollArea(
 
 	final override val style = bind(ScrollAreaStyle())
 
-	private val scrollRect = scrollRect()
+	protected val scrollRect = scrollRect()
 
-	private val contents = scrollRect.addElement(stack())
+	protected val contents = scrollRect.addElement(stack())
 
 	override val stackStyle: StackLayoutStyle
 		get() = contents.style

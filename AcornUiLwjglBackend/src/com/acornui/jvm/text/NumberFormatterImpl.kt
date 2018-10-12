@@ -28,7 +28,7 @@ import java.util.*
 import kotlin.properties.ReadWriteProperty
 import java.util.Locale as JvmLocale
 
-class NumberFormatterImpl() : NumberFormatter {
+class NumberFormatterImpl : NumberFormatter {
 
 	override var type by watched(NumberFormatType.NUMBER)
 	override var locales: List<Locale>? by watched(null)

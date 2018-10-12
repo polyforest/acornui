@@ -75,7 +75,7 @@ class GlScrollRect(
 
 	override val style = bind(ScrollRectStyle())
 
-	private val contents = addChild(container())
+	private val contents = addChild(container { interactivityMode = InteractivityMode.CHILDREN })
 	private val maskClip = addChild(rect {
 		style.backgroundColor = Color.WHITE
 		interactivityMode = InteractivityMode.NONE
