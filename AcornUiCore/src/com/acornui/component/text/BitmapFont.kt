@@ -16,15 +16,17 @@
 
 package com.acornui.component.text
 
-import com.acornui.action.noopDecorator
+import com.acornui.action.Decorator
 import com.acornui.async.Deferred
 import com.acornui.async.async
 import com.acornui.async.launch
 import com.acornui.collection.Clearable
 import com.acornui.collection.copy
 import com.acornui.core.Disposable
-import com.acornui.core.assets.*
-import com.acornui.core.di.Owned
+import com.acornui.core.assets.AssetType
+import com.acornui.core.assets.CachedGroup
+import com.acornui.core.assets.loadAndCache
+import com.acornui.core.assets.loadAndCacheJson
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.graphics.AtlasPageDecorator
@@ -32,6 +34,9 @@ import com.acornui.core.graphics.Texture
 import com.acornui.core.graphics.TextureAtlasDataSerializer
 import com.acornui.core.io.file.Files
 import com.acornui.core.isWhitespace2
+import com.acornui.core.time.delay
+import com.acornui.gl.core.TextureMagFilter
+import com.acornui.gl.core.TextureMinFilter
 import com.acornui.logging.Log
 import com.acornui.math.IntRectangle
 import com.acornui.math.IntRectangleRo
@@ -191,7 +196,7 @@ fun Scoped.loadFontFromDir(fontStyle: FontStyleRo, fntPath: String, imagesDir: S
 			val page = bitmapFontData.pages[i]
 			val imageFile = dir.getFile(page.imagePath)
 					?: throw Exception("Font image file not found: ${page.imagePath}")
-			pageTextures.add(loadAndCache(imageFile.path, AssetType.TEXTURE, noopDecorator(), group))
+			pageTextures.add(loadAndCache(imageFile.path, AssetType.TEXTURE, FontTextureDecorator, group))
 		}
 		// Finished loading the font and all its textures.
 		val glyphs = HashMap<Char, Glyph>()
@@ -333,13 +338,17 @@ object BitmapFontRegistry : Clearable, Disposable {
 	 * Registers a font loader to a font style.
 	 * If the loaded font does not match the style used as the key, a warning will be logged.
 	 * The loaded texture pages will have their use counts incremented via [Texture.refInc]
+	 * @param fontStyle The style key to register to the [BitmapFont].
+	 * @param bitmapFont A loader for a [BitmapFont].
+	 * @param showMismatchWarning If the font style doesn't match the style of the font loaded, a warning will be
+	 * logged. This warning may be turned off if the mismatch is intentional.
 	 */
-	fun register(fontStyle: FontStyleRo, bitmapFont: Deferred<BitmapFont>) {
+	fun register(fontStyle: FontStyleRo, bitmapFont: Deferred<BitmapFont>, showMismatchWarning: Boolean = true) {
 		if (registry.containsKey(fontStyle)) return
 		registry[fontStyle] = bitmapFont
 		launch {
 			val f = bitmapFont.await()
-			if (f.data.fontStyle != fontStyle)
+			if (showMismatchWarning && f.data.fontStyle != fontStyle)
 				Log.warn("Loaded font did not have a font style that match the registered style. Requested: $fontStyle Found: ${f.data.fontStyle}")
 			for (page in f.pages) {
 				page.refInc()
@@ -416,4 +425,13 @@ fun getFont(charStyle: CharStyle, warnOnNotFound: Boolean = true): Deferred<Bitm
 	tmp.bold = charStyle.bold
 	tmp.italic = charStyle.italic
 	return BitmapFontRegistry.getFont(tmp, warnOnNotFound)
+}
+
+private object FontTextureDecorator : Decorator<Texture, Texture> {
+	override fun decorate(target: Texture): Texture {
+		target.filterMin = TextureMinFilter.LINEAR_MIPMAP_LINEAR
+		target.filterMag = TextureMagFilter.LINEAR
+		target.hasWhitePixel = false
+		return target
+	}
 }
