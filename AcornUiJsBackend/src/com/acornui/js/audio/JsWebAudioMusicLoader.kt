@@ -30,7 +30,6 @@ import com.acornui.core.audio.Music
  */
 class JsWebAudioMusicLoader(
 		override val path: String,
-		override val estimatedBytesTotal: Int,
 		private val audioManager: AudioManager
 ) : AssetLoader<Music> {
 

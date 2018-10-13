@@ -191,14 +191,15 @@ object Bandwidth {
 	/**
 	 * Download speed, bytes per second.
 	 */
-	val downBps: Float = 196608f
+	var downBps: Float = 196608f
 
-	val downBpsInv: Float = 1f / 196608f
+	val downBpsInv: Float
+		get() = 1f / downBps
 
 	/**
 	 * Upload speed, bytes per second.
 	 */
-	val upBps: Float = 196608f
+	var upBps: Float = 196608f
 
 }
 

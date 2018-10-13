@@ -27,12 +27,6 @@ import com.acornui.async.Deferred
 interface AssetLoaderRo<out T> : Deferred<T>, Progress {
 
 	/**
-	 * The estimated total number of bytes this loader will load.
-	 * (This is typically only used before the actual number is discovered)
-	 */
-	val estimatedBytesTotal: Int
-
-	/**
 	 * The path used to find the asset.
 	 */
 	val path: String

@@ -33,7 +33,7 @@ import kotlin.browser.window
  */
 class WebGlTextureLoader(
 		override val path: String,
-		override val estimatedBytesTotal: Int,
+		private val estimatedBytesTotal: Int,
 		private val gl: Gl20,
 		private val glState: GlState
 ) : AssetLoader<Texture> {

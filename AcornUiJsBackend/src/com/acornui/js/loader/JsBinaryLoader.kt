@@ -34,7 +34,7 @@ import com.acornui.js.io.JsBinaryRequest
  */
 class JsBinaryLoader(
 		override val path: String,
-		override val estimatedBytesTotal: Int = 0,
+		private val estimatedBytesTotal: Int = 0,
 		private val request: Request<NativeReadByteBuffer> = JsBinaryRequest(UrlRequestData(path))
 ) : AssetLoader<NativeReadByteBuffer> {
 

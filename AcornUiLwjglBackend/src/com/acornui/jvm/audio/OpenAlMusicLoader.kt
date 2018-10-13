@@ -22,8 +22,6 @@ class OpenAlMusicLoader(
 	override val secondsLoaded: Float = 0f
 	override val secondsTotal: Float = 0f
 
-	override var estimatedBytesTotal: Int = 0
-
 	init {
 		launch {
 			val extension = path.extension()
@@ -49,9 +47,9 @@ class OpenAlMusicLoader(
 	companion object {
 
 		fun registerDefaultDecoders() {
-			MusicDecoders.setReaderFactory("ogg", { OggMusicStreamReader(it) })
-			MusicDecoders.setReaderFactory("mp3", { Mp3MusicStreamReader(it) })
-			MusicDecoders.setReaderFactory("wav", { WavMusicStreamReader(it) })
+			MusicDecoders.setReaderFactory("ogg") { OggMusicStreamReader(it) }
+			MusicDecoders.setReaderFactory("mp3") { Mp3MusicStreamReader(it) }
+			MusicDecoders.setReaderFactory("wav") { WavMusicStreamReader(it) }
 		}
 
 		private fun String.extension(): String {

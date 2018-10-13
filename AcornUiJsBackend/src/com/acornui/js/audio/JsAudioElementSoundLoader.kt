@@ -31,7 +31,6 @@ import org.w3c.dom.events.Event
  */
 class JsAudioElementSoundLoader(
 		override val path: String,
-		override val estimatedBytesTotal: Int,
 		private val audioManager: AudioManager
 ) : Promise<SoundFactory>(), AssetLoader<SoundFactory> {
 

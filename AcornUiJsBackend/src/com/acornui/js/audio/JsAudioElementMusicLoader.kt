@@ -30,7 +30,6 @@ import kotlin.browser.document
  */
 class JsAudioElementMusicLoader(
 		override val path: String,
-		override val estimatedBytesTotal: Int,
 		audioManager: AudioManager
 ) : AssetLoader<Music> {
 

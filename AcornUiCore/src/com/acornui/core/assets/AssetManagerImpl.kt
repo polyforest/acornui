@@ -92,8 +92,6 @@ private class FailedLoader<T>(
 		override val path: String
 ) : AssetLoader<T> {
 
-	override val estimatedBytesTotal: Int = 0
-
 	override val secondsLoaded: Float = 0f
 	override val secondsTotal: Float = 0f
 

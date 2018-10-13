@@ -4,7 +4,6 @@ import com.acornui.async.Deferred
 import com.acornui.core.Bandwidth
 import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
-import com.acornui.core.audio.SoundFactory
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -20,14 +19,16 @@ abstract class JvmAssetLoaderBase<T>(
 	private var _bytesTotal: Int? = null
 	private var _bytesLoaded: Int = 0
 
+	/**
+	 * Like any good programmer, before we have any idea what the actual scope of the work is, we make a completely
+	 * blind guess.
+	 */
 	val bytesTotal: Int
-		get() = _bytesTotal ?: estimatedBytesTotal
+		get() = _bytesTotal ?: 100_000
 
 	private lateinit var work: Deferred<T>
 
 	private var initialized: Boolean = false
-
-	override var estimatedBytesTotal: Int = 0
 
 	protected fun init() {
 		initialized = true
@@ -41,6 +42,7 @@ abstract class JvmAssetLoaderBase<T>(
 			val file = File(path)
 			_bytesTotal = file.length().toInt()
 			work = workScheduler {
+				Thread.sleep(500) // To test
 				if (!file.exists())
 					throw FileNotFoundException(path)
 				create(FileInputStream(file)).also { _bytesLoaded = bytesTotal }
@@ -52,7 +54,7 @@ abstract class JvmAssetLoaderBase<T>(
 
 	override val secondsLoaded: Float
 		get() {
-			return _bytesLoaded.toFloat() * Bandwidth.downBps
+			return _bytesLoaded.toFloat() * Bandwidth.downBpsInv
 		}
 
 	override val secondsTotal: Float

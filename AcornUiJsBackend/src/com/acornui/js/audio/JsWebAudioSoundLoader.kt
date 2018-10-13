@@ -33,7 +33,6 @@ import com.acornui.js.io.JsArrayBufferRequest
  */
 class JsWebAudioSoundLoader(
 		override val path: String = "",
-		override val estimatedBytesTotal: Int,
 		private val audioManager: AudioManager
 ) : AssetLoader<SoundFactory> {
 

@@ -33,7 +33,7 @@ import com.acornui.js.io.JsTextRequest
  */
 class JsTextLoader(
 		override val path: String,
-		override val estimatedBytesTotal: Int = 0,
+		private val estimatedBytesTotal: Int = 0,
 		private val request: Request<String> = JsTextRequest(UrlRequestData(path))
 ) : AssetLoader<String> {
 

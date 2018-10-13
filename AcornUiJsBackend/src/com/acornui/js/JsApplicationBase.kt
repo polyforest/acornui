@@ -295,11 +295,11 @@ Function.prototype.bind = function() {
 		val audioManager = AudioManagerImpl()
 		set(AudioManager, audioManager)
 		loaders[AssetType.SOUND] = if (audioContextSupported) {
-			{ path: String, estimatedBytesTotal: Int -> JsWebAudioSoundLoader(path, estimatedBytesTotal, audioManager) }
+			{ path: String, _: Int -> JsWebAudioSoundLoader(path, audioManager) }
 		} else {
-			{ path: String, estimatedBytesTotal: Int -> JsAudioElementSoundLoader(path, estimatedBytesTotal, audioManager) }
+			{ path: String, _: Int -> JsAudioElementSoundLoader(path, audioManager) }
 		}
-		loaders[AssetType.MUSIC] = { path: String, estimatedBytesTotal: Int -> JsAudioElementMusicLoader(path, estimatedBytesTotal, audioManager) }
+		loaders[AssetType.MUSIC] = { path: String, _: Int -> JsAudioElementMusicLoader(path, audioManager) }
 	}
 
 	protected open val timeDriverTask by BootTask {
