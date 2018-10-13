@@ -14,6 +14,7 @@ import com.acornui.core.popup.PopUpInfo
 import com.acornui.core.popup.addPopUp
 import com.acornui.core.popup.removePopUp
 import com.acornui.core.time.onTick
+import com.acornui.core.time.timer
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.*
@@ -112,7 +113,17 @@ fun Owned.progressBarRect(init: ComponentInit<ProgressBarRect> = {}): ProgressBa
 	return p
 }
 
-private var progressBarPopUp: PopUpInfo<ProgressBarRect>? = null
+/**
+ * The factory for creating the loading bar.  This must be set before [showAssetLoadingBar] is ever called
+ * (The component is only created once.)
+ */
+var progressBar: Owned.()->UiComponent = {
+	val progressBar = progressBarRect()
+	progressBar.watch(inject(AssetManager))
+	progressBar
+}
+
+private var progressBarPopUp: PopUpInfo<UiComponent>? = null
 fun Owned.showAssetLoadingBar(onCompleted: () -> Unit = {}) {
 	val assetManager = inject(AssetManager)
 	if (assetManager.secondsRemaining < 0.5f) return onCompleted() // Close enough
@@ -120,11 +131,22 @@ fun Owned.showAssetLoadingBar(onCompleted: () -> Unit = {}) {
 
 	if (progressBarPopUp == null) {
 		// We only want a single progress bar pop up.
-		val progressBar = inject(Stage).progressBarRect()
-		progressBarPopUp = PopUpInfo(progressBar, priority = 1000f, onCloseRequested = { false })
-		progressBar.watch(assetManager)
+		val progressBar = progressBar()
+		progressBarPopUp = PopUpInfo(progressBar, priority = 1000f, dispose = false, onCloseRequested = { false })
 	}
+
 	val popUp = progressBarPopUp!!
 	addPopUp(popUp)
-	assetManager.onLoadersEmpty { removePopUp(popUp) }
+
+	lateinit var loadersEmptyHandler: ()->Unit
+	loadersEmptyHandler = {
+		if (assetManager.currentLoaders.isEmpty()) {
+			removePopUp(progressBarPopUp!!)
+			onCompleted()
+		} else {
+			timer(0.25f, callback = loadersEmptyHandler)
+		}
+		Unit
+	}
+	assetManager.onLoadersEmpty(loadersEmptyHandler)
 }
