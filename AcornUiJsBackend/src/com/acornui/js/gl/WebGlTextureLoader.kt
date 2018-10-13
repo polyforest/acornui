@@ -48,12 +48,13 @@ class WebGlTextureLoader(
 	private val work: Deferred<Texture> = object : Promise<Texture>() {
 		init {
 			val jsTexture = WebGlTexture(gl, glState)
-			try {
+			if (js("URL.prototype != undefined") == true) {
 				// Not supported in IE
 				if (path.startsWith("http", ignoreCase = true) && URL(path).origin !== window.location.origin) {
 					jsTexture.image.crossOrigin = ""
 				}
-			} catch (ignore: Exception) {}
+			}
+
 			jsTexture.image.src = path
 
 			jsTexture.image.onload = {
