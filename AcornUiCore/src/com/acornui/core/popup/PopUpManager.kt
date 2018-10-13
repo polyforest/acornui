@@ -307,16 +307,10 @@ class PopUpManagerImpl(private val root: UiComponent) : LayoutContainerImpl<PopU
 	}
 
 	override fun <T : UiComponent> addPopUp(popUpInfo: PopUpInfo<T>) {
+		removePopUp(popUpInfo)
 		val child = popUpInfo.child
-		if (child.isActive) {
-			val oldIndex = _currentPopUps.indexOfFirst2 { it.child == child }
-			if (oldIndex == -1)
-				throw Exception("The pop-up must be removed from external container before adding.")
-			_currentPopUps.removeAt(oldIndex)
-		} else {
-			if (child is Closeable) {
-				child.closed.add(childClosedHandler)
-			}
+		if (child is Closeable) {
+			child.closed.add(childClosedHandler)
 		}
 		val index = _currentPopUps.sortedInsertionIndex(popUpInfo) { a, b -> a.priority.compareTo(b.priority) }
 		_currentPopUps.add(index, popUpInfo)
@@ -330,8 +324,9 @@ class PopUpManagerImpl(private val root: UiComponent) : LayoutContainerImpl<PopU
 	}
 
 	override fun <T : UiComponent> removePopUp(popUpInfo: PopUpInfo<T>) {
+		val removed = _currentPopUps.remove(popUpInfo)
+		if (!removed) return // Pop-up not found
 		val child = popUpInfo.child
-		_currentPopUps.remove(popUpInfo)
 		removeElement(child)
 		if (child is Closeable) {
 			child.closed.remove(childClosedHandler)
