@@ -17,16 +17,17 @@ internal class LimitedCallback(
 ) : UpdatableChildBase(), UpdatableChild, CallbackWrapper {
 
 	private var currentTime: Float = 0f
-	private var callAgain: Boolean = false
+	private var pendingInvoke: Boolean = false
 
 	override fun update(stepTime: Float) {
 		currentTime += stepTime
 		if (currentTime > duration) {
 			currentTime = 0f
-			remove()
-			if (callAgain) {
-				callAgain = false
+			if (pendingInvoke) {
+				pendingInvoke = false
 				callback()
+			} else {
+				remove()
 			}
 		}
 	}
@@ -36,7 +37,7 @@ internal class LimitedCallback(
 			timeDriver.addChild(this)
 			callback()
 		} else {
-			callAgain = true
+			pendingInvoke = true
 		}
 	}
 
@@ -46,7 +47,9 @@ internal class LimitedCallback(
 }
 
 /**
- *
+ * Creates a callback wrapper that will prevent a method from being invoked too rapidly.
+ * @param duration When the wrapper is invoked, a timed lock will be created for this number of seconds. If the wrapper
+ * is invoked while this timed lock is in place, the callback will be invoked at the end of the lock.
  */
 fun Scoped.limitedCallback(duration: Float, callback: () -> Unit): CallbackWrapper {
 	return LimitedCallback(inject(TimeDriver), duration, callback)
