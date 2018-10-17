@@ -1,15 +1,12 @@
 package com.acornui.component.style
 
-import com.acornui.collection.addSorted
-import com.acornui.collection.forEach2
-import com.acornui.collection.forEachReversed2
-import com.acornui.collection.sortedInsertionIndex
+import com.acornui.collection.*
 
 /**
  * A style calculator is responsible for setting the calculated values
  */
 interface StyleCalculator {
-	fun calculate(style: Style, target: StyleableRo)
+	fun calculate(target: StyleableRo, out: Style)
 }
 
 object CascadingStyleCalculator : StyleCalculator {
@@ -23,12 +20,12 @@ object CascadingStyleCalculator : StyleCalculator {
 		-o1.priority.compareTo(o2.priority) // Higher priority values come first.
 	}
 
-	override fun calculate(style: Style, target: StyleableRo) {
+	override fun calculate(target: StyleableRo, out: Style) {
 		// Collect all style rule objects for the bound style type and tags.
 		// These entries will be sorted first by priority, and then by ancestry level.
 		target.walkStyleableAncestry {
 			ancestor ->
-			style.type.walkInheritance {
+			out.type.walkInheritance {
 				styleType ->
 				ancestor.getRulesByType(styleType, tmp)
 				tmp.forEachReversed2 {
@@ -40,18 +37,26 @@ object CascadingStyleCalculator : StyleCalculator {
 			}
 		}
 
+		for (i in 0..out.allProps.lastIndex) {
+			out.allProps[i].clearCalculated()
+		}
+
 		// Apply style entries to the calculated values of the bound style.
-		entries.forEach2 {
-			for (e in it.style.explicit) {
-				if (!calculated.containsKey(e.key)) {
-					calculated[e.key] = e.value
+		var hasChanged = false
+		entries.forEach2 { entry ->
+			for (i in 0..entry.style.allProps.lastIndex) {
+				val prop = entry.style.allProps[i]
+				if (prop.explicitIsSet) {
+					val found = out.allProps.first2 { it.name == prop.name }
+					if (found?.calculatedIsSet == false) {
+						found.calculatedValue = prop.explicitValue
+						hasChanged = true
+					}
 				}
 			}
 		}
-		if (calculated != style.calculated) {
-			style.calculated.clear()
-			style.calculated.putAll(calculated)
-			style.modTag.increment()
+		if (hasChanged) {
+			out.modTag.increment()
 		}
 		calculated.clear()
 		entries.clear()
@@ -81,10 +86,14 @@ object CascadingStyleCalculator : StyleCalculator {
 		for (i in 0..entries.lastIndex) {
 			val entry = entries[i]
 			val ruleInfo = appliedRules[i]
-			for (e in entry.style.explicit) {
-				if (!calculated.containsKey(e.key)) {
-					calculated[e.key] = e.value
-					ruleInfo.calculated[e.key] = e.value
+			for (i in 0..entry.style.allProps.lastIndex) {
+				val prop = entry.style.allProps[i]
+				if (prop.explicitIsSet) {
+					val found = style.allProps.first2 { it.name == prop.name }
+					if (found?.calculatedIsSet == true) {
+						found.calculatedValue = prop.explicitValue
+						ruleInfo.calculated[prop.name!!] = prop.explicitValue
+					}
 				}
 			}
 		}

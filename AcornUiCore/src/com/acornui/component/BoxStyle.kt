@@ -1,5 +1,6 @@
 package com.acornui.component
 
+import com.acornui.component.BoxStyleSerializer.write
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.component.style.styleProperty
@@ -54,12 +55,12 @@ open class BoxStyle : StyleBase() {
 object BoxStyleSerializer : To<BoxStyle>, From<BoxStyle> {
 
 	override fun BoxStyle.write(writer: Writer) {
-		writer.styleProperty(this, "linearGradient")?.obj(linearGradient, LinearGradientSerializer)
-		writer.styleProperty(this, "backgroundColor")?.color(backgroundColor)
-		writer.styleProperty(this, "borderColors")?.obj(borderColors, BorderColorsSerializer)
-		writer.styleProperty(this, "borderThicknesses")?.obj(borderThicknesses, PadSerializer)
-		writer.styleProperty(this, "borderRadii")?.obj(borderRadii, CornersSerializer)
-		writer.styleProperty(this, "margin")?.obj(margin, PadSerializer)
+		writer.styleProperty(this, this::linearGradient)?.obj(linearGradient, LinearGradientSerializer)
+		writer.styleProperty(this, this::backgroundColor)?.color(backgroundColor)
+		writer.styleProperty(this, this::borderColors)?.obj(borderColors, BorderColorsSerializer)
+		writer.styleProperty(this, this::borderThicknesses)?.obj(borderThicknesses, PadSerializer)
+		writer.styleProperty(this, this::borderRadii)?.obj(borderRadii, CornersSerializer)
+		writer.styleProperty(this, this::margin)?.obj(margin, PadSerializer)
 	}
 
 	override fun read(reader: Reader): BoxStyle {
@@ -69,12 +70,12 @@ object BoxStyleSerializer : To<BoxStyle>, From<BoxStyle> {
 	}
 
 	fun read(reader: Reader, boxStyle: BoxStyle) {
-		reader.contains("linearGradient") { boxStyle.linearGradient = it.obj(LinearGradientSerializer) }
-		reader.contains("backgroundColor") { boxStyle.backgroundColor = it.color()!! }
-		reader.contains("borderColors") { boxStyle.borderColors = it.obj(BorderColorsSerializer)!! }
-		reader.contains("borderThicknesses") { boxStyle.borderThicknesses = it.obj(PadSerializer)!! }
-		reader.contains("borderRadii") { boxStyle.borderRadii = it.obj(CornersSerializer)!! }
-		reader.contains("margin") { boxStyle.margin = it.obj(PadSerializer)!! }
+		reader.contains(boxStyle::linearGradient.name) { boxStyle.linearGradient = it.obj(LinearGradientSerializer) }
+		reader.contains(boxStyle::backgroundColor.name) { boxStyle.backgroundColor = it.color()!! }
+		reader.contains(boxStyle::borderColors.name) { boxStyle.borderColors = it.obj(BorderColorsSerializer)!! }
+		reader.contains(boxStyle::borderThicknesses.name) { boxStyle.borderThicknesses = it.obj(PadSerializer)!! }
+		reader.contains(boxStyle::borderRadii.name) { boxStyle.borderRadii = it.obj(CornersSerializer)!! }
+		reader.contains(boxStyle::margin.name) { boxStyle.margin = it.obj(PadSerializer)!! }
 	}
 }
 

@@ -117,17 +117,17 @@ class CascadingStyleCalculatorTest {
 		}
 
 		val styleC = SimpleStyle()
-		CascadingStyleCalculator.calculate(styleC, c)
+		CascadingStyleCalculator.calculate(c, styleC)
 		assertEquals("CForC_bar", styleC.bar)
 
 		val styleB = SimpleStyle()
-		CascadingStyleCalculator.calculate(styleB, b)
+		CascadingStyleCalculator.calculate(b, styleB)
 		assertEquals("AForB_bar", styleB.bar)
 		assertEquals("BForB_bar", styleB.baz)
 		assertEquals("AForB_foo", styleB.foo)
 
 		val styleA = SimpleStyle()
-		CascadingStyleCalculator.calculate(styleA, a)
+		CascadingStyleCalculator.calculate(a, styleA)
 		assertEquals("AForA_bar", styleA.bar)
 	}
 

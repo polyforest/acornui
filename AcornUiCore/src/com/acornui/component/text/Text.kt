@@ -183,30 +183,30 @@ fun CharStyle.toFontStyle(out: FontStyle = FontStyle()): FontStyle {
 object CharStyleSerializer : To<CharStyle>, From<CharStyle> {
 
 	override fun CharStyle.write(writer: Writer) {
-		writer.styleProperty(this, "face")?.string(face)
-		writer.styleProperty(this, "size")?.int(size)
-		writer.styleProperty(this, "bold")?.bool(bold)
-		writer.styleProperty(this, "italic")?.bool(italic)
-		writer.styleProperty(this, "underlined")?.bool(underlined)
-		writer.styleProperty(this, "colorTint")?.color(colorTint)
-		writer.styleProperty(this, "backgroundColor")?.color(backgroundColor)
-		writer.styleProperty(this, "selectedColorTint")?.color(selectedColorTint)
-		writer.styleProperty(this, "selectedBackgroundColor")?.color(selectedBackgroundColor)
-		writer.styleProperty(this, "selectable")?.bool(selectable)
+		writer.styleProperty(this, this::face)?.string(face)
+		writer.styleProperty(this, this::size)?.int(size)
+		writer.styleProperty(this, this::bold)?.bool(bold)
+		writer.styleProperty(this, this::italic)?.bool(italic)
+		writer.styleProperty(this, this::underlined)?.bool(underlined)
+		writer.styleProperty(this, this::colorTint)?.color(colorTint)
+		writer.styleProperty(this, this::backgroundColor)?.color(backgroundColor)
+		writer.styleProperty(this, this::selectedColorTint)?.color(selectedColorTint)
+		writer.styleProperty(this, this::selectedBackgroundColor)?.color(selectedBackgroundColor)
+		writer.styleProperty(this, this::selectable)?.bool(selectable)
 	}
 
 	override fun read(reader: Reader): CharStyle {
 		val c = CharStyle()
-		reader.contains("face") { c.face = it.string()!! }
-		reader.contains("size") { c.size = it.int()!! }
-		reader.contains("bold") { c.bold = it.bool()!! }
-		reader.contains("italic") { c.italic = it.bool()!! }
-		reader.contains("underlined") { c.underlined = it.bool()!! }
-		reader.contains("colorTint") { c.colorTint = it.color()!! }
-		reader.contains("backgroundColor") { c.backgroundColor = it.color()!! }
-		reader.contains("selectedColorTint") { c.selectedColorTint = it.color()!! }
-		reader.contains("selectedBackgroundColor") { c.selectedBackgroundColor = it.color()!! }
-		reader.contains("selectable") { c.selectable = it.bool()!! }
+		reader.contains(c::face.name) { c.face = it.string()!! }
+		reader.contains(c::size.name) { c.size = it.int()!! }
+		reader.contains(c::bold.name) { c.bold = it.bool()!! }
+		reader.contains(c::italic.name) { c.italic = it.bool()!! }
+		reader.contains(c::underlined.name) { c.underlined = it.bool()!! }
+		reader.contains(c::colorTint.name) { c.colorTint = it.color()!! }
+		reader.contains(c::backgroundColor.name) { c.backgroundColor = it.color()!! }
+		reader.contains(c::selectedColorTint.name) { c.selectedColorTint = it.color()!! }
+		reader.contains(c::selectedBackgroundColor.name) { c.selectedBackgroundColor = it.color()!! }
+		reader.contains(c::selectable.name) { c.selectable = it.bool()!! }
 		return c
 	}
 }

@@ -425,17 +425,6 @@ open class GlRect(
 		}
 	}
 
-	override fun updateConcatenatedColorTransform() {
-		super.updateConcatenatedColorTransform()
-
-		if (simpleMode) {
-			simpleModeObj.apply {
-				fillColor.set(style.backgroundColor).mul(_concatenatedColorTint)
-				borderColors.set(style.borderColors).mul(_concatenatedColorTint)
-			}
-		}
-	}
-
 	private fun updateSimpleModeVertices() {
 		if (!simpleMode) return
 		simpleModeObj.apply {
@@ -466,6 +455,10 @@ open class GlRect(
 			}
 
 			cT.rot(normal.set(Vector3.NEG_Z)).nor()
+
+			val tint = concatenatedColorTint
+			fillColor.set(style.backgroundColor).mul(tint)
+			borderColors.set(style.borderColors).mul(tint)
 		}
 	}
 

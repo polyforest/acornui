@@ -17,6 +17,7 @@
 package com.acornui.component.style
 
 import com.acornui.collection.Clearable
+import com.acornui.collection.first2
 import com.acornui.component.UiComponent
 import com.acornui.core.Disposable
 import com.acornui.core.di.Owned
@@ -37,14 +38,9 @@ interface StyleRo : Observable {
 	val type: StyleType<*>
 
 	/**
-	 * The style properties, if they were explicitly set.
-	 */
-	val explicit: Map<String, Any?>
-
-	/**
 	 * The style properties, as calculated by a [StyleCalculator].
 	 */
-	val calculated: Map<String, Any?>
+	val allProps: List<StyleProp<*>>
 
 	/**
 	 * When either the explicit or calculated values change, the mod tag is incremented.
@@ -59,9 +55,11 @@ interface Style : StyleRo, Clearable {
 
 	override val changed: Signal<(Style) -> Unit>
 
-	override val explicit: MutableMap<String, Any?>
+	override val allProps: MutableList<StyleProp<Any?>>
 
-	override val calculated: MutableMap<String, Any?>
+	fun getProp(kProperty: KProperty<*>): StyleProp<Any?>? {
+		return allProps.first2 { it.name == kProperty.name }
+	}
 
 	/**
 	 * Dispatches a [changed] signal.
@@ -91,13 +89,13 @@ abstract class StyleBase : Style, Disposable {
 	override val modTag = ModTagImpl()
 
 	override fun clear() {
-		explicit.clear()
-		calculated.clear()
+		for (i in 0..allProps.lastIndex) {
+			allProps[i].clear()
+		}
 		notifyChanged()
 	}
 
-	override val explicit = HashMap<String, Any?>()
-	override val calculated = HashMap<String, Any?>()
+	override val allProps: MutableList<StyleProp<Any?>> = ArrayList()
 
 	protected fun <P> prop(defaultValue: P) = StyleProp(defaultValue)
 
@@ -111,12 +109,7 @@ abstract class StyleBase : Style, Disposable {
 	}
 
 	override fun toString(): String {
-		var props = ""
-		for (entry in calculated) {
-			val explicit = if (explicit.containsKey(entry.key)) "*" else ""
-			if (props.isNotEmpty()) props += ", "
-			props += "${entry.key}=$explicit${entry.value}"
-		}
+		val props = allProps.joinToString(", ")
 		return "Style($props)"
 	}
 }
@@ -127,7 +120,7 @@ class StyleValidator(
 ) {
 
 	fun validate(host: Styleable) {
-		calculator.calculate(style, host)
+		calculator.calculate(host, style)
 	}
 }
 
@@ -153,38 +146,113 @@ class StyleWatcher<out T : StyleRo>(
 /**
  * Returns a writer for the style's property if and only if that property is explicitly set.
  */
-fun Writer.styleProperty(style: Style, id: String): Writer? {
-	if (!style.explicit.containsKey(id)) return null
-	return property(id)
+fun Writer.styleProperty(style: Style, prop: KProperty<*>): Writer? {
+	if (style.getProp(prop)?.explicitIsSet != true) return null
+	return property(prop.name)
 }
 
 /**
- * Sets this style to match that of the other style.
+ * Sets this style's explicit values to the calculated values of the given [other] style.
  */
 @Suppress("unchecked_cast")
 fun <T : Style> T.set(other: T) {
-	explicit.clear()
-	explicit.putAll(other.calculated)
-	explicit.putAll(other.explicit)
+	for (i in 0..allProps.lastIndex) {
+		val p = allProps[i]
+		val otherP = other.allProps.first2 { it.name == p.name } ?: continue
+		p.explicitValue = otherP.value
+	}
 	notifyChanged()
 }
 
-open class StyleProp<T>(val defaultValue: T) : ReadWriteProperty<Style, T> {
+open class StyleProp<T>(
+		val defaultValue: T
+) : ReadWriteProperty<Style, T>, Clearable {
+
+	private var _explicitIsSet = false
+
+	val explicitIsSet: Boolean
+		get() = _explicitIsSet
+
+	private var _explicitValue: T? = null
+
+	/**
+	 * The value of this style property.
+	 */
+	@Suppress("UNCHECKED_CAST")
+	var explicitValue: T
+		get() = _explicitValue as T
+		set(v) {
+			_explicitIsSet = true
+			_explicitValue = v
+			_calculatedIsSet = true
+			_calculatedValue = v
+		}
+
+	private var _calculatedIsSet = false
+
+	val calculatedIsSet: Boolean
+		get() = _calculatedIsSet
+
+	private var _calculatedValue: T = defaultValue
+
+	@Suppress("UNCHECKED_CAST")
+	var calculatedValue: T
+		get() = _calculatedValue
+		set(value) {
+			_calculatedIsSet = true
+			_calculatedValue = value
+		}
+
+	var name: String? = null
+		private set
+
+	operator fun provideDelegate(
+			thisRef: Style,
+			prop: KProperty<*>
+	): StyleProp<T> {
+		if (name != null) throw Exception("This style property has already been assigned.")
+		name = prop.name
+		@Suppress("UNCHECKED_CAST")
+		thisRef.allProps.add(this as StyleProp<Any?>)
+		return this
+	}
+
+	/**
+	 * Returns the calculated value.
+	 */
+	val value: T
+		get() = _calculatedValue
 
 	@Suppress("unchecked_cast")
 	override fun getValue(thisRef: Style, property: KProperty<*>): T {
-		return if (thisRef.explicit.containsKey(property.name)) {
-			thisRef.explicit[property.name] as T
-		} else if (thisRef.calculated.containsKey(property.name)) {
-			thisRef.calculated[property.name] as T
-		} else {
-			defaultValue
-		}
+		return _calculatedValue
 	}
 
-	override fun setValue(thisRef: Style, property: KProperty<*>, value: T) {
-		thisRef.explicit[property.name] = value as Any?
+	override fun setValue(thisRef: Style, property: KProperty<*>, value: T) = setValue(thisRef, value)
+
+	fun setValue(thisRef: Style, value: T) {
+		explicitValue = value
 		thisRef.notifyChanged()
+	}
+
+	/**
+	 * Clears the calculated value if the explicit value was not set.
+	 */
+	fun clearCalculated() {
+		if (explicitIsSet) return
+		_calculatedIsSet = false
+		_calculatedValue = defaultValue
+	}
+
+	override fun clear() {
+		_explicitIsSet = false
+		_explicitValue = null
+		_calculatedIsSet = false
+		_calculatedValue = defaultValue
+	}
+
+	override fun toString(): String {
+		return "${if (_explicitIsSet) "*" else ""}$name=$_explicitValue"
 	}
 }
 

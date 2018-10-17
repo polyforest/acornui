@@ -53,13 +53,13 @@ object RuleStyleSerializer : To<RuleStyle>, From<RuleStyle> {
 		BoxStyleSerializer.apply {
 			write(writer)
 		}
-		writer.styleProperty(this, "thickness")?.float(thickness)
+		writer.styleProperty(this, this::thickness)?.float(thickness)
 	}
 
 	override fun read(reader: Reader): RuleStyle {
 		val ruleStyle = RuleStyle()
 		BoxStyleSerializer.read(reader, ruleStyle)
-		reader.contains("thickness") { ruleStyle.thickness = it.float()!! }
+		reader.contains(ruleStyle::thickness.name) { ruleStyle.thickness = it.float()!! }
 		return ruleStyle
 	}
 }
