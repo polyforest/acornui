@@ -494,9 +494,6 @@ inline fun <E, C : MutableCollection<in E>> List<E>.filterTo2(destination: C, pr
 	return destination
 }
 
-@Deprecated("renamed to first2", ReplaceWith("this.firstOrNull2(startIndex, predicate)"), DeprecationLevel.ERROR)
-inline fun <E> List<E>.find2(startIndex: Int = 0, predicate: (E) -> Boolean): E? = this.firstOrNull2(startIndex, predicate)
-
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  * Does not cause allocation.

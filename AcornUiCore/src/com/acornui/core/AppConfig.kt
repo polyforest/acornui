@@ -20,7 +20,7 @@ import com.acornui.core.di.DKey
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.i18n.Locale
-import com.acornui.core.observe.DataBinding
+import com.acornui.core.observe.DataBindingImpl
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import kotlin.properties.Delegates
@@ -161,7 +161,7 @@ data class UserInfo(
 	/**
 	 * The current Locale chain of the user. This may be set.
 	 */
-	val currentLocale = DataBinding(systemLocale)
+	val currentLocale = DataBindingImpl(systemLocale)
 
 	init {
 		currentLocale.bind {

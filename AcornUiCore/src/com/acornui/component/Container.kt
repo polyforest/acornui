@@ -94,7 +94,8 @@ open class ContainerImpl(
 		}
 		child.invalidate(cascadingFlags)
 		invalidate(bubblingFlags)
-		if (!isValidatingLayout) invalidate(ValidationFlags.SIZE_CONSTRAINTS)
+		if (!isValidatingLayout)
+			invalidateSize()
 
 		return child
 	}
@@ -144,7 +145,8 @@ open class ContainerImpl(
 		}
 		invalidate(bubblingFlags)
 		child.invalidate(cascadingFlags)
-		if (!isValidatingLayout) invalidate(ValidationFlags.SIZE_CONSTRAINTS)
+		if (!isValidatingLayout)
+			invalidateSize()
 
 		return child
 	}
@@ -195,12 +197,20 @@ open class ContainerImpl(
 		}
 	}
 
+	private val childrenIterator = _children.iteratorPool.obtain()
+
 	override fun update() {
 		super.update()
-
-		_children.iterate { child ->
-			child.update()
-			true
+		val size = _children.size
+		if (size == 0) return
+		else if (size == 1) {
+			_children[0].update()
+		} else {
+			val c = childrenIterator
+			while (c.hasNext()) {
+				c.next().update()
+			}
+			c.clear()
 		}
 	}
 
@@ -276,7 +286,7 @@ open class ContainerImpl(
 				// If we are currently within a layout validation, do not attempt another invalidation.
 				// If the child isn't laid out (invisible or includeInLayout is false), don't invalidate the layout
 				// unless shouldLayout has just changed.
-				invalidate(ValidationFlags.SIZE_CONSTRAINTS)
+				invalidateSize()
 			}
 		}
 		val bubblingFlags = flagsInvalidated and bubblingFlags

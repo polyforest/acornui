@@ -74,6 +74,7 @@ class Calendar(owner: Owned) : ContainerImpl(owner) {
 	}
 
 	init {
+		validation.addNode(ValidationFlags.PROPERTIES, ValidationFlags.SIZE_CONSTRAINTS, this::updateProperties)
 		grid.apply {
 			for (i in 0..6) {
 				+headers[i]
@@ -114,8 +115,7 @@ class Calendar(owner: Owned) : ContainerImpl(owner) {
 		dateStyle = DateTimeFormatStyle.SHORT
 	}
 
-	override fun updateProperties() {
-		super.updateProperties()
+	private fun updateProperties() {
 		val dayOffset = date.dayOfWeek - dayOfWeek
 
 		for (i in 0..6) {

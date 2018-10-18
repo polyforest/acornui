@@ -28,7 +28,14 @@ interface DataBindingRo<T> {
 	fun remove(callback: (T) -> Unit)
 }
 
-class DataBinding<T>(initialValue: T) : DataBindingRo<T>, Disposable {
+interface DataBinding<T> : DataBindingRo<T>, Disposable {
+
+	override var value: T
+
+	fun change(callback: (T) -> T)
+}
+
+class DataBindingImpl<T>(initialValue: T) : DataBinding<T> {
 
 	private val _changed = Signal2<T, T>()
 
@@ -49,7 +56,7 @@ class DataBinding<T>(initialValue: T) : DataBindingRo<T>, Disposable {
 			_changed.dispatch(old, value)
 		}
 
-	fun change(callback: (T) -> T) {
+	override fun change(callback: (T) -> T) {
 		if (_changed.isDispatching) return
 		value = callback(value)
 	}
@@ -120,6 +127,6 @@ fun <T> DataBinding<T>.mirror(other: DataBinding<T>): Disposable {
  */
 typealias DataChangeHandler<T> = (T, T) -> Unit
 
-fun <T> Owned.dataBinding(initialValue: T): DataBinding<T> {
-	return own(DataBinding(initialValue))
+fun <T> Owned.dataBinding(initialValue: T): DataBindingImpl<T> {
+	return own(DataBindingImpl(initialValue))
 }

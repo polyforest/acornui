@@ -152,6 +152,7 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		}
 
 	init {
+		validation.addNode(ValidationFlags.PROPERTIES, ValidationFlags.SIZE_CONSTRAINTS, this::updateProperties)
 		focusEnabled = true
 		isFocusContainer = true
 
@@ -200,7 +201,7 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	 */
 	fun setSizeToFit(text: String?) = textInput.setSizeToFit(text)
 
-	override fun updateProperties() {
+	private fun updateProperties() {
 		textInput.text = formatter.format(value)
 		stepUpButton.disabled = value >= _max
 		stepDownButton.disabled = value <= _min

@@ -406,10 +406,9 @@ open class UiComponentImpl(
 		validation = validationTree {
 			ValidationFlags.apply {
 				addNode(STYLES, r::updateStyles)
-				addNode(PROPERTIES, STYLES, r::updateProperties)
 				addNode(HIERARCHY_ASCENDING, r::updateHierarchyAscending)
 				addNode(HIERARCHY_DESCENDING, r::updateHierarchyDescending)
-				addNode(SIZE_CONSTRAINTS, PROPERTIES, r::validateSizeConstraints)
+				addNode(SIZE_CONSTRAINTS, STYLES, r::validateSizeConstraints)
 				addNode(LAYOUT, SIZE_CONSTRAINTS, r::validateLayout)
 				addNode(LAYOUT_ENABLED, r::updateLayoutEnabled)
 				addNode(TRANSFORM, r::updateTransform)
@@ -942,14 +941,6 @@ open class UiComponentImpl(
 
 	override val invalidFlags: Int
 		get() = validation.invalidFlags
-
-	/**
-	 * Validates this component's properties. This is done before any layout or transformation
-	 * validation happens.
-	 * Do not call this directly, use `validate(ValidationFlags.PROPERTIES)`
-	 */
-	protected open fun updateProperties() {
-	}
 
 	//-----------------------------------------------
 	// Transformable

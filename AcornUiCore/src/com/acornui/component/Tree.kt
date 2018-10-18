@@ -144,6 +144,7 @@ open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Owned, protected val 
 		get() = _elements
 
 	init {
+		validation.addNode(ValidationFlags.PROPERTIES, ValidationFlags.SIZE_CONSTRAINTS, this::updateProperties)
 		cascadingFlags = cascadingFlags or ValidationFlags.PROPERTIES
 		styleTags.add(Companion)
 
@@ -197,7 +198,7 @@ open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Owned, protected val 
 	protected open val isLeaf: Boolean
 		get() = _data == null || _data!!.children.isEmpty()
 
-	override fun updateProperties() {
+	private fun updateProperties() {
 		openedFolderIcon?.visible = false
 		closedFolderIcon?.visible = false
 		leafIcon?.visible = false
