@@ -16,6 +16,7 @@
 
 package com.acornui.serialization
 
+import com.acornui.collection.stringMapOf
 import com.acornui.core.htmlEntitiesDecode
 import com.acornui.core.isWhitespace2
 import com.acornui.core.replace2
@@ -61,7 +62,7 @@ class XmlNode(
 		val parent: XmlNode?
 ) : Reader {
 
-	private val _properties: HashMap<String, Reader> = HashMap()
+	private val _properties: MutableMap<String, Reader> = stringMapOf()
 	private val _elements: MutableList<Reader> = ArrayList()
 
 	private var isParsed: Boolean = false
@@ -184,7 +185,7 @@ class XmlNode(
 		return index < _elements.size
 	}
 
-	override fun properties(): HashMap<String, Reader> {
+	override fun properties(): MutableMap<String, Reader> {
 		parseObject()
 		return _properties
 	}

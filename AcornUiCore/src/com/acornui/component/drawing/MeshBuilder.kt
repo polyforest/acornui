@@ -2,6 +2,7 @@ package com.acornui.component.drawing
 
 import com.acornui.collection.Clearable
 import com.acornui.collection.ObjectPool
+import com.acornui.collection.stringMapOf
 import com.acornui.gl.core.*
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
@@ -234,7 +235,7 @@ object CapStyle {
 	/**
 	 * A map of cap styles to their respective mesh builders.
 	 */
-	private val CAP_BUILDERS: HashMap<String, CapBuilder> = HashMap()
+	private val CAP_BUILDERS = stringMapOf<CapBuilder>()
 
 	fun getCapBuilder(style: String): CapBuilder? {
 		return CAP_BUILDERS[style]

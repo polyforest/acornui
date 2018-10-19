@@ -16,6 +16,7 @@
 
 package com.acornui.gl.core
 
+import com.acornui.collection.stringMapOf
 import com.acornui.core.Disposable
 
 
@@ -77,8 +78,8 @@ abstract class ShaderProgramBase(
 	private val vertexShader: GlShaderRef
 	private val fragmentShader: GlShaderRef
 
-	private val uniformLocationCache = HashMap<String, GlUniformLocationRef?>()
-	private val attributeLocationCache = HashMap<String, Int>()
+	private val uniformLocationCache = stringMapOf<GlUniformLocationRef?>()
+	private val attributeLocationCache = stringMapOf<Int>()
 
 	init {
 		// Create the shader program

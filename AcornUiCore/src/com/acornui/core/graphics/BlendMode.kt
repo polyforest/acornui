@@ -19,6 +19,7 @@
 package com.acornui.core.graphics
 
 import com.acornui.collection.copy
+import com.acornui.collection.stringMapOf
 import com.acornui.gl.core.Gl20
 
 
@@ -44,7 +45,7 @@ open class BlendMode(
 		val INVERTED = BlendMode(Gl20.ONE_MINUS_DST_ALPHA, Gl20.ONE_MINUS_DST_ALPHA, Gl20.ONE_MINUS_SRC_ALPHA, "inverted")
 		val SCREEN = BlendMode(Gl20.ONE, Gl20.ONE, Gl20.ONE_MINUS_SRC_COLOR, "screen")
 
-		private val registry = HashMap<String, BlendMode>()
+		private val registry = stringMapOf<BlendMode>()
 
 		fun register(vararg blendModes: BlendMode) {
 			for (blendMode in blendModes) {

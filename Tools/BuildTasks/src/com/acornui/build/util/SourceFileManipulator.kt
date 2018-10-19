@@ -16,6 +16,7 @@
 
 package com.acornui.build.util
 
+import com.acornui.collection.stringMapOf
 import java.io.File
 
 /**
@@ -23,7 +24,7 @@ import java.io.File
  */
 class SourceFileManipulator {
 
-	private val fileTypeProcessorMap = HashMap<String, ArrayList<FileProcessor>>()
+	private val fileTypeProcessorMap = stringMapOf<ArrayList<FileProcessor>>()
 
 	fun addProcessor(processor: FileProcessor, vararg fileExtension: String) {
 		for (extension in fileExtension) {

@@ -2,6 +2,7 @@
 
 package com.acornui.jvm.persistance
 
+import com.acornui.collection.stringMapOf
 import com.acornui.core.Version
 import com.acornui.core.persistance.Persistence
 import com.acornui.serialization.*
@@ -79,19 +80,19 @@ private object PersistenceDataSerializer : From<PersistenceData>, To<Persistence
 		val versionStr = reader.string("version")
 		val version = if (versionStr == null) null else Version.fromStr(versionStr)
 
-		val map = HashMap<String, String>()
-		reader["map"]?.forEach { s, reader ->
-			map[s] = reader.string()!!
+		val map = stringMapOf<String>()
+		reader["map"]?.forEach { s, reader2 ->
+			map[s] = reader2.string()!!
 		}
 		return PersistenceData(map, version)
 	}
 
 	override fun PersistenceData.write(writer: Writer) {
 		writer.string("version", version?.toVersionString())
-		writer.obj("map", true, {
+		writer.obj("map", true) {
 			for ((key, value) in map) {
 				it.string(key, value)
 			}
-		})
+		}
 	}
 }

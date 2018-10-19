@@ -18,6 +18,7 @@ package com.acornui.core.io.file
 
 import com.acornui.collection.poll
 import com.acornui.collection.pop
+import com.acornui.collection.stringMapOf
 import com.acornui.core.di.DKey
 import com.acornui.core.replace2
 import com.acornui.core.split2
@@ -40,7 +41,7 @@ interface Files {
  */
 class FilesImpl(manifest: FilesManifest) : Files {
 
-	private val map = HashMap<String, FileEntry>()
+	private val map = stringMapOf<FileEntry>()
 
 	private val rootDir = Directory("", null, HashMap(), HashMap())
 

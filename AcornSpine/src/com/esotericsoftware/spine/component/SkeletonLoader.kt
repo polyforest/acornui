@@ -19,6 +19,7 @@ package com.esotericsoftware.spine.component
 import com.acornui.async.Deferred
 import com.acornui.async.async
 import com.acornui.async.awaitAll
+import com.acornui.collection.stringMapOf
 import com.acornui.core.assets.*
 import com.acornui.core.di.Scoped
 import com.acornui.core.graphics.*
@@ -67,7 +68,7 @@ fun Scoped.loadSkeleton(skeletonDataPath: String, textureAtlasPath: String, skin
 	val skinsToLoad = skins ?: skeletonData.skins.keys // If skins is null, load all skins
 
 	val skinsDirectory = textureAtlasPath.substringBeforeLast("/")
-	val loadedSkins = HashMap<String, Deferred<LoadedSkin>>()
+	val loadedSkins = stringMapOf<Deferred<LoadedSkin>>()
 	for (skinName in skinsToLoad) {
 		loadedSkins[skinName] = loadSkeletonSkin(skeletonData, textureAtlasData, skinName, skinsDirectory, cachedGroup)
 	}
@@ -83,7 +84,7 @@ fun Scoped.loadSkeletonSkin(
 ): Deferred<LoadedSkin> = async {
 
 	val skinData = skeletonData.findSkin(skin) ?: throw Exception("Could not find skin $skin")
-	val pageTextures = HashMap<String, Texture>()
+	val pageTextures = stringMapOf<Texture>()
 	for (i in skinData.attachments.keys) {
 		val (page, _) = textureAtlasData.findRegion(i.attachmentName) ?: throw Exception("Region ${i.attachmentName} not found in atlas.")
 		if (!pageTextures.contains(page.texturePath)) {

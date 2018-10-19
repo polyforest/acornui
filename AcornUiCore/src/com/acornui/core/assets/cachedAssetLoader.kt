@@ -50,11 +50,28 @@ fun <T, R> loadAndCache(assetManager: AssetManager, path: String, type: AssetTyp
 	return value.task
 }
 
-private data class AssetDecoratorCacheKey<T, R>(
+@Suppress("EqualsOrHashCode")
+private class AssetDecoratorCacheKey<T, R>(
 		val path: String,
 		val type: AssetType<T>,
 		val decorator: Decorator<T, R>
-) : CacheKey<DecoratedCacheValue<T, R>>
+) : CacheKey<DecoratedCacheValue<T, R>> {
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		return _hashCode == other?.hashCode()
+	}
+
+	private val _hashCode: Int = run {
+		var result = path.hashCode()
+		result = 31 * result + type.hashCode()
+		31 * result + decorator.hashCode()
+	}
+
+	override fun hashCode(): Int {
+		return _hashCode
+	}
+}
 
 private class DecoratedCacheValue<T, out R>(
 		private val target: CancelableDeferred<T>,

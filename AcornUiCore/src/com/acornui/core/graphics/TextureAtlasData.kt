@@ -94,6 +94,28 @@ data class AtlasPageData(
 	fun getRegion(regionName: String): AtlasRegionData? {
 		return regions.find { it.name == regionName }
 	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		return hashCode() == other?.hashCode()
+	}
+
+	private val _hashCode: Int = run {
+		var result = texturePath.hashCode()
+		result = 31 * result + width
+		result = 31 * result + height
+		result = 31 * result + pixelFormat.hashCode()
+		result = 31 * result + premultipliedAlpha.hashCode()
+		result = 31 * result + filterMin.hashCode()
+		result = 31 * result + filterMag.hashCode()
+		result = 31 * result + regions.hashCode()
+		result = 31 * result + hasWhitePixel.hashCode()
+		result
+	}
+
+	override fun hashCode(): Int {
+		return _hashCode
+	}
 }
 
 object AtlasPageSerializer : To<AtlasPageData>, From<AtlasPageData> {

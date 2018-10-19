@@ -1,5 +1,7 @@
 package com.acornui.collection
 
+import kotlin.properties.Delegates
+
 
 fun <E> arrayCopy(src: List<E>,
 				  srcPos: Int,

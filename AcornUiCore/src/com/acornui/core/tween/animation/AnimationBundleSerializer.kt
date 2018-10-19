@@ -16,6 +16,7 @@
 
 package com.acornui.core.tween.animation
 
+import com.acornui.collection.stringMapOf
 import com.acornui.core.toUnderscoreCase
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
@@ -24,14 +25,14 @@ import com.acornui.serialization.*
 object AnimationBundleSerializer : From<AnimationBundle> {
 
 	override fun read(reader: Reader): AnimationBundle {
-		val library = HashMap<String, LibraryItem>()
+		val library = stringMapOf<LibraryItem>()
 		reader["library"]!!.forEach {
-			name, reader ->
-			val type = reader.string("type")!!
+			name, reader2 ->
+			val type = reader2.string("type")!!
 			library[name] = when (type) {
-				"image" -> reader.obj(ImageLibraryItemSerializer)!!
-				"atlas" -> reader.obj(AtlasLibraryItemSerializer)!!
-				"animation" -> reader.obj(AnimationLibraryItemSerializer)!!
+				"image" -> reader2.obj(ImageLibraryItemSerializer)!!
+				"atlas" -> reader2.obj(AtlasLibraryItemSerializer)!!
+				"animation" -> reader2.obj(AnimationLibraryItemSerializer)!!
 				else -> throw Exception("Unknown library item type $type")
 			}
 		}
@@ -95,13 +96,13 @@ object KeyFrameSerializer : From<KeyFrame> {
 	override fun read(reader: Reader): KeyFrame {
 		val props = HashMap<PropType, Prop>()
 		reader["props"]!!.forEach {
-			propName, reader ->
+			propName, reader2 ->
 			val prop = if (propName != propName.toUpperCase()) {
 				PropType.valueOf(propName.toUnderscoreCase().toUpperCase())
 			} else {
 				PropType.valueOf(propName)
 			}
-			props[prop] = PropSerializer.read(reader)
+			props[prop] = PropSerializer.read(reader2)
 		}
 
 		return KeyFrame(

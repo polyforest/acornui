@@ -1,5 +1,6 @@
 package com.acornui.jvm.audio
 
+import com.acornui.collection.stringMapOf
 import com.acornui.core.assets.AssetType
 import com.acornui.core.audio.SoundFactory
 import com.acornui.jvm.loader.JvmAssetLoaderBase
@@ -38,7 +39,7 @@ open class OpenAlSoundLoader(
 
 object SoundDecoders {
 
-	private val decoders = HashMap<String, SoundDecoder>()
+	private val decoders = stringMapOf<SoundDecoder>()
 
 	/**
 	 * Adds a decoder for the given file type.

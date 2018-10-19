@@ -50,7 +50,6 @@ import com.acornui.serialization.JsonSerializer
 import java.io.File
 import java.net.URLDecoder
 import java.net.URLEncoder
-import java.util.*
 
 /**
  * A Headless application initializes utility dependencies, but does not create any windowing, graphics, or input.

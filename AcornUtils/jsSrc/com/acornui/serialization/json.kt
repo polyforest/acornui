@@ -53,7 +53,7 @@ class JsonNode(private val source: dynamic
 ) : Reader {
 
 	private val _properties: Map<String, Reader> by lazy {
-		val m = HashMap<String, Reader>()
+		val m = stringMapOf<Reader>()
 		if (source != null) {
 			for (name in keys(source)) {
 				if (source.hasOwnProperty(name) == true) {

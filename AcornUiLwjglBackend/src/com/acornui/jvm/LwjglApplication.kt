@@ -22,6 +22,7 @@ import com.acornui.assertionsEnabled
 import com.acornui.async.launch
 import com.acornui.browser.decodeUriComponent2
 import com.acornui.browser.encodeUriComponent2
+import com.acornui.collection._stringMap
 import com.acornui.component.*
 import com.acornui.component.text.BitmapFontRegistry
 import com.acornui.core.*

@@ -16,6 +16,8 @@
 
 package com.acornui.core.input
 
+import com.acornui.collection.stringMapOf
+
 /**
  * Ascii Key codes.
  */
@@ -281,8 +283,8 @@ object Ascii {
 		}
 	}
 
-	private val keyNames: HashMap<String, Int> by lazy(LazyThreadSafetyMode.NONE) {
-		val keyNames = HashMap<String, Int>()
+	private val keyNames: MutableMap<String, Int> by lazy(LazyThreadSafetyMode.NONE) {
+		val keyNames = stringMapOf<Int>()
 		for (i in 0..512) {
 			val name = toString(i)
 			if (name != null) keyNames[name] = i

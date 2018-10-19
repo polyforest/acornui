@@ -17,6 +17,7 @@
 package com.acornui.serialization
 
 import com.acornui.collection.ArrayIterator
+import com.acornui.collection.stringMapOf
 
 
 interface Serializer<T> {
@@ -41,9 +42,9 @@ interface Serializer<T> {
  * Returns the data the Serializer produced.
  */
 fun <E, T> Serializer<T>.write(value: E, to: To<E>): T {
-	return write {
-		it.obj(true) {
-			to.write2(value, it)
+	return write { it ->
+		it.obj(true) { it2 ->
+			to.write2(value, it2)
 		}
 	}
 }
@@ -101,8 +102,8 @@ fun <T> Reader.obj(factory: From<T>): T? {
 	return factory.read(this)
 }
 
-fun <T> Reader.map(itemFactory: From<T>): HashMap<String, T>? {
-	val hashMap = HashMap<String, T>()
+fun <T> Reader.map(itemFactory: From<T>): Map<String, T>? {
+	val hashMap = stringMapOf<T>()
 	forEach {
 		propName, reader ->
 		hashMap[propName] = itemFactory.read(reader)
@@ -262,7 +263,7 @@ fun Reader.floatArray(name: String): FloatArray? = get(name)?.floatArray()
 fun Reader.doubleArray(name: String): DoubleArray? = get(name)?.doubleArray()
 fun Reader.charArray(name: String): CharArray? = get(name)?.charArray()
 fun <T> Reader.obj(name: String, factory: From<T>): T? = get(name)?.obj(factory)
-fun <T> Reader.map(name: String, itemFactory: From<T>): HashMap<String, T>? = get(name)?.map(itemFactory)
+fun <T> Reader.map(name: String, itemFactory: From<T>): Map<String, T>? = get(name)?.map(itemFactory)
 
 interface Writer {
 
@@ -293,8 +294,8 @@ fun <T> Writer.map(value: Map<String, T?>?, to: To<T>) {
 				val p = it.property(entry.key)
 				if (entry.value == null) p.writeNull()
 				else {
-					p.obj(true) {
-						to.write2(entry.value!!, it)
+					p.obj(true) { it2 ->
+						to.write2(entry.value!!, it2)
 					}
 				}
 			}
@@ -339,8 +340,8 @@ fun <T : Any> Writer.array(value: Iterable<T?>?, to: To<T>) {
 			for (v in value) {
 				if (v == null) it.element().writeNull()
 				else {
-					it.element().obj(true) {
-						to.write2(v, it)
+					it.element().obj(true) { it2 ->
+						to.write2(v, it2)
 					}
 				}
 			}

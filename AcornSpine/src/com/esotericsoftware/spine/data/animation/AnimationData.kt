@@ -31,7 +31,6 @@
 
 package com.esotericsoftware.spine.data.animation
 
-import com.acornui.math.MathUtils
 import com.esotericsoftware.spine.data.animation.timeline.*
 
 
@@ -40,22 +39,22 @@ data class AnimationData(
 		/**
 		 * A map of slotName -> ArrayList of TimelineData objects. (Either AttachmentTimelineData, or ColorTimelineData)
 		 */
-		val slotTimelines: HashMap<String, ArrayList<TimelineData>>,
+		val slotTimelines: MutableMap<String, ArrayList<TimelineData>>,
 
 		/**
 		 * A map of boneName -> ArrayList of TimelineData objects. (Either RotateTimelineData, ScaleTimelineData, or TranslateTimelineData)
 		 */
-		val boneTimelines: HashMap<String, ArrayList<CurvedTimelineData>>,
+		val boneTimelines: MutableMap<String, ArrayList<CurvedTimelineData>>,
 
 		/**
 		 * A map of ikConstraintName -> TimelineData objects.
 		 */
-		val ikConstraintTimelines: HashMap<String, IkConstraintTimelineData>,
+		val ikConstraintTimelines: MutableMap<String, IkConstraintTimelineData>,
 
 		/**
 		 * A map of (skinName, slotName, attachmentName) -> FfdTimelineData objects.
 		 */
-		val ffdTimelines: HashMap<FfdtKey, FfdTimelineData>,
+		val ffdTimelines: MutableMap<FfdtKey, FfdTimelineData>,
 
 		/**
 		 * A list of the draw order timelines.

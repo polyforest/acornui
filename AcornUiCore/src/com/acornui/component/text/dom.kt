@@ -160,7 +160,7 @@
 //interface HtmlElement : Element {
 //	var title: String
 //
-//	val dataset: HashMap<String, String>
+//	val dataset: stringMapOf<String>
 //
 //	var spellcheck: Boolean
 //

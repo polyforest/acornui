@@ -3,6 +3,7 @@ package com.acornui.core.i18n
 import com.acornui.action.Decorator
 import com.acornui.async.then
 import com.acornui.collection.firstOrNull2
+import com.acornui.collection.stringMapOf
 import com.acornui.core.Disposable
 import com.acornui.core.assets.*
 import com.acornui.core.di.DKey
@@ -248,7 +249,7 @@ private fun Locale.toPathStrings(): List<String> {
 object PropertiesDecorator : Decorator<String, Map<String, String>> {
 
 	override fun decorate(target: String): Map<String, String> {
-		val map = HashMap<String, String>()
+		val map = stringMapOf<String>()
 		val parser = StringParser(target)
 		while (parser.hasNext) {
 			val line = parser.readLine().trimStart()

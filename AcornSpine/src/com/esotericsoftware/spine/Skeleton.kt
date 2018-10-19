@@ -49,9 +49,9 @@ import com.esotericsoftware.spine.data.SkeletonData
 class Skeleton(val data: SkeletonData, val atlas: TextureAtlasData) : Clearable {
 
 	val bones: MutableList<Bone>
-	val skins: HashMap<String, Skin>
+	val skins: MutableMap<String, Skin>
 	val slots: MutableList<Slot>
-	val animations: HashMap<String, Animation>
+	val animations: MutableMap<String, Animation>
 
 	/**
 	 * The slots and the order they will be drawn.
@@ -220,7 +220,7 @@ class Skeleton(val data: SkeletonData, val atlas: TextureAtlasData) : Clearable 
 	 * Sets a skin by name.
 	 */
 	fun setSkin(skinName: String) {
-		val skin = skins[skinName] ?: throw IllegalArgumentException("Skin not found: " + skinName)
+		val skin = skins[skinName] ?: throw IllegalArgumentException("Skin not found: $skinName")
 		setSkin(skin)
 	}
 

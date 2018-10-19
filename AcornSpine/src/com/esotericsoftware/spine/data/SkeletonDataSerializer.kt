@@ -16,6 +16,7 @@
 
 package com.esotericsoftware.spine.data
 
+import com.acornui.collection.stringMapOf
 import com.acornui.core.graphics.BlendMode
 import com.acornui.graphics.Color
 import com.acornui.serialization.*
@@ -39,7 +40,7 @@ object SkeletonDataSerializer : From<SkeletonData> {
 		val events = reader.map("events", SpineEventDefaultsSerializer) ?: hashMapOf()
 		val ikConstraints = reader.array2("ik", IkConstraintDataSerializer) ?: arrayOf()
 
-		val skins = HashMap<String, SkinData>()
+		val skins = stringMapOf<SkinData>()
 		reader["skins"]!!.forEach { skinName, iReader ->
 			val attachments = SkinAttachmentSerializer.read(iReader)
 			skins[skinName] = SkinData(skinName, attachments)
@@ -146,7 +147,7 @@ object TransformConstraintDataSerializer : From<TransformConstraintData> {
 
 object AnimationDataSerializer : From<AnimationData> {
 	override fun read(reader: Reader): AnimationData {
-		val slotTimelines = HashMap<String, ArrayList<TimelineData>>()
+		val slotTimelines = stringMapOf<ArrayList<TimelineData>>()
 		val slotsReader = reader["slots"]
 		slotsReader?.forEach { slotName, iReader ->
 			val list = ArrayList<TimelineData>()
@@ -163,7 +164,7 @@ object AnimationDataSerializer : From<AnimationData> {
 			}
 		}
 
-		val boneTimelines = HashMap<String, ArrayList<CurvedTimelineData>>()
+		val boneTimelines = stringMapOf<ArrayList<CurvedTimelineData>>()
 		val bonesReader = reader["bones"]
 		bonesReader?.forEach { boneName, iReader ->
 			val list = ArrayList<CurvedTimelineData>()
@@ -185,7 +186,7 @@ object AnimationDataSerializer : From<AnimationData> {
 			}
 		}
 
-		val ikConstraintTimelines = HashMap<String, IkConstraintTimelineData>()
+		val ikConstraintTimelines = stringMapOf<IkConstraintTimelineData>()
 		val ikReader = reader["ik"]
 		ikReader?.forEach { ikName, iReader ->
 			ikConstraintTimelines[ikName] = IkConstraintTimelineData(

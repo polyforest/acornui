@@ -1,5 +1,7 @@
 package com.acornui.collection
 
+import kotlin.properties.Delegates
+
 fun <K, V> Map<K, V>.containsAllKeys(keys: Array<K>): Boolean {
 	for (i in 0..keys.lastIndex) {
 		if (!containsKey(keys[i])) {
@@ -44,4 +46,13 @@ fun <K, V> Map<K, V?>.toNotNull(): MutableMap<K, V> {
 			newMap[k] = v
 	}
 	return newMap
+}
+
+
+// TODO: expects/actual
+var _stringMap: ()-> MutableMap<String, Any?> = { HashMap() }
+
+fun <V> stringMapOf(vararg pairs: Pair<String, V>): MutableMap<String, V> {
+	@Suppress("UNCHECKED_CAST")
+	return (_stringMap() as MutableMap<String, V>).apply { putAll(pairs) }
 }

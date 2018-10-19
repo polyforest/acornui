@@ -2,6 +2,7 @@ package com.acornui.jvm.audio
 
 import com.acornui.async.Promise
 import com.acornui.async.launch
+import com.acornui.collection.stringMapOf
 import com.acornui.core.assets.AssetLoader
 import com.acornui.core.assets.AssetType
 import com.acornui.core.audio.Music
@@ -95,7 +96,7 @@ interface MusicStreamReader {
  */
 object MusicDecoders {
 
-	private val readerFactories = HashMap<String, (() -> InputStream) -> MusicStreamReader>()
+	private val readerFactories = stringMapOf<(() -> InputStream) -> MusicStreamReader>()
 
 	/**
 	 * Adds a decoder for the given file type.

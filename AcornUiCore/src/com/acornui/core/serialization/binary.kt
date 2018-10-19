@@ -18,6 +18,7 @@ package com.acornui.core.serialization
 
 import com.acornui.async.Deferred
 import com.acornui.async.async
+import com.acornui.collection.stringMapOf
 import com.acornui.core.assets.AssetManager
 import com.acornui.core.assets.AssetType
 import com.acornui.core.di.Scoped
@@ -121,7 +122,7 @@ class BinaryReader(val data: ReadByteBuffer, propertyIndex: List<String>) : Read
 			}
 			BinaryType.OBJECT -> {
 				val size = data.getShort().toInt()
-				val list = HashMap<String, BinaryReader>(size)
+				val list = stringMapOf<BinaryReader>()
 				for (i in 0..size - 1) {
 					val j = data.getShort()
 					val propertyName = propertyIndex[j.toInt()]
@@ -209,7 +210,7 @@ class BinaryWriter(val propertyIndex: MutableList<String>) : Writer {
 	override fun property(name: String): Writer {
 		if (type != BinaryType.OBJECT) throw Exception("Writer is not type OBJECT")
 		@Suppress("UNCHECKED_CAST")
-		val map = _value as HashMap<String, BinaryWriter>
+		val map = _value as MutableMap<String, BinaryWriter>
 		val newWriter = BinaryWriter(propertyIndex)
 		map[name] = newWriter
 		if (!propertyIndex.contains(name))
@@ -280,7 +281,7 @@ class BinaryWriter(val propertyIndex: MutableList<String>) : Writer {
 
 	override fun obj(complex: Boolean, contents: (Writer) -> Unit) {
 		type = BinaryType.OBJECT
-		_value = HashMap<String, BinaryWriter>()
+		_value = stringMapOf<BinaryWriter>()
 		contents(this)
 	}
 

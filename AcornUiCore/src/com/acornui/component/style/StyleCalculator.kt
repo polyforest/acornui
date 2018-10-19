@@ -12,7 +12,7 @@ interface StyleCalculator {
 object CascadingStyleCalculator : StyleCalculator {
 
 	private val entries = ArrayList<StyleRule<*>>()
-	private val calculated = HashMap<String, Any?>()
+	private val calculated = stringMapOf<Any?>()
 	private val tmp = ArrayList<StyleRule<*>>()
 
 	private val entrySortComparator = {

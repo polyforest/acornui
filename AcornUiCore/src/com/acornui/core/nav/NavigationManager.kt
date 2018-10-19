@@ -4,6 +4,7 @@ import com.acornui.browser.decodeUriComponent2
 import com.acornui.browser.encodeUriComponent2
 import com.acornui.collection.Clearable
 import com.acornui.collection.copy
+import com.acornui.collection.stringMapOf
 import com.acornui.component.Button
 import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
@@ -120,7 +121,7 @@ data class NavNode(
 	companion object {
 		fun fromStr(str: String): NavNode {
 			val split = str.split("?")
-			val params = HashMap<String, String>()
+			val params = stringMapOf<String>()
 			val name = decodeUriComponent2(split[0])
 			if (split.size > 1) {
 				val paramsSplit = split[1].split("&")
