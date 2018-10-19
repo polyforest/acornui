@@ -87,8 +87,8 @@ open class AtlasComponent(owner: Owned) : DrawableComponent(owner), Clearable {
 		val oldTexture = this.texture
 		this.texture = texture
 		if (isActive) {
-			oldTexture?.refDec()
 			texture.refInc()
+			oldTexture?.refDec()
 		}
 		drawable.setRegionAndTexture(texture, region)
 		invalidateLayout()
@@ -108,6 +108,7 @@ open class AtlasComponent(owner: Owned) : DrawableComponent(owner), Clearable {
 		group?.dispose()
 		group = null
 		if (isActive) texture?.refDec()
+		texture = null
 		drawable.clear()
 		invalidateLayout()
 	}
