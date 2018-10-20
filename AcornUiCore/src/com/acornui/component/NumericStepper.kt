@@ -152,7 +152,7 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		}
 
 	init {
-		validation.addNode(ValidationFlags.PROPERTIES, ValidationFlags.SIZE_CONSTRAINTS, this::updateProperties)
+		validation.addNode(ValidationFlags.PROPERTIES, 0, ValidationFlags.SIZE_CONSTRAINTS, this::updateProperties)
 		focusEnabled = true
 		isFocusContainer = true
 

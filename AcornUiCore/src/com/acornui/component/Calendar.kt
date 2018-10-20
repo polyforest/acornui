@@ -73,7 +73,7 @@ class Calendar(owner: Owned) : ContainerImpl(owner) {
 	}
 
 	init {
-		validation.addNode(ValidationFlags.PROPERTIES, ValidationFlags.SIZE_CONSTRAINTS, this::updateProperties)
+		validation.addNode(ValidationFlags.PROPERTIES, 0, ValidationFlags.SIZE_CONSTRAINTS, this::updateProperties)
 		grid.apply {
 			for (i in 0..6) {
 				+headers[i]
