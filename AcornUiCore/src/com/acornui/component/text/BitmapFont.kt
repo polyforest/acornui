@@ -34,7 +34,6 @@ import com.acornui.core.graphics.Texture
 import com.acornui.core.graphics.TextureAtlasDataSerializer
 import com.acornui.core.io.file.Files
 import com.acornui.core.isWhitespace2
-import com.acornui.core.time.delay
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
 import com.acornui.logging.Log

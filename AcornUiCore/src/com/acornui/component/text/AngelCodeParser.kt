@@ -145,10 +145,10 @@ object AngelCodeParser : Decorator<String, BitmapFontData> {
 		}
 		val nbspChar = '�'
 		if (this[nbspChar] == null) {
-			this[nbspChar] = GlyphData(char = nbspChar, advanceX = space.advanceX)
+			this[nbspChar] = space.copy(char = nbspChar)
 		}
 		val unknownChar = (-1).toChar()
-		this[unknownChar] = (this['?'] ?: space).copy(char = unknownChar, advanceX = space.advanceX)
+		this[unknownChar] = (this['?'] ?: space).copy(char = unknownChar)
 	}
 
 	private fun nextLine(parser: StringParser): Boolean {
