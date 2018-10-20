@@ -24,15 +24,127 @@ import com.acornui.graphics.ColorRo
 import com.acornui.math.*
 import com.acornui.reflect.observable
 
+interface GlState {
+
+	/**
+	 * The shader batch, used by gl backend acorn components.
+	 */
+	var batch: ShaderBatch
+
+	/**
+	 * Sets the shader program.  If this is being changed, it should be set before [setCamera].
+	 */
+	var shader: ShaderProgram?
+
+	/**
+	 * A global override to disable blending. Useful if the shader doesn't support blending.
+	 */
+	var blendingEnabled: Boolean
+
+	val blendMode: BlendMode
+
+	val premultipliedAlpha: Boolean
+
+	/**
+	 * Applies the given matrix as the view-projection transformation.
+	 */
+	var viewProjection: Matrix4Ro
+
+	/**
+	 * Applies the given matrix as the view-projection transformation.
+	 */
+	var colorTransformation: ColorTransformationRo?
+
+	/**
+	 * Applies the given matrix as the model transformation.
+	 */
+	var model: Matrix4Ro
+
+	/**
+	 * Returns whether scissoring is currently enabled.
+	 * @see setScissor
+	 */
+	var scissorEnabled: Boolean
+
+	/**
+	 * To reduce batch flushing from switching back and forth from a texture to a single white pixel, as is the case
+	 * in mesh drawings, a texture can declare that its 0,0 pixel is white.
+	 * The acorn texture packer will optionally add this white pixel.
+	 */
+	val whitePixel: Texture
+
+	/**
+	 * @see Gl20.activeTexture
+	 */
+	fun activeTexture(value: Int)
+
+	fun getTexture(unit: Int): Texture?
+	fun setTexture(texture: Texture? = null, unit: Int = 0)
+	/**
+	 * For any unit where this texture is bound, unbind it.
+	 */
+	fun unsetTexture(texture: Texture)
+
+	fun blendMode(blendMode: BlendMode, premultipliedAlpha: Boolean)
+	/**
+	 * Gets the current scissor rectangle.
+	 * @param out Sets this rectangle to the current scissor rect.
+	 * @return Returns the [out] parameter.
+	 */
+	fun getScissor(out: IntRectangle): IntRectangle
+
+	fun setScissor(x: Int, y: Int, width: Int, height: Int)
+
+	/**
+	 * Sets the [GlState.viewProjection] and [GlState.model] matrices.
+	 * This will set the gl uniforms u_modelTrans (if exists), u_viewTrans (if exists), u_projTrans
+	 * The shader should have the following uniforms:
+	 * u_projTrans - Either MVP or VP if u_modelTrans is present.
+	 * u_modelTrans (optional) - M
+	 * u_viewTrans (optional) - V
+	 */
+	fun setCamera(camera: CameraRo, model: Matrix4Ro = Matrix4.IDENTITY)
+
+	/**
+	 * Gets the current viewport in gl window coordinates. (0,0 is bottom left, width, height includes dpi scaling)
+	 * This is not to be confused with UiComponent.viewport, which is in canvas coordinates.
+	 *
+	 * @param out Sets this rectangle to the current viewport.
+	 * @return Returns the [out] parameter.
+	 */
+	fun getViewport(out: IntRectangle): IntRectangle
+
+	/**
+	 * @see Gl20.viewport
+	 */
+	fun setViewport(x: Int, y: Int, width: Int, height: Int)
+
+	/**
+	 * Gets the current framebuffer, populating the [out] parameter.
+	 */
+	fun getFramebuffer(out: FrameBufferInfo)
+
+	/**
+	 * Sets the current framebuffer and some information about it.
+	 */
+	fun setFramebuffer(framebuffer: GlFramebufferRef?,
+					   width: Int,
+					   height: Int,
+					   scaleX: Float,
+					   scaleY: Float)
+
+	companion object : DKey<GlState>
+}
+
 /**
  * GlState stores OpenGl state information necessary for knowing whether basic draw calls can be batched.
  *
  * @author nbilyk
  */
-class GlState(
+class GlStateImpl(
 		private val gl: Gl20,
 		window: Window
-) : Disposable {
+) : GlState, Disposable {
 
 	/**
 	 * The default shader for this application.
@@ -48,10 +160,7 @@ class GlState(
 
 	private var _batch: ShaderBatch = ShaderBatchImpl(gl, this, uiVertexAttributes)
 
-	/**
-	 * The shader batch, used by gl backend acorn components.
-	 */
-	var batch: ShaderBatch
+	override var batch: ShaderBatch
 		get() = _batch
 		set(value) {
 			if (_batch == value) return
@@ -69,30 +178,21 @@ class GlState(
 
 	private var _whitePixel: Texture? = null
 
-	/**
-	 * To reduce batch flushing from switching back and forth from a texture to a single white pixel, as is the case
-	 * in mesh drawings, a texture can declare that its 0,0 pixel is white.
-	 * The acorn texture packer will optionally add this white pixel.
-	 */
-	val whitePixel: Texture
+	override val whitePixel: Texture
 		get() = _whitePixel ?: defaultWhitePixel
 
-	/**
-	 * @see Gl20.activeTexture
-	 */
-	@Suppress("MemberVisibilityCanBePrivate")
-	fun activeTexture(value: Int) {
+	override fun activeTexture(value: Int) {
 		if (value < 0 || value > 30) throw IllegalArgumentException("Texture index must be between 0 and 30")
 		if (_activeTexture == value) return
 		_activeTexture = value
 		gl.activeTexture(Gl20.TEXTURE0 + value)
 	}
 
-	fun getTexture(unit: Int): Texture? {
+	override fun getTexture(unit: Int): Texture? {
 		return _boundTextures[unit]
 	}
 
-	fun setTexture(texture: Texture? = null, unit: Int = 0) {
+	override fun setTexture(texture: Texture?, unit: Int) {
 		val previous: Texture? = _boundTextures[unit]
 		if (previous == texture && _activeTexture == unit) return
 		batch.flush()
@@ -109,10 +209,7 @@ class GlState(
 		}
 	}
 
-	/**
-	 * For any unit where this texture is bound, unbind it.
-	 */
-	fun unsetTexture(texture: Texture) {
+	override fun unsetTexture(texture: Texture) {
 		for (i in 0.._boundTextures.lastIndex) {
 			if (_boundTextures[i] == texture) {
 				setTexture(null, i)
@@ -120,15 +217,9 @@ class GlState(
 		}
 	}
 
-	/**
-	 * The ShaderProgram uploads GLSL to the GPU.
-	 */
 	private var _shader: ShaderProgram? = null
 
-	/**
-	 * Sets the shader program.  If this is being changed, it should be set before [setCamera].
-	 */
-	var shader: ShaderProgram?
+	override var shader: ShaderProgram?
 		get() = _shader
 		set(value) {
 			if (_shader == value) return
@@ -147,10 +238,7 @@ class GlState(
 
 	private var _blendingEnabled = true
 
-	/**
-	 * A global override to disable blending. Useful if the shader doesn't support blending.
-	 */
-	var blendingEnabled: Boolean
+	override var blendingEnabled: Boolean
 		get() = _blendingEnabled
 		set(value) {
 			if (_blendingEnabled == value) return
@@ -159,13 +247,13 @@ class GlState(
 			refreshBlendMode()
 		}
 
-	val blendMode: BlendMode
+	override val blendMode: BlendMode
 		get() = _blendMode
 
-	val premultipliedAlpha: Boolean
+	override val premultipliedAlpha: Boolean
 		get() = _premultipliedAlpha
 
-	fun blendMode(blendMode: BlendMode, premultipliedAlpha: Boolean) {
+	override fun blendMode(blendMode: BlendMode, premultipliedAlpha: Boolean) {
 		if (_blendMode == blendMode && _premultipliedAlpha == premultipliedAlpha) return
 		batch.flush()
 		_blendMode = blendMode
@@ -187,32 +275,18 @@ class GlState(
 
 	private var _viewport = IntRectangle()
 
-	/**
-	 * Gets the current viewport in gl window coordinates. (0,0 is bottom left, width, height includes dpi scaling)
-	 * This is not to be confused with UiComponent.viewport, which is in canvas coordinates.
-	 *
-	 * @param out Sets this rectangle to the current viewport.
-	 * @return Returns the [out] parameter.
-	 */
-	fun getViewport(out: IntRectangle): IntRectangle {
+	override fun getViewport(out: IntRectangle): IntRectangle {
 		return out.set(_viewport)
 	}
 
-	/**
-	 * @see Gl20.viewport
-	 */
-	fun setViewport(x: Int, y: Int, width: Int, height: Int) {
+	override fun setViewport(x: Int, y: Int, width: Int, height: Int) {
 		if (_viewport.x == x && _viewport.y == y && _viewport.width == width && _viewport.height == height) return
 		_batch.flush()
 		_viewport.set(x, y, width, height)
 		gl.viewport(x, y, width, height)
 	}
 
-	/**
-	 * Returns whether scissoring is currently enabled.
-	 * @see setScissor
-	 */
-	var scissorEnabled: Boolean by observable(false) {
+	override var scissorEnabled: Boolean by observable(false) {
 		batch.flush()
 		if (it)
 			gl.enable(Gl20.SCISSOR_TEST)
@@ -222,15 +296,9 @@ class GlState(
 
 	private val _framebuffer = FrameBufferInfo(null, (window.width * window.scaleX).toInt(), (window.height * window.scaleY).toInt(), window.scaleX, window.scaleY)
 
-	/**
-	 * Gets the current framebuffer, populating the [out] parameter.
-	 */
-	fun getFramebuffer(out: FrameBufferInfo) = out.set(_framebuffer)
+	override fun getFramebuffer(out: FrameBufferInfo) = out.set(_framebuffer)
 
-	/**
-	 * Sets the current framebuffer and some information about it.
-	 */
-	fun setFramebuffer(framebuffer: GlFramebufferRef?,
+	override fun setFramebuffer(framebuffer: GlFramebufferRef?,
 					   width: Int,
 					   height: Int,
 					   scaleX: Float,
@@ -241,21 +309,13 @@ class GlState(
 		gl.bindFramebuffer(Gl20.FRAMEBUFFER, framebuffer)
 	}
 
-	/**
-	 * We must copy the set scissor instead of maintaining a reference in case the reference is mutated.
-	 */
 	private val _scissor = IntRectangle()
 
-	/**
-	 * Gets the current scissor rectangle.
-	 * @param out Sets this rectangle to the current scissor rect.
-	 * @return Returns the [out] parameter.
-	 */
-	fun getScissor(out: IntRectangle): IntRectangle {
+	override fun getScissor(out: IntRectangle): IntRectangle {
 		return out.set(_scissor)
 	}
 
-	fun setScissor(x: Int, y: Int, width: Int, height: Int) {
+	override fun setScissor(x: Int, y: Int, width: Int, height: Int) {
 		if (_scissor.x != x || _scissor.y != y || _scissor.width != width || _scissor.height != height) {
 			batch.flush()
 			_scissor.set(x, y, width, height)
@@ -265,20 +325,7 @@ class GlState(
 
 	private val _mvp = Matrix4()
 
-
-	@Deprecated("use setCamera", ReplaceWith("setCamera(camera, model)"))
-	fun camera(camera: CameraRo, model: Matrix4Ro = Matrix4.IDENTITY) = setCamera(camera, model)
-
-	/**
-	 * Sets the [GlState.viewProjection] and [GlState.model] matrices.
-	 * This will set the gl uniforms u_modelTrans (if exists), u_viewTrans (if exists), u_projTrans
-	 * The shader should have the following uniforms:
-	 * u_projTrans - Either MVP or VP if u_modelTrans is present.
-	 * u_modelTrans (optional) - M
-	 * u_viewTrans (optional) - V
-	 *
-	 */
-	fun setCamera(camera: CameraRo, model: Matrix4Ro = Matrix4.IDENTITY) {
+	override fun setCamera(camera: CameraRo, model: Matrix4Ro) {
 		val hasModel = _shader!!.getUniformLocation(CommonShaderUniforms.U_MODEL_TRANS) != null
 		if (hasModel) {
 			if (viewProjectionCache.set(camera.combined, _shader!!, batch)) {
@@ -298,10 +345,7 @@ class GlState(
 		}
 	}
 
-	/**
-	 * Applies the given matrix as the view-projection transformation.
-	 */
-	var viewProjection: Matrix4Ro
+	override var viewProjection: Matrix4Ro
 		get() = viewProjectionCache.value
 		set(value) {
 			viewProjectionCache.set(value, _shader!!, batch)
@@ -310,10 +354,7 @@ class GlState(
 	private var _colorTransformationIsSet = false
 	private var _colorTransformation = ColorTransformation()
 
-	/**
-	 * Applies the given matrix as the view-projection transformation.
-	 */
-	var colorTransformation: ColorTransformationRo?
+	override var colorTransformation: ColorTransformationRo?
 		get() = if (_colorTransformationIsSet) _colorTransformation else null
 		set(value) {
 			batch.flush()
@@ -339,10 +380,7 @@ class GlState(
 
 	private val tmpMat = Matrix3()
 
-	/**
-	 * Applies the given matrix as the model transformation.
-	 */
-	var model: Matrix4Ro
+	override var model: Matrix4Ro
 		get() = modelCache.value
 		set(value) {
 			val changed = modelCache.set(value, _shader!!, batch)
@@ -366,8 +404,6 @@ class GlState(
 		shader = null
 		defaultShader.dispose()
 	}
-
-	companion object : DKey<GlState>
 
 }
 

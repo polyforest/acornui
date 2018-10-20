@@ -18,14 +18,13 @@ package com.acornui.component
 
 import com.acornui.component.layout.HAlign
 import com.acornui.component.layout.SizeConstraints
+import com.acornui.component.layout.algorithm.GridColumn
 import com.acornui.component.layout.algorithm.grid
-import com.acornui.component.layout.algorithm.gridColumn
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
 import com.acornui.component.text.text
 import com.acornui.core.di.Owned
-import com.acornui.core.input.interaction.click
 import com.acornui.core.text.DateTimeFormatStyle
 import com.acornui.core.text.DateTimeFormatType
 import com.acornui.core.text.dateFormatter
@@ -46,16 +45,16 @@ class Calendar(owner: Owned) : ContainerImpl(owner) {
 
 	private val cells = Array(42) {
 		calendarItemRenderer {
-			click().add {
 
-			}
 		}
 	}
 
 	private val grid = grid {
+		val columns = ArrayList<GridColumn>()
 		for (i in 0..6) {
-			style.columns.add(gridColumn { hAlign = HAlign.RIGHT })
+			columns.add(GridColumn(hAlign = HAlign.RIGHT))
 		}
+		style.columns = columns
 	}
 
 	private val panel = addChild(panel {

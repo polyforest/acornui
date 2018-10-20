@@ -18,8 +18,6 @@
 
 package com.acornui.component.layout.algorithm
 
-import com.acornui.collection.ActiveList
-import com.acornui.collection.addAll
 import com.acornui.collection.addOrSet
 import com.acornui.collection.fill
 import com.acornui.component.ComponentInit
@@ -35,12 +33,6 @@ import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.clamp
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
-import com.acornui.observe.Observable
-import com.acornui.signal.Signal
-import com.acornui.signal.Signal1
-import kotlin.properties.ObservableProperty
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 
@@ -68,7 +60,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 		var minWidth = 0f
 		for (i in 0..props.columns.lastIndex) {
 			val c = props.columns[i]
-			if (c.minWidth != null) minWidth += c.minWidth!!
+			if (c.minWidth != null) minWidth += c.minWidth
 		}
 		out.width.min = minWidth
 	}
@@ -321,22 +313,24 @@ private typealias CellFilter = GridLayout.(element: LayoutElement, rowIndex: Int
 /**
  * A GridColumn contains column properties for the [GridLayout]
  */
-// FIXME: Grid columns, despite being observable, are not observed by a grid.
-class GridColumn : Observable {
+data class GridColumn(
 
-	private val _changed = Signal1<Observable>()
-	override val changed: Signal<(Observable) -> Unit>
-		get() = _changed
+		val width: Float? = null,
 
-	var width: Float? by bindable(null)
-	var widthPercent: Float? by bindable(null)
-	var minWidth: Float? by bindable(null)
-	var hAlign: HAlign by bindable(HAlign.LEFT)
+		val widthPercent: Float? = null,
 
-	/**
-	 * @see getIsFlexible
-	 */
-	var flexible: Boolean? by bindable(null)
+		val minWidth: Float? = null,
+
+		/**
+		 * The horizontal alignment of the column.
+		 */
+		val hAlign: HAlign = HAlign.LEFT,
+
+		/**
+		 * @see getIsFlexible
+		 */
+		val flexible: Boolean? = null
+) {
 
 	/**
 	 * A flexible column will flex its size to fit within the available bounds of the container.
@@ -348,22 +342,10 @@ class GridColumn : Observable {
 	}
 
 	fun getPreferredWidth(availableWidth: Float?): Float? {
-		var w = if (availableWidth == null || widthPercent == null) width else widthPercent!! * availableWidth
-		if (minWidth != null && w != null && minWidth!! > w) w = minWidth
+		var w = if (availableWidth == null || widthPercent == null) width else widthPercent * availableWidth
+		if (minWidth != null && w != null && minWidth > w) w = minWidth
 		return w
 	}
-
-	private fun <T> bindable(initialValue: T): ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
-		override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) {
-			_changed.dispatch(this@GridColumn)
-		}
-	}
-}
-
-fun gridColumn(init: GridColumn.() -> Unit = {}): GridColumn {
-	val c = GridColumn()
-	c.init()
-	return c
 }
 
 open class GridLayoutStyle : StyleBase() {
@@ -401,11 +383,10 @@ open class GridLayoutStyle : StyleBase() {
 	 */
 	var allowScaleUp: Boolean by prop(false)
 
-	// TODO: Make this a styleable property...
 	/**
 	 * The columns for the grid to use.
 	 */
-	val columns: MutableList<GridColumn> = ArrayList()
+	var columns: List<GridColumn> by prop(emptyList())
 
 	companion object : StyleType<GridLayoutStyle>
 }
@@ -437,14 +418,14 @@ open class FormContainer(owner: Owned) : GridLayoutContainer(owner) {
 	init {
 		styleTags.add(FormContainer)
 		style.apply {
-			columns.addAll(
-					gridColumn {
-						hAlign = HAlign.RIGHT
+			columns = listOf(
+					GridColumn(
+						hAlign = HAlign.RIGHT,
 						widthPercent = 0.4f
-					},
-					gridColumn {
+					),
+					GridColumn(
 						widthPercent = 0.6f
-					}
+					)
 			)
 		}
 	}

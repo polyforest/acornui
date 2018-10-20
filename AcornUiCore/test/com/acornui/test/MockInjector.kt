@@ -33,6 +33,8 @@ import com.acornui.core.time.Date
 import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.TimeProvider
 import com.acornui.core.time.time
+import com.acornui.gl.core.Gl20
+import com.acornui.gl.core.GlState
 import com.acornui.serialization.Serializer
 import org.mockito.Mockito
 
@@ -60,6 +62,8 @@ object MockInjector {
 				InteractivityManager to  Mockito.mock(InteractivityManager::class.java),
 				Camera to  Mockito.mock(Camera::class.java),
 				FocusManager to  Mockito.mock(FocusManager::class.java),
+				Gl20 to  Mockito.mock(Gl20::class.java),
+				GlState to  Mockito.mock(GlState::class.java),
 				JSON_KEY to json
 		))
 		time = MockTimeProvider()

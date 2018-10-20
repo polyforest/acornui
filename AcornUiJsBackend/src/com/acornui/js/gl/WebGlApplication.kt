@@ -17,7 +17,9 @@
 package com.acornui.js.gl
 
 import com.acornui.async.launch
-import com.acornui.component.*
+import com.acornui.component.GlStageImpl
+import com.acornui.component.HtmlComponent
+import com.acornui.component.Stage
 import com.acornui.core.AppConfig
 import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.LoaderFactory
@@ -30,6 +32,7 @@ import com.acornui.core.focus.FocusManagerImpl
 import com.acornui.core.graphics.Window
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
+import com.acornui.gl.core.GlStateImpl
 import com.acornui.js.JsApplicationBase
 import com.acornui.js.html.JsHtmlComponent
 import com.acornui.js.html.WebGl
@@ -83,7 +86,7 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 	}
 
 	protected open val glStateTask by BootTask {
-		set(GlState, GlState(get(Gl20), get(Window)))
+		set(GlState, GlStateImpl(get(Gl20), get(Window)))
 	}
 
 	protected open val textureLoaderTask by BootTask {

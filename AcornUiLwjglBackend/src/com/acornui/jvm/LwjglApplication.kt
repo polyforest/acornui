@@ -22,7 +22,6 @@ import com.acornui.assertionsEnabled
 import com.acornui.async.launch
 import com.acornui.browser.decodeUriComponent2
 import com.acornui.browser.encodeUriComponent2
-import com.acornui.collection._stringMap
 import com.acornui.component.*
 import com.acornui.component.text.BitmapFontRegistry
 import com.acornui.core.*
@@ -68,6 +67,7 @@ import com.acornui.core.time.time
 import com.acornui.file.FileIoManager
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
+import com.acornui.gl.core.GlStateImpl
 import com.acornui.io.file.FilesManifestSerializer
 import com.acornui.jvm.audio.NoAudioException
 import com.acornui.jvm.audio.OpenAlAudioManager
@@ -239,7 +239,7 @@ open class LwjglApplication : ApplicationBase() {
 
 	protected open val glStateTask by BootTask {
 		get(Window) // Shaders need a window to be created first.
-		set(GlState, GlState(get(Gl20), get(Window)))
+		set(GlState, GlStateImpl(get(Gl20), get(Window)))
 	}
 
 	protected open val mouseInputTask by BootTask {

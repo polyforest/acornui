@@ -1,8 +1,6 @@
 package com.acornui.component.layout.algorithm
 
-import com.acornui.collection.addAll
 import com.acornui.component.layout.LayoutElement
-import com.acornui.test.MockInjector
 import com.acornui.test.assertListEquals
 import org.junit.Test
 
@@ -12,7 +10,7 @@ class GridLayoutTest {
 	@Test fun cellWalkWithRowSpan() {
 		val layout = GridLayout()
 		val style = GridLayoutStyle()
-		style.columns.addAll(gridColumn(), gridColumn(), gridColumn(), gridColumn())
+		style.columns = listOf(GridColumn(), GridColumn(), GridColumn(), GridColumn())
 
 		val list = createSpacers(19)
 		list[1].layoutData {
@@ -63,7 +61,7 @@ class GridLayoutTest {
 	@Test fun cellWalkWithRowAndColSpan() {
 		val layout = GridLayout()
 		val style = GridLayoutStyle()
-		style.columns.addAll(gridColumn(), gridColumn(), gridColumn(), gridColumn())
+		style.columns = listOf(GridColumn(), GridColumn(), GridColumn(), GridColumn())
 
 		val list = createSpacers(8)
 		list[1].layoutData {
