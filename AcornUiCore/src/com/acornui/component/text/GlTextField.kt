@@ -416,7 +416,8 @@ interface TextElementRo {
 	val y: Float
 
 	/**
-	 * The amount of horizontal space to advance after this part.
+	 * The natural amount of horizontal space to advance after this part.
+	 * [explicitWidth] will override this value.
 	 */
 	val xAdvance: Float
 
@@ -430,6 +431,11 @@ interface TextElementRo {
 	 */
 	val width: Float
 		get() = explicitWidth ?: xAdvance
+
+	/**
+	 * The kerning offset between this element and the next.
+	 */
+	val kerning: Float
 
 	/**
 	 * Returns the amount of horizontal space to offset this part from the next part.
@@ -478,6 +484,8 @@ interface TextElement : TextElementRo, Disposable {
 	 * If set, this element should be drawn to fit this width.
 	 */
 	override var explicitWidth: Float?
+
+	override var kerning: Float
 
 	/**
 	 * If set to true, this part will be rendered using the selected styling.
@@ -732,6 +740,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 			} else {
 				val nextPart = _textElements.getOrNull(spanPartIndex + 1)
 				val kerning = if (nextPart == null) 0f else part.getKerning(nextPart)
+				part.kerning = kerning
 				x += partW + kerning
 				spanPartIndex++
 			}
@@ -966,6 +975,8 @@ class TfChar private constructor() : TextElement, Clearable {
 
 	override var explicitWidth: Float? = null
 
+	override var kerning: Float = 0f
+
 	override fun getKerning(next: TextElementRo): Float {
 		val d = glyph?.data ?: return 0f
 		val c = next.char ?: return 0f
@@ -1027,7 +1038,7 @@ class TfChar private constructor() : TextElement, Clearable {
 
 		val bgL = maxOf(leftClip, x)
 		val bgT = maxOf(topClip, y)
-		val bgR = minOf(rightClip, x + width)
+		val bgR = minOf(rightClip, x + width + kerning)
 		val lineHeight = textParent?.lineHeight ?: 0f
 		val bgB = minOf(bottomClip, y + lineHeight)
 
@@ -1217,6 +1228,7 @@ class LastTextElement(private val flow: TextFlow) : TextElementRo {
 	override val xAdvance = 0f
 
 	override val explicitWidth = 0f
+	override val kerning: Float = 0f
 
 	override fun getKerning(next: TextElementRo) = 0f
 
