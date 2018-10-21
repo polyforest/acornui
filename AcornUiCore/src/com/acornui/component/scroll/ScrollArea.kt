@@ -98,16 +98,20 @@ fun ScrollArea.scrollTo(bounds: RectangleRo) {
  */
 fun ScrollArea.scrollTo(bounds: MinMaxRo) {
 	validate(ValidationFlags.LAYOUT)
-	if (bounds.xMin < hScrollModel.value)
-		hScrollModel.value = bounds.xMin
-	if (bounds.yMin < vScrollModel.value)
-		vScrollModel.value = bounds.yMin
 	val contentsSetW = contentsWidth - hScrollModel.max
-	if (bounds.xMax > hScrollModel.value + contentsSetW)
-		hScrollModel.value = bounds.xMax - contentsSetW
 	val contentsSetH = contentsHeight - vScrollModel.max
-	if (bounds.yMax > vScrollModel.value + contentsSetH)
-		vScrollModel.value = bounds.yMax - contentsSetH
+	if (bounds.xMin >= hScrollModel.value || bounds.xMax <= hScrollModel.value + contentsSetW) {
+		if (bounds.xMin < hScrollModel.value)
+			hScrollModel.value = bounds.xMin
+		if (bounds.xMax > hScrollModel.value + contentsSetW)
+			hScrollModel.value = bounds.xMax - contentsSetW
+	}
+	if (bounds.yMin >= vScrollModel.value || bounds.yMax <= vScrollModel.value + contentsSetH) {
+		if (bounds.yMin < vScrollModel.value)
+			vScrollModel.value = bounds.yMin
+		if (bounds.yMax > vScrollModel.value + contentsSetH)
+			vScrollModel.value = bounds.yMax - contentsSetH
+	}
 }
 
 fun ScrollArea.tweenScrollX(duration: Float, ease: Interpolation, toScrollX: Float, delay: Float = 0f): Tween {
