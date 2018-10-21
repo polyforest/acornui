@@ -23,10 +23,10 @@ import kotlin.test.assertNull
 /**
  * @author nbilyk
  */
-class StringParserTest {
+class StringReaderTest {
 
 	@Test fun getInt() {
-		val parser = StringParser(" 123 434 255")
+		val parser = StringReader(" 123 434 255")
 		parser.white()
 		val a = parser.getInt()
 		parser.white()
@@ -39,7 +39,7 @@ class StringParserTest {
 	}
 
 	@Test fun getDouble() {
-		val parser = StringParser(" 123.526 434 255.0 -234.0 77.3.5")
+		val parser = StringReader(" 123.526 434 255.0 -234.0 77.3.5")
 		parser.white()
 		assertEquals(123.526, parser.getDouble())
 		parser.white()
@@ -54,12 +54,12 @@ class StringParserTest {
 	}
 
 	@Test fun getQuotedString() {
-		assertEquals("Hello World", StringParser("'Hello World'").getQuotedString())
-		assertNull(StringParser("'World").getQuotedString())
+		assertEquals("Hello World", StringReader("'Hello World'").getQuotedString())
+		assertNull(StringReader("'World").getQuotedString())
 	}
 	
 	@Test fun getQuotedString2() {
-		val parser = StringParser("Hello = 'World'")
+		val parser = StringReader("Hello = 'World'")
 		parser.consumeString("Hello")
 		parser.white()
 		parser.consumeChar('=')
@@ -68,7 +68,7 @@ class StringParserTest {
 	}
 
 	@Test fun consumeThrough() {
-		val parser = StringParser("Hello = 'World'")
+		val parser = StringReader("Hello = 'World'")
 		parser.consumeThrough('=')
 		parser.white()
 		assertEquals("World", parser.getQuotedString())
@@ -82,7 +82,7 @@ This is line 1.
 This is line 2${windowz}This is line 3
 This is the last line"""
 
-		val parser = StringParser(str)
+		val parser = StringReader(str)
 		assertEquals("Hello World", parser.readLine())
 		assertEquals("This is line 1.", parser.readLine())
 		assertEquals("This is line 2", parser.readLine())

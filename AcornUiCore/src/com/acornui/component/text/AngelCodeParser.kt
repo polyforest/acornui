@@ -18,7 +18,7 @@ package com.acornui.component.text
 
 import com.acornui.action.Decorator
 import com.acornui.math.IntRectangle
-import com.acornui.string.StringParser
+import com.acornui.string.StringReader
 import com.acornui.core.replace2
 import kotlin.math.abs
 
@@ -32,7 +32,7 @@ object AngelCodeParser : Decorator<String, BitmapFontData> {
 	private val CHAR_MAX_VALUE: Char = '\uFFFF'
 
 	fun parse(str: String): BitmapFontData {
-		val parser = StringParser(str)
+		val parser = StringReader(str)
 
 		// Info
 		parser.white()
@@ -151,33 +151,33 @@ object AngelCodeParser : Decorator<String, BitmapFontData> {
 		this[unknownChar] = (this['?'] ?: space).copy(char = unknownChar)
 	}
 
-	private fun nextLine(parser: StringParser): Boolean {
+	private fun nextLine(parser: StringReader): Boolean {
 		val found = parser.consumeThrough('\n')
 		if (found) parser.white()
 		return found
 	}
 
-	private fun parseFloatProp(parser: StringParser, property: String): Float {
+	private fun parseFloatProp(parser: StringReader, property: String): Float {
 		consumeProperty(parser, property)
 		return parser.getFloat()!!
 	}
 
-	private fun parseBoolProp(parser: StringParser, property: String): Boolean {
+	private fun parseBoolProp(parser: StringReader, property: String): Boolean {
 		consumeProperty(parser, property)
-		return parser.getBoolean()!!
+		return parser.getBool()!!
 	}
 
-	private fun parseIntProp(parser: StringParser, property: String): Int {
+	private fun parseIntProp(parser: StringReader, property: String): Int {
 		consumeProperty(parser, property)
 		return parser.getInt()!!
 	}
 
-	private fun parseQuotedStringProp(parser: StringParser, property: String): String {
+	private fun parseQuotedStringProp(parser: StringReader, property: String): String {
 		consumeProperty(parser, property)
 		return parser.getQuotedString()!!
 	}
 
-	private fun consumeProperty(parser: StringParser, property: String, required: Boolean = true): Boolean {
+	private fun consumeProperty(parser: StringReader, property: String, required: Boolean = true): Boolean {
 		parser.white()
 		val found = parser.consumeString(property)
 		if (!found) {

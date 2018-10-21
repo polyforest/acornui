@@ -18,10 +18,26 @@ package com.acornui.string
 
 import com.acornui.core.isWhitespace2
 
+@Deprecated("Renamed to StringReader", ReplaceWith("StringReader(data)"))
+fun StringParser(data: String): StringReader = StringReader(data)
+
 /**
+ * Using a source string of data, StringReader provides a way to parse the string as if it were a buffer.
+ * Example:
+ *
+ * ```
+ * val parser = StringReader(" 123 434 true")
+ * parser.white()
+ * parser.getInt() // 123
+ * parser.white()
+ * parser.getInt() // 434
+ * parser.white()
+ * parser.getBool() // 255
+ * ```
+ *
  * @author nbilyk
  */
-class StringParser(val data: String) {
+class StringReader(val data: String) {
 
 	val hasNext: Boolean
 		get() = position < length
@@ -33,7 +49,7 @@ class StringParser(val data: String) {
 		return getString { it.isWhitespace2() }
 	}
 
-	fun getBoolean(): Boolean? {
+	fun getBool(): Boolean? {
 		val char = data[position]
 		if (char == '1') {
 			position++
@@ -60,6 +76,10 @@ class StringParser(val data: String) {
 		return getString { it.isLetterOrDigit2() }
 	}
 
+	/**
+	 * Parses a string wrapped in quotes. The string may be single or double quoted, and escaped quotes \" \' are
+	 * ignored.
+	 */
 	fun getQuotedString(): String? {
 		var foundQuoteEnd = false
 		var quoteStart: Char? = null
@@ -87,13 +107,11 @@ class StringParser(val data: String) {
 			}
 			p++
 		}
-		if (foundQuoteEnd) {
+		return if (foundQuoteEnd) {
 			val subString = data.substring(position + 1, p - 1)
 			position = p
-			return subString
-		} else {
-			return null
-		}
+			subString
+		} else null
 	}
 
 	fun getString(predicate: (Char)->Boolean): String {

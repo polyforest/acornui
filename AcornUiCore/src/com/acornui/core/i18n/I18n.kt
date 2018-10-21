@@ -16,7 +16,7 @@ import com.acornui.core.userInfo
 import com.acornui.observe.Observable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
-import com.acornui.string.StringParser
+import com.acornui.string.StringReader
 
 interface I18n {
 
@@ -250,7 +250,7 @@ object PropertiesDecorator : Decorator<String, Map<String, String>> {
 
 	override fun decorate(target: String): Map<String, String> {
 		val map = stringMapOf<String>()
-		val parser = StringParser(target)
+		val parser = StringReader(target)
 		while (parser.hasNext) {
 			val line = parser.readLine().trimStart()
 			if (line.startsWith('#') || line.startsWith('!')) {
