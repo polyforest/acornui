@@ -1124,6 +1124,7 @@ class DataGrid<E>(
 		}
 
 		headerCells.setSize(width, headerHeight)
+		columnResizeHandles.setSize(width + 5f, headerHeight)
 	}
 
 	private fun calculateTotalRows(): Int {
@@ -1419,21 +1420,21 @@ class DataGrid<E>(
 	private fun createHeaderCellBackground(): UiComponent {
 		val headerCellBackground = style.headerCellBackground(this)
 		val drag = headerCellBackground.dragAttachment()
-		drag.dragStart.add {
-			val columnIndex = it.currentTarget.getAttachment<Int>(COL_INDEX_KEY)!!
+		drag.dragStart.add { e ->
+			val columnIndex = e.currentTarget.getAttachment<Int>(COL_INDEX_KEY)!!
 			if (_columnReorderingEnabled && _columns[columnIndex].reorderable) {
 				columnMoveIndicator.visible = true
-				columnMoveIndicator.setSize(it.currentTarget.bounds)
+				columnMoveIndicator.setSize(e.currentTarget.bounds)
 				columnInsertionIndicator.visible = true
 				columnInsertionIndicator.setSize(null, height)
 			} else {
-				it.preventDefault()
+				e.preventDefault()
 			}
 		}
 
-		drag.drag.add {
-			columnMoveIndicator.setPosition(it.currentTarget.x + (it.position.x - it.startPosition.x), 0f)
-			val localP = headerCells.canvasToLocal(Vector2.obtain().set(it.position))
+		drag.drag.add { e ->
+			columnMoveIndicator.setPosition(e.currentTarget.x + (e.position.x - e.startPosition.x), 0f)
+			val localP = headerCells.canvasToLocal(Vector2.obtain().set(e.position))
 
 			val currX = localP.x + hScrollModel.value
 			var index = columnPositions.sortedInsertionIndex(currX)
@@ -1445,13 +1446,13 @@ class DataGrid<E>(
 			Vector2.free(localP)
 		}
 
-		drag.dragEnd.add {
+		drag.dragEnd.add { e ->
 			columnMoveIndicator.visible = false
 			columnInsertionIndicator.visible = false
 
-			val localP = headerCells.canvasToLocal(Vector2.obtain().set(it.position))
+			val localP = headerCells.canvasToLocal(Vector2.obtain().set(e.position))
 
-			val fromIndex = it.currentTarget.getAttachment<Int>(COL_INDEX_KEY)!!
+			val fromIndex = e.currentTarget.getAttachment<Int>(COL_INDEX_KEY)!!
 			val currX = localP.x + hScrollModel.value
 			var toIndex = columnPositions.sortedInsertionIndex(currX)
 			if (toIndex > 0 && currX < columnPositions[toIndex - 1] + columnWidths[toIndex - 1] * 0.5f) toIndex--
@@ -1489,7 +1490,7 @@ class DataGrid<E>(
 		}
 	}
 
-	private fun createColumnResizeHandle(): Spacer {
+	private fun createColumnResizeHandle(): UiComponent {
 		val resizeHandle = spacer(style.resizeHandleWidth, 0f)
 		resizeHandle.interactivityMode = InteractivityMode.ALL
 		resizeHandle.cursor(StandardCursors.RESIZE_E)
