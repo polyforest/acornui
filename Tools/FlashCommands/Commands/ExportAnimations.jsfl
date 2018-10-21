@@ -248,10 +248,12 @@ function _getOrigin(libraryItem) {
 		libraryItem.itemType == "movie clip"
 		var left = 99999999;
 		var top = 99999999;
+		var hasElement = false;
 		
 		for each (var layer in libraryItem.timeline.layers) {
 			if (layer.layerType != "normal") continue;
 			for each (var element in layer.frames[0].elements) {
+				hasElement = true;
 				if (element.left < left) {
 					left = element.left;
 				}
@@ -260,7 +262,11 @@ function _getOrigin(libraryItem) {
 				}
 			}
 		}
-		return {x: -left, y: -top};
+		if (hasElement) {
+			return {x: -left, y: -top};
+		} else {
+			return {x: 0, y: 0};
+		}
 	} else {
 		return {x: 0, y: 0};
 	}
