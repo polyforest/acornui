@@ -520,9 +520,9 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 				it.handled = true
 				async {
 					it.getItemByType(ClipboardItemType.PLAIN_TEXT)
-				} then {
-					if (it != null) {
-						replaceSelection(it.replace("\r", ""), CommandGroup())
+				} then { str ->
+					if (str != null) {
+						replaceSelection(str.replace("\r", ""), CommandGroup())
 						currentGroup = CommandGroup()
 						_input.dispatch()
 					}
