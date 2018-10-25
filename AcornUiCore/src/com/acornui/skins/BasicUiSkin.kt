@@ -16,7 +16,6 @@
 
 package com.acornui.skins
 
-import com.acornui.async.async
 import com.acornui.async.launch
 import com.acornui.collection.addAll
 import com.acornui.component.*
@@ -31,23 +30,21 @@ import com.acornui.component.layout.algorithm.virtual.VirtualVerticalLayoutStyle
 import com.acornui.component.scroll.*
 import com.acornui.component.style.*
 import com.acornui.component.text.*
+import com.acornui.core.AppConfig
 import com.acornui.core.assets.cachedGroup
 import com.acornui.core.di.*
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.SimpleHighlight
-import com.acornui.component.atlas
-import com.acornui.component.contentsAtlas
 import com.acornui.core.input.interaction.ContextMenuStyle
 import com.acornui.core.input.interaction.ContextMenuView
 import com.acornui.core.input.interaction.enableDownRepeat
 import com.acornui.core.popup.PopUpManager
 import com.acornui.core.userInfo
-import com.acornui.component.ScrollRectStyle
-import com.acornui.component.text.loadFontFromAtlas
-import com.acornui.core.AppConfig
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
+import com.acornui.graphics.color
 import com.acornui.math.*
+import com.acornui.serialization.*
 
 open class BasicUiSkin(
 		val target: UiComponent
@@ -117,6 +114,12 @@ open class BasicUiSkin(
 
 	protected open fun textStyle() {
 		target.addStyleRule(charStyle { colorTint = theme.textColor })
+		target.addStyleRule(charStyle { colorTint = theme.headingColor }, withAnyAncestor(
+				TextStyleTags.h1,
+				TextStyleTags.h2,
+				TextStyleTags.h3,
+				TextStyleTags.h4
+		))
 		target.addStyleRule(charStyle { colorTint = theme.formLabelColor }, withAncestor(formLabelStyle))
 
 		target.addStyleRule(charStyle { selectable = true }, withAncestor(TextInput) or withAncestor(TextArea))
@@ -553,7 +556,6 @@ open class BasicUiSkin(
 		target.addStyleRule(headerFlowStyle, withAncestor(TextField) andThen withAncestor(DataGrid.HEADER_CELL))
 
 		val groupHeaderCharStyle = CharStyle()
-		groupHeaderCharStyle.fontKey = "assets/uiskin/verdana_bold_14.fnt" // TODO
 		groupHeaderCharStyle.selectable = false
 		target.addStyleRule(groupHeaderCharStyle, withAncestor(TextField) andThen (withAncestor(DataGridGroupHeader) or withAncestor(DataGrid.HEADER_CELL)))
 
@@ -948,7 +950,7 @@ class Theme {
 
 	var stroke: ColorRo = Color(0x888888FF)
 	var strokeThickness = 1f
-	var strokeHighlight = stroke + brighten
+	var strokeHighlight: ColorRo = stroke + brighten
 	var strokeDisabled: ColorRo = Color(0x999999FF)
 
 	var strokeToggled: ColorRo = Color(0x0235ACFF)
@@ -979,6 +981,70 @@ class Theme {
 		override fun factory(injector: Injector): Theme? = Theme()
 	}
 }
+
+object ThemeSerializer : To<Theme>, From<Theme> {
+
+	override fun read(reader: Reader): Theme {
+		val o = Theme()
+		o.atlasPath = reader.string("atlasPath")!!
+		o.bgColor = reader.color("bgColor")!!
+		o.borderRadius = reader.float("borderRadius")!!
+		o.buttonPad = reader.obj("buttonPad", PadSerializer)!!
+		o.controlBarBgColor = reader.color("controlBarBgColor")!!
+		o.evenRowBgColor = reader.color("evenRowBgColor")!!
+		o.fill = reader.color("fill")!!
+		o.fillDisabled = reader.color("fillDisabled")!!
+		o.fillHighlight = reader.color("fillHighlight")!!
+		o.fillShine = reader.color("fillShine")!!
+		o.formLabelColor = reader.color("formLabelColor")!!
+		o.headingColor = reader.color("headingColor")!!
+		o.highlightedEvenRowBgColor = reader.color("highlightedEvenRowBgColor")!!
+		o.highlightedOddRowBgColor = reader.color("highlightedOddRowBgColor")!!
+		o.inputFill = reader.color("inputFill")!!
+		o.oddRowBgColor = reader.color("oddRowBgColor")!!
+		o.panelBgColor = reader.color("panelBgColor")!!
+		o.stroke = reader.color("stroke")!!
+		o.strokeDisabled = reader.color("strokeDisabled")!!
+		o.strokeHighlight = reader.color("strokeHighlight")!!
+		o.strokeThickness = reader.float("strokeThickness")!!
+		o.strokeToggled = reader.color("strokeToggled")!!
+		o.strokeToggledHighlight = reader.color("strokeToggledHighlight")!!
+		o.textColor = reader.color("textColor")!!
+		o.toggledEvenRowBgColor = reader.color("toggledEvenRowBgColor")!!
+		o.toggledOddRowBgColor = reader.color("toggledOddRowBgColor")!!
+		return o
+	}
+
+	override fun Theme.write(writer: Writer) {
+		writer.string("atlasPath", atlasPath)
+		writer.color("bgColor", bgColor)
+		writer.float("borderRadius", borderRadius)
+		writer.obj("buttonPad", buttonPad, PadSerializer)
+		writer.color("controlBarBgColor", controlBarBgColor)
+		writer.color("evenRowBgColor", evenRowBgColor)
+		writer.color("fill", fill)
+		writer.color("fillDisabled", fillDisabled)
+		writer.color("fillHighlight", fillHighlight)
+		writer.color("fillShine", fillShine)
+		writer.color("formLabelColor", formLabelColor)
+		writer.color("headingColor", headingColor)
+		writer.color("highlightedEvenRowBgColor", highlightedEvenRowBgColor)
+		writer.color("highlightedOddRowBgColor", highlightedOddRowBgColor)
+		writer.color("inputFill", inputFill)
+		writer.color("oddRowBgColor", oddRowBgColor)
+		writer.color("panelBgColor", panelBgColor)
+		writer.color("stroke", stroke)
+		writer.color("strokeDisabled", strokeDisabled)
+		writer.color("strokeHighlight", strokeHighlight)
+		writer.float("strokeThickness", strokeThickness)
+		writer.color("strokeToggled", strokeToggled)
+		writer.color("strokeToggledHighlight", strokeToggledHighlight)
+		writer.color("textColor", textColor)
+		writer.color("toggledEvenRowBgColor", toggledEvenRowBgColor)
+		writer.color("toggledOddRowBgColor", toggledOddRowBgColor)
+	}
+}
+
 
 @Deprecated("Use CommonStyleTags", ReplaceWith("CommonStyleTags"), DeprecationLevel.ERROR)
 object StyleSelectors

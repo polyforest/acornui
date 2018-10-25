@@ -52,6 +52,7 @@ import com.acornui.math.Vector2
 import com.acornui.observe.IndexBinding
 import com.acornui.observe.bindIndex
 import com.acornui.signal.*
+import com.acornui.skins.TextStyleTags
 import kotlin.math.abs
 import kotlin.properties.ObservableProperty
 import kotlin.properties.ReadWriteProperty
@@ -1036,7 +1037,7 @@ class DataGrid<E>(
 			if (columnCache.headerCell == null) {
 				val newHeaderCell  = column.createHeaderCell(headerCells)
 				newHeaderCell.interactivityMode = column.headerCellInteractivityMode
-				newHeaderCell.styleTags.add(DataGrid.HEADER_CELL)
+				newHeaderCell.styleTags.addAll(DataGrid.HEADER_CELL, TextStyleTags.h2)
 				headerCells.addElement(minOf(columnIndex, headerCells.elements.size), newHeaderCell)
 				columnCache.headerCell = newHeaderCell
 			}

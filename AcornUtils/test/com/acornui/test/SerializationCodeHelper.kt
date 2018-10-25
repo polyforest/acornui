@@ -29,8 +29,11 @@ object SerializationCodeHelper {
 				Pair("kotlin.DoubleArray", "doubleArray"),
 				Pair("kotlin.CharArray", "charArray"),
 				Pair("com.acornui.math.Vector2", "vector2"),
+				Pair("com.acornui.math.Vector2Ro", "vector2"),
 				Pair("com.acornui.math.Vector3", "vector3"),
-				Pair("com.acornui.graphics.Color", "color")
+				Pair("com.acornui.math.Vector3Ro", "vector3"),
+				Pair("com.acornui.graphics.Color", "color"),
+				Pair("com.acornui.graphics.ColorRo", "color")
 		)
 
 		val params = kClass.primaryConstructor?.parameters

@@ -100,9 +100,9 @@ class ProgressBarRectStyle : StyleBase() {
 	var defaultHeight by prop(6f)
 	var borderThicknesses: PadRo by prop(Pad(2f))
 	var borderRadii: CornersRo by prop(Corners())
-	var borderColors: BorderColorsRo by prop(BorderColors(Color.BLUE))
-	var bgColor: ColorRo by prop(Color.GREEN.copy())
-	var fillColor: ColorRo by prop(Color.RED.copy())
+	var borderColors: BorderColorsRo by prop(BorderColors(Color.CLEAR))
+	var bgColor: ColorRo by prop(Color.CLEAR)
+	var fillColor: ColorRo by prop(Color.CLEAR)
 
 	companion object : StyleType<ProgressBarRectStyle>
 }

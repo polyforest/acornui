@@ -17,6 +17,7 @@
 package com.acornui.component.datagrid
 
 import com.acornui.collection.ObservableList
+import com.acornui.collection.addAll
 import com.acornui.component.*
 import com.acornui.component.layout.LayoutContainerImpl
 import com.acornui.component.layout.algorithm.HorizontalLayout
@@ -29,6 +30,7 @@ import com.acornui.component.style.noSkinOptional
 import com.acornui.core.di.Owned
 import com.acornui.core.input.interaction.click
 import com.acornui.math.Bounds
+import com.acornui.skins.TextStyleTags
 
 interface DataGridGroupHeader : UiComponent {
 
@@ -37,13 +39,21 @@ interface DataGridGroupHeader : UiComponent {
 	companion object : StyleTag
 }
 
-open class DataGridGroupHeaderImpl<E>(owner: Owned, protected val group: DataGridGroup<E>, protected val list: ObservableList<E>) : LayoutContainerImpl<DataGridGroupHeaderStyle, HorizontalLayoutData>(owner, HorizontalLayout(), DataGridGroupHeaderStyle()), DataGridGroupHeader, Labelable {
+open class DataGridGroupHeaderImpl<E>(
+		owner: Owned,
+		protected val group: DataGridGroup<E>,
+		protected val list: ObservableList<E>
+) : LayoutContainerImpl<DataGridGroupHeaderStyle, HorizontalLayoutData>(
+		owner,
+		HorizontalLayout(),
+		DataGridGroupHeaderStyle()
+), DataGridGroupHeader, Labelable {
 
 	private var background: UiComponent? = null
 	private var collapseButton: Button? = null
 
 	init {
-		styleTags.add(DataGridGroupHeader)
+		styleTags.addAll(DataGridGroupHeader, TextStyleTags.h2)
 		interactivityMode = InteractivityMode.CHILDREN
 		watch(style) {
 
@@ -53,7 +63,7 @@ open class DataGridGroupHeaderImpl<E>(owner: Owned, protected val group: DataGri
 
 			collapseButton?.dispose()
 			collapseButton = addOptionalElement(0, it.collapseButton(this))
-			collapseButton?.click()?.add {
+			collapseButton?.click()?.add { _ ->
 				group.collapsed = !group.collapsed
 			}
 			collapseButton?.toggled = !_collapsed
