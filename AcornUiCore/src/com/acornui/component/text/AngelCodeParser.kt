@@ -29,19 +29,17 @@ import kotlin.math.abs
  */
 object AngelCodeParser : Decorator<String, BitmapFontData> {
 
-	private val CHAR_MAX_VALUE: Char = '\uFFFF'
-
 	fun parse(str: String): BitmapFontData {
 		val parser = StringReader(str)
 
 		// Info
 		parser.white()
 		parser.consumeString("info")
-		val face = parseQuotedStringProp(parser, "face")
 
-		val size = abs(parseIntProp(parser, "size"))
-		val isBold = parseBoolProp(parser, "bold")
-		val isItalic = parseBoolProp(parser, "italic")
+		parseQuotedStringProp(parser, "face")
+		abs(parseIntProp(parser, "size"))
+		parseBoolProp(parser, "bold")
+		parseBoolProp(parser, "italic")
 
 		// Common
 		nextLine(parser)
@@ -52,7 +50,7 @@ object AngelCodeParser : Decorator<String, BitmapFontData> {
 		val pageH = parseIntProp(parser, "scaleH")
 		val totalPages = parseIntProp(parser, "pages")
 
-		val pages = Array(totalPages, {
+		val pages = Array(totalPages) {
 			// Read each "page" info line.
 			nextLine(parser)
 			if (!parser.consumeString("page")) throw Exception("Missing page definition.")
@@ -61,7 +59,7 @@ object AngelCodeParser : Decorator<String, BitmapFontData> {
 			val fileName: String = parseQuotedStringProp(parser, "file")
 			val imagePath = fileName.replace2('\\', '/')
 			BitmapFontPageData(id, imagePath)
-		})
+		}
 
 		// Chars
 		nextLine(parser)
@@ -76,7 +74,7 @@ object AngelCodeParser : Decorator<String, BitmapFontData> {
 			if (!parser.consumeString("char")) break
 
 			val ch = parseIntProp(parser, "id").toChar()
-			if (ch > CHAR_MAX_VALUE) continue
+			if (ch > Char.MAX_SURROGATE) continue
 
 			val regionX = parseIntProp(parser, "x")
 			val regionY = parseIntProp(parser, "y")
@@ -118,7 +116,6 @@ object AngelCodeParser : Decorator<String, BitmapFontData> {
 		glyphs.addMissingCommonGlyphs()
 
 		return BitmapFontData(
-				fontStyle = FontStyle(face, size, isBold, isItalic),
 				pages = pages.toList(),
 				glyphs = glyphs,
 				lineHeight = lineHeight,

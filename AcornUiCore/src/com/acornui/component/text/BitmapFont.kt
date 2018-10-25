@@ -18,10 +18,9 @@ package com.acornui.component.text
 
 import com.acornui.action.Decorator
 import com.acornui.async.Deferred
-import com.acornui.async.async
-import com.acornui.async.launch
 import com.acornui.collection.Clearable
 import com.acornui.collection.copy
+import com.acornui.collection.stringMapOf
 import com.acornui.core.Disposable
 import com.acornui.core.assets.AssetType
 import com.acornui.core.assets.CachedGroup
@@ -76,43 +75,6 @@ class BitmapFont(
 	}
 
 }
-
-interface FontStyleRo {
-
-	/**
-	 * The name of the font face. (case sensitive)
-	 */
-	val face: String
-
-	/**
-	 * The size of the font.
-	 */
-	val size: Int
-
-	val bold: Boolean
-
-	val italic: Boolean
-}
-
-/**
- * A data class representing the criteria for what separates a bitmap font set.
- */
-data class FontStyle(
-
-		/**
-		 * The name of the font face. (case sensitive)
-		 */
-		override var face: String = "[Unknown]",
-
-		/**
-		 * The size of the font.
-		 */
-		override var size: Int = 0,
-
-		override var bold: Boolean = false,
-
-		override var italic: Boolean = false
-) : FontStyleRo
 
 /**
  * The data required to render a glyph inside of a texture.
@@ -169,71 +131,68 @@ class Glyph(
 /**
  * An overload of [loadFontFromDir] where the images directory is assumed to be the parent directory of the font data file.
  */
-fun Scoped.loadFontFromDir(fontStyle: FontStyleRo, fntPath: String, group: CachedGroup): Deferred<BitmapFont> {
+suspend fun Scoped.loadFontFromDir(fontPath: String, group: CachedGroup): BitmapFont {
 	val files = inject(Files)
-	val fontFile = files.getFile(fntPath) ?: throw Exception("$fntPath not found.")
-	return loadFontFromDir(fontStyle, fntPath, fontFile.parent!!.path, group)
+	val fontFile = files.getFile(fontPath) ?: throw Exception("$fontPath not found.")
+	return loadFontFromDir(fontPath, fontFile.parent!!.path, group)
 }
 
 /**
  * Loads a font where the images are standalone files in the specified directory.
- * @param fntPath The path of the font data file. (By default the font data loader expects a .fnt file
+ * @param fontKey The key of the font, which should match the fontKey property in [CharStyle].
+ * @param fontPath The path of the font data file. (By default the font data loader expects a .fnt file
  * in the AngelCode format, but this can be changed by associating a different type of loader for the
  * BitmapFontData asset type.)
- * @param imagesDir The directory of images
+ * @param imagesDir The directory of images.
  * @param group The caching group, to allow the loaded assets to be disposed as one.
  */
-fun Scoped.loadFontFromDir(fontStyle: FontStyleRo, fntPath: String, imagesDir: String, group: CachedGroup): Deferred<BitmapFont> {
-	val loader = async {
-		val files = inject(Files)
-		val dir = files.getDir(imagesDir) ?: throw Exception("Directory not found: $imagesDir")
-		val bitmapFontData = loadAndCache(fntPath, AssetType.TEXT, AngelCodeParser, group).await()
+suspend fun Scoped.loadFontFromDir(fontPath: String, imagesDir: String, group: CachedGroup): BitmapFont {
+	val files = inject(Files)
+	val dir = files.getDir(imagesDir) ?: throw Exception("Directory not found: $imagesDir")
+	val bitmapFontData = loadAndCache(fontPath, AssetType.TEXT, AngelCodeParser, group).await()
 
-		val n = bitmapFontData.pages.size
-		val pageTextures = ArrayList<Deferred<Texture>>()
-		for (i in 0..n - 1) {
-			val page = bitmapFontData.pages[i]
-			val imageFile = dir.getFile(page.imagePath)
-					?: throw Exception("Font image file not found: ${page.imagePath}")
-			pageTextures.add(loadAndCache(imageFile.path, AssetType.TEXTURE, FontTextureDecorator, group))
-		}
-		// Finished loading the font and all its textures.
-		val glyphs = HashMap<Char, Glyph>()
-		// Calculate the uv coordinates for each glyph.
-		for (glyphData in bitmapFontData.glyphs.values) {
-			glyphs[glyphData.char] = Glyph(
-					data = glyphData,
-					offsetX = glyphData.offsetX,
-					offsetY = glyphData.offsetY,
-					width = glyphData.region.width,
-					height = glyphData.region.height,
-					advanceX = glyphData.advanceX,
-					isRotated = false,
-					region = glyphData.region.copy(),
-					texture = pageTextures[glyphData.page].await(),
-					premultipliedAlpha = false
-			)
-		}
-
-		val font = BitmapFont(
-				bitmapFontData,
-				pages = pageTextures.map { it.await() },
-				premultipliedAlpha = false,
-				glyphs = glyphs
-		)
-		font
+	val n = bitmapFontData.pages.size
+	val pageTextures = ArrayList<Deferred<Texture>>()
+	for (i in 0..n - 1) {
+		val page = bitmapFontData.pages[i]
+		val imageFile = dir.getFile(page.imagePath)
+				?: throw Exception("Font image file not found: ${page.imagePath}")
+		pageTextures.add(loadAndCache(imageFile.path, AssetType.TEXTURE, FontTextureDecorator, group))
 	}
-	Log.info("Font loaded $fontStyle")
-	BitmapFontRegistry.register(fontStyle, loader)
-	return loader
+	// Finished loading the font and all its textures.
+	val glyphs = HashMap<Char, Glyph>()
+	// Calculate the uv coordinates for each glyph.
+	for (glyphData in bitmapFontData.glyphs.values) {
+		glyphs[glyphData.char] = Glyph(
+				data = glyphData,
+				offsetX = glyphData.offsetX,
+				offsetY = glyphData.offsetY,
+				width = glyphData.region.width,
+				height = glyphData.region.height,
+				advanceX = glyphData.advanceX,
+				isRotated = false,
+				region = glyphData.region.copy(),
+				texture = pageTextures[glyphData.page].await(),
+				premultipliedAlpha = false
+		)
+	}
+
+	val font = BitmapFont(
+			bitmapFontData,
+			pages = pageTextures.map { it.await() },
+			premultipliedAlpha = false,
+			glyphs = glyphs
+	)
+	Log.info("Font loaded $fontPath")
+	BitmapFontRegistry.register(fontPath, font)
+	return font
 }
 
-fun Scoped.loadFontFromAtlas(fontStyle: FontStyleRo, fntPath: String, atlasPath: String, group: CachedGroup): Deferred<BitmapFont> {
-	val loader = async {
+suspend fun Scoped.loadFontFromAtlas(fontPath: String, atlasPath: String, group: CachedGroup): BitmapFont {
 		val files = inject(Files)
 		val atlasFile = files.getFile(atlasPath) ?: throw Exception("File not found: $atlasPath")
 
-		val bitmapFontData = loadAndCache(fntPath, AssetType.TEXT, AngelCodeParser, group).await()
+		val bitmapFontData = loadAndCache(fontPath, AssetType.TEXT, AngelCodeParser, group).await()
 		val atlasData = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group).await()
 		val atlasPageTextures = ArrayList<Deferred<Texture>>()
 
@@ -321,37 +280,29 @@ fun Scoped.loadFontFromAtlas(fontStyle: FontStyleRo, fntPath: String, atlasPath:
 				premultipliedAlpha = false,
 				glyphs = glyphs
 		)
-		font
-	}
-	BitmapFontRegistry.register(fontStyle, loader)
-	return loader
+	BitmapFontRegistry.register(fontPath, font)
+	return font
 }
 
 
 object BitmapFontRegistry : Clearable, Disposable {
 
-	private val registry: HashMap<FontStyleRo, Deferred<BitmapFont>> = HashMap()
-	private val warnedFontStyles = HashMap<FontStyleRo, Boolean>()
+	private val registry = stringMapOf<BitmapFont>()
+	private val warnedFontKeys = stringMapOf<Boolean>()
 
 	/**
 	 * Registers a font loader to a font style.
 	 * If the loaded font does not match the style used as the key, a warning will be logged.
 	 * The loaded texture pages will have their use counts incremented via [Texture.refInc]
-	 * @param fontStyle The style key to register to the [BitmapFont].
+	 * @param fontKey The font path key to register to the [BitmapFont].
 	 * @param bitmapFont A loader for a [BitmapFont].
-	 * @param showMismatchWarning If the font style doesn't match the style of the font loaded, a warning will be
 	 * logged. This warning may be turned off if the mismatch is intentional.
 	 */
-	fun register(fontStyle: FontStyleRo, bitmapFont: Deferred<BitmapFont>, showMismatchWarning: Boolean = true) {
-		if (registry.containsKey(fontStyle)) return
-		registry[fontStyle] = bitmapFont
-		launch {
-			val f = bitmapFont.await()
-			if (showMismatchWarning && f.data.fontStyle != fontStyle)
-				Log.warn("Loaded font did not have a font style that match the registered style. Requested: $fontStyle Found: ${f.data.fontStyle}")
-			for (page in f.pages) {
-				page.refInc()
-			}
+	fun register(fontKey: String, bitmapFont: BitmapFont) {
+		if (registry.containsKey(fontKey)) return
+		registry[fontKey] = bitmapFont
+		for (page in bitmapFont.pages) {
+			page.refInc()
 		}
 	}
 
@@ -359,12 +310,10 @@ object BitmapFontRegistry : Clearable, Disposable {
 	 * Unregisters a font loader that was registered via [register].
 	 * The texture pages will have their use counts decremented via [Texture.refDec]
 	 */
-	fun unregister(fontStyle: FontStyleRo): Boolean {
-		val removed = registry.remove(fontStyle) ?: return false
-		launch {
-			for (page in removed.await().pages) {
-				page.refDec()
-			}
+	fun unregister(fontKey: String): Boolean {
+		val removed = registry.remove(fontKey) ?: return false
+		for (page in removed.pages) {
+			page.refDec()
 		}
 		return true
 	}
@@ -372,24 +321,24 @@ object BitmapFontRegistry : Clearable, Disposable {
 	/**
 	 * Returns true if this registry contains the given font.
 	 */
-	fun containsFont(fontStyle: FontStyleRo): Boolean {
-		return registry.containsKey(fontStyle)
+	fun containsFont(fontKey: String): Boolean {
+		return registry.containsKey(fontKey)
 	}
 
 	/**
 	 * Returns the font registered to the given style. Throws an exception if the font is not registered.
 	 *
-	 * @param fontStyle The style used as a key via [register]
+	 * @param fontKey The style used as a key via [register]
 	 * @param warnOnNotFound If warnOnNotFound is true and the font style was never registered, a logger warning will
 	 * be issued. This warning will only occur once per font style.
 	 * @see containsFont
 	 */
-	fun getFont(fontStyle: FontStyleRo, warnOnNotFound: Boolean = true): Deferred<BitmapFont>? {
-		val found = registry[fontStyle]
+	fun getFont(fontKey: String, warnOnNotFound: Boolean = true): BitmapFont? {
+		val found = registry[fontKey]
 		if (found == null && warnOnNotFound) {
-			if (!warnedFontStyles.containsKey(fontStyle)) {
-				warnedFontStyles[fontStyle] = true
-				Log.warn("Requested a font not being loaded $fontStyle")
+			if (!warnedFontKeys.containsKey(fontKey)) {
+				warnedFontKeys[fontKey] = true
+				Log.warn("Requested a font not loaded: $fontKey")
 			}
 		}
 		return found
@@ -398,11 +347,9 @@ object BitmapFontRegistry : Clearable, Disposable {
 	override fun clear() {
 		val values = registry.values.copy()
 		registry.clear()
-		launch {
-			for (bitmapFont in values) {
-				for (page in bitmapFont.await().pages) {
-					page.refDec()
-				}
+		for (bitmapFont in values) {
+			for (page in bitmapFont.pages) {
+				page.refDec()
 			}
 		}
 	}
@@ -411,19 +358,6 @@ object BitmapFontRegistry : Clearable, Disposable {
 		clear()
 	}
 
-}
-
-private val tmp = FontStyle()
-
-/**
- * Retrieves the bitmap font based on the char style.
- */
-fun getFont(charStyle: CharStyle, warnOnNotFound: Boolean = true): Deferred<BitmapFont>? {
-	tmp.face = charStyle.face
-	tmp.size = charStyle.size
-	tmp.bold = charStyle.bold
-	tmp.italic = charStyle.italic
-	return BitmapFontRegistry.getFont(tmp, warnOnNotFound)
 }
 
 private object FontTextureDecorator : Decorator<Texture, Texture> {

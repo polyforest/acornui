@@ -86,8 +86,8 @@ object CascadingStyleCalculator : StyleCalculator {
 		for (i in 0..entries.lastIndex) {
 			val entry = entries[i]
 			val ruleInfo = appliedRules[i]
-			for (i in 0..entry.style.allProps.lastIndex) {
-				val prop = entry.style.allProps[i]
+			for (j in 0..entry.style.allProps.lastIndex) {
+				val prop = entry.style.allProps[j]
 				if (prop.explicitIsSet) {
 					val found = style.allProps.first2 { it.name == prop.name }
 					if (found?.calculatedIsSet == true) {

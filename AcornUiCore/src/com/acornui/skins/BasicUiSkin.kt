@@ -16,6 +16,9 @@
 
 package com.acornui.skins
 
+import com.acornui.async.async
+import com.acornui.async.launch
+import com.acornui.collection.addAll
 import com.acornui.component.*
 import com.acornui.component.datagrid.DataGrid
 import com.acornui.component.datagrid.DataGridGroupHeader
@@ -67,7 +70,7 @@ open class BasicUiSkin(
 		target.populateButtonStyle(Checkbox) { checkboxSkin(theme, it) }
 		target.populateButtonStyle(CollapseButton) { collapseButtonSkin(theme, it) }
 		target.populateButtonStyle(RadioButton) { radioButtonSkin(theme, it) }
-		target.populateButtonStyle(StyleSelectors.cbNoLabelStyle) { checkboxNoLabelSkin(theme, it) }
+		target.populateButtonStyle(CommonStyleTags.cbNoLabelStyle) { checkboxNoLabelSkin(theme, it) }
 		target.populateButtonStyle(IconButton) { iconButtonSkin(theme, it) }
 
 		popUpStyle()
@@ -113,11 +116,10 @@ open class BasicUiSkin(
 	}
 
 	protected open fun textStyle() {
-		target.addStyleRule(theme.textStyle)
-		target.addStyleRule(theme.headingStyle, withAncestor(StyleSelectors.headingStyle))
-		target.addStyleRule(theme.formLabelStyle, withAncestor(formLabelStyle))
-		target.addStyleRule(charStyle { selectable = true }, withAncestor(TextInput) or withAncestor(TextArea))
+		target.addStyleRule(charStyle { colorTint = theme.textColor })
+		target.addStyleRule(charStyle { colorTint = theme.formLabelColor }, withAncestor(formLabelStyle))
 
+		target.addStyleRule(charStyle { selectable = true }, withAncestor(TextInput) or withAncestor(TextArea))
 		loadBitmapFonts()
 
 		val textInputBoxStyle = BoxStyle()
@@ -140,17 +142,29 @@ open class BasicUiSkin(
 
 		val errorMessageStyle = CharStyle()
 		errorMessageStyle.colorTint = Color.RED
-		target.addStyleRule(errorMessageStyle, StyleSelectors.errorMessage)
+		target.addStyleRule(errorMessageStyle, CommonStyleTags.errorMessage)
 	}
 
 	protected open fun loadBitmapFonts() {
 		val group = cachedGroup()
-		val fontStyle = theme.textStyle.toFontStyle()
-		loadFontFromAtlas(fontStyle, "assets/uiskin/verdana_14.fnt", theme.atlasPath, group)
-		loadFontFromAtlas(fontStyle.copy(bold = true), "assets/uiskin/verdana_14_bold.fnt", theme.atlasPath, group)
-		loadFontFromAtlas(fontStyle.copy(italic = true), "assets/uiskin/verdana_14_italic.fnt", theme.atlasPath, group)
-		loadFontFromAtlas(fontStyle.copy(bold = true, italic = true), "assets/uiskin/verdana_14_bold_italic.fnt", theme.atlasPath, group)
-		loadFontFromAtlas(theme.headingStyle.toFontStyle(), "assets/uiskin/verdana_14_bold.fnt", theme.atlasPath, group)
+		launch {
+			loadFontFromAtlas("assets/uiskin/verdana_14.fnt", theme.atlasPath, group)
+			loadFontFromAtlas("assets/uiskin/verdana_14_bold.fnt", theme.atlasPath, group)
+			loadFontFromAtlas("assets/uiskin/verdana_14_italic.fnt", theme.atlasPath, group)
+			loadFontFromAtlas("assets/uiskin/verdana_14_bold_italic.fnt", theme.atlasPath, group)
+
+			target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_14.fnt" })
+			target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_14_bold.fnt" }, withAnyAncestor(
+					TextStyleTags.h1,
+					TextStyleTags.h2,
+					TextStyleTags.h3,
+					TextStyleTags.h4
+			))
+
+			target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_bold_14.fnt" }, withAncestor(TextStyleTags.strong))
+			target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_italic_14.fnt" }, withAncestor(TextStyleTags.emphasis))
+			target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_bold_italic_14.fnt" }, withAncestor(TextStyleTags.strong) and withAncestor(TextStyleTags.emphasis))
+		}
 	}
 
 	protected open fun panelStyle() {
@@ -222,7 +236,7 @@ open class BasicUiSkin(
 
 		headingGroupStyle.heading = {
 			text {
-				styleTags.add(StyleSelectors.headingStyle)
+				styleTags.add(TextStyleTags.h1)
 			}
 		}
 
@@ -234,12 +248,12 @@ open class BasicUiSkin(
 		themeRect.backgroundColor = theme.fill
 		themeRect.borderColors = BorderColors(theme.stroke)
 		themeRect.borderThicknesses = Pad(theme.strokeThickness)
-		target.addStyleRule(themeRect, StyleSelectors.themeRect)
+		target.addStyleRule(themeRect, CommonStyleTags.themeRect)
 	}
 
 	protected open fun tabNavigatorStyle() {
 		val tabNavStyle = TabNavigatorStyle()
-		tabNavStyle.background = { rect { styleTags.add(StyleSelectors.themeRect) } }
+		tabNavStyle.background = { rect { styleTags.add(CommonStyleTags.themeRect) } }
 		target.addStyleRule(tabNavStyle, TabNavigator)
 
 		target.populateButtonStyle(TabNavigator.DEFAULT_TAB_STYLE) { tabButtonSkin(theme, it) }
@@ -406,7 +420,7 @@ open class BasicUiSkin(
 		colorPaletteStyle.apply {
 			background = {
 				rect {
-					styleTags.add(StyleSelectors.themeRect)
+					styleTags.add(CommonStyleTags.themeRect)
 					style.borderRadii = Corners(theme.borderRadius)
 				}
 			}
@@ -529,11 +543,6 @@ open class BasicUiSkin(
 
 		target.addStyleRule(dataGridStyle, DataGrid)
 
-		val headerCharStyle = CharStyle()
-		headerCharStyle.bold = true
-		headerCharStyle.selectable = false
-		target.addStyleRule(headerCharStyle, withAncestor(TextField) andThen withAncestor(DataGrid.HEADER_CELL))
-
 		val bodyCharStyle = CharStyle()
 		bodyCharStyle.selectable = false
 		target.addStyleRule(bodyCharStyle, withAncestor(TextField) andThen withAncestor(DataGrid.BODY_CELL))
@@ -544,9 +553,9 @@ open class BasicUiSkin(
 		target.addStyleRule(headerFlowStyle, withAncestor(TextField) andThen withAncestor(DataGrid.HEADER_CELL))
 
 		val groupHeaderCharStyle = CharStyle()
-		groupHeaderCharStyle.bold = true
+		groupHeaderCharStyle.fontKey = "assets/uiskin/verdana_bold_14.fnt" // TODO
 		groupHeaderCharStyle.selectable = false
-		target.addStyleRule(groupHeaderCharStyle, withAncestor(TextField) andThen withAncestor(DataGridGroupHeader))
+		target.addStyleRule(groupHeaderCharStyle, withAncestor(TextField) andThen (withAncestor(DataGridGroupHeader) or withAncestor(DataGrid.HEADER_CELL)))
 
 		val dataGridGroupHeaderStyle = DataGridGroupHeaderStyle()
 		dataGridGroupHeaderStyle.collapseButton = { collapseButton { toggleOnClick = false } }
@@ -918,6 +927,9 @@ fun Owned.getButtonStrokeColor(buttonState: ButtonState): ColorRo {
 	}
 }
 
+/**
+ * The Theme is a set of common styling properties, used to build a skin.
+ */
 class Theme {
 
 	/**
@@ -940,34 +952,13 @@ class Theme {
 	var strokeDisabled: ColorRo = Color(0x999999FF)
 
 	var strokeToggled: ColorRo = Color(0x0235ACFF)
-	var strokeToggledHighlight = strokeToggled + brighten
+	var strokeToggledHighlight: ColorRo = strokeToggled + brighten
 
 	var borderRadius = 8f
 
-	var textStyle = charStyle {
-		face = "Verdana"
-		size = 14
-		colorTint = Color(0x333333FF)
-	}
-
-	var headingStyle = charStyle {
-		face = "Verdana"
-		size = 14
-		bold = true
-		colorTint = Color(0x333333FF)
-	}
-
-	var subHeadingStyle = charStyle {
-		face = "Verdana"
-		size = 14
-		bold = true
-		colorTint = Color(0x333333FF)
-	}
-
-	var formLabelStyle = charStyle {
-		colorTint = Color(0x555555FF)
-		bold = true
-	}
+	var textColor: ColorRo = Color(0x333333FF)
+	var headingColor: ColorRo = Color(0x333333FF)
+	var formLabelColor: ColorRo = Color(0x555555FF)
 
 	var controlBarBgColor: ColorRo = Color(0xDAE5F0FF)
 
@@ -989,32 +980,108 @@ class Theme {
 	}
 }
 
-object StyleSelectors {
+@Deprecated("Use CommonStyleTags", ReplaceWith("CommonStyleTags"), DeprecationLevel.ERROR)
+object StyleSelectors
 
+object CommonStyleTags {
 	val cbNoLabelStyle = styleTag()
-	val headingStyle = styleTag()
-	val subHeadingStyle = styleTag()
 	val themeRect = styleTag()
 	val errorMessage = styleTag()
+
+	@Deprecated("Use TextStyleTags.h1", ReplaceWith("TextStyleTags.h1"))
+	val headingStyle = styleTag()
+	@Deprecated("Use TextStyleTags.h2", ReplaceWith("TextStyleTags.h2"))
+	val subHeadingStyle = styleTag()
 }
 
+object TextStyleTags {
+
+	val h1 = styleTag()
+	val h2 = styleTag()
+	val h3 = styleTag()
+	val h4 = styleTag()
+	val strong = styleTag()
+	val emphasis = styleTag()
+}
+
+@Deprecated("Use h1", ReplaceWith("h1(text, init)"))
+fun Owned.heading(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField = h1(text, init)
+
 /**
- * A shortcut to creating a text field with the [StyleSelectors.headingStyle] tag.
+ * A shortcut to creating a text field with the [CommonStyleTags.headingStyle] tag.
  */
-fun Owned.heading(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField {
+fun Owned.h1(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField {
 	val t = GlTextField(this)
-	t.styleTags.add(StyleSelectors.headingStyle)
+	t.styleTags.add(TextStyleTags.h1)
+	t.text = text
+	t.init()
+	return t
+}
+
+@Deprecated("Use h2", ReplaceWith("h2(text, init)"))
+fun Owned.subHeading(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField = h2(text, init)
+
+/**
+ * A shortcut to creating a text field with the [TextStyleTags.h2] tag.
+ */
+fun Owned.h2(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField {
+	val t = GlTextField(this)
+	t.styleTags.add(TextStyleTags.h2)
 	t.text = text
 	t.init()
 	return t
 }
 
 /**
- * A shortcut to creating a text field with the [StyleSelectors.subHeadingStyle] tag.
+ * A shortcut to creating a text field with the [TextStyleTags.h3] tag.
  */
-fun Owned.subHeading(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField {
+fun Owned.h3(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField {
 	val t = GlTextField(this)
-	t.styleTags.add(StyleSelectors.subHeadingStyle)
+	t.styleTags.add(TextStyleTags.h3)
+	t.text = text
+	t.init()
+	return t
+}
+
+/**
+ * A shortcut to creating a text field with the [TextStyleTags.h4] tag.
+ */
+fun Owned.h4(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField {
+	val t = GlTextField(this)
+	t.styleTags.add(TextStyleTags.h4)
+	t.text = text
+	t.init()
+	return t
+}
+
+/**
+ * A shortcut to creating a text field with the [TextStyleTags.strong] tag.
+ */
+fun Owned.strong(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField {
+	val t = GlTextField(this)
+	t.styleTags.add(TextStyleTags.strong)
+	t.text = text
+	t.init()
+	return t
+}
+
+/**
+ * A shortcut to creating a text field with the [TextStyleTags.emphasis] tag.
+ */
+fun Owned.em(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField {
+	val t = GlTextField(this)
+	t.styleTags.add(TextStyleTags.emphasis)
+	t.text = text
+	t.init()
+	return t
+}
+
+/**
+ * A shortcut to creating a text field with the [TextStyleTags.emphasis] and [TextStyleTags.strong] tags.
+ */
+fun Owned.strongEm(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField {
+	val t = GlTextField(this)
+	t.styleTags.addAll(TextStyleTags.emphasis, TextStyleTags.strong)
 	t.text = text
 	t.init()
 	return t

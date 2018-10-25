@@ -25,6 +25,10 @@ object AlwaysFilter : StyleFilter {
 	override fun invoke(target: StyleableRo): StyleableRo? = target
 }
 
+object NeverFilter : StyleFilter {
+	override fun invoke(target: StyleableRo): StyleableRo? = null
+}
+
 /**
  * Returns the target if both [operandA] or [operandB] passes.
  */
@@ -87,6 +91,13 @@ class AncestorStyleFilter(private val operand: StyleFilter) : StyleFilter {
 }
 
 fun withAncestor(operand: StyleFilter) = AncestorStyleFilter(operand)
+fun withAnyAncestor(vararg operand: StyleFilter): StyleFilter {
+	var ret: StyleFilter = NeverFilter
+	for (filter in operand) {
+		ret = ret or AncestorStyleFilter(filter)
+	}
+	return ret
+}
 
 /**
  * The direct parent passes the given child filter.

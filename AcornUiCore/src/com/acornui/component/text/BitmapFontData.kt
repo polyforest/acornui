@@ -27,11 +27,6 @@ import com.acornui.math.IntRectangleRo
  */
 data class BitmapFontData(
 
-		/**
-		 * The style of the glyphs packed in this font. (font face, size, bold, italic)
-		 */
-		val fontStyle: FontStyleRo,
-
 		val pages: List<BitmapFontPageData>,
 
 		val glyphs: Map<Char, GlyphData>,

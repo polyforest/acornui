@@ -63,14 +63,12 @@ fun Owned.createScope(vararg dependenciesList: DependencyPair<*>, init: Componen
 }
 
 fun Owned.createScope(dependenciesList: List<DependencyPair<*>>, init: ComponentInit<Owned> = {}): Owned {
-	val r = this
+	val owner = this
 	val o = object : Owned {
 		override val isDisposed: Boolean = false
-		override val disposed: Signal<(Owned) -> Unit>
-			get() = r.disposed
-		override val owner: Owned?
-			get() = r
-		override val injector: Injector = r.injector + dependenciesList
+		override val disposed: Signal<(Owned) -> Unit> = owner.disposed
+		override val owner: Owned? = owner
+		override val injector: Injector = owner.injector + dependenciesList
 	}
 	o.init()
 	return o

@@ -88,10 +88,14 @@ class StylesImpl(private val host: Styleable) : Disposable {
 			add(newEntry)
 		}
 		styleRules.reset.add {
+			for (list in entriesByType.values) {
+				for (entry in list) {
+					entry.style.changed.remove(this::styleRuleChangedHandler)
+				}
+			}
 			entriesByType.clear()
 			for (entry in styleRules) add(entry)
 		}
-
 	}
 
 	private fun add(entry: StyleRule<*>) {
@@ -99,10 +103,16 @@ class StylesImpl(private val host: Styleable) : Disposable {
 			entriesByType[entry.style.type] = ArrayList()
 		entriesByType[entry.style.type]!!.add(entry)
 		host.invalidateStyles()
+		entry.style.changed.add(this::styleRuleChangedHandler)
 	}
 
 	private fun remove(entry: StyleRule<*>) {
 		entriesByType[entry.style.type]?.remove(entry)
+		host.invalidateStyles()
+		entry.style.changed.remove(this::styleRuleChangedHandler)
+	}
+
+	private fun styleRuleChangedHandler(style: StyleRo) {
 		host.invalidateStyles()
 	}
 

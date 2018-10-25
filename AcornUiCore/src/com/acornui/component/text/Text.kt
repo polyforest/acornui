@@ -39,6 +39,7 @@ import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.serialization.*
 import com.acornui.signal.Signal
+import com.acornui.skins.TextStyleTags
 
 interface TextField : UiComponent, Labelable, SelectableComponent, Styleable {
 
@@ -88,6 +89,20 @@ interface TextField : UiComponent, Labelable, SelectableComponent, Styleable {
 	companion object : StyleTag
 }
 
+var TextField.strong: Boolean
+	get() = styleTags.contains(TextStyleTags.strong)
+	set(value) {
+		if (!styleTags.contains(TextStyleTags.strong))
+			styleTags.add(TextStyleTags.strong)
+	}
+
+var TextField.emphasis: Boolean
+	get() = styleTags.contains(TextStyleTags.emphasis)
+	set(value) {
+		if (!styleTags.contains(TextStyleTags.emphasis))
+			styleTags.add(TextStyleTags.emphasis)
+	}
+
 fun Owned.editableText(init: ComponentInit<GlEditableTextField> = {}): GlEditableTextField {
 	val t = GlEditableTextField(this)
 	t.init()
@@ -127,18 +142,9 @@ class CharStyle : StyleBase() {
 	override val type: StyleType<CharStyle> = CharStyle
 
 	/**
-	 * The name of the font face. (case sensitive)
+	 * The key of the font, as it was registered on the [BitmapFontRegistry] in the skin.
 	 */
-	var face by prop("_sans")
-
-	/**
-	 * The size of the font.
-	 */
-	var size by prop(14)
-
-	var bold by prop(false)
-
-	var italic by prop(false)
+	var fontKey by prop<String?>(null)
 
 	/**
 	 * True if the characters should draw an line at the baseline.
@@ -172,21 +178,16 @@ class CharStyle : StyleBase() {
 	companion object : StyleType<CharStyle>
 }
 
-fun CharStyle.toFontStyle(out: FontStyle = FontStyle()): FontStyle {
-	out.face = face
-	out.size = size
-	out.bold = bold
-	out.italic = italic
-	return out
-}
+val CharStyle.font: BitmapFont?
+	get() {
+		val fontKey = fontKey ?: return null
+		return BitmapFontRegistry.getFont(fontKey)
+	}
 
 object CharStyleSerializer : To<CharStyle>, From<CharStyle> {
 
 	override fun CharStyle.write(writer: Writer) {
-		writer.styleProperty(this, this::face)?.string(face)
-		writer.styleProperty(this, this::size)?.int(size)
-		writer.styleProperty(this, this::bold)?.bool(bold)
-		writer.styleProperty(this, this::italic)?.bool(italic)
+		writer.styleProperty(this, this::fontKey)?.string(fontKey)
 		writer.styleProperty(this, this::underlined)?.bool(underlined)
 		writer.styleProperty(this, this::colorTint)?.color(colorTint)
 		writer.styleProperty(this, this::backgroundColor)?.color(backgroundColor)
@@ -197,10 +198,7 @@ object CharStyleSerializer : To<CharStyle>, From<CharStyle> {
 
 	override fun read(reader: Reader): CharStyle {
 		val c = CharStyle()
-		reader.contains(c::face.name) { c.face = it.string()!! }
-		reader.contains(c::size.name) { c.size = it.int()!! }
-		reader.contains(c::bold.name) { c.bold = it.bool()!! }
-		reader.contains(c::italic.name) { c.italic = it.bool()!! }
+		reader.contains(c::fontKey.name) { c.fontKey = it.string()!! }
 		reader.contains(c::underlined.name) { c.underlined = it.bool()!! }
 		reader.contains(c::colorTint.name) { c.colorTint = it.color()!! }
 		reader.contains(c::backgroundColor.name) { c.backgroundColor = it.color()!! }

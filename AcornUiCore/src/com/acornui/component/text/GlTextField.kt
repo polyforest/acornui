@@ -16,8 +16,6 @@
 
 package com.acornui.component.text
 
-import com.acornui.async.resultOrNull
-import com.acornui.async.then
 import com.acornui.collection.*
 import com.acornui.component.*
 import com.acornui.component.layout.Positionable
@@ -119,12 +117,6 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 				_drag?.dispose()
 				_drag = null
 			}
-			async {
-				val fontStyle = charStyle.toFontStyle()
-				BitmapFontRegistry.getFont(fontStyle)?.await()
-			} then {
-				invalidateStyles()
-			}
 		}
 		validation.addNode(TextValidationFlags.SELECTION, ValidationFlags.HIERARCHY_ASCENDING, this::updateSelection)
 		selectionManager.selectionChanged.add(this::selectionChangedHandler)
@@ -183,7 +175,7 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 		contents.setPosition(0f, 0f)
 		out.set(contents.bounds)
 
-		val font = BitmapFontRegistry.getFont(charStyle.toFontStyle(tmpFontStyle))?.resultOrNull()
+		val font = charStyle.font
 		val minHeight = flowStyle.padding.expandHeight(font?.data?.lineHeight?.toFloat()) ?: 0f
 		if (out.height < minHeight) out.height = minHeight
 
@@ -204,10 +196,6 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 		selectionManager.selectionChanged.remove(this::selectionChangedHandler)
 		_drag?.dispose()
 		_drag = null
-	}
-
-	companion object {
-		private val tmpFontStyle = FontStyle()
 	}
 }
 
@@ -299,8 +287,7 @@ open class TextSpanElementImpl : TextSpanElement, ElementParent<TextElement>, St
 
 	override fun validateStyles() {
 		styles.validateStyles()
-		val font = BitmapFontRegistry.getFont(charStyle.toFontStyle(tmpFontStyle))?.resultOrNull()
-		tfCharStyle.font = font
+		tfCharStyle.font = charStyle.font
 		tfCharStyle.underlined = charStyle.underlined
 		tfCharStyle.strikeThrough = charStyle.strikeThrough
 		tfCharStyle.lineThickness = charStyle.lineThickness
@@ -394,9 +381,6 @@ open class TextSpanElementImpl : TextSpanElement, ElementParent<TextElement>, St
 		tfCharStyle.backgroundColor.set(concatenatedColorTint).mul(charStyle.backgroundColor)
 	}
 
-	companion object {
-		private val tmpFontStyle = FontStyle()
-	}
 }
 
 /**

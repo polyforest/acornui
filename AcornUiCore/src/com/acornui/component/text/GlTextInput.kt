@@ -168,9 +168,8 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 		val h = margin.reduceHeight(pad.reduceHeight(explicitHeight))
 
 		val w = if (explicitWidth == null && defaultWidthFromText != null) {
-			val fontStyle = charStyle.toFontStyle()
-			val font = BitmapFontRegistry.getFont(fontStyle)
-			font?.resultOrNull()?.data?.measureLineWidth(defaultWidthFromText!!)?.toFloat() ?: 0f
+			val font = charStyle.font
+			font?.data?.measureLineWidth(defaultWidthFromText!!)?.toFloat() ?: 0f
 		} else {
 			margin.reduceWidth2(pad.reduceWidth2(explicitWidth ?: textInputStyle.defaultWidth))
 		}
@@ -506,7 +505,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 		host.char().add {
 			if (editable && !it.defaultPrevented()) {
-				val font = getFont(host.charStyle)?.resultOrNull()
+				val font = host.charStyle.font
 				if (font?.glyphs?.containsKey(it.char) == true && it.char != '\n' && it.char != '\r') {
 					it.handled = true
 					replaceSelection(it.char.toString())
