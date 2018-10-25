@@ -1008,7 +1008,7 @@ object TextStyleTags {
 fun Owned.heading(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField = h1(text, init)
 
 /**
- * A shortcut to creating a text field with the [CommonStyleTags.headingStyle] tag.
+ * A shortcut to creating a text field with the [TextStyleTags.h1] tag.
  */
 fun Owned.h1(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField {
 	val t = GlTextField(this)

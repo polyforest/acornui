@@ -27,6 +27,14 @@ import com.acornui.math.IntRectangleRo
  */
 data class BitmapFontData(
 
+		val face: String,
+
+		val size: Int,
+
+		val bold: Boolean,
+
+		val italic: Boolean,
+
 		val pages: List<BitmapFontPageData>,
 
 		val glyphs: Map<Char, GlyphData>,

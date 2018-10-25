@@ -36,10 +36,10 @@ object AngelCodeParser : Decorator<String, BitmapFontData> {
 		parser.white()
 		parser.consumeString("info")
 
-		parseQuotedStringProp(parser, "face")
-		abs(parseIntProp(parser, "size"))
-		parseBoolProp(parser, "bold")
-		parseBoolProp(parser, "italic")
+		val face = parseQuotedStringProp(parser, "face")
+		val size = abs(parseIntProp(parser, "size"))
+		val bold = parseBoolProp(parser, "bold")
+		val italic = parseBoolProp(parser, "italic")
 
 		// Common
 		nextLine(parser)
@@ -116,6 +116,10 @@ object AngelCodeParser : Decorator<String, BitmapFontData> {
 		glyphs.addMissingCommonGlyphs()
 
 		return BitmapFontData(
+				face = face,
+				size = size,
+				bold = bold,
+				italic = italic,
 				pages = pages.toList(),
 				glyphs = glyphs,
 				lineHeight = lineHeight,
