@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Poly Forest
+ * Copyright 2018 PolyForest
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,8 @@ import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.layout.algorithm.LineInfo
 import com.acornui.component.layout.algorithm.LineInfoRo
+import com.acornui.component.scroll.ClampedScrollModel
+import com.acornui.component.scroll.ScrollPolicy
 import com.acornui.component.style.*
 import com.acornui.core.Disposable
 import com.acornui.core.cursor.RollOverCursor
@@ -31,10 +33,14 @@ import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.floor
+import com.acornui.core.focus.Focusable
 import com.acornui.core.graphics.BlendMode
 import com.acornui.core.input.interaction.DragAttachment
 import com.acornui.core.input.interaction.DragInteractionRo
+import com.acornui.core.mvc.CommandGroup
+import com.acornui.core.mvc.invokeCommand
 import com.acornui.core.selection.Selectable
+import com.acornui.core.selection.SelectableComponent
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionRange
 import com.acornui.gl.core.GlState
@@ -43,15 +49,70 @@ import com.acornui.gl.core.putVertex
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.*
+import com.acornui.signal.Signal
 import com.acornui.string.isBreaking
 import kotlin.math.round
 
+interface TextField : Labelable, SelectableComponent, Styleable {
+
+	/**
+	 * The style object for text flow layout.
+	 */
+	val flowStyle: TextFlowStyle
+
+	/**
+	 * The style object for glyph decoration.
+	 */
+	val charStyle: CharStyle
+
+	/**
+	 * The Selectable target to use for the selection range.
+	 */
+	var selectionTarget: Selectable
+	/**
+	 * The TextField contents.
+	 */
+	val contents: TextNodeRo
+	/**
+	 * Sets this text field's contents to a simple text flow.
+	 */
+	var text: String
+
+	/**
+	 * If true (default), the contents will be clipped to the explicit size of this text field.
+	 */
+	var allowClipping: Boolean
+
+	/**
+	 * Sets the contents of this text field.
+	 * This will remove the existing contents, but does not dispose.
+	 */
+	fun <T : TextNodeComponent> contents(value: T): T
+
+	/**
+	 * Replaces the given range with the provided text.
+	 * This is functionally the same as:
+	 * text.substring(0, startIndex) + newText + text.substring(endIndex, text.length)
+	 *
+	 * @param startIndex The starting character index for the replacement. (Inclusive)
+	 * @param endIndex The ending character index for the replacement. (Exclusive)
+	 *
+	 * E.g.
+	 * +text("Hello World") {
+	 *   replaceTextRange(1, 5, "i") // Hi World
+	 * }
+	 */
+	fun replaceTextRange(startIndex: Int, endIndex: Int, newText: String)
+
+	companion object : StyleTag
+}
+
 /**
- * A TextField implementation for the OpenGL back-ends.
+ * A component that displays text.
  * @author nbilyk
  */
 @Suppress("LeakingThis", "UNUSED_PARAMETER")
-class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
+class TextFieldImpl(owner: Owned) : ContainerImpl(owner), TextField {
 
 	override val flowStyle = bind(TextFlowStyle())
 	override val charStyle = bind(CharStyle())
@@ -63,40 +124,44 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 	/**
 	 * The Selectable target to use for the selection range.
 	 */
-	var selectionTarget: Selectable = this
+	override var selectionTarget: Selectable = this
 
 	private val _textSpan = span()
 	private val _textContents = textFlow { +_textSpan }
 	private var _contents: TextNodeComponent = addChild(_textContents)
 
+	private var _allowClipping: Boolean = true
+
+	/**
+	 * If true (default), the contents will be clipped to the explicit size of this text field.
+	 */
+	override var allowClipping: Boolean
+		get() = _allowClipping
+		set(value) {
+			if (_allowClipping == value) return
+			_allowClipping = value
+			_contents.allowClipping = value
+			invalidateLayout()
+		}
+
 	/**
 	 * The TextField contents.
 	 */
-	val contents: TextNodeRo
+	override val contents: TextNodeRo
 		get() = _contents
 
 	/**
 	 * Sets the contents of this text field.
 	 * This will remove the existing contents, but does not dispose.
 	 */
-	fun <T : TextNodeComponent> contents(value: T): T {
+	override fun <T : TextNodeComponent> contents(value: T): T {
 		if (_contents == value) return value
 		removeChild(_contents)
 		_contents = value
+		_contents.allowClipping = _allowClipping
 		addChild(value)
 		return value
 	}
-
-	/**
-	 * If true (default), the contents will be clipped to the explicit size of this text field.
-	 */
-	var allowClipping: Boolean
-		get() = _contents.allowClipping
-		set(value) {
-			if (_contents.allowClipping == value) return
-			_contents.allowClipping = value
-			invalidateLayout()
-		}
 
 	private var _drag: DragAttachment? = null
 
@@ -154,6 +219,9 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 		}
 	}
 
+	/**
+	 * Sets this text field's contents to a simple text flow.
+	 */
 	override var text: String
 		get() {
 			val builder = StringBuilder()
@@ -163,6 +231,17 @@ class GlTextField(owner: Owned) : ContainerImpl(owner), TextField {
 		set(value) {
 			_textSpan.text = value
 			contents(_textContents)
+		}
+
+	override fun replaceTextRange(startIndex: Int, endIndex: Int, newText: String) {
+		val text = text
+		this.text = text.substring(0, maxOf(0, startIndex)) + newText + text.substring(minOf(text.length, endIndex), text.length)
+	}
+
+	override var label: String
+		get() = text
+		set(value) {
+			text = value
 		}
 
 	private fun updateSelection() {
@@ -204,17 +283,18 @@ object TextValidationFlags {
 }
 
 /**
- *
+ * A [TextSpanElement] will decorate the span's characters all the same way. This class is used to store those
+ * calculated properties.
  */
 class TfCharStyle {
 	var font: BitmapFont? = null
 	var underlined: Boolean = false
 	var strikeThrough: Boolean = false
 	var lineThickness: Float = 1f
-	val selectedTextColorTint: Color = Color()
-	val selectedBackgroundColor: Color = Color()
-	val textColorTint: Color = Color()
-	val backgroundColor: Color = Color()
+	val selectedTextColorTint = Color()
+	val selectedBackgroundColor = Color()
+	val textColorTint = Color()
+	val backgroundColor = Color()
 }
 
 interface TextSpanElementRo<out T : TextElementRo> : ElementParentRo<T> {
@@ -446,7 +526,6 @@ interface TextElementRo {
 	 */
 	val overhangs: Boolean
 }
-
 
 val TextElementRo.right: Float
 	get() = x + width
@@ -1261,3 +1340,145 @@ val TextSpanElementRo<TextElementRo>.textFieldY: Float
 		}
 		return textFieldY
 	}
+
+/**
+ * Creates a [TextField] implementation with the provided text content.
+ */
+fun Owned.text(text: String, init: ComponentInit<TextField> = {}): TextField {
+	val t = TextFieldImpl(this)
+	t.text = text
+	t.init()
+	return t
+}
+
+/**
+ * Creates a [TextField] implementation.
+ */
+fun Owned.text(init: ComponentInit<TextField> = {}): TextField {
+	val t = TextFieldImpl(this)
+	t.init()
+	return t
+}
+
+interface TextInput : Focusable, SelectableComponent, Styleable, Clearable {
+
+	val charStyle: CharStyle
+	val flowStyle: TextFlowStyle
+	val boxStyle: BoxStyle
+	val textInputStyle: TextInputStyle
+
+	/**
+	 * Dispatched on each input character.
+	 * Note - this does not invoke when the text is programmatically changed.
+	 */
+	val input: Signal<() -> Unit>
+
+	/**
+	 * Dispatched on value commit.
+	 * This is only dispatched on a user interaction, such as pressing ENTER or TAB. It is not dispatched when
+	 * the text is programmatically changed.
+	 */
+	val changed: Signal<() -> Unit>
+
+	var editable: Boolean
+	var maxLength: Int?
+
+	var text: String
+
+	var placeholder: String
+
+	/**
+	 * A regular expression pattern to define what is NOT allowed in this text input.
+	 * E.g. "[a-z]" will prevent lowercase letters from being entered.
+	 * Setting this will mutate the current [text] property.
+	 *
+	 * Note: In the future, this will be changed to restrict: Regex, currently KT-17851 prevents this.
+	 * Note: The global flag will be used.
+	 */
+	var restrictPattern: String?
+
+	var password: Boolean
+
+	/**
+	 * If true, pressing TAB inserts a tab character as opposed to the default behavior (typically a focus change).
+	 */
+	var allowTab: Boolean
+
+	// TODO: add prompt
+
+	companion object : StyleTag
+}
+
+/**
+ * Replaces the given range with the provided text.
+ * This is functionally the same as:
+ * text.substring(0, startIndex) + newText + text.substring(endIndex, text.length)
+ *
+ * @param startIndex The starting character index for the replacement. (Inclusive)
+ * @param endIndex The ending character index for the replacement. (Exclusive)
+ *
+ * E.g.
+ * +text("Hello World") {
+ *   replaceTextRange(1, 5, "i") // Hi World
+ * }
+ */
+fun TextInput.replaceTextRange(startIndex: Int, endIndex: Int, newText: String, group: CommandGroup? = null) {
+	invokeCommand(ReplaceTextRangeCommand(this, startIndex, text.substring(MathUtils.clamp(startIndex, 0, text.length), MathUtils.clamp(endIndex, 0, text.length)), newText, group))
+}
+
+var TextInput.selectable: Boolean
+	get(): Boolean = charStyle.selectable
+	set(value) {
+		charStyle.selectable = value
+	}
+
+interface TextArea : TextInput {
+
+	val hScrollModel: ClampedScrollModel
+	val vScrollModel: ClampedScrollModel
+
+	/**
+	 * The horizontal scrolling policy.
+	 * Default: ScrollPolicy.OFF
+	 */
+	var hScrollPolicy: ScrollPolicy
+
+	/**
+	 * The vertical scrolling policy.
+	 * Default: ScrollPolicy.AUTO
+	 */
+	var vScrollPolicy: ScrollPolicy
+
+	val contentsWidth: Float
+	val contentsHeight: Float
+
+	companion object : StyleTag
+}
+
+var TextArea.selectable: Boolean
+	get(): Boolean = charStyle.selectable
+	set(value) {
+		charStyle.selectable = value
+	}
+
+
+fun Owned.textInput(init: ComponentInit<TextInputImpl> = {}): TextInputImpl {
+	val t = TextInputImpl(this)
+	t.init()
+	return t
+}
+
+fun Owned.textArea(init: ComponentInit<TextAreaImpl> = {}): TextAreaImpl {
+	val t = TextAreaImpl(this)
+	t.init()
+	return t
+}
+
+/**
+ * Common text restrict patterns.
+ */
+object RestrictPatterns {
+
+	val INTEGER = "[^0-9+-]"
+	val FLOAT = "[^0-9+-.]"
+}

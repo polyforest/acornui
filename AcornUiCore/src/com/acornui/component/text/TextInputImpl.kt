@@ -18,7 +18,6 @@
 
 package com.acornui.component.text
 
-import com.acornui.async.resultOrNull
 import com.acornui.async.then
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LineInfoRo
@@ -63,18 +62,18 @@ import com.acornui.string.isLetterOrDigit2
 // TODO: Reduce this. instead of boxStyle, use a background component
 // TODO: instead of cursor component, just use 4 vertices
 
-open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
+class TextInputImpl(owner: Owned) : ContainerImpl(owner), TextInput {
 
-	protected val background = addChild(rect())
+	private val background = addChild(rect())
 
-	final override val textInputStyle = bind(TextInputStyle())
-	final override val boxStyle = bind(BoxStyle())
-	protected val editableText = addChild(EditableText(this))
+	override val textInputStyle = bind(TextInputStyle())
+	override val boxStyle = bind(BoxStyle())
+	private val editableText = addChild(EditableText(this))
 
-	final override val charStyle: CharStyle
+	override val charStyle: CharStyle
 		get() = editableText.charStyle
 
-	final override val flowStyle: TextFlowStyle
+	override val flowStyle: TextFlowStyle
 		get() = editableText.flowStyle
 
 	override val input: Signal<() -> Unit>
@@ -187,8 +186,7 @@ open class GlTextInput(owner: Owned) : ContainerImpl(owner), TextInput {
 	}
 }
 
-
-class GlTextArea(owner: Owned) : ContainerImpl(owner), TextArea {
+class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 
 	private val background = addChild(rect())
 
@@ -411,7 +409,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	var maxLength: Int? = null
 
-	val textField = addChild(GlTextField(this).apply { selectionTarget = host })
+	val textField = addChild(TextFieldImpl(this).apply { selectionTarget = host })
 
 	var pageHeight: Float = 400f
 

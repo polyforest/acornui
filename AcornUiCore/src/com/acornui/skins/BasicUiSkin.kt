@@ -1071,13 +1071,13 @@ object TextStyleTags {
 }
 
 @Deprecated("Use h1", ReplaceWith("h1(text, init)"))
-fun Owned.heading(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField = h1(text, init)
+fun Owned.heading(text: String = "", init: ComponentInit<TextFieldImpl> = {}): TextFieldImpl = h1(text, init)
 
 /**
  * A shortcut to creating a text field with the [TextStyleTags.h1] tag.
  */
-fun Owned.h1(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField {
-	val t = GlTextField(this)
+fun Owned.h1(text: String = "", init: ComponentInit<TextFieldImpl> = {}): TextFieldImpl {
+	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.h1)
 	t.text = text
 	t.init()
@@ -1085,13 +1085,13 @@ fun Owned.h1(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextFi
 }
 
 @Deprecated("Use h2", ReplaceWith("h2(text, init)"))
-fun Owned.subHeading(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField = h2(text, init)
+fun Owned.subHeading(text: String = "", init: ComponentInit<TextFieldImpl> = {}): TextFieldImpl = h2(text, init)
 
 /**
  * A shortcut to creating a text field with the [TextStyleTags.h2] tag.
  */
-fun Owned.h2(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField {
-	val t = GlTextField(this)
+fun Owned.h2(text: String = "", init: ComponentInit<TextFieldImpl> = {}): TextFieldImpl {
+	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.h2)
 	t.text = text
 	t.init()
@@ -1101,8 +1101,8 @@ fun Owned.h2(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextFi
 /**
  * A shortcut to creating a text field with the [TextStyleTags.h3] tag.
  */
-fun Owned.h3(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField {
-	val t = GlTextField(this)
+fun Owned.h3(text: String = "", init: ComponentInit<TextFieldImpl> = {}): TextFieldImpl {
+	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.h3)
 	t.text = text
 	t.init()
@@ -1112,8 +1112,8 @@ fun Owned.h3(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextFi
 /**
  * A shortcut to creating a text field with the [TextStyleTags.h4] tag.
  */
-fun Owned.h4(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField {
-	val t = GlTextField(this)
+fun Owned.h4(text: String = "", init: ComponentInit<TextFieldImpl> = {}): TextFieldImpl {
+	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.h4)
 	t.text = text
 	t.init()
@@ -1123,8 +1123,8 @@ fun Owned.h4(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextFi
 /**
  * A shortcut to creating a text field with the [TextStyleTags.strong] tag.
  */
-fun Owned.strong(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField {
-	val t = GlTextField(this)
+fun Owned.strong(text: String = "", init: ComponentInit<TextFieldImpl> = {}): TextFieldImpl {
+	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.strong)
 	t.text = text
 	t.init()
@@ -1134,8 +1134,8 @@ fun Owned.strong(text: String = "", init: ComponentInit<GlTextField> = {}): GlTe
 /**
  * A shortcut to creating a text field with the [TextStyleTags.emphasis] tag.
  */
-fun Owned.em(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField {
-	val t = GlTextField(this)
+fun Owned.em(text: String = "", init: ComponentInit<TextFieldImpl> = {}): TextFieldImpl {
+	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.emphasis)
 	t.text = text
 	t.init()
@@ -1145,8 +1145,8 @@ fun Owned.em(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextFi
 /**
  * A shortcut to creating a text field with the [TextStyleTags.emphasis] and [TextStyleTags.strong] tags.
  */
-fun Owned.strongEm(text: String = "", init: ComponentInit<GlTextField> = {}): GlTextField {
-	val t = GlTextField(this)
+fun Owned.strongEm(text: String = "", init: ComponentInit<TextFieldImpl> = {}): TextFieldImpl {
+	val t = TextFieldImpl(this)
 	t.styleTags.addAll(TextStyleTags.emphasis, TextStyleTags.strong)
 	t.text = text
 	t.init()
