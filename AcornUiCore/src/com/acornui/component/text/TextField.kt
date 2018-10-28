@@ -1479,6 +1479,6 @@ fun Owned.textArea(init: ComponentInit<TextAreaImpl> = {}): TextAreaImpl {
  */
 object RestrictPatterns {
 
-	val INTEGER = "[^0-9+-]"
-	val FLOAT = "[^0-9+-.]"
+	const val INTEGER = "[^0-9+-]"
+	const val FLOAT = "[^0-9+-.]"
 }
