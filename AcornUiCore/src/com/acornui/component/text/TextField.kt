@@ -622,6 +622,11 @@ interface TextNode : TextNodeRo, Positionable {
 	override var textParent: TextNodeRo?
 
 	/**
+	 * If true, this component's vertices will be clipped to the explicit size.
+	 */
+	var allowClipping: Boolean
+
+	/**
 	 * Sets the text selection.
 	 * @param rangeStart The starting index of this leaf.
 	 * @param selection A list of ranges that are selected.
@@ -633,13 +638,7 @@ interface TextNode : TextNodeRo, Positionable {
 /**
  * A component that can be set as content to a text field.
  */
-interface TextNodeComponent : TextNode, UiComponent {
-
-	/**
-	 * If true, this component's vertices will be clipped to the explicit size.
-	 */
-	var allowClipping: Boolean
-}
+interface TextNodeComponent : TextNode, UiComponent
 
 /**
  * A TextFlow component is a container of styleable text spans, to be used inside of a TextField.
