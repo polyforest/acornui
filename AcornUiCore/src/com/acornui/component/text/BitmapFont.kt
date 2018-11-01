@@ -163,6 +163,7 @@ suspend fun Scoped.loadFontFromDir(fontPath: String, imagesDir: String, group: C
 	val glyphs = HashMap<Char, Glyph>()
 	// Calculate the uv coordinates for each glyph.
 	for (glyphData in bitmapFontData.glyphs.values) {
+		val texture = pageTextures[glyphData.page].await()
 		glyphs[glyphData.char] = Glyph(
 				data = glyphData,
 				offsetX = glyphData.offsetX,
@@ -172,7 +173,7 @@ suspend fun Scoped.loadFontFromDir(fontPath: String, imagesDir: String, group: C
 				advanceX = glyphData.advanceX,
 				isRotated = false,
 				region = glyphData.region.copy(),
-				texture = pageTextures[glyphData.page].await(),
+				texture = texture,
 				premultipliedAlpha = false
 		)
 	}

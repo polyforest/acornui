@@ -94,7 +94,7 @@ object AngelCodeParser : Decorator<String, BitmapFontData> {
 					advanceX = xAdvance,
 					page = page,
 					kerning = kerning
-			)
+			).clampRegion(pageW, pageH)
 		}
 
 		parser.consumeString("kernings")

@@ -483,7 +483,7 @@ interface TextElementRo {
 	 * The natural amount of horizontal space to advance after this part.
 	 * [explicitWidth] will override this value.
 	 */
-	val xAdvance: Float
+	val advanceX: Float
 
 	/**
 	 * If set, this part should be drawn to fit this width.
@@ -494,7 +494,7 @@ interface TextElementRo {
 	 * The explicit width, if it's set, or the xAdvance.
 	 */
 	val width: Float
-		get() = explicitWidth ?: xAdvance
+		get() = explicitWidth ?: advanceX
 
 	/**
 	 * The kerning offset between this element and the next.
@@ -888,7 +888,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 						val part = _textElements[i]
 						part.x = (part.x + justifyOffset).floor()
 						if (i < lastIndex && part.char == ' ') {
-							part.explicitWidth = part.xAdvance + hGap.ceil()
+							part.explicitWidth = part.advanceX + hGap.ceil()
 							justifyOffset += hGap
 						}
 					}
@@ -1032,7 +1032,7 @@ class TfChar private constructor() : TextElement, Clearable {
 	override var x: Float = 0f
 	override var y: Float = 0f
 
-	override val xAdvance: Float
+	override val advanceX: Float
 		get() = (glyph?.advanceX?.toFloat() ?: 0f)
 
 	override var explicitWidth: Float? = null
@@ -1098,10 +1098,10 @@ class TfChar private constructor() : TextElement, Clearable {
 		var charR = charL + glyph.width
 		var charB = charT + glyph.height
 
+		val lineHeight = textParent?.lineHeight ?: 0f
 		val bgL = maxOf(leftClip, x)
 		val bgT = maxOf(topClip, y)
 		val bgR = minOf(rightClip, x + width + kerning)
-		val lineHeight = textParent?.lineHeight ?: 0f
 		val bgB = minOf(bottomClip, y + lineHeight)
 
 		visible = bgL < rightClip && bgT < bottomClip && bgR > leftClip && bgB > topClip
@@ -1124,7 +1124,7 @@ class TfChar private constructor() : TextElement, Clearable {
 		}
 		if (charT < topClip) {
 			if (glyph.isRotated) regionX += topClip - charT
-			else regionY -= topClip - charT
+			else regionY += topClip - charT
 			charT = topClip
 		}
 		if (charR > rightClip) {
@@ -1150,7 +1150,6 @@ class TfChar private constructor() : TextElement, Clearable {
 		transform.prj(charVertices[3].set(charL, charB, 0f))
 
 		// Background vertices
-		// FIXME: #59 update bg vertices to handle kerning.  (Use semi-transparent background color to see problem)
 		transform.prj(backgroundVertices[0].set(bgL, bgT, 0f))
 		transform.prj(backgroundVertices[1].set(bgR, bgT, 0f))
 		transform.prj(backgroundVertices[2].set(bgR, bgB, 0f))
@@ -1287,7 +1286,7 @@ class LastTextElement(private val flow: TextFlow) : TextElementRo {
 	override var x = 0f
 	override var y = 0f
 
-	override val xAdvance = 0f
+	override val advanceX = 0f
 
 	override val explicitWidth = 0f
 	override val kerning: Float = 0f

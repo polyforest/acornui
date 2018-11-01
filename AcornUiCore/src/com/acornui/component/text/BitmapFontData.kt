@@ -124,6 +124,46 @@ data class GlyphData(
 		return kerning[ch] ?: 0
 	}
 
+	/**
+	 * If the region is outside of the page (the out of bounds area assumed to be clear), then return this glyph
+	 * with the region clamped.
+	 */
+	fun clampRegion(pageWidth: Int, pageHeight: Int): GlyphData {
+		return clampRegionX(pageWidth).clampRegionY(pageHeight)
+	}
+
+	private fun clampRegionX(pageWidth: Int): GlyphData {
+		return if (region.x < 0) {
+			copy(
+					region = region.copy(x = 0, width = region.width + region.x),
+					offsetX = offsetX - region.x
+			)
+		} else if (region.right > pageWidth) {
+			val diff = region.right - pageWidth
+			copy(
+					region = region.copy(width = region.width - diff)
+			)
+		} else {
+			this
+		}
+	}
+
+	private fun clampRegionY(pageHeight: Int): GlyphData {
+		return if (region.y < 0) {
+			copy(
+					region = region.copy(y = 0, width = region.height + region.y),
+					offsetY = offsetY - region.y
+			)
+		} else if (region.bottom > pageHeight) {
+			val diff = region.bottom - pageHeight
+			copy(
+					region = region.copy(height = region.height - diff)
+			)
+		} else {
+			this
+		}
+	}
+
 }
 
 /**
