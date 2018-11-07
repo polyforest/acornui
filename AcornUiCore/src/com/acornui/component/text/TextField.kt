@@ -407,7 +407,7 @@ interface TextNodeRo : Validatable, StyleableRo, PositionableRo {
 	val textParent: TextNodeRo?
 
 	/**
-	 * The total number of text elements this node contains (hierarchical).
+	 * The total number of text elements this node contains (deep/hierarchical).
 	 */
 	val size: Int
 
@@ -426,6 +426,11 @@ interface TextNodeRo : Validatable, StyleableRo, PositionableRo {
 	 * @param index The text element index between 0 and size - 1.
 	 */
 	fun getTextElementAt(index: Int): TextElementRo
+
+	/**
+	 * The number of lines this node has (deep/hierarchical).
+	 */
+	val linesCount: Int
 
 	/**
 	 * Returns the line at the given index.

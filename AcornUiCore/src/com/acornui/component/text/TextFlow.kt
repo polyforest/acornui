@@ -8,6 +8,7 @@ import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.layout.algorithm.LineInfo
 import com.acornui.component.layout.algorithm.LineInfoRo
+import com.acornui.component.validationProp
 import com.acornui.core.di.Owned
 import com.acornui.core.floor
 import com.acornui.core.selection.SelectionRange
@@ -26,14 +27,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 
 	val flowStyle = bind(TextFlowStyle())
 
-	private var _allowClipping = true
-	override var allowClipping: Boolean
-		get() = _allowClipping
-		set(value) {
-			if (_allowClipping == value) return
-			_allowClipping = value
-			invalidate(VERTICES)
-		}
+	override var allowClipping: Boolean by validationProp(true, VERTICES)
 
 	private val _lines = ArrayList<LineInfo>()
 
@@ -65,6 +59,9 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 	}
 
 	override fun getTextElementAt(index: Int): TextElementRo = textElements[index]
+
+	override val linesCount: Int
+		get() = _lines.size
 
 	override fun getLineAt(index: Int): LineInfoRo? {
 		if (_lines.isEmpty() || index < 0 || index >= _lines.last().endIndex) return null
