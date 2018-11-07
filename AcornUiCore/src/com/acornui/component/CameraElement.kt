@@ -33,16 +33,10 @@ interface CameraElementRo : TransformableRo {
 	 */
 	fun canvasToLocal(canvasCoord: Vector2): Vector2
 
-	@Deprecated("use canvasToLocal", ReplaceWith("canvasToLocal(windowCoord)"), DeprecationLevel.ERROR)
-	fun windowToLocal(windowCoord: Vector2): Vector2 = canvasToLocal(windowCoord)
-
 	/**
 	 * Converts a local coordinate to window coordinates.
 	 */
 	fun localToCanvas(localCoord: Vector3): Vector3
-
-	@Deprecated("use localToCanvas", ReplaceWith("localToCanvas(localCoord)"), DeprecationLevel.ERROR)
-	fun localToWindow(localCoord: Vector3): Vector3 = localToCanvas(localCoord)
 
 	/**
 	 * Returns the camera to be used for this component.
