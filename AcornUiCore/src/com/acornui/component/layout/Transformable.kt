@@ -216,6 +216,7 @@ interface Transformable : TransformableRo, Positionable {
 fun Transformable.convertCoord(coord: Vector3, targetCoordSpace: TransformableRo): Vector3 = targetCoordSpace.globalToLocal(localToGlobal(coord))
 
 interface PositionableRo {
+
 	val x: Float
 	val y: Float
 	val z: Float
