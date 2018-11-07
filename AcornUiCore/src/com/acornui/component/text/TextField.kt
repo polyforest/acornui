@@ -286,7 +286,7 @@ object TextValidationFlags {
  * A [TextSpanElement] will decorate the span's characters all the same way. This class is used to store those
  * calculated properties.
  */
-class TfCharStyle {
+class CharElementStyle {
 	var font: BitmapFont? = null
 	var underlined: Boolean = false
 	var strikeThrough: Boolean = false
@@ -344,7 +344,7 @@ open class TextSpanElementImpl : TextSpanElement, ElementParent<TextElement>, St
 
 	val charStyle = styles.bind(CharStyle())
 
-	private val tfCharStyle = TfCharStyle()
+	private val tfCharStyle = CharElementStyle()
 
 	init {
 	}
@@ -425,7 +425,7 @@ open class TextSpanElementImpl : TextSpanElement, ElementParent<TextElement>, St
 	}
 
 	fun char(char: Char): TextElement {
-		return TfChar.obtain(char, tfCharStyle)
+		return CharElement.obtain(char, tfCharStyle)
 	}
 
 	operator fun String?.unaryPlus() {
@@ -1017,10 +1017,10 @@ private fun Owned.textFlow(init: ComponentInit<TextFlow>): TextFlow {
 /**
  * Represents a single character, typically within a [TextSpanElement].
  */
-class TfChar private constructor() : TextElement, Clearable {
+class CharElement private constructor() : TextElement, Clearable {
 
 	override var char: Char = CHAR_PLACEHOLDER
-	private var style: TfCharStyle? = null
+	private var style: CharElementStyle? = null
 
 	override var textParent: TextSpanElementRo<TextElementRo>? = null
 
@@ -1263,9 +1263,9 @@ class TfChar private constructor() : TextElement, Clearable {
 
 	companion object {
 		private const val CHAR_PLACEHOLDER = 'a'
-		private val pool = ClearableObjectPool { TfChar() }
+		private val pool = ClearableObjectPool { CharElement() }
 
-		fun obtain(char: Char, charStyle: TfCharStyle): TfChar {
+		fun obtain(char: Char, charStyle: CharElementStyle): CharElement {
 			val c = pool.obtain()
 			c.char = char
 			c.style = charStyle
