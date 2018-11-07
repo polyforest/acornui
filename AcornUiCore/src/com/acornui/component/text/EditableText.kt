@@ -106,6 +106,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	val charStyle: CharStyle
 		get() = textField.charStyle
+
 	val flowStyle: TextFlowStyle
 		get() = textField.flowStyle
 

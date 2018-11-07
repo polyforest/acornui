@@ -213,7 +213,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 			if (lastLine.lastClearsLine) {
 				// Where the next line will begin.
 				_placeholder.x = calculateLineX(availableWidth, 0f) // Considers alignment.
-				_placeholder.y = lastLine.y + lastLine.height
+				_placeholder.y = lastLine.y + lastLine.height + flowStyle.verticalGap
 			} else {
 				// At the end of the last line.
 				_placeholder.x = lastLine.x + lastLine.width

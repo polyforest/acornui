@@ -14,7 +14,7 @@ import com.acornui.math.Vector3
 import com.acornui.string.isBreaking
 
 /**
- * Represents a single character, typically within a [TextSpanElement].
+ * Represents a single character in a [TextField], typically within a [TextSpanElement].
  */
 class CharElement private constructor() : TextElement, Clearable {
 
