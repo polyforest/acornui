@@ -507,6 +507,10 @@ object MathUtils {
 		v *= snap
 		return v + offset
 	}
+
+	inline fun offsetRound(x: Float, offset: Float = 0.0136f): Float {
+		return kotlin.math.round(x + offset)
+	}
 }
 
 inline fun Float.ceil(): Int {

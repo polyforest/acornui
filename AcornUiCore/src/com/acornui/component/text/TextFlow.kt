@@ -13,6 +13,7 @@ import com.acornui.core.di.Owned
 import com.acornui.core.floor
 import com.acornui.core.selection.SelectionRange
 import com.acornui.math.Bounds
+import com.acornui.math.MathUtils.offsetRound
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Vector3
 import com.acornui.math.ceil
@@ -234,7 +235,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 			val remainingSpace = availableWidth - lineWidth
 			flowStyle.padding.left + when (flowStyle.horizontalAlign) {
 				FlowHAlign.LEFT -> 0f
-				FlowHAlign.CENTER -> round(remainingSpace * 0.5f)
+				FlowHAlign.CENTER -> offsetRound(remainingSpace * 0.5f)
 				FlowHAlign.RIGHT -> remainingSpace
 				FlowHAlign.JUSTIFY -> 0f
 			}
@@ -275,7 +276,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 
 			val yOffset = when (flowStyle.verticalAlign) {
 				FlowVAlign.TOP -> 0f
-				FlowVAlign.MIDDLE -> round((line.height - part.lineHeight) * 0.5f + 0.00001f)
+				FlowVAlign.MIDDLE -> offsetRound((line.height - part.lineHeight) * 0.5f)
 				FlowVAlign.BOTTOM -> line.height - part.lineHeight
 				FlowVAlign.BASELINE -> line.baseline - part.baseline
 			}
@@ -349,12 +350,12 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 			val y = tL.y
 			if (tR.x < clip.xMin || tL.x > clip.xMax) return
 			val scaleY = concatenatedTransform.getScaleY()
-			val lineStart = _lines.sortedInsertionIndex((clip.yMin - y)) { viewPortY, line ->
+			val lineStart = _lines.sortedInsertionIndex(clip.yMin - y) { viewPortY, line ->
 				viewPortY.compareTo(line.bottom / scaleY)
 			}
 			if (lineStart == -1)
 				return
-			val lineEnd = _lines.sortedInsertionIndex((clip.yMax - y)) { viewPortBottom, line ->
+			val lineEnd = _lines.sortedInsertionIndex(clip.yMax - y) { viewPortBottom, line ->
 				viewPortBottom.compareTo(line.y / scaleY)
 			}
 			if (lineEnd <= lineStart)

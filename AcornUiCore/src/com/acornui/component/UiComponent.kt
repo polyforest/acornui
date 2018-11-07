@@ -45,6 +45,7 @@ import com.acornui.gl.core.GlState
 import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.*
+import com.acornui.math.MathUtils.offsetRound
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
@@ -1019,7 +1020,7 @@ open class UiComponentImpl(
 
 	final override fun moveTo(x: Float, y: Float, z: Float) {
 		// Round after a small, but obscure offset, to avoid flip-flopping around the common case of 0.5f
-		setPosition(round(x - 0.0136f), round(y - 0.0136f), z)
+		setPosition(offsetRound(x), offsetRound(y), z)
 	}
 
 	override var scaleX: Float
