@@ -106,10 +106,9 @@ open class BasicUiSkin(
 
 	protected open fun focusStyle() {
 		val focusManager = inject(FocusManager)
-		focusManager.highlight?.dispose()
 		val focusHighlight = SimpleHighlight(target, theme.atlasPath, "FocusRect")
 		focusHighlight.colorTint = theme.strokeToggled
-		focusManager.highlight = focusHighlight
+		focusManager.setHighlightIndicator(focusHighlight)
 	}
 
 	protected open fun textStyle() {
@@ -186,8 +185,7 @@ open class BasicUiSkin(
 	}
 
 	protected open fun windowPanelStyle() {
-		val windowPanelStyle = WindowPanelStyle()
-		windowPanelStyle.apply {
+		val windowPanelStyle = WindowPanelStyle().apply {
 			background = {
 				rect {
 					style.apply {
@@ -648,9 +646,9 @@ fun populateButtonStyle(buttonStyle: ButtonStyle, skinPartFactory: (ButtonState)
 	return buttonStyle
 }
 
-fun iconButtonSkin(buttonState: ButtonState, icon: String, padding: PadRo = Pad(5f)): Owned.() -> UiComponent = {
+fun iconButtonSkin(buttonState: ButtonState, icon: String, padding: PadRo = Pad(5f), hGap: Float = 4f): Owned.() -> UiComponent = {
 	val texture = buttonTexture(buttonState)
-	val skinPart = IconButtonSkinPart(this, texture, padding)
+	val skinPart = IconButtonSkinPart(this, texture, padding, hGap)
 	val theme = inject(Theme)
 	skinPart.contentsAtlas(theme.atlasPath, icon)
 	skinPart
@@ -663,7 +661,7 @@ fun labelButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> UiCompo
 
 fun tabButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> UiComponent = {
 	val texture = buttonTexture(buttonState, Corners(topLeft = theme.borderRadius, topRight = theme.borderRadius, bottomLeft = 0f, bottomRight = 0f), Pad(theme.strokeThickness), isTab = true)
-	LabelButtonSkinPart(this, texture, theme.buttonPad)
+	IconButtonSkinPart(this, texture, theme.buttonPad, theme.iconButtonGap)
 }
 
 /**
@@ -671,7 +669,7 @@ fun tabButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> UiCompone
  */
 fun iconButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> UiComponent = {
 	val texture = buttonTexture(buttonState)
-	IconButtonSkinPart(this, texture, theme.buttonPad)
+	IconButtonSkinPart(this, texture, theme.buttonPad, theme.iconButtonGap)
 }
 
 fun checkboxNoLabelSkin(theme: Theme, buttonState: ButtonState): Owned.() -> CheckboxSkinPart = {
@@ -974,11 +972,53 @@ class Theme {
 	var toggledOddRowBgColor: ColorRo = Color(0xFCFD7CFF)
 
 	var buttonPad: PadRo = Pad(4f)
+	var iconButtonGap = 2f
 
 	var atlasPath = "assets/uiskin/uiskin.json"
 
+	fun set(other: Theme) {
+		bgColor = other.bgColor
+		panelBgColor = other.panelBgColor
+
+		fill = other.fill
+		fillHighlight = other.fillHighlight
+		fillDisabled = other.fillDisabled
+		fillShine = other.fillShine
+		inputFill = other.inputFill
+
+		stroke = other.stroke
+		strokeThickness = other.strokeThickness
+		strokeHighlight = other.strokeHighlight
+		strokeDisabled = other.strokeDisabled
+
+		strokeToggled = other.strokeToggled
+		strokeToggledHighlight = other.strokeToggledHighlight
+
+		borderRadius = other.borderRadius
+
+		textColor = other.textColor
+		headingColor = other.headingColor
+		formLabelColor = other.formLabelColor
+
+		controlBarBgColor = other.controlBarBgColor
+
+		evenRowBgColor = other.evenRowBgColor
+		oddRowBgColor = other.oddRowBgColor
+
+		highlightedEvenRowBgColor = other.highlightedEvenRowBgColor
+		highlightedOddRowBgColor = other.highlightedOddRowBgColor
+
+		toggledEvenRowBgColor = other.toggledEvenRowBgColor
+		toggledOddRowBgColor = other.toggledOddRowBgColor
+
+		buttonPad = other.buttonPad
+		iconButtonGap = other.iconButtonGap
+
+		atlasPath = other.atlasPath
+	}
+
 	companion object : DKey<Theme> {
-		override fun factory(injector: Injector): Theme? = Theme()
+		override fun factory(injector: Injector) = Theme()
 	}
 }
 
@@ -990,6 +1030,7 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 		o.bgColor = reader.color("bgColor")!!
 		o.borderRadius = reader.float("borderRadius")!!
 		o.buttonPad = reader.obj("buttonPad", PadSerializer)!!
+		o.iconButtonGap = reader.float("iconButtonGap")!!
 		o.controlBarBgColor = reader.color("controlBarBgColor")!!
 		o.evenRowBgColor = reader.color("evenRowBgColor")!!
 		o.fill = reader.color("fill")!!
@@ -1020,6 +1061,7 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 		writer.color("bgColor", bgColor)
 		writer.float("borderRadius", borderRadius)
 		writer.obj("buttonPad", buttonPad, PadSerializer)
+		writer.float("iconButtonGap", iconButtonGap)
 		writer.color("controlBarBgColor", controlBarBgColor)
 		writer.color("evenRowBgColor", evenRowBgColor)
 		writer.color("fill", fill)

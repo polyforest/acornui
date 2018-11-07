@@ -54,7 +54,7 @@ interface FocusManager : Disposable {
 	 * This component will be used to highlight the focused element.
 	 * This component will be added to the stage provided during [init] and sized and positioned automatically.
 	 */
-	var highlight: UiComponent?
+	fun setHighlightIndicator(value: UiComponent?, disposeOld: Boolean = true)
 
 	/**
 	 * Refreshes the focusable's order in the focus list.

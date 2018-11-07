@@ -23,6 +23,7 @@ import com.acornui.component.ContainerRo
 import com.acornui.component.Stage
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
+import com.acornui.core.Disposable
 import com.acornui.core.DisposedException
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.KeyInteractionRo
@@ -51,7 +52,7 @@ class FocusManagerImpl : FocusManager {
 	override val focusedChanging: Signal<(UiComponentRo?, UiComponentRo?, Cancel) -> Unit>
 		get() = _focusedChanging
 	private val _focusedChanged: Signal2<UiComponentRo?, UiComponentRo?> = Signal2()
-	override val focusedChanged: Signal<(UiComponentRo?, UiComponentRo?)->Unit>
+	override val focusedChanged: Signal<(UiComponentRo?, UiComponentRo?) -> Unit>
 		get() = _focusedChanged
 
 	private var _focused: UiComponentRo? = null
@@ -96,18 +97,25 @@ class FocusManagerImpl : FocusManager {
 	}
 
 	private var _highlight: UiComponent? = null
-	override var highlight: UiComponent?
-		get() = _highlight
-		set(value) {
-			if (value == _highlight) return
-			val wasHighlighted = _highlighted != null
-			unhighlightFocused()
-			_highlight = value
-			if (value != null) {
-				value.includeInLayout = false
-			}
-			if (wasHighlighted) highlightFocused()
+	override fun setHighlightIndicator(value: UiComponent?, disposeOld: Boolean) {
+		val old = _highlight
+		if (value == old) return
+		old?.disposed?.remove(this::highlightDisposedHandler)
+		val wasHighlighted = _highlighted != null
+		unhighlightFocused()
+		_highlight = value
+		if (value != null) {
+			value.includeInLayout = false
+			value.disposed.add(this::highlightDisposedHandler)
 		}
+		if (wasHighlighted) highlightFocused()
+		if (disposeOld)
+			old?.dispose()
+	}
+
+	private fun highlightDisposedHandler(d: Disposable) {
+		setHighlightIndicator(null, false)
+	}
 
 	override fun init(root: Stage) {
 		_assert(_root == null, "Already initialized.")
@@ -294,7 +302,7 @@ class FocusManagerImpl : FocusManager {
 		if (isDisposed) throw DisposedException()
 		isDisposed = true
 		unhighlightFocused()
-		highlight = null
+		setHighlightIndicator(null, disposeOld = true)
 		pendingFocusable = null
 		_focused = null
 		_focusedChanged.dispose()
