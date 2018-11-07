@@ -61,9 +61,7 @@ class CharElement private constructor() : TextElement, Clearable {
 
 	private val lineVertices: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
 
-	// By reference
 	private var fontColor: ColorRo = Color.BLACK
-	// By reference
 	private var backgroundColor: ColorRo = Color.CLEAR
 
 	override val clearsLine: Boolean

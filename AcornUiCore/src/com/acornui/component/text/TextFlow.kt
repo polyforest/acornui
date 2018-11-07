@@ -49,7 +49,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 	override val multiline: Boolean
 		get() = flowStyle.multiline
 
-	override val size: Int
+	override val textElementsCount: Int
 		get() = textElements.size
 
 	init {
@@ -63,12 +63,11 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 	override val linesCount: Int
 		get() = _lines.size
 
-	override fun getLineAt(index: Int): LineInfoRo? {
-		if (_lines.isEmpty() || index < 0 || index >= _lines.last().endIndex) return null
-		val lineIndex = _lines.sortedInsertionIndex(index) { i, line ->
+	override fun getLineAt(index: Int): LineInfoRo {
+		val lineIndex = _lines.sortedInsertionIndex(index) { _, line ->
 			index.compareTo(line.startIndex)
 		} - 1
-		return _lines.getOrNull(lineIndex)
+		return _lines[lineIndex]
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -80,6 +79,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 		get() = _elements
 
 	override fun <S : TextSpanElement> addElement(index: Int, element: S): S {
+		if (element.textParent != null) throw Exception("Remove element first.")
 		var newIndex = index
 		val oldIndex = _elements.indexOf(element)
 		if (oldIndex != -1) {
@@ -103,6 +103,9 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 	}
 
 	override fun clearElements(dispose: Boolean) {
+		for (i in 0.._elements.lastIndex) {
+			_textElements[i].textParent = null
+		}
 		_elements.clear()
 		invalidate(TEXT_ELEMENTS)
 	}

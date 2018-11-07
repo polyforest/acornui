@@ -361,7 +361,7 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 
 	private fun scrollToSelected(event: KeyInteractionRo) {
 		val sel = firstSelection ?: return
-		val e = if (sel.endIndex >= contents.size) contents.placeholder else contents.getTextElementAt(sel.endIndex)
+		val e = if (sel.endIndex >= contents.textElementsCount) contents.placeholder else contents.getTextElementAt(sel.endIndex)
 		rect.set(e.x, e.y, e.width, e.lineHeight)
 		rect.inflate(flowStyle.padding)
 

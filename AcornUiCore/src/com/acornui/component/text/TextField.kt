@@ -409,7 +409,7 @@ interface TextNodeRo : Validatable, StyleableRo, PositionableRo {
 	/**
 	 * The total number of text elements this node contains (deep/hierarchical).
 	 */
-	val size: Int
+	val textElementsCount: Int
 
 	/**
 	 * A virtual text element to indicate the position of the next element within this node.
@@ -423,7 +423,7 @@ interface TextNodeRo : Validatable, StyleableRo, PositionableRo {
 
 	/**
 	 * Returns the text element at the given index.
-	 * @param index The text element index between 0 and size - 1.
+	 * @param index The text element index between 0 and [textElementsCount] - 1.
 	 */
 	fun getTextElementAt(index: Int): TextElementRo
 
@@ -433,15 +433,25 @@ interface TextNodeRo : Validatable, StyleableRo, PositionableRo {
 	val linesCount: Int
 
 	/**
-	 * Returns the line at the given index.
+	 * Returns the line at the given text element index (deep/hierarchical).
+	 * @param index The text element index.
 	 */
-	fun getLineAt(index: Int): LineInfoRo?
+	fun getLineAt(index: Int): LineInfoRo
+
+	/**
+	 * Returns the line at the given index, or null if the index is < 0 or >= [textElementsCount].
+	 */
+	fun getLineOrNullAt(index: Int): LineInfoRo? {
+		val n = linesCount
+		if (n == 0 || index < 0 || index >= textElementsCount) return null
+		return getLineAt(index)
+	}
 
 	/**
 	 * @param x The relative x coordinate
 	 * @param y The relative y coordinate
 	 * @return Returns the relative index of the text element nearest (x, y). The text element index will be separated
-	 * at the half-width of the element. This range will be between 0 and size (inclusive)
+	 * at the half-width of the element. This range will be between 0 and [textElementsCount] (inclusive)
 	 */
 	fun getSelectionIndex(x: Float, y: Float): Int
 
