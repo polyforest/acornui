@@ -508,6 +508,9 @@ object MathUtils {
 		return v + offset
 	}
 
+	/**
+	 * Round after a small, but obscure offset, to avoid flip-flopping around the common case of 0.5f
+ 	 */
 	inline fun offsetRound(x: Float, offset: Float = 0.0136f): Float {
 		return kotlin.math.round(x + offset)
 	}

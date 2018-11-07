@@ -17,7 +17,6 @@ import com.acornui.math.MathUtils.offsetRound
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Vector3
 import com.acornui.math.ceil
-import kotlin.math.round
 
 /**
  * A TextFlow component is a container of styleable text spans, to be used inside of a TextField.
@@ -207,13 +206,16 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 		}
 		val lastLine = _lines.lastOrNull()
 		if (lastLine == null) {
-			_placeholder.x = calculateLineX(availableWidth, 0f)
+			// No lines, the placeholder is where the first character will begin.
+			_placeholder.x = calculateLineX(availableWidth, 0f) // Considers alignment.
 			_placeholder.y = flowStyle.padding.top
 		} else {
 			if (lastLine.lastClearsLine) {
-				_placeholder.x = calculateLineX(availableWidth, 0f)
+				// Where the next line will begin.
+				_placeholder.x = calculateLineX(availableWidth, 0f) // Considers alignment.
 				_placeholder.y = lastLine.y + lastLine.height
 			} else {
+				// At the end of the last line.
 				_placeholder.x = lastLine.x + lastLine.width
 				_placeholder.y = lastLine.y
 			}

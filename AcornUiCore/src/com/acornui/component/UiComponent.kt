@@ -1019,7 +1019,6 @@ open class UiComponentImpl(
 	}
 
 	final override fun moveTo(x: Float, y: Float, z: Float) {
-		// Round after a small, but obscure offset, to avoid flip-flopping around the common case of 0.5f
 		setPosition(offsetRound(x), offsetRound(y), z)
 	}
 
