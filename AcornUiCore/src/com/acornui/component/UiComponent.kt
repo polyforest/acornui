@@ -332,7 +332,7 @@ open class UiComponentImpl(
 	override var cameraOverride: CameraRo? by validationProp(null, ValidationFlags.CAMERA)
 
 	// LayoutElement properties
-	protected var _bounds = Bounds()
+	protected val _bounds = Bounds()
 	protected var _explicitWidth: Float? = null
 	protected var _explicitHeight: Float? = null
 	protected val _explicitSizeConstraints: SizeConstraints = SizeConstraints()
@@ -399,33 +399,6 @@ open class UiComponentImpl(
 	protected val focusManager = inject(FocusManager)
 
 	private val rayTmp = Ray()
-
-	init {
-		owner.disposed.add(this::ownerDisposedHandler)
-		val r = this
-		validation = validationTree {
-			ValidationFlags.apply {
-				addNode(STYLES, r::updateStyles)
-				addNode(HIERARCHY_ASCENDING, r::updateHierarchyAscending)
-				addNode(HIERARCHY_DESCENDING, r::updateHierarchyDescending)
-				addNode(SIZE_CONSTRAINTS, STYLES, r::validateSizeConstraints)
-				addNode(LAYOUT, SIZE_CONSTRAINTS, r::validateLayout)
-				addNode(LAYOUT_ENABLED, r::updateLayoutEnabled)
-				addNode(TRANSFORM, r::updateTransform)
-				addNode(CONCATENATED_TRANSFORM, TRANSFORM, r::updateConcatenatedTransform)
-				addNode(COLOR_TRANSFORM, r::updateColorTransform)
-				addNode(CONCATENATED_COLOR_TRANSFORM, COLOR_TRANSFORM, r::updateConcatenatedColorTransform)
-				addNode(INTERACTIVITY_MODE, r::updateInheritedInteractivityMode)
-				addNode(FOCUS_ORDER, r::updateFocusOrder)
-				addNode(CAMERA, r::updateCamera)
-				addNode(VIEWPORT, r::updateViewport)
-			}
-		}
-
-		_activated.add(this::onActivated.as1)
-		_deactivated.add(this::updateFocusOrder.as1)
-		_deactivated.add(this::onDeactivated.as1)
-	}
 
 	private fun ownerDisposedHandler(owner: Owned) {
 		dispose()
@@ -938,7 +911,6 @@ open class UiComponentImpl(
 	// Validatable properties
 	//-----------------------------------------------
 
-
 	override val invalidFlags: Int
 		get() = validation.invalidFlags
 
@@ -1133,7 +1105,8 @@ open class UiComponentImpl(
 	 * Converts a coordinate from global coordinate space to local coordinate space.
 	 * This will modify the provided coord parameter.
 	 * @param globalCoord The coordinate in global space. This will be mutated to become a local coordinate.
-	 * @return Returns the coord
+	 * @return Returns [globalCoord]
+	 * Note: This may be an expensive operation, as it requires a matrix inversion.
 	 */
 	override fun globalToLocal(globalCoord: Vector3): Vector3 {
 		concatenatedTransformInv.prj(globalCoord)
@@ -1372,6 +1345,33 @@ open class UiComponentImpl(
 			(i as? Disposable)?.dispose()
 		}
 		_attachments.clear()
+	}
+
+	init {
+		owner.disposed.add(this::ownerDisposedHandler)
+		val r = this
+		validation = validationTree {
+			ValidationFlags.apply {
+				addNode(STYLES, r::updateStyles)
+				addNode(HIERARCHY_ASCENDING, r::updateHierarchyAscending)
+				addNode(HIERARCHY_DESCENDING, r::updateHierarchyDescending)
+				addNode(SIZE_CONSTRAINTS, STYLES, r::validateSizeConstraints)
+				addNode(LAYOUT, SIZE_CONSTRAINTS, r::validateLayout)
+				addNode(LAYOUT_ENABLED, r::updateLayoutEnabled)
+				addNode(TRANSFORM, r::updateTransform)
+				addNode(CONCATENATED_TRANSFORM, TRANSFORM, r::updateConcatenatedTransform)
+				addNode(COLOR_TRANSFORM, r::updateColorTransform)
+				addNode(CONCATENATED_COLOR_TRANSFORM, COLOR_TRANSFORM, r::updateConcatenatedColorTransform)
+				addNode(INTERACTIVITY_MODE, r::updateInheritedInteractivityMode)
+				addNode(FOCUS_ORDER, r::updateFocusOrder)
+				addNode(CAMERA, r::updateCamera)
+				addNode(VIEWPORT, r::updateViewport)
+			}
+		}
+
+		_activated.add(this::onActivated.as1)
+		_deactivated.add(this::updateFocusOrder.as1)
+		_deactivated.add(this::onDeactivated.as1)
 	}
 
 	companion object {
