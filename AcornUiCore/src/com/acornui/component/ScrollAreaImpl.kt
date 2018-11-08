@@ -26,7 +26,7 @@ import com.acornui.math.Bounds
 /**
  * A container with scrolling.
  */
-open class GlScrollArea(
+open class ScrollAreaImpl(
 		owner: Owned
 ) : ElementContainerImpl<UiComponent>(owner), ScrollArea {
 

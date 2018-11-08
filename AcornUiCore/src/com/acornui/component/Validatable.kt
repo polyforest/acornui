@@ -21,7 +21,6 @@ import com.acornui.math.MathUtils
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal
 import com.acornui.string.toRadix
-import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 
 /**

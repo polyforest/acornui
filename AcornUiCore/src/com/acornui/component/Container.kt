@@ -226,11 +226,8 @@ open class ContainerImpl(
 	/**
 	 * The validation flags that, if a child has invalidated, will cause the same flags on this container to become
 	 * invalidated.
-	 * If this container doesn't lay its children out, it is a good practice to set this property to just
-	 * [ValidationFlags.HIERARCHY_ASCENDING]
 	 */
-	protected var bubblingFlags =
-			ValidationFlags.HIERARCHY_ASCENDING
+	protected var bubblingFlags = defaultBubblingFlags
 
 	//-----------------------------------------------------
 	// Interactivity utility methods
@@ -310,6 +307,20 @@ open class ContainerImpl(
 	override fun dispose() {
 		clearChildren(dispose = false)
 		super.dispose()
+	}
+
+	companion object {
+
+		var defaultBubblingFlags = ValidationFlags.HIERARCHY_ASCENDING
+
+		var defaultCascadingFlags = ValidationFlags.HIERARCHY_DESCENDING or
+				ValidationFlags.STYLES or
+				ValidationFlags.CONCATENATED_COLOR_TRANSFORM or
+				ValidationFlags.CONCATENATED_TRANSFORM or
+				ValidationFlags.INTERACTIVITY_MODE or
+				ValidationFlags.FOCUS_ORDER or
+				ValidationFlags.CAMERA or
+				ValidationFlags.VIEWPORT
 	}
 }
 

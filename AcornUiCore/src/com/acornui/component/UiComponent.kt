@@ -51,7 +51,6 @@ import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
 import com.acornui.signal.StoppableSignal
 import kotlin.collections.set
-import kotlin.math.round
 import kotlin.properties.Delegates
 
 @DslMarker
@@ -95,17 +94,23 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	val includeInLayout: Boolean
 
 	/**
-	 * The flags that, if invalidated, will invalidate the container's layout.
-	 */
-	val layoutInvalidatingFlags: Int
-
-	/**
 	 * Returns true if this component will be rendered. This will be true under the following conditions:
 	 * This component is on the stage.
 	 * This component and all of its ancestors are visible.
 	 * This component does not have an alpha of 0f.
 	 */
 	fun isRendered(): Boolean
+
+	/**
+	 * The flags that, if a child invalidated, will invalidate this container's size constraints / layout.
+	 */
+	val layoutInvalidatingFlags: Int
+
+	companion object {
+		var defaultLayoutInvalidatingFlags = ValidationFlags.HIERARCHY_ASCENDING or
+				ValidationFlags.LAYOUT or
+				ValidationFlags.LAYOUT_ENABLED
+	}
 }
 
 /**
@@ -222,7 +227,6 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	 * required.
 	 */
 	fun render(clip: MinMaxRo)
-
 }
 
 /**
@@ -511,18 +515,14 @@ open class UiComponentImpl(
 	 * Typically one would use width() in order to retrieve the explicit or actual width.
 	 */
 	override val explicitWidth: Float?
-		get() {
-			return _explicitWidth
-		}
+		get() = _explicitWidth
 
 	/**
 	 * The explicit height, as set by height(value)
 	 * Typically one would use height() in order to retrieve the explicit or actual height.
 	 */
 	override val explicitHeight: Float?
-		get() {
-			return _explicitHeight
-		}
+		get() = _explicitHeight
 
 	override val width: Float
 		get() = bounds.width
@@ -558,7 +558,7 @@ open class UiComponentImpl(
 			return includeInLayout && visible
 		}
 
-	override var layoutInvalidatingFlags: Int = defaultLayoutInvalidatingFlags
+	override var layoutInvalidatingFlags: Int = UiComponentRo.defaultLayoutInvalidatingFlags
 
 	final override var includeInLayout: Boolean by validationProp(true, ValidationFlags.LAYOUT_ENABLED)
 
@@ -700,7 +700,7 @@ open class UiComponentImpl(
 	}
 
 	/**
-	 * Updates this LayoutElement's layout.
+	 * Updates this component's layout.
 	 * This method should update the [out] [Rectangle] bounding measurements.
 	 *
 	 * @param explicitWidth The explicitWidth dimension. Null if the preferred width should be used.
@@ -1243,17 +1243,7 @@ open class UiComponentImpl(
 		validation.validate(flags)
 	}
 
-	//-----------------------------------------------
-	// Drivable
-	//-----------------------------------------------
-
-	override fun update() {
-		validate()
-	}
-
-	//-----------------------------------------------
-	// Renderable
-	//-----------------------------------------------
+	override fun update() = validate()
 
 	override fun render(clip: MinMaxRo) {
 		// Nothing visible.
@@ -1376,19 +1366,6 @@ open class UiComponentImpl(
 
 	companion object {
 		private val quat: Quaternion = Quaternion()
-
-		var defaultLayoutInvalidatingFlags = ValidationFlags.HIERARCHY_ASCENDING or
-				ValidationFlags.LAYOUT or
-				ValidationFlags.LAYOUT_ENABLED
-
-		var defaultCascadingFlags = ValidationFlags.HIERARCHY_DESCENDING or
-				ValidationFlags.STYLES or
-				ValidationFlags.CONCATENATED_COLOR_TRANSFORM or
-				ValidationFlags.CONCATENATED_TRANSFORM or
-				ValidationFlags.INTERACTIVITY_MODE or
-				ValidationFlags.FOCUS_ORDER or
-				ValidationFlags.CAMERA or
-				ValidationFlags.VIEWPORT
 	}
 }
 

@@ -16,9 +16,9 @@
 
 package com.acornui.component.text
 
+import com.acornui._assert
 import com.acornui.component.*
-import com.acornui.component.layout.Positionable
-import com.acornui.component.layout.PositionableRo
+import com.acornui.component.layout.*
 import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.component.style.*
 import com.acornui.core.Disposable
@@ -35,6 +35,7 @@ import com.acornui.core.selection.SelectionRange
 import com.acornui.gl.core.GlState
 import com.acornui.graphics.Color
 import com.acornui.math.*
+import com.acornui.signal.Signal
 
 interface TextField : Labelable, SelectableComponent, Styleable {
 
@@ -70,7 +71,7 @@ interface TextField : Labelable, SelectableComponent, Styleable {
 	 * Sets the contents of this text field.
 	 * This will remove the existing contents, but does not dispose.
 	 */
-	fun <T : TextNodeComponent> contents(value: T): T
+	fun <T : TextNode> contents(value: T): T
 
 	/**
 	 * Replaces the given range with the provided text.
@@ -95,7 +96,7 @@ interface TextField : Labelable, SelectableComponent, Styleable {
  * @author nbilyk
  */
 @Suppress("LeakingThis", "UNUSED_PARAMETER")
-class TextFieldImpl(owner: Owned) : ContainerImpl(owner), TextField {
+class TextFieldImpl(owner: Owned) : UiComponentImpl(owner), TextField {
 
 	override val flowStyle = bind(TextFlowStyle())
 	override val charStyle = bind(CharStyle())
@@ -111,7 +112,7 @@ class TextFieldImpl(owner: Owned) : ContainerImpl(owner), TextField {
 
 	private val _textSpan = span()
 	private val _textContents = textFlow { +_textSpan }
-	private var _contents: TextNodeComponent = addChild(_textContents)
+	private var _contents: TextNode = addChild(_textContents)
 
 	private var _allowClipping: Boolean = true
 
@@ -137,7 +138,7 @@ class TextFieldImpl(owner: Owned) : ContainerImpl(owner), TextField {
 	 * Sets the contents of this text field.
 	 * This will remove the existing contents, but does not dispose.
 	 */
-	override fun <T : TextNodeComponent> contents(value: T): T {
+	override fun <T : TextNode> contents(value: T): T {
 		if (_contents == value) return value
 		removeChild(_contents)
 		_contents = value
@@ -146,29 +147,52 @@ class TextFieldImpl(owner: Owned) : ContainerImpl(owner), TextField {
 		return value
 	}
 
-	private var _drag: DragAttachment? = null
-
-	init {
-		addStyleRule(flowStyle)
-		addStyleRule(charStyle)
-		styleTags.add(TextField)
-
-		watch(charStyle) { cS ->
-			refreshCursor()
-			if (cS.selectable) {
-				if (_drag == null) {
-					val d = DragAttachment(this, 0f)
-					d.drag.add(this::dragHandler)
-					_drag = d
-				}
-			} else {
-				_drag?.dispose()
-				_drag = null
-			}
-		}
-		validation.addNode(TextValidationFlags.SELECTION, ValidationFlags.HIERARCHY_ASCENDING, this::updateSelection)
-		selectionManager.selectionChanged.add(this::selectionChangedHandler)
+	private fun removeChild(node: TextNode) {
+		node.textField = null
+		node.invalidate(cascadingFlags)
+		node.invalidated.remove(this::childInvalidatedHandler)
+		node.disposed.remove(this::childDisposedHandler)
+		if (!isValidatingLayout)
+			invalidateLayout()
 	}
+
+	private fun addChild(child: TextNode): TextNode {
+		_assert(!isDisposed, "This TextField is disposed.")
+		_assert(!child.isDisposed, "Added text node is disposed.")
+		child.textField = this
+		child.invalidated.add(this::childInvalidatedHandler)
+		child.disposed.remove(this::childDisposedHandler)
+		child.invalidate(cascadingFlags)
+		if (!isValidatingLayout)
+			invalidateLayout()
+		return child
+	}
+
+	private fun childDisposedHandler(child: TextNode) {
+		removeChild(child)
+	}
+
+	private val isValidatingLayout: Boolean
+		get() = validation.currentFlag == ValidationFlags.LAYOUT
+
+	private fun childInvalidatedHandler(child: TextNodeRo, flagsInvalidated: Int) {
+		if (!isValidatingLayout && flagsInvalidated and ValidationFlags.LAYOUT > 0) invalidateLayout()
+	}
+
+	/**
+	 * These flags, when invalidated, will cascade down to this TextField's contents.
+	 */
+	private val cascadingFlags = ContainerImpl.defaultCascadingFlags
+
+	override fun onInvalidated(flagsInvalidated: Int) {
+		val flagsToCascade = flagsInvalidated and cascadingFlags
+		if (flagsToCascade > 0) {
+			// This component has flags that have been invalidated that must cascade down to the children.
+			_contents.invalidate(flagsToCascade)
+		}
+	}
+
+	private var _drag: DragAttachment? = null
 
 	private fun selectionChangedHandler(old: List<SelectionRange>, new: List<SelectionRange>) {
 		invalidate(TextValidationFlags.SELECTION)
@@ -231,6 +255,11 @@ class TextFieldImpl(owner: Owned) : ContainerImpl(owner), TextField {
 		_contents.setSelection(0, selectionManager.selection.filter { it.target == selectionTarget })
 	}
 
+	override fun update() {
+		super.update()
+		_contents.update()
+	}
+
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val contents = _contents
 		contents.setSize(explicitWidth, explicitHeight)
@@ -258,6 +287,28 @@ class TextFieldImpl(owner: Owned) : ContainerImpl(owner), TextField {
 		selectionManager.selectionChanged.remove(this::selectionChangedHandler)
 		_drag?.dispose()
 		_drag = null
+	}
+
+	init {
+		addStyleRule(flowStyle)
+		addStyleRule(charStyle)
+		styleTags.add(TextField)
+
+		watch(charStyle) { cS ->
+			refreshCursor()
+			if (cS.selectable) {
+				if (_drag == null) {
+					val d = DragAttachment(this, 0f)
+					d.drag.add(this::dragHandler)
+					_drag = d
+				}
+			} else {
+				_drag?.dispose()
+				_drag = null
+			}
+		}
+		validation.addNode(TextValidationFlags.SELECTION, ValidationFlags.HIERARCHY_ASCENDING, this::updateSelection)
+		selectionManager.selectionChanged.add(this::selectionChangedHandler)
 	}
 }
 
@@ -402,9 +453,23 @@ interface TextElement : TextElementRo, Disposable {
 
 }
 
-interface TextNodeRo : Validatable, StyleableRo, PositionableRo {
+interface TextNodeRo : Validatable, StyleableRo, BasicLayoutElementRo, Owned {
 
-	val textParent: TextNodeRo?
+	override val disposed: Signal<(TextNodeRo) -> Unit>
+	override val invalidated: Signal<(TextNodeRo, Int) -> Unit>
+
+	val textNodeParent: TextNodeRo?
+	val textField: TextField?
+
+	/**
+	 * The transformation matrix this node uses.
+	 */
+	val concatenatedTransform: Matrix4Ro
+
+	fun localToGlobal(localCoord: Vector3): Vector3 {
+		concatenatedTransform.prj(localCoord)
+		return localCoord
+	}
 
 	/**
 	 * The total number of text elements this node contains (deep/hierarchical).
@@ -461,9 +526,13 @@ interface TextNodeRo : Validatable, StyleableRo, PositionableRo {
 	fun toString(builder: StringBuilder)
 }
 
-interface TextNode : TextNodeRo, Positionable {
+interface TextNode : TextNodeRo, Styleable, BasicLayoutElement, Disposable {
 
-	override var textParent: TextNodeRo?
+	override val disposed: Signal<(TextNode) -> Unit>
+	override val invalidated: Signal<(TextNode, Int) -> Unit>
+
+	override var textNodeParent: TextNodeRo?
+	override var textField: TextField?
 
 	/**
 	 * If true, this component's vertices will be clipped to the explicit size.
@@ -477,12 +546,18 @@ interface TextNode : TextNodeRo, Positionable {
 	 */
 	fun setSelection(rangeStart: Int, selection: List<SelectionRange>)
 
-}
+	/**
+	 * Updates this component, validating it and its children.
+	 */
+	fun update()
 
-/**
- * A component that can be set as content to a text field.
- */
-interface TextNodeComponent : TextNode, UiComponent
+	/**
+	 * Renders any graphics.
+	 * @see UiComponent.render
+	 */
+	fun render(clip: MinMaxRo)
+
+}
 
 private fun Owned.textFlow(init: ComponentInit<TextFlow>): TextFlow {
 	val f = TextFlow(this)

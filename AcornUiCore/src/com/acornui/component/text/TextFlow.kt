@@ -2,13 +2,11 @@ package com.acornui.component.text
 
 import com.acornui.collection.*
 import com.acornui.component.ElementParent
-import com.acornui.component.UiComponentImpl
 import com.acornui.component.ValidationFlags
 import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.layout.algorithm.LineInfo
 import com.acornui.component.layout.algorithm.LineInfoRo
-import com.acornui.component.validationProp
 import com.acornui.core.di.Owned
 import com.acornui.core.floor
 import com.acornui.core.selection.SelectionRange
@@ -21,13 +19,11 @@ import com.acornui.math.ceil
 /**
  * A TextFlow component is a container of styleable text spans, to be used inside of a TextField.
  */
-class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, ElementParent<TextSpanElement> {
+class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<TextSpanElement> {
 
-	override var textParent: TextNodeRo? = null
+	override var textNodeParent: TextNodeRo? = null
 
 	val flowStyle = bind(TextFlowStyle())
-
-	override var allowClipping: Boolean by validationProp(true, VERTICES)
 
 	private val _lines = ArrayList<LineInfo>()
 
@@ -53,8 +49,9 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 		get() = textElements.size
 
 	init {
-		validation.addNode(TEXT_ELEMENTS, dependencies = 0, dependants = ValidationFlags.LAYOUT, onValidate = this::updateTextElements)
+		validation.addNode(TEXT_ELEMENTS, dependencies = ValidationFlags.HIERARCHY_ASCENDING, dependants = ValidationFlags.LAYOUT, onValidate = this::updateTextElements)
 		validation.addNode(VERTICES, dependencies = ValidationFlags.LAYOUT or ValidationFlags.STYLES or ValidationFlags.CONCATENATED_TRANSFORM, dependants = 0, onValidate = this::updateVertices)
+		validation.addNode(ValidationFlags.CONCATENATED_COLOR_TRANSFORM) {}
 		validation.addNode(CHAR_STYLE, dependencies = ValidationFlags.CONCATENATED_COLOR_TRANSFORM or ValidationFlags.STYLES, dependants = 0, onValidate = this::updateCharStyle)
 	}
 
@@ -104,7 +101,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 
 	override fun clearElements(dispose: Boolean) {
 		for (i in 0.._elements.lastIndex) {
-			_textElements[i].textParent = null
+			_elements[i].textParent = null
 		}
 		_elements.clear()
 		invalidate(TEXT_ELEMENTS)
@@ -344,7 +341,7 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 	private val tL = Vector3()
 	private val tR = Vector3()
 
-	override fun draw(clip: MinMaxRo) {
+	override fun render(clip: MinMaxRo) {
 		if (_lines.isEmpty())
 			return
 		localToCanvas(tL.set(0f, 0f, 0f))
@@ -378,6 +375,8 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 				_textElements[i].render(glState)
 			}
 		}
+		if (_textElements.isNotEmpty() && _textElements[0].char == '?')
+			println("wat??")
 	}
 
 	companion object {

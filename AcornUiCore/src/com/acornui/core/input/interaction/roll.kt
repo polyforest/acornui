@@ -70,13 +70,13 @@ private class MouseOverChanged(
  * this will not bubble, and therefore will not be fired if a child element has had a touchOver event.
  */
 fun UiComponentRo.rollOver(isCapture: Boolean = false): StoppableSignal<MouseInteractionRo> {
-	return createOrReuseAttachment("MouseOverChanged_" + isCapture, {
+	return createOrReuseAttachment("MouseOverChanged_$isCapture") {
 		MouseOverChanged(this, isCapture = isCapture)
-	}).over
+	}.over
 }
 
 fun UiComponentRo.rollOut(isCapture: Boolean = false): StoppableSignal<MouseInteractionRo> {
-	return createOrReuseAttachment("MouseOverChanged_" + isCapture, {
+	return createOrReuseAttachment("MouseOverChanged_$isCapture") {
 		MouseOverChanged(this, isCapture = isCapture)
-	}).out
+	}.out
 }

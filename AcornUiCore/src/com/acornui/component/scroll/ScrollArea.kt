@@ -136,8 +136,8 @@ fun ScrollPolicy.toCssString(): String {
 	}
 }
 
-fun Owned.scrollArea(init: ComponentInit<GlScrollArea> = {}): GlScrollArea {
-	val s = GlScrollArea(this)
+fun Owned.scrollArea(init: ComponentInit<ScrollAreaImpl> = {}): ScrollAreaImpl {
+	val s = ScrollAreaImpl(this)
 	s.init()
 	return s
 }

@@ -35,7 +35,7 @@ val TextSpanElementRo<TextElementRo>.textFieldX: Float
 		var p: TextNodeRo? = textParent
 		while (p != null) {
 			textFieldX += p.x
-			p = p.textParent
+			p = p.textNodeParent
 		}
 		return textFieldX
 	}
@@ -46,7 +46,7 @@ val TextSpanElementRo<TextElementRo>.textFieldY: Float
 		var p: TextNodeRo? = textParent
 		while (p != null) {
 			textFieldY += p.y
-			p = p.textParent
+			p = p.textNodeParent
 		}
 		return textFieldY
 	}
