@@ -49,6 +49,10 @@ class StringReader(val data: String) {
 		return getString { it.isWhitespace2() }
 	}
 
+	fun notWhite(): String {
+		return getString { !it.isWhitespace2() }
+	}
+
 	fun getBool(): Boolean? {
 		val char = data[position]
 		if (char == '1') {

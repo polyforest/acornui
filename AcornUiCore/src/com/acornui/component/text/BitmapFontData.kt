@@ -17,6 +17,7 @@
 package com.acornui.component.text
 
 import com.acornui.core.isWhitespace2
+import com.acornui.math.IntPadRo
 import com.acornui.math.IntRectangle
 import com.acornui.math.IntRectangleRo
 
@@ -27,13 +28,7 @@ import com.acornui.math.IntRectangleRo
  */
 data class BitmapFontData(
 
-		val face: String,
-
-		val size: Int,
-
-		val bold: Boolean,
-
-		val italic: Boolean,
+		val info: BitmapFontInfo,
 
 		val pages: List<BitmapFontPageData>,
 
@@ -75,6 +70,24 @@ data class BitmapFontData(
 		return glyphs[(-1).toChar()]!!
 	}
 }
+
+data class BitmapFontInfo(
+		val face: String,
+
+		val size: Int,
+
+		val bold: Boolean,
+
+		val italic: Boolean,
+		val charset: String,
+		val unicode: Boolean,
+		val stretchH: Int,
+		val smooth: Boolean,
+		val antialiasing: Int,
+		val padding: IntPadRo,
+		val spacingX: Int,
+		val spacingY: Int
+)
 
 data class BitmapFontPageData(
 		val id: Int,

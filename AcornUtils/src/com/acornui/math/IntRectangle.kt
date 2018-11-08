@@ -69,6 +69,15 @@ interface IntRectangleRo {
 	fun copy(x: Int = this.x, y: Int = this.y, width: Int = this.width, height: Int = this.height): IntRectangle {
 		return IntRectangle(x, y, width, height)
 	}
+
+	fun reduce(padding: IntPadRo): IntRectangle = reduce(padding.left, padding.top, padding.right, padding.bottom)
+
+	/**
+	 * Clips the sides of this rectangle by the given amounts, returning a new rectangle.
+	 */
+	fun reduce(left: Int, top: Int, right: Int, bottom: Int): IntRectangle {
+		return IntRectangle(x + left, y + left, width - left - right, height - top - bottom)
+	}
 }
 
 /**

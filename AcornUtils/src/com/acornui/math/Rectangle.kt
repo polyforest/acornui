@@ -109,6 +109,15 @@ interface RectangleRo {
 		return Rectangle(x, y, width, height)
 	}
 
+	fun reduce(padding: PadRo): Rectangle = reduce(padding.left, padding.top, padding.right, padding.bottom)
+
+	/**
+	 * Clips the sides of this rectangle by the given amounts, returning a new rectangle.
+	 */
+	fun reduce(left: Float, top: Float, right: Float, bottom: Float): Rectangle {
+		return Rectangle(x + left, y + left, width - left - right, height - top - bottom)
+	}
+
 	companion object {
 		val EMPTY = Rectangle()
 	}

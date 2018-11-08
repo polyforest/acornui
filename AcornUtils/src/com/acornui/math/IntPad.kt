@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2018 PolyForest
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,52 +20,52 @@ import com.acornui.collection.Clearable
 import com.acornui.serialization.*
 
 /**
- * A read-only interface to [Pad]
+ * A read-only interface to [IntPad]
  */
-interface PadRo {
-	val top: Float
-	val right: Float
-	val bottom: Float
-	val left: Float
+interface IntPadRo {
+	val top: Int
+	val right: Int
+	val bottom: Int
+	val left: Int
 
-	fun isEmpty(): Boolean = top == 0f && right == 0f && bottom == 0f && left == 0f
+	fun isEmpty(): Boolean = top == 0 && right == 0 && bottom == 0 && left == 0
 	fun isNotEmpty(): Boolean = !isEmpty()
 
-	fun reduceWidth(width: Float?): Float? {
+	fun reduceWidth(width: Int?): Int? {
 		if (width == null) return null
 		return width - left - right
 	}
 
-	fun reduceHeight(height: Float?): Float? {
+	fun reduceHeight(height: Int?): Int? {
 		if (height == null) return null
 		return height - top - bottom
 	}
 
-	// TODO: we might be able to overload the nullable floats now.
+	// TODO: we might be able to overload the nullable ints now.
 
-	fun reduceWidth2(width: Float): Float {
+	fun reduceWidth2(width: Int): Int {
 		return width - left - right
 	}
 
-	fun reduceHeight2(height: Float): Float {
+	fun reduceHeight2(height: Int): Int {
 		return height - top - bottom
 	}
 
-	fun expandWidth(width: Float?): Float? {
+	fun expandWidth(width: Int?): Int? {
 		if (width == null) return null
 		return width + left + right
 	}
 
-	fun expandHeight(height: Float?): Float? {
+	fun expandHeight(height: Int?): Int? {
 		if (height == null) return null
 		return height + top + bottom
 	}
 
-	fun expandWidth2(width: Float): Float {
+	fun expandWidth2(width: Int): Int {
 		return width + left + right
 	}
 
-	fun expandHeight2(height: Float): Float {
+	fun expandHeight2(height: Int): Int {
 		return height + top + bottom
 	}
 
@@ -73,29 +73,29 @@ interface PadRo {
 		return "${top}px ${right}px ${bottom}px ${left}px"
 	}
 
-	fun copy(top: Float = this.top, right: Float = this.right, bottom: Float = this.bottom, left: Float = this.left): Pad {
-		return Pad(top, right, bottom, left)
+	fun copy(top: Int = this.top, right: Int = this.right, bottom: Int = this.bottom, left: Int = this.left): IntPad {
+		return IntPad(top, right, bottom, left)
 	}
 }
 
 /**
- * A representation of margins or padding.
+ * A representation of margins or padding with integer values.
  *
  * @author nbilyk
  */
-class Pad(
-		override var top: Float,
-		override var right: Float,
-		override var bottom: Float,
-		override var left: Float) : PadRo, Clearable {
+class IntPad(
+		override var top: Int,
+		override var right: Int,
+		override var bottom: Int,
+		override var left: Int) : IntPadRo, Clearable {
 
-	constructor() : this(0f, 0f, 0f, 0f)
+	constructor() : this(0, 0, 0, 0)
 
-	constructor(all: Float) : this(all, all, all, all)
+	constructor(all: Int) : this(all, all, all, all)
 
-	constructor(all: Array<Float>) : this(all[0], all[1], all[2], all[3])
+	constructor(all: Array<Int>) : this(all[0], all[1], all[2], all[3])
 
-	fun set(all: Float): Pad {
+	fun set(all: Int): IntPad {
 		top = all
 		bottom = all
 		right = all
@@ -103,7 +103,7 @@ class Pad(
 		return this
 	}
 
-	fun set(other: PadRo): Pad {
+	fun set(other: IntPadRo): IntPad {
 		top = other.top
 		bottom = other.bottom
 		right = other.right
@@ -111,7 +111,7 @@ class Pad(
 		return this
 	}
 
-	fun set(left: Float = 0f, top: Float = 0f, right: Float = 0f, bottom: Float = 0f): Pad {
+	fun set(left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0): IntPad {
 		this.top = top
 		this.right = right
 		this.bottom = bottom
@@ -120,15 +120,15 @@ class Pad(
 	}
 
 	override fun clear() {
-		top = 0f
-		right = 0f
-		bottom = 0f
-		left = 0f
+		top = 0
+		right = 0
+		bottom = 0
+		left = 0
 	}
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
-		if (other !is PadRo) return false
+		if (other !is IntPadRo) return false
 
 		if (top != other.top) return false
 		if (right != other.right) return false
@@ -147,25 +147,25 @@ class Pad(
 	}
 
 	companion object {
-		val EMPTY_PAD: PadRo = Pad()
+		val EMPTY_PAD: IntPadRo = IntPad()
 	}
 }
 
-object PadSerializer : To<PadRo>, From<Pad> {
+object IntPadSerializer : To<IntPadRo>, From<IntPad> {
 
-	override fun PadRo.write(writer: Writer) {
-		writer.float("left", left)
-		writer.float("top", top)
-		writer.float("right", right)
-		writer.float("bottom", bottom)
+	override fun IntPadRo.write(writer: Writer) {
+		writer.int("left", left)
+		writer.int("top", top)
+		writer.int("right", right)
+		writer.int("bottom", bottom)
 	}
 
-	override fun read(reader: Reader): Pad {
-		val p = Pad(
-				top = reader.float("top")!!,
-				right = reader.float("right")!!,
-				bottom = reader.float("bottom")!!,
-				left = reader.float("left")!!
+	override fun read(reader: Reader): IntPad {
+		val p = IntPad(
+				top = reader.int("top")!!,
+				right = reader.int("right")!!,
+				bottom = reader.int("bottom")!!,
+				left = reader.int("left")!!
 		)
 		return p
 	}

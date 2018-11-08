@@ -27,6 +27,17 @@ interface ILogger {
 		val WARN: Int = 2
 		val INFO: Int = 3
 		val DEBUG: Int = 4
+
+		fun getLogLevelFromString(str: String): Int {
+			return when (str.toLowerCase()) {
+				"error" -> ERROR
+				"warn" -> WARN
+				"info" -> INFO
+				"debug" -> DEBUG
+				else -> throw IllegalArgumentException("Unknown log level $str")
+			}
+
+		}
 	}
 
 	var level: Int

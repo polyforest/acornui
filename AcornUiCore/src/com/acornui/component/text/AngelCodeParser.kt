@@ -20,6 +20,7 @@ import com.acornui.action.Decorator
 import com.acornui.math.IntRectangle
 import com.acornui.string.StringReader
 import com.acornui.core.replace2
+import com.acornui.math.IntPad
 import kotlin.math.abs
 
 /**
@@ -40,6 +41,28 @@ object AngelCodeParser : Decorator<String, BitmapFontData> {
 		val size = abs(parseIntProp(parser, "size"))
 		val bold = parseBoolProp(parser, "bold")
 		val italic = parseBoolProp(parser, "italic")
+		val charset = parseQuotedStringProp(parser, "charset")
+		val unicode = parseBoolProp(parser, "unicode")
+		val stretchH = parseIntProp(parser, "stretchH")
+		val smooth = parseBoolProp(parser, "smooth")
+		val antialiasing = parseIntProp(parser, "aa")
+		val padding = IntPad(parseIntArrayProp(parser, "padding"))
+		val spacing = parseIntArrayProp(parser, "spacing")
+
+		val info = BitmapFontInfo(
+				face,
+				size,
+				bold,
+				italic,
+				charset,
+				unicode,
+				stretchH,
+				smooth,
+				antialiasing,
+				padding,
+				spacing[0],
+				spacing[1]
+		)
 
 		// Common
 		nextLine(parser)
@@ -88,9 +111,9 @@ object AngelCodeParser : Decorator<String, BitmapFontData> {
 			kernings[ch] = kerning
 			glyphs[ch] = GlyphData(
 					char = ch,
-					region = IntRectangle(regionX, regionY, regionW, regionH),
-					offsetX = offsetX,
-					offsetY = offsetY,
+					region = IntRectangle(regionX, regionY, regionW, regionH).reduce(info.padding),
+					offsetX = offsetX + info.padding.left,
+					offsetY = offsetY + info.padding.top,
 					advanceX = xAdvance,
 					page = page,
 					kerning = kerning
@@ -116,10 +139,7 @@ object AngelCodeParser : Decorator<String, BitmapFontData> {
 		glyphs.addMissingCommonGlyphs()
 
 		return BitmapFontData(
-				face = face,
-				size = size,
-				bold = bold,
-				italic = italic,
+				info = info,
 				pages = pages.toList(),
 				glyphs = glyphs,
 				lineHeight = lineHeight,
@@ -171,6 +191,11 @@ object AngelCodeParser : Decorator<String, BitmapFontData> {
 	private fun parseIntProp(parser: StringReader, property: String): Int {
 		consumeProperty(parser, property)
 		return parser.getInt()!!
+	}
+
+	private fun parseIntArrayProp(parser: StringReader, property: String): Array<Int> {
+		consumeProperty(parser, property)
+		return parser.notWhite().split(",").map { it.toInt() }.toTypedArray()
 	}
 
 	private fun parseQuotedStringProp(parser: StringReader, property: String): String {
