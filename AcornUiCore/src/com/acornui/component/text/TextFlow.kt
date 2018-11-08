@@ -53,9 +53,9 @@ class TextFlow(owner: Owned) : UiComponentImpl(owner), TextNodeComponent, Elemen
 		get() = textElements.size
 
 	init {
-		validation.addNode(TEXT_ELEMENTS, ValidationFlags.HIERARCHY_ASCENDING, ValidationFlags.LAYOUT, this::updateTextElements)
-		validation.addNode(VERTICES, ValidationFlags.LAYOUT or ValidationFlags.STYLES or ValidationFlags.CONCATENATED_TRANSFORM, 0, this::updateVertices)
-		validation.addNode(CHAR_STYLE, ValidationFlags.CONCATENATED_COLOR_TRANSFORM or ValidationFlags.STYLES, 0, this::updateCharStyle)
+		validation.addNode(TEXT_ELEMENTS, dependencies = 0, dependants = ValidationFlags.LAYOUT, onValidate = this::updateTextElements)
+		validation.addNode(VERTICES, dependencies = ValidationFlags.LAYOUT or ValidationFlags.STYLES or ValidationFlags.CONCATENATED_TRANSFORM, dependants = 0, onValidate = this::updateVertices)
+		validation.addNode(CHAR_STYLE, dependencies = ValidationFlags.CONCATENATED_COLOR_TRANSFORM or ValidationFlags.STYLES, dependants = 0, onValidate = this::updateCharStyle)
 	}
 
 	override fun getTextElementAt(index: Int): TextElementRo = textElements[index]
