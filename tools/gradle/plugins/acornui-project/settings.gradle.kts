@@ -1,5 +1,3 @@
-import java.io.File
-
 /*
  * Copyright 2018 Poly Forest, LLC
  *
@@ -15,6 +13,8 @@ import java.io.File
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import java.io.File
 
 rootProject.name = "acornui-project"
 val separator = File.separator
