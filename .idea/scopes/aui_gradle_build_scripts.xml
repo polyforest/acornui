@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="aui-gradle.build-scripts" pattern="file:build.gradle.kts||file:*.build.gradle.kts" />
+</component>

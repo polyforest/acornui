@@ -1,8 +1,36 @@
-dist
-out
-externalLib
-/www
+# Log file
+*.log
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# IDEA
 /.idea/workspace.xml
-/Tools/BuildTasks/testOut
-/Tools/BuildTasks/lib
+/.idea/uiDesigner.xml
+/.idea/modules.xml
+/.idea/gradle.xml
+/.idea/misc.xml
+/.idea/deployment.xml
+/.idea/kotlinScripting.xml
+/.idea/resourceBundles.xml
+/.idea/compiler.xml
+/.idea/dictionaries
+/.idea/modules
+/.idea/libraries
+/.idea/runConfigurations
+/.idea/shelf
+*.iml
+
+# MAC
 .DS_Store
+
+# Gradle
+.gradle/
+build/
+!**/src/**/build/
+/tools/gradle/plugins/repository/

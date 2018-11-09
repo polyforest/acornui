@@ -1,18 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <excludeFromCompile>
-      <directory url="file://$PROJECT_DIR$/AcornUiJsBackend" includeSubdirectories="true" />
-    </excludeFromCompile>
-    <wildcardResourcePatterns>
-      <entry name="!?*.java" />
-      <entry name="!?*.form" />
-      <entry name="!?*.class" />
-      <entry name="!?*.groovy" />
-      <entry name="!?*.scala" />
-      <entry name="!?*.flex" />
-      <entry name="!?*.kt" />
-      <entry name="!?*.clj" />
-    </wildcardResourcePatterns>
+    <bytecodeTargetLevel>
+      <module name="acornui-buildutils_main" target="1.8" />
+      <module name="acornui-buildutils_test" target="1.8" />
+      <module name="acornui-core-common_main" target="1.8" />
+      <module name="acornui-core-common_test" target="1.8" />
+      <module name="acornui-core-js_main" target="1.8" />
+      <module name="acornui-core-js_test" target="1.8" />
+      <module name="acornui-core-jvm_main" target="1.8" />
+      <module name="acornui-core-jvm_test" target="1.8" />
+      <module name="acornui-game_main" target="1.8" />
+      <module name="acornui-game_test" target="1.8" />
+      <module name="acornui-project_main" target="1.8" />
+      <module name="acornui-project_test" target="1.8" />
+      <module name="acornui-spine_main" target="1.8" />
+      <module name="acornui-spine_test" target="1.8" />
+      <module name="acornui-texturepack_main" target="1.8" />
+      <module name="acornui-texturepack_test" target="1.8" />
+      <module name="acornui-texturepacker-core_main" target="1.8" />
+      <module name="acornui-texturepacker-core_test" target="1.8" />
+      <module name="acornui-texturepacker-jvm_main" target="1.8" />
+      <module name="acornui-texturepacker-jvm_test" target="1.8" />
+      <module name="acornui-utils-common_main" target="1.8" />
+      <module name="acornui-utils-common_test" target="1.8" />
+      <module name="acornui-utils-js_main" target="1.8" />
+      <module name="acornui-utils-js_test" target="1.8" />
+      <module name="acornui-utils-jvm_main" target="1.8" />
+      <module name="acornui-utils-jvm_test" target="1.8" />
+      <module name="test-utils-common_main" target="1.8" />
+      <module name="test-utils-common_test" target="1.8" />
+      <module name="test-utils-js_main" target="1.8" />
+      <module name="test-utils-js_test" target="1.8" />
+      <module name="test-utils-jvm_main" target="1.8" />
+      <module name="test-utils-jvm_test" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

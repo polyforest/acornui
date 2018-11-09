@@ -11,6 +11,9 @@
   <component name="KotlinCommonCompilerArguments">
     <option name="apiVersion" value="1.2" />
     <option name="coroutinesState" value="enable" />
+    <option name="errors">
+      <ArgumentParseErrors />
+    </option>
     <option name="languageVersion" value="1.2" />
   </component>
 </project>

@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="aui-gradle.all" pattern="file:gradle.kts||file:*.gradle.kts||file:gradle.properties||file:*.gradle.properties||file:*/META-INF//*" />
+</component>
