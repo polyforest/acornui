@@ -375,8 +375,6 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 				_textElements[i].render(glState)
 			}
 		}
-		if (_textElements.isNotEmpty() && _textElements[0].char == '?')
-			println("wat??")
 	}
 
 	companion object {
