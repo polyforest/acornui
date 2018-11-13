@@ -23,10 +23,10 @@ rootProject.name = "acornui-precompiled-script-plugins"
  * If this template is copied and used to create a production plugin, it's recommended to remove the conditional and
  * uncomment the line below.
  */
-val seperator = File.seperator
+val separator = File.separator
 val pluginsRoot = if (File(rootDir.parent).name == "templates")
-	rootDir.canonicalPath.split(seperator).dropLast(3).joinToString(seperator)
+	rootDir.canonicalPath.split(separator).dropLast(3).joinToString(separator)
 else
-	rootDir.canonicalPath.split(seperator).dropLast(2).joinToString(seperator)
-//val pluginsRoot = rootDir.canonicalPath.split(seperator).dropLast(2).joinToString(seperator)
+	rootDir.canonicalPath.split(separator).dropLast(2).joinToString(separator)
+//val pluginsRoot = rootDir.canonicalPath.split(separator).dropLast(2).joinToString(separator)
 apply(from = "$pluginsRoot/scripts/plugins/shared-plugins.settings.gradle.kts")
