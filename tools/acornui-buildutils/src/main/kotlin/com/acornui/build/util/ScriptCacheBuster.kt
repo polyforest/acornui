@@ -23,7 +23,8 @@ import java.io.File
  */
 object ScriptCacheBuster {
 
-	val extensions = SourceExtensions.HTML_SOURCE_EXTENSIONS + "css"
+	val extensions = listOf("asp", "aspx", "cshtml", "cfm", "go", "jsp", "jspx", "php",
+			"php3", "php4", "phtml", "html", "htm", "rhtml", "css")
 
 	private val regex = Regex("""([\w./\\]+)(\?[\w=&]*)(%VERSION%)""")
 

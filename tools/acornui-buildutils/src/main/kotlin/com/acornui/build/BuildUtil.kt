@@ -17,7 +17,6 @@
 package com.acornui.build
 
 import com.acornui.build.util.*
-import com.acornui.build.util.JsSources.bustScriptCaches
 
 import java.io.File
 
@@ -46,10 +45,6 @@ fun main(args : Array<String>) {
 			Targets.LIB_MANIFEST -> run {
 				val (src, dest, root) = getFileArgs("src", "dest", "root")
 				JsSources.writeManifest(src, dest, root)
-			}
-
-			Targets.BUST_SCRIPT_CACHE -> run {
-				bustScriptCaches(getFileArg("dest"))
 			}
 
 			else -> null
