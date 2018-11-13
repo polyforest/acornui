@@ -36,44 +36,44 @@ import com.acornui.core.time.time
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.serialization.Serializer
-import org.mockito.Mockito
+//import org.mockito.Mockito
 
 // TODO - MP: Mockito is not common friendly
 // TODO - MP: .java class is unavailable in common
-object MockInjector {
-
-	val owner: Owned by lazy { OwnedImpl(injector = create()) }
-
-	@Deprecated("", ReplaceWith("owner"))
-	fun createOwner(): Owned {
-		return OwnedImpl(injector = create())
-	}
-
-	fun create(): Injector {
-
-		@Suppress("UNCHECKED_CAST")
-		val json = Mockito.mock(Serializer::class.java) as Serializer<String>
-
-		val injector = InjectorImpl(null, listOf(
-				TimeDriver to  Mockito.mock(TimeDriver::class.java),
-				Window to  Mockito.mock(Window::class.java),
-				MouseState to  Mockito.mock(MouseState::class.java),
-				KeyState to  Mockito.mock(KeyState::class.java),
-				Files to  Mockito.mock(Files::class.java),
-				AssetManager to  Mockito.mock(AssetManager::class.java),
-				InteractivityManager to  Mockito.mock(InteractivityManager::class.java),
-				Camera to  Mockito.mock(Camera::class.java),
-				FocusManager to  Mockito.mock(FocusManager::class.java),
-				Gl20 to  Mockito.mock(Gl20::class.java),
-				GlState to  Mockito.mock(GlState::class.java),
-				JSON_KEY to json
-		))
-		time = MockTimeProvider()
-
-		return injector
-
-	}
-}
+//object MockInjector {
+//
+//	val owner: Owned by lazy { OwnedImpl(injector = create()) }
+//
+//	@Deprecated("", ReplaceWith("owner"))
+//	fun createOwner(): Owned {
+//		return OwnedImpl(injector = create())
+//	}
+//
+//	fun create(): Injector {
+//
+//		@Suppress("UNCHECKED_CAST")
+//		val json = Mockito.mock(Serializer::class.java) as Serializer<String>
+//
+//		val injector = InjectorImpl(null, listOf(
+//				TimeDriver to  Mockito.mock(TimeDriver::class.java),
+//				Window to  Mockito.mock(Window::class.java),
+//				MouseState to  Mockito.mock(MouseState::class.java),
+//				KeyState to  Mockito.mock(KeyState::class.java),
+//				Files to  Mockito.mock(Files::class.java),
+//				AssetManager to  Mockito.mock(AssetManager::class.java),
+//				InteractivityManager to  Mockito.mock(InteractivityManager::class.java),
+//				Camera to  Mockito.mock(Camera::class.java),
+//				FocusManager to  Mockito.mock(FocusManager::class.java),
+//				Gl20 to  Mockito.mock(Gl20::class.java),
+//				GlState to  Mockito.mock(GlState::class.java),
+//				JSON_KEY to json
+//		))
+//		time = MockTimeProvider()
+//
+//		return injector
+//
+//	}
+//}
 
 class MockTimeProvider : TimeProvider {
 	override fun now(): Date {

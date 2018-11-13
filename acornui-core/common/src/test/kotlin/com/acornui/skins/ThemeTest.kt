@@ -16,14 +16,14 @@
 
 package com.acornui.skins
 
-import com.acornui.test.SerializationCodeHelper
+//import com.acornui.test.SerializationCodeHelper
 import kotlin.test.Test
 
 // TODO - MP: Bad test name
-class ThemeTest {
-
-	@Test
-	fun blah() {
-		SerializationCodeHelper.print(Theme::class)
-	}
-}
+//class ThemeTest {
+//
+//	@Test
+//	fun blah() {
+//		SerializationCodeHelper.print(Theme::class)
+//	}
+//}

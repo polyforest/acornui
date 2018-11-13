@@ -17,21 +17,21 @@
 package com.acornui.core
 
 import com.acornui.component.UiComponentImpl
-import com.acornui.test.MockInjector.owner
-import com.acornui.test.benchmark
+//import com.acornui.test.MockInjector.owner
+//import com.acornui.test.benchmark
 import kotlin.test.Test
 // TODO - MP: MockInjector and System calls via benchmark which aren't friendly to common
-class UiComponentPerformance {
-
-	@Test fun construction() {
-		val owner = owner
-		UiComponentImpl(owner) // Exclude first-time
-
-		val speed = benchmark {
-			UiComponentImpl(owner)
-		}
-
-		// Construct avg: 0.03143258ms  Theoretical best: 0.001ms
-		println("Construct 1000 avg: ${speed}ms")
-	}
-}
+//class UiComponentPerformance {
+//
+//	@Test fun construction() {
+//		val owner = owner
+//		UiComponentImpl(owner) // Exclude first-time
+//
+//		val speed = benchmark {
+//			UiComponentImpl(owner)
+//		}
+//
+//		// Construct avg: 0.03143258ms  Theoretical best: 0.001ms
+//		println("Construct 1000 avg: ${speed}ms")
+//	}
+//}
