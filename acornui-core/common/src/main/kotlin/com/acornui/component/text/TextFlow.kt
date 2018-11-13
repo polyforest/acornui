@@ -50,10 +50,10 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 		get() = textElements.size
 
 	init {
-		validation.addNode(TEXT_ELEMENTS, dependencies = ValidationFlags.HIERARCHY_ASCENDING, dependants = ValidationFlags.LAYOUT, onValidate = this::updateTextElements)
-		validation.addNode(VERTICES, dependencies = ValidationFlags.LAYOUT or ValidationFlags.STYLES or ValidationFlags.CONCATENATED_TRANSFORM, dependants = 0, onValidate = this::updateVertices)
+		validation.addNode(TEXT_ELEMENTS, dependencies = ValidationFlags.HIERARCHY_ASCENDING, dependents = ValidationFlags.LAYOUT, onValidate = this::updateTextElements)
+		validation.addNode(VERTICES, dependencies = ValidationFlags.LAYOUT or ValidationFlags.STYLES or ValidationFlags.CONCATENATED_TRANSFORM, dependents = 0, onValidate = this::updateVertices)
 		validation.addNode(ValidationFlags.CONCATENATED_COLOR_TRANSFORM) {}
-		validation.addNode(CHAR_STYLE, dependencies = TEXT_ELEMENTS or ValidationFlags.CONCATENATED_COLOR_TRANSFORM or ValidationFlags.STYLES, dependants = 0, onValidate = this::updateCharStyle)
+		validation.addNode(CHAR_STYLE, dependencies = TEXT_ELEMENTS or ValidationFlags.CONCATENATED_COLOR_TRANSFORM or ValidationFlags.STYLES, dependents = 0, onValidate = this::updateCharStyle)
 	}
 
 	override fun getTextElementAt(index: Int): TextElementRo = textElements[index]

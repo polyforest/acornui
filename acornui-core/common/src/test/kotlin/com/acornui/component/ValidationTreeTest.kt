@@ -86,8 +86,8 @@ class ValidationTreeTest {
 
 	}
 
-	@Test fun dependants() {
-		n.addNode(EIGHT, dependencies = FOUR, dependants = FIVE) {}
+	@Test fun dependents() {
+		n.addNode(EIGHT, dependencies = FOUR, dependents = FIVE) {}
 
 		n.validate(FIVE)
 
