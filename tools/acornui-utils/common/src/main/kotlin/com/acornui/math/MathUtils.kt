@@ -52,7 +52,7 @@ object MathUtils {
 
 	// ---
 
-	val rng: Random = Random()
+	val rng: Prng = Prng()
 
 	/**
 	 * Returns a random number between 0 (inclusive) and the specified value (inclusive).
