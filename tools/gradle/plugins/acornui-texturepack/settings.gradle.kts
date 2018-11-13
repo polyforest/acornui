@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
+import java.io.File
+
 rootProject.name = "acornui-texturepack"
 
-val pluginsRoot = rootDir.canonicalPath.split("/").dropLast(2).joinToString("/")
+val seperator = File.seperator
+val pluginsRoot = rootDir.canonicalPath.split(seperator).dropLast(2).joinToString(seperator)
 apply(from = "$pluginsRoot/scripts/plugins/shared-plugins.settings.gradle.kts")

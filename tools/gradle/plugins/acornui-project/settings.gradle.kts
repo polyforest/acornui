@@ -1,3 +1,5 @@
+import java.io.File
+
 /*
  * Copyright 2018 Poly Forest, LLC
  *
@@ -15,6 +17,6 @@
  */
 
 rootProject.name = "acornui-project"
-
-val pluginsRoot = rootDir.canonicalPath.split("/").dropLast(2).joinToString("/")
+val seperator = File.seperator
+val pluginsRoot = rootDir.canonicalPath.split(seperator).dropLast(2).joinToString(seperator)
 apply(from = "$pluginsRoot/scripts/plugins/shared-plugins.settings.gradle.kts")

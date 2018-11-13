@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import java.io.File
+
 rootProject.name = "acornui-binary-plugins"
 
 /**
@@ -21,9 +23,10 @@ rootProject.name = "acornui-binary-plugins"
  * If this template is copied and used to create a production plugin, it's recommended to remove the conditional and
  * uncomment the line below.
  */
+val seperator = File.seperator
 val pluginsRoot = if (File(rootDir.parent).name == "templates")
-	rootDir.canonicalPath.split("/").dropLast(3).joinToString("/")
+	rootDir.canonicalPath.split(seperator).dropLast(3).joinToString(seperator)
 else
-	rootDir.canonicalPath.split("/").dropLast(2).joinToString("/")
-//val pluginsRoot = rootDir.canonicalPath.split("/").dropLast(2).joinToString("/")
+	rootDir.canonicalPath.split(seperator).dropLast(2).joinToString(seperator)
+//val pluginsRoot = rootDir.canonicalPath.split(seperator).dropLast(2).joinToString(seperator)
 apply(from = "$pluginsRoot/scripts/plugins/shared-plugins.settings.gradle.kts")
