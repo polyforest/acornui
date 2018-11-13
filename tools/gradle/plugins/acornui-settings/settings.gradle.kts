@@ -18,6 +18,6 @@ import java.io.File
 
 rootProject.name = "acornui-settings"
 
-val separator = File.
+val separator = File.separator
 val pluginsRoot = rootDir.canonicalPath.split(separator).dropLast(2).joinToString(separator)
 apply(from = "$pluginsRoot/scripts/plugins/shared-plugins.settings.gradle.kts")
