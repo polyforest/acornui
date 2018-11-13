@@ -43,7 +43,7 @@ object AcornAssets {
 		val manifest = ManifestUtil.createManifest(source, root)
 		dest.let {
 			it.mkdirs()
-			File(it, "file.json").writeText(JsonSerializer.write(manifest, FilesManifestSerializer))
+			File(it, "files.json").writeText(JsonSerializer.write(manifest, FilesManifestSerializer))
 		}
 	}
 

@@ -539,7 +539,7 @@ val declareResourceGenerationTasks by extra { p: Project ->
 							files(srcDir)
 						}
 
-						outputs.file("$destinationDir/file.json")
+						outputs.file("$destinationDir/files.json")
 
 						args = listOf(
 								"-target=asset-manifest",
