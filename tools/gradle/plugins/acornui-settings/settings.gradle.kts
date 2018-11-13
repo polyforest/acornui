@@ -16,4 +16,5 @@
 
 rootProject.name = "acornui-settings"
 
-apply(from = "../shared-plugins.settings.gradle.kts")
+val pluginsRoot = rootDir.canonicalPath.split("/").dropLast(2).joinToString("/")
+apply(from = "$pluginsRoot/scripts/plugins/shared-plugins.settings.gradle.kts")

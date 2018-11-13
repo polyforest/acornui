@@ -178,7 +178,6 @@ tasks {
 	}
 }
 
-// TODO - MP - TEST: Make manifest groups say com.polyforest
 // TODO - MP: Make publish task that bumps version based on whether someone passes in positional keywords (get them from old version build code)
 // TODO - MP: Get build numbers into acorn and demo project
 // TODO - MP: Optimize build metadata file not to interfere with build caching
