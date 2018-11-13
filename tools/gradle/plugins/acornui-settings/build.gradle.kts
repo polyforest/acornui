@@ -15,7 +15,8 @@
  */
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-apply(from = "../shared-plugins.build.gradle.kts")
+val SHARED_PLUGINS_SCRIPTS_ROOT: String by gradle.startParameter.projectProperties
+apply(from = "$SHARED_PLUGINS_SCRIPTS_ROOT/shared-plugins.build.gradle.kts")
 plugins {
 	`kotlin-dsl`
 }
