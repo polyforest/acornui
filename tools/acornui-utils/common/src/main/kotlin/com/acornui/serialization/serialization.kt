@@ -35,18 +35,18 @@ interface Serializer<T> {
 		return reader.obj(factory)!!
 	}
 
-}
-
-/**
- * Creates a Writer and passes it to the given To value.
- * Returns the data the Serializer produced.
- */
-fun <E, T> Serializer<T>.write(value: E, to: To<E>): T {
-	return write { it ->
-		it.obj(true) { it2 ->
-			to.write2(value, it2)
+	/**
+	 * Creates a Writer and passes it to the given To value.
+	 * Returns the data the Serializer produced.
+	 */
+	fun <E> write(value: E, to: To<E>): T {
+		return write {
+			it.obj(true) {
+				to.write2(value, it)
+			}
 		}
 	}
+
 }
 
 interface Reader {
