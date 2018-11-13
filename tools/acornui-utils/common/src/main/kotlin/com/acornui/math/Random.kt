@@ -43,7 +43,7 @@ open class Random(var seed0: Long = 0, var seed1: Long = 0) {
 
 	init {
 		if (seed0 == 0L) {
-			setSeed((com.acornui.math.MathUtils.random() * LONG_MAX_VALUE).toLong())
+			setSeed((random() * LONG_MAX_VALUE).toLong())
 		} else if (seed1 == 0L) {
 			setSeed(seed0)
 		}
@@ -200,8 +200,8 @@ open class Random(var seed0: Long = 0, var seed1: Long = 0) {
 }
 
 // TODO - MP: Do all of these need to be expects?
-// In oldMaster code I have
-// expect fun random(): Double
+expect fun random(): Double
+
 /**
  * Returns a random number between 0 (inclusive) and the specified value (inclusive).
  */
