@@ -32,6 +32,8 @@ val DEFAULT_ACORNUI_PROJECT_VERSION by acornConfig
 
 // TODO - MP: Pull version back into project properties.
 val GRETTY_VERSION = "2.2.0"
+val separator = File.separator
+val separatorCharacter = File.separatorChar
 
 val isCompositeRoot = gradle.parent == null
 val PluginId.isPolyForest
@@ -69,7 +71,7 @@ enum class PropType(val validOptions: String) {
 }
 
 fun missingOrInvalidProperty(name: String, type: PropType): String {
-	return """MISSING OR INVALID PROPERTY:  $name must be set on the command-line (-D$name=<val>), in $rootDir/gradle.properties ($name=<val>), or $rootDir/gradle.settings.kts (gradle.startParameter.projectProperties["$name"] = <val>)
+	return """MISSING OR INVALID PROPERTY:  $name must be set on the command-line (-D$name=<val>), in $rootDir${separator}gradle.properties ($name=<val>), or $rootDir/gradle.settings.kts (gradle.startParameter.projectProperties["$name"] = <val>)
 		|${"\t".repeat(2)}NOTE: <val> must be ${type.validOptions}""".trimMargin().split(",").joinToString(",\n") +
 			// If this is a skin property, display the valid skins.
 			(type.takeIf { it == PropType.SKIN }?.let { " -> ${validSkins.toList()}" } ?: "")
@@ -152,7 +154,7 @@ if (isCompositeRoot) {
 		val acornUiPlugins = ACORNUI_PLUGINS_AVAILABLE.split(",")
 		acornUiPlugins.forEach {
 			if (it != rootProject.name)
-				settings.includeBuild("$ACORNUI_PLUGINS_PATH/$it")
+				settings.includeBuild("$ACORNUI_PLUGINS_PATH${separator}$it")
 		}
 	}
 
@@ -197,7 +199,7 @@ if (multiModulesList.isNotEmpty() || modulesList.isNotEmpty()) {
 		val projectDir = File("${rootDir.canonicalPath}/$dir")
 
 		if (includeContainerProjects) {
-			var path = dir.replace('/', ':').replaceAfterLast(':', name)
+			var path = dir.replace(separatorCharacter, ':').replaceAfterLast(':', name)
 			if (dir == path)
 				path = name
 
@@ -213,7 +215,7 @@ if (multiModulesList.isNotEmpty() || modulesList.isNotEmpty()) {
 		val fileDir = if (dir == ".")
 			File(rootDir.canonicalPath)
 		else
-			File("${rootDir.canonicalPath}/$dir")
+			File("${rootDir.canonicalPath}$separator$dir")
 
 		if (fileDir.isValid()) {
 			fileDir.listFiles().forEach { file ->
@@ -238,7 +240,7 @@ if (multiModulesList.isNotEmpty() || modulesList.isNotEmpty()) {
 
 	fun module(dir: String, name: String = "") {
 		var moduleName = name
-		val fileDir = file("${rootDir.canonicalPath}/$dir")
+		val fileDir = file("${rootDir.canonicalPath}$separator$dir")
 
 		if (moduleName.isEmpty())
 			moduleName = fileDir.name
