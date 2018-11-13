@@ -22,6 +22,7 @@ import com.acornui.jvm.io.JvmByteBuffer
 import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import java.util.*
 
 open class JvmBinaryLoader(
 		path: String,
@@ -34,10 +35,48 @@ open class JvmBinaryLoader(
 
 	override fun create(inputStream: InputStream): NativeReadByteBuffer {
 		val byteArray = inputStream.use {
-			it.readAllBytes()
+			it.readAllBytes2()
 		}
 		val buffer = ByteBuffer.wrap(byteArray)
 		buffer.order(ByteOrder.LITTLE_ENDIAN)
 		return JvmByteBuffer(buffer)
+	}
+
+	/**
+	 * Jvm 9's readAllBytes method, but for Jvm 6+
+	 */
+	private fun InputStream.readAllBytes2(): ByteArray {
+		var buf = ByteArray(DEFAULT_BUFFER_SIZE)
+		var capacity = buf.size
+		var nread = 0
+		var n: Int
+		while (true) {
+			// read to EOF which may read more or less than initial buffer size
+			while (true) {
+				n = read(buf, nread, capacity - nread)
+				if (n <= 0) break
+				nread += n
+			}
+
+			// if the last call to read returned -1, then we're done
+			if (n < 0)
+				break
+
+			// need to allocate a larger buffer
+			if (capacity <= MAX_BUFFER_SIZE - capacity) {
+				capacity = capacity shl 1
+			} else {
+				if (capacity == MAX_BUFFER_SIZE)
+					throw OutOfMemoryError("Required array size too large")
+				capacity = MAX_BUFFER_SIZE
+			}
+			buf = Arrays.copyOf(buf, capacity)
+		}
+		return if (capacity == nread) buf else Arrays.copyOf(buf, nread)
+	}
+
+	companion object {
+
+		private const val MAX_BUFFER_SIZE = Integer.MAX_VALUE - 8
 	}
 }
