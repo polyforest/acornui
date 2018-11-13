@@ -21,4 +21,6 @@ plugins {
 dependencies {
     implementation(kotlin("reflect"))
     implementation(project(":tools:acornui-utils:acornui-utils-common"))
+    implementation(kotlin("test-common"))
+	implementation(kotlin("test-annotations-common"))
 }
