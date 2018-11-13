@@ -126,7 +126,7 @@ object JvmRestServiceFactory : RestServiceFactory {
 			override fun process(inputStream: InputStream): ReadByteBuffer {
 				val byteArray = inputStream.use {
 					// TODO - MP: We are on Java 8 which does not have readAllBytes (till 9)
-					it.readAllBytes()
+					it.readAllBytes2()
 				}
 				val buffer = ByteBuffer.wrap(byteArray)
 				buffer.order(ByteOrder.LITTLE_ENDIAN)
