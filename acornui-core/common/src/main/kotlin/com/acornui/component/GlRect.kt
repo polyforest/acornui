@@ -46,34 +46,29 @@ open class GlRect(
 	 * If true, we don't need a mesh -- no corners and no gradient, just use the sprite batch.
 	 */
 	private var simpleMode = false
-	private val simpleModeObj by lazy {
-		object {
-			val outerRect = Array(4) { Vector3() }
-			val innerRect = Array(4) { Vector3() }
-			val fillColor = Color()
-			val borderColors = BorderColors()
-			val normal = Vector3()
-		}
-	}
+	private val simpleModeObj by lazy { SimpleModeObj() }
 
 	private val complexModeObj by lazy {
-		object {
-			val fill = staticMesh()
-			val gradient = staticMesh()
-			val stroke = staticMesh()
-			val fillC = addChild(staticMeshC {
-				mesh = fill
-				interactivityMode = InteractivityMode.NONE
-			})
-			val gradientC = addChild(staticMeshC {
-				mesh = gradient
-				interactivityMode = InteractivityMode.NONE
-			})
-			val strokeC = addChild(staticMeshC {
-				mesh = stroke
-				interactivityMode = InteractivityMode.NONE
-			})
-		}
+		val fill = staticMesh()
+		val gradient = staticMesh()
+		val stroke = staticMesh()
+		ComplexModeObj(
+				fill = fill,
+				gradient = gradient,
+				stroke = staticMesh(),
+				fillC =  addChild(staticMeshC {
+					mesh = fill
+					interactivityMode = InteractivityMode.NONE
+				}),
+				gradientC = addChild(staticMeshC {
+					mesh = gradient
+					interactivityMode = InteractivityMode.NONE
+				}),
+				strokeC = addChild(staticMeshC {
+					mesh = stroke
+					interactivityMode = InteractivityMode.NONE
+				})
+		)
 	}
 
 	init {
@@ -534,6 +529,23 @@ open class GlRect(
 		}
 	}
 }
+
+private class SimpleModeObj(
+		val outerRect: Array<Vector3> = Array(4) { Vector3() },
+		val innerRect: Array<Vector3> = Array(4) { Vector3() },
+		val fillColor: Color = Color(),
+		val borderColors: BorderColors = BorderColors(),
+		val normal: Vector3 = Vector3()
+)
+
+private class ComplexModeObj(
+		val fill: StaticMesh,
+		val gradient: StaticMesh,
+		val stroke: StaticMesh,
+		val fillC: StaticMeshComponent,
+		val gradientC: StaticMeshComponent,
+		val strokeC: StaticMeshComponent
+)
 
 /**
  * Proportionally scales value to fit in max if `value + other > max`
