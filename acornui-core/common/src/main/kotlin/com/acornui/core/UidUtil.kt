@@ -17,7 +17,7 @@
 package com.acornui.core
 
 import com.acornui.core.time.time
-import com.acornui.math.MathUtils.random
+import com.acornui.math.random
 import com.acornui.string.toRadix
 import kotlin.math.abs
 
