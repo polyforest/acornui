@@ -231,7 +231,6 @@ Kotlin.isType = function(object, klass) {
 		@Suppress("SENSELESS_COMPARISON") // window.navigator.languages can be null.
 		val uI = UserInfo(
 				isTouchDevice = isTouchDevice,
-				isBrowser = true,
 				isMobile = isMobile,
 				userAgent = window.navigator.userAgent,
 				platformStr = window.navigator.platform,

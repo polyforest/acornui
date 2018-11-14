@@ -139,9 +139,6 @@ data class UserInfo(
 
 		val isTouchDevice: Boolean = false,
 
-		val isBrowser: Boolean = false,
-		val isDesktop: Boolean = false,
-
 		val isMobile: Boolean = false,
 
 		val userAgent: String,
@@ -170,7 +167,7 @@ data class UserInfo(
 	}
 
 	override fun toString(): String {
-		return "UserInfo(isTouchDevice=$isTouchDevice isBrowser=$isBrowser isMobile=$isMobile languages=${systemLocale.joinToString(",")})"
+		return "UserInfo(isTouchDevice=$isTouchDevice isMobile=$isMobile languages=${systemLocale.joinToString(",")})"
 	}
 
 	companion object : DKey<UserInfo> {

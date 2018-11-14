@@ -202,7 +202,6 @@ open class LwjglApplication : ApplicationBase() {
 	 */
 	protected open val userInfoTask by BootTask {
 		val u = UserInfo(
-				isDesktop = true,
 				isTouchDevice = false,
 				userAgent = "glfw",
 				platformStr = System.getProperty("os.name") ?: UserInfo.UNKNOWN_PLATFORM,

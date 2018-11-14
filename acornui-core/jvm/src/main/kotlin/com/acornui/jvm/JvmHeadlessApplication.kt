@@ -98,7 +98,6 @@ open class JvmHeadlessApplication(
 	 */
 	protected open val userInfoTask by BootTask {
 		val u = UserInfo(
-				isDesktop = true,
 				isTouchDevice = false,
 				userAgent = "headless",
 				platformStr = System.getProperty("os.name") ?: UserInfo.UNKNOWN_PLATFORM,

@@ -19,7 +19,6 @@ class DateParserTest {
 	@Before
 	fun setUp() {
 		val u = UserInfo(
-				isDesktop = true,
 				isTouchDevice = false,
 				userAgent = "headless",
 				platformStr = System.getProperty("os.name") ?: UserInfo.UNKNOWN_PLATFORM,
