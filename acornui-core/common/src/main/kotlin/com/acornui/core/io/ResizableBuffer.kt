@@ -112,7 +112,7 @@ open class ResizableBuffer<T, S : NativeReadWriteBuffer<T>>(initialCapacity: Int
 	}
 }
 
-class ResizableByteBuffer(initialCapacity: Int = 16) : ResizableBuffer<Byte, NativeReadWriteByteBuffer>(initialCapacity, { it -> BufferFactory.instance.byteBuffer(it) }), NativeReadWriteByteBuffer {
+class ResizableByteBuffer(initialCapacity: Int = 16) : ResizableBuffer<Byte, NativeReadWriteByteBuffer>(initialCapacity, { it -> byteBuffer(it) }), NativeReadWriteByteBuffer {
 
 	override fun getShort(): Short = wrapped.getShort()
 

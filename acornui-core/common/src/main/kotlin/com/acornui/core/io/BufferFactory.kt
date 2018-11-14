@@ -30,29 +30,27 @@ interface BufferFactory {
 	fun intBuffer(capacity: Int): NativeReadWriteBuffer<Int>
 	fun floatBuffer(capacity: Int): NativeReadWriteBuffer<Float>
 	fun doubleBuffer(capacity: Int): NativeReadWriteBuffer<Double>
-
-	companion object {
-		lateinit var instance: BufferFactory
-	}
 }
 
+expect val bufferFactory: BufferFactory
+
 fun byteBuffer(capacity: Int): NativeReadWriteByteBuffer {
-	return BufferFactory.instance.byteBuffer(capacity)
+	return bufferFactory.byteBuffer(capacity)
 }
 
 fun shortBuffer(capacity: Int): NativeReadWriteBuffer<Short> {
-	return BufferFactory.instance.shortBuffer(capacity)
+	return bufferFactory.shortBuffer(capacity)
 }
 
 fun intBuffer(capacity: Int): NativeReadWriteBuffer<Int> {
-	return BufferFactory.instance.intBuffer(capacity)
+	return bufferFactory.intBuffer(capacity)
 }
 fun floatBuffer(capacity: Int): NativeReadWriteBuffer<Float> {
-	return BufferFactory.instance.floatBuffer(capacity)
+	return bufferFactory.floatBuffer(capacity)
 }
 
 fun doubleBuffer(capacity: Int): NativeReadWriteBuffer<Double> {
-	return BufferFactory.instance.doubleBuffer(capacity)
+	return bufferFactory.doubleBuffer(capacity)
 }
 
 fun resizableByteBuffer(initialCapacity: Int = 16): ResizableByteBuffer {
@@ -60,17 +58,17 @@ fun resizableByteBuffer(initialCapacity: Int = 16): ResizableByteBuffer {
 }
 
 fun resizableShortBuffer(initialCapacity: Int = 16): ResizableBuffer<Short, NativeReadWriteBuffer<Short>> {
-	return ResizableBuffer(initialCapacity, factory = { BufferFactory.instance.shortBuffer(it) })
+	return ResizableBuffer(initialCapacity, factory = { bufferFactory.shortBuffer(it) })
 }
 
 fun resizableIntBuffer(initialCapacity: Int = 16): ResizableBuffer<Int, NativeReadWriteBuffer<Int>> {
-	return ResizableBuffer(initialCapacity, factory = { BufferFactory.instance.intBuffer(it) })
+	return ResizableBuffer(initialCapacity, factory = { bufferFactory.intBuffer(it) })
 }
 
 fun resizableFloatBuffer(initialCapacity: Int = 16): ResizableBuffer<Float, NativeReadWriteBuffer<Float>> {
-	return ResizableBuffer(initialCapacity, factory = { BufferFactory.instance.floatBuffer(it) })
+	return ResizableBuffer(initialCapacity, factory = { bufferFactory.floatBuffer(it) })
 }
 
 fun resizableDoubleBuffer(initialCapacity: Int = 16): ResizableBuffer<Double, NativeReadWriteBuffer<Double>> {
-	return ResizableBuffer(initialCapacity, factory = { BufferFactory.instance.doubleBuffer(it) })
+	return ResizableBuffer(initialCapacity, factory = { bufferFactory.doubleBuffer(it) })
 }

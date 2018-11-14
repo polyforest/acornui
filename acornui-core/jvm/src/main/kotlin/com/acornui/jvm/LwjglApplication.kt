@@ -49,7 +49,6 @@ import com.acornui.core.input.MouseInput
 import com.acornui.core.input.interaction.ContextMenuManager
 import com.acornui.core.input.interaction.JvmClickDispatcher
 import com.acornui.core.input.interaction.UndoDispatcher
-import com.acornui.core.io.BufferFactory
 import com.acornui.core.io.file.Files
 import com.acornui.core.io.file.FilesImpl
 import com.acornui.core.persistance.Persistence
@@ -81,7 +80,6 @@ import com.acornui.jvm.graphic.LwjglGl20
 import com.acornui.jvm.input.JvmClipboardDispatcher
 import com.acornui.jvm.input.JvmMouseInput
 import com.acornui.jvm.input.LwjglKeyInput
-import com.acornui.jvm.io.JvmBufferFactory
 import com.acornui.jvm.io.JvmRestServiceFactory
 import com.acornui.jvm.loader.JvmBinaryLoader
 import com.acornui.jvm.loader.JvmTextLoader
@@ -132,7 +130,6 @@ open class LwjglApplication : ApplicationBase() {
 			}
 
 			time = TimeProviderImpl()
-			BufferFactory.instance = JvmBufferFactory()
 		}
 	}
 

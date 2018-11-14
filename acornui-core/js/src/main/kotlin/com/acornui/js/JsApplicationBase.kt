@@ -49,7 +49,6 @@ import com.acornui.core.input.KeyInput
 import com.acornui.core.input.MouseInput
 import com.acornui.core.input.interaction.ContextMenuManager
 import com.acornui.core.input.interaction.UndoDispatcher
-import com.acornui.core.io.BufferFactory
 import com.acornui.core.io.file.Files
 import com.acornui.core.io.file.FilesImpl
 import com.acornui.core.persistance.Persistence
@@ -73,7 +72,6 @@ import com.acornui.js.cursor.JsCursorManager
 import com.acornui.js.input.JsClipboardDispatcher
 import com.acornui.js.input.JsKeyInput
 import com.acornui.js.input.JsMouseInput
-import com.acornui.js.io.JsBufferFactory
 import com.acornui.js.io.JsRestServiceFactory
 import com.acornui.js.loader.JsBinaryLoader
 import com.acornui.js.loader.JsTextLoader
@@ -266,10 +264,6 @@ Kotlin.isType = function(object, klass) {
 		} else {
 			Log.level = ILogger.WARN
 		}
-	}
-
-	protected open val bufferTask by BootTask {
-		BufferFactory.instance = JsBufferFactory()
 	}
 
 	protected open val mouseInputTask by BootTask {
