@@ -238,3 +238,11 @@ class JsonWriter(
 		return value.replace2("\\", "\\\\").replace2("\r", "\\r").replace2("\n", "\\n").replace2("\t", "\\t").replace2("\"", "\\\"")
 	}
 }
+
+actual fun <T> fromJson(json: String, factory: From<T>): T {
+	return JsonSerializer.read(json, factory)
+}
+
+actual fun <T> toJson(value: T, factory: To<T>): String {
+	return JsonSerializer.write(value, factory)
+}

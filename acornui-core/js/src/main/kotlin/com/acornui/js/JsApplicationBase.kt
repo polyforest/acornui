@@ -50,7 +50,6 @@ import com.acornui.core.input.MouseInput
 import com.acornui.core.input.interaction.ContextMenuManager
 import com.acornui.core.input.interaction.UndoDispatcher
 import com.acornui.core.io.BufferFactory
-import com.acornui.core.io.JSON_KEY
 import com.acornui.core.io.file.Files
 import com.acornui.core.io.file.FilesImpl
 import com.acornui.core.persistance.Persistence
@@ -84,7 +83,7 @@ import com.acornui.js.text.NumberFormatterImpl
 import com.acornui.js.time.TimeProviderImpl
 import com.acornui.logging.ILogger
 import com.acornui.logging.Log
-import com.acornui.serialization.JsonSerializer
+import com.acornui.serialization.fromJson
 import org.w3c.dom.DocumentReadyState
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.LOADING
@@ -281,10 +280,6 @@ Kotlin.isType = function(object, klass) {
 		set(KeyInput, JsKeyInput(get(CANVAS)))
 	}
 
-	protected open val jsonTask by BootTask {
-		set(JSON_KEY, JsonSerializer)
-	}
-
 	protected open val cameraTask by BootTask {
 		val camera = OrthographicCamera()
 		set(Camera, camera)
@@ -292,12 +287,11 @@ Kotlin.isType = function(object, klass) {
 	}
 
 	protected open val filesTask by BootTask {
-		val json = get(JSON_KEY)
 		val config = get(AppConfig)
 		val path = config.rootPath + config.assetsManifestPath.appendParam("version", config.version.toVersionString())
 
 		val it = JsTextLoader(path).await()
-		val manifest = json.read(it, FilesManifestSerializer)
+		val manifest = fromJson(it, FilesManifestSerializer)
 		set(Files, FilesImpl(manifest))
 	}
 

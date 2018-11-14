@@ -18,7 +18,6 @@ package com.acornui.build.util
 
 import com.acornui.core.asset.AssetManager
 import com.acornui.core.di.inject
-import com.acornui.core.io.JSON_KEY
 import com.acornui.core.io.file.Files
 import com.acornui.io.file.FilesManifestSerializer
 import com.acornui.jvm.JvmHeadlessApplication
@@ -37,7 +36,7 @@ object AcornAssets {
 		println("Assets directory: " + dest.path + " root directory: " + root.path)
 		JvmHeadlessApplication(dest.path).start {
 			// Pack the assets in all directories in the dest folder with a name ending in "_unpacked"
-			TexturePackerUtil(inject(Files), inject(AssetManager), inject(JSON_KEY)).packAssets(dest, File("."))
+			TexturePackerUtil(inject(Files), inject(AssetManager)).packAssets(dest, File("."))
 
 			dest.setLastModified(System.currentTimeMillis())
 		}

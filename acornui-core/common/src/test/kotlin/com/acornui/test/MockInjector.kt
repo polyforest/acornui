@@ -27,7 +27,6 @@ import com.acornui.core.graphic.Window
 import com.acornui.core.input.InteractivityManager
 import com.acornui.core.input.KeyState
 import com.acornui.core.input.MouseState
-import com.acornui.core.io.JSON_KEY
 import com.acornui.core.io.file.Files
 import com.acornui.core.time.Date
 import com.acornui.core.time.TimeDriver
@@ -65,8 +64,7 @@ import com.acornui.serialization.Serializer
 //				Camera to  Mockito.mock(Camera::class.java),
 //				FocusManager to  Mockito.mock(FocusManager::class.java),
 //				Gl20 to  Mockito.mock(Gl20::class.java),
-//				GlState to  Mockito.mock(GlState::class.java),
-//				JSON_KEY to json
+//				GlState to  Mockito.mock(GlState::class.java)
 //		))
 //		time = MockTimeProvider()
 //

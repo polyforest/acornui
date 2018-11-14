@@ -50,7 +50,6 @@ import com.acornui.core.input.interaction.ContextMenuManager
 import com.acornui.core.input.interaction.JvmClickDispatcher
 import com.acornui.core.input.interaction.UndoDispatcher
 import com.acornui.core.io.BufferFactory
-import com.acornui.core.io.JSON_KEY
 import com.acornui.core.io.file.Files
 import com.acornui.core.io.file.FilesImpl
 import com.acornui.core.persistance.Persistence
@@ -209,14 +208,6 @@ open class LwjglApplication : ApplicationBase() {
 		)
 		userInfo = u
 		set(UserInfo, u)
-	}
-
-
-	/**
-	 * Sets the [JSON_KEY] dependency.
-	 */
-	protected open val jsonTask by BootTask {
-		set(JSON_KEY, JsonSerializer)
 	}
 
 	/**

@@ -20,8 +20,8 @@ import com.acornui.async.Deferred
 import com.acornui.async.async
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
-import com.acornui.core.io.JSON_KEY
 import com.acornui.serialization.From
+import com.acornui.serialization.fromJson
 
 /**
  * A Collection of utilities for making common asset loading tasks more terse.
@@ -33,5 +33,5 @@ import com.acornui.serialization.From
  */
 fun <T> Scoped.loadJson(path:String, factory: From<T>): Deferred<T> = async {
 	val json = inject(AssetManager).load(path, AssetType.TEXT)
-	inject(JSON_KEY).read(json.await(), factory)
+	fromJson(json.await(), factory)
 }

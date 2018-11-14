@@ -415,7 +415,7 @@ val declareResourceGenerationTasks by extra { p: Project ->
 		with(p) {
 			fun Project.isApplicationEntryPointModule(): Boolean {
 				return isAppModule() &&
-					   (isThatModule("${rootProject.name}-jvm") || isThatModule("${rootProject.name}-js"))
+						(isThatModule("${rootProject.name}-jvm") || isThatModule("${rootProject.name}-js"))
 			}
 
 			if (isApplicationEntryPointModule()) {
@@ -683,7 +683,7 @@ object SourceFileManipulator {
 object ScriptCacheBuster {
 
 	val extensions = listOf("asp", "aspx", "cshtml", "cfm", "go", "jsp", "jspx", "php",
-							"php3", "php4", "phtml", "html", "htm", "rhtml", "css")
+			"php3", "php4", "phtml", "html", "htm", "rhtml", "css")
 
 	private val regex = Regex("""([\w./\\]+)(\?[\w=&]*)(%VERSION%)""")
 
@@ -1135,8 +1135,8 @@ if (isCompositeRoot) {
 val GRADLE_VERSION by acornConfig
 
 tasks.withType<Wrapper> {
-gradleVersion = GRADLE_VERSION
-distributionType = Wrapper.DistributionType.ALL
+	gradleVersion = GRADLE_VERSION
+	distributionType = Wrapper.DistributionType.ALL
 }
 
 // Uncomment below to get access to adhoc debugging (also a good place ot try new things).

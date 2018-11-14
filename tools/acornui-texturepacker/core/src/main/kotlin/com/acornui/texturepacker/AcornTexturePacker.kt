@@ -27,19 +27,18 @@ import com.acornui.core.io.file.Directory
 import com.acornui.gl.core.TexturePixelFormat
 import com.acornui.graphic.Color
 import com.acornui.math.IntRectangle
-import com.acornui.serialization.Serializer
+import com.acornui.serialization.fromJson
 
 /**
  * @author nbilyk
  */
 class AcornTexturePacker(
-		private val assets: AssetManager,
-		private val json: Serializer<String>) {
+		private val assets: AssetManager) {
 
 	suspend fun pack(root: Directory, settingsFilename: String = "_packSettings.json"): PackedTextureData {
 		val settingsFile = root.getFile(settingsFilename) ?: throw Exception("$settingsFilename is missing")
 		val settingsJson = assets.load(settingsFile.path, AssetType.TEXT).await()
-		val settings = json.read(settingsJson, TexturePackerSettingsSerializer)
+		val settings = fromJson(settingsJson, TexturePackerSettingsSerializer)
 		return pack(root, settings)
 	}
 
@@ -97,7 +96,7 @@ class AcornTexturePacker(
 				// If the image has a corresponding metadata file, load that, otherwise, use default metadata settings.
 				val metadata: ImageMetadata = if (metadataFile != null) {
 					val metadataJson = assets.load(metadataFile.path, AssetType.TEXT).await()
-					json.read(metadataJson, ImageMetadataSerializer)
+					fromJson(metadataJson, ImageMetadataSerializer)
 				} else ImageMetadata()
 
 				var rgbData = rgbLoader.await()

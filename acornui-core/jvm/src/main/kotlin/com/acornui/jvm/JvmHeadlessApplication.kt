@@ -31,7 +31,6 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.i18n.I18n
 import com.acornui.core.i18n.I18nImpl
 import com.acornui.core.i18n.Locale
-import com.acornui.core.io.JSON_KEY
 import com.acornui.core.io.file.Files
 import com.acornui.core.io.file.FilesImpl
 import com.acornui.core.text.dateTimeFormatterProvider
@@ -46,7 +45,6 @@ import com.acornui.jvm.text.NumberFormatterImpl
 import com.acornui.jvm.time.TimeProviderImpl
 import com.acornui.logging.ILogger
 import com.acornui.logging.Log
-import com.acornui.serialization.JsonSerializer
 import java.io.File
 import java.net.URLDecoder
 import java.net.URLEncoder
@@ -119,10 +117,6 @@ open class JvmHeadlessApplication(
 		get(UserInfo)
 		numberFormatterProvider = { NumberFormatterImpl() }
 		dateTimeFormatterProvider = { DateTimeFormatterImpl() }
-	}
-
-	protected open val jsonTask by BootTask {
-		set(JSON_KEY, JsonSerializer)
 	}
 
 	protected open val filesTask by BootTask {

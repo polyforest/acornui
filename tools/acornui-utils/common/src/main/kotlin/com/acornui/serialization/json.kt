@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2018 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,8 @@
  * limitations under the License.
  */
 
-package com.acornui.core.io
+package com.acornui.serialization
 
-import com.acornui.core.di.Scoped
-import com.acornui.serialization.From
-import com.acornui.serialization.To
+expect fun <T> fromJson(json: String, factory: From<T>): T
 
-@Deprecated("Use com.acornui.serialization.fromJson")
-fun <T> Scoped.parseJson(json: String, factory: From<T>): T {
-	return com.acornui.serialization.fromJson(json, factory)
-}
-
-@Deprecated("Use com.acornui.serialization.toJson")
-fun <T> Scoped.toJson(value: T, factory: To<T>): String {
-	return com.acornui.serialization.toJson(value, factory)
-}
+expect fun <T> toJson(value: T, factory: To<T>): String
