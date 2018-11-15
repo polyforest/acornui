@@ -20,8 +20,6 @@ import com.acornui.assertionsEnabled
 import com.acornui.async.awaitOrNull
 import com.acornui.async.launch
 import com.acornui.browser.appendParam
-import com.acornui.browser.decodeUriComponent2
-import com.acornui.browser.encodeUriComponent2
 import com.acornui.collection._stringMap
 import com.acornui.component.Stage
 import com.acornui.component.UiComponent
@@ -61,7 +59,6 @@ import com.acornui.core.text.dateTimeFormatterProvider
 import com.acornui.core.text.numberFormatterProvider
 import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.TimeDriverImpl
-import com.acornui.core.time.time
 import com.acornui.file.FileIoManager
 import com.acornui.io.file.FilesManifestSerializer
 import com.acornui.js.audio.JsAudioElementMusicLoader
@@ -78,7 +75,6 @@ import com.acornui.js.loader.JsTextLoader
 import com.acornui.js.persistance.JsPersistence
 import com.acornui.js.text.DateTimeFormatterImpl
 import com.acornui.js.text.NumberFormatterImpl
-import com.acornui.js.time.TimeProviderImpl
 import com.acornui.logging.ILogger
 import com.acornui.logging.Log
 import com.acornui.serialization.fromJson
@@ -146,13 +142,8 @@ Kotlin.isType = function(object, klass) {
 };
 """)
 
-
 		@Suppress("LeakingThis")
 		if (this::memberRefTest != this::memberRefTest) println("[SEVERE] Member reference fix isn't working.")
-		time = TimeProviderImpl()
-		encodeUriComponent2 = ::encodeURIComponent
-		decodeUriComponent2 = ::decodeURIComponent
-
 		window.onbeforeunload = { dispose(); undefined }
 	}
 
@@ -385,9 +376,6 @@ Kotlin.isType = function(object, klass) {
 	}
 
 }
-
-private external fun encodeURIComponent(str: String): String
-private external fun decodeURIComponent(str: String): String
 
 fun Int.toRadix(radix: Int): String {
 	val d: dynamic = this

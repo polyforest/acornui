@@ -128,11 +128,7 @@ fun CharSequence.repeat2(n: Int): String {
 	return sb.toString()
 }
 
-/**
- * May be set by the back-ends.
- * JVM sets to System.lineSeparator()
- */
-var lineSeparator: String = "\n"
+expect val lineSeparator: String
 
 fun htmlEntities(value: String): String {
 	@Suppress("name_shadowing")
