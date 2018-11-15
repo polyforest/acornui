@@ -19,7 +19,7 @@ package com.acornui.test
 import com.acornui.collection.toList
 import com.acornui.core.closeTo
 import com.acornui.math.*
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.math.abs
 
 import kotlin.test.assertFails
