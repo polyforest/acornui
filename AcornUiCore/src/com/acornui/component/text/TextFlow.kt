@@ -1,6 +1,7 @@
 package com.acornui.component.text
 
 import com.acornui.collection.*
+import com.acornui.component.ComponentInit
 import com.acornui.component.ElementParent
 import com.acornui.component.ValidationFlags
 import com.acornui.component.layout.algorithm.FlowHAlign
@@ -383,4 +384,10 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 		private const val CHAR_STYLE = 1 shl 18
 		private val linesPool = ClearableObjectPool { LineInfo() }
 	}
+}
+
+fun Owned.p(init: ComponentInit<TextFlow>): TextFlow {
+	val t = TextFlow(this)
+	t.init()
+	return t
 }
