@@ -23,7 +23,7 @@ import com.liferay.gradle.plugins.node.tasks.DownloadNodeModuleTask
 import com.liferay.gradle.plugins.node.tasks.ExecuteNodeScriptTask
 import com.liferay.gradle.plugins.node.tasks.ExecuteNpmTask
 import org.gradle.api.internal.file.UnionFileCollection
-import org.gradle.api.internal.file.copy.DestinationRootCopySpec
+//import org.gradle.api.internal.file.copy.DestinationRootCopySpec
 
 //import java.net.URI
 
@@ -234,13 +234,6 @@ val jsProjectConfiguration by extra { p: Project ->
 val jvmProjectConfiguration by extra { p: Project ->
 	toUnit {
 		with(p) {
-			dependencies {
-				"implementation"(kotlin("stdlib-jdk8"))
-
-				"testImplementation"(kotlin("test"))
-				"testImplementation"(kotlin("test-junit"))
-			}
-
 			declareResourceGenerationTasks(this)
 		}
 	}
@@ -423,7 +416,6 @@ val declareResourceGenerationTasks by extra { p: Project ->
 				val main by sourceSets
 				val buildutils = maybeCreateBuildutilsConfiguration(p)
 
-				val processedSourcePath by extra(processedSourcePath(p))
 				val prodHtmlSrcDestPath by extra(prodHtmlSrcDestPath(project))
 				val htmlSrcDestPath by extra(htmlSrcDestPath(project))
 				val processedResourcesPath by extra(processedResourcesPath(p))
@@ -431,10 +423,14 @@ val declareResourceGenerationTasks by extra { p: Project ->
 
 				val usedGeneratedResources by extra(p.objects.property(FileCollection::class))
 
-				listOf(processedSourcePath, processedResourcesPath).forEach { path: String? ->
-					path?.let {
-						DirCollection.dir(it, p.files(it))
-						main.output.dir(mapOf("builtBy" to DirCollection.taskDependencies(it)), it)
+				afterEvaluate {
+					val processedSourcePath by extra(processedSourcePath(p))
+
+					listOf(processedSourcePath, processedResourcesPath).forEach { path: String? ->
+						path?.let {
+							DirCollection.dir(it, p.files(it))
+							main.output.dir(mapOf("builtBy" to DirCollection.taskDependencies(it)), it)
+						}
 					}
 				}
 
@@ -450,18 +446,18 @@ val declareResourceGenerationTasks by extra { p: Project ->
 				 *
 				 * Exports the old resources output directory as a project level extra property.
 				 **/
-				fun swapResourcesOutputDirectory(project: Project, resourcesDestPath: String) {
-					toUnit {
-						with(p) {
-							val oldResourcesOutputDir by project.extra(File(main.output.resourcesDir.absolutePath))
-							val processResources by project.tasks.getting(Copy::class) {
-								destinationDir = oldResourcesOutputDir
-							}
-
-							main.output.resourcesDir = file(resourcesDestPath)
-						}
-					}
-				}
+//				fun swapResourcesOutputDirectory(project: Project, resourcesDestPath: String) {
+//					toUnit {
+//						with(p) {
+//							val oldResourcesOutputDir by project.extra(file(main.output.resourcesDir.absolutePath))!!
+//							val processResources by project.tasks.getting(Copy::class) {
+//								destinationDir = oldResourcesOutputDir
+//							}
+//
+//							main.output.resourcesDir = file(resourcesDestPath)
+//						}
+//					}
+//				}
 
 				setBuildType(p)
 
@@ -484,7 +480,7 @@ val declareResourceGenerationTasks by extra { p: Project ->
 						// Swap out resources destination...
 
 						val processResources by getting(Copy::class)
-						swapResourcesOutputDirectory(project, finalResourcesPath)
+//						swapResourcesOutputDirectory(project, finalResourcesPath)
 						exclude(processResources.excludes)
 						/**
 						 * Prevent both unprocessed and processed resources from co-existing on the classpath (or copied
@@ -571,7 +567,8 @@ val declareResourceGenerationTasks by extra { p: Project ->
 						 * val generatedResourceSources: ConfigurableFileCollection by processGeneratedResources.extra
 						 * generatedResourceSources.add(<see ConfigurableFileCollection.add for valid params>)
 						 */
-						val generatedResourceSources by extra(DirCollection.fileCollection(processedResourcesPath))
+						afterEvaluate {
+							val generatedResourceSources by extra(DirCollection.fileCollection(processedResourcesPath))
 //						val generatedSources by extra {
 //							processedSourcePath?.let {
 //								DirCollection.fileCollection(it)
@@ -584,10 +581,12 @@ val declareResourceGenerationTasks by extra { p: Project ->
 //							aggregate + nextElement
 //						})
 //						dependsOn(notNullSources)
-						dependsOn(generatedResourceSources)
+							dependsOn(generatedResourceSources)
+						}
 					}
 
-					val processFinalResources by creating(Copy::class) {
+					val processFinalResources = maybeCreate("processFinalResources", Copy::class)
+					processFinalResources.apply {
 						val processResources by project.tasks.getting(Copy::class)
 						// TODO: Figure out a way so that we can use main.output.resourceDir.  Right now, if we do, even though it should be evaluated after changing the dir, it isn't.
 						val destinationDir by extra(finalResourcesPath)
@@ -596,8 +595,10 @@ val declareResourceGenerationTasks by extra { p: Project ->
 								"resources (${processResources.name} outputs) into ${destinationDir}."
 
 //						from(processResources, usedGeneratedResources.get())
-						val generatedResourceSources: ConfigurableFileCollection by processGeneratedResources.extra
-						from(processResources, generatedResourceSources)
+						afterEvaluate {
+							val generatedResourceSources: ConfigurableFileCollection by processGeneratedResources.extra
+							from(processResources, generatedResourceSources)
+						}
 						into(destinationDir)
 					}
 
@@ -746,8 +747,8 @@ object KotlinMonkeyPatcher {
 /**
  * Retrieves the [node][com.liferay.gradle.plugins.node.NodeExtension] extension.
  */
-//val org.gradle.api.Project.`node`: com.liferay.gradle.plugins.node.NodeExtension get() =
-//	(this as org.gradle.api.plugins.ExtensionAware).extensions.getByType<com.liferay.gradle.plugins.node.NodeExtension>()
+val org.gradle.api.Project.`node`: com.liferay.gradle.plugins.node.NodeExtension get() =
+	(this as org.gradle.api.plugins.ExtensionAware).extensions.getByType<com.liferay.gradle.plugins.node.NodeExtension>()
 
 val declareJsEntryPointConfiguration by extra { p: Project ->
 
@@ -1003,8 +1004,10 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 					}
 
 					val processGeneratedProdResources by creating(DefaultTask::class) {
-						val generatedResourceSources: ConfigurableFileCollection by processGeneratedResources.extra
-						dependsOn(generatedResourceSources)
+						afterEvaluate {
+							val generatedResourceSources: ConfigurableFileCollection by processGeneratedResources.extra
+							dependsOn(generatedResourceSources)
+						}
 
 						val prodHtmlSrcCollection by extra(DirCollection.fileCollection(prodHtmlSrcDestPath))
 						dependsOn(prodHtmlSrcCollection)
@@ -1017,8 +1020,10 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 						into(destinationDir)
 
 						val processResources by getting
-						val generatedResourceSources: ConfigurableFileCollection by processGeneratedResources.extra
-						from(processResources, generatedResourceSources)
+						afterEvaluate {
+							val generatedResourceSources: ConfigurableFileCollection by processGeneratedResources.extra
+							from(processResources, generatedResourceSources)
+						}
 
 						val prodHtmlSrcCollection: ConfigurableFileCollection by processGeneratedProdResources.extra
 						from(prodHtmlSrcCollection)
@@ -1034,11 +1039,11 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 						dependsOn(processFinalResources, processFinalProdResources)
 					}
 
-					val run by creating(DefaultTask::class) {
-						dependsOn(processFinalResources)
-					}
+					val run = maybeCreate("run", DefaultTask::class)
+					run.dependsOn(processFinalResources)
 
-					val runProd by creating(DefaultTask::class) {
+					val runProd = maybeCreate("runProd", DefaultTask::class)
+					runProd.apply {
 						releaseTask()
 						dependsOn(processFinalProdResources)
 					}

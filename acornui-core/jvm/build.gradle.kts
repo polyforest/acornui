@@ -18,6 +18,10 @@ plugins {
     kotlin("platform.jvm")
 }
 
+repositories {
+    mavenCentral()
+}
+
 val lwjglVersion = "3.1.6"
 val lwjglGroup = "org.lwjgl"
 val lwjglName = "lwjgl"

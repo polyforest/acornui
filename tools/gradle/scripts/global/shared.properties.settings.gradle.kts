@@ -20,9 +20,9 @@ import kotlin.reflect.full.memberProperties
 
 open class GlobalConfig(val ACORNUI_HOME: String) {
 
-	val GRADLE_VERSION = "4.10-rc-3"
+	val GRADLE_VERSION = "5.0-rc-3"
 	val TARGET_JVM_VERSION = "1.8"
-	val KOTLIN_VERSION = "1.2.60"
+	val KOTLIN_VERSION = "1.3.0"
 	val TARGET_ECMA_VERSION = "v5"
 	val DOKKA_VERSION = "0.9.17"
 	val ACORNUI_GROUP = "com.polyforest"
