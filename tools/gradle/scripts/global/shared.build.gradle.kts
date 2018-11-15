@@ -810,17 +810,19 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 						into(htmlSrcDestPath)
 						from(htmlSrc)
 						exclude("**/*.meta.js")
-						into(libsDest) {
-							// Delay evaluation by passing a Closure.
-							from(KotlinClosure0(fun() = runtimeFiles.get().toTypedArray()))
-							includeEmptyDirs = false
-							include {
-								jsSrcAndMaps(it.path) && allDirsSansDependencyMeta(it.path)
-							}
+						afterEvaluate {
+							into(libsDest) {
+								// Delay evaluation by passing a Closure.
+								from(KotlinClosure0(fun() = runtimeFiles.get().toTypedArray()))
+								includeEmptyDirs = false
+								include {
+									jsSrcAndMaps(it.path) && allDirsSansDependencyMeta(it.path)
+								}
 
-							// Preserve last modified date for each file
-							eachFile {
-								currentCopyDetails + this
+								// Preserve last modified date for each file
+								eachFile {
+									currentCopyDetails + this
+								}
 							}
 						}
 
