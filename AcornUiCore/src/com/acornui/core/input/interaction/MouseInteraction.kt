@@ -23,6 +23,7 @@ import com.acornui.core.input.InteractionEventRo
 import com.acornui.core.input.InteractionType
 import com.acornui.core.input.WhichButton
 import com.acornui.math.Vector2
+import kotlin.math.sqrt
 
 interface MouseInteractionRo : InteractionEventRo {
 
@@ -70,7 +71,7 @@ interface MouseInteractionRo : InteractionEventRo {
 	fun velocity(previous: MouseInteractionRo): Float {
 		val xDiff = previous.canvasX - canvasX
 		val yDiff = previous.canvasY - canvasY
-		val distance = Math.sqrt((xDiff * xDiff + yDiff * yDiff).toDouble()).toFloat()
+		val distance = sqrt((xDiff * xDiff + yDiff * yDiff).toDouble()).toFloat()
 		val time = timestamp - previous.timestamp
 		return distance / time
 	}

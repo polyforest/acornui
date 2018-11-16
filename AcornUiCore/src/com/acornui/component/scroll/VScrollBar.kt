@@ -25,6 +25,7 @@ import com.acornui.component.style.StyleTag
 import com.acornui.core.di.Owned
 import com.acornui.math.Bounds
 import com.acornui.math.Vector2
+import kotlin.math.round
 
 open class VScrollBar(
 		owner: Owned
@@ -93,7 +94,7 @@ open class VScrollBar(
 
 		val minY = minTrack()
 		val maxY = maxTrack()
-		val h = Math.round(maxY - minY + 0.000001f) - thumb.height
+		val h = round(maxY - minY + 0.000001f) - thumb.height
 		thumb.moveTo(0f, p * h + minY)
 	}
 

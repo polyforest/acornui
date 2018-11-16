@@ -22,7 +22,8 @@ import com.acornui.core.Disposable
 import com.acornui.core.UpdatableChildBase
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
-import kotlin.coroutines.experimental.suspendCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * @author nbilyk

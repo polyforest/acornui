@@ -91,7 +91,8 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.LOADING
 import kotlin.browser.document
 import kotlin.browser.window
-import kotlin.coroutines.experimental.suspendCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * The common setup tasks to both a webgl application and a dom application backend.

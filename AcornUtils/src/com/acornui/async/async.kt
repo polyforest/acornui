@@ -19,7 +19,7 @@ package com.acornui.async
 import com.acornui.async.Deferred.Status
 import com.acornui.collection.*
 import com.acornui.core.Disposable
-import kotlin.coroutines.experimental.*
+import kotlin.coroutines.*
 
 /**
  * Launches a new coroutine on this same thread.
@@ -42,11 +42,7 @@ class BasicContinuationImpl(
 		override val context: CoroutineContext = EmptyCoroutineContext
 ) : Continuation<Unit> {
 
-	override fun resume(value: Unit) {
-	}
-
-	override fun resumeWithException(exception: Throwable) {
-		throw exception
+	override fun resumeWith(result: Result<Unit>) {
 	}
 }
 

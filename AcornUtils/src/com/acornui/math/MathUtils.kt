@@ -20,8 +20,7 @@
 
 package com.acornui.math
 
-import kotlin.math.floor
-import kotlin.math.pow
+import kotlin.math.*
 
 const val PI: Float = 3.1415927f
 const val PI2: Float = PI * 2f
@@ -52,30 +51,6 @@ object MathUtils {
 	 * multiply by this to convert from degrees to radians
 	 */
 	const val degRad: Float = PI / 180f
-
-	/**
-	 * Returns the sine in radians from a lookup table.
-	 */
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.sin(radians)"), DeprecationLevel.ERROR)
-	fun sin(radians: Float): Float = throw Exception()
-
-	/**
-	 * Returns the cosine in radians from a lookup table.
-	 */
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.cos(radians)"), DeprecationLevel.ERROR)
-	fun cos(radians: Float): Float = throw Exception()
-
-	/**
-	 * Returns the tan in radians from a lookup table.
-	 * Throws DivideByZero exception when cos(radians) == 0
-	 */
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.tan(radians)"), DeprecationLevel.ERROR)
-	fun tan(radians: Float): Float = throw Exception()
-
-	// ---
-
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.atan2(y, x)"), DeprecationLevel.ERROR)
-	fun atan2(y: Float, x: Float): Float = throw Exception()
 
 	// ---
 
@@ -197,32 +172,12 @@ object MathUtils {
 
 	// ---
 
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.abs(value)"), DeprecationLevel.ERROR)
-	inline fun abs(value: Float): Float {
-		return if (value < 0f) -value else value
-	}
-
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.abs(value)"), DeprecationLevel.ERROR)
-	inline fun abs(value: Double): Double {
-		return if (value < 0f) -value else value
-	}
-
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.abs(value)"), DeprecationLevel.ERROR)
-	inline fun abs(value: Int): Int {
-		return if (value < 0f) -value else value
-	}
-
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.abs(value)"), DeprecationLevel.ERROR)
-	inline fun abs(value: Long): Long {
-		return if (value < 0f) -value else value
-	}
-
 	/**
 	 * Returns true if the value is zero
 	 * @param tolerance represent an upper bound below which the value is considered zero.
 	 */
 	fun isZero(value: Float, tolerance: Float = FLOAT_ROUNDING_ERROR): Boolean {
-		return kotlin.math.abs(value.toDouble()) <= tolerance
+		return abs(value.toDouble()) <= tolerance
 	}
 
 	/**
@@ -230,7 +185,7 @@ object MathUtils {
 	 * @param tolerance represent an upper bound below which the value is considered zero.
 	 */
 	fun isZero(value: Double, tolerance: Float = FLOAT_ROUNDING_ERROR): Boolean {
-		return kotlin.math.abs(value) <= tolerance
+		return abs(value) <= tolerance
 	}
 
 	/**
@@ -239,7 +194,7 @@ object MathUtils {
 	 * @param b the second value.
 	 */
 	fun isEqual(a: Float, b: Float): Boolean {
-		return kotlin.math.abs(a - b) <= FLOAT_ROUNDING_ERROR
+		return abs(a - b) <= FLOAT_ROUNDING_ERROR
 	}
 
 	/**
@@ -249,21 +204,15 @@ object MathUtils {
 	 * @param tolerance represent an upper bound below which the two values are considered equal.
 	 */
 	fun isEqual(a: Float, b: Float, tolerance: Float): Boolean {
-		return kotlin.math.abs(a - b) <= tolerance
+		return abs(a - b) <= tolerance
 	}
 
 	/**
 	 * @return the logarithm of x with base a
 	 */
+	@Deprecated("Use kotlin.math.log", ReplaceWith("log(x, base)", imports = arrayOf("kotlin.math.log")))
 	fun log(x: Float, base: Float): Float {
-		return (Math.log(x.toDouble()) / Math.log(base.toDouble())).toFloat()
-	}
-
-	/**
-	 * @return the logarithm of x with base 2
-	 */
-	fun log2(x: Float): Float {
-		return log(x, 2f)
+		return kotlin.math.log(x, base)
 	}
 
 	inline fun <T : Comparable<T>> clamp(value: T, min: T, max: T): T {
@@ -303,41 +252,6 @@ object MathUtils {
 	}
 
 	// TODO: deprecate what's now in kotlin native math
-
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.ceil(v).toInt()"), DeprecationLevel.ERROR)
-	inline fun ceil(v: Float): Int {
-		return Math.ceil(v.toDouble()).toInt()
-	}
-
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.floor(v).toInt()"), DeprecationLevel.ERROR)
-	inline fun floor(v: Float): Int {
-		return Math.floor(v.toDouble()).toInt()
-	}
-
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.round(v).toInt()"), DeprecationLevel.ERROR)
-	inline fun round(v: Float): Int {
-		return Math.round(v.toDouble()).toInt()
-	}
-
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.sqrt(v)"), DeprecationLevel.ERROR)
-	inline fun sqrt(v: Float): Float {
-		return Math.sqrt(v.toDouble()).toFloat()
-	}
-
-	@Deprecated("Use native math", ReplaceWith("a.pow(b)", "kotlin.math.pow"), DeprecationLevel.ERROR)
-	inline fun pow(a: Float, b: Float): Float {
-		return Math.pow(a.toDouble(), b.toDouble()).toFloat()
-	}
-
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.acos(v)"), DeprecationLevel.ERROR)
-	inline fun acos(v: Float): Float {
-		return Math.acos(v.toDouble()).toFloat()
-	}
-
-	@Deprecated("Use native math", ReplaceWith("kotlin.math.asin(v)"), DeprecationLevel.ERROR)
-	inline fun asin(v: Float): Float {
-		return Math.asin(v.toDouble()).toFloat()
-	}
 
 	/**
 	 * Returns the signum function of the argument; zero if the argument
@@ -419,7 +333,7 @@ object MathUtils {
 			out.add(-b / (2f * a))
 		} else {
 			val aa = -b / (2f * a)
-			val tmp = kotlin.math.sqrt(q) / (2f * a)
+			val tmp = sqrt(q) / (2f * a)
 			out.add(aa - tmp)
 			out.add(aa + tmp)
 		}
@@ -461,16 +375,16 @@ object MathUtils {
 				out.add(0f)
 			} else {
 				// three real roots
-				val theta: Float = kotlin.math.acos(r / kotlin.math.sqrt(q3))
-				val qSqrt: Float = kotlin.math.sqrt(q)
+				val theta: Float = acos(r / sqrt(q3))
+				val qSqrt: Float = sqrt(q)
 
-				out.add(-2f * qSqrt * kotlin.math.cos(theta / 3f) - b / 3f)
-				out.add(-2f * qSqrt * kotlin.math.cos((theta + 2f * PI) / 3f) - b / 3f)
-				out.add(-2f * qSqrt * kotlin.math.cos((theta + 4f * PI) / 3f) - b / 3f)
+				out.add(-2f * qSqrt * cos(theta / 3f) - b / 3f)
+				out.add(-2f * qSqrt * cos((theta + 2f * PI) / 3f) - b / 3f)
+				out.add(-2f * qSqrt * cos((theta + 4f * PI) / 3f) - b / 3f)
 			}
 		} else {
 			// one real root
-			val tmp: Float = (kotlin.math.sqrt(-diff) + kotlin.math.abs(r)).pow(1f / 3f)
+			val tmp: Float = (sqrt(-diff) + abs(r)).pow(1f / 3f)
 			val rSign = if (r > 0f) 1f else if (r < 0f) -1f else 0f
 			out.add(-rSign * (tmp + q / tmp) - b / 3f)
 		}
@@ -485,7 +399,7 @@ object MathUtils {
 		if (snap <= 0) return value
 		var v = value - offset
 		v /= snap
-		v = kotlin.math.round(v)
+		v = round(v)
 		v *= snap
 		return v + offset
 	}
@@ -494,7 +408,7 @@ object MathUtils {
 		if (snap <= 0) return value
 		var v = value - offset
 		v /= snap
-		v = kotlin.math.floor(v)
+		v = floor(v)
 		v *= snap
 		return v + offset
 	}
@@ -503,7 +417,7 @@ object MathUtils {
 		if (snap <= 0) return value
 		var v = value - offset
 		v /= snap
-		v = kotlin.math.ceil(v)
+		v = ceil(v)
 		v *= snap
 		return v + offset
 	}
@@ -512,12 +426,12 @@ object MathUtils {
 	 * Round after a small, but obscure offset, to avoid flip-flopping around the common case of 0.5f
  	 */
 	inline fun offsetRound(x: Float, offset: Float = 0.0136f): Float {
-		return kotlin.math.round(x + offset)
+		return round(x + offset)
 	}
 }
 
 inline fun Float.ceil(): Int {
-	return kotlin.math.ceil(this).toInt()
+	return ceil(this).toInt()
 }
 
 /**

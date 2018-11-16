@@ -16,10 +16,10 @@
 
 package com.acornui.math
 
+import com.acornui.test.assertClose
 import org.junit.Test
-import com.acornui.test.*
+import kotlin.math.sqrt
 import kotlin.test.assertEquals
-import kotlin.test.assertFails
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -29,17 +29,17 @@ import kotlin.test.assertTrue
 class Vector3Test {
 
 	@Test fun class_len() {
-		assertEquals(1f, Vector3.Companion.len(1f, 0f, 0f))
-		assertEquals(1f, Vector3.Companion.len(0f, 0f, 1f))
-		assertEquals(1f, Vector3.Companion.len(0f, 1f, 0f))
-		assertClose(Math.sqrt(3.0).toFloat(), Vector3.Companion.len(-1f, 1f, -1f))
+		assertEquals(1f, Vector3.len(1f, 0f, 0f))
+		assertEquals(1f, Vector3.len(0f, 0f, 1f))
+		assertEquals(1f, Vector3.len(0f, 1f, 0f))
+		assertClose(sqrt(3.0).toFloat(), Vector3.len(-1f, 1f, -1f))
 	}
 
 	@Test fun class_len2() {
-		assertEquals(1f, Vector3.Companion.len2(1f, 0f, 0f))
-		assertEquals(1f, Vector3.Companion.len2(0f, 0f, 1f))
-		assertEquals(1f, Vector3.Companion.len2(0f, 1f, 0f))
-		assertClose(3.0f, Vector3.Companion.len2(-1f, 1f, -1f))
+		assertEquals(1f, Vector3.len2(1f, 0f, 0f))
+		assertEquals(1f, Vector3.len2(0f, 0f, 1f))
+		assertEquals(1f, Vector3.len2(0f, 1f, 0f))
+		assertClose(3.0f, Vector3.len2(-1f, 1f, -1f))
 	}
 
 	@Test fun set() {
