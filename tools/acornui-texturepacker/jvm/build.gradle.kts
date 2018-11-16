@@ -22,4 +22,7 @@ dependencies {
 	implementation(project(":tools:acornui-texturepacker:acornui-texturepacker-core"))
 	implementation(project(":acornui-core:acornui-core-jvm"))
 	implementation(project(":tools:acornui-utils:acornui-utils-jvm"))
+
+	testImplementation(kotlin("test"))
+	testImplementation(kotlin("test-junit"))
 }
