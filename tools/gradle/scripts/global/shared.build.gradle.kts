@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.dsl.Coroutines
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import com.liferay.gradle.plugins.node.NodeExtension
@@ -92,7 +91,9 @@ val Project.isPolyForestProject: Boolean by lazy {
 inline fun <T : Task> T.releaseTask() {
 	val releaseTask by extra(true)
 	// If a lambda is passed to onlyIf, the block will be evaluated immediately.
-	onlyIf(closureOf<Task> { isProdBuild.get() })
+	project.afterEvaluate {
+		onlyIf(closureOf<Task> { isProdBuild.get() })
+	}
 }
 
 fun Project.isThatModule(module: String) = this.name == module
