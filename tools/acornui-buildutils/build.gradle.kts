@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.dsl.Coroutines
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -42,9 +41,6 @@ version = with(rootProject.file("version.txt")) {
 
 val jvmProjectConfiguration: ProjectConsumer<Unit> by extra
 jvmProjectConfiguration(project)
-configure<KotlinJvmProjectExtension> {
-	experimental.coroutines = Coroutines.ENABLE
-}
 
 val TARGET_JVM_VERSION by acornConfig
 tasks.withType<KotlinCompile> {

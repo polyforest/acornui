@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.dsl.Coroutines
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformCommonPlugin
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JsPluginWrapper
@@ -80,9 +79,6 @@ subprojects {
 
 	plugins.withType<KotlinPlatformCommonPlugin> {
 		commonProjectConfiguration(subProject)
-		subProject.configure<KotlinProjectExtension> {
-			experimental.coroutines = Coroutines.ENABLE
-		}
 	}
 
 	plugins.withType<Kotlin2JsPluginWrapper> {
@@ -91,9 +87,6 @@ subprojects {
 
 	plugins.withType<KotlinPluginWrapper> {
 		jvmProjectConfiguration(subProject)
-		subProject.configure<KotlinJvmProjectExtension> {
-			experimental.coroutines = Coroutines.ENABLE
-		}
 	}
 
 	tasks.withType<Kotlin2JsCompile> {
