@@ -43,6 +43,7 @@ class BasicContinuationImpl(
 ) : Continuation<Unit> {
 
 	override fun resumeWith(result: Result<Unit>) {
+		result.onFailure { throw it }
 	}
 }
 
