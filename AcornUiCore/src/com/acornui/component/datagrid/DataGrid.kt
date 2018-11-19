@@ -64,7 +64,7 @@ import kotlin.reflect.KProperty
  * A component for displaying a virtualized table of data.
  *
  * Key features include:
- * Columns - resizable, movable, sortable
+ * Columns - resizable, reorderable, sortable
  * Grouping - header and footer rows, collapsible
  * Cell editing
  * Toss scrolling

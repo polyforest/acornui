@@ -182,7 +182,6 @@ class StringCell(owner: Owned) : ContainerImpl(owner), DataGridCell<String> {
 		textField.setSize(explicitWidth, explicitHeight)
 		out.set(textField.bounds)
 	}
-
 }
 
 class StringEditorCell(owner: Owned) : ContainerImpl(owner), DataGridEditorCell<String> {
@@ -213,7 +212,6 @@ class StringEditorCell(owner: Owned) : ContainerImpl(owner), DataGridEditorCell<
 		out.set(input.bounds)
 	}
 }
-
 
 abstract class DateColumn<in E>(override val injector: Injector) : DataGridColumn<E, DateRo?>(), Scoped {
 
@@ -282,3 +280,5 @@ class DateEditorCell(owner: Owned, private val formatter: StringFormatter<DateRo
 		out.set(input.bounds)
 	}
 }
+
+// TODO: Boolean column with checkbox

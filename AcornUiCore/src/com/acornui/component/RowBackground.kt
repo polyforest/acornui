@@ -22,7 +22,6 @@ import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.Bounds
 
-
 interface RowBackground : UiComponent, Toggleable {
 
 	var rowIndex: Int
@@ -32,7 +31,7 @@ interface RowBackground : UiComponent, Toggleable {
 	companion object : StyleTag
 }
 
-class RowBackgroundImpl(owner: Owned) : ContainerImpl(owner), RowBackground {
+open class RowBackgroundImpl(owner: Owned) : ContainerImpl(owner), RowBackground {
 
 	override var toggled: Boolean by validationProp(false, BACKGROUND_COLOR)
 	override var highlighted: Boolean by validationProp(false, BACKGROUND_COLOR)
@@ -50,37 +49,42 @@ class RowBackgroundImpl(owner: Owned) : ContainerImpl(owner), RowBackground {
 
 
 	private fun updateColor() {
-		if (toggled) {
+		bg.colorTint = calculateBackgroundColor()
+	}
+
+	protected open fun calculateBackgroundColor(): ColorRo {
+		return if (toggled) {
 			if (rowIndex % 2 == 0) {
-				bg.colorTint = style.toggledEvenColor
+				style.toggledEvenColor
 			} else {
-				bg.colorTint = style.toggledOddColor
+				style.toggledOddColor
 			}
 		} else {
 			if (highlighted) {
 				if (rowIndex % 2 == 0) {
-					bg.colorTint = style.highlightedEvenColor
+					style.highlightedEvenColor
 				} else {
-					bg.colorTint = style.highlightedOddColor
+					style.highlightedOddColor
 				}
 			} else {
 				if (rowIndex % 2 == 0) {
-					bg.colorTint = style.evenColor
+					style.evenColor
 				} else {
-					bg.colorTint = style.oddColor
+					style.oddColor
 				}
 			}
 		}
 	}
-
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		bg.setSize(explicitWidth, explicitHeight)
 		out.set(bg.bounds)
 	}
 
+	fun invalidateBackgroundColor() = invalidate(BACKGROUND_COLOR)
+
 	companion object {
-		private const val BACKGROUND_COLOR = 1 shl 16
+		const val BACKGROUND_COLOR = 1 shl 16
 	}
 }
 
