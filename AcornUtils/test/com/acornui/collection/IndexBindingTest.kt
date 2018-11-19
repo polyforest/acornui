@@ -1,5 +1,6 @@
 package com.acornui.collection
 
+import com.acornui.observe.IndexBinding
 import com.acornui.observe.bindIndex
 import org.junit.Assert.*
 import org.junit.Test
@@ -50,7 +51,7 @@ class IndexBindingTest {
 	@Test fun reset() {
 		val list = activeListOf(0, 1, 2, 3, 3, 3, 4, 5)
 
-		val binding = list.bindIndex(4, recoverOnReset = false)
+		val binding = list.bindIndex(4, equality = null)
 
 		assertEquals(3, binding.element)
 		assertEquals(4, binding.index)
@@ -64,7 +65,7 @@ class IndexBindingTest {
 	@Test fun resetWithRecover() {
 		val list = activeListOf(0, 1, 2, 3, 3, 3, 4, 5)
 
-		val binding = list.bindIndex(4, recoverOnReset = true)
+		val binding = list.bindIndex(4)
 
 		assertEquals(3, binding.element)
 		assertEquals(4, binding.index)
@@ -104,4 +105,32 @@ class IndexBindingTest {
 		assertEquals(binding.element, null)
 		assertEquals(binding.index, -1)
 	}
+
+	@Test fun equalityRecover() {
+		val list = listOf(N(0, 0), N(1, 1), N(2, 2), N(3, 3), N(4, 4), N(5, 5))
+
+		val binding = IndexBinding(list, 3) { a, b -> a?.id == b?.id }
+
+		assertEquals(binding.element, N(3, 3))
+		assertEquals(binding.index, 3)
+
+		binding.data(listOf(N(0, 0), N(3, 5), N(1, 1), N(2, 2), N(4, 4), N(5, 5)))
+		assertEquals(binding.index, 1)
+		assertEquals(binding.element, N(3, 5))
+	}
+
+	@Test fun equalityRecoverActiveList() {
+		val list = ListView(activeListOf(N(0, 3), N(1, 8), N(2, 4), N(3, 1), N(4, 9), N(5, 10), N(6, 0)))
+
+		val binding = IndexBinding(list, 3) { a, b -> a?.id == b?.id }
+
+		assertEquals(binding.element, N(3, 1))
+		assertEquals(binding.index, 3)
+
+		list.sortComparator = { a, b -> a.value.compareTo(b.value) }
+		assertEquals(binding.element, N(3, 1))
+		assertEquals(binding.index, 1)
+	}
 }
+
+private data class N(val id: Int, val value: Int)

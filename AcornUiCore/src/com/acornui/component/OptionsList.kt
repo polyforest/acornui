@@ -27,7 +27,6 @@ import com.acornui.component.layout.algorithm.virtual.VirtualVerticalLayoutStyle
 import com.acornui.component.layout.algorithm.virtual.vDataScroller
 import com.acornui.component.scroll.ScrollModel
 import com.acornui.component.style.*
-import com.acornui.component.text.TextInput
 import com.acornui.component.text.selectable
 import com.acornui.component.text.textInput
 import com.acornui.core.Disposable

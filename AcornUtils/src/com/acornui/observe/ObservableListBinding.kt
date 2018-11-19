@@ -18,31 +18,41 @@
 
 package com.acornui.observe
 
+import com.acornui.collection.Clearable
 import com.acornui.collection.ObservableList
 import com.acornui.core.Disposable
+import com.acornui.core.EqualityCheck
 
 /**
  * Returns a binding that tracks an index within the target list.
  */
-fun <E> ObservableList<E>.bindIndex(index: Int, recoverOnReset: Boolean = true) = IndexBinding(this, index, recoverOnReset)
+fun <E> ObservableList<E>.bindIndex(index: Int, equality: EqualityCheck<E?>? = { a, b -> a == b }) =
+		IndexBinding(this, index, equality)
 
 
 /**
  * Watches an observable list, updating an index when the list changes.
  * This can be useful if the source list contains non-unique elements and you need to follow the changing index of
  * a specific element in the list.
- *
- * If the index watched is removed or changed, the binding will be disposed.
- * If the list is reset,
- *
- * @param list The source list to observe.
- * @param index The index of the element to track.
  */
-class IndexBinding<out E>(
-		private val list: ObservableList<E>,
-		index: Int,
-		var recoverOnReset: Boolean = true
-) : Disposable {
+class IndexBinding<E>() : Clearable, Disposable {
+
+	constructor(source: List<E>, index: Int = -1, equality: EqualityCheck<E?>? = { a, b -> a == b }) : this() {
+		data(source)
+		this.equality = equality
+		this.index = index
+	}
+
+	constructor(source: ObservableList<E>, index: Int = -1, equality: EqualityCheck<E?>? = { a, b -> a == b }) : this() {
+		data(source)
+		this.equality = equality
+		this.index = index
+	}
+
+	/**
+	 * On a list reset, the equality property is used to recover the index.
+	 */
+	var equality: EqualityCheck<E?>? = { a, b -> a == b }
 
 	private var _element: E? = null
 
@@ -53,20 +63,41 @@ class IndexBinding<out E>(
 		set(value) {
 			if (_index == value) return
 			_index = value
-			_element = list.getOrNull(value)
+			_element = _list?.getOrNull(value)
 		}
-
-	init {
-		if (index < 0 || index >= list.size) throw Exception("Cannot track an out of bounds index.")
-		this.index = index
-		list.added.add(this::addedHandler)
-		list.removed.add(this::removedHandler)
-		list.changed.add(this::changedHandler)
-		list.reset.add(this::resetHandler)
-	}
 
 	val element: E?
 		get() = _element
+
+	private var _observableList: ObservableList<E>? = null
+	private var _list: List<E>? = null
+
+	private fun unbind() {
+		val list = _observableList ?: return
+		list.added.remove(this::addedHandler)
+		list.removed.remove(this::removedHandler)
+		list.changed.remove(this::changedHandler)
+		list.reset.remove(this::resetHandler)
+	}
+
+	fun data(source: List<E>?) {
+		unbind()
+		_list = source
+		resetHandler()
+	}
+
+	fun data(source: ObservableList<E>?) {
+		unbind()
+		if (source != null) {
+			source.added.add(this::addedHandler)
+			source.removed.add(this::removedHandler)
+			source.changed.add(this::changedHandler)
+			source.reset.add(this::resetHandler)
+		}
+		_observableList = source
+		_list = source
+		resetHandler()
+	}
 
 	private fun addedHandler(i: Int, element: E) {
 		if (i <= index) ++index
@@ -84,18 +115,22 @@ class IndexBinding<out E>(
 	}
 
 	private fun resetHandler() {
-		if (recoverOnReset) {
-			if (list.getOrNull(_index) != _element)
-				index = list.indexOf(_element)
+		if (_index == -1) return
+		val list = _list ?: return
+		val equality = equality
+		if (equality != null) {
+			if (!equality.invoke(list.getOrNull(_index), _element))
+				index = list.indexOfFirst { equality(it, _element) }
 		}
 		else index = -1
 	}
 
-	override fun dispose() {
+	override fun clear() {
 		index = -1
-		list.added.remove(this::addedHandler)
-		list.removed.remove(this::removedHandler)
-		list.changed.remove(this::changedHandler)
-		list.reset.remove(this::resetHandler)
+		_list = null
+		_observableList = null
+		unbind()
 	}
+
+	override fun dispose() = clear()
 }

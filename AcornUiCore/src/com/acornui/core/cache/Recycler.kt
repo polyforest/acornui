@@ -18,6 +18,7 @@ package com.acornui.core.cache
 
 import com.acornui.collection.copy
 import com.acornui.component.ItemRendererRo
+import com.acornui.core.EqualityCheck
 
 /**
  * Recycles a list of item renderers, creating or disposing renderers only as needed.
@@ -35,7 +36,7 @@ fun <E, T : ItemRendererRo<E>> recycle(
 		factory: (item: E, index: Int) -> T,
 		configure: (element: T, item: E, index: Int) -> Unit,
 		disposer: (element: T) -> Unit,
-		equality: (a: E?, b: E?) -> Boolean = { a, b -> a == b }
+		equality: EqualityCheck<E?> = { a, b -> a == b }
 ) = recycle(data, existingElements, factory, configure, disposer, { it.data }, equality)
 
 
@@ -61,7 +62,7 @@ fun <E, T> recycle(
 		configure: (element: T, item: E, index: Int) -> Unit,
 		disposer: (element: T) -> Unit,
 		retriever: (element: T) -> E?,
-		equality: (a: E?, b: E?) -> Boolean = { a, b -> a == b }
+		equality: EqualityCheck<E?> = { a, b -> a == b }
 ) {
 
 	// Dispose items not found in the new data list first, so that the disposer can potentially pool those elements to

@@ -31,3 +31,5 @@ fun <A : Comparable<A>> A?.compareTo(other: A?): Int {
 	if (other == null) return 1
 	return compareTo(other)
 }
+
+typealias EqualityCheck<E> = (a: E, b: E) -> Boolean

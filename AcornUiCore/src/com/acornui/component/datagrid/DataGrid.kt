@@ -24,6 +24,7 @@ import com.acornui.component.*
 import com.acornui.component.layout.*
 import com.acornui.component.scroll.*
 import com.acornui.component.style.*
+import com.acornui.core.EqualityCheck
 import com.acornui.core.cache.*
 import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.cursor.cursor
@@ -50,7 +51,6 @@ import com.acornui.math.MathUtils.clamp
 import com.acornui.math.Pad
 import com.acornui.math.Vector2
 import com.acornui.observe.IndexBinding
-import com.acornui.observe.bindIndex
 import com.acornui.signal.*
 import com.acornui.skins.TextStyleTags
 import kotlin.math.abs
@@ -71,14 +71,16 @@ import kotlin.reflect.KProperty
  * Styling
  */
 class DataGrid<E>(
-		owner: Owned,
-
-		/**
-		 * The data this data grid will display.
-		 * This data is managed externally, and this data grid will not be responsible for disposal of this list.
-		 */
-		val data: ObservableList<E>
+		owner: Owned
 ) : ContainerImpl(owner) {
+
+	constructor(owner: Owned, data: List<E>) : this(owner) {
+		data(data)
+	}
+
+	constructor(owner: Owned, data: ObservableList<E>) : this(owner) {
+		data(data)
+	}
 
 	private val cellClickedCancel = Cancel()
 	private val _cellClicked = own(Signal2<CellLocation, Cancel>())
@@ -114,6 +116,17 @@ class DataGrid<E>(
 	var rowHeight: Float? by validationProp(null, ValidationFlags.LAYOUT)
 
 	/**
+	 * When the data has changed, this method will be used when recovering state such as selection, the currently
+	 * edited cell, etc.
+	 * This is particularly important to set when using immutable data and the old element != new element.
+	 */
+	var equalityCheck: EqualityCheck<E?> = { a, b -> a == b }
+		set(value) {
+			field = value
+			editorCellRow.equality = value
+		}
+
+	/**
 	 * The starting y offset of the visible rows.
 	 * This is local to the contents.
 	 */
@@ -127,7 +140,7 @@ class DataGrid<E>(
 
 	private var background: UiComponent? = null
 
-	private val dataView = own(ListView(data))
+	private val dataView = own(ListView<E>())
 
 	private val _columns = own(ActiveList<DataGridColumn<E, *>>())
 
@@ -165,6 +178,27 @@ class DataGrid<E>(
 	private val displayGroups: List<DataGridGroup<E>>
 		get() = if (_groups.isEmpty()) defaultGroups else _groups
 
+
+	private var _observableData: ObservableList<E>? = null
+	private var _data: List<E> = emptyList()
+
+	val data: List<E>
+		get() = _data
+
+	fun data(source: List<E>) {
+		_data = source
+		_observableData = null
+		dataView.data(source)
+		editorCellRow.data(source)
+	}
+
+	fun data(source: ObservableList<E>) {
+		_data = source
+		_observableData = source
+		dataView.data(source)
+		editorCellRow.data(source)
+	}
+
 	//------------------------------------------
 	// Display children
 	//------------------------------------------
@@ -192,8 +226,8 @@ class DataGrid<E>(
 	private val columnDividersHeader = clipper.addElement(container { interactivityMode = InteractivityMode.NONE })
 
 	private var editorCell: DataGridEditorCell<*>? = null
-	private var editorCellRow: IndexBinding<E>? = null
-	private var editorCellCol: IndexBinding<DataGridColumn<E, *>>? = null
+	private var editorCellRow = IndexBinding<E>()
+	private var editorCellCol = IndexBinding(_columns)
 
 	private val feedback = clipper.addElement(container { interactivityMode = InteractivityMode.NONE })
 	private var columnMoveIndicator = feedback.addElement(rect { styleTags.add(COLUMN_MOVE_INDICATOR); visible = false })
@@ -534,7 +568,7 @@ class DataGrid<E>(
 	val editorCellLocation: CellLocation?
 		get() {
 			if (editorCell == null) return null
-			return CellLocation(sourceIndexToLocal(editorCellRow!!.index)!!, editorCellCol!!.index)
+			return CellLocation(sourceIndexToLocal(editorCellRow.index)!!, editorCellCol.index)
 		}
 
 	/**
@@ -545,7 +579,7 @@ class DataGrid<E>(
 	fun editCell(element: E, column: DataGridColumn<E, *>) = editCell(data.indexOf(element), _columns.indexOf(column))
 
 	fun editCell(rowLocation: RowLocation, columnIndex: Int) = editCell(CellLocation(rowLocation, columnIndex))
-	fun editCell(sourceIndex: Int, columnIndex: Int) = editCell(CellLocation(sourceIndexToLocal(editorCellRow!!.index)!!, columnIndex))
+	fun editCell(sourceIndex: Int, columnIndex: Int) = editCell(CellLocation(sourceIndexToLocal(editorCellRow.index)!!, columnIndex))
 
 	/**
 	 * Edits the cell at the given location. The user interaction may be intercepted by canceling the [cellClicked]
@@ -554,11 +588,11 @@ class DataGrid<E>(
 	fun editCell(cellLocation: CellLocation) {
 		val columnIndex = cellLocation.columnIndex
 		val sourceIndex = cellLocation.sourceIndex
-		if (sourceIndex == editorCellRow?.index && columnIndex == editorCellCol?.index) return // no-op
+		if (sourceIndex == editorCellRow.index && columnIndex == editorCellCol.index) return // no-op
 		disposeCellEditor()
 		if (!cellLocation.editable) return
-		editorCellCol = _columns.bindIndex(columnIndex)
-		editorCellRow = data.bindIndex(sourceIndex)
+		editorCellCol.index = columnIndex
+		editorCellRow.index = sourceIndex
 
 		val col = _columns[columnIndex]
 		val row = data[sourceIndex]
@@ -638,19 +672,17 @@ class DataGrid<E>(
 	private fun commitCellEditorValue() {
 		val editorCell = editorCell ?: return
 		@Suppress("UNCHECKED_CAST")
-		val column = _columns[editorCellCol!!.index] as DataGridColumn<E, Any?>
-		val element = data[editorCellRow!!.index]
+		val column = _columns[editorCellCol.index] as DataGridColumn<E, Any?>
+		val element = data[editorCellRow.index]
 		column.setCellData(element, editorCell.getData())
-		data.notifyElementModified(editorCellRow!!.index)
+		_observableData?.notifyElementModified(editorCellRow.index)
 	}
 
 	private fun disposeCellEditor() {
 		if (editorCell == null) return
 		inject(FocusManager).focusedChanged.remove(this::focusChangedHandler)
-		editorCellCol?.dispose()
-		editorCellCol = null
-		editorCellRow?.dispose()
-		editorCellRow = null
+		editorCellCol.clear()
+		editorCellRow.clear()
 		editorCell?.dispose()
 		editorCell = null
 	}
@@ -1346,8 +1378,6 @@ class DataGrid<E>(
 
 	private fun updateEditorCell() {
 		val editorCell = editorCell ?: return
-		val editorCellCol = editorCellCol!!
-		val editorCellRow = editorCellRow!!
 		val columnIndex = editorCellCol.index
 		if (_columns.getOrNull(columnIndex)?.editable != true) {
 			closeCellEditor(false)
@@ -2003,7 +2033,6 @@ class DataGrid<E>(
 		val SCROLL_BAR = styleTag()
 
 	}
-
 }
 
 class DataGridStyle : StyleBase() {
