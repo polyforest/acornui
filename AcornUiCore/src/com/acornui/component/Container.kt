@@ -262,12 +262,14 @@ open class ContainerImpl(
 	/**
 	 * Creates a dummy placeholder component which maintains the child index position.
 	 */
-	protected fun <T : UiComponent> createSlot(): ReadWriteProperty<Any?, T?> {
+	protected fun <T : UiComponent> createSlot(disposeOld: Boolean = true): ReadWriteProperty<Any?, T?> {
 		val placeholder = addChild(UiComponentImpl(this))
 		return Delegates.observable(null as T?) { _, oldValue, newValue ->
 			if (oldValue !== newValue) {
 				val index = children.indexOf(oldValue ?: placeholder)
 				removeChild(index)
+				if (disposeOld)
+					oldValue?.dispose()
 				addChild(index, newValue ?: placeholder)
 			}
 		}

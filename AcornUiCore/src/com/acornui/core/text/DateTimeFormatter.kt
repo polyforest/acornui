@@ -412,13 +412,29 @@ fun parseWeekday(str: String, locales: List<Locale>? = null): Int? {
 private val parser by lazy { DateTimeParser() }
 
 /**
- * Parses a string into a date-time either in local time or universal time depending on the [isUtc] flag.
+ * Parses a string into a date with the time being 00:00:00 either in local time or universal time depending on the
+ * [isUtc] flag.
  * @param str The date string to parse.
  * @param isUtc [DateTimeParser.isUtc]
  * @param locales [DateTimeParser.locales]
  * @see DateTimeParser.parse
  */
 fun parseDate(str: String?, isUtc: Boolean = false, locales: List<Locale>? = null): Date? {
+	if (str == null) return null
+	parser.type = DateTimeFormatType.DATE
+	parser.isUtc = isUtc
+	parser.locales = locales
+	return parser.parse(str)
+}
+
+/**
+ * Parses a string into a date-time either in local time or universal time depending on the [isUtc] flag.
+ * @param str The date string to parse.
+ * @param isUtc [DateTimeParser.isUtc]
+ * @param locales [DateTimeParser.locales]
+ * @see DateTimeParser.parse
+ */
+fun parseDateTime(str: String?, isUtc: Boolean = false, locales: List<Locale>? = null): Date? {
 	if (str == null) return null
 	parser.type = DateTimeFormatType.DATE_TIME
 	parser.isUtc = isUtc

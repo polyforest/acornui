@@ -17,7 +17,7 @@
 package com.acornui.component
 
 import com.acornui.component.layout.HAlign
-import com.acornui.component.layout.SizeConstraints
+import com.acornui.component.layout.ListItemRenderer
 import com.acornui.component.layout.algorithm.GridColumn
 import com.acornui.component.layout.algorithm.grid
 import com.acornui.component.style.StyleBase
@@ -25,6 +25,7 @@ import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
 import com.acornui.component.text.text
 import com.acornui.core.di.Owned
+import com.acornui.core.di.own
 import com.acornui.core.text.DateTimeFormatStyle
 import com.acornui.core.text.DateTimeFormatType
 import com.acornui.core.text.dateFormatter
@@ -32,37 +33,49 @@ import com.acornui.core.time.DateRo
 import com.acornui.core.time.time
 import com.acornui.core.zeroPadding
 import com.acornui.math.Bounds
-import com.acornui.math.Pad
-import com.acornui.math.PadRo
+import com.acornui.signal.Signal
+import com.acornui.signal.Signal0
 
-class Calendar(owner: Owned) : ContainerImpl(owner) {
+class Calendar(
+		owner: Owned,
+		val headerFactory: Owned.() -> Labelable = {
+			text {
+				charStyle.selectable = false
+			}
+		},
+		val cellFactory: Owned.() -> ListItemRenderer<DateRo> = { calendarItemRenderer() }
+) : ContainerImpl(owner) {
+
+	private val _changed = own(Signal0())
+
+	/**
+	 * Dispatched on value commit.
+	 * It is dispatched when the user selects an item, or commits the value of the text input. It is not dispatched
+	 * when the selected item or text is programmatically changed.
+	 */
+	val changed: Signal<() -> Unit>
+		get() = _changed
 
 	private val headers = Array(7) {
-		text {
-			charStyle.selectable = false
+		headerFactory()
+	}
+
+	private val cells: Array<ListItemRenderer<DateRo>> = Array(42) {
+		cellFactory().apply {
+			index = it
 		}
 	}
 
-	private val cells = Array(42) {
-		calendarItemRenderer {
-
-		}
-	}
-
-	private val grid = grid {
-		val columns = ArrayList<GridColumn>()
-		for (i in 0..6) {
-			columns.add(GridColumn(hAlign = HAlign.RIGHT))
-		}
-		style.columns = columns
-	}
+	private val grid = grid()
 
 	private val panel = addChild(panel {
 		+grid layout { fill() }
 	})
 
-	val style: PanelStyle
+	val panelStyle: PanelStyle
 		get() = panel.style
+
+	val style = bind(CalendarStyle())
 
 	private val date = time.now().apply {
 		hour = 0
@@ -70,19 +83,6 @@ class Calendar(owner: Owned) : ContainerImpl(owner) {
 		second = 0
 		milli = 0
 		dayOfMonth = 1
-	}
-
-	init {
-		validation.addNode(ValidationFlags.PROPERTIES, 0, ValidationFlags.SIZE_CONSTRAINTS, this::updateProperties)
-		grid.apply {
-			for (i in 0..6) {
-				+headers[i]
-			}
-
-			for (i in 0..41) {
-				+cells[i]
-			}
-		}
 	}
 
 	/**
@@ -109,6 +109,7 @@ class Calendar(owner: Owned) : ContainerImpl(owner) {
 	 * The starting day of the week. (0 is Sunday, 6 is Saturday)
 	 */
 	var dayOfWeek: Int by validationProp(0, ValidationFlags.PROPERTIES)
+
 	private val weekDayFormatter = dateFormatter {
 		type = DateTimeFormatType.WEEKDAY
 		dateStyle = DateTimeFormatStyle.SHORT
@@ -120,7 +121,7 @@ class Calendar(owner: Owned) : ContainerImpl(owner) {
 		for (i in 0..6) {
 			val iDate = date.copy()
 			iDate.dayOfMonth = i - dayOffset + 1
-			headers[i].text = weekDayFormatter.format(iDate)
+			headers[i].label = weekDayFormatter.format(iDate)
 		}
 		for (i in 0..41) {
 			val iDate = date.copy()
@@ -130,9 +131,45 @@ class Calendar(owner: Owned) : ContainerImpl(owner) {
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+		var maxHeaderW = 0f
+		for (i in 0..6) {
+			maxHeaderW = maxOf(maxHeaderW, headers[i].width)
+		}
+		val columns = ArrayList<GridColumn>()
+		for (i in 0..6) {
+			columns.add(GridColumn(hAlign = style.headerHAlign, width = maxHeaderW))
+		}
+		grid.style.columns = columns
+
 		panel.setSize(explicitWidth, explicitHeight)
 		out.set(panel.bounds)
 	}
+
+	init {
+		styleTags.add(Companion)
+		validation.addNode(ValidationFlags.PROPERTIES, 0, ValidationFlags.SIZE_CONSTRAINTS, this::updateProperties)
+		grid.apply {
+			for (i in 0..6) {
+				+headers[i]
+			}
+
+			for (i in 0..41) {
+				+cells[i] layout { widthPercent = 1f }
+			}
+		}
+
+	}
+
+	companion object : StyleTag
+}
+
+class CalendarStyle : StyleBase() {
+
+	override val type: StyleType<*> = Companion
+
+	var headerHAlign by prop(HAlign.CENTER)
+
+	companion object : StyleType<CalendarStyle>
 }
 
 fun Owned.calendar(init: ComponentInit<Calendar> = {}): Calendar {
@@ -141,20 +178,9 @@ fun Owned.calendar(init: ComponentInit<Calendar> = {}): Calendar {
 	return c
 }
 
-class CalendarItemRenderer(owner: Owned) : ContainerImpl(owner), ItemRenderer<DateRo> {
+open class CalendarItemRenderer(owner: Owned) : Button(owner), ListItemRenderer<DateRo> {
 
-	private val textField = addChild(text {
-		interactivityMode = InteractivityMode.NONE
-		charStyle.selectable = false
-	})
-	val style = bind(CalendarItemStyle())
-
-	init {
-		styleTags.add(Companion)
-		watch(style) {
-			refreshLabel()
-		}
-	}
+	val calendarItemRendererStyle = bind(CalendarItemRendererStyle())
 
 	private var _data: DateRo? = null
 	override var data: DateRo?
@@ -165,50 +191,32 @@ class CalendarItemRenderer(owner: Owned) : ContainerImpl(owner), ItemRenderer<Da
 			refreshLabel()
 		}
 
+	override var index: Int = 0
+
 	private fun refreshLabel() {
-		textField.text = _data?.dayOfMonth?.zeroPadding(if (style.zeroPadDay) 1 else 0) ?: ""
+		label = _data?.dayOfMonth?.zeroPadding(if (calendarItemRendererStyle.zeroPadDay) 1 else 0) ?: ""
 	}
 
-	override fun updateSizeConstraints(out: SizeConstraints) {
-		val padding = style.padding
-		out.width.min = padding.expandWidth2(textField.width)
-		out.height.min = padding.expandHeight2(textField.height)
-	}
-
-	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		val padding = style.padding
-		val childAvailableWidth = padding.reduceWidth(explicitWidth)
-		val child = textField
-
-		val childX = padding.left + run {
-			val remainingSpace = maxOf(0f, childAvailableWidth ?: 0f-child.width)
-			when (style.horizontalAlign) {
-				HAlign.LEFT -> 0f
-				HAlign.CENTER -> remainingSpace * 0.5f
-				HAlign.RIGHT -> remainingSpace
-			}
+	init {
+		styleTags.add(Companion)
+		watch(calendarItemRendererStyle) {
+			refreshLabel()
 		}
-		textField.moveTo(childX, padding.top)
-
-		out.ext(padding.expandWidth2(textField.width), padding.expandHeight2(textField.height))
 	}
 
 	companion object : StyleTag
 }
 
-open class CalendarItemStyle : StyleBase() {
+open class CalendarItemRendererStyle : StyleBase() {
 
-	override val type: StyleType<CalendarItemStyle> = Companion
+	override val type: StyleType<CalendarItemRendererStyle> = Companion
 
 	/**
 	 * If true, single digit days will be renderered with zeros.  E.g.  "1" becomes "01"
 	 */
-	val zeroPadDay by prop(false)
+	var zeroPadDay by prop(false)
 
-	var padding: PadRo by prop(Pad())
-	var horizontalAlign by prop(HAlign.LEFT)
-
-	companion object : StyleType<CalendarItemStyle>
+	companion object : StyleType<CalendarItemRendererStyle>
 }
 
 fun Owned.calendarItemRenderer(init: ComponentInit<CalendarItemRenderer> = {}): CalendarItemRenderer {

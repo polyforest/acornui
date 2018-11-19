@@ -92,6 +92,7 @@ open class BasicUiSkin(
 		formStyle()
 		treeStyle()
 		contextMenuStyle()
+		calendarStyle()
 		target.invalidateStyles()
 	}
 
@@ -625,6 +626,12 @@ open class BasicUiSkin(
 			atlas(theme.atlasPath, "RightArrow")
 		}
 		target.addStyleRule(contextMenuStyle, ContextMenuView)
+	}
+
+	protected open fun calendarStyle() {
+//		val calendarItemFlowStyle = TextFlowStyle()
+//		calendarItemFlowStyle.horizontalAlign = FlowHAlign.CENTER
+//		target.addStyleRule(calendarItemFlowStyle, withAncestor(CalendarItemRenderer))
 	}
 
 }
