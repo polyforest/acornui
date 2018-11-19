@@ -256,6 +256,9 @@ class CharElement private constructor() : TextElement, Clearable {
 		u2 = 0f
 		v2 = 0f
 		visible = false
+		kerning = 0f
+		fontColor = Color.BLACK
+		backgroundColor = Color.CLEAR
 	}
 
 	companion object {

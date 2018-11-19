@@ -123,6 +123,7 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+		val textElements = textElements
 		val padding = flowStyle.padding
 		val availableWidth: Float? = padding.reduceWidth(explicitWidth)
 
@@ -137,8 +138,8 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 		var currentLine = linesPool.obtain()
 
 		var spanPartIndex = 0
-		while (spanPartIndex < _textElements.size) {
-			val part = _textElements[spanPartIndex]
+		while (spanPartIndex < textElements.size) {
+			val part = textElements[spanPartIndex]
 			part.explicitWidth = null
 			part.x = x
 
@@ -156,13 +157,13 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 			// If this is multiline text and we extend beyond the right edge,then push the current line and start a new one.
 			val extendsEdge = flowStyle.multiline && (!part.overhangs && availableWidth != null && x + partW > availableWidth)
 			val isFirst = spanPartIndex == currentLine.startIndex
-			val isLast = spanPartIndex == _textElements.lastIndex
+			val isLast = spanPartIndex == textElements.lastIndex
 			if (isLast || (part.clearsLine && flowStyle.multiline) || (extendsEdge && !isFirst)) {
 				if (extendsEdge && !isFirst) {
 					// Find the last good breaking point.
-					var breakIndex = _textElements.indexOfLast2(spanPartIndex, currentLine.startIndex) { it.isBreaking }
+					var breakIndex = textElements.indexOfLast2(spanPartIndex, currentLine.startIndex) { it.isBreaking }
 					if (breakIndex == -1) breakIndex = spanPartIndex - 1
-					val endIndex = _textElements.indexOfFirst2(breakIndex + 1, spanPartIndex) { !it.overhangs }
+					val endIndex = textElements.indexOfFirst2(breakIndex + 1, spanPartIndex) { !it.overhangs }
 					currentLine.endIndex = if (endIndex == -1) spanPartIndex + 1
 					else endIndex
 					spanPartIndex = currentLine.endIndex
@@ -175,7 +176,7 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 				currentLine.startIndex = spanPartIndex
 				x = 0f
 			} else {
-				val nextPart = _textElements.getOrNull(spanPartIndex + 1)
+				val nextPart = textElements.getOrNull(spanPartIndex + 1)
 				val kerning = if (nextPart == null) 0f else part.getKerning(nextPart)
 				part.kerning = kerning
 				x += partW + kerning
@@ -192,7 +193,7 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 			line.y = y
 
 			for (j in line.startIndex..line.endIndex - 1) {
-				val part = _textElements[j]
+				val part = textElements[j]
 				val b = part.lineHeight - part.baseline
 				if (b > line.belowBaseline) line.belowBaseline = b
 				if (part.baseline > line.baseline) line.baseline = part.baseline
@@ -230,7 +231,7 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 	private val LineInfoRo.lastClearsLine: Boolean
 		get() {
 			if (!flowStyle.multiline) return false
-			return _textElements.getOrNull(endIndex - 1)?.clearsLine ?: false
+			return textElements.getOrNull(endIndex - 1)?.clearsLine ?: false
 		}
 
 	private fun calculateLineX(availableWidth: Float?, lineWidth: Float): Float {
@@ -248,22 +249,23 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 	}
 
 	private fun positionElementsInLine(line: LineInfoRo, availableWidth: Float?) {
+		val textElements = textElements
 		if (availableWidth != null) {
 			val remainingSpace = availableWidth - line.contentsWidth
 
 			if (flowStyle.horizontalAlign == FlowHAlign.JUSTIFY &&
 					line.size > 1 &&
 					_lines.last() != line &&
-					!(_textElements[line.endIndex - 1].clearsLine && flowStyle.multiline)
+					!(textElements[line.endIndex - 1].clearsLine && flowStyle.multiline)
 			) {
 				// Apply JUSTIFY spacing if this is not the last line, and there are more than one elements.
-				val lastIndex = _textElements.indexOfLast2(line.endIndex - 1, line.startIndex) { !it.overhangs }
-				val numSpaces = _textElements.count2(line.startIndex, lastIndex) { it.char == ' ' }
+				val lastIndex = textElements.indexOfLast2(line.endIndex - 1, line.startIndex) { !it.overhangs }
+				val numSpaces = textElements.count2(line.startIndex, lastIndex) { it.char == ' ' }
 				if (numSpaces > 0) {
 					val hGap = remainingSpace / numSpaces
 					var justifyOffset = 0f
 					for (i in line.startIndex..line.endIndex - 1) {
-						val part = _textElements[i]
+						val part = textElements[i]
 						part.x = (part.x + justifyOffset).floor()
 						if (i < lastIndex && part.char == ' ') {
 							part.explicitWidth = part.advanceX + hGap.ceil()
@@ -275,7 +277,7 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 		}
 
 		for (i in line.startIndex..line.endIndex - 1) {
-			val part = _textElements[i]
+			val part = textElements[i]
 
 			val yOffset = when (flowStyle.verticalAlign) {
 				FlowVAlign.TOP -> 0f
@@ -303,6 +305,7 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 	}
 
 	private fun updateVertices() {
+		val textElements = textElements
 		val padding = flowStyle.padding
 		val leftClip = padding.left
 		val topClip = padding.top
@@ -310,8 +313,8 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 		val h = (if (allowClipping) explicitHeight else null) ?: Float.MAX_VALUE
 		val rightClip = w - padding.right
 		val bottomClip = h - padding.bottom
-		for (i in 0.._textElements.lastIndex) {
-			_textElements[i].validateVertices(concatenatedTransform, leftClip, topClip, rightClip, bottomClip)
+		for (i in 0..textElements.lastIndex) {
+			textElements[i].validateVertices(concatenatedTransform, leftClip, topClip, rightClip, bottomClip)
 		}
 	}
 
@@ -345,6 +348,7 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 	override fun render(clip: MinMaxRo) {
 		if (_lines.isEmpty())
 			return
+		val textElements = textElements
 		localToCanvas(tL.set(0f, 0f, 0f))
 		localToCanvas(tR.set(_bounds.width, 0f, 0f))
 
@@ -367,13 +371,13 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 			for (i in lineStart..lineEnd - 1) {
 				val line = _lines[i]
 				for (j in line.startIndex..line.endIndex - 1) {
-					_textElements[j].render(glState)
+					textElements[j].render(glState)
 				}
 			}
 		} else {
 			glState.setCamera(camera)
-			for (i in 0.._textElements.lastIndex) {
-				_textElements[i].render(glState)
+			for (i in 0..textElements.lastIndex) {
+				textElements[i].render(glState)
 			}
 		}
 	}
