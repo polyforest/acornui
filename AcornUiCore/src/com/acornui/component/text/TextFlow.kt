@@ -53,7 +53,7 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 		validation.addNode(TEXT_ELEMENTS, dependencies = ValidationFlags.HIERARCHY_ASCENDING, dependants = ValidationFlags.LAYOUT, onValidate = this::updateTextElements)
 		validation.addNode(VERTICES, dependencies = ValidationFlags.LAYOUT or ValidationFlags.STYLES or ValidationFlags.CONCATENATED_TRANSFORM, dependants = 0, onValidate = this::updateVertices)
 		validation.addNode(ValidationFlags.CONCATENATED_COLOR_TRANSFORM) {}
-		validation.addNode(CHAR_STYLE, dependencies = ValidationFlags.CONCATENATED_COLOR_TRANSFORM or ValidationFlags.STYLES, dependants = 0, onValidate = this::updateCharStyle)
+		validation.addNode(CHAR_STYLE, dependencies = TEXT_ELEMENTS or ValidationFlags.CONCATENATED_COLOR_TRANSFORM or ValidationFlags.STYLES, dependants = 0, onValidate = this::updateCharStyle)
 	}
 
 	override fun getTextElementAt(index: Int): TextElementRo = textElements[index]
@@ -318,18 +318,24 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 		}
 	}
 
+	private var selectionRangeStart = 0
+	private var selection: List<SelectionRange> = emptyList()
+
 	override fun setSelection(rangeStart: Int, selection: List<SelectionRange>) {
-		val textElements = textElements
-		for (i in 0..textElements.lastIndex) {
-			val selected = selection.indexOfFirst2 { it.contains(i + rangeStart) } != -1
-			textElements[i].setSelected(selected)
-		}
+		selectionRangeStart = rangeStart
+		this.selection = selection
+		invalidate(CHAR_STYLE)
 	}
 
 	private fun updateCharStyle() {
 		val concatenatedColorTint = concatenatedColorTint
 		for (i in 0.._elements.lastIndex) {
 			_elements[i].validateCharStyle(concatenatedColorTint)
+		}
+		val textElements = textElements
+		for (i in 0..textElements.lastIndex) {
+			val selected = selection.indexOfFirst2 { it.contains(i + selectionRangeStart) } != -1
+			textElements[i].setSelected(selected)
 		}
 	}
 
