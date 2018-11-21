@@ -22,9 +22,6 @@ import com.liferay.gradle.plugins.node.tasks.DownloadNodeModuleTask
 import com.liferay.gradle.plugins.node.tasks.ExecuteNodeScriptTask
 import com.liferay.gradle.plugins.node.tasks.ExecuteNpmTask
 import org.gradle.api.internal.file.UnionFileCollection
-//import org.gradle.api.internal.file.copy.DestinationRootCopySpec
-
-//import java.net.URI
 
 buildscript {
 	val KOTLIN_VERSION: String by gradle.startParameter.projectProperties
@@ -409,7 +406,7 @@ val declareResourceGenerationTasks by extra { p: Project ->
 		with(p) {
 			fun Project.isApplicationEntryPointModule(): Boolean {
 				return isAppModule() &&
-						(isThatModule("${rootProject.name}-jvm") || isThatModule("${rootProject.name}-js"))
+					   (isThatModule("${rootProject.name}-jvm") || isThatModule("${rootProject.name}-js"))
 			}
 
 			if (isApplicationEntryPointModule()) {
@@ -479,7 +476,6 @@ val declareResourceGenerationTasks by extra { p: Project ->
 
 
 						// Swap out resources destination...
-
 						val processResources by getting(Copy::class)
 //						swapResourcesOutputDirectory(project, finalResourcesPath)
 						exclude(processResources.excludes)
@@ -685,7 +681,7 @@ object SourceFileManipulator {
 object ScriptCacheBuster {
 
 	val extensions = listOf("asp", "aspx", "cshtml", "cfm", "go", "jsp", "jspx", "php",
-			"php3", "php4", "phtml", "html", "htm", "rhtml", "css")
+							"php3", "php4", "phtml", "html", "htm", "rhtml", "css")
 
 	private val regex = Regex("""([\w./\\]+)(\?[\w=&]*)(%VERSION%)""")
 
@@ -748,8 +744,9 @@ object KotlinMonkeyPatcher {
 /**
  * Retrieves the [node][com.liferay.gradle.plugins.node.NodeExtension] extension.
  */
-val org.gradle.api.Project.`node`: com.liferay.gradle.plugins.node.NodeExtension get() =
-	(this as org.gradle.api.plugins.ExtensionAware).extensions.getByType<com.liferay.gradle.plugins.node.NodeExtension>()
+val org.gradle.api.Project.`node`: com.liferay.gradle.plugins.node.NodeExtension
+	get() =
+		(this as org.gradle.api.plugins.ExtensionAware).extensions.getByType<com.liferay.gradle.plugins.node.NodeExtension>()
 
 val declareJsEntryPointConfiguration by extra { p: Project ->
 
