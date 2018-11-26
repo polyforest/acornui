@@ -363,8 +363,8 @@ fun FileTree.getRootsChildren(): List<FileVisitDetails> {
  * @see FileTree.getRootsChildren
  * @see FileTree.visit
  */
-val generatePatterns = { fileDetails: List<FileVisitDetails> ->
-	fileDetails.map {
+fun generatePatterns(fileDetails: List<FileVisitDetails>): List<String> {
+	return fileDetails.map {
 		if (it.isDirectory)
 			"${it.name}/**"
 		else
