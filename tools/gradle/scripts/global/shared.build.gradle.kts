@@ -160,7 +160,8 @@ fun setBuildType(project: Project) {
 	toUnit {
 		with(project) {
 			// Performed after project evaluation so tasks evaluated in startParameters actually exist.
-			afterEvaluate {
+			isProdBuild.set(false)
+			gradle.taskGraph.whenReady {
 				val releaseTaskPropName = "releaseTask"
 				var isProdBuild: Property<Boolean> by rootProject.extra
 
@@ -418,21 +419,22 @@ val declareResourceGenerationTasks by extra { p: Project ->
 				val htmlSrcDestPath by extra(htmlSrcDestPath(project))
 				val processedResourcesPath by extra(processedResourcesPath(p))
 				val finalResourcesPath by extra(finalResourcesPath(p))
+//				val processedSourcePath by extra(processedSourcePath(p))
 
 				val usedGeneratedResources by extra(p.objects.property(FileCollection::class))
 
-				afterEvaluate {
-					val processedSourcePath by extra(processedSourcePath(p))
-
-					listOf(processedSourcePath, processedResourcesPath).forEach { path: String? ->
-						path?.let {
-							DirCollection.dir(it, p.files(it))
+				// Pseudo-Code:T0D0 | Need to shift processedSourcePath to Js and possibly delay it till after evaluation?
+				// Pseudo-Code:T0D0 | processedSourcePath,
+				listOf(processedResourcesPath).forEach { path: String? ->
+					path?.let {
+						DirCollection.dir(it, p.files(it))
+						afterEvaluate {
 							main.output.dir(mapOf("builtBy" to DirCollection.taskDependencies(it)), it)
 						}
 					}
 				}
 
-				listOf(htmlSrcDestPath, prodHtmlSrcDestPath).forEach { path: String? ->
+				listOf(processedResourcesPath, htmlSrcDestPath, prodHtmlSrcDestPath).forEach { path: String? ->
 					path?.let {
 						DirCollection.dir(it, p.files(it))
 					}
@@ -564,22 +566,21 @@ val declareResourceGenerationTasks by extra { p: Project ->
 						 * val generatedResourceSources: ConfigurableFileCollection by processGeneratedResources.extra
 						 * generatedResourceSources.add(<see ConfigurableFileCollection.add for valid params>)
 						 */
-						afterEvaluate {
-							val generatedResourceSources by extra(DirCollection.fileCollection(processedResourcesPath))
-//						val generatedSources by extra {
-//							processedSourcePath?.let {
-//								DirCollection.fileCollection(it)
-//							}
-//						}
-//
-//						val notNullSources = listOfNotNull(generatedResourceSources, generatedSources)
-//						usedGeneratedResources.set(notNullSources.reduce { aggregate: FileCollection,
-//																		   nextElement: ConfigurableFileCollection ->
-//							aggregate + nextElement
-//						})
-//						dependsOn(notNullSources)
-							dependsOn(generatedResourceSources)
-						}
+
+						val generatedResourceSources by extra(DirCollection.fileCollection(processedResourcesPath))
+						//						val generatedSources by extra {
+						//							processedSourcePath?.let {
+						//								DirCollection.fileCollection(it)
+						//							}
+						//						}
+						//
+						//						val notNullSources = listOfNotNull(generatedResourceSources, generatedSources)
+						//						usedGeneratedResources.set(notNullSources.reduce { aggregate: FileCollection,
+						//																		   nextElement: ConfigurableFileCollection ->
+						//							aggregate + nextElement
+						//						})
+						//						dependsOn(notNullSources)
+						dependsOn(generatedResourceSources)
 					}
 
 					val processFinalResources = maybeCreate("processFinalResources", Copy::class)
@@ -591,11 +592,10 @@ val declareResourceGenerationTasks by extra { p: Project ->
 						description = "Copies generated (${processGeneratedResources.name} outputs) and non-generated " +
 								"resources (${processResources.name} outputs) into ${destinationDir}."
 
-//						from(processResources, usedGeneratedResources.get())
-						afterEvaluate {
-							val generatedResourceSources: ConfigurableFileCollection by processGeneratedResources.extra
-							from(processResources, generatedResourceSources)
-						}
+						//						from(processResources, usedGeneratedResources.get())
+						// Pseudo-Code:T0D0 | move generatedResourceSources from to Js
+						val generatedResourceSources: ConfigurableFileCollection by processGeneratedResources.extra
+						from(processResources, generatedResourceSources)
 						into(destinationDir)
 					}
 
