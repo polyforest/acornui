@@ -25,6 +25,8 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.di.owns
 import com.acornui.core.isAncestorOf
+import com.acornui.math.Bounds
+import com.acornui.math.Matrix4
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
 
@@ -160,12 +162,19 @@ interface Focusable : Scoped {
 	/**
 	 * Returns true if this component is currently in focus.
 	 *
-	 * This is not true if one of its ancestors is focused.
+	 * This is not true if one of its descendants is focused.
+	 * @see ownsFocused
 	 */
 	val isFocused: Boolean
 		get() {
 			return this === inject(FocusManager).focused()
 		}
+
+	/**
+	 * When this focus manager updates the focus highlight, it will set the highlight's size and transformation to
+	 * the values provided by the focused element.
+	 */
+	fun updateFocusHighlight(sizeOut: Bounds, transformOut: Matrix4)
 }
 
 /**
@@ -201,6 +210,9 @@ val UiComponentRo.firstFocusableChild: UiComponentRo?
 		return found
 	}
 
+/**
+ *
+ */
 fun UiComponentRo.focusFirst() {
 	val focus = inject(FocusManager)
 	if (focusEnabled) focus()

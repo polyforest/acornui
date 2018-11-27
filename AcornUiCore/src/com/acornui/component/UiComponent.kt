@@ -446,6 +446,23 @@ open class UiComponentImpl(
 	}
 
 	/**
+	 * If set, when the focus manager calls [updateFocusHighlight], this delegate will be used instead of this
+	 * component.
+	 */
+	var focusHighlightDelegate: Focusable? = null
+
+	override fun updateFocusHighlight(sizeOut: Bounds, transformOut: Matrix4) {
+		focusHighlightDelegate?.let {
+			it.updateFocusHighlight(sizeOut, transformOut)
+			return
+		}
+		sizeOut.set(bounds)
+		transformOut.set(concatenatedTransform)
+	}
+
+	//-----------------------------------------------
+
+	/**
 	 * Updates the camera.
 	 */
 	protected open fun updateCamera() {

@@ -129,6 +129,7 @@ open class OptionsList<E : Any>(
 			setSelectedItemFromText()
 			_input.dispatch()
 		}
+		focusHighlightDelegate = this@OptionsList
 	}
 
 	var editable: Boolean by observable(true) {

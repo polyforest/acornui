@@ -33,6 +33,8 @@ import com.acornui.core.input.mouseDown
 import com.acornui.core.isBefore
 import com.acornui.core.time.callLater
 import com.acornui.function.as2
+import com.acornui.math.Bounds
+import com.acornui.math.Matrix4
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal2
@@ -290,12 +292,18 @@ class FocusManagerImpl : FocusManager {
 		root.callLater(this::updateHighlight)
 	}
 
+	private val highlightBounds = Bounds()
+	private val highlightTransform = Matrix4()
+
 	private fun updateHighlight() {
 		val highlighted = _highlighted ?: return
 		val highlight = _highlight ?: return
+
+		highlighted.updateFocusHighlight(highlightBounds, highlightTransform)
+
 		root.addElement(highlight)
-		highlight.setSize(highlighted.width, highlighted.height)
-		highlight.customTransform = highlighted.concatenatedTransform
+		highlight.setSize(highlightBounds.width, highlightBounds.height)
+		highlight.customTransform = highlightTransform
 	}
 
 	override fun dispose() {
