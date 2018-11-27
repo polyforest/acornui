@@ -53,6 +53,7 @@ interface TextField : Labelable, SelectableComponent, Styleable {
 	 * The Selectable target to use for the selection range.
 	 */
 	var selectionTarget: Selectable
+
 	/**
 	 * The TextField contents.
 	 */
@@ -96,7 +97,7 @@ interface TextField : Labelable, SelectableComponent, Styleable {
  * @author nbilyk
  */
 @Suppress("LeakingThis", "UNUSED_PARAMETER")
-class TextFieldImpl(owner: Owned) : UiComponentImpl(owner), TextField {
+open class TextFieldImpl(owner: Owned) : UiComponentImpl(owner), TextField {
 
 	override val flowStyle = bind(TextFlowStyle())
 	override val charStyle = bind(CharStyle())
