@@ -19,18 +19,18 @@ package com.acornui.component.datagrid
 import com.acornui.component.ContainerImpl
 import com.acornui.component.layout.HAlign
 import com.acornui.component.layout.algorithm.FlowHAlign
-import com.acornui.component.text.RestrictPatterns
-import com.acornui.component.text.selectable
-import com.acornui.component.text.text
-import com.acornui.component.text.textInput
+import com.acornui.component.text.*
 import com.acornui.core.compareTo
 import com.acornui.core.compareTo2
 import com.acornui.core.di.*
 import com.acornui.core.selection.selectAll
 import com.acornui.core.text.*
 import com.acornui.core.time.DateRo
+import com.acornui.core.userInfo
 import com.acornui.math.Bounds
+import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
+import com.acornui.signal.bind
 
 abstract class IntColumn<in E>(override val injector: Injector) : DataGridColumn<E, Int?>(), Scoped {
 
@@ -50,7 +50,6 @@ abstract class IntColumn<in E>(override val injector: Injector) : DataGridColumn
 		return getCellData(row1).compareTo(getCellData(row2))
 	}
 }
-
 
 abstract class FloatColumn<in E>(override val injector: Injector) : DataGridColumn<E, Float?>(), Scoped {
 
@@ -75,7 +74,9 @@ class NumberCell(owner: Owned, private val formatter: NumberFormatter) : Contain
 	private var _data: Number? = null
 
 	init {
-		//inject(I18n).currentLocaleChanged.add(this::invalidateProperties)
+		own(userInfo.currentLocale.changed.bind {
+			textField.label = formatter.format(_data)
+		})
 	}
 
 	override fun setData(value: Number?) {
@@ -93,16 +94,19 @@ class NumberCell(owner: Owned, private val formatter: NumberFormatter) : Contain
 
 abstract class NumberEditorCell(owner: Owned) : ContainerImpl(owner) {
 
-	val changed = own(Signal0())
+	private val _changed = own(Signal0())
+	val changed: Signal<() -> Unit>
+		get() = _changed
+
 	protected val input = addChild(textInput())
-	protected var _data: Number? = null
+	private var _data: Number? = null
 
 	init {
-		input.changed.add(changed::dispatch)
+		input.changed.add(_changed::dispatch)
 		input.selectAll()
 	}
 
-	fun setData(value: Number?) {
+	protected fun setNumber(value: Number?) {
 		if (_data == value) return
 		_data = value
 		input.text = value?.toString() ?: ""
@@ -129,7 +133,7 @@ class IntEditorCell(owner: Owned) : NumberEditorCell(owner), DataGridEditorCell<
 		return input.text.toIntOrNull()
 	}
 
-	override fun setData(value: Int?) = super.setData(value)
+	override fun setData(value: Int?) = setNumber(value)
 }
 
 class FloatEditorCell(owner: Owned) : NumberEditorCell(owner), DataGridEditorCell<Float?> {
@@ -146,7 +150,7 @@ class FloatEditorCell(owner: Owned) : NumberEditorCell(owner), DataGridEditorCel
 		return input.text.toFloatOrNull()
 	}
 
-	override fun setData(value: Float?) = super.setData(value)
+	override fun setData(value: Float?) = setNumber(value)
 }
 
 abstract class StringColumn<in E> : DataGridColumn<E, String>() {
@@ -169,28 +173,23 @@ abstract class StringColumn<in E> : DataGridColumn<E, String>() {
 	}
 }
 
-class StringCell(owner: Owned) : ContainerImpl(owner), DataGridCell<String> {
+class StringCell<E>(owner: Owned, val formatter: StringFormatter<E> = ToStringFormatter) : TextFieldImpl(owner), DataGridCell<E> {
 
-	private val textField = addChild(text { selectable = false })
-
-	override fun setData(value: String) {
-		textField.label = value
-	}
-
-	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		super.updateLayout(explicitWidth, explicitHeight, out)
-		textField.setSize(explicitWidth, explicitHeight)
-		out.set(textField.bounds)
+	override fun setData(value: E) {
+		label = formatter.format(value)
 	}
 }
 
 class StringEditorCell(owner: Owned) : ContainerImpl(owner), DataGridEditorCell<String> {
 
-	override val changed = own(Signal0())
+	private val _changed = own(Signal0())
+	override val changed: Signal<() -> Unit>
+		get() = _changed
+
 	private val input = addChild(textInput())
 
 	init {
-		input.changed.add(changed::dispatch)
+		input.changed.add(_changed::dispatch)
 		input.selectAll()
 	}
 
@@ -220,7 +219,10 @@ abstract class DateColumn<in E>(override val injector: Injector) : DataGridColum
 		dateStyle = DateTimeFormatStyle.SHORT
 	}
 
-	val parser = dateParser()
+	private val parser = dateParser().apply {
+		allowTwoDigitYears = true
+		yearIsOptional = true
+	}
 
 	init {
 		sortable = true
@@ -239,7 +241,6 @@ class DateCell(owner: Owned, private val formatter: StringFormatter<DateRo>) : C
 
 	private val textField = addChild(text { selectable = false })
 
-
 	override fun setData(value: DateRo?) {
 		textField.label = if (value == null) "" else formatter.format(value)
 	}
@@ -254,11 +255,14 @@ class DateCell(owner: Owned, private val formatter: StringFormatter<DateRo>) : C
 
 class DateEditorCell(owner: Owned, private val formatter: StringFormatter<DateRo>, private val parser: StringParser<DateRo>) : ContainerImpl(owner), DataGridEditorCell<DateRo?> {
 
-	override val changed = own(Signal0())
+	private val _changed = own(Signal0())
+	override val changed: Signal<() -> Unit>
+		get() = _changed
+
 	private val input = addChild(textInput())
 
 	init {
-		input.changed.add(changed::dispatch)
+		input.changed.add(_changed::dispatch)
 		input.selectAll()
 	}
 

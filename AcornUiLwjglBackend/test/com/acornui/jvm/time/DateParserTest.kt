@@ -123,6 +123,9 @@ class DateParserTest {
 		assertEquals(time.date(fullYear = 2149, month = 3, dayOfMonth = 11), parser.parse("3/11/49"))
 		assertEquals(time.date(fullYear = 2050, month = 3, dayOfMonth = 11), parser.parse("3/11/50"))
 		assertEquals(time.date(fullYear = 2125, month = 3, dayOfMonth = 11), parser.parse("3/11/25"))
+		assertEquals(time.date(fullYear = 2125, month = 3, dayOfMonth = 1), parser.parse("3/1/25"))
+		parser.currentYear = 2018
+		assertEquals(time.date(fullYear = 2014, month = 1, dayOfMonth = 1), parser.parse("1/1/14"))
 
 		parser.currentYear = 2018
 		parser.locales = listOf(Locale("de-DE"))
@@ -160,6 +163,10 @@ class DateParserTest {
 
 		parser.currentYear = 2099
 		assertEquals(time.date(fullYear = 2099, month = 3, dayOfMonth = 11), parser.parse("3/11"))
+
+		// One digit month
+		parser.currentYear = 2018
+		assertEquals(time.date(fullYear = 2014, month = 1, dayOfMonth = 1), parser.parse("1/1/14"))
 
 	}
 

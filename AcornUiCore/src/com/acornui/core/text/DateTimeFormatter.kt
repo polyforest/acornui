@@ -18,11 +18,9 @@ package com.acornui.core.text
 
 import com.acornui.collection.indexOfFirst2
 import com.acornui.core.i18n.Locale
-import com.acornui.core.repeat2
 import com.acornui.core.time.Date
 import com.acornui.core.time.DateRo
 import com.acornui.core.time.time
-import com.acornui.core.zeroPadding
 
 /**
  * This class formats dates into localized string representations.
