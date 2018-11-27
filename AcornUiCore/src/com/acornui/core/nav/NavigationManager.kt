@@ -14,7 +14,7 @@ import com.acornui.core.Disposable
 import com.acornui.core.Lifecycle
 import com.acornui.core.LifecycleRo
 import com.acornui.core.di.*
-import com.acornui.core.focus.focusFirst
+import com.acornui.core.focus.focus
 import com.acornui.core.input.interaction.click
 import com.acornui.factory.LazyInstance
 import com.acornui.factory.disposeInstance
@@ -405,13 +405,13 @@ fun ElementContainer<UiComponent>.navAddElement(nav: NavBinding, path: String?, 
 			showAssetLoadingBar {
 				if (!child.isDisposed) {
 					c.addElement(child)
-					child.focusFirst()
+					child.focus()
 				}
 			}
 		} else {
 			if (!child.isDisposed) {
 				c.addElement(child)
-				child.focusFirst()
+				child.focus()
 			}
 		}
 	}

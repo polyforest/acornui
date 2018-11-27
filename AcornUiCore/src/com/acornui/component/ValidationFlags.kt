@@ -28,7 +28,14 @@ object ValidationFlags {
 
 	const val PROPERTIES: Int = 1 shl 1
 
+	/**
+	 * A descendant has added, removed, or reordered a child.
+	 */
 	const val HIERARCHY_ASCENDING: Int = 1 shl 2
+
+	/**
+	 * An ancestor has changed.
+	 */
 	const val HIERARCHY_DESCENDING: Int = 1 shl 3
 
 	const val SIZE_CONSTRAINTS: Int = 1 shl 4
@@ -44,12 +51,11 @@ object ValidationFlags {
 
 	const val INTERACTIVITY_MODE: Int = 1 shl 11
 
-	const val FOCUS_ORDER: Int = 1 shl 12
+	const val CAMERA: Int = 1 shl 12
+	const val VIEWPORT: Int = 1 shl 13
 
-	const val CAMERA: Int = 1 shl 13
-	const val VIEWPORT: Int = 1 shl 14
-
-	const val RESERVED_1: Int = 1 shl 15
+	const val RESERVED_1: Int = 1 shl 14
+	const val RESERVED_2: Int = 1 shl 15
 }
 
 fun Validatable.invalidateSize() {

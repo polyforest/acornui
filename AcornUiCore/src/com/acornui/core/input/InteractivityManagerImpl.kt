@@ -132,7 +132,7 @@ open class InteractivityManagerImpl(
 	}
 
 	private fun <T : KeyInteractionRo> keyHandler(type: InteractionType<T>, event: KeyInteractionRo) {
-		val f = focus.focused() ?: return
+		val f = focus.focused ?: return
 		val key = keyPool.obtain()
 		key.type = type
 		key.set(event)
@@ -142,7 +142,7 @@ open class InteractivityManagerImpl(
 	}
 
 	private fun <T : CharInteractionRo> charHandler(type: InteractionType<T>, event: CharInteractionRo) {
-		val f = focus.focused() ?: return
+		val f = focus.focused ?: return
 		val char = charPool.obtain()
 		char.type = CharInteractionRo.CHAR
 		char.set(event)

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("LeakingThis", "UNUSED_PARAMETER")
+@file:Suppress("LeakingThis", "UNUSED_PARAMETER", "RedundantLambdaArrow")
 
 package com.acornui.component
 
@@ -29,9 +29,7 @@ import com.acornui.component.style.*
 import com.acornui.core.*
 import com.acornui.core.assets.AssetManager
 import com.acornui.core.di.*
-import com.acornui.core.focus.FocusManager
-import com.acornui.core.focus.Focusable
-import com.acornui.core.focus.blur
+import com.acornui.core.focus.*
 import com.acornui.core.graphics.*
 import com.acornui.core.input.InteractionEventRo
 import com.acornui.core.input.InteractionType
@@ -46,6 +44,7 @@ import com.acornui.graphics.Color
 import com.acornui.graphics.ColorRo
 import com.acornui.math.*
 import com.acornui.math.MathUtils.offsetRound
+import com.acornui.reflect.observable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
@@ -99,7 +98,7 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	 * This component and all of its ancestors are visible.
 	 * This component does not have an alpha of 0f.
 	 */
-	fun isRendered(): Boolean
+	val isRendered: Boolean
 
 	/**
 	 * The flags that, if a child invalidated, will invalidate this container's size constraints / layout.
@@ -357,18 +356,9 @@ open class UiComponentImpl(
 		set(value) {
 			if (value != _interactivityMode) {
 				_interactivityMode = value
-				val focused = focusManager.focused()
 				when (value) {
-					InteractivityMode.NONE -> {
-						if (owns(focused)) {
-							focused?.blur()
-						}
-					}
-					InteractivityMode.CHILDREN -> {
-						if (focused == this) {
-							focused.blur()
-						}
-					}
+					InteractivityMode.NONE -> blur()
+					InteractivityMode.CHILDREN -> blurSelf()
 					else -> {}
 				}
 				invalidate(ValidationFlags.INTERACTIVITY_MODE)
@@ -398,10 +388,13 @@ open class UiComponentImpl(
 	override var parent: ContainerRo? = null
 
 	// Focusable properties
-	final override var focusEnabled by validationProp(false, ValidationFlags.FOCUS_ORDER)
-	final override var focusOrder by validationProp(0f, ValidationFlags.FOCUS_ORDER)
-	final override var isFocusContainer by validationProp(false, ValidationFlags.FOCUS_ORDER)
 	protected val focusManager = inject(FocusManager)
+	final override var focusEnabled: Boolean by observable(false) { _ ->
+		if (isFocusContainer) invalidateFocusOrderDeep() else invalidateFocusOrder()
+	}
+
+	final override var focusOrder by observable(0f) { _ -> invalidateFocusOrder() }
+	final override var isFocusContainer by observable(false) { _ -> invalidateFocusOrderDeep() }
 
 	private val rayTmp = Ray()
 
@@ -430,20 +423,10 @@ open class UiComponentImpl(
 	//-----------------------------------------------
 
 	final override var visible: Boolean by validationProp(true, ValidationFlags.LAYOUT_ENABLED)
-	
+
 	//-----------------------------------------------
 	// Focusable
 	//-----------------------------------------------
-
-	private var wasFocusEnabled: Boolean = false
-
-	private fun updateFocusOrder() {
-		val newFocusEnabled = focusEnabled && !isFocusContainer
-		if (newFocusEnabled || wasFocusEnabled) {
-			wasFocusEnabled = newFocusEnabled
-			focusManager.invalidateFocusableOrder(this)
-		}
-	}
 
 	/**
 	 * If set, when the focus manager calls [updateFocusHighlight], this delegate will be used instead of this
@@ -581,24 +564,24 @@ open class UiComponentImpl(
 
 	final override val renderFilters: MutableList<RenderFilter> = ArrayList()
 
-	override fun isRendered(): Boolean {
-		if (!isActive) return false
-		if (concatenatedColorTint.a <= 0f) return false
-		var p: UiComponentRo? = this
-		while (p != null) {
-			if (!p.visible) return false
-			p = p.parent
+	override val isRendered: Boolean
+		get() {
+			if (!isActive) return false
+			if (concatenatedColorTint.a <= 0f) return false
+			var p: UiComponentRo? = this
+			while (p != null) {
+				if (!p.visible) return false
+				p = p.parent
+			}
+			return true
 		}
-		return true
-	}
 
 	private fun layoutDataChangedHandler() {
 		invalidate(ValidationFlags.LAYOUT)
 		Unit
 	}
 
-	final override var layoutData: LayoutData? by Delegates.observable<LayoutData?>(null) {
-		_, old, new ->
+	final override var layoutData: LayoutData? by Delegates.observable<LayoutData?>(null) { _, old, new ->
 		old?.changed?.remove(this::layoutDataChangedHandler)
 		new?.changed?.add(this::layoutDataChangedHandler)
 		invalidate(ValidationFlags.LAYOUT)
@@ -867,7 +850,7 @@ open class UiComponentImpl(
 
 	override fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo?): MutableList<UiComponentRo> {
 		if (!visible || (onlyInteractive && !interactivityEnabled)) return out
-		
+
 		val ray = rayCache ?: camera.getPickRay(canvasX, canvasY, viewport, rayTmp)
 		if (interactivityMode == InteractivityMode.ALWAYS || intersectsGlobalRay(ray)) {
 			out.add(this)
@@ -1370,14 +1353,14 @@ open class UiComponentImpl(
 				addNode(COLOR_TRANSFORM, r::updateColorTransform)
 				addNode(CONCATENATED_COLOR_TRANSFORM, COLOR_TRANSFORM, r::updateConcatenatedColorTransform)
 				addNode(INTERACTIVITY_MODE, r::updateInheritedInteractivityMode)
-				addNode(FOCUS_ORDER, r::updateFocusOrder)
 				addNode(CAMERA, r::updateCamera)
 				addNode(VIEWPORT, r::updateViewport)
 			}
 		}
 
+		_activated.add(this::invalidateFocusOrder.as1)
 		_activated.add(this::onActivated.as1)
-		_deactivated.add(this::updateFocusOrder.as1)
+		_deactivated.add(this::invalidateFocusOrder.as1)
 		_deactivated.add(this::onDeactivated.as1)
 	}
 

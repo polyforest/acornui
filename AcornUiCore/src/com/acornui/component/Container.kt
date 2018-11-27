@@ -21,6 +21,7 @@ import com.acornui.collection.ConcurrentListImpl
 import com.acornui.component.layout.intersectsGlobalRay
 import com.acornui.core.ParentRo
 import com.acornui.core.di.Owned
+import com.acornui.core.focus.invalidateFocusOrderDeep
 import com.acornui.core.graphics.getPickRay
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Ray
@@ -42,6 +43,17 @@ interface Container : UiComponent, ContainerRo
 open class ContainerImpl(
 		owner: Owned
 ) : UiComponentImpl(owner), Container {
+
+	/**
+	 * The validation flags that, if a child has invalidated, will cause the same flags on this container to become
+	 * invalidated.
+	 */
+	protected var bubblingFlags = defaultBubblingFlags
+
+	/**
+	 * These flags, when invalidated, will cascade down to this container's children.
+	 */
+	protected var cascadingFlags = defaultCascadingFlags
 
 	protected val _children = ConcurrentListImpl<UiComponent>()
 	override val children: List<UiComponentRo>
@@ -76,8 +88,8 @@ open class ContainerImpl(
 			val newIndex = if (index > oldIndex) index - 1 else index
 			_children.removeAt(oldIndex)
 			_children.add(newIndex, child)
-			child.invalidate(ValidationFlags.FOCUS_ORDER) // TODO: make this less specific.
 			invalidate(bubblingFlags)
+			child.invalidateFocusOrderDeep()
 			return child
 		}
 		_assert(child.parent == null, "Remove child first.")
@@ -89,11 +101,11 @@ open class ContainerImpl(
 		child.invalidated.add(this::childInvalidatedHandler)
 		child.disposed.add(this::childDisposedHandler)
 
-		if (isActive) {
+		if (isActive)
 			child.activate()
-		}
 		child.invalidate(cascadingFlags)
 		invalidate(bubblingFlags)
+		child.invalidateFocusOrderDeep()
 		if (!isValidatingLayout)
 			invalidateSize()
 
@@ -145,6 +157,7 @@ open class ContainerImpl(
 		}
 		invalidate(bubblingFlags)
 		child.invalidate(cascadingFlags)
+		child.invalidateFocusOrderDeep()
 		if (!isValidatingLayout)
 			invalidateSize()
 
@@ -180,11 +193,6 @@ open class ContainerImpl(
 	}
 
 	//-------------------------------------------------------------------------------------------------
-
-	/**
-	 * These flags, when invalidated, will cascade down to this container's children.
-	 */
-	protected var cascadingFlags = defaultCascadingFlags
 
 	override fun onInvalidated(flagsInvalidated: Int) {
 		val flagsToCascade = flagsInvalidated and cascadingFlags
@@ -222,12 +230,6 @@ open class ContainerImpl(
 				child.render(clip)
 		}
 	}
-
-	/**
-	 * The validation flags that, if a child has invalidated, will cause the same flags on this container to become
-	 * invalidated.
-	 */
-	protected var bubblingFlags = defaultBubblingFlags
 
 	//-----------------------------------------------------
 	// Interactivity utility methods
@@ -320,7 +322,6 @@ open class ContainerImpl(
 				ValidationFlags.CONCATENATED_COLOR_TRANSFORM or
 				ValidationFlags.CONCATENATED_TRANSFORM or
 				ValidationFlags.INTERACTIVITY_MODE or
-				ValidationFlags.FOCUS_ORDER or
 				ValidationFlags.CAMERA or
 				ValidationFlags.VIEWPORT
 	}

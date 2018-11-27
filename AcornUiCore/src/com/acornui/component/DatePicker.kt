@@ -111,7 +111,7 @@
 //	private val calendar = calendar()
 //
 //	private val listLift = lift {
-//		focusFirst = false
+//		focus = false
 //		+calendar layout { fill() }
 //		onClosed = {
 //			close()
@@ -196,7 +196,7 @@
 ////			Ascii.ESCAPE -> {
 ////				event.handled = true
 ////				event.preventDefault() // Prevent focus manager from setting focus back to the stage.
-////				focusFirst()
+////				focus()
 ////				close()
 ////			}
 ////			Ascii.RETURN, Ascii.ENTER -> {
@@ -204,7 +204,7 @@
 ////				val newSelectedDate = dataScroller.highlighted.selectedItem ?: parser.parse(text)
 ////				if (newSelectedDate != selectedDate) {
 ////					selectedDate = newSelectedDate
-////					focusFirst()
+////					focus()
 ////					close()
 ////				}
 ////				_changed.dispatch()

@@ -18,7 +18,6 @@ package com.acornui.core.popup
 
 import com.acornui.collection.Clearable
 import com.acornui.collection.firstOrNull2
-import com.acornui.collection.indexOfFirst2
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
 import com.acornui.component.layout.LayoutContainerImpl
@@ -112,10 +111,10 @@ data class PopUpInfo<T : UiComponent>(
 		/**
 		 * If true, when the pop-up is displayed, the first focusable element will be focused.
 		 */
-		val focusFirst: Boolean = true,
+		val focus: Boolean = true,
 
 		/**
-		 * If true and [focusFirst] is true, when the first focusable element is focused, it will also be highlighted.
+		 * If true and [focus] is true, when the first focusable element is focused, it will also be highlighted.
 		 */
 		val highlightFocused: Boolean = false,
 
@@ -176,17 +175,16 @@ class PopUpManagerImpl(private val root: UiComponent) : LayoutContainerImpl<PopU
 	private fun refresh() {
 		val last = _currentPopUps.lastOrNull()
 		if (last != null) {
-			if (last.focusFirst) {
-				val firstFocusable = last.child.firstFocusableChild
-				if (firstFocusable == null) modalFill.focus()
-				else {
-					firstFocusable.focus()
-					if (last.highlightFocused)
-						inject(FocusManager).highlightFocused()
+			if (last.focus) {
+				val child = last.child
+				if (child.canFocus) {
+					child.focus(highlight = last.highlightFocused)
+				} else {
+					modalFill.focusSelf()
 				}
 			} else {
 				if (last.isModal) {
-					modalFill.focus()
+					modalFill.focusSelf()
 				}
 			}
 		}
@@ -271,7 +269,7 @@ class PopUpManagerImpl(private val root: UiComponent) : LayoutContainerImpl<PopU
 	private fun focusChangingHandler(old: UiComponentRo?, new: UiComponentRo?, cancel: Cancel) {
 		if (_currentPopUps.isEmpty() || new === modalFill) return
 		if (new == null) {
-			modalFill.focus()
+			modalFill.focusSelf()
 			cancel.cancel()
 			return
 		}
@@ -286,8 +284,11 @@ class PopUpManagerImpl(private val root: UiComponent) : LayoutContainerImpl<PopU
 			}
 		}
 		if (!validFocusChange) {
-			val firstFocusableChild = _currentPopUps[lastModalIndex].child.firstFocusableChild
-			if (firstFocusableChild == null) modalFill.focus() else firstFocusableChild.focus()
+			val child = _currentPopUps[lastModalIndex].child
+			if (child.canFocus)
+				child.focus()
+			else
+				modalFill.focusSelf()
 			cancel.cancel()
 		}
 	}
@@ -309,16 +310,14 @@ class PopUpManagerImpl(private val root: UiComponent) : LayoutContainerImpl<PopU
 	override fun <T : UiComponent> addPopUp(popUpInfo: PopUpInfo<T>) {
 		removePopUp(popUpInfo)
 		val child = popUpInfo.child
-		if (child is Closeable) {
+		if (child is Closeable)
 			child.closed.add(childClosedHandler)
-		}
 		val index = _currentPopUps.sortedInsertionIndex(popUpInfo) { a, b -> a.priority.compareTo(b.priority) }
 		_currentPopUps.add(index, popUpInfo)
-		if (index == _currentPopUps.lastIndex) {
+		if (index == _currentPopUps.lastIndex)
 			addElement(child)
-		} else {
+		else
 			addElementBefore(child, _currentPopUps[index + 1].child)
-		}
 		refresh()
 		child.layoutData = popUpInfo.layoutData
 	}
@@ -328,9 +327,8 @@ class PopUpManagerImpl(private val root: UiComponent) : LayoutContainerImpl<PopU
 		if (!removed) return // Pop-up not found
 		val child = popUpInfo.child
 		removeElement(child)
-		if (child is Closeable) {
+		if (child is Closeable)
 			child.closed.remove(childClosedHandler)
-		}
 		popUpInfo.onClosed(child)
 		if (popUpInfo.dispose && !child.isDisposed)
 			child.dispose()

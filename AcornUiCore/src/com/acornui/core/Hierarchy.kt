@@ -293,7 +293,7 @@ inline fun <reified T : ChildRo> T.findLastChildLevelOrder(callback: (T) -> Bool
  *
  * @param callback The callback to invoke on each child.
  */
-inline fun <reified T: ChildRo> T.childWalkPreOrder(callback: (T) -> TreeWalk, reversed: Boolean) {
+inline fun <reified T : ChildRo> T.childWalkPreOrder(callback: (T) -> TreeWalk, reversed: Boolean) {
 	val openList = arrayListObtain<Any?>()
 	openList.add(this)
 	loop@ while (openList.isNotEmpty()) {
@@ -318,11 +318,11 @@ inline fun <reified T: ChildRo> T.childWalkPreOrder(callback: (T) -> TreeWalk, r
 	arrayListPool.free(openList)
 }
 
-inline fun <reified T: ChildRo> T.childWalkPreOrder(callback: (T) -> TreeWalk) {
+inline fun <reified T : ChildRo> T.childWalkPreOrder(callback: (T) -> TreeWalk) {
 	childWalkPreOrder(callback, false)
 }
 
-inline fun <reified T: ChildRo> T.childWalkPreOrderReversed(callback: (T) -> TreeWalk) {
+inline fun <reified T : ChildRo> T.childWalkPreOrderReversed(callback: (T) -> TreeWalk) {
 	childWalkPreOrder(callback, true)
 }
 
@@ -331,7 +331,7 @@ inline fun <reified T: ChildRo> T.childWalkPreOrderReversed(callback: (T) -> Tre
  * the matching condition.
  * The tree traversal will be pre-order.
  */
-inline fun <reified T: ChildRo> T.findChildPreOrder(callback: (T) -> Boolean, reversed: Boolean): T? {
+inline fun <reified T : ChildRo> T.findChildPreOrder(callback: (T) -> Boolean, reversed: Boolean): T? {
 	var foundItem: T? = null
 	childWalkPreOrder({
 		if (callback(it)) {
@@ -344,11 +344,11 @@ inline fun <reified T: ChildRo> T.findChildPreOrder(callback: (T) -> Boolean, re
 	return foundItem
 }
 
-inline fun <reified T: ChildRo> T.findChildPreOrder(callback: (T) -> Boolean): T? {
+inline fun <reified T : ChildRo> T.findChildPreOrder(callback: (T) -> Boolean): T? {
 	return findChildPreOrder(callback, reversed = false)
 }
 
-inline fun <reified T: ChildRo> T.findLastChildPreOrder(callback: (T) -> Boolean): T? {
+inline fun <reified T : ChildRo> T.findLastChildPreOrder(callback: (T) -> Boolean): T? {
 	return findChildPreOrder(callback, reversed = true)
 }
 

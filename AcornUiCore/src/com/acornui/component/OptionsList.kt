@@ -150,7 +150,7 @@ open class OptionsList<E : Any>(
 		selection.changed.add { _, newSelection ->
 			val value = newSelection.firstOrNull()
 			textInput.text = if (value == null) "" else formatter.format(value)
-			this@OptionsList.focusFirst()
+			this@OptionsList.focus()
 			close()
 			_changed.dispatch()
 		}
@@ -318,7 +318,7 @@ open class OptionsList<E : Any>(
 			Ascii.ESCAPE -> {
 				event.handled = true
 				event.preventDefault() // Prevent focus manager from setting focus back to the stage.
-				focusFirst()
+				focus()
 				close()
 			}
 			Ascii.RETURN, Ascii.ENTER -> {
@@ -370,7 +370,7 @@ open class OptionsList<E : Any>(
 		if (nextIndexNotNull != -1) {
 			dataScroller.highlighted.selectedItem = data[nextIndexNotNull]
 			scrollTo(nextIndexNotNull.toFloat())
-			dataScroller.focus()
+			dataScroller.focusSelf()
 		}
 	}
 
@@ -384,7 +384,7 @@ open class OptionsList<E : Any>(
 		if (previousIndexNotNull != -1) {
 			dataScroller.highlighted.selectedItem = data[previousIndexNotNull]
 			scrollTo(previousIndexNotNull.toFloat())
-			dataScroller.focus()
+			dataScroller.focusSelf()
 		}
 	}
 
@@ -394,7 +394,7 @@ open class OptionsList<E : Any>(
 		if (lastIndexNotNull != -1) {
 			dataScroller.highlighted.selectedItem = data[lastIndexNotNull]
 			scrollTo(lastIndexNotNull.toFloat())
-			dataScroller.focus()
+			dataScroller.focusSelf()
 		}
 	}
 
@@ -404,7 +404,7 @@ open class OptionsList<E : Any>(
 		if (firstIndexNotNull != -1) {
 			dataScroller.highlighted.selectedItem = data[firstIndexNotNull]
 			scrollTo(firstIndexNotNull.toFloat())
-			dataScroller.focus()
+			dataScroller.focusSelf()
 		}
 	}
 
@@ -435,7 +435,7 @@ open class OptionsList<E : Any>(
 		dataScroller.highlighted.clear()
 		listLift.priority = inject(PopUpManager).currentPopUps.lastOrNull()?.priority ?: 0f
 		addChild(listLift)
-		textInput.focus()
+		textInput.focusSelf()
 	}
 
 	fun close() {

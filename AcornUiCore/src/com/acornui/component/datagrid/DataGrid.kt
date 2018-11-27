@@ -34,9 +34,9 @@ import com.acornui.core.di.own
 import com.acornui.core.di.owns
 import com.acornui.core.floor
 import com.acornui.core.focus.FocusManager
+import com.acornui.core.focus.focusSelf
 import com.acornui.core.focus.focus
-import com.acornui.core.focus.focusFirst
-import com.acornui.core.focus.ownsFocused
+import com.acornui.core.focus.isFocused
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.KeyState
 import com.acornui.core.input.interaction.ClickInteractionRo
@@ -600,7 +600,7 @@ class DataGrid<E>(
 		val editorCell = col.createEditorCell(this) as DataGridEditorCell<Any?>
 		editorCell.setData(col.getCellData(row))
 		editorCellContainer.addElement(editorCell)
-		editorCell.focusFirst()
+		editorCell.focus()
 		this.editorCell = editorCell
 		inject(FocusManager).focusedChanged.add(this::focusChangedHandler)
 		bringIntoView(cellLocation)
@@ -645,10 +645,10 @@ class DataGrid<E>(
 	}
 
 	fun closeCellEditor(commit: Boolean = false) {
-		val wasFocused = ownsFocused()
+		val wasFocused = isFocused
 		if (commit) commitCellEditorValue()
 		disposeCellEditor()
-		if (wasFocused) focus()
+		if (wasFocused) focusSelf()
 	}
 
 	/**

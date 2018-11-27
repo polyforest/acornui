@@ -51,15 +51,15 @@ class JvmClipboardDispatcher(
 		if (e.commandPlat && e.keyCode == Ascii.V) {
 			pasteEvent.clear()
 			pasteEvent.type = PasteInteractionRo.PASTE
-			interactivity.dispatch(focus.focused() ?: stage, pasteEvent)
+			interactivity.dispatch(focus.focused ?: stage, pasteEvent)
 		} else if (e.commandPlat && e.keyCode == Ascii.C) {
 			copyEvent.clear()
 			copyEvent.type = CopyInteractionRo.COPY
-			interactivity.dispatch(focus.focused() ?: stage, copyEvent)
+			interactivity.dispatch(focus.focused ?: stage, copyEvent)
 		} else if (e.commandPlat && e.keyCode == Ascii.X) {
 			copyEvent.clear()
 			copyEvent.type = CopyInteractionRo.CUT
-			interactivity.dispatch(focus.focused() ?: stage, copyEvent)
+			interactivity.dispatch(focus.focused ?: stage, copyEvent)
 		}
 	}
 

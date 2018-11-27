@@ -49,7 +49,7 @@ class JsClipboardDispatcher(
 		pasteEvent.clear()
 		pasteEvent.type = PasteInteractionRo.PASTE
 		pasteEvent.set(it as ClipboardEvent)
-		interactivity.dispatch(focus.focused() ?: stage, pasteEvent)
+		interactivity.dispatch(focus.focused ?: stage, pasteEvent)
 		it.preventDefault()
 		Unit
 	}
@@ -58,7 +58,7 @@ class JsClipboardDispatcher(
 		copyEvent.clear()
 		copyEvent.type = CopyInteractionRo.COPY
 		copyEvent.set(it as ClipboardEvent)
-		interactivity.dispatch(focus.focused() ?: stage, copyEvent)
+		interactivity.dispatch(focus.focused ?: stage, copyEvent)
 		it.preventDefault()
 		Unit
 	}
@@ -67,7 +67,7 @@ class JsClipboardDispatcher(
 		copyEvent.clear()
 		copyEvent.type = CopyInteractionRo.CUT
 		copyEvent.set(it as ClipboardEvent)
-		interactivity.dispatch(focus.focused() ?: stage, copyEvent)
+		interactivity.dispatch(focus.focused ?: stage, copyEvent)
 		it.preventDefault()
 		Unit
 	}

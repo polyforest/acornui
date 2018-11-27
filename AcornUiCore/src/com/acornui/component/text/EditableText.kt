@@ -9,6 +9,7 @@ import com.acornui.core.di.inject
 import com.acornui.core.di.own
 import com.acornui.core.focus.blurred
 import com.acornui.core.focus.focused
+import com.acornui.core.focus.isFocusedSelf
 import com.acornui.core.input.*
 import com.acornui.core.input.interaction.*
 import com.acornui.core.isWhitespace2
@@ -566,7 +567,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 		val textCursorVisible = if (!charStyle.selectable || !window.isActive) false else {
 			val sel = firstSelection
-			if (host.isFocused && sel != null) {
+			if (host.isFocusedSelf && sel != null) {
 				val rangeEnd = contents.textElementsCount
 				val end = MathUtils.clamp(sel.endIndex, 0, rangeEnd)
 				val textElement = if (end >= rangeEnd) contents.placeholder else contents.getTextElementAt(end)

@@ -48,7 +48,7 @@ class FakeFocusMouse(
 			val downElement = downElement!!
 			this.downElement = null
 			dispatchFakeMouseEvent(downElement, MouseInteractionRo.MOUSE_UP)
-			if (!event.handled && getTarget(event) == focus.focused()) {
+			if (!event.handled && getTarget(event) == focus.focused) {
 				downElement.dispatchClick()
 			}
 			event.handled = true
@@ -65,7 +65,7 @@ class FakeFocusMouse(
 	}
 
 	private fun getTarget(event: KeyInteractionRo): UiComponentRo? {
-		val focused = focus.focused() ?: return null
+		val focused = focus.focused ?: return null
 		var target: UiComponentRo = focused
 		focused.parentWalk {
 			if (it.click().isNotEmpty()) {

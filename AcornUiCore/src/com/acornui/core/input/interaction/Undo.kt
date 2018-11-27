@@ -60,12 +60,12 @@ class UndoDispatcher(override val injector: Injector) : Scoped, Disposable {
 				e.handled = true
 				event.clear()
 				event.type = UndoInteractionRo.REDO
-				interactivity.dispatch(focus.focused() ?: stage, event)
+				interactivity.dispatch(focus.focused ?: stage, event)
 			} else if (e.commandPlat && e.keyCode == Ascii.Z) {
 				e.handled = true
 				event.clear()
 				event.type = UndoInteractionRo.UNDO
-				interactivity.dispatch(focus.focused() ?: stage, event)
+				interactivity.dispatch(focus.focused ?: stage, event)
 			}
 		}
 	}

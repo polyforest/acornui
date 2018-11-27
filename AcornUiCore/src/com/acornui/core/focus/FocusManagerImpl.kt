@@ -61,8 +61,9 @@ class FocusManagerImpl : FocusManager {
 	private var _highlighted: UiComponentRo? = null
 
 	private val invalidFocusables = ArrayList<UiComponentRo>()
+
 	private val _focusables = ArrayList<UiComponentRo>()
-	private val focusables: ArrayList<UiComponentRo>
+	override val focusables: List<UiComponentRo>
 		get() {
 			if (invalidFocusables.isNotEmpty())
 				validateFocusables()
@@ -73,11 +74,11 @@ class FocusManagerImpl : FocusManager {
 
 	private val rootKeyDownHandler = { event: KeyInteractionRo ->
 		if (!event.defaultPrevented() && event.keyCode == Ascii.TAB) {
-			val previousFocused = focused()
+			val previousFocused = focused
 			if (event.shiftKey) focusPrevious()
 			else focusNext()
 			highlightFocused()
-			if (previousFocused != focused())
+			if (previousFocused != focused)
 				event.preventDefault() // Prevent the browser's default tab interactivity if we've handled it.
 		} else if (!event.defaultPrevented() && event.keyCode == Ascii.ESCAPE) {
 			clearFocused()
@@ -194,9 +195,8 @@ class FocusManagerImpl : FocusManager {
 		focusOrderOut.add(value.focusOrder)
 	}
 
-	override fun focused(): UiComponentRo? {
-		return _focused
-	}
+	override val focused: UiComponentRo?
+		get() = _focused
 
 	private var pendingFocusable: UiComponentRo? = null
 
@@ -238,7 +238,7 @@ class FocusManagerImpl : FocusManager {
 			var j = index + i
 			if (j > focusables.lastIndex) j -= focusables.size
 			val element = focusables[j]
-			if (element.canFocus) return element
+			if (element.canFocusSelf) return element
 		}
 		return _focused ?: root
 	}
@@ -249,23 +249,9 @@ class FocusManagerImpl : FocusManager {
 			var j = index - i
 			if (j < 0) j += focusables.size
 			val element = focusables[j]
-			if (element.canFocus) return element
+			if (element.canFocusSelf) return element
 		}
 		return _focused ?: root
-	}
-
-	override fun iterateFocusables(callback: (UiComponentRo) -> Boolean) {
-		for (i in 0..focusables.lastIndex) {
-			val shouldContinue = callback(focusables[i])
-			if (!shouldContinue) break
-		}
-	}
-
-	override fun iterateFocusablesReversed(callback: (UiComponentRo) -> Boolean) {
-		for (i in focusables.lastIndex downTo 0) {
-			val shouldContinue = callback(focusables[i])
-			if (!shouldContinue) break
-		}
 	}
 
 	override fun unhighlightFocused() {
