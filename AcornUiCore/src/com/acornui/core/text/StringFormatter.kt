@@ -16,8 +16,8 @@ interface StringParser<out T> {
 	fun parse(value: String): T?
 }
 
-object ToStringFormatter : StringFormatter<Any> {
-	override fun format(value: Any): String {
+object ToStringFormatter : StringFormatter<Any?> {
+	override fun format(value: Any?): String {
 		return value.toString()
 	}
 }
