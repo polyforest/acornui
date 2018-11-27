@@ -268,28 +268,29 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 	/**
 	 * Sets the data source to the given non-observable list.
 	 */
-	fun data(source: List<E?>) {
+	fun data(source: List<E?>?) {
 		if (_data === source) return
 		unwatchWrappedList()
-		_data = source
-		_selection.data(source)
+		_data = source ?: emptyList()
+		_selection.data(_data)
 		invalidateLayout()
 	}
 
 	/**
 	 * Sets the data source to the given observable list, and watches for changes.
 	 */
-	fun data(source: ObservableList<E?>) {
+	fun data(source: ObservableList<E?>?) {
 		if (observableData === source) return
 		unwatchWrappedList()
 		observableData = source
-		_data = source
-		_selection.data(source)
-		source.added.add(this::invalidateLayout.as2)
-		source.removed.add(this::invalidateLayout.as2)
-		source.changed.add(this::invalidateLayout.as3)
-		source.reset.add(this::invalidateLayout)
-
+		_data = source ?: emptyList()
+		_selection.data(_data)
+		if (source != null) {
+			source.added.add(this::invalidateLayout.as2)
+			source.removed.add(this::invalidateLayout.as2)
+			source.changed.add(this::invalidateLayout.as3)
+			source.reset.add(this::invalidateLayout)
+		}
 		invalidateLayout()
 	}
 

@@ -185,17 +185,17 @@ class DataGrid<E>(
 	val data: List<E>
 		get() = _data
 
-	fun data(source: List<E>) {
-		_data = source
+	fun data(source: List<E>?) {
+		_data = source ?: emptyList()
 		_observableData = null
-		dataView.data(source)
+		dataView.data(_data)
 		editorCellRow.data(source)
 	}
 
-	fun data(source: ObservableList<E>) {
-		_data = source
+	fun data(source: ObservableList<E>?) {
+		_data = source ?: emptyList()
 		_observableData = source
-		dataView.data(source)
+		dataView.data(_data)
 		editorCellRow.data(source)
 	}
 
@@ -2142,6 +2142,18 @@ class DataGridStyle : StyleBase() {
 
 fun <E> Owned.dataGrid(data: ObservableList<E>, init: ComponentInit<DataGrid<E>>): DataGrid<E> {
 	val d = DataGrid(this, data)
+	d.init()
+	return d
+}
+
+fun <E> Owned.dataGrid(data: List<E>, init: ComponentInit<DataGrid<E>>): DataGrid<E> {
+	val d = DataGrid(this, data)
+	d.init()
+	return d
+}
+
+fun <E> Owned.dataGrid(init: ComponentInit<DataGrid<E>>): DataGrid<E> {
+	val d = DataGrid<E>(this)
 	d.init()
 	return d
 }

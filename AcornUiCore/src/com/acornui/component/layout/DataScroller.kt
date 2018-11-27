@@ -155,7 +155,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 	/**
 	 * Sets the data source to the given observable list, and watches for changes.
 	 */
-	fun data(value: ObservableList<E?>) {
+	fun data(value: ObservableList<E?>?) {
 		contents.data(value)
 		bottomContents.data(value)
 		_selection.data(value)
@@ -165,7 +165,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 	/**
 	 * Sets the data source to the given non-observable list.
 	 */
-	fun data(value: List<E?>) {
+	fun data(value: List<E?>?) {
 		contents.data(value)
 		bottomContents.data(value)
 		_selection.data(value)
@@ -383,9 +383,10 @@ private class DataScrollerSelection<E : Any>(
 
 	private var data = emptyList<E?>()
 
-	fun data(value: List<E?>) {
-		deselectNotContaining(value.filterNotNull())
-		data = value
+	fun data(value: List<E?>?) {
+		val newData = value ?: emptyList()
+		deselectNotContaining(newData.filterNotNull())
+		data = newData
 	}
 
 	override fun walkSelectableItems(callback: (E) -> Unit) {
@@ -411,9 +412,10 @@ private class DataScrollerHighlight<E : Any>(private val rowMap: Map<E, RowBackg
 
 	private var data = emptyList<E?>()
 
-	fun data(value: List<E?>) {
-		deselectNotContaining(value.filterNotNull())
-		data = value
+	fun data(value: List<E?>?) {
+		val newData = value ?: emptyList()
+		deselectNotContaining(newData.filterNotNull())
+		data = newData
 	}
 
 	override fun walkSelectableItems(callback: (E) -> Unit) {
