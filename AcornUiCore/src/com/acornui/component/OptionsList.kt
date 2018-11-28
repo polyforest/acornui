@@ -34,9 +34,8 @@ import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.di.own
 import com.acornui.core.di.owns
-import com.acornui.core.focus.FocusManager
+import com.acornui.core.focus.focusSelf
 import com.acornui.core.focus.focus
-import com.acornui.core.focus.focusFirst
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.KeyInteractionRo
 import com.acornui.core.input.interaction.click
@@ -135,7 +134,6 @@ open class OptionsList<E : Any>(
 	var editable: Boolean by observable(true) {
 		textInput.editable = it
 		textInput.selectable = it
-		downArrow?.focusEnabled = it
 		downArrow?.interactivityMode = if (it) InteractivityMode.ALL else InteractivityMode.NONE
 	}
 
@@ -239,17 +237,17 @@ open class OptionsList<E : Any>(
 	val data: List<E?>
 		get() = dataScroller.data
 
-	fun data(value: List<E?>) {
+	fun data(value: List<E?>?) {
 		unbindData()
 		dataScroller.data(value)
 		setSelectedItemFromText()
 	}
 
-	fun data(value: ObservableList<E?>) {
+	fun data(value: ObservableList<E?>?) {
 		unbindData()
 		dataScroller.data(value)
 		setSelectedItemFromText()
-		dataBinding = value.bind {
+		dataBinding = value?.bind {
 			setSelectedItemFromText()
 		}
 	}
@@ -257,8 +255,10 @@ open class OptionsList<E : Any>(
 	private fun setSelectedItemFromText() {
 		val item = textToItem(text)
 		dataScroller.selection.selectedItem = item
-		if (item != null)
+		if (item != null) {
 			dataScroller.highlighted.selectedItem = item
+			scrollTo(item)
+		}
 	}
 
 	fun emptyListRenderer(value: ItemRendererOwner<VerticalLayoutData>.() -> UiComponent) {
@@ -283,12 +283,12 @@ open class OptionsList<E : Any>(
 
 			downArrow?.dispose()
 			val downArrow = addChild(it.downArrow(this))
-			downArrow.focusEnabled = editable
+			downArrow.focusEnabled = false
 			downArrow.interactivityMode = if (editable) InteractivityMode.ALL else InteractivityMode.NONE
-			downArrow.click().add {
+			downArrow.click().add { e ->
 				// Using mouseDown instead of click because we close on blur (which is often via mouseDown).
-				if (!it.handled) {
-					it.handled = true
+				if (!e.handled) {
+					e.handled = true
 					toggleOpen()
 				}
 			}
@@ -302,7 +302,7 @@ open class OptionsList<E : Any>(
 			}
 		}
 
-		inject(FocusManager).focusedChanged.add(this::focusChangedHandler)
+		focusManager.focusedChanged.add(this::focusChangedHandler)
 	}
 
 	private fun focusChangedHandler(old: UiComponentRo?, new: UiComponentRo?) {
@@ -323,12 +323,19 @@ open class OptionsList<E : Any>(
 			}
 			Ascii.RETURN, Ascii.ENTER -> {
 				event.handled = true
-				val newSelectedItem = dataScroller.highlighted.selectedItem ?: textToItem(text)
-				if (newSelectedItem != selectedItem) {
-					selectedItem = newSelectedItem
-					focusFirst()
-					close()
+				val highlighted = dataScroller.highlighted.selectedItem
+				if (highlighted != null) {
+					// An item was highlighted.
+					selectedItem = highlighted
+					focus()
+				} else {
+					// Text was typed. Try to match an item from the data.
+					val typedItem = textToItem(text)
+					dataScroller.selection.selectedItem = typedItem
+					if (typedItem != null) textInput.text = formatter.format(typedItem)
 				}
+				close()
+				focusManager.highlightFocused()
 				_changed.dispatch()
 			}
 			Ascii.DOWN -> {
@@ -408,6 +415,10 @@ open class OptionsList<E : Any>(
 		}
 	}
 
+	private fun scrollTo(item: E) {
+		scrollTo(data.indexOf(item).toFloat())
+	}
+
 	/**
 	 * Scrolls the minimum distance to show the given bounding rectangle.
 	 */
@@ -428,6 +439,9 @@ open class OptionsList<E : Any>(
 	}
 
 	private var _isOpen = false
+
+	val isOpen: Boolean
+		get() = _isOpen
 
 	fun open() {
 		if (_isOpen) return
@@ -474,13 +488,12 @@ open class OptionsList<E : Any>(
 	}
 
 	override fun clear() {
-		textInput.clear()
 		selectedItem = null
 	}
 
 	override fun dispose() {
 		unbindData()
-		inject(FocusManager).focusedChanged.remove(this::focusChangedHandler)
+		focusManager.focusedChanged.remove(this::focusChangedHandler)
 		close()
 		super.dispose()
 	}
