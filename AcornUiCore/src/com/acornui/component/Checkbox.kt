@@ -17,6 +17,7 @@
 package com.acornui.component
 
 import com.acornui.component.style.StyleTag
+import com.acornui.component.style.styleTag
 import com.acornui.core.di.Owned
 
 open class Checkbox(
@@ -28,7 +29,9 @@ open class Checkbox(
 		toggleOnClick = true
 	}
 
-	companion object : StyleTag
+	companion object : StyleTag {
+		val NO_LABEL = styleTag()
+	}
 }
 
 fun Owned.checkbox(init: ComponentInit<Checkbox> = {}): Checkbox {

@@ -156,8 +156,9 @@ open class Button(
 		}
 	}
 
-	open var disabled: Boolean by observable(false) {
+	var disabled: Boolean by observable(false) {
 		interactivityMode = if (it) InteractivityMode.NONE else InteractivityMode.ALL
+		disabledTag = it
 		refreshState()
 	}
 
@@ -195,9 +196,7 @@ open class Button(
 		get() = _currentSkinPart
 
 	val currentState: ButtonState
-		get() {
-			return _currentState
-		}
+		get() = _currentState
 
 	protected open fun currentState(newState: ButtonState) {
 		if (isDisposed) return

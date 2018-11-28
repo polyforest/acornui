@@ -32,7 +32,6 @@ import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.serialization.*
 
-
 var TextField.strong: Boolean
 	get() = styleTags.contains(TextStyleTags.strong)
 	set(value) {
@@ -62,6 +61,7 @@ object TextStyleTags {
 	val h4 = styleTag()
 	val strong = styleTag()
 	val emphasis = styleTag()
+	val errorMessage = styleTag()
 }
 
 /**
@@ -271,4 +271,3 @@ class TextInputStyle : StyleBase() {
 
 	companion object : StyleType<TextInputStyle>
 }
-

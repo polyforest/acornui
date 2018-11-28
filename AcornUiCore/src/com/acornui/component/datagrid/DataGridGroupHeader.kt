@@ -27,10 +27,10 @@ import com.acornui.component.layout.setSize
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
 import com.acornui.component.style.noSkinOptional
+import com.acornui.component.text.TextStyleTags
 import com.acornui.core.di.Owned
 import com.acornui.core.input.interaction.click
 import com.acornui.math.Bounds
-import com.acornui.skins.TextStyleTags
 
 interface DataGridGroupHeader : UiComponent {
 

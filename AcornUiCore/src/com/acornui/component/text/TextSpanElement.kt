@@ -73,7 +73,7 @@ open class TextSpanElementImpl : TextSpanElement, ElementParent<TextElement>, St
 	override val elements: List<TextElement>
 		get() = _elements
 
-	protected val styles = StylesImpl(this)
+	protected val styles = Styles(this)
 
 	val charStyle = styles.bind(CharStyle())
 

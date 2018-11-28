@@ -875,10 +875,10 @@ open class UiComponentImpl(
 		s
 	}
 
-	private var _styles: StylesImpl? = null
-	private val styles: StylesImpl
+	private var _styles: Styles? = null
+	private val styles: Styles
 		get() {
-			if (_styles == null) _styles = own(StylesImpl(this))
+			if (_styles == null) _styles = own(Styles(this))
 			return _styles!!
 		}
 

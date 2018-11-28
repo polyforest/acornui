@@ -39,6 +39,7 @@ import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
+import java.lang.Exception
 
 /**
  * @author nbilyk
@@ -199,9 +200,14 @@ class FocusManagerImpl : FocusManager {
 		get() = _focused
 
 	private var pendingFocusable: UiComponentRo? = null
+	private val focusStack = ArrayList<UiComponentRo?>()
 
 	override fun focused(value: UiComponentRo?) {
 		if (_focusedChanging.isDispatching || _focusedChanged.isDispatching) {
+			if (focusStack.contains(value)) {
+				throw Exception("Attempted focus overflow on element: $value")
+			}
+			focusStack.add(value)
 			pendingFocusable = value
 			return
 		}
@@ -225,7 +231,7 @@ class FocusManagerImpl : FocusManager {
 	}
 
 	private fun focusPending() {
-		if (pendingFocusable != null) {
+		if (pendingFocusable == null) focusStack.clear() else {
 			val next = pendingFocusable
 			pendingFocusable = null
 			focused(next)

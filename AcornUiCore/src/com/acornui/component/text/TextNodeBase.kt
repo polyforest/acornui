@@ -109,7 +109,7 @@ abstract class TextNodeBase(final override val owner: Owned) : TextNode {
 	// Styleable methods
 	//-----------------------------------------------------
 
-	protected val styles = StylesImpl(this)
+	protected val styles = Styles(this)
 
 	override val styleTags: MutableList<StyleTag>
 		get() = styles.styleTags

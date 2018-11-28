@@ -197,13 +197,10 @@ class PopUpManagerImpl(private val root: UiComponent) : LayoutContainerImpl<PopU
 		if (shouldShowModal) {
 			// Set the modal blocker to be at the correct child index so that it is behind the last modal pop-up.
 			val lastModal = _currentPopUps[lastModalIndex]
-			var childIndex = elements.indexOf(lastModal.child)
+			val childIndex = elements.indexOf(lastModal.child)
 			val modalIndex = elements.indexOf(modalFill)
-			if (modalIndex != childIndex - 1) {
-				if (modalIndex < childIndex) childIndex--
-				removeElement(modalFill)
+			if (modalIndex != childIndex - 1)
 				addElement(childIndex, modalFill)
-			}
 		}
 		val s = style
 		if (shouldShowModal != showingModal) {
@@ -251,7 +248,6 @@ class PopUpManagerImpl(private val root: UiComponent) : LayoutContainerImpl<PopU
 
 	init {
 		root.keyDown().add(rootKeyDownHandler)
-
 		interactivityMode = InteractivityMode.CHILDREN
 	}
 

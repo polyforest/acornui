@@ -60,7 +60,7 @@ fun Styleable.addStyleRule(style: StyleRo, priority: Float = 0f) {
 	styleRules.add(StyleRule(style, AlwaysFilter, priority))
 }
 
-class StylesImpl(private val host: Styleable) : Disposable {
+class Styles(private val host: Styleable) : Disposable {
 
 	val styleTags = ActiveList<StyleTag>()
 	val styleRules = ActiveList<StyleRule<*>>()

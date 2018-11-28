@@ -131,10 +131,18 @@ open class OptionsList<E : Any>(
 		focusHighlightDelegate = this@OptionsList
 	}
 
+	/**
+	 * If false, the text input will not accept type input, and items may only be selected via the dropdown.
+	 */
 	var editable: Boolean by observable(true) {
 		textInput.editable = it
 		textInput.selectable = it
 		downArrow?.interactivityMode = if (it) InteractivityMode.ALL else InteractivityMode.NONE
+	}
+
+	var disabled: Boolean by observable(false) {
+		interactivityMode = if (it) InteractivityMode.NONE else InteractivityMode.ALL
+
 	}
 
 	private var background: UiComponent? = null
@@ -515,6 +523,9 @@ class OptionsListStyle : StyleBase() {
 	 */
 	var padding by prop(Pad(0f))
 
+	/**
+	 * The button that opens this list.
+	 */
 	var downArrow by prop(noSkin)
 
 	/**

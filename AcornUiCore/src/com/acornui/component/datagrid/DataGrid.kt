@@ -24,6 +24,7 @@ import com.acornui.component.*
 import com.acornui.component.layout.*
 import com.acornui.component.scroll.*
 import com.acornui.component.style.*
+import com.acornui.component.text.TextStyleTags
 import com.acornui.core.EqualityCheck
 import com.acornui.core.cache.*
 import com.acornui.core.cursor.StandardCursors
@@ -34,8 +35,8 @@ import com.acornui.core.di.own
 import com.acornui.core.di.owns
 import com.acornui.core.floor
 import com.acornui.core.focus.FocusManager
-import com.acornui.core.focus.focusSelf
 import com.acornui.core.focus.focus
+import com.acornui.core.focus.focusSelf
 import com.acornui.core.focus.isFocused
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.KeyState
@@ -52,7 +53,6 @@ import com.acornui.math.Pad
 import com.acornui.math.Vector2
 import com.acornui.observe.IndexBinding
 import com.acornui.signal.*
-import com.acornui.skins.TextStyleTags
 import kotlin.math.abs
 import kotlin.properties.ObservableProperty
 import kotlin.properties.ReadWriteProperty

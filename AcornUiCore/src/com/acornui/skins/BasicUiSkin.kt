@@ -67,7 +67,7 @@ open class BasicUiSkin(
 		target.populateButtonStyle(Checkbox) { checkboxSkin(theme, it) }
 		target.populateButtonStyle(CollapseButton) { collapseButtonSkin(theme, it) }
 		target.populateButtonStyle(RadioButton) { radioButtonSkin(theme, it) }
-		target.populateButtonStyle(CommonStyleTags.cbNoLabelStyle) { checkboxNoLabelSkin(theme, it) }
+		target.populateButtonStyle(Checkbox.NO_LABEL) { checkboxNoLabelSkin(theme, it) }
 		target.populateButtonStyle(IconButton) { iconButtonSkin(theme, it) }
 
 		popUpStyle()
@@ -145,7 +145,7 @@ open class BasicUiSkin(
 
 		val errorMessageStyle = CharStyle()
 		errorMessageStyle.colorTint = Color.RED
-		target.addStyleRule(errorMessageStyle, CommonStyleTags.errorMessage)
+		target.addStyleRule(errorMessageStyle, TextStyleTags.errorMessage)
 	}
 
 	protected open fun loadBitmapFonts() {
@@ -1092,112 +1092,4 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 		writer.color("toggledEvenRowBgColor", toggledEvenRowBgColor)
 		writer.color("toggledOddRowBgColor", toggledOddRowBgColor)
 	}
-}
-
-
-@Deprecated("Use CommonStyleTags", ReplaceWith("CommonStyleTags"), DeprecationLevel.ERROR)
-object StyleSelectors
-
-object CommonStyleTags {
-	val cbNoLabelStyle = styleTag()
-	val themeRect = styleTag()
-	val errorMessage = styleTag()
-
-	@Deprecated("Use TextStyleTags.h1", ReplaceWith("TextStyleTags.h1"))
-	val headingStyle = styleTag()
-	@Deprecated("Use TextStyleTags.h2", ReplaceWith("TextStyleTags.h2"))
-	val subHeadingStyle = styleTag()
-}
-
-object TextStyleTags {
-
-	val h1 = styleTag()
-	val h2 = styleTag()
-	val h3 = styleTag()
-	val h4 = styleTag()
-	val strong = styleTag()
-	val emphasis = styleTag()
-}
-
-@Deprecated("Use h1", ReplaceWith("h1(text, init)"))
-fun Owned.heading(text: String = "", init: ComponentInit<TextFieldImpl> = {}): TextFieldImpl = h1(text, init)
-
-/**
- * A shortcut to creating a text field with the [TextStyleTags.h1] tag.
- */
-fun Owned.h1(text: String = "", init: ComponentInit<TextFieldImpl> = {}): TextFieldImpl {
-	val t = TextFieldImpl(this)
-	t.styleTags.add(TextStyleTags.h1)
-	t.text = text
-	t.init()
-	return t
-}
-
-@Deprecated("Use h2", ReplaceWith("h2(text, init)"))
-fun Owned.subHeading(text: String = "", init: ComponentInit<TextFieldImpl> = {}): TextFieldImpl = h2(text, init)
-
-/**
- * A shortcut to creating a text field with the [TextStyleTags.h2] tag.
- */
-fun Owned.h2(text: String = "", init: ComponentInit<TextFieldImpl> = {}): TextFieldImpl {
-	val t = TextFieldImpl(this)
-	t.styleTags.add(TextStyleTags.h2)
-	t.text = text
-	t.init()
-	return t
-}
-
-/**
- * A shortcut to creating a text field with the [TextStyleTags.h3] tag.
- */
-fun Owned.h3(text: String = "", init: ComponentInit<TextFieldImpl> = {}): TextFieldImpl {
-	val t = TextFieldImpl(this)
-	t.styleTags.add(TextStyleTags.h3)
-	t.text = text
-	t.init()
-	return t
-}
-
-/**
- * A shortcut to creating a text field with the [TextStyleTags.h4] tag.
- */
-fun Owned.h4(text: String = "", init: ComponentInit<TextFieldImpl> = {}): TextFieldImpl {
-	val t = TextFieldImpl(this)
-	t.styleTags.add(TextStyleTags.h4)
-	t.text = text
-	t.init()
-	return t
-}
-
-/**
- * A shortcut to creating a text field with the [TextStyleTags.strong] tag.
- */
-fun Owned.strong(text: String = "", init: ComponentInit<TextFieldImpl> = {}): TextFieldImpl {
-	val t = TextFieldImpl(this)
-	t.styleTags.add(TextStyleTags.strong)
-	t.text = text
-	t.init()
-	return t
-}
-
-/**
- * A shortcut to creating a text field with the [TextStyleTags.emphasis] tag.
- */
-fun Owned.em(text: String = "", init: ComponentInit<TextFieldImpl> = {}): TextFieldImpl {
-	val t = TextFieldImpl(this)
-	t.styleTags.add(TextStyleTags.emphasis)
-	t.text = text
-	t.init()
-	return t
-}
-
-/**
- * A shortcut to creating a text field with the [TextStyleTags.emphasis] and [TextStyleTags.strong] tags.
- */
-fun Owned.strongEm(text: String = "", init: ComponentInit<TextFieldImpl> = {}): TextFieldImpl {
-	val t = TextFieldImpl(this)
-	t.styleTags.addAll(TextStyleTags.emphasis, TextStyleTags.strong)
-	t.text = text
-	t.init()
-	return t
 }
