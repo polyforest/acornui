@@ -21,7 +21,6 @@ import com.liferay.gradle.plugins.node.tasks.ExecuteNodeTask
 import com.liferay.gradle.plugins.node.tasks.DownloadNodeModuleTask
 import com.liferay.gradle.plugins.node.tasks.ExecuteNodeScriptTask
 import com.liferay.gradle.plugins.node.tasks.ExecuteNpmTask
-import org.gradle.api.internal.file.UnionFileCollection
 
 buildscript {
 	val KOTLIN_VERSION: String by gradle.startParameter.projectProperties
@@ -259,91 +258,77 @@ val maybeCreateBuildutilsConfiguration by extra { p: Project ->
 
 // TODO - MP: Fix the documentation.
 /**
- * Holds a map associating directories (absolute paths) with their corresponding ConfigurableFileCollections.
+ * Provides traceability between a directory file (key), its configurable file collection (live and lazy contents)
+ * (value), and the tasks that build the contents (tracked in the value instance).
  *
+ * Tasks that depend on a configurable file collection will implicitly depend on all tasks that build it.  This helps
+ * downstream build engineers hook custom build logic into the task graph in a non-brittle way.
  *
+ * Utilized for directories later registered as an output of a source set as the tasks that build it must be known at
+ * registration time.
  *
- * Aggregates tasks that build directories registered on the classpath via the sourceSets block and also other tasks
- * which act on the finished directory as a whole depend on the FileCollection to implicitly depend on all tasks that
- * build it.
- *
- * A class is not used because classes are not imported to the classpath of other scripts.  As such, this object is
- * only used for entry point module configuration and assumes there is only one entry point for each target.
- *
- * No validation is performed on the paths.
+ * All path strings are validated and resolved according to Project.files()
  */
 object DirCollection {
 
-	val dirs = mutableMapOf<String, ConfigurableFileCollection>()
-
-	private val normalizePath = { path: String ->
-		path.trimEnd('/')
-	}
+	val dirs = mutableMapOf<File, ConfigurableFileCollection>()
 
 	/**
-	 * Registers a new directory path with a ConfigurableFileCollection and returns null.
-	 * If the directory already has been registered, it is overwritten and the original file collection is returned.
+	 * If a [collection] is provided, registers or overwrites an existing entry for [path] and returns the [collection].
+	 * If a [collection] is not provided, the registered ConfigurableFileCollection for the [path] is returned.
+	 * If there is no ConfigurableFileCollection for the [path] and a [collection] is not provided, an Exception is
+	 * thrown.
 	 *
-	 * [path] is normalized by trimming ending '/' characters.
-	 *
-	 * Note:  The file collection cannot be constructed within this object due to the Project service being out of
-	 * scope.
+	 * Note:  The ConfigurableFileCollection instance cannot be constructed within this object due to the Project
+	 * service being out of scope.
 	 */
-	fun dir(path: String, fileCollection: ConfigurableFileCollection): ConfigurableFileCollection? {
-
-		val normalizedPath = normalizePath(path)
-
-		if (normalizedPath.isNotBlank() && dirs[normalizedPath] == null) {
-			dirs[normalizedPath] = fileCollection
-			return null
+	fun dir(
+		project: Project,
+		path: String,
+		collection: ConfigurableFileCollection? = null
+	): ConfigurableFileCollection {
+		val file = project.file(path)
+		if (collection != null)
+			dirs[file] = collection
+		else if (dirs[file] == null) {
+			throw Exception(
+				"The file collection for the path, ${file.canonicalPath}, does not exist in the " +
+						"DirCollection map."
+			)
 		}
 
-		return dirs.replace(normalizedPath, fileCollection)
+		return dirs[file]!!
 	}
 
 	/**
 	 * Registers a [Task] receiver instance as being a builder of the directory that matches the [path].
 	 *
 	 * If the directory is not in [dirs], the [path] is empty, or the [path] is '/', nothing is done.
-	 *
-	 * [path] is normalized by trimming ending '/' characters.
 	 */
 	val builds = fun Task.(path: String) {
+		val file = project.file(path)
 
-		val normalizedPath = normalizePath(path)
-		val fileCollection = dirs[normalizedPath]
-
-		if (normalizedPath.isNotBlank() && fileCollection != null) {
-			dirs[normalizedPath]!!.builtBy(this)
-		}
-
+		dirs[file]?.builtBy(this)
 		return
 	}
-
-	/**
-	 * Get the ConfigurableFileCollection associated with the [path] as a FileCollection.
-	 *
-	 * If the directory is not registered with DirCollection, returns null.
-	 */
-	fun fileCollection(path: String): ConfigurableFileCollection? {
-		return dirs[normalizePath(path)]
-	}
-
-	/**
-	 * Get tasks that build the directory as an Array, represented by its absolute [path].
-	 *
-	 * If the directory is not registered with DirCollection, returns null.
-	 * If no tasks have been registered yet, returns an empty Array<Task>.
-	 */
-	fun taskDependencies(path: String): Array<Task>? = (dirs[path.trimEnd('/')]?.builtBy as Set<Task>?)?.toTypedArray()
 }
 
 /**
- * Syntax sugar for `DirCollection.builds`
+ * Registers a task as building a directory.
+ *
+ * Syntax sugar for `DirCollection.builds` to keep it safely scoped.
  */
 fun <T : Task> T.buildsDir(path: String) {
 	DirCollection.builds(this, path)
 }
+
+/**
+ * Registers a new directory file with its configurable file collection.
+ *
+ * Syntax sugar for `DirCollection.dir` to keep it safely scoped.
+ */
+fun Project.dir(directory: String, collection: ConfigurableFileCollection? = null): ConfigurableFileCollection =
+	DirCollection.dir(this, directory, collection)
 
 /**
  * Returns the FileVisitDetails of the direct children of [fileTree]'s roots as a List.
@@ -433,18 +418,21 @@ val declareResourceGenerationTasks by extra { p: Project ->
 
 				// Pseudo-Code:T0D0 | Need to shift processedSourcePath to Js and possibly delay it till after evaluation?
 				// Pseudo-Code:T0D0 | processedSourcePath,
-				listOf(processedResourcesPath).forEach { path: String? ->
-					path?.let {
-						DirCollection.dir(it, p.files(it))
-						afterEvaluate {
-							main.output.dir(mapOf("builtBy" to DirCollection.taskDependencies(it)), it)
-						}
-					}
-				}
 
-				listOf(processedResourcesPath, htmlSrcDestPath, prodHtmlSrcDestPath).forEach { path: String? ->
-					path?.let {
-						DirCollection.dir(it, p.files(it))
+				//				listOf(processedResourcesPath, htmlSrcDestPath, prodHtmlSrcDestPath).forEach { path: String? ->
+				//
+				//				}
+
+
+				/**
+				 * Register the destination for processed resources.  By default, these are all declared resource source
+				 * directories declared within the configuration phase.
+				 *
+				 * e.g. selected and processed skin + `.../main/src/resources`
+				 */
+				dir(processedResourcesPath, files(processedResourcesPath)).let {
+					afterEvaluate {
+						main.output.dir(mapOf("builtBy" to it.builtBy), it)
 					}
 				}
 
@@ -574,8 +562,7 @@ val declareResourceGenerationTasks by extra { p: Project ->
 						 * val generatedResourceSources: ConfigurableFileCollection by processGeneratedResources.extra
 						 * generatedResourceSources.add(<see ConfigurableFileCollection.add for valid params>)
 						 */
-
-						val generatedResourceSources by extra(DirCollection.fileCollection(processedResourcesPath))
+						val generatedResourceSources by extra(dir(processedResourcesPath))
 						//						val generatedSources by extra {
 						//							processedSourcePath?.let {
 						//								DirCollection.fileCollection(it)
@@ -598,7 +585,7 @@ val declareResourceGenerationTasks by extra { p: Project ->
 						val destinationDir by extra(finalResourcesPath)
 
 						description = "Copies generated (${processGeneratedResources.name} outputs) and non-generated " +
-								"resources (${processResources.name} outputs) into ${destinationDir}."
+								"resources (${processResources.name} outputs) into $destinationDir."
 
 						//						from(processResources, usedGeneratedResources.get())
 						// Pseudo-Code:T0D0 | move generatedResourceSources from to Js
@@ -944,7 +931,7 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 					}
 
 					val processGeneratedResources by getting {
-						val htmlSrcCollection by extra(DirCollection.fileCollection(htmlSrcDestPath))
+						val htmlSrcCollection by extra(dir(htmlSrcDestPath, files(htmlSrcDestPath)))
 						dependsOn(htmlSrcCollection)
 					}
 
@@ -1011,11 +998,8 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 						dependsOn(createJsFileManifest)
 					}
 
-					val processGeneratedProdResources by creating(DefaultTask::class) {
-						afterEvaluate {
-							val generatedResourceSources: ConfigurableFileCollection by processGeneratedResources.extra
-							dependsOn(generatedResourceSources)
-						}
+					val generatedResourceSources: ConfigurableFileCollection by processGeneratedResources.extra
+					val prodHtmlSrcCollection by extra(dir(prodHtmlSrcDestPath, files(prodHtmlSrcDestPath)))
 
 						val prodHtmlSrcCollection by extra(DirCollection.fileCollection(prodHtmlSrcDestPath))
 						dependsOn(prodHtmlSrcCollection)
