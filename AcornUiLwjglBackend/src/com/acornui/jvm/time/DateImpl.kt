@@ -163,7 +163,7 @@ class DateImpl : Date {
 
 	override fun equals(other: Any?): Boolean {
 		if (other == null) return false
-		other as? DateRo ?: return false
+		if (other !is DateRo) return false
 		return time == other.time
 	}
 

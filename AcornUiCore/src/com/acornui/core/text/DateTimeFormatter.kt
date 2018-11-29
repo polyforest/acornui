@@ -235,14 +235,19 @@ class DateTimeParser : StringParser<Date> {
 			val month = isoResult.groupValues[2].toIntOrNull() ?: 1
 			val day = isoResult.groupValues[3].toIntOrNull() ?: 1
 			val hour = isoResult.groupValues[4].toIntOrNull() ?: 0
-			val minute = isoResult.groupValues[5].toIntOrNull() ?: 1
+			val minute = isoResult.groupValues[5].toIntOrNull() ?: 0
 			val second = isoResult.groupValues[6].toIntOrNull() ?: 0
 			val milli = isoResult.groupValues[7].toTimeMilli()
 			val sign = if (isoResult.groupValues[8] == "-") -1 else 1
 			val offsetHour = isoResult.groupValues[9].toIntOrNull() ?: 0
 			val offsetMinute = isoResult.groupValues[10].toIntOrNull() ?: 0
 
-			return time.utcDate(fullYear, month, day, hour, minute + sign * (offsetHour * 60 + offsetMinute), second, milli)
+			return if (isUtc || isoResult.groupValues[4].isNotBlank()) {
+				time.utcDate(fullYear, month, day, hour, minute + sign * (offsetHour * 60 + offsetMinute), second, milli)
+			} else {
+				// No time is provided, use midnight in the local time.
+				time.date(fullYear, month, day, hour, minute + sign * (offsetHour * 60 + offsetMinute), second, milli)
+			}
 		}
 
 		val ret = when (type) {

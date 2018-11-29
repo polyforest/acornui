@@ -18,9 +18,7 @@ package com.acornui.core.time
 
 import com.acornui.core.text.parseDate
 import com.acornui.core.zeroPadding
-import com.acornui.serialization.From
 import com.acornui.serialization.Reader
-import com.acornui.serialization.To
 import com.acornui.serialization.Writer
 
 interface DateRo : Comparable<DateRo> {

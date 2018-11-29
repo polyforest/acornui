@@ -40,6 +40,7 @@ class DateParserTest {
 		assertEquals(time.date(fullYear = 2048, month = 3, dayOfMonth = 11), parser.parse("2048-3-11"))
 		assertEquals(time.date(fullYear = 1950, month = 1, dayOfMonth = 1), parser.parse("1950/1/1"))
 		assertEquals(time.date(fullYear = 1950, month = 1, dayOfMonth = 1), parser.parse("1950-1-1"))
+		assertEquals(time.date(fullYear = 1950, month = 1, dayOfMonth = 1), parser.parse("1950-01-01"))
 		assertEquals(null, parser.parse("3:33 2048/3/11"))
 		assertEquals(null, parser.parse("T 2048/3/11"))
 		assertEquals(null, parser.parse("19501/1/1"))
