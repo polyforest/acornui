@@ -55,7 +55,7 @@ val Project.`sourceSets`: SourceSetContainer
 val Gradle.isComposite
 	get() = includedBuilds.isNotEmpty()
 val Gradle.isNestedComposite
-	get() = isComposite && ! isRoot
+	get() = isComposite && !isRoot
 val Project.isComposite
 	get() = gradle.isComposite
 val Gradle.isRoot
@@ -233,6 +233,12 @@ val jsProjectConfiguration by extra { p: Project ->
 val jvmProjectConfiguration by extra { p: Project ->
 	toUnit {
 		with(p) {
+			dependencies {
+				"implementation"(kotlin("stdlib-jdk8"))
+
+				"testImplementation"(kotlin("test"))
+				"testImplementation"(kotlin("test-junit"))
+			}
 			declareResourceGenerationTasks(this)
 		}
 	}

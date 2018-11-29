@@ -23,6 +23,4 @@ dependencies {
     implementation(project(":tools:acornui-utils:acornui-utils-common"))
 
     testImplementation(project(":tools:test-utils:test-utils-common"))
-    testImplementation(kotlin("test-common"))
-    testImplementation(kotlin("test-annotations-common"))
 }

@@ -17,7 +17,3 @@
 plugins {
     kotlin("platform.common")
 }
-
-dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-}

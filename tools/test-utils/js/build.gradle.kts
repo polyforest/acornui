@@ -20,7 +20,7 @@ plugins {
 
 dependencies {
     expectedBy(project(":tools:test-utils:test-utils-common"))
-    implementation(kotlin("test-js"))
 
+    implementation(kotlin("test-js"))
     implementation(project(":tools:acornui-utils:acornui-utils-js"))
 }
