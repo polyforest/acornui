@@ -90,9 +90,7 @@ inline fun <T : Task> T.releaseTask() {
 	val releaseTask by extra(true)
 
 	// If a lambda is passed to onlyIf, the block will be evaluated immediately.
-	project.afterEvaluate {
-		onlyIf(closureOf<Task> { isProdBuild.get() })
-	}
+	onlyIf(closureOf<Task> { isProdBuild.get() })
 }
 
 fun Project.isThatModule(module: String) = this.name == module
@@ -442,11 +440,9 @@ val declareResourceGenerationTasks by extra { p: Project ->
 				val main by sourceSets
 				val buildutils = maybeCreateBuildutilsConfiguration(p)
 
-				val prodHtmlSrcDestPath by extra(prodHtmlSrcDestPath(project))
-				val htmlSrcDestPath by extra(htmlSrcDestPath(project))
 				val processedResourcesPath by extra(processedResourcesPath(p))
 				val finalResourcesPath by extra(finalResourcesPath(p))
-//				val processedSourcePath by extra(processedSourcePath(p))
+				//				val processedSourcePath by extra(processedSourcePath(p))
 
 				val usedGeneratedResources by extra(p.objects.property(FileCollection::class))
 
@@ -505,7 +501,6 @@ val declareResourceGenerationTasks by extra { p: Project ->
 
 						from(main.resources.sourceDirectories)
 						into(processedResourcesPath)
-
 
 						// Swap out resources destination...
 						val processResources by getting(Copy::class)
