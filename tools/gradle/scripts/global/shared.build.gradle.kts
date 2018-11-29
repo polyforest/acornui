@@ -180,24 +180,26 @@ fun setBuildType(project: Project) {
 }
 
 if (isTopLevelIncludedBuild) {
-	tasks {
-		val buildAll by creating(DefaultTask::class) {
-			group = "other-helpers"
-			description = "Build all subprojects."
-			dependsOn(getTasksByName("build", true))
-		}
+	afterEvaluate{
+		tasks {
+			val buildAll by creating(DefaultTask::class) {
+				group = "other-helpers"
+				description = "Build all subprojects."
+				dependsOn(getTasksByName("build", true))
+			}
 
-		val cleanAll by creating(Delete::class) {
-			group = "other-helpers"
-			description = "Delete build directories of all subprojects."
-			dependsOn(getTasksByName("clean", true))
-		}
+			val cleanAll by creating(Delete::class) {
+				group = "other-helpers"
+				description = "Delete build directories of all subprojects."
+				dependsOn(getTasksByName("clean", true))
+			}
 
-		val fatJarAll by creating(Jar::class) {
-			group = "other-helpers"
-			description = "Builds single jar files including all dependencies and resources contained in all " +
-					"subprojects."
-			dependsOn(getTasksByName("fatJar", true))
+			val fatJarAll by creating(Jar::class) {
+				group = "other-helpers"
+				description = "Builds single jar files including all dependencies and resources contained in all " +
+						"subprojects."
+				dependsOn(getTasksByName("fatJar", true))
+			}
 		}
 	}
 }
