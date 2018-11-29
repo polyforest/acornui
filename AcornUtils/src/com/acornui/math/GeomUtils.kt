@@ -44,7 +44,7 @@ object GeomUtils {
 	 */
 	private fun orientation(p: Vector2, q: Vector2, r: Vector2): Int {
 		val i = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y)
-		if (i == 0f) return 0;  // collinear
+		if (i == 0f) return 0  // collinear
 
 		return if (i > 0) 1 else 2 // clock or counter-clock wise
 	}
@@ -65,6 +65,4 @@ object GeomUtils {
 
 		out.set(aBx, aBy).scl(t).add(x, y)
 	}
-
-
 }

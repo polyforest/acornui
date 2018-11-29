@@ -11,10 +11,10 @@ import com.acornui.core.di.owns
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.interaction.dragAttachment
 import com.acornui.core.popup.lift
-import com.acornui.graphics.Color
-import com.acornui.graphics.ColorRo
-import com.acornui.graphics.Hsv
-import com.acornui.graphics.HsvRo
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
+import com.acornui.graphic.Hsv
+import com.acornui.graphic.HsvRo
 import com.acornui.math.*
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal

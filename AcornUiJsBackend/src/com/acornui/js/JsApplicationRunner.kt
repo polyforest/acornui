@@ -21,7 +21,7 @@ import com.acornui.core.AppConfig
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
-import com.acornui.core.graphics.Window
+import com.acornui.core.graphic.Window
 import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.time
 import com.acornui.logging.Log

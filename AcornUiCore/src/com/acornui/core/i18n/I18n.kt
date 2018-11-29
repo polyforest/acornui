@@ -5,7 +5,7 @@ import com.acornui.async.then
 import com.acornui.collection.firstOrNull2
 import com.acornui.collection.stringMapOf
 import com.acornui.core.Disposable
-import com.acornui.core.assets.*
+import com.acornui.core.asset.*
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject

@@ -33,7 +33,7 @@ import com.acornui.core.selection.SelectableComponent
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionRange
 import com.acornui.gl.core.GlState
-import com.acornui.graphics.Color
+import com.acornui.graphic.Color
 import com.acornui.math.*
 import com.acornui.signal.Signal
 

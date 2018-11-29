@@ -1,6 +1,6 @@
 package com.acornui.core.input.interaction
 
-import com.acornui.core.graphics.Texture
+import com.acornui.core.graphic.Texture
 import com.acornui.core.input.InteractionEventRo
 import com.acornui.core.input.InteractionType
 

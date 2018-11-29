@@ -20,10 +20,10 @@ package com.acornui.component
 
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
-import com.acornui.core.graphics.Camera
-import com.acornui.core.graphics.CameraRo
-import com.acornui.core.graphics.orthographicCamera
-import com.acornui.core.graphics.project
+import com.acornui.core.graphic.Camera
+import com.acornui.core.graphic.CameraRo
+import com.acornui.core.graphic.orthographicCamera
+import com.acornui.core.graphic.project
 import com.acornui.gl.core.FrameBufferInfo
 import com.acornui.gl.core.FrameBufferInfoRo
 import com.acornui.gl.core.GlState

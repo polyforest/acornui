@@ -22,7 +22,7 @@ import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
 import com.acornui.core.floor
-import com.acornui.core.graphics.Scaling
+import com.acornui.core.graphic.Scaling
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.PadRo

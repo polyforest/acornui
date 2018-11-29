@@ -7,8 +7,8 @@ import com.acornui.component.drawing.MeshBuilderStyle.lineStyle
 import com.acornui.gl.core.putIndex
 import com.acornui.gl.core.putIndices
 import com.acornui.gl.core.putVertex
-import com.acornui.graphics.Color
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import kotlin.math.cos
 import kotlin.math.sin

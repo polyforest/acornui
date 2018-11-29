@@ -31,7 +31,7 @@
 
 package com.esotericsoftware.spine.data.attachments
 
-import com.acornui.graphics.Color
+import com.acornui.graphic.Color
 import com.esotericsoftware.spine.data.SkinAttachmentType
 
 @Suppress("ArrayInDataClass") // Lazy

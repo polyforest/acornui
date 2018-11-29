@@ -16,13 +16,13 @@
 
 package com.acornui.component
 
-import com.acornui.core.graphics.BlendMode
-import com.acornui.core.graphics.Texture
+import com.acornui.core.graphic.BlendMode
+import com.acornui.core.graphic.Texture
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.putCcwQuadIndices
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putVertex
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import kotlin.math.abs
 import kotlin.math.cos

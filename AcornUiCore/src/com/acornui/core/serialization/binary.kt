@@ -19,8 +19,8 @@ package com.acornui.core.serialization
 import com.acornui.async.Deferred
 import com.acornui.async.async
 import com.acornui.collection.stringMapOf
-import com.acornui.core.assets.AssetManager
-import com.acornui.core.assets.AssetType
+import com.acornui.core.asset.AssetManager
+import com.acornui.core.asset.AssetType
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.io.byteBuffer

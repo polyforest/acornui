@@ -18,7 +18,7 @@ package com.acornui.gl.core
 
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
-import com.acornui.core.graphics.RgbData
+import com.acornui.core.graphic.RgbData
 import com.acornui.core.io.byteBuffer
 
 class RgbTexture(

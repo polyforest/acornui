@@ -21,8 +21,8 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.i18n.Locale
 import com.acornui.core.observe.DataBindingImpl
-import com.acornui.graphics.Color
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import kotlin.properties.Delegates
 
 /**

@@ -32,8 +32,8 @@ object SerializationCodeHelper {
 				Pair("com.acornui.math.Vector2Ro", "vector2"),
 				Pair("com.acornui.math.Vector3", "vector3"),
 				Pair("com.acornui.math.Vector3Ro", "vector3"),
-				Pair("com.acornui.graphics.Color", "color"),
-				Pair("com.acornui.graphics.ColorRo", "color")
+				Pair("com.acornui.graphic.Color", "color"),
+				Pair("com.acornui.graphic.ColorRo", "color")
 		)
 
 		val params = kClass.primaryConstructor?.parameters

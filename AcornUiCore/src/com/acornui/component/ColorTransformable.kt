@@ -16,7 +16,7 @@
 
 package com.acornui.component
 
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.ColorRo
 
 interface ColorTransformableRo {
 

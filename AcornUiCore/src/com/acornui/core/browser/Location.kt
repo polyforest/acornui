@@ -2,7 +2,7 @@ package com.acornui.core.browser
 
 import com.acornui.browser.UrlParams
 import com.acornui.browser.UrlParamsImpl
-import com.acornui.core.graphics.PopUpSpecs
+import com.acornui.core.graphic.PopUpSpecs
 
 
 interface Location {

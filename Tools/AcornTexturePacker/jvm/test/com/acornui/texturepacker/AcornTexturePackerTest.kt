@@ -17,7 +17,7 @@
 package com.acornui.texturepacker
 
 import com.acornui.async.launch
-import com.acornui.core.assets.AssetManager
+import com.acornui.core.asset.AssetManager
 import com.acornui.core.di.inject
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter

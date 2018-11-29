@@ -16,7 +16,7 @@
 
 package com.acornui.jvm.loader
 
-import com.acornui.core.assets.AssetType
+import com.acornui.core.asset.AssetType
 import java.io.InputStream
 import java.nio.charset.Charset
 

@@ -27,11 +27,11 @@ import com.acornui.core.di.Injector
 import com.acornui.core.di.Owned
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
-import com.acornui.core.graphics.BlendMode
-import com.acornui.core.graphics.Texture
+import com.acornui.core.graphic.BlendMode
+import com.acornui.core.graphic.Texture
 import com.acornui.filter.colorTransformationFilter
 import com.acornui.gl.core.*
-import com.acornui.graphics.Color
+import com.acornui.graphic.Color
 import com.acornui.math.*
 
 /**

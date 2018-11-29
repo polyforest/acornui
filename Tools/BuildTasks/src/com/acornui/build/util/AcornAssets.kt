@@ -16,7 +16,7 @@
 
 package com.acornui.build.util
 
-import com.acornui.core.assets.AssetManager
+import com.acornui.core.asset.AssetManager
 import com.acornui.core.di.inject
 import com.acornui.core.io.JSON_KEY
 import com.acornui.core.io.file.Files

@@ -19,7 +19,7 @@ package com.acornui.jvm.graphics
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.GlTextureBase
-import com.acornui.core.graphics.*
+import com.acornui.core.graphic.*
 import com.acornui.jvm.io.JvmBufferUtil
 import java.nio.ByteBuffer
 

@@ -1,6 +1,5 @@
 package com.acornui.component
 
-import com.acornui.collection.forEachReversed2
 import com.acornui.component.layout.HAlign
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.VAlign
@@ -14,7 +13,7 @@ import com.acornui.core.Disposable
 import com.acornui.core.di.Owned
 import com.acornui.core.di.OwnedImpl
 import com.acornui.core.di.own
-import com.acornui.core.graphics.Scaling
+import com.acornui.core.graphic.Scaling
 import com.acornui.core.input.interaction.ClickInteractionRo
 import com.acornui.core.input.interaction.click
 import com.acornui.factory.LazyInstance

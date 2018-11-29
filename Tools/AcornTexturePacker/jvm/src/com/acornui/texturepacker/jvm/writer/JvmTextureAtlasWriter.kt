@@ -17,8 +17,8 @@
 package com.acornui.texturepacker.jvm.writer
 
 import com.acornui.collection.ArrayList
-import com.acornui.core.graphics.TextureAtlasData
-import com.acornui.core.graphics.TextureAtlasDataSerializer
+import com.acornui.core.graphic.TextureAtlasData
+import com.acornui.core.graphic.TextureAtlasDataSerializer
 import com.acornui.gl.core.TexturePixelFormat
 import com.acornui.jvm.graphics.JvmImageUtils
 import com.acornui.serialization.Serializer

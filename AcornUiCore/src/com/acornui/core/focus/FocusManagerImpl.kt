@@ -39,7 +39,6 @@ import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
-import java.lang.Exception
 
 /**
  * @author nbilyk

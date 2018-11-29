@@ -17,7 +17,7 @@
 package com.acornui.gl.core
 
 import com.acornui._assert
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.ColorRo
 import com.acornui.math.Vector3Ro
 
 class VertexAttributes(

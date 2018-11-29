@@ -22,10 +22,10 @@ import com.acornui.async.launch
 import com.acornui.browser.decodeUriComponent2
 import com.acornui.browser.encodeUriComponent2
 import com.acornui.core.*
-import com.acornui.core.assets.AssetManager
-import com.acornui.core.assets.AssetManagerImpl
-import com.acornui.core.assets.AssetType
-import com.acornui.core.assets.LoaderFactory
+import com.acornui.core.asset.AssetManager
+import com.acornui.core.asset.AssetManagerImpl
+import com.acornui.core.asset.AssetType
+import com.acornui.core.asset.LoaderFactory
 import com.acornui.core.di.OwnedImpl
 import com.acornui.core.di.Scoped
 import com.acornui.core.i18n.I18n

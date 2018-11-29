@@ -16,7 +16,7 @@
 
 package com.acornui.component.layout
 
-import com.acornui.core.graphics.CameraRo
+import com.acornui.core.graphic.CameraRo
 import com.acornui.math.*
 
 interface LayoutElementRo : BasicLayoutElementRo, TransformableRo {

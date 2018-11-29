@@ -16,8 +16,8 @@
 
 package com.acornui.particle
 
-import com.acornui.graphics.Color
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.MathUtils
 import com.acornui.serialization.*
 

@@ -18,7 +18,7 @@ package com.acornui.component
 
 import com.acornui.component.layout.Transformable
 import com.acornui.component.layout.TransformableRo
-import com.acornui.core.graphics.CameraRo
+import com.acornui.core.graphic.CameraRo
 import com.acornui.math.MinMax
 import com.acornui.math.RectangleRo
 import com.acornui.math.Vector2

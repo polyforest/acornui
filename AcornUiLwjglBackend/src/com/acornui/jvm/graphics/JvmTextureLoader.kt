@@ -16,9 +16,9 @@
 
 package com.acornui.jvm.graphics
 
-import com.acornui.core.assets.AssetType
-import com.acornui.core.graphics.RgbData
-import com.acornui.core.graphics.Texture
+import com.acornui.core.asset.AssetType
+import com.acornui.core.graphic.RgbData
+import com.acornui.core.graphic.Texture
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.jvm.loader.JvmAssetLoaderBase

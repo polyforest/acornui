@@ -25,7 +25,7 @@ import com.acornui.component.AtlasComponent
 import com.acornui.component.atlas
 import com.acornui.core.time.onTick
 import com.acornui.core.tween.*
-import com.acornui.graphics.Color
+import com.acornui.graphic.Color
 import com.acornui.logging.Log
 import com.acornui.math.*
 import kotlin.math.tan

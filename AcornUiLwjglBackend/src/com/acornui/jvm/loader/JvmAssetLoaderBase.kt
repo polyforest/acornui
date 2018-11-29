@@ -2,8 +2,8 @@ package com.acornui.jvm.loader
 
 import com.acornui.async.Deferred
 import com.acornui.core.Bandwidth
-import com.acornui.core.assets.AssetLoader
-import com.acornui.core.assets.AssetType
+import com.acornui.core.asset.AssetLoader
+import com.acornui.core.asset.AssetType
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException

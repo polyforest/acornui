@@ -25,9 +25,9 @@ import com.acornui.component.style.StyleType
 import com.acornui.component.style.styleProperty
 import com.acornui.component.style.styleTag
 import com.acornui.core.di.Owned
-import com.acornui.graphics.Color
-import com.acornui.graphics.ColorRo
-import com.acornui.graphics.color
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
+import com.acornui.graphic.color
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.serialization.*

@@ -17,7 +17,6 @@
 package com.acornui.skins
 
 import com.acornui.async.launch
-import com.acornui.collection.addAll
 import com.acornui.component.*
 import com.acornui.component.datagrid.DataGrid
 import com.acornui.component.datagrid.DataGridGroupHeader
@@ -31,7 +30,7 @@ import com.acornui.component.scroll.*
 import com.acornui.component.style.*
 import com.acornui.component.text.*
 import com.acornui.core.AppConfig
-import com.acornui.core.assets.cachedGroup
+import com.acornui.core.asset.cachedGroup
 import com.acornui.core.di.*
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.SimpleHighlight
@@ -40,9 +39,9 @@ import com.acornui.core.input.interaction.ContextMenuView
 import com.acornui.core.input.interaction.enableDownRepeat
 import com.acornui.core.popup.PopUpManager
 import com.acornui.core.userInfo
-import com.acornui.graphics.Color
-import com.acornui.graphics.ColorRo
-import com.acornui.graphics.color
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
+import com.acornui.graphic.color
 import com.acornui.math.*
 import com.acornui.serialization.*
 

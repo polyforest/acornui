@@ -32,8 +32,8 @@
 package com.esotericsoftware.spine
 
 import com.acornui.collection.*
-import com.acornui.core.graphics.TextureAtlasData
-import com.acornui.graphics.Color
+import com.acornui.core.graphic.TextureAtlasData
+import com.acornui.graphic.Color
 import com.acornui.math.Bounds
 import com.acornui.math.Vector2
 import com.esotericsoftware.spine.animation.Animation

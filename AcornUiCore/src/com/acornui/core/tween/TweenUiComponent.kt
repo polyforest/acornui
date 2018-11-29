@@ -17,7 +17,7 @@
 package com.acornui.core.tween
 
 import com.acornui.component.UiComponent
-import com.acornui.graphics.Color
+import com.acornui.graphic.Color
 import com.acornui.math.Interpolation
 
 fun UiComponent.tweenAlpha(duration: Float, ease: Interpolation, toAlpha: Float, delay: Float = 0f): Tween {

@@ -32,7 +32,7 @@
 package com.esotericsoftware.spine.renderer
 
 import com.acornui.gl.core.GlState
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.ColorRo
 import com.esotericsoftware.spine.Skeleton
 import com.esotericsoftware.spine.component.LoadedSkeleton
 

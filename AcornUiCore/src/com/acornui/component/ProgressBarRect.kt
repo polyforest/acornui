@@ -5,9 +5,9 @@ import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
 import com.acornui.core.Disposable
-import com.acornui.core.assets.AssetManager
-import com.acornui.core.assets.onLoadersEmpty
-import com.acornui.core.assets.secondsRemaining
+import com.acornui.core.asset.AssetManager
+import com.acornui.core.asset.onLoadersEmpty
+import com.acornui.core.asset.secondsRemaining
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.popup.PopUpInfo
@@ -15,8 +15,8 @@ import com.acornui.core.popup.addPopUp
 import com.acornui.core.popup.removePopUp
 import com.acornui.core.time.onTick
 import com.acornui.core.time.timer
-import com.acornui.graphics.Color
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 
 /**

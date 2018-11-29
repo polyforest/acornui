@@ -16,14 +16,14 @@
 
 package com.acornui.test
 
-import com.acornui.core.assets.AssetManager
+import com.acornui.core.asset.AssetManager
 import com.acornui.core.di.Injector
 import com.acornui.core.di.InjectorImpl
 import com.acornui.core.di.Owned
 import com.acornui.core.di.OwnedImpl
 import com.acornui.core.focus.FocusManager
-import com.acornui.core.graphics.Camera
-import com.acornui.core.graphics.Window
+import com.acornui.core.graphic.Camera
+import com.acornui.core.graphic.Window
 import com.acornui.core.input.InteractivityManager
 import com.acornui.core.input.KeyState
 import com.acornui.core.input.MouseState

@@ -31,7 +31,7 @@
 
 package com.esotericsoftware.spine.data
 
-import com.acornui.graphics.Color
+import com.acornui.graphic.Color
 
 data class BoneData(
 		val parentName: String?,

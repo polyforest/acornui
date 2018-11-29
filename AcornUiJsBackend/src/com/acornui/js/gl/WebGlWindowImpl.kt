@@ -18,10 +18,10 @@ package com.acornui.js.gl
 
 import com.acornui.core.WindowConfig
 import com.acornui.core.browser.Location
-import com.acornui.core.graphics.Window
+import com.acornui.core.graphic.Window
 import com.acornui.gl.core.Gl20
-import com.acornui.graphics.Color
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.js.window.JsLocation
 import com.acornui.logging.Log
 import com.acornui.signal.Signal

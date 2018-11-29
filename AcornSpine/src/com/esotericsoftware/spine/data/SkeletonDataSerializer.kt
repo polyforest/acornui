@@ -17,8 +17,8 @@
 package com.esotericsoftware.spine.data
 
 import com.acornui.collection.stringMapOf
-import com.acornui.core.graphics.BlendMode
-import com.acornui.graphics.Color
+import com.acornui.core.graphic.BlendMode
+import com.acornui.graphic.Color
 import com.acornui.serialization.*
 import com.esotericsoftware.spine.data.animation.AnimationData
 import com.esotericsoftware.spine.data.animation.FfdtKey

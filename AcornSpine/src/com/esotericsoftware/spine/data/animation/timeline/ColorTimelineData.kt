@@ -31,7 +31,7 @@
 
 package com.esotericsoftware.spine.data.animation.timeline
 
-import com.acornui.graphics.Color
+import com.acornui.graphic.Color
 
 data class ColorTimelineData(
 		override val frames: List<ColorFrameData>

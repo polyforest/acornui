@@ -19,7 +19,7 @@ package com.acornui.component
 import com.acornui.component.layout.algorithm.ScaleBoxLayoutContainer
 import com.acornui.component.layout.algorithm.ScaleLayoutData
 import com.acornui.core.di.Owned
-import com.acornui.core.graphics.Texture
+import com.acornui.core.graphic.Texture
 
 /**
  * A component representing a single image.

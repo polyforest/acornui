@@ -18,13 +18,13 @@ package com.acornui.component
 
 import com.acornui.component.drawing.*
 import com.acornui.core.di.Owned
-import com.acornui.core.graphics.BlendMode
+import com.acornui.core.graphic.BlendMode
 import com.acornui.gl.core.putIndex
 import com.acornui.gl.core.putIndices
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putVertex
-import com.acornui.graphics.Color
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.MinMaxRo
 import com.acornui.math.PI

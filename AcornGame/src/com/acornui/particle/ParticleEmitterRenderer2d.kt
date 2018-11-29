@@ -22,8 +22,8 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.component.Sprite
 import com.acornui.gl.core.GlState
-import com.acornui.graphics.Color
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.PI
 
 class ParticleEmitterRenderer2d(

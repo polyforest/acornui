@@ -18,8 +18,8 @@ package com.esotericsoftware.spine.component
 
 import com.acornui.component.ComponentInit
 import com.acornui.gl.core.*
-import com.acornui.graphics.Color
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.esotericsoftware.spine.Skeleton
 import com.esotericsoftware.spine.Slot

@@ -22,9 +22,9 @@ import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
-import com.acornui.core.graphics.BlendMode
-import com.acornui.graphics.Color
-import com.acornui.graphics.ColorRo
+import com.acornui.core.graphic.BlendMode
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.MathUtils
 import com.acornui.math.Matrix4Ro
 

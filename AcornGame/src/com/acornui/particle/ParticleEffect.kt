@@ -18,7 +18,7 @@ package com.acornui.particle
 
 import com.acornui.core.UidUtil
 import com.acornui.core.Version
-import com.acornui.core.graphics.BlendMode
+import com.acornui.core.graphic.BlendMode
 import com.acornui.serialization.*
 
 data class ParticleEffect(

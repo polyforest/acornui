@@ -25,7 +25,7 @@ import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.input.*
-import com.acornui.graphics.Color
+import com.acornui.graphic.Color
 import com.acornui.math.Vector2
 import com.acornui.skins.Theme
 import kotlin.properties.Delegates

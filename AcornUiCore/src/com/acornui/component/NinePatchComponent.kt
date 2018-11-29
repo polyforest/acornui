@@ -17,13 +17,13 @@
 package com.acornui.component
 
 import com.acornui.async.then
-import com.acornui.core.assets.AssetType
-import com.acornui.core.assets.CachedGroup
-import com.acornui.core.assets.cachedGroup
-import com.acornui.core.assets.loadAndCache
+import com.acornui.core.asset.AssetType
+import com.acornui.core.asset.CachedGroup
+import com.acornui.core.asset.cachedGroup
+import com.acornui.core.asset.loadAndCache
 import com.acornui.core.di.Owned
-import com.acornui.core.graphics.BlendMode
-import com.acornui.core.graphics.Texture
+import com.acornui.core.graphic.BlendMode
+import com.acornui.core.graphic.Texture
 import com.acornui.math.IntRectangleRo
 
 /**

@@ -1,7 +1,7 @@
 package com.acornui.jvm.audio
 
 import com.acornui.collection.stringMapOf
-import com.acornui.core.assets.AssetType
+import com.acornui.core.asset.AssetType
 import com.acornui.core.audio.SoundFactory
 import com.acornui.jvm.loader.JvmAssetLoaderBase
 import com.acornui.jvm.loader.WorkScheduler

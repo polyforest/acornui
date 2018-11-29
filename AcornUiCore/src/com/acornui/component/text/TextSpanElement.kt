@@ -5,7 +5,7 @@ import com.acornui.component.ElementParent
 import com.acornui.component.ElementParentRo
 import com.acornui.component.ValidationFlags
 import com.acornui.component.style.*
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.ColorRo
 
 interface TextSpanElementRo<out T : TextElementRo> : ElementParentRo<T> {
 

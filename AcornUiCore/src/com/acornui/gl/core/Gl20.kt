@@ -19,9 +19,9 @@
 package com.acornui.gl.core
 
 import com.acornui.core.di.DKey
-import com.acornui.core.graphics.Texture
+import com.acornui.core.graphic.Texture
 import com.acornui.core.io.floatBuffer
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.ColorRo
 import com.acornui.io.NativeReadBuffer
 import com.acornui.math.Matrix3Ro
 import com.acornui.math.Matrix4Ro
@@ -1072,7 +1072,7 @@ interface Gl20 {
 	 * Specifies the affine transformation of x and y from normalized device coordinates to screen coordinates.
 	 *
 	 * Note - if the current frame buffer is the window, the values should be multiplied by
-	 * [com.acornui.core.graphics.Window.scaleX] and [com.acornui.core.graphics.Window.scaleY]
+	 * [com.acornui.core.graphic.Window.scaleX] and [com.acornui.core.graphic.Window.scaleY]
 	 *
 	 * @param x Specify the lower left corner of the viewport rectangle, in pixels. The initial value is (0,0).
 	 * @param y

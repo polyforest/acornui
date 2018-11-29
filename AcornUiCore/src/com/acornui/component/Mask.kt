@@ -22,7 +22,7 @@ import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.gl.core.*
-import com.acornui.graphics.Color
+import com.acornui.graphic.Color
 import com.acornui.math.*
 import kotlin.math.abs
 import kotlin.math.roundToInt

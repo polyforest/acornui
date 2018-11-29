@@ -3,12 +3,12 @@ package com.acornui.component.text
 import com.acornui.collection.Clearable
 import com.acornui.collection.ClearableObjectPool
 import com.acornui.core.floor
-import com.acornui.core.graphics.BlendMode
+import com.acornui.core.graphic.BlendMode
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putVertex
-import com.acornui.graphics.Color
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.Vector3
 import com.acornui.string.isBreaking

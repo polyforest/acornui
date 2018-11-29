@@ -1,7 +1,7 @@
 package com.acornui.jvm.browser
 
 import com.acornui.core.browser.Location
-import com.acornui.core.graphics.PopUpSpecs
+import com.acornui.core.graphic.PopUpSpecs
 import java.awt.Desktop
 import java.net.URI
 

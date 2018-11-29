@@ -18,7 +18,7 @@ package com.acornui.gl.core
 
 import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
-import com.acornui.core.graphics.Texture
+import com.acornui.core.graphic.Texture
 import com.acornui.core.userInfo
 import com.acornui.logging.Log
 import com.acornui.math.IntRectangle

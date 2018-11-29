@@ -16,7 +16,7 @@
 
 package com.acornui.jvm.graphics
 
-import com.acornui.core.graphics.Texture
+import com.acornui.core.graphic.Texture
 import com.acornui.gl.core.*
 import com.acornui.io.NativeReadBuffer
 import org.lwjgl.BufferUtils

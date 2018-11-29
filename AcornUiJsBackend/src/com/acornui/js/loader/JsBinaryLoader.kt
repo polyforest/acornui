@@ -21,8 +21,8 @@ package com.acornui.js.loader
  */
 import com.acornui.async.Deferred
 import com.acornui.core.Bandwidth
-import com.acornui.core.assets.AssetLoader
-import com.acornui.core.assets.AssetType
+import com.acornui.core.asset.AssetLoader
+import com.acornui.core.asset.AssetType
 import com.acornui.core.request.Request
 import com.acornui.core.request.UrlRequestData
 import com.acornui.io.NativeReadByteBuffer

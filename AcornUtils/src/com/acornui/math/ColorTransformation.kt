@@ -16,8 +16,8 @@
 
 package com.acornui.math
 
-import com.acornui.graphics.Color
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 
 interface ColorTransformationRo {
 	val matrix: Matrix4Ro

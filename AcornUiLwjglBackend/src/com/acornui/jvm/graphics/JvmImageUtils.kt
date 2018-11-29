@@ -16,7 +16,7 @@
 
 package com.acornui.jvm.graphics
 
-import com.acornui.core.graphics.*
+import com.acornui.core.graphic.*
 import java.awt.image.*
 import java.io.*
 import javax.imageio.*

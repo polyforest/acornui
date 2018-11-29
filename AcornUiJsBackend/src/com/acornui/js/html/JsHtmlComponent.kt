@@ -20,7 +20,7 @@ import com.acornui.component.*
 import com.acornui.component.text.TextField
 import com.acornui.core.di.Owned
 import com.acornui.core.focus.Focusable
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.BoundsRo
 import com.acornui.math.Matrix4Ro

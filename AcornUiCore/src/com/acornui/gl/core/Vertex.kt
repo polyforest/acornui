@@ -2,8 +2,8 @@ package com.acornui.gl.core
 
 import com.acornui.collection.ClearableObjectPool
 import com.acornui.collection.Clearable
-import com.acornui.graphics.Color
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.Vector2
 import com.acornui.math.Vector3
 import com.acornui.math.Vector3Ro

@@ -27,10 +27,10 @@ import com.acornui.component.layout.SizeConstraintsRo
 import com.acornui.component.layout.intersectsGlobalRay
 import com.acornui.component.style.*
 import com.acornui.core.*
-import com.acornui.core.assets.AssetManager
+import com.acornui.core.asset.AssetManager
 import com.acornui.core.di.*
 import com.acornui.core.focus.*
-import com.acornui.core.graphics.*
+import com.acornui.core.graphic.*
 import com.acornui.core.input.InteractionEventRo
 import com.acornui.core.input.InteractionType
 import com.acornui.core.input.InteractivityManager
@@ -40,8 +40,8 @@ import com.acornui.filter.RenderFilter
 import com.acornui.function.as1
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
-import com.acornui.graphics.Color
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.acornui.math.MathUtils.offsetRound
 import com.acornui.reflect.observable

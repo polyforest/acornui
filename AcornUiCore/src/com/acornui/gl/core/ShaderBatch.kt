@@ -17,8 +17,8 @@
 package com.acornui.gl.core
 
 import com.acornui.component.drawing.DrawElementsCallRo
-import com.acornui.graphics.Color
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.io.ReadBuffer
 import com.acornui.io.ReadWriteBuffer
 import com.acornui.math.Vector2Ro

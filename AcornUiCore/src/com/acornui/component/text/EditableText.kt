@@ -24,8 +24,8 @@ import com.acornui.core.selection.unselect
 import com.acornui.core.time.delayedCallback
 import com.acornui.core.time.onTick
 import com.acornui.function.as1
-import com.acornui.graphics.Color
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
 import com.acornui.reflect.observable

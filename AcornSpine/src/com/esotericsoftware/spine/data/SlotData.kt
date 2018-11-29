@@ -31,8 +31,8 @@
 
 package com.esotericsoftware.spine.data
 
-import com.acornui.core.graphics.BlendMode
-import com.acornui.graphics.Color
+import com.acornui.core.graphic.BlendMode
+import com.acornui.graphic.Color
 
 data class SlotData(
 		val name: String,

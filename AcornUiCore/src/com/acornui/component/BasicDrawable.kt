@@ -17,7 +17,7 @@
 package com.acornui.component
 
 import com.acornui.gl.core.GlState
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.ColorRo
 import com.acornui.math.Matrix4Ro
 
 interface BasicDrawable {

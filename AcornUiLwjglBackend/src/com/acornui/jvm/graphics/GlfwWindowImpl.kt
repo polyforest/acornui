@@ -19,10 +19,10 @@ package com.acornui.jvm.graphics
 import com.acornui.core.GlConfig
 import com.acornui.core.WindowConfig
 import com.acornui.core.browser.Location
-import com.acornui.core.graphics.Window
+import com.acornui.core.graphic.Window
 import com.acornui.gl.core.Gl20
-import com.acornui.graphics.Color
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.jvm.browser.LwjglLocation
 import com.acornui.logging.Log
 import com.acornui.signal.Signal1

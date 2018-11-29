@@ -17,8 +17,8 @@
 package com.acornui.js.audio
 
 import com.acornui.async.Deferred
-import com.acornui.core.assets.AssetLoader
-import com.acornui.core.assets.AssetType
+import com.acornui.core.asset.AssetLoader
+import com.acornui.core.asset.AssetType
 import com.acornui.core.audio.AudioManager
 import com.acornui.core.audio.Music
 

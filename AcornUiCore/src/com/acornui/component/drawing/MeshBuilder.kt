@@ -4,8 +4,8 @@ import com.acornui.collection.Clearable
 import com.acornui.collection.ObjectPool
 import com.acornui.collection.stringMapOf
 import com.acornui.gl.core.*
-import com.acornui.graphics.Color
-import com.acornui.graphics.ColorRo
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 
 /**
