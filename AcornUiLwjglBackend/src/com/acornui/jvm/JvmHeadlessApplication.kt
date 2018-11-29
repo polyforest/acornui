@@ -37,7 +37,7 @@ import com.acornui.core.io.file.FilesImpl
 import com.acornui.core.text.dateTimeFormatterProvider
 import com.acornui.core.text.numberFormatterProvider
 import com.acornui.core.time.time
-import com.acornui.jvm.graphics.JvmRgbDataLoader
+import com.acornui.jvm.graphic.JvmRgbDataLoader
 import com.acornui.jvm.io.file.ManifestUtil
 import com.acornui.jvm.loader.JvmTextLoader
 import com.acornui.jvm.loader.WorkScheduler

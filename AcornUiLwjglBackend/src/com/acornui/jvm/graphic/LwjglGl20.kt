@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.acornui.jvm.graphics
+package com.acornui.jvm.graphic
 
 import com.acornui.core.graphic.Texture
 import com.acornui.gl.core.*

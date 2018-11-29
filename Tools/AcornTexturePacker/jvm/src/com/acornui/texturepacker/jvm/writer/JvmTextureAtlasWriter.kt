@@ -20,7 +20,7 @@ import com.acornui.collection.ArrayList
 import com.acornui.core.graphic.TextureAtlasData
 import com.acornui.core.graphic.TextureAtlasDataSerializer
 import com.acornui.gl.core.TexturePixelFormat
-import com.acornui.jvm.graphics.JvmImageUtils
+import com.acornui.jvm.graphic.JvmImageUtils
 import com.acornui.serialization.Serializer
 import com.acornui.core.replaceTokens
 import com.acornui.serialization.write

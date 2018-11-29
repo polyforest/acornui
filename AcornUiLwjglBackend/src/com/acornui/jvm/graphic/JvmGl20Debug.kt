@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.acornui.jvm.graphics
+package com.acornui.jvm.graphic
 
 import com.acornui.gl.core.WrappedGl20
 import org.lwjgl.opengl.ARBImaging.GL_TABLE_TOO_LARGE

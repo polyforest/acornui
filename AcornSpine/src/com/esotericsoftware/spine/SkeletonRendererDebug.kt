@@ -205,7 +205,7 @@
 //
 //package com.esotericsoftware.spine
 //
-//import com.acornui.graphics.Color
+//import com.acornui.graphic.Color
 //import com.esotericsoftware.spine.attachments.MeshAttachment
 //import com.esotericsoftware.spine.attachments.RegionAttachment
 //import com.esotericsoftware.spine.attachments.WeightedMeshAttachment

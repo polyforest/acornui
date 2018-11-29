@@ -75,10 +75,10 @@ import com.acornui.jvm.audio.OpenAlMusicLoader
 import com.acornui.jvm.audio.OpenAlSoundLoader
 import com.acornui.jvm.cursor.JvmCursorManager
 import com.acornui.jvm.files.JvmFileIoManager
-import com.acornui.jvm.graphics.GlfwWindowImpl
-import com.acornui.jvm.graphics.JvmGl20Debug
-import com.acornui.jvm.graphics.JvmTextureLoader
-import com.acornui.jvm.graphics.LwjglGl20
+import com.acornui.jvm.graphic.GlfwWindowImpl
+import com.acornui.jvm.graphic.JvmGl20Debug
+import com.acornui.jvm.graphic.JvmTextureLoader
+import com.acornui.jvm.graphic.LwjglGl20
 import com.acornui.jvm.input.JvmClipboardDispatcher
 import com.acornui.jvm.input.JvmMouseInput
 import com.acornui.jvm.input.LwjglKeyInput
