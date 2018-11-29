@@ -42,7 +42,7 @@ val polyforestProjectFlag = "POLYFOREST_PROJECT"
 val ACORNUI_HOME by acornConfig
 val APP_HOME = acornConfig["APP_HOME"]
 
-// Helpers
+// General helpers
 // sourceSets is being seen as private in applied scripts, so locally defining accessor here
 /**
  * Retrieves the [sourceSets][org.gradle.api.tasks.SourceSetContainer] extension.
@@ -85,7 +85,9 @@ val Project.isPolyForestProject: Boolean by lazy {
  * differing configuration.
  */
 inline fun <T : Task> T.releaseTask() {
+	// So that the task can be identified as a release task...
 	val releaseTask by extra(true)
+
 	// If a lambda is passed to onlyIf, the block will be evaluated immediately.
 	project.afterEvaluate {
 		onlyIf(closureOf<Task> { isProdBuild.get() })
@@ -366,6 +368,9 @@ fun generatePatterns(fileDetails: List<FileVisitDetails>): List<String> {
 	}
 }
 
+/**
+ * Destination directory root for generated/processed resources.
+ */
 fun generatedResourceTaskPath(project: Project, taskName: String? = null): String {
 
 	val generatedResourceBasePath = "${project.buildDir.canonicalPath}/generated-resources/main"
@@ -373,8 +378,19 @@ fun generatedResourceTaskPath(project: Project, taskName: String? = null): Strin
 	return "$generatedResourceBasePath${taskName?.let { "/$it" } ?: ""}"
 }
 
-fun prodHtmlSrcDestPath(project: Project) = "${generatedResourceTaskPath(project)}/htmlSrcDist"
+/**
+ * Destination for development html sources.
+ */
 fun htmlSrcDestPath(project: Project) = "${generatedResourceTaskPath(project)}/htmlSrc"
+
+/**
+ * Destination for production html sources.
+ */
+fun prodHtmlSrcDestPath(project: Project) = "${generatedResourceTaskPath(project)}/htmlSrcDist"
+
+/**
+ * Return the proper html source path depending on the build type (prod/dev).
+ */
 fun htmlSrcDestPathByBuildType(project: Project): String {
 
 	return if (isProdBuild.get())
@@ -383,7 +399,15 @@ fun htmlSrcDestPathByBuildType(project: Project): String {
 		htmlSrcDestPath(project)
 }
 
+/**
+ * Destination for packed assets.
+ */
 fun processedResourcesPath(project: Project) = "${generatedResourceTaskPath(project)}/assetSrc"
+
+/**
+ * Path to processed (static or post-compiled) source.
+ * e.g. processed dev or production html source for Js would go here.
+ */
 fun processedSourcePath(project: Project): String? {
 
 	return if (isThatModule("${rootProject.name}-jvm"))
@@ -392,15 +416,24 @@ fun processedSourcePath(project: Project): String? {
 		htmlSrcDestPathByBuildType(project)
 }
 
+/**
+ * Destination for finalized resources (processed and unprocessed).
+ *
+ * Note:  Js backend combines sources and resources into this directory for serving the application statically on a
+ * local dev web server.
+ */
 fun finalResourcesPath(project: Project): String = "${project.buildDir}/finalResources/main"
 
+/**
+ * Resource processing and generation for jvm and js backends.
+ */
 val declareResourceGenerationTasks by extra { p: Project ->
 
 	toUnit {
 		with(p) {
 			fun Project.isApplicationEntryPointModule(): Boolean {
 				return isAppModule() &&
-					   (isThatModule("${rootProject.name}-jvm") || isThatModule("${rootProject.name}-js"))
+						(isThatModule("${rootProject.name}-jvm") || isThatModule("${rootProject.name}-js"))
 			}
 
 			if (isApplicationEntryPointModule()) {
@@ -442,18 +475,18 @@ val declareResourceGenerationTasks by extra { p: Project ->
 				 *
 				 * Exports the old resources output directory as a project level extra property.
 				 **/
-//				fun swapResourcesOutputDirectory(project: Project, resourcesDestPath: String) {
-//					toUnit {
-//						with(p) {
-//							val oldResourcesOutputDir by project.extra(file(main.output.resourcesDir.absolutePath))!!
-//							val processResources by project.tasks.getting(Copy::class) {
-//								destinationDir = oldResourcesOutputDir
-//							}
-//
-//							main.output.resourcesDir = file(resourcesDestPath)
-//						}
-//					}
-//				}
+				//				fun swapResourcesOutputDirectory(project: Project, resourcesDestPath: String) {
+				//					toUnit {
+				//						with(p) {
+				//							val oldResourcesOutputDir by project.extra(file(main.output.resourcesDir.absolutePath))!!
+				//							val processResources by project.tasks.getting(Copy::class) {
+				//								destinationDir = oldResourcesOutputDir
+				//							}
+				//
+				//							main.output.resourcesDir = file(resourcesDestPath)
+				//						}
+				//					}
+				//				}
 
 				setBuildType(p)
 
@@ -506,8 +539,8 @@ val declareResourceGenerationTasks by extra { p: Project ->
 						outputs.dir(srcDir).withPropertyName("outputFiles")
 
 						args = listOf(
-								"-target=assets",
-								"-src=${inputs.properties["src"]}"
+							"-target=assets",
+							"-src=${inputs.properties["src"]}"
 						)
 						this.main = "com.acornui.build.BuildUtilKt"
 						classpath = buildutils
@@ -533,10 +566,10 @@ val declareResourceGenerationTasks by extra { p: Project ->
 						outputs.file("$destinationDir/files.json")
 
 						args = listOf(
-								"-target=asset-manifest",
-								"-src=${inputs.properties["src"]}",
-								"-dest=${inputs.properties["dest"]}",
-								"-root=${inputs.properties["root"]}"
+							"-target=asset-manifest",
+							"-src=${inputs.properties["src"]}",
+							"-dest=${inputs.properties["dest"]}",
+							"-root=${inputs.properties["root"]}"
 						)
 						this.main = "com.acornui.build.BuildUtilKt"
 						classpath = buildutils
@@ -587,9 +620,8 @@ val declareResourceGenerationTasks by extra { p: Project ->
 						description = "Copies generated (${processGeneratedResources.name} outputs) and non-generated " +
 								"resources (${processResources.name} outputs) into $destinationDir."
 
-						//						from(processResources, usedGeneratedResources.get())
-						// Pseudo-Code:T0D0 | move generatedResourceSources from to Js
 						val generatedResourceSources: ConfigurableFileCollection by processGeneratedResources.extra
+
 						from(processResources, generatedResourceSources)
 						into(destinationDir)
 					}
@@ -601,7 +633,7 @@ val declareResourceGenerationTasks by extra { p: Project ->
 					// Package jar just like the file-system deploy.
 					val jar by getting(Jar::class) {
 						val compiledOutputPatterns =
-								generatePatterns(main.output.classesDirs.asFileTree.getRootsChildren())
+							generatePatterns(main.output.classesDirs.asFileTree.getRootsChildren())
 						exclude(compiledOutputPatterns)
 					}
 
@@ -621,7 +653,7 @@ val declareResourceGenerationTasks by extra { p: Project ->
 	}
 }
 
-// Must be object declaration to support reified inline function usage.
+// Js helpers.
 object NpmDependencies {
 
 	val dependencies = mapOf("http-server" to "0.11.1", "uglify-js" to "3.4.9")
@@ -633,7 +665,6 @@ object NpmDependencies {
 	fun taskNameSuffix(npmModule: String): String {
 		return npmModule.toLowerCase().split('-').joinToString("") { it.capitalize() }
 	}
-
 }
 
 val npmRunPrefix by extra("npmRun")
@@ -651,7 +682,6 @@ object SourceFileManipulator {
 
 	/**
 	 * Iterates through [files] and applies [processors] to their contents in place.
-	 *
 	 */
 	fun <T : Iterable<File>> process(files: T, processors: List<FileProcessor>) {
 		files.forEach {
@@ -675,8 +705,10 @@ object SourceFileManipulator {
 
 object ScriptCacheBuster {
 
-	val extensions = listOf("asp", "aspx", "cshtml", "cfm", "go", "jsp", "jspx", "php",
-							"php3", "php4", "phtml", "html", "htm", "rhtml", "css")
+	val extensions = listOf(
+		"asp", "aspx", "cshtml", "cfm", "go", "jsp", "jspx", "php", "php3", "php4", "phtml", "html", "htm", "rhtml",
+		"css"
+	)
 
 	private val regex = Regex("""([\w./\\]+)(\?[\w=&]*)(%VERSION%)""")
 
@@ -688,9 +720,9 @@ object ScriptCacheBuster {
 	 */
 	fun replaceVersionWithModTime(src: String, file: File): String {
 		return regex.replace(src) { match ->
-			val path = match.groups[1] !!.value
+			val path = match.groups[1]!!.value
 			val relativeFile = File(file.parent, path)
-			if (relativeFile.exists()) path + match.groups[2] !!.value + relativeFile.lastModified()
+			if (relativeFile.exists()) path + match.groups[2]!!.value + relativeFile.lastModified()
 			else match.value
 		}
 	}
@@ -714,8 +746,8 @@ object KotlinMonkeyPatcher {
 	 */
 	private fun stripCce(src: String): String {
 		return Regex("""Kotlin\.isType\(([^,(]+),\s*[^)]+\)\s*\?\s*([^:]+)\s*:\s*Kotlin\.throwCCE\(\)""").replace(src) {
-			val one = it.groups[1] !!.value.trim()
-			val two = it.groups[2] !!.value.trim()
+			val one = it.groups[1]!!.value.trim()
+			val two = it.groups[2]!!.value.trim()
 			if (one == two) {
 				"true?$one:null"
 			} else {
@@ -730,7 +762,8 @@ object KotlinMonkeyPatcher {
 
 	private fun simplifyArrayListGet(src: String): String {
 		return Regex("""ArrayList\.prototype\.get_za3lpa\$[\s]*=[\s]*function[\s]*\(index\)[\s]*\{([^}]+)};""").replace(
-				src) {
+			src
+		) {
 			"""ArrayList.prototype.get_za3lpa$ = function(index) { return this.array_hd7ov6${'$'}_0[index] };"""
 		}
 	}
@@ -740,9 +773,11 @@ object KotlinMonkeyPatcher {
  * Retrieves the [node][com.liferay.gradle.plugins.node.NodeExtension] extension.
  */
 val org.gradle.api.Project.`node`: com.liferay.gradle.plugins.node.NodeExtension
-	get() =
-		(this as org.gradle.api.plugins.ExtensionAware).extensions.getByType<com.liferay.gradle.plugins.node.NodeExtension>()
+	get() = (this as org.gradle.api.plugins.ExtensionAware).extensions.getByType()
 
+/**
+ * Configuration for a module that serves as a Js entry point for the acorn app (i.e. consuming app).
+ */
 val declareJsEntryPointConfiguration by extra { p: Project ->
 
 	toUnit {
@@ -766,8 +801,8 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 				// TODO - MP: Migrate to global properties?
 				acornConfig["JS_LIBS_DEST"] = "lib"
 				acornConfig["HTML_SRC_PATH"] = "${projectDir.canonicalPath}/src/main/web"
-				val libsDest = acornConfig["JS_LIBS_DEST"] !!
-				val htmlSrc = acornConfig["HTML_SRC_PATH"] !!
+				val libsDest = acornConfig["JS_LIBS_DEST"]!!
+				val htmlSrc = acornConfig["HTML_SRC_PATH"]!!
 
 				tasks {
 					val buildutils = maybeCreateBuildutilsConfiguration(p)
@@ -795,7 +830,7 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 							listOf(".js", ".js.map").any { path.endsWith(it) }
 						}
 						val allDirsSansDependencyMeta = { path: String ->
-							path.startsWith("META-INF/resources/") || ! path.startsWith("META-INF")
+							path.startsWith("META-INF/resources/") || !path.startsWith("META-INF")
 						}
 
 						val currentCopyDetails = mutableListOf<FileCopyDetails>()
@@ -835,7 +870,8 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 					}
 
 					val stageWebSourceForProcessing by creating(Copy::class) {
-						description = "Copy gathered html source into intermediate build directory for further processing."
+						description =
+								"Copy gathered html source into intermediate build directory for further processing."
 
 						from(assembleWebSource)
 						exclude("**/*.js.map")
@@ -878,14 +914,12 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 						group = "build"
 						description = "Generate a file manifest of js libs for file handling at runtime."
 
-//						// TODO - MP - TEST: Might ruin caching?
-//						val destinationDir = htmlSrcDestPathByBuildType
 						val destinationDir = htmlSrcDestPath
 
 						with(inputs) {
 							// Directory path containing resources to be targeted by the manifest.
 							property("src", destinationDir)
-							// TODO - MP: Remove this?
+
 							// Directory path from which relative paths to resources are generated.
 							property("root", destinationDir)
 							property("dest", "$destinationDir/$libsDest")
@@ -895,10 +929,10 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 						outputs.dir(destinationDir).withPropertyName("outputFiles")
 
 						args = listOf(
-								"-target=lib-manifest",
-								"-src=${inputs.properties["src"]}",
-								"-dest=${inputs.properties["dest"]}",
-								"-root=${inputs.properties["root"]}"
+							"-target=lib-manifest",
+							"-src=${inputs.properties["src"]}",
+							"-dest=${inputs.properties["dest"]}",
+							"-root=${inputs.properties["root"]}"
 						)
 						this.main = "com.acornui.build.BuildUtilKt"
 						classpath = buildutils
@@ -906,18 +940,16 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 						buildsDir(destinationDir)
 						// TODO - MP - TEST: Does this go whenever if optimizeJs doesn't execute and it doesn't
 						// explicitly depend on stageWebSourceForPorcessing?
-//						dependsOn(stageWebSourceForProcessing, optimizeJs)
-						dependsOn(stageWebSourceForProcessing)
+						dependsOn(stageWebSourceForProcessing, optimizeJs)
 					}
 
 					val bustHtmlSourceScriptCache by creating(SourceTask::class) {
 						description = "Modify ${project.name} html sources to bust browser cache."
 
-//						val srcDir = htmlSrcDestPathByBuildType
 						val srcDir = htmlSrcDestPath
 						source(srcDir)
 						include { fileTreeElement ->
-							! fileTreeElement.isDirectory && ScriptCacheBuster.extensions.any { extension ->
+							!fileTreeElement.isDirectory && ScriptCacheBuster.extensions.any { extension ->
 								fileTreeElement.name.endsWith(extension)
 							}
 						}
@@ -944,14 +976,12 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 						group = "build"
 						description = "Generate a file manifest of js libs for file handling at runtime."
 
-						//						// TODO - MP - TEST: Might ruin caching?
-						//						val destinationDir = htmlSrcDestPathByBuildType
 						val destinationDir = prodHtmlSrcDestPath
 
 						with(inputs) {
 							// Directory path containing resources to be targeted by the manifest.
 							property("src", destinationDir)
-							// TODO - MP: Remove this?
+
 							// Directory path from which relative paths to resources are generated.
 							property("root", destinationDir)
 							property("dest", "$destinationDir/$libsDest")
@@ -961,10 +991,10 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 						outputs.dir(destinationDir).withPropertyName("outputFiles")
 
 						args = listOf(
-								"-target=lib-manifest",
-								"-src=${inputs.properties["src"]}",
-								"-dest=${inputs.properties["dest"]}",
-								"-root=${inputs.properties["root"]}"
+							"-target=lib-manifest",
+							"-src=${inputs.properties["src"]}",
+							"-dest=${inputs.properties["dest"]}",
+							"-root=${inputs.properties["root"]}"
 						)
 						this.main = "com.acornui.build.BuildUtilKt"
 						classpath = buildutils
@@ -984,7 +1014,7 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 						val srcDir = prodHtmlSrcDestPath
 						source(srcDir)
 						include { fileTreeElement ->
-							! fileTreeElement.isDirectory && ScriptCacheBuster.extensions.any { extension ->
+							!fileTreeElement.isDirectory && ScriptCacheBuster.extensions.any { extension ->
 								fileTreeElement.name.endsWith(extension)
 							}
 						}
@@ -1012,13 +1042,12 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 						into(destinationDir)
 
 						val processResources by getting
-						afterEvaluate {
-							val generatedResourceSources: ConfigurableFileCollection by processGeneratedResources.extra
-							from(processResources, generatedResourceSources)
-						}
+						from(processResources, generatedResourceSources, prodHtmlSrcCollection)
 
-						val prodHtmlSrcCollection: ConfigurableFileCollection by processGeneratedProdResources.extra
-						from(prodHtmlSrcCollection)
+						// Pseudo-Code:T0D0 | Make finalResourcesPath a dirCollection?
+						// Pseudo-Code:T0D0 | I believe this is redundant
+						//						destinationDir = file(finalResourcesPath(p))
+						into(file(finalResourcesPath(p)))
 
 						releaseTask()
 					}
@@ -1130,7 +1159,6 @@ if (isCompositeRoot) {
 }
 
 val GRADLE_VERSION by acornConfig
-
 tasks.withType<Wrapper> {
 	gradleVersion = GRADLE_VERSION
 	distributionType = Wrapper.DistributionType.ALL
