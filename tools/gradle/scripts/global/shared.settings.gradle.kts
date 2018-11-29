@@ -18,6 +18,7 @@ import java.net.URL
 
 val acornUiHomePropName = "ACORNUI_HOME"
 val ACORNUI_HOME: String = gradle.startParameter.projectProperties[acornUiHomePropName]!!
+val acornUiHome = file(ACORNUI_HOME)
 val ACORNUI_SHARED_PROPS_PATH: String by gradle.startParameter.projectProperties
 apply(from = "$ACORNUI_HOME/$ACORNUI_SHARED_PROPS_PATH")
 
@@ -54,7 +55,7 @@ settings.pluginManagement {
 				useVersion(KOTLIN_VERSION)
 			if (requested.id.id.startsWith("org.gretty"))
 				useVersion(GRETTY_VERSION)
-			if (rootDir.canonicalPath == ACORNUI_HOME && requested.id.id.startsWith("org.jetbrains.dokka"))
+			if (rootDir.canonicalPath == acornUiHome.canonicalPath && requested.id.id.startsWith("org.jetbrains.dokka"))
 				useVersion(DOKKA_VERSION)
 			if (requested.id.isPolyForest) {
 				val version = requested.version ?: DEFAULT_ACORNUI_PLUGIN_VERSION
@@ -136,7 +137,7 @@ if (isCompositeRoot) {
 			else
 				a
 		}
-		val allIncludedBuilds = ACORNUI_HOME.asList() + acornConfig["APP_DIR"].asList() + includedBuildsList
+		val allIncludedBuilds = acornUiHome.canonicalPath.asList() + acornConfig["APP_DIR"].asList() + includedBuildsList
 
 		// Make available globally
 		acornConfig["ALL_INCLUDED_BUILDS"] = allIncludedBuilds.joinToString(",")

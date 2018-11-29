@@ -40,6 +40,7 @@ buildscript {
 val acornConfig: Map<String, String> = gradle.startParameter.projectProperties
 val polyforestProjectFlag = "POLYFOREST_PROJECT"
 val ACORNUI_HOME by acornConfig
+val acornUiHome = file(ACORNUI_HOME)
 val APP_HOME = acornConfig["APP_HOME"]
 
 // General helpers
@@ -67,12 +68,12 @@ val Project.isTopLevelIncludedBuild
 	get() = gradle.parent?.let { it.isComposite && it.isRoot } ?: false
 
 val Project.isAcornUiRoot
-	get() = projectDir.canonicalPath == ACORNUI_HOME
+	get() = projectDir.canonicalPath == acornUiHome.canonicalPath
 val Project.isAcornUiProject
 	get() = rootProject.isAcornUiRoot
 
 val Project.isAcornUi: Boolean by lazy {
-	projectDir.canonicalPath == ACORNUI_HOME
+	projectDir.canonicalPath == acornUiHome.canonicalPath
 }
 val Project.isPolyForestProject: Boolean by lazy {
 	(this.hasProperty(polyforestProjectFlag) && this.property(polyforestProjectFlag).toString().toBoolean())
