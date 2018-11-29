@@ -16,9 +16,9 @@
 
 // In some runtime contexts, gradle.startParameter.projectProperties is immutable.
 val sharedProperties = mapOf(
-		"GRADLE_VERSION" to "4.10-rc-3",
+		"GRADLE_VERSION" to "5.0",
 		"TARGET_JVM_VERSION" to "1.8",
-		"KOTLIN_VERSION" to "1.2.60",
+		"KOTLIN_VERSION" to "1.3.0",
 		"ACORNUI_GROUP" to "com.polyforest",
 		// From plugins project directories.
 		"ACORNUI_PLUGINS_REPO" to "../repository",
