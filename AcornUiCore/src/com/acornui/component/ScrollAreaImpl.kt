@@ -21,6 +21,7 @@ import com.acornui.core.di.Owned
 import com.acornui.core.floor
 import com.acornui.core.input.interaction.WheelInteractionRo
 import com.acornui.core.input.wheel
+import com.acornui.core.time.callLater
 import com.acornui.math.Bounds
 
 /**
@@ -124,7 +125,10 @@ open class ScrollAreaImpl(
 
 	private fun focusChangedHandler(old: UiComponentRo?, new: UiComponentRo?) {
 		if (new != null && isAncestorOf(new)) {
-			scrollTo(new)
+			callLater {
+				// Inside a callLater because scrollTo invokes validation and focus changes may happen within validation.
+				scrollTo(new)
+			}
 		}
 	}
 
