@@ -30,9 +30,18 @@ interface DataBindingRo<T> {
 
 interface DataBinding<T> : DataBindingRo<T>, Disposable {
 
+	/**
+	 * This data binding's value.
+	 * This will do nothing if the [changed] signal is currently dispatching.
+	 */
 	override var value: T
 
-	fun change(callback: (T) -> T)
+	/**
+	 * Changes this data binding's value.
+	 * @param callback The callback is given the old value, and should return the new value.
+	 * @return Returns false if the data has not changed or if the [changed] signal is currently dispatching.
+	 */
+	fun change(callback: (T) -> T): Boolean
 }
 
 class DataBindingImpl<T>(initialValue: T) : DataBinding<T> {
@@ -52,13 +61,19 @@ class DataBindingImpl<T>(initialValue: T) : DataBinding<T> {
 			if (_changed.isDispatching) return
 			val old = _value
 			if (old == value) return
+			if (_changed.isDispatching) return
 			_value = value
 			_changed.dispatch(old, value)
 		}
 
-	override fun change(callback: (T) -> T) {
-		if (_changed.isDispatching) return
-		value = callback(value)
+	override fun change(callback: (T) -> T): Boolean {
+		val old = _value
+		if (_changed.isDispatching) return false
+		val newValue = callback(value)
+		if (old == newValue) return false
+		_value = newValue
+		_changed.dispatch(old, newValue)
+		return true
 	}
 
 	override fun bind(callback: (T) -> Unit): Disposable {
