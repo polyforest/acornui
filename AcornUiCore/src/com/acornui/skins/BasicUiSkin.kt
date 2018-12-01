@@ -160,7 +160,8 @@ open class BasicUiSkin(
 					TextStyleTags.h1,
 					TextStyleTags.h2,
 					TextStyleTags.h3,
-					TextStyleTags.h4
+					TextStyleTags.h4,
+					formLabelStyle
 			))
 
 			target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_bold_14.fnt" }, withAncestor(TextStyleTags.strong))
