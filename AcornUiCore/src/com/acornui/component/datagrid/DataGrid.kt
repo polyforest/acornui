@@ -83,6 +83,7 @@ class DataGrid<E>(
 	}
 
 	private val cellClickedCancel = Cancel()
+
 	private val _cellClicked = own(Signal2<CellLocation, Cancel>())
 
 	/**
@@ -236,6 +237,10 @@ class DataGrid<E>(
 	private val hScrollBar = clipper.addElement(hScrollBar { visible = false; styleTags.add(SCROLL_BAR) })
 	private val vScrollBar = clipper.addElement(vScrollBar { visible = false; styleTags.add(SCROLL_BAR) })
 
+	/**
+	 * Use this to set the horizontal scroll position.
+	 * The horizontal position is the column position index.
+	 */
 	val hScrollModel: ScrollModel
 		get() = hScrollBar.scrollModel
 
@@ -423,6 +428,16 @@ class DataGrid<E>(
 		}
 	}
 
+	override fun onActivated() {
+		super.onActivated()
+		focusManager.focusedChanged.add(this::focusChangedHandler)
+	}
+
+	override fun onDeactivated() {
+		super.onDeactivated()
+		focusManager.focusedChanged.remove(this::focusChangedHandler)
+	}
+
 	private fun keyDownHandler(event: KeyInteractionRo) {
 		if (event.defaultPrevented()) return
 
@@ -505,7 +520,7 @@ class DataGrid<E>(
 		validate(ValidationFlags.LAYOUT)
 		val p = tmp
 		canvasToLocal(p.set(canvasX, canvasY))
-		val columnIndex = if (p.x < 0 || p.x > width) -1 else columnPositions.sortedInsertionIndex(p.x + hScrollModel.value) - 1
+		val columnIndex = if (p.x < 0 || p.x > width) -1 else _columnPositions.sortedInsertionIndex(p.x + hScrollModel.value) - 1
 		val headerHeight = headerCells.height
 		if (firstVisibleColumn == -1 || p.y < headerHeight || p.y > height) return CellLocation(-1, columnIndex)
 
@@ -567,6 +582,7 @@ class DataGrid<E>(
 	 */
 	val editorCellLocation: CellLocation?
 		get() {
+			editorCellCheck()
 			if (editorCell == null) return null
 			return CellLocation(sourceIndexToLocal(editorCellRow.index)!!, editorCellCol.index)
 		}
@@ -598,11 +614,11 @@ class DataGrid<E>(
 		val row = data[sourceIndex]
 		@Suppress("unchecked_cast")
 		val editorCell = col.createEditorCell(this) as DataGridEditorCell<Any?>
+		editorCell.changed.add(this::commitCellEditorValue)
 		editorCell.setData(col.getCellData(row))
 		editorCellContainer.addElement(editorCell)
 		editorCell.focus()
 		this.editorCell = editorCell
-		inject(FocusManager).focusedChanged.add(this::focusChangedHandler)
 		bringIntoView(cellLocation)
 	}
 
@@ -666,7 +682,7 @@ class DataGrid<E>(
 	 */
 	fun bringIntoView(cellLocation: CellLocation) {
 		bringIntoView(cellLocation as DataGrid<E>.RowLocation)
-		hScrollModel.value = clamp(hScrollModel.value, columnPositions[cellLocation.columnIndex] + columnWidths[cellLocation.columnIndex] - contents.width, columnPositions[cellLocation.columnIndex])
+		hScrollModel.value = clamp(hScrollModel.value, _columnPositions[cellLocation.columnIndex] + _columnWidths[cellLocation.columnIndex] - contents.width, _columnPositions[cellLocation.columnIndex])
 	}
 
 	private fun commitCellEditorValue() {
@@ -679,16 +695,17 @@ class DataGrid<E>(
 	}
 
 	private fun disposeCellEditor() {
-		if (editorCell == null) return
-		inject(FocusManager).focusedChanged.remove(this::focusChangedHandler)
+		val editorCell = editorCell ?: return
 		editorCellCol.clear()
 		editorCellRow.clear()
-		editorCell?.dispose()
-		editorCell = null
+		this.editorCell = null
+		editorCell.dispose()
 	}
 
 	private fun focusChangedHandler(old: UiComponentRo?, new: UiComponentRo?) {
 		if (new == null || !owns(new)) {
+			editorCellCheck()
+			commitCellEditorValue()
 			disposeCellEditor()
 		}
 	}
@@ -819,30 +836,47 @@ class DataGrid<E>(
 		}
 	}
 
+	private val _columnWidths = ArrayList<Float>()
+
 	/**
 	 * The measured width of each column.
 	 */
-	private val columnWidths = ArrayList<Float>()
-	private val columnPositions = ArrayList<Float>()
+	val columnWidths: List<Float>
+		get() {
+			validate(ValidationFlags.LAYOUT)
+			return _columnWidths
+		}
+
+	private val _columnPositions = ArrayList<Float>()
+
+	/**
+	 * The x position of each column.
+	 */
+	val columnPositions: List<Float>
+		get() {
+			validate(ValidationFlags.LAYOUT)
+			return _columnPositions
+		}
 
 	/**
 	 * The sum of [columnWidths]
 	 */
-	private var columnsWidth = 0f
+	var columnsWidth = 0f
+		private set
 
 	private fun updateColumnWidths() {
 		var availableW = style.borderThickness.reduceWidth(explicitWidth)
 		val vScrollBarW = if (vScrollPolicy == ScrollPolicy.OFF) 0f else vScrollBar.minWidth ?: 0f
 		if (availableW != null) availableW -= vScrollBarW
 
-		columnWidths.clear()
+		_columnWidths.clear()
 		var totalColW = 0f
 		var inflexibleW = 0f
 
 		for (i in 0.._columns.lastIndex) {
 			val col = _columns[i]
 			if (!col.visible) {
-				columnWidths.add(0f)
+				_columnWidths.add(0f)
 				continue
 			}
 			val prefWidth = getPreferredColumnWidth(col)
@@ -852,7 +886,7 @@ class DataGrid<E>(
 				col.minWidth
 			}
 			totalColW += prefWidth
-			columnWidths.add(prefWidth)
+			_columnWidths.add(prefWidth)
 		}
 
 		if (availableW != null && hScrollPolicy == ScrollPolicy.OFF) {
@@ -886,10 +920,10 @@ class DataGrid<E>(
 		}
 
 		var x = 0f
-		columnPositions.clear()
+		_columnPositions.clear()
 		for (i in 0.._columns.lastIndex) {
-			columnPositions.add(x)
-			x += columnWidths[i]
+			_columnPositions.add(x)
+			x += _columnWidths[i]
 		}
 
 		columnsWidth = totalColW
@@ -914,13 +948,13 @@ class DataGrid<E>(
 		if (availableW != null) availableW -= vScrollBarW
 
 		val scrollX = hScrollModel.value
-		firstVisibleColumn = columnPositions.sortedInsertionIndex(scrollX) - 1
+		firstVisibleColumn = _columnPositions.sortedInsertionIndex(scrollX) - 1
 		lastVisibleColumn = firstVisibleColumn
 		if (availableW == null) {
 			lastVisibleColumn = _columns.lastIndex
 		} else {
 			for (i in firstVisibleColumn + 1.._columns.lastIndex) {
-				if (columnPositions[i] - scrollX < availableW) {
+				if (_columnPositions[i] - scrollX < availableW) {
 					lastVisibleColumn = i
 				}
 			}
@@ -947,7 +981,7 @@ class DataGrid<E>(
 			while (i < n) {
 				val j = columnsWithSpace[i]
 				val col = _columns[j]
-				val oldColWidth = columnWidths[j]
+				val oldColWidth = _columnWidths[j]
 				var newColW = oldColWidth + wInc
 				if (newColW < col.minWidth) {
 					newColW = col.minWidth
@@ -955,7 +989,7 @@ class DataGrid<E>(
 					i--; n--
 				}
 				val iWDiff = newColW - oldColWidth
-				columnWidths[j] = newColW
+				_columnWidths[j] = newColW
 				if (update) setColumnWidth(j, newColW)
 				d -= iWDiff
 				i++
@@ -994,18 +1028,18 @@ class DataGrid<E>(
 			usedColumns.markUsed(columnCaches[columnIndex])
 			true
 		}
-		val pad = style.borderThickness
+		val border = style.borderThickness
 		val contentsW = columnsWidth - hScrollBar.scrollModel.max
 		val bodyW = contentsW + if (vScrollPolicy != ScrollPolicy.OFF) vScrollBar.minWidth ?: 0f else 0f
 
-		out.width = pad.expandWidth2(bodyW)
+		out.width = border.expandWidth2(bodyW)
 
 		updateHeader(contentsW)
 
 		val hScrollBarH = if (hScrollBar.visible) hScrollBar.minHeight ?: 0f else 0f
 
 		_totalRows = calculateTotalRows()
-		var contentsH = if (explicitHeight == null) null else pad.reduceHeight2(explicitHeight) - headerCells.height - hScrollBarH
+		var contentsH = if (explicitHeight == null) null else border.reduceHeight2(explicitHeight) - headerCells.height - hScrollBarH
 		val bottomRowCount = updateBottomRows(contentsW, contentsH)
 		vScrollBar.modelToPixels = bottomContents.height / maxOf(0.0001f, bottomRowCount)
 		vScrollBar.scrollModel.max = maxOf(0f, _totalRows - bottomRowCount)
@@ -1026,12 +1060,12 @@ class DataGrid<E>(
 		groupHeadersAndFooters.setSize(contentsW, contentsH)
 		groupHeadersAndFooters.setPosition(0f, headerCells.height)
 
-		out.height = pad.expandHeight2(headerCells.height + contents.height + hScrollBarH)
+		out.height = border.expandHeight2(headerCells.height + contents.height + hScrollBarH)
 
 		hScrollBar.setSize(out.width - vScrollBarW, hScrollBarH)
-		hScrollBar.setPosition(-pad.left, out.height - hScrollBarH - pad.top)
+		hScrollBar.setPosition(-border.left, out.height - hScrollBarH - border.top)
 		vScrollBar.setSize(vScrollBarW, out.height - hScrollBarH - headerCells.height)
-		vScrollBar.setPosition(out.width - vScrollBarW - pad.left, headerCells.height - pad.top)
+		vScrollBar.setPosition(out.width - vScrollBarW - border.right, headerCells.height - border.top)
 
 		tossBinding.modelToPixelsY = vScrollBar.modelToPixels
 
@@ -1050,7 +1084,7 @@ class DataGrid<E>(
 		}
 
 		clipper.setSize(bodyW, contents.height + headerCells.height + hScrollBarH)
-		clipper.setPosition(pad.left, pad.top)
+		clipper.setPosition(border.left, border.top)
 
 		background?.setSize(out)
 		usedColumns.flip()
@@ -1377,14 +1411,10 @@ class DataGrid<E>(
 	}
 
 	private fun updateEditorCell() {
+		editorCellCheck()
 		val editorCell = editorCell ?: return
 		val columnIndex = editorCellCol.index
-		if (_columns.getOrNull(columnIndex)?.editable != true) {
-			closeCellEditor(false)
-			return
-		}
-
-		val x = columnPositions[columnIndex] - hScrollModel.value
+		val x = _columnPositions[columnIndex] - hScrollModel.value
 
 		rowIterator.sourceIndex = editorCellRow.index
 		val position = rowIterator.position
@@ -1399,13 +1429,25 @@ class DataGrid<E>(
 			}
 			// Partial row visibility
 			y -= rowHeights[0] * (vScrollModel.value - vScrollModel.value.floor())
-			editorCell.setSize(columnWidths[columnIndex], rowHeights[rowIndex])
+			editorCell.setSize(_columnWidths[columnIndex], rowHeights[rowIndex])
 			editorCell.setPosition(x, y)
 		} else {
 			// We make it hidden instead of invisible so that the phone's keyboard appearing doesn't cause the cause
 			// the cell to move out of view and therefore close the keyboard again.
 			editorCell.alpha = 0f
 			editorCell.interactivityMode = InteractivityMode.NONE
+		}
+	}
+
+	/**
+	 * Checks if the editor cell is still valid (i.e. The data still exists and the column is still editable),
+	 * and if not, closes the cell.
+	 */
+	private fun editorCellCheck() {
+		val columnIndex = editorCellCol.index
+		if (_columns.getOrNull(columnIndex)?.editable != true || editorCellRow.index == -1) {
+			closeCellEditor(false)
+			return
 		}
 	}
 
@@ -1441,8 +1483,8 @@ class DataGrid<E>(
 		for (i in firstVisibleColumn..lastVisibleColumn) {
 			val col = _columns[i]
 			if (!col.visible) continue
-			val colWidth = columnWidths[i]
-			val colX = columnPositions[i] + xOffset
+			val colWidth = _columnWidths[i]
+			val colX = _columnPositions[i] + xOffset
 			val shouldContinue = callback(i, col, colX, colWidth)
 			if (!shouldContinue) break
 		}
@@ -1468,11 +1510,11 @@ class DataGrid<E>(
 			val localP = headerCells.canvasToLocal(Vector2.obtain().set(e.position))
 
 			val currX = localP.x + hScrollModel.value
-			var index = columnPositions.sortedInsertionIndex(currX)
-			if (index > 0 && currX < columnPositions[index - 1] + columnWidths[index - 1] * 0.5f) index--
+			var index = _columnPositions.sortedInsertionIndex(currX)
+			if (index > 0 && currX < _columnPositions[index - 1] + _columnWidths[index - 1] * 0.5f) index--
 			index = maxOf(index, _columns.indexOfFirst2 { it.visible && it.reorderable })
 			index = minOf(index, _columns.indexOfLast2 { it.visible && it.reorderable } + 1)
-			val insertX = (if (index <= 0) 0f else if (index >= columnPositions.size) columnPositions.last() + columnWidths.last() else columnPositions[index]) - hScrollModel.value
+			val insertX = (if (index <= 0) 0f else if (index >= _columnPositions.size) _columnPositions.last() + _columnWidths.last() else _columnPositions[index]) - hScrollModel.value
 			columnInsertionIndicator.setPosition(insertX - columnInsertionIndicator.width * 0.5f, 0f)
 			Vector2.free(localP)
 		}
@@ -1485,8 +1527,8 @@ class DataGrid<E>(
 
 			val fromIndex = e.currentTarget.getAttachment<Int>(COL_INDEX_KEY)!!
 			val currX = localP.x + hScrollModel.value
-			var toIndex = columnPositions.sortedInsertionIndex(currX)
-			if (toIndex > 0 && currX < columnPositions[toIndex - 1] + columnWidths[toIndex - 1] * 0.5f) toIndex--
+			var toIndex = _columnPositions.sortedInsertionIndex(currX)
+			if (toIndex > 0 && currX < _columnPositions[toIndex - 1] + _columnWidths[toIndex - 1] * 0.5f) toIndex--
 			toIndex = maxOf(toIndex, _columns.indexOfFirst2 { it.visible && it.reorderable })
 			toIndex = minOf(toIndex, _columns.indexOfLast2 { it.visible && it.reorderable } + 1)
 			Vector2.free(localP)
@@ -1531,13 +1573,13 @@ class DataGrid<E>(
 		var columnIndex = 0
 		drag.dragStart.add {
 			columnIndex = it.currentTarget.getAttachment(COL_INDEX_KEY)!!
-			colResizeStartX = -hScrollModel.value + columnPositions[columnIndex]
+			colResizeStartX = -hScrollModel.value + _columnPositions[columnIndex]
 
 			if (explicitWidth != null && hScrollPolicy == ScrollPolicy.OFF) {
 				// Set the column widths to their measured sizes so we don't have to compensate for flex size.
 				for (i in 0.._columns.lastIndex) {
 					if (!_columns[i].visible) continue
-					setColumnWidth(i, columnWidths[i])
+					setColumnWidth(i, _columnWidths[i])
 				}
 			}
 		}
@@ -1558,14 +1600,14 @@ class DataGrid<E>(
 					val col = _columns[i]
 					if (!col.visible) continue
 					if (!col.resizable) {
-						minW += columnWidths[i]
+						minW += _columnWidths[i]
 					} else {
 						minW += col.minWidth
 						columnsWithSpace.add(i)
 					}
 				}
 				newWidth = minOf(availableWidth - colResizeStartX - minW, newWidth)
-				val oldWidth = columnWidths[columnIndex]
+				val oldWidth = _columnWidths[columnIndex]
 				setColumnWidth(columnIndex, newWidth)
 				adjustColumnWidths(oldWidth - newWidth, update = true)
 			}
