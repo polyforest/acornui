@@ -21,6 +21,7 @@ import com.acornui.math.MathUtils
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal
 import com.acornui.string.toRadix
+import kotlin.math.log2
 import kotlin.properties.ReadWriteProperty
 
 /**
@@ -183,7 +184,7 @@ class ValidationTree {
 			val currentNode = nodes[currentIndex]
 			val badFlags = flagsToInvalidate and (currentNode.validationMask and currentNode.flag.inv())
 			if (badFlags > 0) {
-				throw Exception("Cannot invalidate ${flags.toRadix(2)} while validating ${currentNode.flag.toRadix(2)}; The following invalidated flags are dependencies of the current node: ${badFlags.toRadix(2)}")
+				throw Exception("Cannot invalidate ${flags.toFlagsString()} while validating ${currentNode.flag.toFlagString()}; The following invalidated flags are dependencies of the current node: ${badFlags.toFlagsString()}")
 			}
 		}
 		for (i in 0..nodes.lastIndex) {
@@ -205,7 +206,7 @@ class ValidationTree {
 				val node = nodes[currentIndex]
 				val badFlags = node.validationMask.inv() and flags
 				if (badFlags > 0)
-					throw IllegalStateException("Cannot validate ${badFlags.toRadix(2)} while validating ${node.flag.toRadix(2)}")
+					throw IllegalStateException("Cannot validate ${badFlags.toFlagsString()} while validating ${node.flag.toFlagString()}")
 			}
 			return 0
 		}
@@ -230,6 +231,21 @@ class ValidationTree {
 	fun isValid(flag: Int): Boolean {
 		return _invalidFlags and flag == 0
 	}
+}
+
+private fun Int.toFlagsString(): String {
+	var str = ""
+	for (i in 0..31) {
+		if ((1 shl i) and this > 0) {
+			if (str.isNotEmpty()) str += ","
+			str += i
+		}
+	}
+	return str
+}
+
+private fun Int.toFlagString(): String {
+	return log2(toDouble()).toInt().toString()
 }
 
 fun validationTree(init: ValidationTree.() -> Unit): ValidationTree {
