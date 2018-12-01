@@ -126,10 +126,10 @@ class IndexBinding<E>() : Clearable, Disposable {
 	}
 
 	override fun clear() {
+		unbind()
 		index = -1
 		_list = null
 		_observableList = null
-		unbind()
 	}
 
 	override fun dispose() = clear()
