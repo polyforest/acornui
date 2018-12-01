@@ -170,8 +170,14 @@ interface LayoutElement : LayoutElementRo, BasicLayoutElement, Transformable {
 
 interface BasicLayoutElementRo : SizableRo, PositionableRo {
 
+	/**
+	 * The right boundary (x + width)
+	 */
 	val right: Float
 
+	/**
+	 * The bottom boundary (y + height)
+	 */
 	val bottom: Float
 
 	/**

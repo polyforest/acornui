@@ -339,8 +339,8 @@ open class UiComponentImpl(
 	protected val _bounds = Bounds()
 	protected var _explicitWidth: Float? = null
 	protected var _explicitHeight: Float? = null
-	protected val _explicitSizeConstraints: SizeConstraints = SizeConstraints()
-	protected val _sizeConstraints: SizeConstraints = SizeConstraints()
+	protected val _explicitSizeConstraints = SizeConstraints()
+	protected val _sizeConstraints = SizeConstraints()
 
 	// InteractiveElement properties
 	protected var _inheritedInteractivityMode = InteractivityMode.ALL

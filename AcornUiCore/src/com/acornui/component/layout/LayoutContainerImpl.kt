@@ -25,6 +25,9 @@ import com.acornui.core.di.Owned
 import com.acornui.core.focus.Focusable
 import com.acornui.math.Bounds
 
+/**
+ * A LayoutContainer uses a layout algorithm to size and position its elements.
+ */
 interface LayoutContainer<S, out T : LayoutData> : LayoutDataProvider<T>, ElementContainer<UiComponent> {
 
 	val layoutAlgorithm: LayoutAlgorithm<S, T>
@@ -33,6 +36,9 @@ interface LayoutContainer<S, out T : LayoutData> : LayoutDataProvider<T>, Elemen
 
 }
 
+/**
+ * The canonical implementation of [LayoutContainer].
+ */
 open class LayoutContainerImpl<S : Style, out U : LayoutData>(
 		owner: Owned,
 		override val layoutAlgorithm: LayoutAlgorithm<S, U>,
