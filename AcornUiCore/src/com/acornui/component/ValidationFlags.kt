@@ -16,6 +16,8 @@
 
 package com.acornui.component
 
+import kotlin.math.log2
+
 /**
  * A list of validation bit flags Acorn internally uses.
  * Extended validation flags should start at 1 shl 16
@@ -56,6 +58,28 @@ object ValidationFlags {
 
 	const val RESERVED_1: Int = 1 shl 14
 	const val RESERVED_2: Int = 1 shl 15
+
+	fun flagToString(flag: Int): String = when (flag) {
+		STYLES -> "STYLES"
+		PROPERTIES -> "PROPERTIES"
+		HIERARCHY_ASCENDING -> "HIERARCHY_ASCENDING"
+		HIERARCHY_DESCENDING -> "HIERARCHY_DESCENDING"
+		SIZE_CONSTRAINTS -> "SIZE_CONSTRAINTS"
+		LAYOUT -> "LAYOUT"
+		LAYOUT_ENABLED -> "LAYOUT_ENABLED"
+		TRANSFORM -> "TRANSFORM"
+		CONCATENATED_TRANSFORM-> "CONCATENATED_TRANSFORM"
+
+		COLOR_TRANSFORM -> "COLOR_TRANSFORM"
+		CONCATENATED_COLOR_TRANSFORM->"CONCATENATED_COLOR_TRANSFORM"
+
+		INTERACTIVITY_MODE -> "INTERACTIVITY_MODE"
+		CAMERA -> "CAMERA"
+		VIEWPORT -> "VIEWPORT"
+		RESERVED_1 -> "RESERVED_1"
+		RESERVED_2 -> "RESERVED_2"
+		else -> log2(flag.toDouble()).toInt().toString()
+	}
 }
 
 fun Validatable.invalidateSize() {

@@ -21,7 +21,6 @@ import com.acornui.math.MathUtils
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal
 import com.acornui.string.toRadix
-import kotlin.math.log2
 import kotlin.properties.ReadWriteProperty
 
 /**
@@ -157,7 +156,7 @@ class ValidationTree {
 				newNode.validationMask = newNode.validationMask or previousNode.validationMask
 				previousNode.invalidationMask = newNode.invalidationMask or previousNode.invalidationMask
 				if (insertIndex <= i) {
-					throw Exception("Validation node cannot be added after dependency ${previousNode.flag.toRadix(2)} and before all dependants ${dependants.toRadix(2)}")
+					throw Exception("Validation node cannot be added after dependency ${previousNode.flag.toFlagString()} and before all dependants ${dependants.toFlagsString()}")
 				}
 			}
 		}
@@ -165,9 +164,9 @@ class ValidationTree {
 		_invalidFlags = _invalidFlags or newNode.flag
 		_allFlags = _allFlags or newNode.flag
 		if (dependantsNotFound != 0)
-			throw Exception("validation node added, but the dependant flags: ${dependantsNotFound.toRadix(2)} were not found.")
+			throw Exception("validation node added, but the dependant flags: ${dependantsNotFound.toFlagsString()} were not found.")
 		if (dependenciesNotFound != 0)
-			throw Exception("validation node added, but the dependency flags: ${dependenciesNotFound.toRadix(2)} were not found.")
+			throw Exception("validation node added, but the dependency flags: ${dependenciesNotFound.toFlagsString()} were not found.")
 	}
 
 	/**
@@ -236,17 +235,16 @@ class ValidationTree {
 private fun Int.toFlagsString(): String {
 	var str = ""
 	for (i in 0..31) {
-		if ((1 shl i) and this > 0) {
+		val flag = 1 shl i
+		if (flag and this > 0) {
 			if (str.isNotEmpty()) str += ","
-			str += i
+			str += ValidationFlags.flagToString(flag)
 		}
 	}
 	return str
 }
 
-private fun Int.toFlagString(): String {
-	return log2(toDouble()).toInt().toString()
-}
+private fun Int.toFlagString(): String = ValidationFlags.flagToString(this)
 
 fun validationTree(init: ValidationTree.() -> Unit): ValidationTree {
 	val v = ValidationTree()
