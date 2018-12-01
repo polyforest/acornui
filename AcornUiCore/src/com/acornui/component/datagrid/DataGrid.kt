@@ -823,7 +823,7 @@ class DataGrid<E>(
 	override fun setSize(width: Float?, height: Float?) {
 		if (_explicitWidth == width && _explicitHeight == height) return
 		invalidate(COLUMNS_WIDTHS_VALIDATION)
-		super<ContainerImpl>.setSize(width, height)
+		super.setSize(width, height)
 	}
 
 	override fun updateSizeConstraints(out: SizeConstraints) {
