@@ -142,7 +142,7 @@ open class OptionsList<E : Any>(
 
 	var disabled: Boolean by observable(false) {
 		interactivityMode = if (it) InteractivityMode.NONE else InteractivityMode.ALL
-
+		disabledTag = it
 	}
 
 	private var background: UiComponent? = null
