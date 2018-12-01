@@ -105,6 +105,10 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 
 	private val _changing = Signal3<List<E>, List<E>, Cancel>()
 
+	/**
+	 * The currently selected items are changing. This provides an opportunity to cancel the event before [changed]
+	 * is invoked.
+	 */
 	override val changing: Signal<(List<E>, List<E>, Cancel) -> Unit>
 		get() = _changing
 
@@ -112,6 +116,12 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 
 	private val _changed = Signal2<List<E>, List<E>>()
 
+	/**
+	 * Dispatched when the selection has changed based on user interaction from via [setSelectedItemsUser] and the
+	 * [changing] signal was not canceled.
+	 * This is not no-oped; calling [setSelectedItemsUser] with the currently selected items will still result
+	 * in a [changed] event.
+	 */
 	override val changed: Signal<(List<E>, List<E>) -> Unit>
 		get() = _changed
 
@@ -172,11 +182,13 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 	}
 
 	/**
-	 * The user has changed the selection. This will invoke the [changing] and [changed] signals.
+	 * The user has changed the selection. This will invoke the [changing] and if not canceled, [changed] signals.
+	 *
+	 * This is not no-oped; calling [setSelectedItemsUser] with the currently selected items will still result
+	 * in a [changed] event.
 	 */
 	override fun setSelectedItemsUser(items: List<E>) {
 		val previousSelection = _selectedMap.keys.toList()
-		if (previousSelection == items) return // no-op
 		if (changing.isNotEmpty()) {
 			_changing.dispatch(previousSelection, items, cancel.reset())
 			if (cancel.canceled()) return
