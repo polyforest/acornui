@@ -389,12 +389,10 @@ open class UiComponentImpl(
 
 	// Focusable properties
 	protected val focusManager = inject(FocusManager)
-	final override var focusEnabled: Boolean by observable(false) { _ ->
-		if (isFocusContainer) invalidateFocusOrderDeep() else invalidateFocusOrder()
-	}
-
+	final override var focusEnabled: Boolean by observable(false) { _ -> invalidateFocusOrder() }
 	final override var focusOrder by observable(0f) { _ -> invalidateFocusOrder() }
 	final override var isFocusContainer by observable(false) { _ -> invalidateFocusOrderDeep() }
+	final override var focusEnabledChildren by observable(false) { _ -> invalidateFocusOrderDeep() }
 
 	private val rayTmp = Ray()
 

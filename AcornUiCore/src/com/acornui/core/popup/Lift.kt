@@ -62,7 +62,6 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutConta
 	override val style = contents.style
 
 	init {
-		focusEnabled = true
 		isFocusContainer = true
 
 		contents.invalidated.add {

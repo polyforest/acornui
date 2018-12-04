@@ -280,7 +280,6 @@ open class OptionList<E : Any>(
 
 	init {
 		isFocusContainer = true
-		focusEnabled = true
 
 		styleTags.add(OptionList)
 		maxItems = 10

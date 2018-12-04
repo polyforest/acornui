@@ -105,7 +105,6 @@ open class ContainerImpl(
 			child.activate()
 		child.invalidate(cascadingFlags)
 		invalidate(bubblingFlags)
-		child.invalidateFocusOrderDeep()
 		if (!isValidatingLayout)
 			invalidateSize()
 
@@ -311,6 +310,10 @@ open class ContainerImpl(
 	override fun dispose() {
 		clearChildren(dispose = false)
 		super.dispose()
+	}
+
+	init {
+		focusEnabledChildren = true
 	}
 
 	companion object {

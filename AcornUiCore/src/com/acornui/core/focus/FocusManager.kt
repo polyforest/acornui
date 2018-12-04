@@ -130,7 +130,7 @@ interface Focusable : Scoped {
 
 	/**
 	 * True if this Focusable object should be included in the focus order.
-	 * Note that this does not affect directly setting this element to be focused via [focusSelf] or
+	 * Note that this does not affect directly setting this element to be focused via [focusSelf] or using
 	 * [FocusManager.focused]
 	 */
 	val focusEnabled: Boolean
@@ -146,10 +146,13 @@ interface Focusable : Scoped {
 	/**
 	 * If true, this is component will be considered a focus container. That means -
 	 * - It is a demarcation for focus order on all Focusable descendants.
-	 * - It will not itself be part of the focus order. (It can still be focused manually)
-	 * - If focusEnabled is false, all descendants will be excluded from the focus order.
 	 */
 	val isFocusContainer: Boolean
+
+	/**
+	 * If false, children will not be considered for focus.
+	 */
+	val focusEnabledChildren: Boolean
 
 	/**
 	 * When this focus manager updates the focus highlight, it will set the highlight's size and transformation to
@@ -166,7 +169,7 @@ val UiComponentRo.focusEnabledAncestry: Boolean
 	get() {
 		var p = parent
 		while (p != null) {
-			if (p.isFocusContainer && !p.focusEnabled) return false
+			if (!p.focusEnabledChildren) return false
 			p = p.parent
 		}
 		return true
@@ -179,8 +182,7 @@ val UiComponentRo.focusEnabledAncestry: Boolean
 val UiComponentRo.firstFocusable: UiComponentRo?
 	get() {
 		if (!focusEnabledAncestry || !isRendered || !interactivityEnabled) return null
-		if (isFocusContainer && !focusEnabled) return null
-		if (!isFocusContainer && focusEnabled) return this
+		if (focusEnabled) return this
 		val focusManager = inject(FocusManager)
 		return focusManager.focusables.firstOrNull2 {
 			it != this && isAncestorOf(it) && it.canFocusSelf
@@ -198,6 +200,7 @@ fun UiComponentRo.invalidateFocusOrder() {
  * Invalidates the focus order of this component and all descendants.
  */
 fun UiComponentRo.invalidateFocusOrderDeep() {
+	if (!isActive) return
 	val focusManager = inject(FocusManager)
 	childWalkLevelOrder { it ->
 		focusManager.invalidateFocusableOrder(it)
@@ -222,7 +225,7 @@ val UiComponentRo.isFocusedSelf: Boolean
  * @see canFocus
  */
 val UiComponentRo.canFocusSelf: Boolean
-	get() = focusEnabledAncestry && !isFocusContainer && focusEnabled && isRendered && interactivityEnabled
+	get() = focusEnabled && focusEnabledAncestry && isRendered && interactivityEnabled
 
 /**
  * Sets focus to this element, ignoring all focus rules such as focus order, focus enabled, visibility, etc.

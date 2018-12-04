@@ -42,7 +42,6 @@ import com.acornui.reflect.observable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 
-
 open class DatePicker(
 		owner: Owned
 ) : ContainerImpl(owner), Clearable {
@@ -101,6 +100,7 @@ open class DatePicker(
 			selectDateFromText()
 			_input.dispatch()
 		}
+		focusHighlightDelegate = this@DatePicker
 	}
 
 	var editable: Boolean by observable(true) {
@@ -145,7 +145,6 @@ open class DatePicker(
 
 	init {
 		isFocusContainer = true
-		focusEnabled = true
 
 		styleTags.add(DatePicker)
 		addChild(textInput)
@@ -158,7 +157,7 @@ open class DatePicker(
 
 			downArrow?.dispose()
 			val downArrow = addChild(it.downArrow(this))
-			downArrow.focusEnabled = true
+			downArrow.focusEnabled = false
 			downArrow.click().add { e ->
 				// Using mouseDown instead of click because we close on blur (which is often via mouseDown).
 				if (!e.handled) {
