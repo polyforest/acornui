@@ -19,13 +19,18 @@ package com.acornui.component
 import com.acornui.component.layout.HAlign
 import com.acornui.component.layout.ListItemRenderer
 import com.acornui.component.layout.algorithm.GridColumn
+import com.acornui.component.layout.algorithm.GridLayoutStyle
 import com.acornui.component.layout.algorithm.grid
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
 import com.acornui.component.text.text
+import com.acornui.core.behavior.Selection
+import com.acornui.core.behavior.SelectionBase
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
+import com.acornui.core.input.interaction.ClickInteractionRo
+import com.acornui.core.input.interaction.click
 import com.acornui.core.text.DateTimeFormatStyle
 import com.acornui.core.text.DateTimeFormatType
 import com.acornui.core.text.dateFormatter
@@ -33,36 +38,128 @@ import com.acornui.core.time.DateRo
 import com.acornui.core.time.time
 import com.acornui.core.zeroPadding
 import com.acornui.math.Bounds
-import com.acornui.signal.Signal
-import com.acornui.signal.Signal0
 
-class Calendar(
-		owner: Owned,
-		val headerFactory: Owned.() -> Labelable = {
-			text {
-				charStyle.selectable = false
-			}
-		},
-		val cellFactory: Owned.() -> ListItemRenderer<DateRo> = { calendarItemRenderer() }
+open class Calendar(
+		owner: Owned
 ) : ContainerImpl(owner) {
 
-	private val _changed = own(Signal0())
-
 	/**
-	 * Dispatched on value commit.
-	 * It is dispatched when the user selects an item, or commits the value of the text input. It is not dispatched
-	 * when the selected item or text is programmatically changed.
+	 * If true, clicking on a calendar cell will set the selection to that cell.
+	 * This does not affect setting the selection via code.
 	 */
-	val changed: Signal<() -> Unit>
-		get() = _changed
+	var selectable = true
 
-	private val headers = Array(7) {
-		headerFactory()
+	val selection: Selection<DateRo> = own(object : SelectionBase<DateRo>() {
+		override fun walkSelectableItems(callback: (item: DateRo) -> Unit) {
+			for (i in 0..cells.lastIndex) {
+				val date = cells[i].data ?: continue
+				callback(date)
+			}
+		}
+
+		override fun onSelectionChanged(oldSelection: List<DateRo>, newSelection: List<DateRo>) {
+			for (i in 0..cells.lastIndex) {
+				val cell = cells[i]
+				val d = cell.data
+				cell.toggled = if (d == null) false else getItemIsSelected(d)
+			}
+		}
+	})
+
+	val highlighted: Selection<DateRo> =  own(object : SelectionBase<DateRo>() {
+		override fun walkSelectableItems(callback: (item: DateRo) -> Unit) {
+			for (i in 0..cells.lastIndex) {
+				val date = cells[i].data ?: continue
+				callback(date)
+			}
+		}
+
+		override fun onSelectionChanged(oldSelection: List<DateRo>, newSelection: List<DateRo>) {
+//			for (i in 0..oldSelection.lastIndex) {
+//				val cell = getCellByDate(oldSelection[i]) ?: continue
+//				cell.highlighted = false
+//			}
+//			for (i in 0..newSelection.lastIndex) {
+//				val cell = getCellByDate(newSelection[i]) ?: continue
+//				cell.highlighted = true
+//			}
+		}
+	})
+
+	protected fun getCellByDate(cellDate: DateRo): ListItemRenderer<DateRo>? {
+		val dayOffset = date.dayOfWeek - dayOfWeek
+		val i = dayOffset + cellDate.dayOfMonth - 1
+		return cells.get(i)
 	}
 
-	private val cells: Array<ListItemRenderer<DateRo>> = Array(42) {
-		cellFactory().apply {
-			index = it
+	var _headerFactory: Owned.() -> Labelable = {
+		text {
+			charStyle.selectable = false
+		}
+	}
+
+	fun headerFactory(value: Owned.() -> Labelable) {
+		val headers = _headers
+		if (headers != null) {
+			// Dispose old header cells when switching renderer factories.
+			for (i in 0..headers.lastIndex) {
+				headers[i].dispose()
+			}
+			_headers = null
+		}
+		_headerFactory = value
+	}
+
+	private var _headers: Array<Labelable>? = null
+
+	val headers: Array<Labelable>
+		get() {
+			if (_headers == null) {
+				grid.apply {
+					_headers = Array(7) {
+						addElement(it, _headerFactory())
+					}
+				}
+			}
+			return _headers!!
+		}
+
+	private var _rendererFactory: Owned.() -> ListItemRenderer<DateRo> = { calendarItemRenderer() }
+
+	fun rendererFactory(value: Owned.() -> ListItemRenderer<DateRo>) {
+		val cells = _cells
+		if (cells != null) {
+			// Dispose old cells when switching renderer factories.
+			for (i in 0..cells.lastIndex) {
+				cells[i].dispose()
+			}
+			_cells = null
+		}
+		_rendererFactory = value
+	}
+
+	private var _cells: Array<ListItemRenderer<DateRo>>? = null
+	protected val cells: Array<ListItemRenderer<DateRo>>
+		get() {
+			if (_cells == null) {
+				grid.apply {
+					_cells = Array(42) {
+						+_rendererFactory().apply {
+							index = it
+							click().add(this@Calendar::cellClickedHandler)
+						} layout { widthPercent = 1f }
+					}
+				}
+			}
+			return _cells!!
+		}
+
+	private fun cellClickedHandler(e: ClickInteractionRo) {
+		if (selectable && !e.handled) {
+			@Suppress("UNCHECKED_CAST")
+			val cell = e.currentTarget as ListItemRenderer<DateRo>
+			e.handled = true
+			selection.setSelectedItemsUser(listOf(cell.data!!))
 		}
 	}
 
@@ -77,6 +174,9 @@ class Calendar(
 
 	val style = bind(CalendarStyle())
 
+	val layoutStyle: GridLayoutStyle
+		get() = grid.style
+
 	private val date = time.now().apply {
 		hour = 0
 		minute = 0
@@ -88,10 +188,10 @@ class Calendar(
 	/**
 	 * The month index. This is 0-based.  January = 0, December = 11
 	 */
-	var monthIndex: Int
-		get() = date.monthIndex
+	var month: Int
+		get() = date.month
 		set(value) {
-			date.monthIndex = value
+			date.month = value
 			invalidateProperties()
 		}
 
@@ -124,9 +224,11 @@ class Calendar(
 			headers[i].label = weekDayFormatter.format(iDate)
 		}
 		for (i in 0..41) {
+			val cell = cells[i]
 			val iDate = date.copy()
 			iDate.dayOfMonth = i - dayOffset + 1
-			cells[i].data = iDate
+			cell.data = iDate
+			cell.toggled = selection.getItemIsSelected(iDate)
 		}
 	}
 
@@ -148,16 +250,6 @@ class Calendar(
 	init {
 		styleTags.add(Companion)
 		validation.addNode(ValidationFlags.PROPERTIES, 0, ValidationFlags.SIZE_CONSTRAINTS, this::updateProperties)
-		grid.apply {
-			for (i in 0..6) {
-				+headers[i]
-			}
-
-			for (i in 0..41) {
-				+cells[i] layout { widthPercent = 1f }
-			}
-		}
-
 	}
 
 	companion object : StyleTag

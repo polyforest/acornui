@@ -374,17 +374,25 @@ fun timeFormatter(init: DateTimeFormatter.() -> Unit = {}): DateTimeFormatter {
 /**
  * Returns a new date time parser configured to parse a date in local time.
  */
-fun dateParser(): DateTimeParser = DateTimeParser().apply { type = DateTimeFormatType.DATE }
+fun dateParser(init: DateTimeParser.() -> Unit = {}): DateTimeParser = DateTimeParser().apply {
+	type = DateTimeFormatType.DATE
+	init()
+}
 
 /**
  * Returns a date time parser configured to parse a time in local time.
  */
-fun timeParser(): DateTimeParser = DateTimeParser().apply { type = DateTimeFormatType.TIME }
+fun timeParser(init: DateTimeParser.() -> Unit = {}): DateTimeParser = DateTimeParser().apply {
+	type = DateTimeFormatType.TIME
+	init()
+}
 
 /**
  * Returns a date time parser configured to parse a date and time in local time.
  */
-fun dateTimeParser(): DateTimeParser = DateTimeParser()
+fun dateTimeParser(init: DateTimeParser.() -> Unit = {}): DateTimeParser = DateTimeParser().apply {
+	init()
+}
 
 /**
  * Parses a string into a Month index, according to the given locale.

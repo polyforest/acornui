@@ -148,11 +148,11 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 
 	val style = bind(ColorPaletteStyle())
 
-	var showAlphaPicker by observable(false, {
+	var showAlphaPicker by observable(false) {
 		alphaRect.visible = it
 		alphaValueIndicator?.visible = it
 		invalidateLayout()
-	})
+	}
 
 	private var background: UiComponent? = null
 	private var hueSaturationIndicator: UiComponent? = null
