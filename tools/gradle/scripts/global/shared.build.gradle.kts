@@ -89,6 +89,7 @@ inline fun <T : Task> T.releaseTask() {
 	// So that the task can be identified as a release task...
 	val releaseTask by extra(true)
 
+	var isProdBuild: Property<Boolean> by rootProject.extra
 	// If a lambda is passed to onlyIf, the block will be evaluated immediately.
 	onlyIf(closureOf<Task> { isProdBuild.get() })
 }
@@ -149,6 +150,54 @@ configurations.all {
 	}
 }
 
+/**
+ * Task requests are created at a build level.  Composite builds must manually define proxy tasks to call tasks inside
+ * included builds.  These target tasks, upon which properties indicating that they are production oriented are set,
+ * cannot be guaranteed to have the same name as their proxy tasks.
+ */
+fun resolveTaskRequestTarget(parent: Task?, task: Task?): List<Task> {
+	val targetTasks = mutableListOf<Task>()
+
+	return if (task == null || task.project == parent?.project)
+		targetTasks
+	else if (task.project.subprojects.isEmpty())
+		targetTasks.also { it.add(task) }
+	else
+		task.taskDependencies.getDependencies(null).flatMap { resolveTaskRequestTarget(task, it) }
+}
+
+fun findAncestorRequestedTaskNames(gradle: Gradle?): List<String> {
+	val taskNames = gradle?.startParameter?.taskNames
+
+	return if (gradle == null)
+		emptyList()
+	else if (!taskNames.isNullOrEmpty())
+		taskNames
+	else
+		findAncestorRequestedTaskNames(gradle.parent)
+}
+
+fun findRequestedTaskNames(project: Project): List<String>? {
+	return findAncestorRequestedTaskNames(project.gradle)
+}
+
+fun findTask(project: Project?, taskName: String): Task? {
+	val property = project?.findProperty(taskName)
+
+	return if (project == null)
+		null
+	else if (property != null && property is Task)
+		property
+	else
+		findTask(project.parent, taskName)
+}
+
+fun resolveTaskRequestTargets(project: Project): List<Task>? {
+	return findRequestedTaskNames(project)?.flatMap {
+		resolveTaskRequestTarget(null, findTask(project, it))
+	}
+}
+
 var isProdBuild by extra(project.objects.property<Boolean>())
 
 // TODO - MP: Migrate these to live within the jsEntryPoint configuration
@@ -159,28 +208,29 @@ var isProdBuild by extra(project.objects.property<Boolean>())
 fun setBuildType(project: Project) {
 	toUnit {
 		with(project) {
-			// Performed after project evaluation so tasks evaluated in startParameters actually exist.
-			isProdBuild.set(false)
-			gradle.taskGraph.whenReady {
+			// After all tasks have been registered/created and tagged as release tasks (as applicable)...
+			afterEvaluate {
 				val releaseTaskPropName = "releaseTask"
 				var isProdBuild: Property<Boolean> by rootProject.extra
 
-				val noRequestedReleaseTasks = gradle.startParameter.taskNames.all { taskName: String ->
-					val task = findProperty(taskName) as Task?
-					task?.hasProperty(releaseTaskPropName) != true
-				}
+				val noRequestedReleaseTasks =
+					resolveTaskRequestTargets(project)?.all { task ->
+						!task.hasProperty(releaseTaskPropName)
+					} ?: true
 
 				if (noRequestedReleaseTasks)
 					isProdBuild.set(false)
 				else
 					isProdBuild.set(true)
+
+				isProdBuild.finalizeValue()
 			}
 		}
 	}
 }
 
 if (isTopLevelIncludedBuild) {
-	afterEvaluate{
+	afterEvaluate {
 		tasks {
 			val buildAll by creating(DefaultTask::class) {
 				group = "other-helpers"
@@ -288,6 +338,7 @@ object DirCollection {
 		path: String,
 		collection: ConfigurableFileCollection? = null
 	): ConfigurableFileCollection {
+
 		val file = project.file(path)
 		if (collection != null)
 			dirs[file] = collection
@@ -392,6 +443,8 @@ fun prodHtmlSrcDestPath(project: Project) = "${generatedResourceTaskPath(project
  */
 fun htmlSrcDestPathByBuildType(project: Project): String {
 
+	var isProdBuild: Property<Boolean> by rootProject.extra
+
 	return if (isProdBuild.get())
 		prodHtmlSrcDestPath(project)
 	else
@@ -445,14 +498,6 @@ val declareResourceGenerationTasks by extra { p: Project ->
 				//				val processedSourcePath by extra(processedSourcePath(p))
 
 				val usedGeneratedResources by extra(p.objects.property(FileCollection::class))
-
-				// Pseudo-Code:T0D0 | Need to shift processedSourcePath to Js and possibly delay it till after evaluation?
-				// Pseudo-Code:T0D0 | processedSourcePath,
-
-				//				listOf(processedResourcesPath, htmlSrcDestPath, prodHtmlSrcDestPath).forEach { path: String? ->
-				//
-				//				}
-
 
 				/**
 				 * Register the destination for processed resources.  By default, these are all declared resource source
@@ -610,7 +655,6 @@ val declareResourceGenerationTasks by extra { p: Project ->
 					val processFinalResources = maybeCreate("processFinalResources", Copy::class)
 					processFinalResources.apply {
 						val processResources by project.tasks.getting(Copy::class)
-						// TODO: Figure out a way so that we can use main.output.resourceDir.  Right now, if we do, even though it should be evaluated after changing the dir, it isn't.
 						val destinationDir by extra(finalResourcesPath)
 
 						description = "Copies generated (${processGeneratedResources.name} outputs) and non-generated " +
@@ -779,6 +823,7 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 	toUnit {
 		with(p) {
 			if (isAppModule() && isThatModule("${rootProject.name}-js")) {
+				val htmlSrcDestPath by extra(htmlSrcDestPath(p))
 				val prodHtmlSrcDestPath by extra(prodHtmlSrcDestPath(p))
 				val htmlSrcDestPath by extra(htmlSrcDestPath(p))
 //				val htmlSrcDestPathByBuildType by extra {
