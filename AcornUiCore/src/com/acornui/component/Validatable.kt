@@ -232,7 +232,7 @@ class ValidationTree {
 	}
 }
 
-private fun Int.toFlagsString(): String {
+fun Int.toFlagsString(): String {
 	var str = ""
 	for (i in 0..31) {
 		val flag = 1 shl i
@@ -244,7 +244,7 @@ private fun Int.toFlagsString(): String {
 	return str
 }
 
-private fun Int.toFlagString(): String = ValidationFlags.flagToString(this)
+fun Int.toFlagString(): String = ValidationFlags.flagToString(this)
 
 fun validationTree(init: ValidationTree.() -> Unit): ValidationTree {
 	val v = ValidationTree()
