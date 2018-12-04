@@ -548,8 +548,8 @@ val declareResourceGenerationTasks by extra { p: Project ->
 
 						// Swap out resources destination...
 						val processResources by getting(Copy::class)
-//						swapResourcesOutputDirectory(project, finalResourcesPath)
-						exclude(processResources.excludes)
+						//						swapResourcesOutputDirectory(project, finalResourcesPath)
+
 						/**
 						 * Prevent both unprocessed and processed resources from co-existing on the classpath (or copied
 						 * around more than necessary).
@@ -557,11 +557,16 @@ val declareResourceGenerationTasks by extra { p: Project ->
 						 * `main.output.resources.sourceDirectories` is still used by other build logic so it is important to
 						 * use this method of exclusion.  It also preserves any extra sources consumers may attach to the task
 						 * itself as inputs.
-						 *
-						 * Must come after stageResources exclusions.
-						 */
+						 **/
+						// Since stageResources preserves processResources inclusions/exclusions, stageResources
+						// inclusions/exclusions must come first.
+						include(processResources.includes)
+						exclude(processResources.excludes)
+
+						// Exclude all declared resource directories in the standard processResources task which simply
+						// copies resources by default.
 						val resourceDirsDirectChildren =
-								main.resources.sourceDirectories.asFileTree.getRootsChildren()
+							main.resources.sourceDirectories.asFileTree.getRootsChildren()
 						processResources.exclude(generatePatterns(resourceDirsDirectChildren))
 
 						buildsDir(processedResourcesPath)
