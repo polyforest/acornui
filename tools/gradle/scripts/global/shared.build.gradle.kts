@@ -954,6 +954,8 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 						group = "build"
 						description = "Generate a file manifest of js libs for file handling at runtime."
 
+						onlyIf(closureOf<Task> { !isProdBuild.get() })
+
 						val destinationDir = htmlSrcDestPath
 
 						with(inputs) {
@@ -980,7 +982,7 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 						buildsDir(destinationDir)
 						// TODO - MP - TEST: Does this go whenever if optimizeJs doesn't execute and it doesn't
 						// explicitly depend on stageWebSourceForPorcessing?
-						dependsOn(stageWebSourceForProcessing, optimizeJs)
+						dependsOn(assembleWebSource)
 					}
 
 					val bustHtmlSourceScriptCache by creating(SourceTask::class) {
@@ -1044,7 +1046,7 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 						// TODO - MP - TEST: Does this go whenever if optimizeJs doesn't execute and it doesn't
 						// explicitly depend on stageWebSourceForPorcessing?
 						//						dependsOn(stageWebSourceForProcessing, optimizeJs)
-						dependsOn(stageWebSourceForProcessing)
+						dependsOn(stageWebSourceForProcessing, optimizeJs)
 					}
 
 					val bustProdHtmlSourceScriptCache by creating(SourceTask::class) {
@@ -1064,7 +1066,7 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 
 						releaseTask()
 						buildsDir(srcDir)
-						dependsOn(createJsFileManifest)
+						dependsOn(createProdJsFileManifest)
 					}
 
 					val generatedResourceSources: ConfigurableFileCollection by processGeneratedResources.extra
