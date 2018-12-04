@@ -231,6 +231,7 @@ open class StyleProp<T>(
 	override fun setValue(thisRef: Style, property: KProperty<*>, value: T) = setValue(thisRef, value)
 
 	fun setValue(thisRef: Style, value: T) {
+		if (_explicitIsSet && _explicitValue == value) return // No-op
 		explicitValue = value
 		thisRef.notifyChanged()
 	}
