@@ -34,7 +34,6 @@ import com.acornui.core.di.inject
 import com.acornui.core.di.own
 import com.acornui.core.di.owns
 import com.acornui.core.floor
-import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.focus
 import com.acornui.core.focus.focusSelf
 import com.acornui.core.focus.isFocused
@@ -774,7 +773,6 @@ class DataGrid<E>(
 	 * Sets a column to be used as the sort comparator.
 	 */
 	fun setSortColumn(column: DataGridColumn<E, *>, direction: ColumnSortDirection = ColumnSortDirection.ASCENDING) {
-		_customSortComparator = null
 		_sortColumn = column
 		_sortDirection = direction
 		dataView.sortComparator = when (_sortDirection) {
@@ -1552,7 +1550,10 @@ class DataGrid<E>(
 		e.handled = true
 
 		if (inject(KeyState).keyIsDown(Ascii.CONTROL)) {
-			clearSorting()
+			_sortColumn = null
+			_sortDirection = ColumnSortDirection.NONE
+			dataView.sortComparator = _customSortComparator
+			invalidateLayout()
 		} else {
 			val direction = if (_sortColumn == column) {
 				if (_sortDirection == ColumnSortDirection.ASCENDING) ColumnSortDirection.DESCENDING else ColumnSortDirection.ASCENDING
