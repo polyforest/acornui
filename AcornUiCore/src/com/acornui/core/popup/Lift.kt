@@ -49,7 +49,10 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutConta
 	 */
 	var priority: Float = 0f
 
-	var focusFirst = true
+	/**
+	 * If true, the contents will be focused when added to the stage.
+	 */
+	var focus = true
 
 	var highlightFocused = false
 
@@ -86,7 +89,7 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutConta
 		super.onActivated()
 		window.sizeChanged.add(windowResizedHandler)
 
-		addPopUp(PopUpInfo(contents, dispose = false, isModal = isModal, priority = priority, focus = focusFirst, highlightFocused = highlightFocused, onClosed = { onClosed?.invoke() }))
+		addPopUp(PopUpInfo(contents, dispose = false, isModal = isModal, priority = priority, focus = focus, highlightFocused = highlightFocused, onClosed = { onClosed?.invoke() }))
 		if (constrainToStage) invalidate(ValidationFlags.CONCATENATED_TRANSFORM)
 	}
 
