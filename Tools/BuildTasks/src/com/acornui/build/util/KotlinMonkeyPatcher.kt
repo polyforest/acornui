@@ -29,6 +29,7 @@ object KotlinMonkeyPatcher {
 		result = simplifyArrayListSet(result)
 		result = stripCce(result)
 		result = stripRangeCheck(result)
+		result += "function alwaysTrue() { return true; }"
 		return result
 	}
 
@@ -36,15 +37,8 @@ object KotlinMonkeyPatcher {
 	 * Strips type checking that only results in a class cast exception.
 	 */
 	private fun stripCce(src: String): String {
-		return Regex("""Kotlin\.isType\(([^,(]+),\s*[^)]+\)\s*\?\s*([^:]+)\s*:\s*Kotlin\.throwCCE\(\)""").replace(src, {
-			val one = it.groups[1]!!.value.trim()
-			val two = it.groups[2]!!.value.trim()
-			if (one == two) {
-				"true?$one:null"
-			} else {
-				"true?($one,$two):null"
-			}
-		})
+		val d = '$'
+		return Regex("""Kotlin\.is(Type|Array|Char|CharSequence|Number)(\((.*?) \? tmp\$d : (Kotlin\.)?throw(\S*)\(\))""").replace(src, "alwaysTrue\$2")
 	}
 
 	private fun stripRangeCheck(src: String): String {
@@ -52,18 +46,18 @@ object KotlinMonkeyPatcher {
 	}
 
 	private fun simplifyArrayListGet(src: String): String {
-		return Regex("""ArrayList\.prototype\.get_za3lpa\$[\s]*=[\s]*function[\s]*\(index\)[\s]*\{([^}]+)};""").replace(src, {
+		return Regex("""ArrayList\.prototype\.get_za3lpa\$[\s]*=[\s]*function[\s]*\(index\)[\s]*\{([^}]+)};""").replace(src) {
 			"""ArrayList.prototype.get_za3lpa$ = function(index) { return this.array_hd7ov6${'$'}_0[index] };"""
-		})
+		}
 	}
 
 	private fun simplifyArrayListSet(src: String): String {
-		return Regex("""ArrayList\.prototype\.set_wxm5ur\$[\s]*=[\s]*function[\s]*\(index, element\)[\s]*\{([^}]+)};""").replace(src, {
+		return Regex("""ArrayList\.prototype\.set_wxm5ur\$[\s]*=[\s]*function[\s]*\(index, element\)[\s]*\{([^}]+)};""").replace(src) {
 			"""ArrayList.prototype.set_wxm5ur${'$'} = function (index, element) {
 			  var previous = this.array_hd7ov6${'$'}_0[index];
 			  this.array_hd7ov6${'$'}_0[index] = element;
 			  return previous;
 			};"""
-		})
+		}
 	}
 }
