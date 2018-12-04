@@ -54,7 +54,7 @@ import com.acornui.signal.bind
 
 // TODO: open inline mode.
 
-open class OptionsList<E : Any>(
+open class OptionList<E : Any>(
 		owner: Owned
 ) : ContainerImpl(owner), Clearable {
 
@@ -120,15 +120,20 @@ open class OptionsList<E : Any>(
 			textInput.text = if (value == null) "" else formatter.format(value)
 		}
 
+	/**
+	 * If true, the list will open when typing into the input field.
+	 */
+	var openOnInput = true
+
 	private val textInput = textInput {
 		input.add {
 			dataView.dirty()  // Most data views will change based on the text input.
-			open()
+			if (openOnInput) open()
 			scrollModel.value = 0f // Scroll to the top.
 			setSelectedItemFromText()
 			_input.dispatch()
 		}
-		focusHighlightDelegate = this@OptionsList
+		focusHighlightDelegate = this@OptionList
 	}
 
 	/**
@@ -152,18 +157,18 @@ open class OptionsList<E : Any>(
 
 	private val dataScroller = vDataScroller<E> {
 		focusEnabled = true
-		keyDown().add(this@OptionsList::keyDownHandler)
+		keyDown().add(this@OptionList::keyDownHandler)
 		selection.changed.add { _, newSelection ->
 			val value = newSelection.firstOrNull()
 			textInput.text = if (value == null) "" else formatter.format(value)
-			this@OptionsList.focus()
+			this@OptionList.focus()
 			close()
 			_changed.dispatch()
 		}
 	}
 
 	private val listLift = lift {
-		focusFirst = false
+		focus = false
 		+dataScroller layout { fill() }
 		onClosed = {
 			close()
@@ -179,7 +184,7 @@ open class OptionsList<E : Any>(
 			dataScroller.maxItems = value
 		}
 
-	val style = bind(OptionsListStyle())
+	val style = bind(OptionListStyle())
 
 	val dataScrollerStyle: DataScrollerStyle
 		get() = dataScroller.style
@@ -277,7 +282,7 @@ open class OptionsList<E : Any>(
 		isFocusContainer = true
 		focusEnabled = true
 
-		styleTags.add(OptionsList)
+		styleTags.add(OptionList)
 		maxItems = 10
 		addChild(textInput)
 
@@ -490,7 +495,6 @@ open class OptionsList<E : Any>(
 		downArrow.moveTo(pad.left + textInput.width + style.gap, pad.top + (textInput.height - downArrow.height) * 0.5f)
 		out.set(pad.expandWidth2(textInput.width + style.gap + downArrow.width), pad.expandHeight2(maxOf(textInput.height, downArrow.height)))
 		background?.setSize(out.width, out.height)
-
 		listLift.setSize(listWidth ?: out.width, listHeight)
 		listLift.moveTo(0f, out.height)
 	}
@@ -509,8 +513,8 @@ open class OptionsList<E : Any>(
 	companion object : StyleTag
 }
 
-class OptionsListStyle : StyleBase() {
-	override val type: StyleType<OptionsListStyle> = OptionsListStyle
+class OptionListStyle : StyleBase() {
+	override val type: StyleType<OptionListStyle> = OptionListStyle
 
 	/**
 	 * The background of the text input / down arrow area.
@@ -533,32 +537,32 @@ class OptionsListStyle : StyleBase() {
 	 */
 	var gap by prop(2f)
 
-	companion object : StyleType<OptionsListStyle>
+	companion object : StyleType<OptionListStyle>
 }
 
-fun <E : Any> Owned.optionsList(
-		init: ComponentInit<OptionsList<E>> = {}): OptionsList<E> {
-	val t = OptionsList<E>(this)
+fun <E : Any> Owned.optionList(
+		init: ComponentInit<OptionList<E>> = {}): OptionList<E> {
+	val t = OptionList<E>(this)
 	t.init()
 	return t
 }
 
-fun <E : Any> Owned.optionsList(
+fun <E : Any> Owned.optionList(
 		data: ObservableList<E?>,
 		rendererFactory: LayoutDataProvider<VerticalLayoutData>.() -> ListItemRenderer<E> = { simpleItemRenderer() },
-		init: ComponentInit<OptionsList<E>> = {}): OptionsList<E> {
-	val t = OptionsList<E>(this)
+		init: ComponentInit<OptionList<E>> = {}): OptionList<E> {
+	val t = OptionList<E>(this)
 	t.data(data)
 	t.rendererFactory(rendererFactory)
 	t.init()
 	return t
 }
 
-fun <E : Any> Owned.optionsList(
+fun <E : Any> Owned.optionList(
 		data: List<E?>,
 		rendererFactory: LayoutDataProvider<VerticalLayoutData>.() -> ListItemRenderer<E> = { simpleItemRenderer() },
-		init: ComponentInit<OptionsList<E>> = {}): OptionsList<E> {
-	val t = OptionsList<E>(this)
+		init: ComponentInit<OptionList<E>> = {}): OptionList<E> {
+	val t = OptionList<E>(this)
 	t.data(data)
 	t.rendererFactory(rendererFactory)
 	t.init()

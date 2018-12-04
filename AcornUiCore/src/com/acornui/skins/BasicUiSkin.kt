@@ -472,11 +472,11 @@ open class BasicUiSkin(
 	}
 
 	protected open fun optionsListStyle() {
-		val optionsListStyle = OptionsListStyle().apply {
+		val optionsListStyle = OptionListStyle().apply {
 			downArrow = {
-				atlas(theme.atlasPath, "OptionsListArrow")
+				atlas(theme.atlasPath, "OptionListArrow")
 			}
-			padding = Pad(theme.strokeThickness)
+			padding = Pad(theme.strokeThickness, theme.strokeThickness + 2f, theme.strokeThickness, theme.strokeThickness)
 			background = {
 				rect {
 					style.apply {
@@ -488,7 +488,7 @@ open class BasicUiSkin(
 				}
 			}
 		}
-		target.addStyleRule(optionsListStyle, OptionsList)
+		target.addStyleRule(optionsListStyle, OptionList)
 
 		val pad = Pad(top = 0f, right = theme.strokeThickness, bottom = theme.strokeThickness, left = theme.strokeThickness)
 		val dataScrollerStyle = DataScrollerStyle().apply {
@@ -504,19 +504,19 @@ open class BasicUiSkin(
 				}
 			}
 		}
-		target.styleRules.add(StyleRule(dataScrollerStyle, withAncestor(OptionsList)))
+		target.styleRules.add(StyleRule(dataScrollerStyle, withAncestor(OptionList)))
 
 		val scrollRectStyle = ScrollRectStyle().apply {
 			borderRadii = Corners(0f, 0f, 0f, theme.borderRadius - theme.strokeThickness)
 		}
-		target.styleRules.add(StyleRule(scrollRectStyle, withAncestor(OptionsList)))
+		target.styleRules.add(StyleRule(scrollRectStyle, withAncestor(OptionList)))
 
 		val textInputBoxStyle = BoxStyle()
 		textInputBoxStyle.apply {
 			backgroundColor = Color.CLEAR
 			borderThicknesses = Pad(0f)
 		}
-		target.addStyleRule(textInputBoxStyle, withAncestor(OptionsList) and TextInput)
+		target.addStyleRule(textInputBoxStyle, withAncestor(OptionList) and TextInput)
 	}
 
 	protected open fun dataGridStyle() {
@@ -629,9 +629,31 @@ open class BasicUiSkin(
 	}
 
 	protected open fun calendarStyle() {
-//		val calendarItemFlowStyle = TextFlowStyle()
-//		calendarItemFlowStyle.horizontalAlign = FlowHAlign.CENTER
-//		target.addStyleRule(calendarItemFlowStyle, withAncestor(CalendarItemRenderer))
+		val datePickerStyle = DatePickerStyle().apply {
+			downArrow = {
+				atlas(theme.atlasPath, "calendar")
+			}
+			padding = Pad(theme.strokeThickness, theme.strokeThickness + 2f, theme.strokeThickness, theme.strokeThickness)
+			background = {
+				rect {
+					style.apply {
+						backgroundColor = theme.inputFill
+						borderThicknesses = Pad(theme.strokeThickness)
+						borderRadii = Corners(0f)
+						borderColors = BorderColors(theme.stroke)
+					}
+				}
+			}
+		}
+
+		target.addStyleRule(datePickerStyle, DatePicker)
+
+		val textInputBoxStyle = BoxStyle()
+		textInputBoxStyle.apply {
+			backgroundColor = Color.CLEAR
+			borderThicknesses = Pad(0f)
+		}
+		target.addStyleRule(textInputBoxStyle, withAncestor(DatePicker) and TextInput)
 	}
 
 }
