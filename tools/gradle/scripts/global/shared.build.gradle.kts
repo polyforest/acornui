@@ -200,7 +200,6 @@ fun resolveTaskRequestTargets(project: Project): List<Task>? {
 
 var isProdBuild by extra(project.objects.property<Boolean>())
 
-// TODO - MP: Migrate these to live within the jsEntryPoint configuration
 /**
  * Determines and sets whether the build is a production js build or dev.
  * Must be called with js project.
@@ -507,7 +506,7 @@ val declareResourceGenerationTasks by extra { p: Project ->
 				 */
 				dir(processedResourcesPath, files(processedResourcesPath)).let {
 					afterEvaluate {
-						main.output.dir(mapOf("builtBy" to it.builtBy), it)
+						main.output.dir(mapOf("builtBy" to it.builtBy), processedResourcesPath)
 					}
 				}
 
@@ -1004,7 +1003,7 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 					}
 
 					val processGeneratedResources by getting {
-						val htmlSrcCollection by extra(dir(htmlSrcDestPath, files(htmlSrcDestPath)))
+						val htmlSrcCollection by extra(dir(htmlSrcDestPath))
 						dependsOn(htmlSrcCollection)
 					}
 
@@ -1051,7 +1050,6 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 					val bustProdHtmlSourceScriptCache by creating(SourceTask::class) {
 						description = "Modify ${project.name} html sources to bust browser cache."
 
-						//						val srcDir = htmlSrcDestPathByBuildType
 						val srcDir = prodHtmlSrcDestPath
 						source(srcDir)
 						include { fileTreeElement ->
@@ -1070,10 +1068,10 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 					}
 
 					val generatedResourceSources: ConfigurableFileCollection by processGeneratedResources.extra
-					val prodHtmlSrcCollection by extra(dir(prodHtmlSrcDestPath, files(prodHtmlSrcDestPath)))
+					val prodHtmlSrcCollection by extra(dir(prodHtmlSrcDestPath))
 
-						val prodHtmlSrcCollection by extra(DirCollection.fileCollection(prodHtmlSrcDestPath))
-						dependsOn(prodHtmlSrcCollection)
+					val processGeneratedProdResources by creating(DefaultTask::class) {
+						dependsOn(generatedResourceSources, prodHtmlSrcCollection)
 
 						releaseTask()
 					}
