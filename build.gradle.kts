@@ -106,7 +106,6 @@ val javaConvention: JavaPluginConvention = convention.getPlugin(JavaPluginConven
 val main: SourceSet by sourceSets
 tasks {
 	val jar by getting(Jar::class) {
-		main.output.classesDirs
 		manifest.attributes.apply {
 			put("Implementation-Title", project.name)
 			put("Implementation-Version", project.version)

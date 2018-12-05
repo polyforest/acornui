@@ -21,6 +21,9 @@ import com.liferay.gradle.plugins.node.tasks.ExecuteNodeTask
 import com.liferay.gradle.plugins.node.tasks.DownloadNodeModuleTask
 import com.liferay.gradle.plugins.node.tasks.ExecuteNodeScriptTask
 import com.liferay.gradle.plugins.node.tasks.ExecuteNpmTask
+import org.gradle.api.internal.file.AbstractFileCollection
+import org.gradle.api.internal.tasks.DefaultTaskDependency
+import kotlin.reflect.jvm.jvmName
 
 buildscript {
 	val KOTLIN_VERSION: String by gradle.startParameter.projectProperties
@@ -221,8 +224,6 @@ fun setBuildType(project: Project) {
 					isProdBuild.set(false)
 				else
 					isProdBuild.set(true)
-
-				isProdBuild.finalizeValue()
 			}
 		}
 	}
@@ -306,7 +307,6 @@ val maybeCreateBuildutilsConfiguration by extra { p: Project ->
 	buildutils
 }
 
-// TODO - MP: Fix the documentation.
 /**
  * Provides traceability between a directory file (key), its configurable file collection (live and lazy contents)
  * (value), and the tasks that build the contents (tracked in the value instance).
@@ -373,6 +373,7 @@ fun <T : Task> T.buildsDir(path: String) {
 	DirCollection.builds(this, path)
 }
 
+// TODO - MP: Store as map of directory properties (project.objects.dir()) associated to the configurable file collection
 /**
  * Registers a new directory file with its configurable file collection.
  *
@@ -494,9 +495,6 @@ val declareResourceGenerationTasks by extra { p: Project ->
 
 				val processedResourcesPath by extra(processedResourcesPath(p))
 				val finalResourcesPath by extra(finalResourcesPath(p))
-				//				val processedSourcePath by extra(processedSourcePath(p))
-
-				val usedGeneratedResources by extra(p.objects.property(FileCollection::class))
 
 				/**
 				 * Register the destination for processed resources.  By default, these are all declared resource source
@@ -509,25 +507,6 @@ val declareResourceGenerationTasks by extra { p: Project ->
 						main.output.dir(mapOf("builtBy" to it.builtBy), processedResourcesPath)
 					}
 				}
-
-				/**
-				 * Swap resources output directory while retaining original `processResources` destination directory.
-				 * [resourcesDestPath] (absolute path) becomes the new resource destination.
-				 *
-				 * Exports the old resources output directory as a project level extra property.
-				 **/
-				//				fun swapResourcesOutputDirectory(project: Project, resourcesDestPath: String) {
-				//					toUnit {
-				//						with(p) {
-				//							val oldResourcesOutputDir by project.extra(file(main.output.resourcesDir.absolutePath))!!
-				//							val processResources by project.tasks.getting(Copy::class) {
-				//								destinationDir = oldResourcesOutputDir
-				//							}
-				//
-				//							main.output.resourcesDir = file(resourcesDestPath)
-				//						}
-				//					}
-				//				}
 
 				setBuildType(p)
 
@@ -546,10 +525,6 @@ val declareResourceGenerationTasks by extra { p: Project ->
 						from(main.resources.sourceDirectories)
 						into(processedResourcesPath)
 
-						// Swap out resources destination...
-						val processResources by getting(Copy::class)
-						//						swapResourcesOutputDirectory(project, finalResourcesPath)
-
 						/**
 						 * Prevent both unprocessed and processed resources from co-existing on the classpath (or copied
 						 * around more than necessary).
@@ -558,6 +533,8 @@ val declareResourceGenerationTasks by extra { p: Project ->
 						 * use this method of exclusion.  It also preserves any extra sources consumers may attach to the task
 						 * itself as inputs.
 						 **/
+						val processResources by getting(Copy::class)
+
 						// Since stageResources preserves processResources inclusions/exclusions, stageResources
 						// inclusions/exclusions must come first.
 						include(processResources.includes)
@@ -641,18 +618,7 @@ val declareResourceGenerationTasks by extra { p: Project ->
 						 * generatedResourceSources.add(<see ConfigurableFileCollection.add for valid params>)
 						 */
 						val generatedResourceSources by extra(dir(processedResourcesPath))
-						//						val generatedSources by extra {
-						//							processedSourcePath?.let {
-						//								DirCollection.fileCollection(it)
-						//							}
-						//						}
-						//
-						//						val notNullSources = listOfNotNull(generatedResourceSources, generatedSources)
-						//						usedGeneratedResources.set(notNullSources.reduce { aggregate: FileCollection,
-						//																		   nextElement: ConfigurableFileCollection ->
-						//							aggregate + nextElement
-						//						})
-						//						dependsOn(notNullSources)
+
 						dependsOn(generatedResourceSources)
 					}
 
@@ -672,13 +638,6 @@ val declareResourceGenerationTasks by extra { p: Project ->
 
 					val classes by getting {
 						dependsOn(processFinalResources)
-					}
-
-					// Package jar just like the file-system deploy.
-					val jar by getting(Jar::class) {
-						val compiledOutputPatterns =
-							generatePatterns(main.output.classesDirs.asFileTree.getRootsChildren())
-						exclude(compiledOutputPatterns)
 					}
 
 					listOf(packAssets, createResourceFileManifest).forEach {
@@ -813,11 +772,101 @@ object KotlinMonkeyPatcher {
 	}
 }
 
+// TODO - MP: Document
+operator fun TaskDependency.minus(taskDependency: TaskDependency): TaskDependency {
+	val result = DefaultTaskDependency()
+	val newDependencies = this.getDependencies(null) - taskDependency.getDependencies(null)
+	return result.add(*newDependencies.toTypedArray())
+}
+
+fun FileCollection.minusAll(collection: FileCollection): FileCollection {
+	if (this is AbstractFileCollection)
+		return minusAll(collection)
+	else
+		throw Exception("$this does not implement or extend AbstractFileCollection.")
+}
+
+// TODO - MP: Document
+fun <T : AbstractFileCollection> T.minusAll(fileCollection: FileCollection): FileCollection {
+	val outerThis = this
+
+	return object : AbstractFileCollection() {
+		override fun getDisplayName(): String {
+			return outerThis.displayName
+		}
+
+		override fun getBuildDependencies(): TaskDependency {
+			return outerThis.buildDependencies - fileCollection.buildDependencies
+		}
+
+		override fun getFiles(): Set<File> {
+			val files = LinkedHashSet<File>(outerThis.files)
+			files.removeAll(fileCollection.files)
+			return files
+		}
+
+		override fun contains(file: File): Boolean {
+			return outerThis.contains(file) && !fileCollection.contains(file)
+		}
+	}
+}
+
 /**
  * Retrieves the [node][com.liferay.gradle.plugins.node.NodeExtension] extension.
  */
 val org.gradle.api.Project.`node`: com.liferay.gradle.plugins.node.NodeExtension
 	get() = (this as org.gradle.api.plugins.ExtensionAware).extensions.getByType()
+
+// TODO - MP: Document
+fun <T : Task, S : FileCollection> T.subtractFromDependsOn(collection: S): Set<Any> {
+	val dependsOnMutatedElements = mutableSetOf<Any>()
+	val otherDependencies =
+		collection.buildDependencies.getDependencies(null)
+
+	val strippedDependsOn = dependsOn.toMutableSet()
+	strippedDependsOn.removeIf { dependency: Any ->
+		when (dependency) {
+			is AbstractFileCollection -> {
+
+				if (dependency != collection)
+					dependsOnMutatedElements.add(dependency.minusAll(collection))
+
+				true
+			}
+
+			is Task                   -> otherDependencies.contains(dependency)
+
+			is TaskDependency         -> {
+				val dependencies = dependency.getDependencies(null)
+				when {
+					dependencies == otherDependencies                   -> true
+
+					dependencies.any { otherDependencies.contains(it) } -> {
+						dependsOnMutatedElements.add(dependency - collection.buildDependencies)
+
+						true
+					}
+
+					else                                                -> false
+				}
+			}
+
+			else                      -> {
+				// TODO - MP: Shore up remaining types.
+				logger.log(
+					LogLevel.DEBUG, """
+					This dependency's type is not supported, so it wasn't removed from the file collection:
+						${dependency::class.jvmName} - $dependency
+				""".trimIndent()
+				)
+
+				false
+			}
+		}
+	}
+
+	return (strippedDependsOn + dependsOnMutatedElements)
+}
 
 /**
  * Configuration for a module that serves as a Js entry point for the acorn app (i.e. consuming app).
@@ -829,19 +878,56 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 			if (isAppModule() && isThatModule("${rootProject.name}-js")) {
 				val htmlSrcDestPath by extra(htmlSrcDestPath(p))
 				val prodHtmlSrcDestPath by extra(prodHtmlSrcDestPath(p))
-				val htmlSrcDestPath by extra(htmlSrcDestPath(p))
-//				val htmlSrcDestPathByBuildType by extra {
-//					KotlinClosure0(fun() = htmlSrcDestPathByBuildType(p))
-//				}
 
-				val acornConfig: MutableMap<String, String> = gradle.startParameter.projectProperties
+				listOf(htmlSrcDestPath, prodHtmlSrcDestPath).forEach {
+					dir(it, files(it))
+				}
 
 				val main: SourceSet by sourceSets
 				var isProdBuild: Property<Boolean> by rootProject.extra
 
-				pluginManager.withPlugin("com.liferay.node") {
-					//					generateNpmTasks(p)
+				/**
+				 * Setup the final JS html source to be used (prod or dev).
+				 */
+				val finalHtmlSrcDest by extra(objects.directoryProperty())
+				// TODO - MP: Spike if possible to refactor runtimeCollection to use KotlinClosure0 and a Provider
+				// 	property
+				var runtimeCollection by files()
+
+				afterEvaluate {
+					val htmlSrcPath = if (!isProdBuild.get()) htmlSrcDestPath else prodHtmlSrcDestPath
+					finalHtmlSrcDest.set(file(htmlSrcPath))
+
+					dir(htmlSrcPath).let { finalHtmlSrc ->
+
+						main.output.dir(mapOf("builtBy" to finalHtmlSrc.builtBy), htmlSrcPath)
+
+						// Remove circular dependency in main's classpaths while retaining processed/generated
+						// resources in artifacts.
+						val processFinalResources by tasks.getting
+						val processFinalProdResources by tasks.getting
+
+						val classes by tasks.getting {
+							setDependsOn(subtractFromDependsOn(finalHtmlSrc) - processFinalResources)
+						}
+
+						// Ensure the source still ends up in the jar.
+						val assemble by tasks.getting {
+							dependsOn(processFinalResources, processFinalProdResources)
+						}
+
+						// Setup runtime collection to not include resource circular dependencies.
+						runtimeCollection.apply {
+							val target =
+								(main.runtimeClasspath + main.output.classesDirs).minusAll(finalHtmlSrc)
+
+							from(KotlinClosure0(fun() = target))
+							builtBy(*target.buildDependencies.getDependencies(null).toTypedArray())
+						}
+					}
 				}
+
+				val acornConfig: MutableMap<String, String> = gradle.startParameter.projectProperties
 
 				// TODO - MP: Migrate to global properties?
 				acornConfig["JS_LIBS_DEST"] = "lib"
@@ -852,20 +938,6 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 				tasks {
 					val buildutils = maybeCreateBuildutilsConfiguration(p)
 
-					/**
-					 * Delay triggering dependency resolution (triggered by iterating through files in the
-					 * FileCollections until all dependencies for the project have been added.
-					 */
-					val runtimeFiles = p.objects.listProperty<Any>()
-					p.afterEvaluate {
-						val explodedRuntimeFiles = (main.runtimeClasspath + main.output.classesDirs).map {
-							if (it.extension in listOf("war", "jar", "zip"))
-								zipTree(it)
-							else
-								it
-						}
-						runtimeFiles.set(explodedRuntimeFiles)
-					}
 
 					val assembleWebSource by creating(Copy::class) {
 						description = "Gather html (.html, .js, etc) source for the ${project.name} module and its " +
@@ -883,19 +955,24 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 						into(htmlSrcDestPath)
 						from(htmlSrc)
 						exclude("**/*.meta.js")
-						afterEvaluate {
-							into(libsDest) {
-								// Delay evaluation by passing a Closure.
-								from(KotlinClosure0(fun() = runtimeFiles.get().toTypedArray()))
-								includeEmptyDirs = false
-								include {
-									jsSrcAndMaps(it.path) && allDirsSansDependencyMeta(it.path)
-								}
 
-								// Preserve last modified date for each file
-								eachFile {
-									currentCopyDetails + this
-								}
+						into(libsDest) {
+							// Delay evaluation by passing a Closure.
+							from(KotlinClosure0(fun() = runtimeCollection.map {
+								if (it.extension in listOf("war", "jar", "zip"))
+									zipTree(it)
+								else
+									it
+							}))
+
+							includeEmptyDirs = false
+							include {
+								jsSrcAndMaps(it.path) && allDirsSansDependencyMeta(it.path)
+							}
+
+							// Preserve last modified date for each file
+							eachFile {
+								currentCopyDetails + this
 							}
 						}
 
@@ -910,8 +987,7 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 						}
 
 						buildsDir(htmlSrcDestPath)
-						// TODO - MP: Needed?
-						dependsOn(main.runtimeClasspath, main.output.classesDirs)
+						dependsOn(runtimeCollection)
 					}
 
 					val stageWebSourceForProcessing by creating(Copy::class) {
@@ -954,7 +1030,6 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 						dependsOn(minifyJs)
 					}
 
-					// TODO - MP: Get hybrid task solution working. (commented out pieces)
 					val createJsFileManifest by creating(JavaExec::class) {
 						group = "build"
 						description = "Generate a file manifest of js libs for file handling at runtime."
@@ -985,8 +1060,6 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 						classpath = buildutils
 
 						buildsDir(destinationDir)
-						// TODO - MP - TEST: Does this go whenever if optimizeJs doesn't execute and it doesn't
-						// explicitly depend on stageWebSourceForPorcessing?
 						dependsOn(assembleWebSource)
 					}
 
@@ -1048,9 +1121,6 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 
 						releaseTask()
 						buildsDir(destinationDir)
-						// TODO - MP - TEST: Does this go whenever if optimizeJs doesn't execute and it doesn't
-						// explicitly depend on stageWebSourceForPorcessing?
-						//						dependsOn(stageWebSourceForProcessing, optimizeJs)
 						dependsOn(stageWebSourceForProcessing, optimizeJs)
 					}
 
@@ -1083,6 +1153,8 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 						releaseTask()
 					}
 
+					// TODO - MP: Make this match processFinalResources.  Something is asymmetrical, though it works.
+					// This will cause inconsistent expectations for downstream build engineers.
 					val processFinalProdResources by creating(Copy::class) {
 						destinationDir = file(finalResourcesPath(p))
 						into(destinationDir)
@@ -1090,20 +1162,9 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 						val processResources by getting
 						from(processResources, generatedResourceSources, prodHtmlSrcCollection)
 
-						// Pseudo-Code:T0D0 | Make finalResourcesPath a dirCollection?
-						// Pseudo-Code:T0D0 | I believe this is redundant
-						//						destinationDir = file(finalResourcesPath(p))
 						into(file(finalResourcesPath(p)))
 
 						releaseTask()
-					}
-
-					val classes by getting {
-						setDependsOn(dependsOn - processFinalResources)
-					}
-
-					val assemble by getting {
-						dependsOn(processFinalResources, processFinalProdResources)
 					}
 
 					val run = maybeCreate("run", DefaultTask::class)
@@ -1114,6 +1175,14 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 						releaseTask()
 						dependsOn(processFinalProdResources)
 					}
+
+					// TODO - MP: We should change this to a zip artifact when publishing.
+					// Package jar just like the file-system deploy.
+//					val jar by getting(Jar::class) {
+//						val compiledOutputPatterns =
+//							generatePatterns(main.output.classesDirs.asFileTree.getRootsChildren())
+//						exclude(compiledOutputPatterns)
+//					}
 				}
 
 				val printDevClasspath by tasks.creating(DefaultTask::class) {

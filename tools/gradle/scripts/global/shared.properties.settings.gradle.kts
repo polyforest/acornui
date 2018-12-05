@@ -22,7 +22,7 @@ open class GlobalConfig(val ACORNUI_HOME: String) {
 
 	val GRADLE_VERSION = "5.0"
 	val TARGET_JVM_VERSION = "1.8"
-	val KOTLIN_VERSION = "1.3.0"
+	val KOTLIN_VERSION = "1.3.10"
 	val TARGET_ECMA_VERSION = "v5"
 	val DOKKA_VERSION = "0.9.17"
 	val ACORNUI_GROUP = "com.polyforest"
