@@ -61,7 +61,10 @@ object TextStyleTags {
 	val h4 = styleTag()
 	val strong = styleTag()
 	val emphasis = styleTag()
-	val errorMessage = styleTag()
+
+	val error = styleTag()
+	val warning = styleTag()
+	val info = styleTag()
 }
 
 /**
@@ -136,6 +139,39 @@ fun Owned.em(text: String = "", init: ComponentInit<TextField> = {}): TextField 
 fun Owned.strongEm(text: String = "", init: ComponentInit<TextField> = {}): TextField {
 	val t = TextFieldImpl(this)
 	t.styleTags.addAll(TextStyleTags.emphasis, TextStyleTags.strong)
+	t.text = text
+	t.init()
+	return t
+}
+
+/**
+ * A shortcut to creating a text field with the [TextStyleTags.error] tag.
+ */
+fun Owned.errorText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
+	val t = TextFieldImpl(this)
+	t.styleTags.add(TextStyleTags.error)
+	t.text = text
+	t.init()
+	return t
+}
+
+/**
+ * A shortcut to creating a text field with the [TextStyleTags.warning] tag.
+ */
+fun Owned.warningText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
+	val t = TextFieldImpl(this)
+	t.styleTags.add(TextStyleTags.warning)
+	t.text = text
+	t.init()
+	return t
+}
+
+/**
+ * A shortcut to creating a text field with the [TextStyleTags.info] tag.
+ */
+fun Owned.infoText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
+	val t = TextFieldImpl(this)
+	t.styleTags.add(TextStyleTags.info)
 	t.text = text
 	t.init()
 	return t

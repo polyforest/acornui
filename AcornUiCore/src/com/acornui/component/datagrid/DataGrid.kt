@@ -1691,13 +1691,13 @@ class DataGrid<E>(
 			get() = showHeader || showList || showFooter
 
 		val showHeader: Boolean
-			get() = visible && group.showHeader
+			get() = group.visible && group.showHeader
 
 		val showList: Boolean
-			get() = visible && !group.collapsed && list.isNotEmpty()
+			get() = group.visible && !group.collapsed && list.isNotEmpty()
 
 		val showFooter: Boolean
-			get() = visible && group.showFooter && (!group.collapsed || group.showFooterWhenCollapsed)
+			get() = group.visible && group.showFooter && (!group.collapsed || group.showFooterWhenCollapsed)
 
 		val size: Int
 			get() {

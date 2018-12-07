@@ -22,6 +22,9 @@ import com.acornui.component.layout.algorithm.GridLayoutStyle
 import com.acornui.component.style.*
 import com.acornui.component.text.selectable
 import com.acornui.component.text.textInput
+import com.acornui.core.Disposable
+import com.acornui.core.cursor.StandardCursors
+import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.di.own
@@ -60,7 +63,7 @@ open class DatePicker(
 	/**
 	 * Dispatched on value commit.
 	 * It is dispatched when the user selects a date, or commits the value of the text input. It is not dispatched
-	 * when the selected item or text is programmatically changed.
+	 * when the selected date or text is programmatically changed.
 	 */
 	val changed: Signal<() -> Unit> = _changed
 
@@ -87,6 +90,9 @@ open class DatePicker(
 		set(value) {
 			calendar.selection.selectedItem = value
 			textInput.text = if (value == null) "" else formatter.format(value)
+			val d = value ?: time.now()
+			calendar.month = d.month
+			calendar.fullYear = d.fullYear
 		}
 
 	/**
@@ -103,9 +109,24 @@ open class DatePicker(
 		focusHighlightDelegate = this@DatePicker
 	}
 
+	private var handCursor: Disposable? = null
+
+	/**
+	 * If false, the date picker will not accept type input, and dates may only be selected via the dropdown.
+	 */
 	var editable: Boolean by observable(true) {
 		textInput.editable = it
 		textInput.selectable = it
+		handCursor?.dispose()
+		if (it) handCursor = cursor(StandardCursors.HAND)
+	}
+
+	/**
+	 * If true, this date picker will use the CommonStyleTags.disabled style tag and have interactivity disabled.
+	 */
+	var disabled: Boolean by observable(false) {
+		interactivityMode = if (it) InteractivityMode.NONE else InteractivityMode.ALL
+		disabledTag = it
 	}
 
 	private var background: UiComponent? = null
@@ -120,7 +141,7 @@ open class DatePicker(
 		}
 	}
 
-	private val listLift = lift {
+	private val calendarLift = lift {
 		focus = false
 		+calendar layout { fill() }
 		onClosed = {
@@ -158,6 +179,7 @@ open class DatePicker(
 			downArrow?.dispose()
 			val downArrow = addChild(it.downArrow(this))
 			downArrow.focusEnabled = false
+			downArrow.cursor(StandardCursors.HAND)
 			downArrow.click().add { e ->
 				// Using mouseDown instead of click because we close on blur (which is often via mouseDown).
 				if (!e.handled) {
@@ -195,15 +217,15 @@ open class DatePicker(
 		if (_isOpen) return
 		_isOpen = true
 		calendar.highlighted.clear()
-		listLift.priority = inject(PopUpManager).currentPopUps.lastOrNull()?.priority ?: 0f
-		addChild(listLift)
+		calendarLift.priority = inject(PopUpManager).currentPopUps.lastOrNull()?.priority ?: 0f
+		addChild(calendarLift)
 		textInput.focus()
 	}
 
 	fun close() {
 		if (!_isOpen) return
 		_isOpen = false
-		removeChild(listLift)
+		removeChild(calendarLift)
 	}
 
 	fun toggleOpen() {
@@ -238,7 +260,7 @@ open class DatePicker(
 		out.set(pad.expandWidth2(textInput.width + style.gap + downArrow.width), pad.expandHeight2(maxOf(textInput.height, downArrow.height)))
 		background?.setSize(out.width, out.height)
 
-		listLift.moveTo(0f, out.height)
+		calendarLift.moveTo(0f, out.height)
 	}
 
 	override fun clear() {

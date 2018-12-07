@@ -30,6 +30,8 @@ import com.acornui.component.style.*
 import com.acornui.component.text.selectable
 import com.acornui.component.text.textInput
 import com.acornui.core.Disposable
+import com.acornui.core.cursor.StandardCursors
+import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.di.own
@@ -136,15 +138,21 @@ open class OptionList<E : Any>(
 		focusHighlightDelegate = this@OptionList
 	}
 
+	private var handCursor: Disposable? = null
+
 	/**
 	 * If false, the text input will not accept type input, and items may only be selected via the dropdown.
 	 */
 	var editable: Boolean by observable(true) {
 		textInput.editable = it
 		textInput.selectable = it
-		downArrow?.interactivityMode = if (it) InteractivityMode.ALL else InteractivityMode.NONE
+		handCursor?.dispose()
+		if (it) handCursor = cursor(StandardCursors.HAND)
 	}
 
+	/**
+	 * If true, this option list will use the CommonStyleTags.disabled style tag and have interactivity disabled.
+	 */
 	var disabled: Boolean by observable(false) {
 		interactivityMode = if (it) InteractivityMode.NONE else InteractivityMode.ALL
 		disabledTag = it
@@ -489,6 +497,7 @@ open class OptionList<E : Any>(
 		val w = pad.reduceWidth(explicitWidth)
 		val h = pad.reduceHeight(explicitHeight)
 		val downArrow = this.downArrow!!
+		downArrow.cursor(StandardCursors.HAND)
 		textInput.setSize(if (w == null) null else w - style.gap - downArrow.width, h)
 		textInput.setPosition(pad.left, pad.top)
 		downArrow.moveTo(pad.left + textInput.width + style.gap, pad.top + (textInput.height - downArrow.height) * 0.5f)

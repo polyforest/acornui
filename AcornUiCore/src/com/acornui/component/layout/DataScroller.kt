@@ -177,35 +177,6 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 		bottomContents.emptyListRenderer(value)
 	}
 
-	init {
-		styleTags.add(DataScroller)
-		maxItems = 15
-		scrollModel.changed.add {
-			contents.indexPosition = scrollModel.value
-		}
-		watch(style) {
-			rowBackgroundsCache.disposeAndClear()
-
-			background?.dispose()
-			background = addOptionalChild(0, it.background(this))
-		}
-
-		wheel().add {
-			tossScroller.stop()
-			scrollModel.value += (if (isVertical) it.deltaY else it.deltaX) / scrollBar.modelToPixels
-		}
-
-		click().add {
-			if (selectable && !it.handled) {
-				val e = getElementUnderPosition(mousePosition(_mousePosition))
-				if (e != null) {
-					it.handled = true
-					_selection.setSelectedItemsUser(listOf(e))
-				}
-			}
-		}
-	}
-
 	override fun onActivated() {
 		super.onActivated()
 		stage.mouseMove().add(stageMouseMoveHandler)
@@ -351,6 +322,37 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 			rowBackground.moveTo(renderer.x, 0f)
 		}
 		return rowBackground
+	}
+
+	init {
+		isFocusContainer = true
+		focusEnabled = true
+		styleTags.add(DataScroller)
+		maxItems = 15
+		scrollModel.changed.add {
+			contents.indexPosition = scrollModel.value
+		}
+		watch(style) {
+			rowBackgroundsCache.disposeAndClear()
+
+			background?.dispose()
+			background = addOptionalChild(0, it.background(this))
+		}
+
+		wheel().add {
+			tossScroller.stop()
+			scrollModel.value += (if (isVertical) it.deltaY else it.deltaX) / scrollBar.modelToPixels
+		}
+
+		click().add {
+			if (selectable && !it.handled) {
+				val e = getElementUnderPosition(mousePosition(_mousePosition))
+				if (e != null) {
+					it.handled = true
+					_selection.setSelectedItemsUser(listOf(e))
+				}
+			}
+		}
 	}
 
 	companion object : StyleTag

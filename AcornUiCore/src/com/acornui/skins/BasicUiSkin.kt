@@ -143,8 +143,16 @@ open class BasicUiSkin(
 		target.addStyleRule(textAreaStyle, withAncestor(TextArea))
 
 		val errorMessageStyle = CharStyle()
-		errorMessageStyle.colorTint = Color.RED
-		target.addStyleRule(errorMessageStyle, TextStyleTags.errorMessage)
+		errorMessageStyle.colorTint = theme.errorColor
+		target.addStyleRule(errorMessageStyle, withAncestor(TextStyleTags.error))
+
+		val warningMessageStyle = CharStyle()
+		warningMessageStyle.colorTint = theme.warningColor
+		target.addStyleRule(warningMessageStyle, withAncestor(TextStyleTags.warning))
+
+		val infoMessageStyle = CharStyle()
+		infoMessageStyle.colorTint = theme.infoColor
+		target.addStyleRule(infoMessageStyle, withAncestor(TextStyleTags.info))
 	}
 
 	protected open fun loadBitmapFonts() {
@@ -989,6 +997,10 @@ class Theme {
 	var headingColor: ColorRo = Color(0x333333FF)
 	var formLabelColor: ColorRo = Color(0x555555FF)
 
+	var errorColor: ColorRo = Color(0xcc3333FF)
+	var warningColor: ColorRo = Color(0xff9933FF)
+	var infoColor: ColorRo = Color(0x339933FF)
+
 	var controlBarBgColor: ColorRo = Color(0xDAE5F0FF)
 
 	var evenRowBgColor: ColorRo = bgColor + Color(0x03030300)
@@ -1029,6 +1041,10 @@ class Theme {
 		headingColor = other.headingColor
 		formLabelColor = other.formLabelColor
 
+		errorColor = other.errorColor
+		warningColor = other.warningColor
+		infoColor = other.infoColor
+
 		controlBarBgColor = other.controlBarBgColor
 
 		evenRowBgColor = other.evenRowBgColor
@@ -1067,6 +1083,9 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 		o.fillHighlight = reader.color("fillHighlight")!!
 		o.fillShine = reader.color("fillShine")!!
 		o.formLabelColor = reader.color("formLabelColor")!!
+		o.errorColor = reader.color("errorColor")!!
+		o.warningColor = reader.color("warningColor")!!
+		o.infoColor = reader.color("infoColor")!!
 		o.headingColor = reader.color("headingColor")!!
 		o.highlightedEvenRowBgColor = reader.color("highlightedEvenRowBgColor")!!
 		o.highlightedOddRowBgColor = reader.color("highlightedOddRowBgColor")!!
@@ -1098,6 +1117,9 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 		writer.color("fillHighlight", fillHighlight)
 		writer.color("fillShine", fillShine)
 		writer.color("formLabelColor", formLabelColor)
+		writer.color("errorColor", errorColor)
+		writer.color("warningColor", warningColor)
+		writer.color("infoColor", infoColor)
 		writer.color("headingColor", headingColor)
 		writer.color("highlightedEvenRowBgColor", highlightedEvenRowBgColor)
 		writer.color("highlightedOddRowBgColor", highlightedOddRowBgColor)

@@ -17,6 +17,7 @@
 package com.acornui.component.datagrid
 
 import com.acornui.component.ContainerImpl
+import com.acornui.component.DatePicker
 import com.acornui.component.layout.HAlign
 import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.text.*
@@ -215,7 +216,6 @@ class StringEditorCell(owner: Owned) : ContainerImpl(owner), DataGridEditorCell<
 abstract class DateColumn<in E>(override val injector: Injector) : DataGridColumn<E, DateRo?>(), Scoped {
 
 	val formatter = dateFormatter {
-		type = DateTimeFormatType.DATE
 		dateStyle = DateTimeFormatStyle.SHORT
 	}
 
@@ -230,7 +230,9 @@ abstract class DateColumn<in E>(override val injector: Injector) : DataGridColum
 
 	override fun createCell(owner: Owned): DataGridCell<DateRo?> = DateCell(owner, formatter)
 
-	override fun createEditorCell(owner: Owned): DataGridEditorCell<DateRo?> = DateEditorCell(owner, formatter, parser)
+	override fun createEditorCell(owner: Owned): DataGridEditorCell<DateRo?> = DateEditorCell(owner).apply {
+		formatter = this@DateColumn.formatter
+	}
 
 	override fun compareRows(row1: E, row2: E): Int {
 		return getCellData(row1).compareTo(getCellData(row2))
@@ -253,35 +255,18 @@ class DateCell(owner: Owned, private val formatter: StringFormatter<DateRo>) : C
 
 }
 
-class DateEditorCell(owner: Owned, private val formatter: StringFormatter<DateRo>, private val parser: StringParser<DateRo>) : ContainerImpl(owner), DataGridEditorCell<DateRo?> {
-
-	private val _changed = own(Signal0())
-	override val changed: Signal<() -> Unit>
-		get() = _changed
-
-	private val input = addChild(textInput())
-
-	init {
-		input.changed.add(_changed::dispatch)
-		input.selectAll()
-	}
+class DateEditorCell(owner: Owned) : DatePicker(owner), DataGridEditorCell<DateRo?> {
 
 	override fun validateData(): Boolean {
 		return true
 	}
 
 	override fun getData(): DateRo? {
-		return parser.parse(input.text)
+		return selectedDate
 	}
 
 	override fun setData(value: DateRo?) {
-		input.text = if (value == null) "" else formatter.format(value)
-	}
-
-	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		super.updateLayout(explicitWidth, explicitHeight, out)
-		input.setSize(explicitWidth, explicitHeight)
-		out.set(input.bounds)
+		selectedDate = value
 	}
 }
 
