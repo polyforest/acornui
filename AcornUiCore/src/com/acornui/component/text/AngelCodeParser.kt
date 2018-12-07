@@ -17,6 +17,8 @@
 package com.acornui.component.text
 
 import com.acornui.action.Decorator
+import com.acornui.component.text.GlyphData.Companion.EMPTY_CHAR
+import com.acornui.component.text.GlyphData.Companion.UNKNOWN_CHAR
 import com.acornui.math.IntRectangle
 import com.acornui.string.StringReader
 import com.acornui.core.replace2
@@ -158,18 +160,18 @@ object AngelCodeParser : Decorator<String, BitmapFontData> {
 			space = GlyphData(char = ' ', advanceX = copy.advanceX)
 			this[' '] = space
 		}
-		for (char in arrayOf('\t', '\n', '\r', 0.toChar())) {
+		for (char in arrayOf('\t', '\n', '\r')) {
 			// Invisible characters that take up no space.
 			if (this[char] == null) {
 				this[char] = GlyphData(char)
 			}
 		}
+		this[EMPTY_CHAR] = GlyphData(EMPTY_CHAR)
 		val nbspChar = '�'
 		if (this[nbspChar] == null) {
 			this[nbspChar] = space.copy(char = nbspChar)
 		}
-		val unknownChar = (-1).toChar()
-		this[unknownChar] = (this['?'] ?: space).copy(char = unknownChar)
+		this[UNKNOWN_CHAR] = (this['?'] ?: space).copy(char = UNKNOWN_CHAR)
 	}
 
 	private fun nextLine(parser: StringReader): Boolean {

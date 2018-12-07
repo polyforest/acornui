@@ -177,6 +177,13 @@ data class GlyphData(
 		}
 	}
 
+	companion object {
+
+		const val EMPTY_CHAR = (-2).toChar()
+
+		const val UNKNOWN_CHAR = (-1).toChar()
+	}
+
 }
 
 /**
