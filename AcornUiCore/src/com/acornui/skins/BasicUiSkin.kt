@@ -906,10 +906,10 @@ open class LabelButtonSkinPart(
 	val textField: TextField = text()
 
 	init {
-		textField.selectable = false
 		+texture
 		+textField
 
+		textField.selectable = false
 		textField.flowStyle.horizontalAlign = FlowHAlign.CENTER
 	}
 

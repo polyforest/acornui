@@ -232,6 +232,7 @@ abstract class DateColumn<in E>(override val injector: Injector) : DataGridColum
 
 	override fun createEditorCell(owner: Owned): DataGridEditorCell<DateRo?> = DateEditorCell(owner).apply {
 		formatter = this@DateColumn.formatter
+		open()
 	}
 
 	override fun compareRows(row1: E, row2: E): Int {

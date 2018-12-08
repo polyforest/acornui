@@ -537,7 +537,7 @@ class DataGrid<E>(
 		if (event.handled) return
 		val cell = getCellFromPosition(event.canvasX, event.canvasY)
 		event.handled = true
-		_cellClicked.dispatch(cell, cellClickedCancel)
+		_cellClicked.dispatch(cell, cellClickedCancel.reset())
 		if (!cellClickedCancel.canceled()) {
 			if (editorCell != null) {
 				commitCellEditorValue()
