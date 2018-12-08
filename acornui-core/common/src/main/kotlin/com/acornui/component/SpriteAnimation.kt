@@ -26,15 +26,12 @@ import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.graphic.AtlasRegionData
 import com.acornui.core.graphic.TextureAtlasDataSerializer
-import com.acornui.core.io.JSON_KEY
 import com.acornui.core.time.onTick
 import com.acornui.math.Bounds
 import com.acornui.math.MinMaxRo
 
 
 class SpriteAnimation(owner: Owned) : ContainerImpl(owner) {
-
-	val json = inject(JSON_KEY)
 
 	/**
 	 * The current animation frame. This will increment after this animation's framerate duration has passed.

@@ -64,7 +64,7 @@ import com.acornui.serialization.Serializer
 //				Camera to  Mockito.mock(Camera::class.java),
 //				FocusManager to  Mockito.mock(FocusManager::class.java),
 //				Gl20 to  Mockito.mock(Gl20::class.java),
-//				GlState to  Mockito.mock(GlState::class.java)
+//				GlState to  Mockito.mock(GlState::class.java),
 //		))
 //		time = MockTimeProvider()
 //

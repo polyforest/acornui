@@ -20,11 +20,11 @@ package com.acornui.jvm
 
 import com.acornui.assertionsEnabled
 import com.acornui.async.launch
-import com.acornui.browser.decodeUriComponent2
-import com.acornui.browser.encodeUriComponent2
 import com.acornui.component.*
 import com.acornui.component.text.BitmapFontRegistry
-import com.acornui.core.*
+import com.acornui.core.AppConfig
+import com.acornui.core.ApplicationBase
+import com.acornui.core.UserInfo
 import com.acornui.core.asset.AssetManager
 import com.acornui.core.asset.AssetManagerImpl
 import com.acornui.core.asset.AssetType
@@ -62,6 +62,7 @@ import com.acornui.core.text.numberFormatterProvider
 import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.TimeDriverImpl
 import com.acornui.core.time.time
+import com.acornui.core.userInfo
 import com.acornui.file.FileIoManager
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
@@ -72,7 +73,6 @@ import com.acornui.jvm.audio.OpenAlAudioManager
 import com.acornui.jvm.audio.OpenAlMusicLoader
 import com.acornui.jvm.audio.OpenAlSoundLoader
 import com.acornui.jvm.cursor.JvmCursorManager
-import com.acornui.jvm.files.FileIoManager
 import com.acornui.jvm.graphic.GlfwWindowImpl
 import com.acornui.jvm.graphic.JvmGl20Debug
 import com.acornui.jvm.graphic.JvmTextureLoader
@@ -87,7 +87,6 @@ import com.acornui.jvm.loader.WorkScheduler
 import com.acornui.jvm.persistance.LwjglPersistence
 import com.acornui.jvm.text.DateTimeFormatterImpl
 import com.acornui.jvm.text.NumberFormatterImpl
-import com.acornui.jvm.time.TimeProviderImpl
 import com.acornui.logging.ILogger
 import com.acornui.logging.Log
 import com.acornui.math.MinMax
@@ -98,8 +97,6 @@ import org.lwjgl.glfw.GLFWWindowRefreshCallback
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileReader
-import java.net.URLDecoder
-import java.net.URLEncoder
 import java.util.Locale as LocaleJvm
 
 /**
@@ -116,21 +113,6 @@ open class LwjglApplication : ApplicationBase() {
 	protected suspend fun getWindowId(): Long {
 		get(Window) // Ensure that the Window has been set.
 		return _windowId
-	}
-
-	companion object {
-		init {
-			lineSeparator = System.lineSeparator()
-
-			encodeUriComponent2 = { str ->
-				URLEncoder.encode(str, "UTF-8")
-			}
-			decodeUriComponent2 = { str ->
-				URLDecoder.decode(str, "UTF-8")
-			}
-
-			time = TimeProviderImpl()
-		}
 	}
 
 	fun start(config: AppConfig = AppConfig(),
@@ -434,4 +416,3 @@ class JvmApplicationRunner(
 	}
 
 }
-

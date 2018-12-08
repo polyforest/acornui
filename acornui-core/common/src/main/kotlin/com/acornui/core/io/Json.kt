@@ -17,15 +17,18 @@
 package com.acornui.core.io
 
 import com.acornui.core.di.Scoped
+import com.acornui.core.di.dKey
+import com.acornui.core.di.inject
 import com.acornui.serialization.From
+import com.acornui.serialization.Serializer
 import com.acornui.serialization.To
 
-@Deprecated("Use com.acornui.serialization.fromJson")
+val JSON_KEY = dKey<Serializer<String>>()
+
 fun <T> Scoped.parseJson(json: String, factory: From<T>): T {
-	return com.acornui.serialization.fromJson(json, factory)
+	return inject(JSON_KEY).read(json, factory)
 }
 
-@Deprecated("Use com.acornui.serialization.toJson")
 fun <T> Scoped.toJson(value: T, factory: To<T>): String {
-	return com.acornui.serialization.toJson(value, factory)
+	return inject(JSON_KEY).write(value, factory)
 }
