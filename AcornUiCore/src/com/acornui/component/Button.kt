@@ -25,9 +25,9 @@ import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.core.focus.Focusable
-import com.acornui.core.input.*
-import com.acornui.core.input.interaction.*
-import com.acornui.core.userInfo
+import com.acornui.core.input.interaction.ClickInteractionRo
+import com.acornui.core.input.interaction.MouseOrTouchState
+import com.acornui.core.input.interaction.click
 import com.acornui.factory.LazyInstance
 import com.acornui.factory.disposeInstance
 import com.acornui.math.Bounds
@@ -60,52 +60,11 @@ open class Button(
 	 */
 	var toggleOnClick = false
 
-	protected var _mouseIsOver = false
-	protected var _mouseIsDown = false
-
 	protected var _label: String = ""
 
 	private var _currentState = ButtonState.UP
 	private var _currentSkinPart: UiComponent? = null
 	private val _stateSkinMap = HashMap<ButtonState, LazyInstance<Owned, UiComponent?>>()
-
-	private val rollOverHandler = { event: MouseInteractionRo ->
-		_mouseIsOver = true
-		refreshState()
-	}
-
-	private val rollOutHandler = { event: MouseInteractionRo ->
-		_mouseIsOver = false
-		refreshState()
-	}
-
-	private val mouseDownHandler = { event: MouseInteractionRo ->
-		if (!_mouseIsDown && event.button == WhichButton.LEFT) {
-			_mouseIsDown = true
-			stage.mouseUp().add(stageMouseUpHandler, true)
-			refreshState()
-		}
-	}
-
-	private val touchStartHandler = { event: TouchInteractionRo ->
-		if (!_mouseIsDown) {
-			_mouseIsDown = true
-			stage.touchEnd().add(stageTouchEndHandler, true)
-			refreshState()
-		}
-	}
-
-	private val stageMouseUpHandler = { event: MouseInteractionRo ->
-		if (event.button == WhichButton.LEFT) {
-			_mouseIsDown = false
-			refreshState()
-		}
-	}
-
-	private val stageTouchEndHandler = { event: TouchInteractionRo ->
-		_mouseIsDown = false
-		refreshState()
-	}
 
 	private val clickHandler = { event: ClickInteractionRo ->
 		if (toggleOnClick) {
@@ -139,17 +98,17 @@ open class Button(
 			ButtonState.DISABLED
 		} else {
 			if (toggled) {
-				if (_mouseIsDown) {
+				if (mouseState.isDown) {
 					ButtonState.TOGGLED_DOWN
-				} else if (_mouseIsOver) {
+				} else if (mouseState.isOver) {
 					ButtonState.TOGGLED_OVER
 				} else {
 					ButtonState.TOGGLED_UP
 				}
 			} else {
-				if (_mouseIsDown) {
+				if (mouseState.isDown) {
 					ButtonState.DOWN
-				} else if (_mouseIsOver) {
+				} else if (mouseState.isOver) {
 					ButtonState.OVER
 				} else {
 					ButtonState.UP
@@ -206,10 +165,9 @@ open class Button(
 		}
 	}
 
-	override fun dispose() {
-		super.dispose()
-		stage.mouseUp().remove(stageMouseUpHandler)
-		stage.touchEnd().remove(stageTouchEndHandler)
+	private val mouseState = own(MouseOrTouchState(this)).apply {
+		isOverChanged.add { refreshState() }
+		isDownChanged.add { refreshState() }
 	}
 
 	init {
@@ -217,13 +175,6 @@ open class Button(
 		focusEnabledChildren = false
 		styleTags.add(Button)
 
-		// Mouse over / out handlers cause problems on mobile.
-		if (!userInfo.isTouchDevice) {
-			rollOver().add(rollOverHandler)
-			rollOut().add(rollOutHandler)
-		}
-		mouseDown().add(mouseDownHandler)
-		touchStart().add(touchStartHandler)
 		click().add(clickHandler)
 		cursor(StandardCursors.HAND)
 
