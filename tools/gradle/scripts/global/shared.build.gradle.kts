@@ -40,11 +40,27 @@ buildscript {
 	}
 }
 
+fun loadStartParamProp(propName: String, default: String? = null, isFilePath: Boolean = false): String? {
+	val startParams: MutableMap<String, String> = gradle.startParameter.projectProperties
+	val startParamProp = startParams[propName]
+	val extraProp = if (extra.has(propName)) extra[propName] else null
+
+	val value= (listOf(extraProp, startParamProp, default).firstOrNull {
+		!(it as? String?).isNullOrBlank()
+	} as String?).let {
+		if (isFilePath && it != null) file(it).canonicalPath else it
+	}
+
+	startParams[propName] = value ?: ""
+	extra[propName] = value
+	return value
+}
+
 val acornConfig: Map<String, String> = gradle.startParameter.projectProperties
 val polyforestProjectFlag = "POLYFOREST_PROJECT"
 val ACORNUI_HOME by acornConfig
 val acornUiHome = file(ACORNUI_HOME)
-val APP_HOME = acornConfig["APP_HOME"]
+val APP_HOME = loadStartParamProp("APP_HOME")
 
 // General helpers
 // sourceSets is being seen as private in applied scripts, so locally defining accessor here
@@ -67,6 +83,10 @@ val Project.isRoot
 	get() = parent == null
 val Project.isCompositeRoot
 	get() = gradle.isRoot && isComposite && isRoot
+// Warning:  `isTopLevelIncludedBuild` will always be `acornui` or `app` when executing tasks anywhere in Intellij.
+// However, be mindful that if a task from `acornui` or `app` is executed from their directories, the meaning of
+// "topLevelBuild" will change, because the build will actually make whichever project the task is run from the composite
+// root.
 val Project.isTopLevelIncludedBuild
 	get() = gradle.parent?.let { it.isComposite && it.isRoot } ?: false
 
@@ -81,6 +101,7 @@ val Project.isAcornUi: Boolean by lazy {
 val Project.isPolyForestProject: Boolean by lazy {
 	(this.hasProperty(polyforestProjectFlag) && this.property(polyforestProjectFlag).toString().toBoolean())
 }
+val isAppRoot = APP_HOME?.let { rootDir.canonicalPath == file(it).canonicalPath } ?: false
 
 /**
  * Designates task to only be run if the build is a prod build.
@@ -249,6 +270,38 @@ if (isTopLevelIncludedBuild) {
 				description = "Builds single jar files including all dependencies and resources contained in all " +
 						"subprojects."
 				dependsOn(getTasksByName("fatJar", true))
+			}
+
+			if (!project.isAcornUiRoot) {
+				val jvmProjectName = "${project.name}-jvm"
+				val runTaskName = ApplicationPlugin.TASK_RUN_NAME
+				val runJvm by creating(JavaExec::class) {
+					group = "application"
+					description = "Executes the $jvmProjectName project's $runTaskName task."
+					dependsOn(":$jvmProjectName:$runTaskName")
+				}
+
+				val jsProjectName = "${project.name}-js"
+				val runJs by creating(DefaultTask::class) {
+					group = "application"
+					description = "Execute dev JS application."
+
+					dependsOn(":$jsProjectName:run")
+				}
+
+				val runProdJs by creating(DefaultTask::class) {
+					group = "application"
+					description = "Execute prod JS application."
+
+					dependsOn(":$jsProjectName:runProd")
+				}
+
+				val fatJar by creating(org.gradle.jvm.tasks.Jar::class) {
+					enabled = false
+					group = "build"
+					description = "Builds a single executable jar file for $jvmProjectName."
+					dependsOn(":$jvmProjectName:$name")
+				}
 			}
 		}
 	}
@@ -1190,6 +1243,15 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 //							generatePatterns(main.output.classesDirs.asFileTree.getRootsChildren())
 //						exclude(compiledOutputPatterns)
 //					}
+
+					// TODO - MP: Pull destination into lazy property
+					val deployToGHPages by registering(Copy::class) {
+						group = "deploy"
+						description = "Deploy production JS to directory in repo used by Github Pages."
+
+						from(processFinalProdResources)
+						into(file("docs"))
+					}
 				}
 
 				val printDevClasspath by tasks.creating(DefaultTask::class) {
@@ -1278,42 +1340,43 @@ if (isCompositeRoot) {
 			gradle.includedBuilds.forEach { this.dependsOn(it.task(":wrapper")) }
 		}
 
-		val APP_DIR by acornConfig
-		val separator = File.separator
-		val app = gradle.includedBuilds.first {
-			it.projectDir.canonicalPath == file("${rootDir.canonicalPath}$separator$APP_DIR").canonicalPath
-		}
-		val acornui = gradle.includedBuilds.first {
-			it.projectDir.canonicalPath == file(ACORNUI_HOME).canonicalPath
-		}
+		val APP_HOME by acornConfig
 
-		val jvmProjectName = "${app.name}-jvm"
-		val runJvm by creating(JavaExec::class) {
-			group = "application"
-			description = "Executes the $jvmProjectName project's $name task"
-			dependsOn(app.task(":$name"))
-		}
+		// !isTopLevelBuild will be different if a task is executed from the command line from acornui or app directories
+		// because it won't be a composite build.
+		if (!isAppRoot && !isAcornUiRoot) {
+			val app = gradle.includedBuilds.first {
+				it.projectDir.canonicalPath == APP_HOME
+			}
 
-		val jsProjectName = "${project.name}-js"
-		val runJs by creating(DefaultTask::class) {
-			group = "application"
-			description = "Execute dev JS application."
+			val jvmProjectName = "${app.name}-jvm"
+			val runJvm by creating(JavaExec::class) {
+				group = "application"
+				description = "Executes the $jvmProjectName project's $name task"
+				dependsOn(app.task(":$name"))
+			}
 
-			dependsOn(app.task(":$name"))
-		}
+			val jsProjectName = "${project.name}-js"
+			val runJs by creating(DefaultTask::class) {
+				group = "application"
+				description = "Execute dev JS application."
 
-		val runProdJs by creating(DefaultTask::class) {
-			group = "application"
-			description = "Execute prod JS application."
+				dependsOn(app.task(":$name"))
+			}
 
-			dependsOn(app.task(":$name"))
-		}
+			val runProdJs by creating(DefaultTask::class) {
+				group = "application"
+				description = "Execute prod JS application."
 
-		val fatJar by creating(org.gradle.jvm.tasks.Jar::class) {
-			enabled = false
-			group = "build"
-			description = "Builds a single executable jar file for $jvmProjectName."
-			dependsOn(app.task(":$name"))
+				dependsOn(app.task(":$name"))
+			}
+
+			val fatJar by creating(org.gradle.jvm.tasks.Jar::class) {
+				enabled = false
+				group = "build"
+				description = "Builds a single executable jar file for $jvmProjectName."
+				dependsOn(app.task(":$name"))
+			}
 		}
 	}
 }

@@ -16,6 +16,22 @@ import java.net.URL
  * limitations under the License.
  */
 
+fun loadStartParamProp(propName: String, default: String? = null, isFilePath: Boolean = false): String? {
+	val startParams: MutableMap<String, String> = gradle.startParameter.projectProperties
+	val startParamProp = startParams[propName]
+	val extraProp = if (extra.has(propName)) extra[propName] else null
+
+	val value= (listOf(extraProp, startParamProp, default).firstOrNull {
+		!(it as? String?).isNullOrBlank()
+	} as String?).let {
+		if (isFilePath && it != null) file(it).canonicalPath else it
+	}
+
+	startParams[propName] = value ?: ""
+	extra[propName] = value
+	return value
+}
+
 val acornUiHomePropName = "ACORNUI_HOME"
 val ACORNUI_HOME: String = gradle.startParameter.projectProperties[acornUiHomePropName]!!
 val acornUiHome = file(ACORNUI_HOME)
@@ -99,8 +115,17 @@ val isValidSkin = { skin: String? ->
 	skin?.let { validSkins.contains(it) } ?: false
 }
 
-val APP_HOME = acornConfig["APP_HOME"]
-val isAppRoot = APP_HOME?.let { rootDir.canonicalPath == APP_HOME } ?: false
+val APP_DIR = loadStartParamProp("APP_DIR", "app")
+val appHomeDefault: String? = if (isCompositeRoot && rootDir.canonicalPath != acornUiHome.canonicalPath) {
+	rootDir.canonicalPath + File.separator + APP_DIR
+}
+else {
+	null
+}
+
+val APP_HOME = loadStartParamProp("APP_HOME", appHomeDefault, true)
+
+val isAppRoot = rootDir.canonicalPath == APP_HOME
 val appSkinPropName = "APP_SKIN"
 val APP_SKIN = acornConfig[appSkinPropName]
 val ACORNUI_DEFAULT_SKIN by acornConfig
@@ -113,8 +138,10 @@ if (isAppRoot) {
 
 		ACORNUI_DEFAULT_SKIN.takeIf { isValidSkin(it) }
 
-	} ?: throw Exception(missingOrInvalidProperty("ACORNUI_DEFAULT_SKIN", PropType.SKIN) + "\n\n\tPlease file a " +
-			"bug with the AcornUi project.")
+	} ?: throw Exception(
+		missingOrInvalidProperty("ACORNUI_DEFAULT_SKIN", PropType.SKIN) + "\n\n\tPlease file a " +
+				"bug with the AcornUi project."
+	)
 
 	// Make the app skin directory available to build scripts.
 	acornConfig["APP_SKIN_DIR"] = validSkins[acornConfig[appSkinPropName]]!!.canonicalPath
@@ -130,6 +157,12 @@ val listProperty: (String?) -> List<String> = {
 if (isCompositeRoot) {
 	fun includeNonPlugins() {
 		val INCLUDED_BUILDS: String? by settings
+		var requestedIncludedBuilds = mutableSetOf<String>()
+		listOf(INCLUDED_BUILDS, acornConfig["INCLUDED_BUILDS"]).forEach {
+			if (it != null)
+				requestedIncludedBuilds.addAll(listProperty(it.toLowerCase()))
+		}
+
 		val includedBuildsList = run {
 			val a = listProperty(INCLUDED_BUILDS)
 			if (a.isEmpty())
@@ -137,16 +170,26 @@ if (isCompositeRoot) {
 			else
 				a
 		}
-		val allIncludedBuilds = acornUiHome.canonicalPath.asList() + acornConfig["APP_DIR"].asList() + includedBuildsList
+
+		val allIncludedBuilds =
+			mutableSetOf(acornUiHome.canonicalPath, APP_HOME) + requestedIncludedBuilds
+
+		@Suppress("UNCHECKED_CAST")
+		val childrenBuilds = allIncludedBuilds.filter {
+			val excludeAppWhenAcornComposite = { path: String ->
+				if (rootDir.canonicalPath == acornUiHome.canonicalPath)
+					path != APP_HOME
+				else
+					true
+			}
+
+			it != null && it != rootDir.canonicalPath && excludeAppWhenAcornComposite(it)
+		} as List<String>
 
 		// Make available globally
-		acornConfig["ALL_INCLUDED_BUILDS"] = allIncludedBuilds.joinToString(",")
+		acornConfig["CHILDREN_BUILDS"] = childrenBuilds.joinToString(",")
 
-		// Include all builds for this composite build
-		allIncludedBuilds.forEach {
-			if (it != rootDir.canonicalPath)
-				settings.includeBuild(it)
-		}
+		childrenBuilds.forEach { settings.includeBuild(it) }
 	}
 
 	fun includePlugins() {
@@ -159,7 +202,8 @@ if (isCompositeRoot) {
 		}
 	}
 
-	includePlugins()
+	// Not using plugins yet.
+//	includePlugins()
 	includeNonPlugins()
 }
 
@@ -167,7 +211,6 @@ val MULTI_MODULES: String? by settings
 // There is a bug in gradle composite builds which causes properties to be non-null even if they are null
 // in includedBuilds if the included build property name shadows the composite build when using settings
 // delegate.
-//val multiModulesList = (MULTI_MODULES ?: acornConfig.get("MULTI_MODULES"))?.split(",")
 val multiModulesList = run {
 	val a = listProperty(MULTI_MODULES)
 	// Composite root builds pass down gradle.startParam.projectProperties to downstream builds.
@@ -229,8 +272,8 @@ if (multiModulesList.isNotEmpty() || modulesList.isNotEmpty()) {
 					val subProjectName = when {
 						fileDir.canonicalPath == rootDir.canonicalPath && name.isEmpty() ->
 							"${rootProject.name}-${file.name}"
-						name.isEmpty() -> "${fileDir.name}-${file.name}"
-						else -> "$name-${file.name}"
+						name.isEmpty()                                                   -> "${fileDir.name}-${file.name}"
+						else                                                             -> "$name-${file.name}"
 					}
 
 					includeModule(subProjectName, file.toRelativeString(rootDir))
