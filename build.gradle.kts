@@ -154,18 +154,6 @@ tasks {
 //    }
 //}
 
-tasks {
-	val writeFileManifest by creating(DefaultTask::class) {
-		group = "build"
-		description = "Writes file manifest for acornui."
-	}
-
-	val packTextures by creating(DefaultTask::class) {
-		group = "build"
-		description = "Prep textures for use in an acornui app."
-	}
-}
-
 // TODO - MP: Make publish task that bumps version based on whether someone passes in positional keywords (get them from old version build code)
 // TODO - MP: Get build numbers into acorn and demo project
 // TODO - MP: Optimize build metadata file not to interfere with build caching
