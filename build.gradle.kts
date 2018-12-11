@@ -105,15 +105,9 @@ subprojects {
 val javaConvention: JavaPluginConvention = convention.getPlugin(JavaPluginConvention::class.java)
 val main: SourceSet by sourceSets
 tasks {
-	val jar by getting(Jar::class) {
-		manifest.attributes.apply {
-			put("Implementation-Title", project.name)
-			put("Implementation-Version", project.version)
-			// TODO - MP: Check if needed for downstream apps.  They were taken from a java library example.
-		}
-	}
-
+	// TODO - MP: Need to pull all source from subprojects, perhaps separate ones for common/js/jvm?
 	val sourcesJar by creating(Jar::class) {
+		enabled = false
 		dependsOn(JavaPlugin.CLASSES_TASK_NAME)
 		group = "build"
 		description = "Assembles a jar archive containing the source."
@@ -121,7 +115,9 @@ tasks {
 		from(main.allSource)
 	}
 
+	// TODO - MP: Need to pull all source from subprojects, perhaps separate ones for common/js/jvm?
 	val javadocJar by creating(Jar::class) {
+		enabled = false
 		dependsOn(JavaPlugin.JAVADOC_TASK_NAME)
 		group = "build"
 		description = "Assembles a jar archive containing the docs."
