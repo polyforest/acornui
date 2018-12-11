@@ -1277,6 +1277,44 @@ if (isCompositeRoot) {
 					"builds in case things get stuck."
 			gradle.includedBuilds.forEach { this.dependsOn(it.task(":wrapper")) }
 		}
+
+		val APP_DIR by acornConfig
+		val separator = File.separator
+		val app = gradle.includedBuilds.first {
+			it.projectDir.canonicalPath == file("${rootDir.canonicalPath}$separator$APP_DIR").canonicalPath
+		}
+		val acornui = gradle.includedBuilds.first {
+			it.projectDir.canonicalPath == file(ACORNUI_HOME).canonicalPath
+		}
+
+		val jvmProjectName = "${app.name}-jvm"
+		val runJvm by creating(JavaExec::class) {
+			group = "application"
+			description = "Executes the $jvmProjectName project's $name task"
+			dependsOn(app.task(":$name"))
+		}
+
+		val jsProjectName = "${project.name}-js"
+		val runJs by creating(DefaultTask::class) {
+			group = "application"
+			description = "Execute dev JS application."
+
+			dependsOn(app.task(":$name"))
+		}
+
+		val runProdJs by creating(DefaultTask::class) {
+			group = "application"
+			description = "Execute prod JS application."
+
+			dependsOn(app.task(":$name"))
+		}
+
+		val fatJar by creating(org.gradle.jvm.tasks.Jar::class) {
+			enabled = false
+			group = "build"
+			description = "Builds a single executable jar file for $jvmProjectName."
+			dependsOn(app.task(":$name"))
+		}
 	}
 }
 
