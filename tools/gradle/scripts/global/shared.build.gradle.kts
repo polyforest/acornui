@@ -250,23 +250,24 @@ fun setBuildType(project: Project) {
 	}
 }
 
+val PF_GROUP_PREFIX by acornConfig
 if (isTopLevelIncludedBuild) {
 	afterEvaluate {
 		tasks {
 			val buildAll by creating(DefaultTask::class) {
-				group = "other-helpers"
+				group = "${PF_GROUP_PREFIX}other-helpers"
 				description = "Build all subprojects."
 				dependsOn(getTasksByName("build", true))
 			}
 
 			val cleanAll by creating(Delete::class) {
-				group = "other-helpers"
+				group = "${PF_GROUP_PREFIX}other-helpers"
 				description = "Delete build directories of all subprojects."
 				dependsOn(getTasksByName("clean", true))
 			}
 
 			val fatJarAll by creating(Jar::class) {
-				group = "other-helpers"
+				group = "${PF_GROUP_PREFIX}other-helpers"
 				description = "Builds single jar files including all dependencies and resources contained in all " +
 						"subprojects."
 				dependsOn(getTasksByName("fatJar", true))
@@ -276,21 +277,21 @@ if (isTopLevelIncludedBuild) {
 				val jvmProjectName = "${project.name}-jvm"
 				val runTaskName = ApplicationPlugin.TASK_RUN_NAME
 				val runJvm by creating(JavaExec::class) {
-					group = "application"
+					group = "${PF_GROUP_PREFIX}application"
 					description = "Executes the $jvmProjectName project's $runTaskName task."
 					dependsOn(":$jvmProjectName:$runTaskName")
 				}
 
 				val jsProjectName = "${project.name}-js"
 				val runJs by creating(DefaultTask::class) {
-					group = "application"
+					group = "${PF_GROUP_PREFIX}application"
 					description = "Execute dev JS application."
 
 					dependsOn(":$jsProjectName:run")
 				}
 
 				val runProdJs by creating(DefaultTask::class) {
-					group = "application"
+					group = "${PF_GROUP_PREFIX}application"
 					description = "Execute prod JS application."
 
 					dependsOn(":$jsProjectName:runProd")
@@ -298,7 +299,7 @@ if (isTopLevelIncludedBuild) {
 
 				val fatJar by creating(org.gradle.jvm.tasks.Jar::class) {
 					enabled = false
-					group = "build"
+					group = "${PF_GROUP_PREFIX}build"
 					description = "Builds a single executable jar file for $jvmProjectName."
 					dependsOn(":$jvmProjectName:$name")
 				}
@@ -566,6 +567,7 @@ val declareResourceGenerationTasks by extra { p: Project ->
 				tasks {
 
 					val stageResources by creating(Copy::class) {
+						group = "${PF_GROUP_PREFIX}other"
 						description = "Copy resources into staging directory for further processing prior to ending " +
 								"up on the classpath."
 
@@ -603,6 +605,7 @@ val declareResourceGenerationTasks by extra { p: Project ->
 					}
 
 					val packAssets by creating(JavaExec::class) {
+						group = "${PF_GROUP_PREFIX}other"
 						description = "Pack and gather assets for ${project.name.substringBeforeLast('-')}'s " +
 								"${project.name.substringAfterLast('-')} module."
 
@@ -625,6 +628,7 @@ val declareResourceGenerationTasks by extra { p: Project ->
 					}
 
 					val createResourceFileManifest by creating(JavaExec::class) {
+						group = "${PF_GROUP_PREFIX}other"
 						description = "Generate a file manifest of shared resources for file handling at runtime."
 
 						val srcDir by extra(processedResourcesPath)
@@ -654,6 +658,7 @@ val declareResourceGenerationTasks by extra { p: Project ->
 					}
 
 					val processGeneratedResources by creating(DefaultTask::class) {
+						group = "${PF_GROUP_PREFIX}other"
 						description = """
 						Lifecycle task to attach generated resource processing tasks (contains configuration phase logic)
 						In execution => does nothing
@@ -680,6 +685,7 @@ val declareResourceGenerationTasks by extra { p: Project ->
 						val processResources by project.tasks.getting(Copy::class)
 						val destinationDir by extra(finalResourcesPath)
 
+						group = "${PF_GROUP_PREFIX}other"
 						description = "Copies generated (${processGeneratedResources.name} outputs) and non-generated " +
 								"resources (${processResources.name} outputs) into $destinationDir."
 
@@ -702,6 +708,7 @@ val declareResourceGenerationTasks by extra { p: Project ->
 					val buildNumber = resources.text.fromFile("$rootDir/build.txt")
 					val bumpBuildVersion by creating(DefaultTask::class) {
 						enabled = false
+						group = "${PF_GROUP_PREFIX}build"
 					}
 				}
 			}
@@ -1000,6 +1007,7 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 
 
 					val assembleWebSource by creating(Copy::class) {
+						group = "${PF_GROUP_PREFIX}other"
 						description = "Gather html (.html, .js, etc) source for the ${project.name} module and its " +
 								"dependencies (sans resources)."
 
@@ -1051,6 +1059,7 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 					}
 
 					val stageWebSourceForProcessing by creating(Copy::class) {
+						group = "${PF_GROUP_PREFIX}other"
 						description =
 								"Copy gathered html source into intermediate build directory for further processing."
 
@@ -1063,6 +1072,7 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 					}
 
 					val minifyJs by creating(SourceTask::class) {
+						group = "${PF_GROUP_PREFIX}other"
 						description = "Minify js."
 						enabled = false
 
@@ -1076,6 +1086,7 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 					}
 
 					val optimizeJs by creating(SourceTask::class) {
+						group = "${PF_GROUP_PREFIX}other"
 						description = "Monkeypatch js code with optimizations."
 
 						source(prodHtmlSrcDestPath)
@@ -1091,7 +1102,7 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 					}
 
 					val createJsFileManifest by creating(JavaExec::class) {
-						group = "build"
+						group = "${PF_GROUP_PREFIX}other"
 						description = "Generate a file manifest of js libs for file handling at runtime."
 
 						onlyIf(closureOf<Task> { !isProdBuild.get() })
@@ -1124,6 +1135,7 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 					}
 
 					val bustHtmlSourceScriptCache by creating(SourceTask::class) {
+						group = "${PF_GROUP_PREFIX}other"
 						description = "Modify ${project.name} html sources to bust browser cache."
 
 						val srcDir = htmlSrcDestPath
@@ -1153,7 +1165,7 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 					}
 
 					val createProdJsFileManifest by creating(JavaExec::class) {
-						group = "build"
+						group = "${PF_GROUP_PREFIX}other"
 						description = "Generate a file manifest of js libs for file handling at runtime."
 
 						val destinationDir = prodHtmlSrcDestPath
@@ -1185,6 +1197,7 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 					}
 
 					val bustProdHtmlSourceScriptCache by creating(SourceTask::class) {
+						group = "${PF_GROUP_PREFIX}other"
 						description = "Modify ${project.name} html sources to bust browser cache."
 
 						val srcDir = prodHtmlSrcDestPath
@@ -1208,6 +1221,14 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 					val prodHtmlSrcCollection by extra(dir(prodHtmlSrcDestPath))
 
 					val processGeneratedProdResources by creating(DefaultTask::class) {
+						group = "${PF_GROUP_PREFIX}other"
+						description = """
+						Lifecycle task to attach generated resource processing tasks (contains configuration phase logic)
+						In execution => does nothing
+						In configuration => computes set of generated resource directories to be on the final main classpath
+						Depends on => Directly/indirectly depends on all tasks contributing to resource generation
+					""".trimIndent()
+
 						dependsOn(generatedResourceSources, prodHtmlSrcCollection)
 
 						releaseTask()
@@ -1216,6 +1237,7 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 					// TODO - MP: Make this match processFinalResources.  Something is asymmetrical, though it works.
 					// This will cause inconsistent expectations for downstream build engineers.
 					val processFinalProdResources by creating(Copy::class) {
+						group = "${PF_GROUP_PREFIX}other"
 						destinationDir = file(finalResourcesPath(p))
 						into(destinationDir)
 
@@ -1228,10 +1250,14 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 					}
 
 					val run = maybeCreate("run", DefaultTask::class)
-					run.dependsOn(processFinalResources)
+					run.apply {
+						group = "${PF_GROUP_PREFIX}application"
+						dependsOn(processFinalResources)
+					}
 
 					val runProd = maybeCreate("runProd", DefaultTask::class)
 					runProd.apply {
+						group = "${PF_GROUP_PREFIX}application"
 						releaseTask()
 						dependsOn(processFinalProdResources)
 					}
@@ -1246,7 +1272,7 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 
 					// TODO - MP: Pull destination into lazy property
 					val deployToGHPages by registering(Copy::class) {
-						group = "deploy"
+						group = "${PF_GROUP_PREFIX}deploy"
 						description = "Deploy production JS to directory in repo used by Github Pages."
 
 						from(processFinalProdResources)
@@ -1255,7 +1281,7 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 				}
 
 				val printDevClasspath by tasks.creating(DefaultTask::class) {
-					group = "build.debug"
+					group = "${PF_GROUP_PREFIX}build.debug"
 
 					doLast {
 						println(main.runtimeClasspath.joinToString("\n") { it.canonicalPath })
@@ -1265,7 +1291,7 @@ val declareJsEntryPointConfiguration by extra { p: Project ->
 				}
 
 				val printProdClasspath by tasks.creating(DefaultTask::class) {
-					group = "build.debug"
+					group = "${PF_GROUP_PREFIX}build.debug"
 
 					doLast {
 						println(main.runtimeClasspath.joinToString("\n") { it.canonicalPath })
@@ -1288,17 +1314,19 @@ val internalPluginsBuilds = gradle.includedBuilds.filter { it.name in acornUiPlu
 if (isCompositeRoot) {
 	tasks {
 		val build by getting(DefaultTask::class) {
+			group = "${PF_GROUP_PREFIX}build"
 			allSansPluginsBuilds.forEach { dependsOn(it.task(":buildAll")) }
 		}
 
 		val clean by getting(Delete::class) {
+			group = "${PF_GROUP_PREFIX}build"
 			description = "Delete all non-acornui plugin build directories and the local acornui plugins repo."
 			allSansPluginsBuilds.forEach { dependsOn(it.task(":cleanAll")) }
 			internalPluginsBuilds.forEach { dependsOn(it.task(":cleanLocalPluginsRepo")) }
 		}
 
 		val buildPlugins by creating(DefaultTask::class) {
-			group = "build"
+			group = "${PF_GROUP_PREFIX}build"
 			description = "Build locally built/applied plugins."
 			/**
 			 * Wrapper is the task IDEA runs to sync the root project.
@@ -1314,27 +1342,27 @@ if (isCompositeRoot) {
 		}
 
 		val cleanPlugins by creating(Delete::class) {
-			group = "build"
+			group = "${PF_GROUP_PREFIX}build"
 			description = "Delete all acornui plugins build directories and the local acornui plugins repo."
 			internalPluginsBuilds.forEach { this.dependsOn(it.task(":${this.name}")) }
 		}
 
 		val wrapperConsumerIncludedBuilds by creating(Wrapper::class) {
-			group = "build setup"
+			group = "${PF_GROUP_PREFIX}build setup"
 			description = "Helper to build the gradle wrappers for acornui and consumer included builds in case " +
 					"things get stuck."
 			allSansPluginsBuilds.forEach { this.dependsOn(it.task(":wrapper")) }
 		}
 
 		val wrapperPluginIncludedBuilds by creating(Wrapper::class) {
-			group = "build setup"
+			group = "${PF_GROUP_PREFIX}build setup"
 			description = "Helper to build the gradle wrappers for acornui plugin included builds in case things " +
 					"get stuck."
 			internalPluginsBuilds.forEach { this.dependsOn(it.task(":wrapper")) }
 		}
 
 		val wrapperAllIncludedBuilds by creating(Wrapper::class) {
-			group = "build setup"
+			group = "${PF_GROUP_PREFIX}build setup"
 			description = "Helper to build the gradle wrappers for acornui (including plugins) and consumer included " +
 					"builds in case things get stuck."
 			gradle.includedBuilds.forEach { this.dependsOn(it.task(":wrapper")) }
@@ -1351,21 +1379,21 @@ if (isCompositeRoot) {
 
 			val jvmProjectName = "${app.name}-jvm"
 			val runJvm by creating(JavaExec::class) {
-				group = "application"
+				group = "${PF_GROUP_PREFIX}application"
 				description = "Executes the $jvmProjectName project's $name task"
 				dependsOn(app.task(":$name"))
 			}
 
 			val jsProjectName = "${project.name}-js"
 			val runJs by creating(DefaultTask::class) {
-				group = "application"
+				group = "${PF_GROUP_PREFIX}application"
 				description = "Execute dev JS application."
 
 				dependsOn(app.task(":$name"))
 			}
 
 			val runProdJs by creating(DefaultTask::class) {
-				group = "application"
+				group = "${PF_GROUP_PREFIX}application"
 				description = "Execute prod JS application."
 
 				dependsOn(app.task(":$name"))
@@ -1373,7 +1401,7 @@ if (isCompositeRoot) {
 
 			val fatJar by creating(org.gradle.jvm.tasks.Jar::class) {
 				enabled = false
-				group = "build"
+				group = "${PF_GROUP_PREFIX}build"
 				description = "Builds a single executable jar file for $jvmProjectName."
 				dependsOn(app.task(":$name"))
 			}

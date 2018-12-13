@@ -40,6 +40,7 @@ open class GlobalConfig(val ACORNUI_HOME: String) {
 	val ACORNUI_SKINS_PATH = "$ACORNUI_HOME/skins"
 	val ACORNUI_DEFAULT_SKIN = "basic"
 
+	val PF_GROUP_PREFIX = ".pf."
 }
 
 fun existing(relativePath: String): File =

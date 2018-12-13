@@ -104,12 +104,13 @@ subprojects {
 
 val javaConvention: JavaPluginConvention = convention.getPlugin(JavaPluginConvention::class.java)
 val main: SourceSet by sourceSets
+val PF_GROUP_PREFIX by acornConfig
 tasks {
 	// TODO - MP: Need to pull all source from subprojects, perhaps separate ones for common/js/jvm?
 	val sourcesJar by creating(Jar::class) {
 		enabled = false
 		dependsOn(JavaPlugin.CLASSES_TASK_NAME)
-		group = "build"
+		group = "${PF_GROUP_PREFIX}build"
 		description = "Assembles a jar archive containing the source."
 		classifier = "sources"
 		from(main.allSource)
@@ -119,7 +120,7 @@ tasks {
 	val javadocJar by creating(Jar::class) {
 		enabled = false
 		dependsOn(JavaPlugin.JAVADOC_TASK_NAME)
-		group = "build"
+		group = "${PF_GROUP_PREFIX}build"
 		description = "Assembles a jar archive containing the docs."
 		classifier = "javadoc"
 		from(file(javaConvention.docsDir))
