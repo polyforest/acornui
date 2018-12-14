@@ -251,7 +251,7 @@ class Vector2Test {
 	}
 
 	@Test
-	fun equals() {
+	fun equalsTest() {
 	}
 
 	@Test

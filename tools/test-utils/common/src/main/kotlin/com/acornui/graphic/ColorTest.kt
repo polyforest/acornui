@@ -51,7 +51,7 @@ class ColorTest {
 		assertEquals("ffffffff", c.toRgbaString())
 	}
 
-	@Test fun equals() {
+	@Test fun equalsTest() {
 		assertEquals(Color(1f, 0.2f, 0.3f, 0.4f), Color(1f, 0.2f, 0.3f, 0.4f))
 		assertEquals(Color(), Color())
 	}
