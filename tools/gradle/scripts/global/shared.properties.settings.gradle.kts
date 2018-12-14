@@ -25,6 +25,11 @@ open class GlobalConfig(val ACORNUI_HOME: String) {
 	val KOTLIN_VERSION = "1.3.10"
 	val TARGET_ECMA_VERSION = "v5"
 	val DOKKA_VERSION = "0.9.17"
+	val NODE_PLUGIN_VERSION = "4.4.2"
+	val NODE_DIR = ".gradle" + File.separator + "node"
+	val NODE_VERSION = "8.12.0"
+	val HTTP_SERVER_VERSION = "0.11.1"
+	val UGLIFY_VERSION = "3.4.9"
 	val ACORNUI_GROUP = "com.polyforest"
 	val MANIFEST_VERSION = "1.0"
 

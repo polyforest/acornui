@@ -43,13 +43,12 @@ val acornConfig: MutableMap<String, String> = gradle.startParameter.projectPrope
 val ACORNUI_PLUGINS_REPO by acornConfig
 val KOTLIN_VERSION by acornConfig
 val DOKKA_VERSION by acornConfig
+val NODE_PLUGIN_VERSION by acornConfig
 val ACORNUI_GROUP by acornConfig
 val DEFAULT_ACORNUI_PLUGIN_VERSION by acornConfig
 val DEFAULT_ACORNUI_PROJECT_VERSION by acornConfig
 
-// TODO - MP: Pull version back into project properties.
-val GRETTY_VERSION = "2.2.0"
-val separator = File.separator
+val separator: String = File.separator
 val separatorCharacter = File.separatorChar
 
 val isCompositeRoot = gradle.parent == null
@@ -69,10 +68,10 @@ settings.pluginManagement {
 		eachPlugin {
 			if (requested.id.id.startsWith("org.jetbrains.kotlin"))
 				useVersion(KOTLIN_VERSION)
-			if (requested.id.id.startsWith("org.gretty"))
-				useVersion(GRETTY_VERSION)
 			if (rootDir.canonicalPath == acornUiHome.canonicalPath && requested.id.id.startsWith("org.jetbrains.dokka"))
 				useVersion(DOKKA_VERSION)
+			if (requested.id.id == "com.liferay.node")
+				useVersion(NODE_PLUGIN_VERSION)
 			if (requested.id.isPolyForest) {
 				val version = requested.version ?: DEFAULT_ACORNUI_PLUGIN_VERSION
 				useVersion(version)
@@ -81,38 +80,60 @@ settings.pluginManagement {
 	}
 }
 
-enum class PropType(val validOptions: String) {
-	ABSOLUTE_PATH("an absolute path"),
-	RELATIVE_PATH("a relative path"),
-	SKIN("an available skin")
-}
-
-fun missingOrInvalidProperty(name: String, type: PropType): String {
-	return """MISSING OR INVALID PROPERTY:  $name must be set on the command-line (-D$name=<val>), in $rootDir${separator}gradle.properties ($name=<val>), or $rootDir/gradle.settings.kts (gradle.startParameter.projectProperties["$name"] = <val>)
-		|${"\t".repeat(2)}NOTE: <val> must be ${type.validOptions}""".trimMargin().split(",").joinToString(",\n") +
-			// If this is a skin property, display the valid skins.
-			(type.takeIf { it == PropType.SKIN }?.let { " -> ${validSkins.toList()}" } ?: "")
-}
-
 fun File.isValid() = this.exists() and this.isDirectory
 val validSkins by lazy {
-	listOf(acornConfig["ACORNUI_SKINS_PATH"], acornConfig["APP_SKINS_PATH"]).mapNotNull {
+	listOf(acornConfig["ACORNUI_SKINS_PATH"], acornConfig["APP_SKINS_PATH"]).mapNotNull { skinsLocation ->
 		// Use skin path directories that exist.
-		it?.let { path: String -> File(path).takeIf { it.isValid() } }
-	}.flatMap {
+		skinsLocation?.let { path: String ->
+			File(path).takeIf { it.isValid() }
+		}
+	}.flatMap { skinLocation ->
 		// For all directories in the given skin directory, grab the directory names of those with resource directories.
-		it.listFiles().mapNotNull {
-			it.takeIf {
-				it.isValid() && File(it, "resources").let { it.isValid() }
+		skinLocation.listFiles().mapNotNull { skinDirCandidate ->
+			skinDirCandidate.takeIf { file ->
+				file.isValid() && File(file, "resources").isValid()
 			}
 		}
-	}.associateBy {
-		it.name
+	}.associateBy { skinDir ->
+		skinDir.name
 	}
 }
 
 val isValidSkin = { skin: String? ->
 	skin?.let { validSkins.contains(it) } ?: false
+}
+
+enum class PropType(val validOption: String) {
+	ABSOLUTE_PATH("an absolute path"),
+	RELATIVE_PATH("a relative path"),
+	SKIN("an available skin")
+}
+
+val standardPathSeparatorMessage =
+	"Please use '/' or '\\\\' as a path separator for Windows platforms or '/' for non-Windows platforms."
+
+val missingRequiredProperty = { name: String, type: PropType ->
+	"""MISSING OR INVALID PROPERTY:  ${if (type != PropType.SKIN) {
+		"""$name is missing from command-line (-D$name=<val>), $rootDir${separator}gradle.properties ($name=<val>) for this machine only, or $rootDir${separator}gradle.settings.kts for all build consumers (gradle.startParameter.projectProperties[\"$name\"] = <val>
+			|${"\t".repeat(2)}NOTE: <val> must be ${type.validOption}.
+			|$standardPathSeparatorMessage""".trimMargin().split(",").joinToString(",\n")
+	}
+	else {
+		"""$name is undefined
+			|VALID SKINS (name, location) -> ${validSkins.toList()}
+		""".trimMargin()
+	}}""".trimMargin()
+}
+
+val incorrectPathSeparator = { name: String ->
+	"""
+		INCORRECT SEPARATOR: $name value is using a path separator that escapes out characters ('\').
+		$standardPathSeparatorMessage
+	""".trimIndent()
+}
+
+val badDirectory = { name: String, path: String ->
+	"INCORRECT $name:  $path either doesn't exist or isn't a directory.\n$standardPathSeparatorMessage"
 }
 
 val APP_DIR = loadStartParamProp("APP_DIR", "app")
@@ -124,6 +145,8 @@ else {
 }
 
 val APP_HOME = loadStartParamProp("APP_HOME", appHomeDefault, true)
+// Setup default app-side skins path
+val APP_SKINS_PATH = loadStartParamProp("APP_SKINS_PATH", APP_HOME + separator + "skins", true)
 
 val isAppRoot = rootDir.canonicalPath == APP_HOME
 val appSkinPropName = "APP_SKIN"
@@ -133,42 +156,34 @@ val ACORNUI_DEFAULT_SKIN by acornConfig
 if (isAppRoot) {
 	acornConfig[appSkinPropName] = APP_SKIN?.takeIf { isValidSkin(it) } ?: run {
 
-		logger.warn(missingOrInvalidProperty(appSkinPropName, PropType.SKIN))
-		logger.warn("...falling back to the default skin: $ACORNUI_DEFAULT_SKIN")
+		logger.info(missingRequiredProperty(appSkinPropName, PropType.SKIN))
+		logger.info("...attempting to fall back to the default skin: $ACORNUI_DEFAULT_SKIN")
 
 		ACORNUI_DEFAULT_SKIN.takeIf { isValidSkin(it) }
 
 	} ?: throw Exception(
-		missingOrInvalidProperty("ACORNUI_DEFAULT_SKIN", PropType.SKIN) + "\n\n\tPlease file a " +
-				"bug with the AcornUi project."
+		missingRequiredProperty("ACORNUI_DEFAULT_SKIN", PropType.SKIN) + "\n\n\tPlease file a bug with the " +
+				"AcornUi project: https://github.com/polyforest/acornui/issues"
 	)
 
 	// Make the app skin directory available to build scripts.
 	acornConfig["APP_SKIN_DIR"] = validSkins[acornConfig[appSkinPropName]]!!.canonicalPath
 }
 
-fun String?.asList(): List<String> = if (this.isNullOrBlank()) emptyList() else listOf(this!!)
+fun String?.asList(): List<String> = if (this.isNullOrBlank()) emptyList() else listOf(this)
 val listProperty: (String?) -> List<String> = {
 	if (it.isNullOrBlank())
 		emptyList()
 	else
-		it!!.split(",")
+		it.split(",")
 }
 if (isCompositeRoot) {
 	fun includeNonPlugins() {
 		val INCLUDED_BUILDS: String? by settings
-		var requestedIncludedBuilds = mutableSetOf<String>()
+		val requestedIncludedBuilds = mutableSetOf<String>()
 		listOf(INCLUDED_BUILDS, acornConfig["INCLUDED_BUILDS"]).forEach {
 			if (it != null)
 				requestedIncludedBuilds.addAll(listProperty(it.toLowerCase()))
-		}
-
-		val includedBuildsList = run {
-			val a = listProperty(INCLUDED_BUILDS)
-			if (a.isEmpty())
-				listProperty(acornConfig["INCLUDED_BUILDS"])
-			else
-				a
 		}
 
 		val allIncludedBuilds =
@@ -198,12 +213,12 @@ if (isCompositeRoot) {
 		val acornUiPlugins = ACORNUI_PLUGINS_AVAILABLE.split(",")
 		acornUiPlugins.forEach {
 			if (it != rootProject.name)
-				settings.includeBuild("$ACORNUI_PLUGINS_PATH${separator}$it")
+				settings.includeBuild("$ACORNUI_PLUGINS_PATH$separator$it")
 		}
 	}
 
 	// Not using plugins yet.
-//	includePlugins()
+	//	includePlugins()
 	includeNonPlugins()
 }
 
@@ -224,7 +239,6 @@ val MODULES: String? by settings
 // There is a bug in gradle composite builds which causes properties to be non-null even if they are null
 // in includedBuilds if the included build property name shadows the composite build when using settings
 // delegate.
-//val modulesList = (MODULES ?: acornConfig.get("MODULES"))?.split(",")
 val modulesList = run {
 	val a = listProperty(MODULES)
 	// Composite root builds pass down gradle.startParam.projectProperties to downstream builds.
