@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="aui-gradle.shared" pattern="file[tools]:gradle//*||file[acornui]:pathBootstrap.settings.gradle.kts" />
+</component>

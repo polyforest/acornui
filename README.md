@@ -1,24 +1,15 @@
-# Acorn
+# AcornUi
 
 ## Dev Environment Setup
 1. Install Intellij IDEA
     - [Download Ultimate](https://www.jetbrains.com/idea/download/download-thanks.html?platform=mac)
     - [Download Community](https://www.jetbrains.com/idea/download/download-thanks.html?platform=mac&code=IIC)
-2. Checkout new project from version control  
-   (https://github.com/PolyForest/Acorn)
-    - Opt out of creating a project from the source
-3. Open `Acorn` folder in IDEA
-4. Change `ACORNUI_HOME` Path Variable to acorn project path  
-   (Settings/Preferences > Appearance & Behavior > Path Variables)
-5. [Download JDK](http://www.oracle.com/technetwork/java/javase/downloads/jre10-downloads-4417026.html)
-6. Add a JDK (>= 1.8) as a SDK  
-   (Project Structure > Platform Settings > SDKs > +)
-    - Windows > point to `C:\Program Files\Java\jdk10.0.1`
-    - MAC > point to `/Library/Java/JavaVirtualMachines/jdk-10.x.x.jdk/Contents/Home`
-7. Set your Project SDK to the JDK (>= 1.8)  
-   (Project Structure > Project Settings > Project > Project SDK > Project SDK)
-8. Get dependencies  
-   (Run > Run… > getDependencies.kts)
+2. [Clone AcornUi](https://github.com/polyforest/acornui.git).
+3. Open a terminal at the root directory of the `acornui` project.
+4. Run the `newProject` task...
+    - Windows: `gradlew.bat newProject`
+    - MAC & *nix:  `./gradlew newProject`
+5. Follow the prompts and then proceed with setting up the new project in Intellij via [instructions for demo projects](https://github.com/polyforest/acornui/wiki/Getting-Started#with-demos)
 
 ## Style Guide
 - Git commit style guide - https://chris.beams.io/posts/git-commit/

@@ -1,8 +1,34 @@
-dist
-out
-externalLib
-/www
-/.idea/workspace.xml
-/Tools/BuildTasks/testOut
-/Tools/BuildTasks/lib
+# Log file
+*.log
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+!/gradle/wrapper/*.jar
+
+# IDEA
+.idea/
+!.idea/codeStyles/Project.xml
+!.idea/copyright/Apache_2.xml
+!.idea/copyright/EsotericSoftware.xml
+!.idea/copyright/profiles_settings.xml
+!.idea/dictionaries/polyforest.xml
+!.idea/inspectionProfiles/Project_Default.xml
+!.idea/scopes/
+!.idea/.name
+!.idea/codeStyleSettings.xml
+!.idea/encodings.xml
+!.idea/kotlinc.xml
+
+# MAC
 .DS_Store
+
+# Gradle
+.gradle/
+build/
+!**/src/**/build/
+/tools/gradle/plugins/repository/

@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="aui-gradle.plugin-descriptors" pattern="file:*/META-INF//*" />
+</component>
