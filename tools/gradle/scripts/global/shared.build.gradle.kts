@@ -99,7 +99,8 @@ val Project.isAcornUi: Boolean by lazy {
 	projectDir.canonicalPath == acornUiHome.canonicalPath
 }
 val Project.isPolyForestProject: Boolean by lazy {
-	(this.hasProperty(polyforestProjectFlag) && this.property(polyforestProjectFlag).toString().toBoolean())
+	val POLYFOREST_PROJECT= acornConfig[polyforestProjectFlag]
+	POLYFOREST_PROJECT?.toBoolean() ?: false
 }
 val isAppRoot = APP_HOME?.let { rootDir.canonicalPath == file(it).canonicalPath } ?: false
 
