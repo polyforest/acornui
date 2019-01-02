@@ -45,7 +45,7 @@ fun loadStartParamProp(propName: String, default: String? = null, isFilePath: Bo
 	val startParamProp = startParams[propName]
 	val extraProp = if (extra.has(propName)) extra[propName] else null
 
-	val value= (listOf(extraProp, startParamProp, default).firstOrNull {
+	val value = (listOf(extraProp, startParamProp, default).firstOrNull {
 		!(it as? String?).isNullOrBlank()
 	} as String?).let {
 		if (isFilePath && it != null) file(it).canonicalPath else it
@@ -99,7 +99,7 @@ val Project.isAcornUi: Boolean by lazy {
 	projectDir.canonicalPath == acornUiHome.canonicalPath
 }
 val Project.isPolyForestProject: Boolean by lazy {
-	val POLYFOREST_PROJECT= acornConfig[polyforestProjectFlag]
+	val POLYFOREST_PROJECT = acornConfig[polyforestProjectFlag]
 	POLYFOREST_PROJECT?.toBoolean() ?: false
 }
 val isAppRoot = APP_HOME?.let { rootDir.canonicalPath == file(it).canonicalPath } ?: false
@@ -579,13 +579,14 @@ val declareResourceGenerationTasks by extra { p: Project ->
 						main.resources.srcDir(skin)
 						val commonProject = rootProject.project("${rootProject.name}-common")
 						val runtimeClasspath by project.configurations
-						afterEvaluate {
-							println(runtimeClasspath.resolvedConfiguration.firstLevelModuleDependencies.joinToString("\n") {
-								val depProject = (it as? ProjectDependency)?.dependencyProject
-								val depMain = depProject?.sourceSets?.get("main")
-								"ModuleName: ${it.moduleName} Project: ${depProject?.name} \nResourceDirectories: \n${depMain?.resources?.srcDirs?.joinToString { it?.path.toString() }} \nName: ${it.name}"
-							})
-						}
+						// Pseudo-Code:T0D0 | remove
+						//						afterEvaluate {
+						//							println(runtimeClasspath.resolvedConfiguration.firstLevelModuleDependencies.joinToString("\n") {
+						//								val depProject = (it as? ProjectDependency)?.dependencyProject
+						//								val depMain = depProject?.sourceSets?.get("main")
+						//								"ModuleName: ${it.moduleName} Project: ${depProject?.name} \nResourceDirectories: \n${depMain?.resources?.srcDirs?.joinToString { it?.path.toString() }} \nName: ${it.name}"
+						//							})
+						//						}
 
 						val commonMain = commonProject.sourceSets["main"]
 						commonMain.resources.srcDirs.forEach {
@@ -898,6 +899,104 @@ fun <T : AbstractFileCollection> T.minusAll(fileCollection: FileCollection): Fil
  */
 val org.gradle.api.Project.`node`: com.liferay.gradle.plugins.node.NodeExtension
 	get() = (this as org.gradle.api.plugins.ExtensionAware).extensions.getByType()
+
+// Pseudo-Code:T0D0 | Migrate
+//
+//fun getPrintableObjects(obj: Any?): List<String> {
+//
+//	var count = 0
+//
+//	fun render(objectTag: Any? = "", content: Any?): String {
+//		val indent = { count: Int ->
+//			val size = 4
+//			if (count == 0)
+//				""
+//			else
+//				(" ".repeat(size)).repeat(count)
+//		}
+//		val tagFormat = { it: String? -> if (it?.isNotBlank() != false) "$it: " else "" }
+//
+//		val objectTag = {
+//			"""
+//                [
+//                    one,
+//                    two,
+//                    [
+//                            this,
+//                            that
+//                    ],
+//                    [ className:
+//                        this,
+//                        that,
+//                    ]
+//                ]
+//
+//            """.trimIndent()
+//			if (objectTag is String?)
+//				objectTag
+//			else
+//				objectTag?.let { it::class.jvmName }
+//		}
+//		val content = {
+//			when (content) {
+//				is Iterable<*>? -> {
+//					//                    "\n${indent(count)}" + content?.joinToString(",\n") + "${indent(count)}\n"
+//					content?.joinToString(",\n")
+//				}
+//
+//				is String?      -> content
+//				else            -> throw Exception("INVALID USAGE - nestFormat: `content` is not a valid type -> " +
+//														   content?.let { content::class.jvmName })
+//			}
+//		}
+//
+//		return "[${tagFormat(objectTag())}${content()}]"
+//	}
+//
+//	val isNotSimplePrimitive = { it: Any? ->
+//		it !is Number && it !is CharSequence
+//	}
+//	val nullableToString = { it: Any? ->
+//		"${it?.toString()}"
+//	}
+//
+//	fun parse(obj: Any?): List<String> {
+//		fun Any.tryParse(): List<String> {
+//			val fileCollection = this as? FileCollection
+//			return parse(fileCollection?.buildDependencies?.getDependencies(null))
+//		}
+//
+//		return listOf(
+//			when (obj) {
+//				is CharSequence?   -> "\"${obj?.toString()}\""
+//				is Number?         -> nullableToString(obj)
+//
+//				is Task?           -> {
+//					count++
+//					render("t", obj?.path)
+//					//                render("t", "${obj?.path} >>\n" + parse(obj?.dependsOn))
+//				}
+//
+//				is FileCollection? -> {
+//					count++
+//					render("fc", obj?.tryParse())
+//				}
+//
+//				is Iterable<*>?    -> {
+//					if (obj?.any(isNotSimplePrimitive) == true) {
+//						count++
+//						render(obj, obj?.flatMap { parse(it) })
+//					} else
+//						nullableToString(obj)
+//				}
+//
+//				else               -> render(obj, obj?.tryParse())
+//			}
+//		).also { /*println("**new-round - ${obj.toString()} - ${count}")*/ }
+//	}
+//
+//	return parse(obj)
+//}
 
 // TODO - MP: Document
 fun <T : Task, S : FileCollection> T.subtractFromDependsOn(collection: S): Set<Any> {
