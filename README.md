@@ -2,17 +2,9 @@
 
 Acorn UI is a Kotlin framework for developing rich, cross-platform applications and games.
 
-### Examples
+Acorn UI allows you to develop write once, run anywhere content with excellent hardware accelerated performance.
 
-- [Text](http://text.acornui.com) - [(Source)](https://github.com/polyforest/text-demo)
-- [Data Grid](http://datagrid.acornui.com) - [(Source)](https://github.com/polyforest/datagrid-demo)
-- [Spine](http://spine.acornui.com) - [(Source)](https://github.com/polyforest/spine-demo)
-
-## Getting Started
-
-Head over to our [Wiki](https://github.com/polyforest/acornui/wiki) to go through our getting started guide and documentation.
-
-Kotlin API Docs (Coming soon) - The AcornUI API documentation is published online as well as bundled as source jars to be used in your IDE.
+Head over to our [Wiki](https://github.com/polyforest/acornui/wiki) to go through our getting started guide, examples, and documentation.
 
 ## Community
 Blog (Coming soon)
