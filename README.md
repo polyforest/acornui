@@ -1,4 +1,4 @@
-# Acorn UI
+# ![Acorn UI](https://github.com/polyforest/acornui/wiki/images/acornUiLogoText100.png "Acorn UI")
 
 Acorn UI is a Kotlin framework for developing rich, cross-platform applications and games.
 
