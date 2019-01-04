@@ -54,6 +54,8 @@ class InjectorImpl(
 
 	private val dependencies = HashMap<DKey<*>, Any>()
 
+	constructor(dependenciesList: List<DependencyPair<*>>) : this(null, dependenciesList)
+
 	init {
 		for ((key, value) in dependenciesList) {
 			_set(key, value)
