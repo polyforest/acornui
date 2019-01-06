@@ -251,9 +251,11 @@ open class UiComponentImpl(
 	private val _activated = Signal1<UiComponent>()
 	final override val activated: Signal<(UiComponent) -> Unit>
 		get() = _activated
+
 	private val _deactivated = Signal1<UiComponent>()
 	final override val deactivated: Signal<(UiComponent) -> Unit>
 		get() = _deactivated
+
 	private val _disposed = Signal1<UiComponent>()
 	final override val disposed: Signal<(UiComponent) -> Unit>
 		get() = _disposed
