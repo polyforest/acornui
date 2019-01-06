@@ -50,12 +50,10 @@ class FocusManagerImpl : FocusManager {
 		get() = _root!!
 
 	private val focusedChangingCancel: Cancel = Cancel()
-	private val _focusedChanging: Signal3<UiComponentRo?, UiComponentRo?, Cancel> = Signal3()
-	override val focusedChanging: Signal<(UiComponentRo?, UiComponentRo?, Cancel) -> Unit>
-		get() = _focusedChanging
-	private val _focusedChanged: Signal2<UiComponentRo?, UiComponentRo?> = Signal2()
-	override val focusedChanged: Signal<(UiComponentRo?, UiComponentRo?) -> Unit>
-		get() = _focusedChanged
+	private val _focusedChanging = Signal3<UiComponentRo?, UiComponentRo?, Cancel>()
+	override val focusedChanging = _focusedChanging.asRo()
+	private val _focusedChanged = Signal2<UiComponentRo?, UiComponentRo?>()
+	override val focusedChanged = _focusedChanged.asRo()
 
 	private var _focused: UiComponentRo? = null
 	private var _highlighted: UiComponentRo? = null

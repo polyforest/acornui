@@ -174,8 +174,7 @@ interface Tween {
 abstract class TweenBase : Tween {
 
 	protected val _completed = Signal1<Tween>()
-	override val completed: Signal<(Tween)->Unit>
-			get() = _completed
+	override val completed = _completed.asRo()
 
 	override var loopBefore: Boolean = false
 	override var loopAfter: Boolean = false

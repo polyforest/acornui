@@ -63,8 +63,7 @@ class RadioGroup<T>(val owner: Owned) : Disposable {
 	}
 
 	private val _changed = Signal0()
-	val changed: Signal<() -> Unit>
-		get() = _changed
+	val changed = _changed.asRo()
 
 	private val _radioButtons = ArrayList<RadioButton<T>>()
 	val radioButtons: List<RadioButton<T>>

@@ -90,8 +90,7 @@ class DataGrid<E>(
 	 * a valid cell has been clicked before getting the row/column.
 	 * If the cancel object is invoked, the default behavior for clicking a cell will be prevented. (I.e. cell editing)
 	 */
-	val cellClicked: Signal<(CellLocation, Cancel)->Unit>
-		get() = _cellClicked
+	val cellClicked = _cellClicked.asRo()
 
 	val style = bind(DataGridStyle())
 
@@ -2234,8 +2233,7 @@ enum class ColumnSortDirection {
 open class DataGridGroup<E> {
 
 	private val _changed = Signal1<DataGridGroup<E>>()
-	val changed: Signal<(DataGridGroup<E>) -> Unit>
-		get() = _changed
+	val changed = _changed.asRo()
 
 	/**
 	 * Creates a header to the group. This should not include background or collapse arrow.

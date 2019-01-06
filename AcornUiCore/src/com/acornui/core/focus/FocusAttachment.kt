@@ -28,12 +28,10 @@ class FocusAttachment(private val target: Focusable) : Disposable {
 	private val focusManager = target.inject(FocusManager)
 
 	private val _focused = Signal0()
-	val focused: Signal<() -> Unit>
-		get() = _focused
+	val focused = _focused.asRo()
 
 	private val _blurred = Signal0()
-	val blurred: Signal<() -> Unit>
-		get() = _blurred
+	val blurred = _blurred.asRo()
 
 	init {
 		focusManager.focusedChanged.add(this::focusChangedHandler)

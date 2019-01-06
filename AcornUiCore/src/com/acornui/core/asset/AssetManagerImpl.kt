@@ -46,8 +46,7 @@ class AssetManagerImpl(
 ) : AssetManager {
 
 	private val _currentLoadersChanged = Signal0()
-	override val currentLoadersChanged: Signal<() -> Unit>
-		get() = _currentLoadersChanged
+	override val currentLoadersChanged = _currentLoadersChanged.asRo()
 
 	private val _currentLoaders = ArrayList<AssetLoader<*>>()
 	override val currentLoaders: List<AssetLoaderRo<*>>

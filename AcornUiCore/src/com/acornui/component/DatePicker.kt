@@ -55,8 +55,7 @@ open class DatePicker(
 	 * Dispatched on each input character.
 	 * This does not dispatch when selecting a date from the picker.
 	 */
-	val input: Signal<() -> Unit>
-		get() = _input
+	val input = _input.asRo()
 
 	private val _changed = own(Signal0())
 

@@ -127,8 +127,7 @@ class I18nImpl : I18n, Disposable {
 class I18nBundleImpl(private val i18n: I18nImpl, private val locales: List<Locale>?, private val bundleName: String) : I18nBundleRo, Disposable {
 
 	private val _changed = Signal1<I18nBundleRo>()
-	override val changed: Signal<(I18nBundleRo) -> Unit>
-		get() = _changed
+	override val changed = _changed.asRo()
 
 	fun notifyChanged() {
 		_changed.dispatch(this)

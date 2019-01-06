@@ -143,8 +143,7 @@ fun Owned.colorPicker(init: ComponentInit<ColorPicker> = {}): ColorPicker {
 class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 
 	private val _changed = own(Signal0())
-	val changed: Signal<() -> Unit>
-		get() = _changed
+	val changed = _changed.asRo()
 
 	val style = bind(ColorPaletteStyle())
 

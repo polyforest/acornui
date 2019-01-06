@@ -34,8 +34,7 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 	 * The handler should have the signature:
 	 * (this: TabNavigator, previousIndex: Int, newIndex: Int, cancel: Cancel)
 	 */
-	val userCurrentIndexChanged: Signal<(TabNavigator, Int, Int, Cancel) -> Unit>
-		get() = _userCurrentIndexChanged
+	val userCurrentIndexChanged = _userCurrentIndexChanged.asRo()
 
 	private val _currentIndexChanged = own(Signal3<TabNavigator, Int, Int>())
 
@@ -43,8 +42,7 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 	 * Dispatched when the current tab index has changed. The handler should have the signature
 	 * (this: TabNavigator, previousIndex: Int, newIndex: Int)
 	 */
-	val currentIndexChanged: Signal<(TabNavigator, Int, Int) -> Unit>
-		get() = _currentIndexChanged
+	val currentIndexChanged = _currentIndexChanged.asRo()
 
 	val style = bind(TabNavigatorStyle())
 

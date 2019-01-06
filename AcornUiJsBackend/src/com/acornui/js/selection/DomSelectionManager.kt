@@ -14,8 +14,7 @@ class DomSelectionManager(
 ) : SelectionManager {
 
 	private val _selectionChanged = Signal2<List<SelectionRange>, List<SelectionRange>>()
-	override val selectionChanged: Signal<(List<SelectionRange>, List<SelectionRange>) -> Unit>
-		get() = _selectionChanged
+	override val selectionChanged = _selectionChanged.asRo()
 
 	override var selection: List<SelectionRange> = listOf()
 

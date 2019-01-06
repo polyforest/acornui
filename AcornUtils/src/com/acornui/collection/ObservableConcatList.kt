@@ -25,24 +25,19 @@ import com.acornui.signal.Signal3
 class ObservableConcatList<out E>(private val listA: ObservableList<E>, private val listB: ObservableList<E>) : ListBase<E>(), ObservableList<E>, Disposable {
 
 	private val _added = Signal2<Int, E>()
-	override val added: Signal<(Int, E) -> Unit>
-		get() = _added
+	override val added = _added.asRo()
 
 	private val _removed = Signal2<Int, E>()
-	override val removed: Signal<(Int, E) -> Unit>
-		get() = _removed
+	override val removed = _removed.asRo()
 
 	private val _changed = Signal3<Int, E, E>()
-	override val changed: Signal<(Int, E, E) -> Unit>
-		get() = _changed
+	override val changed = _changed.asRo()
 
 	private val _modified = Signal2<Int, E>()
-	override val modified: Signal<(Int, E) -> Unit>
-		get() = _modified
+	override val modified = _modified.asRo()
 
 	private val _reset = Signal0()
-	override val reset: Signal<() -> Unit>
-		get() = _reset
+	override val reset = _reset.asRo()
 
 	override val size: Int
 		get() = listA.size + listB.size

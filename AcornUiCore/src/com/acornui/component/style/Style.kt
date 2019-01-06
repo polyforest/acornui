@@ -83,8 +83,7 @@ class NoopStyle : StyleBase(), StyleType<NoopStyle> {
 abstract class StyleBase : Style, Disposable {
 
 	private val _changed = Signal1<StyleBase>()
-	override val changed: Signal<(StyleBase) -> Unit>
-		get() = _changed
+	override val changed = _changed.asRo()
 
 	override val modTag = ModTagImpl()
 

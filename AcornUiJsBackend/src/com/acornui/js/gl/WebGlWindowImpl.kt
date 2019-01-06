@@ -43,20 +43,16 @@ class WebGlWindowImpl(
 		private val gl: Gl20) : Window {
 
 	private val _isActiveChanged: Signal1<Boolean> = Signal1()
-	override val isActiveChanged: Signal<(Boolean) -> Unit>
-		get() = _isActiveChanged
+	override val isActiveChanged = _isActiveChanged.asRo()
 
 	private val _isVisibleChanged: Signal1<Boolean> = Signal1()
-	override val isVisibleChanged: Signal<(Boolean) -> Unit>
-		get() = _isVisibleChanged
+	override val isVisibleChanged = _isVisibleChanged.asRo()
 
 	private val _sizeChanged: Signal3<Float, Float, Boolean> = Signal3()
-	override val sizeChanged: Signal<(Float, Float, Boolean) -> Unit>
-		get() = _sizeChanged
+	override val sizeChanged = _sizeChanged.asRo()
 
 	private val _scaleChanged: Signal2<Float, Float> = Signal2()
-	override val scaleChanged: Signal<(Float, Float) -> Unit>
-		get() = _scaleChanged
+	override val scaleChanged = _scaleChanged.asRo()
 
 	private var _width: Float = 0f
 	private var _height: Float = 0f

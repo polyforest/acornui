@@ -109,8 +109,7 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 	 * The currently selected items are changing. This provides an opportunity to cancel the event before [changed]
 	 * is invoked.
 	 */
-	override val changing: Signal<(List<E>, List<E>, Cancel) -> Unit>
-		get() = _changing
+	override val changing = _changing.asRo()
 
 	private val cancel = Cancel()
 
@@ -122,8 +121,7 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 	 * This is not no-oped; calling [setSelectedItemsUser] with the currently selected items will still result
 	 * in a [changed] event.
 	 */
-	override val changed: Signal<(List<E>, List<E>) -> Unit>
-		get() = _changed
+	override val changed = _changed.asRo()
 
 	private val _selectedMap = HashMap<E, Boolean>()
 

@@ -147,16 +147,14 @@ class PinchAttachment(
 	/**
 	 * Dispatched when the pinch has begun. This will be after the pinch has passed the affordance value.
 	 */
-	val pinchStart: Signal<(PinchInteractionRo) -> Unit>
-		get() = _pinchStart
+	val pinchStart = _pinchStart.asRo()
 
 	private val _pinch = Signal1<PinchInteractionRo>()
 
 	/**
 	 * Dispatched on each frame during a pinch.
 	 */
-	val pinch: Signal<(PinchInteractionRo) -> Unit>
-		get() = _pinch
+	val pinch = _pinch.asRo()
 
 	private val _pinchEnd = Signal1<PinchInteractionRo>()
 
@@ -164,8 +162,7 @@ class PinchAttachment(
 	 * Dispatched when the pinch has completed.
 	 * This may either be by stopping a touch point, or the target deactivating.
 	 */
-	val pinchEnd: Signal<(PinchInteractionRo) -> Unit>
-		get() = _pinchEnd
+	val pinchEnd = _pinchEnd.asRo()
 
 	private val startPoints = PinchPoints()
 	private val points = PinchPoints()

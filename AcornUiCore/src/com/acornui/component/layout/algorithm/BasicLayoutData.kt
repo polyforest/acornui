@@ -26,8 +26,7 @@ import kotlin.properties.ReadWriteProperty
 open class BasicLayoutData : LayoutData {
 
 	protected val _changed = Signal0()
-	override val changed: Signal<() -> Unit>
-		get() = _changed
+	override val changed = _changed.asRo()
 
 	protected fun <T> bindable(initial: T): ReadWriteProperty<Any?, T> {
 		return Delegates.observable(initial) {

@@ -31,8 +31,7 @@ import com.acornui.signal.Signal1
 class BundleBinding(override val injector: Injector, bundleName: String) : Scoped, Disposable, I18nBundleRo {
 
 	private val _changed = Signal1<I18nBundleRo>()
-	override val changed: Signal<(I18nBundleRo) -> Unit>
-		get() = _changed
+	override val changed = _changed.asRo()
 
 
 	/**

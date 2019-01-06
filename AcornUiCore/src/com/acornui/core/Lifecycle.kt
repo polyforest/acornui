@@ -66,14 +66,11 @@ interface Lifecycle : LifecycleRo, Disposable {
 abstract class LifecycleBase : Lifecycle {
 
 	protected val _activated = Signal1<Lifecycle>()
-	override val activated: Signal<(Lifecycle) -> Unit>
-		get() = _activated
+	override val activated = _activated.asRo()
 	protected val _deactivated = Signal1<Lifecycle>()
-	override val deactivated: Signal<(Lifecycle) -> Unit>
-		get() = _deactivated
+	override val deactivated = _deactivated.asRo()
 	protected val _disposed = Signal1<Lifecycle>()
-	override val disposed: Signal<(Lifecycle)->Unit>
-		get() = _disposed
+	override val disposed = _disposed.asRo()
 
 	protected var _isDisposed: Boolean = false
 	protected var _isDisposing: Boolean = false

@@ -45,8 +45,7 @@ class Tree<E : ParentRo<E>>(owner: Owned, rootFactory: (tree: Tree<E>) -> TreeIt
 	/**
 	 * A tree node toggled change is being requested. This may be prevented by calling [Cancel.cancel].
 	 */
-	val nodeToggledChanging: Signal<(node: ParentRo<E>, newValue: Boolean, cancel: Cancel) -> Unit>
-		get() = _nodeToggledChanging
+	val nodeToggledChanging = _nodeToggledChanging.asRo()
 
 	private val _nodeToggledChanged = own(Signal2<E, Boolean>())
 
@@ -54,8 +53,7 @@ class Tree<E : ParentRo<E>>(owner: Owned, rootFactory: (tree: Tree<E>) -> TreeIt
 	 * A tree node toggled value has changed.
 	 * @see getNodeToggled
 	 */
-	val nodeToggledChanged: Signal<(node: E, newValue: Boolean) -> Unit>
-		get() = _nodeToggledChanged
+	val nodeToggledChanged = _nodeToggledChanged.asRo()
 
 	private val _root: TreeItemRenderer<E> = addChild(rootFactory(this))
 	val root: TreeItemRendererRo<E>
@@ -297,8 +295,7 @@ fun <E : ParentRo<E>> Owned.tree(rootFactory: (tree: Tree<E>) -> TreeItemRendere
 open class TreeNode(label: String) : Parent<TreeNode>, Observable {
 
 	private val _changed = Signal1<TreeNode>()
-	override val changed: Signal<(Observable) -> Unit>
-		get() = _changed
+	override val changed = _changed.asRo()
 
 	/**
 	 * Syntax sugar for addChild.

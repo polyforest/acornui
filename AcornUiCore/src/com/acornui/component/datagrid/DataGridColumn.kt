@@ -31,8 +31,7 @@ import kotlin.reflect.KProperty
 abstract class DataGridColumn<in RowData, CellData> {
 
 	private val _changed = Signal1<DataGridColumn<RowData, CellData>>()
-	val changed: Signal<(DataGridColumn<RowData, CellData>) -> Unit>
-		get() = _changed
+	val changed = _changed.asRo()
 
 	/**
 	 * If false, this column will not be shown.

@@ -41,12 +41,10 @@ import com.acornui.string.isLetterOrDigit2
 class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	private val _input = own(Signal0())
-	val input: Signal<() -> Unit>
-		get() = _input
+	val input = _input.asRo()
 
 	private val _changed = own(Signal0())
-	val changed: Signal<() -> Unit>
-		get() = _changed
+	val changed = _changed.asRo()
 
 	var editable by observable(true) {
 		textCursor.visible = it

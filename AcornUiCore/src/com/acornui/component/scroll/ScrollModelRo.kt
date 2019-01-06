@@ -141,8 +141,7 @@ class ScrollModelImpl(
 ) : ClampedScrollModel, Disposable {
 
 	private val _changed = Signal1<ClampedScrollModel>()
-	override val changed: Signal<(ClampedScrollModel) -> Unit>
-		get() = _changed
+	override val changed = _changed.asRo()
 
 	private fun bindable(initial: Float): ReadWriteProperty<Any?, Float> {
 		return Delegates.observable(initial) { _, old, new ->

@@ -66,16 +66,14 @@ class DragAttachment(
 	/**
 	 * Dispatched when the drag has passed the [affordance] distance.
 	 */
-	val dragStart: Signal<(DragInteractionRo) -> Unit>
-		get() = _dragStart
+	val dragStart = _dragStart.asRo()
 
 	private val _drag = Signal1<DragInteraction>()
 
 	/**
 	 * Dispatched on each frame during a drag.
 	 */
-	val drag: Signal<(DragInteractionRo) -> Unit>
-		get() = _drag
+	val drag = _drag.asRo()
 
 	private val _dragEnd = Signal1<DragInteraction>()
 
@@ -83,8 +81,7 @@ class DragAttachment(
 	 * Dispatched when the drag has completed.
 	 * This may either be from the mouse/touch ending, or the target deactivating.
 	 */
-	val dragEnd: Signal<(DragInteractionRo) -> Unit>
-		get() = _dragEnd
+	val dragEnd = _dragEnd.asRo()
 
 	private val position = Vector2()
 	private val startPosition = Vector2()

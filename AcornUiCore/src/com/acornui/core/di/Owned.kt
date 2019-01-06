@@ -121,8 +121,7 @@ open class OwnedImpl(
 		get() = _isDisposed
 
 	private val _disposed = Signal1<Owned>()
-	override val disposed: Signal<(Owned) -> Unit>
-		get() = _disposed
+	override val disposed = _disposed.asRo()
 
 	private val ownerDisposedHandler = {
 		owner: Owned ->

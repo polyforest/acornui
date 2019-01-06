@@ -43,8 +43,7 @@ class ContextMenuManager(override val owner: Owned) : Owned, Disposable {
 		get() = _isDisposed
 
 	private val _disposed = Signal1<Owned>()
-	override val disposed: Signal<(Owned) -> Unit>
-		get() = _disposed
+	override val disposed = _disposed.asRo()
 
 	override val injector: Injector = owner.injector
 

@@ -53,8 +53,7 @@ abstract class TextNodeBase(final override val owner: Owned) : TextNode {
 		get() = _isDisposed
 
 	private val _disposed = Signal1<TextNode>()
-	override val disposed: Signal<(TextNode) -> Unit>
-		get() = _disposed
+	override val disposed = _disposed.asRo()
 
 	private val ownerDisposedHandler = {
 		owner: Owned ->
@@ -81,8 +80,7 @@ abstract class TextNodeBase(final override val owner: Owned) : TextNode {
 	override fun update() = validate()
 
 	private val _invalidated = own(Signal2<TextNode, Int>())
-	override val invalidated: Signal<(TextNode, Int) -> Unit>
-		get() = _invalidated
+	override val invalidated = _invalidated.asRo()
 	override val invalidFlags: Int
 		get() = validation.invalidFlags
 

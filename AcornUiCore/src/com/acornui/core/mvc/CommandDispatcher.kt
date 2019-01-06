@@ -44,8 +44,7 @@ open class CommandDispatcherImpl(
 ) : CommandDispatcher, Disposable {
 
 	private val _commandInvoked: Signal1<Command> = Signal1()
-	override val commandInvoked: Signal<(Command) -> Unit>
-		get() = _commandInvoked
+	override val commandInvoked = _commandInvoked.asRo()
 
 	private val _history = ArrayList<Command>()
 	override val history: List<Command>

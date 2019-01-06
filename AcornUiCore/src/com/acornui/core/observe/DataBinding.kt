@@ -48,8 +48,7 @@ class DataBindingImpl<T>(initialValue: T) : DataBinding<T> {
 
 	private val _changed = Signal2<T, T>()
 
-	override val changed: Signal<(T, T) -> Unit>
-		get() = _changed
+	override val changed = _changed.asRo()
 
 	private val _wrapped = HashMap<(T) -> Unit, DataChangeHandler<T>>()
 

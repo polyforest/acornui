@@ -34,8 +34,7 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	 * The user has changed this stepper's value.
 	 * This will not be dispatched on a programmatic change, only user input.
 	 */
-	val changed: Signal<(NumericStepper) -> Unit>
-		get() = _changed
+	val changed = _changed.asRo()
 
 	val formatter: NumberFormatter = numberFormatter().apply {
 		useGrouping = false

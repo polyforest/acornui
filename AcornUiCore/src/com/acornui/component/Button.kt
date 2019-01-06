@@ -52,8 +52,7 @@ open class Button(
 	 * Dispatched when the toggled flag has changed via user interaction. This will only be invoked if [toggleOnClick]
 	 * is true, and the user clicks this button.
 	 */
-	val toggledChanged: Signal<(Button) -> Unit>
-		get() = _toggledChanged
+	val toggledChanged = _toggledChanged.asRo()
 
 	/**
 	 * If true, when this button is pressed, the selected state will be toggled.

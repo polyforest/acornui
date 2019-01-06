@@ -249,16 +249,13 @@ open class UiComponentImpl(
 	//---------------------------------------------------------
 
 	private val _activated = Signal1<UiComponent>()
-	final override val activated: Signal<(UiComponent) -> Unit>
-		get() = _activated
+	final override val activated = _activated.asRo()
 
 	private val _deactivated = Signal1<UiComponent>()
-	final override val deactivated: Signal<(UiComponent) -> Unit>
-		get() = _deactivated
+	final override val deactivated = _deactivated.asRo()
 
 	private val _disposed = Signal1<UiComponent>()
-	final override val disposed: Signal<(UiComponent) -> Unit>
-		get() = _disposed
+	final override val disposed = _disposed.asRo()
 
 	private var _isDisposed: Boolean = false
 	private var _isActive: Boolean = false
@@ -316,8 +313,7 @@ open class UiComponentImpl(
 
 	// Validatable Properties
 	private val _invalidated = own(Signal2<UiComponent, Int>())
-	final override val invalidated: Signal<(UiComponent, Int) -> Unit>
-		get() = _invalidated
+	final override val invalidated = _invalidated.asRo()
 
 	/**
 	 * The root of the validation tree. This is a tree representing how validation flags are resolved.

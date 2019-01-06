@@ -96,8 +96,7 @@ class NumberCell(owner: Owned, private val formatter: NumberFormatter) : Contain
 abstract class NumberEditorCell(owner: Owned) : ContainerImpl(owner) {
 
 	private val _changed = own(Signal0())
-	val changed: Signal<() -> Unit>
-		get() = _changed
+	val changed = _changed.asRo()
 
 	protected val input = addChild(textInput())
 	private var _data: Number? = null
@@ -184,8 +183,7 @@ class StringCell<E>(owner: Owned, val formatter: StringFormatter<E> = ToStringFo
 class StringEditorCell(owner: Owned) : ContainerImpl(owner), DataGridEditorCell<String> {
 
 	private val _changed = own(Signal0())
-	override val changed: Signal<() -> Unit>
-		get() = _changed
+	override val changed = _changed.asRo()
 
 	private val input = addChild(textInput())
 

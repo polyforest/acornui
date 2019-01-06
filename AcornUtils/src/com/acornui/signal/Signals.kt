@@ -206,6 +206,8 @@ class Signal0 : SignalBase<() -> Unit>() {
 
 	override fun addBinding(callback: () -> Unit) = add(callback)
 	override fun removeBinding(callback: () -> Unit) = remove(callback)
+
+	fun asRo(): Signal<() -> Unit> = this
 }
 
 class Signal1<P1> : SignalBase<(P1) -> Unit>() {
@@ -213,6 +215,8 @@ class Signal1<P1> : SignalBase<(P1) -> Unit>() {
 
 	override fun addBinding(callback: () -> Unit) = add(callback.as1)
 	override fun removeBinding(callback: () -> Unit) = remove(callback.as1)
+
+	fun asRo(): Signal<(P1) -> Unit> = this
 }
 
 class Signal2<P1, P2> : SignalBase<(P1, P2) -> Unit>() {
@@ -220,6 +224,8 @@ class Signal2<P1, P2> : SignalBase<(P1, P2) -> Unit>() {
 
 	override fun addBinding(callback: () -> Unit) = add(callback.as2)
 	override fun removeBinding(callback: () -> Unit) = remove(callback.as2)
+
+	fun asRo(): Signal<(P1, P2) -> Unit> = this
 }
 
 class Signal3<P1, P2, P3> : SignalBase<(P1, P2, P3) -> Unit>() {
@@ -227,6 +233,8 @@ class Signal3<P1, P2, P3> : SignalBase<(P1, P2, P3) -> Unit>() {
 
 	override fun addBinding(callback: () -> Unit) = add(callback.as3)
 	override fun removeBinding(callback: () -> Unit) = remove(callback.as3)
+
+	fun asRo(): Signal<(P1, P2, P3) -> Unit> = this
 }
 
 class Signal4<P1, P2, P3, P4> : SignalBase<(P1, P2, P3, P4) -> Unit>() {
@@ -234,6 +242,8 @@ class Signal4<P1, P2, P3, P4> : SignalBase<(P1, P2, P3, P4) -> Unit>() {
 
 	override fun addBinding(callback: () -> Unit) = add(callback.as4)
 	override fun removeBinding(callback: () -> Unit) = remove(callback.as4)
+
+	fun asRo(): Signal<(P1, P2, P3, P4) -> Unit> = this
 }
 
 class Signal5<P1, P2, P3, P4, P5> : SignalBase<(P1, P2, P3, P4, P5) -> Unit>() {
@@ -241,6 +251,8 @@ class Signal5<P1, P2, P3, P4, P5> : SignalBase<(P1, P2, P3, P4, P5) -> Unit>() {
 
 	override fun addBinding(callback: () -> Unit) = add(callback.as5)
 	override fun removeBinding(callback: () -> Unit) = remove(callback.as5)
+
+	fun asRo(): Signal<(P1, P2, P3, P4, P5) -> Unit> = this
 }
 
 class Signal6<P1, P2, P3, P4, P5, P6> : SignalBase<(P1, P2, P3, P4, P5, P6) -> Unit>() {
@@ -248,6 +260,8 @@ class Signal6<P1, P2, P3, P4, P5, P6> : SignalBase<(P1, P2, P3, P4, P5, P6) -> U
 
 	override fun addBinding(callback: () -> Unit) = add(callback.as6)
 	override fun removeBinding(callback: () -> Unit) = remove(callback.as6)
+
+	fun asRo(): Signal<(P1, P2, P3, P4, P5, P6) -> Unit> = this
 }
 
 class Signal7<P1, P2, P3, P4, P5, P6, P7> : SignalBase<(P1, P2, P3, P4, P5, P6, P7) -> Unit>() {
@@ -255,6 +269,8 @@ class Signal7<P1, P2, P3, P4, P5, P6, P7> : SignalBase<(P1, P2, P3, P4, P5, P6, 
 
 	override fun addBinding(callback: () -> Unit) = add(callback.as7)
 	override fun removeBinding(callback: () -> Unit) = remove(callback.as7)
+
+	fun asRo(): Signal<(P1, P2, P3, P4, P5, P6, P7) -> Unit> = this
 }
 
 class Signal8<P1, P2, P3, P4, P5, P6, P7, P8> : SignalBase<(P1, P2, P3, P4, P5, P6, P7, P8) -> Unit>() {
@@ -262,6 +278,8 @@ class Signal8<P1, P2, P3, P4, P5, P6, P7, P8> : SignalBase<(P1, P2, P3, P4, P5, 
 
 	override fun addBinding(callback: () -> Unit) = add(callback.as8)
 	override fun removeBinding(callback: () -> Unit) = remove(callback.as8)
+
+	fun asRo(): Signal<(P1, P2, P3, P4, P5, P6, P7, P8) -> Unit> = this
 }
 
 class Signal9<P1, P2, P3, P4, P5, P6, P7, P8, P9> : SignalBase<(P1, P2, P3, P4, P5, P6, P7, P8, P9) -> Unit>() {
@@ -269,6 +287,8 @@ class Signal9<P1, P2, P3, P4, P5, P6, P7, P8, P9> : SignalBase<(P1, P2, P3, P4, 
 
 	override fun addBinding(callback: () -> Unit) = add(callback.as9)
 	override fun removeBinding(callback: () -> Unit) = remove(callback.as9)
+
+	fun asRo(): Signal<(P1, P2, P3, P4, P5, P6, P7, P8, P9) -> Unit> = this
 }
 
 interface Stoppable {

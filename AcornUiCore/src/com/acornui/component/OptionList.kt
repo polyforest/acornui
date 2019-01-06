@@ -79,8 +79,7 @@ open class OptionList<E : Any>(
 	 * Dispatched on each input character.
 	 * This does not dispatch when selecting an item from the drop down list.
 	 */
-	val input: Signal<() -> Unit>
-		get() = _input
+	val input = _input.asRo()
 
 	private val _changed = own(Signal0())
 
@@ -89,8 +88,7 @@ open class OptionList<E : Any>(
 	 * It is dispatched when the user selects an item, or commits the value of the text input. It is not dispatched
 	 * when the selected item or text is programmatically changed.
 	 */
-	val changed: Signal<() -> Unit>
-		get() = _changed
+	val changed = _changed.asRo()
 
 	/**
 	 * The formatter to be used when converting a data element to a string.

@@ -43,8 +43,7 @@ fun SelectionManager.contains(target: Selectable, index: Int): Boolean {
 class SelectionManagerImpl : SelectionManager {
 
 	private val _selectionChanged = Signal2<List<SelectionRange>, List<SelectionRange>>()
-	override val selectionChanged: Signal<(List<SelectionRange>, List<SelectionRange>) -> Unit>
-		get() = _selectionChanged
+	override val selectionChanged = _selectionChanged.asRo()
 
 	private var _selection: List<SelectionRange> = ArrayList()
 	override var selection: List<SelectionRange>

@@ -21,16 +21,14 @@ class MouseOrTouchState(private val host: UiComponentRo) : Disposable {
 	/**
 	 * Dispatched when [isOver] has changed.
 	 */
-	val isOverChanged: Signal<() -> Unit>
-		get() = _isOverChanged
+	val isOverChanged = _isOverChanged.asRo()
 
 	private val _isDownChanged = Signal0()
 
 	/**
 	 * Dispatched when [isDown] has changed.
 	 */
-	val isDownChanged: Signal<() -> Unit>
-		get() = _isDownChanged
+	val isDownChanged = _isDownChanged.asRo()
 
 	/**
 	 * True if either the touch or mouse is over the [host].
