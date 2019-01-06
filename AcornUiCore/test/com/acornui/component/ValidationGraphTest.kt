@@ -8,7 +8,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 
-class ValidationTreeTest {
+class ValidationGraphTest {
 
 	private val ONE: Int = 1 shl 0
 	private val TWO: Int = 1 shl 1
@@ -22,7 +22,7 @@ class ValidationTreeTest {
 
 	private lateinit var n: ValidationGraph
 
-	@Before fun before() {
+	@BeforeTest fun before() {
 		assertionsEnabled = true
 		n = validationGraph {
 			addNode(ONE, {})
@@ -86,8 +86,8 @@ class ValidationTreeTest {
 
 	}
 
-	@Test fun dependants() {
-		n.addNode(EIGHT, dependencies = FOUR, dependants = FIVE) {}
+	@Test fun dependents() {
+		n.addNode(EIGHT, dependencies = FOUR, dependents = FIVE) {}
 
 		n.validate(FIVE)
 
