@@ -319,7 +319,7 @@ open class UiComponentImpl(
 	 * The root of the validation tree. This is a tree representing how validation flags are resolved.
 	 * This may be manipulated, but only on construction.
 	 */
-	protected var validation: ValidationTree
+	protected var validation: ValidationGraph
 
 	// Transformable properties
 	protected val _transform = Matrix4()
@@ -1336,7 +1336,7 @@ open class UiComponentImpl(
 	init {
 		owner.disposed.add(this::ownerDisposedHandler)
 		val r = this
-		validation = validationTree {
+		validation = validationGraph {
 			ValidationFlags.apply {
 				addNode(STYLES, r::updateStyles)
 				addNode(HIERARCHY_ASCENDING, r::updateHierarchyAscending)

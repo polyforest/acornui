@@ -91,12 +91,12 @@ private class ValidationNode(
  * guaranteed to be valid first.
  *
  * The UI Component implementation will work in this way:
- * UI Components will validate the validation tree top down, level order. When a component validates a flag such as
+ * UI Components will validate the validation graph top down, level order. When a component validates a flag such as
  * layout, that component may require that a child component have a valid layout in order to determine its measured
  * size. On retrieving the child component size, that child component may then validate its layout, thus effectively
  * validating certain flags in a bottom-up manner.
  */
-class ValidationTree {
+class ValidationGraph {
 
 	private val nodes = ArrayList<ValidationNode>()
 
@@ -246,8 +246,8 @@ fun Int.toFlagsString(): String {
 
 fun Int.toFlagString(): String = ValidationFlags.flagToString(this)
 
-fun validationTree(init: ValidationTree.() -> Unit): ValidationTree {
-	val v = ValidationTree()
+fun validationGraph(init: ValidationGraph.() -> Unit): ValidationGraph {
+	val v = ValidationGraph()
 	v.init()
 	return v
 }

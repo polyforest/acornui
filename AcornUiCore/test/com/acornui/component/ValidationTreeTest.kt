@@ -20,11 +20,11 @@ class ValidationTreeTest {
 	private val EIGHT: Int = 1 shl 7
 	private val NINE: Int = 1 shl 8
 
-	private lateinit var n: ValidationTree
+	private lateinit var n: ValidationGraph
 
 	@Before fun before() {
 		assertionsEnabled = true
-		n = validationTree {
+		n = validationGraph {
 			addNode(ONE, {})
 			addNode(TWO, ONE, {})
 			addNode(THREE, TWO, {})
@@ -125,7 +125,7 @@ class ValidationTreeTest {
 	}
 
 	@Test fun textComponentsBug() {
-		val validation = validationTree {
+		val validation = validationGraph {
 			ValidationFlags.apply {
 				addNode(STYLES, {})
 				addNode(PROPERTIES, STYLES, {})
@@ -150,20 +150,20 @@ class ValidationTreeTest {
 	}
 
 	@Test fun dependenciesCanBeValidated() {
-		val t = validationTree {
+		val t = validationGraph {
 			addNode(ONE, { validate(TWO) })
 			addNode(TWO, 0, ONE, {})
 		}
 		t.validate()
 	}
 
-	private fun ValidationTree.assertIsValid(vararg flags: Int) {
+	private fun ValidationGraph.assertIsValid(vararg flags: Int) {
 		for (flag in flags) {
 			assertEquals(true, isValid(flag), "flag ${flag.toRadix(2)} is not valid")
 		}
 	}
 
-	private fun ValidationTree.assertIsNotValid(vararg flags: Int) {
+	private fun ValidationGraph.assertIsNotValid(vararg flags: Int) {
 		for (flag in flags) {
 			assertEquals(false, isValid(flag), "flag ${flag.toRadix(2)} is valid")
 		}

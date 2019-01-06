@@ -17,7 +17,7 @@
 package com.acornui.component.text
 
 import com.acornui.component.ValidationFlags
-import com.acornui.component.ValidationTree
+import com.acornui.component.ValidationGraph
 import com.acornui.component.layout.LayoutData
 import com.acornui.component.style.*
 import com.acornui.component.validationProp
@@ -35,7 +35,6 @@ import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.acornui.math.MathUtils.offsetRound
-import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
 
@@ -66,7 +65,7 @@ abstract class TextNodeBase(final override val owner: Owned) : TextNode {
 	protected val glState = inject(GlState)
 	protected val window = inject(Window)
 
-	protected val validation = ValidationTree()
+	protected val validation = ValidationGraph()
 
 	protected val _bounds = Bounds()
 	protected var _explicitWidth: Float? = null
