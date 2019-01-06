@@ -69,7 +69,7 @@ class TouchSimulator(override val injector: Injector) : Scoped, Disposable {
 
 	private var isSimulating: Boolean by Delegates.observable(false) { _, old, new ->
 		if (old != new && new) {
-			startPosition.set(mouseState.canvasX(), mouseState.canvasY())
+			startPosition.set(mouseState.canvasX, mouseState.canvasY)
 
 			handle.moveTo(stage.mousePosition(startPosition))
 			stage.addElement(handle)

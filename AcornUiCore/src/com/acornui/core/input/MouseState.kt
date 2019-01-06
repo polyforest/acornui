@@ -40,24 +40,24 @@ interface MouseState : Disposable {
 	/**
 	 * True if the mouse is over the canvas.
 	 */
-	fun overCanvas(): Boolean
+	val overCanvas: Boolean
 
 	/**
 	 * The mouse x position relative to the canvas.
 	 */
-	fun canvasX(): Float
+	val canvasX: Float
 
 	/**
 	 * The mouse y position relative to the canvas.
 	 */
-	fun canvasY(): Float
+	val canvasY: Float
 
 	/**
 	 * Sets the [out] vector to the current canvas position.
 	 * @return Returns the [out] vector.
 	 */
 	fun mousePosition(out: Vector2): Vector2 {
-		out.set(canvasX(), canvasY())
+		out.set(canvasX, canvasY)
 		return out
 	}
 

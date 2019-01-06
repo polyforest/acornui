@@ -47,8 +47,8 @@ class DownRepeat(
 		val m = mouseState
 		MOUSE_DOWN_REPEAT.clear()
 		MOUSE_DOWN_REPEAT.type = MouseInteractionRo.MOUSE_DOWN
-		MOUSE_DOWN_REPEAT.canvasX = m.canvasX()
-		MOUSE_DOWN_REPEAT.canvasY = m.canvasY()
+		MOUSE_DOWN_REPEAT.canvasX = m.canvasX
+		MOUSE_DOWN_REPEAT.canvasY = m.canvasY
 		MOUSE_DOWN_REPEAT.button = WhichButton.LEFT
 		MOUSE_DOWN_REPEAT.timestamp = time.nowMs()
 		MOUSE_DOWN_REPEAT.localize(target)

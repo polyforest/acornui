@@ -59,13 +59,11 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 
 	private val downMap = HashMap<WhichButton, Boolean>()
 
-	override fun canvasX(): Float {
-		return _canvasX
-	}
+	override val canvasX: Float
+		get() = _canvasX
 
-	override fun canvasY(): Float {
-		return _canvasY
-	}
+	override val canvasY: Float
+		get() = _canvasY
 
 	private val mouseEnterHandler = { jsEvent: Event ->
 		overCanvas(true)
@@ -75,9 +73,8 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 		overCanvas(false)
 	}
 
-	override fun overCanvas(): Boolean {
-		return _overCanvas
-	}
+	override val overCanvas: Boolean
+		get() = _overCanvas
 
 	private fun overCanvas(value: Boolean) {
 		if (_overCanvas == value) return

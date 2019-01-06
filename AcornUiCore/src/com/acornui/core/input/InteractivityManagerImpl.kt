@@ -174,8 +174,8 @@ open class InteractivityManagerImpl(
 		val previousOverTarget = overTargets.firstOrNull()
 		if (target == previousOverTarget) return
 		val mouse = mousePool.obtain()
-		mouse.canvasX = mouseInput.canvasX()
-		mouse.canvasY = mouseInput.canvasY()
+		mouse.canvasX = mouseInput.canvasX
+		mouse.canvasY = mouseInput.canvasY
 		mouse.button = WhichButton.UNKNOWN
 		mouse.timestamp = time.nowMs()
 

@@ -766,9 +766,9 @@ open class UiComponentImpl(
 	}
 
 	override fun mouseIsOver(): Boolean {
-		if (!isActive || !mouse.overCanvas()) return false
+		if (!isActive || !mouse.overCanvas) return false
 		val stage = owner.injectOptional(Stage) ?: return false
-		val e = stage.getChildUnderPoint(mouse.canvasX(), mouse.canvasY(), onlyInteractive = true) ?: return false
+		val e = stage.getChildUnderPoint(mouse.canvasX, mouse.canvasY, onlyInteractive = true) ?: return false
 		return e.isDescendantOf(this)
 	}
 

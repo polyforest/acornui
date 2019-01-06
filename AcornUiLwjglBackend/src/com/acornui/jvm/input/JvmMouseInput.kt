@@ -52,17 +52,20 @@ class JvmMouseInput(private val window: Long) : MouseInput {
 
 	val scrollSpeed = 24f
 
-	override fun canvasX(): Float {
-		return _canvasX
-	}
+	override val canvasX: Float
+		get() {
+			return _canvasX
+		}
 
-	override fun canvasY(): Float {
-		return _canvasY
-	}
+	override val canvasY: Float
+		get() {
+			return _canvasY
+		}
 
-	override fun overCanvas(): Boolean {
-		return _overCanvas
-	}
+	override val overCanvas: Boolean
+		get() {
+			return _overCanvas
+		}
 
 	private val mouseButtonCallback: GLFWMouseButtonCallback = object : GLFWMouseButtonCallback() {
 		override fun invoke(window: Long, button: Int, action: Int, mods: Int) {
