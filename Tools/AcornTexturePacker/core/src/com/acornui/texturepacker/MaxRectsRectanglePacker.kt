@@ -18,7 +18,6 @@ package com.acornui.texturepacker
 
 import com.acornui.math.IntRectangle
 import com.acornui.math.MathUtils
-import java.util.*
 import kotlin.math.abs
 import kotlin.math.log
 import kotlin.math.pow
@@ -87,15 +86,16 @@ class MaxRectsPacker(algorithmSettings: PackerAlgorithmSettingsData) : Rectangle
 		if (settings.fast) {
 			if (settings.rotation) {
 				// Sort by longest side if rotation is enabled.
-				Collections.sort(rects) {
-					o1, o2 ->
+				rects.sortWith(Comparator { o1, o2 ->
 					val n1 = if (o1.width > o1.height) o1.width else o1.height
 					val n2 = if (o2.width > o2.height) o2.width else o2.height
 					n2 - n1
-				}
+				})
 			} else {
 				// Sort only by width (largest to smallest) if rotation is disabled.
-				Collections.sort(rects) { o1, o2 -> o2.width - o1.width }
+				rects.sortWith(Comparator { o1, o2 ->
+					o2.width - o1.width
+				})
 			}
 		}
 
@@ -159,7 +159,7 @@ class MaxRectsPacker(algorithmSettings: PackerAlgorithmSettingsData) : Rectangle
 			if (!settings.silent) System.out.println()
 			// Rects don't fit on one page. Fill a whole page and return.
 			if (bestResult == null) bestResult = packAtSize(false, maxSize, maxSize, inputRects)
-			Collections.sort(bestResult!!.outputRects, rectComparator)
+			bestResult!!.outputRects.sortWith(rectComparator)
 			bestResult.width = maxOf(bestResult.width, bestResult.height)
 			bestResult.height = maxOf(bestResult.width, bestResult.height)
 			return bestResult
@@ -191,7 +191,7 @@ class MaxRectsPacker(algorithmSettings: PackerAlgorithmSettingsData) : Rectangle
 			// Rects don't fit on one page. Fill a whole page and return.
 			if (bestResult == null)
 				bestResult = packAtSize(false, maxWidth, maxHeight, inputRects)
-			Collections.sort(bestResult!!.outputRects, rectComparator)
+			bestResult!!.outputRects.sortWith(rectComparator)
 			return bestResult
 		}
 	}
@@ -741,16 +741,16 @@ private class MaxRects(val settings: MaxRectsSettings) {
 
 	private fun pruneFreeList() {
 		/*
-					 * /// Would be nice to do something like this, to avoid a Theta(n^2) loop through each pair. /// But unfortunately it
-					 * doesn't quite cut it, since we also want to detect containment. /// Perhaps there's another way to do this faster than
-					 * Theta(n^2).
-					 *
-					 * if (freeRectangles.size() > 0) clb::sort::QuickSort(&freeRectangles[0], freeRectangles.size(), NodeSortCmp);
-					 *
-					 * for(int i = 0; i < freeRectangles.size()-1; i++) if (freeRectangles[i].x == freeRectangles[i+1].x && freeRectangles[i].y
-					 * == freeRectangles[i+1].y && freeRectangles[i].width == freeRectangles[i+1].width && freeRectangles[i].height ==
-					 * freeRectangles[i+1].height) { freeRectangles.erase(freeRectangles.begin() + i); --i; }
-					 */
+		 * /// Would be nice to do something like this, to avoid a Theta(n^2) loop through each pair. /// But unfortunately it
+		 * doesn't quite cut it, since we also want to detect containment. /// Perhaps there's another way to do this faster than
+		 * Theta(n^2).
+		 *
+		 * if (freeRectangles.size() > 0) clb::sort::QuickSort(&freeRectangles[0], freeRectangles.size(), NodeSortCmp);
+		 *
+		 * for(int i = 0; i < freeRectangles.size()-1; i++) if (freeRectangles[i].x == freeRectangles[i+1].x && freeRectangles[i].y
+		 * == freeRectangles[i+1].y && freeRectangles[i].width == freeRectangles[i+1].width && freeRectangles[i].height ==
+		 * freeRectangles[i+1].height) { freeRectangles.erase(freeRectangles.begin() + i); --i; }
+		 */
 
 		// / Go through each pair and remove any rectangle that is redundant.
 		var i = 0

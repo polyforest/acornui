@@ -18,8 +18,6 @@ package com.acornui.texturepacker
 
 import com.acornui.logging.Log
 import com.acornui.math.IntRectangle
-import java.util.*
-
 
 /**
  * @author nbilyk
@@ -34,7 +32,7 @@ class GreedyRectanglePacker(private val settings: PackerAlgorithmSettingsData) :
 		remaining.addAll(inputRectangles)
 
 		// Sorts the rectangles in descending order by difficulty to place.
-		Collections.sort(remaining) { o1, o2 -> -o1.difficulty.compareTo(o2.difficulty) }
+		remaining.sortByDescending { it.difficulty }
 
 		val pages = ArrayList<PackerPageData>()
 		fillPages(remaining, pages)
