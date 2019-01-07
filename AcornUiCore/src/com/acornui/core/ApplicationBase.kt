@@ -30,6 +30,8 @@ import kotlin.reflect.KProperty
  */
 abstract class ApplicationBase : Disposable {
 
+	protected suspend fun config(): AppConfig = get(AppConfig)
+
 	private val pendingTasks = HashMap<String, Pair<String, suspend () -> Unit>>()
 	private val bootstrap = Bootstrap()
 	protected lateinit var stage: Stage

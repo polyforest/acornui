@@ -127,7 +127,7 @@ interface Updatable {
 	/**
 	 * Updates this object.
 	 */
-	fun update(stepTime: Float)
+	fun update(tickTime: Float)
 }
 
 interface UpdatableChild : Updatable, ChildRo {

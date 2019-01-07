@@ -113,12 +113,12 @@ interface Tween {
 	var paused: Boolean
 
 	/**
-	 * Steps forward [stepTime] seconds.
-	 * @param stepTime The number of seconds to progress. This may be negative.
+	 * Steps forward [tickTime] seconds.
+	 * @param tickTime The number of seconds to progress. This may be negative.
 	 */
-	fun update(stepTime: Float) {
+	fun update(tickTime: Float) {
 		if (!paused)
-			currentTime += stepTime
+			currentTime += tickTime
 	}
 
 	/**
@@ -301,8 +301,8 @@ class TweenDriver private constructor() : UpdatableChildBase(), Disposable {
 			_tween?.completed?.add(tweenCompletedHandler)
 		}
 
-	override fun update(stepTime: Float) {
-		tween?.update(stepTime)
+	override fun update(tickTime: Float) {
+		tween?.update(tickTime)
 	}
 
 	override fun dispose() {

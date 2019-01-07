@@ -19,8 +19,8 @@ internal class LimitedCallback(
 	private var currentTime: Float = 0f
 	private var pendingInvoke: Boolean = false
 
-	override fun update(stepTime: Float) {
-		currentTime += stepTime
+	override fun update(tickTime: Float) {
+		currentTime += tickTime
 		if (currentTime > duration) {
 			currentTime = 0f
 			if (pendingInvoke) {
@@ -63,8 +63,8 @@ internal class DelayedCallback(
 
 	private var currentTime: Float = 0f
 
-	override fun update(stepTime: Float) {
-		currentTime += stepTime
+	override fun update(tickTime: Float) {
+		currentTime += tickTime
 		if (currentTime > duration) {
 			currentTime = 0f
 			remove()

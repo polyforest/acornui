@@ -111,8 +111,6 @@ import java.util.Locale as LocaleJvm
 @Suppress("unused")
 open class LwjglApplication : ApplicationBase() {
 
-	protected suspend fun config(): AppConfig = get(AppConfig)
-
 	// If accessing the window id, use bootstrap.on(Window) { }
 	private var _windowId: Long = -1L
 
@@ -307,7 +305,7 @@ open class LwjglApplication : ApplicationBase() {
 	}
 
 	protected open val timeDriverTask by BootTask {
-		set(TimeDriver, TimeDriverImpl())
+		set(TimeDriver, TimeDriverImpl(config().timeDriverConfig))
 	}
 
 	protected open val cursorManagerTask by BootTask {
@@ -377,9 +375,9 @@ class JvmApplicationRunner(
 ) : Scoped {
 
 	private val window = inject(Window)
-	private val appConfig = inject(AppConfig)
 	private val timeDriver = inject(TimeDriver)
 	private val stage = inject(Stage)
+	private val frameTime = inject(AppConfig).frameTime
 
 	private val refreshCallback = object : GLFWWindowRefreshCallback() {
 		override fun invoke(windowId: Long) {
@@ -389,43 +387,30 @@ class JvmApplicationRunner(
 	}
 
 	private val viewport = MinMax()
-	private var nextTick: Long = 0
 
 	init {
 		Log.info("Application#startIndex")
-
 		stage.activate()
+		timeDriver.activate()
 
 		// The window has been damaged.
 		GLFW.glfwSetWindowRefreshCallback(windowId, refreshCallback)
 		var timeMs = time.nowMs()
+		val frameTimeMs = frameTime * 1000f
 		while (!window.isCloseRequested()) {
 			// Poll for window events. Input callbacks will be invoked at this time.
 			tick()
-			val t = time.nowMs()
-			val sleepTime = (appConfig.stepTime * 1000f - (t - timeMs)).toLong()
+			val dT = time.nowMs() - timeMs
+			val sleepTime = maxOf(0L, (frameTimeMs - dT).toLong())
 			if (sleepTime > 0) Thread.sleep(sleepTime)
-			timeMs = t
+			timeMs += dT + sleepTime
 			GLFW.glfwPollEvents()
 		}
 		GLFW.glfwSetWindowRefreshCallback(windowId, null)
 	}
 
 	private fun tick() {
-		val stepTimeFloat = appConfig.stepTime
-		val stepTimeMs = 1000 / appConfig.frameRate
-		var loops = 0
-		val now: Long = time.msElapsed()
-		// Do a best attempt to keep the time driver in sync, but stage updates and renders may be sacrificed.
-		while (now > nextTick) {
-			nextTick += stepTimeMs
-			timeDriver.update(stepTimeFloat)
-			if (++loops > MAX_FRAME_SKIP) {
-				// If we're too far behind, break and reset.
-				nextTick = time.msElapsed() + stepTimeMs
-				break
-			}
-		}
+		timeDriver.update()
 		if (window.shouldRender(true)) {
 			stage.update()
 			if (window.width > 0f && window.height > 0f) {
@@ -437,14 +422,5 @@ class JvmApplicationRunner(
 			}
 		}
 	}
-
-	companion object {
-
-		/**
-		 * The maximum number of update() calls before a render is required.
-		 */
-		private const val MAX_FRAME_SKIP = 10
-	}
-
 }
 

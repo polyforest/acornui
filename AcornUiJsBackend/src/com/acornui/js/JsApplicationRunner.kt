@@ -23,7 +23,6 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.graphic.Window
 import com.acornui.core.time.TimeDriver
-import com.acornui.core.time.time
 import com.acornui.logging.Log
 import com.acornui.math.MinMax
 import kotlin.browser.window
@@ -43,16 +42,10 @@ class JsApplicationRunnerImpl(
 	private val stage = inject(Stage)
 	private val timeDriver = inject(TimeDriver)
 	private val appWindow = inject(Window)
-	private val appConfig = inject(AppConfig)
 
 	private var isRunning: Boolean = false
 
 	private var tickFrameId: Int = -1
-
-	/**
-	 * The next time to do a step.
-	 */
-	private var nextTick: Long = 0
 
 	private val tick = {
 		newTime: Double ->
@@ -66,25 +59,12 @@ class JsApplicationRunnerImpl(
 		Log.info("Application#startIndex")
 		isRunning = true
 		stage.activate()
-		nextTick = time.nowMs()
+		timeDriver.activate()
 		tickFrameId = window.requestAnimationFrame(tick)
 	}
 
 	private fun _tick() {
-		val stepTimeFloat = appConfig.stepTime
-		val stepTimeMs = 1000 / appConfig.frameRate
-		var loops = 0
-		val now: Long = time.nowMs()
-		// Do a best attempt to keep the time driver in sync, but stage updates and renders may be sacrificed.
-		while (now > nextTick) {
-			nextTick += stepTimeMs
-			timeDriver.update(stepTimeFloat)
-			if (++loops > MAX_FRAME_SKIP) {
-				// If we're too far behind, break and reset.
-				nextTick = time.nowMs() + stepTimeMs
-				break
-			}
-		}
+		timeDriver.update()
 		if (appWindow.shouldRender(true)) {
 			stage.update()
 			appWindow.renderBegin()
@@ -100,13 +80,5 @@ class JsApplicationRunnerImpl(
 		Log.info("Application#stop")
 		isRunning = false
 		window.cancelAnimationFrame(tickFrameId)
-	}
-
-	companion object {
-
-		/**
-		 * The maximum number of update() calls before a render is required.
-		 */
-		private const val MAX_FRAME_SKIP = 10
 	}
 }

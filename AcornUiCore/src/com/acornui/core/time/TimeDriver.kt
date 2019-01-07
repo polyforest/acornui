@@ -24,11 +24,22 @@ import com.acornui.core.di.DKey
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 
-
 /**
+ * The time driver is responsible for invoking [UpdatableChild.update] on anything that changes over time, like
+ * animations, physics, etc.
+ *
  * @author nbilyk
  */
-interface TimeDriver : Parent<UpdatableChild>, Updatable {
+interface TimeDriver : Parent<UpdatableChild> {
+
+	/**
+	 * The configuration provided to this time driver.
+	 */
+	val config: TimeDriverConfig
+
+	fun activate()
+
+	fun update()
 
 	companion object : DKey<TimeDriver>
 }
@@ -36,15 +47,44 @@ interface TimeDriver : Parent<UpdatableChild>, Updatable {
 /**
  * @author nbilyk
  */
-open class TimeDriverImpl : TimeDriver, Disposable {
+open class TimeDriverImpl(
+
+		final override val config: TimeDriverConfig
+) : TimeDriver, Disposable {
 
 	override var parent: Parent<out ChildRo>? = null
 	private val _children = ActiveList<UpdatableChild>()
 	private val childIterator = _children.concurrentIterator()
 
-	override fun update(stepTime: Float) {
+	/**
+	 * The next time to do a step.
+	 */
+	private var nextTick: Double = 0.0
+
+	private val tickTime: Float = config.tickTime
+	private val maxTicksPerUpdate: Int = config.maxTicksPerUpdate
+
+	override fun activate() {
+		nextTick = time.nowS()
+	}
+
+	override fun update() {
+		var loops = 0
+		val now = time.nowS()
+		while (now > nextTick) {
+			nextTick += tickTime
+			tick(tickTime)
+			if (++loops > maxTicksPerUpdate) {
+				// If we're too far behind, break and reset.
+				nextTick = time.nowS() + tickTime
+				break
+			}
+		}
+	}
+
+	protected open fun tick(tickTime: Float) {
 		childIterator.iterate {
-			it.update(stepTime)
+			it.update(tickTime)
 			true
 		}
 	}
@@ -93,10 +133,10 @@ open class TimeDriverImpl : TimeDriver, Disposable {
  * Invokes the callback on every frame. This is similar to [onTick] except the receiver isn't watched for activation
  * or disposal.
  */
-fun Scoped.drive(update: (stepTime: Float) -> Unit): UpdatableChild {
+fun Scoped.drive(update: (tickTime: Float) -> Unit): UpdatableChild {
 	val child = object : UpdatableChildBase() {
-		override fun update(stepTime: Float) {
-			update(stepTime)
+		override fun update(tickTime: Float) {
+			update(tickTime)
 		}
 	}
 	inject(TimeDriver).addChild(child)

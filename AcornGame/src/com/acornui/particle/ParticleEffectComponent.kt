@@ -144,9 +144,9 @@ class LoadedParticleEffect(
 		}
 	}
 
-	override fun update(stepTime: Float) {
+	override fun update(tickTime: Float) {
 		for (i in 0..emitterInstances.lastIndex) {
-			emitterInstances[i].update(stepTime)
+			emitterInstances[i].update(tickTime)
 		}
 	}
 

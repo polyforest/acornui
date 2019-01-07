@@ -93,10 +93,10 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 		}
 	}
 
-	fun tick(stepTime: Float) {
+	fun tick(tickTime: Float) {
 		if (isPaused) return
 		for (i in 0.._children.lastIndex) {
-			_children[i].tick(stepTime)
+			_children[i].tick(tickTime)
 		}
 		window.requestRender()
 	}

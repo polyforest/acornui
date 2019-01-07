@@ -169,11 +169,11 @@ class ParticleEmitterInstance(
 		rewind()
 	}
 
-	fun update(stepTime: Float) {
+	fun update(tickTime: Float) {
 		if (_isComplete) return
 		if (!emitter.enabled) return
 
-		_currentTime += stepTime
+		_currentTime += tickTime
 
 		if (_currentTime >= endTime) {
 			if (loops) {
@@ -193,7 +193,7 @@ class ParticleEmitterInstance(
 		emitter.particleLifeExpectancy.apply(lifeExpectancyValue, alpha)
 		if (_currentTime < _duration && _currentTime > 0f) {
 			// Create new particles if the accumulator surpasses 1.
-			accumulator += emissionRateValue.current * maxParticlesScale * stepTime
+			accumulator += emissionRateValue.current * maxParticlesScale * tickTime
 			if (accumulator > 1f) {
 				for (i in 0..particles.lastIndex) {
 					val particle = particles[i]
@@ -209,7 +209,7 @@ class ParticleEmitterInstance(
 		for (i in 0..particles.lastIndex) {
 			val particle = particles[i]
 			if (particle.active) {
-				particle.update(stepTime, alphaClamped)
+				particle.update(tickTime, alphaClamped)
 				if (particle.life > particle.lifeExpectancy) {
 					particle.active = false
 					_activeCount--
@@ -323,8 +323,8 @@ class Particle(
 
 	var imageIndex = 0
 
-	fun update(stepTime: Float, emitterAlphaClamped: Float) {
-		life += stepTime
+	fun update(tickTime: Float, emitterAlphaClamped: Float) {
+		life += tickTime
 		val alpha = life * _lifeExpectancyInv
 		val alphaClamped = clamp(alpha, 0f, 1f)
 

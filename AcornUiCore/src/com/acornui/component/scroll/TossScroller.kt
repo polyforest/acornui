@@ -17,15 +17,13 @@
 package com.acornui.component.scroll
 
 import com.acornui.collection.poll
-import com.acornui.component.InteractiveElementRo
 import com.acornui.component.UiComponent
 import com.acornui.component.createOrReuseAttachment
-import com.acornui.core.AppConfig
 import com.acornui.core.Disposable
-import com.acornui.core.di.inject
 import com.acornui.core.input.InteractionType
 import com.acornui.core.input.interaction.*
-import com.acornui.core.time.enterFrame
+import com.acornui.core.tickTime
+import com.acornui.core.time.tick
 import com.acornui.core.time.time
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.Vector2
@@ -48,7 +46,7 @@ class TossScroller(
 		val dragAttachment: DragAttachment = target.dragAttachment(TossScroller.minTossDistance)
 ) : Disposable {
 
-	private val stepTime = target.inject(AppConfig).stepTime
+	private val tickTime = target.tickTime
 
 	private val _tossStart = StoppableSignalImpl<DragInteraction>()
 
@@ -113,7 +111,7 @@ class TossScroller(
 
 	private fun startEnterFrame() {
 		if (_timer == null) {
-			_timer = target.enterFrame {
+			_timer = target.tick {
 				if (dragAttachment.isDragging) {
 					// History is also added in an enter frame instead of the drag handler so that if the user stops dragging, the history reflects that.
 					pushHistory()
@@ -152,7 +150,7 @@ class TossScroller(
 		if (historyPoints.size >= 2) {
 			diff.set(historyPoints.last()).sub(historyPoints.first())
 			val time = (historyTimes.last() - historyTimes.first()) * 0.001f
-			velocity.set(diff.x / time, diff.y / time).scl(stepTime)
+			velocity.set(diff.x / time, diff.y / time).scl(tickTime)
 		}
 		clearHistory()
 	}

@@ -330,7 +330,7 @@ Kotlin.isType = function(object, klass) {
 	}
 
 	protected open val timeDriverTask by BootTask {
-		set(TimeDriver, TimeDriverImpl())
+		set(TimeDriver, TimeDriverImpl(config().timeDriverConfig))
 	}
 
 	protected open val interactivityTask by BootTask {

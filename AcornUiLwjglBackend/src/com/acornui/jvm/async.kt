@@ -54,7 +54,7 @@ fun <T> asyncThread(timeDriver: TimeDriver, timeout: Float = 60f, work: () -> T)
 			val watcher = object : UpdatableChildBase() {
 				private var timeRemaining = timeout
 
-				override fun update(stepTime: Float) {
+				override fun update(tickTime: Float) {
 					if (future.isDone) {
 						remove()
 						try {
@@ -64,7 +64,7 @@ fun <T> asyncThread(timeDriver: TimeDriver, timeout: Float = 60f, work: () -> T)
 						}
 						PendingDisposablesRegistry.unregister(r)
 					} else {
-						timeRemaining -= stepTime
+						timeRemaining -= tickTime
 						if (timeRemaining < 0f) {
 							remove()
 							fail(TimeoutException(timeout))

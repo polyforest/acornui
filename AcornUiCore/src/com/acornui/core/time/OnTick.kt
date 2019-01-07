@@ -8,7 +8,7 @@ import com.acornui.core.di.inject
 
 private class OnTick(
 		private val component: UiComponentRo,
-		private val callback: (stepTime: Float) -> Unit
+		private val callback: (tickTime: Float) -> Unit
 ) : UpdatableChildBase(), Disposable {
 
 	private val timeDriver = component.inject(TimeDriver)
@@ -35,8 +35,8 @@ private class OnTick(
 		}
 	}
 
-	override fun update(stepTime: Float) {
-		callback(stepTime)
+	override fun update(tickTime: Float) {
+		callback(tickTime)
 	}
 
 	override fun dispose() {
@@ -48,10 +48,10 @@ private class OnTick(
 }
 
 /**
- * While the receiver component is activated, every frame will invoke the callback.
+ * While the receiver component is activated, every time driver tick will invoke the callback.
  *
- * @return An instance that can be disposed to stop watching frames.
+ * @return An instance that can be disposed to stop watching ticks.
  */
-fun UiComponentRo.onTick(callback: (stepTime: Float) -> Unit): Disposable {
+fun UiComponentRo.onTick(callback: (tickTime: Float) -> Unit): Disposable {
 	return OnTick(this, callback)
 }

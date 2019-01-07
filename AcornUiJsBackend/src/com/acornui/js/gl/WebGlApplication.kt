@@ -81,8 +81,7 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 	}
 	
 	override val windowTask by BootTask {
-		val config = get(AppConfig)
-		set(Window, WebGlWindowImpl(get(CANVAS), config.window, get(Gl20)))
+		set(Window, WebGlWindowImpl(get(CANVAS), config().window, get(Gl20)))
 	}
 
 	protected open val glStateTask by BootTask {

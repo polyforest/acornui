@@ -69,9 +69,9 @@ open class SkeletonComponent(
 		}
 	}
 
-	fun tick(stepTime: Float) {
-		if (isPaused || stepTime <= 0f) return
-		animationState.update(stepTime)
+	fun tick(tickTime: Float) {
+		if (isPaused || tickTime <= 0f) return
+		animationState.update(tickTime)
 		animationState.apply(skeleton)
 		skeleton.updateWorldTransform()
 	}

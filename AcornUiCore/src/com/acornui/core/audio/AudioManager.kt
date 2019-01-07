@@ -133,7 +133,7 @@ open class AudioManagerImpl(final override val simultaneousSounds: Int = 8) : Up
 			}
 		}
 
-	override fun update(stepTime: Float) {
+	override fun update(tickTime: Float) {
 		activeMusics.iterate {
 			it.update()
 			true

@@ -28,6 +28,7 @@ import com.acornui.component.style.StyleTag
 import com.acornui.component.style.Styleable
 import com.acornui.component.style.set
 import com.acornui.core.Disposable
+import com.acornui.core.config
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.focus.Focusable
@@ -37,7 +38,8 @@ import com.acornui.core.mvc.CommandGroup
 import com.acornui.core.mvc.invokeCommand
 import com.acornui.core.repeat2
 import com.acornui.core.selection.*
-import com.acornui.core.time.enterFrame
+import com.acornui.core.tickTime
+import com.acornui.core.time.tick
 import com.acornui.math.*
 import com.acornui.signal.Signal
 
@@ -371,7 +373,7 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 	private val contents
 		get() = editableText.textField.contents
 
-	private val maxScrollSpeed = 20f
+	private val maxScrollSpeed = 1000f * tickTime
 	private val bufferP = 0.2f
 	private val innerBufferMax = 80f
 	private val outerBufferMax = 200f
@@ -382,7 +384,7 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 	private fun startScrollWatch(event: Any) {
 		mousePosition(startMouse)
 		_frameWatch?.dispose()
-		_frameWatch = enterFrame(-1, this::scrollWatcher)
+		_frameWatch = tick(-1, this::scrollWatcher)
 		stage.mouseUp().add(this::endScrollWatch)
 		stage.touchEnd().add(this::endScrollWatch)
 	}

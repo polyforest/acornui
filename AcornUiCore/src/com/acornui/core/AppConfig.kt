@@ -21,6 +21,7 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.i18n.Locale
 import com.acornui.core.observe.DataBindingImpl
+import com.acornui.core.time.TimeDriver
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import kotlin.properties.Delegates
@@ -51,9 +52,17 @@ data class AppConfig(
 		val debug: Boolean = false,
 
 		/**
-		 * The target number of ticks per second.
+		 * The target number of frames per second.
 		 */
 		val frameRate: Int = 50,
+
+		/**
+		 * The configuration for the [com.acornui.core.time.TimeDriver] dependency.
+		 */
+		val timeDriverConfig: TimeDriverConfig = TimeDriverConfig(
+				tickTime = 1f / frameRate.toFloat(),
+				maxTicksPerUpdate = 30
+		),
 
 		/**
 		 * The location of the files.json file created by the AcornUI assets task.
@@ -69,9 +78,10 @@ data class AppConfig(
 ) {
 
 	/**
-	 * The time interval to step forward between each update() call.
+	 * The number of seconds between each frame.
+	 * (The inverse of [frameRate])
 	 */
-	val stepTime: Float
+	val frameTime: Float
 		get() = 1f / frameRate.toFloat()
 
 	companion object : DKey<AppConfig>
@@ -182,6 +192,25 @@ data class UserInfo(
 	}
 }
 
+data class TimeDriverConfig(
+
+		/**
+		 * The number of seconds between each [com.acornui.core.time.TimeDriver] tick.
+		 * The time driver is updated every frame by the application, and the default time driver implementation
+		 * supports having a separated time tick from the framerate. This means that subscribers can rely on a fixed
+		 * update interval, which is important for things such as physics-based animations.
+		 *
+		 * The default matches the framerate, but games may for example wish to divide this by 5 in order to have 5
+		 * ticks per frame.
+		 */
+		val tickTime: Float,
+
+		/**
+		 * The maximum number of ticks per time driver update.
+		 */
+		val maxTicksPerUpdate: Int
+)
+
 /**
  * A way to get at the user's average internet bandwidth.
  */
@@ -258,6 +287,12 @@ private fun String.containsAny(vararg string: String): Boolean {
  */
 val Scoped.config: AppConfig
 	get() = inject(AppConfig)
+
+/**
+ * The number of seconds between each time driver tick.
+ */
+val Scoped.tickTime: Float
+	get() = inject(TimeDriver).config.tickTime
 
 //enum class Browser {
 //	NONE,

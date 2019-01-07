@@ -37,8 +37,8 @@ internal class Timer private constructor() : UpdatableChildBase(), Clearable, Di
 	var currentRepetition: Int = 0
 	var callback: () -> Unit = NOOP
 
-	override fun update(stepTime: Float) {
-		currentTime += stepTime
+	override fun update(tickTime: Float) {
+		currentTime += tickTime
 		while (currentTime > duration) {
 			currentTime -= duration
 			currentRepetition++
@@ -121,7 +121,7 @@ fun timer(timeDriver: TimeDriver, duration: Float, repetitions: Int = 1, delay: 
 /**
  * @author nbilyk
  */
-internal class EnterFrame private constructor() : UpdatableChildBase(), Clearable, Disposable {
+internal class Tick private constructor() : UpdatableChildBase(), Clearable, Disposable {
 
 	/**
 	 * How many frames before the callback begins to be invoked.
@@ -146,7 +146,7 @@ internal class EnterFrame private constructor() : UpdatableChildBase(), Clearabl
 	 */
 	var callback: () -> Unit = NOOP
 
-	override fun update(stepTime: Float) {
+	override fun update(tickTime: Float) {
 		++currentFrame
 		if (currentFrame >= startFrame)
 			callback()
@@ -173,7 +173,7 @@ internal class EnterFrame private constructor() : UpdatableChildBase(), Clearabl
 
 		private val NOOP = {}
 
-		private val pool = ClearableObjectPool { EnterFrame() }
+		private val pool = ClearableObjectPool { Tick() }
 
 		internal fun obtain(timeDriver: TimeDriver, repetitions: Int = -1, startFrame: Int = 1, callback: () -> Unit): Disposable {
 			val e = pool.obtain()
@@ -188,24 +188,52 @@ internal class EnterFrame private constructor() : UpdatableChildBase(), Clearabl
 }
 
 fun Scoped.callLater(callback: () -> Unit): Disposable {
-	return enterFrame(repetitions = 1, startFrame = 1, callback = callback)
+	return tick(repetitions = 1, startFrame = 1, callback = callback)
 }
 
 fun callLater(timeDriver: TimeDriver, startFrame: Int = 1, callback: () -> Unit): Disposable {
-	return enterFrame(timeDriver, 1, startFrame, callback)
+	return tick(timeDriver, 1, startFrame, callback)
 }
 
-fun Scoped.enterFrame(repetitions: Int = -1, callback: () -> Unit): Disposable {
-	return enterFrame(inject(TimeDriver), repetitions, 1, callback)
-}
+@Deprecated("Use tick", ReplaceWith("this.tick(repetitions, callback)"))
+fun Scoped.enterFrame(repetitions: Int = -1, callback: () -> Unit): Disposable = tick(repetitions, 1, callback)
 
-fun Scoped.enterFrame(repetitions: Int = -1, startFrame: Int = 1, callback: () -> Unit): Disposable {
-	return enterFrame(inject(TimeDriver), repetitions, startFrame, callback)
-}
+@Deprecated("Use tick", ReplaceWith("this.tick(repetitions, startFrame, callback)"))
+fun Scoped.enterFrame(repetitions: Int = -1, startFrame: Int = 1, callback: () -> Unit): Disposable =
+		tick(repetitions, startFrame, callback)
 
-fun enterFrame(timeDriver: TimeDriver, repetitions: Int = -1, callback: () -> Unit): Disposable = enterFrame(timeDriver, repetitions, 1, callback)
+@Deprecated("Use tick", ReplaceWith("tick(timeDriver, repetitions, callback)"))
+fun enterFrame(timeDriver: TimeDriver, repetitions: Int = -1, callback: () -> Unit): Disposable = tick(timeDriver, repetitions, callback)
 
-fun enterFrame(timeDriver: TimeDriver, repetitions: Int = -1, startFrame: Int = 1, callback: () -> Unit): Disposable {
+@Deprecated("Use tick", ReplaceWith("tick(timeDriver, repetitions, startFrame, callback)"))
+fun enterFrame(timeDriver: TimeDriver, repetitions: Int = -1, startFrame: Int = 1, callback: () -> Unit): Disposable =
+		tick(timeDriver, repetitions, startFrame, callback)
+
+
+
+//-----------------------------------------------
+
+/**
+ * Invokes [callback] on every time driver tick until disposed.
+ */
+fun Scoped.tick(repetitions: Int = -1, callback: () -> Unit): Disposable =
+		tick(inject(TimeDriver), repetitions, 1, callback)
+
+/**
+ * Invokes [callback] on every time driver tick until disposed.
+ */
+fun Scoped.tick(repetitions: Int = -1, startFrame: Int = 1, callback: () -> Unit): Disposable =
+		tick(inject(TimeDriver), repetitions, startFrame, callback)
+
+/**
+ * Invokes [callback] on every time driver tick until disposed.
+ */
+fun tick(timeDriver: TimeDriver, repetitions: Int = -1, callback: () -> Unit): Disposable = tick(timeDriver, repetitions, 1, callback)
+
+/**
+ * Invokes [callback] on every time driver tick until disposed.
+ */
+fun tick(timeDriver: TimeDriver, repetitions: Int = -1, startFrame: Int = 1, callback: () -> Unit): Disposable {
 	if (repetitions == 0) throw IllegalArgumentException("repetitions argument may not be zero.")
-	return EnterFrame.obtain(timeDriver, repetitions, startFrame, callback)
+	return Tick.obtain(timeDriver, repetitions, startFrame, callback)
 }

@@ -29,7 +29,7 @@ class PhysicsController(
 		componentList(entities, cmd, physicsVos, Physics)
 	}
 
-	override fun update(stepTime: Float) {
+	override fun update(tickTime: Float) {
 		for (i in 0..physicsVos.lastIndex) {
 			val p = physicsVos[i]
 			p.position.add(p.velocity.x, p.velocity.y, 0f)
