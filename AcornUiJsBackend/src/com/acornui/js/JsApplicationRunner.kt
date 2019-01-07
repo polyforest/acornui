@@ -107,6 +107,6 @@ class JsApplicationRunnerImpl(
 		/**
 		 * The maximum number of update() calls before a render is required.
 		 */
-		private val MAX_FRAME_SKIP = 10
+		private const val MAX_FRAME_SKIP = 10
 	}
 }
