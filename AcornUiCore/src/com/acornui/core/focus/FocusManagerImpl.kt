@@ -213,7 +213,7 @@ class FocusManagerImpl : FocusManager {
 		if (oldFocused == newValue)
 			return focusPending()
 		_focusedChanging.dispatch(oldFocused, newValue, focusedChangingCancel.reset())
-		if (focusedChangingCancel.canceled())
+		if (focusedChangingCancel.canceled)
 			return focusPending()
 		unhighlightFocused()
 

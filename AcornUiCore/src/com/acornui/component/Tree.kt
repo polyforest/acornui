@@ -79,7 +79,7 @@ class Tree<E : ParentRo<E>>(owner: Owned, rootFactory: (tree: Tree<E>) -> TreeIt
 		val renderer = _root.findElement { it.data == node } ?: return
 		if (renderer.toggled == toggled) return
 		_nodeToggledChanging.dispatch(node, toggled, toggledChangeRequestedCancel.reset())
-		if (toggledChangeRequestedCancel.canceled()) return
+		if (toggledChangeRequestedCancel.canceled) return
 		renderer.toggled = toggled
 		_nodeToggledChanged.dispatch(node, toggled)
 	}

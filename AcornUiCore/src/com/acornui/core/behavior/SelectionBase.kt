@@ -189,7 +189,7 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 		val previousSelection = _selectedMap.keys.toList()
 		if (changing.isNotEmpty()) {
 			_changing.dispatch(previousSelection, items, cancel.reset())
-			if (cancel.canceled()) return
+			if (cancel.canceled) return
 		}
 		setSelectedItems(items)
 		_changed.dispatch(previousSelection, items)

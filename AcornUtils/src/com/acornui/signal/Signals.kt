@@ -303,9 +303,11 @@ open class Cancel {
 
 	private var _canceled: Boolean = false
 
-	fun canceled(): Boolean {
-		return _canceled
-	}
+	val canceled: Boolean
+		get() = _canceled
+
+	@Deprecated("Use property", ReplaceWith("canceled"))
+	fun canceled(): Boolean = canceled
 
 	open fun cancel() {
 		_canceled = true
