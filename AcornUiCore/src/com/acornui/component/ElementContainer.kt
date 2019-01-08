@@ -68,7 +68,7 @@ interface ElementParent<T> : ElementParentRo<T> {
 
 	/**
 	 * Removes the external element at the given index.
-	 * @param index Must be between 0 and `elements.lastindex`
+	 * @param index Must be between 0 and `elements.lastIndex`
 	 * @return Returns the removed element.
 	 */
 	fun removeElement(index: Int): T
