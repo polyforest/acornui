@@ -55,8 +55,8 @@ open class DataGridGroupHeaderImpl<E>(
 	init {
 		styleTags.addAll(DataGridGroupHeader, TextStyleTags.h2)
 		interactivityMode = InteractivityMode.CHILDREN
-		watch(style) {
 
+		watch(style) {
 			background?.dispose()
 			background = addOptionalChild(0, it.background(this))
 			background?.interactivityMode = InteractivityMode.NONE
