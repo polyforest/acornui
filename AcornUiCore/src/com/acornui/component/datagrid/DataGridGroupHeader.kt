@@ -63,7 +63,7 @@ open class DataGridGroupHeaderImpl<E>(
 
 			collapseButton?.dispose()
 			collapseButton = addOptionalElement(0, it.collapseButton(this))
-			collapseButton?.click()?.add { _ ->
+			collapseButton?.click()?.add {
 				group.collapsed = !group.collapsed
 			}
 			collapseButton?.toggled = !_collapsed
