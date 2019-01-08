@@ -150,45 +150,47 @@ abstract class SignalBase<T : Any> : Signal<T>, Disposable {
 		if (cursor != -1)
 			throw Exception("This signal is currently dispatching.")
 		cursor = 0
-		if (handlers.size <= 4) {
-			if (cursor < handlers.size) {
-				val isOnce1 = isOnces[cursor]
-				val handler1 = handlers[cursor]
-				if (isOnce1) removeAt(cursor)
-				executor(handler1)
+		try {
+			if (handlers.size <= 4) {
+				if (cursor < handlers.size) {
+					val isOnce1 = isOnces[cursor]
+					val handler1 = handlers[cursor]
+					if (isOnce1) removeAt(cursor)
+					executor(handler1)
+					cursor++
+				}
+				if (cursor < handlers.size) {
+					val isOnce2 = isOnces[cursor]
+					val handler2 = handlers[cursor]
+					if (isOnce2) removeAt(cursor)
+					executor(handler2)
+					cursor++
+				}
+				if (cursor < handlers.size) {
+					val isOnce3 = isOnces[cursor]
+					val handler3 = handlers[cursor]
+					if (isOnce3) removeAt(cursor)
+					executor(handler3)
+					cursor++
+				}
+				if (cursor < handlers.size) {
+					val isOnce4 = isOnces[cursor]
+					val handler4 = handlers[cursor]
+					if (isOnce4) removeAt(cursor)
+					executor(handler4)
+					cursor++
+				}
+			}
+			while (cursor < handlers.size) {
+				val isOnce = isOnces[cursor]
+				val handler = handlers[cursor]
+				if (isOnce) removeAt(cursor)
+				executor(handler)
 				cursor++
 			}
-			if (cursor < handlers.size) {
-				val isOnce2 = isOnces[cursor]
-				val handler2 = handlers[cursor]
-				if (isOnce2) removeAt(cursor)
-				executor(handler2)
-				cursor++
-			}
-			if (cursor < handlers.size) {
-				val isOnce3 = isOnces[cursor]
-				val handler3 = handlers[cursor]
-				if (isOnce3) removeAt(cursor)
-				executor(handler3)
-				cursor++
-			}
-			if (cursor < handlers.size) {
-				val isOnce4 = isOnces[cursor]
-				val handler4 = handlers[cursor]
-				if (isOnce4) removeAt(cursor)
-				executor(handler4)
-				cursor++
-			}
+		} finally {
+			cursor = -1
 		}
-		while (cursor < handlers.size) {
-			val isOnce = isOnces[cursor]
-			val handler = handlers[cursor]
-			if (isOnce) removeAt(cursor)
-			executor(handler)
-			cursor++
-		}
-
-		cursor = -1
 	}
 
 	fun clear() {
@@ -305,9 +307,6 @@ open class Cancel {
 
 	val canceled: Boolean
 		get() = _canceled
-
-	@Deprecated("Use property", ReplaceWith("canceled"))
-	fun canceled(): Boolean = canceled
 
 	open fun cancel() {
 		_canceled = true
