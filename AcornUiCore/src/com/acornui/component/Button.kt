@@ -32,7 +32,6 @@ import com.acornui.factory.LazyInstance
 import com.acornui.factory.disposeInstance
 import com.acornui.math.Bounds
 import com.acornui.reflect.observable
-import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import kotlin.collections.set
 
@@ -68,6 +67,34 @@ open class Button(
 	private val clickHandler = { event: ClickInteractionRo ->
 		if (toggleOnClick) {
 			setUserToggled(!toggled)
+		}
+	}
+
+	init {
+		focusEnabled = true
+		focusEnabledChildren = false
+		styleTags.add(Button)
+
+		click().add(clickHandler)
+		cursor(StandardCursors.HAND)
+
+		val oldInstances = ArrayList<LazyInstance<Owned, UiComponent?>>()
+		watch(style) {
+			oldInstances.addAll(_stateSkinMap.values)
+			_stateSkinMap[ButtonState.UP] = LazyInstance(this, it.upState)
+			_stateSkinMap[ButtonState.OVER] = LazyInstance(this, it.overState)
+			_stateSkinMap[ButtonState.DOWN] = LazyInstance(this, it.downState)
+			_stateSkinMap[ButtonState.TOGGLED_UP] = LazyInstance(this, it.toggledUpState)
+			_stateSkinMap[ButtonState.TOGGLED_OVER] = LazyInstance(this, it.toggledOverState)
+			_stateSkinMap[ButtonState.TOGGLED_DOWN] = LazyInstance(this, it.toggledDownState)
+			_stateSkinMap[ButtonState.DISABLED] = LazyInstance(this, it.disabledState)
+			refreshState()
+			// Dispose the old state instances after we refresh state so that onCurrentStateChanged overrides have a
+			// chance to transfer content children if necessary.
+			for (i in 0..oldInstances.lastIndex) {
+				oldInstances[i].disposeInstance()
+			}
+			oldInstances.clear()
 		}
 	}
 
@@ -167,34 +194,6 @@ open class Button(
 	private val mouseState = own(MouseOrTouchState(this)).apply {
 		isOverChanged.add { refreshState() }
 		isDownChanged.add { refreshState() }
-	}
-
-	init {
-		focusEnabled = true
-		focusEnabledChildren = false
-		styleTags.add(Button)
-
-		click().add(clickHandler)
-		cursor(StandardCursors.HAND)
-
-		val oldInstances = ArrayList<LazyInstance<Owned, UiComponent?>>()
-		watch(style) {
-			oldInstances.addAll(_stateSkinMap.values)
-			_stateSkinMap[ButtonState.UP] = LazyInstance(this, it.upState)
-			_stateSkinMap[ButtonState.OVER] = LazyInstance(this, it.overState)
-			_stateSkinMap[ButtonState.DOWN] = LazyInstance(this, it.downState)
-			_stateSkinMap[ButtonState.TOGGLED_UP] = LazyInstance(this, it.toggledUpState)
-			_stateSkinMap[ButtonState.TOGGLED_OVER] = LazyInstance(this, it.toggledOverState)
-			_stateSkinMap[ButtonState.TOGGLED_DOWN] = LazyInstance(this, it.toggledDownState)
-			_stateSkinMap[ButtonState.DISABLED] = LazyInstance(this, it.disabledState)
-			refreshState()
-			// Dispose the old state instances after we refresh state so that onCurrentStateChanged overrides have a
-			// chance to transfer content children if necessary.
-			for (i in 0..oldInstances.lastIndex) {
-				oldInstances[i].disposeInstance()
-			}
-			oldInstances.clear()
-		}
 	}
 
 	companion object : StyleTag

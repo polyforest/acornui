@@ -394,6 +394,33 @@ open class UiComponentImpl(
 
 	private val rayTmp = Ray()
 
+	init {
+		owner.disposed.add(this::ownerDisposedHandler)
+		val r = this
+		validation = validationGraph {
+			ValidationFlags.apply {
+				addNode(STYLES, r::updateStyles)
+				addNode(HIERARCHY_ASCENDING, r::updateHierarchyAscending)
+				addNode(HIERARCHY_DESCENDING, r::updateHierarchyDescending)
+				addNode(SIZE_CONSTRAINTS, STYLES, r::validateSizeConstraints)
+				addNode(LAYOUT, SIZE_CONSTRAINTS, r::validateLayout)
+				addNode(LAYOUT_ENABLED, r::updateLayoutEnabled)
+				addNode(TRANSFORM, r::updateTransform)
+				addNode(CONCATENATED_TRANSFORM, TRANSFORM, r::updateConcatenatedTransform)
+				addNode(COLOR_TRANSFORM, r::updateColorTransform)
+				addNode(CONCATENATED_COLOR_TRANSFORM, COLOR_TRANSFORM, r::updateConcatenatedColorTransform)
+				addNode(INTERACTIVITY_MODE, r::updateInheritedInteractivityMode)
+				addNode(CAMERA, r::updateCamera)
+				addNode(VIEWPORT, r::updateViewport)
+			}
+		}
+
+		_activated.add(this::invalidateFocusOrder.as1)
+		_activated.add(this::onActivated.as1)
+		_deactivated.add(this::invalidateFocusOrder.as1)
+		_deactivated.add(this::onDeactivated.as1)
+	}
+
 	private fun ownerDisposedHandler(owner: Owned) {
 		dispose()
 	}
@@ -1331,33 +1358,6 @@ open class UiComponentImpl(
 			(i as? Disposable)?.dispose()
 		}
 		_attachments.clear()
-	}
-
-	init {
-		owner.disposed.add(this::ownerDisposedHandler)
-		val r = this
-		validation = validationGraph {
-			ValidationFlags.apply {
-				addNode(STYLES, r::updateStyles)
-				addNode(HIERARCHY_ASCENDING, r::updateHierarchyAscending)
-				addNode(HIERARCHY_DESCENDING, r::updateHierarchyDescending)
-				addNode(SIZE_CONSTRAINTS, STYLES, r::validateSizeConstraints)
-				addNode(LAYOUT, SIZE_CONSTRAINTS, r::validateLayout)
-				addNode(LAYOUT_ENABLED, r::updateLayoutEnabled)
-				addNode(TRANSFORM, r::updateTransform)
-				addNode(CONCATENATED_TRANSFORM, TRANSFORM, r::updateConcatenatedTransform)
-				addNode(COLOR_TRANSFORM, r::updateColorTransform)
-				addNode(CONCATENATED_COLOR_TRANSFORM, COLOR_TRANSFORM, r::updateConcatenatedColorTransform)
-				addNode(INTERACTIVITY_MODE, r::updateInheritedInteractivityMode)
-				addNode(CAMERA, r::updateCamera)
-				addNode(VIEWPORT, r::updateViewport)
-			}
-		}
-
-		_activated.add(this::invalidateFocusOrder.as1)
-		_activated.add(this::onActivated.as1)
-		_deactivated.add(this::invalidateFocusOrder.as1)
-		_deactivated.add(this::onDeactivated.as1)
 	}
 
 	companion object {
