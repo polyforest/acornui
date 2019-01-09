@@ -26,42 +26,30 @@ import com.acornui.core.focus.Focusable
 import com.acornui.math.Bounds
 
 /**
- * A LayoutContainer uses a layout algorithm to size and position its elements.
+ * The canonical layout container implementation.
  */
-interface LayoutContainer<S, out T : LayoutData> : LayoutDataProvider<T>, ElementContainer<UiComponent> {
-
-	val layoutAlgorithm: LayoutAlgorithm<S, T>
-
-	val style: S
-
-}
-
-/**
- * The canonical implementation of [LayoutContainer].
- */
-open class LayoutContainerImpl<S : Style, out U : LayoutData>(
+open class LayoutElementContainerImpl<S : Style, out U : LayoutData>(
 		owner: Owned,
-		override val layoutAlgorithm: LayoutAlgorithm<S, U>,
-		style: S
-) : ElementContainerImpl<UiComponent>(owner), LayoutContainer<S, U>, Focusable {
+		protected val layoutAlgorithm: LayoutAlgorithm<S, U>
+) : ElementContainerImpl<UiComponent>(owner), LayoutDataProvider<U>, Focusable {
 
 	protected val elementsToLayout = ArrayList<LayoutElement>()
 
-	final override val style: S = bind(style)
+	val style: S = bind(layoutAlgorithm.style)
 	final override fun createLayoutData(): U = layoutAlgorithm.createLayoutData()
 
 	override fun updateSizeConstraints(out: SizeConstraints) {
 		elementsToLayout.clear()
 		elements.filterTo2(elementsToLayout, LayoutElement::shouldLayout)
 		if (elementsToLayout.isNotEmpty())
-			layoutAlgorithm.calculateSizeConstraints(elementsToLayout, style, out)
+			layoutAlgorithm.calculateSizeConstraints(elementsToLayout, out)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		elementsToLayout.clear()
 		elements.filterTo2(elementsToLayout, LayoutElement::shouldLayout)
 		if (elementsToLayout.isNotEmpty()) {
-			layoutAlgorithm.layout(explicitWidth, explicitHeight, elementsToLayout, style, out)
+			layoutAlgorithm.layout(explicitWidth, explicitHeight, elementsToLayout, out)
 			if (explicitWidth != null && explicitWidth > out.width) out.width = explicitWidth
 			if (explicitHeight != null && explicitHeight > out.height) out.height = explicitHeight
 		}

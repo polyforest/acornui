@@ -20,13 +20,19 @@ import com.acornui.component.layout.LayoutData
 import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.LayoutElementRo
 import com.acornui.component.layout.SizeConstraints
+import com.acornui.component.style.Style
 import com.acornui.math.Bounds
 
 /**
  * A LayoutAlgorithm implementation sizes and positions layout elements. This is typically paired with a
  * LayoutContainer implementation.
  */
-interface LayoutAlgorithm<in S, out T : LayoutData> : LayoutDataProvider<T> {
+interface LayoutAlgorithm<S : Style, out T : LayoutData> : LayoutDataProvider<T> {
+
+	/**
+	 * The configuration properties this layout algorithm uses.
+	 */
+	val style: S
 
 	/**
 	 * Calculates the minimum and maximum dimensions of this layout.
@@ -35,7 +41,7 @@ interface LayoutAlgorithm<in S, out T : LayoutData> : LayoutDataProvider<T> {
 	 * @param out This will be set to the  size constraints for the provided elements. This will describe the minimum,
 	 * and maximum dimensions for the laid out elements.
 	 */
-	fun calculateSizeConstraints(elements: List<LayoutElementRo>, props: S, out: SizeConstraints)
+	fun calculateSizeConstraints(elements: List<LayoutElementRo>, out: SizeConstraints)
 
 	/**
 	 * Sizes and positions the given layout elements.
@@ -45,7 +51,7 @@ interface LayoutAlgorithm<in S, out T : LayoutData> : LayoutDataProvider<T> {
 	 * @param elements The list of objects to lay out.
 	 * @param out This will be set to bounds that the layout elements take up.
 	 */
-	fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, props: S, out: Bounds)
+	fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds)
 
 	/**
 	 * A utility method to get the layout data automatically cast to the type it is expected to be.
@@ -79,7 +85,7 @@ interface LayoutDataProvider<out T : LayoutData> {
  * A sequenced layout is a layout where the the elements are laid out in a serial manner.
  * This means that for elements {a, b, c}, b will always be spatially positioned between a and c.
  */
-interface SequencedLayout<in S, out T : LayoutData> : LayoutAlgorithm<S, T> {
+interface SequencedLayout<S : Style, out T : LayoutData> : LayoutAlgorithm<S, T> {
 
 	/**
 	 * Returns the index of the element at the given position.

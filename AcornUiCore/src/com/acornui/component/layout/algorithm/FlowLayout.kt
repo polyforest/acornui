@@ -21,7 +21,7 @@ import com.acornui.collection.ClearableObjectPool
 import com.acornui.collection.freeTo
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.ComponentInit
-import com.acornui.component.layout.LayoutContainerImpl
+import com.acornui.component.layout.LayoutElementContainerImpl
 import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.LayoutElementRo
 import com.acornui.component.layout.SizeConstraints
@@ -37,6 +37,8 @@ import kotlin.math.round
  */
 class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLayout<FlowLayoutStyle, FlowLayoutData> {
 
+	override val style = FlowLayoutStyle()
+
 	private val _lines = ArrayList<LineInfo>()
 
 	/**
@@ -45,8 +47,8 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 	val lines: List<LineInfoRo>
 		get() = _lines
 
-	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, props: FlowLayoutStyle, out: SizeConstraints) {
-		val padding = props.padding
+	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, out: SizeConstraints) {
+		val padding = style.padding
 		var minWidth = 0f
 		for (i in 0..elements.lastIndex) {
 			minWidth = maxOf(minWidth, elements[i].minWidth ?: 0f)
@@ -54,8 +56,8 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 		out.width.min = minWidth + padding.left + padding.right
 	}
 
-	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, props: FlowLayoutStyle, out: Bounds) {
-		val padding = props.padding
+	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
+		val padding = style.padding
 		val availableWidth: Float? = padding.reduceWidth(explicitWidth)
 		val availableHeight: Float? = padding.reduceHeight(explicitHeight)
 
@@ -78,15 +80,15 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 			val h = element.height
 			val doesOverhang = layoutData?.overhangs ?: false
 
-			if (props.multiline && i > line.startIndex &&
+			if (style.multiline && i > line.startIndex &&
 					(previousElement!!.clearsLine() || element.startsNewLine() ||
 							(availableWidth != null && !doesOverhang && x + w > availableWidth))) {
 				line.endIndex = i
-				line.x = calculateLineX(availableWidth, props, line.contentsWidth)
-				positionElementsInLine(line, availableWidth, props, elements)
+				line.x = calculateLineX(availableWidth, style, line.contentsWidth)
+				positionElementsInLine(line, availableWidth, style, elements)
 				_lines.add(line)
 				x = 0f
-				y += line.height + props.verticalGap
+				y += line.height + style.verticalGap
 				// New line
 				line = linesPool.obtain()
 				line.startIndex = i
@@ -99,7 +101,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 				line.contentsWidth = x
 				if (x > measuredW) measuredW = x
 			}
-			x += props.horizontalGap
+			x += style.horizontalGap
 			val baseline = layoutData?.baseline ?: h
 			if (baseline > line.baseline) line.baseline = baseline
 			val belowBaseline = h - baseline
@@ -108,13 +110,13 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 		}
 		line.endIndex = elements.size
 		if (line.isNotEmpty()) {
-			line.x = calculateLineX(availableWidth, props, line.contentsWidth)
-			positionElementsInLine(line, availableWidth, props, elements)
+			line.x = calculateLineX(availableWidth, style, line.contentsWidth)
+			positionElementsInLine(line, availableWidth, style, elements)
 			_lines.add(line)
 			y += line.height
 		} else {
 			linesPool.free(line)
-			y -= props.verticalGap
+			y -= style.verticalGap
 		}
 		measuredW += padding.left + padding.right
 		if (measuredW > out.width) out.width = measuredW // Use the measured width if it is larger than the explicit.
@@ -350,7 +352,7 @@ enum class FlowVAlign {
 	BASELINE
 }
 
-open class FlowLayoutContainer(owner: Owned) : LayoutContainerImpl<FlowLayoutStyle, FlowLayoutData>(owner, FlowLayout(), FlowLayoutStyle())
+open class FlowLayoutContainer(owner: Owned) : LayoutElementContainerImpl<FlowLayoutStyle, FlowLayoutData>(owner, FlowLayout())
 
 fun Owned.flow(init: ComponentInit<FlowLayoutContainer> = {}): FlowLayoutContainer {
 	val flowContainer = FlowLayoutContainer(this)

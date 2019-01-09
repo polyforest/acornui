@@ -19,11 +19,12 @@ package com.acornui.component.datagrid
 import com.acornui.collection.ObservableList
 import com.acornui.collection.addAll
 import com.acornui.component.*
-import com.acornui.component.layout.LayoutContainerImpl
+import com.acornui.component.layout.LayoutElementContainerImpl
 import com.acornui.component.layout.algorithm.HorizontalLayout
 import com.acornui.component.layout.algorithm.HorizontalLayoutData
 import com.acornui.component.layout.algorithm.HorizontalLayoutStyle
 import com.acornui.component.layout.setSize
+import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
 import com.acornui.component.style.noSkinOptional
@@ -43,20 +44,21 @@ open class DataGridGroupHeaderImpl<E>(
 		owner: Owned,
 		protected val group: DataGridGroup<E>,
 		protected val list: ObservableList<E>
-) : LayoutContainerImpl<DataGridGroupHeaderStyle, HorizontalLayoutData>(
+) : LayoutElementContainerImpl<HorizontalLayoutStyle, HorizontalLayoutData>(
 		owner,
-		HorizontalLayout(),
-		DataGridGroupHeaderStyle()
+		HorizontalLayout()
 ), DataGridGroupHeader, Labelable {
 
 	private var background: UiComponent? = null
 	private var collapseButton: Button? = null
 
+	val groupStyle = bind(DataGridGroupHeaderStyle())
+
 	init {
 		styleTags.addAll(DataGridGroupHeader, TextStyleTags.h2)
 		interactivityMode = InteractivityMode.CHILDREN
 
-		watch(style) {
+		watch(groupStyle) {
 			background?.dispose()
 			background = addOptionalChild(0, it.background(this))
 			background?.interactivityMode = InteractivityMode.NONE
@@ -92,7 +94,7 @@ open class DataGridGroupHeaderImpl<E>(
 	}
 }
 
-class DataGridGroupHeaderStyle : HorizontalLayoutStyle() {
+class DataGridGroupHeaderStyle : StyleBase() {
 
 	override val type: StyleType<DataGridGroupHeaderStyle> = Companion
 

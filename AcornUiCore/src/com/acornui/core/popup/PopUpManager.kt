@@ -20,9 +20,10 @@ import com.acornui.collection.Clearable
 import com.acornui.collection.firstOrNull2
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
-import com.acornui.component.layout.LayoutContainerImpl
+import com.acornui.component.layout.LayoutElementContainerImpl
 import com.acornui.component.layout.algorithm.CanvasLayout
 import com.acornui.component.layout.algorithm.CanvasLayoutData
+import com.acornui.component.style.NoopStyle
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.component.style.styleTag
@@ -150,7 +151,9 @@ class PopUpManagerStyle : StyleBase() {
 	companion object : StyleType<PopUpManagerStyle>
 }
 
-class PopUpManagerImpl(private val root: UiComponent) : LayoutContainerImpl<PopUpManagerStyle, CanvasLayoutData>(root, CanvasLayout(), PopUpManagerStyle()), PopUpManager {
+class PopUpManagerImpl(private val root: UiComponent) : LayoutElementContainerImpl<NoopStyle, CanvasLayoutData>(root, CanvasLayout()), PopUpManager {
+
+	private val popUpManagerStyle = bind(PopUpManagerStyle())
 
 	override val view: UiComponent = this
 
@@ -202,7 +205,7 @@ class PopUpManagerImpl(private val root: UiComponent) : LayoutContainerImpl<PopU
 			if (modalIndex != childIndex - 1)
 				addElement(childIndex, modalFill)
 		}
-		val s = style
+		val s = popUpManagerStyle
 		if (shouldShowModal != showingModal) {
 			showingModal = shouldShowModal
 			if (shouldShowModal) {

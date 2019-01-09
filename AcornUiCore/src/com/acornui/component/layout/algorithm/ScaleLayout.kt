@@ -33,14 +33,16 @@ import com.acornui.math.Vector2
  */
 object ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 
+	override val style = ScaleLayoutStyle()
+
 	override fun createLayoutData() = ScaleLayoutData()
 
-	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, props: ScaleLayoutStyle, out: SizeConstraints) {
+	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, out: SizeConstraints) {
 	}
 
-	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, props: ScaleLayoutStyle, out: Bounds) {
+	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
 		val size = Vector2.obtain()
-		val padding = props.padding
+		val padding = style.padding
 
 		val childAvailableWidth: Float? = padding.reduceWidth(explicitWidth)
 		val childAvailableHeight: Float? = padding.reduceHeight(explicitHeight)
@@ -52,7 +54,7 @@ object ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 			val w = maxOf(1f, child.width) // Don't allow the width/height to be 0 for divide by zero reasons.
 			val h = maxOf(1f, child.height)
 
-			val scaling = layoutData?.scaling ?: props.scaling
+			val scaling = layoutData?.scaling ?: style.scaling
 			scaling.apply(w, h, childAvailableWidth ?: w, childAvailableHeight ?: h, size)
 
 			var scaleX = size.x / w
@@ -69,7 +71,7 @@ object ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 			if (explicitWidth != null) {
 				val remainingSpace = childAvailableWidth!! - w * scaleX
 				if (remainingSpace > 0f) {
-					when (layoutData?.horizontalAlign ?: props.horizontalAlign) {
+					when (layoutData?.horizontalAlign ?: style.horizontalAlign) {
 						HAlign.LEFT -> {
 						}
 						HAlign.CENTER -> {
@@ -85,7 +87,7 @@ object ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 			if (explicitHeight != null) {
 				val remainingSpace = childAvailableHeight!! - h * scaleY
 				if (remainingSpace > 0f) {
-					when (layoutData?.verticalAlign ?: props.verticalAlign) {
+					when (layoutData?.verticalAlign ?: style.verticalAlign) {
 						VAlign.TOP -> {
 						}
 						VAlign.MIDDLE -> {
@@ -146,7 +148,7 @@ open class ScaleLayoutData : BasicLayoutData() {
 	}
 }
 
-open class ScaleBoxLayoutContainer(owner: Owned) : LayoutContainerImpl<ScaleLayoutStyle, ScaleLayoutData>(owner, ScaleLayout, ScaleLayoutStyle())
+open class ScaleBoxLayoutContainer(owner: Owned) : LayoutElementContainerImpl<ScaleLayoutStyle, ScaleLayoutData>(owner, ScaleLayout)
 
 fun Owned.scaleBox(init: ComponentInit<ScaleBoxLayoutContainer> = {}): ScaleBoxLayoutContainer {
 	val boxContainer = ScaleBoxLayoutContainer(this)

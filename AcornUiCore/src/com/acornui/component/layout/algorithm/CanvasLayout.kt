@@ -22,9 +22,11 @@ import com.acornui.component.style.NoopStyle
 import com.acornui.core.di.Owned
 import com.acornui.math.Bounds
 
-class CanvasLayout : LayoutAlgorithm<Any, CanvasLayoutData> {
+class CanvasLayout : LayoutAlgorithm<NoopStyle, CanvasLayoutData> {
 
-	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, props: Any, out: SizeConstraints) {
+	override val style = NoopStyle()
+
+	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, out: SizeConstraints) {
 		var minWidth = 0f
 		var minHeight = 0f
 		for (i in 0..elements.lastIndex) {
@@ -38,7 +40,7 @@ class CanvasLayout : LayoutAlgorithm<Any, CanvasLayoutData> {
 		out.height.min = minHeight
 	}
 
-	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, props: Any, out: Bounds) {
+	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
 		val w = explicitWidth ?: 0f
 		val h = explicitHeight ?: 0f
 
@@ -83,7 +85,7 @@ class CanvasLayout : LayoutAlgorithm<Any, CanvasLayoutData> {
 	override fun createLayoutData() = CanvasLayoutData()
 }
 
-open class CanvasLayoutContainer(owner: Owned) : LayoutContainerImpl<NoopStyle, CanvasLayoutData>(owner, CanvasLayout(), NoopStyle())
+open class CanvasLayoutContainer(owner: Owned) : LayoutElementContainerImpl<NoopStyle, CanvasLayoutData>(owner, CanvasLayout())
 
 fun Owned.canvas(init: ComponentInit<CanvasLayoutContainer> = {}): CanvasLayoutContainer {
 	val canvasContainer = CanvasLayoutContainer(this)

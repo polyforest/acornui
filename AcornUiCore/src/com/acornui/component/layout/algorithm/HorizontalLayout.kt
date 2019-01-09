@@ -29,9 +29,11 @@ import kotlin.math.floor
 
 class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayoutData> {
 
-	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, props: HorizontalLayoutStyle, out: SizeConstraints) {
-		val padding = props.padding
-		val gap = props.gap
+	override val style = HorizontalLayoutStyle()
+
+	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, out: SizeConstraints) {
+		val padding = style.padding
+		val gap = style.gap
 
 		var minHeight = 0f
 		var minWidth = 0f
@@ -49,9 +51,9 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 		out.width.min = minWidth
 	}
 
-	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, props: HorizontalLayoutStyle, out: Bounds) {
-		val padding = props.padding
-		val gap = props.gap
+	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
+		val padding = style.padding
+		val gap = style.gap
 
 		val childAvailableWidth: Float? = padding.reduceWidth(explicitWidth)
 		val childAvailableHeight: Float? = padding.reduceHeight(explicitHeight)
@@ -107,12 +109,12 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 
 		// Position
 		var x = padding.left
-		if (childAvailableWidth != null && props.horizontalAlign != HAlign.LEFT) {
+		if (childAvailableWidth != null && style.horizontalAlign != HAlign.LEFT) {
 			val d = childAvailableWidth - (inflexibleWidth + flexibleWidth)
 			if (d > 0f) {
-				if (props.horizontalAlign == HAlign.RIGHT) {
+				if (style.horizontalAlign == HAlign.RIGHT) {
 					x += d
-				} else if (props.horizontalAlign == HAlign.CENTER) {
+				} else if (style.horizontalAlign == HAlign.CENTER) {
 					x += floor(d * 0.5f).toInt()
 				}
 			}
@@ -120,7 +122,7 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 		for (i in 0..elements.lastIndex) {
 			val element = elements[i]
 			val layoutData = element.layoutDataCast
-			val y = when (layoutData?.verticalAlign ?: props.verticalAlign) {
+			val y = when (layoutData?.verticalAlign ?: style.verticalAlign) {
 				VAlign.TOP -> padding.top
 				VAlign.MIDDLE -> (maxHeight - element.height) * 0.5f + padding.top
 				VAlign.BOTTOM -> maxHeight - element.height + padding.top
@@ -137,7 +139,7 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 
 }
 
-open class HorizontalLayoutStyle : StyleBase() {
+class HorizontalLayoutStyle : StyleBase() {
 
 	override val type: StyleType<HorizontalLayoutStyle> = Companion
 
@@ -174,7 +176,7 @@ class HorizontalLayoutData : BasicLayoutData() {
 	var verticalAlign: HAlign? by bindable(null)
 }
 
-open class HorizontalLayoutContainer(owner: Owned) : LayoutContainerImpl<HorizontalLayoutStyle, HorizontalLayoutData>(owner, HorizontalLayout(), HorizontalLayoutStyle())
+open class HorizontalLayoutContainer(owner: Owned) : LayoutElementContainerImpl<HorizontalLayoutStyle, HorizontalLayoutData>(owner, HorizontalLayout())
 
 fun Owned.hGroup(init: ComponentInit<HorizontalLayoutContainer> = {}): HorizontalLayoutContainer {
 	val horizontalGroup = HorizontalLayoutContainer(this)

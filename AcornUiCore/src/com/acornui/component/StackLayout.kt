@@ -32,8 +32,10 @@ import com.acornui.math.PadRo
  */
 class StackLayout : LayoutAlgorithm<StackLayoutStyle, StackLayoutData> {
 
-	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, props: StackLayoutStyle, out: SizeConstraints) {
-		val padding = props.padding
+	override val style = StackLayoutStyle()
+
+	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, out: SizeConstraints) {
+		val padding = style.padding
 		for (i in 0..elements.lastIndex) {
 			out.bound(elements[i].sizeConstraints)
 		}
@@ -41,8 +43,8 @@ class StackLayout : LayoutAlgorithm<StackLayoutStyle, StackLayoutData> {
 		out.height.min = padding.expandHeight(out.height.min)
 	}
 
-	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, props: StackLayoutStyle, out: Bounds) {
-		val padding = props.padding
+	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
+		val padding = style.padding
 		val childAvailableWidth = padding.reduceWidth(explicitWidth)
 		val childAvailableHeight = padding.reduceHeight(explicitHeight)
 
@@ -53,7 +55,7 @@ class StackLayout : LayoutAlgorithm<StackLayoutStyle, StackLayoutData> {
 
 			val childX = padding.left + if (explicitWidth == null) 0f else run {
 				val remainingSpace = maxOf(0f, childAvailableWidth!! - child.width)
-				when (layoutData?.horizontalAlign ?: props.horizontalAlign) {
+				when (layoutData?.horizontalAlign ?: style.horizontalAlign) {
 					HAlign.LEFT -> 0f
 					HAlign.CENTER -> remainingSpace * 0.5f
 					HAlign.RIGHT -> remainingSpace
@@ -61,7 +63,7 @@ class StackLayout : LayoutAlgorithm<StackLayoutStyle, StackLayoutData> {
 			}
 			val childY = padding.top + if (explicitHeight == null) 0f else run {
 				val remainingSpace = maxOf(0f, childAvailableHeight!! - child.height)
-				when (layoutData?.verticalAlign ?: props.verticalAlign) {
+				when (layoutData?.verticalAlign ?: style.verticalAlign) {
 					VAlign.TOP -> 0f
 					VAlign.MIDDLE -> remainingSpace * 0.5f
 					VAlign.BOTTOM -> remainingSpace
@@ -104,7 +106,7 @@ open class StackLayoutStyle : StyleBase() {
 	companion object : StyleType<StackLayoutStyle>
 }
 
-open class StackLayoutContainer(owner: Owned) : LayoutContainerImpl<StackLayoutStyle, StackLayoutData>(owner, StackLayout(), StackLayoutStyle())
+open class StackLayoutContainer(owner: Owned) : LayoutElementContainerImpl<StackLayoutStyle, StackLayoutData>(owner, StackLayout())
 
 fun Owned.stack(init: ComponentInit<StackLayoutContainer> = {}): StackLayoutContainer {
 	val s = StackLayoutContainer(this)

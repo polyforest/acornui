@@ -17,7 +17,7 @@
 package com.acornui.core.popup
 
 import com.acornui.component.*
-import com.acornui.component.layout.LayoutContainer
+import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.core.di.Owned
 import com.acornui.math.Bounds
 import com.acornui.math.Matrix4
@@ -28,7 +28,7 @@ import com.acornui.math.Vector3
  * The Lift component will place its elements as children in the pop up layer, automatically transforming the children
  * to match transformation as if they were part of this component's display hierarchy.
  */
-class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutContainer<StackLayoutStyle, StackLayoutData> {
+class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataProvider<StackLayoutData> {
 
 	override fun createLayoutData(): StackLayoutData = StackLayoutData()
 
@@ -58,8 +58,7 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutConta
 
 	private val contents = LiftStack(this)
 
-	override val layoutAlgorithm = contents.layoutAlgorithm
-	override val style = contents.style
+	val style = contents.style
 
 	init {
 		isFocusContainer = true

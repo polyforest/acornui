@@ -29,9 +29,11 @@ import kotlin.math.floor
 
 class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> {
 
-	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, props: VerticalLayoutStyle, out: SizeConstraints) {
-		val padding = props.padding
-		val gap = props.gap
+	override val style = VerticalLayoutStyle()
+
+	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, out: SizeConstraints) {
+		val padding = style.padding
+		val gap = style.gap
 
 		var minWidth = 0f
 		var minHeight = 0f
@@ -49,9 +51,9 @@ class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> 
 		out.height.min = minHeight
 	}
 
-	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, props: VerticalLayoutStyle, out: Bounds) {
-		val padding = props.padding
-		val gap = props.gap
+	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
+		val padding = style.padding
+		val gap = style.gap
 
 		val childAvailableWidth = padding.reduceWidth(explicitWidth)
 		val childAvailableHeight = padding.reduceHeight(explicitHeight)
@@ -107,12 +109,12 @@ class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> 
 
 		// Position
 		var y = padding.top
-		if (childAvailableHeight != null && props.verticalAlign != VAlign.TOP) {
+		if (childAvailableHeight != null && style.verticalAlign != VAlign.TOP) {
 			val d = childAvailableHeight - (inflexibleHeight + flexibleHeight)
 			if (d > 0f) {
-				if (props.verticalAlign == VAlign.BOTTOM) {
+				if (style.verticalAlign == VAlign.BOTTOM) {
 					y += d
-				} else if (props.verticalAlign == VAlign.MIDDLE) {
+				} else if (style.verticalAlign == VAlign.MIDDLE) {
 					y += floor(d * 0.5f).toInt()
 				}
 			}
@@ -120,7 +122,7 @@ class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> 
 		for (i in 0..elements.lastIndex) {
 			val element = elements[i]
 			val layoutData = element.layoutDataCast
-			val x = when (layoutData?.horizontalAlign ?: props.horizontalAlign) {
+			val x = when (layoutData?.horizontalAlign ?: style.horizontalAlign) {
 				HAlign.LEFT -> padding.left
 				HAlign.CENTER -> (maxWidth - element.width) * 0.5f + padding.left
 				HAlign.RIGHT -> maxWidth - element.width + padding.left
@@ -135,7 +137,7 @@ class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> 
 	override fun createLayoutData() = VerticalLayoutData()
 }
 
-open class VerticalLayoutStyle : StyleBase() {
+class VerticalLayoutStyle : StyleBase() {
 
 	override val type: StyleType<VerticalLayoutStyle> = Companion
 
@@ -169,7 +171,7 @@ class VerticalLayoutData : BasicLayoutData() {
 	var horizontalAlign: HAlign? by bindable(null)
 }
 
-open class VerticalLayoutContainer(owner: Owned) : LayoutContainerImpl<VerticalLayoutStyle, VerticalLayoutData>(owner, VerticalLayout(), VerticalLayoutStyle())
+open class VerticalLayoutContainer(owner: Owned) : LayoutElementContainerImpl<VerticalLayoutStyle, VerticalLayoutData>(owner, VerticalLayout())
 
 fun Owned.vGroup(init: ComponentInit<VerticalLayoutContainer> = {}): VerticalLayoutContainer {
 	val verticalGroup = VerticalLayoutContainer(this)

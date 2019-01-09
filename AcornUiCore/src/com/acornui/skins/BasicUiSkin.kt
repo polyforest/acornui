@@ -575,9 +575,12 @@ open class BasicUiSkin(
 				style.borderColors = BorderColors(theme.stroke)
 			}
 		}
-		dataGridGroupHeaderStyle.padding = Pad(6f)
-		dataGridGroupHeaderStyle.gap = 2f
-		dataGridGroupHeaderStyle.verticalAlign = VAlign.MIDDLE
+		target.addStyleRule(dataGridGroupHeaderStyle, DataGridGroupHeader)
+
+		val dataGridGroupHeaderLayoutStyle = HorizontalLayoutStyle()
+		dataGridGroupHeaderLayoutStyle.padding = Pad(6f)
+		dataGridGroupHeaderLayoutStyle.gap = 2f
+		dataGridGroupHeaderLayoutStyle.verticalAlign = VAlign.MIDDLE
 		target.addStyleRule(dataGridGroupHeaderStyle, DataGridGroupHeader)
 
 		val columnMoveIndicatorStyle = BoxStyle()
