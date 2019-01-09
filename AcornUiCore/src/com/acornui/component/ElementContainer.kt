@@ -104,7 +104,7 @@ interface ElementContainerRo<out T : UiComponentRo> : ContainerRo, ElementParent
  * It is up to this element container how to treat added elements. It may add them as children, it may provide the
  * element to a child element container.
  */
-interface ElementContainer<T : UiComponent> : ElementContainerRo<T>, ElementParent<T>, UiComponent
+interface ElementContainer<T : UiComponent> : ElementContainerRo<T>, ElementParent<T>, Container
 
 /**
  * @author nbilyk
