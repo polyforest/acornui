@@ -2,7 +2,7 @@
 
 Acorn UI is a Kotlin framework for developing rich, cross-platform applications and games.
 
-Acorn UI allows you to develop write once, run anywhere content with excellent hardware accelerated performance.
+Acorn UI allows you to develop write once, run anywhere content with excellent hardware-accelerated performance.
 
 Head over to our [Wiki](https://github.com/polyforest/acornui/wiki) to go through our getting started guide, examples, and documentation.
 
