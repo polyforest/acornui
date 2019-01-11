@@ -141,7 +141,7 @@ open class ElementContainerImpl<T : UiComponent>(
 		var newIndex = index
 		val oldIndex = elements.indexOf(element)
 		if (oldIndex != -1) {
-			if (newIndex == oldIndex) return element // Element was added in the same spot it previously was.
+			if (newIndex == oldIndex || newIndex == oldIndex + 1) return element // Element was added in the same spot it previously was.
 			// Handle the case where after the element is removed, the new index needs to decrement to compensate.
 			if (oldIndex < newIndex)
 				newIndex--

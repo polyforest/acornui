@@ -148,7 +148,7 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 		var newIndex = index
 		val oldIndex = tabs.indexOf(tab)
 		if (oldIndex != -1) {
-			if (newIndex == oldIndex) return tab // Element was added in the same spot it previously was.
+			if (newIndex == oldIndex || newIndex == oldIndex + 1) return tab // Element was added in the same spot it previously was.
 			// Handle the case where after the element is removed, the new index needs to decrement to compensate.
 			if (oldIndex < newIndex)
 				newIndex--
