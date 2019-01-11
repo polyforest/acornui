@@ -15,7 +15,7 @@ import kotlin.math.round
 
 class IconButton(
 		owner: Owned
-) : Button(owner) {
+) : Button(owner), SingleElementContainer<UiComponent> {
 
 	init {
 		styleTags.add(IconButton)
@@ -29,19 +29,19 @@ class IconButton(
 	 */
 	fun iconMap(map: Map<ButtonState, UiComponent>) {
 		if (!map.containsKey(ButtonState.UP)) throw IllegalArgumentException("iconMap must at least set the icon for the UP state.")
-		clearElements(dispose = true)
+		_element = null
 		_iconMap = map
 		refreshContents()
 	}
 
-	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {
-		if (elements.size > 1) throw Exception("Icon buttons can only have one child.")
-		refreshContents()
-	}
-
-	override fun onElementRemoved(index: Int, element: UiComponent) {
-		refreshContents()
-	}
+	private var _element: UiComponent? = null
+	override var element: UiComponent?
+		get() = _element
+		set(value) {
+			if (value === _element) return
+			_element = value
+			refreshContents()
+		}
 
 	override fun onCurrentStateChanged(previousState: ButtonState, newState: ButtonState, previousSkinPart: UiComponent?, newSkinPart: UiComponent?) {
 		refreshContents()
@@ -56,7 +56,7 @@ class IconButton(
 				iconMap[it]
 			}
 		}
-		return elements.getOrNull(0)
+		return _element
 	}
 
 	private fun refreshContents() {

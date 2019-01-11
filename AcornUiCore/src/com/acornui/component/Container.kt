@@ -60,18 +60,25 @@ open class ContainerImpl(
 		get() = _children
 
 	/**
-	 * Adds a child to the last index.
+	 * Appends a child to the display children.
 	 */
 	protected fun <T : UiComponent> addChild(child: T): T {
 		return addChild(_children.size, child)
 	}
 
+	/**
+	 * Appends a child to the display children. If the child is null, nothing will will happen.
+	 */
 	protected fun <T : UiComponent> addOptionalChild(child: T?): T? {
-		return addOptionalChild(_children.size, child)
+		if (child == null) return null
+		return addChild(_children.size, child)
 	}
 
+	/**
+	 * Adds a child to the display children at the given position. If the child is null, nothing will will happen.
+	 */
 	protected fun <T : UiComponent> addOptionalChild(index: Int, child: T?): T? {
-		if (child == null) return child
+		if (child == null) return null
 		return addChild(index, child)
 	}
 
@@ -131,6 +138,9 @@ open class ContainerImpl(
 		return index
 	}
 
+	/**
+	 * Removes a child from the display children.
+	 */
 	protected fun removeChild(child: UiComponent?): Boolean {
 		if (child == null) return false
 		val index = _children.indexOf(child)
@@ -163,6 +173,9 @@ open class ContainerImpl(
 		return child
 	}
 
+	/**
+	 * Removes all children, optionally disposing them.
+	 */
 	protected fun clearChildren(dispose: Boolean = true) {
 		val c = _children
 		while (c.isNotEmpty()) {

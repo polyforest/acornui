@@ -26,7 +26,7 @@ import com.acornui.core.focus.Focusable
 import com.acornui.math.Bounds
 
 /**
- * The canonical layout container implementation.
+ * A container that uses a [LayoutAlgorithm] to size and position its external [elements].
  */
 open class LayoutElementContainerImpl<S : Style, out U : LayoutData>(
 		owner: Owned,

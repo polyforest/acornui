@@ -135,6 +135,6 @@ fun Owned.atlas(atlasPath: String, region: String, init: ComponentInit<AtlasComp
 /**
  * Creates a texture component and uses it as the contents
  */
-fun ElementContainer<UiComponent>.contentsAtlas(atlasPath: String, region: String) {
-	createOrReuseContents { atlas() }.setRegion(atlasPath, region)
+fun SingleElementContainer<UiComponent>.contentsAtlas(atlasPath: String, region: String) {
+	createOrReuseElement { atlas() }.setRegion(atlasPath, region)
 }

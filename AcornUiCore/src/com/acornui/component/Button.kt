@@ -41,7 +41,7 @@ import kotlin.collections.set
  */
 open class Button(
 		owner: Owned
-) : ElementContainerImpl<UiComponent>(owner), Labelable, Toggleable, Focusable {
+) : ContainerImpl(owner), Labelable, Toggleable, Focusable {
 
 	val style = bind(ButtonStyle())
 

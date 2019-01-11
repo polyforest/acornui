@@ -2,13 +2,16 @@
 
 package com.acornui.component
 
-import com.acornui._assert
 import com.acornui.collection.ConcurrentListImpl
+import com.acornui.collection.iterate
 import com.acornui.core.di.Owned
 import com.acornui.math.Bounds
 
 interface ElementParentRo<out T> {
 
+	/**
+	 * A list of externally added objects.
+	 */
 	val elements: List<T>
 
 }
@@ -101,23 +104,36 @@ interface ElementContainerRo<out T : UiComponentRo> : ContainerRo, ElementParent
 
 /**
  * An ElementContainer is a component that can be provided a list of components as part of its external API.
- * It is up to this element container how to treat added elements. It may add them as children, it may provide the
- * element to a child element container.
+ * It is up to this element container how to treat added elements. It may add them as children to the display graph,
+ * or it may provide the element to a child element container.
  */
 interface ElementContainer<T : UiComponent> : ElementContainerRo<T>, ElementParent<T>, Container
+
+interface SingleElementContainer<T : UiComponent> : ContainerRo, Container {
+
+	/**
+	 * Sets the single element on this container. If there was previously an element set, it will be removed but
+	 * not disposed.
+	 */
+	var element : T?
+}
 
 /**
  * @author nbilyk
  */
 open class ElementContainerImpl<T : UiComponent>(
 		owner: Owned
-) : ContainerImpl(owner), ElementContainer<T>, Container {
+) : ContainerImpl(owner), ElementContainer<T>, SingleElementContainer<T>, Container {
 
 	//-------------------------------------------------------------------------------------------------
 	// Element methods.
 	//-------------------------------------------------------------------------------------------------
 
 	protected val _elements = ConcurrentListImpl<T>()
+
+	/**
+	 * A list of externally added components.
+	 */
 	final override val elements: List<T>
 		get() = _elements
 
@@ -148,11 +164,16 @@ open class ElementContainerImpl<T : UiComponent>(
 	 * [onElementRemoved] should mirror the delegation.
 	 *
 	 * Example:
-	 *
+	 *```
 	 * private val otherContainer = addChild(container())
 	 *
-	 * override fun onElementAdded(oldIndex: Int, newIndex: Int, child: T) { otherContainer.addElement(newIndex, child) }
-	 * override fun onElementRemoved(index: Int, child: T) { otherContainer.removeElement(index) }
+	 * override fun onElementAdded(oldIndex: Int, newIndex: Int, child: T) {
+	 *     otherContainer.addElement(newIndex, child)
+	 * }
+	 * override fun onElementRemoved(index: Int, child: T) {
+	 *     otherContainer.removeElement(index)
+	 * }
+	 * ```
 	 */
 	protected open fun onElementAdded(oldIndex: Int, newIndex: Int, element: T) {
 		if (newIndex == elements.size - 1) {
@@ -186,12 +207,33 @@ open class ElementContainerImpl<T : UiComponent>(
 		}
 	}
 
+	//-------------------------------------------------------------------------------------------------
+	// SingleElementContainer methods
+	//-------------------------------------------------------------------------------------------------
+
 	/**
-	 * A Container implementation will measure its children for dimensions that were not explicit.
+	 * ElementContainerImpl implements SingleElementContainer for convenience -- Setting the single
+	 * element will remove all previously set elements (but not dispose them).
+	 */
+	override var element: T?
+		get() = elements.firstOrNull()
+		set(value) {
+			if (value === elements.firstOrNull()) return
+			clearElements(false)
+			if (value != null)
+				addElement(value)
+		}
+
+	//-------------------------------------------------------------------------------------------------
+
+	private val elementsUpdateIt = _elements.concurrentIterator()
+
+	/**
+	 * A Container implementation will by default measure its children for dimensions that were not explicit.
 	 */
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		if (explicitWidth != null && explicitHeight != null) return // Use explicit dimensions.
-		_elements.iterate { element ->
+		elementsUpdateIt.iterate { element ->
 			if (element.shouldLayout) {
 				if (explicitWidth == null) {
 					if (element.right > out.width)
@@ -215,20 +257,18 @@ open class ElementContainerImpl<T : UiComponent>(
 	}
 }
 
-
 /**
- * Given a factory method that produces a new element [T], if this element container already
- * contains an element of that type, it will be reused. Otherwise, the previous contents will be disposed and
+ * Given a factory method that produces a new element [T], if this single element container already
+ * uses an element of that type, it will be reused. Otherwise, the previous contents will be disposed and
  * the factory will generate new contents.
  */
-inline fun <reified T : UiComponent> ElementContainer<UiComponent>.createOrReuseContents(factory: Owned.() -> T): T {
-	_assert(elements.size <= 1, "createOrReuseContents should not be used on element containers with more than one child.")
+inline fun <reified T : UiComponent> SingleElementContainer<UiComponent>.createOrReuseElement(factory: Owned.() -> T): T {
 	val existing: T
-	val contents = elements.getOrNull(0)
+	val contents = element
 	if (contents !is T) {
 		contents?.dispose()
 		existing = factory()
-		addElement(existing)
+		element = existing
 	} else {
 		existing = contents
 	}

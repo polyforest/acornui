@@ -22,7 +22,7 @@ import com.acornui.core.di.Owned
 import com.acornui.core.graphic.Texture
 
 /**
- * A component representing a single image.
+ * A scale box layout
  */
 open class Image(owner: Owned) : ScaleBoxLayoutContainer(owner) {
 
@@ -59,15 +59,15 @@ fun Owned.image(atlasPath: String, region: String, init: ComponentInit<Image> = 
 }
 
 /**
- * Creates a texture component and uses it as the contents
+ * Creates a texture component and uses it as the element of a single element container.
  */
-fun ElementContainer<UiComponent>.contentsImage(value: String) {
-	createOrReuseContents { textureC() }.path = value
+fun SingleElementContainer<UiComponent>.contentsImage(value: String) {
+	createOrReuseElement { textureC() }.path = value
 }
 
 /**
- * Creates a texture component and uses it as the contents
+ * Creates a texture component and uses it as the element of a single element container.
  */
-fun ElementContainer<UiComponent>.contentsTexture(value: Texture?) {
-	createOrReuseContents { textureC() }.texture = value
+fun SingleElementContainer<UiComponent>.contentsTexture(value: Texture?) {
+	createOrReuseElement { textureC() }.texture = value
 }
