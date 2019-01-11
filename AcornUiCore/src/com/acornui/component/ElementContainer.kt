@@ -3,6 +3,7 @@
 package com.acornui.component
 
 import com.acornui.collection.ConcurrentListImpl
+import com.acornui.collection.addOrReorder
 import com.acornui.collection.iterate
 import com.acornui.core.di.Owned
 import com.acornui.math.Bounds
@@ -138,19 +139,10 @@ open class ElementContainerImpl<T : UiComponent>(
 		get() = _elements
 
 	override fun <S : T> addElement(index: Int, element: S): S {
-		var newIndex = index
-		val oldIndex = elements.indexOf(element)
-		if (oldIndex != -1) {
-			if (newIndex == oldIndex || newIndex == oldIndex + 1) return element // Element was added in the same spot it previously was.
-			// Handle the case where after the element is removed, the new index needs to decrement to compensate.
-			if (oldIndex < newIndex)
-				newIndex--
-			_elements.removeAt(oldIndex)
-		} else {
-			element.disposed.add(this::elementDisposedHandler)
+		_elements.addOrReorder(index, element) { oldIndex, newIndex ->
+			if (oldIndex == -1) element.disposed.add(this::elementDisposedHandler)
+			onElementAdded(oldIndex, newIndex, element)
 		}
-		_elements.add(newIndex, element)
-		onElementAdded(oldIndex, newIndex, element)
 		return element
 	}
 

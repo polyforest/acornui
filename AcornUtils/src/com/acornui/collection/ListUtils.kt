@@ -1,8 +1,5 @@
 package com.acornui.collection
 
-import kotlin.properties.Delegates
-
-
 fun <E> arrayCopy(src: List<E>,
 				  srcPos: Int,
 				  dest: MutableList<E>,
@@ -734,4 +731,24 @@ fun <E : Comparable<E>> List<E>.isReverseSorted(): Boolean {
 		if (a < b) return false
 	}
 	return true
+}
+
+/**
+ * Adds an element to this list at the given position.
+ * If the element already exists in this list, it will be added to the new [index], then removed from the old position.
+ * If `(index == oldIndex || index == oldIndex + 1)` there will be no change.
+ * @param onReorder If an add or a reorder happens, [onReorder] will be called with the old index, and the new index.
+ */
+inline fun <E> MutableList<E>.addOrReorder(index: Int, element: E, onReorder: (oldIndex: Int, newIndex: Int) -> Unit) {
+	val oldIndex = indexOf(element)
+	if (oldIndex == -1) {
+		add(index, element)
+		onReorder(oldIndex, index)
+	} else {
+		val newIndex = if (oldIndex < index) index - 1 else index
+		if (index == oldIndex || index == oldIndex + 1) return
+		removeAt(oldIndex)
+		add(newIndex, element)
+		onReorder(oldIndex, newIndex)
+	}
 }

@@ -78,18 +78,10 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 
 	override fun <S : TextSpanElement> addElement(index: Int, element: S): S {
 		if (element.textParent != null) throw Exception("Remove element first.")
-		var newIndex = index
-		val oldIndex = _elements.indexOf(element)
-		if (oldIndex != -1) {
-			if (newIndex == oldIndex || newIndex == oldIndex + 1) return element // Element was added in the same spot it previously was.
-			// Handle the case where after the element is removed, the new index needs to decrement to compensate.
-			if (oldIndex < newIndex)
-				newIndex--
-			removeElement(oldIndex)
+		_elements.addOrReorder(index, element) { _, _ ->
+			invalidate(TEXT_ELEMENTS)
+			element.textParent = this
 		}
-		_elements.add(newIndex, element)
-		invalidate(TEXT_ELEMENTS)
-		element.textParent = this
 		return element
 	}
 
