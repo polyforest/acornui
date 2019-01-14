@@ -20,7 +20,7 @@ class FlowLayoutTest {
 				spacer("five", 100f, 50f)
 		)
 		val bounds = Bounds()
-		flowLayout.layout(250f, null, elements, FlowLayoutStyle(), bounds)
+		flowLayout.layout(250f, null, elements, bounds)
 
 		assertEquals(3, flowLayout.lines.size)
 		assertEquals(0, flowLayout.lines[0].startIndex)
@@ -47,10 +47,10 @@ class FlowLayoutTest {
 		)
 
 		val bounds = Bounds()
-		val style = FlowLayoutStyle()
+		val style = flowLayout.style
 		style.horizontalGap = 10f
 		style.verticalGap = 20f
-		flowLayout.layout(250f, null, elements, style, bounds)
+		flowLayout.layout(250f, null, elements, bounds)
 
 		// [40,10], [90,50], [30,50], [60, 30]      Line: width: 200, height: 50, y: 0
 		// [90,20], [70, 70], [20, 30], [30, 10]    Line: width: 240, height: 70, y: 70

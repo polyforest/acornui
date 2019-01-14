@@ -9,8 +9,10 @@
     <option name="MAIN_CLASS_NAME" value="com.acornui.build.BuildAcornUiKt" />
     <option name="WORKING_DIRECTORY" value="" />
     <envs>
-      <env name="ACORNUI_HOME" value="$ACORNUI_HOME$" />
+      <env name="ACORNUI_HOME" value="$PROJECT_DIR$/../AcornUiPreGradle" />
     </envs>
-    <method />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
   </configuration>
 </component>

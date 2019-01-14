@@ -22,7 +22,7 @@ class ValidationGraphTest {
 
 	private lateinit var n: ValidationGraph
 
-	@BeforeTest fun before() {
+	@Before fun before() {
 		assertionsEnabled = true
 		n = validationGraph {
 			addNode(ONE, {})
@@ -87,7 +87,7 @@ class ValidationGraphTest {
 	}
 
 	@Test fun dependents() {
-		n.addNode(EIGHT, dependencies = FOUR, dependents = FIVE) {}
+		n.addNode(EIGHT, dependencies = FOUR, dependants = FIVE) {}
 
 		n.validate(FIVE)
 

@@ -20,7 +20,6 @@ import com.acornui.component.layout.Spacer
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.test.MockInjector
-import com.acornui.test.MockInjector.owner
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -30,12 +29,12 @@ class VerticalLayoutTest {
 
 	@Test fun basic() {
 		val layout = VerticalLayout()
-		val style = VerticalLayoutStyle()
+		val style = layout.style
 		val gap = 7f
 		style.gap = gap
 		val list = arrayListOf(Spacer(owner, 10f, 5f), Spacer(owner, 12f, 3f), Spacer(owner, 28f, 29f))
 		val size = Bounds()
-		layout.layout(null, null, list, style, size)
+		layout.layout(null, null, list, size)
 		assertEquals(0f, list[0].y)
 		assertEquals(5f + gap, list[1].y)
 		assertEquals(5f + 3f + gap * 2, list[2].y)
@@ -44,14 +43,14 @@ class VerticalLayoutTest {
 
 	@Test fun padding() {
 		val layout = VerticalLayout()
-		val style = VerticalLayoutStyle()
+		val style = layout.style
 		val gap = 7f
 		style.gap = gap
 		val padding = Pad(7f, 8f, 9f, 6f)
 		style.padding = padding
 		val list = arrayListOf(Spacer(owner, 10f, 5f), Spacer(owner, 12f, 3f), Spacer(owner, 28f, 29f))
 		val size = Bounds()
-		layout.layout(null, null, list, style, size)
+		layout.layout(null, null, list, size)
 		assertEquals(0f + 7f, list[0].y)
 		assertEquals(5f + gap + 7f, list[1].y)
 		assertEquals(5f + 3f + gap * 2 + 7f, list[2].y)
@@ -60,7 +59,7 @@ class VerticalLayoutTest {
 
 	@Test fun percentWidth() {
 		val layout = VerticalLayout()
-		val style = VerticalLayoutStyle()
+		val style = layout.style
 		val gap = 7f
 		style.gap = gap
 		val padding = Pad(7f, 8f, 9f, 6f)
@@ -69,7 +68,7 @@ class VerticalLayoutTest {
 		list[0].layoutData = (VerticalLayoutData().apply { widthPercent = 0.5f })
 		list[1].layoutData = (VerticalLayoutData().apply { widthPercent = 0.75f })
 		val size = Bounds()
-		layout.layout(100f, null, list, style, size)
+		layout.layout(100f, null, list, size)
 		assertEquals((100f - 6f - 8f) * 0.5f, list[0].width)
 		assertEquals(0f + 7f, list[0].y)
 		assertEquals((100f - 6f - 8f) * 0.75f, list[1].width)
@@ -84,7 +83,7 @@ class VerticalLayoutTest {
 	 */
 	@Test fun percentHeight() {
 		val layout = VerticalLayout()
-		val style = VerticalLayoutStyle()
+		val style = layout.style
 		val gap = 7f
 		style.gap = gap
 		val padding = Pad(7f, 8f, 9f, 6f)
@@ -93,7 +92,7 @@ class VerticalLayoutTest {
 		list[0].layoutData = (VerticalLayoutData().apply { heightPercent = 0.5f })
 		list[1].layoutData = (VerticalLayoutData().apply { heightPercent = 0.75f })
 		val size = Bounds()
-		layout.layout(150f, 100f, list, style, size)
+		layout.layout(150f, 100f, list, size)
 		assertEquals(100f - 7f - 9f, list[0].height + list[1].height + list[2].height + gap * 2f)
 		assertEquals(Bounds(150f, 100f), size)
 	}
@@ -103,7 +102,7 @@ class VerticalLayoutTest {
 	 */
 	@Test fun percentHeight2() {
 		val layout = VerticalLayout()
-		val style = VerticalLayoutStyle()
+		val style = layout.style
 		val gap = 3f
 		style.gap = gap
 		val padding = Pad(7f, 8f, 9f, 6f)
@@ -112,7 +111,7 @@ class VerticalLayoutTest {
 		list[0].layoutData = (VerticalLayoutData().apply { heightPercent = 0.25f })
 		list[1].layoutData = (VerticalLayoutData().apply { heightPercent = 0.25f })
 		val size = Bounds()
-		layout.layout(150f, 100f, list, style, size)
+		layout.layout(150f, 100f, list, size)
 		val h = 100f - 7f - 9f
 		assertEquals(h * 0.5f + 29f, list[0].height + list[1].height + list[2].height)
 		assertEquals(Bounds(150f, 93f), size)
