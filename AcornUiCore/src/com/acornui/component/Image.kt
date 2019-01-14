@@ -16,26 +16,28 @@
 
 package com.acornui.component
 
-import com.acornui.component.layout.algorithm.ScaleBoxLayoutContainer
+import com.acornui.component.layout.SingleElementLayoutContainerImpl
+import com.acornui.component.layout.algorithm.ScaleLayout
 import com.acornui.component.layout.algorithm.ScaleLayoutData
+import com.acornui.component.layout.algorithm.ScaleLayoutStyle
 import com.acornui.core.di.Owned
 import com.acornui.core.graphic.Texture
 
 /**
  * A scale box layout
  */
-open class Image(owner: Owned) : ScaleBoxLayoutContainer(owner) {
+open class Image(owner: Owned) : SingleElementLayoutContainerImpl<ScaleLayoutStyle, ScaleLayoutData>(owner, ScaleLayout()), SingleElementContainer<UiComponent> {
 
-	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {
-		super.onElementAdded(oldIndex, newIndex, element)
-		if (element.layoutData !is ScaleLayoutData) {
+	override fun onElementChanged(oldElement: UiComponent?, newElement: UiComponent?) {
+		super.onElementChanged(oldElement, newElement)
+		oldElement?.layoutData = null
+		if (newElement != null && newElement.layoutData == null) {
 			val layoutData = ScaleLayoutData()
 			layoutData.maxScaleX = 1f
 			layoutData.maxScaleY = 1f
-			element.layoutData = layoutData
+			newElement.layoutData = layoutData
 		}
 	}
-
 }
 
 fun Owned.image(init: ComponentInit<Image> = {}): Image {

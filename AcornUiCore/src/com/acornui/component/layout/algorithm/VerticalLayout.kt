@@ -171,7 +171,7 @@ class VerticalLayoutData : BasicLayoutData() {
 	var horizontalAlign: HAlign? by bindable(null)
 }
 
-open class VerticalLayoutContainer(owner: Owned) : LayoutElementContainerImpl<VerticalLayoutStyle, VerticalLayoutData>(owner, VerticalLayout())
+open class VerticalLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<VerticalLayoutStyle, VerticalLayoutData>(owner, VerticalLayout())
 
 fun Owned.vGroup(init: ComponentInit<VerticalLayoutContainer> = {}): VerticalLayoutContainer {
 	val verticalGroup = VerticalLayoutContainer(this)

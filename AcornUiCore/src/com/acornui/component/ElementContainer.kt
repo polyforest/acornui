@@ -117,6 +117,19 @@ interface SingleElementContainer<T : UiComponent> : ContainerRo, Container {
 	 * not disposed.
 	 */
 	var element : T?
+
+	/**
+	 * Syntax sugar for addElement.
+	 */
+	operator fun <P : T> P.unaryPlus(): P {
+		element = this
+		return this
+	}
+
+	operator fun <P : T> P.unaryMinus(): P {
+		element = null
+		return this
+	}
 }
 
 /**
@@ -124,7 +137,7 @@ interface SingleElementContainer<T : UiComponent> : ContainerRo, Container {
  */
 open class ElementContainerImpl<T : UiComponent>(
 		owner: Owned
-) : ContainerImpl(owner), ElementContainer<T>, SingleElementContainer<T>, Container {
+) : ContainerImpl(owner), ElementContainer<T>, Container {
 
 	//-------------------------------------------------------------------------------------------------
 	// Element methods.
@@ -198,23 +211,6 @@ open class ElementContainerImpl<T : UiComponent>(
 			if (dispose) element.dispose()
 		}
 	}
-
-	//-------------------------------------------------------------------------------------------------
-	// SingleElementContainer methods
-	//-------------------------------------------------------------------------------------------------
-
-	/**
-	 * ElementContainerImpl implements SingleElementContainer for convenience -- Setting the single
-	 * element will remove all previously set elements (but not dispose them).
-	 */
-	override var element: T?
-		get() = elements.firstOrNull()
-		set(value) {
-			if (value === elements.firstOrNull()) return
-			clearElements(false)
-			if (value != null)
-				addElement(value)
-		}
 
 	//-------------------------------------------------------------------------------------------------
 

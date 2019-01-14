@@ -20,7 +20,7 @@ import com.acornui.collection.Clearable
 import com.acornui.collection.firstOrNull2
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
-import com.acornui.component.layout.LayoutElementContainerImpl
+import com.acornui.component.layout.ElementLayoutContainerImpl
 import com.acornui.component.layout.algorithm.CanvasLayout
 import com.acornui.component.layout.algorithm.CanvasLayoutData
 import com.acornui.component.style.NoopStyle
@@ -151,7 +151,7 @@ class PopUpManagerStyle : StyleBase() {
 	companion object : StyleType<PopUpManagerStyle>
 }
 
-class PopUpManagerImpl(private val root: UiComponent) : LayoutElementContainerImpl<NoopStyle, CanvasLayoutData>(root, CanvasLayout()), PopUpManager {
+class PopUpManagerImpl(private val root: UiComponent) : ElementLayoutContainerImpl<NoopStyle, CanvasLayoutData>(root, CanvasLayout()), PopUpManager {
 
 	private val popUpManagerStyle = bind(PopUpManagerStyle())
 

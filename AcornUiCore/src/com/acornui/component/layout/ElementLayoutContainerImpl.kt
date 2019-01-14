@@ -28,9 +28,9 @@ import com.acornui.math.Bounds
 /**
  * A container that uses a [LayoutAlgorithm] to size and position its external [elements].
  */
-open class LayoutElementContainerImpl<S : Style, out U : LayoutData>(
+open class ElementLayoutContainerImpl<S : Style, out U : LayoutData>(
 		owner: Owned,
-		protected val layoutAlgorithm: LayoutAlgorithm<S, U>
+		private val layoutAlgorithm: LayoutAlgorithm<S, U>
 ) : ElementContainerImpl<UiComponent>(owner), LayoutDataProvider<U>, Focusable {
 
 	protected val elementsToLayout = ArrayList<LayoutElement>()

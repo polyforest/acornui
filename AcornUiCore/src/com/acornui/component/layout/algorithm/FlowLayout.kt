@@ -21,7 +21,7 @@ import com.acornui.collection.ClearableObjectPool
 import com.acornui.collection.freeTo
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.ComponentInit
-import com.acornui.component.layout.LayoutElementContainerImpl
+import com.acornui.component.layout.ElementLayoutContainerImpl
 import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.LayoutElementRo
 import com.acornui.component.layout.SizeConstraints
@@ -352,7 +352,7 @@ enum class FlowVAlign {
 	BASELINE
 }
 
-open class FlowLayoutContainer(owner: Owned) : LayoutElementContainerImpl<FlowLayoutStyle, FlowLayoutData>(owner, FlowLayout())
+open class FlowLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<FlowLayoutStyle, FlowLayoutData>(owner, FlowLayout())
 
 fun Owned.flow(init: ComponentInit<FlowLayoutContainer> = {}): FlowLayoutContainer {
 	val flowContainer = FlowLayoutContainer(this)

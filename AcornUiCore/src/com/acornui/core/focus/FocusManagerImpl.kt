@@ -36,7 +36,6 @@ import com.acornui.function.as2
 import com.acornui.math.Bounds
 import com.acornui.math.Matrix4
 import com.acornui.signal.Cancel
-import com.acornui.signal.Signal
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
 

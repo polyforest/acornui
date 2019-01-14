@@ -106,7 +106,7 @@ open class StackLayoutStyle : StyleBase() {
 	companion object : StyleType<StackLayoutStyle>
 }
 
-open class StackLayoutContainer(owner: Owned) : LayoutElementContainerImpl<StackLayoutStyle, StackLayoutData>(owner, StackLayout())
+open class StackLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<StackLayoutStyle, StackLayoutData>(owner, StackLayout())
 
 fun Owned.stack(init: ComponentInit<StackLayoutContainer> = {}): StackLayoutContainer {
 	val s = StackLayoutContainer(this)

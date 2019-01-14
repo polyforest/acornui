@@ -408,7 +408,7 @@ fun gridLayoutData(init: GridLayoutData.() -> Unit): GridLayoutData {
 	return g
 }
 
-open class GridLayoutContainer(owner: Owned) : LayoutElementContainerImpl<GridLayoutStyle, GridLayoutData>(owner, GridLayout())
+open class GridLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<GridLayoutStyle, GridLayoutData>(owner, GridLayout())
 
 fun Owned.grid(init: ComponentInit<GridLayoutContainer> = {}): GridLayoutContainer {
 	val c = GridLayoutContainer(this)

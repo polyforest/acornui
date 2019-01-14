@@ -176,7 +176,7 @@ class HorizontalLayoutData : BasicLayoutData() {
 	var verticalAlign: HAlign? by bindable(null)
 }
 
-open class HorizontalLayoutContainer(owner: Owned) : LayoutElementContainerImpl<HorizontalLayoutStyle, HorizontalLayoutData>(owner, HorizontalLayout())
+open class HorizontalLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<HorizontalLayoutStyle, HorizontalLayoutData>(owner, HorizontalLayout())
 
 fun Owned.hGroup(init: ComponentInit<HorizontalLayoutContainer> = {}): HorizontalLayoutContainer {
 	val horizontalGroup = HorizontalLayoutContainer(this)

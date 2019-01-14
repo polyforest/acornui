@@ -148,7 +148,7 @@ open class ScaleLayoutData : BasicLayoutData() {
 	}
 }
 
-open class ScaleBoxLayoutContainer(owner: Owned) : LayoutElementContainerImpl<ScaleLayoutStyle, ScaleLayoutData>(owner, ScaleLayout())
+open class ScaleBoxLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<ScaleLayoutStyle, ScaleLayoutData>(owner, ScaleLayout())
 
 fun Owned.scaleBox(init: ComponentInit<ScaleBoxLayoutContainer> = {}): ScaleBoxLayoutContainer {
 	val boxContainer = ScaleBoxLayoutContainer(this)

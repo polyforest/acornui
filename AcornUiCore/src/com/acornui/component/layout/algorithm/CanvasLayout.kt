@@ -85,7 +85,7 @@ class CanvasLayout : LayoutAlgorithm<NoopStyle, CanvasLayoutData> {
 	override fun createLayoutData() = CanvasLayoutData()
 }
 
-open class CanvasLayoutContainer(owner: Owned) : LayoutElementContainerImpl<NoopStyle, CanvasLayoutData>(owner, CanvasLayout())
+open class CanvasLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<NoopStyle, CanvasLayoutData>(owner, CanvasLayout())
 
 fun Owned.canvas(init: ComponentInit<CanvasLayoutContainer> = {}): CanvasLayoutContainer {
 	val canvasContainer = CanvasLayoutContainer(this)

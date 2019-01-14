@@ -47,7 +47,7 @@ class IconButton(
 		refreshContents()
 	}
 
-	private var _contentsContainer: ElementContainer<UiComponent>? = null
+	private var _contentsContainer: SingleElementContainer<UiComponent>? = null
 
 	private fun getContents(): UiComponent? {
 		val iconMap = _iconMap
@@ -62,11 +62,11 @@ class IconButton(
 	private fun refreshContents() {
 		val contents = getContents()
 		@Suppress("UNCHECKED_CAST")
-		val currentContentsContainer = currentSkinPart as? ElementContainer<UiComponent>
-		if (currentContentsContainer != null && currentContentsContainer.elements.getOrNull(0) != contents) {
-			_contentsContainer?.clearElements(dispose = false)
+		val currentContentsContainer = currentSkinPart as? SingleElementContainer<UiComponent>
+		if (currentContentsContainer != null && currentContentsContainer.element != contents) {
+			_contentsContainer?.element = null
 			_contentsContainer = currentContentsContainer
-			currentContentsContainer.addOptionalElement(contents)
+			currentContentsContainer.element = contents
 		}
 	}
 
@@ -122,7 +122,7 @@ open class IconButtonSkinPart(
 		 * If false, the icon will be on the right instead of left.
 		 */
 		private val iconOnLeft: Boolean = true
-) : ElementContainerImpl<UiComponent>(owner), Labelable {
+) : SingleElementContainerImpl<UiComponent>(owner), Labelable {
 
 	private val icon: Image
 	private val textField: TextField
@@ -141,12 +141,8 @@ open class IconButtonSkinPart(
 			textField.text = value
 		}
 
-	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {
-		icon.addElement(newIndex, element)
-	}
-
-	override fun onElementRemoved(index: Int, element: UiComponent) {
-		icon.removeElement(element)
+	override fun onElementChanged(oldElement: UiComponent?, newElement: UiComponent?) {
+		icon.element = newElement
 	}
 
 	override fun updateSizeConstraints(out: SizeConstraints) {

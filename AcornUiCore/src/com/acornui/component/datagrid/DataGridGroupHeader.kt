@@ -19,7 +19,7 @@ package com.acornui.component.datagrid
 import com.acornui.collection.ObservableList
 import com.acornui.collection.addAll
 import com.acornui.component.*
-import com.acornui.component.layout.LayoutElementContainerImpl
+import com.acornui.component.layout.ElementLayoutContainerImpl
 import com.acornui.component.layout.algorithm.HorizontalLayout
 import com.acornui.component.layout.algorithm.HorizontalLayoutData
 import com.acornui.component.layout.algorithm.HorizontalLayoutStyle
@@ -44,7 +44,7 @@ open class DataGridGroupHeaderImpl<E>(
 		owner: Owned,
 		protected val group: DataGridGroup<E>,
 		protected val list: ObservableList<E>
-) : LayoutElementContainerImpl<HorizontalLayoutStyle, HorizontalLayoutData>(
+) : ElementLayoutContainerImpl<HorizontalLayoutStyle, HorizontalLayoutData>(
 		owner,
 		HorizontalLayout()
 ), DataGridGroupHeader, Labelable {
