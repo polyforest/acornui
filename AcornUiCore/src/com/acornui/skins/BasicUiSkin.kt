@@ -85,7 +85,7 @@ open class BasicUiSkin(
 		sliderStyle()
 		colorPickerStyle()
 		dataScrollerStyle()
-		optionsListStyle()
+		optionListStyle()
 		dataGridStyle()
 		rowsStyle()
 		formStyle()
@@ -479,8 +479,8 @@ open class BasicUiSkin(
 		target.addStyleRule(horizontalLayoutStyle, withParent(DataScroller))
 	}
 
-	protected open fun optionsListStyle() {
-		val optionsListStyle = OptionListStyle().apply {
+	protected open fun optionListStyle() {
+		val optionListStyle = OptionListStyle().apply {
 			downArrow = {
 				atlas(theme.atlasPath, "OptionListArrow")
 			}
@@ -496,7 +496,7 @@ open class BasicUiSkin(
 				}
 			}
 		}
-		target.addStyleRule(optionsListStyle, OptionList)
+		target.addStyleRule(optionListStyle, OptionList)
 
 		val pad = Pad(top = 0f, right = theme.strokeThickness, bottom = theme.strokeThickness, left = theme.strokeThickness)
 		val dataScrollerStyle = DataScrollerStyle().apply {
