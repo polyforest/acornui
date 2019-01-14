@@ -31,7 +31,7 @@ import com.acornui.math.Vector2
 /**
  * This layout will scale and position its elements to fit the provided dimensions of the box.
  */
-object ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
+class ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 
 	override val style = ScaleLayoutStyle()
 
@@ -148,7 +148,7 @@ open class ScaleLayoutData : BasicLayoutData() {
 	}
 }
 
-open class ScaleBoxLayoutContainer(owner: Owned) : LayoutElementContainerImpl<ScaleLayoutStyle, ScaleLayoutData>(owner, ScaleLayout)
+open class ScaleBoxLayoutContainer(owner: Owned) : LayoutElementContainerImpl<ScaleLayoutStyle, ScaleLayoutData>(owner, ScaleLayout())
 
 fun Owned.scaleBox(init: ComponentInit<ScaleBoxLayoutContainer> = {}): ScaleBoxLayoutContainer {
 	val boxContainer = ScaleBoxLayoutContainer(this)
