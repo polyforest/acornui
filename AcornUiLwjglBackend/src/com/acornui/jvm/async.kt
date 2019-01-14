@@ -57,11 +57,14 @@ fun <T> asyncThread(timeDriver: TimeDriver, timeout: Float = 60f, work: () -> T)
 				override fun update(tickTime: Float) {
 					if (future.isDone) {
 						remove()
-						try {
-							success(future.get())
+						val result = try {
+							future.get()
 						} catch (e: Throwable) {
 							fail(e)
+							null
 						}
+						if (status == Deferred.Status.PENDING)
+							success(result as T)
 						PendingDisposablesRegistry.unregister(r)
 					} else {
 						timeRemaining -= tickTime
