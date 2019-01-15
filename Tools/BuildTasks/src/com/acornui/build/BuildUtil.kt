@@ -39,14 +39,7 @@ object BuildUtil {
 		}
 	}
 
-	var ACORNUI_HOME_PATH: String = System.getenv()["ACORNUI_HOME"] ?: throw Exception("Environment variable ACORNUI_HOME must be set.")
-	var ACORNUI_DIST: File = File(ACORNUI_HOME_PATH, "dist")
-	var ACORNUI_OUT: File = File(ACORNUI_HOME_PATH, "out")
-
 	init {
-		if (!File(ACORNUI_HOME_PATH).exists()) throw Exception("ACORNUI_HOME: '$ACORNUI_HOME_PATH' does not exist.")
-		ACORNUI_DIST.mkdir()
-		ACORNUI_OUT.mkdir()
 		incBuildNumber()
 
 		val buildToolsKotlinVer = KotlinCompilerVersion.VERSION
@@ -72,6 +65,7 @@ object BuildUtil {
 	}
 
 	fun execute(allModules: List<Module>, args: Array<String>) {
+		if (args.isEmpty()) return
 		val argMap = ArgumentMap(args)
 		Module.force = argMap.exists("force")
 

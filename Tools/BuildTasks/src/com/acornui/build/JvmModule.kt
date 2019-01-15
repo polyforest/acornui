@@ -17,6 +17,7 @@
 package com.acornui.build
 
 import com.acornui.build.util.AcornAssets
+import com.acornui.build.util.PATH_SEPARATOR
 import com.badlogicgames.packr.Packr
 import com.badlogicgames.packr.PackrConfig
 import java.io.File

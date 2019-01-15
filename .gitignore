@@ -6,3 +6,4 @@ externalLib
 /Tools/BuildTasks/testOut
 /Tools/BuildTasks/lib
 .DS_Store
+scripts/tempScripts

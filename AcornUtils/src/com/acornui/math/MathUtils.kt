@@ -21,6 +21,7 @@
 package com.acornui.math
 
 import kotlin.math.*
+import kotlin.random.Random
 
 const val PI: Float = 3.1415927f
 const val PI2: Float = PI * 2f
@@ -49,94 +50,6 @@ object MathUtils {
 	 * multiply by this to convert from degrees to radians
 	 */
 	const val degRad: Float = PI / 180f
-
-	// ---
-
-	val rng: Random = Random()
-
-	/**
-	 * Returns a random number between 0 (inclusive) and the specified value (inclusive).
-	 */
-	fun random(range: Int): Int = rng.random(range)
-
-	/**
-	 * Returns a random number between start (inclusive) and end (inclusive).
-	 */
-	fun random(start: Int, end: Int): Int = rng.random(start, end)
-
-	/**
-	 * Returns a random number between 0 (inclusive) and the specified value (inclusive).
-	 */
-	fun random(range: Long): Long = rng.random(range)
-
-	/**
-	 * Returns a random number between start (inclusive) and end (inclusive).
-	 */
-	fun random(start: Long, end: Long): Long = rng.random(start, end)
-
-	/**
-	 * Returns a random boolean value.
-	 */
-	fun randomBoolean(): Boolean = rng.nextBoolean()
-
-	/**
-	 * Returns true if a random value between 0 and 1 is less than the specified value.
-	 */
-	fun randomBoolean(chance: Float): Boolean = rng.randomBoolean(chance)
-
-	/**
-	 * Returns random number between 0.0 (inclusive) and 1.0 (exclusive).
-	 */
-	fun random(): Float = rng.nextFloat()
-
-	/**
-	 * Returns a random number between 0 (inclusive) and the specified value (exclusive).
-	 */
-	fun random(range: Float): Float = rng.random(range)
-
-	/**
-	 * Returns a random number between start (inclusive) and end (exclusive).
-	 */
-	fun random(start: Float, end: Float): Float = rng.random(start, end)
-
-	/**
-	 * Returns -1 or 1, randomly.
-	 */
-	fun randomSign(): Int = rng.randomSign()
-
-	/**
-	 * Returns a triangularly distributed random number between -1.0 (exclusive) and 1.0 (exclusive), where values around zero are
-	 * more likely.
-	 * This is an optimized version of {@link #randomTriangular(float, float, float) randomTriangular(-1, 1, 0)}
-	 */
-	fun randomTriangular(): Float = rng.randomTriangular()
-
-	/**
-	 * Returns a triangularly distributed random number between {@code -max} (exclusive) and {@code max} (exclusive), where values
-	 * around zero are more likely.
-	 * This is an optimized version of {@link #randomTriangular(float, float, float) randomTriangular(-max, max, 0)}
-	 * @param max the upper limit
-	 */
-	fun randomTriangular(max: Float): Float = rng.randomTriangular(max)
-
-	/**
-	 * Returns a triangularly distributed random number between {@code min} (inclusive) and {@code max} (exclusive), where the
-	 * `mode` argument defaults to the midpoint between the bounds, giving a symmetric distribution.
-	 *
-	 * This method is equivalent of [randomTriangular(min, max, (max - min) * .5f)]
-	 * @param min the lower limit
-	 * @param max the upper limit
-	 */
-	fun randomTriangular(min: Float, max: Float): Float = rng.randomTriangular(min, max)
-
-	/**
-	 * Returns a triangularly distributed random number between {@code min} (inclusive) and {@code max} (exclusive), where values
-	 * around {@code mode} are more likely.
-	 * @param min the lower limit
-	 * @param max the upper limit
-	 * @param mode the point around which the values are more likely
-	 */
-	fun randomTriangular(min: Float, max: Float, mode: Float): Float = rng.randomTriangular(min, max, mode)
 
 	// ---
 
@@ -464,3 +377,6 @@ inline fun <T : Comparable<T>> maxOf4(a: T, b: T, c: T, d: T): T {
 inline fun <T : Comparable<T>> minOf4(a: T, b: T, c: T, d: T): T {
 	return minOf(minOf(a, b), minOf(c, d))
 }
+
+fun Random.nextFloat(until: Float): Float = nextDouble(until.toDouble()).toFloat()
+fun Random.nextFloat(from: Float, until: Float): Float = nextDouble(from.toDouble(), until.toDouble()).toFloat()

@@ -119,7 +119,7 @@ open class JsModule(
 
 		if (minimize) dce(dest)
 		if (optimize) optimize(dest)
-		//if (minimize) uglify(dest)
+//		if (minimize) uglify(dest)
 
 		val manifest = ManifestUtil.createManifest(File(dest, "lib/"), dest)
 		val filesJs = File(dest, "lib/files.js")
@@ -137,6 +137,7 @@ open class JsModule(
 	}
 
 	private fun optimize(dest: File) {
+		println("Optimizing")
 		// Apply transformations on the source files.
 		val jsPatcher = SourceFileManipulator()
 		jsPatcher.addProcessor(KotlinMonkeyPatcher::optimizeProductionCode, "js")
@@ -144,6 +145,7 @@ open class JsModule(
 	}
 
 	private fun dce(dest: File) {
+		println("Dce")
 		val sources = arrayListOf(File(dest, "$libDir/kotlin.js"))
 		walkDependenciesBottomUp {
 			sources.add(File(dest, "$libDir/${it.name}.js"))
@@ -160,11 +162,12 @@ open class JsModule(
 	}
 
 	private fun uglify(dest: File) {
+		println("Uglifying")
 		val compiler = Compiler()
 		val options = CompilerOptions()
+		CompilationLevel.SIMPLE_OPTIMIZATIONS.setOptionsForCompilationLevel(options)
 		options.languageIn = CompilerOptions.LanguageMode.ECMASCRIPT5
 		options.languageOut = CompilerOptions.LanguageMode.ECMASCRIPT5
-		CompilationLevel.SIMPLE_OPTIMIZATIONS.setOptionsForCompilationLevel(options)
 		WarningLevel.QUIET.setOptionsForWarningLevel(options)
 
 		val sources = arrayListOf(File(dest, "$libDir/kotlin.js"))

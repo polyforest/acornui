@@ -99,7 +99,7 @@ abstract class Module(
 	 * @param name The name of the skin folder. E.g. "basic"
 	 */
 	fun skin(name: String): File {
-		return File(BuildUtil.ACORNUI_HOME_PATH, "Skins/$name/resources")
+		return File(ACORNUI_HOME_PATH, "Skins/$name/resources")
 	}
 
 	open fun buildAssets() {
@@ -209,7 +209,8 @@ abstract class Module(
 				manifest = null
 				println("Using existing manifest.")
 			} else {
-				println("Creating manifest with mainClass $mainClass.")
+				if (mainClass != null) println("Creating manifest with mainClass $mainClass.")
+				else println("Creating manifest with no mainClass.")
 				manifest = Manifest()
 				manifest.mainAttributes[Attributes.Name.MANIFEST_VERSION] = "1.0"
 				if (mainClass != null) manifest.mainAttributes[Attributes.Name.MAIN_CLASS] = mainClass
@@ -278,7 +279,7 @@ abstract class Module(
 		/**
 		 * The module type for JS output.
 		 */
-		var moduleKind = ModuleKind.AMD
+		var moduleKind = ModuleKind.UMD
 
 		var verbose: Boolean = false
 

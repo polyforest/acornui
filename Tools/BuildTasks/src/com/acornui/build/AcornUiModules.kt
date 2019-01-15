@@ -25,10 +25,6 @@ import java.util.jar.JarFile
 //------------------------------------------
 
 
-private val ACORNUI_HOME = BuildUtil.ACORNUI_HOME_PATH
-private val ACORNUI_DIST = BuildUtil.ACORNUI_DIST
-private val ACORNUI_OUT = BuildUtil.ACORNUI_OUT
-
 object AcornUtils : Module(File(ACORNUI_HOME, "AcornUtils"), out = ACORNUI_OUT, dist = ACORNUI_DIST)
 
 object AcornUiCore : Module(File(ACORNUI_HOME, "AcornUiCore"), out = ACORNUI_OUT, dist = ACORNUI_DIST) {
