@@ -45,7 +45,6 @@ class ResizeableFrameBuffer(override val injector: Injector, initialWidth: Int, 
 
 	init {
 		setSize(initialWidth, initialHeight)
-		sprite.setUv(0f, 0f, 1f, 1f, false)
 	}
 
 	fun setSize(width: Int, height: Int) {
