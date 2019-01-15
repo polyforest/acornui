@@ -110,28 +110,6 @@ interface ElementContainerRo<out T : UiComponentRo> : ContainerRo, ElementParent
  */
 interface ElementContainer<T : UiComponent> : ElementContainerRo<T>, ElementParent<T>, Container
 
-interface SingleElementContainer<T : UiComponent> : ContainerRo, Container {
-
-	/**
-	 * Sets the single element on this container. If there was previously an element set, it will be removed but
-	 * not disposed.
-	 */
-	var element : T?
-
-	/**
-	 * Syntax sugar for addElement.
-	 */
-	operator fun <P : T> P.unaryPlus(): P {
-		element = this
-		return this
-	}
-
-	operator fun <P : T> P.unaryMinus(): P {
-		element = null
-		return this
-	}
-}
-
 /**
  * @author nbilyk
  */

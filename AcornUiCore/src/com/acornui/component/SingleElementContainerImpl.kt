@@ -18,6 +18,29 @@ package com.acornui.component
 
 import com.acornui.core.di.Owned
 
+
+interface SingleElementContainer<T : UiComponent> : ContainerRo, Container {
+
+	/**
+	 * Sets the single element on this container. If there was previously an element set, it will be removed but
+	 * not disposed.
+	 */
+	var element : T?
+
+	/**
+	 * Syntax sugar for addElement.
+	 */
+	operator fun <P : T> P.unaryPlus(): P {
+		element = this
+		return this
+	}
+
+	operator fun <P : T> P.unaryMinus(): P {
+		element = null
+		return this
+	}
+}
+
 open class SingleElementContainerImpl<T : UiComponent>(owner: Owned) : ContainerImpl(owner), SingleElementContainer<T> {
 
 	private var _element: T? = null
