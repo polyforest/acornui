@@ -22,6 +22,7 @@ import com.acornui.collection.ClearableObjectPool
 import com.acornui.collection.Clearable
 import com.acornui.serialization.*
 import kotlin.math.*
+import kotlin.random.Random
 
 /**
  * A read-only view into a Vector2
@@ -298,8 +299,8 @@ class Vector2(
 	}
 
 	fun random(): Vector2 {
-		x = MathUtils.random() * 2f - 1f
-		y = MathUtils.random() * 2f - 1f
+		x = Random.nextFloat() * 2f - 1f
+		y = Random.nextFloat() * 2f - 1f
 		return this
 	}
 

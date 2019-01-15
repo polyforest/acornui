@@ -18,8 +18,8 @@ package com.acornui.particle
 
 import com.acornui.math.Easing
 import com.acornui.math.Interpolation
-import com.acornui.math.MathUtils.random
 import com.acornui.serialization.*
+import kotlin.random.Random
 
 data class FloatRange(
 		val min: Float,
@@ -28,7 +28,7 @@ data class FloatRange(
 ) {
 
 	fun getValue(): Float {
-		return easing.apply(random()) * (max - min) + min
+		return easing.apply(Random.nextFloat()) * (max - min) + min
 	}
 
 	companion object {

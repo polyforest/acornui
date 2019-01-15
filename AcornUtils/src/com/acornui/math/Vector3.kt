@@ -22,6 +22,7 @@ import com.acornui.collection.Clearable
 import com.acornui.collection.ClearableObjectPool
 import com.acornui.serialization.*
 import kotlin.math.*
+import kotlin.random.Random
 
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
@@ -596,9 +597,9 @@ class Vector3 (
 	}
 
 	fun random(): Vector3 {
-		x = MathUtils.random() * 2f - 1f
-		y = MathUtils.random() * 2f - 1f
-		z = MathUtils.random() * 2f - 1f
+		x = Random.nextFloat() * 2f - 1f
+		y = Random.nextFloat() * 2f - 1f
+		z = Random.nextFloat() * 2f - 1f
 		return this
 	}
 
