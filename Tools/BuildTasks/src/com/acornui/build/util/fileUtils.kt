@@ -22,6 +22,7 @@ import java.io.File
 fun File.lastModifiedRecursive(): Long {
 	var lastModified = 0L
 	for (i in walkTopDown()) {
+		if (i.isDirectory) continue
 		val iLastModified = i.lastModified()
 		if (iLastModified > lastModified) {
 			lastModified = iLastModified
