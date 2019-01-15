@@ -21,7 +21,6 @@ import com.acornui.math.MathUtils.clamp
 import com.acornui.math.MathUtils.roundToNearest
 import com.acornui.math.fractionDigits
 import com.acornui.reflect.observable
-import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 
 class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
