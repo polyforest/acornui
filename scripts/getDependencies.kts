@@ -20,7 +20,6 @@ dependency("$repo/org/apache/commons/commons-io/1.3.2/commons-io-1.3.2", "Tools/
 dependency("$repo/org/slf4j/slf4j-simple/1.6.6/slf4j-simple-1.6.6", "Tools/BuildTasks", includeSources = false, includeDocs = false)
 dependency("$repo/org/slf4j/slf4j-api/1.7.9/slf4j-api-1.7.9", "Tools/BuildTasks", includeSources = false, includeDocs = false)
 
-
 dependency("$repo/com/google/code/gson/gson/2.7/gson-2.7", "Tools/BuildTasks")
 dependency("$repo/com/google/guava/guava/20.0/guava-20.0", "Tools/BuildTasks")
 
