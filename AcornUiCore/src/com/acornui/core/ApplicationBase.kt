@@ -65,7 +65,7 @@ abstract class ApplicationBase : Disposable {
 				thisRef: ApplicationBase,
 				prop: KProperty<*>
 		): ReadOnlyProperty<ApplicationBase, suspend () -> Unit> {
-			thisRef.pendingTasks.put(prop.name, prop.name to work)
+			thisRef.pendingTasks[prop.name] = prop.name to work
 			return this
 		}
 
