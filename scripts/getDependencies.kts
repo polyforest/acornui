@@ -9,6 +9,9 @@ if (!File(acornUiHome).exists()) throw Exception("ACORNUI_HOME '$acornUiHome' do
 val repo = "http://repo1.maven.org/maven2"
 val lwjglVersion = "3.1.6"
 
+val knownDependencies = mutableSetOf<String>()
+val knownDependencyLocations = mutableSetOf<String>()
+
 dependency("$repo/com/bladecoder/packr/packr/2.1/packr-2.1", "Tools/BuildTasks", includeSources = false, includeDocs = false)
 dependency("$repo/org/zeroturnaround/zt-zip/1.10/zt-zip-1.10", "Tools/BuildTasks", includeSources = false, includeDocs = false)
 dependency("$repo/com/eclipsesource/minimal-json/minimal-json/0.9.1/minimal-json-0.9.1", "Tools/BuildTasks", includeSources = false, includeDocs = false)
@@ -20,9 +23,10 @@ dependency("$repo/org/slf4j/slf4j-api/1.7.9/slf4j-api-1.7.9", "Tools/BuildTasks"
 
 dependency("$repo/com/google/code/gson/gson/2.7/gson-2.7", "Tools/BuildTasks")
 dependency("$repo/com/google/guava/guava/20.0/guava-20.0", "Tools/BuildTasks")
-// v20190106
-dependency("$repo/com/google/javascript/closure-compiler-externs/v20170626/closure-compiler-externs-v20170626", "Tools/BuildTasks", includeSources = false, includeDocs = false)
-dependency("$repo/com/google/javascript/closure-compiler/v20170626/closure-compiler-v20170626", "Tools/BuildTasks")
+
+val closureVersion = "v20190106" // old v20170626
+dependency("$repo/com/google/javascript/closure-compiler-externs/$closureVersion/closure-compiler-externs-$closureVersion", "Tools/BuildTasks", includeSources = false, includeDocs = false)
+dependency("$repo/com/google/javascript/closure-compiler/$closureVersion/closure-compiler-$closureVersion", "Tools/BuildTasks")
 
 
 val natives = arrayOf("windows", "macos", "linux")
@@ -67,6 +71,8 @@ fun downloadJars(path: String, destination: String, includeSources: Boolean, inc
 
 fun download(path: String, destination: String) {
 	val dest = File(destination)
+	knownDependencies.add(dest.absolutePath)
+	knownDependencyLocations.add(dest.parent!!)
 	if (dest.exists()) return // Already up-to-date.
 	dest.parentFile.mkdirs()
 	val connection = URL(path).openConnection()
@@ -89,4 +95,12 @@ fun download(path: String, destination: String) {
 	println("")
 }
 
-println(tEST)
+// Cleanup dependencies
+for (knownDependencyLocation in knownDependencyLocations) {
+	for (listFile in File(knownDependencyLocation).listFiles()) {
+		if (!knownDependencies.contains(listFile.absolutePath)) {
+			println("Deleting old dependency: ${listFile.absolutePath}")
+			listFile.delete()
+		}
+	}
+}
