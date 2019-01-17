@@ -62,6 +62,7 @@ class DateParserTest {
 	fun parseDateOptionalYear() {
 		val currentYear = 2018
 		val parser = DateTimeParser()
+		parser.currentYear = currentYear
 		parser.yearIsOptional = true
 		parser.type = DateTimeFormatType.DATE
 
