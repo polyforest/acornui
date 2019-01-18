@@ -125,7 +125,7 @@ object JvmRestServiceFactory : RestServiceFactory {
 		return object : JvmHttpRequest<ReadByteBuffer>(injector.inject(TimeDriver), requestData) {
 			override fun process(inputStream: InputStream): ReadByteBuffer {
 				val byteArray = inputStream.use {
-					it.readAllBytes()
+					it.readAllBytes2()
 				}
 				val buffer = ByteBuffer.wrap(byteArray)
 				buffer.order(ByteOrder.LITTLE_ENDIAN)
