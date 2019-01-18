@@ -87,7 +87,7 @@ class ValidationGraphTest {
 	}
 
 	@Test fun dependents() {
-		n.addNode(EIGHT, dependencies = FOUR, dependants = FIVE) {}
+		n.addNode(EIGHT, dependencies = FOUR, dependents = FIVE) {}
 
 		n.validate(FIVE)
 
