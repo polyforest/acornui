@@ -45,9 +45,9 @@ fun Array<String>.join2(delim: Char): String {
 }
 
 fun String.split2(delim: Char): Array<String> {
-	val size = count({ it == delim }) + 1
+	val size = count { it == delim } + 1
 	var index = 0
-	return Array(size, {
+	return Array(size) {
 		val nextIndex = indexOf(delim, index)
 		val sub: String
 		if (nextIndex == -1) {
@@ -57,7 +57,7 @@ fun String.split2(delim: Char): Array<String> {
 		}
 		index = nextIndex + 1
 		sub
-	})
+	}
 }
 
 fun Array<String>.join2(delim: CharSequence): String {
@@ -81,7 +81,7 @@ fun String.split2(delim: String): Array<String> {
 	}
 
 	index = 0
-	return Array(size, {
+	return Array(size) {
 		val nextIndex = indexOf(delim, index)
 		val sub: String
 		if (nextIndex == -1) {
@@ -91,7 +91,7 @@ fun String.split2(delim: String): Array<String> {
 		}
 		index = nextIndex + len
 		sub
-	})
+	}
 }
 
 fun String.startsWith2(prefix: String, offset: Int = 0): Boolean {

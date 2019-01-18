@@ -153,7 +153,7 @@ open class JsModule(
 
 		val compilerArgs = K2JSDceArguments().apply {
 			outputDirectory = File(dest, libDir).absolutePath
-			freeArgs = sources.toStringList()
+			freeArgs = sources.map { it.absolutePath }
 			devMode = false
 			printReachabilityInfo = false
 		}
@@ -167,14 +167,14 @@ open class JsModule(
 		val options = CompilerOptions()
 		CompilationLevel.SIMPLE_OPTIMIZATIONS.setOptionsForCompilationLevel(options)
 		options.languageIn = CompilerOptions.LanguageMode.ECMASCRIPT5
-		options.languageOut = CompilerOptions.LanguageMode.ECMASCRIPT5
+//		options.languageOut = CompilerOptions.LanguageMode.ECMASCRIPT5
 		WarningLevel.QUIET.setOptionsForWarningLevel(options)
 
 		val sources = arrayListOf(File(dest, "$libDir/kotlin.js"))
 		walkDependenciesBottomUp {
 			sources.add(File(dest, "$libDir/${it.name}.js"))
 		}
-		compiler.compile(listOf(), sources.map { SourceFile.fromFile(it) }, options)
+		compiler.compile(listOf(), sources.map { SourceFile.fromFile(it.absolutePath) }, options)
 
 		for (message in compiler.errors) {
 			System.err.println("Error message: $message")

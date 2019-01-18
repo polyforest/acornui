@@ -130,14 +130,13 @@ abstract class Module(
 			outJs.clean()
 			expandLibraryDependencies(jsLibraryDependencies, libraryFiles)
 			val compilerArgs = K2JSCompilerArguments().apply {
-				//coroutinesWarn = false
 				moduleKind = Module.moduleKind.name.toLowerCase()
 				outputFile = File(outJs, "$name.js").absolutePath
 				sourceMap = true
 				metaInfo = true
 				if (libraryFiles.isNotEmpty())
 					libraries = libraryFiles.joinToString(PATH_SEPARATOR)
-				freeArgs = sourceFolders.toStringList()
+				freeArgs = sourceFolders.map { it.absolutePath }
 			}
 			println("$name Compiling JS")
 			val exitCode = K2JSCompiler().exec(BasicMessageCollector(verbose = verbose), Services.EMPTY, compilerArgs)
@@ -162,11 +161,12 @@ abstract class Module(
 			outJvm.clean()
 			expandLibraryDependencies(jvmLibraryDependencies, libraryFiles)
 			val compilerArgs = K2JVMCompilerArguments().apply {
+				jvmTarget = "1.8"
 				destination = outJvm.absolutePath
 				if (libraryFiles.isNotEmpty())
 					classpath = libraryFiles.joinToString(PATH_SEPARATOR)
 				includeRuntime = includeKotlinJvmRuntime
-				freeArgs = sourceFolders.toStringList()
+				freeArgs = sourceFolders.map { it.absolutePath }
 			}
 			println("$name Compiling JVM")
 			val exitCode = K2JVMCompiler().exec(BasicMessageCollector(verbose = verbose), Services.EMPTY, compilerArgs)
