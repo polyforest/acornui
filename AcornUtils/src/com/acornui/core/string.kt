@@ -239,6 +239,14 @@ fun String.toUnderscoreCase(): String {
 	return replace(Regex("([a-z])([A-Z]+)"), "$1_$2").toLowerCase()
 }
 
+fun String.toHyphenCase(): String {
+	return replace(Regex("([a-z])([A-Z]+)"), "$1_$2").toLowerCase()
+}
+
+fun String.toFirstLowerCase(): String {
+	return this[0].toLowerCase() + substring(1)
+}
+
 private val whitespaceChars = mapOf(
 		0x0009.toChar() to true,
 		0x000A.toChar() to true,
