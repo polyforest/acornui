@@ -23,14 +23,14 @@ package com.acornui.build
 class ArgumentMap(private val args: Array<String>) {
 
 	fun exists(name: String): Boolean {
-		val str = "-" + name.toLowerCase()
-		val str2 = str + "="
+		val str = "-${name.toLowerCase()}"
+		val str2 = "$str="
 		val found = args.firstOrNull { it.toLowerCase() == str || it.toLowerCase().startsWith(str2) }
 		return found != null
 	}
 
 	fun get(name: String): String? {
-		val str = "-" + name.toLowerCase() + "="
+		val str = "-${name.toLowerCase()}="
 		val index = args.indexOfFirst { it.toLowerCase().startsWith(str) }
 		if (index == -1) return null
 		return args[index].substring(name.length + 2)
@@ -42,7 +42,7 @@ class ArgumentMap(private val args: Array<String>) {
 	}
 
 	fun get(name: String, default: String): String {
-		val str = "-" + name.toLowerCase() + "="
+		val str = "-${name.toLowerCase()}="
 		val index = args.indexOfFirst { it.toLowerCase().startsWith(str) }
 		if (index == -1) return default
 		return args[index].substring(name.length + 2)

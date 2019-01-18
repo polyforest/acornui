@@ -6,7 +6,7 @@ import com.acornui.build.util.sourcesAreNewer
 import java.io.File
 
 /**
- * A core module compiles to both js and jvm, and runs the asset tools such as the texture packer on the asset
+ * A module that can compiles to different back-ends, and runs the asset tools such as the texture packer on the asset
  * directory.
  */
 open class CoreModule(
