@@ -134,18 +134,18 @@ class ValidationGraph {
 	 * Appends a validation node.
 	 * @param dependencies If any of these dependencies become invalid, this node will also become invalid.
 	 */
-	fun addNode(flag: Int, dependencies: Int, dependants: Int, onValidate: () -> Unit) {
+	fun addNode(flag: Int, dependencies: Int, dependents: Int, onValidate: () -> Unit) {
 		if (assertionsEnabled && !MathUtils.isPowerOfTwo(flag)) throw IllegalArgumentException("flag ${flag.toRadix(2)} is not a power of 2.")
-		val newNode = ValidationNode(flag, dependants or flag, dependencies or flag, onValidate)
+		val newNode = ValidationNode(flag, dependents or flag, dependencies or flag, onValidate)
 		var dependenciesNotFound = dependencies
-		var dependantsNotFound = dependants
+		var dependentsNotFound = dependents
 		var insertIndex = nodes.size
 		for (i in 0..nodes.lastIndex) {
 			val previousNode = nodes[i]
 			if (previousNode.flag == flag) throw Exception("flag $flag already exists.")
 			val flagInv = previousNode.flag.inv()
 			dependenciesNotFound = dependenciesNotFound and flagInv
-			dependantsNotFound = dependantsNotFound and flagInv
+			dependentsNotFound = dependentsNotFound and flagInv
 			if (previousNode.validationMask and newNode.invalidationMask > 0) {
 				previousNode.validationMask = newNode.validationMask or previousNode.validationMask
 				newNode.invalidationMask = newNode.invalidationMask or previousNode.invalidationMask
@@ -156,15 +156,15 @@ class ValidationGraph {
 				newNode.validationMask = newNode.validationMask or previousNode.validationMask
 				previousNode.invalidationMask = newNode.invalidationMask or previousNode.invalidationMask
 				if (insertIndex <= i) {
-					throw Exception("Validation node cannot be added after dependency ${previousNode.flag.toFlagString()} and before all dependants ${dependants.toFlagsString()}")
+					throw Exception("Validation node cannot be added after dependency ${previousNode.flag.toFlagString()} and before all dependents ${dependents.toFlagsString()}")
 				}
 			}
 		}
 		nodes.add(insertIndex, newNode)
 		_invalidFlags = _invalidFlags or newNode.flag
 		_allFlags = _allFlags or newNode.flag
-		if (dependantsNotFound != 0)
-			throw Exception("validation node added, but the dependant flags: ${dependantsNotFound.toFlagsString()} were not found.")
+		if (dependentsNotFound != 0)
+			throw Exception("validation node added, but the dependent flags: ${dependentsNotFound.toFlagsString()} were not found.")
 		if (dependenciesNotFound != 0)
 			throw Exception("validation node added, but the dependency flags: ${dependenciesNotFound.toFlagsString()} were not found.")
 	}
