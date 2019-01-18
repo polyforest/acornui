@@ -34,7 +34,7 @@ import java.io.File
 private fun checkResult(result: Int, path: PointerBuffer): String? = when (result) {
 	NFD_OKAY -> {
 		val str = path.getStringUTF8(0)
-		nNFDi_Free(path.get(0))
+		nNFD_Free(path.get(0))
 		str
 	}
 	NFD_CANCEL -> null

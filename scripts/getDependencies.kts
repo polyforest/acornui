@@ -3,11 +3,8 @@ import java.io.FileOutputStream
 import java.net.URL
 import java.nio.channels.Channels
 
-val acornUiHome: String = System.getenv()["ACORNUI_HOME"] ?: throw Exception("Environment variable ACORNUI_HOME must be set.")
-if (!File(acornUiHome).exists()) throw Exception("ACORNUI_HOME '$acornUiHome' does not exist.")
-
 val repo = "http://repo1.maven.org/maven2"
-val lwjglVersion = "3.1.6"
+val lwjglVersion = "3.2.1"
 
 val knownDependencies = mutableSetOf<String>()
 val knownDependencyLocations = mutableSetOf<String>()
@@ -51,15 +48,15 @@ testDependency("$repo/org/mockito/mockito-core/1.10.19/mockito-core-1.10.19")
 testDependency("$repo/org/objenesis/objenesis/2.1/objenesis-2.1")
 
 fun dependency(path: String, module: String, includeSources: Boolean = true, includeDocs: Boolean = true) {
-	downloadJars(path, "$acornUiHome/$module/externalLib/compile/${path.substringAfterLast("/")}", includeSources, includeDocs)
+	downloadJars(path, "$module/externalLib/compile/${path.substringAfterLast("/")}", includeSources, includeDocs)
 }
 
 fun runtimeDependency(path: String, module: String) {
-	downloadJars(path, "$acornUiHome/$module/externalLib/runtime/${path.substringAfterLast("/")}", includeSources = false, includeDocs = false)
+	downloadJars(path, "$module/externalLib/runtime/${path.substringAfterLast("/")}", includeSources = false, includeDocs = false)
 }
 
 fun testDependency(path: String, includeSources: Boolean = true, includeDocs: Boolean = true) {
-	downloadJars(path, "$acornUiHome/externalLib/test/${path.substringAfterLast("/")}", includeSources, includeDocs)
+	downloadJars(path, "externalLib/test/${path.substringAfterLast("/")}", includeSources, includeDocs)
 }
 
 fun downloadJars(path: String, destination: String, includeSources: Boolean, includeDocs: Boolean) {
