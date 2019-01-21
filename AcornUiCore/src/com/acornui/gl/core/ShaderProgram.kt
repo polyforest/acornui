@@ -18,6 +18,7 @@ package com.acornui.gl.core
 
 import com.acornui.collection.stringMapOf
 import com.acornui.core.Disposable
+import com.acornui.core.userInfo
 
 
 interface ShaderProgram : Disposable {
@@ -214,8 +215,9 @@ val standardVertexAttributes = VertexAttributes(listOf(
 		VertexAttribute(2, false, Gl20.FLOAT, VertexAttributeUsage.TEXTURE_COORD))
 )
 
-const val DEFAULT_SHADER_HEADER: String = """
-#version 100
+val DEFAULT_SHADER_HEADER: String
+		get() = """
+#version ${if (userInfo.isDesktop) "120" else "100"}
 #ifdef GL_ES
 #define LOW_P lowp
 #define MED_P mediump

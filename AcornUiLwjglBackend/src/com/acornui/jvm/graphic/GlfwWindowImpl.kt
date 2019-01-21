@@ -91,8 +91,6 @@ class GlfwWindowImpl(
 
 		//GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GL11.GL_FALSE) // the window will stay hidden after creation
 		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GL11.GL_TRUE) // the window will be resizable
-		GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 2)
-		GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 0)
 
 		// Create the window
 		windowId = GLFW.glfwCreateWindow(windowConfig.initialWidth.toInt(), windowConfig.initialHeight.toInt(), windowConfig.title, MemoryUtil.NULL, MemoryUtil.NULL)
