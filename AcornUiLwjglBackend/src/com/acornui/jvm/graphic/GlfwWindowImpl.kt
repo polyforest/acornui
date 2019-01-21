@@ -121,25 +121,12 @@ class GlfwWindowImpl(
 		}
 
 		// Get the thread stack and push a new frame
-		val sizeStack = stackPush()
-		try {
+		stackPush().use { sizeStack ->
 			val pWidth = sizeStack.mallocInt(1) // int*
 			val pHeight = sizeStack.mallocInt(1) // int*
 
 			// Get the window size passed to glfwCreateWindow
 			GLFW.glfwGetWindowSize(windowId, pWidth, pHeight)
-
-			// Get the resolution of the primary monitor
-			val vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor())
-
-			// Center the window
-			GLFW.glfwSetWindowPos(
-					windowId,
-					(vidMode!!.width() - pWidth.get(0)) / 2,
-					(vidMode.height() - pHeight.get(0)) / 2
-			)
-		} finally {
-			sizeStack.close()
 		}
 
 		// Get the window high definition scale
