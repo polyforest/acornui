@@ -19,7 +19,23 @@ package com.acornui.async
 import com.acornui.async.Deferred.Status
 import com.acornui.collection.*
 import com.acornui.core.Disposable
+import com.acornui.error.getStack
 import kotlin.coroutines.*
+
+/**
+ * If true, it is possible to see which co-routines are stuck and what invoked them.
+ *
+ * To check active co-routines, pause the IDEA debugger, then Evaluate expression:
+ * `com.acornui.async.AsyncKt.activeCoroutinesStr`
+ */
+var coroutineDebugMode = false
+
+val activeCoroutines = HashMap<Continuation<*>, String>()
+var activeCoroutinesStr: String = ""
+
+private fun refreshActiveCoroutinesStr() {
+	activeCoroutinesStr = activeCoroutines.entries.joinToString("\n--------------------------------------\n\n")
+}
 
 /**
  * Launches a new coroutine on this same thread.
@@ -42,8 +58,19 @@ class BasicContinuationImpl(
 		override val context: CoroutineContext = EmptyCoroutineContext
 ) : Continuation<Unit> {
 
+	init {
+		if (coroutineDebugMode) {
+			activeCoroutines[this] = getStack()
+			refreshActiveCoroutinesStr()
+		}
+	}
+
 	override fun resumeWith(result: Result<Unit>) {
 		result.onFailure { throw it }
+		if (coroutineDebugMode) {
+			activeCoroutines.remove(this)
+			refreshActiveCoroutinesStr()
+		}
 	}
 }
 

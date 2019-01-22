@@ -191,12 +191,13 @@ Kotlin.isType = function(object, klass) {
 		val path = appConfig.rootPath + "assets/build.txt".appendParam("version", UidUtil.createUid())
 		val buildVersionLoader = JsTextLoader(path)
 		val debug = appConfig.debug || (window.location.search.contains(Regex("""(?:&|\?)debug=(true|1)""")))
+		val debugCoroutines = appConfig.debugCoroutines || (window.location.search.contains(Regex("""(?:&|\?)debugCoroutines=(true|1)""")))
 		val build = buildVersionLoader.awaitOrNull()
 		val finalConfig = if (build != null) {
-			appConfig.copy(debug = debug, version = appConfig.version.copy(build = build.toInt()))
+			appConfig.copy(debug = debug, debugCoroutines = debugCoroutines, version = appConfig.version.copy(build = build.toInt()))
 		} else {
 			Log.warn("assets/build.txt failed to load")
-			appConfig.copy(debug = debug)
+			appConfig.copy(debug = debug, debugCoroutines = debugCoroutines)
 		}
 
 		// Uncaught exception handler

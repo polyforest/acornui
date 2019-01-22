@@ -19,6 +19,7 @@
 package com.acornui.jvm
 
 import com.acornui.assertionsEnabled
+import com.acornui.async.coroutineDebugMode
 import com.acornui.async.launch
 import com.acornui.browser.decodeUriComponent2
 import com.acornui.browser.encodeUriComponent2
@@ -178,11 +179,12 @@ open class LwjglApplication : ApplicationBase() {
 
 		val finalConfig = config.copy(
 				version = config.version.copy(build = build),
-				debug = config.debug || System.getProperty("debug")?.toLowerCase() == "true"
+				debug = config.debug || System.getProperty("debug")?.toLowerCase() == "true",
+				debugCoroutines = config.debugCoroutines || System.getProperty("debugCoroutines")?.toLowerCase() == "true"
 		)
-		if (finalConfig.debug) {
-			assertionsEnabled = true
-		}
+		if (finalConfig.debug) assertionsEnabled = true
+		if (finalConfig.debugCoroutines) coroutineDebugMode = true
+
 		if (finalConfig.debug) {
 			Log.level = ILogger.DEBUG
 		} else {
