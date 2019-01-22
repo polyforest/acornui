@@ -23,6 +23,7 @@ import com.acornui.core.Lifecycle
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
+import com.acornui.core.di.injectOptional
 import kotlin.properties.Delegates
 
 interface CursorManager {
@@ -157,6 +158,6 @@ object CursorPriority {
 	var NOT_ALLOWED: Float = 1000f
 }
 
-fun Owned.busyCursor(): CursorReference {
-	return inject(CursorManager).addCursor(StandardCursors.POINTER_WAIT, CursorPriority.POINTER_WAIT)
+fun Owned.busyCursor(): CursorReference? {
+	return injectOptional(CursorManager)?.addCursor(StandardCursors.POINTER_WAIT, CursorPriority.POINTER_WAIT)
 }

@@ -29,7 +29,7 @@ import com.acornui.core.di.Owned
 class LoadingQueueBusyWatch(injector: Injector) {
 
 	private val assets = injector.inject(AssetManager)
-	private val cursor = injector.inject(CursorManager)
+	private val cursor = injector.injectOptional(CursorManager)
 
 	private var _busyCursor: CursorReference? = null
 	private var _isRunning = false
@@ -54,7 +54,7 @@ class LoadingQueueBusyWatch(injector: Injector) {
 	private fun setBusy(value: Boolean) {
 		if ((_busyCursor != null) == value) return
 		_busyCursor = if (value) {
-			cursor.addCursor(StandardCursors.POINTER_WAIT, CursorPriority.POINTER_WAIT)
+			cursor?.addCursor(StandardCursors.POINTER_WAIT, CursorPriority.POINTER_WAIT)
 		} else {
 			_busyCursor?.remove()
 			null

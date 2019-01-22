@@ -19,7 +19,7 @@ package com.acornui.core.cursor
 import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.core.Disposable
-import com.acornui.core.di.inject
+import com.acornui.core.di.injectOptional
 import com.acornui.core.input.interaction.MouseInteractionRo
 import com.acornui.core.input.interaction.rollOut
 import com.acornui.core.input.interaction.rollOver
@@ -32,14 +32,14 @@ class RollOverCursor(
 		private val cursor: Cursor,
 		private val priority: Float = CursorPriority.ACTIVE) : Disposable {
 
-	private val cursorManager = target.inject(CursorManager)
+	private val cursorManager = target.injectOptional(CursorManager)
 
 	private var cursorRef: CursorReference? = null
 
 	private val rollOverHandler = {
 		event: MouseInteractionRo ->
 		cursorRef?.remove()
-		cursorRef = cursorManager.addCursor(cursor, priority)
+		cursorRef = cursorManager?.addCursor(cursor, priority)
 	}
 
 	private val rollOutHandler = {
