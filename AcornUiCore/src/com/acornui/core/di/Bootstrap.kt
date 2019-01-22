@@ -21,7 +21,7 @@ class Bootstrap : Disposable {
 	private val _map = HashMap<DKey<*>, LateValue<Any>>()
 
 	suspend fun <T : Any> get(key: DKey<T>): T {
-		val late = _map.getOrPut(key) { LateValue<Any>() }
+		val late = _map.getOrPut(key) { LateValue() }
 		@Suppress("UNCHECKED_CAST")
 		return late.await() as T
 	}
@@ -31,7 +31,7 @@ class Bootstrap : Disposable {
 
 		var p: DKey<*>? = key
 		while (p != null) {
-			val late = _map.getOrPut(p) { LateValue<Any>() }
+			val late = _map.getOrPut(p) { LateValue() }
 			if (!late.isPending)
 				throw Exception("value already set for key $p")
 			late.setValue(value)

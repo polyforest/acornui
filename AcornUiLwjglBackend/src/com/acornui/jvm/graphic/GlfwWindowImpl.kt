@@ -30,8 +30,6 @@ import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
 import org.lwjgl.glfw.Callbacks
 import org.lwjgl.glfw.GLFW
-import org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor
-import org.lwjgl.glfw.GLFW.glfwGetVideoMode
 import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11
