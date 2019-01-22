@@ -20,11 +20,10 @@ import com.acornui.collection.Clearable
 import com.acornui.collection.ClearableObjectPool
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.core.Lifecycle
+import com.acornui.core.LifecycleBase
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
 import com.acornui.core.di.injectOptional
-import kotlin.properties.Delegates
 
 interface CursorManager {
 
@@ -130,25 +129,27 @@ abstract class CursorManagerBase : CursorManager {
  * A suite of cursors that standard components should be able to rely on existing.
  */
 object StandardCursors {
-	var ALIAS: Cursor by Delegates.notNull()
-	var ALL_SCROLL: Cursor by Delegates.notNull()
-	var CELL: Cursor by Delegates.notNull()
-	var COPY: Cursor by Delegates.notNull()
-	var CROSSHAIR: Cursor by Delegates.notNull()
-	var DEFAULT: Cursor by Delegates.notNull()
-	var HAND: Cursor by Delegates.notNull()
-	var HELP: Cursor by Delegates.notNull()
-	var IBEAM: Cursor by Delegates.notNull()
-	var MOVE: Cursor by Delegates.notNull()
-	var NONE: Cursor by Delegates.notNull()
-	var NOT_ALLOWED: Cursor by Delegates.notNull()
-	var POINTER_WAIT: Cursor by Delegates.notNull()
-	var RESIZE_E: Cursor by Delegates.notNull()
-	var RESIZE_N: Cursor by Delegates.notNull()
-	var RESIZE_NE: Cursor by Delegates.notNull()
-	var RESIZE_SE: Cursor by Delegates.notNull()
-	var WAIT: Cursor by Delegates.notNull()
+	var ALIAS: Cursor = DummyCursor
+	var ALL_SCROLL: Cursor = DummyCursor
+	var CELL: Cursor = DummyCursor
+	var COPY: Cursor = DummyCursor
+	var CROSSHAIR: Cursor = DummyCursor
+	var DEFAULT: Cursor = DummyCursor
+	var HAND: Cursor = DummyCursor
+	var HELP: Cursor = DummyCursor
+	var IBEAM: Cursor = DummyCursor
+	var MOVE: Cursor = DummyCursor
+	var NONE: Cursor = DummyCursor
+	var NOT_ALLOWED: Cursor = DummyCursor
+	var POINTER_WAIT: Cursor = DummyCursor
+	var RESIZE_E: Cursor = DummyCursor
+	var RESIZE_N: Cursor = DummyCursor
+	var RESIZE_NE: Cursor = DummyCursor
+	var RESIZE_SE: Cursor = DummyCursor
+	var WAIT: Cursor = DummyCursor
 }
+
+object DummyCursor : LifecycleBase(), Cursor
 
 object CursorPriority {
 	var PASSIVE: Float = 0f
