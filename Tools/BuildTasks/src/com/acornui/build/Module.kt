@@ -121,10 +121,12 @@ abstract class Module(
 			sourceFolders.add(jsSrc)
 		Log.info("sourceFolders: ${sourceFolders.joinToString(", ")}")
 		val libraryFiles = ArrayList<String>()
-		for (i in moduleDependencies) {
-			val metaFile = File(i.outJs, "${i.name}.meta.js")
-			if (!metaFile.exists()) throw Exception("Halted, dependency not built: ${i.name}")
-			libraryFiles.add(metaFile.absolutePath)
+		walkDependenciesBottomUp { it ->
+			if (it != this) {
+				val metaFile = File(it.outJs, "${it.name}.meta.js")
+				if (!metaFile.exists()) throw Exception("Halted, dependency not built: ${it.name}")
+				libraryFiles.add(metaFile.absolutePath)
+			}
 		}
 		if (sourcesAreNewer(sourceFolders + libraryFiles.map(::File), outJs)) {
 			outJs.clean()
@@ -153,15 +155,18 @@ abstract class Module(
 		Log.info("sourceFolders: ${sourceFolders.joinToString(", ")}")
 
 		val libraryFiles = ArrayList<String>()
-		for (i in moduleDependencies) {
-			if (!i.outJvm.exists()) throw Exception("Halted, dependency not built: ${i.name}")
-			libraryFiles.add(i.outJvm.absolutePath)
+		walkDependenciesBottomUp {
+			if (it != this) {
+				if (!it.outJvm.exists()) throw Exception("Halted, dependency not built: ${it.name}")
+				libraryFiles.add(it.outJvm.absolutePath)
+			}
 		}
 		if (sourcesAreNewer(sourceFolders + libraryFiles.map(::File), outJvm)) {
 			outJvm.clean()
 			expandLibraryDependencies(jvmLibraryDependencies, libraryFiles)
 			val compilerArgs = K2JVMCompilerArguments().apply {
 				jvmTarget = "1.8"
+				apiVersion = "1.3"
 				destination = outJvm.absolutePath
 				if (libraryFiles.isNotEmpty())
 					classpath = libraryFiles.joinToString(PATH_SEPARATOR)
@@ -243,8 +248,10 @@ abstract class Module(
 
 	fun executeJar(args: Array<String>, className: String = mainClass!!) {
 		val libraryFiles = ArrayList<String>()
-		for (i in moduleDependencies) {
-			libraryFiles.add(i.jvmJar.absolutePath)
+		walkDependenciesBottomUp {
+			if (it != this) {
+				libraryFiles.add(it.jvmJar.absolutePath)
+			}
 		}
 		//println("classpath: " + System.getProperty("java.class.path"))
 		expandLibraryDependencies(jvmLibraryDependencies, libraryFiles)
@@ -262,6 +269,9 @@ abstract class Module(
 	// Util
 	//----------------------------
 
+	/**
+	 * Walks the module dependencies bottom-up, including this module.
+	 */
 	fun walkDependenciesBottomUp(callback: (Module) -> Unit) = walkDependenciesBottomUp(HashMap(), callback)
 
 	fun walkDependenciesBottomUp(exclude: HashMap<Module, Boolean>, callback: (Module) -> Unit) {

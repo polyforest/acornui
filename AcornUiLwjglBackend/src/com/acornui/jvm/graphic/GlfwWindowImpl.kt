@@ -119,12 +119,15 @@ class GlfwWindowImpl(
 		}
 
 		// Get the thread stack and push a new frame
-		stackPush().use { sizeStack ->
-			val pWidth = sizeStack.mallocInt(1) // int*
-			val pHeight = sizeStack.mallocInt(1) // int*
-
+		val stack = stackPush()
+		@Suppress("ConvertTryFinallyToUseCall") // Don't convert to use call, causes problem with JVM Build
+		try {
+			val pWidth = stack.mallocInt(1) // int*
+			val pHeight = stack.mallocInt(1) // int*
 			// Get the window size passed to glfwCreateWindow
 			GLFW.glfwGetWindowSize(windowId, pWidth, pHeight)
+		} finally {
+			stack.close()
 		}
 
 		// Get the window high definition scale
