@@ -40,7 +40,6 @@ data class FWrapper2(private val inner: () -> Unit) : (Any?, Any?) -> Unit {
 	}
 }
 
-
 /**
  * Converts a method with zero parameters to a method with three (unused) parameters.
  */
