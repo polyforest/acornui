@@ -13,6 +13,7 @@
       <module fileurl="file://$PROJECT_DIR$/AcornUtils/AcornUtils.iml" filepath="$PROJECT_DIR$/AcornUtils/AcornUtils.iml" />
       <module fileurl="file://$PROJECT_DIR$/Tools/BuildTasks/BuildTasks.iml" filepath="$PROJECT_DIR$/Tools/BuildTasks/BuildTasks.iml" group="Tools" />
       <module fileurl="file://$PROJECT_DIR$/scripts/Scripts.iml" filepath="$PROJECT_DIR$/scripts/Scripts.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Tools/TaskRunner/TaskRunner.iml" filepath="$PROJECT_DIR$/Tools/TaskRunner/TaskRunner.iml" group="Tools" />
     </modules>
   </component>
 </project>
