@@ -65,7 +65,7 @@ object BuildUtil {
 	}
 
 	fun execute(allModules: List<Module>, args: Array<String>) {
-		if (args.isEmpty()) return
+		if (args.isEmpty()) return // TODO: Temp
 		val argMap = ArgumentMap(args)
 		Module.force = argMap.exists("force")
 

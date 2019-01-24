@@ -240,7 +240,7 @@ fun String.toUnderscoreCase(): String {
 }
 
 fun String.toHyphenCase(): String {
-	return replace(Regex("([a-z])([A-Z]+)"), "$1_$2").toLowerCase()
+	return replace(Regex("([a-z])([A-Z]+)"), "$1-$2").toLowerCase()
 }
 
 fun String.toFirstLowerCase(): String {
