@@ -33,6 +33,7 @@
     <orderEntry type="module" module-name="AcornUiCore" />
     <orderEntry type="module" module-name="AcornUiLwjglBackend" />
     <orderEntry type="module" module-name="AcornUtils" />
+    <orderEntry type="module" module-name="TaskRunner" />
     <orderEntry type="library" scope="TEST" name="ExternalTestLibs" level="project" />
   </component>
 </module>
