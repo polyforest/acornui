@@ -2,7 +2,7 @@ package com.acornui.build
 
 import com.acornui.collection.setTo
 import com.acornui.logging.ArrayTarget
-import com.acornui.logging.ILogger
+import com.acornui.logging.Logger
 import com.acornui.logging.Log
 import com.acornui.test.assertListEquals
 import org.junit.Before
@@ -17,7 +17,7 @@ class TaskKtTest {
 	private val taskOutput = arrayListOf<Any>()
 	private val arrayTarget = ArrayTarget()
 	private val logWarnOutput: List<String>
-		get() = arrayTarget.list.filter { it.level == ILogger.WARN }.map { it.message }
+		get() = arrayTarget.list.filter { it.level == Logger.WARN }.map { it.message }
 
 	init {
 		Log.targets.setTo(listOf(arrayTarget))

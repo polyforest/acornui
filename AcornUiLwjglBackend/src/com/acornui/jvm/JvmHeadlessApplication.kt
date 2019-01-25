@@ -44,7 +44,7 @@ import com.acornui.jvm.loader.WorkScheduler
 import com.acornui.jvm.text.DateTimeFormatterImpl
 import com.acornui.jvm.text.NumberFormatterImpl
 import com.acornui.jvm.time.TimeProviderImpl
-import com.acornui.logging.ILogger
+import com.acornui.logging.Logger
 import com.acornui.logging.Log
 import com.acornui.serialization.JsonSerializer
 import java.io.File
@@ -76,9 +76,9 @@ open class JvmHeadlessApplication(
 			assertionsEnabled = true
 		}
 		if (finalConfig.debug) {
-			Log.level = ILogger.DEBUG
+			Log.level = Logger.DEBUG
 		} else {
-			Log.level = ILogger.INFO
+			Log.level = Logger.INFO
 		}
 		lineSeparator = System.lineSeparator()
 		encodeUriComponent2 = {

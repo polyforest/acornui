@@ -83,7 +83,7 @@ import com.acornui.js.persistance.JsPersistence
 import com.acornui.js.text.DateTimeFormatterImpl
 import com.acornui.js.text.NumberFormatterImpl
 import com.acornui.js.time.TimeProviderImpl
-import com.acornui.logging.ILogger
+import com.acornui.logging.Logger
 import com.acornui.logging.Log
 import com.acornui.serialization.JsonSerializer
 import org.w3c.dom.DocumentReadyState
@@ -266,9 +266,9 @@ Kotlin.isType = function(object, klass) {
 
 	protected open val loggingTask by BootTask {
 		if (get(AppConfig).debug) {
-			Log.level = ILogger.DEBUG
+			Log.level = Logger.DEBUG
 		} else {
-			Log.level = ILogger.WARN
+			Log.level = Logger.WARN
 		}
 	}
 

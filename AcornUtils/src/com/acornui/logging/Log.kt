@@ -20,8 +20,10 @@ import com.acornui.collection.Clearable
 import com.acornui.collection.poll
 import com.acornui.core.lineSeparator
 
+@Deprecated("renamed to Logger", ReplaceWith("Logger"))
+typealias ILogger = Logger
 
-interface ILogger {
+interface Logger {
 
 	companion object {
 		val ERROR: Int = 1
@@ -76,11 +78,11 @@ interface ILogger {
 /**
  * @author nbilyk
  */
-object Log : ILogger {
+object Log : Logger {
 
-	val targets: MutableList<ILogger> = arrayListOf(PrintTarget())
+	val targets: MutableList<Logger> = arrayListOf(PrintTarget())
 
-	override var level: Int = ILogger.DEBUG
+	override var level: Int = Logger.DEBUG
 
 	override fun log(message: Any?, level: Int) {
 		if (level <= this.level) {
@@ -105,9 +107,9 @@ object Log : ILogger {
 	}
 }
 
-class PrintTarget : ILogger {
+class PrintTarget : Logger {
 
-	override var level: Int = ILogger.DEBUG
+	override var level: Int = Logger.DEBUG
 
 	val prefixes: Array<String> = arrayOf("[NONE] ", "[ERROR] ", "[WARN] ", "[INFO] ", "[DEBUG] ")
 
@@ -121,9 +123,9 @@ class PrintTarget : ILogger {
 	}
 }
 
-class ArrayTarget : ILogger, Clearable {
+class ArrayTarget : Logger, Clearable {
 
-	override var level: Int = ILogger.DEBUG
+	override var level: Int = Logger.DEBUG
 
 	var maxLogs: Int = 1000
 
