@@ -415,9 +415,9 @@ class TaskKtTest {
 				taskOutput.add(msg + "$this")
 			}
 
-			fun bye(arg0: Int, arg1: String): Int {
+			fun bye(arg0: Int, arg1: String) {
 				taskOutput.add("bye non-idempotent $arg0 $arg1")
-				return idempotent {
+				idempotent {
 					taskOutput.add("bye idempotent $arg0 $arg1")
 					arg0 + 1
 				}
@@ -454,11 +454,11 @@ class TaskKtTest {
 		}
 
 		taskOutput.clear()
-		assertEquals(1, t.bye(0, "hi"))
-		assertEquals(2, t.bye(1, "hi"))
-		assertEquals(2, t.bye(1, "hi"))
-		assertEquals(1, t.bye(0, "hi"))
-		assertEquals(1, t.bye(0, "bye"))
+		t.bye(0, "hi")
+		t.bye(1, "hi")
+		t.bye(1, "hi")
+		t.bye(0, "hi")
+		t.bye(0, "bye")
 
 		assertListEquals(listOf(
 				"bye non-idempotent 0 hi",
