@@ -1,11 +1,13 @@
 package com.acornui.build
 
+import com.acornui.collection.setTo
 import com.acornui.logging.ArrayTarget
 import com.acornui.logging.ILogger
 import com.acornui.logging.Log
 import com.acornui.test.assertListEquals
 import org.junit.Before
 import org.junit.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
@@ -18,13 +20,70 @@ class TaskKtTest {
 		get() = arrayTarget.list.filter { it.level == ILogger.WARN }.map { it.message }
 
 	init {
-		Log.targets.add(arrayTarget)
+		Log.targets.setTo(listOf(arrayTarget))
 	}
 
 	@Before
 	fun before() {
 		taskOutput.clear()
 		arrayTarget.clear()
+	}
+
+	@Test
+	fun duplicateSet() {
+
+		class Config {
+
+			@ConfigProp
+			var foo by Freezable("foo")
+
+		}
+
+		class Model
+		class Tasks
+
+		val c = Config()
+		runCommands(arrayOf("--foo=Test", "--foo=Test2"), { c }, { Model() }, { Tasks() })
+		assertEquals("Test", c.foo)
+		assertEquals(1, logWarnOutput.size)
+
+		AssertionLevels.unknownProperty = AssertionLevel.ERROR
+		assertFailsWith<CliException> {
+			runCommands(arrayOf("--foo=Test", "--foo=Test"), { Config() }, { Model() }, { Tasks() })
+		}
+
+	}
+
+	@Test
+	fun deepConfig() {
+
+		class B {
+
+			@ConfigProp
+			var foo by Freezable("foo")
+
+			@ConfigProp
+			var baz by Freezable(3)
+		}
+
+		class A {
+
+			@ConfigProp
+			var foo by Freezable("foo")
+
+			@ConfigProp
+			var bar by Freezable(3)
+
+			@ConfigProp("Properties for B")
+			val b = B()
+		}
+
+		class Model
+		class Tasks
+
+		val a = A()
+		runCommands(arrayOf("--b.foo=Test"), { a }, { Model() }, { Tasks() })
+		assertEquals("Test", a.b.foo)
 	}
 
 	@Test
@@ -240,7 +299,7 @@ class TaskKtTest {
 		}
 
 		runCommands(
-				args = listOf("test-a", "test-b"),
+				args = listOf("testA", "testB"),
 				modelProvider = { Model() },
 				tasksProvider = { Tasks() }
 		)
@@ -307,9 +366,9 @@ class TaskKtTest {
 			}
 		}
 
-//		runCommands(arrayOf("--foo=Hello World", "--enum-test=BYE", "--bool", "hello"), Config::class, Model::class, Tasks::class)
+//		runCommands(arrayOf("--foo=Hello World", "--enumTest=BYE", "--bool", "hello"), Config::class, Model::class, Tasks::class)
 
-		val cliArgs = arrayOf("--foo=Hello World", "--enum-test=BYE", "--bool", "hello", "-lang=de_DE")
+		val cliArgs = arrayOf("--foo=Hello World", "--enumTest=BYE", "--bool", "hello", "-lang=de_DE")
 
 		runCommands(
 				cliArgs,

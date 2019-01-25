@@ -17,7 +17,6 @@
 package com.acornui.build
 
 import com.acornui.collection.copy
-import com.acornui.core.toHyphenCase
 import com.acornui.logging.Log
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.*
@@ -52,16 +51,24 @@ fun <T> runCommands(args: List<String> = emptyList(), configProvider: () -> T, m
 	if (config is Any) config.configure(configArgs)
 	val model = modelProvider(config)
 	val tasks = tasksProvider(config)
+
+	if (configArgs.isNotEmpty()) {
+		AssertionLevels.unknownProperty.handle(AssertionType.CLI) {
+			"The following properties were not understood: $configArgs"
+		}
+	}
+
 	tasks.execute(freeArgs, model)
 }
 
 /**
  * Configures the object from the given parameter list.
  */
-fun Any.configure(freeArgs: MutableList<String>, recursive: Boolean = true, parentName: String = "") {
+fun Any.configure(freeArgs: MutableList<String>) = configure(freeArgs, true, "", HashMap())
+
+private fun Any.configure(freeArgs: MutableList<String>, recursive: Boolean, parentName: String, knownAliases: MutableMap<String, Boolean>) {
 	run {
 		// Validate that the properties are configured correctly:
-		val knownAliases = HashMap<String, Boolean>()
 		for (property in this::class.memberProperties) {
 			property.isAccessible = true
 			val annotation = property.findAnnotation<ConfigProp>() ?: continue
@@ -70,21 +77,19 @@ fun Any.configure(freeArgs: MutableList<String>, recursive: Boolean = true, pare
 					throw ConfigurationException("Duplicate alias in configuration: ${annotation.alias}")
 				knownAliases[annotation.alias] = true
 			}
-			if (property !is KMutableProperty<*>) {
-				throw ConfigurationException("Property ${property.name} is not mutable.")
-			}
 			@Suppress("UNCHECKED_CAST")
-			val delegate = (property as KProperty1<Any, *>).getDelegate(this) as? Freezable<*>
-			if (delegate == null) {
-				AssertionLevels.delegateNotFreezable.handle { "Property ${property.name} is not a Freezable delegate." }
-			} else {
-				if (delegate.frozen)
-					throw ConfigurationException("Object of type ${this::class.simpleName} has already been configured.")
+			val freeze = (property as KProperty1<Any, *>).getDelegate(this) as? Freezable<*>
+			if (freeze == null && property is KMutableProperty<*>) {
+				AssertionLevels.delegateNotFreezable.handle { "Property ${property.name} is mutable, but not a Freezable delegate." }
 			}
+			if (freeze != null && property !is KMutableProperty<*>) {
+				AssertionLevels.delegateNotFreezable.handle { "Property ${property.name} is not mutable, but is a Freezable delegate." }
+			}
+			if (freeze?.frozen == true)
+				throw ConfigurationException("Object of type ${this::class.simpleName} has already been configured.")
 		}
 	}
 
-	val setProperties = HashMap<KProperty<*>, Boolean>()
 	val iterator = freeArgs.listIterator()
 	while (iterator.hasNext()) {
 		val next = iterator.next()
@@ -96,27 +101,36 @@ fun Any.configure(freeArgs: MutableList<String>, recursive: Boolean = true, pare
 			val taskSetPropertyAnnotation = memberProperty.findAnnotation<ConfigProp>()
 			if (taskSetPropertyAnnotation != null) {
 				if (isAlias)
-					taskSetPropertyAnnotation.alias == name
+					name == taskSetPropertyAnnotation.alias
 				else
-					memberProperty.name.toHyphenCase() == name
+					name == "$parentName${memberProperty.name}"
 			} else {
 				false
 			}
 		} as KMutableProperty<*>?
-		if (matchingProperty == null) {
-			AssertionLevels.unknownProperty.handle { "No property with the ${if (isAlias) "alias" else "name"} \"$name\" exists." }
-		} else {
+		if (matchingProperty != null) {
 			matchingProperty.isAccessible = true
 			@Suppress("UNCHECKED_CAST")
 			val delegate = (matchingProperty as KProperty1<Any, *>).getDelegate(this) as Freezable<*>
-			val v = value.toType(matchingProperty.returnType)
-			matchingProperty.setter.call(this, v)
-			delegate.frozen = true
-			setProperties[matchingProperty] = true
-			iterator.remove()
+			if (!delegate.isSet) {
+				val v = value.toType(matchingProperty.returnType)
+				matchingProperty.setter.call(this, v)
+				iterator.remove()
+			}
+
 		}
 	}
 	freeze(recursive = false)
+
+	if (recursive) {
+		for (property in this::class.memberProperties) {
+			property.isAccessible = true
+			if (property !is KMutableProperty<*>) {
+				val subObject = property.getter.call(this)
+				subObject?.configure(freeArgs, recursive, "$parentName${property.name}.", knownAliases)
+			}
+		}
+	}
 }
 
 /**
@@ -136,12 +150,12 @@ private fun Any.freeze(recursive: Boolean = true, unsetRequiredProperties: Mutab
 		@Suppress("UNCHECKED_CAST")
 		val delegate = (property as? KProperty1<Any, *>)?.getDelegate(this) as? Freezable<*> ?: continue
 		if (delegate.required && !delegate.isSet) {
-			unsetRequiredProperties.add("$parentName.${property.name}")
+			unsetRequiredProperties.add("$parentName${property.name}")
 		} else {
 			delegate.frozen = true
 			if (recursive) {
 				val value = delegate.getValue(this, property)
-				value?.freeze(true, unsetRequiredProperties, "$parentName.${property.name}")
+				value?.freeze(true, unsetRequiredProperties, "$parentName${property.name}.")
 			}
 		}
 	}
@@ -223,7 +237,7 @@ private fun Any.execute(args: List<String>, model: Any) {
 			val matchingProperty = modelProvider.memberProperties.firstOrNull { memberProperty ->
 				val taskSetPropertyAnnotation = memberProperty.findAnnotation<ModelProp>()
 				if (taskSetPropertyAnnotation != null) {
-					memberProperty.name.toHyphenCase() == name
+					memberProperty.name == name
 				} else {
 					false
 				}
@@ -268,7 +282,7 @@ private fun Any.execute(args: List<String>, model: Any) {
 		}
 
 		var matchingTaskFound = false
-		val tasksNameMatch = allTasks.filter { it.name.toHyphenCase() == taskName }
+		val tasksNameMatch = allTasks.filter { it.name == taskName }
 		for (subjectProperty in subjectProperties) {
 			var bestMatchParams: Map<KParameter, Any?>? = null
 			var bestMatchCallable: KCallable<*>? = null
@@ -338,7 +352,7 @@ private fun createCallArguments(parameters: List<KParameter>, args: List<String>
 		// TODO: handle vararg
 		if (annotation != null) {
 			val index = freeArgs.indexOfFirst {
-				it.argName == if (it.argIsAlias) annotation.alias else taskParam.name!!.toHyphenCase()
+				it.argName == if (it.argIsAlias) annotation.alias else taskParam.name
 			}
 			if (index != -1 || taskParam.isOptional) {
 				if (index != -1) {
@@ -456,13 +470,13 @@ class Freezable<T>(val default: T?, val required: Boolean = false) : ReadWritePr
 	private var value = default
 
 	/**
-	 * Returns true if the freezable property has been set, or is not required.
+	 * Returns true if the freezable property has been set.
 	 */
-	var isSet = !required
+	var isSet = false
 		private set
 
 	override fun getValue(thisRef: Any, property: KProperty<*>): T {
-		if (!isSet) throw Exception("Required property ${property.name} was not set.")
+		if (required && !isSet) throw Exception("Required property ${property.name} was not set.")
 		@Suppress("UNCHECKED_CAST")
 		return value as T
 	}
