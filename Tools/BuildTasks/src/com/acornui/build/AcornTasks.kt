@@ -16,9 +16,6 @@
 
 package com.acornui.build
 
-import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
-
 open class AcornTasks(val config: AcornUiBuildConfig) {
 
 	@Task(description = "Says hello")
@@ -47,7 +44,7 @@ open class AcornTasks(val config: AcornUiBuildConfig) {
 }
 
 @ConfigObject("Global settings for the Acorn UI tasks.")
-object AcornUiBuildConfig {
+class AcornUiBuildConfig {
 
 	@ConfigProp("If true, out of date checks will not be used.")
 	var force = false

@@ -16,6 +16,7 @@
 
 package com.acornui.logging
 
+import com.acornui.collection.Clearable
 import com.acornui.collection.poll
 import com.acornui.core.lineSeparator
 
@@ -33,7 +34,7 @@ interface ILogger {
 				"error" -> ERROR
 				"warn" -> WARN
 				"info" -> INFO
-				"debug" -> DEBUG
+				"verbose", "debug" -> DEBUG
 				else -> throw IllegalArgumentException("Unknown log level $str")
 			}
 
@@ -77,7 +78,7 @@ interface ILogger {
  */
 object Log : ILogger {
 
-	var targets: MutableList<ILogger> = arrayListOf(PrintTarget())
+	val targets: MutableList<ILogger> = arrayListOf(PrintTarget())
 
 	override var level: Int = ILogger.DEBUG
 
@@ -120,30 +121,35 @@ class PrintTarget : ILogger {
 	}
 }
 
-class ArrayTarget : ILogger {
+class ArrayTarget : ILogger, Clearable {
 
 	override var level: Int = ILogger.DEBUG
 
 	var maxLogs: Int = 1000
 
-	var separator:String = lineSeparator
+	var separator = lineSeparator
 	val prefixes: Array<String> = arrayOf("[NONE] ", "[ERROR] ", "[WARN] ", "[INFO] ", "[DEBUG] ")
 
-	var list:ArrayList<Pair<Int, String>> = ArrayList()
+	private val _list: MutableList<ArrayTargetEntry> = ArrayList()
+	val list: List<ArrayTargetEntry> = _list
 
 	override fun log(message: Any?, level: Int) {
-		list.add(Pair(level, message.toString()))
-		if (list.size > maxLogs) list.poll()
+		_list.add(ArrayTargetEntry(level, message.toString()))
+		if (_list.size > maxLogs) _list.poll()
 	}
 
 	override fun log(message: () -> Any?, level: Int) {
 		log(message(), level)
 	}
 
+	override fun clear() {
+		_list.clear()
+	}
+
 	override fun toString(): String {
 		val buffer = StringBuilder()
 		var isFirst = true
-		for ((level, message) in list) {
+		for ((level, message) in _list) {
 			if (isFirst) {
 				isFirst = false
 			} else {
@@ -154,4 +160,6 @@ class ArrayTarget : ILogger {
 		}
 		return buffer.toString()
 	}
+
+	data class ArrayTargetEntry(val level: Int, val message: String)
 }

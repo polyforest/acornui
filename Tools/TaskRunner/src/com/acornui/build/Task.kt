@@ -16,7 +16,6 @@
 
 package com.acornui.build
 
-import com.acornui.async.launch
 import com.acornui.collection.copy
 import com.acornui.core.toHyphenCase
 import com.acornui.logging.Log
@@ -25,11 +24,20 @@ import kotlin.reflect.*
 import kotlin.reflect.full.*
 import kotlin.reflect.jvm.isAccessible
 
-fun MutableList<String>.validate() {
+/**
+ * Array arguments overload.
+ */
+fun <T> runCommands(args: Array<String>, configProvider: () -> T, modelProvider: (T) -> Any = {}, tasksProvider: (T) -> Any) = runCommands(args.toList(), configProvider, modelProvider, tasksProvider)
 
-}
+/**
+ * No configuration, Array arguments, overload.
+ */
+fun runCommands(args: Array<String>, modelProvider: () -> Any = {}, tasksProvider: () -> Any) = runCommands(args.toList(), configProvider = {}, modelProvider = { modelProvider() }, tasksProvider = { tasksProvider() })
 
-fun runCommands(args: Array<String>, configProvider: KClass<*>, modelProvider: KClass<*>, tasksProvider: KClass<*>) = runCommands(args.toList(), configProvider, modelProvider, tasksProvider)
+/**
+ * No configuration overload.
+ */
+fun runCommands(args: List<String> = emptyList(), modelProvider: () -> Any = {}, tasksProvider: () -> Any) = runCommands(args, configProvider = {}, modelProvider = { modelProvider() }, tasksProvider = { tasksProvider() })
 
 /**
  * @param args
@@ -37,57 +45,49 @@ fun runCommands(args: Array<String>, configProvider: KClass<*>, modelProvider: K
  * @param modelProvider
  * @param tasksProvider
  */
-fun runCommands(args: List<String>, configProvider: KClass<*>, modelProvider: KClass<*>, tasksProvider: KClass<*>) {
-	val configArgs = args.takeWhile { it.startsWith("-") }
+fun <T> runCommands(args: List<String> = emptyList(), configProvider: () -> T, modelProvider: (T) -> Any = {}, tasksProvider: (T) -> Any) {
+	val configArgs = args.takeWhile { it.startsWith("-") }.toMutableList()
 	val freeArgs = args.subList(configArgs.size, args.size)
-	if (freeArgs.isEmpty()) return // TODO: default to help task
-
-	val configConstructor = configProvider.constructors.first()
-	require(configConstructor.parameters.isEmpty()) { "${configProvider.simpleName} primary constructor must have zero arguments." }
-
-	val config = configConstructor.call()
-	config.configure(configArgs)
-
-	val modelConstructor = modelProvider.constructors.first()
-	require(modelConstructor.parameters.size <= 1) { "${modelProvider.simpleName} primary constructor must accept no arguments or the configuration as a single argument." }
-	val model = if (modelConstructor.parameters.size == 1) {
-		require(config::class.starProjectedType.isSubtypeOf(modelConstructor.parameters.first().type)) { "${modelProvider.simpleName}(${modelConstructor.parameters.first().type}) does not accept a super type of ${config::class.simpleName}" }
-		modelConstructor.call(config)
-	} else {
-		modelConstructor.call()
-	}
-
-	val tasksConstructor = tasksProvider.constructors.first()
-	require(tasksConstructor.parameters.size <= 1) { "${tasksProvider.simpleName} primary constructor must accept no arguments or the configuration as a single argument." }
-	val tasks = if (tasksConstructor.parameters.size == 1) {
-		require(config::class.starProjectedType.isSubtypeOf(tasksConstructor.parameters.first().type)) { "${tasksProvider.simpleName}(${tasksConstructor.parameters.first().type}) does not accept a super type of ${config::class.simpleName}" }
-		tasksConstructor.call(config)
-	} else {
-		tasksConstructor.call(config)
-	}
-
+	val config = configProvider()
+	if (config is Any) config.configure(configArgs)
+	val model = modelProvider(config)
+	val tasks = tasksProvider(config)
 	tasks.execute(freeArgs, model)
-
 }
 
-
-private fun Any.configure(freeArgs: List<String>) {
-
-	// Validate that the tasks are configured correctly:
+/**
+ * Configures the object from the given parameter list.
+ */
+fun Any.configure(freeArgs: MutableList<String>, recursive: Boolean = true, parentName: String = "") {
 	run {
+		// Validate that the properties are configured correctly:
 		val knownAliases = HashMap<String, Boolean>()
 		for (property in this::class.memberProperties) {
+			property.isAccessible = true
 			val annotation = property.findAnnotation<ConfigProp>() ?: continue
-			if (annotation.alias.isEmpty()) continue
-			if (knownAliases.containsKey(annotation.alias))
-				throw ConfigurationException("Duplicate alias in configuration: ${annotation.alias}")
-			knownAliases[annotation.alias] = true
+			if (annotation.alias.isNotEmpty()) {
+				if (knownAliases.containsKey(annotation.alias))
+					throw ConfigurationException("Duplicate alias in configuration: ${annotation.alias}")
+				knownAliases[annotation.alias] = true
+			}
+			if (property !is KMutableProperty<*>) {
+				throw ConfigurationException("Property ${property.name} is not mutable.")
+			}
+			@Suppress("UNCHECKED_CAST")
+			val delegate = (property as KProperty1<Any, *>).getDelegate(this) as? Freezable<*>
+			if (delegate == null) {
+				AssertionLevels.delegateNotFreezable.handle { "Property ${property.name} is not a Freezable delegate." }
+			} else {
+				if (delegate.frozen)
+					throw ConfigurationException("Object of type ${this::class.simpleName} has already been configured.")
+			}
 		}
 	}
 
 	val setProperties = HashMap<KProperty<*>, Boolean>()
-	for (next in freeArgs) {
-		if (!next.startsWith("-")) break
+	val iterator = freeArgs.listIterator()
+	while (iterator.hasNext()) {
+		val next = iterator.next()
 		val isAlias = next.argIsAlias
 		val name = next.argName
 		val value = next.argValue
@@ -102,37 +102,52 @@ private fun Any.configure(freeArgs: List<String>) {
 			} else {
 				false
 			}
-		}
+		} as KMutableProperty<*>?
 		if (matchingProperty == null) {
-			AssertionLevels.unknownProperty.handle("No property with the ${if (isAlias) "alias" else "name"} \"$name\" exists.")
+			AssertionLevels.unknownProperty.handle { "No property with the ${if (isAlias) "alias" else "name"} \"$name\" exists." }
 		} else {
-			if (matchingProperty is KMutableProperty<*>) {
-				matchingProperty.isAccessible = true
-				@Suppress("UNCHECKED_CAST")
-				val delegate = (matchingProperty as KProperty1<Any, *>).getDelegate(this)
-				val v = value.toType(matchingProperty.returnType)
-				matchingProperty.setter.call(this, v)
-				if (delegate is Freezable<*>) {
-					delegate.frozen = true
-				}
-				setProperties[matchingProperty] = true
-			} else {
-				throw Exception("Property ${matchingProperty.name} is not mutable.")
+			matchingProperty.isAccessible = true
+			@Suppress("UNCHECKED_CAST")
+			val delegate = (matchingProperty as KProperty1<Any, *>).getDelegate(this) as Freezable<*>
+			val v = value.toType(matchingProperty.returnType)
+			matchingProperty.setter.call(this, v)
+			delegate.frozen = true
+			setProperties[matchingProperty] = true
+			iterator.remove()
+		}
+	}
+	freeze(recursive = false)
+}
+
+/**
+ * Freezes any Freezable property delegates.
+ * @param recursive If true, the property values of this object will also be frozen.
+ * @throws CliException If a required property has not been set, no properties will be frozen and an exception will
+ * be thrown.
+ */
+fun Any.freeze(recursive: Boolean = true) {
+	freeze(recursive, mutableListOf(), "")
+}
+
+private fun Any.freeze(recursive: Boolean = true, unsetRequiredProperties: MutableList<String>, parentName: String) {
+	// Ensure required properties have been set.
+	for (property in this::class.memberProperties) {
+		property.isAccessible = true
+		@Suppress("UNCHECKED_CAST")
+		val delegate = (property as? KProperty1<Any, *>)?.getDelegate(this) as? Freezable<*> ?: continue
+		if (delegate.required && !delegate.isSet) {
+			unsetRequiredProperties.add("$parentName.${property.name}")
+		} else {
+			delegate.frozen = true
+			if (recursive) {
+				val value = delegate.getValue(this, property)
+				value?.freeze(true, unsetRequiredProperties, "$parentName.${property.name}")
 			}
 		}
 	}
-
-	// Ensure required properties have been set.
-	val unsetRequiredProperties = mutableListOf<String>()
-	for (memberProperty in this::class.memberProperties) {
-		val taskSetPropertyAnnotation = memberProperty.findAnnotation<ConfigProp>()
-				?: continue
-		if (taskSetPropertyAnnotation.required && !setProperties.containsKey(memberProperty)) {
-			unsetRequiredProperties.add(memberProperty.name)
-		}
+	if (unsetRequiredProperties.isNotEmpty()) {
+		throw CliException("The required properties: $unsetRequiredProperties were not set.")
 	}
-	if (unsetRequiredProperties.isNotEmpty())
-		throw Exception("The required properties: $unsetRequiredProperties were not set.")
 }
 
 private val String.argIsAlias: Boolean
@@ -172,7 +187,7 @@ private fun String.toType(type: KType): Any? {
 			val enumClz = Class.forName((type.classifier as KClass<Enum<*>>).qualifiedName).enumConstants as Array<Enum<*>>
 			enumClz.first { it.name.equals(this, ignoreCase = true) }
 		}
-		else -> throw Exception("Cannot deserialize to type $type")
+		else -> throw CliException("Cannot deserialize to type $type")
 	}
 }
 
@@ -214,7 +229,7 @@ private fun Any.execute(args: List<String>, model: Any) {
 				}
 			}
 			if (matchingProperty == null) {
-				AssertionLevels.unknownSubject.handle("No model subject with the name \"$name\" exists.")
+				AssertionLevels.unknownSubject.handle(AssertionType.CLI) { "No model subject with the name \"$name\" exists." }
 			} else {
 				list.add(matchingProperty)
 			}
@@ -252,29 +267,37 @@ private fun Any.execute(args: List<String>, model: Any) {
 			taskArguments.add(freeArgs[argIndex++])
 		}
 
-		var matchingMethodFound = false
+		var matchingTaskFound = false
 		val tasksNameMatch = allTasks.filter { it.name.toHyphenCase() == taskName }
-		for (task in tasksNameMatch) {
-			// Loop over task name matches that have receivers, checking them against our model subjects list.
-			val taskReceiverType = task.extensionReceiverParameter?.type ?: continue
-			for (subjectProperty in subjectProperties) {
+		for (subjectProperty in subjectProperties) {
+			var bestMatchParams: Map<KParameter, Any?>? = null
+			var bestMatchCallable: KCallable<*>? = null
+			for (task in tasksNameMatch) {
+				// Loop over task name matches that have receivers, checking them against our model subjects list.
+				val taskReceiverType = task.extensionReceiverParameter?.type ?: continue
+
 				if (taskReceiverType.isSupertypeOf(subjectProperty.returnType)) {
 					val freeTaskArgs = taskArguments.copy()
 					val map = mutableMapOf<KParameter, Any?>()
 					if (createCallArguments(task.parameters.subList(2, task.parameters.size), freeTaskArgs, map)) {
 						// We found the right overload.
-						matchingMethodFound = true
 						map[task.parameters[0]] = this
 						map[task.parameters[1]] = subjectProperty.getter.call(model)
-						pendingWork.add {
-							task.callBy(map)
+						if (bestMatchCallable == null || taskReceiverType.isSubtypeOf(bestMatchCallable.extensionReceiverParameter!!.type)) {
+							bestMatchCallable = task
+							bestMatchParams = map
 						}
+						matchingTaskFound = true
 					}
 				}
 			}
+			if (bestMatchCallable != null) {
+				pendingWork.add {
+					bestMatchCallable.callBy(bestMatchParams!!)
+				}
+			}
 		}
-
-		if (!matchingMethodFound) {
+		if (!matchingTaskFound) {
 			// If we had no task matches with an extension receiver, loop over task name matches that do not have receivers.
 			for (task in tasksNameMatch) {
 				if (task.extensionReceiverParameter != null) continue
@@ -282,7 +305,7 @@ private fun Any.execute(args: List<String>, model: Any) {
 				val map = mutableMapOf<KParameter, Any?>()
 				if (createCallArguments(task.parameters.subList(1, task.parameters.size), freeTaskArgs, map)) {
 					// We found the right overload.
-					matchingMethodFound = true
+					matchingTaskFound = true
 					map[task.parameters[0]] = this
 					pendingWork.add {
 						task.callBy(map)
@@ -291,9 +314,9 @@ private fun Any.execute(args: List<String>, model: Any) {
 				}
 			}
 		}
-		if (!matchingMethodFound) {
+		if (!matchingTaskFound) {
 			allTasksMatched = false
-			Log.warn("Could not find a matching task for $taskName $taskArguments")
+			AssertionLevels.unknownTask.handle(AssertionType.CLI) { "Could not find a matching task for $taskName $taskArguments" }
 		}
 	}
 	if (allTasksMatched) {
@@ -336,23 +359,54 @@ private fun createCallArguments(parameters: List<KParameter>, args: List<String>
 }
 
 
-@ConfigObject("Assertion levels for various potential problems in configuration and command arguments.")
 object AssertionLevels {
 
-	@ConfigProp
+	/**
+	 * A configuration property is not freezable.
+	 */
+	var delegateNotFreezable = AssertionLevel.ERROR
+
+	/**
+	 * A configuration property provided on the command line was not found.
+	 */
 	var unknownProperty = AssertionLevel.WARNING
 
-	@ConfigProp
+	/**
+	 * A model subject provided on the command line was not found.
+	 */
 	var unknownSubject = AssertionLevel.WARNING
 
-	@ConfigProp
+	/**
+	 * A task provided on the command line was not found.
+	 */
 	var unknownTask = AssertionLevel.ERROR
 }
 
-enum class AssertionLevel(val handle: (message: String) -> Unit) {
-	NONE({}),
-	WARNING({ Log.warn(it) }),
-	ERROR({ throw Exception(it) });
+enum class AssertionType {
+	CONFIGURATION,
+	CLI;
+
+	fun handle(message: String): Nothing {
+		throw when (this) {
+			CONFIGURATION -> ConfigurationException(message)
+			CLI -> CliException(message)
+		}
+	}
+}
+
+enum class AssertionLevel {
+	NONE,
+	WARNING,
+	ERROR;
+
+	fun handle(type: AssertionType = AssertionType.CONFIGURATION, lazyMessage: () -> String) {
+		when (this) {
+			NONE -> {
+			}
+			WARNING -> Log.warn(lazyMessage())
+			ERROR -> type.handle(lazyMessage())
+		}
+	}
 }
 
 
@@ -368,8 +422,7 @@ annotation class ConfigObject(
 @MustBeDocumented
 annotation class ConfigProp(
 		val description: String = "",
-		val alias: String = "",
-		val required: Boolean = false
+		val alias: String = ""
 )
 
 @Target(AnnotationTarget.PROPERTY)
@@ -392,17 +445,34 @@ annotation class TaskArgument(
 		val alias: String = ""
 )
 
-class Freezable<T>(default: T) : ReadWriteProperty<Any, T> {
+class Freezable<T>(val default: T?, val required: Boolean = false) : ReadWriteProperty<Any, T> {
 
+	constructor() : this(null, true)
+
+	/**
+	 * If this value is true, the delegate will not allow changes.
+	 */
 	var frozen = false
 	private var value = default
 
-	override fun getValue(thisRef: Any, property: KProperty<*>): T = value
+	/**
+	 * Returns true if the freezable property has been set, or is not required.
+	 */
+	var isSet = !required
+		private set
+
+	override fun getValue(thisRef: Any, property: KProperty<*>): T {
+		if (!isSet) throw Exception("Required property ${property.name} was not set.")
+		@Suppress("UNCHECKED_CAST")
+		return value as T
+	}
 
 	override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
-		require(!frozen) { "Cannot change configuration properties." }
+		isSet = true
+		require(!frozen) { "Cannot change frozen configuration properties." }
 		this.value = value
 	}
 }
 
 class ConfigurationException(message: String) : Exception(message)
+class CliException(message: String) : Exception(message)
