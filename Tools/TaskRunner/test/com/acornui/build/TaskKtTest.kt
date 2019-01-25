@@ -402,22 +402,77 @@ class TaskKtTest {
 
 	}
 
-}
+	@Test
+	fun idempotence() {
 
-var last: (() -> Unit)? = null
+		class Tasks {
 
-fun idempotent(inner: () -> Unit) {
-	if (last != null) {
-		val lastR = inner::class.java.declaredFields
-		val innerR = inner::class.java.declaredFields
-		println(lastR[1].get(inner))
-		println("" + lastR + " : " + innerR)
+			fun hello(msg: String) = idempotent {
+				taskOutput.add(msg)
+			}
+
+			fun Any.hello(msg: String) = idempotent {
+				taskOutput.add(msg + "$this")
+			}
+
+			fun bye(arg0: Int, arg1: String): Int {
+				taskOutput.add("bye non-idempotent $arg0 $arg1")
+				return idempotent {
+					taskOutput.add("bye idempotent $arg0 $arg1")
+					arg0 + 1
+				}
+			}
+		}
+
+		val t = Tasks()
+
+		t.hello("Hi")
+		t.hello("Hi")
+		t.hello("Bye")
+		t.hello("Bye")
+		t.hello("Hi")
+		t.hello("Bye")
+
+		assertListEquals(listOf("Hi", "Bye"), taskOutput)
+		taskOutput.clear()
+
+		class Foo(val m: String) {
+			override fun toString(): String = m
+		}
+
+		t.apply {
+			val f = Foo("5")
+			3.hello("Hi")
+			4.hello("Hi")
+			3.hello("Hi")
+			3.hello("Hi")
+			4.hello("Hi")
+			f.hello("Hi")
+			f.hello("Hi")
+			f.hello("Hi")
+			assertListEquals(listOf("Hi3", "Hi4", "Hi5"), taskOutput)
+		}
+
+		taskOutput.clear()
+		assertEquals(1, t.bye(0, "hi"))
+		assertEquals(2, t.bye(1, "hi"))
+		assertEquals(2, t.bye(1, "hi"))
+		assertEquals(1, t.bye(0, "hi"))
+		assertEquals(1, t.bye(0, "bye"))
+
+		assertListEquals(listOf(
+				"bye non-idempotent 0 hi",
+				"bye idempotent 0 hi",
+				"bye non-idempotent 1 hi",
+				"bye idempotent 1 hi",
+				"bye non-idempotent 1 hi",
+				"bye non-idempotent 0 hi",
+				"bye non-idempotent 0 bye",
+				"bye idempotent 0 bye"
+		), taskOutput)
 
 	}
 
-	last = inner
-	print("invoke inner ")
-	inner()
 }
 
 enum class Foo {

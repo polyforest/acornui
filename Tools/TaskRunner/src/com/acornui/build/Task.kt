@@ -45,6 +45,7 @@ fun runCommands(args: List<String> = emptyList(), modelProvider: () -> Any = {},
  * @param tasksProvider
  */
 fun <T> runCommands(args: List<String> = emptyList(), configProvider: () -> T, modelProvider: (T) -> Any = {}, tasksProvider: (T) -> Any) {
+	idempotenceCache.clear()
 	val configArgs = args.takeWhile { it.startsWith("-") }.toMutableList()
 	val freeArgs = args.subList(configArgs.size, args.size)
 	val config = configProvider()
@@ -490,3 +491,17 @@ class Freezable<T>(val default: T?, val required: Boolean = false) : ReadWritePr
 
 class ConfigurationException(message: String) : Exception(message)
 class CliException(message: String) : Exception(message)
+
+private val idempotenceCache = HashMap<Any, Any?>()
+
+fun <R> idempotent(inner: () -> R): R {
+	val captured = inner::class.java.declaredFields.map { it.get(inner) }
+	return if (idempotenceCache.containsKey(captured)) {
+		@Suppress("UNCHECKED_CAST")
+		idempotenceCache[captured] as R
+	} else {
+		val result = inner()
+		idempotenceCache[captured] = result
+		result
+	}
+}
