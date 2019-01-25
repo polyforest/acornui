@@ -492,19 +492,20 @@ class Freezable<T>(val default: T?, val required: Boolean = false) : ReadWritePr
 class ConfigurationException(message: String) : Exception(message)
 class CliException(message: String) : Exception(message)
 
-private val idempotenceCache = HashMap<Any, Boolean>()
+private val idempotenceCache = HashMap<Any, Any?>()
 
 fun clearIdempotentCache() {
 	idempotenceCache.clear()
 }
 
-fun idempotent(vararg excludes: Any, inner: () -> Unit) {
+fun <R> idempotent(vararg excludes: Any, inner: () -> R): R {
 	val captured = inner::class.java.declaredFields.map { it.get(inner) } - excludes
-	if (idempotenceCache.containsKey(captured)) {
+	return if (idempotenceCache.containsKey(captured)) {
 		@Suppress("UNCHECKED_CAST")
-		idempotenceCache[captured]
+		idempotenceCache[captured] as R
 	} else {
-		idempotenceCache[captured] = true
-		inner()
+		val r = inner()
+		idempotenceCache[captured] = r
+		r
 	}
 }
