@@ -42,10 +42,10 @@ fun MeshRegion.fillQuad(v1: Vector2, v2: Vector2, v3: Vector2, v4: Vector2) {
 fun MeshRegion.line(x1: Float, y1: Float, x2: Float, y2: Float, controlA: Vector2? = null, controlB: Vector2? = null, controlAThickness: Float = lineStyle.thickness, controlBThickness: Float = lineStyle.thickness, init: MeshRegion.() -> Unit = {}) {
 	val p1 = Vector2.obtain().set(x1, y1)
 	val p2 = Vector2.obtain().set(x2, y2)
-	val ret = line(p1, p2, controlA, controlB, controlAThickness, controlBThickness, init)
+
+	line(p1, p2, controlA, controlB, controlAThickness, controlBThickness, init)
 	Vector2.free(p1)
 	Vector2.free(p2)
-	return ret
 }
 
 fun MeshRegion.line(p1: Vector2, p2: Vector2, controlA: Vector2? = null, controlB: Vector2? = null, controlAThickness: Float = lineStyle.thickness, controlBThickness: Float = lineStyle.thickness, init: MeshRegion.() -> Unit = {}) {
