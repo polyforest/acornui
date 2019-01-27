@@ -136,6 +136,6 @@ fun Owned.atlas(atlasPath: String, region: String, init: ComponentInit<AtlasComp
 /**
  * Creates a texture component and uses it as the contents
  */
-fun SingleElementContainer<UiComponent>.contentsAtlas(atlasPath: String, region: String) {
-	createOrReuseElement { atlas() }.setRegion(atlasPath, region)
+fun SingleElementContainer<UiComponent>.contentsAtlas(atlasPath: String, region: String): Deferred<Pair<Texture, AtlasRegionData>> {
+	return createOrReuseElement { atlas() }.setRegion(atlasPath, region)
 }
