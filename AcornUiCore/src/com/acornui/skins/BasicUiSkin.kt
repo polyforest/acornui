@@ -153,6 +153,10 @@ open class BasicUiSkin(
 		val infoMessageStyle = CharStyle()
 		infoMessageStyle.colorTint = theme.infoColor
 		target.addStyleRule(infoMessageStyle, withAncestor(TextStyleTags.info))
+
+		val charStyle = CharStyle()
+		charStyle.selectable = false
+		target.addStyleRule(charStyle, withAncestor(Button))
 	}
 
 	protected open fun loadBitmapFonts() {
@@ -882,7 +886,6 @@ open class CheckboxSkinPart(
 		style.verticalAlign = VAlign.MIDDLE
 		+box
 		textField = +text("") {
-			selectable = false
 			includeInLayout = false
 		} layout {
 			widthPercent = 1f
