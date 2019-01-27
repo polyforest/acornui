@@ -17,6 +17,7 @@
 package com.acornui.component
 
 import com.acornui.async.Deferred
+import com.acornui.async.catch
 import com.acornui.async.then
 import com.acornui.collection.Clearable
 import com.acornui.collection.tuple
@@ -58,7 +59,7 @@ open class AtlasComponent(owner: Owned) : DrawableComponent(owner), Clearable {
 		group = cachedGroup()
 		return async {
 			val atlasData = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group!!).await()
-			val (page, region) = atlasData.findRegion(regionName) ?: throw Exception("Region '$regionName' not found in atlas.")
+			val (page, region) = atlasData.findRegion(regionName) ?: throw Exception("Region '$regionName' not found in atlas $atlasPath.")
 			val texture = loadAndCacheAtlasPage(atlasPath, page, group!!).await()
 			texture tuple region
 		} then {
@@ -127,7 +128,7 @@ fun Owned.atlas(init: ComponentInit<AtlasComponent> = {}): AtlasComponent {
 
 fun Owned.atlas(atlasPath: String, region: String, init: ComponentInit<AtlasComponent> = {}): AtlasComponent {
 	val a = AtlasComponent(this)
-	a.setRegion(atlasPath, region)
+	a.setRegion(atlasPath, region).catch { throw it }
 	a.init()
 	return a
 }
