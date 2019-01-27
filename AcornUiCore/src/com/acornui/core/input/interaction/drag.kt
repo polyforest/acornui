@@ -26,6 +26,7 @@ import com.acornui.core.input.*
 import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.callLater
 import com.acornui.core.time.enterFrame
+import com.acornui.core.time.tick
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
 import com.acornui.signal.Signal
@@ -102,7 +103,7 @@ class DragAttachment(
 		if (watchingMouse == value) return
 		watchingMouse = value
 		if (value) {
-			_enterFrame = enterFrame(timeDriver, -1, this::enterFrameHandler)
+			_enterFrame = tick(timeDriver, -1, this::enterFrameHandler)
 			stage.mouseMove().add(this::stageMouseMoveHandler)
 			stage.mouseUp().add(this::stageMouseUpHandler)
 		} else {
@@ -197,7 +198,7 @@ class DragAttachment(
 		if (watchingTouch == value) return
 		watchingTouch = value
 		if (value) {
-			_enterFrame = enterFrame(timeDriver, -1, this::enterFrameHandler)
+			_enterFrame = tick(timeDriver, -1, this::enterFrameHandler)
 			stage.touchMove().add(this::stageTouchMoveHandler)
 			stage.touchEnd().add(this::stageTouchEndHandler)
 		} else {

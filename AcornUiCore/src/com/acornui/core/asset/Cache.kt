@@ -9,6 +9,7 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.enterFrame
+import com.acornui.core.time.tick
 
 
 interface Cache : Disposable {
@@ -78,7 +79,7 @@ class CacheImpl(
 	private var timerPending = checkInterval
 
 	init {
-		enterFrame(timeDriver) {
+		tick(timeDriver) {
 			if (--timerPending <= 0) {
 				timerPending = checkInterval
 				deathPoolIterator.clear()
