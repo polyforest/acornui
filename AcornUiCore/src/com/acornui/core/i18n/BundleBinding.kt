@@ -21,7 +21,6 @@ import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.observe.Observable
-import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 
 /**

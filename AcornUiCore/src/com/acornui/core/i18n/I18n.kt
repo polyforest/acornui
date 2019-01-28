@@ -4,6 +4,7 @@ import com.acornui.action.Decorator
 import com.acornui.async.then
 import com.acornui.collection.firstOrNull2
 import com.acornui.collection.stringMapOf
+import com.acornui.component.Labelable
 import com.acornui.core.Disposable
 import com.acornui.core.asset.*
 import com.acornui.core.di.DKey
@@ -14,8 +15,8 @@ import com.acornui.core.removeBackslashes
 import com.acornui.core.replace2
 import com.acornui.core.userInfo
 import com.acornui.observe.Observable
-import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
+import com.acornui.signal.bind
 import com.acornui.string.StringReader
 
 interface I18n {
@@ -52,6 +53,16 @@ interface I18nBundleRo : Observable {
 	 */
 	operator fun get(key: String): String?
 
+}
+
+/**
+ * Observes an I18nBundle
+ */
+fun <T : Labelable> T.bindLabel(bundle: I18nBundleRo, key: String = ""): T {
+	bundle.bind {
+		label = bundle.getOrElse(key)
+	}
+	return this
 }
 
 fun I18nBundleRo.getOrElse(key: String, default: String = "???") = get(key) ?: default
