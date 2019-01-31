@@ -376,7 +376,7 @@ class NonDeferred<out T>(val value: T) : Deferred<T> {
  */
 suspend fun <T> List<Deferred<T>>.awaitAll(): List<T> {
 	val copy = copy() // Copy the list so that it can't mutate in-between awaits.
-	return ArrayList(copy.size, { copy[it].await() })
+	return ArrayList(copy.size) { copy[it].await() }
 }
 
 /**
@@ -384,7 +384,7 @@ suspend fun <T> List<Deferred<T>>.awaitAll(): List<T> {
  */
 suspend fun <T> List<Deferred<T>>.awaitAllChecked(): List<T?> {
 	val copy = copy() // Copy the list so that it can't mutate in-between awaits.
-	return ArrayList(copy.size, { copy[it].awaitOrNull() })
+	return ArrayList(copy.size) { copy[it].awaitOrNull() }
 }
 
 /**
