@@ -18,6 +18,7 @@ package com.acornui.build
 
 import com.acornui.collection.copy
 import com.acornui.logging.Log
+import kotlinx.coroutines.runBlocking
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.*
 import kotlin.reflect.full.*
@@ -59,7 +60,9 @@ fun <T> runCommands(args: List<String> = emptyList(), configProvider: () -> T, m
 		}
 	}
 
-	tasks.execute(freeArgs, model)
+	runBlocking {
+		tasks.execute(freeArgs, model)
+	}
 }
 
 /**
@@ -218,7 +221,7 @@ fun String.toBooleanSafe(): Boolean {
  * Executes a list of tasks using a model set.
  * @param args task-name --arg0 --arg1=Foo task2-name --arg0 --arg1 :subject1 :subject2
  */
-private fun Any.execute(args: List<String>, model: Any) {
+private suspend fun Any.execute(args: List<String>, model: Any) {
 	val modelProvider = model::class
 	val subjectArgs = args.takeLastWhile { it.startsWith(":") }
 	val freeArgs = args.subList(0, args.size - subjectArgs.size)
@@ -271,7 +274,7 @@ private fun Any.execute(args: List<String>, model: Any) {
 		}
 	}
 
-	val pendingWork = mutableListOf<() -> Unit>()
+	val pendingWork = mutableListOf<suspend () -> Unit>()
 
 	var allTasksMatched = true
 	var argIndex = 0
@@ -294,10 +297,8 @@ private fun Any.execute(args: List<String>, model: Any) {
 				if (taskReceiverType.isSupertypeOf(subjectProperty.returnType)) {
 					val freeTaskArgs = taskArguments.copy()
 					val map = mutableMapOf<KParameter, Any?>()
-					if (createCallArguments(task.parameters.subList(2, task.parameters.size), freeTaskArgs, map)) {
+					if (createCallArguments(task.parameters, freeTaskArgs, this, subjectProperty.getter.call(model), map)) {
 						// We found the right overload.
-						map[task.parameters[0]] = this
-						map[task.parameters[1]] = subjectProperty.getter.call(model)
 						if (bestMatchCallable == null || taskReceiverType.isSubtypeOf(bestMatchCallable.extensionReceiverParameter!!.type)) {
 							bestMatchCallable = task
 							bestMatchParams = map
@@ -308,7 +309,8 @@ private fun Any.execute(args: List<String>, model: Any) {
 			}
 			if (bestMatchCallable != null) {
 				pendingWork.add {
-					bestMatchCallable.callBy(bestMatchParams!!)
+					if (bestMatchCallable.isSuspend) bestMatchCallable.callSuspendBy(bestMatchParams!!)
+					else bestMatchCallable.callBy(bestMatchParams!!)
 				}
 			}
 		}
@@ -318,12 +320,12 @@ private fun Any.execute(args: List<String>, model: Any) {
 				if (task.extensionReceiverParameter != null) continue
 				val freeTaskArgs = taskArguments.copy()
 				val map = mutableMapOf<KParameter, Any?>()
-				if (createCallArguments(task.parameters.subList(1, task.parameters.size), freeTaskArgs, map)) {
+				if (createCallArguments(task.parameters, freeTaskArgs, this, null, map)) {
 					// We found the right overload.
 					matchingTaskFound = true
-					map[task.parameters[0]] = this
 					pendingWork.add {
-						task.callBy(map)
+						if (task.isSuspend) task.callSuspendBy(map)
+						else task.callBy(map)
 					}
 					break
 				}
@@ -335,7 +337,8 @@ private fun Any.execute(args: List<String>, model: Any) {
 		}
 	}
 	if (allTasksMatched) {
-		for (work in pendingWork) work()
+		for (work in pendingWork)
+			work()
 	}
 }
 
@@ -345,32 +348,40 @@ private fun Any.execute(args: List<String>, model: Any) {
  * @param out The matched argument map to be used with `KCallable.callBy`
  * @return Returns true if the parameter list matches the given cli arguments list.
  */
-private fun createCallArguments(parameters: List<KParameter>, args: List<String>, out: MutableMap<KParameter, Any?>): Boolean {
+private fun createCallArguments(parameters: List<KParameter>, args: List<String>, receiver: Any, extensionReceiver: Any?, out: MutableMap<KParameter, Any?>): Boolean {
 	val freeArgs = args.copy()
-	var allParamsFound = true
 	for (taskParam in parameters) {
-		val annotation = taskParam.findAnnotation<TaskArgument>()
-		// TODO: handle vararg
-		if (annotation != null) {
-			val index = freeArgs.indexOfFirst {
-				it.argName == if (it.argIsAlias) annotation.alias else taskParam.name
+		when (taskParam.kind) {
+			KParameter.Kind.INSTANCE -> {
+				out[taskParam] = receiver
 			}
-			if (index != -1 || taskParam.isOptional) {
-				if (index != -1) {
-					try {
-						val value = freeArgs[index].argValue.toType(taskParam.type)
-						out[taskParam] = value
-						freeArgs.removeAt(index)
-					} catch (ignore: Exception) {
+			KParameter.Kind.EXTENSION_RECEIVER -> {
+				out[taskParam] = extensionReceiver
+			}
+			KParameter.Kind.VALUE -> {
+				val annotation = taskParam.findAnnotation<TaskArgument>()
+				// TODO: handle vararg
+				if (annotation != null) {
+					val index = freeArgs.indexOfFirst {
+						it.argName == if (it.argIsAlias) annotation.alias else taskParam.name
+					}
+					if (index != -1 || taskParam.isOptional) {
+						if (index != -1) {
+							try {
+								val value = freeArgs[index].argValue.toType(taskParam.type)
+								out[taskParam] = value
+								freeArgs.removeAt(index)
+							} catch (ignore: Exception) {
+							}
+						}
+					} else {
+						return false
 					}
 				}
-			} else {
-				allParamsFound = false
-				break
 			}
 		}
 	}
-	return allParamsFound && freeArgs.isEmpty()
+	return true
 }
 
 
@@ -498,8 +509,8 @@ fun clearIdempotentCache() {
 	idempotenceCache.clear()
 }
 
-fun <R> idempotent(vararg excludes: Any, inner: () -> R): R {
-	val captured = inner::class.java.declaredFields.map { it.get(inner) } - excludes
+suspend fun <R> idempotent(vararg excludes: Any, inner: suspend () -> R): R {
+	val captured = inner::class.java.declaredFields.map { it.get(inner) } - excludes + inner::class
 	return if (idempotenceCache.containsKey(captured)) {
 		@Suppress("UNCHECKED_CAST")
 		idempotenceCache[captured] as R

@@ -5,6 +5,7 @@ import com.acornui.logging.ArrayTarget
 import com.acornui.logging.Logger
 import com.acornui.logging.Log
 import com.acornui.test.assertListEquals
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -51,7 +52,22 @@ class TaskKtTest {
 		assertFailsWith<CliException> {
 			runCommands(arrayOf("--foo=Test", "--foo=Test"), { Config() }, { Model() }, { Tasks() })
 		}
+	}
 
+	@Test
+	fun suspendingTask() {
+
+		class Model
+		class Tasks {
+
+			@Task
+			suspend fun hello() {
+				taskOutput.add("Hello")
+			}
+		}
+
+		runCommands(arrayOf("hello"), { Model() }, { Tasks() })
+		assertListEquals(listOf("Hello"), taskOutput)
 	}
 
 	@Test
@@ -403,19 +419,19 @@ class TaskKtTest {
 	}
 
 	@Test
-	fun idempotence() {
+	fun idempotence() = runBlocking {
 
 		class Tasks {
 
-			fun hello(msg: String) = idempotent {
+			suspend fun hello(msg: String) = idempotent {
 				taskOutput.add(msg)
 			}
 
-			fun Any.hello(msg: String) = idempotent {
+			suspend fun Any.hello(msg: String) = idempotent {
 				taskOutput.add(msg + "$this")
 			}
 
-			fun bye(arg0: Int, arg1: String): Int {
+			suspend fun bye(arg0: Int, arg1: String): Int {
 				taskOutput.add("bye non-idempotent $arg0 $arg1")
 				return idempotent {
 					taskOutput.add("bye idempotent $arg0 $arg1")
@@ -471,6 +487,29 @@ class TaskKtTest {
 				"bye idempotent 0 bye"
 		), taskOutput)
 
+	}
+
+	@Test
+	fun idempotenceSameArgs() = runBlocking {
+
+		class Tasks {
+
+			suspend fun a() = idempotent {
+				taskOutput.add(1)
+			}
+
+			suspend fun b() = idempotent {
+				taskOutput.add(2)
+			}
+		}
+
+		val t = Tasks()
+		t.a()
+		t.a()
+		t.b()
+		t.b()
+
+		assertListEquals(listOf(1, 2), taskOutput)
 	}
 
 }

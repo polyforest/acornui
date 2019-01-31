@@ -2,6 +2,8 @@ package com.acornui.build.model
 
 import com.acornui.build.ConfigurationException
 import com.acornui.build.util.ACORNUI_HOME_PATH
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import java.io.File
 
 interface ModuleVo {
@@ -67,22 +69,6 @@ fun ModuleVo.skin(name: String): File {
 }
 
 /**
- * Walks the module dependencies bottom-up, including this module.
- */
-fun ModuleVo.walkDependenciesBottomUp(callback: (ModuleVo) -> Unit) = walkDependenciesBottomUp(HashMap(), callback)
-
-fun ModuleVo.walkDependenciesBottomUp(exclude: HashMap<ModuleVo, Boolean>, callback: (ModuleVo) -> Unit) {
-	for (i in moduleDependencies) {
-		i.walkDependenciesBottomUp(exclude, callback)
-	}
-	if (!exclude.containsKey(this)) {
-		exclude[this] = true
-		callback(this)
-	}
-}
-
-
-/**
  * The base model for all modules.
  */
 abstract class ModuleVoBase(
@@ -117,11 +103,20 @@ abstract class ModuleVoBase(
 	 */
 	override var resources = listOf(rel("resources"))
 
-	override var moduleDependencies = listOf<ModuleVo>()
 	override var sources = listOf(rel("src"))
 
 	init {
 		if (!baseDir.exists()) throw ConfigurationException("${baseDir.absolutePath} does not exist.")
+	}
+}
+
+suspend fun <E> List<E>.asyncForEach(inner: suspend (E)->Unit) {
+	coroutineScope {
+		forEach { m ->
+			launch {
+				inner(m)
+			}
+		}
 	}
 }
 
@@ -176,6 +171,8 @@ interface JvmModuleVo : ModuleVo {
 	 * The settings for building for JVM platforms.
 	 */
 	val jvmSettings: JvmSettingsVo
+
+	override val moduleDependencies: List<JvmModuleVo>
 }
 
 interface JsModuleVo : ModuleVo {
@@ -184,9 +181,14 @@ interface JsModuleVo : ModuleVo {
 	 * The settings for building for JS platforms.
 	 */
 	val jsSettings: JsSettingsVo
+
+	override val moduleDependencies: List<JsModuleVo>
 }
 
-interface CommonModuleVo : JsModuleVo, JvmModuleVo
+interface CommonModuleVo : JsModuleVo, JvmModuleVo {
+
+	override var moduleDependencies: List<CommonModuleVo>
+}
 
 open class JvmModuleVoImpl(
 		baseDir: File,
@@ -195,7 +197,9 @@ open class JvmModuleVoImpl(
 		dist: File = File("dist")
 ) : ModuleVoBase(baseDir, name, out, dist), JvmModuleVo {
 
-	override val jvmSettings = jvmSettings()
+	override var moduleDependencies = listOf<JvmModuleVo>()
+
+	override var jvmSettings = jvmSettings()
 }
 
 open class JsModuleVoImpl(
@@ -205,8 +209,12 @@ open class JsModuleVoImpl(
 		dist: File = File("dist")
 ) : ModuleVoBase(baseDir, name, out, dist), JsModuleVo {
 
-	override val jsSettings = jsSettings()
+	override var moduleDependencies = listOf<JsModuleVo>()
+
+	override var jsSettings = jsSettings()
 }
+
+//open class JsApplicationVoImpl() : JsModuleVoImpl()
 
 open class CommonModuleVoImpl(
 		baseDir: File,
@@ -215,6 +223,8 @@ open class CommonModuleVoImpl(
 		dist: File = File("dist")
 ) : ModuleVoBase(baseDir, name, out, dist), CommonModuleVo {
 
-	override val jvmSettings = jvmSettings()
-	override val jsSettings = jsSettings()
+	override var moduleDependencies = listOf<CommonModuleVo>()
+
+	override var jvmSettings = jvmSettings()
+	override var jsSettings = jsSettings()
 }
