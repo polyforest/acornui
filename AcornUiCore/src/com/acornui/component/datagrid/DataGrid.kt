@@ -139,7 +139,8 @@ class DataGrid<E>(
 
 	private var background: UiComponent? = null
 
-	private val dataView = own(ListView<E>())
+	private val _dataView = own(ListView<E>())
+	val dataView: ObservableList<E> = _dataView
 
 	private val _columns = own(ActiveList<DataGridColumn<E, *>>())
 
@@ -178,23 +179,26 @@ class DataGrid<E>(
 		get() = if (_groups.isEmpty()) defaultGroups else _groups
 
 
-	private var _observableData: ObservableList<E>? = null
+	private var _observableData: ObservableList<E> = emptyObservableList()
 	private var _data: List<E> = emptyList()
 
+	/**
+	 * The data source for this list, as set via `data()`
+	 */
 	val data: List<E>
 		get() = _data
 
 	fun data(source: List<E>?) {
 		_data = source ?: emptyList()
-		_observableData = null
-		dataView.data(_data)
+		_observableData = emptyObservableList()
+		_dataView.data(_data)
 		editorCellRow.data(source)
 	}
 
 	fun data(source: ObservableList<E>?) {
 		_data = source ?: emptyList()
-		_observableData = source
-		dataView.data(_data)
+		_observableData = source ?: emptyObservableList()
+		_dataView.data(_observableData)
 		editorCellRow.data(source)
 	}
 
@@ -413,7 +417,7 @@ class DataGrid<E>(
 			invalidateColumnWidths()
 		}
 
-		dataView.bind(this::invalidateLayout)
+		_dataView.bind(this::invalidateLayout)
 
 		// User interaction:
 
@@ -561,12 +565,12 @@ class DataGrid<E>(
 	 */
 	fun sourceIndexToLocal(sourceIndex: Int): RowLocation? {
 		val element = data[sourceIndex]
-		if (dataView.filter?.invoke(element) == false) return null
+		if (_dataView.filter?.invoke(element) == false) return null
 		var position = 0
 		for (groupIndex in 0..displayGroupCaches.lastIndex) {
 			val groupCache = displayGroupCaches[groupIndex]
 			if (groupCache.showList && groupCache.list.filter?.invoke(element) != false) {
-				val rowIndex = if (_groups.isEmpty()) dataView.sourceIndexToLocal(sourceIndex) else groupCache.list.sourceIndexToLocal(dataView.sourceIndexToLocal(sourceIndex))
+				val rowIndex = if (_groups.isEmpty()) _dataView.sourceIndexToLocal(sourceIndex) else groupCache.list.sourceIndexToLocal(_dataView.sourceIndexToLocal(sourceIndex))
 				return RowLocation(position + rowIndex + groupCache.listStartIndex)
 			}
 			position += groupCache.size
@@ -689,7 +693,7 @@ class DataGrid<E>(
 		val column = _columns[editorCellCol.index] as DataGridColumn<E, Any?>
 		val element = data[editorCellRow.index]
 		column.setCellData(element, editorCell.getData())
-		_observableData?.notifyElementModified(editorCellRow.index)
+		_observableData.notifyElementModified(editorCellRow.index)
 	}
 
 	private fun disposeCellEditor() {
@@ -764,7 +768,7 @@ class DataGrid<E>(
 		_customSortComparator = null
 		_sortColumn = null
 		_sortDirection = ColumnSortDirection.NONE
-		dataView.sortComparator = null
+		_dataView.sortComparator = null
 		invalidateLayout()
 	}
 
@@ -774,7 +778,7 @@ class DataGrid<E>(
 	fun setSortColumn(column: DataGridColumn<E, *>, direction: ColumnSortDirection = ColumnSortDirection.ASCENDING) {
 		_sortColumn = column
 		_sortDirection = direction
-		dataView.sortComparator = when (_sortDirection) {
+		_dataView.sortComparator = when (_sortDirection) {
 			ColumnSortDirection.ASCENDING -> {
 				{
 					row1, row2 ->
@@ -802,7 +806,7 @@ class DataGrid<E>(
 			_customSortComparator = value
 			_sortColumn = null
 			_sortDirection = ColumnSortDirection.NONE
-			dataView.sortComparator = _customSortComparator
+			_dataView.sortComparator = _customSortComparator
 			invalidateLayout()
 		}
 
@@ -812,9 +816,9 @@ class DataGrid<E>(
 	 * not be shown.
 	 */
 	var dataFilter: ((E) -> Boolean)?
-		get() = dataView.filter
+		get() = _dataView.filter
 		set(value) {
-			dataView.filter = value
+			_dataView.filter = value
 		}
 
 	override fun setSize(width: Float?, height: Float?) {
@@ -1551,7 +1555,7 @@ class DataGrid<E>(
 		if (inject(KeyState).keyIsDown(Ascii.CONTROL)) {
 			_sortColumn = null
 			_sortDirection = ColumnSortDirection.NONE
-			dataView.sortComparator = _customSortComparator
+			_dataView.sortComparator = _customSortComparator
 			invalidateLayout()
 		} else {
 			val direction = if (_sortColumn == column) {
@@ -1681,7 +1685,7 @@ class DataGrid<E>(
 	 */
 	private inner class GroupCache(owner: Owned, val group: DataGridGroup<E>) {
 
-		val list: ListView<E> = ListView(dataView).apply { filter = group.filter }
+		val list: ListView<E> = ListView(_dataView).apply { filter = group.filter }
 
 		var header: DataGridGroupHeader? = null
 		var bottomHeader: DataGridGroupHeader? = null
@@ -1830,19 +1834,19 @@ class DataGrid<E>(
 		var sourceIndex: Int
 			get() {
 				if (!isElementRow) return -1
-				return dataView.localIndexToSource(groupCache.list.localIndexToSource(rowIndex))
+				return _dataView.localIndexToSource(groupCache.list.localIndexToSource(rowIndex))
 			}
 			set(value) {
 				_groupIndex = 0
 				_position = -1
 				_groupPosition = -1
 				val element = data[value]
-				if (dataView.filter?.invoke(element) == false) return
+				if (_dataView.filter?.invoke(element) == false) return
 				var newPosition = 0
 				for (groupIndex in 0..displayGroupCaches.lastIndex) {
 					val groupCache = displayGroupCaches[groupIndex]
 					if (groupCache.showList && groupCache.list.filter?.invoke(element) != false) {
-						val rowIndex = if (_groups.isEmpty()) dataView.sourceIndexToLocal(value) else groupCache.list.sourceIndexToLocal(dataView.sourceIndexToLocal(value))
+						val rowIndex = if (_groups.isEmpty()) _dataView.sourceIndexToLocal(value) else groupCache.list.sourceIndexToLocal(_dataView.sourceIndexToLocal(value))
 						_groupPosition = rowIndex + groupCache.listStartIndex
 						_groupIndex = groupIndex
 						_position = newPosition + _groupPosition

@@ -21,7 +21,9 @@ package com.acornui.collection
 import com.acornui.function.as2
 import com.acornui.function.as3
 import com.acornui.signal.Bindable
+import com.acornui.signal.EmptySignal
 import com.acornui.signal.Signal
+import com.acornui.signal.emptySignal
 
 interface ObservableList<out E> : ConcurrentList<E>, Bindable {
 
@@ -101,8 +103,45 @@ fun <E> ObservableList<E>.bindUniqueAssertion() {
 
 fun <E> ObservableList<E>.assertUnique() {
 	for (i in 0..lastIndex) {
-		if (indexOfFirst2(i + 1, lastIndex, { it == this[i] }) != -1) {
+		if (indexOfFirst2(i + 1, lastIndex) { it == this[i] } != -1) {
 			throw Exception("The element ${this[i]} is not unique within this list.")
 		}
 	}
 }
+
+internal object EmptyObservableList : ListBase<Nothing>(), ObservableList<Nothing> {
+	override val size: Int = 0
+
+	override fun get(index: Int): Nothing = throw IndexOutOfBoundsException()
+
+	override val added: Signal<(index: Int, element: Nothing) -> Unit> = emptySignal()
+	override val removed: Signal<(index: Int, element: Nothing) -> Unit> = emptySignal()
+	override val changed: Signal<(index: Int, oldElement: Nothing, newElement: Nothing) -> Unit> = emptySignal()
+	override val modified: Signal<(index: Int, element: Nothing) -> Unit> = emptySignal()
+	override val reset: Signal<() -> Unit> = emptySignal()
+
+	override fun notifyElementModified(index: Int) {}
+
+	override fun concurrentIterator(): ConcurrentListIterator<Nothing> = object : ConcurrentListIterator<Nothing> {
+		override val size: Int = 0
+		override var cursor: Int = 0
+		override fun clear() {}
+
+		override fun iterator(): Iterator<Nothing> = emptyList<Nothing>().iterator()
+
+		override fun hasNext(): Boolean = false
+		override fun hasPrevious(): Boolean = false
+
+		override fun next(): Nothing { throw NoSuchElementException() }
+
+		override fun nextIndex(): Int = 0
+
+		override fun previous(): Nothing { throw NoSuchElementException() }
+
+		override fun previousIndex(): Int = -1
+
+		override fun dispose() {}
+	}
+}
+
+fun <T> emptyObservableList(): ObservableList<T> = EmptyObservableList
