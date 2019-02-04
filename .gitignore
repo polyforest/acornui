@@ -1,9 +1,7 @@
 dist
 out
 externalLib
-/www
-/.idea/workspace.xml
-/Tools/BuildTasks/testOut
-/Tools/BuildTasks/lib
+testOut
 .DS_Store
 scripts/tempScripts
+/.idea/workspace.xml

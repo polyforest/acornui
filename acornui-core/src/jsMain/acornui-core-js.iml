@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <output url="file://$ACORNUI_HOME$/out/js/production/acorn-core" />
+    <output-test url="file://$ACORNUI_HOME$/out/js/test/acorn-core" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$ACORNUI_HOME$/acornui-core/jsTest/kotlin" type="kotlin-test" />
+      <sourceFolder url="file://$MODULE_DIR$/kotlin" type="kotlin-source" />
+    </content>
+    <orderEntry type="jdk" jdkName="Kotlin SDK" jdkType="KotlinSDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="TEST" name="ExternalTestLibs" level="project" />
+    <orderEntry type="library" name="KotlinJavaScript" level="project" />
+    <orderEntry type="module" module-name="acornui-utils-common" />
+    <orderEntry type="module" module-name="acornui-utils-js" />
+  </component>
+</module>
+

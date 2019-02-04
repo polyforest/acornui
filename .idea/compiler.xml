@@ -2,7 +2,9 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <excludeFromCompile>
-      <directory url="file://$PROJECT_DIR$/AcornUiJsBackend" includeSubdirectories="true" />
+      <directory url="file://$ACORNUI_HOME$/backends/acornui-webgl-backend/jsMain" includeSubdirectories="true" />
+	  <directory url="file://$ACORNUI_HOME$/acornui-utils/jsMain" includeSubdirectories="true" />
+	  <directory url="file://$ACORNUI_HOME$/acornui-core/jsMain" includeSubdirectories="true" />
     </excludeFromCompile>
     <wildcardResourcePatterns>
       <entry name="!?*.java" />

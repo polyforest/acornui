@@ -2,18 +2,18 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Tools/AcornFont/AcornFont.iml" filepath="$PROJECT_DIR$/Tools/AcornFont/AcornFont.iml" group="Tools" />
-      <module fileurl="file://$PROJECT_DIR$/AcornGame/AcornGame.iml" filepath="$PROJECT_DIR$/AcornGame/AcornGame.iml" />
-      <module fileurl="file://$PROJECT_DIR$/AcornSpine/AcornSpine.iml" filepath="$PROJECT_DIR$/AcornSpine/AcornSpine.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Tools/AcornTexturePacker/core/AcornTexturePackerCore.iml" filepath="$PROJECT_DIR$/Tools/AcornTexturePacker/core/AcornTexturePackerCore.iml" group="Tools/TexturePacker" />
-      <module fileurl="file://$PROJECT_DIR$/Tools/AcornTexturePacker/jvm/AcornTexturePackerJvm.iml" filepath="$PROJECT_DIR$/Tools/AcornTexturePacker/jvm/AcornTexturePackerJvm.iml" group="Tools/TexturePacker" />
-      <module fileurl="file://$PROJECT_DIR$/AcornUiCore/AcornUiCore.iml" filepath="$PROJECT_DIR$/AcornUiCore/AcornUiCore.iml" />
-      <module fileurl="file://$PROJECT_DIR$/AcornUiJsBackend/AcornUiJsBackend.iml" filepath="$PROJECT_DIR$/AcornUiJsBackend/AcornUiJsBackend.iml" />
-      <module fileurl="file://$PROJECT_DIR$/AcornUiLwjglBackend/AcornUiLwjglBackend.iml" filepath="$PROJECT_DIR$/AcornUiLwjglBackend/AcornUiLwjglBackend.iml" />
-      <module fileurl="file://$PROJECT_DIR$/AcornUtils/AcornUtils.iml" filepath="$PROJECT_DIR$/AcornUtils/AcornUtils.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Tools/BuildTasks/BuildTasks.iml" filepath="$PROJECT_DIR$/Tools/BuildTasks/BuildTasks.iml" group="Tools" />
-      <module fileurl="file://$PROJECT_DIR$/scripts/Scripts.iml" filepath="$PROJECT_DIR$/scripts/Scripts.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Tools/TaskRunner/TaskRunner.iml" filepath="$PROJECT_DIR$/Tools/TaskRunner/TaskRunner.iml" group="Tools" />
+      <module fileurl="file://$ACORNUI_HOME$/tools/acornui-build-tasks/src/jvmMain/acornui-build-tasks-jvm.iml" filepath="$ACORNUI_HOME$/tools/acornui-build-tasks/src/jvmMain/acornui-build-tasks-jvm.iml" group="acornui/tools/acornui-build-tasks" />
+      <module fileurl="file://$ACORNUI_HOME$/acornui-core/src/commonMain/acornui-core-common.iml" filepath="$ACORNUI_HOME$/acornui-core/src/commonMain/acornui-core-common.iml" group="acornui/acornui-core" />
+      <module fileurl="file://$ACORNUI_HOME$/acornui-core/src/jsMain/acornui-core-js.iml" filepath="$ACORNUI_HOME$/acornui-core/src/jsMain/acornui-core-js.iml" group="acornui/acornui-core" />
+      <module fileurl="file://$ACORNUI_HOME$/acornui-game/src/commonMain/acornui-game-common.iml" filepath="$ACORNUI_HOME$/acornui-game/src/commonMain/acornui-game-common.iml" group="acornui/acornui-game" />
+      <module fileurl="file://$ACORNUI_HOME$/backends/acornui-lwjgl-backend/src/jvmMain/acornui-lwjgl-backend-jvm.iml" filepath="$ACORNUI_HOME$/backends/acornui-lwjgl-backend/src/jvmMain/acornui-lwjgl-backend-jvm.iml" group="acornui/backends/acornui-lwjgl-backend" />
+      <module fileurl="file://$ACORNUI_HOME$/acornui-spine/src/commonMain/acornui-spine-common.iml" filepath="$ACORNUI_HOME$/acornui-spine/src/commonMain/acornui-spine-common.iml" group="acornui/acornui-spine" />
+      <module fileurl="file://$ACORNUI_HOME$/tools/acornui-texture-packer/src/commonMain/acornui-texture-packer-common.iml" filepath="$ACORNUI_HOME$/tools/acornui-texture-packer/src/commonMain/acornui-texture-packer-common.iml" group="acornui/tools/acornui-texture-packer" />
+      <module fileurl="file://$ACORNUI_HOME$/tools/acornui-texture-packer/src/jvmMain/acornui-texture-packer-jvm.iml" filepath="$ACORNUI_HOME$/tools/acornui-texture-packer/src/jvmMain/acornui-texture-packer-jvm.iml" group="acornui/tools/acornui-texture-packer" />
+      <module fileurl="file://$ACORNUI_HOME$/acornui-utils/src/commonMain/acornui-utils-common.iml" filepath="$ACORNUI_HOME$/acornui-utils/src/commonMain/acornui-utils-common.iml" group="acornui/acornui-utils" />
+      <module fileurl="file://$ACORNUI_HOME$/acornui-utils/src/jsMain/acornui-utils-js.iml" filepath="$ACORNUI_HOME$/acornui-utils/src/jsMain/acornui-utils-js.iml" group="acornui/acornui-utils" />
+      <module fileurl="file://$ACORNUI_HOME$/backends/acornui-webgl-backend/src/jsMain/acornui-webgl-backend-js.iml" filepath="$ACORNUI_HOME$/backends/acornui-webgl-backend/src/jsMain/acornui-webgl-backend-js.iml" group="acornui/backends/acornui-webgl-backend" />
+      <module fileurl="file://$PROJECT_DIR$/scripts/scripts.iml" filepath="$PROJECT_DIR$/scripts/scripts.iml" group="acornui" />
     </modules>
   </component>
 </project>
