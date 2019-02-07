@@ -101,34 +101,34 @@ object BuildUtil {
 			Targets.ASSETS -> assets(selectedModules, js, jvm)
 			Targets.BUILD -> build(selectedModules, js, jvm)
 			Targets.DEPLOY -> deploy(selectedModules, js, jvm)
-			Targets.WIN32 -> throw Exception("win32 is not currently supported.")
-			Targets.WIN64 -> win64(selectedModules.appModules, js, jvm)
-			Targets.MAC64 -> mac64(selectedModules.appModules, js, jvm)
-			Targets.LINUX64 -> linux64(selectedModules.appModules, js, jvm)
+//			Targets.WIN32 -> throw Exception("win32 is not currently supported.")
+//			Targets.WIN64 -> win64(selectedModules.appModules, js, jvm)
+//			Targets.MAC64 -> mac64(selectedModules.appModules, js, jvm)
+//			Targets.LINUX64 -> linux64(selectedModules.appModules, js, jvm)
 			null -> TODO()
 		}
 	}
 
-	private fun win64(appModules: List<AppModule>, js: Boolean, jvm: Boolean) {
-		deploy(appModules, js, jvm)
-		for (appModule in appModules) {
-			appModule.win64()
-		}
-	}
-
-	private fun mac64(appModules: List<AppModule>, js: Boolean, jvm: Boolean) {
-		deploy(appModules, js, jvm)
-		for (appModule in appModules) {
-			appModule.mac64()
-		}
-	}
-
-	private fun linux64(appModules: List<AppModule>, js: Boolean, jvm: Boolean) {
-		deploy(appModules, js, jvm)
-		for (appModule in appModules) {
-			appModule.linux64()
-		}
-	}
+//	private fun win64(appModules: List<AppModule>, js: Boolean, jvm: Boolean) {
+//		deploy(appModules, js, jvm)
+//		for (appModule in appModules) {
+//			appModule.win64()
+//		}
+//	}
+//
+//	private fun mac64(appModules: List<AppModule>, js: Boolean, jvm: Boolean) {
+//		deploy(appModules, js, jvm)
+//		for (appModule in appModules) {
+//			appModule.mac64()
+//		}
+//	}
+//
+//	private fun linux64(appModules: List<AppModule>, js: Boolean, jvm: Boolean) {
+//		deploy(appModules, js, jvm)
+//		for (appModule in appModules) {
+//			appModule.linux64()
+//		}
+//	}
 
 	private fun getTarget(target: String): Targets? {
 		return try {

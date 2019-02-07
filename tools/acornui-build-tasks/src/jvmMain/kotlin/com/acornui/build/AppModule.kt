@@ -21,9 +21,6 @@ import com.acornui.io.file.FilesManifestSerializer
 import com.acornui.jvm.io.file.ManifestUtil
 import com.acornui.serialization.JsonSerializer
 import com.acornui.serialization.write
-import com.badlogicgames.packr.Packr
-import com.badlogicgames.packr.PackrConfig
-import com.google.javascript.jscomp.*
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments
 import org.jetbrains.kotlin.cli.js.dce.K2JSDce
@@ -183,32 +180,32 @@ open class AppModule(
 		if (exitCode != ExitCode.OK) System.exit(exitCode.code)
 	}
 
-	private fun uglify(dest: File) {
-		println("Uglifying")
-		val compiler = Compiler()
-		val options = CompilerOptions()
-		CompilationLevel.SIMPLE_OPTIMIZATIONS.setOptionsForCompilationLevel(options)
-		options.languageIn = CompilerOptions.LanguageMode.ECMASCRIPT5
-//		options.languageOut = CompilerOptions.LanguageMode.ECMASCRIPT5
-		WarningLevel.QUIET.setOptionsForWarningLevel(options)
-
-		val sources = arrayListOf(File(dest, "$jsLibDir/kotlin.js"))
-		walkDependenciesBottomUp {
-			sources.add(File(dest, "$jsLibDir/${it.name}.js"))
-		}
-		compiler.compile(listOf(), sources.map { SourceFile.fromFile(it.absolutePath) }, options)
-
-		for (message in compiler.errors) {
-			System.err.println("Error message: $message")
-		}
-		val minFile = File(dest, "$jsLibDir/$name.js")
-		for (source in sources) {
-			// Remove source files that were merged. Don't delete the file we're going to use for the minified version.
-			if (source.absolutePath != minFile.absolutePath)
-				source.delete()
-		}
-		minFile.writeText(compiler.toSource())
-	}
+//	private fun uglify(dest: File) {
+//		println("Uglifying")
+//		val compiler = Compiler()
+//		val options = CompilerOptions()
+//		CompilationLevel.SIMPLE_OPTIMIZATIONS.setOptionsForCompilationLevel(options)
+//		options.languageIn = CompilerOptions.LanguageMode.ECMASCRIPT5
+////		options.languageOut = CompilerOptions.LanguageMode.ECMASCRIPT5
+//		WarningLevel.QUIET.setOptionsForWarningLevel(options)
+//
+//		val sources = arrayListOf(File(dest, "$jsLibDir/kotlin.js"))
+//		walkDependenciesBottomUp {
+//			sources.add(File(dest, "$jsLibDir/${it.name}.js"))
+//		}
+//		compiler.compile(listOf(), sources.map { SourceFile.fromFile(it.absolutePath) }, options)
+//
+//		for (message in compiler.errors) {
+//			System.err.println("Error message: $message")
+//		}
+//		val minFile = File(dest, "$jsLibDir/$name.js")
+//		for (source in sources) {
+//			// Remove source files that were merged. Don't delete the file we're going to use for the minified version.
+//			if (source.absolutePath != minFile.absolutePath)
+//				source.delete()
+//		}
+//		minFile.writeText(compiler.toSource())
+//	}
 
 	/**
 	 * Creates a single, runnable jar.
@@ -216,72 +213,73 @@ open class AppModule(
 	open fun fatJar() {
 	}
 
-	/**
-	 * Uses Packr to create a win64 executable.
-	 *
-	 * Windows troubleshooting:
-	 * If double clicking the exe does nothing, use your.exe -c --console -v  to see the problem.
-	 */
-	open fun win64() {
-		println("Creating executable for $name")
-		val config = createBasePackrConfig()
-		config.platform = PackrConfig.Platform.Windows64
-		config.jdk = "http://cdn.azul.com/zulu/bin/zulu8.21.0.1-jdk8.0.131-win_x64.zip"
-		config.outDir = File("out-win64")
-		Packr().pack(config)
-	}
-
-	/**
-	 * Uses Packr to create a mac64 executable.
-	 */
-	open fun mac64() {
-		println("Creating dmg for $name")
-		val config = createBasePackrConfig()
-		config.platform = PackrConfig.Platform.MacOS
-		config.jdk = "http://cdn.azul.com/zulu/bin/zulu8.21.0.1-jdk8.0.131-macosx_x64.zip"
-		config.outDir = File("out-mac")
-		Packr().pack(config)
-	}
-
-	/**
-	 * Uses Packr to create a linux64 executable.
-	 */
-	open fun linux64() {
-		println("Creating for $name")
-		val config = createBasePackrConfig()
-		config.platform = PackrConfig.Platform.Linux64
-		config.jdk = "http://cdn.azul.com/zulu/bin/zulu8.21.0.1-jdk8.0.131-linux_x64.tar.gz"
-		config.outDir = File("out-linux64")
-		Packr().pack(config)
-	}
-
-	protected open fun createBasePackrConfig(): PackrConfig {
-		val config = PackrConfig()
-		config.executable = name
-
-		val libraryFiles = ArrayList<String>()
-		walkDependenciesBottomUp {
-			libraryFiles.add(it.jvmJar.absolutePath)
-			Module.expandLibraryDependencies(it.jvmLibraryDependencies, libraryFiles)
-			Module.expandLibraryDependencies(it.jvmRuntimeDependencies, libraryFiles)
-		}
-		libraryFiles.add(jvmJar.absolutePath)
-
-		val cp = System.getProperty("java.class.path")
-		val indexB = cp.indexOf("kotlin-runtime.jar")
-		val indexA = cp.lastIndexOf(PATH_SEPARATOR, indexB) + 1
-		libraryFiles.add(cp.substring(indexA, indexB + "kotlin-runtime.jar".length))
-		config.classpath = libraryFiles
-		config.mainClass = mainClass!!
-		config.vmArgs = arrayListOf("-Xmx1G")
-		config.minimizeJre = "hard"
-		config.resources = jvmOutWorking.listFiles().toList()
-		return config
-	}
+//	/**
+//	 * Uses Packr to create a win64 executable.
+//	 *
+//	 * Windows troubleshooting:
+//	 * If double clicking the exe does nothing, use your.exe -c --console -v  to see the problem.
+//	 */
+//	open fun win64() {
+//		println("Creating executable for $name")
+//		val config = createBasePackrConfig()
+//		config.platform = PackrConfig.Platform.Windows64
+//		config.jdk = "http://cdn.azul.com/zulu/bin/zulu8.21.0.1-jdk8.0.131-win_x64.zip"
+//		config.outDir = File("out-win64")
+//		Packr().pack(config)
+//	}
+//
+//	/**
+//	 * Uses Packr to create a mac64 executable.
+//	 */
+//	open fun mac64() {
+//		println("Creating dmg for $name")
+//		val config = createBasePackrConfig()
+//		config.platform = PackrConfig.Platform.MacOS
+//		config.jdk = "http://cdn.azul.com/zulu/bin/zulu8.21.0.1-jdk8.0.131-macosx_x64.zip"
+//		config.outDir = File("out-mac")
+//		Packr().pack(config)
+//	}
+//
+//	/**
+//	 * Uses Packr to create a linux64 executable.
+//	 */
+//	open fun linux64() {
+//		println("Creating for $name")
+//		val config = createBasePackrConfig()
+//		config.platform = PackrConfig.Platform.Linux64
+//		config.jdk = "http://cdn.azul.com/zulu/bin/zulu8.21.0.1-jdk8.0.131-linux_x64.tar.gz"
+//		config.outDir = File("out-linux64")
+//		Packr().pack(config)
+//	}
+//
+//	protected open fun createBasePackrConfig(): PackrConfig {
+//		val config = PackrConfig()
+//		config.executable = name
+//
+//		val libraryFiles = ArrayList<String>()
+//		walkDependenciesBottomUp {
+//			libraryFiles.add(it.jvmJar.absolutePath)
+//			Module.expandLibraryDependencies(it.jvmLibraryDependencies, libraryFiles)
+//			Module.expandLibraryDependencies(it.jvmRuntimeDependencies, libraryFiles)
+//		}
+//		libraryFiles.add(jvmJar.absolutePath)
+//
+//		val cp = System.getProperty("java.class.path")
+//		val indexB = cp.indexOf("kotlin-runtime.jar")
+//		val indexA = cp.lastIndexOf(PATH_SEPARATOR, indexB) + 1
+//		libraryFiles.add(cp.substring(indexA, indexB + "kotlin-runtime.jar".length))
+//		config.classpath = libraryFiles
+//		config.mainClass = mainClass!!
+//		config.vmArgs = arrayListOf("-Xmx1G")
+//		config.minimizeJre = "hard"
+//		config.resources = jvmOutWorking.listFiles().toList()
+//		return config
+//	}
 
 	override fun clean() {
 		super.clean()
-		outWww.delete()
+		outWww.deleteRecursively()
+		distWww.deleteRecursively()
 	}
 }
 

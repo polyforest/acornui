@@ -10,22 +10,22 @@ val repo = "http://repo1.maven.org/maven2"
 val lwjglVersion = "3.2.1"
 
 val knownDependencies = mutableSetOf<String>()
-val knownDependencyLocations = mutableSetOf<String>()
+val knownDependencyLocations = mutableSetOf<String>("$acornUiHome/tools/acornui-build-tasks/src/jvmMain/externalLib/compile")
 
-dependency("$repo/com/bladecoder/packr/packr/2.1/packr-2.1", "tools/acornui-build-tasks/src/jvmMain", includeSources = false, includeDocs = false)
-dependency("$repo/org/zeroturnaround/zt-zip/1.10/zt-zip-1.10", "tools/acornui-build-tasks/src/jvmMain", includeSources = false, includeDocs = false)
-dependency("$repo/com/eclipsesource/minimal-json/minimal-json/0.9.1/minimal-json-0.9.1", "tools/acornui-build-tasks/src/jvmMain", includeSources = false, includeDocs = false)
-dependency("$repo/com/lexicalscope/jewelcli/jewelcli/0.8.9/jewelcli-0.8.9", "tools/acornui-build-tasks/src/jvmMain", includeSources = false, includeDocs = false)
-dependency("$repo/org/apache/commons/commons-io/1.3.2/commons-io-1.3.2", "tools/acornui-build-tasks/src/jvmMain", includeSources = false, includeDocs = false)
-dependency("$repo/org/slf4j/slf4j-simple/1.6.6/slf4j-simple-1.6.6", "tools/acornui-build-tasks/src/jvmMain", includeSources = false, includeDocs = false)
-dependency("$repo/org/slf4j/slf4j-api/1.7.9/slf4j-api-1.7.9", "tools/acornui-build-tasks/src/jvmMain", includeSources = false, includeDocs = false)
+//dependency("$repo/com/bladecoder/packr/packr/2.1/packr-2.1", "$acornUiHome/tools/acornui-build-tasks/src/jvmMain", includeSources = false, includeDocs = false)
+//dependency("$repo/org/zeroturnaround/zt-zip/1.10/zt-zip-1.10", "$acornUiHome/tools/acornui-build-tasks/src/jvmMain", includeSources = false, includeDocs = false)
+//dependency("$repo/com/eclipsesource/minimal-json/minimal-json/0.9.1/minimal-json-0.9.1", "$acornUiHome/tools/acornui-build-tasks/src/jvmMain", includeSources = false, includeDocs = false)
+//dependency("$repo/com/lexicalscope/jewelcli/jewelcli/0.8.9/jewelcli-0.8.9", "$acornUiHome/tools/acornui-build-tasks/src/jvmMain", includeSources = false, includeDocs = false)
+//dependency("$repo/org/apache/commons/commons-io/1.3.2/commons-io-1.3.2", "$acornUiHome/tools/acornui-build-tasks/src/jvmMain", includeSources = false, includeDocs = false)
+//dependency("$repo/org/slf4j/slf4j-simple/1.6.6/slf4j-simple-1.6.6", "$acornUiHome/tools/acornui-build-tasks/src/jvmMain", includeSources = false, includeDocs = false)
+//dependency("$repo/org/slf4j/slf4j-api/1.7.9/slf4j-api-1.7.9", "$acornUiHome/tools/acornui-build-tasks/src/jvmMain", includeSources = false, includeDocs = false)
 
-dependency("$repo/com/google/code/gson/gson/2.7/gson-2.7", "tools/acornui-build-tasks/src/jvmMain")
-dependency("$repo/com/google/guava/guava/20.0/guava-20.0", "tools/acornui-build-tasks/src/jvmMain")
+//dependency("$repo/com/google/code/gson/gson/2.7/gson-2.7", "$acornUiHome/tools/acornui-build-tasks/src/jvmMain")
+//dependency("$repo/com/google/guava/guava/20.0/guava-20.0", "$acornUiHome/tools/acornui-build-tasks/src/jvmMain")
 
-val closureVersion = "v20190106" // old v20170626
-dependency("$repo/com/google/javascript/closure-compiler-externs/$closureVersion/closure-compiler-externs-$closureVersion", "tools/acornui-build-tasks/src/jvmMain", includeSources = false, includeDocs = false)
-dependency("$repo/com/google/javascript/closure-compiler/$closureVersion/closure-compiler-$closureVersion", "tools/acornui-build-tasks/src/jvmMain")
+//val closureVersion = "v20190106" // old v20170626
+//dependency("$repo/com/google/javascript/closure-compiler-externs/$closureVersion/closure-compiler-externs-$closureVersion", "$acornUiHome/tools/acornui-build-tasks/src/jvmMain", includeSources = false, includeDocs = false)
+//dependency("$repo/com/google/javascript/closure-compiler/$closureVersion/closure-compiler-$closureVersion", "$acornUiHome/tools/acornui-build-tasks/src/jvmMain")
 
 
 val natives = arrayOf("windows", "macos", "linux")
@@ -100,6 +100,7 @@ for (knownDependencyLocation in knownDependencyLocations) {
 		if (!knownDependencies.contains(listFile.absolutePath)) {
 			println("Deleting old dependency: ${listFile.absolutePath}")
 			listFile.delete()
+			listFile.deleteOnExit()
 		}
 	}
 }
