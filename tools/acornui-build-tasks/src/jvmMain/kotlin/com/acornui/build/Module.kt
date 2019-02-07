@@ -117,7 +117,7 @@ abstract class Module(
 			outAssets.clean()
 			for (resDir in allResources) {
 				if (resDir.exists()) {
-					println("Packing assets for $name (${resDir.relativeTo(baseDir).path}")
+					println("Packing assets for $name (${resDir.path}")
 					AcornAssets.packAssets(resDir, outAssets, outAssets.parentFile!!)
 				}
 			}
