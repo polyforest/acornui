@@ -96,7 +96,9 @@ fun download(path: String, destination: String) {
 
 // Cleanup dependencies
 for (knownDependencyLocation in knownDependencyLocations) {
-	for (listFile in File(knownDependencyLocation).listFiles()) {
+	val knownDependencyLocationFile = File(knownDependencyLocation)
+	if (!knownDependencyLocationFile.exists()) continue
+	for (listFile in knownDependencyLocationFile.listFiles()) {
 		if (!knownDependencies.contains(listFile.absolutePath)) {
 			println("Deleting old dependency: ${listFile.absolutePath}")
 			listFile.delete()
