@@ -292,12 +292,9 @@ object BitmapFontRegistry : Clearable, Disposable {
 	private val warnedFontKeys = stringMapOf<Boolean>()
 
 	/**
-	 * Registers a font loader to a font style.
-	 * If the loaded font does not match the style used as the key, a warning will be logged.
-	 * The loaded texture pages will have their use counts incremented via [Texture.refInc]
+	 * Registers a bitmap font to a font path.
 	 * @param fontKey The font path key to register to the [BitmapFont].
-	 * @param bitmapFont A loader for a [BitmapFont].
-	 * logged. This warning may be turned off if the mismatch is intentional.
+	 * @param bitmapFont The bitmap font.
 	 */
 	fun register(fontKey: String, bitmapFont: BitmapFont) {
 		if (registry.containsKey(fontKey)) return
