@@ -118,6 +118,11 @@ interface Window : Disposable {
 	 */
 	fun requestClose()
 
+	/**
+	 * Displays a native alert with a message.
+	 */
+	fun alert(message: String)
+
 	var fullScreen: Boolean
 
 	val location: Location

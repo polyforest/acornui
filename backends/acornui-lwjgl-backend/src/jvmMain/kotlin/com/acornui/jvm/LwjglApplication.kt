@@ -65,6 +65,7 @@ import com.acornui.core.text.numberFormatterProvider
 import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.TimeDriverImpl
 import com.acornui.core.time.time
+import com.acornui.error.stack
 import com.acornui.file.FileIoManager
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
@@ -96,6 +97,7 @@ import com.acornui.logging.Logger
 import com.acornui.logging.Log
 import com.acornui.math.MinMax
 import com.acornui.serialization.JsonSerializer
+import com.acornui.uncaughtExceptionHandler
 import org.lwjgl.Version
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWWindowRefreshCallback
@@ -235,6 +237,13 @@ open class LwjglApplication : ApplicationBase() {
 		val window = GlfwWindowImpl(config.window, config.gl, get(Gl20), config.debug)
 		_windowId = window.windowId
 		set(Window, window)
+		uncaughtExceptionHandler = {
+			val message = it.stack
+			Log.error(message)
+			if (config.debug)
+				window.alert(message)
+			System.exit(1)
+		}
 	}
 
 	protected open val glStateTask by BootTask {
@@ -334,6 +343,13 @@ open class LwjglApplication : ApplicationBase() {
 
 	protected open val fileReadWriteManagerTask by BootTask {
 		set(FileIoManager, JvmFileIoManager())
+	}
+
+	protected open val uncaughtExceptionsTask by BootTask {
+		Thread.currentThread().setUncaughtExceptionHandler {
+			_, exception ->
+			uncaughtExceptionHandler(exception)
+		}
 	}
 
 	/**

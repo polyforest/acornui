@@ -86,6 +86,7 @@ import com.acornui.js.time.TimeProviderImpl
 import com.acornui.logging.Logger
 import com.acornui.logging.Log
 import com.acornui.serialization.JsonSerializer
+import com.acornui.uncaughtExceptionHandler
 import org.w3c.dom.DocumentReadyState
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.LOADING
@@ -204,10 +205,10 @@ Kotlin.isType = function(object, klass) {
 		val prevOnError = window.onerror
 		window.onerror = { message, source, lineNo, colNo, error ->
 			prevOnError?.invoke(message, source, lineNo, colNo, error)
-			val msg = "Error: $message $lineNo $source $colNo $error"
-			Log.error(msg)
-			if (finalConfig.debug)
-				window.alert(msg)
+			if (error is Throwable)
+				uncaughtExceptionHandler(error)
+			else
+				uncaughtExceptionHandler(Exception("Unknown error: $message $lineNo $source $colNo $error"))
 		}
 
 		// _assert
@@ -218,7 +219,7 @@ Kotlin.isType = function(object, klass) {
 	}
 
 	protected open val userInfoTask by BootTask {
-		// TODO: isTouchDevice isn't accurate on Mac (always true).
+		// FIXME: #118 isTouchDevice isn't accurate on Mac (always true).
 		val isTouchDevice = js("""'ontouchstart' in window || !!navigator.maxTouchPoints;""") as? Boolean ?: false
 
 		val isMobile = js("""

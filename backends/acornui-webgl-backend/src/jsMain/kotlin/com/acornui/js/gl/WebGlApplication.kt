@@ -30,6 +30,7 @@ import com.acornui.core.focus.FakeFocusMouse
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.FocusManagerImpl
 import com.acornui.core.graphic.Window
+import com.acornui.error.stack
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.GlStateImpl
@@ -37,6 +38,8 @@ import com.acornui.js.JsApplicationBase
 import com.acornui.js.html.JsHtmlComponent
 import com.acornui.js.html.WebGl
 import com.acornui.js.input.JsClickDispatcher
+import com.acornui.logging.Log
+import com.acornui.uncaughtExceptionHandler
 import org.khronos.webgl.WebGLContextAttributes
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
@@ -81,7 +84,15 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 	}
 	
 	override val windowTask by BootTask {
-		set(Window, WebGlWindowImpl(get(CANVAS), config().window, get(Gl20)))
+		val config = config()
+		val window = WebGlWindowImpl(get(CANVAS), config.window, get(Gl20))
+		set(Window, window)
+		uncaughtExceptionHandler = {
+			val message = it.stack
+			Log.error(message)
+			if (config.debug)
+				window.alert(message)
+		}
 	}
 
 	protected open val glStateTask by BootTask {

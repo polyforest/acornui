@@ -36,6 +36,7 @@ import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL20
 import org.lwjgl.system.MemoryStack.stackPush
 import org.lwjgl.system.MemoryUtil
+import org.lwjgl.util.tinyfd.TinyFileDialogs
 import kotlin.properties.Delegates
 
 
@@ -276,6 +277,10 @@ class GlfwWindowImpl(
 		}
 
 	override val location: Location = LwjglLocation()
+
+	override fun alert(message: String) {
+		TinyFileDialogs.tinyfd_notifyPopup(null, message, "error")
+	}
 
 	override fun dispose() {
 		sizeChanged.dispose()

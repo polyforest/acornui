@@ -19,6 +19,7 @@ package com.acornui.logging
 import com.acornui.collection.Clearable
 import com.acornui.collection.poll
 import com.acornui.core.lineSeparator
+import com.acornui.error.stack
 
 @Deprecated("renamed to Logger", ReplaceWith("Logger"))
 typealias ILogger = Logger
@@ -26,10 +27,10 @@ typealias ILogger = Logger
 interface Logger {
 
 	companion object {
-		val ERROR: Int = 1
-		val WARN: Int = 2
-		val INFO: Int = 3
-		val DEBUG: Int = 4
+		const val ERROR: Int = 1
+		const val WARN: Int = 2
+		const val INFO: Int = 3
+		const val DEBUG: Int = 4
 
 		fun getLogLevelFromString(str: String): Int {
 			return when (str.toLowerCase()) {
@@ -66,8 +67,7 @@ interface Logger {
 	fun error(e: Throwable, message: String = "") {
 		var str = ""
 		if (message.isNotEmpty()) str += "$message\n"
-		str += "${e.message}\n"
-//		str += e.stackTrace.joinToString("\n") { it.toString() } // Currently doesn't work on JS side.
+		str += e.stack
 		log(str, ERROR)
 	}
 

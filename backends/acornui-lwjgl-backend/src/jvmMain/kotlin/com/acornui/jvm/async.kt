@@ -23,12 +23,21 @@ import com.acornui.async.TimeoutException
 import com.acornui.core.Disposable
 import com.acornui.core.UpdatableChildBase
 import com.acornui.core.time.TimeDriver
+import com.acornui.uncaughtExceptionHandler
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 
 private val executor by lazy {
-	val e = Executors.newSingleThreadExecutor { r -> Thread(r, "AcornUI_IO") }
+	val e = Executors.newSingleThreadExecutor {
+		r ->
+		val thread = Thread(r, "AcornUI_IO")
+		thread.setUncaughtExceptionHandler {
+			_, exception ->
+			uncaughtExceptionHandler(exception)
+		}
+		thread
+	}
 	val d = object : Disposable {
 		override fun dispose() {
 			e.shutdownNow()
@@ -63,6 +72,7 @@ fun <T> asyncThread(timeDriver: TimeDriver, timeout: Float = 60f, work: () -> T)
 							fail(e)
 							null
 						}
+						@Suppress("UNCHECKED_CAST")
 						if (status == Deferred.Status.PENDING)
 							success(result as T)
 						PendingDisposablesRegistry.unregister(r)

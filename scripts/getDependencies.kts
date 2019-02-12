@@ -29,7 +29,7 @@ val knownDependencyLocations = mutableSetOf<String>("$acornUiHome/tools/acornui-
 
 
 val natives = arrayOf("windows", "macos", "linux")
-val extensions = arrayOf("glfw", "jemalloc", "opengl", "openal", "stb", "nfd")
+val extensions = arrayOf("glfw", "jemalloc", "opengl", "openal", "stb", "nfd", "tinyfd")
 for (native in natives) {
 	runtimeDependency("$repo/org/lwjgl/lwjgl/$lwjglVersion/lwjgl-$lwjglVersion-natives-$native", "backends/acornui-lwjgl-backend/src/jvmMain")
 	for (extension in extensions) {

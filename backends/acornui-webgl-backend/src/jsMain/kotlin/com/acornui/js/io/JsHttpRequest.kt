@@ -32,11 +32,14 @@ abstract class JsHttpRequest<T>(
 	init {
 		httpRequest.onprogress = {
 			event ->
-			event as ProgressEvent
 			_bytesLoaded = event.loaded
 			_bytesTotal = event.total
 			Unit
 		}
+
+		val async = true
+		val url = if (requestData.method == UrlRequestMethod.GET && requestData.variables != null)
+			requestData.url + "?" + requestData.variables!!.toQueryString() else requestData.url
 
 		httpRequest.onreadystatechange = {
 			if (httpRequest.readyState == XMLHttpRequest.DONE) {
@@ -45,14 +48,11 @@ abstract class JsHttpRequest<T>(
 					val result = process(httpRequest)
 					success(result)
 				} else {
-					fail(ResponseException(httpRequest.status, httpRequest.statusText, httpRequest.response?.toString() ?: ""))
+					fail(ResponseException(httpRequest.status, url + " " + httpRequest.statusText, httpRequest.response?.toString() ?: ""))
 				}
 			}
 		}
 
-		val async = true
-		val url = if (requestData.method == UrlRequestMethod.GET && requestData.variables != null)
-			requestData.url + "?" + requestData.variables!!.toQueryString() else requestData.url
 		httpRequest.open(requestData.method, url, async, requestData.user, requestData.password)
 		httpRequest.responseType = responseType
 		httpRequest.timeout = requestData.timeout.toInt()

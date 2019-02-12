@@ -243,6 +243,10 @@ class WebGlWindowImpl(
 	override val location: Location
 		get() = _location
 
+	override fun alert(message: String) {
+		window.alert(message)
+	}
+
 	override fun dispose() {
 		_sizeChanged.dispose()
 		_isVisibleChanged.dispose()
