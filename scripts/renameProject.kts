@@ -40,8 +40,8 @@ if (!sourceDir.exists()) error("source '$source' does not exist.")
 if (destinationDir.exists()) error("Destination already exists.")
 println("Copying to destination: ${destinationDir.absolutePath}")
 
-val templateName: String = sourceDir.name
-val newProjectName: String = destinationDir.name
+val templateName: String = sourceDir.name.toCamelCase()
+val newProjectName: String = destinationDir.name.toCamelCase()
 val replacements = ArrayList<Pair<String, String>>()
 replacements.add(Pair(templateName, newProjectName))
 replacements.add(Pair(templateName.toLowerCase(), newProjectName.toLowerCase()))
@@ -87,6 +87,11 @@ while (openList.isNotEmpty()) {
 fun String.toUnderscoreCase(): String {
 	return replace(Regex("([a-z])([A-Z]+)"), "$1_$2").toLowerCase()
 }
+
+fun String.toCamelCase(): String {
+	return split("-").map { it[0].toUpperCase() + it.substring(1) }.joinToString("")
+}
+
 
 fun String.toFirstLowerCase(): String {
 	return this[0].toLowerCase() + substring(1)
