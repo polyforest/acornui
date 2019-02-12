@@ -129,23 +129,23 @@ class Entity(
 }
 
 
-class EntitySerializer(val componentTypes: Array<SerializableComponentType<*>>) : To<Entity>, From<Entity> {
+class EntitySerializer(componentTypes: Array<SerializableComponentType<*>>) : To<Entity>, From<Entity> {
 
 	private val componentSerializer = ComponentSerializer(componentTypes)
 
 	override fun Entity.write(writer: Writer) {
 		writer.string("id", id)
 		val w = writer.property("components")
-		w.array(true, {
+		w.array(true) {
 			// Only serialize serializable components.
 			for (v in components.values) {
 				if (v.type is SerializableComponentType) {
-					it.element().obj(true, {
+					it.element().obj(true) {
 						componentSerializer.write2(v, it)
-					})
+					}
 				}
 			}
-		})
+		}
 	}
 
 	override fun read(reader: Reader): Entity {
