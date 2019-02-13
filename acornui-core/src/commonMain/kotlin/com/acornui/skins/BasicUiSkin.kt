@@ -544,8 +544,8 @@ open class BasicUiSkin(
 			}
 		}
 		dataGridStyle.resizeHandleWidth = if (userInfo.isTouchDevice) 16f else 8f
-		dataGridStyle.sortDownArrow = { atlas(theme.atlasPath, "DownArrow") }
-		dataGridStyle.sortUpArrow = { atlas(theme.atlasPath, "UpArrow") }
+		dataGridStyle.sortDownArrow = { atlas(theme.atlasPath, "DownArrow") { colorTint = theme.iconColor } }
+		dataGridStyle.sortUpArrow = { atlas(theme.atlasPath, "UpArrow") { colorTint = theme.iconColor } }
 		dataGridStyle.borderRadius = Corners(theme.borderRadius)
 		dataGridStyle.borderThickness = Pad(theme.strokeThickness)
 
@@ -1028,6 +1028,8 @@ class Theme {
 	var buttonPad: PadRo = Pad(4f)
 	var iconButtonGap = 2f
 
+	var iconColor: ColorRo = Color.DARK_GRAY
+
 	var atlasPath = "assets/uiskin/uiskin.json"
 
 	fun set(other: Theme) {
@@ -1072,6 +1074,8 @@ class Theme {
 		buttonPad = other.buttonPad
 		iconButtonGap = other.iconButtonGap
 
+		iconColor = other.iconColor
+
 		atlasPath = other.atlasPath
 	}
 
@@ -1088,20 +1092,20 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 		o.bgColor = reader.color("bgColor")!!
 		o.borderRadius = reader.float("borderRadius")!!
 		o.buttonPad = reader.obj("buttonPad", PadSerializer)!!
-		o.iconButtonGap = reader.float("iconButtonGap")!!
 		o.controlBarBgColor = reader.color("controlBarBgColor")!!
+		o.errorColor = reader.color("errorColor")!!
 		o.evenRowBgColor = reader.color("evenRowBgColor")!!
 		o.fill = reader.color("fill")!!
 		o.fillDisabled = reader.color("fillDisabled")!!
 		o.fillHighlight = reader.color("fillHighlight")!!
 		o.fillShine = reader.color("fillShine")!!
 		o.formLabelColor = reader.color("formLabelColor")!!
-		o.errorColor = reader.color("errorColor")!!
-		o.warningColor = reader.color("warningColor")!!
-		o.infoColor = reader.color("infoColor")!!
 		o.headingColor = reader.color("headingColor")!!
 		o.highlightedEvenRowBgColor = reader.color("highlightedEvenRowBgColor")!!
 		o.highlightedOddRowBgColor = reader.color("highlightedOddRowBgColor")!!
+		o.iconButtonGap = reader.float("iconButtonGap")!!
+		o.iconColor = reader.color("iconColor") ?: Color.DARK_GRAY
+		o.infoColor = reader.color("infoColor")!!
 		o.inputFill = reader.color("inputFill")!!
 		o.oddRowBgColor = reader.color("oddRowBgColor")!!
 		o.panelBgColor = reader.color("panelBgColor")!!
@@ -1114,6 +1118,7 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 		o.textColor = reader.color("textColor")!!
 		o.toggledEvenRowBgColor = reader.color("toggledEvenRowBgColor")!!
 		o.toggledOddRowBgColor = reader.color("toggledOddRowBgColor")!!
+		o.warningColor = reader.color("warningColor")!!
 		return o
 	}
 
@@ -1122,16 +1127,16 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 		writer.color("bgColor", bgColor)
 		writer.float("borderRadius", borderRadius)
 		writer.obj("buttonPad", buttonPad, PadSerializer)
-		writer.float("iconButtonGap", iconButtonGap)
 		writer.color("controlBarBgColor", controlBarBgColor)
 		writer.color("evenRowBgColor", evenRowBgColor)
+		writer.color("errorColor", errorColor)
 		writer.color("fill", fill)
 		writer.color("fillDisabled", fillDisabled)
 		writer.color("fillHighlight", fillHighlight)
 		writer.color("fillShine", fillShine)
 		writer.color("formLabelColor", formLabelColor)
-		writer.color("errorColor", errorColor)
-		writer.color("warningColor", warningColor)
+		writer.float("iconButtonGap", iconButtonGap)
+		writer.color("iconColor", iconColor)
 		writer.color("infoColor", infoColor)
 		writer.color("headingColor", headingColor)
 		writer.color("highlightedEvenRowBgColor", highlightedEvenRowBgColor)
@@ -1148,5 +1153,6 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 		writer.color("textColor", textColor)
 		writer.color("toggledEvenRowBgColor", toggledEvenRowBgColor)
 		writer.color("toggledOddRowBgColor", toggledOddRowBgColor)
+		writer.color("warningColor", warningColor)
 	}
 }
