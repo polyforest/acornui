@@ -14,6 +14,10 @@
     <option name="PASS_PARENT_ENVS" value="true" />
     <option name="MAIN_CLASS_NAME" />
     <option name="WORKING_DIRECTORY" />
+    <module name="" />
+    <envs>
+      <env name="ACORNUI_HOME" value="$ACORNUI_HOME$" />
+    </envs>
     <option name="filePath" value="$PROJECT_DIR$/scripts/getDependencies.kts" />
     <option name="vmParameters" value="" />
     <option name="alternativeJrePath" />
@@ -28,6 +32,9 @@
     <option name="PASS_PARENT_ENVS" value="true" />
     <option name="MAIN_CLASS_NAME" />
     <option name="WORKING_DIRECTORY" />
+    <envs>
+      <env name="ACORNUI_HOME" value="$ACORNUI_HOME$" />
+    </envs>
     <method v="2" />
   </configuration>
 </component>
