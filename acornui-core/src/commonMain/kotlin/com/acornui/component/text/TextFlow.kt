@@ -146,7 +146,7 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 
 			val partW = part.width
 
-			// If this is multiline text and we extend beyond the right edge,then push the current line and start a new one.
+			// If this is multiline text and we extend beyond the right edge, then push the current line and start a new one.
 			val extendsEdge = flowStyle.multiline && (!part.overhangs && availableWidth != null && x + partW > availableWidth)
 			val isFirst = spanPartIndex == currentLine.startIndex
 			val isLast = spanPartIndex == textElements.lastIndex
@@ -198,6 +198,8 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 			positionElementsInLine(line, availableWidth)
 			y += line.height + flowStyle.verticalGap
 		}
+		y -= flowStyle.verticalGap
+
 		val lastLine = _lines.lastOrNull()
 		if (lastLine == null) {
 			// No lines, the placeholder is where the first character will begin.
@@ -214,7 +216,7 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 				_placeholder.y = lastLine.y
 			}
 		}
-		val measuredHeight = y - flowStyle.verticalGap + padding.bottom
+		val measuredHeight = y + padding.bottom
 		measuredWidth += padding.left + padding.right
 		if (measuredWidth > out.width) out.width = measuredWidth
 		if (measuredHeight > out.height) out.height = measuredHeight
