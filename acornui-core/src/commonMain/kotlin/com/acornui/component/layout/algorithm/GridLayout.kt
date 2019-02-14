@@ -345,7 +345,7 @@ data class GridColumn(
 
 	fun getPreferredWidth(availableWidth: Float?): Float? {
 		var w = if (availableWidth == null || widthPercent == null) width else widthPercent * availableWidth
-		if (minWidth != null && w != null && minWidth > w) w = minWidth
+		if (minWidth != null && (w == null || minWidth > w)) w = minWidth
 		return w
 	}
 }

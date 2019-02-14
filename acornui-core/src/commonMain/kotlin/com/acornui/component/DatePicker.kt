@@ -164,7 +164,7 @@ open class DatePicker(
 	}
 
 	init {
-		isFocusContainer = true
+		focusEnabled = true
 
 		styleTags.add(DatePicker)
 		addChild(textInput)
@@ -180,7 +180,6 @@ open class DatePicker(
 			downArrow.focusEnabled = false
 			downArrow.cursor(StandardCursors.HAND)
 			downArrow.click().add { e ->
-				// Using mouseDown instead of click because we close on blur (which is often via mouseDown).
 				if (!e.handled) {
 					e.handled = true
 					toggleOpen()
@@ -190,12 +189,12 @@ open class DatePicker(
 			this.downArrow = downArrow
 		}
 
-		click().add {
-			if (!it.handled && !editable) {
-				it.handled = true
-				toggleOpen()
-			}
-		}
+//		click().add {
+//			if (!it.handled && !editable) {
+//				it.handled = true
+//				toggleOpen()
+//			}
+//		}
 
 		inject(FocusManager).focusedChanged.add(this::focusChangedHandler)
 	}
@@ -216,6 +215,7 @@ open class DatePicker(
 		if (_isOpen) return
 		_isOpen = true
 		calendar.highlighted.clear()
+		selectDateFromText()
 		calendarLift.priority = inject(PopUpManager).currentPopUps.lastOrNull()?.priority ?: 0f
 		addChild(calendarLift)
 		textInput.focus()

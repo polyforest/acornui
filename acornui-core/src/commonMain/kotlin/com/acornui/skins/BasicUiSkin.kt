@@ -670,6 +670,11 @@ open class BasicUiSkin(
 //		}
 //		target.addStyleRule(calendarStyle, Calendar)
 
+		val calendarTextFlowStyle = TextFlowStyle().apply {
+			horizontalAlign = FlowHAlign.CENTER
+		}
+		target.addStyleRule(calendarTextFlowStyle, withAncestor(CalendarItemRenderer))
+
 		val textInputBoxStyle = BoxStyle()
 		textInputBoxStyle.apply {
 			backgroundColor = Color.CLEAR

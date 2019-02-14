@@ -16,14 +16,10 @@
 
 package com.acornui.component
 
-import com.acornui.component.layout.HAlign
-import com.acornui.component.layout.ListItemRenderer
-import com.acornui.component.layout.SizeConstraints
-import com.acornui.component.layout.algorithm.FlowHAlign
-import com.acornui.component.layout.algorithm.GridColumn
-import com.acornui.component.layout.algorithm.GridLayoutStyle
-import com.acornui.component.layout.algorithm.grid
+import com.acornui.component.layout.*
+import com.acornui.component.layout.algorithm.*
 import com.acornui.component.style.*
+import com.acornui.component.text.TextField
 import com.acornui.component.text.selectable
 import com.acornui.component.text.text
 import com.acornui.core.behavior.Selection
@@ -35,16 +31,16 @@ import com.acornui.core.di.own
 import com.acornui.core.input.interaction.ClickInteractionRo
 import com.acornui.core.input.interaction.MouseOrTouchState
 import com.acornui.core.input.interaction.click
-import com.acornui.core.text.DateTimeFormatStyle
-import com.acornui.core.text.DateTimeFormatType
-import com.acornui.core.text.dateFormatter
+import com.acornui.core.text.*
 import com.acornui.core.time.DateRo
 import com.acornui.core.time.time
+import com.acornui.core.userInfo
 import com.acornui.core.zeroPadding
 import com.acornui.graphic.Color
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.reflect.observable
+import com.acornui.signal.bind
 
 open class Calendar(
 		owner: Owned
@@ -55,6 +51,14 @@ open class Calendar(
 	 * This does not affect setting the selection via code.
 	 */
 	var selectable = true
+
+	private var _headerFactory: Owned.() -> Labelable = { text { charStyle.selectable = false } }
+	private var _rendererFactory: Owned.() -> ListItemRenderer<DateRo> = { calendarItemRenderer() }
+	private val grid = grid()
+	private lateinit var monthYearText: TextField
+
+	private val yearFormatter = dateTimeFormatter(DateTimeFormatType.YEAR)
+	private val monthFormatter = dateTimeFormatter(DateTimeFormatType.MONTH)
 
 	val selection: Selection<DateRo> = own(object : SelectionBase<DateRo>() {
 		override fun walkSelectableItems(callback: (item: DateRo) -> Unit) {
@@ -82,28 +86,8 @@ open class Calendar(
 		}
 
 		override fun onSelectionChanged(oldSelection: List<DateRo>, newSelection: List<DateRo>) {
-//			for (i in 0..oldSelection.lastIndex) {
-//				val cell = getCellByDate(oldSelection[i]) ?: continue
-//				cell.highlighted = false
-//			}
-//			for (i in 0..newSelection.lastIndex) {
-//				val cell = getCellByDate(newSelection[i]) ?: continue
-//				cell.highlighted = true
-//			}
 		}
 	})
-
-	protected fun getCellByDate(cellDate: DateRo): ListItemRenderer<DateRo>? {
-		val dayOffset = date.dayOfWeek - dayOfWeek
-		val i = dayOffset + cellDate.dayOfMonth - 1
-		return cells[i]
-	}
-
-	var _headerFactory: Owned.() -> Labelable = {
-		text {
-			charStyle.selectable = false
-		}
-	}
 
 	fun headerFactory(value: Owned.() -> Labelable) {
 		val headers = _headers
@@ -131,8 +115,6 @@ open class Calendar(
 			return _headers!!
 		}
 
-	private var _rendererFactory: Owned.() -> ListItemRenderer<DateRo> = { calendarItemRenderer() }
-
 	fun rendererFactory(value: Owned.() -> ListItemRenderer<DateRo>) {
 		val cells = _cells
 		if (cells != null) {
@@ -154,7 +136,7 @@ open class Calendar(
 						+_rendererFactory().apply {
 							index = it
 							click().add(this@Calendar::cellClickedHandler)
-						} layout { widthPercent = 1f }
+						} layout { fill() }
 					}
 				}
 			}
@@ -170,10 +152,41 @@ open class Calendar(
 		}
 	}
 
-	private val grid = grid()
+	protected fun getCellByDate(cellDate: DateRo): ListItemRenderer<DateRo>? {
+		val dayOffset = date.dayOfWeek - dayOfWeek
+		val i = dayOffset + cellDate.dayOfMonth - 1
+		return cells[i]
+	}
 
 	private val panel = addChild(panel {
-		+grid layout { fill() }
+		+vGroup {
+			+hGroup {
+				+button("<") {
+					click().add {
+						month--
+					}
+				}
+				+spacer() layout { widthPercent = 1f }
+
+				monthYearText = +text {
+					selectable = false
+					text = ""
+				}
+				+spacer() layout { widthPercent = 1f }
+
+				+button(">") {
+					click().add {
+						month++
+					}
+				}
+			} layout { widthPercent = 1f }
+
+			+grid layout {
+				fill()
+				priority = 1f
+			}
+		} layout { fill() }
+
 	})
 
 	val panelStyle: PanelStyle
@@ -237,6 +250,8 @@ open class Calendar(
 			cell.data = iDate
 			cell.toggled = selection.getItemIsSelected(iDate)
 		}
+
+		monthYearText.text = monthFormatter.format(date) + " " + yearFormatter.format(date)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
@@ -246,9 +261,10 @@ open class Calendar(
 		}
 		val columns = ArrayList<GridColumn>()
 		for (i in 0..6) {
-			columns.add(GridColumn(hAlign = style.headerHAlign, width = maxHeaderW))
+			columns.add(GridColumn(hAlign = style.headerHAlign, widthPercent = 1f, minWidth = maxHeaderW))
 		}
 		grid.style.columns = columns
+		grid.style.rowHeight = if (explicitHeight == null) null else (explicitHeight - 6f * grid.style.verticalGap) / 7f
 
 		panel.setSize(explicitWidth, explicitHeight)
 		out.set(panel.bounds)
@@ -258,7 +274,17 @@ open class Calendar(
 		isFocusContainer = true
 		focusEnabled = true
 		styleTags.add(Companion)
-		validation.addNode(ValidationFlags.PROPERTIES, 0, ValidationFlags.SIZE_CONSTRAINTS, this::updateProperties)
+		validation.addNode(ValidationFlags.PROPERTIES, ValidationFlags.STYLES, ValidationFlags.SIZE_CONSTRAINTS, this::updateProperties)
+
+		own(userInfo.currentLocale.changed.bind {
+			// If the locale changes, the weekday headers and month names change.
+			invalidateProperties()
+		})
+
+		watch(style) {
+			monthFormatter.dateStyle = it.monthFormatStyle
+			yearFormatter.dateStyle = it.yearFormatStyle
+		}
 	}
 
 	companion object : StyleTag
@@ -272,6 +298,9 @@ class CalendarStyle : StyleBase() {
 
 	var monthDecButton by prop(noSkin)
 	var monthIncButton by prop(noSkin)
+
+	var monthFormatStyle by prop(DateTimeFormatStyle.LONG)
+	var yearFormatStyle by prop(DateTimeFormatStyle.FULL)
 
 	companion object : StyleType<CalendarStyle>
 }
@@ -296,8 +325,8 @@ open class CalendarItemRenderer(owner: Owned) : ContainerImpl(owner), ListItemRe
 		style.borderThicknesses = Pad(1f)
 		style.borderColors = BorderColors(Color(0f, 0f, 0f, 0.3f))
 	})
+
 	private val textField = addChild(text {
-		flowStyle.horizontalAlign = FlowHAlign.CENTER
 		selectable = false
 	})
 
@@ -347,20 +376,16 @@ open class CalendarItemRenderer(owner: Owned) : ContainerImpl(owner), ListItemRe
 			ButtonState.DISABLED
 		} else {
 			if (toggled) {
-				if (mouseState.isDown) {
-					ButtonState.TOGGLED_DOWN
-				} else if (mouseState.isOver) {
-					ButtonState.TOGGLED_OVER
-				} else {
-					ButtonState.TOGGLED_UP
+				when {
+					mouseState.isDown -> ButtonState.TOGGLED_DOWN
+					mouseState.isOver -> ButtonState.TOGGLED_OVER
+					else -> ButtonState.TOGGLED_UP
 				}
 			} else {
-				if (mouseState.isDown) {
-					ButtonState.DOWN
-				} else if (mouseState.isOver) {
-					ButtonState.OVER
-				} else {
-					ButtonState.UP
+				when {
+					mouseState.isDown -> ButtonState.DOWN
+					mouseState.isOver -> ButtonState.OVER
+					else -> ButtonState.UP
 				}
 			}
 		}
