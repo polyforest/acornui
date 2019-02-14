@@ -161,6 +161,7 @@ open class Calendar(
 	private val panel = addChild(panel {
 		+vGroup {
 			+hGroup {
+				style.verticalAlign = VAlign.MIDDLE
 				+button("<") {
 					click().add {
 						month--

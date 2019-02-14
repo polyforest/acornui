@@ -185,7 +185,6 @@ open class DatePicker(
 					toggleOpen()
 				}
 			}
-			downArrow.interactivityMode = if (_isOpen) InteractivityMode.NONE else InteractivityMode.ALL
 			this.downArrow = downArrow
 		}
 
