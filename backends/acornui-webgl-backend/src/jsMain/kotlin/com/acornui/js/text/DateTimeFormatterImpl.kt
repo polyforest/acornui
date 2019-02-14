@@ -72,6 +72,11 @@ class DateTimeFormatterImpl : DateTimeFormatter {
 						LONG -> "short"
 						else -> "numeric"
 					}
+				} else if (type == DateTimeFormatType.YEAR) {
+					options.year = when (dateStyle) {
+						FULL, LONG -> "numeric"
+						else -> "2-digit"
+					}
 				} else if (type == DateTimeFormatType.WEEKDAY) {
 					options.weekday = when (dateStyle) {
 						FULL, LONG -> "long"

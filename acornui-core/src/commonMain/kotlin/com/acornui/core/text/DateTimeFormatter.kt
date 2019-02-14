@@ -202,18 +202,7 @@ class DateTimeParser : StringParser<Date> {
 				}
 			}
 		}
-		val fullYear = if (year < 100) {
-			// Two digit year
-			if (!allowTwoDigitYears) return null
-			val window = (currentYear + 50) % 100
-			if (year <= window) {
-				year + ((currentYear + 50) / 100) * 100
-			} else {
-				year + ((currentYear - 49) / 100) * 100
-			}
-		} else {
-			year
-		}
+		val fullYear = calculateFullYear(year, allowTwoDigitYears, currentYear) ?: return null
 		return if (timezoneOffset != null || isUtc) {
 			range to time.utcDate(fullYear, month, day, 0, timezoneOffset ?: 0)
 		} else {
@@ -258,8 +247,9 @@ class DateTimeParser : StringParser<Date> {
 				str -= d.first
 				d.second
 			}
-			DateTimeFormatType.MONTH -> throw Exception("type MONTH not supported, use parseMonthIndex")
 			DateTimeFormatType.WEEKDAY -> throw Exception("type WEEKDAY not supported, use parseWeekday")
+			DateTimeFormatType.MONTH -> throw Exception("type MONTH not supported, use parseMonthIndex")
+			DateTimeFormatType.YEAR -> throw Exception("type YEAR not supported, use parseYear")
 			DateTimeFormatType.TIME -> {
 				val timeZoneOffset = parseTimezoneOffset(str)
 				str -= timeZoneOffset?.first
@@ -345,6 +335,7 @@ enum class DateTimeFormatStyle {
 enum class DateTimeFormatType {
 	DATE,
 	MONTH,
+	YEAR,
 	WEEKDAY,
 	TIME,
 	DATE_TIME
@@ -361,6 +352,12 @@ fun dateTimeFormatter(init: DateTimeFormatter.() -> Unit = {}): DateTimeFormatte
 	return dateTimeFormatterProvider().apply {
 		type = DateTimeFormatType.DATE_TIME
 		init()
+	}
+}
+
+fun dateTimeFormatter(type: DateTimeFormatType): DateTimeFormatter {
+	return dateTimeFormatterProvider().apply {
+		this.type = type
 	}
 }
 
@@ -395,19 +392,6 @@ fun dateTimeParser(init: DateTimeParser.() -> Unit = {}): DateTimeParser = DateT
 }
 
 /**
- * Parses a string into a Month index, according to the given locale.
- * @param str The month string to parse.
- * @param locales [DateTimeParser.locales]
- */
-fun parseMonthIndex(str: String, locales: List<Locale>? = null): Int? {
-	val s = str.trim().toLowerCase()
-	val shortIndex = getMonths(false, locales).indexOfFirst2 { it.toLowerCase() == s }
-	if (shortIndex != -1) return shortIndex
-	val longIndex = getMonths(true, locales).indexOfFirst2 { it.toLowerCase() == s }
-	return if (longIndex != -1) longIndex else null
-}
-
-/**
  * Parses a string into a day of week, 0 - Sunday, 6 - Saturday, according to the given locale.
  * @param str The day of the week string to parse.
  * @param locales [DateTimeParser.locales]
@@ -418,6 +402,48 @@ fun parseWeekday(str: String, locales: List<Locale>? = null): Int? {
 	if (shortIndex != -1) return shortIndex
 	val longIndex = getDaysOfWeek(true, locales).indexOfFirst2 { it.toLowerCase() == s }
 	return if (longIndex != -1) longIndex else null
+}
+
+/**
+ * Parses a string into a Month index, according to the given locale.
+ *
+ * @param str The month string to parse.
+ * @param locales [DateTimeParser.locales]
+ * @return Returns the month index, or null if the month could not be parsed. January - 0, December - 11
+ */
+fun parseMonthIndex(str: String, locales: List<Locale>? = null): Int? {
+	val s = str.trim().toLowerCase()
+	val shortIndex = getMonths(false, locales).indexOfFirst2 { it.toLowerCase() == s }
+	if (shortIndex != -1) return shortIndex
+	val longIndex = getMonths(true, locales).indexOfFirst2 { it.toLowerCase() == s }
+	return if (longIndex != -1) longIndex else null
+}
+
+/**
+ *
+ */
+fun parseYear(str: String, allowTwoDigitYears: Boolean = true, currentYear: Int = time.now().fullYear): Int? {
+	val year = str.trim().toIntOrNull() ?: return null
+	return calculateFullYear(year, allowTwoDigitYears, currentYear)
+}
+
+/**
+ * Converts a two digit year to a four digit year, relative to [currentYear].
+ * @param year If this is not a two digit year, it will be returned as is. Otherwise, it will be considered relative
+ * to [currentYear]. That is, the year returned will be in the century of the span of
+ * `currentYear - 49 to currentYear + 50`.
+ */
+fun calculateFullYear(year: Int, allowTwoDigitYears: Boolean = true, currentYear: Int = time.now().fullYear): Int? {
+	return if (year < 100) {
+		// Two digit year
+		if (!allowTwoDigitYears) return null
+		val window = (currentYear + 50) % 100
+		if (year <= window) {
+			year + ((currentYear + 50) / 100) * 100
+		} else {
+			year + ((currentYear - 49) / 100) * 100
+		}
+	} else year
 }
 
 private val parser by lazy { DateTimeParser() }
@@ -483,7 +509,10 @@ private val monthsOfYearCache = HashMap<Pair<Boolean, List<Locale>?>, List<Strin
 
 /**
  * Returns a list of the localized months of the year.
- * @param locales
+ *
+ * @param longFormat If true, the whole month names will be returned instead of the abbreviations.
+ * @param locales The locale chain to use for parsing. If this is null, then [com.acornui.core.UserInfo.currentLocale]
+ * will be used from [com.acornui.core.userInfo].
  */
 fun getMonths(longFormat: Boolean, locales: List<Locale>? = null): List<String> {
 	val cacheKey = longFormat to locales
