@@ -31,6 +31,5 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="acornui-texture-packer-common" />
-    <orderEntry type="module" module-name="acornui-texture-packer-jvm" />
   </component>
 </module>

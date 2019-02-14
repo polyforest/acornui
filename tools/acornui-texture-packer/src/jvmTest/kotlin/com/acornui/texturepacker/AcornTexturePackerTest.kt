@@ -85,9 +85,9 @@ class AcornTexturePackerTest {
 	}
 
 	@Test fun testPackBasic() {
-		File("testAssets/out").deleteRecursively()
+		File("resources/out").deleteRecursively()
 		JvmHeadlessApplication().start {
-			val dir = inject(Files).getDir("testAssets/packTest1") ?: throw Exception("Missing testAssets/packTest1 folder")
+			val dir = inject(Files).getDir("resources/packTest1") ?: throw Exception("Missing resources/packTest1 folder")
 			launch {
 				val packedData = AcornTexturePacker(inject(AssetManager), inject(JSON_KEY)).pack(dir)
 				JvmTextureAtlasWriter(inject(JSON_KEY)).writeAtlas("packTest1.json", "packTest{0}", packedData, File("testAssets/out"))

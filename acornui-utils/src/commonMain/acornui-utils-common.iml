@@ -6,7 +6,9 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/kotlin" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
+    </content>
+    <content url="file://$ACORNUI_HOME$/acornui-utils/src/commonTest">
+        <sourceFolder url="file://$ACORNUI_HOME$/acornui-utils/src/commonTest/kotlin" isTestSource="true" />
     </content>
     <content url="file://$ACORNUI_HOME$/acornui-utils/src/jvmMain">
       <sourceFolder url="file://$ACORNUI_HOME$/acornui-utils/src/jvmMain/kotlin" isTestSource="false" />
