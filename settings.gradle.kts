@@ -13,4 +13,4 @@ val KOTLIN_VERSION: String by settings.extra
 rootProject.name = "acornui"
 
 // Uncomment below and adapt, adding modules as they are created.  Modules take on the name of their root directory in gradle.
-include("acornui-core", "acornui-game", "acornui-spine", "acornui-utils", "backends:acornui-lwjgl-backend", "backends:acornui-webgl-backend", "tools:acornui-texture-packer")
+include("acornui-core", "acornui-game", "acornui-spine", "acornui-utils", "backends:acornui-lwjgl-backend", "backends:acornui-webgl-backend", "acornui-build-tasks", "tools:acornui-texture-packer")
