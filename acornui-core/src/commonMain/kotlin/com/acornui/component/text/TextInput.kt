@@ -28,7 +28,6 @@ import com.acornui.component.style.StyleTag
 import com.acornui.component.style.Styleable
 import com.acornui.component.style.set
 import com.acornui.core.Disposable
-import com.acornui.core.config
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.focus.Focusable

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Nicholas Bilyk
+ * Copyright 2019 PolyForest
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,36 +20,254 @@ import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.*
 import com.acornui.core.di.Owned
+import com.acornui.core.floor
+import com.acornui.core.input.interaction.WheelInteractionRo
+import com.acornui.core.input.wheel
+import com.acornui.core.time.callLater
 import com.acornui.core.tween.Tween
 import com.acornui.core.tween.createPropertyTween
 import com.acornui.math.*
 
-interface ScrollArea : LayoutDataProvider<StackLayoutData>, ElementContainer<UiComponent> {
+/**
+ * A container with scrolling.
+ */
+open class ScrollArea(
+		owner: Owned
+) : ElementContainerImpl<UiComponent>(owner), LayoutDataProvider<StackLayoutData> {
 
-	val style: ScrollAreaStyle
+	val style = bind(ScrollAreaStyle())
 
-	val hScrollModel: ClampedScrollModel
-	val vScrollModel: ClampedScrollModel
+	override fun createLayoutData(): StackLayoutData = StackLayoutData()
 
-	var hScrollPolicy: ScrollPolicy
-	var vScrollPolicy: ScrollPolicy
+	protected val scrollRect = scrollRect()
+
+	protected val contents = scrollRect.addElement(stack())
 
 	/**
-	 * The unclipped width of the contents.
+	 * The interactivity mode of the contents.  This can be set to [InteractivityMode.CHILDREN] if the scroll area is
+	 * an overlay.  Note that this will prevent toss scrolling or mouse wheel from working.
 	 */
-	val contentsWidth: Float
-
-	/**
-	 * The unclipped height of the contents.
-	 */
-	val contentsHeight: Float
+	var contentsInteractivityMode: InteractivityMode
+		get() = interactivityMode
+		set(value) {
+			contents.interactivityMode = value
+			scrollRect.interactivityMode = value
+		}
 
 	/**
 	 * The layout for the contents stack.
 	 */
 	val stackStyle: StackLayoutStyle
+		get() = contents.style
 
-	override fun createLayoutData(): StackLayoutData = StackLayoutData()
+	private val hScrollBar = HScrollBar(this)
+	private val vScrollBar = VScrollBar(this)
+	private var corner: UiComponent? = null
+
+	val hScrollModel: ClampedScrollModel
+		get() = hScrollBar.scrollModel
+
+	val vScrollModel: ClampedScrollModel
+		get() = vScrollBar.scrollModel
+
+	private var _tossScrolling = false
+	var hScrollPolicy: ScrollPolicy by validationProp(ScrollPolicy.AUTO, ValidationFlags.LAYOUT)
+	var vScrollPolicy: ScrollPolicy by validationProp(ScrollPolicy.AUTO, ValidationFlags.LAYOUT)
+
+	private val wheelHandler = {
+		event: WheelInteractionRo ->
+		vScrollModel.value += event.deltaY
+		hScrollModel.value += event.deltaX
+	}
+
+	private var tossScroller: TossScroller? = null
+	private var tossBinding: TossScrollModelBinding? = null
+
+	private var tossScrolling: Boolean
+		get() = _tossScrolling
+		set(value) {
+			if (_tossScrolling == value) return
+			_tossScrolling = value
+			if (value) {
+				tossScroller = TossScroller(this)
+				tossBinding = TossScrollModelBinding(tossScroller!!, hScrollModel, vScrollModel)
+			} else {
+				tossScroller?.dispose()
+				tossScroller = null
+				tossBinding?.dispose()
+				tossBinding = null
+			}
+		}
+
+	private val scrollChangedHandler = {
+		_: ScrollModelRo ->
+		invalidate(SCROLLING)
+		Unit
+	}
+
+	init {
+		styleTags.add(ScrollArea)
+		validation.addNode(SCROLLING, ValidationFlags.LAYOUT, this::validateScroll)
+
+		styleTags.add(HBAR_STYLE)
+		styleTags.add(VBAR_STYLE)
+
+		scrollRect.wheel().add(wheelHandler)
+		addChild(scrollRect)
+
+		hScrollBar.layoutInvalidatingFlags = ValidationFlags.SIZE_CONSTRAINTS
+		vScrollBar.layoutInvalidatingFlags = ValidationFlags.SIZE_CONSTRAINTS
+		addChild(hScrollBar)
+		addChild(vScrollBar)
+
+		hScrollModel.changed.add(scrollChangedHandler)
+		vScrollModel.changed.add(scrollChangedHandler)
+
+		watch(style) {
+			tossScrolling = it.tossScrolling
+			scrollRect.style.borderRadii = it.borderRadius
+
+			corner?.dispose()
+			corner = it.corner(this)
+			addChildAfter(corner!!, vScrollBar)
+		}
+	}
+
+	override fun onActivated() {
+		super.onActivated()
+		focusManager.focusedChanged.add(this::focusChangedHandler)
+	}
+
+	override fun onDeactivated() {
+		super.onDeactivated()
+		focusManager.focusedChanged.remove(this::focusChangedHandler)
+	}
+
+	private fun focusChangedHandler(old: UiComponentRo?, new: UiComponentRo?) {
+		if (new != null && isAncestorOf(new)) {
+			callLater {
+				// Inside a callLater because scrollTo invokes validation and focus changes may happen within validation.
+				scrollTo(new)
+			}
+		}
+	}
+
+	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {
+		contents.addElement(newIndex, element)
+	}
+
+	override fun onElementRemoved(index: Int, element: UiComponent) {
+		contents.removeElement(element)
+	}
+
+	/**
+	 * The unclipped width of the contents.
+	 */
+	val contentsWidth: Float
+		get() {
+			validate(ValidationFlags.LAYOUT)
+			return scrollRect.contentsWidth
+		}
+
+	/**
+	 * The unclipped height of the contents.
+	 */
+	val contentsHeight: Float
+		get() {
+			validate(ValidationFlags.LAYOUT)
+			return scrollRect.contentsHeight
+		}
+
+	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+		val requireHScrolling = hScrollPolicy == ScrollPolicy.ON && explicitWidth != null
+		val allowHScrolling = hScrollPolicy != ScrollPolicy.OFF && explicitWidth != null
+		val requireVScrolling = vScrollPolicy == ScrollPolicy.ON && explicitHeight != null
+		val allowVScrolling = vScrollPolicy != ScrollPolicy.OFF && explicitHeight != null
+
+		if (!(requireHScrolling || requireVScrolling)) {
+			// Size target without scrolling.
+			contents.setSize(explicitWidth, explicitHeight)
+		}
+		var needsHScrollBar = allowHScrolling && (requireHScrolling || contents.width > explicitWidth!! + 0.1f)
+		var needsVScrollBar = allowVScrolling && (requireVScrolling || contents.height > explicitHeight!! + 0.1f)
+		val vScrollBarW = vScrollBar.minWidth ?: 0f
+		val hScrollBarH = hScrollBar.minHeight ?: 0f
+
+		if (needsHScrollBar && needsVScrollBar) {
+			// Needs both scroll bars.
+			contents.setSize(explicitWidth!! - vScrollBarW, explicitHeight!! - hScrollBarH)
+		} else if (needsHScrollBar) {
+			// Needs horizontal scroll bar.
+			contents.setSize(explicitWidth, if (explicitHeight == null) null else explicitHeight - hScrollBarH)
+			needsVScrollBar = allowVScrolling && (requireVScrolling || contents.height > contents.explicitHeight!! + 0.1f)
+			if (needsVScrollBar) {
+				// Adding the horizontal scroll bar causes the vertical scroll bar to be needed.
+				contents.setSize(explicitWidth!! - vScrollBarW, explicitHeight!! - hScrollBarH)
+			}
+		} else if (needsVScrollBar) {
+			// Needs vertical scroll bar.
+			contents.setSize(if (explicitWidth == null) null else explicitWidth - vScrollBarW, explicitHeight)
+			needsHScrollBar = allowHScrolling && (requireHScrolling || contents.width > contents.explicitWidth!! + 0.1f)
+			if (needsHScrollBar) {
+				// Adding the vertical scroll bar causes the horizontal scroll bar to be needed.
+				contents.setSize(explicitWidth!! - vScrollBarW, explicitHeight!! - hScrollBarH)
+			}
+		}
+		scrollRect.setSize(contents.explicitWidth, contents.explicitHeight)
+
+		// Set the content mask to the explicit size of the contents stack, or the measured size if there was no bound.
+		val contentsSetW = scrollRect.explicitWidth ?: contents.width
+		val contentsSetH = scrollRect.explicitHeight ?: contents.height
+		scrollRect.setSize(contentsSetW, contentsSetH)
+		val vScrollBarW2 = if (needsVScrollBar) vScrollBarW else 0f
+		val hScrollBarH2 = if (needsHScrollBar) hScrollBarH else 0f
+
+		out.set(explicitWidth ?: scrollRect.contentsWidth + vScrollBarW2, explicitHeight ?: scrollRect.contentsHeight + hScrollBarH2)
+
+		// Update the scroll models and scroll bar sizes.
+		if (needsHScrollBar) {
+			hScrollBar.visible = true
+			hScrollBar.setSize(explicitWidth!! - vScrollBarW2, hScrollBarH)
+			hScrollBar.moveTo(0f, out.height - hScrollBarH)
+			hScrollBar.setScaling(minOf(1f, hScrollBar.explicitWidth!! / hScrollBar.width), 1f)
+		} else {
+			hScrollBar.visible = false
+		}
+		if (needsVScrollBar) {
+			vScrollBar.visible = true
+			vScrollBar.setSize(vScrollBarW, explicitHeight!! - hScrollBarH2)
+			vScrollBar.moveTo(out.width - vScrollBarW, 0f)
+			vScrollBar.setScaling(1f, minOf(1f, vScrollBar.explicitHeight!! / vScrollBar.height))
+		} else {
+			vScrollBar.visible = false
+		}
+		val corner = corner!!
+		if (needsHScrollBar && needsVScrollBar) {
+			corner.setSize(vScrollBarW, hScrollBarH)
+			corner.moveTo(explicitWidth!! - vScrollBarW, explicitHeight!! - hScrollBarH)
+			corner.visible = true
+		} else {
+			corner.visible = false
+		}
+
+		hScrollModel.max = maxOf(0f, scrollRect.contentsWidth - contentsSetW)
+		vScrollModel.max = maxOf(0f, scrollRect.contentsHeight - contentsSetH)
+
+		scrollRect.getAttachment<TossScroller>(TossScroller)?.enabled = needsHScrollBar || needsVScrollBar
+	}
+
+	protected open fun validateScroll() {
+		val xScroll = hScrollModel.value.floor()
+		val yScroll = vScrollModel.value.floor()
+		scrollRect.scrollTo(xScroll, yScroll)
+	}
+
+	override fun dispose() {
+		super.dispose()
+		hScrollModel.changed.remove(scrollChangedHandler)
+		vScrollModel.changed.remove(scrollChangedHandler)
+		tossScrolling = false
+	}
 
 	companion object : StyleTag {
 		val VBAR_STYLE = styleTag()
@@ -61,6 +279,7 @@ interface ScrollArea : LayoutDataProvider<StackLayoutData>, ElementContainer<UiC
 		const val SCROLLING: Int = 1 shl 16
 	}
 }
+
 
 private val tmpBounds = MinMax()
 
@@ -136,8 +355,8 @@ fun ScrollPolicy.toCssString(): String {
 	}
 }
 
-fun Owned.scrollArea(init: ComponentInit<ScrollAreaImpl> = {}): ScrollAreaImpl {
-	val s = ScrollAreaImpl(this)
+fun Owned.scrollArea(init: ComponentInit<ScrollArea> = {}): ScrollArea {
+	val s = ScrollArea(this)
 	s.init()
 	return s
 }

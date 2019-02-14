@@ -20,7 +20,6 @@ import com.acornui.factory.LazyInstance
 import com.acornui.factory.lazyInstance
 import com.acornui.math.Bounds
 import com.acornui.signal.Cancel
-import com.acornui.signal.Signal
 import com.acornui.signal.Signal3
 import com.acornui.signal.Signal4
 
