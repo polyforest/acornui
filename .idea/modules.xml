@@ -3,7 +3,12 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.polyforest.acornui.iml" filepath="$PROJECT_DIR$/.idea/modules/com.polyforest.acornui.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/acornui-build-tasks/com.polyforest.acornui-build-tasks.iml" filepath="$PROJECT_DIR$/.idea/modules/acornui-build-tasks/com.polyforest.acornui-build-tasks.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tools/acornui-build-tasks/com.polyforest.acornui-build-tasks.commonMain.iml" filepath="$PROJECT_DIR$/.idea/modules/tools/acornui-build-tasks/com.polyforest.acornui-build-tasks.commonMain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tools/acornui-build-tasks/com.polyforest.acornui-build-tasks.commonTest.iml" filepath="$PROJECT_DIR$/.idea/modules/tools/acornui-build-tasks/com.polyforest.acornui-build-tasks.commonTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tools/acornui-build-tasks/com.polyforest.acornui-build-tasks.jsMain.iml" filepath="$PROJECT_DIR$/.idea/modules/tools/acornui-build-tasks/com.polyforest.acornui-build-tasks.jsMain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tools/acornui-build-tasks/com.polyforest.acornui-build-tasks.jsTest.iml" filepath="$PROJECT_DIR$/.idea/modules/tools/acornui-build-tasks/com.polyforest.acornui-build-tasks.jsTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tools/acornui-build-tasks/com.polyforest.acornui-build-tasks.jvmMain.iml" filepath="$PROJECT_DIR$/.idea/modules/tools/acornui-build-tasks/com.polyforest.acornui-build-tasks.jvmMain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tools/acornui-build-tasks/com.polyforest.acornui-build-tasks.jvmTest.iml" filepath="$PROJECT_DIR$/.idea/modules/tools/acornui-build-tasks/com.polyforest.acornui-build-tasks.jvmTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/acornui-core/com.polyforest.acornui-core.iml" filepath="$PROJECT_DIR$/.idea/modules/acornui-core/com.polyforest.acornui-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/acornui-core/com.polyforest.acornui-core.commonMain.iml" filepath="$PROJECT_DIR$/.idea/modules/acornui-core/com.polyforest.acornui-core.commonMain.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/acornui-core/com.polyforest.acornui-core.commonTest.iml" filepath="$PROJECT_DIR$/.idea/modules/acornui-core/com.polyforest.acornui-core.commonTest.iml" />
@@ -56,6 +61,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/backends/com.polyforest.backends.iml" filepath="$PROJECT_DIR$/.idea/modules/backends/com.polyforest.backends.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/tools/com.polyforest.tools.iml" filepath="$PROJECT_DIR$/.idea/modules/tools/com.polyforest.tools.iml" />
       <module fileurl="file://$PROJECT_DIR$/scripts/scripts.iml" filepath="$PROJECT_DIR$/scripts/scripts.iml" group="acornui" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tools/acornui-build-tasks/tools.com.polyforest.acornui-build-tasks.iml" filepath="$PROJECT_DIR$/.idea/modules/tools/acornui-build-tasks/tools.com.polyforest.acornui-build-tasks.iml" />
     </modules>
   </component>
 </project>

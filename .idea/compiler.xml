@@ -17,12 +17,14 @@
       <entry name="!?*.clj" />
     </wildcardResourcePatterns>
     <bytecodeTargetLevel>
+      <module name="com.polyforest.acornui-build-tasks.jvmMain" target="1.8" />
+      <module name="com.polyforest.acornui-build-tasks.jvmTest" target="1.8" />
       <module name="com.polyforest.acornui-core.jvmMain" target="1.8" />
       <module name="com.polyforest.acornui-core.jvmTest" target="1.8" />
       <module name="com.polyforest.acornui-game.jvmMain" target="1.8" />
       <module name="com.polyforest.acornui-game.jvmTest" target="1.8" />
-      <module name="com.polyforest.acornui-lwjgl-backend.jvmMain" target="1.6" />
-      <module name="com.polyforest.acornui-lwjgl-backend.jvmTest" target="1.6" />
+      <module name="com.polyforest.acornui-lwjgl-backend.jvmMain" target="1.8" />
+      <module name="com.polyforest.acornui-lwjgl-backend.jvmTest" target="1.8" />
       <module name="com.polyforest.acornui-spine.jvmMain" target="1.8" />
       <module name="com.polyforest.acornui-spine.jvmTest" target="1.8" />
       <module name="com.polyforest.acornui-texture-packer.jvmMain" target="1.8" />
