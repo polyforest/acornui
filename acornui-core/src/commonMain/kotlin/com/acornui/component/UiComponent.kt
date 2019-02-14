@@ -590,10 +590,9 @@ open class UiComponentImpl(
 	override val isRendered: Boolean
 		get() {
 			if (!isActive) return false
-			if (concatenatedColorTint.a <= 0f) return false
 			var p: UiComponentRo? = this
 			while (p != null) {
-				if (!p.visible) return false
+				if (!p.visible || p.alpha <= 0f) return false
 				p = p.parent
 			}
 			return true
