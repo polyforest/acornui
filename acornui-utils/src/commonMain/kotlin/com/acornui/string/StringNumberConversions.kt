@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-package com.acornui.error
+package com.acornui.string
 
-import java.io.PrintWriter
-import java.io.StringWriter
-
-actual val Throwable.stack: String
-	get() {
-		val w = StringWriter()
-		printStackTrace(PrintWriter(w))
-		return w.toString()
-	}
+expect fun Int.toRadix(radix: Int): String

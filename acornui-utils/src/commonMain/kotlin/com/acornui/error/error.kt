@@ -16,12 +16,6 @@
 
 package com.acornui.error
 
-import java.io.PrintWriter
-import java.io.StringWriter
+fun getStack(): String = Exception().stack
 
-actual val Throwable.stack: String
-	get() {
-		val w = StringWriter()
-		printStackTrace(PrintWriter(w))
-		return w.toString()
-	}
+expect val Throwable.stack: String

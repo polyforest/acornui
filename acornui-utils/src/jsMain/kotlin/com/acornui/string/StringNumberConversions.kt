@@ -16,7 +16,7 @@
 
 package com.acornui.string
 
-fun Int.toRadix(radix: Int): String {
+actual fun Int.toRadix(radix: Int): String {
 	val d: dynamic = this
 	return d.toString(radix)
 }

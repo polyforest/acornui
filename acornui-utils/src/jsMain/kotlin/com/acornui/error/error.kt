@@ -16,9 +16,7 @@
 
 package com.acornui.error
 
-fun getStack(): String = Exception().stack
-
-val Throwable.stack: String
+actual val Throwable.stack: String
 	get() {
 		return asDynamic().stack as String
 	}

@@ -16,47 +16,47 @@
 
 package com.acornui.function
 
-val (() -> Unit).as1: (Any?) -> Unit
+actual val (() -> Unit).as1: (Any?) -> Unit
 	get() {
 		return this.asDynamic()
 	}
 
-val (() -> Unit).as2: (Any?, Any?) -> Unit
+actual val (() -> Unit).as2: (Any?, Any?) -> Unit
 	get() {
 		return this.asDynamic()
 	}
 
-val (() -> Unit).as3: (Any?, Any?, Any?) -> Unit
+actual val (() -> Unit).as3: (Any?, Any?, Any?) -> Unit
 	get() {
 		return this.asDynamic()
 	}
 
-val (() -> Unit).as4: (Any?, Any?, Any?, Any?) -> Unit
+actual val (() -> Unit).as4: (Any?, Any?, Any?, Any?) -> Unit
 	get() {
 		return this.asDynamic()
 	}
 
-val (() -> Unit).as5: (Any?, Any?, Any?, Any?, Any?) -> Unit
+actual val (() -> Unit).as5: (Any?, Any?, Any?, Any?, Any?) -> Unit
 	get() {
 		return this.asDynamic()
 	}
 
-val (() -> Unit).as6: (Any?, Any?, Any?, Any?, Any?, Any?) -> Unit
+actual val (() -> Unit).as6: (Any?, Any?, Any?, Any?, Any?, Any?) -> Unit
 	get() {
 		return this.asDynamic()
 	}
 
-val (() -> Unit).as7: (Any?, Any?, Any?, Any?, Any?, Any?, Any?) -> Unit
+actual val (() -> Unit).as7: (Any?, Any?, Any?, Any?, Any?, Any?, Any?) -> Unit
 	get() {
 		return this.asDynamic()
 	}
 
-val (() -> Unit).as8: (Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?) -> Unit
+actual val (() -> Unit).as8: (Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?) -> Unit
 	get() {
 		return this.asDynamic()
 	}
 
-val (() -> Unit).as9: (Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?) -> Unit
+actual val (() -> Unit).as9: (Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?) -> Unit
 	get() {
 		return this.asDynamic()
 	}
