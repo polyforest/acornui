@@ -31,7 +31,7 @@ class FileUtilsKtTest {
 	@Before
 	fun before() {
 		src = File("testOut/outOfDateSrc_${++id}")
-		File("testResources/outOfDate").copyRecursively(src)
+		File("resources/outOfDate").copyRecursively(src)
 
 		out = File("testOut/outOfDate_$id")
 		out.mkdirs()
