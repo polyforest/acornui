@@ -16,6 +16,8 @@
 
 package com.acornui.component.layout.algorithm
 
+import com.acornui.collection.sortTo
+import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.ComponentInit
 import com.acornui.component.layout.*
 import com.acornui.component.style.StyleBase
@@ -30,6 +32,8 @@ import kotlin.math.floor
 class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayoutData> {
 
 	override val style = HorizontalLayoutStyle()
+
+	private val orderedElements = ArrayList<LayoutElement>()
 
 	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, out: SizeConstraints) {
 		val padding = style.padding
@@ -54,37 +58,29 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
 		val padding = style.padding
 		val gap = style.gap
+		val allowRelativeSizing = style.allowRelativeSizing
 
 		val childAvailableWidth: Float? = padding.reduceWidth(explicitWidth)
 		val childAvailableHeight: Float? = padding.reduceHeight(explicitHeight)
 
-		// Size inflexible elements first.
-		var maxHeight = childAvailableHeight ?: 0f
-		for (i in 0..elements.lastIndex) {
-			val element = elements[i]
+		if (allowRelativeSizing) elements.sortTo(orderedElements, true, sizeOrderComparator)
+		else orderedElements.addAll(elements)
+
+		// Following the sizing precedence, size the children, maxing the maxHeight by the measured height if
+		// allowRelativeSizing is true.
+		var maxHeight = childAvailableHeight
+		var inflexibleWidth = 0f
+		var flexibleWidth = 0f
+		for (i in 0..orderedElements.lastIndex) {
+			val element = orderedElements[i]
 			val layoutData = element.layoutDataCast
 			if (childAvailableWidth == null || layoutData?.widthPercent == null) {
 				val w = layoutData?.getPreferredWidth(childAvailableWidth)
-				val h = layoutData?.getPreferredHeight(childAvailableHeight)
+				val h = layoutData?.getPreferredHeight(maxHeight)
 				element.setSize(w, h)
-				if (element.height > maxHeight) maxHeight = element.height
-			}
-		}
-
-		// Size height flexible, but width inflexible second and measure the flexible/inflexible width.
-		var inflexibleWidth = 0f
-		var flexibleWidth = 0f
-		for (i in 0..elements.lastIndex) {
-			val element = elements[i]
-			val layoutData = element.layoutDataCast
-			if (childAvailableWidth == null || layoutData?.widthPercent == null) {
-				if (layoutData?.heightPercent == null) {
-					val w = layoutData?.getPreferredWidth(childAvailableWidth)
-					val h = layoutData?.getPreferredHeight(maxHeight)
-					element.setSize(w, h)
-				}
 				inflexibleWidth += element.width
-				if (element.height > maxHeight) maxHeight = element.height
+				if (allowRelativeSizing && (maxHeight == null || element.height > maxHeight))
+					maxHeight = element.height
 			} else {
 				flexibleWidth += layoutData.widthPercent!! * childAvailableWidth
 			}
@@ -95,17 +91,22 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 		// Size flexible elements within the remaining space.
 		if (childAvailableWidth != null) {
 			val scale = if (flexibleWidth > 0) MathUtils.clamp((childAvailableWidth - inflexibleWidth) / flexibleWidth, 0f, 1f) else 1f
-			for (i in 0..elements.lastIndex) {
-				val element = elements[i]
+			for (i in 0..orderedElements.lastIndex) {
+				val element = orderedElements[i]
 				val layoutData = element.layoutDataCast
 				if (layoutData?.widthPercent != null) {
-					val h = layoutData.getPreferredHeight(childAvailableHeight)
+					val h = layoutData.getPreferredHeight(maxHeight)
 					val w = scale * layoutData.widthPercent!! * childAvailableWidth
 					element.setSize(w, h)
-					if (element.height > maxHeight) maxHeight = element.height
+					if (allowRelativeSizing && (maxHeight == null || element.height > maxHeight))
+						maxHeight = element.height
 				}
 			}
 		}
+
+		if (maxHeight == null)
+			maxHeight = 0f
+		orderedElements.clear()
 
 		// Position
 		var x = padding.left
@@ -137,6 +138,18 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 
 	override fun createLayoutData() = HorizontalLayoutData()
 
+	companion object {
+		private val sizeOrderComparator = {
+			o1: LayoutElement, o2: LayoutElement ->
+			val layoutData1 = o1.layoutData as HorizontalLayoutData?
+			val layoutData2 = o2.layoutData as HorizontalLayoutData?
+			val r1 = (layoutData1?.priority ?: 0f).compareTo(layoutData2?.priority ?: 0f)
+			if (r1 == 0) {
+				(layoutData1?.heightPercent == null).compareTo(layoutData2?.heightPercent == null)
+			} else r1
+		}
+	}
+
 }
 
 class HorizontalLayoutStyle : StyleBase() {
@@ -164,6 +177,23 @@ class HorizontalLayoutStyle : StyleBase() {
 	 */
 	var verticalAlign by prop(VAlign.BOTTOM)
 
+	/**
+	 * If true, the actual size of an element can expand the bounds of the layout for the remaining elements, based
+	 * on priority rules.
+	 *
+	 * Example:
+	 *
+	 * ```
+	 * hGroup {
+	 *    +rect() layout { heightPercent = 1f }   // height = if (allowRelativeSizing == true) 200f else 100f.
+	 *    +rect() layout { height = 200f }
+	 * } layout { height = 100f }
+	 * ```
+	 *
+	 * @see HorizontalLayoutData.priority
+	 */
+	var allowRelativeSizing by prop(true)
+
 	companion object : StyleType<HorizontalLayoutStyle>
 
 }
@@ -174,6 +204,14 @@ class HorizontalLayoutData : BasicLayoutData() {
 	 * If set, the vertical alignment for this item overrides the vertical layout's verticalAlign.
 	 */
 	var verticalAlign: HAlign? by bindable(null)
+
+	/**
+	 * The order of sizing precedence is as follows:
+	 * - widthPercent null (inflexible width before flexible width)
+	 * - priority value (higher values before lower values)
+	 * - heightPercent null (inflexible height before flexible height)
+	 */
+	var priority: Float by bindable(0f)
 }
 
 open class HorizontalLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<HorizontalLayoutStyle, HorizontalLayoutData>(owner, HorizontalLayout())

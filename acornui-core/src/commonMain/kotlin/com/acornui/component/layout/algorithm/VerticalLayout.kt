@@ -16,6 +16,7 @@
 
 package com.acornui.component.layout.algorithm
 
+import com.acornui.collection.sortTo
 import com.acornui.component.ComponentInit
 import com.acornui.component.layout.*
 import com.acornui.component.style.StyleBase
@@ -30,6 +31,8 @@ import kotlin.math.floor
 class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> {
 
 	override val style = VerticalLayoutStyle()
+
+	private val orderedElements = ArrayList<LayoutElement>()
 
 	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, out: SizeConstraints) {
 		val padding = style.padding
@@ -54,37 +57,28 @@ class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> 
 	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
 		val padding = style.padding
 		val gap = style.gap
+		val allowRelativeSizing = style.allowRelativeSizing
 
 		val childAvailableWidth = padding.reduceWidth(explicitWidth)
 		val childAvailableHeight = padding.reduceHeight(explicitHeight)
 
-		// Size inflexible elements first.
-		var maxWidth = childAvailableWidth ?: 0f
-		for (i in 0..elements.lastIndex) {
-			val element = elements[i]
-			val layoutData = element.layoutDataCast
-			if ((childAvailableHeight == null || layoutData?.heightPercent == null) && layoutData?.widthPercent == null) {
-				val w = layoutData?.getPreferredWidth(childAvailableWidth)
-				val h = layoutData?.getPreferredHeight(childAvailableHeight)
-				element.setSize(w, h)
-				if (element.width > maxWidth) maxWidth = element.width
-			}
-		}
+		if (allowRelativeSizing) elements.sortTo(orderedElements, true, sizeOrderComparator)
+		else orderedElements.addAll(elements)
 
-		// Size width flexible, but height inflexible second and measure the flexible/inflexible height.
+		//
+		var maxWidth = childAvailableWidth
 		var inflexibleHeight = 0f
 		var flexibleHeight = 0f
-		for (i in 0..elements.lastIndex) {
-			val element = elements[i]
+		for (i in 0..orderedElements.lastIndex) {
+			val element = orderedElements[i]
 			val layoutData = element.layoutDataCast
 			if (childAvailableHeight == null || layoutData?.heightPercent == null) {
-				if (layoutData?.widthPercent != null) {
-					val w = layoutData.getPreferredWidth(maxWidth)
-					val h = layoutData.getPreferredHeight(childAvailableHeight)
-					element.setSize(w, h)
-				}
+				val w = layoutData?.getPreferredWidth(maxWidth)
+				val h = layoutData?.getPreferredHeight(childAvailableHeight)
+				element.setSize(w, h)
 				inflexibleHeight += element.height
-				if (element.width > maxWidth) maxWidth = element.width
+				if (allowRelativeSizing && (maxWidth == null || element.width > maxWidth))
+					maxWidth = element.width
 			} else {
 				flexibleHeight += layoutData.heightPercent!! * childAvailableHeight
 			}
@@ -95,17 +89,22 @@ class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> 
 		// Size flexible elements within the remaining space.
 		if (childAvailableHeight != null) {
 			val scale = if (flexibleHeight > 0) MathUtils.clamp((childAvailableHeight - inflexibleHeight) / flexibleHeight, 0f, 1f) else 1f
-			for (i in 0..elements.lastIndex) {
-				val element = elements[i]
+			for (i in 0..orderedElements.lastIndex) {
+				val element = orderedElements[i]
 				val layoutData = element.layoutDataCast
 				if (layoutData?.heightPercent != null) {
-					val w = layoutData.getPreferredWidth(childAvailableWidth)
+					val w = layoutData.getPreferredWidth(maxWidth)
 					val h = scale * layoutData.heightPercent!! * childAvailableHeight
 					element.setSize(w, h)
-					if (element.width > maxWidth) maxWidth = element.width
+					if (allowRelativeSizing && (maxWidth == null || element.width > maxWidth))
+						maxWidth = element.width
 				}
 			}
 		}
+
+		orderedElements.clear()
+		if (maxWidth == null)
+			maxWidth = 0f
 
 		// Position
 		var y = padding.top
@@ -135,6 +134,17 @@ class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> 
 	}
 
 	override fun createLayoutData() = VerticalLayoutData()
+
+	companion object {
+		private val sizeOrderComparator = { o1: LayoutElement, o2: LayoutElement ->
+			val layoutData1 = o1.layoutData as VerticalLayoutData?
+			val layoutData2 = o2.layoutData as VerticalLayoutData?
+			val r1 = -(layoutData1?.priority ?: 0f).compareTo(layoutData2?.priority ?: 0f)
+			if (r1 == 0) {
+				(layoutData1?.widthPercent == null).compareTo(layoutData2?.widthPercent == null)
+			} else r1
+		}
+	}
 }
 
 class VerticalLayoutStyle : StyleBase() {
@@ -159,6 +169,23 @@ class VerticalLayoutStyle : StyleBase() {
 	 */
 	var verticalAlign by prop(VAlign.TOP)
 
+	/**
+	 * If true, the actual size of an element can expand the bounds of the layout for the remaining elements, based
+	 * on priority rules.
+	 *
+	 * Example:
+	 *
+	 * ```
+	 * vGroup {
+	 *    +rect() layout { widthPercent = 1f }   // width = if (allowRelativeSizing == true) 200f else 100f.
+	 *    +rect() layout { width = 200f }
+	 * } layout { width = 100f }
+	 * ```
+	 *
+	 * @see VerticalLayoutData.priority
+	 */
+	var allowRelativeSizing by prop(true)
+
 	companion object : StyleType<VerticalLayoutStyle>
 
 }
@@ -169,6 +196,14 @@ class VerticalLayoutData : BasicLayoutData() {
 	 * If set, the horizontal alignment for this item overrides the vertical layout's horizontalAlign.
 	 */
 	var horizontalAlign: HAlign? by bindable(null)
+
+	/**
+	 * The order of sizing precedence is as follows:
+	 * - heightPercent null (inflexible height before flexible height)
+	 * - priority value (higher values before lower values)
+	 * - widthPercent null (inflexible width before flexible width)
+	 */
+	var priority: Float by bindable(0f)
 }
 
 open class VerticalLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<VerticalLayoutStyle, VerticalLayoutData>(owner, VerticalLayout())
