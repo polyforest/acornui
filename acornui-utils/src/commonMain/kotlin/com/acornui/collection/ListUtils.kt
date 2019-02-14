@@ -167,6 +167,15 @@ fun <E : Comparable<E>> MutableList<E>.addSorted(element: E, matchForwards: Bool
 	return index
 }
 
+/**
+ * Adds all elements in the receiver list to the provided mutable list using a sorting comparator.
+ * This method does not clear the [out] list first.
+ */
+fun <E> List<E>.sortTo(out: MutableList<E>, matchForwards: Boolean = true, comparator: (o1: E, o2: E) -> Int) {
+	for (i in 0..lastIndex)
+		out.addSorted(this[i], matchForwards, comparator)
+}
+
 
 /**
  * An iterator object for a simple List.
