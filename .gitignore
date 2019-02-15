@@ -176,8 +176,7 @@ gradle-app.setting
 *.iml
 
 ### Custom Build
-www/
 dist/
-externalLib/
-testOut/
-scripts/tempScripts/
+www/
+wwwDist/
+out-win64/
