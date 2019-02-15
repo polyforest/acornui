@@ -144,8 +144,8 @@ interface Focusable : Scoped {
 	val focusOrder: Float
 
 	/**
-	 * If true, this is component will be considered a focus container. That means -
-	 * - It is a demarcation for focus order on all Focusable descendants.
+	 * If true, this is component will be considered a focus container. That means it is a demarcation for focus order
+	 * on all Focusable descendants.
 	 */
 	val isFocusContainer: Boolean
 

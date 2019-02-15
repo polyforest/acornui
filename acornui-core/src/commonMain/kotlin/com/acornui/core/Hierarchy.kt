@@ -449,6 +449,22 @@ fun ChildRo.root(): ChildRo {
 	return root
 }
 
+private val ancestry1 = ArrayList<ChildRo>()
+private val ancestry2 = ArrayList<ChildRo>()
+
+/**
+ * Returns the lowest common ancestor if there is one between the two children.
+ */
+fun ChildRo.lowestCommonAncestor(other: ChildRo): ChildRo? {
+	ancestry(ancestry1)
+	other.ancestry(ancestry2)
+
+	val element = ancestry1.firstOrNull2 { ancestry2.contains(it) }
+	ancestry1.clear()
+	ancestry2.clear()
+	return element
+}
+
 /**
  * Returns true if this ChildRo is before the [other] ChildRo. This considers the parent to come before the child.
  * @throws Exception If [other] does not have a common ancestor.
@@ -471,7 +487,7 @@ fun ChildRo.isBefore(other: ChildRo): Boolean {
 		a = parentA
 		true
 	}
-	throw Exception("No common withAncestor")
+	throw Exception("No common ancestor")
 }
 
 /**

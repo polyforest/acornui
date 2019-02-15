@@ -17,12 +17,8 @@
 package com.acornui.core.focus
 
 import com.acornui._assert
-import com.acornui.collection.poll
-import com.acornui.collection.sortedInsertionIndex
-import com.acornui.component.ContainerRo
-import com.acornui.component.Stage
-import com.acornui.component.UiComponent
-import com.acornui.component.UiComponentRo
+import com.acornui.collection.*
+import com.acornui.component.*
 import com.acornui.core.Disposable
 import com.acornui.core.DisposedException
 import com.acornui.core.input.Ascii
@@ -139,18 +135,28 @@ class FocusManagerImpl : FocusManager {
 	}
 
 	// Temp variables for the focus order comparison so they don't need to be recalculated for the subject.
-	private lateinit var focusable: UiComponentRo
-	private val focusOrder = ArrayList<Float>()
-	private val iFocusOrder = ArrayList<Float>()
+	private val ancestry1 = ArrayList<UiComponentRo>()
+	private val ancestry2 = ArrayList<UiComponentRo>()
 
-	private fun focusOrderComparator(it: UiComponentRo): Int {
-		calculateFocusOrder(it, iFocusOrder)
-		val f = focusOrder.compareTo(iFocusOrder)
-		return if (f != 0) f
-		else {
-			// The explicit focus order chain is equivalent.
-			if (focusable.isBefore(it)) -1 else 1
+
+	private fun focusOrderComparator(o1: UiComponentRo, o2: UiComponentRo): Int {
+		o1.ancestry(ancestry1)
+		o2.ancestry(ancestry2)
+		val lowestCommonAncestor = ancestry1.firstOrNull2 { ancestry2.contains(it) }
+
+		val r: Int = if (lowestCommonAncestor == null) return 0 else {
+			val a = ancestry1.lastOrNull2(ancestry1.indexOf(lowestCommonAncestor) - 1) { it.isFocusContainer } ?: o1
+			val b = ancestry2.lastOrNull2(ancestry2.indexOf(lowestCommonAncestor) - 1) { it.isFocusContainer } ?: o2
+			val c1 = a.focusOrder.compareTo(b.focusOrder)
+			if (c1 != 0) c1
+			else {
+				// The explicit focus order is equivalent.
+				if (a.isBefore(b)) -1 else 1
+			}
 		}
+		ancestry1.clear()
+		ancestry2.clear()
+		return r
 	}
 
 	private fun <T : Comparable<T>> List<T>.compareTo(other: List<T>): Int {
@@ -171,26 +177,24 @@ class FocusManagerImpl : FocusManager {
 				// Trivial case
 				_focusables.add(focusable)
 			} else {
-				calculateFocusOrder(focusable, focusOrder)
-				this.focusable = focusable
-				val indexA = _focusables.sortedInsertionIndex(comparator = this::focusOrderComparator)
-				_focusables.add(indexA, focusable)
+//				calculateFocusOrder(focusable, focusOrder)
+//				this.focusable = focusable
+				_focusables.addSorted(focusable, comparator = this::focusOrderComparator)
 			}
 		}
 	}
 
-	private fun calculateFocusOrder(value: UiComponentRo, focusOrderOut: MutableList<Float>) {
-		focusOrderOut.clear()
-		if (!value.focusEnabled || !value.isActive) return
-		focusOrderOut.add(value.focusOrder)
-		var p: ContainerRo? = value.parent
-		while (p != null) {
-			if (p.isFocusContainer)
-				focusOrderOut.add(0, p.focusOrder)
-			p = p.parent
-		}
-		focusOrderOut.add(value.focusOrder)
-	}
+//	private fun calculateFocusOrder(value: UiComponentRo, focusOrderOut: MutableList<Float>) {
+//		focusOrderOut.clear()
+//		if (!value.focusEnabled || !value.isActive) return
+//		var p: ContainerRo? = value.parent
+//		while (p != null) {
+//			if (p.isFocusContainer)
+//				focusOrderOut.add(0, p.focusOrder)
+//			p = p.parent
+//		}
+//		focusOrderOut.add(value.focusOrder)
+//	}
 
 	override val focused: UiComponentRo?
 		get() = _focused

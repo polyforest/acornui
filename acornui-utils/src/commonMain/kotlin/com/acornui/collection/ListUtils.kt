@@ -311,6 +311,8 @@ inline fun <E, C : MutableCollection<in E>> List<E>.filterTo2(destination: C, pr
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  * Does not cause allocation.
+ * @param startIndex The first index to start the iteration.
+ * @param predicate The filter to use. If this returns true, iteration will stop and that element will be returned.
  */
 inline fun <E> List<E>.firstOrNull2(startIndex: Int = 0, predicate: (E) -> Boolean): E? {
 	val index = indexOfFirst2(startIndex, lastIndex, predicate)
@@ -320,8 +322,10 @@ inline fun <E> List<E>.firstOrNull2(startIndex: Int = 0, predicate: (E) -> Boole
 /**
  * Returns the first element matching the given [predicate], or throws an exception if no such element was found.
  * Does not cause allocation.
+ * @param startIndex The first index to start the iteration.
+ * @param predicate The filter to use. If this returns true, iteration will stop and that element will be returned.
  */
-inline fun <E> List<E>.first2(startIndex: Int = 0, predicate: (E) -> Boolean): E? {
+inline fun <E> List<E>.first2(startIndex: Int = 0, predicate: (E) -> Boolean): E {
 	val index = indexOfFirst2(startIndex, lastIndex, predicate)
 	return if (index == -1) throw Exception("Element not found matching predicate") else this[index]
 }
@@ -342,6 +346,30 @@ inline fun <E> List<E>.indexOfFirst2(startIndex: Int = 0, lastIndex: Int = this.
 	return -1
 }
 
+
+/**
+ * Returns the first element matching the given [predicate], walking backwards from [lastIndex], or `null` if no such
+ * element was found.
+ * Does not cause allocation.
+ * @param lastIndex The last index to start the iteration.
+ * @param predicate The filter to use. If this returns true, iteration will stop and that element will be returned.
+ */
+inline fun <E> List<E>.lastOrNull2(lastIndex: Int = this.lastIndex, predicate: (E) -> Boolean): E? {
+	val index = indexOfLast2(lastIndex, 0, predicate)
+	return if (index == -1) null else this[index]
+}
+
+/**
+ * Returns the first element matching the given [predicate], walking backwards from [lastIndex], or throws an exception
+ * if no such element was found. Does not cause allocation.
+ * @param lastIndex The last index to start the iteration.
+ * @param predicate The filter to use. If this returns true, iteration will stop and that element will be returned.
+ */
+inline fun <E> List<E>.last2(lastIndex: Int = this.lastIndex, predicate: (E) -> Boolean): E {
+	val index = indexOfLast2(lastIndex, 0, predicate)
+	return if (index == -1) throw Exception("Element not found matching predicate") else this[index]
+}
+
 /**
  * Returns index of the last element matching the given [predicate], or -1 if this list does not contain such element.
  * The search goes in reverse starting from lastIndex downTo startIndex
@@ -356,6 +384,15 @@ inline fun <E> List<E>.indexOfLast2(lastIndex: Int = this.lastIndex, startIndex:
 			return i
 	}
 	return -1
+}
+
+/**
+ * Returns `true` if at least one element matches the given [predicate].
+ */
+inline fun <T> List<T>.any2(predicate: (T) -> Boolean): Boolean {
+	if (isEmpty()) return false
+	for (i in 0..lastIndex) if (predicate(this[i])) return true
+	return false
 }
 
 inline fun <E> List<E>.forEach2(action: (E) -> Unit): Unit {

@@ -87,7 +87,6 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 
 	init {
 		styleTags.add(TabNavigator)
-		addChild(contents)
 		tabBarContainer = scaleBox {
 			style.scaling = Scaling.STRETCH_X
 			style.horizontalAlign = HAlign.LEFT
@@ -100,6 +99,7 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 			}
 		}
 		addChild(tabBarContainer)
+		addChild(contents)
 
 		watch(style) {
 			background?.dispose()
