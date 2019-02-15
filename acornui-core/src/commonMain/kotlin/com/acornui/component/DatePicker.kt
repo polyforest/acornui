@@ -108,8 +108,12 @@ open class DatePicker(
 		}
 		keyDown().add {
 			if (it.keyCode == Ascii.ENTER || it.keyCode == Ascii.RETURN) {
-				close()
-				_changed.dispatch()
+				if (isOpen) {
+					close()
+					_changed.dispatch()
+				} else {
+					open()
+				}
 			}
 		}
 		focusHighlightDelegate = this@DatePicker
@@ -210,6 +214,15 @@ open class DatePicker(
 
 	private var _isOpen = false
 
+	/**
+	 * True if the calendar component is currently shown.
+	 */
+	val isOpen: Boolean
+		get() = _isOpen
+
+	/**
+	 * Displays the calendar component.
+	 */
 	fun open() {
 		if (_isOpen) return
 		_isOpen = true
@@ -220,12 +233,18 @@ open class DatePicker(
 		textInput.focus()
 	}
 
+	/**
+	 * Hides the calendar component.
+	 */
 	fun close() {
 		if (!_isOpen) return
 		_isOpen = false
 		removeChild(calendarLift)
 	}
 
+	/**
+	 * Toggles the display of the calendar component.
+	 */
 	fun toggleOpen() {
 		if (_isOpen) close()
 		else open()
