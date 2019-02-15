@@ -109,8 +109,8 @@ class MaxRectsPacker(algorithmSettings: PackerAlgorithmSettingsData) : Rectangle
 	}
 
 	private fun packPage(inputRects: MutableList<Rect>): Page {
-		var minWidth = Integer.MAX_VALUE
-		var minHeight = Integer.MAX_VALUE
+		var minWidth = Int.MAX_VALUE
+		var minHeight = Int.MAX_VALUE
 		val padW = if (settings.edgePadding) settings.paddingX * 2 else 0
 		val padH = if (settings.edgePadding) settings.paddingY * 2 else 0
 		val maxWidth = settings.maxWidth
@@ -137,7 +137,7 @@ class MaxRectsPacker(algorithmSettings: PackerAlgorithmSettingsData) : Rectangle
 		minWidth = maxOf(minWidth, settings.minWidth)
 		minHeight = maxOf(minHeight, settings.minHeight)
 
-		if (!settings.silent) System.out.print("Packing")
+		if (!settings.silent) print("Packing")
 
 		// Find the minimal page size that fits all rects.
 		var bestResult: Page? = null
@@ -150,13 +150,13 @@ class MaxRectsPacker(algorithmSettings: PackerAlgorithmSettingsData) : Rectangle
 			while (size != -1) {
 				val result = packAtSize(true, size, size, inputRects)
 				if (!settings.silent) {
-					if (++i % 70 == 0) System.out.println()
-					System.out.print(".")
+					if (++i % 70 == 0) println()
+					print(".")
 				}
 				bestResult = getBest(bestResult, result)
 				size = sizeSearch.next(result == null)
 			}
-			if (!settings.silent) System.out.println()
+			if (!settings.silent) println()
 			// Rects don't fit on one page. Fill a whole page and return.
 			if (bestResult == null) bestResult = packAtSize(false, maxSize, maxSize, inputRects)
 			bestResult!!.outputRects.sortWith(rectComparator)
@@ -174,8 +174,8 @@ class MaxRectsPacker(algorithmSettings: PackerAlgorithmSettingsData) : Rectangle
 				while (width != -1) {
 					val result = packAtSize(true, width, height, inputRects)
 					if (!settings.silent) {
-						if (++i % 70 == 0) System.out.println()
-						System.out.print(".")
+						if (++i % 70 == 0) println()
+						print(".")
 					}
 					bestWidthResult = getBest(bestWidthResult, result)
 					width = widthSearch.next(result == null)
@@ -187,7 +187,7 @@ class MaxRectsPacker(algorithmSettings: PackerAlgorithmSettingsData) : Rectangle
 				if (height == -1) break
 				width = widthSearch.reset()
 			}
-			if (!settings.silent) System.out.println()
+			if (!settings.silent) println()
 			// Rects don't fit on one page. Fill a whole page and return.
 			if (bestResult == null)
 				bestResult = packAtSize(false, maxWidth, maxHeight, inputRects)
@@ -361,8 +361,8 @@ private class MaxRects(val settings: MaxRectsSettings) {
 		while (r.size > 0) {
 			var bestRectIndex = -1
 			val bestNode = Rect()
-			bestNode.score1 = Integer.MAX_VALUE
-			bestNode.score2 = Integer.MAX_VALUE
+			bestNode.score1 = Int.MAX_VALUE
+			bestNode.score2 = Int.MAX_VALUE
 
 			// Find the next rectangle that packs best.
 			for (i in 0..r.size - 1) {
@@ -458,8 +458,8 @@ private class MaxRects(val settings: MaxRectsSettings) {
 
 		// Cannot fit the current rectangle.
 		if (newNode.height == 0) {
-			newNode.score1 = Integer.MAX_VALUE
-			newNode.score2 = Integer.MAX_VALUE
+			newNode.score1 = Int.MAX_VALUE
+			newNode.score2 = Int.MAX_VALUE
 		}
 
 		return newNode
@@ -478,7 +478,7 @@ private class MaxRects(val settings: MaxRectsSettings) {
 	private fun findPositionForNewNodeBottomLeft(width: Int, height: Int, rotatedWidth: Int, rotatedHeight: Int, rotate: Boolean): Rect {
 		val bestNode = Rect()
 
-		bestNode.score1 = Integer.MAX_VALUE // best y, score2 is best x
+		bestNode.score1 = Int.MAX_VALUE // best y, score2 is best x
 
 		for (i in 0..freeRectangles.size - 1) {
 			// Try to place the rectangle in upright (non-rotated) orientation.
@@ -512,7 +512,7 @@ private class MaxRects(val settings: MaxRectsSettings) {
 
 	private fun findPositionForNewNodeBestShortSideFit(width: Int, height: Int, rotatedWidth: Int, rotatedHeight: Int, rotate: Boolean): Rect {
 		val bestNode = Rect()
-		bestNode.score1 = Integer.MAX_VALUE
+		bestNode.score1 = Int.MAX_VALUE
 
 		for (i in 0..freeRectangles.size - 1) {
 			// Try to place the rectangle in upright (non-rotated) orientation.
@@ -557,7 +557,7 @@ private class MaxRects(val settings: MaxRectsSettings) {
 	private fun findPositionForNewNodeBestLongSideFit(width: Int, height: Int, rotatedWidth: Int, rotatedHeight: Int, rotate: Boolean): Rect {
 		val bestNode = Rect()
 
-		bestNode.score2 = Integer.MAX_VALUE
+		bestNode.score2 = Int.MAX_VALUE
 
 		for (i in 0..freeRectangles.size - 1) {
 			// Try to place the rectangle in upright (non-rotated) orientation.
@@ -601,7 +601,7 @@ private class MaxRects(val settings: MaxRectsSettings) {
 	private fun findPositionForNewNodeBestAreaFit(width: Int, height: Int, rotatedWidth: Int, rotatedHeight: Int, rotate: Boolean): Rect {
 		val bestNode = Rect()
 
-		bestNode.score1 = Integer.MAX_VALUE // best area fit, score2 is best short side fit
+		bestNode.score1 = Int.MAX_VALUE // best area fit, score2 is best short side fit
 
 		for (i in 0..freeRectangles.size - 1) {
 			val areaFit = freeRectangles[i].width * freeRectangles[i].height - width * height
