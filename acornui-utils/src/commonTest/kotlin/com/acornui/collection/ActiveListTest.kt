@@ -16,7 +16,7 @@
 
 package com.acornui.collection
 
-import org.junit.*
+import kotlin.test.Test
 
 import com.acornui.test.*
 
