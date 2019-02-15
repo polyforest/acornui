@@ -46,39 +46,44 @@ open class GlRect(
 	 * If true, we don't need a mesh -- no corners and no gradient, just use the sprite batch.
 	 */
 	private var simpleMode = false
-	private val simpleModeObj by lazy {
-		object {
-			val outerRect = Array(4) { Vector3() }
-			val innerRect = Array(4) { Vector3() }
-			val fillColor = Color()
-			val borderColors = BorderColors()
-			val normal = Vector3()
-		}
+	private val simpleModeObj by lazy { SimpleMode() }
+	private val complexModeObj by lazy { ComplexMode() }
+
+	private inner class SimpleMode {
+		val outerRect = Array(4) { Vector3() }
+		val innerRect = Array(4) { Vector3() }
+		val fillColor = Color()
+		val borderColors = BorderColors()
+		val normal = Vector3()
 	}
 
-	private val complexModeObj by lazy {
-		object {
-			val fill = staticMesh()
-			val gradient = staticMesh()
-			val stroke = staticMesh()
-			val fillC = addChild(staticMeshC {
-				mesh = fill
-				interactivityMode = InteractivityMode.NONE
-			})
-			val gradientC = addChild(staticMeshC {
-				mesh = gradient
-				interactivityMode = InteractivityMode.NONE
-			})
-			val strokeC = addChild(staticMeshC {
-				mesh = stroke
-				interactivityMode = InteractivityMode.NONE
-			})
+	private inner class ComplexMode {
+		val fill = staticMesh()
+		val gradient = staticMesh()
+		val stroke = staticMesh()
+		val fillC = staticMeshC {
+			mesh = fill
+			interactivityMode = InteractivityMode.NONE
+		}
+		val gradientC = staticMeshC {
+			mesh = gradient
+			interactivityMode = InteractivityMode.NONE
+		}
+		val strokeC = staticMeshC {
+			mesh = stroke
+			interactivityMode = InteractivityMode.NONE
 		}
 	}
 
 	init {
 		watch(style) {
 			simpleMode = it.borderRadii.isEmpty() && it.linearGradient == null
+			if (simpleMode) clearChildren(dispose = false)
+			else {
+				addChild(complexModeObj.fillC)
+				addChild(complexModeObj.gradientC)
+				addChild(complexModeObj.strokeC)
+			}
 		}
 		validation.addNode(ValidationFlags.RESERVED_1, ValidationFlags.STYLES or ValidationFlags.CONCATENATED_TRANSFORM or ValidationFlags.LAYOUT or ValidationFlags.CONCATENATED_COLOR_TRANSFORM, this::updateSimpleModeVertices)
 	}
