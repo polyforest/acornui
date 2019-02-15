@@ -177,7 +177,7 @@ gradle-app.setting
 
 ### Custom Build
 **/www/
-dist/
-externalLib/
-testOut/
+**/dist/
+**/externalLib/
+**/testOut/
 scripts/tempScripts/
