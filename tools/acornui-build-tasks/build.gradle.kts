@@ -58,8 +58,11 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(kotlin("stdlib-common"))
+                implementation(kotlin("compiler"))
                 implementation(project(":acornui-core"))
                 implementation(project(":acornui-utils"))
+                implementation(project(":backends:acornui-lwjgl-backend"))
+                implementation(project(":tools:acornui-texture-packer"))
             }
         }
         commonTest {
