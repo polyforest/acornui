@@ -352,6 +352,16 @@ open class CalendarItemRenderer(owner: Owned) : ContainerImpl(owner), ListItemRe
 
 	override var index: Int = 0
 
+	init {
+		focusEnabled = true
+		cursor(StandardCursors.HAND)
+		styleTags.add(Companion)
+		watch(style) {
+			refreshLabel()
+			refreshState()
+		}
+	}
+
 	private fun refreshLabel() {
 		textField.label = _data?.dayOfMonth?.zeroPadding(if (style.zeroPadDay) 1 else 0) ?: ""
 	}
@@ -389,15 +399,6 @@ open class CalendarItemRenderer(owner: Owned) : ContainerImpl(owner), ListItemRe
 					else -> ButtonState.UP
 				}
 			}
-		}
-	}
-
-	init {
-		cursor(StandardCursors.HAND)
-		styleTags.add(Companion)
-		watch(style) {
-			refreshLabel()
-			refreshState()
 		}
 	}
 
