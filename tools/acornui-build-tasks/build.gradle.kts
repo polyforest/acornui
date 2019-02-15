@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
+
 plugins {
     kotlin("multiplatform")
     `maven-publish`
@@ -53,9 +55,19 @@ kotlin {
     }
 
     sourceSets {
+        /**
+         * Build the dependency notation for the named Acorn UI [module] at the given [version].
+         *
+         * @param module simple name of the Acorn UI module, such as "core", "utils", or "build-tasks."
+         * @param version optional requested version where it is unspecified if null.
+         */
+        fun KotlinDependencyHandler.acornui(module: String, version: String? = null): String =
+                "com.polyforest:acornui-$module${version?.let { ":$it" } ?: ""}"
+        
         commonMain {
             dependencies {
                 implementation(kotlin("stdlib-common"))
+                implementation(acornui("core"))
             }
         }
         commonTest {
