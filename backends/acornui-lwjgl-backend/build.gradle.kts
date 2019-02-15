@@ -41,7 +41,6 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib-common"))
                 implementation(project(":acornui-core"))
-                
                 implementation(project(":acornui-utils"))
             }
         }
