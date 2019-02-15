@@ -16,32 +16,11 @@ open class BoxStyle : StyleBase() {
 	override val type: StyleType<BoxStyle> = Companion
 
 	var linearGradient: LinearGradientRo? by prop<LinearGradientRo?>(null)
-	var backgroundColor: ColorRo by prop(Color.CLEAR)
-
-	@Deprecated("Renamed to borderColors", ReplaceWith("borderColors"))
-	var borderColor: BorderColorsRo
-		get() = borderColors
-		set(value) {
-			borderColors = value
-		}
+	var backgroundColor: ColorRo by prop(Color.BLACK)
 
 	var borderColors: BorderColorsRo by prop(BorderColors())
 
-	@Deprecated("Renamed to borderThicknesses", ReplaceWith("borderThicknesses"))
-	var borderThickness: PadRo
-		get() = borderThicknesses
-		set(value) {
-			borderThicknesses = value
-		}
-
 	var borderThicknesses: PadRo by prop(Pad())
-
-	@Deprecated("Renamed to borderRadii", ReplaceWith("borderRadii"))
-	var borderRadius: CornersRo
-		get() = borderRadii
-		set(value) {
-			borderRadii = value
-		}
 
 	var borderRadii: CornersRo by prop(Corners())
 

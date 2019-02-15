@@ -76,6 +76,8 @@ open class GlRect(
 	}
 
 	init {
+		defaultWidth = 100f
+		defaultHeight = 50f
 		watch(style) {
 			simpleMode = it.borderRadii.isEmpty() && it.linearGradient == null
 			if (simpleMode) clearChildren(dispose = false)
@@ -87,7 +89,6 @@ open class GlRect(
 		}
 		validation.addNode(ValidationFlags.RESERVED_1, ValidationFlags.STYLES or ValidationFlags.CONCATENATED_TRANSFORM or ValidationFlags.LAYOUT or ValidationFlags.CONCATENATED_COLOR_TRANSFORM, this::updateSimpleModeVertices)
 	}
-
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		if (simpleMode) return
