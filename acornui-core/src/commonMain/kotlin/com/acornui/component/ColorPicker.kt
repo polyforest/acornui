@@ -45,15 +45,16 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 	var color: ColorRo
 		get() = colorPalette.color
 		set(value) {
-			colorPalette.color = value
-			colorSwatch.style.backgroundColor = value
+			val v = value.copy()
+			colorPalette.color = v
+			colorSwatch.style.backgroundColor = v
 		}
 
 	var value: HsvRo
 		get() = colorPalette.value
 		set(value) {
 			colorPalette.value = value
-			colorSwatch.style.backgroundColor = value.toRgb(tmpColor)
+			colorSwatch.style.backgroundColor = value.toRgb(tmpColor).copy()
 		}
 
 	private val tmpColor = Color()
@@ -73,7 +74,7 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 		})
 
 		colorPalette.changed.add {
-			colorSwatch.style.backgroundColor = value.toRgb(tmpColor)
+			colorSwatch.style.backgroundColor = value.toRgb(tmpColor).copy()
 		}
 
 		watch(style) {
@@ -266,7 +267,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 		tmpHSV.set(_value)
 		tmpHSV.v = 1f
 		valueRect.style.linearGradient = LinearGradient(GradientDirection.BOTTOM,
-				tmpHSV.toRgb(tmpColor),
+				tmpHSV.toRgb(tmpColor).copy(),
 				Color(0f, 0f, 0f, 1f)
 		)
 	}
