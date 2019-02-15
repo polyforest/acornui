@@ -477,6 +477,8 @@ open class GlRect(
 				glState.setCamera(camera)
 				glState.blendMode(BlendMode.NORMAL, false)
 				batch.begin()
+
+				val fillColor = fillColor
 				if (fillColor.a > 0f) {
 					// Fill
 					batch.putVertex(innerRect[0], normal, fillColor)
@@ -487,7 +489,7 @@ open class GlRect(
 				}
 
 				val borderThicknesses = style.borderThicknesses
-				val borderColors = style.borderColors
+				val borderColors = borderColors
 
 				if (borderThicknesses.left > 0f) {
 					batch.putVertex(outerRect[0], normal, borderColors.left)
