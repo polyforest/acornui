@@ -18,8 +18,8 @@ package com.acornui.math
 
 import com.acornui.core.closeTo
 import com.acornui.test.assertListEquals
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -31,7 +31,7 @@ class Matrix4Test {
 	private lateinit var m3: Matrix4
 	private lateinit var m4: Matrix4
 
-	@Before
+	@BeforeTest
 	fun setUp() {
 		m1 = Matrix4(floatArrayOf(
 				3f, 5f, 6f, 13f,

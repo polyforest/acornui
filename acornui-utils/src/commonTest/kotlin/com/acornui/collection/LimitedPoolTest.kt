@@ -16,9 +16,9 @@
 
 package com.acornui.collection
 
+import kotlin.test.Test
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.limitedPool
-import org.junit.Test
 import kotlin.test.assertEquals
 
 /**

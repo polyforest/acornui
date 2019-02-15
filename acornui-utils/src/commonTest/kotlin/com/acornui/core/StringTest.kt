@@ -16,7 +16,7 @@
 
 package com.acornui.core
 
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class StringTest {

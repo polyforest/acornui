@@ -17,7 +17,7 @@
 package com.acornui.collection
 
 import com.acornui.test.assertListEquals
-import org.junit.Test
+import kotlin.test.Test
 
 class ConcatListTest {
 

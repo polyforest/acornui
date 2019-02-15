@@ -16,59 +16,63 @@
 
 package com.acornui.signal
 
-import com.acornui.test.benchmark
-import org.junit.Test
-
-class SignalPerformance {
-
-	@Test fun dispatchSome() {
-		val s = Signal1<Int>()
-		s.add {} // 4 handlers
-		s.add {}
-		s.add {}
-		s.add {}
-
-		val speed = benchmark {
-			for (i in 0..999) {
-				s.dispatch(3)
-			}
-		}
-		// (Old, linked list) Dispatch 4 avg: 0.046264168ms
-		// Dispatch 4 avg: 0.032411993ms
-		println("Dispatch 4 avg: ${speed}ms")
-	}
-
-	@Test fun dispatchMany() {
-		val s = Signal1<Int>()
-		for (i in 0..999) {
-			s.add {}
-		}
-
-		val speed = benchmark {
-			for (i in 0..1000) {
-				s.dispatch(3)
-			}
-		}
-		// (Old, linked list) Dispatch 1000 avg: 2.0503826ms
-		// (New, array list) Dispatch 1000 avg: 1.3271044ms
-		println("Dispatch 1000 avg: ${speed}ms")
-	}
-
-	@Test fun addOnce() {
-		val s = Signal1<Int>()
-		s.add {}
-
-		val speed = benchmark {
-			for (i in 0..999) {
-				s.addOnce {}
-				s.addOnce {}
-				s.addOnce {}
-				s.addOnce {}
-				s.dispatch(3)
-			}
-		}
-		// Old: Add once 4 avg: 0.107870445ms
-		// Add once 4 avg: 0.18459427ms
-		println("Add once 4 avg: ${speed}ms")
-	}
-}
+/**
+ * Commented out due to no common nanoTime replacement...
+ * See https://github.com/polyforest/acornui/issues/121
+ */
+//import com.acornui.test.benchmark
+//import kotlin.test.Test
+//
+//class SignalPerformance {
+//
+//	@Test fun dispatchSome() {
+//		val s = Signal1<Int>()
+//		s.add {} // 4 handlers
+//		s.add {}
+//		s.add {}
+//		s.add {}
+//
+//		val speed = benchmark {
+//			for (i in 0..999) {
+//				s.dispatch(3)
+//			}
+//		}
+//		// (Old, linked list) Dispatch 4 avg: 0.046264168ms
+//		// Dispatch 4 avg: 0.032411993ms
+//		println("Dispatch 4 avg: ${speed}ms")
+//	}
+//
+//	@Test fun dispatchMany() {
+//		val s = Signal1<Int>()
+//		for (i in 0..999) {
+//			s.add {}
+//		}
+//
+//		val speed = benchmark {
+//			for (i in 0..1000) {
+//				s.dispatch(3)
+//			}
+//		}
+//		// (Old, linked list) Dispatch 1000 avg: 2.0503826ms
+//		// (New, array list) Dispatch 1000 avg: 1.3271044ms
+//		println("Dispatch 1000 avg: ${speed}ms")
+//	}
+//
+//	@Test fun addOnce() {
+//		val s = Signal1<Int>()
+//		s.add {}
+//
+//		val speed = benchmark {
+//			for (i in 0..999) {
+//				s.addOnce {}
+//				s.addOnce {}
+//				s.addOnce {}
+//				s.addOnce {}
+//				s.dispatch(3)
+//			}
+//		}
+//		// Old: Add once 4 avg: 0.107870445ms
+//		// Add once 4 avg: 0.18459427ms
+//		println("Add once 4 avg: ${speed}ms")
+//	}
+//}

@@ -19,7 +19,7 @@ package com.acornui.test
 import com.acornui.collection.toList
 import com.acornui.core.closeTo
 import com.acornui.math.*
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.math.abs
 
 import kotlin.test.assertFails
@@ -212,20 +212,24 @@ fun assertClose(expected: Vector2Ro, actual: Vector2Ro, margin: Float = 0.0001f)
 }
 
 /**
- * Returns the median amount of time each call took, in milliseconds.
+ * Commented out due to no common nanoTime replacement...
+ * See https://github.com/polyforest/acornui/issues/121
  */
-fun benchmark(iterations: Int = 1000, testCount: Int = 10, warmCount: Int = 2, call: () -> Unit): Float {
-	val results = ArrayList<Float>(testCount)
-	for (i in 0..testCount + warmCount - 1) {
-		val startTime = System.nanoTime()
-		for (j in 0..iterations - 1) {
-			call()
-		}
-		if (i < warmCount) continue
-		val endTime = System.nanoTime()
-		val elapsed = (endTime - startTime) / 1e6.toFloat()
-		results.add(elapsed / iterations.toFloat())
-	}
-	results.sort()
-	return results[results.size / 2]
-}
+///**
+// * Returns the median amount of time each call took, in milliseconds.
+// */
+//fun benchmark(iterations: Int = 1000, testCount: Int = 10, warmCount: Int = 2, call: () -> Unit): Float {
+//	val results = ArrayList<Float>(testCount)
+//	for (i in 0..testCount + warmCount - 1) {
+//		val startTime = System.nanoTime()
+//		for (j in 0..iterations - 1) {
+//			call()
+//		}
+//		if (i < warmCount) continue
+//		val endTime = System.nanoTime()
+//		val elapsed = (endTime - startTime) / 1e6.toFloat()
+//		results.add(elapsed / iterations.toFloat())
+//	}
+//	results.sort()
+//	return results[results.size / 2]
+//}

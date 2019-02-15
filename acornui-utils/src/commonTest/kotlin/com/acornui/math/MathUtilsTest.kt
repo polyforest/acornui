@@ -17,7 +17,7 @@
 package com.acornui.math
 
 import com.acornui.test.assertClose
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**

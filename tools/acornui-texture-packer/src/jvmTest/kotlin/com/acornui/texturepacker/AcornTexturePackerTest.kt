@@ -28,7 +28,7 @@ import com.acornui.core.io.file.Files
 import com.acornui.jvm.JvmHeadlessApplication
 import com.acornui.serialization.JsonSerializer
 import com.acornui.texturepacker.jvm.writer.JvmTextureAtlasWriter
-import org.junit.Test
+import kotlin.test.Test
 import java.io.File
 import kotlin.test.assertEquals
 

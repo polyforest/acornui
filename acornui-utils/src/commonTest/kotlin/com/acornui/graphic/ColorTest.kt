@@ -1,12 +1,12 @@
 package com.acornui.graphic
 
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ColorTest {
 
-	@Before fun before() {
+	@BeforeTest fun before() {
 	}
 
 	@Test fun toHsl() {
@@ -51,7 +51,7 @@ class ColorTest {
 		assertEquals("ffffffff", c.toRgbaString())
 	}
 
-	@Test fun equals() {
+	@Test fun equalsTest() {
 		assertEquals(Color(1f, 0.2f, 0.3f, 0.4f), Color(1f, 0.2f, 0.3f, 0.4f))
 		assertEquals(Color(), Color())
 	}

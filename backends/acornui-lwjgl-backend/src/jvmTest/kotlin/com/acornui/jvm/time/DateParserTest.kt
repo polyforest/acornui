@@ -10,13 +10,13 @@ import com.acornui.core.time.time
 import com.acornui.core.userInfo
 import com.acornui.jvm.text.DateTimeFormatterImpl
 import com.acornui.jvm.text.NumberFormatterImpl
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DateParserTest {
 
-	@Before
+	@BeforeTest
 	fun setUp() {
 		val u = UserInfo(
 				isDesktop = true,

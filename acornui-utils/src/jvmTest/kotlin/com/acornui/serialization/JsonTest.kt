@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 PolyForest
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,14 @@
 
 package com.acornui.serialization
 
-import com.acornui.test.assertListEquals
-import com.acornui.test.benchmark
-import org.junit.Test
+/**
+ * Commented out due to no common nanoTime replacement...
+ * See https://github.com/polyforest/acornui/issues/121
+ */
+//import com.acornui.test.benchmark
+import kotlin.test.Test
 import kotlin.test.assertEquals
+import com.acornui.test.assertListEquals
 
 /**
  * @author nbilyk
@@ -146,14 +150,18 @@ class JsonTest {
 		    }
 		 }
 		 """
-		val v = benchmark {
-			val value = jsonParse(str)
-			value["bool1"]!!.bool()
-			value["bool2"]!!.bool()
-			value["int1"]!!.int()
-			value["obj1"]!!["int1"]!!.int()
-		}
-		println(v) //  0.011262276
+		/**
+		 * Commented out due to no common nanoTime replacement...
+		 * See https://github.com/polyforest/acornui/issues/121
+		 */
+//		val v = benchmark {
+//			val value = jsonParse(str)
+//			value["bool1"]!!.bool()
+//			value["bool2"]!!.bool()
+//			value["int1"]!!.int()
+//			value["obj1"]!!["int1"]!!.int()
+//		}
+//		println(v) //  0.011262276
 	}
 
 	@Test fun testWrite() {

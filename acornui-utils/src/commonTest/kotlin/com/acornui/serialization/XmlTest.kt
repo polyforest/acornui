@@ -16,7 +16,7 @@
 
 package com.acornui.serialization
 
-import org.junit.Test
+import kotlin.test.Test
 
 class XmlTest {
 

@@ -16,16 +16,13 @@
 
 package com.acornui.math
 
-import org.junit.Test
-
-import org.junit.Assert.*
-import org.junit.Before
+import kotlin.test.*
 
 class MinMaxTest {
 
 	lateinit var m1: MinMax
 
-	@Before
+	@BeforeTest
 	fun setUp() {
 		m1 = MinMax(1f, -3f, 40f, 100f)
 	}

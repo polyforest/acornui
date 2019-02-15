@@ -17,7 +17,7 @@
 package com.acornui.math
 
 import com.acornui.test.assertClose
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.math.sqrt
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -67,7 +67,7 @@ class Vector3Test {
 		assertEquals(Vector3(1f, 0f, 0f), Vector3(0f, 1f, 0f).crs(Vector3(0f, 0f, 1f)))
 	}
 
-	@Test fun equals() {
+	@Test fun equalsTest() {
 		assertTrue(Vector3(1f, 2f, 3f) == Vector3(1f, 2f, 3f))
 		assertFalse(Vector3(1f, 2f, 3f) == Vector3(1f, 2f, 4f))
 	}

@@ -17,9 +17,8 @@
 package com.acornui.collection
 
 import com.acornui.test.assertListEquals
-import org.junit.Test
-
-import org.junit.Assert.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class ListUtilsKtTest {
 	@Test

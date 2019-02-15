@@ -19,8 +19,8 @@ package com.acornui.build.util
 import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import java.io.File
 
 class FileUtilsKtTest {
@@ -28,7 +28,7 @@ class FileUtilsKtTest {
 	private lateinit var src: File
 	private lateinit var out: File
 
-	@Before
+	@BeforeTest
 	fun before() {
 		src = File("testOut/outOfDateSrc_${++id}")
 		File("resources/outOfDate").copyRecursively(src)
