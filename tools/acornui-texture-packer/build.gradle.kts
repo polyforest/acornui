@@ -42,6 +42,7 @@ kotlin {
                 implementation(kotlin("stdlib-common"))
                 implementation(project(":acornui-core"))
                 implementation(project(":acornui-utils"))
+                implementation(project(":backends:acornui-lwjgl-backend"))
             }
         }
         commonTest {
