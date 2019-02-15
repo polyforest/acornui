@@ -31,6 +31,7 @@ import com.acornui.core.di.own
 import com.acornui.core.di.owns
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.focus
+import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.KeyInteractionRo
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.keyDown
@@ -105,6 +106,12 @@ open class DatePicker(
 			selectDateFromText()
 			_input.dispatch()
 		}
+		keyDown().add {
+			if (it.keyCode == Ascii.ENTER || it.keyCode == Ascii.RETURN) {
+				close()
+				_changed.dispatch()
+			}
+		}
 		focusHighlightDelegate = this@DatePicker
 	}
 
@@ -164,6 +171,7 @@ open class DatePicker(
 	}
 
 	init {
+		isFocusContainer = true
 		focusEnabled = true
 
 		styleTags.add(DatePicker)
@@ -187,14 +195,6 @@ open class DatePicker(
 			}
 			this.downArrow = downArrow
 		}
-
-//		click().add {
-//			if (!it.handled && !editable) {
-//				it.handled = true
-//				toggleOpen()
-//			}
-//		}
-
 		inject(FocusManager).focusedChanged.add(this::focusChangedHandler)
 	}
 
