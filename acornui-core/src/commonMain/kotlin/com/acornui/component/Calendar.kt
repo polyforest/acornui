@@ -273,7 +273,6 @@ open class Calendar(
 
 	init {
 		isFocusContainer = true
-		focusEnabled = true
 		styleTags.add(Companion)
 		validation.addNode(ValidationFlags.PROPERTIES, ValidationFlags.STYLES, ValidationFlags.SIZE_CONSTRAINTS, this::updateProperties)
 

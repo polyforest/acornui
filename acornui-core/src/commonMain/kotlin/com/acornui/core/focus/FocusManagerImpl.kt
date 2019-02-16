@@ -21,6 +21,7 @@ import com.acornui.collection.*
 import com.acornui.component.*
 import com.acornui.core.Disposable
 import com.acornui.core.DisposedException
+import com.acornui.core.di.ownerWalk
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.KeyInteractionRo
 import com.acornui.core.input.interaction.MouseInteractionRo
@@ -124,7 +125,7 @@ class FocusManagerImpl : FocusManager {
 	override fun invalidateFocusableOrder(value: UiComponentRo) {
 		if (!invalidFocusables.contains(value)) {
 			_focusables.remove(value)
-			if (value.isActive && value.focusEnabled && !value.isFocusContainer)
+			if (value.isActive && value.focusEnabled)
 				invalidFocusables.add(value)
 			else {
 				if (_focused === value) {
@@ -138,10 +139,9 @@ class FocusManagerImpl : FocusManager {
 	private val ancestry1 = ArrayList<UiComponentRo>()
 	private val ancestry2 = ArrayList<UiComponentRo>()
 
-
 	private fun focusOrderComparator(o1: UiComponentRo, o2: UiComponentRo): Int {
-		o1.ancestry(ancestry1)
-		o2.ancestry(ancestry2)
+		o1.ownerWalk { if (it is UiComponentRo) ancestry1.add(it); true }
+		o2.ownerWalk { if (it is UiComponentRo) ancestry2.add(it); true }
 		val lowestCommonAncestor = ancestry1.firstOrNull2 { ancestry2.contains(it) }
 
 		val r: Int = if (lowestCommonAncestor == null) return 0 else {
@@ -177,24 +177,10 @@ class FocusManagerImpl : FocusManager {
 				// Trivial case
 				_focusables.add(focusable)
 			} else {
-//				calculateFocusOrder(focusable, focusOrder)
-//				this.focusable = focusable
 				_focusables.addSorted(focusable, comparator = this::focusOrderComparator)
 			}
 		}
 	}
-
-//	private fun calculateFocusOrder(value: UiComponentRo, focusOrderOut: MutableList<Float>) {
-//		focusOrderOut.clear()
-//		if (!value.focusEnabled || !value.isActive) return
-//		var p: ContainerRo? = value.parent
-//		while (p != null) {
-//			if (p.isFocusContainer)
-//				focusOrderOut.add(0, p.focusOrder)
-//			p = p.parent
-//		}
-//		focusOrderOut.add(value.focusOrder)
-//	}
 
 	override val focused: UiComponentRo?
 		get() = _focused

@@ -176,7 +176,6 @@ open class DatePicker(
 
 	init {
 		isFocusContainer = true
-		focusEnabled = true
 
 		styleTags.add(DatePicker)
 		addChild(textInput)

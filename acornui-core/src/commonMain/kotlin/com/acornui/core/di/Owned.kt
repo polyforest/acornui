@@ -140,3 +140,20 @@ open class OwnedImpl(
 		_disposed.dispose()
 	}
 }
+
+/**
+ * Traverses this Owned object's ownership lineage, invoking a callback on each owner up the chain.
+ * (including this object)
+ * @param callback The callback to invoke on each owner ancestor. If this callback returns true, iteration will
+ * continue, if it returns false, iteration will be halted.
+ * @return If [callback] returned false, this method returns the element on which the iteration halted.
+ */
+inline fun Owned.ownerWalk(callback: (Owned) -> Boolean): Owned? {
+	var p: Owned? = this
+	while (p != null) {
+		val shouldContinue = callback(p)
+		if (!shouldContinue) return p
+		p = p.owner
+	}
+	return null
+}

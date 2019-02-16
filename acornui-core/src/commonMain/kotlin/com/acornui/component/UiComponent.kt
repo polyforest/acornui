@@ -141,7 +141,7 @@ fun UiComponentRo.root(): UiComponentRo {
 
 
 /**
- * Populates an ArrayList with this component's ancestry.
+ * Populates a [MutableList] with this component's ancestry.
  * @return Returns the [out] ArrayList
  */
 fun UiComponentRo.ancestry(out: MutableList<UiComponentRo>): MutableList<UiComponentRo> {
