@@ -140,7 +140,7 @@ class Styles(private val host: Styleable) : Disposable {
 	fun <T : Style> watch(style: T, priority: Float, callback: (T) -> Unit) {
 		if (isDisposed) return
 		if (assertionsEnabled)
-			_assert(styleValidators.firstOrNull2 { it: StyleValidator -> it.style === style } != null, "A style object is being watched without being bound. Use `val yourStyle = bind(YourStyle())`.")
+			_assert(styleValidators.firstOrNull2 { it.style === style } != null, "A style object is being watched without being bound. Use `val yourStyle = bind(YourStyle())`.")
 		val watcher = StyleWatcher(style, priority, callback)
 		styleWatchers.addSorted(watcher)
 	}

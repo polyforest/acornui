@@ -14,22 +14,19 @@ object CascadingStyleCalculator : StyleCalculator {
 	private val entries = ArrayList<StyleRule<*>>()
 	private val calculated = stringMapOf<Any?>()
 	private val tmp = ArrayList<StyleRule<*>>()
+	private val tmpCalculated = ArrayList<Boolean>()
 
-	private val entrySortComparator = {
-		o1: StyleRule<*>, o2: StyleRule<*> ->
+	private val entrySortComparator = { o1: StyleRule<*>, o2: StyleRule<*> ->
 		-o1.priority.compareTo(o2.priority) // Higher priority values come first.
 	}
 
 	override fun calculate(target: StyleableRo, out: Style) {
 		// Collect all style rule objects for the bound style type and tags.
 		// These entries will be sorted first by priority, and then by ancestry level.
-		target.walkStyleableAncestry {
-			ancestor ->
-			out.type.walkInheritance {
-				styleType ->
+		target.walkStyleableAncestry { ancestor ->
+			out.type.walkInheritance { styleType ->
 				ancestor.getRulesByType(styleType, tmp)
-				tmp.forEachReversed2 {
-					entry ->
+				tmp.forEachReversed2 { entry ->
 					if (entry.filter(target) != null) {
 						entries.addSorted(entry, comparator = entrySortComparator)
 					}
@@ -38,7 +35,7 @@ object CascadingStyleCalculator : StyleCalculator {
 		}
 
 		for (i in 0..out.allProps.lastIndex) {
-			out.allProps[i].clearCalculated()
+			tmpCalculated.add(out.allProps[i].explicitIsSet)
 		}
 
 		// Apply style entries to the calculated values of the bound style.
@@ -47,14 +44,26 @@ object CascadingStyleCalculator : StyleCalculator {
 			for (i in 0..entry.style.allProps.lastIndex) {
 				val prop = entry.style.allProps[i]
 				if (prop.explicitIsSet) {
-					val found = out.allProps.first2 { it.name == prop.name }
-					if (found?.calculatedIsSet == false) {
-						found.calculatedValue = prop.explicitValue
-						hasChanged = true
+					val foundIndex = out.allProps.indexOfFirst2 { it.name == prop.name }
+					val found = out.allProps[foundIndex]
+					if (!tmpCalculated[foundIndex]) {
+						tmpCalculated[foundIndex] = true
+						val v = prop.explicitValue
+						if (found.calculatedValue != v) {
+							found.calculatedValue = v
+							hasChanged = true
+						}
 					}
 				}
 			}
 		}
+		for (i in 0..out.allProps.lastIndex) {
+			if (!tmpCalculated[i]) {
+				out.allProps[i].clearCalculated()
+				hasChanged = true
+			}
+		}
+		tmpCalculated.clear()
 		if (hasChanged) {
 			out.modTag.increment()
 		}
@@ -66,13 +75,10 @@ object CascadingStyleCalculator : StyleCalculator {
 		// Collect all style rule objects for the bound style type and tags.
 		// These entries will be sorted first by priority, and then by ancestry level.
 		val appliedRules = ArrayList<StyleRuleDebugInfo>()
-		target.walkStyleableAncestry {
-			ancestor ->
-			style.type.walkInheritance {
-				styleType ->
+		target.walkStyleableAncestry { ancestor ->
+			style.type.walkInheritance { styleType ->
 				ancestor.getRulesByType(styleType, tmp)
-				tmp.forEachReversed2 {
-					entry ->
+				tmp.forEachReversed2 { entry ->
 					if (entry.filter(target) != null) {
 						val index = entries.sortedInsertionIndex(entry, comparator = entrySortComparator)
 						entries.add(index, entry)
