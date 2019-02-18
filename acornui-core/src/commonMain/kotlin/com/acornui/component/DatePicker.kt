@@ -17,7 +17,6 @@
 package com.acornui.component
 
 import com.acornui.collection.*
-import com.acornui.component.layout.ListItemRenderer
 import com.acornui.component.layout.algorithm.GridLayoutStyle
 import com.acornui.component.style.*
 import com.acornui.component.text.selectable
@@ -170,7 +169,7 @@ open class DatePicker(
 	val calendarLayoutStyle: GridLayoutStyle
 		get() = calendar.layoutStyle
 
-	fun rendererFactory(value: Owned.() -> ListItemRenderer<DateRo>) {
+	fun rendererFactory(value: Owned.() -> CalendarItemRenderer) {
 		calendar.rendererFactory(value)
 	}
 

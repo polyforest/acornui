@@ -57,7 +57,7 @@ open class Calendar(
 	var selectable = true
 
 	private var _headerFactory: Owned.() -> Labelable = { text { charStyle.selectable = false } }
-	private var _rendererFactory: Owned.() -> ListItemRenderer<DateRo> = { calendarItemRenderer() }
+	private var _rendererFactory: Owned.() -> CalendarItemRenderer = { calendarItemRenderer() }
 	private val grid = grid()
 	private lateinit var monthYearText: TextField
 
@@ -119,26 +119,27 @@ open class Calendar(
 			return _headers!!
 		}
 
-	fun rendererFactory(value: Owned.() -> ListItemRenderer<DateRo>) {
+	fun rendererFactory(value: Owned.() -> CalendarItemRenderer) {
 		val cells = _cells
 		if (cells != null) {
 			// Dispose old cells when switching renderer factories.
 			for (i in 0..cells.lastIndex) {
 				cells[i].dispose()
 			}
-			_cells = null
+			_cells = null // Cells will be recreated using the new renderer factory on next access.
 		}
 		_rendererFactory = value
 	}
 
-	private var _cells: Array<ListItemRenderer<DateRo>>? = null
-	protected val cells: Array<ListItemRenderer<DateRo>>
+	private var _cells: Array<CalendarItemRenderer>? = null
+	protected val cells: Array<CalendarItemRenderer>
 		get() {
 			if (_cells == null) {
 				grid.apply {
 					_cells = Array(42) {
 						+_rendererFactory().apply {
 							index = it
+							setActiveMonth(month, fullYear)
 							click().add(this@Calendar::cellClickedHandler)
 						} layout { fill() }
 					}
@@ -150,13 +151,13 @@ open class Calendar(
 	private fun cellClickedHandler(e: ClickInteractionRo) {
 		if (selectable && !e.handled) {
 			@Suppress("UNCHECKED_CAST")
-			val cell = e.currentTarget as ListItemRenderer<DateRo>
+			val cell = e.currentTarget as CalendarItemRenderer
 			e.handled = true
 			selection.setSelectedItemsUser(listOf(cell.data!!))
 		}
 	}
 
-	protected fun getCellByDate(cellDate: DateRo): ListItemRenderer<DateRo>? {
+	protected fun getCellByDate(cellDate: DateRo): CalendarItemRenderer? {
 		val dayOffset = date.dayOfWeek - dayOfWeek
 		val i = dayOffset + cellDate.dayOfMonth - 1
 		return cells[i]
@@ -211,7 +212,7 @@ open class Calendar(
 	}
 
 	/**
-	 * The month index. This is 0-based.  January = 0, December = 11
+	 * The month of the year. This is 1-based.  January = 1, December = 12
 	 */
 	var month: Int
 		get() = date.month
@@ -254,6 +255,7 @@ open class Calendar(
 			iDate.dayOfMonth = i - dayOffset + 1
 			cell.data = iDate
 			cell.toggled = selection.getItemIsSelected(iDate)
+			cell.setActiveMonth(month, fullYear)
 		}
 
 		monthYearText.text = monthFormatter.format(date) + " " + yearFormatter.format(date)
@@ -266,7 +268,7 @@ open class Calendar(
 		}
 		val columns = ArrayList<GridColumn>()
 		for (i in 0..6) {
-			columns.add(GridColumn(hAlign = style.headerHAlign, widthPercent = 1f, minWidth = maxHeaderW))
+			columns.add(GridColumn(hAlign = style.columnHAlign, widthPercent = 1f, minWidth = maxHeaderW))
 		}
 		grid.style.columns = columns
 		grid.style.rowHeight = if (explicitHeight == null) null else (explicitHeight - 6f * grid.style.verticalGap) / 7f
@@ -301,7 +303,6 @@ open class Calendar(
 			Ascii.DOWN -> moveSelectedCell(0, 1)
 			Ascii.LEFT -> moveSelectedCell(-1, 0)
 		}
-
 	}
 
 	private fun moveSelectedCell(xD: Int, yD: Int) {
@@ -349,7 +350,7 @@ class CalendarStyle : StyleBase() {
 
 	override val type: StyleType<*> = Companion
 
-	var headerHAlign by prop(HAlign.CENTER)
+	var columnHAlign by prop(HAlign.CENTER)
 
 	var monthDecButton by prop(noSkin)
 	var monthIncButton by prop(noSkin)
@@ -366,13 +367,23 @@ fun Owned.calendar(init: ComponentInit<Calendar> = {}): Calendar {
 	return c
 }
 
-open class CalendarItemRenderer(owner: Owned) : ContainerImpl(owner), ListItemRenderer<DateRo> {
+interface CalendarItemRenderer : ListItemRenderer<DateRo> {
+
+	/**
+	 * @param month The active month of the year. This is 1-based.  January = 1, December = 12
+	 * @param fullYear The active 4 digit year.
+	 */
+	fun setActiveMonth(month: Int, fullYear: Int)
+
+}
+
+open class CalendarItemRendererImpl(owner: Owned) : ContainerImpl(owner), CalendarItemRenderer {
 
 	val style = bind(CalendarItemRendererStyle())
 
 	private val mouseState = own(MouseOrTouchState(this)).apply {
-		isOverChanged.add { refreshState() }
-		isDownChanged.add { refreshState() }
+		isOverChanged.add { refreshColor() }
+		isDownChanged.add { refreshColor() }
 	}
 
 	private val background = addChild(rect {
@@ -386,13 +397,29 @@ open class CalendarItemRenderer(owner: Owned) : ContainerImpl(owner), ListItemRe
 	})
 
 	override var toggled: Boolean by observable(false) {
-		refreshState()
+		refreshColor()
 	}
 
 	var disabled: Boolean by observable(false) {
 		interactivityMode = if (it) InteractivityMode.NONE else InteractivityMode.ALL
 		disabledTag = it
-		refreshState()
+		refreshColor()
+	}
+
+	private var isInActiveMonth: Boolean by observable(false) {
+		if (it) {
+			styleTags.remove(INACTIVE)
+			styleTags.add(ACTIVE)
+		} else {
+			styleTags.remove(ACTIVE)
+			styleTags.add(INACTIVE)
+		}
+	}
+
+	private fun refreshIsInActiveMonth() {
+		val date = _data
+		val v = date != null && date.month == _month && date.fullYear == _fullYear
+		isInActiveMonth = v
 	}
 
 	private var _data: DateRo? = null
@@ -402,26 +429,37 @@ open class CalendarItemRenderer(owner: Owned) : ContainerImpl(owner), ListItemRe
 			if (_data == value) return
 			_data = value
 			refreshLabel()
+			refreshIsInActiveMonth()
 		}
 
 	override var index: Int = 0
 
 	init {
+		styleTags.add(Companion)
+		styleTags.add(INACTIVE)
 		focusEnabled = true
 		cursor(StandardCursors.HAND)
-		styleTags.add(Companion)
 		watch(style) {
 			refreshLabel()
-			refreshState()
+			refreshColor()
 		}
+	}
+
+	private var _month: Int = -1
+	private var _fullYear: Int = -1
+
+	override fun setActiveMonth(month: Int, fullYear: Int) {
+		_month = month
+		_fullYear = fullYear
+		refreshIsInActiveMonth()
 	}
 
 	private fun refreshLabel() {
 		textField.label = _data?.dayOfMonth?.zeroPadding(if (style.zeroPadDay) 1 else 0) ?: ""
 	}
 
-	private fun currentState(value: ButtonState) {
-		background.colorTint = when (value) {
+	private fun refreshColor() {
+		background.colorTint = when (calculateState()) {
 			ButtonState.UP -> style.upColor
 			ButtonState.OVER -> style.overColor
 			ButtonState.DOWN -> style.downColor
@@ -430,10 +468,6 @@ open class CalendarItemRenderer(owner: Owned) : ContainerImpl(owner), ListItemRe
 			ButtonState.TOGGLED_DOWN -> style.toggledDownColor
 			ButtonState.DISABLED -> style.disabledColor
 		}
-	}
-
-	private fun refreshState() {
-		currentState(calculateState())
 	}
 
 	private fun calculateState(): ButtonState {
@@ -471,7 +505,18 @@ open class CalendarItemRenderer(owner: Owned) : ContainerImpl(owner), ListItemRe
 		out.set(background.bounds)
 	}
 
-	companion object : StyleTag
+	companion object : StyleTag {
+
+		/**
+		 * The tag added when the date is within the active month.
+		 */
+		val ACTIVE = styleTag()
+
+		/**
+		 * The tag added when the date is not within the active month.
+		 */
+		val INACTIVE = styleTag()
+	}
 }
 
 open class CalendarItemRendererStyle : StyleBase() {
@@ -496,8 +541,8 @@ open class CalendarItemRendererStyle : StyleBase() {
 	companion object : StyleType<CalendarItemRendererStyle>
 }
 
-fun Owned.calendarItemRenderer(init: ComponentInit<CalendarItemRenderer> = {}): CalendarItemRenderer {
-	val c = CalendarItemRenderer(this)
+fun Owned.calendarItemRenderer(init: ComponentInit<CalendarItemRendererImpl> = {}): CalendarItemRendererImpl {
+	val c = CalendarItemRendererImpl(this)
 	c.init()
 	return c
 }

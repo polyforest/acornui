@@ -31,7 +31,7 @@ abstract class ClickDispatcher(
 
 	var multiClickSpeed: Int = 400
 
-	private val downButtons: Array<MutableList<UiComponentRo>?> = Array(6, { null }) // TODO: Kotlin bug: Enum.values.size not working.
+	private val downButtons: Array<MutableList<UiComponentRo>?> = Array(6) { null } // TODO: Kotlin bug: Enum.values.size not working.
 	protected val clickEvent = ClickInteraction()
 
 	private var lastTarget: UiComponentRo? = null

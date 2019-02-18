@@ -212,7 +212,6 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 	override fun dispose() {
 		_changing.dispose()
 		_changed.dispose()
-		clear()
 	}
 }
 

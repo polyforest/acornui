@@ -670,10 +670,26 @@ open class BasicUiSkin(
 //		}
 //		target.addStyleRule(calendarStyle, Calendar)
 
+		val inactiveCharStyle = CharStyle().apply {
+			colorTint = Color(0f, 0f, 0f, 0.3f)
+		}
+		target.addStyleRule(inactiveCharStyle, withAncestor(CalendarItemRendererImpl) and withAncestor(CalendarItemRendererImpl.INACTIVE))
+
+		val inactiveCalendarItemRendererStyle = CalendarItemRendererStyle().apply {
+			disabledColor = Color(0.5f, 0.5f, 0.5f, 0.3f)
+			upColor = Color(1f, 1f, 1f, 0.3f)
+			overColor = Color(1f, 1f, 0.5f, 0.3f)
+			downColor = Color(0.6f, 0.6f, 0.5f, 0.3f)
+			toggledUpColor = Color(1f, 1f, 0f, 0.2f)
+			toggledOverColor = Color(1f, 1f, 0f, 0.3f)
+			toggledDownColor = Color(1f, 1f, 0f, 0.2f)
+		}
+		target.addStyleRule(inactiveCalendarItemRendererStyle, withAncestor(CalendarItemRendererImpl) and withAncestor(CalendarItemRendererImpl.INACTIVE))
+
 		val calendarTextFlowStyle = TextFlowStyle().apply {
 			horizontalAlign = FlowHAlign.CENTER
 		}
-		target.addStyleRule(calendarTextFlowStyle, withAncestor(CalendarItemRenderer))
+		target.addStyleRule(calendarTextFlowStyle, withAncestor(CalendarItemRendererImpl))
 
 		val textInputBoxStyle = BoxStyle()
 		textInputBoxStyle.apply {
