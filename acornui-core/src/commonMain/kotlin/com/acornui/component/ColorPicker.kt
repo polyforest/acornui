@@ -211,6 +211,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 
 	val alphaRect = addChild(rect {
 		includeInLayout = false
+		visible = false
 		dragAttachment(0f).drag.add {
 			canvasToLocal(tmpVec.set(it.position))
 			val p = MathUtils.clamp(tmpVec.y / height, 0f, 1f)
