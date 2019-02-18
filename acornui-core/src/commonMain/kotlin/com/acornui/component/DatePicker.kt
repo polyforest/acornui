@@ -188,12 +188,13 @@ open class DatePicker(
 
 			downArrow?.dispose()
 			val downArrow = addChild(it.downArrow(this))
-			downArrow.focusEnabled = false
+			downArrow.focusEnabled = true
 			downArrow.cursor(StandardCursors.HAND)
 			downArrow.click().add { e ->
 				if (!e.handled) {
 					e.handled = true
 					toggleOpen()
+					calendar.focus()
 				}
 			}
 			this.downArrow = downArrow

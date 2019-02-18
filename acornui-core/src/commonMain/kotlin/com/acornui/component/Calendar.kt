@@ -28,9 +28,13 @@ import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
+import com.acornui.core.focus.focus
+import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.ClickInteractionRo
+import com.acornui.core.input.interaction.KeyInteractionRo
 import com.acornui.core.input.interaction.MouseOrTouchState
 import com.acornui.core.input.interaction.click
+import com.acornui.core.input.keyDown
 import com.acornui.core.text.*
 import com.acornui.core.time.DateRo
 import com.acornui.core.time.time
@@ -77,7 +81,7 @@ open class Calendar(
 		}
 	})
 
-	val highlighted: Selection<DateRo> =  own(object : SelectionBase<DateRo>() {
+	val highlighted: Selection<DateRo> = own(object : SelectionBase<DateRo>() {
 		override fun walkSelectableItems(callback: (item: DateRo) -> Unit) {
 			for (i in 0..cells.lastIndex) {
 				val date = cells[i].data ?: continue
@@ -273,6 +277,7 @@ open class Calendar(
 
 	init {
 		isFocusContainer = true
+		focusEnabled = true
 		styleTags.add(Companion)
 		validation.addNode(ValidationFlags.PROPERTIES, ValidationFlags.STYLES, ValidationFlags.SIZE_CONSTRAINTS, this::updateProperties)
 
@@ -284,6 +289,56 @@ open class Calendar(
 		watch(style) {
 			monthFormatter.dateStyle = it.monthFormatStyle
 			yearFormatter.dateStyle = it.yearFormatStyle
+		}
+
+		keyDown().add(this::keyDownHandler)
+	}
+
+	private fun keyDownHandler(e: KeyInteractionRo) {
+		when (e.keyCode) {
+			Ascii.UP -> moveSelectedCell(0, -1)
+			Ascii.RIGHT -> moveSelectedCell(1, 0)
+			Ascii.DOWN -> moveSelectedCell(0, 1)
+			Ascii.LEFT -> moveSelectedCell(-1, 0)
+		}
+
+	}
+
+	private fun moveSelectedCell(xD: Int, yD: Int) {
+		val focusedIndex = cells.indexOf(focusManager.focused)
+		val currentRow: Int
+		val currentCol: Int
+		if (focusedIndex == -1) {
+			currentCol = if (xD > 0) -1 else 0
+			currentRow = if (yD > 0) -1 else 0
+		} else {
+			currentRow = focusedIndex / 7
+			currentCol = focusedIndex % 7
+		}
+
+		var row = currentRow
+		var col = currentCol
+		for (i in 0..7) {
+			row += yD
+			col += xD
+			if (col < 0) {
+				col = 6
+				row -= 1
+			} else if (col >= 7) {
+				col = 0
+				row += 1
+			}
+			if (row < 0) {
+				row = 6
+			} else if (row > 6) {
+				row = 0
+			}
+			val cell = cells.getOrNull(row * 7 + col)
+			if (cell != null && cell.focusEnabled && cell.isRendered && cell.interactivityEnabled) {
+				cell.focus()
+				focusManager.highlightFocused()
+				break
+			}
 		}
 	}
 
@@ -433,7 +488,7 @@ open class CalendarItemRendererStyle : StyleBase() {
 	var disabledColor by prop(Color(0.5f, 0.5f, 0.5f, 0.6f))
 	var upColor by prop(Color(1f, 1f, 1f, 0.6f))
 	var overColor by prop(Color(1f, 1f, 0.5f, 0.6f))
-	var downColor by prop(Color(0f, 0f, 0f, 0.3f))
+	var downColor by prop(Color(0.6f, 0.6f, 0.5f, 0.6f))
 	var toggledUpColor by prop(Color(1f, 1f, 0f, 0.4f))
 	var toggledOverColor by prop(Color(1f, 1f, 0f, 0.6f))
 	var toggledDownColor by prop(Color(1f, 1f, 0f, 0.3f))
