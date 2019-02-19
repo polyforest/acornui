@@ -33,7 +33,7 @@ open class ElementLayoutContainerImpl<S : Style, out U : LayoutData>(
 		private val layoutAlgorithm: LayoutAlgorithm<S, U>
 ) : ElementContainerImpl<UiComponent>(owner), LayoutDataProvider<U>, Focusable {
 
-	protected val elementsToLayout = ArrayList<LayoutElement>()
+	private val elementsToLayout = ArrayList<LayoutElement>()
 
 	val style: S = bind(layoutAlgorithm.style)
 	final override fun createLayoutData(): U = layoutAlgorithm.createLayoutData()
@@ -41,18 +41,15 @@ open class ElementLayoutContainerImpl<S : Style, out U : LayoutData>(
 	override fun updateSizeConstraints(out: SizeConstraints) {
 		elementsToLayout.clear()
 		elements.filterTo2(elementsToLayout, LayoutElement::shouldLayout)
-		if (elementsToLayout.isNotEmpty())
-			layoutAlgorithm.calculateSizeConstraints(elementsToLayout, out)
+		layoutAlgorithm.calculateSizeConstraints(elementsToLayout, out)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		elementsToLayout.clear()
 		elements.filterTo2(elementsToLayout, LayoutElement::shouldLayout)
-		if (elementsToLayout.isNotEmpty()) {
-			layoutAlgorithm.layout(explicitWidth, explicitHeight, elementsToLayout, out)
-			if (explicitWidth != null && explicitWidth > out.width) out.width = explicitWidth
-			if (explicitHeight != null && explicitHeight > out.height) out.height = explicitHeight
-		}
+		layoutAlgorithm.layout(explicitWidth, explicitHeight, elementsToLayout, out)
+		if (explicitWidth != null && explicitWidth > out.width) out.width = explicitWidth
+		if (explicitHeight != null && explicitHeight > out.height) out.height = explicitHeight
 	}
 
 }

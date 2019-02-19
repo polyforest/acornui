@@ -31,11 +31,11 @@ import com.acornui.math.Bounds
  */
 open class SingleElementLayoutContainerImpl<S : Style, out U : LayoutData>(
 		owner: Owned,
-		protected val layoutAlgorithm: LayoutAlgorithm<S, U>
+		private val layoutAlgorithm: LayoutAlgorithm<S, U>
 ) : SingleElementContainerImpl<UiComponent>(owner), SingleElementContainer<UiComponent>, LayoutDataProvider<U>, Focusable {
 
-	protected val elements = SingleList<LayoutElement>()
-	protected val elementsToLayout = SingleListView(elements, LayoutElement::shouldLayout)
+	private val elements = SingleList<LayoutElement>()
+	private val elementsToLayout = SingleListView(elements, LayoutElement::shouldLayout)
 
 	val style: S = bind(layoutAlgorithm.style)
 	final override fun createLayoutData(): U = layoutAlgorithm.createLayoutData()
@@ -48,16 +48,13 @@ open class SingleElementLayoutContainerImpl<S : Style, out U : LayoutData>(
 	}
 
 	override fun updateSizeConstraints(out: SizeConstraints) {
-		if (elementsToLayout.isNotEmpty())
-			layoutAlgorithm.calculateSizeConstraints(elementsToLayout, out)
+		layoutAlgorithm.calculateSizeConstraints(elementsToLayout, out)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		if (elementsToLayout.isNotEmpty()) {
-			layoutAlgorithm.layout(explicitWidth, explicitHeight, elementsToLayout, out)
-			if (explicitWidth != null && explicitWidth > out.width) out.width = explicitWidth
-			if (explicitHeight != null && explicitHeight > out.height) out.height = explicitHeight
-		}
+		layoutAlgorithm.layout(explicitWidth, explicitHeight, elementsToLayout, out)
+		if (explicitWidth != null && explicitWidth > out.width) out.width = explicitWidth
+		if (explicitHeight != null && explicitHeight > out.height) out.height = explicitHeight
 	}
 
 }
