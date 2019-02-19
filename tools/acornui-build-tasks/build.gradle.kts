@@ -58,7 +58,6 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(kotlin("stdlib-common"))
-                implementation(kotlin("compiler"))
                 implementation(project(":acornui-core"))
                 implementation(project(":acornui-utils"))
                 implementation(project(":backends:acornui-lwjgl-backend"))
@@ -74,6 +73,7 @@ kotlin {
         named("jvmMain") {
             dependencies {
                 implementation(kotlin("stdlib-jdk8"))
+                implementation(kotlin("compiler"))
             }
         }
         named("jvmTest") {
