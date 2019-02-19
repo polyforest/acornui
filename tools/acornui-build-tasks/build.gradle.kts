@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
-
 plugins {
     kotlin("multiplatform")
     `maven-publish`
