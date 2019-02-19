@@ -17,6 +17,7 @@
 package com.acornui.build
 
 import com.acornui.build.util.*
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import java.io.File
 import java.util.jar.JarFile
 
@@ -56,16 +57,13 @@ object AcornUiWebGlBackend : Module(File(ACORNUI_HOME, "backends/acornui-webgl-b
 	override fun buildAssets() {
 		// Pull the kotlin-jslib out of the kotlin runtime jar.
 		val cp = System.getProperty("java.class.path")
-		val indexB = cp.indexOf("kotlin-stdlib.jar")
-		val indexA = cp.lastIndexOf(PATH_SEPARATOR, indexB) + 1
-		val runtimeLibFolder = File(cp.substring(indexA, indexB))
-		if (sourcesAreNewer(listOf(runtimeLibFolder), File(outAssets, "lib/kotlin.js"))) {
+
+		val stdlibJs = File(cp.split(File.pathSeparatorChar).find { it.contains("kotlin-compiler-${KotlinCompilerVersion.VERSION}.jar") })
+		if (sourcesAreNewer(listOf(stdlibJs.parentFile), File(outAssets, "lib/kotlin.js"))) {
 			println("Extracting kotlin.js")
 			outAssets.clean()
-
-			val jsLib = File(runtimeLibFolder, "kotlin-stdlib-js.jar")
-			val jsLibJar = JarFile(jsLib)
-			JarUtil.extractFromJar(jsLibJar, outAssets, {
+			val stdlibJsJar = JarFile(stdlibJs)
+			JarUtil.extractFromJar(stdlibJsJar, outAssets, {
 				if (it.name == "kotlin.js") "lib/kotlin.js" // place the kotlin.js file in the outAssets/lib directory.
 				else null
 			})
