@@ -44,7 +44,7 @@ interface SingleElementContainer<T : UiComponent> : ContainerRo, Container {
 open class SingleElementContainerImpl<T : UiComponent>(owner: Owned) : ContainerImpl(owner), SingleElementContainer<T> {
 
 	private var _element: T? = null
-	override var element: T?
+	final override var element: T?
 		get() = _element
 		set(value) {
 			if (value === _element) return
