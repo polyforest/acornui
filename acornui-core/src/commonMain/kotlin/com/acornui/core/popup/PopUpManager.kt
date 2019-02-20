@@ -68,7 +68,7 @@ interface PopUpManager : Clearable {
 	 * Removes the pop-up with the given component.
 	 */
 	fun removePopUp(child: UiComponent) {
-		val info = currentPopUps.firstOrNull2 { it: PopUpInfo<*> -> it.child == child }
+		val info = currentPopUps.firstOrNull2 { it.child == child }
 		if (info != null)
 			removePopUp(info)
 	}
@@ -229,10 +229,6 @@ class PopUpManagerImpl(private val root: UiComponent) : ElementLayoutContainerIm
 		}
 	}
 
-	private val childClosedHandler: (Closeable) -> Unit = {
-		removePopUp(it as UiComponent)
-	}
-
 	override fun clear() {
 		while (_currentPopUps.isNotEmpty()) {
 			removePopUp(_currentPopUps.last())
@@ -310,7 +306,8 @@ class PopUpManagerImpl(private val root: UiComponent) : ElementLayoutContainerIm
 		removePopUp(popUpInfo)
 		val child = popUpInfo.child
 		if (child is Closeable)
-			child.closed.add(childClosedHandler)
+			child.closed.add(this::childClosedHandler)
+		child.disposed.add(this::popUpChildDisposedHandler)
 		val index = _currentPopUps.sortedInsertionIndex(popUpInfo) { a, b -> a.priority.compareTo(b.priority) }
 		_currentPopUps.add(index, popUpInfo)
 		if (index == _currentPopUps.lastIndex)
@@ -327,16 +324,26 @@ class PopUpManagerImpl(private val root: UiComponent) : ElementLayoutContainerIm
 		val child = popUpInfo.child
 		removeElement(child)
 		if (child is Closeable)
-			child.closed.remove(childClosedHandler)
+			child.closed.remove(this::childClosedHandler)
+		child.disposed.remove(this::popUpChildDisposedHandler)
 		popUpInfo.onClosed(child)
-		if (popUpInfo.dispose && !child.isDisposed)
+		if (popUpInfo.dispose && !child.disposed.isDispatching && !child.isDisposed)
 			child.dispose()
 		refresh()
 	}
 
+	private fun childClosedHandler(child: Closeable) {
+		removePopUp(child as UiComponent)
+	}
+
+	private fun popUpChildDisposedHandler(child: UiComponent) {
+		removePopUp(child)
+	}
+
 	override fun dispose() {
-		super.dispose()
 		root.keyDown().remove(rootKeyDownHandler)
+		clear()
+		super.dispose()
 	}
 }
 
