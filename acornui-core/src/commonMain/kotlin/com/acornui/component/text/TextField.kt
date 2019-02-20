@@ -26,6 +26,9 @@ import com.acornui.core.cursor.RollOverCursor
 import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
+import com.acornui.core.input.clipboardCopy
+import com.acornui.core.input.interaction.ClipboardItemType
+import com.acornui.core.input.interaction.CopyInteractionRo
 import com.acornui.core.input.interaction.DragAttachment
 import com.acornui.core.input.interaction.DragInteractionRo
 import com.acornui.core.selection.Selectable
@@ -311,6 +314,31 @@ open class TextFieldImpl(owner: Owned) : UiComponentImpl(owner), TextField {
 		validation.addNode(TextValidationFlags.SELECTION, ValidationFlags.HIERARCHY_ASCENDING, this::updateSelection)
 		selectionManager.selectionChanged.add(this::selectionChangedHandler)
 	}
+
+	override fun onActivated() {
+		super.onActivated()
+		stage.clipboardCopy().add(this::copyHandler)
+	}
+
+	override fun onDeactivated() {
+		super.onDeactivated()
+		stage.clipboardCopy().remove(this::copyHandler)
+	}
+
+	private fun copyHandler(e: CopyInteractionRo) {
+		if (!e.defaultPrevented() && selectable && isRendered) {
+			e.handled = true
+			val sel = firstSelection
+			if (sel != null) {
+				val text = this.text
+				val subStr = text.substring(sel.min, sel.max)
+				e.addItem(ClipboardItemType.PLAIN_TEXT, subStr)
+			}
+		}
+	}
+
+	private val firstSelection: SelectionRange?
+		get() = selectionManager.selection.firstOrNull { it.target == this }
 }
 
 object TextValidationFlags {

@@ -29,7 +29,6 @@ import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
 import com.acornui.reflect.observable
-import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import com.acornui.string.isLetterOrDigit2
 
