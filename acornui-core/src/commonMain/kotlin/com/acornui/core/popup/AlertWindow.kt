@@ -17,8 +17,11 @@
 package com.acornui.core.popup
 
 import com.acornui.component.WindowPanel
+import com.acornui.component.layout.algorithm.CanvasLayoutData
+import com.acornui.component.scroll.scrollArea
 import com.acornui.component.style.StyleTag
 import com.acornui.component.text.text
+import com.acornui.component.text.textArea
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 
@@ -31,13 +34,16 @@ class AlertWindow(owner: Owned) : WindowPanel(owner) {
 	companion object : StyleTag
 }
 
-fun Owned.alert(title: String, message: String, priority: Float = 1f): PopUpInfo<AlertWindow> {
+fun Owned.alert(title: String, message: String, priority: Float = 1f, width: Float? = 500f, height: Float? = null): PopUpInfo<AlertWindow> = alert(title, message, priority, CanvasLayoutData().apply { this.width = width; this.height = height; center() })
+fun Owned.alert(title: String, message: String, priority: Float = 1f, layoutData: CanvasLayoutData = CanvasLayoutData().apply { width = 500f; height = null; center() }): PopUpInfo<AlertWindow> {
 	val alertWindow = AlertWindow(this)
 	alertWindow.label = title
 	alertWindow.apply {
-		+text(message)
+		+scrollArea {
+			+text { text = message } layout { fill() }
+		} layout { fill() }
 	}
-	val info = PopUpInfo(alertWindow, isModal = true, priority = priority, dispose = true)
+	val info = PopUpInfo(alertWindow, isModal = true, priority = priority, layoutData = layoutData, dispose = true)
 	inject(PopUpManager).addPopUp(info)
 	return info
 }
