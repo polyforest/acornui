@@ -276,29 +276,15 @@ class DataGrid<E>(
 	private var _customSortComparator: SortComparator<E>? = null
 	private var _customSortReversed = false
 
-	private var _columnSortingEnabled: Boolean = true
-
 	/**
 	 * If true, the user may click on header cells to sort them.
 	 */
-	var columnSortingEnabled: Boolean
-		get() = _columnSortingEnabled
-		set(value) {
-			_columnSortingEnabled = value
-			headerCellBackgrounds.interactivityMode = if (_columnSortingEnabled || _columnReorderingEnabled) InteractivityMode.CHILDREN else InteractivityMode.NONE
-		}
-
-	private var _columnReorderingEnabled = true
+	var columnSortingEnabled by validationProp(true, ValidationFlags.LAYOUT)
 
 	/**
 	 * If true, the user may drag header cells to reorder them.
 	 */
-	var columnReorderingEnabled: Boolean
-		get() = _columnReorderingEnabled
-		set(value) {
-			_columnReorderingEnabled = value
-			headerCellBackgrounds.interactivityMode = if (_columnSortingEnabled || _columnReorderingEnabled) InteractivityMode.CHILDREN else InteractivityMode.NONE
-		}
+	var columnReorderingEnabled by validationProp(true, ValidationFlags.LAYOUT)
 
 	private var _columnResizingEnabled: Boolean = true
 
@@ -664,6 +650,7 @@ class DataGrid<E>(
 	}
 
 	fun closeCellEditor(commit: Boolean = false) {
+		if (editorCell == null) return
 		val wasFocused = isFocused
 		if (commit) commitCellEditorValue()
 		disposeCellEditor()
@@ -1151,6 +1138,7 @@ class DataGrid<E>(
 		}
 
 		// Update the header cell backgrounds.
+		headerCellBackgrounds.interactivityMode = if (columnSortingEnabled || columnReorderingEnabled) InteractivityMode.CHILDREN else InteractivityMode.NONE
 		val headerHeight = cellPad.expandHeight2(headerCellHeight)
 		var cellBackgroundIndex = 0
 		iterateVisibleColumnsInternal {
@@ -1173,8 +1161,11 @@ class DataGrid<E>(
 
 			// Header cell background
 			val headerCellBackground = headerCellBackgrounds.elements.getOrNull(cellBackgroundIndex) ?: createHeaderCellBackground()
+			headerCellBackground.interactivityMode = if (
+					(columnSortingEnabled && col.sortable) ||
+					(columnReorderingEnabled && col.reorderable)
+			) InteractivityMode.ALL else InteractivityMode.NONE
 			headerCellBackground.setAttachment(COL_INDEX_KEY, i)
-			headerCellBackground.interactivityMode = if (col.sortable || col.reorderable) InteractivityMode.ALL else InteractivityMode.NONE
 			headerCellBackground.visible = true
 			headerCellBackground.setSize(colWidth, headerHeight)
 			headerCellBackground.setPosition(colX, 0f)
@@ -1450,6 +1441,7 @@ class DataGrid<E>(
 	 * and if not, closes the cell.
 	 */
 	private fun editorCellCheck() {
+		if (editorCell == null) return
 		val columnIndex = editorCellCol.index
 		if (_columns.getOrNull(columnIndex)?.editable != true || editorCellRow.index == -1) {
 			closeCellEditor(false)
@@ -1501,7 +1493,7 @@ class DataGrid<E>(
 		val drag = headerCellBackground.dragAttachment()
 		drag.dragStart.add { e ->
 			val columnIndex = e.currentTarget.getAttachment<Int>(COL_INDEX_KEY)!!
-			if (_columnReorderingEnabled && _columns[columnIndex].reorderable) {
+			if (columnReorderingEnabled && _columns[columnIndex].reorderable) {
 				columnMoveIndicator.visible = true
 				columnMoveIndicator.setSize(e.currentTarget.bounds)
 				columnInsertionIndicator.visible = true
@@ -1549,7 +1541,7 @@ class DataGrid<E>(
 	}
 
 	private fun headerCellBackgroundClickedHandler(e: ClickInteractionRo) {
-		if (!_columnSortingEnabled || e.handled) {
+		if (!columnSortingEnabled || e.handled) {
 			return
 		}
 		val columnIndex = e.currentTarget.getAttachment<Int>(COL_INDEX_KEY) ?: return
