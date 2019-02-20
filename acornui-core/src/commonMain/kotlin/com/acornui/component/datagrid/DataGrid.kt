@@ -274,6 +274,7 @@ class DataGrid<E>(
 	private var _sortColumn: DataGridColumn<E, *>? = null
 	private var _sortDirection = ColumnSortDirection.NONE
 	private var _customSortComparator: SortComparator<E>? = null
+	private var _customSortReversed = false
 
 	private var _columnSortingEnabled: Boolean = true
 
@@ -778,21 +779,11 @@ class DataGrid<E>(
 	fun setSortColumn(column: DataGridColumn<E, *>, direction: ColumnSortDirection = ColumnSortDirection.ASCENDING) {
 		_sortColumn = column
 		_sortDirection = direction
-		_dataView.sortComparator = when (_sortDirection) {
-			ColumnSortDirection.ASCENDING -> {
-				{
-					row1, row2 ->
-					_sortColumn!!.compareRows(row1, row2)
-				}
-			}
-			ColumnSortDirection.DESCENDING -> {
-				{
-					row1, row2 ->
-					-_sortColumn!!.compareRows(row1, row2)
-				}
-			}
-			else -> null
+		_dataView.sortComparator = if (_sortDirection == ColumnSortDirection.NONE) null else {
+			row1, row2 ->
+			_sortColumn!!.compareRows(row1, row2)
 		}
+		_dataView.reversed = _sortDirection == ColumnSortDirection.DESCENDING
 		invalidateLayout()
 	}
 
@@ -807,6 +798,20 @@ class DataGrid<E>(
 			_sortColumn = null
 			_sortDirection = ColumnSortDirection.NONE
 			_dataView.sortComparator = _customSortComparator
+			invalidateLayout()
+		}
+
+	/**
+	 * If true, the data view will be reversed.
+	 */
+	var dataSortReversed: Boolean
+		get() = _customSortReversed
+		set(value) {
+			if (_customSortReversed == value) return
+			_sortColumn = null
+			_sortDirection = ColumnSortDirection.NONE
+			_customSortReversed = value
+			_dataView.reversed = value
 			invalidateLayout()
 		}
 
@@ -1556,6 +1561,7 @@ class DataGrid<E>(
 			_sortColumn = null
 			_sortDirection = ColumnSortDirection.NONE
 			_dataView.sortComparator = _customSortComparator
+			_dataView.reversed = _customSortReversed
 			invalidateLayout()
 		} else {
 			val direction = if (_sortColumn == column) {

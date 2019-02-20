@@ -54,7 +54,6 @@ class ListView<E>() : ObservableList<E>, Disposable {
 	 */
 	var filter by observable<Filter<E>?>(null) {
 		dirty()
-		Unit
 	}
 
 	/**
@@ -64,7 +63,13 @@ class ListView<E>() : ObservableList<E>, Disposable {
 	 */
 	var sortComparator by observable<SortComparator<E>?>(null) {
 		dirty()
-		Unit
+	}
+
+	/**
+	 * If true, this list view will be reversed.
+	 */
+	var reversed: Boolean by observable(false) {
+		dirty()
 	}
 
 	private val insertionComparator: SortComparator<Int> = { insertSourceIndex, sourceIndex ->
@@ -333,6 +338,8 @@ class ListView<E>() : ObservableList<E>, Disposable {
 		}
 		if (sortComparator != null)
 			local.sortWith(sortComparatorObj)
+		if (reversed)
+			local.reverse()
 	}
 
 	/**
