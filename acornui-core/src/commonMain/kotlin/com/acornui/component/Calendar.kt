@@ -27,6 +27,7 @@ import com.acornui.core.behavior.SelectionBase
 import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
+import com.acornui.core.di.inject
 import com.acornui.core.di.own
 import com.acornui.core.focus.focus
 import com.acornui.core.input.Ascii
@@ -45,6 +46,7 @@ import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.reflect.observable
 import com.acornui.signal.bind
+import com.acornui.skins.Theme
 
 open class Calendar(
 		owner: Owned
@@ -166,12 +168,14 @@ open class Calendar(
 	private val panel = addChild(panel {
 		+vGroup {
 			+hGroup {
-				style.verticalAlign = VAlign.MIDDLE
-				+button("<") {
+				+button {
+					styleTags.add(MONTH_DEC_STYLE)
 					click().add {
 						month--
 					}
 				}
+
+				style.verticalAlign = VAlign.MIDDLE
 				+spacer() layout { widthPercent = 1f }
 
 				monthYearText = +text {
@@ -180,7 +184,8 @@ open class Calendar(
 				}
 				+spacer() layout { widthPercent = 1f }
 
-				+button(">") {
+				+button {
+					styleTags.add(MONTH_INC_STYLE)
 					click().add {
 						month++
 					}
@@ -192,7 +197,6 @@ open class Calendar(
 				priority = 1f
 			}
 		} layout { fill() }
-
 	})
 
 	val panelStyle: PanelStyle
@@ -241,6 +245,25 @@ open class Calendar(
 		dateStyle = DateTimeFormatStyle.SHORT
 	}
 
+	init {
+		isFocusContainer = true
+		focusEnabled = true
+		styleTags.add(Companion)
+		validation.addNode(ValidationFlags.PROPERTIES, ValidationFlags.STYLES, ValidationFlags.SIZE_CONSTRAINTS, this::updateProperties)
+
+		own(userInfo.currentLocale.changed.bind {
+			// If the locale changes, the weekday headers and month names change.
+			invalidateProperties()
+		})
+
+		watch(style) {
+			monthFormatter.dateStyle = it.monthFormatStyle
+			yearFormatter.dateStyle = it.yearFormatStyle
+		}
+
+		keyDown().add(this::keyDownHandler)
+	}
+
 	private fun updateProperties() {
 		val dayOffset = date.dayOfWeek - dayOfWeek
 
@@ -275,25 +298,6 @@ open class Calendar(
 
 		panel.setSize(explicitWidth, explicitHeight)
 		out.set(panel.bounds)
-	}
-
-	init {
-		isFocusContainer = true
-		focusEnabled = true
-		styleTags.add(Companion)
-		validation.addNode(ValidationFlags.PROPERTIES, ValidationFlags.STYLES, ValidationFlags.SIZE_CONSTRAINTS, this::updateProperties)
-
-		own(userInfo.currentLocale.changed.bind {
-			// If the locale changes, the weekday headers and month names change.
-			invalidateProperties()
-		})
-
-		watch(style) {
-			monthFormatter.dateStyle = it.monthFormatStyle
-			yearFormatter.dateStyle = it.yearFormatStyle
-		}
-
-		keyDown().add(this::keyDownHandler)
 	}
 
 	private fun keyDownHandler(e: KeyInteractionRo) {
@@ -343,7 +347,10 @@ open class Calendar(
 		}
 	}
 
-	companion object : StyleTag
+	companion object : StyleTag {
+		val MONTH_DEC_STYLE = styleTag()
+		val MONTH_INC_STYLE = styleTag()
+	}
 }
 
 class CalendarStyle : StyleBase() {
@@ -351,9 +358,6 @@ class CalendarStyle : StyleBase() {
 	override val type: StyleType<*> = Companion
 
 	var columnHAlign by prop(HAlign.CENTER)
-
-	var monthDecButton by prop(noSkin)
-	var monthIncButton by prop(noSkin)
 
 	var monthFormatStyle by prop(DateTimeFormatStyle.LONG)
 	var yearFormatStyle by prop(DateTimeFormatStyle.FULL)

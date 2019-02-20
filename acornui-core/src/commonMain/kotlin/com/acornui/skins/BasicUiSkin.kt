@@ -183,15 +183,14 @@ open class BasicUiSkin(
 	}
 
 	protected open fun panelStyle() {
-		val panelStyle = PanelStyle()
-		panelStyle.background = {
-			stack {
-				+atlas(theme.atlasPath, "CurvedFill") {
-					colorTint = theme.panelBgColor
-				} layout { fill() }
-				+atlas(theme.atlasPath, "CurvedStroke") {
-					colorTint = theme.stroke
-				} layout { fill() }
+		val panelStyle = PanelStyle().apply {
+			background = {
+				rect {
+					style.backgroundColor = theme.panelBgColor
+					style.borderColors = BorderColors(theme.stroke)
+					style.borderRadii = Corners(theme.borderRadius)
+					style.borderThicknesses = Pad(theme.strokeThickness)
+				}
 			}
 		}
 		target.addStyleRule(panelStyle, Panel)
@@ -654,7 +653,6 @@ open class BasicUiSkin(
 					style.apply {
 						backgroundColor = theme.inputFill
 						borderThicknesses = Pad(theme.strokeThickness)
-						borderRadii = Corners(0f)
 						borderColors = BorderColors(theme.stroke)
 					}
 				}
@@ -662,18 +660,24 @@ open class BasicUiSkin(
 		}
 		target.addStyleRule(datePickerStyle, DatePicker)
 
-		// TODO: TEMP
-//		val calendarStyle = CalendarStyle().apply {
-//			monthDecButton = {
-//
-//			}
-//		}
-//		target.addStyleRule(calendarStyle, Calendar)
+		val calendarPanelStyle = PanelStyle().apply {
+			background = {
+				rect {
+					style.backgroundColor = theme.panelBgColor
+					style.borderColors = BorderColors(theme.stroke)
+					style.borderRadii = Corners(bottomLeft = Vector2(theme.borderRadius, theme.borderRadius), bottomRight = Vector2(theme.borderRadius, theme.borderRadius))
+					style.borderThicknesses = Pad(theme.strokeThickness)
+				}
+			}
+		}
+		target.addStyleRule(calendarPanelStyle, Panel and withAncestor(Calendar))
+
+		target.addStyleRule(populateButtonStyle(ButtonStyle()) { iconButtonSkin(it, "ArrowLeft") }, Calendar.MONTH_DEC_STYLE)
+		target.addStyleRule(populateButtonStyle(ButtonStyle()) { iconButtonSkin(it, "ArrowRight") }, Calendar.MONTH_INC_STYLE)
 
 		val inactiveCharStyle = CharStyle().apply {
 			colorTint = Color(0f, 0f, 0f, 0.3f)
 		}
-		target.addStyleRule(inactiveCharStyle, withAncestor(CalendarItemRendererImpl) and withAncestor(CalendarItemRendererImpl.INACTIVE))
 
 		val inactiveCalendarItemRendererStyle = CalendarItemRendererStyle().apply {
 			disabledColor = Color(0.5f, 0.5f, 0.5f, 0.3f)
