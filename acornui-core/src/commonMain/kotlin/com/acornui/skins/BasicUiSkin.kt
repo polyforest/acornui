@@ -675,10 +675,6 @@ open class BasicUiSkin(
 		target.addStyleRule(populateButtonStyle(ButtonStyle()) { iconButtonSkin(it, "ArrowLeft") }, Calendar.MONTH_DEC_STYLE)
 		target.addStyleRule(populateButtonStyle(ButtonStyle()) { iconButtonSkin(it, "ArrowRight") }, Calendar.MONTH_INC_STYLE)
 
-		val inactiveCharStyle = CharStyle().apply {
-			colorTint = Color(0f, 0f, 0f, 0.3f)
-		}
-
 		val inactiveCalendarItemRendererStyle = CalendarItemRendererStyle().apply {
 			disabledColor = Color(0.5f, 0.5f, 0.5f, 0.3f)
 			upColor = Color(1f, 1f, 1f, 0.3f)

@@ -27,7 +27,6 @@ import com.acornui.core.behavior.SelectionBase
 import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
 import com.acornui.core.di.own
 import com.acornui.core.focus.focus
 import com.acornui.core.input.Ascii
@@ -46,7 +45,6 @@ import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.reflect.observable
 import com.acornui.signal.bind
-import com.acornui.skins.Theme
 
 open class Calendar(
 		owner: Owned
