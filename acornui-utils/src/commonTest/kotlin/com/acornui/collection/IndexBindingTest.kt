@@ -44,7 +44,7 @@ class IndexBindingTest {
 		assertEquals(5, binding.index)
 
 		list.removeAt(5)
-		assertNull(binding.element)
+		assertTrue(binding.isEmpty)
 		assertEquals(-1, binding.index)
 	}
 
@@ -58,7 +58,7 @@ class IndexBindingTest {
 
 		list.dirty()
 
-		assertNull(binding.element)
+		assertTrue(binding.isEmpty)
 		assertEquals(-1, binding.index)
 	}
 
@@ -102,14 +102,14 @@ class IndexBindingTest {
 
 		list[4] = 4
 
-		assertEquals(binding.element, null)
-		assertEquals(binding.index, -1)
+		assertTrue(binding.isEmpty)
+		assertEquals(-1, binding.index)
 	}
 
 	@Test fun equalityRecover() {
 		val list = listOf(N(0, 0), N(1, 1), N(2, 2), N(3, 3), N(4, 4), N(5, 5))
 
-		val binding = IndexBinding(list, 3) { a, b -> a?.id == b?.id }
+		val binding = IndexBinding(list, 3) { a, b -> a.id == b.id }
 
 		assertEquals(binding.element, N(3, 3))
 		assertEquals(binding.index, 3)
@@ -120,16 +120,29 @@ class IndexBindingTest {
 	}
 
 	@Test fun equalityRecoverActiveList() {
-		val list = ListView(activeListOf(N(0, 3), N(1, 8), N(2, 4), N(3, 1), N(4, 9), N(5, 10), N(6, 0)))
+		val source = activeListOf(N(0, 3), N(1, 8), N(2, 4), N(3, 1), N(4, 9), N(5, 10), N(6, 0))
+		val list = ListView(source)
 
-		val binding = IndexBinding(list, 3) { a, b -> a?.id == b?.id }
+		val binding = IndexBinding(list, 3) { a, b -> a.id == b.id }
 
-		assertEquals(binding.element, N(3, 1))
-		assertEquals(binding.index, 3)
+		assertEquals(N(3, 1), binding.element)
+		assertEquals(3, binding.index)
 
 		list.sortComparator = { a, b -> a.value.compareTo(b.value) }
-		assertEquals(binding.element, N(3, 1))
-		assertEquals(binding.index, 1)
+		assertEquals(N(3, 1), binding.element)
+		assertEquals(1, binding.index)
+
+		// Added/removed.
+		source[3] = N(3, 5)
+		// N(id=6, value=0), N(id=0, value=3), N(id=2, value=4), N(id=3, value=5), N(id=1, value=8), N(id=4, value=9), N(id=5, value=10)
+		assertEquals(N(3, 5), binding.element)
+		assertEquals(3, binding.index)
+
+		// Changed.
+		source[3] = N(3, 7)
+		// N(id=6, value=0), N(id=0, value=3), N(id=2, value=4), N(id=3, value=7), N(id=1, value=8), N(id=4, value=9), N(id=5, value=10)
+		assertEquals(N(3, 7), binding.element)
+		assertEquals(3, binding.index)
 	}
 }
 

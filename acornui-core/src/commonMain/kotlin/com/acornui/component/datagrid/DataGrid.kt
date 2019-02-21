@@ -83,7 +83,7 @@ class DataGrid<E>(
 
 	private val cellClickedCancel = Cancel()
 
-	private val _cellClicked = own(Signal2<CellLocation, Cancel>())
+	private val _cellClicked = own(Signal2<CellLocationRo<E>, Cancel>())
 
 	/**
 	 * Dispatched when the contents area has been clicked. Use [CellLocation.isValid] to determine whether or not
@@ -119,10 +119,10 @@ class DataGrid<E>(
 	 * edited cell, etc.
 	 * This is particularly important to set when using immutable data and the old element != new element.
 	 */
-	var equalityCheck: EqualityCheck<E?> = { a, b -> a == b }
+	var equalityCheck: EqualityCheck<E> = { a, b -> a == b }
 		set(value) {
 			field = value
-			editorCellRow.equality = value
+			cellFocusRow.equality = value
 		}
 
 	/**
@@ -140,7 +140,7 @@ class DataGrid<E>(
 	private var background: UiComponent? = null
 
 	private val _dataView = own(ListView<E>())
-	val dataView: ObservableList<E> = _dataView
+	val dataView: ListViewRo<E> = _dataView
 
 	private val _columns = own(ActiveList<DataGridColumn<E, *>>())
 
@@ -148,20 +148,18 @@ class DataGrid<E>(
 	 * The columns this data grid will display.
 	 * This list should be unique, that is no two columns should equal each other.
 	 */
-	val columns: MutableObservableList<DataGridColumn<E, *>>
-		get() = _columns
+	val columns: MutableObservableList<DataGridColumn<E, *>> = _columns
 
 	/**
 	 * Add data grid groups to group data under collapsible headers.
 	 */
-	private val _groups = own(ActiveList<DataGridGroup<E>>())
+	internal val _groups = own(ActiveList<DataGridGroup<E>>())
 
 	/**
 	 * The groups this data grid will display. If this is empty, there will be no grouping.
 	 * This list should be unique, that is no two groups should equal each other.
 	 */
-	val groups: MutableObservableList<DataGridGroup<E>>
-		get() = _groups
+	val groups: MutableObservableList<DataGridGroup<E>> = _groups
 
 	/**
 	 * The case when there are no groups.
@@ -175,7 +173,7 @@ class DataGrid<E>(
 	/**
 	 * If the set groups are empty, use defaultGroups, which is simply showing all data.
 	 */
-	private val displayGroups: List<DataGridGroup<E>>
+	internal val displayGroups: List<DataGridGroup<E>>
 		get() = if (_groups.isEmpty()) defaultGroups else _groups
 
 
@@ -192,14 +190,14 @@ class DataGrid<E>(
 		_data = source ?: emptyList()
 		_observableData = emptyObservableList()
 		_dataView.data(_data)
-		editorCellRow.data(source)
+		cellFocusRow.data(source)
 	}
 
 	fun data(source: ObservableList<E>?) {
 		_data = source ?: emptyList()
 		_observableData = source ?: emptyObservableList()
 		_dataView.data(_observableData)
-		editorCellRow.data(source)
+		cellFocusRow.data(source)
 	}
 
 	//------------------------------------------
@@ -228,9 +226,10 @@ class DataGrid<E>(
 	private var headerDivider: UiComponent? = null
 	private val columnDividersHeader = clipper.addElement(container { interactivityMode = InteractivityMode.NONE })
 
+	private var cellFocusHighlight: UiComponent? = null
 	private var editorCell: DataGridEditorCell<*>? = null
-	private var editorCellRow = IndexBinding<E>()
-	private var editorCellCol = IndexBinding(_columns)
+	private var cellFocusRow = IndexBinding<E>()
+	private var cellFocusCol = IndexBinding(_columns)
 
 	private val feedback = clipper.addElement(container { interactivityMode = InteractivityMode.NONE })
 	private var columnMoveIndicator = feedback.addElement(rect { styleTags.add(COLUMN_MOVE_INDICATOR); visible = false })
@@ -327,7 +326,7 @@ class DataGrid<E>(
 		group ->
 		group.changed.add(this::groupChangedHandler)
 		invalidateLayout()
-		GroupCache(this, group)
+		GroupCache(group)
 	}, {
 		cache ->
 		cache.group.changed.remove(this::groupChangedHandler)
@@ -340,14 +339,21 @@ class DataGrid<E>(
 	 */
 	private val usedColumns = UsedTracker<ColumnCache>()
 
-	private val defaultGroupCache = arrayListOf(GroupCache(this, defaultGroups[0]))
-	private val displayGroupCaches: List<GroupCache>
+	private val defaultGroupCache = arrayListOf(GroupCache(defaultGroups[0]))
+
+	/**
+	 * @suppress
+	 */
+	internal val displayGroupCaches: List<GroupCache>
 		get() = if (_groups.isEmpty()) defaultGroupCache else groupCaches
 
+	private val rowIterator = RowLocation(this)
 
-	private val rowIterator = RowLocation()
+	/**
+	 * @suppress
+	 */
+	internal var _totalRows = 0
 
-	private var _totalRows = 0
 	/**
 	 * The total number of rows, counting header and footer rows.
 	 */
@@ -356,6 +362,12 @@ class DataGrid<E>(
 			validateLayout()
 			return _totalRows
 		}
+
+	/**
+	 * Returns true if there is a cell editor opened.
+	 */
+	val isEditing: Boolean
+		get() = editorCell != null
 
 	init {
 		focusEnabled = true
@@ -396,6 +408,13 @@ class DataGrid<E>(
 
 			rowBackgroundsCache.disposeAndClear()
 
+			cellFocusHighlight?.dispose()
+			val cellFocusHighlight = editorCellContainer.addElement(it.cellFocusHighlight(this))
+			cellFocusHighlight.interactivityMode = InteractivityMode.NONE
+			cellFocusHighlight.includeInLayout = false
+			cellFocusHighlight.visible = false
+			this.cellFocusHighlight = cellFocusHighlight
+
 			for (i in 0..columnResizeHandles.elements.lastIndex) {
 				val resizeHandle = columnResizeHandles.elements[i] as Spacer
 				resizeHandle.defaultWidth = style.resizeHandleWidth
@@ -428,58 +447,54 @@ class DataGrid<E>(
 	private fun keyDownHandler(event: KeyInteractionRo) {
 		if (event.defaultPrevented()) return
 
-		if (editorCell != null) {
+		if (isEditing) {
 			when (event.keyCode) {
 				Ascii.HOME -> {
 					event.handled = true
-					val newLocation = editorCellLocation!!
+					val newLocation = cellFocusLocation!!
 					newLocation.position = 0
 					if (!newLocation.isElementRow) newLocation.moveToNextRowUntil{ it.isElementRow }
 					commitCellEditorValue()
-					editCell(newLocation)
+					focusCell(newLocation)
 				}
 				Ascii.END -> {
 					event.handled = true
-					val newLocation = editorCellLocation!!
+					val newLocation = cellFocusLocation!!
 					newLocation.position = totalRows - 1
 					if (!newLocation.isElementRow) newLocation.moveToPreviousRowUntil { it.isElementRow }
 
 					commitCellEditorValue()
-					editCell(newLocation)
+					focusCell(newLocation)
 				}
 				Ascii.PAGE_DOWN -> {
 					event.handled = true
-					val newLocation = editorCellLocation!!
+					val newLocation = cellFocusLocation!!
 					vScrollModel.value = newLocation.position.toFloat()
 					validateLayout()
 					newLocation.position = clamp(newLocation.position + (rowHeights.lastIndex - 1), 0, totalRows - 1)
 					if (!newLocation.isElementRow) newLocation.moveToNextRowUntil { it.isElementRow }
 
 					commitCellEditorValue()
-					editCell(newLocation)
+					focusCell(newLocation)
 				}
 				Ascii.PAGE_UP -> {
 					event.handled = true
-					val newLocation = editorCellLocation!!
+					val newLocation = cellFocusLocation!!
 					newLocation.position = clamp(newLocation.position - (rowHeights.lastIndex - 1), 0, totalRows - 1)
 					commitCellEditorValue()
 					if (!newLocation.isElementRow) newLocation.moveToPreviousRowUntil { it.isElementRow }
-					editCell(newLocation)
+					focusCell(newLocation)
 				}
-//				Ascii.DOWN -> editNextRow(true)
-//				Ascii.UP -> editPreviousRow(true)
-//				Ascii.RIGHT -> editNextCell(true)
-//				Ascii.LEFT -> editPreviousCell(true)
 				Ascii.TAB -> {
 					// Edit the next column
 					event.handled = true
-					if (event.shiftKey) editPreviousCell(true) else editNextCell(true)
+					if (event.shiftKey) focusPreviousCell(true) else focusNextCell(true)
 					event.preventDefault() // Prevent default tab-focus behavior
 				}
 				Ascii.ENTER, Ascii.RETURN -> {
 					// Edit the next row
 					event.handled = true
-					if (event.shiftKey) editPreviousRow(true) else editNextRow(true)
+					if (event.shiftKey) focusPreviousRow(true) else focusNextRow(true)
 				}
 				Ascii.ESCAPE -> {
 					event.handled = true
@@ -511,13 +526,13 @@ class DataGrid<E>(
 	 * Given a canvas coordinate, this method returns the cell location of that position.
 	 * The cell position returned may be out of bounds, use [CellLocation.isValid] to check.
 	 */
-	fun getCellFromPosition(canvasX: Float, canvasY: Float): CellLocation {
+	fun getCellFromPosition(canvasX: Float, canvasY: Float): CellLocationRo<E> {
 		validate(ValidationFlags.LAYOUT)
 		val p = tmp
 		canvasToLocal(p.set(canvasX, canvasY))
 		val columnIndex = if (p.x < 0 || p.x > width) -1 else _columnPositions.sortedInsertionIndex(p.x + hScrollModel.value) - 1
 		val headerHeight = headerCells.height
-		if (firstVisibleColumn == -1 || p.y < headerHeight || p.y > height) return CellLocation(-1, columnIndex)
+		if (firstVisibleColumn == -1 || p.y < headerHeight || p.y > height) return CellLocation(this, -1, columnIndex)
 
 		rowIterator.position = vScrollModel.value.toInt() - 1
 		var rowIndex = 0
@@ -526,7 +541,7 @@ class DataGrid<E>(
 			rowIterator.moveToNextRow()
 			measuredHeight += rowHeights[rowIndex++]
 		}
-		return CellLocation(rowIterator, columnIndex)
+		return CellLocation(this, rowIterator, columnIndex)
 	}
 
 	private fun contentsClickedHandler(event: ClickInteractionRo) {
@@ -535,12 +550,12 @@ class DataGrid<E>(
 		event.handled = true
 		_cellClicked.dispatch(cell, cellClickedCancel.reset())
 		if (!cellClickedCancel.canceled) {
-			if (editorCell != null) {
+			if (isEditing) {
 				commitCellEditorValue()
 				disposeCellEditor()
 			}
 			if (editable) {
-				editCell(cell)
+				focusCell(cell)
 			}
 		}
 	}
@@ -556,7 +571,7 @@ class DataGrid<E>(
 	 * @param sourceIndex The index of the element within [data] to convert. This should be between 0 and
 	 * `data.lastIndex` (inclusive)
 	 */
-	fun sourceIndexToLocal(sourceIndex: Int): RowLocation? {
+	fun sourceIndexToLocal(sourceIndex: Int): RowLocation<E>? {
 		val element = data[sourceIndex]
 		if (_dataView.filter?.invoke(element) == false) return null
 		var position = 0
@@ -564,7 +579,7 @@ class DataGrid<E>(
 			val groupCache = displayGroupCaches[groupIndex]
 			if (groupCache.showList && groupCache.list.filter?.invoke(element) != false) {
 				val rowIndex = if (_groups.isEmpty()) _dataView.sourceIndexToLocal(sourceIndex) else groupCache.list.sourceIndexToLocal(_dataView.sourceIndexToLocal(sourceIndex))
-				return RowLocation(position + rowIndex + groupCache.listStartIndex)
+				return RowLocation(this, position + rowIndex + groupCache.listStartIndex)
 			}
 			position += groupCache.size
 		}
@@ -572,38 +587,36 @@ class DataGrid<E>(
 	}
 
 	/**
-	 * Returns a new CellLocation object representing the currently edited cell, or null if there is no current cell
-	 * editor.
+	 * Returns a new CellLocation object representing the currently focused cell, or null if there is no current cell
+	 * being focused.
 	 */
-	val editorCellLocation: CellLocation?
+	val cellFocusLocation: CellLocation<E>?
 		get() {
 			if (editorCell == null) return null
-			editorCellCheck()
-			return CellLocation(sourceIndexToLocal(editorCellRow.index)!!, editorCellCol.index)
+			return CellLocation(this, sourceIndexToLocal(cellFocusRow.index)!!, cellFocusCol.index)
 		}
 
 	/**
-	 * Edits the first element in the [data] list that matches the provided [element].
-	 * Note that if the data elements are not unique, one of the [editCell] overloads may be more appropriate to
+	 * Sets focus to the first element in the [data] list that matches the provided [element].
+	 * Note that if the data elements are not unique, one of the [focusCell] overloads may be more appropriate to
 	 * avoid ambiguity.
 	 */
-	fun editCell(element: E, column: DataGridColumn<E, *>) = editCell(data.indexOf(element), _columns.indexOf(column))
+	fun focusCell(element: E, column: DataGridColumn<E, *>) = focusCell(data.indexOf(element), _columns.indexOf(column))
 
-	fun editCell(rowLocation: RowLocation, columnIndex: Int) = editCell(CellLocation(rowLocation, columnIndex))
-	fun editCell(sourceIndex: Int, columnIndex: Int) = editCell(CellLocation(sourceIndexToLocal(editorCellRow.index)!!, columnIndex))
+	fun focusCell(rowLocation: RowLocationRo<E>, columnIndex: Int) = focusCell(CellLocation(this, rowLocation, columnIndex))
+	fun focusCell(sourceIndex: Int, columnIndex: Int) = focusCell(CellLocation(this, sourceIndexToLocal(cellFocusRow.index)!!, columnIndex))
 
 	/**
-	 * Edits the cell at the given location. The user interaction may be intercepted by canceling the [cellClicked]
-	 * event.
+	 * Focuses the cell at the given location.
 	 */
-	fun editCell(cellLocation: CellLocation) {
+	fun focusCell(cellLocation: CellLocationRo<E>) {
 		val columnIndex = cellLocation.columnIndex
 		val sourceIndex = cellLocation.sourceIndex
-		if (sourceIndex == editorCellRow.index && columnIndex == editorCellCol.index) return // no-op
+		if (sourceIndex == cellFocusRow.index && columnIndex == cellFocusCol.index) return // no-op
 		disposeCellEditor()
 		if (!cellLocation.editable) return
-		editorCellCol.index = columnIndex
-		editorCellRow.index = sourceIndex
+		cellFocusCol.index = columnIndex
+		cellFocusRow.index = sourceIndex
 
 		val col = _columns[columnIndex]
 		val row = data[sourceIndex]
@@ -622,11 +635,11 @@ class DataGrid<E>(
 	 * the previous cell will be the last column of the previous row.
 	 * If there are no editable cells left, the editor will be closed.
 	 */
-	fun editPreviousCell(commit: Boolean) {
-		val newLocation = editorCellLocation ?: return
+	fun focusPreviousCell(commit: Boolean) {
+		val newLocation = cellFocusLocation ?: return
 		newLocation.moveToPreviousCellUntil { it.editable }
 		if (commit) commitCellEditorValue()
-		editCell(newLocation)
+		focusCell(newLocation)
 	}
 
 	/**
@@ -634,25 +647,30 @@ class DataGrid<E>(
 	 * the next cell will be the first column of the next row.
 	 * If there are no editable cells left, the editor will be closed.
 	 */
-	fun editNextCell(commit: Boolean) {
-		val newLocation = editorCellLocation ?: return
+	fun focusNextCell(commit: Boolean) {
+		val newLocation = cellFocusLocation ?: return
 		newLocation.moveToNextCellUntil { it.editable }
 		if (commit) commitCellEditorValue()
-		editCell(newLocation)
+		focusCell(newLocation)
 	}
 
-	fun editPreviousRow(commit: Boolean) {
-		val newLocation = editorCellLocation ?: return
+	/**
+	 * Edits the previous cell in a flow-layout pattern. That is, when the column index reaches the left-most column,
+	 * the previous cell will be the last column of the previous row.
+	 * If there are no editable cells left, the editor will be closed.
+	 */
+	fun focusPreviousRow(commit: Boolean) {
+		val newLocation = cellFocusLocation ?: return
 		newLocation.moveToPreviousRowUntil { it.isElementRow }
 		if (commit) commitCellEditorValue()
-		editCell(newLocation)
+		focusCell(newLocation)
 	}
 
-	fun editNextRow(commit: Boolean) {
-		val newLocation = editorCellLocation ?: return
+	fun focusNextRow(commit: Boolean) {
+		val newLocation = cellFocusLocation ?: return
 		newLocation.moveToNextRowUntil { it.isElementRow }
 		if (commit) commitCellEditorValue()
-		editCell(newLocation)
+		focusCell(newLocation)
 	}
 
 	fun closeCellEditor(commit: Boolean = false) {
@@ -666,7 +684,7 @@ class DataGrid<E>(
 	/**
 	 * Brings the given row into view.
 	 */
-	fun bringIntoView(rowLocation: RowLocation) {
+	fun bringIntoView(rowLocation: RowLocationRo<E>) {
 		validateLayout()
 		// TODO: this could be better for variable row heights.
 		val bottomRowCount = _totalRows - vScrollBar.scrollModel.max
@@ -676,24 +694,24 @@ class DataGrid<E>(
 	/**
 	 * Brings the given cell into view.
 	 */
-	fun bringIntoView(cellLocation: CellLocation) {
-		bringIntoView(cellLocation as DataGrid<E>.RowLocation)
+	fun bringIntoView(cellLocation: CellLocationRo<E>) {
+		bringIntoView(cellLocation as RowLocationRo<E>)
 		hScrollModel.value = clamp(hScrollModel.value, _columnPositions[cellLocation.columnIndex] + _columnWidths[cellLocation.columnIndex] - contents.width, _columnPositions[cellLocation.columnIndex])
 	}
 
 	private fun commitCellEditorValue() {
 		val editorCell = editorCell ?: return
 		@Suppress("UNCHECKED_CAST")
-		val column = _columns[editorCellCol.index] as DataGridColumn<E, Any?>
-		val element = data[editorCellRow.index]
+		val column = _columns[cellFocusCol.index] as DataGridColumn<E, Any?>
+		val element = data[cellFocusRow.index]
 		column.setCellData(element, editorCell.getData())
-		_observableData.notifyElementModified(editorCellRow.index)
+		_observableData.notifyElementModified(cellFocusRow.index)
 	}
 
 	private fun disposeCellEditor() {
 		val editorCell = editorCell ?: return
-		editorCellCol.clear()
-		editorCellRow.clear()
+		cellFocusCol.clear()
+		cellFocusRow.clear()
 		this.editorCell = null
 		editorCell.dispose()
 	}
@@ -1408,10 +1426,10 @@ class DataGrid<E>(
 	private fun updateEditorCell() {
 		editorCellCheck()
 		val editorCell = editorCell ?: return
-		val columnIndex = editorCellCol.index
+		val columnIndex = cellFocusCol.index
 		val x = _columnPositions[columnIndex] - hScrollModel.value
 
-		rowIterator.sourceIndex = editorCellRow.index
+		rowIterator.sourceIndex = cellFocusRow.index
 		val position = rowIterator.position
 		val rowIndex = position - vScrollModel.value.toInt()
 
@@ -1439,15 +1457,15 @@ class DataGrid<E>(
 	 * and if not, closes the cell.
 	 */
 	private fun editorCellCheck() {
-		if (editorCell == null) return
-		val columnIndex = editorCellCol.index
-		if (_columns.getOrNull(columnIndex)?.editable != true || editorCellRow.index == -1) {
+		if (!isEditing) return
+		val columnIndex = cellFocusCol.index
+		if (_columns.getOrNull(columnIndex)?.editable != true || cellFocusRow.index == -1) {
 			closeCellEditor(false)
 			return
 		}
 	}
 
-	fun iterateVisibleRows(callback: (row: RowLocation, rowY: Float, rowHeight: Float) -> Boolean) {
+	fun iterateVisibleRows(callback: (row: RowLocation<E>, rowY: Float, rowHeight: Float) -> Boolean) {
 		validateLayout()
 		var rowY = 0f
 		var i = 0
@@ -1678,10 +1696,11 @@ class DataGrid<E>(
 
 	/**
 	 * Cached display values for a data grid group.
+	 * @suppress
 	 */
-	private inner class GroupCache(owner: Owned, val group: DataGridGroup<E>) {
+	internal inner class GroupCache(val group: DataGridGroup<E>) {
 
-		val list: ListView<E> = ListView(_dataView).apply { filter = group.filter }
+		val list: ListView<E> = ListView(dataView).apply { filter = group.filter }
 
 		var header: DataGridGroupHeader? = null
 		var bottomHeader: DataGridGroupHeader? = null
@@ -1722,338 +1741,6 @@ class DataGrid<E>(
 		val footerIndex: Int
 			get() = if (showFooter) lastIndex else -1
 
-	}
-
-	/**
-	 * An object representing a row within the grid.
-	 * This position includes header and footer rows.
-	 */
-	open inner class RowLocation() {
-
-		private var _groupIndex: Int = 0
-
-		/**
-		 * The index of this location's group. This corresponds to the grid's [groups] list.
-		 */
-		val groupIndex: Int
-			get() = _groupIndex
-
-		private var _groupPosition: Int = -1
-
-		/**
-		 * groupPosition is the index within a group. It includes headers, footers, and list rows.
-		 *
-		 * It is mapped as follows:
-		 * Group header (if showHeader)
-		 * List elements (if !collapsed)
-		 * Footer (if showFooter && (!collapsed || showFooterWhenCollapsed))
-		 */
-		val groupPosition: Int
-			get() = _groupPosition
-
-		private var _position: Int = -1
-
-		/**
-		 * The row position within the grid.
-		 * Reading this property is O(C)
-		 * Writing this property is O(groups.size)
-		 * Setting this property iterates over the groups, to increment or decrement, use [hasNextRow], [moveToNextRow],
-		 * [hasPreviousRow], and [moveToPreviousRow]
-		 */
-		var position: Int
-			get() = _position
-			set(newPosition) {
-				var r = 0
-				_position = newPosition
-				val groupCaches = displayGroupCaches
-				for (i in 0..groupCaches.lastIndex) {
-					val next = r + groupCaches[i].size
-					if (newPosition < next) {
-						_groupIndex = i
-						_groupPosition = _position - r
-						return
-					}
-					r = next
-				}
-				_groupIndex = groupCaches.lastIndex
-				_groupPosition = groupCaches.last().lastIndex
-			}
-
-		val group: DataGridGroup<E>
-			get() = displayGroups[this.groupIndex]
-
-		/**
-		 * The index of the element within the group's filtered list.
-		 */
-		val rowIndex: Int
-			get() = _groupPosition - groupCache.listStartIndex
-
-		/**
-		 * The element. This may be null if this location represents a header or footer.
-		 * It will be guaranteed to be not null if [isElementRow] is true.
-		 */
-		val element: E?
-			get() = groupCache.list.getOrNull(rowIndex)
-
-		/**
-		 * Returns true if the [groupPosition] represents a header row.
-		 */
-		val isHeader: Boolean
-			get() = groupCache.showHeader && _groupPosition == 0
-
-		/**
-		 * Returns true if the [groupPosition] represents an element and not a header or footer.
-		 */
-		val isElementRow: Boolean
-			get() = groupCache.showList && _groupPosition >= groupCache.listStartIndex && _groupPosition <= groupCache.listLastIndex
-
-		/**
-		 * Returns true if the [groupPosition] represents a footer row.
-		 */
-		val isFooter: Boolean
-			get() = groupCache.showFooter && _groupPosition == groupCache.footerIndex
-
-		/**
-		 * Returns true if this location is within bounds.
-		 */
-		open val isValid: Boolean
-			get() = _position >= 0 && _position < _totalRows
-
-		/**
-		 * The index of this row within the source [data] list.
-		 * Note: This will return -1 if this row location doesn't represent an element. (That is, it's a header or
-		 * footer row)
-		 * @see isElementRow
-		 *
-		 * This property is derived.
-		 */
-		var sourceIndex: Int
-			get() {
-				if (!isElementRow) return -1
-				return _dataView.localIndexToSource(groupCache.list.localIndexToSource(rowIndex))
-			}
-			set(value) {
-				_groupIndex = 0
-				_position = -1
-				_groupPosition = -1
-				val element = data[value]
-				if (_dataView.filter?.invoke(element) == false) return
-				var newPosition = 0
-				for (groupIndex in 0..displayGroupCaches.lastIndex) {
-					val groupCache = displayGroupCaches[groupIndex]
-					if (groupCache.showList && groupCache.list.filter?.invoke(element) != false) {
-						val rowIndex = if (_groups.isEmpty()) _dataView.sourceIndexToLocal(value) else groupCache.list.sourceIndexToLocal(_dataView.sourceIndexToLocal(value))
-						_groupPosition = rowIndex + groupCache.listStartIndex
-						_groupIndex = groupIndex
-						_position = newPosition + _groupPosition
-						return
-					}
-					newPosition += groupCache.size
-				}
-			}
-
-		constructor(position: Int) : this() {
-			this.position = position
-		}
-
-		open fun copy(): RowLocation = RowLocation().set(this)
-
-		fun set(other: RowLocation): RowLocation {
-			_groupIndex = other.groupIndex
-			_groupPosition = other.groupPosition
-			_position = other.position
-			return this
-		}
-
-		/**
-		 * Move the cursor so that [moveToNextRow] will bring us to the first position.
-		 */
-		fun moveToFirstRow() {
-			_position = -1
-			_groupIndex = maxOf(0, displayGroupCaches.indexOfFirst2 { it.shouldRender })
-			_groupPosition = -1
-		}
-
-		/**
-		 * Move the cursor so that [moveToPreviousRow] will bring us to the last position.
-		 */
-		fun moveToLastRow() {
-			_position = _totalRows
-			_groupIndex = maxOf(0, displayGroupCaches.indexOfLast2 { it.shouldRender })
-			_groupPosition = groupCache.size
-		}
-
-		val hasPreviousRow: Boolean
-			get() = _position > 0
-
-		val hasNextRow: Boolean
-			get() = _position < _totalRows - 1
-
-		fun moveToPreviousRow() {
-			_position--
-			_groupPosition--
-
-			if (_groupPosition < 0) {
-				while (!displayGroupCaches[--_groupIndex].shouldRender) {
-				}
-				_groupPosition = groupCache.lastIndex
-			}
-		}
-
-		/**
-		 * Calls [moveToPreviousRow] until there are no more previous rows, or the [predicate] has returned true.
-		 * @return Returns true if the predicate was ever matched.
-		 */
-		fun moveToPreviousRowUntil(predicate: (RowLocation) -> Boolean): Boolean {
-			while (hasPreviousRow) {
-				moveToPreviousRow()
-				if (predicate(this)) return true
-			}
-			return false
-		}
-
-		fun moveToNextRow() {
-			_position++
-			_groupPosition++
-
-			if (_groupPosition >= groupCache.size) {
-				while (!displayGroupCaches[++_groupIndex].shouldRender) {
-				}
-				_groupPosition = 0
-			}
-		}
-
-		/**
-		 * Calls [moveToNextRow] until there are no more next rows, or the [predicate] has returned true.
-		 * @return Returns true if the predicate was ever matched.
-		 */
-		fun moveToNextRowUntil(predicate: (RowLocation) -> Boolean): Boolean {
-			while (hasNextRow) {
-				moveToNextRow()
-				if (predicate(this)) return true
-			}
-			return false
-		}
-
-		override fun equals(other: Any?): Boolean {
-			if (this === other) return true
-			if (other !is DataGrid<*>.RowLocation) return false
-			if (this._position != other.position) return false
-			return true
-		}
-
-		override fun hashCode(): Int {
-			return _position
-		}
-
-		override fun toString(): String {
-			return "RowLocation(position=$position, groupIndex=$groupIndex, rowIndex=$rowIndex)"
-		}
-	}
-
-	private val RowLocation.groupCache: GroupCache
-		get() = displayGroupCaches[groupIndex]
-
-	inner class CellLocation() : RowLocation() {
-
-		var columnIndex: Int = 0
-
-		constructor(position: Int, columnIndex: Int) : this() {
-			this.position = position
-			this.columnIndex = columnIndex
-		}
-
-		constructor(rowLocation: RowLocation, columnIndex: Int) : this() {
-			set(rowLocation)
-			this.columnIndex = columnIndex
-		}
-
-		val column: DataGridColumn<E, *>
-			get() = _columns[columnIndex]
-
-		override val isValid: Boolean
-			get() = super.isValid && columnIndex >= 0 && columnIndex < _columns.size
-
-		override fun copy(): CellLocation {
-			return CellLocation(position, columnIndex)
-		}
-
-		fun set(other: CellLocation): CellLocation {
-			super.set(other)
-			columnIndex = other.columnIndex
-			return this
-		}
-
-		val hasPreviousCell: Boolean
-			get() = hasPreviousRow || columnIndex > 0
-
-		val hasNextCell: Boolean
-			get() = hasNextRow || columnIndex < columns.lastIndex
-
-		fun moveToPreviousCell() {
-			columnIndex--
-
-			if (columnIndex < 0) {
-				moveToPreviousRow()
-				columnIndex = _columns.lastIndex
-			}
-		}
-
-		/**
-		 * Calls [moveToPreviousCell] until there are no more previous cells, or the [predicate] has returned true.
-		 * @return Returns true if the predicate was ever matched.
-		 */
-		fun moveToPreviousCellUntil(predicate: (CellLocation) -> Boolean): Boolean {
-			while (hasPreviousCell) {
-				moveToPreviousCell()
-				if (predicate(this)) return true
-			}
-			return false
-		}
-
-		/**
-		 * Iterates the column to the right, if the column passes the rightmost column, the column wraps back to 0 and
-		 * the row is incremented.
-		 */
-		fun moveToNextCell() {
-			columnIndex++
-
-			if (columnIndex >= _columns.size) {
-				moveToNextRow()
-				columnIndex = 0
-			}
-		}
-
-		/**
-		 * Calls [moveToNextCell] until there are no more next cells, or the [predicate] has returned true.
-		 * @return Returns true if the predicate was ever matched.
-		 */
-		fun moveToNextCellUntil(predicate: (CellLocation) -> Boolean): Boolean {
-			while (hasNextCell) {
-				moveToNextCell()
-				if (predicate(this)) return true
-			}
-			return false
-		}
-
-		override fun equals(other: Any?): Boolean {
-			if (this === other) return true
-			if (other !is DataGrid<*>.CellLocation) return false
-			if (position != other.position) return false
-			if (columnIndex != other.columnIndex) return false
-			return true
-		}
-
-		override fun hashCode(): Int {
-			var result = groupIndex
-			result = 31 * result + groupPosition
-			result = 31 * result + columnIndex
-			return result
-		}
-
-		override fun toString(): String {
-			return "CellLocation(position=$position, groupIndex=$groupIndex, rowIndex=$rowIndex, columnIndex=$columnIndex)"
-		}
 	}
 
 	companion object : StyleTag {
@@ -2179,6 +1866,11 @@ class DataGridStyle : StyleBase() {
 	 */
 	var alwaysShowHeader by prop(true)
 
+	/**
+	 * The skin part that indicates the highlighted cell. It will be sized and positioned to match the cell.
+	 */
+	var cellFocusHighlight by prop(noSkin)
+
 	companion object : StyleType<DataGridStyle>
 }
 
@@ -2281,8 +1973,3 @@ open class DataGridGroup<E> {
 		}
 	}
 }
-
-val <E> DataGrid<E>.CellLocation.editable: Boolean
-	get() {
-		return isValid && column.visible && column.editable && isElementRow
-	}

@@ -20,13 +20,14 @@ package com.acornui.observe
 
 import com.acornui.collection.Clearable
 import com.acornui.collection.ObservableList
+import com.acornui.collection.rangeCheck
 import com.acornui.core.Disposable
 import com.acornui.core.EqualityCheck
 
 /**
  * Returns a binding that tracks an index within the target list.
  */
-fun <E> ObservableList<E>.bindIndex(index: Int, equality: EqualityCheck<E?>? = { a, b -> a == b }) =
+fun <E> ObservableList<E>.bindIndex(index: Int, equality: EqualityCheck<E>? = { a, b -> a == b }) =
 		IndexBinding(this, index, equality)
 
 
@@ -37,37 +38,49 @@ fun <E> ObservableList<E>.bindIndex(index: Int, equality: EqualityCheck<E?>? = {
  */
 class IndexBinding<E>() : Clearable, Disposable {
 
-	constructor(source: List<E>, index: Int = -1, equality: EqualityCheck<E?>? = { a, b -> a == b }) : this() {
+	constructor(source: List<E>, index: Int = -1, equality: EqualityCheck<E>? = { a, b -> a == b }) : this() {
 		data(source)
 		this.equality = equality
 		this.index = index
 	}
 
-	constructor(source: ObservableList<E>, index: Int = -1, equality: EqualityCheck<E?>? = { a, b -> a == b }) : this() {
+	constructor(source: ObservableList<E>, index: Int = -1, equality: EqualityCheck<E>? = { a, b -> a == b }) : this() {
 		data(source)
 		this.equality = equality
 		this.index = index
 	}
 
 	/**
-	 * On a list reset, the equality property is used to recover the index.
+	 * On a list reset or remove + add, the equality property is used to recover the index.
 	 */
-	var equality: EqualityCheck<E?>? = { a, b -> a == b }
+	var equality: EqualityCheck<E>? = { a, b -> a == b }
 
-	private var _element: E? = null
+	private var lastKnownIsSet = false
+	private var lastKnownElement: E? = null
 
 	private var _index: Int = -1
-
 	var index: Int
 		get() = _index
 		set(value) {
 			if (_index == value) return
 			_index = value
-			_element = _list?.getOrNull(value)
+			refreshLastKnown()
 		}
 
-	val element: E?
-		get() = _element
+	private fun refreshLastKnown() {
+		lastKnownIsSet = _list?.rangeCheck(_index) == true
+		lastKnownElement = if (lastKnownIsSet) _list!![_index] else null
+	}
+
+	val isEmpty: Boolean
+		get() = _list?.rangeCheck(index) != true
+
+	val isNotEmpty: Boolean
+		get() = !isEmpty
+
+	val element: E
+		@Suppress("UNCHECKED_CAST")
+		get() = if (isEmpty) throw Exception("Index binding is empty, use isEmpty before accessing element.") else lastKnownElement as E
 
 	private var _observableList: ObservableList<E>? = null
 	private var _list: List<E>? = null
@@ -100,29 +113,51 @@ class IndexBinding<E>() : Clearable, Disposable {
 	}
 
 	private fun addedHandler(i: Int, element: E) {
-		if (i <= index) ++index
+		@Suppress("UNCHECKED_CAST")
+		if (_index == -1 && lastKnownIsSet && equality?.invoke(element, lastKnownElement as E) == true) {
+			_index = i
+			lastKnownElement = element
+		} else if (i <= _index) ++_index
 	}
 
 	private fun removedHandler(i: Int, element: E) {
 		if (i == index)
-			this.index = -1
-		else if (i <= index) --index
+			this._index = -1
+		else if (i <= _index) --_index
 	}
 
 	private fun changedHandler(index: Int, old: E, new: E) {
-		if (index == this.index)
+		if (index != this.index) return
+		if (equality?.invoke(old, new) == true) {
+			lastKnownElement = new
+		} else
 			this.index = -1
 	}
 
 	private fun resetHandler() {
 		if (_index == -1) return
-		val list = _list ?: return
+		val list = _list!!
 		val equality = equality
-		if (equality != null) {
-			if (!equality.invoke(list.getOrNull(_index), _element))
-				index = list.indexOfFirst { equality(it, _element) }
+		if (equality == null || !lastKnownIsSet) {
+			// No equality, cannot recover.
+			index = -1
+			return
 		}
-		else index = -1
+		@Suppress("UNCHECKED_CAST")
+		val lastKnownElement = lastKnownElement as E
+
+		// On a list reset, first check the greedy option - if the reset list contains an equal element in the same
+		// spot. If not, search the list for the first match.
+		if (isNotEmpty) {
+			val potentialElement = list[_index]
+			if (equality.invoke(lastKnownElement, potentialElement)) {
+				this.lastKnownElement = potentialElement
+				return
+			}
+		}
+		_index = list.indexOfFirst { equality(it, lastKnownElement) }
+		this.lastKnownElement = list[_index]
+		_index = index
 	}
 
 	override fun clear() {

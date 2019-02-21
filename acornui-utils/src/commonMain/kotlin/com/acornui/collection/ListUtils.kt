@@ -150,6 +150,11 @@ fun <E> List<E>.sortedInsertionIndex(fromIndex: Int = 0, toIndex: Int = size, ma
 }
 
 /**
+ * Returns true if the given index is within range of this List.
+ */
+fun List<*>.rangeCheck(index: Int): Boolean = index >= 0 && index < size
+
+/**
  * Adds an element to a sorted list based on the provided comparator function.
  */
 fun <E> MutableList<E>.addSorted(element: E, matchForwards: Boolean = true, comparator: (o1: E, o2: E) -> Int): Int {

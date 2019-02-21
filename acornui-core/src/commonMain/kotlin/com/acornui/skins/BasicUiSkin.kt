@@ -547,6 +547,9 @@ open class BasicUiSkin(
 		dataGridStyle.sortUpArrow = { atlas(theme.atlasPath, "UpArrow") { colorTint = theme.iconColor } }
 		dataGridStyle.borderRadius = Corners(theme.borderRadius)
 		dataGridStyle.borderThickness = Pad(theme.strokeThickness)
+		dataGridStyle.cellFocusHighlight = {
+			SimpleHighlight(target, theme.atlasPath, "FocusRect").apply { colorTint = theme.strokeToggled }
+		}
 
 		val headerCellBackground = styleTag()
 		target.populateButtonStyle(headerCellBackground) { buttonState ->

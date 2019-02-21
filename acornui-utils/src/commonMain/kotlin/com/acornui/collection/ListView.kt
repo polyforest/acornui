@@ -7,11 +7,39 @@ import com.acornui.signal.Signal0
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
 
+interface ListViewRo<E> : ObservableList<E> {
+
+	/**
+	 * Given a local index (ordered, reduced), returns the index of that element in the source list.
+	 */
+	fun localIndexToSource(localIndex: Int): Int
+
+	/**
+	 * Given a source index, returns the index of that element in the ordered and reduced list.
+	 */
+	fun sourceIndexToLocal(sourceIndex: Int): Int
+
+	/**
+	 * The filter used on this view.
+	 */
+	val filter: Filter<E>?
+
+	/**
+	 * The sort comparator used on this view.
+	 */
+	val sortComparator: SortComparator<E>?
+
+	/**
+	 * If true, this list view will be reversed.
+	 */
+	val reversed: Boolean
+}
+
 /**
  * ListView is a read-only wrapper to an ObservableList that will allow filtering and sorting
  * without modifying the original list.
  */
-class ListView<E>() : ObservableList<E>, Disposable {
+class ListView<E>() : ListViewRo<E>, Disposable {
 
 	private var wrapped: List<E> = emptyList()
 	private var observableWrapped: ObservableList<E>? = null
@@ -52,7 +80,7 @@ class ListView<E>() : ObservableList<E>, Disposable {
 	 * If set, this list will be reduced to elements passing the given filter function.
 	 * Changing this will dispatch a [reset] signal.
 	 */
-	var filter by observable<Filter<E>?>(null) {
+	override var filter by observable<Filter<E>?>(null) {
 		dirty()
 	}
 
@@ -61,14 +89,14 @@ class ListView<E>() : ObservableList<E>, Disposable {
 	 * Changing this will dispatch a [reset] signal.
 	 * Example: listView.sortComparator = { o1, o2 -> o1.compareTo(o2) }
 	 */
-	var sortComparator by observable<SortComparator<E>?>(null) {
+	override var sortComparator by observable<SortComparator<E>?>(null) {
 		dirty()
 	}
 
 	/**
 	 * If true, this list view will be reversed.
 	 */
-	var reversed: Boolean by observable(false) {
+	override var reversed: Boolean by observable(false) {
 		_reset.dispatch()
 	}
 
@@ -347,19 +375,13 @@ class ListView<E>() : ObservableList<E>, Disposable {
 			local.sortWith(sortComparatorObj)
 	}
 
-	/**
-	 * Given a local index (ordered, reduced), returns the index of that element in the source list.
-	 */
-	fun localIndexToSource(localIndex: Int): Int {
+	override fun localIndexToSource(localIndex: Int): Int {
 		if (!viewIsModified) return localIndex
 		validate()
 		return local[toReversed(localIndex)]
 	}
 
-	/**
-	 * Given a source index, returns the index of that element in the ordered and reduced list.
-	 */
-	fun sourceIndexToLocal(sourceIndex: Int): Int {
+	override fun sourceIndexToLocal(sourceIndex: Int): Int {
 		if (!viewIsModified) return sourceIndex
 		validate()
 		val element = wrapped[sourceIndex]
