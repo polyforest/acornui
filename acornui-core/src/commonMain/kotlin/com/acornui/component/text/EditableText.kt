@@ -7,8 +7,8 @@ import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.component.rect
 import com.acornui.core.di.inject
 import com.acornui.core.di.own
-import com.acornui.core.focus.blurred
-import com.acornui.core.focus.focused
+import com.acornui.core.focus.blurredSelf
+import com.acornui.core.focus.focusedSelf
 import com.acornui.core.focus.isFocusedSelf
 import com.acornui.core.input.*
 import com.acornui.core.input.interaction.*
@@ -132,13 +132,13 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private val cmd = own(commander())
 
 	init {
-		host.focused().add {
+		host.focusedSelf().add {
 			if (charStyle.selectable)
 				host.selectAll()
 			// todo: open mobile keyboard
 		}
 
-		host.blurred().add {
+		host.blurredSelf().add {
 			host.unselect()
 			if (isActive)
 				_changed.dispatch()

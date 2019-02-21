@@ -16,7 +16,8 @@
 
 package com.acornui.component
 
-import com.acornui.collection.*
+import com.acornui.collection.Clearable
+import com.acornui.collection.Filter
 import com.acornui.component.layout.algorithm.GridLayoutStyle
 import com.acornui.component.style.*
 import com.acornui.component.text.selectable
@@ -29,6 +30,8 @@ import com.acornui.core.di.inject
 import com.acornui.core.di.own
 import com.acornui.core.di.owns
 import com.acornui.core.focus.FocusManager
+import com.acornui.core.focus.blur
+import com.acornui.core.focus.blurred
 import com.acornui.core.focus.focus
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.KeyInteractionRo
@@ -42,7 +45,6 @@ import com.acornui.core.time.time
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.reflect.observable
-import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 
 open class DatePicker(
@@ -64,7 +66,7 @@ open class DatePicker(
 	 * It is dispatched when the user selects a date, or commits the value of the text input. It is not dispatched
 	 * when the selected date or text is programmatically changed.
 	 */
-	val changed: Signal<() -> Unit> = _changed
+	val changed = _changed.asRo()
 
 	/**
 	 * The formatter to be used when converting a date element to a string.
@@ -150,6 +152,22 @@ open class DatePicker(
 		}
 	}
 
+	/**
+	 * If set, only the dates that pass the filter will be enabled.
+	 */
+	var dateEnabledFilter: Filter<DateRo>?
+		get() = calendar.dateEnabledFilter
+		set(value) {
+			calendar.dateEnabledFilter = value
+		}
+
+	/**
+	 * If the date enabled filter
+	 */
+	fun invalidateDateEnabled() {
+		calendar.invalidateDateEnabled()
+	}
+
 	private val calendarLift = lift {
 		focus = false
 		+calendar layout { fill() }
@@ -198,13 +216,10 @@ open class DatePicker(
 			}
 			this.downArrow = downArrow
 		}
-		inject(FocusManager).focusedChanged.add(this::focusChangedHandler)
-	}
-
-	private fun focusChangedHandler(old: UiComponentRo?, new: UiComponentRo?) {
-		if (owns(old) && !owns(new)) {
+		blurred().add {
 			close()
-			_changed.dispatch()
+			if (isActive)
+				_changed.dispatch()
 		}
 	}
 
@@ -285,7 +300,6 @@ open class DatePicker(
 	}
 
 	override fun dispose() {
-		inject(FocusManager).focusedChanged.remove(this::focusChangedHandler)
 		close()
 		super.dispose()
 	}

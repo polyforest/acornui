@@ -20,45 +20,105 @@ import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.core.Disposable
 import com.acornui.core.di.inject
+import com.acornui.core.di.owns
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 
-class FocusAttachment(private val target: Focusable) : Disposable {
+class FocusAttachment(
+		private val target: UiComponentRo
+) : Disposable {
 
 	private val focusManager = target.inject(FocusManager)
 
 	private val _focused = Signal0()
 	val focused = _focused.asRo()
 
+	private val _focusedSelf = Signal0()
+
+	/**
+	 * Dispatched when this component becomes the newly focused component. (Not including if an owned component becomes focused)
+	 * @see isFocusedSelf
+	 * @see FocusManager.focused
+	 * @see focused
+	 */
+	val focusedSelf = _focusedSelf.asRo()
+
 	private val _blurred = Signal0()
+
+	/**
+	 * Dispatched when this component was previously focused, and after a focus change this component then owns the
+	 * newly focused component.
+	 * @see isFocused
+	 * @see FocusManager.focused
+	 */
 	val blurred = _blurred.asRo()
+
+	private val _blurredSelf = Signal0()
+
+	/**
+	 * Dispatched when this component loses focus. (Including losing focus to an owned component)
+	 * @see isFocusedSelf
+	 * @see FocusManager.focused
+	 * @see blurred
+	 */
+	val blurredSelf = _blurredSelf.asRo()
 
 	init {
 		focusManager.focusedChanged.add(this::focusChangedHandler)
 	}
 
-	private fun focusChangedHandler(old: Focusable?, new: Focusable?) {
-		if (old == target) _blurred.dispatch()
-		if (new == target) _focused.dispatch()
+	private fun focusChangedHandler(old: UiComponentRo?, new: UiComponentRo?) {
+		if (_focusedSelf.isNotEmpty() && new === target && old !== target)
+			_focusedSelf.dispatch()
+		if (_blurredSelf.isNotEmpty() && old === target && new !== target)
+			_blurredSelf.dispatch()
+		if (_blurred.isNotEmpty() && target.owns(old) && !target.owns(new))
+			_blurred.dispatch()
+		if (_focused.isNotEmpty() && !target.owns(old) && target.owns(new))
+			_focused.dispatch()
 	}
 
 	override fun dispose() {
 		focusManager.focusedChanged.remove(this::focusChangedHandler)
 		_focused.dispose()
+		_focusedSelf.dispose()
 		_blurred.dispose()
+		_blurredSelf.dispose()
 	}
 
 	companion object
 }
 
 fun UiComponentRo.focusAttachment(): FocusAttachment {
-	return createOrReuseAttachment(FocusAttachment, { FocusAttachment(this) })
+	return createOrReuseAttachment(FocusAttachment) { FocusAttachment(this) }
 }
 
+/**
+ * Dispatched when this component was previously not focused, and after a focus change this component then owns the
+ * newly focused component.
+ * @see isFocused
+ */
 fun UiComponentRo.focused(): Signal<() -> Unit> {
 	return focusAttachment().focused
 }
 
+/**
+ * @see FocusAttachment.blurred
+ */
 fun UiComponentRo.blurred(): Signal<() -> Unit> {
 	return focusAttachment().blurred
+}
+
+/**
+ * @see FocusAttachment.focusedSelf
+ */
+fun UiComponentRo.focusedSelf(): Signal<() -> Unit> {
+	return focusAttachment().focusedSelf
+}
+
+/**
+ * @see FocusAttachment.blurredSelf
+ */
+fun UiComponentRo.blurredSelf(): Signal<() -> Unit> {
+	return focusAttachment().blurredSelf
 }

@@ -254,7 +254,11 @@ class DateCell(owner: Owned, private val formatter: StringFormatter<DateRo>) : C
 
 }
 
-class DateEditorCell(owner: Owned) : DatePicker(owner), DataGridEditorCell<DateRo?> {
+open class DateEditorCell(owner: Owned) : DatePicker(owner), DataGridEditorCell<DateRo?> {
+
+	init {
+		open()
+	}
 
 	override fun validateData(): Boolean {
 		return true

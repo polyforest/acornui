@@ -7,7 +7,7 @@ import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
-import com.acornui.core.di.owns
+import com.acornui.core.focus.blurred
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.interaction.dragAttachment
 import com.acornui.core.popup.lift
@@ -35,12 +35,6 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 
 	val changed: Signal<() -> Unit>
 		get() = colorPalette.changed
-
-	private val focusChangedHandler = { old: UiComponentRo?, new: UiComponentRo? ->
-		if (!owns(new)) {
-			close()
-		}
-	}
 
 	var color: ColorRo
 		get() = colorPalette.color
@@ -81,15 +75,17 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 			background?.dispose()
 			background = addChild(0, it.background(this))
 		}
+
+		blurred().add {
+			close()
+		}
 	}
 
-	var isOpen by observable(false) {
+	private var isOpen by observable(false) {
 		if (it) {
 			addChild(colorPaletteLift)
-			focusManager.focusedChanged.add(focusChangedHandler)
 		} else {
 			removeChild(colorPaletteLift)
-			focusManager.focusedChanged.remove(focusChangedHandler)
 		}
 	}
 

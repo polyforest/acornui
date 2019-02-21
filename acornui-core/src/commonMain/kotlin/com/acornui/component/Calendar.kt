@@ -16,6 +16,7 @@
 
 package com.acornui.component
 
+import com.acornui.collection.Filter
 import com.acornui.component.layout.*
 import com.acornui.component.layout.algorithm.*
 import com.acornui.component.style.*
@@ -63,6 +64,18 @@ open class Calendar(
 
 	private val yearFormatter = dateTimeFormatter(DateTimeFormatType.YEAR)
 	private val monthFormatter = dateTimeFormatter(DateTimeFormatType.MONTH)
+
+	/**
+	 * If set, only the dates that pass the filter will be enabled.
+	 */
+	var dateEnabledFilter: Filter<DateRo>? by validationProp(null, ValidationFlags.PROPERTIES)
+
+	/**
+	 * If the [dateEnabledFilter] needs to be re-evaluated, this method will ensure that the filter is rechecked.
+	 */
+	fun invalidateDateEnabled() {
+		invalidateProperties()
+	}
 
 	val selection: Selection<DateRo> = own(object : SelectionBase<DateRo>() {
 		override fun walkSelectableItems(callback: (item: DateRo) -> Unit) {
@@ -129,6 +142,7 @@ open class Calendar(
 			_cells = null // Cells will be recreated using the new renderer factory on next access.
 		}
 		_rendererFactory = value
+		invalidateProperties()
 	}
 
 	private var _cells: Array<CalendarItemRenderer>? = null
@@ -276,9 +290,9 @@ open class Calendar(
 			iDate.dayOfMonth = i - dayOffset + 1
 			cell.data = iDate
 			cell.toggled = selection.getItemIsSelected(iDate)
+			cell.disabled = dateEnabledFilter?.invoke(iDate) == false
 			cell.setActiveMonth(month, fullYear)
 		}
-
 		monthYearText.text = monthFormatter.format(date) + " " + yearFormatter.format(date)
 	}
 
@@ -377,6 +391,11 @@ interface CalendarItemRenderer : ListItemRenderer<DateRo> {
 	 */
 	fun setActiveMonth(month: Int, fullYear: Int)
 
+	/**
+	 * True if the calendar cell should be disabled.
+	 */
+	var disabled: Boolean
+
 }
 
 open class CalendarItemRendererImpl(owner: Owned) : ContainerImpl(owner), CalendarItemRenderer {
@@ -402,7 +421,7 @@ open class CalendarItemRendererImpl(owner: Owned) : ContainerImpl(owner), Calend
 		refreshColor()
 	}
 
-	var disabled: Boolean by observable(false) {
+	override var disabled: Boolean by observable(false) {
 		interactivityMode = if (it) InteractivityMode.NONE else InteractivityMode.ALL
 		disabledTag = it
 		refreshColor()
