@@ -21,7 +21,6 @@ import com.acornui.component.layout.algorithm.CanvasLayoutData
 import com.acornui.component.scroll.scrollArea
 import com.acornui.component.style.StyleTag
 import com.acornui.component.text.text
-import com.acornui.component.text.textArea
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 
@@ -40,7 +39,7 @@ fun Owned.alert(title: String, message: String, priority: Float = 1f, layoutData
 	alertWindow.label = title
 	alertWindow.apply {
 		+scrollArea {
-			+text { text = message } layout { fill() }
+			+text { text = message } layout { widthPercent = 1f }
 		} layout { fill() }
 	}
 	val info = PopUpInfo(alertWindow, isModal = true, priority = priority, layoutData = layoutData, dispose = true)
