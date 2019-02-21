@@ -27,17 +27,15 @@ allprojects {
         distributionType = Wrapper.DistributionType.ALL
     }
 
-    if (tasks.findByName(":clean") != null) {
-        val clean by tasks.existing(Delete::class) {
-            delete(fileTree(".").matching {
-                include("**/out/", "**/dist/", "**/www", "**/wwwDist")
-            })
-            // Pseudo-Code:TODO | remove
-            afterEvaluate {
-                println("[$name] - $delete")
+    tasks.withType(Delete::class.java)
+            .matching {
+                it.name == BasePlugin.CLEAN_TASK_NAME
             }
-        }
-    }
+            .all {
+                delete(fileTree(".").matching {
+                    include("**/out/", "**/dist/", "**/www", "**/wwwDist")
+                })
+            }
 
     version = PRODUCT_VERSION
     group = PRODUCT_GROUP
