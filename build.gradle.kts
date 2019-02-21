@@ -21,10 +21,24 @@ allprojects {
     repositories {
         jcenter()
     }
+
     tasks.withType<Wrapper> {
         gradleVersion = GRADLE_VERSION
         distributionType = Wrapper.DistributionType.ALL
     }
+
+    if (tasks.findByName(":clean") != null) {
+        val clean by tasks.existing(Delete::class) {
+            delete(fileTree(".").matching {
+                include("**/out/", "**/dist/", "**/www", "**/wwwDist")
+            })
+            // Pseudo-Code:TODO | remove
+            afterEvaluate {
+                println("[$name] - $delete")
+            }
+        }
+    }
+
     version = PRODUCT_VERSION
     group = PRODUCT_GROUP
 }
