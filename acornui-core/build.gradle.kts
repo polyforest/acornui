@@ -68,7 +68,6 @@ kotlin {
         named("jvmMain") {
             dependencies {
                 implementation(kotlin("stdlib-jdk8"))
-//                implementation(project(":backends:acornui-lwjgl-backend"))
             }
         }
         named("jvmTest") {
@@ -81,7 +80,6 @@ kotlin {
         named("jsMain") {
             dependencies {
                 implementation(kotlin("stdlib-js"))
-//                implementation(project(":backends:acornui-webgl-backend"))
             }
         }
         named("jsTest") {
