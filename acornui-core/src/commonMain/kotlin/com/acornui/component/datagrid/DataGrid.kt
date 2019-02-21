@@ -420,9 +420,9 @@ class DataGrid<E>(
 	}
 
 	private fun blurredHandler() {
-//		editorCellCheck()
-//		commitCellEditorValue()
-//		disposeCellEditor()
+		editorCellCheck()
+		commitCellEditorValue()
+		disposeCellEditor()
 	}
 
 	private fun keyDownHandler(event: KeyInteractionRo) {
@@ -431,6 +431,7 @@ class DataGrid<E>(
 		if (editorCell != null) {
 			when (event.keyCode) {
 				Ascii.HOME -> {
+					event.handled = true
 					val newLocation = editorCellLocation!!
 					newLocation.position = 0
 					if (!newLocation.isElementRow) newLocation.moveToNextRowUntil{ it.isElementRow }
@@ -438,6 +439,7 @@ class DataGrid<E>(
 					editCell(newLocation)
 				}
 				Ascii.END -> {
+					event.handled = true
 					val newLocation = editorCellLocation!!
 					newLocation.position = totalRows - 1
 					if (!newLocation.isElementRow) newLocation.moveToPreviousRowUntil { it.isElementRow }
@@ -446,6 +448,7 @@ class DataGrid<E>(
 					editCell(newLocation)
 				}
 				Ascii.PAGE_DOWN -> {
+					event.handled = true
 					val newLocation = editorCellLocation!!
 					vScrollModel.value = newLocation.position.toFloat()
 					validateLayout()
@@ -456,6 +459,7 @@ class DataGrid<E>(
 					editCell(newLocation)
 				}
 				Ascii.PAGE_UP -> {
+					event.handled = true
 					val newLocation = editorCellLocation!!
 					newLocation.position = clamp(newLocation.position - (rowHeights.lastIndex - 1), 0, totalRows - 1)
 					commitCellEditorValue()
@@ -468,17 +472,21 @@ class DataGrid<E>(
 //				Ascii.LEFT -> editPreviousCell(true)
 				Ascii.TAB -> {
 					// Edit the next column
+					event.handled = true
 					if (event.shiftKey) editPreviousCell(true) else editNextCell(true)
+					event.preventDefault() // Prevent default tab-focus behavior
 				}
-				Ascii.ENTER, Ascii.RETURN -> // Edit the next row
+				Ascii.ENTER, Ascii.RETURN -> {
+					// Edit the next row
+					event.handled = true
 					if (event.shiftKey) editPreviousRow(true) else editNextRow(true)
+				}
 				Ascii.ESCAPE -> {
+					event.handled = true
 					closeCellEditor(false)
 				}
 				else -> return
 			}
-			event.preventDefault() // Prevent default tab-focus behavior
-			event.handled = true
 			return
 		} else {
 			when (event.keyCode) {
@@ -569,8 +577,8 @@ class DataGrid<E>(
 	 */
 	val editorCellLocation: CellLocation?
 		get() {
-			editorCellCheck()
 			if (editorCell == null) return null
+			editorCellCheck()
 			return CellLocation(sourceIndexToLocal(editorCellRow.index)!!, editorCellCol.index)
 		}
 

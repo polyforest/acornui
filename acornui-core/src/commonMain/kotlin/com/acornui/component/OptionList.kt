@@ -333,10 +333,12 @@ open class OptionList<E : Any>(
 		if (event.defaultPrevented()) return
 		when (event.keyCode) {
 			Ascii.ESCAPE -> {
-				event.handled = true
-				event.preventDefault() // Prevent focus manager from setting focus back to the stage.
-				focus()
-				close()
+				if (isOpen) {
+					event.handled = true
+					event.preventDefault() // Prevent focus manager from setting focus back to the stage.
+					focus()
+					close()
+				}
 			}
 			Ascii.RETURN, Ascii.ENTER -> {
 				event.handled = true
