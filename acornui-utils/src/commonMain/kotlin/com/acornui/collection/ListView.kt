@@ -69,7 +69,14 @@ class ListView<E>() : ObservableList<E>, Disposable {
 	 * If true, this list view will be reversed.
 	 */
 	var reversed: Boolean by observable(false) {
-		dirty()
+		_reset.dispatch()
+	}
+
+	/**
+	 * Toggles the [reversed] value.
+	 */
+	fun reverse() {
+		reversed = !reversed
 	}
 
 	private val insertionComparator: SortComparator<Int> = { insertSourceIndex, sourceIndex ->
@@ -182,8 +189,8 @@ class ListView<E>() : ObservableList<E>, Disposable {
 		if (observableWrapped != null) {
 			observableWrapped!!.notifyElementModified(local[index])
 		} else {
-			val localIndex = local[index]
-			elementModifiedHandler(localIndex, wrapped[localIndex])
+			val sourceIndex = local[index]
+			elementModifiedHandler(sourceIndex, wrapped[sourceIndex])
 		}
 	}
 
@@ -228,7 +235,7 @@ class ListView<E>() : ObservableList<E>, Disposable {
 
 	override fun get(index: Int): E {
 		validate()
-		return wrapped[local[index]]
+		return wrapped[local[toReversed(index)]]
 	}
 
 	override fun indexOf(element: E): Int {
@@ -238,7 +245,7 @@ class ListView<E>() : ObservableList<E>, Disposable {
 		if (filtered(element)) return -1
 
 		for (i in 0..local.lastIndex) {
-			if (element == local[i]) return i
+			if (element == local[toReversed(i)]) return i
 		}
 		return -1
 	}
@@ -250,7 +257,7 @@ class ListView<E>() : ObservableList<E>, Disposable {
 		if (filtered(element)) return -1
 
 		for (i in local.lastIndex downTo 0) {
-			if (element == local[i]) return i
+			if (element == local[toReversed(i)]) return i
 		}
 		return -1
 	}
@@ -338,32 +345,30 @@ class ListView<E>() : ObservableList<E>, Disposable {
 		}
 		if (sortComparator != null)
 			local.sortWith(sortComparatorObj)
-		if (reversed)
-			local.reverse()
 	}
 
 	/**
 	 * Given a local index (ordered, reduced), returns the index of that element in the source list.
 	 */
 	fun localIndexToSource(localIndex: Int): Int {
-		if (filter == null && sortComparator == null) return localIndex
+		if (!viewIsModified) return localIndex
 		validate()
-		return local[localIndex]
+		return local[toReversed(localIndex)]
 	}
 
 	/**
 	 * Given a source index, returns the index of that element in the ordered and reduced list.
 	 */
 	fun sourceIndexToLocal(sourceIndex: Int): Int {
-		if (filter == null && sortComparator == null) return sourceIndex
+		if (!viewIsModified) return sourceIndex
 		validate()
 		val element = wrapped[sourceIndex]
 		if (filtered(element)) return -1
-		return if (sortComparator == null) {
+		return toReversed(if (sortComparator == null) {
 			local.sortedInsertionIndex(sourceIndex, matchForwards = false)
 		} else {
 			local.sortedInsertionIndex(sourceIndex, matchForwards = false, comparator = insertionComparator)
-		}
+		})
 	}
 
 	/**
@@ -372,15 +377,22 @@ class ListView<E>() : ObservableList<E>, Disposable {
 	 * the [local] list.
 	 */
 	private fun insertionIndex(sourceIndex: Int): Int {
-		if (filter == null && sortComparator == null) return sourceIndex
+		if (!viewIsModified) return sourceIndex
 		val element = wrapped[sourceIndex]
 		if (filtered(element)) return -1
-		return if (sortComparator == null) {
-			local.sortedInsertionIndex(sourceIndex)
+		return toReversed(if (sortComparator == null) {
+			local.sortedInsertionIndex(sourceIndex, matchForwards = true)
 		} else {
-			local.sortedInsertionIndex(sourceIndex, comparator = insertionComparator)
-		}
+			local.sortedInsertionIndex(sourceIndex, matchForwards = true, comparator = insertionComparator)
+		})
 	}
+
+	private fun toReversed(localIndex: Int): Int {
+		return if (reversed) local.lastIndex - localIndex else localIndex
+	}
+
+	private val viewIsModified: Boolean
+		get() = filter != null || sortComparator != null || reversed
 
 	override fun dispose() {
 		unwatchWrappedList()

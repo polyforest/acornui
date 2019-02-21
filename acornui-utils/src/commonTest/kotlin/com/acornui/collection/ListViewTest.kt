@@ -281,6 +281,31 @@ class ListViewTest {
 		assertEquals(1, changedC)
 	}
 
+	@Test
+	fun sourceIndexToLocal() {
+		val source = listOf(6, 4, 3, 2, 5, 1, 7, 9, 8)
+		val listView = ListView(source)
+
+		listView.sort()
+		listView.filter = { it % 2 == 0 }
+
+		// 2, 4, 6, 8
+
+		assertEquals(2, listView.sourceIndexToLocal(0))
+		assertEquals(1, listView.sourceIndexToLocal(1))
+		assertEquals(-1, listView.sourceIndexToLocal(2))
+		assertEquals(0, listView.sourceIndexToLocal(3))
+
+		// 8, 6, 4, 2
+		listView.reversed = true
+		assertEquals(1, listView.sourceIndexToLocal(0))
+		assertEquals(2, listView.sourceIndexToLocal(1))
+		assertEquals(-1, listView.sourceIndexToLocal(2))
+		assertEquals(3, listView.sourceIndexToLocal(3))
+
+
+	}
+
 }
 
 private data class Foo(var i: Int) : Comparable<Foo> {

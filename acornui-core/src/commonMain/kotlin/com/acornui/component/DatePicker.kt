@@ -28,9 +28,6 @@ import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.di.own
-import com.acornui.core.di.owns
-import com.acornui.core.focus.FocusManager
-import com.acornui.core.focus.blur
 import com.acornui.core.focus.blurred
 import com.acornui.core.focus.focus
 import com.acornui.core.input.Ascii
@@ -197,8 +194,6 @@ open class DatePicker(
 		styleTags.add(DatePicker)
 		addChild(textInput)
 
-		keyDown().add(this::keyDownHandler)
-
 		watch(style) {
 			background?.dispose()
 			background = addOptionalChild(0, it.background(this))
@@ -221,9 +216,6 @@ open class DatePicker(
 			if (isActive)
 				_changed.dispatch()
 		}
-	}
-
-	private fun keyDownHandler(event: KeyInteractionRo) {
 	}
 
 	private var _isOpen = false

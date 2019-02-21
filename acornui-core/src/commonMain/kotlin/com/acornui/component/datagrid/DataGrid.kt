@@ -32,8 +32,8 @@ import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.di.own
-import com.acornui.core.di.owns
 import com.acornui.core.floor
+import com.acornui.core.focus.blurred
 import com.acornui.core.focus.focus
 import com.acornui.core.focus.focusSelf
 import com.acornui.core.focus.isFocused
@@ -415,16 +415,14 @@ class DataGrid<E>(
 		wheel().add {
 			vScrollModel.value += it.deltaY / vScrollBar.modelToPixels
 		}
+
+		blurred().add(this::blurredHandler)
 	}
 
-	override fun onActivated() {
-		super.onActivated()
-		focusManager.focusedChanged.add(this::focusChangedHandler)
-	}
-
-	override fun onDeactivated() {
-		super.onDeactivated()
-		focusManager.focusedChanged.remove(this::focusChangedHandler)
+	private fun blurredHandler() {
+//		editorCellCheck()
+//		commitCellEditorValue()
+//		disposeCellEditor()
 	}
 
 	private fun keyDownHandler(event: KeyInteractionRo) {
@@ -690,14 +688,6 @@ class DataGrid<E>(
 		editorCellRow.clear()
 		this.editorCell = null
 		editorCell.dispose()
-	}
-
-	private fun focusChangedHandler(old: UiComponentRo?, new: UiComponentRo?) {
-		if (new == null || !owns(new)) {
-			editorCellCheck()
-			commitCellEditorValue()
-			disposeCellEditor()
-		}
 	}
 
 	private fun columnChangedHandler(column: DataGridColumn<E, *>) {
