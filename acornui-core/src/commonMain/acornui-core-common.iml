@@ -10,10 +10,14 @@
     <content url="file://$ACORNUI_HOME$/acornui-core/src/jvmMain">
       <sourceFolder url="file://$ACORNUI_HOME$/acornui-core/src/jvmMain/kotlin" isTestSource="false" />
     </content>
+    <content url="file://$ACORNUI_HOME$/acornui-core/src/jvmTest">
+      <sourceFolder url="file://$ACORNUI_HOME$/acornui-core/src/jvmTest/kotlin" isTestSource="true" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="TEST" name="ExternalTestLibs" level="project" />
     <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
     <orderEntry type="module" module-name="acornui-utils-common" />
+    <orderEntry type="module" module-name="acornui-lwjgl-backend-jvm" scope="TEST" />
   </component>
 </module>

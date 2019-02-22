@@ -152,7 +152,6 @@ open class RowLocation<RowData>(protected val dataGrid: DataGrid<RowData>) : Row
 	internal val groupCache: DataGrid<RowData>.GroupCache
 		get() = dataGrid.displayGroupCaches[groupIndex]
 
-
 	/**
 	 * The index of the element within the group's filtered list.
 	 */
@@ -239,19 +238,21 @@ open class RowLocation<RowData>(protected val dataGrid: DataGrid<RowData>) : Row
 	/**
 	 * Move the cursor so that [moveToNextRow] will bring us to the first position.
 	 */
-	fun moveToFirstRow() {
+	fun moveToFirstRow(): RowLocation<RowData> {
 		_position = -1
 		_groupIndex = maxOf(0, dataGrid.displayGroupCaches.indexOfFirst2 { it.shouldRender })
 		_groupPosition = -1
+		return this
 	}
 
 	/**
 	 * Move the cursor so that [moveToPreviousRow] will bring us to the last position.
 	 */
-	fun moveToLastRow() {
+	fun moveToLastRow(): RowLocation<RowData> {
 		_position = dataGrid._totalRows
 		_groupIndex = maxOf(0, dataGrid.displayGroupCaches.indexOfLast2 { it.shouldRender })
 		_groupPosition = groupCache.size
+		return this
 	}
 
 	final override val hasPreviousRow: Boolean

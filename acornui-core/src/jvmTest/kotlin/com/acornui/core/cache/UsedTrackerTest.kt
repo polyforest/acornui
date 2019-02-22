@@ -56,7 +56,7 @@ class UsedTrackerTest {
 
 	private fun UsedTracker<Int>.getUnusedList(): List<Int> {
 		val list = ArrayList<Int>()
-		forEach { list.add(it) }
+		forEachUnused { list.add(it) }
 		return list
 	}
 }
