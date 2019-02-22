@@ -22,15 +22,16 @@ import com.acornui.component.UiComponent
 import com.acornui.component.layout.HAlign
 import com.acornui.component.layout.VAlign
 import com.acornui.core.di.Owned
+import com.acornui.observe.Observable
 import com.acornui.signal.Signal1
 import kotlin.properties.ObservableProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-abstract class DataGridColumn<in RowData, CellData> {
+abstract class DataGridColumn<in RowData, CellData> : Observable {
 
 	private val _changed = Signal1<DataGridColumn<RowData, CellData>>()
-	val changed = _changed.asRo()
+	override val changed = _changed.asRo()
 
 	/**
 	 * If false, this column will not be shown.

@@ -220,6 +220,9 @@ open class ActiveList<E>(initialCapacity: Int) : Clearable, MutableObservableLis
 	}
 }
 
+/**
+ * An observable list of observable elements that will notify [modified] when an element has changed.
+ */
 open class WatchedElementsActiveList<E : Observable>(initialCapacity: Int) : ActiveList<E>(initialCapacity) {
 
 	constructor() : this(8)

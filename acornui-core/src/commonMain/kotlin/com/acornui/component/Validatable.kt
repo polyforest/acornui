@@ -60,7 +60,6 @@ interface Validatable {
 
 }
 
-
 private class ValidationNode(
 
 		/**

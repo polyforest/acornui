@@ -97,6 +97,9 @@ interface RowLocationRo<RowData> {
  */
 open class RowLocation<RowData>(protected val dataGrid: DataGrid<RowData>) : RowLocationRo<RowData> {
 
+	private val displayGroupCaches: List<DataGridCache<RowData>.GroupCache>
+		get() = dataGrid.cache.displayGroupCaches
+
 	private var _groupIndex: Int = 0
 
 	/**
@@ -132,7 +135,7 @@ open class RowLocation<RowData>(protected val dataGrid: DataGrid<RowData>) : Row
 		set(newPosition) {
 			var r = 0
 			_position = newPosition
-			val groupCaches = dataGrid.displayGroupCaches
+			val groupCaches = displayGroupCaches
 			for (i in 0..groupCaches.lastIndex) {
 				val next = r + groupCaches[i].size
 				if (newPosition < next) {
@@ -149,8 +152,8 @@ open class RowLocation<RowData>(protected val dataGrid: DataGrid<RowData>) : Row
 	val group: DataGridGroup<RowData>
 		get() = dataGrid.displayGroups[this.groupIndex]
 
-	internal val groupCache: DataGrid<RowData>.GroupCache
-		get() = dataGrid.displayGroupCaches[groupIndex]
+	internal val groupCache: DataGridCache<RowData>.GroupCache
+		get() = displayGroupCaches[groupIndex]
 
 	/**
 	 * The index of the element within the group's filtered list.
@@ -209,8 +212,8 @@ open class RowLocation<RowData>(protected val dataGrid: DataGrid<RowData>) : Row
 			val element = dataGrid.data[value]
 			if (dataGrid.dataView.filter?.invoke(element) == false) return
 			var newPosition = 0
-			for (groupIndex in 0..dataGrid.displayGroupCaches.lastIndex) {
-				val groupCache = dataGrid.displayGroupCaches[groupIndex]
+			for (groupIndex in 0..displayGroupCaches.lastIndex) {
+				val groupCache = displayGroupCaches[groupIndex]
 				if (groupCache.showList && groupCache.list.filter?.invoke(element) != false) {
 					val rowIndex = if (dataGrid.groups.isEmpty()) dataGrid.dataView.sourceIndexToLocal(value) else groupCache.list.sourceIndexToLocal(dataGrid.dataView.sourceIndexToLocal(value))
 					_groupPosition = rowIndex + groupCache.listStartIndex
@@ -240,7 +243,7 @@ open class RowLocation<RowData>(protected val dataGrid: DataGrid<RowData>) : Row
 	 */
 	fun moveToFirstRow(): RowLocation<RowData> {
 		_position = -1
-		_groupIndex = maxOf(0, dataGrid.displayGroupCaches.indexOfFirst2 { it.shouldRender })
+		_groupIndex = maxOf(0, displayGroupCaches.indexOfFirst2 { it.shouldRender })
 		_groupPosition = -1
 		return this
 	}
@@ -250,7 +253,7 @@ open class RowLocation<RowData>(protected val dataGrid: DataGrid<RowData>) : Row
 	 */
 	fun moveToLastRow(): RowLocation<RowData> {
 		_position = dataGrid._totalRows
-		_groupIndex = maxOf(0, dataGrid.displayGroupCaches.indexOfLast2 { it.shouldRender })
+		_groupIndex = maxOf(0, displayGroupCaches.indexOfLast2 { it.shouldRender })
 		_groupPosition = groupCache.size
 		return this
 	}
@@ -266,7 +269,7 @@ open class RowLocation<RowData>(protected val dataGrid: DataGrid<RowData>) : Row
 		_groupPosition--
 
 		if (_groupPosition < 0) {
-			while (!dataGrid.displayGroupCaches[--_groupIndex].shouldRender) {
+			while (!displayGroupCaches[--_groupIndex].shouldRender) {
 			}
 			_groupPosition = groupCache.lastIndex
 		}
@@ -289,7 +292,7 @@ open class RowLocation<RowData>(protected val dataGrid: DataGrid<RowData>) : Row
 		_groupPosition++
 
 		if (_groupPosition >= groupCache.size) {
-			while (!dataGrid.displayGroupCaches[++_groupIndex].shouldRender) {
+			while (!displayGroupCaches[++_groupIndex].shouldRender) {
 			}
 			_groupPosition = 0
 		}
