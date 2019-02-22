@@ -17,72 +17,42 @@
 package com.acornui.collection
 
 import com.acornui.core.Disposable
+import com.acornui.core.EqualityCheck
 
-@Suppress("UNUSED_PARAMETER")
 /**
  * Binds to a target observable list, keeping a parallel list of values created from a factory.
  */
+@Suppress("UNUSED_PARAMETER")
 class ObservableListMapping<E, V>(
-		private val target: ObservableList<E>,
+		target: ObservableList<E>,
 		private val factory: (E) -> V,
-		private val disposer: (V) -> Unit
-) : ListBase<V>(), List<V>, Disposable {
+		private val disposer: (V) -> Unit,
+		equality: EqualityCheck<E> = { o1, o2 -> o1 == o2 }
+) : ListBase<V>(), Disposable {
 
-	private val _list = ArrayList<V>()
+	private val binding = ObservableListBinding(target, configure = this::addedHandler, unconfigure = this::removedHandler, equality = equality)
 
-	init {
-		target.added.add(this::addedHandler)
-		target.removed.add(this::removedHandler)
-		target.changed.add(this::changedHandler)
-		target.reset.add(this::resetHandler)
-		resetHandler()
-	}
+	private val list = ArrayList<V>()
 
 	//---------------------------------------------
 	// Target list handlers
 	//---------------------------------------------
 
 	private fun addedHandler(index: Int, value: E) {
-		_list.add(index, factory(value))
+		list.add(index, factory(value))
 	}
 
 	private fun removedHandler(index: Int, value: E) {
-		disposer(_list.removeAt(index))
+		disposer(list.removeAt(index))
 	}
-
-	private fun changedHandler(index: Int, oldValue: E, newValue: E) {
-		disposer(_list[index])
-		_list[index] = factory(newValue)
-	}
-
-	private fun resetHandler() {
-		clear()
-		for (i in 0..target.lastIndex) {
-			_list.add(factory(target[i]))
-		}
-	}
-
-	private fun clear() {
-		for (i in 0.._list.lastIndex) {
-			disposer(_list[i])
-		}
-		_list.clear()
-	}
-
-	//---------------------------------------------
 
 	override val size: Int
-		get() = _list.size
+		get() = list.size
 
-	override fun get(index: Int): V {
-		return _list[index]
-	}
+	override fun get(index: Int): V = list[index]
 
 	override fun dispose() {
-		clear()
-		target.added.remove(this::addedHandler)
-		target.removed.remove(this::removedHandler)
-		target.changed.remove(this::changedHandler)
-		target.reset.remove(this::resetHandler)
+		binding.dispose()
+		list.clear()
 	}
 }
