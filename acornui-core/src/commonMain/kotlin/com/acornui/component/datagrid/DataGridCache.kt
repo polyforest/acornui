@@ -46,6 +46,8 @@ internal class DataGridCache<E>(private val grid: DataGrid<E>) : Disposable {
 	 */
 	val usedColumns = UsedTracker<Int>()
 
+	val rowBackgroundsCache = IndexedCache { grid.style.rowBackground(grid) }
+
 	val columnCaches = ObservableListMapping(
 			target = grid.columns,
 			factory = { index, column ->
@@ -64,6 +66,7 @@ internal class DataGridCache<E>(private val grid: DataGrid<E>) : Disposable {
 			},
 			disposer = { index, groupCache ->
 				dirty(groupCache)
+				groupCache.dispose()
 			}
 	)
 
@@ -84,13 +87,9 @@ internal class DataGridCache<E>(private val grid: DataGrid<E>) : Disposable {
 	private fun dirty(groupCache: GroupCache) {
 		if (groupCache.header != null) {
 			usedGroupHeaders.forget(groupCache.header!!)
-			groupCache.header!!.dispose()
-			groupCache.header = null
 		}
 		if (groupCache.bottomHeader != null) {
 			usedBottomGroupHeaders.forget(groupCache.bottomHeader!!)
-			groupCache.bottomHeader?.dispose()
-			groupCache.bottomHeader = null
 		}
 	}
 
@@ -129,7 +128,7 @@ internal class DataGridCache<E>(private val grid: DataGrid<E>) : Disposable {
 	 * Cached display values for a data grid group.
 	 * @suppress
 	 */
-	internal inner class GroupCache(val group: DataGridGroup<E>) {
+	internal inner class GroupCache(val group: DataGridGroup<E>) : Disposable {
 
 		val list: ListView<E> = ListView(grid.dataView).apply { filter = group.filter }
 
@@ -172,5 +171,11 @@ internal class DataGridCache<E>(private val grid: DataGrid<E>) : Disposable {
 		val footerIndex: Int
 			get() = if (showFooter) lastIndex else -1
 
+		override fun dispose() {
+			header!!.dispose()
+			header = null
+			bottomHeader?.dispose()
+			bottomHeader = null
+		}
 	}
 }

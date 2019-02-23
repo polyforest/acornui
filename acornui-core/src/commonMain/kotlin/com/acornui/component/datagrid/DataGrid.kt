@@ -26,7 +26,6 @@ import com.acornui.component.scroll.*
 import com.acornui.component.style.*
 import com.acornui.component.text.TextStyleTags
 import com.acornui.core.EqualityCheck
-import com.acornui.core.cache.IndexedCache
 import com.acornui.core.cache.disposeAndClear
 import com.acornui.core.cache.hideAndFlip
 import com.acornui.core.cache.removeAndFlip
@@ -211,7 +210,6 @@ class DataGrid<E>(
 	 */
 	private val measureContents = clipper.addElement(container { interactivityMode = InteractivityMode.NONE; alpha = 0f })
 	private val rowBackgrounds = clipper.addElement(container())
-	private val rowBackgroundsCache = IndexedCache { style.rowBackground(rowBackgrounds) }
 	private val contents = clipper.addElement(container())
 	private val columnDividersContents = clipper.addElement(container { interactivityMode = InteractivityMode.NONE })
 	private val groupHeadersAndFooters = clipper.addElement(container { interactivityMode = InteractivityMode.CHILDREN })
@@ -368,7 +366,7 @@ class DataGrid<E>(
 			sortUpArrow = headerCells.addElement(it.sortUpArrow(this))
 			sortUpArrow!!.interactivityMode = InteractivityMode.NONE
 
-			rowBackgroundsCache.disposeAndClear()
+			cache.rowBackgroundsCache.disposeAndClear()
 
 			cellFocusHighlight?.dispose()
 			val cellFocusHighlight = editorCellContainer.addElement(it.cellFocusHighlight(this))
@@ -796,7 +794,7 @@ class DataGrid<E>(
 		}
 
 	/**
-	 * The sum of [columnWidths]
+	 * The sum of [columnWidths].
 	 */
 	var columnsWidth = 0f
 		private set
@@ -1324,7 +1322,7 @@ class DataGrid<E>(
 				rowCells.clear()
 
 				// Row background
-				val rowBackground = rowBackgroundsCache.obtain(rowIndex)
+				val rowBackground = cache.rowBackgroundsCache.obtain(rowIndex)
 				rowBackground.rowIndex = rowIterator.rowIndex
 				rowBackground.visible = true
 				if (rowBackground.parent == null) {
@@ -1347,7 +1345,7 @@ class DataGrid<E>(
 			cache.columnCaches[it].cellCache.removeAndFlip(contents)
 		}
 		cache.usedGroupHeaders.removeAndFlip(groupHeadersAndFooters)
-		rowBackgroundsCache.hideAndFlip()
+		cache.rowBackgroundsCache.hideAndFlip()
 	}
 
 	private fun updateEditorCell() {
