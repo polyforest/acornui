@@ -1414,7 +1414,7 @@ class DataGrid<E>(
 	}
 
 	/**
-	 * Iterates over all of the columns, invoking the callback with the columnIndex, column, x position, and width.
+	 * @see iterateVisibleColumns
 	 * This assumes the COLUMNS_WIDTHS_VALIDATION flag has already been validated.
 	 */
 	private inline fun iterateVisibleColumnsInternal(callback: (columnIndex: Int, column: DataGridColumn<E, *>, columnX: Float, columnWidth: Float) -> Boolean) {

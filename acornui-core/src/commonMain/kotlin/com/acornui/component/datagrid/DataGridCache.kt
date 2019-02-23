@@ -19,6 +19,7 @@ package com.acornui.component.datagrid
 import com.acornui.collection.ListView
 import com.acornui.collection.ObjectPool
 import com.acornui.collection.ObservableListMapping
+import com.acornui.collection.disposeAndClear
 import com.acornui.component.UiComponent
 import com.acornui.core.Disposable
 import com.acornui.core.cache.IndexedCache
@@ -27,6 +28,8 @@ import com.acornui.core.cache.disposeAndClear
 import com.acornui.core.di.Owned
 
 /**
+ * The DataGrid uses complex caching mechanisms for performance. These display properties are separated for
+ * readability.
  *
  * @suppress
  */
@@ -50,6 +53,7 @@ internal class DataGridCache<E>(private val grid: DataGrid<E>) : Disposable {
 			},
 			disposer = { index, columnCache ->
 				dirty(index, columnCache)
+				columnCache.dispose()
 			}
 	)
 
@@ -73,11 +77,7 @@ internal class DataGridCache<E>(private val grid: DataGrid<E>) : Disposable {
 	private fun dirty(columnIndex: Int, columnCache: ColumnCache) {
 		if (columnCache.headerCell != null) {
 			usedHeaderCells.forget(columnCache.headerCell!!)
-			columnCache.headerCell!!.dispose()
-			columnCache.headerCell = null
 		}
-		columnCache.cellCache.disposeAndClear()
-		columnCache.bottomCellCache.disposeAndClear()
 		usedColumns.forget(columnIndex)
 	}
 
@@ -102,11 +102,11 @@ internal class DataGridCache<E>(private val grid: DataGrid<E>) : Disposable {
 	/**
 	 * Cached display values for a column.
 	 */
-	internal inner class ColumnCache(owner: Owned, val column: DataGridColumn<E, *>) {
+	internal inner class ColumnCache(owner: Owned, val column: DataGridColumn<E, *>) : Disposable {
 
 		var headerCell: UiComponent? = null
 
-		val cellPool = ObjectPool<DataGridCell<*>> {
+		private val cellPool = ObjectPool<DataGridCell<*>> {
 			val newCell = column.createCell(owner)
 			newCell.styleTags.add(DataGrid.BODY_CELL)
 			newCell
@@ -114,6 +114,15 @@ internal class DataGridCache<E>(private val grid: DataGrid<E>) : Disposable {
 
 		val cellCache = IndexedCache(cellPool)
 		val bottomCellCache = IndexedCache(cellPool)
+
+		override fun dispose() {
+			headerCell?.dispose()
+			headerCell = null
+			cellPool.disposeAndClear()
+			cellCache.disposeAndClear()
+			bottomCellCache.disposeAndClear()
+
+		}
 	}
 
 	/**
