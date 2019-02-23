@@ -25,8 +25,8 @@ import com.acornui.core.EqualityCheck
 @Suppress("UNUSED_PARAMETER")
 class ObservableListMapping<E, V>(
 		target: ObservableList<E>,
-		private val factory: (E) -> V,
-		private val disposer: (V) -> Unit,
+		private val factory: (Int, E) -> V,
+		private val disposer: (Int, V) -> Unit,
 		equality: EqualityCheck<E> = { o1, o2 -> o1 == o2 }
 ) : ListBase<V>(), Disposable {
 
@@ -39,11 +39,11 @@ class ObservableListMapping<E, V>(
 	//---------------------------------------------
 
 	private fun addedHandler(index: Int, value: E) {
-		list.add(index, factory(value))
+		list.add(index, factory(index, value))
 	}
 
 	private fun removedHandler(index: Int, value: E) {
-		disposer(list.removeAt(index))
+		disposer(index, list.removeAt(index))
 	}
 
 	override val size: Int

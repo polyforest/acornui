@@ -41,24 +41,24 @@ internal class DataGridCache<E>(private val grid: DataGrid<E>) : Disposable {
 	/**
 	 * Marked which columns are used in an update layout.
 	 */
-	val usedColumns = UsedTracker<ColumnCache>()
+	val usedColumns = UsedTracker<Int>()
 
 	val columnCaches = ObservableListMapping(
 			target = grid.columns,
-			factory = { column ->
+			factory = { index, column ->
 				ColumnCache(grid, column)
 			},
-			disposer = { columnCache ->
-				dirty(columnCache)
+			disposer = { index, columnCache ->
+				dirty(index, columnCache)
 			}
 	)
 
 	val groupCaches = ObservableListMapping(
 			target = grid.groups,
-			factory = { group ->
+			factory = { index, group ->
 				GroupCache(group)
 			},
-			disposer = { groupCache ->
+			disposer = { index, groupCache ->
 				dirty(groupCache)
 			}
 	)
@@ -70,7 +70,7 @@ internal class DataGridCache<E>(private val grid: DataGrid<E>) : Disposable {
 		get() = if (grid.groups.isEmpty()) defaultGroupCache else groupCaches
 
 
-	private fun dirty(columnCache: ColumnCache) {
+	private fun dirty(columnIndex: Int, columnCache: ColumnCache) {
 		if (columnCache.headerCell != null) {
 			usedHeaderCells.forget(columnCache.headerCell!!)
 			columnCache.headerCell!!.dispose()
@@ -78,7 +78,7 @@ internal class DataGridCache<E>(private val grid: DataGrid<E>) : Disposable {
 		}
 		columnCache.cellCache.disposeAndClear()
 		columnCache.bottomCellCache.disposeAndClear()
-		usedColumns.forget(columnCache)
+		usedColumns.forget(columnIndex)
 	}
 
 	private fun dirty(groupCache: GroupCache) {

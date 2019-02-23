@@ -338,7 +338,7 @@ class DataGrid<E>(
 			_columns.bindUniqueAssertion()
 			_groups.bindUniqueAssertion()
 		}
-		validation.addNode(COLUMNS_WIDTHS_VALIDATION, 0, ValidationFlags.LAYOUT, this::updateColumnWidths)
+		validation.addNode(COLUMNS_WIDTHS_VALIDATION, ValidationFlags.STYLES, ValidationFlags.LAYOUT, this::updateColumnWidths)
 		validation.addNode(COLUMNS_VISIBLE_VALIDATION, COLUMNS_WIDTHS_VALIDATION, ValidationFlags.LAYOUT, this::updateColumnVisibility)
 		hScrollBar.scrollModel.snap = 1f
 		vScrollModel.changed.add { invalidateLayout() }
@@ -381,8 +381,6 @@ class DataGrid<E>(
 				val resizeHandle = columnResizeHandles.elements[i] as Spacer
 				resizeHandle.defaultWidth = style.resizeHandleWidth
 			}
-
-			invalidateColumnWidths()
 		}
 
 		_dataView.bind(this::invalidateLayout)
@@ -964,7 +962,7 @@ class DataGrid<E>(
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		iterateVisibleColumnsInternal { columnIndex, column, columnX, columnWidth ->
 			// Mark the visible columns as used.
-			cache.usedColumns.markUsed(cache.columnCaches[columnIndex])
+			cache.usedColumns.markUsed(columnIndex)
 			true
 		}
 		val border = style.borderThickness
@@ -1232,7 +1230,7 @@ class DataGrid<E>(
 				true
 			}
 			cache.usedColumns.forEachUnused {
-				it.bottomCellCache.removeAndFlip(measureContents)
+				cache.columnCaches[it].bottomCellCache.removeAndFlip(measureContents)
 			}
 			cache.usedBottomGroupHeaders.removeAndFlip(measureContents)
 		}
@@ -1346,7 +1344,7 @@ class DataGrid<E>(
 			true
 		}
 		cache.usedColumns.forEachUnused {
-			it.cellCache.removeAndFlip(contents)
+			cache.columnCaches[it].cellCache.removeAndFlip(contents)
 		}
 		cache.usedGroupHeaders.removeAndFlip(groupHeadersAndFooters)
 		rowBackgroundsCache.hideAndFlip()
@@ -1420,6 +1418,7 @@ class DataGrid<E>(
 	 * This assumes the COLUMNS_WIDTHS_VALIDATION flag has already been validated.
 	 */
 	private inline fun iterateVisibleColumnsInternal(callback: (columnIndex: Int, column: DataGridColumn<E, *>, columnX: Float, columnWidth: Float) -> Boolean) {
+		if (firstVisibleColumn == -1) return
 		val xOffset = -hScrollModel.value
 		for (i in firstVisibleColumn..lastVisibleColumn) {
 			val col = _columns[i]
