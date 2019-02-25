@@ -16,7 +16,7 @@
 
 package com.acornui.component.layout
 
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.math.Range2
 import com.acornui.math.Range2Ro
 

@@ -16,6 +16,8 @@
 
 package com.acornui.collection
 
+import com.acornui.recycle.Clearable
+
 /**
  * A dual-key map.
  * @author nbilyk

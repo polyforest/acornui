@@ -18,8 +18,8 @@
 
 package com.acornui.math
 
-import com.acornui.collection.Clearable
-import com.acornui.collection.ClearableObjectPool
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.ClearableObjectPool
 import com.acornui.core.notCloseTo
 import com.acornui.math.MathUtils.FLOAT_ROUNDING_ERROR
 import kotlin.math.sqrt

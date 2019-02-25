@@ -17,6 +17,7 @@
 package com.acornui.collection
 
 import com.acornui.core.Disposable
+import com.acornui.recycle.Clearable
 
 interface ConcurrentList<out E> : List<E> {
 

@@ -16,6 +16,8 @@
 
 package com.acornui.collection
 
+import com.acornui.recycle.Clearable
+
 class QuadTree<K : Comparable<K>, V> : Clearable {
 
 	private var root: Node? = null

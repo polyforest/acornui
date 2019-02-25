@@ -2,6 +2,8 @@ package com.acornui.collection
 
 import com.acornui.core.Disposable
 import com.acornui.observe.Observable
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.ClearableObjectPool
 import com.acornui.signal.Signal0
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3

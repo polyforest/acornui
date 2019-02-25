@@ -1,6 +1,6 @@
 package com.acornui.core.input.interaction
 
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.component.UiComponent
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.component.stage

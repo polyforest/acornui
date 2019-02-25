@@ -16,7 +16,7 @@
 
 package com.acornui.component.style
 
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.collection.first2
 import com.acornui.component.UiComponent
 import com.acornui.core.Disposable

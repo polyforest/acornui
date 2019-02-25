@@ -19,7 +19,7 @@ package com.acornui.core.request
 import com.acornui.action.Progress
 import com.acornui.async.CancelableDeferred
 import com.acornui.browser.UrlParams
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped

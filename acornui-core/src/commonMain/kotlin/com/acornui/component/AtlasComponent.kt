@@ -19,7 +19,7 @@ package com.acornui.component
 import com.acornui.async.Deferred
 import com.acornui.async.catch
 import com.acornui.async.then
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.collection.tuple
 import com.acornui.core.asset.CachedGroup
 import com.acornui.core.asset.cachedGroup

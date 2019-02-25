@@ -31,8 +31,8 @@
 
 package com.esotericsoftware.spine.animation
 
-import com.acornui.collection.ClearableObjectPool
-import com.acornui.collection.Clearable
+import com.acornui.recycle.ClearableObjectPool
+import com.acornui.recycle.Clearable
 import com.acornui.collection.fill
 import com.esotericsoftware.spine.Skeleton
 import com.esotericsoftware.spine.SpineEvent

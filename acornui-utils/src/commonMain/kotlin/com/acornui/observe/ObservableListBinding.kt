@@ -18,7 +18,7 @@
 
 package com.acornui.observe
 
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.collection.ObservableList
 import com.acornui.collection.rangeCheck
 import com.acornui.core.Disposable

@@ -20,7 +20,7 @@ package com.acornui.particle
 
 
 import com.acornui.collection.ArrayList
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.graphic.Color
 import com.acornui.math.MathUtils.clamp
 import com.acornui.math.Vector3

@@ -1,6 +1,6 @@
 package com.acornui.graphic.lighting
 
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.graphic.Color
 import com.acornui.math.Vector3
 

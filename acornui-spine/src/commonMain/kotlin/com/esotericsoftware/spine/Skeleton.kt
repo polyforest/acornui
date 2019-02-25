@@ -36,6 +36,7 @@ import com.acornui.core.graphic.TextureAtlasData
 import com.acornui.graphic.Color
 import com.acornui.math.Bounds
 import com.acornui.math.Vector2
+import com.acornui.recycle.Clearable
 import com.esotericsoftware.spine.animation.Animation
 import com.esotericsoftware.spine.attachments.MeshAttachment
 import com.esotericsoftware.spine.attachments.RegionAttachment

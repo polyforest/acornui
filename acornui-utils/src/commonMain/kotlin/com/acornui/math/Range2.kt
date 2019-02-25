@@ -16,7 +16,7 @@
 
 package com.acornui.math
 
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 
 /**
  * A read-only view of a 2D range describing optional min and max boundaries.

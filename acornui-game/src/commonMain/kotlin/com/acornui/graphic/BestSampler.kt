@@ -1,6 +1,6 @@
 package com.acornui.graphic
 
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 
 /**
  *

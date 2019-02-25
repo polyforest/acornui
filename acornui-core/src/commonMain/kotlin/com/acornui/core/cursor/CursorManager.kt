@@ -16,8 +16,8 @@
 
 package com.acornui.core.cursor
 
-import com.acornui.collection.Clearable
-import com.acornui.collection.ClearableObjectPool
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.ClearableObjectPool
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.core.Lifecycle
 import com.acornui.core.LifecycleBase

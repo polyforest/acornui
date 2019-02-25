@@ -16,8 +16,8 @@
 
 package com.acornui.core.time
 
-import com.acornui.collection.Clearable
-import com.acornui.collection.ClearableObjectPool
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.ClearableObjectPool
 import com.acornui.core.Disposable
 import com.acornui.core.UpdatableChildBase
 import com.acornui.core.di.Scoped

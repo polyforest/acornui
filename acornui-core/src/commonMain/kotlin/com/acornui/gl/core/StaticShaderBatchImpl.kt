@@ -16,7 +16,7 @@
 
 package com.acornui.gl.core
 
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.component.drawing.DrawElementsCall
 import com.acornui.component.drawing.DrawElementsCallRo
 import com.acornui.core.Disposable

@@ -16,7 +16,7 @@
 
 package com.acornui.component
 
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.collection.Filter
 import com.acornui.component.layout.algorithm.GridLayoutStyle
 import com.acornui.component.style.*
@@ -31,7 +31,6 @@ import com.acornui.core.di.own
 import com.acornui.core.focus.blurred
 import com.acornui.core.focus.focus
 import com.acornui.core.input.Ascii
-import com.acornui.core.input.interaction.KeyInteractionRo
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.keyDown
 import com.acornui.core.popup.PopUpManager

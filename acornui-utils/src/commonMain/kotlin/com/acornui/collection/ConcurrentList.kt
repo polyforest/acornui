@@ -16,6 +16,8 @@
 
 package com.acornui.collection
 
+import com.acornui.recycle.ClearableObjectPool
+
 class ConcurrentListImpl<E> : MutableListBase<E>(), MutableConcurrentList<E> {
 
 	private val iteratorStack = ArrayList<ConcurrentListImplIterator<E>>()

@@ -1,6 +1,6 @@
 package com.acornui.core.persistance
 
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.core.Version
 import com.acornui.core.di.DKey
 

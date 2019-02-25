@@ -16,8 +16,9 @@
 
 package com.acornui.component.drawing
 
-import com.acornui.collection.Clearable
-import com.acornui.collection.ClearableObjectPool
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.ClearableObjectPool
+import com.acornui.recycle.freeAll
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.ValidationFlags

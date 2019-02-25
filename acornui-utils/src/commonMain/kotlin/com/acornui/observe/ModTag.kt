@@ -16,7 +16,7 @@
 
 package com.acornui.observe
 
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 
 interface ModTagRo {
 

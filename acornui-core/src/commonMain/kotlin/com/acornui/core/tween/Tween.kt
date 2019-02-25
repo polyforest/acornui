@@ -16,7 +16,7 @@
 
 package com.acornui.core.tween
 
-import com.acornui.collection.ObjectPool
+import com.acornui.recycle.ObjectPool
 import com.acornui.core.Disposable
 import com.acornui.core.UpdatableChildBase
 import com.acornui.core.di.Scoped

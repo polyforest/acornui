@@ -16,9 +16,9 @@
 
 package com.acornui.component.layout.algorithm
 
-import com.acornui.collection.Clearable
-import com.acornui.collection.ClearableObjectPool
-import com.acornui.collection.freeTo
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.ClearableObjectPool
+import com.acornui.recycle.freeTo
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.ComponentInit
 import com.acornui.component.layout.ElementLayoutContainerImpl

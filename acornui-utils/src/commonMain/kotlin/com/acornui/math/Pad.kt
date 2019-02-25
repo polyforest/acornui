@@ -16,7 +16,7 @@
 
 package com.acornui.math
 
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.serialization.*
 
 /**

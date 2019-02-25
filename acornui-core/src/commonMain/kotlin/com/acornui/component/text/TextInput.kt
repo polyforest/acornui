@@ -18,7 +18,7 @@
 
 package com.acornui.component.text
 
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.component.*
 import com.acornui.component.scroll.ClampedScrollModel
 import com.acornui.component.scroll.ScrollPolicy

@@ -16,6 +16,8 @@
 
 package com.acornui.collection
 
+import com.acornui.recycle.Clearable
+
 /**
  * Returns first index of *element*, or -1 if the collection does not contain element
  */

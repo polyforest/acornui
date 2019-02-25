@@ -1,7 +1,7 @@
 package com.acornui.component.drawing
 
 import com.acornui._assert
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.component.drawing.MeshBuilderStyle.fillColor
 import com.acornui.component.drawing.MeshBuilderStyle.lineStyle
 import com.acornui.gl.core.putIndex

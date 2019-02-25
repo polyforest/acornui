@@ -18,6 +18,8 @@
 
 package com.acornui.collection
 
+import com.acornui.recycle.Clearable
+
 /**
  * @author Nathan Sweet
  */

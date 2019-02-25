@@ -16,7 +16,7 @@
 
 package com.acornui.logging
 
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.collection.poll
 import com.acornui.core.lineSeparator
 import com.acornui.error.stack

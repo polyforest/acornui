@@ -16,7 +16,7 @@
 
 package com.acornui.core.behavior
 
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
 import com.acornui.core.Disposable

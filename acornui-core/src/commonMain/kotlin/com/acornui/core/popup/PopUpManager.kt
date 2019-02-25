@@ -16,7 +16,7 @@
 
 package com.acornui.core.popup
 
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.collection.firstOrNull2
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*

@@ -16,6 +16,8 @@
 
 package com.acornui.collection
 
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.limitedPool
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -25,7 +27,7 @@ import kotlin.test.assertEquals
 class LimitedPoolTest {
 
 	@Test fun testObtain() {
-		val pool = limitedPool(16, { ClearableTest()})
+		val pool = limitedPool(16, { ClearableTest() })
 		val item1 = pool.obtain()
 		val item2 = pool.obtain()
 		val item3 = pool.obtain()
@@ -44,7 +46,7 @@ class LimitedPoolTest {
 	}
 
 	@Test fun testObtainPastCapacity() {
-		val pool = limitedPool(4, { ClearableTest()})
+		val pool = limitedPool(4, { ClearableTest() })
 		val item1 = pool.obtain()
 		val item2 = pool.obtain()
 		val item3 = pool.obtain()

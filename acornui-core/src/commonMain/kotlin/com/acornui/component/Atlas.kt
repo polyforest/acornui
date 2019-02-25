@@ -16,7 +16,7 @@
 
 package com.acornui.component
 
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.core.graphic.*
 import com.acornui.gl.core.GlState
 import com.acornui.graphic.ColorRo

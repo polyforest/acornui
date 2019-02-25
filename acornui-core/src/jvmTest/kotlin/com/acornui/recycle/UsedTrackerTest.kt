@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Nicholas Bilyk
+ * Copyright 2019 PolyForest
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.acornui.core.cache
+package com.acornui.recycle
 
 import com.acornui.test.assertListEquals
 import org.junit.Test

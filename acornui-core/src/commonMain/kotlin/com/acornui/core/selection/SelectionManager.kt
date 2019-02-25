@@ -1,6 +1,6 @@
 package com.acornui.core.selection
 
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.component.UiComponent
 import com.acornui.core.Disposable
 import com.acornui.core.di.DKey

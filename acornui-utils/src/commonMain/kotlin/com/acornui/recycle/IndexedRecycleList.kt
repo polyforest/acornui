@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package com.acornui.core.cache
+package com.acornui.recycle
 
 import com.acornui.collection.*
-import com.acornui.component.ElementContainer
-import com.acornui.component.UiComponent
 import com.acornui.core.Disposable
 
 /**
  * A layer between item reuse and an object pool that first seeks an item from the same index.
  * It is to reduce the amount of changes a pooled item may need to make.
  *
- * To use this class, make a series of [obtain] calls to grab recycled elements, call [forEachUnused] to iterate over
- * the elements that weren't obtained, then call [flip] to send unused elements back to the object pool, and make the
- * obtained elements available for the next series.
+ * To use this class, make a series of [obtain] calls to grab recycled elements, then call [flip] to send unused
+ * elements back to the object pool, and make the obtained elements available for the next series.
  *
  * A set may look like this:
  *
@@ -37,8 +34,7 @@ import com.acornui.core.Disposable
  * obtain(5)
  * obtain(2)
  * obtain(1)
- * forEachUnused { ... } // Deactivate unused items
- * flip()
+ * flip() // 1 through 5 is available in the next set for fast access.
  * ```
  *
  * A set pulling in reverse order should look like this:
@@ -48,13 +44,25 @@ import com.acornui.core.Disposable
  * obtain(3)
  * obtain(6)
  * obtain(7)
- * forEachUnused { ... } // Deactivate unused items
- * flip()
+ * flip() // 3 through 7 is available in the next set for fast access.
  * ```
+ *
+ * @param pool The indexed cache will call [Pool.obtain] when a new element is needed, and [Pool.free] when an element
+ * is returned.
  */
-class IndexedCache<E>(val pool: Pool<E>) : ListBase<E>() {
+open class IndexedRecycleList<E>(
 
-	constructor(factory: () -> E) : this(ObjectPool(factory))
+		/**
+		 * @suppress
+		 */
+		internal val pool: Pool<E>
+) : ListBase<E>(), Clearable {
+
+	/**
+	 * Creates an [IndexedRecycleList] with a basic [ObjectPool] implementation.
+	 * @param create The factory method for creating new elements.
+	 */
+	constructor(create: () -> E) : this(ObjectPool(create))
 
 	/**
 	 * The current items are indexed in this list starting at index 0. This offset represents the lowest index used in
@@ -113,37 +121,21 @@ class IndexedCache<E>(val pool: Pool<E>) : ListBase<E>() {
 	}
 
 	/**
-	 * Returns the cached element at the given index, if it exists.
-	 */
-	fun getCached(index: Int): E {
-		return current[index - offset]!!
-	}
-
-	/**
 	 * Iterates over each unused item still in the cache.
 	 */
-	fun forEachUnused(callback: (index: Int, renderer: E) -> Unit) {
-		if (current.isEmpty()) return
+	fun forEachUnused(callback: (index: Int, renderer: E) -> Unit): IndexedRecycleList<E> {
+		if (current.isEmpty()) return this
 		for (i in 0..current.lastIndex) {
 			callback(currentIndices[i], current[i])
 		}
-	}
-
-	/**
-	 * Clears the current cache values. Note that this does not clear the pool, nor does it move the current cache
-	 * values into the pool.
-	 * @see flip
-	 */
-	fun clear() {
-		current.clear()
-		currentIndices.clear()
+		return this
 	}
 
 	/**
 	 * Sets the items returned via [obtain] to be used as the cached items for the next set.
 	 */
 	fun flip() {
-		pool.freeAll(current)
+		current.forEach2(pool::free)
 		val tmp = current
 		val tmpIndices = currentIndices
 		current = obtained
@@ -153,38 +145,22 @@ class IndexedCache<E>(val pool: Pool<E>) : ListBase<E>() {
 		obtainedIndices = tmpIndices
 		obtainedIndices.clear()
 	}
+
+	/**
+	 * Clears this list, sending all known elements back to the [pool].
+	 */
+	override fun clear() {
+		current.freeTo(pool)
+		obtained.freeTo(pool)
+		currentIndices.clear()
+		obtainedIndices.clear()
+	}
 }
 
 /**
- * Disposes each instance in the cache and pool.
+ * Clears the index cache back into the pool, then disposes all elements and clears the pool.
  */
-fun <E : Disposable> IndexedCache<E>.disposeAndClear() {
-	forEachUnused {
-		_, it ->
-		it.dispose()
-	}
-	pool.disposeAndClear()
+fun <E : Disposable> IndexedRecycleList<E>.disposeAndClear() {
 	clear()
-}
-
-/**
- * Removes all unused cache instances from the given container before flipping.
- */
-fun <E : UiComponent> IndexedCache<E>.removeAndFlip(parent: ElementContainer<UiComponent>) {
-	forEachUnused {
-		_, it ->
-		parent.removeElement(it)
-	}
-	flip()
-}
-
-/**
- * Sets visible to false on all unused cache instances before flipping.
- */
-fun <E : UiComponent> IndexedCache<E>.hideAndFlip() {
-	forEachUnused {
-		_, it ->
-		it.visible = false
-	}
-	flip()
+	pool.disposeAndClear()
 }

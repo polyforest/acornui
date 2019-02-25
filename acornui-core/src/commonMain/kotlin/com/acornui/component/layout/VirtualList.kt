@@ -10,13 +10,15 @@ import com.acornui.component.style.Style
 import com.acornui.core.behavior.Selection
 import com.acornui.core.behavior.SelectionBase
 import com.acornui.core.behavior.deselectNotContaining
-import com.acornui.core.cache.IndexedCache
+import com.acornui.recycle.IndexedRecycleList
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.function.as2
 import com.acornui.function.as3
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
+import com.acornui.recycle.ObjectPool
+import com.acornui.recycle.disposeAndClear
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -179,7 +181,7 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 
 	private val nullRendererPool = ObjectPool { _nullRendererFactory() }
 
-	private val nullRendererCache = IndexedCache(nullRendererPool)
+	private val nullRendererCache = IndexedRecycleList(nullRendererPool)
 
 	//-------------------------------------------------
 	// Item renderers
@@ -199,7 +201,7 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 
 	private val rendererPool = ObjectPool { _rendererFactory() }
 
-	private val rendererCache = IndexedCache(rendererPool)
+	private val rendererCache = IndexedRecycleList(rendererPool)
 
 	private var _emptyListRenderer: UiComponent? = null
 

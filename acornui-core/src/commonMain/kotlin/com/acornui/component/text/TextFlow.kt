@@ -16,6 +16,8 @@ import com.acornui.math.MathUtils.offsetRound
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Vector3
 import com.acornui.math.ceil
+import com.acornui.recycle.ClearableObjectPool
+import com.acornui.recycle.freeTo
 
 /**
  * A TextFlow component is a container of styleable text spans, to be used inside of a TextField.

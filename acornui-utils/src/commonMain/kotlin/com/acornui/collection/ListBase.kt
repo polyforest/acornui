@@ -16,6 +16,8 @@
 
 package com.acornui.collection
 
+import com.acornui.recycle.Clearable
+
 /**
  * Provides a partial implementation of the List interface.
  */

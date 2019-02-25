@@ -18,7 +18,7 @@ package com.acornui.component.text
 
 import com.acornui.action.Decorator
 import com.acornui.async.Deferred
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.collection.copy
 import com.acornui.collection.stringMapOf
 import com.acornui.core.Disposable

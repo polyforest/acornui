@@ -24,7 +24,7 @@ import com.acornui.component.text.text
 import com.acornui.core.ChildRo
 import com.acornui.core.Parent
 import com.acornui.core.ParentRo
-import com.acornui.core.cache.recycle
+import com.acornui.recycle.recycle
 import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned

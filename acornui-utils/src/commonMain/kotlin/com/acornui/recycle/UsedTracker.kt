@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package com.acornui.core.cache
+package com.acornui.recycle
 
 import com.acornui.collection.filterTo2
-import com.acornui.component.ElementContainer
-import com.acornui.component.UiComponent
 
 /**
- * Similar to [IndexedCache], to use this class, make a series of [markUsed] calls to indicate that an element was ued,
+ * Similar to [IndexedRecycleList], to use this class, make a series of [markUsed] calls to indicate that an element was ued,
  * then call [forEachUnused] to iterate over the elements that were marked used on the last set, but weren't marked on
  * this set, then call [flip] to set the used elements as unused for the next set.
  */
@@ -53,13 +51,14 @@ class UsedTracker<E> {
 	/**
 	 * Iterates over the unused items.
 	 */
-	fun forEachUnused(callback: (element: E) -> Unit) {
+	fun forEachUnused(callback: (element: E) -> Unit): UsedTracker<E> {
 		for (i in 0..elements.lastIndex) {
 			val element = elements[i]
 			if (used[element] != true) {
 				callback(element)
 			}
 		}
+		return this
 	}
 
 	/**
@@ -77,24 +76,4 @@ class UsedTracker<E> {
 		}
 	}
 
-}
-
-/**
- * Removes all unused cache instances from the given container before flipping.
- */
-fun <E : UiComponent> UsedTracker<E>.removeAndFlip(parent: ElementContainer<UiComponent>) {
-	forEachUnused {
-		parent.removeElement(it)
-	}
-	flip()
-}
-
-/**
- * Sets visible to false on all unused cache instances before flipping.
- */
-fun <E : UiComponent> UsedTracker<E>.hideAndFlip() {
-	forEachUnused {
-		it.visible = false
-	}
-	flip()
 }

@@ -2,7 +2,7 @@ package com.acornui.core.nav
 
 import com.acornui.browser.decodeUriComponent2
 import com.acornui.browser.encodeUriComponent2
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.collection.copy
 import com.acornui.collection.stringMapOf
 import com.acornui.component.Button

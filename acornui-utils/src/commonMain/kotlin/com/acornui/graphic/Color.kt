@@ -17,7 +17,7 @@
 
 package com.acornui.graphic
 
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 import com.acornui.core.closeTo
 import com.acornui.serialization.Reader
 import com.acornui.serialization.Writer

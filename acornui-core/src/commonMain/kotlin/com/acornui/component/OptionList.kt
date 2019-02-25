@@ -48,6 +48,7 @@ import com.acornui.core.text.StringFormatter
 import com.acornui.core.text.ToStringFormatter
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
+import com.acornui.recycle.Clearable
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal0
 import com.acornui.signal.bind

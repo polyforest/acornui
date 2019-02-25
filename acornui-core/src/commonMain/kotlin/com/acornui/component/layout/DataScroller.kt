@@ -10,9 +10,9 @@ import com.acornui.component.style.*
 import com.acornui.core.behavior.Selection
 import com.acornui.core.behavior.SelectionBase
 import com.acornui.core.behavior.deselectNotContaining
-import com.acornui.core.cache.IndexedCache
-import com.acornui.core.cache.disposeAndClear
-import com.acornui.core.cache.hideAndFlip
+import com.acornui.recycle.IndexedRecycleList
+import com.acornui.recycle.Recycler
+import com.acornui.recycle.disposeAndClear
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.core.focus.Focusable
@@ -66,9 +66,11 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 	private val clipper = addChild(scrollRect())
 
 	private val rowBackgrounds = clipper.addElement(container())
-	private val rowBackgroundsCache = IndexedCache {
-		style.rowBackground(rowBackgrounds)
-	}
+	private val rowBackgroundsCache = IndexedRecycleList(Recycler(
+			create = { rowBackgrounds.addElement(style.rowBackground(rowBackgrounds)) },
+			configure = { it.visible = true },
+			unconfigure = { it.visible = false }
+	))
 
 	private val contents = clipper.addElement(virtualList<E, S, T>(layoutAlgorithm, layoutStyle) {
 		interactivityMode = InteractivityMode.CHILDREN
@@ -193,7 +195,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 	}
 
 	private fun getElementUnderPosition(p: Vector2Ro): E? {
-		for (i in 0 .. rowBackgroundsCache.lastIndex) {
+		for (i in 0..rowBackgroundsCache.lastIndex) {
 			val bg = rowBackgroundsCache[i]
 			if (p.x >= bg.x && p.y >= bg.y && p.x < bg.right && p.y < bg.bottom) {
 				return data.getOrNull(bg.rowIndex)
@@ -298,8 +300,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 			rowBackground.toggled = false
 			rowBackground.highlighted = false
 		}
-
-		rowBackgroundsCache.hideAndFlip()
+		rowBackgroundsCache.flip()
 
 		clipper.setSize(bottomContents.width, bottomContents.height)
 		clipper.setPosition(pad.left, pad.top)
@@ -309,10 +310,6 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 
 	private fun updateRowBackgroundForRenderer(renderer: ListRendererRo): RowBackground {
 		val rowBackground = rowBackgroundsCache.obtain(renderer.index)
-		if (rowBackground.parent == null) {
-			rowBackgrounds.addElement(rowBackground)
-		}
-		rowBackground.visible = true
 		rowBackground.rowIndex = renderer.index
 		if (isVertical) {
 			rowBackground.setSize(bottomContents.width, renderer.height)

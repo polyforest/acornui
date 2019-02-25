@@ -1,7 +1,7 @@
 package com.acornui.component.drawing
 
-import com.acornui.collection.Clearable
-import com.acornui.collection.ObjectPool
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.ObjectPool
 import com.acornui.collection.stringMapOf
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color

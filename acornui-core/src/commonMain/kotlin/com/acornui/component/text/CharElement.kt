@@ -1,7 +1,7 @@
 package com.acornui.component.text
 
-import com.acornui.collection.Clearable
-import com.acornui.collection.ClearableObjectPool
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.ClearableObjectPool
 import com.acornui.core.floor
 import com.acornui.core.graphic.BlendMode
 import com.acornui.gl.core.GlState

@@ -1,5 +1,8 @@
 package com.acornui.collection
 
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.ObjectPool
+
 fun <E> arrayCopy(src: List<E>,
 				  srcPos: Int,
 				  dest: MutableList<E>,
@@ -400,11 +403,11 @@ inline fun <T> List<T>.any2(predicate: (T) -> Boolean): Boolean {
 	return false
 }
 
-inline fun <E> List<E>.forEach2(action: (E) -> Unit): Unit {
+inline fun <E> List<E>.forEach2(action: (E) -> Unit) {
 	for (i in 0..lastIndex) action(this[i])
 }
 
-inline fun <E> List<E>.forEachReversed2(action: (E) -> Unit): Unit {
+inline fun <E> List<E>.forEachReversed2(action: (E) -> Unit) {
 	for (i in lastIndex downTo 0) action(this[i])
 }
 

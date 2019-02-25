@@ -14,36 +14,15 @@
  * limitations under the License.
  */
 
-package com.acornui.core.cache
+package com.acornui.recycle
 
 import com.acornui.collection.copy
-import com.acornui.component.ItemRendererRo
 import com.acornui.core.EqualityCheck
-
-/**
- * Recycles a list of item renderers, creating or disposing renderers only as needed.
- * @param data The updated list of data items.
- * @param existingElements The stale list of item renderers. This will be modified to reflect the new item renderers.
- * @param factory Used to create new item renderers as needed. [configure] will be called after factory to configure
- * the new element.
- * @param configure Used to configure the element.
- * @param disposer Used to dispose the element.
- * @param equality If set, uses custom equality rules. This guides how to know whether an item can be recycled or not.
- */
-fun <E, T : ItemRendererRo<E>> recycle(
-		data: List<E>?,
-		existingElements: MutableList<T>,
-		factory: (item: E, index: Int) -> T,
-		configure: (element: T, item: E, index: Int) -> Unit,
-		disposer: (element: T) -> Unit,
-		equality: EqualityCheck<E?> = { a, b -> a == b }
-) = recycle(data, existingElements, factory, configure, disposer, { it.data }, equality)
-
 
 /**
  * Recycles a list of item renderers, creating or disposing renderers only when there is no data match.
  *
- * The [factory] and [disposer] methods may use an [com.acornui.collection.ObjectPool] to handle the case where there
+ * The [factory] and [disposer] methods may use an [com.acornui.recycle.ObjectPool] to handle the case where there
  * is no data match, but there would still like to be recycling.
  *
  * @param data The updated list of data items.
@@ -102,5 +81,5 @@ fun <E, T> recycle(
  * every time.
  */
 fun <E1, E2> recycle(data: List<E1>?, other: MutableList<E2>, factory: (E1) -> E2, compare: (E2, E1) -> Boolean) {
-	recycle(data, other, { e, index -> factory(e) }, { e1, e2, index -> }, {}, { element -> data?.find { compare(element, it) } } )
+	recycle(data, other, { e, index -> factory(e) }, { e1, e2, index -> }, {}, { element -> data?.find { compare(element, it) } })
 }

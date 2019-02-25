@@ -16,7 +16,7 @@
 
 package com.acornui.core.input
 
-import com.acornui.collection.Clearable
+import com.acornui.recycle.Clearable
 
 interface PropagationRo {
 

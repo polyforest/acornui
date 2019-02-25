@@ -17,15 +17,12 @@
 package com.acornui.component.datagrid
 
 import com.acornui.collection.ListView
-import com.acornui.collection.ObjectPool
 import com.acornui.collection.ObservableListMapping
-import com.acornui.collection.disposeAndClear
+import com.acornui.component.ElementContainerImpl
 import com.acornui.component.UiComponent
 import com.acornui.core.Disposable
-import com.acornui.core.cache.IndexedCache
-import com.acornui.core.cache.UsedTracker
-import com.acornui.core.cache.disposeAndClear
 import com.acornui.core.di.Owned
+import com.acornui.recycle.*
 
 /**
  * The DataGrid uses complex caching mechanisms for performance. These display properties are separated for
@@ -36,7 +33,6 @@ import com.acornui.core.di.Owned
 internal class DataGridCache<E>(private val grid: DataGrid<E>) : Disposable {
 
 	val usedBottomGroupHeaders = UsedTracker<UiComponent>()
-	val usedHeaderCells = UsedTracker<UiComponent>()
 	val usedGroupHeaders = UsedTracker<UiComponent>()
 
 	val defaultGroupCache = arrayListOf(GroupCache(DataGrid.defaultGroups<E>().first()))
@@ -46,26 +42,26 @@ internal class DataGridCache<E>(private val grid: DataGrid<E>) : Disposable {
 	 */
 	val usedColumns = UsedTracker<Int>()
 
-	val rowBackgroundsCache = IndexedCache { grid.style.rowBackground(grid) }
+	val rowBackgroundsCache = IndexedRecycleList { grid.style.rowBackground(grid) }
 
 	val columnCaches = ObservableListMapping(
 			target = grid.columns,
-			factory = { index, column ->
+			factory = { _, column ->
 				ColumnCache(grid, column)
 			},
-			disposer = { index, columnCache ->
-				dirty(index, columnCache)
+			disposer = { columnIndex, columnCache ->
+				usedColumns.forget(columnIndex)
 				columnCache.dispose()
 			}
 	)
 
 	val groupCaches = ObservableListMapping(
 			target = grid.groups,
-			factory = { index, group ->
+			factory = { _, group ->
 				GroupCache(group)
 			},
-			disposer = { index, groupCache ->
-				dirty(groupCache)
+			disposer = { _, groupCache ->
+				dispose(groupCache)
 				groupCache.dispose()
 			}
 	)
@@ -76,15 +72,7 @@ internal class DataGridCache<E>(private val grid: DataGrid<E>) : Disposable {
 	internal val displayGroupCaches: List<DataGridCache<E>.GroupCache>
 		get() = if (grid.groups.isEmpty()) defaultGroupCache else groupCaches
 
-
-	private fun dirty(columnIndex: Int, columnCache: ColumnCache) {
-		if (columnCache.headerCell != null) {
-			usedHeaderCells.forget(columnCache.headerCell!!)
-		}
-		usedColumns.forget(columnIndex)
-	}
-
-	private fun dirty(groupCache: GroupCache) {
+	private fun dispose(groupCache: GroupCache) {
 		if (groupCache.header != null) {
 			usedGroupHeaders.forget(groupCache.header!!)
 		}
@@ -105,22 +93,21 @@ internal class DataGridCache<E>(private val grid: DataGrid<E>) : Disposable {
 
 		var headerCell: UiComponent? = null
 
-		private val cellPool = ObjectPool<DataGridCell<*>> {
+		private val cellPool = ObjectPool {
 			val newCell = column.createCell(owner)
 			newCell.styleTags.add(DataGrid.BODY_CELL)
 			newCell
 		}
 
-		val cellCache = IndexedCache(cellPool)
-		val bottomCellCache = IndexedCache(cellPool)
+		val cellCache = IndexedRecycleList(cellPool)
+		val bottomCellCache = IndexedRecycleList(cellPool)
 
 		override fun dispose() {
 			headerCell?.dispose()
 			headerCell = null
+			cellCache.clear()
+			bottomCellCache.clear()
 			cellPool.disposeAndClear()
-			cellCache.disposeAndClear()
-			bottomCellCache.disposeAndClear()
-
 		}
 	}
 
@@ -172,10 +159,16 @@ internal class DataGridCache<E>(private val grid: DataGrid<E>) : Disposable {
 			get() = if (showFooter) lastIndex else -1
 
 		override fun dispose() {
-			header!!.dispose()
+			header?.dispose()
 			header = null
 			bottomHeader?.dispose()
 			bottomHeader = null
 		}
 	}
+}
+
+internal fun <T : UiComponent> IndexedRecycleList<T>.removeAndFlip(container: ElementContainerImpl<UiComponent>) {
+	forEachUnused { index, element ->
+		container.removeElement(element)
+	}.flip()
 }

@@ -1,7 +1,8 @@
 package com.acornui.gl.core
 
-import com.acornui.collection.ClearableObjectPool
-import com.acornui.collection.Clearable
+import com.acornui.recycle.ClearableObjectPool
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.freeAll
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Vector2

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Nicholas Bilyk
+ * Copyright 2019 PolyForest
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package com.acornui.core.cache
+package com.acornui.recycle
 
 import com.acornui.assertionsEnabled
-import com.acornui.collection.Clearable
-import com.acornui.collection.ClearableObjectPool
-import com.acornui.test.assertListEquals
 import com.acornui.test.assertUnorderedListEquals
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
 
-class IndexedCacheTest {
+class IndexedRecycleListTest {
 
 	@Before
 	fun setUp() {
@@ -39,7 +36,7 @@ class IndexedCacheTest {
 	 */
 	@Test
 	fun smartObtain() {
-		val c = IndexedCache(ClearableObjectPool { TestObj() })
+		val c = IndexedRecycleList(ClearableObjectPool { TestObj() })
 		for (i in 5..9) {
 			c.obtain(i).value = i
 		}
@@ -97,7 +94,7 @@ class IndexedCacheTest {
 
 
 	@Test fun testNonSequential1() {
-		val c = IndexedCache(ClearableObjectPool { TestObj() })
+		val c = IndexedRecycleList(ClearableObjectPool { TestObj() })
 		c.obtain(9).value = 9
 		c.obtain(11).value = 11
 		c.flip()
@@ -110,13 +107,13 @@ class IndexedCacheTest {
 	}
 
 	@Test fun testNonSequential2() {
-		val c = IndexedCache(ClearableObjectPool { TestObj() })
+		val c = IndexedRecycleList(ClearableObjectPool { TestObj() })
 		c.obtain(9)
 		c.obtain(7)
 	}
 
 	@Test fun forEach() {
-		val c = IndexedCache(ClearableObjectPool { TestObj() })
+		val c = IndexedRecycleList(ClearableObjectPool { TestObj() })
 		for (i in 5..9) {
 			c.obtain(i).value = i
 		}
@@ -133,7 +130,7 @@ class IndexedCacheTest {
 		assertUnorderedListEquals(listOf(), c.getUnused())
 	}
 
-	private fun IndexedCache<TestObj>.getUnused(): List<Int> {
+	private fun IndexedRecycleList<TestObj>.getUnused(): List<Int> {
 		val list = ArrayList<Int>()
 		forEachUnused {
 			_, it ->

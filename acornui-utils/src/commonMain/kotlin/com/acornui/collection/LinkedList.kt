@@ -16,6 +16,9 @@
 
 package com.acornui.collection
 
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.ClearableObjectPool
+
 // TODO: TEMPORARY until kotlin finishes their linked list.
 
 class Entry<T> : Clearable {

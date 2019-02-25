@@ -17,7 +17,7 @@
 package com.acornui.core.input
 
 import com.acornui._assert
-import com.acornui.collection.ClearableObjectPool
+import com.acornui.recycle.ClearableObjectPool
 import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
 import com.acornui.component.StageRo
