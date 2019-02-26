@@ -202,7 +202,7 @@ class ValidationGraph {
 		if (currentIndex != -1) {
 			if (assertionsEnabled) {
 				val node = nodes[currentIndex]
-				val badFlags = node.invalidationMask and flags
+				val badFlags = (node.invalidationMask and node.flag.inv()) and flags
 				if (badFlags > 0)
 					throw IllegalStateException("Cannot validate ${badFlags.toFlagsString()} while validating ${node.flag.toFlagString()}")
 			}
