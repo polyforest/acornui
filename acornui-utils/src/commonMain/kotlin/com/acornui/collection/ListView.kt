@@ -216,13 +216,17 @@ class ListView<E>() : ListViewRo<E>, Disposable {
 		validate()
 		if (index < 0 || index >= size) return
 		if (observableWrapped != null) {
-			observableWrapped!!.notifyElementModified(local[index])
+			observableWrapped!!.notifyElementModified(local[toReversed(index)])
 		} else {
-			val sourceIndex = local[index]
+			val sourceIndex = local[toReversed(index)]
 			elementModifiedHandler(sourceIndex, wrapped[sourceIndex])
 		}
 	}
 
+	/**
+	 * Returns true if the element is in the correct place within the [local] list after a modification, or false if the
+	 * source element must be moved internally.
+	 */
 	private fun isLocalIndexCorrect(sourceIndex: Int): Boolean {
 		val localIndex = local.indexOf(sourceIndex)
 		val element = wrapped[sourceIndex]
@@ -403,11 +407,11 @@ class ListView<E>() : ListViewRo<E>, Disposable {
 		if (!viewIsModified) return sourceIndex
 		val element = wrapped[sourceIndex]
 		if (filtered(element)) return -1
-		return toReversed(if (sortComparator == null) {
+		return if (sortComparator == null) {
 			local.sortedInsertionIndex(sourceIndex, matchForwards = true)
 		} else {
 			local.sortedInsertionIndex(sourceIndex, matchForwards = true, comparator = insertionComparator)
-		})
+		}
 	}
 
 	private fun toReversed(localIndex: Int): Int {
