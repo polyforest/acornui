@@ -121,6 +121,14 @@ open class IndexedRecycleList<E>(
 	}
 
 	/**
+	 * Returns the cached element at the given index.
+	 */
+//	fun getCached(index: Int): E {
+//		if (obtainedIndices.isEmpty()) throw IndexOutOfBoundsException()
+//		val shiftIndex = obtainedIndices.sortedInsertionIndex(index, matchForwards = false)
+//	}
+
+	/**
 	 * Iterates over each unused item still in the cache.
 	 */
 	fun forEachUnused(callback: (index: Int, renderer: E) -> Unit): IndexedRecycleList<E> {

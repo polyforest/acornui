@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
+@file:Suppress("UNUSED_ANONYMOUS_PARAMETER")
+
 package com.acornui.component.datagrid
 
 import com.acornui.collection.ListView
 import com.acornui.collection.ObservableListMapping
-import com.acornui.component.ElementContainerImpl
+import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
 import com.acornui.core.Disposable
 import com.acornui.core.di.Owned
-import com.acornui.recycle.*
+import com.acornui.recycle.IndexedRecycleList
+import com.acornui.recycle.ObjectPool
+import com.acornui.recycle.UsedTracker
+import com.acornui.recycle.disposeAndClear
 
 /**
  * The DataGrid uses complex caching mechanisms for performance. These display properties are separated for
@@ -30,12 +35,9 @@ import com.acornui.recycle.*
  *
  * @suppress
  */
-internal class DataGridCache<E>(private val grid: DataGrid<E>) : Disposable {
+internal class DataGridCache<RowData>(private val grid: DataGrid<RowData>) : Disposable {
 
-	val usedBottomGroupHeaders = UsedTracker<UiComponent>()
-	val usedGroupHeaders = UsedTracker<UiComponent>()
-
-	val defaultGroupCache = arrayListOf(GroupCache(DataGrid.defaultGroups<E>().first()))
+	val defaultGroupCache = arrayListOf(GroupCache(DataGrid.defaultGroups<RowData>().first()))
 
 	/**
 	 * Marked which columns are used in an update layout.
@@ -61,53 +63,86 @@ internal class DataGridCache<E>(private val grid: DataGrid<E>) : Disposable {
 				GroupCache(group)
 			},
 			disposer = { _, groupCache ->
-				dispose(groupCache)
 				groupCache.dispose()
 			}
 	)
 
 	/**
+	 * The cell cache for the displayed cells.
+	 */
+	val cellCache = CellCache(columnCaches)
+
+	/**
+	 * The cell cache for the cells used in measurement.
+	 */
+	val measuredCellCache = CellCache(columnCaches)
+
+	/**
+	 * The cell cache for measuring the rows at the tail of the data view.
+	 * This is important for calculating the max vertical scroll position.
+	 */
+	val bottomCellCache = CellCache(columnCaches)
+
+	/**
 	 * @suppress
 	 */
-	internal val displayGroupCaches: List<DataGridCache<E>.GroupCache>
+	internal val displayGroupCaches: List<DataGridCache<RowData>.GroupCache>
 		get() = if (grid.groups.isEmpty()) defaultGroupCache else groupCaches
-
-	private fun dispose(groupCache: GroupCache) {
-		if (groupCache.header != null) {
-			usedGroupHeaders.forget(groupCache.header!!)
-		}
-		if (groupCache.bottomHeader != null) {
-			usedBottomGroupHeaders.forget(groupCache.bottomHeader!!)
-		}
-	}
 
 	override fun dispose() {
 		columnCaches.dispose()
 		groupCaches.dispose()
+		cellCache.dispose()
+		bottomCellCache.dispose()
 	}
 
 	/**
 	 * Cached display values for a column.
 	 */
-	internal inner class ColumnCache(owner: Owned, val column: DataGridColumn<E, *>) : Disposable {
+	internal inner class ColumnCache(owner: Owned, val column: DataGridColumn<RowData, *>) : Disposable {
 
 		var headerCell: UiComponent? = null
 
-		private val cellPool = ObjectPool {
+		val cellPool = ObjectPool {
 			val newCell = column.createCell(owner)
 			newCell.styleTags.add(DataGrid.BODY_CELL)
 			newCell
 		}
 
-		val cellCache = IndexedRecycleList(cellPool)
-		val bottomCellCache = IndexedRecycleList(cellPool)
-
 		override fun dispose() {
 			headerCell?.dispose()
 			headerCell = null
-			cellCache.clear()
-			bottomCellCache.clear()
 			cellPool.disposeAndClear()
+		}
+	}
+
+	internal inner class CellCache(
+			private val columnCaches: List<ColumnCache>
+	) : Disposable {
+
+		/**
+		 * The header and footer rows.
+		 */
+		val usedGroupHeadersAndFooters = UsedTracker<UiComponent>()
+
+		/**
+		 * Marked which columns are used in an update layout.
+		 */
+		val usedColumns = UsedTracker<Int>()
+
+		val columnCellCaches = ObservableListMapping(
+				target = grid.columns,
+				factory = { columnIndex, column ->
+					IndexedRecycleList(columnCaches[columnIndex].cellPool)
+				},
+				disposer = { columnIndex, columnCellCache ->
+					usedColumns.forget(columnIndex)
+					columnCellCache.disposeAndClear()
+				}
+		)
+
+		override fun dispose() {
+			columnCellCaches.dispose()
 		}
 	}
 
@@ -115,9 +150,9 @@ internal class DataGridCache<E>(private val grid: DataGrid<E>) : Disposable {
 	 * Cached display values for a data grid group.
 	 * @suppress
 	 */
-	internal inner class GroupCache(val group: DataGridGroup<E>) : Disposable {
+	internal inner class GroupCache(val group: DataGridGroup<RowData>) : Disposable {
 
-		val list: ListView<E> = ListView(grid.dataView).apply { filter = group.filter }
+		val list: ListView<RowData> = ListView(grid.dataView).apply { filter = group.filter }
 
 		var header: DataGridGroupHeader? = null
 		var bottomHeader: DataGridGroupHeader? = null
@@ -167,7 +202,7 @@ internal class DataGridCache<E>(private val grid: DataGrid<E>) : Disposable {
 	}
 }
 
-internal fun <T : UiComponent> IndexedRecycleList<T>.removeAndFlip(container: ElementContainerImpl<UiComponent>) {
+internal fun <T : UiComponent> IndexedRecycleList<T>.removeAndFlip(container: ElementContainer<UiComponent>) {
 	forEachUnused { index, element ->
 		container.removeElement(element)
 	}.flip()

@@ -48,7 +48,6 @@ import com.acornui.math.MathUtils.clamp
 import com.acornui.math.Pad
 import com.acornui.math.Vector2
 import com.acornui.observe.IndexBinding
-import com.acornui.recycle.IndexedRecycleList
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal2
@@ -67,21 +66,21 @@ import kotlin.math.abs
  * Toss scrolling
  * Styling
  */
-class DataGrid<E>(
+class DataGrid<RowData>(
 		owner: Owned
 ) : ContainerImpl(owner) {
 
-	constructor(owner: Owned, data: List<E>) : this(owner) {
+	constructor(owner: Owned, data: List<RowData>) : this(owner) {
 		data(data)
 	}
 
-	constructor(owner: Owned, data: ObservableList<E>) : this(owner) {
+	constructor(owner: Owned, data: ObservableList<RowData>) : this(owner) {
 		data(data)
 	}
 
 	private val cellClickedCancel = Cancel()
 
-	private val _cellClicked = own(Signal2<CellLocationRo<E>, Cancel>())
+	private val _cellClicked = own(Signal2<CellLocationRo<RowData>, Cancel>())
 
 	/**
 	 * Dispatched when the contents area has been clicked. Use [CellLocation.isValid] to determine whether or not
@@ -117,7 +116,7 @@ class DataGrid<E>(
 	 * edited cell, etc.
 	 * This is particularly important to set when using immutable data and the old element != new element.
 	 */
-	var equalityCheck: EqualityCheck<E> = { a, b -> a == b }
+	var equalityCheck: EqualityCheck<RowData> = { a, b -> a == b }
 		set(value) {
 			field = value
 			cellFocusRow.equality = value
@@ -137,10 +136,10 @@ class DataGrid<E>(
 
 	private var background: UiComponent? = null
 
-	private val _dataView = own(ListView<E>())
-	val dataView: ListViewRo<E> = _dataView
+	private val _dataView = own(ListView<RowData>())
+	val dataView: ListViewRo<RowData> = _dataView
 
-	private val _columns = own(WatchedElementsActiveList<DataGridColumn<E, *>>()).apply {
+	private val _columns = own(WatchedElementsActiveList<DataGridColumn<RowData, *>>()).apply {
 		bind(this@DataGrid::invalidateColumnWidths)
 	}
 
@@ -148,12 +147,12 @@ class DataGrid<E>(
 	 * The columns this data grid will display.
 	 * This list should be unique, that is no two columns should equal each other.
 	 */
-	val columns: MutableObservableList<DataGridColumn<E, *>> = _columns
+	val columns: MutableObservableList<DataGridColumn<RowData, *>> = _columns
 
 	/**
 	 * Add data grid groups to group data under collapsible headers.
 	 */
-	private val _groups = own(WatchedElementsActiveList<DataGridGroup<E>>()).apply {
+	private val _groups = own(WatchedElementsActiveList<DataGridGroup<RowData>>()).apply {
 		bind(this@DataGrid::invalidateLayout)
 	}
 
@@ -161,32 +160,32 @@ class DataGrid<E>(
 	 * The groups this data grid will display. If this is empty, there will be no grouping.
 	 * This list should be unique, that is no two groups should equal each other.
 	 */
-	val groups: MutableObservableList<DataGridGroup<E>> = _groups
+	val groups: MutableObservableList<DataGridGroup<RowData>> = _groups
 
 	/**
 	 * If the set groups are empty, use defaultGroups, which is simply showing all data.
 	 * @suppress
 	 */
-	internal val displayGroups: List<DataGridGroup<E>>
+	internal val displayGroups: List<DataGridGroup<RowData>>
 		get() = if (_groups.isEmpty()) defaultGroups() else _groups
 
-	private var _observableData: ObservableList<E> = emptyObservableList()
-	private var _data: List<E> = emptyList()
+	private var _observableData: ObservableList<RowData> = emptyObservableList()
+	private var _data: List<RowData> = emptyList()
 
 	/**
 	 * The data source for this list, as set via `data()`
 	 */
-	val data: List<E>
+	val data: List<RowData>
 		get() = _data
 
-	fun data(source: List<E>?) {
+	fun data(source: List<RowData>?) {
 		_data = source ?: emptyList()
 		_observableData = emptyObservableList()
 		_dataView.data(_data)
 		cellFocusRow.data(source)
 	}
 
-	fun data(source: ObservableList<E>?) {
+	fun data(source: ObservableList<RowData>?) {
 		_data = source ?: emptyList()
 		_observableData = source ?: emptyObservableList()
 		_dataView.data(_observableData)
@@ -207,9 +206,9 @@ class DataGrid<E>(
 	/**
 	 * Used for measurement of max v scroll position.
 	 */
-	internal val measureContents = clipper.addElement(container { interactivityMode = InteractivityMode.NONE; visible = false })
-	internal val rowBackgrounds = clipper.addElement(container())
-	internal val contents = clipper.addElement(container())
+	private val measureContents = clipper.addElement(container { interactivityMode = InteractivityMode.NONE; visible = false })
+	private val rowBackgrounds = clipper.addElement(container())
+	private val contents = clipper.addElement(container())
 	private val columnDividersContents = clipper.addElement(container { interactivityMode = InteractivityMode.NONE })
 	private val groupHeadersAndFooters = clipper.addElement(container { interactivityMode = InteractivityMode.CHILDREN })
 	private val editorCellContainer = clipper.addElement(container { interactivityMode = InteractivityMode.CHILDREN })
@@ -222,7 +221,7 @@ class DataGrid<E>(
 
 	private var cellFocusHighlight: UiComponent? = null
 	private var editorCell: DataGridEditorCell<*>? = null
-	private var cellFocusRow = IndexBinding<E>()
+	private var cellFocusRow = IndexBinding<RowData>()
 	private var cellFocusCol = IndexBinding(_columns)
 
 	private val feedback = clipper.addElement(container { interactivityMode = InteractivityMode.NONE })
@@ -264,9 +263,9 @@ class DataGrid<E>(
 	fun stopToss() = tossScroller.stop()
 
 	// Column sorting
-	private var _sortColumn: DataGridColumn<E, *>? = null
+	private var _sortColumn: DataGridColumn<RowData, *>? = null
 	private var _sortDirection = ColumnSortDirection.NONE
-	private var _customSortComparator: SortComparator<E>? = null
+	private var _customSortComparator: SortComparator<RowData>? = null
 	private var _customSortReversed = false
 
 	/**
@@ -407,43 +406,45 @@ class DataGrid<E>(
 	private fun keyDownHandler(event: KeyInteractionRo) {
 		if (event.defaultPrevented()) return
 
-		if (isEditing) {
+		val loc = cellFocusLocation
+		if (loc != null) {
 			when (event.keyCode) {
 				Ascii.HOME -> {
 					event.handled = true
-					val newLocation = cellFocusLocation!!
-					newLocation.position = 0
-					if (!newLocation.isElementRow) newLocation.moveToNextRowUntil { it.isElementRow }
+					loc.position = 0
+					if (!loc.isElementRow) loc.moveToNextRowUntil { it.isElementRow }
 					commitCellEditorValue()
-					focusCell(newLocation)
+					focusCell(loc)
 				}
 				Ascii.END -> {
 					event.handled = true
-					val newLocation = cellFocusLocation!!
-					newLocation.position = totalRows - 1
-					if (!newLocation.isElementRow) newLocation.moveToPreviousRowUntil { it.isElementRow }
+					loc.position = totalRows - 1
+					if (!loc.isElementRow) loc.moveToPreviousRowUntil { it.isElementRow }
 
 					commitCellEditorValue()
-					focusCell(newLocation)
+					focusCell(loc)
 				}
 				Ascii.PAGE_DOWN -> {
 					event.handled = true
-					val newLocation = cellFocusLocation!!
-					vScrollModel.value = newLocation.position.toFloat()
+
+					vScrollModel.value = loc.position.toFloat()
 					validateLayout()
-					newLocation.position = clamp(newLocation.position + (rowHeights.lastIndex - 1), 0, totalRows - 1)
-					if (!newLocation.isElementRow) newLocation.moveToNextRowUntil { it.isElementRow }
+					val pageSize = rowHeights.lastIndex - 1
+					loc.position = clamp(loc.position + pageSize, 0, totalRows - 1)
+					if (!loc.isElementRow) loc.moveToNextRowUntil { it.isElementRow }
 
 					commitCellEditorValue()
-					focusCell(newLocation)
+					focusCell(loc)
 				}
 				Ascii.PAGE_UP -> {
 					event.handled = true
-					val newLocation = cellFocusLocation!!
-					newLocation.position = clamp(newLocation.position - (rowHeights.lastIndex - 1), 0, totalRows - 1)
+//					measureRowsReversed(bottomBounds.width, bottomBounds.height, loc, bottomBounds)
+					val pageSize = rowHeights.lastIndex - 1
+					loc.position = clamp(loc.position - pageSize, 0, totalRows - 1)
+					if (!loc.isElementRow) loc.moveToPreviousRowUntil { it.isElementRow }
+
 					commitCellEditorValue()
-					if (!newLocation.isElementRow) newLocation.moveToPreviousRowUntil { it.isElementRow }
-					focusCell(newLocation)
+					focusCell(loc)
 				}
 				Ascii.TAB -> {
 					// Edit the next column
@@ -486,7 +487,7 @@ class DataGrid<E>(
 	 * Given a canvas coordinate, this method returns the cell location of that position.
 	 * The cell position returned may be out of bounds, use [CellLocation.isValid] to check.
 	 */
-	fun getCellFromPosition(canvasX: Float, canvasY: Float): CellLocationRo<E> {
+	fun getCellFromPosition(canvasX: Float, canvasY: Float): CellLocationRo<RowData> {
 		validate(ValidationFlags.LAYOUT)
 		val p = tmp
 		canvasToLocal(p.set(canvasX, canvasY))
@@ -531,7 +532,7 @@ class DataGrid<E>(
 	 * @param sourceIndex The index of the element within [data] to convert. This should be between 0 and
 	 * `data.lastIndex` (inclusive)
 	 */
-	fun sourceIndexToLocal(sourceIndex: Int): RowLocation<E>? {
+	fun sourceIndexToLocal(sourceIndex: Int): RowLocation<RowData>? {
 		val element = data[sourceIndex]
 		if (_dataView.filter?.invoke(element) == false) return null
 		var position = 0
@@ -551,7 +552,7 @@ class DataGrid<E>(
 	 * Returns a new CellLocation object representing the currently focused cell, or null if there is no current cell
 	 * being focused.
 	 */
-	val cellFocusLocation: CellLocation<E>?
+	val cellFocusLocation: CellLocation<RowData>?
 		get() {
 			if (editorCell == null) return null
 			return CellLocation(this, sourceIndexToLocal(cellFocusRow.index)!!, cellFocusCol.index)
@@ -562,15 +563,15 @@ class DataGrid<E>(
 	 * Note that if the data elements are not unique, one of the [focusCell] overloads may be more appropriate to
 	 * avoid ambiguity.
 	 */
-	fun focusCell(element: E, column: DataGridColumn<E, *>) = focusCell(data.indexOf(element), _columns.indexOf(column))
+	fun focusCell(element: RowData, column: DataGridColumn<RowData, *>) = focusCell(data.indexOf(element), _columns.indexOf(column))
 
-	fun focusCell(rowLocation: RowLocationRo<E>, columnIndex: Int) = focusCell(CellLocation(this, rowLocation, columnIndex))
+	fun focusCell(rowLocation: RowLocationRo<RowData>, columnIndex: Int) = focusCell(CellLocation(this, rowLocation, columnIndex))
 	fun focusCell(sourceIndex: Int, columnIndex: Int) = focusCell(CellLocation(this, sourceIndexToLocal(cellFocusRow.index)!!, columnIndex))
 
 	/**
 	 * Focuses the cell at the given location.
 	 */
-	fun focusCell(cellLocation: CellLocationRo<E>) {
+	fun focusCell(cellLocation: CellLocationRo<RowData>) {
 		val columnIndex = cellLocation.columnIndex
 		val sourceIndex = cellLocation.sourceIndex
 		if (sourceIndex == cellFocusRow.index && columnIndex == cellFocusCol.index) return // no-op
@@ -645,7 +646,7 @@ class DataGrid<E>(
 	/**
 	 * Brings the given row into view.
 	 */
-	fun bringIntoView(rowLocation: RowLocationRo<E>) {
+	fun bringIntoView(rowLocation: RowLocationRo<RowData>) {
 		val max = rowLocation.position.toFloat()
 		if (vScrollModel.value > max) {
 			vScrollModel.value = max
@@ -664,15 +665,17 @@ class DataGrid<E>(
 	/**
 	 * Brings the given cell into view.
 	 */
-	fun bringIntoView(cellLocation: CellLocationRo<E>) {
-		bringIntoView(cellLocation as RowLocationRo<E>)
-		hScrollModel.value = clamp(hScrollModel.value, _columnPositions[cellLocation.columnIndex] + _columnWidths[cellLocation.columnIndex] - contents.width, _columnPositions[cellLocation.columnIndex])
+	fun bringIntoView(cellLocation: CellLocationRo<RowData>) {
+		bringIntoView(cellLocation as RowLocationRo<RowData>)
+		val minXScroll = _columnPositions[cellLocation.columnIndex] + _columnWidths[cellLocation.columnIndex] - contents.width
+		val maxXScroll = _columnPositions[cellLocation.columnIndex]
+		hScrollModel.value = clamp(hScrollModel.value, minXScroll, maxXScroll)
 	}
 
 	private fun commitCellEditorValue() {
 		val editorCell = editorCell ?: return
 		@Suppress("UNCHECKED_CAST")
-		val column = _columns[cellFocusCol.index] as DataGridColumn<E, Any?>
+		val column = _columns[cellFocusCol.index] as DataGridColumn<RowData, Any?>
 		val element = data[cellFocusRow.index]
 		column.setCellData(element, editorCell.getData())
 		_observableData.notifyElementModified(cellFocusRow.index)
@@ -708,7 +711,7 @@ class DataGrid<E>(
 	/**
 	 * Sets a column to be used as the sort comparator.
 	 */
-	fun setSortColumn(column: DataGridColumn<E, *>, direction: ColumnSortDirection = ColumnSortDirection.ASCENDING) {
+	fun setSortColumn(column: DataGridColumn<RowData, *>, direction: ColumnSortDirection = ColumnSortDirection.ASCENDING) {
 		_sortColumn = column
 		_sortDirection = direction
 		_dataView.sortComparator = if (_sortDirection == ColumnSortDirection.NONE) null else { row1, row2 ->
@@ -722,7 +725,7 @@ class DataGrid<E>(
 	 * A custom sort comparator.
 	 * Note that no sorting arrows will be displayed in the header.
 	 */
-	var dataSortComparator: SortComparator<E>?
+	var dataSortComparator: SortComparator<RowData>?
 		get() = _customSortComparator
 		set(value) {
 			_customSortComparator = value
@@ -751,7 +754,7 @@ class DataGrid<E>(
 	 * If this filter is set, the row data will be passed to the filter function, if false is returned, the row will
 	 * not be shown.
 	 */
-	var dataFilter: ((E) -> Boolean)?
+	var dataFilter: ((RowData) -> Boolean)?
 		get() = _dataView.filter
 		set(value) {
 			_dataView.filter = value
@@ -953,7 +956,7 @@ class DataGrid<E>(
 	/**
 	 * Gets the preferred width of a column.
 	 */
-	private fun getPreferredColumnWidth(column: DataGridColumn<E, *>): Float {
+	private fun getPreferredColumnWidth(column: DataGridColumn<RowData, *>): Float {
 		if (!column.visible) return 0f
 		val width = style.borderThickness.reduceWidth(explicitWidth)
 		return column.getPreferredWidth(width) ?: maxOf(column.minWidth, style.defaultColumnWidth)
@@ -977,7 +980,15 @@ class DataGrid<E>(
 
 		_totalRows = calculateTotalRows()
 		var contentsH = if (explicitHeight == null) null else border.reduceHeight2(explicitHeight) - headerCells.height - hScrollBarH
-		val bottomRowCount = measureRowsReversed(contentsW, contentsH, rowIterator.moveToLastRow(), bottomBounds)
+		val bottomRowCount = measureRowsReversed(
+				width = contentsW,
+				height = contentsH,
+				rowLocation = rowIterator.moveToLastRow(),
+				cellCache = cache.bottomCellCache,
+				cellsContainer = measureContents,
+				headerAndFootersContainer = measureContents,
+				bounds = bottomBounds
+		)
 		vScrollBar.modelToPixels = bottomBounds.height / maxOf(0.0001f, bottomRowCount)
 		vScrollBar.scrollModel.max = maxOf(0f, _totalRows - bottomRowCount)
 		vScrollBar.visible = vScrollPolicy != ScrollPolicy.OFF && vScrollBar.scrollModel.max > 0.0001f
@@ -1028,8 +1039,6 @@ class DataGrid<E>(
 		cache.usedColumns.forEachUnused {
 			cache.columnCaches[it].headerCell?.visible = false
 		}.flip()
-		cache.usedGroupHeaders.forEachUnused { groupHeadersAndFooters.removeElement(it) }.flip()
-		cache.usedBottomGroupHeaders.forEachUnused { measureContents.removeElement(it) }.flip()
 	}
 
 	private fun updateHeader(width: Float) {
@@ -1152,6 +1161,17 @@ class DataGrid<E>(
 		return total
 	}
 
+	private val tmpBounds = Bounds()
+	private fun measureRowsReversed(rowLocation: RowLocationRo<RowData>): Float = measureRowsReversed(
+			width = bottomBounds.width,
+			height = bottomBounds.height,
+			rowLocation = rowLocation,
+			cellCache = cache.measuredCellCache,
+			cellsContainer = measureContents,
+			headerAndFootersContainer = measureContents,
+			bounds = tmpBounds
+	)
+
 	/**
 	 * Calculates how many rows can be rendered in the given space with the last row being the given row location.
 	 * This method must set the size of [bounds], and return the number of visible rows.
@@ -1161,7 +1181,19 @@ class DataGrid<E>(
 	 * @param bounds This will be set to the measured width and height of the contents area.
 	 * @return Returns the number of visible rows.
 	 */
-	private fun measureRowsReversed(width: Float, height: Float?, rowLocation: RowLocationRo<E>, bounds: Bounds): Float {
+	private fun measureRowsReversed(
+			width: Float,
+			height: Float?,
+			rowLocation: RowLocationRo<RowData>,
+			cellCache: DataGridCache<RowData>.CellCache,
+			cellsContainer: ElementContainer<UiComponent>,
+			headerAndFootersContainer: ElementContainer<UiComponent>,
+			bounds: Bounds
+	): Float {
+		iterateVisibleColumnsInternal { columnIndex, _, _, _ ->
+			cellCache.usedColumns.markUsed(columnIndex)
+			true
+		}
 		var rowsY: Float
 		val visibleRows: Float
 		val rowHeight = rowHeight
@@ -1189,13 +1221,13 @@ class DataGrid<E>(
 				if (rowIterator.isHeader) {
 					val groupCache = rowIterator.groupCache
 					val group = rowIterator.group
-					if (groupCache.bottomHeader == null) {
-						groupCache.bottomHeader = group.createHeader(measureContents, groupCache.list)
+					if (groupCache.header == null) {
+						groupCache.header = group.createHeader(headerAndFootersContainer, groupCache.list)
 					}
-					val header = groupCache.bottomHeader!!
-					if (!header.isActive) measureContents.addElement(header)
+					val header = groupCache.header!!
+					if (!header.isActive) cellsContainer.addElement(header)
 					header.collapsed = group.collapsed
-					cache.usedBottomGroupHeaders.markUsed(header)
+					cellCache.usedGroupHeadersAndFooters.markUsed(header)
 
 					header.setSize(width, null)
 					iRowHeight = rowHeight ?: maxOf(iRowHeight, header.height)
@@ -1205,10 +1237,9 @@ class DataGrid<E>(
 					val element = rowIterator.element!!
 					rowIndex--
 					iterateVisibleColumnsInternal { columnIndex, column, columnX, columnWidth ->
-						val columnCache = cache.columnCaches[columnIndex]
 						@Suppress("unchecked_cast")
-						val cell = columnCache.bottomCellCache.obtain(rowIndex) as DataGridCell<Any?>
-						if (!cell.isActive) measureContents.addElement(cell)
+						val cell = cellCache.columnCellCaches[columnIndex].obtain(rowIndex) as DataGridCell<Any?>
+						if (!cell.isActive) cellsContainer.addElement(cell)
 
 						val cellData = column.getCellData(element)
 						cell.setData(cellData)
@@ -1227,12 +1258,13 @@ class DataGrid<E>(
 
 		// Recycle unused components.
 		iterateVisibleColumnsInternal { columnIndex, _, _, _ ->
-			cache.columnCaches[columnIndex].bottomCellCache.removeAndFlip(measureContents)
+			cellCache.columnCellCaches[columnIndex].removeAndFlip(cellsContainer)
 			true
 		}
 		cache.usedColumns.forEachUnused { columnIndex ->
-			cache.columnCaches[columnIndex].bottomCellCache.removeAndFlip(measureContents)
+			cellCache.columnCellCaches[columnIndex].removeAndFlip(cellsContainer)
 		}
+		cellCache.usedGroupHeadersAndFooters.forEachUnused { headerAndFootersContainer.removeElement(it) }.flip()
 		return visibleRows
 	}
 
@@ -1243,8 +1275,15 @@ class DataGrid<E>(
 	private val rowCells = ArrayList<UiComponent>()
 
 	private fun updateRows(width: Float, height: Float) {
-		val rowHeight = rowHeight
+		val cellsContainer = contents
+		val cellCache = cache.cellCache
+		val headersAndFootersContainer = groupHeadersAndFooters
+		iterateVisibleColumnsInternal { columnIndex, _, _, _ ->
+			cellCache.usedColumns.markUsed(columnIndex)
+			true
+		}
 
+		val rowHeight = rowHeight
 		val pad = style.cellPadding
 		val rowHeight2 = pad.reduceHeight(rowHeight)
 		var rowsShown = 0
@@ -1262,12 +1301,12 @@ class DataGrid<E>(
 				val groupCache = rowIterator.groupCache
 				val group = rowIterator.group
 				if (groupCache.header == null) {
-					groupCache.header = group.createHeader(groupHeadersAndFooters, groupCache.list)
+					groupCache.header = group.createHeader(headersAndFootersContainer, groupCache.list)
 				}
 				val header = groupCache.header!!
-				if (!header.isActive) groupHeadersAndFooters.addElement(header)
+				if (!header.isActive) headersAndFootersContainer.addElement(header)
 				header.collapsed = group.collapsed
-				cache.usedGroupHeaders.markUsed(header)
+				cellCache.usedGroupHeadersAndFooters.markUsed(header)
 
 				header.setSize(width, null)
 				iRowHeight = rowHeight ?: maxOf(iRowHeight, header.height)
@@ -1283,10 +1322,9 @@ class DataGrid<E>(
 				val element = rowIterator.element!!
 				rowIndex++
 				iterateVisibleColumnsInternal { columnIndex, column, columnX, columnWidth ->
-					val columnCache = cache.columnCaches[columnIndex]
 					@Suppress("unchecked_cast")
-					val cell = columnCache.cellCache.obtain(rowIndex) as DataGridCell<Any?>
-					if (!cell.isActive) contents.addElement(cell)
+					val cell = cellCache.columnCellCaches[columnIndex].obtain(rowIndex) as DataGridCell<Any?>
+					if (!cell.isActive) cellsContainer.addElement(cell)
 					val cellData = column.getCellData(element)
 					cell.setData(cellData)
 
@@ -1334,12 +1372,13 @@ class DataGrid<E>(
 		}
 		// Recycle unused components.
 		iterateVisibleColumnsInternal { columnIndex, _, _, _ ->
-			cache.columnCaches[columnIndex].cellCache.removeAndFlip(contents)
+			cellCache.columnCellCaches[columnIndex].removeAndFlip(cellsContainer)
 			true
 		}
 		cache.usedColumns.forEachUnused { columnIndex ->
-			cache.columnCaches[columnIndex].cellCache.removeAndFlip(contents)
+			cellCache.columnCellCaches[columnIndex].removeAndFlip(cellsContainer)
 		}
+		cellCache.usedGroupHeadersAndFooters.forEachUnused { headersAndFootersContainer.removeElement(it) }.flip()
 		cache.rowBackgroundsCache.forEachUnused { index, element -> element.visible = false }.flip()
 	}
 
@@ -1383,7 +1422,7 @@ class DataGrid<E>(
 		}
 	}
 
-	fun iterateVisibleRows(callback: (row: RowLocation<E>, rowY: Float, rowHeight: Float) -> Boolean) {
+	fun iterateVisibleRows(callback: (row: RowLocation<RowData>, rowY: Float, rowHeight: Float) -> Boolean) {
 		validateLayout()
 		var rowY = 0f
 		var i = 0
@@ -1401,7 +1440,7 @@ class DataGrid<E>(
 	 * The callback will be invoked for every column fully or partially visible, providing the
 	 * the columnIndex, column, x position, and width.
 	 */
-	fun iterateVisibleColumns(callback: (columnIndex: Int, column: DataGridColumn<E, *>, columnX: Float, columnWidth: Float) -> Boolean) {
+	fun iterateVisibleColumns(callback: (columnIndex: Int, column: DataGridColumn<RowData, *>, columnX: Float, columnWidth: Float) -> Boolean) {
 		validate(COLUMNS_WIDTHS_VALIDATION)
 		iterateVisibleColumnsInternal(callback)
 	}
@@ -1410,7 +1449,7 @@ class DataGrid<E>(
 	 * @see iterateVisibleColumns
 	 * This assumes the COLUMNS_WIDTHS_VALIDATION flag has already been validated.
 	 */
-	private inline fun iterateVisibleColumnsInternal(callback: (columnIndex: Int, column: DataGridColumn<E, *>, columnX: Float, columnWidth: Float) -> Boolean) {
+	private inline fun iterateVisibleColumnsInternal(callback: (columnIndex: Int, column: DataGridColumn<RowData, *>, columnX: Float, columnWidth: Float) -> Boolean) {
 		if (firstVisibleColumn == -1) return
 		val xOffset = -hScrollModel.value
 		for (i in firstVisibleColumn..lastVisibleColumn) {
