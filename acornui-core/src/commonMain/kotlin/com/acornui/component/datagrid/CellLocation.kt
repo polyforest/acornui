@@ -39,6 +39,9 @@ class CellLocation<RowData>(dataGrid: DataGrid<RowData>) : RowLocation<RowData>(
 		this.columnIndex = columnIndex
 	}
 
+	/**
+	 * Constructs a cell location, setting this row location to match the provided row location.
+	 */
 	constructor(dataGrid: DataGrid<RowData>, rowLocation: RowLocationRo<RowData>, columnIndex: Int) : this(dataGrid) {
 		set(rowLocation)
 		this.columnIndex = columnIndex

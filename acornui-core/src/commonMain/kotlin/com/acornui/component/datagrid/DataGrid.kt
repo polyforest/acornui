@@ -122,17 +122,17 @@ class DataGrid<RowData>(
 			cellFocusRow.equality = value
 		}
 
-	/**
-	 * The starting y offset of the visible rows.
-	 * This is local to the contents.
-	 */
-	private val rowsY: Float
-		get() = if (rowHeights.isEmpty()) 0f else -rowHeights.first() * (vScrollModel.value - vScrollModel.value.floor())
+	private val _bottomCellMetrics = DataGridCellMetrics()
+	private val _cellMetrics = DataGridCellMetrics()
 
 	/**
-	 * The currently visible row heights.
+	 * The metrics for the currently visible cells.
 	 */
-	private val rowHeights = ArrayList<Float>()
+	val cellMetrics: DataGridCellMetricsRo
+		get() {
+			validateLayout()
+			return _cellMetrics
+		}
 
 	private var background: UiComponent? = null
 
@@ -429,7 +429,7 @@ class DataGrid<RowData>(
 
 					vScrollModel.value = loc.position.toFloat()
 					validateLayout()
-					val pageSize = rowHeights.lastIndex - 1
+					val pageSize = _cellMetrics.rowHeights.lastIndex - 1
 					loc.position = clamp(loc.position + pageSize, 0, totalRows - 1)
 					if (!loc.isElementRow) loc.moveToNextRowUntil { it.isElementRow }
 
@@ -438,8 +438,8 @@ class DataGrid<RowData>(
 				}
 				Ascii.PAGE_UP -> {
 					event.handled = true
-//					measureRowsReversed(bottomBounds.width, bottomBounds.height, loc, bottomBounds)
-					val pageSize = rowHeights.lastIndex - 1
+//					sizeRowsReversed(bottomBounds.width, bottomBounds.height, loc, bottomBounds)
+					val pageSize = _cellMetrics.rowHeights.lastIndex - 1
 					loc.position = clamp(loc.position - pageSize, 0, totalRows - 1)
 					if (!loc.isElementRow) loc.moveToPreviousRowUntil { it.isElementRow }
 
@@ -468,8 +468,8 @@ class DataGrid<RowData>(
 			when (event.keyCode) {
 				Ascii.HOME -> vScrollModel.value = 0f
 				Ascii.END -> vScrollModel.value = totalRows - 1f
-				Ascii.PAGE_DOWN -> vScrollModel.value += rowHeights.lastIndex - 1
-				Ascii.PAGE_UP -> vScrollModel.value -= rowHeights.lastIndex - 1
+				Ascii.PAGE_DOWN -> vScrollModel.value += _cellMetrics.rowHeights.lastIndex - 1
+				Ascii.PAGE_UP -> vScrollModel.value -= _cellMetrics.rowHeights.lastIndex - 1
 				Ascii.DOWN -> vScrollModel.value++
 				Ascii.UP -> vScrollModel.value--
 				Ascii.RIGHT -> hScrollModel.value += 20f
@@ -493,15 +493,9 @@ class DataGrid<RowData>(
 		canvasToLocal(p.set(canvasX, canvasY))
 		val columnIndex = if (p.x < 0 || p.x > width) -1 else _columnPositions.sortedInsertionIndex(p.x + hScrollModel.value) - 1
 		val headerHeight = headerCells.height
-		if (firstVisibleColumn == -1 || p.y < headerHeight || p.y > height) return CellLocation(this, -1, columnIndex)
-
-		rowIterator.position = vScrollModel.value.toInt() - 1
-		var rowIndex = 0
-		var measuredHeight = headerHeight + rowsY
-		while (rowIterator.hasNextRow && measuredHeight < p.y) {
-			rowIterator.moveToNextRow()
-			measuredHeight += rowHeights[rowIndex++]
-		}
+		val rowPosition = _cellMetrics.getPositionAtY(p.y - headerHeight)
+		if (rowPosition < 0f) return CellLocation(this, -1, columnIndex)
+		rowIterator.position = rowPosition.toInt()
 		return CellLocation(this, rowIterator, columnIndex)
 	}
 
@@ -985,7 +979,7 @@ class DataGrid<RowData>(
 
 		_totalRows = calculateTotalRows()
 		var contentsH = if (explicitHeight == null) null else border.reduceHeight2(explicitHeight) - headerCells.height - hScrollBarH
-		val bottomRowCount = measureRowsReversed(
+		val bottomRowCount = sizeRowsReversed(
 				width = contentsW,
 				height = contentsH,
 				rowLocation = rowIterator.moveToLastRow(),
@@ -1000,7 +994,7 @@ class DataGrid<RowData>(
 		val vScrollBarW = if (vScrollBar.visible) vScrollBar.minWidth ?: 0f else 0f
 
 		contentsH = bottomBounds.height
-		updateRows(contentsW, contentsH)
+		updateRows(contentsW, contentsH, vScrollModel.value, _cellMetrics)
 		updateEditorCell()
 
 		rowBackgrounds.setSize(contentsW, contentsH)
@@ -1167,7 +1161,7 @@ class DataGrid<RowData>(
 	}
 
 	private val tmpBounds = Bounds()
-	private fun measureRowsReversed(rowLocation: RowLocationRo<RowData>): Float = measureRowsReversed(
+	private fun measureRowsReversed(rowLocation: RowLocationRo<RowData>): Float = sizeRowsReversed(
 			width = bottomBounds.width,
 			height = bottomBounds.height,
 			rowLocation = rowLocation,
@@ -1186,7 +1180,7 @@ class DataGrid<RowData>(
 	 * @param bounds This will be set to the measured width and height of the contents area.
 	 * @return Returns the number of visible rows.
 	 */
-	private fun measureRowsReversed(
+	private fun sizeRowsReversed(
 			width: Float,
 			height: Float?,
 			rowLocation: RowLocationRo<RowData>,
@@ -1279,7 +1273,12 @@ class DataGrid<RowData>(
 	 */
 	private val rowCells = ArrayList<UiComponent>()
 
-	private fun updateRows(width: Float, height: Float) {
+	/**
+	 *
+	 */
+	private fun updateRows(width: Float, height: Float, position: Float, metrics: DataGridCellMetrics) {
+		metrics.clear()
+		metrics.bounds.set(width, height)
 		val cellsContainer = contents
 		val cellCache = cache.cellCache
 		val headersAndFootersContainer = groupHeadersAndFooters
@@ -1293,10 +1292,10 @@ class DataGrid<RowData>(
 		val rowHeight2 = pad.reduceHeight(rowHeight)
 		var rowsShown = 0
 		var rowsY = 0f
-		var iRowHeight: Float
-		rowHeights.clear()
+		var iRowHeight: Float = minRowHeight
 
-		rowIterator.position = vScrollModel.value.toInt() - 1
+		metrics.startPosition = position
+		rowIterator.position = position.toInt() - 1
 		val firstP = vScrollModel.value - vScrollModel.value.floor()
 		var rowIndex = rowIterator.position
 		while (rowIterator.hasNextRow && rowsY < height) {
@@ -1371,10 +1370,16 @@ class DataGrid<RowData>(
 				rowBackground.setSize(width, iRowHeight)
 				rowBackground.setPosition(0f, rowsY)
 			}
-			rowHeights.add(iRowHeight)
+			metrics.rowHeights.add(iRowHeight)
+			metrics.rowPositions.add(rowsY)
 			rowsY += iRowHeight
 			rowsShown++
 		}
+		val overhang = if (rowsY <= height) 0f else {
+			(rowsY - height) / iRowHeight
+		}
+		metrics.endPosition = rowIterator.position.toFloat() - overhang
+
 		// Recycle unused components.
 		iterateVisibleColumnsInternal { columnIndex, _, _, _ ->
 			cellCache.columnCellCaches[columnIndex].removeAndFlip(cellsContainer)
@@ -1392,6 +1397,7 @@ class DataGrid<RowData>(
 		val editorCell = editorCell ?: return
 		val columnIndex = cellFocusCol.index
 		val x = _columnPositions[columnIndex] - hScrollModel.value
+		val rowHeights = _cellMetrics.rowHeights
 
 		rowIterator.sourceIndex = cellFocusRow.index
 		val position = rowIterator.position
@@ -1429,6 +1435,7 @@ class DataGrid<RowData>(
 
 	fun iterateVisibleRows(callback: (row: RowLocation<RowData>, rowY: Float, rowHeight: Float) -> Boolean) {
 		validateLayout()
+		val rowHeights = _cellMetrics.rowHeights
 		var rowY = 0f
 		var i = 0
 		rowIterator.position = vScrollModel.value.toInt() - 1
