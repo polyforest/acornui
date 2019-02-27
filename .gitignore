@@ -180,3 +180,4 @@ dist/
 www/
 wwwDist/
 out-win64/
+!**/src/**/build
