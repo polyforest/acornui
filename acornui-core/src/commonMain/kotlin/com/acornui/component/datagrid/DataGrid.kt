@@ -404,7 +404,7 @@ class DataGrid<RowData>(
 	}
 
 	private fun keyDownHandler(event: KeyInteractionRo) {
-		if (event.defaultPrevented()) return
+		if (event.defaultPrevented() || event.handled) return
 
 		val loc = cellFocusLocation
 		if (loc != null) {
@@ -533,6 +533,7 @@ class DataGrid<RowData>(
 	 * `data.lastIndex` (inclusive)
 	 */
 	fun sourceIndexToLocal(sourceIndex: Int): RowLocation<RowData>? {
+		if (!data.rangeCheck(sourceIndex)) return null
 		val element = data[sourceIndex]
 		if (_dataView.filter?.invoke(element) == false) return null
 		var position = 0
@@ -554,7 +555,11 @@ class DataGrid<RowData>(
 	 */
 	val cellFocusLocation: CellLocation<RowData>?
 		get() {
-			if (editorCell == null) return null
+			if (cellFocusRow.index == -1) {
+				if (isEditing)
+					println("??")
+				return null
+			}
 			return CellLocation(this, sourceIndexToLocal(cellFocusRow.index)!!, cellFocusCol.index)
 		}
 

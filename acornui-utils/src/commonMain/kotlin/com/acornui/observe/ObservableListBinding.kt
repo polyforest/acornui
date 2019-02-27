@@ -156,8 +156,7 @@ class IndexBinding<E>() : Clearable, Disposable {
 			}
 		}
 		_index = list.indexOfFirst { equality(it, lastKnownElement) }
-		this.lastKnownElement = list[_index]
-		_index = index
+		this.lastKnownElement = list.getOrNull(_index)
 	}
 
 	override fun clear() {

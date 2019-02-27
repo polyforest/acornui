@@ -188,6 +188,8 @@ abstract class SignalBase<T : Any> : Signal<T>, Disposable {
 				executor(handler)
 				cursor++
 			}
+		} catch(e: Throwable) {
+			throw e
 		} finally {
 			cursor = -1
 		}
