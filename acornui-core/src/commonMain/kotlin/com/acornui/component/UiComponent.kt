@@ -696,7 +696,7 @@ open class UiComponentImpl(
 	/**
 	 * Do not call this directly, use [validate(ValidationFlags.SIZE_CONSTRAINTS)]
 	 */
-	protected fun validateSizeConstraints() {
+	private fun validateSizeConstraints() {
 		_sizeConstraints.clear()
 		updateSizeConstraints(_sizeConstraints)
 		_sizeConstraints.bound(_explicitSizeConstraints)
@@ -711,7 +711,7 @@ open class UiComponentImpl(
 	/**
 	 * Do not call this directly, use [validate(ValidationFlags.LAYOUT)]
 	 */
-	protected fun validateLayout() {
+	private fun validateLayout() {
 		val sC = sizeConstraints
 		val w = sC.width.clamp(_explicitWidth ?: defaultWidth)
 		val h = sC.height.clamp(_explicitHeight ?: defaultHeight)

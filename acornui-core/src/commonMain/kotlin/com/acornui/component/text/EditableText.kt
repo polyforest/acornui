@@ -541,7 +541,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		// TODO: Make this efficient.
 		val text = this.text
 		this.text = text.substring(0, MathUtils.clamp(cmd.startIndex, 0, text.length)) + cmd.newText + text.substring(MathUtils.clamp(cmd.endIndex, 0, text.length), text.length)
-		validateLayout()
+		validate(ValidationFlags.LAYOUT)
 	}
 
 	private fun String.toPassword(): String {

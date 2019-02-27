@@ -54,7 +54,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 	 */
 	val scrollMax: Float
 		get() {
-			validateLayout()
+			validate(ValidationFlags.LAYOUT)
 			return scrollBar.scrollModel.max
 		}
 

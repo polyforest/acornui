@@ -74,5 +74,5 @@ fun DataGridCellMetricsRo.getPositionAtY(yValue: Float): Float {
 	val rowIndex = rowPositions.sortedInsertionIndex(yValue, matchForwards = true) - 1
 	val rowPosition = rowPositions[rowIndex]
 	val rowHeight = rowHeights[rowIndex]
-	return startPosition + rowIndex.toFloat() + (yValue - rowPosition) / rowHeight
+	return startPosition.toInt() + rowIndex.toFloat() + (yValue - rowPosition) / rowHeight
 }

@@ -42,6 +42,7 @@ import com.acornui.core.input.interaction.click
 import com.acornui.core.input.interaction.dragAttachment
 import com.acornui.core.input.keyDown
 import com.acornui.core.input.wheel
+import com.acornui.graphic.Color
 import com.acornui.math.Bounds
 import com.acornui.math.Corners
 import com.acornui.math.MathUtils.clamp
@@ -130,7 +131,7 @@ class DataGrid<RowData>(
 	 */
 	val cellMetrics: DataGridCellMetricsRo
 		get() {
-			validateLayout()
+			validate(ValidationFlags.LAYOUT)
 			return _cellMetrics
 		}
 
@@ -320,7 +321,7 @@ class DataGrid<RowData>(
 	 */
 	val totalRows: Int
 		get() {
-			validateLayout()
+			validate(ValidationFlags.LAYOUT)
 			return _totalRows
 		}
 
@@ -404,7 +405,7 @@ class DataGrid<RowData>(
 	}
 
 	private fun keyDownHandler(event: KeyInteractionRo) {
-		if (event.defaultPrevented() || event.handled) return
+		if (event.defaultPrevented()) return
 
 		val loc = cellFocusLocation
 		if (loc != null) {
@@ -428,7 +429,7 @@ class DataGrid<RowData>(
 					event.handled = true
 
 					vScrollModel.value = loc.position.toFloat()
-					validateLayout()
+					validate(ValidationFlags.LAYOUT)
 					val pageSize = _cellMetrics.rowHeights.lastIndex - 1
 					loc.position = clamp(loc.position + pageSize, 0, totalRows - 1)
 					if (!loc.isElementRow) loc.moveToNextRowUntil { it.isElementRow }
@@ -490,10 +491,9 @@ class DataGrid<RowData>(
 	fun getCellFromPosition(canvasX: Float, canvasY: Float): CellLocationRo<RowData> {
 		validate(ValidationFlags.LAYOUT)
 		val p = tmp
-		canvasToLocal(p.set(canvasX, canvasY))
+		contents.canvasToLocal(p.set(canvasX, canvasY))
 		val columnIndex = if (p.x < 0 || p.x > width) -1 else _columnPositions.sortedInsertionIndex(p.x + hScrollModel.value) - 1
-		val headerHeight = headerCells.height
-		val rowPosition = _cellMetrics.getPositionAtY(p.y - headerHeight)
+		val rowPosition = _cellMetrics.getPositionAtY(p.y)
 		if (rowPosition < 0f) return CellLocation(this, -1, columnIndex)
 		rowIterator.position = rowPosition.toInt()
 		return CellLocation(this, rowIterator, columnIndex)
@@ -550,8 +550,6 @@ class DataGrid<RowData>(
 	val cellFocusLocation: CellLocation<RowData>?
 		get() {
 			if (cellFocusRow.index == -1) {
-				if (isEditing)
-					println("??")
 				return null
 			}
 			return CellLocation(this, sourceIndexToLocal(cellFocusRow.index)!!, cellFocusCol.index)
@@ -994,7 +992,16 @@ class DataGrid<RowData>(
 		val vScrollBarW = if (vScrollBar.visible) vScrollBar.minWidth ?: 0f else 0f
 
 		contentsH = bottomBounds.height
-		updateRows(contentsW, contentsH, vScrollModel.value, _cellMetrics)
+		updateRows(
+				width = contentsW,
+				height = contentsH,
+				position = vScrollModel.value,
+				cellsContainer = contents,
+				headersAndFootersContainer = groupHeadersAndFooters,
+				cellCache = cache.cellCache,
+				metrics = _cellMetrics
+		)
+		updateRowBackgrounds()
 		updateEditorCell()
 
 		rowBackgrounds.setSize(contentsW, contentsH)
@@ -1034,10 +1041,7 @@ class DataGrid<RowData>(
 		clipper.setPosition(border.left, border.top)
 
 		background?.setSize(out)
-
-		cache.usedColumns.forEachUnused {
-			cache.columnCaches[it].headerCell?.visible = false
-		}.flip()
+		cache.usedColumns.flip()
 	}
 
 	private fun updateHeader(width: Float) {
@@ -1143,6 +1147,10 @@ class DataGrid<RowData>(
 
 		headerCells.setSize(width, headerHeight)
 		columnResizeHandles.setSize(width + 5f, headerHeight)
+
+		cache.usedColumns.forEachUnused {
+			cache.columnCaches[it].headerCell?.visible = false
+		}
 	}
 
 	private fun calculateTotalRows(): Int {
@@ -1221,7 +1229,7 @@ class DataGrid<RowData>(
 					val groupCache = rowIterator.groupCache
 					val group = rowIterator.group
 					if (groupCache.header == null) {
-						groupCache.header = group.createHeader(headerAndFootersContainer, groupCache.list)
+						groupCache.header = group.createHeader(this, groupCache.list)
 					}
 					val header = groupCache.header!!
 					if (!header.isActive) cellsContainer.addElement(header)
@@ -1276,12 +1284,17 @@ class DataGrid<RowData>(
 	/**
 	 *
 	 */
-	private fun updateRows(width: Float, height: Float, position: Float, metrics: DataGridCellMetrics) {
+	private fun updateRows(
+			width: Float,
+			height: Float,
+			position: Float,
+			cellsContainer: ElementContainer<UiComponent>,
+			headersAndFootersContainer: ElementContainer<UiComponent>,
+			cellCache: DataGridCache<RowData>.CellCache,
+			metrics: DataGridCellMetrics
+	) {
 		metrics.clear()
 		metrics.bounds.set(width, height)
-		val cellsContainer = contents
-		val cellCache = cache.cellCache
-		val headersAndFootersContainer = groupHeadersAndFooters
 		iterateVisibleColumnsInternal { columnIndex, _, _, _ ->
 			cellCache.usedColumns.markUsed(columnIndex)
 			true
@@ -1305,7 +1318,7 @@ class DataGrid<RowData>(
 				val groupCache = rowIterator.groupCache
 				val group = rowIterator.group
 				if (groupCache.header == null) {
-					groupCache.header = group.createHeader(headersAndFootersContainer, groupCache.list)
+					groupCache.header = group.createHeader(this, groupCache.list)
 				}
 				val header = groupCache.header!!
 				if (!header.isActive) headersAndFootersContainer.addElement(header)
@@ -1362,13 +1375,6 @@ class DataGrid<RowData>(
 					true
 				}
 				rowCells.clear()
-
-				// Row background
-				val rowBackground = cache.rowBackgroundsCache.obtain(rowIndex)
-				rowBackground.visible = true
-				rowBackground.rowIndex = rowIterator.rowIndex
-				rowBackground.setSize(width, iRowHeight)
-				rowBackground.setPosition(0f, rowsY)
 			}
 			metrics.rowHeights.add(iRowHeight)
 			metrics.rowPositions.add(rowsY)
@@ -1389,6 +1395,20 @@ class DataGrid<RowData>(
 			cellCache.columnCellCaches[columnIndex].removeAndFlip(cellsContainer)
 		}
 		cellCache.usedGroupHeadersAndFooters.forEachUnused { headersAndFootersContainer.removeElement(it) }.flip()
+	}
+
+	private fun updateRowBackgrounds() {
+		val startPosition = _cellMetrics.startPosition.toInt()
+		for (i in 0.._cellMetrics.rowHeights.lastIndex) {
+			// Row background
+			val rowIndex = i + startPosition
+			val rowBackground = cache.rowBackgroundsCache.obtain(rowIndex)
+			if (!rowBackground.isActive) rowBackgrounds.addElement(rowBackground)
+			rowBackground.visible = true
+			rowBackground.rowIndex = rowIndex
+			rowBackground.setSize(width, _cellMetrics.rowHeights[i])
+			rowBackground.setPosition(0f, _cellMetrics.rowPositions[i])
+		}
 		cache.rowBackgroundsCache.forEachUnused { index, element -> element.visible = false }.flip()
 	}
 
@@ -1434,7 +1454,7 @@ class DataGrid<RowData>(
 	}
 
 	fun iterateVisibleRows(callback: (row: RowLocation<RowData>, rowY: Float, rowHeight: Float) -> Boolean) {
-		validateLayout()
+		validate(ValidationFlags.LAYOUT)
 		val rowHeights = _cellMetrics.rowHeights
 		var rowY = 0f
 		var i = 0
