@@ -42,12 +42,8 @@ import com.acornui.core.input.interaction.click
 import com.acornui.core.input.interaction.dragAttachment
 import com.acornui.core.input.keyDown
 import com.acornui.core.input.wheel
-import com.acornui.graphic.Color
-import com.acornui.math.Bounds
-import com.acornui.math.Corners
+import com.acornui.math.*
 import com.acornui.math.MathUtils.clamp
-import com.acornui.math.Pad
-import com.acornui.math.Vector2
 import com.acornui.observe.IndexBinding
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
@@ -125,6 +121,7 @@ class DataGrid<RowData>(
 
 	private val _bottomCellMetrics = DataGridCellMetrics()
 	private val _cellMetrics = DataGridCellMetrics()
+	private val _measureCellMetrics = DataGridCellMetrics()
 
 	/**
 	 * The metrics for the currently visible cells.
@@ -198,11 +195,6 @@ class DataGrid<RowData>(
 	//------------------------------------------
 
 	private val clipper = addChild(scrollRect())
-
-	/**
-	 * The measured bounds of the bottom rows.
-	 */
-	private val bottomBounds = Bounds()
 
 	/**
 	 * Used for measurement of max v scroll position.
@@ -439,7 +431,7 @@ class DataGrid<RowData>(
 				}
 				Ascii.PAGE_UP -> {
 					event.handled = true
-//					sizeRowsReversed(bottomBounds.width, bottomBounds.height, loc, bottomBounds)
+//					sizeCellsReversed(bottomBounds.width, bottomBounds.height, loc, bottomBounds)
 					val pageSize = _cellMetrics.rowHeights.lastIndex - 1
 					loc.position = clamp(loc.position - pageSize, 0, totalRows - 1)
 					if (!loc.isElementRow) loc.moveToPreviousRowUntil { it.isElementRow }
@@ -644,18 +636,11 @@ class DataGrid<RowData>(
 	 * Brings the given row into view.
 	 */
 	fun bringIntoView(rowLocation: RowLocationRo<RowData>) {
-		val max = rowLocation.position.toFloat()
-		if (vScrollModel.value > max) {
-			vScrollModel.value = max
-			return
-		}
-		val currentValue = vScrollModel.value
-
-		val bottomRowCount = totalRows - vScrollBar.scrollModel.max
-		val min = rowLocation.position - bottomRowCount + 1f
-
-		if (currentValue < min) {
-			vScrollModel.value = min
+		if (rowLocation.position < _cellMetrics.startPosition) {
+			vScrollModel.value = rowLocation.position.toFloat()
+		} else if (rowLocation.position > _cellMetrics.endPosition - 1f) {
+			measureCellsReversed(rowLocation.position.toFloat() + 1f, _measureCellMetrics)
+			vScrollModel.value = _measureCellMetrics.startPosition
 		}
 	}
 
@@ -977,30 +962,35 @@ class DataGrid<RowData>(
 
 		_totalRows = calculateTotalRows()
 		var contentsH = if (explicitHeight == null) null else border.reduceHeight2(explicitHeight) - headerCells.height - hScrollBarH
-		val bottomRowCount = sizeRowsReversed(
+		sizeCellsReversed(
 				width = contentsW,
 				height = contentsH,
-				rowLocation = rowIterator.moveToLastRow(),
+				endPosition = _totalRows.toFloat(),
 				cellCache = cache.bottomCellCache,
 				cellsContainer = measureContents,
 				headerAndFootersContainer = measureContents,
-				bounds = bottomBounds
+				allowVirtual = true,
+				metrics = _bottomCellMetrics
 		)
+		val bottomBounds = _bottomCellMetrics.bounds
+		val bottomRowCount = _bottomCellMetrics.visibleRows
 		vScrollBar.modelToPixels = bottomBounds.height / maxOf(0.0001f, bottomRowCount)
 		vScrollBar.scrollModel.max = maxOf(0f, _totalRows - bottomRowCount)
 		vScrollBar.visible = vScrollPolicy != ScrollPolicy.OFF && vScrollBar.scrollModel.max > 0.0001f
 		val vScrollBarW = if (vScrollBar.visible) vScrollBar.minWidth ?: 0f else 0f
 
 		contentsH = bottomBounds.height
-		updateRows(
+		sizeCells(
 				width = contentsW,
 				height = contentsH,
-				position = vScrollModel.value,
+				startPosition = vScrollModel.value,
 				cellsContainer = contents,
-				headersAndFootersContainer = groupHeadersAndFooters,
+				headerAndFootersContainer = groupHeadersAndFooters,
 				cellCache = cache.cellCache,
+				allowVirtual = false,
 				metrics = _cellMetrics
 		)
+		positionCells()
 		updateRowBackgrounds()
 		updateEditorCell()
 
@@ -1168,61 +1158,75 @@ class DataGrid<RowData>(
 		return total
 	}
 
-	private val tmpBounds = Bounds()
-	private fun measureRowsReversed(rowLocation: RowLocationRo<RowData>): Float = sizeRowsReversed(
-			width = bottomBounds.width,
-			height = bottomBounds.height,
-			rowLocation = rowLocation,
+	private fun measureCellsReversed(endPosition: Float, metrics: DataGridCellMetrics) = sizeCellsReversed(
+			width = _bottomCellMetrics.bounds.width,
+			height = _bottomCellMetrics.bounds.height,
+			endPosition = endPosition,
 			cellCache = cache.measuredCellCache,
 			cellsContainer = measureContents,
 			headerAndFootersContainer = measureContents,
-			bounds = tmpBounds
+			allowVirtual = true,
+			metrics = metrics
 	)
 
 	/**
 	 * Calculates how many rows can be rendered in the given space with the last row being the given row location.
-	 * This method must set the size of [bounds], and return the number of visible rows.
 	 * @param width The explicit width of the contents area.
 	 * @param height The explicit width of the contents area.
-	 * @param rowLocation The location
-	 * @param bounds This will be set to the measured width and height of the contents area.
+	 * @param endPosition The position that marks the bottom row of the cell area.
+	 * @param cellCache The cache of cells to use.
+	 * @param cellsContainer The container to add elements to.
+	 * @param headerAndFootersContainer The container to add header and footer rows to.
+	 * @param metrics This will be populated with various measured properties.
+	 * @param allowVirtual If true and [rowHeight] is explicitly set, cells will not be created, only measurement
+	 * properties calculated.
 	 * @return Returns the number of visible rows.
 	 */
-	private fun sizeRowsReversed(
+	private fun sizeCellsReversed(
 			width: Float,
 			height: Float?,
-			rowLocation: RowLocationRo<RowData>,
+			endPosition: Float,
 			cellCache: DataGridCache<RowData>.CellCache,
 			cellsContainer: ElementContainer<UiComponent>,
 			headerAndFootersContainer: ElementContainer<UiComponent>,
-			bounds: Bounds
-	): Float {
+			allowVirtual: Boolean,
+			metrics: DataGridCellMetrics
+	) {
+		metrics.clear()
 		iterateVisibleColumnsInternal { columnIndex, _, _, _ ->
 			cellCache.usedColumns.markUsed(columnIndex)
 			true
 		}
-		var rowsY: Float
-		val visibleRows: Float
+		metrics.endPosition = endPosition
+
+		val firstPartial = endPosition.ceil() - endPosition
+
+		var heightSum: Float
 		val rowHeight = rowHeight
-		if (rowHeight != null) {
-			if (height == null) {
-				rowsY = rowHeight * maxRows
-				visibleRows = maxRows.toFloat()
-			} else {
-				rowsY = height
-				visibleRows = height / rowHeight
+		val maxRows = minOf(_totalRows, maxRows)
+		val maxHeight = height ?: Float.MAX_VALUE
+
+		if (allowVirtual && rowHeight != null) {
+			heightSum = minOf(maxHeight, rowHeight * maxRows)
+			metrics.startPosition = maxOf(0f, endPosition - heightSum / rowHeight)
+			metrics.bounds.set(width, heightSum)
+
+			var rowPosition = -rowHeight * firstPartial
+			for (i in 0..metrics.visibleRows.toInt()) {
+				metrics.rowPositions.add(rowPosition)
+				metrics.rowHeights.add(rowHeight)
+				rowPosition += rowHeight
 			}
 		} else {
-			val maxHeight = height ?: Float.MAX_VALUE
-
 			val pad = style.cellPadding
 			var rowsShown = 0
-			rowsY = 0f
-			var iRowHeight = 0f
+			heightSum = 0f
+			var iRowHeight = minRowHeight
 
-			rowIterator.set(rowLocation)
+			rowIterator.position = endPosition.ceil()
+
 			var rowIndex = rowIterator.position
-			while (rowIterator.hasPreviousRow && rowsShown < maxRows && rowsY < maxHeight) {
+			while (rowIterator.hasPreviousRow && rowsShown < maxRows && heightSum < maxHeight) {
 				rowIterator.moveToPreviousRow()
 				iRowHeight = minRowHeight
 				if (rowIterator.isHeader) {
@@ -1256,12 +1260,27 @@ class DataGrid<RowData>(
 						true
 					}
 				}
-				rowsY += iRowHeight
+				if (rowsShown == 0) {
+					// Start the first row off accounting for partial row visibility
+					heightSum = -iRowHeight * firstPartial
+				}
+
+				heightSum += iRowHeight
+				metrics.rowHeights.add(0, iRowHeight)
+				metrics.rowPositions.add(0, heightSum)
 				rowsShown++
 			}
-			visibleRows = if (rowsY <= maxHeight) rowsShown.toFloat() else rowsShown.toFloat() - (rowsY - maxHeight) / iRowHeight
+			val overhang = if (heightSum <= maxHeight) 0f else {
+				(heightSum - maxHeight) / iRowHeight
+			}
+			metrics.startPosition = rowIterator.position.toFloat() + overhang
+
+			val measuredHeight = minOf(heightSum, maxHeight)
+			metrics.bounds.set(width, measuredHeight)
+			for (i in 0..metrics.rowPositions.lastIndex) {
+				metrics.rowPositions[i] = measuredHeight - metrics.rowPositions[i]
+			}
 		}
-		bounds.set(width, if (height == null || rowsY < height) rowsY else height)
 
 		// Recycle unused components.
 		iterateVisibleColumnsInternal { columnIndex, _, _, _ ->
@@ -1272,25 +1291,29 @@ class DataGrid<RowData>(
 			cellCache.columnCellCaches[columnIndex].removeAndFlip(cellsContainer)
 		}
 		cellCache.usedGroupHeadersAndFooters.forEachUnused { headerAndFootersContainer.removeElement(it) }.flip()
-		return visibleRows
 	}
 
 	/**
-	 * When measuring the cells, they will temporarily be placed in this list so they can be easily accessed for
-	 * positioning.
+	 * Calculates how many rows can be rendered in the given space with the first row being the given row location.
+	 * @param width The explicit width of the contents area.
+	 * @param height The explicit width of the contents area.
+	 * @param startPosition The position that marks the beginning row of the cell area.
+	 * @param cellCache The cache of cells to use.
+	 * @param cellsContainer The container to add elements to.
+	 * @param headerAndFootersContainer The container to add header and footer rows to.
+	 * @param metrics This will be populated with various measured properties.
+	 * @param allowVirtual If true and [rowHeight] is explicitly set, cells will not be created, only measurement
+	 * properties calculated.
+	 * @return Returns the number of visible rows.
 	 */
-	private val rowCells = ArrayList<UiComponent>()
-
-	/**
-	 *
-	 */
-	private fun updateRows(
+	private fun sizeCells(
 			width: Float,
 			height: Float,
-			position: Float,
+			startPosition: Float,
 			cellsContainer: ElementContainer<UiComponent>,
-			headersAndFootersContainer: ElementContainer<UiComponent>,
+			headerAndFootersContainer: ElementContainer<UiComponent>,
 			cellCache: DataGridCache<RowData>.CellCache,
+			allowVirtual: Boolean,
 			metrics: DataGridCellMetrics
 	) {
 		metrics.clear()
@@ -1301,90 +1324,76 @@ class DataGrid<RowData>(
 		}
 
 		val rowHeight = rowHeight
+		val maxRows = minOf(_totalRows, maxRows)
 		val pad = style.cellPadding
 		val rowHeight2 = pad.reduceHeight(rowHeight)
 		var rowsShown = 0
-		var rowsY = 0f
+		var heightSum = 0f
 		var iRowHeight: Float = minRowHeight
 
-		metrics.startPosition = position
-		rowIterator.position = position.toInt() - 1
-		val firstP = vScrollModel.value - vScrollModel.value.floor()
-		var rowIndex = rowIterator.position
-		while (rowIterator.hasNextRow && rowsY < height) {
-			rowIterator.moveToNextRow()
-			iRowHeight = minRowHeight
-			if (rowIterator.isHeader) {
-				val groupCache = rowIterator.groupCache
-				val group = rowIterator.group
-				if (groupCache.header == null) {
-					groupCache.header = group.createHeader(this, groupCache.list)
-				}
-				val header = groupCache.header!!
-				if (!header.isActive) headersAndFootersContainer.addElement(header)
-				header.collapsed = group.collapsed
-				cellCache.usedGroupHeadersAndFooters.markUsed(header)
+		val firstPartial = startPosition - startPosition.floor()
+		metrics.startPosition = startPosition
 
-				header.setSize(width, null)
-				iRowHeight = rowHeight ?: maxOf(iRowHeight, header.height)
+		if (allowVirtual && rowHeight != null) {
+			heightSum = minOf(height, rowHeight * maxRows)
+			metrics.endPosition = maxOf(0f, heightSum / rowHeight - startPosition)
 
-				if (rowsShown == 0) {
-					// Start the first row off accounting for partial row visibility
-					rowsY = -iRowHeight * firstP
-				}
-				header.setPosition(0f, rowsY)
-			} else if (rowIterator.isFooter) {
-				// TODO:
-			} else {
-				val element = rowIterator.element!!
-				rowIndex++
-				iterateVisibleColumnsInternal { columnIndex, column, columnX, columnWidth ->
-					@Suppress("unchecked_cast")
-					val cell = cellCache.columnCellCaches[columnIndex].obtain(rowIndex) as DataGridCell<Any?>
-					if (!cell.isActive) cellsContainer.addElement(cell)
-					val cellData = column.getCellData(element)
-					cell.setData(cellData)
-
-					cell.setSize(pad.reduceWidth2(columnWidth), rowHeight2)
-					iRowHeight = rowHeight ?: maxOf(iRowHeight, pad.expandHeight2(cell.height))
-					rowCells.add(cell)
-					true
-				}
-
-				if (rowsShown == 0) {
-					// Start the first row off accounting for partial row visibility
-					rowsY = -iRowHeight * firstP
-				}
-
-				// Position
-				iterateVisibleColumnsInternal { columnIndex, column, columnX, columnWidth ->
-					val cell = rowCells.poll()
-					val y = pad.top + maxOf(0f, when (column.cellVAlign ?: style.cellVAlign) {
-						VAlign.TOP -> 0f
-						VAlign.MIDDLE -> (iRowHeight - cell.height) * 0.5f
-						VAlign.BOTTOM -> (iRowHeight - cell.height)
-					})
-					val cellWidth = cell.explicitWidth ?: cell.width
-
-					val x = pad.left + maxOf(0f, when (column.cellHAlign ?: style.headerCellHAlign) {
-						HAlign.LEFT -> 0f
-						HAlign.CENTER -> (cellWidth - cell.width) * 0.5f
-						HAlign.RIGHT -> (cellWidth - cell.width)
-					})
-					cell.moveTo(columnX + x, rowsY + y)
-					true
-				}
-				rowCells.clear()
+			var rowPosition = -rowHeight * firstPartial
+			for (i in 0..metrics.visibleRows.toInt()) {
+				metrics.rowPositions.add(rowPosition)
+				metrics.rowHeights.add(rowHeight)
+				rowPosition += rowHeight
 			}
-			metrics.rowHeights.add(iRowHeight)
-			metrics.rowPositions.add(rowsY)
-			rowsY += iRowHeight
-			rowsShown++
+		} else {
+			rowIterator.position = startPosition.toInt() - 1
+			var rowIndex = rowIterator.position
+			while (rowIterator.hasNextRow && heightSum < height) {
+				rowIterator.moveToNextRow()
+				iRowHeight = minRowHeight
+				if (rowIterator.isHeader) {
+					val groupCache = rowIterator.groupCache
+					val group = rowIterator.group
+					if (groupCache.header == null) {
+						groupCache.header = group.createHeader(this, groupCache.list)
+					}
+					val header = groupCache.header!!
+					if (!header.isActive) headerAndFootersContainer.addElement(header)
+					header.collapsed = group.collapsed
+					cellCache.usedGroupHeadersAndFooters.markUsed(header)
+
+					header.setSize(width, null)
+					iRowHeight = rowHeight ?: maxOf(iRowHeight, header.height)
+				} else if (rowIterator.isFooter) {
+					// TODO:
+				} else {
+					val element = rowIterator.element!!
+					rowIndex++
+					iterateVisibleColumnsInternal { columnIndex, column, columnX, columnWidth ->
+						@Suppress("unchecked_cast")
+						val cell = cellCache.columnCellCaches[columnIndex].obtain(rowIndex) as DataGridCell<Any?>
+						if (!cell.isActive) cellsContainer.addElement(cell)
+						val cellData = column.getCellData(element)
+						cell.setData(cellData)
+
+						cell.setSize(pad.reduceWidth2(columnWidth), rowHeight2)
+						iRowHeight = rowHeight ?: maxOf(iRowHeight, pad.expandHeight2(cell.height))
+						true
+					}
+				}
+				if (rowsShown == 0) {
+					// Start the first row off accounting for partial row visibility
+					heightSum = -iRowHeight * firstPartial
+				}
+				metrics.rowHeights.add(iRowHeight)
+				metrics.rowPositions.add(heightSum)
+				heightSum += iRowHeight
+				rowsShown++
+			}
+			val overhang = if (heightSum <= height) 0f else {
+				(heightSum - height) / iRowHeight
+			}
+			metrics.endPosition = rowIterator.position.toFloat() - overhang
 		}
-		val overhang = if (rowsY <= height) 0f else {
-			(rowsY - height) / iRowHeight
-		}
-		metrics.endPosition = rowIterator.position.toFloat() - overhang
 
 		// Recycle unused components.
 		iterateVisibleColumnsInternal { columnIndex, _, _, _ ->
@@ -1394,7 +1403,47 @@ class DataGrid<RowData>(
 		cache.usedColumns.forEachUnused { columnIndex ->
 			cellCache.columnCellCaches[columnIndex].removeAndFlip(cellsContainer)
 		}
-		cellCache.usedGroupHeadersAndFooters.forEachUnused { headersAndFootersContainer.removeElement(it) }.flip()
+		cellCache.usedGroupHeadersAndFooters.forEachUnused { headerAndFootersContainer.removeElement(it) }.flip()
+	}
+
+	private fun positionCells() {
+		val cellCache = cache.cellCache
+		val metrics = _cellMetrics
+		val pad = style.cellPadding
+		val startPosition = metrics.startPosition.toInt()
+		rowIterator.position = startPosition - 1
+		for (i in 0..metrics.rowHeights.lastIndex) {
+			rowIterator.moveToNextRow()
+			val rowHeight = metrics.rowHeights[i]
+			val rowPosition = metrics.rowPositions[i]
+
+			if (rowIterator.isHeader) {
+				rowIterator.groupCache.header!!.setPosition(0f, rowPosition)
+			} else if (rowIterator.isFooter) {
+//				rowIterator.groupCache.footer!!.setPosition(0f, rowPosition)
+			} else {
+
+				iterateVisibleColumnsInternal { columnIndex, column, columnX, columnWidth ->
+					@Suppress("unchecked_cast")
+					val cell = cellCache.columnCellCaches[columnIndex][i] as DataGridCell<Any?>
+
+					val y = pad.top + maxOf(0f, when (column.cellVAlign ?: style.cellVAlign) {
+						VAlign.TOP -> 0f
+						VAlign.MIDDLE -> (rowHeight - cell.height) * 0.5f
+						VAlign.BOTTOM -> (rowHeight - cell.height)
+					})
+					val cellWidth = cell.explicitWidth ?: cell.width
+
+					val x = pad.left + maxOf(0f, when (column.cellHAlign ?: style.headerCellHAlign) {
+						HAlign.LEFT -> 0f
+						HAlign.CENTER -> (cellWidth - cell.width) * 0.5f
+						HAlign.RIGHT -> (cellWidth - cell.width)
+					})
+					cell.moveTo(columnX + x, rowPosition + y)
+					true
+				}
+			}
+		}
 	}
 
 	private fun updateRowBackgrounds() {

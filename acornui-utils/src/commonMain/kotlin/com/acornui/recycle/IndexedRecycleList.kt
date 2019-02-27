@@ -65,13 +65,6 @@ open class IndexedRecycleList<E>(
 	constructor(create: () -> E) : this(ObjectPool(create))
 
 	/**
-	 * The current items are indexed in this list starting at index 0. This offset represents the lowest index used in
-	 * the last [obtain] set.
-	 */
-	val offset: Int
-		get() = currentIndices.firstOrNull() ?: 0
-
-	/**
 	 * The size of this list. This will be updated after a [flip]
 	 */
 	override val size: Int
@@ -102,7 +95,6 @@ open class IndexedRecycleList<E>(
 			current.shiftAll(shiftIndex)
 		}
 		val isForward = obtainedIndices.isEmpty() || index >= obtainedIndices.first()
-
 		val element: E
 		element = if (current.isEmpty()) {
 			pool.obtain()
@@ -121,12 +113,30 @@ open class IndexedRecycleList<E>(
 	}
 
 	/**
-	 * Returns the cached element at the given index.
+	 * Returns the element obtained via [obtain] in this set for the given index.
+	 * @throws IndexOutOfBoundsException If the index is out of range, or the index was not obtained via [obtain].
 	 */
-//	fun getCached(index: Int): E {
-//		if (obtainedIndices.isEmpty()) throw IndexOutOfBoundsException()
-//		val shiftIndex = obtainedIndices.sortedInsertionIndex(index, matchForwards = false)
-//	}
+	fun getObtainedByIndex(index: Int): E = getByIndex(index, obtained, obtainedIndices)
+
+	/**
+	 * Returns the current element in this set for the given index.
+	 * This will only be valid after a [flip].
+	 * @throws IndexOutOfBoundsException If the index is out of range, or the index was not found.
+	 */
+	fun getByIndex(index: Int): E = getByIndex(index, current, currentIndices)
+
+	private fun getByIndex(index: Int, elements: List<E>, indices: List<Int>): E {
+		if (elements.isEmpty()) throw IndexOutOfBoundsException()
+
+		val offset = indices.first()
+		return if (indices[index - offset] == index) {
+			elements[index - offset]
+		} else {
+			val i = indices.sortedInsertionIndex(index)
+			if (indices[i] != index) throw IndexOutOfBoundsException("")
+			elements[i]
+		}
+	}
 
 	/**
 	 * Iterates over each unused item still in the cache.

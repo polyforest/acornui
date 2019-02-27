@@ -133,6 +133,10 @@ open class RowLocation<RowData>(protected val dataGrid: DataGrid<RowData>) : Row
 	final override var position: Int
 		get() = _position
 		set(newPosition) {
+			if (newPosition == dataGrid._totalRows) {
+				moveToLastRow() // An optimization for the common case.
+				return
+			}
 			var r = 0
 			_position = newPosition
 			val groupCaches = displayGroupCaches

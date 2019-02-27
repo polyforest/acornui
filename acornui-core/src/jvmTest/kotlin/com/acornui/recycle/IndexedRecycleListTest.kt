@@ -21,6 +21,7 @@ import com.acornui.test.assertUnorderedListEquals
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 
 class IndexedRecycleListTest {
 
@@ -93,7 +94,8 @@ class IndexedRecycleListTest {
 	}
 
 
-	@Test fun testNonSequential1() {
+	@Test
+	fun testNonSequential1() {
 		val c = IndexedRecycleList(ClearableObjectPool { TestObj() })
 		c.obtain(9).value = 9
 		c.obtain(11).value = 11
@@ -106,13 +108,15 @@ class IndexedRecycleListTest {
 		assertEquals(Int.MAX_VALUE, c.obtain(12).value)
 	}
 
-	@Test fun testNonSequential2() {
+	@Test
+	fun testNonSequential2() {
 		val c = IndexedRecycleList(ClearableObjectPool { TestObj() })
 		c.obtain(9)
 		c.obtain(7)
 	}
 
-	@Test fun forEach() {
+	@Test
+	fun forEach() {
 		val c = IndexedRecycleList(ClearableObjectPool { TestObj() })
 		for (i in 5..9) {
 			c.obtain(i).value = i
@@ -130,10 +134,22 @@ class IndexedRecycleListTest {
 		assertUnorderedListEquals(listOf(), c.getUnused())
 	}
 
+	@Test
+	fun getObtainedSerial() {
+		val c = IndexedRecycleList(ClearableObjectPool { TestObj() })
+		for (i in 5..9) {
+			c.obtain(i).value = i
+		}
+		for (i in 5..9) {
+			assertEquals(i, c.getObtainedByIndex(i).value)
+		}
+		assertFails { c.getObtainedByIndex(4) }
+		assertFails { c.getObtainedByIndex(10) }
+	}
+
 	private fun IndexedRecycleList<TestObj>.getUnused(): List<Int> {
 		val list = ArrayList<Int>()
-		forEachUnused {
-			_, it ->
+		forEachUnused { _, it ->
 			list.add(it.value)
 		}
 		return list
