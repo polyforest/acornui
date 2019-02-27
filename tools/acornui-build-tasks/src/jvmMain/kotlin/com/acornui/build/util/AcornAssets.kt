@@ -31,10 +31,11 @@ import java.io.File
 
 object AcornAssets {
 
-	fun packAssets(source: File, dest: File, root: File) {
-		copyAssets(source, dest)
+	fun packAssets(source: File, dest: File) {
+		if (source != dest)
+			copyAssets(source, dest)
 
-		println("Assets directory: " + dest.path + " root directory: " + root.path)
+		println("Source directory: " + source.path + "Assets directory: " + dest.path)
 		JvmHeadlessApplication(dest.path).start {
 			// Pack the assets in all directories in the dest folder with a name ending in "_unpacked"
 			TexturePackerUtil(inject(Files), inject(AssetManager), inject(JSON_KEY)).packAssets(dest, File("."))
