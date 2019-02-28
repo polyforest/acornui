@@ -56,6 +56,6 @@ fun ArgumentMap.getFileArg(arg: String) = File(get(arg)?.removeSurrounding("[", 
 fun ArgumentMap.getFileArgs(vararg args: String): List<File> {
 	val result = mutableListOf<File>()
 	for (arg in args)
-		File(get(arg)?.removeSurrounding("[", "]")).let { result.add(it) }
+		getFileArg(arg).let { result.add(it) }
 	return result.toList()
 }
