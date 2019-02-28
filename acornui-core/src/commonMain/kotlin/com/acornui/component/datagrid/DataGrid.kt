@@ -215,8 +215,8 @@ class DataGrid<RowData>(
 
 	private var cellFocusHighlight: UiComponent? = null
 	private var editorCell: DataGridEditorCell<*>? = null
-	private var cellFocusRow = IndexBinding<RowData>()
-	private var cellFocusCol = IndexBinding(_columns)
+	private var cellFocusRow = own(IndexBinding<RowData>())
+	private var cellFocusCol = own(IndexBinding(_columns))
 
 	private val feedback = clipper.addElement(container { interactivityMode = InteractivityMode.NONE })
 	private var columnMoveIndicator = feedback.addElement(rect { styleTags.add(COLUMN_MOVE_INDICATOR); visible = false })

@@ -47,6 +47,9 @@ import com.acornui.core.Disposable
  * flip() // 3 through 7 is available in the next set for fast access.
  * ```
  *
+ * Indices may have gaps, but never insertions.  That is, for `obtain(index)`, `index` must be either the highest, or the
+ * lowest index obtained in the current set.
+ *
  * @param pool The indexed cache will call [Pool.obtain] when a new element is needed, and [Pool.free] when an element
  * is returned.
  */
