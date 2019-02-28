@@ -21,6 +21,8 @@ plugins {
 
 val KOTLIN_LANGUAGE_VERSION: String by extra
 val KOTLIN_JVM_TARGET: String by extra
+val MOCKITO_VERSION: String by extra
+val OBJENESIS_VERSION: String by extra
 kotlin {
     js {
         compilations.named("test") {
@@ -63,6 +65,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
+                implementation(project(":acornui-test-utils"))
             }
         }
         named("jvmMain") {
@@ -75,6 +78,8 @@ kotlin {
                 implementation(kotlin("test"))
                 implementation(kotlin("test-junit"))
                 implementation(kotlin("reflect"))
+                implementation("org.mockito:mockito-core:$MOCKITO_VERSION")
+                implementation("org.objenesis:objenesis:$OBJENESIS_VERSION")
             }
         }
         named("jsMain") {
