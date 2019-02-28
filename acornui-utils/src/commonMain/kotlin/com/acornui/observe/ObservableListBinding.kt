@@ -159,11 +159,11 @@ class IndexBinding<E>() : Clearable, Disposable {
 		this.lastKnownElement = list.getOrNull(_index)
 	}
 
+	/**
+	 * Sets the index to -1
+	 */
 	override fun clear() {
-		unbind()
 		index = -1
-		_list = null
-		_observableList = null
 	}
 
 	override fun dispose() = clear()
