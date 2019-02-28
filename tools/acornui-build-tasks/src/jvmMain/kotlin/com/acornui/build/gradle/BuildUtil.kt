@@ -32,8 +32,8 @@ fun main(args: Array<String>) {
 		when (target) {
 
 			Targets.ASSETS -> run {
-				val (src, dest) = getFileArgs("src", "dest")
-				com.acornui.build.util.AcornAssets.packAssets(src, dest)
+				val src = getFileArg("src")
+				com.acornui.build.util.AcornAssets.packAssets(src, src)
 			}
 
 			Targets.ASSET_MANIFEST -> run {
