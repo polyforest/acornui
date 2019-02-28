@@ -37,8 +37,7 @@ object KotlinMonkeyPatcher {
 	 * Strips type checking that only results in a class cast exception.
 	 */
 	private fun stripCce(src: String): String {
-		val d = '$'
-		return Regex("""Kotlin\.is(Type|Array|Char|CharSequence|Number)(\((.*?) \? tmp\$d : (Kotlin\.)?throw(\S*)\(\))""").replace(src, "alwaysTrue\$2")
+		return Regex("""Kotlin\.is(Type|Array|Char|CharSequence|Number)(\((.*?) \? tmp(?:.*) : (Kotlin\.)?throw(\S*)\(\))""").replace(src, "alwaysTrue\$2")
 	}
 
 	private fun stripRangeCheck(src: String): String {
