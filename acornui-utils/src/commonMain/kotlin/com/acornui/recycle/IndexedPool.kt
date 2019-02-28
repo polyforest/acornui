@@ -50,7 +50,7 @@ import com.acornui.core.Disposable
  * @param pool The indexed cache will call [Pool.obtain] when a new element is needed, and [Pool.free] when an element
  * is returned.
  */
-open class IndexedRecycleList<E>(
+open class IndexedPool<E>(
 
 		/**
 		 * @suppress
@@ -59,7 +59,7 @@ open class IndexedRecycleList<E>(
 ) : ListBase<E>(), Clearable {
 
 	/**
-	 * Creates an [IndexedRecycleList] with a basic [ObjectPool] implementation.
+	 * Creates an [IndexedPool] with a basic [ObjectPool] implementation.
 	 * @param create The factory method for creating new elements.
 	 */
 	constructor(create: () -> E) : this(ObjectPool(create))
@@ -160,7 +160,7 @@ open class IndexedRecycleList<E>(
 	/**
 	 * Iterates over each unused item still in the cache.
 	 */
-	fun forEachUnused(callback: (index: Int, renderer: E) -> Unit): IndexedRecycleList<E> {
+	fun forEachUnused(callback: (index: Int, renderer: E) -> Unit): IndexedPool<E> {
 		if (current.isEmpty()) return this
 		for (i in 0..current.lastIndex) {
 			callback(currentIndices[i], current[i])
@@ -197,7 +197,7 @@ open class IndexedRecycleList<E>(
 /**
  * Clears the index cache back into the pool, then disposes all elements and clears the pool.
  */
-fun <E : Disposable> IndexedRecycleList<E>.disposeAndClear() {
+fun <E : Disposable> IndexedPool<E>.disposeAndClear() {
 	clear()
 	pool.disposeAndClear()
 }

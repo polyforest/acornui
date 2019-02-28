@@ -19,7 +19,7 @@ package com.acornui.recycle
 import com.acornui.collection.filterTo2
 
 /**
- * Similar to [IndexedRecycleList], to use this class, make a series of [markUsed] calls to indicate that an element was ued,
+ * Similar to [IndexedPool], to use this class, make a series of [markUsed] calls to indicate that an element was ued,
  * then call [forEachUnused] to iterate over the elements that were marked used on the last set, but weren't marked on
  * this set, then call [flip] to set the used elements as unused for the next set.
  */

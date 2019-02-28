@@ -10,7 +10,7 @@ import com.acornui.component.style.*
 import com.acornui.core.behavior.Selection
 import com.acornui.core.behavior.SelectionBase
 import com.acornui.core.behavior.deselectNotContaining
-import com.acornui.recycle.IndexedRecycleList
+import com.acornui.recycle.IndexedPool
 import com.acornui.recycle.Recycler
 import com.acornui.recycle.disposeAndClear
 import com.acornui.core.di.Owned
@@ -66,7 +66,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 	private val clipper = addChild(scrollRect())
 
 	private val rowBackgrounds = clipper.addElement(container())
-	private val rowBackgroundsCache = IndexedRecycleList(Recycler(
+	private val rowBackgroundsCache = IndexedPool(Recycler(
 			create = { rowBackgrounds.addElement(style.rowBackground(rowBackgrounds)) },
 			configure = { it.visible = true },
 			unconfigure = { it.visible = false }

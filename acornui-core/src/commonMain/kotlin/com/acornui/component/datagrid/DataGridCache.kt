@@ -24,7 +24,7 @@ import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
 import com.acornui.core.Disposable
 import com.acornui.core.di.Owned
-import com.acornui.recycle.IndexedRecycleList
+import com.acornui.recycle.IndexedPool
 import com.acornui.recycle.ObjectPool
 import com.acornui.recycle.UsedTracker
 import com.acornui.recycle.disposeAndClear
@@ -44,7 +44,7 @@ internal class DataGridCache<RowData>(private val grid: DataGrid<RowData>) : Dis
 	 */
 	val usedColumns = UsedTracker<Int>()
 
-	val rowBackgroundsCache = IndexedRecycleList { grid.style.rowBackground(grid) }
+	val rowBackgroundsCache = IndexedPool { grid.style.rowBackground(grid) }
 
 	val columnCaches = ObservableListMapping(
 			target = grid.columns,
@@ -128,7 +128,7 @@ internal class DataGridCache<RowData>(private val grid: DataGrid<RowData>) : Dis
 		val columnCellCaches = ObservableListMapping(
 				target = grid.columns,
 				factory = { columnIndex, column ->
-					IndexedRecycleList(columnCaches[columnIndex].cellPool)
+					IndexedPool(columnCaches[columnIndex].cellPool)
 				},
 				disposer = { columnIndex, columnCellCache ->
 					usedColumns.forget(columnIndex)
@@ -197,7 +197,7 @@ internal class DataGridCache<RowData>(private val grid: DataGrid<RowData>) : Dis
 	}
 }
 
-internal fun <T : UiComponent> IndexedRecycleList<T>.removeAndFlip(container: ElementContainer<UiComponent>) {
+internal fun <T : UiComponent> IndexedPool<T>.removeAndFlip(container: ElementContainer<UiComponent>) {
 	forEachUnused { index, element ->
 		container.removeElement(element)
 	}.flip()

@@ -37,7 +37,7 @@ class IndexedRecycleListTest {
 	 */
 	@Test
 	fun smartObtain() {
-		val c = IndexedRecycleList(ClearableObjectPool { TestObj() })
+		val c = IndexedPool(ClearableObjectPool { TestObj() })
 		for (i in 5..9) {
 			c.obtain(i).value = i
 		}
@@ -98,7 +98,7 @@ class IndexedRecycleListTest {
 	 */
 	@Test
 	fun smartObtainOppositeDirection() {
-		val c = IndexedRecycleList(ClearableObjectPool { TestObj() })
+		val c = IndexedPool(ClearableObjectPool { TestObj() })
 		for (i in 5..9) {
 			c.obtain(i).value = i
 		}
@@ -126,7 +126,7 @@ class IndexedRecycleListTest {
 
 	@Test
 	fun testNonSequential1() {
-		val c = IndexedRecycleList(ClearableObjectPool { TestObj() })
+		val c = IndexedPool(ClearableObjectPool { TestObj() })
 		c.obtain(9).value = 9
 		c.obtain(11).value = 11
 		c.flip()
@@ -140,14 +140,14 @@ class IndexedRecycleListTest {
 
 	@Test
 	fun testNonSequential2() {
-		val c = IndexedRecycleList(ClearableObjectPool { TestObj() })
+		val c = IndexedPool(ClearableObjectPool { TestObj() })
 		c.obtain(9)
 		c.obtain(7)
 	}
 
 	@Test
 	fun forEach() {
-		val c = IndexedRecycleList(ClearableObjectPool { TestObj() })
+		val c = IndexedPool(ClearableObjectPool { TestObj() })
 		for (i in 5..9) {
 			c.obtain(i).value = i
 		}
@@ -166,7 +166,7 @@ class IndexedRecycleListTest {
 
 	@Test
 	fun getObtainedSerial() {
-		val c = IndexedRecycleList(ClearableObjectPool { TestObj() })
+		val c = IndexedPool(ClearableObjectPool { TestObj() })
 		for (i in 5..9) {
 			c.obtain(i).value = i
 		}
@@ -177,7 +177,7 @@ class IndexedRecycleListTest {
 		assertFails { c.getObtainedByIndex(10) }
 	}
 
-	private fun IndexedRecycleList<TestObj>.getUnused(): List<Int> {
+	private fun IndexedPool<TestObj>.getUnused(): List<Int> {
 		val list = ArrayList<Int>()
 		forEachUnused { _, it ->
 			list.add(it.value)

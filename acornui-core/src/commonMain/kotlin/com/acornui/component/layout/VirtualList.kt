@@ -10,7 +10,7 @@ import com.acornui.component.style.Style
 import com.acornui.core.behavior.Selection
 import com.acornui.core.behavior.SelectionBase
 import com.acornui.core.behavior.deselectNotContaining
-import com.acornui.recycle.IndexedRecycleList
+import com.acornui.recycle.IndexedPool
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.function.as2
@@ -181,7 +181,7 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 
 	private val nullRendererPool = ObjectPool { _nullRendererFactory() }
 
-	private val nullRendererCache = IndexedRecycleList(nullRendererPool)
+	private val nullRendererCache = IndexedPool(nullRendererPool)
 
 	//-------------------------------------------------
 	// Item renderers
@@ -201,7 +201,7 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 
 	private val rendererPool = ObjectPool { _rendererFactory() }
 
-	private val rendererCache = IndexedRecycleList(rendererPool)
+	private val rendererCache = IndexedPool(rendererPool)
 
 	private var _emptyListRenderer: UiComponent? = null
 
