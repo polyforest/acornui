@@ -129,12 +129,12 @@ fun <T : Any> assertUnorderedListEquals(expected: Iterator<T>, actual: Iterator<
 		fail("actual size: ${actualList.size} expected size: ${expectedList.size}")
 	}
 
-	val finds = Array(expectedList.size, { false })
+	val finds = Array(expectedList.size) { false }
 	for (i in 0..expectedList.lastIndex) {
 		val expectedI = expectedList[i]
 		var found: T? = null
 		for (j in 0..actualList.lastIndex) {
-			if (finds[j] == false && actualList[j] == expectedI) {
+			if (!finds[j] && actualList[j] == expectedI) {
 				finds[j] = true
 				found = actualList[j]
 				break

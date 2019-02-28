@@ -73,11 +73,6 @@ internal class DataGridCache<RowData>(private val grid: DataGrid<RowData>) : Dis
 	val cellCache = CellCache(columnCaches)
 
 	/**
-	 * The cell cache for the cells used in measurement.
-	 */
-	val measuredCellCache = CellCache(columnCaches)
-
-	/**
 	 * The cell cache for measuring the rows at the tail of the data view.
 	 * This is important for calculating the max vertical scroll position.
 	 */

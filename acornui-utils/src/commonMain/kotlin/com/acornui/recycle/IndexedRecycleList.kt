@@ -94,13 +94,32 @@ open class IndexedRecycleList<E>(
 			currentIndices.shiftAll(shiftIndex)
 			current.shiftAll(shiftIndex)
 		}
-		val isForward = obtainedIndices.isEmpty() || index >= obtainedIndices.first()
+		val isForward = if (obtainedIndices.isEmpty()) {
+			if (currentIndices.isEmpty()) true
+			else {
+				val mid = currentIndices.size shr 1
+				index < currentIndices[mid]
+			}
+		} else index >= obtainedIndices.first()
+
 		val element: E
 		element = if (current.isEmpty()) {
 			pool.obtain()
 		} else {
-			if (isForward) current.shift()
-			else current.pop()
+			if (isForward) if (currentIndices.first() == index) {
+				currentIndices.shift()
+				current.shift()
+			} else {
+				currentIndices.pop()
+				current.pop()
+			}
+			else if (currentIndices.last() == index) {
+				currentIndices.pop()
+				current.pop()
+			} else {
+				currentIndices.shift()
+				current.shift()
+			}
 		}
 		if (isForward) {
 			obtained.add(element)

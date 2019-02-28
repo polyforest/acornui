@@ -18,6 +18,7 @@ package com.acornui.component.datagrid
 
 import com.acornui.component.ContainerImpl
 import com.acornui.component.DatePicker
+import com.acornui.component.ValidationFlags
 import com.acornui.component.layout.HAlign
 import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.text.*

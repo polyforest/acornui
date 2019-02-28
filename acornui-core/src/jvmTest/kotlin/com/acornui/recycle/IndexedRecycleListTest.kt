@@ -93,6 +93,36 @@ class IndexedRecycleListTest {
 		c.flip()
 	}
 
+	/**
+	 * Test that obtaining forwards, but a negative offset or obtaining reversed, but a positive offset is optimal.
+	 */
+	@Test
+	fun smartObtainOppositeDirection() {
+		val c = IndexedRecycleList(ClearableObjectPool { TestObj() })
+		for (i in 5..9) {
+			c.obtain(i).value = i
+		}
+		c.flip()
+		assertChangedCount(5)
+		assertConstructionCount(5)
+
+		// Step down one
+		for (i in 4..8) {
+			c.obtain(i).value = i
+		}
+		c.flip()
+		assertChangedCount(1)
+		assertConstructionCount(0)
+
+		// Step up one
+		for (i in 9 downTo 5) {
+			c.obtain(i).value = i
+		}
+		c.flip()
+		assertChangedCount(1)
+		assertConstructionCount(0)
+	}
+
 
 	@Test
 	fun testNonSequential1() {

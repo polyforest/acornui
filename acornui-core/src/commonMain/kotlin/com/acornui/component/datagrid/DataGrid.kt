@@ -93,18 +93,19 @@ class DataGrid<RowData>(
 
 	/**
 	 * The maximum number of rows to display.
-	 * Note that if maxRows is too large and minRowHeight is too small, a very large number of cells may be created.
+	 * Note that if [maxRows] is too large and [minRowHeight] is too small, a very large number of cells may be created.
 	 */
 	var maxRows by validationProp(100, ValidationFlags.LAYOUT)
 
 	/**
 	 * The minimum height a row can be.
-	 * Note that if maxRows is too large and minRowHeight is too small, a very large number of cells may be created.
+	 * Note that if [maxRows] is too large and [minRowHeight] is too small, a very large number of cells may be created.
 	 */
 	var minRowHeight by validationProp(15f, ValidationFlags.LAYOUT)
 
 	/**
 	 * If set, each row will be this height, instead of being measured based on the grid cells.
+	 * Additionally, if this is set, the cell heights will be explicitly set to this minus the cell padding.
 	 */
 	var rowHeight: Float? by validationProp(null, ValidationFlags.LAYOUT)
 
@@ -639,8 +640,20 @@ class DataGrid<RowData>(
 		if (rowLocation.position < _cellMetrics.startPosition) {
 			vScrollModel.value = rowLocation.position.toFloat()
 		} else if (rowLocation.position > _cellMetrics.endPosition - 1f) {
-			measureCellsReversed(rowLocation.position.toFloat() + 1f, _measureCellMetrics)
+
+
+			sizeCellsReversed(
+					width = _bottomCellMetrics.bounds.width,
+					height = _bottomCellMetrics.bounds.height,
+					endPosition = rowLocation.position.toFloat() + 1f,
+					cellCache = cache.cellCache,
+					cellsContainer = contents,
+					headerAndFootersContainer = groupHeadersAndFooters,
+					allowVirtual = true,
+					metrics = _measureCellMetrics
+			)
 			vScrollModel.value = _measureCellMetrics.startPosition
+			invalidateLayout()
 		}
 	}
 
@@ -1158,17 +1171,6 @@ class DataGrid<RowData>(
 		return total
 	}
 
-	private fun measureCellsReversed(endPosition: Float, metrics: DataGridCellMetrics) = sizeCellsReversed(
-			width = _bottomCellMetrics.bounds.width,
-			height = _bottomCellMetrics.bounds.height,
-			endPosition = endPosition,
-			cellCache = cache.measuredCellCache,
-			cellsContainer = measureContents,
-			headerAndFootersContainer = measureContents,
-			allowVirtual = true,
-			metrics = metrics
-	)
-
 	/**
 	 * Calculates how many rows can be rendered in the given space with the last row being the given row location.
 	 * @param width The explicit width of the contents area.
@@ -1201,8 +1203,10 @@ class DataGrid<RowData>(
 
 		val firstPartial = endPosition.ceil() - endPosition
 
-		var heightSum: Float
+		val pad = style.cellPadding
 		val rowHeight = rowHeight
+		val rowHeight2 = pad.reduceHeight(rowHeight)
+		var heightSum: Float
 		val maxRows = minOf(_totalRows, maxRows)
 		val maxHeight = height ?: Float.MAX_VALUE
 
@@ -1218,14 +1222,12 @@ class DataGrid<RowData>(
 				rowPosition += rowHeight
 			}
 		} else {
-			val pad = style.cellPadding
 			var rowsShown = 0
 			heightSum = 0f
 			var iRowHeight = minRowHeight
 
 			rowIterator.position = endPosition.ceil()
 
-			var rowIndex = rowIterator.position
 			while (rowIterator.hasPreviousRow && rowsShown < maxRows && heightSum < maxHeight) {
 				rowIterator.moveToPreviousRow()
 				iRowHeight = minRowHeight
@@ -1246,16 +1248,15 @@ class DataGrid<RowData>(
 					// TODO:
 				} else {
 					val element = rowIterator.element!!
-					rowIndex--
 					iterateVisibleColumnsInternal { columnIndex, column, columnX, columnWidth ->
 						@Suppress("unchecked_cast")
-						val cell = cellCache.columnCellCaches[columnIndex].obtain(rowIndex) as DataGridCell<Any?>
+						val cell = cellCache.columnCellCaches[columnIndex].obtain(rowIterator.position) as DataGridCell<Any?>
 						if (!cell.isActive) cellsContainer.addElement(cell)
 
 						val cellData = column.getCellData(element)
 						cell.setData(cellData)
 
-						cell.setSize(pad.reduceWidth2(columnWidth), null)
+						cell.setSize(pad.reduceWidth2(columnWidth), rowHeight2)
 						iRowHeight = maxOf(iRowHeight, pad.expandHeight2(cell.height))
 						true
 					}
@@ -1287,9 +1288,9 @@ class DataGrid<RowData>(
 			cellCache.columnCellCaches[columnIndex].removeAndFlip(cellsContainer)
 			true
 		}
-		cache.usedColumns.forEachUnused { columnIndex ->
+		cellCache.usedColumns.forEachUnused { columnIndex ->
 			cellCache.columnCellCaches[columnIndex].removeAndFlip(cellsContainer)
-		}
+		}.flip()
 		cellCache.usedGroupHeadersAndFooters.forEachUnused { headerAndFootersContainer.removeElement(it) }.flip()
 	}
 
@@ -1323,10 +1324,10 @@ class DataGrid<RowData>(
 			true
 		}
 
-		val rowHeight = rowHeight
-		val maxRows = minOf(_totalRows, maxRows)
 		val pad = style.cellPadding
+		val rowHeight = rowHeight
 		val rowHeight2 = pad.reduceHeight(rowHeight)
+		val maxRows = minOf(_totalRows, maxRows)
 		var rowsShown = 0
 		var heightSum = 0f
 		var iRowHeight: Float = minRowHeight
@@ -1346,7 +1347,6 @@ class DataGrid<RowData>(
 			}
 		} else {
 			rowIterator.position = startPosition.toInt() - 1
-			var rowIndex = rowIterator.position
 			while (rowIterator.hasNextRow && heightSum < height) {
 				rowIterator.moveToNextRow()
 				iRowHeight = minRowHeight
@@ -1367,10 +1367,9 @@ class DataGrid<RowData>(
 					// TODO:
 				} else {
 					val element = rowIterator.element!!
-					rowIndex++
 					iterateVisibleColumnsInternal { columnIndex, column, columnX, columnWidth ->
 						@Suppress("unchecked_cast")
-						val cell = cellCache.columnCellCaches[columnIndex].obtain(rowIndex) as DataGridCell<Any?>
+						val cell = cellCache.columnCellCaches[columnIndex].obtain(rowIterator.position) as DataGridCell<Any?>
 						if (!cell.isActive) cellsContainer.addElement(cell)
 						val cellData = column.getCellData(element)
 						cell.setData(cellData)
@@ -1400,9 +1399,9 @@ class DataGrid<RowData>(
 			cellCache.columnCellCaches[columnIndex].removeAndFlip(cellsContainer)
 			true
 		}
-		cache.usedColumns.forEachUnused { columnIndex ->
+		cellCache.usedColumns.forEachUnused { columnIndex ->
 			cellCache.columnCellCaches[columnIndex].removeAndFlip(cellsContainer)
-		}
+		}.flip()
 		cellCache.usedGroupHeadersAndFooters.forEachUnused { headerAndFootersContainer.removeElement(it) }.flip()
 	}
 
