@@ -33,7 +33,7 @@ allprojects {
             }
             .all {
                 delete(fileTree(".").matching {
-                    include("**/out/", "**/dist/", "**/www", "**/wwwDist")
+                    include("**/out/")
                 })
             }
 
