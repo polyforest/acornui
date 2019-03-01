@@ -17,7 +17,7 @@
 package com.acornui.recycle
 
 import com.acornui.test.assertListEquals
-import org.junit.Test
+import kotlin.test.Test
 
 class UsedTrackerTest {
 

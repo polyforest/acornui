@@ -19,7 +19,7 @@ package com.acornui.core.io.file
 import com.acornui.collection.isSorted
 import com.acornui.io.file.FilesManifestSerializer
 import com.acornui.serialization.JsonSerializer
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

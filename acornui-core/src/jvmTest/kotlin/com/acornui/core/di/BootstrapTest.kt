@@ -1,7 +1,7 @@
 package com.acornui.core.di
 
 import com.acornui.async.launch
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertNotNull
 
 class BootstrapTest {

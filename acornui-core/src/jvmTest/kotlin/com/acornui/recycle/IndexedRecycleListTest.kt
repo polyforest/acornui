@@ -19,7 +19,7 @@ package com.acornui.recycle
 import com.acornui.assertionsEnabled
 import com.acornui.test.assertUnorderedListEquals
 import org.junit.Before
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 

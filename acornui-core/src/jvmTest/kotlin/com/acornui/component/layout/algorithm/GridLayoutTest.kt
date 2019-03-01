@@ -2,7 +2,7 @@ package com.acornui.component.layout.algorithm
 
 import com.acornui.component.layout.LayoutElement
 import com.acornui.test.assertListEquals
-import org.junit.Test
+import kotlin.test.Test
 
 
 class GridLayoutTest {

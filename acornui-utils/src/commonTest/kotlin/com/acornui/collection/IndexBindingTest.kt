@@ -4,7 +4,7 @@ import com.acornui.observe.IndexBinding
 import com.acornui.observe.bindIndex
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class IndexBindingTest {
 

@@ -3,7 +3,7 @@ package com.acornui.component
 import com.acornui.assertionsEnabled
 import com.acornui.string.toRadix
 import org.junit.Before
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse

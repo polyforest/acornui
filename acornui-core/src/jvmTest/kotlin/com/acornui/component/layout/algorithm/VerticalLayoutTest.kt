@@ -20,7 +20,7 @@ import com.acornui.component.layout.Spacer
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.test.MockInjector
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class VerticalLayoutTest {

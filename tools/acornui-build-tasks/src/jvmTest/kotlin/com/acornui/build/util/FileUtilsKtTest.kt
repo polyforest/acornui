@@ -16,9 +16,9 @@
 
 package com.acornui.build.util
 
-import org.junit.After
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import kotlin.test.AfterTest
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import java.io.File
@@ -37,7 +37,7 @@ class FileUtilsKtTest {
 		out.mkdirs()
 	}
 
-	@After
+	@AfterTest
 	fun after() {
 		src.deleteRecursively()
 		out.deleteRecursively()
