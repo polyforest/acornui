@@ -238,7 +238,7 @@ open class LwjglApplication : ApplicationBase() {
 		_windowId = window.windowId
 		set(Window, window)
 		uncaughtExceptionHandler = {
-			val message = it.stack
+			val message = it.stack + "\n${config.version.toVersionString()}"
 			Log.error(message)
 			if (config.debug)
 				window.alert(message)
