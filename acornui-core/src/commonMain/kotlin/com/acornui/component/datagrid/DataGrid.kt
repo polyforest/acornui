@@ -1411,6 +1411,7 @@ class DataGrid<RowData>(
 		val pad = style.cellPadding
 		val startPosition = metrics.startPosition.toInt()
 		rowIterator.position = startPosition - 1
+		var cellRow = 0
 		for (i in 0..metrics.rowHeights.lastIndex) {
 			rowIterator.moveToNextRow()
 			val rowHeight = metrics.rowHeights[i]
@@ -1421,10 +1422,9 @@ class DataGrid<RowData>(
 			} else if (rowIterator.isFooter) {
 //				rowIterator.groupCache.footer!!.setPosition(0f, rowPosition)
 			} else {
-
 				iterateVisibleColumnsInternal { columnIndex, column, columnX, columnWidth ->
 					@Suppress("unchecked_cast")
-					val cell = cellCache.columnCellCaches[columnIndex][i] as DataGridCell<Any?>
+					val cell = cellCache.columnCellCaches[columnIndex][cellRow] as DataGridCell<Any?>
 
 					val y = pad.top + maxOf(0f, when (column.cellVAlign ?: style.cellVAlign) {
 						VAlign.TOP -> 0f
@@ -1441,6 +1441,7 @@ class DataGrid<RowData>(
 					cell.moveTo(columnX + x, rowPosition + y)
 					true
 				}
+				cellRow++
 			}
 		}
 	}
