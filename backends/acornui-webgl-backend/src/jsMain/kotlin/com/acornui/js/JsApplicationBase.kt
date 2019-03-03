@@ -282,7 +282,7 @@ Kotlin.isType = function(object, klass) {
 	}
 
 	protected open val keyInputTask by BootTask {
-		set(KeyInput, JsKeyInput(get(CANVAS)))
+		set(KeyInput, JsKeyInput(get(CANVAS), get(AppConfig).input.jsCaptureAllKeyboardInput))
 	}
 
 	protected open val jsonTask by BootTask {

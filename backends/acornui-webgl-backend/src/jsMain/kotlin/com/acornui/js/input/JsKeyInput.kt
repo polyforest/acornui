@@ -24,6 +24,7 @@ import com.acornui.core.input.interaction.KeyLocation
 import com.acornui.signal.Signal1
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event
+import org.w3c.dom.events.EventTarget
 import org.w3c.dom.events.KeyboardEvent
 import kotlin.browser.window
 
@@ -31,7 +32,8 @@ import kotlin.browser.window
  * @author nbilyk
  */
 class JsKeyInput(
-		private val root: HTMLElement
+		root: HTMLElement,
+		captureAllKeyboardInput: Boolean
 ) : KeyInput {
 
 	override val keyDown: Signal1<KeyInteraction> = Signal1()
@@ -77,16 +79,21 @@ class JsKeyInput(
 		}
 	}
 
-	private val rootBlurHandler = {
+	private val blurHandler = {
 		jsEvent: Event ->
 		downMap.clear()
 	}
 
+	private val eventTarget: EventTarget = if (captureAllKeyboardInput) window else root
+
 	init {
-		window.addEventListener("keydown", keyDownHandler)
-		window.addEventListener("keyup", keyUpHandler)
-		window.addEventListener("keypress", keyPressHandler)
-		window.addEventListener("blur", rootBlurHandler)
+		if (!captureAllKeyboardInput && !root.hasAttribute("tabIndex")) {
+			root.tabIndex = 0
+		}
+		eventTarget.addEventListener("keydown", keyDownHandler)
+		eventTarget.addEventListener("keyup", keyUpHandler)
+		eventTarget.addEventListener("keypress", keyPressHandler)
+		eventTarget.addEventListener("blur", blurHandler)
 	}
 
 	private fun populateKeyEvent(jsEvent: KeyboardEvent) {
@@ -109,10 +116,10 @@ class JsKeyInput(
 	}
 
 	override fun dispose() {
-		window.removeEventListener("keydown", keyDownHandler)
-		window.removeEventListener("keyup", keyUpHandler)
-		window.removeEventListener("keypress", keyPressHandler)
-		window.removeEventListener("blur", rootBlurHandler)
+		eventTarget.removeEventListener("keydown", keyDownHandler)
+		eventTarget.removeEventListener("keyup", keyUpHandler)
+		eventTarget.removeEventListener("keypress", keyPressHandler)
+		eventTarget.removeEventListener("blur", blurHandler)
 		keyDown.dispose()
 		keyUp.dispose()
 		char.dispose()

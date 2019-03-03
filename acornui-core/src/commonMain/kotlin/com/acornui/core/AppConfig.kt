@@ -78,12 +78,20 @@ data class AppConfig(
 		 */
 		val assetsManifestPath: String = "assets/files.json",
 
+		/**
+		 * The properties for the Window.
+		 */
 		val window: WindowConfig = WindowConfig(),
 
 		/**
 		 * The Config for OpenGL properties. Only used in GL applications.
 		 */
-		val gl: GlConfig = GlConfig()
+		val gl: GlConfig = GlConfig(),
+
+		/**
+		 * The config for Input properties.
+		 */
+		val input: InputConfig = InputConfig()
 ) {
 
 	/**
@@ -115,6 +123,18 @@ data class WindowConfig(
 		 */
 		val backgroundColor: ColorRo = Color(0xF1F2F3FF)
 
+)
+
+data class InputConfig(
+
+		/**
+		 * By default, keyboard input for the JS backend will be processed from the window. This is so that
+		 * keyboard input can be processed immediately without first focusing the canvas.
+		 * However, if there are other elements on the page that need to receive keyboard input, this can cause a
+		 * problem.
+		 * Set to false in order to only accept keyboard input from the canvas.
+		 */
+		val jsCaptureAllKeyboardInput: Boolean = true
 )
 
 data class GlConfig(
