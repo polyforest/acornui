@@ -38,6 +38,13 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/acornui-spine/com.polyforest.acornui-spine.jsTest.iml" filepath="$PROJECT_DIR$/.idea/modules/acornui-spine/com.polyforest.acornui-spine.jsTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/acornui-spine/com.polyforest.acornui-spine.jvmMain.iml" filepath="$PROJECT_DIR$/.idea/modules/acornui-spine/com.polyforest.acornui-spine.jvmMain.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/acornui-spine/com.polyforest.acornui-spine.jvmTest.iml" filepath="$PROJECT_DIR$/.idea/modules/acornui-spine/com.polyforest.acornui-spine.jvmTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/acornui-test-utils/com.polyforest.acornui-test-utils.iml" filepath="$PROJECT_DIR$/.idea/modules/acornui-test-utils/com.polyforest.acornui-test-utils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/acornui-test-utils/com.polyforest.acornui-test-utils.commonMain.iml" filepath="$PROJECT_DIR$/.idea/modules/acornui-test-utils/com.polyforest.acornui-test-utils.commonMain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/acornui-test-utils/com.polyforest.acornui-test-utils.commonTest.iml" filepath="$PROJECT_DIR$/.idea/modules/acornui-test-utils/com.polyforest.acornui-test-utils.commonTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/acornui-test-utils/com.polyforest.acornui-test-utils.jsMain.iml" filepath="$PROJECT_DIR$/.idea/modules/acornui-test-utils/com.polyforest.acornui-test-utils.jsMain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/acornui-test-utils/com.polyforest.acornui-test-utils.jsTest.iml" filepath="$PROJECT_DIR$/.idea/modules/acornui-test-utils/com.polyforest.acornui-test-utils.jsTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/acornui-test-utils/com.polyforest.acornui-test-utils.jvmMain.iml" filepath="$PROJECT_DIR$/.idea/modules/acornui-test-utils/com.polyforest.acornui-test-utils.jvmMain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/acornui-test-utils/com.polyforest.acornui-test-utils.jvmTest.iml" filepath="$PROJECT_DIR$/.idea/modules/acornui-test-utils/com.polyforest.acornui-test-utils.jvmTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/tools/acornui-texture-packer/com.polyforest.acornui-texture-packer.iml" filepath="$PROJECT_DIR$/.idea/modules/tools/acornui-texture-packer/com.polyforest.acornui-texture-packer.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/tools/acornui-texture-packer/com.polyforest.acornui-texture-packer.commonMain.iml" filepath="$PROJECT_DIR$/.idea/modules/tools/acornui-texture-packer/com.polyforest.acornui-texture-packer.commonMain.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/tools/acornui-texture-packer/com.polyforest.acornui-texture-packer.commonTest.iml" filepath="$PROJECT_DIR$/.idea/modules/tools/acornui-texture-packer/com.polyforest.acornui-texture-packer.commonTest.iml" />
@@ -61,7 +68,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/backends/acornui-webgl-backend/com.polyforest.acornui-webgl-backend.jvmTest.iml" filepath="$PROJECT_DIR$/.idea/modules/backends/acornui-webgl-backend/com.polyforest.acornui-webgl-backend.jvmTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/backends/com.polyforest.backends.iml" filepath="$PROJECT_DIR$/.idea/modules/backends/com.polyforest.backends.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/tools/com.polyforest.tools.iml" filepath="$PROJECT_DIR$/.idea/modules/tools/com.polyforest.tools.iml" />
-      <module fileurl="file://$PROJECT_DIR$/scripts/scripts.iml" filepath="$PROJECT_DIR$/scripts/scripts.iml" group="acornui" />
+      <module fileurl="file://$PROJECT_DIR$/scripts/scripts.iml" filepath="$PROJECT_DIR$/scripts/scripts.iml" />
     </modules>
   </component>
 </project>
