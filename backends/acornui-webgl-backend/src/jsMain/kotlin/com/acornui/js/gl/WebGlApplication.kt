@@ -69,18 +69,17 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 	}
 
 	protected open val glTask by BootTask {
-		val config = get(AppConfig)
-		val glConfig = config.gl
+		val glConfig = config().gl
 		val attributes = WebGLContextAttributes()
 		attributes.alpha = glConfig.alpha
 		attributes.antialias = glConfig.antialias
 		attributes.depth = glConfig.depth
 		attributes.stencil = glConfig.stencil
 		attributes.premultipliedAlpha = false
+		attributes.preserveDrawingBuffer = true
 
 		val context = WebGl.getContext(get(CANVAS), attributes) ?: throw Exception("Browser does not support WebGL") // TODO: Make this a better UX
-		val gl = WebGl20(context)
-		set(Gl20, gl)
+		set(Gl20, WebGl20(context))
 	}
 	
 	override val windowTask by BootTask {
