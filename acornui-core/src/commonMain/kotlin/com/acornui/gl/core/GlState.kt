@@ -80,12 +80,14 @@ interface GlState {
 
 	fun getTexture(unit: Int): Texture?
 	fun setTexture(texture: Texture? = null, unit: Int = 0)
+
 	/**
 	 * For any unit where this texture is bound, unbind it.
 	 */
 	fun unsetTexture(texture: Texture)
 
 	fun blendMode(blendMode: BlendMode, premultipliedAlpha: Boolean)
+
 	/**
 	 * Gets the current scissor rectangle.
 	 * @param out Sets this rectangle to the current scissor rect.
