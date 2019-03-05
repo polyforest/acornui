@@ -271,7 +271,7 @@ class StaticMesh(
 						}
 					}
 				} else {
-					// TODO: Implement intersections for TRIANGLE_STRIP and TRIANGLE_FAN
+					// TODO #149: Implement intersections for TRIANGLE_STRIP and TRIANGLE_FAN
 				}
 			}
 		}

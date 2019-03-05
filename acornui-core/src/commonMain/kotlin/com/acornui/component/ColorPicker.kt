@@ -76,9 +76,7 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 			background = addChild(0, it.background(this))
 		}
 
-		blurred().add {
-			close()
-		}
+		blurred().add(::close)
 	}
 
 	private var isOpen by observable(false) {
