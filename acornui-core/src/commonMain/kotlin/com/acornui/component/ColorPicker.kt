@@ -11,6 +11,7 @@ import com.acornui.core.focus.blurred
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.interaction.dragAttachment
 import com.acornui.core.popup.lift
+import com.acornui.core.toInt
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.Hsv
@@ -51,6 +52,25 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 			colorSwatch.style.backgroundColor = value.toRgb(tmpColor).copy()
 		}
 
+	/**
+	 * If true, there will be a slider input for the color's value component in the HSV color.
+	 */
+	var showValuePicker: Boolean
+		get() = colorPalette.showValuePicker
+		set(value) {
+			colorPalette.showValuePicker = value
+		}
+
+	/**
+	 * If true (default), there will be a slider input for the color's alpha.
+	 */
+	var showAlphaPicker: Boolean
+		get() = colorPalette.showAlphaPicker
+		set(value) {
+			colorPalette.showAlphaPicker = value
+		}
+
+
 	private val tmpColor = Color()
 
 	init {
@@ -88,15 +108,23 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 	}
 
 
-	fun open() { isOpen = true }
-	fun close() { isOpen = false }
-	fun toggleOpen() { isOpen = !isOpen }
+	fun open() {
+		isOpen = true
+	}
+
+	fun close() {
+		isOpen = false
+	}
+
+	fun toggleOpen() {
+		isOpen = !isOpen
+	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val s = style
 		val padding = s.padding
-		val w = explicitWidth ?: s.defaultSwatchWidth+padding.left+padding.right
-		val h = explicitHeight ?: s.defaultSwatchHeight+padding.top+padding.bottom
+		val w = explicitWidth ?: s.defaultSwatchWidth + padding.left + padding.right
+		val h = explicitHeight ?: s.defaultSwatchHeight + padding.top + padding.bottom
 
 		colorSwatch.setSize(padding.reduceWidth(w), padding.reduceHeight(h))
 		colorSwatch.moveTo(padding.left, padding.top)
@@ -142,18 +170,31 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 
 	val style = bind(ColorPaletteStyle())
 
-	var showAlphaPicker by observable(false) {
+	/**
+	 * If true, there will be a slider input for the color's value component in the HSV color.
+	 */
+	var showValuePicker by observable(true) {
+		valueRect.visible = it
+		valueIndicator?.visible = it
+		invalidateLayout()
+	}
+
+	/**
+	 * If true, there will be a slider input for the color's alpha.
+	 */
+	var showAlphaPicker by observable(true) {
 		alphaRect.visible = it
-		alphaValueIndicator?.visible = it
+		alphaGrid.visible = it
+		alphaIndicator?.visible = it
 		invalidateLayout()
 	}
 
 	private var background: UiComponent? = null
 	private var hueSaturationIndicator: UiComponent? = null
-	private var saturationValueIndicator: UiComponent? = null
-	private var alphaValueIndicator: UiComponent? = null
+	private var valueIndicator: UiComponent? = null
+	private var alphaIndicator: UiComponent? = null
 
-	val hueRect = addChild(rect {
+	private val hueRect = addChild(rect {
 		includeInLayout = false
 		style.linearGradient = LinearGradient(GradientDirection.RIGHT,
 				Color(1f, 0f, 0f, 1f),
@@ -166,7 +207,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 		)
 	})
 
-	val saturationRect = addChild(rect {
+	private val saturationRect = addChild(rect {
 		includeInLayout = false
 		style.linearGradient = LinearGradient(GradientDirection.BOTTOM,
 				Color(1f, 1f, 1f, 0f),
@@ -191,8 +232,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 		_changed.dispatch()
 	}
 
-	val valueRect = addChild(rect {
-		includeInLayout = false
+	private val valueRect = addChild(rect {
 		dragAttachment(0f).drag.add {
 			canvasToLocal(tmpVec.set(it.position))
 			val p = MathUtils.clamp(tmpVec.y / height, 0f, 1f)
@@ -203,9 +243,9 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 		}
 	})
 
-	val alphaRect = addChild(rect {
-		includeInLayout = false
-		visible = false
+	private val alphaGrid = addChild(repeatingTexture("assets/uiskin/AlphaCheckerboard.png"))
+
+	private val alphaRect = addChild(rect {
 		dragAttachment(0f).drag.add {
 			canvasToLocal(tmpVec.set(it.position))
 			val p = MathUtils.clamp(tmpVec.y / height, 0f, 1f)
@@ -239,53 +279,66 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 		watch(style) {
 			background?.dispose()
 			hueSaturationIndicator?.dispose()
-			saturationValueIndicator?.dispose()
-			alphaValueIndicator?.dispose()
+			valueIndicator?.dispose()
+			alphaIndicator?.dispose()
 
 			background = addChild(0, it.background(this))
 
 			hueSaturationIndicator = addChild(it.hueSaturationIndicator(this))
 			hueSaturationIndicator!!.interactivityMode = InteractivityMode.NONE
 
-			saturationValueIndicator = addChild(it.valueIndicator(this))
-			saturationValueIndicator!!.interactivityMode = InteractivityMode.NONE
+			valueIndicator = addChild(it.sliderArrow(this))
+			valueIndicator!!.interactivityMode = InteractivityMode.NONE
+			valueIndicator?.visible = showValuePicker
 
-			alphaValueIndicator = addChild(it.valueIndicator(this))
-			alphaValueIndicator!!.interactivityMode = InteractivityMode.NONE
-			alphaValueIndicator?.visible = showAlphaPicker
+			alphaIndicator = addChild(it.sliderArrow(this))
+			alphaIndicator!!.interactivityMode = InteractivityMode.NONE
+			alphaIndicator?.visible = showAlphaPicker
 		}
 
-		validation.addNode(COLORS, ValidationFlags.STYLES, ValidationFlags.LAYOUT, this::validateColors)
+		validation.addNode(COLORS, ValidationFlags.STYLES, ValidationFlags.LAYOUT, this::updateColors)
 	}
 
-	private fun validateColors() {
+	private fun updateColors() {
 		tmpHSV.set(_value)
 		tmpHSV.v = 1f
+		tmpHSV.a = 1f
 		valueRect.style.linearGradient = LinearGradient(GradientDirection.BOTTOM,
 				tmpHSV.toRgb(tmpColor).copy(),
 				Color(0f, 0f, 0f, 1f)
 		)
+		alphaRect.style.linearGradient = LinearGradient(GradientDirection.BOTTOM,
+				tmpHSV.toRgb(),
+				Color(0f, 0f, 0f, 0f)
+		)
+
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val s = style
 		val padding = s.padding
 
-		val w = explicitWidth ?: s.defaultPaletteWidth+s.brightnessWidth+s.gap+padding.left+padding.right
-		val h = explicitHeight ?: s.defaultPaletteHeight+padding.top+padding.bottom
+		val numSliders = showValuePicker.toInt() + showAlphaPicker.toInt()
+		val w = explicitWidth ?: s.defaultPaletteWidth + numSliders * (s.sliderWidth + s.gap) + padding.left + padding.right
+		val h = explicitHeight ?: s.defaultPaletteHeight + padding.top + padding.bottom
 
-		hueRect.setSize(w - padding.right - padding.left - s.gap - s.brightnessWidth, h - padding.top - padding.bottom)
+		hueRect.setSize(w - padding.right - padding.left - numSliders * (s.sliderWidth + s.gap), h - padding.top - padding.bottom)
 		hueRect.moveTo(padding.left, padding.top)
 		saturationRect.setSize(hueRect.width, hueRect.height)
 		saturationRect.moveTo(hueRect.x, hueRect.y)
 
-		val satHeight = h - padding.top - padding.bottom
-		valueRect.setSize(s.brightnessWidth, satHeight)
-		valueRect.moveTo(padding.left + hueRect.width + s.gap, padding.top)
+		val sliderHeight = h - padding.top - padding.bottom
+		valueRect.setSize(s.sliderWidth, sliderHeight)
+		valueRect.moveTo(hueRect.right + s.gap, padding.top)
+
+		alphaGrid.setSize(s.sliderWidth, sliderHeight)
+		alphaGrid.moveTo(valueRect.right + s.gap, padding.top)
+		alphaRect.setSize(s.sliderWidth, sliderHeight)
+		alphaRect.moveTo(valueRect.right + s.gap, padding.top)
 
 		hueSaturationIndicator!!.moveTo(saturationRect.x + _value.h / 360f * saturationRect.width - hueSaturationIndicator!!.width * 0.5f, saturationRect.y + (1f - _value.s) * saturationRect.height - hueSaturationIndicator!!.height * 0.5f)
-
-		saturationValueIndicator!!.moveTo(valueRect.x - saturationValueIndicator!!.width * 0.5f, (1f - _value.v) * satHeight + padding.top - saturationValueIndicator!!.height * 0.5f)
+		valueIndicator!!.moveTo(valueRect.x - valueIndicator!!.width * 0.5f, (1f - _value.v) * sliderHeight + padding.top - valueIndicator!!.height * 0.5f)
+		alphaIndicator!!.moveTo(alphaRect.x - alphaIndicator!!.width * 0.5f, (1f - _value.a) * sliderHeight + padding.top - alphaIndicator!!.height * 0.5f)
 
 		val bg = background!!
 		bg.setSize(w, h)
@@ -307,13 +360,13 @@ class ColorPaletteStyle : StyleBase() {
 	override val type = Companion
 
 	var padding by prop(Pad(5f))
-	var brightnessWidth by prop(15f)
+	var sliderWidth by prop(16f)
 	var defaultPaletteWidth by prop(200f)
 	var defaultPaletteHeight by prop(100f)
 	var gap by prop(5f)
 	var background by prop(noSkin)
 	var hueSaturationIndicator by prop(noSkin)
-	var valueIndicator by prop(noSkin)
+	var sliderArrow by prop(noSkin)
 
 	companion object : StyleType<ColorPaletteStyle>
 }

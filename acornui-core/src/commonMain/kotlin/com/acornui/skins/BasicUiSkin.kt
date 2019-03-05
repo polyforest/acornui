@@ -440,7 +440,7 @@ open class BasicUiSkin(
 			hueSaturationIndicator = {
 				atlas(theme.atlasPath, "Picker")
 			}
-			valueIndicator = {
+			sliderArrow = {
 				atlas(theme.atlasPath, "SliderArrowRight")
 			}
 		}

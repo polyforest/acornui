@@ -16,6 +16,7 @@
 
 package com.acornui.component
 
+import com.acornui.async.catch
 import com.acornui.async.then
 import com.acornui.core.asset.AssetType
 import com.acornui.core.asset.CachedGroup
@@ -24,6 +25,7 @@ import com.acornui.core.asset.loadAndCache
 import com.acornui.core.di.Owned
 import com.acornui.core.graphic.BlendMode
 import com.acornui.core.graphic.Texture
+import com.acornui.logging.Log
 import com.acornui.math.IntRectangleRo
 import com.acornui.math.RectangleRo
 
@@ -34,13 +36,13 @@ import com.acornui.math.RectangleRo
 open class TextureComponent(owner: Owned) : DrawableComponent(owner) {
 
 	override val drawable: Sprite = Sprite()
-	
+
 	/**
 	 * If true, the normal and indices will be reversed.
 	 */
 	var useAsBackFace: Boolean
 		get() = drawable.useAsBackFace
-		set(value) { 
+		set(value) {
 			drawable.useAsBackFace = value
 		}
 
@@ -81,7 +83,7 @@ open class TextureComponent(owner: Owned) : DrawableComponent(owner) {
 			if (value != null) {
 				loadAndCache(value, AssetType.TEXTURE, cached!!).then {
 					_setTexture(it)
-				}
+				} catch(errorHandler)
 			} else {
 				_setTexture(null)
 			}
@@ -154,6 +156,14 @@ open class TextureComponent(owner: Owned) : DrawableComponent(owner) {
 	override fun dispose() {
 		path = null
 		super.dispose()
+	}
+
+	companion object {
+
+		/**
+		 * The error handler when loading textures via [TextureComponent.path] and the texture is not found.
+		 */
+		var errorHandler: (e: Throwable) -> Unit = { Log.error(it) }
 	}
 }
 
