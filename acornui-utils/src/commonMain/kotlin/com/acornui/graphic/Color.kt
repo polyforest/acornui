@@ -32,7 +32,7 @@ interface ColorRo {
 	val a: Float
 
 	operator fun times(value: Float): Color {
-		return Color().set(this).mul(value)
+		return Color().set(this).mulRgb(value)
 	}
 
 	operator fun plus(color: ColorRo): Color {
@@ -188,6 +188,19 @@ data class Color(
 		this.g *= value
 		this.b *= value
 		this.a *= value
+		return this
+	}
+
+	/**
+	 * Multiplies rgb components of this Color with the given value.
+	 *
+	 * @param value the value
+	 * @return this Color.
+	 */
+	fun mulRgb(value: Float): Color {
+		this.r *= value
+		this.g *= value
+		this.b *= value
 		return this
 	}
 
