@@ -144,7 +144,7 @@ open class ScrollArea(
 	}
 
 	private fun focusChangedHandler(old: UiComponentRo?, new: UiComponentRo?) {
-		if (new != null && isAncestorOf(new)) {
+		if (style.autoScrollToFocused && new != null && isAncestorOf(new)) {
 			callLater {
 				// Inside a callLater because scrollTo invokes validation and focus changes may happen within validation.
 				scrollTo(new)
@@ -370,6 +370,11 @@ class ScrollAreaStyle : StyleBase() {
 	var tossScrolling by prop(false)
 
 	var borderRadius: CornersRo by prop(Corners())
+
+	/**
+	 * If true, the scroll area will automatically scroll to show the focused element.
+	 */
+	var autoScrollToFocused by prop(true)
 
 	companion object : StyleType<ScrollAreaStyle>
 }
