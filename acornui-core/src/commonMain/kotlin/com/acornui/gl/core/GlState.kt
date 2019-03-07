@@ -124,7 +124,7 @@ interface GlState {
 	/**
 	 * Gets the current framebuffer, populating the [out] parameter.
 	 */
-	fun getFramebuffer(out: FrameBufferInfo)
+	fun getFramebuffer(out: FramebufferInfo)
 
 	/**
 	 * Sets the current framebuffer and some information about it.
@@ -296,9 +296,9 @@ class GlStateImpl(
 			gl.disable(Gl20.SCISSOR_TEST)
 	}
 
-	private val _framebuffer = FrameBufferInfo(null, (window.width * window.scaleX).toInt(), (window.height * window.scaleY).toInt(), window.scaleX, window.scaleY)
+	private val _framebuffer = FramebufferInfo(null, (window.width * window.scaleX).toInt(), (window.height * window.scaleY).toInt(), window.scaleX, window.scaleY)
 
-	override fun getFramebuffer(out: FrameBufferInfo) = out.set(_framebuffer)
+	override fun getFramebuffer(out: FramebufferInfo) = out.set(_framebuffer)
 
 	override fun setFramebuffer(framebuffer: GlFramebufferRef?,
 					   width: Int,

@@ -34,35 +34,35 @@ import com.acornui.math.Matrix4
 class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean = false, hasStencil: Boolean = false) : Scoped, Disposable {
 
 	private val window = inject(Window)
-	private val frameBuffer = ResizeableFrameBuffer(injector, window.width.toInt(), window.height.toInt(), hasDepth, hasStencil)
+	private val framebuffer = ResizeableFramebuffer(injector, window.width, window.height, hasDepth, hasStencil)
 
 	var blendMode: BlendMode
-		get() = frameBuffer.blendMode
+		get() = framebuffer.blendMode
 		set(value) {
-			frameBuffer.blendMode = value
+			framebuffer.blendMode = value
 		}
 
 	init {
 		window.sizeChanged.add(this::resize.as3)
-		frameBuffer.updateWorldVertices(Matrix4.IDENTITY, 2f, 2f, -1f, -1f)
+		framebuffer.updateWorldVertices(Matrix4.IDENTITY, 2f, 2f, -1f, -1f)
 	}
 
 	private fun resize() {
-		frameBuffer.setSize(window.width.toInt(), window.height.toInt())
+		framebuffer.setSize(window.width.toInt(), window.height.toInt())
 	}
 
 	/**
 	 * Begins drawing to the frame buffer.
 	 */
 	fun begin() {
-		frameBuffer.begin()
+		framebuffer.begin()
 	}
 
 	/**
 	 * Ends drawing to the frame buffer.
 	 */
 	fun end() {
-		frameBuffer.end()
+		framebuffer.end()
 	}
 
 	/**
@@ -83,12 +83,12 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 	fun render(colorTint: ColorRo = Color.WHITE) {
 		glState.viewProjection = Matrix4.IDENTITY
 		glState.model = Matrix4.IDENTITY
-		frameBuffer.render(colorTint)
+		framebuffer.render(colorTint)
 	}
 
 	override fun dispose() {
 		window.sizeChanged.remove(this::resize.as3)
-		frameBuffer.dispose()
+		framebuffer.dispose()
 	}
 }
 

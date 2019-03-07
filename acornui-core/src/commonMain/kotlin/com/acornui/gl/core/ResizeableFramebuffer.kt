@@ -27,13 +27,20 @@ import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.MathUtils
 import com.acornui.math.Matrix4Ro
+import com.acornui.math.ceil
 
 /**
  * Wraps a frame buffer, keeping it the size of the screen.
  */
-class ResizeableFrameBuffer(override val injector: Injector, initialWidth: Int, initialHeight: Int, private val hasDepth: Boolean = false, private val hasStencil: Boolean = false) : Scoped, Disposable {
+class ResizeableFramebuffer(
+		override val injector: Injector,
+		initialWidth: Float,
+		initialHeight: Float,
+		private val hasDepth: Boolean = false,
+		private val hasStencil: Boolean = false
+) : Scoped, Disposable {
 
-	private var frameBuffer: Framebuffer? = null
+	private var framebuffer: Framebuffer? = null
 
 	private val sprite = Sprite()
 
@@ -47,23 +54,28 @@ class ResizeableFrameBuffer(override val injector: Injector, initialWidth: Int, 
 		setSize(initialWidth, initialHeight)
 	}
 
-	fun setSize(width: Int, height: Int) {
-		val newW = MathUtils.nextPowerOfTwo(width)
-		val newH = MathUtils.nextPowerOfTwo(height)
+	fun setSize(width: Int, height: Int) = setSize(width.toFloat(), height.toFloat())
+	fun setSize(width: Float, height: Float) {
+		val widthInt = width.ceil()
+		val heightInt = height.ceil()
+		val oldFramebuffer = framebuffer
+		val oldW = oldFramebuffer?.width ?: 0
+		val oldH = oldFramebuffer?.height ?: 0
+		val newW = MathUtils.nextPowerOfTwo(widthInt)
+		val newH = MathUtils.nextPowerOfTwo(heightInt)
 		if (newW <= 0 || newH <= 0) {
-			frameBuffer?.dispose()
-			frameBuffer = null
+			framebuffer?.dispose()
+			framebuffer = null
 			sprite.texture = null
 		} else {
-			val oldFramebuffer = frameBuffer
-			if (oldFramebuffer == null || oldFramebuffer.width < newW || oldFramebuffer.height < newH) {
-				frameBuffer?.dispose()
-				frameBuffer = Framebuffer(injector, newW, newH, hasDepth, hasStencil)
-				sprite.texture = frameBuffer?.texture
+			if (oldW < newW || oldH < newH) {
+				framebuffer?.dispose()
+				framebuffer = Framebuffer(injector, maxOf(oldW, newW), maxOf(oldH, newH), hasDepth, hasStencil)
+				sprite.texture = framebuffer?.texture
 			}
-			val frameBuffer = this.frameBuffer!!
-			frameBuffer.setViewport(0, 0, width, height)
-			sprite.setUv(0f, 0f, width.toFloat() / frameBuffer.width.toFloat(), height.toFloat() / frameBuffer.height.toFloat(), isRotated = false)
+			val framebuffer = this.framebuffer!!
+			framebuffer.setViewport(0, 0, widthInt, heightInt)
+			sprite.setUv(0f, 0f, width / framebuffer.width.toFloat(), height / framebuffer.height.toFloat(), isRotated = false)
 		}
 	}
 
@@ -71,14 +83,14 @@ class ResizeableFrameBuffer(override val injector: Injector, initialWidth: Int, 
 	 * Begins drawing to the frame buffer.
 	 */
 	fun begin() {
-		frameBuffer?.begin()
+		framebuffer?.begin()
 	}
 
 	/**
 	 * Ends drawing to the frame buffer.
 	 */
 	fun end() {
-		frameBuffer?.end()
+		framebuffer?.end()
 	}
 
 	/**
@@ -105,12 +117,12 @@ class ResizeableFrameBuffer(override val injector: Injector, initialWidth: Int, 
 	}
 
 	override fun dispose() {
-		frameBuffer?.dispose()
+		framebuffer?.dispose()
 	}
 }
 
-fun Scoped.resizeableFramebuffer(hasDepth: Boolean = false, hasStencil: Boolean = false, init: ComponentInit<FullScreenFramebuffer> = {}): FullScreenFramebuffer {
-	val f = FullScreenFramebuffer(injector, hasDepth, hasStencil)
+fun Scoped.resizeableFramebuffer(initialWidth: Float = 256f, initialHeight: Float = 256f, hasDepth: Boolean = false, hasStencil: Boolean = false, init: ComponentInit<ResizeableFramebuffer> = {}): ResizeableFramebuffer {
+	val f = ResizeableFramebuffer(injector, initialWidth, initialHeight, hasDepth, hasStencil)
 	f.init()
 	return f
 }

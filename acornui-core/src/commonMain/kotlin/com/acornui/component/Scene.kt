@@ -24,7 +24,7 @@ import com.acornui.core.graphic.Camera
 import com.acornui.core.graphic.CameraRo
 import com.acornui.core.graphic.orthographicCamera
 import com.acornui.core.graphic.project
-import com.acornui.gl.core.FrameBufferInfo
+import com.acornui.gl.core.FramebufferInfo
 import com.acornui.gl.core.FrameBufferInfoRo
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.setViewport
@@ -153,12 +153,12 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	}
 
 	private val oldGlViewport = IntRectangle()
-	private val frameBuffer = FrameBufferInfo()
+	private val framebufferInfo = FramebufferInfo()
 
 	override fun draw(clip: MinMaxRo) {
-		glState.getFramebuffer(frameBuffer)
+		glState.getFramebuffer(framebufferInfo)
 		glState.getViewport(oldGlViewport)
-		frameBuffer.glViewport(glState, viewport)
+		framebufferInfo.glViewport(glState, viewport)
 		super.draw(_clip)
 		glState.setViewport(oldGlViewport)
 	}

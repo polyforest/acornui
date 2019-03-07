@@ -135,7 +135,8 @@ class Framebuffer(
 	fun setViewport(x: Int, y: Int, width: Int, height: Int) {
 		_viewport.set(x, y, width, height)
 	}
-	private var previousFramebuffer = FrameBufferInfo()
+
+	private var previousFramebuffer = FramebufferInfo()
 
 	private val previousViewport = IntRectangle()
 

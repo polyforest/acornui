@@ -40,12 +40,12 @@ interface FrameBufferInfoRo {
 	 */
 	val scaleY: Float
 
-	fun copy(): FrameBufferInfo {
-		return FrameBufferInfo(framebuffer, width, height, scaleX, scaleY)
+	fun copy(): FramebufferInfo {
+		return FramebufferInfo(framebuffer, width, height, scaleX, scaleY)
 	}
 }
 
-data class FrameBufferInfo(
+data class FramebufferInfo(
 		override var framebuffer: GlFramebufferRef?,
 		override var width: Int,
 		override var height: Int,
