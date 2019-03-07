@@ -16,6 +16,7 @@
 
 package com.acornui.component
 
+import com.acornui.component.style.StyleTag
 import com.acornui.core.di.Owned
 import com.acornui.core.di.dKey
 
@@ -25,7 +26,7 @@ interface HtmlComponent : UiComponent {
 
 	var html: String
 
-	companion object {
+	companion object : StyleTag {
 		val FACTORY_KEY = dKey<(owner: Owned) -> HtmlComponent>()
 	}
 }

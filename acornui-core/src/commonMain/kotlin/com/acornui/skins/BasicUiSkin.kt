@@ -92,6 +92,7 @@ open class BasicUiSkin(
 		treeStyle()
 		contextMenuStyle()
 		calendarStyle()
+		htmlComponentStyle()
 		target.invalidateStyles()
 	}
 
@@ -702,6 +703,11 @@ open class BasicUiSkin(
 		target.addStyleRule(textInputBoxStyle, withAncestor(DatePicker) and TextInput)
 	}
 
+	protected open fun htmlComponentStyle() {
+		val boxStyle = BoxStyle()
+		boxStyle.backgroundColor = Color.CLEAR
+		target.addStyleRule(boxStyle, HtmlComponent)
+	}
 }
 
 fun UiComponent.populateButtonStyle(tag: StyleTag, skinPartFactory: (ButtonState) -> Owned.() -> UiComponent) {

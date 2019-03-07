@@ -33,7 +33,7 @@ import kotlin.browser.document
 
 class JsHtmlComponent(
 		owner: Owned,
-		private val rootElement: HTMLElement,
+		rootElement: HTMLElement,
 		element: HTMLElement = document.createElement("div") as HTMLElement
 ) : UiComponentImpl(owner), HtmlComponent {
 
@@ -50,7 +50,7 @@ class JsHtmlComponent(
 	private var parentElement: Element
 
 	init {
-		styleTags.add(TextField)
+		styleTags.add(HtmlComponent)
 
 		watch(boxStyle) {
 			it.applyCss(element)
