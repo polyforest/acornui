@@ -46,8 +46,8 @@ interface BasicDrawable {
 	/**
 	 * Draws this component.
 	 * Remember to set the camera on the [GlState] object before drawing.
-	 * If [updateVertices] was used (and therefore no world transformation), that world transform matrix must be
-	 * supplied to [GlState.setCamera] first.
+	 * If [updateVertices] was used (and therefore no world transformation), that world transformation (model) matrix
+	 * must be supplied to [GlState.setCamera] first.
 	 */
 	fun draw(glState: GlState, colorTint: ColorRo)
 }

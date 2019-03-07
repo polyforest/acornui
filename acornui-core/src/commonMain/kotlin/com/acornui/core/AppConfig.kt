@@ -140,7 +140,7 @@ data class InputConfig(
 data class GlConfig(
 
 		/**
-		 * Post-scene 4x4 MSAA. May make text look blurry on certain systems.
+		 * Post-scene 4x4 MSAA.
 		 */
 		val antialias: Boolean = true,
 

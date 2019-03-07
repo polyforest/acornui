@@ -19,13 +19,13 @@ package com.acornui.component
 import com.acornui.async.Deferred
 import com.acornui.async.catch
 import com.acornui.async.then
-import com.acornui.recycle.Clearable
 import com.acornui.collection.tuple
 import com.acornui.core.asset.CachedGroup
 import com.acornui.core.asset.cachedGroup
 import com.acornui.core.asset.loadAndCacheJson
 import com.acornui.core.di.Owned
 import com.acornui.core.graphic.*
+import com.acornui.recycle.Clearable
 
 /**
  * A UiComponent that draws a region from a texture atlas.
