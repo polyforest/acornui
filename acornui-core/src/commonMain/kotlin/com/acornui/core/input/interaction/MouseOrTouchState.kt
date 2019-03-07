@@ -5,7 +5,6 @@ import com.acornui.component.stage
 import com.acornui.core.Disposable
 import com.acornui.core.input.*
 import com.acornui.core.userInfo
-import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 
 /**

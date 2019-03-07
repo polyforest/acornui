@@ -58,7 +58,7 @@ open class Button(
 	 */
 	var toggleOnClick = false
 
-	protected var _label: String = ""
+	private var _label: String = ""
 
 	private var _currentState = ButtonState.UP
 	private var _currentSkinPart: UiComponent? = null
@@ -104,7 +104,6 @@ open class Button(
 	fun setUserToggled(value: Boolean) {
 		toggled = value
 		_toggledChanged.dispatch(this)
-
 	}
 
 	var disabled: Boolean by observable(false) {

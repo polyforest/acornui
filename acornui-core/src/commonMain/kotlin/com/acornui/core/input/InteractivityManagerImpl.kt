@@ -19,7 +19,6 @@
 package com.acornui.core.input
 
 import com.acornui._assert
-import com.acornui.recycle.ClearableObjectPool
 import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
 import com.acornui.component.StageRo
@@ -29,6 +28,8 @@ import com.acornui.component.getChildUnderPoint
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.input.interaction.*
 import com.acornui.core.time.time
+import com.acornui.recycle.ClearableObjectPool
+import com.acornui.signal.StoppableSignal
 import com.acornui.signal.StoppableSignalImpl
 
 
@@ -199,7 +200,7 @@ open class InteractivityManagerImpl(
 		mousePool.free(mouse)
 	}
 
-	override fun <T : InteractionEventRo> getSignal(host: UiComponentRo, type: InteractionType<T>, isCapture: Boolean): StoppableSignalImpl<T> {
+	override fun <T : InteractionEventRo> getSignal(host: UiComponentRo, type: InteractionType<T>, isCapture: Boolean): StoppableSignal<T> {
 		return StoppableSignalImpl()
 	}
 

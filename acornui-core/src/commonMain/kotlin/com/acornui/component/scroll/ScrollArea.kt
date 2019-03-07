@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
+
 package com.acornui.component.scroll
 
 import com.acornui.component.*

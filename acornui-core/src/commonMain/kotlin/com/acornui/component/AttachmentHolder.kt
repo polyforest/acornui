@@ -18,11 +18,11 @@ interface AttachmentHolder {
 
 fun <T : Any> AttachmentHolder.createOrReuseAttachment(key: Any, factory: () -> T): T {
 	val existing = getAttachment<T>(key)
-	if (existing != null) {
-		return existing
+	return if (existing != null) {
+		existing
 	} else {
 		val newAttachment = factory()
 		setAttachment(key, newAttachment)
-		return newAttachment
+		newAttachment
 	}
 }
