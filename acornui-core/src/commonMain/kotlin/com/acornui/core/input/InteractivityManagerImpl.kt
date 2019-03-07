@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("UNUSED_PARAMETER")
+
 package com.acornui.core.input
 
 import com.acornui._assert
@@ -60,31 +62,31 @@ open class InteractivityManagerImpl(
 			overTarget(null)
 	}
 
-	private fun rawTouchStartHandler(event: TouchInteraction) {
+	private fun rawTouchStartHandler(event: TouchInteractionRo) {
 		touchHandler(TouchInteractionRo.TOUCH_START, event)
 	}
 
-	private fun rawTouchEndHandler(event: TouchInteraction) {
+	private fun rawTouchEndHandler(event: TouchInteractionRo) {
 		touchHandler(TouchInteractionRo.TOUCH_END, event)
 	}
 
-	private fun rawTouchMoveHandler(event: TouchInteraction) {
+	private fun rawTouchMoveHandler(event: TouchInteractionRo) {
 		overTarget(touchHandler(TouchInteractionRo.TOUCH_MOVE, event))
 	}
 
-	private fun rawMouseDownHandler(event: MouseInteraction) {
+	private fun rawMouseDownHandler(event: MouseInteractionRo) {
 		mouseHandler(MouseInteractionRo.MOUSE_DOWN, event)
 	}
 
-	private fun rawMouseUpHandler(event: MouseInteraction) {
+	private fun rawMouseUpHandler(event: MouseInteractionRo) {
 		mouseHandler(MouseInteractionRo.MOUSE_UP, event)
 	}
 
-	private fun rawMouseMoveHandler(event: MouseInteraction) {
+	private fun rawMouseMoveHandler(event: MouseInteractionRo) {
 		overTarget(mouseHandler(MouseInteractionRo.MOUSE_MOVE, event))
 	}
 
-	private fun rawWheelHandler(event: WheelInteraction) {
+	private fun rawWheelHandler(event: WheelInteractionRo) {
 		val wheel = wheelPool.obtain()
 		wheel.set(event)
 		wheel.type = WheelInteractionRo.MOUSE_WHEEL
@@ -94,7 +96,7 @@ open class InteractivityManagerImpl(
 		wheelPool.free(wheel)
 	}
 
-	private fun <T : MouseInteractionRo> mouseHandler(type: InteractionType<T>, event: MouseInteraction): UiComponentRo? {
+	private fun <T : MouseInteractionRo> mouseHandler(type: InteractionType<T>, event: MouseInteractionRo): UiComponentRo? {
 		val mouse = mousePool.obtain()
 		mouse.set(event)
 		mouse.type = type
@@ -106,13 +108,13 @@ open class InteractivityManagerImpl(
 		return ele
 	}
 
-	private fun touchHandler(type: InteractionType<TouchInteractionRo>, event: TouchInteraction): UiComponentRo? {
+	private fun touchHandler(type: InteractionType<TouchInteractionRo>, event: TouchInteractionRo): UiComponentRo? {
 		val touch = touchPool.obtain()
 		touch.set(event)
 		touch.type = type
 		val first = event.changedTouches.first()
 		val ele = root.getChildUnderPoint(first.canvasX + 0.5f, first.canvasY + 0.5f, onlyInteractive = true) ?: root
-		dispatch(ele, touch, true, true)
+		dispatch(ele, touch, useCapture = true, useBubble = true)
 		if (touch.defaultPrevented())
 			event.preventDefault()
 		touchPool.free(touch)

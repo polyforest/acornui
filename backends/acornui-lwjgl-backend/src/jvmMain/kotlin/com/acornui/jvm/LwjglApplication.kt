@@ -79,7 +79,7 @@ import com.acornui.jvm.graphic.JvmGl20Debug
 import com.acornui.jvm.graphic.JvmTextureLoader
 import com.acornui.jvm.graphic.LwjglGl20
 import com.acornui.jvm.input.JvmClipboard
-import com.acornui.jvm.input.JvmMouseInput
+import com.acornui.jvm.input.GlfwMouseInput
 import com.acornui.jvm.input.LwjglKeyInput
 import com.acornui.jvm.io.JvmBufferFactory
 import com.acornui.jvm.io.JvmRestServiceFactory
@@ -249,7 +249,7 @@ open class LwjglApplication : ApplicationBase() {
 	}
 
 	protected open val mouseInputTask by BootTask {
-		set(MouseInput, JvmMouseInput(getWindowId()))
+		set(MouseInput, GlfwMouseInput(getWindowId()))
 	}
 
 	protected open val keyInputTask by BootTask {

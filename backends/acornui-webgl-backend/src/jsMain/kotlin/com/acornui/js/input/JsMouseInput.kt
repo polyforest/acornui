@@ -18,10 +18,7 @@ package com.acornui.js.input
 
 import com.acornui.core.input.MouseInput
 import com.acornui.core.input.WhichButton
-import com.acornui.core.input.interaction.MouseInteraction
-import com.acornui.core.input.interaction.Touch
-import com.acornui.core.input.interaction.TouchInteraction
-import com.acornui.core.input.interaction.WheelInteraction
+import com.acornui.core.input.interaction.*
 import com.acornui.js.html.TouchEvent
 import com.acornui.signal.Signal1
 import org.w3c.dom.HTMLElement
@@ -35,16 +32,24 @@ import kotlin.browser.window
  */
 class JsMouseInput(private val root: HTMLElement) : MouseInput {
 
-	override val touchStart: Signal1<TouchInteraction> = Signal1()
-	override val touchEnd: Signal1<TouchInteraction> = Signal1()
-	override val touchMove: Signal1<TouchInteraction> = Signal1()
-	override val touchCancel: Signal1<TouchInteraction> = Signal1()
-
-	override val mouseDown: Signal1<MouseInteraction> = Signal1()
-	override val mouseUp: Signal1<MouseInteraction> = Signal1()
-	override val mouseMove: Signal1<MouseInteraction> = Signal1()
-	override val mouseWheel: Signal1<WheelInteraction> = Signal1()
-	override val overCanvasChanged: Signal1<Boolean> = Signal1()
+	private val _touchStart = Signal1<TouchInteractionRo>()
+	override val touchStart = _touchStart.asRo()
+	private val _touchEnd = Signal1<TouchInteractionRo>()
+	override val touchEnd = _touchEnd.asRo()
+	private val _touchMove = Signal1<TouchInteractionRo>()
+	override val touchMove = _touchMove.asRo()
+	private val _touchCancel = Signal1<TouchInteractionRo>()
+	override val touchCancel = _touchCancel.asRo()
+	private val _mouseDown: Signal1<MouseInteraction> = Signal1()
+	override val mouseDown = _mouseDown.asRo()
+	private val _mouseUp = Signal1<MouseInteractionRo>()
+	override val mouseUp = _mouseUp.asRo()
+	private val _mouseMove = Signal1<MouseInteractionRo>()
+	override val mouseMove = _mouseMove.asRo()
+	private val _mouseWheel = Signal1<WheelInteractionRo>()
+	override val mouseWheel = _mouseWheel.asRo()
+	private val _overCanvasChanged = Signal1<Boolean>()
+	override val overCanvasChanged = _overCanvasChanged.asRo()
 
 	private val touchEvent = TouchInteraction()
 	private val mouseEvent = MouseInteraction()
@@ -79,40 +84,34 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 	private fun overCanvas(value: Boolean) {
 		if (_overCanvas == value) return
 		_overCanvas = value
-		overCanvasChanged.dispatch(value)
+		_overCanvasChanged.dispatch(value)
 	}
 
 	private val touchStartHandler = { jsEvent: Event ->
 		populateTouchEvent(jsEvent as TouchEvent)
-		touchStart.dispatch(touchEvent)
+		_touchStart.dispatch(touchEvent)
 		if (jsEvent.cancelable && touchEvent.defaultPrevented())
 			jsEvent.preventDefault()
 
 	}
 
 	private val touchMoveHandler = { jsEvent: Event ->
-
-		// Dispatch a mouse move event for the touch move. (Duck punch!)
 		populateTouchEvent(jsEvent as TouchEvent)
-
-		touchMove.dispatch(touchEvent)
+		_touchMove.dispatch(touchEvent)
 		if (jsEvent.cancelable && touchEvent.defaultPrevented())
 			jsEvent.preventDefault()
 	}
 
 	private val touchEndHandler = { jsEvent: Event ->
-
 		populateTouchEvent(jsEvent as TouchEvent)
-		touchEnd.dispatch(touchEvent)
-
+		_touchEnd.dispatch(touchEvent)
 		if (jsEvent.cancelable && touchEvent.defaultPrevented())
 			jsEvent.preventDefault()
 	}
 
 	private val touchCancelHandler = { jsEvent: Event ->
-
 		populateTouchEvent(jsEvent as TouchEvent)
-		touchCancel.dispatch(touchEvent)
+		_touchCancel.dispatch(touchEvent)
 
 		if (jsEvent.cancelable && touchEvent.defaultPrevented())
 			jsEvent.preventDefault()
@@ -121,26 +120,23 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 	private val mouseMoveHandler = { jsEvent: Event ->
 		populateMouseEvent(jsEvent as MouseEvent)
 		mouseEvent.button = WhichButton.UNKNOWN
-
-		mouseMove.dispatch(mouseEvent)
+		_mouseMove.dispatch(mouseEvent)
 		if (jsEvent.cancelable && mouseEvent.defaultPrevented())
 			jsEvent.preventDefault()
 	}
 
 	private val mouseDownHandler = { jsEvent: Event ->
 		populateMouseEvent(jsEvent as MouseEvent)
-
 		downMap[mouseEvent.button] = true
-		mouseDown.dispatch(mouseEvent)
+		_mouseDown.dispatch(mouseEvent)
 		if (jsEvent.cancelable && mouseEvent.defaultPrevented())
 			jsEvent.preventDefault()
 	}
 
 	private val mouseUpHandler = { jsEvent: Event ->
 		populateMouseEvent(jsEvent as MouseEvent)
-
 		downMap[mouseEvent.button] = false
-		mouseUp.dispatch(mouseEvent)
+		_mouseUp.dispatch(mouseEvent)
 		if (jsEvent.cancelable && mouseEvent.defaultPrevented())
 			jsEvent.preventDefault()
 	}
@@ -160,7 +156,7 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 			wheelEvent.deltaX = m * jsEvent.deltaX.toFloat()
 			wheelEvent.deltaY = m * jsEvent.deltaY.toFloat()
 			wheelEvent.deltaZ = m * jsEvent.deltaZ.toFloat()
-			mouseWheel.dispatch(wheelEvent)
+			_mouseWheel.dispatch(wheelEvent)
 		}
 	}
 
@@ -225,16 +221,16 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 	}
 
 	override fun dispose() {
-		touchStart.dispose()
-		touchEnd.dispose()
-		touchMove.dispose()
-		touchCancel.dispose()
+		_touchStart.dispose()
+		_touchEnd.dispose()
+		_touchMove.dispose()
+		_touchCancel.dispose()
 
-		mouseDown.dispose()
-		mouseUp.dispose()
-		mouseMove.dispose()
-		mouseWheel.dispose()
-		overCanvasChanged.dispose()
+		_mouseDown.dispose()
+		_mouseUp.dispose()
+		_mouseMove.dispose()
+		_mouseWheel.dispose()
+		_overCanvasChanged.dispose()
 
 		window.removeEventListener("touchstart", touchStartHandler, true)
 		window.removeEventListener("touchend", touchEndHandler, true)

@@ -18,9 +18,7 @@ package com.acornui.jvm.input
 
 import com.acornui.core.input.MouseInput
 import com.acornui.core.input.WhichButton
-import com.acornui.core.input.interaction.MouseInteraction
-import com.acornui.core.input.interaction.TouchInteraction
-import com.acornui.core.input.interaction.WheelInteraction
+import com.acornui.core.input.interaction.*
 import com.acornui.core.time.time
 import com.acornui.signal.Signal1
 import org.lwjgl.glfw.*
@@ -28,19 +26,27 @@ import org.lwjgl.glfw.*
 /**
  * @author nbilyk
  */
-class JvmMouseInput(private val window: Long) : MouseInput {
+class GlfwMouseInput(private val window: Long) : MouseInput {
 
 	// TODO: Touch input for lwjgl?
-	override val touchStart: Signal1<TouchInteraction> = Signal1()
-	override val touchEnd: Signal1<TouchInteraction> = Signal1()
-	override val touchMove: Signal1<TouchInteraction> = Signal1()
-	override val touchCancel: Signal1<TouchInteraction> = Signal1()
-
-	override val mouseDown: Signal1<MouseInteraction> = Signal1()
-	override val mouseUp: Signal1<MouseInteraction> = Signal1()
-	override val mouseMove: Signal1<MouseInteraction> = Signal1()
-	override val mouseWheel: Signal1<WheelInteraction> = Signal1()
-	override val overCanvasChanged: Signal1<Boolean> = Signal1()
+	private val _touchStart = Signal1<TouchInteractionRo>()
+	override val touchStart = _touchStart.asRo()
+	private val _touchEnd = Signal1<TouchInteractionRo>()
+	override val touchEnd = _touchEnd.asRo()
+	private val _touchMove = Signal1<TouchInteractionRo>()
+	override val touchMove = _touchMove.asRo()
+	private val _touchCancel = Signal1<TouchInteractionRo>()
+	override val touchCancel = _touchCancel.asRo()
+	private val _mouseDown: Signal1<MouseInteraction> = Signal1()
+	override val mouseDown = _mouseDown.asRo()
+	private val _mouseUp = Signal1<MouseInteractionRo>()
+	override val mouseUp = _mouseUp.asRo()
+	private val _mouseMove = Signal1<MouseInteractionRo>()
+	override val mouseMove = _mouseMove.asRo()
+	private val _mouseWheel = Signal1<WheelInteractionRo>()
+	override val mouseWheel = _mouseWheel.asRo()
+	private val _overCanvasChanged = Signal1<Boolean>()
+	override val overCanvasChanged = _overCanvasChanged.asRo()
 
 	private val mouseEvent = MouseInteraction()
 	private val wheelEvent = WheelInteraction()
@@ -78,11 +84,11 @@ class JvmMouseInput(private val window: Long) : MouseInput {
 				when (action) {
 					GLFW.GLFW_PRESS -> {
 						downMap[mouseEvent.button] = true
-						mouseDown.dispatch(mouseEvent)
+						_mouseDown.dispatch(mouseEvent)
 					}
 					GLFW.GLFW_RELEASE -> {
 						downMap[mouseEvent.button] = false
-						mouseUp.dispatch(mouseEvent)
+						_mouseUp.dispatch(mouseEvent)
 					}
 				}
 			}
@@ -100,7 +106,7 @@ class JvmMouseInput(private val window: Long) : MouseInput {
 			mouseEvent.canvasY = _canvasY
 			mouseEvent.button = WhichButton.UNKNOWN
 			mouseEvent.timestamp = time.nowMs()
-			mouseMove.dispatch(mouseEvent)
+			_mouseMove.dispatch(mouseEvent)
 		}
 	}
 
@@ -108,7 +114,7 @@ class JvmMouseInput(private val window: Long) : MouseInput {
 		override fun invoke(window: Long, entered: Boolean) {
 			if (overCanvasChanged.isDispatching) return
 			_overCanvas = entered
-			overCanvasChanged.dispatch(_overCanvas)
+			_overCanvasChanged.dispatch(_overCanvas)
 		}
 	}
 
@@ -122,7 +128,7 @@ class JvmMouseInput(private val window: Long) : MouseInput {
 			wheelEvent.timestamp = time.nowMs()
 			wheelEvent.deltaX = scrollSpeed * -xoffset.toFloat()
 			wheelEvent.deltaY = scrollSpeed * -yoffset.toFloat()
-			mouseWheel.dispatch(wheelEvent)
+			_mouseWheel.dispatch(wheelEvent)
 		}
 	}
 
@@ -143,16 +149,16 @@ class JvmMouseInput(private val window: Long) : MouseInput {
 		GLFW.glfwSetCursorEnterCallback(window, null)
 		GLFW.glfwSetScrollCallback(window, null)
 
-		touchStart.dispose()
-		touchEnd.dispose()
-		touchMove.dispose()
-		touchCancel.dispose()
+		_touchStart.dispose()
+		_touchEnd.dispose()
+		_touchMove.dispose()
+		_touchCancel.dispose()
 
-		mouseDown.dispose()
-		mouseUp.dispose()
-		mouseMove.dispose()
-		mouseWheel.dispose()
-		overCanvasChanged.dispose()
+		_mouseDown.dispose()
+		_mouseUp.dispose()
+		_mouseMove.dispose()
+		_mouseWheel.dispose()
+		_overCanvasChanged.dispose()
 	}
 
 	companion object {
