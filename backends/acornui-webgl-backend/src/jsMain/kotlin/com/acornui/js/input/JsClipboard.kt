@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Nicholas Bilyk
+ * Copyright 2019 PolyForest
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,9 @@
 
 package com.acornui.js.input
 
-import com.acornui.component.Stage
 import com.acornui.core.Disposable
-import com.acornui.core.di.Injector
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
 import com.acornui.core.focus.FocusManager
+import com.acornui.core.input.Clipboard
 import com.acornui.core.input.InteractionEventBase
 import com.acornui.core.input.InteractivityManager
 import com.acornui.core.input.interaction.ClipboardItemType
@@ -29,61 +26,106 @@ import com.acornui.core.input.interaction.CopyInteractionRo
 import com.acornui.core.input.interaction.PasteInteractionRo
 import com.acornui.js.html.ClipboardEvent
 import org.w3c.dom.HTMLElement
+import org.w3c.dom.HTMLTextAreaElement
 import org.w3c.dom.events.Event
+import org.w3c.dom.events.EventTarget
+import kotlin.browser.document
 import kotlin.browser.window
 
-
-class JsClipboardDispatcher(
-		private val rootElement: HTMLElement,
-		override val injector: Injector
-) : Scoped, Disposable {
-
-	private val interactivity = inject(InteractivityManager)
-	private val focus = inject(FocusManager)
-	private val stage = inject(Stage)
+class JsClipboard(
+		private val canvas: HTMLElement,
+		private val focusManager: FocusManager,
+		private val interactivityManager: InteractivityManager,
+		captureAllKeyboardInput: Boolean
+) : Clipboard, Disposable {
 
 	private val pasteEvent = JsPasteInteraction()
 	private val copyEvent = JsCopyInteraction()
 
+	/**
+	 * If we are fabricating a copy interaction on a temporary text area via [copy], do not handle
+	 * the js copy event.
+	 */
+	private var ignoreCopyEvent = false
+
+	override fun copy(str: String): Boolean {
+		ignoreCopyEvent = true
+		val el = document.createElement("textarea") as HTMLTextAreaElement
+		el.value = str
+		el.setAttribute("readonly", "")
+		el.style.position = "absolute"
+		el.style.left = "0px"
+		el.style.top = "0px"
+		document.body?.appendChild(el)
+		el.select()
+
+		return try {
+			document.execCommand("copy")
+		} catch (e: Throwable) {
+			false
+		} finally {
+			document.body?.removeChild(el)
+			canvas.focus()
+			ignoreCopyEvent = false
+		}
+	}
+
+	override fun triggerCopy(): Boolean {
+		return try {
+			document.execCommand("copy")
+		} catch (e: Throwable) {
+			false
+		}
+	}
+
 	private val pasteHandler: (Event) -> dynamic = {
-		pasteEvent.clear()
-		pasteEvent.type = PasteInteractionRo.PASTE
-		pasteEvent.set(it as ClipboardEvent)
-		interactivity.dispatch(focus.focused ?: stage, pasteEvent)
-		it.preventDefault()
-		Unit
+		val focused = focusManager.focused
+		if (focused != null) {
+			pasteEvent.clear()
+			pasteEvent.type = PasteInteractionRo.PASTE
+			pasteEvent.set(it as ClipboardEvent)
+			interactivityManager.dispatch(focused, pasteEvent)
+			it.preventDefault()
+		}
 	}
 
 	private val copyHandler: (Event) -> dynamic = {
-		copyEvent.clear()
-		copyEvent.type = CopyInteractionRo.COPY
-		copyEvent.set(it as ClipboardEvent)
-		interactivity.dispatch(focus.focused ?: stage, copyEvent)
-		it.preventDefault()
-		Unit
+		val focused = focusManager.focused
+		if (focused != null && !ignoreCopyEvent) {
+			copyEvent.clear()
+			copyEvent.type = CopyInteractionRo.COPY
+			copyEvent.set(it as ClipboardEvent)
+			interactivityManager.dispatch(focused, copyEvent)
+			it.preventDefault()
+		}
 	}
 
 	private val cutHandler: (Event) -> dynamic = {
-		copyEvent.clear()
-		copyEvent.type = CopyInteractionRo.CUT
-		copyEvent.set(it as ClipboardEvent)
-		interactivity.dispatch(focus.focused ?: stage, copyEvent)
-		it.preventDefault()
-		Unit
+		val focused = focusManager.focused
+		if (focused != null) {
+			copyEvent.clear()
+			copyEvent.type = CopyInteractionRo.CUT
+			copyEvent.set(it as ClipboardEvent)
+			interactivityManager.dispatch(focused, copyEvent)
+			it.preventDefault()
+		}
 	}
 
+	private val target: EventTarget = if (captureAllKeyboardInput) window else canvas
+
 	init {
-		window.addEventListener("paste", pasteHandler, true)
-		window.addEventListener("cut", cutHandler, true)
-		window.addEventListener("copy", copyHandler, true)
+		target.addEventListener("paste", pasteHandler, true)
+		target.addEventListener("cut", cutHandler, true)
+		target.addEventListener("copy", copyHandler, true)
 	}
 
 	override fun dispose() {
-		window.removeEventListener("paste", pasteHandler, true)
-		window.removeEventListener("cut", cutHandler, true)
-		window.removeEventListener("copy", copyHandler, true)
+		target.removeEventListener("paste", pasteHandler, true)
+		target.removeEventListener("cut", cutHandler, true)
+		target.removeEventListener("copy", copyHandler, true)
 	}
 }
+
 
 private class JsPasteInteraction : InteractionEventBase(), PasteInteractionRo {
 
@@ -99,7 +141,7 @@ private class JsPasteInteraction : InteractionEventBase(), PasteInteractionRo {
 			ClipboardItemType.HTML -> {
 				jsEvent.clipboardData?.getData("text/html")
 			}
-			ClipboardItemType.TEXTURE ->  {
+			ClipboardItemType.TEXTURE -> {
 				TODO()
 			}
 			ClipboardItemType.FILE_LIST -> TODO()
@@ -132,7 +174,7 @@ private class JsCopyInteraction : InteractionEventBase(), CopyInteractionRo {
 			ClipboardItemType.HTML -> {
 				jsEvent.clipboardData?.setData("text/html", value as String)
 			}
-			ClipboardItemType.TEXTURE ->  {
+			ClipboardItemType.TEXTURE -> {
 				TODO()
 			}
 			ClipboardItemType.FILE_LIST -> TODO()

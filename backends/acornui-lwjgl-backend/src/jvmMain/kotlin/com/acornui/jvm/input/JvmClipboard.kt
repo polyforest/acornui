@@ -16,55 +16,59 @@
 
 package com.acornui.jvm.input
 
-import com.acornui.component.Stage
 import com.acornui.core.Disposable
-import com.acornui.core.di.Injector
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
 import com.acornui.core.focus.FocusManager
-import com.acornui.core.input.Ascii
-import com.acornui.core.input.InteractionEventBase
-import com.acornui.core.input.InteractivityManager
-import com.acornui.core.input.KeyInput
+import com.acornui.core.input.*
 import com.acornui.core.input.interaction.*
 import org.lwjgl.glfw.GLFW
 
 
-class JvmClipboardDispatcher(
-		override val injector: Injector,
-		windowId: Long
-) : Scoped, Disposable {
-
-	private val key = inject(KeyInput)
-	private val interactivity = inject(InteractivityManager)
-	private val focus = inject(FocusManager)
-	private val stage = inject(Stage)
+class JvmClipboard(
+		private val keyInput: KeyInput,
+		private val focusManager: FocusManager,
+		private val interactivityManager: InteractivityManager,
+		private val windowId: Long
+) : Clipboard, Disposable {
 
 	private val pasteEvent = JvmPasteInteraction(windowId)
 	private val copyEvent = JvmCopyInteraction(windowId)
 
 	init {
-		key.keyDown.add(this::keyDownHandler)
+		keyInput.keyDown.add(this::keyDownHandler)
+	}
+
+	override fun copy(str: String): Boolean {
+		GLFW.glfwSetClipboardString(windowId, str)
+		return true
+	}
+
+	override fun triggerCopy(): Boolean {
+		val focused = focusManager.focused ?: return false
+		copyEvent.clear()
+		copyEvent.type = CopyInteractionRo.COPY
+		interactivityManager.dispatch(focused, copyEvent)
+		return true
 	}
 
 	private fun keyDownHandler(e: KeyInteractionRo) {
+		val focused = focusManager.focused ?: return
 		if (e.commandPlat && e.keyCode == Ascii.V) {
 			pasteEvent.clear()
 			pasteEvent.type = PasteInteractionRo.PASTE
-			interactivity.dispatch(focus.focused ?: stage, pasteEvent)
+			interactivityManager.dispatch(focused, pasteEvent)
 		} else if (e.commandPlat && e.keyCode == Ascii.C) {
 			copyEvent.clear()
 			copyEvent.type = CopyInteractionRo.COPY
-			interactivity.dispatch(focus.focused ?: stage, copyEvent)
+			interactivityManager.dispatch(focused, copyEvent)
 		} else if (e.commandPlat && e.keyCode == Ascii.X) {
 			copyEvent.clear()
 			copyEvent.type = CopyInteractionRo.CUT
-			interactivity.dispatch(focus.focused ?: stage, copyEvent)
+			interactivityManager.dispatch(focused, copyEvent)
 		}
 	}
 
 	override fun dispose() {
-		key.keyDown.remove(this::keyDownHandler)
+		keyInput.keyDown.remove(this::keyDownHandler)
 	}
 }
 

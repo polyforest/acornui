@@ -67,9 +67,6 @@ class JsFileIoManager : FileIoManager {
 	}
 
 	private fun createFilePicker(): HTMLInputElement {
-		if (document.body == null) {
-			document.createElement("body").also { document.appendChild(it) }
-		}
 		val newFilePicker = document.createElement("input") as HTMLInputElement
 		newFilePicker.type = "file"
 		// Required for iOS Safari

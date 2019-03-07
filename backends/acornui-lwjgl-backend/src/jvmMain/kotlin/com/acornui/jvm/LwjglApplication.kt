@@ -43,10 +43,7 @@ import com.acornui.core.graphic.autoCenterCamera
 import com.acornui.core.i18n.I18n
 import com.acornui.core.i18n.I18nImpl
 import com.acornui.core.i18n.Locale
-import com.acornui.core.input.InteractivityManager
-import com.acornui.core.input.InteractivityManagerImpl
-import com.acornui.core.input.KeyInput
-import com.acornui.core.input.MouseInput
+import com.acornui.core.input.*
 import com.acornui.core.input.interaction.ContextMenuManager
 import com.acornui.core.input.interaction.JvmClickDispatcher
 import com.acornui.core.input.interaction.UndoDispatcher
@@ -81,7 +78,7 @@ import com.acornui.jvm.graphic.GlfwWindowImpl
 import com.acornui.jvm.graphic.JvmGl20Debug
 import com.acornui.jvm.graphic.JvmTextureLoader
 import com.acornui.jvm.graphic.LwjglGl20
-import com.acornui.jvm.input.JvmClipboardDispatcher
+import com.acornui.jvm.input.JvmClipboard
 import com.acornui.jvm.input.JvmMouseInput
 import com.acornui.jvm.input.LwjglKeyInput
 import com.acornui.jvm.io.JvmBufferFactory
@@ -365,6 +362,15 @@ open class LwjglApplication : ApplicationBase() {
 		})
 	}
 
+	protected open val clipboardTask by BootTask {
+		set(Clipboard, JvmClipboard(
+				get(KeyInput),
+				get(FocusManager),
+				get(InteractivityManager),
+				getWindowId()
+		))
+	}
+
 	protected open fun createStage(owned: Owned): Stage {
 		return GlStageImpl(owned)
 	}
@@ -376,7 +382,6 @@ open class LwjglApplication : ApplicationBase() {
 	protected open fun initializeSpecialInteractivity(owner: Owned) {
 		owner.own(JvmClickDispatcher(owner.injector))
 		owner.own(FakeFocusMouse(owner.injector))
-		owner.own(JvmClipboardDispatcher(owner.injector, _windowId))
 		owner.own(UndoDispatcher(owner.injector))
 		owner.own(ContextMenuManager(owner))
 	}

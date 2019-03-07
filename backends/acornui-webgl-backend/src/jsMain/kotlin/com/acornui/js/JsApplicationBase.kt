@@ -43,10 +43,7 @@ import com.acornui.core.graphic.autoCenterCamera
 import com.acornui.core.i18n.I18n
 import com.acornui.core.i18n.I18nImpl
 import com.acornui.core.i18n.Locale
-import com.acornui.core.input.InteractivityManager
-import com.acornui.core.input.InteractivityManagerImpl
-import com.acornui.core.input.KeyInput
-import com.acornui.core.input.MouseInput
+import com.acornui.core.input.*
 import com.acornui.core.input.interaction.ContextMenuManager
 import com.acornui.core.input.interaction.UndoDispatcher
 import com.acornui.core.io.BufferFactory
@@ -72,7 +69,7 @@ import com.acornui.js.audio.JsWebAudioSoundLoader
 import com.acornui.js.audio.audioContextSupported
 import com.acornui.js.cursor.JsCursorManager
 import com.acornui.js.file.JsFileIoManager
-import com.acornui.js.input.JsClipboardDispatcher
+import com.acornui.js.input.JsClipboard
 import com.acornui.js.input.JsKeyInput
 import com.acornui.js.input.JsMouseInput
 import com.acornui.js.io.JsBufferFactory
@@ -83,8 +80,8 @@ import com.acornui.js.persistance.JsPersistence
 import com.acornui.js.text.DateTimeFormatterImpl
 import com.acornui.js.text.NumberFormatterImpl
 import com.acornui.js.time.TimeProviderImpl
-import com.acornui.logging.Logger
 import com.acornui.logging.Log
+import com.acornui.logging.Logger
 import com.acornui.serialization.JsonSerializer
 import com.acornui.uncaughtExceptionHandler
 import org.w3c.dom.DocumentReadyState
@@ -370,6 +367,15 @@ Kotlin.isType = function(object, klass) {
 		set(FileIoManager, JsFileIoManager())
 	}
 
+	protected open val clipboardTask by BootTask {
+		set(Clipboard, JsClipboard(
+				get(CANVAS),
+				get(FocusManager),
+				get(InteractivityManager),
+				config().input.jsCaptureAllKeyboardInput
+		))
+	}
+
 	abstract suspend fun createStage(owner: Owned): Stage
 
 	protected open suspend fun createPopUpManager(root: UiComponent): PopUpManager {
@@ -377,7 +383,6 @@ Kotlin.isType = function(object, klass) {
 	}
 
 	protected open suspend fun initializeSpecialInteractivity(owner: Owned) {
-		owner.own(JsClipboardDispatcher(owner.inject(CANVAS), owner.injector))
 		owner.own(UndoDispatcher(owner.injector))
 		owner.own(ContextMenuManager(owner))
 	}
