@@ -1,11 +1,13 @@
 package com.acornui.component.text
 
+import com.acornui.async.async
 import com.acornui.async.then
 import com.acornui.component.ContainerImpl
 import com.acornui.component.ValidationFlags
 import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.component.rect
 import com.acornui.core.di.inject
+import com.acornui.core.di.notDisposed
 import com.acornui.core.di.own
 import com.acornui.core.focus.blurredSelf
 import com.acornui.core.focus.focusedSelf
@@ -160,7 +162,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 				it.handled = true
 				async {
 					it.getItemByType(ClipboardItemType.PLAIN_TEXT)
-				} then { str ->
+				} then notDisposed { str ->
 					if (str != null) {
 						replaceSelection(str.replace("\r", ""), CommandGroup())
 						currentGroup = CommandGroup()

@@ -180,6 +180,10 @@ infix fun <T> Deferred<T>.then(callback: (result: T) -> Unit): Deferred<T> {
 	return this
 }
 
+infix fun Deferred<Unit>.then(callback: () -> Unit): Deferred<Unit> {
+	return then<Unit> { callback() }
+}
+
 infix fun <A, B> Deferred<Pair<A, B>>.then(callback: (result: A, B) -> Unit): Deferred<Pair<A, B>> {
 	return then<Pair<A, B>> { callback(it.first, it.second) }
 }

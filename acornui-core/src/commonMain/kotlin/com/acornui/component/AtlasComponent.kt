@@ -17,6 +17,7 @@
 package com.acornui.component
 
 import com.acornui.async.Deferred
+import com.acornui.async.async
 import com.acornui.async.catch
 import com.acornui.async.then
 import com.acornui.collection.tuple
@@ -24,6 +25,7 @@ import com.acornui.core.asset.CachedGroup
 import com.acornui.core.asset.cachedGroup
 import com.acornui.core.asset.loadAndCacheJson
 import com.acornui.core.di.Owned
+import com.acornui.core.di.notDisposed
 import com.acornui.core.graphic.*
 import com.acornui.recycle.Clearable
 
@@ -62,7 +64,7 @@ open class AtlasComponent(owner: Owned) : DrawableComponent(owner), Clearable {
 			val (page, region) = atlasData.findRegion(regionName) ?: throw Exception("Region '$regionName' not found in atlas $atlasPath.")
 			val texture = loadAndCacheAtlasPage(atlasPath, page, group!!).await()
 			texture tuple region
-		} then {
+		} then notDisposed {
 			texture, region ->
 			setRegionAndTexture(texture, region)
 		}

@@ -16,6 +16,8 @@
 
 package com.acornui.particle
 
+import com.acornui.async.Deferred
+import com.acornui.async.async
 import com.acornui.component.InteractivityMode
 import com.acornui.component.Sprite
 import com.acornui.component.UiComponentImpl
@@ -62,7 +64,7 @@ class ParticleEffectComponent(
 	 * @param disposeOld If true, the old effect will be disposed and cached files decremented.
 	 * @return Returns a deferred loaded particle effect in order to handle the wait.
 	 */
-	fun load(pDataPath: String, atlasPath: String, disposeOld: Boolean = true, maxParticlesScale: Float = 1f) = async {
+	fun load(pDataPath: String, atlasPath: String, disposeOld: Boolean = true, maxParticlesScale: Float = 1f): Deferred<LoadedParticleEffect> = async {
 		val oldEffect = _effect
 		effect = loadParticleEffect(pDataPath, atlasPath, maxParticlesScale = maxParticlesScale)
 		if (disposeOld)

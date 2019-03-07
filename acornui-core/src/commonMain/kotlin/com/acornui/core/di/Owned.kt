@@ -1,7 +1,5 @@
 package com.acornui.core.di
 
-import com.acornui.async.Deferred
-import com.acornui.async.Work
 import com.acornui.component.ComponentInit
 import com.acornui.core.Disposable
 import com.acornui.core.DisposedException
@@ -30,32 +28,41 @@ interface Owned : Scoped {
 	 */
 	val owner: Owned?
 
-	//----------------------------------------------
-	// Async utility
-	//----------------------------------------------
+}
 
-	/**
-	 * Wraps [com.acornui.async.async] with a check that will fail the task if this object is disposed.
-	 *
-	 * Example usage:
-	 * ```
-	 * async {
-	 *   delay(3f)
-	 * } then {
-	 *   println("I'm done!")
-	 * } catch {
-	 *   println("I failed.")
-	 * }
-	 * ```
-	 */
-	fun <T> async(work: Work<T>): Deferred<T> = com.acornui.async.async {
-		val result = work()
-		if (isDisposed) {
-			throw DisposedException()
-		}
-		result
-	}
+/**
+ * Wraps the callback in an `if (!isDisposed)` block.
+ */
+inline fun Owned.notDisposed(crossinline callback: () -> Unit): () -> Unit {
+	return { if (!isDisposed) callback() }
+}
 
+/**
+ * Wraps the callback in an `if (!isDisposed)` block.
+ */
+inline fun <P1> Owned.notDisposed(crossinline callback: (P1) -> Unit): (P1) -> Unit {
+	return { p1 -> if (!isDisposed) callback(p1) }
+}
+
+/**
+ * Wraps the callback in an `if (!isDisposed)` block.
+ */
+inline fun <P1, P2> Owned.notDisposed(crossinline callback: (P1, P2) -> Unit): (P1, P2) -> Unit {
+	return { p1, p2 -> if (!isDisposed) callback(p1, p2) }
+}
+
+/**
+ * Wraps the callback in an `if (!isDisposed)` block.
+ */
+inline fun <P1, P2, P3> Owned.notDisposed(crossinline callback: (P1, P2, P3) -> Unit): (P1, P2, P3) -> Unit {
+	return { p1, p2, p3 -> if (!isDisposed) callback(p1, p2, p3) }
+}
+
+/**
+ * Wraps the callback in an `if (!isDisposed)` block.
+ */
+inline fun <P1, P2, P3, P4> Owned.notDisposed(crossinline callback: (P1, P2, P3, P4) -> Unit): (P1, P2, P3, P4) -> Unit {
+	return { p1, p2, p3, p4 -> if (!isDisposed) callback(p1, p2, p3, p4) }
 }
 
 fun Owned.createScope(vararg dependenciesList: DependencyPair<*>, init: ComponentInit<Owned> = {}): Owned {
