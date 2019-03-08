@@ -17,13 +17,10 @@
 package com.acornui.component
 
 import com.acornui.async.Deferred
-import com.acornui.async.async
 import com.acornui.async.catch
 import com.acornui.async.then
-import com.acornui.collection.tuple
 import com.acornui.core.asset.CachedGroup
 import com.acornui.core.asset.cachedGroup
-import com.acornui.core.asset.loadAndCacheJson
 import com.acornui.core.di.Owned
 import com.acornui.core.di.notDisposed
 import com.acornui.core.graphic.*
@@ -56,15 +53,10 @@ open class AtlasComponent(owner: Owned) : DrawableComponent(owner), Clearable {
 	 *
 	 * This load can be canceled using [clear].
 	 */
-	fun setRegion(atlasPath: String, regionName: String): Deferred<Pair<Texture, AtlasRegionData>> {
+	fun setRegion(atlasPath: String, regionName: String): Deferred<LoadedAtlasRegion> {
 		clear()
-		group = cachedGroup()
-		return async {
-			val atlasData = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group!!).await()
-			val (page, region) = atlasData.findRegion(regionName) ?: throw Exception("Region '$regionName' not found in atlas $atlasPath.")
-			val texture = loadAndCacheAtlasPage(atlasPath, page, group!!).await()
-			texture tuple region
-		} then notDisposed {
+		this.group = cachedGroup()
+		return loadAndCacheAtlasRegion(atlasPath, regionName, group!!) then notDisposed {
 			texture, region ->
 			setRegionAndTexture(texture, region)
 		}

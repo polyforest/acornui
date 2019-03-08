@@ -16,6 +16,13 @@
 
 package com.acornui.core.graphic
 
+import com.acornui.async.Deferred
+import com.acornui.async.async
+import com.acornui.collection.tuple
+import com.acornui.core.asset.CachedGroup
+import com.acornui.core.asset.cachedGroup
+import com.acornui.core.asset.loadAndCacheJson
+import com.acornui.core.di.Scoped
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
 import com.acornui.gl.core.TexturePixelFormat
@@ -235,3 +242,19 @@ object AtlasRegionDataSerializer : To<AtlasRegionData>, From<AtlasRegionData> {
 		writer.intArray("padding", padding.toIntArray())
 	}
 }
+
+
+typealias LoadedAtlasRegion = Pair<Texture, AtlasRegionData>
+val LoadedAtlasRegion.texture: Texture
+	get() = first
+val LoadedAtlasRegion.region: AtlasRegionData
+	get() = second
+
+fun Scoped.loadAndCacheAtlasRegion(atlasPath: String, regionName: String, group: CachedGroup = cachedGroup()): Deferred<LoadedAtlasRegion> =
+		async {
+			val atlasData = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group).await()
+			val (page, region) = atlasData.findRegion(regionName)
+					?: throw Exception("Region '$regionName' not found in atlas $atlasPath.")
+			val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
+			texture tuple region
+		}
