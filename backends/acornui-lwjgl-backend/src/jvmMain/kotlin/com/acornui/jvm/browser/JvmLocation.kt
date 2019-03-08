@@ -5,7 +5,7 @@ import com.acornui.core.graphic.PopUpSpecs
 import java.awt.Desktop
 import java.net.URI
 
-class LwjglLocation : Location {
+class JvmLocation : Location {
 
 	override val href: String = ""
 	override val origin: String = ""
@@ -22,7 +22,9 @@ class LwjglLocation : Location {
 
 	override fun navigateToUrl(url: String, name: String, specs: PopUpSpecs?) {
 		if (Desktop.isDesktopSupported()) {
-			Desktop.getDesktop().browse(URI(url))
+			val uri = URI(url)
+			if (uri.isAbsolute)
+				Desktop.getDesktop().browse(uri)
 		}
 	}
 }
