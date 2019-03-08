@@ -59,6 +59,9 @@ object ValidationFlags {
 	const val RESERVED_1: Int = 1 shl 14
 	const val RESERVED_2: Int = 1 shl 15
 
+	/**
+	 * Prints out the name of the flag for reserved flags, or the power of two for non-reserved flags.
+	 */
 	fun flagToString(flag: Int): String = when (flag) {
 		STYLES -> "STYLES"
 		PROPERTIES -> "PROPERTIES"

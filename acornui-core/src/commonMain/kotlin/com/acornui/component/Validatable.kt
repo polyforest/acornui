@@ -231,6 +231,12 @@ class ValidationGraph {
 	}
 }
 
+/**
+ * Using the ValidationFlags list, prints out a comma separated list of the flags this bit mask contains.
+ * For non-reserved flags (flags at least 1 shl 16), the power of two will be printed.
+ * @see ValidationFlags
+ * @see ValidationFlags.flagToString
+ */
 fun Int.toFlagsString(): String {
 	var str = ""
 	for (i in 0..31) {
@@ -241,6 +247,11 @@ fun Int.toFlagsString(): String {
 		}
 	}
 	return str
+}
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun Int.containsFlag(flag: Int): Boolean {
+	return this and flag > 0
 }
 
 fun Int.toFlagString(): String = ValidationFlags.flagToString(this)
