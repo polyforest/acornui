@@ -132,6 +132,7 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 		var currentLine = linesPool.obtain()
 
 		var spanPartIndex = 0
+		var allowWordBreak = true
 		while (spanPartIndex < textElements.size) {
 			val part = textElements[spanPartIndex]
 			part.explicitWidth = null
@@ -151,9 +152,11 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 			// If this is multiline text and we extend beyond the right edge, then push the current line and start a new one.
 			val extendsEdge = flowStyle.multiline && (!part.overhangs && availableWidth != null && x + partW > availableWidth)
 			val isFirst = spanPartIndex == currentLine.startIndex
+			val mustBreak = part.clearsLine && flowStyle.multiline
+			val canBreak = flowStyle.multiline && !isFirst && allowWordBreak
 			val isLast = spanPartIndex == textElements.lastIndex
-			if (isLast || (part.clearsLine && flowStyle.multiline) || (extendsEdge && !isFirst)) {
-				if (extendsEdge && !isFirst) {
+			if (isLast || mustBreak || (extendsEdge && canBreak)) {
+				if (extendsEdge && canBreak) {
 					// Find the last good breaking point.
 					var breakIndex = textElements.indexOfLast2(spanPartIndex, currentLine.startIndex) { it.isBreaking }
 					if (breakIndex == -1) breakIndex = spanPartIndex - 1
@@ -161,9 +164,11 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 					currentLine.endIndex = if (endIndex == -1) spanPartIndex + 1
 					else endIndex
 					spanPartIndex = currentLine.endIndex
+					allowWordBreak = false
 				} else {
 					spanPartIndex++
 					currentLine.endIndex = spanPartIndex
+					allowWordBreak = true
 				}
 				_lines.add(currentLine)
 				currentLine = linesPool.obtain()
