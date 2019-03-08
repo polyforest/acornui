@@ -16,6 +16,8 @@
  * limitations under the License.
 */
 
+@file:Suppress("unused")
+
 package com.acornui.math
 
 import com.acornui.recycle.Clearable
@@ -181,6 +183,13 @@ class Rectangle(
 	}
 
 	/**
+	 * Sets this rectangle to match the given [minMax] region.
+	 */
+	fun set(minMax: MinMaxRo): Rectangle {
+		return set(minMax.xMin, minMax.yMin, minMax.width, minMax.height)
+	}
+
+	/**
 	 * Sets this Rectangle to 0,0,0,0
 	 */
 	override fun clear() {
@@ -250,7 +259,7 @@ class Rectangle(
 	 * @return whether the point is contained in the rectangle
 	 */
 	override fun intersects(x: Float, y: Float): Boolean {
-		return this.x <= x && this.x + this.width >= x && this.y <= y && this.y + this.height >= y
+		return this.x <= x && right >= x && this.y <= y && bottom >= y
 	}
 
 	/**
@@ -304,7 +313,7 @@ class Rectangle(
 	}
 
 	override fun intersects(xVal: Float, yVal: Float, widthVal: Float, heightVal: Float): Boolean {
-		return x < xVal + widthVal && x + width > xVal && y < yVal + heightVal && y + height > yVal
+		return x < xVal + widthVal && right > xVal && y < yVal + heightVal && bottom > yVal
 	}
 
 	/**
@@ -353,8 +362,8 @@ class Rectangle(
 	}
 
 	/**
-	 * Fits this rectangle around another rectangle while maintaining aspect ratio. This scales and centers the rectangle to the
-	 * other rectangle (e.g. Having a camera translate and scale to show a given area)
+	 * Fits this rectangle around another rectangle while maintaining aspect ratio. This scales and centers the
+	 * rectangle to the other rectangle (e.g. Having a camera translate and scale to show a given area)
 	 * @param rect the other rectangle to fit this rectangle around
 	 * @return this rectangle for chaining
 	 */
@@ -374,8 +383,8 @@ class Rectangle(
 	}
 
 	/**
-	 * Fits this rectangle into another rectangle while maintaining aspect ratio. This scales and centers the rectangle to the
-	 * other rectangle (e.g. Scaling a texture within a arbitrary cell without squeezing)
+	 * Fits this rectangle into another rectangle while maintaining aspect ratio. This scales and centers the rectangle
+	 * to the other rectangle (e.g. Scaling a texture within a arbitrary cell without squeezing)
 	 * @param rect the other rectangle to fit this rectangle inside
 	 * @return this rectangle for chaining
 	 */

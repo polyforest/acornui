@@ -74,6 +74,9 @@ interface MinMaxRo {
 	}
 }
 
+/**
+ * A two dimentional minimum maximum range.
+ */
 class MinMax(
 		override var xMin: Float = Float.POSITIVE_INFINITY,
 		override var yMin: Float = Float.POSITIVE_INFINITY,
@@ -137,6 +140,13 @@ class MinMax(
 		xMax = other.xMax
 		yMax = other.yMax
 		return this
+	}
+
+	/**
+	 * Sets this region to match the bounds of the rectangle.
+	 */
+	fun set(rectangle: RectangleRo): MinMax {
+		return set(rectangle.x, rectangle.y, rectangle.right, rectangle.bottom)
 	}
 
 	fun set(xMin: Float, yMin: Float, xMax: Float, yMax: Float): MinMax {

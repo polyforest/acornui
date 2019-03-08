@@ -23,7 +23,6 @@ import com.acornui.component.*
 import com.acornui.component.scroll.ClampedScrollModel
 import com.acornui.component.scroll.ScrollPolicy
 import com.acornui.component.scroll.scrollArea
-import com.acornui.component.scroll.scrollTo
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.Styleable
 import com.acornui.component.style.set

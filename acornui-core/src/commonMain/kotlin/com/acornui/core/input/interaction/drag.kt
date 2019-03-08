@@ -60,6 +60,14 @@ class DragAttachment(
 	val isDragging: Boolean
 		get() = _isDragging
 
+	/**
+	 * Returns true if the user is currently interacting.
+	 * Note: This will be true even before the movement has passed the [affordance] threshold.
+	 * @see isDragging
+	 */
+	val userIsActive: Boolean
+		get() = watchingMouse || watchingTouch
+
 	private val dragEvent: DragInteraction = DragInteraction()
 
 	private val _dragStart = Signal1<DragInteraction>()

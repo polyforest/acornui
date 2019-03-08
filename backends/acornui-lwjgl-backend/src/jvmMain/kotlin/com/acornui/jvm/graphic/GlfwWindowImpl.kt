@@ -23,7 +23,7 @@ import com.acornui.core.graphic.Window
 import com.acornui.gl.core.Gl20
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
-import com.acornui.jvm.browser.LwjglLocation
+import com.acornui.jvm.browser.JvmLocation
 import com.acornui.logging.Log
 import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
@@ -276,7 +276,7 @@ class GlfwWindowImpl(
 			}
 		}
 
-	override val location: Location = LwjglLocation()
+	override val location: Location = JvmLocation()
 
 	override fun alert(message: String) {
 		TinyFileDialogs.tinyfd_notifyPopup(null, message, "error")

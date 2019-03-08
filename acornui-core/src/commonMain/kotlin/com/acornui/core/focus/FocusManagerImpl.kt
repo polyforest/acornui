@@ -17,16 +17,23 @@
 package com.acornui.core.focus
 
 import com.acornui._assert
-import com.acornui.collection.*
-import com.acornui.component.*
+import com.acornui.collection.addSorted
+import com.acornui.collection.firstOrNull2
+import com.acornui.collection.lastOrNull2
+import com.acornui.collection.poll
+import com.acornui.component.Stage
+import com.acornui.component.UiComponent
+import com.acornui.component.UiComponentRo
 import com.acornui.core.Disposable
 import com.acornui.core.DisposedException
 import com.acornui.core.di.ownerWalk
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.KeyInteractionRo
 import com.acornui.core.input.interaction.MouseInteractionRo
+import com.acornui.core.input.interaction.TouchInteractionRo
 import com.acornui.core.input.keyDown
 import com.acornui.core.input.mouseDown
+import com.acornui.core.input.touchStart
 import com.acornui.core.isBefore
 import com.acornui.core.time.callLater
 import com.acornui.function.as2
@@ -79,16 +86,23 @@ class FocusManagerImpl : FocusManager {
 		}
 	}
 
-	private val rootMouseDownHandler = { event: MouseInteractionRo ->
-		if (!event.defaultPrevented()) {
-			var p: UiComponentRo? = event.target
-			while (p != null) {
-				if (p.focusEnabled) {
-					focused(p)
-					break
-				}
-				p = p.parent
+	private fun rootMouseDownHandler(event: MouseInteractionRo) {
+		focusFirstAncestor(event.target)
+	}
+
+	private fun rootTouchStartHandler(event: TouchInteractionRo) {
+		if (event.touches.size == 1)
+			focusFirstAncestor(event.target)
+	}
+
+	private fun focusFirstAncestor(target: UiComponentRo?) {
+		var p: UiComponentRo? = target
+		while (p != null) {
+			if (p.focusEnabled) {
+				focused(p)
+				break
 			}
+			p = p.parent
 		}
 		Unit
 	}
@@ -119,7 +133,8 @@ class FocusManagerImpl : FocusManager {
 		_root = root
 		_focused = root
 		root.keyDown().add(rootKeyDownHandler)
-		root.mouseDown(isCapture = true).add(rootMouseDownHandler)
+		root.mouseDown(isCapture = false).add(::rootMouseDownHandler)
+		root.touchStart(isCapture = false).add(::rootTouchStartHandler)
 	}
 
 	override fun invalidateFocusableOrder(value: UiComponentRo) {
@@ -293,13 +308,11 @@ class FocusManagerImpl : FocusManager {
 		_focused = null
 		_focusedChanged.dispose()
 		_focusedChanging.dispose()
-		val root = _root
-		if (root != null) {
-			root.keyDown().remove(rootKeyDownHandler)
-			root.mouseDown(isCapture = true).remove(rootMouseDownHandler)
-			_root = null
-
-		}
+		val root = _root ?: throw Exception("Not initialized.")
+		root.keyDown().remove(rootKeyDownHandler)
+		root.mouseDown(isCapture = false).remove(::rootMouseDownHandler)
+		root.touchStart(isCapture = false).remove(::rootTouchStartHandler)
+		_root = null
 	}
 
 }

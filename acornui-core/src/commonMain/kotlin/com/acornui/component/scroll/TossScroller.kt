@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("UNUSED_ANONYMOUS_PARAMETER", "unused")
+
 package com.acornui.component.scroll
 
 import com.acornui.collection.poll
@@ -27,6 +29,7 @@ import com.acornui.core.time.tick
 import com.acornui.core.time.time
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.Vector2
+import com.acornui.math.Vector2Ro
 import com.acornui.signal.StoppableSignal
 import com.acornui.signal.StoppableSignalImpl
 
@@ -43,7 +46,7 @@ class TossScroller(
 		 */
 		var dampening: Float = TossScroller.DEFAULT_DAMPENING,
 
-		val dragAttachment: DragAttachment = target.dragAttachment(TossScroller.minTossDistance)
+		private val dragAttachment: DragAttachment = target.dragAttachment(TossScroller.minTossDistance)
 ) : Disposable {
 
 	private val tickTime = target.tickTime
@@ -72,7 +75,34 @@ class TossScroller(
 	val tossEnd: StoppableSignal<DragInteractionRo>
 		get() = _tossEnd
 
-	private val velocity = Vector2()
+	private val _velocity = Vector2()
+
+	/**
+	 * The current velocity of the toss.
+	 */
+	val velocity: Vector2Ro = _velocity
+
+	/**
+	 * Returns true if the user is currently interacting or if there is still momentum.
+	 * @see isDragging
+	 * @see hasVelocity
+	 */
+	val userIsActive: Boolean
+		get() = dragAttachment.userIsActive
+
+	/**
+	 * Returns true if the user is currently dragging (the drag has surpassed the drag affordance,
+	 * and the user has not yet released.)
+	 */
+	val isDragging: Boolean
+		get() = dragAttachment.isDragging
+
+	/**
+	 * Returns true if the toss scrolling currently has momentum.
+	 * @see stop
+	 */
+	val hasVelocity: Boolean
+		get() = _timer != null
 
 	private val event = DragInteraction()
 	private val startPosition: Vector2 = Vector2()
@@ -117,10 +147,10 @@ class TossScroller(
 					pushHistory()
 				} else {
 					if (clickPreventer > 0) clickPreventer--
-					velocity.scl(dampening)
-					position.add(velocity)
+					_velocity.scl(dampening)
+					position.add(_velocity)
 					dispatchDragEvent(TOSS, _toss)
-					if (velocity.isZero(0.1f)) {
+					if (_velocity.isZero(0.1f)) {
 						stop()
 					}
 				}
@@ -150,7 +180,7 @@ class TossScroller(
 		if (historyPoints.size >= 2) {
 			diff.set(historyPoints.last()).sub(historyPoints.first())
 			val time = (historyTimes.last() - historyTimes.first()) * 0.001f
-			velocity.set(diff.x / time, diff.y / time).scl(tickTime)
+			_velocity.set(diff.x / time, diff.y / time).scl(tickTime)
 		}
 		clearHistory()
 	}
@@ -188,10 +218,10 @@ class TossScroller(
 		}
 
 	fun stop() {
-		if (!velocity.isZero() || _timer != null) {
+		if (_timer != null) {
 			dispatchDragEvent(TOSS_END, _tossEnd)
 			clickPreventer = 0
-			velocity.clear()
+			_velocity.clear()
 			_timer?.dispose()
 			_timer = null
 			event.clear()

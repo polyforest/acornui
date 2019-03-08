@@ -25,7 +25,6 @@ import com.acornui.core.di.Owned
 import com.acornui.core.floor
 import com.acornui.core.input.interaction.WheelInteractionRo
 import com.acornui.core.input.wheel
-import com.acornui.core.time.callLater
 import com.acornui.core.tween.Tween
 import com.acornui.core.tween.createPropertyTween
 import com.acornui.math.*
@@ -135,6 +134,13 @@ open class ScrollArea(
 		}
 	}
 
+	/**
+	 * Stops the current toss, if there is one.
+	 */
+	fun stopToss() {
+		tossScroller?.stop()
+	}
+
 	override fun onActivated() {
 		super.onActivated()
 		focusManager.focusedChanged.add(this::focusChangedHandler)
@@ -146,11 +152,8 @@ open class ScrollArea(
 	}
 
 	private fun focusChangedHandler(old: UiComponentRo?, new: UiComponentRo?) {
-		if (style.autoScrollToFocused && new != null && isAncestorOf(new)) {
-			callLater {
-				// Inside a callLater because scrollTo invokes validation and focus changes may happen within validation.
-				scrollTo(new)
-			}
+		if (style.autoScrollToFocused && new != null && isAncestorOf(new) && tossScroller?.userIsActive != true) {
+			scrollTo(new)
 		}
 	}
 
@@ -162,14 +165,18 @@ open class ScrollArea(
 		contents.removeElement(element)
 	}
 
+	private var _contentsWidth = 0f
+
 	/**
 	 * The unclipped width of the contents.
 	 */
 	val contentsWidth: Float
 		get() {
 			validate(ValidationFlags.LAYOUT)
-			return scrollRect.contentsWidth
+			return _contentsWidth
 		}
+
+	private var _contentsHeight = 0f
 
 	/**
 	 * The unclipped height of the contents.
@@ -177,8 +184,59 @@ open class ScrollArea(
 	val contentsHeight: Float
 		get() {
 			validate(ValidationFlags.LAYOUT)
-			return scrollRect.contentsHeight
+			return _contentsHeight
 		}
+
+	private val tmpBounds = MinMax()
+
+	fun scrollTo(target: UiComponentRo, pad: PadRo = Pad(10f)) {
+		tmpBounds.set(0f, 0f, target.width, target.height)
+		target.localToGlobal(tmpBounds)
+		globalToLocal(tmpBounds)
+		tmpBounds.xMin += hScrollModel.value
+		tmpBounds.xMax += hScrollModel.value
+		tmpBounds.yMin += vScrollModel.value
+		tmpBounds.yMax += vScrollModel.value
+		tmpBounds.inflate(pad)
+		scrollTo(tmpBounds)
+	}
+
+	private val tmpMinMax = MinMax()
+
+	/**
+	 * Scrolls the minimum distance to show the given bounding rectangle.
+	 */
+	fun scrollTo(bounds: RectangleRo) = scrollTo(tmpMinMax.set(bounds))
+
+	/**
+	 * Scrolls the minimum distance to show the given bounding MinMax.
+	 * Note: This does not validate the scroll area's layout first.
+	 */
+	fun scrollTo(bounds: MinMaxRo) {
+		stopToss()
+		val contentsSetW = _contentsWidth - hScrollModel.max
+		val contentsSetH = _contentsHeight - vScrollModel.max
+		if (bounds.xMin >= hScrollModel.value || bounds.xMax <= hScrollModel.value + contentsSetW) {
+			if (bounds.xMax > hScrollModel.value + contentsSetW)
+				hScrollModel.value = bounds.xMax - contentsSetW
+			if (bounds.xMin < hScrollModel.value)
+				hScrollModel.value = bounds.xMin
+		}
+		if (bounds.yMin >= vScrollModel.value || bounds.yMax <= vScrollModel.value + contentsSetH) {
+			if (bounds.yMax > vScrollModel.value + contentsSetH)
+				vScrollModel.value = bounds.yMax - contentsSetH
+			if (bounds.yMin < vScrollModel.value)
+				vScrollModel.value = bounds.yMin
+		}
+	}
+
+	/**
+	 * Sets the [hScrollModel] value to [x] and the [vScrollModel] value to [y].
+	 */
+	fun scrollTo(x: Float, y: Float) {
+		hScrollModel.value = x
+		vScrollModel.value = y
+	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val requireHScrolling = hScrollPolicy == ScrollPolicy.ON && explicitWidth != null
@@ -256,6 +314,9 @@ open class ScrollArea(
 		vScrollModel.max = maxOf(0f, scrollRect.contentsHeight - contentsSetH)
 
 		scrollRect.getAttachment<TossScroller>(TossScroller)?.enabled = needsHScrollBar || needsVScrollBar
+
+		_contentsWidth = scrollRect.contentsWidth
+		_contentsHeight = scrollRect.contentsHeight
 	}
 
 	protected open fun validateScroll() {
@@ -279,59 +340,6 @@ open class ScrollArea(
 		 * The validation flag used for scrolling.
 		 */
 		const val SCROLLING: Int = 1 shl 16
-	}
-}
-
-
-private val tmpBounds = MinMax()
-
-fun ScrollArea.scrollTo(target: UiComponentRo, pad: PadRo = Pad(10f)) {
-	tmpBounds.set(0f, 0f, target.width, target.height)
-	target.localToGlobal(tmpBounds)
-	globalToLocal(tmpBounds)
-	tmpBounds.xMin += hScrollModel.value
-	tmpBounds.xMax += hScrollModel.value
-	tmpBounds.yMin += vScrollModel.value
-	tmpBounds.yMax += vScrollModel.value
-	tmpBounds.inflate(pad)
-	scrollTo(tmpBounds)
-}
-
-/**
- * Scrolls the minimum distance to show the given bounding rectangle.
- */
-fun ScrollArea.scrollTo(bounds: RectangleRo) {
-	validate(ValidationFlags.LAYOUT)
-	if (bounds.x < hScrollModel.value)
-		hScrollModel.value = bounds.x
-	if (bounds.y < vScrollModel.value)
-		vScrollModel.value = bounds.y
-	val contentsSetW = contentsWidth - hScrollModel.max
-	if (bounds.right > hScrollModel.value + contentsSetW)
-		hScrollModel.value = bounds.right - contentsSetW
-	val contentsSetH = contentsHeight - vScrollModel.max
-	if (bounds.bottom > vScrollModel.value + contentsSetH)
-		vScrollModel.value = bounds.bottom - contentsSetH
-}
-
-/**
- * Scrolls the minimum distance to show the given bounding MinMax.
- */
-fun ScrollArea.scrollTo(bounds: MinMaxRo) {
-	validate(ValidationFlags.LAYOUT)
-	val contentsSetW = contentsWidth - hScrollModel.max
-	val contentsSetH = contentsHeight - vScrollModel.max
-	if (bounds.xMin >= hScrollModel.value || bounds.xMax <= hScrollModel.value + contentsSetW) {
-		if (bounds.xMin < hScrollModel.value)
-			hScrollModel.value = bounds.xMin
-		if (bounds.xMax > hScrollModel.value + contentsSetW)
-			hScrollModel.value = bounds.xMax - contentsSetW
-	}
-	if (bounds.yMin >= vScrollModel.value || bounds.yMax <= vScrollModel.value + contentsSetH) {
-		if (bounds.yMin < vScrollModel.value)
-			vScrollModel.value = bounds.yMin
-		if (bounds.yMax > vScrollModel.value + contentsSetH)
-			vScrollModel.value = bounds.yMax - contentsSetH
 	}
 }
 
