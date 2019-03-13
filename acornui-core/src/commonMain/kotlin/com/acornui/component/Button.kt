@@ -234,6 +234,17 @@ open class ButtonStyle : StyleBase() {
 	companion object : StyleType<ButtonStyle>
 }
 
+fun ButtonStyle.set(skinPartFactory: (ButtonState) -> (Owned.() -> UiComponent)): ButtonStyle {
+	upState = skinPartFactory(ButtonState.UP)
+	overState = skinPartFactory(ButtonState.OVER)
+	downState = skinPartFactory(ButtonState.DOWN)
+	toggledUpState = skinPartFactory(ButtonState.TOGGLED_UP)
+	toggledOverState = skinPartFactory(ButtonState.TOGGLED_OVER)
+	toggledDownState = skinPartFactory(ButtonState.TOGGLED_DOWN)
+	disabledState = skinPartFactory(ButtonState.DISABLED)
+	return this
+}
+
 interface LabelableRo : UiComponentRo {
 	val label: String
 }

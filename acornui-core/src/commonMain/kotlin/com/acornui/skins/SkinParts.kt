@@ -201,7 +201,7 @@ open class BasicSkinPartFactory : SkinPartFactory {
 				this.borderThicknesses = bT
 				this.borderRadii = borderRadius
 			}
-		} layout { widthPercent = 1f; heightPercent = 1f }
+		} layout { fill() }
 		when (buttonState) {
 			ButtonState.UP,
 			ButtonState.OVER,

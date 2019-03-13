@@ -41,6 +41,7 @@ class Theme {
 	private val brighten: ColorRo = Color(0x15151500)
 
 	var fill: ColorRo = Color(0xF3F9FAFF)
+	var fillDown: ColorRo = Color(0xE3E9EAFF)
 	var fillHighlight: ColorRo = fill + brighten
 	var fillDisabled: ColorRo = Color(0xCCCCCCFF)
 	var fillShine: ColorRo = Color(1f, 1f, 1f, 0.9f)
@@ -89,6 +90,7 @@ class Theme {
 		panelBgColor = other.panelBgColor
 
 		fill = other.fill
+		fillDown = other.fillDown
 		fillHighlight = other.fillHighlight
 		fillDisabled = other.fillDisabled
 		fillShine = other.fillShine
@@ -149,6 +151,7 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 		o.errorColor = reader.color("errorColor")!!
 		o.evenRowBgColor = reader.color("evenRowBgColor")!!
 		o.fill = reader.color("fill")!!
+		o.fillDown = reader.color("fillDown")!!
 		o.fillDisabled = reader.color("fillDisabled")!!
 		o.fillHighlight = reader.color("fillHighlight")!!
 		o.fillShine = reader.color("fillShine")!!
@@ -185,6 +188,7 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 		writer.color("evenRowBgColor", evenRowBgColor)
 		writer.color("errorColor", errorColor)
 		writer.color("fill", fill)
+		writer.color("fillDown", fillDown)
 		writer.color("fillDisabled", fillDisabled)
 		writer.color("fillHighlight", fillHighlight)
 		writer.color("fillShine", fillShine)
@@ -215,10 +219,8 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 
 fun Theme.getButtonFillColor(buttonState: ButtonState): ColorRo {
 	return when (buttonState) {
-		ButtonState.UP,
-		ButtonState.DOWN,
-		ButtonState.TOGGLED_UP,
-		ButtonState.TOGGLED_DOWN -> fill
+		ButtonState.UP, ButtonState.TOGGLED_UP -> fill
+		ButtonState.DOWN, ButtonState.TOGGLED_DOWN -> fillDown
 
 		ButtonState.OVER,
 		ButtonState.TOGGLED_OVER -> fillHighlight

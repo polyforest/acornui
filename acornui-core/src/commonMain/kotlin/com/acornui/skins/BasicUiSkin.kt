@@ -67,12 +67,12 @@ open class BasicUiSkin(
 		}
 		initTheme()
 
-		target.populateButtonStyle(Button) { labelButtonSkin(theme, it) }
-		target.populateButtonStyle(Checkbox) { checkboxSkin(theme, it) }
-		target.populateButtonStyle(CollapseButton) { collapseButtonSkin(theme, it) }
-		target.populateButtonStyle(RadioButton) { radioButtonSkin(theme, it) }
-		target.populateButtonStyle(Checkbox.NO_LABEL) { checkboxNoLabelSkin(theme, it) }
-		target.populateButtonStyle(IconButton) { iconButtonSkin(theme, it) }
+		target.addStyleRule(ButtonStyle().set { labelButtonSkin(theme, it) }, Button)
+		target.addStyleRule(ButtonStyle().set { checkboxSkin(theme, it) }, Checkbox)
+		target.addStyleRule(ButtonStyle().set { collapseButtonSkin(theme, it) }, CollapseButton)
+		target.addStyleRule(ButtonStyle().set { radioButtonSkin(theme, it) }, RadioButton)
+		target.addStyleRule(ButtonStyle().set { checkboxNoLabelSkin(theme, it) }, Checkbox.NO_LABEL)
+		target.addStyleRule(ButtonStyle().set { iconButtonSkin(theme, it) }, IconButton)
 
 		popUpStyle()
 		focusStyle()
@@ -113,7 +113,7 @@ open class BasicUiSkin(
 	protected open fun focusStyle() {
 		val focusManager = inject(FocusManager)
 		val focusHighlight = SimpleHighlight(target, theme.atlasPath, "FocusRect")
-		focusHighlight.colorTint = theme.strokeToggled
+		focusHighlight.colorTint = theme.focusHighlightColor
 		focusManager.setHighlightIndicator(focusHighlight)
 	}
 
@@ -276,9 +276,9 @@ open class BasicUiSkin(
 		tabNavStyle.background = { rect { styleTags.add(CommonStyleTags.themeRect) } }
 		target.addStyleRule(tabNavStyle, TabNavigator)
 
-		target.populateButtonStyle(TabNavigator.DEFAULT_TAB_STYLE) { tabButtonSkin(theme, it) }
-		target.populateButtonStyle(TabNavigator.DEFAULT_TAB_STYLE_FIRST) { tabButtonSkin(theme, it) }
-		target.populateButtonStyle(TabNavigator.DEFAULT_TAB_STYLE_LAST) { tabButtonSkin(theme, it) }
+		target.addStyleRule(ButtonStyle().set { tabButtonSkin(theme, it) }, TabNavigator.DEFAULT_TAB_STYLE)
+		target.addStyleRule(ButtonStyle().set { tabButtonSkin(theme, it) }, TabNavigator.DEFAULT_TAB_STYLE_FIRST)
+		target.addStyleRule(ButtonStyle().set { tabButtonSkin(theme, it) }, TabNavigator.DEFAULT_TAB_STYLE_LAST)
 	}
 
 	protected open fun dividerStyle() {
@@ -309,8 +309,8 @@ open class BasicUiSkin(
 
 	protected open fun numericStepperStyle() {
 		val stepperPad = Pad(left = 4f, right = 4f, top = 4f, bottom = 4f)
-		target.populateButtonStyle(NumericStepper.STEP_UP_STYLE) { iconButtonSkin(it, "UpArrowStepper", padding = stepperPad) }
-		target.populateButtonStyle(NumericStepper.STEP_DOWN_STYLE) { iconButtonSkin(it, "DownArrowStepper", padding = stepperPad) }
+		target.addStyleRule(ButtonStyle().set { iconButtonSkin(it, "UpArrowStepper", padding = stepperPad) }, NumericStepper.STEP_UP_STYLE)
+		target.addStyleRule(ButtonStyle().set { iconButtonSkin(it, "DownArrowStepper", padding = stepperPad) }, NumericStepper.STEP_DOWN_STYLE)
 	}
 
 	protected open fun scrollAreaStyle() {
@@ -331,7 +331,7 @@ open class BasicUiSkin(
 		val thumb: Owned.() -> UiComponent = {
 			button {
 				focusEnabled = false
-				populateButtonStyle(style) {
+				style.set {
 					{
 						rect {
 							style.backgroundColor = Color(0f, 0f, 0f, 0.6f)
@@ -538,31 +538,35 @@ open class BasicUiSkin(
 	}
 
 	protected open fun dataGridStyle() {
-		val dataGridStyle = DataGridStyle()
-		dataGridStyle.background = {
-			rect {
-				style.apply {
-					backgroundColor = theme.fill
-					borderThicknesses = Pad(theme.strokeThickness)
-					borderColors = BorderColors(theme.stroke)
-					borderRadii = Corners(theme.borderRadius)
+		val dataGridStyle = DataGridStyle().apply {
+			background = {
+				rect {
+					style.apply {
+						backgroundColor = theme.fill
+						borderThicknesses = Pad(theme.strokeThickness)
+						borderColors = BorderColors(theme.stroke)
+						borderRadii = Corners(theme.borderRadius)
+					}
+				}
+			}
+			cellPadding = Pad(theme.strokeThickness + 2f)
+			resizeHandleWidth = if (userInfo.isTouchDevice) 16f else 8f
+			sortDownArrow = { atlas(theme.atlasPath, "DownArrow") { colorTint = theme.iconColor } }
+			sortUpArrow = { atlas(theme.atlasPath, "UpArrow") { colorTint = theme.iconColor } }
+			borderRadius = Corners(theme.borderRadius)
+			borderThickness = Pad(theme.strokeThickness)
+			cellFocusHighlight = {
+				SimpleHighlight(target, theme.atlasPath, "FocusRect").apply { colorTint = theme.strokeToggled }
+			}
+			headerCellBackground = {
+				button {
+					style.set { buttonState ->
+						{ buttonTexture(buttonState, Corners(0f), Pad(0f)) }
+					}
 				}
 			}
 		}
-		dataGridStyle.resizeHandleWidth = if (userInfo.isTouchDevice) 16f else 8f
-		dataGridStyle.sortDownArrow = { atlas(theme.atlasPath, "DownArrow") { colorTint = theme.iconColor } }
-		dataGridStyle.sortUpArrow = { atlas(theme.atlasPath, "UpArrow") { colorTint = theme.iconColor } }
-		dataGridStyle.borderRadius = Corners(theme.borderRadius)
-		dataGridStyle.borderThickness = Pad(theme.strokeThickness)
-		dataGridStyle.cellFocusHighlight = {
-			SimpleHighlight(target, theme.atlasPath, "FocusRect").apply { colorTint = theme.strokeToggled }
-		}
 
-		val headerCellBackground = styleTag()
-		target.populateButtonStyle(headerCellBackground) { buttonState ->
-			{ buttonTexture(buttonState, Corners(0f), Pad(0f)) }
-		}
-		dataGridStyle.headerCellBackground = { button { styleTags.add(headerCellBackground) } }
 
 		target.addStyleRule(dataGridStyle, DataGrid)
 
@@ -682,8 +686,8 @@ open class BasicUiSkin(
 		}
 		target.addStyleRule(calendarPanelStyle, Panel and withAncestor(Calendar))
 
-		target.addStyleRule(populateButtonStyle(ButtonStyle()) { iconButtonSkin(it, "ArrowLeft") }, Calendar.MONTH_DEC_STYLE)
-		target.addStyleRule(populateButtonStyle(ButtonStyle()) { iconButtonSkin(it, "ArrowRight") }, Calendar.MONTH_INC_STYLE)
+		target.addStyleRule(ButtonStyle().set { iconButtonSkin(it, "ArrowLeft") }, Calendar.MONTH_DEC_STYLE)
+		target.addStyleRule(ButtonStyle().set { iconButtonSkin(it, "ArrowRight") }, Calendar.MONTH_INC_STYLE)
 
 		val inactiveCalendarItemRendererStyle = CalendarItemRendererStyle().apply {
 			disabledColor = Color(0.5f, 0.5f, 0.5f, 0.3f)
