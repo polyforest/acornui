@@ -57,8 +57,8 @@ open class AtlasComponent(owner: Owned) : DrawableComponent(owner), Clearable {
 		clear()
 		this.group = cachedGroup()
 		return loadAndCacheAtlasRegion(atlasPath, regionName, group!!) then notDisposed {
-			texture, region ->
-			setRegionAndTexture(texture, region)
+			loadedRegion ->
+			setRegionAndTexture(loadedRegion.texture, loadedRegion.region)
 		}
 	}
 
@@ -130,6 +130,6 @@ fun Owned.atlas(atlasPath: String, region: String, init: ComponentInit<AtlasComp
 /**
  * Creates a texture component and uses it as the contents
  */
-fun SingleElementContainer<UiComponent>.contentsAtlas(atlasPath: String, region: String): Deferred<Pair<Texture, AtlasRegionData>> {
+fun SingleElementContainer<UiComponent>.contentsAtlas(atlasPath: String, region: String): Deferred<LoadedAtlasRegion> {
 	return createOrReuseElement { atlas() }.setRegion(atlasPath, region)
 }

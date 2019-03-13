@@ -14,11 +14,12 @@
 * limitations under the License.
 */
 
+@file:Suppress("unused")
+
 package com.acornui.core.graphic
 
 import com.acornui.async.Deferred
 import com.acornui.async.async
-import com.acornui.collection.tuple
 import com.acornui.core.asset.CachedGroup
 import com.acornui.core.asset.cachedGroup
 import com.acornui.core.asset.loadAndCacheJson
@@ -243,12 +244,7 @@ object AtlasRegionDataSerializer : To<AtlasRegionData>, From<AtlasRegionData> {
 	}
 }
 
-
-typealias LoadedAtlasRegion = Pair<Texture, AtlasRegionData>
-val LoadedAtlasRegion.texture: Texture
-	get() = first
-val LoadedAtlasRegion.region: AtlasRegionData
-	get() = second
+data class LoadedAtlasRegion(val texture: Texture, val region: AtlasRegionData)
 
 fun Scoped.loadAndCacheAtlasRegion(atlasPath: String, regionName: String, group: CachedGroup = cachedGroup()): Deferred<LoadedAtlasRegion> =
 		async {
@@ -256,5 +252,5 @@ fun Scoped.loadAndCacheAtlasRegion(atlasPath: String, regionName: String, group:
 			val (page, region) = atlasData.findRegion(regionName)
 					?: throw Exception("Region '$regionName' not found in atlas $atlasPath.")
 			val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
-			texture tuple region
+			LoadedAtlasRegion(texture, region)
 		}
