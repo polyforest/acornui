@@ -267,6 +267,7 @@ open class BasicUiSkin(
 
 	protected open fun tabNavigatorStyle() {
 		val tabNavStyle = TabNavigatorStyle()
+		tabNavStyle.vGap = -theme.strokeThickness
 		tabNavStyle.background = { rect { styleTags.add(CommonStyleTags.themeRect) } }
 		target.addStyleRule(tabNavStyle, TabNavigator)
 
