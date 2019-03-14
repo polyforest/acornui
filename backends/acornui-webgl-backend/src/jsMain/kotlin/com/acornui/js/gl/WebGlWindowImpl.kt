@@ -24,7 +24,6 @@ import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.js.window.JsLocation
 import com.acornui.logging.Log
-import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
@@ -73,7 +72,6 @@ class WebGlWindowImpl(
 	// TODO: Study context loss
 	// getExtension( 'WEBGL_lose_context' ).loseContext();
 	private val webGlContextRestoredHandler = { event: Event ->
-		//		event.preventDefault()
 		Log.info("WebGL context lost")
 		requestRender()
 	}
@@ -87,7 +85,7 @@ class WebGlWindowImpl(
 	}
 
 	private val resizeHandler = { _: Event ->
-		setSize(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat(), true)
+		setSizeInternal(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat(), true)
 	}
 
 	private var _clearColor = Color.CLEAR.copy()
@@ -101,7 +99,7 @@ class WebGlWindowImpl(
 		}
 
 	init {
-		setSize(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat(), true)
+		setSizeInternal(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat(), true)
 
 		window.addEventListener("resize", resizeHandler)
 		canvas.addEventListener("webglcontextrestored", webGlContextRestoredHandler)
@@ -175,9 +173,9 @@ class WebGlWindowImpl(
 	override val scaleY: Float
 		get() = 1f
 
-	override fun setSize(width: Float, height: Float) = setSize(width, height, false)
+	override fun setSize(width: Float, height: Float) = setSizeInternal(width, height, false)
 
-	private fun setSize(width: Float, height: Float, isUserInteraction: Boolean) {
+	private fun setSizeInternal(width: Float, height: Float, isUserInteraction: Boolean) {
 		if (_width == width && _height == height) return // no-op
 		_width = width
 		_height = height
