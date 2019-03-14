@@ -271,9 +271,17 @@ open class BasicUiSkin(
 	}
 
 	protected open fun tabNavigatorStyle() {
-		val tabNavStyle = TabNavigatorStyle()
-		tabNavStyle.vGap = -theme.strokeThickness
-		tabNavStyle.background = { rect { styleTags.add(CommonStyleTags.themeRect) } }
+		val tabNavStyle = TabNavigatorStyle().apply {
+			vGap = -theme.strokeThickness
+			contentsPadding = Pad(theme.strokeThickness)
+			background = { rect {
+				style.apply {
+					backgroundColor = theme.panelBgColor
+					borderColors = BorderColors(theme.stroke)
+					borderThicknesses = Pad(theme.strokeThickness)
+				}
+			} }
+		}
 		target.addStyleRule(tabNavStyle, TabNavigator)
 
 		target.addStyleRule(ButtonStyle().set { tabButtonSkin(theme, it) }, TabNavigator.DEFAULT_TAB_STYLE)
@@ -457,6 +465,9 @@ open class BasicUiSkin(
 		colorPickerStyle.apply {
 			background = {
 				button { focusEnabled = false }
+			}
+			colorSwatch = {
+				curvedRect(Color.WHITE, Color(1f, 1f, 1f, 0.5f))
 			}
 		}
 		target.addStyleRule(colorPickerStyle, ColorPicker)

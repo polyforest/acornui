@@ -53,10 +53,9 @@ open class LabelButtonSkinPart(
 		}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		val textWidth = padding.reduceWidth(explicitWidth)
-		textField.setSize(textWidth, null)
-		val w = explicitWidth ?: maxOf(minWidth ?: 0f, padding.expandWidth2(textField.width))
+		textField.setSize(padding.reduceWidth(explicitWidth), null)
 		var h = maxOf(minHeight ?: 0f, padding.expandHeight2(textField.height))
+		val w = maxOf(h, explicitWidth ?: maxOf(minWidth ?: 0f, padding.expandWidth2(textField.width)))
 		if (explicitHeight != null && explicitHeight > h) h = explicitHeight
 		texture.setSize(w, h)
 		textField.moveTo((padding.reduceWidth2(w) - textField.width) * 0.5f + padding.left, (padding.reduceHeight2(h) - textField.height) * 0.5f + padding.top)

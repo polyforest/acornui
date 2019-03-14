@@ -22,6 +22,7 @@ import com.acornui.component.layout.algorithm.canvas
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 
 interface SkinPartFactory {
@@ -54,6 +55,7 @@ interface SkinPartFactory {
 
 	fun Owned.buttonTexture(buttonState: ButtonState): UiComponent
 	fun Owned.buttonTexture(buttonState: ButtonState, borderRadius: CornersRo, borderThickness: PadRo, isTab: Boolean = false): CanvasLayoutContainer
+	fun Owned.curvedRect(fillColor: ColorRo, strokeColor: ColorRo): StackLayoutContainer
 
 }
 
@@ -242,6 +244,16 @@ open class BasicSkinPartFactory : SkinPartFactory {
 				}
 			}
 		}
+	}
+
+	override fun Owned.curvedRect(fillColor: ColorRo, strokeColor: ColorRo) = stack {
+		val theme = inject(Theme)
+		+atlas(theme.atlasPath, "CurvedFill") {
+			colorTint = fillColor
+		} layout { fill() }
+		+atlas(theme.atlasPath, "CurvedStroke") {
+			colorTint = strokeColor
+		} layout { fill() }
 	}
 
 }

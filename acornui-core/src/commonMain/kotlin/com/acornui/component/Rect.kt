@@ -469,7 +469,10 @@ open class Rect(
 	}
 
 	override fun draw(clip: MinMaxRo) {
-		if (bounds.isEmpty()) return
+		val margin = style.margin
+		val w = margin.reduceWidth2(explicitWidth ?: 0f)
+		val h = margin.reduceHeight2(explicitHeight ?: 0f)
+		if (w <= 0f || h <= 0f) return
 		if (simpleMode) {
 			simpleModeObj.apply {
 				val batch = glState.batch

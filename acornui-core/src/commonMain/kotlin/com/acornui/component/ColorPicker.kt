@@ -26,7 +26,7 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 	val style = bind(ColorPickerStyle())
 
 	private var background: UiComponent? = null
-	private val colorSwatch: Rect
+	private var colorSwatch: UiComponent? = null
 	private val colorPalette = ColorPalette(this)
 
 	private val colorPaletteLift = lift {
@@ -42,14 +42,14 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 		set(value) {
 			val v = value.copy()
 			colorPalette.color = v
-			colorSwatch.style.backgroundColor = v
+			colorSwatch?.colorTint = v
 		}
 
 	var value: HsvRo
 		get() = colorPalette.value
 		set(value) {
 			colorPalette.value = value
-			colorSwatch.style.backgroundColor = value.toRgb(tmpColor).copy()
+			colorSwatch?.colorTint = value.toRgb(tmpColor).copy()
 		}
 
 	/**
@@ -81,19 +81,19 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 			toggleOpen()
 		}
 
-		colorSwatch = addChild(rect {
-			styleTags.add(COLOR_SWATCH_STYLE)
-			interactivityMode = InteractivityMode.NONE
-			style.backgroundColor = color
-		})
-
 		colorPalette.changed.add {
-			colorSwatch.style.backgroundColor = value.toRgb(tmpColor).copy()
+			colorSwatch?.colorTint = value.toRgb(tmpColor).copy()
 		}
 
 		watch(style) {
 			background?.dispose()
 			background = addChild(0, it.background(this))
+			colorSwatch?.dispose()
+			colorSwatch = addChild(it.colorSwatch(this)).apply {
+				colorTint = color
+				interactivityMode = InteractivityMode.NONE
+			}
+
 		}
 
 		blurred().add(::close)
@@ -121,16 +121,18 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+		val background = background ?: return
+		val colorSwatch = colorSwatch ?: return
 		val s = style
 		val padding = s.padding
-		val w = explicitWidth ?: s.defaultSwatchWidth + padding.left + padding.right
-		val h = explicitHeight ?: s.defaultSwatchHeight + padding.top + padding.bottom
+		val w = explicitWidth ?: padding.expandWidth2(s.defaultSwatchWidth)
+		val h = explicitHeight ?: padding.expandHeight2(s.defaultSwatchHeight)
 
 		colorSwatch.setSize(padding.reduceWidth(w), padding.reduceHeight(h))
-		colorSwatch.moveTo(padding.left, padding.top)
 
-		background!!.setSize(w, h)
-		out.set(w, h)
+		background.setSize(maxOf(padding.expandWidth2(colorSwatch.width), w), maxOf(padding.expandHeight2(colorSwatch.height), h))
+		out.set(background.width, background.height)
+		colorSwatch.setPosition(0.5f * (out.width - colorSwatch.width), 0.5f * (out.height - colorSwatch.height))
 
 		colorPaletteLift.moveTo(0f, h)
 	}
@@ -153,6 +155,7 @@ class ColorPickerStyle : StyleBase() {
 	var background by prop(noSkin)
 	var defaultSwatchWidth by prop(20f)
 	var defaultSwatchHeight by prop(20f)
+	var colorSwatch by prop(noSkin)
 
 	companion object : StyleType<ColorPickerStyle>
 }

@@ -19,6 +19,7 @@ import com.acornui.core.input.interaction.click
 import com.acornui.factory.LazyInstance
 import com.acornui.factory.lazyInstance
 import com.acornui.math.Bounds
+import com.acornui.math.Pad
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal3
 import com.acornui.signal.Signal4
@@ -268,15 +269,17 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+		val background = background ?: return
 		tabBarContainer.setSize(explicitWidth, null)
 		val tabBarHeight = tabBarContainer.height + style.vGap
 		val contentsHeight = if (explicitHeight == null) null else explicitHeight - tabBarHeight
-		contents.setSize(explicitWidth, contentsHeight)
-		contents.moveTo(0f, tabBarHeight)
-		background!!.moveTo(0f, tabBarHeight)
-		background!!.setSize(contents.width, contents.height)
-		out.width = maxOf(contents.width, tabBarContainer.width)
-		out.height = contents.height + tabBarHeight
+		val pad = style.contentsPadding
+		contents.setSize(pad.reduceWidth(explicitWidth), pad.reduceHeight(contentsHeight))
+		contents.moveTo(pad.left, tabBarHeight + pad.top)
+		background.setSize(pad.expandWidth2(contents.width), pad.expandHeight2(contents.height))
+		background.moveTo(0f, tabBarHeight)
+		out.width = maxOf(background.width, tabBarContainer.width)
+		out.height = background.height + tabBarHeight
 	}
 
 	override fun dispose() {
@@ -326,9 +329,14 @@ class TabNavigatorStyle : StyleBase() {
 	var vGap by prop(-1f)
 
 	/**
-	 * The component to be placed in the background of the contents.
+	 * The component to be placed in the behind the contents.
 	 */
 	var background by prop(noSkin)
+
+	/**
+	 * The padding around the contents area.
+	 */
+	var contentsPadding by prop(Pad(0f))
 
 	companion object : StyleType<TabNavigatorStyle>
 }
