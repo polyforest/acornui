@@ -19,6 +19,7 @@ package com.acornui.component.text
 import com.acornui.component.ValidationFlags
 import com.acornui.component.ValidationGraph
 import com.acornui.component.layout.LayoutData
+import com.acornui.component.layout.Transformable
 import com.acornui.component.style.*
 import com.acornui.component.validationProp
 import com.acornui.core.DisposedException
@@ -154,8 +155,10 @@ abstract class TextNodeBase(final override val owner: Owned) : TextNode {
 
 
 	//-----------------------------------------------------
-	// Positionable methods
+	// Tranformable methods
 	//-----------------------------------------------------
+
+	override var snapToPixel: Boolean = Transformable.defaultSnapToPixel
 
 	private val _position = Vector3()
 
@@ -222,10 +225,6 @@ abstract class TextNodeBase(final override val owner: Owned) : TextNode {
 		if (value?.isNaN() == true) throw Exception("May not set the size to be NaN")
 		_explicitHeight = value
 		invalidate(ValidationFlags.LAYOUT)
-	}
-
-	final override fun moveTo(x: Float, y: Float, z: Float) {
-		setPosition(offsetRound(x), offsetRound(y), z)
 	}
 
 	protected open fun updateStyles() {

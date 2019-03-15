@@ -208,6 +208,13 @@ interface Transformable : TransformableRo, Positionable {
 
 	fun setOrigin(x: Float, y: Float, z: Float = 0f)
 
+	companion object {
+
+		/**
+		 * Transformable components will use this value to set their initial [Transformable.snapToPixel] state.
+		 */
+		var defaultSnapToPixel = true
+	}
 }
 
 /**
@@ -231,9 +238,21 @@ interface Positionable : PositionableRo {
 	override var z: Float
 
 	/**
-	 * Sets the position of this component, rounding the x and y coordinates.
+	 * If true, then [moveTo] will snap the position to the nearest pixel.
 	 */
-	fun moveTo(x: Float, y: Float, z: Float = 0f)
+	val snapToPixel: Boolean
+
+	/**
+	 * Sets the position of this component, and if [snapToPixel] is true,
+	 * The x and y coordinates will be rounded to the nearest pixel.
+	 * The rounding by default will use [MathUtils.offsetRound].
+	 */
+	fun moveTo(x: Float, y: Float, z: Float = 0f) {
+		if (snapToPixel)
+			setPosition(MathUtils.offsetRound(x), MathUtils.offsetRound(y), z)
+		else
+			setPosition(x, y, z)
+	}
 
 	/**
 	 * Sets the position of this component. (Without rounding)

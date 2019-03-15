@@ -21,10 +21,7 @@ package com.acornui.component
 import com.acornui.assertionsEnabled
 import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
-import com.acornui.component.layout.LayoutData
-import com.acornui.component.layout.SizeConstraints
-import com.acornui.component.layout.SizeConstraintsRo
-import com.acornui.component.layout.intersectsGlobalRay
+import com.acornui.component.layout.*
 import com.acornui.component.style.*
 import com.acornui.core.*
 import com.acornui.core.asset.AssetManager
@@ -941,6 +938,8 @@ open class UiComponentImpl(
 	// Transformable
 	//-----------------------------------------------
 
+	override var snapToPixel: Boolean = Transformable.defaultSnapToPixel
+
 	/**
 	 * This component's transformation matrix.
 	 * Responsible for positioning, scaling, rotation, etc.
@@ -1038,10 +1037,6 @@ open class UiComponentImpl(
 		_position.set(x, y, z)
 		invalidate(ValidationFlags.TRANSFORM)
 		return
-	}
-
-	final override fun moveTo(x: Float, y: Float, z: Float) {
-		setPosition(offsetRound(x), offsetRound(y), z)
 	}
 
 	override var scaleX: Float
