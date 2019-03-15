@@ -67,8 +67,8 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/backends/acornui-webgl-backend/com.polyforest.acornui-webgl-backend.jvmMain.iml" filepath="$PROJECT_DIR$/.idea/modules/backends/acornui-webgl-backend/com.polyforest.acornui-webgl-backend.jvmMain.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/backends/acornui-webgl-backend/com.polyforest.acornui-webgl-backend.jvmTest.iml" filepath="$PROJECT_DIR$/.idea/modules/backends/acornui-webgl-backend/com.polyforest.acornui-webgl-backend.jvmTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/backends/com.polyforest.backends.iml" filepath="$PROJECT_DIR$/.idea/modules/backends/com.polyforest.backends.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/scripts/com.polyforest.scripts.iml" filepath="$PROJECT_DIR$/.idea/modules/scripts/com.polyforest.scripts.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/tools/com.polyforest.tools.iml" filepath="$PROJECT_DIR$/.idea/modules/tools/com.polyforest.tools.iml" />
-      <module fileurl="file://$PROJECT_DIR$/scripts/scripts.iml" filepath="$PROJECT_DIR$/scripts/scripts.iml" />
     </modules>
   </component>
 </project>
