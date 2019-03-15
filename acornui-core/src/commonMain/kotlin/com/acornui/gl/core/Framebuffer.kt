@@ -16,12 +16,19 @@
 
 package com.acornui.gl.core
 
+import com.acornui.component.BasicDrawable
+import com.acornui.component.ComponentInit
+import com.acornui.component.Sprite
 import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
+import com.acornui.core.di.Scoped
+import com.acornui.core.graphic.BlendMode
 import com.acornui.core.graphic.Texture
 import com.acornui.core.userInfo
+import com.acornui.graphic.ColorRo
 import com.acornui.logging.Log
 import com.acornui.math.IntRectangle
+import com.acornui.math.Matrix4Ro
 
 /**
  * @author nbilyk
@@ -29,12 +36,12 @@ import com.acornui.math.IntRectangle
 class Framebuffer(
 		private val gl: Gl20,
 		private val glState: GlState,
-		val width: Int = 0,
-		val height: Int = 0,
+		val width: Int,
+		val height: Int,
 		hasDepth: Boolean = false,
 		hasStencil: Boolean = false,
 		val texture: Texture = BufferTexture(gl, glState, width, height)
-) : Disposable {
+) : Disposable, BasicDrawable {
 
 	/**
 	 * True if the depth render attachment was created.
@@ -49,8 +56,8 @@ class Framebuffer(
 	private val _viewport = IntRectangle(0, 0, width, height)
 
 	constructor(injector: Injector,
-				width: Int = 0,
-				height: Int = 0,
+				width: Int,
+				height: Int,
 				hasDepth: Boolean = false,
 				hasStencil: Boolean = false,
 				texture: Texture = BufferTexture(injector.inject(Gl20), injector.inject(GlState), width, height)) : this(injector.inject(Gl20), injector.inject(GlState), width, height, hasDepth, hasStencil, texture)
@@ -82,12 +89,12 @@ class Framebuffer(
 		gl.bindFramebuffer(Gl20.FRAMEBUFFER, framebufferHandle)
 		gl.framebufferTexture2D(Gl20.FRAMEBUFFER, Gl20.COLOR_ATTACHMENT0, Gl20.TEXTURE_2D, texture.textureHandle!!, 0)
 		if (this.hasDepth && this.hasStencil) {
-				depthStencilbufferHandle = gl.createRenderbuffer()
-				depthbufferHandle = null
-				stencilbufferHandle = null
-				gl.bindRenderbuffer(Gl20.RENDERBUFFER, depthStencilbufferHandle)
-				gl.renderbufferStorage(Gl20.RENDERBUFFER, Gl20.DEPTH_STENCIL, width, height)
-				gl.framebufferRenderbuffer(Gl20.FRAMEBUFFER, Gl20.DEPTH_STENCIL_ATTACHMENT, Gl20.RENDERBUFFER, depthStencilbufferHandle)
+			depthStencilbufferHandle = gl.createRenderbuffer()
+			depthbufferHandle = null
+			stencilbufferHandle = null
+			gl.bindRenderbuffer(Gl20.RENDERBUFFER, depthStencilbufferHandle)
+			gl.renderbufferStorage(Gl20.RENDERBUFFER, Gl20.DEPTH_STENCIL, width, height)
+			gl.framebufferRenderbuffer(Gl20.FRAMEBUFFER, Gl20.DEPTH_STENCIL_ATTACHMENT, Gl20.RENDERBUFFER, depthStencilbufferHandle)
 		} else {
 			depthStencilbufferHandle = null
 			if (this.hasDepth) {
@@ -158,7 +165,7 @@ class Framebuffer(
 	/**
 	 * Sugar to wrap the inner method in [begin] and [end] calls.
 	 */
-	inline fun drawTo(inner: ()->Unit) {
+	inline fun drawTo(inner: () -> Unit) {
 		begin()
 		inner()
 		end()
@@ -176,6 +183,40 @@ class Framebuffer(
 		}
 		gl.deleteFramebuffer(framebufferHandle)
 	}
+
+	//---------------------------------------------------------------
+	// BasicDrawable methods
+	//---------------------------------------------------------------
+
+	private val sprite: Sprite by lazy {
+		Sprite().apply {
+			setUv(0f, 0f, 1f, 1f, isRotated = false)
+			texture = this@Framebuffer.texture
+		}
+	}
+
+	var blendMode: BlendMode
+		get() = sprite.blendMode
+		set(value) {
+			sprite.blendMode = value
+		}
+
+	override val naturalWidth: Float = width.toFloat()
+	override val naturalHeight: Float = height.toFloat()
+
+	override fun updateWorldVertices(worldTransform: Matrix4Ro, width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
+		sprite.updateWorldVertices(worldTransform, width, height, x, y, z, rotation, originX, originY)
+	}
+
+	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
+		sprite.updateVertices(width, height, x, y, z, rotation, originX, originY)
+	}
+
+	override fun draw(glState: GlState, colorTint: ColorRo) {
+		sprite.draw(glState, colorTint)
+	}
+
+	//---------------------------------------------------------------
 
 	override fun dispose() {
 		delete()
@@ -206,4 +247,10 @@ class BufferTexture(gl: Gl20,
 	override fun uploadTexture() {
 		gl.texImage2Db(target.value, 0, pixelFormat.value, width, height, 0, pixelFormat.value, pixelType.value, null)
 	}
+}
+
+fun Scoped.framebuffer(width: Int, height: Int, hasDepth: Boolean = false, hasStencil: Boolean = false, init: ComponentInit<Framebuffer> = {}): Framebuffer {
+	val f = Framebuffer(injector, width, height, hasDepth, hasStencil)
+	f.init()
+	return f
 }

@@ -56,3 +56,11 @@ abstract class DrawableComponent(
 		const val VERTICES = 1 shl 16
 	}
 }
+
+class DrawableComponentImpl(owner: Owned, override val drawable: BasicDrawable) : DrawableComponent(owner)
+
+fun Owned.drawableC(drawable: BasicDrawable, init: ComponentInit<DrawableComponentImpl> = {}): DrawableComponentImpl {
+	val d = DrawableComponentImpl(this, drawable)
+	d.init()
+	return d
+}

@@ -25,6 +25,19 @@ interface BasicDrawable {
 	val naturalWidth: Float
 	val naturalHeight: Float
 
+	/**
+	 * Updates this BasicDrawable's local vertices, then projects them with the given [worldTransform].
+	 *
+	 * @param worldTransform The transformation matrix used to project the local vertices.
+	 * @param width The width of the sprite.
+	 * @param height The height of the sprite.
+	 * @param x translation
+	 * @param y translation
+	 * @param z translation
+	 * @param rotation The rotation around the Z axis in radians. If y-axis is pointing down, this will be clockwise.
+	 * @param originX The x point of the rectangle that will be 0,0
+	 * @param originY The y point of the rectangle that will be 0,0
+	 */
 	fun updateWorldVertices(worldTransform: Matrix4Ro, width: Float, height: Float, x: Float = 0f, y: Float = 0f, z: Float = 0f, rotation: Float = 0f, originX: Float = 0f, originY: Float = 0f)
 
 	/**

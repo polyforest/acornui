@@ -7,11 +7,15 @@ import com.acornui.core.di.inject
 import com.acornui.core.graphic.CameraRo
 import com.acornui.core.graphic.Window
 import com.acornui.gl.core.*
+import com.acornui.graphic.Color
 import com.acornui.math.Matrix4
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Pad
 
+// TODO: WIP
+
 /**
+ * WIP
  * A filter that draws the target component to a resizable frame buffer.
  */
 class FramebufferFilter(
@@ -49,6 +53,6 @@ class FramebufferFilter(
 		framebuffer.end()
 		glState.viewProjection = Matrix4.IDENTITY
 		glState.model = Matrix4.IDENTITY
-		framebuffer.render()
+		framebuffer.draw(glState, Color.WHITE)
 	}
 }

@@ -52,9 +52,6 @@ interface ShaderBatch : VertexFeed, IndexFeed {
 	 */
 	fun flush()
 
-	@Deprecated("use flush(), no more force flag.", ReplaceWith("flush()"))
-	fun flush(force: Boolean) = flush()
-
 	/**
 	 * A way to push a 'standard' UI vertex.
 	 * This will be adapted to fit this batch's [vertexAttributes]

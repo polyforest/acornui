@@ -28,6 +28,8 @@ import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Matrix4
 
+// TODO: Turn into a BasicDrawable
+
 /**
  * Wraps a frame buffer, keeping it the size of the screen.
  */
@@ -83,7 +85,7 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 	fun render(colorTint: ColorRo = Color.WHITE) {
 		glState.viewProjection = Matrix4.IDENTITY
 		glState.model = Matrix4.IDENTITY
-		framebuffer.render(colorTint)
+		framebuffer.draw(glState, colorTint)
 	}
 
 	override fun dispose() {

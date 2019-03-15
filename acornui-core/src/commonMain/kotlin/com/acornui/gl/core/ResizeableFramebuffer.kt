@@ -16,14 +16,13 @@
 
 package com.acornui.gl.core
 
+import com.acornui.component.BasicDrawable
 import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
 import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
 import com.acornui.core.graphic.BlendMode
-import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.MathUtils
 import com.acornui.math.Matrix4Ro
@@ -38,17 +37,10 @@ class ResizeableFramebuffer(
 		initialHeight: Float,
 		private val hasDepth: Boolean = false,
 		private val hasStencil: Boolean = false
-) : Scoped, Disposable {
+) : Scoped, Disposable, BasicDrawable {
 
+	private val sprite: Sprite = Sprite()
 	private var framebuffer: Framebuffer? = null
-
-	private val sprite = Sprite()
-
-	var blendMode: BlendMode
-		get() = sprite.blendMode
-		set(value) {
-			sprite.blendMode = value
-		}
 
 	init {
 		setSize(initialWidth, initialHeight)
@@ -56,6 +48,8 @@ class ResizeableFramebuffer(
 
 	fun setSize(width: Int, height: Int) = setSize(width.toFloat(), height.toFloat())
 	fun setSize(width: Float, height: Float) {
+		naturalWidth = width
+		naturalHeight = height
 		val widthInt = width.ceil()
 		val heightInt = height.ceil()
 		val oldFramebuffer = framebuffer
@@ -102,19 +96,35 @@ class ResizeableFramebuffer(
 		end()
 	}
 
-	private val glState = inject(GlState)
+	//---------------------------------------------------------------
+	// BasicDrawable methods
+	//---------------------------------------------------------------
 
-	fun updateWorldVertices(worldTransform: Matrix4Ro, width: Float, height: Float, x: Float = 0f, y: Float = 0f, z: Float = 0f, rotation: Float = 0f, originX: Float = 0f, originY: Float = 0f) {
+	var blendMode: BlendMode
+		get() = sprite.blendMode
+		set(value) {
+			sprite.blendMode = value
+		}
+
+	override var naturalWidth: Float = 0f
+		private set
+
+	override var naturalHeight: Float = 0f
+		private set
+
+	override fun updateWorldVertices(worldTransform: Matrix4Ro, width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
 		sprite.updateWorldVertices(worldTransform, width, height, x, y, z, rotation, originX, originY)
 	}
 
-	/**
-	 * Renders the frame buffer to the screen.
-	 * Be sure to set [GlState.setCamera] before this call.
-	 */
-	fun render(colorTint: ColorRo = Color.WHITE) {
+	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
+		sprite.updateVertices(width, height, x, y, z, rotation, originX, originY)
+	}
+
+	override fun draw(glState: GlState, colorTint: ColorRo) {
 		sprite.draw(glState, colorTint)
 	}
+
+	//---------------------------------------------------------------
 
 	override fun dispose() {
 		framebuffer?.dispose()
