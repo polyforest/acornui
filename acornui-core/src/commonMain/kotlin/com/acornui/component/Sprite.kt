@@ -23,7 +23,11 @@ import com.acornui.gl.core.putCcwQuadIndices
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putVertex
 import com.acornui.graphic.ColorRo
-import com.acornui.math.*
+import com.acornui.math.IntRectangleRo
+import com.acornui.math.Matrix4Ro
+import com.acornui.math.RectangleRo
+import com.acornui.math.Vector3
+import com.acornui.recycle.Clearable
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
@@ -34,7 +38,7 @@ import kotlin.properties.Delegates
  *
  * @author nbilyk
  */
-class Sprite : BasicDrawable {
+class Sprite : BasicDrawable, Clearable {
 
 	/**
 	 * If true, the normal and indices will be reversed.
@@ -95,10 +99,17 @@ class Sprite : BasicDrawable {
 		updateUv()
 	}
 
-	private var u: Float = 0f
-	private var v: Float = 0f
-	private var u2: Float = 0f
-	private var v2: Float = 0f
+	var u: Float = 0f
+		private set
+
+	var v: Float = 0f
+		private set
+
+	var u2: Float = 0f
+		private set
+
+	var v2: Float = 0f
+		private set
 
 	/**
 	 * When the transform or the layout needs validation, update the 4 vertices of this texture.
@@ -226,5 +237,10 @@ class Sprite : BasicDrawable {
 		}
 		if (useAsBackFace) batch.putCcwQuadIndices()
 		else batch.putQuadIndices()
+	}
+
+	override fun clear() {
+		texture = null
+		setUv(0f, 0f, 1f, 1f, false)
 	}
 }

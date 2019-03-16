@@ -133,6 +133,7 @@ class Atlas : BasicDrawable, Clearable {
 	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
 		val drawable = drawable ?: return
 		updatePadding(width, height)
+
 		drawable.updateVertices(
 				width - totalPadLeft - totalPadRight,
 				height - totalPadBottom - totalPadTop,

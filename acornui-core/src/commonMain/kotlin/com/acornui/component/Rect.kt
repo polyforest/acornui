@@ -24,7 +24,6 @@ import com.acornui.gl.core.putIndices
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putVertex
 import com.acornui.graphic.Color
-import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.MinMaxRo
 import com.acornui.math.PI
@@ -58,6 +57,16 @@ open class Rect(
 	}
 
 	private inner class ComplexMode {
+
+		val topLeftCorner = Sprite()
+		val topLeftStrokeCorner = Sprite()
+		val topRightCorner = Sprite()
+		val topRightStrokeCorner = Sprite()
+		val bottomRightCorner = Sprite()
+		val bottomRightStrokeCorner = Sprite()
+		val bottomLeftCorner = Sprite()
+		val bottomLeftStrokeCorner = Sprite()
+
 		val fill = staticMesh()
 		val gradient = staticMesh()
 		val stroke = staticMesh()
@@ -98,6 +107,7 @@ open class Rect(
 		if (w <= 0f || h <= 0f) return
 
 		val corners = style.borderRadii
+
 		complexModeObj.apply {
 			fill.clear()
 			stroke.clear()
@@ -111,6 +121,32 @@ open class Rect(
 			val bottomRightY = fitSize(corners.bottomRight.y, corners.topRight.y, h)
 			val bottomLeftX = fitSize(corners.bottomLeft.x, corners.bottomRight.x, w)
 			val bottomLeftY = fitSize(corners.bottomLeft.y, corners.topLeft.y, h)
+
+			// Stroke properties.
+			val borderColors = style.borderColors
+			val border = style.borderThicknesses
+			val topBorder = fitSize(border.top, border.bottom, h)
+			val leftBorder = fitSize(border.left, border.right, w)
+			val rightBorder = fitSize(border.right, border.left, w)
+			val bottomBorder = fitSize(border.bottom, border.top, h)
+			val innerTopLeftX = maxOf(topLeftX, leftBorder)
+			val innerTopLeftY = maxOf(topLeftY, topBorder)
+			val innerTopRightX = maxOf(topRightX, rightBorder)
+			val innerTopRightY = maxOf(topRightY, topBorder)
+			val innerBottomRightX = maxOf(bottomRightX, rightBorder)
+			val innerBottomRightY = maxOf(bottomRightY, bottomBorder)
+			val innerBottomLeftX = maxOf(bottomLeftX, leftBorder)
+			val innerBottomLeftY = maxOf(bottomLeftY, bottomBorder)
+
+			createSmoothCorner(topLeftX, topLeftY, spriteOut = topLeftCorner, flipX = true, flipY = true)
+			createSmoothCorner(topRightX, topRightY, spriteOut = topRightCorner, flipX = false, flipY = true)
+			createSmoothCorner(bottomRightX, bottomRightY, spriteOut = bottomRightCorner, flipX = false, flipY = false)
+			createSmoothCorner(bottomLeftX, bottomLeftY, spriteOut = bottomLeftCorner, flipX = true, flipY = false)
+
+			createSmoothCorner(topLeftX, topLeftY, strokeThicknessX = leftBorder, strokeThicknessY = topBorder, spriteOut = topLeftStrokeCorner, flipX = true, flipY = true)
+			createSmoothCorner(topRightX, topRightY, strokeThicknessX = rightBorder, strokeThicknessY = topBorder, spriteOut = topRightStrokeCorner, flipX = false, flipY = true)
+			createSmoothCorner(bottomRightX, bottomRightY, strokeThicknessX = rightBorder, strokeThicknessY = bottomBorder, spriteOut = bottomRightStrokeCorner, flipX = false, flipY = false)
+			createSmoothCorner(bottomLeftX, bottomLeftY, strokeThicknessX = leftBorder, strokeThicknessY = bottomBorder, spriteOut = bottomLeftStrokeCorner, flipX = true, flipY = false)
 
 			fill.buildMesh {
 				// If we have a linear gradient, fill with white; we will be using the fill as a mask inside draw.
@@ -185,92 +221,31 @@ open class Rect(
 						putIndices(QUAD_INDICES)
 					}
 
-					if (topLeftX > 0f && topLeftY > 0f) {
-						val n = highestIndex + 1
-						val anchorX = topLeftX
-						val anchorY = topLeftY
-						putVertex(anchorX, anchorY, 0f, colorTint = tint) // Anchor
-
-						for (i in 0..segments) {
-							val theta = PI * 0.5f * (i.toFloat() / segments)
-							putVertex(anchorX - cos(theta) * topLeftX, anchorY - sin(theta) * topLeftY, 0f, colorTint = tint)
-							if (i > 0) {
-								putIndex(n)
-								putIndex(n + i)
-								putIndex(n + i + 1)
-							}
-						}
+					if (topLeftCorner.texture != null) {
+						topLeftCorner.updateVertices(x = 0f, y = 0f)
+						topLeftCorner.draw(glState, tint)
 					}
 
-					if (topRightX > 0f && topRightY > 0f) {
-						val n = highestIndex + 1
-						val anchorX = w - topRightX
-						val anchorY = topRightY
-						putVertex(anchorX, anchorY, 0f, colorTint = tint) // Anchor
-
-						for (i in 0..segments) {
-							val theta = PI * 0.5f * (i.toFloat() / segments)
-							putVertex(anchorX + cos(theta) * topRightX, anchorY - sin(theta) * topRightY, 0f, colorTint = tint)
-							if (i > 0) {
-								putIndex(n)
-								putIndex(n + i + 1)
-								putIndex(n + i)
-							}
-						}
+					if (topRightCorner.texture != null) {
+						topRightCorner.updateVertices(x = w - topRightX, y = 0f)
+						topRightCorner.draw(glState, tint)
 					}
 
-					if (bottomRightX > 0f && bottomRightY > 0f) {
-						val n = highestIndex + 1
-						val anchorX = w - bottomRightX
-						val anchorY = h - bottomRightY
-						putVertex(anchorX, anchorY, 0f, colorTint = tint) // Anchor
-
-						for (i in 0..segments) {
-							val theta = PI * 0.5f * (i.toFloat() / segments)
-							putVertex(anchorX + cos(theta) * bottomRightX, anchorY + sin(theta) * bottomRightY, 0f, colorTint = tint)
-							if (i > 0) {
-								putIndex(n)
-								putIndex(n + i)
-								putIndex(n + i + 1)
-							}
-						}
+					if (bottomRightCorner.texture != null) {
+						bottomRightCorner.updateVertices(x = w - bottomRightX, y = h - bottomRightY)
+						bottomRightCorner.draw(glState, tint)
 					}
 
-					if (bottomLeftX > 0f && bottomLeftY > 0f) {
-						val n = highestIndex + 1
-						val anchorX = bottomLeftX
-						val anchorY = h - bottomLeftY
-						putVertex(anchorX, anchorY, 0f, colorTint = tint) // Anchor
-
-						for (i in 0..segments) {
-							val theta = PI * 0.5f * (i.toFloat() / segments)
-							putVertex(anchorX - cos(theta) * bottomLeftX, anchorY + sin(theta) * bottomLeftY, 0f, colorTint = tint)
-							if (i > 0) {
-								putIndex(n)
-								putIndex(n + i + 1)
-								putIndex(n + i)
-							}
-						}
+					if (bottomLeftCorner.texture != null) {
+						bottomLeftCorner.updateVertices(x = 0f, y = h - bottomRightY)
+						bottomLeftCorner.draw(glState, tint)
 					}
+
 					trn(margin.left, margin.top)
 				}
 			}
 
 			stroke.buildMesh {
-				val borderColors = style.borderColors
-				val border = style.borderThicknesses
-				val topBorder = fitSize(border.top, border.bottom, h)
-				val leftBorder = fitSize(border.left, border.right, w)
-				val rightBorder = fitSize(border.right, border.left, w)
-				val bottomBorder = fitSize(border.bottom, border.top, h)
-				val innerTopLeftX = maxOf(topLeftX, leftBorder)
-				val innerTopLeftY = maxOf(topLeftY, topBorder)
-				val innerTopRightX = maxOf(topRightX, rightBorder)
-				val innerTopRightY = maxOf(topRightY, topBorder)
-				val innerBottomRightX = maxOf(bottomRightX, rightBorder)
-				val innerBottomRightY = maxOf(bottomRightY, bottomBorder)
-				val innerBottomLeftX = maxOf(bottomLeftX, leftBorder)
-				val innerBottomLeftY = maxOf(bottomLeftY, bottomBorder)
 
 				if (topBorder > 0f && borderColors.top.a > 0f) {
 					val left = topLeftX
@@ -322,10 +297,22 @@ open class Rect(
 					}
 				}
 
-				borderCorner(0f, topLeftY, topLeftX, 0f, leftBorder, innerTopLeftY, innerTopLeftX, topBorder, borderColors.left, borderColors.top)
-				borderCorner(w - rightBorder, innerTopRightY, w - innerTopRightX, topBorder, w, topRightY, w - topRightX, 0f, borderColors.right, borderColors.top)
-				borderCorner(w, h - bottomRightY, w - bottomRightX, h, w - rightBorder, h - innerBottomRightY, w - innerBottomRightX, h - bottomBorder, borderColors.right, borderColors.bottom)
-				borderCorner(leftBorder, h - innerBottomLeftY, innerBottomLeftX, h - bottomBorder, 0f, h - bottomLeftY, bottomLeftX, h, borderColors.left, borderColors.bottom)
+				if (topLeftStrokeCorner.texture != null) {
+					topLeftStrokeCorner.updateVertices(x = 0f, y = 0f)
+					topLeftStrokeCorner.draw(glState, borderColors.top) // TODO: Colors
+				}
+				if (topRightStrokeCorner.texture != null) {
+					topRightStrokeCorner.updateVertices(x = w - topRightX, y = 0f)
+					topRightStrokeCorner.draw(glState, borderColors.right)
+				}
+				if (bottomRightStrokeCorner.texture != null) {
+					bottomRightStrokeCorner.updateVertices(x = w - bottomRightX, y = h - bottomRightY)
+					bottomRightStrokeCorner.draw(glState, borderColors.right)
+				}
+				if (bottomLeftStrokeCorner.texture != null) {
+					bottomLeftStrokeCorner.updateVertices(x = 0f, y = h - bottomRightY)
+					bottomLeftStrokeCorner.draw(glState, borderColors.bottom) // TODO: Colors
+				}
 
 				trn(margin.left, margin.top)
 			}
@@ -403,32 +390,6 @@ open class Rect(
 			}
 		}
 
-	}
-
-	private fun MeshRegion.borderCorner(outerX1: Float, outerY1: Float, outerX2: Float, outerY2: Float, innerX1: Float, innerY1: Float, innerX2: Float, innerY2: Float, color1: ColorRo, color2: ColorRo) {
-		if (color1.a <= 0f && color2.a <= 0f) return
-		val outerW = outerX2 - outerX1
-		val outerH = outerY2 - outerY1
-		val innerW = innerX2 - innerX1
-		val innerH = innerY2 - innerY1
-		if (outerW != 0f || outerH != 0f || innerW != 0f || innerH != 0f) {
-			var n = highestIndex + 1
-			for (i in 0..segments) {
-				val theta = PI * 0.5f * (i.toFloat() / segments)
-				val color = if (i < segments shr 1) color1 else color2
-				putVertex(outerX2 - cos(theta) * outerW, outerY1 + sin(theta) * outerH, 0f, colorTint = color)
-				putVertex(innerX2 - cos(theta) * innerW, innerY1 + sin(theta) * innerH, 0f, colorTint = color)
-				if (i > 0) {
-					putIndex(n)
-					putIndex(n + 1)
-					putIndex(n - 1)
-					putIndex(n - 1)
-					putIndex(n - 2)
-					putIndex(n)
-				}
-				n += 2
-			}
-		}
 	}
 
 	private fun updateSimpleModeVertices() {

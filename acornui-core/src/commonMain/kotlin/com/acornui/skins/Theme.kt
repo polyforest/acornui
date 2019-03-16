@@ -33,7 +33,9 @@ import com.acornui.serialization.*
 class Theme {
 
 	/**
-	 * This will be set to AppConfig.window.backgroundColor
+	 * This will be set to the `backgroundColor` property in [com.acornui.core.config] window.
+	 * @see com.acornui.core.WindowConfig.backgroundColor
+	 * @see com.acornui.core.AppConfig
 	 */
 	var bgColor: ColorRo = Color(0xF1F2F3FF)
 	var panelBgColor: ColorRo = Color(0xE7EDF1FF)
@@ -48,7 +50,6 @@ class Theme {
 	var inputFill: ColorRo = Color(0.97f, 0.97f, 0.97f, 1f)
 
 	var stroke: ColorRo = Color(0x888888FF)
-	var strokeThickness = 1f
 	var strokeHighlight: ColorRo = stroke + brighten
 	var strokeDisabled: ColorRo = Color(0x999999FF)
 
@@ -57,6 +58,7 @@ class Theme {
 
 	var focusHighlightColor: ColorRo = Color(0x0235ACFF)
 
+	var strokeThickness = 1f
 	var borderRadius = 8f
 
 	var textColor: ColorRo = Color(0x333333FF)
@@ -97,7 +99,6 @@ class Theme {
 		inputFill = other.inputFill
 
 		stroke = other.stroke
-		strokeThickness = other.strokeThickness
 		strokeHighlight = other.strokeHighlight
 		strokeDisabled = other.strokeDisabled
 
@@ -105,6 +106,7 @@ class Theme {
 		strokeToggledHighlight = other.strokeToggledHighlight
 		focusHighlightColor = other.focusHighlightColor
 
+		strokeThickness = other.strokeThickness
 		borderRadius = other.borderRadius
 
 		textColor = other.textColor

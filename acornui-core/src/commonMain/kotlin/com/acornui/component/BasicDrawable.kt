@@ -54,7 +54,7 @@ interface BasicDrawable {
 	 * @param originX The x point of the rectangle that will be 0,0
 	 * @param originY The y point of the rectangle that will be 0,0
 	 */
-	fun updateVertices(width: Float, height: Float, x: Float = 0f, y: Float = 0f, z: Float = 0f, rotation: Float = 0f, originX: Float = 0f, originY: Float = 0f)
+	fun updateVertices(width: Float = naturalWidth, height: Float = naturalHeight, x: Float = 0f, y: Float = 0f, z: Float = 0f, rotation: Float = 0f, originX: Float = 0f, originY: Float = 0f)
 
 	/**
 	 * Draws this component.
