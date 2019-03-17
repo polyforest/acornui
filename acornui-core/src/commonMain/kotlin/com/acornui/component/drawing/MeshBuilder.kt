@@ -195,24 +195,44 @@ fun MeshRegion.transform(position: Vector3Ro = Vector3.ZERO, scale: Vector3Ro = 
 	transform(mat)
 }
 
+interface LineStyleRo {
+
+	/**
+	 * The style used to draw the caps of joining lines.
+	 * @see [CapStyle.CAP_BUILDERS]
+	 */
+	val capStyle: String
+
+	/**
+	 * The thickness of the line.
+	 */
+	val thickness: Float
+
+	/**
+	 * The color of the line.
+	 */
+	val colorTint: ColorRo
+
+}
+
 data class LineStyle(
 
 		/**
 		 * The style used to draw the caps of joining lines.
 		 * @see [CapStyle.CAP_BUILDERS]
 		 */
-		var capStyle: String = CapStyle.MITER,
+		override var capStyle: String = CapStyle.MITER,
 
 		/**
 		 * The thickness of the line.
 		 */
-		var thickness: Float = 1f,
+		override var thickness: Float = 1f,
 
 		/**
 		 * The color of the line.
 		 */
-		var colorTint: ColorRo = Color.WHITE
-) : Clearable {
+		override var colorTint: ColorRo = Color.WHITE
+) : Clearable, LineStyleRo {
 
 	override fun clear() {
 		capStyle = CapStyle.MITER
@@ -264,7 +284,7 @@ interface CapBuilder {
 	 * @param p2 The second point in the line
 	 * @param control The optional previous point before this line.
 	 */
-	fun createCap(p1: Vector2Ro, p2: Vector2Ro, control: Vector2Ro?, meshRegion: MeshRegion, lineStyle: LineStyle, controlLineThickness: Float, clockwise: Boolean)
+	fun createCap(p1: Vector2Ro, p2: Vector2Ro, control: Vector2Ro?, meshRegion: MeshRegion, lineStyle: LineStyleRo, controlLineThickness: Float, clockwise: Boolean)
 }
 
 enum class MeshIntersectionType {
@@ -282,14 +302,14 @@ enum class MeshIntersectionType {
 }
 
 
-fun meshData(batch: StaticShaderBatch, init: MeshRegion.() -> Unit = {}) {
+fun mesh(batch: StaticShaderBatch, init: MeshRegion.() -> Unit = {}) {
 	val p = MeshRegion.obtain(batch)
 	p.begin()
 	p.init()
 	MeshRegion.free(p)
 }
 
-fun MeshRegion.meshData(init: MeshRegion.() -> Unit = {}) {
+fun MeshRegion.mesh(init: MeshRegion.() -> Unit = {}) {
 	val p = MeshRegion.obtain(batch)
 	p.begin()
 	p.init()

@@ -1,23 +1,24 @@
 package com.acornui.component.drawing
 
-import com.acornui.component.drawing.MeshBuilderStyle.fillColor
 import com.acornui.gl.core.putIndex
-import com.acornui.gl.core.putIndices
+import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putVertex
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.PI2
 import com.acornui.math.Vector3
 import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * Creates a 3d cylinder mesh (only fills)
+ * Creates a 3d cylinder mesh.
  *
  * The following gl properties should be set:
  * gl.enable(Gl20.CULL_FACE)
  * gl.frontFace(Gl20.CW)
  * gl.cullFace(Gl20.BACK)
  */
-fun MeshRegion.cylinder(width: Float, height: Float, depth: Float, segments: Int = 180, init: MeshRegion.() -> Unit = {}) = meshData {
+fun MeshRegion.cylinder(width: Float, height: Float, depth: Float, segments: Int = 180, fillColor: ColorRo = Color.WHITE, init: MeshRegion.() -> Unit = {}) = mesh {
 	val hW = width * 0.5f
 	val hH = height * 0.5f
 	putVertex(hW, hH, 0f, Vector3.NEG_Z, fillColor) // 0
@@ -63,47 +64,55 @@ fun MeshRegion.cylinder(width: Float, height: Float, depth: Float, segments: Int
 	init()
 }
 
-fun MeshRegion.box(width: Float, height: Float, depth: Float, init: MeshRegion.() -> Unit = {}) = meshData {
+/**
+ * Creates a 3d box.
+ *
+ * The following gl properties should be set:
+ * gl.enable(Gl20.CULL_FACE)
+ * gl.frontFace(Gl20.CW)
+ * gl.cullFace(Gl20.BACK)
+ */
+fun MeshRegion.box(width: Float, height: Float, depth: Float, fillColor: ColorRo = Color.WHITE, init: MeshRegion.() -> Unit = {}) = mesh {
 	// Top face
 	putVertex(0f, 0f, 0f, Vector3.NEG_Z, fillColor)
 	putVertex(width, 0f, 0f, Vector3.NEG_Z, fillColor)
 	putVertex(width, height, 0f, Vector3.NEG_Z, fillColor)
 	putVertex(0f, height, 0f, Vector3.NEG_Z, fillColor)
-	putIndices(QUAD_INDICES)
+	putQuadIndices()
 
 	// Right face
 	putVertex(width, height, 0f, Vector3.X, fillColor)
 	putVertex(width, 0f, 0f, Vector3.X, fillColor)
 	putVertex(width, 0f, depth, Vector3.X, fillColor)
 	putVertex(width, height, depth, Vector3.X, fillColor)
-	putIndices(QUAD_INDICES)
+	putQuadIndices()
 
 	// Back face
 	putVertex(width, 0f, 0f, Vector3.NEG_Y, fillColor)
 	putVertex(0f, 0f, 0f, Vector3.NEG_Y, fillColor)
 	putVertex(0f, 0f, depth, Vector3.NEG_Y, fillColor)
 	putVertex(width, 0f, depth, Vector3.NEG_Y, fillColor)
-	putIndices(QUAD_INDICES)
+	putQuadIndices()
 
 	// Left face
 	putVertex(0f, 0f, 0f, Vector3.NEG_X, fillColor)
 	putVertex(0f, height, 0f, Vector3.NEG_X, fillColor)
 	putVertex(0f, height, depth, Vector3.NEG_X, fillColor)
 	putVertex(0f, 0f, depth, Vector3.NEG_X, fillColor)
-	putIndices(QUAD_INDICES)
+	putQuadIndices()
 
 	// Front face
 	putVertex(0f, height, 0f, Vector3.Y, fillColor)
 	putVertex(width, height, 0f, Vector3.Y, fillColor)
 	putVertex(width, height, depth, Vector3.Y, fillColor)
 	putVertex(0f, height, depth, Vector3.Y, fillColor)
-	putIndices(QUAD_INDICES)
+	putQuadIndices()
 
 	// Bottom face
 	putVertex(0f, height, depth, Vector3.Z, fillColor)
 	putVertex(width, height, depth, Vector3.Z, fillColor)
 	putVertex(width, 0f, depth, Vector3.Z, fillColor)
 	putVertex(0f, 0f, depth, Vector3.Z, fillColor)
-	putIndices(QUAD_INDICES)
+	putQuadIndices()
 	init()
 }

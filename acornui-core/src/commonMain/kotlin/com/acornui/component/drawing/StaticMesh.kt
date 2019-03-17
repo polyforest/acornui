@@ -199,13 +199,12 @@ class StaticMesh(
 		if (refCount > 0) {
 			oldTextures.addAll(textures)
 		}
-		MeshBuilderStyle.clear()
 		val previousBatch = glState.batch
 		glState.setTexture(glState.whitePixel)
 		glState.batch = batch
 		batch.begin()
 		glState.blendMode(BlendMode.NORMAL, false)
-		meshData(batch) {
+		mesh(batch) {
 			inner()
 		}
 		batch.flush()

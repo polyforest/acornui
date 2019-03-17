@@ -28,7 +28,7 @@ object NoCap : CapBuilder {
 	private val perpLine = Vector2()
 	private val dirLine = Vector2()
 
-	override fun createCap(p1: Vector2Ro, p2: Vector2Ro, control: Vector2Ro?, meshRegion: MeshRegion, lineStyle: LineStyle, controlLineThickness: Float, clockwise: Boolean) {
+	override fun createCap(p1: Vector2Ro, p2: Vector2Ro, control: Vector2Ro?, meshRegion: MeshRegion, lineStyle: LineStyleRo, controlLineThickness: Float, clockwise: Boolean) {
 		val t = (if (clockwise) lineStyle.thickness else -lineStyle.thickness) * 0.5f
 		// Cap A
 		dirLine.set(p2).sub(p1).nor()

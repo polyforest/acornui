@@ -30,7 +30,7 @@ object MiterCap : CapBuilder {
 	private val dirControl = Vector2()
 	private val joinedPoint = Vector2()
 
-	override fun createCap(p1: Vector2Ro, p2: Vector2Ro, control: Vector2Ro?, meshRegion: MeshRegion, lineStyle: LineStyle, controlLineThickness: Float, clockwise: Boolean) {
+	override fun createCap(p1: Vector2Ro, p2: Vector2Ro, control: Vector2Ro?, meshRegion: MeshRegion, lineStyle: LineStyleRo, controlLineThickness: Float, clockwise: Boolean) {
 		if (control == null) {
 			NoCap.createCap(p1, p2, null, meshRegion, lineStyle, controlLineThickness, clockwise)
 			return

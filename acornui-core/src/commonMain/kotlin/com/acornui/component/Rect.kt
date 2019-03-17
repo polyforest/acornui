@@ -20,7 +20,6 @@ import com.acornui.component.drawing.*
 import com.acornui.core.di.Owned
 import com.acornui.core.graphic.BlendMode
 import com.acornui.gl.core.putIndex
-import com.acornui.gl.core.putIndices
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putVertex
 import com.acornui.graphic.Color
@@ -125,7 +124,7 @@ open class Rect(
 			// Stroke properties.
 			val borderColors = style.borderColors
 			val border = style.borderThicknesses
-			val topBorder = fitSize(border.top, border.bottom, h)
+			val topBorder = minOf(h - bottomLeftY, h - bottomRightY, fitSize(border.top, border.bottom, h))
 			val leftBorder = fitSize(border.left, border.right, w)
 			val rightBorder = fitSize(border.right, border.left, w)
 			val bottomBorder = fitSize(border.bottom, border.top, h)
@@ -156,69 +155,41 @@ open class Rect(
 						// Middle vertical strip
 						val left = maxOf(topLeftX, bottomLeftX)
 						val right = w - maxOf(topRightX, bottomRightX)
-						if (right > left) {
-							putVertex(left, 0f, 0f, colorTint = tint)
-							putVertex(right, 0f, 0f, colorTint = tint)
-							putVertex(right, h, 0f, colorTint = tint)
-							putVertex(left, h, 0f, colorTint = tint)
-							putIndices(QUAD_INDICES)
-						}
+						val width = right - left
+						if (width > 0f)
+							rect(left, 0f, width, h, tint)
 					}
 					if (topLeftX > 0f || bottomLeftX > 0f) {
 						// Left vertical strip
-						val leftW = maxOf(topLeftX, bottomLeftX)
-						putVertex(0f, topLeftY, 0f, colorTint = tint)
-						putVertex(leftW, topLeftY, 0f, colorTint = tint)
-						putVertex(leftW, h - bottomLeftY, 0f, colorTint = tint)
-						putVertex(0f, h - bottomLeftY, 0f, colorTint = tint)
-						putIndices(QUAD_INDICES)
+						val width = maxOf(topLeftX, bottomLeftX)
+						val height = h - bottomLeftY - topLeftY
+						if (height > 0f)
+							rect(0f, topLeftY, width, height, tint)
 					}
 					if (topRightX > 0f || bottomRightX > 0f) {
 						// Right vertical strip
-						val rightW = maxOf(topRightX, bottomRightX)
-						putVertex(w - rightW, topRightY, 0f, colorTint = tint)
-						putVertex(w, topRightY, 0f, colorTint = tint)
-						putVertex(w, h - bottomRightY, 0f, colorTint = tint)
-						putVertex(w - rightW, h - bottomRightY, 0f, colorTint = tint)
-						putIndices(QUAD_INDICES)
+						val width = maxOf(topRightX, bottomRightX)
+						val height = h - bottomRightY - topRightY
+						if (height > 0f)
+							rect(w - width, topRightY, width, height, tint)
 					}
 					if (topLeftX < bottomLeftX) {
 						// Vertical slice to the right of top left corner
-						val anchorX = topLeftX
-						val anchorY = topLeftY
-						putVertex(anchorX, 0f, 0f, colorTint = tint)
-						putVertex(maxOf(topLeftX, bottomLeftX), 0f, 0f, colorTint = tint)
-						putVertex(maxOf(topLeftX, bottomLeftX), anchorY, 0f, colorTint = tint)
-						putVertex(anchorX, anchorY, 0f, colorTint = tint)
-						putIndices(QUAD_INDICES)
+						if (topLeftY > 0f)
+							rect(topLeftX, 0f, bottomLeftX - topLeftX, topLeftY, tint)
 					} else if (topLeftX > bottomLeftX) {
 						// Vertical slice to the right of bottom left corner
-						val anchorX = bottomLeftX
-						val anchorY = h - bottomLeftY
-						putVertex(anchorX, anchorY, 0f, colorTint = tint)
-						putVertex(maxOf(topLeftX, bottomLeftX), anchorY, 0f, colorTint = tint)
-						putVertex(maxOf(topLeftX, bottomLeftX), h, 0f, colorTint = tint)
-						putVertex(anchorX, h, 0f, colorTint = tint)
-						putIndices(QUAD_INDICES)
+						if (bottomLeftY > 0f)
+							rect(bottomLeftX, h - bottomLeftY, topLeftX - bottomLeftX, bottomLeftY, tint)
 					}
 					if (topRightX < bottomRightX) {
 						// Vertical slice to the left of top right corner
-						val anchorX = w - maxOf(topRightX, bottomRightX)
-						val anchorY = topRightY
-						putVertex(anchorX, 0f, 0f, colorTint = tint)
-						putVertex(w - topRightX, 0f, 0f, colorTint = tint)
-						putVertex(w - topRightX, anchorY, 0f, colorTint = tint)
-						putVertex(anchorX, anchorY, 0f, colorTint = tint)
-						putIndices(QUAD_INDICES)
+						if (topRightY > 0f)
+							rect(w - bottomRightX, 0f, bottomRightX - topRightX, topRightY, tint)
 					} else if (topRightX > bottomRightX) {
 						// Vertical slice to the left of bottom right corner
-						val anchorX = w - maxOf(topRightX, bottomRightX)
-						val anchorY = h - bottomRightY
-						putVertex(anchorX, anchorY, 0f, colorTint = tint)
-						putVertex(w - bottomRightX, anchorY, 0f, colorTint = tint)
-						putVertex(w - bottomRightX, h, 0f, colorTint = tint)
-						putVertex(anchorX, h, 0f, colorTint = tint)
-						putIndices(QUAD_INDICES)
+						if (bottomRightY > 0f)
+							rect(w - topRightX, h - bottomRightY, topRightX - bottomRightX, bottomRightY, tint)
 					}
 
 					if (topLeftCorner.texture != null) {
@@ -237,7 +208,7 @@ open class Rect(
 					}
 
 					if (bottomLeftCorner.texture != null) {
-						bottomLeftCorner.updateVertices(x = 0f, y = h - bottomRightY)
+						bottomLeftCorner.updateVertices(x = 0f, y = h - bottomLeftY)
 						bottomLeftCorner.draw(glState, tint)
 					}
 
@@ -255,7 +226,7 @@ open class Rect(
 						putVertex(right, 0f, 0f, colorTint = borderColors.top)
 						putVertex(w - innerTopRightX, topBorder, 0f, colorTint = borderColors.top)
 						putVertex(innerTopLeftX, topBorder, 0f, colorTint = borderColors.top)
-						putIndices(QUAD_INDICES)
+						putQuadIndices()
 					}
 				}
 
@@ -268,7 +239,7 @@ open class Rect(
 						putVertex(right, bottom, 0f, colorTint = borderColors.right)
 						putVertex(right - rightBorder, h - innerBottomRightY, 0f, colorTint = borderColors.right)
 						putVertex(right - rightBorder, innerTopRightY, 0f, colorTint = borderColors.right)
-						putIndices(QUAD_INDICES)
+						putQuadIndices()
 					}
 				}
 
@@ -281,7 +252,7 @@ open class Rect(
 						putVertex(left, bottom, 0f, colorTint = borderColors.bottom)
 						putVertex(innerBottomLeftX, bottom - bottomBorder, 0f, colorTint = borderColors.bottom)
 						putVertex(w - innerBottomRightX, bottom - bottomBorder, 0f, colorTint = borderColors.bottom)
-						putIndices(QUAD_INDICES)
+						putQuadIndices()
 					}
 				}
 
@@ -293,7 +264,7 @@ open class Rect(
 						putVertex(0f, top, 0f, colorTint = borderColors.left)
 						putVertex(leftBorder, innerTopLeftY, 0f, colorTint = borderColors.left)
 						putVertex(leftBorder, h - innerBottomLeftY, 0f, colorTint = borderColors.left)
-						putIndices(QUAD_INDICES)
+						putQuadIndices()
 					}
 				}
 
@@ -310,7 +281,7 @@ open class Rect(
 					bottomRightStrokeCorner.draw(glState, borderColors.right)
 				}
 				if (bottomLeftStrokeCorner.texture != null) {
-					bottomLeftStrokeCorner.updateVertices(x = 0f, y = h - bottomRightY)
+					bottomLeftStrokeCorner.updateVertices(x = 0f, y = h - bottomLeftY)
 					bottomLeftStrokeCorner.draw(glState, borderColors.bottom) // TODO: Colors
 				}
 

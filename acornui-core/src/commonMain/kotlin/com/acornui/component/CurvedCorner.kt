@@ -56,7 +56,9 @@ fun Scoped.createSmoothCorner(
 		spriteOut: Sprite = Sprite(),
 		useCache: Boolean = true
 ): Sprite {
-	if (cornerRadiusX <= 0.0001f || cornerRadiusY <= 0.0001f) {
+	val sX = strokeThicknessX ?: cornerRadiusX + 1f
+	val sY = strokeThicknessY ?: cornerRadiusY + 1f
+	if (cornerRadiusX < 0.0001f || cornerRadiusY < 0.0001f || (sX < 0.0001f && sY < 0.0001f)) {
 		spriteOut.clear()
 		return spriteOut
 	}
@@ -67,16 +69,19 @@ fun Scoped.createSmoothCorner(
 		val gl = inject(Gl20)
 		val glState = inject(GlState)
 		if (curvedShader == null) curvedShader = CurvedRectShaderProgram(gl)
-		val framebuffer = framebuffer(cornerRadiusX.ceil(), cornerRadiusY.ceil())
+		val framebuffer = framebuffer(cornerRadiusX.ceil() + 10, cornerRadiusY.ceil() + 18)
 		val fBW = framebuffer.width.toFloat()
 		val fBH = framebuffer.height.toFloat()
 		val pW = cornerRadiusX / fBW
 		val pH = cornerRadiusY / fBH
 		val previousShader = glState.shader
-		glState.shader = curvedShader!!
+		val curvedShader = curvedShader!!
+		glState.shader = curvedShader
 		framebuffer.drawTo {
-			gl.uniform2f(curvedShader!!.getRequiredUniformLocation("u_resolutionInv"), 1.0f / fBW, 1.0f / fBH)
-			gl.uniform2f(curvedShader!!.getRequiredUniformLocation("u_strokeThickness"), strokeThicknessX ?: fBW, strokeThicknessY ?: fBH)
+			gl.uniform2f(curvedShader.getRequiredUniformLocation("u_cornerRadius"), cornerRadiusX, cornerRadiusY)
+			curvedShader.getUniformLocation("u_strokeThickness")?.let {
+				gl.uniform2f(it, sX, sY)
+			}
 			glState.blendMode(BlendMode.NONE, premultipliedAlpha = false)
 			val batch = glState.batch
 			batch.begin()
@@ -138,14 +143,47 @@ void main() {
 $DEFAULT_SHADER_HEADER
 
 uniform vec2 u_strokeThickness;
-uniform vec2 u_resolutionInv;
+uniform vec2 u_cornerRadius;
 varying vec2 v_texCoord;
 
 void main() {
-	float halfStroke = u_strokeThickness.x * 0.5 * u_resolutionInv.x;
-	float dist = abs(length(v_texCoord) - 1.0 + halfStroke);
-	float smooth = u_resolutionInv.x * 0.8;
-	gl_FragColor = vec4(1.0, 1.0, 1.0, smoothstep(halfStroke + smooth, halfStroke - smooth, dist));
+	// x^2/a^2 + y^2/b^2 = 1
+	// c2 = a2 - b2
+	vec2 p = v_texCoord * u_cornerRadius;
+	vec2 p2 = p * p;
+	vec2 innerRadius = max(vec2(0.0), u_cornerRadius - u_strokeThickness);
+	float outer = p2.x / (u_cornerRadius.x * u_cornerRadius.x) + p2.y / (u_cornerRadius.y * u_cornerRadius.y);
+	float inner = p2.x / (innerRadius.x * innerRadius.x) + p2.y / (innerRadius.y * innerRadius.y);
+	float smooth = 2.0 / max(u_cornerRadius.x, u_cornerRadius.y);
+	if (outer < 1.0 + smooth && inner > 1.0 - smooth) {
+		if (inner > 1.0 + smooth) {
+			gl_FragColor = vec4(1.0, 1.0, 1.0, smoothstep(1.0 + smooth, 1.0 - smooth, outer));
+		} else {
+			gl_FragColor = vec4(1.0, 1.0, 1.0, smoothstep(1.0 - smooth, 1.0 + smooth, inner));
+		}
+	} else {
+		gl_FragColor = vec4(0.0);
+	}
+
+
+//	vec2 normTex = normalize(v_texCoord);
+//	float outerEdge = length(normTex * u_cornerRadius);
+//	float stroke = dot(normTex, u_strokeThickness);
+////	float innerEdge = length(normTex * max(vec2(0.0), u_cornerRadius - u_strokeThickness));
+//	float innerEdge = outerEdge - 30.0;
+//	float c = length(v_texCoord * u_cornerRadius);
+//
+//	if (c > innerEdge && c < outerEdge) {
+//		gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+//	} else {
+//		discard;
+//	}
+
+//	float halfStroke = abs(outerEdge - innerEdge) * 0.5;
+//	float halfStroke = u_strokeThickness.y * 0.5;
+//	float dist = abs(c - (outerEdge - halfStroke));
+//	float smooth = 1.0;
+//	gl_FragColor = vec4(1.0, 1.0, 1.0, smoothstep(halfStroke + smooth, halfStroke - smooth, dist));
 }""",
 		vertexAttributes = mapOf(
 				VertexAttributeUsage.POSITION to CommonShaderAttributes.A_POSITION,
