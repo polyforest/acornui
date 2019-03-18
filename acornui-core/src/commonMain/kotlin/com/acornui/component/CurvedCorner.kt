@@ -40,6 +40,7 @@ private val smoothCornerMap = HashMap<SmoothCornerKey, Framebuffer>()
  * @param cornerRadiusY The elliptical height of the corner.
  * @param strokeThicknessX The horizontal thickness of the stroke.
  * @param strokeThicknessY The vertical thickness of the stroke.
+ * @param antialias If true, the curve will be antialiased.
  * @param flipX If true, the u and u2 values will be flipped.
  * @param flipY If true, the v and v2 values will be flipped.
  * @param spriteOut The Sprite to populate with the uv coordinates and texture.
@@ -51,6 +52,7 @@ fun Scoped.createSmoothCorner(
 		cornerRadiusY: Float,
 		strokeThicknessX: Float? = null,
 		strokeThicknessY: Float? = null,
+		antialias: Boolean = true,
 		flipX: Boolean = false,
 		flipY: Boolean = false,
 		spriteOut: Sprite = Sprite(),
@@ -69,7 +71,7 @@ fun Scoped.createSmoothCorner(
 		val gl = inject(Gl20)
 		val glState = inject(GlState)
 		if (curvedShader == null) curvedShader = CurvedRectShaderProgram(gl)
-		val framebuffer = framebuffer(cornerRadiusX.ceil(), cornerRadiusY.ceil())
+		val framebuffer = framebuffer(cornerRadiusX.ceil() + 4, cornerRadiusY.ceil() + 4)
 		val fBW = framebuffer.width.toFloat()
 		val fBH = framebuffer.height.toFloat()
 		val pW = cornerRadiusX / fBW
@@ -79,6 +81,8 @@ fun Scoped.createSmoothCorner(
 		glState.shader = curvedShader
 		framebuffer.drawTo {
 			gl.uniform2f(curvedShader.getRequiredUniformLocation("u_cornerRadius"), cornerRadiusX, cornerRadiusY)
+			gl.uniform1f(curvedShader.getRequiredUniformLocation("u_smoothOuter"), if (antialias) 1f / minOf(cornerRadiusX, cornerRadiusY) else 0.00001f)
+			gl.uniform1f(curvedShader.getRequiredUniformLocation("u_smoothInner"), if (antialias) 1f / minOf(cornerRadiusX - sX, cornerRadiusY - sY) else 0.00001f)
 			curvedShader.getUniformLocation("u_strokeThickness")?.let {
 				gl.uniform2f(it, sX, sY)
 			}
@@ -144,46 +148,27 @@ $DEFAULT_SHADER_HEADER
 
 uniform vec2 u_strokeThickness;
 uniform vec2 u_cornerRadius;
+uniform float u_smoothOuter;
+uniform float u_smoothInner;
 varying vec2 v_texCoord;
+
 
 void main() {
 	// x^2/a^2 + y^2/b^2 = 1
-	// c2 = a2 - b2
 	vec2 p = v_texCoord * u_cornerRadius;
 	vec2 p2 = p * p;
 	vec2 innerRadius = max(vec2(0.0), u_cornerRadius - u_strokeThickness);
 	float outer = p2.x / (u_cornerRadius.x * u_cornerRadius.x) + p2.y / (u_cornerRadius.y * u_cornerRadius.y);
 	float inner = p2.x / (innerRadius.x * innerRadius.x) + p2.y / (innerRadius.y * innerRadius.y);
-	float smooth = 2.0 / max(u_cornerRadius.x, u_cornerRadius.y);
-	if (outer < 1.0 + smooth && inner > 1.0 - smooth) {
-		if (inner > 1.0 + smooth) {
-			gl_FragColor = vec4(1.0, 1.0, 1.0, smoothstep(1.0 + smooth, 1.0 - smooth, outer));
+	if (outer <= 1.0 + u_smoothOuter && inner >= 1.0 - u_smoothInner) {
+		if (inner > 1.0 + u_smoothOuter) {
+			gl_FragColor = vec4(1.0, 1.0, 1.0, smoothstep(1.0 + u_smoothOuter, 1.0 - u_smoothOuter, outer));
 		} else {
-			gl_FragColor = vec4(1.0, 1.0, 1.0, smoothstep(1.0 - smooth, 1.0 + smooth, inner));
+			gl_FragColor = vec4(1.0, 1.0, 1.0, smoothstep(1.0 - u_smoothInner, 1.0 + u_smoothInner, inner));
 		}
 	} else {
 		gl_FragColor = vec4(0.0);
 	}
-
-
-//	vec2 normTex = normalize(v_texCoord);
-//	float outerEdge = length(normTex * u_cornerRadius);
-//	float stroke = dot(normTex, u_strokeThickness);
-////	float innerEdge = length(normTex * max(vec2(0.0), u_cornerRadius - u_strokeThickness));
-//	float innerEdge = outerEdge - 30.0;
-//	float c = length(v_texCoord * u_cornerRadius);
-//
-//	if (c > innerEdge && c < outerEdge) {
-//		gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-//	} else {
-//		discard;
-//	}
-
-//	float halfStroke = abs(outerEdge - innerEdge) * 0.5;
-//	float halfStroke = u_strokeThickness.y * 0.5;
-//	float dist = abs(c - (outerEdge - halfStroke));
-//	float smooth = 1.0;
-//	gl_FragColor = vec4(1.0, 1.0, 1.0, smoothstep(halfStroke + smooth, halfStroke - smooth, dist));
 }""",
 		vertexAttributes = mapOf(
 				VertexAttributeUsage.POSITION to CommonShaderAttributes.A_POSITION,

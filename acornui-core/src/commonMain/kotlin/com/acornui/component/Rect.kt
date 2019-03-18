@@ -24,10 +24,7 @@ import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putTriangleIndices
 import com.acornui.gl.core.putVertex
 import com.acornui.graphic.Color
-import com.acornui.math.Bounds
-import com.acornui.math.MinMaxRo
-import com.acornui.math.PI
-import com.acornui.math.Vector3
+import com.acornui.math.*
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
@@ -139,15 +136,21 @@ open class Rect(
 			val innerBottomLeftX = maxOf(bottomLeftX, leftBorder)
 			val innerBottomLeftY = maxOf(bottomLeftY, bottomBorder)
 
-			createSmoothCorner(topLeftX, topLeftY, spriteOut = topLeftCorner, flipX = true, flipY = true)
-			createSmoothCorner(topRightX, topRightY, spriteOut = topRightCorner, flipX = false, flipY = true)
-			createSmoothCorner(bottomRightX, bottomRightY, spriteOut = bottomRightCorner, flipX = false, flipY = false)
-			createSmoothCorner(bottomLeftX, bottomLeftY, spriteOut = bottomLeftCorner, flipX = true, flipY = false)
+			val fillPad = Pad(0f)
+			if (topBorder < 1f) fillPad.top = 0f
+			if (rightBorder < 1f) fillPad.right = 0f
+			if (bottomBorder < 1f) fillPad.bottom = 0f
+			if (leftBorder < 1f) fillPad.left = 0f
 
-			createSmoothCorner(topLeftX, topLeftY, strokeThicknessX = leftBorder, strokeThicknessY = topBorder, spriteOut = topLeftStrokeCorner, flipX = true, flipY = true)
-			createSmoothCorner(topRightX, topRightY, strokeThicknessX = rightBorder, strokeThicknessY = topBorder, spriteOut = topRightStrokeCorner, flipX = false, flipY = true)
-			createSmoothCorner(bottomRightX, bottomRightY, strokeThicknessX = rightBorder, strokeThicknessY = bottomBorder, spriteOut = bottomRightStrokeCorner, flipX = false, flipY = false)
-			createSmoothCorner(bottomLeftX, bottomLeftY, strokeThicknessX = leftBorder, strokeThicknessY = bottomBorder, spriteOut = bottomLeftStrokeCorner, flipX = true, flipY = false)
+			createSmoothCorner(topLeftX - fillPad.left, topLeftY - fillPad.top, spriteOut = topLeftCorner, antialias = true, flipX = true, flipY = true)
+			createSmoothCorner(topRightX - fillPad.right, topRightY - fillPad.top, spriteOut = topRightCorner, antialias = true, flipX = false, flipY = true)
+			createSmoothCorner(bottomRightX - fillPad.right, bottomRightY - fillPad.bottom, spriteOut = bottomRightCorner, antialias = true, flipX = false, flipY = false)
+			createSmoothCorner(bottomLeftX - fillPad.left, bottomLeftY - fillPad.bottom, spriteOut = bottomLeftCorner, antialias = true, flipX = true, flipY = false)
+
+			createSmoothCorner(topLeftX, topLeftY, strokeThicknessX = leftBorder, strokeThicknessY = topBorder, spriteOut = topLeftStrokeCorner, antialias = true, flipX = true, flipY = true)
+			createSmoothCorner(topRightX, topRightY, strokeThicknessX = rightBorder, strokeThicknessY = topBorder, spriteOut = topRightStrokeCorner, antialias = true, flipX = false, flipY = true)
+			createSmoothCorner(bottomRightX, bottomRightY, strokeThicknessX = rightBorder, strokeThicknessY = bottomBorder, spriteOut = bottomRightStrokeCorner, antialias = true, flipX = false, flipY = false)
+			createSmoothCorner(bottomLeftX, bottomLeftY, strokeThicknessX = leftBorder, strokeThicknessY = bottomBorder, spriteOut = bottomLeftStrokeCorner, antialias = true, flipX = true, flipY = false)
 
 			fill.buildMesh {
 				// If we have a linear gradient, fill with white; we will be using the fill as a mask inside draw.
@@ -195,22 +198,22 @@ open class Rect(
 					}
 
 					if (topLeftCorner.texture != null) {
-						topLeftCorner.updateVertices(x = 0f, y = 0f)
+						topLeftCorner.updateVertices(x = fillPad.left, y = fillPad.top)
 						topLeftCorner.draw(glState, tint)
 					}
 
 					if (topRightCorner.texture != null) {
-						topRightCorner.updateVertices(x = w - topRightX, y = 0f)
+						topRightCorner.updateVertices(x = w - topRightX - fillPad.right, y = fillPad.top)
 						topRightCorner.draw(glState, tint)
 					}
 
 					if (bottomRightCorner.texture != null) {
-						bottomRightCorner.updateVertices(x = w - bottomRightX, y = h - bottomRightY)
+						bottomRightCorner.updateVertices(x = w - bottomRightX - fillPad.right, y = h - bottomRightY - fillPad.bottom)
 						bottomRightCorner.draw(glState, tint)
 					}
 
 					if (bottomLeftCorner.texture != null) {
-						bottomLeftCorner.updateVertices(x = 0f, y = h - bottomLeftY)
+						bottomLeftCorner.updateVertices(x = fillPad.left, y = h - bottomLeftY - fillPad.bottom)
 						bottomLeftCorner.draw(glState, tint)
 					}
 
@@ -248,11 +251,6 @@ open class Rect(
 						rect(0f, innerTopLeftY, leftBorder, height, borderColors.left)
 
 				}
-
-//				if (topLeftStrokeCorner.texture != null) {
-//					topLeftStrokeCorner.updateVertices(x = 0f, y = 0f)
-//					topLeftStrokeCorner.draw(glState, borderColors.top) // TODO: Colors
-//				}
 
 				topLeftStrokeCorner.apply {
 					val texture = texture
@@ -577,7 +575,9 @@ private fun fitSize(value: Float, other: Float, max: Float): Float {
 	val v2 = if (other < 0f) 0f else other
 	val total = v1 + v2
 	return if (total > max) {
-		v1 * max / total
+		val r = v1 * max / total
+		val frac = r.fpart()
+		return if (frac >= 0.5f) r - frac + 1f else r - frac
 	} else {
 		v1
 	}
