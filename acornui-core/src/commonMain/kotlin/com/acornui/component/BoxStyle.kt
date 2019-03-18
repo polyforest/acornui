@@ -277,6 +277,13 @@ data class BorderColors(
 		set(all)
 	}
 
+	constructor(
+			top: ColorRo,
+			right: ColorRo,
+			bottom: ColorRo,
+			left: ColorRo
+	) : this(top.copy(), right.copy(), bottom.copy(), left.copy())
+
 	constructor() : this(Color.CLEAR)
 
 	fun set(all: ColorRo): BorderColors {

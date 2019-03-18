@@ -69,7 +69,7 @@ fun Scoped.createSmoothCorner(
 		val gl = inject(Gl20)
 		val glState = inject(GlState)
 		if (curvedShader == null) curvedShader = CurvedRectShaderProgram(gl)
-		val framebuffer = framebuffer(cornerRadiusX.ceil() + 10, cornerRadiusY.ceil() + 18)
+		val framebuffer = framebuffer(cornerRadiusX.ceil(), cornerRadiusY.ceil())
 		val fBW = framebuffer.width.toFloat()
 		val fBH = framebuffer.height.toFloat()
 		val pW = cornerRadiusX / fBW

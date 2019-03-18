@@ -21,6 +21,7 @@ import com.acornui.core.di.Owned
 import com.acornui.core.graphic.BlendMode
 import com.acornui.gl.core.putIndex
 import com.acornui.gl.core.putQuadIndices
+import com.acornui.gl.core.putTriangleIndices
 import com.acornui.gl.core.putVertex
 import com.acornui.graphic.Color
 import com.acornui.math.Bounds
@@ -124,7 +125,8 @@ open class Rect(
 			// Stroke properties.
 			val borderColors = style.borderColors
 			val border = style.borderThicknesses
-			val topBorder = minOf(h - bottomLeftY, h - bottomRightY, fitSize(border.top, border.bottom, h))
+//			val topBorder = minOf(h - bottomLeftY, h - bottomRightY, fitSize(border.top, border.bottom, h))
+			val topBorder = fitSize(border.top, border.bottom, h)
 			val leftBorder = fitSize(border.left, border.right, w)
 			val rightBorder = fitSize(border.right, border.left, w)
 			val bottomBorder = fitSize(border.bottom, border.top, h)
@@ -219,72 +221,161 @@ open class Rect(
 			stroke.buildMesh {
 
 				if (topBorder > 0f && borderColors.top.a > 0f) {
-					val left = topLeftX
-					val right = w - topRightX
-					if (right > left) {
-						putVertex(left, 0f, 0f, colorTint = borderColors.top)
-						putVertex(right, 0f, 0f, colorTint = borderColors.top)
-						putVertex(w - innerTopRightX, topBorder, 0f, colorTint = borderColors.top)
-						putVertex(innerTopLeftX, topBorder, 0f, colorTint = borderColors.top)
-						putQuadIndices()
-					}
+					// Top middle
+					val width = w - innerTopRightX - innerTopLeftX
+					if (width > 0f)
+						rect(innerTopLeftX, 0f, width, topBorder, borderColors.top)
 				}
 
 				if (rightBorder > 0f && borderColors.right.a > 0f) {
-					val top = topRightY
-					val bottom = h - bottomRightY
-					val right = w
-					if (bottom > top) {
-						putVertex(right, top, 0f, colorTint = borderColors.right)
-						putVertex(right, bottom, 0f, colorTint = borderColors.right)
-						putVertex(right - rightBorder, h - innerBottomRightY, 0f, colorTint = borderColors.right)
-						putVertex(right - rightBorder, innerTopRightY, 0f, colorTint = borderColors.right)
-						putQuadIndices()
-					}
+					// Right middle
+					val height = h - innerBottomRightY - innerTopRightY
+					if (height > 0f)
+						rect(w - rightBorder, innerTopRightY, rightBorder, height, borderColors.right)
 				}
 
 				if (bottomBorder > 0f && borderColors.bottom.a > 0f) {
-					val left = bottomLeftX
-					val right = w - bottomRightX
-					val bottom = h
-					if (right > left) {
-						putVertex(right, bottom, 0f, colorTint = borderColors.bottom)
-						putVertex(left, bottom, 0f, colorTint = borderColors.bottom)
-						putVertex(innerBottomLeftX, bottom - bottomBorder, 0f, colorTint = borderColors.bottom)
-						putVertex(w - innerBottomRightX, bottom - bottomBorder, 0f, colorTint = borderColors.bottom)
-						putQuadIndices()
-					}
+					// Bottom middle
+					val width = w - innerBottomRightX - innerBottomLeftX
+					if (width > 0f)
+						rect(innerBottomLeftX, h - bottomBorder, width, bottomBorder, borderColors.bottom)
 				}
 
 				if (leftBorder > 0f && borderColors.left.a > 0f) {
-					val top = topLeftY
-					val bottom = h - bottomLeftY
-					if (bottom > top) {
-						putVertex(0f, bottom, 0f, colorTint = borderColors.left)
-						putVertex(0f, top, 0f, colorTint = borderColors.left)
-						putVertex(leftBorder, innerTopLeftY, 0f, colorTint = borderColors.left)
-						putVertex(leftBorder, h - innerBottomLeftY, 0f, colorTint = borderColors.left)
-						putQuadIndices()
+					// Left middle
+					val height = h - innerBottomLeftY - innerTopLeftY
+					if (height > 0f)
+						rect(0f, innerTopLeftY, leftBorder, height, borderColors.left)
+
+				}
+
+//				if (topLeftStrokeCorner.texture != null) {
+//					topLeftStrokeCorner.updateVertices(x = 0f, y = 0f)
+//					topLeftStrokeCorner.draw(glState, borderColors.top) // TODO: Colors
+//				}
+
+				topLeftStrokeCorner.apply {
+					val texture = texture
+					val u: Float
+					val v: Float
+					val u2: Float
+					val v2: Float
+					if (texture != null) {
+						glState.setTexture(texture)
+						u = this.u
+						u2 = (topLeftX - innerTopLeftX) / texture.width
+						v = this.v
+						v2 = (topLeftY - innerTopLeftY) / texture.height
+					} else {
+						glState.setTexture(glState.whitePixel)
+						u = 0f; v = 0f; u2 = 0f; v2 = 0f
 					}
+					val x2 = innerTopLeftX
+					val y2 = innerTopLeftY
+					batch.putVertex(0f, 0f, 0f, colorTint = borderColors.top, u = u, v = v)
+					batch.putVertex(x2, 0f, 0f, colorTint = borderColors.top, u = u2, v = v)
+					batch.putVertex(x2, y2, 0f, colorTint = borderColors.top, u = u2, v = v2)
+					batch.putTriangleIndices()
+
+					batch.putVertex(x2, y2, 0f, colorTint = borderColors.left, u = u2, v = v2)
+					batch.putVertex(0f, y2, 0f, colorTint = borderColors.left, u = u, v = v2)
+					batch.putVertex(0f, 0f, 0f, colorTint = borderColors.left, u = u, v = v)
+					batch.putTriangleIndices()
 				}
 
-				if (topLeftStrokeCorner.texture != null) {
-					topLeftStrokeCorner.updateVertices(x = 0f, y = 0f)
-					topLeftStrokeCorner.draw(glState, borderColors.top) // TODO: Colors
-				}
-				if (topRightStrokeCorner.texture != null) {
-					topRightStrokeCorner.updateVertices(x = w - topRightX, y = 0f)
-					topRightStrokeCorner.draw(glState, borderColors.right)
-				}
-				if (bottomRightStrokeCorner.texture != null) {
-					bottomRightStrokeCorner.updateVertices(x = w - bottomRightX, y = h - bottomRightY)
-					bottomRightStrokeCorner.draw(glState, borderColors.right)
-				}
-				if (bottomLeftStrokeCorner.texture != null) {
-					bottomLeftStrokeCorner.updateVertices(x = 0f, y = h - bottomLeftY)
-					bottomLeftStrokeCorner.draw(glState, borderColors.bottom) // TODO: Colors
+				topRightStrokeCorner.apply {
+					val texture = texture
+					val u: Float
+					val v: Float
+					val u2: Float
+					val v2: Float
+					if (texture != null) {
+						glState.setTexture(texture)
+						u = (topRightX - innerTopRightX) / texture.width
+						u2 = this.u2
+						v = this.v
+						v2 = (topRightY - innerTopRightY) / texture.height
+					} else {
+						glState.setTexture(glState.whitePixel)
+						u = 0f; v = 0f; u2 = 0f; v2 = 0f
+					}
+					val x = w - innerTopRightX
+					batch.putVertex(x, 0f, 0f, colorTint = borderColors.top, u = u, v = v)
+					batch.putVertex(w, 0f, 0f, colorTint = borderColors.top, u = u2, v = v)
+					batch.putVertex(x, innerTopRightY, 0f, colorTint = borderColors.top, u = u, v = v2)
+					batch.putTriangleIndices()
+
+					batch.putVertex(w, 0f, 0f, colorTint = borderColors.right, u = u2, v = v)
+					batch.putVertex(w, innerTopRightY, 0f, colorTint = borderColors.right, u = u2, v = v2)
+					batch.putVertex(x, innerTopRightY, 0f, colorTint = borderColors.right, u = u, v = v2)
+					batch.putTriangleIndices()
 				}
 
+				bottomRightStrokeCorner.apply {
+					val texture = texture
+					val u: Float
+					val v: Float
+					val u2: Float
+					val v2: Float
+					if (texture != null) {
+						glState.setTexture(texture)
+						u = (bottomRightX - innerBottomRightX) / texture.width
+						u2 = this.u2
+						v = (bottomRightY - innerBottomRightY) / texture.height
+						v2 = this.v2
+					} else {
+						glState.setTexture(glState.whitePixel)
+						u = 0f; v = 0f; u2 = 0f; v2 = 0f
+					}
+					val x = w - innerBottomRightX
+					val y = h - innerBottomRightY
+					batch.putVertex(x, y, 0f, colorTint = borderColors.right, u = u, v = v)
+					batch.putVertex(w, y, 0f, colorTint = borderColors.right, u = u2, v = v)
+					batch.putVertex(w, h, 0f, colorTint = borderColors.right, u = u2, v = v2)
+					batch.putTriangleIndices()
+
+					batch.putVertex(x, y, 0f, colorTint = borderColors.bottom, u = u, v = v)
+					batch.putVertex(w, h, 0f, colorTint = borderColors.bottom, u = u2, v = v2)
+					batch.putVertex(x, h, 0f, colorTint = borderColors.bottom, u = u, v = v2)
+					batch.putTriangleIndices()
+				}
+
+				bottomLeftStrokeCorner.apply {
+					val texture = texture
+					val u: Float
+					val v: Float
+					val u2: Float
+					val v2: Float
+					if (texture != null) {
+						glState.setTexture(texture)
+						u = this.u
+						u2 = (bottomLeftX - innerBottomLeftX) / texture.width
+						v = (bottomLeftY - innerBottomLeftY) / texture.height
+						v2 = this.v2
+					} else {
+						glState.setTexture(glState.whitePixel)
+						u = 0f; v = 0f; u2 = 0f; v2 = 0f
+					}
+					val y = h - innerBottomLeftY
+					batch.putVertex(0f, y, 0f, colorTint = borderColors.left, u = u, v = v)
+					batch.putVertex(innerBottomLeftX, y, 0f, colorTint = borderColors.left, u = u2, v = v)
+					batch.putVertex(0f, h, 0f, colorTint = borderColors.left, u = u, v = v2)
+					batch.putTriangleIndices()
+
+					batch.putVertex(innerBottomLeftX, y, 0f, colorTint = borderColors.bottom, u = u2, v = v)
+					batch.putVertex(innerBottomLeftX, h, 0f, colorTint = borderColors.bottom, u = u2, v = v2)
+					batch.putVertex(0f, h, 0f, colorTint = borderColors.bottom, u = u, v = v2)
+					batch.putTriangleIndices()
+				}
+
+//				if (bottomRightStrokeCorner.texture != null) {
+//					bottomRightStrokeCorner.updateVertices(x = w - bottomRightX, y = h - bottomRightY)
+//					bottomRightStrokeCorner.draw(glState, borderColors.right)
+//				}
+//				if (bottomLeftStrokeCorner.texture != null) {
+//					bottomLeftStrokeCorner.updateVertices(x = 0f, y = h - bottomLeftY)
+//					bottomLeftStrokeCorner.draw(glState, borderColors.bottom) // TODO: Colors
+//				}
 				trn(margin.left, margin.top)
 			}
 
