@@ -82,7 +82,7 @@ fun Scoped.createSmoothCorner(
 		framebuffer.drawTo {
 			gl.uniform2f(curvedShader.getRequiredUniformLocation("u_cornerRadius"), cornerRadiusX, cornerRadiusY)
 			gl.uniform1f(curvedShader.getRequiredUniformLocation("u_smoothOuter"), if (antialias) 1f / minOf(cornerRadiusX, cornerRadiusY) else 0.00001f)
-			gl.uniform1f(curvedShader.getRequiredUniformLocation("u_smoothInner"), if (antialias) 1f / minOf(cornerRadiusX - sX, cornerRadiusY - sY) else 0.00001f)
+			gl.uniform1f(curvedShader.getRequiredUniformLocation("u_smoothInner"), if (antialias) 1f / minOf(maxOf(0.00001f, cornerRadiusX - sX), maxOf(0.00001f, cornerRadiusY - sY)) else 0.00001f)
 			curvedShader.getUniformLocation("u_strokeThickness")?.let {
 				gl.uniform2f(it, sX, sY)
 			}
@@ -161,7 +161,7 @@ void main() {
 	float outer = p2.x / (u_cornerRadius.x * u_cornerRadius.x) + p2.y / (u_cornerRadius.y * u_cornerRadius.y);
 	float inner = p2.x / (innerRadius.x * innerRadius.x) + p2.y / (innerRadius.y * innerRadius.y);
 	if (outer <= 1.0 + u_smoothOuter && inner >= 1.0 - u_smoothInner) {
-		if (inner > 1.0 + u_smoothOuter) {
+		if (inner > 1.0 + u_smoothInner) {
 			gl_FragColor = vec4(1.0, 1.0, 1.0, smoothstep(1.0 + u_smoothOuter, 1.0 - u_smoothOuter, outer));
 		} else {
 			gl_FragColor = vec4(1.0, 1.0, 1.0, smoothstep(1.0 - u_smoothInner, 1.0 + u_smoothInner, inner));

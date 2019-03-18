@@ -122,11 +122,10 @@ open class Rect(
 			// Stroke properties.
 			val borderColors = style.borderColors
 			val border = style.borderThicknesses
-//			val topBorder = minOf(h - bottomLeftY, h - bottomRightY, fitSize(border.top, border.bottom, h))
-			val topBorder = fitSize(border.top, border.bottom, h)
-			val leftBorder = fitSize(border.left, border.right, w)
-			val rightBorder = fitSize(border.right, border.left, w)
-			val bottomBorder = fitSize(border.bottom, border.top, h)
+			val topBorder = minOf(h - bottomLeftY, h - bottomRightY, fitSize(border.top, border.bottom, h))
+			val leftBorder = minOf(w - topRightX, w - bottomRightX, fitSize(border.left, border.right, w))
+			val rightBorder = minOf(w - topLeftX, w - bottomLeftX, fitSize(border.right, border.left, w))
+			val bottomBorder = minOf(h - topLeftY, h - topRightY, fitSize(border.bottom, border.top, h))
 			val innerTopLeftX = maxOf(topLeftX, leftBorder)
 			val innerTopLeftY = maxOf(topLeftY, topBorder)
 			val innerTopRightX = maxOf(topRightX, rightBorder)
@@ -136,7 +135,7 @@ open class Rect(
 			val innerBottomLeftX = maxOf(bottomLeftX, leftBorder)
 			val innerBottomLeftY = maxOf(bottomLeftY, bottomBorder)
 
-			val fillPad = Pad(0f)
+			val fillPad = Pad(0.5f)
 			if (topBorder < 1f) fillPad.top = 0f
 			if (rightBorder < 1f) fillPad.right = 0f
 			if (bottomBorder < 1f) fillPad.bottom = 0f
@@ -203,17 +202,17 @@ open class Rect(
 					}
 
 					if (topRightCorner.texture != null) {
-						topRightCorner.updateVertices(x = w - topRightX - fillPad.right, y = fillPad.top)
+						topRightCorner.updateVertices(x = w - topRightX, y = fillPad.top)
 						topRightCorner.draw(glState, tint)
 					}
 
 					if (bottomRightCorner.texture != null) {
-						bottomRightCorner.updateVertices(x = w - bottomRightX - fillPad.right, y = h - bottomRightY - fillPad.bottom)
+						bottomRightCorner.updateVertices(x = w - bottomRightX, y = h - bottomRightY)
 						bottomRightCorner.draw(glState, tint)
 					}
 
 					if (bottomLeftCorner.texture != null) {
-						bottomLeftCorner.updateVertices(x = fillPad.left, y = h - bottomLeftY - fillPad.bottom)
+						bottomLeftCorner.updateVertices(x = fillPad.left, y = h - bottomLeftY)
 						bottomLeftCorner.draw(glState, tint)
 					}
 
