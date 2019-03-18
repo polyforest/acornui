@@ -39,9 +39,6 @@ val KOTLIN_LANGUAGE_VERSION: String by extra
 val KOTLIN_JVM_TARGET: String by extra
 kotlin {
     js {
-        compilations.named("test") {
-            runtimeDependencyFiles
-        }
         compilations.all {
             kotlinOptions {
                 moduleKind = "amd"

@@ -25,9 +25,6 @@ val MOCKITO_VERSION: String by extra
 val OBJENESIS_VERSION: String by extra
 kotlin {
     js {
-        compilations.named("test") {
-            runtimeDependencyFiles
-        }
         compilations.all {
             kotlinOptions {
                 moduleKind = "amd"
