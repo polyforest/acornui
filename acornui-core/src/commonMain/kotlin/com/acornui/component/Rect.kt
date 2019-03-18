@@ -364,15 +364,6 @@ open class Rect(
 					batch.putVertex(0f, h, 0f, colorTint = borderColors.bottom, u = u, v = v2)
 					batch.putTriangleIndices()
 				}
-
-//				if (bottomRightStrokeCorner.texture != null) {
-//					bottomRightStrokeCorner.updateVertices(x = w - bottomRightX, y = h - bottomRightY)
-//					bottomRightStrokeCorner.draw(glState, borderColors.right)
-//				}
-//				if (bottomLeftStrokeCorner.texture != null) {
-//					bottomLeftStrokeCorner.updateVertices(x = 0f, y = h - bottomLeftY)
-//					bottomLeftStrokeCorner.draw(glState, borderColors.bottom) // TODO: Colors
-//				}
 				trn(margin.left, margin.top)
 			}
 
@@ -555,9 +546,9 @@ open class Rect(
 					}) {
 						if (gradientC.visible)
 							gradientC.render(clip)
-						if (strokeC.visible)
-							strokeC.render(clip)
 					}
+					if (strokeC.visible)
+						strokeC.render(clip)
 				}
 			} else {
 				super.draw(clip)
