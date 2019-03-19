@@ -96,32 +96,31 @@ class Corners() : CornersRo, Clearable {
 	}
 
 	/**
-	 * Increases the corner radius by the given padding.
-	 */
-	fun inflate(pad: PadRo): Corners {
-		topLeft.x += pad.left
-		topLeft.y += pad.top
-		topRight.x += pad.right
-		topRight.y += pad.top
-		bottomRight.x += pad.right
-		bottomRight.y += pad.bottom
-		bottomLeft.x += pad.left
-		bottomLeft.y += pad.bottom
-		return this
-	}
-
-	/**
 	 * Decreases the corner radius by the given padding.
 	 */
-	fun deflate(pad: PadRo): Corners {
-		topLeft.x -= pad.left
-		topLeft.y -= pad.top
-		topRight.x -= pad.right
-		topRight.y -= pad.top
-		bottomRight.x -= pad.right
-		bottomRight.y -= pad.bottom
-		bottomLeft.x -= pad.left
-		bottomLeft.y -= pad.bottom
+	fun deflate(pad: PadRo): Corners = inflate(-pad.left, -pad.top, -pad.right, -pad.bottom)
+	fun deflate(left: Float, top: Float, right: Float, bottom: Float): Corners = inflate(-left, -top, -right, -bottom)
+	fun deflate(all: Float): Corners = inflate(-all, -all, -all, -all)
+
+	/**
+	 * Increases the corner radius by the given padding.
+	 */
+	fun inflate(pad: PadRo): Corners = inflate(pad.left, pad.top, pad.right, pad.bottom)
+
+	/**
+	 * Increases all dimensions of the corner radius by the given amount.
+	 */
+	fun inflate(all: Float): Corners = inflate(all, all, all, all)
+
+	fun inflate(left: Float, top: Float, right: Float, bottom: Float): Corners {
+		topLeft.x += left
+		topLeft.y += top
+		topRight.x += right
+		topRight.y += top
+		bottomRight.x += right
+		bottomRight.y += bottom
+		bottomLeft.x += left
+		bottomLeft.y += bottom
 		return this
 	}
 

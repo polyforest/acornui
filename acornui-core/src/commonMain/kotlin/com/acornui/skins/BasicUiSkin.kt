@@ -42,16 +42,18 @@ import com.acornui.core.input.interaction.ContextMenuStyle
 import com.acornui.core.input.interaction.ContextMenuView
 import com.acornui.core.input.interaction.enableDownRepeat
 import com.acornui.core.popup.PopUpManager
+import com.acornui.core.popup.PopUpManagerStyle
 import com.acornui.core.userInfo
 import com.acornui.graphic.Color
 import com.acornui.math.Corners
+import com.acornui.math.PI
 import com.acornui.math.Pad
 import com.acornui.math.Vector2
 
 open class BasicUiSkin(
 		val target: UiComponent,
-		private val skinPartFactory: SkinPartFactory = BasicSkinPartFactory()
-) : Scoped, SkinPartFactory by skinPartFactory {
+		private val skinPartProvider: SkinPartProvider = BasicSkinPartProvider()
+) : Scoped, SkinPartProvider by skinPartProvider {
 
 	final override val injector = target.injector
 
@@ -104,9 +106,14 @@ open class BasicUiSkin(
 	}
 
 	protected open fun popUpStyle() {
-		val modalStyle = BoxStyle()
-		modalStyle.backgroundColor = Color(0f, 0f, 0f, 0.7f)
-		target.addStyleRule(modalStyle, PopUpManager.MODAL_STYLE)
+		val popUpManagerStyle = PopUpManagerStyle().apply {
+			modalFill = {
+				rect {
+					style.backgroundColor = Color(0f, 0f, 0f, 0.7f)
+				}
+			}
+		}
+		target.addStyleRule(popUpManagerStyle, PopUpManager)
 	}
 
 	protected open fun focusStyle() {
@@ -466,7 +473,12 @@ open class BasicUiSkin(
 				button { focusEnabled = false }
 			}
 			colorSwatch = {
-				curvedRect(Color.WHITE, Color(1f, 1f, 1f, 0.5f))
+				rect {
+					style.backgroundColor = Color.WHITE
+					style.borderColors = BorderColors(Color.WHITE * 0.8f)
+					style.borderRadii = Corners(32f)
+					style.borderThicknesses = Pad(1f)
+				}
 			}
 		}
 		target.addStyleRule(colorPickerStyle, ColorPicker)
@@ -564,7 +576,7 @@ open class BasicUiSkin(
 			sortDownArrow = { atlas(theme.atlasPath, "DownArrow") { colorTint = theme.iconColor } }
 			sortUpArrow = { atlas(theme.atlasPath, "UpArrow") { colorTint = theme.iconColor } }
 			borderRadius = Corners(theme.borderRadius)
-			borderThickness = Pad(theme.strokeThickness)
+			borderThickness = Pad(theme.strokeThickness + 1f)
 			cellFocusHighlight = {
 				SimpleHighlight(target, theme.atlasPath, "FocusRect").apply { colorTint = theme.strokeToggled }
 			}

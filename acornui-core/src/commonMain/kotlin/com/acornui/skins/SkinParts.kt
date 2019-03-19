@@ -23,10 +23,9 @@ import com.acornui.component.style.SkinPart
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.graphic.Color
-import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 
-interface SkinPartFactory {
+interface SkinPartProvider {
 
 	/**
 	 * Returns a factory to create an icon button skin part for the given button state.
@@ -75,7 +74,7 @@ interface SkinPartFactory {
 	): UiComponent
 }
 
-open class BasicSkinPartFactory : SkinPartFactory {
+open class BasicSkinPartProvider : SkinPartProvider {
 
 	override fun iconButtonSkin(buttonState: ButtonState, icon: String, padding: PadRo, hGap: Float): SkinPart = {
 		val texture = buttonTexture(buttonState)
@@ -95,7 +94,8 @@ open class BasicSkinPartFactory : SkinPartFactory {
 		if (buttonState.toggled) borderThickness.bottom = 0f
 		val texture = buttonTexture(
 				buttonState,
-				Corners(topLeft = theme.borderRadius, topRight = theme.borderRadius, bottomLeft = 0f, bottomRight = 0f)
+				Corners(topLeft = theme.borderRadius, topRight = theme.borderRadius, bottomLeft = 0f, bottomRight = 0f),
+				borderThickness
 		)
 
 		IconButtonSkinPart(this, texture, theme.buttonPad, theme.iconButtonGap)
@@ -241,16 +241,6 @@ open class BasicSkinPartFactory : SkinPartFactory {
 				}
 			}
 		}
-	}
-
-	override fun Owned.curvedRect(fillColor: ColorRo, strokeColor: ColorRo) = stack {
-		val theme = inject(Theme)
-		+atlas(theme.atlasPath, "CurvedFill") {
-			colorTint = fillColor
-		} layout { fill() }
-		+atlas(theme.atlasPath, "CurvedStroke") {
-			colorTint = strokeColor
-		} layout { fill() }
 	}
 
 }

@@ -23,10 +23,7 @@ import com.acornui.component.*
 import com.acornui.component.layout.ElementLayoutContainerImpl
 import com.acornui.component.layout.algorithm.CanvasLayout
 import com.acornui.component.layout.algorithm.CanvasLayoutData
-import com.acornui.component.style.NoopStyle
-import com.acornui.component.style.StyleBase
-import com.acornui.component.style.StyleType
-import com.acornui.component.style.styleTag
+import com.acornui.component.style.*
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
@@ -80,10 +77,7 @@ interface PopUpManager : Clearable {
 	 */
 	override fun clear()
 
-	companion object : DKey<PopUpManager> {
-
-		val MODAL_STYLE = styleTag()
-	}
+	companion object : DKey<PopUpManager>, StyleTag
 }
 
 data class PopUpInfo<T : UiComponent>(
@@ -143,6 +137,7 @@ class PopUpManagerStyle : StyleBase() {
 
 	override val type: StyleType<PopUpManagerStyle> = PopUpManagerStyle
 
+	var modalFill by prop(noSkin)
 	var modalEaseIn by prop(Easing.pow2In)
 	var modalEaseOut by prop(Easing.pow2Out)
 	var modalEaseInDuration by prop(0.2f)
@@ -161,8 +156,9 @@ class PopUpManagerImpl(private val root: UiComponent) : ElementLayoutContainerIm
 	override val currentPopUps: List<PopUpInfo<*>>
 		get() = _currentPopUps
 
-	private val modalFill = +rect {
-		styleTags.add(PopUpManager.MODAL_STYLE)
+	private var modalFill: UiComponent? = null
+
+	private val modalFillContainer = +stack {
 		visible = false
 		click().add {
 			if (!it.handled)
@@ -183,11 +179,11 @@ class PopUpManagerImpl(private val root: UiComponent) : ElementLayoutContainerIm
 				if (child.canFocus) {
 					child.focus(highlight = last.highlightFocused)
 				} else {
-					modalFill.focusSelf()
+					modalFillContainer.focusSelf()
 				}
 			} else {
 				if (last.isModal) {
-					modalFill.focusSelf()
+					modalFillContainer.focusSelf()
 				}
 			}
 		}
@@ -201,9 +197,9 @@ class PopUpManagerImpl(private val root: UiComponent) : ElementLayoutContainerIm
 			// Set the modal blocker to be at the correct child index so that it is behind the last modal pop-up.
 			val lastModal = _currentPopUps[lastModalIndex]
 			val childIndex = elements.indexOf(lastModal.child)
-			val modalIndex = elements.indexOf(modalFill)
+			val modalIndex = elements.indexOf(modalFillContainer)
 			if (modalIndex != childIndex - 1)
-				addElement(childIndex, modalFill)
+				addElement(childIndex, modalFillContainer)
 		}
 		val s = popUpManagerStyle
 		if (shouldShowModal != showingModal) {
@@ -211,18 +207,18 @@ class PopUpManagerImpl(private val root: UiComponent) : ElementLayoutContainerIm
 			if (shouldShowModal) {
 				tween?.complete()
 				// Often pop-ups are added via mouse down. Do not allow a click() on the modal blocker for one frame.
-				modalFill.clickHandledForAFrame()
-				modalFill.visible = true
-				modalFill.alpha = 0f
-				tween = modalFill.tweenAlpha(s.modalEaseInDuration, s.modalEaseIn, 1f).drive(timeDriver)
+				modalFillContainer.clickHandledForAFrame()
+				modalFillContainer.visible = true
+				modalFillContainer.alpha = 0f
+				tween = modalFillContainer.tweenAlpha(s.modalEaseInDuration, s.modalEaseIn, 1f).drive(timeDriver)
 				tween!!.completed.addOnce {
 					tween = null
 				}
 			} else {
 				tween?.complete()
-				tween = modalFill.tweenAlpha(s.modalEaseOutDuration, s.modalEaseOut, 0f).drive(timeDriver)
+				tween = modalFillContainer.tweenAlpha(s.modalEaseOutDuration, s.modalEaseOut, 0f).drive(timeDriver)
 				tween!!.completed.addOnce {
-					modalFill.visible = false
+					modalFillContainer.visible = false
 					tween = null
 				}
 			}
@@ -246,8 +242,18 @@ class PopUpManagerImpl(private val root: UiComponent) : ElementLayoutContainerIm
 	}
 
 	init {
+		styleTags.add(PopUpManager)
 		root.keyDown().add(rootKeyDownHandler)
 		interactivityMode = InteractivityMode.CHILDREN
+
+		watch(popUpManagerStyle) {
+			modalFill?.dispose()
+			modalFill = it.modalFill(this)
+			modalFillContainer.apply {
+				+modalFill!! layout { fill() }
+			}
+			Unit
+		}
 	}
 
 	override fun onActivated() {
@@ -262,9 +268,9 @@ class PopUpManagerImpl(private val root: UiComponent) : ElementLayoutContainerIm
 	}
 
 	private fun focusChangingHandler(old: UiComponentRo?, new: UiComponentRo?, cancel: Cancel) {
-		if (_currentPopUps.isEmpty() || new === modalFill) return
+		if (_currentPopUps.isEmpty() || new === modalFillContainer) return
 		if (new == null) {
-			modalFill.focusSelf()
+			modalFillContainer.focusSelf()
 			cancel.cancel()
 			return
 		}
@@ -283,7 +289,7 @@ class PopUpManagerImpl(private val root: UiComponent) : ElementLayoutContainerIm
 			if (child.canFocus)
 				child.focus()
 			else
-				modalFill.focusSelf()
+				modalFillContainer.focusSelf()
 			cancel.cancel()
 		}
 	}

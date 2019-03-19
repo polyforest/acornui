@@ -91,6 +91,7 @@ class GlScrollRect(
 	init {
 		watch(style) {
 			maskClip.style.borderRadii = it.borderRadii
+			maskClip.style.margin = it.padding
 		}
 	}
 
@@ -109,16 +110,8 @@ class GlScrollRect(
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val w = explicitWidth ?: 100f
 		val h = explicitHeight ?: 100f
-		val borderRadii = style.borderRadii
-		if (borderRadii.isEmpty()) {
-			// An optimized case where we can just scale the mask instead of recreating the mesh.
-			maskClip.setSize(1f, 1f)
-			maskClip.setScaling(w, h)
-		} else {
-			// Our mask needs curved borders.
-			maskClip.setSize(w, h)
-			maskClip.setScaling(1f, 1f)
-		}
+		maskClip.setSize(w, h)
+		maskClip.setScaling(1f, 1f)
 		out.set(w, h)
 	}
 
@@ -146,6 +139,11 @@ class ScrollRectStyle : StyleBase() {
 
 	override val type: StyleType<ScrollRectStyle> = Companion
 	var borderRadii: CornersRo by prop(Corners())
+
+	/**
+	 * Pads the mask.  This will not affect the layout of the Scroll Rect's elements.
+	 */
+	var padding: PadRo by prop(Pad())
 
 	companion object : StyleType<ScrollRectStyle>
 }

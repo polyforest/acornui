@@ -227,6 +227,8 @@ data class ColorStop(
 		override var pixels: Float? = null
 ) : ColorStopRo {
 
+	constructor(rgba: Long, percent: Float? = null, pixels: Float? = null) : this(Color(rgba), percent, pixels)
+
 	fun set(other: ColorStopRo): ColorStop {
 		color = other.color
 		percent = other.percent
