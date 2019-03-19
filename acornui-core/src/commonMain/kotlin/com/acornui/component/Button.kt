@@ -234,7 +234,7 @@ open class ButtonStyle : StyleBase() {
 	companion object : StyleType<ButtonStyle>
 }
 
-fun ButtonStyle.set(skinPartFactory: (ButtonState) -> (Owned.() -> UiComponent)): ButtonStyle {
+fun ButtonStyle.set(skinPartFactory: (ButtonState) -> (SkinPart)): ButtonStyle {
 	upState = skinPartFactory(ButtonState.UP)
 	overState = skinPartFactory(ButtonState.OVER)
 	downState = skinPartFactory(ButtonState.DOWN)

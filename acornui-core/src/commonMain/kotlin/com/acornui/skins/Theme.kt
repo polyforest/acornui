@@ -46,6 +46,10 @@ class Theme {
 	var fillDown: ColorRo = Color(0xE3E9EAFF)
 	var fillHighlight: ColorRo = fill + brighten
 	var fillDisabled: ColorRo = Color(0xCCCCCCFF)
+
+	/**
+	 * The shine color to overlay. (Set to clear for no shine.)
+	 */
 	var fillShine: ColorRo = Color(1f, 1f, 1f, 0.9f)
 	var inputFill: ColorRo = Color(0.97f, 0.97f, 0.97f, 1f)
 
@@ -217,7 +221,6 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 		writer.color("warningColor", warningColor)
 	}
 }
-
 
 fun Theme.getButtonFillColor(buttonState: ButtonState): ColorRo {
 	return when (buttonState) {

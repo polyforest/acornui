@@ -1781,12 +1781,12 @@ class DataGridStyle : StyleBase() {
 	/**
 	 * The divider between the header and the body.
 	 */
-	var headerDivider by prop<Owned.() -> UiComponent?>({ hr() })
+	var headerDivider by prop<OptionalSkinPart>({ hr() })
 
 	/**
 	 * The skin part for the down sort arrow.
 	 */
-	var verticalDivider by prop<Owned.() -> UiComponent>({ vr() })
+	var verticalDivider by prop<SkinPart>({ vr() })
 
 	/**
 	 * The skin part for the down sort arrow.

@@ -19,6 +19,7 @@ package com.acornui.skins
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.CanvasLayoutContainer
 import com.acornui.component.layout.algorithm.canvas
+import com.acornui.component.style.SkinPart
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.graphic.Color
@@ -27,41 +28,56 @@ import com.acornui.math.*
 
 interface SkinPartFactory {
 
-	fun iconButtonSkin(buttonState: ButtonState, icon: String, padding: PadRo = Pad(5f), hGap: Float = 4f): Owned.() -> UiComponent
-	fun labelButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> UiComponent
-	fun tabButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> UiComponent
+	/**
+	 * Returns a factory to create an icon button skin part for the given button state.
+	 */
+	fun iconButtonSkin(buttonState: ButtonState, icon: String, padding: PadRo = Pad(5f), hGap: Float = 4f): SkinPart
+
+	/**
+	 * Returns a factory to create a label button skin part for the given button state.
+	 */
+	fun labelButtonSkin(theme: Theme, buttonState: ButtonState): SkinPart
+
+	/**
+	 * Returns a factory to create a tab button skin part for the given button state.
+	 */
+	fun tabButtonSkin(theme: Theme, buttonState: ButtonState): SkinPart
 
 	/**
 	 * A convenience function to create a button skin part.
 	 */
-	fun iconButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> UiComponent
+	fun iconButtonSkin(theme: Theme, buttonState: ButtonState): SkinPart
 
-	fun checkboxNoLabelSkin(theme: Theme, buttonState: ButtonState): Owned.() -> UiComponent
-
-	/**
-	 * A checkbox skin part.
-	 */
-	fun checkboxSkin(theme: Theme, buttonState: ButtonState): Owned.() -> UiComponent
+	fun checkboxNoLabelSkin(theme: Theme, buttonState: ButtonState): SkinPart
 
 	/**
 	 * A checkbox skin part.
 	 */
-	fun collapseButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> UiComponent
+	fun checkboxSkin(theme: Theme, buttonState: ButtonState): SkinPart
+
+	/**
+	 * A checkbox skin part.
+	 */
+	fun collapseButtonSkin(theme: Theme, buttonState: ButtonState): SkinPart
 
 	/**
 	 * A convenience function to create a radio button skin part.
 	 */
-	fun radioButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> UiComponent
+	fun radioButtonSkin(theme: Theme, buttonState: ButtonState): SkinPart
 
-	fun Owned.buttonTexture(buttonState: ButtonState): UiComponent
-	fun Owned.buttonTexture(buttonState: ButtonState, borderRadius: CornersRo, borderThickness: PadRo, isTab: Boolean = false): CanvasLayoutContainer
-	fun Owned.curvedRect(fillColor: ColorRo, strokeColor: ColorRo): StackLayoutContainer
-
+	/**
+	 *
+	 */
+	fun Owned.buttonTexture(
+			buttonState: ButtonState,
+			borderRadius: CornersRo = Corners(inject(Theme).borderRadius),
+			borderThickness: PadRo = Pad(inject(Theme).strokeThickness)
+	): UiComponent
 }
 
 open class BasicSkinPartFactory : SkinPartFactory {
 
-	override fun iconButtonSkin(buttonState: ButtonState, icon: String, padding: PadRo, hGap: Float): Owned.() -> UiComponent = {
+	override fun iconButtonSkin(buttonState: ButtonState, icon: String, padding: PadRo, hGap: Float): SkinPart = {
 		val texture = buttonTexture(buttonState)
 		val skinPart = IconButtonSkinPart(this, texture, padding, hGap)
 		val theme = inject(Theme)
@@ -69,20 +85,26 @@ open class BasicSkinPartFactory : SkinPartFactory {
 		skinPart
 	}
 
-	override fun labelButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> UiComponent = {
+	override fun labelButtonSkin(theme: Theme, buttonState: ButtonState): SkinPart = {
 		val texture = buttonTexture(buttonState)
 		LabelButtonSkinPart(this, texture, theme.buttonPad)
 	}
 
-	override fun tabButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> UiComponent = {
-		val texture = buttonTexture(buttonState, Corners(topLeft = theme.borderRadius, topRight = theme.borderRadius, bottomLeft = 0f, bottomRight = 0f), Pad(theme.strokeThickness), isTab = true)
+	override fun tabButtonSkin(theme: Theme, buttonState: ButtonState): SkinPart = {
+		val borderThickness = Pad(theme.strokeThickness)
+		if (buttonState.toggled) borderThickness.bottom = 0f
+		val texture = buttonTexture(
+				buttonState,
+				Corners(topLeft = theme.borderRadius, topRight = theme.borderRadius, bottomLeft = 0f, bottomRight = 0f)
+		)
+
 		IconButtonSkinPart(this, texture, theme.buttonPad, theme.iconButtonGap)
 	}
 
 	/**
 	 * A convenience function to create a button skin part.
 	 */
-	override fun iconButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> UiComponent = {
+	override fun iconButtonSkin(theme: Theme, buttonState: ButtonState): SkinPart = {
 		val texture = buttonTexture(buttonState)
 		IconButtonSkinPart(this, texture, theme.buttonPad, theme.iconButtonGap)
 	}
@@ -168,38 +190,13 @@ open class BasicSkinPartFactory : SkinPartFactory {
 		}
 	}
 
-	override fun Owned.buttonTexture(buttonState: ButtonState): UiComponent = stack {
-		val theme = inject(Theme)
-		val fillRegion = when (buttonState) {
-			ButtonState.TOGGLED_UP, ButtonState.UP -> "Button_up"
-			ButtonState.TOGGLED_OVER, ButtonState.OVER -> "Button_over"
-			ButtonState.TOGGLED_DOWN, ButtonState.DOWN -> "Button_down"
-			ButtonState.DISABLED -> "Button_disabled"
-		}
-		+atlas(theme.atlasPath, fillRegion) {
-			colorTint = when (buttonState) {
-				ButtonState.DISABLED -> theme.fillDisabled
-				ButtonState.UP, ButtonState.TOGGLED_UP -> theme.fill
-				ButtonState.OVER, ButtonState.TOGGLED_OVER -> theme.fillHighlight
-				ButtonState.DOWN, ButtonState.TOGGLED_DOWN -> theme.fill
-			}
-
-		} layout { fill() }
-		+atlas(theme.atlasPath, "CurvedStroke") {
-			colorTint = if (buttonState == ButtonState.DISABLED) theme.strokeDisabled else if (buttonState.toggled) theme.strokeToggled else theme.stroke
-		} layout { fill() }
-	}
-
-	override fun Owned.buttonTexture(buttonState: ButtonState, borderRadius: CornersRo, borderThickness: PadRo, isTab: Boolean): CanvasLayoutContainer = canvas {
+	override fun Owned.buttonTexture(buttonState: ButtonState, borderRadius: CornersRo, borderThickness: PadRo): CanvasLayoutContainer = canvas {
 		val theme = inject(Theme)
 		+rect {
 			style.apply {
 				backgroundColor = theme.getButtonFillColor(buttonState)
 				borderColors = BorderColors(theme.getButtonStrokeColor(buttonState))
 				val bT = borderThickness.copy()
-				if (isTab && buttonState.toggled) {
-					bT.bottom = 0f
-				}
 				this.borderThicknesses = bT
 				this.borderRadii = borderRadius
 			}

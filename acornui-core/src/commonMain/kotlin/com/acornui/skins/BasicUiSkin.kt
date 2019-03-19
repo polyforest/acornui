@@ -34,7 +34,6 @@ import com.acornui.component.style.*
 import com.acornui.component.text.*
 import com.acornui.core.AppConfig
 import com.acornui.core.asset.cachedGroup
-import com.acornui.core.di.Owned
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.focus.FocusManager
@@ -336,7 +335,7 @@ open class BasicUiSkin(
 		// Note that this does not style native scroll bars.
 		val size = if (userInfo.isTouchDevice) 16f else 10f
 
-		val thumb: Owned.() -> UiComponent = {
+		val thumb: SkinPart = {
 			button {
 				focusEnabled = false
 				style.set {
@@ -351,7 +350,7 @@ open class BasicUiSkin(
 			}
 		}
 
-		val track: Owned.() -> UiComponent = {
+		val track: SkinPart = {
 			rect {
 				style.backgroundColor = Color(1f, 1f, 1f, 0.4f)
 				enableDownRepeat()

@@ -9,6 +9,7 @@ import com.acornui.component.Button
 import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
 import com.acornui.component.showAssetLoadingBar
+import com.acornui.component.style.SkinPart
 import com.acornui.core.ChildRo
 import com.acornui.core.Disposable
 import com.acornui.core.Lifecycle
@@ -395,7 +396,7 @@ fun ElementContainer<UiComponent>.navAddElement(nav: NavBinding, path: String?, 
 	nav.bindPathExit(path) { removeElement(component) }
 }
 
-fun ElementContainer<UiComponent>.navAddElement(nav: NavBinding, path: String?, showPreloader: Boolean = true, disposeOnRemove: Boolean = false, factory: Owned.() -> UiComponent) {
+fun ElementContainer<UiComponent>.navAddElement(nav: NavBinding, path: String?, showPreloader: Boolean = true, disposeOnRemove: Boolean = false, factory: SkinPart) {
 	val lazy = LazyInstance(this, factory)
 	val c = this
 	nav.bindPathEnter(path) {

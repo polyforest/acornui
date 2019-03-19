@@ -19,6 +19,7 @@ package com.acornui.component
 import com.acornui.component.layout.ListRenderer
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.spacer
+import com.acornui.component.style.SkinPart
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
@@ -73,7 +74,7 @@ class NullRendererStyle : StyleBase() {
 
 	var padding by prop(Pad())
 
-	var contents by prop<Owned.() -> UiComponent>({ spacer(15f, 15f) })
+	var contents by prop<SkinPart>({ spacer(15f, 15f) })
 
 	companion object : StyleType<NullRendererStyle>
 }

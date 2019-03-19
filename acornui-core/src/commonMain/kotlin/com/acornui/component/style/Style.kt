@@ -257,7 +257,17 @@ open class StyleProp<T>(
 }
 
 /**
+ * The function signature for a factory that provides a component.
+ */
+typealias SkinPart = Owned.() -> UiComponent
+
+/**
+ * The function signature for a factory that optionally provides a component.
+ */
+typealias OptionalSkinPart = Owned.() -> UiComponent?
+
+/**
  * Used as a placeholder for skin part factories that need to be declared in the skin.
  */
-val noSkin: Owned.() -> UiComponent = { throw Exception("Skin part must be created.") }
-val noSkinOptional: Owned.() -> UiComponent? = { null }
+val noSkin: SkinPart = { throw Exception("Skin part must be created.") }
+val noSkinOptional: OptionalSkinPart = { null }

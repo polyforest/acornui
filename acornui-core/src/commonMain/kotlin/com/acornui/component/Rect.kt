@@ -16,7 +16,10 @@
 
 package com.acornui.component
 
-import com.acornui.component.drawing.*
+import com.acornui.component.drawing.rect
+import com.acornui.component.drawing.staticMesh
+import com.acornui.component.drawing.staticMeshC
+import com.acornui.component.drawing.transform
 import com.acornui.core.di.Owned
 import com.acornui.core.graphic.BlendMode
 import com.acornui.gl.core.putIndex
@@ -110,14 +113,14 @@ open class Rect(
 			stroke.clear()
 			gradient.clear()
 
-			val topLeftX = fitSize(corners.topLeft.x, corners.topRight.x, w)
-			val topLeftY = fitSize(corners.topLeft.y, corners.bottomLeft.y, h)
-			val topRightX = fitSize(corners.topRight.x, corners.topLeft.x, w)
-			val topRightY = fitSize(corners.topRight.y, corners.bottomRight.y, h)
-			val bottomRightX = fitSize(corners.bottomRight.x, corners.bottomLeft.x, w)
-			val bottomRightY = fitSize(corners.bottomRight.y, corners.topRight.y, h)
-			val bottomLeftX = fitSize(corners.bottomLeft.x, corners.bottomRight.x, w)
-			val bottomLeftY = fitSize(corners.bottomLeft.y, corners.topLeft.y, h)
+			val topLeftX = fitSize(corners.topLeft.x, maxOf(corners.topRight.x, corners.bottomRight.x), w)
+			val topLeftY = fitSize(corners.topLeft.y, maxOf(corners.bottomLeft.y, corners.bottomRight.y), h)
+			val topRightX = fitSize(corners.topRight.x, maxOf(corners.topLeft.x, corners.bottomLeft.x), w)
+			val topRightY = fitSize(corners.topRight.y, maxOf(corners.bottomRight.y, corners.bottomLeft.y), h)
+			val bottomRightX = fitSize(corners.bottomRight.x, maxOf(corners.bottomLeft.x, corners.topLeft.x), w)
+			val bottomRightY = fitSize(corners.bottomRight.y, maxOf(corners.topRight.y, corners.topLeft.y), h)
+			val bottomLeftX = fitSize(corners.bottomLeft.x, maxOf(corners.bottomRight.x, corners.topRight.x), w)
+			val bottomLeftY = fitSize(corners.bottomLeft.y, maxOf(corners.topLeft.y, corners.topRight.y), h)
 
 			// Stroke properties.
 			val borderColors = style.borderColors
@@ -135,7 +138,7 @@ open class Rect(
 			val innerBottomLeftX = maxOf(bottomLeftX, leftBorder)
 			val innerBottomLeftY = maxOf(bottomLeftY, bottomBorder)
 
-			val fillPad = Pad(0.8f)
+			val fillPad = Pad(1f)
 			if (topBorder < 1f) fillPad.top = 0f
 			if (rightBorder < 1f) fillPad.right = 0f
 			if (bottomBorder < 1f) fillPad.bottom = 0f
@@ -165,35 +168,48 @@ open class Rect(
 					}
 					if (topLeftX > 0f || bottomLeftX > 0f) {
 						// Left vertical strip
-						val width = maxOf(topLeftX, bottomLeftX)
+						val width = minOf(maxOf(topLeftX, bottomLeftX), w - maxOf(topRightX, bottomRightX))
 						val height = h - bottomLeftY - topLeftY
 						if (height > 0f)
 							rect(0f, topLeftY, width, height, tint)
 					}
 					if (topRightX > 0f || bottomRightX > 0f) {
 						// Right vertical strip
-						val width = maxOf(topRightX, bottomRightX)
+						val width = minOf(maxOf(topRightX, bottomRightX), w - maxOf(topLeftX, bottomLeftX))
+
 						val height = h - bottomRightY - topRightY
 						if (height > 0f)
 							rect(w - width, topRightY, width, height, tint)
 					}
 					if (topLeftX < bottomLeftX) {
 						// Vertical slice to the right of top left corner
-						if (topLeftY > 0f)
-							rect(topLeftX, 0f, bottomLeftX - topLeftX, topLeftY, tint)
+						if (topLeftY > 0f) {
+							val width = minOf(bottomLeftX - topLeftX, w - topRightX - topLeftX)
+							if (width > 0f)
+								rect(topLeftX, 0f, width, topLeftY, tint)
+						}
 					} else if (topLeftX > bottomLeftX) {
 						// Vertical slice to the right of bottom left corner
-						if (bottomLeftY > 0f)
-							rect(bottomLeftX, h - bottomLeftY, topLeftX - bottomLeftX, bottomLeftY, tint)
+						if (bottomLeftY > 0f) {
+							val width = minOf(topLeftX - bottomLeftX, w - bottomRightX - bottomLeftX)
+							if (width > 0f)
+								rect(bottomLeftX, h - bottomLeftY, width, bottomLeftY,  tint)
+						}
 					}
 					if (topRightX < bottomRightX) {
 						// Vertical slice to the left of top right corner
-						if (topRightY > 0f)
-							rect(w - bottomRightX, 0f, bottomRightX - topRightX, topRightY, tint)
+						if (topRightY > 0f) {
+							val width = minOf(bottomRightX - topRightX, w - topRightX - topLeftX)
+							if (width > 0f)
+								rect(w - topRightX - width, 0f, width, topRightY, tint)
+						}
 					} else if (topRightX > bottomRightX) {
 						// Vertical slice to the left of bottom right corner
-						if (bottomRightY > 0f)
-							rect(w - topRightX, h - bottomRightY, topRightX - bottomRightX, bottomRightY, tint)
+						if (bottomRightY > 0f) {
+							val width = minOf(topRightX - bottomRightX, w - bottomRightX - bottomLeftX)
+							if (width > 0f)
+								rect(w - bottomRightX - width, h - bottomRightY, width, bottomRightY, tint)
+						}
 					}
 
 					if (topLeftCorner.texture != null) {
