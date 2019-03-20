@@ -21,6 +21,7 @@ import com.acornui.component.drawing.staticMesh
 import com.acornui.component.drawing.staticMeshC
 import com.acornui.component.drawing.transform
 import com.acornui.core.di.Owned
+import com.acornui.core.floor
 import com.acornui.core.graphic.BlendMode
 import com.acornui.gl.core.putIndex
 import com.acornui.gl.core.putQuadIndices
@@ -589,9 +590,7 @@ private fun fitSize(value: Float, other: Float, max: Float): Float {
 	val v2 = if (other < 0f) 0f else other
 	val total = v1 + v2
 	return if (total > max) {
-		val r = v1 * max / total
-		val frac = r.fpart()
-		return if (frac >= 0.5f) r - frac + 1f else r - frac
+		return (v1 * max / total).floor()
 	} else {
 		v1
 	}
