@@ -132,7 +132,7 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 
 		background.setSize(maxOf(padding.expandWidth2(colorSwatch.width), w), maxOf(padding.expandHeight2(colorSwatch.height), h))
 		out.set(background.width, background.height)
-		colorSwatch.setPosition(0.5f * (out.width - colorSwatch.width), 0.5f * (out.height - colorSwatch.height))
+		colorSwatch.moveTo(0.5f * (out.width - colorSwatch.width), 0.5f * (out.height - colorSwatch.height))
 
 		colorPaletteLift.moveTo(0f, h)
 	}
@@ -153,8 +153,8 @@ class ColorPickerStyle : StyleBase() {
 
 	var padding: PadRo by prop(Pad(4f))
 	var background by prop(noSkin)
-	var defaultSwatchWidth by prop(20f)
-	var defaultSwatchHeight by prop(20f)
+	var defaultSwatchWidth by prop(21f)
+	var defaultSwatchHeight by prop(21f)
 	var colorSwatch by prop(noSkin)
 
 	companion object : StyleType<ColorPickerStyle>

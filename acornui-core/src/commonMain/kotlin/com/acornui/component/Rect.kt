@@ -592,7 +592,7 @@ private fun fitSize(value: Float, other: Float, max: Float): Float {
 	return if (total > max) {
 		return (v1 * max / total).floor()
 	} else {
-		v1
+		v1.floor()
 	}
 }
 
