@@ -17,7 +17,6 @@
 package com.acornui.core.text
 
 import com.acornui.core.i18n.Locale
-import kotlin.properties.Delegates
 
 /**
  * This class formats numbers into localized string representations.

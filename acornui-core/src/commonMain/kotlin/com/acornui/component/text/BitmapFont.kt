@@ -139,7 +139,6 @@ suspend fun Scoped.loadFontFromDir(fontPath: String, group: CachedGroup): Bitmap
 
 /**
  * Loads a font where the images are standalone files in the specified directory.
- * @param fontKey The key of the font, which should match the fontKey property in [CharStyle].
  * @param fontPath The path of the font data file. (By default the font data loader expects a .fnt file
  * in the AngelCode format, but this can be changed by associating a different type of loader for the
  * BitmapFontData asset type.)
@@ -147,6 +146,9 @@ suspend fun Scoped.loadFontFromDir(fontPath: String, group: CachedGroup): Bitmap
  * @param group The caching group, to allow the loaded assets to be disposed as one.
  */
 suspend fun Scoped.loadFontFromDir(fontPath: String, imagesDir: String, group: CachedGroup): BitmapFont {
+	val existing = BitmapFontRegistry.getFont(fontPath, warnOnNotFound = false)
+	if (existing != null) return existing
+
 	val files = inject(Files)
 	val dir = files.getDir(imagesDir) ?: throw Exception("Directory not found: $imagesDir")
 	val bitmapFontData = loadAndCache(fontPath, AssetType.TEXT, AngelCodeParser, group).await()
