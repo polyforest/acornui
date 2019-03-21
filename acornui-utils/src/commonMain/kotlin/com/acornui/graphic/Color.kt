@@ -15,6 +15,8 @@
 
 */
 
+@file:Suppress("MemberVisibilityCanBePrivate", "unused")
+
 package com.acornui.graphic
 
 import com.acornui.recycle.Clearable
@@ -147,7 +149,7 @@ data class Color(
 		override var g: Float = 0f,
 		override var b: Float = 0f,
 		override var a: Float = 0f
-): ColorRo, Clearable {
+) : ColorRo, Clearable {
 
 	/**
 	 * Sets this color to the given color.
@@ -446,6 +448,7 @@ data class Color(
 		val CYAN: ColorRo = Color(0f, 1f, 1f, 1f)
 		val OLIVE: ColorRo = Color(0.5f, 0.5f, 0f, 1f)
 		val PURPLE: ColorRo = Color(0.5f, 0f, 0.5f, 1f)
+		val INDIGO: ColorRo = Color(0.29f, 0f, 0.51f, 1f)
 		val MAROON: ColorRo = Color(0.5f, 0f, 0f, 1f)
 		val TEAL: ColorRo = Color(0f, 0.5f, 0.5f, 1f)
 		val NAVY: ColorRo = Color(0f, 0f, 0.5f, 1f)
@@ -459,14 +462,14 @@ data class Color(
 		 * 0xRRGGBBAA,
 		 * rgb(255, 255, 255),
 		 * rgba(255, 255, 255, 255),
-		 * or #RRGGBBAA.
+		 * or by name (blue)
 		 * @see [toRgbaString]
 		 */
 		fun fromStr(str: String): Color {
 			return if (str.startsWith("0x")) fromRgbaStr(str.substring(2))
 			else if (str.startsWith("#")) fromRgbaStr(str.substring(1))
 			else if (str.startsWith("rgb", ignoreCase = true)) fromCssStr(str)
-			else fromRgbaStr(str)
+			else fromName(str)?.copy() ?: fromRgbaStr(str)
 		}
 
 		fun from8888Str(value: String): Color {
@@ -524,6 +527,42 @@ data class Color(
 		fun rgba8888(color: ColorRo): Int {
 			clamped.set(color).clamp()
 			return ((clamped.r * 255).toInt() shl 24) or ((clamped.g * 255).toInt() shl 16) or ((clamped.b * 255).toInt() shl 8) or (clamped.a * 255).toInt()
+		}
+
+		private val nameColorMap = hashMapOf(
+				"clear" to CLEAR,
+				"white" to WHITE,
+				"black" to BLACK,
+				"red" to RED,
+				"brown" to BROWN,
+				"green" to GREEN,
+				"blue" to BLUE,
+				"light-blue" to LIGHT_BLUE,
+				"light-gray" to LIGHT_GRAY,
+				"light-grey" to LIGHT_GRAY,
+				"gray" to GRAY,
+				"grey" to GRAY,
+				"dark-gray" to DARK_GRAY,
+				"dark-grey" to DARK_GRAY,
+				"pink" to PINK,
+				"orange" to ORANGE,
+				"yellow" to YELLOW,
+				"magenta" to MAGENTA,
+				"cyan" to CYAN,
+				"olive" to OLIVE,
+				"purple" to PURPLE,
+				"indigo" to INDIGO,
+				"maroon" to MAROON,
+				"teal" to TEAL,
+				"navy" to NAVY
+		)
+
+		/**
+		 * Returns the color for the given name.
+		 * The only colors supported are the constants on the Color companion object.
+		 */
+		fun fromName(name: String): ColorRo? {
+			return nameColorMap[name.toLowerCase().trim()]
 		}
 	}
 }

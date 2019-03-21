@@ -83,7 +83,7 @@ object BoneDataSerializer : From<BoneData> {
 				scaleY = reader.float("scaleY") ?: 1f,
 				inheritScale = reader.bool("inheritScale") ?: true,
 				inheritRotation = reader.bool("inheritRotation") ?: true,
-				color = Color.fromStr(reader.string("color") ?: "ccccccff")
+				color = Color.fromStr(reader.string("color") ?: "#ccccccff")
 		)
 	}
 }
