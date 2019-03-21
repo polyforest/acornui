@@ -159,12 +159,14 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 				if (extendsEdge && canBreak) {
 					// Find the last good breaking point.
 					var breakIndex = textElements.indexOfLast2(spanPartIndex, currentLine.startIndex) { it.isBreaking }
-					if (breakIndex == -1) breakIndex = spanPartIndex - 1
+					if (breakIndex == -1) {
+						allowWordBreak = false
+						breakIndex = spanPartIndex - 1
+					}
 					val endIndex = textElements.indexOfFirst2(breakIndex + 1, spanPartIndex) { !it.overhangs }
 					currentLine.endIndex = if (endIndex == -1) spanPartIndex + 1
 					else endIndex
 					spanPartIndex = currentLine.endIndex
-					allowWordBreak = false
 				} else {
 					spanPartIndex++
 					currentLine.endIndex = spanPartIndex
