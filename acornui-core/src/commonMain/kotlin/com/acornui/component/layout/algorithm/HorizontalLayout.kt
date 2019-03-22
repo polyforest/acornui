@@ -17,7 +17,6 @@
 package com.acornui.component.layout.algorithm
 
 import com.acornui.collection.sortTo
-import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.ComponentInit
 import com.acornui.component.layout.*
 import com.acornui.component.style.StyleBase

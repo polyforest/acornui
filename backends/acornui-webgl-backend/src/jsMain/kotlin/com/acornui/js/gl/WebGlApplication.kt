@@ -20,7 +20,6 @@ import com.acornui.async.launch
 import com.acornui.component.GlStageImpl
 import com.acornui.component.HtmlComponent
 import com.acornui.component.Stage
-import com.acornui.core.AppConfig
 import com.acornui.core.asset.AssetType
 import com.acornui.core.asset.LoaderFactory
 import com.acornui.core.di.Owned

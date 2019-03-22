@@ -38,6 +38,7 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.SimpleHighlight
+import com.acornui.core.graphic.Window
 import com.acornui.core.input.interaction.ContextMenuStyle
 import com.acornui.core.input.interaction.ContextMenuView
 import com.acornui.core.input.interaction.enableDownRepeat
@@ -46,7 +47,6 @@ import com.acornui.core.popup.PopUpManagerStyle
 import com.acornui.core.userInfo
 import com.acornui.graphic.Color
 import com.acornui.math.Corners
-import com.acornui.math.PI
 import com.acornui.math.Pad
 import com.acornui.math.Vector2
 
@@ -59,14 +59,18 @@ open class BasicUiSkin(
 
 	protected val theme = inject(Theme)
 
-	open fun apply() {
-		target.styleRules.clear()
+	init {
 		theme.apply {
 			bgColor = inject(AppConfig).window.backgroundColor
 			evenRowBgColor = bgColor + Color(0x03030300)
 			oddRowBgColor = bgColor - Color(0x03030300)
 		}
+	}
+
+	open fun apply() {
+		target.styleRules.clear()
 		initTheme()
+		inject(Window).clearColor = theme.bgColor
 
 		target.addStyleRule(ButtonStyle().set { labelButtonSkin(theme, it) }, Button)
 		target.addStyleRule(ButtonStyle().set { checkboxSkin(theme, it) }, Checkbox)
@@ -99,7 +103,6 @@ open class BasicUiSkin(
 		contextMenuStyle()
 		calendarStyle()
 		htmlComponentStyle()
-		target.invalidateStyles()
 	}
 
 	open fun initTheme() {

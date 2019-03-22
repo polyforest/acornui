@@ -222,6 +222,8 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 	}
 }
 
+typealias ButtonStateColors = Map<ButtonState, ColorRo>
+
 fun Theme.getButtonFillColor(buttonState: ButtonState): ColorRo {
 	return when (buttonState) {
 		ButtonState.UP, ButtonState.TOGGLED_UP -> fill

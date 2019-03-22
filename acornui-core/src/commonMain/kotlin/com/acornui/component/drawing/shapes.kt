@@ -60,7 +60,7 @@ fun ShaderBatch.quad(v1: Vector2Ro, v2: Vector2Ro, v3: Vector2Ro, v4: Vector2Ro,
 	putQuadIndices()
 }
 
-fun MeshRegion.line(x1: Float, y1: Float, x2: Float, y2: Float, lineStyle: LineStyleRo, controlA: Vector2Ro? = null, controlB: Vector2Ro? = null, controlAThickness: Float, controlBThickness: Float, init: MeshRegion.() -> Unit = {}) {
+fun MeshRegion.line(x1: Float, y1: Float, x2: Float, y2: Float, lineStyle: LineStyleRo = LineStyle(), controlA: Vector2Ro? = null, controlB: Vector2Ro? = null, controlAThickness: Float = lineStyle.thickness, controlBThickness: Float = lineStyle.thickness, init: MeshRegion.() -> Unit = {}) {
 	val p1 = Vector2.obtain().set(x1, y1)
 	val p2 = Vector2.obtain().set(x2, y2)
 
@@ -69,7 +69,7 @@ fun MeshRegion.line(x1: Float, y1: Float, x2: Float, y2: Float, lineStyle: LineS
 	Vector2.free(p2)
 }
 
-fun MeshRegion.line(p1: Vector2Ro, p2: Vector2Ro, lineStyle: LineStyleRo, controlA: Vector2Ro? = null, controlB: Vector2Ro? = null, controlAThickness: Float = lineStyle.thickness, controlBThickness: Float = lineStyle.thickness, init: MeshRegion.() -> Unit = {}) = mesh {
+fun MeshRegion.line(p1: Vector2Ro, p2: Vector2Ro, lineStyle: LineStyleRo = LineStyle(), controlA: Vector2Ro? = null, controlB: Vector2Ro? = null, controlAThickness: Float = lineStyle.thickness, controlBThickness: Float = lineStyle.thickness, init: MeshRegion.() -> Unit = {}) = mesh {
 	val capBuilder = CapStyle.getCapBuilder(lineStyle.capStyle)
 			?: throw Exception("No cap builder defined for: ${lineStyle.capStyle}")
 	capBuilder.createCap(p1, p2, controlA, this, lineStyle, controlAThickness, clockwise = true)
