@@ -22,7 +22,7 @@ import com.acornui.core.input.mouseMove
 import com.acornui.core.input.wheel
 import com.acornui.math.*
 
-// TODO: largest renderer?
+// FIXME: #161 largest renderer?
 
 class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 		owner: Owned,
