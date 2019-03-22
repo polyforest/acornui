@@ -126,7 +126,7 @@ open class ScrollArea(
 
 		watch(style) {
 			tossScrolling = it.tossScrolling
-			scrollRect.style.borderRadii = it.borderRadius
+			scrollRect.style.borderRadii = it.borderRadii
 
 			corner?.dispose()
 			corner = it.corner(this)
@@ -379,7 +379,10 @@ class ScrollAreaStyle : StyleBase() {
 
 	var tossScrolling by prop(false)
 
-	var borderRadius: CornersRo by prop(Corners())
+	/**
+	 *
+	 */
+	var borderRadii: CornersRo by prop(Corners())
 
 	/**
 	 * If true, the scroll area will automatically scroll to show the focused element.

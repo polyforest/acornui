@@ -16,14 +16,13 @@
 
 package com.acornui.component
 
-import com.acornui.component.scroll.ScrollRect
-import com.acornui.component.style.StyleBase
-import com.acornui.component.style.StyleType
-import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
-import com.acornui.gl.core.*
-import com.acornui.graphic.Color
-import com.acornui.math.*
+import com.acornui.gl.core.Gl20
+import com.acornui.gl.core.GlState
+import com.acornui.gl.core.ShaderBatch
+import com.acornui.gl.core.setScissor
+import com.acornui.math.IntRectangle
+import com.acornui.math.Vector3
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -66,86 +65,6 @@ object StencilUtil {
 		}
 		depth--
 	}
-}
-
-
-class GlScrollRect(
-		owner: Owned
-) : ElementContainerImpl<UiComponent>(owner), ScrollRect {
-
-	override val style = bind(ScrollRectStyle())
-
-	private val contents = addChild(container { interactivityMode = InteractivityMode.CHILDREN })
-	private val maskClip = addChild(rect {
-		style.backgroundColor = Color.WHITE
-		interactivityMode = InteractivityMode.NONE
-	})
-
-	private val _contentBounds = Rectangle()
-	override val contentBounds: RectangleRo
-		get() {
-			_contentBounds.set(contents.x, contents.y, contents.width, contents.height)
-			return _contentBounds
-		}
-
-	init {
-		watch(style) {
-			maskClip.style.borderRadii = it.borderRadii
-			maskClip.style.margin = it.padding
-		}
-	}
-
-	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {
-		contents.addElement(newIndex, element)
-	}
-
-	override fun onElementRemoved(index: Int, element: UiComponent) {
-		contents.removeElement(element)
-	}
-
-	override fun scrollTo(x: Float, y: Float) {
-		contents.setPosition(-x, -y)
-	}
-
-	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		val w = explicitWidth ?: 100f
-		val h = explicitHeight ?: 100f
-		maskClip.setSize(w, h)
-		maskClip.setScaling(1f, 1f)
-		out.set(w, h)
-	}
-
-	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
-		return maskClip.intersectsGlobalRay(globalRay, intersection)
-	}
-
-	private val contentsClip = MinMax()
-
-	override fun draw(clip: MinMaxRo) {
-		StencilUtil.mask(glState.batch, gl, {
-			if (maskClip.visible) {
-				maskClip.render(clip)
-			}
-		}) {
-			localToCanvas(contentsClip.set(0f, 0f, _bounds.width, _bounds.height))
-			contentsClip.intersection(clip)
-
-			contents.render(contentsClip)
-		}
-	}
-}
-
-class ScrollRectStyle : StyleBase() {
-
-	override val type: StyleType<ScrollRectStyle> = Companion
-	var borderRadii: CornersRo by prop(Corners())
-
-	/**
-	 * Pads the mask.  This will not affect the layout of the Scroll Rect's elements.
-	 */
-	var padding: PadRo by prop(Pad())
-
-	companion object : StyleType<ScrollRectStyle>
 }
 
 

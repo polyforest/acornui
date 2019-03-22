@@ -25,7 +25,6 @@ import com.acornui.component.scroll.ScrollPolicy
 import com.acornui.component.scroll.scrollArea
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.Styleable
-import com.acornui.component.style.set
 import com.acornui.core.Disposable
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
@@ -45,7 +44,6 @@ interface TextInput : Focusable, SelectableComponent, Styleable, Clearable {
 
 	val charStyle: CharStyle
 	val flowStyle: TextFlowStyle
-	val boxStyle: BoxStyle
 	val textInputStyle: TextInputStyle
 
 	/**
@@ -90,15 +88,13 @@ interface TextInput : Focusable, SelectableComponent, Styleable, Clearable {
 	companion object : StyleTag
 }
 
-// TODO: Reduce this. instead of boxStyle, use a background component
 // TODO: instead of cursor component, just use 4 vertices
 
 class TextInputImpl(owner: Owned) : ContainerImpl(owner), TextInput {
 
-	private val background = addChild(rect())
+	private var background: UiComponent? = null
 
 	override val textInputStyle = bind(TextInputStyle())
-	override val boxStyle = bind(BoxStyle())
 	private val editableText = addChild(EditableText(this))
 
 	override val charStyle: CharStyle
@@ -158,14 +154,13 @@ class TextInputImpl(owner: Owned) : ContainerImpl(owner), TextInput {
 	init {
 		focusEnabled = true
 		styleTags.add(TextInput)
-		watch(boxStyle) {
-			background.style.set(it)
-		}
 		watch(textInputStyle) {
+			background?.dispose()
+			background = addOptionalChild(0, it.background(this))
+
 			editableText.cursorColorOne = it.cursorColorOne
 			editableText.cursorColorTwo = it.cursorColorTwo
 			editableText.cursorBlinkSpeed = it.cursorBlinkSpeed
-			invalidateLayout()
 		}
 	}
 
@@ -193,8 +188,8 @@ class TextInputImpl(owner: Owned) : ContainerImpl(owner), TextInput {
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		val pad = boxStyle.padding
-		val margin = boxStyle.margin
+		val pad = textInputStyle.padding
+		val margin = textInputStyle.margin
 		val h = margin.reduceHeight(pad.reduceHeight(explicitHeight))
 
 		val w = if (explicitWidth == null && defaultWidthFromText != null) {
@@ -208,8 +203,8 @@ class TextInputImpl(owner: Owned) : ContainerImpl(owner), TextInput {
 		editableText.setPosition(margin.left + pad.left, margin.top + pad.top)
 		out.set(explicitWidth ?: margin.expandHeight2(pad.expandHeight2(w)), explicitHeight
 				?: margin.expandHeight2(pad.expandHeight2(editableText.height)))
-		background.setSize(margin.reduceWidth2(out.width), margin.reduceHeight(out.height))
-		background.setPosition(margin.left, margin.top)
+		background?.setSize(margin.reduceWidth2(out.width), margin.reduceHeight(out.height))
+		background?.setPosition(margin.left, margin.top)
 	}
 
 	override fun clear() {
@@ -243,10 +238,9 @@ interface TextArea : TextInput {
 
 class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 
-	private val background = addChild(rect())
+	private var background: UiComponent? = null
 
 	override val textInputStyle = bind(TextInputStyle())
-	override val boxStyle = bind(BoxStyle())
 
 	private val editableText = EditableText(this).apply {
 		textField.allowClipping = false
@@ -342,12 +336,12 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 		focusEnabled = true
 		styleTags.add(TextInput)
 		styleTags.add(TextArea)
-		watch(boxStyle) {
-			scroller.stackStyle.padding = it.padding
-			scroller.style.borderRadius = it.borderRadii
-			background.style.set(it)
-		}
 		watch(textInputStyle) {
+			background?.dispose()
+			background = addOptionalChild(0, it.background(this))
+
+			scroller.stackStyle.padding = it.padding
+			scroller.style.borderRadii = it.borderRadii
 			editableText.cursorColorOne = it.cursorColorOne
 			editableText.cursorColorTwo = it.cursorColorTwo
 			editableText.cursorBlinkSpeed = it.cursorBlinkSpeed
@@ -423,15 +417,15 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		val margin = boxStyle.margin
+		val margin = textInputStyle.margin
 		val w = margin.reduceWidth2(explicitWidth ?: textInputStyle.defaultWidth)
 		val h = margin.reduceHeight(explicitHeight)
 		scroller.setSize(w, h)
 		scroller.setPosition(margin.left, margin.top)
 		editableText.pageHeight = h ?: 400f
 		out.set(explicitWidth ?: textInputStyle.defaultWidth, explicitHeight ?: margin.expandHeight2(scroller.height))
-		background.setSize(margin.reduceWidth2(out.width), margin.reduceHeight(out.height))
-		background.setPosition(margin.left, margin.top)
+		background?.setSize(margin.reduceWidth2(out.width), margin.reduceHeight(out.height))
+		background?.setPosition(margin.left, margin.top)
 	}
 
 	override fun clear() {

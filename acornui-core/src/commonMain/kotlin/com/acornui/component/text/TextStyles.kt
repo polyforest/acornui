@@ -20,14 +20,12 @@ import com.acornui.collection.addAll
 import com.acornui.component.ComponentInit
 import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.layout.algorithm.FlowVAlign
-import com.acornui.component.style.StyleBase
-import com.acornui.component.style.StyleType
-import com.acornui.component.style.styleProperty
-import com.acornui.component.style.styleTag
+import com.acornui.component.style.*
 import com.acornui.core.di.Owned
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.color
+import com.acornui.math.Corners
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.serialization.*
@@ -304,6 +302,26 @@ class TextInputStyle : StyleBase() {
 	 * The number of seconds between cursor blinks.
 	 */
 	var cursorBlinkSpeed: Float by prop(0.5f)
+
+	/**
+	 * The background of this text input.
+	 */
+	var background: OptionalSkinPart by prop(noSkinOptional)
+
+	/**
+	 * Whitespace between the bounds of this text input and the contents.
+	 */
+	var margin: PadRo by prop(Pad())
+
+	/**
+	 * Whitespace between the background and text.
+	 */
+	var padding: PadRo by prop(Pad())
+
+	/**
+	 * Used for clipping, this should match that of the background border radius.
+	 */
+	var borderRadii by prop(Corners())
 
 	companion object : StyleType<TextInputStyle>
 }

@@ -349,7 +349,7 @@ class DataGrid<RowData>(
 			columnDividersContents.clearElements(dispose = true)
 			columnDividersHeader.clearElements(dispose = true)
 
-			clipper.style.borderRadii = Corners().set(it.borderRadius).deflate(it.borderThickness)
+			clipper.style.borderRadii = Corners().set(it.borderRadii).deflate(it.borderThicknesses)
 			background?.dispose()
 			background = addChild(0, it.background(this))
 
@@ -800,7 +800,7 @@ class DataGrid<RowData>(
 		private set
 
 	private fun updateColumnWidths() {
-		var availableW = style.borderThickness.reduceWidth(explicitWidth)
+		var availableW = style.borderThicknesses.reduceWidth(explicitWidth)
 		val vScrollBarW = if (vScrollPolicy == ScrollPolicy.OFF) 0f else vScrollBar.minWidth ?: 0f
 		if (availableW != null) availableW -= vScrollBarW
 
@@ -878,7 +878,7 @@ class DataGrid<RowData>(
 	 * Calculates the first visible column, and the last visible column.
 	 */
 	private fun updateColumnVisibility() {
-		var availableW = style.borderThickness.reduceWidth(explicitWidth)
+		var availableW = style.borderThicknesses.reduceWidth(explicitWidth)
 		val vScrollBarW = if (vScrollPolicy == ScrollPolicy.OFF) 0f else vScrollBar.minWidth ?: 0f
 		if (availableW != null) availableW -= vScrollBarW
 
@@ -939,7 +939,7 @@ class DataGrid<RowData>(
 	 */
 	private fun setColumnWidth(columnIndex: Int, newWidth: Float) {
 		val column = _columns[columnIndex]
-		val availableWidth = if (column.widthPercent == null) null else style.borderThickness.reduceWidth(explicitWidth)
+		val availableWidth = if (column.widthPercent == null) null else style.borderThicknesses.reduceWidth(explicitWidth)
 		if (availableWidth != null) {
 			column.widthPercent = newWidth / availableWidth
 		} else {
@@ -953,7 +953,7 @@ class DataGrid<RowData>(
 	 */
 	private fun getPreferredColumnWidth(column: DataGridColumn<RowData, *>): Float {
 		if (!column.visible) return 0f
-		val width = style.borderThickness.reduceWidth(explicitWidth)
+		val width = style.borderThicknesses.reduceWidth(explicitWidth)
 		return column.getPreferredWidth(width) ?: maxOf(column.minWidth, style.defaultColumnWidth)
 	}
 
@@ -963,7 +963,7 @@ class DataGrid<RowData>(
 			cache.usedColumns.markUsed(columnIndex)
 			true
 		}
-		val border = style.borderThickness
+		val border = style.borderThicknesses
 		val contentsW = columnsWidth - hScrollBar.scrollModel.max
 		val bodyW = contentsW + if (vScrollPolicy != ScrollPolicy.OFF) vScrollBar.minWidth ?: 0f else 0f
 
@@ -1645,7 +1645,7 @@ class DataGrid<RowData>(
 			val column = _columns[columnIndex]
 			val localP = columnResizeHandles.canvasToLocal(Vector2.obtain().set(it.position))
 
-			val availableWidth = style.borderThickness.reduceWidth(explicitWidth)
+			val availableWidth = style.borderThicknesses.reduceWidth(explicitWidth)
 			var newWidth: Float = maxOf(column.minWidth, localP.x - colResizeStartX)
 			Vector2.free(localP)
 			if (availableWidth == null || hScrollPolicy != ScrollPolicy.OFF) {
@@ -1761,12 +1761,12 @@ class DataGridStyle : StyleBase() {
 	/**
 	 * Used for clipping, this should match that of the background border radius.
 	 */
-	var borderRadius by prop(Corners())
+	var borderRadii by prop(Corners())
 
 	/**
 	 * Used for clipping, this should match that of the background border thickness.
 	 */
-	var borderThickness by prop(Pad())
+	var borderThicknesses by prop(Pad())
 
 	/**
 	 * Used if a column has no set width or widthPercent.

@@ -139,15 +139,20 @@ open class BasicUiSkin(
 		target.addStyleRule(charStyle { selectable = true }, withAncestor(TextInput) or withAncestor(TextArea))
 		loadBitmapFonts()
 
-		val textInputBoxStyle = BoxStyle()
-		textInputBoxStyle.apply {
-			backgroundColor = theme.inputFill
-			borderColors = BorderColors(theme.stroke)
-			borderThicknesses = Pad(theme.strokeThickness)
+		val textInputStyle = TextInputStyle().apply {
+			background = {
+				rect {
+					style.apply {
+						backgroundColor = theme.inputFill
+						borderColors = BorderColors(theme.stroke)
+						borderThicknesses = Pad(theme.strokeThickness)
+					}
+				}
+			}
 			padding = Pad(theme.strokeThickness + 2f)
 		}
-		target.addStyleRule(textInputBoxStyle, TextInput)
-		target.addStyleRule(textInputBoxStyle, TextArea)
+		target.addStyleRule(textInputStyle, TextInput)
+		target.addStyleRule(textInputStyle, TextArea)
 
 		val textInputFlowStyle = TextFlowStyle()
 		textInputFlowStyle.multiline = false
@@ -395,8 +400,6 @@ open class BasicUiSkin(
 	}
 
 	protected open fun sliderStyle() {
-		// Scroll bars (usually only used in GL versions)
-
 		val vSliderStyle = ScrollBarStyle()
 		vSliderStyle.defaultSize = 200f
 		vSliderStyle.inactiveAlpha = 1f
@@ -578,8 +581,8 @@ open class BasicUiSkin(
 			resizeHandleWidth = if (userInfo.isTouchDevice) 16f else 8f
 			sortDownArrow = { atlas(theme.atlasPath, "DownArrow") { colorTint = theme.iconColor } }
 			sortUpArrow = { atlas(theme.atlasPath, "UpArrow") { colorTint = theme.iconColor } }
-			borderRadius = Corners(theme.borderRadius)
-			borderThickness = Pad(theme.strokeThickness + 1f)
+			borderRadii = Corners(theme.borderRadius)
+			borderThicknesses = Pad(theme.strokeThickness + 1f)
 			cellFocusHighlight = {
 				SimpleHighlight(target, theme.atlasPath, "FocusRect").apply { colorTint = theme.strokeToggled }
 			}

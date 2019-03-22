@@ -137,7 +137,7 @@ class PopUpManagerStyle : StyleBase() {
 
 	override val type: StyleType<PopUpManagerStyle> = PopUpManagerStyle
 
-	var modalFill by prop(noSkin)
+	var modalFill by prop(noSkinOptional)
 	var modalEaseIn by prop(Easing.pow2In)
 	var modalEaseOut by prop(Easing.pow2Out)
 	var modalEaseInDuration by prop(0.2f)
@@ -250,7 +250,7 @@ class PopUpManagerImpl(private val root: UiComponent) : ElementLayoutContainerIm
 			modalFill?.dispose()
 			modalFill = it.modalFill(this)
 			modalFillContainer.apply {
-				+modalFill!! layout { fill() }
+				addOptionalElement(modalFill)?.layout { fill() }
 			}
 			Unit
 		}
