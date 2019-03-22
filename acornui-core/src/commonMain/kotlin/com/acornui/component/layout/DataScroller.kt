@@ -20,10 +20,7 @@ import com.acornui.core.input.interaction.MouseInteractionRo
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.mouseMove
 import com.acornui.core.input.wheel
-import com.acornui.math.Bounds
-import com.acornui.math.Pad
-import com.acornui.math.Vector2
-import com.acornui.math.Vector2Ro
+import com.acornui.math.*
 
 // TODO: largest renderer?
 
@@ -58,7 +55,8 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 			return scrollBar.scrollModel.max
 		}
 
-	private val scrollBar = addChild(if (isVertical) vScrollBar() else hScrollBar())
+	private val scrollBarClipper = addChild(scrollRect())
+	private val scrollBar = scrollBarClipper.addElement(if (isVertical) vScrollBar() else hScrollBar())
 
 	/**
 	 * The scroll area is just used for clipping, not scrolling.
@@ -305,6 +303,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 		clipper.setSize(bottomContents.width, bottomContents.height)
 		clipper.setPosition(pad.left, pad.top)
 
+		scrollBarClipper.setSize(out)
 		background?.setSize(out)
 	}
 
@@ -334,6 +333,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 
 			background?.dispose()
 			background = addOptionalChild(0, it.background(this))
+			scrollBarClipper.style.borderRadii = it.borderRadii
 		}
 
 		wheel().add {
@@ -359,12 +359,20 @@ class DataScrollerStyle : StyleBase() {
 
 	override val type: StyleType<DataScrollerStyle> = DataScrollerStyle
 
+	/**
+	 * The background of the data scroller.
+	 */
 	var background by prop(noSkinOptional)
 
 	/**
 	 * The padding between the background and elements.
 	 */
 	var padding by prop(Pad(0f))
+
+	/**
+	 * Used for clipping, this should match that of the background border radius.
+	 */
+	var borderRadii by prop(Corners(0f))
 
 	/**
 	 * The background for each row.

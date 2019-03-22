@@ -549,6 +549,7 @@ open class BasicUiSkin(
 					}
 				}
 			}
+			borderRadii = Corners(0f, 0f, theme.borderRadius, theme.borderRadius)
 		}
 		target.styleRules.add(StyleRule(dataScrollerStyle, withAncestor(OptionList)))
 
@@ -557,12 +558,10 @@ open class BasicUiSkin(
 		}
 		target.styleRules.add(StyleRule(scrollRectStyle, withAncestor(OptionList)))
 
-		val textInputBoxStyle = BoxStyle()
-		textInputBoxStyle.apply {
-			backgroundColor = Color.CLEAR
-			borderThicknesses = Pad(0f)
+		val textInputStyle = TextInputStyle().apply {
+			background = noSkinOptional
 		}
-		target.addStyleRule(textInputBoxStyle, withAncestor(OptionList) and TextInput)
+		target.addStyleRule(textInputStyle, withAncestor(OptionList) and TextInput)
 	}
 
 	protected open fun dataGridStyle() {
