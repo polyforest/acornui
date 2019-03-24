@@ -23,12 +23,13 @@ import com.acornui.file.FileIoManager
 import com.acornui.file.FileReader
 import com.acornui.io.NativeReadBuffer
 import com.acornui.io.NativeReadByteBuffer
+import com.acornui.js.html.hide
 import com.acornui.js.io.JsByteBuffer
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Uint8Array
 import org.w3c.dom.HTMLAnchorElement
+import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.Node
 import org.w3c.dom.events.Event
 import org.w3c.dom.url.URL
 import org.w3c.files.Blob
@@ -39,7 +40,7 @@ import kotlin.browser.window
 import org.w3c.files.File as DomFile
 import org.w3c.files.FileReader as JsFileApiReader
 
-class JsFileIoManager : FileIoManager {
+class JsFileIoManager(private val root: HTMLElement) : FileIoManager {
 
 	override val saveSupported: Boolean = true
 	private var filePicker: HTMLInputElement? = null
@@ -67,22 +68,20 @@ class JsFileIoManager : FileIoManager {
 	}
 
 	private fun createFilePicker(): HTMLInputElement {
+		disposeFilePicker()
 		val newFilePicker = document.createElement("input") as HTMLInputElement
 		newFilePicker.type = "file"
-		// Required for iOS Safari
-		newFilePicker.setAttribute("style", "width: 0px; height: 0px; overflow: hidden;")
-		newFilePicker.style.visibility = "hidden"
+		newFilePicker.hide()
+		// Workaround to onchange not firing:
 		newFilePicker.onclick = null
-		document.body?.appendChild(newFilePicker)
+		root.appendChild(newFilePicker)
 		return newFilePicker
 	}
 
-	private fun destroyFilePicker() {
-		val body = document.body
-		if (body != null && body.contains(filePicker)) {
-			body.removeChild(filePicker as Node)
-			filePicker = null
-		}
+	private fun disposeFilePicker() {
+		val filePicker = filePicker ?: return
+		root.removeChild(filePicker)
+		this.filePicker = null
 	}
 
 	private fun getFileReaders(fileFilterGroups: List<FileFilterGroup>?, onSuccess: (Any) -> Unit) {
@@ -104,14 +103,12 @@ class JsFileIoManager : FileIoManager {
 	private fun FileFilterGroup.toFilterListStr(): String = extensions.joinToString(",") { ".$it" }
 
 	override fun pickFileForOpen(fileFilterGroups: List<FileFilterGroup>?, onSuccess: (FileReader) -> Unit) {
-		destroyFilePicker()
 		filePicker = createFilePicker()
 		@Suppress("UNCHECKED_CAST")
 		getFileReaders(fileFilterGroups, onSuccess as (Any?) -> Unit)
 	}
 
 	override fun pickFilesForOpen(fileFilterGroups: List<FileFilterGroup>?, onSuccess: (List<FileReader>) -> Unit) {
-		destroyFilePicker()
 		filePicker = createFilePicker()
 		filePicker?.multiple = true
 		@Suppress("UNCHECKED_CAST")
@@ -137,17 +134,17 @@ class JsFileIoManager : FileIoManager {
 			val url = URL.createObjectURL(file)
 			a.href = url
 			a.download = defaultFilename
-			document.body?.appendChild(a)
+			root.appendChild(a)
 			a.click()
 			window.setTimeout({
-				document.body?.removeChild(a)
+				root.removeChild(a)
 				URL.revokeObjectURL(url)
 			}, 0)
 		}
 	}
 
 	override fun dispose() {
-		destroyFilePicker()
+		disposeFilePicker()
 	}
 }
 

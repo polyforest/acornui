@@ -16,9 +16,7 @@
 
 package com.acornui.js.html
 
-import org.w3c.dom.DataTransfer
-import org.w3c.dom.EventInit
-import org.w3c.dom.Node
+import org.w3c.dom.*
 import org.w3c.dom.events.Event
 
 /**
@@ -35,4 +33,15 @@ fun Node.owns(element: Node): Boolean {
 		p = p.parentNode
 	}
 	return false
+}
+
+fun HTMLElement.hide() {
+	style.apply {
+		// Necessary to hide on iOS.
+		width = "0px"
+		height = "0px"
+		overflowX = "hidden"
+		overflowY = "hidden"
+		visibility = "hidden"
+	}
 }

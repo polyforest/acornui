@@ -81,6 +81,7 @@ import com.acornui.jvm.graphic.LwjglGl20
 import com.acornui.jvm.input.JvmClipboard
 import com.acornui.jvm.input.GlfwMouseInput
 import com.acornui.jvm.input.LwjglKeyInput
+import com.acornui.jvm.input.MockTouchScreenKeyboard
 import com.acornui.jvm.io.JvmBufferFactory
 import com.acornui.jvm.io.JvmRestServiceFactory
 import com.acornui.jvm.loader.JvmBinaryLoader
@@ -254,6 +255,10 @@ open class LwjglApplication : ApplicationBase() {
 
 	protected open val keyInputTask by BootTask {
 		set(KeyInput, LwjglKeyInput(getWindowId()))
+	}
+
+	protected open val touchScreenKeyboardTask by BootTask {
+		set(TouchScreenKeyboard, MockTouchScreenKeyboard)
 	}
 
 	protected open val cameraTask by BootTask {

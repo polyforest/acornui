@@ -29,14 +29,18 @@ import com.acornui.core.focus.FakeFocusMouse
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.FocusManagerImpl
 import com.acornui.core.graphic.Window
+import com.acornui.core.input.TouchScreenKeyboard
 import com.acornui.error.stack
+import com.acornui.file.FileIoManager
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.GlStateImpl
 import com.acornui.js.JsApplicationBase
+import com.acornui.js.file.JsFileIoManager
 import com.acornui.js.html.JsHtmlComponent
 import com.acornui.js.html.WebGl
 import com.acornui.js.input.JsClickDispatcher
+import com.acornui.js.input.JsTouchScreenKeyboard
 import com.acornui.logging.Log
 import com.acornui.uncaughtExceptionHandler
 import org.khronos.webgl.WebGLContextAttributes
@@ -51,9 +55,12 @@ import kotlin.dom.clear
 @Suppress("unused")
 open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 
+	private val rootElement: HTMLElement by lazy {
+		document.getElementById(rootId) as HTMLElement
+	}
+
 	override val canvasTask by BootTask {
-		val rootElement = document.getElementById(rootId) ?: throw Exception("Could not find root canvas $rootId")
-		val root = rootElement as HTMLElement
+		val root = rootElement
 		root.style.setProperty("-webkit-tap-highlight-color", "rgba(0,0,0,0)")
 		root.clear()
 		val canvas = document.createElement("canvas") as HTMLCanvasElement
@@ -77,10 +84,11 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 		attributes.premultipliedAlpha = false
 		attributes.preserveDrawingBuffer = true
 
-		val context = WebGl.getContext(get(CANVAS), attributes) ?: throw Exception("Browser does not support WebGL") // TODO: Make this a better UX
+		val context = WebGl.getContext(get(CANVAS), attributes)
+				?: throw Exception("Browser does not support WebGL") // TODO: Make this a better UX
 		set(Gl20, WebGl20(context))
 	}
-	
+
 	override val windowTask by BootTask {
 		val config = config()
 		val window = WebGlWindowImpl(get(CANVAS), config.window, get(Gl20))
@@ -112,22 +120,28 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 	/**
 	 * The last chance to set dependencies on the application scope.
 	 */
-	override val componentsTask  by BootTask {
-		val root = document.getElementById(rootId) as HTMLElement
-		set(HtmlComponent.FACTORY_KEY, { JsHtmlComponent(it, root) })
+	override val componentsTask by BootTask {
+		set(HtmlComponent.FACTORY_KEY, { JsHtmlComponent(it, rootElement) })
 	}
 
 	override val focusManagerTask by BootTask {
 		// When the focused element changes, make sure the document's active element is the canvas.
 		val canvas = get(CANVAS)
 		val focusManager = FocusManagerImpl()
-		focusManager.focusedChanged.add {
-			old, new ->
+		focusManager.focusedChanged.add { old, new ->
 			if (new != null) {
 				canvas.focus()
 			}
 		}
 		set(FocusManager, focusManager)
+	}
+
+	protected open val touchScreenKeyboardTask by BootTask {
+		set(TouchScreenKeyboard, JsTouchScreenKeyboard(rootElement, get(CANVAS)))
+	}
+
+	protected open val fileIoManagerTask by BootTask {
+		set(FileIoManager, JsFileIoManager(rootElement))
 	}
 
 	override suspend fun createStage(owner: Owned): Stage {
@@ -139,7 +153,7 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 		owner.own(FakeFocusMouse(owner.injector))
 		owner.own(JsClickDispatcher(get(CANVAS), owner.injector))
 	}
-	
+
 	companion object {
 		val CANVAS = dKey<HTMLCanvasElement, HTMLElement>(JsApplicationBase.CANVAS)
 	}

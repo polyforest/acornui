@@ -143,6 +143,8 @@ open class ScrollArea(
 
 	override fun onActivated() {
 		super.onActivated()
+		// Must call super.onActivated first so that the priority of this scroll area's changed handler is less than
+		// that of nested scroll areas.
 		focusManager.focusedChanged.add(this::focusChangedHandler)
 	}
 

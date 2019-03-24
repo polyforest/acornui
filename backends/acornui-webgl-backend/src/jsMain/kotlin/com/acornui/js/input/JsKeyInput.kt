@@ -32,13 +32,16 @@ import kotlin.browser.window
  * @author nbilyk
  */
 class JsKeyInput(
-		root: HTMLElement,
+		canvas: HTMLElement,
 		captureAllKeyboardInput: Boolean
 ) : KeyInput {
 
-	override val keyDown: Signal1<KeyInteraction> = Signal1()
-	override val keyUp: Signal1<KeyInteraction> = Signal1()
-	override val char: Signal1<CharInteraction> = Signal1()
+	private val _keyDown = Signal1<KeyInteraction>()
+	override val keyDown = _keyDown.asRo()
+	private val _keyUp = Signal1<KeyInteraction>()
+	override val keyUp = _keyDown.asRo()
+	private val _char = Signal1<CharInteraction>()
+	override val char = _char.asRo()
 
 	private val keyEvent = KeyInteraction()
 	private val charEvent = CharInteraction()
@@ -53,7 +56,7 @@ class JsKeyInput(
 			if (!jsEvent.repeat) {
 				downMap.put(keyEvent.keyCode, keyEvent.location, true)
 			}
-			keyDown.dispatch(keyEvent)
+			_keyDown.dispatch(keyEvent)
 			if (keyEvent.defaultPrevented()) jsEvent.preventDefault()
 		}
 	}
@@ -64,7 +67,7 @@ class JsKeyInput(
 			keyEvent.clear()
 			populateKeyEvent(jsEvent)
 			downMap[keyEvent.keyCode]?.clear() // Browsers give incorrect key location properties on key up.
-			keyUp.dispatch(keyEvent)
+			_keyUp.dispatch(keyEvent)
 			if (keyEvent.defaultPrevented()) jsEvent.preventDefault()
 		}
 	}
@@ -74,7 +77,7 @@ class JsKeyInput(
 		if (jsEvent is KeyboardEvent) {
 			charEvent.clear()
 			charEvent.char = jsEvent.charCode.toChar()
-			char.dispatch(charEvent)
+			_char.dispatch(charEvent)
 			if (charEvent.defaultPrevented()) jsEvent.preventDefault()
 		}
 	}
@@ -84,11 +87,11 @@ class JsKeyInput(
 		downMap.clear()
 	}
 
-	private val eventTarget: EventTarget = if (captureAllKeyboardInput) window else root
+	private val eventTarget: EventTarget = if (captureAllKeyboardInput) window else canvas
 
 	init {
-		if (!captureAllKeyboardInput && !root.hasAttribute("tabIndex")) {
-			root.tabIndex = 0
+		if (!captureAllKeyboardInput && !canvas.hasAttribute("tabIndex")) {
+			canvas.tabIndex = 0
 		}
 		eventTarget.addEventListener("keydown", keyDownHandler)
 		eventTarget.addEventListener("keyup", keyUpHandler)
@@ -120,9 +123,9 @@ class JsKeyInput(
 		eventTarget.removeEventListener("keyup", keyUpHandler)
 		eventTarget.removeEventListener("keypress", keyPressHandler)
 		eventTarget.removeEventListener("blur", blurHandler)
-		keyDown.dispose()
-		keyUp.dispose()
-		char.dispose()
+		_keyDown.dispose()
+		_keyUp.dispose()
+		_char.dispose()
 	}
 
 	private fun locationFromInt(location: Int): KeyLocation {

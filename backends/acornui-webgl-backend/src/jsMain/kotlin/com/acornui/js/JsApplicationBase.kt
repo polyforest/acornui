@@ -363,10 +363,6 @@ Kotlin.isType = function(object, klass) {
 		dateTimeFormatterProvider = { DateTimeFormatterImpl() }
 	}
 
-	protected open val fileIoManagerTask by BootTask {
-		set(FileIoManager, JsFileIoManager())
-	}
-
 	protected open val clipboardTask by BootTask {
 		set(Clipboard, JsClipboard(
 				get(CANVAS),

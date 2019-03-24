@@ -30,7 +30,7 @@ import kotlin.browser.window
 /**
  * @author nbilyk
  */
-class JsMouseInput(private val root: HTMLElement) : MouseInput {
+class JsMouseInput(private val canvas: HTMLElement) : MouseInput {
 
 	private val _touchStart = Signal1<TouchInteractionRo>()
 	override val touchStart = _touchStart.asRo()
@@ -146,8 +146,8 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 			wheelEvent.clear()
 			wheelEvent.timestamp = jsEvent.timeStamp.toLong()
 			// TODO: This probably doesn't work if the root canvas is nested.
-			wheelEvent.canvasX = jsEvent.pageX.toFloat() - root.offsetLeft.toFloat()
-			wheelEvent.canvasY = jsEvent.pageY.toFloat() - root.offsetTop.toFloat()
+			wheelEvent.canvasX = jsEvent.pageX.toFloat() - canvas.offsetLeft.toFloat()
+			wheelEvent.canvasY = jsEvent.pageY.toFloat() - canvas.offsetTop.toFloat()
 			wheelEvent.button = getWhichButton(jsEvent.button.toInt())
 			_canvasX = wheelEvent.canvasX
 			_canvasY = wheelEvent.canvasY
@@ -166,24 +166,24 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 		window.addEventListener("touchend", touchEndHandler, true)
 		window.addEventListener("touchmove", touchMoveHandler, true)
 		window.addEventListener("touchcancel", touchCancelHandler, true)
-		root.addEventListener("touchleave", mouseLeaveHandler, true)
+		canvas.addEventListener("touchleave", mouseLeaveHandler, true)
 		window.addEventListener("touchleave", mouseLeaveHandler, true)
 
 		// Mouse
-		root.addEventListener("mouseenter", mouseEnterHandler, true)
+		canvas.addEventListener("mouseenter", mouseEnterHandler, true)
 		window.addEventListener("mouseleave", mouseLeaveHandler, true)
-		root.addEventListener("mouseleave", mouseLeaveHandler, true)
+		canvas.addEventListener("mouseleave", mouseLeaveHandler, true)
 		window.addEventListener("mousemove", mouseMoveHandler, true)
 		window.addEventListener("mousedown", mouseDownHandler, true)
 		window.addEventListener("mouseup", mouseUpHandler, true)
-		root.addEventListener("wheel", mouseWheelHandler, true)
+		canvas.addEventListener("wheel", mouseWheelHandler, true)
 	}
 
 	private fun populateMouseEvent(jsEvent: MouseEvent) {
 		mouseEvent.clear()
 		mouseEvent.timestamp = jsEvent.timeStamp.toLong()
-		mouseEvent.canvasX = jsEvent.clientX.toFloat() - root.offsetLeft.toFloat()
-		mouseEvent.canvasY = jsEvent.clientY.toFloat() - root.offsetTop.toFloat()
+		mouseEvent.canvasX = jsEvent.clientX.toFloat() - canvas.offsetLeft.toFloat()
+		mouseEvent.canvasY = jsEvent.clientY.toFloat() - canvas.offsetTop.toFloat()
 		mouseEvent.button = getWhichButton(jsEvent.button.toInt())
 		_canvasX = mouseEvent.canvasX
 		_canvasY = mouseEvent.canvasY
@@ -215,8 +215,8 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 	}
 
 	private fun Touch.set(jsTouch: com.acornui.js.html.Touch) {
-		canvasX = jsTouch.clientX.toFloat() - root.offsetLeft.toFloat()
-		canvasY = jsTouch.clientY.toFloat() - root.offsetTop.toFloat()
+		canvasX = jsTouch.clientX.toFloat() - canvas.offsetLeft.toFloat()
+		canvasY = jsTouch.clientY.toFloat() - canvas.offsetTop.toFloat()
 		identifier = jsTouch.identifier
 	}
 
@@ -235,15 +235,15 @@ class JsMouseInput(private val root: HTMLElement) : MouseInput {
 		window.removeEventListener("touchstart", touchStartHandler, true)
 		window.removeEventListener("touchend", touchEndHandler, true)
 		window.removeEventListener("touchmove", touchMoveHandler, true)
-		root.removeEventListener("touchleave", mouseLeaveHandler, true)
+		canvas.removeEventListener("touchleave", mouseLeaveHandler, true)
 		window.removeEventListener("touchleave", mouseLeaveHandler, true)
 
-		root.removeEventListener("mouseenter", mouseEnterHandler, true)
-		root.removeEventListener("mouseleave", mouseLeaveHandler, true)
+		canvas.removeEventListener("mouseenter", mouseEnterHandler, true)
+		canvas.removeEventListener("mouseleave", mouseLeaveHandler, true)
 		window.removeEventListener("mousemove", mouseMoveHandler, true)
 		window.removeEventListener("mousedown", mouseDownHandler, true)
 		window.removeEventListener("mouseup", mouseUpHandler, true)
-		root.removeEventListener("wheel", mouseWheelHandler, true)
+		canvas.removeEventListener("wheel", mouseWheelHandler, true)
 	}
 
 	override fun mouseIsDown(button: WhichButton): Boolean {

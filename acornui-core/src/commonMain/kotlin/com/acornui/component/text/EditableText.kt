@@ -132,15 +132,26 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	var allowTab: Boolean = false
 
 	private val cmd = own(commander())
+	private var openedKeyboard: TouchScreenKeyboardRef? = null
 
 	init {
+		host.click().add {
+			if (!it.handled) {
+				// After a click, even if we were already focused, open the touch screen keyboard.
+				if (openedKeyboard == null)
+					openedKeyboard = host.touchScreenKeyboard.open(host.touchScreenInputType)
+			}
+		}
+
 		host.focusedSelf().add {
 			if (charStyle.selectable)
 				host.selectAll()
-			// todo: open mobile keyboard
+			openedKeyboard = host.touchScreenKeyboard.open(host.touchScreenInputType)
 		}
 
 		host.blurredSelf().add {
+			openedKeyboard?.close()
+			openedKeyboard = null
 			host.unselect()
 			if (isActive)
 				_changed.dispatch()
