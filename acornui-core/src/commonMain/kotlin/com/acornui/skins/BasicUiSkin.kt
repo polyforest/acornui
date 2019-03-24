@@ -732,12 +732,11 @@ open class BasicUiSkin(
 		}
 		target.addStyleRule(calendarTextFlowStyle, withAncestor(CalendarItemRendererImpl))
 
-		val textInputBoxStyle = BoxStyle()
-		textInputBoxStyle.apply {
-			backgroundColor = Color.CLEAR
-			borderThicknesses = Pad(0f)
+		val textInputStyle = TextInputStyle()
+		textInputStyle.apply {
+			background = noSkinOptional
 		}
-		target.addStyleRule(textInputBoxStyle, withAncestor(DatePicker) and TextInput)
+		target.addStyleRule(textInputStyle, withAncestor(DatePicker) and TextInput)
 	}
 
 	protected open fun htmlComponentStyle() {
