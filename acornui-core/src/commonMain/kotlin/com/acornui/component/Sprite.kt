@@ -209,7 +209,7 @@ class Sprite : BasicDrawable, Clearable {
 		normal.set(if (useAsBackFace) Vector3.Z else Vector3.NEG_Z)
 	}
 
-	override fun draw(glState: GlState, colorTint: ColorRo) {
+	override fun render(glState: GlState, colorTint: ColorRo) {
 		if (texture == null || colorTint.a <= 0f || width == 0f || height == 0f) return // Nothing to draw
 		val batch = glState.batch
 		glState.setTexture(texture)

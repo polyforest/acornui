@@ -261,7 +261,7 @@ class NinePatch : BasicDrawable {
 	 * If [updateVertices] was used (and therefore no world transformation), that world transform matrix must be
 	 * supplied to [GlState.setCamera] first.
 	 */
-	override fun draw(glState: GlState, colorTint: ColorRo) {
+	override fun render(glState: GlState, colorTint: ColorRo) {
 		val texture = texture
 		if (texture == null || width <= 0f || height <= 0f) return
 		glState.setTexture(texture)

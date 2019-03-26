@@ -40,7 +40,6 @@ import com.acornui.gl.core.GlState
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
-import com.acornui.math.MathUtils.offsetRound
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
@@ -98,7 +97,7 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	val isRendered: Boolean
 
 	/**
-	 * The flags that, if a child invalidated, will invalidate this container's size constraints / layout.
+	 * The flags that, if invalidated, will invalidate the parent container's size constraints / layout.
 	 */
 	val layoutInvalidatingFlags: Int
 
@@ -1110,7 +1109,7 @@ open class UiComponentImpl(
 	/**
 	 * Converts a coordinate from local coordinate space to global coordinate space.
 	 * This will modify the provided coord parameter.
-	 * @param localCoord The coordinate local to this Transformable. This will be mutated to become a global coordinate.
+	 * @param localCoord The coordinate local to this component. This will be mutated to become a global coordinate.
 	 * @return Returns the coord
 	 */
 	override fun localToGlobal(localCoord: Vector3): Vector3 {

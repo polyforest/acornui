@@ -1,14 +1,19 @@
 package com.acornui.component.text
 
+import com.acornui.collection.forEach2
 import com.acornui.component.ComponentInit
 import com.acornui.component.ElementParent
 import com.acornui.component.ElementParentRo
 import com.acornui.component.ValidationFlags
 import com.acornui.component.style.*
+import com.acornui.core.Disposable
 import com.acornui.graphic.ColorRo
 
 interface TextSpanElementRo<out T : TextElementRo> : ElementParentRo<T> {
 
+	/**
+	 * The text node this span element was added to.
+	 */
 	val textParent: TextNodeRo?
 
 	/**
@@ -35,7 +40,7 @@ val TextSpanElementRo<TextElementRo>.textFieldX: Float
 		var p: TextNodeRo? = textParent
 		while (p != null) {
 			textFieldX += p.x
-			p = p.textNodeParent
+			p = p.parentTextNode
 		}
 		return textFieldX
 	}
@@ -46,13 +51,13 @@ val TextSpanElementRo<TextElementRo>.textFieldY: Float
 		var p: TextNodeRo? = textParent
 		while (p != null) {
 			textFieldY += p.y
-			p = p.textNodeParent
+			p = p.parentTextNode
 		}
 		return textFieldY
 	}
 
 
-interface TextSpanElement : TextSpanElementRo<TextElement> {
+interface TextSpanElement : TextSpanElementRo<TextElement>, Disposable {
 
 	override var textParent: TextNodeRo?
 
@@ -131,7 +136,7 @@ open class TextSpanElementImpl : TextSpanElement, ElementParent<TextElement>, St
 					ValidationFlags.LAYOUT
 
 	override fun <S : TextElement> addElement(index: Int, element: S): S {
-		element.textParent = this
+		element.parentSpan = this
 		_elements.add(index, element)
 		textParent?.invalidate(bubblingFlags)
 		return element
@@ -139,7 +144,7 @@ open class TextSpanElementImpl : TextSpanElement, ElementParent<TextElement>, St
 
 	override fun removeElement(index: Int): TextElement {
 		val element = _elements.removeAt(index)
-		element.textParent = null
+		element.parentSpan = null
 		textParent?.invalidate(bubblingFlags)
 		return element
 	}
@@ -194,6 +199,9 @@ open class TextSpanElementImpl : TextSpanElement, ElementParent<TextElement>, St
 		tfCharStyle.backgroundColor.set(concatenatedColorTint).mul(charStyle.backgroundColor)
 	}
 
+	override fun dispose() {
+		clearElements(true)
+	}
 }
 
 fun span(init: ComponentInit<TextSpanElement> = {}): TextSpanElementImpl {

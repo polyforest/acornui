@@ -49,7 +49,7 @@ abstract class DrawableComponent(
 	override fun draw(clip: MinMaxRo) {
 		val drawable = drawable ?: return
 		glState.setCamera(camera)
-		drawable.draw(glState, concatenatedColorTint)
+		drawable.render(glState, concatenatedColorTint)
 	}
 
 	companion object {

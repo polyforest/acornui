@@ -8,6 +8,7 @@ import com.acornui.component.text.TextField
 import com.acornui.component.text.text
 import com.acornui.core.di.Owned
 import com.acornui.math.Bounds
+import com.acornui.math.MathUtils.offsetRound
 import com.acornui.math.MathUtils.roundToNearest
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
@@ -157,8 +158,8 @@ open class IconButtonSkinPart(
 		textField.setSize(textWidth, childAvailableHeight)
 		val contentWidth = roundToNearest(if (label == "") icon.width else icon.width + hGap + textField.width, 2f)
 		val contentHeight = roundToNearest(if (label == "") icon.height else maxOf(textField.height, icon.height), 2f)
-		val w = maxOf(contentWidth + padding.left + padding.right, explicitWidth ?: 4f)
-		val h = maxOf(contentHeight + padding.top + padding.bottom, explicitHeight ?: 4f)
+		val w = maxOf(padding.expandWidth2(contentWidth), explicitWidth ?: 4f)
+		val h = maxOf(padding.expandHeight2(contentHeight), explicitHeight ?: 4f)
 
 		texture.setSize(w, h)
 		out.set(w, h)
@@ -171,7 +172,7 @@ open class IconButtonSkinPart(
 			} else {
 				padding.left
 			}
-			textFieldX = round(iconX + icon.width + hGap)
+			textFieldX = offsetRound(iconX + icon.width + hGap)
 		} else {
 			textFieldX = if (childAvailableWidth != null) {
 				(childAvailableWidth - contentWidth) * 0.5f + padding.left

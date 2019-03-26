@@ -35,7 +35,6 @@ import com.acornui.gl.core.GlState
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
-import com.acornui.math.MathUtils.offsetRound
 import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
 
@@ -72,7 +71,7 @@ abstract class TextNodeBase(final override val owner: Owned) : TextNode {
 	protected var _explicitWidth: Float? = null
 	protected var _explicitHeight: Float? = null
 
-	override var textNodeParent: TextNodeRo? by validationProp(null, ValidationFlags.STYLES or ValidationFlags.HIERARCHY_DESCENDING)
+	override var parentTextNode: TextNodeRo? by validationProp(null, ValidationFlags.STYLES or ValidationFlags.HIERARCHY_DESCENDING)
 	override var textField: TextField? by validationProp(null, ValidationFlags.STYLES)
 
 	override var allowClipping: Boolean by validationProp(true, ValidationFlags.LAYOUT)
@@ -107,7 +106,12 @@ abstract class TextNodeBase(final override val owner: Owned) : TextNode {
 	// Styleable methods
 	//-----------------------------------------------------
 
-	protected val styles = Styles(this)
+	private var _styles: Styles? = null
+	private val styles: Styles
+		get() {
+			if (_styles == null) _styles = own(Styles(this))
+			return _styles!!
+		}
 
 	override val styleTags: MutableList<StyleTag>
 		get() = styles.styleTags
@@ -118,7 +122,7 @@ abstract class TextNodeBase(final override val owner: Owned) : TextNode {
 			styles.getRulesByType(type, out)
 
 	override val styleParent: StyleableRo?
-		get() = textNodeParent ?: textField
+		get() = parentTextNode ?: textField
 
 	protected fun <T : Style> bind(style: T, calculator: StyleCalculator = CascadingStyleCalculator): T {
 		styles.bind(style, calculator)
@@ -228,7 +232,7 @@ abstract class TextNodeBase(final override val owner: Owned) : TextNode {
 	}
 
 	protected open fun updateStyles() {
-		styles.validateStyles()
+		_styles?.validateStyles()
 	}
 
 	/**
@@ -255,7 +259,7 @@ abstract class TextNodeBase(final override val owner: Owned) : TextNode {
 		get() = _concatenatedTransform
 
 	protected open fun updateConcatenatedTransform() {
-		val parentTransform: Matrix4Ro = textNodeParent?.concatenatedTransform ?: textField?.concatenatedTransform ?: Matrix4.IDENTITY
+		val parentTransform: Matrix4Ro = parentTextNode?.concatenatedTransform ?: textField?.concatenatedTransform ?: Matrix4.IDENTITY
 		_concatenatedTransform.set(parentTransform).translate(x, y, z)
 	}
 

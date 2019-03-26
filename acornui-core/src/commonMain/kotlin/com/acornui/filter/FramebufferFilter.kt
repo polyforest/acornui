@@ -53,6 +53,6 @@ class FramebufferFilter(
 		framebuffer.end()
 		glState.viewProjection = Matrix4.IDENTITY
 		glState.model = Matrix4.IDENTITY
-		framebuffer.draw(glState, Color.WHITE)
+		framebuffer.render(glState, Color.WHITE)
 	}
 }

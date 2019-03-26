@@ -15,9 +15,9 @@ interface Clearable {
  * An ObjectPool implementation that resets the objects as they go back into the pool.
  * @author nbilyk
  */
-open class ClearableObjectPool<T : Clearable>(initialCapacity: Int, create: () -> T) : ObjectPool<T>(initialCapacity, create) {
+open class ClearableObjectPool<T : Clearable>(initialCapacity: Int, capacity: Int, create: () -> T) : ObjectPool<T>(initialCapacity, capacity, create) {
 
-	constructor(create: () -> T) : this(8, create)
+	constructor(create: () -> T) : this(8, 20000, create)
 
 	override fun free(obj: T) {
 		obj.clear()

@@ -21,7 +21,7 @@ class CharElement private constructor() : TextElement, Clearable {
 	override var char: Char = CHAR_PLACEHOLDER
 	private var style: CharElementStyle? = null
 
-	override var textParent: TextSpanElementRo<TextElementRo>? = null
+	override var parentSpan: TextSpanElementRo<TextElementRo>? = null
 
 	val glyph: Glyph?
 		get() {
@@ -95,7 +95,7 @@ class CharElement private constructor() : TextElement, Clearable {
 		var charR = charL + glyph.width
 		var charB = charT + glyph.height
 
-		val lineHeight = textParent?.lineHeight ?: 0f
+		val lineHeight = parentSpan?.lineHeight ?: 0f
 		val bgL = maxOf(leftClip, x)
 		val bgT = maxOf(topClip, y)
 		val bgR = minOf(rightClip, x + width + kerning)
@@ -248,7 +248,7 @@ class CharElement private constructor() : TextElement, Clearable {
 		explicitWidth = null
 		char = CHAR_PLACEHOLDER
 		style = null
-		textParent = null
+		parentSpan = null
 		x = 0f
 		y = 0f
 		u = 0f

@@ -80,7 +80,7 @@ open class BasicSkinPartProvider : SkinPartProvider {
 		val texture = buttonTexture(buttonState)
 		val skinPart = IconButtonSkinPart(this, texture, padding, hGap)
 		val theme = inject(Theme)
-		skinPart.contentsAtlas(theme.atlasPath, icon)
+		skinPart.element = atlas(theme.atlasPath, icon)
 		skinPart
 	}
 
@@ -155,7 +155,9 @@ open class BasicSkinPartProvider : SkinPartProvider {
 	 * A checkbox skin part.
 	 */
 	override fun collapseButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> CheckboxSkinPart = {
-		val box = atlas(theme.atlasPath, if (buttonState.toggled) "CollapseSelected" else "CollapseUnselected")
+		val box = atlas(theme.atlasPath, if (buttonState.toggled) "CollapseSelected" else "CollapseUnselected") {
+			colorTint = theme.iconColor
+		}
 		CheckboxSkinPart(
 				this,
 				box

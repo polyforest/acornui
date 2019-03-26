@@ -212,8 +212,8 @@ class Framebuffer(
 		sprite.updateVertices(width, height, x, y, z, rotation, originX, originY)
 	}
 
-	override fun draw(glState: GlState, colorTint: ColorRo) {
-		sprite.draw(glState, colorTint)
+	override fun render(glState: GlState, colorTint: ColorRo) {
+		sprite.render(glState, colorTint)
 	}
 
 	//---------------------------------------------------------------

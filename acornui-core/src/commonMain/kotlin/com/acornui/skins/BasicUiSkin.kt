@@ -330,9 +330,31 @@ open class BasicUiSkin(
 	}
 
 	protected open fun numericStepperStyle() {
-		val stepperPad = Pad(left = 4f, right = 4f, top = 4f, bottom = 4f)
-		target.addStyleRule(ButtonStyle().set { iconButtonSkin(it, "UpArrowStepper", padding = stepperPad) }, NumericStepper.STEP_UP_STYLE)
-		target.addStyleRule(ButtonStyle().set { iconButtonSkin(it, "DownArrowStepper", padding = stepperPad) }, NumericStepper.STEP_DOWN_STYLE)
+		val stepperPad = Pad(4f)
+		stepperPad.right = 5f
+		target.addStyleRule(ButtonStyle().set {
+			{
+				val texture = buttonTexture(it, Corners(topLeft = 0f, topRight = maxOf(4f, theme.borderRadius), bottomRight = 0f, bottomLeft = 0f))
+				val skinPart = IconButtonSkinPart(this, texture, stepperPad)
+				val theme = inject(Theme)
+				skinPart.element = atlas(theme.atlasPath, "UpArrow") {
+					colorTint = theme.iconColor
+				}
+				skinPart
+			}
+		}, NumericStepper.STEP_UP_STYLE)
+
+		target.addStyleRule(ButtonStyle().set {
+			{
+				val texture = buttonTexture(it, Corners(topLeft = 0f, topRight = 0f, bottomRight = maxOf(4f, theme.borderRadius), bottomLeft = 0f))
+				val skinPart = IconButtonSkinPart(this, texture, stepperPad)
+				val theme = inject(Theme)
+				skinPart.element = atlas(theme.atlasPath, "DownArrow") {
+					colorTint = theme.iconColor
+				}
+				skinPart
+			}
+		}, NumericStepper.STEP_DOWN_STYLE)
 	}
 
 	protected open fun scrollAreaStyle() {

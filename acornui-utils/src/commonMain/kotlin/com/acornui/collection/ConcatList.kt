@@ -16,6 +16,11 @@
 
 package com.acornui.collection
 
+/**
+ * A List that is backed by two lists, virtually concatenated.
+ * @param listA The first list.
+ * @param listB The second list, this will begin where [listA] ends.
+ */
 class ConcatList<out E>(private val listA: List<E>, private val listB: List<E>) : ListBase<E>() {
 
 	override val size: Int

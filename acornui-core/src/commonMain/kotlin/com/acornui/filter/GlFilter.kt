@@ -71,7 +71,7 @@ class GlFilter(
 		sprite.texture = framebuffer.texture
 		sprite.updateWorldVertices(concatenatedTransform, sprite.naturalWidth, sprite.naturalHeight, z = 0f)
 		glState.setCamera(camera)
-		sprite.draw(glState, concatenatedColorTint)
+		sprite.render(glState, concatenatedColorTint)
 
 		glState.shader = previousShader
 	}

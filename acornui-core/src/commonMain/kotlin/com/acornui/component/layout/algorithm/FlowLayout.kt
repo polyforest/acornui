@@ -16,9 +16,7 @@
 
 package com.acornui.component.layout.algorithm
 
-import com.acornui.recycle.Clearable
-import com.acornui.recycle.ClearableObjectPool
-import com.acornui.recycle.freeTo
+import com.acornui.collection.forEach2
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.ComponentInit
 import com.acornui.component.layout.ElementLayoutContainerImpl
@@ -29,7 +27,11 @@ import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
 import com.acornui.core.floor
-import com.acornui.math.*
+import com.acornui.math.Bounds
+import com.acornui.math.Pad
+import com.acornui.math.PadRo
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.ClearableObjectPool
 import kotlin.math.round
 
 /**
@@ -62,8 +64,10 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 		val availableHeight: Float? = padding.reduceHeight(explicitHeight)
 
 		var measuredW = 0f
-		_lines.freeTo(linesPool)
-		var line = linesPool.obtain()
+		_lines.forEach2(LineInfo.Companion::free)
+		_lines.clear()
+
+		var line = LineInfo.obtain()
 		line.y = padding.top
 		var x = 0f
 		var y = 0f
@@ -90,7 +94,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 				x = 0f
 				y += line.height + style.verticalGap
 				// New line
-				line = linesPool.obtain()
+				line = LineInfo.obtain()
 				line.startIndex = i
 				line.y = y + padding.top
 			}
@@ -115,7 +119,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 			_lines.add(line)
 			y += line.height
 		} else {
-			linesPool.free(line)
+			LineInfo.free(line)
 			y -= style.verticalGap
 		}
 		measuredW += padding.left + padding.right
@@ -190,18 +194,14 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 		if (lines.isEmpty()) return 0
 		if (y < lines.first().y) return 0
 		if (y >= lines.last().bottom) return elements.size
-		val lineIndex = _lines.sortedInsertionIndex(y, comparator = { y, line ->
-			y.compareTo(line.bottom)
+		val lineIndex = _lines.sortedInsertionIndex(y, comparator = { yVal, line ->
+			yVal.compareTo(line.bottom)
 		})
 		val line = _lines[lineIndex]
 		return elements.sortedInsertionIndex(x, line.startIndex, line.endIndex) {
-			x, element ->
-			x.compareTo(element.right)
+			xVal, element ->
+			xVal.compareTo(element.right)
 		}
-	}
-
-	companion object {
-		private val linesPool = ClearableObjectPool { LineInfo() }
 	}
 
 }
@@ -217,7 +217,9 @@ interface LineInfoRo {
 	 * The line's end index, exclusive.
 	 */
 	val endIndex: Int
+
 	val x: Float
+
 	val y: Float
 
 	/**
@@ -254,10 +256,6 @@ interface LineInfoRo {
 class LineInfo : Clearable, LineInfoRo {
 
 	override var startIndex: Int = 0
-
-	/**
-	 * The end index of the line. (exclusive)
-	 */
 	override var endIndex: Int = 0
 	override var x: Float = 0f
 	override var y: Float = 0f
@@ -266,6 +264,18 @@ class LineInfo : Clearable, LineInfoRo {
 	override var width: Float = 0f
 	override var baseline: Float = 0f
 	override var belowBaseline: Float = 0f
+
+	fun set(other: LineInfoRo): LineInfo {
+		startIndex = other.startIndex
+		endIndex = other.endIndex
+		contentsWidth = other.contentsWidth
+		width = other.width
+		x = other.x
+		y = other.y
+		baseline = other.baseline
+		belowBaseline = other.belowBaseline
+		return this
+	}
 
 	override fun clear() {
 		startIndex = 0
@@ -282,6 +292,13 @@ class LineInfo : Clearable, LineInfoRo {
 		return "LineInfo(startIndex=$startIndex, endIndex=$endIndex)"
 	}
 
+	companion object {
+
+		private val pool = ClearableObjectPool { LineInfo() }
+
+		fun obtain(): LineInfo = pool.obtain()
+		fun free(obj: LineInfo) = pool.free(obj)
+	}
 
 }
 

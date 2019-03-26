@@ -1,5 +1,5 @@
 {
-  "alphaThreshold": 0, 
+  "alphaThreshold": 0,  
   "filterMag": "LINEAR",
   "filterMin": "LINEAR",
   "pixelType": "UNSIGNED_BYTE",

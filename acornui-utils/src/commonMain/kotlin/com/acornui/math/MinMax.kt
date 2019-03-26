@@ -38,6 +38,10 @@ interface MinMaxRo {
 		return (xMax > other.xMin && yMax > other.yMin && xMin < other.xMax && yMin < other.yMax)
 	}
 
+	fun intersects(other: RectangleRo): Boolean {
+		return (xMax > other.left && yMax > other.top && xMin < other.right && yMin < other.bottom)
+	}
+
 	fun contains(x: Float, y: Float): Boolean {
 		return x > xMin && y > yMin && x < xMax && y < yMax
 	}

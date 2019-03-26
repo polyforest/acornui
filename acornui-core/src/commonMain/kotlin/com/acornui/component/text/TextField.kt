@@ -17,6 +17,7 @@
 package com.acornui.component.text
 
 import com.acornui._assert
+import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
 import com.acornui.component.layout.*
 import com.acornui.component.layout.algorithm.LineInfoRo
@@ -115,7 +116,7 @@ open class TextFieldImpl(owner: Owned) : UiComponentImpl(owner), TextField {
 	override var selectionTarget: Selectable = this
 
 	private val _textSpan = span()
-	private val _textContents = textFlow { +_textSpan }
+	private val _textContents = p { +_textSpan }
 	private var _contents: TextNode = addChild(_textContents)
 
 	private var _allowClipping: Boolean = true
@@ -311,7 +312,7 @@ open class TextFieldImpl(owner: Owned) : UiComponentImpl(owner), TextField {
 				_drag = null
 			}
 		}
-		validation.addNode(TextValidationFlags.SELECTION, ValidationFlags.HIERARCHY_ASCENDING, this::updateSelection)
+		validation.addNode(TextValidationFlags.SELECTION, dependencies = ValidationFlags.HIERARCHY_ASCENDING, onValidate = this::updateSelection)
 		selectionManager.selectionChanged.add(this::selectionChangedHandler)
 	}
 
@@ -367,9 +368,9 @@ class CharElementStyle {
 interface TextElementRo {
 
 	/**
-	 * Set by the TextSpanElement when this is part is added.
+	 * Set by the TextSpanElement when this part is added.
 	 */
-	val textParent: TextSpanElementRo<TextElementRo>?
+	val parentSpan: TextSpanElementRo<TextElementRo>?
 
 	val char: Char?
 
@@ -432,20 +433,20 @@ val TextElementRo.bottom: Float
 
 val TextElementRo.lineHeight: Float
 	get() {
-		return textParent?.lineHeight ?: 0f
+		return parentSpan?.lineHeight ?: 0f
 	}
 
 val TextElementRo.baseline: Float
-	get() = (textParent?.baseline ?: 0f)
+	get() = (parentSpan?.baseline ?: 0f)
 
 val TextElementRo.textFieldX: Float
 	get() {
-		return x + (textParent?.textFieldX ?: 0f)
+		return x + (parentSpan?.textFieldX ?: 0f)
 	}
 
 val TextElementRo.textFieldY: Float
 	get() {
-		return y + (textParent?.textFieldY ?: 0f)
+		return y + (parentSpan?.textFieldY ?: 0f)
 	}
 
 interface TextElement : TextElementRo, Disposable {
@@ -453,7 +454,7 @@ interface TextElement : TextElementRo, Disposable {
 	/**
 	 * Set by the TextSpanElement when this is part is added.
 	 */
-	override var textParent: TextSpanElementRo<TextElementRo>?
+	override var parentSpan: TextSpanElementRo<TextElementRo>?
 
 	override var x: Float
 	override var y: Float
@@ -487,7 +488,8 @@ interface TextNodeRo : Validatable, StyleableRo, BasicLayoutElementRo, Owned {
 	override val disposed: Signal<(TextNodeRo) -> Unit>
 	override val invalidated: Signal<(TextNodeRo, Int) -> Unit>
 
-	val textNodeParent: TextNodeRo?
+	val parentTextNode: TextNodeRo?
+
 	val textField: TextField?
 
 	/**
@@ -495,20 +497,19 @@ interface TextNodeRo : Validatable, StyleableRo, BasicLayoutElementRo, Owned {
 	 */
 	val concatenatedTransform: Matrix4Ro
 
+	/**
+	 * Converts a coordinate from local coordinate space to global coordinate space.
+	 * @param localCoord The input local coordinates. This will be mutated to become the output global coordinates.
+	 */
 	fun localToGlobal(localCoord: Vector3): Vector3 {
 		concatenatedTransform.prj(localCoord)
 		return localCoord
 	}
 
 	/**
-	 * The total number of text elements this node contains (deep/hierarchical).
-	 */
-	val textElementsCount: Int
-
-	/**
 	 * A virtual text element to indicate the position of the next element within this node.
 	 */
-	val placeholder: TextElementRo
+	val placeholder: TextElementRo?
 
 	/**
 	 * True if this node allows \n characters.
@@ -516,28 +517,33 @@ interface TextNodeRo : Validatable, StyleableRo, BasicLayoutElementRo, Owned {
 	val multiline: Boolean
 
 	/**
-	 * Returns the text element at the given index.
-	 * @param index The text element index between 0 and [textElementsCount] - 1.
+	 * A list of the text elements this node contains.  (deep/hierarchical)
 	 */
-	fun getTextElementAt(index: Int): TextElementRo
+	val textElements: List<TextElementRo>
 
 	/**
-	 * The number of lines this node has (deep/hierarchical).
+	 * The lines in this node (deep/hierarchical).
 	 */
-	val linesCount: Int
+	val lines: List<LineInfoRo>
 
 	/**
 	 * Returns the line at the given text element index (deep/hierarchical).
 	 * @param index The text element index.
 	 */
-	fun getLineAt(index: Int): LineInfoRo
+	fun getLineAt(index: Int): LineInfoRo {
+		val lines = lines
+		val lineIndex = lines.sortedInsertionIndex(index) { _, line ->
+			index.compareTo(line.startIndex)
+		} - 1
+		return lines[lineIndex]
+	}
 
 	/**
 	 * Returns the line at the given index, or null if the index is < 0 or >= [textElementsCount].
 	 */
 	fun getLineOrNullAt(index: Int): LineInfoRo? {
-		val n = linesCount
-		if (n == 0 || index < 0 || index >= textElementsCount) return null
+		val n = lines.size
+		if (n == 0 || index < 0 || index >= textElements.size) return null
 		return getLineAt(index)
 	}
 
@@ -545,9 +551,24 @@ interface TextNodeRo : Validatable, StyleableRo, BasicLayoutElementRo, Owned {
 	 * @param x The relative x coordinate
 	 * @param y The relative y coordinate
 	 * @return Returns the relative index of the text element nearest (x, y). The text element index will be separated
-	 * at the half-width of the element. This range will be between 0 and [textElementsCount] (inclusive)
+	 * at the half-width of the element. This range will be between `0` and `textElements.size` (inclusive)
 	 */
-	fun getSelectionIndex(x: Float, y: Float): Int
+	fun getSelectionIndex(x: Float, y: Float): Int {
+		val multiline = multiline
+		val lines = lines
+		if (lines.isEmpty()) return 0
+		if (y < lines.first().y) return 0
+		if (y >= lines.last().bottom) return textElements.size
+		val lineIndex = lines.sortedInsertionIndex(y) { yVal, line ->
+			yVal.compareTo(line.bottom)
+		}
+		val line = lines[lineIndex]
+		return textElements.sortedInsertionIndex(x, line.startIndex, line.endIndex) { xVal, textElement ->
+			// If the current element clears the line, end the recursion before the newline character, not after.
+			// Otherwise, separate at the half-width of the element.
+			if (textElement.clearsLine && multiline) -1 else xVal.compareTo(textElement.x + textElement.width * 0.5f)
+		}
+	}
 
 	/**
 	 * Writes this node's contents to a string builder.
@@ -560,7 +581,7 @@ interface TextNode : TextNodeRo, Styleable, BasicLayoutElement, Disposable {
 	override val disposed: Signal<(TextNode) -> Unit>
 	override val invalidated: Signal<(TextNode, Int) -> Unit>
 
-	override var textNodeParent: TextNodeRo?
+	override var parentTextNode: TextNodeRo?
 	override var textField: TextField?
 
 	/**
@@ -570,7 +591,8 @@ interface TextNode : TextNodeRo, Styleable, BasicLayoutElement, Disposable {
 
 	/**
 	 * Sets the text selection.
-	 * @param rangeStart The starting index of this leaf.
+	 * @param rangeStart The starting index of this node. The selection range indices are relative to the text field
+	 * and text nodes themselves don't know their starting index. Therefore it is provided.
 	 * @param selection A list of ranges that are selected.
 	 */
 	fun setSelection(rangeStart: Int, selection: List<SelectionRange>)
@@ -588,18 +610,12 @@ interface TextNode : TextNodeRo, Styleable, BasicLayoutElement, Disposable {
 
 }
 
-private fun Owned.textFlow(init: ComponentInit<TextFlow>): TextFlow {
-	val f = TextFlow(this)
-	f.init()
-	return f
-}
-
 /**
  * A placeholder for the last text element in a span. This is useful for calculating the text cursor placement.
  */
-class LastTextElement(private val flow: TextFlow) : TextElementRo {
+class LastTextElement(private val flow: Paragraph) : TextElementRo {
 
-	override val textParent: TextSpanElement?
+	override val parentSpan: TextSpanElement?
 		get() = flow.elements.lastOrNull()
 
 	override val char: Char? = null

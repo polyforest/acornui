@@ -243,7 +243,7 @@ open class ListIteratorImpl<out E>(
 
 }
 
-val arrayListPool = object : ObjectPool<MutableList<*>>(8, { ArrayList<Any?>() }) {
+val arrayListPool = object : ObjectPool<MutableList<*>>({ ArrayList<Any?>() }) {
 	override fun free(obj: MutableList<*>) {
 		obj.clear()
 		super.free(obj)

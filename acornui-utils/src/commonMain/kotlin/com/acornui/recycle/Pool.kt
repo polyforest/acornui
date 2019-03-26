@@ -61,9 +61,16 @@ fun <T : Disposable> Pool<T>.disposeAndClear() {
 	clear()
 }
 
-open class ObjectPool<T>(initialCapacity: Int, private val create: () -> T) : Pool<T> {
+/**
+ * @param initialCapacity The initial array capacity for this pool. The array size will expand automatically, but
+ * if this pool will have an extraordinarily high number of elements, setting this to that estimation may reduce the
+ * number of resizes the backing array requires.
+ * @param capacity The pool will never contain more than this many free objects.
+ * @param create The factory method for producing new elements when this pool is empty.
+ */
+open class ObjectPool<T>(initialCapacity: Int, private val capacity: Int, private val create: () -> T) : Pool<T> {
 
-	constructor(create: () -> T) : this(8, create)
+	constructor(create: () -> T) : this(8, 20000, create)
 
 	private val freeObjects = ArrayList<T>(initialCapacity)
 
@@ -83,6 +90,7 @@ open class ObjectPool<T>(initialCapacity: Int, private val create: () -> T) : Po
 	 * Returns an object back to the pool.
 	 */
 	override fun free(obj: T) {
+		if (freeObjects.size >= capacity) return
 		freeObjects.add(obj)
 	}
 

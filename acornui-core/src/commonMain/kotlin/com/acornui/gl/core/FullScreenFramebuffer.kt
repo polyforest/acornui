@@ -85,7 +85,7 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 	fun render(colorTint: ColorRo = Color.WHITE) {
 		glState.viewProjection = Matrix4.IDENTITY
 		glState.model = Matrix4.IDENTITY
-		framebuffer.draw(glState, colorTint)
+		framebuffer.render(glState, colorTint)
 	}
 
 	override fun dispose() {

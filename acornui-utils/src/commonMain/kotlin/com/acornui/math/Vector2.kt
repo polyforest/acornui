@@ -485,11 +485,6 @@ class Vector2(
 		this.y = 0f
 	}
 
-	@Deprecated("Use Vector2.free", ReplaceWith("Vector2.free(this)"))
-	fun free() {
-		pool.free(this)
-	}
-
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		other as Vector2Ro

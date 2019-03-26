@@ -143,8 +143,8 @@ open class ElementContainerImpl<T : UiComponent>(
 	}
 
 	/**
-	 * Invoked when an external element has been added. If this is overriden and the [addChild] is delegated, the
-	 * [onElementRemoved] should mirror the delegation.
+	 * Invoked when an external element has been added or reordered. If this is overriden and the [addChild] is
+	 * delegated, the [onElementRemoved] should mirror the delegation.
 	 *
 	 * Example:
 	 *```

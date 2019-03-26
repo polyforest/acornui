@@ -8,6 +8,7 @@ import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.layout.algorithm.LineInfo
 import com.acornui.component.layout.algorithm.LineInfoRo
+import com.acornui.component.text.collection.JoinedList
 import com.acornui.core.di.Owned
 import com.acornui.core.floor
 import com.acornui.core.selection.SelectionRange
@@ -16,26 +17,23 @@ import com.acornui.math.MathUtils.offsetRound
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Vector3
 import com.acornui.math.ceil
-import com.acornui.recycle.ClearableObjectPool
-import com.acornui.recycle.freeTo
 
 /**
- * A TextFlow component is a container of styleable text spans, to be used inside of a TextField.
+ * A Paragraph component is a container of styleable text spans, to be used inside of a TextField.
  */
-class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<TextSpanElement> {
-
-	override var textNodeParent: TextNodeRo? = null
+class Paragraph(owner: Owned) : TextNodeBase(owner), ElementParent<TextSpanElement> {
 
 	val flowStyle = bind(TextFlowStyle())
 
 	private val _lines = ArrayList<LineInfo>()
+	private val _elements = ArrayList<TextSpanElement>()
 
-	private val _textElements = ArrayList<TextElement>()
+	private val _textElements = JoinedList(_elements) { it.elements }
 
 	/**
 	 * A list of all the text elements within the child spans.
 	 */
-	private val textElements: List<TextElement>
+	override val textElements: List<TextElementRo>
 		get() {
 			validate(TEXT_ELEMENTS)
 			return _textElements
@@ -48,40 +46,34 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 	override val multiline: Boolean
 		get() = flowStyle.multiline
 
-	override val textElementsCount: Int
-		get() = textElements.size
+	private var bubblingFlags =
+			ValidationFlags.HIERARCHY_ASCENDING or
+					ValidationFlags.LAYOUT
 
 	init {
-		validation.addNode(TEXT_ELEMENTS, dependencies = ValidationFlags.HIERARCHY_ASCENDING, dependents = ValidationFlags.LAYOUT, onValidate = this::updateTextElements)
-		validation.addNode(VERTICES, dependencies = ValidationFlags.LAYOUT or ValidationFlags.STYLES or ValidationFlags.CONCATENATED_TRANSFORM, dependents = 0, onValidate = this::updateVertices)
+		validation.addNode(TEXT_ELEMENTS, dependencies = ValidationFlags.HIERARCHY_ASCENDING, dependents = ValidationFlags.LAYOUT, onValidate = _textElements::dirty)
+		validation.addNode(VERTICES, dependencies = TEXT_ELEMENTS or ValidationFlags.LAYOUT or ValidationFlags.STYLES or ValidationFlags.CONCATENATED_TRANSFORM, dependents = 0, onValidate = this::updateVertices)
 		validation.addNode(ValidationFlags.CONCATENATED_COLOR_TRANSFORM) {}
 		validation.addNode(CHAR_STYLE, dependencies = TEXT_ELEMENTS or ValidationFlags.CONCATENATED_COLOR_TRANSFORM or ValidationFlags.STYLES, dependents = 0, onValidate = this::updateCharStyle)
 	}
 
-	override fun getTextElementAt(index: Int): TextElementRo = textElements[index]
-
-	override val linesCount: Int
-		get() = _lines.size
-
-	override fun getLineAt(index: Int): LineInfoRo {
-		val lineIndex = _lines.sortedInsertionIndex(index) { _, line ->
-			index.compareTo(line.startIndex)
-		} - 1
-		return _lines[lineIndex]
-	}
+	override val lines: List<LineInfoRo>
+		get() {
+			validate(ValidationFlags.LAYOUT)
+			return _lines
+		}
 
 	//-------------------------------------------------------------------------------------------------
 	// Element methods.
 	//-------------------------------------------------------------------------------------------------
 
-	private val _elements = ArrayList<TextSpanElement>()
 	override val elements: List<TextSpanElement>
 		get() = _elements
 
 	override fun <S : TextSpanElement> addElement(index: Int, element: S): S {
 		if (element.textParent != null) throw Exception("Remove element first.")
 		_elements.addOrReorder(index, element) { _, _ ->
-			invalidate(TEXT_ELEMENTS)
+			invalidate(bubblingFlags)
 			element.textParent = this
 		}
 		return element
@@ -90,7 +82,7 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 	override fun removeElement(index: Int): TextSpanElement {
 		val element = _elements.removeAt(index)
 		element.textParent = null
-		invalidate(TEXT_ELEMENTS)
+		invalidate(bubblingFlags)
 		return element
 	}
 
@@ -99,14 +91,7 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 			_elements[i].textParent = null
 		}
 		_elements.clear()
-		invalidate(TEXT_ELEMENTS)
-	}
-
-	private fun updateTextElements() {
-		_textElements.clear()
-		for (i in 0.._elements.lastIndex) {
-			_textElements.addAll(_elements[i].elements)
-		}
+		invalidate(bubblingFlags)
 	}
 
 	override fun updateStyles() {
@@ -117,11 +102,12 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		val textElements = textElements
+		val textElements = _textElements
 		val padding = flowStyle.padding
 		val availableWidth: Float? = padding.reduceWidth(explicitWidth)
 
-		_lines.freeTo(linesPool)
+		_lines.forEach2(LineInfo.Companion::free)
+		_lines.clear()
 
 		// To keep tab sizes consistent across the whole text field, we only use the first span's space size.
 		val spaceSize = _elements.firstOrNull()?.spaceSize ?: 6f
@@ -129,7 +115,7 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 
 		// Calculate lines
 		var x = 0f
-		var currentLine = linesPool.obtain()
+		var currentLine = LineInfo.obtain()
 
 		var spanPartIndex = 0
 		var allowWordBreak = true
@@ -173,7 +159,7 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 					allowWordBreak = true
 				}
 				_lines.add(currentLine)
-				currentLine = linesPool.obtain()
+				currentLine = LineInfo.obtain()
 				currentLine.startIndex = spanPartIndex
 				x = 0f
 			} else {
@@ -184,7 +170,7 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 				spanPartIndex++
 			}
 		}
-		linesPool.free(currentLine) // Current line was obtained, but not used / pushed to list.
+		LineInfo.free(currentLine) // Current line was obtained, but not used / pushed to list.
 
 		// We now have the elements per line; measure the line heights/widths and position the elements within the line.
 		var y = padding.top
@@ -252,7 +238,7 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 	}
 
 	private fun positionElementsInLine(line: LineInfoRo, availableWidth: Float?) {
-		val textElements = textElements
+		val textElements = _textElements
 		if (availableWidth != null) {
 			val remainingSpace = availableWidth - line.contentsWidth
 
@@ -294,21 +280,8 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 		}
 	}
 
-	override fun getSelectionIndex(x: Float, y: Float): Int {
-		if (_lines.isEmpty()) return 0
-		if (y < _lines.first().y) return 0
-		if (y >= _lines.last().bottom) return textElements.size
-		val lineIndex = _lines.sortedInsertionIndex(y) { yVal, line ->
-			yVal.compareTo(line.bottom)
-		}
-		val line = _lines[lineIndex]
-		return textElements.sortedInsertionIndex(x, line.startIndex, line.endIndex) { xVal, part ->
-			if (part.clearsLine && flowStyle.multiline) -1 else xVal.compareTo(part.x + part.width * 0.5f)
-		}
-	}
-
 	private fun updateVertices() {
-		val textElements = textElements
+		val textElements = _textElements
 		val padding = flowStyle.padding
 		val leftClip = padding.left
 		val topClip = padding.top
@@ -335,7 +308,7 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 		for (i in 0.._elements.lastIndex) {
 			_elements[i].validateCharStyle(concatenatedColorTint)
 		}
-		val textElements = textElements
+		val textElements = _textElements
 		for (i in 0..textElements.lastIndex) {
 			val selected = selection.indexOfFirst2 { it.contains(i + selectionRangeStart) } != -1
 			textElements[i].setSelected(selected)
@@ -357,7 +330,7 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 	override fun render(clip: MinMaxRo) {
 		if (_lines.isEmpty())
 			return
-		val textElements = textElements
+		val textElements = _textElements
 		localToCanvas(tL.set(0f, 0f, 0f))
 		localToCanvas(tR.set(_bounds.width, 0f, 0f))
 
@@ -395,12 +368,11 @@ class TextFlow(owner: Owned) : TextNodeBase(owner), TextNode, ElementParent<Text
 		private const val TEXT_ELEMENTS = 1 shl 16
 		private const val VERTICES = 1 shl 17
 		private const val CHAR_STYLE = 1 shl 18
-		private val linesPool = ClearableObjectPool { LineInfo() }
 	}
 }
 
-fun Owned.p(init: ComponentInit<TextFlow>): TextFlow {
-	val t = TextFlow(this)
+fun Owned.p(init: ComponentInit<Paragraph>): Paragraph {
+	val t = Paragraph(this)
 	t.init()
 	return t
 }

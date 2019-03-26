@@ -309,7 +309,8 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			}
 			Ascii.ENTER, Ascii.RETURN -> {
 				val sel = firstSelection
-				val multiline = if (sel == null || sel.min >= contents.textElementsCount) null else textField.contents.getTextElementAt(sel.min).textParent?.textParent?.multiline
+				val multiline = if (sel == null || sel.min >= contents.textElements.size) null
+				else textField.contents.textElements[sel.min].parentSpan?.textParent?.multiline
 
 				if (multiline ?: flowStyle.multiline) {
 					event.handled = true
@@ -327,7 +328,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			Ascii.END -> cursorEnd(event)
 			Ascii.A -> {
 				if (event.commandPlat) {
-					val n = contents.textElementsCount
+					val n = contents.textElements.size
 					setSelection(listOf(SelectionRange(host, 0, n)))
 				}
 			}
@@ -348,7 +349,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	private fun cursorLeft(event: KeyInteractionRo) {
 		val sel = firstSelection ?: return
-		val n = contents.textElementsCount
+		val n = contents.textElements.size
 		var i = MathUtils.clamp(sel.endIndex, 0, n)
 		if (event.commandPlat) {
 			while (i > 0 && charAt(i - 1).charType() == 0) {
@@ -365,7 +366,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	private fun cursorRight(event: KeyInteractionRo) {
 		val sel = firstSelection ?: return
-		val n = contents.textElementsCount
+		val n = contents.textElements.size
 		var i = MathUtils.clamp(sel.endIndex, 0, n)
 		if (event.commandPlat) {
 			val startType = charAt(i++).charType()
@@ -381,7 +382,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	}
 
 	private fun charAt(index: Int): Char? {
-		return contents.getTextElementAt(index).char
+		return contents.textElements[index].char
 	}
 
 	private fun Char?.charType(): Int {
@@ -395,7 +396,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	private fun cursorUp(event: KeyInteractionRo) {
 		val sel = firstSelection ?: return
-		val line = contents.getLineOrNullAt(minOf(contents.textElementsCount - 1, sel.endIndex)) ?: return
+		val line = contents.getLineOrNullAt(minOf(contents.textElements.size - 1, sel.endIndex)) ?: return
 		val previousLine = contents.getLineOrNullAt(line.startIndex - 1)
 		if (previousLine != null) {
 			if (column == -1)
@@ -417,19 +418,19 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			val nextPos = minOf(lineEnd(nextLine), nextLine.startIndex + column)
 			selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else nextPos, nextPos))
 		} else {
-			val n = contents.textElementsCount
+			val n = contents.textElements.size
 			selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else n, n))
 		}
 	}
 
 	private fun lineEnd(line: LineInfoRo): Int {
-		val n = contents.textElementsCount
+		val n = contents.textElements.size
 		return if (line.endIndex == n) n else line.endIndex - 1
 	}
 
 	private fun cursorHome(event: KeyInteractionRo) {
 		val sel = firstSelection ?: return
-		val line = contents.getLineOrNullAt(minOf(contents.textElementsCount - 1, sel.endIndex)) ?: return
+		val line = contents.getLineOrNullAt(minOf(contents.textElements.size - 1, sel.endIndex)) ?: return
 		val metaKey = event.commandPlat
 		val toIndex = if (metaKey) 0 else line.startIndex
 		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else toIndex, toIndex))
@@ -440,13 +441,13 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		val line = contents.getLineOrNullAt(sel.endIndex) ?: return
 		val pos = lineEnd(line)
 		val metaKey = event.commandPlat
-		val toIndex = if (metaKey) contents.textElementsCount else pos
+		val toIndex = if (metaKey) contents.textElements.size else pos
 		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else toIndex, toIndex))
 	}
 
 	private fun cursorPageUp(event: KeyInteractionRo) {
 		val sel = firstSelection ?: return
-		val currentLine = contents.getLineOrNullAt(minOf(sel.endIndex, contents.textElementsCount - 1)) ?: return
+		val currentLine = contents.getLineOrNullAt(minOf(sel.endIndex, contents.textElements.size - 1)) ?: return
 		var line: LineInfoRo? = currentLine
 		var h = line?.height ?: 0f
 		while (line != null && h < pageHeight) {
@@ -478,13 +479,13 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			val nextPos = minOf(lineEnd(line), line.startIndex + column)
 			selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else nextPos, nextPos))
 		} else {
-			val n = contents.textElementsCount
+			val n = contents.textElements.size
 			selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else n, n))
 		}
 	}
 
 	private val contentsSize: Int
-		get() = textField.contents.textElementsCount
+		get() = textField.contents.textElements.size
 
 	private val firstSelection: SelectionRange?
 		get() = selectionManager.selection.firstOrNull { it.target == host }
@@ -578,13 +579,17 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		val textCursorVisible = if (!charStyle.selectable || !window.isActive) false else {
 			val sel = firstSelection
 			if (host.isFocusedSelf && sel != null) {
-				val rangeEnd = contents.textElementsCount
+				val rangeEnd = contents.textElements.size
 				val end = MathUtils.clamp(sel.endIndex, 0, rangeEnd)
-				val textElement = if (end >= rangeEnd) contents.placeholder else contents.getTextElementAt(end)
-				textCursor.x = textElement.textFieldX
-				textCursor.y = textElement.textFieldY
-				textCursor.scaleY = textElement.lineHeight / textCursor.height
-				true
+				val textElement = if (end >= rangeEnd) contents.placeholder else contents.textElements[end]
+				if (textElement != null) {
+					textCursor.x = textElement.textFieldX
+					textCursor.y = textElement.textFieldY
+					textCursor.scaleY = textElement.lineHeight / textCursor.height
+					true
+				} else {
+					false
+				}
 			} else {
 				false
 			}

@@ -62,5 +62,5 @@ interface BasicDrawable {
 	 * If [updateVertices] was used (and therefore no world transformation), that world transformation (model) matrix
 	 * must be supplied to [GlState.setCamera] first.
 	 */
-	fun draw(glState: GlState, colorTint: ColorRo)
+	fun render(glState: GlState, colorTint: ColorRo)
 }

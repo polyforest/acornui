@@ -215,22 +215,22 @@ open class Rect(
 
 					if (topLeftCorner.texture != null) {
 						topLeftCorner.updateVertices(x = fillPad.left, y = fillPad.top)
-						topLeftCorner.draw(glState, tint)
+						topLeftCorner.render(glState, tint)
 					}
 
 					if (topRightCorner.texture != null) {
 						topRightCorner.updateVertices(x = w - topRightX, y = fillPad.top)
-						topRightCorner.draw(glState, tint)
+						topRightCorner.render(glState, tint)
 					}
 
 					if (bottomRightCorner.texture != null) {
 						bottomRightCorner.updateVertices(x = w - bottomRightX, y = h - bottomRightY)
-						bottomRightCorner.draw(glState, tint)
+						bottomRightCorner.render(glState, tint)
 					}
 
 					if (bottomLeftCorner.texture != null) {
 						bottomLeftCorner.updateVertices(x = fillPad.left, y = h - bottomLeftY)
-						bottomLeftCorner.draw(glState, tint)
+						bottomLeftCorner.render(glState, tint)
 					}
 
 					trn(margin.left, margin.top)

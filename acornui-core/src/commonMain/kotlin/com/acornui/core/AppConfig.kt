@@ -142,7 +142,7 @@ data class GlConfig(
 		/**
 		 * Post-scene 4x4 MSAA.
 		 */
-		val antialias: Boolean = true,
+		val antialias: Boolean = false,
 
 		/**
 		 * Use a depth buffer.

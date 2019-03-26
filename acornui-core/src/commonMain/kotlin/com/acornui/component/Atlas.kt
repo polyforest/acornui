@@ -176,8 +176,8 @@ class Atlas : BasicDrawable, Clearable {
 		totalPadBottom = unscaledPadBottom + scaledPadBottom * sY
 	}
 
-	override fun draw(glState: GlState, colorTint: ColorRo) {
-		drawable?.draw(glState, colorTint)
+	override fun render(glState: GlState, colorTint: ColorRo) {
+		drawable?.render(glState, colorTint)
 	}
 
 	override fun clear() {

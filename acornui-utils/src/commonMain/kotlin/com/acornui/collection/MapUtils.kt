@@ -17,7 +17,7 @@ fun <K, V> Map<K, V>.copy(): MutableMap<K, V> {
 	return m
 }
 
-val mapPool = object : ObjectPool<MutableMap<*, *>>(8, { HashMap<Any?, Any?>() }) {
+val mapPool = object : ObjectPool<MutableMap<*, *>>({ HashMap<Any?, Any?>() }) {
 	override fun free(obj: MutableMap<*, *>) {
 		obj.clear()
 		super.free(obj)
