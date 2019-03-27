@@ -391,7 +391,7 @@ open class UiComponentImpl(
 	private val rayTmp = Ray()
 
 	init {
-		owner.disposed.add(this::ownerDisposedHandler)
+		owner.disposed.add(::dispose.as1)
 		val r = this
 		validation = validationGraph {
 			ValidationFlags.apply {
@@ -411,14 +411,10 @@ open class UiComponentImpl(
 			}
 		}
 
-		_activated.add(this::invalidateFocusOrder.as1)
-		_activated.add(this::onActivated.as1)
-		_deactivated.add(this::invalidateFocusOrder.as1)
-		_deactivated.add(this::onDeactivated.as1)
-	}
-
-	private fun ownerDisposedHandler(owner: Owned) {
-		dispose()
+		_activated.add(::invalidateFocusOrder.as1)
+		_activated.add(::onActivated.as1)
+		_deactivated.add(::invalidateFocusOrder.as1)
+		_deactivated.add(::onDeactivated.as1)
 	}
 
 	//-----------------------------------------------
@@ -600,8 +596,8 @@ open class UiComponentImpl(
 	}
 
 	final override var layoutData: LayoutData? by Delegates.observable<LayoutData?>(null) { _, old, new ->
-		old?.changed?.remove(this::layoutDataChangedHandler)
-		new?.changed?.add(this::layoutDataChangedHandler)
+		old?.changed?.remove(::layoutDataChangedHandler)
+		new?.changed?.add(::layoutDataChangedHandler)
 		invalidate(ValidationFlags.LAYOUT)
 	}
 
@@ -1323,7 +1319,7 @@ open class UiComponentImpl(
 		_disposed.dispose()
 		_activated.dispose()
 		_deactivated.dispose()
-		owner.disposed.remove(this::ownerDisposedHandler)
+		owner.disposed.remove(::dispose.as1)
 		_isDisposed = true
 		if (assertionsEnabled) {
 			parentWalk {

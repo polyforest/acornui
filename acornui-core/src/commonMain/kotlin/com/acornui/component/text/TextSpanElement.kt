@@ -1,6 +1,5 @@
 package com.acornui.component.text
 
-import com.acornui.collection.forEach2
 import com.acornui.component.ComponentInit
 import com.acornui.component.ElementParent
 import com.acornui.component.ElementParentRo
@@ -8,8 +7,14 @@ import com.acornui.component.ValidationFlags
 import com.acornui.component.style.*
 import com.acornui.core.Disposable
 import com.acornui.graphic.ColorRo
+import com.acornui.recycle.ObjectPool
 
 interface TextSpanElementRo<out T : TextElementRo> : ElementParentRo<T> {
+
+	/**
+	 * The calculated character style.
+	 */
+	val charElementStyle: CharElementStyleRo
 
 	/**
 	 * The text node this span element was added to.
@@ -32,6 +37,10 @@ interface TextSpanElementRo<out T : TextElementRo> : ElementParentRo<T> {
 	 */
 	val spaceSize: Float
 
+	/**
+	 * Clones this paragraph, returning a deep copy.
+	 */
+	fun clone(): TextSpanElementRo<T>
 }
 
 val TextSpanElementRo<TextElementRo>.textFieldX: Float
@@ -40,7 +49,7 @@ val TextSpanElementRo<TextElementRo>.textFieldX: Float
 		var p: TextNodeRo? = textParent
 		while (p != null) {
 			textFieldX += p.x
-			p = p.parentTextNode
+			p = p.parent
 		}
 		return textFieldX
 	}
@@ -51,22 +60,27 @@ val TextSpanElementRo<TextElementRo>.textFieldY: Float
 		var p: TextNodeRo? = textParent
 		while (p != null) {
 			textFieldY += p.y
-			p = p.parentTextNode
+			p = p.parent
 		}
 		return textFieldY
 	}
 
 
-interface TextSpanElement : TextSpanElementRo<TextElement>, Disposable {
+interface TextSpanElement : ElementParent<TextElement>, TextSpanElementRo<TextElement>, Disposable {
 
 	override var textParent: TextNodeRo?
 
 	fun validateStyles()
 	fun validateCharStyle(concatenatedColorTint: ColorRo)
+
+	/**
+	 * Clones this paragraph, returning a deep copy.
+	 */
+	override fun clone(): TextSpanElement
 }
 
 @Suppress("LeakingThis")
-open class TextSpanElementImpl : TextSpanElement, ElementParent<TextElement>, Styleable {
+open class TextSpanElementImpl private constructor() : TextSpanElement, Styleable {
 
 	override var textParent: TextNodeRo? = null
 
@@ -82,7 +96,8 @@ open class TextSpanElementImpl : TextSpanElement, ElementParent<TextElement>, St
 
 	val charStyle = styles.bind(CharStyle())
 
-	private val tfCharStyle = CharElementStyle()
+	private val _charElementStyle = CharElementStyle()
+	override val charElementStyle: CharElementStyleRo = _charElementStyle
 
 	init {
 	}
@@ -105,14 +120,14 @@ open class TextSpanElementImpl : TextSpanElement, ElementParent<TextElement>, St
 
 	override fun validateStyles() {
 		styles.validateStyles()
-		tfCharStyle.font = charStyle.font
-		tfCharStyle.underlined = charStyle.underlined
-		tfCharStyle.strikeThrough = charStyle.strikeThrough
-		tfCharStyle.lineThickness = charStyle.lineThickness
+		_charElementStyle.font = charStyle.font
+		_charElementStyle.underlined = charStyle.underlined
+		_charElementStyle.strikeThrough = charStyle.strikeThrough
+		_charElementStyle.lineThickness = charStyle.lineThickness
 	}
 
 	private val font: BitmapFont?
-		get() = tfCharStyle.font
+		get() = _charElementStyle.font
 
 	override val lineHeight: Float
 		get() = (font?.data?.lineHeight?.toFloat() ?: 0f)
@@ -163,7 +178,7 @@ open class TextSpanElementImpl : TextSpanElement, ElementParent<TextElement>, St
 	}
 
 	fun char(char: Char): TextElement {
-		return CharElement.obtain(char, tfCharStyle)
+		return CharElement.obtain(char)
 	}
 
 	operator fun String?.unaryPlus() {
@@ -193,19 +208,34 @@ open class TextSpanElementImpl : TextSpanElement, ElementParent<TextElement>, St
 		}
 
 	override fun validateCharStyle(concatenatedColorTint: ColorRo) {
-		tfCharStyle.selectedTextColorTint.set(concatenatedColorTint).mul(charStyle.selectedColorTint)
-		tfCharStyle.selectedBackgroundColor.set(concatenatedColorTint).mul(charStyle.selectedBackgroundColor)
-		tfCharStyle.textColorTint.set(concatenatedColorTint).mul(charStyle.colorTint)
-		tfCharStyle.backgroundColor.set(concatenatedColorTint).mul(charStyle.backgroundColor)
+		_charElementStyle.selectedTextColorTint.set(concatenatedColorTint).mul(charStyle.selectedColorTint)
+		_charElementStyle.selectedBackgroundColor.set(concatenatedColorTint).mul(charStyle.selectedBackgroundColor)
+		_charElementStyle.textColorTint.set(concatenatedColorTint).mul(charStyle.colorTint)
+		_charElementStyle.backgroundColor.set(concatenatedColorTint).mul(charStyle.backgroundColor)
 	}
 
 	override fun dispose() {
 		clearElements(true)
+		pool.free(this)
+	}
+
+	override fun clone(): TextSpanElementImpl {
+		val span = obtain()
+		for (i in 0.._elements.lastIndex) {
+			span.addElement(_elements[i].clone())
+		}
+		return span
+	}
+
+	companion object {
+		private val pool = ObjectPool { TextSpanElementImpl() }
+
+		fun obtain(): TextSpanElementImpl = pool.obtain()
 	}
 }
 
-fun span(init: ComponentInit<TextSpanElement> = {}): TextSpanElementImpl {
-	val s = TextSpanElementImpl()
+fun span(init: ComponentInit<TextSpanElementImpl> = {}): TextSpanElementImpl {
+	val s = TextSpanElementImpl.obtain()
 	s.init()
 	return s
 }

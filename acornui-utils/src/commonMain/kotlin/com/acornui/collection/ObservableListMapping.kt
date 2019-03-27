@@ -30,7 +30,7 @@ class ObservableListMapping<E, V>(
 		equality: EqualityCheck<E> = { o1, o2 -> o1 == o2 }
 ) : ListBase<V>(), Disposable {
 
-	private val binding = ObservableListBinding(target, configure = this::addedHandler, unconfigure = this::removedHandler, equality = equality)
+	private val binding = ObservableListBinding(target, configure = ::addedHandler, unconfigure = ::removedHandler, equality = equality)
 
 	private val list = ArrayList<V>()
 

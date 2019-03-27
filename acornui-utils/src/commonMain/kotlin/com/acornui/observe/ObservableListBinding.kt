@@ -87,10 +87,10 @@ class IndexBinding<E>() : Clearable, Disposable {
 
 	private fun unbind() {
 		val list = _observableList ?: return
-		list.added.remove(this::addedHandler)
-		list.removed.remove(this::removedHandler)
-		list.changed.remove(this::changedHandler)
-		list.reset.remove(this::resetHandler)
+		list.added.remove(::addedHandler)
+		list.removed.remove(::removedHandler)
+		list.changed.remove(::changedHandler)
+		list.reset.remove(::resetHandler)
 	}
 
 	fun data(source: List<E>?) {
@@ -102,10 +102,10 @@ class IndexBinding<E>() : Clearable, Disposable {
 	fun data(source: ObservableList<E>?) {
 		unbind()
 		if (source != null) {
-			source.added.add(this::addedHandler)
-			source.removed.add(this::removedHandler)
-			source.changed.add(this::changedHandler)
-			source.reset.add(this::resetHandler)
+			source.added.add(::addedHandler)
+			source.removed.add(::removedHandler)
+			source.changed.add(::changedHandler)
+			source.reset.add(::resetHandler)
 		}
 		_observableList = source
 		_list = source

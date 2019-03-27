@@ -56,7 +56,7 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	private val cam = orthographicCamera(autoCenter = false)
 
 	init {
-		validation.addNode(1 shl 16, ValidationFlags.LAYOUT or ValidationFlags.CONCATENATED_TRANSFORM or ValidationFlags.CAMERA or ValidationFlags.VIEWPORT, this::updateViewport2)
+		validation.addNode(1 shl 16, ValidationFlags.LAYOUT or ValidationFlags.CONCATENATED_TRANSFORM or ValidationFlags.CAMERA or ValidationFlags.VIEWPORT, ::updateViewport2)
 		cameraOverride = cam
 	}
 

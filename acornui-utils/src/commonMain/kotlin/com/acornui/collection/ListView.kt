@@ -133,11 +133,11 @@ class ListView<E>() : ListViewRo<E>, Disposable {
 
 	private fun unwatchWrappedList() {
 		val old = observableWrapped ?: return
-		old.added.add(this::addedHandler)
-		old.removed.add(this::removedHandler)
-		old.changed.add(this::changedHandler)
-		old.modified.add(this::elementModifiedHandler)
-		old.reset.add(this::dirty)
+		old.added.add(::addedHandler)
+		old.removed.add(::removedHandler)
+		old.changed.add(::changedHandler)
+		old.modified.add(::elementModifiedHandler)
+		old.reset.add(::dirty)
 		observableWrapped = null
 	}
 
@@ -146,11 +146,11 @@ class ListView<E>() : ListViewRo<E>, Disposable {
 		unwatchWrappedList()
 		observableWrapped = source
 		wrapped = source
-		source.added.add(this::addedHandler)
-		source.removed.add(this::removedHandler)
-		source.changed.add(this::changedHandler)
-		source.modified.add(this::elementModifiedHandler)
-		source.reset.add(this::dirty)
+		source.added.add(::addedHandler)
+		source.removed.add(::removedHandler)
+		source.changed.add(::changedHandler)
+		source.modified.add(::elementModifiedHandler)
+		source.reset.add(::dirty)
 		dirty()
 	}
 

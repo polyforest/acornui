@@ -9,6 +9,7 @@ import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.layout.algorithm.LineInfo
 import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.component.text.collection.JoinedList
+import com.acornui.component.validationProp
 import com.acornui.core.di.Owned
 import com.acornui.core.floor
 import com.acornui.core.selection.SelectionRange
@@ -50,11 +51,13 @@ class Paragraph(owner: Owned) : TextNodeBase(owner), ElementParent<TextSpanEleme
 			ValidationFlags.HIERARCHY_ASCENDING or
 					ValidationFlags.LAYOUT
 
+	override var allowClipping: Boolean by validationProp(true, VERTICES)
+
 	init {
 		validation.addNode(TEXT_ELEMENTS, dependencies = ValidationFlags.HIERARCHY_ASCENDING, dependents = ValidationFlags.LAYOUT, onValidate = _textElements::dirty)
-		validation.addNode(VERTICES, dependencies = TEXT_ELEMENTS or ValidationFlags.LAYOUT or ValidationFlags.STYLES or ValidationFlags.CONCATENATED_TRANSFORM, dependents = 0, onValidate = this::updateVertices)
+		validation.addNode(VERTICES, dependencies = TEXT_ELEMENTS or ValidationFlags.LAYOUT or ValidationFlags.STYLES or ValidationFlags.CONCATENATED_TRANSFORM, dependents = 0, onValidate = ::updateVertices)
 		validation.addNode(ValidationFlags.CONCATENATED_COLOR_TRANSFORM) {}
-		validation.addNode(CHAR_STYLE, dependencies = TEXT_ELEMENTS or ValidationFlags.CONCATENATED_COLOR_TRANSFORM or ValidationFlags.STYLES, dependents = 0, onValidate = this::updateCharStyle)
+		validation.addNode(CHAR_STYLE, dependencies = TEXT_ELEMENTS or ValidationFlags.CONCATENATED_COLOR_TRANSFORM or ValidationFlags.STYLES, dependents = 0, onValidate = ::updateCharStyle)
 	}
 
 	override val lines: List<LineInfoRo>
@@ -364,6 +367,14 @@ class Paragraph(owner: Owned) : TextNodeBase(owner), ElementParent<TextSpanEleme
 		}
 	}
 
+	override fun clone(newOwner: Owned): Paragraph {
+		val p = configureClone(Paragraph(newOwner))
+		for (i in 0.._elements.lastIndex) {
+			p.addElement(_elements[i].clone())
+		}
+		return p
+	}
+
 	companion object {
 		private const val TEXT_ELEMENTS = 1 shl 16
 		private const val VERTICES = 1 shl 17
@@ -371,7 +382,7 @@ class Paragraph(owner: Owned) : TextNodeBase(owner), ElementParent<TextSpanEleme
 	}
 }
 
-fun Owned.p(init: ComponentInit<Paragraph>): Paragraph {
+fun Owned.p(init: ComponentInit<Paragraph> = {}): Paragraph {
 	val t = Paragraph(this)
 	t.init()
 	return t

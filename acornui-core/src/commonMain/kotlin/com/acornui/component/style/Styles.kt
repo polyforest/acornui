@@ -90,7 +90,7 @@ class Styles(private val host: Styleable) : Disposable {
 		styleRules.reset.add {
 			for (list in entriesByType.values) {
 				for (entry in list) {
-					entry.style.changed.remove(this::styleRuleChangedHandler)
+					entry.style.changed.remove(::styleRuleChangedHandler)
 				}
 			}
 			entriesByType.clear()
@@ -103,13 +103,13 @@ class Styles(private val host: Styleable) : Disposable {
 			entriesByType[entry.style.type] = ArrayList()
 		entriesByType[entry.style.type]!!.add(entry)
 		host.invalidateStyles()
-		entry.style.changed.add(this::styleRuleChangedHandler)
+		entry.style.changed.add(::styleRuleChangedHandler)
 	}
 
 	private fun remove(entry: StyleRule<*>) {
 		entriesByType[entry.style.type]?.remove(entry)
 		host.invalidateStyles()
-		entry.style.changed.remove(this::styleRuleChangedHandler)
+		entry.style.changed.remove(::styleRuleChangedHandler)
 	}
 
 	private fun styleRuleChangedHandler(style: StyleRo) {
@@ -126,14 +126,14 @@ class Styles(private val host: Styleable) : Disposable {
 
 	fun <T : Style> bind(style: T, calculator: StyleCalculator = CascadingStyleCalculator): T {
 		if (isDisposed) throw DisposedException()
-		style.changed.add(this::styleChangedHandler)
+		style.changed.add(::styleChangedHandler)
 		styleValidators.add(StyleValidator(style, calculator))
 		host.invalidateStyles()
 		return style
 	}
 
 	fun unbind(style: StyleRo) {
-		style.changed.remove(this::styleChangedHandler)
+		style.changed.remove(::styleChangedHandler)
 		styleValidators.removeFirst { it.style === style }
 	}
 
@@ -166,7 +166,7 @@ class Styles(private val host: Styleable) : Disposable {
 		if (isDisposed) throw DisposedException()
 		isDisposed = true
 		for (i in 0..styleValidators.lastIndex) {
-			styleValidators[i].style.changed.remove(this::styleChangedHandler)
+			styleValidators[i].style.changed.remove(::styleChangedHandler)
 		}
 		styleWatchers.clear()
 		styleValidators.clear()

@@ -142,7 +142,7 @@ open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Owned, protected val 
 		get() = _elements
 
 	init {
-		validation.addNode(ValidationFlags.PROPERTIES, dependencies = ValidationFlags.STYLES, dependents = ValidationFlags.SIZE_CONSTRAINTS, onValidate = this::updateProperties)
+		validation.addNode(ValidationFlags.PROPERTIES, dependencies = ValidationFlags.STYLES, dependents = ValidationFlags.SIZE_CONSTRAINTS, onValidate = ::updateProperties)
 		cascadingFlags = cascadingFlags or ValidationFlags.PROPERTIES
 		styleTags.add(Companion)
 
@@ -171,11 +171,11 @@ open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Owned, protected val 
 			val oldData = _data
 			if (oldData == value) return
 			if (oldData is Observable) {
-				oldData.changed.remove(this::dataChangedHandler)
+				oldData.changed.remove(::dataChangedHandler)
 			}
 			_data = value
 			if (value is Observable) {
-				value.changed.add(this::dataChangedHandler)
+				value.changed.add(::dataChangedHandler)
 			}
 			invalidateStyles()
 		}

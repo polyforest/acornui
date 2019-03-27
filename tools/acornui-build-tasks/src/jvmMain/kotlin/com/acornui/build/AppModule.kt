@@ -132,7 +132,7 @@ open class AppModule(
 		}
 
 		for (i in libraryFiles) {
-			JarUtil.extractFromJar(JarFile(i), dest, this::extractFilter)
+			JarUtil.extractFromJar(JarFile(i), dest, ::extractFilter)
 		}
 
 		if (minimize) dce(dest)

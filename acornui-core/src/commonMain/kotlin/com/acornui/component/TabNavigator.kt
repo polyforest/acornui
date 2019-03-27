@@ -174,7 +174,7 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 		tab.button.click().add(tabClickHandler)
 
 		updateSelectedTab()
-		tab.disposed.add(this::tabDisposedHandler)
+		tab.disposed.add(::tabDisposedHandler)
 		return tab
 	}
 
@@ -215,7 +215,7 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 		tabBar.removeElement(r.button)
 
 		updateSelectedTab()
-		r.disposed.remove(this::tabDisposedHandler)
+		r.disposed.remove(::tabDisposedHandler)
 		return r
 	}
 

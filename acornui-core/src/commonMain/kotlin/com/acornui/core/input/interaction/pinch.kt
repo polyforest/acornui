@@ -217,11 +217,11 @@ class PinchAttachment(
 		if (watchingTouch == value) return
 		watchingTouch = value
 		if (value) {
-			stage.touchMove().add(this::stageTouchMoveHandler)
-			stage.touchEnd().add(this::stageTouchEndHandler)
+			stage.touchMove().add(::stageTouchMoveHandler)
+			stage.touchEnd().add(::stageTouchEndHandler)
 		} else {
-			stage.touchMove().remove(this::stageTouchMoveHandler)
-			stage.touchEnd().remove(this::stageTouchEndHandler)
+			stage.touchMove().remove(::stageTouchMoveHandler)
+			stage.touchEnd().remove(::stageTouchEndHandler)
 		}
 	}
 
@@ -263,7 +263,7 @@ class PinchAttachment(
 			if (pinchEvent.defaultPrevented()) {
 				_isPinching = false
 			} else {
-				stage.click(isCapture = true).add(this::clickBlocker, true) // Set the next click to be marked as handled.
+				stage.click(isCapture = true).add(::clickBlocker, true) // Set the next click to be marked as handled.
 				dispatchPinchEvent(PinchInteraction.PINCH, _pinch)
 			}
 		} else {
@@ -272,7 +272,7 @@ class PinchAttachment(
 			}
 			dispatchPinchEvent(PinchInteraction.PINCH_END, _pinchEnd)
 
-			target.callLater { stage.click(isCapture = true).remove(this::clickBlocker) }
+			target.callLater { stage.click(isCapture = true).remove(::clickBlocker) }
 		}
 	}
 
@@ -305,8 +305,8 @@ class PinchAttachment(
 	}
 
 	init {
-		target.deactivated.add(this::targetDeactivatedHandler)
-		target.touchStart().add(this::touchStartHandler)
+		target.deactivated.add(::targetDeactivatedHandler)
+		target.touchStart().add(::touchStartHandler)
 	}
 
 	override fun dispose() {
@@ -315,8 +315,8 @@ class PinchAttachment(
 		_pinch.dispose()
 		_pinchEnd.dispose()
 
-		target.deactivated.remove(this::targetDeactivatedHandler)
-		target.touchStart().remove(this::touchStartHandler)
+		target.deactivated.remove(::targetDeactivatedHandler)
+		target.touchStart().remove(::touchStartHandler)
 	}
 
 	companion object {

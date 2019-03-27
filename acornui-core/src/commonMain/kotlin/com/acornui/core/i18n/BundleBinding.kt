@@ -41,7 +41,7 @@ class BundleBinding(override val injector: Injector, bundleName: String) : Scope
 	private var bundleLoader = loadBundle(bundleName)
 
 	init {
-		bundle.changed.add(this::bundleChangedHandler)
+		bundle.changed.add(::bundleChangedHandler)
 	}
 
 	fun bind(callback: (bundle: I18nBundleRo) -> Unit): Disposable {
@@ -59,7 +59,7 @@ class BundleBinding(override val injector: Injector, bundleName: String) : Scope
 	override fun get(key: String): String? = bundle[key]
 
 	override fun dispose() {
-		bundle.changed.remove(this::bundleChangedHandler)
+		bundle.changed.remove(::bundleChangedHandler)
 		bundleLoader.dispose()
 		_changed.dispose()
 	}

@@ -64,7 +64,7 @@ class FocusAttachment(
 	val blurredSelf = _blurredSelf.asRo()
 
 	init {
-		focusManager.focusedChanged.add(this::focusChangedHandler)
+		focusManager.focusedChanged.add(::focusChangedHandler)
 	}
 
 	private fun focusChangedHandler(old: UiComponentRo?, new: UiComponentRo?) {
@@ -79,7 +79,7 @@ class FocusAttachment(
 	}
 
 	override fun dispose() {
-		focusManager.focusedChanged.remove(this::focusChangedHandler)
+		focusManager.focusedChanged.remove(::focusChangedHandler)
 		_focused.dispose()
 		_focusedSelf.dispose()
 		_blurred.dispose()

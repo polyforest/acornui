@@ -40,7 +40,7 @@ fun AudioContext.decodeAudioData(audioData: ArrayBuffer): Deferred<ArrayBuffer> 
 	return object : Promise<ArrayBuffer>() {
 		init {
 			// The Audio Context handles creating source buffers from raw binary
-			decodeAudioData(audioData, this::success)
+			decodeAudioData(audioData, ::success)
 		}
 	}
 }

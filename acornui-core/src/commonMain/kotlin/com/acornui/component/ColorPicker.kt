@@ -299,7 +299,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 			alphaIndicator?.visible = showAlphaPicker
 		}
 
-		validation.addNode(COLORS, ValidationFlags.STYLES, ValidationFlags.LAYOUT, this::updateColors)
+		validation.addNode(COLORS, ValidationFlags.STYLES, ValidationFlags.LAYOUT, ::updateColors)
 	}
 
 	private fun updateColors() {

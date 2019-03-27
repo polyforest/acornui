@@ -337,7 +337,7 @@ open class BasicUiSkin(
 				val texture = buttonTexture(it, Corners(topLeft = 0f, topRight = maxOf(4f, theme.borderRadius), bottomRight = 0f, bottomLeft = 0f))
 				val skinPart = IconButtonSkinPart(this, texture, stepperPad)
 				val theme = inject(Theme)
-				skinPart.element = atlas(theme.atlasPath, "UpArrow") {
+				skinPart.element = atlas(theme.atlasPath, "ArrowUpMed") {
 					colorTint = theme.iconColor
 				}
 				skinPart
@@ -349,7 +349,7 @@ open class BasicUiSkin(
 				val texture = buttonTexture(it, Corners(topLeft = 0f, topRight = 0f, bottomRight = maxOf(4f, theme.borderRadius), bottomLeft = 0f))
 				val skinPart = IconButtonSkinPart(this, texture, stepperPad)
 				val theme = inject(Theme)
-				skinPart.element = atlas(theme.atlasPath, "DownArrow") {
+				skinPart.element = atlas(theme.atlasPath, "ArrowDownMed") {
 					colorTint = theme.iconColor
 				}
 				skinPart
@@ -600,8 +600,8 @@ open class BasicUiSkin(
 			}
 			cellPadding = Pad(theme.strokeThickness + 2f)
 			resizeHandleWidth = if (userInfo.isTouchDevice) 16f else 8f
-			sortDownArrow = { atlas(theme.atlasPath, "DownArrow") { colorTint = theme.iconColor } }
-			sortUpArrow = { atlas(theme.atlasPath, "UpArrow") { colorTint = theme.iconColor } }
+			sortDownArrow = { atlas(theme.atlasPath, "ArrowDownMed") { colorTint = theme.iconColor } }
+			sortUpArrow = { atlas(theme.atlasPath, "ArrowUpMed") { colorTint = theme.iconColor } }
 			borderRadii = Corners(theme.borderRadius)
 			borderThicknesses = Pad(theme.strokeThickness + 1f)
 			cellFocusHighlight = {
@@ -700,7 +700,7 @@ open class BasicUiSkin(
 	protected open fun contextMenuStyle() {
 		val contextMenuStyle = ContextMenuStyle()
 		contextMenuStyle.rightArrow = {
-			atlas(theme.atlasPath, "RightArrow")
+			atlas(theme.atlasPath, "ArrowRightMed")
 		}
 		target.addStyleRule(contextMenuStyle, ContextMenuView)
 	}
@@ -735,8 +735,8 @@ open class BasicUiSkin(
 		}
 		target.addStyleRule(calendarPanelStyle, Panel and withAncestor(Calendar))
 
-		target.addStyleRule(ButtonStyle().set { iconButtonSkin(it, "ArrowLeft") }, Calendar.MONTH_DEC_STYLE)
-		target.addStyleRule(ButtonStyle().set { iconButtonSkin(it, "ArrowRight") }, Calendar.MONTH_INC_STYLE)
+		target.addStyleRule(ButtonStyle().set { iconButtonSkin(it, "ArrowLeftLg") }, Calendar.MONTH_DEC_STYLE)
+		target.addStyleRule(ButtonStyle().set { iconButtonSkin(it, "ArrowRightLg") }, Calendar.MONTH_INC_STYLE)
 
 		val inactiveCalendarItemRendererStyle = CalendarItemRendererStyle().apply {
 			disabledColor = Color(0.5f, 0.5f, 0.5f, 0.3f)

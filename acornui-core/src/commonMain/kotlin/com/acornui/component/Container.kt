@@ -105,8 +105,8 @@ open class ContainerImpl(
 
 		child.parent = this
 		_children.add(index, child)
-		child.invalidated.add(this::childInvalidatedHandler)
-		child.disposed.add(this::childDisposedHandler)
+		child.invalidated.add(::childInvalidatedHandler)
+		child.disposed.add(::childDisposedHandler)
 
 		if (isActive)
 			child.activate()
@@ -159,8 +159,8 @@ open class ContainerImpl(
 		val child = _children.removeAt(index)
 		child.parent = null
 
-		child.invalidated.remove(this::childInvalidatedHandler)
-		child.disposed.remove(this::childDisposedHandler)
+		child.invalidated.remove(::childInvalidatedHandler)
+		child.disposed.remove(::childDisposedHandler)
 		if (child.isActive) {
 			child.deactivate()
 		}
@@ -254,7 +254,8 @@ open class ContainerImpl(
 		val ray = rayCache ?: camera.getPickRay(canvasX, canvasY, viewport, rayTmp)
 		if (interactivityMode == InteractivityMode.ALWAYS || intersectsGlobalRay(ray)) {
 			if ((returnAll || out.isEmpty())) {
-				_children.iterateReversed { child ->
+				for (i in _children.lastIndex downTo 0) {
+					val child = _children[i]
 					val childRayCache = if (child.camera === camera && child.viewport === viewport) ray else null
 					child.getChildrenUnderPoint(canvasX, canvasY, onlyInteractive, returnAll, out, childRayCache)
 					// Continue iterating if we haven't found an intersecting child yet, or if returnAll is true.

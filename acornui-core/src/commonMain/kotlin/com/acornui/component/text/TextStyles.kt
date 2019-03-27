@@ -235,13 +235,13 @@ fun charStyle(init: CharStyle.() -> Unit = {}): CharStyle {
 object CharStyleSerializer : To<CharStyle>, From<CharStyle> {
 
 	override fun CharStyle.write(writer: Writer) {
-		writer.styleProperty(this, this::fontKey)?.string(fontKey)
-		writer.styleProperty(this, this::underlined)?.bool(underlined)
-		writer.styleProperty(this, this::colorTint)?.color(colorTint)
-		writer.styleProperty(this, this::backgroundColor)?.color(backgroundColor)
-		writer.styleProperty(this, this::selectedColorTint)?.color(selectedColorTint)
-		writer.styleProperty(this, this::selectedBackgroundColor)?.color(selectedBackgroundColor)
-		writer.styleProperty(this, this::selectable)?.bool(selectable)
+		writer.styleProperty(this, ::fontKey)?.string(fontKey)
+		writer.styleProperty(this, ::underlined)?.bool(underlined)
+		writer.styleProperty(this, ::colorTint)?.color(colorTint)
+		writer.styleProperty(this, ::backgroundColor)?.color(backgroundColor)
+		writer.styleProperty(this, ::selectedColorTint)?.color(selectedColorTint)
+		writer.styleProperty(this, ::selectedBackgroundColor)?.color(selectedBackgroundColor)
+		writer.styleProperty(this, ::selectable)?.bool(selectable)
 	}
 
 	override fun read(reader: Reader): CharStyle {

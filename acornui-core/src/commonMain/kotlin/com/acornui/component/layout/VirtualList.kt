@@ -259,10 +259,10 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 
 	private fun unwatchWrappedList() {
 		val old = observableData ?: return
-		old.added.remove(this::invalidateLayout.as2)
-		old.removed.remove(this::invalidateLayout.as2)
-		old.changed.remove(this::invalidateLayout.as3)
-		old.reset.remove(this::invalidateLayout)
+		old.added.remove(::invalidateLayout.as2)
+		old.removed.remove(::invalidateLayout.as2)
+		old.changed.remove(::invalidateLayout.as3)
+		old.reset.remove(::invalidateLayout)
 		observableData = null
 		_data = emptyList()
 	}
@@ -288,10 +288,10 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 		_data = source ?: emptyList()
 		_selection.data(_data)
 		if (source != null) {
-			source.added.add(this::invalidateLayout.as2)
-			source.removed.add(this::invalidateLayout.as2)
-			source.changed.add(this::invalidateLayout.as3)
-			source.reset.add(this::invalidateLayout)
+			source.added.add(::invalidateLayout.as2)
+			source.removed.add(::invalidateLayout.as2)
+			source.changed.add(::invalidateLayout.as3)
+			source.reset.add(::invalidateLayout)
 		}
 		invalidateLayout()
 	}

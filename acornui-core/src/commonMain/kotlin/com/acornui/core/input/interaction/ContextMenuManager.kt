@@ -52,7 +52,7 @@ class ContextMenuManager(override val owner: Owned) : Owned, Disposable {
 	private val popUpManager = inject(PopUpManager)
 
 	init {
-		stage.rightClick().add(this::rightClickHandler)
+		stage.rightClick().add(::rightClickHandler)
 	}
 
 	private fun rightClickHandler(event: MouseInteractionRo) {
@@ -73,7 +73,7 @@ class ContextMenuManager(override val owner: Owned) : Owned, Disposable {
 	override fun dispose() {
 		if (_isDisposed) throw DisposedException()
 		_isDisposed = true
-		stage.rightClick().remove(this::rightClickHandler)
+		stage.rightClick().remove(::rightClickHandler)
 		_disposed.dispatch(this)
 		_disposed.dispose()
 	}
@@ -196,7 +196,7 @@ class ContextMenuView(owner: Owned) : ContainerImpl(owner) {
 			}
 		}
 
-		click().add(this::clickHandler)
+		click().add(::clickHandler)
 	}
 
 	override fun onActivated() {

@@ -63,7 +63,7 @@ open class StaticMeshComponent(
 	private val colorTransformationFilter = colorTransformationFilter()
 
 	init {
-		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.CONCATENATED_TRANSFORM or ValidationFlags.LAYOUT, this::updateGlobalBoundingBox)
+		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.CONCATENATED_TRANSFORM or ValidationFlags.LAYOUT, ::updateGlobalBoundingBox)
 		renderFilters.add(colorTransformationFilter)
 	}
 

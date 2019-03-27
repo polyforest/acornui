@@ -19,9 +19,10 @@ import com.acornui.string.isBreaking
 class CharElement private constructor() : TextElement, Clearable {
 
 	override var char: Char = CHAR_PLACEHOLDER
-	private var style: CharElementStyle? = null
-
 	override var parentSpan: TextSpanElementRo<TextElementRo>? = null
+
+	private val style: CharElementStyleRo?
+		get() = parentSpan?.charElementStyle
 
 	val glyph: Glyph?
 		get() {
@@ -247,7 +248,6 @@ class CharElement private constructor() : TextElement, Clearable {
 	override fun clear() {
 		explicitWidth = null
 		char = CHAR_PLACEHOLDER
-		style = null
 		parentSpan = null
 		x = 0f
 		y = 0f
@@ -261,15 +261,42 @@ class CharElement private constructor() : TextElement, Clearable {
 		backgroundColor = Color.CLEAR
 	}
 
+	override fun clone(): CharElement = obtain(char)
+
 	companion object {
 		private const val CHAR_PLACEHOLDER = 'a'
 		private val pool = ClearableObjectPool { CharElement() }
 
-		fun obtain(char: Char, charStyle: CharElementStyle): CharElement {
+		internal fun obtain(char: Char): CharElement {
 			val c = pool.obtain()
 			c.char = char
-			c.style = charStyle
 			return c
 		}
 	}
+}
+
+interface CharElementStyleRo {
+	val font: BitmapFont?
+	val underlined: Boolean
+	val strikeThrough: Boolean
+	val lineThickness: Float
+	val selectedTextColorTint: ColorRo
+	val selectedBackgroundColor: ColorRo
+	val textColorTint: ColorRo
+	val backgroundColor: ColorRo
+}
+
+/**
+ * A [TextSpanElement] will decorate the span's characters all the same way. This class is used to store those
+ * calculated properties.
+ */
+class CharElementStyle : CharElementStyleRo {
+	override var font: BitmapFont? = null
+	override var underlined: Boolean = false
+	override var strikeThrough: Boolean = false
+	override var lineThickness: Float = 1f
+	override val selectedTextColorTint = Color()
+	override val selectedBackgroundColor = Color()
+	override val textColorTint = Color()
+	override val backgroundColor = Color()
 }

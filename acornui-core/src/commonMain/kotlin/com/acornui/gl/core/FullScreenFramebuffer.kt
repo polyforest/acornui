@@ -45,7 +45,7 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 		}
 
 	init {
-		window.sizeChanged.add(this::resize.as3)
+		window.sizeChanged.add(::resize.as3)
 		framebuffer.updateWorldVertices(Matrix4.IDENTITY, 2f, 2f, -1f, -1f)
 	}
 
@@ -89,7 +89,7 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 	}
 
 	override fun dispose() {
-		window.sizeChanged.remove(this::resize.as3)
+		window.sizeChanged.remove(::resize.as3)
 		framebuffer.dispose()
 	}
 }

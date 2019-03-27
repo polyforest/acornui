@@ -291,7 +291,7 @@ open class OptionList<E : Any>(
 		maxItems = 10
 		addChild(textInput)
 
-		keyDown().add(this::keyDownHandler)
+		keyDown().add(::keyDownHandler)
 
 		sortComparator = defaultSortComparator
 
@@ -320,7 +320,7 @@ open class OptionList<E : Any>(
 			}
 		}
 
-		focusManager.focusedChanged.add(this::focusChangedHandler)
+		focusManager.focusedChanged.add(::focusChangedHandler)
 	}
 
 	private fun focusChangedHandler(old: UiComponentRo?, new: UiComponentRo?) {
@@ -513,7 +513,7 @@ open class OptionList<E : Any>(
 
 	override fun dispose() {
 		unbindData()
-		focusManager.focusedChanged.remove(this::focusChangedHandler)
+		focusManager.focusedChanged.remove(::focusChangedHandler)
 		close()
 		super.dispose()
 	}

@@ -17,12 +17,10 @@
 package com.acornui.component.text
 
 import com.acornui._assert
-import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
-import com.acornui.component.layout.*
-import com.acornui.component.layout.algorithm.LineInfoRo
-import com.acornui.component.style.*
-import com.acornui.core.Disposable
+import com.acornui.component.style.StyleTag
+import com.acornui.component.style.Styleable
+import com.acornui.component.style.addStyleRule
 import com.acornui.core.cursor.RollOverCursor
 import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.di.Owned
@@ -36,10 +34,8 @@ import com.acornui.core.selection.Selectable
 import com.acornui.core.selection.SelectableComponent
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionRange
-import com.acornui.gl.core.GlState
-import com.acornui.graphic.Color
-import com.acornui.math.*
-import com.acornui.signal.Signal
+import com.acornui.math.Bounds
+import com.acornui.math.MinMaxRo
 
 interface TextField : Labelable, SelectableComponent, Styleable {
 
@@ -62,8 +58,11 @@ interface TextField : Labelable, SelectableComponent, Styleable {
 	 * The TextField contents.
 	 */
 	val contents: TextNodeRo
+
 	/**
 	 * Sets this text field's contents to a simple text flow.
+	 *
+	 * @see replaceTextRange
 	 */
 	var text: String
 
@@ -79,19 +78,25 @@ interface TextField : Labelable, SelectableComponent, Styleable {
 	fun <T : TextNode> contents(value: T): T
 
 	/**
-	 * Replaces the given range with the provided text.
-	 * This is functionally the same as:
-	 * text.substring(0, startIndex) + newText + text.substring(endIndex, text.length)
-	 *
-	 * @param startIndex The starting character index for the replacement. (Inclusive)
-	 * @param endIndex The ending character index for the replacement. (Exclusive)
+	 * Replaces the given range with the provided text. This method doesn't destroy text node structure (therefore
+	 * styling) outside of the range. Nodes entirely contained within this range, however, will be removed.
 	 *
 	 * E.g.
+	 * ```
 	 * +text("Hello World") {
 	 *   replaceTextRange(1, 5, "i") // Hi World
 	 * }
+	 * ```
+	 *
+	 * @param startIndex The starting text element index for the replacement. (Inclusive)
+	 * @param endIndex The ending text element index for the replacement. (Exclusive)
+	 * (Max is `contents.textElements.size`)
 	 */
 	fun replaceTextRange(startIndex: Int, endIndex: Int, newText: String)
+
+//	fun <T : TextNode> replaceTextRange(startIndex: Int, endIndex: Int, newContent: T): T {
+//
+//	}
 
 	companion object : StyleTag
 }
@@ -117,7 +122,7 @@ open class TextFieldImpl(owner: Owned) : UiComponentImpl(owner), TextField {
 
 	private val _textSpan = span()
 	private val _textContents = p { +_textSpan }
-	private var _contents: TextNode = addChild(_textContents)
+	private var _contents: TextNode = watchNode(_textContents)
 
 	private var _allowClipping: Boolean = true
 
@@ -144,29 +149,30 @@ open class TextFieldImpl(owner: Owned) : UiComponentImpl(owner), TextField {
 	 * This will remove the existing contents, but does not dispose.
 	 */
 	override fun <T : TextNode> contents(value: T): T {
-		if (_contents == value) return value
-		removeChild(_contents)
+		if (_contents === value) return value
+		unwatchNode(_contents)
 		_contents = value
 		_contents.allowClipping = _allowClipping
-		addChild(value)
+		watchNode(value)
 		return value
 	}
 
-	private fun removeChild(node: TextNode) {
+	private fun unwatchNode(node: TextNode) {
 		node.textField = null
 		node.invalidate(cascadingFlags)
-		node.invalidated.remove(this::childInvalidatedHandler)
-		node.disposed.remove(this::childDisposedHandler)
+		node.invalidated.remove(::childInvalidatedHandler)
+		node.disposed.remove(::childDisposedHandler)
 		if (!isValidatingLayout)
 			invalidateLayout()
 	}
 
-	private fun addChild(child: TextNode): TextNode {
+	private fun watchNode(child: TextNode): TextNode {
 		_assert(!isDisposed, "This TextField is disposed.")
 		_assert(!child.isDisposed, "Added text node is disposed.")
+		_assert(child.textField == null, "Added text node is already owned by a different text field.")
 		child.textField = this
-		child.invalidated.add(this::childInvalidatedHandler)
-		child.disposed.remove(this::childDisposedHandler)
+		child.invalidated.add(::childInvalidatedHandler)
+		child.disposed.remove(::childDisposedHandler)
 		child.invalidate(cascadingFlags)
 		if (!isValidatingLayout)
 			invalidateLayout()
@@ -174,7 +180,7 @@ open class TextFieldImpl(owner: Owned) : UiComponentImpl(owner), TextField {
 	}
 
 	private fun childDisposedHandler(child: TextNode) {
-		removeChild(child)
+		unwatchNode(child)
 	}
 
 	private val isValidatingLayout: Boolean
@@ -200,7 +206,7 @@ open class TextFieldImpl(owner: Owned) : UiComponentImpl(owner), TextField {
 	private var _drag: DragAttachment? = null
 
 	private fun selectionChangedHandler(old: List<SelectionRange>, new: List<SelectionRange>) {
-		invalidate(TextValidationFlags.SELECTION)
+		invalidate(SELECTION)
 	}
 
 	private fun dragHandler(event: DragInteractionRo) {
@@ -289,7 +295,7 @@ open class TextFieldImpl(owner: Owned) : UiComponentImpl(owner), TextField {
 		super.dispose()
 		_selectionCursor?.dispose()
 		_selectionCursor = null
-		selectionManager.selectionChanged.remove(this::selectionChangedHandler)
+		selectionManager.selectionChanged.remove(::selectionChangedHandler)
 		_drag?.dispose()
 		_drag = null
 	}
@@ -304,7 +310,7 @@ open class TextFieldImpl(owner: Owned) : UiComponentImpl(owner), TextField {
 			if (cS.selectable) {
 				if (_drag == null) {
 					val d = DragAttachment(this, 0f)
-					d.drag.add(this::dragHandler)
+					d.drag.add(::dragHandler)
 					_drag = d
 				}
 			} else {
@@ -312,18 +318,18 @@ open class TextFieldImpl(owner: Owned) : UiComponentImpl(owner), TextField {
 				_drag = null
 			}
 		}
-		validation.addNode(TextValidationFlags.SELECTION, dependencies = ValidationFlags.HIERARCHY_ASCENDING, onValidate = this::updateSelection)
-		selectionManager.selectionChanged.add(this::selectionChangedHandler)
+		validation.addNode(SELECTION, dependencies = ValidationFlags.HIERARCHY_ASCENDING, onValidate = ::updateSelection)
+		selectionManager.selectionChanged.add(::selectionChangedHandler)
 	}
 
 	override fun onActivated() {
 		super.onActivated()
-		stage.clipboardCopy().add(this::copyHandler)
+		stage.clipboardCopy().add(::copyHandler)
 	}
 
 	override fun onDeactivated() {
 		super.onDeactivated()
-		stage.clipboardCopy().remove(this::copyHandler)
+		stage.clipboardCopy().remove(::copyHandler)
 	}
 
 	private fun copyHandler(e: CopyInteractionRo) {
@@ -340,299 +346,10 @@ open class TextFieldImpl(owner: Owned) : UiComponentImpl(owner), TextField {
 
 	private val firstSelection: SelectionRange?
 		get() = selectionManager.selection.firstOrNull { it.target == this }
-}
 
-object TextValidationFlags {
-	const val SELECTION = 1 shl 16
-}
-
-/**
- * A [TextSpanElement] will decorate the span's characters all the same way. This class is used to store those
- * calculated properties.
- */
-class CharElementStyle {
-	var font: BitmapFont? = null
-	var underlined: Boolean = false
-	var strikeThrough: Boolean = false
-	var lineThickness: Float = 1f
-	val selectedTextColorTint = Color()
-	val selectedBackgroundColor = Color()
-	val textColorTint = Color()
-	val backgroundColor = Color()
-}
-
-/**
- * The smallest unit that can be inside of a TextField.
- * This can be a single character, or a more complex object.
- */
-interface TextElementRo {
-
-	/**
-	 * Set by the TextSpanElement when this part is added.
-	 */
-	val parentSpan: TextSpanElementRo<TextElementRo>?
-
-	val char: Char?
-
-	val x: Float
-	val y: Float
-
-	/**
-	 * The natural amount of horizontal space to advance after this part.
-	 * [explicitWidth] will override this value.
-	 */
-	val advanceX: Float
-
-	/**
-	 * If set, this part should be drawn to fit this width.
-	 */
-	val explicitWidth: Float?
-
-	/**
-	 * The explicit width, if it's set, or the xAdvance.
-	 */
-	val width: Float
-		get() = explicitWidth ?: advanceX
-
-	/**
-	 * The kerning offset between this element and the next.
-	 */
-	val kerning: Float
-
-	/**
-	 * Returns the amount of horizontal space to offset this part from the next part.
-	 */
-	fun getKerning(next: TextElementRo): Float
-
-	/**
-	 * If true, this element will cause the line to break after this element.
-	 */
-	val clearsLine: Boolean
-
-	/**
-	 * If true, the tabstop should be cleared after placing this element.
-	 */
-	val clearsTabstop: Boolean
-
-	/**
-	 * If true, this part is a good word break. (The part after this part may be placed on the next line).
-	 */
-	val isBreaking: Boolean
-
-	/**
-	 * If true, this part will not cause a wrap.
-	 */
-	val overhangs: Boolean
-}
-
-val TextElementRo.right: Float
-	get() = x + width
-
-val TextElementRo.bottom: Float
-	get() = y + lineHeight
-
-val TextElementRo.lineHeight: Float
-	get() {
-		return parentSpan?.lineHeight ?: 0f
+	companion object {
+		const val SELECTION = 1 shl 16
 	}
-
-val TextElementRo.baseline: Float
-	get() = (parentSpan?.baseline ?: 0f)
-
-val TextElementRo.textFieldX: Float
-	get() {
-		return x + (parentSpan?.textFieldX ?: 0f)
-	}
-
-val TextElementRo.textFieldY: Float
-	get() {
-		return y + (parentSpan?.textFieldY ?: 0f)
-	}
-
-interface TextElement : TextElementRo, Disposable {
-
-	/**
-	 * Set by the TextSpanElement when this is part is added.
-	 */
-	override var parentSpan: TextSpanElementRo<TextElementRo>?
-
-	override var x: Float
-	override var y: Float
-
-	/**
-	 * If set, this element should be drawn to fit this width.
-	 */
-	override var explicitWidth: Float?
-
-	override var kerning: Float
-
-	/**
-	 * If set to true, this part will be rendered using the selected styling.
-	 */
-	fun setSelected(value: Boolean)
-
-	/**
-	 * Finalizes the vertices for rendering.
-	 */
-	fun validateVertices(transform: Matrix4Ro, leftClip: Float, topClip: Float, rightClip: Float, bottomClip: Float)
-
-	/**
-	 * Draws this element.
-	 */
-	fun render(glState: GlState)
-
-}
-
-interface TextNodeRo : Validatable, StyleableRo, BasicLayoutElementRo, Owned {
-
-	override val disposed: Signal<(TextNodeRo) -> Unit>
-	override val invalidated: Signal<(TextNodeRo, Int) -> Unit>
-
-	val parentTextNode: TextNodeRo?
-
-	val textField: TextField?
-
-	/**
-	 * The transformation matrix this node uses.
-	 */
-	val concatenatedTransform: Matrix4Ro
-
-	/**
-	 * Converts a coordinate from local coordinate space to global coordinate space.
-	 * @param localCoord The input local coordinates. This will be mutated to become the output global coordinates.
-	 */
-	fun localToGlobal(localCoord: Vector3): Vector3 {
-		concatenatedTransform.prj(localCoord)
-		return localCoord
-	}
-
-	/**
-	 * A virtual text element to indicate the position of the next element within this node.
-	 */
-	val placeholder: TextElementRo?
-
-	/**
-	 * True if this node allows \n characters.
-	 */
-	val multiline: Boolean
-
-	/**
-	 * A list of the text elements this node contains.  (deep/hierarchical)
-	 */
-	val textElements: List<TextElementRo>
-
-	/**
-	 * The lines in this node (deep/hierarchical).
-	 */
-	val lines: List<LineInfoRo>
-
-	/**
-	 * Returns the line at the given text element index (deep/hierarchical).
-	 * @param index The text element index.
-	 */
-	fun getLineAt(index: Int): LineInfoRo {
-		val lines = lines
-		val lineIndex = lines.sortedInsertionIndex(index) { _, line ->
-			index.compareTo(line.startIndex)
-		} - 1
-		return lines[lineIndex]
-	}
-
-	/**
-	 * Returns the line at the given index, or null if the index is < 0 or >= [textElementsCount].
-	 */
-	fun getLineOrNullAt(index: Int): LineInfoRo? {
-		val n = lines.size
-		if (n == 0 || index < 0 || index >= textElements.size) return null
-		return getLineAt(index)
-	}
-
-	/**
-	 * @param x The relative x coordinate
-	 * @param y The relative y coordinate
-	 * @return Returns the relative index of the text element nearest (x, y). The text element index will be separated
-	 * at the half-width of the element. This range will be between `0` and `textElements.size` (inclusive)
-	 */
-	fun getSelectionIndex(x: Float, y: Float): Int {
-		val multiline = multiline
-		val lines = lines
-		if (lines.isEmpty()) return 0
-		if (y < lines.first().y) return 0
-		if (y >= lines.last().bottom) return textElements.size
-		val lineIndex = lines.sortedInsertionIndex(y) { yVal, line ->
-			yVal.compareTo(line.bottom)
-		}
-		val line = lines[lineIndex]
-		return textElements.sortedInsertionIndex(x, line.startIndex, line.endIndex) { xVal, textElement ->
-			// If the current element clears the line, end the recursion before the newline character, not after.
-			// Otherwise, separate at the half-width of the element.
-			if (textElement.clearsLine && multiline) -1 else xVal.compareTo(textElement.x + textElement.width * 0.5f)
-		}
-	}
-
-	/**
-	 * Writes this node's contents to a string builder.
-	 */
-	fun toString(builder: StringBuilder)
-}
-
-interface TextNode : TextNodeRo, Styleable, BasicLayoutElement, Disposable {
-
-	override val disposed: Signal<(TextNode) -> Unit>
-	override val invalidated: Signal<(TextNode, Int) -> Unit>
-
-	override var parentTextNode: TextNodeRo?
-	override var textField: TextField?
-
-	/**
-	 * If true, this component's vertices will be clipped to the explicit size.
-	 */
-	var allowClipping: Boolean
-
-	/**
-	 * Sets the text selection.
-	 * @param rangeStart The starting index of this node. The selection range indices are relative to the text field
-	 * and text nodes themselves don't know their starting index. Therefore it is provided.
-	 * @param selection A list of ranges that are selected.
-	 */
-	fun setSelection(rangeStart: Int, selection: List<SelectionRange>)
-
-	/**
-	 * Updates this component, validating it and its children.
-	 */
-	fun update()
-
-	/**
-	 * Renders any graphics.
-	 * @see UiComponent.render
-	 */
-	fun render(clip: MinMaxRo)
-
-}
-
-/**
- * A placeholder for the last text element in a span. This is useful for calculating the text cursor placement.
- */
-class LastTextElement(private val flow: Paragraph) : TextElementRo {
-
-	override val parentSpan: TextSpanElement?
-		get() = flow.elements.lastOrNull()
-
-	override val char: Char? = null
-	override var x = 0f
-	override var y = 0f
-
-	override val advanceX = 0f
-
-	override val explicitWidth = 0f
-	override val kerning: Float = 0f
-
-	override fun getKerning(next: TextElementRo) = 0f
-
-	override val clearsLine = false
-	override val clearsTabstop = false
-	override val isBreaking = false
-	override val overhangs = false
 }
 
 /**

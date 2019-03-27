@@ -18,18 +18,13 @@ package com.acornui.component.text
 
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.ComponentInit
-import com.acornui.component.layout.algorithm.FlowHAlign
-import com.acornui.component.style.StyleBase
-import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
 import com.acornui.math.Bounds
-import com.acornui.math.Pad
-import com.acornui.math.PadRo
 
 /**
  * A list of paragraphs to be laid out vertically.
  */
-class TextVerticalGroup(owner: Owned) : TextNodeContainer<TextNode>(owner) {
+class TextVerticalGroup(owner: Owned) : TextElementContainerImpl<TextNode>(owner) {
 
 	override val multiline = true
 
@@ -55,30 +50,9 @@ class TextVerticalGroup(owner: Owned) : TextNodeContainer<TextNode>(owner) {
 		}
 		out.set(explicitWidth ?: measuredWidth, y)
 	}
-}
 
-class TextVerticalGroupStyle : StyleBase() {
-
-	override val type = Companion
-
-	/**
-	 * The vertical gap between lines.
-	 */
-	var verticalGap by prop(0f)
-
-	/**
-	 * The Padding object with left, bottom, top, and right padding.
-	 */
-	var padding: PadRo by prop(Pad())
-
-	/**
-	 * The number of space char widths a tab should occupy.
-	 */
-	var tabSize: Int by prop(4)
-
-	var horizontalAlign by prop(FlowHAlign.LEFT)
-
-	companion object : StyleType<TextFlowStyle>
+	override fun clone(newOwner: Owned): TextNode =
+			configureClone(TextVerticalGroup(newOwner))
 }
 
 fun Owned.paragraphs(init: ComponentInit<TextVerticalGroup> = {}): TextVerticalGroup {

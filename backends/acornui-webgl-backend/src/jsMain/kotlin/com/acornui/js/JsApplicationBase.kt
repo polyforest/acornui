@@ -150,7 +150,7 @@ Kotlin.isType = function(object, klass) {
 
 
 		@Suppress("LeakingThis")
-		if (this::memberRefTest != this::memberRefTest) println("[SEVERE] Member reference fix isn't working.")
+		if (::memberRefTest != ::memberRefTest) println("[SEVERE] Member reference fix isn't working.")
 		time = TimeProviderImpl()
 		encodeUriComponent2 = ::encodeURIComponent
 		decodeUriComponent2 = ::decodeURIComponent

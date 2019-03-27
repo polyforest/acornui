@@ -33,12 +33,12 @@ open class BoxStyle : StyleBase() {
 object BoxStyleSerializer : To<BoxStyle>, From<BoxStyle> {
 
 	override fun BoxStyle.write(writer: Writer) {
-		writer.styleProperty(this, this::linearGradient)?.obj(linearGradient, LinearGradientSerializer)
-		writer.styleProperty(this, this::backgroundColor)?.color(backgroundColor)
-		writer.styleProperty(this, this::borderColors)?.obj(borderColors, BorderColorsSerializer)
-		writer.styleProperty(this, this::borderThicknesses)?.obj(borderThicknesses, PadSerializer)
-		writer.styleProperty(this, this::borderRadii)?.obj(borderRadii, CornersSerializer)
-		writer.styleProperty(this, this::margin)?.obj(margin, PadSerializer)
+		writer.styleProperty(this, ::linearGradient)?.obj(linearGradient, LinearGradientSerializer)
+		writer.styleProperty(this, ::backgroundColor)?.color(backgroundColor)
+		writer.styleProperty(this, ::borderColors)?.obj(borderColors, BorderColorsSerializer)
+		writer.styleProperty(this, ::borderThicknesses)?.obj(borderThicknesses, PadSerializer)
+		writer.styleProperty(this, ::borderRadii)?.obj(borderRadii, CornersSerializer)
+		writer.styleProperty(this, ::margin)?.obj(margin, PadSerializer)
 	}
 
 	override fun read(reader: Reader): BoxStyle {

@@ -355,9 +355,9 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 			invalidateLayout()
 		}
 
-		mouseDown().add(this::startScrollWatch)
-		touchStart().add(this::startScrollWatch)
-		keyDown().add(this::scrollToSelected)
+		mouseDown().add(::startScrollWatch)
+		touchStart().add(::startScrollWatch)
+		keyDown().add(::scrollToSelected)
 	}
 
 	override var touchScreenInputType = TouchScreenKeyboardType.DEFAULT
@@ -384,16 +384,16 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 	private fun startScrollWatch(event: Any) {
 		mousePosition(startMouse)
 		_frameWatch?.dispose()
-		_frameWatch = tick(-1, this::scrollWatcher)
-		stage.mouseUp().add(this::endScrollWatch)
-		stage.touchEnd().add(this::endScrollWatch)
+		_frameWatch = tick(-1, ::scrollWatcher)
+		stage.mouseUp().add(::endScrollWatch)
+		stage.touchEnd().add(::endScrollWatch)
 	}
 
 	private fun endScrollWatch(event: Any) {
 		_frameWatch?.dispose()
 		_frameWatch = null
-		stage.mouseUp().remove(this::endScrollWatch)
-		stage.touchEnd().remove(this::endScrollWatch)
+		stage.mouseUp().remove(::endScrollWatch)
+		stage.touchEnd().remove(::endScrollWatch)
 	}
 
 	private fun scrollWatcher() {

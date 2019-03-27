@@ -243,12 +243,12 @@ open class WatchedElementsActiveList<E : Observable>(initialCapacity: Int) : Act
 
 	override fun removeAt(index: Int): E {
 		val e = super.removeAt(index)
-		e.changed.remove(this::elementModifiedHandler)
+		e.changed.remove(::elementModifiedHandler)
 		return e
 	}
 
 	override fun add(index: Int, element: E) {
-		element.changed.add(this::elementModifiedHandler)
+		element.changed.add(::elementModifiedHandler)
 		super.add(index, element)
 	}
 
@@ -259,7 +259,7 @@ open class WatchedElementsActiveList<E : Observable>(initialCapacity: Int) : Act
 
 	override fun clear() {
 		for (i in 0..wrapped.lastIndex) {
-			wrapped[i].changed.remove(this::elementModifiedHandler)
+			wrapped[i].changed.remove(::elementModifiedHandler)
 		}
 		super.clear()
 	}

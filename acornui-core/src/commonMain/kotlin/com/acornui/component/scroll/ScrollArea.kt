@@ -108,7 +108,7 @@ open class ScrollArea(
 
 	init {
 		styleTags.add(ScrollArea)
-		validation.addNode(SCROLLING, ValidationFlags.LAYOUT, this::validateScroll)
+		validation.addNode(SCROLLING, ValidationFlags.LAYOUT, ::validateScroll)
 
 		styleTags.add(HBAR_STYLE)
 		styleTags.add(VBAR_STYLE)
@@ -145,12 +145,12 @@ open class ScrollArea(
 		super.onActivated()
 		// Must call super.onActivated first so that the priority of this scroll area's changed handler is less than
 		// that of nested scroll areas.
-		focusManager.focusedChanged.add(this::focusChangedHandler)
+		focusManager.focusedChanged.add(::focusChangedHandler)
 	}
 
 	override fun onDeactivated() {
 		super.onDeactivated()
-		focusManager.focusedChanged.remove(this::focusChangedHandler)
+		focusManager.focusedChanged.remove(::focusChangedHandler)
 	}
 
 	private fun focusChangedHandler(old: UiComponentRo?, new: UiComponentRo?) {

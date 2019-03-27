@@ -50,7 +50,7 @@ class TouchSimulator(override val injector: Injector) : Scoped, Disposable {
 	private var mouseIsDown = false
 
 	init {
-		stage.keyDown().add(this::keyDownHandler)
+		stage.keyDown().add(::keyDownHandler)
 	}
 
 	private fun keyDownHandler(event: KeyInteractionRo) {
@@ -73,9 +73,9 @@ class TouchSimulator(override val injector: Injector) : Scoped, Disposable {
 
 			handle.moveTo(stage.mousePosition(startPosition))
 			stage.addElement(handle)
-			stage.keyUp().add(this::keyUpHandler)
-			stage.mouseDown(true).add(this::mouseDownHandler)
-			stage.mouseUp(true).add(this::mouseUpHandler)
+			stage.keyUp().add(::keyUpHandler)
+			stage.mouseDown(true).add(::mouseDownHandler)
+			stage.mouseUp(true).add(::mouseUpHandler)
 
 			fakeTouchEvent.clear()
 			fakeTouchEvent.type = TouchInteractionRo.TOUCH_START
@@ -93,8 +93,8 @@ class TouchSimulator(override val injector: Injector) : Scoped, Disposable {
 			enterFrameRef?.dispose()
 			enterFrameRef = null
 
-			stage.keyUp().remove(this::keyDownHandler)
-			stage.mouseDown(true).remove(this::mouseDownHandler)
+			stage.keyUp().remove(::keyDownHandler)
+			stage.mouseDown(true).remove(::mouseDownHandler)
 		}
 	}
 
@@ -141,8 +141,8 @@ class TouchSimulator(override val injector: Injector) : Scoped, Disposable {
 		fakeTouchEvent.type = TouchInteractionRo.TOUCH_START
 		populateTouches()
 		interactivity.dispatch(position.x, position.y, fakeTouchEvent)
-		stage.mouseMove(true).add(this::mouseMoveHandler)
-		stage.mouseUp(true).add(this::mouseUpHandler)
+		stage.mouseMove(true).add(::mouseMoveHandler)
+		stage.mouseUp(true).add(::mouseUpHandler)
 	}
 
 	private fun mouseMoveHandler(event: MouseInteractionRo) {
@@ -166,13 +166,13 @@ class TouchSimulator(override val injector: Injector) : Scoped, Disposable {
 		fakeTouchEvent.type = TouchInteractionRo.TOUCH_END
 		populateTouches()
 		interactivity.dispatch(position.x, position.y, fakeTouchEvent)
-		stage.mouseMove(true).remove(this::mouseMoveHandler)
-		stage.mouseUp(true).remove(this::mouseUpHandler)
+		stage.mouseMove(true).remove(::mouseMoveHandler)
+		stage.mouseUp(true).remove(::mouseUpHandler)
 	}
 
 	override fun dispose() {
 		isSimulating = false
-		stage.keyDown().remove(this::keyDownHandler)
+		stage.keyDown().remove(::keyDownHandler)
 		handle.dispose()
 	}
 }

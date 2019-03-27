@@ -77,10 +77,10 @@ abstract class ScrollBarBase(owner: Owned) : ContainerImpl(owner) {
 
 			decrementButton?.dispose()
 			decrementButton = addChild(it.decrementButton(this))
-			decrementButton!!.mouseDown().add(this::decrementPressHandler)
+			decrementButton!!.mouseDown().add(::decrementPressHandler)
 			incrementButton?.dispose()
 			incrementButton = addChild(it.incrementButton(this))
-			incrementButton!!.mouseDown().add(this::incrementPressHandler)
+			incrementButton!!.mouseDown().add(::incrementPressHandler)
 
 			val oldThumbAlpha = thumb?.alpha ?: it.inactiveAlpha
 			thumb?.dispose()
@@ -89,14 +89,14 @@ abstract class ScrollBarBase(owner: Owned) : ContainerImpl(owner) {
 			thumb.alpha = oldThumbAlpha
 			thumb.cursor(StandardCursors.HAND)
 			if (it.pageMode) {
-				track.mouseDown().add(this::trackPressHandler)
+				track.mouseDown().add(::trackPressHandler)
 				val thumbDrag = thumb.dragAttachment(0f)
-				thumbDrag.dragStart.add(this::dragStartHandler)
-				thumbDrag.drag.add(this::thumbDragHandler)
+				thumbDrag.dragStart.add(::dragStartHandler)
+				thumbDrag.drag.add(::thumbDragHandler)
 			} else {
 				thumb.interactivityMode = InteractivityMode.NONE
 				track.dragAttachment(0f)
-				track.drag().add(this::trackDragHandler)
+				track.drag().add(::trackDragHandler)
 			}
 			thumb.mouseOver().add { activeAnim() }
 		}

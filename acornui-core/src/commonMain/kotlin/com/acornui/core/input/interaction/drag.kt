@@ -111,14 +111,14 @@ class DragAttachment(
 		if (watchingMouse == value) return
 		watchingMouse = value
 		if (value) {
-			_enterFrame = tick(timeDriver, -1, this::enterFrameHandler)
-			stage.mouseMove().add(this::stageMouseMoveHandler)
-			stage.mouseUp().add(this::stageMouseUpHandler)
+			_enterFrame = tick(timeDriver, -1, ::enterFrameHandler)
+			stage.mouseMove().add(::stageMouseMoveHandler)
+			stage.mouseUp().add(::stageMouseUpHandler)
 		} else {
 			_enterFrame?.dispose()
 			_enterFrame = null
-			stage.mouseMove().remove(this::stageMouseMoveHandler)
-			stage.mouseUp().remove(this::stageMouseUpHandler)
+			stage.mouseMove().remove(::stageMouseMoveHandler)
+			stage.mouseUp().remove(::stageMouseUpHandler)
 		}
 	}
 
@@ -206,14 +206,14 @@ class DragAttachment(
 		if (watchingTouch == value) return
 		watchingTouch = value
 		if (value) {
-			_enterFrame = tick(timeDriver, -1, this::enterFrameHandler)
-			stage.touchMove().add(this::stageTouchMoveHandler)
-			stage.touchEnd().add(this::stageTouchEndHandler)
+			_enterFrame = tick(timeDriver, -1, ::enterFrameHandler)
+			stage.touchMove().add(::stageTouchMoveHandler)
+			stage.touchEnd().add(::stageTouchEndHandler)
 		} else {
 			_enterFrame?.dispose()
 			_enterFrame = null
-			stage.touchMove().remove(this::stageTouchMoveHandler)
-			stage.touchEnd().remove(this::stageTouchEndHandler)
+			stage.touchMove().remove(::stageTouchMoveHandler)
+			stage.touchEnd().remove(::stageTouchEndHandler)
 		}
 	}
 
@@ -316,9 +316,9 @@ class DragAttachment(
 	}
 
 	init {
-		target.deactivated.add(this::targetDeactivatedHandler)
-		target.mouseDown().add(this::mouseDownHandler)
-		target.touchStart().add(this::touchStartHandler)
+		target.deactivated.add(::targetDeactivatedHandler)
+		target.mouseDown().add(::mouseDownHandler)
+		target.touchStart().add(::touchStartHandler)
 	}
 
 	override fun dispose() {
@@ -327,9 +327,9 @@ class DragAttachment(
 		_drag.dispose()
 		_dragEnd.dispose()
 
-		target.deactivated.remove(this::targetDeactivatedHandler)
-		target.mouseDown().remove(this::mouseDownHandler)
-		target.touchStart().remove(this::touchStartHandler)
+		target.deactivated.remove(::targetDeactivatedHandler)
+		target.mouseDown().remove(::mouseDownHandler)
+		target.touchStart().remove(::touchStartHandler)
 	}
 
 	companion object {

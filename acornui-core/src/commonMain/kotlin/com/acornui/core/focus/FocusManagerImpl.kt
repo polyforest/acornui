@@ -111,13 +111,13 @@ class FocusManagerImpl : FocusManager {
 	override fun setHighlightIndicator(value: UiComponent?, disposeOld: Boolean) {
 		val old = _highlight
 		if (value == old) return
-		old?.disposed?.remove(this::highlightDisposedHandler)
+		old?.disposed?.remove(::highlightDisposedHandler)
 		val wasHighlighted = _highlighted != null
 		unhighlightFocused()
 		_highlight = value
 		if (value != null) {
 			value.includeInLayout = false
-			value.disposed.add(this::highlightDisposedHandler)
+			value.disposed.add(::highlightDisposedHandler)
 		}
 		if (wasHighlighted) highlightFocused()
 		if (disposeOld)
@@ -192,7 +192,7 @@ class FocusManagerImpl : FocusManager {
 				// Trivial case
 				_focusables.add(focusable)
 			} else {
-				_focusables.addSorted(focusable, comparator = this::focusOrderComparator)
+				_focusables.addSorted(focusable, comparator = ::focusOrderComparator)
 			}
 		}
 	}
@@ -266,7 +266,7 @@ class FocusManagerImpl : FocusManager {
 			_highlight?.visible = false
 			root.removeElement(_highlight!!)
 		}
-		_highlighted?.invalidated?.remove(this::highlightedInvalidatedHandler.as2)
+		_highlighted?.invalidated?.remove(::highlightedInvalidatedHandler.as2)
 		_highlighted = null
 	}
 
@@ -275,14 +275,14 @@ class FocusManagerImpl : FocusManager {
 			_highlighted = _focused
 			if (_highlighted != null) {
 				_highlight?.visible = true
-				_highlighted!!.invalidated.add(this::highlightedInvalidatedHandler.as2)
+				_highlighted!!.invalidated.add(::highlightedInvalidatedHandler.as2)
 			}
 			highlightedInvalidatedHandler()
 		}
 	}
 
 	private fun highlightedInvalidatedHandler() {
-		root.callLater(this::updateHighlight)
+		root.callLater(::updateHighlight)
 	}
 
 	private val highlightBounds = Bounds()

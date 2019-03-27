@@ -211,13 +211,13 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			}
 		}
 
-		host.keyDown().add(this::keyDownHandler)
+		host.keyDown().add(::keyDownHandler)
 		host.touchStart().add { column = -1; resetCursorBlink() }
 		host.mouseDown().add { column = -1; resetCursorBlink() }
 
-		validation.addNode(TEXT_CURSOR, ValidationFlags.LAYOUT, this::updateTextCursor)
+		validation.addNode(TEXT_CURSOR, ValidationFlags.LAYOUT, ::updateTextCursor)
 
-		selectionManager.selectionChanged.add(this::selectionChangedHandler)
+		selectionManager.selectionChanged.add(::selectionChangedHandler)
 
 		// Handle the cursor blink
 		onTick {
@@ -231,7 +231,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 		//host.enableUndoRedo()
 
-		cmd.onCommandInvoked(ReplaceTextRangeCommand, this::onReplaceTextRange)
+		cmd.onCommandInvoked(ReplaceTextRangeCommand, ::onReplaceTextRange)
 
 		cmd.onCommandInvoked(ChangeSelectionCommand) {
 			if (it.target == host)
@@ -261,13 +261,13 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	override fun onActivated() {
 		super.onActivated()
-		window.isActiveChanged.add(this::windowActiveChangedHandler.as1)
+		window.isActiveChanged.add(::windowActiveChangedHandler.as1)
 		windowActiveChangedHandler()
 	}
 
 	override fun onDeactivated() {
 		super.onDeactivated()
-		window.isActiveChanged.remove(this::windowActiveChangedHandler.as1)
+		window.isActiveChanged.remove(::windowActiveChangedHandler.as1)
 	}
 
 	private fun windowActiveChangedHandler() {
@@ -555,7 +555,6 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		// TODO: Make this efficient.
 		val text = this.text
 		this.text = text.substring(0, MathUtils.clamp(cmd.startIndex, 0, text.length)) + cmd.newText + text.substring(MathUtils.clamp(cmd.endIndex, 0, text.length), text.length)
-		validate(ValidationFlags.LAYOUT)
 	}
 
 	private fun String.toPassword(): String {
@@ -603,7 +602,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	override fun dispose() {
 		super.dispose()
-		selectionManager.selectionChanged.remove(this::selectionChangedHandler)
+		selectionManager.selectionChanged.remove(::selectionChangedHandler)
 	}
 
 	companion object {

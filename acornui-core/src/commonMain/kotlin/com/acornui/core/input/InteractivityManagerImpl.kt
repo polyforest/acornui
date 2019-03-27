@@ -158,19 +158,19 @@ open class InteractivityManagerImpl(
 	override fun init(root: StageRo) {
 		_assert(_root == null, "Already initialized.")
 		_root = root
-		mouseInput.overCanvasChanged.add(this::overCanvasChangedHandler)
-		mouseInput.mouseDown.add(this::rawMouseDownHandler)
-		mouseInput.mouseUp.add(this::rawMouseUpHandler)
-		mouseInput.mouseMove.add(this::rawMouseMoveHandler)
-		mouseInput.mouseWheel.add(this::rawWheelHandler)
+		mouseInput.overCanvasChanged.add(::overCanvasChangedHandler)
+		mouseInput.mouseDown.add(::rawMouseDownHandler)
+		mouseInput.mouseUp.add(::rawMouseUpHandler)
+		mouseInput.mouseMove.add(::rawMouseMoveHandler)
+		mouseInput.mouseWheel.add(::rawWheelHandler)
 
-		mouseInput.touchStart.add(this::rawTouchStartHandler)
-		mouseInput.touchEnd.add(this::rawTouchEndHandler)
-		mouseInput.touchMove.add(this::rawTouchMoveHandler)
+		mouseInput.touchStart.add(::rawTouchStartHandler)
+		mouseInput.touchEnd.add(::rawTouchEndHandler)
+		mouseInput.touchMove.add(::rawTouchMoveHandler)
 
-		keyInput.keyDown.add(this::keyDownHandler)
-		keyInput.keyUp.add(this::keyUpHandler)
-		keyInput.char.add(this::charHandler)
+		keyInput.keyDown.add(::keyDownHandler)
+		keyInput.keyUp.add(::keyUpHandler)
+		keyInput.char.add(::charHandler)
 	}
 
 	private fun overTarget(target: UiComponentRo?) {
@@ -262,18 +262,18 @@ open class InteractivityManagerImpl(
 		overTarget(null)
 
 		val mouse = mouseInput
-		mouse.mouseDown.remove(this::rawMouseDownHandler)
-		mouse.mouseUp.remove(this::rawMouseUpHandler)
-		mouse.mouseMove.remove(this::rawMouseMoveHandler)
-		mouse.mouseWheel.remove(this::rawWheelHandler)
+		mouse.mouseDown.remove(::rawMouseDownHandler)
+		mouse.mouseUp.remove(::rawMouseUpHandler)
+		mouse.mouseMove.remove(::rawMouseMoveHandler)
+		mouse.mouseWheel.remove(::rawWheelHandler)
 
-		mouseInput.touchStart.remove(this::rawTouchStartHandler)
-		mouseInput.touchEnd.remove(this::rawTouchEndHandler)
-		mouseInput.touchMove.remove(this::rawTouchMoveHandler)
+		mouseInput.touchStart.remove(::rawTouchStartHandler)
+		mouseInput.touchEnd.remove(::rawTouchEndHandler)
+		mouseInput.touchMove.remove(::rawTouchMoveHandler)
 
 		val key = keyInput
-		key.keyDown.remove(this::keyDownHandler)
-		key.keyUp.remove(this::keyUpHandler)
-		key.char.remove(this::charHandler)
+		key.keyDown.remove(::keyDownHandler)
+		key.keyUp.remove(::keyUpHandler)
+		key.char.remove(::charHandler)
 	}
 }

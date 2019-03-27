@@ -136,10 +136,10 @@ private class TestConcurrentRemove {
 
 	init {
 
-		s.add(this::testHandler1)
-		s.add(this::testHandler2)
-		s.add(this::testHandler3)
-		s.add(this::testHandler4)
+		s.add(::testHandler1)
+		s.add(::testHandler2)
+		s.add(::testHandler3)
+		s.add(::testHandler4)
 
 		s.dispatch()
 		s.dispatch()
@@ -153,12 +153,12 @@ private class TestConcurrentRemove {
 
 	private fun testHandler2() {
 		arr.add(2)
-		s.remove(this::testHandler2)
+		s.remove(::testHandler2)
 	}
 
 	private fun testHandler3() {
 		arr.add(3)
-		s.remove(this::testHandler4)
+		s.remove(::testHandler4)
 	}
 
 	private fun testHandler4() {

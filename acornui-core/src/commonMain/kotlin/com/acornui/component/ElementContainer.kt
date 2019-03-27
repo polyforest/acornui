@@ -131,7 +131,7 @@ open class ElementContainerImpl<T : UiComponent>(
 
 	override fun <S : T> addElement(index: Int, element: S): S {
 		_elements.addOrReorder(index, element) { oldIndex, newIndex ->
-			if (oldIndex == -1) element.disposed.add(this::elementDisposedHandler)
+			if (oldIndex == -1) element.disposed.add(::elementDisposedHandler)
 			onElementAdded(oldIndex, newIndex, element)
 		}
 		return element
@@ -172,7 +172,7 @@ open class ElementContainerImpl<T : UiComponent>(
 
 	override fun removeElement(index: Int): T {
 		val element = _elements.removeAt(index)
-		element.disposed.remove(this::elementDisposedHandler)
+		element.disposed.remove(::elementDisposedHandler)
 		onElementRemoved(index, element)
 		if (element.parent != null) throw Exception("Removing an element should remove from the display.")
 		return element

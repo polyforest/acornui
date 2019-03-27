@@ -34,7 +34,7 @@ class JvmClipboard(
 	private val copyEvent = JvmCopyInteraction(windowId)
 
 	init {
-		keyInput.keyDown.add(this::keyDownHandler)
+		keyInput.keyDown.add(::keyDownHandler)
 	}
 
 	override fun copy(str: String): Boolean {
@@ -68,7 +68,7 @@ class JvmClipboard(
 	}
 
 	override fun dispose() {
-		keyInput.keyDown.remove(this::keyDownHandler)
+		keyInput.keyDown.remove(::keyDownHandler)
 	}
 }
 

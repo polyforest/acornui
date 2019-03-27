@@ -14,22 +14,31 @@
  * limitations under the License.
  */
 
+@file:Suppress("UNUSED_PARAMETER")
+
 package com.acornui.component.text
 
+import com.acornui.collection.ConcurrentListImpl
 import com.acornui.collection.addOrReorder
 import com.acornui.collection.forEach2
+import com.acornui.component.ContainerImpl
 import com.acornui.component.ElementParent
 import com.acornui.component.ValidationFlags
 import com.acornui.component.layout.algorithm.LineInfo
 import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.component.text.collection.JoinedList
+import com.acornui.core.ParentRo
 import com.acornui.core.di.Owned
 import com.acornui.core.selection.SelectionRange
 import com.acornui.math.MinMaxRo
 
-abstract class TextNodeContainer<T : TextNode>(owner: Owned) : TextNodeBase(owner), ElementParent<T> {
+interface TextNodeContainerRo : TextNodeRo, ParentRo<TextNodeRo>
+interface TextNodeContainer : TextNode, TextNodeContainerRo
 
-	private val _elements = ArrayList<T>()
+abstract class TextElementContainerImpl<T : TextNode>(owner: Owned) : TextNodeBase(owner), ElementParent<T>, TextNodeContainer {
+
+	private val _elements = ConcurrentListImpl<T>()
+	override val children: List<TextNodeRo> = _elements
 
 	override val elements: List<T>
 		get() = _elements
@@ -49,23 +58,33 @@ abstract class TextNodeContainer<T : TextNode>(owner: Owned) : TextNodeBase(owne
 	protected var bubblingFlags = ValidationFlags.HIERARCHY_ASCENDING or
 			ValidationFlags.LAYOUT
 
-	protected var cascadingFlags = ValidationFlags.HIERARCHY_DESCENDING or
-			ValidationFlags.STYLES or
-			ValidationFlags.CONCATENATED_TRANSFORM
+	protected var cascadingFlags = ContainerImpl.defaultCascadingFlags
+
+	override var allowClipping: Boolean = true
+		set(value) {
+			if (field == value) return
+			field = value
+			for (i in 0.._elements.lastIndex) {
+				_elements[i].allowClipping = value
+			}
+		}
 
 	init {
 		validation.addNode(TEXT_ELEMENTS, dependencies = ValidationFlags.HIERARCHY_ASCENDING, dependents = ValidationFlags.LAYOUT, onValidate = _textElements::dirty)
 		validation.addNode(LINES, dependencies = ValidationFlags.LAYOUT, onValidate = ::updateLines)
 	}
 
+	override var textField: TextField? = null
+		set(value) {
+			if (field == value) return
+			field = value
+			for (i in 0.._elements.lastIndex) {
+				_elements[i].textField = value
+			}
+		}
+
 	override val placeholder: TextElementRo?
 		get() = _elements.lastOrNull()?.placeholder
-
-	override fun toString(builder: StringBuilder) {
-		for (i in 0.._elements.lastIndex) {
-			_elements[i].toString(builder)
-		}
-	}
 
 	override fun setSelection(rangeStart: Int, selection: List<SelectionRange>) {
 		var r = rangeStart
@@ -83,15 +102,17 @@ abstract class TextNodeContainer<T : TextNode>(owner: Owned) : TextNodeBase(owne
 		}
 
 	override fun <S : T> addElement(index: Int, element: S): S {
-		if (element.parentTextNode != null) throw Exception("Remove element first.")
+		if (element.parent != null) throw Exception("Remove element first.")
 		_elements.addOrReorder(index, element) { oldIndex, newIndex ->
-			invalidate(bubblingFlags)
-			element.invalidate(cascadingFlags)
-			element.parentTextNode = this
+			element.parent = this
+			element.textField = textField
+			element.allowClipping = allowClipping
 			if (oldIndex == -1) {
 				element.disposed.add(::elementDisposedHandler)
 				element.invalidated.add(::elementInvalidatedHandler)
 			}
+			invalidate(bubblingFlags)
+			element.invalidate(cascadingFlags)
 			onElementAdded(oldIndex, newIndex, element)
 		}
 		return element
@@ -111,7 +132,8 @@ abstract class TextNodeContainer<T : TextNode>(owner: Owned) : TextNodeBase(owne
 
 	override fun removeElement(index: Int): T {
 		val element = _elements.removeAt(index)
-		element.parentTextNode = null
+		element.parent = null
+		element.textField = null
 		element.disposed.remove(::elementDisposedHandler)
 		element.invalidated.remove(::elementInvalidatedHandler)
 		invalidate(bubblingFlags)
@@ -168,10 +190,42 @@ abstract class TextNodeContainer<T : TextNode>(owner: Owned) : TextNodeBase(owne
 		}
 	}
 
+	private val childrenIterator = _elements.iteratorPool.obtain()
+
+	override fun update() {
+		super.update()
+		val size = _elements.size
+		if (size == 0) return
+		else if (size == 1) {
+			_elements[0].update()
+		} else {
+			val c = childrenIterator
+			while (c.hasNext()) {
+				c.next().update()
+			}
+			c.clear()
+		}
+	}
+
 	override fun render(clip: MinMaxRo) {
 		for (i in 0.._elements.lastIndex) {
 			_elements[i].render(clip)
 		}
+	}
+
+	override fun toString(builder: StringBuilder) {
+		for (i in 0.._elements.lastIndex) {
+			_elements[i].toString(builder)
+		}
+	}
+
+	protected fun <P : TextElementContainerImpl<T>> configureClone(clone: P): P {
+		super.configureClone(clone as TextNode)
+		for (i in 0.._elements.lastIndex) {
+			@Suppress("UNCHECKED_CAST")
+			clone.addElement(_elements[i].clone(clone) as T)
+		}
+		return clone
 	}
 
 	companion object {

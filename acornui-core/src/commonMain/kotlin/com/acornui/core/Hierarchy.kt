@@ -84,6 +84,11 @@ inline fun <T> ParentRo<T>.iterateChildren(reversed: Boolean = false, body: (chi
  */
 interface Parent<T> : ParentRo<T> {
 
+	/**
+	 * Adds the given child to the last child index.
+	 * This is the equivalent of:
+	 * `addChild(children.size, child)`
+	 */
 	fun <S : T> addChild(child: S): S = addChild(children.size, child)
 
 	/**

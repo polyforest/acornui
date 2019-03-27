@@ -37,10 +37,10 @@ class ObservableListBinding<E>(
 	private val _list = ArrayList<E>()
 
 	init {
-		target.added.add(this::addedHandler)
-		target.removed.add(this::removedHandler)
-		target.changed.add(this::changedHandler)
-		target.reset.add(this::resetHandler)
+		target.added.add(::addedHandler)
+		target.removed.add(::removedHandler)
+		target.changed.add(::changedHandler)
+		target.reset.add(::resetHandler)
 		resetHandler()
 	}
 
@@ -86,9 +86,9 @@ class ObservableListBinding<E>(
 
 	override fun dispose() {
 		clear()
-		target.added.remove(this::addedHandler)
-		target.removed.remove(this::removedHandler)
-		target.changed.remove(this::changedHandler)
-		target.reset.remove(this::resetHandler)
+		target.added.remove(::addedHandler)
+		target.removed.remove(::removedHandler)
+		target.changed.remove(::changedHandler)
+		target.reset.remove(::resetHandler)
 	}
 }

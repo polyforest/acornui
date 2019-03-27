@@ -21,7 +21,6 @@ import com.acornui.component.ValidationGraph
 import com.acornui.component.layout.LayoutData
 import com.acornui.component.layout.Transformable
 import com.acornui.component.style.*
-import com.acornui.component.validationProp
 import com.acornui.core.DisposedException
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Owned
@@ -30,6 +29,7 @@ import com.acornui.core.di.own
 import com.acornui.core.graphic.CameraRo
 import com.acornui.core.graphic.Window
 import com.acornui.core.graphic.project
+import com.acornui.function.as1
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.graphic.Color
@@ -39,10 +39,6 @@ import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
 
 abstract class TextNodeBase(final override val owner: Owned) : TextNode {
-
-	//-----------------------------------------------------
-	// Owned methods
-	//-----------------------------------------------------
 
 	override val injector: Injector
 		get() = owner.injector
@@ -54,12 +50,12 @@ abstract class TextNodeBase(final override val owner: Owned) : TextNode {
 	private val _disposed = Signal1<TextNode>()
 	override val disposed = _disposed.asRo()
 
-	private val ownerDisposedHandler = {
-		owner: Owned ->
-		dispose()
-	}
-
 	//-----------------------------------------------------
+
+	private val _invalidated = own(Signal2<TextNode, Int>())
+	override val invalidated = _invalidated.asRo()
+	override val invalidFlags: Int
+		get() = validation.invalidFlags
 
 	protected val gl = inject(Gl20)
 	protected val glState = inject(GlState)
@@ -71,17 +67,28 @@ abstract class TextNodeBase(final override val owner: Owned) : TextNode {
 	protected var _explicitWidth: Float? = null
 	protected var _explicitHeight: Float? = null
 
-	override var parentTextNode: TextNodeRo? by validationProp(null, ValidationFlags.STYLES or ValidationFlags.HIERARCHY_DESCENDING)
-	override var textField: TextField? by validationProp(null, ValidationFlags.STYLES)
+	override var parent: TextNodeContainerRo? = null
+	override var textField: TextField? = null
 
-	override var allowClipping: Boolean by validationProp(true, ValidationFlags.LAYOUT)
+	private val _position = Vector3()
+
+	init {
+		val r = this
+		validation.apply {
+			addNode(ValidationFlags.HIERARCHY_ASCENDING) {}
+			addNode(ValidationFlags.HIERARCHY_DESCENDING) {}
+			addNode(ValidationFlags.STYLES, r::updateStyles)
+			addNode(ValidationFlags.LAYOUT, ValidationFlags.STYLES, r::validateLayout)
+			addNode(ValidationFlags.CONCATENATED_TRANSFORM, r::updateConcatenatedTransform)
+		}
+		owner.disposed.add(::dispose.as1)
+	}
+
+	//-----------------------------------------------------
+	// Validation methods
+	//-----------------------------------------------------
 
 	override fun update() = validate()
-
-	private val _invalidated = own(Signal2<TextNode, Int>())
-	override val invalidated = _invalidated.asRo()
-	override val invalidFlags: Int
-		get() = validation.invalidFlags
 
 	override fun invalidate(flags: Int): Int {
 		val flagsInvalidated: Int = validation.invalidate(flags)
@@ -122,7 +129,7 @@ abstract class TextNodeBase(final override val owner: Owned) : TextNode {
 			styles.getRulesByType(type, out)
 
 	override val styleParent: StyleableRo?
-		get() = parentTextNode ?: textField
+		get() = parent ?: textField
 
 	protected fun <T : Style> bind(style: T, calculator: StyleCalculator = CascadingStyleCalculator): T {
 		styles.bind(style, calculator)
@@ -159,12 +166,10 @@ abstract class TextNodeBase(final override val owner: Owned) : TextNode {
 
 
 	//-----------------------------------------------------
-	// Tranformable methods
+	// Transformable methods
 	//-----------------------------------------------------
 
 	override var snapToPixel: Boolean = Transformable.defaultSnapToPixel
-
-	private val _position = Vector3()
 
 	override var x: Float
 		get() = _position.x
@@ -259,7 +264,8 @@ abstract class TextNodeBase(final override val owner: Owned) : TextNode {
 		get() = _concatenatedTransform
 
 	protected open fun updateConcatenatedTransform() {
-		val parentTransform: Matrix4Ro = parentTextNode?.concatenatedTransform ?: textField?.concatenatedTransform ?: Matrix4.IDENTITY
+		val parentTransform: Matrix4Ro = parent?.concatenatedTransform ?: textField?.concatenatedTransform
+		?: Matrix4.IDENTITY
 		_concatenatedTransform.set(parentTransform).translate(x, y, z)
 	}
 
@@ -276,22 +282,16 @@ abstract class TextNodeBase(final override val owner: Owned) : TextNode {
 		return localCoord
 	}
 
-	init {
-		val r = this
-		validation.apply {
-			addNode(ValidationFlags.HIERARCHY_ASCENDING) {}
-			addNode(ValidationFlags.HIERARCHY_DESCENDING) {}
-			addNode(ValidationFlags.STYLES, r::updateStyles)
-			addNode(ValidationFlags.LAYOUT, ValidationFlags.STYLES, r::validateLayout)
-			addNode(ValidationFlags.CONCATENATED_TRANSFORM, r::updateConcatenatedTransform)
-		}
-		owner.disposed.add(ownerDisposedHandler)
+	protected fun <P : TextNode> configureClone(clone: P): P {
+		clone.styleTags.addAll(styleTags)
+		clone.styleRules.addAll(styleRules)
+		return clone
 	}
 
 	override fun dispose() {
 		if (_isDisposed) throw DisposedException()
 		_isDisposed = true
-		owner.disposed.remove(ownerDisposedHandler)
+		owner.disposed.remove(::dispose.as1)
 		_disposed.dispatch(this)
 		_disposed.dispose()
 	}

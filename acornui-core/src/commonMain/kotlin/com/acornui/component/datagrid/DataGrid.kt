@@ -331,8 +331,8 @@ class DataGrid<RowData>(
 			_columns.bindUniqueAssertion()
 			_groups.bindUniqueAssertion()
 		}
-		validation.addNode(COLUMNS_WIDTHS_VALIDATION, ValidationFlags.STYLES, ValidationFlags.LAYOUT, this::updateColumnWidths)
-		validation.addNode(COLUMNS_VISIBLE_VALIDATION, COLUMNS_WIDTHS_VALIDATION, ValidationFlags.LAYOUT, this::updateColumnVisibility)
+		validation.addNode(COLUMNS_WIDTHS_VALIDATION, ValidationFlags.STYLES, ValidationFlags.LAYOUT, ::updateColumnWidths)
+		validation.addNode(COLUMNS_VISIBLE_VALIDATION, COLUMNS_WIDTHS_VALIDATION, ValidationFlags.LAYOUT, ::updateColumnVisibility)
 		hScrollBar.scrollModel.snap = 1f
 		vScrollModel.changed.add { invalidateLayout() }
 		hScrollModel.changed.add { invalidate(COLUMNS_VISIBLE_VALIDATION) }
@@ -376,19 +376,19 @@ class DataGrid<RowData>(
 			}
 		}
 
-		_dataView.bind(this::invalidateLayout)
+		_dataView.bind(::invalidateLayout)
 
 		// User interaction:
 
-		contents.click().add(this::contentsClickedHandler)
+		contents.click().add(::contentsClickedHandler)
 
-		keyDown().add(this::keyDownHandler)
+		keyDown().add(::keyDownHandler)
 
 		wheel().add {
 			vScrollModel.value += it.deltaY / vScrollBar.modelToPixels
 		}
 
-		blurred().add(this::blurredHandler)
+		blurred().add(::blurredHandler)
 	}
 
 	private fun blurredHandler() {
@@ -574,7 +574,7 @@ class DataGrid<RowData>(
 		val row = data[sourceIndex]
 		@Suppress("unchecked_cast")
 		val editorCell = col.createEditorCell(this) as DataGridEditorCell<Any?>
-		editorCell.changed.add(this::commitCellEditorValue)
+		editorCell.changed.add(::commitCellEditorValue)
 		editorCell.setData(col.getCellData(row))
 		editorCellContainer.addElement(editorCell)
 		editorCell.focus()
@@ -1589,7 +1589,7 @@ class DataGrid<RowData>(
 		}
 
 		// Click to sort
-		headerCellBackground.click().add(this::headerCellBackgroundClickedHandler)
+		headerCellBackground.click().add(::headerCellBackgroundClickedHandler)
 
 		headerCellBackgrounds.addElement(headerCellBackground)
 		return headerCellBackground

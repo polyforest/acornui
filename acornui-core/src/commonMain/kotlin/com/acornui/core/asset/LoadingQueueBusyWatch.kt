@@ -42,13 +42,13 @@ class LoadingQueueBusyWatch(injector: Injector) {
 		if (_isRunning) return
 		setBusy(true) // No matter what, toggle the busy cursor so we don't have an endless loop with the loading queue loading the cursor itself.
 		currentLoadersChanged()
-		assets.currentLoadersChanged.add(this::currentLoadersChanged)
+		assets.currentLoadersChanged.add(::currentLoadersChanged)
 	}
 
 	fun stop() {
 		if (!_isRunning) return
 		setBusy(false)
-		assets.currentLoadersChanged.remove(this::currentLoadersChanged)
+		assets.currentLoadersChanged.remove(::currentLoadersChanged)
 	}
 
 	private fun setBusy(value: Boolean) {

@@ -261,7 +261,7 @@ open class Calendar(
 		isFocusContainer = true
 		focusEnabled = true
 		styleTags.add(Companion)
-		validation.addNode(ValidationFlags.PROPERTIES, ValidationFlags.STYLES, ValidationFlags.SIZE_CONSTRAINTS, this::updateProperties)
+		validation.addNode(ValidationFlags.PROPERTIES, ValidationFlags.STYLES, ValidationFlags.SIZE_CONSTRAINTS, ::updateProperties)
 
 		own(userInfo.currentLocale.changed.bind {
 			// If the locale changes, the weekday headers and month names change.
@@ -273,7 +273,7 @@ open class Calendar(
 			yearFormatter.dateStyle = it.yearFormatStyle
 		}
 
-		keyDown().add(this::keyDownHandler)
+		keyDown().add(::keyDownHandler)
 	}
 
 	private fun updateProperties() {

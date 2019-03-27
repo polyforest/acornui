@@ -258,12 +258,12 @@ class PopUpManagerImpl(private val root: UiComponent) : ElementLayoutContainerIm
 
 	override fun onActivated() {
 		super.onActivated()
-		focusManager.focusedChanging.add(this::focusChangingHandler)
+		focusManager.focusedChanging.add(::focusChangingHandler)
 	}
 
 	override fun onDeactivated() {
 		// Must be before super.onDeactivated or the focus change prevention will get tsuck.
-		focusManager.focusedChanging.remove(this::focusChangingHandler)
+		focusManager.focusedChanging.remove(::focusChangingHandler)
 		super.onDeactivated()
 	}
 
@@ -312,8 +312,8 @@ class PopUpManagerImpl(private val root: UiComponent) : ElementLayoutContainerIm
 		removePopUp(popUpInfo)
 		val child = popUpInfo.child
 		if (child is Closeable)
-			child.closed.add(this::childClosedHandler)
-		child.disposed.add(this::popUpChildDisposedHandler)
+			child.closed.add(::childClosedHandler)
+		child.disposed.add(::popUpChildDisposedHandler)
 		val index = _currentPopUps.sortedInsertionIndex(popUpInfo) { a, b -> a.priority.compareTo(b.priority) }
 		_currentPopUps.add(index, popUpInfo)
 		if (index == _currentPopUps.lastIndex)
@@ -330,8 +330,8 @@ class PopUpManagerImpl(private val root: UiComponent) : ElementLayoutContainerIm
 		val child = popUpInfo.child
 		removeElement(child)
 		if (child is Closeable)
-			child.closed.remove(this::childClosedHandler)
-		child.disposed.remove(this::popUpChildDisposedHandler)
+			child.closed.remove(::childClosedHandler)
+		child.disposed.remove(::popUpChildDisposedHandler)
 		popUpInfo.onClosed(child)
 		if (popUpInfo.dispose && !child.disposed.isDispatching && !child.isDisposed)
 			child.dispose()
