@@ -33,20 +33,38 @@ open class ElementLayoutContainerImpl<S : Style, out U : LayoutData>(
 		private val layoutAlgorithm: LayoutAlgorithm<S, U>
 ) : ElementContainerImpl<UiComponent>(owner), LayoutDataProvider<U>, Focusable {
 
-	private val elementsToLayout = ArrayList<LayoutElement>()
+	private var elementsToLayoutIsValid = false
+	private val _elementsToLayout = ArrayList<LayoutElement>()
+	private val elementsToLayout: List<LayoutElement>
+		get() {
+			if (!elementsToLayoutIsValid) {
+				elementsToLayoutIsValid = true
+				_elementsToLayout.clear()
+				elements.filterTo2(_elementsToLayout, LayoutElement::shouldLayout)
+			}
+			return _elementsToLayout
+		}
+
+	override fun onInvalidated(flagsInvalidated: Int) {
+		super.onInvalidated(flagsInvalidated)
+		if (flagsInvalidated.containsFlag(ValidationFlags.HIERARCHY_ASCENDING))
+			elementsToLayoutIsValid = false
+	}
+
+	override fun childInvalidatedHandler(child: UiComponent, flagsInvalidated: Int) {
+		super.childInvalidatedHandler(child, flagsInvalidated)
+		if (flagsInvalidated.containsFlag(ValidationFlags.LAYOUT_ENABLED))
+			elementsToLayoutIsValid = false
+	}
 
 	val style: S = bind(layoutAlgorithm.style)
 	final override fun createLayoutData(): U = layoutAlgorithm.createLayoutData()
 
 	override fun updateSizeConstraints(out: SizeConstraints) {
-		elementsToLayout.clear()
-		elements.filterTo2(elementsToLayout, LayoutElement::shouldLayout)
 		layoutAlgorithm.calculateSizeConstraints(elementsToLayout, out)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		elementsToLayout.clear()
-		elements.filterTo2(elementsToLayout, LayoutElement::shouldLayout)
 		layoutAlgorithm.layout(explicitWidth, explicitHeight, elementsToLayout, out)
 		if (explicitWidth != null && explicitWidth > out.width) out.width = explicitWidth
 		if (explicitHeight != null && explicitHeight > out.height) out.height = explicitHeight
