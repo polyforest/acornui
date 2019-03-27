@@ -1,15 +1,12 @@
 package com.acornui.component.text
 
 import com.acornui.collection.*
-import com.acornui.component.ComponentInit
-import com.acornui.component.ElementParent
-import com.acornui.component.ValidationFlags
+import com.acornui.component.*
 import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.layout.algorithm.LineInfo
 import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.component.text.collection.JoinedList
-import com.acornui.component.validationProp
 import com.acornui.core.di.Owned
 import com.acornui.core.floor
 import com.acornui.core.selection.SelectionRange
@@ -22,9 +19,11 @@ import com.acornui.math.ceil
 /**
  * A Paragraph component is a container of styleable text spans, to be used inside of a TextField.
  */
-class Paragraph(owner: Owned) : TextNodeBase(owner), ElementParent<TextSpanElement> {
+class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<TextSpanElement> {
 
 	val flowStyle = bind(TextFlowStyle())
+
+	override var textField: TextField? = null
 
 	private val _lines = ArrayList<LineInfo>()
 	private val _elements = ArrayList<TextSpanElement>()
@@ -56,7 +55,6 @@ class Paragraph(owner: Owned) : TextNodeBase(owner), ElementParent<TextSpanEleme
 	init {
 		validation.addNode(TEXT_ELEMENTS, dependencies = ValidationFlags.HIERARCHY_ASCENDING, dependents = ValidationFlags.LAYOUT, onValidate = _textElements::dirty)
 		validation.addNode(VERTICES, dependencies = TEXT_ELEMENTS or ValidationFlags.LAYOUT or ValidationFlags.STYLES or ValidationFlags.CONCATENATED_TRANSFORM, dependents = 0, onValidate = ::updateVertices)
-		validation.addNode(ValidationFlags.CONCATENATED_COLOR_TRANSFORM) {}
 		validation.addNode(CHAR_STYLE, dependencies = TEXT_ELEMENTS or ValidationFlags.CONCATENATED_COLOR_TRANSFORM or ValidationFlags.STYLES, dependents = 0, onValidate = ::updateCharStyle)
 	}
 

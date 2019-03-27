@@ -18,21 +18,12 @@ package com.acornui.component.text
 
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.UiComponent
-import com.acornui.component.Validatable
-import com.acornui.component.layout.BasicLayoutElement
-import com.acornui.component.layout.BasicLayoutElementRo
+import com.acornui.component.UiComponentRo
 import com.acornui.component.layout.algorithm.LineInfoRo
-import com.acornui.component.style.Styleable
-import com.acornui.component.style.StyleableRo
-import com.acornui.core.ChildRo
 import com.acornui.core.Disposable
-import com.acornui.core.di.Owned
 import com.acornui.core.selection.SelectionRange
 import com.acornui.gl.core.GlState
 import com.acornui.math.Matrix4Ro
-import com.acornui.math.MinMaxRo
-import com.acornui.math.Vector3
-import com.acornui.signal.Signal
 
 
 /**
@@ -158,28 +149,9 @@ interface TextElement : TextElementRo, Disposable {
 
 }
 
-interface TextNodeRo : ChildRo, Validatable, StyleableRo, BasicLayoutElementRo, Owned {
-
-	override val disposed: Signal<(TextNodeRo) -> Unit>
-	override val invalidated: Signal<(TextNodeRo, Int) -> Unit>
-
-	override val parent: TextNodeContainerRo?
+interface TextNodeRo : UiComponentRo {
 
 	val textField: TextField?
-
-	/**
-	 * The transformation matrix this node uses.
-	 */
-	val concatenatedTransform: Matrix4Ro
-
-	/**
-	 * Converts a coordinate from local coordinate space to global coordinate space.
-	 * @param localCoord The input local coordinates. This will be mutated to become the output global coordinates.
-	 */
-	fun localToGlobal(localCoord: Vector3): Vector3 {
-		concatenatedTransform.prj(localCoord)
-		return localCoord
-	}
 
 	/**
 	 * A virtual text element to indicate the position of the next element within this node.
@@ -259,14 +231,9 @@ interface TextNodeRo : ChildRo, Validatable, StyleableRo, BasicLayoutElementRo, 
 
 }
 
-interface TextNode : TextNodeRo, Styleable, BasicLayoutElement, Disposable {
-
-	override val disposed: Signal<(TextNode) -> Unit>
-	override val invalidated: Signal<(TextNode, Int) -> Unit>
+interface TextNode : TextNodeRo, UiComponent {
 
 	override var textField: TextField?
-
-	override var parent: TextNodeContainerRo?
 
 	/**
 	 * If true, this component's vertices will be clipped to the explicit size.
@@ -280,18 +247,6 @@ interface TextNode : TextNodeRo, Styleable, BasicLayoutElement, Disposable {
 	 * @param selection A list of ranges that are selected.
 	 */
 	fun setSelection(rangeStart: Int, selection: List<SelectionRange>)
-
-	/**
-	 * Updates this component, validating it and its children.
-	 * Unlike UI Components, text nodes may not remove themselves from the display graph during a validation.
-	 */
-	fun update()
-
-	/**
-	 * Renders any graphics.
-	 * @see UiComponent.render
-	 */
-	fun render(clip: MinMaxRo)
 
 }
 

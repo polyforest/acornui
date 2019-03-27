@@ -50,11 +50,22 @@ open class SingleElementContainerImpl<T : UiComponent>(owner: Owned) : Container
 			if (value === _element) return
 			val oldElement = _element
 			_element = value
+			oldElement?.disposed?.remove(::elementDisposedHandler)
+			value?.disposed?.add(::elementDisposedHandler)
 			onElementChanged(oldElement, value)
 		}
+
+	private fun elementDisposedHandler(disposed: UiComponent) {
+		this.element = null
+	}
 
 	protected open fun onElementChanged(oldElement: T?, newElement: T?) {
 		removeChild(oldElement)
 		addOptionalChild(newElement)
+	}
+
+	override fun dispose() {
+		super.dispose()
+		element = null
 	}
 }

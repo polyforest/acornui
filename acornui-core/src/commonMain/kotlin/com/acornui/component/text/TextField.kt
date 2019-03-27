@@ -16,7 +16,6 @@
 
 package com.acornui.component.text
 
-import com.acornui._assert
 import com.acornui.component.*
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.Styleable
@@ -35,9 +34,8 @@ import com.acornui.core.selection.SelectableComponent
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionRange
 import com.acornui.math.Bounds
-import com.acornui.math.MinMaxRo
 
-interface TextField : Labelable, SelectableComponent, Styleable {
+interface TextField : SingleElementContainer<TextNode>, Labelable, SelectableComponent, Styleable {
 
 	/**
 	 * The style object for text flow layout.
@@ -55,11 +53,6 @@ interface TextField : Labelable, SelectableComponent, Styleable {
 	var selectionTarget: Selectable
 
 	/**
-	 * The TextField contents.
-	 */
-	val contents: TextNodeRo
-
-	/**
 	 * Sets this text field's contents to a simple text flow.
 	 *
 	 * @see replaceTextRange
@@ -70,12 +63,6 @@ interface TextField : Labelable, SelectableComponent, Styleable {
 	 * If true (default), the contents will be clipped to the explicit size of this text field.
 	 */
 	var allowClipping: Boolean
-
-	/**
-	 * Sets the contents of this text field.
-	 * This will remove the existing contents, but does not dispose.
-	 */
-	fun <T : TextNode> contents(value: T): T
 
 	/**
 	 * Replaces the given range with the provided text. This method doesn't destroy text node structure (therefore
@@ -106,7 +93,7 @@ interface TextField : Labelable, SelectableComponent, Styleable {
  * @author nbilyk
  */
 @Suppress("LeakingThis", "UNUSED_PARAMETER")
-open class TextFieldImpl(owner: Owned) : UiComponentImpl(owner), TextField {
+open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(owner), TextField {
 
 	override val flowStyle = bind(TextFlowStyle())
 	override val charStyle = bind(CharStyle())
@@ -122,7 +109,6 @@ open class TextFieldImpl(owner: Owned) : UiComponentImpl(owner), TextField {
 
 	private val _textSpan = span()
 	private val _textContents = p { +_textSpan }
-	private var _contents: TextNode = watchNode(_textContents)
 
 	private var _allowClipping: Boolean = true
 
@@ -134,73 +120,15 @@ open class TextFieldImpl(owner: Owned) : UiComponentImpl(owner), TextField {
 		set(value) {
 			if (_allowClipping == value) return
 			_allowClipping = value
-			_contents.allowClipping = value
+			_textContents.allowClipping = value
+			element?.allowClipping = value
 			invalidateLayout()
 		}
 
-	/**
-	 * The TextField contents.
-	 */
-	override val contents: TextNodeRo
-		get() = _contents
-
-	/**
-	 * Sets the contents of this text field.
-	 * This will remove the existing contents, but does not dispose.
-	 */
-	override fun <T : TextNode> contents(value: T): T {
-		if (_contents === value) return value
-		unwatchNode(_contents)
-		_contents = value
-		_contents.allowClipping = _allowClipping
-		watchNode(value)
-		return value
-	}
-
-	private fun unwatchNode(node: TextNode) {
-		node.textField = null
-		node.invalidate(cascadingFlags)
-		node.invalidated.remove(::childInvalidatedHandler)
-		node.disposed.remove(::childDisposedHandler)
-		if (!isValidatingLayout)
-			invalidateLayout()
-	}
-
-	private fun watchNode(child: TextNode): TextNode {
-		_assert(!isDisposed, "This TextField is disposed.")
-		_assert(!child.isDisposed, "Added text node is disposed.")
-		_assert(child.textField == null, "Added text node is already owned by a different text field.")
-		child.textField = this
-		child.invalidated.add(::childInvalidatedHandler)
-		child.disposed.remove(::childDisposedHandler)
-		child.invalidate(cascadingFlags)
-		if (!isValidatingLayout)
-			invalidateLayout()
-		return child
-	}
-
-	private fun childDisposedHandler(child: TextNode) {
-		unwatchNode(child)
-	}
-
-	private val isValidatingLayout: Boolean
-		get() = validation.currentFlag == ValidationFlags.LAYOUT
-
-	private fun childInvalidatedHandler(child: TextNodeRo, flagsInvalidated: Int) {
-		if (!isValidatingLayout && flagsInvalidated and ValidationFlags.LAYOUT > 0) invalidateLayout()
-	}
-
-	/**
-	 * These flags, when invalidated, will cascade down to this TextField's contents.
-	 */
-	private val cascadingFlags = ContainerImpl.defaultCascadingFlags
-
-	override fun onInvalidated(flagsInvalidated: Int) {
-		val flagsToCascade = flagsInvalidated and cascadingFlags
-		if (flagsToCascade > 0) {
-			// This component has flags that have been invalidated that must cascade down to the children.
-			_contents.invalidate(flagsToCascade)
-		}
+	override fun onElementChanged(oldElement: TextNode?, newElement: TextNode?) {
+		super.onElementChanged(oldElement, newElement)
+		oldElement?.textField = null
+		newElement?.textField = this
 	}
 
 	private var _drag: DragAttachment? = null
@@ -218,7 +146,7 @@ open class TextFieldImpl(owner: Owned) : UiComponentImpl(owner), TextField {
 	}
 
 	private fun getNewSelection(event: DragInteractionRo): List<SelectionRange>? {
-		val contents = _contents
+		val contents = element ?: return emptyList()
 		val p1 = event.startPositionLocal
 		val p2 = event.positionLocal
 
@@ -243,12 +171,12 @@ open class TextFieldImpl(owner: Owned) : UiComponentImpl(owner), TextField {
 	override var text: String
 		get() {
 			val builder = StringBuilder()
-			_contents.toString(builder)
+			element?.toString(builder)
 			return builder.toString()
 		}
 		set(value) {
 			_textSpan.text = value
-			contents(_textContents)
+			element = _textContents
 		}
 
 	override fun replaceTextRange(startIndex: Int, endIndex: Int, newText: String) {
@@ -263,16 +191,11 @@ open class TextFieldImpl(owner: Owned) : UiComponentImpl(owner), TextField {
 		}
 
 	private fun updateSelection() {
-		_contents.setSelection(0, selectionManager.selection.filter { it.target == selectionTarget })
-	}
-
-	override fun update() {
-		super.update()
-		_contents.update()
+		element?.setSelection(0, selectionManager.selection.filter { it.target == selectionTarget })
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		val contents = _contents
+		val contents = element ?: return
 		contents.setSize(explicitWidth, explicitHeight)
 		contents.setPosition(0f, 0f)
 		out.set(contents.bounds)
@@ -285,10 +208,6 @@ open class TextFieldImpl(owner: Owned) : UiComponentImpl(owner), TextField {
 			if (explicitWidth != null) out.width = explicitWidth
 			if (explicitHeight != null) out.height = explicitHeight
 		}
-	}
-
-	override fun draw(clip: MinMaxRo) {
-		_contents.render(clip)
 	}
 
 	override fun dispose() {

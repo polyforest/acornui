@@ -363,6 +363,7 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 	override var touchScreenInputType = TouchScreenKeyboardType.DEFAULT
 
 	private fun scrollToSelected(event: KeyInteractionRo) {
+		val contents = contents ?: return
 		val sel = firstSelection ?: return
 		val e = (if (sel.endIndex >= contents.textElements.size) contents.placeholder else contents.textElements[sel.endIndex]) ?: return
 		rect.set(e.x, e.y, e.width, e.lineHeight)
@@ -371,7 +372,7 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 	}
 
 	private val contents
-		get() = editableText.textField.contents
+		get() = editableText.textField.element
 
 	private val maxScrollSpeed = 1000f * tickTime
 	private val bufferP = 0.2f

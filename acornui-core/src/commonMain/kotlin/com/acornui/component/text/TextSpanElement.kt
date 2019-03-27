@@ -1,9 +1,6 @@
 package com.acornui.component.text
 
-import com.acornui.component.ComponentInit
-import com.acornui.component.ElementParent
-import com.acornui.component.ElementParentRo
-import com.acornui.component.ValidationFlags
+import com.acornui.component.*
 import com.acornui.component.style.*
 import com.acornui.core.Disposable
 import com.acornui.graphic.ColorRo
@@ -42,8 +39,9 @@ interface TextSpanElementRo<out T : TextElementRo> : ElementParentRo<T> {
 val TextSpanElementRo<TextElementRo>.textFieldX: Float
 	get() {
 		var textFieldX = 0f
-		var p: TextNodeRo? = textParent
-		while (p != null) {
+		val textField = textParent?.textField
+		var p: UiComponentRo? = textParent
+		while (p != null && p !== textField) {
 			textFieldX += p.x
 			p = p.parent
 		}
@@ -53,8 +51,9 @@ val TextSpanElementRo<TextElementRo>.textFieldX: Float
 val TextSpanElementRo<TextElementRo>.textFieldY: Float
 	get() {
 		var textFieldY = 0f
-		var p: TextNodeRo? = textParent
-		while (p != null) {
+		val textField = textParent?.textField
+		var p: UiComponentRo? = textParent
+		while (p != null && p !== textField) {
 			textFieldY += p.y
 			p = p.parent
 		}
