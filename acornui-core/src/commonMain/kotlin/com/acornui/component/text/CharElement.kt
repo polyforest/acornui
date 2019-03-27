@@ -261,8 +261,6 @@ class CharElement private constructor() : TextElement, Clearable {
 		backgroundColor = Color.CLEAR
 	}
 
-	override fun clone(): CharElement = obtain(char)
-
 	companion object {
 		private const val CHAR_PLACEHOLDER = 'a'
 		private val pool = ClearableObjectPool { CharElement() }

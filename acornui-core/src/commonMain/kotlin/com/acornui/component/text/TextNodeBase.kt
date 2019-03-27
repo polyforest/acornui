@@ -282,12 +282,6 @@ abstract class TextNodeBase(final override val owner: Owned) : TextNode {
 		return localCoord
 	}
 
-	protected fun <P : TextNode> configureClone(clone: P): P {
-		clone.styleTags.addAll(styleTags)
-		clone.styleRules.addAll(styleRules)
-		return clone
-	}
-
 	override fun dispose() {
 		if (_isDisposed) throw DisposedException()
 		_isDisposed = true

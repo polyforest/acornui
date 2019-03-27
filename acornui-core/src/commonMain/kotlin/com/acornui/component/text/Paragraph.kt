@@ -367,14 +367,6 @@ class Paragraph(owner: Owned) : TextNodeBase(owner), ElementParent<TextSpanEleme
 		}
 	}
 
-	override fun clone(newOwner: Owned): Paragraph {
-		val p = configureClone(Paragraph(newOwner))
-		for (i in 0.._elements.lastIndex) {
-			p.addElement(_elements[i].clone())
-		}
-		return p
-	}
-
 	companion object {
 		private const val TEXT_ELEMENTS = 1 shl 16
 		private const val VERTICES = 1 shl 17

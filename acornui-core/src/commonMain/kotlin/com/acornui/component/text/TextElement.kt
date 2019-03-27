@@ -26,7 +26,6 @@ import com.acornui.component.style.Styleable
 import com.acornui.component.style.StyleableRo
 import com.acornui.core.ChildRo
 import com.acornui.core.Disposable
-import com.acornui.core.ParentRo
 import com.acornui.core.di.Owned
 import com.acornui.core.selection.SelectionRange
 import com.acornui.gl.core.GlState
@@ -99,10 +98,6 @@ interface TextElementRo {
 	 */
 	val overhangs: Boolean
 
-	/**
-	 * Creates a clone of this text element.
-	 */
-	fun clone(): TextElementRo
 }
 
 val TextElementRo.right: Float
@@ -161,10 +156,6 @@ interface TextElement : TextElementRo, Disposable {
 	 */
 	fun render(glState: GlState)
 
-	/**
-	 * Creates a clone of this text element.
-	 */
-	override fun clone(): TextElement
 }
 
 interface TextNodeRo : ChildRo, Validatable, StyleableRo, BasicLayoutElementRo, Owned {
@@ -266,11 +257,6 @@ interface TextNodeRo : ChildRo, Validatable, StyleableRo, BasicLayoutElementRo, 
 	 */
 	fun toString(builder: StringBuilder)
 
-	/**
-	 * Clones this node, returning a deep copy.
-	 * @return Returns the clone.
-	 */
-	fun clone(newOwner: Owned): TextNode
 }
 
 interface TextNode : TextNodeRo, Styleable, BasicLayoutElement, Disposable {
@@ -332,8 +318,4 @@ class LastTextElement(private val flow: Paragraph) : TextElementRo {
 	override val clearsTabstop = false
 	override val isBreaking = false
 	override val overhangs = false
-
-	override fun clone(): TextElementRo {
-		throw UnsupportedOperationException("Do not clone LastTextElement.")
-	}
 }

@@ -219,14 +219,6 @@ abstract class TextElementContainerImpl<T : TextNode>(owner: Owned) : TextNodeBa
 		}
 	}
 
-	protected fun <P : TextElementContainerImpl<T>> configureClone(clone: P): P {
-		super.configureClone(clone as TextNode)
-		for (i in 0.._elements.lastIndex) {
-			@Suppress("UNCHECKED_CAST")
-			clone.addElement(_elements[i].clone(clone) as T)
-		}
-		return clone
-	}
 
 	companion object {
 		private const val TEXT_ELEMENTS = 1 shl 16

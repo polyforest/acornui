@@ -37,10 +37,6 @@ interface TextSpanElementRo<out T : TextElementRo> : ElementParentRo<T> {
 	 */
 	val spaceSize: Float
 
-	/**
-	 * Clones this paragraph, returning a deep copy.
-	 */
-	fun clone(): TextSpanElementRo<T>
 }
 
 val TextSpanElementRo<TextElementRo>.textFieldX: Float
@@ -73,10 +69,6 @@ interface TextSpanElement : ElementParent<TextElement>, TextSpanElementRo<TextEl
 	fun validateStyles()
 	fun validateCharStyle(concatenatedColorTint: ColorRo)
 
-	/**
-	 * Clones this paragraph, returning a deep copy.
-	 */
-	override fun clone(): TextSpanElement
 }
 
 @Suppress("LeakingThis")
@@ -217,14 +209,6 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 	override fun dispose() {
 		clearElements(true)
 		pool.free(this)
-	}
-
-	override fun clone(): TextSpanElementImpl {
-		val span = obtain()
-		for (i in 0.._elements.lastIndex) {
-			span.addElement(_elements[i].clone())
-		}
-		return span
 	}
 
 	companion object {

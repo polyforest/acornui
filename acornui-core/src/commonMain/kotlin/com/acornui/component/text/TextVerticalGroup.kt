@@ -51,8 +51,6 @@ class TextVerticalGroup(owner: Owned) : TextElementContainerImpl<TextNode>(owner
 		out.set(explicitWidth ?: measuredWidth, y)
 	}
 
-	override fun clone(newOwner: Owned): TextNode =
-			configureClone(TextVerticalGroup(newOwner))
 }
 
 fun Owned.paragraphs(init: ComponentInit<TextVerticalGroup> = {}): TextVerticalGroup {
