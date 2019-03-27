@@ -37,6 +37,9 @@ interface TextElementRo {
 	 */
 	val parentSpan: TextSpanElementRo<TextElementRo>?
 
+	/**
+	 * The character, if any, that this text element represents.
+	 */
 	val char: Char?
 
 	val x: Float

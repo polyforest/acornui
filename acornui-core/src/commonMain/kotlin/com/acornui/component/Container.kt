@@ -290,8 +290,9 @@ open class ContainerImpl(
 		}
 	}
 
-	private val isValidatingLayout: Boolean
-		get() = validation.currentFlag == ValidationFlags.LAYOUT
+	protected val isValidatingLayout: Boolean
+		get() = validation.currentFlag == ValidationFlags.LAYOUT ||
+				validation.currentFlag == ValidationFlags.SIZE_CONSTRAINTS
 
 	protected open fun childInvalidatedHandler(child: UiComponent, flagsInvalidated: Int) {
 		if (flagsInvalidated and child.layoutInvalidatingFlags > 0) {

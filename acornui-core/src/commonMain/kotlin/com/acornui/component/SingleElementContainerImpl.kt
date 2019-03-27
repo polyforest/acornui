@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("UNUSED_PARAMETER")
+
 package com.acornui.component
 
 import com.acornui.core.di.Owned

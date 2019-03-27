@@ -337,7 +337,7 @@ open class BasicUiSkin(
 				val texture = buttonTexture(it, Corners(topLeft = 0f, topRight = maxOf(4f, theme.borderRadius), bottomRight = 0f, bottomLeft = 0f))
 				val skinPart = IconButtonSkinPart(this, texture, stepperPad)
 				val theme = inject(Theme)
-				skinPart.element = atlas(theme.atlasPath, "ArrowUpMed") {
+				skinPart.element = atlas(theme.atlasPath, "ArrowUpSm") {
 					colorTint = theme.iconColor
 				}
 				skinPart
@@ -349,7 +349,7 @@ open class BasicUiSkin(
 				val texture = buttonTexture(it, Corners(topLeft = 0f, topRight = 0f, bottomRight = maxOf(4f, theme.borderRadius), bottomLeft = 0f))
 				val skinPart = IconButtonSkinPart(this, texture, stepperPad)
 				val theme = inject(Theme)
-				skinPart.element = atlas(theme.atlasPath, "ArrowDownMed") {
+				skinPart.element = atlas(theme.atlasPath, "ArrowDownSm") {
 					colorTint = theme.iconColor
 				}
 				skinPart
