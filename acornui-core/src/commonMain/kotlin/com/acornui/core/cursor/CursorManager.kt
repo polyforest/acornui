@@ -142,8 +142,8 @@ object StandardCursors {
 	var NONE: Cursor = DummyCursor
 	var NOT_ALLOWED: Cursor = DummyCursor
 	var POINTER_WAIT: Cursor = DummyCursor
-	var RESIZE_E: Cursor = DummyCursor
-	var RESIZE_N: Cursor = DummyCursor
+	var RESIZE_EW: Cursor = DummyCursor
+	var RESIZE_NS: Cursor = DummyCursor
 	var RESIZE_NE: Cursor = DummyCursor
 	var RESIZE_SE: Cursor = DummyCursor
 	var WAIT: Cursor = DummyCursor

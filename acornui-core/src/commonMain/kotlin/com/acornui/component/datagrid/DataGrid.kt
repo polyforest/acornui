@@ -1623,7 +1623,7 @@ class DataGrid<RowData>(
 	private fun createColumnResizeHandle(): UiComponent {
 		val resizeHandle = spacer(style.resizeHandleWidth, 0f)
 		resizeHandle.interactivityMode = InteractivityMode.ALL
-		resizeHandle.cursor(StandardCursors.RESIZE_E)
+		resizeHandle.cursor(StandardCursors.RESIZE_EW)
 
 		val drag = resizeHandle.dragAttachment(0f)
 		var colResizeStartX = 0f

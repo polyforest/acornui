@@ -46,6 +46,7 @@ class FramebufferFilter(
 		framebuffer.setSize(window.width, window.height)
 		framebuffer.begin()
 //		glState.setViewport(0, 0, 1000, 1000)
+		framebuffer.begin()
 		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
 	}
 

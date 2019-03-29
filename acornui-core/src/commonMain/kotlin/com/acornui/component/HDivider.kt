@@ -52,7 +52,7 @@ open class HDivider(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 			val dividerBar = addChild(it.divideBar(this))
 			_dividerBar = dividerBar
 			dividerBar.drag().add(::dividerDragHandler)
-			dividerBar.cursor(StandardCursors.RESIZE_E)
+			dividerBar.cursor(StandardCursors.RESIZE_EW)
 			val handle = addChild(it.handle(this))
 			_handle = handle
 			handle.interactivityMode = InteractivityMode.NONE

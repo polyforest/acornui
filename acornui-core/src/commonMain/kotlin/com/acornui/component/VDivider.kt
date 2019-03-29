@@ -56,7 +56,7 @@ open class VDivider(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 			val dividerBar = addChild(it.divideBar(this))
 			_dividerBar = dividerBar
 			dividerBar.drag().add(::dividerDragHandler)
-			dividerBar.cursor(StandardCursors.RESIZE_N)
+			dividerBar.cursor(StandardCursors.RESIZE_NS)
 			val handle = addChild(it.handle(this))
 			handle.interactivityMode = InteractivityMode.NONE
 			_handle = handle
