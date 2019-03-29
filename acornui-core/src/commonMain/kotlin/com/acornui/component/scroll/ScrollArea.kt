@@ -22,12 +22,12 @@ import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.*
 import com.acornui.core.di.Owned
-import com.acornui.core.floor
 import com.acornui.core.input.interaction.WheelInteractionRo
 import com.acornui.core.input.wheel
 import com.acornui.core.tween.Tween
 import com.acornui.core.tween.createPropertyTween
 import com.acornui.math.*
+import kotlin.math.floor
 
 /**
  * A container with scrolling.
@@ -322,8 +322,8 @@ open class ScrollArea(
 	}
 
 	protected open fun validateScroll() {
-		val xScroll = hScrollModel.value.floor()
-		val yScroll = vScrollModel.value.floor()
+		val xScroll = floor(hScrollModel.value)
+		val yScroll = floor(vScrollModel.value)
 		scrollRect.scrollTo(xScroll, yScroll)
 	}
 

@@ -17,8 +17,6 @@
 package com.acornui.filter
 
 import com.acornui.component.UiComponentRo
-import com.acornui.core.di.Injector
-import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.gl.core.GlState
 import com.acornui.math.ColorTransformation
@@ -26,21 +24,19 @@ import com.acornui.math.ColorTransformationRo
 import com.acornui.math.MinMaxRo
 
 class ColorTransformationFilter(
-		override val injector: Injector,
+		target: UiComponentRo,
 
 		/**
 		 * The mutable color transformation to be applied.
 		 */
 		val colorTransformation: ColorTransformation
-) : RenderFilter, Scoped {
-
-	override var enabled = true
+) : RenderFilterBase(target) {
 
 	private val glState = inject(GlState)
 	private val combined = ColorTransformation()
 	private var previous: ColorTransformationRo? = null
 
-	override fun begin(viewport: MinMaxRo, target: UiComponentRo) {
+	override fun beforeRender(clip: MinMaxRo) {
 		previous = glState.colorTransformation
 		val previous = previous
 		if (previous == null) {
@@ -51,11 +47,11 @@ class ColorTransformationFilter(
 		}
 	}
 
-	override fun end() {
+	override fun afterRender(clip: MinMaxRo) {
 		glState.colorTransformation = previous
 	}
 }
 
-fun Scoped.colorTransformationFilter(colorTransformation: ColorTransformation = ColorTransformation()): ColorTransformationFilter {
-	return ColorTransformationFilter(injector, colorTransformation)
+fun UiComponentRo.colorTransformationFilter(colorTransformation: ColorTransformation = ColorTransformation()): ColorTransformationFilter {
+	return ColorTransformationFilter(this, colorTransformation)
 }

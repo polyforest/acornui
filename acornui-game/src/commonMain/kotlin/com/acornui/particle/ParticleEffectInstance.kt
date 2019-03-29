@@ -25,7 +25,7 @@ import com.acornui.graphic.Color
 import com.acornui.math.MathUtils.clamp
 import com.acornui.math.Vector3
 import com.acornui.math.Vector3Ro
-import com.acornui.math.ceil
+import kotlin.math.ceil
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -93,7 +93,7 @@ class ParticleEmitterInstance(
 
 	val particles: List<Particle>
 
-	private val count = (emitter.count * maxParticlesScale).ceil()
+	private val count = ceil((emitter.count * maxParticlesScale)).toInt()
 	private var _activeCount: Int = 0
 
 	val activeCount: Int

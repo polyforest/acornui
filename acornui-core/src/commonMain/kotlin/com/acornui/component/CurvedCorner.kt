@@ -20,7 +20,7 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.graphic.BlendMode
 import com.acornui.gl.core.*
-import com.acornui.math.ceil
+import kotlin.math.ceil
 
 
 private var curvedShader: ShaderProgram? = null
@@ -71,7 +71,7 @@ fun Scoped.createSmoothCorner(
 		val gl = inject(Gl20)
 		val glState = inject(GlState)
 		if (curvedShader == null) curvedShader = CurvedRectShaderProgram(gl)
-		val framebuffer = framebuffer(cornerRadiusX.ceil() + 4, cornerRadiusY.ceil() + 4)
+		val framebuffer = framebuffer(ceil(cornerRadiusX).toInt() + 4, ceil(cornerRadiusY).toInt() + 4)
 		val fBW = framebuffer.width.toFloat()
 		val fBH = framebuffer.height.toFloat()
 		val pW = cornerRadiusX / fBW

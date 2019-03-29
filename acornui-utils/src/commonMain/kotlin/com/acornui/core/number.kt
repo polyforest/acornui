@@ -18,6 +18,7 @@ package com.acornui.core
 
 import com.acornui.math.*
 import kotlin.math.abs
+import kotlin.math.floor
 import kotlin.math.round
 
 /**
@@ -124,6 +125,7 @@ fun Int.numberOfTrailingZeros(): Int {
 	return n - (i shl 1).ushr(31)
 }
 
+@Deprecated("use floor(float)", ReplaceWith("floor(this)", "kotlin.math.floor"))
 fun Float.floor(): Float {
 	return toInt().toFloat()
 }

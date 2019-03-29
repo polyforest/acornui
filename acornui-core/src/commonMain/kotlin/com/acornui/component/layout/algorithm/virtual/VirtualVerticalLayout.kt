@@ -24,10 +24,10 @@ import com.acornui.component.layout.algorithm.VerticalLayoutData
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
-import com.acornui.core.floor
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
+import kotlin.math.floor
 
 class VirtualVerticalLayout : VirtualLayoutAlgorithm<VirtualVerticalLayoutStyle, VerticalLayoutData> {
 
@@ -79,7 +79,7 @@ class VirtualVerticalLayout : VirtualLayoutAlgorithm<VirtualVerticalLayoutStyle,
 				HAlign.LEFT ->
 					element.moveTo(padding.left, y)
 				HAlign.CENTER ->
-					element.moveTo(padding.left + ((childAvailableWidth - element.width) * 0.5f).floor(), y)
+					element.moveTo(padding.left + floor(((childAvailableWidth - element.width) * 0.5f)), y)
 				HAlign.RIGHT ->
 					element.moveTo(padding.left + (childAvailableWidth - element.width), y)
 			}

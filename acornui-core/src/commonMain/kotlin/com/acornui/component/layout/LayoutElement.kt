@@ -201,14 +201,14 @@ interface BasicLayoutElement : BasicLayoutElementRo, Sizable, Positionable {
 interface SizableRo {
 
 	/**
-	 * Returns the measured width.
+	 * Returns the measured, untransformed width.
 	 * If layout is invalid, this will invoke a layout validation.
 	 * This is the same as `bounds.width`
 	 */
 	val width: Float
 
 	/**
-	 * Returns the measured height.
+	 * Returns the measured, untransformed height.
 	 * If layout is invalid, this will invoke a layout validation.
 	 * This is the same as `bounds.height`
 	 */

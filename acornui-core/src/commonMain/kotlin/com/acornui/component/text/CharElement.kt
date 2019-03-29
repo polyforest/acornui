@@ -2,7 +2,6 @@ package com.acornui.component.text
 
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
-import com.acornui.core.floor
 import com.acornui.core.graphic.BlendMode
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.putQuadIndices
@@ -12,6 +11,7 @@ import com.acornui.graphic.ColorRo
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.Vector3
 import com.acornui.string.isBreaking
+import kotlin.math.floor
 
 /**
  * Represents a single character in a [TextField], typically within a [TextSpanElement].
@@ -159,7 +159,7 @@ class CharElement private constructor() : TextElement, Clearable {
 			var lineR = x + glyph.advanceX
 			if (lineL > rightClip) lineR = rightClip
 			var lineT = y + if (style.strikeThrough) {
-				(baseline / 2f).floor()
+				floor((baseline / 2f))
 			} else {
 				baseline + 1f
 			}

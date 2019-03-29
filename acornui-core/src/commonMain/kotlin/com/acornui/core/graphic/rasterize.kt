@@ -27,7 +27,7 @@ import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
 import com.acornui.math.MathUtils
 import com.acornui.math.MinMax
-import com.acornui.math.ceil
+import kotlin.math.ceil
 
 // TODO: reconsider overriding the camera and adding to the new Scene component.
 
@@ -45,7 +45,7 @@ fun Scoped.rasterize(target: UiComponent, hasDepth: Boolean = config.gl.depth, h
 	val w = bounds.width
 	val h = bounds.height
 	if (w <= 0f || h <= 0f) throw Exception("Cannot rasterize a component with an empty width or height.")
-	val framebuffer = Framebuffer(injector, MathUtils.nextPowerOfTwo(w.ceil()), MathUtils.nextPowerOfTwo(h.ceil()), hasDepth, hasStencil)
+	val framebuffer = Framebuffer(injector, MathUtils.nextPowerOfTwo(ceil(w).toInt()), MathUtils.nextPowerOfTwo(ceil(h).toInt()), hasDepth, hasStencil)
 	target.cameraOverride = FramebufferOrthographicCamera().apply {
 		setViewport(framebuffer.width.toFloat(), framebuffer.height.toFloat())
 		setPosition(position.x + bounds.xMin, position.y + bounds.yMin)

@@ -26,12 +26,12 @@ import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
-import com.acornui.core.floor
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
+import kotlin.math.floor
 import kotlin.math.round
 
 /**
@@ -154,7 +154,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 					!elements[line.endIndex - 1].clearsLine() &&
 					!elements[line.endIndex].startsNewLine()) {
 				// Apply JUSTIFY spacing if this is not the last line, and there are more than one elements.
-				(props.horizontalGap + remainingSpace / (line.endIndex - line.startIndex - 1)).floor()
+				floor((props.horizontalGap + remainingSpace / (line.endIndex - line.startIndex - 1)))
 			} else {
 				props.horizontalGap
 			}

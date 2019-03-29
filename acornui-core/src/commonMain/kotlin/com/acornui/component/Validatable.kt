@@ -198,6 +198,11 @@ class ValidationGraph {
 		return flagsInvalidated
 	}
 
+	/**
+	 * Validates the given flags.
+	 *
+	 * @return Returns the flags actually validated.
+	 */
 	fun validate(flags: Int = -1): Int {
 		if (currentIndex != -1) {
 			if (assertionsEnabled) {

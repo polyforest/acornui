@@ -21,12 +21,12 @@ import com.acornui.component.layout.*
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
-import com.acornui.core.floor
 import com.acornui.core.graphic.Scaling
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.math.Vector2
+import kotlin.math.floor
 
 /**
  * This layout will scale and position its elements to fit the provided dimensions of the box.
@@ -75,7 +75,7 @@ class ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 						HAlign.LEFT -> {
 						}
 						HAlign.CENTER -> {
-							val halfSpace = (remainingSpace * 0.5f).floor()
+							val halfSpace = floor((remainingSpace * 0.5f))
 							child.x = halfSpace + padding.left
 						}
 						HAlign.RIGHT -> {
@@ -91,7 +91,7 @@ class ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 						VAlign.TOP -> {
 						}
 						VAlign.MIDDLE -> {
-							val halfSpace = (remainingSpace * 0.5f).floor()
+							val halfSpace = floor((remainingSpace * 0.5f))
 							child.y = halfSpace + padding.top
 						}
 						VAlign.BOTTOM -> {

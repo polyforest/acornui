@@ -25,13 +25,13 @@ import com.acornui.component.style.noSkin
 import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
-import com.acornui.core.floor
 import com.acornui.core.input.interaction.DragInteractionRo
 import com.acornui.core.input.interaction.drag
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
 import com.acornui.math.Vector2
 import com.acornui.math.maxOf4
+import kotlin.math.floor
 
 open class VDivider(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 
@@ -120,7 +120,7 @@ open class VDivider(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 			// Bound the bottom side first, then bound the top. Top side trumps bottom.
 			val h = explicitHeight - dividerBarHeight
 			val bH = _bottom?.clampHeight(h * (1f - _split)) ?: 0f
-			topHeight = (_top?.clampHeight(h - bH) ?: 0f).floor()
+			topHeight = floor((_top?.clampHeight(h - bH) ?: 0f))
 			bottomHeight = minOf(bH, h - topHeight)
 			_top?.setSize(explicitWidth, topHeight)
 			_bottom?.setSize(explicitWidth, bottomHeight)

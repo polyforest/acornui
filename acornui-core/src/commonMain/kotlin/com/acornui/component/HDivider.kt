@@ -22,13 +22,13 @@ import com.acornui.component.style.StyleTag
 import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
-import com.acornui.core.floor
 import com.acornui.core.input.interaction.DragInteractionRo
 import com.acornui.core.input.interaction.drag
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
 import com.acornui.math.Vector2
 import com.acornui.math.maxOf4
+import kotlin.math.floor
 
 open class HDivider(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 
@@ -116,7 +116,7 @@ open class HDivider(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 			// Bound the right side first, then bound the left. Left side trumps right.
 			val w = explicitWidth - dividerBarWidth
 			val rW = _right?.clampWidth(w * (1f - _split)) ?: 0f
-			leftWidth = (_left?.clampWidth(w - rW) ?: 0f).floor()
+			leftWidth = floor((_left?.clampWidth(w - rW) ?: 0f))
 			rightWidth = minOf(rW, w - leftWidth)
 			_left?.setSize(leftWidth, explicitHeight)
 			_right?.setSize(rightWidth, explicitHeight)

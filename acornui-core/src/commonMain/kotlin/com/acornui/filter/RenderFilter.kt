@@ -17,10 +17,15 @@
 package com.acornui.filter
 
 import com.acornui.component.UiComponentRo
+import com.acornui.core.di.Injector
+import com.acornui.core.di.Scoped
+import com.acornui.core.di.inject
+import com.acornui.core.graphic.Window
 import com.acornui.math.MinMaxRo
 
 /**
- * A render filter wraps the draw of a component.
+ * A render filter wraps the drawing of a component.
+ *
  */
 interface RenderFilter {
 
@@ -29,7 +34,36 @@ interface RenderFilter {
 	 */
 	var enabled: Boolean
 
-	fun begin(viewport: MinMaxRo, target: UiComponentRo)
+	/**
+	 * Before the component is drawn, this will be invoked. This will be in the order of the component's render filters.
+	 * @param clip The visible region (in viewport coordinates.)
+	 */
+	fun beforeRender(clip: MinMaxRo)
 
-	fun end()
+	/**
+	 * After the component is drawn, this will be invoked. This will be in the reverse order of the component's render
+	 * filters.
+	 * @param clip The visible region (in viewport coordinates.)
+	 */
+	fun afterRender(clip: MinMaxRo)
+
+
+}
+
+/**
+ * The base class for render filters.
+ */
+abstract class RenderFilterBase(protected val target: UiComponentRo) : RenderFilter, Scoped {
+
+	override val injector: Injector = target.injector
+
+	private val window = target.inject(Window)
+
+	final override var enabled: Boolean = true
+		set(value) {
+			if (value != field) {
+				field = value
+				window.requestRender()
+			}
+		}
 }

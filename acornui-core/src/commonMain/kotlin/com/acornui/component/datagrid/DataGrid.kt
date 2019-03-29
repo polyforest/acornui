@@ -32,7 +32,6 @@ import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.di.own
-import com.acornui.core.floor
 import com.acornui.core.focus.*
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.KeyState
@@ -50,6 +49,8 @@ import com.acornui.signal.Signal
 import com.acornui.signal.Signal2
 import com.acornui.signal.bind
 import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.floor
 
 // TODO: Selection
 
@@ -1201,7 +1202,7 @@ class DataGrid<RowData>(
 		}
 		metrics.endPosition = endPosition
 
-		val firstPartial = endPosition.ceil() - endPosition
+		val firstPartial = ceil(endPosition).toInt() - endPosition
 
 		val pad = style.cellPadding
 		val rowHeight = rowHeight
@@ -1226,7 +1227,7 @@ class DataGrid<RowData>(
 			heightSum = 0f
 			var iRowHeight = minRowHeight
 
-			rowIterator.position = endPosition.ceil()
+			rowIterator.position = ceil(endPosition).toInt()
 
 			while (rowIterator.hasPreviousRow && rowsShown < maxRows && heightSum < maxHeight) {
 				rowIterator.moveToPreviousRow()
@@ -1332,7 +1333,7 @@ class DataGrid<RowData>(
 		var heightSum = 0f
 		var iRowHeight: Float = minRowHeight
 
-		val firstPartial = startPosition - startPosition.floor()
+		val firstPartial = startPosition - floor(startPosition)
 		metrics.startPosition = startPosition
 
 		if (allowVirtual && rowHeight != null) {
@@ -1480,7 +1481,7 @@ class DataGrid<RowData>(
 				y += rowHeights[i]
 			}
 			// Partial row visibility
-			y -= rowHeights[0] * (vScrollModel.value - vScrollModel.value.floor())
+			y -= rowHeights[0] * (vScrollModel.value - floor(vScrollModel.value))
 			editorCell.setSize(_columnWidths[columnIndex], rowHeights[rowIndex])
 			editorCell.setPosition(x, y)
 		} else {

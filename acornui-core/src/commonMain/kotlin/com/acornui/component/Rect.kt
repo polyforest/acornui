@@ -21,7 +21,6 @@ import com.acornui.component.drawing.staticMesh
 import com.acornui.component.drawing.staticMeshC
 import com.acornui.component.drawing.transform
 import com.acornui.core.di.Owned
-import com.acornui.core.floor
 import com.acornui.core.graphic.BlendMode
 import com.acornui.gl.core.putIndex
 import com.acornui.gl.core.putQuadIndices
@@ -29,10 +28,8 @@ import com.acornui.gl.core.putTriangleIndices
 import com.acornui.gl.core.putVertex
 import com.acornui.graphic.Color
 import com.acornui.math.*
-import kotlin.math.abs
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
+import com.acornui.math.PI as PI
+import kotlin.math.*
 
 open class Rect(
 		owner: Owned
@@ -590,9 +587,9 @@ private fun fitSize(value: Float, other: Float, max: Float): Float {
 	val v2 = if (other < 0f) 0f else other
 	val total = v1 + v2
 	return if (total > max) {
-		return (v1 * max / total).floor()
+		return floor(v1 * max / total)
 	} else {
-		v1.floor()
+		floor(v1)
 	}
 }
 

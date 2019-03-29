@@ -17,7 +17,7 @@
 package com.acornui.core.io
 
 import com.acornui.io.*
-import com.acornui.math.ceil
+import kotlin.math.ceil
 
 open class ResizableBuffer<T, S : NativeReadWriteBuffer<T>>(initialCapacity: Int = 16, private val factory: (newCapacity: Int) -> S) : NativeReadWriteBuffer<T> {
 
@@ -77,7 +77,7 @@ open class ResizableBuffer<T, S : NativeReadWriteBuffer<T>>(initialCapacity: Int
 
 	override fun put(value: T) {
 		if (position >= _wrapped.capacity) {
-			resize((_wrapped.capacity * 1.75f).ceil(), _limit)
+			resize(ceil((_wrapped.capacity * 1.75f)).toInt(), _limit)
 		}
 		_wrapped.put(value)
 	}
@@ -92,7 +92,7 @@ open class ResizableBuffer<T, S : NativeReadWriteBuffer<T>>(initialCapacity: Int
 
 	override fun limit(newLimit: Int): Buffer {
 		if (newLimit > _wrapped.capacity) {
-			resize((newLimit * 1.75f).ceil(), newLimit)
+			resize(ceil((newLimit * 1.75f)).toInt(), newLimit)
 		}
 		_limit = newLimit
 		_wrapped.limit(newLimit)

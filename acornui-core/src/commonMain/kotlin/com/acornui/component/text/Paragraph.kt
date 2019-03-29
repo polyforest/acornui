@@ -8,13 +8,13 @@ import com.acornui.component.layout.algorithm.LineInfo
 import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.component.text.collection.JoinedList
 import com.acornui.core.di.Owned
-import com.acornui.core.floor
 import com.acornui.core.selection.SelectionRange
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.offsetRound
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Vector3
-import com.acornui.math.ceil
+import kotlin.math.ceil
+import kotlin.math.floor
 
 /**
  * A Paragraph component is a container of styleable text spans, to be used inside of a TextField.
@@ -256,9 +256,9 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 					var justifyOffset = 0f
 					for (i in line.startIndex..line.endIndex - 1) {
 						val part = textElements[i]
-						part.x = (part.x + justifyOffset).floor()
+						part.x = floor((part.x + justifyOffset))
 						if (i < lastIndex && part.char == ' ') {
-							part.explicitWidth = part.advanceX + hGap.ceil()
+							part.explicitWidth = part.advanceX + ceil(hGap).toInt()
 							justifyOffset += hGap
 						}
 					}

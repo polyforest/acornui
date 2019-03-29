@@ -26,7 +26,7 @@ import com.acornui.core.graphic.BlendMode
 import com.acornui.graphic.ColorRo
 import com.acornui.math.MathUtils
 import com.acornui.math.Matrix4Ro
-import com.acornui.math.ceil
+import kotlin.math.ceil
 
 /**
  * Wraps a frame buffer, keeping it the size of the screen.
@@ -50,8 +50,8 @@ class ResizeableFramebuffer(
 	fun setSize(width: Float, height: Float) {
 		naturalWidth = width
 		naturalHeight = height
-		val widthInt = width.ceil()
-		val heightInt = height.ceil()
+		val widthInt = ceil(width).toInt()
+		val heightInt = ceil(height).toInt()
 		val oldFramebuffer = framebuffer
 		val oldW = oldFramebuffer?.width ?: 0
 		val oldH = oldFramebuffer?.height ?: 0
