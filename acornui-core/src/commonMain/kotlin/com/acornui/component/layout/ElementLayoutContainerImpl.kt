@@ -33,29 +33,13 @@ open class ElementLayoutContainerImpl<S : Style, out U : LayoutData>(
 		private val layoutAlgorithm: LayoutAlgorithm<S, U>
 ) : ElementContainerImpl<UiComponent>(owner), LayoutDataProvider<U>, Focusable {
 
-	private var elementsToLayoutIsValid = false
 	private val _elementsToLayout = ArrayList<LayoutElement>()
 	private val elementsToLayout: List<LayoutElement>
 		get() {
-			if (!elementsToLayoutIsValid) {
-				elementsToLayoutIsValid = true
-				_elementsToLayout.clear()
-				elements.filterTo2(_elementsToLayout, LayoutElement::shouldLayout)
-			}
+			_elementsToLayout.clear()
+			elements.filterTo2(_elementsToLayout, LayoutElement::shouldLayout)
 			return _elementsToLayout
 		}
-
-	override fun onInvalidated(flagsInvalidated: Int) {
-		super.onInvalidated(flagsInvalidated)
-		if (flagsInvalidated.containsFlag(ValidationFlags.HIERARCHY_ASCENDING))
-			elementsToLayoutIsValid = false
-	}
-
-	override fun childInvalidatedHandler(child: UiComponent, flagsInvalidated: Int) {
-		super.childInvalidatedHandler(child, flagsInvalidated)
-		if (flagsInvalidated.containsFlag(ValidationFlags.LAYOUT_ENABLED))
-			elementsToLayoutIsValid = false
-	}
 
 	val style: S = bind(layoutAlgorithm.style)
 	final override fun createLayoutData(): U = layoutAlgorithm.createLayoutData()
