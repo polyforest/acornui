@@ -220,6 +220,7 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 	}
 
 	init {
+		element = _textContents
 		addStyleRule(flowStyle)
 		addStyleRule(charStyle)
 		styleTags.add(TextField)
