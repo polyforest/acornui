@@ -79,7 +79,7 @@ interface MinMaxRo {
 }
 
 /**
- * A two dimentional minimum maximum range.
+ * A two dimensional minimum maximum range.
  */
 class MinMax(
 		override var xMin: Float = Float.POSITIVE_INFINITY,

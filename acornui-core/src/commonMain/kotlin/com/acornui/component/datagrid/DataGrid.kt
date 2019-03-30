@@ -596,7 +596,7 @@ class DataGrid<RowData>(
 		editorCell.focus()
 		this.editorCell = editorCell
 		bringIntoView(cellLocation)
-		invalidateLayout()
+		invalidateLayout() // Necessary, ScrollRect doesn't bubble layout invalidation.
 	}
 
 	/**
