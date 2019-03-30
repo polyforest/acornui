@@ -279,18 +279,6 @@ open class RowLocation<RowData>(protected val dataGrid: DataGrid<RowData>) : Row
 		}
 	}
 
-	/**
-	 * Calls [moveToPreviousRow] until there are no more previous rows, or the [predicate] has returned true.
-	 * @return Returns true if the predicate was ever matched.
-	 */
-	fun moveToPreviousRowUntil(predicate: (RowLocationRo<RowData>) -> Boolean): Boolean {
-		while (hasPreviousRow) {
-			moveToPreviousRow()
-			if (predicate(this)) return true
-		}
-		return false
-	}
-
 	fun moveToNextRow() {
 		_position++
 		_groupPosition++
@@ -300,18 +288,6 @@ open class RowLocation<RowData>(protected val dataGrid: DataGrid<RowData>) : Row
 			}
 			_groupPosition = 0
 		}
-	}
-
-	/**
-	 * Calls [moveToNextRow] until there are no more next rows, or the [predicate] has returned true.
-	 * @return Returns true if the predicate was ever matched.
-	 */
-	fun moveToNextRowUntil(predicate: (RowLocationRo<RowData>) -> Boolean): Boolean {
-		while (hasNextRow) {
-			moveToNextRow()
-			if (predicate(this)) return true
-		}
-		return false
 	}
 
 	override fun equals(other: Any?): Boolean {
@@ -328,6 +304,52 @@ open class RowLocation<RowData>(protected val dataGrid: DataGrid<RowData>) : Row
 	override fun toString(): String {
 		return "RowLocation(position=$position, groupIndex=$groupIndex, rowIndex=$rowIndex)"
 	}
+}
 
+/**
+ * Calls [RowLocation.moveToPreviousRow] until there are no more previous rows, or the [predicate] has returned true.
+ * @return Returns true if the predicate was ever matched.
+ */
+fun <T : RowLocation<*>> T.moveToPreviousRowUntil(predicate: (T) -> Boolean): Boolean {
+	while (hasPreviousRow) {
+		moveToPreviousRow()
+		if (predicate(this)) return true
+	}
+	return false
+}
 
+/**
+ * Calls [RowLocation.moveToNextRow] until there are no more next rows, or the [predicate] has returned true.
+ * @return Returns true if the predicate was ever matched.
+ */
+fun <T : RowLocation<*>> T.moveToNextRowUntil(predicate: (T) -> Boolean): Boolean {
+	while (hasNextRow) {
+		moveToNextRow()
+		if (predicate(this)) return true
+	}
+	return false
+}
+
+/**
+ * While [predicate] returns false, calls [RowLocation.moveToNextRow].
+ * @return Returns true if the predicate was ever matched.
+ */
+fun <T : RowLocation<*>> T.findNextRow(predicate: (T) -> Boolean): Boolean {
+	while (true) {
+		if (predicate(this)) return true
+		if (!hasNextRow) return false
+		moveToNextRow()
+	}
+}
+
+/**
+ * While [predicate] returns false, calls [RowLocation.moveToPreviousRow].
+ * @return Returns true if the predicate was ever matched.
+ */
+fun <T : RowLocation<*>> T.findPreviousRow(predicate: (T) -> Boolean): Boolean {
+	while (true) {
+		if (predicate(this)) return true
+		if (!hasPreviousRow) return false
+		moveToPreviousRow()
+	}
 }

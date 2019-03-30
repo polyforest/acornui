@@ -26,7 +26,6 @@ import com.acornui.component.scroll.*
 import com.acornui.component.style.*
 import com.acornui.component.text.TextStyleTags
 import com.acornui.core.EqualityCheck
-import com.acornui.recycle.disposeAndClear
 import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
@@ -41,9 +40,13 @@ import com.acornui.core.input.interaction.click
 import com.acornui.core.input.interaction.dragAttachment
 import com.acornui.core.input.keyDown
 import com.acornui.core.input.wheel
-import com.acornui.math.*
+import com.acornui.math.Bounds
+import com.acornui.math.Corners
 import com.acornui.math.MathUtils.clamp
+import com.acornui.math.Pad
+import com.acornui.math.Vector2
 import com.acornui.observe.IndexBinding
+import com.acornui.recycle.disposeAndClear
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal2
@@ -392,6 +395,8 @@ class DataGrid<RowData>(
 		blurred().add(::blurredHandler)
 	}
 
+	var focusEnabledFilter: Filter<CellLocationRo<RowData>> = { true }
+
 	private fun blurredHandler() {
 		editorCellCheck()
 		commitCellEditorValue()
@@ -407,17 +412,23 @@ class DataGrid<RowData>(
 				Ascii.HOME -> {
 					event.handled = true
 					loc.position = 0
-					if (!loc.isElementRow) loc.moveToNextRowUntil { it.isElementRow }
+
+					val everMatched = loc.findNextRow {
+						focusEnabledFilter(it) && it.isElementRow
+					}
 					commitCellEditorValue()
-					focusCell(loc)
+					if (everMatched) focusCell(loc)
+					else disposeCellEditor()
 				}
 				Ascii.END -> {
 					event.handled = true
 					loc.position = totalRows - 1
-					if (!loc.isElementRow) loc.moveToPreviousRowUntil { it.isElementRow }
-
+					val everMatched = loc.findPreviousRow {
+						focusEnabledFilter(it) && it.isElementRow
+					}
 					commitCellEditorValue()
-					focusCell(loc)
+					if (everMatched) focusCell(loc)
+					else disposeCellEditor()
 				}
 				Ascii.PAGE_DOWN -> {
 					event.handled = true
@@ -426,20 +437,23 @@ class DataGrid<RowData>(
 					validate(ValidationFlags.LAYOUT)
 					val pageSize = _cellMetrics.rowHeights.lastIndex - 1
 					loc.position = clamp(loc.position + pageSize, 0, totalRows - 1)
-					if (!loc.isElementRow) loc.moveToNextRowUntil { it.isElementRow }
-
+					val everMatched = loc.findNextRow {
+						focusEnabledFilter(it) && it.isElementRow
+					}
 					commitCellEditorValue()
-					focusCell(loc)
+					if (everMatched) focusCell(loc)
+					else disposeCellEditor()
 				}
 				Ascii.PAGE_UP -> {
 					event.handled = true
-//					sizeCellsReversed(bottomBounds.width, bottomBounds.height, loc, bottomBounds)
 					val pageSize = _cellMetrics.rowHeights.lastIndex - 1
 					loc.position = clamp(loc.position - pageSize, 0, totalRows - 1)
-					if (!loc.isElementRow) loc.moveToPreviousRowUntil { it.isElementRow }
-
+					val everMatched = loc.findPreviousRow {
+						focusEnabledFilter(it) && it.isElementRow
+					}
 					commitCellEditorValue()
-					focusCell(loc)
+					if (everMatched) focusCell(loc)
+					else disposeCellEditor()
 				}
 				Ascii.TAB -> {
 					// Edit the next column
@@ -504,7 +518,8 @@ class DataGrid<RowData>(
 				disposeCellEditor()
 			}
 			if (editable) {
-				focusCell(cell)
+				if (focusEnabledFilter(cell))
+					focusCell(cell)
 			}
 		}
 	}
@@ -581,6 +596,7 @@ class DataGrid<RowData>(
 		editorCell.focus()
 		this.editorCell = editorCell
 		bringIntoView(cellLocation)
+		invalidateLayout()
 	}
 
 	/**
@@ -590,9 +606,9 @@ class DataGrid<RowData>(
 	 */
 	fun focusPreviousCell(commit: Boolean) {
 		val newLocation = cellFocusLocation ?: return
-		newLocation.moveToPreviousCellUntil { it.editable }
+		val everMatched = newLocation.moveToPreviousCellUntil { focusEnabledFilter(it) && it.editable }
 		if (commit) commitCellEditorValue()
-		focusCell(newLocation)
+		if (everMatched) focusCell(newLocation)
 	}
 
 	/**
@@ -602,9 +618,10 @@ class DataGrid<RowData>(
 	 */
 	fun focusNextCell(commit: Boolean) {
 		val newLocation = cellFocusLocation ?: return
-		newLocation.moveToNextCellUntil { it.editable }
+		val everMatched = newLocation.moveToNextCellUntil { focusEnabledFilter(it) && it.editable }
 		if (commit) commitCellEditorValue()
-		focusCell(newLocation)
+		if (everMatched) focusCell(newLocation)
+		else disposeCellEditor()
 	}
 
 	/**
@@ -614,16 +631,18 @@ class DataGrid<RowData>(
 	 */
 	fun focusPreviousRow(commit: Boolean) {
 		val newLocation = cellFocusLocation ?: return
-		newLocation.moveToPreviousRowUntil { it.isElementRow }
+		val everMatched = newLocation.moveToPreviousRowUntil { focusEnabledFilter(it) && it.isElementRow }
 		if (commit) commitCellEditorValue()
-		focusCell(newLocation)
+		if (everMatched) focusCell(newLocation)
+		else disposeCellEditor()
 	}
 
 	fun focusNextRow(commit: Boolean) {
 		val newLocation = cellFocusLocation ?: return
-		newLocation.moveToNextRowUntil { it.isElementRow }
+		val everMatched = newLocation.moveToNextRowUntil { focusEnabledFilter(it) && it.isElementRow }
 		if (commit) commitCellEditorValue()
-		focusCell(newLocation)
+		if (everMatched) focusCell(newLocation)
+		else disposeCellEditor()
 	}
 
 	fun closeCellEditor(commit: Boolean = false) {

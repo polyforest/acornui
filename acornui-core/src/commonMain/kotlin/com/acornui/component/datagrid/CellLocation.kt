@@ -79,18 +79,6 @@ class CellLocation<RowData>(dataGrid: DataGrid<RowData>) : RowLocation<RowData>(
 	}
 
 	/**
-	 * Calls [moveToPreviousCell] until there are no more previous cells, or the [predicate] has returned true.
-	 * @return Returns true if the predicate was ever matched.
-	 */
-	fun moveToPreviousCellUntil(predicate: (CellLocationRo<RowData>) -> Boolean): Boolean {
-		while (hasPreviousCell) {
-			moveToPreviousCell()
-			if (predicate(this)) return true
-		}
-		return false
-	}
-
-	/**
 	 * Iterates the column to the right, if the column passes the rightmost column, the column wraps back to 0 and
 	 * the row is incremented.
 	 */
@@ -101,18 +89,6 @@ class CellLocation<RowData>(dataGrid: DataGrid<RowData>) : RowLocation<RowData>(
 			moveToNextRow()
 			columnIndex = 0
 		}
-	}
-
-	/**
-	 * Calls [moveToNextCell] until there are no more next cells, or the [predicate] has returned true.
-	 * @return Returns true if the predicate was ever matched.
-	 */
-	fun moveToNextCellUntil(predicate: (CellLocationRo<RowData>) -> Boolean): Boolean {
-		while (hasNextCell) {
-			moveToNextCell()
-			if (predicate(this)) return true
-		}
-		return false
 	}
 
 	override fun equals(other: Any?): Boolean {
@@ -133,4 +109,28 @@ class CellLocation<RowData>(dataGrid: DataGrid<RowData>) : RowLocation<RowData>(
 	override fun toString(): String {
 		return "CellLocation(position=$position, groupIndex=$groupIndex, rowIndex=$rowIndex, columnIndex=$columnIndex)"
 	}
+}
+
+/**
+ * Calls [CellLocation.moveToPreviousCell] until there are no more previous cells, or the [predicate] has returned true.
+ * @return Returns true if the predicate was ever matched.
+ */
+fun <T : CellLocation<*>> T.moveToPreviousCellUntil(predicate: (T) -> Boolean): Boolean {
+	while (hasPreviousCell) {
+		moveToPreviousCell()
+		if (predicate(this)) return true
+	}
+	return false
+}
+
+/**
+ * Calls [CellLocation.moveToNextCell] until there are no more next cells, or the [predicate] has returned true.
+ * @return Returns true if the predicate was ever matched.
+ */
+fun <T : CellLocation<*>> T.moveToNextCellUntil(predicate: (T) -> Boolean): Boolean {
+	while (hasNextCell) {
+		moveToNextCell()
+		if (predicate(this)) return true
+	}
+	return false
 }
