@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.badlogicgames.jlayer:jlayer:1.0.2-gdx">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.badlogicgames.jlayer/jlayer/1.0.2-gdx/3de16c54d83a09246be43c59ae0329550e06cca5/jlayer-1.0.2-gdx.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.badlogicgames.jlayer/jlayer/1.0.2-gdx/903c6e0e70af664aadc1e48d732a5a78a24d9d7f/jlayer-1.0.2-gdx-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

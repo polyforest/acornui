@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id=":backends:acornui-webgl-backend" external.linked.project.path="$ACORNUI_HOME$/backends/acornui-webgl-backend" external.root.project.path="$ACORNUI_HOME$" external.system.id="GRADLE" external.system.module.group="com.polyforest" external.system.module.version="0.0.1" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$ACORNUI_HOME$/backends/acornui-webgl-backend">
+      <excludeFolder url="file://$ACORNUI_HOME$/backends/acornui-webgl-backend/.gradle" />
+      <excludeFolder url="file://$ACORNUI_HOME$/backends/acornui-webgl-backend/build" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
