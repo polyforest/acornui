@@ -37,6 +37,11 @@ allprojects {
                 })
             }
 
+    afterEvaluate {
+        tasks.withType(Test::class).configureEach {
+            jvmArgs("-ea")
+        }
+    }
     version = PRODUCT_VERSION
     group = PRODUCT_GROUP
 }
