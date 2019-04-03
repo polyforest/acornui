@@ -15,8 +15,15 @@
  */
 
 pluginManagement {
+    repositories {
+        mavenLocal()
+        gradlePluginPortal()
+    }
     resolutionStrategy {
         eachPlugin {
+            if (requested.id.id.startsWith(ACORNUI_PLUGIN_MARKER_PREFIX)) {
+                useVersion(ACORNUI_PLUGIN_VERSION)
+            }
             if (requested.id.id == "org.jetbrains.kotlin.multiplatform") {
                 useVersion(KOTLIN_VERSION)
             }
@@ -26,6 +33,8 @@ pluginManagement {
 
 val settings = this as ExtensionAware
 val KOTLIN_VERSION: String by settings.extra
+val ACORNUI_PLUGIN_MARKER_PREFIX: String by settings.extra
+val ACORNUI_PLUGIN_VERSION: String by settings.extra
 rootProject.name = "acornui"
 
 // Uncomment below and adapt, adding modules as they are created.  Modules take on the name of their root directory in gradle.
