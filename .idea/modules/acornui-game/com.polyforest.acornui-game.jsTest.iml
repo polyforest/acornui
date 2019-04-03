@@ -4,8 +4,8 @@
     <facet type="kotlin-language" name="Kotlin">
       <configuration version="3" platform="JavaScript " useProjectSettings="false" isTestModule="true" externalProjectId=":acornui-game">
         <sourceSets>
-          <sourceSet>com.polyforest.acornui-game.jsMain</sourceSet>
           <sourceSet>com.polyforest.acornui-game.commonMain</sourceSet>
+          <sourceSet>com.polyforest.acornui-game.jsMain</sourceSet>
           <sourceSet>com.polyforest.acornui-game.commonTest</sourceSet>
         </sourceSets>
         <newMppModelJpsModuleKind>COMPILATION_AND_SOURCE_SET_HOLDER</newMppModelJpsModuleKind>
@@ -49,8 +49,8 @@
     <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.kotlin:kotlin-test-common:1.3.21" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.21" level="project" />
     <orderEntry type="module" module-name="com.polyforest.acornui-game.commonTest" scope="TEST" />
-    <orderEntry type="module" module-name="com.polyforest.acornui-game.commonMain" scope="TEST" />
     <orderEntry type="module" module-name="com.polyforest.acornui-game.jsMain" scope="TEST" />
+    <orderEntry type="module" module-name="com.polyforest.acornui-game.commonMain" scope="TEST" />
     <orderEntry type="module" module-name="com.polyforest.acornui-utils.commonMain" scope="TEST" />
     <orderEntry type="module" module-name="com.polyforest.acornui-utils.jsMain" scope="TEST" />
     <orderEntry type="module" module-name="com.polyforest.acornui-core.commonMain" scope="TEST" />
