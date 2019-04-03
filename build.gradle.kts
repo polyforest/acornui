@@ -38,7 +38,7 @@ afterEvaluate {
             else
                 it.toString()
         }}
-        
+
         (all files relative to project directory unless absolute)
         """.trimIndent()
 
