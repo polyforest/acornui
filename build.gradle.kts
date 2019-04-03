@@ -17,31 +17,39 @@
 val GRADLE_VERSION: String by extra
 val PRODUCT_VERSION: String by extra
 val PRODUCT_GROUP: String by extra
-allprojects {
-    repositories {
-        jcenter()
-    }
 
-    tasks.withType<Wrapper> {
-        gradleVersion = GRADLE_VERSION
-        distributionType = Wrapper.DistributionType.ALL
-    }
+version = PRODUCT_VERSION
+group = PRODUCT_GROUP
 
-    tasks.withType(Delete::class.java)
-            .matching {
-                it.name == BasePlugin.CLEAN_TASK_NAME
-            }
-            .all {
-                delete(fileTree(".").matching {
-                    include("**/out/")
-                })
-            }
+tasks.withType<Wrapper> {
+    gradleVersion = GRADLE_VERSION
+    distributionType = Wrapper.DistributionType.ALL
+}
 
-    afterEvaluate {
-        tasks.withType(Test::class).configureEach {
-            jvmArgs("-ea")
-        }
+afterEvaluate {
+    val clean = tasks.withType(Delete::class).tryNamed(BasePlugin.CLEAN_TASK_NAME) ?: tasks.register<Delete>(BasePlugin.CLEAN_TASK_NAME)
+    clean {
+        group = "build"
+        description = """
+            Deletes:
+            ${delete.joinToString("\n") {
+            if (it is File)
+                it.relativeToOrSelf(projectDir).path
+            else
+                it.toString()
+        }}
+        
+        (all files relative to project directory unless absolute)
+        """.trimIndent()
+
+        delete(file("out/"))
     }
-    version = PRODUCT_VERSION
-    group = PRODUCT_GROUP
+}
+
+fun <T : Task> TaskCollection<T>.tryNamed(name: String): TaskProvider<T>? {
+    return try {
+        named(name)
+    } catch (e: UnknownTaskException) {
+        null
+    }
 }

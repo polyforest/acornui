@@ -24,9 +24,6 @@ pluginManagement {
             if (requested.id.id.startsWith(ACORNUI_PLUGIN_MARKER_PREFIX)) {
                 useVersion(ACORNUI_PLUGIN_VERSION)
             }
-            if (requested.id.id == "org.jetbrains.kotlin.multiplatform") {
-                useVersion(KOTLIN_VERSION)
-            }
         }
     }
 }
