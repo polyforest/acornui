@@ -21,9 +21,8 @@ pluginManagement {
     }
     resolutionStrategy {
         eachPlugin {
-            if (requested.id.id.startsWith(ACORNUI_PLUGIN_MARKER_PREFIX)) {
+            if (requested.id.id.startsWith(ACORNUI_PLUGIN_MARKER_PREFIX))
                 useVersion(ACORNUI_PLUGIN_VERSION)
-            }
         }
     }
 }
