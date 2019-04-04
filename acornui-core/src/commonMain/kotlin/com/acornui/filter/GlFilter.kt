@@ -23,6 +23,7 @@ import com.acornui.gl.core.Framebuffer
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.ShaderProgram
 import com.acornui.math.*
+import kotlin.math.ceil
 
 // TODO: WIP
 
@@ -53,8 +54,8 @@ class GlFilter(
 		tempTransform.set(_concatenatedTransform)
 		
 		
-		val fbWidth = minOf(maxSize, MathUtils.nextPowerOfTwo(sizePadding.expandWidth2(width).ceil()))
-		val fbHeight = minOf(maxSize, MathUtils.nextPowerOfTwo(sizePadding.expandHeight2(height).ceil()))
+		val fbWidth = minOf(maxSize, MathUtils.nextPowerOfTwo(ceil(sizePadding.expandWidth2(width)).toInt()))
+		val fbHeight = minOf(maxSize, MathUtils.nextPowerOfTwo(ceil(sizePadding.expandHeight2(height)).toInt()))
 		val framebuffer = framebuffer
 		if (framebuffer == null || fbWidth > framebuffer.width || fbHeight > framebuffer.height) {
 			resizeFramebuffer(fbWidth, fbHeight)

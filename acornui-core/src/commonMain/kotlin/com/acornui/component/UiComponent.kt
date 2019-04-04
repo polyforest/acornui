@@ -187,6 +187,16 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 
 	val renderFilters: MutableList<RenderFilter>
 
+	operator fun <T : RenderFilter> T.unaryPlus(): T {
+		renderFilters.add(this)
+		return this
+	}
+
+	operator fun <T : RenderFilter> T.unaryMinus(): T {
+		renderFilters.remove(this)
+		return this
+	}
+
 	override var focusEnabled: Boolean
 	override var focusOrder: Float
 	override var isFocusContainer: Boolean
@@ -211,15 +221,16 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	/**
 	 * Renders any graphics.
 	 * [render] does not check the [visible] flag; that is the responsibility of the caller.
-	 * @param clip The visible region (in viewport coordinates.) If you wish to render a component with a no
-	 * clipping, you may use [MinMaxRo.POSITIVE_INFINITY]. This is used in order to potentially avoid drawing things
-	 * the user cannot see. (Due to the screen size, stencil buffers, or scissors)
 	 *
 	 * Canvas coordinates are 0,0 top left, and bottom right is the canvas width/height without dpi scaling.
 	 *
 	 * You may convert the window coordinate clip region to local coordinates via [canvasToLocal], but in general it is
 	 * faster to convert the local coordinates to window coordinates [localToCanvas], as no matrix inversion is
 	 * required.
+	 *
+	 * @param clip The visible region (in viewport coordinates.) If you wish to render a component with a no
+	 * clipping, you may use [MinMaxRo.POSITIVE_INFINITY]. This is used in order to potentially avoid drawing things
+	 * the user cannot see. (Due to the screen size, stencil buffers, or scissors)
 	 */
 	fun render(clip: MinMaxRo)
 }
@@ -1269,13 +1280,13 @@ open class UiComponentImpl(
 			while (--i >= 0) {
 				val filter = renderFilters[i]
 				if (filter.enabled)
-					filter.begin(clip, this)
+					filter.beforeRender(clip)
 			}
 			draw(clip)
 			while (++i < renderFiltersL) {
 				val filter = renderFilters[i]
 				if (filter.enabled)
-					filter.end()
+					filter.afterRender(clip)
 			}
 		}
 	}
