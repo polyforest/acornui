@@ -19,8 +19,12 @@
 package com.acornui.gl.core
 
 import com.acornui.core.di.DKey
+import com.acornui.core.di.Scoped
+import com.acornui.core.di.inject
 import com.acornui.core.graphic.Texture
+import com.acornui.core.graphic.Window
 import com.acornui.core.io.floatBuffer
+import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.io.NativeReadBuffer
 import com.acornui.math.Matrix3Ro
@@ -1238,4 +1242,15 @@ fun Gl20.uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, va
 	}
 	buffer.flip()
 	uniformMatrix3fv(location, transpose, buffer)
+}
+
+/**
+ * Clears the current frame buffer with the given color and mask, then resets the clear color to the Window's clear
+ * color.
+ */
+fun Scoped.clearAndReset(color: ColorRo = Color.CLEAR, mask: Int = Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT) {
+	val gl = inject(Gl20)
+	gl.clearColor(color)
+	gl.clear(mask)
+	gl.clearColor(inject(Window).clearColor)
 }

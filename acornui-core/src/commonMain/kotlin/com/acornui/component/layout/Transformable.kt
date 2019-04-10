@@ -96,6 +96,9 @@ interface TransformableRo : PositionableRo {
 
 	/**
 	 * Converts a bounding rectangle from local to global coordinates.
+	 * @param minMax These bounds will be mutated into the projected global coordinates, and set to the
+	 * bounding region of those four points.
+	 * @return Returns the mutated [minMax] parameter.
 	 */
 	fun localToGlobal(minMax: MinMax): MinMax {
 		val tmp1 =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)

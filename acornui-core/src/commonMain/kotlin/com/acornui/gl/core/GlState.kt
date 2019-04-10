@@ -482,10 +482,17 @@ inline fun GlState.setViewport(x: Int, y: Int, width: Int, height: Int, inner: (
 	IntRectangle.free(oldViewport)
 }
 
+inline fun GlState.setShader(s: ShaderProgram, inner: ()->Unit) {
+	val previousShader = shader
+	shader = s
+	inner()
+	shader = previousShader
+}
+
 /**
  * @see Gl20.viewport
  */
-fun GlState.setViewport(value: IntRectangleRo) = setViewport(value.x, value.y, value.width, value.height)
+fun GlState.setViewport(value: IntRectangleRo) = setViewport(value.x, value.y, maxOf(0, value.width), maxOf(0, value.height))
 
 fun GlState.setScissor(value: IntRectangleRo) = setScissor(value.x, value.y, value.width, value.height)
 

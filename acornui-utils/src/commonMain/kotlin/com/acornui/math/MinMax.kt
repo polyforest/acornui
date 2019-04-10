@@ -118,19 +118,18 @@ class MinMax(
 	/**
 	 * Increases this value by the given deltas.
 	 */
-	fun inflate(left: Float, top: Float, right: Float, bottom: Float) {
+	fun inflate(left: Float, top: Float, right: Float, bottom: Float): MinMax {
 		xMin -= left
 		yMin -= top
 		xMax += right
 		yMax += bottom
+		return this
 	}
 
 	/**
 	 * Increases this value by the given padding values.
 	 */
-	fun inflate(pad: PadRo) {
-		inflate(pad.left, pad.top, pad.right, pad.bottom)
-	}
+	fun inflate(pad: PadRo): MinMax = inflate(pad.left, pad.top, pad.right, pad.bottom)
 
 	override val width: Float
 		get() = xMax - xMin

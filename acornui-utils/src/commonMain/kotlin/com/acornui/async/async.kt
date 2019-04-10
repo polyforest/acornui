@@ -79,9 +79,9 @@ object PendingDisposablesRegistry {
 	private val allPending = HashMap<Disposable, Unit>()
 	private var isDisposing = false
 
-	fun register(continuation: Disposable) {
+	fun register(disposable: Disposable) {
 		if (isDisposing) throw IllegalStateException("Cannot addBinding a disposable to the registry on dispose.")
-		allPending[continuation] = Unit
+		allPending[disposable] = Unit
 	}
 
 	fun unregister(continuation: Disposable) {
@@ -95,8 +95,8 @@ object PendingDisposablesRegistry {
 	fun dispose() {
 		if (isDisposing) return
 		isDisposing = true
-		for (continuation in allPending.keys) {
-			continuation.dispose()
+		for (disposable in allPending.keys) {
+			disposable.dispose()
 		}
 	}
 }

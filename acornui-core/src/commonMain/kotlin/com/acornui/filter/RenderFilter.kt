@@ -17,11 +17,15 @@
 package com.acornui.filter
 
 import com.acornui.component.UiComponentRo
-import com.acornui.core.di.Injector
+import com.acornui.core.Disposable
+import com.acornui.core.di.Owned
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.graphic.Window
+import com.acornui.function.as1
 import com.acornui.math.MinMaxRo
+import com.acornui.reflect.observable
+import kotlin.properties.ReadWriteProperty
 
 /**
  * A render filter wraps the drawing of a component.
@@ -38,14 +42,14 @@ interface RenderFilter {
 	 * Before the component is drawn, this will be invoked. This will be in the order of the component's render filters.
 	 * @param clip The visible region (in viewport coordinates.)
 	 */
-	fun beforeRender(clip: MinMaxRo)
+	fun beforeRender(target: UiComponentRo, clip: MinMaxRo)
 
 	/**
 	 * After the component is drawn, this will be invoked. This will be in the reverse order of the component's render
 	 * filters.
 	 * @param clip The visible region (in viewport coordinates.)
 	 */
-	fun afterRender(clip: MinMaxRo)
+	fun afterRender(target: UiComponentRo, clip: MinMaxRo)
 
 
 }
@@ -53,17 +57,23 @@ interface RenderFilter {
 /**
  * The base class for render filters.
  */
-abstract class RenderFilterBase(protected val target: UiComponentRo) : RenderFilter, Scoped {
+abstract class RenderFilterBase(private val owner: Owned) : RenderFilter, Scoped, Disposable {
 
-	override val injector: Injector = target.injector
+	final override val injector = owner.injector
 
-	private val window = target.inject(Window)
+	private val window = inject(Window)
 
-	final override var enabled: Boolean = true
-		set(value) {
-			if (value != field) {
-				field = value
-				window.requestRender()
-			}
-		}
+	final override var enabled: Boolean by bindable(true)
+
+	protected fun <T> bindable(initial: T): ReadWriteProperty<Any?, T> = observable(initial) {
+		window.requestRender()
+	}
+
+	init {
+		owner.disposed.add(this::dispose.as1)
+	}
+
+	override fun dispose() {
+		owner.disposed.remove(this::dispose.as1)
+	}
 }

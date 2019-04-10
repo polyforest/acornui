@@ -1280,13 +1280,13 @@ open class UiComponentImpl(
 			while (--i >= 0) {
 				val filter = renderFilters[i]
 				if (filter.enabled)
-					filter.beforeRender(clip)
+					filter.beforeRender(this, clip)
 			}
 			draw(clip)
 			while (++i < renderFiltersL) {
 				val filter = renderFilters[i]
 				if (filter.enabled)
-					filter.afterRender(clip)
+					filter.afterRender(this, clip)
 			}
 		}
 	}

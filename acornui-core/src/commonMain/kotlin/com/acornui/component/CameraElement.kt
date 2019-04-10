@@ -39,6 +39,31 @@ interface CameraElementRo : TransformableRo {
 	fun localToCanvas(localCoord: Vector3): Vector3
 
 	/**
+	 * Converts a 2d bounding rectangle from local to global coordinates.
+	 * @param minMax These bounds will be mutated into the projected global coordinates, and set to the
+	 * bounding region of those four points.
+	 * @return Returns the mutated [minMax] parameter.
+	 */
+	fun localToCanvas(minMax: MinMax): MinMax {
+		val tmp1 =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)
+		val tmp2 =  Vector3.obtain().set(minMax.xMax, minMax.yMax, 0f)
+		val tmp =  Vector3.obtain()
+		minMax.inf()
+		localToCanvas(tmp.set(tmp1))
+		minMax.ext(tmp.x, tmp.y)
+		localToCanvas(tmp.set(tmp2.x, tmp1.y, 0f))
+		minMax.ext(tmp.x, tmp.y)
+		localToCanvas(tmp.set(tmp2))
+		minMax.ext(tmp.x, tmp.y)
+		localToCanvas(tmp.set(tmp1.x, tmp2.y, 0f))
+		minMax.ext(tmp.x, tmp.y)
+		Vector3.free(tmp1)
+		Vector3.free(tmp2)
+		Vector3.free(tmp)
+		return minMax
+	}
+
+	/**
 	 * Returns the camera to be used for this component.
 	 * camera.
 	 */

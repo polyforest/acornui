@@ -434,8 +434,10 @@ data class Color(
 		val WHITE: ColorRo = Color(1f, 1f, 1f, 1f)
 		val BLACK: ColorRo = Color(0f, 0f, 0f, 1f)
 		val RED: ColorRo = Color(1f, 0f, 0f, 1f)
+		val LIGHT_RED: ColorRo = Color(1f, 0.68f, 0.68f, 1f)
 		val BROWN: ColorRo = Color(0.5f, 0.3f, 0f, 1f)
 		val GREEN: ColorRo = Color(0f, 1f, 0f, 1f)
+		val LIGHT_GREEN: ColorRo = Color(0.68f, 1f, 0.68f, 1f)
 		val BLUE: ColorRo = Color(0f, 0f, 1f, 1f)
 		val LIGHT_BLUE: ColorRo = Color(0.68f, 0.68f, 1f, 1f)
 		val LIGHT_GRAY: ColorRo = Color(0.75f, 0.75f, 0.75f, 1f)
@@ -534,14 +536,16 @@ data class Color(
 				"white" to WHITE,
 				"black" to BLACK,
 				"red" to RED,
+				"light-red" to LIGHT_RED,
 				"brown" to BROWN,
 				"green" to GREEN,
+				"light-green" to LIGHT_GREEN,
 				"blue" to BLUE,
 				"light-blue" to LIGHT_BLUE,
-				"light-gray" to LIGHT_GRAY,
-				"light-grey" to LIGHT_GRAY,
 				"gray" to GRAY,
 				"grey" to GRAY,
+				"light-gray" to LIGHT_GRAY,
+				"light-grey" to LIGHT_GRAY,
 				"dark-gray" to DARK_GRAY,
 				"dark-grey" to DARK_GRAY,
 				"pink" to PINK,

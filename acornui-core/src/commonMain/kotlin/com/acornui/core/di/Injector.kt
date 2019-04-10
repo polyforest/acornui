@@ -22,6 +22,10 @@ package com.acornui.core.di
  */
 interface Scoped {
 
+	/**
+	 * The dependency injector for this scope.
+	 * Implementations should be immutable.
+	 */
 	val injector: Injector
 }
 

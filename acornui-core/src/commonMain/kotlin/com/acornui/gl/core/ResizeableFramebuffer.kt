@@ -16,6 +16,7 @@
 
 package com.acornui.gl.core
 
+import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.BasicDrawable
 import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
@@ -23,27 +24,48 @@ import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.graphic.BlendMode
+import com.acornui.core.graphic.Texture
 import com.acornui.graphic.ColorRo
-import com.acornui.math.MathUtils
 import com.acornui.math.Matrix4Ro
 import kotlin.math.ceil
 
 /**
- * Wraps a frame buffer, keeping it the size of the screen.
+ * A ResizableFramebuffer has a backing frame buffer that is discarded and replaced when [setSize] requests a size
+ * that is too large for the current backing frame buffer.
  */
 class ResizeableFramebuffer(
-		override val injector: Injector,
+		private val gl: Gl20,
+		private val glState: GlState,
 		initialWidth: Float,
 		initialHeight: Float,
 		private val hasDepth: Boolean = false,
 		private val hasStencil: Boolean = false
-) : Scoped, Disposable, BasicDrawable {
+) : Disposable, BasicDrawable {
+
+	constructor(injector: Injector, initialWidth: Float, initialHeight: Float, hasDepth: Boolean, hasStencil: Boolean) : this(
+			injector.inject(Gl20),
+			injector.inject(GlState),
+			initialWidth,
+			initialHeight,
+			hasDepth,
+			hasStencil
+	)
 
 	private val sprite: Sprite = Sprite()
+
 	private var framebuffer: Framebuffer? = null
+	val texture: Texture
+		get() = if (framebuffer == null) throw Exception("Call setSize first.") else framebuffer!!.texture
+
+	private val allowedSizes = listOf(16, 32, 64, 128, 256, 512, 768, 1024, 1536, 2048)
 
 	init {
 		setSize(initialWidth, initialHeight)
+	}
+
+	private fun nextSize(size: Int): Int {
+		val index = allowedSizes.sortedInsertionIndex(size, matchForwards = false)
+		return allowedSizes.getOrNull(index) ?: allowedSizes.last()
 	}
 
 	fun setSize(width: Int, height: Int) = setSize(width.toFloat(), height.toFloat())
@@ -55,8 +77,8 @@ class ResizeableFramebuffer(
 		val oldFramebuffer = framebuffer
 		val oldW = oldFramebuffer?.width ?: 0
 		val oldH = oldFramebuffer?.height ?: 0
-		val newW = MathUtils.nextPowerOfTwo(widthInt)
-		val newH = MathUtils.nextPowerOfTwo(heightInt)
+		val newW = nextSize(widthInt)
+		val newH = nextSize(heightInt)
 		if (newW <= 0 || newH <= 0) {
 			framebuffer?.dispose()
 			framebuffer = null
@@ -64,7 +86,7 @@ class ResizeableFramebuffer(
 		} else {
 			if (oldW < newW || oldH < newH) {
 				framebuffer?.dispose()
-				framebuffer = Framebuffer(injector, maxOf(oldW, newW), maxOf(oldH, newH), hasDepth, hasStencil)
+				framebuffer = Framebuffer(gl, glState, maxOf(oldW, newW), maxOf(oldH, newH), hasDepth, hasStencil)
 				sprite.texture = framebuffer?.texture
 			}
 			val framebuffer = this.framebuffer!!
