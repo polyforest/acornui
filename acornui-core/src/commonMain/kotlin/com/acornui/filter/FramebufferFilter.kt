@@ -7,7 +7,6 @@ import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.graphic.BlendMode
 import com.acornui.core.graphic.Texture
-import com.acornui.core.graphic.Window
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
 import com.acornui.math.IntRectangle

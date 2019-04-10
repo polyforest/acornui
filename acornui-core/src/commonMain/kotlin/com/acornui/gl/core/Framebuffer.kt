@@ -20,6 +20,7 @@ import com.acornui.component.BasicDrawable
 import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
 import com.acornui.core.Disposable
+import com.acornui.core.DisposedException
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.graphic.BlendMode
@@ -218,9 +219,14 @@ class Framebuffer(
 
 	//---------------------------------------------------------------
 
+	private var isDisposed = false
+
 	override fun dispose() {
-		delete()
+		if (isDisposed)
+			throw DisposedException()
+		isDisposed = true
 		texture.refDec()
+		delete()
 	}
 
 	companion object {

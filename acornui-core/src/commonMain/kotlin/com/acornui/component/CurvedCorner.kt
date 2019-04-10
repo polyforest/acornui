@@ -16,6 +16,7 @@
 
 package com.acornui.component
 
+import com.acornui.async.disposeOnShutdown
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.graphic.BlendMode
@@ -70,7 +71,8 @@ fun Scoped.createSmoothCorner(
 	} else {
 		val gl = inject(Gl20)
 		val glState = inject(GlState)
-		if (curvedShader == null) curvedShader = CurvedRectShaderProgram(gl)
+		if (curvedShader == null)
+			curvedShader = disposeOnShutdown(CurvedRectShaderProgram(gl))
 		val framebuffer = framebuffer(ceil(cornerRadiusX).toInt() + 4, ceil(cornerRadiusY).toInt() + 4)
 		val fBW = framebuffer.width.toFloat()
 		val fBH = framebuffer.height.toFloat()
@@ -98,7 +100,8 @@ fun Scoped.createSmoothCorner(
 			batch.putQuadIndices()
 		}
 		glState.shader = previousShader
-		if (useCache) smoothCornerMap[cacheKey] = framebuffer
+		if (useCache)
+			smoothCornerMap[cacheKey] = disposeOnShutdown(framebuffer)
 		framebuffer
 	}
 	val fBW = framebuffer.width.toFloat()

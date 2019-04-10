@@ -22,9 +22,7 @@ class BlurFilter(owner: Owned) : FramebufferFilter(owner) {
 	private val blurFramebuffer = resizeableFramebuffer()
 
 	init {
-//		premultipliedAlpha = true
 		clearColor = Color(0.5f, 0.5f, 0.5f, 0f)
-		//clearColor = Color.BLACK
 	}
 
 	override fun beforeRender(target: UiComponentRo, clip: MinMaxRo) {
@@ -46,10 +44,6 @@ class BlurFilter(owner: Owned) : FramebufferFilter(owner) {
 
 		glState.setTexture(textureToBlur)
 
-		blurFramebuffer.begin()
-//		clearAndReset(Color(0.5f, 0.5f, 0.5f, 0.0f))
-//		clearAndReset()
-		blurFramebuffer.end()
 		glState.setShader(blurShader) {
 			gl.uniform2f(blurShader.getRequiredUniformLocation("u_resolutionInv"), 1f / textureToBlur.width.toFloat(), 1f / textureToBlur.height.toFloat())
 			glState.setTexture(framebuffer.texture)
@@ -77,6 +71,12 @@ class BlurFilter(owner: Owned) : FramebufferFilter(owner) {
 		putVertex(1f, 1f, 0f)
 		putVertex(-1f, 1f, 0f)
 		putQuadIndices()
+	}
+
+	override fun dispose() {
+		super.dispose()
+		blurFramebuffer.dispose()
+		blurShader.dispose()
 	}
 }
 
