@@ -161,3 +161,9 @@ fun ColorTransformation.invert(): ColorTransformation {
 	offset = Color(1.0f, 1.0f, 1.0f, 0.0f)
 	return this
 }
+
+fun colorTransformation(init: ColorTransformation.() -> Unit = {}): ColorTransformation {
+	val c = ColorTransformation()
+	c.init()
+	return c
+}
