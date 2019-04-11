@@ -88,31 +88,34 @@ class MinMax(
 		override var yMax: Float = Float.NEGATIVE_INFINITY
 ) : MinMaxRo {
 
-	fun inf() {
+	fun inf(): MinMax {
 		xMin = Float.POSITIVE_INFINITY
 		yMin = Float.POSITIVE_INFINITY
 		xMax = Float.NEGATIVE_INFINITY
 		yMax = Float.NEGATIVE_INFINITY
+		return this
 	}
 
 	/**
 	 * Expands this value to include the given point.
 	 */
-	fun ext(x: Float, y: Float) {
+	fun ext(x: Float, y: Float): MinMax {
 		if (x < xMin) xMin = x
 		if (y < yMin) yMin = y
 		if (x > xMax) xMax = x
 		if (y > yMax) yMax = y
+		return this
 	}
 
 	/**
 	 * Scales this value by the given scalars.
 	 */
-	fun scl(x: Float, y: Float) {
+	fun scl(x: Float, y: Float): MinMax {
 		xMin *= x
 		yMin *= y
 		xMax *= x
 		yMax *= y
+		return this
 	}
 
 	/**
@@ -163,19 +166,21 @@ class MinMax(
 	/**
 	 * Sets this value to be the intersection of this and [other].
 	 */
-	fun intersection(other: MinMaxRo) {
+	fun intersection(other: MinMaxRo): MinMax {
 		xMin = maxOf(xMin, other.xMin)
 		yMin = maxOf(yMin, other.yMin)
 		xMax = minOf(xMax, other.xMax)
 		yMax = minOf(yMax, other.yMax)
+		return this
 	}
 
 	/**
 	 * Expands this value to include the given [MinMaxRo].
 	 */
-	fun ext(other: MinMaxRo) {
+	fun ext(other: MinMaxRo): MinMax {
 		ext(other.xMin, other.yMin)
 		ext(other.xMax, other.yMax)
+		return this
 	}
 
 	override fun equals(other: Any?): Boolean {

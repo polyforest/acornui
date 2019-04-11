@@ -34,6 +34,7 @@ import com.acornui.core.input.InteractivityManager
 import com.acornui.core.input.MouseState
 import com.acornui.core.time.TimeDriver
 import com.acornui.filter.RenderFilter
+import com.acornui.filter.RenderFilterList
 import com.acornui.function.as1
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
@@ -91,8 +92,8 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	/**
 	 * Returns true if this component will be rendered. This will be true under the following conditions:
 	 * This component is on the stage.
-	 * This component and all of its ancestors are visible.
-	 * This component does not have an alpha of 0f.
+	 * No ancestor has [visible] false.
+	 * No ancestor has [alpha] <= 0f.
 	 */
 	val isRendered: Boolean
 
@@ -364,7 +365,8 @@ open class UiComponentImpl(
 				when (value) {
 					InteractivityMode.NONE -> blur()
 					InteractivityMode.CHILDREN -> blurSelf()
-					else -> {}
+					else -> {
+					}
 				}
 				invalidate(ValidationFlags.INTERACTIVITY_MODE)
 			}
@@ -588,7 +590,18 @@ open class UiComponentImpl(
 
 	final override var includeInLayout: Boolean by validationProp(true, ValidationFlags.LAYOUT_ENABLED)
 
-	final override val renderFilters: MutableList<RenderFilter> = ArrayList()
+	/**
+	 * If there are render filters, inner renderable is set as the contents of the last render filter.
+	 */
+	private val innerRenderable: Renderable by lazy {
+		object : Renderable {
+			override val visible: Boolean = true
+			override fun canvasDrawRegion(out: MinMax): MinMax = localToCanvas(out.set(0f, 0f, width, height))
+			override fun render(clip: MinMaxRo) = draw(clip)
+		}
+	}
+
+	final override val renderFilters: MutableList<RenderFilter> = RenderFilterList(innerRenderable)
 
 	override val isRendered: Boolean
 		get() {
@@ -1272,23 +1285,10 @@ open class UiComponentImpl(
 		// Nothing visible.
 		if (_concatenatedColorTint.a <= 0f)
 			return
-		val renderFiltersL = renderFilters.size
-		if (renderFiltersL == 0) {
+		if (renderFilters.isEmpty())
 			draw(clip)
-		} else {
-			var i = renderFiltersL
-			while (--i >= 0) {
-				val filter = renderFilters[i]
-				if (filter.enabled)
-					filter.beforeRender(this, clip)
-			}
-			draw(clip)
-			while (++i < renderFiltersL) {
-				val filter = renderFilters[i]
-				if (filter.enabled)
-					filter.afterRender(this, clip)
-			}
-		}
+		else
+			renderFilters.first().render(clip)
 	}
 
 	private val viewportTmpMinMax = MinMax()

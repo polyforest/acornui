@@ -1,18 +1,16 @@
 package com.acornui.filter
 
-import com.acornui.component.UiComponentRo
 import com.acornui.core.AppConfig
 import com.acornui.core.Disposable
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.graphic.BlendMode
+import com.acornui.core.graphic.OrthographicCamera
 import com.acornui.core.graphic.Texture
+import com.acornui.core.graphic.Window
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
-import com.acornui.math.IntRectangle
-import com.acornui.math.MinMax
-import com.acornui.math.MinMaxRo
-import com.acornui.math.Pad
+import com.acornui.math.*
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -21,52 +19,65 @@ import kotlin.math.floor
 /**
  * A filter that draws the target component to a resizable frame buffer.
  */
-open class FramebufferFilter(
+abstract class FramebufferFilter(
 		owner: Owned,
 		hasDepth: Boolean = owner.inject(AppConfig).gl.depth,
 		hasStencil: Boolean = owner.inject(AppConfig).gl.stencil
 ) : RenderFilterBase(owner), Disposable {
 
 	private val glState = inject(GlState)
+	private val window = inject(Window)
 
-	var blendMode = BlendMode.NORMAL
-	var premultipliedAlpha = false
-	var clearColor = Color.CLEAR
-	var padding by bindable(Pad(16f))
+	protected var blendMode = BlendMode.NORMAL
+	protected var premultipliedAlpha = false
+
+	protected var clearMask = Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT
+	protected var clearColor = Color.CLEAR
+
+	protected abstract val padding: PadRo
 
 	protected val framebuffer = resizeableFramebuffer(hasDepth = hasDepth, hasStencil = hasStencil)
 
-	private val globalBounds = MinMax()
+	private val canvasRegion = MinMax()
 
 	private val previousViewport = IntRectangle()
+	private val camera = OrthographicCamera()
 
-	override fun beforeRender(target: UiComponentRo, clip: MinMaxRo) {
-		target.localToCanvas(globalBounds.set(0f, 0f, target.width, target.height)).inflate(padding).intersection(clip)
-		framebuffer.setSize(globalBounds.width, globalBounds.height)
+	override fun canvasDrawRegion(out: MinMax): MinMax {
+		super.canvasDrawRegion(out)
+		return out.inflate(padding)
+	}
+
+	protected open fun beginFramebuffer(clip: MinMaxRo) {
+		canvasDrawRegion(canvasRegion).intersection(clip)
+		framebuffer.setSize(canvasRegion.width, canvasRegion.height)
 
 		glState.getViewport(previousViewport)
 		framebuffer.begin()
-		glState.setViewport(-globalBounds.xMin.toInt(), globalBounds.yMin.toInt() - previousViewport.height + framebuffer.texture.height, previousViewport.width, previousViewport.height)
-		clearAndReset(clearColor)
+		glState.setViewport(-canvasRegion.xMin.toInt(), canvasRegion.yMin.toInt() - previousViewport.height + framebuffer.texture.height, previousViewport.width, previousViewport.height)
+		camera.setViewport(window.width, window.height)
+		camera.moveToLookAtRect(0f, 0f, window.width, window.height)
+		if (clearMask != 0)
+			clearAndReset(clearColor, clearMask)
 	}
 
-	override fun afterRender(target: UiComponentRo, clip: MinMaxRo) {
+	protected open fun endFramebuffer() {
 		framebuffer.end()
-		draw(target, framebuffer.texture)
+		drawToCanvasRegion(framebuffer.texture)
 	}
 
-	protected open fun draw(target: UiComponentRo, texture: Texture) {
+	protected fun drawToCanvasRegion(texture: Texture) {
 		val batch = glState.batch
 		batch.begin()
-		glState.setCamera(target.camera)
+		glState.setCamera(camera)
 		glState.setTexture(texture)
 		glState.blendMode(blendMode, premultipliedAlpha)
 
-		val w = ceil(globalBounds.width)
-		val h = ceil(globalBounds.height)
+		val w = ceil(canvasRegion.width)
+		val h = ceil(canvasRegion.height)
 
-		val x = floor(globalBounds.xMin)
-		val y = floor(globalBounds.yMin)
+		val x = floor(canvasRegion.xMin)
+		val y = floor(canvasRegion.yMin)
 
 		val u = w / texture.width
 		val v = 1f - (h / texture.height)
@@ -86,9 +97,4 @@ open class FramebufferFilter(
 		super.dispose()
 		framebuffer.dispose()
 	}
-}
-
-fun Owned.framebufferFilter(hasDepth: Boolean = true,
-							hasStencil: Boolean = true): FramebufferFilter {
-	return FramebufferFilter(this, hasDepth, hasStencil)
 }

@@ -16,12 +16,10 @@
 
 package com.acornui.filter
 
-import com.acornui.component.UiComponentRo
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.gl.core.GlState
 import com.acornui.math.ColorTransformation
-import com.acornui.math.ColorTransformationRo
 import com.acornui.math.MinMaxRo
 
 class ColorTransformationFilter(
@@ -35,22 +33,20 @@ class ColorTransformationFilter(
 
 	private val glState = inject(GlState)
 	private val combined = ColorTransformation()
-	private var previous: ColorTransformationRo? = null
 
-	override fun beforeRender(target: UiComponentRo, clip: MinMaxRo) {
-		previous = glState.colorTransformation
-		val previous = previous
+	override fun render(clip: MinMaxRo) {
+		if (!enabled) return renderContents(clip)
+		val previous = glState.colorTransformation
 		if (previous == null) {
 			glState.colorTransformation = colorTransformation
 		} else {
 			combined.set(previous).mul(colorTransformation)
 			glState.colorTransformation = combined
 		}
-	}
-
-	override fun afterRender(target: UiComponentRo, clip: MinMaxRo) {
+		renderContents(clip)
 		glState.colorTransformation = previous
 	}
+
 }
 
 fun Owned.colorTransformationFilter(colorTransformation: ColorTransformation = ColorTransformation()): ColorTransformationFilter {
