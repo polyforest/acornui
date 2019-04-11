@@ -23,7 +23,7 @@ abstract class FramebufferFilter(
 		owner: Owned,
 		hasDepth: Boolean = owner.inject(AppConfig).gl.depth,
 		hasStencil: Boolean = owner.inject(AppConfig).gl.stencil
-) : RenderFilterBase(owner), Disposable {
+) : RenderFilterBase(owner) {
 
 	private val glState = inject(GlState)
 	private val window = inject(Window)
@@ -41,7 +41,6 @@ abstract class FramebufferFilter(
 	private val canvasRegion = MinMax()
 
 	private val previousViewport = IntRectangle()
-	private val camera = OrthographicCamera()
 
 	override fun canvasDrawRegion(out: MinMax): MinMax {
 		super.canvasDrawRegion(out)
@@ -55,8 +54,6 @@ abstract class FramebufferFilter(
 		glState.getViewport(previousViewport)
 		framebuffer.begin()
 		glState.setViewport(-canvasRegion.xMin.toInt(), canvasRegion.yMin.toInt() - previousViewport.height + framebuffer.texture.height, previousViewport.width, previousViewport.height)
-		camera.setViewport(window.width, window.height)
-		camera.moveToLookAtRect(0f, 0f, window.width, window.height)
 		if (clearMask != 0)
 			clearAndReset(clearColor, clearMask)
 	}
@@ -69,7 +66,8 @@ abstract class FramebufferFilter(
 	protected fun drawToCanvasRegion(texture: Texture) {
 		val batch = glState.batch
 		batch.begin()
-		glState.setCamera(camera)
+		glState.viewProjection = Matrix4.IDENTITY
+		glState.model = Matrix4.IDENTITY
 		glState.setTexture(texture)
 		glState.blendMode(blendMode, premultipliedAlpha)
 
@@ -82,14 +80,19 @@ abstract class FramebufferFilter(
 		val u = w / texture.width
 		val v = 1f - (h / texture.height)
 
+		val x1 = x / window.width * 2f - 1f
+		val x2 = (x + w) / window.width * 2f - 1f
+		val y1 = -(y / window.height * 2f - 1f)
+		val y2 = -((y + h) / window.height * 2f - 1f)
+
 		// Top left
-		batch.putVertex(x, y, 0f, u = 0f, v = 1f)
+		batch.putVertex(x1, y1, 0f, u = 0f, v = 1f)
 		// Top right
-		batch.putVertex(x + w, y, 0f, u = u, v = 1f)
+		batch.putVertex(x2, y1, 0f, u = u, v = 1f)
 		// Bottom right
-		batch.putVertex(x + w, y + h, 0f, u = u, v = v)
+		batch.putVertex(x2, y2, 0f, u = u, v = v)
 		// Bottom left
-		batch.putVertex(x, y + h, 0f, u = 0f, v = v)
+		batch.putVertex(x1, y2, 0f, u = 0f, v = v)
 		batch.putQuadIndices()
 	}
 
