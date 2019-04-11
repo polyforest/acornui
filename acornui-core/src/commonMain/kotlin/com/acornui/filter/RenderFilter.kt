@@ -55,6 +55,12 @@ abstract class RenderFilterBase(private val owner: Owned) : RenderFilter, Scoped
 
 	var enabled: Boolean by bindable(true)
 
+	/**
+	 * True if this filter should be skipped.
+	 */
+	protected open val shouldSkipFilter: Boolean
+		get() = !enabled
+
 	override var contents: Renderable? = null
 
 	override fun canvasDrawRegion(out: MinMax): MinMax = contents!!.canvasDrawRegion(out)
@@ -66,6 +72,13 @@ abstract class RenderFilterBase(private val owner: Owned) : RenderFilter, Scoped
 	init {
 		owner.disposed.add(this::dispose.as1)
 	}
+
+	final override fun render(clip: MinMaxRo) {
+		if (shouldSkipFilter) renderContents(clip)
+		else draw(clip)
+	}
+
+	abstract fun draw(clip: MinMaxRo)
 
 	protected open fun renderContents(clip: MinMaxRo) {
 		val contents = contents ?: return

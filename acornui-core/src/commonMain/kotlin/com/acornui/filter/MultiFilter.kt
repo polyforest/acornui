@@ -29,8 +29,10 @@ class MultiFilter(owner: Owned) : RenderFilterBase(owner) {
 		return this
 	}
 
-	override fun render(clip: MinMaxRo) {
-		if (!enabled || filters.isEmpty()) return renderContents(clip)
+	override val shouldSkipFilter: Boolean
+		get() = super.shouldSkipFilter || filters.isEmpty()
+
+	override fun draw(clip: MinMaxRo) {
 		filters.first().render(clip)
 	}
 }

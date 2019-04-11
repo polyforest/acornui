@@ -62,7 +62,7 @@ interface GlState {
 
 	/**
 	 * Returns whether scissoring is currently enabled.
-	 * @see setScissor
+	 * @see useScissor
 	 */
 	var scissorEnabled: Boolean
 
@@ -457,9 +457,10 @@ private class ColorCache(
 }
 
 /**
+ * Temporarily uses a scissor rectangle, resetting to the old scissor rectangle after [inner].
  * @see Gl20.setScissor
  */
-inline fun GlState.setScissor(x: Int, y: Int, width: Int, height: Int, inner: () -> Unit) {
+inline fun GlState.useScissor(x: Int, y: Int, width: Int, height: Int, inner: () -> Unit) {
 	val oldScissor = getScissor(IntRectangle.obtain())
 	val oldEnabled = scissorEnabled
 	scissorEnabled = true
@@ -472,9 +473,10 @@ inline fun GlState.setScissor(x: Int, y: Int, width: Int, height: Int, inner: ()
 
 
 /**
+ * Temporarily uses a viewport, resetting to the old viewport after [inner].
  * @see Gl20.viewport
  */
-inline fun GlState.setViewport(x: Int, y: Int, width: Int, height: Int, inner: () -> Unit) {
+inline fun GlState.useViewport(x: Int, y: Int, width: Int, height: Int, inner: () -> Unit) {
 	val oldViewport = getViewport(IntRectangle.obtain())
 	setViewport(x, y, width, height)
 	inner()
@@ -482,7 +484,10 @@ inline fun GlState.setViewport(x: Int, y: Int, width: Int, height: Int, inner: (
 	IntRectangle.free(oldViewport)
 }
 
-inline fun GlState.setShader(s: ShaderProgram, inner: ()->Unit) {
+/**
+ * Temporarily uses a shader, resetting to the old shader after [inner].
+ */
+inline fun GlState.useShader(s: ShaderProgram, inner: ()->Unit) {
 	val previousShader = shader
 	shader = s
 	inner()
@@ -497,3 +502,21 @@ fun GlState.setViewport(value: IntRectangleRo) = setViewport(value.x, value.y, m
 fun GlState.setScissor(value: IntRectangleRo) = setScissor(value.x, value.y, value.width, value.height)
 
 fun GlState.setFramebuffer(value: FrameBufferInfoRo) = setFramebuffer(value.framebuffer, value.width, value.height, value.scaleX, value.scaleY)
+
+@PublishedApi
+internal val combined = ColorTransformation()
+
+/**
+ * Adds a color transformation to the current stack, using that color transformation within [inner].
+ */
+inline fun GlState.useColorTransformation(cT: ColorTransformationRo, inner: ()->Unit) {
+	val previous = colorTransformation
+	if (previous == null) {
+		colorTransformation = cT
+	} else {
+		combined.set(previous).mul(cT)
+		colorTransformation = combined
+	}
+	inner()
+	colorTransformation = previous
+}

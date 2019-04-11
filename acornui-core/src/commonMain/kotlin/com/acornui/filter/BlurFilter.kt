@@ -10,7 +10,7 @@ import com.acornui.math.MinMaxRo
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 
-class BlurFilter(owner: Owned) : FramebufferFilter(owner) {
+open class BlurFilter(owner: Owned) : FramebufferFilter(owner) {
 
 	var blurX by bindable(1f)
 	var blurY by bindable(1f)
@@ -21,7 +21,6 @@ class BlurFilter(owner: Owned) : FramebufferFilter(owner) {
 	private val glState = inject(GlState)
 	private val blurShader = BlurShader(gl)
 	private val blurFramebufferA = resizeableFramebuffer()
-	private val blurFramebufferB = resizeableFramebuffer()
 
 	private val _padding = Pad()
 	override val padding: PadRo
@@ -31,13 +30,19 @@ class BlurFilter(owner: Owned) : FramebufferFilter(owner) {
 			return _padding.set(left = hPad, top = vPad, right = hPad, bottom = vPad)
 		}
 
+	override val shouldSkipFilter: Boolean
+		get() = super.shouldSkipFilter || (blurX <= 0f && blurY <= 0f)
+
 	init {
 		clearColor = Color(0.5f, 0.5f, 0.5f, 0f)
 	}
 
-	override fun render(clip: MinMaxRo) {
-		if (!enabled || (blurX <= 0f && blurY <= 0f)) return renderContents(clip)
+	override fun draw(clip: MinMaxRo) {
+		renderToFramebuffer(clip)
+		drawToScreen()
+	}
 
+	protected fun renderToFramebuffer(clip: MinMaxRo) {
 		beginFramebuffer(clip)
 		renderContents(clip)
 		framebuffer.end()
@@ -48,13 +53,13 @@ class BlurFilter(owner: Owned) : FramebufferFilter(owner) {
 		blurFramebufferA.setSize(textureToBlur.width, textureToBlur.height)
 		blurFramebufferA.texture.filterMin = TextureMinFilter.LINEAR
 		blurFramebufferA.texture.filterMag = TextureMagFilter.LINEAR
-		blurFramebufferB.setSize(textureToBlur.width, textureToBlur.height)
-		blurFramebufferB.texture.filterMin = TextureMinFilter.LINEAR
-		blurFramebufferB.texture.filterMag = TextureMagFilter.LINEAR
+		framebuffer.setSize(textureToBlur.width, textureToBlur.height)
+		framebuffer.texture.filterMin = TextureMinFilter.LINEAR
+		framebuffer.texture.filterMag = TextureMagFilter.LINEAR
 
 		glState.setTexture(textureToBlur)
 
-		glState.setShader(blurShader) {
+		glState.useShader(blurShader) {
 			gl.uniform2f(blurShader.getRequiredUniformLocation("u_resolutionInv"), 1f / textureToBlur.width.toFloat(), 1f / textureToBlur.height.toFloat())
 			glState.setTexture(framebuffer.texture)
 			glState.blendMode(BlendMode.NONE, premultipliedAlpha = false)
@@ -65,15 +70,14 @@ class BlurFilter(owner: Owned) : FramebufferFilter(owner) {
 				gl.uniform2f(blurShader.getRequiredUniformLocation("u_dir"), 0f, blurY * p)
 				glState.batch.putIdt()
 				blurFramebufferA.end()
-				blurFramebufferB.begin()
+				framebuffer.begin()
 				glState.setTexture(blurFramebufferA.texture)
 				gl.uniform2f(blurShader.getRequiredUniformLocation("u_dir"), blurX * p, 0f)
 				glState.batch.putIdt()
-				blurFramebufferB.end()
-				glState.setTexture(blurFramebufferB.texture)
+				framebuffer.end()
+				glState.setTexture(framebuffer.texture)
 			}
 		}
-		drawToCanvasRegion(blurFramebufferB.texture)
 	}
 
 	private fun ShaderBatch.putIdt() {
@@ -87,7 +91,6 @@ class BlurFilter(owner: Owned) : FramebufferFilter(owner) {
 	override fun dispose() {
 		super.dispose()
 		blurFramebufferA.dispose()
-		blurFramebufferB.dispose()
 		blurShader.dispose()
 	}
 }

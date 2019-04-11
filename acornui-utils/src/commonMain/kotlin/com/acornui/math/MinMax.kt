@@ -183,6 +183,17 @@ class MinMax(
 		return this
 	}
 
+	/**
+	 * Translate this region by the given deltas.
+	 */
+	fun translate(xD: Float, yD: Float): MinMax {
+		xMin += xD
+		xMax += xD
+		yMin += yD
+		yMax += yD
+		return this
+	}
+
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 
