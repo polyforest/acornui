@@ -38,14 +38,12 @@ open class BlurFilter(owner: Owned) : FramebufferFilter(owner) {
 	}
 
 	override fun draw(clip: MinMaxRo) {
-		renderToFramebuffer(clip)
+		drawToPingPongBuffers(clip)
 		drawToScreen()
 	}
 
-	protected fun renderToFramebuffer(clip: MinMaxRo) {
-		beginFramebuffer(clip)
-		renderContents(clip)
-		framebuffer.end()
+	protected fun drawToPingPongBuffers(clip: MinMaxRo) {
+		drawToFramebuffer(clip)
 
 		val textureToBlur = framebuffer.texture
 		textureToBlur.filterMin = TextureMinFilter.LINEAR

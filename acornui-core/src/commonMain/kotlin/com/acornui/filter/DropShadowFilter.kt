@@ -33,9 +33,9 @@ open class DropShadowFilter(owner: Owned) : BlurFilter(owner) {
 	}
 
 	override fun draw(clip: MinMaxRo) {
-		renderToFramebuffer(clip)
+		drawToPingPongBuffers(clip)
 		glState.useColorTransformation(colorTransformation) {
-			drawToScreen(offsetX, offsetY)
+			drawToScreen(canvasRegion.xMin + offsetX, canvasRegion.yMin + offsetY)
 		}
 		renderContents(clip)
 	}

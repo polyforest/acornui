@@ -34,16 +34,24 @@ open class FramebufferFilter(
 	protected var blendMode = BlendMode.NORMAL
 	protected var premultipliedAlpha = false
 
-	protected var clearMask = Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT
-	protected var clearColor = Color.CLEAR
+	var clearMask by bindable(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
+	var clearColor by bindable(Color.CLEAR)
 
 	protected open val padding: PadRo = Pad.EMPTY_PAD
 
 	protected val framebuffer = resizeableFramebuffer(hasDepth = hasDepth, hasStencil = hasStencil)
 
-	private val canvasRegion = MinMax()
+	private val _canvasRegion = MinMax()
+
+	/**
+	 * The region (in canvas coordinates) where the contents have been drawn.
+	 */
+	val canvasRegion: MinMaxRo = _canvasRegion
 
 	private val previousViewport = IntRectangle()
+
+	private var u: Float = 0f
+	private var v: Float = 0f
 
 	override fun canvasDrawRegion(out: MinMax): MinMax {
 		super.canvasDrawRegion(out)
@@ -56,28 +64,34 @@ open class FramebufferFilter(
 	}
 
 	override fun draw(clip: MinMaxRo) {
+		drawToFramebuffer(clip)
+		drawToScreen()
+	}
+
+	protected fun drawToFramebuffer(clip: MinMaxRo) {
 		beginFramebuffer(clip)
 		renderContents(clip)
 		framebuffer.end()
-		drawToScreen()
+		val texture = framebuffer.texture
+		u = _canvasRegion.width / texture.width
+		v = 1f - (_canvasRegion.height / texture.height)
 	}
 
 	/**
 	 * Initializes and begins the frame buffer.
-	 *
 	 */
-	protected open fun beginFramebuffer(clip: MinMaxRo) {
-		canvasDrawRegion(canvasRegion).intersection(clip)
-		framebuffer.setSize(canvasRegion.width, canvasRegion.height)
+	private fun beginFramebuffer(clip: MinMaxRo) {
+		canvasDrawRegion(_canvasRegion).intersection(clip)
+		framebuffer.setSize(_canvasRegion.width, _canvasRegion.height)
 
 		glState.getViewport(previousViewport)
 		framebuffer.begin()
-		glState.setViewport(-canvasRegion.xMin.toInt(), canvasRegion.yMin.toInt() - previousViewport.height + framebuffer.texture.height, previousViewport.width, previousViewport.height)
+		glState.setViewport(-_canvasRegion.xMin.toInt(), _canvasRegion.yMin.toInt() - previousViewport.height + framebuffer.texture.height, previousViewport.width, previousViewport.height)
 		if (clearMask != 0)
 			clearAndReset(clearColor, clearMask)
 	}
 
-	protected open fun drawToScreen(offsetX: Float = 0f, offsetY: Float = 0f) {
+	open fun drawToScreen(canvasX: Float = canvasRegion.xMin, canvasY: Float = canvasRegion.yMin) {
 		val texture = framebuffer.texture
 		val batch = glState.batch
 		batch.begin()
@@ -86,14 +100,8 @@ open class FramebufferFilter(
 		glState.setTexture(texture)
 		glState.blendMode(blendMode, premultipliedAlpha)
 
-		val w = canvasRegion.width
-		val h = canvasRegion.height
-
-		val canvasX = canvasRegion.xMin + offsetX
-		val canvasY = canvasRegion.yMin + offsetY
-
-		val u = w / texture.width
-		val v = 1f - (h / texture.height)
+		val w = _canvasRegion.width
+		val h = _canvasRegion.height
 
 		val x1 = canvasX / window.width * 2f - 1f
 		val x2 = (canvasX + w) / window.width * 2f - 1f
