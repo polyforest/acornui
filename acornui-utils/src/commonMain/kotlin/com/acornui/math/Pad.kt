@@ -146,6 +146,11 @@ class Pad(
 		return result
 	}
 
+	override fun toString(): String {
+		return "Pad(top=$top, right=$right, bottom=$bottom, left=$left)"
+	}
+
+
 	companion object {
 		val EMPTY_PAD: PadRo = Pad()
 	}

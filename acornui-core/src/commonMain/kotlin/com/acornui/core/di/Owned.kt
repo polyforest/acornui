@@ -4,6 +4,7 @@ import com.acornui.component.ComponentInit
 import com.acornui.core.Disposable
 import com.acornui.core.DisposedException
 import com.acornui.core.Lifecycle
+import com.acornui.function.as1
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 
@@ -130,19 +131,14 @@ open class OwnedImpl(
 	private val _disposed = Signal1<Owned>()
 	override val disposed = _disposed.asRo()
 
-	private val ownerDisposedHandler = {
-		owner: Owned ->
-		dispose()
-	}
-
 	init {
-		owner?.disposed?.add(ownerDisposedHandler)
+		owner?.disposed?.add(::dispose.as1)
 	}
 
 	override fun dispose() {
 		if (_isDisposed) throw DisposedException()
 		_isDisposed = true
-		owner?.disposed?.remove(ownerDisposedHandler)
+		owner?.disposed?.remove(::dispose.as1)
 		_disposed.dispatch(this)
 		_disposed.dispose()
 	}

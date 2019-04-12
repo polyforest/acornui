@@ -20,7 +20,7 @@ import com.acornui.collection.MutableListBase
 import com.acornui.core.Disposable
 import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
-import com.acornui.core.di.Scoped
+import com.acornui.core.di.OwnedImpl
 import com.acornui.core.di.inject
 import com.acornui.core.graphic.Window
 import com.acornui.function.as1
@@ -45,13 +45,9 @@ interface RenderFilter : Renderable {
 /**
  * The base class for render filters.
  */
-abstract class RenderFilterBase(private val owner: Owned) : RenderFilter, Scoped, Disposable {
-
-	final override val injector = owner.injector
+abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, Disposable {
 
 	private val window = inject(Window)
-
-	override val visible: Boolean = true
 
 	var enabled: Boolean by bindable(true)
 
@@ -69,25 +65,15 @@ abstract class RenderFilterBase(private val owner: Owned) : RenderFilter, Scoped
 		window.requestRender()
 	}
 
-	init {
-		owner.disposed.add(this::dispose.as1)
-	}
-
 	final override fun render(clip: MinMaxRo) {
-		if (shouldSkipFilter) renderContents(clip)
+		if (shouldSkipFilter) contents?.render(clip)
 		else draw(clip)
 	}
 
 	abstract fun draw(clip: MinMaxRo)
 
-	protected open fun renderContents(clip: MinMaxRo) {
-		val contents = contents ?: return
-		if (contents.visible)
-			contents.render(clip)
-	}
-
 	override fun dispose() {
-		owner.disposed.remove(this::dispose.as1)
+		super.dispose()
 		contents = null
 	}
 }

@@ -8,11 +8,6 @@ import com.acornui.math.MinMaxRo
 interface Renderable {
 
 	/**
-	 * True if the component should be rendered.
-	 */
-	val visible: Boolean
-
-	/**
 	 * Calculates the region of the canvas that this component will draw.
 	 */
 	fun canvasDrawRegion(out: MinMax): MinMax

@@ -31,7 +31,7 @@ class ShaderFilter(
 	override fun draw(clip: MinMaxRo) {
 		glState.useShader(shader) {
 			configure(gl, shader)
-			renderContents(clip)
+			contents?.render(clip)
 		}
 	}
 
