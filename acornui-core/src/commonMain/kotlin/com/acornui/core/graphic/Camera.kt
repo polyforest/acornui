@@ -213,6 +213,35 @@ interface Camera : CameraRo {
 	companion object : DKey<Camera>
 }
 
+/**
+ * Flips the y-down direction.
+ * Cameras by default will consider the top-left corner of the screen as 0,0.
+ * Call this method to consider the bottom-left corner of the screen as 0,0.
+ *
+ * Typical conventions:
+ * ```
+ * UI Screen (Camera default)
+ *   up:        Vector3.NEG_Y
+ *   direction: Vector3.Z
+ *
+ * UI Frame Buffer
+ *   up:        Vector3.Y
+ *   direction: Vector3.NEG_Z
+ *
+ * Game Screen
+ *   up:        Vector3.Y
+ *   direction: Vector3.NEG_Z
+ *
+ * Game Frame Buffer (Camera default)
+ *   up:        Vector3.NEG_Y
+ *   direction: Vector3.Z
+ *  ```
+ */
+fun Camera.flipYDown() {
+	setUp(up.x, -up.y, up.z)
+	setDirection(direction.x, direction.y, -direction.z)
+}
+
 abstract class CameraBase : Camera {
 
 	protected val _combined: Matrix4 = Matrix4()

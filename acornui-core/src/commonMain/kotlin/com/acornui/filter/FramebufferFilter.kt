@@ -91,7 +91,7 @@ open class FramebufferFilter(
 			clearAndReset(clearColor, clearMask)
 	}
 
-	open fun drawToScreen(canvasX: Float = canvasRegion.xMin, canvasY: Float = canvasRegion.yMin) {
+	fun drawToScreen(canvasX: Float = canvasRegion.xMin, canvasY: Float = canvasRegion.yMin) {
 		val texture = framebuffer.texture
 		val batch = glState.batch
 		batch.begin()
