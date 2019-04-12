@@ -28,8 +28,6 @@ import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Matrix4
 
-// TODO: Turn into a BasicDrawable
-
 /**
  * Wraps a frame buffer, keeping it the size of the screen.
  */
@@ -37,20 +35,22 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 
 	private val window = inject(Window)
 	private val framebuffer = ResizeableFramebuffer(injector, window.width, window.height, hasDepth, hasStencil)
+	private val sprite = framebuffer.sprite()
 
 	var blendMode: BlendMode
-		get() = framebuffer.blendMode
+		get() = sprite.blendMode
 		set(value) {
-			framebuffer.blendMode = value
+			sprite.blendMode = value
 		}
 
 	init {
 		window.sizeChanged.add(::resize.as3)
-		framebuffer.updateWorldVertices(Matrix4.IDENTITY, 2f, 2f, -1f, -1f)
+		sprite.updateWorldVertices(Matrix4.IDENTITY, 2f, 2f, -1f, -1f)
 	}
 
 	private fun resize() {
 		framebuffer.setSize(window.width.toInt(), window.height.toInt())
+		framebuffer.sprite(sprite)
 	}
 
 	/**
@@ -85,7 +85,7 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 	fun render(colorTint: ColorRo = Color.WHITE) {
 		glState.viewProjection = Matrix4.IDENTITY
 		glState.model = Matrix4.IDENTITY
-		framebuffer.render(glState, colorTint)
+		sprite.render(glState, colorTint)
 	}
 
 	override fun dispose() {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("LeakingThis", "UNUSED_PARAMETER", "RedundantLambdaArrow")
+@file:Suppress("UNUSED_PARAMETER", "RedundantLambdaArrow")
 
 package com.acornui.component
 
@@ -405,22 +405,21 @@ open class UiComponentImpl(
 
 	init {
 		owner.disposed.add(::dispose.as1)
-		val r = this
 		validation = validationGraph {
 			ValidationFlags.apply {
-				addNode(STYLES, r::updateStyles)
-				addNode(HIERARCHY_ASCENDING, r::updateHierarchyAscending)
-				addNode(HIERARCHY_DESCENDING, r::updateHierarchyDescending)
-				addNode(LAYOUT_ENABLED, r::updateLayoutEnabled)
-				addNode(SIZE_CONSTRAINTS, STYLES, r::validateSizeConstraints)
-				addNode(LAYOUT, SIZE_CONSTRAINTS, r::validateLayout)
-				addNode(TRANSFORM, r::updateTransform)
-				addNode(CONCATENATED_TRANSFORM, TRANSFORM, r::updateConcatenatedTransform)
-				addNode(COLOR_TRANSFORM, r::updateColorTransform)
-				addNode(CONCATENATED_COLOR_TRANSFORM, COLOR_TRANSFORM, r::updateConcatenatedColorTransform)
-				addNode(INTERACTIVITY_MODE, r::updateInheritedInteractivityMode)
-				addNode(CAMERA, r::updateCamera)
-				addNode(VIEWPORT, r::updateViewport)
+				addNode(STYLES, ::updateStyles)
+				addNode(HIERARCHY_ASCENDING, ::updateHierarchyAscending)
+				addNode(HIERARCHY_DESCENDING, ::updateHierarchyDescending)
+				addNode(LAYOUT_ENABLED, ::updateLayoutEnabled)
+				addNode(SIZE_CONSTRAINTS, STYLES, ::validateSizeConstraints)
+				addNode(LAYOUT, SIZE_CONSTRAINTS, ::validateLayout)
+				addNode(TRANSFORM, ::updateTransform)
+				addNode(CONCATENATED_TRANSFORM, TRANSFORM, ::updateConcatenatedTransform)
+				addNode(COLOR_TRANSFORM, ::updateColorTransform)
+				addNode(CONCATENATED_COLOR_TRANSFORM, COLOR_TRANSFORM, ::updateConcatenatedColorTransform)
+				addNode(INTERACTIVITY_MODE, ::updateInheritedInteractivityMode)
+				addNode(CAMERA, ::updateCamera)
+				addNode(VIEWPORT, ::updateViewport)
 			}
 		}
 
@@ -595,7 +594,6 @@ open class UiComponentImpl(
 	 */
 	private val innerRenderable: Renderable by lazy {
 		object : Renderable {
-			override val visible: Boolean = true
 			override fun canvasDrawRegion(out: MinMax): MinMax = localToCanvas(out.set(0f, 0f, width, height))
 			override fun render(clip: MinMaxRo) = draw(clip)
 		}
