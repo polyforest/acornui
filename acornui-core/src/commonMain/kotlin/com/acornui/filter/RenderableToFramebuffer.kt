@@ -7,7 +7,6 @@ import com.acornui.core.di.OwnedImpl
 import com.acornui.core.di.inject
 import com.acornui.core.graphic.BlendMode
 import com.acornui.core.graphic.Texture
-import com.acornui.core.graphic.Window
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
@@ -36,7 +35,6 @@ class RenderableToFramebuffer(
 	var premultipliedAlpha = false
 
 	private val glState = inject(GlState)
-	private val window = inject(Window)
 
 	private val framebuffer = resizeableFramebuffer(hasDepth = hasDepth, hasStencil = hasStencil)
 
@@ -46,11 +44,13 @@ class RenderableToFramebuffer(
 	private val _canvasRegion = MinMax()
 
 	/**
-	 * The region (in canvas coordinates) where the contents have been drawn.
+	 * The region (in canvas coordinates) where the contents have been drawn, using [drawToFramebuffer].
+	 *
+	 * Note: This will include the padding provided to [drawToFramebuffer].
 	 */
 	val canvasRegion: MinMaxRo = _canvasRegion
 
-	private val previousViewport = IntRectangle()
+	private val viewport = IntRectangle()
 
 	private var u: Float = 0f
 	private var v: Float = 0f
@@ -65,9 +65,9 @@ class RenderableToFramebuffer(
 
 		framebuffer.setSize(region.width, region.height)
 
-		glState.getViewport(previousViewport)
+		glState.getViewport(viewport)
 		framebuffer.begin()
-		glState.setViewport(-region.xMin.toInt(), region.yMin.toInt() - previousViewport.height + framebuffer.texture.height, previousViewport.width, previousViewport.height)
+		glState.setViewport(-region.xMin.toInt(), region.yMin.toInt() - viewport.height + framebuffer.texture.height, viewport.width, viewport.height)
 		if (clearMask != 0)
 			clearAndReset(clearColor, clearMask)
 
@@ -80,6 +80,7 @@ class RenderableToFramebuffer(
 	}
 
 	fun drawToScreen(canvasX: Float = canvasRegion.xMin, canvasY: Float = canvasRegion.yMin) {
+		glState.getViewport(viewport)
 		val texture = framebuffer.texture
 		val batch = glState.batch
 		batch.begin()
@@ -91,10 +92,10 @@ class RenderableToFramebuffer(
 		val w = _canvasRegion.width
 		val h = _canvasRegion.height
 
-		val x1 = canvasX / window.width * 2f - 1f
-		val x2 = (canvasX + w) / window.width * 2f - 1f
-		val y1 = -(canvasY / window.height * 2f - 1f)
-		val y2 = -((canvasY + h) / window.height * 2f - 1f)
+		val x1 = canvasX / viewport.width * 2f - 1f
+		val x2 = (canvasX + w) / viewport.width * 2f - 1f
+		val y1 = -(canvasY / viewport.height * 2f - 1f)
+		val y2 = -((canvasY + h) / viewport.height * 2f - 1f)
 
 		// Top left
 		batch.putVertex(x1, y1, 0f, u = 0f, v = 1f, colorTint = colorTint)
