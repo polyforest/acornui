@@ -112,6 +112,10 @@ abstract class MutableListBase<E> : ListBase<E>(), Clearable, MutableList<E> {
 		return true
 	}
 
+	// Shouldn't need to declare this here, but workaround to kotlin compiler bug.
+	// FIXME: Workaround to https://youtrack.jetbrains.com/issue/KT-31005
+	abstract override fun removeAt(index: Int): E
+
 	override fun removeAll(elements: Collection<E>): Boolean {
 		var changed = false
 		for (i in elements) {
