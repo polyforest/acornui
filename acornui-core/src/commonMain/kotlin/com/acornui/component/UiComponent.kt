@@ -166,7 +166,7 @@ fun UiComponentRo.isAncestorOf(child: UiComponentRo): Boolean {
 
 fun UiComponentRo.isDescendantOf(ancestor: UiComponentRo): Boolean = ancestor.isAncestorOf(this)
 
-interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, InteractiveElement, Styleable {
+interface UiComponent : UiComponentRo, Renderable, Lifecycle, ColorTransformable, InteractiveElement, Styleable {
 
 	override val disposed: Signal<(UiComponent) -> Unit>
 	override val activated: Signal<(UiComponent) -> Unit>
@@ -219,21 +219,6 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	 */
 	fun update()
 
-	/**
-	 * Renders any graphics.
-	 * [render] does not check the [visible] flag; that is the responsibility of the caller.
-	 *
-	 * Canvas coordinates are 0,0 top left, and bottom right is the canvas width/height without dpi scaling.
-	 *
-	 * You may convert the window coordinate clip region to local coordinates via [canvasToLocal], but in general it is
-	 * faster to convert the local coordinates to window coordinates [localToCanvas], as no matrix inversion is
-	 * required.
-	 *
-	 * @param clip The visible region (in viewport coordinates.) If you wish to render a component with a no
-	 * clipping, you may use [MinMaxRo.POSITIVE_INFINITY]. This is used in order to potentially avoid drawing things
-	 * the user cannot see. (Due to the screen size, stencil buffers, or scissors)
-	 */
-	fun render(clip: MinMaxRo)
 }
 
 /**
@@ -599,7 +584,7 @@ open class UiComponentImpl(
 		}
 	}
 
-	final override val renderFilters: MutableList<RenderFilter> = RenderFilterList(innerRenderable)
+	final override val renderFilters: MutableList<RenderFilter> = own(RenderFilterList(innerRenderable).apply { changed.add { window.requestRender() } })
 
 	override val isRendered: Boolean
 		get() {
@@ -1279,6 +1264,31 @@ open class UiComponentImpl(
 
 	override fun update() = validate()
 
+	//-----------------------------------------------
+	// Renderable
+	//-----------------------------------------------
+
+	override fun canvasDrawRegion(out: MinMax): MinMax {
+		return if (renderFilters.isEmpty())
+			localToCanvas(out.set(0f, 0f, width, height))
+		else
+			renderFilters.first().canvasDrawRegion(out)
+	}
+
+	/**
+	 * Renders any graphics.
+	 * [render] does not check the [visible] flag; that is the responsibility of the caller.
+	 *
+	 * Canvas coordinates are 0,0 top left, and bottom right is the canvas width/height without dpi scaling.
+	 *
+	 * You may convert the window coordinate clip region to local coordinates via [canvasToLocal], but in general it is
+	 * faster to convert the local coordinates to window coordinates [localToCanvas], as no matrix inversion is
+	 * required.
+	 *
+	 * @param clip The visible region (in viewport coordinates.) If you wish to render a component with a no
+	 * clipping, you may use [MinMaxRo.POSITIVE_INFINITY]. This is used in order to potentially avoid drawing things
+	 * the user cannot see. (Due to the screen size, stencil buffers, or scissors)
+	 */
 	override fun render(clip: MinMaxRo) {
 		// Nothing visible.
 		if (_concatenatedColorTint.a <= 0f)

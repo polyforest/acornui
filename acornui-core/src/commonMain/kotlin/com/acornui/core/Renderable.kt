@@ -14,7 +14,6 @@ interface Renderable {
 
 	/**
 	 * Renders any graphics.
-	 * [render] does not check the [visible] flag; that is the responsibility of the caller.
 	 *
 	 * Canvas coordinates are 0,0 top left, and bottom right is the canvas width/height without dpi scaling.
 	 *

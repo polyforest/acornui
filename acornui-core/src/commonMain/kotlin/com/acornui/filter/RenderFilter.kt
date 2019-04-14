@@ -21,19 +21,19 @@ import com.acornui.core.Disposable
 import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
 import com.acornui.core.di.OwnedImpl
-import com.acornui.core.di.inject
-import com.acornui.core.graphic.Window
 import com.acornui.function.as1
 import com.acornui.math.MinMax
 import com.acornui.math.MinMaxRo
+import com.acornui.observe.Observable
 import com.acornui.reflect.observable
+import com.acornui.signal.Signal1
 import kotlin.properties.ReadWriteProperty
 
 /**
  * A render filter wraps the drawing of a component.
  *
  */
-interface RenderFilter : Renderable {
+interface RenderFilter : Renderable, Observable {
 
 	/**
 	 * The contents this render filter should wrap.
@@ -47,7 +47,8 @@ interface RenderFilter : Renderable {
  */
 abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, Disposable {
 
-	private val window = inject(Window)
+	private val _changed = Signal1<Observable>()
+	override val changed = _changed.asRo()
 
 	var enabled: Boolean by bindable(true)
 
@@ -62,7 +63,7 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 	override fun canvasDrawRegion(out: MinMax): MinMax = contents!!.canvasDrawRegion(out)
 
 	protected fun <T> bindable(initial: T): ReadWriteProperty<Any?, T> = observable(initial) {
-		window.requestRender()
+		_changed.dispatch(this)
 	}
 
 	final override fun render(clip: MinMaxRo) {
@@ -75,14 +76,32 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 	override fun dispose() {
 		super.dispose()
 		contents = null
+		_changed.dispose()
 	}
 }
 
 class RenderFilterList(
 		tail: Renderable?
-) : MutableListBase<RenderFilter>() {
+) : MutableListBase<RenderFilter>(), Observable, Disposable {
+
+	private val _list = ArrayList<RenderFilter>()
+	private val _changed = Signal1<Observable>()
+	override val changed = _changed.asRo()
 
 	private var _tail: Renderable? = tail
+
+	override fun removeAt(index: Int): RenderFilter {
+		val element = _list.removeAt(index)
+		element.contents = null
+		_list.getOrNull(index - 1)?.contents = _list.getOrNull(index) ?: tail
+		element.changed.remove(::notifyChanged.as1)
+		_changed.dispatch(this)
+		return element
+	}
+
+	private fun notifyChanged() {
+		_changed.dispatch(this)
+	}
 
 	/**
 	 * The renderable that will always be drawn at the end of this list.
@@ -94,12 +113,12 @@ class RenderFilterList(
 			_list.lastOrNull()?.contents = value
 		}
 
-
-	private val _list = ArrayList<RenderFilter>()
 	override fun add(index: Int, element: RenderFilter) {
 		_list.add(index, element)
 		element.contents = _list.getOrNull(index + 1) ?: tail
 		_list.getOrNull(index - 1)?.contents = element
+		element.changed.add(::notifyChanged.as1)
+		_changed.dispatch(this)
 	}
 
 	override val size: Int
@@ -107,19 +126,20 @@ class RenderFilterList(
 
 	override fun get(index: Int): RenderFilter = _list[index]
 
-	override fun removeAt(index: Int): RenderFilter {
-		val element = _list.removeAt(index)
-		element.contents = null
-		_list.getOrNull(index - 1)?.contents = _list.getOrNull(index) ?: tail
-		return element
-	}
-
 	override fun set(index: Int, element: RenderFilter): RenderFilter {
 		val old = _list[index]
 		old.contents = null
 		_list[index] = element
 		_list.getOrNull(index - 1)?.contents = element
 		element.contents = _list.getOrNull(index + 1) ?: tail
+		old.changed.remove(::notifyChanged.as1)
+		element.changed.add(::notifyChanged.as1)
+		_changed.dispatch(this)
 		return old
+	}
+
+	override fun dispose() {
+		clear()
+		_changed.dispose()
 	}
 }
