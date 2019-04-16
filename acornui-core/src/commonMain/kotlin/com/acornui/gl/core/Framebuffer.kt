@@ -29,7 +29,6 @@ import com.acornui.core.graphic.flipYDown
 import com.acornui.core.userInfo
 import com.acornui.logging.Log
 import com.acornui.math.IntRectangle
-import com.acornui.math.Vector3
 
 /**
  * @author nbilyk
@@ -205,7 +204,7 @@ class Framebuffer(
 	 *
 	 * @param sprite The sprite to configure. (A newly constructed Sprite is the default)
 	 */
-	fun sprite(sprite: Sprite = Sprite()): Sprite {
+	fun sprite(sprite: Sprite = Sprite(glState)): Sprite {
 		return sprite.apply {
 			setUv(0f, 0f, 1f, 1f, false)
 			texture = this@Framebuffer.texture

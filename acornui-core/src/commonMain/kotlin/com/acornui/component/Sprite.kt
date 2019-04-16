@@ -38,7 +38,7 @@ import kotlin.properties.Delegates
  *
  * @author nbilyk
  */
-class Sprite : BasicDrawable, Clearable {
+class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 
 	/**
 	 * If true, the normal and indices will be reversed.
@@ -155,19 +155,6 @@ class Sprite : BasicDrawable, Clearable {
 	private var width: Float = 0f
 	private var height: Float = 0f
 
-	/**
-	 * Updates this Sprite's local vertices and then multiplies them with the world transformation matrix.
-	 *
-	 * @param worldTransform The transformation matrix to project the local coordinates to global coordinates.
-	 * @param width The width of the sprite.
-	 * @param height The height of the sprite.
-	 * @param x translation
-	 * @param y translation
-	 * @param z translation
-	 * @param rotation The rotation around the Z axis in radians.
-	 * @param originX The x point of the rectangle that will be 0,0
-	 * @param originY The y point of the rectangle that will be 0,0
-	 */
 	override fun updateWorldVertices(worldTransform: Matrix4Ro, width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
 		updateVertices(width, height, x, y, z, rotation, originX, originY)
 		worldTransform.prj(vertexPoints[0])
@@ -209,7 +196,7 @@ class Sprite : BasicDrawable, Clearable {
 		normal.set(if (useAsBackFace) Vector3.Z else Vector3.NEG_Z)
 	}
 
-	override fun render(glState: GlState, colorTint: ColorRo) {
+	override fun render(colorTint: ColorRo) {
 		if (texture == null || colorTint.a <= 0f || width == 0f || height == 0f) return // Nothing to draw
 		val batch = glState.batch
 		glState.setTexture(texture)

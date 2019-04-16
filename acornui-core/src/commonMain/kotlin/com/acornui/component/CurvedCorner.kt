@@ -56,7 +56,7 @@ fun Scoped.createSmoothCorner(
 		antialias: Boolean = true,
 		flipX: Boolean = false,
 		flipY: Boolean = false,
-		spriteOut: Sprite = Sprite(),
+		spriteOut: Sprite = Sprite(inject(GlState)),
 		useCache: Boolean = true
 ): Sprite {
 	val sX = strokeThicknessX ?: cornerRadiusX + 1f

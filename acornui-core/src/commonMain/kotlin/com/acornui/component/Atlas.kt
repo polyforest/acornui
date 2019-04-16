@@ -22,7 +22,7 @@ import com.acornui.gl.core.GlState
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Matrix4Ro
 
-class Atlas : BasicDrawable, Clearable {
+class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 
 	private var _region: AtlasRegionData? = null
 
@@ -66,7 +66,7 @@ class Atlas : BasicDrawable, Clearable {
 		if (region.splits == null) {
 			_ninePatch = null
 			if (_sprite == null) {
-				_sprite = Sprite()
+				_sprite = Sprite(glState)
 				_sprite?.blendMode = _blendMode
 				_sprite?.useAsBackFace = _useAsBackFace
 			}
@@ -75,7 +75,7 @@ class Atlas : BasicDrawable, Clearable {
 		} else {
 			_sprite = null
 			if (_ninePatch == null) {
-				_ninePatch = NinePatch()
+				_ninePatch = NinePatch(glState)
 				_ninePatch?.blendMode = _blendMode
 				_ninePatch?.useAsBackFace = _useAsBackFace
 			}
@@ -176,8 +176,8 @@ class Atlas : BasicDrawable, Clearable {
 		totalPadBottom = unscaledPadBottom + scaledPadBottom * sY
 	}
 
-	override fun render(glState: GlState, colorTint: ColorRo) {
-		drawable?.render(glState, colorTint)
+	override fun render(colorTint: ColorRo) {
+		drawable?.render(colorTint)
 	}
 
 	override fun clear() {

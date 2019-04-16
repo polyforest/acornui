@@ -48,7 +48,7 @@ class GlFilter(
 	//private val framebuffer = Framebuffer(injector, directionalShadowsResolution, directionalShadowsResolution, hasStencil = true, hasDepth = false)
 
 	private val tempTransform = Matrix4()
-	private val sprite = Sprite()
+	private val sprite = Sprite(glState)
 	
 	override fun draw(clip: MinMaxRo) {
 		tempTransform.set(_concatenatedTransform)
@@ -72,7 +72,7 @@ class GlFilter(
 		sprite.texture = framebuffer.texture
 		sprite.updateWorldVertices(concatenatedTransform, sprite.naturalWidth, sprite.naturalHeight, z = 0f)
 		glState.setCamera(camera)
-		sprite.render(glState, concatenatedColorTint)
+		sprite.render(concatenatedColorTint)
 
 		glState.shader = previousShader
 	}

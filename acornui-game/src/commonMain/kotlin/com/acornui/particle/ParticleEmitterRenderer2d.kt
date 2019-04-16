@@ -71,7 +71,7 @@ class ParticleEmitterRenderer2d(
 		val emitterPosition = emitterInstance.position
 		val rotationZ = if (emitter.orientToForwardDirection) rotation.z + forwardDirection.z + HALF_PI else rotation.z
 		sprite.updateVertices(w, h, position.x + emitterPosition.x, position.y + emitterPosition.y, position.z + emitterPosition.z, rotationZ, w * origin.x, h * origin.y)
-		sprite.render(glState, finalColor.set(colorTint).mul(concatenatedColorTint))
+		sprite.render(finalColor.set(colorTint).mul(concatenatedColorTint))
 	}
 
 }

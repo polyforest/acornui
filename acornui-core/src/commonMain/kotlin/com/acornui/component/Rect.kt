@@ -56,14 +56,14 @@ open class Rect(
 
 	private inner class ComplexMode {
 
-		val topLeftCorner = Sprite()
-		val topLeftStrokeCorner = Sprite()
-		val topRightCorner = Sprite()
-		val topRightStrokeCorner = Sprite()
-		val bottomRightCorner = Sprite()
-		val bottomRightStrokeCorner = Sprite()
-		val bottomLeftCorner = Sprite()
-		val bottomLeftStrokeCorner = Sprite()
+		val topLeftCorner = Sprite(glState)
+		val topLeftStrokeCorner = Sprite(glState)
+		val topRightCorner = Sprite(glState)
+		val topRightStrokeCorner = Sprite(glState)
+		val bottomRightCorner = Sprite(glState)
+		val bottomRightStrokeCorner = Sprite(glState)
+		val bottomLeftCorner = Sprite(glState)
+		val bottomLeftStrokeCorner = Sprite(glState)
 
 		val fill = staticMesh()
 		val gradient = staticMesh()
@@ -212,22 +212,22 @@ open class Rect(
 
 					if (topLeftCorner.texture != null) {
 						topLeftCorner.updateVertices(x = fillPad.left, y = fillPad.top)
-						topLeftCorner.render(glState, tint)
+						topLeftCorner.render(tint)
 					}
 
 					if (topRightCorner.texture != null) {
 						topRightCorner.updateVertices(x = w - topRightX, y = fillPad.top)
-						topRightCorner.render(glState, tint)
+						topRightCorner.render(tint)
 					}
 
 					if (bottomRightCorner.texture != null) {
 						bottomRightCorner.updateVertices(x = w - bottomRightX, y = h - bottomRightY)
-						bottomRightCorner.render(glState, tint)
+						bottomRightCorner.render(tint)
 					}
 
 					if (bottomLeftCorner.texture != null) {
 						bottomLeftCorner.updateVertices(x = fillPad.left, y = h - bottomLeftY)
-						bottomLeftCorner.render(glState, tint)
+						bottomLeftCorner.render(tint)
 					}
 
 					trn(margin.left, margin.top)

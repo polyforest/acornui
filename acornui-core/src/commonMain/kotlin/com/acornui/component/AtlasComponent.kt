@@ -42,7 +42,7 @@ open class AtlasComponent(owner: Owned) : DrawableComponent(owner), Clearable {
 
 	private var texture: Texture? = null
 
-	override val drawable = Atlas()
+	override val drawable = Atlas(glState)
 
 	private var group: CachedGroup? = null
 

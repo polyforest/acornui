@@ -48,7 +48,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.properties.Delegates
 
-class NinePatch : BasicDrawable {
+class NinePatch(val glState: GlState) : BasicDrawable {
 
 	private var _isRotated: Boolean = false
 
@@ -261,7 +261,7 @@ class NinePatch : BasicDrawable {
 	 * If [updateVertices] was used (and therefore no world transformation), that world transform matrix must be
 	 * supplied to [GlState.setCamera] first.
 	 */
-	override fun render(glState: GlState, colorTint: ColorRo) {
+	override fun render(colorTint: ColorRo) {
 		val texture = texture
 		if (texture == null || width <= 0f || height <= 0f) return
 		glState.setTexture(texture)

@@ -35,7 +35,7 @@ import com.acornui.math.RectangleRo
  */
 open class TextureComponent(owner: Owned) : DrawableComponent(owner) {
 
-	override val drawable: Sprite = Sprite()
+	override val drawable: Sprite = Sprite(glState)
 
 	/**
 	 * If true, the normal and indices will be reversed.

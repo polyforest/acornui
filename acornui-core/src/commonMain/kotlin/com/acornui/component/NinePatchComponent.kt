@@ -31,7 +31,7 @@ import com.acornui.math.IntRectangleRo
  */
 class NinePatchComponent(owner: Owned) : DrawableComponent(owner) {
 
-	override val drawable: NinePatch = NinePatch()
+	override val drawable: NinePatch = NinePatch(glState)
 
 	/**
 	 * If true, the normal and indices will be reversed.

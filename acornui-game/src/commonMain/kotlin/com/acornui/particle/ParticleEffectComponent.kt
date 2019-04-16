@@ -29,10 +29,12 @@ import com.acornui.core.asset.loadAndCacheJson
 import com.acornui.core.asset.loadJson
 import com.acornui.core.di.Owned
 import com.acornui.core.di.Scoped
+import com.acornui.core.di.inject
 import com.acornui.core.graphic.TextureAtlasDataSerializer
 import com.acornui.core.graphic.loadAndCacheAtlasPage
 import com.acornui.core.serialization.loadBinary
 import com.acornui.core.time.onTick
+import com.acornui.gl.core.GlState
 import com.acornui.graphic.ColorRo
 import com.acornui.math.MinMaxRo
 
@@ -179,13 +181,14 @@ suspend fun Scoped.loadParticleEffect(pDataPath: String, atlasPath: String, grou
 suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffect, atlasPath: String, group: CachedGroup = cachedGroup(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
 	val atlasDataPromise = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group)
 	val atlasData = atlasDataPromise.await()
+	val glState = inject(GlState)
 
 	val spriteResolver: SpriteResolver = { emitter, imageEntry ->
 		val (page, region) = atlasData.findRegion(imageEntry.path)
 				?: throw Exception("Could not find \"${imageEntry.path}\" in the atlas $atlasPath")
 		val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
 
-		val sprite = Sprite()
+		val sprite = Sprite(glState)
 		sprite.blendMode = emitter.blendMode
 		sprite.premultipliedAlpha = emitter.premultipliedAlpha
 		sprite.texture = texture

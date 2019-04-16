@@ -131,7 +131,7 @@ class ResizeableFramebuffer(
 	 *
 	 * @param sprite The sprite to configure. (A newly constructed Sprite is the default)
 	 */
-	fun sprite(sprite: Sprite = Sprite()): Sprite {
+	fun sprite(sprite: Sprite = Sprite(glState)): Sprite {
 		return sprite.apply {
 			texture = framebuffer?.texture
 			val textureW = framebuffer?.width?.toFloat() ?: 0f
