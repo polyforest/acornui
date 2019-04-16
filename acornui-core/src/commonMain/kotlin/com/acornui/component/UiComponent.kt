@@ -1303,7 +1303,6 @@ open class UiComponentImpl(
 
 	/**
 	 * Returns true if the given viewport in local coordinates intersects with the viewport in screen coordinates.
-	 * This does not perform a validation if the transformation is currently invalid.
 	 */
 	fun isInViewport(local: MinMaxRo, viewport: MinMaxRo): Boolean {
 		localToCanvas(viewportTmpMinMax.set(local))
@@ -1312,8 +1311,6 @@ open class UiComponentImpl(
 
 	/**
 	 * Returns true if this component's bounds are currently within the given window viewport.
-	 *
-	 * This does not perform a validation if the layout or transformation is currently invalid.
 	 */
 	fun isBoundsInViewport(viewport: MinMaxRo): Boolean {
 		localToCanvas(viewportTmpMinMax.set(0f, 0f, _bounds.width, _bounds.height))
