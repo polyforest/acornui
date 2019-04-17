@@ -119,6 +119,17 @@ class Pad(
 		return this
 	}
 
+	/**
+	 * Inflates the padding by the given amount.
+	 */
+	fun inflate(padding: PadRo): Pad {
+		left += padding.left
+		top += padding.top
+		right += padding.right
+		bottom += padding.bottom
+		return this
+	}
+
 	override fun clear() {
 		top = 0f
 		right = 0f

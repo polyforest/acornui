@@ -37,10 +37,8 @@ import kotlin.properties.Delegates
  */
 class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 
-	private var width: Float = 0f
-	private var height: Float = 0f
-
-	override fun drawRegion(out: MinMax): MinMax = out.set(0f, 0f, width, height)
+	private val _bounds = Bounds()
+	override val bounds: BoundsRo = _bounds
 
 	/**
 	 * If true, the normal and indices will be reversed.
@@ -55,9 +53,8 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 	var blendMode: BlendMode = BlendMode.NORMAL
 	var premultipliedAlpha: Boolean = false
 
-	private var _isRotated: Boolean = false
-	val isRotated: Boolean
-		get() = _isRotated
+	var isRotated: Boolean = false
+		private set
 
 	/**
 	 * Either represents uv values, or pixel coordinates, depending on _isUv
@@ -80,7 +77,7 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 		region[2] = u2
 		region[3] = v2
 		isUv = true
-		_isRotated = isRotated
+		this.isRotated = isRotated
 		updateUv()
 	}
 
@@ -98,7 +95,7 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 		region[2] = width + x
 		region[3] = height + y
 		isUv = false
-		_isRotated = isRotated
+		this.isRotated = isRotated
 		updateUv()
 	}
 
@@ -156,8 +153,8 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 	}
 
 	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
-		this.width = width
-		this.height = height
+		_bounds.set(width, height)
+
 		// Transform vertex coordinates from local to global
 		if (rotation == 0f) {
 			val aX = x - originX
@@ -222,8 +219,31 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 		else batch.putQuadIndices()
 	}
 
+	/**
+	 * Sets this sprite to match the properties of [other].
+	 * This does not update the vertices.
+	 * @param other The sprite to make this sprite match.
+	 * @return Returns this sprite for chaining purposes.
+	 */
+	fun set(other: Sprite): Sprite {
+		useAsBackFace = other.useAsBackFace
+		texture = other.texture
+		region[0] = other.region[0]
+		region[1] = other.region[1]
+		region[2] = other.region[2]
+		region[3] = other.region[3]
+		isUv = other.isUv
+		isRotated = other.isRotated
+		blendMode = other.blendMode
+		premultipliedAlpha = other.premultipliedAlpha
+		return this
+	}
+
 	override fun clear() {
 		texture = null
 		setUv(0f, 0f, 1f, 1f, false)
+		useAsBackFace = false
+		blendMode = BlendMode.NORMAL
+		premultipliedAlpha = false
 	}
 }

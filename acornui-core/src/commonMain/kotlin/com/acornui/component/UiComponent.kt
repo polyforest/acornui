@@ -102,6 +102,18 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	 */
 	val layoutInvalidatingFlags: Int
 
+	/**
+	 * The explicit width, as set by width(value)
+	 * Typically one would use [width] in order to retrieve the actual width.
+	 */
+	val explicitWidth: Float?
+
+	/**
+	 * The explicit height, as set by height(value)
+	 * Typically one would use [height] in order to retrieve actual height.
+	 */
+	val explicitHeight: Float?
+
 	companion object {
 		var defaultLayoutInvalidatingFlags = ValidationFlags.HIERARCHY_ASCENDING or
 				ValidationFlags.LAYOUT or
@@ -535,18 +547,6 @@ open class UiComponentImpl(
 	override val explicitHeight: Float?
 		get() = _explicitHeight
 
-	override val width: Float
-		get() = bounds.width
-
-	override val height: Float
-		get() = bounds.height
-
-	override val right: Float
-		get() = x + width
-
-	override val bottom: Float
-		get() = y + height
-
 	/**
 	 * Sets the explicit width. Set to null to use actual width.
 	 */
@@ -578,7 +578,9 @@ open class UiComponentImpl(
 	 */
 	private val innerRenderable: Renderable by lazy {
 		object : Renderable {
-			override fun drawRegion(out: MinMax): MinMax = out.set(0f, 0f, width, height)
+
+			override val bounds: BoundsRo
+				get() = this@UiComponentImpl.bounds
 
 			override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) = draw(clip, transform, tint)
 		}
@@ -1253,12 +1255,11 @@ open class UiComponentImpl(
 	// Renderable
 	//-----------------------------------------------
 
-	override fun drawRegion(out: MinMax): MinMax {
-		return if (renderFilters.isEmpty())
-			out.set(0f, 0f, width, height)
+	override val renderMargin: PadRo
+		get() = if (renderFilters.isEmpty())
+			Pad.EMPTY_PAD
 		else
-			renderFilters.first().drawRegion(out)
-	}
+			renderFilters.first().renderMargin
 
 	/**
 	 * Renders any graphics.

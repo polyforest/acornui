@@ -83,6 +83,8 @@ class Bounds(
 
 	companion object {
 
+		val EMPTY_BOUNDS = Bounds()
+
 		private val pool = ClearableObjectPool { Bounds() }
 
 		fun obtain(): Bounds = pool.obtain()

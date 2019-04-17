@@ -23,12 +23,12 @@ import com.acornui.core.di.Owned
 import com.acornui.core.di.OwnedImpl
 import com.acornui.function.as1
 import com.acornui.graphic.ColorRo
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.MinMax
-import com.acornui.math.MinMaxRo
+import com.acornui.math.*
 import com.acornui.observe.Observable
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal1
+import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.properties.ReadWriteProperty
 
 /**
@@ -74,7 +74,31 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 		bitmapCacheIsValid = false
 	}
 
-	override fun drawRegion(out: MinMax): MinMax = contents!!.drawRegion(out)
+	/**
+	 * The padding this filter expands the render margin and draw region.
+	 */
+	open val padding: PadRo = Pad.EMPTY_PAD
+
+	private val _renderMargin = Pad()
+	override val renderMargin: PadRo
+		get() = _renderMargin.set(contents?.renderMargin ?: Pad.EMPTY_PAD).inflate(padding)
+
+	override val bounds: BoundsRo
+		get() = contents?.bounds ?: Bounds.EMPTY_BOUNDS
+
+	private val _drawRegion = MinMax()
+	val drawRegion: MinMaxRo
+		get() {
+			val bounds = bounds
+			val r = _drawRegion
+			r.set(0f, 0f, bounds.width, bounds.height)
+			r.inflate(renderMargin)
+			r.xMin = floor(r.xMin)
+			r.yMin = floor(r.yMin)
+			r.xMax = ceil(r.xMax)
+			r.yMax = ceil(r.yMax)
+			return r
+		}
 
 	protected fun <T> bindable(initial: T): ReadWriteProperty<Any?, T> = observable(initial) {
 		_changed.dispatch(this)

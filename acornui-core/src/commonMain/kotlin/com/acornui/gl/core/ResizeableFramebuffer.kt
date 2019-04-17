@@ -132,11 +132,12 @@ class ResizeableFramebuffer(
 	 * @param sprite The sprite to configure. (A newly constructed Sprite is the default)
 	 */
 	fun sprite(sprite: Sprite = Sprite(glState)): Sprite {
+		val t = this
 		return sprite.apply {
 			texture = framebuffer?.texture
 			val textureW = framebuffer?.width?.toFloat() ?: 0f
 			val textureH = framebuffer?.height?.toFloat() ?: 0f
-			setUv(0f, 0f, width / textureW, height / textureH, isRotated = false)
+			setUv(0f, 0f, t.width / textureW, t.height / textureH, isRotated = false)
 			updateVertices()
 		}
 	}

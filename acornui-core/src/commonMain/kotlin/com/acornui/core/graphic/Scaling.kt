@@ -27,26 +27,26 @@ import com.acornui.math.*
 enum class Scaling {
 
 	/**
-	 * Scales the source to fit the target while keeping the same aspect ratio. This may cause the source to be smaller than the
-	 * target in one direction.
+	 * Scales the source to fit the target while keeping the same aspect ratio. This may cause the source to be smaller
+	 * than the target in one direction.
 	 */
 	FIT,
 
 	/**
-	 * Scales the source to fill the target while keeping the same aspect ratio. This may cause the source to be larger than the
-	 * target in one direction.
+	 * Scales the source to fill the target while keeping the same aspect ratio. This may cause the source to be larger
+	 * than the target in one direction.
 	 */
 	FILL,
 
 	/**
-	 * Scales the source to fill the target in the x direction while keeping the same aspect ratio. This may cause the source to be
-	 * smaller or larger than the target in the y direction.
+	 * Scales the source to fill the target in the x direction while keeping the same aspect ratio. This may cause the
+	 * source to be smaller or larger than the target in the y direction.
 	 */
 	FILL_X,
 
 	/**
-	 * Scales the source to fill the target in the y direction while keeping the same aspect ratio. This may cause the source to be
-	 * smaller or larger than the target in the x direction.
+	 * Scales the source to fill the target in the y direction while keeping the same aspect ratio. This may cause the
+	 * source to be smaller or larger than the target in the x direction.
 	 */
 	FILL_Y,
 
@@ -56,14 +56,14 @@ enum class Scaling {
 	STRETCH,
 
 	/**
-	 * Scales the source to fill the target in the x direction, without changing the y direction. This may cause the source to not
-	 * keep the same aspect ratio.
+	 * Scales the source to fill the target in the x direction, without changing the y direction. This may cause the
+	 * source to not keep the same aspect ratio.
 	 */
 	STRETCH_X,
 
 	/**
-	 * Scales the source to fill the target in the y direction, without changing the x direction. This may cause the source to not
-	 * keep the same aspect ratio.
+	 * Scales the source to fill the target in the y direction, without changing the x direction. This may cause the
+	 * source to not keep the same aspect ratio.
 	 */
 	STRETCH_Y,
 

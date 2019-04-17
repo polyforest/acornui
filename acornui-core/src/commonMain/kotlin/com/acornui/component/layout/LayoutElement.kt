@@ -174,11 +174,13 @@ interface BasicLayoutElementRo : SizableRo, PositionableRo {
 	 * The right boundary (x + width)
 	 */
 	val right: Float
+		get() = x + width
 
 	/**
 	 * The bottom boundary (y + height)
 	 */
 	val bottom: Float
+		get() = y + height
 
 	/**
 	 * The layout data to be used in layout algorithms.
@@ -201,35 +203,25 @@ interface BasicLayoutElement : BasicLayoutElementRo, Sizable, Positionable {
 interface SizableRo {
 
 	/**
-	 * Returns the measured, untransformed width.
+	 * Returns the actual, untransformed width.
 	 * If layout is invalid, this will invoke a layout validation.
 	 * This is the same as `bounds.width`
 	 */
 	val width: Float
+		get() = bounds.width
 
 	/**
-	 * Returns the measured, untransformed height.
+	 * Returns the actual, untransformed height.
 	 * If layout is invalid, this will invoke a layout validation.
 	 * This is the same as `bounds.height`
 	 */
 	val height: Float
+		get() = bounds.height
 
 	/**
-	 * The measured bounds of this component.
+	 * The actual bounds of this component.
 	 */
 	val bounds: BoundsRo
-
-	/**
-	 * The explicit width, as set by width(value)
-	 * Typically one would use [width] in order to retrieve the explicit or measured width.
-	 */
-	val explicitWidth: Float?
-
-	/**
-	 * The explicit height, as set by height(value)
-	 * Typically one would use [height] in order to retrieve the explicit or measured height.
-	 */
-	val explicitHeight: Float?
 }
 
 interface Sizable : SizableRo {

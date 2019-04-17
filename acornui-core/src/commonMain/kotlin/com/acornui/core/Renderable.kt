@@ -1,18 +1,18 @@
 package com.acornui.core
 
 import com.acornui.component.canvasToLocal
+import com.acornui.component.layout.SizableRo
 import com.acornui.component.localToCanvas
 import com.acornui.graphic.ColorRo
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.MinMax
-import com.acornui.math.MinMaxRo
+import com.acornui.math.*
 
-interface Renderable {
+interface Renderable : SizableRo {
 
 	/**
-	 * Calculates the region, in local coordinates, that this component will draw.
+	 * The added area to the bounds needed for rendering.
 	 */
-	fun drawRegion(out: MinMax): MinMax
+	val renderMargin: PadRo
+		get() = Pad.EMPTY_PAD
 
 	/**
 	 * Renders any graphics.

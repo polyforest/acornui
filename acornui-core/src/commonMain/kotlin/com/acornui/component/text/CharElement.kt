@@ -8,10 +8,7 @@ import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putVertex
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.MinMax
-import com.acornui.math.MinMaxRo
-import com.acornui.math.Vector3
+import com.acornui.math.*
 import com.acornui.string.isBreaking
 import kotlin.math.floor
 
@@ -20,7 +17,9 @@ import kotlin.math.floor
  */
 class CharElement private constructor() : TextElement, Clearable {
 
-	override fun drawRegion(out: MinMax): MinMax = out.set(0f, 0f, width, lineHeight)
+	private val _bounds = Bounds()
+	override val bounds: BoundsRo
+		get() = _bounds.set(explicitWidth ?: advanceX, lineHeight)
 
 	private lateinit var glState: GlState
 

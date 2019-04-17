@@ -70,7 +70,7 @@ class ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 
 			if (explicitWidth != null) {
 				val remainingSpace = childAvailableWidth!! - w * scaleX
-				if (remainingSpace > 0f) {
+				if (remainingSpace != 0f) {
 					when (layoutData?.horizontalAlign ?: style.horizontalAlign) {
 						HAlign.LEFT -> {
 						}
@@ -86,7 +86,7 @@ class ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 			}
 			if (explicitHeight != null) {
 				val remainingSpace = childAvailableHeight!! - h * scaleY
-				if (remainingSpace > 0f) {
+				if (remainingSpace != 0f) {
 					when (layoutData?.verticalAlign ?: style.verticalAlign) {
 						VAlign.TOP -> {
 						}

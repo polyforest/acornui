@@ -1,19 +1,20 @@
 package com.acornui.filter
 
-import com.acornui.component.ComponentInit
-import com.acornui.component.Sprite
+import com.acornui.component.*
 import com.acornui.core.AppConfig
 import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
+import com.acornui.core.di.own
 import com.acornui.core.graphic.BlendMode
 import com.acornui.core.graphic.Texture
+import com.acornui.core.time.onTick
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
-import kotlin.math.ceil
-import kotlin.math.floor
+import com.acornui.signal.Signal0
+import com.acornui.signal.bind
 
 /**
  * Creates a Framebuffer and provides utility to draw a [Renderable] object to it and then draw the frame buffer to the
@@ -24,6 +25,8 @@ class FramebufferFilter(
 		hasDepth: Boolean = owner.inject(AppConfig).gl.depth,
 		hasStencil: Boolean = owner.inject(AppConfig).gl.stencil
 ) : RenderFilterBase(owner) {
+
+	override var padding: PadRo = Pad.EMPTY_PAD
 
 	var clearMask = Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT
 	var clearColor = Color.CLEAR
@@ -37,29 +40,24 @@ class FramebufferFilter(
 	val texture: Texture
 		get() = framebuffer.texture
 
-	private val _drawRegion = MinMax()
-	val drawRegion: MinMaxRo = _drawRegion
-
 	private val viewport = IntRectangle()
 	private val sprite = Sprite(glState)
+	private val drawable = PaddedDrawable(sprite)
 	private val mvp = Matrix4()
+	private val drawed = own(Signal0())
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		val contents = contents ?: return
 		if (!bitmapCacheIsValid)
-			drawToFramebuffer(contents)
+			drawToFramebuffer()
 		drawToScreen(clip, transform, tint)
 	}
 
-	fun drawToFramebuffer(contents: Renderable, padding: PadRo = Pad.EMPTY_PAD) {
-		val region = _drawRegion
-		contents.drawRegion(region).inflate(padding)
-		region.xMin = floor(region.xMin)
-		region.yMin = floor(region.yMin)
-		region.xMax = ceil(region.xMax)
-		region.yMax = ceil(region.yMax)
-
+	fun drawToFramebuffer() {
+		val contents = contents ?: return
+		val region = drawRegion
 		framebuffer.setSize(region.width, region.height)
+		val renderMargin = renderMargin
+		drawable.padding.set(-renderMargin.left, -renderMargin.top, -renderMargin.right, -renderMargin.bottom)
 
 		viewport.set(glState.viewport)
 		framebuffer.begin()
@@ -71,19 +69,32 @@ class FramebufferFilter(
 
 		framebuffer.end()
 		framebuffer.sprite(sprite)
+		drawable.updateVertices()
+
 		sprite.setUv(sprite.u, 1f - sprite.v, sprite.u2, 1f - sprite.v2, isRotated = false)
 		glState.setViewport(viewport)
+		drawed.dispatch()
 	}
 
 	fun drawToScreen(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		viewport.set(glState.viewport)
 		mvp.idt().scl(2f / viewport.width, -2f / viewport.height, 1f).trn(-1f, 1f, 0f) // Projection transform
-		val region = drawRegion
-		mvp.mul(transform).translate(region.xMin, region.yMin, 0f) // Model transform
+		mvp.mul(transform)//.translate(margin.left, margin.top)
 
 		glState.viewProjection = mvp
 		glState.model = Matrix4.IDENTITY
-		sprite.render(clip, Matrix4.IDENTITY, tint)
+		drawable.render(clip, Matrix4.IDENTITY, tint)
+	}
+
+	/**
+	 * Creates a component that renders the sprite that represents the last time [drawToFramebuffer] was called.
+	 */
+	fun createSnapshot(owner: Owned): UiComponent {
+		return owner.drawableC(drawable) {
+			own(drawed.bind {
+				invalidate(ValidationFlags.LAYOUT)
+			})
+		}
 	}
 
 	override fun dispose() {

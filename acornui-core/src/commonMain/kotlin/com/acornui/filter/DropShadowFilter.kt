@@ -39,11 +39,17 @@ open class DropShadowFilter(owner: Owned) : RenderFilterBase(owner) {
 	 */
 	var offsetY by bindable(3f)
 
-	private val tmpMinMax = MinMax()
-
-	override fun drawRegion(out: MinMax): MinMax {
-		return blurFilter.drawRegion(out).translate(offsetX, offsetY).ext(super.drawRegion(tmpMinMax))
-	}
+	private val _padding = Pad()
+	override val padding: PadRo
+		get() {
+			val blurPadding = blurFilter.padding
+			return _padding.set(
+					blurPadding.left + maxOf(0f, -offsetX),
+					blurPadding.top + maxOf(0f, -offsetY),
+					blurPadding.right + maxOf(0f, offsetX),
+					blurPadding.bottom + maxOf(0f, offsetY)
+			)
+		}
 
 	private val glState = inject(GlState)
 

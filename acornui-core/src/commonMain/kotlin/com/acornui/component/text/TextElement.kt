@@ -19,19 +19,19 @@ package com.acornui.component.text
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
+import com.acornui.component.layout.SizableRo
 import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.core.Disposable
 import com.acornui.core.Renderable
 import com.acornui.core.selection.SelectionRange
-import com.acornui.gl.core.GlState
-import com.acornui.math.Matrix4Ro
-
+import com.acornui.math.Bounds
+import com.acornui.math.BoundsRo
 
 /**
  * The smallest unit that can be inside of a TextField.
  * This can be a single character, or a more complex object.
  */
-interface TextElementRo {
+interface TextElementRo: SizableRo {
 
 	/**
 	 * Set by the TextSpanElement when this part is added.
@@ -56,12 +56,6 @@ interface TextElementRo {
 	 * If set, this part should be drawn to fit this width.
 	 */
 	val explicitWidth: Float?
-
-	/**
-	 * The explicit width, if it's set, or the xAdvance.
-	 */
-	val width: Float
-		get() = explicitWidth ?: advanceX
 
 	/**
 	 * The kerning offset between this element and the next.
@@ -253,6 +247,8 @@ interface TextNode : TextNodeRo, UiComponent {
  * A placeholder for the last text element in a span. This is useful for calculating the text cursor placement.
  */
 class LastTextElement(private val flow: Paragraph) : TextElementRo {
+
+	override val bounds: BoundsRo = Bounds.EMPTY_BOUNDS
 
 	override val parentSpan: TextSpanElement?
 		get() = flow.elements.lastOrNull()

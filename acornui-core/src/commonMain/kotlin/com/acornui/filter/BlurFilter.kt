@@ -2,6 +2,7 @@ package com.acornui.filter
 
 import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
+import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.di.own
@@ -10,8 +11,6 @@ import com.acornui.gl.core.*
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
-import kotlin.math.ceil
-import kotlin.math.floor
 
 open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 
@@ -31,26 +30,23 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	private val mvp = Matrix4()
 
 	private val _padding = Pad()
-	val padding: PadRo
+	override val padding: PadRo
 		get() {
 			val hPad = blurX * 4f * quality.passes
 			val vPad = blurY * 4f * quality.passes
 			return _padding.set(left = hPad, top = vPad, right = hPad, bottom = vPad)
 		}
 
-	override fun drawRegion(out: MinMax): MinMax {
-		super.drawRegion(out).inflate(padding)
-		out.xMin = floor(out.xMin)
-		out.yMin = floor(out.yMin)
-		out.xMax = ceil(out.xMax)
-		out.yMax = ceil(out.yMax)
-		return out
-	}
-
 	override val shouldSkipFilter: Boolean
 		get() = super.shouldSkipFilter || (blurX <= 0f && blurY <= 0f)
 
 	private val framebufferUtil = FramebufferFilter(this)
+
+	override var contents: Renderable? = null
+		set(value) {
+			field = value
+			framebufferUtil.contents = value
+		}
 
 	init {
 		framebufferUtil.clearColor = Color(0.5f, 0.5f, 0.5f, 0f)
@@ -63,9 +59,9 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	}
 
 	fun drawToPingPongBuffers() {
-		val contents = contents ?: return
 		val framebufferUtil = framebufferUtil
-		framebufferUtil.drawToFramebuffer(contents, padding)
+		framebufferUtil.padding = padding
+		framebufferUtil.drawToFramebuffer()
 		val region = framebufferUtil.drawRegion
 		glState.useViewport(-region.xMin.toInt(), region.yMin.toInt() - viewport.height + framebufferUtil.texture.height, viewport.width, viewport.height) {
 			val textureToBlur = framebufferUtil.texture
