@@ -1,10 +1,10 @@
 package com.acornui.filter
 
+import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
 import com.acornui.core.AppConfig
 import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
-import com.acornui.core.di.OwnedImpl
 import com.acornui.core.di.inject
 import com.acornui.core.graphic.BlendMode
 import com.acornui.core.graphic.Texture
@@ -19,11 +19,11 @@ import kotlin.math.floor
  * Creates a Framebuffer and provides utility to draw a [Renderable] object to it and then draw the frame buffer to the
  * screen.
  */
-class RenderableToFramebuffer(
+class FramebufferFilter(
 		owner: Owned,
 		hasDepth: Boolean = owner.inject(AppConfig).gl.depth,
 		hasStencil: Boolean = owner.inject(AppConfig).gl.stencil
-) : OwnedImpl(owner) {
+) : RenderFilterBase(owner) {
 
 	var clearMask = Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT
 	var clearColor = Color.CLEAR
@@ -43,6 +43,13 @@ class RenderableToFramebuffer(
 	private val viewport = IntRectangle()
 	private val sprite = Sprite(glState)
 	private val mvp = Matrix4()
+
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		val contents = contents ?: return
+		if (!bitmapCacheIsValid)
+			drawToFramebuffer(clip, contents)
+		drawToScreen(clip, transform, tint)
+	}
 
 	fun drawToFramebuffer(clip: MinMaxRo, contents: Renderable, padding: PadRo = Pad.EMPTY_PAD) {
 		val region = _drawRegion
@@ -83,4 +90,13 @@ class RenderableToFramebuffer(
 		super.dispose()
 		framebuffer.dispose()
 	}
+}
+
+/**
+ * A frame buffer filter will cache the render target as a bitmap.
+ */
+fun Owned.framebufferFilter(init: ComponentInit<FramebufferFilter> = {}): FramebufferFilter {
+	val b = FramebufferFilter(this)
+	b.init()
+	return b
 }

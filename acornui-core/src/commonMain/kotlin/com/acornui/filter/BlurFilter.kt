@@ -50,7 +50,7 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	override val shouldSkipFilter: Boolean
 		get() = super.shouldSkipFilter || (blurX <= 0f && blurY <= 0f)
 
-	private val framebufferUtil = RenderableToFramebuffer(this)
+	private val framebufferUtil = FramebufferFilter(this)
 
 	init {
 		framebufferUtil.clearColor = Color(0.5f, 0.5f, 0.5f, 0f)
