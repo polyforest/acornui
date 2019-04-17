@@ -219,10 +219,6 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	 */
 	fun update()
 
-	fun render(clip: MinMaxRo = MinMaxRo.POSITIVE_INFINITY) {
-		render(clip, concatenatedTransform, concatenatedColorTint)
-	}
-
 }
 
 /**
@@ -404,8 +400,6 @@ open class UiComponentImpl(
 				addNode(LAYOUT, SIZE_CONSTRAINTS, ::validateLayout)
 				addNode(TRANSFORM, ::updateTransform)
 				addNode(CONCATENATED_TRANSFORM, TRANSFORM, ::updateConcatenatedTransform)
-				addNode(COLOR_TRANSFORM, ::updateColorTransform)
-				addNode(CONCATENATED_COLOR_TRANSFORM, COLOR_TRANSFORM, ::updateConcatenatedColorTransform)
 				addNode(INTERACTIVITY_MODE, ::updateInheritedInteractivityMode)
 				addNode(CAMERA, ::updateCamera)
 				addNode(VIEWPORT, ::updateViewport)
@@ -805,8 +799,6 @@ open class UiComponentImpl(
 	/**
 	 * The color tint of this component.
 	 * The final pixel color value for the default shader is [colorTint * pixel]
-	 *
-	 * If this is modified directly, be sure to call [invalidate(ValidationFlags.COLOR_TRANSFORM)]
 	 */
 	override var colorTint: ColorRo
 		get() {
@@ -815,7 +807,6 @@ open class UiComponentImpl(
 		set(value) {
 			if (_colorTint == value) return
 			_colorTint.set(value)
-			invalidate(ValidationFlags.COLOR_TRANSFORM)
 		}
 
 	override var alpha: Float
@@ -830,35 +821,18 @@ open class UiComponentImpl(
 
 	override fun colorTint(r: Float, g: Float, b: Float, a: Float) {
 		_colorTint.set(r, g, b, a)
-		invalidate(ValidationFlags.COLOR_TRANSFORM)
 	}
 
 	/**
 	 * The color multiplier of this component and all ancestor color tints multiplied together.
-	 * Do not set this directly, it will be overwritten on a [ValidationFlags.CONCATENATED_COLOR_TRANSFORM] validation.
-	 * Retrieving this value validates [ValidationFlags.CONCATENATED_COLOR_TRANSFORM]
 	 */
 	override val concatenatedColorTint: ColorRo
 		get() {
-			validate(ValidationFlags.CONCATENATED_COLOR_TRANSFORM)
+			_concatenatedColorTint.set(_colorTint)
+			val parent = parent
+			if (parent != null) _concatenatedColorTint.mul(parent.concatenatedColorTint)
 			return _concatenatedColorTint
 		}
-
-	/**
-	 * Concatenates the color transform.
-	 * Do not call this directly, use `validate(ValidationFlags.CONCATENATED_COLOR_TRANSFORM)`
-	 */
-	protected open fun updateColorTransform() {
-	}
-
-	protected open fun updateConcatenatedColorTransform() {
-		val p = parent
-		if (p == null) {
-			_concatenatedColorTint.set(_colorTint)
-		} else {
-			_concatenatedColorTint.set(p.concatenatedColorTint).mul(_colorTint)
-		}
-	}
 
 	protected open fun updateInheritedInteractivityMode() {
 		_inheritedInteractivityMode = _interactivityMode

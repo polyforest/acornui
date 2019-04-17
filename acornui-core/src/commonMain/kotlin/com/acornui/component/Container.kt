@@ -343,7 +343,6 @@ open class ContainerImpl(
 
 		var defaultCascadingFlags = ValidationFlags.HIERARCHY_DESCENDING or
 				ValidationFlags.STYLES or
-				ValidationFlags.CONCATENATED_COLOR_TRANSFORM or
 				ValidationFlags.CONCATENATED_TRANSFORM or
 				ValidationFlags.INTERACTIVITY_MODE or
 				ValidationFlags.CAMERA or

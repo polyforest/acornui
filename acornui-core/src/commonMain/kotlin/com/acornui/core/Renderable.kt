@@ -2,9 +2,7 @@ package com.acornui.core
 
 import com.acornui.component.canvasToLocal
 import com.acornui.component.localToCanvas
-import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
-import com.acornui.math.Matrix4
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.MinMax
 import com.acornui.math.MinMaxRo
@@ -28,10 +26,14 @@ interface Renderable {
 	 * @param clip The visible region (in viewport coordinates.) If you wish to render a component with a no
 	 * clipping, you may use [MinMaxRo.POSITIVE_INFINITY]. This is used in order to potentially avoid drawing things
 	 * the user cannot see. (Due to the screen size, stencil buffers, or scissors)
+	 *
+	 * @param transform The world transformation to use for drawing the target.
+	 *
+	 * @param tint The final tint to use for vertices.
 	 */
 	fun render(
-			clip: MinMaxRo = MinMaxRo.POSITIVE_INFINITY,
-			transform: Matrix4Ro = Matrix4.IDENTITY,
-			tint: ColorRo = Color.WHITE
+			clip: MinMaxRo,
+			transform: Matrix4Ro,
+			tint: ColorRo
 	)
 }

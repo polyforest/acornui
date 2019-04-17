@@ -27,9 +27,6 @@ interface ColorTransformableRo {
 
 	/**
 	 * The color multiplier of this component and all ancestor color tints multiplied together.
-	 * Do not set this directly, it will be overwritten on a [ValidationFlags.CONCATENATED_COLOR_TRANSFORM] validation.
-	 * Retrieving this value validates [ValidationFlags.CONCATENATED_COLOR_TRANSFORM]
-	 * @see colorTint
 	 */
 	val concatenatedColorTint: ColorRo
 
