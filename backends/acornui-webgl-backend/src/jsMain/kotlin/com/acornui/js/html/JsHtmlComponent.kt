@@ -216,7 +216,9 @@ class DomComponent(
 	}
 
 	fun setConcatenatedColorTint(value: ColorRo) {
-		element.style.opacity = value.a.toString()
+		val str = value.a.toString()
+		if (element.style.opacity != str)
+			element.style.opacity = str
 	}
 }
 

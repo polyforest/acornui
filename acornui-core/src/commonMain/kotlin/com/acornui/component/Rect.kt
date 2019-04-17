@@ -462,8 +462,6 @@ class Rect(
 
 	}
 
-	private val colorTmp = Color()
-
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		val margin = style.margin
 		val w = margin.reduceWidth2(_bounds.width)
@@ -551,13 +549,13 @@ class Rect(
 				complexModeObj.apply {
 					StencilUtil.mask(glState.batch, gl, {
 						if (fillC.visible)
-							fillC.render(clip, transform, colorTmp.set(tint).mul(fillC.colorTint))
+							fillC.renderConcat(clip, transform, tint)
 					}) {
 						if (gradientC.visible)
-							gradientC.render(clip, transform, colorTmp.set(tint).mul(gradientC.colorTint))
+							gradientC.renderConcat(clip, transform, tint)
 					}
 					if (strokeC.visible)
-						strokeC.render(clip, transform, colorTmp.set(tint).mul(strokeC.colorTint))
+						strokeC.renderConcat(clip, transform, tint)
 				}
 			} else {
 				super.draw(clip, transform, tint)

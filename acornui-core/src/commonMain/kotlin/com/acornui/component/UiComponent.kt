@@ -403,6 +403,7 @@ open class UiComponentImpl(
 				addNode(INTERACTIVITY_MODE, ::updateInheritedInteractivityMode)
 				addNode(CAMERA, ::updateCamera)
 				addNode(VIEWPORT, ::updateViewport)
+				addNode(BITMAP_CACHE) {}
 			}
 		}
 
@@ -583,7 +584,7 @@ open class UiComponentImpl(
 		}
 	}
 
-	final override val renderFilters = own(RenderFilterList(innerRenderable).apply { changed.add { window.requestRender() } })
+	final override val renderFilters = own(RenderFilterList(innerRenderable).apply { changed.add { invalidate(ValidationFlags.BITMAP_CACHE) } })
 
 	override val isRendered: Boolean
 		get() {
@@ -806,7 +807,7 @@ open class UiComponentImpl(
 		}
 		set(value) {
 			if (_colorTint == value) return
-			_colorTint.set(value)
+			colorTint(value.r, value.g, value.b, value.a)
 		}
 
 	override var alpha: Float
@@ -821,6 +822,7 @@ open class UiComponentImpl(
 
 	override fun colorTint(r: Float, g: Float, b: Float, a: Float) {
 		_colorTint.set(r, g, b, a)
+		window.requestRender()
 	}
 
 	/**
@@ -1220,7 +1222,11 @@ open class UiComponentImpl(
 		val flagsInvalidated: Int = validation.invalidate(flags)
 
 		if (flagsInvalidated != 0) {
-			window.requestRender()
+			if (renderFilters.isNotEmpty() && flags and BITMAP_CACHE_INVALIDATING_FLAGS > 0) {
+				for (i in 0..renderFilters.lastIndex) {
+					renderFilters[i].invalidateBitmapCache()
+				}
+			}
 			onInvalidated(flagsInvalidated)
 			_invalidated.dispatch(this, flagsInvalidated)
 		}
@@ -1348,6 +1354,14 @@ open class UiComponentImpl(
 
 	companion object {
 		private val quat: Quaternion = Quaternion()
+
+		private const val BITMAP_CACHE_INVALIDATING_FLAGS = (
+				ValidationFlags.HIERARCHY_DESCENDING or
+						ValidationFlags.TRANSFORM or
+						ValidationFlags.CONCATENATED_TRANSFORM or
+						ValidationFlags.INTERACTIVITY_MODE or
+						ValidationFlags.CAMERA or
+						ValidationFlags.VIEWPORT).inv()
 	}
 }
 

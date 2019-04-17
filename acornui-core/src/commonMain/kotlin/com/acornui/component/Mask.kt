@@ -92,7 +92,7 @@ fun UiComponentRo.scissorLocal(x: Float, y: Float, width: Float, height: Float, 
 
 	val glState = inject(GlState)
 	val intR = IntRectangle.obtain()
-	glState.getViewport(intR)
+	intR.set(glState.viewport)
 	glState.useScissor(
 			minOf(sX1, sX2).roundToInt(),
 			(intR.height - maxOf(sY1, sY2)).roundToInt(),

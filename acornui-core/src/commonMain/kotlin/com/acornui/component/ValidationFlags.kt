@@ -53,10 +53,11 @@ object ValidationFlags {
 	const val CAMERA: Int = 1 shl 10
 	const val VIEWPORT: Int = 1 shl 11
 
-	const val RESERVED_1: Int = 1 shl 12
-	const val RESERVED_2: Int = 1 shl 13
-	const val RESERVED_3: Int = 1 shl 14
-	const val RESERVED_4: Int = 1 shl 15
+	const val BITMAP_CACHE: Int = 1 shl 12
+
+	const val RESERVED_1: Int = 1 shl 13
+	const val RESERVED_2: Int = 1 shl 14
+	const val RESERVED_3: Int = 1 shl 15
 
 	/**
 	 * Prints out the name of the flag for reserved flags, or the power of two for non-reserved flags.
@@ -75,10 +76,12 @@ object ValidationFlags {
 		INTERACTIVITY_MODE -> "INTERACTIVITY_MODE"
 		CAMERA -> "CAMERA"
 		VIEWPORT -> "VIEWPORT"
+
+		BITMAP_CACHE -> "BITMAP_CACHE"
+
 		RESERVED_1 -> "RESERVED_1"
 		RESERVED_2 -> "RESERVED_2"
 		RESERVED_3 -> "RESERVED_3"
-		RESERVED_4 -> "RESERVED_4"
 		else -> log2(flag.toDouble()).toInt().toString()
 	}
 }

@@ -234,20 +234,25 @@ open class ContainerImpl(
 		}
 	}
 
-	private val childConcatenatedColorTransform = Color()
-	private val childConcatenatedTransform = Matrix4()
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		// The children list shouldn't be modified during a draw, so no reason to do a safe iteration here.
 		for (i in 0.._children.lastIndex) {
 			val child = _children[i]
 			if (child.visible) {
-				childConcatenatedColorTransform.set(tint).mul(child.colorTint)
-				childConcatenatedTransform.set(transform).mul(child.transform)
-				child.render(clip, childConcatenatedTransform, childConcatenatedColorTransform)
+				child.renderConcat(clip, transform, tint)
 			}
 		}
 	}
+
+	private val childConcatenatedTransform = Matrix4()
+	private val childConcatenatedColorTransform = Color()
+
+	protected fun UiComponentRo.renderConcat(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) =
+			render(clip,
+					if (transform === this@ContainerImpl.concatenatedTransform) concatenatedTransform else childConcatenatedTransform.set(transform).mul(this.transform),
+					childConcatenatedColorTransform.set(tint).mul(this.colorTint)
+			)
 
 	//-----------------------------------------------------
 	// Interactivity utility methods
@@ -310,10 +315,7 @@ open class ContainerImpl(
 				invalidateSize()
 			}
 		}
-		val bubblingFlags = flagsInvalidated and bubblingFlags
-		if (bubblingFlags > 0) {
-			invalidate(bubblingFlags)
-		}
+		invalidate(flagsInvalidated and bubblingFlags or ValidationFlags.BITMAP_CACHE)
 	}
 
 	protected open fun childDisposedHandler(child: UiComponent) {

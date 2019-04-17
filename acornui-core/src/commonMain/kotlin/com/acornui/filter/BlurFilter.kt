@@ -57,7 +57,8 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	}
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		drawToPingPongBuffers(clip)
+		if (!bitmapCacheIsValid)
+			drawToPingPongBuffers(clip)
 		drawBlurToScreen(clip, transform, tint)
 	}
 
@@ -103,7 +104,7 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	}
 
 	fun drawBlurToScreen(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		glState.getViewport(viewport)
+		viewport.set(glState.viewport)
 		mvp.idt().scl(2f / viewport.width, -2f / viewport.height, 1f).trn(-1f, 1f, 0f) // Projection transform
 		val region = framebufferUtil.drawRegion
 		mvp.mul(transform).translate(region.xMin, region.yMin, 0f) // Model transform

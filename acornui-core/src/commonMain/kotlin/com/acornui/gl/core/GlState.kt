@@ -89,11 +89,12 @@ interface GlState {
 	fun blendMode(blendMode: BlendMode, premultipliedAlpha: Boolean)
 
 	/**
-	 * Gets the current scissor rectangle.
-	 * @param out Sets this rectangle to the current scissor rect.
-	 * @return Returns the [out] parameter.
+	 * The current scissor rectangle.
 	 */
-	fun getScissor(out: IntRectangle): IntRectangle
+	val scissor: IntRectangleRo
+
+	@Deprecated("use out.set(scissor)", ReplaceWith("out.set(scissor)"))
+	fun getScissor(out: IntRectangle): IntRectangle = out.set(scissor)
 
 	fun setScissor(x: Int, y: Int, width: Int, height: Int)
 
@@ -108,13 +109,21 @@ interface GlState {
 	fun setCamera(camera: CameraRo, model: Matrix4Ro = Matrix4.IDENTITY)
 
 	/**
+	 * The current viewport rectangle, in gl window coordinates.
+	 * (0,0 is bottom left, width, height includes dpi scaling)
+	 * This is not to be confused with UiComponent.viewport, which is in canvas coordinates.
+	 */
+	val viewport: IntRectangleRo
+
+	/**
 	 * Gets the current viewport in gl window coordinates. (0,0 is bottom left, width, height includes dpi scaling)
 	 * This is not to be confused with UiComponent.viewport, which is in canvas coordinates.
 	 *
 	 * @param out Sets this rectangle to the current viewport.
 	 * @return Returns the [out] parameter.
 	 */
-	fun getViewport(out: IntRectangle): IntRectangle
+	@Deprecated("use out.set(viewport)", ReplaceWith("out.set(viewport)"))
+	fun getViewport(out: IntRectangle): IntRectangle = out.set(viewport)
 
 	/**
 	 * @see Gl20.viewport
@@ -277,9 +286,7 @@ class GlStateImpl(
 
 	private var _viewport = IntRectangle()
 
-	override fun getViewport(out: IntRectangle): IntRectangle {
-		return out.set(_viewport)
-	}
+	override val viewport: IntRectangleRo = _viewport
 
 	override fun setViewport(x: Int, y: Int, width: Int, height: Int) {
 		if (_viewport.x == x && _viewport.y == y && _viewport.width == width && _viewport.height == height) return
@@ -312,10 +319,7 @@ class GlStateImpl(
 	}
 
 	private val _scissor = IntRectangle()
-
-	override fun getScissor(out: IntRectangle): IntRectangle {
-		return out.set(_scissor)
-	}
+	override val scissor: IntRectangleRo = _scissor
 
 	override fun setScissor(x: Int, y: Int, width: Int, height: Int) {
 		if (_scissor.x != x || _scissor.y != y || _scissor.width != width || _scissor.height != height) {
@@ -461,7 +465,7 @@ private class ColorCache(
  * @see Gl20.setScissor
  */
 inline fun GlState.useScissor(x: Int, y: Int, width: Int, height: Int, inner: () -> Unit) {
-	val oldScissor = getScissor(IntRectangle.obtain())
+	val oldScissor = IntRectangle.obtain().set(scissor)
 	val oldEnabled = scissorEnabled
 	scissorEnabled = true
 	setScissor(x, y, width, height)
@@ -477,7 +481,7 @@ inline fun GlState.useScissor(x: Int, y: Int, width: Int, height: Int, inner: ()
  * @see Gl20.viewport
  */
 inline fun GlState.useViewport(x: Int, y: Int, width: Int, height: Int, inner: () -> Unit) {
-	val oldViewport = getViewport(IntRectangle.obtain())
+	val oldViewport = IntRectangle.obtain().set(viewport)
 	setViewport(x, y, width, height)
 	inner()
 	setViewport(oldViewport)

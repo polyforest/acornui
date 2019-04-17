@@ -42,6 +42,11 @@ interface RenderFilter : Renderable, Observable {
 	 */
 	var contents: Renderable?
 
+	/**
+	 * Marks any bitmap caches (if there are any) as invalid and need to be redrawn.
+	 */
+	fun invalidateBitmapCache()
+
 }
 
 /**
@@ -51,6 +56,9 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 
 	private val _changed = Signal1<Observable>()
 	override val changed = _changed.asRo()
+
+	protected var bitmapCacheIsValid = false
+		private set
 
 	var enabled: Boolean by bindable(true)
 
@@ -62,6 +70,10 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 
 	override var contents: Renderable? = null
 
+	override fun invalidateBitmapCache() {
+		bitmapCacheIsValid = false
+	}
+
 	override fun drawRegion(out: MinMax): MinMax = contents!!.drawRegion(out)
 
 	protected fun <T> bindable(initial: T): ReadWriteProperty<Any?, T> = observable(initial) {
@@ -71,6 +83,7 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 	final override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		if (shouldSkipFilter) contents?.render(clip, transform, tint)
 		else draw(clip, transform, tint)
+		bitmapCacheIsValid = true
 	}
 
 	abstract fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo)
@@ -96,12 +109,12 @@ class RenderFilterList(
 		val element = _list.removeAt(index)
 		element.contents = null
 		_list.getOrNull(index - 1)?.contents = _list.getOrNull(index) ?: tail
-		element.changed.remove(::notifyChanged.as1)
+		element.changed.remove(::changedHandler.as1)
 		_changed.dispatch(this)
 		return element
 	}
 
-	private fun notifyChanged() {
+	private fun changedHandler() {
 		_changed.dispatch(this)
 	}
 
@@ -119,7 +132,7 @@ class RenderFilterList(
 		_list.add(index, element)
 		element.contents = _list.getOrNull(index + 1) ?: tail
 		_list.getOrNull(index - 1)?.contents = element
-		element.changed.add(::notifyChanged.as1)
+		element.changed.add(::changedHandler.as1)
 		_changed.dispatch(this)
 	}
 
@@ -134,8 +147,8 @@ class RenderFilterList(
 		_list[index] = element
 		_list.getOrNull(index - 1)?.contents = element
 		element.contents = _list.getOrNull(index + 1) ?: tail
-		old.changed.remove(::notifyChanged.as1)
-		element.changed.add(::notifyChanged.as1)
+		old.changed.remove(::changedHandler.as1)
+		element.changed.add(::changedHandler.as1)
 		_changed.dispatch(this)
 		return old
 	}

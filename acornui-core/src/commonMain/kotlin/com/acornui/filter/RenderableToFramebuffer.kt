@@ -54,7 +54,7 @@ class RenderableToFramebuffer(
 
 		framebuffer.setSize(region.width, region.height)
 
-		glState.getViewport(viewport)
+		viewport.set(glState.viewport)
 		framebuffer.begin()
 		glState.setViewport(-region.xMin.toInt(), region.yMin.toInt() - viewport.height + framebuffer.texture.height, viewport.width, viewport.height)
 		if (clearMask != 0)
@@ -69,7 +69,7 @@ class RenderableToFramebuffer(
 	}
 
 	fun drawToScreen(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		glState.getViewport(viewport)
+		viewport.set(glState.viewport)
 		mvp.idt().scl(2f / viewport.width, -2f / viewport.height, 1f).trn(-1f, 1f, 0f) // Projection transform
 		val region = drawRegion
 		mvp.mul(transform).translate(region.xMin, region.yMin, 0f) // Model transform

@@ -158,7 +158,7 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		glState.getFramebuffer(framebufferInfo)
-		glState.getViewport(oldGlViewport)
+		oldGlViewport.set(glState.viewport)
 		framebufferInfo.glViewport(glState, viewport)
 		super.draw(_clip, transform, tint)
 		glState.setViewport(oldGlViewport)

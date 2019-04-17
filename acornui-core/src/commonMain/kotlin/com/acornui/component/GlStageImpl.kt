@@ -50,9 +50,12 @@ open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(
 		newWidth: Float, newHeight: Float, isUserInteraction: Boolean ->
 		val w = (newWidth * window.scaleX).roundToInt()
 		val h = (newHeight * window.scaleY).roundToInt()
-		glState.setViewport(0, 0, w, h)
-		glState.setFramebuffer(null, w, h, window.scaleX, window.scaleY)
-		invalidate(ValidationFlags.LAYOUT or ValidationFlags.VIEWPORT)
+		val viewport = glState.viewport
+		if (w != viewport.width || h != viewport.height) {
+			glState.setViewport(0, 0, w, h)
+			glState.setFramebuffer(null, w, h, window.scaleX, window.scaleY)
+			invalidate(ValidationFlags.LAYOUT or ValidationFlags.VIEWPORT)
+		}
 	}
 
 	override fun updateViewport() {
@@ -63,6 +66,13 @@ open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(
 		window.sizeChanged.add(windowResizedHandler)
 		windowResizedHandler(window.width, window.height, false)
 		super.onActivated()
+	}
+
+	override fun invalidate(flags: Int): Int {
+		val flagsInvalidated = super.invalidate(flags)
+		if (flagsInvalidated != 0)
+			window.requestRender()
+		return flagsInvalidated
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
