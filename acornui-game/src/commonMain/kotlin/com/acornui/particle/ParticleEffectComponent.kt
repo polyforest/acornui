@@ -36,6 +36,7 @@ import com.acornui.core.serialization.loadBinary
 import com.acornui.core.time.onTick
 import com.acornui.gl.core.GlState
 import com.acornui.graphic.ColorRo
+import com.acornui.math.Matrix4Ro
 import com.acornui.math.MinMaxRo
 
 class ParticleEffectComponent(
@@ -107,7 +108,7 @@ class ParticleEffectComponent(
 	val effectInstance: ParticleEffectInstance?
 		get() = _effect?.effectInstance
 
-	override fun draw(clip: MinMaxRo) {
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		val effect = _effect ?: return
 		glState.setCamera(camera, concatenatedTransform)
 		effect.render(concatenatedColorTint)

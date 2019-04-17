@@ -9,8 +9,10 @@ import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.component.text.collection.JoinedList
 import com.acornui.core.di.Owned
 import com.acornui.core.selection.SelectionRange
+import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.offsetRound
+import com.acornui.math.Matrix4Ro
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Vector3
 import kotlin.math.ceil
@@ -54,8 +56,8 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 
 	init {
 		validation.addNode(TEXT_ELEMENTS, dependencies = ValidationFlags.HIERARCHY_ASCENDING, dependents = ValidationFlags.LAYOUT, onValidate = _textElements::dirty)
-		validation.addNode(VERTICES, dependencies = TEXT_ELEMENTS or ValidationFlags.LAYOUT or ValidationFlags.STYLES or ValidationFlags.CONCATENATED_TRANSFORM, dependents = 0, onValidate = ::updateVertices)
-		validation.addNode(CHAR_STYLE, dependencies = TEXT_ELEMENTS or ValidationFlags.CONCATENATED_COLOR_TRANSFORM or ValidationFlags.STYLES, dependents = 0, onValidate = ::updateCharStyle)
+		validation.addNode(VERTICES, dependencies = TEXT_ELEMENTS or ValidationFlags.LAYOUT or ValidationFlags.STYLES, dependents = 0, onValidate = ::updateVertices)
+		validation.addNode(CHAR_STYLE, dependencies = TEXT_ELEMENTS or ValidationFlags.STYLES, dependents = 0, onValidate = ::updateCharStyle)
 	}
 
 	override val lines: List<LineInfoRo>
@@ -291,7 +293,7 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 		val rightClip = w - padding.right
 		val bottomClip = h - padding.bottom
 		for (i in 0..textElements.lastIndex) {
-			textElements[i].validateVertices(concatenatedTransform, leftClip, topClip, rightClip, bottomClip)
+			textElements[i].validateVertices(leftClip, topClip, rightClip, bottomClip)
 		}
 	}
 
@@ -305,10 +307,6 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 	}
 
 	private fun updateCharStyle() {
-		val concatenatedColorTint = concatenatedColorTint
-		for (i in 0.._elements.lastIndex) {
-			_elements[i].validateCharStyle(concatenatedColorTint)
-		}
 		val textElements = _textElements
 		for (i in 0..textElements.lastIndex) {
 			val selected = selection.indexOfFirst2 { it.contains(i + selectionRangeStart) } != -1
@@ -328,8 +326,8 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 	private val tL = Vector3()
 	private val tR = Vector3()
 
-	override fun render(clip: MinMaxRo) {
-		if (_lines.isEmpty())
+	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		if (_lines.isEmpty() || tint.a <= 0f)
 			return
 		val textElements = _textElements
 		localToCanvas(tL.set(0f, 0f, 0f))
@@ -354,13 +352,13 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 			for (i in lineStart..lineEnd - 1) {
 				val line = _lines[i]
 				for (j in line.startIndex..line.endIndex - 1) {
-					textElements[j].render(glState)
+					textElements[j].render(clip, transform, tint)
 				}
 			}
 		} else {
 			glState.setCamera(camera)
 			for (i in 0..textElements.lastIndex) {
-				textElements[i].render(glState)
+				textElements[i].render(clip, transform, tint)
 			}
 		}
 	}

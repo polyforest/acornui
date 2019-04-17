@@ -21,6 +21,7 @@ import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
 import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 
 interface ScrollRect : ElementContainer<UiComponent> {
@@ -91,16 +92,16 @@ class ScrollRectImpl(
 
 	private val contentsClip = MinMax()
 
-	override fun draw(clip: MinMaxRo) {
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		StencilUtil.mask(glState.batch, gl, {
 			if (maskClip.visible) {
-				maskClip.render(clip)
+				maskClip.render(clip, maskClip.concatenatedTransform, maskClip.concatenatedColorTint)
 			}
 		}) {
 			localToCanvas(contentsClip.set(0f, 0f, _bounds.width, _bounds.height))
 			contentsClip.intersection(clip)
 
-			contents.render(contentsClip)
+			contents.render(contentsClip, contents.concatenatedTransform, contents.concatenatedColorTint)
 		}
 	}
 }

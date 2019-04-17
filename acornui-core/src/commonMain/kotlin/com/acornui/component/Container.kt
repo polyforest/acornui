@@ -23,9 +23,9 @@ import com.acornui.core.ParentRo
 import com.acornui.core.di.Owned
 import com.acornui.core.focus.invalidateFocusOrderDeep
 import com.acornui.core.graphic.getPickRay
-import com.acornui.math.MinMaxRo
-import com.acornui.math.Ray
-import com.acornui.math.RayRo
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
+import com.acornui.math.*
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 
@@ -234,12 +234,18 @@ open class ContainerImpl(
 		}
 	}
 
-	override fun draw(clip: MinMaxRo) {
+	private val childConcatenatedColorTransform = Color()
+	private val childConcatenatedTransform = Matrix4()
+
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		// The children list shouldn't be modified during a draw, so no reason to do a safe iteration here.
 		for (i in 0.._children.lastIndex) {
 			val child = _children[i]
-			if (child.visible)
-				child.render(clip)
+			if (child.visible) {
+				childConcatenatedColorTransform.set(tint).mul(child.colorTint)
+				childConcatenatedTransform.set(transform).mul(child.transform)
+				child.render(clip, childConcatenatedTransform, childConcatenatedColorTransform)
+			}
 		}
 	}
 

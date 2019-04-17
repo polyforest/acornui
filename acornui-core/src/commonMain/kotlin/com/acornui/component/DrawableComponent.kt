@@ -17,7 +17,9 @@
 package com.acornui.component
 
 import com.acornui.core.di.Owned
+import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
+import com.acornui.math.Matrix4Ro
 import com.acornui.math.MinMaxRo
 
 /**
@@ -30,7 +32,7 @@ abstract class DrawableComponent(
 	protected abstract val drawable: BasicDrawable?
 
 	init {
-		validation.addNode(VERTICES, ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM or ValidationFlags.CONCATENATED_TRANSFORM) { updateVertices() }
+		validation.addNode(VERTICES, ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM) { updateVertices() }
 	}
 
 	fun invalidateVertices() {
@@ -43,13 +45,13 @@ abstract class DrawableComponent(
 	}
 
 	protected open fun updateVertices() {
-		drawable?.updateWorldVertices(concatenatedTransform, width, height)
+		drawable?.updateVertices(width, height)
 	}
 
-	override fun draw(clip: MinMaxRo) {
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		val drawable = drawable ?: return
 		glState.setCamera(camera)
-		drawable.render(concatenatedColorTint)
+		drawable.render(clip, transform, tint)
 	}
 
 	companion object {

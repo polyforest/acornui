@@ -25,13 +25,13 @@ class ValidationGraphTest {
 	@Before fun before() {
 		assertionsEnabled = true
 		n = validationGraph {
-			addNode(ONE, {})
-			addNode(TWO, ONE, {})
-			addNode(THREE, TWO, {})
-			addNode(FOUR, THREE, {})
-			addNode(FIVE, TWO, {})
-			addNode(SIX, FIVE, {})
-			addNode(SEVEN, TWO, {})
+			addNode(ONE) {}
+			addNode(TWO, ONE) {}
+			addNode(THREE, TWO) {}
+			addNode(FOUR, THREE) {}
+			addNode(FIVE, TWO) {}
+			addNode(SIX, FIVE) {}
+			addNode(SEVEN, TWO) {}
 		}
 	}
 
@@ -114,45 +114,45 @@ class ValidationGraphTest {
 
 	@Test fun dependencyAssertion() {
 		assertFailsWith(Exception::class) {
-			n.addNode(EIGHT, NINE, {})
+			n.addNode(EIGHT, NINE) {}
 		}
 	}
 
 	@Test fun powerOfTwoAssertion() {
 		assertFailsWith(IllegalArgumentException::class) {
-			n.addNode(3, {})
+			n.addNode(3) {}
 		}
 	}
 
 	@Test fun textComponentsBug() {
 		val validation = validationGraph {
 			ValidationFlags.apply {
-				addNode(STYLES, {})
-				addNode(PROPERTIES, STYLES, {})
-				addNode(SIZE_CONSTRAINTS, PROPERTIES, {})
-				addNode(LAYOUT, PROPERTIES or SIZE_CONSTRAINTS, {})
-				addNode(TRANSFORM, {})
-				addNode(CONCATENATED_TRANSFORM, TRANSFORM, {})
-				addNode(COLOR_TRANSFORM, {})
-				addNode(CONCATENATED_COLOR_TRANSFORM, COLOR_TRANSFORM, {})
-				addNode(INTERACTIVITY_MODE, {})
-				addNode(HIERARCHY_ASCENDING, PROPERTIES, {})
-				addNode(HIERARCHY_DESCENDING, PROPERTIES, {})
+				addNode(STYLES) {}
+				addNode(PROPERTIES, STYLES) {}
+				addNode(SIZE_CONSTRAINTS, PROPERTIES) {}
+				addNode(LAYOUT, PROPERTIES or SIZE_CONSTRAINTS) {}
+				addNode(TRANSFORM) {}
+				addNode(CONCATENATED_TRANSFORM, TRANSFORM) {}
+				addNode(COLOR_TRANSFORM) {}
+				addNode(CONCATENATED_COLOR_TRANSFORM, COLOR_TRANSFORM) {}
+				addNode(INTERACTIVITY_MODE) {}
+				addNode(HIERARCHY_ASCENDING, PROPERTIES) {}
+				addNode(HIERARCHY_DESCENDING, PROPERTIES) {}
 			}
 		}
 
-		validation.addNode(ValidationFlags.RESERVED_1, 0, ValidationFlags.STYLES or ValidationFlags.LAYOUT, {})
+		validation.addNode(1 shl 16, 0, ValidationFlags.STYLES or ValidationFlags.LAYOUT) {}
 
 		validation.validate()
 
-		validation.invalidate(ValidationFlags.RESERVED_1)
+		validation.invalidate(1 shl 16)
 		assertFalse(validation.isValid(ValidationFlags.STYLES))
 	}
 
 	@Test fun dependenciesCanBeValidated() {
 		val t = validationGraph {
-			addNode(ONE, { validate(TWO) })
-			addNode(TWO, 0, ONE, {})
+			addNode(ONE) { validate(TWO) }
+			addNode(TWO, 0, ONE) {}
 		}
 		t.validate()
 	}

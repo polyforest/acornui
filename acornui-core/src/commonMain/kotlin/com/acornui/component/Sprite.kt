@@ -23,10 +23,7 @@ import com.acornui.gl.core.putCcwQuadIndices
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putVertex
 import com.acornui.graphic.ColorRo
-import com.acornui.math.IntRectangleRo
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.RectangleRo
-import com.acornui.math.Vector3
+import com.acornui.math.*
 import com.acornui.recycle.Clearable
 import kotlin.math.abs
 import kotlin.math.cos
@@ -69,7 +66,8 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 	 */
 	private var isUv: Boolean = true
 
-	private val normal = Vector3()
+	private val normalLocal = Vector3()
+	private val normalWorld = Vector3()
 
 	fun setUv(u: Float, v: Float, u2: Float, v2: Float, isRotated: Boolean) {
 		region[0] = u
@@ -114,7 +112,7 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 	/**
 	 * When the transform or the layout needs validation, update the 4 vertices of this texture.
 	 */
-	private val vertexPoints: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
+	private val pointsLocal: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
 
 	override val naturalWidth: Float
 		get() {
@@ -155,15 +153,6 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 	private var width: Float = 0f
 	private var height: Float = 0f
 
-	override fun updateWorldVertices(worldTransform: Matrix4Ro, width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
-		updateVertices(width, height, x, y, z, rotation, originX, originY)
-		worldTransform.prj(vertexPoints[0])
-		worldTransform.prj(vertexPoints[1])
-		worldTransform.prj(vertexPoints[2])
-		worldTransform.prj(vertexPoints[3])
-		worldTransform.rot(normal).nor()
-	}
-
 	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
 		this.width = width
 		this.height = height
@@ -173,10 +162,10 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 			val aY = y - originY
 			val bX = x + width - originX
 			val bY = y + height - originY
-			vertexPoints[0].set(aX, aY, z)
-			vertexPoints[1].set(bX, aY, z)
-			vertexPoints[2].set(bX, bY, z)
-			vertexPoints[3].set(aX, bY, z)
+			pointsLocal[0].set(aX, aY, z)
+			pointsLocal[1].set(bX, aY, z)
+			pointsLocal[2].set(bX, bY, z)
+			pointsLocal[3].set(aX, bY, z)
 		} else {
 			// (cos x - sin y, sin x + cos y)
 
@@ -185,19 +174,24 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 
 			var x1: Float = -originX
 			var y1: Float = -originY
-			vertexPoints[0].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
+			pointsLocal[0].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
 			x1 = -originX + width
-			vertexPoints[1].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
+			pointsLocal[1].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
 			y1 = -originY + height
-			vertexPoints[2].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
+			pointsLocal[2].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
 			x1 = -originX
-			vertexPoints[3].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
+			pointsLocal[3].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
 		}
-		normal.set(if (useAsBackFace) Vector3.Z else Vector3.NEG_Z)
+		normalLocal.set(if (useAsBackFace) Vector3.Z else Vector3.NEG_Z)
 	}
 
-	override fun render(colorTint: ColorRo) {
-		if (texture == null || colorTint.a <= 0f || width == 0f || height == 0f) return // Nothing to draw
+	private val tmpVec = Vector3()
+
+	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		if (texture == null || tint.a <= 0f || width == 0f || height == 0f) return // Nothing to draw
+		val tmpVec =  tmpVec
+		transform.rot(normalWorld.set(normalLocal)).nor()
+
 		val batch = glState.batch
 		glState.setTexture(texture)
 		glState.blendMode(blendMode, premultipliedAlpha)
@@ -205,22 +199,22 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 
 		if (isRotated) {
 			// Top left
-			batch.putVertex(vertexPoints[0], normal, colorTint, u2, v)
+			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[0])), normalWorld, tint, u2, v)
 			// Top right
-			batch.putVertex(vertexPoints[1], normal, colorTint, u2, v2)
+			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[1])), normalWorld, tint, u2, v2)
 			// Bottom right
-			batch.putVertex(vertexPoints[2], normal, colorTint, u, v2)
+			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[2])), normalWorld, tint, u, v2)
 			// Bottom left
-			batch.putVertex(vertexPoints[3], normal, colorTint, u, v)
+			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[3])), normalWorld, tint, u, v)
 		} else {
 			// Top left
-			batch.putVertex(vertexPoints[0], normal, colorTint, u, v)
+			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[0])), normalWorld, tint, u, v)
 			// Top right
-			batch.putVertex(vertexPoints[1], normal, colorTint, u2, v)
+			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[1])), normalWorld, tint, u2, v)
 			// Bottom right
-			batch.putVertex(vertexPoints[2], normal, colorTint, u2, v2)
+			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[2])), normalWorld, tint, u2, v2)
 			// Bottom left
-			batch.putVertex(vertexPoints[3], normal, colorTint, u, v2)
+			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[3])), normalWorld, tint, u, v2)
 		}
 		if (useAsBackFace) batch.putCcwQuadIndices()
 		else batch.putQuadIndices()

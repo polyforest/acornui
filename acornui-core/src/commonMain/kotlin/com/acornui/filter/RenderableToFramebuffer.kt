@@ -1,5 +1,6 @@
 package com.acornui.filter
 
+import com.acornui.component.Sprite
 import com.acornui.core.AppConfig
 import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
@@ -24,11 +25,6 @@ class RenderableToFramebuffer(
 		hasStencil: Boolean = owner.inject(AppConfig).gl.stencil
 ) : OwnedImpl(owner) {
 
-	/**
-	 * The color tint for the rendering of the frame buffer.
-	 */
-	var colorTint: ColorRo = Color.WHITE
-
 	var clearMask = Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT
 	var clearColor = Color.CLEAR
 	var blendMode = BlendMode.NORMAL
@@ -41,23 +37,16 @@ class RenderableToFramebuffer(
 	val texture: Texture
 		get() = framebuffer.texture
 
-	private val _canvasRegion = MinMax()
-
-	/**
-	 * The region (in canvas coordinates) where the contents have been drawn, using [drawToFramebuffer].
-	 *
-	 * Note: This will include the padding provided to [drawToFramebuffer].
-	 */
-	val canvasRegion: MinMaxRo = _canvasRegion
+	private val _drawRegion = MinMax()
+	val drawRegion: MinMaxRo = _drawRegion
 
 	private val viewport = IntRectangle()
-
-	private var u: Float = 0f
-	private var v: Float = 0f
+	private val sprite = Sprite(glState)
+	private val mvp = Matrix4()
 
 	fun drawToFramebuffer(clip: MinMaxRo, contents: Renderable, padding: PadRo = Pad.EMPTY_PAD) {
-		val region = _canvasRegion
-		contents.canvasDrawRegion(region).inflate(padding)
+		val region = _drawRegion
+		contents.drawRegion(region).inflate(padding)
 		region.xMin = floor(region.xMin)
 		region.yMin = floor(region.yMin)
 		region.xMax = ceil(region.xMax)
@@ -71,41 +60,23 @@ class RenderableToFramebuffer(
 		if (clearMask != 0)
 			clearAndReset(clearColor, clearMask)
 
-		contents.render(clip)
+		contents.render(clip, Matrix4.IDENTITY, Color.WHITE)
 
 		framebuffer.end()
-		val texture = framebuffer.texture
-		u = region.width / texture.width
-		v = 1f - (region.height / texture.height)
+		framebuffer.sprite(sprite)
+		sprite.setUv(sprite.u, 1f - sprite.v, sprite.u2, 1f - sprite.v2, isRotated = false)
+		glState.setViewport(viewport)
 	}
 
-	fun drawToScreen(canvasX: Float = canvasRegion.xMin, canvasY: Float = canvasRegion.yMin) {
+	fun drawToScreen(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		glState.getViewport(viewport)
-		val texture = framebuffer.texture
-		val batch = glState.batch
-		batch.begin()
-		glState.viewProjection = Matrix4.IDENTITY
+		mvp.idt().scl(2f / viewport.width, -2f / viewport.height, 1f).trn(-1f, 1f, 0f) // Projection transform
+		val region = drawRegion
+		mvp.mul(transform).translate(region.xMin, region.yMin, 0f) // Model transform
+
+		glState.viewProjection = mvp
 		glState.model = Matrix4.IDENTITY
-		glState.setTexture(texture)
-		glState.blendMode(blendMode, premultipliedAlpha)
-
-		val w = _canvasRegion.width
-		val h = _canvasRegion.height
-
-		val x1 = canvasX / viewport.width * 2f - 1f
-		val x2 = (canvasX + w) / viewport.width * 2f - 1f
-		val y1 = -(canvasY / viewport.height * 2f - 1f)
-		val y2 = -((canvasY + h) / viewport.height * 2f - 1f)
-
-		// Top left
-		batch.putVertex(x1, y1, 0f, u = 0f, v = 1f, colorTint = colorTint)
-		// Top right
-		batch.putVertex(x2, y1, 0f, u = u, v = 1f, colorTint = colorTint)
-		// Bottom right
-		batch.putVertex(x2, y2, 0f, u = u, v = v, colorTint = colorTint)
-		// Bottom left
-		batch.putVertex(x1, y2, 0f, u = 0f, v = v, colorTint = colorTint)
-		batch.putQuadIndices()
+		sprite.render(clip, Matrix4.IDENTITY, tint)
 	}
 
 	override fun dispose() {

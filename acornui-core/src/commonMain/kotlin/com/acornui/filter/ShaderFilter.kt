@@ -6,6 +6,8 @@ import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.ShaderProgram
 import com.acornui.gl.core.useShader
+import com.acornui.graphic.ColorRo
+import com.acornui.math.Matrix4Ro
 import com.acornui.math.MinMaxRo
 
 /**
@@ -28,10 +30,10 @@ class ShaderFilter(
 	private val glState = inject(GlState)
 	private val gl = inject(Gl20)
 
-	override fun draw(clip: MinMaxRo) {
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		glState.useShader(shader) {
 			configure(gl, shader)
-			contents?.render(clip)
+			contents?.render(clip, transform, tint)
 		}
 	}
 

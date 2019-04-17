@@ -27,6 +27,7 @@ import com.acornui.core.io.floatBuffer
 import com.acornui.gl.core.*
 import com.acornui.io.put
 import com.acornui.math.Matrix4
+import com.acornui.math.Matrix4Ro
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Vector3
 import com.acornui.observe.ModTagWatch
@@ -155,7 +156,7 @@ class Skybox(owner: Owned, private val yDown: Boolean = true) : UiComponentImpl(
 	private val viewProjection = Matrix4()
 	private val modTag = ModTagWatch()
 
-	override fun draw(clip: MinMaxRo) {
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		// TODO: Should we account for this component's transform?
 		val cubeMap = cubeMap ?: return
 		glState.setTexture(cubeMap)

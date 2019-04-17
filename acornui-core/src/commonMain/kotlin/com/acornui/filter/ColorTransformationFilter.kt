@@ -20,7 +20,9 @@ import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.useColorTransformation
+import com.acornui.graphic.ColorRo
 import com.acornui.math.ColorTransformation
+import com.acornui.math.Matrix4Ro
 import com.acornui.math.MinMaxRo
 
 class ColorTransformationFilter(
@@ -34,9 +36,12 @@ class ColorTransformationFilter(
 
 	private val glState = inject(GlState)
 
-	override fun draw(clip: MinMaxRo) {
+	override val shouldSkipFilter: Boolean
+		get() = !enabled || colorTransformation.isIdentity
+
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		glState.useColorTransformation(colorTransformation) {
-			contents?.render(clip)
+			contents?.render(clip, transform, tint)
 		}
 	}
 

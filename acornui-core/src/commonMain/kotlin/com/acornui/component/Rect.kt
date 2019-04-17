@@ -27,17 +27,16 @@ import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putTriangleIndices
 import com.acornui.gl.core.putVertex
 import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.acornui.math.PI as PI
 import kotlin.math.*
 
-open class Rect(
+class Rect(
 		owner: Owned
 ) : ContainerImpl(owner) {
 
 	val style = bind(BoxStyle())
-
-	var segments = 40
 
 	/**
 	 * If true, we don't need a mesh -- no corners and no gradient, just use the sprite batch.
@@ -94,7 +93,6 @@ open class Rect(
 				addChild(complexModeObj.strokeC)
 			}
 		}
-		validation.addNode(ValidationFlags.RESERVED_1, ValidationFlags.STYLES or ValidationFlags.CONCATENATED_TRANSFORM or ValidationFlags.LAYOUT or ValidationFlags.CONCATENATED_COLOR_TRANSFORM, ::updateSimpleModeVertices)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
@@ -212,22 +210,22 @@ open class Rect(
 
 					if (topLeftCorner.texture != null) {
 						topLeftCorner.updateVertices(x = fillPad.left, y = fillPad.top)
-						topLeftCorner.render(tint)
+						topLeftCorner.render(MinMaxRo.POSITIVE_INFINITY, Matrix4.IDENTITY, tint)
 					}
 
 					if (topRightCorner.texture != null) {
 						topRightCorner.updateVertices(x = w - topRightX, y = fillPad.top)
-						topRightCorner.render(tint)
+						topRightCorner.render(MinMaxRo.POSITIVE_INFINITY, Matrix4.IDENTITY, tint)
 					}
 
 					if (bottomRightCorner.texture != null) {
 						bottomRightCorner.updateVertices(x = w - bottomRightX, y = h - bottomRightY)
-						bottomRightCorner.render(tint)
+						bottomRightCorner.render(MinMaxRo.POSITIVE_INFINITY, Matrix4.IDENTITY, tint)
 					}
 
 					if (bottomLeftCorner.texture != null) {
 						bottomLeftCorner.updateVertices(x = fillPad.left, y = h - bottomLeftY)
-						bottomLeftCorner.render(tint)
+						bottomLeftCorner.render(MinMaxRo.POSITIVE_INFINITY, Matrix4.IDENTITY, tint)
 					}
 
 					trn(margin.left, margin.top)
@@ -464,50 +462,40 @@ open class Rect(
 
 	}
 
-	private fun updateSimpleModeVertices() {
-		if (!simpleMode) return
-		simpleModeObj.apply {
-			val margin = style.margin
-			val w = margin.reduceWidth2(width)
-			val h = margin.reduceHeight2(height)
-			if (w <= 0f || h <= 0f) return
-			val cT = _concatenatedTransform
+	private val colorTmp = Color()
 
-			val borderThicknesses = style.borderThicknesses
-
-			val innerX = margin.left + borderThicknesses.left
-			val innerY = margin.top + borderThicknesses.top
-			val fillW = borderThicknesses.reduceWidth2(w)
-			val fillH = borderThicknesses.reduceHeight2(h)
-			cT.prj(innerRect[0].set(innerX, innerY, 0f))
-			cT.prj(innerRect[1].set(innerX + fillW, innerY, 0f))
-			cT.prj(innerRect[2].set(innerX + fillW, innerY + fillH, 0f))
-			cT.prj(innerRect[3].set(innerX, innerY + fillH, 0f))
-
-			if (style.borderThicknesses.isNotEmpty()) {
-				val outerX = margin.left
-				val outerY = margin.top
-				cT.prj(outerRect[0].set(outerX, outerY, 0f))
-				cT.prj(outerRect[1].set(outerX + w, outerY, 0f))
-				cT.prj(outerRect[2].set(outerX + w, outerY + h, 0f))
-				cT.prj(outerRect[3].set(outerX, outerY + h, 0f))
-			}
-
-			cT.rot(normal.set(Vector3.NEG_Z)).nor()
-
-			val tint = concatenatedColorTint
-			fillColor.set(style.backgroundColor).mul(tint)
-			borderColors.set(style.borderColors).mul(tint)
-		}
-	}
-
-	override fun draw(clip: MinMaxRo) {
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		val margin = style.margin
 		val w = margin.reduceWidth2(_bounds.width)
 		val h = margin.reduceHeight2(_bounds.height)
 		if (w <= 0f || h <= 0f) return
 		if (simpleMode) {
 			simpleModeObj.apply {
+				val borderThicknesses = style.borderThicknesses
+
+				val innerX = margin.left + borderThicknesses.left
+				val innerY = margin.top + borderThicknesses.top
+				val fillW = borderThicknesses.reduceWidth2(w)
+				val fillH = borderThicknesses.reduceHeight2(h)
+				transform.prj(innerRect[0].set(innerX, innerY, 0f))
+				transform.prj(innerRect[1].set(innerX + fillW, innerY, 0f))
+				transform.prj(innerRect[2].set(innerX + fillW, innerY + fillH, 0f))
+				transform.prj(innerRect[3].set(innerX, innerY + fillH, 0f))
+
+				if (style.borderThicknesses.isNotEmpty()) {
+					val outerX = margin.left
+					val outerY = margin.top
+					transform.prj(outerRect[0].set(outerX, outerY, 0f))
+					transform.prj(outerRect[1].set(outerX + w, outerY, 0f))
+					transform.prj(outerRect[2].set(outerX + w, outerY + h, 0f))
+					transform.prj(outerRect[3].set(outerX, outerY + h, 0f))
+				}
+
+				transform.rot(normal.set(Vector3.NEG_Z)).nor()
+
+				fillColor.set(style.backgroundColor).mul(tint)
+				borderColors.set(style.borderColors).mul(tint)
+
 				val batch = glState.batch
 				glState.setTexture(glState.whitePixel)
 				glState.setCamera(camera)
@@ -524,7 +512,6 @@ open class Rect(
 					batch.putQuadIndices()
 				}
 
-				val borderThicknesses = style.borderThicknesses
 				val borderColors = borderColors
 
 				if (borderThicknesses.left > 0f) {
@@ -564,16 +551,16 @@ open class Rect(
 				complexModeObj.apply {
 					StencilUtil.mask(glState.batch, gl, {
 						if (fillC.visible)
-							fillC.render(clip)
+							fillC.render(clip, transform, colorTmp.set(tint).mul(fillC.colorTint))
 					}) {
 						if (gradientC.visible)
-							gradientC.render(clip)
+							gradientC.render(clip, transform, colorTmp.set(tint).mul(gradientC.colorTint))
 					}
 					if (strokeC.visible)
-						strokeC.render(clip)
+						strokeC.render(clip, transform, colorTmp.set(tint).mul(strokeC.colorTint))
 				}
 			} else {
-				super.draw(clip)
+				super.draw(clip, transform, tint)
 			}
 		}
 	}

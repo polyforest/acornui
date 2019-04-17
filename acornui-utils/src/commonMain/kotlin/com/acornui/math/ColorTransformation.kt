@@ -20,6 +20,13 @@ import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 
 interface ColorTransformationRo {
+
+	/**
+	 * Returns true if this color transformation doesn't modify a color and therefore can be no-oped.
+	 */
+	val isIdentity: Boolean
+		get() = matrix.mode == MatrixMode.IDENTITY && offset == Color.CLEAR
+
 	val matrix: Matrix4Ro
 	val offset: ColorRo
 }

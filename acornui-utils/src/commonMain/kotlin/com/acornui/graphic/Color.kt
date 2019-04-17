@@ -166,7 +166,7 @@ data class Color(
 	}
 
 	/**
-	 * Multiplies the this color and the given color
+	 * Multiplies this color and the given color
 	 *
 	 * @param color the color
 	 * @return this Color.

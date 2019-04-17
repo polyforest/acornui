@@ -1,13 +1,14 @@
 package com.acornui.filter
 
 import com.acornui.component.ComponentInit
+import com.acornui.component.Sprite
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.di.own
 import com.acornui.core.graphic.BlendMode
-import com.acornui.core.graphic.Window
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -18,14 +19,16 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	var blurY by bindable(1f)
 
 	var quality by bindable(BlurQuality.NORMAL)
-	var colorTint by bindable(Color.WHITE)
 
 	private val gl = inject(Gl20)
 	private val glState = inject(GlState)
-	private val window = inject(Window)
 	private val blurShader = own(BlurShader(gl))
 	private val blurFramebufferA = own(resizeableFramebuffer())
 	private val blurFramebufferB = own(resizeableFramebuffer())
+
+	private val viewport = IntRectangle()
+	private val sprite = Sprite(glState)
+	private val mvp = Matrix4()
 
 	private val _padding = Pad()
 	val padding: PadRo
@@ -35,8 +38,8 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 			return _padding.set(left = hPad, top = vPad, right = hPad, bottom = vPad)
 		}
 
-	override fun canvasDrawRegion(out: MinMax): MinMax {
-		super.canvasDrawRegion(out).inflate(padding)
+	override fun drawRegion(out: MinMax): MinMax {
+		super.drawRegion(out).inflate(padding)
 		out.xMin = floor(out.xMin)
 		out.yMin = floor(out.yMin)
 		out.xMax = ceil(out.xMax)
@@ -49,89 +52,69 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 
 	private val framebufferUtil = RenderableToFramebuffer(this)
 
-	/**
-	 * The region (in canvas coordinates) where the contents have been drawn.
-	 */
-	val canvasRegion: MinMaxRo
-		get() = framebufferUtil.canvasRegion
-
 	init {
 		framebufferUtil.clearColor = Color(0.5f, 0.5f, 0.5f, 0f)
 	}
 
-	override fun draw(clip: MinMaxRo) {
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		drawToPingPongBuffers(clip)
-		drawBlurToScreen()
+		drawBlurToScreen(clip, transform, tint)
 	}
 
 	fun drawToPingPongBuffers(clip: MinMaxRo) {
 		val contents = contents ?: return
+		val framebufferUtil = framebufferUtil
 		framebufferUtil.drawToFramebuffer(clip, contents, padding)
-		val textureToBlur = framebufferUtil.texture
+		val region = framebufferUtil.drawRegion
+		glState.useViewport(-region.xMin.toInt(), region.yMin.toInt() - viewport.height + framebufferUtil.texture.height, viewport.width, viewport.height) {
+			val textureToBlur = framebufferUtil.texture
 
-		blurFramebufferA.setSize(textureToBlur.width, textureToBlur.height)
-		blurFramebufferA.texture.filterMin = TextureMinFilter.LINEAR
-		blurFramebufferA.texture.filterMag = TextureMagFilter.LINEAR
-		blurFramebufferB.setSize(textureToBlur.width, textureToBlur.height)
-		blurFramebufferB.texture.filterMin = TextureMinFilter.LINEAR
-		blurFramebufferB.texture.filterMag = TextureMagFilter.LINEAR
+			blurFramebufferA.setSize(textureToBlur.width, textureToBlur.height)
+			blurFramebufferA.texture.filterMin = TextureMinFilter.LINEAR
+			blurFramebufferA.texture.filterMag = TextureMagFilter.LINEAR
+			blurFramebufferB.setSize(textureToBlur.width, textureToBlur.height)
+			blurFramebufferB.texture.filterMin = TextureMinFilter.LINEAR
+			blurFramebufferB.texture.filterMag = TextureMagFilter.LINEAR
 
-		glState.setTexture(textureToBlur)
+			glState.setTexture(textureToBlur)
 
-		glState.useShader(blurShader) {
-			gl.uniform2f(blurShader.getRequiredUniformLocation("u_resolutionInv"), 1f / textureToBlur.width.toFloat(), 1f / textureToBlur.height.toFloat())
-			glState.setTexture(framebufferUtil.texture)
-			glState.blendMode(BlendMode.NONE, premultipliedAlpha = false)
-			val passes = quality.passes
-			for (i in 1 .. passes) {
-				val p = i.toFloat() / passes.toFloat()
-				blurFramebufferA.begin()
-				gl.uniform2f(blurShader.getRequiredUniformLocation("u_dir"), 0f, blurY * p)
-				glState.batch.putIdt()
-				blurFramebufferA.end()
-				blurFramebufferB.begin()
-				glState.setTexture(blurFramebufferA.texture)
-				gl.uniform2f(blurShader.getRequiredUniformLocation("u_dir"), blurX * p, 0f)
-				glState.batch.putIdt()
-				blurFramebufferB.end()
-				glState.setTexture(blurFramebufferB.texture)
+			glState.useShader(blurShader) {
+				gl.uniform2f(blurShader.getRequiredUniformLocation("u_resolutionInv"), 1f / textureToBlur.width.toFloat(), 1f / textureToBlur.height.toFloat())
+				glState.setTexture(framebufferUtil.texture)
+				glState.blendMode(BlendMode.NONE, premultipliedAlpha = false)
+				val passes = quality.passes
+				for (i in 1..passes) {
+					val p = i.toFloat() / passes.toFloat()
+					blurFramebufferA.begin()
+					gl.uniform2f(blurShader.getRequiredUniformLocation("u_dir"), 0f, blurY * p)
+					glState.batch.putIdt()
+					blurFramebufferA.end()
+					blurFramebufferB.begin()
+					glState.setTexture(blurFramebufferA.texture)
+					gl.uniform2f(blurShader.getRequiredUniformLocation("u_dir"), blurX * p, 0f)
+					glState.batch.putIdt()
+					blurFramebufferB.end()
+					glState.setTexture(blurFramebufferB.texture)
+				}
 			}
 		}
+		blurFramebufferB.sprite(sprite)
+		sprite.setUv(sprite.u, 1f - sprite.v, sprite.u2, 1f - sprite.v2, isRotated = false)
 	}
 
-	fun drawBlurToScreen(canvasX: Float = canvasRegion.xMin, canvasY: Float = canvasRegion.yMin) {
-		val texture = blurFramebufferB.texture
-		val batch = glState.batch
-		batch.begin()
-		glState.viewProjection = Matrix4.IDENTITY
+	fun drawBlurToScreen(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		glState.getViewport(viewport)
+		mvp.idt().scl(2f / viewport.width, -2f / viewport.height, 1f).trn(-1f, 1f, 0f) // Projection transform
+		val region = framebufferUtil.drawRegion
+		mvp.mul(transform).translate(region.xMin, region.yMin, 0f) // Model transform
+
+		glState.viewProjection = mvp
 		glState.model = Matrix4.IDENTITY
-		glState.setTexture(texture)
-		glState.blendMode(BlendMode.NORMAL, false)
-
-		val w = canvasRegion.width
-		val h = canvasRegion.height
-
-		val x1 = canvasX / window.width * 2f - 1f
-		val x2 = (canvasX + w) / window.width * 2f - 1f
-		val y1 = -(canvasY / window.height * 2f - 1f)
-		val y2 = -((canvasY + h) / window.height * 2f - 1f)
-
-		val u = canvasRegion.width / texture.width
-		val v = 1f - (canvasRegion.height / texture.height)
-
-		// Top left
-		batch.putVertex(x1, y1, 0f, u = 0f, v = 1f, colorTint = colorTint)
-		// Top right
-		batch.putVertex(x2, y1, 0f, u = u, v = 1f, colorTint = colorTint)
-		// Bottom right
-		batch.putVertex(x2, y2, 0f, u = u, v = v, colorTint = colorTint)
-		// Bottom left
-		batch.putVertex(x1, y2, 0f, u = 0f, v = v, colorTint = colorTint)
-		batch.putQuadIndices()
+		sprite.render(clip, Matrix4.IDENTITY, tint)
 	}
 
-	fun drawOriginalToScreen() {
-		framebufferUtil.drawToScreen()
+	fun drawOriginalToScreen(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		framebufferUtil.drawToScreen(clip, transform, tint)
 	}
 
 	private fun ShaderBatch.putIdt() {
@@ -190,8 +173,8 @@ fun Owned.blurFilter(init: ComponentInit<BlurFilter> = {}): BlurFilter {
 }
 
 enum class BlurQuality(val passes: Int) {
-		LOW(1),
-		NORMAL(2),
-		HIGH(3),
-		BEST(4),
+	LOW(1),
+	NORMAL(2),
+	HIGH(3),
+	BEST(4),
 }

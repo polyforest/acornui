@@ -21,6 +21,7 @@ import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
 import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.core.Disposable
+import com.acornui.core.Renderable
 import com.acornui.core.selection.SelectionRange
 import com.acornui.gl.core.GlState
 import com.acornui.math.Matrix4Ro
@@ -118,7 +119,7 @@ val TextElementRo.textFieldY: Float
 		return y + (parentSpan?.textFieldY ?: 0f)
 	}
 
-interface TextElement : TextElementRo, Disposable {
+interface TextElement : TextElementRo, Renderable, Disposable {
 
 	/**
 	 * Set by the TextSpanElement when this is part is added.
@@ -143,12 +144,7 @@ interface TextElement : TextElementRo, Disposable {
 	/**
 	 * Finalizes the vertices for rendering.
 	 */
-	fun validateVertices(transform: Matrix4Ro, leftClip: Float, topClip: Float, rightClip: Float, bottomClip: Float)
-
-	/**
-	 * Draws this element.
-	 */
-	fun render(glState: GlState)
+	fun validateVertices(leftClip: Float, topClip: Float, rightClip: Float, bottomClip: Float)
 
 }
 

@@ -25,7 +25,9 @@ import com.acornui.core.di.Scoped
 import com.acornui.gl.core.Framebuffer
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
+import com.acornui.graphic.Color
 import com.acornui.math.MathUtils
+import com.acornui.math.Matrix4
 import com.acornui.math.MinMax
 import kotlin.math.ceil
 
@@ -54,7 +56,7 @@ fun Scoped.rasterize(target: UiComponent, hasDepth: Boolean = config.gl.depth, h
 	framebuffer.texture.filterMin = TextureMinFilter.LINEAR_MIPMAP_NEAREST
 
 	framebuffer.drawTo {
-		target.render(MinMax(0f, 0f, w, h))
+		target.render(MinMax(0f, 0f, w, h), Matrix4.IDENTITY, Color.WHITE)
 	}
 
 	return Rasterized(framebuffer.texture, w / framebuffer.width.toFloat(), h / framebuffer.height.toFloat(), -bounds.xMin, -bounds.yMin)

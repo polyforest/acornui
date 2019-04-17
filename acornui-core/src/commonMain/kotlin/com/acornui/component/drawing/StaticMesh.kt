@@ -16,9 +16,6 @@
 
 package com.acornui.component.drawing
 
-import com.acornui.recycle.Clearable
-import com.acornui.recycle.ClearableObjectPool
-import com.acornui.recycle.freeAll
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.ValidationFlags
@@ -33,7 +30,11 @@ import com.acornui.core.graphic.Texture
 import com.acornui.filter.colorTransformationFilter
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.*
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.ClearableObjectPool
+import com.acornui.recycle.freeAll
 
 /**
  * A UiComponent for drawing static [MeshRegion] with uniforms for model and color transformation.
@@ -94,15 +95,6 @@ open class StaticMeshComponent(
 		return true
 	}
 
-	override fun updateConcatenatedColorTransform() {
-		super.updateConcatenatedColorTransform()
-
-		colorTransformationFilter.enabled = _concatenatedColorTint != Color.WHITE
-		if (colorTransformationFilter.enabled) {
-			colorTransformationFilter.colorTransformation.tint(_concatenatedColorTint)
-		}
-	}
-
 	override fun onActivated() {
 		super.onActivated()
 		mesh?.refInc()
@@ -113,10 +105,15 @@ open class StaticMeshComponent(
 		mesh?.refDec()
 	}
 
-	override fun draw(clip: MinMaxRo) {
+	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		colorTransformationFilter.colorTransformation.tint(tint)
+		super.render(clip, transform, Color.WHITE)
+	}
+
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		val mesh = mesh ?: return
 		glState.batch.flush()
-		glState.setCamera(camera, concatenatedTransform) // Use the concatenated transform as the model matrix.
+		glState.setCamera(camera, transform) // Use the concatenated transform as the model matrix.
 		mesh.render()
 	}
 

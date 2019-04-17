@@ -22,7 +22,9 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.graphic.Window
 import com.acornui.core.time.TimeDriver
+import com.acornui.graphic.Color
 import com.acornui.logging.Log
+import com.acornui.math.Matrix4
 import com.acornui.math.MinMax
 import kotlin.browser.window
 
@@ -68,7 +70,7 @@ class JsApplicationRunnerImpl(
 			stage.update()
 			appWindow.renderBegin()
 			if (stage.visible)
-				stage.render(viewport.set(0f, 0f, appWindow.width, appWindow.height))
+				stage.render(viewport.set(0f, 0f, appWindow.width, appWindow.height), Matrix4.IDENTITY, Color.WHITE)
 			appWindow.renderEnd()
 		}
 		tickFrameId = window.requestAnimationFrame(tick)

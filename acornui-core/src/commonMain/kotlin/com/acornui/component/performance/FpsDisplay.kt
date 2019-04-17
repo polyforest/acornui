@@ -4,6 +4,8 @@ import com.acornui.component.text.TextFieldImpl
 import com.acornui.core.di.Owned
 import com.acornui.core.time.timer
 import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
+import com.acornui.math.Matrix4Ro
 import com.acornui.math.MinMaxRo
 
 class FpsDisplay(owner: Owned) : TextFieldImpl(owner) {
@@ -34,8 +36,8 @@ class FpsDisplay(owner: Owned) : TextFieldImpl(owner) {
 		}
 	}
 
-	override fun render(clip: MinMaxRo) {
-		super.render(clip)
+	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		super.render(clip, transform, tint)
 		frames++
 	}
 }

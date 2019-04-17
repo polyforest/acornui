@@ -55,7 +55,7 @@ annotation class ComponentDslMarker
 
 typealias ComponentInit<T> = (@ComponentDslMarker T).() -> Unit
 
-interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementRo, Validatable, StyleableRo, ChildRo, Focusable {
+interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementRo, Validatable, StyleableRo, ChildRo, Focusable, Renderable {
 
 	override val disposed: Signal<(UiComponentRo) -> Unit>
 	override val activated: Signal<(UiComponentRo) -> Unit>
@@ -166,7 +166,7 @@ fun UiComponentRo.isAncestorOf(child: UiComponentRo): Boolean {
 
 fun UiComponentRo.isDescendantOf(ancestor: UiComponentRo): Boolean = ancestor.isAncestorOf(this)
 
-interface UiComponent : UiComponentRo, Renderable, Lifecycle, ColorTransformable, InteractiveElement, Styleable {
+interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, InteractiveElement, Styleable {
 
 	override val disposed: Signal<(UiComponent) -> Unit>
 	override val activated: Signal<(UiComponent) -> Unit>
@@ -218,6 +218,10 @@ interface UiComponent : UiComponentRo, Renderable, Lifecycle, ColorTransformable
 	 * Updates this component, validating it and its children.
 	 */
 	fun update()
+
+	fun render(clip: MinMaxRo = MinMaxRo.POSITIVE_INFINITY) {
+		render(clip, concatenatedTransform, concatenatedColorTint)
+	}
 
 }
 
@@ -579,8 +583,9 @@ open class UiComponentImpl(
 	 */
 	private val innerRenderable: Renderable by lazy {
 		object : Renderable {
-			override fun canvasDrawRegion(out: MinMax): MinMax = localToCanvas(out.set(0f, 0f, width, height))
-			override fun render(clip: MinMaxRo) = draw(clip)
+			override fun drawRegion(out: MinMax): MinMax = out.set(0f, 0f, width, height)
+
+			override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) = draw(clip, transform, tint)
 		}
 	}
 
@@ -1268,11 +1273,11 @@ open class UiComponentImpl(
 	// Renderable
 	//-----------------------------------------------
 
-	override fun canvasDrawRegion(out: MinMax): MinMax {
+	override fun drawRegion(out: MinMax): MinMax {
 		return if (renderFilters.isEmpty())
-			localToCanvas(out.set(0f, 0f, width, height))
+			out.set(0f, 0f, width, height)
 		else
-			renderFilters.first().canvasDrawRegion(out)
+			renderFilters.first().drawRegion(out)
 	}
 
 	/**
@@ -1289,14 +1294,16 @@ open class UiComponentImpl(
 	 * clipping, you may use [MinMaxRo.POSITIVE_INFINITY]. This is used in order to potentially avoid drawing things
 	 * the user cannot see. (Due to the screen size, stencil buffers, or scissors)
 	 */
-	override fun render(clip: MinMaxRo) {
+
+
+	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		// Nothing visible.
-		if (_concatenatedColorTint.a <= 0f)
+		if (tint.a <= 0f)
 			return
 		if (renderFilters.isEmpty())
-			draw(clip)
+			draw(clip, transform, tint)
 		else
-			renderFilters.first().render(clip)
+			renderFilters.first().render(clip, transform, tint)
 	}
 
 	private val viewportTmpMinMax = MinMax()
@@ -1320,7 +1327,7 @@ open class UiComponentImpl(
 	/**
 	 * The core drawing method for this component.
 	 */
-	protected open fun draw(clip: MinMaxRo) {
+	protected open fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 	}
 
 	//-----------------------------------------------

@@ -2,15 +2,19 @@ package com.acornui.core
 
 import com.acornui.component.canvasToLocal
 import com.acornui.component.localToCanvas
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
+import com.acornui.math.Matrix4
+import com.acornui.math.Matrix4Ro
 import com.acornui.math.MinMax
 import com.acornui.math.MinMaxRo
 
 interface Renderable {
 
 	/**
-	 * Calculates the region of the canvas that this component will draw.
+	 * Calculates the region, in local coordinates, that this component will draw.
 	 */
-	fun canvasDrawRegion(out: MinMax): MinMax
+	fun drawRegion(out: MinMax): MinMax
 
 	/**
 	 * Renders any graphics.
@@ -25,5 +29,9 @@ interface Renderable {
 	 * clipping, you may use [MinMaxRo.POSITIVE_INFINITY]. This is used in order to potentially avoid drawing things
 	 * the user cannot see. (Due to the screen size, stencil buffers, or scissors)
 	 */
-	fun render(clip: MinMaxRo)
+	fun render(
+			clip: MinMaxRo = MinMaxRo.POSITIVE_INFINITY,
+			transform: Matrix4Ro = Matrix4.IDENTITY,
+			tint: ColorRo = Color.WHITE
+	)
 }

@@ -22,6 +22,8 @@ import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
 import com.acornui.core.di.OwnedImpl
 import com.acornui.function.as1
+import com.acornui.graphic.ColorRo
+import com.acornui.math.Matrix4Ro
 import com.acornui.math.MinMax
 import com.acornui.math.MinMaxRo
 import com.acornui.observe.Observable
@@ -60,18 +62,18 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 
 	override var contents: Renderable? = null
 
-	override fun canvasDrawRegion(out: MinMax): MinMax = contents!!.canvasDrawRegion(out)
+	override fun drawRegion(out: MinMax): MinMax = contents!!.drawRegion(out)
 
 	protected fun <T> bindable(initial: T): ReadWriteProperty<Any?, T> = observable(initial) {
 		_changed.dispatch(this)
 	}
 
-	final override fun render(clip: MinMaxRo) {
-		if (shouldSkipFilter) contents?.render(clip)
-		else draw(clip)
+	final override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		if (shouldSkipFilter) contents?.render(clip, transform, tint)
+		else draw(clip, transform, tint)
 	}
 
-	abstract fun draw(clip: MinMaxRo)
+	abstract fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo)
 
 	override fun dispose() {
 		super.dispose()

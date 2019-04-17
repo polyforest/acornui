@@ -21,6 +21,7 @@ import com.acornui.core.graphic.*
 import com.acornui.gl.core.GlState
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Matrix4Ro
+import com.acornui.math.MinMaxRo
 
 class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 
@@ -114,22 +115,6 @@ class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 	private var totalPadRight = 0f
 	private var totalPadBottom = 0f
 
-	override fun updateWorldVertices(worldTransform: Matrix4Ro, width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
-		val drawable = drawable ?: return
-		updatePadding(width, height)
-
-		drawable.updateWorldVertices(
-				worldTransform,
-				width - totalPadLeft - totalPadRight,
-				height - totalPadBottom - totalPadTop,
-				x = totalPadLeft,
-				y = totalPadTop,
-				rotation = rotation,
-				originX = originX,
-				originY = originY
-		)
-	}
-
 	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
 		val drawable = drawable ?: return
 		updatePadding(width, height)
@@ -176,8 +161,8 @@ class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 		totalPadBottom = unscaledPadBottom + scaledPadBottom * sY
 	}
 
-	override fun render(colorTint: ColorRo) {
-		drawable?.render(colorTint)
+	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		drawable?.render(clip, transform, tint)
 	}
 
 	override fun clear() {

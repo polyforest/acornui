@@ -9,6 +9,7 @@ import com.acornui.gl.core.putVertex
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Matrix4Ro
+import com.acornui.math.MinMaxRo
 import com.acornui.math.Vector3
 import com.acornui.string.isBreaking
 import kotlin.math.floor
@@ -17,6 +18,8 @@ import kotlin.math.floor
  * Represents a single character in a [TextField], typically within a [TextSpanElement].
  */
 class CharElement private constructor() : TextElement, Clearable {
+
+	private lateinit var glState: GlState
 
 	override var char: Char = CHAR_PLACEHOLDER
 	override var parentSpan: TextSpanElementRo<TextElementRo>? = null
@@ -56,14 +59,17 @@ class CharElement private constructor() : TextElement, Clearable {
 	 * A cache of the vertex positions in world space.
 	 */
 	private val charVertices: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
-	private val normal = Vector3()
+	private val normalWorld = Vector3()
 
 	private val backgroundVertices: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
 
 	private val lineVertices: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
 
+	private val tmpVec = Vector3()
+
 	private var fontColor: ColorRo = Color.BLACK
 	private var backgroundColor: ColorRo = Color.CLEAR
+	private val colorTmp = Color()
 
 	override val clearsLine: Boolean
 		get() = char == '\n'
@@ -85,7 +91,7 @@ class CharElement private constructor() : TextElement, Clearable {
 		}
 	}
 
-	override fun validateVertices(transform: Matrix4Ro, leftClip: Float, topClip: Float, rightClip: Float, bottomClip: Float) {
+	override fun validateVertices(leftClip: Float, topClip: Float, rightClip: Float, bottomClip: Float) {
 		val style = style ?: return
 		val x = x
 		val y = y
@@ -142,16 +148,16 @@ class CharElement private constructor() : TextElement, Clearable {
 		v2 = regionB / textureH
 
 		// Transform vertex coordinates from local to global
-		transform.prj(charVertices[0].set(charL, charT, 0f))
-		transform.prj(charVertices[1].set(charR, charT, 0f))
-		transform.prj(charVertices[2].set(charR, charB, 0f))
-		transform.prj(charVertices[3].set(charL, charB, 0f))
+		charVertices[0].set(charL, charT, 0f)
+		charVertices[1].set(charR, charT, 0f)
+		charVertices[2].set(charR, charB, 0f)
+		charVertices[3].set(charL, charB, 0f)
 
 		// Background vertices
-		transform.prj(backgroundVertices[0].set(bgL, bgT, 0f))
-		transform.prj(backgroundVertices[1].set(bgR, bgT, 0f))
-		transform.prj(backgroundVertices[2].set(bgR, bgB, 0f))
-		transform.prj(backgroundVertices[3].set(bgL, bgB, 0f))
+		backgroundVertices[0].set(bgL, bgT, 0f)
+		backgroundVertices[1].set(bgR, bgT, 0f)
+		backgroundVertices[2].set(bgR, bgB, 0f)
+		backgroundVertices[3].set(bgL, bgB, 0f)
 
 		if (style.underlined || style.strikeThrough) {
 			var lineL = x
@@ -167,35 +173,39 @@ class CharElement private constructor() : TextElement, Clearable {
 			var lineB = lineT + style.lineThickness
 			if (lineB > bottomClip) lineB = bottomClip
 
-			transform.prj(lineVertices[0].set(lineL, lineT, 0f))
-			transform.prj(lineVertices[1].set(lineR, lineT, 0f))
-			transform.prj(lineVertices[2].set(lineR, lineB, 0f))
-			transform.prj(lineVertices[3].set(lineL, lineB, 0f))
+			lineVertices[0].set(lineL, lineT, 0f)
+			lineVertices[1].set(lineR, lineT, 0f)
+			lineVertices[2].set(lineR, lineB, 0f)
+			lineVertices[3].set(lineL, lineB, 0f)
 		}
-
-		transform.rot(normal.set(Vector3.NEG_Z)).nor()
 	}
 
-	override fun render(glState: GlState) {
-		if (!visible) return
+	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		if (!visible || tint.a <= 0f) return
 		val style = style ?: return
 		val glyph = glyph ?: return
+		val glState = glState
 		val batch = glState.batch
+		val colorTmp = colorTmp
+		transform.rot(normalWorld.set(Vector3.NEG_Z)).nor()
 
 		if (backgroundColor.a > 0f) {
+			colorTmp.set(backgroundColor).mul(tint)
 			batch.begin()
 			glState.setTexture(glState.whitePixel)
 			glState.blendMode(BlendMode.NORMAL, false)
 			// Top left
-			batch.putVertex(backgroundVertices[0], normal, backgroundColor, 0f, 0f)
+			batch.putVertex(transform.prj(tmpVec.set(backgroundVertices[0])), normalWorld, colorTmp, 0f, 0f)
 			// Top right
-			batch.putVertex(backgroundVertices[1], normal, backgroundColor, 0f, 0f)
+			batch.putVertex(transform.prj(tmpVec.set(backgroundVertices[1])), normalWorld, colorTmp, 0f, 0f)
 			// Bottom right
-			batch.putVertex(backgroundVertices[2], normal, backgroundColor, 0f, 0f)
+			batch.putVertex(transform.prj(tmpVec.set(backgroundVertices[2])), normalWorld, colorTmp, 0f, 0f)
 			// Bottom left
-			batch.putVertex(backgroundVertices[3], normal, backgroundColor, 0f, 0f)
+			batch.putVertex(transform.prj(tmpVec.set(backgroundVertices[3])), normalWorld, colorTmp, 0f, 0f)
 			batch.putQuadIndices()
 		}
+
+		colorTmp.set(fontColor).mul(tint)
 
 		if (style.underlined || style.strikeThrough) {
 			batch.begin()
@@ -203,13 +213,13 @@ class CharElement private constructor() : TextElement, Clearable {
 			glState.blendMode(BlendMode.NORMAL, false)
 
 			// Top left
-			batch.putVertex(lineVertices[0], normal, fontColor, 0f, 0f)
+			batch.putVertex(transform.prj(tmpVec.set(lineVertices[0])), normalWorld, colorTmp, 0f, 0f)
 			// Top right
-			batch.putVertex(lineVertices[1], normal, fontColor, 0f, 0f)
+			batch.putVertex(transform.prj(tmpVec.set(lineVertices[1])), normalWorld, colorTmp, 0f, 0f)
 			// Bottom right
-			batch.putVertex(lineVertices[2], normal, fontColor, 0f, 0f)
+			batch.putVertex(transform.prj(tmpVec.set(lineVertices[2])), normalWorld, colorTmp, 0f, 0f)
 			// Bottom left
-			batch.putVertex(lineVertices[3], normal, fontColor, 0f, 0f)
+			batch.putVertex(transform.prj(tmpVec.set(lineVertices[3])), normalWorld, colorTmp, 0f, 0f)
 			batch.putQuadIndices()
 		}
 
@@ -220,24 +230,23 @@ class CharElement private constructor() : TextElement, Clearable {
 
 		if (glyph.isRotated) {
 			// Top left
-			batch.putVertex(charVertices[0], normal, fontColor, u2, v)
+			batch.putVertex(transform.prj(tmpVec.set(charVertices[0])), normalWorld, colorTmp, u2, v)
 			// Top right
-			batch.putVertex(charVertices[1], normal, fontColor, u2, v2)
+			batch.putVertex(transform.prj(tmpVec.set(charVertices[1])), normalWorld, colorTmp, u2, v2)
 			// Bottom right
-			batch.putVertex(charVertices[2], normal, fontColor, u, v2)
+			batch.putVertex(transform.prj(tmpVec.set(charVertices[2])), normalWorld, colorTmp, u, v2)
 			// Bottom left
-			batch.putVertex(charVertices[3], normal, fontColor, u, v)
+			batch.putVertex(transform.prj(tmpVec.set(charVertices[3])), normalWorld, colorTmp, u, v)
 		} else {
 			// Top left
-			batch.putVertex(charVertices[0], normal, fontColor, u, v)
+			batch.putVertex(transform.prj(tmpVec.set(charVertices[0])), normalWorld, colorTmp, u, v)
 			// Top right
-			batch.putVertex(charVertices[1], normal, fontColor, u2, v)
+			batch.putVertex(transform.prj(tmpVec.set(charVertices[1])), normalWorld, colorTmp, u2, v)
 			// Bottom right
-			batch.putVertex(charVertices[2], normal, fontColor, u2, v2)
+			batch.putVertex(transform.prj(tmpVec.set(charVertices[2])), normalWorld, colorTmp, u2, v2)
 			// Bottom left
-			batch.putVertex(charVertices[3], normal, fontColor, u, v2)
+			batch.putVertex(transform.prj(tmpVec.set(charVertices[3])), normalWorld, colorTmp, u, v2)
 		}
-
 		batch.putQuadIndices()
 	}
 
@@ -265,9 +274,10 @@ class CharElement private constructor() : TextElement, Clearable {
 		private const val CHAR_PLACEHOLDER = 'a'
 		private val pool = ClearableObjectPool { CharElement() }
 
-		internal fun obtain(char: Char): CharElement {
+		internal fun obtain(char: Char, glState: GlState): CharElement {
 			val c = pool.obtain()
 			c.char = char
+			c.glState = glState
 			return c
 		}
 	}
@@ -297,4 +307,15 @@ class CharElementStyle : CharElementStyleRo {
 	override val selectedBackgroundColor = Color()
 	override val textColorTint = Color()
 	override val backgroundColor = Color()
+
+	fun set(charStyle: CharStyle) {
+		font = charStyle.font
+		underlined = charStyle.underlined
+		strikeThrough = charStyle.strikeThrough
+		lineThickness = charStyle.lineThickness
+		selectedTextColorTint.set(charStyle.selectedColorTint)
+		selectedBackgroundColor.set(charStyle.selectedBackgroundColor)
+		textColorTint.set(charStyle.colorTint)
+		backgroundColor.set(charStyle.backgroundColor)
+	}
 }

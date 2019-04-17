@@ -67,6 +67,7 @@ import com.acornui.file.FileIoManager
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.GlStateImpl
+import com.acornui.graphic.Color
 import com.acornui.io.file.FilesManifestSerializer
 import com.acornui.jvm.audio.NoAudioException
 import com.acornui.jvm.audio.OpenAlAudioManager
@@ -93,6 +94,7 @@ import com.acornui.jvm.text.NumberFormatterImpl
 import com.acornui.jvm.time.TimeProviderImpl
 import com.acornui.logging.Logger
 import com.acornui.logging.Log
+import com.acornui.math.Matrix4
 import com.acornui.math.MinMax
 import com.acornui.serialization.JsonSerializer
 import com.acornui.uncaughtExceptionHandler
@@ -444,7 +446,7 @@ class JvmApplicationRunner(
 			if (window.width > 0f && window.height > 0f) {
 				window.renderBegin()
 				if (stage.visible) {
-					stage.render(viewport.set(0f, 0f, window.width, window.height))
+					stage.render(viewport.set(0f, 0f, window.width, window.height), Matrix4.IDENTITY, Color.WHITE)
 				}
 				window.renderEnd()
 			}

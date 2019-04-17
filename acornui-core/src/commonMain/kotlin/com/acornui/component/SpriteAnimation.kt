@@ -28,7 +28,9 @@ import com.acornui.core.graphic.AtlasRegionData
 import com.acornui.core.graphic.TextureAtlasDataSerializer
 import com.acornui.core.io.JSON_KEY
 import com.acornui.core.time.onTick
+import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
+import com.acornui.math.Matrix4Ro
 import com.acornui.math.MinMaxRo
 
 
@@ -167,11 +169,11 @@ class SpriteAnimation(owner: Owned) : ContainerImpl(owner) {
 		out.set(regionWidth.toFloat(), regionHeight.toFloat())
 	}
 
-	override fun draw(clip: MinMaxRo) {
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		if (currentFrame >= startFrame && (currentFrame - startFrame) < frameClips.size) {
 			val frameClip = frameClips[currentFrame - startFrame]
 			if (frameClip.visible)
-				frameClip.render(clip)
+				frameClip.render(clip, transform, tint)
 		}
 	}
 

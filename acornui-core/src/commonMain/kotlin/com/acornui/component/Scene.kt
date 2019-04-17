@@ -28,6 +28,7 @@ import com.acornui.gl.core.FramebufferInfo
 import com.acornui.gl.core.FrameBufferInfoRo
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.setViewport
+import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import kotlin.math.round
 import kotlin.math.roundToInt
@@ -155,11 +156,11 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	private val oldGlViewport = IntRectangle()
 	private val framebufferInfo = FramebufferInfo()
 
-	override fun draw(clip: MinMaxRo) {
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		glState.getFramebuffer(framebufferInfo)
 		glState.getViewport(oldGlViewport)
 		framebufferInfo.glViewport(glState, viewport)
-		super.draw(_clip)
+		super.draw(_clip, transform, tint)
 		glState.setViewport(oldGlViewport)
 	}
 

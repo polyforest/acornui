@@ -27,6 +27,7 @@ import com.acornui.function.as3
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Matrix4
+import com.acornui.math.MinMaxRo
 
 /**
  * Wraps a frame buffer, keeping it the size of the screen.
@@ -45,7 +46,6 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 
 	init {
 		window.sizeChanged.add(::resize.as3)
-		sprite.updateWorldVertices(Matrix4.IDENTITY, 2f, 2f, -1f, -1f)
 	}
 
 	private fun resize() {
@@ -85,7 +85,7 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 	fun render(colorTint: ColorRo = Color.WHITE) {
 		glState.viewProjection = Matrix4.IDENTITY
 		glState.model = Matrix4.IDENTITY
-		sprite.render(colorTint)
+		sprite.render(MinMaxRo.POSITIVE_INFINITY, Matrix4.IDENTITY, colorTint)
 	}
 
 	override fun dispose() {

@@ -7,6 +7,7 @@ import com.acornui.core.di.inject
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.useColorTransformation
 import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.acornui.reflect.observableAndCall
 
@@ -40,8 +41,8 @@ open class DropShadowFilter(owner: Owned) : RenderFilterBase(owner) {
 
 	private val tmpMinMax = MinMax()
 
-	override fun canvasDrawRegion(out: MinMax): MinMax {
-		return blurFilter.canvasDrawRegion(out).translate(offsetX, offsetY).ext(super.canvasDrawRegion(tmpMinMax))
+	override fun drawRegion(out: MinMax): MinMax {
+		return blurFilter.drawRegion(out).translate(offsetX, offsetY).ext(super.drawRegion(tmpMinMax))
 	}
 
 	private val glState = inject(GlState)
@@ -55,17 +56,16 @@ open class DropShadowFilter(owner: Owned) : RenderFilterBase(owner) {
 			blurFilter.contents = value
 		}
 
-	init {
-	}
+	private val offsetTransform = Matrix4()
 
-	override fun draw(clip: MinMaxRo) {
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		offsetTransform.set(transform).translate(offsetX, offsetY, 0f)
 		blurFilter.drawToPingPongBuffers(clip)
 
 		glState.useColorTransformation(colorTransformation) {
-			val canvasRegion = blurFilter.canvasRegion
-			blurFilter.drawBlurToScreen(canvasRegion.xMin + offsetX, canvasRegion.yMin + offsetY)
+			blurFilter.drawBlurToScreen(clip, offsetTransform, tint)
 		}
-		blurFilter.drawOriginalToScreen()
+		blurFilter.drawOriginalToScreen(clip, transform, tint)
 	}
 
 	companion object {

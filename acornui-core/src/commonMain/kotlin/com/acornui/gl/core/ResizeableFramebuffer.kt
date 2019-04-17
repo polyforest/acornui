@@ -137,6 +137,7 @@ class ResizeableFramebuffer(
 			val textureW = framebuffer?.width?.toFloat() ?: 0f
 			val textureH = framebuffer?.height?.toFloat() ?: 0f
 			setUv(0f, 0f, width / textureW, height / textureH, isRotated = false)
+			updateVertices()
 		}
 	}
 

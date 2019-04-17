@@ -39,10 +39,7 @@ import com.acornui.gl.core.putIndices
 import com.acornui.gl.core.putIndicesReversed
 import com.acornui.gl.core.putVertex
 import com.acornui.graphic.ColorRo
-import com.acornui.math.IntRectangleRo
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.RectangleRo
-import com.acornui.math.Vector3
+import com.acornui.math.*
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
@@ -88,8 +85,10 @@ class NinePatch(val glState: GlState) : BasicDrawable {
 
 	private val indices = intArrayOf(0, 1, 5, 5, 4, 0, 1, 2, 6, 6, 5, 1, 2, 3, 7, 7, 6, 2, 4, 5, 9, 9, 8, 4, 5, 6, 10, 10, 9, 5, 6, 7, 11, 11, 10, 6, 8, 9, 13, 13, 12, 8, 9, 10, 14, 14, 13, 9, 10, 11, 15, 15, 14, 10)
 
-	private val vertexPoints = Array(16) { Vector3() }
+	private val localPoints = Array(16) { Vector3() }
 	private val normal = Vector3()
+	private val worldNormal = Vector3()
+	private val tmpVec = Vector3()
 
 	var texture: Texture? by Delegates.observable<Texture?>(null) {
 		_, _, _ ->
@@ -186,27 +185,6 @@ class NinePatch(val glState: GlState) : BasicDrawable {
 		}
 	}
 
-	override fun updateWorldVertices(worldTransform: Matrix4Ro, width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
-		updateVertices(width, height, x, y, z, rotation, originX, originY)
-		worldTransform.prj(vertexPoints[0])
-		worldTransform.prj(vertexPoints[1])
-		worldTransform.prj(vertexPoints[2])
-		worldTransform.prj(vertexPoints[3])
-		worldTransform.prj(vertexPoints[4])
-		worldTransform.prj(vertexPoints[5])
-		worldTransform.prj(vertexPoints[6])
-		worldTransform.prj(vertexPoints[7])
-		worldTransform.prj(vertexPoints[8])
-		worldTransform.prj(vertexPoints[9])
-		worldTransform.prj(vertexPoints[10])
-		worldTransform.prj(vertexPoints[11])
-		worldTransform.prj(vertexPoints[12])
-		worldTransform.prj(vertexPoints[13])
-		worldTransform.prj(vertexPoints[14])
-		worldTransform.prj(vertexPoints[15])
-		worldTransform.rot(normal).nor()
-	}
-
 	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
 		this.width = width
 		this.height = height
@@ -229,41 +207,38 @@ class NinePatch(val glState: GlState) : BasicDrawable {
 		val sin = sin(rotation)
 
 		// Row 0
-		vertexPoints[0].set(cos * x0 - sin * y0 + x, sin * x0 + cos * y0 + y, z)
-		vertexPoints[1].set(cos * x1 - sin * y0 + x, sin * x1 + cos * y0 + y, z)
-		vertexPoints[2].set(cos * x2 - sin * y0 + x, sin * x2 + cos * y0 + y, z)
-		vertexPoints[3].set(cos * x3 - sin * y0 + x, sin * x3 + cos * y0 + y, z)
+		localPoints[0].set(cos * x0 - sin * y0 + x, sin * x0 + cos * y0 + y, z)
+		localPoints[1].set(cos * x1 - sin * y0 + x, sin * x1 + cos * y0 + y, z)
+		localPoints[2].set(cos * x2 - sin * y0 + x, sin * x2 + cos * y0 + y, z)
+		localPoints[3].set(cos * x3 - sin * y0 + x, sin * x3 + cos * y0 + y, z)
 
 		// Row 1
-		vertexPoints[4].set(cos * x0 - sin * y1 + x, sin * x0 + cos * y1 + y, z)
-		vertexPoints[5].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
-		vertexPoints[6].set(cos * x2 - sin * y1 + x, sin * x2 + cos * y1 + y, z)
-		vertexPoints[7].set(cos * x3 - sin * y1 + x, sin * x3 + cos * y1 + y, z)
+		localPoints[4].set(cos * x0 - sin * y1 + x, sin * x0 + cos * y1 + y, z)
+		localPoints[5].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
+		localPoints[6].set(cos * x2 - sin * y1 + x, sin * x2 + cos * y1 + y, z)
+		localPoints[7].set(cos * x3 - sin * y1 + x, sin * x3 + cos * y1 + y, z)
 
 		// Row 2
-		vertexPoints[8].set(cos * x0 - sin * y2 + x, sin * x0 + cos * y2 + y, z)
-		vertexPoints[9].set(cos * x1 - sin * y2 + x, sin * x1 + cos * y2 + y, z)
-		vertexPoints[10].set(cos * x2 - sin * y2 + x, sin * x2 + cos * y2 + y, z)
-		vertexPoints[11].set(cos * x3 - sin * y2 + x, sin * x3 + cos * y2 + y, z)
+		localPoints[8].set(cos * x0 - sin * y2 + x, sin * x0 + cos * y2 + y, z)
+		localPoints[9].set(cos * x1 - sin * y2 + x, sin * x1 + cos * y2 + y, z)
+		localPoints[10].set(cos * x2 - sin * y2 + x, sin * x2 + cos * y2 + y, z)
+		localPoints[11].set(cos * x3 - sin * y2 + x, sin * x3 + cos * y2 + y, z)
 
 		// Row 3
-		vertexPoints[12].set(cos * x0 - sin * y3 + x, sin * x0 + cos * y3 + y, z)
-		vertexPoints[13].set(cos * x1 - sin * y3 + x, sin * x1 + cos * y3 + y, z)
-		vertexPoints[14].set(cos * x2 - sin * y3 + x, sin * x2 + cos * y3 + y, z)
-		vertexPoints[15].set(cos * x3 - sin * y3 + x, sin * x3 + cos * y3 + y, z)
+		localPoints[12].set(cos * x0 - sin * y3 + x, sin * x0 + cos * y3 + y, z)
+		localPoints[13].set(cos * x1 - sin * y3 + x, sin * x1 + cos * y3 + y, z)
+		localPoints[14].set(cos * x2 - sin * y3 + x, sin * x2 + cos * y3 + y, z)
+		localPoints[15].set(cos * x3 - sin * y3 + x, sin * x3 + cos * y3 + y, z)
 
 		normal.set(if (useAsBackFace) Vector3.Z else Vector3.NEG_Z)
 	}
 
-	/**
-	 * Draws this nine patch.
-	 * Remember to set the camera on the [GlState] object before drawing.
-	 * If [updateVertices] was used (and therefore no world transformation), that world transform matrix must be
-	 * supplied to [GlState.setCamera] first.
-	 */
-	override fun render(colorTint: ColorRo) {
+	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		val texture = texture
-		if (texture == null || width <= 0f || height <= 0f) return
+		if (texture == null || width <= 0f || height <= 0f || tint.a <= 0f) return
+
+		transform.rot(worldNormal.set(normal)).nor()
+
 		glState.setTexture(texture)
 		glState.blendMode(blendMode, premultipliedAlpha = false)
 
@@ -292,28 +267,28 @@ class NinePatch(val glState: GlState) : BasicDrawable {
 			// u, v2 = u, v
 
 			// Row 0
-			batch.putVertex(vertexPoints[0], normal, colorTint, rowU0, colV0)
-			batch.putVertex(vertexPoints[1], normal, colorTint, rowU0, colV1)
-			batch.putVertex(vertexPoints[2], normal, colorTint, rowU0, colV2)
-			batch.putVertex(vertexPoints[3], normal, colorTint, rowU0, colV3)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[0])), worldNormal, tint, rowU0, colV0)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[1])), worldNormal, tint, rowU0, colV1)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[2])), worldNormal, tint, rowU0, colV2)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[3])), worldNormal, tint, rowU0, colV3)
 
 			// Row 1
-			batch.putVertex(vertexPoints[4], normal, colorTint, rowU1, colV0)
-			batch.putVertex(vertexPoints[5], normal, colorTint, rowU1, colV1)
-			batch.putVertex(vertexPoints[6], normal, colorTint, rowU1, colV2)
-			batch.putVertex(vertexPoints[7], normal, colorTint, rowU1, colV3)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[4])), worldNormal, tint, rowU1, colV0)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[5])), worldNormal, tint, rowU1, colV1)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[6])), worldNormal, tint, rowU1, colV2)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[7])), worldNormal, tint, rowU1, colV3)
 
 			// Row 2
-			batch.putVertex(vertexPoints[8], normal, colorTint, rowU2, colV0)
-			batch.putVertex(vertexPoints[9], normal, colorTint, rowU2, colV1)
-			batch.putVertex(vertexPoints[10], normal, colorTint, rowU2, colV2)
-			batch.putVertex(vertexPoints[11], normal, colorTint, rowU2, colV3)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[8])), worldNormal, tint, rowU2, colV0)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[9])), worldNormal, tint, rowU2, colV1)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[10])), worldNormal, tint, rowU2, colV2)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[11])), worldNormal, tint, rowU2, colV3)
 
 			// Row 3
-			batch.putVertex(vertexPoints[12], normal, colorTint, rowU3, colV0)
-			batch.putVertex(vertexPoints[13], normal, colorTint, rowU3, colV1)
-			batch.putVertex(vertexPoints[14], normal, colorTint, rowU3, colV2)
-			batch.putVertex(vertexPoints[15], normal, colorTint, rowU3, colV3)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[12])), worldNormal, tint, rowU3, colV0)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[13])), worldNormal, tint, rowU3, colV1)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[14])), worldNormal, tint, rowU3, colV2)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[15])), worldNormal, tint, rowU3, colV3)
 		} else {
 			val splitLeftU = _splitLeft / texture.width
 			val splitRightU = _splitRight / texture.width
@@ -331,28 +306,28 @@ class NinePatch(val glState: GlState) : BasicDrawable {
 			val rowV3 = v2
 
 			// Row 0
-			batch.putVertex(vertexPoints[0], normal, colorTint, colU0, rowV0)
-			batch.putVertex(vertexPoints[1], normal, colorTint, colU1, rowV0)
-			batch.putVertex(vertexPoints[2], normal, colorTint, colU2, rowV0)
-			batch.putVertex(vertexPoints[3], normal, colorTint, colU3, rowV0)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[0])), worldNormal, tint, colU0, rowV0)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[1])), worldNormal, tint, colU1, rowV0)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[2])), worldNormal, tint, colU2, rowV0)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[3])), worldNormal, tint, colU3, rowV0)
 
 			// Row 1
-			batch.putVertex(vertexPoints[4], normal, colorTint, colU0, rowV1)
-			batch.putVertex(vertexPoints[5], normal, colorTint, colU1, rowV1)
-			batch.putVertex(vertexPoints[6], normal, colorTint, colU2, rowV1)
-			batch.putVertex(vertexPoints[7], normal, colorTint, colU3, rowV1)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[4])), worldNormal, tint, colU0, rowV1)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[5])), worldNormal, tint, colU1, rowV1)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[6])), worldNormal, tint, colU2, rowV1)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[7])), worldNormal, tint, colU3, rowV1)
 
 			// Row 2
-			batch.putVertex(vertexPoints[8], normal, colorTint, colU0, rowV2)
-			batch.putVertex(vertexPoints[9], normal, colorTint, colU1, rowV2)
-			batch.putVertex(vertexPoints[10], normal, colorTint, colU2, rowV2)
-			batch.putVertex(vertexPoints[11], normal, colorTint, colU3, rowV2)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[8])), worldNormal, tint, colU0, rowV2)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[9])), worldNormal, tint, colU1, rowV2)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[10])), worldNormal, tint, colU2, rowV2)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[11])), worldNormal, tint, colU3, rowV2)
 
 			// Row 3
-			batch.putVertex(vertexPoints[12], normal, colorTint, colU0, rowV3)
-			batch.putVertex(vertexPoints[13], normal, colorTint, colU1, rowV3)
-			batch.putVertex(vertexPoints[14], normal, colorTint, colU2, rowV3)
-			batch.putVertex(vertexPoints[15], normal, colorTint, colU3, rowV3)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[12])), worldNormal, tint, colU0, rowV3)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[13])), worldNormal, tint, colU1, rowV3)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[14])), worldNormal, tint, colU2, rowV3)
+			batch.putVertex(transform.prj(tmpVec.set(localPoints[15])), worldNormal, tint, colU3, rowV3)
 		}
 		if (useAsBackFace) batch.putIndicesReversed(indices) else batch.putIndices(indices)
 	}

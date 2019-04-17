@@ -18,7 +18,9 @@ package com.acornui.component
 
 import com.acornui.core.di.Owned
 import com.acornui.core.focus.Focusable
+import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
+import com.acornui.math.Matrix4Ro
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Rectangle
 import kotlin.math.roundToInt
@@ -75,9 +77,9 @@ open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(
 		out.set(w, h)
 	}
 
-	override fun render(clip: MinMaxRo) {
+	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		glState.batch.resetRenderCount()
-		super.render(clip)
+		super.render(clip, transform, tint)
 		glState.batch.flush()
 	}
 
