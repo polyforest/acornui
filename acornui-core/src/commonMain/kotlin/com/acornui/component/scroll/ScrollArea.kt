@@ -20,6 +20,8 @@ package com.acornui.component.scroll
 
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LayoutDataProvider
+import com.acornui.component.layout.globalToLocal
+import com.acornui.component.layout.localToGlobal
 import com.acornui.component.style.*
 import com.acornui.core.di.Owned
 import com.acornui.core.input.interaction.WheelInteractionRo

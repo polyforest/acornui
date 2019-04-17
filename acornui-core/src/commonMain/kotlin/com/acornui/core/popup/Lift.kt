@@ -19,10 +19,8 @@ package com.acornui.core.popup
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.core.di.Owned
-import com.acornui.math.Bounds
-import com.acornui.math.Matrix4
-import com.acornui.math.Vector2
-import com.acornui.math.Vector3
+import com.acornui.graphic.ColorRo
+import com.acornui.math.*
 
 /**
  * The Lift component will place its elements as children in the pop up layer, automatically transforming the children
@@ -140,11 +138,6 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 		}
 		contents.setExternalTransform(tmpMat)
 	}
-
-	override fun updateConcatenatedColorTransform() {
-		super.updateConcatenatedColorTransform()
-		contents.colorTint = concatenatedColorTint
-	}
 }
 
 fun Owned.lift(init: ComponentInit<Lift>): Lift {
@@ -153,13 +146,16 @@ fun Owned.lift(init: ComponentInit<Lift>): Lift {
 	return l
 }
 
-private class LiftStack(owner: Owned) : StackLayoutContainer(owner) {
+private class LiftStack(private val delegate: UiComponentRo) : StackLayoutContainer(delegate) {
 
 	private val _externalTransform = Matrix4()
 
 	init {
 		includeInLayout = false
 	}
+
+	override val concatenatedColorTint: ColorRo
+		get() = delegate.concatenatedColorTint
 
 	fun setExternalTransform(value: Matrix4) {
 		_externalTransform.set(value)
@@ -170,4 +166,7 @@ private class LiftStack(owner: Owned) : StackLayoutContainer(owner) {
 		_transform.set(_externalTransform)
 	}
 
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		super.draw(clip, transform, concatenatedColorTint)
+	}
 }

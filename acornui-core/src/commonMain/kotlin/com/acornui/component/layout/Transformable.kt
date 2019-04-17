@@ -95,66 +95,6 @@ interface TransformableRo : PositionableRo {
 	fun globalToLocal(ray: Ray): Ray
 
 	/**
-	 * Converts a bounding rectangle from local to global coordinates.
-	 * @param minMax These bounds will be mutated into the projected global coordinates, and set to the
-	 * bounding region of those four points.
-	 * @return Returns the mutated [minMax] parameter.
-	 */
-	fun localToGlobal(minMax: MinMax): MinMax {
-		val tmp1 =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)
-		val tmp2 =  Vector3.obtain().set(minMax.xMax, minMax.yMax, 0f)
-		val tmp =  Vector3.obtain()
-		minMax.inf()
-		localToGlobal(tmp.set(tmp1))
-		minMax.ext(tmp.x, tmp.y)
-		localToGlobal(tmp.set(tmp2.x, tmp1.y, 0f))
-		minMax.ext(tmp.x, tmp.y)
-		localToGlobal(tmp.set(tmp2))
-		minMax.ext(tmp.x, tmp.y)
-		localToGlobal(tmp.set(tmp1.x, tmp2.y, 0f))
-		minMax.ext(tmp.x, tmp.y)
-		Vector3.free(tmp1)
-		Vector3.free(tmp2)
-		Vector3.free(tmp)
-		return minMax
-	}
-
-	/**
-	 * Converts a bounding rectangle from global to local coordinates.
-	 */
-	fun globalToLocal(minMax: MinMax): MinMax {
-		val tmp1 =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)
-		val tmp2 =  Vector3.obtain().set(minMax.xMax, minMax.yMax, 0f)
-		val tmp =  Vector3.obtain()
-		minMax.inf()
-		globalToLocal(tmp.set(tmp1))
-		minMax.ext(tmp.x, tmp.y)
-		globalToLocal(tmp.set(tmp2.x, tmp1.y, 0f))
-		minMax.ext(tmp.x, tmp.y)
-		globalToLocal(tmp.set(tmp2))
-		minMax.ext(tmp.x, tmp.y)
-		globalToLocal(tmp.set(tmp1.x, tmp2.y, 0f))
-		minMax.ext(tmp.x, tmp.y)
-		Vector3.free(tmp1)
-		Vector3.free(tmp2)
-		Vector3.free(tmp)
-		return minMax
-	}
-
-	/**
-	 * Calculates the intersection coordinates of the provided Ray (in local coordinate space) and this layout
-	 * element's plane.
-	 * @return Returns true if the provided Ray intersects with this plane, or false if the Ray is parallel.
-	 */
-	fun rayToPlane(ray: RayRo, out: Vector2): Boolean {
-		if (ray.direction.z == 0f) return false
-		val m = -ray.origin.z * ray.directionInv.z
-		out.x = ray.origin.x + m * ray.direction.x
-		out.y = ray.origin.y + m * ray.direction.y
-		return true
-	}
-
-	/**
 	 * The global transform of this component, of all ancestor transforms multiplied together.
 	 * Do not modify this matrix directly, it will be overwritten on a TRANSFORM validation.
 	 * @see transform
@@ -170,6 +110,66 @@ interface TransformableRo : PositionableRo {
 	 */
 	val concatenatedTransformInv: Matrix4Ro
 
+}
+
+/**
+ * Converts a bounding rectangle from local to global coordinates.
+ * @param minMax These bounds will be mutated into the projected global coordinates, and set to the
+ * bounding region of those four points.
+ * @return Returns the mutated [minMax] parameter.
+ */
+fun TransformableRo.localToGlobal(minMax: MinMax): MinMax {
+	val tmp1 =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)
+	val tmp2 =  Vector3.obtain().set(minMax.xMax, minMax.yMax, 0f)
+	val tmp =  Vector3.obtain()
+	minMax.inf()
+	localToGlobal(tmp.set(tmp1))
+	minMax.ext(tmp.x, tmp.y)
+	localToGlobal(tmp.set(tmp2.x, tmp1.y, 0f))
+	minMax.ext(tmp.x, tmp.y)
+	localToGlobal(tmp.set(tmp2))
+	minMax.ext(tmp.x, tmp.y)
+	localToGlobal(tmp.set(tmp1.x, tmp2.y, 0f))
+	minMax.ext(tmp.x, tmp.y)
+	Vector3.free(tmp1)
+	Vector3.free(tmp2)
+	Vector3.free(tmp)
+	return minMax
+}
+
+/**
+ * Converts a bounding rectangle from global to local coordinates.
+ */
+fun TransformableRo.globalToLocal(minMax: MinMax): MinMax {
+	val tmp1 =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)
+	val tmp2 =  Vector3.obtain().set(minMax.xMax, minMax.yMax, 0f)
+	val tmp =  Vector3.obtain()
+	minMax.inf()
+	globalToLocal(tmp.set(tmp1))
+	minMax.ext(tmp.x, tmp.y)
+	globalToLocal(tmp.set(tmp2.x, tmp1.y, 0f))
+	minMax.ext(tmp.x, tmp.y)
+	globalToLocal(tmp.set(tmp2))
+	minMax.ext(tmp.x, tmp.y)
+	globalToLocal(tmp.set(tmp1.x, tmp2.y, 0f))
+	minMax.ext(tmp.x, tmp.y)
+	Vector3.free(tmp1)
+	Vector3.free(tmp2)
+	Vector3.free(tmp)
+	return minMax
+}
+
+/**
+ * Calculates the intersection coordinates of the provided Ray (in local coordinate space) and this layout
+ * element's plane.
+ * @return Returns true if the provided Ray intersects with this plane, or false if the Ray is parallel.
+ */
+fun TransformableRo.rayToPlane(ray: RayRo, out: Vector2): Boolean {
+	if (ray.direction.z == 0f) return false
+	val m = -ray.origin.z * ray.directionInv.z
+	out.x = ray.origin.x + m * ray.direction.x
+	out.y = ray.origin.y + m * ray.direction.y
+	return true
 }
 
 /**

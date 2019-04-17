@@ -21,11 +21,17 @@ import com.acornui.core.graphic.*
 import com.acornui.gl.core.GlState
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Matrix4Ro
+import com.acornui.math.MinMax
 import com.acornui.math.MinMaxRo
 
 class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 
 	private var _region: AtlasRegionData? = null
+
+	private var width = 0f
+	private var height = 0f
+
+	override fun drawRegion(out: MinMax): MinMax = out.set(0f, 0f, width, height)
 
 	val region: AtlasRegionData?
 		get() = _region
@@ -116,6 +122,8 @@ class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 	private var totalPadBottom = 0f
 
 	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
+		this.width = width
+		this.height = height
 		val drawable = drawable ?: return
 		updatePadding(width, height)
 

@@ -47,6 +47,11 @@ import kotlin.properties.Delegates
 
 class NinePatch(val glState: GlState) : BasicDrawable {
 
+	private var width: Float = 0f
+	private var height: Float = 0f
+
+	override fun drawRegion(out: MinMax): MinMax = out.set(0f, 0f, width, height)
+
 	private var _isRotated: Boolean = false
 
 	/**
@@ -165,9 +170,6 @@ class NinePatch(val glState: GlState) : BasicDrawable {
 		this._splitRight = splitRight
 		this._splitBottom = splitBottom
 	}
-
-	private var width: Float = 0f
-	private var height: Float = 0f
 
 	private fun updateUv() {
 		val t = texture ?: return

@@ -9,6 +9,7 @@ import com.acornui.gl.core.putVertex
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Matrix4Ro
+import com.acornui.math.MinMax
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Vector3
 import com.acornui.string.isBreaking
@@ -18,6 +19,8 @@ import kotlin.math.floor
  * Represents a single character in a [TextField], typically within a [TextSpanElement].
  */
 class CharElement private constructor() : TextElement, Clearable {
+
+	override fun drawRegion(out: MinMax): MinMax = out.set(0f, 0f, width, lineHeight)
 
 	private lateinit var glState: GlState
 

@@ -37,6 +37,11 @@ import kotlin.properties.Delegates
  */
 class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 
+	private var width: Float = 0f
+	private var height: Float = 0f
+
+	override fun drawRegion(out: MinMax): MinMax = out.set(0f, 0f, width, height)
+
 	/**
 	 * If true, the normal and indices will be reversed.
 	 */
@@ -149,9 +154,6 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 			v2 = region[3] / t.height.toFloat()
 		}
 	}
-
-	private var width: Float = 0f
-	private var height: Float = 0f
 
 	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
 		this.width = width

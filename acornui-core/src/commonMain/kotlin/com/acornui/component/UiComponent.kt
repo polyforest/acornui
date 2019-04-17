@@ -583,7 +583,7 @@ open class UiComponentImpl(
 		}
 	}
 
-	final override val renderFilters: MutableList<RenderFilter> = own(RenderFilterList(innerRenderable).apply { changed.add { window.requestRender() } })
+	final override val renderFilters = own(RenderFilterList(innerRenderable).apply { changed.add { window.requestRender() } })
 
 	override val isRendered: Boolean
 		get() {

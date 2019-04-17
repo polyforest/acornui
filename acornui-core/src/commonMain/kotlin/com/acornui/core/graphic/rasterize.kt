@@ -18,6 +18,7 @@ package com.acornui.core.graphic
 
 import com.acornui.component.TextureComponent
 import com.acornui.component.UiComponent
+import com.acornui.component.layout.localToGlobal
 import com.acornui.component.textureC
 import com.acornui.core.config
 import com.acornui.core.di.Owned
