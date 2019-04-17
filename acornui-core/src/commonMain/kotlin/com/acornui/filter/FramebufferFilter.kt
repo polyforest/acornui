@@ -47,11 +47,11 @@ class FramebufferFilter(
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		val contents = contents ?: return
 		if (!bitmapCacheIsValid)
-			drawToFramebuffer(clip, contents)
+			drawToFramebuffer(contents)
 		drawToScreen(clip, transform, tint)
 	}
 
-	fun drawToFramebuffer(clip: MinMaxRo, contents: Renderable, padding: PadRo = Pad.EMPTY_PAD) {
+	fun drawToFramebuffer(contents: Renderable, padding: PadRo = Pad.EMPTY_PAD) {
 		val region = _drawRegion
 		contents.drawRegion(region).inflate(padding)
 		region.xMin = floor(region.xMin)
@@ -67,7 +67,7 @@ class FramebufferFilter(
 		if (clearMask != 0)
 			clearAndReset(clearColor, clearMask)
 
-		contents.render(clip, Matrix4.IDENTITY, Color.WHITE)
+		contents.render(MinMaxRo.POSITIVE_INFINITY, Matrix4.IDENTITY, Color.WHITE)
 
 		framebuffer.end()
 		framebuffer.sprite(sprite)

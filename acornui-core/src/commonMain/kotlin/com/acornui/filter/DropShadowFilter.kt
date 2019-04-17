@@ -61,7 +61,7 @@ open class DropShadowFilter(owner: Owned) : RenderFilterBase(owner) {
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		offsetTransform.set(transform).translate(offsetX, offsetY, 0f)
 		if (!bitmapCacheIsValid)
-			blurFilter.drawToPingPongBuffers(clip)
+			blurFilter.drawToPingPongBuffers()
 
 		glState.useColorTransformation(colorTransformation) {
 			blurFilter.drawBlurToScreen(clip, offsetTransform, tint)

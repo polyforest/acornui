@@ -58,14 +58,14 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		if (!bitmapCacheIsValid)
-			drawToPingPongBuffers(clip)
+			drawToPingPongBuffers()
 		drawBlurToScreen(clip, transform, tint)
 	}
 
-	fun drawToPingPongBuffers(clip: MinMaxRo) {
+	fun drawToPingPongBuffers() {
 		val contents = contents ?: return
 		val framebufferUtil = framebufferUtil
-		framebufferUtil.drawToFramebuffer(clip, contents, padding)
+		framebufferUtil.drawToFramebuffer(contents, padding)
 		val region = framebufferUtil.drawRegion
 		glState.useViewport(-region.xMin.toInt(), region.yMin.toInt() - viewport.height + framebufferUtil.texture.height, viewport.width, viewport.height) {
 			val textureToBlur = framebufferUtil.texture
