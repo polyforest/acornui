@@ -301,6 +301,9 @@ open class ContainerImpl(
 		}
 	}
 
+	/**
+	 * True if the current validation step is on layout or size constraints.
+	 */
 	protected val isValidatingLayout: Boolean
 		get() = validation.currentFlag == ValidationFlags.LAYOUT ||
 				validation.currentFlag == ValidationFlags.SIZE_CONSTRAINTS
