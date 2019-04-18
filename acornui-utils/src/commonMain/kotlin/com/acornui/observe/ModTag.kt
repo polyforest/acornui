@@ -42,7 +42,7 @@ class ModTagImpl : ModTag {
 	private var _modCount: Int = 0
 
 	override val crc: Long
-		get() = _id.toLong() shl 16 or _modCount.toLong()
+		get() = _id.toLong() shl 32 or _modCount.toLong()
 
 	override fun increment() {
 		_modCount++

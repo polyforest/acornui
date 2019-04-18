@@ -51,14 +51,14 @@ interface GlState {
 	var viewProjection: Matrix4Ro
 
 	/**
-	 * Applies the given matrix as the view-projection transformation.
-	 */
-	var colorTransformation: ColorTransformationRo?
-
-	/**
 	 * Applies the given matrix as the model transformation.
 	 */
 	var model: Matrix4Ro
+
+	/**
+	 * Sets the color transformation matrix and offset uniforms.
+	 */
+	var colorTransformation: ColorTransformationRo?
 
 	/**
 	 * Returns whether scissoring is currently enabled.
