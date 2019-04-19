@@ -41,42 +41,6 @@ interface CameraRo {
 	val combined: Matrix4Ro
 
 	/**
-	 * Creates a picking {@link Ray} from the coordinates given in global coordinates. The global coordinates origin
-	 * is assumed to be in the top left corner, its y-axis pointing down, the x-axis  pointing to the right.
-	 *
-	 * @param viewportX the x coordinate of the bottom left corner of the viewport in glViewport coordinates.
-	 * @param viewportY the y coordinate of the bottom left corner of the viewport in glViewport coordinates.
-	 * @param viewportWidth the width of the viewport in pixels
-	 * @param viewportHeight the height of the viewport in pixels
-	 * @return The [out] parameter. The Ray will be in global coordinate space.
-	 */
-	fun getPickRay(canvasX: Float, canvasY: Float, viewportX: Float, viewportY: Float, viewportWidth: Float, viewportHeight: Float, out: Ray): Ray {
-		canvasToGlobal(out.origin.set(canvasX, canvasY, -1f), viewportX, viewportY, viewportWidth, viewportHeight)
-		canvasToGlobal(out.direction.set(canvasX, canvasY, 0f), viewportX, viewportY, viewportWidth, viewportHeight)
-		out.direction.sub(out.origin)
-		out.update()
-		return out
-	}
-
-	/**
-	 * Projects the {@link Vector3} given in global space to window coordinates. The window coordinate system has its
-	 * origin in the top left, with the y-axis pointing downwards and the x-axis pointing to the right.
-	 *
-	 * @param viewportX the coordinate of the top left corner of the viewport in glViewport coordinates.
-	 * @param viewportY the coordinate of the top left corner of the viewport in glViewport coordinates.
-	 * @param viewportWidth the width of the viewport in pixels
-	 * @param viewportHeight the height of the viewport in pixels
-	 */
-	fun project(globalCoords: Vector3, viewportX: Float, viewportY: Float, viewportWidth: Float, viewportHeight: Float): Vector3 {
-		combined.prj(globalCoords) // Global coords become clip coords.
-		// Convert clip coords to canvas coords.
-		globalCoords.x = viewportWidth * (globalCoords.x + 1f) * 0.5f + viewportX
-		globalCoords.y = viewportHeight * (-globalCoords.y + 1f) * 0.5f + viewportY
-		globalCoords.z = (globalCoords.z + 1f) * 0.5f
-		return globalCoords
-	}
-
-	/**
 	 * The position of the camera
 	 */
 	val position: Vector3Ro
@@ -144,6 +108,41 @@ interface CameraRo {
 	 */
 	fun canvasToGlobal(canvasCoords: Vector3, viewportX: Float, viewportY: Float, viewportWidth: Float, viewportHeight: Float): Vector3
 
+	/**
+	 * Creates a picking {@link Ray} from the coordinates given in global coordinates. The global coordinates origin
+	 * is assumed to be in the top left corner, its y-axis pointing down, the x-axis  pointing to the right.
+	 *
+	 * @param viewportX the x coordinate of the bottom left corner of the viewport in glViewport coordinates.
+	 * @param viewportY the y coordinate of the bottom left corner of the viewport in glViewport coordinates.
+	 * @param viewportWidth the width of the viewport in pixels
+	 * @param viewportHeight the height of the viewport in pixels
+	 * @return The [out] parameter. The Ray will be in global coordinate space.
+	 */
+	fun getPickRay(canvasX: Float, canvasY: Float, viewportX: Float, viewportY: Float, viewportWidth: Float, viewportHeight: Float, out: Ray): Ray {
+		canvasToGlobal(out.origin.set(canvasX, canvasY, -1f), viewportX, viewportY, viewportWidth, viewportHeight)
+		canvasToGlobal(out.direction.set(canvasX, canvasY, 0f), viewportX, viewportY, viewportWidth, viewportHeight)
+		out.direction.sub(out.origin)
+		out.update()
+		return out
+	}
+
+	/**
+	 * Projects the {@link Vector3} given in global space to window coordinates. The window coordinate system has its
+	 * origin in the top left, with the y-axis pointing downwards and the x-axis pointing to the right.
+	 *
+	 * @param viewportX the coordinate of the top left corner of the viewport in glViewport coordinates.
+	 * @param viewportY the coordinate of the top left corner of the viewport in glViewport coordinates.
+	 * @param viewportWidth the width of the viewport in pixels
+	 * @param viewportHeight the height of the viewport in pixels
+	 */
+	fun project(globalCoords: Vector3, viewportX: Float, viewportY: Float, viewportWidth: Float, viewportHeight: Float): Vector3 {
+		combined.prj(globalCoords) // Global coords become clip coords.
+		// Convert clip coords to canvas coords.
+		globalCoords.x = viewportWidth * (globalCoords.x + 1f) * 0.5f + viewportX
+		globalCoords.y = viewportHeight * (-globalCoords.y + 1f) * 0.5f + viewportY
+		globalCoords.z = (globalCoords.z + 1f) * 0.5f
+		return globalCoords
+	}
 }
 
 val CameraRo.aspect: Float
