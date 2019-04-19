@@ -165,7 +165,7 @@ gradle-app.setting
 # keep a clean project and ensure the project settings will pick up
 # format changes upon IDE update.
 .idea/**/artifacts/
-#.idea/**/misc.xml
+.idea/**/.name
 .idea/**/compiler.xml
 .idea/**/kotlinc.xml
 .idea/**/kotlinScripting.xml
