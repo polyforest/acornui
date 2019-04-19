@@ -344,9 +344,7 @@ class GlStateImpl(
 			viewProjection = if (model.mode == MatrixMode.IDENTITY) {
 				camera.combined
 			} else {
-				_mvp.set(camera.combined)
-				_mvp.mul(model)
-				_mvp
+				_mvp.set(camera.combined).mul(model)
 			}
 		}
 	}
