@@ -812,16 +812,6 @@ open class UiComponentImpl(
 			colorTint(value.r, value.g, value.b, value.a)
 		}
 
-	override var alpha: Float
-		get() {
-			return colorTint.a
-		}
-		set(value) {
-			val t = colorTint
-			if (t.a == value) return
-			colorTint(t.r, t.g, t.b, value)
-		}
-
 	override fun colorTint(r: Float, g: Float, b: Float, a: Float) {
 		_colorTint.set(r, g, b, a)
 		window.requestRender()
@@ -945,7 +935,6 @@ open class UiComponentImpl(
 			_customTransform = value
 			invalidate(ValidationFlags.TRANSFORM)
 		}
-
 
 	override var rotationX: Float
 		get() = _rotation.x
@@ -1090,54 +1079,6 @@ open class UiComponentImpl(
 		_origin.set(x, y, z)
 		invalidate(ValidationFlags.TRANSFORM)
 		return
-	}
-
-	/**
-	 * Converts a coordinate from local coordinate space to global coordinate space.
-	 * This will modify the provided coord parameter.
-	 * @param localCoord The coordinate local to this component. This will be mutated to become a global coordinate.
-	 * @return Returns the coord
-	 */
-	override fun localToGlobal(localCoord: Vector3): Vector3 {
-		concatenatedTransform.prj(localCoord)
-		return localCoord
-	}
-
-	/**
-	 * Converts a coordinate from global coordinate space to local coordinate space.
-	 * This will modify the provided coord parameter.
-	 * @param globalCoord The coordinate in global space. This will be mutated to become a local coordinate.
-	 * @return Returns [globalCoord]
-	 * Note: This may be an expensive operation, as it requires a matrix inversion.
-	 */
-	override fun globalToLocal(globalCoord: Vector3): Vector3 {
-		concatenatedTransformInv.prj(globalCoord)
-		return globalCoord
-	}
-
-	/**
-	 * Converts a ray from local coordinate space to global coordinate space.
-	 * This will modify the provided ray parameter.
-	 * @param ray The ray local to this Transformable. This will be mutated to become a global ray.
-	 * @return Returns the ray
-	 */
-	override fun localToGlobal(ray: Ray): Ray {
-		ray.mul(concatenatedTransform)
-		return ray
-	}
-
-	/**
-	 * Converts a ray from global coordinate space to local coordinate space.
-	 * This will modify the provided ray parameter.
-	 *
-	 * Note: This is a heavy operation as it performs a Matrix4 inversion.
-	 *
-	 * @param ray The ray in global space. This will be mutated to become a local coordinate.
-	 * @return Returns the ray
-	 */
-	override fun globalToLocal(ray: Ray): Ray {
-		ray.mul(concatenatedTransformInv)
-		return ray
 	}
 
 	/**

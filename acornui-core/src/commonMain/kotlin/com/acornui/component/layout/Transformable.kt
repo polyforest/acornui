@@ -65,7 +65,10 @@ interface TransformableRo : PositionableRo {
 	 * @param localCoord The coordinate local to this Transformable. This will be mutated to become a global coordinate.
 	 * @return Returns the coord
 	 */
-	fun localToGlobal(localCoord: Vector3): Vector3
+	fun localToGlobal(localCoord: Vector3): Vector3 {
+		concatenatedTransform.prj(localCoord)
+		return localCoord
+	}
 
 	/**
 	 * Converts a coordinate from global coordinate space to local coordinate space.
@@ -73,7 +76,10 @@ interface TransformableRo : PositionableRo {
 	 * @param globalCoord The coordinate in global space. This will be mutated to become a local coordinate.
 	 * @return Returns the coord
 	 */
-	fun globalToLocal(globalCoord: Vector3): Vector3
+	fun globalToLocal(globalCoord: Vector3): Vector3 {
+		concatenatedTransformInv.prj(globalCoord)
+		return globalCoord
+	}
 
 	/**
 	 * Converts a ray from local coordinate space to global coordinate space.
@@ -81,7 +87,10 @@ interface TransformableRo : PositionableRo {
 	 * @param ray The ray local to this Transformable. This will be mutated to become a global ray.
 	 * @return Returns the ray
 	 */
-	fun localToGlobal(ray: Ray): Ray
+	fun localToGlobal(ray: Ray): Ray {
+		ray.mul(concatenatedTransform)
+		return ray
+	}
 
 	/**
 	 * Converts a ray from global coordinate space to local coordinate space.
@@ -92,7 +101,10 @@ interface TransformableRo : PositionableRo {
 	 * @param ray The ray in global space. This will be mutated to become a local coordinate.
 	 * @return Returns the ray
 	 */
-	fun globalToLocal(ray: Ray): Ray
+	fun globalToLocal(ray: Ray): Ray {
+		ray.mul(concatenatedTransformInv)
+		return ray
+	}
 
 	/**
 	 * The global transform of this component, of all ancestor transforms multiplied together.
