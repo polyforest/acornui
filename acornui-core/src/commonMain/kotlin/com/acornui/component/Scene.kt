@@ -19,19 +19,12 @@
 package com.acornui.component
 
 import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
-import com.acornui.core.graphic.Camera
-import com.acornui.core.graphic.CameraRo
 import com.acornui.core.graphic.orthographicCamera
-import com.acornui.core.graphic.project
-import com.acornui.gl.core.FramebufferInfo
-import com.acornui.gl.core.FrameBufferInfoRo
-import com.acornui.gl.core.GlState
-import com.acornui.gl.core.setViewport
+import com.acornui.gl.core.useViewportFromCanvasTransform
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
-import kotlin.math.round
-import kotlin.math.roundToInt
+import kotlin.math.ceil
+import kotlin.math.floor
 
 /**
  * A Scene renders its children within an unrotated window according to its explicit size and position.
@@ -40,71 +33,14 @@ import kotlin.math.roundToInt
  */
 class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 
-	/**
-	 * The viewport this scene would have rendered to had we not overriden.
-	 */
-	private var superViewport: RectangleRo = RectangleRo.EMPTY
-
-	/**
-	 * The camera this scene would have rendered with had we not overriden.
-	 */
-	private var superCamera: CameraRo = inject(Camera)
-
-	private val globalPosition = Vector3()
-	private val globalScale = Vector3()
-	private val _clip = MinMax()
-
 	private val cam = orthographicCamera(autoCenter = false)
 
 	init {
-		validation.addNode(1 shl 16, ValidationFlags.LAYOUT or ValidationFlags.CONCATENATED_TRANSFORM or ValidationFlags.CAMERA or ValidationFlags.VIEWPORT, ::updateViewport2)
+		validation.addNode(1 shl 16, ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT, ::updateViewport)
 		cameraOverride = cam
+		_renderContext.modelTransformOverride = Matrix4.IDENTITY
+		_renderContext.clipRegionOverride = MinMaxRo.POSITIVE_INFINITY
 	}
-
-	override fun updateCamera() {
-		super.updateCamera()
-		superCamera = parent?.camera ?: inject(Camera)
-	}
-
-	override var rotationX: Float
-		get() = super.rotationX
-		set(value) {
-			throw UnsupportedOperationException("Cannot set rotation on Scene")
-		}
-
-	override var rotationY: Float
-		get() = super.rotationY
-		set(value) {
-			throw UnsupportedOperationException("Cannot set rotation on Scene")
-		}
-
-	override var rotation: Float
-		get() = super.rotation
-		set(value) {
-			throw UnsupportedOperationException("Cannot set rotation on Scene")
-		}
-
-	override var z: Float
-		get() = super.z
-		set(value) {
-			if (value != 0f) throw UnsupportedOperationException("Cannot set z translation on Scene")
-		}
-
-	override fun setPosition(x: Float, y: Float, z: Float) {
-		super.setPosition(x, y, z)
-		if (z != 0f)
-			throw UnsupportedOperationException("Cannot set z translation on Scene")
-	}
-
-	override fun setRotation(x: Float, y: Float, z: Float) {
-		throw UnsupportedOperationException("Cannot set rotation on Scene")
-	}
-
-	override var customTransform: Matrix4Ro?
-		get() = super.customTransform
-		set(value) {
-			throw UnsupportedOperationException("Cannot set custom transformation on Scene")
-		}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		out.set(explicitWidth ?: window.width, explicitHeight ?: window.height)
@@ -118,76 +54,25 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		}
 	}
 
-	override fun updateConcatenatedTransform() {
-		val pCT = parent?.concatenatedTransform ?: Matrix4.IDENTITY
-		if (pCT.mode == MatrixMode.FULL) {
-			throw Exception("A Scene must not be rotated.")
-		}
-		pCT.getScale(globalScale).scl(_scale)
-		if (globalScale.x < 0f || globalScale.y < 0f) {
-			throw Exception("A Scene cannot have negative scaling.")
-		}
+	private val region = MinMax()
+	private val canvasTransformOverride = IntRectangle()
 
-		pCT.getTranslation(globalPosition).add(position).sub(_origin.x * globalScale.x, _origin.y * globalScale.y, 0f)
-		if (globalPosition.z != 0f)
-			throw UnsupportedOperationException("Cannot set z translation on Scene")
-		globalPosition.x = round(globalPosition.x)
-		globalPosition.y = round(globalPosition.y)
-
-	}
-
-	private val topLeft = Vector3()
-	private val bottomRight = Vector3()
-	private val sceneViewport = Rectangle()
-
-	private fun updateViewport2() {
-		superViewport = parent?.viewport ?: stage.viewport
-		if (superCamera.combined.mode == MatrixMode.FULL)
-			throw Exception("Scene components cannot be rotated, even via their camera.")
-
-		localToCanvas2(topLeft.set(0f, 0f, 0f))
-		localToCanvas2(bottomRight.set(width, height, 0f))
-		val x = topLeft.x.roundToInt()
-		val y = topLeft.y.roundToInt()
-		_viewport = sceneViewport.set(x, y, bottomRight.x.roundToInt() - x, bottomRight.y.roundToInt() - y)
-		_clip.set(_viewport.x, _viewport.y, _viewport.right, _viewport.bottom)
-	}
-
-	private val oldGlViewport = IntRectangle()
-	private val framebufferInfo = FramebufferInfo()
-
-	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		glState.getFramebuffer(framebufferInfo)
-		oldGlViewport.set(glState.viewport)
-		framebufferInfo.glViewport(glState, viewport)
-		super.draw(_clip, transform, tint)
-		glState.setViewport(oldGlViewport)
-	}
-
-	/**
-	 * Sets the gl viewport from a UiComponent viewport.
-	 */
-	private fun FrameBufferInfoRo.glViewport(glState: GlState, viewport: RectangleRo) {
-		glState.setViewport(
-				(viewport.x * scaleX).roundToInt(),
-				(height - viewport.bottom * scaleY).roundToInt(),
-				(viewport.width * scaleX).roundToInt(),
-				(viewport.height * scaleY).roundToInt()
+	private fun updateViewport() {
+		_renderContext.parentContext.localToCanvas(region.set(x, y, width, height))
+		_renderContext.canvasTransformOverride = canvasTransformOverride.set(
+				floor(region.xMin).toInt(),
+				floor(region.yMin).toInt(),
+				ceil(region.width).toInt(),
+				ceil(region.height).toInt()
 		)
 	}
 
-	/**
-	 * Converts the local coordinate to canvas coordinates using the [superViewport]
-	 */
-	private fun localToCanvas2(localCoord: Vector3): Vector3 {
-		localToGlobal2(localCoord)
-		superCamera.project(localCoord, superViewport)
-		return localCoord
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		glState.useViewportFromCanvasTransform(canvasTransform) {
+			super.draw(clip, transform, tint)
+		}
 	}
 
-	private fun localToGlobal2(localCoord: Vector3): Vector3 {
-		return localCoord.scl(globalScale).add(globalPosition)
-	}
 }
 
 fun Owned.scene(init: ComponentInit<Scene>): Scene {

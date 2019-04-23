@@ -16,7 +16,8 @@
 
 package com.acornui.component.layout
 
-import com.acornui.core.graphic.CameraRo
+import com.acornui.component.CanvasTransformableRo
+import com.acornui.component.localToGlobal
 import com.acornui.math.*
 
 interface LayoutElementRo : BasicLayoutElementRo, TransformableRo {
@@ -92,53 +93,6 @@ fun LayoutElementRo.clampWidth(value: Float?): Float? {
 fun LayoutElementRo.clampHeight(value: Float?): Float? {
 	return sizeConstraints.height.clamp(value)
 }
-
-private val a = Vector3()
-private val b = Vector3()
-private val c = Vector3()
-
-/**
- * Returns true if any part of the element's bounding rectangle can be seen by this camera.
- */
-fun CameraRo.intersects(element: LayoutElementRo): Boolean {
-	return combined.intersects(element)
-}
-
-private fun Matrix4Ro.intersects(element: LayoutElementRo): Boolean {
-	prj(element.localToGlobal(a.set(0f, 0f, 0f)))
-	if (checkPoint(a)) return true
-	prj(element.localToGlobal(b.set(element.width, 0f, 0f)))
-	if (checkPoint(b)) return true
-	prj(element.localToGlobal(c.set(element.width, element.height, 0f)))
-	if (checkPoint(c)) return true
-	if (checkTriangle(a, b, c)) return true
-	prj(element.localToGlobal(b.set(0f, element.height, 0f)))
-	if (checkPoint(b)) return true
-	return checkTriangle(a, b, c)
-}
-
-private fun checkTriangle(a: Vector3Ro, b: Vector3Ro, c: Vector3Ro): Boolean {
-	return checkSegment(a, b) || checkSegment(b, c) || checkSegment(a, c)
-}
-
-private fun checkSegment(a: Vector3Ro, b: Vector3Ro): Boolean {
-	return (checkValue(a.x) || checkValue(b.x) || crosses(a.x, b.x)) &&
-			(checkValue(a.y) || checkValue(b.y) || crosses(a.y, b.y)) &&
-			(checkValue(a.z) || checkValue(b.z) || crosses(a.z, b.z))
-}
-
-private fun checkPoint(point: Vector3Ro): Boolean {
-	return checkValue(point.x) && checkValue(point.y) && checkValue(point.z)
-}
-
-private fun crosses(a: Float, b: Float): Boolean {
-	return (a <= -1f && b > -1f) || (a >= 1f && b < 1f)
-}
-
-private fun checkValue(x: Float): Boolean {
-	return x > -1f && x < 1f
-}
-
 /**
  * A LayoutElement is a Transformable component that can be used in layout algorithms.
  * It has features responsible for providing explicit dimensions, and returning measured dimensions.

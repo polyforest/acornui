@@ -12,18 +12,17 @@ class CacheImplTest {
 
 	private val timeDriver = object : TimeDriver {
 		override val config: TimeDriverConfig
-			get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+			get() = throw UnsupportedOperationException()
 
 		override fun activate() {
-			TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+			throw UnsupportedOperationException()
 		}
 
 		override fun update() {
 			children.forEach { it.update(1f) }
 		}
-
 		override val parent: ParentRo<ChildRo>?
-			get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+			get() = throw UnsupportedOperationException()
 		override val children = ActiveList<UpdatableChild>()
 
 		override fun <S : UpdatableChild> addChild(index: Int, child: S): S {

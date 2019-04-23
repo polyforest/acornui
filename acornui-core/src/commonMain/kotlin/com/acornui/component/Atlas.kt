@@ -26,9 +26,8 @@ class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 
 	private var _region: AtlasRegionData? = null
 
-	private val _bounds = Bounds()
-	override val bounds: BoundsRo
-		get() = _bounds
+	private var width = 0f
+	private var height = 0f
 
 	val region: AtlasRegionData?
 		get() = _region
@@ -119,7 +118,8 @@ class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 	private var totalPadBottom = 0f
 
 	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
-		_bounds.set(width, height)
+		this.width = width
+		this.height = height
 		val drawable = drawable ?: return
 		updatePadding(width, height)
 

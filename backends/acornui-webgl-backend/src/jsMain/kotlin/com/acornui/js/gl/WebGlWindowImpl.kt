@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("UNUSED_ANONYMOUS_PARAMETER")
+
 package com.acornui.js.gl
 
 import com.acornui.core.WindowConfig
@@ -235,6 +237,7 @@ class WebGlWindowImpl(
 //			} else {
 //				document.exitFullscreen()
 //			}
+			requestRender()
 		}
 
 	private val _location by lazy { JsLocation(window.location) }

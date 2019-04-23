@@ -81,7 +81,8 @@ fun Scoped.createSmoothCorner(
 		val previousShader = glState.shader
 		val curvedShader = curvedShader!!
 		glState.shader = curvedShader
-		framebuffer.drawTo {
+		framebuffer.begin()
+		glState.useViewport(0, 0, framebuffer.width, framebuffer.height) {
 			gl.uniform2f(curvedShader.getRequiredUniformLocation("u_cornerRadius"), cornerRadiusX, cornerRadiusY)
 			gl.uniform1f(curvedShader.getRequiredUniformLocation("u_smoothOuter"), if (antialias) 1f / minOf(cornerRadiusX, cornerRadiusY) else 0.00001f)
 			gl.uniform1f(curvedShader.getRequiredUniformLocation("u_smoothInner"), if (antialias) 1f / minOf(maxOf(0.00001f, cornerRadiusX - sX), maxOf(0.00001f, cornerRadiusY - sY)) else 0.00001f)
@@ -99,6 +100,7 @@ fun Scoped.createSmoothCorner(
 			batch.putVertex(-1f, h, -1f, u = 0f, v = 1f)
 			batch.putQuadIndices()
 		}
+		framebuffer.end()
 		glState.shader = previousShader
 		if (useCache)
 			smoothCornerMap[cacheKey] = disposeOnShutdown(framebuffer)

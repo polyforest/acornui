@@ -173,7 +173,7 @@ class SpriteAnimation(owner: Owned) : ContainerImpl(owner) {
 		if (currentFrame >= startFrame && (currentFrame - startFrame) < frameClips.size) {
 			val frameClip = frameClips[currentFrame - startFrame]
 			if (frameClip.visible)
-				frameClip.render(clip, transform, tint)
+				frameClip.render()
 		}
 	}
 

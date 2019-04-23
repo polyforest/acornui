@@ -301,6 +301,8 @@ class IntRectangle(
 
 		fun obtain(): IntRectangle = pool.obtain()
 		fun free(obj: IntRectangle) = pool.free(obj)
+
+		val EMPTY = IntRectangle()
 	}
 
 }

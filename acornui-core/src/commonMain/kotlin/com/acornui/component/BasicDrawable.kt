@@ -16,9 +16,11 @@
 
 package com.acornui.component
 
-import com.acornui.core.Renderable
+import com.acornui.graphic.ColorRo
+import com.acornui.math.Matrix4Ro
+import com.acornui.math.MinMaxRo
 
-interface BasicDrawable : Renderable {
+interface BasicDrawable {
 
 	val naturalWidth: Float
 	val naturalHeight: Float
@@ -36,4 +38,6 @@ interface BasicDrawable : Renderable {
 	 * @param originY The y point of the rectangle that will be 0,0
 	 */
 	fun updateVertices(width: Float = naturalWidth, height: Float = naturalHeight, x: Float = 0f, y: Float = 0f, z: Float = 0f, rotation: Float = 0f, originX: Float = 0f, originY: Float = 0f)
+
+	fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo)
 }

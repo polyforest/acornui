@@ -8,7 +8,7 @@ import com.acornui.core.di.inject
 import com.acornui.core.di.own
 import com.acornui.core.graphic.BlendMode
 import com.acornui.core.graphic.Texture
-import com.acornui.core.time.onTick
+import com.acornui.core.render
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
@@ -34,6 +34,7 @@ class FramebufferFilter(
 	var premultipliedAlpha = false
 
 	private val glState = inject(GlState)
+	private val defaultRenderContext = inject(RenderContextRo)
 
 	private val framebuffer = resizeableFramebuffer(hasDepth = hasDepth, hasStencil = hasStencil)
 
@@ -44,7 +45,7 @@ class FramebufferFilter(
 	private val sprite = Sprite(glState)
 	private val drawable = PaddedDrawable(sprite)
 	private val mvp = Matrix4()
-	private val drawed = own(Signal0())
+	private val drew = own(Signal0())
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		if (!bitmapCacheIsValid)
@@ -61,11 +62,11 @@ class FramebufferFilter(
 
 		viewport.set(glState.viewport)
 		framebuffer.begin()
-		glState.setViewport(-region.xMin.toInt(), region.yMin.toInt() - viewport.height + framebuffer.texture.height, viewport.width, viewport.height)
+		glState.setViewport(-region.xMin.toInt(), region.yMin.toInt() - renderContext.canvasTransform.height.toInt() + framebuffer.texture.height, renderContext.canvasTransform.width.toInt(), renderContext.canvasTransform.height.toInt())
 		if (clearMask != 0)
 			clearAndReset(clearColor, clearMask)
 
-		contents.render(MinMaxRo.POSITIVE_INFINITY, Matrix4.IDENTITY, Color.WHITE)
+		contents.render(defaultRenderContext)
 
 		framebuffer.end()
 		framebuffer.sprite(sprite)
@@ -73,7 +74,7 @@ class FramebufferFilter(
 
 		sprite.setUv(sprite.u, 1f - sprite.v, sprite.u2, 1f - sprite.v2, isRotated = false)
 		glState.setViewport(viewport)
-		drawed.dispatch()
+		drew.dispatch()
 	}
 
 	fun drawToScreen(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
@@ -91,7 +92,7 @@ class FramebufferFilter(
 	 */
 	fun createSnapshot(owner: Owned): UiComponent {
 		return owner.drawableC(drawable) {
-			own(drawed.bind {
+			own(drew.bind {
 				invalidate(ValidationFlags.LAYOUT)
 			})
 		}

@@ -17,6 +17,7 @@
 package com.acornui.core.input.interaction
 
 import com.acornui.component.UiComponentRo
+import com.acornui.component.canvasToLocal
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.component.stage
 import com.acornui.core.Disposable

@@ -50,7 +50,7 @@ abstract class DrawableComponent(
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		val drawable = drawable ?: return
-		glState.setCamera(camera)
+		useCamera()
 		drawable.render(clip, transform, tint)
 	}
 

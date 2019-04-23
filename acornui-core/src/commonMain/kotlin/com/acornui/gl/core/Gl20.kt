@@ -1073,7 +1073,8 @@ interface Gl20 {
 	fun vertexAttribPointer(index: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Int)
 
 	/**
-	 * Specifies the affine transformation of x and y from normalized device coordinates to screen coordinates.
+	 * Specifies the affine transformation of x and y from normalized device coordinates to screen (gl fragment)
+	 * coordinates.
 	 *
 	 * Note - if the current frame buffer is the window, the values should be multiplied by
 	 * [com.acornui.core.graphic.Window.scaleX] and [com.acornui.core.graphic.Window.scaleY]

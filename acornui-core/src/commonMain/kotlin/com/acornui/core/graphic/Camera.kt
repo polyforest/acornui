@@ -21,7 +21,6 @@
 package com.acornui.core.graphic
 
 import com.acornui.core.Disposable
-import com.acornui.core.di.DKey
 import com.acornui.math.*
 import com.acornui.observe.ModTagImpl
 import com.acornui.observe.ModTagRo
@@ -93,60 +92,67 @@ interface CameraRo {
 	/**
 	 * The inverse combined projection and view matrix
 	 */
-	val invCombined: Matrix4Ro
+	val combinedInv: Matrix4Ro
 
-	/**
-	 * Translates a point given in window coordinates to global space. The x- and y-coordinate of vec are assumed to be
-	 * in window coordinates (origin is the top left corner, y pointing down, x pointing to the right) as reported by
-	 * the canvas coordinates in input events. A z-coordinate of 0 will return a point on the near plane, a z-coordinate
-	 * of 1 will return a point on the far plane.
-	 * @param canvasCoords the point in canvas coordinates (origin top left). This will be mutated.
-	 * @param viewportX the coordinate of the bottom left corner of the viewport in glViewport coordinates.
-	 * @param viewportY the coordinate of the bottom left corner of the viewport in glViewport coordinates.
-	 * @param viewportWidth the width of the viewport in pixels
-	 * @param viewportHeight the height of the viewport in pixels
-	 */
-	fun canvasToGlobal(canvasCoords: Vector3, viewportX: Float, viewportY: Float, viewportWidth: Float, viewportHeight: Float): Vector3
-
-	/**
-	 * Creates a picking {@link Ray} from the coordinates given in global coordinates. The global coordinates origin
-	 * is assumed to be in the top left corner, its y-axis pointing down, the x-axis  pointing to the right.
-	 *
-	 * @param viewportX the x coordinate of the bottom left corner of the viewport in glViewport coordinates.
-	 * @param viewportY the y coordinate of the bottom left corner of the viewport in glViewport coordinates.
-	 * @param viewportWidth the width of the viewport in pixels
-	 * @param viewportHeight the height of the viewport in pixels
-	 * @return The [out] parameter. The Ray will be in global coordinate space.
-	 */
-	fun getPickRay(canvasX: Float, canvasY: Float, viewportX: Float, viewportY: Float, viewportWidth: Float, viewportHeight: Float, out: Ray): Ray {
-		canvasToGlobal(out.origin.set(canvasX, canvasY, -1f), viewportX, viewportY, viewportWidth, viewportHeight)
-		canvasToGlobal(out.direction.set(canvasX, canvasY, 0f), viewportX, viewportY, viewportWidth, viewportHeight)
-		out.direction.sub(out.origin)
-		out.update()
-		return out
-	}
-
-	/**
-	 * Projects the {@link Vector3} given in global space to window coordinates. The window coordinate system has its
-	 * origin in the top left, with the y-axis pointing downwards and the x-axis pointing to the right.
-	 *
-	 * @param viewportX the coordinate of the top left corner of the viewport in glViewport coordinates.
-	 * @param viewportY the coordinate of the top left corner of the viewport in glViewport coordinates.
-	 * @param viewportWidth the width of the viewport in pixels
-	 * @param viewportHeight the height of the viewport in pixels
-	 */
-	fun project(globalCoords: Vector3, viewportX: Float, viewportY: Float, viewportWidth: Float, viewportHeight: Float): Vector3 {
-		combined.prj(globalCoords) // Global coords become clip coords.
-		// Convert clip coords to canvas coords.
-		globalCoords.x = viewportWidth * (globalCoords.x + 1f) * 0.5f + viewportX
-		globalCoords.y = viewportHeight * (-globalCoords.y + 1f) * 0.5f + viewportY
-		globalCoords.z = (globalCoords.z + 1f) * 0.5f
-		return globalCoords
-	}
 }
 
 val CameraRo.aspect: Float
 	get() = viewportWidth / viewportHeight
+
+/**
+ * Translates a point given in window coordinates to global space. The x- and y-coordinate of vec are assumed to be
+ * in window coordinates (origin is the top left corner, y pointing down, x pointing to the right) as reported by
+ * the canvas coordinates in input events. A z-coordinate of 0 will return a point on the near plane, a z-coordinate
+ * of 1 will return a point on the far plane.
+ * @param canvasCoords the point in canvas coordinates (origin top left). This will be mutated.
+ * @param viewportX the coordinate of the bottom left corner of the viewport in glViewport coordinates.
+ * @param viewportY the coordinate of the bottom left corner of the viewport in glViewport coordinates.
+ * @param viewportWidth the width of the viewport in pixels
+ * @param viewportHeight the height of the viewport in pixels
+ */
+fun CameraRo.canvasToGlobal(canvasCoords: Vector3, viewportX: Float, viewportY: Float, viewportWidth: Float, viewportHeight: Float): Vector3 {
+	canvasCoords.x = 2f * (canvasCoords.x - viewportX) / viewportWidth - 1f
+	canvasCoords.y = -2f * (canvasCoords.y - viewportY) / viewportHeight + 1f
+	canvasCoords.z = 2f * canvasCoords.z - 1f
+	combinedInv.prj(canvasCoords)
+	return canvasCoords
+}
+
+/**
+ * Projects [globalCoords] given in global space to window coordinates. The window coordinate system has its
+ * origin in the top left, with the y-axis pointing downwards and the x-axis pointing to the right.
+ *
+ * @param viewportX the coordinate of the top left corner of the viewport in glViewport coordinates.
+ * @param viewportY the coordinate of the top left corner of the viewport in glViewport coordinates.
+ * @param viewportWidth the width of the viewport in pixels
+ * @param viewportHeight the height of the viewport in pixels
+ */
+fun CameraRo.project(globalCoords: Vector3, viewportX: Float, viewportY: Float, viewportWidth: Float, viewportHeight: Float): Vector3 {
+	combined.prj(globalCoords) // Global coords become clip coords.
+	// Convert clip coords to canvas coords.
+	globalCoords.x = viewportWidth * (globalCoords.x + 1f) * 0.5f + viewportX
+	globalCoords.y = viewportHeight * (-globalCoords.y + 1f) * 0.5f + viewportY
+	globalCoords.z = (globalCoords.z + 1f) * 0.5f
+	return globalCoords
+}
+
+/**
+ * Creates a picking [Ray] from the coordinates given in global coordinates. The global coordinates origin
+ * is assumed to be in the top left corner, its y-axis pointing down, the x-axis  pointing to the right.
+ *
+ * @param viewportX the x coordinate of the bottom left corner of the viewport in glViewport coordinates.
+ * @param viewportY the y coordinate of the bottom left corner of the viewport in glViewport coordinates.
+ * @param viewportWidth the width of the viewport in pixels
+ * @param viewportHeight the height of the viewport in pixels
+ * @return The [out] parameter. The Ray will be in global coordinate space.
+ */
+fun CameraRo.getPickRay(canvasX: Float, canvasY: Float, viewportX: Float, viewportY: Float, viewportWidth: Float, viewportHeight: Float, out: Ray): Ray {
+	canvasToGlobal(out.origin.set(canvasX, canvasY, -1f), viewportX, viewportY, viewportWidth, viewportHeight)
+	canvasToGlobal(out.direction.set(canvasX, canvasY, 0f), viewportX, viewportY, viewportWidth, viewportHeight)
+	out.direction.sub(out.origin)
+	out.update()
+	return out
+}
 
 fun CameraRo.getPickRay(canvasX: Float, canvasY: Float, viewport: MinMaxRo, out: Ray): Ray = getPickRay(canvasX, canvasY, viewport.xMin, viewport.yMin, viewport.width, viewport.height, out)
 fun CameraRo.getPickRay(canvasX: Float, canvasY: Float, viewport: RectangleRo, out: Ray): Ray = getPickRay(canvasX, canvasY, viewport.x, viewport.y, viewport.width, viewport.height, out)
@@ -208,8 +214,6 @@ interface Camera : CameraRo {
 	 * @param scaling The scaling type to fit to the given width/height. This may not be a stretch type.
 	 */
 	fun moveToLookAtRect(x: Float, y: Float, width: Float, height: Float, scaling: Scaling = Scaling.FIT)
-
-	companion object : DKey<Camera>
 }
 
 /**
@@ -350,15 +354,15 @@ abstract class CameraBase : Camera {
 			return _frustum
 		}
 
-	protected val _invCombined: Matrix4 = Matrix4()
+	protected val _combinedInv: Matrix4 = Matrix4()
 
 	/**
 	 * The inverse combined projection and view matrix
 	 */
-	override val invCombined: Matrix4Ro
+	override val combinedInv: Matrix4Ro
 		get() {
-			validateInvCombined()
-			return _invCombined
+			validateCombinedInv()
+			return _combinedInv
 		}
 
 	//------------------------------------
@@ -455,8 +459,8 @@ abstract class CameraBase : Camera {
 	}
 
 	/**
-	 * Rotates the direction and up vector of this camera by the given {@link Quaternion}. The direction and up vector will not be
-	 * orthogonalized.
+	 * Rotates the direction and up vector of this camera by the given [Quaternion]. The direction and up vector will
+	 * not be orthogonalized.
 	 *
 	 * @param quat The quaternion
 	 */
@@ -521,14 +525,6 @@ abstract class CameraBase : Camera {
 		translate(vec.x, vec.y)
 	}
 
-	override fun canvasToGlobal(canvasCoords: Vector3, viewportX: Float, viewportY: Float, viewportWidth: Float, viewportHeight: Float): Vector3 {
-		canvasCoords.x = 2f * (canvasCoords.x - viewportX) / viewportWidth - 1f
-		canvasCoords.y = -2f * (canvasCoords.y - viewportY) / viewportHeight + 1f
-		canvasCoords.z = 2f * canvasCoords.z - 1f
-		invCombined.prj(canvasCoords)
-		return canvasCoords
-	}
-
 	/**
 	 * Moves the position to the point where the camera is looking at the provided coordinates at a given distance.
 	 */
@@ -555,7 +551,7 @@ abstract class CameraBase : Camera {
 		updateViewProjection()
 	}
 
-	private fun validateInvCombined() {
+	private fun validateCombinedInv() {
 		if (invCombinedIsValid) return
 		invCombinedIsValid = true
 		validateViewProjection()
@@ -571,12 +567,12 @@ abstract class CameraBase : Camera {
 	protected abstract fun updateViewProjection()
 
 	protected open fun updateInvCombined() {
-		_invCombined.set(_combined)
-		_invCombined.inv()
+		_combinedInv.set(_combined)
+		_combinedInv.inv()
 	}
 
 	protected open fun updateFrustum() {
-		_frustum.update(invCombined)
+		_frustum.update(combinedInv)
 	}
 
 	protected fun <T> bindable(initial: T): ReadWriteProperty<Any?, T> = observable(initial) {

@@ -17,6 +17,7 @@
 package com.acornui.core.tween
 
 import com.acornui.component.UiComponent
+import com.acornui.component.alpha
 import com.acornui.graphic.Color
 import com.acornui.math.Interpolation
 

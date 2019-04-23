@@ -256,7 +256,7 @@ fun Int.toFlagsString(): String {
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun Int.containsFlag(flag: Int): Boolean {
-	return this and flag > 0
+	return this and flag != 0
 }
 
 fun Int.toFlagString(): String = ValidationFlags.flagToString(this)

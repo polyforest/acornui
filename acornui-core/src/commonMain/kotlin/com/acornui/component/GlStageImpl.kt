@@ -18,26 +18,19 @@ package com.acornui.component
 
 import com.acornui.core.di.Owned
 import com.acornui.core.focus.Focusable
-import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.MinMaxRo
-import com.acornui.math.Rectangle
-import kotlin.math.roundToInt
+import kotlin.math.ceil
 
 /**
  * @author nbilyk
  */
 open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(owner), Focusable {
 
-	private val stageViewport = Rectangle()
-
 	init {
 		focusEnabled = true
 		interactivityMode = InteractivityMode.ALWAYS
 		interactivity.init(this)
 		focusManager.init(this)
-		_viewport = stageViewport
 	}
 
 	/**
@@ -48,18 +41,14 @@ open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(
 	 */
 	protected open val windowResizedHandler: (Float, Float, Boolean) -> Unit = {
 		newWidth: Float, newHeight: Float, isUserInteraction: Boolean ->
-		val w = (newWidth * window.scaleX).roundToInt()
-		val h = (newHeight * window.scaleY).roundToInt()
+		val w = ceil(newWidth * window.scaleX).toInt()
+		val h = ceil(newHeight * window.scaleY).toInt()
 		val viewport = glState.viewport
 		if (w != viewport.width || h != viewport.height) {
 			glState.setViewport(0, 0, w, h)
 			glState.setFramebuffer(null, w, h, window.scaleX, window.scaleY)
-			invalidate(ValidationFlags.LAYOUT or ValidationFlags.VIEWPORT)
+			invalidate(ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT)
 		}
-	}
-
-	override fun updateViewport() {
-		stageViewport.set(0f, 0f, window.width, window.height)
 	}
 
 	override fun onActivated() {
@@ -87,9 +76,9 @@ open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(
 		out.set(w, h)
 	}
 
-	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+	override fun render() {
 		glState.batch.resetRenderCount()
-		super.render(clip, transform, tint)
+		super.render()
 		glState.batch.flush()
 	}
 

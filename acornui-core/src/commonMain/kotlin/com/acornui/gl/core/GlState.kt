@@ -23,6 +23,8 @@ import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.acornui.reflect.observable
+import kotlin.math.ceil
+import kotlin.math.floor
 
 interface GlState {
 
@@ -106,7 +108,7 @@ interface GlState {
 	 * u_modelTrans (optional) - M
 	 * u_viewTrans (optional) - V
 	 */
-	fun setCamera(camera: CameraRo, model: Matrix4Ro = Matrix4.IDENTITY)
+	fun setCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, model: Matrix4Ro = Matrix4.IDENTITY)
 
 	/**
 	 * The current viewport rectangle, in gl window coordinates.
@@ -331,20 +333,20 @@ class GlStateImpl(
 
 	private val _mvp = Matrix4()
 
-	override fun setCamera(camera: CameraRo, model: Matrix4Ro) {
+	override fun setCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, model: Matrix4Ro) {
 		val hasModel = _shader!!.getUniformLocation(CommonShaderUniforms.U_MODEL_TRANS) != null
 		if (hasModel) {
-			if (viewProjectionCache.set(camera.combined, _shader!!, batch)) {
+			if (viewProjectionCache.set(viewProjection, _shader!!, batch)) {
 				_shader!!.getUniformLocation(CommonShaderUniforms.U_VIEW_TRANS)?.let {
-					gl.uniformMatrix4fv(it, false, camera.view)
+					gl.uniformMatrix4fv(it, false, viewTransform)
 				}
 			}
 			this.model = model
 		} else {
-			viewProjection = if (model.mode == MatrixMode.IDENTITY) {
-				camera.combined
+			this.viewProjection = if (model.mode == MatrixMode.IDENTITY) {
+				viewProjection
 			} else {
-				_mvp.set(camera.combined).mul(model)
+				_mvp.set(viewProjection).mul(model)
 			}
 		}
 	}
@@ -484,6 +486,29 @@ inline fun GlState.useViewport(x: Int, y: Int, width: Int, height: Int, inner: (
 	inner()
 	setViewport(oldViewport)
 	IntRectangle.free(oldViewport)
+}
+
+private val frameBufferInfo = FramebufferInfo()
+
+fun GlState.useViewportFromCanvasTransform(canvasTransform: IntRectangleRo, inner: () -> Unit) {
+	getFramebuffer(frameBufferInfo)
+	useViewport(
+			floor(canvasTransform.x * frameBufferInfo.scaleX).toInt(),
+			floor((frameBufferInfo.height - canvasTransform.bottom) * frameBufferInfo.scaleY).toInt(),
+			ceil(canvasTransform.width * frameBufferInfo.scaleX).toInt(),
+			ceil(canvasTransform.height * frameBufferInfo.scaleY).toInt(),
+			inner
+	)
+}
+
+fun GlState.setViewportFromCanvasTransform(canvasTransform: IntRectangleRo) {
+	getFramebuffer(frameBufferInfo)
+	setViewport(
+			floor(canvasTransform.x * frameBufferInfo.scaleX).toInt(),
+			floor((frameBufferInfo.height - canvasTransform.bottom) * frameBufferInfo.scaleY).toInt(),
+			ceil(canvasTransform.width * frameBufferInfo.scaleX).toInt(),
+			ceil(canvasTransform.height * frameBufferInfo.scaleY).toInt()
+	)
 }
 
 /**

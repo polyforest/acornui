@@ -269,7 +269,7 @@ class TossScrollModelBinding(
 	private val tossStartHandler = {
 		_: DragInteractionRo ->
 		modelStart.set(hScrollModel.value, vScrollModel.value)
-		matrix = tossScroller.target.concatenatedTransformInv
+		matrix = tossScroller.target.modelTransformInv
 	}
 
 	private val changedHandler = {

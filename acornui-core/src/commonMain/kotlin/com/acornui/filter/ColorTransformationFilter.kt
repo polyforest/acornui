@@ -41,7 +41,7 @@ class ColorTransformationFilter(
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		glState.useColorTransformation(colorTransformation) {
-			contents?.render(clip, transform, tint)
+			contents?.render()
 		}
 	}
 

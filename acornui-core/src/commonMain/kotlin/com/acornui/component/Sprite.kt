@@ -37,8 +37,8 @@ import kotlin.properties.Delegates
  */
 class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 
-	private val _bounds = Bounds()
-	override val bounds: BoundsRo = _bounds
+	private var width = 0f
+	private var height = 0f
 
 	/**
 	 * If true, the normal and indices will be reversed.
@@ -153,7 +153,8 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 	}
 
 	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
-		_bounds.set(width, height)
+		this.width = width
+		this.height = height
 
 		// Transform vertex coordinates from local to global
 		if (rotation == 0f) {

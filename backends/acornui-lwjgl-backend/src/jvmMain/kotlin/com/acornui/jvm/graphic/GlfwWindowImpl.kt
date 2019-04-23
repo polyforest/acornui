@@ -273,6 +273,7 @@ class GlfwWindowImpl(
 				}
 				if (glConfig.vSync)
 					GLFW.glfwSwapInterval(1)
+				requestRender()
 			}
 		}
 

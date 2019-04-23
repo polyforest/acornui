@@ -496,7 +496,7 @@ class Rect(
 
 				val batch = glState.batch
 				glState.setTexture(glState.whitePixel)
-				glState.setCamera(camera)
+				useCamera()
 				glState.blendMode(BlendMode.NORMAL, false)
 				batch.begin()
 
@@ -549,13 +549,13 @@ class Rect(
 				complexModeObj.apply {
 					StencilUtil.mask(glState.batch, gl, {
 						if (fillC.visible)
-							fillC.renderConcat(clip, transform, tint)
+							fillC.render()
 					}) {
 						if (gradientC.visible)
-							gradientC.renderConcat(clip, transform, tint)
+							gradientC.render()
 					}
 					if (strokeC.visible)
-						strokeC.renderConcat(clip, transform, tint)
+						strokeC.render()
 				}
 			} else {
 				super.draw(clip, transform, tint)

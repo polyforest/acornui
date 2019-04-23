@@ -47,9 +47,8 @@ import kotlin.properties.Delegates
 
 class NinePatch(val glState: GlState) : BasicDrawable {
 
-	private val _bounds = Bounds()
-	override val bounds: BoundsRo
-		get() = _bounds
+	private var width: Float = 0f
+	private var height: Float = 0f
 
 	private var _isRotated: Boolean = false
 
@@ -187,7 +186,8 @@ class NinePatch(val glState: GlState) : BasicDrawable {
 	}
 
 	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
-		_bounds.set(width, height)
+		this.width = width
+		this.height = height
 		val minW = _splitLeft + _splitRight
 		val minH = _splitTop + _splitBottom
 		val scaleX = if (minW <= 0f || width > minW) 1f else width / minW

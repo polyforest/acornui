@@ -16,10 +16,7 @@
 
 package com.acornui.component.drawing
 
-import com.acornui.component.ComponentInit
-import com.acornui.component.UiComponentImpl
-import com.acornui.component.ValidationFlags
-import com.acornui.component.invalidateLayout
+import com.acornui.component.*
 import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Owned
@@ -29,7 +26,6 @@ import com.acornui.core.graphic.BlendMode
 import com.acornui.core.graphic.Texture
 import com.acornui.filter.colorTransformationFilter
 import com.acornui.gl.core.*
-import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.acornui.recycle.Clearable
@@ -64,13 +60,13 @@ open class StaticMeshComponent(
 	private val colorTransformationFilter = +colorTransformationFilter()
 
 	init {
-		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.CONCATENATED_TRANSFORM or ValidationFlags.LAYOUT, ::updateGlobalBoundingBox)
+		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.RENDER_CONTEXT or ValidationFlags.LAYOUT, ::updateGlobalBoundingBox)
 	}
 
 	private fun updateGlobalBoundingBox() {
 		val mesh = mesh
 		if (mesh != null) {
-			globalBoundingBox.set(mesh.boundingBox).mul(concatenatedTransform)
+			globalBoundingBox.set(mesh.boundingBox).mul(modelTransform)
 		} else {
 			globalBoundingBox.inf()
 		}
@@ -105,15 +101,14 @@ open class StaticMeshComponent(
 		mesh?.refDec()
 	}
 
-	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		colorTransformationFilter.colorTransformation.tint(tint)
-		super.render(clip, transform, Color.WHITE)
+	override fun render() {
+		colorTransformationFilter.colorTransformation.tint(renderContext.colorTint)
+		super.render()
 	}
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		val mesh = mesh ?: return
-		glState.batch.flush()
-		glState.setCamera(camera, transform) // Use the concatenated transform as the model matrix.
+		useCamera(useModel = true)
 		mesh.render()
 	}
 

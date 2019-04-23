@@ -104,8 +104,8 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 	}
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		val concatenatedTransform = concatenatedTransform
-		glState.setCamera(camera, concatenatedTransform)
+		val concatenatedTransform = modelTransform
+		glState.setCamera(viewProjectionTransform, viewTransform, concatenatedTransform)
 		val concatenatedColorTint = concatenatedColorTint
 
 		for (i in 0.._children.lastIndex) {

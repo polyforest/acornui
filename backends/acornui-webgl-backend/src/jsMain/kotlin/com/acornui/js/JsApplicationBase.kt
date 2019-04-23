@@ -286,12 +286,6 @@ Kotlin.isType = function(object, klass) {
 		set(JSON_KEY, JsonSerializer)
 	}
 
-	protected open val cameraTask by BootTask {
-		val camera = OrthographicCamera()
-		set(Camera, camera)
-		get(Window).autoCenterCamera(camera)
-	}
-
 	protected open val filesTask by BootTask {
 		val json = get(JSON_KEY)
 		val config = get(AppConfig)

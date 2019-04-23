@@ -16,25 +16,23 @@
 
 package com.acornui.component.layout
 
-import com.acornui.math.*
+import com.acornui.component.ModelTransformableRo
+import com.acornui.math.MathUtils
+import com.acornui.math.Matrix4Ro
+import com.acornui.math.Vector2Ro
+import com.acornui.math.Vector3Ro
 
-interface TransformableRo : PositionableRo {
+interface TransformableRo : PositionableRo, ModelTransformableRo {
 
 	/**
-	 * This component's transformation matrix.
+	 * This component's local transformation matrix.
 	 * Responsible for 3d positioning, scaling, rotation, etc.
-	 *
-	 * Do not modify this matrix directly, but instead use the exposed transformation methods:
-	 * [x], [y], [z], [scaleX], [scaleY], [scaleZ], [rotationX], [rotationY], [rotation]
 	 */
 	val transform: Matrix4Ro
 
 	/**
 	 * If this is not null, this custom transformation matrix will be used. Note that if this is set, all properties
 	 * that would otherwise generate the transformation matrix are no longer applicable.
-	 * [scaleX], [scaleY], [scaleZ]
-	 * [rotationX], [rotationY], [rotation],
-	 * [originX], [originY], [originZ]
 	 */
 	val customTransform: Matrix4Ro?
 
@@ -59,129 +57,6 @@ interface TransformableRo : PositionableRo {
 
 	val originZ: Float
 
-	/**
-	 * Converts a coordinate from local coordinate space to global coordinate space.
-	 * This will modify the provided coord parameter.
-	 * @param localCoord The coordinate local to this Transformable. This will be mutated to become a global coordinate.
-	 * @return Returns the coord
-	 */
-	fun localToGlobal(localCoord: Vector3): Vector3 {
-		concatenatedTransform.prj(localCoord)
-		return localCoord
-	}
-
-	/**
-	 * Converts a coordinate from global coordinate space to local coordinate space.
-	 * This will modify the provided coord parameter.
-	 * @param globalCoord The coordinate in global space. This will be mutated to become a local coordinate.
-	 * @return Returns the coord
-	 */
-	fun globalToLocal(globalCoord: Vector3): Vector3 {
-		concatenatedTransformInv.prj(globalCoord)
-		return globalCoord
-	}
-
-	/**
-	 * Converts a ray from local coordinate space to global coordinate space.
-	 * This will modify the provided ray parameter.
-	 * @param ray The ray local to this Transformable. This will be mutated to become a global ray.
-	 * @return Returns the ray
-	 */
-	fun localToGlobal(ray: Ray): Ray {
-		ray.mul(concatenatedTransform)
-		return ray
-	}
-
-	/**
-	 * Converts a ray from global coordinate space to local coordinate space.
-	 * This will modify the provided ray parameter.
-	 *
-	 * Note: This is a heavy operation as it performs a Matrix4 inversion.
-	 *
-	 * @param ray The ray in global space. This will be mutated to become a local coordinate.
-	 * @return Returns the ray
-	 */
-	fun globalToLocal(ray: Ray): Ray {
-		ray.mul(concatenatedTransformInv)
-		return ray
-	}
-
-	/**
-	 * The global transform of this component, of all ancestor transforms multiplied together.
-	 * Do not modify this matrix directly, it will be overwritten on a TRANSFORM validation.
-	 * @see transform
-	 */
-	val concatenatedTransform: Matrix4Ro
-
-	/**
-	 * Returns the inverse concatenated transformation matrix.
-	 * Note that this is a heavy operation and should be used judiciously. It is not part of the normal validation
-	 * cycle.
-	 * @see concatenatedTransform
-	 * @see transform
-	 */
-	val concatenatedTransformInv: Matrix4Ro
-
-}
-
-/**
- * Converts a bounding rectangle from local to global coordinates.
- * @param minMax These bounds will be mutated into the projected global coordinates, and set to the
- * bounding region of those four points.
- * @return Returns the mutated [minMax] parameter.
- */
-fun TransformableRo.localToGlobal(minMax: MinMax): MinMax {
-	val tmp1 =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)
-	val tmp2 =  Vector3.obtain().set(minMax.xMax, minMax.yMax, 0f)
-	val tmp =  Vector3.obtain()
-	minMax.inf()
-	localToGlobal(tmp.set(tmp1))
-	minMax.ext(tmp.x, tmp.y)
-	localToGlobal(tmp.set(tmp2.x, tmp1.y, 0f))
-	minMax.ext(tmp.x, tmp.y)
-	localToGlobal(tmp.set(tmp2))
-	minMax.ext(tmp.x, tmp.y)
-	localToGlobal(tmp.set(tmp1.x, tmp2.y, 0f))
-	minMax.ext(tmp.x, tmp.y)
-	Vector3.free(tmp1)
-	Vector3.free(tmp2)
-	Vector3.free(tmp)
-	return minMax
-}
-
-/**
- * Converts a bounding rectangle from global to local coordinates.
- */
-fun TransformableRo.globalToLocal(minMax: MinMax): MinMax {
-	val tmp1 =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)
-	val tmp2 =  Vector3.obtain().set(minMax.xMax, minMax.yMax, 0f)
-	val tmp =  Vector3.obtain()
-	minMax.inf()
-	globalToLocal(tmp.set(tmp1))
-	minMax.ext(tmp.x, tmp.y)
-	globalToLocal(tmp.set(tmp2.x, tmp1.y, 0f))
-	minMax.ext(tmp.x, tmp.y)
-	globalToLocal(tmp.set(tmp2))
-	minMax.ext(tmp.x, tmp.y)
-	globalToLocal(tmp.set(tmp1.x, tmp2.y, 0f))
-	minMax.ext(tmp.x, tmp.y)
-	Vector3.free(tmp1)
-	Vector3.free(tmp2)
-	Vector3.free(tmp)
-	return minMax
-}
-
-/**
- * Calculates the intersection coordinates of the provided Ray (in local coordinate space) and this layout
- * element's plane.
- * @return Returns true if the provided Ray intersects with this plane, or false if the Ray is parallel.
- */
-fun TransformableRo.rayToPlane(ray: RayRo, out: Vector2): Boolean {
-	if (ray.direction.z == 0f) return false
-	val m = -ray.origin.z * ray.directionInv.z
-	out.x = ray.origin.x + m * ray.direction.x
-	out.y = ray.origin.y + m * ray.direction.y
-	return true
 }
 
 /**
@@ -223,19 +98,7 @@ interface Transformable : TransformableRo, Positionable {
 
 	fun setOrigin(x: Float, y: Float, z: Float = 0f)
 
-	companion object {
-
-		/**
-		 * Transformable components will use this value to set their initial [Transformable.snapToPixel] state.
-		 */
-		var defaultSnapToPixel = true
-	}
 }
-
-/**
- * Converts a coordinate from this Transformable's coordinate space to the target coordinate space.
- */
-fun Transformable.convertCoord(coord: Vector3, targetCoordSpace: TransformableRo): Vector3 = targetCoordSpace.globalToLocal(localToGlobal(coord))
 
 interface PositionableRo {
 
@@ -273,6 +136,14 @@ interface Positionable : PositionableRo {
 	 * Sets the position of this component. (Without rounding)
 	 */
 	fun setPosition(x: Float, y: Float, z: Float = 0f)
+
+	companion object {
+
+		/**
+		 * Transformable components will use this value to set their initial [Transformable.snapToPixel] state.
+		 */
+		var defaultSnapToPixel = true
+	}
 
 }
 

@@ -17,9 +17,11 @@
 package com.acornui.component.scroll
 
 import com.acornui.component.*
+import com.acornui.component.layout.Positionable
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
+import com.acornui.core.drawRegion
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
@@ -52,6 +54,16 @@ class ScrollRectImpl(
 		interactivityMode = InteractivityMode.NONE
 	})
 
+	/**
+	 * If true, when the contents scroll, the position will be snapped to the nearest pixel.
+	 * Default is [Positionable.defaultSnapToPixel]
+	 */
+	var contentsSnapToPixel: Boolean
+		get() = contents.snapToPixel
+		set(value) {
+			contents.snapToPixel = value
+		}
+
 	private val _contentBounds = Rectangle()
 	override val contentBounds: RectangleRo
 		get() {
@@ -75,7 +87,7 @@ class ScrollRectImpl(
 	}
 
 	override fun scrollTo(x: Float, y: Float) {
-		contents.setPosition(-x, -y)
+		contents.moveTo(-x, -y)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
@@ -92,16 +104,22 @@ class ScrollRectImpl(
 
 	private val contentsClip = MinMax()
 
-	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		StencilUtil.mask(glState.batch, gl, {
-			if (maskClip.visible) {
-				maskClip.render(clip, maskClip.concatenatedTransform, maskClip.concatenatedColorTint)
-			}
-		}) {
-			localToCanvas(contentsClip.set(0f, 0f, _bounds.width, _bounds.height))
-			contentsClip.intersection(clip)
+	override fun updateRenderContext() {
+		super.updateRenderContext()
+		_renderContext.clipRegionLocal = drawRegion(contentsClip)
+	}
 
-			contents.render(contentsClip, contents.concatenatedTransform, contents.concatenatedColorTint)
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		if (maskClip.visible) {
+			StencilUtil.mask(glState.batch, gl, {
+				maskClip.render()
+			}) {
+				if (contents.visible)
+					contents.render()
+			}
+		} else {
+			if (contents.visible)
+				contents.render()
 		}
 	}
 }

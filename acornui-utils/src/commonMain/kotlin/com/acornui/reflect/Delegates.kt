@@ -24,14 +24,14 @@ import kotlin.reflect.KProperty
  * Similar to Delegates.observable, except vetoes when oldValue == newValue and onChange only takes newValue as a
  * parameter.
  */
-inline fun <T> observable(initialValue: T, crossinline onChange: (newValue: T) -> Unit):
+inline fun <T> observable(initialValue: T, crossinline afterChange: (newValue: T) -> Unit):
 		ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
 
 	override fun beforeChange(property: KProperty<*>, oldValue: T, newValue: T): Boolean {
 		return oldValue != newValue
 	}
 
-	override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) = onChange(newValue)
+	override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) = afterChange(newValue)
 }
 
 /**

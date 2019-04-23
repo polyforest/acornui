@@ -240,19 +240,10 @@ open class ContainerImpl(
 		for (i in 0.._children.lastIndex) {
 			val child = _children[i]
 			if (child.visible) {
-				child.renderConcat(clip, transform, tint)
+				child.render()
 			}
 		}
 	}
-
-	private val childConcatenatedTransform = Matrix4()
-	private val childConcatenatedColorTransform = Color()
-
-	protected fun UiComponentRo.renderConcat(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) =
-			render(clip,
-					if (transform === this@ContainerImpl.concatenatedTransform) concatenatedTransform else childConcatenatedTransform.set(transform).mul(this.transform),
-					childConcatenatedColorTransform.set(tint).mul(this.colorTint)
-			)
 
 	//-----------------------------------------------------
 	// Interactivity utility methods
@@ -262,12 +253,12 @@ open class ContainerImpl(
 
 	override fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo?): MutableList<UiComponentRo> {
 		if (!visible || (onlyInteractive && inheritedInteractivityMode == InteractivityMode.NONE)) return out
-		val ray = rayCache ?: camera.getPickRay(canvasX, canvasY, viewport, rayTmp)
+		val ray = rayCache ?: getPickRay(canvasX, canvasY, rayTmp)
 		if (interactivityMode == InteractivityMode.ALWAYS || intersectsGlobalRay(ray)) {
 			if ((returnAll || out.isEmpty())) {
 				for (i in _children.lastIndex downTo 0) {
 					val child = _children[i]
-					val childRayCache = if (child.camera === camera && child.viewport === viewport) ray else null
+					val childRayCache = if (child.renderContext.cameraEquals(renderContext)) ray else null
 					child.getChildrenUnderPoint(canvasX, canvasY, onlyInteractive, returnAll, out, childRayCache)
 					// Continue iterating if we haven't found an intersecting child yet, or if returnAll is true.
 					returnAll || out.isEmpty()
@@ -348,10 +339,8 @@ open class ContainerImpl(
 
 		var defaultCascadingFlags = ValidationFlags.HIERARCHY_DESCENDING or
 				ValidationFlags.STYLES or
-				ValidationFlags.CONCATENATED_TRANSFORM or
 				ValidationFlags.INTERACTIVITY_MODE or
-				ValidationFlags.CAMERA or
-				ValidationFlags.VIEWPORT
+				ValidationFlags.RENDER_CONTEXT
 	}
 }
 

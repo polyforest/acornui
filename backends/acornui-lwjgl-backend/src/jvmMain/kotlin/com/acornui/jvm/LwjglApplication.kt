@@ -263,12 +263,6 @@ open class LwjglApplication : ApplicationBase() {
 		set(TouchScreenKeyboard, MockTouchScreenKeyboard)
 	}
 
-	protected open val cameraTask by BootTask {
-		val camera = OrthographicCamera()
-		set(Camera, camera)
-		get(Window).autoCenterCamera(camera)
-	}
-
 	protected open val filesTask by BootTask {
 		val manifestFile = File(config().rootPath + config().assetsManifestPath)
 		if (!manifestFile.exists()) throw FileNotFoundException(manifestFile.absolutePath)
@@ -360,13 +354,13 @@ open class LwjglApplication : ApplicationBase() {
 	 * The last chance to set dependencies on the application scope.
 	 */
 	protected open val componentsTask by BootTask {
-		set(HtmlComponent.FACTORY_KEY, {
+		set(HtmlComponent.FACTORY_KEY) {
 			object : UiComponentImpl(it), HtmlComponent {
 
 				override val boxStyle = BoxStyle()
 				override var html: String = ""
 			}
-		})
+		}
 	}
 
 	protected open val clipboardTask by BootTask {
@@ -445,9 +439,8 @@ class JvmApplicationRunner(
 			stage.update()
 			if (window.width > 0f && window.height > 0f) {
 				window.renderBegin()
-				if (stage.visible) {
-					stage.render(viewport.set(0f, 0f, window.width, window.height), Matrix4.IDENTITY, Color.WHITE)
-				}
+				if (stage.visible)
+					stage.render()
 				window.renderEnd()
 			}
 		}

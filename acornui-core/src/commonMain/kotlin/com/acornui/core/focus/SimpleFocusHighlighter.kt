@@ -2,12 +2,16 @@ package com.acornui.core.focus
 
 import com.acornui.component.ContainerImpl
 import com.acornui.component.InteractivityMode
+import com.acornui.component.alpha
 import com.acornui.core.di.Owned
 import com.acornui.component.atlas
 import com.acornui.core.tween.driveTween
 import com.acornui.core.tween.tweenAlpha
+import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.Easing
+import com.acornui.math.Matrix4Ro
+import com.acornui.math.MinMaxRo
 
 open class SimpleHighlight(
 		owner: Owned,

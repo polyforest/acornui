@@ -24,8 +24,11 @@ import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.core.Disposable
 import com.acornui.core.Renderable
 import com.acornui.core.selection.SelectionRange
+import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.BoundsRo
+import com.acornui.math.Matrix4Ro
+import com.acornui.math.MinMaxRo
 
 /**
  * The smallest unit that can be inside of a TextField.
@@ -113,7 +116,7 @@ val TextElementRo.textFieldY: Float
 		return y + (parentSpan?.textFieldY ?: 0f)
 	}
 
-interface TextElement : TextElementRo, Renderable, Disposable {
+interface TextElement : TextElementRo, Disposable {
 
 	/**
 	 * Set by the TextSpanElement when this is part is added.
@@ -139,6 +142,8 @@ interface TextElement : TextElementRo, Renderable, Disposable {
 	 * Finalizes the vertices for rendering.
 	 */
 	fun validateVertices(leftClip: Float, topClip: Float, rightClip: Float, bottomClip: Float)
+
+	fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo)
 
 }
 

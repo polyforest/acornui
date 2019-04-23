@@ -101,9 +101,9 @@ class JsHtmlComponent(
 		out.set(component.bounds)
 	}
 
-	override fun updateConcatenatedTransform() {
-		super.updateConcatenatedTransform()
-		component.setConcatenatedTransform(concatenatedTransform)
+	override fun updateRenderContext() {
+		super.updateRenderContext()
+		component.setConcatenatedTransform(modelTransform)
 	}
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {

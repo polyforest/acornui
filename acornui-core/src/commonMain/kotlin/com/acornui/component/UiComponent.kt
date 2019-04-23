@@ -303,19 +303,6 @@ open class UiComponentImpl(
 	protected val gl = inject(Gl20)
 	protected val glState = inject(GlState)
 
-	private val defaultCamera = inject(Camera)
-
-	protected var _viewport: RectangleRo = RectangleRo.EMPTY
-
-	/**
-	 * Returns the viewport (in canvas coordinates, not gl window coordinates) this component will use for UI.
-	 */
-	final override val viewport: RectangleRo
-		get() {
-			validate(ValidationFlags.VIEWPORT)
-			return _viewport
-		}
-
 	// Validatable Properties
 	private val _invalidated = own(Signal2<UiComponent, Int>())
 	final override val invalidated = _invalidated.asRo()
@@ -328,20 +315,13 @@ open class UiComponentImpl(
 
 	// Transformable properties
 	protected val _transform = Matrix4()
-	protected val _concatenatedTransform = Matrix4()
-	protected val _concatenatedTransformInv = Matrix4()
-	protected var _concatenatedTransformInvIsValid = false
 	protected val _position = Vector3(0f, 0f, 0f)
 	protected val _rotation = Vector3(0f, 0f, 0f)
 	protected val _scale = Vector3(1f, 1f, 1f)
 	protected val _origin = Vector3(0f, 0f, 0f)
 
-	override var cameraOverride: CameraRo? by validationProp(null, ValidationFlags.CAMERA)
-
 	// LayoutElement properties
 	protected val _bounds = Bounds()
-	protected var _explicitWidth: Float? = null
-	protected var _explicitHeight: Float? = null
 	protected val _explicitSizeConstraints = SizeConstraints()
 	protected val _sizeConstraints = SizeConstraints()
 
@@ -386,7 +366,6 @@ open class UiComponentImpl(
 
 	// ColorTransformable properties
 	protected val _colorTint: Color = Color.WHITE.copy()
-	protected val _concatenatedColorTint: Color = Color.WHITE.copy()
 
 	// ChildRo properties
 	override var parent: ContainerRo? = null
@@ -397,6 +376,48 @@ open class UiComponentImpl(
 	final override var focusOrder by observable(0f) { _ -> invalidateFocusOrder() }
 	final override var isFocusContainer by observable(false) { _ -> invalidateFocusOrderDeep() }
 	final override var focusEnabledChildren by observable(false) { _ -> invalidateFocusOrderDeep() }
+
+	// Render context properties
+
+	private val defaultRenderContext = inject(RenderContextRo)
+	protected val _renderContext = RenderContext(defaultRenderContext)
+
+	override val viewProjectionTransformInv: Matrix4Ro
+		get() = renderContext.viewProjectionTransformInv
+
+	override val viewProjectionTransform: Matrix4Ro
+		get() = renderContext.viewProjectionTransform
+
+	override val viewTransform: Matrix4Ro
+		get() = renderContext.viewTransform
+
+	override val projectionTransform: Matrix4Ro
+		get() = renderContext.projectionTransform
+
+	override val canvasTransform: IntRectangleRo
+		get() = renderContext.canvasTransform
+
+	override var renderContextOverride: RenderContextRo? = null
+		set(value) {
+			if (value != field) {
+				invalidate(ValidationFlags.RENDER_CONTEXT)
+				field = value
+				update()
+			}
+		}
+
+	override val renderContext: RenderContextRo
+		get() = renderContextOverride ?: _renderContext
+
+	var cameraOverride: CameraRo?
+		get() = _renderContext.cameraOverride
+		set(value) {
+			_renderContext.cameraOverride = value
+			invalidate(ValidationFlags.RENDER_CONTEXT)
+		}
+
+	//
+
 
 	private val rayTmp = Ray()
 
@@ -411,10 +432,8 @@ open class UiComponentImpl(
 				addNode(SIZE_CONSTRAINTS, STYLES, ::validateSizeConstraints)
 				addNode(LAYOUT, SIZE_CONSTRAINTS, ::validateLayout)
 				addNode(TRANSFORM, ::updateTransform)
-				addNode(CONCATENATED_TRANSFORM, TRANSFORM, ::updateConcatenatedTransform)
 				addNode(INTERACTIVITY_MODE, ::updateInheritedInteractivityMode)
-				addNode(CAMERA, ::updateCamera)
-				addNode(VIEWPORT, ::updateViewport)
+				addNode(RENDER_CONTEXT, TRANSFORM, ::updateRenderContext)
 				addNode(BITMAP_CACHE) {}
 			}
 		}
@@ -423,22 +442,6 @@ open class UiComponentImpl(
 		_activated.add(::onActivated.as1)
 		_deactivated.add(::invalidateFocusOrder.as1)
 		_deactivated.add(::onDeactivated.as1)
-	}
-
-	//-----------------------------------------------
-	// CameraElement
-	//-----------------------------------------------
-
-	override fun canvasToLocal(canvasCoord: Vector2): Vector2 {
-		globalToLocal(camera.getPickRay(canvasCoord.x, canvasCoord.y, viewport, rayTmp))
-		rayToPlane(rayTmp, canvasCoord)
-		return canvasCoord
-	}
-
-	override fun localToCanvas(localCoord: Vector3): Vector3 {
-		localToGlobal(localCoord)
-		camera.project(localCoord, viewport)
-		return localCoord
 	}
 
 	//-----------------------------------------------
@@ -463,28 +466,11 @@ open class UiComponentImpl(
 			return
 		}
 		sizeOut.set(bounds)
-		transformOut.set(concatenatedTransform)
+		transformOut.set(modelTransform)
 	}
 
 	//-----------------------------------------------
 
-	/**
-	 * Updates the camera.
-	 */
-	protected open fun updateCamera() {
-		_camera = if (cameraOverride == null) {
-			parent?.camera ?: defaultCamera
-		} else {
-			cameraOverride!!
-		}
-	}
-
-	/**
-	 * Sets the viewport rectangle.
-	 */
-	protected open fun updateViewport() {
-		_viewport = parent?.viewport ?: RectangleRo.EMPTY
-	}
 
 	//-----------------------------------------------
 	// LayoutElement
@@ -493,7 +479,7 @@ open class UiComponentImpl(
 	override fun containsCanvasPoint(canvasX: Float, canvasY: Float): Boolean {
 		if (!isActive) return false
 		val ray = Ray.obtain()
-		camera.getPickRay(canvasX, canvasY, viewport, ray)
+		getPickRay(canvasX, canvasY, ray)
 		val b = intersectsGlobalRay(ray)
 		Ray.free(ray)
 		return b
@@ -501,6 +487,7 @@ open class UiComponentImpl(
 
 	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
 		val bounds = bounds
+		// TODO: make these temp vars
 		val topLeft = Vector3.obtain()
 		val topRight = Vector3.obtain()
 		val bottomRight = Vector3.obtain()
@@ -537,30 +524,30 @@ open class UiComponentImpl(
 	 * The explicit width, as set by width(value)
 	 * Typically one would use width() in order to retrieve the explicit or actual width.
 	 */
-	override val explicitWidth: Float?
-		get() = _explicitWidth
+	final override var explicitWidth: Float? = null
+		private set
 
 	/**
 	 * The explicit height, as set by height(value)
 	 * Typically one would use height() in order to retrieve the explicit or actual height.
 	 */
-	override val explicitHeight: Float?
-		get() = _explicitHeight
+	final override var explicitHeight: Float? = null
+		private set
 
 	/**
 	 * Sets the explicit width. Set to null to use actual width.
 	 */
 	override fun width(value: Float?) {
-		if (_explicitWidth == value) return
+		if (explicitWidth == value) return
 		if (value?.isNaN() == true) throw Exception("May not set the size to be NaN")
-		_explicitWidth = value
+		explicitWidth = value
 		invalidate(ValidationFlags.LAYOUT)
 	}
 
 	override fun height(value: Float?) {
-		if (_explicitHeight == value) return
+		if (explicitHeight == value) return
 		if (value?.isNaN() == true) throw Exception("May not set the size to be NaN")
-		_explicitHeight = value
+		explicitHeight = value
 		invalidate(ValidationFlags.LAYOUT)
 	}
 
@@ -582,7 +569,19 @@ open class UiComponentImpl(
 			override val bounds: BoundsRo
 				get() = this@UiComponentImpl.bounds
 
-			override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) = draw(clip, transform, tint)
+			override val renderContext: RenderContextRo
+				get() = this@UiComponentImpl.renderContext
+
+			override var renderContextOverride: RenderContextRo?
+				get() = this@UiComponentImpl.renderContextOverride
+				set(value) {
+					this@UiComponentImpl.renderContextOverride = value
+				}
+
+			override fun render() {
+				val renderContext = renderContext
+				draw(renderContext.clipRegion, renderContext.modelTransform, renderContext.colorTint)
+			}
 		}
 	}
 
@@ -688,9 +687,9 @@ open class UiComponentImpl(
 	 */
 	override fun setSize(width: Float?, height: Float?) {
 		if (width?.isNaN() == true || height?.isNaN() == true) throw Exception("May not set the size to be NaN")
-		if (_explicitWidth == width && _explicitHeight == height) return
-		_explicitWidth = width
-		_explicitHeight = height
+		if (explicitWidth == width && explicitHeight == height) return
+		explicitWidth = width
+		explicitHeight = height
 		invalidate(ValidationFlags.LAYOUT)
 	}
 
@@ -714,8 +713,8 @@ open class UiComponentImpl(
 	 */
 	private fun validateLayout() {
 		val sC = sizeConstraints
-		val w = sC.width.clamp(_explicitWidth ?: defaultWidth)
-		val h = sC.height.clamp(_explicitHeight ?: defaultHeight)
+		val w = sC.width.clamp(explicitWidth ?: defaultWidth)
+		val h = sC.height.clamp(explicitHeight ?: defaultHeight)
 		_bounds.set(w ?: 0f, h ?: 0f)
 		updateLayout(w, h, _bounds)
 		if (assertionsEnabled && (_bounds.width.isNaN() || _bounds.height.isNaN()))
@@ -814,7 +813,7 @@ open class UiComponentImpl(
 
 	override fun colorTint(r: Float, g: Float, b: Float, a: Float) {
 		_colorTint.set(r, g, b, a)
-		window.requestRender()
+		invalidate(ValidationFlags.RENDER_CONTEXT)
 	}
 
 	/**
@@ -822,10 +821,8 @@ open class UiComponentImpl(
 	 */
 	override val concatenatedColorTint: ColorRo
 		get() {
-			_concatenatedColorTint.set(_colorTint)
-			val parent = parent
-			if (parent != null) _concatenatedColorTint.mul(parent.concatenatedColorTint)
-			return _concatenatedColorTint
+			validate(ValidationFlags.RENDER_CONTEXT)
+			return renderContext.colorTint
 		}
 
 	protected open fun updateInheritedInteractivityMode() {
@@ -845,7 +842,7 @@ open class UiComponentImpl(
 	override fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo?): MutableList<UiComponentRo> {
 		if (!visible || (onlyInteractive && !interactivityEnabled)) return out
 
-		val ray = rayCache ?: camera.getPickRay(canvasX, canvasY, viewport, rayTmp)
+		val ray = rayCache ?: getPickRay(canvasX, canvasY, rayTmp)
 		if (interactivityMode == InteractivityMode.ALWAYS || intersectsGlobalRay(ray)) {
 			out.add(this)
 		}
@@ -913,7 +910,7 @@ open class UiComponentImpl(
 	// Transformable
 	//-----------------------------------------------
 
-	override var snapToPixel: Boolean = Transformable.defaultSnapToPixel
+	override var snapToPixel: Boolean = Positionable.defaultSnapToPixel
 
 	/**
 	 * This component's transformation matrix.
@@ -1085,28 +1082,19 @@ open class UiComponentImpl(
 	 * The global transform of this component, of all ancestor transforms multiplied together.
 	 * Do not modify this matrix directly, it will be overwritten on a TRANSFORM validation.
 	 */
-	override val concatenatedTransform: Matrix4Ro
+	override val modelTransform: Matrix4Ro
 		get() {
-			validate(ValidationFlags.CONCATENATED_TRANSFORM)
-			return _concatenatedTransform
+			validate(ValidationFlags.RENDER_CONTEXT)
+			return renderContext.modelTransform
 		}
 
 	/**
 	 * Returns the inverse concatenated transformation matrix.
 	 */
-	override val concatenatedTransformInv: Matrix4Ro
+	override val modelTransformInv: Matrix4Ro
 		get() {
-			validate(ValidationFlags.CONCATENATED_TRANSFORM)
-			if (!_concatenatedTransformInvIsValid) {
-				_concatenatedTransformInvIsValid = true
-				_concatenatedTransformInv.set(_concatenatedTransform)
-				try {
-					_concatenatedTransformInv.inv()
-				} catch (e: Throwable) {
-					println("Error inverting matrix")
-				}
-			}
-			return _concatenatedTransformInv
+			validate(ValidationFlags.RENDER_CONTEXT)
+			return renderContext.modelTransformInv
 		}
 
 	/**
@@ -1127,35 +1115,13 @@ open class UiComponentImpl(
 		_transform.scale(_scale)
 		if (!_origin.isZero())
 			_transform.translate(-_origin.x, -_origin.y, -_origin.z)
-
 	}
 
-	/**
-	 * Updates this component's concatenatedTransform matrix, which is the parent's concatenatedTransform
-	 * multiplied by this component's transform matrix.
-	 *
-	 * Do not call this directly, use [validate(ValidationFlags.CONCATENATED_TRANSFORM)]
-	 */
-	protected open fun updateConcatenatedTransform() {
-		val p = parent
-		if (p != null) {
-			_concatenatedTransform.set(p.concatenatedTransform).mul(_transform)
-		} else {
-			_concatenatedTransform.set(_transform)
-		}
-		_concatenatedTransformInvIsValid = false
+	protected open fun updateRenderContext() {
+		_renderContext.parentContext = parent?.renderContext ?: defaultRenderContext
+		_renderContext.modelTransformLocal = _transform
+		_renderContext.colorTintLocal = _colorTint
 	}
-
-	private var _camera: CameraRo = defaultCamera
-
-	/**
-	 * Returns the camera to be used for this component.
-	 */
-	override val camera: CameraRo
-		get() {
-			validate(ValidationFlags.CAMERA)
-			return _camera
-		}
 
 	//-----------------------------------------------
 	// Validatable
@@ -1165,15 +1131,22 @@ open class UiComponentImpl(
 		val flagsInvalidated: Int = validation.invalidate(flags)
 
 		if (flagsInvalidated != 0) {
+			if (_invalidated.isDispatching) {
+				throw Exception("invalidated already dispatching. ${flagsInvalidated.toFlagsString()}. Possible cyclic validation dependency.")
+			}
 			if (renderFilters.isNotEmpty() && flags and BITMAP_CACHE_INVALIDATING_FLAGS > 0) {
-				for (i in 0..renderFilters.lastIndex) {
-					renderFilters[i].invalidateBitmapCache()
-				}
+				invalidateBitmapCache()
 			}
 			onInvalidated(flagsInvalidated)
 			_invalidated.dispatch(this, flagsInvalidated)
 		}
 		return flagsInvalidated
+	}
+
+	protected open fun invalidateBitmapCache() {
+		for (i in 0..renderFilters.lastIndex) {
+			renderFilters[i].invalidateBitmapCache()
+		}
 	}
 
 	protected open fun onInvalidated(flagsInvalidated: Int) {
@@ -1216,34 +1189,21 @@ open class UiComponentImpl(
 	 * clipping, you may use [MinMaxRo.POSITIVE_INFINITY]. This is used in order to potentially avoid drawing things
 	 * the user cannot see. (Due to the screen size, stencil buffers, or scissors)
 	 */
-
-
-	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+	override fun render() {
 		// Nothing visible.
-		if (tint.a <= 0f)
+		val renderContext = renderContext
+		if (renderContext.colorTint.a <= 0f)
 			return
 		if (renderFilters.isEmpty())
-			draw(clip, transform, tint)
+			draw(renderContext.clipRegion, renderContext.modelTransform, renderContext.colorTint)
 		else
-			renderFilters.first().render(clip, transform, tint)
+			renderFilters.first().render()
 	}
 
-	private val viewportTmpMinMax = MinMax()
-
-	/**
-	 * Returns true if the given viewport in local coordinates intersects with the viewport in screen coordinates.
-	 */
-	fun isInViewport(local: MinMaxRo, viewport: MinMaxRo): Boolean {
-		localToCanvas(viewportTmpMinMax.set(local))
-		return viewport.intersects(viewportTmpMinMax)
-	}
-
-	/**
-	 * Returns true if this component's bounds are currently within the given window viewport.
-	 */
-	fun isBoundsInViewport(viewport: MinMaxRo): Boolean {
-		localToCanvas(viewportTmpMinMax.set(0f, 0f, _bounds.width, _bounds.height))
-		return viewport.intersects(viewportTmpMinMax)
+	protected fun useCamera(useModel: Boolean = false) {
+		val renderContext = renderContext
+		if (useModel) glState.setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform, renderContext.modelTransform)
+		else glState.setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform)
 	}
 
 	/**
@@ -1300,10 +1260,8 @@ open class UiComponentImpl(
 		private const val BITMAP_CACHE_INVALIDATING_FLAGS = (
 				ValidationFlags.HIERARCHY_DESCENDING or
 						ValidationFlags.TRANSFORM or
-						ValidationFlags.CONCATENATED_TRANSFORM or
-						ValidationFlags.INTERACTIVITY_MODE or
-						ValidationFlags.CAMERA or
-						ValidationFlags.VIEWPORT).inv()
+						ValidationFlags.RENDER_CONTEXT or
+						ValidationFlags.INTERACTIVITY_MODE).inv()
 	}
 }
 

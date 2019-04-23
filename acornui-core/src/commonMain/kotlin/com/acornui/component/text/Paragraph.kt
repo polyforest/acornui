@@ -326,7 +326,7 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 	private val tL = Vector3()
 	private val tR = Vector3()
 
-	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		if (_lines.isEmpty() || tint.a <= 0f)
 			return
 		val textElements = _textElements
@@ -337,7 +337,7 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 			// This text field is axis aligned, we can check against the viewport without a matrix inversion.
 			val y = tL.y
 			if (tR.x < clip.xMin || tL.x > clip.xMax) return
-			val scaleY = concatenatedTransform.getScaleY()
+			val scaleY = modelTransform.getScaleY()
 			val lineStart = _lines.sortedInsertionIndex(clip.yMin - y) { viewPortY, line ->
 				viewPortY.compareTo(line.bottom / scaleY)
 			}
@@ -348,7 +348,7 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 			}
 			if (lineEnd <= lineStart)
 				return
-			glState.setCamera(camera)
+			useCamera()
 			for (i in lineStart..lineEnd - 1) {
 				val line = _lines[i]
 				for (j in line.startIndex..line.endIndex - 1) {
@@ -356,7 +356,7 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 				}
 			}
 		} else {
-			glState.setCamera(camera)
+			useCamera()
 			for (i in 0..textElements.lastIndex) {
 				textElements[i].render(clip, transform, tint)
 			}

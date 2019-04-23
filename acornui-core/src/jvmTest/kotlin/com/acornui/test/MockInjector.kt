@@ -16,6 +16,7 @@
 
 package com.acornui.test
 
+import com.acornui.component.RenderContextRo
 import com.acornui.core.asset.AssetManager
 import com.acornui.core.di.Injector
 import com.acornui.core.di.InjectorImpl
@@ -60,7 +61,7 @@ object MockInjector {
 				Files to  Mockito.mock(Files::class.java),
 				AssetManager to  Mockito.mock(AssetManager::class.java),
 				InteractivityManager to  Mockito.mock(InteractivityManager::class.java),
-				Camera to  Mockito.mock(Camera::class.java),
+				RenderContextRo to  Mockito.mock(RenderContextRo::class.java),
 				FocusManager to  Mockito.mock(FocusManager::class.java),
 				Gl20 to  Mockito.mock(Gl20::class.java),
 				GlState to  Mockito.mock(GlState::class.java),

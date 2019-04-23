@@ -72,13 +72,13 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 					invalidate(ValidationFlags.SIZE_CONSTRAINTS)
 				}
 			}
-			if (constrainToStage) invalidate(ValidationFlags.CONCATENATED_TRANSFORM)
+			if (constrainToStage) invalidate(ValidationFlags.RENDER_CONTEXT)
 		}
 	}
 
 	val windowResizedHandler: (Float, Float, Boolean) -> Unit = {
 		newWidth: Float, newHeight: Float, isUserInteraction: Boolean ->
-		invalidate(ValidationFlags.CONCATENATED_TRANSFORM)
+		invalidate(ValidationFlags.RENDER_CONTEXT)
 	}
 
 	override fun onActivated() {
@@ -86,7 +86,7 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 		window.sizeChanged.add(windowResizedHandler)
 
 		addPopUp(PopUpInfo(contents, dispose = false, isModal = isModal, priority = priority, focus = focus, highlightFocused = highlightFocused, onClosed = { onClosed?.invoke() }))
-		if (constrainToStage) invalidate(ValidationFlags.CONCATENATED_TRANSFORM)
+		if (constrainToStage) invalidate(ValidationFlags.RENDER_CONTEXT)
 	}
 
 	override fun onDeactivated() {
@@ -111,9 +111,9 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 	private val tmpMat = Matrix4()
 	private val points = arrayOf(Vector2(0f, 0f), Vector2(1f, 0f), Vector2(1f, 1f), Vector2(0f, 1f))
 
-	override fun updateConcatenatedTransform() {
-		super.updateConcatenatedTransform()
-		tmpMat.set(concatenatedTransform)
+	override fun updateRenderContext() {
+		super.updateRenderContext()
+		tmpMat.set(modelTransform)
 		if (constrainToStage) {
 			val w = window.width
 			val h = window.height
@@ -136,7 +136,7 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 				}
 			}
 		}
-		contents.setExternalTransform(tmpMat)
+		contents.customTransform = tmpMat
 	}
 }
 
@@ -148,23 +148,12 @@ fun Owned.lift(init: ComponentInit<Lift>): Lift {
 
 private class LiftStack(private val delegate: UiComponentRo) : StackLayoutContainer(delegate) {
 
-	private val _externalTransform = Matrix4()
-
 	init {
 		includeInLayout = false
 	}
 
 	override val concatenatedColorTint: ColorRo
 		get() = delegate.concatenatedColorTint
-
-	fun setExternalTransform(value: Matrix4) {
-		_externalTransform.set(value)
-		invalidate(ValidationFlags.TRANSFORM)
-	}
-
-	override fun updateTransform() {
-		_transform.set(_externalTransform)
-	}
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		super.draw(clip, transform, concatenatedColorTint)

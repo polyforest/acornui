@@ -17,18 +17,19 @@
 package com.acornui.filter
 
 import com.acornui.collection.MutableListBase
+import com.acornui.component.RenderContextRo
 import com.acornui.core.Disposable
 import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
 import com.acornui.core.di.OwnedImpl
+import com.acornui.core.di.inject
+import com.acornui.core.drawRegion
 import com.acornui.function.as1
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.acornui.observe.Observable
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal1
-import kotlin.math.ceil
-import kotlin.math.floor
 import kotlin.properties.ReadWriteProperty
 
 /**
@@ -87,26 +88,25 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 		get() = contents?.bounds ?: Bounds.EMPTY_BOUNDS
 
 	private val _drawRegion = MinMax()
+
+	/**
+	 * @see Renderable.drawRegion
+	 */
 	val drawRegion: MinMaxRo
-		get() {
-			val bounds = bounds
-			val r = _drawRegion
-			r.set(0f, 0f, bounds.width, bounds.height)
-			r.inflate(renderMargin)
-			r.xMin = floor(r.xMin)
-			r.yMin = floor(r.yMin)
-			r.xMax = ceil(r.xMax)
-			r.yMax = ceil(r.yMax)
-			return r
-		}
+		get() = drawRegion(_drawRegion)
 
 	protected fun <T> bindable(initial: T): ReadWriteProperty<Any?, T> = observable(initial) {
 		_changed.dispatch(this)
 	}
 
-	final override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		if (shouldSkipFilter) contents?.render(clip, transform, tint)
-		else draw(clip, transform, tint)
+	override val renderContext: RenderContextRo
+		get() = renderContextOverride ?: contents?.renderContext ?: inject(RenderContextRo)
+
+	override var renderContextOverride: RenderContextRo? = null
+
+	final override fun render() {
+		if (shouldSkipFilter) contents?.render()
+		else draw(renderContext.clipRegion, renderContext.modelTransform, renderContext.colorTint)
 		bitmapCacheIsValid = true
 	}
 

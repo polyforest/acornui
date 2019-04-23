@@ -18,6 +18,7 @@ package com.acornui.core.input.interaction
 
 import com.acornui.component.InteractiveElement
 import com.acornui.component.UiComponentRo
+import com.acornui.component.canvasToLocal
 import com.acornui.core.input.InteractionEventBase
 import com.acornui.core.input.InteractionEventRo
 import com.acornui.core.input.InteractionType

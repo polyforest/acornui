@@ -30,7 +30,6 @@ interface ColorTransformableRo {
 	 */
 	val concatenatedColorTint: ColorRo
 
-	val alpha: Float
 }
 
 /**
@@ -50,17 +49,18 @@ interface ColorTransformable : ColorTransformableRo {
 
 	fun colorTint(r: Float, g: Float, b: Float, a: Float)
 
-	/**
-	 * A utility method for setting and retrieving the alpha tint.
-	 */
-	override var alpha: Float
-		get() {
-			return colorTint.a
-		}
-		set(value) {
-			val t = colorTint
-			if (t.a == value) return
-			colorTint(t.r, t.g, t.b, value)
-		}
-
 }
+
+val ColorTransformableRo.alpha: Float
+	get() = colorTint.a
+
+/**
+ * A utility method for setting and retrieving the alpha tint.
+ */
+var ColorTransformable.alpha: Float
+	get() = colorTint.a
+	set(value) {
+		val t = colorTint
+		if (t.a == value) return
+		colorTint(t.r, t.g, t.b, value)
+	}
