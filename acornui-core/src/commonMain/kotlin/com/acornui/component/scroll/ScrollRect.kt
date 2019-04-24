@@ -104,12 +104,8 @@ class ScrollRectImpl(
 
 	private val contentsClip = MinMax()
 
-	override fun updateRenderContext() {
-		super.updateRenderContext()
-		_renderContext.clipRegionLocal = drawRegion(contentsClip)
-	}
-
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		_renderContext.clipRegionLocal = drawRegion(contentsClip)
 		if (maskClip.visible) {
 			StencilUtil.mask(glState.batch, gl, {
 				maskClip.render()
