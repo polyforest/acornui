@@ -51,10 +51,13 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 	 */
 	protected val contents = scrollArea()
 
+	protected val _tabBarContainer: UiComponent
+
 	/**
 	 * The container for the tab buttons.
 	 */
-	protected val tabBarContainer: UiComponent
+	val tabBarContainer: UiComponentRo
+		get() = _tabBarContainer
 
 	private lateinit var tabBar: HorizontalLayoutContainer
 
@@ -73,6 +76,26 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 
 	private val cancel = Cancel()
 
+	/**
+	 * The measured height of the tab bar (including tab padding).
+	 */
+	var tabBarHeight: Float = 0f
+		get() {
+			validate(ValidationFlags.LAYOUT)
+			return field
+		}
+		protected set
+
+	/**
+	 * The measured width of the tab bar (including tab padding).
+	 */
+	var tabBarWidth: Float = 0f
+		get() {
+			validate(ValidationFlags.LAYOUT)
+			return field
+		}
+		protected set
+
 	private val tabClickHandler = { e: ClickInteractionRo ->
 		if (!e.handled) {
 			val index = tabBar.elements.indexOf(e.currentTarget)
@@ -88,18 +111,20 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 
 	init {
 		styleTags.add(TabNavigator)
-		tabBarContainer = scaleBox {
+		_tabBarContainer = scaleBox {
+			interactivityMode = InteractivityMode.CHILDREN
 			style.scaling = Scaling.STRETCH_X
 			style.horizontalAlign = HAlign.LEFT
 			style.verticalAlign = VAlign.BOTTOM
 			tabBar = +hGroup {
+				interactivityMode = InteractivityMode.CHILDREN
 				style.verticalAlign = VAlign.BOTTOM
 			} layout {
 				maxScaleX = 1f
 				maxScaleY = 1f
 			}
 		}
-		addChild(tabBarContainer)
+		addChild(_tabBarContainer)
 		addChild(contents)
 
 		watch(style) {
@@ -265,21 +290,28 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 
 	override fun updateSizeConstraints(out: SizeConstraints) {
 		out.width.min = maxOf(tabBar.minWidth ?: 0f, contents.minWidth ?: 0f)
-		out.height.min = (tabBar.minHeight ?: 0f) + (contents.minHeight ?: 0f) + style.vGap
+		out.height.min = style.tabBarPadding.expandHeight2(tabBar.minHeight ?: 0f) + (contents.minHeight ?: 0f)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val background = background ?: return
-		tabBarContainer.setSize(explicitWidth, null)
-		val tabBarHeight = tabBarContainer.height + style.vGap
+		updateTabBarLayout(explicitWidth, explicitHeight)
 		val contentsHeight = if (explicitHeight == null) null else explicitHeight - tabBarHeight
 		val pad = style.contentsPadding
 		contents.setSize(pad.reduceWidth(explicitWidth), pad.reduceHeight(contentsHeight))
 		contents.moveTo(pad.left, tabBarHeight + pad.top)
 		background.setSize(pad.expandWidth2(contents.width), pad.expandHeight2(contents.height))
 		background.moveTo(0f, tabBarHeight)
-		out.width = maxOf(background.width, tabBarContainer.width)
+		out.width = maxOf(background.width, tabBarWidth)
 		out.height = background.height + tabBarHeight
+	}
+
+	protected open fun updateTabBarLayout(explicitWidth: Float?, explicitHeight: Float?) {
+		val tabPadding = style.tabBarPadding
+		_tabBarContainer.setSize(tabPadding.reduceWidth(explicitWidth), null)
+		_tabBarContainer.setPosition(tabPadding.left, tabPadding.top)
+		this.tabBarHeight = tabPadding.expandHeight2(_tabBarContainer.height)
+		this.tabBarWidth = tabPadding.expandWidth2(_tabBarContainer.width)
 	}
 
 	override fun dispose() {
@@ -324,9 +356,9 @@ class TabNavigatorStyle : StyleBase() {
 	var tabGap by prop(0f)
 
 	/**
-	 * The vertical gap between the tabs and the contents.
+	 * The padding around the tabs.
 	 */
-	var vGap by prop(-1f)
+	var tabBarPadding by prop(Pad(0f, 0f, -1f, 0f))
 
 	/**
 	 * The component to be placed in the behind the contents.

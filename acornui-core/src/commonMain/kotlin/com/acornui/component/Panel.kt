@@ -40,12 +40,18 @@ open class Panel(
 	private val contents = addChild(stack())
 	private var background: UiComponent? = null
 
+	var contentsInteractivityMode: InteractivityMode
+		get() = contents.interactivityMode
+		set(value) {
+			contents.interactivityMode = value
+		}
+
 	init {
 		styleTags.add(Panel)
 		watch(style) {
 			contents.style.padding = it.padding
 			background?.dispose()
-			background = addChild(0, it.background(this))
+			background = addOptionalChild(0, it.background(this))
 		}
 	}
 
@@ -83,7 +89,7 @@ open class PanelStyle : StyleBase() {
 
 	override val type: StyleType<PanelStyle> = PanelStyle
 
-	var background by prop(noSkin)
+	var background by prop(noSkinOptional)
 	var padding by prop(Pad(5f))
 
 	companion object : StyleType<PanelStyle>

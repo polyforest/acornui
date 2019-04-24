@@ -336,8 +336,9 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 		if (tL.y == tR.y) {
 			// This text field is axis aligned, we can check against the viewport without a matrix inversion.
 			val y = tL.y
-			if (tR.x < clip.xMin || tL.x > clip.xMax) return
-			val scaleY = modelTransform.getScaleY()
+			if (tR.x < clip.xMin || tL.x > clip.xMax)
+				return
+			val scaleY = transform.getScaleY()
 			val lineStart = _lines.sortedInsertionIndex(clip.yMin - y) { viewPortY, line ->
 				viewPortY.compareTo(line.bottom / scaleY)
 			}

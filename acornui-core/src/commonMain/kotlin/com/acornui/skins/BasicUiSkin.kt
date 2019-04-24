@@ -286,7 +286,7 @@ open class BasicUiSkin(
 
 	protected open fun tabNavigatorStyle() {
 		val tabNavStyle = TabNavigatorStyle().apply {
-			vGap = -theme.strokeThickness
+			tabBarPadding = Pad(0f, 0f, -theme.strokeThickness, 0f)
 			contentsPadding = Pad(theme.strokeThickness)
 			background = { rect {
 				style.apply {
