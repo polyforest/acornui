@@ -198,7 +198,13 @@ class FocusManagerImpl : FocusManager {
 	}
 
 	override val focused: UiComponentRo?
-		get() = _focused
+		get() {
+			val focused = _focused ?: return null
+			if (!focused.isActive) {
+				focused(root)
+			}
+			return _focused
+		}
 
 	private var pendingFocusable: UiComponentRo? = null
 	private val focusStack = ArrayList<UiComponentRo?>()
@@ -274,7 +280,7 @@ class FocusManagerImpl : FocusManager {
 		if (_focused != _root) {
 			_highlighted = _focused
 			if (_highlighted != null) {
-				_highlight?.visible = true
+				_highlight?.visible = false
 				_highlighted!!.invalidated.add(::highlightedInvalidatedHandler.as2)
 			}
 			highlightedInvalidatedHandler()
@@ -291,6 +297,7 @@ class FocusManagerImpl : FocusManager {
 	private fun updateHighlight() {
 		val highlighted = _highlighted ?: return
 		val highlight = _highlight ?: return
+		_highlight?.visible = true
 
 		highlighted.updateFocusHighlight(highlightBounds, highlightTransform)
 

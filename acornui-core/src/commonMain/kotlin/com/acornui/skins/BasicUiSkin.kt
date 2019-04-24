@@ -151,8 +151,7 @@ open class BasicUiSkin(
 			}
 			padding = Pad(theme.strokeThickness + 2f)
 		}
-		target.addStyleRule(textInputStyle, TextInput)
-		target.addStyleRule(textInputStyle, TextArea)
+		target.addStyleRule(textInputStyle, TextInput or TextArea)
 
 		val textInputFlowStyle = TextFlowStyle()
 		textInputFlowStyle.multiline = false

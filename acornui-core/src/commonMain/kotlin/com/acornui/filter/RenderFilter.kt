@@ -69,7 +69,12 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 	protected open val shouldSkipFilter: Boolean
 		get() = !enabled
 
-	override var contents: Renderable? = null
+	private var _contents: Renderable? = null
+	override var contents: Renderable?
+		get() = _contents
+		set(value) {
+			_contents = value
+		}
 
 	override fun invalidateBitmapCache() {
 		bitmapCacheIsValid = false
@@ -106,7 +111,7 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 
 	final override fun render() {
 		if (shouldSkipFilter) contents?.render()
-		else draw(renderContext.clipRegion, renderContext.modelTransform, renderContext.colorTint)
+		else draw(MinMaxRo.POSITIVE_INFINITY, renderContext.modelTransform, renderContext.colorTint)
 		bitmapCacheIsValid = true
 	}
 

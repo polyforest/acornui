@@ -114,6 +114,7 @@ fun withParent(operand: StyleFilter) = ParentStyleFilter(operand)
 /**
  * The target contains the given tag.
  */
+@Deprecated("Use the Style tag as a filter", ReplaceWith("tag"))
 class TargetStyleFilter(private val tag: StyleTag) : StyleFilter {
 	override fun invoke(target: StyleableRo): StyleableRo? {
 		if (target.styleTags.contains(tag)) {

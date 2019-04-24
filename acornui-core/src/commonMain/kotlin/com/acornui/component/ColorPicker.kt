@@ -171,6 +171,8 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 	private val _changed = own(Signal0())
 	val changed = _changed.asRo()
 
+	private val handleWidth = 7f
+
 	val style = bind(ColorPaletteStyle())
 
 	/**
@@ -236,6 +238,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 	}
 
 	private val valueRect = addChild(rect {
+		style.margin = Pad(0f, 0f, 0f, handleWidth)
 		dragAttachment(0f).drag.add {
 			canvasToLocal(tmpVec.set(it.position))
 			val p = MathUtils.clamp(tmpVec.y / height, 0f, 1f)
@@ -249,6 +252,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 	private val alphaGrid = addChild(repeatingTexture("assets/uiskin/AlphaCheckerboard.png"))
 
 	private val alphaRect = addChild(rect {
+		style.margin = Pad(0f, 0f, 0f, handleWidth)
 		dragAttachment(0f).drag.add {
 			canvasToLocal(tmpVec.set(it.position))
 			val p = MathUtils.clamp(tmpVec.y / height, 0f, 1f)
@@ -331,17 +335,17 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 		saturationRect.moveTo(hueRect.x, hueRect.y)
 
 		val sliderHeight = h - padding.top - padding.bottom
-		valueRect.setSize(s.sliderWidth, sliderHeight)
-		valueRect.moveTo(hueRect.right + s.gap, padding.top)
+		valueRect.setSize(s.sliderWidth + handleWidth, sliderHeight)
+		valueRect.moveTo(hueRect.right + s.gap - handleWidth, padding.top)
 
 		alphaGrid.setSize(s.sliderWidth, sliderHeight)
 		alphaGrid.moveTo(valueRect.right + s.gap, padding.top)
-		alphaRect.setSize(s.sliderWidth, sliderHeight)
-		alphaRect.moveTo(valueRect.right + s.gap, padding.top)
+		alphaRect.setSize(s.sliderWidth + handleWidth, sliderHeight)
+		alphaRect.moveTo(valueRect.right + s.gap - handleWidth, padding.top)
 
 		hueSaturationIndicator!!.moveTo(saturationRect.x + _value.h / 360f * saturationRect.width - hueSaturationIndicator!!.width * 0.5f, saturationRect.y + (1f - _value.s) * saturationRect.height - hueSaturationIndicator!!.height * 0.5f)
-		valueIndicator!!.moveTo(valueRect.x - valueIndicator!!.width * 0.5f, (1f - _value.v) * sliderHeight + padding.top - valueIndicator!!.height * 0.5f)
-		alphaIndicator!!.moveTo(alphaRect.x - alphaIndicator!!.width * 0.5f, (1f - _value.a) * sliderHeight + padding.top - alphaIndicator!!.height * 0.5f)
+		valueIndicator!!.moveTo(valueRect.x + handleWidth - valueIndicator!!.width * 0.5f, (1f - _value.v) * sliderHeight + padding.top - valueIndicator!!.height * 0.5f)
+		alphaIndicator!!.moveTo(alphaRect.x + handleWidth - alphaIndicator!!.width * 0.5f, (1f - _value.a) * sliderHeight + padding.top - alphaIndicator!!.height * 0.5f)
 
 		val bg = background!!
 		bg.setSize(w, h)
@@ -362,7 +366,7 @@ class ColorPaletteStyle : StyleBase() {
 
 	override val type = Companion
 
-	var padding by prop(Pad(5f))
+	var padding by prop(Pad(7f))
 	var sliderWidth by prop(16f)
 	var defaultPaletteWidth by prop(200f)
 	var defaultPaletteHeight by prop(100f)
