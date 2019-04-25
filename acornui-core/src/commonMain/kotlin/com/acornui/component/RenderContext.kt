@@ -142,6 +142,6 @@ class RenderContext(initialParentContext: RenderContextRo) : RenderContextRo {
 
 	private val _colorTint = Color()
 	override val colorTint: ColorRo
-		get() = _colorTint.set(parentContext.colorTint).mul(colorTintLocal)
+		get() = _colorTint.set(parentContext.colorTint).mul(colorTintLocal).clamp()
 
 }
