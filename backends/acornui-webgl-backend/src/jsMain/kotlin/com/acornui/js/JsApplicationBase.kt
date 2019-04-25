@@ -17,6 +17,7 @@
 package com.acornui.js
 
 import com.acornui.assertionsEnabled
+import com.acornui.async.PendingDisposablesRegistry
 import com.acornui.async.awaitOrNull
 import com.acornui.async.launch
 import com.acornui.browser.appendParam
@@ -24,7 +25,9 @@ import com.acornui.browser.decodeUriComponent2
 import com.acornui.browser.encodeUriComponent2
 import com.acornui.collection._stringMap
 import com.acornui.component.Stage
+import com.acornui.component.TooltipManager
 import com.acornui.component.UiComponent
+import com.acornui.component.stage
 import com.acornui.core.*
 import com.acornui.core.asset.AssetManager
 import com.acornui.core.asset.AssetManagerImpl
@@ -34,12 +37,9 @@ import com.acornui.core.audio.AudioManager
 import com.acornui.core.audio.AudioManagerImpl
 import com.acornui.core.cursor.CursorManager
 import com.acornui.core.di.*
+import com.acornui.core.focus.FakeFocusMouse
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.FocusManagerImpl
-import com.acornui.core.graphic.Camera
-import com.acornui.core.graphic.OrthographicCamera
-import com.acornui.core.graphic.Window
-import com.acornui.core.graphic.autoCenterCamera
 import com.acornui.core.i18n.I18n
 import com.acornui.core.i18n.I18nImpl
 import com.acornui.core.i18n.Locale
@@ -61,14 +61,12 @@ import com.acornui.core.text.numberFormatterProvider
 import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.TimeDriverImpl
 import com.acornui.core.time.time
-import com.acornui.file.FileIoManager
 import com.acornui.io.file.FilesManifestSerializer
 import com.acornui.js.audio.JsAudioElementMusicLoader
 import com.acornui.js.audio.JsAudioElementSoundLoader
 import com.acornui.js.audio.JsWebAudioSoundLoader
 import com.acornui.js.audio.audioContextSupported
 import com.acornui.js.cursor.JsCursorManager
-import com.acornui.js.file.JsFileIoManager
 import com.acornui.js.input.JsClipboard
 import com.acornui.js.input.JsKeyInput
 import com.acornui.js.input.JsMouseInput
@@ -164,22 +162,14 @@ Kotlin.isType = function(object, klass) {
 			contentLoad()
 
 			awaitAll()
-			val injector = createInjector()
-			stage = createStage(OwnedImpl(injector))
-			val popUpManager = createPopUpManager(stage)
-			val scope = stage.createScope(
-					listOf(
-							Stage to stage,
-							PopUpManager to popUpManager
-					)
-			)
-			initializeSpecialInteractivity(scope)
-			scope.onReady()
-
+			val owner = OwnedImpl(createInjector())
+			PendingDisposablesRegistry.register(owner)
+			initializeSpecialInteractivity(owner)
+			owner.stage.onReady()
 			// Add the pop-up manager after onReady so that it is the highest index.
-			stage.addElement(popUpManager.view)
+			owner.stage.addElement(owner.inject(PopUpManager).view)
 
-			frameDriver = initializeFrameDriver(scope.injector)
+			frameDriver = initializeFrameDriver(owner.injector)
 			frameDriver!!.start()
 		}
 	}
@@ -366,15 +356,9 @@ Kotlin.isType = function(object, klass) {
 		))
 	}
 
-	abstract suspend fun createStage(owner: Owned): Stage
-
-	protected open suspend fun createPopUpManager(root: UiComponent): PopUpManager {
-		return PopUpManagerImpl(root)
-	}
-
 	protected open suspend fun initializeSpecialInteractivity(owner: Owned) {
 		owner.own(UndoDispatcher(owner.injector))
-		owner.own(ContextMenuManager(owner))
+		owner.own(ContextMenuManager(owner.injector))
 	}
 
 	private fun memberRefTest() {}

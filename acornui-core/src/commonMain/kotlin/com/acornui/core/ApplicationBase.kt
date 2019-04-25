@@ -21,6 +21,7 @@ import com.acornui.component.Stage
 import com.acornui.core.di.Bootstrap
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Injector
+import com.acornui.core.di.InjectorImpl
 import com.acornui.logging.Log
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -34,13 +35,12 @@ abstract class ApplicationBase : Disposable {
 
 	private val pendingTasks = HashMap<String, Pair<String, suspend () -> Unit>>()
 	private val bootstrap = Bootstrap()
-	protected lateinit var stage: Stage
 
 	protected fun <T : Any> set(key: DKey<T>, value: T) = bootstrap.set(key, value)
 
 	protected suspend fun <T : Any> get(key: DKey<T>): T = bootstrap.get(key)
 
-	protected suspend fun createInjector(): Injector = bootstrap.createInjector()
+	protected suspend fun createInjector(): Injector = InjectorImpl(bootstrap.dependenciesList())
 
 	protected suspend fun awaitAll() {
 		val waitFor = ArrayList<Deferred<Unit>>()
@@ -79,7 +79,6 @@ abstract class ApplicationBase : Disposable {
 		launch {
 			awaitAll()
 			PendingDisposablesRegistry.dispose()
-			stage.dispose()
 			bootstrap.dispose()
 			Log.info("Application disposed")
 		}

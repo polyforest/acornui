@@ -9,13 +9,9 @@ class Bootstrap : Disposable {
 
 	private val dependenciesList = ArrayList<DependencyPair<*>>()
 
-	/**
-	 * Creates a new injector with the dependencies set on this bootstrap.
-	 */
-	suspend fun createInjector(parentInjector: Injector? = null): Injector {
+	suspend fun dependenciesList(): List<DependencyPair<*>> {
 		awaitAll()
-
-		return InjectorImpl(parentInjector, dependenciesList)
+		return dependenciesList
 	}
 
 	private val _map = HashMap<DKey<*>, LateValue<Any>>()

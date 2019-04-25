@@ -16,7 +16,8 @@
 
 package com.acornui.component
 
-import com.acornui.core.di.Owned
+import com.acornui.core.di.Injector
+import com.acornui.core.di.OwnedImpl
 import com.acornui.core.focus.Focusable
 import com.acornui.math.Bounds
 import kotlin.math.ceil
@@ -24,7 +25,7 @@ import kotlin.math.ceil
 /**
  * @author nbilyk
  */
-open class GlStageImpl(owner: Owned) : Stage, ElementContainerImpl<UiComponent>(owner), Focusable {
+open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiComponent>(OwnedImpl(injector)), Focusable {
 
 	init {
 		focusEnabled = true

@@ -36,10 +36,7 @@ import com.acornui.core.di.*
 import com.acornui.core.focus.FakeFocusMouse
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.FocusManagerImpl
-import com.acornui.core.graphic.Camera
-import com.acornui.core.graphic.OrthographicCamera
 import com.acornui.core.graphic.Window
-import com.acornui.core.graphic.autoCenterCamera
 import com.acornui.core.i18n.I18n
 import com.acornui.core.i18n.I18nImpl
 import com.acornui.core.i18n.Locale
@@ -53,7 +50,6 @@ import com.acornui.core.io.file.Files
 import com.acornui.core.io.file.FilesImpl
 import com.acornui.core.persistance.Persistence
 import com.acornui.core.popup.PopUpManager
-import com.acornui.core.popup.PopUpManagerImpl
 import com.acornui.core.request.RestServiceFactory
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionManagerImpl
@@ -67,7 +63,6 @@ import com.acornui.file.FileIoManager
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.GlStateImpl
-import com.acornui.graphic.Color
 import com.acornui.io.file.FilesManifestSerializer
 import com.acornui.jvm.audio.NoAudioException
 import com.acornui.jvm.audio.OpenAlAudioManager
@@ -79,8 +74,8 @@ import com.acornui.jvm.graphic.GlfwWindowImpl
 import com.acornui.jvm.graphic.JvmGl20Debug
 import com.acornui.jvm.graphic.JvmTextureLoader
 import com.acornui.jvm.graphic.LwjglGl20
-import com.acornui.jvm.input.JvmClipboard
 import com.acornui.jvm.input.GlfwMouseInput
+import com.acornui.jvm.input.JvmClipboard
 import com.acornui.jvm.input.LwjglKeyInput
 import com.acornui.jvm.input.MockTouchScreenKeyboard
 import com.acornui.jvm.io.JvmBufferFactory
@@ -92,9 +87,8 @@ import com.acornui.jvm.persistance.LwjglPersistence
 import com.acornui.jvm.text.DateTimeFormatterImpl
 import com.acornui.jvm.text.NumberFormatterImpl
 import com.acornui.jvm.time.TimeProviderImpl
-import com.acornui.logging.Logger
 import com.acornui.logging.Log
-import com.acornui.math.Matrix4
+import com.acornui.logging.Logger
 import com.acornui.math.MinMax
 import com.acornui.serialization.JsonSerializer
 import com.acornui.uncaughtExceptionHandler
@@ -150,21 +144,13 @@ open class LwjglApplication : ApplicationBase() {
 
 		while (true) {
 			if (injector != null) {
-				stage = createStage(OwnedImpl(injector!!))
-				val popUpManager = createPopUpManager(stage)
-				val scope = stage.createScope(
-						listOf(
-								Stage to stage,
-								PopUpManager to popUpManager
-						)
-				)
-				initializeSpecialInteractivity(scope)
-				scope.onReady()
-
+				val owner = OwnedImpl(injector!!)
+				owner.initializeSpecialInteractivity()
+				owner.stage.onReady()
 				// Add the pop-up manager after onReady so that it is the highest index.
-				stage.addElement(popUpManager.view)
-
-				JvmApplicationRunner(scope.injector, _windowId)
+				owner.stage.addElement(owner.inject(PopUpManager).view)
+				JvmApplicationRunner(owner.injector, _windowId)
+				owner.dispose()
 				dispose()
 				break
 			} else {
@@ -372,19 +358,11 @@ open class LwjglApplication : ApplicationBase() {
 		))
 	}
 
-	protected open fun createStage(owned: Owned): Stage {
-		return GlStageImpl(owned)
-	}
-
-	protected open fun createPopUpManager(root: UiComponent): PopUpManager {
-		return PopUpManagerImpl(root)
-	}
-
-	protected open fun initializeSpecialInteractivity(owner: Owned) {
-		owner.own(JvmClickDispatcher(owner.injector))
-		owner.own(FakeFocusMouse(owner.injector))
-		owner.own(UndoDispatcher(owner.injector))
-		owner.own(ContextMenuManager(owner))
+	protected open fun Owned.initializeSpecialInteractivity() {
+		own(JvmClickDispatcher(injector))
+		own(FakeFocusMouse(injector))
+		own(UndoDispatcher(injector))
+		own(ContextMenuManager(injector))
 	}
 
 	override fun dispose() {

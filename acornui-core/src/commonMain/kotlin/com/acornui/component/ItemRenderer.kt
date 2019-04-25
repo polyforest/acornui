@@ -2,7 +2,7 @@ package com.acornui.component
 
 import com.acornui.core.EqualityCheck
 
-interface ItemRendererRo<out E> {
+interface ItemRendererRo<out E> : UiComponentRo {
 
 	/**
 	 * The data this item renderer represents.
@@ -10,7 +10,7 @@ interface ItemRendererRo<out E> {
 	val data: E?
 }
 
-interface ItemRenderer<E> : ItemRendererRo<E> {
+interface ItemRenderer<E> : ItemRendererRo<E>, UiComponent {
 
 	/**
 	 * The data this item renderer represents.

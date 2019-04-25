@@ -45,6 +45,7 @@ import com.acornui.core.input.interaction.enableDownRepeat
 import com.acornui.core.popup.PopUpManager
 import com.acornui.core.popup.PopUpManagerStyle
 import com.acornui.core.userInfo
+import com.acornui.filter.dropShadowFilter
 import com.acornui.graphic.Color
 import com.acornui.math.Corners
 import com.acornui.math.Pad
@@ -103,6 +104,7 @@ open class BasicUiSkin(
 		contextMenuStyle()
 		calendarStyle()
 		htmlComponentStyle()
+		tooltipStyle()
 	}
 
 	open fun initTheme() {
@@ -764,5 +766,20 @@ open class BasicUiSkin(
 		val boxStyle = BoxStyle()
 		boxStyle.backgroundColor = Color.CLEAR
 		target.addStyleRule(boxStyle, HtmlComponent)
+	}
+
+	protected open fun tooltipStyle() {
+		val tooltipStyle = PanelStyle().apply {
+			background = {
+				rect {
+					style.backgroundColor = theme.panelBgColor
+					style.borderColors = BorderColors(theme.stroke)
+					style.borderRadii = Corners(theme.borderRadius)
+					style.borderThicknesses = Pad(theme.strokeThickness)
+					+dropShadowFilter()
+				}
+			}
+		}
+		target.addStyleRule(tooltipStyle, TooltipView)
 	}
 }

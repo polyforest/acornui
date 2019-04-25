@@ -17,9 +17,7 @@
 package com.acornui.js.gl
 
 import com.acornui.async.launch
-import com.acornui.component.GlStageImpl
 import com.acornui.component.HtmlComponent
-import com.acornui.component.Stage
 import com.acornui.core.asset.AssetType
 import com.acornui.core.asset.LoaderFactory
 import com.acornui.core.di.Owned
@@ -121,7 +119,7 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 	 * The last chance to set dependencies on the application scope.
 	 */
 	override val componentsTask by BootTask {
-		set(HtmlComponent.FACTORY_KEY, { JsHtmlComponent(it, rootElement) })
+		set(HtmlComponent.FACTORY_KEY) { JsHtmlComponent(it, rootElement) }
 	}
 
 	override val focusManagerTask by BootTask {
@@ -142,10 +140,6 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 
 	protected open val fileIoManagerTask by BootTask {
 		set(FileIoManager, JsFileIoManager(rootElement))
-	}
-
-	override suspend fun createStage(owner: Owned): Stage {
-		return GlStageImpl(owner)
 	}
 
 	override suspend fun initializeSpecialInteractivity(owner: Owned) {

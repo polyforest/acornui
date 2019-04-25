@@ -25,6 +25,7 @@ import com.acornui.component.layout.algorithm.CanvasLayout
 import com.acornui.component.layout.algorithm.CanvasLayoutData
 import com.acornui.component.style.*
 import com.acornui.core.di.DKey
+import com.acornui.core.di.Injector
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.focus.*
@@ -77,7 +78,11 @@ interface PopUpManager : Clearable {
 	 */
 	override fun clear()
 
-	companion object : DKey<PopUpManager>, StyleTag
+	companion object : DKey<PopUpManager>, StyleTag {
+		override fun factory(injector: Injector): PopUpManager? {
+			return PopUpManagerImpl(injector)
+		}
+	}
 }
 
 data class PopUpInfo<T : UiComponent>(
@@ -146,7 +151,7 @@ class PopUpManagerStyle : StyleBase() {
 	companion object : StyleType<PopUpManagerStyle>
 }
 
-class PopUpManagerImpl(private val root: UiComponent) : ElementLayoutContainerImpl<NoopStyle, CanvasLayoutData>(root, CanvasLayout()), PopUpManager {
+class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyle, CanvasLayoutData>(injector.inject(Stage), CanvasLayout()), PopUpManager {
 
 	private val popUpManagerStyle = bind(PopUpManagerStyle())
 
@@ -243,7 +248,7 @@ class PopUpManagerImpl(private val root: UiComponent) : ElementLayoutContainerIm
 
 	init {
 		styleTags.add(PopUpManager)
-		root.keyDown().add(rootKeyDownHandler)
+		stage.keyDown().add(rootKeyDownHandler)
 		interactivityMode = InteractivityMode.CHILDREN
 
 		watch(popUpManagerStyle) {
@@ -347,7 +352,7 @@ class PopUpManagerImpl(private val root: UiComponent) : ElementLayoutContainerIm
 	}
 
 	override fun dispose() {
-		root.keyDown().remove(rootKeyDownHandler)
+		stage.keyDown().remove(rootKeyDownHandler)
 		clear()
 		super.dispose()
 	}

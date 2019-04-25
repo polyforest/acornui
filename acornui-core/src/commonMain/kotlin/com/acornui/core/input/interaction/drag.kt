@@ -26,7 +26,6 @@ import com.acornui.core.di.inject
 import com.acornui.core.input.*
 import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.callLater
-import com.acornui.core.time.enterFrame
 import com.acornui.core.time.tick
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro

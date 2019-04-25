@@ -17,6 +17,7 @@
 package com.acornui.component
 
 import com.acornui.core.di.DKey
+import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.focus.Focusable
@@ -24,7 +25,11 @@ import com.acornui.core.focus.Focusable
 interface StageRo : ContainerRo, Focusable
 
 interface Stage : ElementContainer<UiComponent>, StageRo {
-	companion object : DKey<Stage>
+	companion object : DKey<Stage> {
+		override fun factory(injector: Injector): Stage? {
+			return StageImpl(injector)
+		}
+	}
 }
 
 val Scoped.stage: Stage

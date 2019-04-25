@@ -16,6 +16,9 @@
 
 package com.acornui.core.di
 
+import com.acornui.async.PendingDisposablesRegistry
+import com.acornui.core.Disposable
+
 
 /**
  * A scoped object has a dependency injector.
@@ -79,6 +82,8 @@ class InjectorImpl(
 				d = key.factory(this)
 				if (d != null) {
 					// If the dependency key's factory method produces an instance, set it on the root injector.
+					if (d is Disposable)
+						PendingDisposablesRegistry.register(d)
 					_set(key, d)
 				}
 			}
