@@ -484,9 +484,12 @@ open class CalendarItemRendererImpl(owner: Owned) : ContainerImpl(owner), Calend
 			ButtonState.UP -> style.upColor
 			ButtonState.OVER -> style.overColor
 			ButtonState.DOWN -> style.downColor
-			ButtonState.TOGGLED_UP -> style.toggledUpColor
-			ButtonState.TOGGLED_OVER -> style.toggledOverColor
-			ButtonState.TOGGLED_DOWN -> style.toggledDownColor
+			ButtonState.TOGGLED_UP,
+			ButtonState.INDETERMINATE_UP -> style.toggledUpColor
+			ButtonState.TOGGLED_OVER,
+			ButtonState.INDETERMINATE_OVER -> style.toggledOverColor
+			ButtonState.TOGGLED_DOWN,
+			ButtonState.INDETERMINATE_DOWN -> style.toggledDownColor
 			ButtonState.DISABLED -> style.disabledColor
 		}
 	}

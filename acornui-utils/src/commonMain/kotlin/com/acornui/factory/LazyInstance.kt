@@ -19,7 +19,8 @@ class LazyInstance<out R, out T>(
 				_instance = receiver.factory()
 				_created = true
 			}
-			return _instance!!
+			@Suppress("UNCHECKED_CAST")
+			return _instance as T
 		}
 
 	fun clear() {

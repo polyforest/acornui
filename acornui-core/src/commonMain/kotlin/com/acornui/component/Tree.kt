@@ -184,14 +184,7 @@ open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Owned, protected val 
 		invalidateStyles()
 	}
 
-	private var _toggled = false
-	override var toggled: Boolean
-		get() = _toggled
-		set(value) {
-			if (_toggled == value) return
-			_toggled = value
-			invalidateProperties()
-		}
+	override var toggled: Boolean by validationProp(false, ValidationFlags.PROPERTIES)
 
 	protected open val isLeaf: Boolean
 		get() = _data == null || _data!!.children.isEmpty()

@@ -30,20 +30,9 @@ import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.serialization.*
 
-var TextField.strong: Boolean
-	get() = styleTags.contains(TextStyleTags.strong)
-	set(value) {
-		if (!styleTags.contains(TextStyleTags.strong))
-			styleTags.add(TextStyleTags.strong)
-	}
+var TextField.strong by StyleTagToggle(TextStyleTags.strong)
 
-var TextField.emphasis: Boolean
-	get() = styleTags.contains(TextStyleTags.emphasis)
-	set(value) {
-		if (!styleTags.contains(TextStyleTags.emphasis))
-			styleTags.add(TextStyleTags.emphasis)
-	}
-
+var TextField.emphasis by StyleTagToggle(TextStyleTags.emphasis)
 
 var TextField.selectable: Boolean
 	get(): Boolean = charStyle.selectable

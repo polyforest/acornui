@@ -40,7 +40,7 @@ class Theme {
 	var bgColor: ColorRo = Color(0xF1F2F3FF)
 	var panelBgColor: ColorRo = Color(0xE7EDF1FF)
 
-	private val brighten: ColorRo = Color(0x15151500)
+	val brighten: ColorRo = Color(0x15151500)
 
 	var fill: ColorRo = Color(0xF3F9FAFF)
 	var fillDown: ColorRo = Color(0xE3E9EAFF)
@@ -226,11 +226,17 @@ typealias ButtonStateColors = Map<ButtonState, ColorRo>
 
 fun Theme.getButtonFillColor(buttonState: ButtonState): ColorRo {
 	return when (buttonState) {
-		ButtonState.UP, ButtonState.TOGGLED_UP -> fill
-		ButtonState.DOWN, ButtonState.TOGGLED_DOWN -> fillDown
+		ButtonState.UP,
+		ButtonState.TOGGLED_UP,
+		ButtonState.INDETERMINATE_UP -> fill
+
+		ButtonState.DOWN,
+		ButtonState.TOGGLED_DOWN,
+		ButtonState.INDETERMINATE_DOWN -> fillDown
 
 		ButtonState.OVER,
-		ButtonState.TOGGLED_OVER -> fillHighlight
+		ButtonState.TOGGLED_OVER,
+		ButtonState.INDETERMINATE_OVER -> fillHighlight
 
 		ButtonState.DISABLED -> fillDisabled
 	}
@@ -245,9 +251,12 @@ fun Theme.getButtonStrokeColor(buttonState: ButtonState): ColorRo {
 		ButtonState.OVER -> strokeHighlight
 
 		ButtonState.TOGGLED_UP,
-		ButtonState.TOGGLED_DOWN -> strokeToggled
+		ButtonState.TOGGLED_DOWN,
+		ButtonState.INDETERMINATE_UP,
+		ButtonState.INDETERMINATE_DOWN -> strokeToggled
 
-		ButtonState.TOGGLED_OVER -> strokeToggledHighlight
+		ButtonState.TOGGLED_OVER,
+		ButtonState.INDETERMINATE_OVER -> strokeToggledHighlight
 
 		ButtonState.DISABLED -> strokeDisabled
 	}

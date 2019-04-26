@@ -77,9 +77,9 @@ open class BasicUiSkin(
 		target.addStyleRule(ButtonStyle().set { checkboxSkin(theme, it) }, Checkbox)
 		target.addStyleRule(ButtonStyle().set { collapseButtonSkin(theme, it) }, CollapseButton)
 		target.addStyleRule(ButtonStyle().set { radioButtonSkin(theme, it) }, RadioButton)
-		target.addStyleRule(ButtonStyle().set { checkboxNoLabelSkin(theme, it) }, Checkbox.NO_LABEL)
 		target.addStyleRule(ButtonStyle().set { iconButtonSkin(theme, it) }, IconButton)
 
+		iconStyle()
 		popUpStyle()
 		focusStyle()
 		textStyle()
@@ -108,6 +108,13 @@ open class BasicUiSkin(
 	}
 
 	open fun initTheme() {
+	}
+
+	protected open fun iconStyle() {
+		val iconStyle = IconStyle().apply {
+			iconColor = theme.iconColor
+		}
+		target.addStyleRule(iconStyle)
 	}
 
 	protected open fun popUpStyle() {

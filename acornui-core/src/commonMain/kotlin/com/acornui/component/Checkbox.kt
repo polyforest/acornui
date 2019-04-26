@@ -29,9 +29,7 @@ open class Checkbox(
 		toggleOnClick = true
 	}
 
-	companion object : StyleTag {
-		val NO_LABEL = styleTag()
-	}
+	companion object : StyleTag
 }
 
 fun Owned.checkbox(init: ComponentInit<Checkbox> = {}): Checkbox {

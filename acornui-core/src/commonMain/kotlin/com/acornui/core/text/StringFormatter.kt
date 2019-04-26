@@ -22,3 +22,8 @@ object ToStringFormatter : StringFormatter<Any?> {
 	}
 }
 
+fun <E> stringFormatter(valueToString: (E) -> String): StringFormatter<E> = object : StringFormatter<E> {
+	override fun format(value: E): String {
+		return valueToString(value)
+	}
+}

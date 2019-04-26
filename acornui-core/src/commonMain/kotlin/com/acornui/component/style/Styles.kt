@@ -10,7 +10,10 @@ import com.acornui.collection.firstOrNull2
 import com.acornui.collection.removeFirst
 import com.acornui.core.Disposable
 import com.acornui.core.DisposedException
+import com.acornui.io.ReadWriteBuffer
 import com.acornui.observe.Observable
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 interface StyleableRo {
 
@@ -240,5 +243,19 @@ inline fun StyleableRo.walkStyleableAncestry(callback: (StyleableRo) -> Unit) {
 	while (p != null) {
 		callback(p)
 		p = p.styleParent
+	}
+}
+
+class StyleTagToggle(private val styleTag: StyleTag) : ReadWriteProperty<Styleable, Boolean> {
+
+	override fun getValue(thisRef: Styleable, property: KProperty<*>): Boolean {
+		return thisRef.styleTags.contains(styleTag)
+	}
+
+	override fun setValue(thisRef: Styleable, property: KProperty<*>, value: Boolean) {
+		if (getValue(thisRef, property) != value) {
+			if (value) thisRef.styleTags.add(styleTag)
+			else thisRef.styleTags.remove(styleTag)
+		}
 	}
 }

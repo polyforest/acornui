@@ -557,7 +557,7 @@ fun <E : Any> Owned.optionList(
 
 fun <E : Any> Owned.optionList(
 		data: ObservableList<E?>,
-		rendererFactory: LayoutDataProvider<VerticalLayoutData>.() -> ListItemRenderer<E> = { simpleItemRenderer() },
+		rendererFactory: OptionListRendererFactory<E> = { simpleItemRenderer() },
 		init: ComponentInit<OptionList<E>> = {}): OptionList<E> {
 	val t = OptionList<E>(this)
 	t.data(data)
@@ -568,7 +568,7 @@ fun <E : Any> Owned.optionList(
 
 fun <E : Any> Owned.optionList(
 		data: List<E?>,
-		rendererFactory: LayoutDataProvider<VerticalLayoutData>.() -> ListItemRenderer<E> = { simpleItemRenderer() },
+		rendererFactory: OptionListRendererFactory<E> = { simpleItemRenderer() },
 		init: ComponentInit<OptionList<E>> = {}): OptionList<E> {
 	val t = OptionList<E>(this)
 	t.data(data)
@@ -576,3 +576,5 @@ fun <E : Any> Owned.optionList(
 	t.init()
 	return t
 }
+
+typealias OptionListRendererFactory<E> = ItemRendererOwner<VerticalLayoutData>.() -> ListItemRenderer<E>
