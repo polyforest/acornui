@@ -15,12 +15,12 @@ import com.acornui.math.Pad
 /**
  * A SimpleItemRenderer is a [ListItemRenderer] implementation that displays data as text using a formatter.
  */
-class SimpleItemRenderer<E : Any>(
+open class SimpleItemRenderer<E : Any>(
 		owner: Owned,
 		private val formatter: StringFormatter<E>
 ) : ContainerImpl(owner), ListItemRenderer<E> {
 
-	private val textField = addChild(text())
+	protected val textField = addChild(text())
 	override var toggled: Boolean = false
 
 	override var index: Int = -1
