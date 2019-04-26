@@ -25,9 +25,7 @@ import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.jvm.browser.JvmLocation
 import com.acornui.logging.Log
-import com.acornui.signal.Signal1
-import com.acornui.signal.Signal2
-import com.acornui.signal.Signal3
+import com.acornui.signal.*
 import org.lwjgl.glfw.Callbacks
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWErrorCallback
@@ -252,6 +250,11 @@ class GlfwWindowImpl(
 	private var lastWidth = windowConfig.initialWidth
 	private var lastHeight = windowConfig.initialHeight
 
+	private val _fullScreenChanged = Signal0()
+	override val fullScreenChanged = _fullScreenChanged.asRo()
+
+	override val fullScreenEnabled: Boolean = true
+
 	private var _fullScreen = false
 	override var fullScreen: Boolean
 		get() = _fullScreen
@@ -274,6 +277,7 @@ class GlfwWindowImpl(
 				if (glConfig.vSync)
 					GLFW.glfwSwapInterval(1)
 				requestRender()
+				_fullScreenChanged.dispatch()
 			}
 		}
 

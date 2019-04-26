@@ -550,7 +550,7 @@ open class BasicUiSkin(
 	protected open fun optionListStyle() {
 		val optionListStyle = OptionListStyle().apply {
 			downArrow = {
-				atlas(theme.atlasPath, "OptionListArrow")
+				iconAtlas(theme.atlasPath, "ic_expand_more_white_24dp")
 			}
 			padding = Pad(theme.strokeThickness, theme.strokeThickness + 2f, theme.strokeThickness, theme.strokeThickness)
 			background = {
@@ -577,6 +577,7 @@ open class BasicUiSkin(
 						borderRadii = Corners(0f, 0f, theme.borderRadius, theme.borderRadius)
 						borderColors = BorderColors(theme.stroke)
 					}
+					+dropShadowFilter()
 				}
 			}
 			borderRadii = Corners(0f, 0f, theme.borderRadius, theme.borderRadius)

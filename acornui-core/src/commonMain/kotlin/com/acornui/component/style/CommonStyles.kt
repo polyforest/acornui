@@ -32,10 +32,4 @@ object CommonStyleTags {
 	val disabled = styleTag()
 }
 
-var UiComponent.disabledTag: Boolean
-	get() = styleTags.contains(CommonStyleTags.disabled)
-	set(value) {
-		if (value == disabledTag) return // no-op
-		if (value) styleTags.add(CommonStyleTags.disabled)
-		else styleTags.remove(CommonStyleTags.disabled)
-	}
+var UiComponent.disabledTag: Boolean by StyleTagToggle(CommonStyleTags.disabled)

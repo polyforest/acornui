@@ -178,3 +178,6 @@ enum class KeyLocation {
  */
 val KeyInteractionRo.commandPlat: Boolean
 	get() = if (platform == Platform.APPLE) metaKey else ctrlKey
+
+val KeyInteractionRo.isEnterOrReturn: Boolean
+	get() = keyCode == Ascii.ENTER || keyCode == Ascii.RETURN

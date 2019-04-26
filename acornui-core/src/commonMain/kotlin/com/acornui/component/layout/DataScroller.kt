@@ -334,6 +334,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 			background?.dispose()
 			background = addOptionalChild(0, it.background(this))
 			scrollBarClipper.style.borderRadii = it.borderRadii
+			clipper.style.borderRadii = it.borderRadii
 		}
 
 		wheel().add {

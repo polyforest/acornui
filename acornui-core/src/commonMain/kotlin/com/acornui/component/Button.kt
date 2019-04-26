@@ -60,18 +60,16 @@ open class Button(
 
 	private val _stateSkinMap = HashMap<ButtonState, LazyInstance<Owned, UiComponent?>>()
 
-	private val clickHandler = { event: ClickInteractionRo ->
-		if (toggleOnClick) {
-			setUserToggled(!toggled)
-		}
-	}
-
 	init {
 		focusEnabled = true
 		focusEnabledChildren = false
 		styleTags.add(Button)
 
-		click().add(clickHandler)
+		click().add {
+			if (toggleOnClick) {
+				setUserToggled(!toggled)
+			}
+		}
 		cursor(StandardCursors.HAND)
 
 		val oldInstances = ArrayList<LazyInstance<Owned, UiComponent?>>()
@@ -129,39 +127,8 @@ open class Button(
 		currentState(calculateButtonState())
 	}
 
-	protected open fun calculateButtonState(): ButtonState {
-		return if (disabled) {
-			ButtonState.DISABLED
-		} else {
-			if (indeterminate) {
-				if (mouseState.isDown) {
-					ButtonState.INDETERMINATE_DOWN
-				} else if (mouseState.isOver) {
-					ButtonState.INDETERMINATE_OVER
-				} else {
-					ButtonState.INDETERMINATE_UP
-				}
-			} else {
-				if (toggled) {
-					if (mouseState.isDown) {
-						ButtonState.TOGGLED_DOWN
-					} else if (mouseState.isOver) {
-						ButtonState.TOGGLED_OVER
-					} else {
-						ButtonState.TOGGLED_UP
-					}
-				} else {
-					if (mouseState.isDown) {
-						ButtonState.DOWN
-					} else if (mouseState.isOver) {
-						ButtonState.OVER
-					} else {
-						ButtonState.UP
-					}
-				}
-			}
-		}
-	}
+	protected open fun calculateButtonState(): ButtonState =
+			ButtonState.calculateButtonState(mouseState.isOver, mouseState.isDown, toggled, indeterminate, disabled)
 
 	protected var currentSkinPart: UiComponent? = null
 		private set
@@ -245,6 +212,42 @@ enum class ButtonState(
 	INDETERMINATE_OVER(isOver = true, isIndeterminate = true, backup = INDETERMINATE_UP),
 	INDETERMINATE_DOWN(isDown = true, isIndeterminate = true, backup = INDETERMINATE_UP),
 	DISABLED(backup = UP);
+
+	companion object {
+		fun calculateButtonState(isOver: Boolean = false, isDown: Boolean = false, toggled: Boolean = false, indeterminate: Boolean = false, disabled: Boolean = false): ButtonState {
+			return if (disabled) {
+				DISABLED
+			} else {
+				if (indeterminate) {
+					if (isDown) {
+						INDETERMINATE_DOWN
+					} else if (isOver) {
+						INDETERMINATE_OVER
+					} else {
+						INDETERMINATE_UP
+					}
+				} else {
+					if (toggled) {
+						if (isDown) {
+							TOGGLED_DOWN
+						} else if (isOver) {
+							TOGGLED_OVER
+						} else {
+							TOGGLED_UP
+						}
+					} else {
+						if (isDown) {
+							DOWN
+						} else if (isOver) {
+							OVER
+						} else {
+							UP
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 fun <T : Any> ButtonState.backupWalk(block: (ButtonState) -> T?): T? {

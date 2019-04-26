@@ -32,6 +32,7 @@ import com.acornui.core.focus.blurred
 import com.acornui.core.focus.focus
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.click
+import com.acornui.core.input.interaction.isEnterOrReturn
 import com.acornui.core.input.keyDown
 import com.acornui.core.popup.PopUpManager
 import com.acornui.core.popup.lift
@@ -104,7 +105,7 @@ open class DatePicker(
 			_input.dispatch()
 		}
 		keyDown().add {
-			if (it.keyCode == Ascii.ENTER || it.keyCode == Ascii.RETURN) {
+			if (it.isEnterOrReturn) {
 				if (isOpen) {
 					close()
 					_changed.dispatch()

@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-@file:Suppress("UNUSED_ANONYMOUS_PARAMETER")
+@file:Suppress("UNUSED_ANONYMOUS_PARAMETER", "UnsafeCastFromDynamic")
 
 package com.acornui.js.gl
 
 import com.acornui.core.WindowConfig
 import com.acornui.core.browser.Location
 import com.acornui.core.graphic.Window
+import com.acornui.function.as1
 import com.acornui.gl.core.Gl20
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.js.window.JsLocation
 import com.acornui.logging.Log
-import com.acornui.signal.Signal1
-import com.acornui.signal.Signal2
-import com.acornui.signal.Signal3
+import com.acornui.signal.*
 import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.events.Event
 import org.w3c.dom.get
 import kotlin.browser.document
 import kotlin.browser.window
@@ -67,29 +65,6 @@ class WebGlWindowImpl(
 			"webkitHidden" to "webkitvisibilitychange",
 			"msHidden" to "msvisibilitychange")
 
-	private val visibilityChangeHandler = { event: Event? ->
-		isVisible = document[hiddenProp!!] != true
-	}
-
-	// TODO: Study context loss
-	// getExtension( 'WEBGL_lose_context' ).loseContext();
-	private val webGlContextRestoredHandler = { event: Event ->
-		Log.info("WebGL context lost")
-		requestRender()
-	}
-
-	private val blurHandler = { _: Event ->
-		isActive = false
-	}
-
-	private val focusHandler = { _: Event ->
-		isActive = true
-	}
-
-	private val resizeHandler = { _: Event ->
-		setSizeInternal(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat(), true)
-	}
-
 	private var _clearColor = Color.CLEAR.copy()
 
 	override var clearColor: ColorRo
@@ -103,10 +78,10 @@ class WebGlWindowImpl(
 	init {
 		setSizeInternal(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat(), true)
 
-		window.addEventListener("resize", resizeHandler)
-		canvas.addEventListener("webglcontextrestored", webGlContextRestoredHandler)
-		window.addEventListener("blur", blurHandler)
-		window.addEventListener("focus", focusHandler)
+		window.addEventListener("resize", ::resizeHandler.as1)
+		canvas.addEventListener("webglcontextrestored", ::webGlContextRestoredHandler.as1)
+		window.addEventListener("blur", ::blurHandler.as1)
+		window.addEventListener("focus", ::focusHandler.as1)
 
 		canvas.addEventListener("selectstart", { it.preventDefault() })
 		if (config.title.isNotEmpty())
@@ -116,6 +91,30 @@ class WebGlWindowImpl(
 
 		clearColor = config.backgroundColor
 		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
+		document.addEventListener("fullscreenchange", ::fullScreenChangedHandler.as1)
+	}
+
+	// TODO: Study context loss
+	// getExtension( 'WEBGL_lose_context' ).loseContext();
+	private fun webGlContextRestoredHandler() {
+		Log.info("WebGL context lost")
+		resizeHandler()
+	}
+
+	private fun blurHandler() {
+		isActive = false
+	}
+
+	private fun focusHandler() {
+		isActive = true
+	}
+
+	private fun fullScreenChangedHandler() {
+		_fullScreenChanged.dispatch()
+	}
+
+	private fun resizeHandler() {
+		setSizeInternal(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat(), true)
 	}
 
 	private fun watchForVisibilityChanges() {
@@ -130,16 +129,20 @@ class WebGlWindowImpl(
 			hiddenProp = "msHidden"
 		}
 		if (hiddenProp != null) {
-			document.addEventListener(hiddenPropEventMap[hiddenProp!!]!!, visibilityChangeHandler)
-			visibilityChangeHandler(null)
+			document.addEventListener(hiddenPropEventMap[hiddenProp!!]!!, ::visibilityChangeHandler.as1)
+			visibilityChangeHandler()
 		}
 	}
 
 	private fun unwatchVisibilityChanges() {
 		if (hiddenProp != null) {
-			document.removeEventListener(hiddenPropEventMap[hiddenProp!!]!!, visibilityChangeHandler)
+			document.removeEventListener(hiddenPropEventMap[hiddenProp!!]!!, ::visibilityChangeHandler.as1)
 			hiddenProp = null
 		}
+	}
+
+	private fun visibilityChangeHandler() {
+		isVisible = document[hiddenProp!!] != true
 	}
 
 	private var _isVisible: Boolean = true
@@ -187,6 +190,7 @@ class WebGlWindowImpl(
 		}
 		sizeIsDirty = true
 		_sizeChanged.dispatch(_width, _height, isUserInteraction)
+		requestRender()
 	}
 
 	override var continuousRendering: Boolean = false
@@ -226,17 +230,20 @@ class WebGlWindowImpl(
 		_closeRequested = true
 	}
 
-	private var _fullScreen = false
+	private val _fullScreenChanged = Signal0()
+	override val fullScreenChanged = _fullScreenChanged.asRo()
+
+	override val fullScreenEnabled: Boolean
+		get() = document.fullscreenEnabled
+
 	override var fullScreen: Boolean
-		get() = _fullScreen
+		get() = document.fullscreen
 		set(value) {
-			if (value == _fullScreen) return
-			_fullScreen = value
-//			if (value) {
-//				canvas.requestFullscreen()
-//			} else {
-//				document.exitFullscreen()
-//			}
+			if (value && !fullScreen && document.fullscreenEnabled) {
+				canvas.requestFullscreen().then { resizeHandler() }
+			} else if (!value && fullScreen) {
+				document.exitFullscreen().then { resizeHandler() }
+			}
 			requestRender()
 		}
 
@@ -252,10 +259,11 @@ class WebGlWindowImpl(
 		_sizeChanged.dispose()
 		_isVisibleChanged.dispose()
 
-		window.removeEventListener("resize", resizeHandler)
-		canvas.removeEventListener("webglcontextlost", webGlContextRestoredHandler)
-		window.removeEventListener("blur", blurHandler)
-		window.removeEventListener("focus", focusHandler)
+		window.removeEventListener("resize", ::resizeHandler.as1)
+		canvas.removeEventListener("webglcontextlost", ::webGlContextRestoredHandler.as1)
+		window.removeEventListener("blur", ::blurHandler.as1)
+		window.removeEventListener("focus", ::focusHandler.as1)
+		document.removeEventListener("fullscreenchange", ::fullScreenChangedHandler.as1)
 		unwatchVisibilityChanges()
 	}
 }

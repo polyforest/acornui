@@ -38,6 +38,7 @@ import com.acornui.core.isAncestorOf
 import com.acornui.core.tween.Tween
 import com.acornui.core.tween.drive
 import com.acornui.core.tween.tweenAlpha
+import com.acornui.function.as1
 import com.acornui.math.Easing
 import com.acornui.signal.Cancel
 
@@ -247,6 +248,10 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 	}
 
 	init {
+		// The pop up manager is automatically added to the pending disposables registry and should not be
+		// disposed when the stage is.
+		owner.disposed.remove(::dispose.as1)
+
 		styleTags.add(PopUpManager)
 		stage.keyDown().add(rootKeyDownHandler)
 		interactivityMode = InteractivityMode.CHILDREN
