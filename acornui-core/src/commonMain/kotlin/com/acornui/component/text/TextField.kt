@@ -16,6 +16,7 @@
 
 package com.acornui.component.text
 
+import com.acornui.async.resultOrNull
 import com.acornui.component.*
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.Styleable
@@ -201,7 +202,7 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 		out.set(contents.bounds)
 
 		val font = charStyle.font
-		val minHeight = flowStyle.padding.expandHeight(font?.data?.lineHeight?.toFloat()) ?: 0f
+		val minHeight = flowStyle.padding.expandHeight(font?.resultOrNull()?.data?.lineHeight?.toFloat()) ?: 0f
 		if (out.height < minHeight) out.height = minHeight
 
 		if (contents.allowClipping) {

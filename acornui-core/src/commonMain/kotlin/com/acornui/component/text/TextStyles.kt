@@ -16,6 +16,7 @@
 
 package com.acornui.component.text
 
+import com.acornui.async.Deferred
 import com.acornui.collection.addAll
 import com.acornui.component.ComponentInit
 import com.acornui.component.layout.algorithm.FlowHAlign
@@ -208,7 +209,7 @@ class CharStyle : StyleBase() {
 	companion object : StyleType<CharStyle>
 }
 
-val CharStyle.font: BitmapFont?
+val CharStyle.font: Deferred<BitmapFont>?
 	get() {
 		val fontKey = fontKey ?: return null
 		return BitmapFontRegistry.getFont(fontKey)

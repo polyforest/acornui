@@ -18,14 +18,12 @@ package com.acornui.component.text
 
 import com.acornui.action.Decorator
 import com.acornui.async.Deferred
+import com.acornui.async.then
 import com.acornui.recycle.Clearable
 import com.acornui.collection.copy
 import com.acornui.collection.stringMapOf
 import com.acornui.core.Disposable
-import com.acornui.core.asset.AssetType
-import com.acornui.core.asset.CachedGroup
-import com.acornui.core.asset.loadAndCache
-import com.acornui.core.asset.loadAndCacheJson
+import com.acornui.core.asset.*
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.graphic.AtlasPageDecorator
@@ -131,7 +129,7 @@ class Glyph(
 /**
  * An overload of [loadFontFromDir] where the images directory is assumed to be the parent directory of the font data file.
  */
-suspend fun Scoped.loadFontFromDir(fontPath: String, group: CachedGroup): BitmapFont {
+suspend fun Scoped.loadFontFromDir(fontPath: String, group: CachedGroup = cachedGroup()): BitmapFont {
 	val files = inject(Files)
 	val fontFile = files.getFile(fontPath) ?: throw Exception("$fontPath not found.")
 	return loadFontFromDir(fontPath, fontFile.parent!!.path, group)
@@ -145,10 +143,7 @@ suspend fun Scoped.loadFontFromDir(fontPath: String, group: CachedGroup): Bitmap
  * @param imagesDir The directory of images.
  * @param group The caching group, to allow the loaded assets to be disposed as one.
  */
-suspend fun Scoped.loadFontFromDir(fontPath: String, imagesDir: String, group: CachedGroup): BitmapFont {
-	val existing = BitmapFontRegistry.getFont(fontPath, warnOnNotFound = false)
-	if (existing != null) return existing
-
+suspend fun Scoped.loadFontFromDir(fontPath: String, imagesDir: String, group: CachedGroup = cachedGroup()): BitmapFont {
 	val files = inject(Files)
 	val dir = files.getDir(imagesDir) ?: throw Exception("Directory not found: $imagesDir")
 	val bitmapFontData = loadAndCache(fontPath, AssetType.TEXT, AngelCodeParser, group).await()
@@ -187,122 +182,130 @@ suspend fun Scoped.loadFontFromDir(fontPath: String, imagesDir: String, group: C
 			glyphs = glyphs
 	)
 	Log.info("Font loaded $fontPath")
-	BitmapFontRegistry.register(fontPath, font)
 	return font
 }
 
-suspend fun Scoped.loadFontFromAtlas(fontPath: String, atlasPath: String, group: CachedGroup): BitmapFont {
-		val files = inject(Files)
-		val atlasFile = files.getFile(atlasPath) ?: throw Exception("File not found: $atlasPath")
+suspend fun Scoped.loadFontFromAtlas(fontKey: String, atlasPath: String, group: CachedGroup = cachedGroup()): BitmapFont {
+	val files = inject(Files)
+	val atlasFile = files.getFile(atlasPath) ?: throw Exception("File not found: $atlasPath")
 
-		val bitmapFontData = loadAndCache(fontPath, AssetType.TEXT, AngelCodeParser, group).await()
-		val atlasData = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group).await()
-		val atlasPageTextures = ArrayList<Deferred<Texture>>()
+	val bitmapFontData = loadAndCache(fontKey, AssetType.TEXT, AngelCodeParser, group).await()
+	val atlasData = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group).await()
+	val atlasPageTextures = ArrayList<Deferred<Texture>>()
 
-		for (atlasPageIndex in 0..atlasData.pages.lastIndex) {
-			val atlasPageData = atlasData.pages[atlasPageIndex]
-			val textureEntry = atlasFile.siblingFile(atlasPageData.texturePath)
-					?: throw Exception("File not found: ${atlasPageData.texturePath} relative to: $atlasPath")
-			atlasPageTextures.add(loadAndCache(textureEntry.path, AssetType.TEXTURE, AtlasPageDecorator(atlasPageData), group))
+	for (atlasPageIndex in 0..atlasData.pages.lastIndex) {
+		val atlasPageData = atlasData.pages[atlasPageIndex]
+		val textureEntry = atlasFile.siblingFile(atlasPageData.texturePath)
+				?: throw Exception("File not found: ${atlasPageData.texturePath} relative to: $atlasPath")
+		atlasPageTextures.add(loadAndCache(textureEntry.path, AssetType.TEXTURE, AtlasPageDecorator(atlasPageData), group))
+	}
+
+	// Finished loading the font and all its textures.
+
+	// Calculate the uv coordinates for each glyph.
+	val glyphs = HashMap<Char, Glyph>()
+	for (glyphData in bitmapFontData.glyphs.values) {
+		val fontPageData = bitmapFontData.pages[glyphData.page]
+		val (page, region) = atlasData.findRegion(fontPageData.imagePath)!!
+
+		val leftPadding = region.padding[0]
+		val topPadding = region.padding[1]
+
+		var regionX: Int
+		var regionY: Int
+		var regionW: Int
+		var regionH: Int
+		var offsetX = 0
+		var offsetY = 0
+		var offsetR = 0
+
+		if (region.isRotated) {
+			regionX = (region.bounds.right + topPadding) - glyphData.region.bottom
+			regionY = glyphData.region.x - leftPadding + region.bounds.y
+			regionW = glyphData.region.height
+			regionH = glyphData.region.width
+		} else {
+			regionX = glyphData.region.x + region.bounds.x - leftPadding
+			regionY = glyphData.region.y + region.bounds.y - topPadding
+			regionW = glyphData.region.width
+			regionH = glyphData.region.height
 		}
 
-		// Finished loading the font and all its textures.
+		// Account for glyph regions being cut off from whitespace stripping.
 
-		// Calculate the uv coordinates for each glyph.
-		val glyphs = HashMap<Char, Glyph>()
-		for (glyphData in bitmapFontData.glyphs.values) {
-			val fontPageData = bitmapFontData.pages[glyphData.page]
-			val (page, region) = atlasData.findRegion(fontPageData.imagePath)!!
-
-			val leftPadding = region.padding[0]
-			val topPadding = region.padding[1]
-
-			var regionX: Int
-			var regionY: Int
-			var regionW: Int
-			var regionH: Int
-			var offsetX = 0
-			var offsetY = 0
-			var offsetR = 0
-
-			if (region.isRotated) {
-				regionX = (region.bounds.right + topPadding) - glyphData.region.bottom
-				regionY = glyphData.region.x - leftPadding + region.bounds.y
-				regionW = glyphData.region.height
-				regionH = glyphData.region.width
-			} else {
-				regionX = glyphData.region.x + region.bounds.x - leftPadding
-				regionY = glyphData.region.y + region.bounds.y - topPadding
-				regionW = glyphData.region.width
-				regionH = glyphData.region.height
-			}
-
-			// Account for glyph regions being cut off from whitespace stripping.
-
-			if (regionX < region.bounds.x) {
-				val diff = region.bounds.x - regionX
-				regionW -= diff
-				regionX += diff
-				offsetX += diff
-			}
-			if (regionY < region.bounds.y) {
-				val diff = region.bounds.y - regionY
-				regionH -= diff
-				regionY += diff
-				offsetY += diff
-			}
-			if (regionX + regionW > region.bounds.right) {
-				val diff = regionX + regionW - region.bounds.right
-				regionW -= diff
-				offsetR += diff
-			}
-			if (regionY + regionH > region.bounds.bottom) {
-				val diff = regionY + regionH - region.bounds.bottom
-				regionH -= diff
-			}
-
-			val pageIndex = atlasData.pages.indexOf(page)
-			val atlasTexture = atlasPageTextures[pageIndex]
-
-			glyphs[glyphData.char] = Glyph(
-					data = glyphData,
-					offsetX = glyphData.offsetX + if (region.isRotated) offsetY else offsetX,
-					offsetY = glyphData.offsetY + if (region.isRotated) offsetR else offsetY,
-					width = if (region.isRotated) regionH else regionW,
-					height = if (region.isRotated) regionW else regionH,
-					advanceX = glyphData.advanceX,
-					isRotated = region.isRotated,
-					region = IntRectangle(regionX, regionY, regionW, regionH),
-					texture = atlasTexture.await(),
-					premultipliedAlpha = page.premultipliedAlpha
-			)
+		if (regionX < region.bounds.x) {
+			val diff = region.bounds.x - regionX
+			regionW -= diff
+			regionX += diff
+			offsetX += diff
 		}
-		val font = BitmapFont(
-				bitmapFontData,
-				pages = atlasPageTextures.map { it.await() },
-				premultipliedAlpha = false,
-				glyphs = glyphs
+		if (regionY < region.bounds.y) {
+			val diff = region.bounds.y - regionY
+			regionH -= diff
+			regionY += diff
+			offsetY += diff
+		}
+		if (regionX + regionW > region.bounds.right) {
+			val diff = regionX + regionW - region.bounds.right
+			regionW -= diff
+			offsetR += diff
+		}
+		if (regionY + regionH > region.bounds.bottom) {
+			val diff = regionY + regionH - region.bounds.bottom
+			regionH -= diff
+		}
+
+		val pageIndex = atlasData.pages.indexOf(page)
+		val atlasTexture = atlasPageTextures[pageIndex]
+
+		glyphs[glyphData.char] = Glyph(
+				data = glyphData,
+				offsetX = glyphData.offsetX + if (region.isRotated) offsetY else offsetX,
+				offsetY = glyphData.offsetY + if (region.isRotated) offsetR else offsetY,
+				width = if (region.isRotated) regionH else regionW,
+				height = if (region.isRotated) regionW else regionH,
+				advanceX = glyphData.advanceX,
+				isRotated = region.isRotated,
+				region = IntRectangle(regionX, regionY, regionW, regionH),
+				texture = atlasTexture.await(),
+				premultipliedAlpha = page.premultipliedAlpha
 		)
-	BitmapFontRegistry.register(fontPath, font)
+	}
+	val font = BitmapFont(
+			bitmapFontData,
+			pages = atlasPageTextures.map { it.await() },
+			premultipliedAlpha = false,
+			glyphs = glyphs
+	)
 	return font
 }
 
+
+typealias FontResolver = (fontKey: String) -> Deferred<BitmapFont>?
 
 object BitmapFontRegistry : Clearable, Disposable {
 
-	private val registry = stringMapOf<BitmapFont>()
+	private val registry = stringMapOf<Deferred<BitmapFont>>()
 	private val warnedFontKeys = stringMapOf<Boolean>()
+
+	/**
+	 * If set, when a font is requested that isn't registered, this font resolver will be used to load the font with
+	 * the given key.
+	 */
+	var fontResolver: FontResolver? = null
 
 	/**
 	 * Registers a bitmap font to a font path.
 	 * @param fontKey The font path key to register to the [BitmapFont].
-	 * @param bitmapFont The bitmap font.
+	 * @param fontPromise The deferred bitmap font.
 	 */
-	fun register(fontKey: String, bitmapFont: BitmapFont) {
+	fun register(fontKey: String, fontPromise: Deferred<BitmapFont>) {
 		if (registry.containsKey(fontKey)) return
-		registry[fontKey] = bitmapFont
-		for (page in bitmapFont.pages) {
-			page.refInc()
+		registry[fontKey] = fontPromise
+		fontPromise.then {
+			for (page in it.pages) {
+				page.refInc()
+			}
 		}
 	}
 
@@ -312,8 +315,10 @@ object BitmapFontRegistry : Clearable, Disposable {
 	 */
 	fun unregister(fontKey: String): Boolean {
 		val removed = registry.remove(fontKey) ?: return false
-		for (page in removed.pages) {
-			page.refDec()
+		removed.then {
+			for (page in it.pages) {
+				page.refDec()
+			}
 		}
 		return true
 	}
@@ -333,13 +338,18 @@ object BitmapFontRegistry : Clearable, Disposable {
 	 * be issued. This warning will only occur once per font style.
 	 * @see containsFont
 	 */
-	fun getFont(fontKey: String, warnOnNotFound: Boolean = true): BitmapFont? {
-		val found = registry[fontKey]
-		if (found == null && warnOnNotFound) {
-			if (!warnedFontKeys.containsKey(fontKey)) {
-				warnedFontKeys[fontKey] = true
-				Log.warn("Requested a font not loaded: $fontKey")
-			}
+	fun getFont(fontKey: String, warnOnNotFound: Boolean = true): Deferred<BitmapFont>? {
+		var found = registry[fontKey]
+		if (found != null) return found
+		if (fontResolver != null) {
+			val resolved: Deferred<BitmapFont>? = fontResolver!!.invoke(fontKey)
+			if (resolved != null)
+				register(fontKey, resolved)
+			found = resolved
+		}
+		if (found == null && warnOnNotFound && !warnedFontKeys.containsKey(fontKey)) {
+			warnedFontKeys[fontKey] = true
+			Log.warn("Requested a font that could not be resolved: $fontKey")
 		}
 		return found
 	}
@@ -348,8 +358,10 @@ object BitmapFontRegistry : Clearable, Disposable {
 		val values = registry.values.copy()
 		registry.clear()
 		for (bitmapFont in values) {
-			for (page in bitmapFont.pages) {
-				page.refDec()
+			bitmapFont.then {
+				for (page in it.pages) {
+					page.refDec()
+				}
 			}
 		}
 	}

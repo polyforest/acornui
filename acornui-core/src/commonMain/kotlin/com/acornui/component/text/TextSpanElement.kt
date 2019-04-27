@@ -1,12 +1,13 @@
 package com.acornui.component.text
 
+import com.acornui.async.resultOrNull
+import com.acornui.async.then
 import com.acornui.component.*
 import com.acornui.component.style.*
 import com.acornui.core.Disposable
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.gl.core.GlState
-import com.acornui.graphic.ColorRo
 import com.acornui.recycle.ObjectPool
 
 interface TextSpanElementRo<out T : TextElementRo> : ElementParentRo<T> {
@@ -116,10 +117,11 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 	override fun validateStyles() {
 		styles.validateStyles()
 		_charElementStyle.set(charStyle)
+		_charElementStyle.font?.then { textParent?.invalidate(ValidationFlags.LAYOUT) }
 	}
 
 	private val font: BitmapFont?
-		get() = _charElementStyle.font
+		get() = _charElementStyle.font?.resultOrNull()
 
 	override val lineHeight: Float
 		get() = (font?.data?.lineHeight?.toFloat() ?: 0f)

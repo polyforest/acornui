@@ -1,5 +1,7 @@
 package com.acornui.component.text
 
+import com.acornui.async.Deferred
+import com.acornui.async.resultOrNull
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
 import com.acornui.core.graphic.BlendMode
@@ -31,7 +33,7 @@ class CharElement private constructor() : TextElement, Clearable {
 
 	val glyph: Glyph?
 		get() {
-			return style?.font?.getGlyphSafe(char)
+			return style?.font?.resultOrNull()?.getGlyphSafe(char)
 		}
 
 	override var x: Float = 0f
@@ -286,7 +288,7 @@ class CharElement private constructor() : TextElement, Clearable {
 }
 
 interface CharElementStyleRo {
-	val font: BitmapFont?
+	val font: Deferred<BitmapFont>?
 	val underlined: Boolean
 	val strikeThrough: Boolean
 	val lineThickness: Float
@@ -301,7 +303,7 @@ interface CharElementStyleRo {
  * calculated properties.
  */
 class CharElementStyle : CharElementStyleRo {
-	override var font: BitmapFont? = null
+	override var font: Deferred<BitmapFont>? = null
 	override var underlined: Boolean = false
 	override var strikeThrough: Boolean = false
 	override var lineThickness: Float = 1f

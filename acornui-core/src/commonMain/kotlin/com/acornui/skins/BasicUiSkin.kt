@@ -16,6 +16,7 @@
 
 package com.acornui.skins
 
+import com.acornui.async.async
 import com.acornui.async.launch
 import com.acornui.component.*
 import com.acornui.component.datagrid.DataGrid
@@ -188,26 +189,23 @@ open class BasicUiSkin(
 	}
 
 	protected open fun loadBitmapFonts() {
-		val group = cachedGroup()
-		launch {
-			loadFontFromAtlas("assets/uiskin/verdana_14.fnt", theme.atlasPath, group)
-			loadFontFromAtlas("assets/uiskin/verdana_14_bold.fnt", theme.atlasPath, group)
-			loadFontFromAtlas("assets/uiskin/verdana_14_italic.fnt", theme.atlasPath, group)
-			loadFontFromAtlas("assets/uiskin/verdana_14_bold_italic.fnt", theme.atlasPath, group)
-
-			target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_14.fnt" })
-			target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_14_bold.fnt" }, withAnyAncestor(
-					TextStyleTags.h1,
-					TextStyleTags.h2,
-					TextStyleTags.h3,
-					TextStyleTags.h4,
-					formLabelStyle
-			))
-
-			target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_bold_14.fnt" }, withAncestor(TextStyleTags.strong))
-			target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_italic_14.fnt" }, withAncestor(TextStyleTags.emphasis))
-			target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_bold_italic_14.fnt" }, withAncestor(TextStyleTags.strong) and withAncestor(TextStyleTags.emphasis))
+		BitmapFontRegistry.fontResolver = { key ->
+			async {
+				loadFontFromAtlas(key, theme.atlasPath)
+			}
 		}
+		target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_14.fnt" })
+		target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_14_bold.fnt" }, withAnyAncestor(
+				TextStyleTags.h1,
+				TextStyleTags.h2,
+				TextStyleTags.h3,
+				TextStyleTags.h4,
+				formLabelStyle
+		))
+
+		target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_bold_14.fnt" }, withAncestor(TextStyleTags.strong))
+		target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_italic_14.fnt" }, withAncestor(TextStyleTags.emphasis))
+		target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_bold_italic_14.fnt" }, withAncestor(TextStyleTags.strong) and withAncestor(TextStyleTags.emphasis))
 	}
 
 	protected open fun panelStyle() {

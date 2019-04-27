@@ -1,6 +1,7 @@
 package com.acornui.component.text
 
 import com.acornui.async.async
+import com.acornui.async.resultOrNull
 import com.acornui.async.then
 import com.acornui.component.ContainerImpl
 import com.acornui.component.ValidationFlags
@@ -159,7 +160,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 		host.char().add {
 			if (editable && !it.defaultPrevented()) {
-				val font = host.charStyle.font
+				val font = host.charStyle.font?.resultOrNull()
 				if (font?.glyphs?.containsKey(it.char) == true && it.char != '\n' && it.char != '\r') {
 					it.handled = true
 					replaceSelection(it.char.toString())

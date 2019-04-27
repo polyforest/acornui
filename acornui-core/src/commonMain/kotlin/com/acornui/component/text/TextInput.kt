@@ -18,6 +18,7 @@
 
 package com.acornui.component.text
 
+import com.acornui.async.resultOrNull
 import com.acornui.recycle.Clearable
 import com.acornui.component.*
 import com.acornui.component.scroll.ClampedScrollModel
@@ -200,7 +201,7 @@ class TextInputImpl(owner: Owned) : ContainerImpl(owner), TextInput {
 		val h = margin.reduceHeight(pad.reduceHeight(explicitHeight))
 
 		val w = if (explicitWidth == null && defaultWidthFromText != null) {
-			val font = charStyle.font
+			val font = charStyle.font?.resultOrNull()
 			font?.data?.measureLineWidth(defaultWidthFromText!!)?.toFloat() ?: 0f
 		} else {
 			margin.reduceWidth2(pad.reduceWidth2(explicitWidth ?: textInputStyle.defaultWidth))
