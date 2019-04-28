@@ -24,10 +24,7 @@ import com.acornui.component.layout.ElementLayoutContainerImpl
 import com.acornui.component.layout.algorithm.CanvasLayout
 import com.acornui.component.layout.algorithm.CanvasLayoutData
 import com.acornui.component.style.*
-import com.acornui.core.di.DKey
-import com.acornui.core.di.Injector
-import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
+import com.acornui.core.di.*
 import com.acornui.core.focus.*
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.KeyInteractionRo
@@ -152,7 +149,7 @@ class PopUpManagerStyle : StyleBase() {
 	companion object : StyleType<PopUpManagerStyle>
 }
 
-class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyle, CanvasLayoutData>(injector.inject(Stage), CanvasLayout()), PopUpManager {
+class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyle, CanvasLayoutData>(OwnedImpl(injector), CanvasLayout()), PopUpManager {
 
 	private val popUpManagerStyle = bind(PopUpManagerStyle())
 
@@ -247,11 +244,11 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 		}
 	}
 
+	override val styleParent: StyleableRo? = stage
+
 	init {
 		// The pop up manager is automatically added to the pending disposables registry and should not be
 		// disposed when the stage is.
-		owner.disposed.remove(::dispose.as1)
-
 		styleTags.add(PopUpManager)
 		stage.keyDown().add(rootKeyDownHandler)
 		interactivityMode = InteractivityMode.CHILDREN
