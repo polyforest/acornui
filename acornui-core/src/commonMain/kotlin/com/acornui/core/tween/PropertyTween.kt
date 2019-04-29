@@ -1,6 +1,6 @@
 package com.acornui.core.tween
 
-import com.acornui.collection.DualHashMap
+import com.acornui.collection.*
 import com.acornui.math.Interpolation
 
 /**
@@ -8,7 +8,7 @@ import com.acornui.math.Interpolation
  */
 object TweenRegistry {
 
-	private val registry = DualHashMap<Any, String, Tween>(removeEmptyInnerMaps = true)
+	private val registry: MutableMultiMap2<Any, String, Tween> = multiMap2()
 
 	fun contains(target: Any, property: String): Boolean {
 		return registry[target, property] != null
@@ -30,9 +30,9 @@ object TweenRegistry {
 
 	fun register(target: Any, property: String, tween: Tween) {
 		tween.completed.addOnce {
-			TweenRegistry.unregister(target, property)
+			unregister(target, property)
 		}
-		registry.put(target, property, tween)
+		registry[target][property] = tween
 	}
 
 	fun unregister(target: Any, property: String) {
