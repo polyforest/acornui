@@ -177,11 +177,15 @@ open class Calendar(
 		return cells[i]
 	}
 
+	private lateinit var monthDecContainer: ElementContainer<UiComponent>
+	private lateinit var monthIncContainer: ElementContainer<UiComponent>
+	private var monthDecButton: UiComponent? = null
+	private var monthIncButton: UiComponent? = null
+
 	private val panel = addChild(panel {
 		+vGroup {
 			+hGroup {
-				+button {
-					styleTags.add(MONTH_DEC_STYLE)
+				monthDecContainer = +stack {
 					click().add {
 						month--
 					}
@@ -196,8 +200,7 @@ open class Calendar(
 				}
 				+spacer() layout { widthPercent = 1f }
 
-				+button {
-					styleTags.add(MONTH_INC_STYLE)
+				monthIncContainer = +stack {
 					click().add {
 						month++
 					}
@@ -271,6 +274,12 @@ open class Calendar(
 		watch(style) {
 			monthFormatter.dateStyle = it.monthFormatStyle
 			yearFormatter.dateStyle = it.yearFormatStyle
+
+			monthDecButton?.dispose()
+			monthDecButton = monthDecContainer.addElement(it.monthDecButton(this))
+
+			monthIncButton?.dispose()
+			monthIncButton = monthDecContainer.addElement(it.monthIncButton(this))
 		}
 
 		keyDown().add(::keyDownHandler)
@@ -359,15 +368,15 @@ open class Calendar(
 		}
 	}
 
-	companion object : StyleTag {
-		val MONTH_DEC_STYLE = styleTag()
-		val MONTH_INC_STYLE = styleTag()
-	}
+	companion object : StyleTag
 }
 
 class CalendarStyle : StyleBase() {
 
 	override val type: StyleType<*> = Companion
+
+	var monthDecButton by prop(noSkin)
+	var monthIncButton by prop(noSkin)
 
 	var columnHAlign by prop(HAlign.CENTER)
 

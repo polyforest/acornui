@@ -742,8 +742,15 @@ open class BasicUiSkin(
 		}
 		target.addStyleRule(calendarPanelStyle, Panel and withAncestor(Calendar))
 
-		target.addStyleRule(ButtonStyle().set { iconButtonSkin(it, "ArrowLeftLg") }, Calendar.MONTH_DEC_STYLE)
-		target.addStyleRule(ButtonStyle().set { iconButtonSkin(it, "ArrowRightLg") }, Calendar.MONTH_INC_STYLE)
+		val calendarStyle = CalendarStyle().apply {
+			monthDecButton = {
+				iconImageButton(theme.atlasPath, "ic_chevron_left_white_24dp")
+			}
+			monthIncButton = {
+				iconImageButton(theme.atlasPath, "ic_chevron_right_white_24dp")
+			}
+		}
+		target.addStyleRule(calendarStyle)
 
 		val inactiveCalendarItemRendererStyle = CalendarItemRendererStyle().apply {
 			disabledColor = Color(0.5f, 0.5f, 0.5f, 0.3f)
