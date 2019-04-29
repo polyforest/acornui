@@ -1,1 +1,0 @@
-typealias Math = kotlin.js.Math
