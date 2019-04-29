@@ -17,7 +17,6 @@
 package com.acornui.core
 
 import com.acornui.async.*
-import com.acornui.component.Stage
 import com.acornui.core.di.Bootstrap
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Injector

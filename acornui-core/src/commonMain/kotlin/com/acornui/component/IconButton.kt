@@ -12,7 +12,6 @@ import com.acornui.math.MathUtils.offsetRound
 import com.acornui.math.MathUtils.roundToNearest
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
-import kotlin.math.round
 
 class IconButton(
 		owner: Owned
