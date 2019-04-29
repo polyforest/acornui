@@ -34,7 +34,7 @@ val mapPool = object : ObjectPool<MutableMap<*, *>>({ HashMap<Any?, Any?>() }) {
 inline fun <K, V, K2, V2> Map<K, V>.mapTo(other: MutableMap<K2, V2> = HashMap(), transform: (key: K, value: V) -> Pair<K2, V2>): MutableMap<K2, V2> {
 	for ((key, value) in this) {
 		val (newKey, newValue) = transform(key, value)
-		other.put(newKey, newValue)
+		other[newKey] = newValue
 	}
 	return other
 }

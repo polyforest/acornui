@@ -16,6 +16,8 @@
 
 package com.acornui.core
 
+import com.acornui.collection.removeFirst
+
 /**
  * Replaces {0}, {1}, {2}, ... {n} with the values from the tokens array.
  */
@@ -278,4 +280,19 @@ private val whitespaceChars = mapOf(
 
 fun Char.isWhitespace2(): Boolean {
 	return whitespaceChars.containsKey(this)
+}
+
+/**
+ *
+ */
+fun Iterable<String>.filterWithWords(wordList: List<String>): List<String> {
+	return filter { haystackWord ->
+		val words = haystackWord.toUnderscoreCase().split(Regex("[\\W_]")).filter { it.isNotEmpty() }.toMutableList()
+		for (needleWord in wordList) {
+			if (needleWord.isEmpty()) continue
+			words.removeFirst { it.equals(needleWord, ignoreCase = true) } ?: return@filter false
+		}
+		words.isEmpty()
+	}
+
 }
