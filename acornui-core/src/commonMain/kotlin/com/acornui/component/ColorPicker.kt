@@ -40,7 +40,7 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 	var color: ColorRo
 		get() = colorPalette.color
 		set(value) {
-			val v = value.copy()
+			val v = value.copy().clamp()
 			colorPalette.color = v
 			colorSwatch?.colorTint = v
 		}
@@ -49,7 +49,7 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 		get() = colorPalette.value
 		set(value) {
 			colorPalette.value = value
-			colorSwatch?.colorTint = value.toRgb(tmpColor).copy()
+			colorSwatch?.colorTint = value.toRgb(tmpColor).copy().clamp()
 		}
 
 	/**
