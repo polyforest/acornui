@@ -23,10 +23,6 @@ import com.acornui.async.launch
 import com.acornui.browser.appendParam
 import com.acornui.browser.decodeUriComponent2
 import com.acornui.browser.encodeUriComponent2
-import com.acornui.collection._stringMap
-import com.acornui.component.Stage
-import com.acornui.component.TooltipManager
-import com.acornui.component.UiComponent
 import com.acornui.component.stage
 import com.acornui.core.*
 import com.acornui.core.asset.AssetManager
@@ -37,7 +33,6 @@ import com.acornui.core.audio.AudioManager
 import com.acornui.core.audio.AudioManagerImpl
 import com.acornui.core.cursor.CursorManager
 import com.acornui.core.di.*
-import com.acornui.core.focus.FakeFocusMouse
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.FocusManagerImpl
 import com.acornui.core.i18n.I18n
@@ -52,7 +47,6 @@ import com.acornui.core.io.file.Files
 import com.acornui.core.io.file.FilesImpl
 import com.acornui.core.persistance.Persistence
 import com.acornui.core.popup.PopUpManager
-import com.acornui.core.popup.PopUpManagerImpl
 import com.acornui.core.request.RestServiceFactory
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionManagerImpl
@@ -99,8 +93,6 @@ abstract class JsApplicationBase : ApplicationBase() {
 	private var frameDriver: JsApplicationRunner? = null
 
 	init {
-		_stringMap = { stringMapOf() }
-
 		js( // language=JS
 				"""
 Function.prototype.uncachedBind = Function.prototype.bind;
