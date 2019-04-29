@@ -286,6 +286,7 @@ open class OptionList<E : Any>(
 
 	init {
 		isFocusContainer = true
+		cursor(StandardCursors.HAND)
 
 		styleTags.add(OptionList)
 		maxItems = 10

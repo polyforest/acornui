@@ -251,8 +251,7 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 		}
 
 	private val _selection = own(VirtualListSelection(rendererCache))
-	val selection: Selection<E>
-		get() = _selection
+	val selection: Selection<E> = _selection
 
 	private var observableData: ObservableList<E?>? = null
 
