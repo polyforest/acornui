@@ -19,9 +19,8 @@ package com.acornui.component.text
 import com.acornui.action.Decorator
 import com.acornui.async.Deferred
 import com.acornui.async.then
+import com.acornui.collection.*
 import com.acornui.recycle.Clearable
-import com.acornui.collection.copy
-import com.acornui.collection.stringMapOf
 import com.acornui.core.Disposable
 import com.acornui.core.asset.*
 import com.acornui.core.di.Scoped
@@ -281,12 +280,14 @@ suspend fun Scoped.loadFontFromAtlas(fontKey: String, atlasPath: String, group: 
 }
 
 
-typealias FontResolver = (fontKey: String) -> Deferred<BitmapFont>?
+typealias FontResolver = (family: String, size: String, weight: String, style: String) -> Deferred<BitmapFont>?
 
 object BitmapFontRegistry : Clearable, Disposable {
 
-	private val registry = stringMapOf<Deferred<BitmapFont>>()
-	private val warnedFontKeys = stringMapOf<Boolean>()
+	/**
+	 * family, size, weight, style -> Deferred<BitmapFont>
+	 */
+	private val registry: MutableMultiMap4<String, String, String, String, Deferred<BitmapFont>> = multiMap4()
 
 	/**
 	 * If set, when a font is requested that isn't registered, this font resolver will be used to load the font with
@@ -296,12 +297,16 @@ object BitmapFontRegistry : Clearable, Disposable {
 
 	/**
 	 * Registers a bitmap font to a font path.
-	 * @param fontKey The font path key to register to the [BitmapFont].
-	 * @param fontPromise The deferred bitmap font.
 	 */
-	fun register(fontKey: String, fontPromise: Deferred<BitmapFont>) {
-		if (registry.containsKey(fontKey)) return
-		registry[fontKey] = fontPromise
+	private fun register(family: String, size: String, weight: String, style: String, fontPromise: Deferred<BitmapFont>) {
+		registry[family][size][weight][style]?.let { oldFontPromise ->
+			oldFontPromise.then {
+				for (page in it.pages) {
+					page.refDec()
+				}
+			}
+		}
+		registry[family][size][weight][style] = fontPromise
 		fontPromise.then {
 			for (page in it.pages) {
 				page.refInc()
@@ -310,60 +315,34 @@ object BitmapFontRegistry : Clearable, Disposable {
 	}
 
 	/**
-	 * Unregisters a font loader that was registered via [register].
-	 * The texture pages will have their use counts decremented via [Texture.refDec]
-	 */
-	fun unregister(fontKey: String): Boolean {
-		val removed = registry.remove(fontKey) ?: return false
-		removed.then {
-			for (page in it.pages) {
-				page.refDec()
-			}
-		}
-		return true
-	}
-
-	/**
-	 * Returns true if this registry contains the given font.
-	 */
-	fun containsFont(fontKey: String): Boolean {
-		return registry.containsKey(fontKey)
-	}
-
-	/**
 	 * Returns the font registered to the given style. Throws an exception if the font is not registered.
 	 *
-	 * @param fontKey The style used as a key via [register]
-	 * @param warnOnNotFound If warnOnNotFound is true and the font style was never registered, a logger warning will
-	 * be issued. This warning will only occur once per font style.
-	 * @see containsFont
+	 * @param family
+	 * @param size
+	 * @param weight
+	 * @param style
 	 */
-	fun getFont(fontKey: String, warnOnNotFound: Boolean = true): Deferred<BitmapFont>? {
-		var found = registry[fontKey]
+	fun getFont(family: String, size: String, weight: String, style: String): Deferred<BitmapFont>? {
+		var found = registry[family][size][weight][style]
 		if (found != null) return found
 		if (fontResolver != null) {
-			val resolved: Deferred<BitmapFont>? = fontResolver!!.invoke(fontKey)
+			val resolved: Deferred<BitmapFont>? = fontResolver!!.invoke(family, size, weight, style)
 			if (resolved != null)
-				register(fontKey, resolved)
+				register(family, size, weight, style, resolved)
 			found = resolved
-		}
-		if (found == null && warnOnNotFound && !warnedFontKeys.containsKey(fontKey)) {
-			warnedFontKeys[fontKey] = true
-			Log.warn("Requested a font that could not be resolved: $fontKey")
 		}
 		return found
 	}
 
 	override fun clear() {
-		val values = registry.values.copy()
-		registry.clear()
-		for (bitmapFont in values) {
+		registry.iterateValues4 { bitmapFont ->
 			bitmapFont.then {
 				for (page in it.pages) {
 					page.refDec()
 				}
 			}
 		}
+		registry.clear()
 	}
 
 	override fun dispose() {

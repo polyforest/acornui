@@ -55,7 +55,7 @@ open class DataGridGroupHeaderImpl<E>(
 	val groupStyle = bind(DataGridGroupHeaderStyle())
 
 	init {
-		styleTags.addAll(DataGridGroupHeader, TextStyleTags.h2)
+		styleTags.addAll(DataGridGroupHeader, TextStyleTags.large)
 		interactivityMode = InteractivityMode.CHILDREN
 
 		watch(groupStyle) {

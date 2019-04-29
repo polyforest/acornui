@@ -17,7 +17,6 @@
 package com.acornui.skins
 
 import com.acornui.async.async
-import com.acornui.async.launch
 import com.acornui.component.*
 import com.acornui.component.datagrid.DataGrid
 import com.acornui.component.datagrid.DataGridGroupHeader
@@ -34,7 +33,6 @@ import com.acornui.component.scroll.*
 import com.acornui.component.style.*
 import com.acornui.component.text.*
 import com.acornui.core.AppConfig
-import com.acornui.core.asset.cachedGroup
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.focus.FocusManager
@@ -48,9 +46,7 @@ import com.acornui.core.popup.PopUpManagerStyle
 import com.acornui.core.userInfo
 import com.acornui.filter.dropShadowFilter
 import com.acornui.graphic.Color
-import com.acornui.math.Corners
-import com.acornui.math.Pad
-import com.acornui.math.Vector2
+import com.acornui.math.*
 
 open class BasicUiSkin(
 		val target: UiComponent,
@@ -84,6 +80,7 @@ open class BasicUiSkin(
 		popUpStyle()
 		focusStyle()
 		textStyle()
+		textFontStyle()
 		panelStyle()
 		windowPanelStyle()
 		headingGroupStyle()
@@ -106,6 +103,7 @@ open class BasicUiSkin(
 		calendarStyle()
 		htmlComponentStyle()
 		tooltipStyle()
+		imageButtonStyle()
 	}
 
 	open fun initTheme() {
@@ -139,15 +137,11 @@ open class BasicUiSkin(
 	protected open fun textStyle() {
 		target.addStyleRule(charStyle { colorTint = theme.textColor })
 		target.addStyleRule(charStyle { colorTint = theme.headingColor }, withAnyAncestor(
-				TextStyleTags.h1,
-				TextStyleTags.h2,
-				TextStyleTags.h3,
-				TextStyleTags.h4
+				TextStyleTags.large
 		))
 		target.addStyleRule(charStyle { colorTint = theme.formLabelColor }, withAncestor(formLabelStyle))
 
 		target.addStyleRule(charStyle { selectable = true }, withAncestor(TextInput) or withAncestor(TextArea))
-		loadBitmapFonts()
 
 		val textInputStyle = TextInputStyle().apply {
 			background = {
@@ -186,26 +180,42 @@ open class BasicUiSkin(
 		val charStyle = CharStyle()
 		charStyle.selectable = false
 		target.addStyleRule(charStyle, withAncestor(Button))
+
+		target.addStyleRule(charStyle { fontWeight = FontWeight.BOLD }, withAnyAncestor(
+				TextStyleTags.strong,
+				formLabelStyle,
+				TextStyleTags.heading
+		))
+		target.addStyleRule(charStyle { fontStyle = FontStyle.ITALIC }, withAncestor(TextStyleTags.emphasis))
+		target.addStyleRule(charStyle { fontSize = FontSize.EXTRA_SMALL }, withAncestor(TextStyleTags.extraSmall))
+		target.addStyleRule(charStyle { fontSize = FontSize.SMALL }, withAncestor(TextStyleTags.small))
+		target.addStyleRule(charStyle { fontSize = FontSize.REGULAR }, withAncestor(TextStyleTags.regular))
+		target.addStyleRule(charStyle { fontSize = FontSize.LARGE }, withAncestor(TextStyleTags.large))
+		target.addStyleRule(charStyle { fontSize = FontSize.EXTRA_LARGE }, withAncestor(TextStyleTags.extraLarge))
 	}
 
-	protected open fun loadBitmapFonts() {
-		BitmapFontRegistry.fontResolver = { key ->
+	/**
+	 * The basic skin
+	 */
+	protected val sizeToPxMap = mutableMapOf(
+			FontSize.EXTRA_SMALL to 14,
+			FontSize.SMALL to 14,
+			FontSize.REGULAR to 14,
+			FontSize.LARGE to 14,
+			FontSize.EXTRA_LARGE to 14
+	)
+
+	protected open fun textFontStyle() {
+		BitmapFontRegistry.fontResolver = { family, size, weight, style ->
 			async {
-				loadFontFromAtlas(key, theme.atlasPath)
+				val weightStr = if (weight != FontWeight.REGULAR) "_$weight" else ""
+				val styleStr = if (style != FontStyle.NORMAL) "_$style" else ""
+				val sizeStr = if (size == FontSize.REGULAR) "_14" else throw UnsupportedOperationException("Font size for $size ")
+
+				loadFontFromAtlas("assets/uiskin/$family$weightStr$styleStr$sizeStr.fnt", theme.atlasPath)
 			}
 		}
-		target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_14.fnt" })
-		target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_14_bold.fnt" }, withAnyAncestor(
-				TextStyleTags.h1,
-				TextStyleTags.h2,
-				TextStyleTags.h3,
-				TextStyleTags.h4,
-				formLabelStyle
-		))
-
-		target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_bold_14.fnt" }, withAncestor(TextStyleTags.strong))
-		target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_italic_14.fnt" }, withAncestor(TextStyleTags.emphasis))
-		target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_bold_italic_14.fnt" }, withAncestor(TextStyleTags.strong) and withAncestor(TextStyleTags.emphasis))
+		target.addStyleRule(charStyle { fontFamily = "verdana" })
 	}
 
 	protected open fun panelStyle() {
@@ -275,7 +285,7 @@ open class BasicUiSkin(
 
 		headingGroupStyle.heading = {
 			text {
-				styleTags.add(TextStyleTags.h1)
+				styleTags.add(TextStyleTags.large)
 			}
 		}
 
@@ -794,5 +804,27 @@ open class BasicUiSkin(
 			}
 		}
 		target.addStyleRule(tooltipStyle, TooltipView)
+	}
+
+	protected open fun imageButtonStyle() {
+		val imageButtonStyle = ImageButtonStyle().apply {
+			upState = colorTransformation {
+				tint(theme.iconColor)
+			}
+			overState = colorTransformation {
+				tint(theme.iconColor)
+				offset = Color(0.1f, 0.1f, 0.1f, 0.0f)
+			}
+			downState = colorTransformation {
+				tint(theme.iconColor * 0.9f)
+				offset = Color(-0.1f, -0.1f, -0.1f, 0.0f)
+			}
+			disabledState = colorTransformation {
+				tint(0.2f, 0.2f, 0.2f, 0.5f)
+				grayscale()
+				offset = Color(-0.1f, -0.1f, -0.1f, 0.0f)
+			}
+		}
+		target.addStyleRule(imageButtonStyle, ImageButton.ICON_IMAGE)
 	}
 }

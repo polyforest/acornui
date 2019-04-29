@@ -96,7 +96,7 @@ object CascadingStyleCalculator : StyleCalculator {
 				val prop = entry.style.allProps[j]
 				if (prop.explicitIsSet) {
 					val found = style.allProps.first2 { it.name == prop.name }
-					if (found?.calculatedIsSet == true) {
+					if (found.calculatedIsSet) {
 						found.calculatedValue = prop.explicitValue
 						ruleInfo.calculated[prop.name!!] = prop.explicitValue
 					}

@@ -55,12 +55,8 @@ interface Styleable : StyleableRo {
 
 }
 
-fun Styleable.addStyleRule(style: StyleRo, filter: StyleFilter, priority: Float = 0f) {
+fun Styleable.addStyleRule(style: StyleRo, filter: StyleFilter = AlwaysFilter, priority: Float = 0f) {
 	styleRules.add(StyleRule(style, filter, priority))
-}
-
-fun Styleable.addStyleRule(style: StyleRo, priority: Float = 0f) {
-	styleRules.add(StyleRule(style, AlwaysFilter, priority))
 }
 
 class Styles(private val host: Styleable) : Disposable {

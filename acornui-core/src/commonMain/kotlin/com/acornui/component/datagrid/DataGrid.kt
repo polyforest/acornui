@@ -1079,7 +1079,7 @@ class DataGrid<RowData>(
 			if (columnCache.headerCell == null) {
 				val newHeaderCell = column.createHeaderCell(headerCells)
 				newHeaderCell.interactivityMode = column.headerCellInteractivityMode
-				newHeaderCell.styleTags.addAll(HEADER_CELL, TextStyleTags.h2)
+				newHeaderCell.styleTags.addAll(HEADER_CELL, TextStyleTags.large)
 				headerCells.addElement(minOf(columnIndex, headerCells.elements.size), newHeaderCell)
 				columnCache.headerCell = newHeaderCell
 			}

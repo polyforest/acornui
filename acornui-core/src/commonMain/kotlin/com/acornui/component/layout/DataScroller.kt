@@ -10,6 +10,8 @@ import com.acornui.component.style.*
 import com.acornui.core.behavior.Selection
 import com.acornui.core.behavior.SelectionBase
 import com.acornui.core.behavior.deselectNotContaining
+import com.acornui.core.cursor.StandardCursors
+import com.acornui.core.cursor.cursor
 import com.acornui.recycle.IndexedPool
 import com.acornui.recycle.Recycler
 import com.acornui.recycle.disposeAndClear
@@ -77,9 +79,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 	private val rowMap = HashMap<E, RowBackground>()
 
 	private val _selection = own(DataScrollerSelection(contents, bottomContents, rowMap))
-
-	val selection: Selection<E>
-		get() = _selection
+	val selection: Selection<E> = _selection
 
 	private val _highlighted = own(DataScrollerHighlight(rowMap))
 
@@ -324,6 +324,8 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 		isFocusContainer = true
 		focusEnabled = true
 		styleTags.add(DataScroller)
+		cursor(StandardCursors.HAND)
+
 		maxItems = 15
 		scrollModel.changed.add {
 			contents.indexPosition = scrollModel.value
