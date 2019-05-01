@@ -37,34 +37,34 @@ class Theme {
 	 * @see com.acornui.core.WindowConfig.backgroundColor
 	 * @see com.acornui.core.AppConfig
 	 */
-	var bgColor: ColorRo = Color(0xF1F2F3FF)
-	var panelBgColor: ColorRo = Color(0xE7EDF1FF)
+	var bgColor: ColorRo = Color(0xf1f2f3ff)
+	var panelBgColor: ColorRo = Color(0xe7edf1ff)
 
 	val brighten: ColorRo = Color(0x15151500)
 
-	var fill: ColorRo = Color(0xF3F9FAFF)
+	var fill: ColorRo = Color(0xf3f9faff)
 	var fillOver: ColorRo = fill + brighten
 	var fillDown: ColorRo = fill - brighten
-	var fillToggled: ColorRo = fill
+	var fillToggled: ColorRo = Color(0xedf1faff)
 	var fillToggledOver: ColorRo = fillToggled + brighten
 	var fillToggledDown: ColorRo = fillToggled - brighten
-	var fillDisabled: ColorRo = Color(0xCCCCCCFF)
+	var fillDisabled: ColorRo = Color(0xccccccff)
 
-	var stroke: ColorRo = Color(0x888888FF)
+	var stroke: ColorRo = Color(0x888888ff)
 	var strokeOver: ColorRo = stroke + brighten
 	var strokeDown: ColorRo = stroke - brighten
-//	var strokeToggled: ColorRo = Color(0xdb4401cc)
 	var strokeToggled: ColorRo = Color(0x2287f9cc)
 	var strokeToggledOver: ColorRo = strokeToggled + brighten
 	var strokeToggledDown: ColorRo = strokeToggled - brighten
-	var strokeDisabled: ColorRo = Color(0x999999FF)
+	var strokeDisabled: ColorRo = Color(0x999999ff)
 
 	/**
 	 * The shine color to overlay. (Set to clear for no shine.)
 	 */
 	var fillShine: ColorRo = Color(1f, 1f, 1f, 0.9f)
+	var fillToggledShine: ColorRo = Color(1f, 1f, 1f, 0.9f)
 
-	var focusHighlightColor: ColorRo = Color(0x0235ACFF)
+	var focusHighlightColor: ColorRo = Color(0x0235acff)
 
 	/**
 	 * Text input, text area.
@@ -74,24 +74,24 @@ class Theme {
 	var strokeThickness = 1f
 	var borderRadius = 8f
 
-	var textColor: ColorRo = Color(0x333333FF)
-	var headingColor: ColorRo = Color(0x333333FF)
-	var formLabelColor: ColorRo = Color(0x555555FF)
+	var textColor: ColorRo = Color(0x333333ff)
+	var headingColor: ColorRo = Color(0x333333ff)
+	var formLabelColor: ColorRo = Color(0x555555ff)
 
-	var errorColor: ColorRo = Color(0xcc3333FF)
-	var warningColor: ColorRo = Color(0xff9933FF)
-	var infoColor: ColorRo = Color(0x339933FF)
+	var errorColor: ColorRo = Color(0xcc3333ff)
+	var warningColor: ColorRo = Color(0xff9933ff)
+	var infoColor: ColorRo = Color(0x339933ff)
 
-	var controlBarBgColor: ColorRo = Color(0xDAE5F0FF)
+	var controlBarBgColor: ColorRo = Color(0xdae5f0ff)
 
 	var evenRowBgColor: ColorRo = bgColor + Color(0x03030300)
 	var oddRowBgColor: ColorRo = bgColor - Color(0x03030300)
 
-	var highlightedEvenRowBgColor: ColorRo = Color(0xFEFFD2FF)
-	var highlightedOddRowBgColor: ColorRo = Color(0xFEFFD2FF)
+	var highlightedEvenRowBgColor: ColorRo = Color(0xfeffd2ff)
+	var highlightedOddRowBgColor: ColorRo = Color(0xfeffd2ff)
 
-	var toggledEvenRowBgColor: ColorRo = Color(0xFCFD7CFF)
-	var toggledOddRowBgColor: ColorRo = Color(0xFCFD7CFF)
+	var toggledEvenRowBgColor: ColorRo = Color(0xfcfd7cff)
+	var toggledOddRowBgColor: ColorRo = Color(0xfcfd7cff)
 
 	var buttonPad: PadRo = Pad(4f)
 	var iconButtonGap = 2f
@@ -121,6 +121,7 @@ class Theme {
 		strokeDisabled = other.strokeDisabled
 
 		fillShine = other.fillShine
+		fillToggledShine = other.fillToggledShine
 		inputFill = other.inputFill
 		focusHighlightColor = other.focusHighlightColor
 
@@ -175,6 +176,7 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 		o.fillDisabled = reader.color("fillDisabled")!!
 		o.fillOver = reader.color("fillOver")!!
 		o.fillShine = reader.color("fillShine")!!
+		o.fillToggledShine = reader.color("fillToggledShine")!!
 		o.formLabelColor = reader.color("formLabelColor")!!
 		o.headingColor = reader.color("headingColor")!!
 		o.highlightedEvenRowBgColor = reader.color("highlightedEvenRowBgColor")!!

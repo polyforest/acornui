@@ -24,6 +24,7 @@ import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionRange
 import com.acornui.core.selection.selectAll
 import com.acornui.core.selection.unselect
+import com.acornui.core.substringInRange
 import com.acornui.core.time.delayedCallback
 import com.acornui.core.time.onTick
 import com.acornui.function.as1
@@ -188,7 +189,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 				val sel = firstSelection
 				if (sel != null) {
 					val text = this.text
-					val subStr = text.substring(sel.min, sel.max)
+					val subStr = text.substringInRange(sel.min, sel.max)
 					it.addItem(ClipboardItemType.PLAIN_TEXT, subStr)
 				}
 			}
@@ -200,7 +201,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 				val sel = firstSelection
 				if (sel != null) {
 					val text = this.text
-					val subStr = text.substring(sel.min, sel.max)
+					val subStr = text.substringInRange(sel.min, sel.max)
 					if (editable)
 						replaceSelection("", CommandGroup())
 					it.addItem(ClipboardItemType.PLAIN_TEXT, subStr)

@@ -121,7 +121,7 @@ data class WindowConfig(
 		/**
 		 * The initial background color.
 		 */
-		val backgroundColor: ColorRo = Color(0xF1F2F3FF)
+		val backgroundColor: ColorRo = Color(0xf1f2f3ff)
 
 )
 

@@ -192,7 +192,7 @@ open class BasicSkinPartProvider : SkinPartProvider {
 				+rect {
 					style.apply {
 						margin = Pad(top = borderThickness.top, right = borderThickness.right, bottom = 0f, left = borderThickness.left)
-						backgroundColor = theme.fillShine
+						backgroundColor = if (buttonState.isToggled) theme.fillToggledShine else theme.fillShine
 						this.borderRadii = Corners(
 								topLeft = Vector2(borderRadius.topLeft.x - borderThickness.left, borderRadius.topLeft.y - borderThickness.top),
 								topRight = Vector2(borderRadius.topRight.x - borderThickness.right, borderRadius.topRight.y - borderThickness.top),
@@ -210,7 +210,7 @@ open class BasicSkinPartProvider : SkinPartProvider {
 				+rect {
 					style.apply {
 						margin = Pad(top = 0f, right = borderThickness.right, bottom = borderThickness.bottom, left = borderThickness.left)
-						backgroundColor = theme.fillShine
+						backgroundColor = if (buttonState.isToggled) theme.fillToggledShine else theme.fillShine
 						this.borderRadii = Corners(
 								topLeft = Vector2(), topRight = Vector2(),
 								bottomLeft = Vector2(borderRadius.bottomLeft.x - borderThickness.left, borderRadius.bottomLeft.y - borderThickness.bottom),

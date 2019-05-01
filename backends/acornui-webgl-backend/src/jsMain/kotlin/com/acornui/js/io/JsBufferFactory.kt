@@ -99,7 +99,7 @@ class JsByteBuffer(private val bufferView: Uint8Array) : BufferBase(bufferView.l
 
 	override fun putLong(value: Long) {
 		dataView.setInt32(nextPosition(4), (value shr 16).toInt(), littleEndian)
-		dataView.setInt32(nextPosition(4), (value and 0xFFFFFFFF).toInt(), littleEndian)
+		dataView.setInt32(nextPosition(4), (value and 0xffffffff).toInt(), littleEndian)
 	}
 }
 

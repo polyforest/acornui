@@ -17,6 +17,7 @@
 package com.acornui.core
 
 import com.acornui.collection.removeFirst
+import com.acornui.math.MathUtils.clamp
 
 /**
  * Replaces {0}, {1}, {2}, ... {n} with the values from the tokens array.
@@ -295,4 +296,9 @@ fun Iterable<String>.filterWithWords(wordList: List<String>): List<String> {
 		words.isEmpty()
 	}
 
+}
+
+fun String.substringInRange(startIndex: Int, endIndex: Int = length): String {
+	if (startIndex >= endIndex) return this
+	return substring(clamp(startIndex, 0, length), clamp(endIndex, 0, length))
 }

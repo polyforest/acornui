@@ -26,10 +26,10 @@ import kotlin.math.round
  * have, 2<sup>53</sup>-1.
  * Note: This is 53 bits instead of 63 for the sake of JavaScript Number.
  */
-val LONG_MAX_VALUE: Long = 0x1FFFFFFFFFFFFFL
+val LONG_MAX_VALUE: Long = 0x1fffffffFFFFFFL
 
 @Deprecated("Use Int.MAX_VALUE", ReplaceWith("Int.MAX_VALUE"))
-val INT_MAX_VALUE: Int = 0x7FFFFFFF
+val INT_MAX_VALUE: Int = 0x7fffffff
 
 @Deprecated("Use Int.MIN_VALUE", ReplaceWith("Int.MIN_VALUE"))
 val INT_MIN_VALUE: Int = -2147483648
