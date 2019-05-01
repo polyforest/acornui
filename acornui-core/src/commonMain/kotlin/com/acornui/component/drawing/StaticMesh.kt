@@ -184,7 +184,7 @@ class StaticMesh(
 	}
 
 	/**
-	 * Resets the line and fill styles
+	 * Draws the [inner] contents into this static mesh.
 	 */
 	fun buildMesh(inner: MeshRegion.() -> Unit) {
 		if (refCount > 0) {

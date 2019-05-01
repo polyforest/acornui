@@ -21,6 +21,7 @@ package com.acornui.graphic
 
 import com.acornui.recycle.Clearable
 import com.acornui.core.closeTo
+import com.acornui.graphic.Color.Companion.fromStr
 import com.acornui.serialization.Reader
 import com.acornui.serialization.Writer
 import com.acornui.string.toRadix
@@ -771,11 +772,22 @@ fun Writer.color(name: String, color: ColorRo) = property(name).color(color)
 
 fun Reader.color(): Color? {
 	val str = string() ?: return null
-	return Color.fromStr(str)
+	return fromStr(str)
 }
 
 fun Reader.color(name: String): Color? = get(name)?.color()
 
 private fun Float.toOctet(): String {
 	return (this * 255).toInt().toRadix(16).padStart(2, '0')
+}
+
+val colorValidationRegex = Regex("""^(#|0x)?([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})?${'$'}""")
+
+/**
+ * First validates that the given string is parsable, and returns the [fromStr] value if it is.
+ * If the string is not a valid color, returns null.
+ */
+fun String.toColorOrNull(): Color? {
+	return if (colorValidationRegex.matches(this)) fromStr(this)
+	else null
 }

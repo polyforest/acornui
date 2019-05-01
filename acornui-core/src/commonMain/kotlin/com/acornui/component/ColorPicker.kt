@@ -1,7 +1,8 @@
 package com.acornui.component
 
-import com.acornui.component.layout.algorithm.HorizontalLayoutContainer
+import com.acornui.component.layout.algorithm.hGroup
 import com.acornui.component.style.*
+import com.acornui.component.text.TextInputImpl
 import com.acornui.component.text.textInput
 import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.cursor.cursor
@@ -12,10 +13,7 @@ import com.acornui.core.input.interaction.click
 import com.acornui.core.input.interaction.dragAttachment
 import com.acornui.core.popup.lift
 import com.acornui.core.toInt
-import com.acornui.graphic.Color
-import com.acornui.graphic.ColorRo
-import com.acornui.graphic.Hsv
-import com.acornui.graphic.HsvRo
+import com.acornui.graphic.*
 import com.acornui.math.*
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal
@@ -378,29 +376,75 @@ class ColorPaletteStyle : StyleBase() {
 	companion object : StyleType<ColorPaletteStyle>
 }
 
-// TODO
 /**
  * A Color picker with a text input for a hexdecimal color representation.
  */
-open class ColorPickerWithText(owner: Owned) : HorizontalLayoutContainer(owner) {
+open class ColorPickerWithText(owner: Owned) : ContainerImpl(owner) {
 
-	val textInput = +textInput {
+	val changed: Signal<() -> Unit>
+		get() = colorPicker.changed
+
+	var color: ColorRo
+		get() = colorPicker.color
+		set(value) {
+			colorPicker.color = value
+			updateText()
+		}
+
+	var value: HsvRo
+		get() = colorPicker.value
+		set(value) {
+			colorPicker.value = value
+			updateText()
+		}
+
+	/**
+	 * If true, there will be a slider input for the color's value component in the HSV color.
+	 */
+	var showValuePicker: Boolean
+		get() = colorPicker.showValuePicker
+		set(value) {
+			colorPicker.showValuePicker = value
+		}
+
+	/**
+	 * If true (default), there will be a slider input for the color's alpha.
+	 */
+	var showAlphaPicker: Boolean
+		get() = colorPicker.showAlphaPicker
+		set(value) {
+			colorPicker.showAlphaPicker = value
+		}
+
+	private val textInput: TextInputImpl = textInput {
 		changed.add {
-
+			colorPicker.color = text.toColorOrNull() ?: Color.WHITE
 		}
 	}
 
-	private val color = Color()
-
-	val colorPicker = +colorPicker {
+	private val colorPicker: ColorPicker = colorPicker {
 		changed.add {
-			textInput.text = value.toRgb(color.copy()).toRgbString()
+			updateText()
 		}
+	}
+
+	private fun updateText() {
+		textInput.text = "#" + value.toRgb(color.copy()).toRgbString()
+	}
+
+	private val hGroup = addChild(hGroup {
+		+colorPicker
+		+textInput
+	})
+
+	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+		hGroup.setSize(explicitWidth, explicitHeight)
+		out.set(hGroup.bounds)
 	}
 }
 
-fun Owned.colorPickerWithText(init: ComponentInit<ColorPicker> = {}): ColorPicker {
-	val c = ColorPicker(this)
+fun Owned.colorPickerWithText(init: ComponentInit<ColorPickerWithText> = {}): ColorPickerWithText {
+	val c = ColorPickerWithText(this)
 	c.init()
 	return c
 }
