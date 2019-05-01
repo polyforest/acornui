@@ -22,7 +22,6 @@ import com.acornui.core.Lifecycle
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.core.input.interaction.click
-import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 
 

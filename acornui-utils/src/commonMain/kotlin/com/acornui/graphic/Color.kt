@@ -66,7 +66,7 @@ interface ColorRo {
 		return r.toOctet() + g.toOctet() + b.toOctet() + a.toOctet()
 	}
 
-	fun toHsl(out: Hsl): Hsl {
+	fun toHsl(out: Hsl = Hsl()): Hsl {
 		out.a = a
 		val max = maxOf(r, g, b)
 		val min = minOf(r, g, b)
@@ -91,7 +91,7 @@ interface ColorRo {
 		return out
 	}
 
-	fun toHsv(out: Hsv): Hsv {
+	fun toHsv(out: Hsv = Hsv()): Hsv {
 		out.a = a
 		val max = maxOf(r, g, b)
 		val min = minOf(r, g, b)
@@ -572,6 +572,15 @@ data class Color(
 }
 
 /**
+ * Calculates a luminance value weighting the rgb components based on how the human eye sees them.
+ * This is unrelated to HSL Lightness.  [Hsl.l]
+ */
+val ColorRo.luminancePerceived: Float
+	get() {
+		return r * 0.299f + g * 0.587f + b * 0.114f
+	}
+
+/**
  * A read-only representation of an Hsl value.
  */
 interface HslRo {
@@ -586,7 +595,7 @@ interface HslRo {
 }
 
 /**
- * Hue saturation luminance
+ * Hue saturation lightness
  */
 class Hsl(
 		override var h: Float = 0f,

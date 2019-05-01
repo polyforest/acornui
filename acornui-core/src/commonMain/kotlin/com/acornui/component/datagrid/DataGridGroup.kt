@@ -19,7 +19,7 @@ open class DataGridGroup<E> : Observable {
 	 * The header is cached, so this method should not return inconsistent results.
 	 */
 	open fun createHeader(owner: Owned, list: ObservableList<E>): DataGridGroupHeader {
-		throw Exception("A header cell was requested, but createHeaderCell was not implemented.")
+		throw Exception("A header cell was requested, but createHeader was not implemented.")
 	}
 
 	/**

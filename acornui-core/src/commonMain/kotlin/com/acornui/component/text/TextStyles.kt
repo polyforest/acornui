@@ -300,6 +300,8 @@ object FontSize {
 	const val REGULAR = "regular"
 	const val LARGE = "large"
 	const val EXTRA_LARGE = "extra-large"
+
+	val values = listOf(EXTRA_SMALL, SMALL, REGULAR, LARGE, EXTRA_LARGE)
 }
 
 class TextFlowStyle : StyleBase() {

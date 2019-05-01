@@ -222,6 +222,7 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 
 	init {
 		element = _textContents
+		// Add the styles as rules so that they cascade down into the text spans:
 		addStyleRule(flowStyle)
 		addStyleRule(charStyle)
 		styleTags.add(TextField)
