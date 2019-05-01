@@ -53,7 +53,8 @@ class Theme {
 	var stroke: ColorRo = Color(0x888888FF)
 	var strokeOver: ColorRo = stroke + brighten
 	var strokeDown: ColorRo = stroke - brighten
-	var strokeToggled: ColorRo = Color(0xdb4401cc)
+//	var strokeToggled: ColorRo = Color(0xdb4401cc)
+	var strokeToggled: ColorRo = Color(0x2287f9cc)
 	var strokeToggledOver: ColorRo = strokeToggled + brighten
 	var strokeToggledDown: ColorRo = strokeToggled - brighten
 	var strokeDisabled: ColorRo = Color(0x999999FF)

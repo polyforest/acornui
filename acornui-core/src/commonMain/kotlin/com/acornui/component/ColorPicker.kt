@@ -3,12 +3,14 @@ package com.acornui.component
 import com.acornui.component.layout.algorithm.hGroup
 import com.acornui.component.style.*
 import com.acornui.component.text.TextInputImpl
+import com.acornui.component.text.selectable
+import com.acornui.component.text.text
 import com.acornui.component.text.textInput
 import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
-import com.acornui.core.focus.blurred
+import com.acornui.core.focus.*
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.interaction.dragAttachment
 import com.acornui.core.popup.lift
@@ -417,10 +419,13 @@ open class ColorPickerWithText(owner: Owned) : ContainerImpl(owner) {
 		}
 
 	private val textInput: TextInputImpl = textInput {
+		visible = false
 		changed.add {
 			colorPicker.color = text.toColorOrNull() ?: Color.WHITE
 		}
 	}
+
+	private val text = text("")
 
 	private val colorPicker: ColorPicker = colorPicker {
 		changed.add {
@@ -428,19 +433,42 @@ open class ColorPickerWithText(owner: Owned) : ContainerImpl(owner) {
 		}
 	}
 
-	private fun updateText() {
-		textInput.text = "#" + value.toRgb(color.copy()).toRgbString()
-	}
-
 	private val hGroup = addChild(hGroup {
 		+colorPicker
 		+textInput
+		+text
 	})
+
+	init {
+		styleTags.add(Companion)
+		colorPicker.focusEnabled = false
+		colorPicker.focusEnabledChildren = false
+		text.focusEnabled = true
+		text.selectable = false
+
+		text.focused().add {
+			textInput.visible = true
+			text.visible = false
+			textInput.focus()
+		}
+		textInput.blurred().add {
+			textInput.visible = false
+			text.visible = true
+		}
+	}
+
+	private fun updateText() {
+		val str = "#" + color.toRgbaString()
+		textInput.text = str
+		text.text = str
+	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		hGroup.setSize(explicitWidth, explicitHeight)
 		out.set(hGroup.bounds)
 	}
+
+	companion object : StyleTag
 }
 
 fun Owned.colorPickerWithText(init: ComponentInit<ColorPickerWithText> = {}): ColorPickerWithText {
