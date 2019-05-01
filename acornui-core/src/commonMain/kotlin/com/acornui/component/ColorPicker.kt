@@ -52,7 +52,7 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 		}
 
 	fun userChange(value: ColorRo) {
-		colorPalette.userChange(value.toHsv())
+		colorPalette.userChange(value)
 		colorSwatch?.colorTint = value.copy().clamp()
 	}
 
@@ -231,7 +231,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 
 		dragAttachment(0f).drag.add {
 			canvasToLocal(tmpVec.set(it.position))
-			tmpHSV.set(_value)
+			tmpHSV.set(value)
 			tmpHSV.h = 360f * MathUtils.clamp(tmpVec.x / width, 0f, 1f)
 			tmpHSV.s = 1f - MathUtils.clamp(tmpVec.y / height, 0f, 1f)
 
@@ -243,11 +243,23 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 	 * Sets the value and triggers a changed signal.
 	 */
 	fun userChange(value: HsvRo) {
-		val oldValue = _value
-		if (oldValue == value) return
+		val previous = this.value
+		if (previous == value) return
 		this.value = value
 		_changed.dispatch()
 	}
+
+	/**
+	 * Sets the color and triggers a changed signal.
+	 */
+	fun userChange(value: ColorRo) {
+		val previous = color
+		if (previous == value) return
+		this.color = value
+		_changed.dispatch()
+	}
+
+
 
 	private val valueRect = addChild(rect {
 		style.margin = Pad(0f, 0f, 0f, handleWidth)
@@ -255,7 +267,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 			canvasToLocal(tmpVec.set(it.position))
 			val p = MathUtils.clamp(tmpVec.y / height, 0f, 1f)
 
-			tmpHSV.set(_value)
+			tmpHSV.set(value)
 			tmpHSV.v = 1f - p
 			userChange(tmpHSV)
 		}
@@ -269,27 +281,32 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 			canvasToLocal(tmpVec.set(it.position))
 			val p = MathUtils.clamp(tmpVec.y / height, 0f, 1f)
 
-			tmpHSV.set(_value)
+			tmpHSV.set(value)
 			tmpHSV.a = 1f - p
 			userChange(tmpHSV)
 		}
 	})
 
-	private var _value = Color.WHITE.toHsv(Hsv())
-
+	private var _color: ColorRo = Color.WHITE
 	var color: ColorRo
-		get() = _value.toRgb(Color())
+		get() = _color
 		set(value) {
-			this.value = value.toHsv(Hsv())
+			if (_color != value) {
+				_color = value.copy()
+				_value = value.toHsv()
+				invalidate(COLORS)
+			}
 		}
 
+	private var _value: HsvRo = Color.WHITE.toHsv(Hsv())
 	var value: HsvRo
 		get() = _value
 		set(value) {
-			val oldValue = _value
-			if (oldValue == value) return
-			_value = value.copy()
-			invalidate(COLORS)
+			if (_value != value) {
+				_value = value.copy()
+				_color = value.toRgb()
+				invalidate(COLORS)
+			}
 		}
 
 	init {
@@ -319,7 +336,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 	}
 
 	private fun updateColors() {
-		tmpHSV.set(_value)
+		tmpHSV.set(value)
 		tmpHSV.v = 1f
 		tmpHSV.a = 1f
 		valueRect.style.linearGradient = LinearGradient(GradientDirection.BOTTOM,
@@ -355,9 +372,9 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 		alphaRect.setSize(s.sliderWidth + handleWidth, sliderHeight)
 		alphaRect.moveTo(valueRect.right + s.gap - handleWidth, padding.top)
 
-		hueSaturationIndicator!!.moveTo(saturationRect.x + _value.h / 360f * saturationRect.width - hueSaturationIndicator!!.width * 0.5f, saturationRect.y + (1f - _value.s) * saturationRect.height - hueSaturationIndicator!!.height * 0.5f)
-		valueIndicator!!.moveTo(valueRect.x + handleWidth - valueIndicator!!.width * 0.5f, (1f - _value.v) * sliderHeight + padding.top - valueIndicator!!.height * 0.5f)
-		alphaIndicator!!.moveTo(alphaRect.x + handleWidth - alphaIndicator!!.width * 0.5f, (1f - _value.a) * sliderHeight + padding.top - alphaIndicator!!.height * 0.5f)
+		hueSaturationIndicator!!.moveTo(saturationRect.x + value.h / 360f * saturationRect.width - hueSaturationIndicator!!.width * 0.5f, saturationRect.y + (1f - value.s) * saturationRect.height - hueSaturationIndicator!!.height * 0.5f)
+		valueIndicator!!.moveTo(valueRect.x + handleWidth - valueIndicator!!.width * 0.5f, (1f - value.v) * sliderHeight + padding.top - valueIndicator!!.height * 0.5f)
+		alphaIndicator!!.moveTo(alphaRect.x + handleWidth - alphaIndicator!!.width * 0.5f, (1f - value.a) * sliderHeight + padding.top - alphaIndicator!!.height * 0.5f)
 
 		val bg = background!!
 		bg.setSize(w, h)
@@ -434,9 +451,12 @@ open class ColorPickerWithText(owner: Owned) : ContainerImpl(owner) {
 		restrictPattern = RestrictPatterns.COLOR
 		visible = false
 		changed.add {
-			colorPicker.userChange(text.toColorOrNull() ?: Color.WHITE)
-			updateText()
-			closeTextEditor()
+			val c = text.toColorOrNull()
+			if (c != null) {
+				colorPicker.userChange(c)
+				updateText()
+				closeTextEditor()
+			}
 		}
 	}
 
