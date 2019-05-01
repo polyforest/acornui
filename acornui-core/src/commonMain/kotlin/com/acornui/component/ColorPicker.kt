@@ -2,10 +2,7 @@ package com.acornui.component
 
 import com.acornui.component.layout.algorithm.hGroup
 import com.acornui.component.style.*
-import com.acornui.component.text.TextInputImpl
-import com.acornui.component.text.selectable
-import com.acornui.component.text.text
-import com.acornui.component.text.textInput
+import com.acornui.component.text.*
 import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
@@ -13,6 +10,8 @@ import com.acornui.core.di.own
 import com.acornui.core.focus.*
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.interaction.dragAttachment
+import com.acornui.core.input.interaction.isEnterOrReturn
+import com.acornui.core.input.keyDown
 import com.acornui.core.popup.lift
 import com.acornui.core.toInt
 import com.acornui.graphic.*
@@ -51,6 +50,16 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 			colorPalette.value = value
 			colorSwatch?.colorTint = value.toRgb(tmpColor).copy().clamp()
 		}
+
+	fun userChange(value: ColorRo) {
+		colorPalette.userChange(value.toHsv())
+		colorSwatch?.colorTint = value.copy().clamp()
+	}
+
+	fun userChange(value: HsvRo) {
+		colorPalette.userChange(value)
+		colorSwatch?.colorTint = value.toRgb(tmpColor).copy().clamp()
+	}
 
 	/**
 	 * If true, there will be a slider input for the color's value component in the HSV color.
@@ -230,7 +239,10 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 		}
 	})
 
-	private fun userChange(value: Hsv) {
+	/**
+	 * Sets the value and triggers a changed signal.
+	 */
+	fun userChange(value: HsvRo) {
 		val oldValue = _value
 		if (oldValue == value) return
 		this.value = value
@@ -419,13 +431,20 @@ open class ColorPickerWithText(owner: Owned) : ContainerImpl(owner) {
 		}
 
 	private val textInput: TextInputImpl = textInput {
+		restrictPattern = RestrictPatterns.COLOR
 		visible = false
 		changed.add {
-			colorPicker.color = text.toColorOrNull() ?: Color.WHITE
+			colorPicker.userChange(text.toColorOrNull() ?: Color.WHITE)
+			updateText()
+			closeTextEditor()
 		}
 	}
 
-	private val text = text("")
+	private val text = text("") {
+		focusEnabled = true
+		selectable = false
+		cursor(StandardCursors.HAND)
+	}
 
 	private val colorPicker: ColorPicker = colorPicker {
 		changed.add {
@@ -443,19 +462,41 @@ open class ColorPickerWithText(owner: Owned) : ContainerImpl(owner) {
 		styleTags.add(Companion)
 		colorPicker.focusEnabled = false
 		colorPicker.focusEnabledChildren = false
-		text.focusEnabled = true
-		text.selectable = false
 
+		keyDown().add {
+			if (it.isEnterOrReturn && isFocusedSelf) {
+				it.handled = true
+				openTextEditor()
+			}
+		}
 		text.focused().add {
-			textInput.visible = true
-			text.visible = false
-			textInput.focus()
+			openTextEditor()
 		}
 		textInput.blurred().add {
-			textInput.visible = false
-			text.visible = true
+			closeTextEditor()
 		}
 	}
+
+	fun openTextEditor() {
+		if (textInput.visible) return
+		textInput.visible = true
+		text.visible = false
+		textInput.focus()
+	}
+
+	fun closeTextEditor() {
+		if (!textInput.visible) return
+		textInput.visible = false
+		text.visible = true
+//		if (textInput.isFocusedSelf)
+//			this@ColorPickerWithText.focusSelf()
+	}
+
+	fun open() = colorPicker.open()
+
+	fun close() = colorPicker.close()
+
+	fun toggleOpen() = colorPicker.toggleOpen()
 
 	private fun updateText() {
 		val str = "#" + color.toRgbaString()

@@ -78,24 +78,22 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		get() = _text
 		set(value) {
 			if (_text == value) return
-			_text = if (_restrictPatternRegex == null) value else value.replace(_restrictPatternRegex!!, "")
+			_text = if (_restrictPattern == null) value else value.replace(_restrictPattern!!, "")
 			_text = _text.replace("\r", "")
 			refreshText()
 		}
 
 	var placeholder: String = ""
 
-	private var _restrictPattern: String? = null
-	private var _restrictPatternRegex: Regex? = null
+	private var _restrictPattern: Regex? = null
 
-	var restrictPattern: String?
+	var restrictPattern: Regex?
 		get() = _restrictPattern
 		set(value) {
 			if (_restrictPattern == value) return
 			_restrictPattern = value
-			_restrictPatternRegex = if (value == null) null else Regex(value)
 			if (value != null) {
-				_text = _text.replace(_restrictPatternRegex!!, "")
+				_text = _text.replace(_restrictPattern!!, "")
 			}
 			refreshText()
 		}
@@ -531,7 +529,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	}
 
 	private fun replaceSelection(str: String, group: CommandGroup = currentGroup) {
-		var str2 = if (_restrictPatternRegex == null) str else str.replace(_restrictPatternRegex!!, "")
+		var str2 = if (_restrictPattern == null) str else str.replace(_restrictPattern!!, "")
 		val sel = firstSelection ?: return
 		val maxLength = maxLength
 		if (maxLength != null) {

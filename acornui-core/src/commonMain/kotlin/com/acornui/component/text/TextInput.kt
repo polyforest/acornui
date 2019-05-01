@@ -69,13 +69,13 @@ interface TextInput : Focusable, SelectableComponent, Styleable, Clearable {
 
 	/**
 	 * A regular expression pattern to define what is NOT allowed in this text input.
-	 * E.g. "[a-z]" will prevent lowercase letters from being entered.
+	 * E.g. Regex("[a-z]") will prevent lowercase letters from being entered.
 	 * Setting this will mutate the current [text] property.
 	 *
 	 * Note: In the future, this will be changed to restrict: Regex, currently KT-17851 prevents this.
 	 * Note: The global flag will be used.
 	 */
-	var restrictPattern: String?
+	var restrictPattern: Regex?
 
 	var password: Boolean
 
@@ -139,7 +139,7 @@ class TextInputImpl(owner: Owned) : ContainerImpl(owner), TextInput {
 			editableText.placeholder = value
 		}
 
-	override var restrictPattern: String?
+	override var restrictPattern: Regex?
 		get() = editableText.restrictPattern
 		set(value) {
 			editableText.restrictPattern = value
@@ -295,7 +295,7 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 			editableText.placeholder = value
 		}
 
-	override var restrictPattern: String?
+	override var restrictPattern: Regex?
 		get() = editableText.restrictPattern
 		set(value) {
 			editableText.restrictPattern = value
@@ -493,9 +493,12 @@ fun Owned.textArea(init: ComponentInit<TextAreaImpl> = {}): TextAreaImpl {
 
 /**
  * Common text restrict patterns.
+ * These shouldn't be used as validation patterns; they are meant to restrict the types of characters that can be
+ * typed into an input text.
  */
 object RestrictPatterns {
 
-	const val INTEGER = "[^0-9+-]"
-	const val FLOAT = "[^0-9+-.]"
+	val INTEGER = Regex("[^0-9+-]")
+	val FLOAT = Regex("[^0-9+-.]")
+	val COLOR = Regex("[^0-9a-fA-F#x]")
 }
