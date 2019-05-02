@@ -68,6 +68,7 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 
 		// Following the sizing precedence, size the children, maxing the maxHeight by the measured height if
 		// allowRelativeSizing is true.
+		// Size width inflexible elements first.
 		var maxHeight = childAvailableHeight
 		var baseline = 0f
 		var inflexibleWidth = 0f
@@ -152,7 +153,7 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 			o1: LayoutElement, o2: LayoutElement ->
 			val layoutData1 = o1.layoutData as HorizontalLayoutData?
 			val layoutData2 = o2.layoutData as HorizontalLayoutData?
-			val r1 = (layoutData1?.priority ?: 0f).compareTo(layoutData2?.priority ?: 0f)
+			val r1 = -(layoutData1?.priority ?: 0f).compareTo(layoutData2?.priority ?: 0f)
 			if (r1 == 0) {
 				(layoutData1?.heightPercent == null).compareTo(layoutData2?.heightPercent == null)
 			} else r1

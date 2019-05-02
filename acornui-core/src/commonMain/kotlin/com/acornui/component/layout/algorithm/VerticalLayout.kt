@@ -65,7 +65,9 @@ class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> 
 		if (allowRelativeSizing) elements.sortTo(orderedElements, true, sizeOrderComparator)
 		else orderedElements.addAll(elements)
 
-		//
+		// Following the sizing precedence, size the children, maxing the maxWidth by the measured width if
+		// allowRelativeSizing is true.
+		// Size height inflexible elements first.
 		var maxWidth = childAvailableWidth
 		var inflexibleHeight = 0f
 		var flexibleHeight = 0f

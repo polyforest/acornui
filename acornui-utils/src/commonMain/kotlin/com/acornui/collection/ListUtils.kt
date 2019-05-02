@@ -411,9 +411,10 @@ inline fun <E> List<E>.forEachReversed2(action: (E) -> Unit) {
 	for (i in lastIndex downTo 0) action(this[i])
 }
 
-fun List<Float>.sum2(): Float {
+fun List<Float>.sum2(startIndex: Int = 0, lastIndex: Int = this.lastIndex): Float {
+	if (startIndex == lastIndex) return this[startIndex]
 	var t = 0f
-	for (i in 0..lastIndex) {
+	for (i in startIndex..lastIndex) {
 		t += this[i]
 	}
 	return t
