@@ -280,7 +280,7 @@ open class DatePicker(
 		textInput.setSize(if (w == null) null else w - style.gap - downArrow.width, h)
 		textInput.setPosition(pad.left, pad.top)
 		downArrow.moveTo(pad.left + textInput.width + style.gap, pad.top + (textInput.height - downArrow.height) * 0.5f)
-		out.set(pad.expandWidth2(textInput.width + style.gap + downArrow.width), pad.expandHeight2(maxOf(textInput.height, downArrow.height)))
+		out.set(pad.expandWidth2(textInput.width + style.gap + downArrow.width), pad.expandHeight2(maxOf(textInput.height, downArrow.height)), textInput.baselineY)
 		background?.setSize(out.width, out.height)
 
 		calendarLift.moveTo(0f, out.height)
