@@ -83,6 +83,18 @@ fun Owned.largeText(text: String = "", init: ComponentInit<TextField> = {}): Tex
 }
 
 /**
+ * A shortcut to creating a text field with the [TextStyleTags.small] tag.
+ */
+fun Owned.smallText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
+	val t = TextFieldImpl(this)
+	t.styleTags.add(TextStyleTags.small)
+	t.text = text
+	t.init()
+	return t
+}
+
+
+/**
  * A shortcut to creating a text field with the [TextStyleTags.strong] tag.
  */
 fun Owned.strongText(text: String = "", init: ComponentInit<TextField> = {}): TextField {

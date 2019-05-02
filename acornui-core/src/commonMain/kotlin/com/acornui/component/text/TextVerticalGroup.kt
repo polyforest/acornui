@@ -48,7 +48,7 @@ class TextVerticalGroup(owner: Owned) : TextElementContainerImpl<TextNode>(owner
 			measuredWidth = maxOf(measuredWidth, element.width)
 			y += element.height
 		}
-		out.set(explicitWidth ?: measuredWidth, y)
+		out.set(explicitWidth ?: measuredWidth, y, elements.firstOrNull()?.baselineY ?: 0f)
 	}
 
 }

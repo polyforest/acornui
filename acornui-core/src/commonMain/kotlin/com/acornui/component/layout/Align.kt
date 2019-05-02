@@ -28,5 +28,6 @@ enum class HAlign {
 enum class VAlign {
 	TOP,
 	MIDDLE,
-	BOTTOM
+	BOTTOM,
+	BASELINE
 }

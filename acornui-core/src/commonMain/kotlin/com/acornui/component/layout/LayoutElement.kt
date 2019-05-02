@@ -137,6 +137,12 @@ interface BasicLayoutElementRo : SizableRo, PositionableRo {
 		get() = y + height
 
 	/**
+	 * The y value representing the baseline + y position.
+	 */
+	val baselineY: Float
+		get() = y + bounds.baseline
+
+	/**
 	 * The layout data to be used in layout algorithms.
 	 * Most layout containers have a special layout method that statically types the type of
 	 * layout data that a component should have.
@@ -171,6 +177,18 @@ interface SizableRo {
 	 */
 	val height: Float
 		get() = bounds.height
+
+	/**
+	 * The y position representing the baseline of the first line of text.
+	 */
+	val baseline: Float
+		get() = bounds.baseline
+
+	/**
+	 * The height below the baseline.
+	 */
+	val descender: Float
+		get() = height - baseline
 
 	/**
 	 * The actual bounds of this component.

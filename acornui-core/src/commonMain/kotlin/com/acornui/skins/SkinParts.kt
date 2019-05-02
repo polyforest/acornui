@@ -122,7 +122,10 @@ open class BasicSkinPartProvider : SkinPartProvider {
 	 * A checkbox skin part.
 	 */
 	override fun checkboxSkin(theme: Theme, buttonState: ButtonState): OptionalSkinPart = {
-		val box = iconAtlas(theme.atlasPath, if (buttonState.isIndeterminate) "ic_indeterminate_check_box_white_24dp" else if (buttonState.isToggled) "ic_check_box_white_24dp" else "ic_check_box_outline_blank_white_24dp")
+		val box = stack {
+			style.padding = Pad(-3f) // The icon is only 18px and has 3px of padding around it.
+			+iconAtlas(theme.atlasPath, if (buttonState.isIndeterminate) "ic_indeterminate_check_box_white_24dp" else if (buttonState.isToggled) "ic_check_box_white_24dp" else "ic_check_box_outline_blank_white_24dp")
+		}
 		CheckboxSkinPart(
 				this,
 				box

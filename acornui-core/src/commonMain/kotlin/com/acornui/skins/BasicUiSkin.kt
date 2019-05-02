@@ -97,13 +97,13 @@ open class BasicUiSkin(
 		optionListStyle()
 		dataGridStyle()
 		rowsStyle()
-		formStyle()
 		treeStyle()
 		contextMenuStyle()
 		calendarStyle()
 		htmlComponentStyle()
 		tooltipStyle()
 		imageButtonStyle()
+		formStyle()
 	}
 
 	open fun initTheme() {
@@ -514,7 +514,10 @@ open class BasicUiSkin(
 		val colorPickerStyle = ColorPickerStyle()
 		colorPickerStyle.apply {
 			background = {
-				button { focusEnabled = false }
+				button {
+					focusEnabled = false
+					style.set { { buttonTexture(it) } }
+				}
 			}
 			colorSwatch = {
 				rect {
@@ -687,12 +690,6 @@ open class BasicUiSkin(
 		target.addStyleRule(rowBackgroundsStyle, RowBackground)
 	}
 
-	protected open fun formStyle() {
-		val formStyle = GridLayoutStyle()
-		formStyle.verticalAlign = VAlign.TOP
-		target.addStyleRule(formStyle, FormContainer)
-	}
-
 	protected open fun treeStyle() {
 		val itemRendererStyle = DefaultTreeItemRendererStyle()
 		itemRendererStyle.openedFolderIcon = {
@@ -826,5 +823,12 @@ open class BasicUiSkin(
 			}
 		}
 		target.addStyleRule(imageButtonStyle, ImageButton.ICON_IMAGE)
+	}
+
+	protected open fun formStyle() {
+		val formStyle = GridLayoutStyle().apply {
+			horizontalGap = 10f
+		}
+		target.addStyleRule(formStyle, FormContainer)
 	}
 }

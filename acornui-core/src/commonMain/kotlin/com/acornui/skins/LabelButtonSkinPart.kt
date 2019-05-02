@@ -36,7 +36,7 @@ open class LabelButtonSkinPart(
 		val padding: PadRo
 ) : ElementContainerImpl<UiComponent>(owner), Labelable {
 
-	val textField: TextField = text()
+	private val textField: TextField = text()
 
 	init {
 		+texture
@@ -59,6 +59,6 @@ open class LabelButtonSkinPart(
 		if (explicitHeight != null && explicitHeight > h) h = explicitHeight
 		texture.setSize(w, h)
 		textField.moveTo((padding.reduceWidth2(w) - textField.width) * 0.5f + padding.left, (padding.reduceHeight2(h) - textField.height) * 0.5f + padding.top)
-		out.set(texture.bounds)
+		out.set(texture.width, texture.height, textField.baselineY)
 	}
 }

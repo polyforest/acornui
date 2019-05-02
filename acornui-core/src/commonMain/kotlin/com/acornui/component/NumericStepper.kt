@@ -5,7 +5,7 @@ import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
 import com.acornui.component.style.styleTag
-import com.acornui.string.RestrictPatterns
+import com.acornui.component.text.RestrictPatterns
 import com.acornui.component.text.textInput
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own

@@ -194,7 +194,7 @@ open class IconButtonSkinPart(
 				iconY = yOffset + (contentHeight - icon.height) * 0.5f
 				textFieldY = (yOffset + (contentHeight - textField.height) * 0.5f)
 			}
-			VAlign.BOTTOM -> {
+			VAlign.BASELINE, VAlign.BOTTOM -> {
 				iconY = yOffset + (contentHeight - icon.height)
 				textFieldY = yOffset + (contentHeight - textField.height)
 			}

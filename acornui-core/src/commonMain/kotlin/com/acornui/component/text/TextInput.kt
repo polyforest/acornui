@@ -209,8 +209,11 @@ class TextInputImpl(owner: Owned) : ContainerImpl(owner), TextInput {
 
 		editableText.setSize(w, h)
 		editableText.setPosition(margin.left + pad.left, margin.top + pad.top)
-		out.set(explicitWidth ?: margin.expandHeight2(pad.expandHeight2(w)), explicitHeight
-				?: margin.expandHeight2(pad.expandHeight2(editableText.height)))
+		out.set(
+				explicitWidth ?: margin.expandHeight2(pad.expandHeight2(w)),
+				explicitHeight ?: margin.expandHeight2(pad.expandHeight2(editableText.height)),
+				baseline = editableText.baseline + editableText.y
+		)
 		background?.setSize(margin.reduceWidth2(out.width), margin.reduceHeight(out.height))
 		background?.setPosition(margin.left, margin.top)
 	}
@@ -433,7 +436,11 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 		scroller.setSize(w, h)
 		scroller.setPosition(margin.left, margin.top)
 		editableText.pageHeight = h ?: 400f
-		out.set(explicitWidth ?: textInputStyle.defaultWidth, explicitHeight ?: margin.expandHeight2(scroller.height))
+		out.set(
+				explicitWidth ?: textInputStyle.defaultWidth,
+				explicitHeight ?: margin.expandHeight2(scroller.height),
+				baseline = editableText.baseline + editableText.y
+		)
 		background?.setSize(margin.reduceWidth2(out.width), margin.reduceHeight(out.height))
 		background?.setPosition(margin.left, margin.top)
 	}

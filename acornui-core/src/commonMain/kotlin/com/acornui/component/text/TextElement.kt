@@ -103,9 +103,6 @@ val TextElementRo.lineHeight: Float
 		return parentSpan?.lineHeight ?: 0f
 	}
 
-val TextElementRo.baseline: Float
-	get() = (parentSpan?.baseline ?: 0f)
-
 val TextElementRo.textFieldX: Float
 	get() {
 		return x + (parentSpan?.textFieldX ?: 0f)

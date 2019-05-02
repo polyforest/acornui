@@ -201,9 +201,14 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 		contents.setPosition(0f, 0f)
 		out.set(contents.bounds)
 
-		val font = charStyle.font
-		val minHeight = flowStyle.padding.expandHeight(font?.resultOrNull()?.data?.lineHeight?.toFloat()) ?: 0f
-		if (out.height < minHeight) out.height = minHeight
+		// Handle sizing if the content is blank:
+		if (contents.textElements.isEmpty()) {
+			val font = charStyle.font
+			val fontData = font?.resultOrNull()?.data
+			val padding = flowStyle.padding
+			out.height = padding.expandHeight(fontData?.lineHeight?.toFloat()) ?: 0f
+			out.baseline = padding.top + (fontData?.baseline?.toFloat() ?: 0f)
+		}
 
 		if (contents.allowClipping) {
 			if (explicitWidth != null) out.width = explicitWidth

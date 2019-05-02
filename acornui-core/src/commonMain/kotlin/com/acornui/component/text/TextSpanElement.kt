@@ -3,6 +3,7 @@ package com.acornui.component.text
 import com.acornui.async.resultOrNull
 import com.acornui.async.then
 import com.acornui.component.*
+import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.style.*
 import com.acornui.core.Disposable
 import com.acornui.core.di.Scoped
@@ -37,6 +38,11 @@ interface TextSpanElementRo<out T : TextElementRo> : ElementParentRo<T> {
 	 * The size of a space.
 	 */
 	val spaceSize: Float
+
+	/**
+	 * The vertical alignment override of the span.
+	 */
+	val verticalAlign: FlowVAlign?
 
 }
 
@@ -94,6 +100,8 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 
 	private val _charElementStyle = CharElementStyle()
 	override val charElementStyle: CharElementStyleRo = _charElementStyle
+
+	override var verticalAlign: FlowVAlign? = null
 
 	init {
 	}

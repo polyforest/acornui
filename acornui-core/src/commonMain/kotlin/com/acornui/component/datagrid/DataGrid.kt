@@ -1114,7 +1114,7 @@ class DataGrid<RowData>(
 			sortArrow.y = when (style.headerSortArrowVAlign) {
 				VAlign.TOP -> cellPad.top
 				VAlign.MIDDLE -> cellPad.top + (headerCellHeight - sortArrow.height) * 0.5f
-				VAlign.BOTTOM -> cellPad.top + (headerCellHeight - sortArrow.height)
+				VAlign.BASELINE, VAlign.BOTTOM -> cellPad.top + (headerCellHeight - sortArrow.height)
 			}
 		}
 
@@ -1129,7 +1129,7 @@ class DataGrid<RowData>(
 			val y = cellPad.top + maxOf(0f, when (col.headerCellVAlign ?: style.headerCellVAlign) {
 				VAlign.TOP -> 0f
 				VAlign.MIDDLE -> (headerCellHeight - headerCell.height) * 0.5f
-				VAlign.BOTTOM -> (headerCellHeight - headerCell.height)
+				VAlign.BASELINE, VAlign.BOTTOM -> (headerCellHeight - headerCell.height)
 			})
 			val headerCellWidth = headerCell.explicitWidth ?: headerCell.width
 			val x = cellPad.left + maxOf(0f, when (col.headerCellHAlign ?: style.headerCellHAlign) {
@@ -1449,7 +1449,7 @@ class DataGrid<RowData>(
 					val y = pad.top + maxOf(0f, when (column.cellVAlign ?: style.cellVAlign) {
 						VAlign.TOP -> 0f
 						VAlign.MIDDLE -> (rowHeight - cell.height) * 0.5f
-						VAlign.BOTTOM -> (rowHeight - cell.height)
+						VAlign.BASELINE, VAlign.BOTTOM -> (rowHeight - cell.height)
 					})
 					val cellWidth = cell.explicitWidth ?: cell.width
 

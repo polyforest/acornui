@@ -88,13 +88,12 @@ class ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 				val remainingSpace = childAvailableHeight!! - h * scaleY
 				if (remainingSpace != 0f) {
 					when (layoutData?.verticalAlign ?: style.verticalAlign) {
-						VAlign.TOP -> {
-						}
+						VAlign.TOP -> {}
 						VAlign.MIDDLE -> {
 							val halfSpace = floor((remainingSpace * 0.5f))
 							child.y = halfSpace + padding.top
 						}
-						VAlign.BOTTOM -> {
+						VAlign.BASELINE, VAlign.BOTTOM -> {
 							child.y = remainingSpace + padding.top
 						}
 					}

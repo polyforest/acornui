@@ -105,12 +105,15 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+		val lines = _lines
 		val textElements = _textElements
+		val flowStyle = flowStyle
 		val padding = flowStyle.padding
+		val placeholder = _placeholder
 		val availableWidth: Float? = padding.reduceWidth(explicitWidth)
 
-		_lines.forEach2(LineInfo.Companion::free)
-		_lines.clear()
+		lines.forEach2(LineInfo.Companion::free)
+		lines.clear()
 
 		// To keep tab sizes consistent across the whole text field, we only use the first span's space size.
 		val spaceSize = _elements.firstOrNull()?.spaceSize ?: 6f
@@ -161,7 +164,7 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 					currentLine.endIndex = spanPartIndex
 					allowWordBreak = true
 				}
-				_lines.add(currentLine)
+				lines.add(currentLine)
 				currentLine = LineInfo.obtain()
 				currentLine.startIndex = spanPartIndex
 				x = 0f
@@ -178,15 +181,20 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 		// We now have the elements per line; measure the line heights/widths and position the elements within the line.
 		var y = padding.top
 		var measuredWidth = 0f
-		for (i in 0.._lines.lastIndex) {
-			val line = _lines[i]
+		for (i in 0..lines.lastIndex) {
+			val line = lines[i]
 			line.y = y
 
 			for (j in line.startIndex..line.endIndex - 1) {
 				val part = textElements[j]
-				val b = part.lineHeight - part.baseline
-				if (b > line.belowBaseline) line.belowBaseline = b
-				if (part.baseline > line.baseline) line.baseline = part.baseline
+				if (part.parentSpan?.verticalAlign ?: flowStyle.verticalAlign == FlowVAlign.BASELINE) {
+					val belowBaseline = part.lineHeight - part.baseline
+					if (belowBaseline > line.descender) line.descender = belowBaseline
+					if (part.baseline > line.baseline) line.baseline = part.baseline
+				} else {
+					if (part.height > line.nonBaselineHeight)
+						line.nonBaselineHeight = part.height
+				}
 				if (!part.overhangs) line.contentsWidth = part.x + part.width
 				line.width = part.x + part.width
 			}
@@ -198,26 +206,27 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 		}
 		y -= flowStyle.verticalGap
 
-		val lastLine = _lines.lastOrNull()
+		val lastLine = lines.lastOrNull()
 		if (lastLine == null) {
 			// No lines, the placeholder is where the first character will begin.
-			_placeholder.x = calculateLineX(availableWidth, 0f) // Considers alignment.
-			_placeholder.y = flowStyle.padding.top
+			placeholder.x = calculateLineX(availableWidth, 0f) // Considers alignment.
+			placeholder.y = flowStyle.padding.top
 		} else {
 			if (lastLine.lastClearsLine) {
 				// Where the next line will begin.
-				_placeholder.x = calculateLineX(availableWidth, 0f) // Considers alignment.
-				_placeholder.y = lastLine.y + lastLine.height + flowStyle.verticalGap
+				placeholder.x = calculateLineX(availableWidth, 0f) // Considers alignment.
+				placeholder.y = lastLine.y + lastLine.height + flowStyle.verticalGap
 			} else {
 				// At the end of the last line.
-				_placeholder.x = lastLine.x + lastLine.width
-				_placeholder.y = lastLine.y
+				placeholder.x = lastLine.x + lastLine.width
+				placeholder.y = lastLine.y
 			}
 		}
 		val measuredHeight = y + padding.bottom
 		measuredWidth += padding.left + padding.right
 		if (measuredWidth > out.width) out.width = measuredWidth
 		if (measuredHeight > out.height) out.height = measuredHeight
+		out.baseline = padding.top + (lines.firstOrNull()?.baseline ?: 0f)
 	}
 
 	private val LineInfoRo.lastClearsLine: Boolean
@@ -242,6 +251,7 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 
 	private fun positionElementsInLine(line: LineInfoRo, availableWidth: Float?) {
 		val textElements = _textElements
+		val flowStyle = flowStyle
 		if (availableWidth != null) {
 			val remainingSpace = availableWidth - line.contentsWidth
 
@@ -271,7 +281,7 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 		for (i in line.startIndex..line.endIndex - 1) {
 			val part = textElements[i]
 
-			val yOffset = when (flowStyle.verticalAlign) {
+			val yOffset = when (part.parentSpan?.verticalAlign ?: flowStyle.verticalAlign) {
 				FlowVAlign.TOP -> 0f
 				FlowVAlign.MIDDLE -> offsetRound((line.height - part.lineHeight) * 0.5f)
 				FlowVAlign.BOTTOM -> line.height - part.lineHeight

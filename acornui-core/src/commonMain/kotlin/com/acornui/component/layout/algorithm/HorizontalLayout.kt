@@ -23,7 +23,7 @@ import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
 import com.acornui.math.Bounds
-import com.acornui.math.MathUtils
+import com.acornui.math.MathUtils.clamp
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import kotlin.math.floor
@@ -57,6 +57,7 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
 		val padding = style.padding
 		val gap = style.gap
+		val style = style
 		val allowRelativeSizing = style.allowRelativeSizing
 
 		val childAvailableWidth: Float? = padding.reduceWidth(explicitWidth)
@@ -68,6 +69,7 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 		// Following the sizing precedence, size the children, maxing the maxHeight by the measured height if
 		// allowRelativeSizing is true.
 		var maxHeight = childAvailableHeight
+		var baseline = 0f
 		var inflexibleWidth = 0f
 		var flexibleWidth = 0f
 		for (i in 0..orderedElements.lastIndex) {
@@ -78,6 +80,9 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 				val h = layoutData?.getPreferredHeight(maxHeight)
 				element.setSize(w, h)
 				inflexibleWidth += element.width
+
+				if (layoutData?.verticalAlign ?: style.verticalAlign == VAlign.BASELINE)
+					baseline = maxOf(baseline, element.baseline)
 				if (allowRelativeSizing && (maxHeight == null || element.height > maxHeight))
 					maxHeight = element.height
 			} else {
@@ -89,7 +94,7 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 
 		// Size flexible elements within the remaining space.
 		if (childAvailableWidth != null) {
-			val scale = if (flexibleWidth > 0) MathUtils.clamp((childAvailableWidth - inflexibleWidth) / flexibleWidth, 0f, 1f) else 1f
+			val scale = if (flexibleWidth > 0) clamp((childAvailableWidth - inflexibleWidth) / flexibleWidth, 0f, 1f) else 1f
 			for (i in 0..orderedElements.lastIndex) {
 				val element = orderedElements[i]
 				val layoutData = element.layoutDataCast
@@ -97,6 +102,8 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 					val h = layoutData.getPreferredHeight(maxHeight)
 					val w = scale * layoutData.widthPercent!! * childAvailableWidth
 					element.setSize(w, h)
+					if (layoutData.verticalAlign ?: style.verticalAlign == VAlign.BASELINE)
+						baseline = maxOf(baseline, element.baseline)
 					if (allowRelativeSizing && (maxHeight == null || element.height > maxHeight))
 						maxHeight = element.height
 				}
@@ -112,13 +119,14 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 		if (childAvailableWidth != null && style.horizontalAlign != HAlign.LEFT) {
 			val d = childAvailableWidth - (inflexibleWidth + flexibleWidth)
 			if (d > 0f) {
-				if (style.horizontalAlign == HAlign.RIGHT) {
-					x += d
-				} else if (style.horizontalAlign == HAlign.CENTER) {
-					x += floor(d * 0.5f).toInt()
+				x += when (style.horizontalAlign) {
+					HAlign.LEFT -> 0f
+					HAlign.CENTER -> floor(d * 0.5f)
+					HAlign.RIGHT -> d
 				}
 			}
 		}
+		var bottomY = 0f
 		for (i in 0..elements.lastIndex) {
 			val element = elements[i]
 			val layoutData = element.layoutDataCast
@@ -126,13 +134,15 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 				VAlign.TOP -> padding.top
 				VAlign.MIDDLE -> (maxHeight - element.height) * 0.5f + padding.top
 				VAlign.BOTTOM -> maxHeight - element.height + padding.top
-				else -> throw Exception()
+				VAlign.BASELINE -> baseline - element.baseline
 			}
 			element.moveTo(x, y)
 			x += element.width + gap
+			bottomY = maxOf(bottomY, element.bottom)
 		}
 		x += padding.right - gap
-		out.set(x, maxHeight + padding.bottom + padding.top)
+		val measuredHeight = padding.bottom + bottomY
+		out.set(x, measuredHeight, elements.firstOrNull()?.baselineY ?: measuredHeight)
 	}
 
 	override fun createLayoutData() = HorizontalLayoutData()
@@ -174,7 +184,7 @@ class HorizontalLayoutStyle : StyleBase() {
 	/**
 	 * The vertical alignment of each element within the measured height.
 	 */
-	var verticalAlign by prop(VAlign.BOTTOM)
+	var verticalAlign by prop(VAlign.BASELINE)
 
 	/**
 	 * If true, the actual size of an element can expand the bounds of the layout for the remaining elements, based
@@ -202,7 +212,7 @@ class HorizontalLayoutData : BasicLayoutData() {
 	/**
 	 * If set, the vertical alignment for this item overrides the vertical layout's verticalAlign.
 	 */
-	var verticalAlign: HAlign? by bindable(null)
+	var verticalAlign: VAlign? by bindable(null)
 
 	/**
 	 * The order of sizing precedence is as follows:

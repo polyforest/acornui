@@ -111,10 +111,10 @@ class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> 
 		if (childAvailableHeight != null && style.verticalAlign != VAlign.TOP) {
 			val d = childAvailableHeight - (inflexibleHeight + flexibleHeight)
 			if (d > 0f) {
-				if (style.verticalAlign == VAlign.BOTTOM) {
-					y += d
-				} else if (style.verticalAlign == VAlign.MIDDLE) {
-					y += floor(d * 0.5f).toInt()
+				y += when (style.verticalAlign) {
+					VAlign.TOP -> 0f
+					VAlign.MIDDLE -> floor(d * 0.5f)
+					VAlign.BASELINE, VAlign.BOTTOM -> d
 				}
 			}
 		}
@@ -130,7 +130,7 @@ class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> 
 			y += element.height + gap
 		}
 		y += padding.bottom - gap
-		out.set(maxWidth + padding.left + padding.right, y)
+		out.set(maxWidth + padding.left + padding.right, y, elements.firstOrNull()?.baselineY ?: y)
 	}
 
 	override fun createLayoutData() = VerticalLayoutData()

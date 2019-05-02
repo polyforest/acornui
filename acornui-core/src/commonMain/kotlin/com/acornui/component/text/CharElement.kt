@@ -21,7 +21,7 @@ class CharElement private constructor() : TextElement, Clearable {
 
 	private val _bounds = Bounds()
 	override val bounds: BoundsRo
-		get() = _bounds.set(explicitWidth ?: advanceX, lineHeight)
+		get() = _bounds.set(explicitWidth ?: advanceX, lineHeight, parentSpan?.baseline ?: 0f)
 
 	private lateinit var glState: GlState
 

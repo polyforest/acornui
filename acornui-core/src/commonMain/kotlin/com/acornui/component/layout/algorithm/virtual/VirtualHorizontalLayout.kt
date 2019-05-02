@@ -80,7 +80,7 @@ class VirtualHorizontalLayout : VirtualLayoutAlgorithm<VirtualHorizontalLayoutSt
 					element.moveTo(x, padding.top)
 				VAlign.MIDDLE ->
 					element.moveTo(x, padding.top + (childAvailableHeight - element.height) * 0.5f)
-				VAlign.BOTTOM ->
+				VAlign.BASELINE, VAlign.BOTTOM ->
 					element.moveTo(x, padding.top + (childAvailableHeight - element.height))
 			}
 		}

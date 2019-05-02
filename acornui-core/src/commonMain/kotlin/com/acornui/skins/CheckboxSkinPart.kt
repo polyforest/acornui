@@ -23,6 +23,7 @@ import com.acornui.component.layout.algorithm.HorizontalLayoutContainer
 import com.acornui.component.text.TextField
 import com.acornui.component.text.text
 import com.acornui.core.di.Owned
+import com.acornui.math.Bounds
 
 /**
  * A typical implementation of a skin part for a labelable button state.
@@ -50,4 +51,9 @@ open class CheckboxSkinPart(
 			textField.includeInLayout = value.isNotEmpty()
 			textField.text = value
 		}
+
+	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+		super.updateLayout(explicitWidth, explicitHeight, out)
+		out.baseline = textField.baselineY
+	}
 }

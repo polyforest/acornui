@@ -1,5 +1,6 @@
 package com.acornui.component
 
+import com.acornui.component.layout.VAlign
 import com.acornui.component.layout.algorithm.hGroup
 import com.acornui.component.style.*
 import com.acornui.component.text.*
@@ -134,16 +135,17 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 		val colorSwatch = colorSwatch ?: return
 		val s = style
 		val padding = s.padding
-		val w = explicitWidth ?: padding.expandWidth2(s.defaultSwatchWidth)
-		val h = explicitHeight ?: padding.expandHeight2(s.defaultSwatchHeight)
+		colorSwatch.setSize(
+				padding.reduceWidth(explicitWidth) ?: s.defaultSwatchWidth,
+				padding.reduceHeight(explicitHeight) ?: s.defaultSwatchHeight
+		)
+		val measuredW = padding.expandWidth2(colorSwatch.width)
+		val measuredH = padding.expandHeight2(colorSwatch.height)
+		background.setSize(measuredW, measuredH)
+		colorSwatch.moveTo(0.5f * (background.width - colorSwatch.width), 0.5f * (background.height - colorSwatch.height))
+		out.set(background.width, background.height, colorSwatch.bottom)
 
-		colorSwatch.setSize(padding.reduceWidth(w), padding.reduceHeight(h))
-
-		background.setSize(maxOf(padding.expandWidth2(colorSwatch.width), w), maxOf(padding.expandHeight2(colorSwatch.height), h))
-		out.set(background.width, background.height)
-		colorSwatch.moveTo(0.5f * (out.width - colorSwatch.width), 0.5f * (out.height - colorSwatch.height))
-
-		colorPaletteLift.moveTo(0f, h)
+		colorPaletteLift.moveTo(0f, measuredH)
 	}
 
 	override fun dispose() {
@@ -160,10 +162,10 @@ class ColorPickerStyle : StyleBase() {
 
 	override val type = Companion
 
-	var padding: PadRo by prop(Pad(4f))
+	var padding: PadRo by prop(Pad(2f))
 	var background by prop(noSkin)
-	var defaultSwatchWidth by prop(21f)
-	var defaultSwatchHeight by prop(21f)
+	var defaultSwatchWidth by prop(14f)
+	var defaultSwatchHeight by prop(14f)
 	var colorSwatch by prop(noSkin)
 
 	companion object : StyleType<ColorPickerStyle>
@@ -473,6 +475,7 @@ open class ColorPickerWithText(owner: Owned) : ContainerImpl(owner) {
 	}
 
 	private val hGroup = addChild(hGroup {
+		style.verticalAlign = VAlign.BASELINE
 		+colorPicker
 		+textInput
 		+text
@@ -522,6 +525,15 @@ open class ColorPickerWithText(owner: Owned) : ContainerImpl(owner) {
 		val str = "#" + color.toRgbaString()
 		textInput.text = str
 		text.text = str
+	}
+
+	private val pad = Pad()
+
+	override fun updateStyles() {
+		super.updateStyles()
+		textInput.validate(ValidationFlags.STYLES)
+		val textInputStyle = textInput.textInputStyle
+		text.flowStyle.padding = pad.set(top = textInputStyle.margin.top + textInputStyle.padding.top, bottom = textInputStyle.margin.bottom + textInputStyle.padding.bottom, right = 0f, left = 0f)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

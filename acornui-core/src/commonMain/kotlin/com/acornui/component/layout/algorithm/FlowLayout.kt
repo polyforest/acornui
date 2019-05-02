@@ -64,8 +64,9 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 		val availableHeight: Float? = padding.reduceHeight(explicitHeight)
 
 		var measuredW = 0f
-		_lines.forEach2(LineInfo.Companion::free)
-		_lines.clear()
+		val lines = _lines
+		lines.forEach2(LineInfo.Companion::free)
+		lines.clear()
 
 		var line = LineInfo.obtain()
 		line.y = padding.top
@@ -90,7 +91,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 				line.endIndex = i
 				line.x = calculateLineX(availableWidth, style, line.contentsWidth)
 				positionElementsInLine(line, availableWidth, style, elements)
-				_lines.add(line)
+				lines.add(line)
 				x = 0f
 				y += line.height + style.verticalGap
 				// New line
@@ -106,17 +107,22 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 				if (x > measuredW) measuredW = x
 			}
 			x += style.horizontalGap
-			val baseline = layoutData?.baseline ?: h
-			if (baseline > line.baseline) line.baseline = baseline
-			val belowBaseline = h - baseline
-			if (belowBaseline > belowBaseline) line.belowBaseline = belowBaseline
+			if (layoutData?.verticalAlign ?: style.verticalAlign == FlowVAlign.BASELINE) {
+				val baseline = element.baseline
+				if (baseline > line.baseline) line.baseline = baseline
+				val belowBaseline = h - baseline
+				if (belowBaseline > belowBaseline) line.descender = belowBaseline
+			} else {
+				val elementH = element.height
+				if (elementH > line.nonBaselineHeight) line.nonBaselineHeight = elementH
+			}
 			previousElement = element
 		}
 		line.endIndex = elements.size
 		if (line.isNotEmpty()) {
 			line.x = calculateLineX(availableWidth, style, line.contentsWidth)
 			positionElementsInLine(line, availableWidth, style, elements)
-			_lines.add(line)
+			lines.add(line)
 			y += line.height
 		} else {
 			LineInfo.free(line)
@@ -126,6 +132,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 		if (measuredW > out.width) out.width = measuredW // Use the measured width if it is larger than the explicit.
 		val measuredH = padding.expandHeight2(y)
 		if (measuredH > out.height) out.height = measuredH
+		out.baseline = lines.firstOrNull()?.baseline ?: measuredH
 	}
 
 	private fun calculateLineX(availableWidth: Float?, props: FlowLayoutStyle, lineWidth: Float): Float {
@@ -171,7 +178,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 				FlowVAlign.TOP -> 0f
 				FlowVAlign.MIDDLE -> round((line.height - element.height) * 0.5f)
 				FlowVAlign.BOTTOM -> (line.height - element.height)
-				FlowVAlign.BASELINE -> (line.baseline - (layoutData?.baseline ?: element.height))
+				FlowVAlign.BASELINE -> line.baseline - element.baseline
 			}
 			element.moveTo(line.x + x, line.y + yOffset)
 			x += element.width + hGap
@@ -233,12 +240,25 @@ interface LineInfoRo {
 	val contentsWidth: Float
 
 	/**
-	 * The [baseline] + [belowBaseline]
+	 * The height of the line.
 	 */
 	val height: Float
-		get() = baseline + belowBaseline
+		get() = maxOf(nonBaselineHeight, baseline + descender)
+
+	/**
+	 * The height measuring the top to the baseline (where a line of text should 'sit').
+	 */
 	val baseline: Float
-	val belowBaseline: Float
+
+	/**
+	 * The height below the baseline.
+	 */
+	val descender: Float
+
+	/**
+	 * The max height of the elements not sitting on the baseline.
+	 */
+	val nonBaselineHeight: Float
 
 	val bottom: Float
 		get() = y + height
@@ -263,17 +283,19 @@ class LineInfo : Clearable, LineInfoRo {
 	override var contentsWidth: Float = 0f
 	override var width: Float = 0f
 	override var baseline: Float = 0f
-	override var belowBaseline: Float = 0f
+	override var descender: Float = 0f
+	override var nonBaselineHeight: Float = 0f
 
 	fun set(other: LineInfoRo): LineInfo {
 		startIndex = other.startIndex
 		endIndex = other.endIndex
 		contentsWidth = other.contentsWidth
 		width = other.width
+		nonBaselineHeight = other.nonBaselineHeight
 		x = other.x
 		y = other.y
 		baseline = other.baseline
-		belowBaseline = other.belowBaseline
+		descender = other.descender
 		return this
 	}
 
@@ -282,10 +304,11 @@ class LineInfo : Clearable, LineInfoRo {
 		endIndex = 0
 		contentsWidth = 0f
 		width = 0f
+		nonBaselineHeight = 0f
 		x = 0f
 		y = 0f
 		baseline = 0f
-		belowBaseline = 0f
+		descender = 0f
 	}
 
 	override fun toString(): String {
@@ -314,7 +337,7 @@ class FlowLayoutStyle : StyleBase() {
 	 */
 	var padding: PadRo by prop(Pad())
 	var horizontalAlign by prop(FlowHAlign.LEFT)
-	var verticalAlign by prop(FlowVAlign.TOP)
+	var verticalAlign by prop(FlowVAlign.BASELINE)
 	var multiline by prop(true)
 
 	companion object : StyleType<FlowLayoutStyle>
@@ -341,12 +364,6 @@ class FlowLayoutData : BasicLayoutData() {
 	 * If set, the vertical align of this element overrides the default of the flow layout algorithm.
 	 */
 	var verticalAlign: FlowVAlign? by bindable(null)
-
-	/**
-	 * A child whose vertical alignment is [FlowVAlign.BASELINE] will be positioned so that the baseline attribute
-	 * will align with the baseline position on its line. If left null, the height will be used.
-	 */
-	var baseline by bindable<Float?>(null)
 
 }
 
