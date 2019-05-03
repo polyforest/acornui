@@ -21,7 +21,7 @@ import com.acornui.collection.addSorted
 import com.acornui.collection.firstOrNull2
 import com.acornui.collection.lastOrNull2
 import com.acornui.collection.poll
-import com.acornui.component.Stage
+import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
 import com.acornui.core.Disposable
@@ -46,10 +46,14 @@ import com.acornui.signal.Signal3
 /**
  * @author nbilyk
  */
-class FocusManagerImpl : FocusManager {
+class FocusManagerImpl() : FocusManager {
 
-	private var _root: Stage? = null
-	private val root: Stage
+	constructor(target: ElementContainer<UiComponent>) : this() {
+		init(target)
+	}
+
+	private var _root: ElementContainer<UiComponent>? = null
+	private val root: ElementContainer<UiComponent>
 		get() = _root!!
 
 	private val focusedChangingCancel: Cancel = Cancel()
@@ -128,7 +132,7 @@ class FocusManagerImpl : FocusManager {
 		setHighlightIndicator(null, false)
 	}
 
-	override fun init(root: Stage) {
+	override fun init(root: ElementContainer<UiComponent>) {
 		_assert(_root == null, "Already initialized.")
 		_root = root
 		_focused = root

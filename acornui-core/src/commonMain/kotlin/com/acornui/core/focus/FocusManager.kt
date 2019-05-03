@@ -41,7 +41,7 @@ interface FocusManager : Disposable {
 	/**
 	 * Initializes the focus manager with the given root focusable.
 	 */
-	fun init(root: Stage)
+	fun init(root: ElementContainer<UiComponent>)
 
 	/**
 	 * Dispatched when the focused object is about to change.

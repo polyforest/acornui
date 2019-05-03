@@ -2,22 +2,14 @@ package com.acornui.core.focus
 
 import com.acornui.component.ContainerImpl
 import com.acornui.component.InteractivityMode
-import com.acornui.component.alpha
-import com.acornui.core.di.Owned
 import com.acornui.component.atlas
-import com.acornui.core.tween.driveTween
-import com.acornui.core.tween.tweenAlpha
-import com.acornui.graphic.ColorRo
+import com.acornui.core.di.Owned
 import com.acornui.math.Bounds
-import com.acornui.math.Easing
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.MinMaxRo
 
 open class SimpleHighlight(
 		owner: Owned,
 		atlasPath: String,
-		regionName: String,
-		private val animate: Boolean = true
+		regionName: String
 ) : ContainerImpl(owner) {
 
 	private val highlight = addChild(atlas(atlasPath, regionName))
@@ -25,14 +17,6 @@ open class SimpleHighlight(
 	init {
 		interactivityMode = InteractivityMode.NONE
 		includeInLayout = false
-	}
-
-	override fun onActivated() {
-		super.onActivated()
-		if (animate) {
-			highlight.alpha = 0.3f
-			driveTween(highlight.tweenAlpha(0.2f, Easing.pow2Out, 1f))
-		}
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
