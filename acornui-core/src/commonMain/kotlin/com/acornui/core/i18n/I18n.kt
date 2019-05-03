@@ -65,7 +65,9 @@ fun <T : Labelable> T.bindLabel(bundle: I18nBundleRo, key: String = ""): T {
 	return this
 }
 
-fun I18nBundleRo.getOrElse(key: String, default: String = "???") = get(key) ?: default
+var missingI18nStr = "..."
+
+fun I18nBundleRo.getOrElse(key: String, default: String = missingI18nStr) = get(key) ?: default
 
 class I18nImpl : I18n, Disposable {
 
