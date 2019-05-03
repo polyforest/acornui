@@ -17,7 +17,7 @@
 package com.acornui.core.focus
 
 import com.acornui.collection.firstOrNull2
-import com.acornui.component.Stage
+import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
 import com.acornui.core.Disposable
