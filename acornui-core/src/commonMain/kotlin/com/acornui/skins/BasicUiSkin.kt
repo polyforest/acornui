@@ -722,7 +722,7 @@ open class BasicUiSkin(
 	protected open fun calendarStyle() {
 		val datePickerStyle = DatePickerStyle().apply {
 			downArrow = {
-				atlas(theme.atlasPath, "calendar")
+				iconAtlas(theme.atlasPath, "ic_date_range_white_24dp")
 			}
 			padding = Pad(theme.strokeThickness, theme.strokeThickness + 2f, theme.strokeThickness, theme.strokeThickness)
 			background = {
