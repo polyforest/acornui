@@ -1,5 +1,6 @@
 package com.acornui.filter
 
+import com.acornui.async.disposeOnShutdown
 import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
 import com.acornui.core.Renderable
@@ -21,7 +22,6 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 
 	private val gl = inject(Gl20)
 	private val glState = inject(GlState)
-	private val blurShader = own(BlurShader(gl))
 	private val blurFramebufferA = own(resizeableFramebuffer())
 	private val blurFramebufferB = own(resizeableFramebuffer())
 
@@ -75,6 +75,10 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 
 			glState.setTexture(textureToBlur)
 
+			if (blurShader == null) {
+				blurShader = disposeOnShutdown(BlurShader(gl))
+			}
+			val blurShader = blurShader!!
 			glState.useShader(blurShader) {
 				gl.uniform2f(blurShader.getRequiredUniformLocation("u_resolutionInv"), 1f / textureToBlur.width.toFloat(), 1f / textureToBlur.height.toFloat())
 				glState.setTexture(framebufferUtil.texture)
@@ -120,6 +124,10 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 		putVertex(1f, 1f, 0f)
 		putVertex(-1f, 1f, 0f)
 		putQuadIndices()
+	}
+
+	companion object {
+		private var blurShader: ShaderProgram? = null
 	}
 }
 

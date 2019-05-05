@@ -26,6 +26,11 @@ import com.acornui.reflect.observable
 import kotlin.math.ceil
 import kotlin.math.floor
 
+/**
+ * The gl state contains a [ShaderBatch] and a set of gl state properties. When properties are changed, the batch is
+ * flushed.
+ *
+ */
 interface GlState {
 
 	/**
