@@ -106,3 +106,11 @@ fun ShaderBatch.quadLine(v1: Vector2Ro, v2: Vector2Ro, v3: Vector2Ro, v4: Vector
 	line(v3, v4, lineStyle, v2, v1)
 	line(v4, v1, lineStyle, v3, v2)
 }
+
+fun ShaderBatch.putIdtQuad() {
+	putVertex(-1f, -1f, 0f)
+	putVertex(1f, -1f, 0f)
+	putVertex(1f, 1f, 0f)
+	putVertex(-1f, 1f, 0f)
+	putQuadIndices()
+}

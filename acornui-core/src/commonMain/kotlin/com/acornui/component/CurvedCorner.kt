@@ -17,6 +17,7 @@
 package com.acornui.component
 
 import com.acornui.async.disposeOnShutdown
+import com.acornui.component.drawing.putIdtQuad
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.graphic.BlendMode
@@ -74,10 +75,6 @@ fun Scoped.createSmoothCorner(
 		if (curvedShader == null)
 			curvedShader = disposeOnShutdown(CurvedRectShaderProgram(gl))
 		val framebuffer = framebuffer(ceil(cornerRadiusX).toInt() + 4, ceil(cornerRadiusY).toInt() + 4)
-		val fBW = framebuffer.width.toFloat()
-		val fBH = framebuffer.height.toFloat()
-		val pW = cornerRadiusX / fBW
-		val pH = cornerRadiusY / fBH
 		val previousShader = glState.shader
 		val curvedShader = curvedShader!!
 		glState.shader = curvedShader
@@ -92,13 +89,7 @@ fun Scoped.createSmoothCorner(
 			glState.blendMode(BlendMode.NONE, premultipliedAlpha = false)
 			val batch = glState.batch
 			batch.begin()
-			val w = pW * 2f - 1f
-			val h = pH * 2f - 1f
-			batch.putVertex(-1f, -1f, 0f, u = 0f, v = 0f)
-			batch.putVertex(w, -1f, -1f, u = 1f, v = 0f)
-			batch.putVertex(w, h, -1f, u = 1f, v = 1f)
-			batch.putVertex(-1f, h, -1f, u = 0f, v = 1f)
-			batch.putQuadIndices()
+			batch.putIdtQuad()
 		}
 		framebuffer.end()
 		glState.shader = previousShader
@@ -160,7 +151,7 @@ varying vec2 v_texCoord;
 
 void main() {
 	// x^2/a^2 + y^2/b^2 = 1
-	vec2 p = v_texCoord * u_cornerRadius;
+	vec2 p = gl_FragCoord.xy;
 	vec2 p2 = p * p;
 	vec2 innerRadius = max(vec2(0.0), u_cornerRadius - u_strokeThickness);
 	float outer = p2.x / (u_cornerRadius.x * u_cornerRadius.x) + p2.y / (u_cornerRadius.y * u_cornerRadius.y);
@@ -176,6 +167,5 @@ void main() {
 	}
 }""",
 		vertexAttributes = mapOf(
-				VertexAttributeUsage.POSITION to CommonShaderAttributes.A_POSITION,
-				VertexAttributeUsage.TEXTURE_COORD to CommonShaderAttributes.A_TEXTURE_COORD + "0")
+				VertexAttributeUsage.POSITION to CommonShaderAttributes.A_POSITION)
 )

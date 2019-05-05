@@ -3,6 +3,7 @@ package com.acornui.filter
 import com.acornui.async.disposeOnShutdown
 import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
+import com.acornui.component.drawing.putIdtQuad
 import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
@@ -116,14 +117,6 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 
 	fun drawOriginalToScreen(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		framebufferUtil.drawToScreen(clip, transform, tint)
-	}
-
-	private fun ShaderBatch.putIdtQuad() {
-		putVertex(-1f, -1f, 0f)
-		putVertex(1f, -1f, 0f)
-		putVertex(1f, 1f, 0f)
-		putVertex(-1f, 1f, 0f)
-		putQuadIndices()
 	}
 
 	companion object {
