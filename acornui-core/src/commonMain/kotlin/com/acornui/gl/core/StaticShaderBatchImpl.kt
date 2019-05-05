@@ -37,6 +37,11 @@ class StaticShaderBatchImpl(
 		override val vertexAttributes: VertexAttributes
 ) : StaticShaderBatch, Clearable, Disposable {
 
+	override val vertexComponentsCount: Int
+		get() = vertexComponents.position
+	override val indicesCount: Int
+		get() = indices.position
+
 	private val vertexComponentsBuffer: GlBufferRef = gl.createBuffer()
 	private val indicesBuffer: GlBufferRef = gl.createBuffer()
 

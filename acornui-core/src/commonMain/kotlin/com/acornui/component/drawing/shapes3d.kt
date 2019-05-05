@@ -1,5 +1,6 @@
 package com.acornui.component.drawing
 
+import com.acornui.gl.core.ShaderBatch
 import com.acornui.gl.core.putIndex
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putVertex
@@ -18,7 +19,7 @@ import kotlin.math.sin
  * gl.frontFace(Gl20.CW)
  * gl.cullFace(Gl20.BACK)
  */
-fun MeshRegion.cylinder(width: Float, height: Float, depth: Float, segments: Int = 180, fillColor: ColorRo = Color.WHITE, init: MeshRegion.() -> Unit = {}) = mesh {
+fun ShaderBatch.cylinder(width: Float, height: Float, depth: Float, segments: Int = 180, fillColor: ColorRo = Color.WHITE, init: ShaderBatch.() -> Unit = {}) {
 	val hW = width * 0.5f
 	val hH = height * 0.5f
 	putVertex(hW, hH, 0f, Vector3.NEG_Z, fillColor) // 0
@@ -72,7 +73,7 @@ fun MeshRegion.cylinder(width: Float, height: Float, depth: Float, segments: Int
  * gl.frontFace(Gl20.CW)
  * gl.cullFace(Gl20.BACK)
  */
-fun MeshRegion.box(width: Float, height: Float, depth: Float, fillColor: ColorRo = Color.WHITE, init: MeshRegion.() -> Unit = {}) = mesh {
+fun ShaderBatch.box(width: Float, height: Float, depth: Float, fillColor: ColorRo = Color.WHITE, init: ShaderBatch.() -> Unit = {}) {
 	// Top face
 	putVertex(0f, 0f, 0f, Vector3.NEG_Z, fillColor)
 	putVertex(width, 0f, 0f, Vector3.NEG_Z, fillColor)

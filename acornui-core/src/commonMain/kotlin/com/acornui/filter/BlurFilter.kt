@@ -88,12 +88,12 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 					val p = i.toFloat() / passes.toFloat()
 					blurFramebufferA.begin()
 					gl.uniform2f(blurShader.getRequiredUniformLocation("u_dir"), 0f, blurY * p)
-					glState.batch.putIdt()
+					glState.batch.putIdtQuad()
 					blurFramebufferA.end()
 					blurFramebufferB.begin()
 					glState.setTexture(blurFramebufferA.texture)
 					gl.uniform2f(blurShader.getRequiredUniformLocation("u_dir"), blurX * p, 0f)
-					glState.batch.putIdt()
+					glState.batch.putIdtQuad()
 					blurFramebufferB.end()
 					glState.setTexture(blurFramebufferB.texture)
 				}
@@ -118,7 +118,7 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 		framebufferUtil.drawToScreen(clip, transform, tint)
 	}
 
-	private fun ShaderBatch.putIdt() {
+	private fun ShaderBatch.putIdtQuad() {
 		putVertex(-1f, -1f, 0f)
 		putVertex(1f, -1f, 0f)
 		putVertex(1f, 1f, 0f)

@@ -34,6 +34,11 @@ class ShaderBatchImpl(
 		override val vertexAttributes: VertexAttributes
 ) : ShaderBatch, Disposable {
 
+	override val vertexComponentsCount: Int
+		get() = vertexComponents.position
+	override val indicesCount: Int
+		get() = indices.position
+
 	private var _renderCount = 0
 
 	private val vertexComponentsBuffer: GlBufferRef = gl.createBuffer()

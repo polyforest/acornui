@@ -6,6 +6,11 @@ package com.acornui.gl.core
 interface VertexFeed {
 
 	/**
+	 * The number of vertex components currently in the feed.
+	 */
+	val vertexComponentsCount: Int
+
+	/**
 	 * The vertex attributes for this feed, this should never change.
 	 */
 	val vertexAttributes: VertexAttributes
@@ -18,6 +23,11 @@ interface VertexFeed {
  * An [IndexFeed] provides a way to push indices to an index buffer.
  */
 interface IndexFeed {
+
+	/**
+	 * The number of indices currently in the feed.
+	 */
+	val indicesCount: Int
 
 	/**
 	 * Returns the currently highest index pushed.

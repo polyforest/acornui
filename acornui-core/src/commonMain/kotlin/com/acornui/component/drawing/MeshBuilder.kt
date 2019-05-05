@@ -13,27 +13,29 @@ import com.acornui.math.*
  */
 class MeshRegion private constructor() : Clearable, ShaderBatch {
 
-	private var _startVertexPosition = 0
-	private var _startIndexPosition = 0
-	private var _startDrawCallIndex = 0
+	override val vertexComponentsCount: Int
+		get() = batch.vertexComponentsCount
+	override val indicesCount: Int
+		get() = batch.indicesCount
 
 	/**
-	 * Returns the vertex component buffer position where this region begins.
+	 * The vertex component buffer position where this region begins.
 	 */
-	val startVertexPosition: Int
-		get() = _startVertexPosition
+	var startVertexPosition: Int = 0
+		private set
 
 	/**
-	 * Returns the index buffer position where this region begins.
+	 * The index buffer position where this region begins.
 	 */
-	val startIndexPosition: Int
-		get() = _startIndexPosition
+	var startIndexPosition: Int = 0
+		private set
+
 
 	/**
-	 * Returns the draw call list index where this region begins.
+	 * The draw call list index where this region begins.
 	 */
-	val startDrawCallIndex: Int
-		get() = _startDrawCallIndex
+	var startDrawCallIndex: Int = 0
+		private set
 
 	private var _batch: StaticShaderBatch? = null
 	val batch: StaticShaderBatch
@@ -41,9 +43,9 @@ class MeshRegion private constructor() : Clearable, ShaderBatch {
 
 	fun init(batch: StaticShaderBatch) {
 		this._batch = batch
-		_startVertexPosition = batch.vertexComponents.position
-		_startIndexPosition = batch.indices.position
-		_startDrawCallIndex = batch.drawCalls.size
+		this.startVertexPosition = batch.vertexComponents.position
+		this.startIndexPosition = batch.indices.position
+		this.startDrawCallIndex = batch.drawCalls.size
 	}
 
 	override val highestIndex: Short
@@ -79,19 +81,6 @@ class MeshRegion private constructor() : Clearable, ShaderBatch {
 	fun transformVertices(value: Matrix4Ro) {
 		iterateVector3Attribute(VertexAttributeUsage.POSITION) {
 			value.prj(it)
-		}
-	}
-
-	private inline fun iterateVector3Attribute(usage: Int, inner: (v: Vector3) -> Unit) {
-		batch.iterateVertexAttribute(usage, _startVertexPosition) {
-			val x = it.get()
-			val y = it.get()
-			val z = it.get()
-			inner(tmpVec.set(x, y, z))
-			it.position -= 3
-			it.put(tmpVec.x)
-			it.put(tmpVec.y)
-			it.put(tmpVec.z)
 		}
 	}
 
@@ -134,7 +123,7 @@ class MeshRegion private constructor() : Clearable, ShaderBatch {
 	 */
 	fun colorTransform(colorTint: ColorRo) {
 		val v = batch.vertexComponents
-		batch.iterateVertexAttribute(VertexAttributeUsage.COLOR_TINT, _startVertexPosition) {
+		batch.iterateVertexAttribute(VertexAttributeUsage.COLOR_TINT, this.startVertexPosition) {
 			val r = v.get()
 			val g = v.get()
 			val b = v.get()
@@ -145,6 +134,19 @@ class MeshRegion private constructor() : Clearable, ShaderBatch {
 			v.put(tmpColor.g)
 			v.put(tmpColor.b)
 			v.put(tmpColor.a)
+		}
+	}
+
+	private inline fun iterateVector3Attribute(usage: Int, inner: (v: Vector3) -> Unit) {
+		batch.iterateVertexAttribute(usage, this.startVertexPosition) {
+			val x = it.get()
+			val y = it.get()
+			val z = it.get()
+			inner(tmpVec.set(x, y, z))
+			it.position -= 3
+			it.put(tmpVec.x)
+			it.put(tmpVec.y)
+			it.put(tmpVec.z)
 		}
 	}
 
@@ -284,7 +286,7 @@ interface CapBuilder {
 	 * @param p2 The second point in the line
 	 * @param control The optional previous point before this line.
 	 */
-	fun createCap(p1: Vector2Ro, p2: Vector2Ro, control: Vector2Ro?, meshRegion: MeshRegion, lineStyle: LineStyleRo, controlLineThickness: Float, clockwise: Boolean)
+	fun createCap(p1: Vector2Ro, p2: Vector2Ro, control: Vector2Ro?, meshRegion: ShaderBatch, lineStyle: LineStyleRo, controlLineThickness: Float, clockwise: Boolean)
 }
 
 enum class MeshIntersectionType {

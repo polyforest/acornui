@@ -92,11 +92,11 @@ interface StaticShaderBatch : ShaderBatch {
 	fun render()
 }
 
-inline fun StaticShaderBatch.iterateVertexAttribute(usage: Int, startPosition: Int = 0, inner: (ReadWriteBuffer<Float>) -> Unit) {
+inline fun StaticShaderBatch.iterateVertexAttribute(usage: Int, startPosition: Int = 0, endPosition: Int = vertexComponentsCount, inner: (ReadWriteBuffer<Float>) -> Unit) {
 	val offset = vertexAttributes.getOffsetByUsage(usage) ?: return
 	val p = vertexComponents.position
 	var i = startPosition + offset
-	while (i < p) {
+	while (i < endPosition) {
 		vertexComponents.position = i
 		inner(vertexComponents)
 		i += vertexAttributes.vertexSize
