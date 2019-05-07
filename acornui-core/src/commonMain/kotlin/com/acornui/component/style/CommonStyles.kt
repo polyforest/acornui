@@ -17,7 +17,6 @@
 package com.acornui.component.style
 
 import com.acornui.component.UiComponent
-import com.acornui.skins.Theme
 
 object CommonStyleTags {
 

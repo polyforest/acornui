@@ -111,14 +111,18 @@ class FocusManagerImpl() : FocusManager {
 		Unit
 	}
 
-	private var _highlight: UiComponent? = null
+	private var _highlightIndicator: UiComponent? = null
+
+	override val highlightIndicator: UiComponentRo?
+		get() = _highlightIndicator
+
 	override fun setHighlightIndicator(value: UiComponent?, disposeOld: Boolean) {
-		val old = _highlight
+		val old = _highlightIndicator
 		if (value == old) return
 		old?.disposed?.remove(::highlightDisposedHandler)
 		val wasHighlighted = _highlighted != null
 		unhighlightFocused()
-		_highlight = value
+		_highlightIndicator = value
 		if (value != null) {
 			value.includeInLayout = false
 			value.disposed.add(::highlightDisposedHandler)
@@ -272,9 +276,9 @@ class FocusManagerImpl() : FocusManager {
 	}
 
 	override fun unhighlightFocused() {
-		if (_highlight != null) {
-			_highlight?.visible = false
-			root.removeElement(_highlight!!)
+		if (_highlightIndicator != null) {
+			_highlightIndicator?.visible = false
+			root.removeElement(_highlightIndicator!!)
 		}
 		_highlighted?.invalidated?.remove(::highlightedInvalidatedHandler.as2)
 		_highlighted = null
@@ -284,7 +288,7 @@ class FocusManagerImpl() : FocusManager {
 		if (_focused != _root) {
 			_highlighted = _focused
 			if (_highlighted != null) {
-				_highlight?.visible = false
+				_highlightIndicator?.visible = false
 				_highlighted!!.invalidated.add(::highlightedInvalidatedHandler.as2)
 			}
 			highlightedInvalidatedHandler()
@@ -300,8 +304,8 @@ class FocusManagerImpl() : FocusManager {
 
 	private fun updateHighlight() {
 		val highlighted = _highlighted ?: return
-		val highlight = _highlight ?: return
-		_highlight?.visible = true
+		val highlight = _highlightIndicator ?: return
+		_highlightIndicator?.visible = true
 
 		highlighted.updateFocusHighlight(highlightBounds, highlightTransform)
 

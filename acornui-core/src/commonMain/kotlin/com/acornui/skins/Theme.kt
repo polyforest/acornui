@@ -17,8 +17,11 @@
 package com.acornui.skins
 
 import com.acornui.component.ButtonState
+import com.acornui.core.AppConfig
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Injector
+import com.acornui.core.di.Scoped
+import com.acornui.core.di.inject
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.color
@@ -30,176 +33,142 @@ import com.acornui.serialization.*
 /**
  * The Theme is a set of common styling properties, used to build a skin.
  */
-class Theme {
+data class Theme(
+
+		/**
+		 * This will be set to the `backgroundColor` property in [com.acornui.core.config] window.
+		 * @see com.acornui.core.WindowConfig.backgroundColor
+		 * @see com.acornui.core.AppConfig
+		 */
+		val bgColor: ColorRo = Color(0xf1f2f3ff),
+		val panelBgColor: ColorRo = Color(0xe7edf1ff),
+
+		val brighten: ColorRo = Color(0x15151500),
+
+		val fill: ColorRo = Color(0xf3f9faff),
+		val fillOver: ColorRo = fill + brighten,
+		val fillDown: ColorRo = fill - brighten,
+		val fillToggled: ColorRo = Color(0xedf1faff),
+		val fillToggledOver: ColorRo = fillToggled + brighten,
+		val fillToggledDown: ColorRo = fillToggled - brighten,
+		val fillDisabled: ColorRo = Color(0xccccccff),
+
+		val stroke: ColorRo = Color(0x888888ff),
+		val strokeOver: ColorRo = stroke + brighten,
+		val strokeDown: ColorRo = stroke - brighten,
+		val strokeToggled: ColorRo = Color(0x2287f9cc),
+		val strokeToggledOver: ColorRo = strokeToggled + brighten,
+		val strokeToggledDown: ColorRo = strokeToggled - brighten,
+		val strokeDisabled: ColorRo = Color(0x999999ff),
+
+		/**
+		 *The shine color to overlay. (Set to clear for no shine.)
+		 */
+		val fillShine: ColorRo = Color(1f, 1f, 1f, 0.9f),
+		val fillToggledShine: ColorRo = Color(1f, 1f, 1f, 0.9f),
+
+		val focusHighlightColor: ColorRo = Color(0x0235acff),
+
+		/**
+		 *Text input, text area.
+		 */
+		val inputFill: ColorRo = Color(0.97f, 0.97f, 0.97f, 1f),
+
+		val strokeThickness: Float = 1f,
+		val borderRadius: Float = 8f,
+
+		val textColor: ColorRo = Color(0x333333ff),
+		val textDisabledColor: ColorRo = Color(0x666666ff),
+		val headingColor: ColorRo = Color(0x333333ff),
+		val formLabelColor: ColorRo = Color(0x555555ff),
+
+		val errorColor: ColorRo = Color(0xcc3333ff),
+		val warningColor: ColorRo = Color(0xff9933ff),
+		val infoColor: ColorRo = Color(0x339933ff),
+
+		val controlBarBgColor: ColorRo = Color(0xdae5f0ff),
+
+		val evenRowBgColor: ColorRo = bgColor + Color(0x03030300),
+		val oddRowBgColor: ColorRo = bgColor - Color(0x03030300),
+
+		val highlightedEvenRowBgColor: ColorRo = Color(0xfeffd2ff),
+		val highlightedOddRowBgColor: ColorRo = Color(0xfeffd2ff),
+
+		val toggledEvenRowBgColor: ColorRo = Color(0xfcfd7cff),
+		val toggledOddRowBgColor: ColorRo = Color(0xfcfd7cff),
+
+		val buttonPad: PadRo = Pad(4f),
+		val iconButtonGap: Float = 2f,
+
+		val iconColor: ColorRo = Color(0.25f, 0.25f, 0.25f, 0.8f),
+
+		val atlasPath: String = "assets/uiskin/uiskin.json"
+)
+
+interface ThemeProvider {
 
 	/**
-	 * This will be set to the `backgroundColor` property in [com.acornui.core.config] window.
-	 * @see com.acornui.core.WindowConfig.backgroundColor
-	 * @see com.acornui.core.AppConfig
+	 * The scope's theme. If this is set, the skin will need to be re-applied.
 	 */
-	var bgColor: ColorRo = Color(0xf1f2f3ff)
-	var panelBgColor: ColorRo = Color(0xe7edf1ff)
+	val theme: Theme
 
-	val brighten: ColorRo = Color(0x15151500)
+	companion object : DKey<ThemeProvider> {
+		override fun factory(injector: Injector): ThemeProvider {
+			val bgColor = injector.inject(AppConfig).window.backgroundColor
+			return ThemeProviderImpl(Theme(
+					bgColor = bgColor,
+					evenRowBgColor = bgColor + Color(0x03030300),
+					oddRowBgColor = bgColor - Color(0x03030300)
 
-	var fill: ColorRo = Color(0xf3f9faff)
-	var fillOver: ColorRo = fill + brighten
-	var fillDown: ColorRo = fill - brighten
-	var fillToggled: ColorRo = Color(0xedf1faff)
-	var fillToggledOver: ColorRo = fillToggled + brighten
-	var fillToggledDown: ColorRo = fillToggled - brighten
-	var fillDisabled: ColorRo = Color(0xccccccff)
-
-	var stroke: ColorRo = Color(0x888888ff)
-	var strokeOver: ColorRo = stroke + brighten
-	var strokeDown: ColorRo = stroke - brighten
-	var strokeToggled: ColorRo = Color(0x2287f9cc)
-	var strokeToggledOver: ColorRo = strokeToggled + brighten
-	var strokeToggledDown: ColorRo = strokeToggled - brighten
-	var strokeDisabled: ColorRo = Color(0x999999ff)
-
-	/**
-	 * The shine color to overlay. (Set to clear for no shine.)
-	 */
-	var fillShine: ColorRo = Color(1f, 1f, 1f, 0.9f)
-	var fillToggledShine: ColorRo = Color(1f, 1f, 1f, 0.9f)
-
-	var focusHighlightColor: ColorRo = Color(0x0235acff)
-
-	/**
-	 * Text input, text area.
-	 */
-	var inputFill: ColorRo = Color(0.97f, 0.97f, 0.97f, 1f)
-
-	var strokeThickness = 1f
-	var borderRadius = 8f
-
-	var textColor: ColorRo = Color(0x333333ff)
-	var headingColor: ColorRo = Color(0x333333ff)
-	var formLabelColor: ColorRo = Color(0x555555ff)
-
-	var errorColor: ColorRo = Color(0xcc3333ff)
-	var warningColor: ColorRo = Color(0xff9933ff)
-	var infoColor: ColorRo = Color(0x339933ff)
-
-	var controlBarBgColor: ColorRo = Color(0xdae5f0ff)
-
-	var evenRowBgColor: ColorRo = bgColor + Color(0x03030300)
-	var oddRowBgColor: ColorRo = bgColor - Color(0x03030300)
-
-	var highlightedEvenRowBgColor: ColorRo = Color(0xfeffd2ff)
-	var highlightedOddRowBgColor: ColorRo = Color(0xfeffd2ff)
-
-	var toggledEvenRowBgColor: ColorRo = Color(0xfcfd7cff)
-	var toggledOddRowBgColor: ColorRo = Color(0xfcfd7cff)
-
-	var buttonPad: PadRo = Pad(4f)
-	var iconButtonGap = 2f
-
-	var iconColor: ColorRo = Color(0.25f, 0.25f, 0.25f, 0.8f)
-
-	var atlasPath = "assets/uiskin/uiskin.json"
-
-	fun set(other: Theme) {
-		bgColor = other.bgColor
-		panelBgColor = other.panelBgColor
-
-		fill = other.fill
-		fillOver = other.fillOver
-		fillDown = other.fillDown
-		fillToggled = other.fillToggled
-		fillToggledOver = other.fillToggledOver
-		fillToggledDown = other.fillToggledDown
-		fillDisabled = other.fillDisabled
-
-		stroke = other.stroke
-		strokeOver = other.strokeOver
-		strokeDown = other.strokeDown
-		strokeToggled = other.strokeToggled
-		strokeToggledOver = other.strokeToggledOver
-		strokeToggledDown = other.strokeToggledDown
-		strokeDisabled = other.strokeDisabled
-
-		fillShine = other.fillShine
-		fillToggledShine = other.fillToggledShine
-		inputFill = other.inputFill
-		focusHighlightColor = other.focusHighlightColor
-
-		strokeThickness = other.strokeThickness
-		borderRadius = other.borderRadius
-
-		textColor = other.textColor
-		headingColor = other.headingColor
-		formLabelColor = other.formLabelColor
-
-		errorColor = other.errorColor
-		warningColor = other.warningColor
-		infoColor = other.infoColor
-
-		controlBarBgColor = other.controlBarBgColor
-
-		evenRowBgColor = other.evenRowBgColor
-		oddRowBgColor = other.oddRowBgColor
-
-		highlightedEvenRowBgColor = other.highlightedEvenRowBgColor
-		highlightedOddRowBgColor = other.highlightedOddRowBgColor
-
-		toggledEvenRowBgColor = other.toggledEvenRowBgColor
-		toggledOddRowBgColor = other.toggledOddRowBgColor
-
-		buttonPad = other.buttonPad
-		iconButtonGap = other.iconButtonGap
-
-		iconColor = other.iconColor
-
-		atlasPath = other.atlasPath
-	}
-
-	companion object : DKey<Theme> {
-		override fun factory(injector: Injector) = Theme()
+			))
+		}
 	}
 }
+
+class ThemeProviderImpl(override val theme: Theme) : ThemeProvider
 
 object ThemeSerializer : To<Theme>, From<Theme> {
 
 	override fun read(reader: Reader): Theme {
-		val o = Theme()
-		o.atlasPath = reader.string("atlasPath")!!
-		o.bgColor = reader.color("bgColor")!!
-		o.borderRadius = reader.float("borderRadius")!!
-		o.buttonPad = reader.obj("buttonPad", PadSerializer)!!
-		o.controlBarBgColor = reader.color("controlBarBgColor")!!
-		o.errorColor = reader.color("errorColor")!!
-		o.evenRowBgColor = reader.color("evenRowBgColor")!!
-		o.fill = reader.color("fill")!!
-		o.fillDown = reader.color("fillDown")!!
-		o.fillDisabled = reader.color("fillDisabled")!!
-		o.fillOver = reader.color("fillOver")!!
-		o.fillShine = reader.color("fillShine")!!
-		o.fillToggledShine = reader.color("fillToggledShine")!!
-		o.formLabelColor = reader.color("formLabelColor")!!
-		o.headingColor = reader.color("headingColor")!!
-		o.highlightedEvenRowBgColor = reader.color("highlightedEvenRowBgColor")!!
-		o.highlightedOddRowBgColor = reader.color("highlightedOddRowBgColor")!!
-		o.iconButtonGap = reader.float("iconButtonGap")!!
-		o.iconColor = reader.color("iconColor") ?: Color.DARK_GRAY
-		o.infoColor = reader.color("infoColor")!!
-		o.inputFill = reader.color("inputFill")!!
-		o.oddRowBgColor = reader.color("oddRowBgColor")!!
-		o.panelBgColor = reader.color("panelBgColor")!!
-		o.stroke = reader.color("stroke")!!
-		o.strokeDisabled = reader.color("strokeDisabled")!!
-		o.strokeOver = reader.color("strokeOver")!!
-		o.strokeThickness = reader.float("strokeThickness")!!
-		o.strokeToggled = reader.color("strokeToggled")!!
-		o.strokeToggledOver = reader.color("strokeToggledOver")!!
-		o.strokeToggledDown = reader.color("strokeToggledDown")!!
-		o.focusHighlightColor = reader.color("focusHighlightColor")!!
-		o.textColor = reader.color("textColor")!!
-		o.toggledEvenRowBgColor = reader.color("toggledEvenRowBgColor")!!
-		o.toggledOddRowBgColor = reader.color("toggledOddRowBgColor")!!
-		o.warningColor = reader.color("warningColor")!!
-		return o
+		return Theme(
+				atlasPath = reader.string("atlasPath")!!,
+				bgColor = reader.color("bgColor")!!,
+				borderRadius = reader.float("borderRadius")!!,
+				buttonPad = reader.obj("buttonPad", PadSerializer)!!,
+				controlBarBgColor = reader.color("controlBarBgColor")!!,
+				errorColor = reader.color("errorColor")!!,
+				evenRowBgColor = reader.color("evenRowBgColor")!!,
+				fill = reader.color("fill")!!,
+				fillDown = reader.color("fillDown")!!,
+				fillDisabled = reader.color("fillDisabled")!!,
+				fillOver = reader.color("fillOver")!!,
+				fillShine = reader.color("fillShine")!!,
+				fillToggledShine = reader.color("fillToggledShine")!!,
+				formLabelColor = reader.color("formLabelColor")!!,
+				headingColor = reader.color("headingColor")!!,
+				highlightedEvenRowBgColor = reader.color("highlightedEvenRowBgColor")!!,
+				highlightedOddRowBgColor = reader.color("highlightedOddRowBgColor")!!,
+				iconButtonGap = reader.float("iconButtonGap")!!,
+				iconColor = reader.color("iconColor") ?: Color.DARK_GRAY,
+				infoColor = reader.color("infoColor")!!,
+				inputFill = reader.color("inputFill")!!,
+				oddRowBgColor = reader.color("oddRowBgColor")!!,
+				panelBgColor = reader.color("panelBgColor")!!,
+				stroke = reader.color("stroke")!!,
+				strokeDisabled = reader.color("strokeDisabled")!!,
+				strokeOver = reader.color("strokeOver")!!,
+				strokeThickness = reader.float("strokeThickness")!!,
+				strokeToggled = reader.color("strokeToggled")!!,
+				strokeToggledOver = reader.color("strokeToggledOver")!!,
+				strokeToggledDown = reader.color("strokeToggledDown")!!,
+				focusHighlightColor = reader.color("focusHighlightColor")!!,
+				textColor = reader.color("textColor")!!,
+				textDisabledColor = reader.color("textDisabledColor")!!,
+				toggledEvenRowBgColor = reader.color("toggledEvenRowBgColor")!!,
+				toggledOddRowBgColor = reader.color("toggledOddRowBgColor")!!,
+				warningColor = reader.color("warningColor")!!
+
+		)
 	}
 
 	override fun Theme.write(writer: Writer) {
@@ -239,13 +208,12 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 		writer.color("panelBgColor", panelBgColor)
 		writer.color("focusHighlightColor", focusHighlightColor)
 		writer.color("textColor", textColor)
+		writer.color("textDisabledColor", textDisabledColor)
 		writer.color("toggledEvenRowBgColor", toggledEvenRowBgColor)
 		writer.color("toggledOddRowBgColor", toggledOddRowBgColor)
 		writer.color("warningColor", warningColor)
 	}
 }
-
-typealias ButtonStateColors = Map<ButtonState, ColorRo>
 
 fun Theme.getButtonFillColor(buttonState: ButtonState): ColorRo {
 	return when (buttonState) {
@@ -281,4 +249,8 @@ fun Theme.getButtonStrokeColor(buttonState: ButtonState): ColorRo {
 
 		ButtonState.DISABLED -> strokeDisabled
 	}
+}
+
+fun Scoped.theme(): Theme {
+	return inject(ThemeProvider).theme
 }

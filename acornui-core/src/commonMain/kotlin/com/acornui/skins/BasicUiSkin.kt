@@ -32,7 +32,6 @@ import com.acornui.component.layout.spacer
 import com.acornui.component.scroll.*
 import com.acornui.component.style.*
 import com.acornui.component.text.*
-import com.acornui.core.AppConfig
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.focus.FocusManager
@@ -55,19 +54,11 @@ open class BasicUiSkin(
 
 	final override val injector = target.injector
 
-	protected val theme = inject(Theme)
-
-	init {
-		theme.apply {
-			bgColor = inject(AppConfig).window.backgroundColor
-			evenRowBgColor = bgColor + Color(0x03030300)
-			oddRowBgColor = bgColor - Color(0x03030300)
-		}
-	}
+	protected lateinit var theme: Theme
 
 	open fun apply() {
+		theme = target.theme()
 		target.styleRules.clear()
-		initTheme()
 		inject(Window).clearColor = theme.bgColor
 
 		target.addStyleRule(ButtonStyle().set { labelButtonSkin(theme, it) }, Button)
@@ -106,9 +97,6 @@ open class BasicUiSkin(
 		formStyle()
 	}
 
-	open fun initTheme() {
-	}
-
 	protected open fun iconStyle() {
 		val iconStyle = IconStyle().apply {
 			iconColor = theme.iconColor
@@ -129,9 +117,11 @@ open class BasicUiSkin(
 
 	protected open fun focusStyle() {
 		val focusManager = inject(FocusManager)
-		val focusHighlight = SimpleHighlight(target, theme.atlasPath, "FocusRect")
-		focusHighlight.colorTint = theme.focusHighlightColor
-		focusManager.setHighlightIndicator(focusHighlight)
+		if (focusManager.highlightIndicator == null) {
+			val focusHighlight = SimpleHighlight(target, theme.atlasPath, "FocusRect")
+			focusHighlight.colorTint = theme.focusHighlightColor
+			focusManager.setHighlightIndicator(focusHighlight)
+		}
 	}
 
 	protected open fun textStyle() {
@@ -352,7 +342,7 @@ open class BasicUiSkin(
 			{
 				val texture = buttonTexture(it, Corners(topLeft = 0f, topRight = maxOf(4f, theme.borderRadius), bottomRight = 0f, bottomLeft = 0f))
 				val skinPart = IconButtonSkinPart(this, texture, stepperPad)
-				val theme = inject(Theme)
+				val theme = theme
 				skinPart.element = atlas(theme.atlasPath, "ArrowUpSm") {
 					colorTint = theme.iconColor
 				}
@@ -364,7 +354,7 @@ open class BasicUiSkin(
 			{
 				val texture = buttonTexture(it, Corners(topLeft = 0f, topRight = 0f, bottomRight = maxOf(4f, theme.borderRadius), bottomLeft = 0f))
 				val skinPart = IconButtonSkinPart(this, texture, stepperPad)
-				val theme = inject(Theme)
+				val theme = theme
 				skinPart.element = atlas(theme.atlasPath, "ArrowDownSm") {
 					colorTint = theme.iconColor
 				}

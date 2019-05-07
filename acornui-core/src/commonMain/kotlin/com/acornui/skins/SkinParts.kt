@@ -20,8 +20,9 @@ import com.acornui.component.*
 import com.acornui.component.layout.algorithm.CanvasLayoutContainer
 import com.acornui.component.layout.algorithm.canvas
 import com.acornui.component.style.OptionalSkinPart
+import com.acornui.component.style.addStyleRule
+import com.acornui.component.text.charStyle
 import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
 import com.acornui.graphic.Color
 import com.acornui.math.*
 
@@ -67,8 +68,8 @@ interface SkinPartProvider {
 	 */
 	fun Owned.buttonTexture(
 			buttonState: ButtonState,
-			borderRadius: CornersRo = Corners(inject(Theme).borderRadius),
-			borderThickness: PadRo = Pad(inject(Theme).strokeThickness)
+			borderRadius: CornersRo = Corners(theme().borderRadius),
+			borderThickness: PadRo = Pad(theme().strokeThickness)
 	): UiComponent
 }
 
@@ -79,7 +80,7 @@ open class BasicSkinPartProvider : SkinPartProvider {
 		else {
 			val texture = buttonTexture(buttonState)
 			val skinPart = IconButtonSkinPart(this, texture, padding, hGap)
-			val theme = inject(Theme)
+			val theme = theme()
 			skinPart.element = atlas(theme.atlasPath, icon)
 			skinPart
 		}
@@ -89,7 +90,11 @@ open class BasicSkinPartProvider : SkinPartProvider {
 		if (buttonState.isIndeterminate) null
 		else {
 			val texture = buttonTexture(buttonState)
-			LabelButtonSkinPart(this, texture, theme.buttonPad)
+			LabelButtonSkinPart(this, texture, theme.buttonPad).apply {
+				if (buttonState == ButtonState.DISABLED) {
+					addStyleRule(charStyle { colorTint = theme.textDisabledColor })
+				}
+			}
 		}
 	}
 
@@ -129,7 +134,11 @@ open class BasicSkinPartProvider : SkinPartProvider {
 		CheckboxSkinPart(
 				this,
 				box
-		)
+		).apply {
+			if (buttonState == ButtonState.DISABLED) {
+				addStyleRule(charStyle { colorTint = theme.textDisabledColor })
+			}
+		}
 	}
 
 	/**
@@ -169,6 +178,9 @@ open class BasicSkinPartProvider : SkinPartProvider {
 				this,
 				radio
 		).apply {
+			if (buttonState == ButtonState.DISABLED) {
+				addStyleRule(charStyle { colorTint = theme.textDisabledColor })
+			}
 			radio layout {
 				width = 18f
 				height = 18f
@@ -177,7 +189,7 @@ open class BasicSkinPartProvider : SkinPartProvider {
 	}
 
 	override fun Owned.buttonTexture(buttonState: ButtonState, borderRadius: CornersRo, borderThickness: PadRo): CanvasLayoutContainer = canvas {
-		val theme = inject(Theme)
+		val theme = theme()
 		+rect {
 			style.apply {
 				backgroundColor = theme.getButtonFillColor(buttonState)

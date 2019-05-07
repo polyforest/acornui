@@ -56,6 +56,11 @@ interface FocusManager : Disposable {
 	val focusedChanged: Signal<(UiComponentRo?, UiComponentRo?) -> Unit>
 
 	/**
+	 * The current highlight indicator, as set via [setHighlightIndicator].
+	 */
+	val highlightIndicator: UiComponentRo?
+
+	/**
 	 * This component will be used to highlight the focused element.
 	 * This component will be added to the stage provided during [init] and sized and positioned automatically.
 	 */
