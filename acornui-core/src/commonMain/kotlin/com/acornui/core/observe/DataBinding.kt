@@ -49,7 +49,7 @@ class DataBindingImpl<T>(initialValue: T) : DataBinding<T> {
 	private val _changed = Signal2<T, T>()
 	override val changed = _changed.asRo()
 
-	private val _wrapped = HashMap<(T) -> Unit, DataChangeHandler<T>>()
+	private val _wrapped: MutableMap<(T) -> Unit, (T, T) -> Unit> = HashMap()
 
 	private var _value: T = initialValue
 

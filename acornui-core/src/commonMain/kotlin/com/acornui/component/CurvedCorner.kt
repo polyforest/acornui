@@ -31,10 +31,11 @@ private data class SmoothCornerKey(
 		val cornerRadiusX: Float,
 		val cornerRadiusY: Float,
 		val strokeThicknessX: Float?,
-		val strokeThicknessY: Float?
+		val strokeThicknessY: Float?,
+		val pad: Float
 )
 
-private val smoothCornerMap = HashMap<SmoothCornerKey, Framebuffer>()
+private val smoothCornerMap: MutableMap<SmoothCornerKey, Framebuffer> = HashMap()
 
 /**
  * Generates a smooth, antialiased corner.
@@ -46,6 +47,7 @@ private val smoothCornerMap = HashMap<SmoothCornerKey, Framebuffer>()
  * @param flipY If true, the v and v2 values will be flipped.
  * @param spriteOut The Sprite to populate with the uv coordinates and texture.
  * @param useCache If true, the frame buffer used will be saved for matching corner properties.
+ * @param pad The padding to
  * @return Returns [spriteOut].
  */
 fun Scoped.createSmoothCorner(
@@ -55,8 +57,9 @@ fun Scoped.createSmoothCorner(
 		strokeThicknessY: Float? = null,
 		flipX: Boolean = false,
 		flipY: Boolean = false,
-		spriteOut: Sprite = Sprite(inject(GlState)),
-		useCache: Boolean = true
+		spriteOut: Sprite,
+		useCache: Boolean = true,
+		pad: Float = 0f
 ): Sprite {
 	val sX = strokeThicknessX ?: cornerRadiusX + 1f
 	val sY = strokeThicknessY ?: cornerRadiusY + 1f
@@ -64,7 +67,7 @@ fun Scoped.createSmoothCorner(
 		spriteOut.clear()
 		return spriteOut
 	}
-	val cacheKey = SmoothCornerKey(cornerRadiusX, cornerRadiusY, strokeThicknessX, strokeThicknessY)
+	val cacheKey = SmoothCornerKey(cornerRadiusX, cornerRadiusY, strokeThicknessX, strokeThicknessY, pad)
 	val framebuffer = if (useCache && smoothCornerMap.containsKey(cacheKey)) {
 		smoothCornerMap[cacheKey]!!
 	} else {
@@ -72,7 +75,7 @@ fun Scoped.createSmoothCorner(
 		val glState = inject(GlState)
 		if (curvedShader == null)
 			curvedShader = disposeOnShutdown(CurvedRectShaderProgram(gl))
-		val framebuffer = framebuffer(ceil(cornerRadiusX).toInt() + 4, ceil(cornerRadiusY).toInt() + 4)
+		val framebuffer = framebuffer(ceil(cornerRadiusX + pad).toInt(), ceil(cornerRadiusY + pad).toInt())
 		val previousShader = glState.shader
 		val curvedShader = curvedShader!!
 		glState.shader = curvedShader
@@ -97,8 +100,8 @@ fun Scoped.createSmoothCorner(
 	}
 	val fBW = framebuffer.width.toFloat()
 	val fBH = framebuffer.height.toFloat()
-	val pW = cornerRadiusX / fBW
-	val pH = cornerRadiusY / fBH
+	val pW = (cornerRadiusX + pad) / fBW
+	val pH = (cornerRadiusY + pad) / fBH
 	val u: Float
 	val v: Float
 	val u2: Float
@@ -142,23 +145,22 @@ uniform vec2 u_cornerRadius;
 
 void main() {
 	// x^2/a^2 + y^2/b^2 = 1
-	vec2 point = gl_FragCoord.xy - gl_PointCoord.xy + 0.5;
+	vec2 point = gl_FragCoord.xy;
 
-	float p = length(point / max(vec2(0.0), u_cornerRadius - 0.2));
+	float p = length(point / max(vec2(0.0), u_cornerRadius - 0.3));
 	float p2;
 	float a1;
 	float a2;
-	p2 = length(point / (u_cornerRadius + 1.0));
+	p2 = length(point / (u_cornerRadius + 0.5));
 	a1 = smoothstep(p2, p, 1.0);
 
-	p = length(point / max(vec2(0.0), u_cornerRadius - u_strokeThickness - 0.2));
-	p2 = length(point / max(vec2(0.0), (u_cornerRadius - u_strokeThickness + 1.3)));
+	p = length(point / max(vec2(0.0), u_cornerRadius - u_strokeThickness - 0.5));
+	p2 = length(point / max(vec2(0.0), (u_cornerRadius - u_strokeThickness + 0.5)));
 	a2 = 1.0 - smoothstep(p2, p, 1.0);
 
 	float a = min(a1, a2);
 	if (a < 0.001) discard;
 	gl_FragColor = vec4(1.0, 1.0, 1.0, a);
 }""",
-		vertexAttributes = mapOf(
-				VertexAttributeUsage.POSITION to CommonShaderAttributes.A_POSITION)
+		vertexAttributes = mapOf(VertexAttributeUsage.POSITION to CommonShaderAttributes.A_POSITION)
 )
