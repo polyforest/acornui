@@ -134,21 +134,21 @@ class Rect(
 			val innerBottomLeftX = maxOf(bottomLeftX, leftBorder)
 			val innerBottomLeftY = maxOf(bottomLeftY, bottomBorder)
 
-			val fillPad = Pad(1f)
+			val fillPad = Pad(0.5f)
 			if (topBorder < 1f) fillPad.top = 0f
 			if (rightBorder < 1f) fillPad.right = 0f
 			if (bottomBorder < 1f) fillPad.bottom = 0f
 			if (leftBorder < 1f) fillPad.left = 0f
 
-			createSmoothCorner(topLeftX - fillPad.left, topLeftY - fillPad.top, spriteOut = topLeftCorner, antialias = true, flipX = true, flipY = true)
-			createSmoothCorner(topRightX - fillPad.right, topRightY - fillPad.top, spriteOut = topRightCorner, antialias = true, flipX = false, flipY = true)
-			createSmoothCorner(bottomRightX - fillPad.right, bottomRightY - fillPad.bottom, spriteOut = bottomRightCorner, antialias = true, flipX = false, flipY = false)
-			createSmoothCorner(bottomLeftX - fillPad.left, bottomLeftY - fillPad.bottom, spriteOut = bottomLeftCorner, antialias = true, flipX = true, flipY = false)
+			createSmoothCorner(topLeftX - fillPad.left, topLeftY - fillPad.top, flipX = true, flipY = true, spriteOut = topLeftCorner)
+			createSmoothCorner(topRightX - fillPad.right, topRightY - fillPad.top, flipX = false, flipY = true, spriteOut = topRightCorner)
+			createSmoothCorner(bottomRightX - fillPad.right, bottomRightY - fillPad.bottom, flipX = false, flipY = false, spriteOut = bottomRightCorner)
+			createSmoothCorner(bottomLeftX - fillPad.left, bottomLeftY - fillPad.bottom, flipX = true, flipY = false, spriteOut = bottomLeftCorner)
 
-			createSmoothCorner(topLeftX, topLeftY, strokeThicknessX = leftBorder, strokeThicknessY = topBorder, spriteOut = topLeftStrokeCorner, antialias = true, flipX = true, flipY = true)
-			createSmoothCorner(topRightX, topRightY, strokeThicknessX = rightBorder, strokeThicknessY = topBorder, spriteOut = topRightStrokeCorner, antialias = true, flipX = false, flipY = true)
-			createSmoothCorner(bottomRightX, bottomRightY, strokeThicknessX = rightBorder, strokeThicknessY = bottomBorder, spriteOut = bottomRightStrokeCorner, antialias = true, flipX = false, flipY = false)
-			createSmoothCorner(bottomLeftX, bottomLeftY, strokeThicknessX = leftBorder, strokeThicknessY = bottomBorder, spriteOut = bottomLeftStrokeCorner, antialias = true, flipX = true, flipY = false)
+			createSmoothCorner(topLeftX, topLeftY, strokeThicknessX = leftBorder, strokeThicknessY = topBorder, flipX = true, flipY = true, spriteOut = topLeftStrokeCorner)
+			createSmoothCorner(topRightX, topRightY, strokeThicknessX = rightBorder, strokeThicknessY = topBorder, flipX = false, flipY = true, spriteOut = topRightStrokeCorner)
+			createSmoothCorner(bottomRightX, bottomRightY, strokeThicknessX = rightBorder, strokeThicknessY = bottomBorder, flipX = false, flipY = false, spriteOut = bottomRightStrokeCorner)
+			createSmoothCorner(bottomLeftX, bottomLeftY, strokeThicknessX = leftBorder, strokeThicknessY = bottomBorder, flipX = true, flipY = false, spriteOut = bottomLeftStrokeCorner)
 
 			fill.buildMesh {
 				// If we have a linear gradient, fill with white; we will be using the fill as a mask inside draw.
