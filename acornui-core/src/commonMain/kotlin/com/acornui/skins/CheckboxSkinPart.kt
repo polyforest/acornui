@@ -38,9 +38,7 @@ open class CheckboxSkinPart(
 	init {
 		style.verticalAlign = VAlign.MIDDLE
 		+box
-		textField = +text("") {
-			includeInLayout = false
-		} layout {
+		textField = +text("") layout {
 			widthPercent = 1f
 		}
 	}
