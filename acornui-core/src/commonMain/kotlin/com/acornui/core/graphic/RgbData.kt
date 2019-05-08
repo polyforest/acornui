@@ -20,9 +20,7 @@ import com.acornui.graphic.*
 import com.acornui.math.*
 
 /**
- * A trait for reading pixel data.
- * Note: Unlike global coordinates, rgb pixel x,y coordinates are top-left of the image, not bottom-left.
- * 		This is because acorn does not flip the y when unpacking the texture.
+ * A byte array of pixels.
  */
 class RgbData(
 
@@ -50,7 +48,7 @@ class RgbData(
 	val numBands: Int = if (hasAlpha) 4 else 3
 
 	private var _scanSize: Int = _width * numBands
-	private var _bytes: ByteArray = ByteArray(_width * _height * numBands);
+	private var _bytes: ByteArray = ByteArray(_width * _height * numBands)
 
 	val bytes: ByteArray
 		get(): ByteArray = _bytes
