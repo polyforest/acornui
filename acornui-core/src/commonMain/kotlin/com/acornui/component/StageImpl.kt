@@ -20,6 +20,7 @@ import com.acornui.core.di.Injector
 import com.acornui.core.di.OwnedImpl
 import com.acornui.core.focus.Focusable
 import com.acornui.math.Bounds
+import com.acornui.skins.theme
 import kotlin.math.ceil
 
 /**
@@ -63,6 +64,11 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		if (flagsInvalidated != 0)
 			window.requestRender()
 		return flagsInvalidated
+	}
+
+	override fun updateStyles() {
+		super.updateStyles()
+		window.clearColor = theme().bgColor
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

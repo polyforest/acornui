@@ -59,7 +59,6 @@ open class BasicUiSkin(
 	open fun apply() {
 		theme = target.theme()
 		target.styleRules.clear()
-		inject(Window).clearColor = theme.bgColor
 
 		target.addStyleRule(ButtonStyle().set { labelButtonSkin(theme, it) }, Button)
 		target.addStyleRule(ButtonStyle().set { checkboxSkin(theme, it) }, Checkbox)
