@@ -340,7 +340,7 @@ open class BasicUiSkin(
 		stepperPad.right = 5f
 		target.addStyleRule(ButtonStyle().set {
 			{
-				val texture = buttonTexture(it, Corners(topLeft = 0f, topRight = maxOf(4f, theme.borderRadius), bottomRight = 0f, bottomLeft = 0f))
+				val texture = buttonTexture(theme, it, Corners(topLeft = 0f, topRight = maxOf(4f, theme.borderRadius), bottomRight = 0f, bottomLeft = 0f))
 				val skinPart = IconButtonSkinPart(this, texture, stepperPad)
 				val theme = theme
 				skinPart.element = atlas(theme.atlasPath, "ArrowUpSm") {
@@ -352,7 +352,7 @@ open class BasicUiSkin(
 
 		target.addStyleRule(ButtonStyle().set {
 			{
-				val texture = buttonTexture(it, Corners(topLeft = 0f, topRight = 0f, bottomRight = maxOf(4f, theme.borderRadius), bottomLeft = 0f))
+				val texture = buttonTexture(theme, it, Corners(topLeft = 0f, topRight = 0f, bottomRight = maxOf(4f, theme.borderRadius), bottomLeft = 0f))
 				val skinPart = IconButtonSkinPart(this, texture, stepperPad)
 				val theme = theme
 				skinPart.element = atlas(theme.atlasPath, "ArrowDownSm") {
@@ -506,7 +506,7 @@ open class BasicUiSkin(
 			background = {
 				button {
 					focusEnabled = false
-					style.set { { buttonTexture(it) } }
+					style.set { { buttonTexture(theme, it) } }
 				}
 			}
 			colorSwatch = {
@@ -620,7 +620,7 @@ open class BasicUiSkin(
 			headerCellBackground = {
 				button {
 					style.set { buttonState ->
-						{ buttonTexture(buttonState, Corners(0f), Pad(0f)) }
+						{ buttonTexture(theme, buttonState, Corners(0f), Pad(0f)) }
 					}
 				}
 			}

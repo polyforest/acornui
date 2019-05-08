@@ -48,12 +48,12 @@ open class CheckboxSkinPart(
 	override var label: String
 		get() = textField.label
 		set(value) {
-			textField.includeInLayout = value.isNotEmpty()
 			textField.text = value
 		}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		super.updateLayout(explicitWidth, explicitHeight, out)
+		if (label.isEmpty()) out.width -= style.gap
 		out.baseline = textField.baselineY
 	}
 }

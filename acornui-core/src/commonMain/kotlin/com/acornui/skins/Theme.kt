@@ -62,7 +62,7 @@ data class Theme(
 		val strokeDisabled: ColorRo = Color(0x999999ff),
 
 		/**
-		 *The shine color to overlay. (Set to clear for no shine.)
+		 * The shine color to overlay. (Set to clear for no shine.)
 		 */
 		val fillShine: ColorRo = Color(1f, 1f, 1f, 0.9f),
 		val fillToggledShine: ColorRo = Color(1f, 1f, 1f, 0.9f),
@@ -70,7 +70,7 @@ data class Theme(
 		val focusHighlightColor: ColorRo = Color(0x0235acff),
 
 		/**
-		 *Text input, text area.
+		 * Text input, text area.
 		 */
 		val inputFill: ColorRo = Color(0.97f, 0.97f, 0.97f, 1f),
 

@@ -29,11 +29,6 @@ import com.acornui.math.*
 interface SkinPartProvider {
 
 	/**
-	 * Returns a factory to create an icon button skin part for the given button state.
-	 */
-	fun iconButtonSkin(buttonState: ButtonState, icon: String, padding: PadRo = Pad(5f), hGap: Float = 4f): OptionalSkinPart
-
-	/**
 	 * Returns a factory to create a label button skin part for the given button state.
 	 */
 	fun labelButtonSkin(theme: Theme, buttonState: ButtonState): OptionalSkinPart
@@ -64,32 +59,22 @@ interface SkinPartProvider {
 	fun radioButtonSkin(theme: Theme, buttonState: ButtonState): OptionalSkinPart
 
 	/**
-	 *
+	 * Creates the button background texture part for the given state.
 	 */
 	fun Owned.buttonTexture(
+			theme: Theme,
 			buttonState: ButtonState,
-			borderRadius: CornersRo = Corners(theme().borderRadius),
-			borderThickness: PadRo = Pad(theme().strokeThickness)
+			borderRadius: CornersRo = Corners(theme.borderRadius),
+			borderThickness: PadRo = Pad(theme.strokeThickness)
 	): UiComponent
 }
 
 open class BasicSkinPartProvider : SkinPartProvider {
 
-	override fun iconButtonSkin(buttonState: ButtonState, icon: String, padding: PadRo, hGap: Float): OptionalSkinPart = {
-		if (buttonState.isIndeterminate) null
-		else {
-			val texture = buttonTexture(buttonState)
-			val skinPart = IconButtonSkinPart(this, texture, padding, hGap)
-			val theme = theme()
-			skinPart.element = atlas(theme.atlasPath, icon)
-			skinPart
-		}
-	}
-
 	override fun labelButtonSkin(theme: Theme, buttonState: ButtonState): OptionalSkinPart = {
 		if (buttonState.isIndeterminate) null
 		else {
-			val texture = buttonTexture(buttonState)
+			val texture = buttonTexture(theme, buttonState)
 			LabelButtonSkinPart(this, texture, theme.buttonPad).apply {
 				if (buttonState == ButtonState.DISABLED) {
 					addStyleRule(charStyle { colorTint = theme.textDisabledColor })
@@ -104,6 +89,7 @@ open class BasicSkinPartProvider : SkinPartProvider {
 			val borderThickness = Pad(theme.strokeThickness)
 			if (buttonState.isToggled) borderThickness.bottom = 0f
 			val texture = buttonTexture(
+					theme,
 					buttonState,
 					Corners(topLeft = theme.borderRadius, topRight = theme.borderRadius, bottomLeft = 0f, bottomRight = 0f),
 					borderThickness
@@ -118,7 +104,7 @@ open class BasicSkinPartProvider : SkinPartProvider {
 	override fun iconButtonSkin(theme: Theme, buttonState: ButtonState): OptionalSkinPart = {
 		if (buttonState.isIndeterminate) null
 		else {
-			val texture = buttonTexture(buttonState)
+			val texture = buttonTexture(theme, buttonState)
 			IconButtonSkinPart(this, texture, theme.buttonPad, theme.iconButtonGap)
 		}
 	}
@@ -161,7 +147,7 @@ open class BasicSkinPartProvider : SkinPartProvider {
 	 * A convenience function to create a radio button skin part.
 	 */
 	override fun radioButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> CheckboxSkinPart = {
-		val radio = buttonTexture(buttonState, borderRadius = Corners(1000f), borderThickness = Pad(theme.strokeThickness))
+		val radio = buttonTexture(theme, buttonState, borderRadius = Corners(1000f), borderThickness = Pad(theme.strokeThickness))
 		if (buttonState.isToggled) {
 			val filledCircle = rect {
 				style.margin = Pad(4f)
@@ -188,8 +174,7 @@ open class BasicSkinPartProvider : SkinPartProvider {
 		}
 	}
 
-	override fun Owned.buttonTexture(buttonState: ButtonState, borderRadius: CornersRo, borderThickness: PadRo): CanvasLayoutContainer = canvas {
-		val theme = theme()
+	override fun Owned.buttonTexture(theme: Theme, buttonState: ButtonState, borderRadius: CornersRo, borderThickness: PadRo): CanvasLayoutContainer = canvas {
 		+rect {
 			style.apply {
 				backgroundColor = theme.getButtonFillColor(buttonState)
