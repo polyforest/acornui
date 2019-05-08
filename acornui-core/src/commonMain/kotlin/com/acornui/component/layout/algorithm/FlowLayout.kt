@@ -65,7 +65,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 
 		var measuredW = 0f
 		val lines = _lines
-		lines.forEach2(LineInfo.Companion::free)
+		lines.forEach2(action = LineInfo.Companion::free)
 		lines.clear()
 
 		var line = LineInfo.obtain()

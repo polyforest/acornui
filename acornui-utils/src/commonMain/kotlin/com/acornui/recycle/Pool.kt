@@ -41,7 +41,7 @@ interface Pool<T> {
 /**
  * Frees all items in the given list back to the pool.
  */
-fun <T> Pool<T>.freeAll(list: List<T>) = list.forEach2(::free)
+fun <T> Pool<T>.freeAll(list: List<T>) = list.forEach2(action = ::free)
 
 /**
  * Frees all items in this list back to the given pool, then clears this list.

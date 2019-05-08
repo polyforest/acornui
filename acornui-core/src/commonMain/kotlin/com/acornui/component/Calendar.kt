@@ -155,7 +155,7 @@ open class Calendar(
 							index = it
 							setActiveMonth(month, fullYear)
 							click().add(this@Calendar::cellClickedHandler)
-						} layout { fill() }
+						}
 					}
 				}
 			}
@@ -279,7 +279,7 @@ open class Calendar(
 			monthDecButton = monthDecContainer.addElement(it.monthDecButton(this))
 
 			monthIncButton?.dispose()
-			monthIncButton = monthDecContainer.addElement(it.monthIncButton(this))
+			monthIncButton = monthIncContainer.addElement(it.monthIncButton(this))
 		}
 
 		keyDown().add(::keyDownHandler)
@@ -314,8 +314,19 @@ open class Calendar(
 		for (i in 0..6) {
 			columns.add(GridColumn(hAlign = style.columnHAlign, widthPercent = 1f, minWidth = maxHeaderW))
 		}
-		grid.style.columns = columns
-		grid.style.rowHeight = if (explicitHeight == null) null else (explicitHeight - 6f * grid.style.verticalGap) / 7f
+		grid.apply {
+			style.columns = columns
+			style.rowHeight = if (explicitHeight == null) null else (explicitHeight - 6f * style.verticalGap) / 7f
+			cells.forEach {
+				if (it.layoutData == null) {
+					it.layoutData = grid.createLayoutData()
+				}
+				(it.layoutData as GridLayoutData).let { layoutData ->
+					layoutData.widthPercent = 1f
+					layoutData.heightPercent = if (explicitHeight == null) null else 1f
+				}
+			}
+		}
 
 		panel.setSize(explicitWidth, explicitHeight)
 		out.set(panel.bounds)
@@ -531,11 +542,10 @@ open class CalendarItemRendererImpl(owner: Owned) : ContainerImpl(owner), Calend
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val pad = style.padding
-		if (explicitWidth != null) textField.width(pad.reduceWidth2(explicitWidth))
-		if (explicitHeight != null) textField.height(pad.reduceHeight2(explicitHeight))
+		textField.setSize(pad.reduceWidth(explicitWidth), pad.reduceHeight(explicitHeight))
 		textField.moveTo(pad.left, pad.top)
 		background.setSize(pad.expandWidth2(textField.width), pad.expandHeight2(textField.height))
-		out.set(background.bounds)
+		out.set(background.width, background.height, textField.baselineY)
 	}
 
 	companion object : StyleTag {

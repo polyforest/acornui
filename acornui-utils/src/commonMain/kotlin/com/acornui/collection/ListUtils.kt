@@ -403,12 +403,12 @@ inline fun <T> List<T>.any2(predicate: (T) -> Boolean): Boolean {
 	return false
 }
 
-inline fun <E> List<E>.forEach2(action: (E) -> Unit) {
-	for (i in 0..lastIndex) action(this[i])
+inline fun <E> List<E>.forEach2(startIndex: Int = 0, lastIndex: Int = this.lastIndex, action: (E) -> Unit) {
+	for (i in startIndex..lastIndex) action(this[i])
 }
 
-inline fun <E> List<E>.forEachReversed2(action: (E) -> Unit) {
-	for (i in lastIndex downTo 0) action(this[i])
+inline fun <E> List<E>.forEachReversed2(lastIndex: Int = this.lastIndex, startIndex: Int = 0, action: (E) -> Unit) {
+	for (i in lastIndex downTo startIndex) action(this[i])
 }
 
 fun List<Float>.sum2(startIndex: Int = 0, lastIndex: Int = this.lastIndex): Float {
@@ -463,9 +463,10 @@ inline fun <E> MutableList<E>.removeFirst(predicate: (E) -> Boolean): E? {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
  */
-inline fun <E> List<E>.sumBy2(selector: (E) -> Int): Int {
+inline fun <E> List<E>.sumByInt2(startIndex: Int = 0, lastIndex: Int = this.lastIndex, selector: (E) -> Int): Int {
+	if (startIndex == lastIndex) return selector(this[startIndex])
 	var sum = 0
-	for (i in 0..lastIndex) {
+	for (i in startIndex..lastIndex) {
 		sum += selector(this[i])
 	}
 	return sum
@@ -474,9 +475,10 @@ inline fun <E> List<E>.sumBy2(selector: (E) -> Int): Int {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
  */
-inline fun <E> List<E>.sumByFloat2(selector: (E) -> Float): Float {
+inline fun <E> List<E>.sumByFloat2(startIndex: Int = 0, lastIndex: Int = this.lastIndex, selector: (E) -> Float): Float {
+	if (startIndex == lastIndex) return selector(this[startIndex])
 	var sum = 0f
-	for (i in 0..lastIndex) {
+	for (i in startIndex..lastIndex) {
 		sum += selector(this[i])
 	}
 	return sum

@@ -175,7 +175,7 @@ open class IndexedPool<E>(
 	 * Sets the items returned via [obtain] to be used as the cached items for the next set.
 	 */
 	fun flip() {
-		current.forEach2(pool::free)
+		current.forEach2(action = pool::free)
 		val tmp = current
 		val tmpIndices = currentIndices
 		current = obtained

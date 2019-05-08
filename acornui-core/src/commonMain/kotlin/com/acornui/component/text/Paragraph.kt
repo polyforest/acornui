@@ -112,7 +112,7 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 		val placeholder = _placeholder
 		val availableWidth: Float? = padding.reduceWidth(explicitWidth)
 
-		lines.forEach2(LineInfo.Companion::free)
+		lines.forEach2(action = LineInfo.Companion::free)
 		lines.clear()
 
 		// To keep tab sizes consistent across the whole text field, we only use the first span's space size.

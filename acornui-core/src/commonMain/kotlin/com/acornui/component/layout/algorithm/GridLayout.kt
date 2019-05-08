@@ -122,16 +122,28 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 		val padding = style.padding
 
 		measuredColWidths.clear()
-		lines.forEach2(LineInfo.Companion::free)
+		lines.forEach2(action = LineInfo.Companion::free)
 		lines.clear()
 
 		// The sum of the explicit width of all columns.
-		val columnTotalWidth = if (childAvailableWidth == null) null else childAvailableWidth - style.horizontalGap * columns.lastIndex
+		val totalColumnsExplicitWidth = if (childAvailableWidth == null) null else childAvailableWidth - style.horizontalGap * columns.lastIndex
 
 		// Calculate initial column widths. The flexible columns will later be fit in the remaining space.
+		var totalMeasuredColumnWidths = 0f
 		for (i in 0..columns.lastIndex) {
 			val col = columns[i]
-			measuredColWidths.add(col.getPreferredWidth(columnTotalWidth) ?: col.minWidth ?: 0f)
+			val measuredColWidth = col.getPreferredWidth(totalColumnsExplicitWidth) ?: col.minWidth ?: 0f
+			measuredColWidths.add(measuredColWidth)
+			totalMeasuredColumnWidths += measuredColWidth
+		}
+		if (totalColumnsExplicitWidth != null) {
+			// Scale the measured columns down to fit if needed.
+			if (totalColumnsExplicitWidth > totalMeasuredColumnWidths) {
+				val scale = totalColumnsExplicitWidth / totalMeasuredColumnWidths
+				for (i in 0..measuredColWidths.lastIndex) {
+					measuredColWidths[i] *= scale
+				}
+			}
 		}
 
 		// Set the column and row indices.
@@ -154,17 +166,35 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 			val colSpan = layoutData.colSpan
 			val colIndex = layoutData.colIndex
 			val rowIndex = layoutData.rowIndex
+			val lastColIndex = colIndex + colSpan - 1
+			val lastRowIndex = rowIndex + rowSpan - 1
 
-			val hGapTotal = style.horizontalGap * (colSpan - 1)
-			val availableSpanWidth = measuredColWidths.sum2(colIndex, colIndex + colSpan - 1) + hGapTotal
-			val vGapTotal = style.verticalGap * (rowSpan - 1)
-			var availableSpanHeight = vGapTotal
-			for (j in rowIndex..rowIndex + rowSpan - 1) {
-				availableSpanHeight += lines[j].height
+			val measuredSpanWidth = measuredColWidths.sum2(colIndex, lastColIndex) + style.horizontalGap * (colSpan - 1)
+
+			val cellW = if (layoutData.widthPercent != null) {
+				layoutData.getPreferredWidth(measuredSpanWidth)
+			} else {
+				var explicitSpanWidth: Float? = 0f
+				for (j in colIndex..lastColIndex) {
+					val col = columns[j]
+					val colW = col.getPreferredWidth(totalColumnsExplicitWidth) ?: col.minWidth
+					if (colW == null) {
+						explicitSpanWidth = null
+						break
+					} else {
+						explicitSpanWidth = colW + explicitSpanWidth!!
+					}
+				}
+				layoutData.getPreferredWidth(explicitSpanWidth)
 			}
 
-			val cellW = layoutData.getPreferredWidth(availableSpanWidth)
-			val cellH = layoutData.getPreferredHeight(availableSpanHeight)
+			val measuredSpanHeight = lines.sumByFloat2(rowIndex, lastRowIndex) { it.height } + style.verticalGap * (rowSpan - 1)
+			val cellH = if (layoutData.heightPercent != null) {
+				layoutData.getPreferredHeight(measuredSpanHeight)
+			} else {
+				val explicitSpanHeight: Float? = if (style.rowHeight == null) null else style.rowHeight!! * rowSpan + style.verticalGap * (rowSpan - 1)
+				layoutData.getPreferredHeight(explicitSpanHeight)
+			}
 			element.setSize(cellW, cellH)
 
 			if (layoutData.verticalAlign ?: style.verticalAlign == VAlign.BASELINE) {
@@ -176,82 +206,65 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 			}
 
 			val elementH = element.height
-			if (elementH > availableSpanHeight) {
+			if (elementH > measuredSpanHeight) {
 				// Increase the spanned line heights evenly.
-				val incH = (elementH - availableSpanHeight) / rowSpan
-				for (j in rowIndex..rowIndex + rowSpan - 1) {
+				val incH = (elementH - measuredSpanHeight) / rowSpan
+				for (j in rowIndex..lastRowIndex) {
 					val line = lines[j]
 					line.nonBaselineHeight += incH
 				}
 			}
 			val elementW = element.width
-			if (elementW > availableSpanWidth) {
+			if (elementW > measuredSpanWidth) {
 				// Increase the spanned column widths evenly across the flexible columns.
-				val incW = (elementW - availableSpanWidth) / colSpan
-				for (j in colIndex..colIndex + colSpan - 1) {
-					if (columns[j].getIsFlexible())
-						measuredColWidths[j] += incW
+				val numFlexibleColumns = columns.sumByInt2(colIndex, lastColIndex) { if (it.getIsFlexible()) 1 else 0 }
+				if (numFlexibleColumns > 0) {
+					val incW = (elementW - measuredSpanWidth) / numFlexibleColumns
+					for (j in colIndex..lastColIndex) {
+						if (columns[j].getIsFlexible())
+							measuredColWidths[j] += incW
+					}
 				}
 			}
 		}
 
-		// Position the elements.
+		// Position the elements. (Order doesn't matter here)
 
-		var x = padding.left
-		var y = padding.top
-		var lastRowIndex = 0
+		for (i in 0..elements.lastIndex) {
+			val element = elements[i]
+			val layoutData = element.layoutDataCast!!
+			val rowSpan = layoutData.rowSpan
+			val colSpan = layoutData.colSpan
+			val colIndex = layoutData.colIndex
+			val rowIndex = layoutData.rowIndex
+			val lastColIndex = colIndex + colSpan - 1
+			val lastRowIndex = rowIndex + rowSpan - 1
 
-		cellWalk(elements, style) { element, rowIndex, colIndex ->
-			if (rowIndex != lastRowIndex) {
-				x = padding.left
-				for (i in 0..colIndex - 1) {
-					x += measuredColWidths[i] + style.horizontalGap
-				}
-				for (i in lastRowIndex..rowIndex - 1) {
-					y += lines[i].height + style.verticalGap
-				}
-				lastRowIndex = rowIndex
-			}
-
-			val layoutData = element.layoutData as GridLayoutData?
-
-			val colSpan = layoutData?.colSpan ?: 1
-			var measuredSpanWidth = 0f
-			for (i in colIndex..colIndex + colSpan - 1) {
-				measuredSpanWidth += measuredColWidths[i] + style.horizontalGap
-			}
-			measuredSpanWidth -= style.horizontalGap
-			val xOffset = when (layoutData?.horizontalAlign ?: columns[colIndex].hAlign) {
+			val measuredSpanWidth = measuredColWidths.sum2(colIndex, lastColIndex) + (colSpan - 1) * style.horizontalGap
+			val xOffset = when (layoutData.horizontalAlign ?: columns[colIndex].hAlign) {
 				HAlign.LEFT -> 0f
 				HAlign.CENTER -> (measuredSpanWidth - element.width) * 0.5f
 				HAlign.RIGHT -> measuredSpanWidth - element.width
 			}
 
-			val rowSpan = layoutData?.rowSpan ?: 1
 			var measuredSpanHeight = 0f
-			for (i in rowIndex..rowIndex + rowSpan - 1) {
-				measuredSpanHeight += lines[i].height + style.verticalGap
+			for (j in rowIndex..lastRowIndex) {
+				measuredSpanHeight += lines[j].height + style.verticalGap
 			}
 			measuredSpanHeight -= style.verticalGap
-			val yOffset = when (layoutData?.verticalAlign ?: style.verticalAlign) {
+			val yOffset = when (layoutData.verticalAlign ?: style.verticalAlign) {
 				VAlign.TOP -> 0f
 				VAlign.MIDDLE -> (measuredSpanHeight - element.height) * 0.5f
 				VAlign.BOTTOM -> measuredSpanHeight - element.height
 				VAlign.BASELINE -> lines[rowIndex].baseline - element.baseline
 			}
+			val x = padding.left + measuredColWidths.sumByFloat2(0, colIndex - 1) { it } + style.horizontalGap * colIndex
+			val y = padding.top + lines.sumByFloat2(0, rowIndex - 1) { it.height } + style.verticalGap * rowIndex
 			element.moveTo(x + xOffset, y + yOffset)
-			x += measuredSpanWidth + style.horizontalGap
 		}
-		for (i in lastRowIndex..lines.lastIndex) {
-			y += lines[i].height + style.verticalGap
-		}
-		y += padding.bottom - style.verticalGap
-		var maxWidth = padding.left
-		for (i in 0..columns.lastIndex) {
-			maxWidth += measuredColWidths[i] + style.horizontalGap
-		}
-		maxWidth += padding.right - style.horizontalGap
-		out.set(maxWidth, y, baseline = lines.firstOrNull()?.baseline ?: 0f)
+		val width = padding.expandWidth2(measuredColWidths.sumByFloat2 { it } + style.horizontalGap * lines.lastIndex)
+		val height = padding.expandHeight2(lines.sumByFloat2 { it.height } + style.verticalGap * lines.lastIndex)
+		out.set(width, height, baseline = lines.firstOrNull()?.baseline ?: 0f)
 
 		orderedElements.clear()
 	}

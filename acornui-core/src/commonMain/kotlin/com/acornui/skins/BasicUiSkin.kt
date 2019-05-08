@@ -733,6 +733,7 @@ open class BasicUiSkin(
 					style.borderColors = BorderColors(theme.stroke)
 					style.borderRadii = Corners(bottomLeft = Vector2(theme.borderRadius, theme.borderRadius), bottomRight = Vector2(theme.borderRadius, theme.borderRadius))
 					style.borderThicknesses = Pad(theme.strokeThickness)
+					+dropShadowFilter()
 				}
 			}
 		}
