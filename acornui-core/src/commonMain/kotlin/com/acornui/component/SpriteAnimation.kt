@@ -16,6 +16,8 @@
 
 package com.acornui.component
 
+import com.acornui.async.Deferred
+import com.acornui.async.async
 import com.acornui.async.then
 import com.acornui.collection.fill
 import com.acornui.core.AppConfig
@@ -23,18 +25,21 @@ import com.acornui.core.asset.CachedGroup
 import com.acornui.core.asset.cachedGroup
 import com.acornui.core.asset.loadAndCacheJson
 import com.acornui.core.di.Owned
+import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
-import com.acornui.core.graphic.AtlasRegionData
-import com.acornui.core.graphic.TextureAtlasDataSerializer
+import com.acornui.core.di.notDisposed
+import com.acornui.core.graphic.*
 import com.acornui.core.io.JSON_KEY
 import com.acornui.core.time.onTick
+import com.acornui.gl.core.GlState
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.MinMaxRo
+import com.acornui.recycle.Clearable
 
 
-class SpriteAnimation(owner: Owned) : ContainerImpl(owner) {
+class SpriteAnimation(owner: Owned) : UiComponentImpl(owner), Clearable {
 
 	val json = inject(JSON_KEY)
 
@@ -43,22 +48,17 @@ class SpriteAnimation(owner: Owned) : ContainerImpl(owner) {
 	 */
 	var currentFrame = 0
 
-	private var _startFrame = 0
-
 	/**
 	 * After [endFrame] the animation will start back on this index.
+	 *
 	 */
-	val startFrame: Int
-		get() = _startFrame
-
-	private var _endFrame = -1
+	var startFrame: Int = 0
 
 	/**
 	 * After this frame, the animation will loop back to [startFrame]
 	 * If this value is negative, the last frame in the sequence will be used.
 	 */
-	val endFrame: Int
-		get() = _endFrame
+	var endFrame: Int = -1
 
 	var frameRate: Int = inject(AppConfig).frameRate
 
@@ -77,28 +77,27 @@ class SpriteAnimation(owner: Owned) : ContainerImpl(owner) {
 
 	private var elapsed: Float = 0f
 
-	private var regionWidth: Int = 0
-	private var regionHeight: Int = 0
-
-	private val frameClips = ArrayList<AtlasComponent>()
+	var animation: LoadedAnimation? = null
+		private set
 
 	init {
 		onTick {
-			if (!paused && frameClips.isNotEmpty()) {
-				val tickTime = this.tickTime
+			val loadedAnimation = animation
+			if (!paused && loadedAnimation != null) {
+				val tickTime = tickTime
 
 				elapsed += it
 				while (elapsed >= tickTime) {
 					// Tick a frame
 					elapsed -= tickTime
-					frameClips[currentFrame - startFrame].visible = false // Hide the old frame clip.
-					if (currentFrame >= _endFrame) {
+					val end = if (endFrame < 0) loadedAnimation.frames.lastIndex else endFrame
+					if (currentFrame >= end) {
 						if (loops)
-							currentFrame = _startFrame
+							currentFrame = startFrame
 					} else {
 						currentFrame++
 					}
-					frameClips[currentFrame - startFrame].visible = true // Show the current frame clip.
+					window.requestRender()
 				}
 			}
 		}
@@ -106,75 +105,55 @@ class SpriteAnimation(owner: Owned) : ContainerImpl(owner) {
 
 	private var group: CachedGroup? = null
 
-	fun setRegion(atlasPath: String, regionName: String, startFrame: Int = 0, endFrame: Int = -1) {
-		for (i in 0..frameClips.lastIndex) {
-			removeChild(frameClips[i])
-			frameClips[i].dispose()
-		}
-		frameClips.clear()
-
-		group?.dispose()
+	fun setRegion(atlasPath: String, regionName: String) : Deferred<LoadedAnimation> {
+		clear()
 		group = cachedGroup()
-		loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group!!).then {
-			atlasData ->
-			val regions = ArrayList<AtlasRegionData?>()
-			regionWidth = 0
-			for (page in atlasData.pages) {
-				for (region in page.regions) {
-					val index = region.name.calculateFrameIndex(regionName)
-					if (index >= startFrame && (endFrame == -1 || index <= endFrame)) {
-						regions.fill(index - startFrame + 1) { null }
-						regions[index - startFrame] = region
-						if (region.originalWidth > regionWidth) {
-							regionWidth = region.originalWidth
-						}
-						if (region.originalHeight > regionHeight) {
-							regionHeight = region.originalHeight
-						}
-					}
-				}
-			}
-
-			for (i in 0..regions.lastIndex) {
-				val region = regions[i] ?: continue
-
-				val atlasComponent = addChild(atlas(atlasPath, region.name))
-				frameClips.add(atlasComponent)
-			}
-			_startFrame = startFrame
-			_endFrame = frameClips.lastIndex + _startFrame
-
-			invalidate(ValidationFlags.LAYOUT)
+		return loadSpriteAnimation(atlasPath, regionName) then notDisposed {
+			loadedAnimation ->
+			setAnimation(loadedAnimation)
 		}
 	}
 
-	/**
-	 * If the region name matches, returns the index of the frame. Otherwise, returns -1
-	 */
-	private fun String.calculateFrameIndex(name: String): Int {
-		if (this.startsWith(name)) {
-			if (this.length == name.length) return 0
-			if (this[name.length] == '.') return 0
-			if (this[name.length] == '_') {
-				var lastIndex = lastIndexOf('.')
-				if (lastIndex == -1)
-					lastIndex = length
-				return substring(name.length + 1, lastIndex).toIntOrNull() ?: -1
-			}
-		}
-		return -1
+	override fun clear() {
+		group?.dispose()
+		group = null
+		if (isActive) animation?.refDec()
+		animation = null
+		invalidateLayout()
+	}
+
+	override fun onActivated() {
+		super.onActivated()
+		animation?.refInc()
+	}
+
+	override fun onDeactivated() {
+		super.onDeactivated()
+		animation?.refDec()
+	}
+
+	fun setAnimation(value: LoadedAnimation) {
+		clear()
+		animation = value
+		if (isActive) value.refInc()
+		invalidateLayout()
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		out.set(regionWidth.toFloat(), regionHeight.toFloat())
+		val animation = animation ?: return
+		var w = 0f
+		var h = 0f
+		for (i in 0..animation.frames.lastIndex) {
+			val r = animation.frames[i]
+			if (r.naturalWidth > w) w = r.naturalWidth
+			if (r.naturalHeight > h) h = r.naturalHeight
+			r.updateVertices(explicitWidth ?: r.naturalWidth, explicitHeight ?: r.naturalHeight)
+		}
+		out.set(w, h)
 	}
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		if (currentFrame >= startFrame && (currentFrame - startFrame) < frameClips.size) {
-			val frameClip = frameClips[currentFrame - startFrame]
-			if (frameClip.visible)
-				frameClip.render()
-		}
+		animation?.frames?.getOrNull(currentFrame - startFrame)?.render(clip, transform, tint)
 	}
 
 	override fun dispose() {
@@ -184,9 +163,72 @@ class SpriteAnimation(owner: Owned) : ContainerImpl(owner) {
 	}
 }
 
-fun Owned.spriteAnimation(atlasPath: String, regionName: String, startFrame: Int = 0, endFrame: Int = -1, init: ComponentInit<SpriteAnimation> = {}): SpriteAnimation {
+data class LoadedAnimation(
+		val textures: List<Texture>,
+		val frames: List<BasicDrawable>
+) {
+	fun refDec() {
+		for (i in 0..textures.lastIndex) {
+			textures[i].refDec()
+		}
+	}
+
+	fun refInc() {
+		for (i in 0..textures.lastIndex) {
+			textures[i].refInc()
+		}
+	}
+}
+
+fun Scoped.loadSpriteAnimation(atlasPath: String, regionName: String, group: CachedGroup = cachedGroup()): Deferred<LoadedAnimation> {
+	val glState = inject(GlState)
+	return async {
+		val atlasData = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group).await()
+		val regions = ArrayList<Pair<AtlasRegionData, AtlasPageData>?>()
+		for (page in atlasData.pages) {
+			for (region in page.regions) {
+				val index = region.name.calculateFrameIndex(regionName)
+				if (index >= 0) {
+					regions.fill(index + 1) { null }
+					regions[index] = region to page
+				}
+			}
+		}
+
+		val textures = ArrayList<Texture>()
+		val frames = ArrayList<Atlas>()
+		for (i in 0..regions.lastIndex) {
+			val (region, page) = regions[i] ?: continue
+			val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
+			if (!textures.contains(texture)) textures.add(texture)
+			val atlas = Atlas(glState)
+			atlas.setRegionAndTexture(texture, region)
+			frames.add(atlas)
+		}
+		LoadedAnimation(textures, frames)
+	}
+}
+
+/**
+ * If the region name matches, returns the index of the frame. Otherwise, returns -1
+ */
+private fun String.calculateFrameIndex(name: String): Int {
+	if (this.startsWith(name)) {
+		if (this.length == name.length) return 0
+		if (this[name.length] == '.') return 0
+		if (this[name.length] == '_') {
+			var lastIndex = lastIndexOf('.')
+			if (lastIndex == -1)
+				lastIndex = length
+			return substring(name.length + 1, lastIndex).toIntOrNull() ?: -1
+		}
+	}
+	return -1
+}
+
+fun Owned.spriteAnimation(atlasPath: String, regionName: String, init: ComponentInit<SpriteAnimation> = {}): SpriteAnimation {
 	val s = SpriteAnimation(this)
-	s.setRegion(atlasPath, regionName, startFrame, endFrame)
+	s.setRegion(atlasPath, regionName)
 	s.init()
 	return s
 }
