@@ -24,6 +24,7 @@ import com.acornui.core.asset.cachedGroup
 import com.acornui.core.di.Owned
 import com.acornui.core.di.notDisposed
 import com.acornui.core.graphic.*
+import com.acornui.logging.Log
 import com.acornui.recycle.Clearable
 
 /**
@@ -53,12 +54,15 @@ open class AtlasComponent(owner: Owned) : DrawableComponent(owner), Clearable {
 	 *
 	 * This load can be canceled using [clear].
 	 */
-	fun setRegion(atlasPath: String, regionName: String): Deferred<LoadedAtlasRegion> {
+	fun setRegion(atlasPath: String, regionName: String, warnOnNotFound: Boolean = true): Deferred<LoadedAtlasRegion> {
 		clear()
 		this.group = cachedGroup()
 		return loadAndCacheAtlasRegion(atlasPath, regionName, group!!) then notDisposed {
 			loadedRegion ->
 			setRegionAndTexture(loadedRegion.texture, loadedRegion.region)
+		} catch {
+			if (warnOnNotFound)
+				Log.warn("Region \"$regionName\" not found in atlas \"$atlasPath\".")
 		}
 	}
 
