@@ -101,6 +101,8 @@ class DataBindingImpl<T>(initialValue: T) : DataBinding<T> {
 		_changed.dispose()
 		_wrapped.clear()
 	}
+
+	fun asRo(): DataBindingRo<T> = this
 }
 
 infix fun <S, T> DataBinding<S>.or(other: DataBinding<T>): Bindable {

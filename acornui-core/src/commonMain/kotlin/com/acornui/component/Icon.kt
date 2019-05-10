@@ -13,16 +13,6 @@ import com.acornui.gl.core.TextureMinFilter
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 
-/**
- * An icon button where the icon is tinted based on [IconStyle].
- */
-fun Owned.iconButtonThemed(atlasPath: String, region: String, init: ComponentInit<IconButton> = {}): IconButton {
-	return iconButton {
-		element = iconAtlas(atlasPath, region)
-		init()
-	}
-}
-
 fun Owned.iconAtlas(init: ComponentInit<AtlasComponent> = {}): AtlasComponent {
 	return object : AtlasComponent(this@iconAtlas) {
 		init {

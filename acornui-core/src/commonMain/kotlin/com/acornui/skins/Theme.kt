@@ -17,11 +17,6 @@
 package com.acornui.skins
 
 import com.acornui.component.ButtonState
-import com.acornui.core.AppConfig
-import com.acornui.core.di.DKey
-import com.acornui.core.di.Injector
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.color
@@ -104,28 +99,6 @@ data class Theme(
 
 		val atlasPath: String = "assets/uiskin/uiskin.json"
 )
-
-interface ThemeProvider {
-
-	/**
-	 * The scope's theme. If this is set, the skin will need to be re-applied.
-	 */
-	val theme: Theme
-
-	companion object : DKey<ThemeProvider> {
-		override fun factory(injector: Injector): ThemeProvider {
-			val bgColor = injector.inject(AppConfig).window.backgroundColor
-			return ThemeProviderImpl(Theme(
-					bgColor = bgColor,
-					evenRowBgColor = bgColor + Color(0x03030300),
-					oddRowBgColor = bgColor - Color(0x03030300)
-
-			))
-		}
-	}
-}
-
-class ThemeProviderImpl(override val theme: Theme) : ThemeProvider
 
 object ThemeSerializer : To<Theme>, From<Theme> {
 
@@ -249,8 +222,4 @@ fun Theme.getButtonStrokeColor(buttonState: ButtonState): ColorRo {
 
 		ButtonState.DISABLED -> strokeDisabled
 	}
-}
-
-fun Scoped.theme(): Theme {
-	return inject(ThemeProvider).theme
 }

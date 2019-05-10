@@ -36,6 +36,7 @@ import com.acornui.core.tween.Tween
 import com.acornui.core.tween.drive
 import com.acornui.core.tween.tweenAlpha
 import com.acornui.function.as1
+import com.acornui.graphic.Color
 import com.acornui.math.Easing
 import com.acornui.signal.Cancel
 
@@ -140,7 +141,12 @@ class PopUpManagerStyle : StyleBase() {
 
 	override val type: StyleType<PopUpManagerStyle> = PopUpManagerStyle
 
-	var modalFill by prop(noSkinOptional)
+	var modalFill by prop<OptionalSkinPart> {
+		rect {
+			style.backgroundColor = Color(0f, 0f, 0f, 0.7f)
+		}
+	}
+
 	var modalEaseIn by prop(Easing.pow2In)
 	var modalEaseOut by prop(Easing.pow2Out)
 	var modalEaseInDuration by prop(0.2f)

@@ -27,13 +27,12 @@ import com.acornui.core.di.inject
 import com.acornui.core.input.*
 import com.acornui.graphic.Color
 import com.acornui.math.Vector2
-import com.acornui.skins.theme
 import kotlin.properties.Delegates
 
 class TouchSimulator(override val injector: Injector) : Scoped, Disposable {
 
 	private val stage = inject(Stage)
-	private val handle = stage.atlas(theme().atlasPath, "Picker") {
+	private val handle = stage.atlas("assets/uiskin/uiskin.json", "Picker") {
 		setOrigin(5f, 5f)
 		includeInLayout = false
 		interactivityMode = InteractivityMode.NONE

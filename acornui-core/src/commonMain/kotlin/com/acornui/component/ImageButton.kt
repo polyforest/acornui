@@ -86,30 +86,24 @@ class ImageButton(
 
 }
 
-fun Owned.imageButton(atlasPath: String, region: String, init: ImageButton.() -> Unit = {}): ImageButton {
+fun Owned.imageButton(init: ImageButton.() -> Unit = {}): ImageButton {
 	val i = ImageButton(this)
-	i.contentsAtlas(atlasPath, region)
 	i.init()
 	return i
 }
 
-fun Owned.imageButton(imagePath: String, init: ImageButton.() -> Unit = {}): ImageButton {
-	val i = ImageButton(this)
-	i.contentsImage(imagePath)
-	i.init()
-	return i
-}
-
-fun Owned.iconImageButton(atlasPath: String, region: String, init: ImageButton.() -> Unit = {}): ImageButton =
-		imageButton(atlasPath, region) {
+fun Owned.iconImageButton(init: ImageButton.() -> Unit = {}): ImageButton =
+		imageButton {
 			styleTags.add(ImageButton.ICON_IMAGE)
 			init()
 		}
 
-fun Owned.iconImageButton(imagePath: String, init: ImageButton.() -> Unit = {}): ImageButton = imageButton(imagePath) {
-	styleTags.add(ImageButton.ICON_IMAGE)
-	init()
-}
+fun Owned.iconImageButton(atlasPath: String, atlasRegion: String, init: ImageButton.() -> Unit = {}): ImageButton =
+		imageButton {
+			element = atlas(atlasPath, atlasRegion)
+			styleTags.add(ImageButton.ICON_IMAGE)
+			init()
+		}
 
 class ImageButtonStyle : StyleBase() {
 	override val type = Companion

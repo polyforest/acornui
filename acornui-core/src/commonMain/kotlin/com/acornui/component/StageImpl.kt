@@ -20,7 +20,6 @@ import com.acornui.core.di.Injector
 import com.acornui.core.di.OwnedImpl
 import com.acornui.core.focus.Focusable
 import com.acornui.math.Bounds
-import com.acornui.skins.theme
 import kotlin.math.ceil
 
 /**
@@ -28,11 +27,17 @@ import kotlin.math.ceil
  */
 open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiComponent>(OwnedImpl(injector)), Focusable {
 
+	final override val style = bind(StageStyle())
+
 	init {
 		focusEnabled = true
 		interactivityMode = InteractivityMode.ALWAYS
 		interactivity.init(this)
 		focusManager.init(this)
+
+		watch(style) {
+			window.clearColor = it.bgColor
+		}
 	}
 
 	/**
@@ -64,11 +69,6 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		if (flagsInvalidated != 0)
 			window.requestRender()
 		return flagsInvalidated
-	}
-
-	override fun updateStyles() {
-		super.updateStyles()
-		window.clearColor = theme().bgColor
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

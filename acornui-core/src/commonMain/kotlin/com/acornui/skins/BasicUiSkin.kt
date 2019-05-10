@@ -36,28 +36,23 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.SimpleHighlight
-import com.acornui.core.graphic.Window
 import com.acornui.core.input.interaction.ContextMenuStyle
 import com.acornui.core.input.interaction.ContextMenuView
 import com.acornui.core.input.interaction.enableDownRepeat
-import com.acornui.core.popup.PopUpManager
-import com.acornui.core.popup.PopUpManagerStyle
 import com.acornui.core.userInfo
 import com.acornui.filter.dropShadowFilter
 import com.acornui.graphic.Color
 import com.acornui.math.*
 
 open class BasicUiSkin(
-		val target: UiComponent,
+		protected val target: UiComponent,
+		protected val theme: Theme,
 		private val skinPartProvider: SkinPartProvider = BasicSkinPartProvider()
 ) : Scoped, SkinPartProvider by skinPartProvider {
 
 	final override val injector = target.injector
 
-	protected lateinit var theme: Theme
-
 	open fun apply() {
-		theme = target.theme()
 		target.styleRules.clear()
 
 		target.addStyleRule(ButtonStyle().set { labelButtonSkin(theme, it) }, Button)
@@ -66,8 +61,8 @@ open class BasicUiSkin(
 		target.addStyleRule(ButtonStyle().set { radioButtonSkin(theme, it) }, RadioButton)
 		target.addStyleRule(ButtonStyle().set { iconButtonSkin(theme, it) }, IconButton)
 
+		stageStyle()
 		iconStyle()
-		popUpStyle()
 		focusStyle()
 		textStyle()
 		textFontStyle()
@@ -96,22 +91,18 @@ open class BasicUiSkin(
 		formStyle()
 	}
 
+	protected open fun stageStyle() {
+		val stageStyle = StageStyle().apply {
+			bgColor = theme.bgColor
+		}
+		target.addStyleRule(stageStyle)
+	}
+
 	protected open fun iconStyle() {
 		val iconStyle = IconStyle().apply {
 			iconColor = theme.iconColor
 		}
 		target.addStyleRule(iconStyle)
-	}
-
-	protected open fun popUpStyle() {
-		val popUpManagerStyle = PopUpManagerStyle().apply {
-			modalFill = {
-				rect {
-					style.backgroundColor = Color(0f, 0f, 0f, 0.7f)
-				}
-			}
-		}
-		target.addStyleRule(popUpManagerStyle, PopUpManager)
 	}
 
 	protected open fun focusStyle() {
@@ -199,7 +190,7 @@ open class BasicUiSkin(
 			async {
 				val weightStr = if (weight != FontWeight.REGULAR) "_$weight" else ""
 				val styleStr = if (style != FontStyle.NORMAL) "_$style" else ""
-				val sizeStr = if (size == FontSize.REGULAR) "_14" else throw UnsupportedOperationException("Font size for $size ")
+				val sizeStr = "_${sizeToPxMap[size]}"
 
 				loadFontFromAtlas("assets/uiskin/$family$weightStr$styleStr$sizeStr.fnt", theme.atlasPath)
 			}
@@ -252,8 +243,9 @@ open class BasicUiSkin(
 				}
 			}
 			closeButton = {
-				button {
-					label = "x"
+				iconImageButton {
+					element = atlas(theme.atlasPath, "ic_clear_white_18dp")
+					style.overState = colorTransformation { tint(Color.RED) }
 				}
 			}
 		}
@@ -741,10 +733,14 @@ open class BasicUiSkin(
 
 		val calendarStyle = CalendarStyle().apply {
 			monthDecButton = {
-				iconImageButton(theme.atlasPath, "ic_chevron_left_white_24dp")
+				iconImageButton {
+					element = atlas(theme.atlasPath, "ic_chevron_left_white_24dp")
+				}
 			}
 			monthIncButton = {
-				iconImageButton(theme.atlasPath, "ic_chevron_right_white_24dp")
+				iconImageButton {
+					element = atlas(theme.atlasPath, "ic_chevron_right_white_24dp")
+				}
 			}
 		}
 		target.addStyleRule(calendarStyle)

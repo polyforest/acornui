@@ -16,15 +16,22 @@
 
 package com.acornui.component
 
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleType
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.focus.Focusable
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 
 interface StageRo : ContainerRo, Focusable
 
 interface Stage : ElementContainer<UiComponent>, StageRo {
+
+	val style: StageStyle
+
 	companion object : DKey<Stage> {
 		override fun factory(injector: Injector): Stage? {
 			return StageImpl(injector)
@@ -34,3 +41,11 @@ interface Stage : ElementContainer<UiComponent>, StageRo {
 
 val Scoped.stage: Stage
 	get() = inject(Stage)
+
+class StageStyle : StyleBase() {
+	override val type = Companion
+
+	var bgColor: ColorRo by prop(Color.WHITE)
+
+	companion object : StyleType<StageStyle>
+}

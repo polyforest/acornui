@@ -134,7 +134,7 @@ class WindowPanelStyle : StyleBase() {
 	var background by prop(noSkin)
 	var titleBarBackground by prop(noSkin)
 	var closeButton by prop(noSkin)
-	var padding by prop(Pad(5f))
+	var padding by prop(Pad(6f))
 	var titleBarPadding by prop(Pad(5f))
 	var titleBarGap by prop(5f)
 
