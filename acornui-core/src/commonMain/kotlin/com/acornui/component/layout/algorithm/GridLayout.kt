@@ -262,7 +262,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 			val y = padding.top + lines.sumByFloat2(0, rowIndex - 1) { it.height } + style.verticalGap * rowIndex
 			element.moveTo(x + xOffset, y + yOffset)
 		}
-		val width = padding.expandWidth2(measuredColWidths.sumByFloat2 { it } + style.horizontalGap * lines.lastIndex)
+		val width = padding.expandWidth2(measuredColWidths.sumByFloat2 { it } + style.horizontalGap * columns.lastIndex)
 		val height = padding.expandHeight2(lines.sumByFloat2 { it.height } + style.verticalGap * lines.lastIndex)
 		out.set(width, height, baseline = lines.firstOrNull()?.baseline ?: 0f)
 
