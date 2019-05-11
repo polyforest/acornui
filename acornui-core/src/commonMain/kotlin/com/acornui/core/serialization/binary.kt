@@ -130,6 +130,13 @@ class BinaryReader(val data: ReadByteBuffer, propertyIndex: List<String>) : Read
 				}
 				list
 			}
+			BinaryType.BYTE_ARRAY -> {
+				val size = data.getInt()
+				val byteArray = ByteArray(size)
+				for (i in 0..size - 1) {
+					byteArray[i] = data.get()
+				}
+			}
 			else ->
 				throw Exception("Unknown data type: $type")
 		}
@@ -160,6 +167,8 @@ class BinaryReader(val data: ReadByteBuffer, propertyIndex: List<String>) : Read
 	override fun float(): Float? = value as Float?
 
 	override fun double(): Double? = value as Double?
+
+	override fun byteArray(): ByteArray? = value as ByteArray?
 
 	@Suppress("UNCHECKED_CAST")
 	override fun properties(): Map<String, BinaryReader> = value as Map<String, BinaryReader>
@@ -202,6 +211,9 @@ class BinaryWriter(val propertyIndex: MutableList<String>) : Writer {
 				for (writer in list)
 					c += writer.calculateSize()
 				c
+			}
+			BinaryType.BYTE_ARRAY -> {
+				4 + (_value as ByteArray).size
 			}
 			else -> throw Exception("Unknown data type: $type")
 		}
@@ -291,11 +303,20 @@ class BinaryWriter(val propertyIndex: MutableList<String>) : Writer {
 		contents(this)
 	}
 
+	override fun byteArray(value: ByteArray?) {
+		if (value == null) return writeNull()
+		type = BinaryType.BYTE_ARRAY
+		_value = value
+	}
+
 	fun write(data: WriteByteBuffer) {
 		data.put(type)
 		when (type) {
-			BinaryType.NULL -> {}
-			BinaryType.BOOLEAN -> { data.put(if (_value == true) 1 else 0) }
+			BinaryType.NULL -> {
+			}
+			BinaryType.BOOLEAN -> {
+				data.put(if (_value == true) 1 else 0)
+			}
 			BinaryType.BYTE -> data.put(_value as Byte)
 			BinaryType.CHAR -> data.putChar16(_value as Char)
 			BinaryType.SHORT -> data.putShort(_value as Short)
@@ -322,6 +343,13 @@ class BinaryWriter(val propertyIndex: MutableList<String>) : Writer {
 					entry.value.write(data)
 				}
 			}
+			BinaryType.BYTE_ARRAY -> {
+				val bytes = _value as ByteArray
+				data.putInt(bytes.size)
+				for (i in 0..bytes.lastIndex) {
+					data.put(bytes[i])
+				}
+			}
 			else -> throw Exception("Unknown data type: $type")
 		}
 	}
@@ -341,6 +369,7 @@ object BinaryType {
 	const val STRING: Byte = 10
 	const val ARRAY: Byte = 11
 	const val OBJECT: Byte = 12
+	const val BYTE_ARRAY: Byte = 13
 }
 
 fun <T> parseBinary(binary: NativeReadByteBuffer, factory: From<T>): T {
@@ -351,7 +380,7 @@ fun <T> toBinary(value: T, factory: To<T>): NativeReadByteBuffer {
 	return BinarySerializer.write(value, factory)
 }
 
-fun <T> Scoped.loadBinary(path:String, factory: From<T>): Deferred<T> = async {
+fun <T> Scoped.loadBinary(path: String, factory: From<T>): Deferred<T> = async {
 	val binary = inject(AssetManager).load(path, AssetType.BINARY)
 	BinarySerializer.read(binary.await(), factory)
 }

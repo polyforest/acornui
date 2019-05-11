@@ -121,6 +121,11 @@ class JsonNode(private val source: dynamic
 		return source as? Double?
 	}
 
+	override fun byteArray(): ByteArray? {
+		if (source == null) return null
+		return base64.decodeFromString(source as String)
+	}
+
 	override fun toString(): String {
 		return source.toString()
 	}
@@ -228,6 +233,11 @@ class JsonWriter(
 		}
 		if (complex) builder.append(indentStr)
 		builder.append(']')
+	}
+
+	override fun byteArray(value: ByteArray?) {
+		if (value == null) return writeNull()
+		string(base64.encodeToString(value))
 	}
 
 	override fun writeNull() {

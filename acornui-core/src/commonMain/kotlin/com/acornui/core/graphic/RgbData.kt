@@ -18,6 +18,7 @@ package com.acornui.core.graphic
 
 import com.acornui.graphic.*
 import com.acornui.math.*
+import com.acornui.serialization.*
 
 /**
  * A byte array of pixels.
@@ -229,4 +230,27 @@ fun rgbData(width: Int, height: Int, hasAlpha: Boolean = true, init: RgbData.()-
 	val r = RgbData(width, height, hasAlpha)
 	r.init()
 	return r
+}
+
+object RgbDataSerializer : To<RgbData>, From<RgbData> {
+
+	override fun read(reader: Reader): RgbData {
+		return RgbData(
+				width = reader.int("width")!!,
+				height = reader.int("height")!!,
+				hasAlpha = reader.bool("hasAlpha")!!
+		).apply {
+			val bytes = reader.byteArray("bytes")!!
+			for (i in 0..bytes.lastIndex) {
+				this[i] = bytes[i]
+			}
+		}
+	}
+
+	override fun RgbData.write(writer: Writer) {
+		writer.int("width", width)
+		writer.int("height", height)
+		writer.bool("hasAlpha", hasAlpha)
+		writer.byteArray(bytes)
+	}
 }

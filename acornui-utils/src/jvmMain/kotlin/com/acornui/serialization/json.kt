@@ -243,6 +243,11 @@ class JsonNode(private val source: String,
 		return subStr.toString().toDoubleOrNull()
 	}
 
+	override fun byteArray(): ByteArray? {
+		if (isNull) return null
+		return base64.decodeFromString(subStr.toString())
+	}
+
 	override fun toString(): String {
 		return subStr.toString()
 	}
@@ -351,6 +356,11 @@ class JsonWriter(
 
 	override fun writeNull() {
 		builder.append("null")
+	}
+
+	override fun byteArray(value: ByteArray?) {
+		if (value == null) return writeNull()
+		builder.append(base64.encodeToString(value))
 	}
 
 	private fun escape(value: String): String {
