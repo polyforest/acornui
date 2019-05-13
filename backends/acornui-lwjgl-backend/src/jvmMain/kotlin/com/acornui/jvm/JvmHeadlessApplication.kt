@@ -16,7 +16,6 @@
 
 package com.acornui.jvm
 
-import com.acornui.assertionsEnabled
 import com.acornui.async.Promise
 import com.acornui.async.launch
 import com.acornui.browser.decodeUriComponent2
@@ -34,18 +33,12 @@ import com.acornui.core.i18n.Locale
 import com.acornui.core.io.JSON_KEY
 import com.acornui.core.io.file.Files
 import com.acornui.core.io.file.FilesImpl
-import com.acornui.core.text.dateTimeFormatterProvider
-import com.acornui.core.text.numberFormatterProvider
-import com.acornui.core.time.time
 import com.acornui.jvm.graphic.JvmRgbDataLoader
 import com.acornui.jvm.io.file.ManifestUtil
 import com.acornui.jvm.loader.JvmTextLoader
 import com.acornui.jvm.loader.WorkScheduler
-import com.acornui.jvm.text.DateTimeFormatterImpl
-import com.acornui.jvm.text.NumberFormatterImpl
-import com.acornui.jvm.time.TimeProviderImpl
-import com.acornui.logging.Logger
 import com.acornui.logging.Log
+import com.acornui.logging.Logger
 import com.acornui.serialization.JsonSerializer
 import java.io.File
 import java.net.URLDecoder
@@ -71,16 +64,8 @@ open class JvmHeadlessApplication(
 	}
 
 	protected open fun initializeConfig(config: AppConfig) {
-		val finalConfig = config.copy(debug = config.debug || System.getProperty("debug")?.toLowerCase() == "true")
-		if (finalConfig.debug) {
-			assertionsEnabled = true
-		}
-		if (finalConfig.debug) {
-			Log.level = Logger.DEBUG
-		} else {
-			Log.level = Logger.INFO
-		}
-		lineSeparator = System.lineSeparator()
+		val finalConfig = config.copy()
+		Log.level = if (debug) Logger.DEBUG else Logger.INFO
 		encodeUriComponent2 = {
 			str ->
 			URLEncoder.encode(str, "UTF-8")
@@ -89,7 +74,6 @@ open class JvmHeadlessApplication(
 			str ->
 			URLDecoder.decode(str, "UTF-8")
 		}
-		time = TimeProviderImpl()
 		set(AppConfig, finalConfig)
 	}
 
@@ -111,15 +95,6 @@ open class JvmHeadlessApplication(
 	protected open val i18nTask by BootTask {
 		get(UserInfo)
 		set(I18n, I18nImpl())
-	}
-
-	/**
-	 * Initializes number constants and methods
-	 */
-	protected open val formatterTask by BootTask {
-		get(UserInfo)
-		numberFormatterProvider = { NumberFormatterImpl() }
-		dateTimeFormatterProvider = { DateTimeFormatterImpl() }
 	}
 
 	protected open val jsonTask by BootTask {

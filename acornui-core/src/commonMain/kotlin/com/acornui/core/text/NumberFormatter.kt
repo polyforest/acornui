@@ -21,7 +21,7 @@ import com.acornui.core.i18n.Locale
 /**
  * This class formats numbers into localized string representations.
  */
-interface NumberFormatter : StringFormatter<Number?>, StringParser<Double> {
+expect class NumberFormatter() : StringFormatter<Number?>, StringParser<Double> {
 
 	var type: NumberFormatType
 
@@ -50,14 +50,7 @@ interface NumberFormatter : StringFormatter<Number?>, StringParser<Double> {
 	 */
 	var locales: List<Locale>?
 
-	override fun parse(value: String): Double? {
-		val thousandSeparator = format(1111).replace("1", "")
-		val decimalSeparator = format(1.1).replace("1", "")
-		return value.replace(thousandSeparator, "").replace(decimalSeparator, ".").toDoubleOrNull()
-	}
 }
-
-lateinit var numberFormatterProvider: () -> NumberFormatter
 
 enum class NumberFormatType {
 	NUMBER,
@@ -66,7 +59,7 @@ enum class NumberFormatType {
 }
 
 fun numberFormatter(init: NumberFormatter.() -> Unit = {}): NumberFormatter {
-	val formatter = numberFormatterProvider()
+	val formatter = NumberFormatter()
 	formatter.init()
 	return formatter
 }
@@ -75,7 +68,7 @@ fun numberFormatter(init: NumberFormatter.() -> Unit = {}): NumberFormatter {
  * @pstsm currencyCode the ISO 4217 code of the currency
  */
 fun currencyFormatter(currencyCode: String, init: NumberFormatter.() -> Unit = {}): NumberFormatter {
-	return numberFormatterProvider().apply {
+	return NumberFormatter().apply {
 		type = NumberFormatType.CURRENCY
 		minFractionDigits = 2
 		this.currencyCode = currencyCode
@@ -88,7 +81,7 @@ fun currencyFormatter(currencyCode: String, init: NumberFormatter.() -> Unit = {
  * E.g. 0.23 will be formatted as 23%
  */
 fun percentFormatter(init: NumberFormatter.() -> Unit = {}): NumberFormatter {
-	return numberFormatterProvider().apply {
+	return NumberFormatter().apply {
 		type = NumberFormatType.PERCENT
 		init()
 	}

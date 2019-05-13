@@ -16,7 +16,9 @@
 
 package com.acornui
 
-var assertionsEnabled: Boolean = false
+import com.acornui.core.debug
+
+var assertionsEnabled: Boolean = debug
 
 /**
  * assert method calls that work in both jvm and js.

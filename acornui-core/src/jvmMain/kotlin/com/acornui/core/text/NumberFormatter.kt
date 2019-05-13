@@ -1,44 +1,28 @@
-/*
- * Copyright 2017 Nicholas Bilyk
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package com.acornui.jvm.text
+package com.acornui.core.text
 
 import com.acornui.collection.copy
 import com.acornui.core.i18n.Locale
-import com.acornui.core.text.NumberFormatType
-import com.acornui.core.text.NumberFormatter
 import com.acornui.core.userInfo
 import com.acornui.logging.Log
 import com.acornui.reflect.observable
 import java.text.NumberFormat
 import java.util.*
 import kotlin.properties.ReadWriteProperty
-import java.util.Locale as JvmLocale
 
-class NumberFormatterImpl : NumberFormatter {
+/**
+ * This class formats numbers into localized string representations.
+ */
+actual class NumberFormatter actual constructor() : StringFormatter<Number?>, StringParser<Double> {
 
-	override var type by watched(NumberFormatType.NUMBER)
-	override var locales: List<Locale>? by watched(null)
-	override var minIntegerDigits: Int by watched(1)
-	override var maxIntegerDigits: Int by watched(40)
-	override var minFractionDigits: Int by watched(0)
-	override var maxFractionDigits: Int by watched(3)
-	override var useGrouping: Boolean by watched(true)
+	actual var type by watched(NumberFormatType.NUMBER)
+	actual var locales: List<Locale>? by watched(null)
+	actual var minIntegerDigits: Int by watched(1)
+	actual var maxIntegerDigits: Int by watched(40)
+	actual var minFractionDigits: Int by watched(0)
+	actual var maxFractionDigits: Int by watched(3)
+	actual var useGrouping: Boolean by watched(true)
 
-	override var currencyCode: String by watched("USD")
+	actual var currencyCode: String by watched("USD")
 
 	private var lastLocales: List<Locale> = listOf()
 	private var formatter: NumberFormat? = null
@@ -84,5 +68,11 @@ class NumberFormatterImpl : NumberFormatter {
 		return observable(initial) {
 			formatter = null
 		}
+	}
+
+	override fun parse(value: String): Double? {
+		val thousandSeparator = format(1111).replace("1", "")
+		val decimalSeparator = format(1.1).replace("1", "")
+		return value.replace(thousandSeparator, "").replace(decimalSeparator, ".").toDoubleOrNull()
 	}
 }

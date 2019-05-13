@@ -23,17 +23,13 @@ import com.acornui.core.di.InjectorImpl
 import com.acornui.core.di.Owned
 import com.acornui.core.di.OwnedImpl
 import com.acornui.core.focus.FocusManager
-import com.acornui.core.graphic.Camera
 import com.acornui.core.graphic.Window
 import com.acornui.core.input.InteractivityManager
 import com.acornui.core.input.KeyState
 import com.acornui.core.input.MouseState
 import com.acornui.core.io.JSON_KEY
 import com.acornui.core.io.file.Files
-import com.acornui.core.time.Date
 import com.acornui.core.time.TimeDriver
-import com.acornui.core.time.TimeProvider
-import com.acornui.core.time.time
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.serialization.Serializer
@@ -67,19 +63,7 @@ object MockInjector {
 				GlState to  Mockito.mock(GlState::class.java),
 				JSON_KEY to json
 		))
-		time = MockTimeProvider()
-
 		return injector
 
 	}
-}
-
-class MockTimeProvider : TimeProvider {
-	override fun now(): Date {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-	}
-
-	override fun nowMs(): Long = 0
-
-	override fun nanoElapsed(): Long = 0
 }

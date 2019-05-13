@@ -296,3 +296,5 @@ fun Writer.dateTime(date: DateRo?) {
 	else long(date.time)
 }
 fun Writer.dateTime(name: String, date: DateRo?) = property(name).dateTime(date)
+
+expect class DateImpl() : Date

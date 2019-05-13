@@ -44,23 +44,6 @@ data class AppConfig(
 		val rootPath: String = "",
 
 		/**
-		 * A flag for enabling various debugging features like debug logging.
-		 * Don't set this to true directly, it will be automatically set to true if:
-		 * On the JS backend debug=true exists as a querystring parameter.
-		 * On the JVM backend -Ddebug=true exists as a vm parameter.
-		 */
-		val debug: Boolean = false,
-
-		/**
-		 * A flag for enabling debugging co-routines. This is useful if a co-routine is hanging and you wish
-		 * to track down where it was invoked.
-		 * Don't set this to true directly, it will be automatically set to true if:
-		 * On the JS backend debugCoroutines=true exists as a querystring parameter.
-		 * On the JVM backend -DdebugCoroutines=true exists as a vm parameter.
-		 */
-		val debugCoroutines: Boolean = false,
-
-		/**
 		 * The target number of frames per second.
 		 */
 		val frameRate: Int = 50,

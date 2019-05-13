@@ -16,8 +16,6 @@
 
 package com.acornui.core.time
 
-import kotlin.properties.Delegates
-
 /**
  * @author nbilyk
  */
@@ -134,4 +132,4 @@ interface TimeProvider {
 /**
  * A global abstracted time provider.
  */
-var time: TimeProvider by Delegates.notNull()
+expect val time: TimeProvider

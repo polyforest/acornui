@@ -20,6 +20,7 @@ import com.acornui.async.launch
 import com.acornui.component.HtmlComponent
 import com.acornui.core.asset.AssetType
 import com.acornui.core.asset.LoaderFactory
+import com.acornui.core.debug
 import com.acornui.core.di.Owned
 import com.acornui.core.di.dKey
 import com.acornui.core.di.own
@@ -94,7 +95,7 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 		uncaughtExceptionHandler = {
 			val message = it.stack + "\n${config.version.toVersionString()}"
 			Log.error(message)
-			if (config.debug)
+			if (debug)
 				window.alert(message)
 		}
 	}

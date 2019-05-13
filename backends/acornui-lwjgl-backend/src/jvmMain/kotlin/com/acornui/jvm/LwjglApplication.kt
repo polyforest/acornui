@@ -18,8 +18,6 @@
 
 package com.acornui.jvm
 
-import com.acornui.assertionsEnabled
-import com.acornui.async.coroutineDebugMode
 import com.acornui.async.launch
 import com.acornui.browser.decodeUriComponent2
 import com.acornui.browser.encodeUriComponent2
@@ -53,8 +51,6 @@ import com.acornui.core.popup.PopUpManager
 import com.acornui.core.request.RestServiceFactory
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionManagerImpl
-import com.acornui.core.text.dateTimeFormatterProvider
-import com.acornui.core.text.numberFormatterProvider
 import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.TimeDriverImpl
 import com.acornui.core.time.time
@@ -84,9 +80,6 @@ import com.acornui.jvm.loader.JvmBinaryLoader
 import com.acornui.jvm.loader.JvmTextLoader
 import com.acornui.jvm.loader.WorkScheduler
 import com.acornui.jvm.persistance.LwjglPersistence
-import com.acornui.jvm.text.DateTimeFormatterImpl
-import com.acornui.jvm.text.NumberFormatterImpl
-import com.acornui.jvm.time.TimeProviderImpl
 import com.acornui.logging.Log
 import com.acornui.logging.Logger
 import com.acornui.math.MinMax
@@ -118,16 +111,12 @@ open class LwjglApplication : ApplicationBase() {
 
 	companion object {
 		init {
-			lineSeparator = System.lineSeparator()
-
 			encodeUriComponent2 = { str ->
 				URLEncoder.encode(str, "UTF-8")
 			}
 			decodeUriComponent2 = { str ->
 				URLDecoder.decode(str, "UTF-8")
 			}
-
-			time = TimeProviderImpl()
 			BufferFactory.instance = JvmBufferFactory()
 		}
 	}
@@ -166,14 +155,9 @@ open class LwjglApplication : ApplicationBase() {
 		val build = if (buildVersion.exists()) buildVersion.readText().toInt() else config.version.build
 
 		val finalConfig = config.copy(
-				version = config.version.copy(build = build),
-				debug = config.debug || System.getProperty("debug")?.toLowerCase() == "true",
-				debugCoroutines = config.debugCoroutines || System.getProperty("debugCoroutines")?.toLowerCase() == "true"
+				version = config.version.copy(build = build)
 		)
-		if (finalConfig.debug) assertionsEnabled = true
-		if (finalConfig.debugCoroutines) coroutineDebugMode = true
-
-		if (finalConfig.debug) {
+		if (debug) {
 			Log.level = Logger.DEBUG
 		} else {
 			Log.level = Logger.INFO
@@ -212,7 +196,7 @@ open class LwjglApplication : ApplicationBase() {
 	 * Sets the [Gl20] dependency.
 	 */
 	protected open val glTask by BootTask {
-		set(Gl20, if (config().debug) JvmGl20Debug() else LwjglGl20())
+		set(Gl20, if (debug) JvmGl20Debug() else LwjglGl20())
 	}
 
 	/**
@@ -220,13 +204,13 @@ open class LwjglApplication : ApplicationBase() {
 	 */
 	protected open val windowTask by BootTask {
 		val config = config()
-		val window = GlfwWindowImpl(config.window, config.gl, get(Gl20), config.debug)
+		val window = GlfwWindowImpl(config.window, config.gl, get(Gl20), debug)
 		_windowId = window.windowId
 		set(Window, window)
 		uncaughtExceptionHandler = {
 			val message = it.stack + "\n${config.version.toVersionString()}"
 			Log.error(message)
-			if (config.debug)
+			if (debug)
 				window.alert(message)
 			System.exit(1)
 		}
@@ -318,11 +302,6 @@ open class LwjglApplication : ApplicationBase() {
 	protected open val i18nTask by BootTask {
 		get(UserInfo)
 		set(I18n, I18nImpl())
-	}
-
-	protected open val formattersTask by BootTask {
-		numberFormatterProvider = { NumberFormatterImpl() }
-		dateTimeFormatterProvider = { DateTimeFormatterImpl() }
 	}
 
 	protected open val fileReadWriteManagerTask by BootTask {

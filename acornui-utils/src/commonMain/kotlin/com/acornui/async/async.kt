@@ -27,8 +27,11 @@ import kotlin.coroutines.*
  *
  * To check active co-routines, pause the IDEA debugger, then Evaluate expression:
  * `com.acornui.async.AsyncKt.activeCoroutinesStr`
+ *
+ * On the JS backend debugCoroutines=true exists as a querystring parameter.
+ * On the JVM backend -DdebugCoroutines=true exists as a vm parameter.
  */
-var coroutineDebugMode = false
+expect val debugCoroutines: Boolean
 
 val activeCoroutines = HashMap<Continuation<*>, String>()
 var activeCoroutinesStr: String = ""
@@ -59,7 +62,7 @@ class BasicContinuationImpl(
 ) : Continuation<Unit> {
 
 	init {
-		if (coroutineDebugMode) {
+		if (debugCoroutines) {
 			activeCoroutines[this] = getStack()
 			refreshActiveCoroutinesStr()
 		}
@@ -67,7 +70,7 @@ class BasicContinuationImpl(
 
 	override fun resumeWith(result: Result<Unit>) {
 		result.onFailure { throw it }
-		if (coroutineDebugMode) {
+		if (debugCoroutines) {
 			activeCoroutines.remove(this)
 			refreshActiveCoroutinesStr()
 		}

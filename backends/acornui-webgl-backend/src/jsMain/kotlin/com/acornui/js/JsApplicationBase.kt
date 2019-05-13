@@ -16,7 +16,6 @@
 
 package com.acornui.js
 
-import com.acornui.assertionsEnabled
 import com.acornui.async.PendingDisposablesRegistry
 import com.acornui.async.awaitOrNull
 import com.acornui.async.launch
@@ -50,11 +49,8 @@ import com.acornui.core.popup.PopUpManager
 import com.acornui.core.request.RestServiceFactory
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionManagerImpl
-import com.acornui.core.text.dateTimeFormatterProvider
-import com.acornui.core.text.numberFormatterProvider
 import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.TimeDriverImpl
-import com.acornui.core.time.time
 import com.acornui.io.file.FilesManifestSerializer
 import com.acornui.js.audio.JsAudioElementMusicLoader
 import com.acornui.js.audio.JsAudioElementSoundLoader
@@ -69,9 +65,6 @@ import com.acornui.js.io.JsRestServiceFactory
 import com.acornui.js.loader.JsBinaryLoader
 import com.acornui.js.loader.JsTextLoader
 import com.acornui.js.persistance.JsPersistence
-import com.acornui.js.text.DateTimeFormatterImpl
-import com.acornui.js.text.NumberFormatterImpl
-import com.acornui.js.time.TimeProviderImpl
 import com.acornui.logging.Log
 import com.acornui.logging.Logger
 import com.acornui.serialization.JsonSerializer
@@ -141,7 +134,6 @@ Kotlin.isType = function(object, klass) {
 
 		@Suppress("LeakingThis")
 		if (::memberRefTest != ::memberRefTest) println("[SEVERE] Member reference fix isn't working.")
-		time = TimeProviderImpl()
 		encodeUriComponent2 = ::encodeURIComponent
 		decodeUriComponent2 = ::decodeURIComponent
 
@@ -170,14 +162,12 @@ Kotlin.isType = function(object, klass) {
 		// Copy the app config and set the build number and debug value.
 		val path = appConfig.rootPath + "assets/build.txt".appendParam("version", UidUtil.createUid())
 		val buildVersionLoader = JsTextLoader(path)
-		val debug = appConfig.debug || (window.location.search.contains(Regex("""(?:&|\?)debug=(true|1)""")))
-		val debugCoroutines = appConfig.debugCoroutines || (window.location.search.contains(Regex("""(?:&|\?)debugCoroutines=(true|1)""")))
 		val build = buildVersionLoader.awaitOrNull()
 		val finalConfig = if (build != null) {
-			appConfig.copy(debug = debug, debugCoroutines = debugCoroutines, version = appConfig.version.copy(build = build.toInt()))
+			appConfig.copy(version = appConfig.version.copy(build = build.toInt()))
 		} else {
 			Log.warn("assets/build.txt failed to load")
-			appConfig.copy(debug = debug, debugCoroutines = debugCoroutines)
+			appConfig
 		}
 
 		// Uncaught exception handler
@@ -189,10 +179,6 @@ Kotlin.isType = function(object, klass) {
 			else
 				uncaughtExceptionHandler(Exception("Unknown error: $message $lineNo $source $colNo $error"))
 		}
-
-		// _assert
-		assertionsEnabled = finalConfig.debug
-
 		Log.info("Config $finalConfig")
 		set(AppConfig, finalConfig)
 	}
@@ -245,11 +231,7 @@ Kotlin.isType = function(object, klass) {
 	}
 
 	protected open val loggingTask by BootTask {
-		if (get(AppConfig).debug) {
-			Log.level = Logger.DEBUG
-		} else {
-			Log.level = Logger.WARN
-		}
+		Log.level = if (debug) Logger.DEBUG else Logger.WARN
 	}
 
 	protected open val bufferTask by BootTask {
@@ -331,12 +313,6 @@ Kotlin.isType = function(object, klass) {
 	protected open val i18nTask by BootTask {
 		get(UserInfo)
 		set(I18n, I18nImpl())
-	}
-
-	protected open val textFormattersTask by BootTask {
-		get(UserInfo)
-		numberFormatterProvider = { NumberFormatterImpl() }
-		dateTimeFormatterProvider = { DateTimeFormatterImpl() }
 	}
 
 	protected open val clipboardTask by BootTask {

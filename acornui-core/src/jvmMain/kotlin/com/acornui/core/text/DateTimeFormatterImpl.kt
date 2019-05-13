@@ -1,29 +1,11 @@
-/*
- * Copyright 2017 Nicholas Bilyk
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package com.acornui.core.text
 
-package com.acornui.jvm.text
 
 import com.acornui.collection.copy
 import com.acornui.core.i18n.Locale
-import com.acornui.core.text.DateTimeFormatStyle
-import com.acornui.core.text.DateTimeFormatType
-import com.acornui.core.text.DateTimeFormatter
+import com.acornui.core.time.DateImpl
 import com.acornui.core.time.DateRo
 import com.acornui.core.userInfo
-import com.acornui.jvm.time.DateImpl
 import com.acornui.logging.Log
 import com.acornui.reflect.observable
 import java.text.DateFormat
@@ -32,13 +14,13 @@ import java.util.*
 import kotlin.properties.ReadWriteProperty
 import java.util.Locale as JvmLocale
 
-class DateTimeFormatterImpl : DateTimeFormatter {
+actual class DateTimeFormatter : StringFormatter<DateRo> {
 
-	override var type by watched(DateTimeFormatType.DATE_TIME)
-	override var timeStyle by watched(DateTimeFormatStyle.DEFAULT)
-	override var dateStyle by watched(DateTimeFormatStyle.DEFAULT)
-	override var timeZone: String? by watched(null)
-	override var locales: List<Locale>? by watched(null)
+	actual var type by watched(DateTimeFormatType.DATE_TIME)
+	actual var timeStyle by watched(DateTimeFormatStyle.DEFAULT)
+	actual var dateStyle by watched(DateTimeFormatStyle.DEFAULT)
+	actual var timeZone: String? by watched(null)
+	actual var locales: List<Locale>? by watched(null)
 
 	private var currentUserLocales: List<Locale> = listOf()
 	private var _formatter: DateFormat? = null
