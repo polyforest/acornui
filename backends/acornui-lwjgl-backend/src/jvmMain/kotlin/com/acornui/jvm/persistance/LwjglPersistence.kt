@@ -27,7 +27,7 @@ open class LwjglPersistence(
 		if (file.exists()) {
 			// Load the saved data.
 			val jsonData = file.readText()
-			data = JsonSerializer.read(jsonData, PersistenceDataSerializer)
+			data = json.read(jsonData, PersistenceDataSerializer)
 		} else {
 			data = PersistenceData()
 		}
@@ -63,7 +63,7 @@ open class LwjglPersistence(
 
 	override fun flush() {
 		data.version = currentVersion
-		val jsonStr = JsonSerializer.write(data, PersistenceDataSerializer)
+		val jsonStr = json.write(data, PersistenceDataSerializer)
 		file.writeText(jsonStr)
 	}
 }

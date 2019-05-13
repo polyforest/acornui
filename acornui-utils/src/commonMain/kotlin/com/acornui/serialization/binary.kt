@@ -14,24 +14,16 @@
  * limitations under the License.
  */
 
-package com.acornui.core.serialization
+package com.acornui.serialization
 
-import com.acornui.async.Deferred
-import com.acornui.async.async
 import com.acornui.collection.stringMapOf
-import com.acornui.core.asset.AssetManager
-import com.acornui.core.asset.AssetType
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
-import com.acornui.core.io.byteBuffer
 import com.acornui.io.*
-import com.acornui.serialization.*
 
 /**
  * A factory that provides a Reader and Writer for ReadBuffer<Byte>
  * @author nbilyk
  */
-object BinarySerializer : Serializer<NativeReadByteBuffer> {
+private object BinarySerializer : Serializer<NativeReadByteBuffer> {
 
 	override fun read(data: NativeReadByteBuffer): Reader {
 		data.rewind()
@@ -378,9 +370,4 @@ fun <T> parseBinary(binary: NativeReadByteBuffer, factory: From<T>): T {
 
 fun <T> toBinary(value: T, factory: To<T>): NativeReadByteBuffer {
 	return BinarySerializer.write(value, factory)
-}
-
-fun <T> Scoped.loadBinary(path: String, factory: From<T>): Deferred<T> = async {
-	val binary = inject(AssetManager).load(path, AssetType.BINARY)
-	BinarySerializer.read(binary.await(), factory)
 }

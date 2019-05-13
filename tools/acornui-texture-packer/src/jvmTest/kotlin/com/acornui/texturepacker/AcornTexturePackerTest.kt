@@ -23,10 +23,8 @@
 //import com.acornui.gl.core.TextureMinFilter
 //import com.acornui.gl.core.TexturePixelFormat
 //import com.acornui.gl.core.TexturePixelType
-//import com.acornui.core.io.JSON_KEY
 //import com.acornui.core.io.file.Files
 //import com.acornui.jvm.JvmHeadlessApplication
-//import com.acornui.serialization.JsonSerializer
 //import com.acornui.texturepacker.jvm.writer.JvmTextureAtlasWriter
 //import kotlin.test.Test
 //import java.io.File
@@ -38,7 +36,6 @@
 //class AcornTexturePackerTest {
 //
 //	@Test fun settings() {
-//		val json = JsonSerializer
 //		// language=JSON
 //		val settings = json.read("""
 //		{
@@ -89,8 +86,8 @@
 //		JvmHeadlessApplication().start {
 //			val dir = inject(Files).getDir("resources/packTest1") ?: throw Exception("Missing resources/packTest1 folder")
 //			launch {
-//				val packedData = AcornTexturePacker(inject(AssetManager), inject(JSON_KEY)).pack(dir)
-//				JvmTextureAtlasWriter(inject(JSON_KEY)).writeAtlas("packTest1.json", "packTest{0}", packedData, File("testAssets/out"))
+//				val packedData = AcornTexturePacker(inject(AssetManager)).pack(dir)
+//				JvmTextureAtlasWriter().writeAtlas("packTest1.json", "packTest{0}", packedData, File("testAssets/out"))
 //			}
 //		}
 //

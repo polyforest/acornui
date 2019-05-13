@@ -23,16 +23,12 @@ import com.acornui.component.Sprite
 import com.acornui.component.UiComponentImpl
 import com.acornui.core.Disposable
 import com.acornui.core.Updatable
-import com.acornui.core.asset.CachedGroup
-import com.acornui.core.asset.cachedGroup
-import com.acornui.core.asset.loadAndCacheJson
-import com.acornui.core.asset.loadJson
+import com.acornui.core.asset.*
 import com.acornui.core.di.Owned
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.graphic.TextureAtlasDataSerializer
 import com.acornui.core.graphic.loadAndCacheAtlasPage
-import com.acornui.core.serialization.loadBinary
 import com.acornui.core.time.onTick
 import com.acornui.gl.core.GlState
 import com.acornui.graphic.ColorRo

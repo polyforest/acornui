@@ -18,12 +18,11 @@ package com.acornui.build.util
 
 import com.acornui.core.asset.AssetManager
 import com.acornui.core.di.inject
-import com.acornui.core.io.JSON_KEY
 import com.acornui.core.io.file.Files
 import com.acornui.io.file.FilesManifestSerializer
 import com.acornui.jvm.JvmHeadlessApplication
 import com.acornui.jvm.io.file.ManifestUtil
-import com.acornui.serialization.JsonSerializer
+import com.acornui.serialization.json
 import com.acornui.serialization.write
 import com.acornui.texturepacker.jvm.TexturePackerUtil
 import java.io.File
@@ -40,7 +39,7 @@ object AcornAssets {
 
 		JvmHeadlessApplication(dest.path).start {
 			// Pack the assets in all directories in the dest folder with a name ending in "_unpacked"
-			TexturePackerUtil(inject(Files), inject(AssetManager), inject(JSON_KEY)).packAssets(dest, File("."))
+			TexturePackerUtil(inject(Files), inject(AssetManager)).packAssets(dest, File("."))
 
 			dest.setLastModified(System.currentTimeMillis())
 		}
@@ -49,7 +48,7 @@ object AcornAssets {
 	fun writeManifest(dest: File, root: File) {
 		println("Creating manifest")
 		val manifest = ManifestUtil.createManifest(dest, root)
-		File(dest, "files.json").writeText(JsonSerializer.write(manifest, FilesManifestSerializer))
+		File(dest, "files.json").writeText(json.write(manifest, FilesManifestSerializer))
 	}
 
 	private fun copyAssets(source: File, destination: File) {

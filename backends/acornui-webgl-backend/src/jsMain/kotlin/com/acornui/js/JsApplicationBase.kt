@@ -40,8 +40,7 @@ import com.acornui.core.i18n.Locale
 import com.acornui.core.input.*
 import com.acornui.core.input.interaction.ContextMenuManager
 import com.acornui.core.input.interaction.UndoDispatcher
-import com.acornui.core.io.BufferFactory
-import com.acornui.core.io.JSON_KEY
+import com.acornui.io.BufferFactory
 import com.acornui.core.io.file.Files
 import com.acornui.core.io.file.FilesImpl
 import com.acornui.core.persistance.Persistence
@@ -60,14 +59,13 @@ import com.acornui.js.cursor.JsCursorManager
 import com.acornui.js.input.JsClipboard
 import com.acornui.js.input.JsKeyInput
 import com.acornui.js.input.JsMouseInput
-import com.acornui.js.io.JsBufferFactory
 import com.acornui.js.io.JsRestServiceFactory
 import com.acornui.js.loader.JsBinaryLoader
 import com.acornui.js.loader.JsTextLoader
 import com.acornui.js.persistance.JsPersistence
 import com.acornui.logging.Log
 import com.acornui.logging.Logger
-import com.acornui.serialization.JsonSerializer
+import com.acornui.serialization.json
 import com.acornui.uncaughtExceptionHandler
 import org.w3c.dom.DocumentReadyState
 import org.w3c.dom.HTMLElement
@@ -234,10 +232,6 @@ Kotlin.isType = function(object, klass) {
 		Log.level = if (debug) Logger.DEBUG else Logger.WARN
 	}
 
-	protected open val bufferTask by BootTask {
-		BufferFactory.instance = JsBufferFactory()
-	}
-
 	protected open val mouseInputTask by BootTask {
 		set(MouseInput, JsMouseInput(get(CANVAS)))
 	}
@@ -246,12 +240,7 @@ Kotlin.isType = function(object, klass) {
 		set(KeyInput, JsKeyInput(get(CANVAS), get(AppConfig).input.jsCaptureAllKeyboardInput))
 	}
 
-	protected open val jsonTask by BootTask {
-		set(JSON_KEY, JsonSerializer)
-	}
-
 	protected open val filesTask by BootTask {
-		val json = get(JSON_KEY)
 		val config = get(AppConfig)
 		val path = config.rootPath + config.assetsManifestPath.appendParam("version", config.version.toVersionString())
 

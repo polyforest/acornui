@@ -21,8 +21,8 @@ import com.acornui.assertionsEnabled
 import com.acornui.core.Disposable
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
-import com.acornui.core.io.resizableFloatBuffer
-import com.acornui.core.io.resizableShortBuffer
+import com.acornui.io.resizableFloatBuffer
+import com.acornui.io.resizableShortBuffer
 
 /**
  *

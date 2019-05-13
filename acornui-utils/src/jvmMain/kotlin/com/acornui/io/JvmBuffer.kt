@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package com.acornui.jvm.io
-
-import com.acornui.io.*
+package com.acornui.io
 
 /**
  * Wraps a JVM buffer with the abstract Acorn Buffer interface.

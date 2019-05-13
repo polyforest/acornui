@@ -4,6 +4,7 @@ import com.acornui.async.Promise
 import com.acornui.core.Bandwidth
 import com.acornui.core.di.Injector
 import com.acornui.core.request.*
+import com.acornui.io.JsByteBuffer
 import com.acornui.io.ReadByteBuffer
 import com.acornui.io.NativeReadByteBuffer
 import com.acornui.logging.Log

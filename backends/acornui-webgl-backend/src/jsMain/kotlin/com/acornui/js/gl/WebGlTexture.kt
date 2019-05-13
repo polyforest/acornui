@@ -18,7 +18,7 @@ package com.acornui.js.gl
 
 import com.acornui.core.graphic.BlendMode
 import com.acornui.core.graphic.RgbData
-import com.acornui.core.io.BufferFactory
+import com.acornui.io.BufferFactory
 import com.acornui.gl.core.*
 import com.acornui.math.Matrix4
 import org.w3c.dom.HTMLImageElement

@@ -23,7 +23,7 @@ import com.acornui.core.cursor.Cursor
 import com.acornui.core.cursor.CursorManagerBase
 import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.graphic.Texture
-import com.acornui.jvm.io.JvmBufferUtil
+import com.acornui.io.JvmBufferUtil
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWImage
 

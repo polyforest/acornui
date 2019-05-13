@@ -24,7 +24,7 @@ import com.acornui.file.FileReader
 import com.acornui.io.NativeReadBuffer
 import com.acornui.io.NativeReadByteBuffer
 import com.acornui.js.html.hide
-import com.acornui.js.io.JsByteBuffer
+import com.acornui.io.JsByteBuffer
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Uint8Array
 import org.w3c.dom.HTMLAnchorElement

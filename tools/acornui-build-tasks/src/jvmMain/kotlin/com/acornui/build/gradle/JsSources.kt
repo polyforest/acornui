@@ -18,7 +18,7 @@ package com.acornui.build.gradle
 
 import com.acornui.io.file.FilesManifestSerializer
 import com.acornui.jvm.io.file.ManifestUtil
-import com.acornui.serialization.JsonSerializer
+import com.acornui.serialization.json
 import com.acornui.serialization.write
 import java.io.File
 
@@ -27,7 +27,7 @@ object JsSources {
 		val manifest = ManifestUtil.createManifest(source, root)
 		dest.let {
 			it.mkdirs()
-			File(it, "files.js").writeText("var manifest = ${JsonSerializer.write(manifest, FilesManifestSerializer)};")
+			File(it, "files.js").writeText("var manifest = ${json.write(manifest, FilesManifestSerializer)};")
 		}
 	}
 }

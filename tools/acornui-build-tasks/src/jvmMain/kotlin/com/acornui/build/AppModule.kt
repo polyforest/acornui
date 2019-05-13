@@ -19,7 +19,7 @@ package com.acornui.build
 import com.acornui.build.util.*
 import com.acornui.io.file.FilesManifestSerializer
 import com.acornui.jvm.io.file.ManifestUtil
-import com.acornui.serialization.JsonSerializer
+import com.acornui.serialization.json
 import com.acornui.serialization.write
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments
@@ -142,7 +142,7 @@ open class AppModule(
 		val manifest = ManifestUtil.createManifest(File(dest, "lib/"), dest)
 		val filesJs = File(dest, "lib/files.js")
 		println("Writing js files manifest: ${filesJs.absolutePath}")
-		filesJs.writeText("var manifest = ${JsonSerializer.write(manifest, FilesManifestSerializer)};")
+		filesJs.writeText("var manifest = ${json.write(manifest, FilesManifestSerializer)};")
 
 		val m = SourceFileManipulator()
 		m.addProcessor(ScriptCacheBuster::replaceVersionWithModTime, *ScriptCacheBuster.extensions)

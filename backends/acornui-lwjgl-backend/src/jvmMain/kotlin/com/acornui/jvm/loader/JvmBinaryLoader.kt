@@ -18,7 +18,7 @@ package com.acornui.jvm.loader
 
 import com.acornui.core.asset.AssetType
 import com.acornui.io.NativeReadByteBuffer
-import com.acornui.jvm.io.JvmByteBuffer
+import com.acornui.io.JvmByteBuffer
 import com.acornui.jvm.io.readAllBytes2
 import java.io.InputStream
 import java.nio.ByteBuffer

@@ -1,6 +1,6 @@
 package com.acornui.jvm.audio
 
-import com.acornui.jvm.io.closeQuietly
+import com.acornui.io.closeQuietly
 import java.io.*
 
 

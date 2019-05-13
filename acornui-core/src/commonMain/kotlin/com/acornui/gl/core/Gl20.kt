@@ -23,7 +23,7 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.graphic.Texture
 import com.acornui.core.graphic.Window
-import com.acornui.core.io.floatBuffer
+import com.acornui.io.floatBuffer
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.io.NativeReadBuffer

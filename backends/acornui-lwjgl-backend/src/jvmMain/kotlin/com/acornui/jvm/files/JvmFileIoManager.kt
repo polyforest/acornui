@@ -17,7 +17,7 @@
 package com.acornui.jvm.files
 
 import com.acornui.core.Platform
-import com.acornui.core.io.byteBuffer
+import com.acornui.io.byteBuffer
 import com.acornui.core.platform
 import com.acornui.file.FileFilterGroup
 import com.acornui.file.FileIoManager

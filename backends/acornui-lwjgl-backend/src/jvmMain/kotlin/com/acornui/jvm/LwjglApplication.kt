@@ -42,8 +42,6 @@ import com.acornui.core.input.*
 import com.acornui.core.input.interaction.ContextMenuManager
 import com.acornui.core.input.interaction.JvmClickDispatcher
 import com.acornui.core.input.interaction.UndoDispatcher
-import com.acornui.core.io.BufferFactory
-import com.acornui.core.io.JSON_KEY
 import com.acornui.core.io.file.Files
 import com.acornui.core.io.file.FilesImpl
 import com.acornui.core.persistance.Persistence
@@ -74,7 +72,6 @@ import com.acornui.jvm.input.GlfwMouseInput
 import com.acornui.jvm.input.JvmClipboard
 import com.acornui.jvm.input.LwjglKeyInput
 import com.acornui.jvm.input.MockTouchScreenKeyboard
-import com.acornui.jvm.io.JvmBufferFactory
 import com.acornui.jvm.io.JvmRestServiceFactory
 import com.acornui.jvm.loader.JvmBinaryLoader
 import com.acornui.jvm.loader.JvmTextLoader
@@ -83,7 +80,7 @@ import com.acornui.jvm.persistance.LwjglPersistence
 import com.acornui.logging.Log
 import com.acornui.logging.Logger
 import com.acornui.math.MinMax
-import com.acornui.serialization.JsonSerializer
+import com.acornui.serialization.json
 import com.acornui.uncaughtExceptionHandler
 import org.lwjgl.Version
 import org.lwjgl.glfw.GLFW
@@ -117,7 +114,6 @@ open class LwjglApplication : ApplicationBase() {
 			decodeUriComponent2 = { str ->
 				URLDecoder.decode(str, "UTF-8")
 			}
-			BufferFactory.instance = JvmBufferFactory()
 		}
 	}
 
@@ -184,14 +180,6 @@ open class LwjglApplication : ApplicationBase() {
 		set(UserInfo, u)
 	}
 
-
-	/**
-	 * Sets the [JSON_KEY] dependency.
-	 */
-	protected open val jsonTask by BootTask {
-		set(JSON_KEY, JsonSerializer)
-	}
-
 	/**
 	 * Sets the [Gl20] dependency.
 	 */
@@ -238,7 +226,7 @@ open class LwjglApplication : ApplicationBase() {
 		if (!manifestFile.exists()) throw FileNotFoundException(manifestFile.absolutePath)
 		val reader = FileReader(manifestFile)
 		val jsonStr = reader.readText()
-		val files = FilesImpl(JsonSerializer.read(jsonStr, FilesManifestSerializer))
+		val files = FilesImpl(json.read(jsonStr, FilesManifestSerializer))
 		set(Files, files)
 	}
 

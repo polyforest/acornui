@@ -30,7 +30,6 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.i18n.I18n
 import com.acornui.core.i18n.I18nImpl
 import com.acornui.core.i18n.Locale
-import com.acornui.core.io.JSON_KEY
 import com.acornui.core.io.file.Files
 import com.acornui.core.io.file.FilesImpl
 import com.acornui.jvm.graphic.JvmRgbDataLoader
@@ -39,7 +38,6 @@ import com.acornui.jvm.loader.JvmTextLoader
 import com.acornui.jvm.loader.WorkScheduler
 import com.acornui.logging.Log
 import com.acornui.logging.Logger
-import com.acornui.serialization.JsonSerializer
 import java.io.File
 import java.net.URLDecoder
 import java.net.URLEncoder
@@ -95,10 +93,6 @@ open class JvmHeadlessApplication(
 	protected open val i18nTask by BootTask {
 		get(UserInfo)
 		set(I18n, I18nImpl())
-	}
-
-	protected open val jsonTask by BootTask {
-		set(JSON_KEY, JsonSerializer)
 	}
 
 	protected open val filesTask by BootTask {

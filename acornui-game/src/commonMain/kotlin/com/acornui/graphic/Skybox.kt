@@ -23,7 +23,7 @@
 //import com.acornui.core.di.Owned
 //import com.acornui.core.graphic.BlendMode
 //import com.acornui.core.graphic.Texture
-//import com.acornui.core.io.floatBuffer
+//import com.acornui.io.floatBuffer
 //import com.acornui.gl.core.*
 //import com.acornui.io.put
 //import com.acornui.math.Matrix4

@@ -22,7 +22,7 @@ import com.acornui.core.replace2
  * A factory that provides a Reader and Writer for JSON
  * @author nbilyk
  */
-object JsonSerializer : Serializer<String> {
+private object JsonSerializer : Serializer<String> {
 
 	override fun read(data: String): Reader {
 		return JsonNode(JSON.parse(data))
@@ -36,14 +36,6 @@ object JsonSerializer : Serializer<String> {
 		callback(writer)
 		return buffer.toString()
 	}
-}
-
-fun <E> JsonSerializer.write(value: E, to: To<E>, tabStr: String, returnStr: String): String {
-	return write({
-		it.obj(true) {
-			to.write2(value, it)
-		}
-	}, tabStr, returnStr)
 }
 
 /**
@@ -248,3 +240,5 @@ class JsonWriter(
 		return value.replace2("\\", "\\\\").replace2("\r", "\\r").replace2("\n", "\\n").replace2("\t", "\\t").replace2("\"", "\\\"")
 	}
 }
+
+actual val json: Serializer<String> = JsonSerializer

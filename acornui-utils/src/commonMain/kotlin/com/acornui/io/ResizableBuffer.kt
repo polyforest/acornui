@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.acornui.core.io
+package com.acornui.io
 
-import com.acornui.io.*
 import kotlin.math.ceil
 
 open class ResizableBuffer<T, S : NativeReadWriteBuffer<T>>(initialCapacity: Int = 16, private val factory: (newCapacity: Int) -> S) : NativeReadWriteBuffer<T> {
@@ -112,7 +111,7 @@ open class ResizableBuffer<T, S : NativeReadWriteBuffer<T>>(initialCapacity: Int
 	}
 }
 
-class ResizableByteBuffer(initialCapacity: Int = 16) : ResizableBuffer<Byte, NativeReadWriteByteBuffer>(initialCapacity, { it -> BufferFactory.instance.byteBuffer(it) }), NativeReadWriteByteBuffer {
+class ResizableByteBuffer(initialCapacity: Int = 16) : ResizableBuffer<Byte, NativeReadWriteByteBuffer>(initialCapacity, { BufferFactory.byteBuffer(it) }), NativeReadWriteByteBuffer {
 
 	override fun getShort(): Short = wrapped.getShort()
 
@@ -143,4 +142,25 @@ class ResizableByteBuffer(initialCapacity: Int = 16) : ResizableBuffer<Byte, Nat
 	override fun putLong(value: Long) {
 		wrapped.putLong(value)
 	}
+}
+
+
+fun resizableByteBuffer(initialCapacity: Int = 16): ResizableByteBuffer {
+	return ResizableByteBuffer(initialCapacity)
+}
+
+fun resizableShortBuffer(initialCapacity: Int = 16): ResizableBuffer<Short, NativeReadWriteBuffer<Short>> {
+	return ResizableBuffer(initialCapacity, factory = { BufferFactory.shortBuffer(it) })
+}
+
+fun resizableIntBuffer(initialCapacity: Int = 16): ResizableBuffer<Int, NativeReadWriteBuffer<Int>> {
+	return ResizableBuffer(initialCapacity, factory = { BufferFactory.intBuffer(it) })
+}
+
+fun resizableFloatBuffer(initialCapacity: Int = 16): ResizableBuffer<Float, NativeReadWriteBuffer<Float>> {
+	return ResizableBuffer(initialCapacity, factory = { BufferFactory.floatBuffer(it) })
+}
+
+fun resizableDoubleBuffer(initialCapacity: Int = 16): ResizableBuffer<Double, NativeReadWriteBuffer<Double>> {
+	return ResizableBuffer(initialCapacity, factory = { BufferFactory.doubleBuffer(it) })
 }

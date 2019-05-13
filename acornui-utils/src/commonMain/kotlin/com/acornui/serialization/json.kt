@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-package com.acornui.core.io
+package com.acornui.serialization
 
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.dKey
-import com.acornui.core.di.inject
-import com.acornui.serialization.From
-import com.acornui.serialization.Serializer
-import com.acornui.serialization.To
-import com.acornui.serialization.write
+expect val json: Serializer<String>
 
-val JSON_KEY = dKey<Serializer<String>>()
-
-fun <T> Scoped.parseJson(json: String, factory: From<T>): T {
-	return inject(JSON_KEY).read(json, factory)
+fun <T> parseJson(jsonStr: String, factory: From<T>): T {
+	return json.read(jsonStr, factory)
 }
 
-fun <T> Scoped.toJson(value: T, factory: To<T>): String {
-	return inject(JSON_KEY).write(value, factory)
+fun <T> toJson(value: T, factory: To<T>): String {
+	return json.write(value, factory)
 }
