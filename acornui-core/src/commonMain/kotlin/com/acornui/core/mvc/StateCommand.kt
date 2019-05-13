@@ -25,9 +25,7 @@ import com.acornui.core.input.interaction.redo
 import com.acornui.core.input.interaction.undo
 import com.acornui.logging.Log
 
-class StateCommandHistory(
-		private val commandDispatcher: CommandDispatcher
-) : Disposable {
+class StateCommandHistory : Disposable {
 
 	private var maxCommandHistory = 100000
 	private val _commandHistory: ArrayList<StateCommand> = ArrayList()
@@ -46,7 +44,7 @@ class StateCommandHistory(
 	}
 
 	init {
-		commandDispatcher.commandInvoked.add(commandInvokedHandler)
+		CommandDispatcher.commandInvoked.add(commandInvokedHandler)
 	}
 
 	fun lastCommand(): StateCommand? {
@@ -118,7 +116,7 @@ class StateCommandHistory(
 
 	private fun _invoke(command: Command) {
 		isDispatching = true
-		commandDispatcher.invokeCommand(command)
+		CommandDispatcher.invokeCommand(command)
 		isDispatching = false
 	}
 
@@ -128,12 +126,12 @@ class StateCommandHistory(
 	}
 
 	override fun dispose() {
-		commandDispatcher.commandInvoked.remove(commandInvokedHandler)
+		CommandDispatcher.commandInvoked.remove(commandInvokedHandler)
 	}
 
 	companion object : DKey<StateCommandHistory> {
 		override fun factory(injector: Injector): StateCommandHistory? {
-			return StateCommandHistory(injector.inject(CommandDispatcher))
+			return StateCommandHistory()
 		}
 	}
 }

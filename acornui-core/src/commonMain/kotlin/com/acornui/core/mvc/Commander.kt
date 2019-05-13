@@ -1,16 +1,13 @@
 package com.acornui.core.mvc
 
 import com.acornui.core.Disposable
-import com.acornui.core.di.Scoped
 
 
 /**
  * A commander provides utility to listening to the command dispatcher, and allows for all callbacks to be
  * unregistered via the commander's dispose method.
  */
-class Commander(
-		private val commandDispatcher: CommandDispatcher
-) : Disposable {
+class Commander : Disposable {
 
 	private val disposables = ArrayList<Disposable>()
 
@@ -31,11 +28,11 @@ class Commander(
 	 * @return An object which, when disposed, will remove the handler.
 	 */
 	fun onCommandInvoked(callback: (command: Command) -> Unit): Disposable {
-		commandDispatcher.commandInvoked.add(callback)
+		CommandDispatcher.commandInvoked.add(callback)
 
 		val disposable = object : Disposable {
 			override fun dispose() {
-				commandDispatcher.commandInvoked.remove(callback)
+				CommandDispatcher.commandInvoked.remove(callback)
 			}
 		}
 		disposables.add(disposable)
@@ -50,4 +47,4 @@ class Commander(
 	}
 }
 
-fun Scoped.commander(): Commander = Commander(injector.inject(CommandDispatcher))
+fun commander(): Commander = Commander()
