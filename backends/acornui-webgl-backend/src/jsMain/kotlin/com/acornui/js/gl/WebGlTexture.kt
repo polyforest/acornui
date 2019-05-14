@@ -60,7 +60,7 @@ class WebGlTexture(
 		batch.putVertex(-1f, 1f, 0f, u = 0f, v = 1f)
 		batch.putQuadIndices()
 		batch.flush()
-		val pixelData = BufferFactory.instance.byteBuffer(width * height * 4)
+		val pixelData = BufferFactory.byteBuffer(width * height * 4)
 		gl.readPixels(0, 0, width, height, Gl20.RGBA, Gl20.UNSIGNED_BYTE, pixelData)
 		framebuffer.end()
 		glState.shader = previousShader
