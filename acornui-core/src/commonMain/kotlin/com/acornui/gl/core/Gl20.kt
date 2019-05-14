@@ -1,7 +1,5 @@
 /*
- * Derived from LibGDX by Nicholas Bilyk
- * https://github.com/libgdx
- * Copyright 2011 See https://github.com/libgdx/libgdx/blob/master/AUTHORS
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
