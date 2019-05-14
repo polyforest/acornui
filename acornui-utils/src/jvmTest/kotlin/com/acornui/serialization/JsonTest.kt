@@ -173,7 +173,7 @@ class JsonTest {
 						PersonData("Alexander", 1985, false),
 						PersonData("Joseph", 1987, true),
 						PersonData("Christian", 1987, false)))
-		val json = JsonSerializer.write(data, PersonDataSerializer)
+		val json = json.write(data, PersonDataSerializer)
 
 		// language=JSON
 		val expected = """{
@@ -286,7 +286,7 @@ class JsonTest {
 
 	@Test fun escaped() {
 		val data = PersonData("""B"\ob""", 1956, true)
-		val json = JsonSerializer.write(data, PersonDataSerializer)
+		val json = json.write(data, PersonDataSerializer)
 		assertEquals("""{
 	"name": "B\"\\ob",
 	"born": 1956,
