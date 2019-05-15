@@ -120,10 +120,15 @@ class ColorTransformation : ColorTransformationRo {
 		return this
 	}
 
+	override fun toString(): String {
+		return "ColorTransformation(matrix=$_matrix, offset=$_offset)"
+	}
+
 	companion object {
 
 		val IDENTITY: ColorTransformationRo = ColorTransformation()
 	}
+
 
 }
 
