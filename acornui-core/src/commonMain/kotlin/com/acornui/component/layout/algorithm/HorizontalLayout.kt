@@ -73,6 +73,7 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 		var baseline = 0f
 		var inflexibleWidth = 0f
 		var flexibleWidth = 0f
+		var hasBaseline = false
 		for (i in 0..orderedElements.lastIndex) {
 			val element = orderedElements[i]
 			val layoutData = element.layoutDataCast
@@ -82,8 +83,10 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 				element.setSize(w, h)
 				inflexibleWidth += element.width
 
-				if (layoutData?.verticalAlign ?: style.verticalAlign == VAlign.BASELINE)
+				if (layoutData?.verticalAlign ?: style.verticalAlign == VAlign.BASELINE) {
 					baseline = maxOf(baseline, element.baseline)
+					hasBaseline = true
+				}
 				if (allowRelativeSizing && (maxHeight == null || element.height > maxHeight))
 					maxHeight = element.height
 			} else {
@@ -131,10 +134,10 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 		for (i in 0..elements.lastIndex) {
 			val element = elements[i]
 			val layoutData = element.layoutDataCast
-			val y = when (layoutData?.verticalAlign ?: style.verticalAlign) {
-				VAlign.TOP -> padding.top
-				VAlign.MIDDLE -> (maxHeight - element.height) * 0.5f + padding.top
-				VAlign.BOTTOM -> maxHeight - element.height + padding.top
+			val y = padding.top + when (layoutData?.verticalAlign ?: style.verticalAlign) {
+				VAlign.TOP -> 0f
+				VAlign.MIDDLE -> (maxHeight - element.height) * 0.5f
+				VAlign.BOTTOM -> maxHeight - element.height
 				VAlign.BASELINE -> baseline - element.baseline
 			}
 			element.moveTo(x, y)
@@ -143,7 +146,7 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 		}
 		x += padding.right - gap
 		val measuredHeight = padding.bottom + bottomY
-		out.set(x, measuredHeight, elements.firstOrNull()?.baselineY ?: measuredHeight)
+		out.set(x, measuredHeight, if (hasBaseline) baseline else bottomY)
 	}
 
 	override fun createLayoutData() = HorizontalLayoutData()
