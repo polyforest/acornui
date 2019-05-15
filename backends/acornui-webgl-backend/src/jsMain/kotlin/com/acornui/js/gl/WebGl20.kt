@@ -79,22 +79,27 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 	}
 
 	override fun bufferDatabv(target: Int, data: NativeReadBuffer<Byte>, usage: Int) {
+		@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 		context.bufferData(target, data.native as BufferDataSource, usage)
 	}
 
 	override fun bufferDatafv(target: Int, data: NativeReadBuffer<Float>, usage: Int) {
+		@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 		context.bufferData(target, data.native as BufferDataSource, usage)
 	}
 
 	override fun bufferDatasv(target: Int, data: NativeReadBuffer<Short>, usage: Int) {
+		@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 		context.bufferData(target, data.native as BufferDataSource, usage)
 	}
 
 	override fun bufferSubDatafv(target: Int, offset: Int, data: NativeReadBuffer<Float>) {
+		@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 		context.bufferSubData(target, offset, data.native as BufferDataSource)
 	}
 
 	override fun bufferSubDatasv(target: Int, offset: Int, data: NativeReadBuffer<Short>) {
+		@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 		context.bufferSubData(target, offset, data.native as BufferDataSource)
 	}
 
@@ -338,6 +343,7 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 	}
 
 	override fun readPixels(x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: NativeReadBuffer<Byte>) {
+		@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 		context.readPixels(x, y, width, height, format, type, pixels.native as ArrayBufferView)
 	}
 
