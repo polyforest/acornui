@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,17 +23,16 @@ import com.acornui.component.Sprite
 import com.acornui.component.UiComponentImpl
 import com.acornui.core.Disposable
 import com.acornui.core.Updatable
-import com.acornui.core.asset.CachedGroup
-import com.acornui.core.asset.cachedGroup
-import com.acornui.core.asset.loadAndCacheJson
-import com.acornui.core.asset.loadJson
+import com.acornui.core.asset.*
 import com.acornui.core.di.Owned
 import com.acornui.core.di.Scoped
+import com.acornui.core.di.inject
 import com.acornui.core.graphic.TextureAtlasDataSerializer
 import com.acornui.core.graphic.loadAndCacheAtlasPage
-import com.acornui.core.serialization.loadBinary
 import com.acornui.core.time.onTick
+import com.acornui.gl.core.GlState
 import com.acornui.graphic.ColorRo
+import com.acornui.math.Matrix4Ro
 import com.acornui.math.MinMaxRo
 
 class ParticleEffectComponent(
@@ -105,9 +104,9 @@ class ParticleEffectComponent(
 	val effectInstance: ParticleEffectInstance?
 		get() = _effect?.effectInstance
 
-	override fun draw(clip: MinMaxRo) {
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		val effect = _effect ?: return
-		glState.setCamera(camera, concatenatedTransform)
+		glState.setCamera(viewProjectionTransform, viewTransform, modelTransform)
 		effect.render(concatenatedColorTint)
 	}
 
@@ -179,13 +178,14 @@ suspend fun Scoped.loadParticleEffect(pDataPath: String, atlasPath: String, grou
 suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffect, atlasPath: String, group: CachedGroup = cachedGroup(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
 	val atlasDataPromise = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group)
 	val atlasData = atlasDataPromise.await()
+	val glState = inject(GlState)
 
 	val spriteResolver: SpriteResolver = { emitter, imageEntry ->
 		val (page, region) = atlasData.findRegion(imageEntry.path)
 				?: throw Exception("Could not find \"${imageEntry.path}\" in the atlas $atlasPath")
 		val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
 
-		val sprite = Sprite()
+		val sprite = Sprite(glState)
 		sprite.blendMode = emitter.blendMode
 		sprite.premultipliedAlpha = emitter.premultipliedAlpha
 		sprite.texture = texture

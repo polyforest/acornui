@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,6 +73,7 @@ interface Reader {
 	fun float(): Float?
 	fun double(): Double?
 	fun char(): Char?
+	fun byteArray(): ByteArray?
 
 	fun properties(): Map<String, Reader>
 	fun elements(): List<Reader>
@@ -254,6 +255,7 @@ fun Reader.long(name: String): Long? = get(name)?.long()
 fun Reader.float(name: String): Float? = get(name)?.float()
 fun Reader.double(name: String): Double? = get(name)?.double()
 fun Reader.char(name: String): Char? = get(name)?.char()
+fun Reader.byteArray(name: String): ByteArray? = get(name)?.byteArray()
 fun Reader.boolArray(name: String): BooleanArray? = get(name)?.boolArray()
 fun Reader.stringArray(name: String): Array<String?>? = get(name)?.stringArray()
 fun Reader.shortArray(name: String): ShortArray? = get(name)?.shortArray()
@@ -279,6 +281,7 @@ interface Writer {
 	fun float(value: Float?)
 	fun double(value: Double?)
 	fun char(value: Char?)
+	fun byteArray(value: ByteArray?)
 
 	fun obj(complex: Boolean, contents: (Writer) -> Unit)
 	fun array(complex: Boolean, contents: (Writer) -> Unit)
@@ -471,6 +474,7 @@ fun Writer.long(name: String, value: Long?) = property(name).long(value)
 fun Writer.float(name: String, value: Float?) = property(name).float(value)
 fun Writer.double(name: String, value: Double?) = property(name).double(value)
 fun Writer.char(name: String, value: Char?) = property(name).char(value)
+fun Writer.byteArray(name: String, value: ByteArray?) = property(name).byteArray(value)
 fun Writer.boolArray(name: String, value: BooleanArray?) = property(name).boolArray(value)
 fun Writer.stringArray(name: String, value: Array<out String?>?) = property(name).stringArray(value)
 fun Writer.intArray(name: String, value: IntArray?) = property(name).intArray(value)
@@ -501,39 +505,4 @@ interface To<in T> {
 	fun write2(receiver: T, writer: Writer) = receiver.write(writer)
 
 	fun T.write(writer: Writer)
-}
-
-
-class StringNode(val str: String) : Reader {
-	override val isNull: Boolean = false
-	override fun contains(name: String): Boolean = false
-	override fun contains(index: Int): Boolean = false
-	override fun bool(): Boolean? = null
-	override fun byte(): Byte? = null
-	override fun int(): Int? = null
-	override fun string(): String = str
-	override fun short(): Short? = null
-	override fun long(): Long? = null
-	override fun float(): Float? = null
-	override fun double(): Double? = null
-	override fun char(): Char? = null
-	override fun properties(): Map<String, Reader> = emptyMap()
-	override fun elements(): List<Reader> = emptyList()
-}
-
-object NullNode : Reader {
-	override val isNull: Boolean = true
-	override fun contains(name: String): Boolean = false
-	override fun contains(index: Int): Boolean = false
-	override fun bool(): Boolean? = null
-	override fun byte(): Byte? = null
-	override fun int(): Int? = null
-	override fun string(): String? = null
-	override fun short(): Short? = null
-	override fun long(): Long? = null
-	override fun float(): Float? = null
-	override fun double(): Double? = null
-	override fun char(): Char? = null
-	override fun properties(): Map<String, Reader> = emptyMap()
-	override fun elements(): List<Reader> = emptyList()
 }

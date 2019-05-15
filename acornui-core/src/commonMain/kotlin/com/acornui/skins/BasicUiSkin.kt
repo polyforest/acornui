@@ -16,7 +16,7 @@
 
 package com.acornui.skins
 
-import com.acornui.async.launch
+import com.acornui.async.async
 import com.acornui.component.*
 import com.acornui.component.datagrid.DataGrid
 import com.acornui.component.datagrid.DataGridGroupHeader
@@ -32,56 +32,40 @@ import com.acornui.component.layout.spacer
 import com.acornui.component.scroll.*
 import com.acornui.component.style.*
 import com.acornui.component.text.*
-import com.acornui.core.AppConfig
-import com.acornui.core.asset.cachedGroup
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.SimpleHighlight
-import com.acornui.core.graphic.Window
 import com.acornui.core.input.interaction.ContextMenuStyle
 import com.acornui.core.input.interaction.ContextMenuView
 import com.acornui.core.input.interaction.enableDownRepeat
-import com.acornui.core.popup.PopUpManager
-import com.acornui.core.popup.PopUpManagerStyle
 import com.acornui.core.userInfo
+import com.acornui.filter.dropShadowFilter
 import com.acornui.graphic.Color
-import com.acornui.math.Corners
-import com.acornui.math.Pad
-import com.acornui.math.Vector2
+import com.acornui.math.*
 
 open class BasicUiSkin(
-		val target: UiComponent,
+		protected val target: UiComponent,
+		protected val theme: Theme,
 		private val skinPartProvider: SkinPartProvider = BasicSkinPartProvider()
 ) : Scoped, SkinPartProvider by skinPartProvider {
 
 	final override val injector = target.injector
 
-	protected val theme = inject(Theme)
-
-	init {
-		theme.apply {
-			bgColor = inject(AppConfig).window.backgroundColor
-			evenRowBgColor = bgColor + Color(0x03030300)
-			oddRowBgColor = bgColor - Color(0x03030300)
-		}
-	}
-
 	open fun apply() {
 		target.styleRules.clear()
-		initTheme()
-		inject(Window).clearColor = theme.bgColor
 
 		target.addStyleRule(ButtonStyle().set { labelButtonSkin(theme, it) }, Button)
 		target.addStyleRule(ButtonStyle().set { checkboxSkin(theme, it) }, Checkbox)
 		target.addStyleRule(ButtonStyle().set { collapseButtonSkin(theme, it) }, CollapseButton)
 		target.addStyleRule(ButtonStyle().set { radioButtonSkin(theme, it) }, RadioButton)
-		target.addStyleRule(ButtonStyle().set { checkboxNoLabelSkin(theme, it) }, Checkbox.NO_LABEL)
 		target.addStyleRule(ButtonStyle().set { iconButtonSkin(theme, it) }, IconButton)
 
-		popUpStyle()
+		stageStyle()
+		iconStyle()
 		focusStyle()
 		textStyle()
+		textFontStyle()
 		panelStyle()
 		windowPanelStyle()
 		headingGroupStyle()
@@ -98,46 +82,46 @@ open class BasicUiSkin(
 		optionListStyle()
 		dataGridStyle()
 		rowsStyle()
-		formStyle()
 		treeStyle()
 		contextMenuStyle()
 		calendarStyle()
 		htmlComponentStyle()
+		tooltipStyle()
+		imageButtonStyle()
+		formStyle()
 	}
 
-	open fun initTheme() {
-	}
-
-	protected open fun popUpStyle() {
-		val popUpManagerStyle = PopUpManagerStyle().apply {
-			modalFill = {
-				rect {
-					style.backgroundColor = Color(0f, 0f, 0f, 0.7f)
-				}
-			}
+	protected open fun stageStyle() {
+		val stageStyle = StageStyle().apply {
+			bgColor = theme.bgColor
 		}
-		target.addStyleRule(popUpManagerStyle, PopUpManager)
+		target.addStyleRule(stageStyle)
+	}
+
+	protected open fun iconStyle() {
+		val iconStyle = IconStyle().apply {
+			iconColor = theme.iconColor
+		}
+		target.addStyleRule(iconStyle)
 	}
 
 	protected open fun focusStyle() {
 		val focusManager = inject(FocusManager)
-		val focusHighlight = SimpleHighlight(target, theme.atlasPath, "FocusRect")
-		focusHighlight.colorTint = theme.focusHighlightColor
-		focusManager.setHighlightIndicator(focusHighlight)
+		if (focusManager.highlightIndicator == null) {
+			val focusHighlight = SimpleHighlight(target, theme.atlasPath, "FocusRect")
+			focusHighlight.colorTint = theme.focusHighlightColor
+			focusManager.setHighlightIndicator(focusHighlight)
+		}
 	}
 
 	protected open fun textStyle() {
 		target.addStyleRule(charStyle { colorTint = theme.textColor })
 		target.addStyleRule(charStyle { colorTint = theme.headingColor }, withAnyAncestor(
-				TextStyleTags.h1,
-				TextStyleTags.h2,
-				TextStyleTags.h3,
-				TextStyleTags.h4
+				TextStyleTags.large
 		))
 		target.addStyleRule(charStyle { colorTint = theme.formLabelColor }, withAncestor(formLabelStyle))
 
 		target.addStyleRule(charStyle { selectable = true }, withAncestor(TextInput) or withAncestor(TextArea))
-		loadBitmapFonts()
 
 		val textInputStyle = TextInputStyle().apply {
 			background = {
@@ -151,8 +135,7 @@ open class BasicUiSkin(
 			}
 			padding = Pad(theme.strokeThickness + 2f)
 		}
-		target.addStyleRule(textInputStyle, TextInput)
-		target.addStyleRule(textInputStyle, TextArea)
+		target.addStyleRule(textInputStyle, TextInput or TextArea)
 
 		val textInputFlowStyle = TextFlowStyle()
 		textInputFlowStyle.multiline = false
@@ -177,29 +160,42 @@ open class BasicUiSkin(
 		val charStyle = CharStyle()
 		charStyle.selectable = false
 		target.addStyleRule(charStyle, withAncestor(Button))
+
+		target.addStyleRule(charStyle { fontWeight = FontWeight.BOLD }, withAnyAncestor(
+				TextStyleTags.strong,
+				formLabelStyle,
+				TextStyleTags.heading
+		))
+		target.addStyleRule(charStyle { fontStyle = FontStyle.ITALIC }, withAncestor(TextStyleTags.emphasis))
+		target.addStyleRule(charStyle { fontSize = FontSize.EXTRA_SMALL }, withAncestor(TextStyleTags.extraSmall))
+		target.addStyleRule(charStyle { fontSize = FontSize.SMALL }, withAncestor(TextStyleTags.small))
+		target.addStyleRule(charStyle { fontSize = FontSize.REGULAR }, withAncestor(TextStyleTags.regular))
+		target.addStyleRule(charStyle { fontSize = FontSize.LARGE }, withAncestor(TextStyleTags.large))
+		target.addStyleRule(charStyle { fontSize = FontSize.EXTRA_LARGE }, withAncestor(TextStyleTags.extraLarge))
 	}
 
-	protected open fun loadBitmapFonts() {
-		val group = cachedGroup()
-		launch {
-			loadFontFromAtlas("assets/uiskin/verdana_14.fnt", theme.atlasPath, group)
-			loadFontFromAtlas("assets/uiskin/verdana_14_bold.fnt", theme.atlasPath, group)
-			loadFontFromAtlas("assets/uiskin/verdana_14_italic.fnt", theme.atlasPath, group)
-			loadFontFromAtlas("assets/uiskin/verdana_14_bold_italic.fnt", theme.atlasPath, group)
+	/**
+	 * The basic skin
+	 */
+	protected val sizeToPxMap = mutableMapOf(
+			FontSize.EXTRA_SMALL to 14,
+			FontSize.SMALL to 14,
+			FontSize.REGULAR to 14,
+			FontSize.LARGE to 14,
+			FontSize.EXTRA_LARGE to 14
+	)
 
-			target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_14.fnt" })
-			target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_14_bold.fnt" }, withAnyAncestor(
-					TextStyleTags.h1,
-					TextStyleTags.h2,
-					TextStyleTags.h3,
-					TextStyleTags.h4,
-					formLabelStyle
-			))
+	protected open fun textFontStyle() {
+		BitmapFontRegistry.fontResolver = { family, size, weight, style ->
+			async {
+				val weightStr = if (weight != FontWeight.REGULAR) "_$weight" else ""
+				val styleStr = if (style != FontStyle.NORMAL) "_$style" else ""
+				val sizeStr = "_${sizeToPxMap[size]}"
 
-			target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_bold_14.fnt" }, withAncestor(TextStyleTags.strong))
-			target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_italic_14.fnt" }, withAncestor(TextStyleTags.emphasis))
-			target.addStyleRule(charStyle { fontKey = "assets/uiskin/verdana_bold_italic_14.fnt" }, withAncestor(TextStyleTags.strong) and withAncestor(TextStyleTags.emphasis))
+				loadFontFromAtlas("assets/uiskin/$family$weightStr$styleStr$sizeStr.fnt", theme.atlasPath)
+			}
 		}
+		target.addStyleRule(charStyle { fontFamily = "verdana" })
 	}
 
 	protected open fun panelStyle() {
@@ -247,8 +243,9 @@ open class BasicUiSkin(
 				}
 			}
 			closeButton = {
-				button {
-					label = "x"
+				iconImageButton {
+					element = atlas(theme.atlasPath, "ic_clear_white_18dp")
+					style.overState = colorTransformation { tint(Color.RED) }
 				}
 			}
 		}
@@ -269,7 +266,7 @@ open class BasicUiSkin(
 
 		headingGroupStyle.heading = {
 			text {
-				styleTags.add(TextStyleTags.h1)
+				styleTags.add(TextStyleTags.large)
 			}
 		}
 
@@ -286,7 +283,7 @@ open class BasicUiSkin(
 
 	protected open fun tabNavigatorStyle() {
 		val tabNavStyle = TabNavigatorStyle().apply {
-			vGap = -theme.strokeThickness
+			tabBarPadding = Pad(0f, 0f, -theme.strokeThickness, 0f)
 			contentsPadding = Pad(theme.strokeThickness)
 			background = { rect {
 				style.apply {
@@ -334,9 +331,9 @@ open class BasicUiSkin(
 		stepperPad.right = 5f
 		target.addStyleRule(ButtonStyle().set {
 			{
-				val texture = buttonTexture(it, Corners(topLeft = 0f, topRight = maxOf(4f, theme.borderRadius), bottomRight = 0f, bottomLeft = 0f))
+				val texture = buttonTexture(theme, it, Corners(topLeft = 0f, topRight = maxOf(4f, theme.borderRadius), bottomRight = 0f, bottomLeft = 0f))
 				val skinPart = IconButtonSkinPart(this, texture, stepperPad)
-				val theme = inject(Theme)
+				val theme = theme
 				skinPart.element = atlas(theme.atlasPath, "ArrowUpSm") {
 					colorTint = theme.iconColor
 				}
@@ -346,9 +343,9 @@ open class BasicUiSkin(
 
 		target.addStyleRule(ButtonStyle().set {
 			{
-				val texture = buttonTexture(it, Corners(topLeft = 0f, topRight = 0f, bottomRight = maxOf(4f, theme.borderRadius), bottomLeft = 0f))
+				val texture = buttonTexture(theme, it, Corners(topLeft = 0f, topRight = 0f, bottomRight = maxOf(4f, theme.borderRadius), bottomLeft = 0f))
 				val skinPart = IconButtonSkinPart(this, texture, stepperPad)
-				val theme = inject(Theme)
+				val theme = theme
 				skinPart.element = atlas(theme.atlasPath, "ArrowDownSm") {
 					colorTint = theme.iconColor
 				}
@@ -498,7 +495,10 @@ open class BasicUiSkin(
 		val colorPickerStyle = ColorPickerStyle()
 		colorPickerStyle.apply {
 			background = {
-				button { focusEnabled = false }
+				button {
+					focusEnabled = false
+					style.set { { buttonTexture(theme, it) } }
+				}
 			}
 			colorSwatch = {
 				rect {
@@ -542,7 +542,7 @@ open class BasicUiSkin(
 	protected open fun optionListStyle() {
 		val optionListStyle = OptionListStyle().apply {
 			downArrow = {
-				atlas(theme.atlasPath, "OptionListArrow")
+				iconAtlas(theme.atlasPath, "ic_expand_more_white_24dp")
 			}
 			padding = Pad(theme.strokeThickness, theme.strokeThickness + 2f, theme.strokeThickness, theme.strokeThickness)
 			background = {
@@ -569,6 +569,7 @@ open class BasicUiSkin(
 						borderRadii = Corners(0f, 0f, theme.borderRadius, theme.borderRadius)
 						borderColors = BorderColors(theme.stroke)
 					}
+					+dropShadowFilter()
 				}
 			}
 			borderRadii = Corners(0f, 0f, theme.borderRadius, theme.borderRadius)
@@ -610,7 +611,7 @@ open class BasicUiSkin(
 			headerCellBackground = {
 				button {
 					style.set { buttonState ->
-						{ buttonTexture(buttonState, Corners(0f), Pad(0f)) }
+						{ buttonTexture(theme, buttonState, Corners(0f), Pad(0f)) }
 					}
 				}
 			}
@@ -670,12 +671,6 @@ open class BasicUiSkin(
 		target.addStyleRule(rowBackgroundsStyle, RowBackground)
 	}
 
-	protected open fun formStyle() {
-		val formStyle = GridLayoutStyle()
-		formStyle.verticalAlign = VAlign.TOP
-		target.addStyleRule(formStyle, FormContainer)
-	}
-
 	protected open fun treeStyle() {
 		val itemRendererStyle = DefaultTreeItemRendererStyle()
 		itemRendererStyle.openedFolderIcon = {
@@ -708,7 +703,7 @@ open class BasicUiSkin(
 	protected open fun calendarStyle() {
 		val datePickerStyle = DatePickerStyle().apply {
 			downArrow = {
-				atlas(theme.atlasPath, "calendar")
+				iconAtlas(theme.atlasPath, "ic_date_range_white_24dp")
 			}
 			padding = Pad(theme.strokeThickness, theme.strokeThickness + 2f, theme.strokeThickness, theme.strokeThickness)
 			background = {
@@ -730,13 +725,25 @@ open class BasicUiSkin(
 					style.borderColors = BorderColors(theme.stroke)
 					style.borderRadii = Corners(bottomLeft = Vector2(theme.borderRadius, theme.borderRadius), bottomRight = Vector2(theme.borderRadius, theme.borderRadius))
 					style.borderThicknesses = Pad(theme.strokeThickness)
+					+dropShadowFilter()
 				}
 			}
 		}
 		target.addStyleRule(calendarPanelStyle, Panel and withAncestor(Calendar))
 
-		target.addStyleRule(ButtonStyle().set { iconButtonSkin(it, "ArrowLeftLg") }, Calendar.MONTH_DEC_STYLE)
-		target.addStyleRule(ButtonStyle().set { iconButtonSkin(it, "ArrowRightLg") }, Calendar.MONTH_INC_STYLE)
+		val calendarStyle = CalendarStyle().apply {
+			monthDecButton = {
+				iconImageButton {
+					element = atlas(theme.atlasPath, "ic_chevron_left_white_24dp")
+				}
+			}
+			monthIncButton = {
+				iconImageButton {
+					element = atlas(theme.atlasPath, "ic_chevron_right_white_24dp")
+				}
+			}
+		}
+		target.addStyleRule(calendarStyle)
 
 		val inactiveCalendarItemRendererStyle = CalendarItemRendererStyle().apply {
 			disabledColor = Color(0.5f, 0.5f, 0.5f, 0.3f)
@@ -765,5 +772,49 @@ open class BasicUiSkin(
 		val boxStyle = BoxStyle()
 		boxStyle.backgroundColor = Color.CLEAR
 		target.addStyleRule(boxStyle, HtmlComponent)
+	}
+
+	protected open fun tooltipStyle() {
+		val tooltipStyle = PanelStyle().apply {
+			background = {
+				rect {
+					style.backgroundColor = theme.panelBgColor
+					style.borderColors = BorderColors(theme.stroke)
+					style.borderRadii = Corners(theme.borderRadius)
+					style.borderThicknesses = Pad(theme.strokeThickness)
+					+dropShadowFilter()
+				}
+			}
+		}
+		target.addStyleRule(tooltipStyle, TooltipView)
+	}
+
+	protected open fun imageButtonStyle() {
+		val imageButtonStyle = ImageButtonStyle().apply {
+			upState = colorTransformation {
+				tint(theme.iconColor)
+			}
+			overState = colorTransformation {
+				tint(theme.iconColor)
+				offset = Color(0.1f, 0.1f, 0.1f, 0.0f)
+			}
+			downState = colorTransformation {
+				tint(theme.iconColor * 0.9f)
+				offset = Color(-0.1f, -0.1f, -0.1f, 0.0f)
+			}
+			disabledState = colorTransformation {
+				tint(0.2f, 0.2f, 0.2f, 0.5f)
+				grayscale()
+				offset = Color(-0.1f, -0.1f, -0.1f, 0.0f)
+			}
+		}
+		target.addStyleRule(imageButtonStyle, ImageButton.ICON_IMAGE)
+	}
+
+	protected open fun formStyle() {
+		val formStyle = GridLayoutStyle().apply {
+			horizontalGap = 10f
+		}
+		target.addStyleRule(formStyle, FormContainer)
 	}
 }

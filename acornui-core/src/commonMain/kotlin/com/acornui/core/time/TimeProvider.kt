@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 
 package com.acornui.core.time
-
-import kotlin.properties.Delegates
 
 /**
  * @author nbilyk
@@ -134,4 +132,4 @@ interface TimeProvider {
 /**
  * A global abstracted time provider.
  */
-var time: TimeProvider by Delegates.notNull()
+expect val time: TimeProvider

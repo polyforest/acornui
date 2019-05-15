@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 PolyForest
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ class TextVerticalGroup(owner: Owned) : TextElementContainerImpl<TextNode>(owner
 			measuredWidth = maxOf(measuredWidth, element.width)
 			y += element.height
 		}
-		out.set(explicitWidth ?: measuredWidth, y)
+		out.set(explicitWidth ?: measuredWidth, y, elements.firstOrNull()?.baselineY ?: 0f)
 	}
 
 }

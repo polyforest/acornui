@@ -17,8 +17,10 @@
 package com.acornui.core.serialization
 
 import org.junit.Assert.*
+import org.junit.Test
 
 class BinarySerializerTest {
+
 
 
 }

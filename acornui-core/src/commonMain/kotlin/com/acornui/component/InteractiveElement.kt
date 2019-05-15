@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import com.acornui.core.input.InteractivityManager
 import com.acornui.math.Vector2
 import com.acornui.signal.StoppableSignal
 
-interface InteractiveElementRo : LayoutElementRo, CameraElementRo, AttachmentHolder, Owned {
+interface InteractiveElementRo : LayoutElementRo, CanvasTransformableRo, AttachmentHolder, Owned {
 
 	/**
 	 * If false, interaction will be blocked on this element.
@@ -74,7 +74,7 @@ interface InteractiveElementRo : LayoutElementRo, CameraElementRo, AttachmentHol
  * To use interaction signals, use their respective extension function.
  * See commonInteractions.kt
  */
-interface InteractiveElement : InteractiveElementRo, LayoutElement, CameraElement {
+interface InteractiveElement : InteractiveElementRo, LayoutElement {
 
 	/**
 	 * Determines how this element will block or accept interaction events.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.acornui.string
 
-fun Int.toRadix(radix: Int): String {
+actual fun Int.toRadix(radix: Int): String {
 	val d: dynamic = this
 	return d.toString(radix)
 }

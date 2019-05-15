@@ -16,7 +16,7 @@
 
 package com.acornui.component.layout.algorithm
 
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SizeLayoutDataTest {

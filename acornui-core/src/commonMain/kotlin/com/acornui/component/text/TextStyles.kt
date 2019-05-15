@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 PolyForest
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.acornui.component.text
 
+import com.acornui.async.Deferred
 import com.acornui.collection.addAll
 import com.acornui.component.ComponentInit
 import com.acornui.component.layout.algorithm.FlowHAlign
@@ -30,20 +31,9 @@ import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.serialization.*
 
-var TextField.strong: Boolean
-	get() = styleTags.contains(TextStyleTags.strong)
-	set(value) {
-		if (!styleTags.contains(TextStyleTags.strong))
-			styleTags.add(TextStyleTags.strong)
-	}
+var TextField.strong by StyleTagToggle(TextStyleTags.strong)
 
-var TextField.emphasis: Boolean
-	get() = styleTags.contains(TextStyleTags.emphasis)
-	set(value) {
-		if (!styleTags.contains(TextStyleTags.emphasis))
-			styleTags.add(TextStyleTags.emphasis)
-	}
-
+var TextField.emphasis by StyleTagToggle(TextStyleTags.emphasis)
 
 var TextField.selectable: Boolean
 	get(): Boolean = charStyle.selectable
@@ -53,10 +43,15 @@ var TextField.selectable: Boolean
 
 object TextStyleTags {
 
-	val h1 = styleTag()
-	val h2 = styleTag()
-	val h3 = styleTag()
-	val h4 = styleTag()
+	val heading = styleTag()
+
+	val extraSmall = styleTag()
+	val small = styleTag()
+	val normal = styleTag()
+	val large = styleTag()
+	val extraLarge = styleTag()
+
+	val regular = styleTag()
 	val strong = styleTag()
 	val emphasis = styleTag()
 
@@ -66,53 +61,43 @@ object TextStyleTags {
 }
 
 /**
- * A shortcut to creating a text field with the [TextStyleTags.h1] tag.
+ * A shortcut to creating a text field with the [TextStyleTags.heading] tag.
  */
-fun Owned.h1(text: String = "", init: ComponentInit<TextField> = {}): TextField {
+fun Owned.headingText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
 	val t = TextFieldImpl(this)
-	t.styleTags.add(TextStyleTags.h1)
+	t.styleTags.add(TextStyleTags.heading)
 	t.text = text
 	t.init()
 	return t
 }
 
 /**
- * A shortcut to creating a text field with the [TextStyleTags.h2] tag.
+ * A shortcut to creating a text field with the [TextStyleTags.large] tag.
  */
-fun Owned.h2(text: String = "", init: ComponentInit<TextField> = {}): TextField {
+fun Owned.largeText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
 	val t = TextFieldImpl(this)
-	t.styleTags.add(TextStyleTags.h2)
+	t.styleTags.add(TextStyleTags.large)
 	t.text = text
 	t.init()
 	return t
 }
 
 /**
- * A shortcut to creating a text field with the [TextStyleTags.h3] tag.
+ * A shortcut to creating a text field with the [TextStyleTags.small] tag.
  */
-fun Owned.h3(text: String = "", init: ComponentInit<TextField> = {}): TextField {
+fun Owned.smallText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
 	val t = TextFieldImpl(this)
-	t.styleTags.add(TextStyleTags.h3)
+	t.styleTags.add(TextStyleTags.small)
 	t.text = text
 	t.init()
 	return t
 }
 
-/**
- * A shortcut to creating a text field with the [TextStyleTags.h4] tag.
- */
-fun Owned.h4(text: String = "", init: ComponentInit<TextField> = {}): TextField {
-	val t = TextFieldImpl(this)
-	t.styleTags.add(TextStyleTags.h4)
-	t.text = text
-	t.init()
-	return t
-}
 
 /**
  * A shortcut to creating a text field with the [TextStyleTags.strong] tag.
  */
-fun Owned.strong(text: String = "", init: ComponentInit<TextField> = {}): TextField {
+fun Owned.strongText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
 	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.strong)
 	t.text = text
@@ -123,7 +108,7 @@ fun Owned.strong(text: String = "", init: ComponentInit<TextField> = {}): TextFi
 /**
  * A shortcut to creating a text field with the [TextStyleTags.emphasis] tag.
  */
-fun Owned.em(text: String = "", init: ComponentInit<TextField> = {}): TextField {
+fun Owned.emphasizedText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
 	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.emphasis)
 	t.text = text
@@ -134,7 +119,7 @@ fun Owned.em(text: String = "", init: ComponentInit<TextField> = {}): TextField 
 /**
  * A shortcut to creating a text field with the [TextStyleTags.emphasis] and [TextStyleTags.strong] tags.
  */
-fun Owned.strongEm(text: String = "", init: ComponentInit<TextField> = {}): TextField {
+fun Owned.strongEmphasizedText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
 	val t = TextFieldImpl(this)
 	t.styleTags.addAll(TextStyleTags.emphasis, TextStyleTags.strong)
 	t.text = text
@@ -183,9 +168,49 @@ class CharStyle : StyleBase() {
 	override val type: StyleType<CharStyle> = CharStyle
 
 	/**
-	 * The key of the font, as it was registered on the [BitmapFontRegistry] in the skin.
+	 * The font family. This is not typically set directly, but provided by the skin.
+	 * It should match the font family in [BitmapFontRegistry].
 	 */
-	var fontKey by prop<String?>(null)
+	var fontFamily by prop<String?>(null)
+
+	/**
+	 * The size of the font. This should be a string that matches the what the [FontResolver] expects in the
+	 * [BitmapFontRegistry]
+	 *
+	 * This is not typically set directly, but provided by the skin. Use the corresponding tags in [TextStyleTags].
+	 *
+	 * @see TextStyleTags.extraSmall
+	 * @see TextStyleTags.small
+	 * @see TextStyleTags.normal
+	 * @see TextStyleTags.large
+	 * @see TextStyleTags.extraLarge
+	 *
+	 * @see FontSize
+	 */
+	var fontSize by prop(FontSize.REGULAR)
+
+	/**
+	 * Which font style to use.
+	 *
+	 * This is not typically set directly, but provided by the skin. Use the corresponding tags in [TextStyleTags].
+	 *
+	 * @see TextStyleTags.emphasis
+	 *
+	 * @see FontStyle
+	 */
+	var fontStyle by prop(FontStyle.NORMAL)
+
+	/**
+	 * Which font weight to use.
+	 *
+	 * This is not typically set directly, but provided by the skin. Use the corresponding tags in [TextStyleTags].
+	 *
+	 * @see TextStyleTags.strong
+	 * @see TextStyleTags.regular
+	 *
+	 * @see FontWeight
+	 */
+	var fontWeight by prop(FontWeight.REGULAR)
 
 	/**
 	 * True if the characters should draw an line at the baseline.
@@ -219,10 +244,10 @@ class CharStyle : StyleBase() {
 	companion object : StyleType<CharStyle>
 }
 
-val CharStyle.font: BitmapFont?
+val CharStyle.font: Deferred<BitmapFont>?
 	get() {
-		val fontKey = fontKey ?: return null
-		return BitmapFontRegistry.getFont(fontKey)
+		val family = fontFamily ?: return null
+		return BitmapFontRegistry.getFont(family, fontSize, fontWeight, fontStyle)
 	}
 
 
@@ -235,7 +260,10 @@ fun charStyle(init: CharStyle.() -> Unit = {}): CharStyle {
 object CharStyleSerializer : To<CharStyle>, From<CharStyle> {
 
 	override fun CharStyle.write(writer: Writer) {
-		writer.styleProperty(this, ::fontKey)?.string(fontKey)
+		writer.styleProperty(this, ::fontFamily)?.string(fontFamily)
+		writer.styleProperty(this, ::fontWeight)?.string(fontWeight)
+		writer.styleProperty(this, ::fontStyle)?.string(fontStyle)
+		writer.styleProperty(this, ::fontSize)?.string(fontSize)
 		writer.styleProperty(this, ::underlined)?.bool(underlined)
 		writer.styleProperty(this, ::colorTint)?.color(colorTint)
 		writer.styleProperty(this, ::backgroundColor)?.color(backgroundColor)
@@ -246,7 +274,10 @@ object CharStyleSerializer : To<CharStyle>, From<CharStyle> {
 
 	override fun read(reader: Reader): CharStyle {
 		val c = CharStyle()
-		reader.contains(c::fontKey.name) { c.fontKey = it.string()!! }
+		reader.contains(c::fontFamily.name) { c.fontFamily = it.string()!! }
+		reader.contains(c::fontWeight.name) { c.fontWeight = it.string()!! }
+		reader.contains(c::fontStyle.name) { c.fontStyle = it.string()!! }
+		reader.contains(c::fontSize.name) { c.fontSize = it.string()!! }
 		reader.contains(c::underlined.name) { c.underlined = it.bool()!! }
 		reader.contains(c::colorTint.name) { c.colorTint = it.color()!! }
 		reader.contains(c::backgroundColor.name) { c.backgroundColor = it.color()!! }
@@ -255,6 +286,34 @@ object CharStyleSerializer : To<CharStyle>, From<CharStyle> {
 		reader.contains(c::selectable.name) { c.selectable = it.bool()!! }
 		return c
 	}
+}
+
+object FontWeight {
+	const val THIN = "thin"
+	const val EXTRA_LIGHT = "extra-light"
+	const val LIGHT = "light"
+	const val REGULAR = "regular"
+	const val MEDIUM = "medium"
+	const val SEMI_BOLD = "semi-bold"
+	const val BOLD = "bold"
+	const val BLACK = "black"
+
+	val values = listOf(THIN, EXTRA_LIGHT, LIGHT, REGULAR, MEDIUM, SEMI_BOLD, BOLD, BLACK)
+}
+
+object FontStyle {
+	const val NORMAL = "normal"
+	const val ITALIC = "italic"
+}
+
+object FontSize {
+	const val EXTRA_SMALL = "extra-small"
+	const val SMALL = "small"
+	const val REGULAR = "regular"
+	const val LARGE = "large"
+	const val EXTRA_LARGE = "extra-large"
+
+	val values = listOf(EXTRA_SMALL, SMALL, REGULAR, LARGE, EXTRA_LARGE)
 }
 
 class TextFlowStyle : StyleBase() {

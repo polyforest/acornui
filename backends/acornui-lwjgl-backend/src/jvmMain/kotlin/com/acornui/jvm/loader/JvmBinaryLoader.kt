@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.acornui.jvm.loader
 
 import com.acornui.core.asset.AssetType
 import com.acornui.io.NativeReadByteBuffer
-import com.acornui.jvm.io.JvmByteBuffer
+import com.acornui.io.JvmByteBuffer
 import com.acornui.jvm.io.readAllBytes2
 import java.io.InputStream
 import java.nio.ByteBuffer

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,14 @@ import com.acornui.recycle.Clearable
 import com.acornui.core.graphic.*
 import com.acornui.gl.core.GlState
 import com.acornui.graphic.ColorRo
-import com.acornui.math.Matrix4Ro
+import com.acornui.math.*
 
-class Atlas : BasicDrawable, Clearable {
+class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 
 	private var _region: AtlasRegionData? = null
+
+	private var width = 0f
+	private var height = 0f
 
 	val region: AtlasRegionData?
 		get() = _region
@@ -66,7 +69,7 @@ class Atlas : BasicDrawable, Clearable {
 		if (region.splits == null) {
 			_ninePatch = null
 			if (_sprite == null) {
-				_sprite = Sprite()
+				_sprite = Sprite(glState)
 				_sprite?.blendMode = _blendMode
 				_sprite?.useAsBackFace = _useAsBackFace
 			}
@@ -75,7 +78,7 @@ class Atlas : BasicDrawable, Clearable {
 		} else {
 			_sprite = null
 			if (_ninePatch == null) {
-				_ninePatch = NinePatch()
+				_ninePatch = NinePatch(glState)
 				_ninePatch?.blendMode = _blendMode
 				_ninePatch?.useAsBackFace = _useAsBackFace
 			}
@@ -114,23 +117,9 @@ class Atlas : BasicDrawable, Clearable {
 	private var totalPadRight = 0f
 	private var totalPadBottom = 0f
 
-	override fun updateWorldVertices(worldTransform: Matrix4Ro, width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
-		val drawable = drawable ?: return
-		updatePadding(width, height)
-
-		drawable.updateWorldVertices(
-				worldTransform,
-				width - totalPadLeft - totalPadRight,
-				height - totalPadBottom - totalPadTop,
-				x = totalPadLeft,
-				y = totalPadTop,
-				rotation = rotation,
-				originX = originX,
-				originY = originY
-		)
-	}
-
 	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
+		this.width = width
+		this.height = height
 		val drawable = drawable ?: return
 		updatePadding(width, height)
 
@@ -176,8 +165,8 @@ class Atlas : BasicDrawable, Clearable {
 		totalPadBottom = unscaledPadBottom + scaledPadBottom * sY
 	}
 
-	override fun render(glState: GlState, colorTint: ColorRo) {
-		drawable?.render(glState, colorTint)
+	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		drawable?.render(clip, transform, tint)
 	}
 
 	override fun clear() {

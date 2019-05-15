@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,10 @@
 package com.acornui.js.gl
 
 import com.acornui.async.launch
-import com.acornui.component.GlStageImpl
 import com.acornui.component.HtmlComponent
-import com.acornui.component.Stage
 import com.acornui.core.asset.AssetType
 import com.acornui.core.asset.LoaderFactory
+import com.acornui.core.debug
 import com.acornui.core.di.Owned
 import com.acornui.core.di.dKey
 import com.acornui.core.di.own
@@ -96,7 +95,7 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 		uncaughtExceptionHandler = {
 			val message = it.stack + "\n${config.version.toVersionString()}"
 			Log.error(message)
-			if (config.debug)
+			if (debug)
 				window.alert(message)
 		}
 	}
@@ -121,7 +120,7 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 	 * The last chance to set dependencies on the application scope.
 	 */
 	override val componentsTask by BootTask {
-		set(HtmlComponent.FACTORY_KEY, { JsHtmlComponent(it, rootElement) })
+		set(HtmlComponent.FACTORY_KEY) { JsHtmlComponent(it, rootElement) }
 	}
 
 	override val focusManagerTask by BootTask {
@@ -142,10 +141,6 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 
 	protected open val fileIoManagerTask by BootTask {
 		set(FileIoManager, JsFileIoManager(rootElement))
-	}
-
-	override suspend fun createStage(owner: Owned): Stage {
-		return GlStageImpl(owner)
 	}
 
 	override suspend fun initializeSpecialInteractivity(owner: Owned) {

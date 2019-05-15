@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -776,7 +776,7 @@ class DataGrid<RowData>(
 		}
 
 	override fun setSize(width: Float?, height: Float?) {
-		if (_explicitWidth == width && _explicitHeight == height) return
+		if (explicitWidth == width && explicitHeight == height) return
 		invalidate(COLUMNS_WIDTHS_VALIDATION)
 		super.setSize(width, height)
 	}
@@ -1079,7 +1079,7 @@ class DataGrid<RowData>(
 			if (columnCache.headerCell == null) {
 				val newHeaderCell = column.createHeaderCell(headerCells)
 				newHeaderCell.interactivityMode = column.headerCellInteractivityMode
-				newHeaderCell.styleTags.addAll(DataGrid.HEADER_CELL, TextStyleTags.h2)
+				newHeaderCell.styleTags.addAll(HEADER_CELL, TextStyleTags.large)
 				headerCells.addElement(minOf(columnIndex, headerCells.elements.size), newHeaderCell)
 				columnCache.headerCell = newHeaderCell
 			}
@@ -1114,7 +1114,7 @@ class DataGrid<RowData>(
 			sortArrow.y = when (style.headerSortArrowVAlign) {
 				VAlign.TOP -> cellPad.top
 				VAlign.MIDDLE -> cellPad.top + (headerCellHeight - sortArrow.height) * 0.5f
-				VAlign.BOTTOM -> cellPad.top + (headerCellHeight - sortArrow.height)
+				VAlign.BASELINE, VAlign.BOTTOM -> cellPad.top + (headerCellHeight - sortArrow.height)
 			}
 		}
 
@@ -1129,7 +1129,7 @@ class DataGrid<RowData>(
 			val y = cellPad.top + maxOf(0f, when (col.headerCellVAlign ?: style.headerCellVAlign) {
 				VAlign.TOP -> 0f
 				VAlign.MIDDLE -> (headerCellHeight - headerCell.height) * 0.5f
-				VAlign.BOTTOM -> (headerCellHeight - headerCell.height)
+				VAlign.BASELINE, VAlign.BOTTOM -> (headerCellHeight - headerCell.height)
 			})
 			val headerCellWidth = headerCell.explicitWidth ?: headerCell.width
 			val x = cellPad.left + maxOf(0f, when (col.headerCellHAlign ?: style.headerCellHAlign) {
@@ -1449,7 +1449,7 @@ class DataGrid<RowData>(
 					val y = pad.top + maxOf(0f, when (column.cellVAlign ?: style.cellVAlign) {
 						VAlign.TOP -> 0f
 						VAlign.MIDDLE -> (rowHeight - cell.height) * 0.5f
-						VAlign.BOTTOM -> (rowHeight - cell.height)
+						VAlign.BASELINE, VAlign.BOTTOM -> (rowHeight - cell.height)
 					})
 					val cellWidth = cell.explicitWidth ?: cell.width
 

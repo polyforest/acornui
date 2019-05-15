@@ -1,86 +1,130 @@
+/*
+ * Copyright 2019 Poly Forest, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.acornui.filter
 
-import com.acornui.component.UiComponent
-import com.acornui.component.UiComponentRo
-import com.acornui.component.localToCanvas
+import com.acornui.component.*
+import com.acornui.core.AppConfig
+import com.acornui.core.Renderable
+import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
+import com.acornui.core.di.own
 import com.acornui.core.graphic.BlendMode
-import com.acornui.core.graphic.Window
-import com.acornui.core.graphic.orthographicCamera
+import com.acornui.core.graphic.Texture
+import com.acornui.core.render
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.*
-import kotlin.math.ceil
-import kotlin.math.floor
-
-// TODO: WIP
+import com.acornui.signal.Signal0
+import com.acornui.signal.bind
 
 /**
- * WIP
- * A filter that draws the target component to a resizable frame buffer.
+ * Creates a Framebuffer and provides utility to draw a [Renderable] object to it and then draw the frame buffer to the
+ * screen.
  */
 class FramebufferFilter(
-		target: UiComponent,
-		hasDepth: Boolean = true,
-		hasStencil: Boolean = true
-) : RenderFilterBase(target) {
+		owner: Owned,
+		hasDepth: Boolean = owner.inject(AppConfig).gl.depth,
+		hasStencil: Boolean = owner.inject(AppConfig).gl.stencil
+) : RenderFilterBase(owner) {
 
-	private val gl = inject(Gl20)
+	override var padding: PadRo = Pad.EMPTY_PAD
+
+	var clearMask = Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT
+	var clearColor = Color.CLEAR
+	var blendMode = BlendMode.NORMAL
+	var premultipliedAlpha = false
+
 	private val glState = inject(GlState)
-	private val window = inject(Window)
+	private val defaultRenderContext = inject(RenderContextRo)
 
-	var padding = Pad(16f)
+	private val framebuffer = resizeableFramebuffer(hasDepth = hasDepth, hasStencil = hasStencil)
 
-	private val framebuffer = framebuffer(512, 512, hasDepth = hasDepth, hasStencil = hasStencil)
+	val texture: Texture
+		get() = framebuffer.texture
 
-	private val globalBounds = MinMax()
-	private val worldTransform = Matrix4()
+	private val viewport = IntRectangle()
+	private val sprite = Sprite(glState)
+	private val drawable = PaddedDrawable(sprite)
+	private val mvp = Matrix4()
+	private val drew = own(Signal0())
 
-	init {
-//		target.cameraOverride = target.orthographicCamera {
-//			setViewport(112f, 42f)
-//			moveToLookAtRect(0f, 0f, 256f, 256f)
-//		}
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		if (!bitmapCacheIsValid)
+			drawToFramebuffer()
+		drawToScreen(clip, transform, tint)
 	}
 
-	override fun beforeRender(clip: MinMaxRo) {
-//		target.localToGlobal
-		(globalBounds.set(target.x, target.y, target.right, target.bottom)).inflate(padding)
-//		globalBounds.xMin = floor(globalBounds.xMin)
-//		globalBounds.yMin = floor(globalBounds.yMin)
-//		globalBounds.xMax = ceil(globalBounds.xMax)
-//		globalBounds.yMax = ceil(globalBounds.yMax)
-		//worldTransform.setTranslation(globalBounds.xMin, globalBounds.yMin, 0f)
-//		framebuffer.setSize(512f, 512f)
+	fun drawToFramebuffer() {
+		val contents = contents ?: return
+		val region = drawRegion
+		framebuffer.setSize(region.width, region.height)
+		val renderMargin = renderMargin
+		drawable.padding.set(-renderMargin.left, -renderMargin.top, -renderMargin.right, -renderMargin.bottom)
+
+		viewport.set(glState.viewport)
 		framebuffer.begin()
-		glState.setViewport(0, -600+target.height.toInt(), 1000, 600)
-		//glState.setViewport(globalBounds.xMin.toInt(), globalBounds.yMin.toInt(), globalBounds.width.toInt(), globalBounds.height.toInt())
-		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
+		glState.setViewport(-region.xMin.toInt(), region.yMin.toInt() - renderContext.canvasTransform.height.toInt() + framebuffer.texture.height, renderContext.canvasTransform.width.toInt(), renderContext.canvasTransform.height.toInt())
+		if (clearMask != 0)
+			clearAndReset(clearColor, clearMask)
+
+		contents.render(defaultRenderContext)
+
+		framebuffer.end()
+		framebuffer.sprite(sprite)
+		drawable.updateVertices()
+
+		sprite.setUv(sprite.u, 1f - sprite.v, sprite.u2, 1f - sprite.v2, isRotated = false)
+		glState.setViewport(viewport)
+		drew.dispatch()
 	}
 
-	override fun afterRender(clip: MinMaxRo) {
-		framebuffer.end()
-		val batch = glState.batch
-		batch.begin()
-		glState.setCamera(target.camera)
-		glState.setTexture(framebuffer.texture)
-		glState.blendMode(BlendMode.NORMAL, premultipliedAlpha = false)
+	fun drawToScreen(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		viewport.set(glState.viewport)
+		mvp.idt().scl(2f / viewport.width, -2f / viewport.height, 1f).trn(-1f, 1f, 0f) // Projection transform
+		mvp.mul(transform)//.translate(margin.left, margin.top)
 
-		// Top left
-		batch.putVertex(0f, 0f, 0f, u = 0f, v = 1f, colorTint = Color.BLUE)
-		// Top right
-		batch.putVertex(512f, 0f, 0f, u = 1f, v = 1f, colorTint = Color.BLUE)
-		// Bottom right
-		batch.putVertex(512f, 512f, 0f, u = 1f, v = 0f, colorTint = Color.RED)
-		// Bottom left
-		batch.putVertex(0f, 512f, 0f, u = 0f, v = 0f, colorTint = Color.RED)
-		batch.putQuadIndices()
+		glState.viewProjection = mvp
+		glState.model = Matrix4.IDENTITY
+		drawable.render(clip, Matrix4.IDENTITY, tint)
+	}
 
+	/**
+	 * Creates a component that renders the sprite that represents the last time [drawToFramebuffer] was called.
+	 */
+	fun createSnapshot(owner: Owned): UiComponent {
+		return owner.drawableC(drawable) {
+			own(drew.bind {
+				invalidate(ValidationFlags.LAYOUT)
+			})
+		}
+	}
 
+	override fun dispose() {
+		super.dispose()
+		framebuffer.dispose()
 	}
 }
 
-fun UiComponent.framebufferFilter(hasDepth: Boolean = true,
-							 hasStencil: Boolean = true): FramebufferFilter {
-	return FramebufferFilter(this, hasDepth, hasStencil)
+/**
+ * A frame buffer filter will cache the render target as a bitmap.
+ */
+fun Owned.framebufferFilter(init: ComponentInit<FramebufferFilter> = {}): FramebufferFilter {
+	val b = FramebufferFilter(this)
+	b.init()
+	return b
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import com.acornui.collection.addSorted
 import com.acornui.collection.firstOrNull2
 import com.acornui.collection.lastOrNull2
 import com.acornui.collection.poll
-import com.acornui.component.Stage
+import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
 import com.acornui.core.Disposable
@@ -46,10 +46,14 @@ import com.acornui.signal.Signal3
 /**
  * @author nbilyk
  */
-class FocusManagerImpl : FocusManager {
+class FocusManagerImpl() : FocusManager {
 
-	private var _root: Stage? = null
-	private val root: Stage
+	constructor(target: ElementContainer<UiComponent>) : this() {
+		init(target)
+	}
+
+	private var _root: ElementContainer<UiComponent>? = null
+	private val root: ElementContainer<UiComponent>
 		get() = _root!!
 
 	private val focusedChangingCancel: Cancel = Cancel()
@@ -107,14 +111,18 @@ class FocusManagerImpl : FocusManager {
 		Unit
 	}
 
-	private var _highlight: UiComponent? = null
+	private var _highlightIndicator: UiComponent? = null
+
+	override val highlightIndicator: UiComponentRo?
+		get() = _highlightIndicator
+
 	override fun setHighlightIndicator(value: UiComponent?, disposeOld: Boolean) {
-		val old = _highlight
+		val old = _highlightIndicator
 		if (value == old) return
 		old?.disposed?.remove(::highlightDisposedHandler)
 		val wasHighlighted = _highlighted != null
 		unhighlightFocused()
-		_highlight = value
+		_highlightIndicator = value
 		if (value != null) {
 			value.includeInLayout = false
 			value.disposed.add(::highlightDisposedHandler)
@@ -128,7 +136,7 @@ class FocusManagerImpl : FocusManager {
 		setHighlightIndicator(null, false)
 	}
 
-	override fun init(root: Stage) {
+	override fun init(root: ElementContainer<UiComponent>) {
 		_assert(_root == null, "Already initialized.")
 		_root = root
 		_focused = root
@@ -198,7 +206,13 @@ class FocusManagerImpl : FocusManager {
 	}
 
 	override val focused: UiComponentRo?
-		get() = _focused
+		get() {
+			val focused = _focused ?: return null
+			if (!focused.isActive) {
+				focused(root)
+			}
+			return _focused
+		}
 
 	private var pendingFocusable: UiComponentRo? = null
 	private val focusStack = ArrayList<UiComponentRo?>()
@@ -262,9 +276,9 @@ class FocusManagerImpl : FocusManager {
 	}
 
 	override fun unhighlightFocused() {
-		if (_highlight != null) {
-			_highlight?.visible = false
-			root.removeElement(_highlight!!)
+		if (_highlightIndicator != null) {
+			_highlightIndicator?.visible = false
+			root.removeElement(_highlightIndicator!!)
 		}
 		_highlighted?.invalidated?.remove(::highlightedInvalidatedHandler.as2)
 		_highlighted = null
@@ -274,7 +288,7 @@ class FocusManagerImpl : FocusManager {
 		if (_focused != _root) {
 			_highlighted = _focused
 			if (_highlighted != null) {
-				_highlight?.visible = true
+				_highlightIndicator?.visible = false
 				_highlighted!!.invalidated.add(::highlightedInvalidatedHandler.as2)
 			}
 			highlightedInvalidatedHandler()
@@ -290,7 +304,8 @@ class FocusManagerImpl : FocusManager {
 
 	private fun updateHighlight() {
 		val highlighted = _highlighted ?: return
-		val highlight = _highlight ?: return
+		val highlight = _highlightIndicator ?: return
+		_highlightIndicator?.visible = true
 
 		highlighted.updateFocusHighlight(highlightBounds, highlightTransform)
 

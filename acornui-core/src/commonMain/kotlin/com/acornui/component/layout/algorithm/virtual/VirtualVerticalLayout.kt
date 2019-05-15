@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.acornui.component.ComponentInit
 import com.acornui.component.layout.DataScroller
 import com.acornui.component.layout.HAlign
 import com.acornui.component.layout.LayoutElement
+import com.acornui.component.layout.ListItemRenderer
 import com.acornui.component.layout.algorithm.VerticalLayoutData
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType

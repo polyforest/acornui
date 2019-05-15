@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ class VirtualHorizontalLayout : VirtualLayoutAlgorithm<VirtualHorizontalLayoutSt
 					element.moveTo(x, padding.top)
 				VAlign.MIDDLE ->
 					element.moveTo(x, padding.top + (childAvailableHeight - element.height) * 0.5f)
-				VAlign.BOTTOM ->
+				VAlign.BASELINE, VAlign.BOTTOM ->
 					element.moveTo(x, padding.top + (childAvailableHeight - element.height))
 			}
 		}

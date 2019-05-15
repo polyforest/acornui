@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,8 @@
 
 package com.acornui.component.layout
 
-import com.acornui.core.graphic.CameraRo
+import com.acornui.component.CanvasTransformableRo
+import com.acornui.component.localToGlobal
 import com.acornui.math.*
 
 interface LayoutElementRo : BasicLayoutElementRo, TransformableRo {
@@ -92,53 +93,6 @@ fun LayoutElementRo.clampWidth(value: Float?): Float? {
 fun LayoutElementRo.clampHeight(value: Float?): Float? {
 	return sizeConstraints.height.clamp(value)
 }
-
-private val a = Vector3()
-private val b = Vector3()
-private val c = Vector3()
-
-/**
- * Returns true if any part of the element's bounding rectangle can be seen by this camera.
- */
-fun CameraRo.intersects(element: LayoutElementRo): Boolean {
-	return combined.intersects(element)
-}
-
-private fun Matrix4Ro.intersects(element: LayoutElementRo): Boolean {
-	prj(element.localToGlobal(a.set(0f, 0f, 0f)))
-	if (checkPoint(a)) return true
-	prj(element.localToGlobal(b.set(element.width, 0f, 0f)))
-	if (checkPoint(b)) return true
-	prj(element.localToGlobal(c.set(element.width, element.height, 0f)))
-	if (checkPoint(c)) return true
-	if (checkTriangle(a, b, c)) return true
-	prj(element.localToGlobal(b.set(0f, element.height, 0f)))
-	if (checkPoint(b)) return true
-	return checkTriangle(a, b, c)
-}
-
-private fun checkTriangle(a: Vector3Ro, b: Vector3Ro, c: Vector3Ro): Boolean {
-	return checkSegment(a, b) || checkSegment(b, c) || checkSegment(a, c)
-}
-
-private fun checkSegment(a: Vector3Ro, b: Vector3Ro): Boolean {
-	return (checkValue(a.x) || checkValue(b.x) || crosses(a.x, b.x)) &&
-			(checkValue(a.y) || checkValue(b.y) || crosses(a.y, b.y)) &&
-			(checkValue(a.z) || checkValue(b.z) || crosses(a.z, b.z))
-}
-
-private fun checkPoint(point: Vector3Ro): Boolean {
-	return checkValue(point.x) && checkValue(point.y) && checkValue(point.z)
-}
-
-private fun crosses(a: Float, b: Float): Boolean {
-	return (a <= -1f && b > -1f) || (a >= 1f && b < 1f)
-}
-
-private fun checkValue(x: Float): Boolean {
-	return x > -1f && x < 1f
-}
-
 /**
  * A LayoutElement is a Transformable component that can be used in layout algorithms.
  * It has features responsible for providing explicit dimensions, and returning measured dimensions.
@@ -174,11 +128,19 @@ interface BasicLayoutElementRo : SizableRo, PositionableRo {
 	 * The right boundary (x + width)
 	 */
 	val right: Float
+		get() = x + width
 
 	/**
 	 * The bottom boundary (y + height)
 	 */
 	val bottom: Float
+		get() = y + height
+
+	/**
+	 * The y value representing the baseline + y position.
+	 */
+	val baselineY: Float
+		get() = y + bounds.baseline
 
 	/**
 	 * The layout data to be used in layout algorithms.
@@ -201,35 +163,37 @@ interface BasicLayoutElement : BasicLayoutElementRo, Sizable, Positionable {
 interface SizableRo {
 
 	/**
-	 * Returns the measured, untransformed width.
+	 * Returns the actual, untransformed width.
 	 * If layout is invalid, this will invoke a layout validation.
 	 * This is the same as `bounds.width`
 	 */
 	val width: Float
+		get() = bounds.width
 
 	/**
-	 * Returns the measured, untransformed height.
+	 * Returns the actual, untransformed height.
 	 * If layout is invalid, this will invoke a layout validation.
 	 * This is the same as `bounds.height`
 	 */
 	val height: Float
+		get() = bounds.height
 
 	/**
-	 * The measured bounds of this component.
+	 * The y position representing the baseline of the first line of text.
+	 */
+	val baseline: Float
+		get() = bounds.baseline
+
+	/**
+	 * The height below the baseline.
+	 */
+	val descender: Float
+		get() = height - baseline
+
+	/**
+	 * The actual bounds of this component.
 	 */
 	val bounds: BoundsRo
-
-	/**
-	 * The explicit width, as set by width(value)
-	 * Typically one would use [width] in order to retrieve the explicit or measured width.
-	 */
-	val explicitWidth: Float?
-
-	/**
-	 * The explicit height, as set by height(value)
-	 * Typically one would use [height] in order to retrieve the explicit or measured height.
-	 */
-	val explicitHeight: Float?
 }
 
 interface Sizable : SizableRo {

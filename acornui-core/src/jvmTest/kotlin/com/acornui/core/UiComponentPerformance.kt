@@ -16,22 +16,23 @@
 
 package com.acornui.core
 
-import com.acornui.component.UiComponentImpl
-import com.acornui.test.MockInjector.owner
-import com.acornui.test.benchmark
-import org.junit.Test
-
-class UiComponentPerformance {
-
-	@Test fun construction() {
-		val owner = owner
-		UiComponentImpl(owner) // Exclude first-time
-
-		val speed = benchmark {
-			UiComponentImpl(owner)
-		}
-
-		// Construct avg: 0.03143258ms  Theoretical best: 0.001ms
-		println("Construct 1000 avg: ${speed}ms")
-	}
-}
+// Commented out due to https://github.com/polyforest/acornui/issues/121
+//import com.acornui.component.UiComponentImpl
+//import com.acornui.test.MockInjector.owner
+//import com.acornui.test.benchmark
+//import kotlin.test.Test
+//
+//class UiComponentPerformance {
+//
+//	@Test fun construction() {
+//		val owner = owner
+//		UiComponentImpl(owner) // Exclude first-time
+//
+//		val speed = benchmark {
+//			UiComponentImpl(owner)
+//		}
+//
+//		// Construct avg: 0.03143258ms  Theoretical best: 0.001ms
+//		println("Construct 1000 avg: ${speed}ms")
+//	}
+//}

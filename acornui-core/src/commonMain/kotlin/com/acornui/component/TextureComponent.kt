@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import com.acornui.math.RectangleRo
  */
 open class TextureComponent(owner: Owned) : DrawableComponent(owner) {
 
-	override val drawable: Sprite = Sprite()
+	override val drawable: Sprite = Sprite(glState)
 
 	/**
 	 * If true, the normal and indices will be reversed.

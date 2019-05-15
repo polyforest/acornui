@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.acornui.core.input.interaction
 
 import com.acornui.component.UiComponentRo
+import com.acornui.component.canvasToLocal
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.component.stage
 import com.acornui.core.Disposable
@@ -25,7 +26,6 @@ import com.acornui.core.di.inject
 import com.acornui.core.input.*
 import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.callLater
-import com.acornui.core.time.enterFrame
 import com.acornui.core.time.tick
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -127,7 +127,8 @@ abstract class GlTextureBase(
 	 * Decrements the number of places this Texture is used. If the count reaches zero, the texture will be deleted.
 	 */
 	override fun refDec() {
-		if (refCount == 0) throw Exception("Texture refInc/refDec is not paired correctly.")
+		if (refCount == 0)
+			throw Exception("Texture refInc/refDec is not paired correctly.")
 		if (--refCount == 0) {
 			delete()
 		}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Poly Forest
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,17 +27,16 @@ import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putTriangleIndices
 import com.acornui.gl.core.putVertex
 import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.acornui.math.PI as PI
 import kotlin.math.*
 
-open class Rect(
+class Rect(
 		owner: Owned
 ) : ContainerImpl(owner) {
 
 	val style = bind(BoxStyle())
-
-	var segments = 40
 
 	/**
 	 * If true, we don't need a mesh -- no corners and no gradient, just use the sprite batch.
@@ -45,6 +44,11 @@ open class Rect(
 	private var simpleMode = false
 	private val simpleModeObj by lazy { SimpleMode() }
 	private val complexModeObj by lazy { ComplexMode() }
+
+	/**
+	 * The smooth corners have some padding so we don't cut off any of the anti-aliasing.
+	 */
+	private val cPad = 4f
 
 	private inner class SimpleMode {
 		val outerRect = Array(4) { Vector3() }
@@ -56,14 +60,14 @@ open class Rect(
 
 	private inner class ComplexMode {
 
-		val topLeftCorner = Sprite()
-		val topLeftStrokeCorner = Sprite()
-		val topRightCorner = Sprite()
-		val topRightStrokeCorner = Sprite()
-		val bottomRightCorner = Sprite()
-		val bottomRightStrokeCorner = Sprite()
-		val bottomLeftCorner = Sprite()
-		val bottomLeftStrokeCorner = Sprite()
+		val topLeftCorner = Sprite(glState)
+		val topLeftStrokeCorner = Sprite(glState)
+		val topRightCorner = Sprite(glState)
+		val topRightStrokeCorner = Sprite(glState)
+		val bottomRightCorner = Sprite(glState)
+		val bottomRightStrokeCorner = Sprite(glState)
+		val bottomLeftCorner = Sprite(glState)
+		val bottomLeftStrokeCorner = Sprite(glState)
 
 		val fill = staticMesh()
 		val gradient = staticMesh()
@@ -94,7 +98,6 @@ open class Rect(
 				addChild(complexModeObj.strokeC)
 			}
 		}
-		validation.addNode(ValidationFlags.RESERVED_1, ValidationFlags.STYLES or ValidationFlags.CONCATENATED_TRANSFORM or ValidationFlags.LAYOUT or ValidationFlags.CONCATENATED_COLOR_TRANSFORM, ::updateSimpleModeVertices)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
@@ -136,21 +139,21 @@ open class Rect(
 			val innerBottomLeftX = maxOf(bottomLeftX, leftBorder)
 			val innerBottomLeftY = maxOf(bottomLeftY, bottomBorder)
 
-			val fillPad = Pad(1f)
+			val fillPad = Pad(0.5f)
 			if (topBorder < 1f) fillPad.top = 0f
 			if (rightBorder < 1f) fillPad.right = 0f
 			if (bottomBorder < 1f) fillPad.bottom = 0f
 			if (leftBorder < 1f) fillPad.left = 0f
 
-			createSmoothCorner(topLeftX - fillPad.left, topLeftY - fillPad.top, spriteOut = topLeftCorner, antialias = true, flipX = true, flipY = true)
-			createSmoothCorner(topRightX - fillPad.right, topRightY - fillPad.top, spriteOut = topRightCorner, antialias = true, flipX = false, flipY = true)
-			createSmoothCorner(bottomRightX - fillPad.right, bottomRightY - fillPad.bottom, spriteOut = bottomRightCorner, antialias = true, flipX = false, flipY = false)
-			createSmoothCorner(bottomLeftX - fillPad.left, bottomLeftY - fillPad.bottom, spriteOut = bottomLeftCorner, antialias = true, flipX = true, flipY = false)
+			createSmoothCorner(topLeftX - fillPad.left, topLeftY - fillPad.top, flipX = true, flipY = true, spriteOut = topLeftCorner, pad = cPad)
+			createSmoothCorner(topRightX - fillPad.right, topRightY - fillPad.top, flipX = false, flipY = true, spriteOut = topRightCorner, pad = cPad)
+			createSmoothCorner(bottomRightX - fillPad.right, bottomRightY - fillPad.bottom, flipX = false, flipY = false, spriteOut = bottomRightCorner, pad = cPad)
+			createSmoothCorner(bottomLeftX - fillPad.left, bottomLeftY - fillPad.bottom, flipX = true, flipY = false, spriteOut = bottomLeftCorner, pad = cPad)
 
-			createSmoothCorner(topLeftX, topLeftY, strokeThicknessX = leftBorder, strokeThicknessY = topBorder, spriteOut = topLeftStrokeCorner, antialias = true, flipX = true, flipY = true)
-			createSmoothCorner(topRightX, topRightY, strokeThicknessX = rightBorder, strokeThicknessY = topBorder, spriteOut = topRightStrokeCorner, antialias = true, flipX = false, flipY = true)
-			createSmoothCorner(bottomRightX, bottomRightY, strokeThicknessX = rightBorder, strokeThicknessY = bottomBorder, spriteOut = bottomRightStrokeCorner, antialias = true, flipX = false, flipY = false)
-			createSmoothCorner(bottomLeftX, bottomLeftY, strokeThicknessX = leftBorder, strokeThicknessY = bottomBorder, spriteOut = bottomLeftStrokeCorner, antialias = true, flipX = true, flipY = false)
+			createSmoothCorner(topLeftX, topLeftY, strokeThicknessX = leftBorder, strokeThicknessY = topBorder, flipX = true, flipY = true, spriteOut = topLeftStrokeCorner, pad = cPad)
+			createSmoothCorner(topRightX, topRightY, strokeThicknessX = rightBorder, strokeThicknessY = topBorder, flipX = false, flipY = true, spriteOut = topRightStrokeCorner, pad = cPad)
+			createSmoothCorner(bottomRightX, bottomRightY, strokeThicknessX = rightBorder, strokeThicknessY = bottomBorder, flipX = false, flipY = false, spriteOut = bottomRightStrokeCorner, pad = cPad)
+			createSmoothCorner(bottomLeftX, bottomLeftY, strokeThicknessX = leftBorder, strokeThicknessY = bottomBorder, flipX = true, flipY = false, spriteOut = bottomLeftStrokeCorner, pad = cPad)
 
 			fill.buildMesh {
 				// If we have a linear gradient, fill with white; we will be using the fill as a mask inside draw.
@@ -191,7 +194,7 @@ open class Rect(
 						if (bottomLeftY > 0f) {
 							val width = minOf(topLeftX - bottomLeftX, w - bottomRightX - bottomLeftX)
 							if (width > 0f)
-								rect(bottomLeftX, h - bottomLeftY, width, bottomLeftY,  tint)
+								rect(bottomLeftX, h - bottomLeftY, width, bottomLeftY, tint)
 						}
 					}
 					if (topRightX < bottomRightX) {
@@ -211,23 +214,23 @@ open class Rect(
 					}
 
 					if (topLeftCorner.texture != null) {
-						topLeftCorner.updateVertices(x = fillPad.left, y = fillPad.top)
-						topLeftCorner.render(glState, tint)
+						topLeftCorner.updateVertices(x = fillPad.left - cPad, y = fillPad.top - cPad)
+						topLeftCorner.render(MinMaxRo.POSITIVE_INFINITY, Matrix4.IDENTITY, tint)
 					}
 
 					if (topRightCorner.texture != null) {
-						topRightCorner.updateVertices(x = w - topRightX, y = fillPad.top)
-						topRightCorner.render(glState, tint)
+						topRightCorner.updateVertices(x = w - topRightX, y = fillPad.top - cPad)
+						topRightCorner.render(MinMaxRo.POSITIVE_INFINITY, Matrix4.IDENTITY, tint)
 					}
 
 					if (bottomRightCorner.texture != null) {
 						bottomRightCorner.updateVertices(x = w - bottomRightX, y = h - bottomRightY)
-						bottomRightCorner.render(glState, tint)
+						bottomRightCorner.render(MinMaxRo.POSITIVE_INFINITY, Matrix4.IDENTITY, tint)
 					}
 
 					if (bottomLeftCorner.texture != null) {
-						bottomLeftCorner.updateVertices(x = fillPad.left, y = h - bottomLeftY)
-						bottomLeftCorner.render(glState, tint)
+						bottomLeftCorner.updateVertices(x = fillPad.left - cPad, y = h - bottomLeftY)
+						bottomLeftCorner.render(MinMaxRo.POSITIVE_INFINITY, Matrix4.IDENTITY, tint)
 					}
 
 					trn(margin.left, margin.top)
@@ -235,7 +238,6 @@ open class Rect(
 			}
 
 			stroke.buildMesh {
-
 				if (topBorder > 0f && borderColors.top.a > 0f) {
 					// Top middle
 					val width = w - innerTopRightX - innerTopLeftX
@@ -266,34 +268,35 @@ open class Rect(
 				}
 
 				topLeftStrokeCorner.apply {
-					if (topBorder > 0.0001f || leftBorder > 0.0001f) {
-						val texture = texture
-						val u: Float
-						val v: Float
-						val u2: Float
-						val v2: Float
-						if (texture != null) {
-							glState.setTexture(texture)
-							u = this.u
-							u2 = (topLeftX - innerTopLeftX) / texture.width
-							v = this.v
-							v2 = (topLeftY - innerTopLeftY) / texture.height
-						} else {
-							glState.setTexture(glState.whitePixel)
-							u = 0f; v = 0f; u2 = 0f; v2 = 0f
-						}
-						val x2 = innerTopLeftX
-						val y2 = innerTopLeftY
-						batch.putVertex(0f, 0f, 0f, colorTint = borderColors.top, u = u, v = v)
-						batch.putVertex(x2, 0f, 0f, colorTint = borderColors.top, u = u2, v = v)
-						batch.putVertex(x2, y2, 0f, colorTint = borderColors.top, u = u2, v = v2)
-						batch.putTriangleIndices()
-
-						batch.putVertex(x2, y2, 0f, colorTint = borderColors.left, u = u2, v = v2)
-						batch.putVertex(0f, y2, 0f, colorTint = borderColors.left, u = u, v = v2)
-						batch.putVertex(0f, 0f, 0f, colorTint = borderColors.left, u = u, v = v)
-						batch.putTriangleIndices()
+					val texture = texture
+					val u: Float
+					val v: Float
+					val u2: Float
+					val v2: Float
+					val pad: Float
+					if (texture != null) {
+						glState.setTexture(texture)
+						pad = cPad
+						u = this.u
+						u2 = (topLeftX - innerTopLeftX) / texture.width
+						v = this.v
+						v2 = (topLeftY - innerTopLeftY) / texture.height
+					} else {
+						glState.setTexture(glState.whitePixel)
+						pad = 0f
+						u = 0f; v = 0f; u2 = 0f; v2 = 0f
 					}
+					val x2 = innerTopLeftX
+					val y2 = innerTopLeftY
+					batch.putVertex(-pad, -pad, 0f, colorTint = borderColors.top, u = u, v = v)
+					batch.putVertex(x2, -pad, 0f, colorTint = borderColors.top, u = u2, v = v)
+					batch.putVertex(x2, y2, 0f, colorTint = borderColors.top, u = u2, v = v2)
+					batch.putTriangleIndices()
+
+					batch.putVertex(x2, y2, 0f, colorTint = borderColors.left, u = u2, v = v2)
+					batch.putVertex(-pad, y2, 0f, colorTint = borderColors.left, u = u, v = v2)
+					batch.putVertex(-pad, -pad, 0f, colorTint = borderColors.left, u = u, v = v)
+					batch.putTriangleIndices()
 				}
 
 				topRightStrokeCorner.apply {
@@ -303,24 +306,27 @@ open class Rect(
 						val v: Float
 						val u2: Float
 						val v2: Float
+						val pad: Float
 						if (texture != null) {
 							glState.setTexture(texture)
+							pad = cPad
 							u = (topRightX - innerTopRightX) / texture.width
 							u2 = this.u2
 							v = this.v
 							v2 = (topRightY - innerTopRightY) / texture.height
 						} else {
 							glState.setTexture(glState.whitePixel)
+							pad = 0f
 							u = 0f; v = 0f; u2 = 0f; v2 = 0f
 						}
 						val x = w - innerTopRightX
-						batch.putVertex(x, 0f, 0f, colorTint = borderColors.top, u = u, v = v)
-						batch.putVertex(w, 0f, 0f, colorTint = borderColors.top, u = u2, v = v)
+						batch.putVertex(x, -pad, 0f, colorTint = borderColors.top, u = u, v = v)
+						batch.putVertex(w + pad, -pad, 0f, colorTint = borderColors.top, u = u2, v = v)
 						batch.putVertex(x, innerTopRightY, 0f, colorTint = borderColors.top, u = u, v = v2)
 						batch.putTriangleIndices()
 
-						batch.putVertex(w, 0f, 0f, colorTint = borderColors.right, u = u2, v = v)
-						batch.putVertex(w, innerTopRightY, 0f, colorTint = borderColors.right, u = u2, v = v2)
+						batch.putVertex(w + pad, -pad, 0f, colorTint = borderColors.right, u = u2, v = v)
+						batch.putVertex(w + pad, innerTopRightY, 0f, colorTint = borderColors.right, u = u2, v = v2)
 						batch.putVertex(x, innerTopRightY, 0f, colorTint = borderColors.right, u = u, v = v2)
 						batch.putTriangleIndices()
 					}
@@ -333,56 +339,62 @@ open class Rect(
 						val v: Float
 						val u2: Float
 						val v2: Float
+						val pad: Float
 						if (texture != null) {
 							glState.setTexture(texture)
+							pad = cPad
 							u = (bottomRightX - innerBottomRightX) / texture.width
 							u2 = this.u2
 							v = (bottomRightY - innerBottomRightY) / texture.height
 							v2 = this.v2
 						} else {
 							glState.setTexture(glState.whitePixel)
+							pad = 0f
 							u = 0f; v = 0f; u2 = 0f; v2 = 0f
 						}
 						val x = w - innerBottomRightX
 						val y = h - innerBottomRightY
 						batch.putVertex(x, y, 0f, colorTint = borderColors.right, u = u, v = v)
-						batch.putVertex(w, y, 0f, colorTint = borderColors.right, u = u2, v = v)
-						batch.putVertex(w, h, 0f, colorTint = borderColors.right, u = u2, v = v2)
+						batch.putVertex(w + pad, y, 0f, colorTint = borderColors.right, u = u2, v = v)
+						batch.putVertex(w + pad, h + pad, 0f, colorTint = borderColors.right, u = u2, v = v2)
 						batch.putTriangleIndices()
 
 						batch.putVertex(x, y, 0f, colorTint = borderColors.bottom, u = u, v = v)
-						batch.putVertex(w, h, 0f, colorTint = borderColors.bottom, u = u2, v = v2)
-						batch.putVertex(x, h, 0f, colorTint = borderColors.bottom, u = u, v = v2)
+						batch.putVertex(w + pad, h + pad, 0f, colorTint = borderColors.bottom, u = u2, v = v2)
+						batch.putVertex(x, h + pad, 0f, colorTint = borderColors.bottom, u = u, v = v2)
 						batch.putTriangleIndices()
 					}
 				}
 
 				bottomLeftStrokeCorner.apply {
-					if (topBorder > 0.0001f || leftBorder > 0.0001f) {
+					if (bottomBorder > 0.0001f || leftBorder > 0.0001f) {
 						val texture = texture
 						val u: Float
 						val v: Float
 						val u2: Float
 						val v2: Float
+						val pad: Float
 						if (texture != null) {
 							glState.setTexture(texture)
+							pad = cPad
 							u = this.u
 							u2 = (bottomLeftX - innerBottomLeftX) / texture.width
 							v = (bottomLeftY - innerBottomLeftY) / texture.height
 							v2 = this.v2
 						} else {
 							glState.setTexture(glState.whitePixel)
+							pad = 0f
 							u = 0f; v = 0f; u2 = 0f; v2 = 0f
 						}
 						val y = h - innerBottomLeftY
-						batch.putVertex(0f, y, 0f, colorTint = borderColors.left, u = u, v = v)
+						batch.putVertex(-pad, y, 0f, colorTint = borderColors.left, u = u, v = v)
 						batch.putVertex(innerBottomLeftX, y, 0f, colorTint = borderColors.left, u = u2, v = v)
-						batch.putVertex(0f, h, 0f, colorTint = borderColors.left, u = u, v = v2)
+						batch.putVertex(-pad, h + pad, 0f, colorTint = borderColors.left, u = u, v = v2)
 						batch.putTriangleIndices()
 
 						batch.putVertex(innerBottomLeftX, y, 0f, colorTint = borderColors.bottom, u = u2, v = v)
-						batch.putVertex(innerBottomLeftX, h, 0f, colorTint = borderColors.bottom, u = u2, v = v2)
-						batch.putVertex(0f, h, 0f, colorTint = borderColors.bottom, u = u, v = v2)
+						batch.putVertex(innerBottomLeftX, h + pad, 0f, colorTint = borderColors.bottom, u = u2, v = v2)
+						batch.putVertex(-pad, h + pad, 0f, colorTint = borderColors.bottom, u = u, v = v2)
 						batch.putTriangleIndices()
 					}
 				}
@@ -464,53 +476,41 @@ open class Rect(
 
 	}
 
-	private fun updateSimpleModeVertices() {
-		if (!simpleMode) return
-		simpleModeObj.apply {
-			val margin = style.margin
-			val w = margin.reduceWidth2(width)
-			val h = margin.reduceHeight2(height)
-			if (w <= 0f || h <= 0f) return
-			val cT = _concatenatedTransform
-
-			val borderThicknesses = style.borderThicknesses
-
-			val innerX = margin.left + borderThicknesses.left
-			val innerY = margin.top + borderThicknesses.top
-			val fillW = borderThicknesses.reduceWidth2(w)
-			val fillH = borderThicknesses.reduceHeight2(h)
-			cT.prj(innerRect[0].set(innerX, innerY, 0f))
-			cT.prj(innerRect[1].set(innerX + fillW, innerY, 0f))
-			cT.prj(innerRect[2].set(innerX + fillW, innerY + fillH, 0f))
-			cT.prj(innerRect[3].set(innerX, innerY + fillH, 0f))
-
-			if (style.borderThicknesses.isNotEmpty()) {
-				val outerX = margin.left
-				val outerY = margin.top
-				cT.prj(outerRect[0].set(outerX, outerY, 0f))
-				cT.prj(outerRect[1].set(outerX + w, outerY, 0f))
-				cT.prj(outerRect[2].set(outerX + w, outerY + h, 0f))
-				cT.prj(outerRect[3].set(outerX, outerY + h, 0f))
-			}
-
-			cT.rot(normal.set(Vector3.NEG_Z)).nor()
-
-			val tint = concatenatedColorTint
-			fillColor.set(style.backgroundColor).mul(tint)
-			borderColors.set(style.borderColors).mul(tint)
-		}
-	}
-
-	override fun draw(clip: MinMaxRo) {
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		val margin = style.margin
 		val w = margin.reduceWidth2(_bounds.width)
 		val h = margin.reduceHeight2(_bounds.height)
 		if (w <= 0f || h <= 0f) return
 		if (simpleMode) {
 			simpleModeObj.apply {
+				val borderThicknesses = style.borderThicknesses
+
+				val innerX = margin.left + borderThicknesses.left
+				val innerY = margin.top + borderThicknesses.top
+				val fillW = borderThicknesses.reduceWidth2(w)
+				val fillH = borderThicknesses.reduceHeight2(h)
+				transform.prj(innerRect[0].set(innerX, innerY, 0f))
+				transform.prj(innerRect[1].set(innerX + fillW, innerY, 0f))
+				transform.prj(innerRect[2].set(innerX + fillW, innerY + fillH, 0f))
+				transform.prj(innerRect[3].set(innerX, innerY + fillH, 0f))
+
+				if (style.borderThicknesses.isNotEmpty()) {
+					val outerX = margin.left
+					val outerY = margin.top
+					transform.prj(outerRect[0].set(outerX, outerY, 0f))
+					transform.prj(outerRect[1].set(outerX + w, outerY, 0f))
+					transform.prj(outerRect[2].set(outerX + w, outerY + h, 0f))
+					transform.prj(outerRect[3].set(outerX, outerY + h, 0f))
+				}
+
+				transform.rot(normal.set(Vector3.NEG_Z)).nor()
+
+				fillColor.set(style.backgroundColor).mul(tint)
+				borderColors.set(style.borderColors).mul(tint)
+
 				val batch = glState.batch
 				glState.setTexture(glState.whitePixel)
-				glState.setCamera(camera)
+				useCamera()
 				glState.blendMode(BlendMode.NORMAL, false)
 				batch.begin()
 
@@ -524,7 +524,6 @@ open class Rect(
 					batch.putQuadIndices()
 				}
 
-				val borderThicknesses = style.borderThicknesses
 				val borderColors = borderColors
 
 				if (borderThicknesses.left > 0f) {
@@ -564,16 +563,16 @@ open class Rect(
 				complexModeObj.apply {
 					StencilUtil.mask(glState.batch, gl, {
 						if (fillC.visible)
-							fillC.render(clip)
+							fillC.render()
 					}) {
 						if (gradientC.visible)
-							gradientC.render(clip)
+							gradientC.render()
 					}
 					if (strokeC.visible)
-						strokeC.render(clip)
+						strokeC.render()
 				}
 			} else {
-				super.draw(clip)
+				super.draw(clip, transform, tint)
 			}
 		}
 	}

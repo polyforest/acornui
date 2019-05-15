@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import com.acornui.math.IntRectangleRo
  */
 class NinePatchComponent(owner: Owned) : DrawableComponent(owner) {
 
-	override val drawable: NinePatch = NinePatch()
+	override val drawable: NinePatch = NinePatch(glState)
 
 	/**
 	 * If true, the normal and indices will be reversed.

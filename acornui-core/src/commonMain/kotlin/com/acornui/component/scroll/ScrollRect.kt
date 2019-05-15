@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,13 @@
 package com.acornui.component.scroll
 
 import com.acornui.component.*
+import com.acornui.component.layout.Positionable
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
+import com.acornui.core.drawRegion
 import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 
 interface ScrollRect : ElementContainer<UiComponent> {
@@ -51,6 +54,16 @@ class ScrollRectImpl(
 		interactivityMode = InteractivityMode.NONE
 	})
 
+	/**
+	 * If true, when the contents scroll, the position will be snapped to the nearest pixel.
+	 * Default is [Positionable.defaultSnapToPixel]
+	 */
+	var contentsSnapToPixel: Boolean
+		get() = contents.snapToPixel
+		set(value) {
+			contents.snapToPixel = value
+		}
+
 	private val _contentBounds = Rectangle()
 	override val contentBounds: RectangleRo
 		get() {
@@ -74,7 +87,7 @@ class ScrollRectImpl(
 	}
 
 	override fun scrollTo(x: Float, y: Float) {
-		contents.setPosition(-x, -y)
+		contents.moveTo(-x, -y)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
@@ -91,16 +104,18 @@ class ScrollRectImpl(
 
 	private val contentsClip = MinMax()
 
-	override fun draw(clip: MinMaxRo) {
-		StencilUtil.mask(glState.batch, gl, {
-			if (maskClip.visible) {
-				maskClip.render(clip)
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		_renderContext.clipRegionLocal = drawRegion(contentsClip)
+		if (maskClip.visible) {
+			StencilUtil.mask(glState.batch, gl, {
+				maskClip.render()
+			}) {
+				if (contents.visible)
+					contents.render()
 			}
-		}) {
-			localToCanvas(contentsClip.set(0f, 0f, _bounds.width, _bounds.height))
-			contentsClip.intersection(clip)
-
-			contents.render(contentsClip)
+		} else {
+			if (contents.visible)
+				contents.render()
 		}
 	}
 }

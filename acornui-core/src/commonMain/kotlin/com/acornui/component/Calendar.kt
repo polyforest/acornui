@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -155,7 +155,7 @@ open class Calendar(
 							index = it
 							setActiveMonth(month, fullYear)
 							click().add(this@Calendar::cellClickedHandler)
-						} layout { fill() }
+						}
 					}
 				}
 			}
@@ -177,11 +177,15 @@ open class Calendar(
 		return cells[i]
 	}
 
+	private lateinit var monthDecContainer: ElementContainer<UiComponent>
+	private lateinit var monthIncContainer: ElementContainer<UiComponent>
+	private var monthDecButton: UiComponent? = null
+	private var monthIncButton: UiComponent? = null
+
 	private val panel = addChild(panel {
 		+vGroup {
 			+hGroup {
-				+button {
-					styleTags.add(MONTH_DEC_STYLE)
+				monthDecContainer = +stack {
 					click().add {
 						month--
 					}
@@ -196,8 +200,7 @@ open class Calendar(
 				}
 				+spacer() layout { widthPercent = 1f }
 
-				+button {
-					styleTags.add(MONTH_INC_STYLE)
+				monthIncContainer = +stack {
 					click().add {
 						month++
 					}
@@ -271,6 +274,12 @@ open class Calendar(
 		watch(style) {
 			monthFormatter.dateStyle = it.monthFormatStyle
 			yearFormatter.dateStyle = it.yearFormatStyle
+
+			monthDecButton?.dispose()
+			monthDecButton = monthDecContainer.addElement(it.monthDecButton(this))
+
+			monthIncButton?.dispose()
+			monthIncButton = monthIncContainer.addElement(it.monthIncButton(this))
 		}
 
 		keyDown().add(::keyDownHandler)
@@ -305,8 +314,19 @@ open class Calendar(
 		for (i in 0..6) {
 			columns.add(GridColumn(hAlign = style.columnHAlign, widthPercent = 1f, minWidth = maxHeaderW))
 		}
-		grid.style.columns = columns
-		grid.style.rowHeight = if (explicitHeight == null) null else (explicitHeight - 6f * grid.style.verticalGap) / 7f
+		grid.apply {
+			style.columns = columns
+			style.rowHeight = if (explicitHeight == null) null else (explicitHeight - 6f * style.verticalGap) / 7f
+			cells.forEach {
+				if (it.layoutData == null) {
+					it.layoutData = grid.createLayoutData()
+				}
+				(it.layoutData as GridLayoutData).let { layoutData ->
+					layoutData.widthPercent = 1f
+					layoutData.heightPercent = if (explicitHeight == null) null else 1f
+				}
+			}
+		}
 
 		panel.setSize(explicitWidth, explicitHeight)
 		out.set(panel.bounds)
@@ -359,15 +379,15 @@ open class Calendar(
 		}
 	}
 
-	companion object : StyleTag {
-		val MONTH_DEC_STYLE = styleTag()
-		val MONTH_INC_STYLE = styleTag()
-	}
+	companion object : StyleTag
 }
 
 class CalendarStyle : StyleBase() {
 
 	override val type: StyleType<*> = Companion
+
+	var monthDecButton by prop(noSkin)
+	var monthIncButton by prop(noSkin)
 
 	var columnHAlign by prop(HAlign.CENTER)
 
@@ -484,9 +504,12 @@ open class CalendarItemRendererImpl(owner: Owned) : ContainerImpl(owner), Calend
 			ButtonState.UP -> style.upColor
 			ButtonState.OVER -> style.overColor
 			ButtonState.DOWN -> style.downColor
-			ButtonState.TOGGLED_UP -> style.toggledUpColor
-			ButtonState.TOGGLED_OVER -> style.toggledOverColor
-			ButtonState.TOGGLED_DOWN -> style.toggledDownColor
+			ButtonState.TOGGLED_UP,
+			ButtonState.INDETERMINATE_UP -> style.toggledUpColor
+			ButtonState.TOGGLED_OVER,
+			ButtonState.INDETERMINATE_OVER -> style.toggledOverColor
+			ButtonState.TOGGLED_DOWN,
+			ButtonState.INDETERMINATE_DOWN -> style.toggledDownColor
 			ButtonState.DISABLED -> style.disabledColor
 		}
 	}
@@ -519,11 +542,10 @@ open class CalendarItemRendererImpl(owner: Owned) : ContainerImpl(owner), Calend
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val pad = style.padding
-		if (explicitWidth != null) textField.width(pad.reduceWidth2(explicitWidth))
-		if (explicitHeight != null) textField.height(pad.reduceHeight2(explicitHeight))
+		textField.setSize(pad.reduceWidth(explicitWidth), pad.reduceHeight(explicitHeight))
 		textField.moveTo(pad.left, pad.top)
 		background.setSize(pad.expandWidth2(textField.width), pad.expandHeight2(textField.height))
-		out.set(background.bounds)
+		out.set(background.width, background.height, textField.baselineY)
 	}
 
 	companion object : StyleTag {

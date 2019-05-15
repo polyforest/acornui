@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 PolyForest
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import com.acornui.file.FileReader
 import com.acornui.io.NativeReadBuffer
 import com.acornui.io.NativeReadByteBuffer
 import com.acornui.js.html.hide
-import com.acornui.js.io.JsByteBuffer
+import com.acornui.io.JsByteBuffer
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Uint8Array
 import org.w3c.dom.HTMLAnchorElement

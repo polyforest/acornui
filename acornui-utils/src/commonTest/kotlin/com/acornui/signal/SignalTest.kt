@@ -19,7 +19,7 @@
 package com.acornui.signal
 
 import com.acornui.test.assertListEquals
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 

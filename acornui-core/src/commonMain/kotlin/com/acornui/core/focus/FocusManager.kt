@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package com.acornui.core.focus
 
 import com.acornui.collection.firstOrNull2
-import com.acornui.component.Stage
+import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
 import com.acornui.core.Disposable
@@ -41,7 +41,7 @@ interface FocusManager : Disposable {
 	/**
 	 * Initializes the focus manager with the given root focusable.
 	 */
-	fun init(root: Stage)
+	fun init(root: ElementContainer<UiComponent>)
 
 	/**
 	 * Dispatched when the focused object is about to change.
@@ -54,6 +54,11 @@ interface FocusManager : Disposable {
 	 * (oldFocusable, newFocusable)
 	 */
 	val focusedChanged: Signal<(UiComponentRo?, UiComponentRo?) -> Unit>
+
+	/**
+	 * The current highlight indicator, as set via [setHighlightIndicator].
+	 */
+	val highlightIndicator: UiComponentRo?
 
 	/**
 	 * This component will be used to highlight the focused element.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.acornui.core
 import com.acornui.core.time.time
 import com.acornui.string.toRadix
 import kotlin.math.abs
+import kotlin.random.Random
 
 object UidUtil {
 
@@ -26,7 +27,7 @@ object UidUtil {
 	 * Returns a unique id.
 	 */
 	fun createUid(): String {
-		return abs(time.nowMs().toInt()).toRadix(36) + (Math.random() * Int.MAX_VALUE).toInt().toRadix(36)
+		return abs(time.nowMs().toInt()).toRadix(36) + (Random.nextDouble() * Int.MAX_VALUE).toInt().toRadix(36)
 	}
 
 }

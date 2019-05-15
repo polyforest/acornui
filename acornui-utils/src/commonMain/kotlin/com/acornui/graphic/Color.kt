@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,8 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-
-*/
+ */
 
 @file:Suppress("MemberVisibilityCanBePrivate", "unused")
 
@@ -21,6 +20,7 @@ package com.acornui.graphic
 
 import com.acornui.recycle.Clearable
 import com.acornui.core.closeTo
+import com.acornui.graphic.Color.Companion.fromStr
 import com.acornui.serialization.Reader
 import com.acornui.serialization.Writer
 import com.acornui.string.toRadix
@@ -66,7 +66,7 @@ interface ColorRo {
 		return r.toOctet() + g.toOctet() + b.toOctet() + a.toOctet()
 	}
 
-	fun toHsl(out: Hsl): Hsl {
+	fun toHsl(out: Hsl = Hsl()): Hsl {
 		out.a = a
 		val max = maxOf(r, g, b)
 		val min = minOf(r, g, b)
@@ -91,7 +91,7 @@ interface ColorRo {
 		return out
 	}
 
-	fun toHsv(out: Hsv): Hsv {
+	fun toHsv(out: Hsv = Hsv()): Hsv {
 		out.a = a
 		val max = maxOf(r, g, b)
 		val min = minOf(r, g, b)
@@ -166,7 +166,7 @@ data class Color(
 	}
 
 	/**
-	 * Multiplies the this color and the given color
+	 * Multiplies this color and the given color
 	 *
 	 * @param color the color
 	 * @return this Color.
@@ -434,8 +434,10 @@ data class Color(
 		val WHITE: ColorRo = Color(1f, 1f, 1f, 1f)
 		val BLACK: ColorRo = Color(0f, 0f, 0f, 1f)
 		val RED: ColorRo = Color(1f, 0f, 0f, 1f)
+		val LIGHT_RED: ColorRo = Color(1f, 0.68f, 0.68f, 1f)
 		val BROWN: ColorRo = Color(0.5f, 0.3f, 0f, 1f)
 		val GREEN: ColorRo = Color(0f, 1f, 0f, 1f)
+		val LIGHT_GREEN: ColorRo = Color(0.68f, 1f, 0.68f, 1f)
 		val BLUE: ColorRo = Color(0f, 0f, 1f, 1f)
 		val LIGHT_BLUE: ColorRo = Color(0.68f, 0.68f, 1f, 1f)
 		val LIGHT_GRAY: ColorRo = Color(0.75f, 0.75f, 0.75f, 1f)
@@ -534,14 +536,16 @@ data class Color(
 				"white" to WHITE,
 				"black" to BLACK,
 				"red" to RED,
+				"light-red" to LIGHT_RED,
 				"brown" to BROWN,
 				"green" to GREEN,
+				"light-green" to LIGHT_GREEN,
 				"blue" to BLUE,
 				"light-blue" to LIGHT_BLUE,
-				"light-gray" to LIGHT_GRAY,
-				"light-grey" to LIGHT_GRAY,
 				"gray" to GRAY,
 				"grey" to GRAY,
+				"light-gray" to LIGHT_GRAY,
+				"light-grey" to LIGHT_GRAY,
 				"dark-gray" to DARK_GRAY,
 				"dark-grey" to DARK_GRAY,
 				"pink" to PINK,
@@ -568,6 +572,15 @@ data class Color(
 }
 
 /**
+ * Calculates a luminance value weighting the rgb components based on how the human eye sees them.
+ * This is unrelated to HSL Lightness.  [Hsl.l]
+ */
+val ColorRo.luminancePerceived: Float
+	get() {
+		return r * 0.299f + g * 0.587f + b * 0.114f
+	}
+
+/**
  * A read-only representation of an Hsl value.
  */
 interface HslRo {
@@ -582,7 +595,7 @@ interface HslRo {
 }
 
 /**
- * Hue saturation luminance
+ * Hue saturation lightness
  */
 class Hsl(
 		override var h: Float = 0f,
@@ -758,11 +771,22 @@ fun Writer.color(name: String, color: ColorRo) = property(name).color(color)
 
 fun Reader.color(): Color? {
 	val str = string() ?: return null
-	return Color.fromStr(str)
+	return fromStr(str)
 }
 
 fun Reader.color(name: String): Color? = get(name)?.color()
 
 private fun Float.toOctet(): String {
 	return (this * 255).toInt().toRadix(16).padStart(2, '0')
+}
+
+val colorValidationRegex = Regex("""^(#|0x)?([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})?${'$'}""")
+
+/**
+ * First validates that the given string is parsable, and returns the [fromStr] value if it is.
+ * If the string is not a valid color, returns null.
+ */
+fun String.toColorOrNull(): Color? {
+	return if (colorValidationRegex.matches(this)) fromStr(this)
+	else null
 }

@@ -17,8 +17,6 @@
 package com.acornui.skins
 
 import com.acornui.component.ButtonState
-import com.acornui.core.di.DKey
-import com.acornui.core.di.Injector
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.color
@@ -30,159 +28,120 @@ import com.acornui.serialization.*
 /**
  * The Theme is a set of common styling properties, used to build a skin.
  */
-class Theme {
+data class Theme(
 
-	/**
-	 * This will be set to the `backgroundColor` property in [com.acornui.core.config] window.
-	 * @see com.acornui.core.WindowConfig.backgroundColor
-	 * @see com.acornui.core.AppConfig
-	 */
-	var bgColor: ColorRo = Color(0xF1F2F3FF)
-	var panelBgColor: ColorRo = Color(0xE7EDF1FF)
+		/**
+		 * This will be set to the `backgroundColor` property in [com.acornui.core.config] window.
+		 * @see com.acornui.core.WindowConfig.backgroundColor
+		 * @see com.acornui.core.AppConfig
+		 */
+		val bgColor: ColorRo = Color(0xf1f2f3ff),
+		val panelBgColor: ColorRo = Color(0xe7edf1ff),
 
-	private val brighten: ColorRo = Color(0x15151500)
+		val brighten: ColorRo = Color(0x15151500),
 
-	var fill: ColorRo = Color(0xF3F9FAFF)
-	var fillDown: ColorRo = Color(0xE3E9EAFF)
-	var fillHighlight: ColorRo = fill + brighten
-	var fillDisabled: ColorRo = Color(0xCCCCCCFF)
+		val fill: ColorRo = Color(0xf3f9faff),
+		val fillOver: ColorRo = fill + brighten,
+		val fillDown: ColorRo = fill - brighten,
+		val fillToggled: ColorRo = Color(0xedf1faff),
+		val fillToggledOver: ColorRo = fillToggled + brighten,
+		val fillToggledDown: ColorRo = fillToggled - brighten,
+		val fillDisabled: ColorRo = Color(0xccccccff),
 
-	/**
-	 * The shine color to overlay. (Set to clear for no shine.)
-	 */
-	var fillShine: ColorRo = Color(1f, 1f, 1f, 0.9f)
-	var inputFill: ColorRo = Color(0.97f, 0.97f, 0.97f, 1f)
+		val stroke: ColorRo = Color(0x888888ff),
+		val strokeOver: ColorRo = stroke + brighten,
+		val strokeDown: ColorRo = stroke - brighten,
+		val strokeToggled: ColorRo = Color(0x2287f9cc),
+		val strokeToggledOver: ColorRo = strokeToggled + brighten,
+		val strokeToggledDown: ColorRo = strokeToggled - brighten,
+		val strokeDisabled: ColorRo = Color(0x999999ff),
 
-	var stroke: ColorRo = Color(0x888888FF)
-	var strokeHighlight: ColorRo = stroke + brighten
-	var strokeDisabled: ColorRo = Color(0x999999FF)
+		/**
+		 * The shine color to overlay. (Set to clear for no shine.)
+		 */
+		val fillShine: ColorRo = Color(1f, 1f, 1f, 0.9f),
+		val fillToggledShine: ColorRo = Color(1f, 1f, 1f, 0.9f),
 
-	var strokeToggled: ColorRo = Color(0x717276FF)
-	var strokeToggledHighlight: ColorRo = strokeToggled + brighten
+		val focusHighlightColor: ColorRo = Color(0x0235acff),
 
-	var focusHighlightColor: ColorRo = Color(0x0235ACFF)
+		/**
+		 * Text input, text area.
+		 */
+		val inputFill: ColorRo = Color(0.97f, 0.97f, 0.97f, 1f),
 
-	var strokeThickness = 1f
-	var borderRadius = 8f
+		val strokeThickness: Float = 1f,
+		val borderRadius: Float = 8f,
 
-	var textColor: ColorRo = Color(0x333333FF)
-	var headingColor: ColorRo = Color(0x333333FF)
-	var formLabelColor: ColorRo = Color(0x555555FF)
+		val textColor: ColorRo = Color(0x333333ff),
+		val textDisabledColor: ColorRo = Color(0x666666ff),
+		val headingColor: ColorRo = Color(0x333333ff),
+		val formLabelColor: ColorRo = Color(0x555555ff),
 
-	var errorColor: ColorRo = Color(0xcc3333FF)
-	var warningColor: ColorRo = Color(0xff9933FF)
-	var infoColor: ColorRo = Color(0x339933FF)
+		val errorColor: ColorRo = Color(0xcc3333ff),
+		val warningColor: ColorRo = Color(0xff9933ff),
+		val infoColor: ColorRo = Color(0x339933ff),
 
-	var controlBarBgColor: ColorRo = Color(0xDAE5F0FF)
+		val controlBarBgColor: ColorRo = Color(0xdae5f0ff),
 
-	var evenRowBgColor: ColorRo = bgColor + Color(0x03030300)
-	var oddRowBgColor: ColorRo = bgColor - Color(0x03030300)
+		val evenRowBgColor: ColorRo = bgColor + Color(0x03030300),
+		val oddRowBgColor: ColorRo = bgColor - Color(0x03030300),
 
-	var highlightedEvenRowBgColor: ColorRo = Color(0xFEFFD2FF)
-	var highlightedOddRowBgColor: ColorRo = Color(0xFEFFD2FF)
+		val highlightedEvenRowBgColor: ColorRo = Color(0xfeffd2ff),
+		val highlightedOddRowBgColor: ColorRo = Color(0xfeffd2ff),
 
-	var toggledEvenRowBgColor: ColorRo = Color(0xFCFD7CFF)
-	var toggledOddRowBgColor: ColorRo = Color(0xFCFD7CFF)
+		val toggledEvenRowBgColor: ColorRo = Color(0xfcfd7cff),
+		val toggledOddRowBgColor: ColorRo = Color(0xfcfd7cff),
 
-	var buttonPad: PadRo = Pad(4f)
-	var iconButtonGap = 2f
+		val buttonPad: PadRo = Pad(4f),
+		val iconButtonGap: Float = 2f,
 
-	var iconColor: ColorRo = Color(0.25f, 0.25f, 0.25f, 0.8f)
+		val iconColor: ColorRo = Color(0.25f, 0.25f, 0.25f, 0.8f),
 
-	var atlasPath = "assets/uiskin/uiskin.json"
-
-	fun set(other: Theme) {
-		bgColor = other.bgColor
-		panelBgColor = other.panelBgColor
-
-		fill = other.fill
-		fillDown = other.fillDown
-		fillHighlight = other.fillHighlight
-		fillDisabled = other.fillDisabled
-		fillShine = other.fillShine
-		inputFill = other.inputFill
-
-		stroke = other.stroke
-		strokeHighlight = other.strokeHighlight
-		strokeDisabled = other.strokeDisabled
-
-		strokeToggled = other.strokeToggled
-		strokeToggledHighlight = other.strokeToggledHighlight
-		focusHighlightColor = other.focusHighlightColor
-
-		strokeThickness = other.strokeThickness
-		borderRadius = other.borderRadius
-
-		textColor = other.textColor
-		headingColor = other.headingColor
-		formLabelColor = other.formLabelColor
-
-		errorColor = other.errorColor
-		warningColor = other.warningColor
-		infoColor = other.infoColor
-
-		controlBarBgColor = other.controlBarBgColor
-
-		evenRowBgColor = other.evenRowBgColor
-		oddRowBgColor = other.oddRowBgColor
-
-		highlightedEvenRowBgColor = other.highlightedEvenRowBgColor
-		highlightedOddRowBgColor = other.highlightedOddRowBgColor
-
-		toggledEvenRowBgColor = other.toggledEvenRowBgColor
-		toggledOddRowBgColor = other.toggledOddRowBgColor
-
-		buttonPad = other.buttonPad
-		iconButtonGap = other.iconButtonGap
-
-		iconColor = other.iconColor
-
-		atlasPath = other.atlasPath
-	}
-
-	companion object : DKey<Theme> {
-		override fun factory(injector: Injector) = Theme()
-	}
-}
+		val atlasPath: String = "assets/uiskin/uiskin.json"
+)
 
 object ThemeSerializer : To<Theme>, From<Theme> {
 
 	override fun read(reader: Reader): Theme {
-		val o = Theme()
-		o.atlasPath = reader.string("atlasPath")!!
-		o.bgColor = reader.color("bgColor")!!
-		o.borderRadius = reader.float("borderRadius")!!
-		o.buttonPad = reader.obj("buttonPad", PadSerializer)!!
-		o.controlBarBgColor = reader.color("controlBarBgColor")!!
-		o.errorColor = reader.color("errorColor")!!
-		o.evenRowBgColor = reader.color("evenRowBgColor")!!
-		o.fill = reader.color("fill")!!
-		o.fillDown = reader.color("fillDown")!!
-		o.fillDisabled = reader.color("fillDisabled")!!
-		o.fillHighlight = reader.color("fillHighlight")!!
-		o.fillShine = reader.color("fillShine")!!
-		o.formLabelColor = reader.color("formLabelColor")!!
-		o.headingColor = reader.color("headingColor")!!
-		o.highlightedEvenRowBgColor = reader.color("highlightedEvenRowBgColor")!!
-		o.highlightedOddRowBgColor = reader.color("highlightedOddRowBgColor")!!
-		o.iconButtonGap = reader.float("iconButtonGap")!!
-		o.iconColor = reader.color("iconColor") ?: Color.DARK_GRAY
-		o.infoColor = reader.color("infoColor")!!
-		o.inputFill = reader.color("inputFill")!!
-		o.oddRowBgColor = reader.color("oddRowBgColor")!!
-		o.panelBgColor = reader.color("panelBgColor")!!
-		o.stroke = reader.color("stroke")!!
-		o.strokeDisabled = reader.color("strokeDisabled")!!
-		o.strokeHighlight = reader.color("strokeHighlight")!!
-		o.strokeThickness = reader.float("strokeThickness")!!
-		o.strokeToggled = reader.color("strokeToggled")!!
-		o.strokeToggledHighlight = reader.color("strokeToggledHighlight")!!
-		o.focusHighlightColor = reader.color("focusHighlightColor")!!
-		o.textColor = reader.color("textColor")!!
-		o.toggledEvenRowBgColor = reader.color("toggledEvenRowBgColor")!!
-		o.toggledOddRowBgColor = reader.color("toggledOddRowBgColor")!!
-		o.warningColor = reader.color("warningColor")!!
-		return o
+		return Theme(
+				atlasPath = reader.string("atlasPath")!!,
+				bgColor = reader.color("bgColor")!!,
+				borderRadius = reader.float("borderRadius")!!,
+				buttonPad = reader.obj("buttonPad", PadSerializer)!!,
+				controlBarBgColor = reader.color("controlBarBgColor")!!,
+				errorColor = reader.color("errorColor")!!,
+				evenRowBgColor = reader.color("evenRowBgColor")!!,
+				fill = reader.color("fill")!!,
+				fillDown = reader.color("fillDown")!!,
+				fillDisabled = reader.color("fillDisabled")!!,
+				fillOver = reader.color("fillOver")!!,
+				fillShine = reader.color("fillShine")!!,
+				fillToggledShine = reader.color("fillToggledShine")!!,
+				formLabelColor = reader.color("formLabelColor")!!,
+				headingColor = reader.color("headingColor")!!,
+				highlightedEvenRowBgColor = reader.color("highlightedEvenRowBgColor")!!,
+				highlightedOddRowBgColor = reader.color("highlightedOddRowBgColor")!!,
+				iconButtonGap = reader.float("iconButtonGap")!!,
+				iconColor = reader.color("iconColor") ?: Color.DARK_GRAY,
+				infoColor = reader.color("infoColor")!!,
+				inputFill = reader.color("inputFill")!!,
+				oddRowBgColor = reader.color("oddRowBgColor")!!,
+				panelBgColor = reader.color("panelBgColor")!!,
+				stroke = reader.color("stroke")!!,
+				strokeDisabled = reader.color("strokeDisabled")!!,
+				strokeOver = reader.color("strokeOver")!!,
+				strokeThickness = reader.float("strokeThickness")!!,
+				strokeToggled = reader.color("strokeToggled")!!,
+				strokeToggledOver = reader.color("strokeToggledOver")!!,
+				strokeToggledDown = reader.color("strokeToggledDown")!!,
+				focusHighlightColor = reader.color("focusHighlightColor")!!,
+				textColor = reader.color("textColor")!!,
+				textDisabledColor = reader.color("textDisabledColor")!!,
+				toggledEvenRowBgColor = reader.color("toggledEvenRowBgColor")!!,
+				toggledOddRowBgColor = reader.color("toggledOddRowBgColor")!!,
+				warningColor = reader.color("warningColor")!!
+
+		)
 	}
 
 	override fun Theme.write(writer: Writer) {
@@ -194,10 +153,22 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 		writer.color("evenRowBgColor", evenRowBgColor)
 		writer.color("errorColor", errorColor)
 		writer.color("fill", fill)
+		writer.color("fillOver", fillOver)
 		writer.color("fillDown", fillDown)
+		writer.color("fillToggled", fillToggled)
+		writer.color("fillToggledOver", fillToggledOver)
+		writer.color("fillToggledDown", fillToggledDown)
 		writer.color("fillDisabled", fillDisabled)
-		writer.color("fillHighlight", fillHighlight)
 		writer.color("fillShine", fillShine)
+		writer.color("stroke", stroke)
+		writer.color("strokeOver", strokeOver)
+		writer.color("strokeDown", strokeDown)
+		writer.color("strokeToggled", strokeToggled)
+		writer.color("strokeToggledOver", strokeToggledOver)
+		writer.color("strokeToggledDown", strokeToggledDown)
+		writer.color("strokeDisabled", strokeDisabled)
+		writer.float("strokeThickness", strokeThickness)
+
 		writer.color("formLabelColor", formLabelColor)
 		writer.float("iconButtonGap", iconButtonGap)
 		writer.color("iconColor", iconColor)
@@ -208,29 +179,28 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 		writer.color("inputFill", inputFill)
 		writer.color("oddRowBgColor", oddRowBgColor)
 		writer.color("panelBgColor", panelBgColor)
-		writer.color("stroke", stroke)
-		writer.color("strokeDisabled", strokeDisabled)
-		writer.color("strokeHighlight", strokeHighlight)
-		writer.float("strokeThickness", strokeThickness)
-		writer.color("strokeToggled", strokeToggled)
-		writer.color("strokeToggledHighlight", strokeToggledHighlight)
 		writer.color("focusHighlightColor", focusHighlightColor)
 		writer.color("textColor", textColor)
+		writer.color("textDisabledColor", textDisabledColor)
 		writer.color("toggledEvenRowBgColor", toggledEvenRowBgColor)
 		writer.color("toggledOddRowBgColor", toggledOddRowBgColor)
 		writer.color("warningColor", warningColor)
 	}
 }
 
-typealias ButtonStateColors = Map<ButtonState, ColorRo>
-
 fun Theme.getButtonFillColor(buttonState: ButtonState): ColorRo {
 	return when (buttonState) {
-		ButtonState.UP, ButtonState.TOGGLED_UP -> fill
-		ButtonState.DOWN, ButtonState.TOGGLED_DOWN -> fillDown
+		ButtonState.UP,
+		ButtonState.INDETERMINATE_UP -> fill
+		ButtonState.TOGGLED_UP -> fillToggled
+
+		ButtonState.DOWN,
+		ButtonState.INDETERMINATE_DOWN -> fillDown
+		ButtonState.TOGGLED_DOWN -> fillToggledDown
 
 		ButtonState.OVER,
-		ButtonState.TOGGLED_OVER -> fillHighlight
+		ButtonState.INDETERMINATE_OVER -> fillOver
+		ButtonState.TOGGLED_OVER -> fillToggledOver
 
 		ButtonState.DISABLED -> fillDisabled
 	}
@@ -238,16 +208,17 @@ fun Theme.getButtonFillColor(buttonState: ButtonState): ColorRo {
 
 fun Theme.getButtonStrokeColor(buttonState: ButtonState): ColorRo {
 	return when (buttonState) {
-
 		ButtonState.UP,
-		ButtonState.DOWN -> stroke
+		ButtonState.INDETERMINATE_UP -> stroke
+		ButtonState.TOGGLED_UP -> strokeToggled
 
-		ButtonState.OVER -> strokeHighlight
+		ButtonState.DOWN,
+		ButtonState.INDETERMINATE_DOWN -> strokeDown
+		ButtonState.TOGGLED_DOWN -> strokeToggledDown
 
-		ButtonState.TOGGLED_UP,
-		ButtonState.TOGGLED_DOWN -> strokeToggled
-
-		ButtonState.TOGGLED_OVER -> strokeToggledHighlight
+		ButtonState.OVER,
+		ButtonState.INDETERMINATE_OVER -> strokeOver
+		ButtonState.TOGGLED_OVER -> strokeToggledOver
 
 		ButtonState.DISABLED -> strokeDisabled
 	}

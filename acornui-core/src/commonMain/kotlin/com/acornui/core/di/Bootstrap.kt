@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019 Poly Forest, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.acornui.core.di
 
 import com.acornui.async.LateValue
@@ -9,13 +25,9 @@ class Bootstrap : Disposable {
 
 	private val dependenciesList = ArrayList<DependencyPair<*>>()
 
-	/**
-	 * Creates a new injector with the dependencies set on this bootstrap.
-	 */
-	suspend fun createInjector(parentInjector: Injector? = null): Injector {
+	suspend fun dependenciesList(): List<DependencyPair<*>> {
 		awaitAll()
-
-		return InjectorImpl(parentInjector, dependenciesList)
+		return dependenciesList
 	}
 
 	private val _map = HashMap<DKey<*>, LateValue<Any>>()

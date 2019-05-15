@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import com.acornui.core.focus.blurred
 import com.acornui.core.focus.focus
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.click
+import com.acornui.core.input.interaction.isEnterOrReturn
 import com.acornui.core.input.keyDown
 import com.acornui.core.popup.PopUpManager
 import com.acornui.core.popup.lift
@@ -104,7 +105,7 @@ open class DatePicker(
 			_input.dispatch()
 		}
 		keyDown().add {
-			if (it.keyCode == Ascii.ENTER || it.keyCode == Ascii.RETURN) {
+			if (it.isEnterOrReturn) {
 				if (isOpen) {
 					close()
 					_changed.dispatch()
@@ -279,7 +280,7 @@ open class DatePicker(
 		textInput.setSize(if (w == null) null else w - style.gap - downArrow.width, h)
 		textInput.setPosition(pad.left, pad.top)
 		downArrow.moveTo(pad.left + textInput.width + style.gap, pad.top + (textInput.height - downArrow.height) * 0.5f)
-		out.set(pad.expandWidth2(textInput.width + style.gap + downArrow.width), pad.expandHeight2(maxOf(textInput.height, downArrow.height)))
+		out.set(pad.expandWidth2(textInput.width + style.gap + downArrow.width), pad.expandHeight2(maxOf(textInput.height, downArrow.height)), textInput.baselineY)
 		background?.setSize(out.width, out.height)
 
 		calendarLift.moveTo(0f, out.height)

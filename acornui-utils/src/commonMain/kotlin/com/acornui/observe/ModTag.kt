@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ class ModTagImpl : ModTag {
 	private var _modCount: Int = 0
 
 	override val crc: Long
-		get() = _id.toLong() shl 16 or _modCount.toLong()
+		get() = _id.toLong() shl 32 or _modCount.toLong()
 
 	override fun increment() {
 		_modCount++

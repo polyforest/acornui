@@ -1,21 +1,37 @@
+/*
+ * Copyright 2019 Poly Forest, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.acornui.component
 
-import com.acornui.component.layout.algorithm.HorizontalLayoutContainer
+import com.acornui.component.layout.VAlign
+import com.acornui.component.layout.algorithm.hGroup
 import com.acornui.component.style.*
-import com.acornui.component.text.textInput
+import com.acornui.component.text.*
 import com.acornui.core.cursor.StandardCursors
 import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
-import com.acornui.core.focus.blurred
+import com.acornui.core.focus.*
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.interaction.dragAttachment
+import com.acornui.core.input.interaction.isEnterOrReturn
+import com.acornui.core.input.keyDown
 import com.acornui.core.popup.lift
 import com.acornui.core.toInt
-import com.acornui.graphic.Color
-import com.acornui.graphic.ColorRo
-import com.acornui.graphic.Hsv
-import com.acornui.graphic.HsvRo
+import com.acornui.graphic.*
 import com.acornui.math.*
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal
@@ -40,7 +56,7 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 	var color: ColorRo
 		get() = colorPalette.color
 		set(value) {
-			val v = value.copy()
+			val v = value.copy().clamp()
 			colorPalette.color = v
 			colorSwatch?.colorTint = v
 		}
@@ -49,8 +65,18 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 		get() = colorPalette.value
 		set(value) {
 			colorPalette.value = value
-			colorSwatch?.colorTint = value.toRgb(tmpColor).copy()
+			colorSwatch?.colorTint = value.toRgb(tmpColor).copy().clamp()
 		}
+
+	fun userChange(value: ColorRo) {
+		colorPalette.userChange(value)
+		colorSwatch?.colorTint = value.copy().clamp()
+	}
+
+	fun userChange(value: HsvRo) {
+		colorPalette.userChange(value)
+		colorSwatch?.colorTint = value.toRgb(tmpColor).copy().clamp()
+	}
 
 	/**
 	 * If true, there will be a slider input for the color's value component in the HSV color.
@@ -125,16 +151,17 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 		val colorSwatch = colorSwatch ?: return
 		val s = style
 		val padding = s.padding
-		val w = explicitWidth ?: padding.expandWidth2(s.defaultSwatchWidth)
-		val h = explicitHeight ?: padding.expandHeight2(s.defaultSwatchHeight)
+		colorSwatch.setSize(
+				padding.reduceWidth(explicitWidth) ?: s.defaultSwatchWidth,
+				padding.reduceHeight(explicitHeight) ?: s.defaultSwatchHeight
+		)
+		val measuredW = padding.expandWidth2(colorSwatch.width)
+		val measuredH = padding.expandHeight2(colorSwatch.height)
+		background.setSize(measuredW, measuredH)
+		colorSwatch.moveTo(0.5f * (background.width - colorSwatch.width), 0.5f * (background.height - colorSwatch.height))
+		out.set(background.width, background.height, colorSwatch.bottom)
 
-		colorSwatch.setSize(padding.reduceWidth(w), padding.reduceHeight(h))
-
-		background.setSize(maxOf(padding.expandWidth2(colorSwatch.width), w), maxOf(padding.expandHeight2(colorSwatch.height), h))
-		out.set(background.width, background.height)
-		colorSwatch.moveTo(0.5f * (out.width - colorSwatch.width), 0.5f * (out.height - colorSwatch.height))
-
-		colorPaletteLift.moveTo(0f, h)
+		colorPaletteLift.moveTo(0f, measuredH)
 	}
 
 	override fun dispose() {
@@ -151,10 +178,10 @@ class ColorPickerStyle : StyleBase() {
 
 	override val type = Companion
 
-	var padding: PadRo by prop(Pad(4f))
+	var padding: PadRo by prop(Pad(2f))
 	var background by prop(noSkin)
-	var defaultSwatchWidth by prop(21f)
-	var defaultSwatchHeight by prop(21f)
+	var defaultSwatchWidth by prop(14f)
+	var defaultSwatchHeight by prop(14f)
 	var colorSwatch by prop(noSkin)
 
 	companion object : StyleType<ColorPickerStyle>
@@ -170,6 +197,8 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 
 	private val _changed = own(Signal0())
 	val changed = _changed.asRo()
+
+	private val handleWidth = 7f
 
 	val style = bind(ColorPaletteStyle())
 
@@ -220,7 +249,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 
 		dragAttachment(0f).drag.add {
 			canvasToLocal(tmpVec.set(it.position))
-			tmpHSV.set(_value)
+			tmpHSV.set(value)
 			tmpHSV.h = 360f * MathUtils.clamp(tmpVec.x / width, 0f, 1f)
 			tmpHSV.s = 1f - MathUtils.clamp(tmpVec.y / height, 0f, 1f)
 
@@ -228,19 +257,35 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 		}
 	})
 
-	private fun userChange(value: Hsv) {
-		val oldValue = _value
-		if (oldValue == value) return
+	/**
+	 * Sets the value and triggers a changed signal.
+	 */
+	fun userChange(value: HsvRo) {
+		val previous = this.value
+		if (previous == value) return
 		this.value = value
 		_changed.dispatch()
 	}
 
+	/**
+	 * Sets the color and triggers a changed signal.
+	 */
+	fun userChange(value: ColorRo) {
+		val previous = color
+		if (previous == value) return
+		this.color = value
+		_changed.dispatch()
+	}
+
+
+
 	private val valueRect = addChild(rect {
+		style.margin = Pad(0f, 0f, 0f, handleWidth)
 		dragAttachment(0f).drag.add {
 			canvasToLocal(tmpVec.set(it.position))
 			val p = MathUtils.clamp(tmpVec.y / height, 0f, 1f)
 
-			tmpHSV.set(_value)
+			tmpHSV.set(value)
 			tmpHSV.v = 1f - p
 			userChange(tmpHSV)
 		}
@@ -249,31 +294,37 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 	private val alphaGrid = addChild(repeatingTexture("assets/uiskin/AlphaCheckerboard.png"))
 
 	private val alphaRect = addChild(rect {
+		style.margin = Pad(0f, 0f, 0f, handleWidth)
 		dragAttachment(0f).drag.add {
 			canvasToLocal(tmpVec.set(it.position))
 			val p = MathUtils.clamp(tmpVec.y / height, 0f, 1f)
 
-			tmpHSV.set(_value)
+			tmpHSV.set(value)
 			tmpHSV.a = 1f - p
 			userChange(tmpHSV)
 		}
 	})
 
-	private var _value = Color.WHITE.toHsv(Hsv())
-
+	private var _color: ColorRo = Color.WHITE
 	var color: ColorRo
-		get() = _value.toRgb(Color())
+		get() = _color
 		set(value) {
-			this.value = value.toHsv(Hsv())
+			if (_color != value) {
+				_color = value.copy()
+				_value = value.toHsv()
+				invalidate(COLORS)
+			}
 		}
 
+	private var _value: HsvRo = Color.WHITE.toHsv(Hsv())
 	var value: HsvRo
 		get() = _value
 		set(value) {
-			val oldValue = _value
-			if (oldValue == value) return
-			_value = value.copy()
-			invalidate(COLORS)
+			if (_value != value) {
+				_value = value.copy()
+				_color = value.toRgb()
+				invalidate(COLORS)
+			}
 		}
 
 	init {
@@ -303,7 +354,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 	}
 
 	private fun updateColors() {
-		tmpHSV.set(_value)
+		tmpHSV.set(value)
 		tmpHSV.v = 1f
 		tmpHSV.a = 1f
 		valueRect.style.linearGradient = LinearGradient(GradientDirection.BOTTOM,
@@ -331,17 +382,17 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 		saturationRect.moveTo(hueRect.x, hueRect.y)
 
 		val sliderHeight = h - padding.top - padding.bottom
-		valueRect.setSize(s.sliderWidth, sliderHeight)
-		valueRect.moveTo(hueRect.right + s.gap, padding.top)
+		valueRect.setSize(s.sliderWidth + handleWidth, sliderHeight)
+		valueRect.moveTo(hueRect.right + s.gap - handleWidth, padding.top)
 
 		alphaGrid.setSize(s.sliderWidth, sliderHeight)
 		alphaGrid.moveTo(valueRect.right + s.gap, padding.top)
-		alphaRect.setSize(s.sliderWidth, sliderHeight)
-		alphaRect.moveTo(valueRect.right + s.gap, padding.top)
+		alphaRect.setSize(s.sliderWidth + handleWidth, sliderHeight)
+		alphaRect.moveTo(valueRect.right + s.gap - handleWidth, padding.top)
 
-		hueSaturationIndicator!!.moveTo(saturationRect.x + _value.h / 360f * saturationRect.width - hueSaturationIndicator!!.width * 0.5f, saturationRect.y + (1f - _value.s) * saturationRect.height - hueSaturationIndicator!!.height * 0.5f)
-		valueIndicator!!.moveTo(valueRect.x - valueIndicator!!.width * 0.5f, (1f - _value.v) * sliderHeight + padding.top - valueIndicator!!.height * 0.5f)
-		alphaIndicator!!.moveTo(alphaRect.x - alphaIndicator!!.width * 0.5f, (1f - _value.a) * sliderHeight + padding.top - alphaIndicator!!.height * 0.5f)
+		hueSaturationIndicator!!.moveTo(saturationRect.x + value.h / 360f * saturationRect.width - hueSaturationIndicator!!.width * 0.5f, saturationRect.y + (1f - value.s) * saturationRect.height - hueSaturationIndicator!!.height * 0.5f)
+		valueIndicator!!.moveTo(valueRect.x + handleWidth - valueIndicator!!.width * 0.5f, (1f - value.v) * sliderHeight + padding.top - valueIndicator!!.height * 0.5f)
+		alphaIndicator!!.moveTo(alphaRect.x + handleWidth - alphaIndicator!!.width * 0.5f, (1f - value.a) * sliderHeight + padding.top - alphaIndicator!!.height * 0.5f)
 
 		val bg = background!!
 		bg.setSize(w, h)
@@ -362,7 +413,7 @@ class ColorPaletteStyle : StyleBase() {
 
 	override val type = Companion
 
-	var padding by prop(Pad(5f))
+	var padding by prop(Pad(7f))
 	var sliderWidth by prop(16f)
 	var defaultPaletteWidth by prop(200f)
 	var defaultPaletteHeight by prop(100f)
@@ -374,29 +425,143 @@ class ColorPaletteStyle : StyleBase() {
 	companion object : StyleType<ColorPaletteStyle>
 }
 
-// TODO
 /**
  * A Color picker with a text input for a hexdecimal color representation.
  */
-open class ColorPickerWithText(owner: Owned) : HorizontalLayoutContainer(owner) {
+open class ColorPickerWithText(owner: Owned) : ContainerImpl(owner) {
 
-	val textInput = +textInput {
+	val changed: Signal<() -> Unit>
+		get() = colorPicker.changed
+
+	var color: ColorRo
+		get() = colorPicker.color
+		set(value) {
+			colorPicker.color = value
+			updateText()
+		}
+
+	var value: HsvRo
+		get() = colorPicker.value
+		set(value) {
+			colorPicker.value = value
+			updateText()
+		}
+
+	/**
+	 * If true, there will be a slider input for the color's value component in the HSV color.
+	 */
+	var showValuePicker: Boolean
+		get() = colorPicker.showValuePicker
+		set(value) {
+			colorPicker.showValuePicker = value
+		}
+
+	/**
+	 * If true (default), there will be a slider input for the color's alpha.
+	 */
+	var showAlphaPicker: Boolean
+		get() = colorPicker.showAlphaPicker
+		set(value) {
+			colorPicker.showAlphaPicker = value
+		}
+
+	private val textInput: TextInputImpl = textInput {
+		restrictPattern = RestrictPatterns.COLOR
+		visible = false
 		changed.add {
-
+			val c = text.toColorOrNull()
+			if (c != null) {
+				colorPicker.userChange(c)
+				updateText()
+				closeTextEditor()
+			}
 		}
 	}
 
-	private val color = Color()
+	private val text = text("") {
+		focusEnabled = true
+		selectable = false
+		cursor(StandardCursors.HAND)
+	}
 
-	val colorPicker = +colorPicker {
+	private val colorPicker: ColorPicker = colorPicker {
 		changed.add {
-			textInput.text = value.toRgb(color.copy()).toRgbString()
+			updateText()
 		}
 	}
+
+	private val hGroup = addChild(hGroup {
+		style.verticalAlign = VAlign.BASELINE
+		+colorPicker
+		+textInput
+		+text
+	})
+
+	init {
+		styleTags.add(Companion)
+		colorPicker.focusEnabled = false
+		colorPicker.focusEnabledChildren = false
+
+		keyDown().add {
+			if (it.isEnterOrReturn && isFocusedSelf) {
+				it.handled = true
+				openTextEditor()
+			}
+		}
+		text.focused().add {
+			openTextEditor()
+		}
+		textInput.blurred().add {
+			closeTextEditor()
+		}
+	}
+
+	fun openTextEditor() {
+		if (textInput.visible) return
+		textInput.visible = true
+		text.visible = false
+		textInput.focus()
+	}
+
+	fun closeTextEditor() {
+		if (!textInput.visible) return
+		textInput.visible = false
+		text.visible = true
+//		if (textInput.isFocusedSelf)
+//			this@ColorPickerWithText.focusSelf()
+	}
+
+	fun open() = colorPicker.open()
+
+	fun close() = colorPicker.close()
+
+	fun toggleOpen() = colorPicker.toggleOpen()
+
+	private fun updateText() {
+		val str = "#" + color.toRgbaString()
+		textInput.text = str
+		text.text = str
+	}
+
+	private val pad = Pad()
+
+	override fun updateStyles() {
+		super.updateStyles()
+		textInput.validate(ValidationFlags.STYLES)
+		val textInputStyle = textInput.textInputStyle
+		text.flowStyle.padding = pad.set(top = textInputStyle.margin.top + textInputStyle.padding.top, bottom = textInputStyle.margin.bottom + textInputStyle.padding.bottom, right = 0f, left = 0f)
+	}
+
+	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+		hGroup.setSize(explicitWidth, explicitHeight)
+		out.set(hGroup.bounds)
+	}
+
+	companion object : StyleTag
 }
 
-fun Owned.colorPickerWithText(init: ComponentInit<ColorPicker> = {}): ColorPicker {
-	val c = ColorPicker(this)
+fun Owned.colorPickerWithText(init: ComponentInit<ColorPickerWithText> = {}): ColorPickerWithText {
+	val c = ColorPickerWithText(this)
 	c.init()
 	return c
 }

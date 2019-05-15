@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,9 @@
  */
 
 package com.acornui.core
+
+import com.acornui.collection.removeFirst
+import com.acornui.math.MathUtils.clamp
 
 /**
  * Replaces {0}, {1}, {2}, ... {n} with the values from the tokens array.
@@ -132,7 +135,7 @@ fun CharSequence.repeat2(n: Int): String {
  * May be set by the back-ends.
  * JVM sets to System.lineSeparator()
  */
-var lineSeparator: String = "\n"
+expect val lineSeparator: String
 
 fun htmlEntities(value: String): String {
 	@Suppress("name_shadowing")
@@ -278,4 +281,24 @@ private val whitespaceChars = mapOf(
 
 fun Char.isWhitespace2(): Boolean {
 	return whitespaceChars.containsKey(this)
+}
+
+/**
+ *
+ */
+fun Iterable<String>.filterWithWords(wordList: List<String>): List<String> {
+	return filter { haystackWord ->
+		val words = haystackWord.toUnderscoreCase().split(Regex("[\\W_]")).filter { it.isNotEmpty() }.toMutableList()
+		for (needleWord in wordList) {
+			if (needleWord.isEmpty()) continue
+			words.removeFirst { it.equals(needleWord, ignoreCase = true) } ?: return@filter false
+		}
+		words.isEmpty()
+	}
+
+}
+
+fun String.substringInRange(startIndex: Int, endIndex: Int = length): String {
+	if (startIndex >= endIndex) return this
+	return substring(clamp(startIndex, 0, length), clamp(endIndex, 0, length))
 }

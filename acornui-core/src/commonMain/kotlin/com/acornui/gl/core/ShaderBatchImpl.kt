@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import com.acornui.assertionsEnabled
 import com.acornui.core.Disposable
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
-import com.acornui.core.io.resizableFloatBuffer
-import com.acornui.core.io.resizableShortBuffer
+import com.acornui.io.resizableFloatBuffer
+import com.acornui.io.resizableShortBuffer
 
 /**
  *
@@ -33,6 +33,11 @@ class ShaderBatchImpl(
 		private val glState: GlState,
 		override val vertexAttributes: VertexAttributes
 ) : ShaderBatch, Disposable {
+
+	override val vertexComponentsCount: Int
+		get() = vertexComponents.position
+	override val indicesCount: Int
+		get() = indices.position
 
 	private var _renderCount = 0
 

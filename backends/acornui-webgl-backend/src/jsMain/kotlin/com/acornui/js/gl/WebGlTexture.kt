@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.acornui.js.gl
 
 import com.acornui.core.graphic.BlendMode
 import com.acornui.core.graphic.RgbData
-import com.acornui.core.io.BufferFactory
+import com.acornui.io.BufferFactory
 import com.acornui.gl.core.*
 import com.acornui.math.Matrix4
 import org.w3c.dom.HTMLImageElement
@@ -60,7 +60,7 @@ class WebGlTexture(
 		batch.putVertex(-1f, 1f, 0f, u = 0f, v = 1f)
 		batch.putQuadIndices()
 		batch.flush()
-		val pixelData = BufferFactory.instance.byteBuffer(width * height * 4)
+		val pixelData = BufferFactory.byteBuffer(width * height * 4)
 		gl.readPixels(0, 0, width, height, Gl20.RGBA, Gl20.UNSIGNED_BYTE, pixelData)
 		framebuffer.end()
 		glState.shader = previousShader

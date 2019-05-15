@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,6 +111,10 @@ abstract class MutableListBase<E> : ListBase<E>(), Clearable, MutableList<E> {
 		removeAt(index)
 		return true
 	}
+
+	// Shouldn't need to declare this here, but workaround to kotlin compiler bug.
+	// FIXME: Workaround to https://youtrack.jetbrains.com/issue/KT-31005
+	abstract override fun removeAt(index: Int): E
 
 	override fun removeAll(elements: Collection<E>): Boolean {
 		var changed = false

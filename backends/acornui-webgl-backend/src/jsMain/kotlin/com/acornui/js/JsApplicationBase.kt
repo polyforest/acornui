@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,13 @@
 
 package com.acornui.js
 
-import com.acornui.assertionsEnabled
+import com.acornui.async.PendingDisposablesRegistry
 import com.acornui.async.awaitOrNull
 import com.acornui.async.launch
 import com.acornui.browser.appendParam
 import com.acornui.browser.decodeUriComponent2
 import com.acornui.browser.encodeUriComponent2
-import com.acornui.collection._stringMap
-import com.acornui.component.Stage
-import com.acornui.component.UiComponent
+import com.acornui.component.stage
 import com.acornui.core.*
 import com.acornui.core.asset.AssetManager
 import com.acornui.core.asset.AssetManagerImpl
@@ -36,53 +34,38 @@ import com.acornui.core.cursor.CursorManager
 import com.acornui.core.di.*
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.FocusManagerImpl
-import com.acornui.core.graphic.Camera
-import com.acornui.core.graphic.OrthographicCamera
-import com.acornui.core.graphic.Window
-import com.acornui.core.graphic.autoCenterCamera
 import com.acornui.core.i18n.I18n
 import com.acornui.core.i18n.I18nImpl
 import com.acornui.core.i18n.Locale
 import com.acornui.core.input.*
 import com.acornui.core.input.interaction.ContextMenuManager
 import com.acornui.core.input.interaction.UndoDispatcher
-import com.acornui.core.io.BufferFactory
-import com.acornui.core.io.JSON_KEY
+import com.acornui.io.BufferFactory
 import com.acornui.core.io.file.Files
 import com.acornui.core.io.file.FilesImpl
 import com.acornui.core.persistance.Persistence
 import com.acornui.core.popup.PopUpManager
-import com.acornui.core.popup.PopUpManagerImpl
 import com.acornui.core.request.RestServiceFactory
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionManagerImpl
-import com.acornui.core.text.dateTimeFormatterProvider
-import com.acornui.core.text.numberFormatterProvider
 import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.TimeDriverImpl
-import com.acornui.core.time.time
-import com.acornui.file.FileIoManager
 import com.acornui.io.file.FilesManifestSerializer
 import com.acornui.js.audio.JsAudioElementMusicLoader
 import com.acornui.js.audio.JsAudioElementSoundLoader
 import com.acornui.js.audio.JsWebAudioSoundLoader
 import com.acornui.js.audio.audioContextSupported
 import com.acornui.js.cursor.JsCursorManager
-import com.acornui.js.file.JsFileIoManager
 import com.acornui.js.input.JsClipboard
 import com.acornui.js.input.JsKeyInput
 import com.acornui.js.input.JsMouseInput
-import com.acornui.js.io.JsBufferFactory
 import com.acornui.js.io.JsRestServiceFactory
 import com.acornui.js.loader.JsBinaryLoader
 import com.acornui.js.loader.JsTextLoader
 import com.acornui.js.persistance.JsPersistence
-import com.acornui.js.text.DateTimeFormatterImpl
-import com.acornui.js.text.NumberFormatterImpl
-import com.acornui.js.time.TimeProviderImpl
 import com.acornui.logging.Log
 import com.acornui.logging.Logger
-import com.acornui.serialization.JsonSerializer
+import com.acornui.serialization.json
 import com.acornui.uncaughtExceptionHandler
 import org.w3c.dom.DocumentReadyState
 import org.w3c.dom.HTMLElement
@@ -101,8 +84,6 @@ abstract class JsApplicationBase : ApplicationBase() {
 	private var frameDriver: JsApplicationRunner? = null
 
 	init {
-		_stringMap = { stringMapOf() }
-
 		js( // language=JS
 				"""
 Function.prototype.uncachedBind = Function.prototype.bind;
@@ -151,7 +132,6 @@ Kotlin.isType = function(object, klass) {
 
 		@Suppress("LeakingThis")
 		if (::memberRefTest != ::memberRefTest) println("[SEVERE] Member reference fix isn't working.")
-		time = TimeProviderImpl()
 		encodeUriComponent2 = ::encodeURIComponent
 		decodeUriComponent2 = ::decodeURIComponent
 
@@ -164,22 +144,14 @@ Kotlin.isType = function(object, klass) {
 			contentLoad()
 
 			awaitAll()
-			val injector = createInjector()
-			stage = createStage(OwnedImpl(injector))
-			val popUpManager = createPopUpManager(stage)
-			val scope = stage.createScope(
-					listOf(
-							Stage to stage,
-							PopUpManager to popUpManager
-					)
-			)
-			initializeSpecialInteractivity(scope)
-			scope.onReady()
-
+			val owner = OwnedImpl(createInjector())
+			PendingDisposablesRegistry.register(owner)
+			initializeSpecialInteractivity(owner)
+			owner.stage.onReady()
 			// Add the pop-up manager after onReady so that it is the highest index.
-			stage.addElement(popUpManager.view)
+			owner.stage.addElement(owner.inject(PopUpManager).view)
 
-			frameDriver = initializeFrameDriver(scope.injector)
+			frameDriver = initializeFrameDriver(owner.injector)
 			frameDriver!!.start()
 		}
 	}
@@ -188,14 +160,12 @@ Kotlin.isType = function(object, klass) {
 		// Copy the app config and set the build number and debug value.
 		val path = appConfig.rootPath + "assets/build.txt".appendParam("version", UidUtil.createUid())
 		val buildVersionLoader = JsTextLoader(path)
-		val debug = appConfig.debug || (window.location.search.contains(Regex("""(?:&|\?)debug=(true|1)""")))
-		val debugCoroutines = appConfig.debugCoroutines || (window.location.search.contains(Regex("""(?:&|\?)debugCoroutines=(true|1)""")))
 		val build = buildVersionLoader.awaitOrNull()
 		val finalConfig = if (build != null) {
-			appConfig.copy(debug = debug, debugCoroutines = debugCoroutines, version = appConfig.version.copy(build = build.toInt()))
+			appConfig.copy(version = appConfig.version.copy(build = build.toInt()))
 		} else {
 			Log.warn("assets/build.txt failed to load")
-			appConfig.copy(debug = debug, debugCoroutines = debugCoroutines)
+			appConfig
 		}
 
 		// Uncaught exception handler
@@ -207,10 +177,6 @@ Kotlin.isType = function(object, klass) {
 			else
 				uncaughtExceptionHandler(Exception("Unknown error: $message $lineNo $source $colNo $error"))
 		}
-
-		// _assert
-		assertionsEnabled = finalConfig.debug
-
 		Log.info("Config $finalConfig")
 		set(AppConfig, finalConfig)
 	}
@@ -263,15 +229,7 @@ Kotlin.isType = function(object, klass) {
 	}
 
 	protected open val loggingTask by BootTask {
-		if (get(AppConfig).debug) {
-			Log.level = Logger.DEBUG
-		} else {
-			Log.level = Logger.WARN
-		}
-	}
-
-	protected open val bufferTask by BootTask {
-		BufferFactory.instance = JsBufferFactory()
+		Log.level = if (debug) Logger.DEBUG else Logger.WARN
 	}
 
 	protected open val mouseInputTask by BootTask {
@@ -282,18 +240,7 @@ Kotlin.isType = function(object, klass) {
 		set(KeyInput, JsKeyInput(get(CANVAS), get(AppConfig).input.jsCaptureAllKeyboardInput))
 	}
 
-	protected open val jsonTask by BootTask {
-		set(JSON_KEY, JsonSerializer)
-	}
-
-	protected open val cameraTask by BootTask {
-		val camera = OrthographicCamera()
-		set(Camera, camera)
-		get(Window).autoCenterCamera(camera)
-	}
-
 	protected open val filesTask by BootTask {
-		val json = get(JSON_KEY)
 		val config = get(AppConfig)
 		val path = config.rootPath + config.assetsManifestPath.appendParam("version", config.version.toVersionString())
 
@@ -357,12 +304,6 @@ Kotlin.isType = function(object, klass) {
 		set(I18n, I18nImpl())
 	}
 
-	protected open val textFormattersTask by BootTask {
-		get(UserInfo)
-		numberFormatterProvider = { NumberFormatterImpl() }
-		dateTimeFormatterProvider = { DateTimeFormatterImpl() }
-	}
-
 	protected open val clipboardTask by BootTask {
 		set(Clipboard, JsClipboard(
 				get(CANVAS),
@@ -372,15 +313,9 @@ Kotlin.isType = function(object, klass) {
 		))
 	}
 
-	abstract suspend fun createStage(owner: Owned): Stage
-
-	protected open suspend fun createPopUpManager(root: UiComponent): PopUpManager {
-		return PopUpManagerImpl(root)
-	}
-
 	protected open suspend fun initializeSpecialInteractivity(owner: Owned) {
 		owner.own(UndoDispatcher(owner.injector))
-		owner.own(ContextMenuManager(owner))
+		owner.own(ContextMenuManager(owner.injector))
 	}
 
 	private fun memberRefTest() {}

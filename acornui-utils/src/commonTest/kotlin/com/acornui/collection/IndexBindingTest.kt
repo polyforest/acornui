@@ -2,8 +2,9 @@ package com.acornui.collection
 
 import com.acornui.observe.IndexBinding
 import com.acornui.observe.bindIndex
-import org.junit.Assert.*
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class IndexBindingTest {
 

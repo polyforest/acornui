@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -178,3 +178,6 @@ enum class KeyLocation {
  */
 val KeyInteractionRo.commandPlat: Boolean
 	get() = if (platform == Platform.APPLE) metaKey else ctrlKey
+
+val KeyInteractionRo.isEnterOrReturn: Boolean
+	get() = keyCode == Ascii.ENTER || keyCode == Ascii.RETURN

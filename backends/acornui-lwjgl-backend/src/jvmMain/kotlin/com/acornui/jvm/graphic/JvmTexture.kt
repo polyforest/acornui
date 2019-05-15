@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.GlTextureBase
 import com.acornui.core.graphic.*
-import com.acornui.jvm.io.JvmBufferUtil
+import com.acornui.io.JvmBufferUtil
 import java.nio.ByteBuffer
 
 /**

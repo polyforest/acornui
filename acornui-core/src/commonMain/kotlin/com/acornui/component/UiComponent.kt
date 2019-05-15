@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Poly Forest, LLC
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("LeakingThis", "UNUSED_PARAMETER", "RedundantLambdaArrow")
+@file:Suppress("UNUSED_PARAMETER", "RedundantLambdaArrow")
 
 package com.acornui.component
 
@@ -34,6 +34,7 @@ import com.acornui.core.input.InteractivityManager
 import com.acornui.core.input.MouseState
 import com.acornui.core.time.TimeDriver
 import com.acornui.filter.RenderFilter
+import com.acornui.filter.RenderFilterList
 import com.acornui.function.as1
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
@@ -54,7 +55,7 @@ annotation class ComponentDslMarker
 
 typealias ComponentInit<T> = (@ComponentDslMarker T).() -> Unit
 
-interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementRo, Validatable, StyleableRo, ChildRo, Focusable {
+interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementRo, Validatable, StyleableRo, ChildRo, Focusable, Renderable {
 
 	override val disposed: Signal<(UiComponentRo) -> Unit>
 	override val activated: Signal<(UiComponentRo) -> Unit>
@@ -91,8 +92,8 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	/**
 	 * Returns true if this component will be rendered. This will be true under the following conditions:
 	 * This component is on the stage.
-	 * This component and all of its ancestors are visible.
-	 * This component does not have an alpha of 0f.
+	 * No ancestor has [visible] false.
+	 * No ancestor has [alpha] <= 0f.
 	 */
 	val isRendered: Boolean
 
@@ -100,6 +101,18 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	 * The flags that, if invalidated, will invalidate the parent container's size constraints / layout.
 	 */
 	val layoutInvalidatingFlags: Int
+
+	/**
+	 * The explicit width, as set by width(value)
+	 * Typically one would use [width] in order to retrieve the actual width.
+	 */
+	val explicitWidth: Float?
+
+	/**
+	 * The explicit height, as set by height(value)
+	 * Typically one would use [height] in order to retrieve actual height.
+	 */
+	val explicitHeight: Float?
 
 	companion object {
 		var defaultLayoutInvalidatingFlags = ValidationFlags.HIERARCHY_ASCENDING or
@@ -218,21 +231,6 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	 */
 	fun update()
 
-	/**
-	 * Renders any graphics.
-	 * [render] does not check the [visible] flag; that is the responsibility of the caller.
-	 *
-	 * Canvas coordinates are 0,0 top left, and bottom right is the canvas width/height without dpi scaling.
-	 *
-	 * You may convert the window coordinate clip region to local coordinates via [canvasToLocal], but in general it is
-	 * faster to convert the local coordinates to window coordinates [localToCanvas], as no matrix inversion is
-	 * required.
-	 *
-	 * @param clip The visible region (in viewport coordinates.) If you wish to render a component with a no
-	 * clipping, you may use [MinMaxRo.POSITIVE_INFINITY]. This is used in order to potentially avoid drawing things
-	 * the user cannot see. (Due to the screen size, stencil buffers, or scissors)
-	 */
-	fun render(clip: MinMaxRo)
 }
 
 /**
@@ -305,19 +303,6 @@ open class UiComponentImpl(
 	protected val gl = inject(Gl20)
 	protected val glState = inject(GlState)
 
-	private val defaultCamera = inject(Camera)
-
-	protected var _viewport: RectangleRo = RectangleRo.EMPTY
-
-	/**
-	 * Returns the viewport (in canvas coordinates, not gl window coordinates) this component will use for UI.
-	 */
-	final override val viewport: RectangleRo
-		get() {
-			validate(ValidationFlags.VIEWPORT)
-			return _viewport
-		}
-
 	// Validatable Properties
 	private val _invalidated = own(Signal2<UiComponent, Int>())
 	final override val invalidated = _invalidated.asRo()
@@ -330,20 +315,13 @@ open class UiComponentImpl(
 
 	// Transformable properties
 	protected val _transform = Matrix4()
-	protected val _concatenatedTransform = Matrix4()
-	protected val _concatenatedTransformInv = Matrix4()
-	protected var _concatenatedTransformInvIsValid = false
 	protected val _position = Vector3(0f, 0f, 0f)
 	protected val _rotation = Vector3(0f, 0f, 0f)
 	protected val _scale = Vector3(1f, 1f, 1f)
 	protected val _origin = Vector3(0f, 0f, 0f)
 
-	override var cameraOverride: CameraRo? by validationProp(null, ValidationFlags.CAMERA)
-
 	// LayoutElement properties
 	protected val _bounds = Bounds()
-	protected var _explicitWidth: Float? = null
-	protected var _explicitHeight: Float? = null
 	protected val _explicitSizeConstraints = SizeConstraints()
 	protected val _sizeConstraints = SizeConstraints()
 
@@ -364,7 +342,8 @@ open class UiComponentImpl(
 				when (value) {
 					InteractivityMode.NONE -> blur()
 					InteractivityMode.CHILDREN -> blurSelf()
-					else -> {}
+					else -> {
+					}
 				}
 				invalidate(ValidationFlags.INTERACTIVITY_MODE)
 			}
@@ -387,7 +366,6 @@ open class UiComponentImpl(
 
 	// ColorTransformable properties
 	protected val _colorTint: Color = Color.WHITE.copy()
-	protected val _concatenatedColorTint: Color = Color.WHITE.copy()
 
 	// ChildRo properties
 	override var parent: ContainerRo? = null
@@ -399,26 +377,64 @@ open class UiComponentImpl(
 	final override var isFocusContainer by observable(false) { _ -> invalidateFocusOrderDeep() }
 	final override var focusEnabledChildren by observable(false) { _ -> invalidateFocusOrderDeep() }
 
+	// Render context properties
+
+	private val defaultRenderContext = inject(RenderContextRo)
+	protected val _renderContext = RenderContext(defaultRenderContext)
+
+	override val viewProjectionTransformInv: Matrix4Ro
+		get() = renderContext.viewProjectionTransformInv
+
+	override val viewProjectionTransform: Matrix4Ro
+		get() = renderContext.viewProjectionTransform
+
+	override val viewTransform: Matrix4Ro
+		get() = renderContext.viewTransform
+
+	override val projectionTransform: Matrix4Ro
+		get() = renderContext.projectionTransform
+
+	override val canvasTransform: IntRectangleRo
+		get() = renderContext.canvasTransform
+
+	override var renderContextOverride: RenderContextRo? = null
+		set(value) {
+			if (value != field) {
+				invalidate(ValidationFlags.RENDER_CONTEXT)
+				field = value
+				update()
+			}
+		}
+
+	override val renderContext: RenderContextRo
+		get() = renderContextOverride ?: _renderContext
+
+	var cameraOverride: CameraRo?
+		get() = _renderContext.cameraOverride
+		set(value) {
+			_renderContext.cameraOverride = value
+			invalidate(ValidationFlags.RENDER_CONTEXT)
+		}
+
+	//
+
+
 	private val rayTmp = Ray()
 
 	init {
 		owner.disposed.add(::dispose.as1)
-		val r = this
 		validation = validationGraph {
 			ValidationFlags.apply {
-				addNode(STYLES, r::updateStyles)
-				addNode(HIERARCHY_ASCENDING, r::updateHierarchyAscending)
-				addNode(HIERARCHY_DESCENDING, r::updateHierarchyDescending)
-				addNode(LAYOUT_ENABLED, r::updateLayoutEnabled)
-				addNode(SIZE_CONSTRAINTS, STYLES, r::validateSizeConstraints)
-				addNode(LAYOUT, SIZE_CONSTRAINTS, r::validateLayout)
-				addNode(TRANSFORM, r::updateTransform)
-				addNode(CONCATENATED_TRANSFORM, TRANSFORM, r::updateConcatenatedTransform)
-				addNode(COLOR_TRANSFORM, r::updateColorTransform)
-				addNode(CONCATENATED_COLOR_TRANSFORM, COLOR_TRANSFORM, r::updateConcatenatedColorTransform)
-				addNode(INTERACTIVITY_MODE, r::updateInheritedInteractivityMode)
-				addNode(CAMERA, r::updateCamera)
-				addNode(VIEWPORT, r::updateViewport)
+				addNode(STYLES, ::updateStyles)
+				addNode(HIERARCHY_ASCENDING, ::updateHierarchyAscending)
+				addNode(HIERARCHY_DESCENDING, ::updateHierarchyDescending)
+				addNode(LAYOUT_ENABLED, ::updateLayoutEnabled)
+				addNode(SIZE_CONSTRAINTS, STYLES, ::validateSizeConstraints)
+				addNode(LAYOUT, SIZE_CONSTRAINTS, ::validateLayout)
+				addNode(TRANSFORM, ::updateTransform)
+				addNode(INTERACTIVITY_MODE, ::updateInheritedInteractivityMode)
+				addNode(RENDER_CONTEXT, TRANSFORM, ::updateRenderContext)
+				addNode(BITMAP_CACHE) {}
 			}
 		}
 
@@ -426,22 +442,6 @@ open class UiComponentImpl(
 		_activated.add(::onActivated.as1)
 		_deactivated.add(::invalidateFocusOrder.as1)
 		_deactivated.add(::onDeactivated.as1)
-	}
-
-	//-----------------------------------------------
-	// CameraElement
-	//-----------------------------------------------
-
-	override fun canvasToLocal(canvasCoord: Vector2): Vector2 {
-		globalToLocal(camera.getPickRay(canvasCoord.x, canvasCoord.y, viewport, rayTmp))
-		rayToPlane(rayTmp, canvasCoord)
-		return canvasCoord
-	}
-
-	override fun localToCanvas(localCoord: Vector3): Vector3 {
-		localToGlobal(localCoord)
-		camera.project(localCoord, viewport)
-		return localCoord
 	}
 
 	//-----------------------------------------------
@@ -466,28 +466,11 @@ open class UiComponentImpl(
 			return
 		}
 		sizeOut.set(bounds)
-		transformOut.set(concatenatedTransform)
+		transformOut.set(modelTransform)
 	}
 
 	//-----------------------------------------------
 
-	/**
-	 * Updates the camera.
-	 */
-	protected open fun updateCamera() {
-		_camera = if (cameraOverride == null) {
-			parent?.camera ?: defaultCamera
-		} else {
-			cameraOverride!!
-		}
-	}
-
-	/**
-	 * Sets the viewport rectangle.
-	 */
-	protected open fun updateViewport() {
-		_viewport = parent?.viewport ?: RectangleRo.EMPTY
-	}
 
 	//-----------------------------------------------
 	// LayoutElement
@@ -496,7 +479,7 @@ open class UiComponentImpl(
 	override fun containsCanvasPoint(canvasX: Float, canvasY: Float): Boolean {
 		if (!isActive) return false
 		val ray = Ray.obtain()
-		camera.getPickRay(canvasX, canvasY, viewport, ray)
+		getPickRay(canvasX, canvasY, ray)
 		val b = intersectsGlobalRay(ray)
 		Ray.free(ray)
 		return b
@@ -504,6 +487,7 @@ open class UiComponentImpl(
 
 	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
 		val bounds = bounds
+		// TODO: make these temp vars
 		val topLeft = Vector3.obtain()
 		val topRight = Vector3.obtain()
 		val bottomRight = Vector3.obtain()
@@ -540,42 +524,30 @@ open class UiComponentImpl(
 	 * The explicit width, as set by width(value)
 	 * Typically one would use width() in order to retrieve the explicit or actual width.
 	 */
-	override val explicitWidth: Float?
-		get() = _explicitWidth
+	final override var explicitWidth: Float? = null
+		private set
 
 	/**
 	 * The explicit height, as set by height(value)
 	 * Typically one would use height() in order to retrieve the explicit or actual height.
 	 */
-	override val explicitHeight: Float?
-		get() = _explicitHeight
-
-	override val width: Float
-		get() = bounds.width
-
-	override val height: Float
-		get() = bounds.height
-
-	override val right: Float
-		get() = x + width
-
-	override val bottom: Float
-		get() = y + height
+	final override var explicitHeight: Float? = null
+		private set
 
 	/**
 	 * Sets the explicit width. Set to null to use actual width.
 	 */
 	override fun width(value: Float?) {
-		if (_explicitWidth == value) return
+		if (explicitWidth == value) return
 		if (value?.isNaN() == true) throw Exception("May not set the size to be NaN")
-		_explicitWidth = value
+		explicitWidth = value
 		invalidate(ValidationFlags.LAYOUT)
 	}
 
 	override fun height(value: Float?) {
-		if (_explicitHeight == value) return
+		if (explicitHeight == value) return
 		if (value?.isNaN() == true) throw Exception("May not set the size to be NaN")
-		_explicitHeight = value
+		explicitHeight = value
 		invalidate(ValidationFlags.LAYOUT)
 	}
 
@@ -588,7 +560,32 @@ open class UiComponentImpl(
 
 	final override var includeInLayout: Boolean by validationProp(true, ValidationFlags.LAYOUT_ENABLED)
 
-	final override val renderFilters: MutableList<RenderFilter> = ArrayList()
+	/**
+	 * If there are render filters, inner renderable is set as the contents of the last render filter.
+	 */
+	private val innerRenderable: Renderable by lazy {
+		object : Renderable {
+
+			override val bounds: BoundsRo
+				get() = this@UiComponentImpl.bounds
+
+			override val renderContext: RenderContextRo
+				get() = this@UiComponentImpl.renderContext
+
+			override var renderContextOverride: RenderContextRo?
+				get() = this@UiComponentImpl.renderContextOverride
+				set(value) {
+					this@UiComponentImpl.renderContextOverride = value
+				}
+
+			override fun render() {
+				val renderContext = renderContext
+				draw(renderContext.clipRegion, renderContext.modelTransform, renderContext.colorTint)
+			}
+		}
+	}
+
+	final override val renderFilters = own(RenderFilterList(innerRenderable).apply { changed.add { invalidate(ValidationFlags.BITMAP_CACHE) } })
 
 	override val isRendered: Boolean
 		get() {
@@ -690,9 +687,9 @@ open class UiComponentImpl(
 	 */
 	override fun setSize(width: Float?, height: Float?) {
 		if (width?.isNaN() == true || height?.isNaN() == true) throw Exception("May not set the size to be NaN")
-		if (_explicitWidth == width && _explicitHeight == height) return
-		_explicitWidth = width
-		_explicitHeight = height
+		if (explicitWidth == width && explicitHeight == height) return
+		explicitWidth = width
+		explicitHeight = height
 		invalidate(ValidationFlags.LAYOUT)
 	}
 
@@ -716,8 +713,8 @@ open class UiComponentImpl(
 	 */
 	private fun validateLayout() {
 		val sC = sizeConstraints
-		val w = sC.width.clamp(_explicitWidth ?: defaultWidth)
-		val h = sC.height.clamp(_explicitHeight ?: defaultHeight)
+		val w = sC.width.clamp(explicitWidth ?: defaultWidth)
+		val h = sC.height.clamp(explicitHeight ?: defaultHeight)
 		_bounds.set(w ?: 0f, h ?: 0f)
 		updateLayout(w, h, _bounds)
 		if (assertionsEnabled && (_bounds.width.isNaN() || _bounds.height.isNaN()))
@@ -804,8 +801,6 @@ open class UiComponentImpl(
 	/**
 	 * The color tint of this component.
 	 * The final pixel color value for the default shader is [colorTint * pixel]
-	 *
-	 * If this is modified directly, be sure to call [invalidate(ValidationFlags.COLOR_TRANSFORM)]
 	 */
 	override var colorTint: ColorRo
 		get() {
@@ -813,51 +808,22 @@ open class UiComponentImpl(
 		}
 		set(value) {
 			if (_colorTint == value) return
-			_colorTint.set(value)
-			invalidate(ValidationFlags.COLOR_TRANSFORM)
-		}
-
-	override var alpha: Float
-		get() {
-			return colorTint.a
-		}
-		set(value) {
-			val t = colorTint
-			if (t.a == value) return
-			colorTint(t.r, t.g, t.b, value)
+			colorTint(value.r, value.g, value.b, value.a)
 		}
 
 	override fun colorTint(r: Float, g: Float, b: Float, a: Float) {
 		_colorTint.set(r, g, b, a)
-		invalidate(ValidationFlags.COLOR_TRANSFORM)
+		invalidate(ValidationFlags.RENDER_CONTEXT)
 	}
 
 	/**
 	 * The color multiplier of this component and all ancestor color tints multiplied together.
-	 * Do not set this directly, it will be overwritten on a [ValidationFlags.CONCATENATED_COLOR_TRANSFORM] validation.
-	 * Retrieving this value validates [ValidationFlags.CONCATENATED_COLOR_TRANSFORM]
 	 */
 	override val concatenatedColorTint: ColorRo
 		get() {
-			validate(ValidationFlags.CONCATENATED_COLOR_TRANSFORM)
-			return _concatenatedColorTint
+			validate(ValidationFlags.RENDER_CONTEXT)
+			return renderContext.colorTint
 		}
-
-	/**
-	 * Concatenates the color transform.
-	 * Do not call this directly, use `validate(ValidationFlags.CONCATENATED_COLOR_TRANSFORM)`
-	 */
-	protected open fun updateColorTransform() {
-	}
-
-	protected open fun updateConcatenatedColorTransform() {
-		val p = parent
-		if (p == null) {
-			_concatenatedColorTint.set(_colorTint)
-		} else {
-			_concatenatedColorTint.set(p.concatenatedColorTint).mul(_colorTint)
-		}
-	}
 
 	protected open fun updateInheritedInteractivityMode() {
 		_inheritedInteractivityMode = _interactivityMode
@@ -876,7 +842,7 @@ open class UiComponentImpl(
 	override fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo?): MutableList<UiComponentRo> {
 		if (!visible || (onlyInteractive && !interactivityEnabled)) return out
 
-		val ray = rayCache ?: camera.getPickRay(canvasX, canvasY, viewport, rayTmp)
+		val ray = rayCache ?: getPickRay(canvasX, canvasY, rayTmp)
 		if (interactivityMode == InteractivityMode.ALWAYS || intersectsGlobalRay(ray)) {
 			out.add(this)
 		}
@@ -944,7 +910,7 @@ open class UiComponentImpl(
 	// Transformable
 	//-----------------------------------------------
 
-	override var snapToPixel: Boolean = Transformable.defaultSnapToPixel
+	override var snapToPixel: Boolean = Positionable.defaultSnapToPixel
 
 	/**
 	 * This component's transformation matrix.
@@ -966,7 +932,6 @@ open class UiComponentImpl(
 			_customTransform = value
 			invalidate(ValidationFlags.TRANSFORM)
 		}
-
 
 	override var rotationX: Float
 		get() = _rotation.x
@@ -1114,79 +1079,22 @@ open class UiComponentImpl(
 	}
 
 	/**
-	 * Converts a coordinate from local coordinate space to global coordinate space.
-	 * This will modify the provided coord parameter.
-	 * @param localCoord The coordinate local to this component. This will be mutated to become a global coordinate.
-	 * @return Returns the coord
-	 */
-	override fun localToGlobal(localCoord: Vector3): Vector3 {
-		concatenatedTransform.prj(localCoord)
-		return localCoord
-	}
-
-	/**
-	 * Converts a coordinate from global coordinate space to local coordinate space.
-	 * This will modify the provided coord parameter.
-	 * @param globalCoord The coordinate in global space. This will be mutated to become a local coordinate.
-	 * @return Returns [globalCoord]
-	 * Note: This may be an expensive operation, as it requires a matrix inversion.
-	 */
-	override fun globalToLocal(globalCoord: Vector3): Vector3 {
-		concatenatedTransformInv.prj(globalCoord)
-		return globalCoord
-	}
-
-	/**
-	 * Converts a ray from local coordinate space to global coordinate space.
-	 * This will modify the provided ray parameter.
-	 * @param ray The ray local to this Transformable. This will be mutated to become a global ray.
-	 * @return Returns the ray
-	 */
-	override fun localToGlobal(ray: Ray): Ray {
-		ray.mul(concatenatedTransform)
-		return ray
-	}
-
-	/**
-	 * Converts a ray from global coordinate space to local coordinate space.
-	 * This will modify the provided ray parameter.
-	 *
-	 * Note: This is a heavy operation as it performs a Matrix4 inversion.
-	 *
-	 * @param ray The ray in global space. This will be mutated to become a local coordinate.
-	 * @return Returns the ray
-	 */
-	override fun globalToLocal(ray: Ray): Ray {
-		ray.mul(concatenatedTransformInv)
-		return ray
-	}
-
-	/**
 	 * The global transform of this component, of all ancestor transforms multiplied together.
 	 * Do not modify this matrix directly, it will be overwritten on a TRANSFORM validation.
 	 */
-	override val concatenatedTransform: Matrix4Ro
+	override val modelTransform: Matrix4Ro
 		get() {
-			validate(ValidationFlags.CONCATENATED_TRANSFORM)
-			return _concatenatedTransform
+			validate(ValidationFlags.RENDER_CONTEXT)
+			return renderContext.modelTransform
 		}
 
 	/**
 	 * Returns the inverse concatenated transformation matrix.
 	 */
-	override val concatenatedTransformInv: Matrix4Ro
+	override val modelTransformInv: Matrix4Ro
 		get() {
-			validate(ValidationFlags.CONCATENATED_TRANSFORM)
-			if (!_concatenatedTransformInvIsValid) {
-				_concatenatedTransformInvIsValid = true
-				_concatenatedTransformInv.set(_concatenatedTransform)
-				try {
-					_concatenatedTransformInv.inv()
-				} catch (e: Throwable) {
-					println("Error inverting matrix")
-				}
-			}
-			return _concatenatedTransformInv
+			validate(ValidationFlags.RENDER_CONTEXT)
+			return renderContext.modelTransformInv
 		}
 
 	/**
@@ -1207,35 +1115,13 @@ open class UiComponentImpl(
 		_transform.scale(_scale)
 		if (!_origin.isZero())
 			_transform.translate(-_origin.x, -_origin.y, -_origin.z)
-
 	}
 
-	/**
-	 * Updates this component's concatenatedTransform matrix, which is the parent's concatenatedTransform
-	 * multiplied by this component's transform matrix.
-	 *
-	 * Do not call this directly, use [validate(ValidationFlags.CONCATENATED_TRANSFORM)]
-	 */
-	protected open fun updateConcatenatedTransform() {
-		val p = parent
-		if (p != null) {
-			_concatenatedTransform.set(p.concatenatedTransform).mul(_transform)
-		} else {
-			_concatenatedTransform.set(_transform)
-		}
-		_concatenatedTransformInvIsValid = false
+	protected open fun updateRenderContext() {
+		_renderContext.parentContext = parent?.renderContext ?: defaultRenderContext
+		_renderContext.modelTransformLocal = _transform
+		_renderContext.colorTintLocal = _colorTint
 	}
-
-	private var _camera: CameraRo = defaultCamera
-
-	/**
-	 * Returns the camera to be used for this component.
-	 */
-	override val camera: CameraRo
-		get() {
-			validate(ValidationFlags.CAMERA)
-			return _camera
-		}
 
 	//-----------------------------------------------
 	// Validatable
@@ -1245,11 +1131,22 @@ open class UiComponentImpl(
 		val flagsInvalidated: Int = validation.invalidate(flags)
 
 		if (flagsInvalidated != 0) {
-			window.requestRender()
+			if (_invalidated.isDispatching) {
+				throw Exception("invalidated already dispatching. ${flagsInvalidated.toFlagsString()}. Possible cyclic validation dependency.")
+			}
+			if (renderFilters.isNotEmpty() && flags and BITMAP_CACHE_INVALIDATING_FLAGS > 0) {
+				invalidateBitmapCache()
+			}
 			onInvalidated(flagsInvalidated)
 			_invalidated.dispatch(this, flagsInvalidated)
 		}
 		return flagsInvalidated
+	}
+
+	protected open fun invalidateBitmapCache() {
+		for (i in 0..renderFilters.lastIndex) {
+			renderFilters[i].invalidateBitmapCache()
+		}
 	}
 
 	protected open fun onInvalidated(flagsInvalidated: Int) {
@@ -1268,54 +1165,51 @@ open class UiComponentImpl(
 
 	override fun update() = validate()
 
-	override fun render(clip: MinMaxRo) {
-		// Nothing visible.
-		if (_concatenatedColorTint.a <= 0f)
-			return
-		val renderFiltersL = renderFilters.size
-		if (renderFiltersL == 0) {
-			draw(clip)
-		} else {
-			var i = renderFiltersL
-			while (--i >= 0) {
-				val filter = renderFilters[i]
-				if (filter.enabled)
-					filter.beforeRender(clip)
-			}
-			draw(clip)
-			while (++i < renderFiltersL) {
-				val filter = renderFilters[i]
-				if (filter.enabled)
-					filter.afterRender(clip)
-			}
-		}
-	}
+	//-----------------------------------------------
+	// Renderable
+	//-----------------------------------------------
 
-	private val viewportTmpMinMax = MinMax()
+	override val renderMargin: PadRo
+		get() = if (renderFilters.isEmpty())
+			Pad.EMPTY_PAD
+		else
+			renderFilters.first().renderMargin
 
 	/**
-	 * Returns true if the given viewport in local coordinates intersects with the viewport in screen coordinates.
-	 * This does not perform a validation if the transformation is currently invalid.
-	 */
-	fun isInViewport(local: MinMaxRo, viewport: MinMaxRo): Boolean {
-		localToCanvas(viewportTmpMinMax.set(local))
-		return viewport.intersects(viewportTmpMinMax)
-	}
-
-	/**
-	 * Returns true if this component's bounds are currently within the given window viewport.
+	 * Renders any graphics.
+	 * [render] does not check the [visible] flag; that is the responsibility of the caller.
 	 *
-	 * This does not perform a validation if the layout or transformation is currently invalid.
+	 * Canvas coordinates are 0,0 top left, and bottom right is the canvas width/height without dpi scaling.
+	 *
+	 * You may convert the window coordinate clip region to local coordinates via [canvasToLocal], but in general it is
+	 * faster to convert the local coordinates to window coordinates [localToCanvas], as no matrix inversion is
+	 * required.
+	 *
+	 * @param clip The visible region (in viewport coordinates.) If you wish to render a component with a no
+	 * clipping, you may use [MinMaxRo.POSITIVE_INFINITY]. This is used in order to potentially avoid drawing things
+	 * the user cannot see. (Due to the screen size, stencil buffers, or scissors)
 	 */
-	fun isBoundsInViewport(viewport: MinMaxRo): Boolean {
-		localToCanvas(viewportTmpMinMax.set(0f, 0f, _bounds.width, _bounds.height))
-		return viewport.intersects(viewportTmpMinMax)
+	override fun render() {
+		// Nothing visible.
+		val renderContext = renderContext
+		if (renderContext.colorTint.a <= 0f)
+			return
+		if (renderFilters.isEmpty())
+			draw(renderContext.clipRegion, renderContext.modelTransform, renderContext.colorTint)
+		else
+			renderFilters.first().render()
+	}
+
+	protected fun useCamera(useModel: Boolean = false) {
+		val renderContext = renderContext
+		if (useModel) glState.setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform, renderContext.modelTransform)
+		else glState.setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform)
 	}
 
 	/**
 	 * The core drawing method for this component.
 	 */
-	protected open fun draw(clip: MinMaxRo) {
+	protected open fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 	}
 
 	//-----------------------------------------------
@@ -1362,6 +1256,12 @@ open class UiComponentImpl(
 
 	companion object {
 		private val quat: Quaternion = Quaternion()
+
+		private const val BITMAP_CACHE_INVALIDATING_FLAGS = (
+				ValidationFlags.HIERARCHY_DESCENDING or
+						ValidationFlags.TRANSFORM or
+						ValidationFlags.RENDER_CONTEXT or
+						ValidationFlags.INTERACTIVITY_MODE).inv()
 	}
 }
 

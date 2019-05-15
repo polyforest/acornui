@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 PolyForest
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.acornui.component.text
 
+import com.acornui.async.resultOrNull
 import com.acornui.component.*
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.Styleable
@@ -200,9 +201,14 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 		contents.setPosition(0f, 0f)
 		out.set(contents.bounds)
 
-		val font = charStyle.font
-		val minHeight = flowStyle.padding.expandHeight(font?.data?.lineHeight?.toFloat()) ?: 0f
-		if (out.height < minHeight) out.height = minHeight
+		// Handle sizing if the content is blank:
+		if (contents.textElements.isEmpty()) {
+			val font = charStyle.font
+			val fontData = font?.resultOrNull()?.data
+			val padding = flowStyle.padding
+			out.height = padding.expandHeight(fontData?.lineHeight?.toFloat()) ?: 0f
+			out.baseline = padding.top + (fontData?.baseline?.toFloat() ?: 0f)
+		}
 
 		if (contents.allowClipping) {
 			if (explicitWidth != null) out.width = explicitWidth
@@ -221,6 +227,7 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 
 	init {
 		element = _textContents
+		// Add the styles as rules so that they cascade down into the text spans:
 		addStyleRule(flowStyle)
 		addStyleRule(charStyle)
 		styleTags.add(TextField)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.acornui.core.input.interaction
 
 import com.acornui.component.InteractiveElement
 import com.acornui.component.UiComponentRo
+import com.acornui.component.canvasToLocal
 import com.acornui.core.input.InteractionEventBase
 import com.acornui.core.input.InteractionEventRo
 import com.acornui.core.input.InteractionType

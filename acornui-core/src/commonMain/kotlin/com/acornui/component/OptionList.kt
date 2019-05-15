@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -286,6 +286,7 @@ open class OptionList<E : Any>(
 
 	init {
 		isFocusContainer = true
+		cursor(StandardCursors.HAND)
 
 		styleTags.add(OptionList)
 		maxItems = 10
@@ -501,7 +502,7 @@ open class OptionList<E : Any>(
 		textInput.setSize(if (w == null) null else w - style.gap - downArrow.width, h)
 		textInput.setPosition(pad.left, pad.top)
 		downArrow.moveTo(pad.left + textInput.width + style.gap, pad.top + (textInput.height - downArrow.height) * 0.5f)
-		out.set(pad.expandWidth2(textInput.width + style.gap + downArrow.width), pad.expandHeight2(maxOf(textInput.height, downArrow.height)))
+		out.set(pad.expandWidth2(textInput.width + style.gap + downArrow.width), pad.expandHeight2(maxOf(textInput.height, downArrow.height)), textInput.baselineY)
 		background?.setSize(out.width, out.height)
 		listLift.setSize(listWidth ?: out.width, listHeight)
 		listLift.moveTo(0f, out.height)
@@ -557,7 +558,7 @@ fun <E : Any> Owned.optionList(
 
 fun <E : Any> Owned.optionList(
 		data: ObservableList<E?>,
-		rendererFactory: LayoutDataProvider<VerticalLayoutData>.() -> ListItemRenderer<E> = { simpleItemRenderer() },
+		rendererFactory: OptionListRendererFactory<E> = { simpleItemRenderer() },
 		init: ComponentInit<OptionList<E>> = {}): OptionList<E> {
 	val t = OptionList<E>(this)
 	t.data(data)
@@ -568,7 +569,7 @@ fun <E : Any> Owned.optionList(
 
 fun <E : Any> Owned.optionList(
 		data: List<E?>,
-		rendererFactory: LayoutDataProvider<VerticalLayoutData>.() -> ListItemRenderer<E> = { simpleItemRenderer() },
+		rendererFactory: OptionListRendererFactory<E> = { simpleItemRenderer() },
 		init: ComponentInit<OptionList<E>> = {}): OptionList<E> {
 	val t = OptionList<E>(this)
 	t.data(data)
@@ -576,3 +577,5 @@ fun <E : Any> Owned.optionList(
 	t.init()
 	return t
 }
+
+typealias OptionListRendererFactory<E> = ItemRendererOwner<VerticalLayoutData>.() -> ListItemRenderer<E>

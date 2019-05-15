@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@
 
 package com.acornui.jvm
 
-import com.acornui.assertionsEnabled
-import com.acornui.async.coroutineDebugMode
 import com.acornui.async.launch
 import com.acornui.browser.decodeUriComponent2
 import com.acornui.browser.encodeUriComponent2
@@ -36,10 +34,7 @@ import com.acornui.core.di.*
 import com.acornui.core.focus.FakeFocusMouse
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.FocusManagerImpl
-import com.acornui.core.graphic.Camera
-import com.acornui.core.graphic.OrthographicCamera
 import com.acornui.core.graphic.Window
-import com.acornui.core.graphic.autoCenterCamera
 import com.acornui.core.i18n.I18n
 import com.acornui.core.i18n.I18nImpl
 import com.acornui.core.i18n.Locale
@@ -47,18 +42,13 @@ import com.acornui.core.input.*
 import com.acornui.core.input.interaction.ContextMenuManager
 import com.acornui.core.input.interaction.JvmClickDispatcher
 import com.acornui.core.input.interaction.UndoDispatcher
-import com.acornui.core.io.BufferFactory
-import com.acornui.core.io.JSON_KEY
 import com.acornui.core.io.file.Files
 import com.acornui.core.io.file.FilesImpl
 import com.acornui.core.persistance.Persistence
 import com.acornui.core.popup.PopUpManager
-import com.acornui.core.popup.PopUpManagerImpl
 import com.acornui.core.request.RestServiceFactory
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionManagerImpl
-import com.acornui.core.text.dateTimeFormatterProvider
-import com.acornui.core.text.numberFormatterProvider
 import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.TimeDriverImpl
 import com.acornui.core.time.time
@@ -78,23 +68,19 @@ import com.acornui.jvm.graphic.GlfwWindowImpl
 import com.acornui.jvm.graphic.JvmGl20Debug
 import com.acornui.jvm.graphic.JvmTextureLoader
 import com.acornui.jvm.graphic.LwjglGl20
-import com.acornui.jvm.input.JvmClipboard
 import com.acornui.jvm.input.GlfwMouseInput
+import com.acornui.jvm.input.JvmClipboard
 import com.acornui.jvm.input.LwjglKeyInput
 import com.acornui.jvm.input.MockTouchScreenKeyboard
-import com.acornui.jvm.io.JvmBufferFactory
 import com.acornui.jvm.io.JvmRestServiceFactory
 import com.acornui.jvm.loader.JvmBinaryLoader
 import com.acornui.jvm.loader.JvmTextLoader
 import com.acornui.jvm.loader.WorkScheduler
 import com.acornui.jvm.persistance.LwjglPersistence
-import com.acornui.jvm.text.DateTimeFormatterImpl
-import com.acornui.jvm.text.NumberFormatterImpl
-import com.acornui.jvm.time.TimeProviderImpl
-import com.acornui.logging.Logger
 import com.acornui.logging.Log
+import com.acornui.logging.Logger
 import com.acornui.math.MinMax
-import com.acornui.serialization.JsonSerializer
+import com.acornui.serialization.json
 import com.acornui.uncaughtExceptionHandler
 import org.lwjgl.Version
 import org.lwjgl.glfw.GLFW
@@ -122,17 +108,12 @@ open class LwjglApplication : ApplicationBase() {
 
 	companion object {
 		init {
-			lineSeparator = System.lineSeparator()
-
 			encodeUriComponent2 = { str ->
 				URLEncoder.encode(str, "UTF-8")
 			}
 			decodeUriComponent2 = { str ->
 				URLDecoder.decode(str, "UTF-8")
 			}
-
-			time = TimeProviderImpl()
-			BufferFactory.instance = JvmBufferFactory()
 		}
 	}
 
@@ -148,21 +129,13 @@ open class LwjglApplication : ApplicationBase() {
 
 		while (true) {
 			if (injector != null) {
-				stage = createStage(OwnedImpl(injector!!))
-				val popUpManager = createPopUpManager(stage)
-				val scope = stage.createScope(
-						listOf(
-								Stage to stage,
-								PopUpManager to popUpManager
-						)
-				)
-				initializeSpecialInteractivity(scope)
-				scope.onReady()
-
+				val owner = OwnedImpl(injector!!)
+				owner.initializeSpecialInteractivity()
+				owner.stage.onReady()
 				// Add the pop-up manager after onReady so that it is the highest index.
-				stage.addElement(popUpManager.view)
-
-				JvmApplicationRunner(scope.injector, _windowId)
+				owner.stage.addElement(owner.inject(PopUpManager).view)
+				JvmApplicationRunner(owner.injector, _windowId)
+				owner.dispose()
 				dispose()
 				break
 			} else {
@@ -178,14 +151,9 @@ open class LwjglApplication : ApplicationBase() {
 		val build = if (buildVersion.exists()) buildVersion.readText().toInt() else config.version.build
 
 		val finalConfig = config.copy(
-				version = config.version.copy(build = build),
-				debug = config.debug || System.getProperty("debug")?.toLowerCase() == "true",
-				debugCoroutines = config.debugCoroutines || System.getProperty("debugCoroutines")?.toLowerCase() == "true"
+				version = config.version.copy(build = build)
 		)
-		if (finalConfig.debug) assertionsEnabled = true
-		if (finalConfig.debugCoroutines) coroutineDebugMode = true
-
-		if (finalConfig.debug) {
+		if (debug) {
 			Log.level = Logger.DEBUG
 		} else {
 			Log.level = Logger.INFO
@@ -212,19 +180,11 @@ open class LwjglApplication : ApplicationBase() {
 		set(UserInfo, u)
 	}
 
-
-	/**
-	 * Sets the [JSON_KEY] dependency.
-	 */
-	protected open val jsonTask by BootTask {
-		set(JSON_KEY, JsonSerializer)
-	}
-
 	/**
 	 * Sets the [Gl20] dependency.
 	 */
 	protected open val glTask by BootTask {
-		set(Gl20, if (config().debug) JvmGl20Debug() else LwjglGl20())
+		set(Gl20, if (debug) JvmGl20Debug() else LwjglGl20())
 	}
 
 	/**
@@ -232,13 +192,13 @@ open class LwjglApplication : ApplicationBase() {
 	 */
 	protected open val windowTask by BootTask {
 		val config = config()
-		val window = GlfwWindowImpl(config.window, config.gl, get(Gl20), config.debug)
+		val window = GlfwWindowImpl(config.window, config.gl, get(Gl20), debug)
 		_windowId = window.windowId
 		set(Window, window)
 		uncaughtExceptionHandler = {
 			val message = it.stack + "\n${config.version.toVersionString()}"
 			Log.error(message)
-			if (config.debug)
+			if (debug)
 				window.alert(message)
 			System.exit(1)
 		}
@@ -261,18 +221,12 @@ open class LwjglApplication : ApplicationBase() {
 		set(TouchScreenKeyboard, MockTouchScreenKeyboard)
 	}
 
-	protected open val cameraTask by BootTask {
-		val camera = OrthographicCamera()
-		set(Camera, camera)
-		get(Window).autoCenterCamera(camera)
-	}
-
 	protected open val filesTask by BootTask {
 		val manifestFile = File(config().rootPath + config().assetsManifestPath)
 		if (!manifestFile.exists()) throw FileNotFoundException(manifestFile.absolutePath)
 		val reader = FileReader(manifestFile)
 		val jsonStr = reader.readText()
-		val files = FilesImpl(JsonSerializer.read(jsonStr, FilesManifestSerializer))
+		val files = FilesImpl(json.read(jsonStr, FilesManifestSerializer))
 		set(Files, files)
 	}
 
@@ -338,11 +292,6 @@ open class LwjglApplication : ApplicationBase() {
 		set(I18n, I18nImpl())
 	}
 
-	protected open val formattersTask by BootTask {
-		numberFormatterProvider = { NumberFormatterImpl() }
-		dateTimeFormatterProvider = { DateTimeFormatterImpl() }
-	}
-
 	protected open val fileReadWriteManagerTask by BootTask {
 		set(FileIoManager, JvmFileIoManager())
 	}
@@ -358,13 +307,13 @@ open class LwjglApplication : ApplicationBase() {
 	 * The last chance to set dependencies on the application scope.
 	 */
 	protected open val componentsTask by BootTask {
-		set(HtmlComponent.FACTORY_KEY, {
+		set(HtmlComponent.FACTORY_KEY) {
 			object : UiComponentImpl(it), HtmlComponent {
 
 				override val boxStyle = BoxStyle()
 				override var html: String = ""
 			}
-		})
+		}
 	}
 
 	protected open val clipboardTask by BootTask {
@@ -376,19 +325,11 @@ open class LwjglApplication : ApplicationBase() {
 		))
 	}
 
-	protected open fun createStage(owned: Owned): Stage {
-		return GlStageImpl(owned)
-	}
-
-	protected open fun createPopUpManager(root: UiComponent): PopUpManager {
-		return PopUpManagerImpl(root)
-	}
-
-	protected open fun initializeSpecialInteractivity(owner: Owned) {
-		owner.own(JvmClickDispatcher(owner.injector))
-		owner.own(FakeFocusMouse(owner.injector))
-		owner.own(UndoDispatcher(owner.injector))
-		owner.own(ContextMenuManager(owner))
+	protected open fun Owned.initializeSpecialInteractivity() {
+		own(JvmClickDispatcher(injector))
+		own(FakeFocusMouse(injector))
+		own(UndoDispatcher(injector))
+		own(ContextMenuManager(injector))
 	}
 
 	override fun dispose() {
@@ -443,9 +384,8 @@ class JvmApplicationRunner(
 			stage.update()
 			if (window.width > 0f && window.height > 0f) {
 				window.renderBegin()
-				if (stage.visible) {
-					stage.render(viewport.set(0f, 0f, window.width, window.height))
-				}
+				if (stage.visible)
+					stage.render()
 				window.renderEnd()
 			}
 		}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@
 package com.acornui.core
 
 import com.acornui.async.*
-import com.acornui.component.Stage
 import com.acornui.core.di.Bootstrap
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Injector
+import com.acornui.core.di.InjectorImpl
 import com.acornui.logging.Log
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -34,13 +34,12 @@ abstract class ApplicationBase : Disposable {
 
 	private val pendingTasks = HashMap<String, Pair<String, suspend () -> Unit>>()
 	private val bootstrap = Bootstrap()
-	protected lateinit var stage: Stage
 
 	protected fun <T : Any> set(key: DKey<T>, value: T) = bootstrap.set(key, value)
 
 	protected suspend fun <T : Any> get(key: DKey<T>): T = bootstrap.get(key)
 
-	protected suspend fun createInjector(): Injector = bootstrap.createInjector()
+	protected suspend fun createInjector(): Injector = InjectorImpl(bootstrap.dependenciesList())
 
 	protected suspend fun awaitAll() {
 		val waitFor = ArrayList<Deferred<Unit>>()
@@ -78,10 +77,9 @@ abstract class ApplicationBase : Disposable {
 		Log.info("Application disposing")
 		launch {
 			awaitAll()
-			stage.dispose()
+			PendingDisposablesRegistry.dispose()
 			bootstrap.dispose()
 			Log.info("Application disposed")
 		}
-		PendingDisposablesRegistry.dispose()
 	}
 }

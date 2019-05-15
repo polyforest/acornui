@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -134,7 +134,7 @@ class WindowPanelStyle : StyleBase() {
 	var background by prop(noSkin)
 	var titleBarBackground by prop(noSkin)
 	var closeButton by prop(noSkin)
-	var padding by prop(Pad(5f))
+	var padding by prop(Pad(6f))
 	var titleBarPadding by prop(Pad(5f))
 	var titleBarGap by prop(5f)
 

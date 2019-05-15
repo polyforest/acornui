@@ -1,9 +1,30 @@
+/*
+ * Copyright 2019 Poly Forest, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.acornui.component.text
 
+import com.acornui.async.resultOrNull
+import com.acornui.async.then
 import com.acornui.component.*
+import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.style.*
 import com.acornui.core.Disposable
-import com.acornui.graphic.ColorRo
+import com.acornui.core.di.Scoped
+import com.acornui.core.di.inject
+import com.acornui.gl.core.GlState
 import com.acornui.recycle.ObjectPool
 
 interface TextSpanElementRo<out T : TextElementRo> : ElementParentRo<T> {
@@ -33,6 +54,11 @@ interface TextSpanElementRo<out T : TextElementRo> : ElementParentRo<T> {
 	 * The size of a space.
 	 */
 	val spaceSize: Float
+
+	/**
+	 * The vertical alignment override of the span.
+	 */
+	val verticalAlign: FlowVAlign?
 
 }
 
@@ -66,7 +92,6 @@ interface TextSpanElement : ElementParent<TextElement>, TextSpanElementRo<TextEl
 	override var textParent: TextNodeRo?
 
 	fun validateStyles()
-	fun validateCharStyle(concatenatedColorTint: ColorRo)
 
 }
 
@@ -74,6 +99,8 @@ interface TextSpanElement : ElementParent<TextElement>, TextSpanElementRo<TextEl
 open class TextSpanElementImpl private constructor() : TextSpanElement, Styleable {
 
 	override var textParent: TextNodeRo? = null
+
+	private lateinit var glState: GlState
 
 	override val styleParent: StyleableRo?
 		get() = textParent
@@ -89,6 +116,8 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 
 	private val _charElementStyle = CharElementStyle()
 	override val charElementStyle: CharElementStyleRo = _charElementStyle
+
+	override var verticalAlign: FlowVAlign? = null
 
 	init {
 	}
@@ -111,14 +140,12 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 
 	override fun validateStyles() {
 		styles.validateStyles()
-		_charElementStyle.font = charStyle.font
-		_charElementStyle.underlined = charStyle.underlined
-		_charElementStyle.strikeThrough = charStyle.strikeThrough
-		_charElementStyle.lineThickness = charStyle.lineThickness
+		_charElementStyle.set(charStyle)
+		_charElementStyle.font?.then { textParent?.invalidate(ValidationFlags.LAYOUT) }
 	}
 
 	private val font: BitmapFont?
-		get() = _charElementStyle.font
+		get() = _charElementStyle.font?.resultOrNull()
 
 	override val lineHeight: Float
 		get() = (font?.data?.lineHeight?.toFloat() ?: 0f)
@@ -169,7 +196,7 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 	}
 
 	fun char(char: Char): TextElement {
-		return CharElement.obtain(char)
+		return CharElement.obtain(char, glState)
 	}
 
 	operator fun String?.unaryPlus() {
@@ -198,13 +225,6 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 			+value
 		}
 
-	override fun validateCharStyle(concatenatedColorTint: ColorRo) {
-		_charElementStyle.selectedTextColorTint.set(concatenatedColorTint).mul(charStyle.selectedColorTint)
-		_charElementStyle.selectedBackgroundColor.set(concatenatedColorTint).mul(charStyle.selectedBackgroundColor)
-		_charElementStyle.textColorTint.set(concatenatedColorTint).mul(charStyle.colorTint)
-		_charElementStyle.backgroundColor.set(concatenatedColorTint).mul(charStyle.backgroundColor)
-	}
-
 	override fun dispose() {
 		clearElements(true)
 		pool.free(this)
@@ -213,12 +233,16 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 	companion object {
 		private val pool = ObjectPool { TextSpanElementImpl() }
 
-		fun obtain(): TextSpanElementImpl = pool.obtain()
+		fun obtain(glState: GlState): TextSpanElementImpl {
+			val s = pool.obtain()
+			s.glState = glState
+			return s
+		}
 	}
 }
 
-fun span(init: ComponentInit<TextSpanElementImpl> = {}): TextSpanElementImpl {
-	val s = TextSpanElementImpl.obtain()
+fun Scoped.span(init: ComponentInit<TextSpanElementImpl> = {}): TextSpanElementImpl {
+	val s = TextSpanElementImpl.obtain(inject(GlState))
 	s.init()
 	return s
 }

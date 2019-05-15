@@ -1,9 +1,26 @@
+/*
+ * Copyright 2019 Poly Forest, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.acornui.core.di
 
 import com.acornui.component.ComponentInit
 import com.acornui.core.Disposable
 import com.acornui.core.DisposedException
 import com.acornui.core.Lifecycle
+import com.acornui.function.as1
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 
@@ -130,19 +147,14 @@ open class OwnedImpl(
 	private val _disposed = Signal1<Owned>()
 	override val disposed = _disposed.asRo()
 
-	private val ownerDisposedHandler = {
-		owner: Owned ->
-		dispose()
-	}
-
 	init {
-		owner?.disposed?.add(ownerDisposedHandler)
+		owner?.disposed?.add(::dispose.as1)
 	}
 
 	override fun dispose() {
 		if (_isDisposed) throw DisposedException()
 		_isDisposed = true
-		owner?.disposed?.remove(ownerDisposedHandler)
+		owner?.disposed?.remove(::dispose.as1)
 		_disposed.dispatch(this)
 		_disposed.dispose()
 	}

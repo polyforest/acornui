@@ -3,7 +3,7 @@ package com.acornui.component.layout.algorithm
 import com.acornui.component.layout.LayoutElement
 import com.acornui.math.Bounds
 import org.junit.Assert.assertEquals
-import org.junit.Test
+import kotlin.test.Test
 
 class FlowLayoutTest {
 

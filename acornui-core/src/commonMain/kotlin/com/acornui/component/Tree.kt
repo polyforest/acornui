@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -184,14 +184,7 @@ open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Owned, protected val 
 		invalidateStyles()
 	}
 
-	private var _toggled = false
-	override var toggled: Boolean
-		get() = _toggled
-		set(value) {
-			if (_toggled == value) return
-			_toggled = value
-			invalidateProperties()
-		}
+	override var toggled: Boolean by validationProp(false, ValidationFlags.PROPERTIES)
 
 	protected open val isLeaf: Boolean
 		get() = _data == null || _data!!.children.isEmpty()

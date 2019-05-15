@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -119,6 +119,17 @@ class Pad(
 		return this
 	}
 
+	/**
+	 * Inflates the padding by the given amount.
+	 */
+	fun inflate(padding: PadRo): Pad {
+		left += padding.left
+		top += padding.top
+		right += padding.right
+		bottom += padding.bottom
+		return this
+	}
+
 	override fun clear() {
 		top = 0f
 		right = 0f
@@ -145,6 +156,11 @@ class Pad(
 		result = 31 * result + left.hashCode()
 		return result
 	}
+
+	override fun toString(): String {
+		return "Pad(top=$top, right=$right, bottom=$bottom, left=$left)"
+	}
+
 
 	companion object {
 		val EMPTY_PAD: PadRo = Pad()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,20 @@ class AndStyleFilter(private val operandA: StyleFilter, private val operandB: St
 infix fun StyleFilter.and(other: StyleFilter): StyleFilter = AndStyleFilter(this, other)
 
 /**
+ * The same as a not and operation.
+ *
+ * ```not(operandA and operandB)```
+ */
+class NandStyleFilter(private val operandA: StyleFilter, private val operandB: StyleFilter) : StyleFilter {
+	override fun invoke(target: StyleableRo): StyleableRo? {
+		if (operandA(target) == null || operandB(target) == null) return target
+		return null
+	}
+}
+
+infix fun StyleFilter.nand(other: StyleFilter) = NorStyleFilter(this, other)
+
+/**
  * Returns the target if [operand] does not pass.
  */
 class NotStyleFilter(private val operand: StyleFilter) : StyleFilter {
@@ -76,6 +90,32 @@ class OrStyleFilter(private val operandA: StyleFilter, private val operandB: Sty
 }
 
 infix fun StyleFilter.or(other: StyleFilter) = OrStyleFilter(this, other)
+
+/**
+ * Returns the target if both [operandA] and [operandB] fails.
+ */
+class NorStyleFilter(private val operandA: StyleFilter, private val operandB: StyleFilter) : StyleFilter {
+	override fun invoke(target: StyleableRo): StyleableRo? {
+		if (operandA(target) == null && operandB(target) == null) return target
+		return null
+	}
+}
+
+infix fun StyleFilter.nor(other: StyleFilter) = NorStyleFilter(this, other)
+
+/**
+ * Returns the target if any of the operands pass.
+ */
+class OrAnyStyleFilter(private val operands: List<StyleFilter>) : StyleFilter {
+	override fun invoke(target: StyleableRo): StyleableRo? {
+		for (i in 0..operands.lastIndex) {
+			if (operands[i](target) != null) return target
+		}
+		return null
+	}
+}
+
+fun orAny(vararg filters: StyleFilter) = OrAnyStyleFilter(filters.toList())
 
 /**
  * Any ancestor passes the given child filter.
@@ -114,6 +154,7 @@ fun withParent(operand: StyleFilter) = ParentStyleFilter(operand)
 /**
  * The target contains the given tag.
  */
+@Deprecated("Use the Style tag as a filter", ReplaceWith("tag"))
 class TargetStyleFilter(private val tag: StyleTag) : StyleFilter {
 	override fun invoke(target: StyleableRo): StyleableRo? {
 		if (target.styleTags.contains(tag)) {

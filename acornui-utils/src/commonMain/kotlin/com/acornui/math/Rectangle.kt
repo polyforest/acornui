@@ -1,7 +1,5 @@
 /*
- * Derived from LibGDX by Nicholas Bilyk
- * https://github.com/libgdx
- * Copyright 2011 See https://github.com/libgdx/libgdx/blob/master/AUTHORS
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 
 @file:Suppress("unused")
 
@@ -144,12 +142,20 @@ class Rectangle(
 			y = value
 		}
 
+	/**
+	 * The x + width value.
+	 * If set, this will change the width to width = right - x
+	 */
 	override var right: Float
 		get() = x + width
 		set(value) {
 			width = value - x
 		}
 
+	/**
+	 * The y + height value.
+	 * If set, this will change the height to height = bottom - y
+	 */
 	override var bottom: Float
 		get() = y + height
 		set(value) {
@@ -314,6 +320,17 @@ class Rectangle(
 
 	override fun intersects(xVal: Float, yVal: Float, widthVal: Float, heightVal: Float): Boolean {
 		return x < xVal + widthVal && right > xVal && y < yVal + heightVal && bottom > yVal
+	}
+
+	/**
+	 * Sets this rectangle to the intersection of this rectangle and [other].
+	 */
+	fun intersection(other: RectangleRo): Rectangle {
+		x = maxOf(x, other.x)
+		y = maxOf(y, other.y)
+		right = minOf(right, other.right)
+		bottom = minOf(bottom, other.bottom)
+		return this
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,13 @@ import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 
 interface ColorTransformationRo {
+
+	/**
+	 * Returns true if this color transformation doesn't modify a color and therefore can be no-oped.
+	 */
+	val isIdentity: Boolean
+		get() = matrix.mode == MatrixMode.IDENTITY && offset == Color.CLEAR
+
 	val matrix: Matrix4Ro
 	val offset: ColorRo
 }
@@ -160,4 +167,10 @@ fun ColorTransformation.invert(): ColorTransformation {
 	))
 	offset = Color(1.0f, 1.0f, 1.0f, 0.0f)
 	return this
+}
+
+fun colorTransformation(init: ColorTransformation.() -> Unit = {}): ColorTransformation {
+	val c = ColorTransformation()
+	c.init()
+	return c
 }

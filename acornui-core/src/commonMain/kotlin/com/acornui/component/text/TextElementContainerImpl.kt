@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 PolyForest
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,7 +88,7 @@ abstract class TextElementContainerImpl<T : TextNode>(owner: Owned) : ElementCon
 
 	protected open fun updateLines() {
 		// Create line info objects with attributes relative to this container.
-		_lines.forEach2(LineInfo.Companion::free)
+		_lines.forEach2(action = LineInfo.Companion::free)
 		_lines.clear()
 		var relativeIndex = 0
 		for (i in 0.._elements.lastIndex) {

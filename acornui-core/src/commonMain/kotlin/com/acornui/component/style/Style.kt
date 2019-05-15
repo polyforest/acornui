@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -153,17 +153,16 @@ fun Writer.styleProperty(style: Style, prop: KProperty<*>): Writer? {
 /**
  * Sets this style's explicit values to the calculated values of the given [other] style.
  */
-@Suppress("unchecked_cast")
 fun <T : Style> T.set(other: T) {
 	for (i in 0..allProps.lastIndex) {
 		val p = allProps[i]
-		val otherP = other.allProps.first2 { it.name == p.name } ?: continue
+		val otherP = other.allProps.first2 { it.name == p.name }
 		p.explicitValue = otherP.value
 	}
 	notifyChanged()
 }
 
-open class StyleProp<T>(
+class StyleProp<T>(
 		val defaultValue: T
 ) : ReadWriteProperty<Style, T>, Clearable {
 

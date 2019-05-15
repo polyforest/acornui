@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,18 +46,17 @@ object ValidationFlags {
 	const val LAYOUT_ENABLED: Int = 1 shl 6
 
 	const val TRANSFORM: Int = 1 shl 7
-	const val CONCATENATED_TRANSFORM: Int = 1 shl 8
 
-	const val COLOR_TRANSFORM: Int = 1 shl 9
-	const val CONCATENATED_COLOR_TRANSFORM: Int = 1 shl 10
+	const val INTERACTIVITY_MODE: Int = 1 shl 8
 
-	const val INTERACTIVITY_MODE: Int = 1 shl 11
+	const val RENDER_CONTEXT: Int = 1 shl 9
+	const val BITMAP_CACHE: Int = 1 shl 10
 
-	const val CAMERA: Int = 1 shl 12
-	const val VIEWPORT: Int = 1 shl 13
-
-	const val RESERVED_1: Int = 1 shl 14
-	const val RESERVED_2: Int = 1 shl 15
+	const val RESERVED_1: Int = 1 shl 11
+	const val RESERVED_2: Int = 1 shl 12
+	const val RESERVED_3: Int = 1 shl 13
+	const val RESERVED_4: Int = 1 shl 14
+	const val RESERVED_5: Int = 1 shl 15
 
 	/**
 	 * Prints out the name of the flag for reserved flags, or the power of two for non-reserved flags.
@@ -71,16 +70,17 @@ object ValidationFlags {
 		LAYOUT -> "LAYOUT"
 		LAYOUT_ENABLED -> "LAYOUT_ENABLED"
 		TRANSFORM -> "TRANSFORM"
-		CONCATENATED_TRANSFORM-> "CONCATENATED_TRANSFORM"
-
-		COLOR_TRANSFORM -> "COLOR_TRANSFORM"
-		CONCATENATED_COLOR_TRANSFORM->"CONCATENATED_COLOR_TRANSFORM"
 
 		INTERACTIVITY_MODE -> "INTERACTIVITY_MODE"
-		CAMERA -> "CAMERA"
-		VIEWPORT -> "VIEWPORT"
+
+		RENDER_CONTEXT-> "RENDER_CONTEXT"
+		BITMAP_CACHE -> "BITMAP_CACHE"
+
 		RESERVED_1 -> "RESERVED_1"
 		RESERVED_2 -> "RESERVED_2"
+		RESERVED_3 -> "RESERVED_3"
+		RESERVED_4 -> "RESERVED_4"
+		RESERVED_5 -> "RESERVED_5"
 		else -> log2(flag.toDouble()).toInt().toString()
 	}
 }

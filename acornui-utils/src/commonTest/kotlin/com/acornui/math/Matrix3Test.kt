@@ -19,8 +19,8 @@ package com.acornui.math
 import com.acornui.core.closeTo
 import com.acornui.test.assertClose
 import com.acornui.test.assertListEquals
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
@@ -32,7 +32,7 @@ class Matrix3Test {
 	lateinit var m1: Matrix3
 	lateinit var m2: Matrix3
 
-	@Before
+	@BeforeTest
 	fun setUp() {
 		m1 = Matrix3(0.3f, 0.7f, 1.4f, 13f, 5.9f, 0.1f, 1.1f, 1.17f, 23f)
 		m2 = Matrix3(-0.5f, -1.6f, 2.5f, 9f, 1.6f, 2.34f, 9.32f, -2.2f, -1.15f)

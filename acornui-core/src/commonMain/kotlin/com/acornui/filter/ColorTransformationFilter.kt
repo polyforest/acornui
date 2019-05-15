@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,42 +16,37 @@
 
 package com.acornui.filter
 
-import com.acornui.component.UiComponentRo
+import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.gl.core.GlState
+import com.acornui.gl.core.useColorTransformation
+import com.acornui.graphic.ColorRo
 import com.acornui.math.ColorTransformation
-import com.acornui.math.ColorTransformationRo
+import com.acornui.math.Matrix4Ro
 import com.acornui.math.MinMaxRo
 
 class ColorTransformationFilter(
-		target: UiComponentRo,
+		owner: Owned,
 
 		/**
 		 * The mutable color transformation to be applied.
 		 */
 		val colorTransformation: ColorTransformation
-) : RenderFilterBase(target) {
+) : RenderFilterBase(owner) {
 
 	private val glState = inject(GlState)
-	private val combined = ColorTransformation()
-	private var previous: ColorTransformationRo? = null
 
-	override fun beforeRender(clip: MinMaxRo) {
-		previous = glState.colorTransformation
-		val previous = previous
-		if (previous == null) {
-			glState.colorTransformation = colorTransformation
-		} else {
-			combined.set(previous).mul(colorTransformation)
-			glState.colorTransformation = combined
+	override val shouldSkipFilter: Boolean
+		get() = !enabled || colorTransformation.isIdentity
+
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		glState.useColorTransformation(colorTransformation) {
+			contents?.render()
 		}
 	}
 
-	override fun afterRender(clip: MinMaxRo) {
-		glState.colorTransformation = previous
-	}
 }
 
-fun UiComponentRo.colorTransformationFilter(colorTransformation: ColorTransformation = ColorTransformation()): ColorTransformationFilter {
+fun Owned.colorTransformationFilter(colorTransformation: ColorTransformation = ColorTransformation()): ColorTransformationFilter {
 	return ColorTransformationFilter(this, colorTransformation)
 }

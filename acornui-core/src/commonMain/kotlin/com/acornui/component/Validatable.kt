@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -256,7 +256,7 @@ fun Int.toFlagsString(): String {
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun Int.containsFlag(flag: Int): Boolean {
-	return this and flag > 0
+	return this and flag != 0
 }
 
 fun Int.toFlagString(): String = ValidationFlags.flagToString(this)

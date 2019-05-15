@@ -1,7 +1,5 @@
 /*
- * Derived from LibGDX by Nicholas Bilyk
- * https://github.com/libgdx
- * Copyright 2011 See https://github.com/libgdx/libgdx/blob/master/AUTHORS
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +17,12 @@
 package com.acornui.gl.core
 
 import com.acornui.core.di.DKey
+import com.acornui.core.di.Scoped
+import com.acornui.core.di.inject
 import com.acornui.core.graphic.Texture
-import com.acornui.core.io.floatBuffer
+import com.acornui.core.graphic.Window
+import com.acornui.io.floatBuffer
+import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.io.NativeReadBuffer
 import com.acornui.math.Matrix3Ro
@@ -1069,7 +1071,8 @@ interface Gl20 {
 	fun vertexAttribPointer(index: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Int)
 
 	/**
-	 * Specifies the affine transformation of x and y from normalized device coordinates to screen coordinates.
+	 * Specifies the affine transformation of x and y from normalized device coordinates to screen (gl fragment)
+	 * coordinates.
 	 *
 	 * Note - if the current frame buffer is the window, the values should be multiplied by
 	 * [com.acornui.core.graphic.Window.scaleX] and [com.acornui.core.graphic.Window.scaleY]
@@ -1238,4 +1241,15 @@ fun Gl20.uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, va
 	}
 	buffer.flip()
 	uniformMatrix3fv(location, transpose, buffer)
+}
+
+/**
+ * Clears the current frame buffer with the given color and mask, then resets the clear color to the Window's clear
+ * color.
+ */
+fun Scoped.clearAndReset(color: ColorRo = Color.CLEAR, mask: Int = Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT) {
+	val gl = inject(Gl20)
+	gl.clearColor(color)
+	gl.clear(mask)
+	gl.clearColor(inject(Window).clearColor)
 }

@@ -18,7 +18,7 @@ package com.acornui.core.graphic
 
 import com.acornui.math.Vector3
 import com.acornui.test.assertClose
-import org.junit.Test
+import kotlin.test.Test
 
 /**
  * @author nbilyk

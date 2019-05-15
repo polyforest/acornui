@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,7 +65,9 @@ class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> 
 		if (allowRelativeSizing) elements.sortTo(orderedElements, true, sizeOrderComparator)
 		else orderedElements.addAll(elements)
 
-		//
+		// Following the sizing precedence, size the children, maxing the maxWidth by the measured width if
+		// allowRelativeSizing is true.
+		// Size height inflexible elements first.
 		var maxWidth = childAvailableWidth
 		var inflexibleHeight = 0f
 		var flexibleHeight = 0f
@@ -111,10 +113,10 @@ class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> 
 		if (childAvailableHeight != null && style.verticalAlign != VAlign.TOP) {
 			val d = childAvailableHeight - (inflexibleHeight + flexibleHeight)
 			if (d > 0f) {
-				if (style.verticalAlign == VAlign.BOTTOM) {
-					y += d
-				} else if (style.verticalAlign == VAlign.MIDDLE) {
-					y += floor(d * 0.5f).toInt()
+				y += when (style.verticalAlign) {
+					VAlign.TOP -> 0f
+					VAlign.MIDDLE -> floor(d * 0.5f)
+					VAlign.BASELINE, VAlign.BOTTOM -> d
 				}
 			}
 		}
@@ -130,7 +132,7 @@ class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> 
 			y += element.height + gap
 		}
 		y += padding.bottom - gap
-		out.set(maxWidth + padding.left + padding.right, y)
+		out.set(maxWidth + padding.left + padding.right, y, elements.firstOrNull()?.baselineY ?: y)
 	}
 
 	override fun createLayoutData() = VerticalLayoutData()

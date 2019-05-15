@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import com.acornui.async.launch
 import com.acornui.core.asset.AssetManager
 import com.acornui.core.io.file.Files
 import com.acornui.jvm.io.file.relativePath2
-import com.acornui.serialization.Serializer
+import com.acornui.serialization.json
 import com.acornui.texturepacker.AcornTexturePacker
 import com.acornui.texturepacker.jvm.writer.JvmTextureAtlasWriter
 import java.io.File
@@ -30,8 +30,7 @@ import java.io.File
  */
 class TexturePackerUtil(
 		private val files: Files,
-		private val assets: AssetManager,
-		private val json: Serializer<String>
+		private val assets: AssetManager
 ) {
 
 	/**
@@ -39,7 +38,7 @@ class TexturePackerUtil(
 	 * uses TexturePacker to create an atlas by the matched name $1
 	 */
 	fun packAssets(dest: File, root: File) {
-		val writer = JvmTextureAtlasWriter(json)
+		val writer = JvmTextureAtlasWriter()
 		for (i in dest.walkTopDown()) {
 			if (i.isDirectory) {
 				val name = i.name

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
+@file:Suppress("UNUSED_ANONYMOUS_PARAMETER")
+
 package com.acornui.js.input
 
-import com.acornui.collection.DualHashMap
+import com.acornui.collection.MutableMultiMap2
+import com.acornui.collection.get
+import com.acornui.collection.multiMap2
 import com.acornui.core.input.KeyInput
 import com.acornui.core.input.interaction.CharInteraction
 import com.acornui.core.input.interaction.KeyInteraction
@@ -46,34 +50,32 @@ class JsKeyInput(
 	private val keyEvent = KeyInteraction()
 	private val charEvent = CharInteraction()
 
-	private val downMap: DualHashMap<Int, KeyLocation, Boolean> = DualHashMap()
+	private val downMap: MutableMultiMap2<Int, KeyLocation, Boolean> = multiMap2()
 
-	private val keyDownHandler = {
-		jsEvent: Event ->
+	private val keyDownHandler = { jsEvent: Event ->
 		if (jsEvent is KeyboardEvent) {
 			keyEvent.clear()
 			populateKeyEvent(jsEvent)
 			if (!jsEvent.repeat) {
-				downMap.put(keyEvent.keyCode, keyEvent.location, true)
+				downMap[keyEvent.keyCode][keyEvent.location] = true
 			}
 			_keyDown.dispatch(keyEvent)
 			if (keyEvent.defaultPrevented()) jsEvent.preventDefault()
 		}
 	}
 
-	private val keyUpHandler = {
-		jsEvent: Event ->
+	private val keyUpHandler = { jsEvent: Event ->
 		if (jsEvent is KeyboardEvent) {
 			keyEvent.clear()
 			populateKeyEvent(jsEvent)
-			downMap[keyEvent.keyCode]?.clear() // Browsers give incorrect key location properties on key up.
+			if (downMap.containsKey(keyEvent.keyCode))
+				downMap[keyEvent.keyCode].clear() // Browsers give incorrect key location properties on key up.
 			_keyUp.dispatch(keyEvent)
 			if (keyEvent.defaultPrevented()) jsEvent.preventDefault()
 		}
 	}
 
-	private val keyPressHandler = {
-		jsEvent: Event ->
+	private val keyPressHandler = { jsEvent: Event ->
 		if (jsEvent is KeyboardEvent) {
 			charEvent.clear()
 			charEvent.char = jsEvent.charCode.toChar()
@@ -82,8 +84,7 @@ class JsKeyInput(
 		}
 	}
 
-	private val blurHandler = {
-		jsEvent: Event ->
+	private val blurHandler = { jsEvent: Event ->
 		downMap.clear()
 	}
 
@@ -112,7 +113,8 @@ class JsKeyInput(
 
 	override fun keyIsDown(keyCode: Int, location: KeyLocation): Boolean {
 		return if (location == KeyLocation.UNKNOWN) {
-			downMap[keyCode]?.isNotEmpty() ?: false
+			return if (!downMap.containsKey(keyCode)) false
+			else downMap[keyCode].isNotEmpty()
 		} else {
 			downMap[keyCode, location] ?: false
 		}

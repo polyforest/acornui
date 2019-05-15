@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,7 @@ import com.acornui.gl.core.putCcwQuadIndices
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putVertex
 import com.acornui.graphic.ColorRo
-import com.acornui.math.IntRectangleRo
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.RectangleRo
-import com.acornui.math.Vector3
+import com.acornui.math.*
 import com.acornui.recycle.Clearable
 import kotlin.math.abs
 import kotlin.math.cos
@@ -38,7 +35,10 @@ import kotlin.properties.Delegates
  *
  * @author nbilyk
  */
-class Sprite : BasicDrawable, Clearable {
+class Sprite(val glState: GlState) : BasicDrawable, Clearable {
+
+	private var width = 0f
+	private var height = 0f
 
 	/**
 	 * If true, the normal and indices will be reversed.
@@ -53,9 +53,8 @@ class Sprite : BasicDrawable, Clearable {
 	var blendMode: BlendMode = BlendMode.NORMAL
 	var premultipliedAlpha: Boolean = false
 
-	private var _isRotated: Boolean = false
-	val isRotated: Boolean
-		get() = _isRotated
+	var isRotated: Boolean = false
+		private set
 
 	/**
 	 * Either represents uv values, or pixel coordinates, depending on _isUv
@@ -69,7 +68,8 @@ class Sprite : BasicDrawable, Clearable {
 	 */
 	private var isUv: Boolean = true
 
-	private val normal = Vector3()
+	private val normalLocal = Vector3()
+	private val normalWorld = Vector3()
 
 	fun setUv(u: Float, v: Float, u2: Float, v2: Float, isRotated: Boolean) {
 		region[0] = u
@@ -77,7 +77,7 @@ class Sprite : BasicDrawable, Clearable {
 		region[2] = u2
 		region[3] = v2
 		isUv = true
-		_isRotated = isRotated
+		this.isRotated = isRotated
 		updateUv()
 	}
 
@@ -95,7 +95,7 @@ class Sprite : BasicDrawable, Clearable {
 		region[2] = width + x
 		region[3] = height + y
 		isUv = false
-		_isRotated = isRotated
+		this.isRotated = isRotated
 		updateUv()
 	}
 
@@ -114,7 +114,7 @@ class Sprite : BasicDrawable, Clearable {
 	/**
 	 * When the transform or the layout needs validation, update the 4 vertices of this texture.
 	 */
-	private val vertexPoints: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
+	private val pointsLocal: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
 
 	override val naturalWidth: Float
 		get() {
@@ -152,44 +152,20 @@ class Sprite : BasicDrawable, Clearable {
 		}
 	}
 
-	private var width: Float = 0f
-	private var height: Float = 0f
-
-	/**
-	 * Updates this Sprite's local vertices and then multiplies them with the world transformation matrix.
-	 *
-	 * @param worldTransform The transformation matrix to project the local coordinates to global coordinates.
-	 * @param width The width of the sprite.
-	 * @param height The height of the sprite.
-	 * @param x translation
-	 * @param y translation
-	 * @param z translation
-	 * @param rotation The rotation around the Z axis in radians.
-	 * @param originX The x point of the rectangle that will be 0,0
-	 * @param originY The y point of the rectangle that will be 0,0
-	 */
-	override fun updateWorldVertices(worldTransform: Matrix4Ro, width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
-		updateVertices(width, height, x, y, z, rotation, originX, originY)
-		worldTransform.prj(vertexPoints[0])
-		worldTransform.prj(vertexPoints[1])
-		worldTransform.prj(vertexPoints[2])
-		worldTransform.prj(vertexPoints[3])
-		worldTransform.rot(normal).nor()
-	}
-
 	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
 		this.width = width
 		this.height = height
+
 		// Transform vertex coordinates from local to global
 		if (rotation == 0f) {
 			val aX = x - originX
 			val aY = y - originY
 			val bX = x + width - originX
 			val bY = y + height - originY
-			vertexPoints[0].set(aX, aY, z)
-			vertexPoints[1].set(bX, aY, z)
-			vertexPoints[2].set(bX, bY, z)
-			vertexPoints[3].set(aX, bY, z)
+			pointsLocal[0].set(aX, aY, z)
+			pointsLocal[1].set(bX, aY, z)
+			pointsLocal[2].set(bX, bY, z)
+			pointsLocal[3].set(aX, bY, z)
 		} else {
 			// (cos x - sin y, sin x + cos y)
 
@@ -198,19 +174,24 @@ class Sprite : BasicDrawable, Clearable {
 
 			var x1: Float = -originX
 			var y1: Float = -originY
-			vertexPoints[0].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
+			pointsLocal[0].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
 			x1 = -originX + width
-			vertexPoints[1].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
+			pointsLocal[1].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
 			y1 = -originY + height
-			vertexPoints[2].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
+			pointsLocal[2].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
 			x1 = -originX
-			vertexPoints[3].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
+			pointsLocal[3].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
 		}
-		normal.set(if (useAsBackFace) Vector3.Z else Vector3.NEG_Z)
+		normalLocal.set(if (useAsBackFace) Vector3.Z else Vector3.NEG_Z)
 	}
 
-	override fun render(glState: GlState, colorTint: ColorRo) {
-		if (texture == null || colorTint.a <= 0f || width == 0f || height == 0f) return // Nothing to draw
+	private val tmpVec = Vector3()
+
+	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		if (texture == null || tint.a <= 0f || width == 0f || height == 0f) return // Nothing to draw
+		val tmpVec =  tmpVec
+		transform.rot(normalWorld.set(normalLocal)).nor()
+
 		val batch = glState.batch
 		glState.setTexture(texture)
 		glState.blendMode(blendMode, premultipliedAlpha)
@@ -218,29 +199,52 @@ class Sprite : BasicDrawable, Clearable {
 
 		if (isRotated) {
 			// Top left
-			batch.putVertex(vertexPoints[0], normal, colorTint, u2, v)
+			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[0])), normalWorld, tint, u2, v)
 			// Top right
-			batch.putVertex(vertexPoints[1], normal, colorTint, u2, v2)
+			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[1])), normalWorld, tint, u2, v2)
 			// Bottom right
-			batch.putVertex(vertexPoints[2], normal, colorTint, u, v2)
+			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[2])), normalWorld, tint, u, v2)
 			// Bottom left
-			batch.putVertex(vertexPoints[3], normal, colorTint, u, v)
+			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[3])), normalWorld, tint, u, v)
 		} else {
 			// Top left
-			batch.putVertex(vertexPoints[0], normal, colorTint, u, v)
+			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[0])), normalWorld, tint, u, v)
 			// Top right
-			batch.putVertex(vertexPoints[1], normal, colorTint, u2, v)
+			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[1])), normalWorld, tint, u2, v)
 			// Bottom right
-			batch.putVertex(vertexPoints[2], normal, colorTint, u2, v2)
+			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[2])), normalWorld, tint, u2, v2)
 			// Bottom left
-			batch.putVertex(vertexPoints[3], normal, colorTint, u, v2)
+			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[3])), normalWorld, tint, u, v2)
 		}
 		if (useAsBackFace) batch.putCcwQuadIndices()
 		else batch.putQuadIndices()
 	}
 
+	/**
+	 * Sets this sprite to match the properties of [other].
+	 * This does not update the vertices.
+	 * @param other The sprite to make this sprite match.
+	 * @return Returns this sprite for chaining purposes.
+	 */
+	fun set(other: Sprite): Sprite {
+		useAsBackFace = other.useAsBackFace
+		texture = other.texture
+		region[0] = other.region[0]
+		region[1] = other.region[1]
+		region[2] = other.region[2]
+		region[3] = other.region[3]
+		isUv = other.isUv
+		isRotated = other.isRotated
+		blendMode = other.blendMode
+		premultipliedAlpha = other.premultipliedAlpha
+		return this
+	}
+
 	override fun clear() {
 		texture = null
 		setUv(0f, 0f, 1f, 1f, false)
+		useAsBackFace = false
+		blendMode = BlendMode.NORMAL
+		premultipliedAlpha = false
 	}
 }

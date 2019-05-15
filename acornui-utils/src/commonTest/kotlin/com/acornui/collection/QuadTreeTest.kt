@@ -17,7 +17,7 @@
 package com.acornui.collection
 
 import com.acornui.test.assertUnorderedListEquals
-import org.junit.Test
+import kotlin.test.Test
 
 class QuadTreeTest {
 

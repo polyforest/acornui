@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import com.acornui.core.di.inject
 import com.acornui.core.graphic.Window
 import com.acornui.core.time.TimeDriver
 import com.acornui.logging.Log
-import com.acornui.math.MinMax
 import kotlin.browser.window
 
 interface JsApplicationRunner {
@@ -47,11 +46,9 @@ class JsApplicationRunnerImpl(
 	private var tickFrameId: Int = -1
 
 	private val tick = {
-		newTime: Double ->
-		_tick()
+		_: Double ->
+		tick()
 	}
-
-	private val viewport = MinMax()
 
 	override fun start() {
 		if (isRunning) return
@@ -62,13 +59,13 @@ class JsApplicationRunnerImpl(
 		tickFrameId = window.requestAnimationFrame(tick)
 	}
 
-	private fun _tick() {
+	private fun tick() {
 		timeDriver.update()
 		if (appWindow.shouldRender(true)) {
 			stage.update()
 			appWindow.renderBegin()
 			if (stage.visible)
-				stage.render(viewport.set(0f, 0f, appWindow.width, appWindow.height))
+				stage.render()
 			appWindow.renderEnd()
 		}
 		tickFrameId = window.requestAnimationFrame(tick)

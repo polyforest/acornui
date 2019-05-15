@@ -18,7 +18,7 @@ package com.acornui.string
 
 import com.acornui.core.replaceTokens
 import com.acornui.core.split2
-import org.junit.*
+import kotlin.test.Test
 import kotlin.test.*
 import com.acornui.test.*
 
@@ -27,7 +27,8 @@ import com.acornui.test.*
  */
 class StringExtensionsTest {
 
-	@Test fun testTokenReplace() {
+	@Test
+	fun testTokenReplace() {
 		assertEquals("alpha, beta, gamma", "{0}, {1}, {2}".replaceTokens("alpha", "beta", "gamma"))
 		assertEquals("beta, alpha, alpha, beta, gamma", "{1}, {0}, {0}, {1}, {2}".replaceTokens("alpha", "beta", "gamma"))
 	}

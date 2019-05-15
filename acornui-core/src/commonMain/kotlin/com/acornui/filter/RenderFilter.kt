@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,54 +16,174 @@
 
 package com.acornui.filter
 
-import com.acornui.component.UiComponentRo
-import com.acornui.core.di.Injector
-import com.acornui.core.di.Scoped
+import com.acornui.collection.MutableListBase
+import com.acornui.component.RenderContextRo
+import com.acornui.core.Disposable
+import com.acornui.core.Renderable
+import com.acornui.core.di.Owned
+import com.acornui.core.di.OwnedImpl
 import com.acornui.core.di.inject
-import com.acornui.core.graphic.Window
-import com.acornui.math.MinMaxRo
+import com.acornui.core.drawRegion
+import com.acornui.function.as1
+import com.acornui.graphic.ColorRo
+import com.acornui.math.*
+import com.acornui.observe.Observable
+import com.acornui.reflect.observable
+import com.acornui.signal.Signal1
+import kotlin.properties.ReadWriteProperty
 
 /**
  * A render filter wraps the drawing of a component.
  *
  */
-interface RenderFilter {
+interface RenderFilter : Renderable, Observable {
 
 	/**
-	 * If true (default), this filter will be used.
+	 * The contents this render filter should wrap.
 	 */
-	var enabled: Boolean
+	var contents: Renderable?
 
 	/**
-	 * Before the component is drawn, this will be invoked. This will be in the order of the component's render filters.
-	 * @param clip The visible region (in viewport coordinates.)
+	 * Marks any bitmap caches (if there are any) as invalid and need to be redrawn.
 	 */
-	fun beforeRender(clip: MinMaxRo)
-
-	/**
-	 * After the component is drawn, this will be invoked. This will be in the reverse order of the component's render
-	 * filters.
-	 * @param clip The visible region (in viewport coordinates.)
-	 */
-	fun afterRender(clip: MinMaxRo)
-
+	fun invalidateBitmapCache()
 
 }
 
 /**
  * The base class for render filters.
  */
-abstract class RenderFilterBase(protected val target: UiComponentRo) : RenderFilter, Scoped {
+abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, Disposable {
 
-	override val injector: Injector = target.injector
+	private val _changed = Signal1<Observable>()
+	override val changed = _changed.asRo()
 
-	private val window = target.inject(Window)
+	protected var bitmapCacheIsValid = false
+		private set
 
-	final override var enabled: Boolean = true
+	var enabled: Boolean by bindable(true)
+
+	/**
+	 * True if this filter should be skipped.
+	 */
+	protected open val shouldSkipFilter: Boolean
+		get() = !enabled
+
+	private var _contents: Renderable? = null
+	override var contents: Renderable?
+		get() = _contents
 		set(value) {
-			if (value != field) {
-				field = value
-				window.requestRender()
-			}
+			_contents = value
 		}
+
+	override fun invalidateBitmapCache() {
+		bitmapCacheIsValid = false
+	}
+
+	/**
+	 * The padding this filter expands the render margin and draw region.
+	 */
+	open val padding: PadRo = Pad.EMPTY_PAD
+
+	private val _renderMargin = Pad()
+	override val renderMargin: PadRo
+		get() = _renderMargin.set(contents?.renderMargin ?: Pad.EMPTY_PAD).inflate(padding)
+
+	override val bounds: BoundsRo
+		get() = contents?.bounds ?: Bounds.EMPTY_BOUNDS
+
+	private val _drawRegion = MinMax()
+
+	/**
+	 * @see Renderable.drawRegion
+	 */
+	val drawRegion: MinMaxRo
+		get() = drawRegion(_drawRegion)
+
+	protected fun <T> bindable(initial: T): ReadWriteProperty<Any?, T> = observable(initial) {
+		_changed.dispatch(this)
+	}
+
+	override val renderContext: RenderContextRo
+		get() = renderContextOverride ?: contents?.renderContext ?: inject(RenderContextRo)
+
+	override var renderContextOverride: RenderContextRo? = null
+
+	final override fun render() {
+		if (shouldSkipFilter) contents?.render()
+		else draw(MinMaxRo.POSITIVE_INFINITY, renderContext.modelTransform, renderContext.colorTint)
+		bitmapCacheIsValid = true
+	}
+
+	abstract fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo)
+
+	override fun dispose() {
+		super.dispose()
+		contents = null
+		_changed.dispose()
+	}
+}
+
+class RenderFilterList(
+		tail: Renderable?
+) : MutableListBase<RenderFilter>(), Observable, Disposable {
+
+	private val _list = ArrayList<RenderFilter>()
+	private val _changed = Signal1<Observable>()
+	override val changed = _changed.asRo()
+
+	private var _tail: Renderable? = tail
+
+	override fun removeAt(index: Int): RenderFilter {
+		val element = _list.removeAt(index)
+		element.contents = null
+		_list.getOrNull(index - 1)?.contents = _list.getOrNull(index) ?: tail
+		element.changed.remove(::changedHandler.as1)
+		_changed.dispatch(this)
+		return element
+	}
+
+	private fun changedHandler() {
+		_changed.dispatch(this)
+	}
+
+	/**
+	 * The renderable that will always be drawn at the end of this list.
+	 */
+	var tail: Renderable?
+		get() = _tail
+		set(value) {
+			_tail = value
+			_list.lastOrNull()?.contents = value
+		}
+
+	override fun add(index: Int, element: RenderFilter) {
+		_list.add(index, element)
+		element.contents = _list.getOrNull(index + 1) ?: tail
+		_list.getOrNull(index - 1)?.contents = element
+		element.changed.add(::changedHandler.as1)
+		_changed.dispatch(this)
+	}
+
+	override val size: Int
+		get() = _list.size
+
+	override fun get(index: Int): RenderFilter = _list[index]
+
+	override fun set(index: Int, element: RenderFilter): RenderFilter {
+		val old = _list[index]
+		old.contents = null
+		_list[index] = element
+		_list.getOrNull(index - 1)?.contents = element
+		element.contents = _list.getOrNull(index + 1) ?: tail
+		old.changed.remove(::changedHandler.as1)
+		element.changed.add(::changedHandler.as1)
+		_changed.dispatch(this)
+		return old
+	}
+
+	override fun dispose() {
+		clear()
+		_changed.dispose()
+	}
 }

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019 Poly Forest, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.acornui.core.observe
 
 import com.acornui.core.Disposable
@@ -49,7 +65,7 @@ class DataBindingImpl<T>(initialValue: T) : DataBinding<T> {
 	private val _changed = Signal2<T, T>()
 	override val changed = _changed.asRo()
 
-	private val _wrapped = HashMap<(T) -> Unit, DataChangeHandler<T>>()
+	private val _wrapped: MutableMap<(T) -> Unit, (T, T) -> Unit> = HashMap()
 
 	private var _value: T = initialValue
 
@@ -101,9 +117,11 @@ class DataBindingImpl<T>(initialValue: T) : DataBinding<T> {
 		_changed.dispose()
 		_wrapped.clear()
 	}
+
+	fun asRo(): DataBindingRo<T> = this
 }
 
-infix fun <S, T> DataBinding<S>.or(other: DataBinding<T>): Bindable {
+infix fun <S, T> DataBindingRo<S>.or(other: DataBindingRo<T>): Bindable {
 	return changed or other.changed
 }
 
@@ -111,12 +129,14 @@ infix fun <T> DataBindingRo<T>.or(other: Bindable): Bindable {
 	return changed or other
 }
 
-infix fun <T> Bindable.or(other: DataBinding<T>): Bindable {
+infix fun <T> Bindable.or(other: DataBindingRo<T>): Bindable {
 	return this or other.changed
 }
 
 /**
  * Mirrors changes from two data binding objects. If one changes, the other will be set.
+ * @param other The receiver and other will be bound to each other. other will be initially set to the value of the
+ * receiver.
  */
 fun <T> DataBinding<T>.mirror(other: DataBinding<T>): Disposable {
 	if (this === other) throw IllegalArgumentException("Cannot mirror to self")

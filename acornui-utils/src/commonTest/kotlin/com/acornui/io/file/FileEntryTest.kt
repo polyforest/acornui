@@ -16,16 +16,17 @@
 
 package com.acornui.io.file
 
-import org.junit.*
 import com.acornui.test.*
 import kotlin.test.*
+import kotlin.test.Test
 
 /**
  * @author nbilyk
  */
 class FileEntryTest {
 
-	@Test fun compare() {
+	@Test
+	fun compare() {
 		val arr = arrayOf(ManifestEntry("foo/Daz.txt", 0L, 0L, "unknown"),
 				ManifestEntry("Caz.txt", 0L, 0L, "unknown"),
 				ManifestEntry("foo/bar/Baz.txt", 0L, 0L, "unknown"),

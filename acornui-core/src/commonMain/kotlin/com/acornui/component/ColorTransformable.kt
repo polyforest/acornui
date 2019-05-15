@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,13 +27,9 @@ interface ColorTransformableRo {
 
 	/**
 	 * The color multiplier of this component and all ancestor color tints multiplied together.
-	 * Do not set this directly, it will be overwritten on a [ValidationFlags.CONCATENATED_COLOR_TRANSFORM] validation.
-	 * Retrieving this value validates [ValidationFlags.CONCATENATED_COLOR_TRANSFORM]
-	 * @see colorTint
 	 */
 	val concatenatedColorTint: ColorRo
 
-	val alpha: Float
 }
 
 /**
@@ -53,9 +49,18 @@ interface ColorTransformable : ColorTransformableRo {
 
 	fun colorTint(r: Float, g: Float, b: Float, a: Float)
 
-	/**
-	 * A utility method for setting and retrieving the alpha tint.
-	 */
-	override var alpha: Float
-
 }
+
+val ColorTransformableRo.alpha: Float
+	get() = colorTint.a
+
+/**
+ * A utility method for setting and retrieving the alpha tint.
+ */
+var ColorTransformable.alpha: Float
+	get() = colorTint.a
+	set(value) {
+		val t = colorTint
+		if (t.a == value) return
+		colorTint(t.r, t.g, t.b, value)
+	}

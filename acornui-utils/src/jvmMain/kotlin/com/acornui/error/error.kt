@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
+@file:JvmName("ErrorJvmKt")
 package com.acornui.error
 
 import java.io.PrintWriter
 import java.io.StringWriter
 
-fun getStack(): String = Exception().stack
-
-val Throwable.stack: String
+actual val Throwable.stack: String
 	get() {
 		val w = StringWriter()
 		printStackTrace(PrintWriter(w))

@@ -16,14 +16,14 @@
 
 package com.acornui.skins
 
-import com.acornui.test.SerializationCodeHelper
-import org.junit.Assert.*
-import org.junit.Test
-
-class ThemeTest {
-
-	@Test
-	fun blah() {
-		SerializationCodeHelper.print(Theme::class)
-	}
-}
+// Commented out due to https://github.com/polyforest/acornui/issues/122
+//import com.acornui.test.SerializationCodeHelper
+//import kotlin.test.Test
+//
+//class ThemeTest {
+//
+//	@Test
+//	fun blah() {
+//		SerializationCodeHelper.print(Theme::class)
+//	}
+//}

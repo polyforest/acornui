@@ -20,6 +20,8 @@ import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponentImpl
 import com.acornui.core.di.Owned
 import com.acornui.core.time.onTick
+import com.acornui.graphic.ColorRo
+import com.acornui.math.Matrix4Ro
 import com.acornui.math.MinMaxRo
 
 
@@ -101,9 +103,9 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 		window.requestRender()
 	}
 
-	override fun draw(clip: MinMaxRo) {
-		val concatenatedTransform = concatenatedTransform
-		glState.setCamera(camera, concatenatedTransform)
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		val concatenatedTransform = modelTransform
+		glState.setCamera(viewProjectionTransform, viewTransform, concatenatedTransform)
 		val concatenatedColorTint = concatenatedColorTint
 
 		for (i in 0.._children.lastIndex) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import com.acornui.component.*
 import com.acornui.component.style.*
 import com.acornui.component.text.text
 import com.acornui.core.Disposable
-import com.acornui.core.DisposedException
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Owned
+import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.input.*
 import com.acornui.core.popup.PopUpInfo
@@ -32,20 +32,9 @@ import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
-import com.acornui.signal.Signal
-import com.acornui.signal.Signal1
 import com.acornui.signal.StoppableSignal
 
-class ContextMenuManager(override val owner: Owned) : Owned, Disposable {
-
-	private var _isDisposed = false
-	override val isDisposed: Boolean
-		get() = _isDisposed
-
-	private val _disposed = Signal1<Owned>()
-	override val disposed = _disposed.asRo()
-
-	override val injector: Injector = owner.injector
+class ContextMenuManager(override val injector: Injector) : Scoped, Disposable {
 
 	private val contextEvent = ContextMenuInteraction()
 	private val interactivity = inject(InteractivityManager)
@@ -63,7 +52,7 @@ class ContextMenuManager(override val owner: Owned) : Owned, Disposable {
 			if (!contextEvent.defaultPrevented() && contextEvent.menuGroups.isNotEmpty()) {
 				event.preventDefault() // Prevent native context menu
 
-				val view = ContextMenuView(this)
+				val view = ContextMenuView(stage)
 				view.setData(contextEvent.menuGroups)
 				popUpManager.addPopUp(PopUpInfo(view, dispose = true))
 			}
@@ -71,11 +60,7 @@ class ContextMenuManager(override val owner: Owned) : Owned, Disposable {
 	}
 
 	override fun dispose() {
-		if (_isDisposed) throw DisposedException()
-		_isDisposed = true
 		stage.rightClick().remove(::rightClickHandler)
-		_disposed.dispatch(this)
-		_disposed.dispose()
 	}
 }
 

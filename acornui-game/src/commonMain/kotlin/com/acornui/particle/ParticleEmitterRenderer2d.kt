@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,8 @@ import com.acornui.component.Sprite
 import com.acornui.gl.core.GlState
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
+import com.acornui.math.Matrix4
+import com.acornui.math.MinMaxRo
 import com.acornui.math.PI
 
 class ParticleEmitterRenderer2d(
@@ -71,7 +73,7 @@ class ParticleEmitterRenderer2d(
 		val emitterPosition = emitterInstance.position
 		val rotationZ = if (emitter.orientToForwardDirection) rotation.z + forwardDirection.z + HALF_PI else rotation.z
 		sprite.updateVertices(w, h, position.x + emitterPosition.x, position.y + emitterPosition.y, position.z + emitterPosition.z, rotationZ, w * origin.x, h * origin.y)
-		sprite.render(glState, finalColor.set(colorTint).mul(concatenatedColorTint))
+		sprite.render(MinMaxRo.POSITIVE_INFINITY, Matrix4.IDENTITY, finalColor.set(colorTint).mul(concatenatedColorTint))
 	}
 
 }

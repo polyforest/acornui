@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ open class DataGridGroupHeaderImpl<E>(
 	val groupStyle = bind(DataGridGroupHeaderStyle())
 
 	init {
-		styleTags.addAll(DataGridGroupHeader, TextStyleTags.h2)
+		styleTags.addAll(DataGridGroupHeader, TextStyleTags.large)
 		interactivityMode = InteractivityMode.CHILDREN
 
 		watch(groupStyle) {

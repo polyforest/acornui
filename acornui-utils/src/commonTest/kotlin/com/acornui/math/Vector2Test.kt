@@ -17,7 +17,7 @@
 package com.acornui.math
 
 import com.acornui.test.assertClose
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.math.sqrt
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -251,7 +251,7 @@ class Vector2Test {
 	}
 
 	@Test
-	fun equals() {
+	fun equalsTest() {
 	}
 
 	@Test

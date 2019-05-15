@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:JvmName("JsonSerializerKt")
+
 package com.acornui.serialization
 
 import com.acornui.collection.peek
@@ -27,7 +29,7 @@ import com.acornui.core.removeBackslashes
  * A factory that provides a Reader and Writer for JSON
  * @author nbilyk
  */
-object JsonSerializer : Serializer<String> {
+private object JsonSerializer : Serializer<String> {
 
 	override fun read(data: String): Reader {
 		return JsonNode(data, 0, data.length)
@@ -41,14 +43,6 @@ object JsonSerializer : Serializer<String> {
 		callback(writer)
 		return buffer.toString()
 	}
-}
-
-fun <E> JsonSerializer.write(value: E, to: To<E>, tabStr: String, returnStr: String): String {
-	return write({
-		it.obj(true) {
-			to.write2(value, it)
-		}
-	}, tabStr, returnStr)
 }
 
 /**
@@ -243,6 +237,11 @@ class JsonNode(private val source: String,
 		return subStr.toString().toDoubleOrNull()
 	}
 
+	override fun byteArray(): ByteArray? {
+		if (isNull) return null
+		return base64.decodeFromString(subStr.toString())
+	}
+
 	override fun toString(): String {
 		return subStr.toString()
 	}
@@ -353,7 +352,14 @@ class JsonWriter(
 		builder.append("null")
 	}
 
+	override fun byteArray(value: ByteArray?) {
+		if (value == null) return writeNull()
+		builder.append(base64.encodeToString(value))
+	}
+
 	private fun escape(value: String): String {
 		return value.replace2("\\", "\\\\").replace2("\r", "\\r").replace2("\n", "\\n").replace2("\t", "\\t").replace2("\"", "\\\"")
 	}
 }
+
+actual val json: Serializer<String> = JsonSerializer

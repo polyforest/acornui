@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,9 @@ import com.acornui.core.ParentRo
 import com.acornui.core.di.Owned
 import com.acornui.core.focus.invalidateFocusOrderDeep
 import com.acornui.core.graphic.getPickRay
-import com.acornui.math.MinMaxRo
-import com.acornui.math.Ray
-import com.acornui.math.RayRo
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
+import com.acornui.math.*
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 
@@ -234,12 +234,14 @@ open class ContainerImpl(
 		}
 	}
 
-	override fun draw(clip: MinMaxRo) {
+
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		// The children list shouldn't be modified during a draw, so no reason to do a safe iteration here.
 		for (i in 0.._children.lastIndex) {
 			val child = _children[i]
-			if (child.visible)
-				child.render(clip)
+			if (child.visible) {
+				child.render()
+			}
 		}
 	}
 
@@ -251,12 +253,12 @@ open class ContainerImpl(
 
 	override fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo?): MutableList<UiComponentRo> {
 		if (!visible || (onlyInteractive && inheritedInteractivityMode == InteractivityMode.NONE)) return out
-		val ray = rayCache ?: camera.getPickRay(canvasX, canvasY, viewport, rayTmp)
+		val ray = rayCache ?: getPickRay(canvasX, canvasY, rayTmp)
 		if (interactivityMode == InteractivityMode.ALWAYS || intersectsGlobalRay(ray)) {
 			if ((returnAll || out.isEmpty())) {
 				for (i in _children.lastIndex downTo 0) {
 					val child = _children[i]
-					val childRayCache = if (child.camera === camera && child.viewport === viewport) ray else null
+					val childRayCache = if (child.renderContext.cameraEquals(renderContext)) ray else null
 					child.getChildrenUnderPoint(canvasX, canvasY, onlyInteractive, returnAll, out, childRayCache)
 					// Continue iterating if we haven't found an intersecting child yet, or if returnAll is true.
 					returnAll || out.isEmpty()
@@ -290,6 +292,9 @@ open class ContainerImpl(
 		}
 	}
 
+	/**
+	 * True if the current validation step is on layout or size constraints.
+	 */
 	protected val isValidatingLayout: Boolean
 		get() = validation.currentFlag == ValidationFlags.LAYOUT ||
 				validation.currentFlag == ValidationFlags.SIZE_CONSTRAINTS
@@ -304,10 +309,7 @@ open class ContainerImpl(
 				invalidateSize()
 			}
 		}
-		val bubblingFlags = flagsInvalidated and bubblingFlags
-		if (bubblingFlags > 0) {
-			invalidate(bubblingFlags)
-		}
+		invalidate(flagsInvalidated and bubblingFlags or ValidationFlags.BITMAP_CACHE)
 	}
 
 	protected open fun childDisposedHandler(child: UiComponent) {
@@ -337,11 +339,8 @@ open class ContainerImpl(
 
 		var defaultCascadingFlags = ValidationFlags.HIERARCHY_DESCENDING or
 				ValidationFlags.STYLES or
-				ValidationFlags.CONCATENATED_COLOR_TRANSFORM or
-				ValidationFlags.CONCATENATED_TRANSFORM or
 				ValidationFlags.INTERACTIVITY_MODE or
-				ValidationFlags.CAMERA or
-				ValidationFlags.VIEWPORT
+				ValidationFlags.RENDER_CONTEXT
 	}
 }
 

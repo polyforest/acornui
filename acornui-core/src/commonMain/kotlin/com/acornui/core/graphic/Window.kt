@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -123,6 +123,20 @@ interface Window : Disposable {
 	 */
 	fun alert(message: String)
 
+	/**
+	 * Dispatched after the [fullScreen] status has changed.
+	 */
+	val fullScreenChanged: Signal<() -> Unit>
+
+	/**
+	 * Returns true if full screen mode is allowed.
+	 */
+	val fullScreenEnabled: Boolean
+
+	/**
+	 * Sets the full screen value.
+	 * Note that in a browser, this may only be invoked in response to a user interaction.
+	 */
 	var fullScreen: Boolean
 
 	val location: Location

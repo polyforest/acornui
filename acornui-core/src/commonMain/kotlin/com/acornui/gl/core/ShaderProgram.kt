@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,11 +53,12 @@ object CommonShaderUniforms {
 	const val U_MODEL_TRANS: String = "u_modelTrans"
 	const val U_VIEW_TRANS: String = "u_viewTrans"
 	const val U_NORMAL_TRANS: String = "u_normalTrans"
+	const val U_TEXTURE: String = "u_texture"
+	const val U_TEXTURE_NORMAL: String = "u_textureNormal"
+
 	const val U_COLOR_TRANS: String = "u_colorTrans"
 	const val U_COLOR_OFFSET: String = "u_colorOffset"
 	const val U_USE_COLOR_TRANS: String = "u_useColorTrans"
-	const val U_TEXTURE: String = "u_texture"
-	const val U_TEXTURE_NORMAL: String = "u_textureNormal"
 }
 
 /**
@@ -222,7 +223,7 @@ val DEFAULT_SHADER_HEADER: String
 #define LOW_P lowp
 #define MED_P mediump
 #define HIGH_P highp
-precision highp float;
+precision lowp float;
 #else
 #define MED_P
 #define LOW_P

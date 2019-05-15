@@ -1,6 +1,23 @@
+/*
+ * Copyright 2019 Poly Forest, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.acornui.component.text
 
 import com.acornui.async.async
+import com.acornui.async.resultOrNull
 import com.acornui.async.then
 import com.acornui.component.ContainerImpl
 import com.acornui.component.ValidationFlags
@@ -23,6 +40,7 @@ import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionRange
 import com.acornui.core.selection.selectAll
 import com.acornui.core.selection.unselect
+import com.acornui.core.substringInRange
 import com.acornui.core.time.delayedCallback
 import com.acornui.core.time.onTick
 import com.acornui.function.as1
@@ -77,24 +95,22 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		get() = _text
 		set(value) {
 			if (_text == value) return
-			_text = if (_restrictPatternRegex == null) value else value.replace(_restrictPatternRegex!!, "")
+			_text = if (_restrictPattern == null) value else value.replace(_restrictPattern!!, "")
 			_text = _text.replace("\r", "")
 			refreshText()
 		}
 
 	var placeholder: String = ""
 
-	private var _restrictPattern: String? = null
-	private var _restrictPatternRegex: Regex? = null
+	private var _restrictPattern: Regex? = null
 
-	var restrictPattern: String?
+	var restrictPattern: Regex?
 		get() = _restrictPattern
 		set(value) {
 			if (_restrictPattern == value) return
 			_restrictPattern = value
-			_restrictPatternRegex = if (value == null) null else Regex(value)
 			if (value != null) {
-				_text = _text.replace(_restrictPatternRegex!!, "")
+				_text = _text.replace(_restrictPattern!!, "")
 			}
 			refreshText()
 		}
@@ -159,7 +175,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 		host.char().add {
 			if (editable && !it.defaultPrevented()) {
-				val font = host.charStyle.font
+				val font = host.charStyle.font?.resultOrNull()
 				if (font?.glyphs?.containsKey(it.char) == true && it.char != '\n' && it.char != '\r') {
 					it.handled = true
 					replaceSelection(it.char.toString())
@@ -189,7 +205,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 				val sel = firstSelection
 				if (sel != null) {
 					val text = this.text
-					val subStr = text.substring(sel.min, sel.max)
+					val subStr = text.substringInRange(sel.min, sel.max)
 					it.addItem(ClipboardItemType.PLAIN_TEXT, subStr)
 				}
 			}
@@ -201,7 +217,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 				val sel = firstSelection
 				if (sel != null) {
 					val text = this.text
-					val subStr = text.substring(sel.min, sel.max)
+					val subStr = text.substringInRange(sel.min, sel.max)
 					if (editable)
 						replaceSelection("", CommandGroup())
 					it.addItem(ClipboardItemType.PLAIN_TEXT, subStr)
@@ -530,7 +546,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	}
 
 	private fun replaceSelection(str: String, group: CommandGroup = currentGroup) {
-		var str2 = if (_restrictPatternRegex == null) str else str.replace(_restrictPatternRegex!!, "")
+		var str2 = if (_restrictPattern == null) str else str.replace(_restrictPattern!!, "")
 		val sel = firstSelection ?: return
 		val maxLength = maxLength
 		if (maxLength != null) {

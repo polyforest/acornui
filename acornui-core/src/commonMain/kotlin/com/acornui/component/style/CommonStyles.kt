@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 PolyForest
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package com.acornui.component.style
 
 import com.acornui.component.UiComponent
-import com.acornui.skins.Theme
 
 object CommonStyleTags {
 
@@ -32,10 +31,4 @@ object CommonStyleTags {
 	val disabled = styleTag()
 }
 
-var UiComponent.disabledTag: Boolean
-	get() = styleTags.contains(CommonStyleTags.disabled)
-	set(value) {
-		if (value == disabledTag) return // no-op
-		if (value) styleTags.add(CommonStyleTags.disabled)
-		else styleTags.remove(CommonStyleTags.disabled)
-	}
+var UiComponent.disabledTag: Boolean by StyleTagToggle(CommonStyleTags.disabled)

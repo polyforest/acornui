@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,20 @@
 
 package com.acornui.gl.core
 
-import com.acornui.component.BasicDrawable
 import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
+import com.acornui.component.StencilUtil
 import com.acornui.core.Disposable
+import com.acornui.core.DisposedException
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
-import com.acornui.core.graphic.BlendMode
+import com.acornui.core.graphic.Camera
+import com.acornui.core.graphic.OrthographicCamera
 import com.acornui.core.graphic.Texture
+import com.acornui.core.graphic.flipYDown
 import com.acornui.core.userInfo
-import com.acornui.graphic.ColorRo
 import com.acornui.logging.Log
 import com.acornui.math.IntRectangle
-import com.acornui.math.Matrix4Ro
 
 /**
  * @author nbilyk
@@ -41,7 +42,7 @@ class Framebuffer(
 		hasDepth: Boolean = false,
 		hasStencil: Boolean = false,
 		val texture: Texture = BufferTexture(gl, glState, width, height)
-) : Disposable, BasicDrawable {
+) : Disposable {
 
 	/**
 	 * True if the depth render attachment was created.
@@ -62,6 +63,7 @@ class Framebuffer(
 				hasStencil: Boolean = false,
 				texture: Texture = BufferTexture(injector.inject(Gl20), injector.inject(GlState), width, height)) : this(injector.inject(Gl20), injector.inject(GlState), width, height, hasDepth, hasStencil, texture)
 
+	private var previousStencil: Boolean = false
 	private val framebufferHandle: GlFramebufferRef
 	private val depthbufferHandle: GlRenderbufferRef?
 	private val stencilbufferHandle: GlRenderbufferRef?
@@ -151,8 +153,10 @@ class Framebuffer(
 		glState.batch.flush()
 		glState.getFramebuffer(previousFramebuffer)
 		glState.setFramebuffer(framebufferHandle, width, height, 1f, 1f)
-		glState.getViewport(previousViewport)
+		previousViewport.set(glState.viewport)
 		glState.setViewport(_viewport)
+		previousStencil = gl.getParameterb(Gl20.STENCIL_TEST)
+		if (previousStencil) gl.disable(Gl20.STENCIL_TEST)
 	}
 
 	fun end() {
@@ -160,6 +164,8 @@ class Framebuffer(
 		glState.setFramebuffer(previousFramebuffer)
 		glState.setViewport(previousViewport)
 		previousFramebuffer.clear()
+		if (previousStencil)
+			gl.enable(Gl20.STENCIL_TEST)
 	}
 
 	/**
@@ -184,43 +190,42 @@ class Framebuffer(
 		gl.deleteFramebuffer(framebufferHandle)
 	}
 
-	//---------------------------------------------------------------
-	// BasicDrawable methods
-	//---------------------------------------------------------------
 
-	private val sprite: Sprite by lazy {
-		Sprite().apply {
-			setUv(0f, 0f, 1f, 1f, isRotated = false)
+	/**
+	 * Configures a Camera for rendering this frame buffer.
+	 * This will set the viewport and positioning to 'see' the frame buffer.
+	 *
+	 * @param camera The camera to configure. (A newly constructed Sprite is the default)
+	 */
+	fun camera(camera: Camera = OrthographicCamera()): Camera {
+		return camera.apply {
+			flipYDown()
+			setViewport(width.toFloat(), height.toFloat())
+			moveToLookAtRect(0f, 0f, viewportWidth, viewportHeight)
+		}
+	}
+
+	/**
+	 * Configures a Sprite for rendering this frame buffer.
+	 *
+	 * @param sprite The sprite to configure. (A newly constructed Sprite is the default)
+	 */
+	fun sprite(sprite: Sprite = Sprite(glState)): Sprite {
+		return sprite.apply {
+			setUv(0f, 0f, 1f, 1f, false)
 			texture = this@Framebuffer.texture
+			updateVertices()
 		}
 	}
 
-	var blendMode: BlendMode
-		get() = sprite.blendMode
-		set(value) {
-			sprite.blendMode = value
-		}
-
-	override val naturalWidth: Float = width.toFloat()
-	override val naturalHeight: Float = height.toFloat()
-
-	override fun updateWorldVertices(worldTransform: Matrix4Ro, width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
-		sprite.updateWorldVertices(worldTransform, width, height, x, y, z, rotation, originX, originY)
-	}
-
-	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
-		sprite.updateVertices(width, height, x, y, z, rotation, originX, originY)
-	}
-
-	override fun render(glState: GlState, colorTint: ColorRo) {
-		sprite.render(glState, colorTint)
-	}
-
-	//---------------------------------------------------------------
+	private var isDisposed = false
 
 	override fun dispose() {
-		delete()
+		if (isDisposed)
+			throw DisposedException()
+		isDisposed = true
 		texture.refDec()
+		delete()
 	}
 
 	companion object {

@@ -4,7 +4,7 @@ import com.acornui.browser.decodeUriComponent2
 import com.acornui.browser.encodeUriComponent2
 import com.acornui.test.assertListEquals
 import org.junit.Before
-import org.junit.Test
+import kotlin.test.Test
 import java.net.URLDecoder
 import java.net.URLEncoder
 import kotlin.test.assertEquals

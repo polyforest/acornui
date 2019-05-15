@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019 Poly Forest, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.acornui.graphic
 
 import com.acornui.gl.core.*
@@ -79,7 +95,7 @@ uniform vec4 u_colorOffset;
 ${if (numPointLights > 0) "uniform PointLight u_pointLights[$numPointLights];" else ""}
 ${if (numShadowPointLights > 0) "uniform samplerCube u_pointLightShadowMaps[$numShadowPointLights];" else ""}
 
-uniform vec2 poissonDisk[4];
+uniform vec2 u_poissonDisk[4];
 
 $UNPACK_FLOAT
 
@@ -100,7 +116,7 @@ vec3 getDirectionalColor() {
 
 	if (shadow >= testZ) visibility += 0.2;
 	for (int i = 0; i < 4; i++) {
-		shadow = getShadowDepth((v_directionalShadowCoord.xy + poissonDisk[i] * u_resolutionInv));
+		shadow = getShadowDepth((v_directionalShadowCoord.xy + u_poissonDisk[i] * u_resolutionInv));
 		if (shadow >= testZ) visibility += 0.2;
 	}
 
@@ -178,10 +194,10 @@ void main() {
 		if (isFirst) {
 			isFirst = false
 			// Poisson disk
-			gl.uniform2f(getRequiredUniformLocation("poissonDisk[0]"), -0.94201624f, -0.39906216f)
-			gl.uniform2f(getRequiredUniformLocation("poissonDisk[1]"), 0.94558609f, -0.76890725f)
-			gl.uniform2f(getRequiredUniformLocation("poissonDisk[2]"), -0.09418410f, -0.92938870f)
-			gl.uniform2f(getRequiredUniformLocation("poissonDisk[3]"), 0.34495938f, 0.29387760f)
+			gl.uniform2f(getRequiredUniformLocation("u_poissonDisk[0]"), -0.94201624f, -0.39906216f)
+			gl.uniform2f(getRequiredUniformLocation("u_poissonDisk[1]"), 0.94558609f, -0.76890725f)
+			gl.uniform2f(getRequiredUniformLocation("u_poissonDisk[2]"), -0.09418410f, -0.92938870f)
+			gl.uniform2f(getRequiredUniformLocation("u_poissonDisk[3]"), 0.34495938f, 0.29387760f)
 		}
 	}
 }

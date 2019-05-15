@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,11 @@ package com.acornui.build.util
 
 import com.acornui.core.asset.AssetManager
 import com.acornui.core.di.inject
-import com.acornui.core.io.JSON_KEY
 import com.acornui.core.io.file.Files
 import com.acornui.io.file.FilesManifestSerializer
 import com.acornui.jvm.JvmHeadlessApplication
 import com.acornui.jvm.io.file.ManifestUtil
-import com.acornui.serialization.JsonSerializer
+import com.acornui.serialization.json
 import com.acornui.serialization.write
 import com.acornui.texturepacker.jvm.TexturePackerUtil
 import java.io.File
@@ -31,13 +30,16 @@ import java.io.File
 
 object AcornAssets {
 
-	fun packAssets(source: File, dest: File, root: File) {
-		copyAssets(source, dest)
+	fun packAssets(source: File, dest: File) {
+		println("Source directory: " + source.path)
+		if (source != dest) {
+			println("Assets directory: " + dest.path)
+			copyAssets(source, dest)
+		}
 
-		println("Assets directory: " + dest.path + " root directory: " + root.path)
 		JvmHeadlessApplication(dest.path).start {
 			// Pack the assets in all directories in the dest folder with a name ending in "_unpacked"
-			TexturePackerUtil(inject(Files), inject(AssetManager), inject(JSON_KEY)).packAssets(dest, File("."))
+			TexturePackerUtil(inject(Files), inject(AssetManager)).packAssets(dest, File("."))
 
 			dest.setLastModified(System.currentTimeMillis())
 		}
@@ -46,7 +48,7 @@ object AcornAssets {
 	fun writeManifest(dest: File, root: File) {
 		println("Creating manifest")
 		val manifest = ManifestUtil.createManifest(dest, root)
-		File(dest, "files.json").writeText(JsonSerializer.write(manifest, FilesManifestSerializer))
+		File(dest, "files.json").writeText(json.write(manifest, FilesManifestSerializer))
 	}
 
 	private fun copyAssets(source: File, destination: File) {

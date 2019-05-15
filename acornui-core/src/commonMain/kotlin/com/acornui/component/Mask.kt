@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Poly Forest
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import com.acornui.core.di.inject
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.ShaderBatch
-import com.acornui.gl.core.setScissor
+import com.acornui.gl.core.useScissor
 import com.acornui.math.IntRectangle
 import com.acornui.math.Vector3
 import kotlin.math.abs
@@ -92,8 +92,8 @@ fun UiComponentRo.scissorLocal(x: Float, y: Float, width: Float, height: Float, 
 
 	val glState = inject(GlState)
 	val intR = IntRectangle.obtain()
-	glState.getViewport(intR)
-	glState.setScissor(
+	intR.set(glState.viewport)
+	glState.useScissor(
 			minOf(sX1, sX2).roundToInt(),
 			(intR.height - maxOf(sY1, sY2)).roundToInt(),
 			abs(sX2 - sX1).roundToInt(),

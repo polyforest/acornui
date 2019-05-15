@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,19 @@
 
 package com.acornui.core.di
 
+import com.acornui.async.PendingDisposablesRegistry
+import com.acornui.core.Disposable
+
 
 /**
  * A scoped object has a dependency injector.
  */
 interface Scoped {
 
+	/**
+	 * The dependency injector for this scope.
+	 * Implementations should be immutable.
+	 */
 	val injector: Injector
 }
 
@@ -75,6 +82,8 @@ class InjectorImpl(
 				d = key.factory(this)
 				if (d != null) {
 					// If the dependency key's factory method produces an instance, set it on the root injector.
+					if (d is Disposable)
+						PendingDisposablesRegistry.register(d)
 					_set(key, d)
 				}
 			}

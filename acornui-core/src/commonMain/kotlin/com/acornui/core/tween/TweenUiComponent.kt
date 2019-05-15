@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.acornui.core.tween
 
 import com.acornui.component.UiComponent
+import com.acornui.component.alpha
 import com.acornui.graphic.Color
 import com.acornui.math.Interpolation
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Poly Forest
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 
 package com.acornui.component.text
 
+import com.acornui.async.resultOrNull
 import com.acornui.recycle.Clearable
 import com.acornui.component.*
 import com.acornui.component.scroll.ClampedScrollModel
@@ -68,13 +69,13 @@ interface TextInput : Focusable, SelectableComponent, Styleable, Clearable {
 
 	/**
 	 * A regular expression pattern to define what is NOT allowed in this text input.
-	 * E.g. "[a-z]" will prevent lowercase letters from being entered.
+	 * E.g. Regex("[a-z]") will prevent lowercase letters from being entered.
 	 * Setting this will mutate the current [text] property.
 	 *
 	 * Note: In the future, this will be changed to restrict: Regex, currently KT-17851 prevents this.
 	 * Note: The global flag will be used.
 	 */
-	var restrictPattern: String?
+	var restrictPattern: Regex?
 
 	var password: Boolean
 
@@ -138,7 +139,7 @@ class TextInputImpl(owner: Owned) : ContainerImpl(owner), TextInput {
 			editableText.placeholder = value
 		}
 
-	override var restrictPattern: String?
+	override var restrictPattern: Regex?
 		get() = editableText.restrictPattern
 		set(value) {
 			editableText.restrictPattern = value
@@ -200,7 +201,7 @@ class TextInputImpl(owner: Owned) : ContainerImpl(owner), TextInput {
 		val h = margin.reduceHeight(pad.reduceHeight(explicitHeight))
 
 		val w = if (explicitWidth == null && defaultWidthFromText != null) {
-			val font = charStyle.font
+			val font = charStyle.font?.resultOrNull()
 			font?.data?.measureLineWidth(defaultWidthFromText!!)?.toFloat() ?: 0f
 		} else {
 			margin.reduceWidth2(pad.reduceWidth2(explicitWidth ?: textInputStyle.defaultWidth))
@@ -208,8 +209,11 @@ class TextInputImpl(owner: Owned) : ContainerImpl(owner), TextInput {
 
 		editableText.setSize(w, h)
 		editableText.setPosition(margin.left + pad.left, margin.top + pad.top)
-		out.set(explicitWidth ?: margin.expandHeight2(pad.expandHeight2(w)), explicitHeight
-				?: margin.expandHeight2(pad.expandHeight2(editableText.height)))
+		out.set(
+				explicitWidth ?: margin.expandHeight2(pad.expandHeight2(w)),
+				explicitHeight ?: margin.expandHeight2(pad.expandHeight2(editableText.height)),
+				baseline = editableText.baseline + editableText.y
+		)
 		background?.setSize(margin.reduceWidth2(out.width), margin.reduceHeight(out.height))
 		background?.setPosition(margin.left, margin.top)
 	}
@@ -294,7 +298,7 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 			editableText.placeholder = value
 		}
 
-	override var restrictPattern: String?
+	override var restrictPattern: Regex?
 		get() = editableText.restrictPattern
 		set(value) {
 			editableText.restrictPattern = value
@@ -432,7 +436,11 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 		scroller.setSize(w, h)
 		scroller.setPosition(margin.left, margin.top)
 		editableText.pageHeight = h ?: 400f
-		out.set(explicitWidth ?: textInputStyle.defaultWidth, explicitHeight ?: margin.expandHeight2(scroller.height))
+		out.set(
+				explicitWidth ?: textInputStyle.defaultWidth,
+				explicitHeight ?: margin.expandHeight2(scroller.height),
+				baseline = editableText.baseline + editableText.y
+		)
 		background?.setSize(margin.reduceWidth2(out.width), margin.reduceHeight(out.height))
 		background?.setPosition(margin.left, margin.top)
 	}
@@ -492,9 +500,12 @@ fun Owned.textArea(init: ComponentInit<TextAreaImpl> = {}): TextAreaImpl {
 
 /**
  * Common text restrict patterns.
+ * These shouldn't be used as validation patterns; they are meant to restrict the types of characters that can be
+ * typed into an input text.
  */
 object RestrictPatterns {
 
-	const val INTEGER = "[^0-9+-]"
-	const val FLOAT = "[^0-9+-.]"
+	val INTEGER = Regex("[^0-9+-]")
+	val FLOAT = Regex("[^0-9+-.]")
+	val COLOR = Regex("[^0-9a-fA-F#x]")
 }

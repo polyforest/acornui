@@ -1,7 +1,7 @@
 package com.acornui.core.audio
 
 import com.acornui.test.assertListEquals
-import org.junit.Test
+import kotlin.test.Test
 import org.mockito.Mockito
 
 class AudioManagerImplTest {

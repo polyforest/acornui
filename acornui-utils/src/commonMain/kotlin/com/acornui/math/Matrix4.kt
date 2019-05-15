@@ -1,7 +1,5 @@
 /*
- * Derived from LibGDX by Nicholas Bilyk
- * https://github.com/libgdx
- * Copyright 2011 See https://github.com/libgdx/libgdx/blob/master/AUTHORS
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 
 package com.acornui.math
 
@@ -172,18 +170,27 @@ class Matrix4() : Matrix4Ro {
 
 	operator fun set(index: Int, value: Float) {
 		_values[index] = value
+		if (index == M03 || index == M13 || index == M23) {
+			if (value != 0f && _mode == MatrixMode.IDENTITY)
+				_mode = MatrixMode.TRANSLATION
+		} else if (index == M00 || index == M11 || index == M22 || index == M33) {
+			if (value != 1f && (_mode == MatrixMode.IDENTITY || _mode == MatrixMode.TRANSLATION))
+				_mode = MatrixMode.SCALE
+		} else if (index == M01 || index == M02 || index == M10 || index == M12 || index == M20 ||
+				index == M21 || index == M30 || index == M31 || index == M32
+		) {
+			if (value != 0f && _mode != MatrixMode.FULL)
+				_mode = MatrixMode.FULL
+		}
 	}
 
 	private fun refreshMode() {
 		val values = _values
 		if (values[M03] != 0f || values[M13] != 0f || values[M23] != 0f) _mode = MatrixMode.TRANSLATION
 		if (values[M00] != 1f || values[M11] != 1f || values[M22] != 1f || values[M33] != 1f) _mode = MatrixMode.SCALE
-		if (values[M01] != 0f || values[M02] != 0f ||
-				values[M10] != 0f || values[M12] != 0f ||
-				values[M20] != 0f || values[M21] != 0f ||
-				values[M30] != 0f || values[M31] != 0f || values[M32] != 0f
+		if (values[M01] != 0f || values[M02] != 0f || values[M10] != 0f || values[M12] != 0f || values[M20] != 0f ||
+				values[M21] != 0f || values[M30] != 0f || values[M31] != 0f || values[M32] != 0f
 		) _mode = MatrixMode.FULL
-		//_mode = MatrixMode.FULL
 	}
 
 	/**

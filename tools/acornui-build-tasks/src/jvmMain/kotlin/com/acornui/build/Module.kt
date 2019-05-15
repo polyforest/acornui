@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,7 +118,7 @@ abstract class Module(
 			for (resDir in allResources) {
 				if (resDir.exists()) {
 					println("Packing assets for $name (${resDir.path}")
-					AcornAssets.packAssets(resDir, outAssets, outAssets.parentFile!!)
+					AcornAssets.packAssets(resDir, outAssets)
 				}
 			}
 		}

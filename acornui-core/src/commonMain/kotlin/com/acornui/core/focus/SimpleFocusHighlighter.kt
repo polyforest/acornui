@@ -1,19 +1,31 @@
+/*
+ * Copyright 2019 Poly Forest, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.acornui.core.focus
 
 import com.acornui.component.ContainerImpl
 import com.acornui.component.InteractivityMode
-import com.acornui.core.di.Owned
 import com.acornui.component.atlas
-import com.acornui.core.tween.driveTween
-import com.acornui.core.tween.tweenAlpha
+import com.acornui.core.di.Owned
 import com.acornui.math.Bounds
-import com.acornui.math.Easing
 
 open class SimpleHighlight(
 		owner: Owned,
 		atlasPath: String,
-		regionName: String,
-		private val animate: Boolean = true
+		regionName: String
 ) : ContainerImpl(owner) {
 
 	private val highlight = addChild(atlas(atlasPath, regionName))
@@ -21,14 +33,6 @@ open class SimpleHighlight(
 	init {
 		interactivityMode = InteractivityMode.NONE
 		includeInLayout = false
-	}
-
-	override fun onActivated() {
-		super.onActivated()
-		if (animate) {
-			highlight.alpha = 0.3f
-			driveTween(highlight.tweenAlpha(0.2f, Easing.pow2Out, 1f))
-		}
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,11 @@ import kotlin.coroutines.*
  *
  * To check active co-routines, pause the IDEA debugger, then Evaluate expression:
  * `com.acornui.async.AsyncKt.activeCoroutinesStr`
+ *
+ * On the JS backend debugCoroutines=true exists as a querystring parameter.
+ * On the JVM backend -DdebugCoroutines=true exists as a vm parameter.
  */
-var coroutineDebugMode = false
+expect val debugCoroutines: Boolean
 
 val activeCoroutines = HashMap<Continuation<*>, String>()
 var activeCoroutinesStr: String = ""
@@ -59,7 +62,7 @@ class BasicContinuationImpl(
 ) : Continuation<Unit> {
 
 	init {
-		if (coroutineDebugMode) {
+		if (debugCoroutines) {
 			activeCoroutines[this] = getStack()
 			refreshActiveCoroutinesStr()
 		}
@@ -67,7 +70,7 @@ class BasicContinuationImpl(
 
 	override fun resumeWith(result: Result<Unit>) {
 		result.onFailure { throw it }
-		if (coroutineDebugMode) {
+		if (debugCoroutines) {
 			activeCoroutines.remove(this)
 			refreshActiveCoroutinesStr()
 		}
@@ -79,14 +82,15 @@ object PendingDisposablesRegistry {
 	private val allPending = HashMap<Disposable, Unit>()
 	private var isDisposing = false
 
-	fun register(continuation: Disposable) {
+	fun <T : Disposable> register(disposable: T): T {
 		if (isDisposing) throw IllegalStateException("Cannot addBinding a disposable to the registry on dispose.")
-		allPending[continuation] = Unit
+		allPending[disposable] = Unit
+		return disposable
 	}
 
-	fun unregister(continuation: Disposable) {
+	fun unregister(disposable: Disposable) {
 		if (isDisposing) return
-		allPending.remove(continuation)
+		allPending.remove(disposable)
 	}
 
 	/**
@@ -95,11 +99,13 @@ object PendingDisposablesRegistry {
 	fun dispose() {
 		if (isDisposing) return
 		isDisposing = true
-		for (continuation in allPending.keys) {
-			continuation.dispose()
+		for (disposable in allPending.keys) {
+			disposable.dispose()
 		}
 	}
 }
+
+fun <T : Disposable> disposeOnShutdown(disposable: T): T = PendingDisposablesRegistry.register(disposable)
 
 interface Deferred<out T> {
 

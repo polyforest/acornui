@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,7 +79,8 @@ class FilesImpl(manifest: FilesManifest) : Files {
 		val pathSplit = path.replace2('\\', '/').split2('/')
 		for (part in pathSplit) {
 			if (p == null) return null
-			p = p.getDir(part)
+			if (part.isNotEmpty())
+				p = p.getDir(part)
 		}
 		return p
 	}
@@ -108,7 +109,7 @@ class FileEntry(
 
 	val nameNoExtension: String
 		get() {
-			return path.substringAfterLast('/').substringBeforeLast('.')
+			return name.substringBeforeLast('.')
 		}
 
 	val extension: String

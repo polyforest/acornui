@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 
 package com.acornui.js.html
 
-import com.acornui.component.*
-import com.acornui.component.text.TextField
+import com.acornui.component.BoxStyle
+import com.acornui.component.HtmlComponent
+import com.acornui.component.UiComponentImpl
+import com.acornui.component.parentWalk
 import com.acornui.core.di.Owned
 import com.acornui.core.focus.Focusable
 import com.acornui.graphic.ColorRo
-import com.acornui.math.Bounds
-import com.acornui.math.BoundsRo
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.Pad
+import com.acornui.math.*
 import com.acornui.signal.Cancel
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
@@ -102,14 +101,14 @@ class JsHtmlComponent(
 		out.set(component.bounds)
 	}
 
-	override fun updateConcatenatedColorTransform() {
-		super.updateConcatenatedColorTransform()
-		component.setConcatenatedColorTint(concatenatedColorTint)
+	override fun updateRenderContext() {
+		super.updateRenderContext()
+		component.setConcatenatedTransform(modelTransform)
 	}
 
-	override fun updateConcatenatedTransform() {
-		super.updateConcatenatedTransform()
-		component.setConcatenatedTransform(concatenatedTransform)
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		super.draw(clip, transform, tint)
+		component.setConcatenatedColorTint(tint)
 	}
 }
 
@@ -217,7 +216,9 @@ class DomComponent(
 	}
 
 	fun setConcatenatedColorTint(value: ColorRo) {
-		element.style.opacity = value.a.toString()
+		val str = value.a.toString()
+		if (element.style.opacity != str)
+			element.style.opacity = str
 	}
 }
 

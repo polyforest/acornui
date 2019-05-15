@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,7 @@ import com.acornui.component.layout.ElementLayoutContainerImpl
 import com.acornui.component.layout.algorithm.CanvasLayout
 import com.acornui.component.layout.algorithm.CanvasLayoutData
 import com.acornui.component.style.*
-import com.acornui.core.di.DKey
-import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
+import com.acornui.core.di.*
 import com.acornui.core.focus.*
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.KeyInteractionRo
@@ -37,6 +35,8 @@ import com.acornui.core.isAncestorOf
 import com.acornui.core.tween.Tween
 import com.acornui.core.tween.drive
 import com.acornui.core.tween.tweenAlpha
+import com.acornui.function.as1
+import com.acornui.graphic.Color
 import com.acornui.math.Easing
 import com.acornui.signal.Cancel
 
@@ -77,7 +77,11 @@ interface PopUpManager : Clearable {
 	 */
 	override fun clear()
 
-	companion object : DKey<PopUpManager>, StyleTag
+	companion object : DKey<PopUpManager>, StyleTag {
+		override fun factory(injector: Injector): PopUpManager? {
+			return PopUpManagerImpl(injector)
+		}
+	}
 }
 
 data class PopUpInfo<T : UiComponent>(
@@ -137,7 +141,12 @@ class PopUpManagerStyle : StyleBase() {
 
 	override val type: StyleType<PopUpManagerStyle> = PopUpManagerStyle
 
-	var modalFill by prop(noSkinOptional)
+	var modalFill by prop<OptionalSkinPart> {
+		rect {
+			style.backgroundColor = Color(0f, 0f, 0f, 0.7f)
+		}
+	}
+
 	var modalEaseIn by prop(Easing.pow2In)
 	var modalEaseOut by prop(Easing.pow2Out)
 	var modalEaseInDuration by prop(0.2f)
@@ -146,7 +155,7 @@ class PopUpManagerStyle : StyleBase() {
 	companion object : StyleType<PopUpManagerStyle>
 }
 
-class PopUpManagerImpl(private val root: UiComponent) : ElementLayoutContainerImpl<NoopStyle, CanvasLayoutData>(root, CanvasLayout()), PopUpManager {
+class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyle, CanvasLayoutData>(OwnedImpl(injector), CanvasLayout()), PopUpManager {
 
 	private val popUpManagerStyle = bind(PopUpManagerStyle())
 
@@ -241,9 +250,13 @@ class PopUpManagerImpl(private val root: UiComponent) : ElementLayoutContainerIm
 		}
 	}
 
+	override val styleParent: StyleableRo? = stage
+
 	init {
+		// The pop up manager is automatically added to the pending disposables registry and should not be
+		// disposed when the stage is.
 		styleTags.add(PopUpManager)
-		root.keyDown().add(rootKeyDownHandler)
+		stage.keyDown().add(rootKeyDownHandler)
 		interactivityMode = InteractivityMode.CHILDREN
 
 		watch(popUpManagerStyle) {
@@ -347,7 +360,7 @@ class PopUpManagerImpl(private val root: UiComponent) : ElementLayoutContainerIm
 	}
 
 	override fun dispose() {
-		root.keyDown().remove(rootKeyDownHandler)
+		stage.keyDown().remove(rootKeyDownHandler)
 		clear()
 		super.dispose()
 	}

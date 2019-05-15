@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -269,7 +269,7 @@ class TossScrollModelBinding(
 	private val tossStartHandler = {
 		_: DragInteractionRo ->
 		modelStart.set(hScrollModel.value, vScrollModel.value)
-		matrix = tossScroller.target.concatenatedTransformInv
+		matrix = tossScroller.target.modelTransformInv
 	}
 
 	private val changedHandler = {

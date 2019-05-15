@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.acornui.jvm.input
 
-import com.acornui.collection.DualHashMap
+import com.acornui.collection.*
 import com.acornui.core.input.*
 import com.acornui.core.input.interaction.CharInteraction
 import com.acornui.core.input.interaction.KeyInteraction
@@ -42,7 +42,7 @@ class LwjglKeyInput(private val window: Long) : KeyInput {
 	private val charEvent = CharInteraction()
 
 	private val keyCodeMap: HashMap<Int, Pair<Int, KeyLocation>>
-	private val downMap: DualHashMap<Int, KeyLocation, Boolean> = DualHashMap()
+	private val downMap: MutableMultiMap2<Int, KeyLocation, Boolean> = multiMap2()
 
 	init {
 		GLFW.glfwSetInputMode(window, GLFW.GLFW_LOCK_KEY_MODS, 1)
@@ -116,7 +116,7 @@ class LwjglKeyInput(private val window: Long) : KeyInput {
 
 	private val keyCallback: GLFWKeyCallback = object : GLFWKeyCallback() {
 
-		override fun invoke(window: kotlin.Long, key: kotlin.Int, scanCode: kotlin.Int, action: kotlin.Int, mods: kotlin.Int) {
+		override fun invoke(window: Long, key: Int, scanCode: Int, action: Int, mods: Int) {
 			keyEvent.clear()
 			if (key >= GLFW.GLFW_KEY_KP_0 && key <= GLFW.GLFW_KEY_KP_9 && (mods and GLFW.GLFW_MOD_NUM_LOCK > 0)) {
 				keyEvent.keyCode = Ascii.NUMPAD_0 + key - GLFW.GLFW_KEY_KP_0
@@ -139,12 +139,12 @@ class LwjglKeyInput(private val window: Long) : KeyInput {
 
 			when (action) {
 				GLFW.GLFW_PRESS -> {
-					downMap.put(keyEvent.keyCode, keyEvent.location, true)
+					downMap[keyEvent.keyCode][keyEvent.location] = true
 					keyEvent.type = KeyInteractionRo.KEY_DOWN
 					keyDown.dispatch(keyEvent)
 				}
 				GLFW.GLFW_RELEASE -> {
-					downMap.remove(keyEvent.keyCode, keyEvent.location)
+					downMap.remove(keyEvent.keyCode, keyEvent.location, removeEmptyMaps = false)
 					keyEvent.type = KeyInteractionRo.KEY_UP
 					keyUp.dispatch(keyEvent)
 				}
@@ -158,7 +158,7 @@ class LwjglKeyInput(private val window: Long) : KeyInput {
 	}
 
 	private val charCallback: GLFWCharCallback = object : GLFWCharCallback() {
-		override fun invoke(window: kotlin.Long, codepoint: kotlin.Int) {
+		override fun invoke(window: Long, codepoint: Int) {
 			charEvent.char = codepoint.toChar()
 			char.dispatch(charEvent)
 		}
@@ -170,10 +170,11 @@ class LwjglKeyInput(private val window: Long) : KeyInput {
 	}
 
 	override fun keyIsDown(keyCode: Int, location: KeyLocation): Boolean {
-		if (location == KeyLocation.UNKNOWN) {
-			return downMap[keyCode]?.isNotEmpty() ?: false
+		return if (location == KeyLocation.UNKNOWN) {
+			return if (!downMap.containsKey(keyCode)) false
+			else downMap[keyCode].isNotEmpty()
 		} else {
-			return downMap[keyCode, location] ?: false
+			downMap[keyCode, location] ?: false
 		}
 	}
 

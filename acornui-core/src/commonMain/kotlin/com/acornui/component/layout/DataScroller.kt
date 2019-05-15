@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019 Poly Forest, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.acornui.component.layout
 
 import com.acornui.collection.ObservableList
@@ -10,6 +26,8 @@ import com.acornui.component.style.*
 import com.acornui.core.behavior.Selection
 import com.acornui.core.behavior.SelectionBase
 import com.acornui.core.behavior.deselectNotContaining
+import com.acornui.core.cursor.StandardCursors
+import com.acornui.core.cursor.cursor
 import com.acornui.recycle.IndexedPool
 import com.acornui.recycle.Recycler
 import com.acornui.recycle.disposeAndClear
@@ -77,9 +95,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 	private val rowMap = HashMap<E, RowBackground>()
 
 	private val _selection = own(DataScrollerSelection(contents, bottomContents, rowMap))
-
-	val selection: Selection<E>
-		get() = _selection
+	val selection: Selection<E> = _selection
 
 	private val _highlighted = own(DataScrollerHighlight(rowMap))
 
@@ -324,6 +340,8 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 		isFocusContainer = true
 		focusEnabled = true
 		styleTags.add(DataScroller)
+		cursor(StandardCursors.HAND)
+
 		maxItems = 15
 		scrollModel.changed.add {
 			contents.indexPosition = scrollModel.value
@@ -334,6 +352,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 			background?.dispose()
 			background = addOptionalChild(0, it.background(this))
 			scrollBarClipper.style.borderRadii = it.borderRadii
+			clipper.style.borderRadii = it.borderRadii
 		}
 
 		wheel().add {

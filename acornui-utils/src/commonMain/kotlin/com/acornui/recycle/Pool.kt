@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ interface Pool<T> {
 /**
  * Frees all items in the given list back to the pool.
  */
-fun <T> Pool<T>.freeAll(list: List<T>) = list.forEach2(::free)
+fun <T> Pool<T>.freeAll(list: List<T>) = list.forEach2(action = ::free)
 
 /**
  * Frees all items in this list back to the given pool, then clears this list.

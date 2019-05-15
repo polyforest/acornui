@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import com.acornui.recycle.Clearable
 import com.acornui.component.drawing.DrawElementsCall
 import com.acornui.component.drawing.DrawElementsCallRo
 import com.acornui.core.Disposable
-import com.acornui.core.io.resizableFloatBuffer
-import com.acornui.core.io.resizableShortBuffer
+import com.acornui.io.resizableFloatBuffer
+import com.acornui.io.resizableShortBuffer
 
 /**
  * A static shader batch will remember the draw calls, allowing the batch to be rendered without needing to buffer data
@@ -36,6 +36,11 @@ class StaticShaderBatchImpl(
 		val glState: GlState,
 		override val vertexAttributes: VertexAttributes
 ) : StaticShaderBatch, Clearable, Disposable {
+
+	override val vertexComponentsCount: Int
+		get() = vertexComponents.position
+	override val indicesCount: Int
+		get() = indices.position
 
 	private val vertexComponentsBuffer: GlBufferRef = gl.createBuffer()
 	private val indicesBuffer: GlBufferRef = gl.createBuffer()

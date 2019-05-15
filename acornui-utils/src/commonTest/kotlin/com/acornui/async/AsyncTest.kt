@@ -16,8 +16,9 @@
 
 package com.acornui.async
 
-import org.junit.Assert.*
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class AsyncTest {
 

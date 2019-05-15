@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,12 @@ class StackLayout : LayoutAlgorithm<StackLayoutStyle, StackLayoutData> {
 			val child = elements[i]
 			val layoutData = child.layoutDataCast
 			child.setSize(layoutData?.getPreferredWidth(childAvailableWidth), layoutData?.getPreferredHeight(childAvailableHeight))
+			out.ext(padding.expandWidth2(child.width), padding.expandHeight2(child.height), padding.top + child.baseline)
+		}
 
+		for (i in 0..elements.lastIndex) {
+			val child = elements[i]
+			val layoutData = child.layoutDataCast
 			val childX = padding.left + if (explicitWidth == null) 0f else run {
 				val remainingSpace = maxOf(0f, childAvailableWidth!! - child.width)
 				when (layoutData?.horizontalAlign ?: style.horizontalAlign) {
@@ -66,11 +71,10 @@ class StackLayout : LayoutAlgorithm<StackLayoutStyle, StackLayoutData> {
 				when (layoutData?.verticalAlign ?: style.verticalAlign) {
 					VAlign.TOP -> 0f
 					VAlign.MIDDLE -> remainingSpace * 0.5f
-					VAlign.BOTTOM -> remainingSpace
+					VAlign.BASELINE, VAlign.BOTTOM -> remainingSpace
 				}
 			}
 			child.moveTo(childX, childY)
-			out.ext(padding.expandWidth2(child.width), padding.expandHeight2(child.height))
 		}
 	}
 

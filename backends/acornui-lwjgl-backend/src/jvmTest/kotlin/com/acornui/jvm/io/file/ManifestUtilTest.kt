@@ -16,7 +16,7 @@
 
 package com.acornui.jvm.io.file
 
-import org.junit.Test
+import kotlin.test.Test
 
 /**
  * @author nbilyk

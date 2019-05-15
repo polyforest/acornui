@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,7 @@
 
 package com.acornui.component.drawing
 
-import com.acornui.recycle.Clearable
-import com.acornui.recycle.ClearableObjectPool
-import com.acornui.recycle.freeAll
-import com.acornui.component.ComponentInit
-import com.acornui.component.UiComponentImpl
-import com.acornui.component.ValidationFlags
-import com.acornui.component.invalidateLayout
+import com.acornui.component.*
 import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Owned
@@ -32,8 +26,11 @@ import com.acornui.core.graphic.BlendMode
 import com.acornui.core.graphic.Texture
 import com.acornui.filter.colorTransformationFilter
 import com.acornui.gl.core.*
-import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.*
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.ClearableObjectPool
+import com.acornui.recycle.freeAll
 
 /**
  * A UiComponent for drawing static [MeshRegion] with uniforms for model and color transformation.
@@ -63,13 +60,13 @@ open class StaticMeshComponent(
 	private val colorTransformationFilter = +colorTransformationFilter()
 
 	init {
-		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.CONCATENATED_TRANSFORM or ValidationFlags.LAYOUT, ::updateGlobalBoundingBox)
+		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.RENDER_CONTEXT or ValidationFlags.LAYOUT, ::updateGlobalBoundingBox)
 	}
 
 	private fun updateGlobalBoundingBox() {
 		val mesh = mesh
 		if (mesh != null) {
-			globalBoundingBox.set(mesh.boundingBox).mul(concatenatedTransform)
+			globalBoundingBox.set(mesh.boundingBox).mul(modelTransform)
 		} else {
 			globalBoundingBox.inf()
 		}
@@ -94,15 +91,6 @@ open class StaticMeshComponent(
 		return true
 	}
 
-	override fun updateConcatenatedColorTransform() {
-		super.updateConcatenatedColorTransform()
-
-		colorTransformationFilter.enabled = _concatenatedColorTint != Color.WHITE
-		if (colorTransformationFilter.enabled) {
-			colorTransformationFilter.colorTransformation.tint(_concatenatedColorTint)
-		}
-	}
-
 	override fun onActivated() {
 		super.onActivated()
 		mesh?.refInc()
@@ -113,10 +101,14 @@ open class StaticMeshComponent(
 		mesh?.refDec()
 	}
 
-	override fun draw(clip: MinMaxRo) {
+	override fun render() {
+		colorTransformationFilter.colorTransformation.tint(renderContext.colorTint)
+		super.render()
+	}
+
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		val mesh = mesh ?: return
-		glState.batch.flush()
-		glState.setCamera(camera, concatenatedTransform) // Use the concatenated transform as the model matrix.
+		useCamera(useModel = true)
 		mesh.render()
 	}
 
@@ -192,7 +184,7 @@ class StaticMesh(
 	}
 
 	/**
-	 * Resets the line and fill styles
+	 * Draws the [inner] contents into this static mesh.
 	 */
 	fun buildMesh(inner: MeshRegion.() -> Unit) {
 		if (refCount > 0) {

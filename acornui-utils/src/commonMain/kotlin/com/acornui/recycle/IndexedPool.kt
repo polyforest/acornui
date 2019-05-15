@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -175,7 +175,7 @@ open class IndexedPool<E>(
 	 * Sets the items returned via [obtain] to be used as the cached items for the next set.
 	 */
 	fun flip() {
-		current.forEach2(pool::free)
+		current.forEach2(action = pool::free)
 		val tmp = current
 		val tmpIndices = currentIndices
 		current = obtained

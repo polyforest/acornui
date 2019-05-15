@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import com.acornui.core.time.time
 /**
  * This class formats dates into localized string representations.
  */
-interface DateTimeFormatter : StringFormatter<DateRo> {
+expect class DateTimeFormatter() : StringFormatter<DateRo> {
 
 	/**
 	 * Whether this should format the [Date] object as time, date, or date and time.
@@ -64,8 +64,6 @@ interface DateTimeFormatter : StringFormatter<DateRo> {
 	var locales: List<Locale>?
 
 }
-
-lateinit var dateTimeFormatterProvider: () -> DateTimeFormatter
 
 class DateTimeParser : StringParser<Date> {
 
@@ -342,27 +340,27 @@ enum class DateTimeFormatType {
 }
 
 fun dateFormatter(init: DateTimeFormatter.() -> Unit = {}): DateTimeFormatter {
-	return dateTimeFormatterProvider().apply {
+	return DateTimeFormatter().apply {
 		type = DateTimeFormatType.DATE
 		init()
 	}
 }
 
 fun dateTimeFormatter(init: DateTimeFormatter.() -> Unit = {}): DateTimeFormatter {
-	return dateTimeFormatterProvider().apply {
+	return DateTimeFormatter().apply {
 		type = DateTimeFormatType.DATE_TIME
 		init()
 	}
 }
 
 fun dateTimeFormatter(type: DateTimeFormatType): DateTimeFormatter {
-	return dateTimeFormatterProvider().apply {
+	return DateTimeFormatter().apply {
 		this.type = type
 	}
 }
 
 fun timeFormatter(init: DateTimeFormatter.() -> Unit = {}): DateTimeFormatter {
-	return dateTimeFormatterProvider().apply {
+	return DateTimeFormatter().apply {
 		type = DateTimeFormatType.TIME
 		init()
 	}

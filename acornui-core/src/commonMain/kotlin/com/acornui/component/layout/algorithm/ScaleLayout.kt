@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ class ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 
 			if (explicitWidth != null) {
 				val remainingSpace = childAvailableWidth!! - w * scaleX
-				if (remainingSpace > 0f) {
+				if (remainingSpace != 0f) {
 					when (layoutData?.horizontalAlign ?: style.horizontalAlign) {
 						HAlign.LEFT -> {
 						}
@@ -86,15 +86,14 @@ class ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 			}
 			if (explicitHeight != null) {
 				val remainingSpace = childAvailableHeight!! - h * scaleY
-				if (remainingSpace > 0f) {
+				if (remainingSpace != 0f) {
 					when (layoutData?.verticalAlign ?: style.verticalAlign) {
-						VAlign.TOP -> {
-						}
+						VAlign.TOP -> {}
 						VAlign.MIDDLE -> {
 							val halfSpace = floor((remainingSpace * 0.5f))
 							child.y = halfSpace + padding.top
 						}
-						VAlign.BOTTOM -> {
+						VAlign.BASELINE, VAlign.BOTTOM -> {
 							child.y = remainingSpace + padding.top
 						}
 					}

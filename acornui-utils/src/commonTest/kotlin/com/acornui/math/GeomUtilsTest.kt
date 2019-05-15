@@ -1,8 +1,8 @@
 package com.acornui.math
 
-import org.junit.Test
-
-import org.junit.Assert.*
+import kotlin.test.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class GeomUtilsTest {
 

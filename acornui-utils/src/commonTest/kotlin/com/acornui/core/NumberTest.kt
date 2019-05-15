@@ -16,7 +16,7 @@
 
 package com.acornui.core
 
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
@@ -34,7 +34,7 @@ class NumberTest {
 
 	@Test fun numberOfLeadingZeros() {
 		assertEquals(31, 1.numberOfLeadingZeros())
-		assertEquals(4, 0x0FFFFFFF.numberOfLeadingZeros())
+		assertEquals(4, 0x0fffffff.numberOfLeadingZeros())
 	}
 
 	@Test fun zeroPaddingTest() {

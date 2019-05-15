@@ -1,18 +1,21 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Clean" type="JetRunConfigurationType" factoryName="Kotlin">
-    <module name="BuildTool" />
-    <option name="VM_PARAMETERS" value="" />
-    <option name="PROGRAM_PARAMETERS" value="-target=clean" />
-    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-    <option name="ALTERNATIVE_JRE_PATH" />
-    <option name="PASS_PARENT_ENVS" value="true" />
-    <option name="MAIN_CLASS_NAME" value="com.acornui.build.BuildAcornUiKt" />
-    <option name="WORKING_DIRECTORY" value="" />
-    <envs>
-      <env name="ACORNUI_HOME" value="$PROJECT_DIR$/../AcornUiPreGradle" />
-    </envs>
-    <method v="2">
-      <option name="Make" enabled="true" />
-    </method>
+  <configuration default="false" name="Clean" type="GradleRunConfiguration" factoryName="Gradle">
+    <ExternalSystemSettings>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list>
+          <option value="clean" />
+        </list>
+      </option>
+      <option name="vmOptions" value="" />
+    </ExternalSystemSettings>
+    <GradleScriptDebugEnabled>false</GradleScriptDebugEnabled>
+    <method v="2" />
   </configuration>
 </component>
