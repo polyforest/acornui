@@ -28,9 +28,12 @@ import com.acornui.core.di.*
 import com.acornui.core.input.interaction.MouseInteractionRo
 import com.acornui.core.input.interaction.rollOut
 import com.acornui.core.input.interaction.rollOver
+import com.acornui.core.input.mouseDown
+import com.acornui.core.input.touchStart
 import com.acornui.core.popup.PopUpInfo
 import com.acornui.core.popup.PopUpManager
 import com.acornui.core.time.tick
+import com.acornui.function.as1
 import com.acornui.math.Bounds
 import com.acornui.math.Easing
 import com.acornui.math.Vector2
@@ -48,6 +51,8 @@ class TooltipAttachment(val target: UiComponentRo) : Disposable {
 	init {
 		target.rollOver(isCapture = true).add(::targetRollOverHandler)
 		target.rollOut(isCapture = true).add(::targetRollOutHandler)
+		target.mouseDown(isCapture = true).add(::resetShowCountdown.as1)
+		target.touchStart(isCapture = true).add(::resetShowCountdown.as1)
 	}
 
 	private fun targetRollOverHandler(event: MouseInteractionRo) {
@@ -82,6 +87,10 @@ class TooltipAttachment(val target: UiComponentRo) : Disposable {
 		isOver = false
 	}
 
+	private fun resetShowCountdown() {
+		showCountdown = showDelay
+	}
+
 	private var _activeTip: Tooltip<*>? = null
 	private var activeTip: Tooltip<*>?
 		get() = _activeTip
@@ -107,13 +116,16 @@ class TooltipAttachment(val target: UiComponentRo) : Disposable {
 	override fun dispose() {
 		target.rollOver(isCapture = true).remove(::targetRollOverHandler)
 		target.rollOut(isCapture = true).remove(::targetRollOutHandler)
+		target.mouseDown(isCapture = true).remove(::resetShowCountdown.as1)
+		target.touchStart(isCapture = true).remove(::resetShowCountdown.as1)
+
 		activeTip = null
 		timerHandle?.dispose()
 		timerHandle = null
 	}
 
 	companion object {
-		var showDelay = 0.7f
+		var showDelay = 1f
 		var hideDelay = 0.5f
 		var fadeInDuration = 0.2f
 		var fadeOutDuration = 0.3f
