@@ -11,17 +11,37 @@ import com.acornui.core.input.interaction.undo
 import com.acornui.core.time.delayedCallback
 import com.acornui.function.as2
 import com.acornui.recycle.Clearable
+import com.acornui.signal.Signal0
 
 class DataBindingHistory<T>(
 		private val host: UiComponentRo,
 		private val dataBinding: DataBinding<T>
 ) : Clearable, Disposable {
 
+	private val _changed = Signal0()
+
+	/**
+	 * Dispatched when either the [cursor] or the [history] has changed.
+	 * Unlike component changed signals, this will be dispatched on programmatic changes as well,
+	 * not just user interactions.
+	 */
+	val changed = _changed.asRo()
+
 	var maxHistory = 200
+
 	private val _history = ArrayList<T>()
+
+	/**
+	 * The state history for the target databinding.
+	 */
 	val history: List<T> = _history
 
-	private var cursor: Int = -1
+	/**
+	 * The current history index.
+	 */
+	var cursor: Int = -1
+		private set
+
 	private var isDispatching = false
 
 	private val delayedPush = host.delayedCallback(1f, ::pushState)
@@ -52,7 +72,14 @@ class DataBindingHistory<T>(
 		redo()
 	}
 
-	private fun redo() {
+	val hasRedo: Boolean
+		get() = cursor < _history.lastIndex
+
+	/**
+	 * If [hasRedo] is true, the cursor will be decremented and the [dataBinding] state will be
+	 * set to the next historic value.
+	 */
+	fun redo() {
 		if (isDispatching)
 			throw IllegalStateException("Cannot redo while dispatching.")
 		if (cursor >= _history.lastIndex) return
@@ -60,9 +87,17 @@ class DataBindingHistory<T>(
 		val nextState = _history[++cursor]
 		dataBinding.value = nextState
 		isDispatching = false
+		_changed.dispatch()
 	}
 
-	private fun undo() {
+	val hasUndo: Boolean
+		get() = cursor > 0
+
+	/**
+	 * If [hasUndo] is true, the cursor will be decremented and the [dataBinding] state will be
+	 * set to the previous historic value.
+	 */
+	fun undo() {
 		if (isDispatching)
 			throw IllegalStateException("Cannot undo while dispatching.")
 		if (cursor == 0) return
@@ -70,6 +105,7 @@ class DataBindingHistory<T>(
 		val previousState = _history[--cursor]
 		dataBinding.value = previousState
 		isDispatching = false
+		_changed.dispatch()
 	}
 
 	private fun pushState() {
@@ -80,6 +116,7 @@ class DataBindingHistory<T>(
 		}
 		_history.add(dataBinding.value)
 		if (_history.size > maxHistory) _history.poll() else cursor++
+		_changed.dispatch()
 	}
 
 	override fun clear() {
@@ -95,6 +132,7 @@ class DataBindingHistory<T>(
 		host.redo().remove(this::redoHandler)
 		dataBinding.changed.remove(::dataBindingChangedHandler.as2)
 		delayedPush.dispose()
+		_changed.dispose()
 	}
 }
 
