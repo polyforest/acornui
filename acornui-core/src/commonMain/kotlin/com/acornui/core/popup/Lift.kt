@@ -22,8 +22,6 @@ import com.acornui.core.di.Owned
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 
-// TODO: This can be reworked with the new render context.
-
 /**
  * The Lift component will place its elements as children in the pop up layer, automatically transforming the children
  * to match transformation as if they were part of this component's display hierarchy.
@@ -35,7 +33,7 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 	/**
 	 * If true, the contents position will be constrained to not extend beyond the stage.
 	 */
-	var constrainToStage: Boolean = true
+	var constrainToStage: Boolean by validationProp(true, ValidationFlags.RENDER_CONTEXT)
 
 	/**
 	 * When the pop-up is closed, this will be invoked.
@@ -74,7 +72,8 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 					invalidate(ValidationFlags.SIZE_CONSTRAINTS)
 				}
 			}
-			if (constrainToStage) invalidate(ValidationFlags.RENDER_CONTEXT)
+			if (constrainToStage)
+				if (constrainToStage) invalidate(ValidationFlags.RENDER_CONTEXT)
 		}
 	}
 
