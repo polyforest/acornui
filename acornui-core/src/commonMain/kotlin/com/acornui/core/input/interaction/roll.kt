@@ -38,16 +38,22 @@ private class MouseOverChanged(
 	val over = StoppableSignalImpl<MouseInteractionRo>()
 	val out = StoppableSignalImpl<MouseInteractionRo>()
 
+	private var isOver = false
+
 	private val mouseOverHandler = {
 		event: MouseInteractionRo ->
-		if (filter(event))
+		if (!isOver) {
+			isOver = true
 			over.dispatch(event)
+		}
 	}
 
 	private val mouseOutHandler = {
 		event: MouseInteractionRo ->
-		if (filter(event))
+		if (isOver && event.relatedTarget?.isDescendantOf(interactiveElement) != true) {
+			isOver = false
 			out.dispatch(event)
+		}
 	}
 
 	private fun filter(event: MouseInteractionRo): Boolean {
