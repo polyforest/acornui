@@ -24,25 +24,26 @@ import com.acornui.io.byteBuffer
 class RgbTexture(
 		gl: Gl20,
 		glState: GlState,
-		private val _rgbData: RgbData
+		override val rgbData: RgbData
 ) : GlTextureBase(gl, glState) {
 
+	init {
+		pixelFormat = if (rgbData.hasAlpha) TexturePixelFormat.RGBA else TexturePixelFormat.RGB
+	}
+
 	override val width: Int
-		get() = _rgbData.width
+		get() = rgbData.width
 
 	override val height: Int
-		get() = _rgbData.height
-
-	override val rgbData: RgbData
-		get() = _rgbData
-
+		get() = rgbData.height
+	
 	override fun uploadTexture() {
-		val buffer = byteBuffer(_rgbData.bytes.size)
-		for (i in 0.._rgbData.bytes.lastIndex) {
-			buffer.put(_rgbData.bytes[i])
+		val buffer = byteBuffer(rgbData.bytes.size)
+		for (i in 0..rgbData.bytes.lastIndex) {
+			buffer.put(rgbData.bytes[i])
 		}
 		buffer.flip()
-		gl.texImage2Db(target.value, 0, pixelFormat.value, _rgbData.width, _rgbData.height, 0, pixelFormat.value, pixelType.value, buffer)
+		gl.texImage2Db(target.value, 0, pixelFormat.value, rgbData.width, rgbData.height, 0, pixelFormat.value, pixelType.value, buffer)
 	}
 }
 
