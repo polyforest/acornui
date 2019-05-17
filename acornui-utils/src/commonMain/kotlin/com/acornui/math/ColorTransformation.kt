@@ -128,8 +128,10 @@ class ColorTransformation : ColorTransformationRo {
 
 		val IDENTITY: ColorTransformationRo = ColorTransformation()
 	}
+}
 
-
+fun ColorTransformation.offset(value: ColorRo): ColorTransformation {
+	return offset(value.r, value.g, value.b, value.a)
 }
 
 /**
