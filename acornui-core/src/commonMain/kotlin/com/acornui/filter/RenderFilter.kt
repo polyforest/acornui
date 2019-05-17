@@ -69,11 +69,10 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 	protected open val shouldSkipFilter: Boolean
 		get() = !enabled
 
-	private var _contents: Renderable? = null
-	override var contents: Renderable?
-		get() = _contents
+	override var contents: Renderable? = null
 		set(value) {
-			_contents = value
+			if (value === this) throw Exception("Cannot set contents to self.")
+			field = value
 		}
 
 	override fun invalidateBitmapCache() {
@@ -135,11 +134,16 @@ class RenderFilterList(
 	private var _tail: Renderable? = tail
 
 	override fun removeAt(index: Int): RenderFilter {
-		val element = _list.removeAt(index)
-		element.contents = null
-		_list.getOrNull(index - 1)?.contents = _list.getOrNull(index) ?: tail
-		element.changed.remove(::changedHandler.as1)
+		val element = _removeAt(index)
 		_changed.dispatch(this)
+		return element
+	}
+
+	private fun _removeAt(index: Int): RenderFilter {
+		val element = _list.removeAt(index)
+		_list.getOrNull(index - 1)?.contents = _list.getOrNull(index) ?: tail
+		element.contents = null
+		element.changed.remove(::changedHandler.as1)
 		return element
 	}
 
@@ -158,9 +162,13 @@ class RenderFilterList(
 		}
 
 	override fun add(index: Int, element: RenderFilter) {
-		_list.add(index, element)
-		element.contents = _list.getOrNull(index + 1) ?: tail
-		_list.getOrNull(index - 1)?.contents = element
+		val oldIndex = indexOf(element)
+		if (oldIndex != -1)
+			_removeAt(oldIndex)
+		val newIndex = if (oldIndex == -1 || oldIndex >= index) index else index - 1
+		_list.add(newIndex, element)
+		element.contents = _list.getOrNull(newIndex + 1) ?: tail
+		_list.getOrNull(newIndex - 1)?.contents = element
 		element.changed.add(::changedHandler.as1)
 		_changed.dispatch(this)
 	}

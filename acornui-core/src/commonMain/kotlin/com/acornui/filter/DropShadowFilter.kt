@@ -29,7 +29,7 @@ import com.acornui.reflect.observableAndCall
 
 open class DropShadowFilter(owner: Owned) : RenderFilterBase(owner) {
 
-	val colorTransformation: ColorTransformationRo by bindable(defaultColorTransformation)
+	var colorTransformation: ColorTransformationRo by bindable(defaultColorTransformation)
 
 	private val blurFilter = BlurFilter(this)
 
@@ -72,9 +72,10 @@ open class DropShadowFilter(owner: Owned) : RenderFilterBase(owner) {
 	override val shouldSkipFilter: Boolean
 		get() = !enabled
 
-	override var contents: Renderable? = null
+	override var contents: Renderable?
+		get() = super.contents
 		set(value) {
-			field = value
+			super.contents = value
 			blurFilter.contents = value
 		}
 
@@ -98,6 +99,18 @@ open class DropShadowFilter(owner: Owned) : RenderFilterBase(owner) {
 
 fun Owned.dropShadowFilter(init: ComponentInit<DropShadowFilter> = {}): DropShadowFilter {
 	val b = DropShadowFilter(this)
+	b.init()
+	return b
+}
+
+fun Owned.glowFilter(color: ColorRo, init: ComponentInit<DropShadowFilter> = {}): DropShadowFilter {
+	val b = DropShadowFilter(this)
+	b.offsetX = 0f
+	b.offsetY = 0f
+	b.colorTransformation = colorTransformation {
+		tint(0f, 0f, 0f, color.a)
+		offset(color.r, color.g, color.b)
+	}
 	b.init()
 	return b
 }

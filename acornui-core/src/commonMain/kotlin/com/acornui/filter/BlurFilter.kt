@@ -59,9 +59,10 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 
 	private val framebufferUtil = FramebufferFilter(this)
 
-	override var contents: Renderable? = null
+	override var contents: Renderable?
+		get() = super.contents
 		set(value) {
-			field = value
+			super.contents = value
 			framebufferUtil.contents = value
 		}
 
