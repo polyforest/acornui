@@ -185,3 +185,17 @@ fun Float.radToDeg(): Float {
 fun Float.degToRad(): Float {
 	return this * TO_RAD
 }
+
+/**
+ * If this Float is zero, returns [Float.MIN_VALUE]. Otherwise, returns this Float.
+ */
+fun Float.nonZero(): Float {
+	return if (this == 0f) Float.MIN_VALUE else this
+}
+
+/**
+ * If this Double is zero, returns [Double.MIN_VALUE]. Otherwise, returns this Double.
+ */
+fun Double.nonZero(): Double {
+	return if (this == 0.0) Double.MIN_VALUE else this
+}

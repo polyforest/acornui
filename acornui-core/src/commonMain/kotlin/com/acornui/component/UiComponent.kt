@@ -1013,7 +1013,7 @@ open class UiComponentImpl(
 	override var scaleX: Float
 		get() = _scale.x
 		set(value) {
-			val v = maxOf(0.000001f, value)
+			val v = value.nonZero()
 			if (_scale.x == v) return
 			_scale.x = v
 			invalidate(ValidationFlags.TRANSFORM)
@@ -1022,7 +1022,7 @@ open class UiComponentImpl(
 	override var scaleY: Float
 		get() = _scale.y
 		set(value) {
-			val v = maxOf(0.000001f, value)
+			val v = value.nonZero()
 			if (_scale.y == v) return
 			_scale.y = v
 			invalidate(ValidationFlags.TRANSFORM)
@@ -1031,16 +1031,16 @@ open class UiComponentImpl(
 	override var scaleZ: Float
 		get() = _scale.z
 		set(value) {
-			val v = maxOf(0.000001f, value)
+			val v = value.nonZero()
 			if (_scale.z == v) return
 			_scale.z = v
 			invalidate(ValidationFlags.TRANSFORM)
 		}
 
 	override fun setScaling(x: Float, y: Float, z: Float) {
-		val x2 = maxOf(0.000001f, x)
-		val y2 = maxOf(0.000001f, y)
-		val z2 = maxOf(0.000001f, z)
+		val x2 = x.nonZero()
+		val y2 = y.nonZero()
+		val z2 = z.nonZero()
 		if (_scale.x == x2 && _scale.y == y2 && _scale.z == z2) return
 		_scale.set(x2, y2, z2)
 		invalidate(ValidationFlags.TRANSFORM)

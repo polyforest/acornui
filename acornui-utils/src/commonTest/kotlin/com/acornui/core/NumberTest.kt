@@ -49,4 +49,13 @@ class NumberTest {
 		assertEquals("0034.123", 034.123.zeroPadding(4, 1))
 	}
 
+	@Test fun nonZeroTest() {
+		assertEquals(3f, 3f.nonZero())
+		assertEquals(-3f, (-3f).nonZero())
+		assertEquals(Float.MIN_VALUE, 0f.nonZero())
+		assertEquals(Float.MIN_VALUE, (-0f).nonZero())
+		assertEquals(-Float.MIN_VALUE, (-Float.MIN_VALUE).nonZero())
+		assertEquals(Float.MIN_VALUE, (Float.MIN_VALUE).nonZero())
+	}
+
 }
