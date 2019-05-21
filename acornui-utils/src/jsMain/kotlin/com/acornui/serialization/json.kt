@@ -237,7 +237,7 @@ class JsonWriter(
 	}
 
 	private fun escape(value: String): String {
-		return value.replace2("\\", "\\\\").replace2("\r", "\\r").replace2("\n", "\\n").replace2("\t", "\\t").replace2("\"", "\\\"").replace2("'", "\\'")
+		return value.replace2("\\", "\\\\").replace2("\r", "\\r").replace2("\n", "\\n").replace2("\t", "\\t").replace2("\"", "\\\"")
 	}
 }
 

@@ -308,8 +308,10 @@ class JsonTest {
 	@Test fun escaped2() {
 		val data = PersonData("""B"\o'b'""", 1956, true)
 		val jsonStr = json.write(data, PersonDataSerializer)
+
+		//language=JSON
 		assertEquals("""{
-	"name": "B\"\\o\'b\'",
+	"name": "B\"\\o'b'",
 	"birthDate": 1956,
 	"married": true,
 	"bools": [ true, true, false, false, true ],
