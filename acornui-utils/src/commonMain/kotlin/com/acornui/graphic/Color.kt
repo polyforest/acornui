@@ -21,6 +21,7 @@ package com.acornui.graphic
 import com.acornui.recycle.Clearable
 import com.acornui.core.closeTo
 import com.acornui.graphic.Color.Companion.fromStr
+import com.acornui.math.MathUtils.clamp
 import com.acornui.serialization.Reader
 import com.acornui.serialization.Writer
 import com.acornui.string.toRadix
@@ -53,14 +54,14 @@ interface ColorRo {
 	}
 
 	/**
-	 * RRGGBB
+	 * rrggbb
 	 */
 	fun toRgbString(): String {
 		return r.toOctet() + g.toOctet() + b.toOctet()
 	}
 
 	/**
-	 * RRGGBBAA
+	 * rrggbbaa
 	 */
 	fun toRgbaString(): String {
 		return r.toOctet() + g.toOctet() + b.toOctet() + a.toOctet()
@@ -777,7 +778,7 @@ fun Reader.color(): Color? {
 fun Reader.color(name: String): Color? = get(name)?.color()
 
 private fun Float.toOctet(): String {
-	return (this * 255).toInt().toRadix(16).padStart(2, '0')
+	return clamp(this * 255, 0f, 255f).toInt().toRadix(16).padStart(2, '0')
 }
 
 val colorValidationRegex = Regex("""^(#|0x)?([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})?${'$'}""")

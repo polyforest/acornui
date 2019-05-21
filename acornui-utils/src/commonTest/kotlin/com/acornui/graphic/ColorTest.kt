@@ -64,6 +64,28 @@ class ColorTest {
 		assertEquals(Color(0x334455FF), "#334455".toColorOrNull())
 		assertEquals(Color(0x33445533), "#33445533".toColorOrNull())
 	}
+
+	@Test fun toRgbString() {
+		assertEquals("ffffffff", Color.WHITE.toRgbaString())
+		assertEquals("ffffff", Color.WHITE.toRgbString())
+		assertEquals("0000ffff", Color.BLUE.toRgbaString())
+		assertEquals("0000ff", Color.BLUE.toRgbString())
+		assertEquals("ff0000ff", Color.RED.toRgbaString())
+		assertEquals("ff0000", Color.RED.toRgbString())
+		assertEquals("00ff00ff", Color.GREEN.toRgbaString())
+		assertEquals("00ff00", Color.GREEN.toRgbString())
+		assertEquals("12345678", Color(0x12345678).toRgbaString())
+		assertEquals("123456", Color(0x12345678).toRgbString())
+	}
+
+	/**
+	 * Color values support > 1f and < 0f, but the hex value should be clamped.
+	 */
+	@Test fun toRgbStringOutOfRange() {
+		assertEquals("ffffffff", Color(2f, 3f, 4f, 5f).toRgbaString())
+		assertEquals("ffffff", Color(2f, 3f, 4f, 5f).toRgbString())
+		assertEquals("00ff00ff", Color(0f, 3f, 0f, 5f).toRgbaString())
+	}
 }
 
 class HSLTest {
