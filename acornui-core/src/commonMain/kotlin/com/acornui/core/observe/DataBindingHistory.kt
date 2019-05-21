@@ -1,7 +1,9 @@
 package com.acornui.core.observe
 
+import com.acornui.collection.Filter
 import com.acornui.collection.poll
 import com.acornui.collection.pop
+import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponentRo
 import com.acornui.core.Disposable
 import com.acornui.core.di.own
@@ -44,7 +46,12 @@ class DataBindingHistory<T>(
 
 	private var isDispatching = false
 
-	private val delayedPush = host.delayedCallback(1f, ::pushState)
+	private val delayedPush = host.delayedCallback(0.7f, ::pushState)
+
+	/**
+	 * Only values that pass this filter will be added to the history.
+	 */
+	var filter: Filter<T> = { true }
 
 	init {
 		host.own(this)
@@ -109,6 +116,7 @@ class DataBindingHistory<T>(
 	}
 
 	private fun pushState() {
+		if (!filter(dataBinding.value)) return
 		if (cursor != history.lastIndex) {
 			// If we have undone states and are now pushing a new state, then remove the undone states from the history.
 			while (_history.lastIndex > cursor)
@@ -136,6 +144,8 @@ class DataBindingHistory<T>(
 	}
 }
 
-fun <T> UiComponentRo.applyDataBindingUndoRedo(dataBinding: DataBinding<T>): DataBindingHistory<T> {
-	return DataBindingHistory(this, dataBinding)
+fun <T> UiComponentRo.applyDataBindingUndoRedo(dataBinding: DataBinding<T>, init: ComponentInit<DataBindingHistory<T>> = {}): DataBindingHistory<T> {
+	val h = DataBindingHistory(this, dataBinding)
+	h.init()
+	return h
 }

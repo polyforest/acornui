@@ -21,7 +21,7 @@ import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.signal.*
 
-interface DataBindingRo<T> {
+interface DataBindingRo<out T> {
 
 	/**
 	 * Dispatched when the data binding [value] has changed.
@@ -36,12 +36,19 @@ interface DataBindingRo<T> {
 	 *
 	 * If you need to know the old value as well, use the [changed] signal.
 	 */
-	fun bind(callback: (T) -> Unit): Disposable
+	fun bind(callback: (T) -> Unit): Disposable {
+		val handler: DataChangeHandler<T> = { _, new: T ->
+			callback(new)
+		}
+		changed.add(handler)
+		callback(value)
 
-	/**
-	 * Removes the callback handler that was added via [bind].
-	 */
-	fun remove(callback: (T) -> Unit)
+		return object : Disposable {
+			override fun dispose() {
+				changed.remove(handler)
+			}
+		}
+	}
 }
 
 interface DataBinding<T> : DataBindingRo<T>, Disposable {
@@ -58,14 +65,14 @@ interface DataBinding<T> : DataBindingRo<T>, Disposable {
 	 * @return Returns false if the data has not changed or if the [changed] signal is currently dispatching.
 	 */
 	fun change(callback: (T) -> T): Boolean
+
+	fun asRo(): DataBindingRo<T> = this
 }
 
 class DataBindingImpl<T>(initialValue: T) : DataBinding<T> {
 
 	private val _changed = Signal2<T, T>()
 	override val changed = _changed.asRo()
-
-	private val _wrapped: MutableMap<(T) -> Unit, (T, T) -> Unit> = HashMap()
 
 	private var _value: T = initialValue
 
@@ -81,8 +88,8 @@ class DataBindingImpl<T>(initialValue: T) : DataBinding<T> {
 		}
 
 	override fun change(callback: (T) -> T): Boolean {
-		val old = _value
 		if (_changed.isDispatching) return false
+		val old = _value
 		val newValue = callback(value)
 		if (old == newValue) return false
 		_value = newValue
@@ -90,35 +97,9 @@ class DataBindingImpl<T>(initialValue: T) : DataBinding<T> {
 		return true
 	}
 
-	override fun bind(callback: (T) -> Unit): Disposable {
-		val handler: DataChangeHandler<T> = { _, new: T ->
-			callback(new)
-		}
-		_wrapped[callback] = handler
-		_changed.add(handler)
-		callback(_value)
-
-		return object : Disposable {
-			override fun dispose() {
-				remove(callback)
-			}
-		}
-	}
-
-	override fun remove(callback: (T) -> Unit) {
-		val handler = _wrapped[callback]
-		if (handler != null) {
-			_wrapped.remove(callback)
-			_changed.remove(handler)
-		}
-	}
-
 	override fun dispose() {
 		_changed.dispose()
-		_wrapped.clear()
 	}
-
-	fun asRo(): DataBindingRo<T> = this
 }
 
 infix fun <S, T> DataBindingRo<S>.or(other: DataBindingRo<T>): Bindable {
