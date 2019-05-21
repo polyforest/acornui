@@ -17,13 +17,12 @@
 package com.acornui.skins
 
 // Commented out due to https://github.com/polyforest/acornui/issues/122
-//import com.acornui.test.SerializationCodeHelper
-//import kotlin.test.Test
-//
-//class ThemeTest {
-//
-//	@Test
-//	fun blah() {
+import kotlin.test.Test
+
+class ThemeTest {
+
+	@Test
+	fun blah() {
 //		SerializationCodeHelper.print(Theme::class)
-//	}
-//}
+	}
+}
