@@ -114,7 +114,8 @@ class JsonNode(private val source: String,
 					marker++
 					val identifierStartIndex = marker
 					while (!(source[marker] == '"' && source[marker - 1] != '\\')) {
-						if (marker >= toIndex) throw Exception("Expected '\"', but reached end of stream")
+						if (marker >= toIndex)
+							throw Exception("Expected '\"', but reached end of stream")
 						marker++
 					}
 					identifier = SubString(source, identifierStartIndex, marker++)
@@ -122,7 +123,8 @@ class JsonNode(private val source: String,
 
 				consumeWhitespace()
 				if (isObject) {
-					if (source[marker++] != ':') throw Exception("Expected ':', but instead found: ${source.subSequence(marker, marker + 20)}")
+					if (source[marker++] != ':')
+						throw Exception("Expected ':', but instead found: ${source.subSequence(marker, marker + 20)}")
 				}
 
 				val valueStartIndex = marker
@@ -156,15 +158,18 @@ class JsonNode(private val source: String,
 					}
 					marker++
 				}
-				if (!tagStack.isEmpty()) throw Exception("Expected ${tagStack.peek()}, but reached end of stream")
+				if (tagStack.isNotEmpty())
+					throw Exception("Expected ${tagStack.peek()}, but reached end of stream")
 				if (isObject) {
 					properties!![identifier!!.toString()] = JsonNode(source, valueStartIndex, marker)
 				} else {
 					elements!!.add(JsonNode(source, valueStartIndex, marker))
 				}
 			} else {
-				if (isObject) throw Exception("Expected \", but instead found: ${source.subSequence(marker, marker + 20)}")
-				else throw Exception("Unexpected character ${source[marker]}.  ${source.subSequence(marker, marker + 20)}")
+				if (isObject)
+					throw Exception("Expected \", but instead found: ${source.subSequence(marker, marker + 20)}")
+				else
+					throw Exception("Unexpected character ${source[marker]}.  ${source.subSequence(marker, marker + 20)}")
 			}
 		}
 	}
@@ -358,7 +363,7 @@ class JsonWriter(
 	}
 
 	private fun escape(value: String): String {
-		return value.replace2("\\", "\\\\").replace2("\r", "\\r").replace2("\n", "\\n").replace2("\t", "\\t").replace2("\"", "\\\"")
+		return value.replace2("\\", "\\\\").replace2("\r", "\\r").replace2("\n", "\\n").replace2("\t", "\\t").replace2("\"", "\\\"").replace2("'", "\\'")
 	}
 }
 
