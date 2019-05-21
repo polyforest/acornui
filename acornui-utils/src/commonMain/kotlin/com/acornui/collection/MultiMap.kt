@@ -16,22 +16,6 @@
 
 package com.acornui.collection
 
-class HashMapWithDefault<K, V>(private val wrapped: MutableMap<K, V>, private val defaultProvider: (K) -> V) : MutableMap<K, V> by wrapped, MutableMapWithDefault<K, V> {
-
-	override fun get(key: K): V {
-		if (!wrapped.containsKey(key)) {
-			put(key, defaultProvider(key))
-		}
-		return wrapped[key]!!
-	}
-}
-
-interface MapWithDefault<K, out V> : Map<K, V> {
-	override fun get(key: K): V
-}
-
-interface MutableMapWithDefault<K, V> : MutableMap<K, V>, MapWithDefault<K, V>
-
 typealias MultiMap2<K1, K2, V> = MapWithDefault<K1, Map<K2, V>>
 typealias MutableMultiMap2<K1, K2, V> = MutableMapWithDefault<K1, MutableMap<K2, V>>
 

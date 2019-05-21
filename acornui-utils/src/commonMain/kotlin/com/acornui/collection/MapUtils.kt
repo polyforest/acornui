@@ -65,6 +65,20 @@ fun <K, V> Map<K, V?>.toNotNull(): MutableMap<K, V> {
 }
 
 
-// TODO: expects/actual
-
 expect fun <V> stringMapOf(vararg pairs: Pair<String, V>): MutableMap<String, V>
+
+class HashMapWithDefault<K, V>(private val wrapped: MutableMap<K, V> = HashMap(), private val defaultProvider: (K) -> V) : MutableMap<K, V> by wrapped, MutableMapWithDefault<K, V> {
+
+	override fun get(key: K): V {
+		if (!wrapped.containsKey(key)) {
+			put(key, defaultProvider(key))
+		}
+		return wrapped[key]!!
+	}
+}
+
+interface MapWithDefault<K, out V> : Map<K, V> {
+	override fun get(key: K): V
+}
+
+interface MutableMapWithDefault<K, V> : MutableMap<K, V>, MapWithDefault<K, V>
