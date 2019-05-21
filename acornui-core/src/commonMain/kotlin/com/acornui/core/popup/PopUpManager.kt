@@ -38,6 +38,7 @@ import com.acornui.core.tween.tweenAlpha
 import com.acornui.graphic.Color
 import com.acornui.math.Easing
 import com.acornui.signal.Cancel
+import com.acornui.signal.addOnce
 
 interface PopUpManager : Clearable {
 

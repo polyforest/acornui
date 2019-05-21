@@ -49,10 +49,6 @@ interface Signal<in T : Any> : Bindable {
 	 */
 	fun add(handler: T, isOnce: Boolean)
 
-	fun addOnce(handler: T) {
-		add(handler, true)
-	}
-
 	/**
 	 * Removes the given handler from the list.
 	 *
@@ -65,6 +61,10 @@ interface Signal<in T : Any> : Bindable {
 	 */
 	fun contains(handler: T): Boolean
 
+}
+
+fun <T : Any> Signal<T>.addOnce(handler: T) {
+	add(handler, true)
 }
 
 
