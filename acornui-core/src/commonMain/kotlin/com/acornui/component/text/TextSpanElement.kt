@@ -141,7 +141,9 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 	override fun validateStyles() {
 		styles.validateStyles()
 		_charElementStyle.set(charStyle)
-		_charElementStyle.font?.then { textParent?.invalidate(ValidationFlags.LAYOUT) }
+		_charElementStyle.font?.then {
+			textParent?.invalidate(ValidationFlags.LAYOUT)
+		}
 	}
 
 	private val font: BitmapFont?

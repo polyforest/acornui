@@ -201,6 +201,7 @@ class TextInputImpl(owner: Owned) : ContainerImpl(owner), TextInput {
 		val h = margin.reduceHeight(pad.reduceHeight(explicitHeight))
 
 		val w = if (explicitWidth == null && defaultWidthFromText != null) {
+			editableText.validate(ValidationFlags.STYLES)
 			val font = charStyle.font?.resultOrNull()
 			font?.data?.measureLineWidth(defaultWidthFromText!!)?.toFloat() ?: 0f
 		} else {
@@ -340,6 +341,12 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 	override val contentsHeight: Float
 		get() = scroller.contentsHeight
 
+	/**
+	 * If the explicit height is not set, the height will be set to what it would be if there were [rows] number of
+	 * lines. Only the root [TextField.element] node's font will be considered.
+	 */
+	var rows by validationProp<Float?>(3f, ValidationFlags.LAYOUT)
+
 	private val selectionManager = inject(SelectionManager)
 	private val rect = Rectangle()
 
@@ -429,10 +436,23 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 		}
 	}
 
+	override fun updateStyles() {
+		super.updateStyles()
+		// This class's styles are delegated from the editableText styles.
+		editableText.validate(ValidationFlags.STYLES)
+	}
+
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val margin = textInputStyle.margin
 		val w = margin.reduceWidth2(explicitWidth ?: textInputStyle.defaultWidth)
-		val h = margin.reduceHeight(explicitHeight)
+		val rows = rows
+		val h = if (explicitHeight == null && rows != null) {
+			val font = charStyle.font
+			val fontData = font?.resultOrNull()?.data
+			flowStyle.padding.expandHeight((fontData?.lineHeight?.toFloat() ?: 0f) * rows)
+		} else {
+			margin.reduceHeight(explicitHeight)
+		}
 		scroller.setSize(w, h)
 		scroller.setPosition(margin.left, margin.top)
 		editableText.pageHeight = h ?: 400f
