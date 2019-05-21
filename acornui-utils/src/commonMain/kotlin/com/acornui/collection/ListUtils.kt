@@ -16,6 +16,7 @@
 
 package com.acornui.collection
 
+import com.acornui.math.MathUtils.clamp
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ObjectPool
 
@@ -507,7 +508,7 @@ inline fun <E> List<E>.sumByFloat2(startIndex: Int = 0, lastIndex: Int = this.la
  * Structural changes in the base list make the behavior of the view undefined.
  * @see List.subList
  */
-fun <E> List<E>.subList(size: Int): List<E> = subList(0, size)
+fun <E> List<E>.subList(size: Int): List<E> = subList(0, clamp(size, 0, this.size))
 
 /**
  * Modifies this list to become the new size.
@@ -630,4 +631,14 @@ inline fun <E> MutableList<E>.addOrReorder(index: Int, element: E, onReorder: (o
 		add(newIndex, element)
 		onReorder(oldIndex, newIndex)
 	}
+}
+
+/**
+ * Calls [List.subList], clamping [startIndex] (inclusive) and [toIndex] (exclusive) to the range of the list.
+ */
+fun <E> List<E>.subListSafe(startIndex: Int, toIndex: Int): List<E> {
+	val sI = clamp(startIndex, 0, size)
+	val tI = clamp(toIndex, 0, size)
+	if (tI <= sI) return emptyList()
+	return subList(sI, tI)
 }

@@ -220,4 +220,13 @@ class ListUtilsKtTest {
 		assertListEquals(listOf(0, 1, 2, 3, 4, 5, 6), list)
 	}
 
+	@Test fun subListSafe() {
+		val list = listOf(1, 2, 3, 4)
+		assertListEquals(listOf(2, 3), list.subListSafe(1, 3))
+		assertListEquals(listOf(2, 3, 4), list.subListSafe(1, 4))
+		assertListEquals(listOf(2, 3, 4), list.subListSafe(1, 5))
+		assertListEquals(listOf(1, 2, 3, 4), list.subListSafe(0, 5))
+		assertListEquals(listOf(1, 2, 3, 4), list.subListSafe(-1, 5))
+	}
+
 }
