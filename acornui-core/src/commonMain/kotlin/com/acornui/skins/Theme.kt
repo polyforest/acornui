@@ -104,82 +104,85 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 
 	override fun read(reader: Reader): Theme {
 		return Theme(
-				atlasPath = reader.string("atlasPath")!!,
 				bgColor = reader.color("bgColor")!!,
 				borderRadius = reader.float("borderRadius")!!,
+				brighten = reader.color("brighten")!!,
 				buttonPad = reader.obj("buttonPad", PadSerializer)!!,
 				controlBarBgColor = reader.color("controlBarBgColor")!!,
 				errorColor = reader.color("errorColor")!!,
 				evenRowBgColor = reader.color("evenRowBgColor")!!,
 				fill = reader.color("fill")!!,
-				fillDown = reader.color("fillDown")!!,
 				fillDisabled = reader.color("fillDisabled")!!,
+				fillDown = reader.color("fillDown")!!,
 				fillOver = reader.color("fillOver")!!,
 				fillShine = reader.color("fillShine")!!,
+				fillToggled = reader.color("fillToggled")!!,
+				fillToggledDown = reader.color("fillToggledDown")!!,
+				fillToggledOver = reader.color("fillToggledOver")!!,
 				fillToggledShine = reader.color("fillToggledShine")!!,
+				focusHighlightColor = reader.color("focusHighlightColor")!!,
 				formLabelColor = reader.color("formLabelColor")!!,
 				headingColor = reader.color("headingColor")!!,
 				highlightedEvenRowBgColor = reader.color("highlightedEvenRowBgColor")!!,
 				highlightedOddRowBgColor = reader.color("highlightedOddRowBgColor")!!,
 				iconButtonGap = reader.float("iconButtonGap")!!,
-				iconColor = reader.color("iconColor") ?: Color.DARK_GRAY,
+				iconColor = reader.color("iconColor")!!,
 				infoColor = reader.color("infoColor")!!,
 				inputFill = reader.color("inputFill")!!,
 				oddRowBgColor = reader.color("oddRowBgColor")!!,
 				panelBgColor = reader.color("panelBgColor")!!,
 				stroke = reader.color("stroke")!!,
 				strokeDisabled = reader.color("strokeDisabled")!!,
+				strokeDown = reader.color("strokeDown")!!,
 				strokeOver = reader.color("strokeOver")!!,
 				strokeThickness = reader.float("strokeThickness")!!,
 				strokeToggled = reader.color("strokeToggled")!!,
-				strokeToggledOver = reader.color("strokeToggledOver")!!,
 				strokeToggledDown = reader.color("strokeToggledDown")!!,
-				focusHighlightColor = reader.color("focusHighlightColor")!!,
+				strokeToggledOver = reader.color("strokeToggledOver")!!,
 				textColor = reader.color("textColor")!!,
 				textDisabledColor = reader.color("textDisabledColor")!!,
 				toggledEvenRowBgColor = reader.color("toggledEvenRowBgColor")!!,
 				toggledOddRowBgColor = reader.color("toggledOddRowBgColor")!!,
 				warningColor = reader.color("warningColor")!!
-
 		)
 	}
 
 	override fun Theme.write(writer: Writer) {
-		writer.string("atlasPath", atlasPath)
 		writer.color("bgColor", bgColor)
 		writer.float("borderRadius", borderRadius)
+		writer.color("brighten", brighten)
 		writer.obj("buttonPad", buttonPad, PadSerializer)
 		writer.color("controlBarBgColor", controlBarBgColor)
-		writer.color("evenRowBgColor", evenRowBgColor)
 		writer.color("errorColor", errorColor)
+		writer.color("evenRowBgColor", evenRowBgColor)
 		writer.color("fill", fill)
-		writer.color("fillOver", fillOver)
-		writer.color("fillDown", fillDown)
-		writer.color("fillToggled", fillToggled)
-		writer.color("fillToggledOver", fillToggledOver)
-		writer.color("fillToggledDown", fillToggledDown)
 		writer.color("fillDisabled", fillDisabled)
+		writer.color("fillDown", fillDown)
+		writer.color("fillOver", fillOver)
 		writer.color("fillShine", fillShine)
-		writer.color("stroke", stroke)
-		writer.color("strokeOver", strokeOver)
-		writer.color("strokeDown", strokeDown)
-		writer.color("strokeToggled", strokeToggled)
-		writer.color("strokeToggledOver", strokeToggledOver)
-		writer.color("strokeToggledDown", strokeToggledDown)
-		writer.color("strokeDisabled", strokeDisabled)
-		writer.float("strokeThickness", strokeThickness)
-
+		writer.color("fillToggled", fillToggled)
+		writer.color("fillToggledDown", fillToggledDown)
+		writer.color("fillToggledOver", fillToggledOver)
+		writer.color("fillToggledShine", fillToggledShine)
+		writer.color("focusHighlightColor", focusHighlightColor)
 		writer.color("formLabelColor", formLabelColor)
-		writer.float("iconButtonGap", iconButtonGap)
-		writer.color("iconColor", iconColor)
-		writer.color("infoColor", infoColor)
 		writer.color("headingColor", headingColor)
 		writer.color("highlightedEvenRowBgColor", highlightedEvenRowBgColor)
 		writer.color("highlightedOddRowBgColor", highlightedOddRowBgColor)
+		writer.float("iconButtonGap", iconButtonGap)
+		writer.color("iconColor", iconColor)
+		writer.color("infoColor", infoColor)
 		writer.color("inputFill", inputFill)
 		writer.color("oddRowBgColor", oddRowBgColor)
 		writer.color("panelBgColor", panelBgColor)
-		writer.color("focusHighlightColor", focusHighlightColor)
+		writer.color("stroke", stroke)
+		writer.color("strokeDisabled", strokeDisabled)
+		writer.color("strokeDown", strokeDown)
+		writer.color("strokeOver", strokeOver)
+		writer.float("strokeThickness", strokeThickness)
+		writer.color("strokeToggled", strokeToggled)
+		writer.color("strokeToggledDown", strokeToggledDown)
+		writer.color("strokeToggledOver", strokeToggledOver)
 		writer.color("textColor", textColor)
 		writer.color("textDisabledColor", textDisabledColor)
 		writer.color("toggledEvenRowBgColor", toggledEvenRowBgColor)

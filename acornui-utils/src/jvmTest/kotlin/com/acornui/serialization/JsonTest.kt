@@ -21,9 +21,9 @@ package com.acornui.serialization
  * See https://github.com/polyforest/acornui/issues/121
  */
 //import com.acornui.test.benchmark
+import com.acornui.test.assertListEquals
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import com.acornui.test.assertListEquals
 
 /**
  * @author nbilyk
@@ -166,7 +166,7 @@ class JsonTest {
 
 	@Test fun testWrite() {
 		val data = PersonData("Bob", 1956, true,
-				arrayOf(PersonData("Nicholas", 1982, true, arrayOf(
+				listOf(PersonData("Nicholas", 1982, true, listOf(
 						PersonData("Margaret", 2001, false),
 						PersonData("Dizzy", 2001, false)
 				)),
@@ -178,7 +178,7 @@ class JsonTest {
 		// language=JSON
 		val expected = """{
 	"name": "Bob",
-	"born": 1956,
+	"birthDate": 1956,
 	"married": true,
 	"bools": [ true, true, false, false, true ],
 	"ints": [ 0, 1, 2, 3, 4 ],
@@ -191,7 +191,7 @@ class JsonTest {
 	"children": [
 		{
 			"name": "Nicholas",
-			"born": 1982,
+			"birthDate": 1982,
 			"married": true,
 			"bools": [ true, true, false, false, true ],
 			"ints": [ 0, 1, 2, 3, 4 ],
@@ -204,7 +204,7 @@ class JsonTest {
 			"children": [
 				{
 					"name": "Margaret",
-					"born": 2001,
+					"birthDate": 2001,
 					"married": false,
 					"bools": [ true, true, false, false, true ],
 					"ints": [ 0, 1, 2, 3, 4 ],
@@ -219,7 +219,7 @@ class JsonTest {
 				},
 				{
 					"name": "Dizzy",
-					"born": 2001,
+					"birthDate": 2001,
 					"married": false,
 					"bools": [ true, true, false, false, true ],
 					"ints": [ 0, 1, 2, 3, 4 ],
@@ -236,7 +236,7 @@ class JsonTest {
 		},
 		{
 			"name": "Alexander",
-			"born": 1985,
+			"birthDate": 1985,
 			"married": false,
 			"bools": [ true, true, false, false, true ],
 			"ints": [ 0, 1, 2, 3, 4 ],
@@ -251,7 +251,7 @@ class JsonTest {
 		},
 		{
 			"name": "Joseph",
-			"born": 1987,
+			"birthDate": 1987,
 			"married": true,
 			"bools": [ true, true, false, false, true ],
 			"ints": [ 0, 1, 2, 3, 4 ],
@@ -266,7 +266,7 @@ class JsonTest {
 		},
 		{
 			"name": "Christian",
-			"born": 1987,
+			"birthDate": 1987,
 			"married": false,
 			"bools": [ true, true, false, false, true ],
 			"ints": [ 0, 1, 2, 3, 4 ],
@@ -289,7 +289,7 @@ class JsonTest {
 		val json = json.write(data, PersonDataSerializer)
 		assertEquals("""{
 	"name": "B\"\\ob",
-	"born": 1956,
+	"birthDate": 1956,
 	"married": true,
 	"bools": [ true, true, false, false, true ],
 	"ints": [ 0, 1, 2, 3, 4 ],
@@ -304,6 +304,28 @@ class JsonTest {
 }""", json)
 
 	}
+
+	@Test fun escaped2() {
+		val data = PersonData("""B"\o'b'""", 1956, true)
+		val jsonStr = json.write(data, PersonDataSerializer)
+		assertEquals("""{
+	"name": "B\"\\o\'b\'",
+	"birthDate": 1956,
+	"married": true,
+	"bools": [ true, true, false, false, true ],
+	"ints": [ 0, 1, 2, 3, 4 ],
+	"char": "a",
+	"double": 3.4,
+	"object": {
+		"foo": "bar",
+		"strings": [ "test1", "test2" ]
+	},
+	"children": [
+	]
+}""", jsonStr)
+
+		assertEquals(data, json.read(jsonStr, PersonDataSerializer))
+	}
 }
 
 private data class PersonData(
@@ -311,15 +333,14 @@ private data class PersonData(
 		val birthDate: Int,
 		val married: Boolean,
 
-		val children: Array<PersonData> = arrayOf()
-) {
-}
+		val children: List<PersonData> = emptyList()
+)
 
-private object PersonDataSerializer : To<PersonData> {
+private object PersonDataSerializer : To<PersonData>, From<PersonData> {
 
 	override fun PersonData.write(writer: Writer) {
 		writer.string("name", name)
-		writer.int("born", birthDate)
+		writer.int("birthDate", birthDate)
 		writer.bool("married", married)
 		writer.boolArray("bools", booleanArrayOf(true, true, false, false, true))
 		writer.intArray("ints", intArrayOf(0, 1, 2, 3, 4))
@@ -332,5 +353,14 @@ private object PersonDataSerializer : To<PersonData> {
 		}
 
 		writer.array("children", children, PersonDataSerializer)
+	}
+
+	override fun read(reader: Reader): PersonData {
+		return PersonData(
+				birthDate = reader.int("birthDate")!!,
+				children = reader.arrayList("children", PersonDataSerializer)!!,
+				married = reader.bool("married")!!,
+				name = reader.string("name")!!
+		)
 	}
 }
