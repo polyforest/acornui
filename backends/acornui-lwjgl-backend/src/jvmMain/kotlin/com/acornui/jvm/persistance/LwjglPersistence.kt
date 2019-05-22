@@ -40,12 +40,12 @@ open class LwjglPersistence(
 		println("Prefs location ${file.absolutePath}")
 		file.parentFile.mkdirs()
 
-		if (file.exists()) {
+		data = if (file.exists()) {
 			// Load the saved data.
 			val jsonData = file.readText()
-			data = json.read(jsonData, PersistenceDataSerializer)
+			json.read(jsonData, PersistenceDataSerializer)
 		} else {
-			data = PersistenceData()
+			PersistenceData()
 		}
 	}
 
