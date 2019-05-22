@@ -46,10 +46,10 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 	/**
 	 * The list of current lines. This is valid after a layout.
 	 */
-	val lines: List<LineInfoRo>
-		get() = _lines
+	val lines: List<LineInfoRo> = _lines
 
 	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, out: SizeConstraints) {
+		if (elements.isEmpty()) return
 		val padding = style.padding
 		var minWidth = 0f
 		for (i in 0..elements.lastIndex) {
@@ -67,6 +67,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 		val lines = _lines
 		lines.forEach2(action = LineInfo.Companion::free)
 		lines.clear()
+		if (elements.isEmpty()) return
 
 		var line = LineInfo.obtain()
 		line.y = padding.top
@@ -78,9 +79,6 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 			val element = elements[i]
 			val layoutData = element.layoutDataCast
 			element.setSize(layoutData?.getPreferredWidth(availableWidth), layoutData?.getPreferredHeight(availableHeight))
-			if (availableWidth != null && element.width > availableWidth) {
-				element.width(availableWidth)
-			}
 			val w = element.width
 			val h = element.height
 			val doesOverhang = layoutData?.overhangs ?: false

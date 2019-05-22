@@ -41,6 +41,7 @@ class ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 	}
 
 	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
+		if (elements.isEmpty()) return
 		val size = Vector2.obtain()
 		val padding = style.padding
 

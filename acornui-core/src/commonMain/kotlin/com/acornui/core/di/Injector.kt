@@ -46,7 +46,8 @@ interface Injector {
 
 	fun <T : Any> inject(key: DKey<T>): T {
 		@Suppress("UNCHECKED_CAST")
-		return injectOptional(key) ?: throw Exception("Dependency not found for key: $key")
+		return injectOptional(key) ?:
+		throw Exception("Dependency not found for key: $key")
 	}
 }
 

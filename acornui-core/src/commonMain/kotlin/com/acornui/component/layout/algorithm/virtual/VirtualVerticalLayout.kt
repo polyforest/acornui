@@ -20,7 +20,6 @@ import com.acornui.component.ComponentInit
 import com.acornui.component.layout.DataScroller
 import com.acornui.component.layout.HAlign
 import com.acornui.component.layout.LayoutElement
-import com.acornui.component.layout.ListItemRenderer
 import com.acornui.component.layout.algorithm.VerticalLayoutData
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType

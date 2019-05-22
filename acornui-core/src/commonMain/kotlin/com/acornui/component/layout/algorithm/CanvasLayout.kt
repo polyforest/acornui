@@ -27,6 +27,7 @@ class CanvasLayout : LayoutAlgorithm<NoopStyle, CanvasLayoutData> {
 	override val style = NoopStyle()
 
 	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, out: SizeConstraints) {
+		if (elements.isEmpty()) return
 		var minWidth = 0f
 		var minHeight = 0f
 		for (i in 0..elements.lastIndex) {
@@ -41,6 +42,7 @@ class CanvasLayout : LayoutAlgorithm<NoopStyle, CanvasLayoutData> {
 	}
 
 	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
+		if (elements.isEmpty()) return
 		val w = explicitWidth ?: 0f
 		val h = explicitHeight ?: 0f
 
