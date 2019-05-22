@@ -20,6 +20,7 @@ import com.acornui.core.Disposable
 import com.acornui.core.browser.Location
 import com.acornui.core.di.DKey
 import com.acornui.graphic.ColorRo
+import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
 
 
@@ -27,6 +28,11 @@ import com.acornui.signal.Signal
  * @author nbilyk
  */
 interface Window : Disposable {
+
+	/**
+	 * Dispatched when the window has requested to be closed.
+	 */
+	val closeRequested: Signal<(Cancel) -> Unit>
 
 	/**
 	 * Dispatched when the [isActive] value has changed.

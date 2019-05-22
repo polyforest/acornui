@@ -28,6 +28,7 @@ import com.acornui.graphic.ColorRo
 import com.acornui.js.window.JsLocation
 import com.acornui.logging.Log
 import com.acornui.signal.*
+import org.w3c.dom.BeforeUnloadEvent
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.get
 import kotlin.browser.document
@@ -40,6 +41,10 @@ class WebGlWindowImpl(
 		private val canvas: HTMLCanvasElement,
 		config: WindowConfig,
 		private val gl: Gl20) : Window {
+
+	private val cancel = Cancel()
+	private val _closeRequested = Signal1<Cancel>()
+	override val closeRequested: Signal<(Cancel) -> Unit> = _closeRequested.asRo()
 
 	private val _isActiveChanged: Signal1<Boolean> = Signal1()
 	override val isActiveChanged = _isActiveChanged.asRo()
@@ -92,6 +97,16 @@ class WebGlWindowImpl(
 		clearColor = config.backgroundColor
 		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
 		document.addEventListener("fullscreenchange", ::fullScreenChangedHandler.as1)
+
+		window.addEventListener("beforeunload", {
+			event ->
+			event as BeforeUnloadEvent
+			_closeRequested.dispatch(cancel.reset())
+			if (cancel.canceled) {
+				event.preventDefault()
+				event.returnValue = ""
+			}
+		})
 	}
 
 	// TODO: Study context loss
@@ -219,15 +234,10 @@ class WebGlWindowImpl(
 	override fun renderEnd() {
 	}
 
-	private var _closeRequested = false
-
-	override fun isCloseRequested(): Boolean {
-		return _closeRequested
-	}
+	override fun isCloseRequested(): Boolean = false
 
 	// TODO: Implement. Pop-ups can be closed
 	override fun requestClose() {
-		_closeRequested = true
 	}
 
 	private val _fullScreenChanged = Signal0()

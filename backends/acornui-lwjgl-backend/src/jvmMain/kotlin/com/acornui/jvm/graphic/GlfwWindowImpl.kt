@@ -48,9 +48,15 @@ class GlfwWindowImpl(
 		debug: Boolean
 ) : Window {
 
-	override val isActiveChanged: Signal1<Boolean> = Signal1()
-	override val isVisibleChanged: Signal1<Boolean> = Signal1()
-	override val sizeChanged: Signal3<Float, Float, Boolean> = Signal3()
+	private val cancel = Cancel()
+	private val _closeRequested = Signal1<Cancel>()
+	override val closeRequested = _closeRequested.asRo()
+	private val _isActiveChanged = Signal1<Boolean>()
+	override val isActiveChanged = _isActiveChanged.asRo()
+	private val _isVisibleChanged = Signal1<Boolean>()
+	override val isVisibleChanged = _isVisibleChanged.asRo()
+	private val _sizeChanged = Signal3<Float, Float, Boolean>()
+	override val sizeChanged = _sizeChanged.asRo()
 
 	private var _width: Float = 0f
 	private var _height: Float = 0f
@@ -117,6 +123,13 @@ class GlfwWindowImpl(
 			isActive = focused
 		}
 
+		GLFW.glfwSetWindowCloseCallback(windowId) {
+			_closeRequested.dispatch(cancel.reset())
+			if (cancel.canceled) {
+				GLFW.glfwSetWindowShouldClose(windowId, false)
+			}
+		}
+
 		// Get the thread stack and push a new frame
 		val stack = stackPush()
 		@Suppress("ConvertTryFinallyToUseCall") // Don't convert to use call, causes problem with JVM Build
@@ -180,13 +193,13 @@ class GlfwWindowImpl(
 
 	override var isVisible: Boolean by Delegates.observable(true) {
 		prop, old, new ->
-		isVisibleChanged.dispatch(new)
+		_isVisibleChanged.dispatch(new)
 	}
 
 	override var isActive: Boolean by Delegates.observable(true) {
 		prop, old, new ->
-		isActiveChanged.dispatch(new)
-		sizeChanged.dispatch(_width, _height, false)
+		_isActiveChanged.dispatch(new)
+		_sizeChanged.dispatch(_width, _height, false)
 	}
 
 	override val width: Float
@@ -214,7 +227,7 @@ class GlfwWindowImpl(
 		requestRender()
 		_width = width
 		_height = height
-		sizeChanged.dispatch(_width, _height, userInteraction)
+		_sizeChanged.dispatch(_width, _height, userInteraction)
 	}
 
 	override var continuousRendering: Boolean = false
@@ -288,7 +301,10 @@ class GlfwWindowImpl(
 	}
 
 	override fun dispose() {
-		sizeChanged.dispose()
+		_closeRequested.dispose()
+		_isActiveChanged.dispose()
+		_sizeChanged.dispose()
+		_isVisibleChanged.dispose()
 		Callbacks.glfwFreeCallbacks(windowId)
 		GLFW.glfwTerminate()
 	}

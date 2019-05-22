@@ -135,7 +135,9 @@ Kotlin.isType = function(object, klass) {
 		encodeUriComponent2 = ::encodeURIComponent
 		decodeUriComponent2 = ::decodeURIComponent
 
-		window.onbeforeunload = { dispose(); undefined }
+		window.addEventListener("unload", { event ->
+			dispose()
+		})
 	}
 
 	fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {
