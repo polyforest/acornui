@@ -20,10 +20,10 @@ package com.acornui.serialization
 
 import com.acornui.collection.peek
 import com.acornui.collection.pop
+import com.acornui.core.addBackslashes
 import com.acornui.core.isWhitespace2
-import com.acornui.string.SubString
-import com.acornui.core.replace2
 import com.acornui.core.removeBackslashes
+import com.acornui.string.SubString
 
 /**
  * A factory that provides a Reader and Writer for JSON
@@ -296,7 +296,7 @@ class JsonWriter(
 	override fun string(value: String?) {
 		if (value == null) return writeNull()
 		builder.append('"')
-		builder.append(escape(value))
+		builder.append(addBackslashes(value))
 		builder.append('"')
 	}
 
@@ -360,10 +360,6 @@ class JsonWriter(
 	override fun byteArray(value: ByteArray?) {
 		if (value == null) return writeNull()
 		builder.append(base64.encodeToString(value))
-	}
-
-	private fun escape(value: String): String {
-		return value.replace2("\\", "\\\\").replace2("\r", "\\r").replace2("\n", "\\n").replace2("\t", "\\t").replace2("\"", "\\\"")
 	}
 }
 

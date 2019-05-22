@@ -16,7 +16,7 @@
 
 package com.acornui.serialization
 
-import com.acornui.core.replace2
+import com.acornui.core.addBackslashes
 
 /**
  * A factory that provides a Reader and Writer for JSON
@@ -170,7 +170,7 @@ class JsonWriter(
 	override fun string(value: String?) {
 		if (value == null) return writeNull()
 		builder.append('"')
-		builder.append(escape(value))
+		builder.append(addBackslashes(value))
 		builder.append('"')
 	}
 
@@ -234,10 +234,6 @@ class JsonWriter(
 
 	override fun writeNull() {
 		builder.append("null")
-	}
-
-	private fun escape(value: String): String {
-		return value.replace2("\\", "\\\\").replace2("\r", "\\r").replace2("\n", "\\n").replace2("\t", "\\t").replace2("\"", "\\\"")
 	}
 }
 
