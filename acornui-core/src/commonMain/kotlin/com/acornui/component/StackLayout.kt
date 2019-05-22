@@ -16,6 +16,7 @@
 
 package com.acornui.component
 
+import com.acornui.collection.sortTo
 import com.acornui.component.layout.*
 import com.acornui.component.layout.algorithm.BasicLayoutData
 import com.acornui.component.layout.algorithm.LayoutAlgorithm
@@ -35,6 +36,7 @@ class StackLayout : LayoutAlgorithm<StackLayoutStyle, StackLayoutData> {
 	override val style = StackLayoutStyle()
 
 	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, out: SizeConstraints) {
+		if (elements.isEmpty()) return
 		val padding = style.padding
 		for (i in 0..elements.lastIndex) {
 			out.bound(elements[i].sizeConstraints)
@@ -43,42 +45,82 @@ class StackLayout : LayoutAlgorithm<StackLayoutStyle, StackLayoutData> {
 		out.height.min = padding.expandHeight(out.height.min)
 	}
 
+	private val orderedElements = ArrayList<LayoutElement>()
+
 	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
+		if (elements.isEmpty()) return
 		val padding = style.padding
+		val allowRelativeSizing = style.allowRelativeSizing
 		val childAvailableWidth = padding.reduceWidth(explicitWidth)
 		val childAvailableHeight = padding.reduceHeight(explicitHeight)
 
-		for (i in 0..elements.lastIndex) {
-			val child = elements[i]
+		if (allowRelativeSizing) elements.sortTo(orderedElements, true, sizeOrderComparator)
+		else orderedElements.addAll(elements)
+
+		var measuredW = childAvailableWidth
+		var measuredH = childAvailableHeight
+		var measuredB: Float? = null
+		for (i in 0..orderedElements.lastIndex) {
+			val child = orderedElements[i]
 			val layoutData = child.layoutDataCast
-			child.setSize(layoutData?.getPreferredWidth(childAvailableWidth), layoutData?.getPreferredHeight(childAvailableHeight))
-			out.ext(padding.expandWidth2(child.width), padding.expandHeight2(child.height), padding.top + child.baseline)
+			if (allowRelativeSizing) child.setSize(layoutData?.getPreferredWidth(measuredW), layoutData?.getPreferredHeight(measuredH))
+			else child.setSize(layoutData?.getPreferredWidth(childAvailableWidth), layoutData?.getPreferredHeight(childAvailableHeight))
+
+			if (measuredW == null || child.width > measuredW)
+				measuredW = child.width
+
+			if (measuredH == null || child.height > measuredH)
+				measuredH = child.height
+
+			if (layoutData?.verticalAlign ?: style.verticalAlign == VAlign.BASELINE) {
+				if (measuredB == null || child.baseline > measuredB)
+					measuredB = child.baseline
+			}
 		}
+		orderedElements.clear()
 
 		for (i in 0..elements.lastIndex) {
-			val child = elements[i]
-			val layoutData = child.layoutDataCast
-			val childX = padding.left + if (explicitWidth == null) 0f else run {
-				val remainingSpace = maxOf(0f, childAvailableWidth!! - child.width)
+			val element = elements[i]
+			val layoutData = element.layoutDataCast
+			val w = if (allowRelativeSizing) measuredW else explicitWidth
+			val childX = padding.left + if (w == null) 0f else run {
+				val remainingSpace = maxOf(0f, w - element.width)
 				when (layoutData?.horizontalAlign ?: style.horizontalAlign) {
 					HAlign.LEFT -> 0f
 					HAlign.CENTER -> remainingSpace * 0.5f
 					HAlign.RIGHT -> remainingSpace
 				}
 			}
-			val childY = padding.top + if (explicitHeight == null) 0f else run {
-				val remainingSpace = maxOf(0f, childAvailableHeight!! - child.height)
+			val h = if (allowRelativeSizing) measuredH else explicitHeight
+			val childY = padding.top + if (h == null) 0f else run {
+				val remainingSpace = maxOf(0f, h - element.height)
 				when (layoutData?.verticalAlign ?: style.verticalAlign) {
 					VAlign.TOP -> 0f
 					VAlign.MIDDLE -> remainingSpace * 0.5f
-					VAlign.BASELINE, VAlign.BOTTOM -> remainingSpace
+					VAlign.BASELINE -> measuredB!! - element.baseline
+					VAlign.BOTTOM -> remainingSpace
 				}
 			}
-			child.moveTo(childX, childY)
+			element.moveTo(childX, childY)
 		}
+		out.set(padding.expandWidth2(measuredW ?: 0f), padding.expandHeight2(measuredH ?: 0f), padding.top + if (measuredB == null) measuredH ?: 0f else measuredB)
 	}
 
 	override fun createLayoutData(): StackLayoutData = StackLayoutData()
+
+	companion object {
+		private val c = compareBy<StackLayoutData?>(
+				{ -(it?.priority ?: 0f) },
+				{ it?.widthPercent == null },
+				{ it?.heightPercent == null }
+		)
+
+		private val sizeOrderComparator = { o1: LayoutElement, o2: LayoutElement ->
+			val layoutData1 = o1.layoutData as StackLayoutData?
+			val layoutData2 = o2.layoutData as StackLayoutData?
+			c.compare(layoutData1, layoutData2)
+		}
+	}
 }
 
 open class StackLayoutData : BasicLayoutData() {
@@ -93,6 +135,14 @@ open class StackLayoutData : BasicLayoutData() {
 	 */
 	var horizontalAlign: HAlign? by bindable(null)
 
+	/**
+	 * The order of sizing precedence is as follows:
+	 * - priority value (higher values before lower values)
+	 * - widthPercent null (inflexible width before flexible width)
+	 * - heightPercent null (inflexible height before flexible height)
+	 */
+	var priority: Float by bindable(0f)
+
 	fun center() {
 		verticalAlign = VAlign.MIDDLE
 		horizontalAlign = HAlign.CENTER
@@ -106,6 +156,23 @@ open class StackLayoutStyle : StyleBase() {
 	var padding: PadRo by prop(Pad())
 	var verticalAlign by prop(VAlign.TOP)
 	var horizontalAlign by prop(HAlign.LEFT)
+
+	/**
+	 * If true, the actual size of an element can expand the bounds of the layout for the remaining elements, based
+	 * on priority rules.
+	 *
+	 * Example:
+	 *
+	 * ```
+	 * stack {
+	 *    +rect() layout { widthPercent = 1f }   // width = if (allowRelativeSizing == true) 200f else 100f.
+	 *    +rect() layout { width = 200f }
+	 * } layout { width = 100f }
+	 * ```
+	 *
+	 * @see StackLayoutData.priority
+	 */
+	var allowRelativeSizing by prop(true)
 
 	companion object : StyleType<StackLayoutStyle>
 }
