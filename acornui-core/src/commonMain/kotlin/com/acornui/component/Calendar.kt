@@ -185,13 +185,14 @@ open class Calendar(
 	private val panel = addChild(panel {
 		+vGroup {
 			+hGroup {
+				style.verticalAlign = VAlign.MIDDLE
+
 				monthDecContainer = +stack {
 					click().add {
 						month--
 					}
 				}
 
-				style.verticalAlign = VAlign.MIDDLE
 				+spacer() layout { widthPercent = 1f }
 
 				monthYearText = +text {
