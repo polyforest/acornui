@@ -109,13 +109,14 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 			x += style.horizontalGap
 			if (layoutData?.verticalAlign ?: style.verticalAlign == FlowVAlign.BASELINE) {
 				val baseline = element.baseline
-				if (baseline > line.baseline) line.baseline = baseline
+				if (baseline > line.baseline)
+					line.baseline = baseline
 				val belowBaseline = h - baseline
-				if (belowBaseline > belowBaseline) line.descender = belowBaseline
-			} else {
-				val elementH = element.height
-				if (elementH > line.nonBaselineHeight) line.nonBaselineHeight = elementH
+				if (belowBaseline > belowBaseline)
+					line.descender = belowBaseline
 			}
+			val elementH = element.height
+			if (elementH > line.nonBaselineHeight) 	line.nonBaselineHeight = elementH
 			previousElement = element
 		}
 		line.endIndex = elements.size
