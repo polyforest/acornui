@@ -138,7 +138,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 		}
 		if (totalColumnsExplicitWidth != null) {
 			// Scale the measured columns down to fit if needed.
-			if (totalColumnsExplicitWidth > totalMeasuredColumnWidths) {
+			if (totalMeasuredColumnWidths > totalColumnsExplicitWidth) {
 				val scale = totalColumnsExplicitWidth / totalMeasuredColumnWidths
 				for (i in 0..measuredColWidths.lastIndex) {
 					measuredColWidths[i] *= scale
