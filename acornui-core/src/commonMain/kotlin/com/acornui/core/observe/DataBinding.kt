@@ -51,7 +51,7 @@ interface DataBindingRo<out T> {
 	}
 }
 
-interface DataBinding<T> : DataBindingRo<T>, Disposable {
+interface DataBinding<T> : DataBindingRo<T> {
 
 	/**
 	 * This data binding's value.
@@ -69,7 +69,7 @@ interface DataBinding<T> : DataBindingRo<T>, Disposable {
 	fun asRo(): DataBindingRo<T> = this
 }
 
-class DataBindingImpl<T>(initialValue: T) : DataBinding<T> {
+class DataBindingImpl<T>(initialValue: T) : DataBinding<T>, Disposable {
 
 	private val _changed = Signal2<T, T>()
 	override val changed = _changed.asRo()
