@@ -161,7 +161,7 @@ fun htmlEntitiesDecode(value: String): String {
 
 /**
  * Converts backslash escapes into their corresponding characters.
- * \t, \b, \n, \r, \', \", \\, \/, \$, \uFF00
+ * \t, \b, \n, \r, \", \\, \/, \$, \uFF00
  */
 fun removeBackslashes(value: String): String {
 	val unescaped = StringBuilder()
@@ -176,7 +176,6 @@ fun removeBackslashes(value: String): String {
 				'b' -> '\b'
 				'n' -> '\n'
 				'r' -> '\r'
-				'\'' -> '\''
 				'\"' -> '\"'
 				'/' -> '/'
 				'\\' -> '\\'
@@ -207,7 +206,7 @@ fun removeBackslashes(value: String): String {
 
 /**
  * Adds a backslash before the following characters:
- * t, b, n, r, ', ", \, $
+ * t, b, n, r, ", \, $
  */
 fun addBackslashes(value: String): String {
 	val escaped = StringBuilder()
@@ -220,7 +219,6 @@ fun addBackslashes(value: String): String {
 			'\b' -> "\\b"
 			'\n' -> "\\n"
 			'\r' -> "\\r"
-			'\'' -> "\\'"
 			'\"' -> "\\\""
 			'\\' -> "\\\\"
 			'\$' -> "\\$"

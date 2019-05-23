@@ -17,6 +17,7 @@
 package com.acornui.serialization
 
 import com.acornui.core.addBackslashes
+import com.acornui.logging.Log
 
 /**
  * A factory that provides a Reader and Writer for JSON
@@ -25,7 +26,12 @@ import com.acornui.core.addBackslashes
 private object JsonSerializer : Serializer<String> {
 
 	override fun read(data: String): Reader {
-		return JsonNode(JSON.parse(data))
+		val parsed: dynamic = try {
+			JSON.parse(data)
+		} catch (e: Throwable) {
+			Log.error("Could not parse json: ${e.message} \n\n$data")
+		}
+		return JsonNode(parsed)
 	}
 
 	override fun write(callback: (Writer) -> Unit): String = write(callback, "\t", "\n")
