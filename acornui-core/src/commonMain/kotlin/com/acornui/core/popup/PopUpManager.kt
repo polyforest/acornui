@@ -168,6 +168,7 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 	private var modalFill: UiComponent? = null
 
 	private val modalFillContainer = +stack {
+		focusEnabled = true
 		visible = false
 		click().add {
 			if (!it.handled)
@@ -257,6 +258,7 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 		// disposed when the stage is.
 		styleTags.add(PopUpManager)
 		stage.keyDown().add(rootKeyDownHandler)
+		isFocusContainer = true
 		interactivityMode = InteractivityMode.CHILDREN
 
 		watch(popUpManagerStyle) {
@@ -275,18 +277,19 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 	}
 
 	override fun onDeactivated() {
-		// Must be before super.onDeactivated or the focus change prevention will get tsuck.
+		// Must be before super.onDeactivated or the focus change prevention will get stuck.
 		focusManager.focusedChanging.remove(::focusChangingHandler)
 		super.onDeactivated()
 	}
 
 	private fun focusChangingHandler(old: UiComponentRo?, new: UiComponentRo?, cancel: Cancel) {
-		if (_currentPopUps.isEmpty() || new === modalFillContainer) return
-		if (new == null) {
+		if (_currentPopUps.isEmpty() || new === modalFillContainer || new == null) return
+		if (new == stage) {
 			modalFillContainer.focusSelf()
 			cancel.cancel()
 			return
 		}
+
 		// Prevent focusing anything below the modal layer.
 		val lastModalIndex = _currentPopUps.indexOfLast { it.isModal }
 		if (lastModalIndex == -1) return // no modals
@@ -298,9 +301,21 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 			}
 		}
 		if (!validFocusChange) {
-			val child = _currentPopUps[lastModalIndex].child
-			if (child.canFocus)
-				child.focus()
+			val isForwards = focusManager.focusables.indexOf(new) >= focusManager.focusables.indexOf(old)
+			var foundFocusable: UiComponentRo? = null
+			if (isForwards) {
+				for (i in lastModalIndex.._currentPopUps.lastIndex) {
+					foundFocusable =  _currentPopUps[i].child.firstFocusable ?: continue
+					break
+				}
+			} else {
+				for (i in _currentPopUps.lastIndex downTo lastModalIndex) {
+					foundFocusable =  _currentPopUps[i].child.lastFocusable ?: continue
+					break
+				}
+			}
+			if (foundFocusable != null)
+				foundFocusable.focusSelf()
 			else
 				modalFillContainer.focusSelf()
 			cancel.cancel()

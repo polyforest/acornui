@@ -43,6 +43,8 @@ import com.acornui.signal.Cancel
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
 
+// TODO: handle blur/focus when not the only html element on screen.
+
 /**
  * @author nbilyk
  */
@@ -254,7 +256,8 @@ class FocusManagerImpl() : FocusManager {
 	}
 
 	override fun nextFocusable(): UiComponentRo {
-		val index = focusables.indexOf(_focused ?: root)
+		var index = focusables.indexOf(_focused ?: root)
+		if (index == -1) index = 0
 		for (i in 1..focusables.lastIndex) {
 			var j = index + i
 			if (j > focusables.lastIndex) j -= focusables.size
@@ -265,7 +268,8 @@ class FocusManagerImpl() : FocusManager {
 	}
 
 	override fun previousFocusable(): UiComponentRo {
-		val index = focusables.indexOf(_focused ?: root)
+		var index = focusables.indexOf(_focused ?: root)
+		if (index == -1) index = focusables.size
 		for (i in 1..focusables.lastIndex) {
 			var j = index - i
 			if (j < 0) j += focusables.size

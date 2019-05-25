@@ -17,6 +17,7 @@
 package com.acornui.core.focus
 
 import com.acornui.collection.firstOrNull2
+import com.acornui.collection.lastOrNull2
 import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
@@ -117,7 +118,7 @@ interface FocusManager : Disposable {
 	fun previousFocusable(): UiComponentRo
 
 	/**
-	 * Returns a list
+	 * Returns a list of the focusable elements.
 	 */
 	val focusables: List<UiComponentRo>
 
@@ -191,6 +192,19 @@ val UiComponentRo.firstFocusable: UiComponentRo?
 		val focusManager = inject(FocusManager)
 		return focusManager.focusables.firstOrNull2 {
 			it != this && isAncestorOf(it) && it.canFocusSelf
+		}
+	}
+
+/**
+ * Finds the last focusable child that may be focused.
+ * If no focusable element is found, null is returned.
+ */
+val UiComponentRo.lastFocusable: UiComponentRo?
+	get() {
+		if (!focusEnabledAncestry || !isRendered || !interactivityEnabled) return null
+		val focusManager = inject(FocusManager)
+		return focusManager.focusables.lastOrNull2 {
+			isAncestorOf(it) && it.canFocusSelf
 		}
 	}
 
