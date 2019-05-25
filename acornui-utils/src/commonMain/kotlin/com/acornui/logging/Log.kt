@@ -48,7 +48,7 @@ interface Logger {
 
 	fun log(message: Any?, level: Int)
 
-	fun log(message: () -> Any?, level: Int)
+	fun log(message: () -> Any?, level: Int) = log(message(), level)
 
 	fun debug(message: Any?) = log(message, DEBUG)
 
@@ -96,11 +96,12 @@ object Log : Logger {
 	}
 
 	override fun log(message: () -> Any?, level: Int) {
+		val m by lazy(message)
 		if (level <= this.level) {
 			for (i in 0..targets.lastIndex) {
 				val target = targets[i]
 				if (level <= target.level) {
-					target.log(message, level)
+					target.log(m, level)
 				}
 			}
 		}
@@ -111,15 +112,11 @@ class PrintTarget : Logger {
 
 	override var level: Int = Logger.DEBUG
 
-	val prefixes: Array<String> = arrayOf("[NONE] ", "[ERROR] ", "[WARN] ", "[INFO] ", "[DEBUG] ")
+	private val prefixes: Array<String> = arrayOf("[NONE] ", "[ERROR] ", "[WARN] ", "[INFO] ", "[DEBUG] ")
 
 	override fun log(message: Any?, level: Int) {
 		val prefix = if (level < prefixes.size) prefixes[level] else ""
 		println(prefix + message.toString())
-	}
-
-	override fun log(message: () -> Any?, level: Int) {
-		log(message(), level)
 	}
 }
 
@@ -138,10 +135,6 @@ class ArrayTarget : Logger, Clearable {
 	override fun log(message: Any?, level: Int) {
 		_list.add(ArrayTargetEntry(level, message.toString()))
 		if (_list.size > maxLogs) _list.poll()
-	}
-
-	override fun log(message: () -> Any?, level: Int) {
-		log(message(), level)
 	}
 
 	override fun clear() {
