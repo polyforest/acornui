@@ -181,3 +181,4 @@ www/
 wwwDist/
 out-win64/
 !**/src/**/build
+!.idea/dictionaries/project.xml
