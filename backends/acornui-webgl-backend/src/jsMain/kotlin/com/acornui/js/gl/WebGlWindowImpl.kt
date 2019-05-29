@@ -160,21 +160,17 @@ class WebGlWindowImpl(
 		isVisible = document[hiddenProp!!] != true
 	}
 
-	private var _isVisible: Boolean = true
-	override var isVisible: Boolean
-		get() = _isVisible
-		set(value) {
-			if (_isVisible == value) return
-			_isVisible = value
+	override var isVisible: Boolean = true
+		private set(value) {
+			if (field == value) return
+			field = value
 			_isVisibleChanged.dispatch(value)
 		}
 
-	private var _isActive: Boolean = true
-	override var isActive: Boolean
-		get() = _isActive
-		set(value) {
-			if (_isActive == value) return
-			_isActive = value
+	override var isActive: Boolean = true
+		private set(value) {
+			if (field == value) return
+			field = value
 			_isActiveChanged.dispatch(value)
 		}
 

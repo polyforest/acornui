@@ -367,7 +367,7 @@ open class BasicUiSkin(
 
 	protected open fun scrollBarStyle() {
 		// Note that this does not style native scroll bars.
-		val size = if (userInfo.isTouchDevice) 16f else 10f
+		val size = 10f
 
 		val thumb: SkinPart = {
 			button {
@@ -600,7 +600,7 @@ open class BasicUiSkin(
 				}
 			}
 			cellPadding = Pad(theme.strokeThickness + 2f)
-			resizeHandleWidth = if (userInfo.isTouchDevice) 16f else 8f
+			resizeHandleWidth = 8f
 			sortDownArrow = { atlas(theme.atlasPath, "ArrowDownMed") { colorTint = theme.iconColor } }
 			sortUpArrow = { atlas(theme.atlasPath, "ArrowUpMed") { colorTint = theme.iconColor } }
 			borderRadii = Corners(theme.borderRadius)

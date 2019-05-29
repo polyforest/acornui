@@ -16,61 +16,68 @@
 
 package com.acornui.core.input
 
+import com.acornui.component.UiComponent
+import com.acornui.core.Disposable
 import com.acornui.core.di.DKey
+import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 
-interface TouchScreenKeyboard {
+interface SoftKeyboardManager {
 
-	fun open(type: TouchScreenKeyboardType): TouchScreenKeyboardRef
+	val view: UiComponent
 
-	companion object : DKey<TouchScreenKeyboard>
+	fun open(type: String, priority: Float = 0f): SoftKeyboardRef
+
+	companion object : DKey<SoftKeyboardManager> {
+		override fun factory(injector: Injector): SoftKeyboardManager? {
+			return SoftKeyboardManagerImpl(injector)
+		}
+	}
 }
 
-interface TouchScreenKeyboardRef {
-	fun close()
-}
+interface SoftKeyboardRef : Disposable
 
-enum class TouchScreenKeyboardType {
+object SoftKeyboardType {
 
 	/**
 	 * Standard text input keyboard for the user's current locale.
 	 */
-	DEFAULT,
+	const val DEFAULT = "default"
 
 	/**
 	 * Fractional numeric input keyboard containing the digits and the appropriate separator character for the user's
 	 * locale (typically either "." or ",").
 	 */
-	DECIMAL,
+	const val DECIMAL = "decimal"
 
 	/**
 	 * Numeric input keyboard; all that is needed are the digits 0 through 9.
 	 */
-	NUMERIC,
+	const val NUMERIC = "numeric"
 
 	/**
 	 * A telephone keypad input, including the digits 0 through 9, the asterisk ("*"), and the pound ("#") key.
 	 */
-	TEL,
+	const val TEL = "tel"
 
 	/**
 	 * A virtual keyboard optimized for search input. For instance, the return key may be re-labeled "Search", and
 	 * there may be other optimizations.
 	 */
-	SEARCH,
+	const val SEARCH = "search"
 
 	/**
 	 * A virtual keyboard optimized for entering email addresses; typically this includes the "@" character as well as
 	 * other optimizations.
 	 */
-	EMAIL,
+	const val EMAIL = "email"
 
 	/**
-	 * A  keypad optimized for entering URLs. This may have the "/" key more prominently available, for example.
+	 * A keypad optimized for entering URLs. This may have the "/" key more prominently available, for example.
 	 */
-	URL
+	const val URL = "url"
 }
 
-val Scoped.touchScreenKeyboard: TouchScreenKeyboard
-	get() = inject(TouchScreenKeyboard)
+val Scoped.touchScreenKeyboard: SoftKeyboardManager
+	get() = inject(SoftKeyboardManager)

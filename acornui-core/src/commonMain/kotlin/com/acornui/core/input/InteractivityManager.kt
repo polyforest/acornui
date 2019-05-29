@@ -82,12 +82,15 @@ interface InteractionEventRo : Stoppable {
 	val type: InteractionType<InteractionEventRo>
 
 	/**
-	 * The target that triggered the interaction.
+	 * The object dispatching the event. Unlike [currentTarget] this will not change during the bubble or capture
+	 * phases.
+	 * This will throw a null reference error if not accessed from the interactivity manager.
 	 */
 	val target: UiComponentRo
 
 	/**
-	 * The current target. This is the element walked in the capture and bubble phases.
+	 * The current target. This is the element currently walked in the capture and bubble phases.
+	 * This will throw a null reference error if not accessed from the interactivity manager.
 	 */
 	val currentTarget: UiComponentRo
 

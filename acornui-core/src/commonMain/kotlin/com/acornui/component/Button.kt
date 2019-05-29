@@ -25,7 +25,6 @@ import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.core.focus.Focusable
-import com.acornui.core.input.interaction.ClickInteractionRo
 import com.acornui.core.input.interaction.MouseOrTouchState
 import com.acornui.core.input.interaction.click
 import com.acornui.factory.LazyInstance
@@ -128,7 +127,7 @@ open class Button(
 	}
 
 	protected open fun calculateButtonState(): ButtonState =
-			ButtonState.calculateButtonState(mouseState.isOver, mouseState.isDown, toggled, indeterminate, disabled)
+			ButtonState.calculateButtonState(mouseOrTouchState.isOver, mouseOrTouchState.isDown, toggled, indeterminate, disabled)
 
 	protected var currentSkinPart: UiComponent? = null
 		private set
@@ -185,7 +184,7 @@ open class Button(
 		}
 	}
 
-	private val mouseState = own(MouseOrTouchState(this)).apply {
+	private val mouseOrTouchState = own(MouseOrTouchState(this)).apply {
 		isOverChanged.add { invalidateProperties() }
 		isDownChanged.add { invalidateProperties() }
 	}

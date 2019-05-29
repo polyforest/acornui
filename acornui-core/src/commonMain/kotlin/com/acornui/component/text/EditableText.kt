@@ -148,25 +148,25 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	var allowTab: Boolean = false
 
 	private val cmd = own(commander())
-	private var openedKeyboard: TouchScreenKeyboardRef? = null
 
 	init {
-		host.click().add {
-			if (!it.handled) {
-				// After a click, even if we were already focused, open the touch screen keyboard.
-				if (openedKeyboard == null)
-					openedKeyboard = host.touchScreenKeyboard.open(host.touchScreenInputType)
+		host.touchStart().add {
+			if (!it.handled && !it.defaultPrevented()) {
+				it.handled = true
+				openedKeyboard = host.touchScreenKeyboard.open(host.touchScreenInputType)
 			}
 		}
 
 		host.focusedSelf().add {
 			if (charStyle.selectable)
 				host.selectAll()
-			openedKeyboard = host.touchScreenKeyboard.open(host.touchScreenInputType)
+
+			if (mouseState.touchMode) {
+				openedKeyboard = host.touchScreenKeyboard.open(host.touchScreenInputType)
+			}
 		}
 
 		host.blurredSelf().add {
-			openedKeyboard?.close()
 			openedKeyboard = null
 			host.unselect()
 			if (isActive)
@@ -268,6 +268,14 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			}
 		}
 	}
+
+	private var openedKeyboard: SoftKeyboardRef? = null
+		set(value) {
+			if (field != value) {
+				field?.dispose()
+				field = value
+			}
+		}
 
 	override fun updateStyles() {
 		super.updateStyles()
@@ -600,23 +608,21 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		val contents = textField.element ?: return
 		textField.validate(ValidationFlags.LAYOUT)
 
-		val textCursorVisible = if (!charStyle.selectable || !window.isActive) false else {
+		val textElement = if (!charStyle.selectable || !window.isActive) null else {
 			val sel = firstSelection
 			if (host.isFocusedSelf && sel != null) {
 				val rangeEnd = contents.textElements.size
 				val end = MathUtils.clamp(sel.endIndex, 0, rangeEnd)
-				val textElement = if (end >= rangeEnd) contents.placeholder else contents.textElements[end]
-				if (textElement != null) {
-					textCursor.x = textElement.textFieldX
-					textCursor.y = textElement.textFieldY
-					textCursor.scaleY = textElement.lineHeight / textCursor.height
-					true
-				} else {
-					false
-				}
+				if (end >= rangeEnd) contents.placeholder else contents.textElements[end]
 			} else {
-				false
+				null
 			}
+		}
+		val textCursorVisible = textElement != null
+		if (textElement != null) {
+			textCursor.x = textElement.textFieldX
+			textCursor.y = textElement.textFieldY
+			textCursor.scaleY = textElement.lineHeight / textCursor.height
 		}
 		if (textCursor.visible != textCursorVisible) {
 			if (textCursorVisible)

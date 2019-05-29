@@ -30,7 +30,6 @@ class DateTimeFormatterTest {
 	fun setUp() {
 		val u = UserInfo(
 				isDesktop = true,
-				isTouchDevice = false,
 				userAgent = "headless",
 				platformStr = System.getProperty("os.name") ?: UserInfo.UNKNOWN_PLATFORM,
 				systemLocale = listOf(Locale("en-US"))

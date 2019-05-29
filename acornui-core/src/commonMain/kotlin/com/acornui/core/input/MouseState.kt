@@ -32,6 +32,16 @@ import com.acornui.signal.Signal
 interface MouseState : Disposable {
 
 	/**
+	 * Dispatched when [touchMode] has changed.
+	 */
+	val touchModeChanged: Signal<() -> Unit>
+
+	/**
+	 * True if the last interaction was via touch, and not mouse.
+	 */
+	val touchMode: Boolean
+
+	/**
 	 * Dispatched when the mouse has entered or left the canvas.
 	 * Note: This is not 100% reliable in most browsers.
 	 */
@@ -68,7 +78,16 @@ interface MouseState : Disposable {
 }
 
 /**
- * Dispatches touch and mouse events for the canvas.
+ * The raw touch and mouse input on the canvas. This will only be key input from the system, and never fabricated events.
+ * Components shouldn't use this directly, but instead use the the events from the [InteractivityManager].
+ *
+ * @see com.acornui.core.input.mouseDown
+ * @see com.acornui.core.input.mouseUp
+ * @see com.acornui.core.input.touchStart
+ * @see com.acornui.core.input.touchEnd
+ * @see com.acornui.core.input.mouseMove
+ * @see com.acornui.core.input.touchMove
+ * @see com.acornui.core.input.touchCancel
  */
 interface MouseInput : MouseState {
 

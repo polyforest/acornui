@@ -20,7 +20,6 @@ import com.acornui.component.UiComponentRo
 import com.acornui.component.stage
 import com.acornui.core.Disposable
 import com.acornui.core.input.*
-import com.acornui.core.userInfo
 import com.acornui.signal.Signal0
 
 /**
@@ -109,11 +108,8 @@ class MouseOrTouchState(private val host: UiComponentRo) : Disposable {
 	}
 
 	init {
-		// Mouse over / out handlers cause problems on mobile.
-		if (!userInfo.isTouchDevice) {
-			host.rollOver().add(rollOverHandler)
-			host.rollOut().add(rollOutHandler)
-		}
+		host.rollOver().add(rollOverHandler)
+		host.rollOut().add(rollOutHandler)
 		host.mouseDown().add(mouseDownHandler)
 		host.touchStart().add(touchStartHandler)
 	}

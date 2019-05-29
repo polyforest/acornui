@@ -28,7 +28,6 @@ import com.acornui.core.focus.FakeFocusMouse
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.FocusManagerImpl
 import com.acornui.core.graphic.Window
-import com.acornui.core.input.TouchScreenKeyboard
 import com.acornui.error.stack
 import com.acornui.file.FileIoManager
 import com.acornui.gl.core.Gl20
@@ -39,7 +38,6 @@ import com.acornui.js.file.JsFileIoManager
 import com.acornui.js.html.JsHtmlComponent
 import com.acornui.js.html.WebGl
 import com.acornui.js.input.JsClickDispatcher
-import com.acornui.js.input.JsTouchScreenKeyboard
 import com.acornui.logging.Log
 import com.acornui.uncaughtExceptionHandler
 import org.khronos.webgl.WebGLContextAttributes
@@ -133,10 +131,6 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 			}
 		}
 		set(FocusManager, focusManager)
-	}
-
-	protected open val touchScreenKeyboardTask by BootTask {
-		set(TouchScreenKeyboard, JsTouchScreenKeyboard(rootElement, get(CANVAS)))
 	}
 
 	protected open val fileIoManagerTask by BootTask {

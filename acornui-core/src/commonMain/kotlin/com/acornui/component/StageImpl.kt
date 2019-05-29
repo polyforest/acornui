@@ -16,9 +16,13 @@
 
 package com.acornui.component
 
+import com.acornui.component.style.StyleableRo
 import com.acornui.core.di.Injector
 import com.acornui.core.di.OwnedImpl
+import com.acornui.core.di.inject
 import com.acornui.core.focus.Focusable
+import com.acornui.core.input.SoftKeyboardManager
+import com.acornui.core.popup.PopUpManager
 import com.acornui.math.Bounds
 import kotlin.math.ceil
 
@@ -28,6 +32,8 @@ import kotlin.math.ceil
 open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiComponent>(OwnedImpl(injector)), Focusable {
 
 	final override val style = bind(StageStyle())
+	private val popUpManagerView = inject(PopUpManager).view
+	private val softKeyboardManagerView = inject(SoftKeyboardManager).view
 
 	init {
 		focusEnabled = true
@@ -35,10 +41,15 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		interactivity.init(this)
 		focusManager.init(this)
 
+		addChild(popUpManagerView)
+		addChild(softKeyboardManagerView)
+
 		watch(style) {
 			window.clearColor = it.bgColor
 		}
 	}
+
+	override val styleParent: StyleableRo? = null
 
 	/**
 	 * It is not normal to set gl state within an event handler, but because this is the Stage, we can safely set
@@ -71,15 +82,32 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		return flagsInvalidated
 	}
 
+	//-------------------------------------------------------------
+	// External elements
+	// Pop up manager view
+	// Soft keyboard view
+	//-------------------------------------------------------------
+
+	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {
+		addChild(newIndex, element)
+	}
+
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val w = window.width
 		val h = window.height
+		val softKeyboardH: Float = if (softKeyboardManagerView.shouldLayout) {
+			softKeyboardManagerView.setSize(w, null)
+			softKeyboardManagerView.height
+		} else 0f
+
 		_elements.iterate {
 			// Elements of the stage all are explicitly sized to the dimensions of the stage.
-			if (it.shouldLayout)
-				it.setSize(w, h)
+			if (it.shouldLayout) {
+				it.setSize(w, h - softKeyboardH)
+			}
 			true
 		}
+		popUpManagerView.setSize(w, h - softKeyboardH)
 		out.set(w, h)
 	}
 

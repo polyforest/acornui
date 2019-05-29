@@ -22,9 +22,7 @@ import com.acornui.collection.MutableMultiMap2
 import com.acornui.collection.get
 import com.acornui.collection.multiMap2
 import com.acornui.core.input.KeyInput
-import com.acornui.core.input.interaction.CharInteraction
-import com.acornui.core.input.interaction.KeyInteraction
-import com.acornui.core.input.interaction.KeyLocation
+import com.acornui.core.input.interaction.*
 import com.acornui.signal.Signal1
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event
@@ -40,11 +38,11 @@ class JsKeyInput(
 		captureAllKeyboardInput: Boolean
 ) : KeyInput {
 
-	private val _keyDown = Signal1<KeyInteraction>()
+	private val _keyDown = Signal1<KeyInteractionRo>()
 	override val keyDown = _keyDown.asRo()
-	private val _keyUp = Signal1<KeyInteraction>()
+	private val _keyUp = Signal1<KeyInteractionRo>()
 	override val keyUp = _keyDown.asRo()
-	private val _char = Signal1<CharInteraction>()
+	private val _char = Signal1<CharInteractionRo>()
 	override val char = _char.asRo()
 
 	private val keyEvent = KeyInteraction()
@@ -53,35 +51,29 @@ class JsKeyInput(
 	private val downMap: MutableMultiMap2<Int, KeyLocation, Boolean> = multiMap2()
 
 	private val keyDownHandler = { jsEvent: Event ->
-		if (jsEvent is KeyboardEvent) {
-			keyEvent.clear()
-			populateKeyEvent(jsEvent)
-			if (!jsEvent.repeat) {
-				downMap[keyEvent.keyCode][keyEvent.location] = true
-			}
-			_keyDown.dispatch(keyEvent)
-			if (keyEvent.defaultPrevented()) jsEvent.preventDefault()
+		(jsEvent as KeyboardEvent)
+		keyEvent.set(jsEvent)
+		if (!jsEvent.repeat) {
+			downMap[keyEvent.keyCode][keyEvent.location] = true
 		}
+		_keyDown.dispatch(keyEvent)
+		if (keyEvent.defaultPrevented()) jsEvent.preventDefault()
+
 	}
 
 	private val keyUpHandler = { jsEvent: Event ->
-		if (jsEvent is KeyboardEvent) {
-			keyEvent.clear()
-			populateKeyEvent(jsEvent)
-			if (downMap.containsKey(keyEvent.keyCode))
-				downMap[keyEvent.keyCode].clear() // Browsers give incorrect key location properties on key up.
-			_keyUp.dispatch(keyEvent)
-			if (keyEvent.defaultPrevented()) jsEvent.preventDefault()
-		}
+		(jsEvent as KeyboardEvent)
+		keyEvent.set(jsEvent)
+		if (downMap.containsKey(keyEvent.keyCode))
+			downMap[keyEvent.keyCode].clear() // Browsers give incorrect key location properties on key up.
+		_keyUp.dispatch(keyEvent)
+		if (keyEvent.defaultPrevented()) jsEvent.preventDefault()
 	}
 
 	private val keyPressHandler = { jsEvent: Event ->
-		if (jsEvent is KeyboardEvent) {
-			charEvent.clear()
-			charEvent.char = jsEvent.charCode.toChar()
-			_char.dispatch(charEvent)
-			if (charEvent.defaultPrevented()) jsEvent.preventDefault()
-		}
+		(jsEvent as KeyboardEvent)
+		_char.dispatch(charEvent.set(jsEvent))
+		if (charEvent.defaultPrevented()) jsEvent.preventDefault()
 	}
 
 	private val blurHandler = { jsEvent: Event ->
@@ -98,17 +90,6 @@ class JsKeyInput(
 		eventTarget.addEventListener("keyup", keyUpHandler)
 		eventTarget.addEventListener("keypress", keyPressHandler)
 		eventTarget.addEventListener("blur", blurHandler)
-	}
-
-	private fun populateKeyEvent(jsEvent: KeyboardEvent) {
-		keyEvent.timestamp = jsEvent.timeStamp.toLong()
-		keyEvent.location = locationFromInt(jsEvent.location)
-		keyEvent.keyCode = jsEvent.keyCode
-		keyEvent.altKey = jsEvent.altKey
-		keyEvent.ctrlKey = jsEvent.ctrlKey
-		keyEvent.metaKey = jsEvent.metaKey
-		keyEvent.shiftKey = jsEvent.shiftKey
-		keyEvent.isRepeat = jsEvent.repeat
 	}
 
 	override fun keyIsDown(keyCode: Int, location: KeyLocation): Boolean {
@@ -129,15 +110,41 @@ class JsKeyInput(
 		_keyUp.dispose()
 		_char.dispose()
 	}
-
-	private fun locationFromInt(location: Int): KeyLocation {
-		return when (location) {
-			0 -> KeyLocation.STANDARD
-			1 -> KeyLocation.LEFT
-			2 -> KeyLocation.RIGHT
-			3 -> KeyLocation.NUMBER_PAD
-			else -> KeyLocation.UNKNOWN
-		}
-	}
 }
 
+/**
+ * Sets the values of this key interaction to match that of the javascript keyboard event.
+ * @return Returns the receiver for chaining.
+ */
+fun KeyInteraction.set(jsEvent: KeyboardEvent): KeyInteraction {
+	clear()
+	timestamp = jsEvent.timeStamp.toLong()
+	location = keyLocationFromInt(jsEvent.location)
+	keyCode = jsEvent.keyCode
+	altKey = jsEvent.altKey
+	ctrlKey = jsEvent.ctrlKey
+	metaKey = jsEvent.metaKey
+	shiftKey = jsEvent.shiftKey
+	isRepeat = jsEvent.repeat
+	return this
+}
+
+/**
+ * Sets the values of this char interaction to match that of the javascript keyboard event.
+ * @return Returns the receiver for chaining.
+ */
+fun CharInteraction.set(jsEvent: KeyboardEvent): CharInteraction {
+	clear()
+	char = jsEvent.charCode.toChar()
+	return this
+}
+
+fun keyLocationFromInt(location: Int): KeyLocation {
+	return when (location) {
+		0 -> KeyLocation.STANDARD
+		1 -> KeyLocation.LEFT
+		2 -> KeyLocation.RIGHT
+		3 -> KeyLocation.NUMBER_PAD
+		else -> KeyLocation.UNKNOWN
+	}
+}

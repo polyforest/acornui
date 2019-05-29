@@ -18,10 +18,7 @@ package com.acornui.jvm.input
 
 import com.acornui.collection.*
 import com.acornui.core.input.*
-import com.acornui.core.input.interaction.CharInteraction
-import com.acornui.core.input.interaction.KeyInteraction
-import com.acornui.core.input.interaction.KeyInteractionRo
-import com.acornui.core.input.interaction.KeyLocation
+import com.acornui.core.input.interaction.*
 import com.acornui.core.time.time
 import com.acornui.signal.Signal1
 import org.lwjgl.glfw.GLFW
@@ -34,9 +31,12 @@ import org.lwjgl.glfw.GLFWKeyCallback
  */
 class LwjglKeyInput(private val window: Long) : KeyInput {
 
-	override val keyDown: Signal1<KeyInteraction> = Signal1()
-	override val keyUp: Signal1<KeyInteraction> = Signal1()
-	override val char: Signal1<CharInteraction> = Signal1()
+	private val _keyDown = Signal1<KeyInteractionRo>()
+	override val keyDown = _keyDown.asRo()
+	private val _keyUp = Signal1<KeyInteractionRo>()
+	override val keyUp = _keyUp.asRo()
+	private val _char = Signal1<CharInteractionRo>()
+	override val char = _char.asRo()
 
 	private val keyEvent = KeyInteraction()
 	private val charEvent = CharInteraction()
@@ -141,17 +141,17 @@ class LwjglKeyInput(private val window: Long) : KeyInput {
 				GLFW.GLFW_PRESS -> {
 					downMap[keyEvent.keyCode][keyEvent.location] = true
 					keyEvent.type = KeyInteractionRo.KEY_DOWN
-					keyDown.dispatch(keyEvent)
+					_keyDown.dispatch(keyEvent)
 				}
 				GLFW.GLFW_RELEASE -> {
 					downMap.remove(keyEvent.keyCode, keyEvent.location, removeEmptyMaps = false)
 					keyEvent.type = KeyInteractionRo.KEY_UP
-					keyUp.dispatch(keyEvent)
+					_keyUp.dispatch(keyEvent)
 				}
 				GLFW.GLFW_REPEAT -> {
 					keyEvent.type = KeyInteractionRo.KEY_DOWN
 					keyEvent.isRepeat = true
-					keyDown.dispatch(keyEvent)
+					_keyDown.dispatch(keyEvent)
 				}
 			}
 		}
@@ -160,7 +160,7 @@ class LwjglKeyInput(private val window: Long) : KeyInput {
 	private val charCallback: GLFWCharCallback = object : GLFWCharCallback() {
 		override fun invoke(window: Long, codepoint: Int) {
 			charEvent.char = codepoint.toChar()
-			char.dispatch(charEvent)
+			_char.dispatch(charEvent)
 		}
 	}
 
@@ -181,8 +181,8 @@ class LwjglKeyInput(private val window: Long) : KeyInput {
 	override fun dispose() {
 		GLFW.glfwSetKeyCallback(window, null)
 		GLFW.glfwSetCharCallback(window, null)
-		keyDown.dispose()
-		keyUp.dispose()
-		char.dispose()
+		_keyDown.dispose()
+		_keyUp.dispose()
+		_char.dispose()
 	}
 }

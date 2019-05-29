@@ -22,17 +22,32 @@ import com.acornui.core.input.MouseInput
 import com.acornui.core.input.WhichButton
 import com.acornui.core.input.interaction.*
 import com.acornui.js.html.TouchEvent
+import com.acornui.signal.Signal0
 import com.acornui.signal.Signal1
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.events.WheelEvent
 import kotlin.browser.window
+import kotlin.collections.HashMap
+import kotlin.collections.firstOrNull
+import kotlin.collections.lastIndex
+import kotlin.collections.set
 
 /**
  * @author nbilyk
  */
 class JsMouseInput(private val canvas: HTMLElement) : MouseInput {
+
+	private val _touchModeChange = Signal0()
+	override val touchModeChanged = _touchModeChange.asRo()
+	override var touchMode: Boolean = false
+		private set(value) {
+			if (value != field) {
+				field = value
+				_touchModeChange.dispatch()
+			}
+		}
 
 	private val _touchStart = Signal1<TouchInteractionRo>()
 	override val touchStart = _touchStart.asRo()
@@ -94,7 +109,7 @@ class JsMouseInput(private val canvas: HTMLElement) : MouseInput {
 		_touchStart.dispatch(touchEvent)
 		if (jsEvent.cancelable && touchEvent.defaultPrevented())
 			jsEvent.preventDefault()
-
+		else touchMode = true
 	}
 
 	private val touchMoveHandler = { jsEvent: Event ->
@@ -133,6 +148,7 @@ class JsMouseInput(private val canvas: HTMLElement) : MouseInput {
 		_mouseDown.dispatch(mouseEvent)
 		if (jsEvent.cancelable && mouseEvent.defaultPrevented())
 			jsEvent.preventDefault()
+		else touchMode = false
 	}
 
 	private val mouseUpHandler = { jsEvent: Event ->

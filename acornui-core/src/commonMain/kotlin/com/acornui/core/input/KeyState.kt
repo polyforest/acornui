@@ -18,9 +18,7 @@ package com.acornui.core.input
 
 import com.acornui.core.Disposable
 import com.acornui.core.di.DKey
-import com.acornui.core.input.interaction.CharInteraction
-import com.acornui.core.input.interaction.KeyInteraction
-import com.acornui.core.input.interaction.KeyLocation
+import com.acornui.core.input.interaction.*
 import com.acornui.signal.Signal
 
 /**
@@ -36,25 +34,33 @@ interface KeyState : Disposable {
 	companion object : DKey<KeyState>
 }
 
+/**
+ * The raw key input. This will only be key input from the system, and never fabricated events.
+ * Components shouldn't use this directly, but instead use the the events from the [InteractivityManager].
+ *
+ * @see com.acornui.core.input.keyDown
+ * @see com.acornui.core.input.keyUp
+ * @see com.acornui.core.input.char
+ */
 interface KeyInput : KeyState {
 
 	/**
 	 * Dispatched when the user has pressed down a key
 	 * Do not keep a reference to this event, it will be recycled.
 	 */
-	val keyDown: Signal<(KeyInteraction) -> Unit>
+	val keyDown: Signal<(KeyInteractionRo) -> Unit>
 
 	/**
 	 * Dispatched when the user has released a key
 	 * Do not keep a reference to this event, it will be recycled.
 	 */
-	val keyUp: Signal<(KeyInteraction) -> Unit>
+	val keyUp: Signal<(KeyInteractionRo) -> Unit>
 
 	/**
 	 * Dispatched when the user has inputted a character.
 	 * Do not keep a reference to this event, it will be recycled.
 	 */
-	val char: Signal<(CharInteraction) -> Unit>
+	val char: Signal<(CharInteractionRo) -> Unit>
 
 	companion object : DKey<KeyInput> {
 		override val extends: DKey<*>? = KeyState

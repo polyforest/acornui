@@ -18,6 +18,8 @@ package com.acornui.core.di
 
 import com.acornui.async.PendingDisposablesRegistry
 import com.acornui.core.Disposable
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 
 
 /**
@@ -46,8 +48,7 @@ interface Injector {
 
 	fun <T : Any> inject(key: DKey<T>): T {
 		@Suppress("UNCHECKED_CAST")
-		return injectOptional(key) ?:
-		throw Exception("Dependency not found for key: $key")
+		return injectOptional(key) ?: throw Exception("Dependency not found for key: $key")
 	}
 }
 
@@ -61,12 +62,13 @@ class InjectorImpl(
 ) : Injector {
 
 	private val dependencies = HashMap<DKey<*>, Any>()
+	private val constructing = ArrayList<DKey<*>>()
 
 	constructor(dependenciesList: List<DependencyPair<*>>) : this(null, dependenciesList)
 
 	init {
 		for ((key, value) in dependenciesList) {
-			_set(key, value)
+			set(key, value)
 		}
 	}
 
@@ -80,19 +82,23 @@ class InjectorImpl(
 		if (d == null) {
 			d = parent?.injectOptional(key)
 			if (d == null && parent == null) {
+				if (constructing.contains(key))
+					throw Exception("Cyclic dependency detected: ${constructing.joinToString(" -> ")} -> $key")
+				constructing.add(key)
 				d = key.factory(this)
+				constructing.remove(key)
 				if (d != null) {
 					// If the dependency key's factory method produces an instance, set it on the root injector.
 					if (d is Disposable)
 						PendingDisposablesRegistry.register(d)
-					_set(key, d)
+					set(key, d)
 				}
 			}
 		}
 		return d
 	}
 
-	private fun _set(key: DKey<out Any>, value: Any) {
+	private fun set(key: DKey<out Any>, value: Any) {
 		var p: DKey<*>? = key
 		while (p != null) {
 			if (dependencies.containsKey(p))
@@ -137,5 +143,21 @@ fun <T : Any> dKey(): DKey<T> {
 fun <T : SuperKey, SuperKey : Any> dKey(extends: DKey<SuperKey>): DKey<T> {
 	return object : DKey<T> {
 		override val extends: DKey<SuperKey>? = extends
+	}
+}
+
+operator fun <T : Any> DKey<T>.provideDelegate(
+		thisRef: Scoped,
+		prop: KProperty<*>
+): ReadOnlyProperty<Scoped, T> = LazyDependency(this)
+
+private class LazyDependency<T : Any>(private val key: DKey<T>) : ReadOnlyProperty<Scoped, T> {
+
+	private var value: T? = null
+
+	override fun getValue(thisRef: Scoped, property: KProperty<*>): T {
+		if (value == null)
+			value = thisRef.inject(key)
+		return value as T
 	}
 }

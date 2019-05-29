@@ -85,9 +85,10 @@ interface TextInput : Focusable, SelectableComponent, Styleable, Clearable {
 	var allowTab: Boolean
 
 	/**
-	 * The hinting to use for the touch screen keyboard, if supported.
+	 * The hinting to use for the touch screen keyboard.
+	 * @see SoftKeyboardType
 	 */
-	var touchScreenInputType: TouchScreenKeyboardType
+	var touchScreenInputType: String
 
 	// TODO: add prompt
 
@@ -187,7 +188,7 @@ class TextInputImpl(owner: Owned) : ContainerImpl(owner), TextInput {
 		invalidateLayout()
 	}
 
-	override var touchScreenInputType = TouchScreenKeyboardType.DEFAULT
+	override var touchScreenInputType = SoftKeyboardType.DEFAULT
 
 	override fun updateStyles() {
 		super.updateStyles()
@@ -371,7 +372,7 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 		keyDown().add(::scrollToSelected)
 	}
 
-	override var touchScreenInputType = TouchScreenKeyboardType.DEFAULT
+	override var touchScreenInputType = SoftKeyboardType.DEFAULT
 
 	private fun scrollToSelected(event: KeyInteractionRo) {
 		val contents = contents ?: return

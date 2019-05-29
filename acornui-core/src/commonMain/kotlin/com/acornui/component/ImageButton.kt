@@ -59,7 +59,7 @@ class ImageButton(
 	}
 
 	private fun updateProperties() {
-		currentState = ButtonState.calculateButtonState(mouseState.isOver, mouseState.isDown, false, false, disabled)
+		currentState = ButtonState.calculateButtonState(mouseOrTouchState.isOver, mouseOrTouchState.isDown, false, false, disabled)
 		val colorTransform = when (currentState) {
 			ButtonState.OVER -> style.overState
 			ButtonState.DOWN -> style.downState
@@ -87,7 +87,7 @@ class ImageButton(
 		out.set(element.bounds)
 	}
 
-	private val mouseState = own(MouseOrTouchState(this)).apply {
+	private val mouseOrTouchState = own(MouseOrTouchState(this)).apply {
 		isOverChanged.add { invalidateProperties() }
 		isDownChanged.add { invalidateProperties() }
 	}

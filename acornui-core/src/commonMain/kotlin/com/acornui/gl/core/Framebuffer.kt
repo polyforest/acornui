@@ -18,7 +18,6 @@ package com.acornui.gl.core
 
 import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
-import com.acornui.component.StencilUtil
 import com.acornui.core.Disposable
 import com.acornui.core.DisposedException
 import com.acornui.core.di.Injector

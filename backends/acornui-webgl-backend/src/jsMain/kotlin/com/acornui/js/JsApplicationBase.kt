@@ -40,7 +40,6 @@ import com.acornui.core.i18n.Locale
 import com.acornui.core.input.*
 import com.acornui.core.input.interaction.ContextMenuManager
 import com.acornui.core.input.interaction.UndoDispatcher
-import com.acornui.io.BufferFactory
 import com.acornui.core.io.file.Files
 import com.acornui.core.io.file.FilesImpl
 import com.acornui.core.persistance.Persistence
@@ -150,8 +149,6 @@ Kotlin.isType = function(object, klass) {
 			PendingDisposablesRegistry.register(owner)
 			initializeSpecialInteractivity(owner)
 			owner.stage.onReady()
-			// Add the pop-up manager after onReady so that it is the highest index.
-			owner.stage.addElement(owner.inject(PopUpManager).view)
 
 			frameDriver = initializeFrameDriver(owner.injector)
 			frameDriver!!.start()
@@ -198,7 +195,6 @@ Kotlin.isType = function(object, klass) {
 
 		@Suppress("SENSELESS_COMPARISON") // window.navigator.languages can be null.
 		val uI = UserInfo(
-				isTouchDevice = isTouchDevice,
 				isBrowser = true,
 				isMobile = isMobile,
 				userAgent = window.navigator.userAgent,

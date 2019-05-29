@@ -423,7 +423,7 @@ open class CalendarItemRendererImpl(owner: Owned) : ContainerImpl(owner), Calend
 
 	val style = bind(CalendarItemRendererStyle())
 
-	private val mouseState = own(MouseOrTouchState(this)).apply {
+	private val mouseOrTouchState = own(MouseOrTouchState(this)).apply {
 		isOverChanged.add { refreshColor() }
 		isDownChanged.add { refreshColor() }
 	}
@@ -521,14 +521,14 @@ open class CalendarItemRendererImpl(owner: Owned) : ContainerImpl(owner), Calend
 		} else {
 			if (toggled) {
 				when {
-					mouseState.isDown -> ButtonState.TOGGLED_DOWN
-					mouseState.isOver -> ButtonState.TOGGLED_OVER
+					mouseOrTouchState.isDown -> ButtonState.TOGGLED_DOWN
+					mouseOrTouchState.isOver -> ButtonState.TOGGLED_OVER
 					else -> ButtonState.TOGGLED_UP
 				}
 			} else {
 				when {
-					mouseState.isDown -> ButtonState.DOWN
-					mouseState.isOver -> ButtonState.OVER
+					mouseOrTouchState.isDown -> ButtonState.DOWN
+					mouseOrTouchState.isOver -> ButtonState.OVER
 					else -> ButtonState.UP
 				}
 			}

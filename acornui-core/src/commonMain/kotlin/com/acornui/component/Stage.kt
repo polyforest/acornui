@@ -43,6 +43,7 @@ val Scoped.stage: Stage
 	get() = inject(Stage)
 
 class StageStyle : StyleBase() {
+
 	override val type = Companion
 
 	var bgColor: ColorRo by prop(Color.WHITE)

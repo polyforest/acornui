@@ -20,7 +20,9 @@ import com.acornui.core.input.MouseInput
 import com.acornui.core.input.WhichButton
 import com.acornui.core.input.interaction.*
 import com.acornui.core.time.time
+import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
+import com.acornui.signal.emptySignal
 import org.lwjgl.glfw.*
 
 /**
@@ -29,6 +31,10 @@ import org.lwjgl.glfw.*
 class GlfwMouseInput(private val window: Long) : MouseInput {
 
 	// TODO: Touch input for lwjgl?
+
+	override val touchModeChanged: Signal<() -> Unit> = emptySignal()
+	override val touchMode: Boolean = false
+
 	private val _touchStart = Signal1<TouchInteractionRo>()
 	override val touchStart = _touchStart.asRo()
 	private val _touchEnd = Signal1<TouchInteractionRo>()

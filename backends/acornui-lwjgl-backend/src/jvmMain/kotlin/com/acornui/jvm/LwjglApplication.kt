@@ -71,7 +71,6 @@ import com.acornui.jvm.graphic.LwjglGl20
 import com.acornui.jvm.input.GlfwMouseInput
 import com.acornui.jvm.input.JvmClipboard
 import com.acornui.jvm.input.LwjglKeyInput
-import com.acornui.jvm.input.MockTouchScreenKeyboard
 import com.acornui.jvm.io.JvmRestServiceFactory
 import com.acornui.jvm.loader.JvmBinaryLoader
 import com.acornui.jvm.loader.JvmTextLoader
@@ -132,8 +131,6 @@ open class LwjglApplication : ApplicationBase() {
 				val owner = OwnedImpl(injector!!)
 				owner.initializeSpecialInteractivity()
 				owner.stage.onReady()
-				// Add the pop-up manager after onReady so that it is the highest index.
-				owner.stage.addElement(owner.inject(PopUpManager).view)
 				JvmApplicationRunner(owner.injector, _windowId)
 				owner.dispose()
 				dispose()
@@ -171,7 +168,6 @@ open class LwjglApplication : ApplicationBase() {
 	protected open val userInfoTask by BootTask {
 		val u = UserInfo(
 				isDesktop = true,
-				isTouchDevice = false,
 				userAgent = "glfw",
 				platformStr = System.getProperty("os.name") ?: UserInfo.UNKNOWN_PLATFORM,
 				systemLocale = listOf(Locale(LocaleJvm.getDefault().toLanguageTag()))
@@ -215,10 +211,6 @@ open class LwjglApplication : ApplicationBase() {
 
 	protected open val keyInputTask by BootTask {
 		set(KeyInput, LwjglKeyInput(getWindowId()))
-	}
-
-	protected open val touchScreenKeyboardTask by BootTask {
-		set(TouchScreenKeyboard, MockTouchScreenKeyboard)
 	}
 
 	protected open val filesTask by BootTask {

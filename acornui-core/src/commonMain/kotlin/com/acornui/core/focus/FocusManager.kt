@@ -40,7 +40,7 @@ import com.acornui.signal.Signal
 interface FocusManager : Disposable {
 
 	/**
-	 * Initializes the focus manager with the given root focusable.
+	 * Initializes this focus manager with the given root focusable.
 	 */
 	fun init(root: ElementContainer<UiComponent>)
 
@@ -305,3 +305,4 @@ fun UiComponentRo.focus(highlight: Boolean = false) {
 			focusManager.highlightFocused()
 	}
 }
+

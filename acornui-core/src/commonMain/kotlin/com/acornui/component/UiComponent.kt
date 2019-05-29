@@ -28,10 +28,7 @@ import com.acornui.core.asset.AssetManager
 import com.acornui.core.di.*
 import com.acornui.core.focus.*
 import com.acornui.core.graphic.*
-import com.acornui.core.input.InteractionEventRo
-import com.acornui.core.input.InteractionType
-import com.acornui.core.input.InteractivityManager
-import com.acornui.core.input.MouseState
+import com.acornui.core.input.*
 import com.acornui.core.time.TimeDriver
 import com.acornui.filter.RenderFilter
 import com.acornui.filter.RenderFilterList
@@ -295,13 +292,18 @@ open class UiComponentImpl(
 	}
 
 	// Common dependencies
-	protected val window = inject(Window)
-	protected val mouse = inject(MouseState)
-	protected val assets = inject(AssetManager)
-	protected val interactivity = inject(InteractivityManager)
-	protected val timeDriver = inject(TimeDriver)
-	protected val gl = inject(Gl20)
-	protected val glState = inject(GlState)
+	protected val window by Window
+
+	@Deprecated("use mouseState", ReplaceWith("mouseState"), DeprecationLevel.ERROR)
+	protected val mouse by MouseState
+	protected val mouseState by MouseState
+
+	protected val assets by AssetManager
+	protected val interactivity by InteractivityManager
+	protected val timeDriver by TimeDriver
+	protected val gl by Gl20
+	protected val glState by GlState
+	protected val stage by Stage
 
 	// Validatable Properties
 	private val _invalidated = own(Signal2<UiComponent, Int>())
@@ -371,7 +373,7 @@ open class UiComponentImpl(
 	override var parent: ContainerRo? = null
 
 	// Focusable properties
-	protected val focusManager = inject(FocusManager)
+	protected val focusManager by FocusManager
 	final override var focusEnabled: Boolean by observable(false) { _ -> invalidateFocusOrder() }
 	final override var focusOrder by observable(0f) { _ -> invalidateFocusOrder() }
 	final override var isFocusContainer by observable(false) { _ -> invalidateFocusOrderDeep() }
@@ -783,14 +785,14 @@ open class UiComponentImpl(
 	 * @return Returns the [out] vector.
 	 */
 	override fun mousePosition(out: Vector2): Vector2 {
-		canvasToLocal(mouse.mousePosition(out))
+		canvasToLocal(mouseState.mousePosition(out))
 		return out
 	}
 
 	override fun mouseIsOver(): Boolean {
-		if (!isActive || !mouse.overCanvas) return false
+		if (!isActive || !mouseState.overCanvas) return false
 		val stage = owner.injectOptional(Stage) ?: return false
-		val e = stage.getChildUnderPoint(mouse.canvasX, mouse.canvasY, onlyInteractive = true) ?: return false
+		val e = stage.getChildUnderPoint(mouseState.canvasX, mouseState.canvasY, onlyInteractive = true) ?: return false
 		return e.isDescendantOf(this)
 	}
 
@@ -863,7 +865,7 @@ open class UiComponentImpl(
 			}
 			p = p.owner
 		}
-		s
+		s ?: stage
 	}
 
 	private var _styles: Styles? = null

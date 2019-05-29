@@ -241,23 +241,10 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 		}
 	}
 
-	private val rootKeyDownHandler = {
-		event: KeyInteractionRo ->
-		if (_currentPopUps.isNotEmpty()) {
-			if (!event.handled && event.keyCode == Ascii.ESCAPE) {
-				event.handled = true
-				requestModalClose()
-			}
-		}
-	}
-
-	override val styleParent: StyleableRo? = stage
-
 	init {
 		// The pop up manager is automatically added to the pending disposables registry and should not be
 		// disposed when the stage is.
 		styleTags.add(PopUpManager)
-		stage.keyDown().add(rootKeyDownHandler)
 		isFocusContainer = true
 		interactivityMode = InteractivityMode.CHILDREN
 
@@ -274,12 +261,23 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 	override fun onActivated() {
 		super.onActivated()
 		focusManager.focusedChanging.add(::focusChangingHandler)
+		stage.keyDown().add(::rootKeyDownHandler)
 	}
 
 	override fun onDeactivated() {
 		// Must be before super.onDeactivated or the focus change prevention will get stuck.
 		focusManager.focusedChanging.remove(::focusChangingHandler)
+		stage.keyDown().remove(::rootKeyDownHandler)
 		super.onDeactivated()
+	}
+
+	private fun rootKeyDownHandler(event: KeyInteractionRo) {
+		if (_currentPopUps.isNotEmpty()) {
+			if (!event.handled && event.keyCode == Ascii.ESCAPE) {
+				event.handled = true
+				requestModalClose()
+			}
+		}
 	}
 
 	private fun focusChangingHandler(old: UiComponentRo?, new: UiComponentRo?, cancel: Cancel) {
@@ -375,7 +373,6 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 	}
 
 	override fun dispose() {
-		stage.keyDown().remove(rootKeyDownHandler)
 		clear()
 		super.dispose()
 	}
