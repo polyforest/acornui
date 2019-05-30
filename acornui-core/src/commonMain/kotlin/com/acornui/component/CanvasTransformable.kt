@@ -19,6 +19,7 @@ package com.acornui.component
 import com.acornui.core.Renderable
 import com.acornui.core.drawRegion
 import com.acornui.core.graphic.flipYDown
+import com.acornui.core.renderContext
 import com.acornui.gl.core.Framebuffer
 
 import com.acornui.math.*

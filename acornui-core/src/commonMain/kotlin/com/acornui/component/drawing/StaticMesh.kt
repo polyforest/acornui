@@ -24,6 +24,7 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.graphic.BlendMode
 import com.acornui.core.graphic.Texture
+import com.acornui.core.renderContext
 import com.acornui.filter.colorTransformationFilter
 import com.acornui.gl.core.*
 import com.acornui.graphic.ColorRo

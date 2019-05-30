@@ -19,12 +19,10 @@ package com.acornui.core.focus
 import com.acornui._assert
 import com.acornui.collection.addSorted
 import com.acornui.collection.firstOrNull2
-import com.acornui.collection.lastOrNull2
 import com.acornui.collection.poll
 import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
-import com.acornui.core.Disposable
 import com.acornui.core.DisposedException
 import com.acornui.core.di.ownerWalk
 import com.acornui.core.input.Ascii
@@ -35,10 +33,6 @@ import com.acornui.core.input.keyDown
 import com.acornui.core.input.mouseDown
 import com.acornui.core.input.touchStart
 import com.acornui.core.isBefore
-import com.acornui.core.time.callLater
-import com.acornui.function.as2
-import com.acornui.math.Bounds
-import com.acornui.math.Matrix4
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
@@ -65,7 +59,6 @@ class FocusManagerImpl() : FocusManager {
 	override val focusedChanged = _focusedChanged.asRo()
 
 	private var _focused: UiComponentRo? = null
-	private var _highlighted: UiComponentRo? = null
 
 	private val invalidFocusables = ArrayList<UiComponentRo>()
 
@@ -113,31 +106,6 @@ class FocusManagerImpl() : FocusManager {
 		Unit
 	}
 
-	private var _highlightIndicator: UiComponent? = null
-
-	override val highlightIndicator: UiComponentRo?
-		get() = _highlightIndicator
-
-	override fun setHighlightIndicator(value: UiComponent?, disposeOld: Boolean) {
-		val old = _highlightIndicator
-		if (value == old) return
-		old?.disposed?.remove(::highlightDisposedHandler)
-		val wasHighlighted = _highlighted != null
-		unhighlightFocused()
-		_highlightIndicator = value
-		if (value != null) {
-			value.includeInLayout = false
-			value.disposed.add(::highlightDisposedHandler)
-		}
-		if (wasHighlighted) highlightFocused()
-		if (disposeOld)
-			old?.dispose()
-	}
-
-	private fun highlightDisposedHandler(d: Disposable) {
-		setHighlightIndicator(null, false)
-	}
-
 	override fun init(root: ElementContainer<UiComponent>) {
 		_assert(_root == null, "Already initialized.")
 		_root = root
@@ -160,37 +128,35 @@ class FocusManagerImpl() : FocusManager {
 		}
 	}
 
-	// Temp variables for the focus order comparison so they don't need to be recalculated for the subject.
-	private val ancestry1 = ArrayList<UiComponentRo>()
-	private val ancestry2 = ArrayList<UiComponentRo>()
+	private val focusDemarcations1 = ArrayList<UiComponentRo>()
+	private val focusDemarcations2 = ArrayList<UiComponentRo>()
 
 	private fun focusOrderComparator(o1: UiComponentRo, o2: UiComponentRo): Int {
-		o1.ownerWalk { if (it is UiComponentRo) ancestry1.add(it); true }
-		o2.ownerWalk { if (it is UiComponentRo) ancestry2.add(it); true }
-		val lowestCommonAncestor = ancestry1.firstOrNull2 { ancestry2.contains(it) }
+		o1.calculateFocusDemarcations(focusDemarcations1)
+		o2.calculateFocusDemarcations(focusDemarcations2)
 
-		val r: Int = if (lowestCommonAncestor == null) return 0 else {
-			val a = ancestry1.lastOrNull2(ancestry1.indexOf(lowestCommonAncestor) - 1) { it.isFocusContainer } ?: o1
-			val b = ancestry2.lastOrNull2(ancestry2.indexOf(lowestCommonAncestor) - 1) { it.isFocusContainer } ?: o2
-			val c1 = a.focusOrder.compareTo(b.focusOrder)
-			if (c1 != 0) c1
-			else {
-				// The explicit focus order is equivalent.
-				if (a.isBefore(b)) -1 else 1
-			}
+		var r = 0
+		for (i in 0..minOf(focusDemarcations1.lastIndex, focusDemarcations2.lastIndex)) {
+			val d1 = focusDemarcations1[i]
+			val d2 = focusDemarcations2[i]
+			r = d1.compareFocusOrder(d2)
+			if (r != 0) break
 		}
-		ancestry1.clear()
-		ancestry2.clear()
+		focusDemarcations1.clear()
+		focusDemarcations2.clear()
 		return r
 	}
 
-	private fun <T : Comparable<T>> List<T>.compareTo(other: List<T>): Int {
-		for (i in 0..minOf(lastIndex, other.lastIndex)) {
-			val r = this[i].compareTo(other[i])
-			if (r != 0)
-				return r
-		}
-		return size.compareTo(other.size)
+	private fun UiComponentRo.calculateFocusDemarcations(out: MutableList<UiComponentRo>) {
+		out.add(this)
+		ownerWalk { if (it is UiComponentRo && it.isFocusContainer) out.add(it); true }
+	}
+
+	private fun UiComponentRo.compareFocusOrder(other: UiComponentRo): Int {
+		if (this === other) return 0
+		val r1 = focusOrder.compareTo(other.focusOrder)
+		if (r1 != 0) return r1
+		return if (isBefore(other)) -1 else 1
 	}
 
 	private fun validateFocusables() {
@@ -279,50 +245,27 @@ class FocusManagerImpl() : FocusManager {
 		return _focused ?: root
 	}
 
-	override fun unhighlightFocused() {
-		if (_highlightIndicator != null) {
-			_highlightIndicator?.visible = false
-			root.removeElement(_highlightIndicator!!)
+	private var highlighted: UiComponentRo? = null
+		set(value) {
+			if (field != value) {
+				field?.showFocusHighlight = false
+				field = value
+				value?.showFocusHighlight = true
+			}
 		}
-		_highlighted?.invalidated?.remove(::highlightedInvalidatedHandler.as2)
-		_highlighted = null
+
+	override fun unhighlightFocused() {
+		highlighted = null
 	}
 
 	override fun highlightFocused() {
-		if (_focused != _root) {
-			_highlighted = _focused
-			if (_highlighted != null) {
-				_highlightIndicator?.visible = false
-				_highlighted!!.invalidated.add(::highlightedInvalidatedHandler.as2)
-			}
-			highlightedInvalidatedHandler()
-		}
-	}
-
-	private fun highlightedInvalidatedHandler() {
-		root.callLater(::updateHighlight)
-	}
-
-	private val highlightBounds = Bounds()
-	private val highlightTransform = Matrix4()
-
-	private fun updateHighlight() {
-		val highlighted = _highlighted ?: return
-		val highlight = _highlightIndicator ?: return
-		_highlightIndicator?.visible = true
-
-		highlighted.updateFocusHighlight(highlightBounds, highlightTransform)
-
-		root.addElement(highlight)
-		highlight.setSize(highlightBounds.width, highlightBounds.height)
-		highlight.customTransform = highlightTransform
+		highlighted = if (_focused != _root) _focused else null
 	}
 
 	override fun dispose() {
 		if (isDisposed) throw DisposedException()
 		isDisposed = true
-		unhighlightFocused()
-		setHighlightIndicator(null, disposeOld = true)
+		highlighted = null
 		pendingFocusable = null
 		_focused = null
 		_focusedChanged.dispose()

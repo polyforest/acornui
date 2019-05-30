@@ -18,6 +18,8 @@ package com.acornui.math
 
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.ClearableObjectPool
 
 interface ColorTransformationRo {
 
@@ -34,7 +36,7 @@ interface ColorTransformationRo {
 /**
  * Shaders may support a color transformation matrix.
  */
-class ColorTransformation : ColorTransformationRo {
+class ColorTransformation : ColorTransformationRo, Clearable {
 
 	private val _matrix = Matrix4()
 	private val _offset = Color()
@@ -120,11 +122,19 @@ class ColorTransformation : ColorTransformationRo {
 		return this
 	}
 
+	override fun clear() {
+		idt()
+	}
+
 	override fun toString(): String {
 		return "ColorTransformation(matrix=$_matrix, offset=$_offset)"
 	}
 
 	companion object {
+
+		private val pool = ClearableObjectPool { ColorTransformation() }
+		fun obtain(): ColorTransformation = pool.obtain()
+		fun free(value: ColorTransformation) = pool.free(value)
 
 		val IDENTITY: ColorTransformationRo = ColorTransformation()
 	}

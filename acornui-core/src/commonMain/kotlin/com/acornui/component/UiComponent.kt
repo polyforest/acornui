@@ -384,6 +384,9 @@ open class UiComponentImpl(
 	private val defaultRenderContext = inject(RenderContextRo)
 	protected val _renderContext = RenderContext(defaultRenderContext)
 
+	override val naturalRenderContext: RenderContextRo
+		get() = _renderContext
+
 	override val viewProjectionTransformInv: Matrix4Ro
 		get() = renderContext.viewProjectionTransformInv
 
@@ -407,9 +410,6 @@ open class UiComponentImpl(
 				update()
 			}
 		}
-
-	override val renderContext: RenderContextRo
-		get() = renderContextOverride ?: _renderContext
 
 	var cameraOverride: CameraRo?
 		get() = _renderContext.cameraOverride
@@ -456,23 +456,37 @@ open class UiComponentImpl(
 	// Focusable
 	//-----------------------------------------------
 
-	/**
-	 * If set, when the focus manager calls [updateFocusHighlight], this delegate will be used instead of this
-	 * component.
-	 */
-	var focusHighlightDelegate: Focusable? = null
-
-	override fun updateFocusHighlight(sizeOut: Bounds, transformOut: Matrix4) {
-		focusHighlightDelegate?.let {
-			it.updateFocusHighlight(sizeOut, transformOut)
-			return
+	override val focusableStyle: FocusableStyle by lazy {
+		bind(FocusableStyle()).apply {
+			watch(this) {
+				refreshFocusHighlight()
+			}
 		}
-		sizeOut.set(bounds)
-		transformOut.set(modelTransform)
 	}
 
-	//-----------------------------------------------
+	/**
+	 * If set, the provided delegate will be highlighted instead of this component.
+	 * The highlighter will still be obtained from this component's [focusableStyle].
+	 */
+	var focusHighlightDelegate: UiComponent? by observable(null, this::refreshFocusHighlight.as1)
 
+	override var showFocusHighlight by observable(false, this::refreshFocusHighlight.as1)
+
+	private var previousFocusTarget: UiComponent? = null
+	private var previousHighlighter: FocusHighlighter? = null
+
+	private fun refreshFocusHighlight() {
+		if (previousFocusTarget != null)
+			previousHighlighter?.unhighlight(previousFocusTarget!!)
+		if (showFocusHighlight) {
+			previousFocusTarget = focusHighlightDelegate ?: this
+			previousHighlighter = focusableStyle.highlighter
+			previousHighlighter?.highlight(previousFocusTarget!!)
+		} else {
+			previousFocusTarget = null
+			previousHighlighter = null
+		}
+	}
 
 	//-----------------------------------------------
 	// LayoutElement
@@ -571,8 +585,8 @@ open class UiComponentImpl(
 			override val bounds: BoundsRo
 				get() = this@UiComponentImpl.bounds
 
-			override val renderContext: RenderContextRo
-				get() = this@UiComponentImpl.renderContext
+			override val naturalRenderContext: RenderContextRo
+				get() = this@UiComponentImpl.naturalRenderContext
 
 			override var renderContextOverride: RenderContextRo?
 				get() = this@UiComponentImpl.renderContextOverride
@@ -1260,6 +1274,7 @@ open class UiComponentImpl(
 		private val quat: Quaternion = Quaternion()
 
 		private const val BITMAP_CACHE_INVALIDATING_FLAGS = (
+				ValidationFlags.BITMAP_CACHE or
 				ValidationFlags.HIERARCHY_DESCENDING or
 						ValidationFlags.TRANSFORM or
 						ValidationFlags.RENDER_CONTEXT or

@@ -32,15 +32,19 @@ import com.acornui.component.layout.spacer
 import com.acornui.component.scroll.*
 import com.acornui.component.style.*
 import com.acornui.component.text.*
+import com.acornui.core.Disposable
+import com.acornui.core.di.OwnedImpl
 import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
-import com.acornui.core.focus.FocusManager
+import com.acornui.core.focus.FocusHighlighter
+import com.acornui.core.focus.FocusableStyle
 import com.acornui.core.focus.SimpleHighlight
 import com.acornui.core.input.interaction.ContextMenuStyle
 import com.acornui.core.input.interaction.ContextMenuView
 import com.acornui.core.input.interaction.enableDownRepeat
-import com.acornui.core.userInfo
+import com.acornui.filter.ComponentDecorationFilter
+import com.acornui.filter.RenderFilter
 import com.acornui.filter.dropShadowFilter
+import com.acornui.filter.glowFilter
 import com.acornui.graphic.Color
 import com.acornui.math.*
 
@@ -106,12 +110,30 @@ open class BasicUiSkin(
 	}
 
 	protected open fun focusStyle() {
-		val focusManager = inject(FocusManager)
-		if (focusManager.highlightIndicator == null) {
-			val focusHighlight = SimpleHighlight(target, theme.atlasPath, "FocusRect")
-			focusHighlight.colorTint = theme.focusHighlightColor
-			focusManager.setHighlightIndicator(focusHighlight)
+		(target.getAttachment<FocusHighlighter>(FocusHighlighter) as? Disposable)?.dispose()
+
+		val focusHighlighter = object : FocusHighlighter, OwnedImpl(null, injector) {
+			private val filter: ComponentDecorationFilter// = glowFilter(theme.focusHighlightColor)
+			init {
+				val c = SimpleHighlight(this, theme.atlasPath, "FocusRect").apply { colorTint = theme.focusHighlightColor }
+				filter = ComponentDecorationFilter(this, c)
+			}
+
+			override fun unhighlight(target: UiComponent) {
+				target.renderFilters.remove(filter)
+			}
+
+			override fun highlight(target: UiComponent) {
+				target.renderFilters.add(0, filter)
+			}
+
+
 		}
+		target.setAttachment(FocusHighlighter, focusHighlighter)
+		val focusableStyle = FocusableStyle().apply {
+			highlighter = focusHighlighter
+		}
+		target.addStyleRule(focusableStyle)
 	}
 
 	protected open fun textStyle() {
@@ -606,7 +628,7 @@ open class BasicUiSkin(
 			borderRadii = Corners(theme.borderRadius)
 			borderThicknesses = Pad(theme.strokeThickness + 1f)
 			cellFocusHighlight = {
-				SimpleHighlight(target, theme.atlasPath, "FocusRect").apply { colorTint = theme.strokeToggled }
+				SimpleHighlight(target, theme.atlasPath, "FocusRect").apply { colorTint = theme.focusHighlightColor }
 			}
 			headerCellBackground = {
 				button {

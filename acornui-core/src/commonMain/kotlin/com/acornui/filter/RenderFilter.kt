@@ -24,6 +24,7 @@ import com.acornui.core.di.Owned
 import com.acornui.core.di.OwnedImpl
 import com.acornui.core.di.inject
 import com.acornui.core.drawRegion
+import com.acornui.core.renderContext
 import com.acornui.function.as1
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
@@ -73,6 +74,7 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 		set(value) {
 			if (value === this) throw Exception("Cannot set contents to self.")
 			field = value
+			invalidateBitmapCache()
 		}
 
 	override fun invalidateBitmapCache() {
@@ -80,13 +82,13 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 	}
 
 	/**
-	 * The padding this filter expands the render margin and draw region.
+	 * The margin this filter should inflate the render margin and therefore draw region.
 	 */
-	open val padding: PadRo = Pad.EMPTY_PAD
+	open val renderMarginInflation: PadRo = Pad.EMPTY_PAD
 
 	private val _renderMargin = Pad()
 	override val renderMargin: PadRo
-		get() = _renderMargin.set(contents?.renderMargin ?: Pad.EMPTY_PAD).inflate(padding)
+		get() = _renderMargin.set(contents?.renderMargin ?: Pad.EMPTY_PAD).inflate(renderMarginInflation)
 
 	override val bounds: BoundsRo
 		get() = contents?.bounds ?: Bounds.EMPTY_BOUNDS
@@ -103,14 +105,19 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 		_changed.dispatch(this)
 	}
 
-	override val renderContext: RenderContextRo
-		get() = renderContextOverride ?: contents?.renderContext ?: inject(RenderContextRo)
+	override val naturalRenderContext: RenderContextRo
+		get() = contents?.naturalRenderContext ?: inject(RenderContextRo)
 
-	override var renderContextOverride: RenderContextRo? = null
+	override var renderContextOverride: RenderContextRo?
+		get() = contents?.renderContextOverride
+		set(value) {
+			contents?.renderContextOverride = value
+		}
 
 	final override fun render() {
+		val renderContext = renderContext
 		if (shouldSkipFilter) contents?.render()
-		else draw(MinMaxRo.POSITIVE_INFINITY, renderContext.modelTransform, renderContext.colorTint)
+		else draw(renderContext.clipRegion, renderContext.modelTransform, renderContext.colorTint)
 		bitmapCacheIsValid = true
 	}
 

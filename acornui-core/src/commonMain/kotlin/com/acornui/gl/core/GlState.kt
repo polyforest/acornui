@@ -18,7 +18,10 @@ package com.acornui.gl.core
 
 import com.acornui.core.Disposable
 import com.acornui.core.di.DKey
-import com.acornui.core.graphic.*
+import com.acornui.core.graphic.BlendMode
+import com.acornui.core.graphic.Texture
+import com.acornui.core.graphic.Window
+import com.acornui.core.graphic.rgbData
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
@@ -542,13 +545,18 @@ internal val combined = ColorTransformation()
  * Adds a color transformation to the current stack, using that color transformation within [inner].
  */
 inline fun GlState.useColorTransformation(cT: ColorTransformationRo, inner: ()->Unit) {
-	val previous = colorTransformation
-	if (previous == null) {
-		colorTransformation = cT
-	} else {
-		combined.set(previous).mul(cT)
-		colorTransformation = combined
-	}
+	val wasSet = colorTransformation != null
+	val previous = if (wasSet) ColorTransformation.obtain().set(colorTransformation!!) else null
+	colorTransformation = combined.combine(previous, cT)
 	inner()
-	colorTransformation = previous
+	if (wasSet) {
+		colorTransformation = previous
+		ColorTransformation.free(previous!!)
+	} else {
+		colorTransformation = null
+	}
+}
+
+fun ColorTransformation.combine(previous: ColorTransformationRo?, cT: ColorTransformationRo): ColorTransformation {
+	return if (previous != null) set(previous).mul(cT) else set(cT)
 }

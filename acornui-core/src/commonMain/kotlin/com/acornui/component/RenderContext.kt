@@ -28,8 +28,6 @@ import com.acornui.core.graphic.centerCamera
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
-import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
 
 interface RenderContextRo : CanvasTransformableRo {
 
@@ -156,8 +154,10 @@ class RenderContext(initialParentContext: RenderContextRo) : RenderContextRo {
 			else localToCanvas(_clipRegionIntersection.set(clipRegionLocal!!)).intersection(parentContext.clipRegion)
 		}
 
+	var colorTintOverride: ColorRo? = null
+
 	private val _colorTint = Color()
 	override val colorTint: ColorRo
-		get() = _colorTint.set(parentContext.colorTint).mul(colorTintLocal).clamp()
+		get() = colorTintOverride ?: _colorTint.set(parentContext.colorTint).mul(colorTintLocal).clamp()
 
 }

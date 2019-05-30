@@ -237,11 +237,13 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 		// Handle the cursor blink
 		onTick {
-			cursorTimer -= it
-			if (cursorTimer <= 0f) {
-				cursorTimer = cursorBlinkSpeed
-				usingCursorColorOne = !usingCursorColorOne
-				textCursor.colorTint = if (usingCursorColorOne) cursorColorOne else cursorColorTwo
+			if (window.isActive) {
+				cursorTimer -= it
+				if (cursorTimer <= 0f) {
+					cursorTimer = cursorBlinkSpeed
+					usingCursorColorOne = !usingCursorColorOne
+					textCursor.colorTint = if (usingCursorColorOne) cursorColorOne else cursorColorTwo
+				}
 			}
 		}
 

@@ -124,6 +124,11 @@ interface DKey<T : Any> {
 	 */
 	fun factory(injector: Injector): T? = null
 
+	operator fun provideDelegate(
+			thisRef: Scoped,
+			prop: KProperty<*>
+	): ReadOnlyProperty<Scoped, T> = LazyDependency(this)
+
 	infix fun to(value: T): DependencyPair<T> = DependencyPair(this, value)
 }
 
@@ -145,11 +150,6 @@ fun <T : SuperKey, SuperKey : Any> dKey(extends: DKey<SuperKey>): DKey<T> {
 		override val extends: DKey<SuperKey>? = extends
 	}
 }
-
-operator fun <T : Any> DKey<T>.provideDelegate(
-		thisRef: Scoped,
-		prop: KProperty<*>
-): ReadOnlyProperty<Scoped, T> = LazyDependency(this)
 
 private class LazyDependency<T : Any>(private val key: DKey<T>) : ReadOnlyProperty<Scoped, T> {
 

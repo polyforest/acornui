@@ -25,6 +25,7 @@ import com.acornui.core.di.own
 import com.acornui.core.graphic.BlendMode
 import com.acornui.core.graphic.Texture
 import com.acornui.core.render
+import com.acornui.core.renderContext
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
@@ -42,7 +43,7 @@ class FramebufferFilter(
 		hasStencil: Boolean = owner.inject(AppConfig).gl.stencil
 ) : RenderFilterBase(owner) {
 
-	override var padding: PadRo = Pad.EMPTY_PAD
+	override var renderMarginInflation: PadRo = Pad.EMPTY_PAD
 
 	var clearMask = Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT
 	var clearColor = Color.CLEAR
@@ -96,7 +97,7 @@ class FramebufferFilter(
 	fun drawToScreen(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		viewport.set(glState.viewport)
 		mvp.idt().scl(2f / viewport.width, -2f / viewport.height, 1f).trn(-1f, 1f, 0f) // Projection transform
-		mvp.mul(transform)//.translate(margin.left, margin.top)
+		mvp.mul(transform)
 
 		glState.viewProjection = mvp
 		glState.model = Matrix4.IDENTITY

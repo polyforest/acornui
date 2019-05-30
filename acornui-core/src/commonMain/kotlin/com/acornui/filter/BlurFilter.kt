@@ -46,12 +46,12 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	private val sprite = Sprite(glState)
 	private val mvp = Matrix4()
 
-	private val _padding = Pad()
-	override val padding: PadRo
+	private val _renderMarginInflation = Pad()
+	override val renderMarginInflation: PadRo
 		get() {
 			val hPad = blurX * 4f * quality.passes
 			val vPad = blurY * 4f * quality.passes
-			return _padding.set(left = hPad, top = vPad, right = hPad, bottom = vPad)
+			return _renderMarginInflation.set(left = hPad, top = vPad, right = hPad, bottom = vPad)
 		}
 
 	override val shouldSkipFilter: Boolean
@@ -78,7 +78,7 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 
 	fun drawToPingPongBuffers() {
 		val framebufferUtil = framebufferUtil
-		framebufferUtil.padding = padding
+		framebufferUtil.renderMarginInflation = renderMarginInflation
 		framebufferUtil.drawToFramebuffer()
 		val region = framebufferUtil.drawRegion
 		glState.useViewport(-region.xMin.toInt(), region.yMin.toInt() - viewport.height + framebufferUtil.texture.height, viewport.width, viewport.height) {

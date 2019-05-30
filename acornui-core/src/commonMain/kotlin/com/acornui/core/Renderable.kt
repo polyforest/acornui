@@ -32,18 +32,29 @@ interface Renderable : SizableRo {
 	val renderMargin: PadRo
 		get() = Pad.EMPTY_PAD
 
-	val renderContext: RenderContextRo
-
 	/**
 	 * Overrides the default render context.
 	 */
 	var renderContextOverride: RenderContextRo?
 
 	/**
+	 * The render context that will be used if there is no [renderContextOverride] value set.
+	 * The render context is responsible for transformation of local vertices to global vertices at the [render] phase.
+	 */
+	val naturalRenderContext: RenderContextRo
+
+	/**
 	 * Renders any graphics.
 	 */
 	fun render()
 }
+
+/**
+ * The rendering context to be used within [render].
+ * This can be overriden via [Renderable.renderContextOverride]
+ */
+val Renderable.renderContext: RenderContextRo
+	get() = renderContextOverride ?: naturalRenderContext
 
 /**
  * Renders the target with the given render context.

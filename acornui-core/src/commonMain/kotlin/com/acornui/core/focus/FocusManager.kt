@@ -21,6 +21,8 @@ import com.acornui.collection.lastOrNull2
 import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleType
 import com.acornui.core.Disposable
 import com.acornui.core.TreeWalk
 import com.acornui.core.childWalkLevelOrder
@@ -29,8 +31,6 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.di.owns
 import com.acornui.core.isAncestorOf
-import com.acornui.math.Bounds
-import com.acornui.math.Matrix4
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
 
@@ -55,17 +55,6 @@ interface FocusManager : Disposable {
 	 * (oldFocusable, newFocusable)
 	 */
 	val focusedChanged: Signal<(UiComponentRo?, UiComponentRo?) -> Unit>
-
-	/**
-	 * The current highlight indicator, as set via [setHighlightIndicator].
-	 */
-	val highlightIndicator: UiComponentRo?
-
-	/**
-	 * This component will be used to highlight the focused element.
-	 * This component will be added to the stage provided during [init] and sized and positioned automatically.
-	 */
-	fun setHighlightIndicator(value: UiComponent?, disposeOld: Boolean = true)
 
 	/**
 	 * Refreshes the focusable's order in the focus list.
@@ -134,6 +123,8 @@ interface FocusManager : Disposable {
  */
 interface Focusable : Scoped {
 
+	val focusableStyle: FocusableStyle
+
 	/**
 	 * True if this Focusable object should be included in the focus order.
 	 * Note that this does not affect directly setting this element to be focused via [focusSelf] or using
@@ -161,10 +152,9 @@ interface Focusable : Scoped {
 	val focusEnabledChildren: Boolean
 
 	/**
-	 * When this focus manager updates the focus highlight, it will set the highlight's size and transformation to
-	 * the values provided by the focused element.
+	 * If true, this component will render its focus highlight as provided by the [focusableStyle].
 	 */
-	fun updateFocusHighlight(sizeOut: Bounds, transformOut: Matrix4)
+	var showFocusHighlight: Boolean
 }
 
 /**
@@ -221,7 +211,7 @@ fun UiComponentRo.invalidateFocusOrder() {
 fun UiComponentRo.invalidateFocusOrderDeep() {
 	if (!isActive) return
 	val focusManager = inject(FocusManager)
-	childWalkLevelOrder { it ->
+	childWalkLevelOrder {
 		focusManager.invalidateFocusableOrder(it)
 		TreeWalk.CONTINUE
 	}
@@ -306,3 +296,20 @@ fun UiComponentRo.focus(highlight: Boolean = false) {
 	}
 }
 
+class FocusableStyle : StyleBase() {
+
+	override val type = Companion
+
+	var highlighter by prop<FocusHighlighter?>(null)
+
+	companion object : StyleType<FocusableStyle>
+}
+
+interface FocusHighlighter {
+
+	fun unhighlight(target: UiComponent)
+
+	fun highlight(target: UiComponent)
+
+	companion object
+}
