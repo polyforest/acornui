@@ -311,5 +311,7 @@ interface FocusHighlighter : Disposable {
 
 	fun highlight(target: UiComponent)
 
-	companion object
+	companion object {
+		const val HIGHLIGHT_PRIORITY = 99999f
+	}
 }

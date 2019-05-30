@@ -21,6 +21,7 @@ import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Owned
 import com.acornui.core.di.Scoped
+import com.acornui.core.focus.FocusHighlighter.Companion.HIGHLIGHT_PRIORITY
 import com.acornui.core.popup.PopUpInfo
 import com.acornui.core.popup.PopUpManager
 import com.acornui.core.renderContext
@@ -106,7 +107,7 @@ class SimpleFocusHighlighter(
 	private val popUpInfo = PopUpInfo(
 			highlight,
 			isModal = false,
-			priority = 99999f,
+			priority = HIGHLIGHT_PRIORITY,
 			dispose = false,
 			focus = false,
 			highlightFocused = false
