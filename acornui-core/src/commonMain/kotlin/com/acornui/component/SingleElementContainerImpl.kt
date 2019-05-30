@@ -71,3 +71,21 @@ open class SingleElementContainerImpl<T : UiComponent>(owner: Owned) : Container
 		element = null
 	}
 }
+
+/**
+ * Given a factory method that produces a new element [T], if this single element container already
+ * uses an element of that type, it will be reused. Otherwise, the previous contents will be disposed and
+ * the factory will generate new contents.
+ */
+inline fun <reified T : UiComponent> SingleElementContainer<UiComponent>.createOrReuseElement(factory: Owned.() -> T): T {
+	val existing: T
+	val contents = element
+	if (contents !is T) {
+		contents?.dispose()
+		existing = factory()
+		element = existing
+	} else {
+		existing = contents
+	}
+	return existing
+}

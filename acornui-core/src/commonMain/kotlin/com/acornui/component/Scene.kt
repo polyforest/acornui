@@ -18,6 +18,7 @@
 
 package com.acornui.component
 
+import com.acornui.collection.forEach2
 import com.acornui.core.di.Owned
 import com.acornui.core.graphic.orthographicCamera
 import com.acornui.gl.core.useViewportFromCanvasTransform
@@ -46,11 +47,9 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		out.set(explicitWidth ?: window.width, explicitHeight ?: window.height)
 		cam.setViewport(out.width, out.height)
 		cam.moveToLookAtRect(0f, 0f, out.width, out.height)
-		_elements.iterate {
+		elementsToLayout.forEach2 {
 			// Elements of the stage all are explicitly sized to the dimensions of the stage.
-			if (it.shouldLayout)
-				it.setSize(explicitWidth, explicitHeight)
-			true
+			it.setSize(explicitWidth, explicitHeight)
 		}
 	}
 

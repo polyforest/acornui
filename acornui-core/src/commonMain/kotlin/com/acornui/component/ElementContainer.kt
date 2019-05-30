@@ -18,9 +18,8 @@
 
 package com.acornui.component
 
-import com.acornui.collection.ConcurrentListImpl
-import com.acornui.collection.addOrReorder
-import com.acornui.collection.iterate
+import com.acornui.collection.*
+import com.acornui.component.layout.LayoutElement
 import com.acornui.core.di.Owned
 import com.acornui.math.Bounds
 
@@ -137,13 +136,20 @@ open class ElementContainerImpl<T : UiComponent>(
 	// Element methods.
 	//-------------------------------------------------------------------------------------------------
 
-	protected val _elements = ConcurrentListImpl<T>()
+	protected val _elements = ArrayList<T>()
 
 	/**
 	 * A list of externally added components.
 	 */
-	final override val elements: List<T>
-		get() = _elements
+	final override val elements: List<T> = _elements
+
+	private val _elementsToLayout = ArrayList<LayoutElement>()
+	protected val elementsToLayout: List<LayoutElement>
+		get() {
+			_elementsToLayout.clear()
+			elements.filterTo2(_elementsToLayout, LayoutElement::shouldLayout)
+			return _elementsToLayout
+		}
 
 	override fun <S : T> addElement(index: Int, element: S): S {
 		_elements.addOrReorder(index, element) { oldIndex, newIndex ->
@@ -208,25 +214,20 @@ open class ElementContainerImpl<T : UiComponent>(
 
 	//-------------------------------------------------------------------------------------------------
 
-	private val elementsUpdateIt = _elements.concurrentIterator()
-
 	/**
 	 * A Container implementation will by default measure its children for dimensions that were not explicit.
 	 */
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		if (explicitWidth != null && explicitHeight != null) return // Use explicit dimensions.
-		elementsUpdateIt.iterate { element ->
-			if (element.shouldLayout) {
-				if (explicitWidth == null) {
-					if (element.right > out.width)
-						out.width = element.right
-				}
-				if (explicitHeight == null) {
-					if (element.bottom > out.height)
-						out.height = element.bottom
-				}
+		elementsToLayout.forEach2 { element ->
+			if (explicitWidth == null) {
+				if (element.right > out.width)
+					out.width = element.right
 			}
-			true
+			if (explicitHeight == null) {
+				if (element.bottom > out.height)
+					out.height = element.bottom
+			}
 		}
 	}
 
@@ -237,22 +238,4 @@ open class ElementContainerImpl<T : UiComponent>(
 		clearElements(dispose = false) // The elements this container owns will be disposed in the disposed signal.
 		super.dispose()
 	}
-}
-
-/**
- * Given a factory method that produces a new element [T], if this single element container already
- * uses an element of that type, it will be reused. Otherwise, the previous contents will be disposed and
- * the factory will generate new contents.
- */
-inline fun <reified T : UiComponent> SingleElementContainer<UiComponent>.createOrReuseElement(factory: Owned.() -> T): T {
-	val existing: T
-	val contents = element
-	if (contents !is T) {
-		contents?.dispose()
-		existing = factory()
-		element = existing
-	} else {
-		existing = contents
-	}
-	return existing
 }

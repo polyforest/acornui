@@ -16,8 +16,8 @@
 
 package com.acornui.component.layout
 
-import com.acornui.collection.filterTo2
-import com.acornui.component.*
+import com.acornui.component.ElementContainerImpl
+import com.acornui.component.UiComponent
 import com.acornui.component.layout.algorithm.LayoutAlgorithm
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.Style
@@ -32,14 +32,6 @@ open class ElementLayoutContainerImpl<S : Style, out U : LayoutData>(
 		owner: Owned,
 		private val layoutAlgorithm: LayoutAlgorithm<S, U>
 ) : ElementContainerImpl<UiComponent>(owner), LayoutDataProvider<U>, Focusable {
-
-	private val _elementsToLayout = ArrayList<LayoutElement>()
-	private val elementsToLayout: List<LayoutElement>
-		get() {
-			_elementsToLayout.clear()
-			elements.filterTo2(_elementsToLayout, LayoutElement::shouldLayout)
-			return _elementsToLayout
-		}
 
 	val style: S = bind(layoutAlgorithm.style)
 	final override fun createLayoutData(): U = layoutAlgorithm.createLayoutData()

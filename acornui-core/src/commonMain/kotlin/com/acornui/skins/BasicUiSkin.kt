@@ -32,8 +32,6 @@ import com.acornui.component.layout.spacer
 import com.acornui.component.scroll.*
 import com.acornui.component.style.*
 import com.acornui.component.text.*
-import com.acornui.core.Disposable
-import com.acornui.core.di.OwnedImpl
 import com.acornui.core.di.Scoped
 import com.acornui.core.focus.FocusHighlighter
 import com.acornui.core.focus.FocusableStyle
@@ -42,10 +40,7 @@ import com.acornui.core.focus.SimpleHighlight
 import com.acornui.core.input.interaction.ContextMenuStyle
 import com.acornui.core.input.interaction.ContextMenuView
 import com.acornui.core.input.interaction.enableDownRepeat
-import com.acornui.filter.ComponentDecorationFilter
-import com.acornui.filter.RenderFilter
 import com.acornui.filter.dropShadowFilter
-import com.acornui.filter.glowFilter
 import com.acornui.graphic.Color
 import com.acornui.math.*
 

@@ -16,6 +16,7 @@
 
 package com.acornui.component
 
+import com.acornui.collection.forEach2
 import com.acornui.component.style.StyleableRo
 import com.acornui.core.di.Injector
 import com.acornui.core.di.OwnedImpl
@@ -100,14 +101,12 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 			softKeyboardManagerView.height
 		} else 0f
 
-		_elements.iterate {
+		elementsToLayout.forEach2 {
 			// Elements of the stage all are explicitly sized to the dimensions of the stage.
-			if (it.shouldLayout) {
-				it.setSize(w, h - softKeyboardH)
-			}
-			true
+			it.setSize(w, h - softKeyboardH)
 		}
 		popUpManagerView.setSize(w, h - softKeyboardH)
+		softKeyboardManagerView.setPosition(0f, h - softKeyboardH)
 		out.set(w, h)
 	}
 
