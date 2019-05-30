@@ -135,7 +135,11 @@ data class PopUpInfo<T : UiComponent>(
 		val layoutData: CanvasLayoutData = CanvasLayoutData().apply {
 			center()
 		}
-)
+) : Comparable<PopUpInfo<*>> {
+	override fun compareTo(other: PopUpInfo<*>): Int {
+		return priority.compareTo(other.priority)
+	}
+}
 
 class PopUpManagerStyle : StyleBase() {
 
@@ -335,7 +339,7 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 		if (child is Closeable)
 			child.closed.add(::childClosedHandler)
 		child.disposed.add(::popUpChildDisposedHandler)
-		val index = _currentPopUps.sortedInsertionIndex(popUpInfo) { a, b -> a.priority.compareTo(b.priority) }
+		val index = _currentPopUps.sortedInsertionIndex(popUpInfo)
 		_currentPopUps.add(index, popUpInfo)
 		if (index == _currentPopUps.lastIndex)
 			addElement(child)
