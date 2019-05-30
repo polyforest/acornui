@@ -122,7 +122,7 @@ open class BasicUiSkin(
 		))
 		target.addStyleRule(charStyle { colorTint = theme.formLabelColor }, withAncestor(formLabelStyle))
 
-		target.addStyleRule(charStyle { selectable = true }, withAncestor(TextInput) or withAncestor(TextArea))
+		target.addStyleRule(charStyle { selectable = theme.selectableText }, not(withAncestor(TextInput) or withAncestor(TextArea)))
 
 		val textInputStyle = TextInputStyle().apply {
 			background = {

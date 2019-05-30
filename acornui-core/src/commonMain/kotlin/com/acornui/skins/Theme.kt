@@ -77,6 +77,8 @@ data class Theme(
 		val headingColor: ColorRo = Color(0x333333ff),
 		val formLabelColor: ColorRo = Color(0x555555ff),
 
+		val selectableText: Boolean = false,
+
 		val errorColor: ColorRo = Color(0xcc3333ff),
 		val warningColor: ColorRo = Color(0xff9933ff),
 		val infoColor: ColorRo = Color(0x339933ff),
@@ -122,6 +124,7 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 				fillToggledShine = reader.color("fillToggledShine")!!,
 				focusHighlightColor = reader.color("focusHighlightColor")!!,
 				formLabelColor = reader.color("formLabelColor")!!,
+				selectableText = reader.bool("selectableText") ?: false,
 				headingColor = reader.color("headingColor")!!,
 				highlightedEvenRowBgColor = reader.color("highlightedEvenRowBgColor")!!,
 				highlightedOddRowBgColor = reader.color("highlightedOddRowBgColor")!!,
@@ -166,6 +169,7 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 		writer.color("fillToggledShine", fillToggledShine)
 		writer.color("focusHighlightColor", focusHighlightColor)
 		writer.color("formLabelColor", formLabelColor)
+		writer.bool("selectableText", selectableText)
 		writer.color("headingColor", headingColor)
 		writer.color("highlightedEvenRowBgColor", highlightedEvenRowBgColor)
 		writer.color("highlightedOddRowBgColor", highlightedOddRowBgColor)
