@@ -30,7 +30,8 @@ interface CursorManager {
 	/**
 	 * Adds a cursor at the given index in the stack. (Only the last cursor will be displayed.)
 	 * @param cursor The cursor to add. Use [StandardCursors] to grab a cursor object.
-	 * @param priority The priority of the cursor. Use [CursorPriority] to get useful default priorities.
+	 * @param priority The priority of the cursor. Use [CursorPriority] to get useful default priorities. Higher numbers
+	 * will take precedence over lower numbers.
 	 * @return Returns the cursor reference of the cursor added, this can be used to remove the cursor.
 	 */
 	fun addCursor(cursor: Cursor, priority: Float = 0f): CursorReference
