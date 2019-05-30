@@ -538,13 +538,12 @@ fun GlState.setScissor(value: IntRectangleRo) = setScissor(value.x, value.y, val
 
 fun GlState.setFramebuffer(value: FrameBufferInfoRo) = setFramebuffer(value.framebuffer, value.width, value.height, value.scaleX, value.scaleY)
 
-@PublishedApi
-internal val combined = ColorTransformation()
+private val combined = ColorTransformation()
 
 /**
  * Adds a color transformation to the current stack, using that color transformation within [inner].
  */
-inline fun GlState.useColorTransformation(cT: ColorTransformationRo, inner: ()->Unit) {
+fun GlState.useColorTransformation(cT: ColorTransformationRo, inner: ()->Unit) {
 	val wasSet = colorTransformation != null
 	val previous = if (wasSet) ColorTransformation.obtain().set(colorTransformation!!) else null
 	colorTransformation = combined.combine(previous, cT)
