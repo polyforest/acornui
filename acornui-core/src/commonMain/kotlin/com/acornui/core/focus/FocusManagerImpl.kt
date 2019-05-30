@@ -175,10 +175,10 @@ class FocusManagerImpl() : FocusManager {
 
 	override val focused: UiComponentRo?
 		get() {
-			val focused = _focused ?: return null
-			if (!focused.isActive) {
-				focused(root)
-			}
+//			val focused = _focused ?: return null
+//			if (!focused.isActive) {
+//				focused(root)
+//			}
 			return _focused
 		}
 
@@ -250,7 +250,7 @@ class FocusManagerImpl() : FocusManager {
 			if (field != value) {
 				field?.showFocusHighlight = false
 				field = value
-				value?.showFocusHighlight = true
+				field?.showFocusHighlight = true
 			}
 		}
 

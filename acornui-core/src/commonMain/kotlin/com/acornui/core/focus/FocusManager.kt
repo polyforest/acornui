@@ -305,7 +305,7 @@ class FocusableStyle : StyleBase() {
 	companion object : StyleType<FocusableStyle>
 }
 
-interface FocusHighlighter {
+interface FocusHighlighter : Disposable {
 
 	fun unhighlight(target: UiComponent)
 

@@ -187,7 +187,8 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 			if (last.focus) {
 				val child = last.child
 				if (child.canFocus) {
-					child.focus(highlight = last.highlightFocused)
+					if (!child.isFocused)
+						child.focus(highlight = last.highlightFocused)
 				} else {
 					modalFillContainer.focusSelf()
 				}
@@ -282,12 +283,6 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 
 	private fun focusChangingHandler(old: UiComponentRo?, new: UiComponentRo?, cancel: Cancel) {
 		if (_currentPopUps.isEmpty() || new === modalFillContainer || new == null) return
-		if (new == stage) {
-			modalFillContainer.focusSelf()
-			cancel.cancel()
-			return
-		}
-
 		// Prevent focusing anything below the modal layer.
 		val lastModalIndex = _currentPopUps.indexOfLast { it.isModal }
 		if (lastModalIndex == -1) return // no modals

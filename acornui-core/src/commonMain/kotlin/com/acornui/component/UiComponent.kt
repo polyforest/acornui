@@ -381,7 +381,7 @@ open class UiComponentImpl(
 
 	// Render context properties
 
-	private val defaultRenderContext = inject(RenderContextRo)
+	protected val defaultRenderContext = inject(RenderContextRo)
 	protected val _renderContext = RenderContext(defaultRenderContext)
 
 	override val naturalRenderContext: RenderContextRo
@@ -468,23 +468,24 @@ open class UiComponentImpl(
 	 * If set, the provided delegate will be highlighted instead of this component.
 	 * The highlighter will still be obtained from this component's [focusableStyle].
 	 */
-	var focusHighlightDelegate: UiComponent? by observable(null, this::refreshFocusHighlight.as1)
+	var focusHighlightDelegate: UiComponent? by observable(null, ::refreshFocusHighlight.as1)
 
-	override var showFocusHighlight by observable(false, this::refreshFocusHighlight.as1)
+	override var showFocusHighlight by observable(false, ::refreshFocusHighlight.as1)
 
-	private var previousFocusTarget: UiComponent? = null
-	private var previousHighlighter: FocusHighlighter? = null
+	private var focusTarget: UiComponent? = null
+	private var focusHighlighter: FocusHighlighter? = null
 
 	private fun refreshFocusHighlight() {
-		if (previousFocusTarget != null)
-			previousHighlighter?.unhighlight(previousFocusTarget!!)
+		validate(ValidationFlags.STYLES)
+		if (focusTarget != null)
+			focusHighlighter?.unhighlight(focusTarget!!)
 		if (showFocusHighlight) {
-			previousFocusTarget = focusHighlightDelegate ?: this
-			previousHighlighter = focusableStyle.highlighter
-			previousHighlighter?.highlight(previousFocusTarget!!)
+			focusTarget = focusHighlightDelegate ?: this
+			focusHighlighter = focusableStyle.highlighter
+			focusHighlighter?.highlight(focusTarget!!)
 		} else {
-			previousFocusTarget = null
-			previousHighlighter = null
+			focusTarget = null
+			focusHighlighter = null
 		}
 	}
 
@@ -601,7 +602,11 @@ open class UiComponentImpl(
 		}
 	}
 
-	final override val renderFilters = own(RenderFilterList(innerRenderable).apply { changed.add { invalidate(ValidationFlags.BITMAP_CACHE) } })
+	final override val renderFilters = own(RenderFilterList(innerRenderable).apply {
+		changed.add {
+			invalidate(ValidationFlags.BITMAP_CACHE)
+		}
+	})
 
 	override val isRendered: Boolean
 		get() {
@@ -638,9 +643,7 @@ open class UiComponentImpl(
 	 * Returns the explicit size constraints.
 	 */
 	override val explicitSizeConstraints: SizeConstraintsRo
-		get() {
-			return _explicitSizeConstraints
-		}
+		get() = _explicitSizeConstraints
 
 	override val minWidth: Float?
 		get() {
@@ -1200,10 +1203,6 @@ open class UiComponentImpl(
 	 * You may convert the window coordinate clip region to local coordinates via [canvasToLocal], but in general it is
 	 * faster to convert the local coordinates to window coordinates [localToCanvas], as no matrix inversion is
 	 * required.
-	 *
-	 * @param clip The visible region (in viewport coordinates.) If you wish to render a component with a no
-	 * clipping, you may use [MinMaxRo.POSITIVE_INFINITY]. This is used in order to potentially avoid drawing things
-	 * the user cannot see. (Due to the screen size, stencil buffers, or scissors)
 	 */
 	override fun render() {
 		// Nothing visible.

@@ -37,6 +37,7 @@ import com.acornui.core.di.OwnedImpl
 import com.acornui.core.di.Scoped
 import com.acornui.core.focus.FocusHighlighter
 import com.acornui.core.focus.FocusableStyle
+import com.acornui.core.focus.SimpleFocusHighlighter
 import com.acornui.core.focus.SimpleHighlight
 import com.acornui.core.input.interaction.ContextMenuStyle
 import com.acornui.core.input.interaction.ContextMenuView
@@ -110,25 +111,8 @@ open class BasicUiSkin(
 	}
 
 	protected open fun focusStyle() {
-		(target.getAttachment<FocusHighlighter>(FocusHighlighter) as? Disposable)?.dispose()
-
-		val focusHighlighter = object : FocusHighlighter, OwnedImpl(null, injector) {
-			private val filter: ComponentDecorationFilter// = glowFilter(theme.focusHighlightColor)
-			init {
-				val c = SimpleHighlight(this, theme.atlasPath, "FocusRect").apply { colorTint = theme.focusHighlightColor }
-				filter = ComponentDecorationFilter(this, c)
-			}
-
-			override fun unhighlight(target: UiComponent) {
-				target.renderFilters.remove(filter)
-			}
-
-			override fun highlight(target: UiComponent) {
-				target.renderFilters.add(0, filter)
-			}
-
-
-		}
+		target.getAttachment<FocusHighlighter>(FocusHighlighter)?.dispose()
+		val focusHighlighter = SimpleFocusHighlighter(target, theme)
 		target.setAttachment(FocusHighlighter, focusHighlighter)
 		val focusableStyle = FocusableStyle().apply {
 			highlighter = focusHighlighter

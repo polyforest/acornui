@@ -52,8 +52,8 @@ class FpsDisplay(owner: Owned) : TextFieldImpl(owner) {
 		}
 	}
 
-	override fun render() {
-		super.render()
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		super.draw(clip, transform, tint)
 		frames++
 	}
 }
