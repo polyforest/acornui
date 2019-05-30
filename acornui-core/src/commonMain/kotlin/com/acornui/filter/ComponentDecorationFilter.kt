@@ -23,11 +23,11 @@ class ComponentDecorationFilter(owner: Owned, private val component: UiComponent
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		val contents = contents ?: return
+		component.setSize(contents.width, contents.height)
+		component.update() // Not typical, but the component is not a part of any display hierarchy.
 		_renderContext.parentContext = renderContext
 		_renderContext.colorTintOverride = component.naturalRenderContext.colorTint
 		component.renderContextOverride = _renderContext
-		component.setSize(contents.width, contents.height)
-		component.update() // Not typical, but the component is not a part of any display hierarchy.
 
 		val prev = glState.colorTransformation
 		glState.colorTransformation = null
