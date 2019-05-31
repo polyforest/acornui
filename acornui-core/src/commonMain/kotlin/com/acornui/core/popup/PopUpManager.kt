@@ -186,22 +186,22 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 	private var tween: Tween? = null
 
 	private fun refresh() {
-		val last = _currentPopUps.lastOrNull()
-		if (last != null) {
-			if (last.focus) {
-				val child = last.child
-				if (child.canFocus) {
-					if (!child.isFocused)
-						child.focus(highlight = last.highlightFocused)
-				} else {
-					modalFillContainer.focusSelf()
-				}
-			} else {
-				if (last.isModal) {
-					modalFillContainer.focusSelf()
-				}
-			}
-		}
+//		val last = _currentPopUps.lastOrNull()
+//		if (last != null) {
+//			if (last.focus) {
+//				val child = last.child
+//				if (child.canFocus) {
+//					if (!child.isFocused)
+//						child.focus(highlight = last.highlightFocused)
+//				} else {
+//					modalFillContainer.focusSelf()
+//				}
+//			} else {
+//				if (last.isModal) {
+//					modalFillContainer.focusSelf()
+//				}
+//			}
+//		}
 		refreshModalBlocker()
 	}
 
@@ -285,38 +285,51 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 		}
 	}
 
-	private fun focusChangingHandler(old: UiComponentRo?, new: UiComponentRo?, cancel: Cancel) {
-		if (_currentPopUps.isEmpty() || new === modalFillContainer || new == null) return
+	private fun isBeneathModal(target: UiComponentRo?): Boolean {
+		if (_currentPopUps.isEmpty() || target === modalFillContainer || target == null) return false
 		// Prevent focusing anything below the modal layer.
 		val lastModalIndex = _currentPopUps.indexOfLast { it.isModal }
-		if (lastModalIndex == -1) return // no modals
-		var validFocusChange = false
+		if (lastModalIndex == -1) return false // no modals
 		for (i in _currentPopUps.lastIndex downTo lastModalIndex) {
-			if (_currentPopUps[i].child.isAncestorOf(new)) {
-				validFocusChange = true
-				break
+			if (_currentPopUps[i].child.isAncestorOf(target)) {
+				return false
 			}
 		}
-		if (!validFocusChange) {
-			val isForwards = focusManager.focusables.indexOf(new) >= focusManager.focusables.indexOf(old)
-			var foundFocusable: UiComponentRo? = null
-			if (isForwards) {
+		return true
+	}
+
+	private fun focusChangingHandler(old: UiComponentRo?, new: UiComponentRo?, cancel: Cancel) {
+		if (!isBeneathModal(new)) return
+		val lastModalIndex = _currentPopUps.indexOfLast { it.isModal }
+		val focusables = focusManager.focusables
+		val focusIndex = focusables.indexOf(new)
+		val isForwards = focusIndex >= focusables.indexOf(old)
+
+		val toFocus: UiComponentRo = if (isForwards) {
+			if (old == modalFillContainer) {
+				var firstFocusable: UiComponentRo = modalFillContainer
 				for (i in lastModalIndex.._currentPopUps.lastIndex) {
-					foundFocusable =  _currentPopUps[i].child.firstFocusable ?: continue
+					firstFocusable = _currentPopUps[i].child.firstFocusable ?: continue
 					break
 				}
+				firstFocusable
 			} else {
+				modalFillContainer
+			}
+		} else {
+			if (old == modalFillContainer) {
+				var lastFocusable: UiComponentRo = modalFillContainer
 				for (i in _currentPopUps.lastIndex downTo lastModalIndex) {
-					foundFocusable =  _currentPopUps[i].child.lastFocusable ?: continue
+					lastFocusable = _currentPopUps[i].child.lastFocusable ?: continue
 					break
 				}
+				lastFocusable
+			} else {
+				modalFillContainer
 			}
-			if (foundFocusable != null)
-				foundFocusable.focusSelf()
-			else
-				modalFillContainer.focusSelf()
-			cancel.cancel()
 		}
+		toFocus.focusSelf()
+		cancel.cancel()
 	}
 
 	override fun requestModalClose() {
@@ -346,10 +359,13 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 		else
 			addElementBefore(child, _currentPopUps[index + 1].child)
 		refresh()
+		if (popUpInfo.focus)
+			child.focus(popUpInfo.highlightFocused)
 		child.layoutData = popUpInfo.layoutData
 	}
 
 	override fun <T : UiComponent> removePopUp(popUpInfo: PopUpInfo<T>) {
+		val wasFocused = popUpInfo.child.isFocused
 		val removed = _currentPopUps.remove(popUpInfo)
 		if (!removed) return // Pop-up not found
 		val child = popUpInfo.child
@@ -361,6 +377,14 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 		if (popUpInfo.dispose && !child.disposed.isDispatching && !child.isDisposed)
 			child.dispose()
 		refresh()
+		val currentPopUp = _currentPopUps.lastOrNull()
+		if (wasFocused) {
+			if (currentPopUp?.focus == true) {
+				currentPopUp.child.focus(currentPopUp.highlightFocused)
+			} else {
+				modalFillContainer.focusSelf()
+			}
+		}
 	}
 
 	private fun childClosedHandler(child: Closeable) {
