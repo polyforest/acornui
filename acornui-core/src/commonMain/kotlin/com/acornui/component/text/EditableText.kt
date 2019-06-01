@@ -150,10 +150,10 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private val cmd = own(commander())
 
 	init {
-		host.touchStart().add {
-			if (!it.handled && !it.defaultPrevented()) {
+		host.click().add {
+			if (it.fromTouch) {
 				it.handled = true
-				openedKeyboard = host.touchScreenKeyboard.open(host.touchScreenInputType)
+				host.touchScreenKeyboard.show(host.touchScreenInputType)
 			}
 		}
 
@@ -167,7 +167,6 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		}
 
 		host.blurredSelf().add {
-			openedKeyboard = null
 			host.unselect()
 			if (isActive)
 				_changed.dispatch()
@@ -270,14 +269,6 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			}
 		}
 	}
-
-	private var openedKeyboard: SoftKeyboardRef? = null
-		set(value) {
-			if (field != value) {
-				field?.dispose()
-				field = value
-			}
-		}
 
 	override fun updateStyles() {
 		super.updateStyles()

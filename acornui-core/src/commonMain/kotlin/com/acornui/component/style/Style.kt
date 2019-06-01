@@ -19,6 +19,7 @@ package com.acornui.component.style
 import com.acornui.recycle.Clearable
 import com.acornui.collection.first2
 import com.acornui.component.UiComponent
+import com.acornui.component.layout.spacer
 import com.acornui.core.Disposable
 import com.acornui.core.di.Owned
 import com.acornui.observe.*
@@ -268,5 +269,5 @@ typealias OptionalSkinPart = Owned.() -> UiComponent?
 /**
  * Used as a placeholder for skin part factories that need to be declared in the skin.
  */
-val noSkin: SkinPart = { throw Exception("Skin part must be created.") }
+val noSkin: SkinPart = { spacer() }
 val noSkinOptional: OptionalSkinPart = { null }

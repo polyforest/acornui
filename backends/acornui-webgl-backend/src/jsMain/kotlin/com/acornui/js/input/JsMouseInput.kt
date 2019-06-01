@@ -87,6 +87,9 @@ class JsMouseInput(private val canvas: HTMLElement) : MouseInput {
 	override val canvasY: Float
 		get() = _canvasY
 
+	override val touches: List<TouchRo>
+		get() = touchEvent.touches
+
 	private val mouseEnterHandler = { jsEvent: Event ->
 		overCanvas(true)
 	}

@@ -65,19 +65,15 @@ class GlfwMouseInput(private val window: Long) : MouseInput {
 	val scrollSpeed = 24f
 
 	override val canvasX: Float
-		get() {
-			return _canvasX
-		}
+		get() = _canvasX
 
 	override val canvasY: Float
-		get() {
-			return _canvasY
-		}
+		get() = _canvasY
+
+	override val touches: List<TouchRo> = emptyList()
 
 	override val overCanvas: Boolean
-		get() {
-			return _overCanvas
-		}
+		get() = _overCanvas
 
 	private val mouseButtonCallback: GLFWMouseButtonCallback = object : GLFWMouseButtonCallback() {
 		override fun invoke(window: Long, button: Int, action: Int, mods: Int) {

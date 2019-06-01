@@ -110,7 +110,8 @@ suspend fun Scoped.delay(
 /**
  * @param timeDriver The time driver to add the Timer instance to.
  * @param duration The number of seconds between repetitions.
- * @param repetitions The number of repetitions the timer will be invoked.
+ * @param repetitions The number of repetitions the timer will be invoked. If this is -1, the callback will be invoked
+ * until disposal.
  * @param callback The function to call after every repetition.
  */
 fun timer(timeDriver: TimeDriver, duration: Float, repetitions: Int = 1, delay: Float = 0f, callback: () -> Unit): Disposable {

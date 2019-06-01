@@ -20,6 +20,7 @@ import com.acornui.core.Disposable
 import com.acornui.core.di.DKey
 import com.acornui.core.input.interaction.MouseInteractionRo
 import com.acornui.core.input.interaction.TouchInteractionRo
+import com.acornui.core.input.interaction.TouchRo
 import com.acornui.core.input.interaction.WheelInteractionRo
 import com.acornui.math.Vector2
 import com.acornui.signal.Signal
@@ -61,6 +62,11 @@ interface MouseState : Disposable {
 	 * The mouse y position relative to the canvas.
 	 */
 	val canvasY: Float
+
+	/**
+	 * The current list of touch points.
+	 */
+	val touches: List<TouchRo>
 
 	/**
 	 * Sets the [out] vector to the current canvas position.

@@ -16,14 +16,14 @@
 
 package com.acornui.core
 
-import com.acornui.math.*
+import com.acornui.math.TO_DEG
+import com.acornui.math.TO_RAD
 import kotlin.math.abs
-import kotlin.math.floor
 import kotlin.math.round
 
 /**
- * A constant holding the maximum value a {@code long} can
- * have, 2<sup>53</sup>-1.
+ * A constant holding the maximum value a `long` can
+ * have, 2^53-1.
  * Note: This is 53 bits instead of 63 for the sake of JavaScript Number.
  */
 val LONG_MAX_VALUE: Long = 0x1fffffffFFFFFFL
@@ -35,8 +35,8 @@ val INT_MAX_VALUE: Int = 0x7fffffff
 val INT_MIN_VALUE: Int = -2147483648
 
 /**
- * A constant holding the minimum value a {@code long} can
- * have, -2<sup>53</sup>.
+ * A constant holding the minimum value a `long` can
+ * have, -2^53.
  * Note: This is 53 bits instead of 63 for the sake of JavaScript Number.
  */
 val LONG_MIN_VALUE: Long = -0x20000000000000L
@@ -44,20 +44,21 @@ val LONG_MIN_VALUE: Long = -0x20000000000000L
 /**
  * Returns the number of zero bits preceding the highest-order
  * ("leftmost") one-bit in the two's complement binary representation
- * of the specified {@code int} value.  Returns 32 if the
+ * of the specified `int` value.  Returns 32 if the
  * specified value has no one-bits in its two's complement representation,
  * in other words if it is equal to zero.
  *
- * <p>Note that this method is closely related to the logarithm base 2.
- * For all positive {@code int} values x:
- * <ul>
- * <li>floor(log<sub>2</sub>(x)) = {@code 31 - numberOfLeadingZeros(x)}
- * <li>ceil(log<sub>2</sub>(x)) = {@code 32 - numberOfLeadingZeros(x - 1)}
- * </ul>
+ * Note that this method is closely related to the logarithm base 2.
+ * 
+ * For all positive `int` values x:
+ * ```
+ * floor(log2(x)) = 31 - numberOfLeadingZeros(x)
+ * ceil(log2(x)) = 32 - numberOfLeadingZeros(x - 1)
+ *```
  *
  * @return the number of zero bits preceding the highest-order
  *     ("leftmost") one-bit in the two's complement binary representation
- *     of the specified {@code int} value, or 32 if the value
+ *     of the specified `int` value, or 32 if the value
  *     is equal to zero.
  */
 fun Int.numberOfLeadingZeros(): Int {
@@ -88,13 +89,13 @@ fun Int.numberOfLeadingZeros(): Int {
 /**
  * Returns the number of zero bits following the lowest-order ("rightmost")
  * one-bit in the two's complement binary representation of the specified
- * {@code int} value.  Returns 32 if the specified value has no
+ * `int` value.  Returns 32 if the specified value has no
  * one-bits in its two's complement representation, in other words if it is
  * equal to zero.
  *
  * @return the number of zero bits following the lowest-order ("rightmost")
  *     one-bit in the two's complement binary representation of the
- *     specified {@code int} value, or 32 if the value is equal
+ *     specified `int` value, or 32 if the value is equal
  *     to zero.
  */
 fun Int.numberOfTrailingZeros(): Int {

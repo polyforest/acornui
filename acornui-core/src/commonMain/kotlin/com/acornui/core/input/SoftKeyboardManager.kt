@@ -17,7 +17,6 @@
 package com.acornui.core.input
 
 import com.acornui.component.UiComponent
-import com.acornui.core.Disposable
 import com.acornui.core.di.DKey
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
@@ -27,7 +26,8 @@ interface SoftKeyboardManager {
 
 	val view: UiComponent
 
-	fun open(type: String, priority: Float = 0f): SoftKeyboardRef
+	fun show(type: String = SoftKeyboardType.DEFAULT)
+	fun hide()
 
 	companion object : DKey<SoftKeyboardManager> {
 		override fun factory(injector: Injector): SoftKeyboardManager? {
@@ -35,8 +35,6 @@ interface SoftKeyboardManager {
 		}
 	}
 }
-
-interface SoftKeyboardRef : Disposable
 
 object SoftKeyboardType {
 

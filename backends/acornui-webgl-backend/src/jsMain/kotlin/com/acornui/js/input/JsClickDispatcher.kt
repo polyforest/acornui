@@ -17,9 +17,13 @@
 package com.acornui.js.input
 
 import com.acornui.core.di.Injector
+import com.acornui.core.input.WhichButton
 import com.acornui.core.input.interaction.ClickDispatcher
+import com.acornui.core.input.interaction.ClickInteractionRo
+import com.acornui.core.time.time
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event
+import org.w3c.dom.events.MouseEvent
 
 /**
  * An implementation of ClickDispatcher that doesn't fire the click event until the browser fires the click event.
@@ -29,24 +33,42 @@ class JsClickDispatcher(
 		injector: Injector
 ) : ClickDispatcher(injector) {
 
-	private val contextMenuFireHandler = {
-		event: Event ->
+	init {
+		rootElement.addEventListener("click", ::clickHandler, true)
+		rootElement.addEventListener("contextmenu", ::contextMenuHandler, true)
+	}
+
+	override fun dispose() {
+		super.dispose()
+		rootElement.removeEventListener("click", ::clickHandler, true)
+		rootElement.removeEventListener("contextmenu", ::contextMenuHandler, true)
+	}
+
+	private fun clickHandler(event: Event) {
+		if (event.defaultPrevented)
+			return
+
 		if (fireClickEvent()) {
 			if (clickEvent.defaultPrevented()) {
 				event.preventDefault()
 			}
 		}
-		Unit
 	}
 
-	init {
-		rootElement.addEventListener("click", fireHandler, true)
-		rootElement.addEventListener("contextmenu", contextMenuFireHandler, true)
-	}
+	private fun contextMenuHandler(jsEvent: Event) {
+		jsEvent as MouseEvent
+		if (jsEvent.defaultPrevented)
+			return
 
-	override fun dispose() {
-		super.dispose()
-		rootElement.removeEventListener("click", fireHandler, true)
-		rootElement.removeEventListener("contextmenu", contextMenuFireHandler, true)
+		val canvasX = jsEvent.pageX.toFloat() - rootElement.offsetLeft.toFloat()
+		val canvasY = jsEvent.pageY.toFloat() - rootElement.offsetTop.toFloat()
+		release(WhichButton.LEFT, canvasX, canvasY, time.nowMs(), true)
+		clickEvent.button = WhichButton.RIGHT
+		clickEvent.type = ClickInteractionRo.RIGHT_CLICK
+		if (fireClickEvent()) {
+			// If anything is listening to right-click, prevent default to stop the default context webgl menu.
+			if (clickEvent.handled || clickEvent.defaultPrevented())
+				jsEvent.preventDefault()
+		}
 	}
 }

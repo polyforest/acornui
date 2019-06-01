@@ -31,6 +31,7 @@ interface StageRo : ContainerRo, Focusable
 interface Stage : ElementContainer<UiComponent>, StageRo {
 
 	val style: StageStyle
+	var showWaitingForSkinMessage: Boolean
 
 	companion object : DKey<Stage> {
 		override fun factory(injector: Injector): Stage? {

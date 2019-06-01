@@ -47,37 +47,50 @@ abstract class ClickDispatcher(
 
 	var multiClickSpeed: Int = 400
 
-	private val downButtons: Array<MutableList<UiComponentRo>?> = Array(6) { null } // TODO: Kotlin bug: Enum.values.size not working.
+	private val downButtons: Array<MutableList<UiComponentRo>?> = Array(WhichButton.values().size) { null }
 	protected val clickEvent = ClickInteraction()
 
 	private var lastTarget: UiComponentRo? = null
 	private var currentCount = 0
 	private var previousTimestamp = 0L
 
-	private var touchMode = false
+	private var preventMouse = false
 
 	private var pendingClick = false
 
-	private val rootMouseDownHandler = {
-		event: MouseInteractionRo ->
-		if (!touchMode) {
+	private var preventMouseTimer: Disposable? = null
+
+	init {
+		stage.mouseDown(isCapture = true).add(::rootMouseDownHandler)
+		stage.touchStart(isCapture = true).add(::rootTouchStartHandler)
+		stage.mouseUp().add(::rootMouseUpHandler)
+		stage.touchEnd().add(::rootTouchEndHandler)
+		stage.touchCancel(isCapture = true).add(::rootTouchCancelHandler)
+	}
+
+	private fun rootMouseDownHandler(event: MouseInteractionRo) {
+		if (!preventMouse) {
+			if (event.defaultPrevented()) {
+				clearDownButton(event.button)
+				return
+			}
+
 			val downElement = stage.getChildUnderPoint(event.canvasX, event.canvasY, onlyInteractive = true)
 			if (downElement != null) {
-				setDownElement(downElement, event.button.ordinal)
+				setDownElement(downElement, event.button)
 			}
 		}
 	}
 
-	private val rootTouchStartHandler = {
-		event: TouchInteractionRo ->
+	private fun rootTouchStartHandler(event: TouchInteractionRo) {
 		val first = event.changedTouches.first()
 		val downElement = stage.getChildUnderPoint(first.canvasX, first.canvasY, onlyInteractive = true)
 		if (downElement != null) {
-			setDownElement(downElement, WhichButton.LEFT.ordinal)
+			setDownElement(downElement, WhichButton.LEFT)
 		}
 	}
 
-	private fun setDownElement(downElement: UiComponentRo, ordinal: Int) {
+	private fun setDownElement(downElement: UiComponentRo, button: WhichButton) {
 		if (lastTarget != downElement) {
 			lastTarget = downElement
 			currentCount = 1
@@ -85,40 +98,43 @@ abstract class ClickDispatcher(
 		@Suppress("UNCHECKED_CAST")
 		val ancestry = arrayListObtain<UiComponentRo>()
 		downElement.ancestry(ancestry)
-		downButtons[ordinal] = ancestry
+		downButtons[button.ordinal] = ancestry
 	}
 
-	private var preventMouseTimer: Disposable? = null
+	private fun rootMouseUpHandler(event: MouseInteractionRo) {
+		if (!preventMouse) {
+			release(event.button, event.canvasX, event.canvasY, event.timestamp, false)
+		}
+	}
 
-	private val rootTouchEndHandler =  {
-		event: TouchInteractionRo ->
+	private fun rootTouchEndHandler(event: TouchInteractionRo) {
+		if (event.defaultPrevented()) {
+			clearDownButton(WhichButton.LEFT)
+			return
+		}
 		val first = event.changedTouches.first()
-		release(WhichButton.LEFT, first.canvasX, first.canvasY, event.timestamp)
-		touchMode = true
+		release(WhichButton.LEFT, first.canvasX, first.canvasY, event.timestamp, true)
+		preventMouse = true
 		preventMouseTimer?.dispose()
 		preventMouseTimer = timer(timeDriver, 2.5f, 1) {
-			touchMode = false
+			preventMouse = false
 			preventMouseTimer = null
 		}
 	}
 
-	private val rootTouchCancelHandler = {
-		event: TouchInteractionRo ->
-		val downElements = downButtons[WhichButton.LEFT.ordinal]
+	private fun rootTouchCancelHandler(event: TouchInteractionRo) {
+		clearDownButton(WhichButton.LEFT)
+	}
+
+	private fun clearDownButton(button: WhichButton) {
+		val downElements = downButtons[button.ordinal]
 		if (downElements != null) {
-			downButtons[WhichButton.LEFT.ordinal] = null
+			downButtons[button.ordinal] = null
 			arrayListPool.free(downElements)
 		}
 	}
 
-	private val rootMouseUpHandler = {
-		event: MouseInteractionRo ->
-		if (!touchMode && !event.isFabricated) {
-			release(event.button, event.canvasX, event.canvasY, event.timestamp)
-		}
-	}
-
-	private fun release(button: WhichButton, canvasX: Float, canvasY: Float, timestamp: Long) {
+	protected fun release(button: WhichButton, canvasX: Float, canvasY: Float, timestamp: Long, fromTouch: Boolean) {
 		val downElements = downButtons[button.ordinal]
 		if (downElements != null) {
 			downButtons[button.ordinal] = null
@@ -140,6 +156,7 @@ abstract class ClickDispatcher(
 					clickEvent.count = currentCount
 					clickEvent.canvasX = canvasX
 					clickEvent.canvasY = canvasY
+					clickEvent.fromTouch = fromTouch
 					pendingClick = true
 					break
 				}
@@ -159,18 +176,9 @@ abstract class ClickDispatcher(
 		}
 	}
 
-	init {
-		stage.mouseDown(isCapture = true).add(rootMouseDownHandler)
-		stage.touchStart(isCapture = true).add(rootTouchStartHandler)
-		stage.mouseUp().add(rootMouseUpHandler)
-		stage.touchEnd().add(rootTouchEndHandler)
-		stage.touchCancel(isCapture = true).add(rootTouchCancelHandler)
-	}
-
-	protected val fireHandler = {
-		_: Any ->
-		fireClickEvent()
-		Unit
+	protected fun fireHandler(e: InteractionEventRo) {
+		if (!e.defaultPrevented())
+			fireClickEvent()
 	}
 
 	protected fun fireClickEvent(): Boolean {
@@ -183,11 +191,11 @@ abstract class ClickDispatcher(
 	}
 
 	override fun dispose() {
-		stage.mouseDown(isCapture = true).remove(rootMouseDownHandler)
-		stage.touchStart(isCapture = true).remove(rootTouchStartHandler)
-		stage.mouseUp().remove(rootMouseUpHandler)
-		stage.touchEnd().remove(rootTouchEndHandler)
-		stage.touchCancel(isCapture = true).remove(rootTouchCancelHandler)
+		stage.mouseDown(isCapture = true).remove(::rootMouseDownHandler)
+		stage.touchStart(isCapture = true).remove(::rootTouchStartHandler)
+		stage.mouseUp().remove(::rootMouseUpHandler)
+		stage.touchEnd().remove(::rootTouchEndHandler)
+		stage.touchCancel(isCapture = true).remove(::rootTouchCancelHandler)
 		for (i in 0..downButtons.lastIndex) {
 			val list = downButtons[i]
 			if (list != null) {
@@ -201,13 +209,13 @@ abstract class ClickDispatcher(
 class JvmClickDispatcher(injector: Injector) : ClickDispatcher(injector) {
 
 	init {
-		stage.mouseUp().add(fireHandler)
-		stage.touchEnd().add(fireHandler)
+		stage.mouseUp().add(::fireHandler)
+		stage.touchEnd().add(::fireHandler)
 	}
 
 	override fun dispose() {
 		super.dispose()
-		stage.mouseUp().remove(fireHandler)
-		stage.touchEnd().remove(fireHandler)
+		stage.mouseUp().remove(::fireHandler)
+		stage.touchEnd().remove(::fireHandler)
 	}
 }

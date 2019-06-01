@@ -18,12 +18,15 @@ package com.acornui.component
 
 import com.acornui.collection.forEach2
 import com.acornui.component.style.StyleableRo
+import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
 import com.acornui.core.di.OwnedImpl
 import com.acornui.core.di.inject
 import com.acornui.core.focus.Focusable
 import com.acornui.core.input.SoftKeyboardManager
 import com.acornui.core.popup.PopUpManager
+import com.acornui.core.time.timer
+import com.acornui.logging.Log
 import com.acornui.math.Bounds
 import kotlin.math.ceil
 
@@ -33,10 +36,15 @@ import kotlin.math.ceil
 open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiComponent>(OwnedImpl(injector)), Focusable {
 
 	final override val style = bind(StageStyle())
+	override var showWaitingForSkinMessage = true
+
 	private val popUpManagerView = inject(PopUpManager).view
 	private val softKeyboardManagerView = inject(SoftKeyboardManager).view
 
+	private var skinCheckTimer: Disposable? = null
+
 	init {
+		skinCheckTimer = timer(5f, 10, callback = ::skinCheck)
 		focusEnabled = true
 		interactivityMode = InteractivityMode.ALWAYS
 		interactivity.init(this)
@@ -48,6 +56,14 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		watch(style) {
 			window.clearColor = it.bgColor
 		}
+	}
+
+	private fun skinCheck() {
+		if (showWaitingForSkinMessage && styleRules.isEmpty())
+			Log.debug("Awaiting skin...")
+		else
+			skinCheckTimer?.dispose()
+
 	}
 
 	override val styleParent: StyleableRo? = null

@@ -337,4 +337,6 @@ open class StoppableSignalImpl<P1 : Stoppable> : SignalBase<(P1) -> Unit>(), Sto
 
 	override fun addBinding(callback: () -> Unit) = add(callback.as1)
 	override fun removeBinding(callback: () -> Unit) = remove(callback.as1)
+
+	fun asRo(): StoppableSignal<P1> = this
 }

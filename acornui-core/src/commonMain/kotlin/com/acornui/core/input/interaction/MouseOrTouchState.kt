@@ -16,6 +16,7 @@
 
 package com.acornui.core.input.interaction
 
+import com.acornui.component.Stage
 import com.acornui.component.UiComponentRo
 import com.acornui.component.stage
 import com.acornui.core.Disposable
@@ -28,7 +29,8 @@ import com.acornui.signal.Signal0
  */
 class MouseOrTouchState(private val host: UiComponentRo) : Disposable {
 
-	private val stage = host.stage
+	private val stage: Stage
+		get() = host.stage
 
 	private val _isOverChanged = Signal0()
 

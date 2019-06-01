@@ -21,7 +21,13 @@ import com.acornui.core.input.InteractionEventRo
 import com.acornui.core.input.InteractionType
 
 interface CharInteractionRo : InteractionEventRo {
+
 	val char: Char
+
+	/**
+	 * If true, this interaction was triggered from code, not user input.
+	 */
+	val isFabricated: Boolean
 
 	companion object {
 		val CHAR = InteractionType<CharInteractionRo>("char")
@@ -35,12 +41,16 @@ open class CharInteraction : InteractionEventBase(), CharInteractionRo {
 
 	override var char: Char = 0.toChar()
 
+	override var isFabricated: Boolean = false
+
 	fun set(other: CharInteractionRo) {
 		char = other.char
+		isFabricated = other.isFabricated
 	}
 
 	override fun clear() {
 		super.clear()
 		char = 0.toChar()
+		isFabricated = false
 	}
 }

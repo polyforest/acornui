@@ -84,7 +84,7 @@ interface PopUpManager : Clearable {
 	}
 }
 
-data class PopUpInfo<T : UiComponent>(
+class PopUpInfo<T : UiComponent>(
 
 		/**
 		 * The child to add when the pop-up is activated.
@@ -169,8 +169,6 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 	override val currentPopUps: List<PopUpInfo<*>>
 		get() = _currentPopUps
 
-	private var modalFill: UiComponent? = null
-
 	private val modalFillContainer = +stack {
 		focusEnabled = true
 		visible = false
@@ -186,22 +184,6 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 	private var tween: Tween? = null
 
 	private fun refresh() {
-//		val last = _currentPopUps.lastOrNull()
-//		if (last != null) {
-//			if (last.focus) {
-//				val child = last.child
-//				if (child.canFocus) {
-//					if (!child.isFocused)
-//						child.focus(highlight = last.highlightFocused)
-//				} else {
-//					modalFillContainer.focusSelf()
-//				}
-//			} else {
-//				if (last.isModal) {
-//					modalFillContainer.focusSelf()
-//				}
-//			}
-//		}
 		refreshModalBlocker()
 	}
 
@@ -254,8 +236,8 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 		interactivityMode = InteractivityMode.CHILDREN
 
 		watch(popUpManagerStyle) {
-			modalFill?.dispose()
-			modalFill = it.modalFill(this)
+			val modalFill = it.modalFill(this)
+			modalFillContainer.clearElements(true)
 			modalFillContainer.apply {
 				addOptionalElement(modalFill)?.layout { fill() }
 			}
@@ -300,6 +282,10 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 
 	private fun focusChangingHandler(old: UiComponentRo?, new: UiComponentRo?, cancel: Cancel) {
 		if (!isBeneathModal(new)) return
+		if (old === modalFillContainer && new === stage) {
+			cancel.cancel()
+			return
+		}
 		val lastModalIndex = _currentPopUps.indexOfLast { it.isModal }
 		val focusables = focusManager.focusables
 		val focusIndex = focusables.indexOf(new)

@@ -86,10 +86,12 @@ class FocusManagerImpl() : FocusManager {
 	}
 
 	private fun rootMouseDownHandler(event: MouseInteractionRo) {
+		if (event.defaultPrevented()) return
 		focusFirstAncestor(event.target)
 	}
 
 	private fun rootTouchStartHandler(event: TouchInteractionRo) {
+		if (event.defaultPrevented()) return
 		if (event.touches.size == 1)
 			focusFirstAncestor(event.target)
 	}

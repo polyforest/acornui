@@ -16,8 +16,12 @@
 
 package com.acornui.jvm.input
 
-import com.acornui.collection.*
-import com.acornui.core.input.*
+import com.acornui.collection.MutableMultiMap2
+import com.acornui.collection.get
+import com.acornui.collection.multiMap2
+import com.acornui.collection.remove
+import com.acornui.core.input.Ascii
+import com.acornui.core.input.KeyInput
 import com.acornui.core.input.interaction.*
 import com.acornui.core.time.time
 import com.acornui.signal.Signal1
@@ -136,7 +140,6 @@ class LwjglKeyInput(private val window: Long) : KeyInput {
 			keyEvent.shiftKey = mods and GLFW.GLFW_MOD_SHIFT > 0
 
 			keyEvent.timestamp = time.nowMs()
-
 			when (action) {
 				GLFW.GLFW_PRESS -> {
 					downMap[keyEvent.keyCode][keyEvent.location] = true

@@ -31,43 +31,42 @@ import com.acornui.signal.StoppableSignalImpl
  * where a roll over will only dispatch for the specific target.
  * @author nbilyk
  */
-private class MouseOverChanged(
-		private val interactiveElement: UiComponentRo,
+private class MouseOverChangedAttachment(
+		private val target: UiComponentRo,
 		private val isCapture: Boolean) : Disposable {
 
-	val over = StoppableSignalImpl<MouseInteractionRo>()
-	val out = StoppableSignalImpl<MouseInteractionRo>()
+	private val _over = StoppableSignalImpl<MouseInteractionRo>()
+	val over = _over.asRo()
+
+	private val _out = StoppableSignalImpl<MouseInteractionRo>()
+	val out = _out.asRo()
 
 	private var isOver = false
 
-	private val mouseOverHandler = {
-		event: MouseInteractionRo ->
+	init {
+		target.mouseOver(isCapture).add(::mouseOverHandler)
+		target.mouseOut(isCapture).add(::mouseOutHandler)
+	}
+
+	private fun mouseOverHandler(event: MouseInteractionRo) {
 		if (!isOver) {
 			isOver = true
-			over.dispatch(event)
+			_over.dispatch(event)
 		}
 	}
 
-	private val mouseOutHandler = {
-		event: MouseInteractionRo ->
-		if (isOver && event.relatedTarget?.isDescendantOf(interactiveElement) != true) {
+	private fun mouseOutHandler(event: MouseInteractionRo) {
+		if (isOver && event.relatedTarget?.isDescendantOf(target) != true) {
 			isOver = false
-			out.dispatch(event)
+			_out.dispatch(event)
 		}
-	}
-
-	private fun filter(event: MouseInteractionRo): Boolean {
-		return event.relatedTarget?.isDescendantOf(interactiveElement) != true
-	}
-
-	init {
-		interactiveElement.mouseOver(isCapture).add(mouseOverHandler)
-		interactiveElement.mouseOut(isCapture).add(mouseOutHandler)
 	}
 
 	override fun dispose() {
-		interactiveElement.mouseOver(isCapture).remove(mouseOverHandler)
-		interactiveElement.mouseOut(isCapture).remove(mouseOutHandler)
+		target.mouseOver(isCapture).remove(::mouseOverHandler)
+		target.mouseOut(isCapture).remove(::mouseOutHandler)
+		_over.dispose()
+		_out.dispose()
 	}
 }
 
@@ -77,12 +76,12 @@ private class MouseOverChanged(
  */
 fun UiComponentRo.rollOver(isCapture: Boolean = false): StoppableSignal<MouseInteractionRo> {
 	return createOrReuseAttachment("MouseOverChanged_$isCapture") {
-		MouseOverChanged(this, isCapture = isCapture)
+		MouseOverChangedAttachment(this, isCapture = isCapture)
 	}.over
 }
 
 fun UiComponentRo.rollOut(isCapture: Boolean = false): StoppableSignal<MouseInteractionRo> {
 	return createOrReuseAttachment("MouseOverChanged_$isCapture") {
-		MouseOverChanged(this, isCapture = isCapture)
+		MouseOverChangedAttachment(this, isCapture = isCapture)
 	}.out
 }

@@ -29,6 +29,7 @@ import com.acornui.signal.StoppableSignal
 interface ClickInteractionRo : MouseInteractionRo {
 
 	val count: Int
+	val fromTouch: Boolean
 
 	companion object {
 		val LEFT_CLICK = InteractionType<ClickInteractionRo>("leftClick")
@@ -49,10 +50,12 @@ open class ClickInteraction : ClickInteractionRo, MouseInteraction() {
 	 * consecutive clicks, each click within [ClickDispatcher.multiClickSpeed] milliseconds of the next.
 	 */
 	override var count: Int = 0
+	override var fromTouch = false
 
 	override fun clear() {
 		super.clear()
 		count = 0
+		fromTouch = false
 	}
 }
 
@@ -96,6 +99,9 @@ private val clickHandler = { event: ClickInteractionRo ->
 	event.preventDefault()
 }
 
+/**
+ * Marks any click events as handled and default prevented for one frame.
+ */
 fun UiComponentRo.clickHandledForAFrame() {
 	click().add(clickHandler)
 	callLater { click().remove(clickHandler) }

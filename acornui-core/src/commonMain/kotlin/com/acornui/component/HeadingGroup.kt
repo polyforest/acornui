@@ -101,7 +101,7 @@ open class HeadingGroupStyle : StyleBase() {
 	/**
 	 * The labelable component to place at the top of the group.
 	 */
-	var heading by prop<Owned.() -> Labelable>({ text() })
+	var heading by prop<Owned.() -> Labelable> { text() }
 
 	/**
 	 * The padding around the heading component.
