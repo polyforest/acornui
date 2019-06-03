@@ -150,6 +150,10 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private val cmd = own(commander())
 
 	init {
+		dragAttachment(0f).dragEnd.add {
+			if (it.fromTouch)
+				host.touchScreenKeyboard.show(host.touchScreenInputType)
+		}
 		host.click().add {
 			if (it.fromTouch) {
 				it.handled = true
@@ -160,10 +164,6 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		host.focusedSelf().add {
 			if (charStyle.selectable)
 				host.selectAll()
-
-			if (mouseState.touchMode) {
-				openedKeyboard = host.touchScreenKeyboard.open(host.touchScreenInputType)
-			}
 		}
 
 		host.blurredSelf().add {
