@@ -472,9 +472,9 @@ fun ChildRo.lowestCommonAncestor(other: ChildRo): ChildRo? {
 
 /**
  * Returns true if this ChildRo is before the [other] ChildRo. This considers the parent to come before the child.
- * @throws Exception If [other] does not have a common ancestor.
+ * Returns null if there is no common ancestor.
  */
-fun ChildRo.isBefore(other: ChildRo): Boolean {
+fun ChildRo.isBefore(other: ChildRo): Boolean? {
 	if (this === other) throw Exception("this === other")
 	var a = this
 	parentWalk { parentA ->
@@ -492,7 +492,7 @@ fun ChildRo.isBefore(other: ChildRo): Boolean {
 		a = parentA
 		true
 	}
-	throw Exception("No common ancestor")
+	return null
 }
 
 /**

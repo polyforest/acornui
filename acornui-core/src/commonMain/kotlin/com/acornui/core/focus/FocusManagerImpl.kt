@@ -151,14 +151,15 @@ class FocusManagerImpl() : FocusManager {
 
 	private fun UiComponentRo.calculateFocusDemarcations(out: MutableList<UiComponentRo>) {
 		out.add(this)
-		ownerWalk { if (it is UiComponentRo && it.isFocusContainer) out.add(it); true }
+		ownerWalk { if (it is UiComponentRo && it.isFocusContainer && it.isActive) out.add(it); true }
 	}
 
 	private fun UiComponentRo.compareFocusOrder(other: UiComponentRo): Int {
 		if (this === other) return 0
 		val r1 = focusOrder.compareTo(other.focusOrder)
 		if (r1 != 0) return r1
-		return if (isBefore(other)) -1 else 1
+		val b = isBefore(other)
+		return if (b == null) 0 else if (b) -1 else 1
 	}
 
 	private fun validateFocusables() {
@@ -176,13 +177,7 @@ class FocusManagerImpl() : FocusManager {
 	}
 
 	override val focused: UiComponentRo?
-		get() {
-//			val focused = _focused ?: return null
-//			if (!focused.isActive) {
-//				focused(root)
-//			}
-			return _focused
-		}
+		get() = _focused
 
 	private var pendingFocusable: UiComponentRo? = null
 	private val focusStack = ArrayList<UiComponentRo?>()
