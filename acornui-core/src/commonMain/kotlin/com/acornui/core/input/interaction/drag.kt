@@ -70,21 +70,21 @@ class DragAttachment(
 
 	private val dragEvent: DragInteraction = DragInteraction()
 
-	private val _dragStart = Signal1<DragInteraction>()
+	private val _dragStart = Signal1<DragInteractionRo>()
 
 	/**
 	 * Dispatched when the drag has passed the [affordance] distance.
 	 */
 	val dragStart = _dragStart.asRo()
 
-	private val _drag = Signal1<DragInteraction>()
+	private val _drag = Signal1<DragInteractionRo>()
 
 	/**
 	 * Dispatched on each frame during a drag.
 	 */
 	val drag = _drag.asRo()
 
-	private val _dragEnd = Signal1<DragInteraction>()
+	private val _dragEnd = Signal1<DragInteractionRo>()
 
 	/**
 	 * Dispatched when the drag has completed.
@@ -267,7 +267,7 @@ class DragAttachment(
 		}
 	}
 
-	private fun dispatchDragEvent(type: InteractionType<DragInteractionRo>, signal: Signal1<DragInteraction>) {
+	private fun dispatchDragEvent(type: InteractionType<DragInteractionRo>, signal: Signal1<DragInteractionRo>) {
 		dragEvent.clear()
 		dragEvent.target = target
 		dragEvent.currentTarget = target
@@ -275,7 +275,7 @@ class DragAttachment(
 		dragEvent.startPosition.set(startPosition)
 		dragEvent.startPositionLocal.set(startPositionLocal)
 		dragEvent.position.set(position)
-		dragEvent.isTouch = isTouch
+		dragEvent.fromTouch = isTouch
 		dragEvent.touchId = touchId
 		signal.dispatch(dragEvent)
 	}
@@ -308,7 +308,7 @@ class DragAttachment(
 		startPosition.set(event.startPosition)
 		startPositionLocal.set(event.startPositionLocal)
 		position.set(event.position)
-		isTouch = event.isTouch
+		isTouch = event.fromTouch
 		touchId = event.touchId
 		if (isTouch) setIsWatchingTouch(true)
 		else setIsWatchingMouse(true)
@@ -368,10 +368,10 @@ interface DragInteractionRo : InteractionEventRo {
 	/**
 	 * True if initialized from a touch interaction, false if mouse.
 	 */
-	val isTouch: Boolean
+	val fromTouch: Boolean
 
 	/**
-	 * If [isTouch] is true, this is the touch id the drag started from.
+	 * If [fromTouch] is true, this is the touch id the drag started from.
 	 */
 	val touchId: Int
 }
@@ -391,19 +391,19 @@ class DragInteraction : InteractionEventBase(), DragInteractionRo {
 			return currentTarget.canvasToLocal(_positionLocal.set(position))
 		}
 
-	override var isTouch: Boolean = false
+	override var fromTouch: Boolean = false
 	override var touchId: Int = -1
 
 	override fun clear() {
 		super.clear()
 		startPosition.clear()
 		position.clear()
-		isTouch = false
+		fromTouch = false
 		touchId = -1
 	}
 
 	override fun toString(): String {
-		return "DragInteraction(startPosition=$startPosition, position=$position, isTouch=$isTouch, touchId=$touchId)"
+		return "DragInteraction(startPosition=$startPosition, position=$position, isTouch=$fromTouch, touchId=$touchId)"
 	}
 
 
