@@ -155,7 +155,8 @@ class Framebuffer(
 		previousViewport.set(glState.viewport)
 		glState.setViewport(_viewport)
 		previousStencil = gl.getParameterb(Gl20.STENCIL_TEST)
-		if (previousStencil) gl.disable(Gl20.STENCIL_TEST)
+		if (previousStencil)
+			gl.disable(Gl20.STENCIL_TEST)
 	}
 
 	fun end() {

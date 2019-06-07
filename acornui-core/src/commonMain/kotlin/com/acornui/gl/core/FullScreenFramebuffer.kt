@@ -36,7 +36,10 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 
 	private val window = inject(Window)
 	private val framebuffer = ResizeableFramebuffer(injector, window.width, window.height, hasDepth, hasStencil)
-	private val sprite = framebuffer.sprite()
+	private val sprite = framebuffer.sprite().apply {
+		setUv(0f, 0f, 1f, 1f, isRotated = false)
+		updateVertices(2f, 2f, -1f, -1f)
+	}
 
 	var blendMode: BlendMode
 		get() = sprite.blendMode
@@ -46,11 +49,11 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 
 	init {
 		window.sizeChanged.add(::resize.as3)
+		resize()
 	}
 
 	private fun resize() {
 		framebuffer.setSize(window.width.toInt(), window.height.toInt())
-		framebuffer.sprite(sprite)
 	}
 
 	/**
