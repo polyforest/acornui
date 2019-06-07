@@ -23,6 +23,7 @@ import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.jvm.loader.JvmAssetLoaderBase
 import com.acornui.jvm.loader.WorkScheduler
+import java.io.IOException
 import java.io.InputStream
 import javax.imageio.ImageIO
 
@@ -42,7 +43,7 @@ open class JvmTextureLoader(
 	}
 
 	override fun create(inputStream: InputStream): Texture {
-		return JvmTexture(gl, glState, createImageData(inputStream))
+		return JvmTexture(gl, glState, createImageData(inputStream) ?: throw Exception("Could not load image at path \"$path\""))
 	}
 }
 
@@ -56,13 +57,16 @@ open class JvmRgbDataLoader(
 	}
 
 	override fun create(inputStream: InputStream): RgbData {
-		return createImageData(inputStream)
+		return createImageData(inputStream) ?: throw Exception("Could not load image at path \"$path\"")
 	}
 }
 
-fun createImageData(input: InputStream): RgbData {
+/**
+ */
+fun createImageData(input: InputStream): RgbData? {
 	val image = ImageIO.read(input)
 	input.close()
+	if (image == null) return null
 
 	val width = image.width
 	val height = image.height
