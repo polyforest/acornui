@@ -50,10 +50,8 @@ kotlin {
         }
         named("jvmTest") {
             dependencies {
-                val HAMCREST_VERSION: String by extra
                 val MOCKITO_VERSION: String by extra
                 val OBJENESIS_VERSION: String by extra
-                implementation("org.hamcrest:hamcrest-core:$HAMCREST_VERSION")
                 implementation("org.mockito:mockito-core:$MOCKITO_VERSION")
                 implementation("org.objenesis:objenesis:$OBJENESIS_VERSION")
             }
