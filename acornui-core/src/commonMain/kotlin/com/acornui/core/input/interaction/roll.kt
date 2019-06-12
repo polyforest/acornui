@@ -71,8 +71,8 @@ private class MouseOverChangedAttachment(
 }
 
 /**
- * An interaction signal dispatched when this element has had the mouse move over the element, but unlike touchOver,
- * this will not bubble, and therefore will not be fired if a child element has had a touchOver event.
+ * An interaction signal dispatched when this element has had the mouse move over the element, but unlike mouseOver,
+ * this will not bubble, and therefore will not be fired if a child element has had a rollOver event.
  */
 fun UiComponentRo.rollOver(isCapture: Boolean = false): StoppableSignal<MouseInteractionRo> {
 	return createOrReuseAttachment("MouseOverChanged_$isCapture") {
