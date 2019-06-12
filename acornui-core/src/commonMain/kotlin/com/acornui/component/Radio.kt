@@ -135,7 +135,7 @@ class RadioGroup<T>(val owner: Owned) : Disposable {
 	}
 }
 
-fun <T> Owned.radioGroup(init: RadioGroup<T>.() -> Unit): RadioGroup<T> {
+fun <T> Owned.radioGroup(init: RadioGroup<T>.() -> Unit = {}): RadioGroup<T> {
 	val group = RadioGroup<T>(this)
 	group.init()
 	return group
