@@ -18,10 +18,7 @@ package com.acornui.component
 
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.algorithm.LayoutDataProvider
-import com.acornui.component.style.StyleBase
-import com.acornui.component.style.StyleTag
-import com.acornui.component.style.StyleType
-import com.acornui.component.style.noSkin
+import com.acornui.component.style.*
 import com.acornui.component.text.text
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
@@ -44,9 +41,13 @@ open class WindowPanel(owner: Owned) : ElementContainerImpl<UiComponent>(owner),
 
 	val style = bind(WindowPanelStyle())
 
-	protected val textField = addChild(text())
+	protected val textField = addChild(text {
+		styleTags.add(TITLE_BAR_STYLE)
+	})
 
-	private val contents = addChild(stack())
+	private val contents = addChild(stack {
+		styleTags.add(CONTENTS_STYLE)
+	})
 	private var background: UiComponent? = null
 	private var titleBarBackground: UiComponent? = null
 	private var closeButton: UiComponent? = null
@@ -67,9 +68,11 @@ open class WindowPanel(owner: Owned) : ElementContainerImpl<UiComponent>(owner),
 			titleBarBackground = addChild(1, it.titleBarBackground(this))
 
 			closeButton?.dispose()
-			closeButton = it.closeButton(this)
-			closeButton!!.click().add { close() }
-			addChild(2, closeButton!!)
+			closeButton = addChild(2, it.closeButton(this).apply {
+				styleTags.add(TITLE_BAR_STYLE)
+				click().add { close() }
+			})
+
 		}
 	}
 
@@ -126,7 +129,10 @@ open class WindowPanel(owner: Owned) : ElementContainerImpl<UiComponent>(owner),
 		closeButton.setPosition(out.width - titleBarPadding.right - closeButton.width, titleBarPadding.top)
 	}
 
-	companion object : StyleTag
+	companion object : StyleTag {
+		val TITLE_BAR_STYLE = styleTag()
+		val CONTENTS_STYLE = styleTag()
+	}
 }
 
 class WindowPanelStyle : StyleBase() {
