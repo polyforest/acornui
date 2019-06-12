@@ -18,6 +18,7 @@ package com.acornui.gl.core
 
 import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
+import com.acornui.component.StencilUtil
 import com.acornui.core.Disposable
 import com.acornui.core.DisposedException
 import com.acornui.core.di.Injector
@@ -54,6 +55,8 @@ class Framebuffer(
 	val hasStencil: Boolean
 
 	private val _viewport = IntRectangle(0, 0, width, height)
+
+	private var previousStencilDepth: Int = -1
 
 	constructor(injector: Injector,
 				width: Int,
@@ -155,7 +158,9 @@ class Framebuffer(
 		previousViewport.set(glState.viewport)
 		glState.setViewport(_viewport)
 		previousStencil = gl.getParameterb(Gl20.STENCIL_TEST)
-		if (previousStencil)
+		previousStencilDepth = StencilUtil.depth
+		StencilUtil.depth = -1
+		if (previousStencil && !hasStencil)
 			gl.disable(Gl20.STENCIL_TEST)
 	}
 
@@ -164,7 +169,8 @@ class Framebuffer(
 		glState.setFramebuffer(previousFramebuffer)
 		glState.setViewport(previousViewport)
 		previousFramebuffer.clear()
-		if (previousStencil)
+		StencilUtil.depth = previousStencilDepth
+		if (previousStencil && hasStencil)
 			gl.enable(Gl20.STENCIL_TEST)
 	}
 
