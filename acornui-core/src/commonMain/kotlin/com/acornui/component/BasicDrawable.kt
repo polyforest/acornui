@@ -41,3 +41,7 @@ interface BasicDrawable {
 
 	fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo)
 }
+
+fun BasicDrawable.render(renderContext: RenderContextRo) {
+	render(renderContext.clipRegion, renderContext.modelTransform, renderContext.colorTint)
+}
