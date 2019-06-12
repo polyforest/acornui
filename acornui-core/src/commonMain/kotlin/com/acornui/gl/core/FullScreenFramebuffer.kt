@@ -54,6 +54,7 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 
 	private fun resize() {
 		framebuffer.setSize(window.width.toInt(), window.height.toInt())
+		sprite.texture = framebuffer.texture
 	}
 
 	/**
