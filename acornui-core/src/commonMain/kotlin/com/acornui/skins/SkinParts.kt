@@ -147,29 +147,16 @@ open class BasicSkinPartProvider : SkinPartProvider {
 	 * A convenience function to create a radio button skin part.
 	 */
 	override fun radioButtonSkin(theme: Theme, buttonState: ButtonState): Owned.() -> CheckboxSkinPart = {
-		val radio = buttonTexture(theme, buttonState, borderRadius = Corners(1000f), borderThickness = Pad(theme.strokeThickness))
-		if (buttonState.isToggled) {
-			val filledCircle = rect {
-				style.margin = Pad(4f)
-				style.borderRadii = Corners(1000f)
-				style.backgroundColor = Color.DARK_GRAY.copy()
-				layoutData = radio.createLayoutData().apply {
-					fill()
-				}
-			}
-			radio.addElement(filledCircle)
+		val box = stack {
+			style.padding = Pad(-3f) // The icon is only 18px and has 3px of padding around it.
+			+iconAtlas(theme.atlasPath, if (buttonState.isIndeterminate) "ic_indeterminate_check_box_white_24dp" else if (buttonState.isToggled) "ic_radio_button_checked_white_24dp" else "ic_radio_button_unchecked_white_24dp")
 		}
-
 		CheckboxSkinPart(
 				this,
-				radio
+				box
 		).apply {
 			if (buttonState == ButtonState.DISABLED) {
 				addStyleRule(charStyle { colorTint = theme.textDisabledColor })
-			}
-			radio layout {
-				width = 18f
-				height = 18f
 			}
 		}
 	}
