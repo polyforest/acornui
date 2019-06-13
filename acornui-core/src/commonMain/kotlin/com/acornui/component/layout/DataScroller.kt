@@ -61,7 +61,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 
 	private val isVertical = layoutAlgorithm.direction == VirtualLayoutDirection.VERTICAL
 
-	val scrollModel: ScrollModel
+	val scrollModel: ClampedScrollModel
 		get() = scrollBar.scrollModel
 
 	/**
@@ -356,8 +356,12 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 		}
 
 		wheel().add {
-			tossScroller.stop()
-			scrollModel.value += (if (isVertical) it.deltaY else it.deltaX) / scrollBar.modelToPixels
+			val d = if (isVertical) it.deltaY else it.deltaX
+			if (!it.handled && scrollModel.max > 0f && d != 0f) {
+				it.handled = true
+				tossScroller.stop()
+				scrollModel.value += d / scrollBar.modelToPixels
+			}
 		}
 
 		click().add {

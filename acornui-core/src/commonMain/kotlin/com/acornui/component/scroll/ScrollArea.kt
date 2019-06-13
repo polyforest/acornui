@@ -40,7 +40,20 @@ open class ScrollArea(
 
 	override fun createLayoutData(): StackLayoutData = StackLayoutData()
 
-	protected val scrollRect = scrollRect()
+	protected val scrollRect = scrollRect {
+		wheel().add { event ->
+			if (!event.handled) {
+				if (vScrollModel.max > 0f && event.deltaY != 0f) {
+					event.handled = true
+					vScrollModel.value += event.deltaY
+				}
+				if (hScrollModel.max > 0f && event.deltaX != 0f) {
+					event.handled = true
+					hScrollModel.value += event.deltaX
+				}
+			}
+		}
+	}
 
 	protected val contents = scrollRect.addElement(stack())
 
@@ -75,12 +88,6 @@ open class ScrollArea(
 	var hScrollPolicy: ScrollPolicy by validationProp(ScrollPolicy.AUTO, ValidationFlags.LAYOUT)
 	var vScrollPolicy: ScrollPolicy by validationProp(ScrollPolicy.AUTO, ValidationFlags.LAYOUT)
 
-	private val wheelHandler = {
-		event: WheelInteractionRo ->
-		vScrollModel.value += event.deltaY
-		hScrollModel.value += event.deltaX
-	}
-
 	private var tossScroller: TossScroller? = null
 	private var tossBinding: TossScrollModelBinding? = null
 
@@ -113,7 +120,6 @@ open class ScrollArea(
 		styleTags.add(HBAR_STYLE)
 		styleTags.add(VBAR_STYLE)
 
-		scrollRect.wheel().add(wheelHandler)
 		addChild(scrollRect)
 
 		hScrollBar.layoutInvalidatingFlags = ValidationFlags.SIZE_CONSTRAINTS
