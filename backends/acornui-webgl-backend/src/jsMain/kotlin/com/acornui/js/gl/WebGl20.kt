@@ -62,16 +62,16 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.blendEquation(mode)
 	}
 
-	override fun blendEquationSeparate(modeRGB: Int, modeAlpha: Int) {
-		context.blendEquationSeparate(modeRGB, modeAlpha)
+	override fun blendEquationSeparate(modeRgb: Int, modeAlpha: Int) {
+		context.blendEquationSeparate(modeRgb, modeAlpha)
 	}
 
 	override fun blendFunc(sfactor: Int, dfactor: Int) {
 		context.blendFunc(sfactor, dfactor)
 	}
 
-	override fun blendFuncSeparate(srcRGB: Int, dstRGB: Int, srcAlpha: Int, dstAlpha: Int) {
-		context.blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha)
+	override fun blendFuncSeparate(srcRgb: Int, dstRgb: Int, srcAlpha: Int, dstAlpha: Int) {
+		context.blendFuncSeparate(srcRgb, dstRgb, srcAlpha, dstAlpha)
 	}
 
 	override fun bufferData(target: Int, size: Int, usage: Int) {
@@ -575,6 +575,14 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 
 	override fun getParameterb(pName: Int): Boolean {
 		return context.getParameter(pName) as Boolean
+	}
+
+	override fun getParameterb(pName: Int, out: BooleanArray): BooleanArray {
+		val r = context.getParameter(pName).asDynamic()
+		for (i in 0..out.lastIndex) {
+			out[i] = r[i] as Boolean
+		}
+		return out
 	}
 
 	override fun getParameteri(pName: Int): Int {

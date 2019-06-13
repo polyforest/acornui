@@ -81,9 +81,9 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun blendEquationSeparate(modeRGB: Int, modeAlpha: Int) {
+	override fun blendEquationSeparate(modeRgb: Int, modeAlpha: Int) {
 		before()
-		wrapped.blendEquationSeparate(modeRGB, modeAlpha)
+		wrapped.blendEquationSeparate(modeRgb, modeAlpha)
 		after()
 	}
 
@@ -93,9 +93,9 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun blendFuncSeparate(srcRGB: Int, dstRGB: Int, srcAlpha: Int, dstAlpha: Int) {
+	override fun blendFuncSeparate(srcRgb: Int, dstRgb: Int, srcAlpha: Int, dstAlpha: Int) {
 		before()
-		wrapped.blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha)
+		wrapped.blendFuncSeparate(srcRgb, dstRgb, srcAlpha, dstAlpha)
 		after()
 	}
 
@@ -859,6 +859,13 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 	override fun getParameterb(pName: Int): Boolean {
 		before()
 		val ret = wrapped.getParameterb(pName)
+		after()
+		return ret
+	}
+
+	override fun getParameterb(pName: Int, out: BooleanArray): BooleanArray {
+		before()
+		val ret = wrapped.getParameterb(pName, out)
 		after()
 		return ret
 	}

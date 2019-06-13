@@ -21,6 +21,9 @@ import com.acornui.gl.core.*
 import com.acornui.io.NativeReadBuffer
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.*
+import org.lwjgl.opengl.GL11.nglGetBooleanv
+import org.lwjgl.system.MemoryStack.stackGet
+import org.lwjgl.system.MemoryUtil.memAddress
 import java.nio.*
 
 /**
@@ -68,16 +71,16 @@ open class LwjglGl20 : Gl20 {
 		GL14.glBlendEquation(mode)
 	}
 
-	override fun blendEquationSeparate(modeRGB: Int, modeAlpha: Int) {
-		GL20.glBlendEquationSeparate(modeRGB, modeAlpha)
+	override fun blendEquationSeparate(modeRgb: Int, modeAlpha: Int) {
+		GL20.glBlendEquationSeparate(modeRgb, modeAlpha)
 	}
 
 	override fun blendFunc(sfactor: Int, dfactor: Int) {
 		GL11.glBlendFunc(sfactor, dfactor)
 	}
 
-	override fun blendFuncSeparate(srcRGB: Int, dstRGB: Int, srcAlpha: Int, dstAlpha: Int) {
-		GL14.glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha)
+	override fun blendFuncSeparate(srcRgb: Int, dstRgb: Int, srcAlpha: Int, dstAlpha: Int) {
+		GL14.glBlendFuncSeparate(srcRgb, dstRgb, srcAlpha, dstAlpha)
 	}
 
 	override fun bufferData(target: Int, size: Int, usage: Int) {
@@ -141,7 +144,7 @@ open class LwjglGl20 : Gl20 {
 	}
 
 	override fun createBuffer(): GlBufferRef {
-		return JvmGlBuffer(GL15.glGenBuffers()) // TODO: Check this
+		return JvmGlBuffer(GL15.glGenBuffers())
 	}
 
 	override fun createFramebuffer(): GlFramebufferRef {
@@ -605,6 +608,21 @@ open class LwjglGl20 : Gl20 {
 
 	override fun getParameterb(pName: Int): Boolean {
 		return GL11.glGetBoolean(pName)
+	}
+
+	override fun getParameterb(pName: Int, out: BooleanArray): BooleanArray {
+		val stack = stackGet()
+		val stackPointer = stack.pointer
+		try {
+			val params = stack.calloc(out.size)
+			nglGetBooleanv(pName, memAddress(params))
+			for (i in 0..out.lastIndex) {
+				out[i] = params[i].toInt() != 0
+			}
+		} finally {
+			stack.pointer = stackPointer
+		}
+		return out
 	}
 
 	override fun getParameteri(pName: Int): Int {

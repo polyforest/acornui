@@ -450,13 +450,13 @@ interface Gl20 {
 	/**
 	 * Set the texture unit subsequent texture operations apply to.
 	 *
-	 * must be one of TEXTURE0, TEXTURE1, to getParameter(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS) - 1.
-	 * The default value is TEXTURE0. A texture must be bound to the active texture unit using bindTexture().
+	 * must be one of [TEXTURE0], [TEXTURE1], to `getParameteri(MAX_COMBINED_TEXTURE_IMAGE_UNITS) - 1`.
+	 * The default value is [TEXTURE0]. A texture must be bound to the active texture unit using bindTexture().
 	 */
 	fun activeTexture(texture: Int)
 
 	/**
-	 * Attaches shader to program. A program must have both a VERTEX_SHADER and FRAGMENT_SHADER before it can be used.
+	 * Attaches shader to program. A program must have both a [VERTEX_SHADER] and [FRAGMENT_SHADER] before it can be used.
 	 * shader can be attached before its source has been set. See also detachShader().
 	 */
 	fun attachShader(program: GlProgramRef, shader: GlShaderRef)
@@ -468,30 +468,30 @@ interface Gl20 {
 	 * that attribute. Locations are automatically assigned if you do not call bindAttribLocation so this method is
 	 * only necessary if you wish to assign a specific location for an attribute. Use getAttribLocation() to retrieve
 	 * the automatically assigned location. bindAttribLocation() must be called before calling linkProgram(program) and
-	 * location must be an integer in the range 0 to getParameter(gl.MAX_VERTEX_ATTRIBS) - 1.
+	 * location must be an integer in the range 0 to `getParameter(MAX_VERTEX_ATTRIBS) - 1`.
 	 */
 	fun bindAttribLocation(program: GlProgramRef, index: Int, name: String)
 
 	/**
-	 * Sets the current buffer for target to buffer. target must be either ARRAY_BUFFER or ELEMENT_ARRAY_BUFFER.
+	 * Sets the current buffer for target to buffer. target must be either [ARRAY_BUFFER] or [ELEMENT_ARRAY_BUFFER].
 	 * Use bufferData() to fill the bound buffer with data.
 	 */
 	fun bindBuffer(target: Int, buffer: GlBufferRef?)
 
 	/**
-	 * Sets the current framebuffer to framebuffer. target must be FRAMEBUFFER. See createFramebuffer() for an
+	 * Sets the current framebuffer to framebuffer. target must be [FRAMEBUFFER]. See createFramebuffer() for an
 	 * example of using bindFramebuffer().
 	 */
 	fun bindFramebuffer(target: Int, framebuffer: GlFramebufferRef?)
 
 	/**
-	 * Sets the current renderbuffer to renderbuffer. target must be RENDERBUFFER.
+	 * Sets the current renderbuffer to renderbuffer. target must be [RENDERBUFFER].
 	 */
 	fun bindRenderbuffer(target: Int, renderbuffer: GlRenderbufferRef?)
 
 	/**
 	 * Sets the specified target and texture (created with createTexture) for the bound texture in the active texture
-	 * unit (set through activeTexture() and bindTexture). target must be one of TEXTURE_2D or TEXTURE_CUBE_MAP
+	 * unit (set through activeTexture() and bindTexture). target must be one of [TEXTURE_2D] or [TEXTURE_CUBE_MAP]
 	 */
 	fun bindTexture(target: Int, texture: GlTextureRef?)
 
@@ -508,14 +508,14 @@ interface Gl20 {
 	/**
 	 * Sets how the newly rendered pixel color and alpha (src) is combined with the existing framebuffer color and
 	 * alpha (dst) before storing in the framebuffer.
-	 * modeRGB and modeAlpha must be one of FUNC_ADD, FUNC_SUBTRACT, or FUNC_REVERSE_SUBTRACT. If the mode is FUNC_ADD,
-	 * the destination color will be src + dst. If the mode is FUNC_SUBTRACT, the destination color will be src - dst.
-	 * If the mode is FUNC_REVERSE_SUBTRACT, the destination color will be dst - src. Both modeRGB and modeAlpha
-	 * default to FUNC_ADD. Use getParameter(gl.BLEND_EQUATION_RGB) and getParameter(gl.BLEND_EQUATION_ALPHA) to get
+	 * modeRgb and modeAlpha must be one of [FUNC_ADD], [FUNC_SUBTRACT], or [FUNC_REVERSE_SUBTRACT]. If the mode is [FUNC_ADD],
+	 * the destination color will be src + dst. If the mode is [FUNC_SUBTRACT], the destination color will be src - dst.
+	 * If the mode is [FUNC_REVERSE_SUBTRACT], the destination color will be dst - src. Both modeRgb and modeAlpha
+	 * default to [FUNC_ADD]. Use getParameter([BLEND_EQUATION_RGB]) and getParameter([BLEND_EQUATION_ALPHA]) to get
 	 * the current values. See blendFuncSeparate() for how src and dst are computed. Blending must be enabled with
-	 * enable(BLEND).
+	 * enable([BLEND]).
 	 */
-	fun blendEquationSeparate(modeRGB: Int, modeAlpha: Int)
+	fun blendEquationSeparate(modeRgb: Int, modeAlpha: Int)
 
 	/**
 	 * Same as blendFuncSeparate(srcFactor, dstFactor, srcFactor, dstFactor).
@@ -524,22 +524,22 @@ interface Gl20 {
 
 	/**
 	 * Adjusts the newly rendered pixel color and alpha (src) and existing framebuffer color and alpha in the
-	 * framebuffer (dst) before being combined using blendEquationSeparate(). srcRGB, dstRGB, srcAlpha, and dstAlpha
-	 * must be one of ZERO, ONE, SRC_COLOR, ONE_MINUS_SRC_COLOR, DST_COLOR, ONE_MINUS_DST_COLOR, SRC_ALPHA,
-	 * ONE_MINUS_SRC_ALPHA, DST_ALPHA, ONE_MINUS_DST_ALPHA, CONSTANT_COLOR, ONE_MINUS_CONSTANT_COLOR, CONSTANT_ALPHA,
-	 * ONE_MINUS_CONSTANT_ALPHA, or SRC_ALPHA_SATURATE srcRGB and srcAlpha default to ONE. dstRGB and dstAlpha
-	 * default to NONE. For traditional alpha blending, use: gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA,
-	 * gl.ONE, gl.ZERO). For premultiplied alpha blending, use: gl.blendFuncSeparate(gl.ONE, gl.ONE_MINUS_SRC_ALPHA,
-	 * gl.ONE, gl.ZERO). Use getParameter(gl.BLEND_SRC_RGB), getParameter(gl.BLEND_DST_RGB),
-	 * getParameter(gl.BLEND_SRC_ALPHA), and getParameter(gl.BLEND_DST_ALPHA) to get the current values.
+	 * framebuffer (dst) before being combined using blendEquationSeparate(). srcRgb, dstRgb, srcAlpha, and dstAlpha
+	 * must be one of [ZERO], [ONE], [SRC_COLOR], [ONE_MINUS_SRC_COLOR], [DST_COLOR], [ONE_MINUS_DST_COLOR], [SRC_ALPHA],
+	 * [ONE_MINUS_SRC_ALPHA], [DST_ALPHA], [ONE_MINUS_DST_ALPHA], [CONSTANT_COLOR], [ONE_MINUS_CONSTANT_COLOR], [CONSTANT_ALPHA],
+	 * [ONE_MINUS_CONSTANT_ALPHA], or [SRC_ALPHA_SATURATE] [srcRgb] and [srcAlpha] default to [ONE]. [dstRgb] and [dstAlpha]
+	 * default to [NONE]. For traditional alpha blending, use: blendFuncSeparate([SRC_ALPHA], [ONE_MINUS_SRC_ALPHA],
+	 * [ONE], [ZERO]). For premultiplied alpha blending, use: blendFuncSeparate([ONE], [ONE_MINUS_SRC_ALPHA],
+	 * [ONE], [ZERO]). Use getParameter([BLEND_SRC_RGB]), getParameter([BLEND_DST_RGB]),
+	 * getParameter([BLEND_SRC_ALPHA]), and getParameter([BLEND_DST_ALPHA]) to get the current values.
 	 */
-	fun blendFuncSeparate(srcRGB: Int, dstRGB: Int, srcAlpha: Int, dstAlpha: Int)
+	fun blendFuncSeparate(srcRgb: Int, dstRgb: Int, srcAlpha: Int, dstAlpha: Int)
 
 	/**
 	 * Creates the storage for the currently bound buffer.
-	 * @param target must be one of ARRAY_BUFFER or ELEMENT_ARRAY_BUFFER.
+	 * @param target must be one of [ARRAY_BUFFER] or [ELEMENT_ARRAY_BUFFER].
 	 * @param size the size in bytes of the buffer to allocate.
-	 * @param usage must be one of STREAM_DRAW, STATIC_DRAW, or DYNAMIC_DRAW.
+	 * @param usage must be one of [STREAM_DRAW], [STATIC_DRAW], or [DYNAMIC_DRAW].
 	 */
 	fun bufferData(target: Int, size: Int, usage: Int)
 
@@ -569,20 +569,20 @@ interface Gl20 {
 	fun bufferSubDatasv(target: Int, offset: Int, data: NativeReadBuffer<Short>)
 
 	/**
-	 * Returns one of the following to indicate the current status of the framebuffer: FRAMEBUFFER_COMPLETE,
-	 * FRAMEBUFFER_INCOMPLETE_ATTACHMENT, FRAMEBUFFER_INCOMPLETE_DIMENSIONS, FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT,
-	 * or FRAMEBUFFER_UNSUPPORTED.
+	 * Returns one of the following to indicate the current status of the framebuffer: [FRAMEBUFFER_COMPLETE],
+	 * [FRAMEBUFFER_INCOMPLETE_ATTACHMENT], [FRAMEBUFFER_INCOMPLETE_DIMENSIONS], [FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT],
+	 * or [FRAMEBUFFER_UNSUPPORTED].
 	 */
 	fun checkFramebufferStatus(target: Int): Int
 
 	/**
 	 * Clears the buffers specified by mask where mask is the bitwise OR (|) of one or more of the following values:
-	 * COLOR_BUFFER_BIT, STENCIL_BUFFER_BIT, and DEPTH_BUFFER_BIT.
+	 * [COLOR_BUFFER_BIT], [STENCIL_BUFFER_BIT], and [DEPTH_BUFFER_BIT].
 	 */
 	fun clear(mask: Int)
 
 	/**
-	 * Specifies the color to fill the color buffer when reset() is called with the COLOR_BUFFER_BIT.
+	 * Specifies the color to fill the color buffer when reset() is called with the [COLOR_BUFFER_BIT].
 	 * The parameters are clamped to the range 0 to 1.
 	 */
 	fun clearColor(red: Float, green: Float, blue: Float, alpha: Float)
@@ -592,25 +592,25 @@ interface Gl20 {
 	}
 
 	/**
-	 * Specifies the value to fill the depth buffer when reset() is called with the DEPTH_BUFFER_BIT.
+	 * Specifies the value to fill the depth buffer when reset() is called with the [DEPTH_BUFFER_BIT].
 	 * depth is clamped to the range 0 (near) to 1 (far). Defaults to 1 if not specified.
 	 */
 	fun clearDepth(depth: Float)
 
 	/**
-	 * Specifies the value (integer) to fill the depth buffer when reset() is called with the STENCIL_BUFFER_BIT.
+	 * Specifies the value (integer) to fill the depth buffer when reset() is called with the [STENCIL_BUFFER_BIT].
 	 */
 	fun clearStencil(s: Int)
 
 	/**
 	 * Turns on or off writing to the specified channels of the frame buffer. Defaults to true for all channels.
-	 * Use getParameter(gl.COLOR_WRITEMASK) to get the current value.
+	 * Use `getParameterb(COLOR_WRITEMASK, BooleanArray(4))` to get the current value.
 	 */
 	fun colorMask(red: Boolean, green: Boolean, blue: Boolean, alpha: Boolean)
 
 	/**
 	 * Compiles the specified shader. Must be called after setting the source with shaderSource(). If the shader had
-	 * errors during compilation, gl.getShaderParameter(shader, gl.COMPILE_STATUS) will return false and you can use
+	 * errors during compilation, getShaderParameter(shader, [COMPILE_STATUS]) will return false and you can use
 	 * getShaderInfoLog() to get details about the error.
 	 */
 	fun compileShader(shader: GlShaderRef)
@@ -618,9 +618,9 @@ interface Gl20 {
 	/**
 	 * Copies pixels from the framebuffer to the bound texture in the active texture unit (set through activeTexture()
 	 * and bindTexture).
-	 * @param target must be one of TEXTURE_2D, TEXTURE_CUBE_MAP_POSITIVE_X, TEXTURE_CUBE_MAP_NEGATIVE_X, TEXTURE_CUBE_MAP_POSITIVE_Y, TEXTURE_CUBE_MAP_NEGATIVE_Y, TEXTURE_CUBE_MAP_POSITIVE_Z, or TEXTURE_CUBE_MAP_NEGATIVE_Z.
+	 * @param target must be one of [TEXTURE_2D], [TEXTURE_CUBE_MAP_POSITIVE_X], [TEXTURE_CUBE_MAP_NEGATIVE_X], [TEXTURE_CUBE_MAP_POSITIVE_Y], [TEXTURE_CUBE_MAP_NEGATIVE_Y], [TEXTURE_CUBE_MAP_POSITIVE_Z], or [TEXTURE_CUBE_MAP_NEGATIVE_Z].
 	 * @param level specifies the mipmap level to copy into.
-	 * @param internalFormat ALPHA, LUMINANCE, LUMINANCE_ALPHA, RGB, or RGBA.
+	 * @param internalFormat [ALPHA], [LUMINANCE], [LUMINANCE_ALPHA], [RGB], or [RGBA].
 	 * @param x
 	 * @param y
 	 * @param width
@@ -631,7 +631,7 @@ interface Gl20 {
 
 	/**
 	 * Copies pixels from the framebuffer to a subregion of the bound texture in the active texture unit (set through activeTexture() and bindTexture).
-	 * @param target must be one of TEXTURE_2D, TEXTURE_CUBE_MAP_POSITIVE_X, TEXTURE_CUBE_MAP_NEGATIVE_X, TEXTURE_CUBE_MAP_POSITIVE_Y, TEXTURE_CUBE_MAP_NEGATIVE_Y, TEXTURE_CUBE_MAP_POSITIVE_Z, or TEXTURE_CUBE_MAP_NEGATIVE_Z.
+	 * @param target must be one of [TEXTURE_2D], [TEXTURE_CUBE_MAP_POSITIVE_X], [TEXTURE_CUBE_MAP_NEGATIVE_X], [TEXTURE_CUBE_MAP_POSITIVE_Y], [TEXTURE_CUBE_MAP_NEGATIVE_Y], [TEXTURE_CUBE_MAP_POSITIVE_Z], or [TEXTURE_CUBE_MAP_NEGATIVE_Z].
 	 * @param level specifies the mipmap level to copy into.
 	 * @param xOffset
 	 * @param yOffset the position in the texture to store the copied pixels.
@@ -644,8 +644,12 @@ interface Gl20 {
 
 	/**
 	 * Creates a buffer. A buffer is memory used to store data passed to the shader program through attributes.
-	 * See also bindBuffer(), bufferData(), bufferSubData(), deleteBuffer(), isBuffer(), vertexAttribPointer() and
-	 * enableVertexAttribArray().
+	 * @see bindBuffer
+	 * @see bufferData
+	 * @see deleteBuffer
+	 * @see isBuffer
+	 * @see vertexAttribPointer
+	 * @see enableVertexAttribArray
 	 */
 	fun createBuffer(): GlBufferRef
 
@@ -671,7 +675,7 @@ interface Gl20 {
 	fun createRenderbuffer(): GlRenderbufferRef
 
 	/**
-	 * Creates a vertex or fragment shader. type must be either VERTEX_SHADER or FRAGMENT_SHADER. Shaders must be
+	 * Creates a vertex or fragment shader. type must be either [VERTEX_SHADER] or [FRAGMENT_SHADER]. Shaders must be
 	 * compiled using compileShader() and then attached to a GlProgram using attachShader() before they can be used.
 	 */
 	fun createShader(type: Int): GlShaderRef
@@ -684,8 +688,8 @@ interface Gl20 {
 	fun createTexture(): GlTextureRef
 
 	/**
-	 * Sets which side of the triangle is culled (not drawn). mode must be one of BACK, FRONT, or FRONT_AND_BACK.
-	 * Defaults to BACK. To turn on culling, you must call enable(CULL_FACE). To select which face is the front or back,
+	 * Sets which side of the triangle is culled (not drawn). mode must be one of [BACK], [FRONT], or [FRONT_AND_BACK].
+	 * Defaults to [BACK]. To turn on culling, you must call enable([CULL_FACE]). To select which face is the front or back,
 	 * use frontFace().
 	 */
 	fun cullFace(mode: Int)
@@ -722,14 +726,14 @@ interface Gl20 {
 
 	/**
 	 * Specifies what function used to compare the rendered depth with the existing depth in the framebuffer to
-	 * determine if the pixel will be written to the framebuffer. func must be one of NEVER, LESS, EQUAL, LEQUAL,
-	 * GREATER, NOTEQUAL, GEQUAL, or ALWAYS. Defaults to LESS. Depth test will only be used if enabled with
-	 * enable(DEPTH_TEST).
+	 * determine if the pixel will be written to the framebuffer. func must be one of [NEVER], [LESS], [EQUAL], [LEQUAL],
+	 * [GREATER], [NOTEQUAL], [GEQUAL], or [ALWAYS]. Defaults to [LESS]. Depth test will only be used if enabled with
+	 * enable([DEPTH_TEST]).
 	 */
 	fun depthFunc(func: Int)
 
 	/**
-	 * Turns on or off writing to the depth buffer. Defaults to true. Use getParameter(gl.DEPTH_WRITEMASK) to get the
+	 * Turns on or off writing to the depth buffer. Defaults to true. Use getParameter(DEPTH_WRITEMASK) to get the
 	 * current value. Depth test will only be used if enabled with enable(DEPTH_TEST).
 	 */
 	fun depthMask(flag: Boolean)
@@ -756,20 +760,20 @@ interface Gl20 {
 	fun disableVertexAttribArray(index: Int)
 
 	/**
-	 * Draws primitives using the vertex buffer data (stored in the ARRAY_BUFFER buffer).
-	 * @param mode must be one of POINTS, LINE_STRIP, LINE_LOOP, LINES, TRIANGLE_STRIP, TRIANGLE_FAN, or TRIANGLES.
+	 * Draws primitives using the vertex buffer data (stored in the [ARRAY_BUFFER] buffer).
+	 * @param mode must be one of [POINTS], [LINE_STRIP], [LINE_LOOP], [LINES], [TRIANGLE_STRIP], [TRIANGLE_FAN], or [TRIANGLES].
 	 * @param first specifies the index of the first vertex to draw.
 	 * @param count specifies the number of vertices to draw.
-	 * You must call enableVertexAttribArray() for each attribute in the vertex shader that uses the vertex data.
+	 * You must call [enableVertexAttribArray] for each attribute in the vertex shader that uses the vertex data.
 	 */
 	fun drawArrays(mode: Int, first: Int, count: Int)
 
 	/**
-	 * Draws primitives using the vertex buffer data (stored in the ARRAY_BUFFER buffer) and the index buffer data
-	 * (stored in the ELEMENT_ARRAY_BUFFER buffer).
-	 * @param mode must be one of POINTS, LINE_STRIP, LINE_LOOP, LINES, TRIANGLE_STRIP, TRIANGLE_FAN, or TRIANGLES.
+	 * Draws primitives using the vertex buffer data (stored in the [ARRAY_BUFFER] buffer) and the index buffer data
+	 * (stored in the [ELEMENT_ARRAY_BUFFER] buffer).
+	 * @param mode must be one of [POINTS], [LINE_STRIP], [LINE_LOOP], [LINES], [TRIANGLE_STRIP], [TRIANGLE_FAN], or [TRIANGLES].
 	 * @param count the number of elements to be rendered.
-	 * @param type must be one of UNSIGNED_BYTE or UNSIGNED_SHORT.
+	 * @param type must be one of [UNSIGNED_BYTE] or [UNSIGNED_SHORT].
 	 * @param offset an offset in the element array buffer. Must be a valid multiple of the size of the given type.
 	 * You must call enableVertexAttribArray() for each attribute in the vertex shader that uses the vertex data.
 	 */
@@ -777,15 +781,15 @@ interface Gl20 {
 
 	/**
 	 * Turns on a capability. capability must be one of the following:
-	 * BLEND if enabled, will combine the color generated by the fragment shader with the existing color in the framebuffer using the method specified by blendFunc(). Most commonly used to enable alpha blending. Defaults to disabled.
-	 * CULL_FACE if enabled, will cull (not draw) triangles based on which face is visible. See cullFace() and frontFace() to configure culling. Defaults to disabled.
-	 * DEPTH_TEST if enabled, fragments will only be written to the framebuffer if they pass the depth function (set with gl.depthFunc()). See also depthMask(), and depthRange(). Most commonly used to draw closer objects on top of further away objects. Defaults to disabled.
-	 * DITHER if enabled, the colors will be dithered when written to the color buffer. Defaults to enabled.
-	 * POLYGON_OFFSET_FILL if enabled, the offset specified by polygonOffset will be added to the depth for the fragment when writing to the depth buffer. Most commonly used to draw decals on top of already drawn surfaces. Defaults to disabled.
-	 * SAMPLE_COVERAGE Defaults to disabled.
-	 * SAMPLE_ALPHA_TO_COVERAGE Defaults to disabled.
-	 * SCISSOR_TEST if enabled, fragments outside the scissor rectangle (set with scissor() will not be drawn. Defaults to disabled.
-	 * STENCIL_TEST if enabled, perform a stencil test on each fragment and update the stencil buffer. See also stencilFunc and stencilOp. Defaults to disabled.
+	 * [BLEND] if enabled, will combine the color generated by the fragment shader with the existing color in the framebuffer using the method specified by blendFunc(). Most commonly used to enable alpha blending. Defaults to disabled.
+	 * [CULL_FACE] if enabled, will cull (not draw) triangles based on which face is visible. See cullFace() and frontFace() to configure culling. Defaults to disabled.
+	 * [DEPTH_TEST] if enabled, fragments will only be written to the framebuffer if they pass the depth function (set with depthFunc()). See also depthMask(), and depthRange(). Most commonly used to draw closer objects on top of further away objects. Defaults to disabled.
+	 * [DITHER] if enabled, the colors will be dithered when written to the color buffer. Defaults to enabled.
+	 * [POLYGON_OFFSET_FILL] if enabled, the offset specified by polygonOffset will be added to the depth for the fragment when writing to the depth buffer. Most commonly used to draw decals on top of already drawn surfaces. Defaults to disabled.
+	 * [SAMPLE_COVERAGE] Defaults to disabled.
+	 * [SAMPLE_ALPHA_TO_COVERAGE] Defaults to disabled.
+	 * [SCISSOR_TEST] if enabled, fragments outside the scissor rectangle (set with scissor() will not be drawn. Defaults to disabled.
+	 * [STENCIL_TEST] if enabled, perform a stencil test on each fragment and update the stencil buffer. See also stencilFunc and stencilOp. Defaults to disabled.
 	 * Use disable() to turn off the capability.
 	 */
 	fun enable(cap: Int)
@@ -802,20 +806,20 @@ interface Gl20 {
 
 	/**
 	 * Specifies the renderbuffer to use as destination of rendering for the current framebuffer (set with the most recent bindFramebuffer() call).
-	 * target must be FRAMEBUFFER.
-	 * attachment determines what is rendered into renderbuffer. Pass COLOR_ATTACHMENT0 for color data, DEPTH_ATTACHMENT for depth data, or STENCIL_ATTACHMENT for stencil data.
-	 * renderbufferTarget must be RENDERBUFFER.
+	 * target must be [FRAMEBUFFER].
+	 * attachment determines what is rendered into renderbuffer. Pass [COLOR_ATTACHMENT0] for color data, [DEPTH_ATTACHMENT] for depth data, or [STENCIL_ATTACHMENT] for stencil data.
+	 * renderbufferTarget must be [RENDERBUFFER].
 	 * renderbuffer the buffer to store the rendered output.
 	 */
 	fun framebufferRenderbuffer(target: Int, attachment: Int, renderbufferTarget: Int, renderbuffer: GlRenderbufferRef)
 
 	/**
 	 * Specifies the texture to use as destination of rendering for the current framebuffer (set with the most recent bindFramebuffer() call).
-	 * target must be FRAMEBUFFER.
-	 * attachment determines what is rendered into renderbuffer. Pass COLOR_ATTACHMENT0 for color data, DEPTH_ATTACHMENT for depth data, or STENCIL_ATTACHMENT for stencil data.
-	 * target must be one of TEXTURE_2D, TEXTURE_CUBE_MAP_POSITIVE_X, TEXTURE_CUBE_MAP_NEGATIVE_X, TEXTURE_CUBE_MAP_POSITIVE_Y, TEXTURE_CUBE_MAP_NEGATIVE_Y, TEXTURE_CUBE_MAP_POSITIVE_Z, or TEXTURE_CUBE_MAP_NEGATIVE_Z.
+	 * target must be [FRAMEBUFFER].
+	 * attachment determines what is rendered into renderbuffer. [P]ass [COLOR_ATTACHMENT0] for color data, [DEPTH_ATTACHMENT] for depth data, or [STENCIL_ATTACHMENT] for stencil data.
+	 * target must be one of [TEXTURE_2D], [TEXTURE_CUBE_MAP_POSITIVE_X], [TEXTURE_CUBE_MAP_NEGATIVE_X], [TEXTURE_CUBE_MAP_POSITIVE_Y], [TEXTURE_CUBE_MAP_NEGATIVE_Y], [TEXTURE_CUBE_MAP_POSITIVE_Z], or [TEXTURE_CUBE_MAP_NEGATIVE_Z].
 	 * texture the texture to store the rendered output.
-	 * level must be 0.
+	 * level must be [0].
 	 */
 	fun framebufferTexture2D(target: Int, attachment: Int, textureTarget: Int, texture: GlTextureRef, level: Int)
 
@@ -830,12 +834,12 @@ interface Gl20 {
 	fun generateMipmap(target: Int)
 
 	/**
-	 * Returns information about an attribute in program. program must be linked before calling getActiveAttrib(). index must be between 0 and gl.getProgramParameter(program, ACTIVE_ATTRIBUTES) - 1.
+	 * Returns information about an attribute in program. program must be linked before calling getActiveAttrib(). index must be between 0 and getProgramParameter(program, ACTIVE_ATTRIBUTES) - 1.
 	 */
 	fun getActiveAttrib(program: GlProgramRef, index: Int): GlActiveInfoRef
 
 	/**
-	 * Returns information about a uniform in program. program must be linked before calling getActiveUniform(). index must be between 0 and gl.getProgramParameter(program, ACTIVE_UNIFORMS) - 1.
+	 * Returns information about a uniform in program. program must be linked before calling getActiveUniform(). index must be between 0 and getProgramParameter(program, ACTIVE_UNIFORMS) - 1.
 	 */
 	fun getActiveUniform(program: GlProgramRef, index: Int): GlActiveInfoRef
 
@@ -851,7 +855,7 @@ interface Gl20 {
 
 	/**
 	 * Returns the first error hit since the last time getError() was called. The returned value will be one of
-	 * NO_ERROR, INVALID_ENUM, INVALID_VALUE, INVALID_OPERATION, INVALID_FRAMEBUFFER_OPERATION, or OUT_OF_MEMORY.
+	 * [NO_ERROR], [INVALID_ENUM], [INVALID_VALUE], [INVALID_OPERATION], [INVALID_FRAMEBUFFER_OPERATION], or [OUT_OF_MEMORY].
 	 */
 	fun getError(): Int
 
@@ -937,14 +941,14 @@ interface Gl20 {
 
 	/**
 	 * Specifies the size and data of the bound texture in the active texture unit (set through activeTexture() and bindTexture).
-	 * @param target must be one of TEXTURE_2D, TEXTURE_CUBE_MAP_POSITIVE_X, TEXTURE_CUBE_MAP_NEGATIVE_X, TEXTURE_CUBE_MAP_POSITIVE_Y, TEXTURE_CUBE_MAP_NEGATIVE_Y, TEXTURE_CUBE_MAP_POSITIVE_Z, or TEXTURE_CUBE_MAP_NEGATIVE_Z.
+	 * @param target must be one of [TEXTURE_2D], [TEXTURE_CUBE_MAP_POSITIVE_X], [TEXTURE_CUBE_MAP_NEGATIVE_X], [TEXTURE_CUBE_MAP_POSITIVE_Y], [TEXTURE_CUBE_MAP_NEGATIVE_Y], [TEXTURE_CUBE_MAP_POSITIVE_Z], or [TEXTURE_CUBE_MAP_NEGATIVE_Z].
 	 * @param level is the mipmap level (0 is base level).
-	 * @param internalFormat must be one of ALPHA, LUMINANCE, LUMINANCE_ALPHA, RGB, or RGBA.
+	 * @param internalFormat must be one of [ALPHA], [LUMINANCE], [LUMINANCE_ALPHA], [RGB], or [RGBA].
 	 * @param width  the size of the texture.
 	 * @param height
 	 * @param border must be 0.
 	 * @param format must match internalFormat.
-	 * @param type must be one of UNSIGNED_BYTE, UNSIGNED_SHORT_5_6_5, UNSIGNED_SHORT_4_4_4_4, or UNSIGNED_5_5_5_1;
+	 * @param type must be one of [UNSIGNED_BYTE], [UNSIGNED_SHORT_5_6_5], [UNSIGNED_SHORT_4_4_4_4], or [UNSIGNED_SHORT_5_5_5_1];
 	 * @param pixels is the data to load into the texture. May be null to allocate the texture without data.
 	 * The loaded data is affected by the pixelStorei() options. You can also use copyTexSubImage2D or texSubImage2D to initialize the texture.
 	 */
@@ -952,14 +956,14 @@ interface Gl20 {
 
 	/**
 	 * Specifies the size and data of the bound texture in the active texture unit (set through activeTexture() and bindTexture).
-	 * @param target must be one of TEXTURE_2D, TEXTURE_CUBE_MAP_POSITIVE_X, TEXTURE_CUBE_MAP_NEGATIVE_X, TEXTURE_CUBE_MAP_POSITIVE_Y, TEXTURE_CUBE_MAP_NEGATIVE_Y, TEXTURE_CUBE_MAP_POSITIVE_Z, or TEXTURE_CUBE_MAP_NEGATIVE_Z.
+	 * @param target must be one of [TEXTURE_2D], [TEXTURE_CUBE_MAP_POSITIVE_X], [TEXTURE_CUBE_MAP_NEGATIVE_X], [TEXTURE_CUBE_MAP_POSITIVE_Y], [TEXTURE_CUBE_MAP_NEGATIVE_Y], [TEXTURE_CUBE_MAP_POSITIVE_Z], or [TEXTURE_CUBE_MAP_NEGATIVE_Z].
 	 * @param level is the mipmap level (0 is base level).
-	 * @param internalFormat must be one of ALPHA, LUMINANCE, LUMINANCE_ALPHA, RGB, or RGBA.
+	 * @param internalFormat must be one of [ALPHA], [LUMINANCE], [LUMINANCE_ALPHA], [RGB], or [RGBA].
 	 * @param width  the size of the texture.
 	 * @param height
 	 * @param border must be 0.
 	 * @param format must match internalFormat.
-	 * @param type must be one of UNSIGNED_BYTE, UNSIGNED_SHORT_5_6_5, UNSIGNED_SHORT_4_4_4_4, or UNSIGNED_5_5_5_1;
+	 * @param type must be one of [UNSIGNED_BYTE], [UNSIGNED_SHORT_5_6_5], [UNSIGNED_SHORT_4_4_4_4], or [UNSIGNED_SHORT_5_5_5_1];
 	 * @param pixels is the data to load into the texture. May be null to allocate the texture without data.
 	 * The loaded data is affected by the pixelStorei() options. You can also use copyTexSubImage2D or texSubImage2D to initialize the texture.
 	 */
@@ -967,11 +971,11 @@ interface Gl20 {
 
 	/**
 	 * Specifies the data for the bound texture in the active texture unit (set through activeTexture() and bindTexture).
-	 * @param target must be one of TEXTURE_2D, TEXTURE_CUBE_MAP_POSITIVE_X, TEXTURE_CUBE_MAP_NEGATIVE_X, TEXTURE_CUBE_MAP_POSITIVE_Y, TEXTURE_CUBE_MAP_NEGATIVE_Y, TEXTURE_CUBE_MAP_POSITIVE_Z, or TEXTURE_CUBE_MAP_NEGATIVE_Z.
+	 * @param target must be one of [TEXTURE_2D], [TEXTURE_CUBE_MAP_POSITIVE_X], [TEXTURE_CUBE_MAP_NEGATIVE_X], [TEXTURE_CUBE_MAP_POSITIVE_Y], [TEXTURE_CUBE_MAP_NEGATIVE_Y], [TEXTURE_CUBE_MAP_POSITIVE_Z], or [TEXTURE_CUBE_MAP_NEGATIVE_Z].
 	 * @param level is the mipmap level (0 is base level).
-	 * @param internalFormat must be one of ALPHA, LUMINANCE, LUMINANCE_ALPHA, RGB, or RGBA.
+	 * @param internalFormat must be one of [ALPHA], [LUMINANCE], [LUMINANCE_ALPHA], [RGB], or [RGBA].
 	 * @param format must match internalformat.
-	 * @param type must be one of UNSIGNED_BYTE, UNSIGNED_SHORT_5_6_5, UNSIGNED_SHORT_4_4_4_4, or UNSIGNED_SHORT_5_5_5_1;
+	 * @param type must be one of [UNSIGNED_BYTE], [UNSIGNED_SHORT_5_6_5], [UNSIGNED_SHORT_4_4_4_4], or [UNSIGNED_SHORT_5_5_5_1];
 	 * @param texture is the data to load into the texture.
 	 * The loaded data is affected by the pixelStorei() options. You can also use copyTexSubImage2D or texSubImage2D to initialize the texture.
 	 */
@@ -1063,7 +1067,7 @@ interface Gl20 {
 	 * Defines the data for the specified shader attribute.
 	 * @param index is the location of the shader attribute. Use getAttribLocation() to get the location if you did not specify it explicitly with bindAttribLocation().
 	 * @param size is the number of components for each attribute and must be 1, 2, 3, or 4.
-	 * @param type must be one of BYTE, UNSIGNED_BYTE, SHORT, UNSIGNED_SHORT, or FLOAT.
+	 * @param type must be one of [BYTE], [UNSIGNED_BYTE], [SHORT], [UNSIGNED_SHORT], or [FLOAT].
 	 * @param normalized if true and dataType is not FLOAT, the data will be mapped to the range -1 to 1 for signed types and the range 0 to 1 for unsigned types.
 	 * @param stride indicates the number of bytes between the consecutive attributes. If stride is 0, size * sizeof(dataType) will be used.
 	 * @param offset is the number of bytes before the first attribute.
@@ -1103,14 +1107,14 @@ interface Gl20 {
 	/**
 	 * Return the information requested in pName about the vertex attribute at the passed index.
 	 *
-	 * @param pName one of VERTEX_ATTRIB_ARRAY_SIZE, VERTEX_ATTRIB_ARRAY_STRIDE, VERTEX_ATTRIB_ARRAY_TYPE
+	 * @param pName one of [VERTEX_ATTRIB_ARRAY_SIZE], [VERTEX_ATTRIB_ARRAY_STRIDE], [VERTEX_ATTRIB_ARRAY_TYPE]
 	 */
 	fun getVertexAttribi(index: Int, pName: Int): Int
 
 	/**
 	 * Return the information requested in pName about the vertex attribute at the passed index.
 	 *
-	 * @param pName one of VERTEX_ATTRIB_ARRAY_ENABLED, VERTEX_ATTRIB_ARRAY_NORMALIZED
+	 * @param pName one of [VERTEX_ATTRIB_ARRAY_ENABLED], [VERTEX_ATTRIB_ARRAY_NORMALIZED]
 	 */
 	fun getVertexAttribb(index: Int, pName: Int): Boolean
 
@@ -1119,82 +1123,89 @@ interface Gl20 {
 	 * pName, as given in the following table: If an attempt is made to call this function with no GlTexture bound (see above),
 	 * an INVALID_OPERATION error is generated.
 	 *
-	 * @param pName one of TEXTURE_MAG_FILTER, TEXTURE_MIN_FILTER, TEXTURE_WRAP_S, TEXTURE_WRAP_T
+	 * @param pName one of [TEXTURE_MAG_FILTER], [TEXTURE_MIN_FILTER], [TEXTURE_WRAP_S], [TEXTURE_WRAP_T]
 	 */
 	fun getTexParameter(target: Int, pName: Int): Int
 
 	/**
 	 * Return the value for the passed pName given the passed shader.
 	 *
-	 * @param pName one of DELETE_STATUS, COMPILE_STATUS
+	 * @param pName one of [DELETE_STATUS], [COMPILE_STATUS]
 	 */
 	fun getShaderParameterb(shader: GlShaderRef, pName: Int): Boolean
 
 	/**
 	 * Return the value for the passed pName given the passed shader.
 	 *
-	 * @param pName one of SHADER_TYPE, INFO_LOG_LENGTH, SHADER_SOURCE_LENGTH
+	 * @param pName one of [SHADER_TYPE], [INFO_LOG_LENGTH], [SHADER_SOURCE_LENGTH]
 	 */
 	fun getShaderParameteri(shader: GlShaderRef, pName: Int): Int
 
 	/**
 	 * Return the value for the passed pName given the passed target.
 	 *
-	 * @param pName one of RENDERBUFFER_WIDTH, RENDERBUFFER_HEIGHT, RENDERBUFFER_INTERNAL_FORMAT, RENDERBUFFER_RED_SIZE,
-	 *           RENDERBUFFER_GREEN_SIZE, RENDERBUFFER_BLUE_SIZE, RENDERBUFFER_ALPHA_SIZE, RENDERBUFFER_DEPTH_SIZE,
-	 *           RENDERBUFFER_STENCIL_SIZE
+	 * @param pName one of [RENDERBUFFER_WIDTH], [RENDERBUFFER_HEIGHT], [RENDERBUFFER_INTERNAL_FORMAT], [RENDERBUFFER_RED_SIZE],
+	 *           [RENDERBUFFER_GREEN_SIZE], [RENDERBUFFER_BLUE_SIZE], [RENDERBUFFER_ALPHA_SIZE], [RENDERBUFFER_DEPTH_SIZE],
+	 *           [RENDERBUFFER_STENCIL_SIZE]
 	 */
 	fun getRenderbufferParameter(target: Int, pName: Int): Int
 
 	/**
-	 * Return the value for the passed pname.
+	 * Return the value for the passed pName.
 	 *
-	 * @param pname one of BLEND, CULL_FACE, DEPTH_TEST, DEPTH_WRITEMASK, DITHER, POLYGON_OFFSET_FILL, SAMPLE_COVERAGE_INVERT,
-	 *           SCISSOR_TEST, STENCIL_TEST, UNPACK_FLIP_Y_WEBGL, UNPACK_PREMULTIPLY_ALPHA_WEBGL
+	 * @param pName one of [BLEND], [CULL_FACE], [DEPTH_TEST], [DEPTH_WRITEMASK], [DITHER], [POLYGON_OFFSET_FILL], [SAMPLE_COVERAGE_INVERT],
+	 *           [SCISSOR_TEST], [STENCIL_TEST], [UNPACK_FLIP_Y_WEBGL], [UNPACK_PREMULTIPLY_ALPHA_WEBGL]
 	 */
 	fun getParameterb(pName: Int): Boolean
 
 	/**
-	 * Return the value for the passed pname.
+	 * Return the value for the passed pName.
 	 *
-	 * @param pname one of ACTIVE_TEXTURE, ALPHA_BITS, BLEND_DST_ALPHA, BLEND_DST_RGB, BLEND_EQUATION_ALPHA, BLEND_EQUATION_RGB,
-	 *           BLEND_SRC_ALPHA, BLEND_SRC_RGB, BLUE_BITS, CULL_FACE_MODE, DEPTH_BITS, DEPTH_FUNC, FRONT_FACE,
-	 *           GENERATE_MIPMAP_HINT, GREEN_BITS, IMPLEMENTATION_COLOR_READ_FORMAT, IMPLEMENTATION_COLOR_READ_TYPE,
-	 *           MAX_COMBINED_TEXTURE_IMAGE_UNITS, MAX_CUBE_MAP_TEXTURE_SIZE, MAX_FRAGMENT_UNIFORM_VECTORS, MAX_RENDERBUFFER_SIZE,
-	 *           MAX_TEXTURE_IMAGE_UNITS, MAX_TEXTURE_SIZE, MAX_VARYING_VECTORS, MAX_VERTEX_ATTRIBS,
-	 *           MAX_VERTEX_TEXTURE_IMAGE_UNITS, MAX_VERTEX_UNIFORM_VECTORS, NUM_COMPRESSED_TEXTURE_FORMATS, PACK_ALIGNMENT,
-	 *           RED_BITS, SAMPLE_BUFFERS, SAMPLES, STENCIL_BACK_FAIL, STENCIL_BACK_FUNC, STENCIL_BACK_PASS_DEPTH_FAIL,
-	 *           STENCIL_BACK_PASS_DEPTH_PASS, STENCIL_BACK_REF, STENCIL_BACK_VALUE_MASK, STENCIL_BACK_WRITEMASK, STENCIL_BITS,
-	 *           STENCIL_CLEAR_VALUE, STENCIL_FAIL, STENCIL_FUNC, STENCIL_PASS_DEPTH_FAIL, STENCIL_PASS_DEPTH_PASS, STENCIL_REF,
-	 *           STENCIL_VALUE_MASK, STENCIL_WRITEMASK, SUBPIXEL_BITS, UNPACK_ALIGNMENT
+	 * @param pName one of [COLOR_WRITEMASK]
+	 */
+	fun getParameterb(pName: Int, out: BooleanArray): BooleanArray
+
+	/**
+	 * Return the value for the passed pName.
+	 *
+	 * @param pName one of [ACTIVE_TEXTURE], [ALPHA_BITS], [BLEND_DST_ALPHA], [BLEND_DST_RGB], [BLEND_EQUATION_ALPHA], [BLEND_EQUATION_RGB],
+	 * [BLEND_SRC_ALPHA], [BLEND_SRC_RGB], [BLUE_BITS], [CULL_FACE_MODE], [DEPTH_BITS], [DEPTH_FUNC], [FRONT_FACE],
+	 * [GENERATE_MIPMAP_HINT], [GREEN_BITS], [IMPLEMENTATION_COLOR_READ_FORMAT], [IMPLEMENTATION_COLOR_READ_TYPE],
+	 * [MAX_COMBINED_TEXTURE_IMAGE_UNITS], [MAX_CUBE_MAP_TEXTURE_SIZE], [MAX_FRAGMENT_UNIFORM_VECTORS], [MAX_RENDERBUFFER_SIZE],
+	 * [MAX_TEXTURE_IMAGE_UNITS], [MAX_TEXTURE_SIZE], [MAX_VARYING_VECTORS], [MAX_VERTEX_ATTRIBS],
+	 * [MAX_VERTEX_TEXTURE_IMAGE_UNITS], [MAX_VERTEX_UNIFORM_VECTORS], [NUM_COMPRESSED_TEXTURE_FORMATS], [PACK_ALIGNMENT],
+	 * [RED_BITS], [SAMPLE_BUFFERS], [SAMPLES], [STENCIL_BACK_FAIL], [STENCIL_BACK_FUNC], [STENCIL_BACK_PASS_DEPTH_FAIL],
+	 * [STENCIL_BACK_PASS_DEPTH_PASS], [STENCIL_BACK_REF], [STENCIL_BACK_VALUE_MASK], [STENCIL_BACK_WRITEMASK], [STENCIL_BITS],
+	 * [STENCIL_CLEAR_VALUE], [STENCIL_FAIL], [STENCIL_FUNC], [STENCIL_PASS_DEPTH_FAIL], [STENCIL_PASS_DEPTH_PASS], [STENCIL_REF],
+	 * [STENCIL_VALUE_MASK], [STENCIL_WRITEMASK], [SUBPIXEL_BITS], [UNPACK_ALIGNMENT]
 	 */
 	fun getParameteri(pName: Int): Int
 
 	/**
 	 * Return the value for the passed pName given the passed program.
 	 *
-	 * @param pName one of DELETE_STATUS, LINK_STATUS, VALIDATE_STATUS
+	 * @param pName one of [DELETE_STATUS], [LINK_STATUS], [VALIDATE_STATUS]
 	 */
 	fun getProgramParameterb(program: GlProgramRef, pName: Int): Boolean
 
 	/**
 	 * Return the value for the passed pName given the passed program.
 	 *
-	 * @param pName one of INFO_LOG_LENGTH, ATTACHED_SHADERS, ACTIVE_ATTRIBUTES, ACTIVE_ATTRIBUTE_MAX_LENGTH, ACTIVE_UNIFORMS,
-	 *           ACTIVE_UNIFORM_MAX_LENGTH
+	 * @param pName one of [INFO_LOG_LENGTH], [ATTACHED_SHADERS], [ACTIVE_ATTRIBUTES], [ACTIVE_ATTRIBUTE_MAX_LENGTH], [ACTIVE_UNIFORMS],
+	 *           [ACTIVE_UNIFORM_MAX_LENGTH]
 	 */
 	fun getProgramParameteri(program: GlProgramRef, pName: Int): Int
 
 	/**
-	 * target must be one of ARRAY_BUFFER or ELEMENT_ARRAY_BUFFER. parameter
-	 * must be one of BUFFER_SIZE or BUFFER_USAGE.
+	 * target must be one of [ARRAY_BUFFER] or [ELEMENT_ARRAY_BUFFER]. parameter
+	 * must be one of [BUFFER_SIZE] or [BUFFER_USAGE].
 	 */
 	fun getBufferParameter(target: Int, pName: Int): Int
 
 	/**
 	 * Return the value for the passed pName given the passed target and attachment.
 	 *
-	 * @param pName one of FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL, FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE
+	 * @param pName one of [FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE], [FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL], [FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE]
 	 */
 	fun getFramebufferAttachmentParameteri(target: Int, attachment: Int, pName: Int): Int
 
