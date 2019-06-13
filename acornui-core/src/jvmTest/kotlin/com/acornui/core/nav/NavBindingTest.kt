@@ -31,7 +31,7 @@ class NavBindingTest {
 		get() = mockInjector.inject(NavigationManager)
 
 	@Test fun pathStr() {
-		val b = NavBinding(mockBindable(0), "")
+		val b = NavBindingImpl(mockBindable(0), "")
 		b.navigate("../test/foo/bar")
 		val p = navMan.path()
 		assertEquals(3, p.size)
@@ -45,7 +45,7 @@ class NavBindingTest {
 	}
 
 	@Test fun pathStrWithParams() {
-		val b = NavBinding(mockBindable(0), "")
+		val b = NavBindingImpl(mockBindable(0), "")
 		b.navigate("/test?a=0&b=1&c=2/foo/bar?d=3&e=4")
 
 		val p = navMan.path()
@@ -63,7 +63,7 @@ class NavBindingTest {
 	}
 
 	@Test fun dotDotRelative() {
-		val b = NavBinding(mockBindable(0), "")
+		val b = NavBindingImpl(mockBindable(0), "")
 		b.navigate("/test?a=0&b=1&c=2/foo/bar?d=3&e=4")
 
 		b.navigate("../..")
