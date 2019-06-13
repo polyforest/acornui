@@ -609,7 +609,7 @@ interface Gl20 {
 
 	/**
 	 * Turns on or off writing to the specified channels of the frame buffer. Defaults to true for all channels.
-	 * Use `getParameterb(COLOR_WRITEMASK, BooleanArray(4))` to get the current value.
+	 * Use `getParameterbv(COLOR_WRITEMASK, BooleanArray(4))` to get the current value.
 	 */
 	fun colorMask(red: Boolean, green: Boolean, blue: Boolean, alpha: Boolean)
 
@@ -938,8 +938,14 @@ interface Gl20 {
 
 	fun stencilFuncSeparate(face: Int, func: Int, ref: Int, mask: Int)
 
+	/**
+	 * Controls enabling and disabling of both the front and back writing of individual bits in the stencil planes.
+	 */
 	fun stencilMask(mask: Int)
 
+	/**
+	 * Controls enabling and disabling of front and/or back writing of individual bits in the stencil planes.
+	 */
 	fun stencilMaskSeparate(face: Int, mask: Int)
 
 	fun stencilOp(fail: Int, zfail: Int, zpass: Int)
@@ -1170,7 +1176,7 @@ interface Gl20 {
 	 *
 	 * @param pName one of [COLOR_WRITEMASK]
 	 */
-	fun getParameterb(pName: Int, out: BooleanArray): BooleanArray
+	fun getParameterbv(pName: Int, out: BooleanArray): BooleanArray
 
 	/**
 	 * Return the value for the passed pName.

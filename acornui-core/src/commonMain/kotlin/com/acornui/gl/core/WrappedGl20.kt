@@ -863,9 +863,9 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		return ret
 	}
 
-	override fun getParameterb(pName: Int, out: BooleanArray): BooleanArray {
+	override fun getParameterbv(pName: Int, out: BooleanArray): BooleanArray {
 		before()
-		val ret = wrapped.getParameterb(pName, out)
+		val ret = wrapped.getParameterbv(pName, out)
 		after()
 		return ret
 	}

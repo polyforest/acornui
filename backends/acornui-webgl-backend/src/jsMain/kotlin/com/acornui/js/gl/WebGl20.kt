@@ -577,7 +577,7 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		return context.getParameter(pName) as Boolean
 	}
 
-	override fun getParameterb(pName: Int, out: BooleanArray): BooleanArray {
+	override fun getParameterbv(pName: Int, out: BooleanArray): BooleanArray {
 		val r = context.getParameter(pName).asDynamic()
 		for (i in 0..out.lastIndex) {
 			out[i] = r[i] as Boolean

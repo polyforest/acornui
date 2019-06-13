@@ -610,7 +610,7 @@ open class LwjglGl20 : Gl20 {
 		return GL11.glGetBoolean(pName)
 	}
 
-	override fun getParameterb(pName: Int, out: BooleanArray): BooleanArray {
+	override fun getParameterbv(pName: Int, out: BooleanArray): BooleanArray {
 		val stack = stackGet()
 		val stackPointer = stack.pointer
 		try {
