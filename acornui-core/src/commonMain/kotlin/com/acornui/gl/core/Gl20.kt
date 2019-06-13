@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/*
+ * Documentation by [Mozilla Contributors](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API) and
+ * licensed under [CC-BY-SA 2.5](http://creativecommons.org/licenses/by-sa/2.5/).
+ */
+
 package com.acornui.gl.core
 
 import com.acornui.core.di.DKey
@@ -451,24 +456,24 @@ interface Gl20 {
 	 * Set the texture unit subsequent texture operations apply to.
 	 *
 	 * must be one of [TEXTURE0], [TEXTURE1], to `getParameteri(MAX_COMBINED_TEXTURE_IMAGE_UNITS) - 1`.
-	 * The default value is [TEXTURE0]. A texture must be bound to the active texture unit using bindTexture().
+	 * The default value is [TEXTURE0]. A texture must be bound to the active texture unit using [bindTexture].
 	 */
 	fun activeTexture(texture: Int)
 
 	/**
 	 * Attaches shader to program. A program must have both a [VERTEX_SHADER] and [FRAGMENT_SHADER] before it can be used.
-	 * shader can be attached before its source has been set. See also detachShader().
+	 * shader can be attached before its source has been set. See also [detachShader].
 	 */
 	fun attachShader(program: GlProgramRef, shader: GlShaderRef)
 
 	/**
 	 * Associates a number (location) with an attribute (a shader input such as vertex position) in program. Other
-	 * Gl functions (such as enableVertexAttribArray() or vertexAttribPointer()) deal with an attribute location
+	 * Gl functions (such as [enableVertexAttribArray] or [vertexAttribPointer]) deal with an attribute location
 	 * number instead of the name used in the program and bindAttribLocation is used to choose the number used for
 	 * that attribute. Locations are automatically assigned if you do not call bindAttribLocation so this method is
 	 * only necessary if you wish to assign a specific location for an attribute. Use getAttribLocation() to retrieve
-	 * the automatically assigned location. bindAttribLocation() must be called before calling linkProgram(program) and
-	 * location must be an integer in the range 0 to `getParameter(MAX_VERTEX_ATTRIBS) - 1`.
+	 * the automatically assigned location. `bindAttribLocation()` must be called before calling `linkProgram(program)`
+	 * and location must be an integer in the range 0 to `getParameter(MAX_VERTEX_ATTRIBS) - 1`.
 	 */
 	fun bindAttribLocation(program: GlProgramRef, index: Int, name: String)
 
@@ -618,7 +623,9 @@ interface Gl20 {
 	/**
 	 * Copies pixels from the framebuffer to the bound texture in the active texture unit (set through activeTexture()
 	 * and bindTexture).
-	 * @param target must be one of [TEXTURE_2D], [TEXTURE_CUBE_MAP_POSITIVE_X], [TEXTURE_CUBE_MAP_NEGATIVE_X], [TEXTURE_CUBE_MAP_POSITIVE_Y], [TEXTURE_CUBE_MAP_NEGATIVE_Y], [TEXTURE_CUBE_MAP_POSITIVE_Z], or [TEXTURE_CUBE_MAP_NEGATIVE_Z].
+	 * @param target must be one of [TEXTURE_2D], [TEXTURE_CUBE_MAP_POSITIVE_X], [TEXTURE_CUBE_MAP_NEGATIVE_X],
+	 * [TEXTURE_CUBE_MAP_POSITIVE_Y], [TEXTURE_CUBE_MAP_NEGATIVE_Y], [TEXTURE_CUBE_MAP_POSITIVE_Z], or
+	 * [TEXTURE_CUBE_MAP_NEGATIVE_Z].
 	 * @param level specifies the mipmap level to copy into.
 	 * @param internalFormat [ALPHA], [LUMINANCE], [LUMINANCE_ALPHA], [RGB], or [RGBA].
 	 * @param x
