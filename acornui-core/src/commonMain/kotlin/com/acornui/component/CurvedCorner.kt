@@ -80,6 +80,7 @@ fun Scoped.createSmoothCorner(
 		val curvedShader = curvedShader!!
 		glState.shader = curvedShader
 		framebuffer.begin()
+		clearAndReset()
 		glState.blendMode(BlendMode.NONE, premultipliedAlpha = false)
 		glState.useViewport(0, 0, framebuffer.width, framebuffer.height) {
 			gl.uniform2f(curvedShader.getRequiredUniformLocation("u_cornerRadius"), cornerRadiusX, cornerRadiusY)
