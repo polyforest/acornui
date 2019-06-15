@@ -218,7 +218,7 @@ class Rectangle(
 	 * @param position The position vector
 	 * @return this rectangle for chaining
 	 */
-	fun setPosition(position: Vector2): Rectangle {
+	fun setPosition(position: Vector2Ro): Rectangle {
 		this.x = position.x
 		this.y = position.y
 

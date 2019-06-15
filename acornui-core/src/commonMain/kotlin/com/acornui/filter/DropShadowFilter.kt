@@ -55,11 +55,11 @@ open class DropShadowFilter(owner: Owned) : RenderFilterBase(owner) {
 	 */
 	var offsetY by bindable(3f)
 
-	private val _padding = Pad()
-	override val renderMarginInflation: PadRo
+	private val _drawPadding = Pad()
+	override val drawPadding: PadRo
 		get() {
-			val blurPadding = blurFilter.renderMarginInflation
-			return _padding.set(
+			val blurPadding = blurFilter.drawPadding
+			return _drawPadding.set(
 					blurPadding.left + maxOf(0f, -offsetX),
 					blurPadding.top + maxOf(0f, -offsetY),
 					blurPadding.right + maxOf(0f, offsetX),

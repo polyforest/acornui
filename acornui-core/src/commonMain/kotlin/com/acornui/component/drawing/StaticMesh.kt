@@ -25,7 +25,6 @@ import com.acornui.core.di.inject
 import com.acornui.core.graphic.BlendMode
 import com.acornui.core.graphic.Texture
 import com.acornui.core.renderContext
-import com.acornui.filter.colorTransformationFilter
 import com.acornui.gl.core.*
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
@@ -58,7 +57,7 @@ open class StaticMeshComponent(
 			invalidateLayout()
 		}
 
-	private val colorTransformationFilter = +colorTransformationFilter()
+	private val colorTransformation = colorTransformation()
 
 	init {
 		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.RENDER_CONTEXT or ValidationFlags.LAYOUT, ::updateGlobalBoundingBox)
@@ -102,15 +101,18 @@ open class StaticMeshComponent(
 		mesh?.refDec()
 	}
 
-	override fun render() {
-		colorTransformationFilter.colorTransformation.tint(renderContext.colorTint)
-		super.render()
+	override fun updateRenderContext() {
+		super.updateRenderContext()
+		colorTransformation.tint(renderContext.colorTint)
 	}
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		val mesh = mesh ?: return
 		useCamera(useModel = true)
-		mesh.render()
+
+		glState.useColorTransformation(colorTransformation) {
+			mesh.render()
+		}
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

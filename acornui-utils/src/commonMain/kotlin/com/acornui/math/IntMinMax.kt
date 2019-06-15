@@ -19,16 +19,16 @@ package com.acornui.math
 import com.acornui.recycle.Clearable
 
 /**
- * A MinMax object represents a minimum and maximum cartesian point.
+ * A IntMinMax object represents a minimum and maximum cartesian point.
  */
-interface MinMaxRo {
+interface IntMinMaxRo {
 
-	val xMin: Float
-	val xMax: Float
-	val yMin: Float
-	val yMax: Float
-	val width: Float
-	val height: Float
+	val xMin: Int
+	val xMax: Int
+	val yMin: Int
+	val yMax: Int
+	val width: Int
+	val height: Int
 
 	fun isEmpty(): Boolean {
 		return xMax <= xMin || yMax <= yMin
@@ -36,7 +36,7 @@ interface MinMaxRo {
 
 	fun isNotEmpty(): Boolean = !isEmpty()
 
-	fun intersects(other: MinMaxRo): Boolean {
+	fun intersects(other: IntMinMaxRo): Boolean {
 		return (xMax > other.xMin && yMax > other.yMin && xMin < other.xMax && yMin < other.yMax)
 	}
 
@@ -44,68 +44,63 @@ interface MinMaxRo {
 		return (xMax > other.left && yMax > other.top && xMin < other.right && yMin < other.bottom)
 	}
 
-	fun contains(x: Float, y: Float): Boolean {
+	fun contains(x: Int, y: Int): Boolean {
 		return x > xMin && y > yMin && x < xMax && y < yMax
 	}
 
-	/**
-	 * Clamps a 2d vector to these bounds.
-	 */
-	fun clampPoint(value: Vector2): Vector2 {
-		if (value.x < xMin) value.x = xMin
-		if (value.y < yMin) value.y = yMin
-		if (value.x > xMax) value.x = xMax
-		if (value.y > yMax) value.y = yMax
-		return value
-	}
+//	/**
+//	 * Clamps a 2d vector to these bounds.
+//	 */
+//	fun clampPoint(value: Vector2): Vector2 {
+//		if (value.x < xMin) value.x = xMin
+//		if (value.y < yMin) value.y = yMin
+//		if (value.x > xMax) value.x = xMax
+//		if (value.y > yMax) value.y = yMax
+//		return value
+//	}
 
-	fun copy(xMin: Float = this.xMin,
-			 xMax: Float = this.xMax,
-			 yMin: Float = this.yMin,
-			 yMax: Float = this.yMax): MinMax {
-		return MinMax(xMin, yMin, xMax, yMax)
+	fun copy(xMin: Int = this.xMin,
+			 xMax: Int = this.xMax,
+			 yMin: Int = this.yMin,
+			 yMax: Int = this.yMax): IntMinMax {
+		return IntMinMax(xMin, yMin, xMax, yMax)
 	}
 
 	companion object {
 
 		/**
-		 * Infinitely negative size.
+		 * Maximum negative size.
 		 */
-		val NEGATIVE_INFINITY: MinMaxRo = MinMax()
+		val MIN: IntMinMaxRo = IntMinMax()
 
 		/**
-		 * Infinitely positive size.
+		 * Maximum positive size.
 		 */
-		val POSITIVE_INFINITY: MinMaxRo = MinMax(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
+		val MAX: IntMinMaxRo = IntMinMax(Int.MIN_VALUE, Int.MIN_VALUE, Int.MAX_VALUE, Int.MAX_VALUE)
 	}
 }
 
 /**
  * A two dimensional minimum maximum range.
  */
-class MinMax(
-		override var xMin: Float = Float.POSITIVE_INFINITY,
-		override var yMin: Float = Float.POSITIVE_INFINITY,
-		override var xMax: Float = Float.NEGATIVE_INFINITY,
-		override var yMax: Float = Float.NEGATIVE_INFINITY
-) : MinMaxRo, Clearable {
-
-	fun inf(): MinMax {
-		clear()
-		return this
-	}
+class IntMinMax(
+		override var xMin: Int = Int.MAX_VALUE,
+		override var yMin: Int = Int.MAX_VALUE,
+		override var xMax: Int = Int.MIN_VALUE,
+		override var yMax: Int = Int.MIN_VALUE
+) : IntMinMaxRo, Clearable {
 
 	override fun clear() {
-		xMin = Float.POSITIVE_INFINITY
-		yMin = Float.POSITIVE_INFINITY
-		xMax = Float.NEGATIVE_INFINITY
-		yMax = Float.NEGATIVE_INFINITY
+		xMin = Int.MAX_VALUE
+		yMin = Int.MAX_VALUE
+		xMax = Int.MIN_VALUE
+		yMax = Int.MIN_VALUE
 	}
 
 	/**
 	 * Expands this value to include the given point.
 	 */
-	fun ext(x: Float, y: Float): MinMax {
+	fun ext(x: Int, y: Int): IntMinMax {
 		if (x < xMin) xMin = x
 		if (y < yMin) yMin = y
 		if (x > xMax) xMax = x
@@ -116,7 +111,7 @@ class MinMax(
 	/**
 	 * Scales this value by the given scalars.
 	 */
-	fun scl(x: Float, y: Float): MinMax {
+	fun scl(x: Int, y: Int): IntMinMax {
 		xMin *= x
 		yMin *= y
 		xMax *= x
@@ -127,7 +122,7 @@ class MinMax(
 	/**
 	 * Increases this value by the given deltas.
 	 */
-	fun inflate(left: Float, top: Float, right: Float, bottom: Float): MinMax {
+	fun inflate(left: Int, top: Int, right: Int, bottom: Int): IntMinMax {
 		xMin -= left
 		yMin -= top
 		xMax += right
@@ -138,34 +133,30 @@ class MinMax(
 	/**
 	 * Increases this value by the given padding values.
 	 */
-	fun inflate(pad: PadRo): MinMax = inflate(pad.left, pad.top, pad.right, pad.bottom)
+	fun inflate(pad: IntPadRo): IntMinMax = inflate(pad.left, pad.top, pad.right, pad.bottom)
 
-	override val width: Float
+	override val width: Int
 		get() = xMax - xMin
 
-	override val height: Float
+	override val height: Int
 		get() = yMax - yMin
 
-	fun set(other: MinMaxRo?): MinMax {
-		if (other == null) {
-			clear()
-		} else {
-			xMin = other.xMin
-			yMin = other.yMin
-			xMax = other.xMax
-			yMax = other.yMax
-		}
+	fun set(other: IntMinMaxRo): IntMinMax {
+		xMin = other.xMin
+		yMin = other.yMin
+		xMax = other.xMax
+		yMax = other.yMax
 		return this
 	}
 
 	/**
 	 * Sets this region to match the bounds of the rectangle.
 	 */
-	fun set(rectangle: RectangleRo): MinMax {
+	fun set(rectangle: IntRectangleRo): IntMinMax {
 		return set(rectangle.x, rectangle.y, rectangle.right, rectangle.bottom)
 	}
 
-	fun set(xMin: Float, yMin: Float, xMax: Float, yMax: Float): MinMax {
+	fun set(xMin: Int, yMin: Int, xMax: Int, yMax: Int): IntMinMax {
 		this.xMin = xMin
 		this.yMin = yMin
 		this.xMax = xMax
@@ -176,7 +167,7 @@ class MinMax(
 	/**
 	 * Sets this value to be the intersection of this and [other].
 	 */
-	fun intersection(other: MinMaxRo): MinMax {
+	fun intersection(other: IntMinMaxRo): IntMinMax {
 		xMin = maxOf(xMin, other.xMin)
 		yMin = maxOf(yMin, other.yMin)
 		xMax = minOf(xMax, other.xMax)
@@ -185,9 +176,9 @@ class MinMax(
 	}
 
 	/**
-	 * Expands this value to include the given [MinMaxRo].
+	 * Expands this value to include the given [IntMinMaxRo].
 	 */
-	fun ext(other: MinMaxRo): MinMax {
+	fun ext(other: IntMinMaxRo): IntMinMax {
 		ext(other.xMin, other.yMin)
 		ext(other.xMax, other.yMax)
 		return this
@@ -196,7 +187,7 @@ class MinMax(
 	/**
 	 * Translate this region by the given deltas.
 	 */
-	fun translate(xD: Float, yD: Float): MinMax {
+	fun translate(xD: Int, yD: Int): IntMinMax {
 		xMin += xD
 		xMax += xD
 		yMin += yD
@@ -207,7 +198,7 @@ class MinMax(
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 
-		other as MinMaxRo
+		other as IntMinMaxRo
 
 		if (xMin != other.xMin) return false
 		if (yMin != other.yMin) return false
@@ -226,7 +217,7 @@ class MinMax(
 	}
 
 	override fun toString(): String {
-		return "MinMax(xMin=$xMin, yMin=$yMin, xMax=$xMax, yMax=$yMax)"
+		return "IntMinMax(xMin=$xMin, yMin=$yMin, xMax=$xMax, yMax=$yMax)"
 	}
 
 }

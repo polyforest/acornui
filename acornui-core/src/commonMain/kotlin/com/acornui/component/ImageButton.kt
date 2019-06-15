@@ -25,10 +25,10 @@ import com.acornui.core.di.own
 import com.acornui.core.focus.Focusable
 import com.acornui.core.input.interaction.MouseOrTouchState
 import com.acornui.filter.colorTransformationFilter
+import com.acornui.gl.core.useColorTransformation
 import com.acornui.graphic.Color
-import com.acornui.math.Bounds
-import com.acornui.math.colorTransformation
-import com.acornui.math.grayscale
+import com.acornui.graphic.ColorRo
+import com.acornui.math.*
 import com.acornui.reflect.observable
 
 /**
@@ -40,7 +40,7 @@ class ImageButton(
 
 	val style = bind(ImageButtonStyle())
 
-	private val colorTransformationFilter = +colorTransformationFilter()
+	private val colorTransformation = colorTransformation()
 
 	init {
 		focusEnabled = true
@@ -66,7 +66,7 @@ class ImageButton(
 			ButtonState.DISABLED -> style.disabledState
 			else -> style.upState
 		}
-		colorTransformationFilter.colorTransformation.set(colorTransform)
+		colorTransformation.set(colorTransform)
 	}
 
 	var currentState: ButtonState = ButtonState.UP
@@ -90,6 +90,12 @@ class ImageButton(
 	private val mouseOrTouchState = own(MouseOrTouchState(this)).apply {
 		isOverChanged.add { invalidateProperties() }
 		isDownChanged.add { invalidateProperties() }
+	}
+
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		glState.useColorTransformation(colorTransformation) {
+			super.draw(clip, transform, tint)
+		}
 	}
 
 	companion object : StyleTag {

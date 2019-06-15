@@ -17,7 +17,6 @@
 package com.acornui.component
 
 import com.acornui.core.Renderable
-import com.acornui.core.drawRegion
 import com.acornui.core.graphic.flipYDown
 import com.acornui.core.renderContext
 import com.acornui.gl.core.Framebuffer
@@ -121,7 +120,7 @@ fun CanvasTransformableRo.localToCanvas(minMax: MinMax): MinMax {
 	val tmp1 =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)
 	val tmp2 =  Vector3.obtain().set(minMax.xMax, minMax.yMax, 0f)
 	val tmp =  Vector3.obtain()
-	minMax.inf()
+	minMax.clear()
 	localToCanvas(tmp.set(tmp1))
 	minMax.ext(tmp.x, tmp.y)
 	localToCanvas(tmp.set(tmp2.x, tmp1.y, 0f))
@@ -144,7 +143,7 @@ fun CanvasTransformableRo.canvasToLocal(minMax: MinMax): MinMax {
 	val tmp1 =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)
 	val tmp2 =  Vector3.obtain().set(minMax.xMax, minMax.yMax, 0f)
 	val tmp = Vector2.obtain()
-	minMax.inf()
+	minMax.clear()
 	canvasToLocal(tmp.set(tmp1.x, tmp1.y))
 	minMax.ext(tmp.x, tmp.y)
 	canvasToLocal(tmp.set(tmp2.x, tmp1.y))
@@ -169,15 +168,13 @@ fun CanvasTransformableRo.localIntersectsCanvas(localRegion: MinMaxRo, canvasReg
 	return minMaxTmp.intersects(canvasRegion)
 }
 
-private val minMaxTmp2 = MinMax()
-
 /**
  * Returns true if the draw region intersects with the canvas region.
  */
 fun CanvasTransformableRo.drawRegionIntersectsCanvas(element: Renderable, canvasRegion: MinMaxRo): Boolean {
-	return localIntersectsCanvas(element.drawRegion(minMaxTmp2), canvasRegion)
+	return localIntersectsCanvas(element.drawRegion, canvasRegion)
 }
 
 fun UiComponentRo.intersectsClipRegion(): Boolean {
-	return localIntersectsCanvas(drawRegion(minMaxTmp2), renderContext.clipRegion)
+	return localIntersectsCanvas(drawRegion, renderContext.clipRegion)
 }

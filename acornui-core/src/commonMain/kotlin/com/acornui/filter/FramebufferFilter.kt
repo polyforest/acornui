@@ -43,7 +43,7 @@ class FramebufferFilter(
 		hasStencil: Boolean = owner.inject(AppConfig).gl.stencil
 ) : RenderFilterBase(owner) {
 
-	override var renderMarginInflation: PadRo = Pad.EMPTY_PAD
+	override var drawPadding: PadRo = Pad.EMPTY_PAD
 
 	var clearMask = Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT
 	var clearColor = Color.CLEAR
@@ -72,14 +72,19 @@ class FramebufferFilter(
 
 	fun drawToFramebuffer() {
 		val contents = contents ?: return
-		val region = drawRegion
-		framebuffer.setSize(region.width, region.height)
-		val renderMargin = renderMargin
-		drawable.padding.set(-renderMargin.left, -renderMargin.top, -renderMargin.right, -renderMargin.bottom)
+		val drawRegion = drawRegion
+		framebuffer.setSize(drawRegion.width, drawRegion.height)
+		val bounds = bounds
+		drawable.padding.set(drawRegion.xMin, drawRegion.yMin, bounds.width - drawRegion.xMax, bounds.height - drawRegion.yMax)
 
 		viewport.set(glState.viewport)
 		framebuffer.begin()
-		glState.setViewport(-region.xMin.toInt(), region.yMin.toInt() - renderContext.canvasTransform.height.toInt() + framebuffer.texture.height, renderContext.canvasTransform.width.toInt(), renderContext.canvasTransform.height.toInt())
+		glState.setViewport(
+				-drawRegion.xMin.toInt(),
+				drawRegion.yMin.toInt() - renderContext.canvasTransform.height + framebuffer.texture.height,
+				renderContext.canvasTransform.width,
+				renderContext.canvasTransform.height
+		)
 		if (clearMask != 0)
 			clearAndReset(clearColor, clearMask)
 

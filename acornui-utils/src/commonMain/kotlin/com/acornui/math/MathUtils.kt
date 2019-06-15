@@ -339,11 +339,6 @@ object MathUtils {
 	}
 }
 
-@Deprecated("use ceil(this).toInt()", ReplaceWith("ceil(this).toInt()", "kotlin.math.ceil"))
-inline fun Float.ceil(): Int {
-	return ceil(this).toInt()
-}
-
 /**
  * Returns the fraction of this float.
  */

@@ -313,7 +313,7 @@ class GlStateImpl(
 			gl.disable(Gl20.SCISSOR_TEST)
 	}
 
-	private val _framebuffer = FramebufferInfo(null, (window.width * window.scaleX).toInt(), (window.height * window.scaleY).toInt(), window.scaleX, window.scaleY)
+	private val _framebuffer = FramebufferInfo(null, ceil(window.width).toInt(), ceil(window.height).toInt(), window.scaleX, window.scaleY)
 
 	override fun getFramebuffer(out: FramebufferInfo) = out.set(_framebuffer)
 

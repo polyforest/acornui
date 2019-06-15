@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+/*
+ * Derived from LibGDX
+ * https://github.com/libgdx
+ * Copyright 2011 See https://github.com/libgdx/libgdx/blob/master/AUTHORS
+ */
+
 package com.acornui.math
 
 import com.acornui.recycle.ClearableObjectPool

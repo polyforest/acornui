@@ -24,10 +24,7 @@ import com.acornui.core.di.Owned
 import com.acornui.core.focus.invalidateFocusOrderDeep
 import com.acornui.core.renderContext
 import com.acornui.graphic.ColorRo
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.MinMaxRo
-import com.acornui.math.Ray
-import com.acornui.math.RayRo
+import com.acornui.math.*
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 
@@ -236,6 +233,7 @@ open class ContainerImpl(
 		}
 	}
 
+	private val childDrawRegion = MinMax()
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		// The children list shouldn't be modified during a draw, so no reason to do a safe iteration here.
@@ -311,7 +309,8 @@ open class ContainerImpl(
 				invalidateSize()
 			}
 		}
-		invalidate(flagsInvalidated and bubblingFlags or ValidationFlags.BITMAP_CACHE)
+		val bCF = if (flagsInvalidated.containsFlag(bitmapCacheInvalidatingFlags)) ValidationFlags.BITMAP_CACHE else 0
+		invalidate(flagsInvalidated and bubblingFlags or bCF)
 	}
 
 	protected open fun childDisposedHandler(child: UiComponent) {
@@ -343,6 +342,12 @@ open class ContainerImpl(
 				ValidationFlags.STYLES or
 				ValidationFlags.INTERACTIVITY_MODE or
 				ValidationFlags.RENDER_CONTEXT
+
+		var bitmapCacheInvalidatingFlags = (
+				ValidationFlags.HIERARCHY_DESCENDING or
+						ValidationFlags.TRANSFORM or
+						ValidationFlags.RENDER_CONTEXT or
+						ValidationFlags.INTERACTIVITY_MODE).inv() or ValidationFlags.BITMAP_CACHE
 	}
 }
 

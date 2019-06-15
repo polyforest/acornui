@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("UNUSED_PARAMETER", "RedundantLambdaArrow")
+@file:Suppress("UNUSED_PARAMETER", "RedundantLambdaArrow", "ObjectPropertyName")
 
 package com.acornui.component
 
@@ -27,11 +27,13 @@ import com.acornui.core.*
 import com.acornui.core.asset.AssetManager
 import com.acornui.core.di.*
 import com.acornui.core.focus.*
-import com.acornui.core.graphic.*
-import com.acornui.core.input.*
+import com.acornui.core.graphic.CameraRo
+import com.acornui.core.graphic.Window
+import com.acornui.core.input.InteractionEventRo
+import com.acornui.core.input.InteractionType
+import com.acornui.core.input.InteractivityManager
+import com.acornui.core.input.MouseState
 import com.acornui.core.time.TimeDriver
-import com.acornui.filter.RenderFilter
-import com.acornui.filter.RenderFilterList
 import com.acornui.function.as1
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
@@ -194,18 +196,6 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	override var visible: Boolean
 
 	override var includeInLayout: Boolean
-
-	val renderFilters: MutableList<RenderFilter>
-
-	operator fun <T : RenderFilter> T.unaryPlus(): T {
-		renderFilters.add(this)
-		return this
-	}
-
-	operator fun <T : RenderFilter> T.unaryMinus(): T {
-		renderFilters.remove(this)
-		return this
-	}
 
 	override var focusEnabled: Boolean
 	override var focusOrder: Float
@@ -576,37 +566,6 @@ open class UiComponentImpl(
 	override var layoutInvalidatingFlags: Int = UiComponentRo.defaultLayoutInvalidatingFlags
 
 	final override var includeInLayout: Boolean by validationProp(true, ValidationFlags.LAYOUT_ENABLED)
-
-	/**
-	 * If there are render filters, inner renderable is set as the contents of the last render filter.
-	 */
-	private val innerRenderable: Renderable by lazy {
-		object : Renderable {
-
-			override val bounds: BoundsRo
-				get() = this@UiComponentImpl.bounds
-
-			override val naturalRenderContext: RenderContextRo
-				get() = this@UiComponentImpl.naturalRenderContext
-
-			override var renderContextOverride: RenderContextRo?
-				get() = this@UiComponentImpl.renderContextOverride
-				set(value) {
-					this@UiComponentImpl.renderContextOverride = value
-				}
-
-			override fun render() {
-				val renderContext = renderContext
-				draw(renderContext.clipRegion, renderContext.modelTransform, renderContext.colorTint)
-			}
-		}
-	}
-
-	final override val renderFilters = own(RenderFilterList(innerRenderable).apply {
-		changed.add {
-			invalidate(ValidationFlags.BITMAP_CACHE)
-		}
-	})
 
 	override val isRendered: Boolean
 		get() {
@@ -1153,19 +1112,10 @@ open class UiComponentImpl(
 			if (_invalidated.isDispatching) {
 				throw Exception("invalidated already dispatching. ${flagsInvalidated.toFlagsString()}. Possible cyclic validation dependency.")
 			}
-			if (renderFilters.isNotEmpty() && flags and BITMAP_CACHE_INVALIDATING_FLAGS > 0) {
-				invalidateBitmapCache()
-			}
 			onInvalidated(flagsInvalidated)
 			_invalidated.dispatch(this, flagsInvalidated)
 		}
 		return flagsInvalidated
-	}
-
-	protected open fun invalidateBitmapCache() {
-		for (i in 0..renderFilters.lastIndex) {
-			renderFilters[i].invalidateBitmapCache()
-		}
 	}
 
 	protected open fun onInvalidated(flagsInvalidated: Int) {
@@ -1188,11 +1138,37 @@ open class UiComponentImpl(
 	// Renderable
 	//-----------------------------------------------
 
-	override val renderMargin: PadRo
-		get() = if (renderFilters.isEmpty())
-			Pad.EMPTY_PAD
-		else
-			renderFilters.first().renderMargin
+	private val _drawRegion = MinMax()
+
+	/**
+	 * The local drawing region of this renderable component.
+	 * Use `localToCanvas` to convert this region to canvas coordinates.
+	 * The draw region is not used for a typical [render], but may be used for render filters or components that
+	 * need to set a region for a frame buffer.
+	 *
+	 * The draw region does not have a validation flag associated with it; invalidating any property will cause
+	 * the draw region to be recalculated upon the next request.
+	 *
+	 * @see Renderable.renderContext
+	 * @see com.acornui.component.localToCanvas
+	 */
+	override val drawRegion: MinMaxRo
+		get() {
+			updateDrawRegion(_drawRegion)
+			return _drawRegion
+		}
+
+	/**
+	 * Updates this component's draw region.
+	 *
+	 * By default, this will be the same area as the [bounds].
+	 * This may be overriden to modify the area that
+	 *
+	 * @param out The region that will be set as the [drawRegion].
+	 */
+	protected open fun updateDrawRegion(out: MinMax) {
+		out.set(0f, 0f, _bounds.width, _bounds.height)
+	}
 
 	/**
 	 * Renders any graphics.
@@ -1209,10 +1185,7 @@ open class UiComponentImpl(
 		val renderContext = renderContext
 		if (renderContext.colorTint.a <= 0f)
 			return
-		if (renderFilters.isEmpty())
-			draw(renderContext.clipRegion, renderContext.modelTransform, renderContext.colorTint)
-		else
-			renderFilters.first().render()
+		draw(renderContext.clipRegion, renderContext.modelTransform, renderContext.colorTint)
 	}
 
 	protected fun useCamera(useModel: Boolean = false) {
@@ -1271,13 +1244,6 @@ open class UiComponentImpl(
 
 	companion object {
 		private val quat: Quaternion = Quaternion()
-
-		private const val BITMAP_CACHE_INVALIDATING_FLAGS = (
-				ValidationFlags.BITMAP_CACHE or
-				ValidationFlags.HIERARCHY_DESCENDING or
-						ValidationFlags.TRANSFORM or
-						ValidationFlags.RENDER_CONTEXT or
-						ValidationFlags.INTERACTIVITY_MODE).inv()
 	}
 }
 

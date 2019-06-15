@@ -21,7 +21,6 @@ import com.acornui.component.layout.Positionable
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.core.di.Owned
-import com.acornui.core.drawRegion
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
@@ -102,10 +101,8 @@ class ScrollRectImpl(
 		return maskClip.intersectsGlobalRay(globalRay, intersection)
 	}
 
-	private val contentsClip = MinMax()
-
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		_renderContext.clipRegionLocal = drawRegion(contentsClip)
+		_renderContext.clipRegionLocal = drawRegion
 		if (maskClip.visible) {
 			StencilUtil.mask(glState.batch, gl, {
 				maskClip.render()

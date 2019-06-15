@@ -41,6 +41,7 @@ import com.acornui.core.input.interaction.ContextMenuStyle
 import com.acornui.core.input.interaction.ContextMenuView
 import com.acornui.core.input.interaction.enableDownRepeat
 import com.acornui.filter.dropShadowFilter
+import com.acornui.filter.filtered
 import com.acornui.graphic.Color
 import com.acornui.math.*
 
@@ -286,13 +287,15 @@ open class BasicUiSkin(
 		val tabNavStyle = TabNavigatorStyle().apply {
 			tabBarPadding = Pad(0f, 0f, -theme.strokeThickness, 0f)
 			contentsPadding = Pad(theme.strokeThickness)
-			background = { rect {
-				style.apply {
-					backgroundColor = theme.panelBgColor
-					borderColors = BorderColors(theme.stroke)
-					borderThicknesses = Pad(theme.strokeThickness)
+			background = {
+				rect {
+					style.apply {
+						backgroundColor = theme.panelBgColor
+						borderColors = BorderColors(theme.stroke)
+						borderThicknesses = Pad(theme.strokeThickness)
+					}
 				}
-			} }
+			}
 		}
 		target.addStyleRule(tabNavStyle, TabNavigator)
 
@@ -563,14 +566,16 @@ open class BasicUiSkin(
 		val dataScrollerStyle = DataScrollerStyle().apply {
 			padding = pad
 			background = {
-				rect {
-					style.apply {
-						backgroundColor = theme.panelBgColor
-						borderThicknesses = pad
-						borderRadii = Corners(0f, 0f, theme.borderRadius, theme.borderRadius)
-						borderColors = BorderColors(theme.stroke)
-					}
+				filtered {
 					+dropShadowFilter()
+					+rect {
+						style.apply {
+							backgroundColor = theme.panelBgColor
+							borderThicknesses = pad
+							borderRadii = Corners(0f, 0f, theme.borderRadius, theme.borderRadius)
+							borderColors = BorderColors(theme.stroke)
+						}
+					}
 				}
 			}
 			borderRadii = Corners(0f, 0f, theme.borderRadius, theme.borderRadius)
@@ -617,7 +622,6 @@ open class BasicUiSkin(
 				}
 			}
 		}
-
 
 		target.addStyleRule(dataGridStyle, DataGrid)
 
@@ -721,12 +725,14 @@ open class BasicUiSkin(
 
 		val calendarPanelStyle = PanelStyle().apply {
 			background = {
-				rect {
-					style.backgroundColor = theme.panelBgColor
-					style.borderColors = BorderColors(theme.stroke)
-					style.borderRadii = Corners(bottomLeft = Vector2(theme.borderRadius, theme.borderRadius), bottomRight = Vector2(theme.borderRadius, theme.borderRadius))
-					style.borderThicknesses = Pad(theme.strokeThickness)
+				filtered {
 					+dropShadowFilter()
+					+rect {
+						style.backgroundColor = theme.panelBgColor
+						style.borderColors = BorderColors(theme.stroke)
+						style.borderRadii = Corners(bottomLeft = Vector2(theme.borderRadius, theme.borderRadius), bottomRight = Vector2(theme.borderRadius, theme.borderRadius))
+						style.borderThicknesses = Pad(theme.strokeThickness)
+					}
 				}
 			}
 		}
@@ -778,12 +784,14 @@ open class BasicUiSkin(
 	protected open fun tooltipStyle() {
 		val tooltipStyle = PanelStyle().apply {
 			background = {
-				rect {
-					style.backgroundColor = theme.panelBgColor
-					style.borderColors = BorderColors(theme.stroke)
-					style.borderRadii = Corners(theme.borderRadius)
-					style.borderThicknesses = Pad(theme.strokeThickness)
+				filtered {
 					+dropShadowFilter()
+					+rect {
+						style.backgroundColor = theme.panelBgColor
+						style.borderColors = BorderColors(theme.stroke)
+						style.borderRadii = Corners(theme.borderRadius)
+						style.borderThicknesses = Pad(theme.strokeThickness)
+					}
 				}
 			}
 		}

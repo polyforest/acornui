@@ -23,7 +23,6 @@ import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
 import com.acornui.core.di.OwnedImpl
 import com.acornui.core.di.inject
-import com.acornui.core.drawRegion
 import com.acornui.core.renderContext
 import com.acornui.function.as1
 import com.acornui.graphic.ColorRo
@@ -35,7 +34,6 @@ import kotlin.properties.ReadWriteProperty
 
 /**
  * A render filter wraps the drawing of a component.
- *
  */
 interface RenderFilter : Renderable, Observable {
 
@@ -82,13 +80,9 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 	}
 
 	/**
-	 * The margin this filter should inflate the render margin and therefore draw region.
+	 * The padding this filter should inflate the draw region.
 	 */
-	open val renderMarginInflation: PadRo = Pad.EMPTY_PAD
-
-	private val _renderMargin = Pad()
-	override val renderMargin: PadRo
-		get() = _renderMargin.set(contents?.renderMargin ?: Pad.EMPTY_PAD).inflate(renderMarginInflation)
+	open val drawPadding: PadRo = Pad.EMPTY_PAD
 
 	override val bounds: BoundsRo
 		get() = contents?.bounds ?: Bounds.EMPTY_BOUNDS
@@ -98,8 +92,8 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 	/**
 	 * @see Renderable.drawRegion
 	 */
-	val drawRegion: MinMaxRo
-		get() = drawRegion(_drawRegion)
+	override val drawRegion: MinMaxRo
+		get() = _drawRegion.set(contents?.drawRegion).inflate(drawPadding)
 
 	protected fun <T> bindable(initial: T): ReadWriteProperty<Any?, T> = observable(initial) {
 		_changed.dispatch(this)
@@ -131,14 +125,15 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 }
 
 class RenderFilterList(
-		tail: Renderable?
-) : MutableListBase<RenderFilter>(), Observable, Disposable {
+		tail: Renderable
+) : MutableListBase<RenderFilter>(), Renderable, Observable, Disposable {
 
 	private val _list = ArrayList<RenderFilter>()
 	private val _changed = Signal1<Observable>()
 	override val changed = _changed.asRo()
 
-	private var _tail: Renderable? = tail
+	private var _tail: Renderable = tail
+	private var head: Renderable = tail
 
 	override fun removeAt(index: Int): RenderFilter {
 		val element = _removeAt(index)
@@ -151,6 +146,9 @@ class RenderFilterList(
 		_list.getOrNull(index - 1)?.contents = _list.getOrNull(index) ?: tail
 		element.contents = null
 		element.changed.remove(::changedHandler.as1)
+		if (index == 0) {
+			head = _list.firstOrNull() ?: tail
+		}
 		return element
 	}
 
@@ -161,10 +159,12 @@ class RenderFilterList(
 	/**
 	 * The renderable that will always be drawn at the end of this list.
 	 */
-	var tail: Renderable?
+	var tail: Renderable
 		get() = _tail
 		set(value) {
 			_tail = value
+			if (head == _tail)
+				head = value
 			_list.lastOrNull()?.contents = value
 		}
 
@@ -178,6 +178,9 @@ class RenderFilterList(
 		_list.getOrNull(newIndex - 1)?.contents = element
 		element.changed.add(::changedHandler.as1)
 		_changed.dispatch(this)
+
+		if (index == 0)
+			head = element
 	}
 
 	override val size: Int
@@ -196,6 +199,29 @@ class RenderFilterList(
 		_changed.dispatch(this)
 		return old
 	}
+
+	//-------------------------------------------
+	// Renderable
+	//-------------------------------------------
+
+	override val drawRegion: MinMaxRo
+		get() = head.drawRegion
+
+	override var renderContextOverride: RenderContextRo?
+		get() = head.renderContextOverride
+		set(value) {
+			head.renderContextOverride = value
+		}
+
+	override val naturalRenderContext: RenderContextRo
+		get() = head.naturalRenderContext
+
+	override fun render() = head.render()
+
+	override val bounds: BoundsRo
+		get() = head.bounds
+
+	//-------------------------------------------
 
 	override fun dispose() {
 		clear()

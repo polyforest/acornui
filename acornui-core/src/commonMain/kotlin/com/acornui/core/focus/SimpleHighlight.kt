@@ -26,6 +26,8 @@ import com.acornui.core.popup.PopUpInfo
 import com.acornui.core.popup.PopUpManager
 import com.acornui.core.renderContext
 import com.acornui.math.Bounds
+import com.acornui.math.BoundsRo
+import com.acornui.math.MinMax
 import com.acornui.skins.Theme
 
 interface HighlightView : UiComponent {
@@ -79,6 +81,15 @@ open class SimpleHighlight(
 		} else {
 			highlight.setSize(w, h)
 			highlight.moveTo(0f, 0f)
+		}
+	}
+
+	override fun updateDrawRegion(out: MinMax) {
+		super.updateDrawRegion(out)
+		val splits = highlight.region?.splits
+		if (splits != null) {
+			// Rendering of this highlight extends beyond the bounds of this component.
+			out.inflate(splits[0], splits[1], splits[2], splits[3])
 		}
 	}
 

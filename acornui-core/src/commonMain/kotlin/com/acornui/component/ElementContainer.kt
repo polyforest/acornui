@@ -22,6 +22,7 @@ import com.acornui.collection.addOrReorder
 import com.acornui.collection.filterTo2
 import com.acornui.collection.forEach2
 import com.acornui.component.layout.LayoutElement
+import com.acornui.component.layout.SizeConstraints
 import com.acornui.core.di.Owned
 import com.acornui.math.Bounds
 
@@ -230,6 +231,8 @@ open class ElementContainerImpl<T : UiComponent>(
 				if (element.bottom > out.height)
 					out.height = element.bottom
 			}
+			if (element.baseline > out.baseline)
+				out.baseline = element.baseline
 		}
 	}
 
