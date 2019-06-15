@@ -29,7 +29,7 @@ class MinMaxTest {
 
 	@Test
 	fun inf() {
-		m1.inf()
+		m1.clear()
 		assertEquals(MinMax(), m1)
 	}
 
@@ -46,7 +46,7 @@ class MinMaxTest {
 	@Test
 	fun isEmpty() {
 		assertFalse(m1.isEmpty())
-		m1.inf()
+		m1.clear()
 		assertTrue(m1.isEmpty())
 		assertTrue(MinMax(23f, 0f, 355f, 0f).isEmpty())
 		assertFalse(MinMax(23f, 0f, 355f, 0.1f).isEmpty())

@@ -133,7 +133,7 @@ open class SkeletonComponent(
 	private val v3 = Vector2()
 
 	private fun intersects(x: Float, y: Float, vertices: List<Float>, triangles: ShortArray): Boolean {
-		bounds.inf()
+		bounds.clear()
 		pt.set(x, y)
 
 		run {
