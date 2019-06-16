@@ -25,7 +25,7 @@ class VertexAttributes(
 ) {
 
 	/**
-	 * The number of bytes per vertex.
+	 * The number of bytes between the consecutive attributes. Typically the number of bytes per vertex.
 	 */
 	val stride: Int
 
