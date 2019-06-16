@@ -82,6 +82,9 @@ fun ShaderBatch.putVertex(positionX: Float, positionY: Float, positionZ: Float, 
 
 /**
  * A static shader batch keeps the buffers and draw calls for future renders.
+ *
+ * Flushing a static shader batch does not cause a draw call. Instead, a draw call is added to [drawCalls],
+ * which will then be drawn on the next [render]
  */
 interface StaticShaderBatch : ShaderBatch {
 
