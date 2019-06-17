@@ -80,13 +80,18 @@ class WebGlWindowImpl(
 			requestRender()
 		}
 
+	private val scaleQuery = window.matchMedia("screen and (min-resolution: 2dppx)")
+
 	init {
-		setSizeInternal(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat(), true)
+		setSizeInternal(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat(), isUserInteraction = true)
 
 		window.addEventListener("resize", ::resizeHandler.as1)
 		canvas.addEventListener("webglcontextrestored", ::webGlContextRestoredHandler.as1)
 		window.addEventListener("blur", ::blurHandler.as1)
 		window.addEventListener("focus", ::focusHandler.as1)
+
+		// Watch for devicePixelRatio changes.
+		scaleQuery.addListener(::scaleChangedHandler.as1)
 
 		canvas.addEventListener("selectstart", { it.preventDefault() })
 		if (config.title.isNotEmpty())
@@ -109,6 +114,19 @@ class WebGlWindowImpl(
 		})
 	}
 
+	private fun scaleChangedHandler() {
+		val oldScaleX = scaleX
+		val oldScaleY = scaleY
+		val newScale = window.devicePixelRatio.toFloat()
+		if (newScale != oldScaleX || newScale != oldScaleY) {
+			Log.debug("Window scale changed to: $newScale")
+			scaleX = newScale
+			scaleY = newScale
+			sizeIsDirty = true
+			_scaleChanged.dispatch(newScale, newScale)
+		}
+	}
+
 	// TODO: Study context loss
 	// getExtension( 'WEBGL_lose_context' ).loseContext();
 	private fun webGlContextRestoredHandler() {
@@ -129,7 +147,7 @@ class WebGlWindowImpl(
 	}
 
 	private fun resizeHandler() {
-		setSizeInternal(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat(), true)
+		setSizeInternal(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat(), isUserInteraction = true)
 	}
 
 	private fun watchForVisibilityChanges() {
@@ -184,10 +202,11 @@ class WebGlWindowImpl(
 			return _height
 		}
 
-	override val scaleX: Float
-		get() = 1f
-	override val scaleY: Float
-		get() = 1f
+	override var scaleX: Float = window.devicePixelRatio.toFloat()
+		private set
+
+	override var scaleY: Float = window.devicePixelRatio.toFloat()
+		private set
 
 	override fun setSize(width: Float, height: Float) = setSizeInternal(width, height, false)
 
@@ -221,8 +240,8 @@ class WebGlWindowImpl(
 	override fun renderBegin() {
 		if (sizeIsDirty) {
 			sizeIsDirty = false
-			canvas.width = _width.toInt()
-			canvas.height = _height.toInt()
+			canvas.width = (_width * scaleX).toInt()
+			canvas.height = (_height * scaleY).toInt()
 		}
 		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
 	}
@@ -262,8 +281,10 @@ class WebGlWindowImpl(
 	}
 
 	override fun dispose() {
+		_scaleChanged.dispose()
 		_sizeChanged.dispose()
 		_isVisibleChanged.dispose()
+		scaleQuery.removeListener(::scaleChangedHandler.as1)
 
 		window.removeEventListener("resize", ::resizeHandler.as1)
 		canvas.removeEventListener("webglcontextlost", ::webGlContextRestoredHandler.as1)

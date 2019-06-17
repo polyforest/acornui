@@ -63,7 +63,9 @@ class GlfwWindowImpl(
 
 	private var _scaleX: Float = 1f
 	private var _scaleY: Float = 1f
-	override val scaleChanged: Signal2<Float, Float> = Signal2()
+
+	private val _scaleChanged = Signal2<Float, Float>()
+	override val scaleChanged = _scaleChanged.asRo()
 
 	val windowId: Long
 
@@ -188,7 +190,7 @@ class GlfwWindowImpl(
 	private fun updateScale(scaleX: Float, scaleY: Float) {
 		_scaleX = scaleX
 		_scaleY = scaleY
-		scaleChanged.dispatch(scaleX, scaleY)
+		_scaleChanged.dispatch(scaleX, scaleY)
 	}
 
 	override var isVisible: Boolean by Delegates.observable(true) {
@@ -305,6 +307,7 @@ class GlfwWindowImpl(
 		_isActiveChanged.dispose()
 		_sizeChanged.dispose()
 		_isVisibleChanged.dispose()
+		_scaleChanged.dispose()
 		Callbacks.glfwFreeCallbacks(windowId)
 		GLFW.glfwTerminate()
 	}
