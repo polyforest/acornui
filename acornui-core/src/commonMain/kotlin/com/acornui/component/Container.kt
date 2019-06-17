@@ -233,8 +233,6 @@ open class ContainerImpl(
 		}
 	}
 
-	private val childDrawRegion = MinMax()
-
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		// The children list shouldn't be modified during a draw, so no reason to do a safe iteration here.
 		for (i in 0.._children.lastIndex) {

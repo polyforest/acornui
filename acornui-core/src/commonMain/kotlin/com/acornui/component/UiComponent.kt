@@ -1112,6 +1112,7 @@ open class UiComponentImpl(
 			if (_invalidated.isDispatching) {
 				throw Exception("invalidated already dispatching. ${flagsInvalidated.toFlagsString()}. Possible cyclic validation dependency.")
 			}
+			window.requestRender()
 			onInvalidated(flagsInvalidated)
 			_invalidated.dispatch(this, flagsInvalidated)
 		}
