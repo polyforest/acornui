@@ -80,7 +80,7 @@ class WebGlWindowImpl(
 			requestRender()
 		}
 
-	private val scaleQuery = window.matchMedia("screen and (min-resolution: 2dppx)")
+	private val scaleQuery = window.matchMedia("(resolution: ${window.devicePixelRatio}dppx")
 
 	init {
 		setSizeInternal(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat(), isUserInteraction = true)
