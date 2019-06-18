@@ -16,7 +16,6 @@
 
 package com.acornui.gl.core
 
-import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
 import com.acornui.core.Disposable
@@ -25,6 +24,7 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.graphic.Camera
 import com.acornui.core.graphic.OrthographicCamera
 import com.acornui.core.graphic.Texture
+import com.acornui.math.MathUtils.nextPowerOfTwo
 import kotlin.math.ceil
 
 /**
@@ -53,8 +53,6 @@ class ResizeableFramebuffer(
 	val texture: Texture
 		get() = if (framebuffer == null) throw Exception("Call setSize first.") else framebuffer!!.texture
 
-	private val allowedSizes = listOf(16, 32, 64, 128, 256, 512, 768, 1024, 1536, 2048)
-
 	var width: Float = 0f
 		private set
 
@@ -66,8 +64,7 @@ class ResizeableFramebuffer(
 	}
 
 	private fun nextSize(size: Int): Int {
-		val index = allowedSizes.sortedInsertionIndex(size, matchForwards = false)
-		return allowedSizes.getOrNull(index) ?: allowedSizes.last()
+		return nextPowerOfTwo(size)
 	}
 
 	fun setSize(width: Int, height: Int) = setSize(width.toFloat(), height.toFloat())
