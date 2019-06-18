@@ -25,6 +25,7 @@ import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.di.own
 import com.acornui.core.graphic.BlendMode
+import com.acornui.core.graphic.Window
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
@@ -66,6 +67,8 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 			framebufferUtil.contents = value
 		}
 
+	private val window = inject(Window)
+
 	init {
 		framebufferUtil.clearColor = Color(0.5f, 0.5f, 0.5f, 0f)
 	}
@@ -80,50 +83,47 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 		val framebufferUtil = framebufferUtil
 		framebufferUtil.drawPadding = drawPadding
 		framebufferUtil.drawToFramebuffer()
-		val region = framebufferUtil.drawRegion
-		glState.useViewport(-region.xMin.toInt(), region.yMin.toInt() - viewport.height + framebufferUtil.texture.height, viewport.width, viewport.height) {
-			val textureToBlur = framebufferUtil.texture
+		val textureToBlur = framebufferUtil.texture
 
-			blurFramebufferA.setSize(textureToBlur.width, textureToBlur.height)
-			blurFramebufferA.texture.filterMin = TextureMinFilter.LINEAR
-			blurFramebufferA.texture.filterMag = TextureMagFilter.LINEAR
-			blurFramebufferB.setSize(textureToBlur.width, textureToBlur.height)
-			blurFramebufferB.texture.filterMin = TextureMinFilter.LINEAR
-			blurFramebufferB.texture.filterMag = TextureMagFilter.LINEAR
+		blurFramebufferA.setSize(textureToBlur.width, textureToBlur.height)
+		blurFramebufferA.texture.filterMin = TextureMinFilter.LINEAR
+		blurFramebufferA.texture.filterMag = TextureMagFilter.LINEAR
+		blurFramebufferB.setSize(textureToBlur.width, textureToBlur.height)
+		blurFramebufferB.texture.filterMin = TextureMinFilter.LINEAR
+		blurFramebufferB.texture.filterMag = TextureMagFilter.LINEAR
 
-			glState.setTexture(textureToBlur)
+		glState.setTexture(textureToBlur)
 
-			if (blurShader == null) {
-				blurShader = disposeOnShutdown(BlurShader(gl))
-			}
-			val blurShader = blurShader!!
-			glState.useShader(blurShader) {
-				gl.uniform2f(blurShader.getRequiredUniformLocation("u_resolutionInv"), 1f / textureToBlur.width.toFloat(), 1f / textureToBlur.height.toFloat())
-				glState.setTexture(framebufferUtil.texture)
-				glState.blendMode(BlendMode.NONE, premultipliedAlpha = false)
-				val passes = quality.passes
-				for (i in 1..passes) {
-					val p = i.toFloat() / passes.toFloat()
-					blurFramebufferA.begin()
-					gl.uniform2f(blurShader.getRequiredUniformLocation("u_dir"), 0f, blurY * p)
-					glState.batch.putIdtQuad()
-					blurFramebufferA.end()
-					blurFramebufferB.begin()
-					glState.setTexture(blurFramebufferA.texture)
-					gl.uniform2f(blurShader.getRequiredUniformLocation("u_dir"), blurX * p, 0f)
-					glState.batch.putIdtQuad()
-					blurFramebufferB.end()
-					glState.setTexture(blurFramebufferB.texture)
-				}
+		if (blurShader == null) {
+			blurShader = disposeOnShutdown(BlurShader(gl))
+		}
+		val blurShader = blurShader!!
+		glState.useShader(blurShader) {
+			gl.uniform2f(blurShader.getRequiredUniformLocation("u_resolutionInv"), 1f / textureToBlur.width.toFloat(), 1f / textureToBlur.height.toFloat())
+			glState.setTexture(framebufferUtil.texture)
+			glState.blendMode(BlendMode.NONE, premultipliedAlpha = false)
+			val passes = quality.passes
+			for (i in 1..passes) {
+				val p = i.toFloat() / passes.toFloat()
+				blurFramebufferA.begin()
+				gl.uniform2f(blurShader.getRequiredUniformLocation("u_dir"), 0f, blurY * p)
+				glState.batch.putIdtQuad()
+				blurFramebufferA.end()
+				blurFramebufferB.begin()
+				glState.setTexture(blurFramebufferA.texture)
+				gl.uniform2f(blurShader.getRequiredUniformLocation("u_dir"), blurX * p, 0f)
+				glState.batch.putIdtQuad()
+				blurFramebufferB.end()
+				glState.setTexture(blurFramebufferB.texture)
 			}
 		}
+
 		blurFramebufferB.sprite(sprite)
 		sprite.setUv(sprite.u, 1f - sprite.v, sprite.u2, 1f - sprite.v2, isRotated = false)
 	}
 
 	fun drawBlurToScreen(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		viewport.set(glState.viewport)
-		mvp.idt().scl(2f / viewport.width, -2f / viewport.height, 1f).trn(-1f, 1f, 0f) // Projection transform
+		mvp.idt().scl(2f / window.width, -2f / window.height, 1f).trn(-1f, 1f, 0f) // Projection transform
 		val region = framebufferUtil.drawRegion
 		mvp.mul(transform).translate(region.xMin, region.yMin, 0f) // Model transform
 

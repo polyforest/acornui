@@ -24,6 +24,7 @@ import com.acornui.core.di.inject
 import com.acornui.core.di.own
 import com.acornui.core.graphic.BlendMode
 import com.acornui.core.graphic.Texture
+import com.acornui.core.graphic.Window
 import com.acornui.core.render
 import com.acornui.core.renderContext
 import com.acornui.gl.core.*
@@ -50,6 +51,7 @@ class FramebufferFilter(
 	var blendMode = BlendMode.NORMAL
 	var premultipliedAlpha = false
 
+	private val window = inject(Window)
 	private val glState = inject(GlState)
 	private val defaultRenderContext = inject(RenderContextRo)
 
@@ -100,8 +102,7 @@ class FramebufferFilter(
 	}
 
 	fun drawToScreen(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		viewport.set(glState.viewport)
-		mvp.idt().scl(2f / viewport.width, -2f / viewport.height, 1f).trn(-1f, 1f, 0f) // Projection transform
+		mvp.idt().scl(2f / window.width, -2f / window.height, 1f).trn(-1f, 1f, 0f) // Projection transform
 		mvp.mul(transform)
 
 		glState.viewProjection = mvp
