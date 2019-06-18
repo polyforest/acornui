@@ -26,6 +26,8 @@ import com.acornui.core.focus.Focusable
 import com.acornui.core.input.SoftKeyboardManager
 import com.acornui.core.popup.PopUpManager
 import com.acornui.core.time.timer
+import com.acornui.function.as2
+import com.acornui.function.as3
 import com.acornui.logging.Log
 import com.acornui.math.Bounds
 import kotlin.math.ceil
@@ -69,26 +71,21 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 	override val styleParent: StyleableRo? = null
 
 	/**
-	 * It is not normal to set gl state within an event handler, but because this is the Stage, we can safely set
-	 * certain properties and expect them to act as the first values in the stack.
-	 *
-	 * Also note that event handlers can never be called within a render.
+	 * Invoked when the window's size or scaling has changed.
+	 * This will update the viewport and framebuffer information.
 	 */
-	protected open val windowResizedHandler: (Float, Float, Boolean) -> Unit = {
-		newWidth: Float, newHeight: Float, isUserInteraction: Boolean ->
-		val w = ceil(newWidth * window.scaleX).toInt()
-		val h = ceil(newHeight * window.scaleY).toInt()
-		val viewport = glState.viewport
-		if (w != viewport.width || h != viewport.height) {
-			glState.setViewport(0, 0, w, h)
-			glState.setFramebuffer(null, w, h, window.scaleX, window.scaleY)
-			invalidate(ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT)
-		}
+	protected open fun windowChangedHandler() {
+		val w = ceil(window.width * window.scaleX).toInt()
+		val h = ceil(window.height * window.scaleY).toInt()
+		glState.setViewport(0, 0, w, h)
+		glState.setFramebuffer(null, w, h, window.scaleX, window.scaleY)
+		invalidate(ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT)
 	}
 
 	override fun onActivated() {
-		window.sizeChanged.add(windowResizedHandler)
-		windowResizedHandler(window.width, window.height, false)
+		window.sizeChanged.add(::windowChangedHandler.as3)
+		window.scaleChanged.add(::windowChangedHandler.as2)
+		windowChangedHandler()
 		super.onActivated()
 	}
 
@@ -134,7 +131,8 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 
 	override fun onDeactivated() {
 		super.onDeactivated()
-		window.sizeChanged.remove(windowResizedHandler)
+		window.sizeChanged.remove(::windowChangedHandler.as3)
+		window.scaleChanged.remove(::windowChangedHandler.as2)
 	}
 
 }

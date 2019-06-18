@@ -99,6 +99,10 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 		_changed.dispatch(this)
 	}
 
+	protected fun notifyChanged() {
+		_changed.dispatch(this)
+	}
+
 	override val naturalRenderContext: RenderContextRo
 		get() = contents?.naturalRenderContext ?: inject(RenderContextRo)
 

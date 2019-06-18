@@ -21,6 +21,7 @@ import com.acornui.component.*
 import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
+import com.acornui.function.as2
 import com.acornui.math.Bounds
 import com.acornui.math.BoundsRo
 import com.acornui.math.MinMaxRo
@@ -86,6 +87,16 @@ class FilteredContainer(owner: Owned) : ElementContainerImpl<UiComponent>(owner)
 		for (i in 0..renderFilters.lastIndex) {
 			renderFilters[i].invalidateBitmapCache()
 		}
+	}
+
+	override fun onActivated() {
+		super.onActivated()
+		window.scaleChanged.add(::invalidateBitmapCache.as2)
+	}
+
+	override fun onDeactivated() {
+		super.onDeactivated()
+		window.scaleChanged.remove(::invalidateBitmapCache.as2)
 	}
 
 	//-------------------------------------------

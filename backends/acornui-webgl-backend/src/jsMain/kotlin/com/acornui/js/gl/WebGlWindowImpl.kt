@@ -80,7 +80,7 @@ class WebGlWindowImpl(
 			requestRender()
 		}
 
-	private val scaleQuery = window.matchMedia("(resolution: ${window.devicePixelRatio}dppx")
+	private var scaleQuery = window.matchMedia("(resolution: ${window.devicePixelRatio}dppx")
 
 	init {
 		setSizeInternal(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat(), isUserInteraction = true)
@@ -123,6 +123,9 @@ class WebGlWindowImpl(
 			scaleX = newScale
 			scaleY = newScale
 			sizeIsDirty = true
+			scaleQuery.removeListener(::scaleChangedHandler.as1)
+			scaleQuery = window.matchMedia("(resolution: ${window.devicePixelRatio}dppx")
+			scaleQuery.addListener(::scaleChangedHandler.as1)
 			_scaleChanged.dispatch(newScale, newScale)
 		}
 	}
@@ -219,6 +222,7 @@ class WebGlWindowImpl(
 			canvas.style.height = "${_height.toInt()}px"
 		}
 		sizeIsDirty = true
+		Log.debug("Window size changed to: $_width, $_height")
 		_sizeChanged.dispatch(_width, _height, isUserInteraction)
 		requestRender()
 	}

@@ -121,7 +121,6 @@ interface GlState {
 	/**
 	 * The current viewport rectangle, in gl window coordinates.
 	 * (0,0 is bottom left, width, height includes dpi scaling)
-	 * This is not to be confused with UiComponent.viewport, which is in canvas coordinates.
 	 */
 	val viewport: IntRectangleRo
 
@@ -496,26 +495,26 @@ inline fun GlState.useViewport(x: Int, y: Int, width: Int, height: Int, inner: (
 	IntRectangle.free(oldViewport)
 }
 
-private val frameBufferInfo = FramebufferInfo()
+private val framebufferInfo = FramebufferInfo()
 
 fun GlState.useViewportFromCanvasTransform(canvasTransform: IntRectangleRo, inner: () -> Unit) {
-	getFramebuffer(frameBufferInfo)
+	getFramebuffer(framebufferInfo)
 	useViewport(
-			floor(canvasTransform.x * frameBufferInfo.scaleX).toInt(),
-			floor((frameBufferInfo.height - canvasTransform.bottom * frameBufferInfo.scaleY)).toInt(),
-			ceil(canvasTransform.width * frameBufferInfo.scaleX).toInt(),
-			ceil(canvasTransform.height * frameBufferInfo.scaleY).toInt(),
+			floor(canvasTransform.x * framebufferInfo.scaleX).toInt(),
+			floor((framebufferInfo.height - canvasTransform.bottom * framebufferInfo.scaleY)).toInt(),
+			ceil(canvasTransform.width * framebufferInfo.scaleX).toInt(),
+			ceil(canvasTransform.height * framebufferInfo.scaleY).toInt(),
 			inner
 	)
 }
 
 fun GlState.setViewportFromCanvasTransform(canvasTransform: IntRectangleRo) {
-	getFramebuffer(frameBufferInfo)
+	getFramebuffer(framebufferInfo)
 	setViewport(
-			floor(canvasTransform.x * frameBufferInfo.scaleX).toInt(),
-			floor((frameBufferInfo.height - canvasTransform.bottom * frameBufferInfo.scaleY)).toInt(),
-			ceil(canvasTransform.width * frameBufferInfo.scaleX).toInt(),
-			ceil(canvasTransform.height * frameBufferInfo.scaleY).toInt()
+			floor(canvasTransform.x * framebufferInfo.scaleX).toInt(),
+			floor((framebufferInfo.height - canvasTransform.bottom * framebufferInfo.scaleY)).toInt(),
+			ceil(canvasTransform.width * framebufferInfo.scaleX).toInt(),
+			ceil(canvasTransform.height * framebufferInfo.scaleY).toInt()
 	)
 }
 
@@ -536,7 +535,7 @@ fun GlState.setViewport(value: IntRectangleRo) = setViewport(value.x, value.y, m
 
 fun GlState.setScissor(value: IntRectangleRo) = setScissor(value.x, value.y, value.width, value.height)
 
-fun GlState.setFramebuffer(value: FrameBufferInfoRo) = setFramebuffer(value.framebuffer, value.width, value.height, value.scaleX, value.scaleY)
+fun GlState.setFramebuffer(value: FramebufferInfoRo) = setFramebuffer(value.framebuffer, value.width, value.height, value.scaleX, value.scaleY)
 
 private val combined = ColorTransformation()
 

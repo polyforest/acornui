@@ -16,7 +16,7 @@
 
 package com.acornui.gl.core
 
-interface FrameBufferInfoRo {
+interface FramebufferInfoRo {
 
 	val framebuffer: GlFramebufferRef?
 
@@ -52,11 +52,11 @@ data class FramebufferInfo(
 		override var scaleX: Float,
 		override var scaleY: Float
 
-) : FrameBufferInfoRo {
+) : FramebufferInfoRo {
 
 	constructor() : this(null, 0, 0, 1f, 1f)
 
-	fun set(value: FrameBufferInfoRo) {
+	fun set(value: FramebufferInfoRo) {
 		framebuffer = value.framebuffer
 		width = value.width
 		height = value.height
