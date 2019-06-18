@@ -22,6 +22,8 @@ import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.*
 import com.acornui.core.di.Owned
+import com.acornui.core.input.Ascii
+import com.acornui.core.input.KeyState
 import com.acornui.core.input.interaction.WheelInteractionRo
 import com.acornui.core.input.wheel
 import com.acornui.core.tween.Tween
@@ -37,12 +39,13 @@ open class ScrollArea(
 ) : ElementContainerImpl<UiComponent>(owner), LayoutDataProvider<StackLayoutData> {
 
 	val style = bind(ScrollAreaStyle())
+	private val keyState by KeyState
 
 	override fun createLayoutData(): StackLayoutData = StackLayoutData()
 
 	protected val scrollRect = scrollRect {
 		wheel().add { event ->
-			if (!event.handled) {
+			if (!event.handled && !keyState.keyIsDown(Ascii.CONTROL)) {
 				if (vScrollModel.max > 0f && event.deltaY != 0f) {
 					event.handled = true
 					vScrollModel.value += event.deltaY

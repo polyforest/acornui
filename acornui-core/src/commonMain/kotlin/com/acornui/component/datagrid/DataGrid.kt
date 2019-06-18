@@ -328,6 +328,8 @@ class DataGrid<RowData>(
 	val isEditing: Boolean
 		get() = editorCell != null
 
+	private val keyState by KeyState
+
 	init {
 		focusEnabled = true
 		styleTags.add(Companion)
@@ -389,7 +391,8 @@ class DataGrid<RowData>(
 		keyDown().add(::keyDownHandler)
 
 		wheel().add {
-			vScrollModel.value += it.deltaY / vScrollBar.modelToPixels
+			if (!keyState.keyIsDown(Ascii.CONTROL))
+				vScrollModel.value += it.deltaY / vScrollBar.modelToPixels
 		}
 
 		blurred().add(::blurredHandler)

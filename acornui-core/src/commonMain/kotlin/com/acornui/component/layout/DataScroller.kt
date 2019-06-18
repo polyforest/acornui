@@ -34,6 +34,8 @@ import com.acornui.recycle.disposeAndClear
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.core.focus.Focusable
+import com.acornui.core.input.Ascii
+import com.acornui.core.input.KeyState
 import com.acornui.core.input.interaction.MouseInteractionRo
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.mouseMove
@@ -139,8 +141,48 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 	private var background: UiComponent? = null
 
 	private val _mousePosition = Vector2()
+	private val keyState by KeyState
 
-	private val stageMouseMoveHandler = { e: MouseInteractionRo ->
+	init {
+		isFocusContainer = true
+		focusEnabled = true
+		styleTags.add(DataScroller)
+		cursor(StandardCursors.HAND)
+
+		maxItems = 15
+		scrollModel.changed.add {
+			contents.indexPosition = scrollModel.value
+		}
+		watch(style) {
+			rowBackgroundsCache.disposeAndClear()
+
+			background?.dispose()
+			background = addOptionalChild(0, it.background(this))
+			scrollBarClipper.style.borderRadii = it.borderRadii
+			clipper.style.borderRadii = it.borderRadii
+		}
+
+		wheel().add {
+			val d = if (isVertical) it.deltaY else it.deltaX
+			if (!it.handled && scrollModel.max > 0f && d != 0f && !keyState.keyIsDown(Ascii.CONTROL)) {
+				it.handled = true
+				tossScroller.stop()
+				scrollModel.value += d / scrollBar.modelToPixels
+			}
+		}
+
+		click().add {
+			if (selectable && !it.handled) {
+				val e = getElementUnderPosition(mousePosition(_mousePosition))
+				if (e != null) {
+					it.handled = true
+					_selection.setSelectedItemsUser(listOf(e))
+				}
+			}
+		}
+	}
+
+	private fun stageMouseMoveHandler(e: MouseInteractionRo) {
 		if (highlightable) updateHighlight()
 	}
 
@@ -195,12 +237,12 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 
 	override fun onActivated() {
 		super.onActivated()
-		stage.mouseMove().add(stageMouseMoveHandler)
+		stage.mouseMove().add(::stageMouseMoveHandler)
 	}
 
 	override fun onDeactivated() {
 		super.onDeactivated()
-		stage.mouseMove().remove(stageMouseMoveHandler)
+		stage.mouseMove().remove(::stageMouseMoveHandler)
 	}
 
 	private fun updateHighlight() {
@@ -334,45 +376,6 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 			rowBackground.moveTo(renderer.x, 0f)
 		}
 		return rowBackground
-	}
-
-	init {
-		isFocusContainer = true
-		focusEnabled = true
-		styleTags.add(DataScroller)
-		cursor(StandardCursors.HAND)
-
-		maxItems = 15
-		scrollModel.changed.add {
-			contents.indexPosition = scrollModel.value
-		}
-		watch(style) {
-			rowBackgroundsCache.disposeAndClear()
-
-			background?.dispose()
-			background = addOptionalChild(0, it.background(this))
-			scrollBarClipper.style.borderRadii = it.borderRadii
-			clipper.style.borderRadii = it.borderRadii
-		}
-
-		wheel().add {
-			val d = if (isVertical) it.deltaY else it.deltaX
-			if (!it.handled && scrollModel.max > 0f && d != 0f) {
-				it.handled = true
-				tossScroller.stop()
-				scrollModel.value += d / scrollBar.modelToPixels
-			}
-		}
-
-		click().add {
-			if (selectable && !it.handled) {
-				val e = getElementUnderPosition(mousePosition(_mousePosition))
-				if (e != null) {
-					it.handled = true
-					_selection.setSelectedItemsUser(listOf(e))
-				}
-			}
-		}
 	}
 
 	companion object : StyleTag
