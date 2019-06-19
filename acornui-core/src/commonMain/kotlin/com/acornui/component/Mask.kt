@@ -29,41 +29,44 @@ import kotlin.math.roundToInt
 object StencilUtil {
 
 	var depth = -1
+	private var maxDepth = -1
 
-	inline fun mask(batch: ShaderBatch, gl: Gl20, renderMask: () -> Unit, renderContents: () -> Unit) {
+	fun mask(batch: ShaderBatch, gl: Gl20, renderMask: () -> Unit, renderContents: () -> Unit) {
 		batch.flush()
 		depth++
-		if (depth >= 65535) throw IllegalStateException("There may not be more than 65535 nested masks.")
-		if (depth == 0) {
-			gl.enable(Gl20.STENCIL_TEST)
+		if (maxDepth == -1) {
+			val bitPlanes = gl.getParameteri(Gl20.STENCIL_BITS)
+			maxDepth = 1 shl bitPlanes - 1
 		}
+		if (depth >= maxDepth) throw IllegalStateException("There may not be more than $maxDepth nested masks.")
+		if (depth == 0) gl.enable(Gl20.STENCIL_TEST)
+		val all = 0.inv()
 		gl.colorMask(false, false, false, false)
-		gl.stencilFunc(Gl20.ALWAYS, 0, 0.inv())
+		gl.stencilFunc(Gl20.ALWAYS, 0, all)
 		gl.stencilOp(Gl20.INCR, Gl20.INCR, Gl20.INCR)
 		renderMask()
 		batch.flush()
 
-		gl.colorMask(true, true, true, true)
-		gl.stencilFunc(Gl20.EQUAL, depth + 1, 0.inv())
-		gl.stencilOp(Gl20.KEEP, Gl20.KEEP, Gl20.KEEP)
-
+		updateMask(gl)
 		renderContents()
 
 		batch.flush()
 		gl.colorMask(false, false, false, false)
-		gl.stencilFunc(Gl20.ALWAYS, 0, 0.inv())
+		gl.stencilFunc(Gl20.ALWAYS, 0, all)
 		gl.stencilOp(Gl20.DECR, Gl20.DECR, Gl20.DECR)
 		renderMask()
 
 		batch.flush()
-		gl.colorMask(true, true, true, true)
-		gl.stencilFunc(Gl20.EQUAL, depth, 0.inv())
-		gl.stencilOp(Gl20.KEEP, Gl20.KEEP, Gl20.KEEP)
 
-		if (depth == 0) {
-			gl.disable(Gl20.STENCIL_TEST)
-		}
 		depth--
+		updateMask(gl)
+		if (depth == -1) gl.disable(Gl20.STENCIL_TEST)
+	}
+
+	private fun updateMask(gl: Gl20) {
+		gl.colorMask(true, true, true, true)
+		gl.stencilFunc(Gl20.EQUAL, depth + 1, 0.inv())
+		gl.stencilOp(Gl20.KEEP, Gl20.KEEP, Gl20.KEEP)
 	}
 }
 

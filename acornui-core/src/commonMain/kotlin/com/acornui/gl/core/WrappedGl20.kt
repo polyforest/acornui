@@ -559,15 +559,15 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun stencilOp(fail: Int, zfail: Int, zpass: Int) {
+	override fun stencilOp(fail: Int, zFail: Int, zPass: Int) {
 		before()
-		wrapped.stencilOp(fail, zfail, zpass)
+		wrapped.stencilOp(fail, zFail, zPass)
 		after()
 	}
 
-	override fun stencilOpSeparate(face: Int, fail: Int, zfail: Int, zpass: Int) {
+	override fun stencilOpSeparate(face: Int, fail: Int, zFail: Int, zPass: Int) {
 		before()
-		wrapped.stencilOpSeparate(face, fail, zfail, zpass)
+		wrapped.stencilOpSeparate(face, fail, zFail, zPass)
 		after()
 	}
 

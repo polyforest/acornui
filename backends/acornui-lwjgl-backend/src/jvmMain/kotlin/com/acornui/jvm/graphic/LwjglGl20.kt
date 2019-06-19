@@ -409,12 +409,12 @@ open class LwjglGl20 : Gl20 {
 		GL20.glStencilMaskSeparate(face, mask)
 	}
 
-	override fun stencilOp(fail: Int, zfail: Int, zpass: Int) {
-		GL11.glStencilOp(fail, zfail, zpass)
+	override fun stencilOp(fail: Int, zFail: Int, zPass: Int) {
+		GL11.glStencilOp(fail, zFail, zPass)
 	}
 
-	override fun stencilOpSeparate(face: Int, fail: Int, zfail: Int, zpass: Int) {
-		GL20.glStencilOpSeparate(face, fail, zfail, zpass)
+	override fun stencilOpSeparate(face: Int, fail: Int, zFail: Int, zPass: Int) {
+		GL20.glStencilOpSeparate(face, fail, zFail, zPass)
 	}
 
 	override fun texImage2Db(target: Int, level: Int, internalFormat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: NativeReadBuffer<Byte>?) {

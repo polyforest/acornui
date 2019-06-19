@@ -19,6 +19,8 @@
  * licensed under [CC-BY-SA 2.5](http://creativecommons.org/licenses/by-sa/2.5/).
  */
 
+@file:Suppress("unused")
+
 package com.acornui.gl.core
 
 import com.acornui.core.di.DKey
@@ -823,7 +825,7 @@ interface Gl20 {
 	/**
 	 * Specifies the texture to use as destination of rendering for the current framebuffer (set with the most recent bindFramebuffer() call).
 	 * target must be [FRAMEBUFFER].
-	 * attachment determines what is rendered into renderbuffer. [P]ass [COLOR_ATTACHMENT0] for color data, [DEPTH_ATTACHMENT] for depth data, or [STENCIL_ATTACHMENT] for stencil data.
+	 * attachment determines what is rendered into renderbuffer. Pass [COLOR_ATTACHMENT0] for color data, [DEPTH_ATTACHMENT] for depth data, or [STENCIL_ATTACHMENT] for stencil data.
 	 * target must be one of [TEXTURE_2D], [TEXTURE_CUBE_MAP_POSITIVE_X], [TEXTURE_CUBE_MAP_NEGATIVE_X], [TEXTURE_CUBE_MAP_POSITIVE_Y], [TEXTURE_CUBE_MAP_NEGATIVE_Y], [TEXTURE_CUBE_MAP_POSITIVE_Z], or [TEXTURE_CUBE_MAP_NEGATIVE_Z].
 	 * texture the texture to store the rendered output.
 	 * level must be [0].
@@ -948,9 +950,17 @@ interface Gl20 {
 	 */
 	fun stencilMaskSeparate(face: Int, mask: Int)
 
-	fun stencilOp(fail: Int, zfail: Int, zpass: Int)
+	/**
+	 * Sets both the front and back-facing stencil test actions.
+	 * @param fail Specifies the function to use when the stencil test fails. The default value is [KEEP].
+	 * @param zFail Specifies the function to use when the stencil test passes, but the depth test fails. The default
+	 * value is [KEEP].
+	 * @param zPass Specifies the function to use when both the stencil test and the depth test pass, or when the
+	 * stencil test passes and there is no depth buffer or depth testing is disabled. The default value is [KEEP].
+	 */
+	fun stencilOp(fail: Int, zFail: Int, zPass: Int)
 
-	fun stencilOpSeparate(face: Int, fail: Int, zfail: Int, zpass: Int)
+	fun stencilOpSeparate(face: Int, fail: Int, zFail: Int, zPass: Int)
 
 	/**
 	 * Specifies the size and data of the bound texture in the active texture unit (set through activeTexture() and bindTexture).

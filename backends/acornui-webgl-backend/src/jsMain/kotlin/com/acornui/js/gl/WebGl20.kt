@@ -379,12 +379,12 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.stencilMaskSeparate(face, mask)
 	}
 
-	override fun stencilOp(fail: Int, zfail: Int, zpass: Int) {
-		context.stencilOp(fail, zfail, zpass)
+	override fun stencilOp(fail: Int, zFail: Int, zPass: Int) {
+		context.stencilOp(fail, zFail, zPass)
 	}
 
-	override fun stencilOpSeparate(face: Int, fail: Int, zfail: Int, zpass: Int) {
-		context.stencilOpSeparate(face, fail, zfail, zpass)
+	override fun stencilOpSeparate(face: Int, fail: Int, zFail: Int, zPass: Int) {
+		context.stencilOpSeparate(face, fail, zFail, zPass)
 	}
 
 	override fun texImage2Db(target: Int, level: Int, internalFormat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: NativeReadBuffer<Byte>?) {
