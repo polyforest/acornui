@@ -20,6 +20,7 @@ import com.acornui.recycle.Clearable
 import com.acornui.collection.poll
 import com.acornui.core.lineSeparator
 import com.acornui.error.stack
+import com.acornui.core.debug as debugFlag
 
 @Deprecated("renamed to Logger", ReplaceWith("Logger"))
 typealias ILogger = Logger
@@ -27,17 +28,20 @@ typealias ILogger = Logger
 interface Logger {
 
 	companion object {
+
 		const val ERROR: Int = 1
 		const val WARN: Int = 2
 		const val INFO: Int = 3
 		const val DEBUG: Int = 4
+		const val VERBOSE: Int = 5
 
 		fun getLogLevelFromString(str: String): Int {
 			return when (str.toLowerCase()) {
 				"error" -> ERROR
 				"warn" -> WARN
 				"info" -> INFO
-				"verbose", "debug" -> DEBUG
+				"debug" -> DEBUG
+				"verbose" -> VERBOSE
 				else -> throw IllegalArgumentException("Unknown log level $str")
 			}
 
@@ -49,6 +53,10 @@ interface Logger {
 	fun log(message: Any?, level: Int)
 
 	fun log(message: () -> Any?, level: Int) = log(message(), level)
+
+	fun verbose(message: Any?) = log(message, VERBOSE)
+
+	fun verbose(message: () -> Any?) = log(message, VERBOSE)
 
 	fun debug(message: Any?) = log(message, DEBUG)
 
@@ -82,7 +90,7 @@ object Log : Logger {
 
 	val targets: MutableList<Logger> = arrayListOf(PrintTarget())
 
-	override var level: Int = Logger.DEBUG
+	override var level: Int = if (debugFlag) Logger.DEBUG else Logger.INFO
 
 	override fun log(message: Any?, level: Int) {
 		if (level <= this.level) {
@@ -110,9 +118,9 @@ object Log : Logger {
 
 class PrintTarget : Logger {
 
-	override var level: Int = Logger.DEBUG
+	override var level: Int = Logger.VERBOSE
 
-	private val prefixes: Array<String> = arrayOf("[NONE] ", "[ERROR] ", "[WARN] ", "[INFO] ", "[DEBUG] ")
+	private val prefixes: Array<String> = arrayOf("[NONE] ", "[ERROR] ", "[WARN] ", "[INFO] ", "[DEBUG] ", "[VERBOSE] ")
 
 	override fun log(message: Any?, level: Int) {
 		val prefix = if (level < prefixes.size) prefixes[level] else ""

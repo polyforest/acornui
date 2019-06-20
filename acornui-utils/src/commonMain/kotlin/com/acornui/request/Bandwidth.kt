@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-package com.acornui.build.gradle
+package com.acornui.request
 
-import com.acornui.io.file.FilesManifestSerializer
-import com.acornui.io.file.ManifestUtil
-import com.acornui.serialization.json
-import com.acornui.serialization.write
-import java.io.File
+/**
+ * A way to get at the user's average internet bandwidth.
+ */
+object Bandwidth {
+	// TODO: Calculate bandwidth
 
-object JsSources {
-	fun writeManifest(source: File, dest: File, root: File) {
-		val manifest = ManifestUtil.createManifest(source, root)
-		dest.let {
-			it.mkdirs()
-			File(it, "files.js").writeText("var manifest = ${json.write(manifest, FilesManifestSerializer)};")
-		}
-	}
+	/**
+	 * Download speed, bytes per second.
+	 */
+	var downBps: Float = 196608f
+
+	val downBpsInv: Float
+		get() = 1f / downBps
+
+	/**
+	 * Upload speed, bytes per second.
+	 */
+	var upBps: Float = 196608f
+
 }

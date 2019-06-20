@@ -24,19 +24,12 @@ import com.acornui.core.observe.DataBindingImpl
 import com.acornui.core.time.TimeDriver
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
-import kotlin.properties.Delegates
 
 /**
  * Application configuration common across back-end types.
  * @author nbilyk
  */
 data class AppConfig(
-
-		/**
-		 * The application's version. The version's build number will be set to the number within the file:
-		 * `config.rootPath + "assets/build.txt"`
-		 */
-		val version: Version = Version(0, 1, 0, 0),
 
 		/**
 		 * All relative files will be prepended with this string.
@@ -84,7 +77,9 @@ data class AppConfig(
 	val frameTime: Float
 		get() = 1f / frameRate.toFloat()
 
+
 	companion object : DKey<AppConfig>
+
 }
 
 data class WindowConfig(
@@ -106,7 +101,12 @@ data class WindowConfig(
 		 */
 		val backgroundColor: ColorRo = Color(0xf1f2f3ff)
 
-)
+
+) {
+	override fun toString(): String {
+		return "WindowConfig(title='$title', initialWidth=$initialWidth, initialHeight=$initialHeight, backgroundColor=#${backgroundColor.toRgbaString()})"
+	}
+}
 
 data class InputConfig(
 
@@ -152,7 +152,7 @@ data class GlConfig(
 /**
  * A singleton reference to the user info. This does not need to be scoped; there can only be one machine.
  */
-var userInfo: UserInfo by Delegates.notNull()
+expect val userInfo: UserInfo
 
 /**
  * Details about the user.
@@ -189,11 +189,28 @@ data class UserInfo(
 		}
 	}
 
+	val platform: Platform by lazy {
+		val p = platformStr.toLowerCase()
+		when {
+			p.contains("android") -> Platform.ANDROID
+			p.containsAny("os/2", "pocket pc", "windows", "win16", "win32", "wince") -> Platform.MICROSOFT
+			p.containsAny("iphone", "ipad", "ipod", "mac", "pike") -> Platform.APPLE
+			p.containsAny("linux", "unix", "mpe/ix", "freebsd", "openbsd", "irix") -> Platform.UNIX
+			p.containsAny("sunos", "sun os", "solaris", "hp-ux", "aix") -> Platform.POSIX_UNIX
+			p.contains("nintendo") -> Platform.NINTENDO
+			p.containsAny("palmos", "webos") -> Platform.PALM
+			p.containsAny("playstation", "psp") -> Platform.SONY
+			p.contains("blackberry") -> Platform.BLACKBERRY
+			p.containsAny("nokia", "s60", "symbian") -> Platform.SYMBIAN
+			else -> Platform.OTHER
+		}
+	}
+
 	override fun toString(): String {
 		return "UserInfo(isBrowser=$isBrowser isMobile=$isMobile languages=${systemLocale.joinToString(",")})"
 	}
 
-	companion object : DKey<UserInfo> {
+	companion object {
 
 		/**
 		 * The string [platformStr] is set to when the platform could not be determined.
@@ -221,27 +238,6 @@ data class TimeDriverConfig(
 		val maxTicksPerUpdate: Int
 )
 
-/**
- * A way to get at the user's average internet bandwidth.
- */
-object Bandwidth {
-	// TODO: Calculate bandwidth
-
-	/**
-	 * Download speed, bytes per second.
-	 */
-	var downBps: Float = 196608f
-
-	val downBpsInv: Float
-		get() = 1f / downBps
-
-	/**
-	 * Upload speed, bytes per second.
-	 */
-	var upBps: Float = 196608f
-
-}
-
 // TODO: isMac, isWindows, isLinux
 
 enum class Platform {
@@ -256,33 +252,6 @@ enum class Platform {
 	SONY,
 	SYMBIAN,
 	OTHER
-}
-
-val platform: Platform by lazy {
-	val p = userInfo.platformStr.toLowerCase()
-	if (p.contains("android")) {
-		Platform.ANDROID
-	} else if (p.containsAny("os/2", "pocket pc", "windows", "win16", "win32", "wince")) {
-		Platform.MICROSOFT
-	} else if (p.containsAny("iphone", "ipad", "ipod", "mac", "pike")) {
-		Platform.APPLE
-	} else if (p.containsAny("linux", "unix", "mpe/ix", "freebsd", "openbsd", "irix")) {
-		Platform.UNIX
-	} else if (p.containsAny("sunos", "sun os", "solaris", "hp-ux", "aix")) {
-		Platform.POSIX_UNIX
-	} else if (p.contains("nintendo")) {
-		Platform.NINTENDO
-	} else if (p.containsAny("palmos", "webos")) {
-		Platform.PALM
-	} else if (p.containsAny("playstation", "psp")) {
-		Platform.SONY
-	} else if (p.contains("blackberry")) {
-		Platform.BLACKBERRY
-	} else if (p.containsAny("nokia", "s60", "symbian")) {
-		Platform.SYMBIAN
-	} else {
-		Platform.OTHER
-	}
 }
 
 private fun String.containsAny(vararg string: String): Boolean {

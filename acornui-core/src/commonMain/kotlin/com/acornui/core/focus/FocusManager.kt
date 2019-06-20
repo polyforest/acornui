@@ -26,10 +26,7 @@ import com.acornui.component.style.StyleType
 import com.acornui.core.Disposable
 import com.acornui.core.TreeWalk
 import com.acornui.core.childWalkLevelOrder
-import com.acornui.core.di.DKey
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
-import com.acornui.core.di.owns
+import com.acornui.core.di.*
 import com.acornui.core.isAncestorOf
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal

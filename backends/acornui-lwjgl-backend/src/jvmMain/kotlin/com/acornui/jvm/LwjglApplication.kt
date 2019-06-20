@@ -19,25 +19,23 @@
 package com.acornui.jvm
 
 import com.acornui.async.launch
-import com.acornui.browser.decodeUriComponent2
-import com.acornui.browser.encodeUriComponent2
 import com.acornui.component.*
 import com.acornui.component.text.BitmapFontRegistry
-import com.acornui.core.*
+import com.acornui.core.AppConfig
+import com.acornui.core.ApplicationBase
+import com.acornui.core.Version
 import com.acornui.core.asset.AssetManager
 import com.acornui.core.asset.AssetManagerImpl
 import com.acornui.core.asset.AssetType
 import com.acornui.core.asset.LoaderFactory
 import com.acornui.core.audio.AudioManager
 import com.acornui.core.cursor.CursorManager
+import com.acornui.core.debug
 import com.acornui.core.di.*
 import com.acornui.core.focus.FakeFocusMouse
 import com.acornui.core.focus.FocusManager
 import com.acornui.core.focus.FocusManagerImpl
 import com.acornui.core.graphic.Window
-import com.acornui.core.i18n.I18n
-import com.acornui.core.i18n.I18nImpl
-import com.acornui.core.i18n.Locale
 import com.acornui.core.input.*
 import com.acornui.core.input.interaction.ContextMenuManager
 import com.acornui.core.input.interaction.JvmClickDispatcher
@@ -45,8 +43,6 @@ import com.acornui.core.input.interaction.UndoDispatcher
 import com.acornui.core.io.file.Files
 import com.acornui.core.io.file.FilesImpl
 import com.acornui.core.persistance.Persistence
-import com.acornui.core.popup.PopUpManager
-import com.acornui.core.request.RestServiceFactory
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionManagerImpl
 import com.acornui.core.time.TimeDriver
@@ -71,24 +67,17 @@ import com.acornui.jvm.graphic.LwjglGl20
 import com.acornui.jvm.input.GlfwMouseInput
 import com.acornui.jvm.input.JvmClipboard
 import com.acornui.jvm.input.LwjglKeyInput
-import com.acornui.jvm.io.JvmRestServiceFactory
 import com.acornui.jvm.loader.JvmBinaryLoader
 import com.acornui.jvm.loader.JvmTextLoader
-import com.acornui.jvm.loader.WorkScheduler
 import com.acornui.jvm.persistance.LwjglPersistence
 import com.acornui.logging.Log
-import com.acornui.logging.Logger
-import com.acornui.math.MinMax
-import com.acornui.serialization.json
+import com.acornui.serialization.parseJson
 import com.acornui.uncaughtExceptionHandler
-import org.lwjgl.Version
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWWindowRefreshCallback
 import java.io.File
 import java.io.FileNotFoundException
-import java.io.FileReader
-import java.net.URLDecoder
-import java.net.URLEncoder
+import org.lwjgl.Version as LwjglVersion
 import java.util.Locale as LocaleJvm
 
 /**
@@ -105,21 +94,18 @@ open class LwjglApplication : ApplicationBase() {
 		return _windowId
 	}
 
-	companion object {
-		init {
-			encodeUriComponent2 = { str ->
-				URLEncoder.encode(str, "UTF-8")
-			}
-			decodeUriComponent2 = { str ->
-				URLDecoder.decode(str, "UTF-8")
-			}
+	init {
+		Thread.currentThread().setUncaughtExceptionHandler { _, exception ->
+			uncaughtExceptionHandler(exception)
 		}
+		println("LWJGL Version: ${LwjglVersion.getVersion()}")
 	}
 
-	fun start(config: AppConfig = AppConfig(),
+	fun start(appConfig: AppConfig = AppConfig(),
 			  onReady: Owned.() -> Unit) {
 
-		initializeConfig(config)
+		set(AppConfig, appConfig)
+
 		var injector: Injector? = null
 		launch {
 			awaitAll()
@@ -143,178 +129,136 @@ open class LwjglApplication : ApplicationBase() {
 		//System.exit(-1)
 	}
 
-	protected open fun initializeConfig(config: AppConfig) {
-		val buildVersion = File("assets/build.txt")
-		val build = if (buildVersion.exists()) buildVersion.readText().toInt() else config.version.build
-
-		val finalConfig = config.copy(
-				version = config.version.copy(build = build)
-		)
-		if (debug) {
-			Log.level = Logger.DEBUG
-		} else {
-			Log.level = Logger.INFO
-		}
-
-		println("LWJGL Version: ${Version.getVersion()}")
-
-		Log.info("Config $finalConfig")
-		set(AppConfig, finalConfig)
-	}
-
-	/**
-	 * Sets the UserInfo dependency.
-	 */
-	protected open val userInfoTask by BootTask {
-		val u = UserInfo(
-				isDesktop = true,
-				userAgent = "glfw",
-				platformStr = System.getProperty("os.name") ?: UserInfo.UNKNOWN_PLATFORM,
-				systemLocale = listOf(Locale(LocaleJvm.getDefault().toLanguageTag()))
-		)
-		userInfo = u
-		set(UserInfo, u)
-	}
-
 	/**
 	 * Sets the [Gl20] dependency.
 	 */
-	protected open val glTask by BootTask {
-		set(Gl20, if (debug) JvmGl20Debug() else LwjglGl20())
+	protected open val glTask by task(Gl20) {
+		if (debug) JvmGl20Debug() else LwjglGl20()
 	}
 
 	/**
 	 * Sets the [Window] dependency.
 	 */
-	protected open val windowTask by BootTask {
+	protected open val windowTask by task(Window) {
 		val config = config()
 		val window = GlfwWindowImpl(config.window, config.gl, get(Gl20), debug)
 		_windowId = window.windowId
-		set(Window, window)
+		window
+	}
+
+	protected open val uncaughtExceptionHandlerTask by task(uncaughtExceptionHandlerKey) {
+		val version = get(Version)
+		val window = get(Window)
 		uncaughtExceptionHandler = {
-			val message = it.stack + "\n${config.version.toVersionString()}"
+			val message = it.stack + "\n${version.toVersionString()}"
 			Log.error(message)
 			if (debug)
 				window.alert(message)
 			System.exit(1)
 		}
+		uncaughtExceptionHandler
 	}
 
-	protected open val glStateTask by BootTask {
+	protected open val glStateTask by task(GlState) {
 		get(Window) // Shaders need a window to be created first.
-		set(GlState, GlStateImpl(get(Gl20), get(Window)))
+		GlStateImpl(get(Gl20), get(Window))
 	}
 
-	protected open val mouseInputTask by BootTask {
-		set(MouseInput, GlfwMouseInput(getWindowId()))
+	protected open val focusManagerTask by task(FocusManager) {
+		FocusManagerImpl()
 	}
 
-	protected open val keyInputTask by BootTask {
-		set(KeyInput, LwjglKeyInput(getWindowId()))
+	protected open val mouseInputTask by task(MouseInput) {
+		GlfwMouseInput(getWindowId())
 	}
 
-	protected open val filesTask by BootTask {
+	protected open val keyInputTask by task(KeyInput) {
+		LwjglKeyInput(getWindowId())
+	}
+
+	override val filesTask by task(Files) {
 		val manifestFile = File(config().rootPath + config().assetsManifestPath)
 		if (!manifestFile.exists()) throw FileNotFoundException(manifestFile.absolutePath)
-		val reader = FileReader(manifestFile)
-		val jsonStr = reader.readText()
-		val files = FilesImpl(json.read(jsonStr, FilesManifestSerializer))
-		set(Files, files)
+		val manifest = parseJson(manifestFile.readText(), FilesManifestSerializer)
+		FilesImpl(manifest)
 	}
 
-	protected open val requestTask by BootTask {
-		set(RestServiceFactory, JvmRestServiceFactory)
-	}
-
-	protected open val focusManagerTask by BootTask {
-		set(FocusManager, FocusManagerImpl())
-	}
-
-	private fun <T> ioWorkScheduler(timeDriver: TimeDriver): WorkScheduler<T> = { asyncThread(timeDriver, work = it) }
-
-	protected open val assetManagerTask by BootTask {
-		val gl20 = get(Gl20)
-		val glState = get(GlState)
+	private val audioManagerTask by task(AudioManager) {
 		val timeDriver = get(TimeDriver)
-
-		val loaders = HashMap<AssetType<*>, LoaderFactory<*>>()
-		loaders[AssetType.TEXTURE] = { path, _ -> JvmTextureLoader(path, gl20, glState, ioWorkScheduler(timeDriver)) }
-		loaders[AssetType.TEXT] = { path, _ -> JvmTextLoader(path, Charsets.UTF_8, ioWorkScheduler(timeDriver)) }
-		loaders[AssetType.BINARY] = { path, _ -> JvmBinaryLoader(path, ioWorkScheduler(timeDriver)) }
+		// TODO: optional dependency task
+		val audioManager = OpenAlAudioManager()
+		timeDriver.addChild(audioManager)
+		OpenAlSoundLoader.registerDefaultDecoders()
 
 		// Audio
 		try {
-			val audioManager = OpenAlAudioManager()
-			set(AudioManager, audioManager)
-			timeDriver.addChild(audioManager)
-			OpenAlSoundLoader.registerDefaultDecoders()
-			loaders[AssetType.SOUND] = { path, _ -> OpenAlSoundLoader(path, audioManager, ioWorkScheduler(timeDriver)) }
-
 			OpenAlMusicLoader.registerDefaultDecoders()
+		} catch (e: NoAudioException) {
+			Log.warn("No Audio device found.")
+		}
+		audioManager
+	}
+
+	override val assetManagerTask by task(AssetManager) {
+		val gl20 = get(Gl20)
+		val glState = get(GlState)
+		val audioManager = get(AudioManager) as OpenAlAudioManager
+
+		val loaders = HashMap<AssetType<*>, LoaderFactory<*>>()
+		loaders[AssetType.TEXTURE] = { path, _ -> JvmTextureLoader(path, gl20, glState) }
+		loaders[AssetType.TEXT] = { path, _ -> JvmTextLoader(path, Charsets.UTF_8) }
+		loaders[AssetType.BINARY] = { path, _ -> JvmBinaryLoader(path) }
+
+		// Audio
+		try {
+			loaders[AssetType.SOUND] = { path, _ -> OpenAlSoundLoader(path, audioManager) }
 			loaders[AssetType.MUSIC] = { path, _ -> OpenAlMusicLoader(path, audioManager) }
 		} catch (e: NoAudioException) {
 			Log.warn("No Audio device found.")
 		}
-
-		set(AssetManager, AssetManagerImpl(config().rootPath, get(Files), loaders))
+		AssetManagerImpl(config().rootPath, get(Files), loaders)
 	}
 
-	protected open val interactivityTask by BootTask {
-		set(InteractivityManager, InteractivityManagerImpl(get(MouseInput), get(KeyInput), get(FocusManager)))
+	protected open val interactivityTask by task(InteractivityManager) {
+		InteractivityManagerImpl(get(MouseInput), get(KeyInput), get(FocusManager))
 	}
 
-	protected open val timeDriverTask by BootTask {
-		set(TimeDriver, TimeDriverImpl(config().timeDriverConfig))
+	protected open val timeDriverTask by task(TimeDriver) {
+		TimeDriverImpl(config().timeDriverConfig)
 	}
 
-	protected open val cursorManagerTask by BootTask {
-		set(CursorManager, JvmCursorManager(get(AssetManager), getWindowId()))
+	protected open val cursorManagerTask by task(CursorManager) {
+		JvmCursorManager(get(AssetManager), getWindowId())
 	}
 
-	protected open val selectionManagerTask by BootTask {
-		set(SelectionManager, SelectionManagerImpl())
+	protected open val selectionManagerTask by task(SelectionManager) {
+		SelectionManagerImpl()
 	}
 
-	protected open val persistenceTask by BootTask {
-		set(Persistence, LwjglPersistence(config().version, config().window.title))
+	protected open val persistenceTask by task(Persistence) {
+		LwjglPersistence(get(Version), config().window.title)
 	}
 
-	protected open val i18nTask by BootTask {
-		get(UserInfo)
-		set(I18n, I18nImpl())
+	protected open val fileReadWriteManagerTask by task(FileIoManager) {
+		JvmFileIoManager()
 	}
 
-	protected open val fileReadWriteManagerTask by BootTask {
-		set(FileIoManager, JvmFileIoManager())
-	}
-
-	protected open val uncaughtExceptionsTask by BootTask {
-		Thread.currentThread().setUncaughtExceptionHandler {
-			_, exception ->
-			uncaughtExceptionHandler(exception)
-		}
-	}
-
-	/**
-	 * The last chance to set dependencies on the application scope.
-	 */
-	protected open val componentsTask by BootTask {
-		set(HtmlComponent.FACTORY_KEY) {
-			object : UiComponentImpl(it), HtmlComponent {
-
+	protected open val componentsTask by task(HtmlComponent.FACTORY_KEY) {
+		{ owner ->
+			object : UiComponentImpl(owner), HtmlComponent {
 				override val boxStyle = BoxStyle()
 				override var html: String = ""
 			}
 		}
 	}
 
-	protected open val clipboardTask by BootTask {
-		set(Clipboard, JvmClipboard(
+	protected open val clipboardTask by task(Clipboard) {
+		JvmClipboard(
 				get(KeyInput),
 				get(FocusManager),
 				get(InteractivityManager),
 				getWindowId()
-		))
+		)
 	}
 
 	protected open fun Owned.initializeSpecialInteractivity() {
@@ -346,8 +290,6 @@ class JvmApplicationRunner(
 			tick()
 		}
 	}
-
-	private val viewport = MinMax()
 
 	init {
 		Log.info("Application#startIndex")

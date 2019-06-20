@@ -3,27 +3,11 @@ package com.acornui.core.nav
 import com.acornui.core.ChildRo
 import com.acornui.core.ParentRo
 import com.acornui.core.di.Injector
-import com.acornui.browser.decodeUriComponent2
-import com.acornui.browser.encodeUriComponent2
 import com.acornui.core.di.InjectorImpl
-import org.junit.Before
 import kotlin.test.Test
-import java.net.URLDecoder
-import java.net.URLEncoder
 import kotlin.test.assertEquals
 
 class NavBindingTest {
-
-	@Before fun before() {
-		encodeUriComponent2 = {
-			str ->
-			URLEncoder.encode(str, "UTF-8")
-		}
-		decodeUriComponent2 = {
-			str ->
-			URLDecoder.decode(str, "UTF-8")
-		}
-	}
 
 	private val mockInjector = InjectorImpl(null, listOf())
 

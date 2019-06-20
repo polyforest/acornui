@@ -20,21 +20,19 @@ import com.acornui.collection.stringMapOf
 import com.acornui.core.asset.AssetType
 import com.acornui.core.audio.SoundFactory
 import com.acornui.jvm.loader.JvmAssetLoaderBase
-import com.acornui.jvm.loader.WorkScheduler
 import java.io.InputStream
 
 
 open class OpenAlSoundLoader(
 		path: String,
-		private val audioManager: OpenAlAudioManager,
-		workScheduler: WorkScheduler<SoundFactory>
-) : JvmAssetLoaderBase<SoundFactory>(path, AssetType.SOUND, workScheduler) {
+		private val audioManager: OpenAlAudioManager
+) : JvmAssetLoaderBase<SoundFactory>(path, AssetType.SOUND) {
 
 	init {
 		init()
 	}
 
-	override fun create(inputStream: InputStream): SoundFactory {
+	override suspend fun create(inputStream: InputStream): SoundFactory {
 		val data = SoundDecoders.decode(path.extension(), inputStream)
 		return OpenAlSoundFactory(audioManager, data.pcm, data.channels, data.sampleRate)
 	}

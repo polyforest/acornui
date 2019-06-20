@@ -22,8 +22,8 @@ import com.acornui.core.asset.AssetLoader
 import com.acornui.core.asset.AssetType
 import com.acornui.core.audio.AudioManager
 import com.acornui.core.audio.SoundFactory
-import com.acornui.core.request.UrlRequestData
-import com.acornui.js.io.JsArrayBufferRequest
+import com.acornui.request.JsArrayBufferRequest
+import com.acornui.request.UrlRequestData
 
 /**
  * An asset loader for js AudioContext sounds.

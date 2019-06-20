@@ -21,7 +21,6 @@ import com.acornui.async.awaitOrNull
 import com.acornui.async.launch
 import com.acornui.browser.appendParam
 import com.acornui.core.io.file.Files
-import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 
 

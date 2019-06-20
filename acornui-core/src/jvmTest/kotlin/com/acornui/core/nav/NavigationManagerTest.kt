@@ -1,28 +1,12 @@
 package com.acornui.core.nav
 
-import com.acornui.browser.decodeUriComponent2
-import com.acornui.browser.encodeUriComponent2
 import com.acornui.test.assertListEquals
-import org.junit.Before
 import kotlin.test.Test
-import java.net.URLDecoder
-import java.net.URLEncoder
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.fail
 
 class NavigationManagerTest {
-
-	@Before fun before() {
-		encodeUriComponent2 = {
-			str ->
-			URLEncoder.encode(str, "UTF-8")
-		}
-		decodeUriComponent2 = {
-			str ->
-			URLDecoder.decode(str, "UTF-8")
-		}
-	}
 
 	@Test fun navNode() {
 		var n1 = NavNode("Hi", hashMapOf(Pair("test1", "test2")))

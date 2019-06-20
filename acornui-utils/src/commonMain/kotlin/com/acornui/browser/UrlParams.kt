@@ -124,9 +124,8 @@ class UrlParamsImpl() : Clearable, UrlParams {
 
 }
 
-
-lateinit var encodeUriComponent2: (str: String)->String
-lateinit var decodeUriComponent2: (str: String)->String
+expect fun encodeUriComponent2(str: String): String
+expect fun decodeUriComponent2(str: String): String
 
 /**
  * Appends a url parameter to a url string, returning the new string.

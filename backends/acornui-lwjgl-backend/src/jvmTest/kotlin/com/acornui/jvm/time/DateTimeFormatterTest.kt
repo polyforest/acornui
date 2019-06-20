@@ -16,26 +16,13 @@
 
 package com.acornui.jvm.time
 
-import com.acornui.core.UserInfo
 import com.acornui.core.i18n.Locale
 import com.acornui.core.text.getMonths
-import com.acornui.core.userInfo
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
 class DateTimeFormatterTest {
-	@BeforeTest
-	fun setUp() {
-		val u = UserInfo(
-				isDesktop = true,
-				userAgent = "headless",
-				platformStr = System.getProperty("os.name") ?: UserInfo.UNKNOWN_PLATFORM,
-				systemLocale = listOf(Locale("en-US"))
-		)
-		userInfo = u
-	}
 
 	@Test
 	fun getMonthsTest() {

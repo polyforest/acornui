@@ -16,13 +16,16 @@
 
 package com.acornui.core
 
+import com.acornui.core.di.DKey
+import com.acornui.core.di.Scoped
+import com.acornui.core.di.inject
 
 /**
  * A major.minor.patch.build representation
  *
- * MAJOR version when you make incompatible API changes,
- * MINOR version when you add functionality in a backwards-compatible manner, and
- * PATCH version when you make backwards-compatible bug fixes.
+ * MAJOR version increments when there is a major release.
+ * MINOR version increments when there are incompatible api changes.
+ * PATCH version when there are no incompatible api changes.
  * BUILD version automatically incremented on a build.
  */
 data class Version(
@@ -55,7 +58,7 @@ data class Version(
 
 	override fun toString(): String = toVersionString()
 
-	companion object {
+	companion object : DKey<Version> {
 		fun fromStr(value: String): Version {
 			val split = value.split(".")
 			if (split.size != 4 && split.size != 3) throw IllegalArgumentException("Version '$value' is not in the format major.minor.patch.[build]")
@@ -63,3 +66,6 @@ data class Version(
 		}
 	}
 }
+
+val Scoped.version: Version
+	get() = inject(Version)

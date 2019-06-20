@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package com.acornui.js.io
+package com.acornui.request
+
 
 import com.acornui.async.Promise
-import com.acornui.core.Bandwidth
-import com.acornui.core.di.Injector
-import com.acornui.core.request.*
 import com.acornui.io.JsByteBuffer
-import com.acornui.io.ReadByteBuffer
 import com.acornui.io.NativeReadByteBuffer
+import com.acornui.io.ReadByteBuffer
 import com.acornui.logging.Log
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Uint8Array
@@ -79,25 +77,26 @@ abstract class JsHttpRequest<T>(
 		if (requestData.method == UrlRequestMethod.GET) {
 			httpRequest.send()
 		} else {
-			if (requestData.variables != null) {
-				val data = requestData.variables!!.toQueryString()
-				httpRequest.send(data)
-			} else if (requestData.formData != null) {
-				val formData = FormData()
-				for (item in requestData.formData!!.items) {
-					if (item is ByteArrayFormItem) {
-						formData.append(item.name, Blob(arrayOf(item.value.native)))
-					} else if (item is StringFormItem) {
-						formData.append(item.name, item.value)
-					} else {
-						Log.warn("Unknown form item type $item")
-					}
+			when {
+				requestData.variables != null -> {
+					val data = requestData.variables!!.toQueryString()
+					httpRequest.send(data)
 				}
-				httpRequest.send(formData)
-			} else if (requestData.body != null) {
-				httpRequest.send(requestData.body!!)
-			} else {
-				httpRequest.send()
+				requestData.formData != null -> {
+					val formData = FormData()
+					for (item in requestData.formData.items) {
+						if (item is ByteArrayFormItem) {
+							formData.append(item.name, Blob(arrayOf(item.value.native)))
+						} else if (item is StringFormItem) {
+							formData.append(item.name, item.value)
+						} else {
+							Log.warn("Unknown form item type $item")
+						}
+					}
+					httpRequest.send(formData)
+				}
+				requestData.body != null -> httpRequest.send(requestData.body!!)
+				else -> httpRequest.send()
 			}
 		}
 	}
@@ -126,13 +125,10 @@ class JsTextRequest(requestData: UrlRequestData) : JsHttpRequest<String>(request
 	}
 }
 
+actual fun createTextRequest(requestData: UrlRequestData): Request<String> {
+	return JsTextRequest(requestData)
+}
 
-object JsRestServiceFactory : RestServiceFactory {
-	override fun createTextRequest(injector: Injector, requestData: UrlRequestData): Request<String> {
-		return JsTextRequest(requestData)
-	}
-
-	override fun createBinaryRequest(injector: Injector, requestData: UrlRequestData): Request<ReadByteBuffer> {
-		return JsBinaryRequest(requestData)
-	}
+actual fun createBinaryRequest(requestData: UrlRequestData): Request<ReadByteBuffer> {
+	return JsBinaryRequest(requestData)
 }

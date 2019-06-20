@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.acornui.jvm.io
+package com.acornui.io
 
 import java.io.InputStream
 import java.util.*

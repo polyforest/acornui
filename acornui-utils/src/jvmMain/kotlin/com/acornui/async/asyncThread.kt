@@ -14,20 +14,10 @@
  * limitations under the License.
  */
 
-package com.acornui.build.gradle
+package com.acornui.async
 
-import com.acornui.io.file.FilesManifestSerializer
-import com.acornui.io.file.ManifestUtil
-import com.acornui.serialization.json
-import com.acornui.serialization.write
-import java.io.File
-
-object JsSources {
-	fun writeManifest(source: File, dest: File, root: File) {
-		val manifest = ManifestUtil.createManifest(source, root)
-		dest.let {
-			it.mkdirs()
-			File(it, "files.js").writeText("var manifest = ${json.write(manifest, FilesManifestSerializer)};")
-		}
+fun <T> asyncIo(work: Work<T>): Deferred<T> {
+	return async {
+		work()
 	}
 }

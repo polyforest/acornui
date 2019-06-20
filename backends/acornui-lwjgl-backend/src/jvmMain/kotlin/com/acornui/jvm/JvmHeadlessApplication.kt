@@ -14,33 +14,27 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package com.acornui.jvm
 
 import com.acornui.async.Promise
 import com.acornui.async.launch
-import com.acornui.browser.decodeUriComponent2
-import com.acornui.browser.encodeUriComponent2
-import com.acornui.core.*
+import com.acornui.core.AppConfig
+import com.acornui.core.ApplicationBase
 import com.acornui.core.asset.AssetManager
 import com.acornui.core.asset.AssetManagerImpl
 import com.acornui.core.asset.AssetType
 import com.acornui.core.asset.LoaderFactory
 import com.acornui.core.di.OwnedImpl
 import com.acornui.core.di.Scoped
-import com.acornui.core.i18n.I18n
-import com.acornui.core.i18n.I18nImpl
-import com.acornui.core.i18n.Locale
 import com.acornui.core.io.file.Files
 import com.acornui.core.io.file.FilesImpl
+import com.acornui.io.file.ManifestUtil
 import com.acornui.jvm.graphic.JvmRgbDataLoader
-import com.acornui.jvm.io.file.ManifestUtil
 import com.acornui.jvm.loader.JvmTextLoader
 import com.acornui.jvm.loader.WorkScheduler
-import com.acornui.logging.Log
-import com.acornui.logging.Logger
 import java.io.File
-import java.net.URLDecoder
-import java.net.URLEncoder
 
 /**
  * A Headless application initializes utility dependencies, but does not create any windowing, graphics, or input.
@@ -51,59 +45,26 @@ open class JvmHeadlessApplication(
 		private val assetsRoot: String = "./"
 ) : ApplicationBase() {
 
-	fun start(config: AppConfig = AppConfig(),
+	fun start(appConfig: AppConfig = AppConfig(),
 			  onReady: Scoped.() -> Unit = {}) {
+		set(AppConfig, appConfig)
 		launch {
-			initializeConfig(config)
 			awaitAll()
 			val injector = createInjector()
 			OwnedImpl(injector).onReady()
 		}
 	}
 
-	protected open fun initializeConfig(config: AppConfig) {
-		val finalConfig = config.copy()
-		Log.level = if (debug) Logger.DEBUG else Logger.INFO
-		encodeUriComponent2 = {
-			str ->
-			URLEncoder.encode(str, "UTF-8")
-		}
-		decodeUriComponent2 = {
-			str ->
-			URLDecoder.decode(str, "UTF-8")
-		}
-		set(AppConfig, finalConfig)
-	}
-
-	/**
-	 * Sets the UserInfo dependency.
-	 */
-	protected open val userInfoTask by BootTask {
-		val u = UserInfo(
-				isDesktop = true,
-				userAgent = "headless",
-				platformStr = System.getProperty("os.name") ?: UserInfo.UNKNOWN_PLATFORM,
-				systemLocale = listOf(Locale(java.util.Locale.getDefault().toLanguageTag()))
-		)
-		userInfo = u
-		set(UserInfo, u)
-	}
-
-	protected open val i18nTask by BootTask {
-		get(UserInfo)
-		set(I18n, I18nImpl())
-	}
-
-	protected open val filesTask by BootTask {
+	override val filesTask by task(Files) {
 		val manifest = ManifestUtil.createManifest(File(assetsPath), File(assetsRoot))
-		set(Files, FilesImpl(manifest))
+		FilesImpl(manifest)
 	}
 
-	private fun <T> ioWorkScheduler(): WorkScheduler<T> = {
+	private fun <T> ioWorkScheduler(): WorkScheduler<T> = { work ->
 		object : Promise<T>() {
 			init {
 				try {
-					success(it())
+					success(work())
 				} catch (e: Throwable) {
 					fail(e)
 				}
@@ -111,11 +72,10 @@ open class JvmHeadlessApplication(
 		}
 	}
 
-	protected open val assetManager by BootTask {
+	override val assetManagerTask by task(AssetManager) {
 		val loaders = HashMap<AssetType<*>, LoaderFactory<*>>()
-		loaders[AssetType.TEXT] = { path, _ ->  JvmTextLoader(path, Charsets.UTF_8, ioWorkScheduler()) }
-		loaders[AssetType.RGB_DATA] = { path, _ -> JvmRgbDataLoader(path, ioWorkScheduler()) }
-		val assetManager = AssetManagerImpl("", get(Files), loaders)
-		set(AssetManager, assetManager)
+		loaders[AssetType.TEXT] = { path, _ -> JvmTextLoader(path, Charsets.UTF_8) }
+		loaders[AssetType.RGB_DATA] = { path, _ -> JvmRgbDataLoader(path) }
+		AssetManagerImpl("", get(Files), loaders)
 	}
 }

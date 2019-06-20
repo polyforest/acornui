@@ -20,12 +20,12 @@ package com.acornui.js.loader
  * @author nbilyk
  */
 import com.acornui.async.Deferred
-import com.acornui.core.Bandwidth
 import com.acornui.core.asset.AssetLoader
 import com.acornui.core.asset.AssetType
-import com.acornui.core.request.Request
-import com.acornui.core.request.UrlRequestData
-import com.acornui.js.io.JsTextRequest
+import com.acornui.request.Bandwidth
+import com.acornui.request.JsTextRequest
+import com.acornui.request.Request
+import com.acornui.request.UrlRequestData
 
 /**
  * An asset loader for text.

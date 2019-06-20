@@ -60,14 +60,10 @@ interface AssetManager : Disposable, Progress {
 	fun <T> load(path: String, type: AssetType<T>): AssetLoader<T>
 
 	override val secondsLoaded: Float
-		get() {
-			return currentLoaders.sumByFloat2 { it.secondsLoaded }
-		}
+		get() = currentLoaders.sumByFloat2 { it.secondsLoaded }
 
 	override val secondsTotal: Float
-		get() {
-			return currentLoaders.sumByFloat2 { it.secondsTotal }
-		}
+		get() = currentLoaders.sumByFloat2 { it.secondsTotal }
 
 	companion object : DKey<AssetManager>
 

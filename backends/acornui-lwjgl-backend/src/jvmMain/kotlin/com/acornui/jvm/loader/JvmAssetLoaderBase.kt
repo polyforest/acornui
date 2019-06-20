@@ -17,9 +17,10 @@
 package com.acornui.jvm.loader
 
 import com.acornui.async.Deferred
-import com.acornui.core.Bandwidth
+import com.acornui.async.asyncIo
 import com.acornui.core.asset.AssetLoader
 import com.acornui.core.asset.AssetType
+import com.acornui.request.Bandwidth
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -28,8 +29,7 @@ import java.net.URL
 
 abstract class JvmAssetLoaderBase<T>(
 		final override val path: String,
-		final override val type: AssetType<T>,
-		protected val workScheduler: WorkScheduler<T>
+		final override val type: AssetType<T>
 ) : AssetLoader<T> {
 
 	private var _bytesTotal: Int? = null
@@ -49,7 +49,7 @@ abstract class JvmAssetLoaderBase<T>(
 	protected fun init() {
 		initialized = true
 		if (path.startsWith("http:", ignoreCase = true) || path.startsWith("https:", ignoreCase = true)) {
-			work = workScheduler {
+			work = asyncIo {
 				val connection = URL(path).openConnection()
 				_bytesTotal = connection.contentLength
 				create(connection.inputStream).also { _bytesLoaded = bytesTotal }
@@ -57,7 +57,7 @@ abstract class JvmAssetLoaderBase<T>(
 		} else {
 			val file = File(path)
 			_bytesTotal = file.length().toInt()
-			work = workScheduler {
+			work = asyncIo {
 				if (!file.exists())
 					throw FileNotFoundException(path)
 				create(FileInputStream(file)).also { _bytesLoaded = bytesTotal }
@@ -65,7 +65,7 @@ abstract class JvmAssetLoaderBase<T>(
 		}
 	}
 
-	abstract fun create(inputStream: InputStream): T
+	abstract suspend fun create(inputStream: InputStream): T
 
 	override val secondsLoaded: Float
 		get() {

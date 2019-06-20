@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.acornui.jvm.io.file
+package com.acornui.io.file
 
 
 import java.io.File

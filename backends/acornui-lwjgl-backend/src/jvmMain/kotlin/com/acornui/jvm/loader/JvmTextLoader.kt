@@ -22,18 +22,16 @@ import java.nio.charset.Charset
 
 open class JvmTextLoader(
 		path: String,
-		private val charset: Charset,
-		workScheduler: WorkScheduler<String>
-) : JvmAssetLoaderBase<String>(path, AssetType.TEXT, workScheduler) {
+		private val charset: Charset
+) : JvmAssetLoaderBase<String>(path, AssetType.TEXT) {
 
 	init {
 		init()
 	}
 
-	override fun create(inputStream: InputStream): String {
-		val size = if (bytesTotal <= 0) DEFAULT_BUFFER_SIZE else bytesTotal
+	override suspend fun create(inputStream: InputStream): String {
 		val bytes = inputStream.use {
-			it.readBytes(size)
+			it.readBytes()
 		}
 		return bytes.toString(charset)
 	}

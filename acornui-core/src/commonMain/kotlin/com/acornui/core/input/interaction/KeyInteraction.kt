@@ -21,7 +21,7 @@ import com.acornui.core.input.Ascii
 import com.acornui.core.input.InteractionEventBase
 import com.acornui.core.input.InteractionEventRo
 import com.acornui.core.input.InteractionType
-import com.acornui.core.platform
+import com.acornui.core.userInfo
 
 interface KeyInteractionRo : InteractionEventRo {
 
@@ -177,7 +177,7 @@ enum class KeyLocation {
  * The command key on mac os, otherwise, the ctrl key.
  */
 val KeyInteractionRo.commandPlat: Boolean
-	get() = if (platform == Platform.APPLE) metaKey else ctrlKey
+	get() = if (userInfo.platform == Platform.APPLE) metaKey else ctrlKey
 
 val KeyInteractionRo.isEnterOrReturn: Boolean
 	get() = keyCode == Ascii.ENTER || keyCode == Ascii.RETURN

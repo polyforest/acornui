@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:JvmName("AsyncUtils")
+
 package com.acornui.async
 
 import com.acornui.async.Deferred.Status
@@ -21,6 +23,7 @@ import com.acornui.collection.*
 import com.acornui.core.Disposable
 import com.acornui.error.getStack
 import kotlin.coroutines.*
+import kotlin.jvm.JvmName
 
 /**
  * If true, it is possible to see which co-routines are stuck and what invoked them.
@@ -48,11 +51,6 @@ fun launch(block: suspend () -> Unit) {
 }
 
 typealias Work<R> = suspend () -> R
-
-/**
- * Launches a new coroutine on this same thread, exposing the ability to suspend execution, awaiting a result.
- */
-fun <T> async(work: Work<T>): Deferred<T> = AsyncWorker(work)
 
 /**
  * A suspension point with no result.
@@ -136,6 +134,9 @@ interface Deferred<out T> {
 		FAILED
 	}
 }
+
+val Deferred<*>.isPending: Boolean
+	get() = status == Status.PENDING
 
 /**
  * Wraps await in a try/catch block, returning null if there was an exception.
@@ -230,17 +231,60 @@ infix fun <T> Deferred<T>.finally(callback: (result: T?) -> Unit): Deferred<T> {
 	return this
 }
 
-@Suppress("AddVarianceModifier")
-private class AsyncWorker<T>(work: Work<T>) : Deferred<T> {
+class Async<T>(private val work: Work<T>) : Promise<T>() {
 
-	private var _status = Status.PENDING
-	override val status: Status
-		get() = _status
+	init {
+		launch {
+			try {
+				success(work())
+			} catch (e: Throwable) {
+				fail(e)
+			}
+		}
+	}
+}
+
+class LazyAsync<T>(private val work: Work<T>) : Promise<T>() {
+
+	var isInvoked = false
+		private set
+
+	operator fun invoke() {
+		if (isInvoked) return
+		isInvoked = true
+		launch {
+			try {
+				success(work())
+			} catch (e: Throwable) {
+				fail(e)
+			}
+		}
+	}
+
+	override suspend fun await(): T {
+		invoke()
+		return super.await()
+	}
+}
+
+/**
+ * Launches a new coroutine on this same thread, exposing the ability to suspend execution, awaiting a result.
+ */
+fun <T> async(work: Work<T>): Deferred<T> = Async(work)
+
+/**
+ * Similar to [async], except the [work] is only started when the deferred value is requested or [LazyAsync.invoke] is
+ * called.
+ */
+fun <T> lazyAsync(work: Work<T>): LazyAsync<T> = LazyAsync(work)
+
+@Suppress("AddVarianceModifier")
+abstract class Promise<T> : Deferred<T> {
 
 	private var _result: T? = null
 	override val result: T
 		get() {
-			if (_status != Status.SUCCESSFUL) throw Exception("status is not SUCCESSFUL")
+			if (status != Status.SUCCESSFUL) throw Exception("status is not SUCCESSFUL")
 			@Suppress("UNCHECKED_CAST")
 			return _result as T
 		}
@@ -248,50 +292,68 @@ private class AsyncWorker<T>(work: Work<T>) : Deferred<T> {
 	private var _error: Throwable? = null
 	override val error: Throwable
 		get() {
-			if (_status != Status.FAILED) throw Exception("status is not FAILED")
+			if (status != Status.FAILED) throw Exception("status is not FAILED")
 			return _error as Throwable
 		}
 
-	private val children = ArrayList<Continuation<T>>()
+	private val continuations = ArrayList<Continuation<T>>()
 
-	init {
-		launch {
-			try {
-				_result = work()
-				_status = Status.SUCCESSFUL
-			} catch (e: Throwable) {
-				_error = e
-				_status = Status.FAILED
-			}
-			@Suppress("UNCHECKED_CAST")
-			when (_status) {
-				Status.SUCCESSFUL -> {
-					val r = _result as T
-					while (children.isNotEmpty()) {
-						children.poll().resume(r)
+	final override var status: Status = Status.PENDING
+		private set(value) {
+			if (field != value) {
+				field = value
+
+				when (value) {
+					Status.SUCCESSFUL -> {
+						@Suppress("UNCHECKED_CAST")
+						val r = _result as T
+						while (continuations.isNotEmpty()) {
+							continuations.poll().resume(r)
+						}
 					}
-				}
-				Status.FAILED -> {
-					val e = _error as Throwable
-					while (children.isNotEmpty()) {
-						children.poll().resumeWithException(e)
+					Status.FAILED -> {
+						val e = _error as Throwable
+						while (continuations.isNotEmpty()) {
+							continuations.poll().resumeWithException(e)
+						}
 					}
+					else -> throw Exception("Status should not be set to pending.")
 				}
-				else -> throw Exception("Status should not be pending.")
 			}
+
 		}
+
+	protected fun success(result: T) {
+		if (status != Status.PENDING)
+			throw IllegalStateException("Deferred object is not in pending state.")
+		_result = result
+		status = Status.SUCCESSFUL
+	}
+
+	protected fun fail(error: Throwable) {
+		if (status != Status.PENDING)
+			throw IllegalStateException("Deferred object is not in pending state.")
+		_error = error
+		status = Status.FAILED
 	}
 
 	override suspend fun await(): T {
 		@Suppress("UNCHECKED_CAST")
-		return when (_status) {
-			Status.PENDING -> suspendCoroutine { cont: Continuation<T> ->
-				children.add(cont)
-			}
-			Status.FAILED -> throw _error!!
+		return when (status) {
+			Status.PENDING -> suspendCoroutine { cont: Continuation<T> -> continuations.add(cont) }
+			Status.FAILED -> throw _error as Throwable
 			else -> _result as T
 		}
 	}
+
+//	override suspend fun await(): T = suspendCoroutine { cont: Continuation<T> ->
+//		@Suppress("UNCHECKED_CAST")
+//		when (_status) {
+//			Status.PENDING -> continuations.add(cont)
+//			Status.SUCCESSFUL -> cont.resume(_result as T)
+//			Status.FAILED -> cont.resumeWithException(_error as Throwable)
+//		}
+//	}
 }
 
 /**
@@ -299,65 +361,9 @@ private class AsyncWorker<T>(work: Work<T>) : Deferred<T> {
  */
 class LateValue<T> : Promise<T>() {
 
-	val isPending: Boolean
-		get() = status == Status.PENDING
-
 	fun setValue(value: T) = success(value)
 
 	fun setError(value: Throwable) = fail(value)
-}
-
-open class Promise<T> : Deferred<T> {
-
-	private var _status = Status.PENDING
-	override val status: Status
-		get() = _status
-
-	private var _result: T? = null
-	@Suppress("UNCHECKED_CAST")
-	override val result: T
-		get() {
-			if (_status != Status.SUCCESSFUL) throw Exception("status is not SUCCESSFUL.")
-			return _result as T
-		}
-
-	private var _error: Throwable? = null
-	override val error: Throwable
-		get() {
-			if (_status != Status.FAILED) throw Exception("status is not FAILED.")
-			return _error as Throwable
-		}
-
-	private val continuations = ArrayList<Continuation<T>>()
-
-	protected fun success(result: T) {
-		if (_status != Status.PENDING)
-			throw IllegalStateException("Promise is not in pending state.")
-		this._result = result
-		_status = Status.SUCCESSFUL
-		while (continuations.isNotEmpty()) {
-			continuations.poll().resume(result)
-		}
-	}
-
-	protected fun fail(error: Throwable) {
-		if (_status != Status.PENDING)
-			throw IllegalStateException("Promise is not in pending state.")
-		this._error = error
-		_status = Status.FAILED
-		while (continuations.isNotEmpty()) {
-			continuations.poll().resumeWithException(error)
-		}
-	}
-
-	override suspend fun await(): T = suspendCoroutine { cont: Continuation<T> ->
-		@Suppress("UNCHECKED_CAST")
-		when (_status) {
-			Status.PENDING -> continuations.add(cont)
-			Status.SUCCESSFUL -> cont.resume(_result as T)
-			Status.FAILED -> cont.resumeWithException(_error as Throwable)
-		}
-	}
 }
 
 /**
@@ -398,7 +404,7 @@ suspend fun <T> List<Deferred<T>>.awaitAllChecked(): List<T?> {
 }
 
 /**
- * Like awaitAll but the values will be null if await fails.
+ * Awaits all deferred values, populating a map with the results.
  */
 suspend fun <K, V> Map<K, Deferred<V>>.awaitAll(): Map<K, V> {
 	// Copy the map so that it can't mutate in-between awaits.
@@ -406,9 +412,14 @@ suspend fun <K, V> Map<K, Deferred<V>>.awaitAll(): Map<K, V> {
 }
 
 /**
- * Awaits all deferred values, populating a map with the results.
+ * Like awaitAll but the values will be null if await fails.
  */
 suspend fun <K, V> Map<K, Deferred<V>>.awaitAllChecked(): Map<K, V?> {
 	// Copy the map so that it can't mutate in-between awaits.
 	return copy().mapTo { key, value -> key to value.awaitOrNull() }
 }
+
+/**
+ * Suspends the coroutine for [duration] seconds.
+ */
+expect suspend fun delay(duration: Float)

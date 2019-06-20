@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package com.acornui.build.gradle
+package com.acornui.browser
 
-import com.acornui.io.file.FilesManifestSerializer
-import com.acornui.io.file.ManifestUtil
-import com.acornui.serialization.json
-import com.acornui.serialization.write
-import java.io.File
-
-object JsSources {
-	fun writeManifest(source: File, dest: File, root: File) {
-		val manifest = ManifestUtil.createManifest(source, root)
-		dest.let {
-			it.mkdirs()
-			File(it, "files.js").writeText("var manifest = ${json.write(manifest, FilesManifestSerializer)};")
-		}
-	}
+actual fun encodeUriComponent2(str: String): String {
+	return encodeURIComponent(str)
 }
+
+actual fun decodeUriComponent2(str: String): String {
+	return decodeURIComponent(str)
+}
+
+private external fun encodeURIComponent(str: String): String
+private external fun decodeURIComponent(str: String): String

@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package com.acornui.build.gradle
+package com.acornui.core
 
-import com.acornui.io.file.FilesManifestSerializer
-import com.acornui.io.file.ManifestUtil
-import com.acornui.serialization.json
-import com.acornui.serialization.write
-import java.io.File
+import com.acornui.core.i18n.Locale
 
-object JsSources {
-	fun writeManifest(source: File, dest: File, root: File) {
-		val manifest = ManifestUtil.createManifest(source, root)
-		dest.let {
-			it.mkdirs()
-			File(it, "files.js").writeText("var manifest = ${json.write(manifest, FilesManifestSerializer)};")
-		}
-	}
-}
+/**
+ * A singleton reference to the user info. This does not need to be scoped; there can only be one machine.
+ */
+actual val userInfo: UserInfo = UserInfo(
+		isDesktop = true,
+		userAgent = "jvm",
+		platformStr = System.getProperty("os.name") ?: UserInfo.UNKNOWN_PLATFORM,
+		systemLocale = listOf(Locale(java.util.Locale.getDefault().toLanguageTag()))
+)

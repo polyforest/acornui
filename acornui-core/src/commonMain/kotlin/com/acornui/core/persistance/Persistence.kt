@@ -23,7 +23,8 @@ import com.acornui.core.di.DKey
 interface Persistence : Clearable {
 
 	/**
-	 * The version of the application as described in [AppConfig.version] when the persistence was last saved.
+	 * The version of the application as described in [com.acornui.core.version] when the persistence was
+	 * last saved. This can be useful for storage migration.
 	 * This will be null if there was nothing loaded.
 	 */
 	val version: Version?

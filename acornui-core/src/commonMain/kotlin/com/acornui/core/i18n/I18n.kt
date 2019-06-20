@@ -24,6 +24,7 @@ import com.acornui.component.Labelable
 import com.acornui.core.Disposable
 import com.acornui.core.asset.*
 import com.acornui.core.di.DKey
+import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.io.file.Files
@@ -58,6 +59,8 @@ interface I18n {
 	companion object : DKey<I18n> {
 
 		val UNDEFINED: Locale = Locale("und")
+
+		override fun factory(injector: Injector): I18n? = I18nImpl()
 	}
 }
 

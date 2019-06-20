@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package com.acornui.core.request
+package com.acornui.request
 
 import com.acornui.action.Progress
 import com.acornui.async.CancelableDeferred
 import com.acornui.browser.UrlParams
-import com.acornui.recycle.Clearable
-import com.acornui.core.di.DKey
-import com.acornui.core.di.Injector
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
-import com.acornui.io.ReadByteBuffer
 import com.acornui.io.NativeReadByteBuffer
+import com.acornui.io.ReadByteBuffer
+import com.acornui.recycle.Clearable
 
 /**
  * A model with the necessary information to make an http request.
@@ -67,23 +63,11 @@ object UrlRequestMethod {
 	val PUT: String = "PUT"
 	val DELETE: String = "DELETE"
 }
-interface RestServiceFactory {
 
-	fun createTextRequest(injector: Injector, requestData: UrlRequestData): Request<String>
-	fun createBinaryRequest(injector: Injector, requestData: UrlRequestData): Request<ReadByteBuffer>
-
-	companion object : DKey<RestServiceFactory>
-}
+expect fun createTextRequest(requestData: UrlRequestData): Request<String>
+expect fun createBinaryRequest(requestData: UrlRequestData): Request<ReadByteBuffer>
 
 interface Request<out T>: Progress, CancelableDeferred<T>
-
-fun Scoped.createTextRequest(requestData: UrlRequestData): Request<String> {
-	return inject(RestServiceFactory).createTextRequest(injector, requestData)
-}
-
-fun Scoped.createBinaryRequest(requestData: UrlRequestData): Request<ReadByteBuffer> {
-	return inject(RestServiceFactory).createBinaryRequest(injector, requestData)
-}
 
 open class ResponseException(val status: Short, message: String?, val detail: String) : Throwable(message) {
 

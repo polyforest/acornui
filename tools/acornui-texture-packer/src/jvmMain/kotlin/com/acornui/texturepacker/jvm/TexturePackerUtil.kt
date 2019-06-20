@@ -19,7 +19,7 @@ package com.acornui.texturepacker.jvm
 import com.acornui.async.launch
 import com.acornui.core.asset.AssetManager
 import com.acornui.core.io.file.Files
-import com.acornui.jvm.io.file.relativePath2
+import com.acornui.io.file.relativePath2
 import com.acornui.serialization.json
 import com.acornui.texturepacker.AcornTexturePacker
 import com.acornui.texturepacker.jvm.writer.JvmTextureAtlasWriter

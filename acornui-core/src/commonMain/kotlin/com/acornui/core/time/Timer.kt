@@ -98,6 +98,7 @@ fun Scoped.timer(duration: Float, repetitions: Int = 1, delay: Float = 0f, callb
 /**
  * Suspends the coroutine for [duration] seconds.
  */
+@Deprecated("Use com.acornui.async.delay", ReplaceWith("com.acornui.async.delay(duration)"))
 suspend fun Scoped.delay(
 		duration: Float
 ) = suspendCoroutine<Unit> { cont ->

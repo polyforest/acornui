@@ -20,12 +20,12 @@ package com.acornui.js.gl
 
 import com.acornui.async.Deferred
 import com.acornui.async.Promise
-import com.acornui.core.Bandwidth
 import com.acornui.core.asset.AssetLoader
 import com.acornui.core.asset.AssetType
 import com.acornui.core.graphic.Texture
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
+import com.acornui.request.Bandwidth
 import org.w3c.dom.url.URL
 import kotlin.browser.window
 

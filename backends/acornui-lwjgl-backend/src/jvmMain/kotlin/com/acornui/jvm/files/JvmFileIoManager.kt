@@ -17,12 +17,14 @@
 package com.acornui.jvm.files
 
 import com.acornui.core.Platform
-import com.acornui.io.byteBuffer
-import com.acornui.core.platform
+import com.acornui.core.userInfo
 import com.acornui.file.FileFilterGroup
 import com.acornui.file.FileIoManager
 import com.acornui.file.FileReader
-import com.acornui.io.*
+import com.acornui.io.NativeReadBuffer
+import com.acornui.io.NativeReadByteBuffer
+import com.acornui.io.byteBuffer
+import com.acornui.io.toByteArray
 import org.lwjgl.PointerBuffer
 import org.lwjgl.system.MemoryUtil.memAllocPointer
 import org.lwjgl.system.MemoryUtil.memFree
@@ -79,7 +81,7 @@ class JvmFileIoManager : FileIoManager {
 	}
 
 	private fun List<FileFilterGroup>.toFilterListStr(): String? {
-		if (platform == Platform.APPLE) return null // Issue #36
+		if (userInfo.platform == Platform.APPLE) return null // Issue #36
 		return joinToString(";") { it.toFilterListStr() }
 	}
 

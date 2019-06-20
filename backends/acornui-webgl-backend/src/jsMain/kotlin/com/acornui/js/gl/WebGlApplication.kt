@@ -16,8 +16,8 @@
 
 package com.acornui.js.gl
 
-import com.acornui.async.launch
 import com.acornui.component.HtmlComponent
+import com.acornui.core.Version
 import com.acornui.core.asset.AssetType
 import com.acornui.core.asset.LoaderFactory
 import com.acornui.core.debug
@@ -56,7 +56,7 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 		document.getElementById(rootId) as HTMLElement
 	}
 
-	override val canvasTask by BootTask {
+	override val canvasTask by task(CANVAS) {
 		val root = rootElement
 		root.style.setProperty("-webkit-tap-highlight-color", "rgba(0,0,0,0)")
 		root.clear()
@@ -68,10 +68,10 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 			position = "absolute"
 		}
 		root.appendChild(canvas)
-		set(CANVAS, canvas)
+		canvas
 	}
 
-	protected open val glTask by BootTask {
+	protected open val glTask by task(Gl20) {
 		val glConfig = config().gl
 		val attributes = WebGLContextAttributes()
 		attributes.alpha = glConfig.alpha
@@ -83,45 +83,44 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 
 		val context = WebGl.getContext(get(CANVAS), attributes)
 				?: throw Exception("Browser does not support WebGL") // TODO: Make this a better UX
-		set(Gl20, WebGl20(context))
+		WebGl20(context)
 	}
 
-	override val windowTask by BootTask {
-		val config = config()
-		val window = WebGlWindowImpl(get(CANVAS), config.window, get(Gl20))
-		set(Window, window)
+	override val windowTask by task(Window) {
+		WebGlWindowImpl(get(CANVAS), config().window, get(Gl20))
+	}
+
+	protected open val uncaughtExceptionHandlerTask by task(uncaughtExceptionHandlerKey) {
+		val version = get(Version)
+		val window = get(Window)
 		uncaughtExceptionHandler = {
-			val message = it.stack + "\n${config.version.toVersionString()}"
+			val message = it.stack + "\n${version.toVersionString()}"
 			Log.error(message)
 			if (debug)
 				window.alert(message)
 		}
+		uncaughtExceptionHandler
 	}
 
-	protected open val glStateTask by BootTask {
-		set(GlState, GlStateImpl(get(Gl20), get(Window)))
+	protected open val glStateTask by task(GlState) {
+		GlStateImpl(get(Gl20), get(Window))
 	}
 
-	protected open val textureLoaderTask by BootTask {
-	}
-
-	override fun addAssetLoaders(loaders: MutableMap<AssetType<*>, LoaderFactory<*>>) {
+	override suspend fun addAssetLoaders(loaders: MutableMap<AssetType<*>, LoaderFactory<*>>) {
 		super.addAssetLoaders(loaders)
-		launch {
-			val gl = get(Gl20)
-			val glState = get(GlState)
-			loaders[AssetType.TEXTURE] = { path, estimatedBytesTotal -> WebGlTextureLoader(path, estimatedBytesTotal, gl, glState) }
-		}
+		val gl = get(Gl20)
+		val glState = get(GlState)
+		loaders[AssetType.TEXTURE] = { path, estimatedBytesTotal -> WebGlTextureLoader(path, estimatedBytesTotal, gl, glState) }
 	}
 
 	/**
 	 * The last chance to set dependencies on the application scope.
 	 */
-	override val componentsTask by BootTask {
-		set(HtmlComponent.FACTORY_KEY) { JsHtmlComponent(it, rootElement) }
+	override val componentsTask by task(HtmlComponent.FACTORY_KEY) {
+		{ JsHtmlComponent(it, rootElement) }
 	}
 
-	override val focusManagerTask by BootTask {
+	protected val focusManagerTask by task(FocusManager) {
 		// When the focused element changes, make sure the document's active element is the canvas.
 		val canvas = get(CANVAS)
 		val focusManager = FocusManagerImpl()
@@ -130,11 +129,11 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 				canvas.focus()
 			}
 		}
-		set(FocusManager, focusManager)
+		focusManager
 	}
 
-	protected open val fileIoManagerTask by BootTask {
-		set(FileIoManager, JsFileIoManager(rootElement))
+	protected open val fileIoManagerTask by task(FileIoManager) {
+		JsFileIoManager(rootElement)
 	}
 
 	override suspend fun initializeSpecialInteractivity(owner: Owned) {

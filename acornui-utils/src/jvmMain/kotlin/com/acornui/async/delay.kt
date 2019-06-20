@@ -16,24 +16,32 @@
 
 package com.acornui.async
 
-import kotlin.browser.window
+import com.acornui.core.Disposable
+import java.util.concurrent.Executors
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-/**
- * If true, it is possible to see which co-routines are stuck and what invoked them.
- *
- * To check active co-routines, pause the IDEA debugger, then Evaluate expression:
- * `com.acornui.async.AsyncKt.activeCoroutinesStr`
- */
-actual val debugCoroutines: Boolean by lazy { window.location.search.contains(Regex("""[&?]debugCoroutines=(true|1)""")) }
+private val sleepExecutor by lazy {
+	val e = Executors.newCachedThreadPool{
+		r ->
+		Thread(r, "AcornUI_Sleep")
+	}
+	val d = object : Disposable {
+		override fun dispose() {
+			e.shutdownNow()
+			PendingDisposablesRegistry.unregister(this)
+		}
+	}
+	PendingDisposablesRegistry.register(d)
+	e
+}
 
 /**
  * Suspends the coroutine for [duration] seconds.
  */
 actual suspend fun delay(duration: Float) = suspendCoroutine<Unit> { cont ->
-	window.setTimeout({
+	sleepExecutor.submit {
+		Thread.sleep((duration * 1000).toLong())
 		cont.resume(Unit)
-	}, (duration * 1000).toInt())
-
+	}
 }

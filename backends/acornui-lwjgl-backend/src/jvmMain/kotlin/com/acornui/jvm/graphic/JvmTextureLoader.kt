@@ -22,8 +22,6 @@ import com.acornui.core.graphic.Texture
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.jvm.loader.JvmAssetLoaderBase
-import com.acornui.jvm.loader.WorkScheduler
-import java.io.IOException
 import java.io.InputStream
 import javax.imageio.ImageIO
 
@@ -34,29 +32,27 @@ import javax.imageio.ImageIO
 open class JvmTextureLoader(
 		path: String,
 		private val gl: Gl20,
-		private val glState: GlState,
-		workScheduler: WorkScheduler<Texture>
-) : JvmAssetLoaderBase<Texture>(path, AssetType.TEXTURE, workScheduler) {
+		private val glState: GlState
+) : JvmAssetLoaderBase<Texture>(path, AssetType.TEXTURE) {
 
 	init {
 		init()
 	}
 
-	override fun create(inputStream: InputStream): Texture {
+	override suspend fun create(inputStream: InputStream): Texture {
 		return JvmTexture(gl, glState, createImageData(inputStream) ?: throw Exception("Could not load image at path \"$path\""))
 	}
 }
 
 open class JvmRgbDataLoader(
-		path: String,
-		workScheduler: WorkScheduler<RgbData>
-) : JvmAssetLoaderBase<RgbData>(path, AssetType.RGB_DATA, workScheduler) {
+		path: String
+) : JvmAssetLoaderBase<RgbData>(path, AssetType.RGB_DATA) {
 
 	init {
 		init()
 	}
 
-	override fun create(inputStream: InputStream): RgbData {
+	override suspend fun create(inputStream: InputStream): RgbData {
 		return createImageData(inputStream) ?: throw Exception("Could not load image at path \"$path\"")
 	}
 }
