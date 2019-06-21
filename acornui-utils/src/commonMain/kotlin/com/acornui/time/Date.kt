@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package com.acornui.core.time
+package com.acornui.time
 
-import com.acornui.core.text.parseDate
 import com.acornui.core.zeroPadding
-import com.acornui.serialization.Reader
-import com.acornui.serialization.Writer
 
 interface DateRo : Comparable<DateRo> {
 
@@ -157,15 +154,38 @@ fun DateRo.isSameDate(o: DateRo): Boolean {
 }
 
 /**
+ * The normalized year of the gregorian cutover in Gregorian, with
+ * 0 representing 1 BCE, -1 representing 2 BCE, etc.
+ */
+const val GREGORIAN_CUTOVER_YEAR = 1582
+
+/**
+ * Determines if the given year is a leap year. Returns `true` if
+ * the given year is a leap year. To specify BC year numbers,
+ * `1 - year number` must be given. For example, year BC 4 is
+ * specified as -3.
+ *
+ * @param year the given year.
+ * @return `true` if the given year is a leap year; `false` otherwise.
+ */
+fun isLeapYear(year: Int): Boolean {
+	if ((year and 3) != 0) {
+		return false
+	}
+	return if (year >= GREGORIAN_CUTOVER_YEAR) {
+		(year % 100 != 0) || (year % 400 == 0) // Gregorian
+	} else true // Julian calendar had no correction.
+}
+
+/**
  * Returns true if this Date's year is a leap year.
  */
 val DateRo.isLeapYear: Boolean
-	get() = DateUtil.isLeapYear(fullYear)
+	get() = isLeapYear(fullYear)
 
 /**
  * A Date object.
  * To convert this date to a string, use [com.acornui.core.text.DateTimeFormatter]
- * @author nbilyk
  */
 interface Date : DateRo {
 
@@ -270,31 +290,31 @@ enum class Era {
 	CE
 }
 
+object Months {
 
-fun Reader.dateIso(): Date? = parseDate(string())
-fun Reader.dateIso(name: String): Date? = get(name)?.dateIso()
-fun Writer.dateIso(date: DateRo?) {
-	if (date == null) writeNull()
-	else string(date.toIsoString())
-}
-fun Writer.dateIso(name: String, date: DateRo?) = property(name).dateIso(date)
+	val JANUARY: Int = 0
 
-/**
- * Reads the date as a Long - the number of milliseconds from the Unix Epoch.
- */
-fun Reader.dateTime(): Date? {
-	val t = long() ?: return null
-	return time.date(t)
-}
-fun Reader.dateTime(name: String): Date? = get(name)?.dateTime()
+	val FEBRUARY: Int = 1
 
-/**
- * Writes the date as a Long - the number of milliseconds from the Unix Epoch.
- */
-fun Writer.dateTime(date: DateRo?) {
-	if (date == null) writeNull()
-	else long(date.time)
+	val MARCH: Int = 2
+
+	val APRIL: Int = 3
+
+	val MAY: Int = 4
+
+	val JUNE: Int = 5
+
+	val JULY: Int = 6
+
+	val AUGUST: Int = 7
+
+	val SEPTEMBER: Int = 8
+
+	val OCTOBER: Int = 9
+
+	val NOVEMBER: Int = 10
+
+	val DECEMBER: Int = 11
 }
-fun Writer.dateTime(name: String, date: DateRo?) = property(name).dateTime(date)
 
 expect class DateImpl() : Date

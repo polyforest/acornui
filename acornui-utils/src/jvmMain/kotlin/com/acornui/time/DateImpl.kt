@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.acornui.core.time
+package com.acornui.time
 
 import com.acornui.core.zeroPadding
 import java.time.ZoneOffset

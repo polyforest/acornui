@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.acornui.core.time
+package com.acornui.time
 
 import com.acornui.core.zeroPadding
 
@@ -23,115 +23,115 @@ import com.acornui.core.zeroPadding
  */
 actual class DateImpl : Date {
 
-	internal val date = js("new Date();")
+	val jsDate = js("new Date();")
 
 	override var time: Long
 		get() {
-			return (date.getTime() as Number).toLong()
+			return (jsDate.getTime() as Number).toLong()
 		}
 		set(value) {
 			val t = value.asDynamic().toNumber()
-			date.setTime(t)
+			jsDate.setTime(t)
 		}
 
 	override var fullYear: Int
 		get() {
-			return date.getFullYear()
+			return jsDate.getFullYear()
 		}
 		set(value) {
-			date.setFullYear(value)
+			jsDate.setFullYear(value)
 		}
 
 	override var monthIndex: Int
-		get() = date.getMonth()
+		get() = jsDate.getMonth()
 		set(value) {
-			date.setMonth(value)
+			jsDate.setMonth(value)
 		}
 
 	override var dayOfMonth: Int
-		get() = date.getDate()
+		get() = jsDate.getDate()
 		set(value) {
-			date.setDate(value)
+			jsDate.setDate(value)
 		}
 
 	override val dayOfWeek: Int
-		get() = date.getDay()
+		get() = jsDate.getDay()
 
 
 	override var hour: Int
-		get() = date.getHours()
+		get() = jsDate.getHours()
 		set(value) {
-			date.setHours(value)
+			jsDate.setHours(value)
 		}
 
 	override var minute: Int
-		get() = date.getMinutes()
+		get() = jsDate.getMinutes()
 		set(value) {
-			date.setMinutes(value)
+			jsDate.setMinutes(value)
 		}
 
 	override var second: Int
-		get() = date.getSeconds()
+		get() = jsDate.getSeconds()
 		set(value) {
-			date.setSeconds(value)
+			jsDate.setSeconds(value)
 		}
 
 	override var milli: Int
-		get() = date.getMilliseconds()
+		get() = jsDate.getMilliseconds()
 		set(value) {
-			date.setMilliseconds(value)
+			jsDate.setMilliseconds(value)
 		}
 
 	override var utcFullYear: Int
 		get() {
-			return date.getUTCFullYear()
+			return jsDate.getUTCFullYear()
 		}
 		set(value) {
-			date.setUTCFullYear(value)
+			jsDate.setUTCFullYear(value)
 		}
 
 	override var utcMonthIndex: Int
-		get() = date.getUTCMonth()
+		get() = jsDate.getUTCMonth()
 		set(value) {
-			date.setUTCMonth(value)
+			jsDate.setUTCMonth(value)
 		}
 
 	override var utcDayOfMonth: Int
-		get() = date.getUTCDate()
+		get() = jsDate.getUTCDate()
 		set(value) {
-			date.setUTCDate(value)
+			jsDate.setUTCDate(value)
 		}
 
 	override val utcDayOfWeek: Int
-		get() = date.getUTCDay()
+		get() = jsDate.getUTCDay()
 
 
 	override var utcHour: Int
-		get() = date.getUTCHours()
+		get() = jsDate.getUTCHours()
 		set(value) {
-			date.setUTCHours(value)
+			jsDate.setUTCHours(value)
 		}
 
 	override var utcMinute: Int
-		get() = date.getUTCMinutes()
+		get() = jsDate.getUTCMinutes()
 		set(value) {
-			date.setUTCMinutes(value)
+			jsDate.setUTCMinutes(value)
 		}
 
 	override var utcSecond: Int
-		get() = date.getUTCSeconds()
+		get() = jsDate.getUTCSeconds()
 		set(value) {
-			date.setUTCSeconds(value)
+			jsDate.setUTCSeconds(value)
 		}
 
 	override var utcMilli: Int
-		get() = date.getUTCMilliseconds()
+		get() = jsDate.getUTCMilliseconds()
 		set(value) {
-			date.setUTCMilliseconds(value)
+			jsDate.setUTCMilliseconds(value)
 		}
 
 	override val timezoneOffset: Int
-		get() = date.getTimezoneOffset()
+		get() = jsDate.getTimezoneOffset()
 
 	override fun copy(): Date {
 		val newDate = DateImpl()

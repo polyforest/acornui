@@ -29,7 +29,7 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.own
 import com.acornui.core.selection.selectAll
 import com.acornui.core.text.*
-import com.acornui.core.time.DateRo
+import com.acornui.time.DateRo
 import com.acornui.core.userInfo
 import com.acornui.math.Bounds
 import com.acornui.signal.Signal0

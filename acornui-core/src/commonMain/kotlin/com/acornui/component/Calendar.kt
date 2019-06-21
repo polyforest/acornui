@@ -37,7 +37,7 @@ import com.acornui.core.input.interaction.MouseOrTouchState
 import com.acornui.core.input.interaction.click
 import com.acornui.core.input.keyDown
 import com.acornui.core.text.*
-import com.acornui.core.time.DateRo
+import com.acornui.time.DateRo
 import com.acornui.core.time.time
 import com.acornui.core.userInfo
 import com.acornui.core.zeroPadding

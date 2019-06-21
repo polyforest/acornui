@@ -16,6 +16,8 @@
 
 package com.acornui.core.time
 
+import com.acornui.time.Date
+
 /**
  * @author nbilyk
  */

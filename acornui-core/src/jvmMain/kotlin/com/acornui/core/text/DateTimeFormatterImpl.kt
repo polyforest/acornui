@@ -19,8 +19,8 @@ package com.acornui.core.text
 
 import com.acornui.collection.copy
 import com.acornui.core.i18n.Locale
-import com.acornui.core.time.DateImpl
-import com.acornui.core.time.DateRo
+import com.acornui.time.DateImpl
+import com.acornui.time.DateRo
 import com.acornui.core.userInfo
 import com.acornui.logging.Log
 import com.acornui.reflect.observable

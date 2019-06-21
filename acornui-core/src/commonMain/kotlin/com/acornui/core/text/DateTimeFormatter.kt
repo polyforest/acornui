@@ -18,8 +18,8 @@ package com.acornui.core.text
 
 import com.acornui.collection.indexOfFirst2
 import com.acornui.core.i18n.Locale
-import com.acornui.core.time.Date
-import com.acornui.core.time.DateRo
+import com.acornui.time.Date
+import com.acornui.time.DateRo
 import com.acornui.core.time.time
 
 /**

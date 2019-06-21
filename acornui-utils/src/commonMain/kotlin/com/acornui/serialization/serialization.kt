@@ -27,7 +27,7 @@ interface Serializer<T> {
 	fun write(callback: (writer: Writer) -> Unit): T
 
 	/**
-	 * Creates a Reader for the specified data, and passes it to the <code>out</code> object.
+	 * Creates a Reader for the specified data, and passes it to the `out` object.
 	 * @return Returns the now-populated out object for chaining.
 	 */
 	fun <E> read(data: T, factory: From<E>): E {

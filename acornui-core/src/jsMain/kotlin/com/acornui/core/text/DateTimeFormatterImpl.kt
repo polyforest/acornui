@@ -20,8 +20,8 @@ package com.acornui.core.text
 import com.acornui.collection.copy
 import com.acornui.core.i18n.Locale
 import com.acornui.core.text.DateTimeFormatStyle.*
-import com.acornui.core.time.DateImpl
-import com.acornui.core.time.DateRo
+import com.acornui.time.DateImpl
+import com.acornui.time.DateRo
 import com.acornui.core.userInfo
 import com.acornui.reflect.observable
 import kotlin.properties.ReadWriteProperty
@@ -92,9 +92,12 @@ actual class DateTimeFormatter : StringFormatter<DateRo> {
 
 	override fun format(value: DateRo): String {
 		value as DateImpl
-		return formatter!!.format(value.date) as String
+		return formatter!!.format(value.jsDate) as String
 	}
 
+	/**
+	 * Invalidates the formatter when the value has changed.
+	 */
 	private fun <T> watched(initial: T): ReadWriteProperty<Any?, T> {
 		return observable(initial) {
 			_formatter = null
