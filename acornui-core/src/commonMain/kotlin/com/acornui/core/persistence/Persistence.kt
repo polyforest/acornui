@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.acornui.core.persistance
+package com.acornui.core.persistence
 
 import com.acornui.recycle.Clearable
 import com.acornui.core.Version

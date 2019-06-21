@@ -42,7 +42,7 @@ import com.acornui.core.input.interaction.JvmClickDispatcher
 import com.acornui.core.input.interaction.UndoDispatcher
 import com.acornui.core.io.file.Files
 import com.acornui.core.io.file.FilesImpl
-import com.acornui.core.persistance.Persistence
+import com.acornui.core.persistence.Persistence
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionManagerImpl
 import com.acornui.core.time.TimeDriver
@@ -69,7 +69,7 @@ import com.acornui.jvm.input.JvmClipboard
 import com.acornui.jvm.input.LwjglKeyInput
 import com.acornui.jvm.loader.JvmBinaryLoader
 import com.acornui.jvm.loader.JvmTextLoader
-import com.acornui.jvm.persistance.LwjglPersistence
+import com.acornui.jvm.persistence.LwjglPersistence
 import com.acornui.logging.Log
 import com.acornui.serialization.parseJson
 import com.acornui.uncaughtExceptionHandler

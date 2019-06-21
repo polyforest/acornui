@@ -38,7 +38,7 @@ import com.acornui.core.input.interaction.ContextMenuManager
 import com.acornui.core.input.interaction.UndoDispatcher
 import com.acornui.core.io.file.Files
 import com.acornui.core.io.file.FilesImpl
-import com.acornui.core.persistance.Persistence
+import com.acornui.core.persistence.Persistence
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionManagerImpl
 import com.acornui.core.time.TimeDriver
@@ -54,7 +54,7 @@ import com.acornui.js.input.JsKeyInput
 import com.acornui.js.input.JsMouseInput
 import com.acornui.js.loader.JsBinaryLoader
 import com.acornui.js.loader.JsTextLoader
-import com.acornui.js.persistance.JsPersistence
+import com.acornui.js.persistence.JsPersistence
 import com.acornui.logging.Log
 import com.acornui.serialization.parseJson
 import com.acornui.uncaughtExceptionHandler

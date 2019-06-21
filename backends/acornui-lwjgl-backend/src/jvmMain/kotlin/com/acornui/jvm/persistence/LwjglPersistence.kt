@@ -16,11 +16,11 @@
 
 @file:Suppress("LoopToCallChain")
 
-package com.acornui.jvm.persistance
+package com.acornui.jvm.persistence
 
 import com.acornui.collection.stringMapOf
 import com.acornui.core.Version
-import com.acornui.core.persistance.Persistence
+import com.acornui.core.persistence.Persistence
 import com.acornui.serialization.*
 import java.io.File
 

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.acornui.js.persistance
+package com.acornui.js.persistence
 
 import com.acornui.core.Version
-import com.acornui.core.persistance.Persistence
+import com.acornui.core.persistence.Persistence
 import kotlin.browser.localStorage
 
 class JsPersistence(private val currentVersion: Version) : Persistence {
