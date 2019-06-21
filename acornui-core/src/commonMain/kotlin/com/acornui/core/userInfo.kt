@@ -1,7 +1,10 @@
+@file:JvmName("UserInfoUtils")
+
 package com.acornui.core
 
 import com.acornui.core.i18n.Locale
 import com.acornui.core.observe.DataBindingImpl
+import kotlin.jvm.JvmName
 
 /**
  * A singleton reference to the user info. This does not need to be scoped; there can only be one machine.
