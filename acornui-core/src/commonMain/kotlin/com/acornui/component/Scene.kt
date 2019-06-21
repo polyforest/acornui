@@ -37,7 +37,7 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	private val cam = orthographicCamera(autoCenter = false)
 
 	init {
-		validation.addNode(1 shl 16, ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT, ::updateViewport)
+		validation.addNode(1 shl 16, ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT, ::updateCanvasTransform)
 		cameraOverride = cam
 		_renderContext.modelTransformOverride = Matrix4.IDENTITY
 		_renderContext.clipRegionOverride = MinMaxRo.POSITIVE_INFINITY
@@ -56,7 +56,7 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	private val region = MinMax()
 	private val canvasTransformOverride = IntRectangle()
 
-	private fun updateViewport() {
+	private fun updateCanvasTransform() {
 		_renderContext.parentContext.localToCanvas(region.set(x, y, width, height))
 		_renderContext.canvasTransformOverride = canvasTransformOverride.set(
 				floor(region.xMin).toInt(),
