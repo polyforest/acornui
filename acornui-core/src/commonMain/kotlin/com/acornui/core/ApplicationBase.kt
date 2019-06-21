@@ -16,23 +16,27 @@
 
 package com.acornui.core
 
-import com.acornui.async.*
-import com.acornui.core.di.Bootstrap
-import com.acornui.core.di.DKey
-import com.acornui.core.di.Injector
-import com.acornui.core.di.InjectorImpl
+import com.acornui.async.PendingDisposablesRegistry
+import com.acornui.async.Work
+import com.acornui.async.launch
+import com.acornui.core.asset.AssetManager
+import com.acornui.core.asset.AssetType
+import com.acornui.core.di.*
+import com.acornui.core.io.file.Files
 import com.acornui.logging.Log
-import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
 
 /**
  * Utilities for boot tasks in an application.
  */
 abstract class ApplicationBase : Disposable {
 
-	protected suspend fun config(): AppConfig = get(AppConfig)
+	/**
+	 * The number of seconds before logs are created for any remaining boot tasks.
+	 */
+	var timeout = 10f
 
-	private val pendingTasks = HashMap<String, Pair<String, suspend () -> Unit>>()
+	suspend fun config() = get(AppConfig)
+
 	private val bootstrap = Bootstrap()
 
 	protected fun <T : Any> set(key: DKey<T>, value: T) = bootstrap.set(key, value)
@@ -42,36 +46,24 @@ abstract class ApplicationBase : Disposable {
 	protected suspend fun createInjector(): Injector = InjectorImpl(bootstrap.dependenciesList())
 
 	protected suspend fun awaitAll() {
-		val waitFor = ArrayList<Deferred<Unit>>()
-		for (pendingTask in pendingTasks.values) {
-			waitFor.add(async {
-				try {
-					//Log.debug("Task started: ${pendingTask.first}")
-					pendingTask.second()
-					//Log.debug("Task finished: ${pendingTask.first}")
-				} catch (e: Throwable) {
-					Log.error("Task failed: ${pendingTask.first} $e")
-				}
-			})
-		}
-		waitFor.awaitAll()
-		pendingTasks.clear()
+		bootstrap.awaitAll()
 	}
 
-	protected class BootTask(private val work: suspend () -> Unit) : ReadOnlyProperty<ApplicationBase, suspend () -> Unit> {
+	abstract val assetManagerTask: suspend () -> AssetManager
+	abstract val filesTask: suspend () -> Files
 
-		operator fun provideDelegate(
-				thisRef: ApplicationBase,
-				prop: KProperty<*>
-		): ReadOnlyProperty<ApplicationBase, suspend () -> Unit> {
-			thisRef.pendingTasks[prop.name] = prop.name to work
-			return this
+	protected open val versionTask by task(Version) {
+		// Copy the app config and set the build number.
+		val buildFile = get(Files).getFile("assets/build.txt")
+		val version = if (buildFile == null) Version(0, 0, 0) else {
+			val buildTimestamp = get(AssetManager).load(buildFile.path, AssetType.TEXT).await()
+			Version.fromStr(buildTimestamp)
 		}
-
-		override fun getValue(thisRef: ApplicationBase, property: KProperty<*>): suspend () -> Unit {
-			return work
-		}
+		Log.info("Version $version")
+		version
 	}
+
+	fun <T : Any> task(dKey: DKey<T>, timeout: Float = 10f, work: Work<T>) = bootstrap.task(dKey, timeout, work)
 
 	override fun dispose() {
 		Log.info("Application disposing")
@@ -81,5 +73,9 @@ abstract class ApplicationBase : Disposable {
 			bootstrap.dispose()
 			Log.info("Application disposed")
 		}
+	}
+
+	companion object {
+		val uncaughtExceptionHandlerKey: DKey<(error: Throwable) -> Unit> = dKey()
 	}
 }
