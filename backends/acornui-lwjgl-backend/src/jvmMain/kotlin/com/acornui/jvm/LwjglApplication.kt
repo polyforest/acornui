@@ -169,7 +169,7 @@ open class LwjglApplication : ApplicationBase() {
 	}
 
 	protected open val mouseInputTask by task(MouseInput) {
-		GlfwMouseInput(getWindowId())
+		GlfwMouseInput(getWindowId(), get(Window))
 	}
 
 	protected open val keyInputTask by task(KeyInput) {

@@ -97,8 +97,16 @@ class GlfwWindowImpl(
 		//GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GL11.GL_FALSE) // the window will stay hidden after creation
 		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GL11.GL_TRUE) // the window will be resizable
 
+		// Get the monitor dpi scale
+		val monitor = GLFW.glfwGetPrimaryMonitor()
+		val scaleXArr = FloatArray(1)
+		val scaleYArr = FloatArray(1)
+		GLFW.glfwGetMonitorContentScale(monitor, scaleXArr, scaleYArr)
+		_scaleX = scaleXArr[0]
+		_scaleY = scaleYArr[0]
+
 		// Create the window
-		windowId = GLFW.glfwCreateWindow(windowConfig.initialWidth.toInt(), windowConfig.initialHeight.toInt(), windowConfig.title, MemoryUtil.NULL, MemoryUtil.NULL)
+		windowId = GLFW.glfwCreateWindow((windowConfig.initialWidth * _scaleX).toInt(), (windowConfig.initialHeight * _scaleY).toInt(), windowConfig.title, MemoryUtil.NULL, MemoryUtil.NULL)
 		if (windowId == MemoryUtil.NULL)
 			throw Exception("Failed to create the GLFW window")
 
@@ -144,19 +152,11 @@ class GlfwWindowImpl(
 			stack.close()
 		}
 
-		// Get the window high definition scale
-		val monitor = GLFW.glfwGetPrimaryMonitor()
-		val scaleXArr = FloatArray(1)
-		val scaleYArr = FloatArray(1)
-		GLFW.glfwGetMonitorContentScale(monitor, scaleXArr, scaleYArr)
-		_scaleX = scaleXArr[0]
-		_scaleY = scaleYArr[0]
-
 		// Get the resolution of the primary monitor
 		val vidMode = GLFW.glfwGetVideoMode(monitor)
 		// Center our window
 		if (vidMode != null)
-			GLFW.glfwSetWindowPos(windowId, (vidMode.width() - windowConfig.initialWidth.toInt()) / 2, (vidMode.height() - windowConfig.initialHeight.toInt()) / 2)
+			GLFW.glfwSetWindowPos(windowId, (vidMode.width() - (windowConfig.initialWidth * _scaleX).toInt()) / 2, (vidMode.height() - (windowConfig.initialHeight * _scaleY).toInt()) / 2)
 
 		// Make the OpenGL context current
 		GLFW.glfwMakeContextCurrent(windowId)
@@ -179,7 +179,7 @@ class GlfwWindowImpl(
 //			GLUtil.setupDebugMessageCallback()
 //		}
 
-		setSize(windowConfig.initialWidth, windowConfig.initialHeight)
+		setSize(windowConfig.initialWidth, windowConfig.initialHeight, isUserInteraction = true)
 
 		clearColor = windowConfig.backgroundColor
 
@@ -220,7 +220,8 @@ class GlfwWindowImpl(
 
 	private fun setSize(width: Float, height: Float, isUserInteraction: Boolean) {
 		if (_width == width && _height == height) return // no-op
-		GLFW.glfwSetWindowSize(windowId, width.toInt(), height.toInt())
+		if (!isUserInteraction)
+			GLFW.glfwSetWindowSize(windowId, (width * _scaleX).toInt(), (height * _scaleY).toInt())
 		updateSize(width, height, isUserInteraction)
 	}
 
@@ -287,7 +288,7 @@ class GlfwWindowImpl(
 					setSize(w.toFloat(), h.toFloat(), isUserInteraction = false)
 					GLFW.glfwSetWindowMonitor(windowId, GLFW.glfwGetPrimaryMonitor(), 0, 0, w, h, r)
 				} else {
-					GLFW.glfwSetWindowMonitor(windowId, 0, ((w - lastWidth) * 0.5f).toInt(), ((h - lastHeight) * 0.5f).toInt(), lastWidth.toInt(), lastHeight.toInt(), 60)
+					GLFW.glfwSetWindowMonitor(windowId, 0, ((w - lastWidth * _scaleX) * 0.5f).toInt(), ((h - lastHeight * _scaleY) * 0.5f).toInt(), (lastWidth * _scaleX).toInt(), (lastHeight * _scaleY).toInt(), 60)
 				}
 				if (glConfig.vSync)
 					GLFW.glfwSwapInterval(1)

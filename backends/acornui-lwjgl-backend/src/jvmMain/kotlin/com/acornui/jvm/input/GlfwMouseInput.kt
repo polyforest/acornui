@@ -16,6 +16,7 @@
 
 package com.acornui.jvm.input
 
+import com.acornui.core.graphic.Window
 import com.acornui.core.input.MouseInput
 import com.acornui.core.input.WhichButton
 import com.acornui.core.input.interaction.*
@@ -28,7 +29,7 @@ import org.lwjgl.glfw.*
 /**
  * @author nbilyk
  */
-class GlfwMouseInput(private val window: Long) : MouseInput {
+class GlfwMouseInput(private val windowId: Long, val window: Window) : MouseInput {
 
 	// TODO: Touch input for lwjgl?
 
@@ -98,10 +99,10 @@ class GlfwMouseInput(private val window: Long) : MouseInput {
 	}
 
 	private val cursorPosCallback: GLFWCursorPosCallback = object : GLFWCursorPosCallback() {
-		override fun invoke(window: Long, xpos: Double, ypos: Double) {
+		override fun invoke(windowId: Long, xpos: Double, ypos: Double) {
 			if (mouseMove.isDispatching) return
-			_canvasX = xpos.toFloat()
-			_canvasY = ypos.toFloat()
+			_canvasX = (xpos / window.scaleX).toFloat()
+			_canvasY = (ypos / window.scaleY).toFloat()
 
 			mouseEvent.clear()
 			mouseEvent.canvasX = _canvasX
@@ -135,10 +136,10 @@ class GlfwMouseInput(private val window: Long) : MouseInput {
 	}
 
 	init {
-		GLFW.glfwSetMouseButtonCallback(window, mouseButtonCallback)
-		GLFW.glfwSetCursorPosCallback(window, cursorPosCallback)
-		GLFW.glfwSetCursorEnterCallback(window, cursorEnterCallback)
-		GLFW.glfwSetScrollCallback(window, mouseWheelCallback)
+		GLFW.glfwSetMouseButtonCallback(windowId, mouseButtonCallback)
+		GLFW.glfwSetCursorPosCallback(windowId, cursorPosCallback)
+		GLFW.glfwSetCursorEnterCallback(windowId, cursorEnterCallback)
+		GLFW.glfwSetScrollCallback(windowId, mouseWheelCallback)
 	}
 
 	override fun mouseIsDown(button: WhichButton): Boolean {
@@ -146,10 +147,10 @@ class GlfwMouseInput(private val window: Long) : MouseInput {
 	}
 
 	override fun dispose() {
-		GLFW.glfwSetMouseButtonCallback(window, null)
-		GLFW.glfwSetCursorPosCallback(window, null)
-		GLFW.glfwSetCursorEnterCallback(window, null)
-		GLFW.glfwSetScrollCallback(window, null)
+		GLFW.glfwSetMouseButtonCallback(windowId, null)
+		GLFW.glfwSetCursorPosCallback(windowId, null)
+		GLFW.glfwSetCursorEnterCallback(windowId, null)
+		GLFW.glfwSetScrollCallback(windowId, null)
 
 		_touchStart.dispose()
 		_touchEnd.dispose()
@@ -165,13 +166,13 @@ class GlfwMouseInput(private val window: Long) : MouseInput {
 
 	companion object {
 		fun getWhichButton(button: Int): WhichButton {
-			when (button) {
-				0 -> return WhichButton.LEFT
-				1 -> return WhichButton.RIGHT
-				2 -> return WhichButton.MIDDLE
-				3 -> return WhichButton.BACK
-				4 -> return WhichButton.FORWARD
-				else -> return WhichButton.UNKNOWN
+			return when (button) {
+				0 -> WhichButton.LEFT
+				1 -> WhichButton.RIGHT
+				2 -> WhichButton.MIDDLE
+				3 -> WhichButton.BACK
+				4 -> WhichButton.FORWARD
+				else -> WhichButton.UNKNOWN
 			}
 		}
 	}

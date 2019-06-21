@@ -17,6 +17,7 @@
 package com.acornui.component
 
 import com.acornui.core.di.inject
+import com.acornui.core.graphic.Window
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.ShaderBatch
@@ -93,14 +94,17 @@ fun UiComponentRo.scissorLocal(x: Float, y: Float, width: Float, height: Float, 
 	val sY2 = tmp.y
 	Vector3.free(tmp)
 
+	val window = inject(Window)
 	val glState = inject(GlState)
 	val intR = IntRectangle.obtain()
 	intR.set(glState.viewport)
+	val sX = window.scaleX
+	val sY = window.scaleY
 	glState.useScissor(
-			minOf(sX1, sX2).roundToInt(),
-			(intR.height - maxOf(sY1, sY2)).roundToInt(),
-			abs(sX2 - sX1).roundToInt(),
-			abs(sY2 - sY1).roundToInt(),
+			(minOf(sX1, sX2) * sX).roundToInt(),
+			(intR.height - maxOf(sY1, sY2) * sY).roundToInt(),
+			(abs(sX2 - sX1) * sX).roundToInt(),
+			(abs(sY2 - sY1) * sY).roundToInt(),
 			inner
 	)
 	IntRectangle.free(intR)
