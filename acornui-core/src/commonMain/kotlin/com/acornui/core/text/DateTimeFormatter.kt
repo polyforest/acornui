@@ -59,7 +59,7 @@ expect class DateTimeFormatter() : StringFormatter<DateRo> {
 	/**
 	 * The ordered locale chain to use for formatting. If this is left null, the user's current locale will be used.
 	 *
-	 * See [https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#Locale_identification_and_negotiation]
+	 * See [Locale Identification](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#Locale_identification_and_negotiation)
 	 */
 	var locales: List<Locale>?
 
