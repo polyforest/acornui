@@ -44,9 +44,9 @@ class TossScroller(
 		 * Dampening affects how quickly the toss velocity will slow to a stop.
 		 * Make this number 0 &lt; dampening &lt; 1.  Where 1 will go forever, and 0 will prevent any momentum.
 		 */
-		var dampening: Float = TossScroller.DEFAULT_DAMPENING,
+		var dampening: Float = DEFAULT_DAMPENING,
 
-		private val dragAttachment: DragAttachment = target.dragAttachment(TossScroller.minTossDistance)
+		private val dragAttachment: DragAttachment = target.dragAttachment(minTossDistance)
 ) : Disposable {
 
 	private val tickTime = target.tickTime

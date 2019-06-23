@@ -24,7 +24,6 @@ import com.acornui.component.style.*
 import com.acornui.core.di.Owned
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.KeyState
-import com.acornui.core.input.interaction.WheelInteractionRo
 import com.acornui.core.input.wheel
 import com.acornui.core.tween.Tween
 import com.acornui.core.tween.createPropertyTween
