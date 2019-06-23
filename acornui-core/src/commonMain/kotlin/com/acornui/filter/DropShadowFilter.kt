@@ -46,7 +46,7 @@ open class DropShadowFilter(owner: Owned) : RenderFilterBase(owner) {
 	}
 
 	/**
-	 * The x offset to translate the rendering of the frame buffer.
+	 * The x offset to translate the rendering of the framebuffer.
 	 */
 	var offsetX by bindable(3f)
 

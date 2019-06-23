@@ -486,8 +486,8 @@ interface Gl20 {
 	fun bindBuffer(target: Int, buffer: GlBufferRef?)
 
 	/**
-	 * Sets the current framebuffer to framebuffer. target must be [FRAMEBUFFER]. See createFramebuffer() for an
-	 * example of using bindFramebuffer().
+	 * Sets the current frame buffer to [framebuffer]. target must be [FRAMEBUFFER]. See [createFramebuffer] for an
+	 * example of using [bindFramebuffer].
 	 */
 	fun bindFramebuffer(target: Int, framebuffer: GlFramebufferRef?)
 

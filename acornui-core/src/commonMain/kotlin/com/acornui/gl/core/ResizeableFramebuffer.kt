@@ -24,6 +24,7 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.graphic.Camera
 import com.acornui.core.graphic.OrthographicCamera
 import com.acornui.core.graphic.Texture
+import com.acornui.core.graphic.flipYDown
 import com.acornui.math.MathUtils.nextPowerOfTwo
 import kotlin.math.ceil
 
@@ -82,11 +83,12 @@ class ResizeableFramebuffer(
 			framebuffer?.dispose()
 			framebuffer = null
 		} else {
-			if (oldW < newW || oldH < newH) {
+			if (newW > oldW || newH > oldH) {
 				framebuffer?.dispose()
 				framebuffer = Framebuffer(gl, glState, maxOf(oldW, newW), maxOf(oldH, newH), hasDepth, hasStencil)
 			}
 		}
+		framebuffer!!.setViewport(0, 0, widthInt, heightInt)
 	}
 
 	/**
@@ -118,7 +120,7 @@ class ResizeableFramebuffer(
 	 *
 	 * @param camera The camera to configure. (A newly constructed Sprite is the default)
 	 */
-	fun camera(camera: Camera = OrthographicCamera()): Camera {
+	fun camera(camera: Camera = OrthographicCamera().apply { flipYDown() }): Camera {
 		framebuffer?.camera(camera)
 		return camera
 	}

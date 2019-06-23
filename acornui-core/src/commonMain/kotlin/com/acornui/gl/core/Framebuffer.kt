@@ -192,21 +192,20 @@ class Framebuffer(
 
 
 	/**
-	 * Configures a Camera for rendering this frame buffer.
-	 * This will set the viewport and positioning to 'see' the frame buffer.
+	 * Configures a Camera to match the viewport used in this framebuffer.
+	 * This will set the viewport and positioning to 'see' the framebuffer.
 	 *
 	 * @param camera The camera to configure. (A newly constructed Sprite is the default)
 	 */
-	fun camera(camera: Camera = OrthographicCamera()): Camera {
+	fun camera(camera: Camera = OrthographicCamera().apply { flipYDown() }): Camera {
 		return camera.apply {
-			flipYDown()
-			setViewport(width.toFloat(), height.toFloat())
-			moveToLookAtRect(0f, 0f, viewportWidth, viewportHeight)
+			setViewport(_viewport.width.toFloat(), _viewport.height.toFloat())
+			moveToLookAtRect(_viewport.x.toFloat(), _viewport.y.toFloat(), viewportWidth, viewportHeight)
 		}
 	}
 
 	/**
-	 * Configures a Sprite for rendering this frame buffer.
+	 * Configures a Sprite for rendering this framebuffer.
 	 *
 	 * @param sprite The sprite to configure. (A newly constructed Sprite is the default)
 	 */
