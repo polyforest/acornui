@@ -24,8 +24,6 @@ import com.acornui.core.graphic.orthographicCamera
 import com.acornui.gl.core.useViewportFromCanvasTransform
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
-import kotlin.math.ceil
-import kotlin.math.floor
 
 /**
  * A Scene renders its children within an unrotated window according to its explicit size and position.
@@ -54,15 +52,15 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	}
 
 	private val region = MinMax()
-	private val canvasTransformOverride = IntRectangle()
+	private val canvasTransformOverride = Rectangle()
 
 	private fun updateCanvasTransform() {
 		_renderContext.parentContext.localToCanvas(region.set(x, y, width, height))
 		_renderContext.canvasTransformOverride = canvasTransformOverride.set(
-				floor(region.xMin).toInt(),
-				floor(region.yMin).toInt(),
-				ceil(region.width).toInt(),
-				ceil(region.height).toInt()
+				region.xMin,
+				region.yMin,
+				region.width,
+				region.height
 		)
 	}
 

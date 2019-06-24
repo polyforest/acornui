@@ -55,9 +55,9 @@ interface CanvasTransformableRo : ModelTransformableRo {
 	/**
 	 * The affine transformation to convert clip space coordinates to canvas coordinates.
 	 * The canvas coordinate space is the same coordinate space as input events.
-	 * The top left of the canvas is 0,0 and the bottom right is the canvas width and height without dpi scaling.
+	 * The top left of the canvas is 0,0 and the bottom right is the canvas width and height, in points, not pixels.
 	 */
-	val canvasTransform: IntRectangleRo
+	val canvasTransform: RectangleRo
 }
 
 /**

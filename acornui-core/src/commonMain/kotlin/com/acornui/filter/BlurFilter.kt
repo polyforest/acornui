@@ -39,6 +39,7 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	var quality by bindable(BlurQuality.NORMAL)
 
 	private val gl = inject(Gl20)
+	private val window = inject(Window)
 	private val glState = inject(GlState)
 	private val blurFramebufferA = own(resizeableFramebuffer())
 	private val blurFramebufferB = own(resizeableFramebuffer())
@@ -66,8 +67,6 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 			super.contents = value
 			framebufferUtil.contents = value
 		}
-
-	private val window = inject(Window)
 
 	init {
 		framebufferUtil.clearColor = Color(0.5f, 0.5f, 0.5f, 0f)
@@ -120,6 +119,7 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 
 		blurFramebufferB.sprite(sprite)
 		sprite.setUv(sprite.u, 1f - sprite.v, sprite.u2, 1f - sprite.v2, isRotated = false)
+		//sprite.setScaling(window.scaleX, window.scaleY)
 	}
 
 	fun drawBlurToScreen(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {

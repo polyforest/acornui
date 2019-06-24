@@ -19,6 +19,7 @@ package com.acornui.core.popup
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.core.di.Owned
+import com.acornui.function.as2
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 
@@ -77,14 +78,9 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 		}
 	}
 
-	val windowResizedHandler: (Float, Float, Boolean) -> Unit = {
-		newWidth: Float, newHeight: Float, isUserInteraction: Boolean ->
-		invalidate(ValidationFlags.RENDER_CONTEXT)
-	}
-
 	override fun onActivated() {
 		super.onActivated()
-		window.sizeChanged.add(windowResizedHandler)
+		window.sizeChanged.add(::windowResizedHandler.as2)
 
 		addPopUp(PopUpInfo(contents, dispose = false, isModal = isModal, priority = priority, focus = focus, highlightFocused = highlightFocused, onClosed = { onClosed?.invoke() }))
 		if (constrainToStage) invalidate(ValidationFlags.RENDER_CONTEXT)
@@ -92,8 +88,12 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 
 	override fun onDeactivated() {
 		super.onDeactivated()
-		window.sizeChanged.remove(windowResizedHandler)
+		window.sizeChanged.remove(::windowResizedHandler.as2)
 		removePopUp(contents)
+	}
+
+	private fun windowResizedHandler() {
+		invalidate(ValidationFlags.RENDER_CONTEXT)
 	}
 
 	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {

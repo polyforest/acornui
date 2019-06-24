@@ -66,35 +66,3 @@ fun Owned.orthographicCamera(autoCenter: Boolean = false, init: OrthographicCame
 	p.init()
 	return p
 }
-
-class FramebufferOrthographicCamera : CameraBase() {
-
-	/**
-	 * The zoom of the camera.
-	 * The camera will be able to see zoom * viewport pixels.
-	 */
-	var zoom: Float by bindable(1f)
-
-	private val tmp: Vector3 = Vector3()
-	private val tmp2: Vector2 = Vector2()
-
-	init {
-		near = -1f
-	}
-
-	override fun updateViewProjection() {
-		_projection.setToOrtho(zoom * -viewportWidth * 0.5f, zoom * viewportWidth * 0.5f, zoom * viewportHeight * 0.5f, zoom * -viewportHeight * 0.5f, near, far)
-		_projection.trn(-1f, -1f, 0f)
-		_view.setToLookAt(position, tmp.set(position).add(direction), up)
-		_combined.set(_projection)
-		_combined.mul(_view)
-	}
-
-	override fun moveToLookAtRect(x: Float, y: Float, width: Float, height: Float, scaling: Scaling) {
-		scaling.apply(viewportWidth, viewportHeight, width, height, tmp2)
-		val (newW, newH) = tmp2
-		zoom = if (viewportWidth == 0f) 0f else newW / viewportWidth
-		_position.set(x + newW * 0.5f, y + newH * 0.5f, 0f)
-		dirty()
-	}
-}

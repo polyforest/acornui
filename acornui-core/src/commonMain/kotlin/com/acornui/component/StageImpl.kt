@@ -30,7 +30,6 @@ import com.acornui.function.as2
 import com.acornui.function.as3
 import com.acornui.logging.Log
 import com.acornui.math.Bounds
-import kotlin.math.ceil
 
 /**
  * @author nbilyk
@@ -75,18 +74,29 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 	 * This will update the viewport and framebuffer information.
 	 */
 	protected open fun windowChangedHandler() {
-		val w = window.framebufferWidth
-		val h = window.framebufferHeight
-		glState.setViewport(0, 0, w, h)
-		glState.setFramebuffer(null, w, h, window.scaleX, window.scaleY)
 		invalidate(ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT)
 	}
 
 	override fun onActivated() {
-		window.sizeChanged.add(::windowChangedHandler.as3)
+		window.sizeChanged.add(::windowChangedHandler.as2)
 		window.scaleChanged.add(::windowChangedHandler.as2)
 		windowChangedHandler()
 		super.onActivated()
+	}
+
+	override fun onDeactivated() {
+		super.onDeactivated()
+		window.sizeChanged.remove(::windowChangedHandler.as2)
+		window.scaleChanged.remove(::windowChangedHandler.as2)
+	}
+
+	override fun updateRenderContext() {
+		val w = window.framebufferWidth
+		val h = window.framebufferHeight
+		glState.setViewport(0, 0, w, h)
+		glState.setFramebuffer(null, w, h, window.scaleX, window.scaleY)
+		defaultRenderContext.validate()
+		super.updateRenderContext()
 	}
 
 	override fun invalidate(flags: Int): Int {
@@ -129,10 +139,6 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		glState.batch.flush()
 	}
 
-	override fun onDeactivated() {
-		super.onDeactivated()
-		window.sizeChanged.remove(::windowChangedHandler.as3)
-		window.scaleChanged.remove(::windowChangedHandler.as2)
-	}
+
 
 }

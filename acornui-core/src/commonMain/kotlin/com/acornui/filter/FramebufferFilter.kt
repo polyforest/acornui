@@ -33,6 +33,8 @@ import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.acornui.signal.Signal0
 import com.acornui.signal.bind
+import kotlin.math.ceil
+import kotlin.math.floor
 
 /**
  * Creates a Framebuffer and provides utility to draw a [Renderable] object to it and then draw the frame buffer to the
@@ -75,6 +77,8 @@ class FramebufferFilter(
 	fun drawToFramebuffer() {
 		val contents = contents ?: return
 		val drawRegion = drawRegion
+		val scaleX = 1f
+		val scaleY = 1f
 		framebuffer.setSize(drawRegion.width, drawRegion.height)
 		val bounds = bounds
 		drawable.padding.set(drawRegion.xMin, drawRegion.yMin, bounds.width - drawRegion.xMax, bounds.height - drawRegion.yMax)
@@ -82,21 +86,22 @@ class FramebufferFilter(
 		viewport.set(glState.viewport)
 		framebuffer.begin()
 		glState.setViewport(
-				-drawRegion.xMin.toInt(),
-				drawRegion.yMin.toInt() - renderContext.canvasTransform.height + framebuffer.texture.height,
-				renderContext.canvasTransform.width,
-				renderContext.canvasTransform.height
+				floor(-drawRegion.xMin).toInt(),
+				floor((drawRegion.yMin.toInt() - renderContext.canvasTransform.height + framebuffer.texture.height)).toInt(),
+				ceil(renderContext.canvasTransform.width).toInt(),
+				ceil(renderContext.canvasTransform.height).toInt()
 		)
 		if (clearMask != 0)
 			clearAndReset(clearColor, clearMask)
 
+		defaultRenderContext.validate()
 		contents.render(defaultRenderContext)
 
 		framebuffer.end()
 		framebuffer.sprite(sprite)
-		drawable.updateVertices()
-
 		sprite.setUv(sprite.u, 1f - sprite.v, sprite.u2, 1f - sprite.v2, isRotated = false)
+		sprite.setScaling(scaleX, scaleY)
+		drawable.updateVertices()
 		glState.setViewport(viewport)
 		drew.dispatch()
 	}

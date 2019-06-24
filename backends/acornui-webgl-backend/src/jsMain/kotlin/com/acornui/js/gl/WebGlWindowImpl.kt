@@ -47,20 +47,24 @@ class WebGlWindowImpl(
 	private val _closeRequested = Signal1<Cancel>()
 	override val closeRequested: Signal<(Cancel) -> Unit> = _closeRequested.asRo()
 
-	private val _isActiveChanged: Signal1<Boolean> = Signal1()
+	private val _isActiveChanged = Signal1<Boolean>()
 	override val isActiveChanged = _isActiveChanged.asRo()
 
-	private val _isVisibleChanged: Signal1<Boolean> = Signal1()
+	private val _isVisibleChanged = Signal1<Boolean>()
 	override val isVisibleChanged = _isVisibleChanged.asRo()
 
-	private val _sizeChanged: Signal3<Float, Float, Boolean> = Signal3()
+	private val _sizeChanged = Signal2<Float, Float>()
 	override val sizeChanged = _sizeChanged.asRo()
 
-	private val _scaleChanged: Signal2<Float, Float> = Signal2()
+	private val _scaleChanged = Signal2<Float, Float>()
 	override val scaleChanged = _scaleChanged.asRo()
 
-	private var _width: Float = 0f
-	private var _height: Float = 0f
+	override var width: Float = canvas.offsetWidth.toFloat()
+		private set
+
+	override var height: Float = canvas.offsetHeight.toFloat()
+		private set
+
 	private var sizeIsDirty: Boolean = true
 
 	// Visibility properties
@@ -84,8 +88,6 @@ class WebGlWindowImpl(
 	private var scaleQuery = window.matchMedia("(resolution: ${window.devicePixelRatio}dppx")
 
 	init {
-		setSizeInternal(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat(), isUserInteraction = true)
-
 		window.addEventListener("resize", ::resizeHandler.as1)
 		canvas.addEventListener("webglcontextrestored", ::webGlContextRestoredHandler.as1)
 		window.addEventListener("blur", ::blurHandler.as1)
@@ -151,7 +153,11 @@ class WebGlWindowImpl(
 	}
 
 	private fun resizeHandler() {
-		setSizeInternal(canvas.offsetWidth.toFloat(), canvas.offsetHeight.toFloat(), isUserInteraction = true)
+		this.width = canvas.offsetWidth.toFloat()
+		this.height = canvas.offsetHeight.toFloat()
+		sizeIsDirty = true
+		_sizeChanged.dispatch(width, height)
+		requestRender()
 	}
 
 	private fun watchForVisibilityChanges() {
@@ -196,12 +202,6 @@ class WebGlWindowImpl(
 			_isActiveChanged.dispatch(value)
 		}
 
-	override val width: Float
-		get() = _width
-
-	override val height: Float
-		get() = _height
-
 	override val framebufferWidth: Int
 		get() = ceil(width * scaleX).toInt()
 
@@ -214,20 +214,13 @@ class WebGlWindowImpl(
 	override var scaleY: Float = window.devicePixelRatio.toFloat()
 		private set
 
-	override fun setSize(width: Float, height: Float) = setSizeInternal(width, height, false)
-
-	private fun setSizeInternal(width: Float, height: Float, isUserInteraction: Boolean) {
-		if (_width == width && _height == height) return // no-op
-		_width = width
-		_height = height
-		if (!isUserInteraction) {
-			canvas.style.width = "${_width.toInt()}px"
-			canvas.style.height = "${_height.toInt()}px"
-		}
+	override fun setSize(width: Float, height: Float) {
+		if (this.width == width && this.height == height) return
+		this.width = width
+		this.height = height
+		canvas.style.width = "${width.toInt()}px"
+		canvas.style.height = "${height.toInt()}px"
 		sizeIsDirty = true
-		Log.debug("Window size changed to: $_width, $_height")
-		_sizeChanged.dispatch(_width, _height, isUserInteraction)
-		requestRender()
 	}
 
 	override var continuousRendering: Boolean = false
@@ -247,8 +240,8 @@ class WebGlWindowImpl(
 	override fun renderBegin() {
 		if (sizeIsDirty) {
 			sizeIsDirty = false
-			canvas.width = (_width * scaleX).toInt()
-			canvas.height = (_height * scaleY).toInt()
+			canvas.width = framebufferWidth
+			canvas.height = framebufferHeight
 		}
 		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
 	}

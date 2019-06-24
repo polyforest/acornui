@@ -103,9 +103,6 @@ class LightingRenderer(
 	 * Render the directional and point light shadows to their shadow buffers.
 	 */
 	fun renderOcclusion(camera: CameraRo, directionalLight: DirectionalLight, pointLights: List<PointLight>, renderOcclusion: () -> Unit) {
-		val currentW = window.width.toInt()
-		val currentH = window.height.toInt()
-		if (currentW == 0 || currentH == 0) return
 		if (!allowShadows) return
 		val previousShader = glState.shader
 

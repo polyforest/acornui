@@ -41,6 +41,23 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 	private var height = 0f
 
 	/**
+	 * [naturalWidth] uses uv coordinates multiplied by the texture size. If the texture uses dpi scaling, this
+	 * scaling should be set on this sprite.
+	 */
+	var scaleX: Float = 1f
+
+	/**
+	 * [naturalHeight] uses uv coordinates multiplied by the texture size. If the texture uses dpi scaling, this
+	 * scaling should be set on this sprite.
+	 */
+	var scaleY: Float = 1f
+
+	fun setScaling(scaleX: Float, scaleY: Float) {
+		this.scaleX = scaleX
+		this.scaleY = scaleY
+	}
+
+	/**
 	 * If true, the normal and indices will be reversed.
 	 */
 	var useAsBackFace = false
@@ -123,7 +140,7 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 				t.height.toFloat() * abs(v2 - v)
 			} else {
 				t.width.toFloat() * abs(u2 - u)
-			}
+			} / scaleX
 		}
 
 	override val naturalHeight: Float
@@ -133,7 +150,7 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 				t.width.toFloat() * abs(u2 - u)
 			} else {
 				t.height.toFloat() * abs(v2 - v)
-			}
+			} / scaleY
 		}
 
 	private fun updateUv() {

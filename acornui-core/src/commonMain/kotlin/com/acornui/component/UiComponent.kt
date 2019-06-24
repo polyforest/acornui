@@ -389,7 +389,7 @@ open class UiComponentImpl(
 	override val projectionTransform: Matrix4Ro
 		get() = renderContext.projectionTransform
 
-	override val canvasTransform: IntRectangleRo
+	override val canvasTransform: RectangleRo
 		get() = renderContext.canvasTransform
 
 	override var renderContextOverride: RenderContextRo? = null
@@ -1099,6 +1099,7 @@ open class UiComponentImpl(
 		_renderContext.parentContext = parent?.renderContext ?: defaultRenderContext
 		_renderContext.modelTransformLocal = _transform
 		_renderContext.colorTintLocal = _colorTint
+		_renderContext.validate()
 	}
 
 	//-----------------------------------------------

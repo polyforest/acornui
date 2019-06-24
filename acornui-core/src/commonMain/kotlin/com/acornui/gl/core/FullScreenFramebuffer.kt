@@ -24,7 +24,7 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.graphic.BlendMode
 import com.acornui.core.graphic.Window
-import com.acornui.function.as3
+import com.acornui.function.as2
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Matrix4
@@ -37,7 +37,7 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 
 	private val glState = inject(GlState)
 	private val window = inject(Window)
-	private val framebuffer = ResizeableFramebuffer(injector, window.width, window.height, hasDepth, hasStencil)
+	private val framebuffer = ResizeableFramebuffer(injector, window.framebufferWidth.toFloat(), window.framebufferHeight.toFloat(), hasDepth, hasStencil)
 	private val sprite = Sprite(glState)
 
 	var blendMode: BlendMode
@@ -47,12 +47,12 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 		}
 
 	init {
-		window.sizeChanged.add(::resize.as3)
+		window.sizeChanged.add(::resize.as2)
 		resize()
 	}
 
 	private fun resize() {
-		framebuffer.setSize(window.width.toInt(), window.height.toInt())
+		framebuffer.setSize(window.framebufferWidth, window.framebufferHeight)
 		sprite.apply {
 			texture = framebuffer.texture
 			val w = framebuffer.width / framebuffer.texture.width
@@ -97,7 +97,7 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 	}
 
 	override fun dispose() {
-		window.sizeChanged.remove(::resize.as3)
+		window.sizeChanged.remove(::resize.as2)
 		framebuffer.dispose()
 	}
 }

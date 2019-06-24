@@ -25,6 +25,7 @@ import com.acornui.core.graphic.CameraRo
 import com.acornui.core.graphic.OrthographicCamera
 import com.acornui.core.graphic.Window
 import com.acornui.core.graphic.centerCamera
+import com.acornui.function.as2
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
@@ -42,6 +43,11 @@ interface RenderContextRo : CanvasTransformableRo {
 	 * The color multiplier for vertices.
 	 */
 	val colorTint: ColorRo
+
+	/**
+	 * Validates the properties of the render context.
+	 */
+	fun validate()
 
 	companion object : DKey<RenderContextRo> {
 
@@ -62,17 +68,17 @@ class DefaultRenderContext(override val injector: Injector) : Scoped, RenderCont
 	private val window = inject(Window)
 
 	private var _clipRegion = MinMax()
-	private var _canvasTransform = IntRectangle()
+	private var _canvasTransform = Rectangle()
+
+	private var isValid = false
 
 	init {
-		window.sizeChanged.add(::windowResizedHandler)
-		windowResizedHandler(window.width, window.height, false)
+		window.sizeChanged.add(::invalidate.as2)
+		window.scaleChanged.add(::invalidate.as2)
 	}
 
-	private fun windowResizedHandler(newWidth: Float, newHeight: Float, isUserInteraction: Boolean) {
-		window.centerCamera(camera)
-		_clipRegion.set(0f, 0f, newWidth, newHeight)
-		_canvasTransform.set(0, 0, newWidth.toInt(), newHeight.toInt())
+	private fun invalidate() {
+		isValid = false
 	}
 
 	override val modelTransform: Matrix4Ro = Matrix4.IDENTITY
@@ -92,12 +98,24 @@ class DefaultRenderContext(override val injector: Injector) : Scoped, RenderCont
 
 	override val clipRegion: MinMaxRo = _clipRegion
 
-	override val canvasTransform: IntRectangleRo = _canvasTransform
+	override val canvasTransform: RectangleRo = _canvasTransform
 
 	override val colorTint: ColorRo = Color.WHITE
 
+	override fun validate() {
+		if (isValid) return
+		isValid = true
+		val window = window
+		val w = window.width
+		val h = window.height
+		window.centerCamera(camera)
+		_clipRegion.set(0f, 0f, w, h)
+		_canvasTransform.set(0f, 0f, w, h)
+	}
+
 	override fun dispose() {
-		window.sizeChanged.remove(::windowResizedHandler)
+		window.sizeChanged.remove(::invalidate.as2)
+		window.scaleChanged.remove(::invalidate.as2)
 	}
 }
 
@@ -107,7 +125,7 @@ class RenderContext(initialParentContext: RenderContextRo) : RenderContextRo {
 
 	var cameraOverride: CameraRo? = null
 	var modelTransformLocal: Matrix4Ro = Matrix4.IDENTITY
-	var canvasTransformOverride: IntRectangleRo? = null
+	var canvasTransformOverride: RectangleRo? = null
 
 	/**
 	 * The clip region, in local coordinates.
@@ -142,7 +160,7 @@ class RenderContext(initialParentContext: RenderContextRo) : RenderContextRo {
 	override val projectionTransform: Matrix4Ro
 		get() = cameraOverride?.projection ?: parentContext.projectionTransform
 
-	override val canvasTransform: IntRectangleRo
+	override val canvasTransform: RectangleRo
 		get() {
 			return canvasTransformOverride ?: parentContext.canvasTransform
 		}
@@ -160,4 +178,6 @@ class RenderContext(initialParentContext: RenderContextRo) : RenderContextRo {
 	override val colorTint: ColorRo
 		get() = colorTintOverride ?: _colorTint.set(parentContext.colorTint).mul(colorTintLocal).clamp()
 
+	override fun validate() {
+	}
 }

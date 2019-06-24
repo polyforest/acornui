@@ -312,7 +312,7 @@ class GlStateImpl(
 			gl.disable(Gl20.SCISSOR_TEST)
 	}
 
-	private val _framebuffer = FramebufferInfo(null, ceil(window.width).toInt(), ceil(window.height).toInt(), window.scaleX, window.scaleY)
+	private val _framebuffer = FramebufferInfo(null, window.framebufferWidth, window.framebufferHeight, window.scaleX, window.scaleY)
 
 	override fun getFramebuffer(out: FramebufferInfo) = out.set(_framebuffer)
 
@@ -497,7 +497,7 @@ inline fun GlState.useViewport(x: Int, y: Int, width: Int, height: Int, inner: (
 
 private val framebufferInfo = FramebufferInfo()
 
-fun GlState.useViewportFromCanvasTransform(canvasTransform: IntRectangleRo, inner: () -> Unit) {
+fun GlState.useViewportFromCanvasTransform(canvasTransform: RectangleRo, inner: () -> Unit) {
 	getFramebuffer(framebufferInfo)
 	useViewport(
 			floor(canvasTransform.x * framebufferInfo.scaleX).toInt(),

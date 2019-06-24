@@ -55,21 +55,32 @@ interface Window : Disposable {
 	val isVisible: Boolean
 
 	/**
-	 * Dispatched when this window size has changed.
-	 * (newWidth, newHeight, isUserInteraction)
-	 * The isUserInteraction parameter will be true if this window was resized by the user dragging the resize handles.
+	 * Dispatched when this window size has changed, in screen coordinates.
+	 * (newWidth, newHeight)
+	 * This will not be dispatched in response to a [setSize] call.
 	 */
-	val sizeChanged: Signal<(Float, Float, Boolean) -> Unit>
+	val sizeChanged: Signal<(Float, Float) -> Unit>
 
+	/**
+	 * Dispatched when this window scale has changed.
+	 * (newWidth, newHeight)
+	 * newWidth and newHeight are in points, not pixels.
+	 */
+	val scaleChanged: Signal<(Float, Float) -> Unit>
+
+	/**
+	 * The width of the window, in points.
+	 */
 	val width: Float
 
+	/**
+	 * The height of the window, in points.
+	 */
 	val height: Float
 
 	val framebufferWidth: Int
 
 	val framebufferHeight: Int
-
-	val scaleChanged: Signal<(Float, Float) -> Unit>
 
 	/**
 	 * The monitor content scale x factor.
@@ -82,7 +93,9 @@ interface Window : Disposable {
 	val scaleY: Float
 
 	/**
-	 * Sets the size of this window, in screen coordinates, not pixels.
+	 * Sets the size of the content area of this window, in screen coordinates, not pixels.
+	 * @param width The width of the new content area.
+	 * @param height The width of the new content area.
 	 */
 	fun setSize(width: Float, height: Float)
 

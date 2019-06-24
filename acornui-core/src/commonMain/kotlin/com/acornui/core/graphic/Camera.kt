@@ -18,11 +18,12 @@
 
 package com.acornui.core.graphic
 
-import com.acornui.core.Disposable
 import com.acornui.math.*
 import com.acornui.observe.ModTagImpl
 import com.acornui.observe.ModTagRo
 import com.acornui.reflect.observable
+import com.acornui.signal.bind
+import com.acornui.signal.or
 import kotlin.properties.ReadWriteProperty
 
 interface CameraRo {
@@ -579,25 +580,18 @@ abstract class CameraBase : Camera {
 
 }
 
-fun Window.autoCenterCamera(camera: Camera): Disposable {
-	val windowResizedHandler = { _: Float, _: Float, _: Boolean ->
-		centerCamera(camera)
-	}
-	sizeChanged.add(windowResizedHandler)
+fun Window.autoCenterCamera(camera: Camera) = (sizeChanged or scaleChanged).bind {
 	centerCamera(camera)
-	return object : Disposable {
-		override fun dispose() {
-			sizeChanged.remove(windowResizedHandler)
-		}
-	}
 }
 
 /**
  * Centers the camera to this window.
  */
 fun Window.centerCamera(camera: Camera) {
-	if (width > 0f && height > 0f && (camera.viewportWidth != width || camera.viewportHeight != height)) {
-		camera.setViewport(width, height)
-		camera.moveToLookAtRect(0f, 0f, width, height)
+	if (width > 0 && height > 0) {
+		val w = width
+		val h = height
+		camera.setViewport(w, h)
+		camera.moveToLookAtRect(0f, 0f, w, h)
 	}
 }
