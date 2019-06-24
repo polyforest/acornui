@@ -65,6 +65,10 @@ interface Window : Disposable {
 
 	val height: Float
 
+	val framebufferWidth: Int
+
+	val framebufferHeight: Int
+
 	val scaleChanged: Signal<(Float, Float) -> Unit>
 
 	/**
@@ -78,7 +82,7 @@ interface Window : Disposable {
 	val scaleY: Float
 
 	/**
-	 * Sets the size of this window.
+	 * Sets the size of this window, in screen coordinates, not pixels.
 	 */
 	fun setSize(width: Float, height: Float)
 

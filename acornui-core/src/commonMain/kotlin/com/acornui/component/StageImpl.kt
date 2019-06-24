@@ -75,8 +75,8 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 	 * This will update the viewport and framebuffer information.
 	 */
 	protected open fun windowChangedHandler() {
-		val w = ceil(window.width * window.scaleX).toInt()
-		val h = ceil(window.height * window.scaleY).toInt()
+		val w = window.framebufferWidth
+		val h = window.framebufferHeight
 		glState.setViewport(0, 0, w, h)
 		glState.setFramebuffer(null, w, h, window.scaleX, window.scaleY)
 		invalidate(ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT)

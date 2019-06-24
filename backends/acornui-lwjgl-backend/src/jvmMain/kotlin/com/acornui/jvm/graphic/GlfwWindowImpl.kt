@@ -27,12 +27,11 @@ import com.acornui.jvm.browser.JvmLocation
 import com.acornui.logging.Log
 import com.acornui.signal.*
 import org.lwjgl.glfw.Callbacks
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL20
-import org.lwjgl.system.MemoryStack.stackPush
 import org.lwjgl.system.MemoryUtil
 import org.lwjgl.util.tinyfd.TinyFileDialogs
 import kotlin.properties.Delegates
@@ -58,12 +57,6 @@ class GlfwWindowImpl(
 	private val _sizeChanged = Signal3<Float, Float, Boolean>()
 	override val sizeChanged = _sizeChanged.asRo()
 
-	private var _width: Float = 0f
-	private var _height: Float = 0f
-
-	private var _scaleX: Float = 1f
-	private var _scaleY: Float = 1f
-
 	private val _scaleChanged = Signal2<Float, Float>()
 	override val scaleChanged = _scaleChanged.asRo()
 
@@ -79,94 +72,72 @@ class GlfwWindowImpl(
 			requestRender()
 		}
 
+	override var width: Float = 0f
+		private set
+
+	override var height: Float = 0f
+		private set
+
+	override var framebufferWidth: Int = 0
+		private set
+
+	override var framebufferHeight: Int = 0
+		private set
+
+	override var scaleX: Float = 1f
+		private set
+
+	override var scaleY: Float = 1f
+		private set
+
+
 	init {
 		if (debug)
-			GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_DEBUG_CONTEXT, GLFW.GLFW_TRUE)
+			glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE)
 
 		GLFWErrorCallback.createPrint(System.err).set()
 
 		// Initialize GLFW. Most GLFW functions will not work before doing this.
-		if (!GLFW.glfwInit())
+		if (!glfwInit())
 			throw IllegalStateException("Unable to initialize GLFW")
 
 		// Configure our window
-		GLFW.glfwDefaultWindowHints() // optional, the current window hints are already the default
+		glfwDefaultWindowHints() // optional, the current window hints are already the default
+		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE)
+		glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_TRUE)
 
-		if (glConfig.antialias) GLFW.glfwWindowHint(GLFW.GLFW_SAMPLES, 4)
+		if (glConfig.antialias)
+			glfwWindowHint(GLFW_SAMPLES, 4)
 
-		//GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GL11.GL_FALSE) // the window will stay hidden after creation
-		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GL11.GL_TRUE) // the window will be resizable
+		//glfwWindowHint(GLFW_VISIBLE, GL11.GL_FALSE) // the window will stay hidden after creation
+		glfwWindowHint(GLFW_RESIZABLE, GL11.GL_TRUE) // the window will be resizable
 
 		// Get the monitor dpi scale
-		val monitor = GLFW.glfwGetPrimaryMonitor()
+		val monitor = glfwGetPrimaryMonitor()
 		val scaleXArr = FloatArray(1)
 		val scaleYArr = FloatArray(1)
-		GLFW.glfwGetMonitorContentScale(monitor, scaleXArr, scaleYArr)
-		_scaleX = scaleXArr[0]
-		_scaleY = scaleYArr[0]
+		glfwGetMonitorContentScale(monitor, scaleXArr, scaleYArr)
+		scaleX = scaleXArr[0]
+		scaleY = scaleYArr[0]
 
 		// Create the window
-		windowId = GLFW.glfwCreateWindow((windowConfig.initialWidth * _scaleX).toInt(), (windowConfig.initialHeight * _scaleY).toInt(), windowConfig.title, MemoryUtil.NULL, MemoryUtil.NULL)
+		windowId = glfwCreateWindow((windowConfig.initialWidth * scaleX).toInt(), (windowConfig.initialHeight * scaleY).toInt(), windowConfig.title, MemoryUtil.NULL, MemoryUtil.NULL)
 		if (windowId == MemoryUtil.NULL)
 			throw Exception("Failed to create the GLFW window")
 
-		// Redraw when the window has been minimized / restored / etc.
-
-		GLFW.glfwSetWindowIconifyCallback(windowId) {
-			_, iconified ->
-			isVisible = !iconified
-			requestRender()
-		}
-
-		GLFW.glfwSetFramebufferSizeCallback(windowId) {
-			_, width, height ->
-			updateSize(width.toFloat() / _scaleX, height.toFloat() / _scaleY, true)
-		}
-
-		GLFW.glfwSetWindowContentScaleCallback(windowId) {
-			_, scaleX, scaleY ->
-			updateScale(scaleX, scaleY)
-		}
-
-		GLFW.glfwSetWindowFocusCallback(windowId) {
-			_, focused ->
-			isActive = focused
-		}
-
-		GLFW.glfwSetWindowCloseCallback(windowId) {
-			_closeRequested.dispatch(cancel.reset())
-			if (cancel.canceled) {
-				GLFW.glfwSetWindowShouldClose(windowId, false)
-			}
-		}
-
-		// Get the thread stack and push a new frame
-		val stack = stackPush()
-		@Suppress("ConvertTryFinallyToUseCall") // Don't convert to use call, causes problem with JVM Build
-		try {
-			val pWidth = stack.mallocInt(1) // int*
-			val pHeight = stack.mallocInt(1) // int*
-			// Get the window size passed to glfwCreateWindow
-			GLFW.glfwGetWindowSize(windowId, pWidth, pHeight)
-		} finally {
-			stack.close()
-		}
-
-		// Get the resolution of the primary monitor
-		val vidMode = GLFW.glfwGetVideoMode(monitor)
-		// Center our window
-		if (vidMode != null)
-			GLFW.glfwSetWindowPos(windowId, (vidMode.width() - (windowConfig.initialWidth * _scaleX).toInt()) / 2, (vidMode.height() - (windowConfig.initialHeight * _scaleY).toInt()) / 2)
+		val framebufferW = IntArray(1)
+		val framebufferH = IntArray(1)
+		glfwGetFramebufferSize(windowId, framebufferW, framebufferH)
+		framebufferWidth = framebufferW[0]
+		framebufferHeight = framebufferH[0]
 
 		// Make the OpenGL context current
-		GLFW.glfwMakeContextCurrent(windowId)
+		glfwMakeContextCurrent(windowId)
 
 		// Enable v-sync
 		if (glConfig.vSync)
-			GLFW.glfwSwapInterval(1)
+			glfwSwapInterval(1)
 
-		// Make the window visible
-		GLFW.glfwShowWindow(windowId)
 
 		// This line is critical for LWJGL's interoperation with GLFW's
 		// OpenGL context, or any context that is managed externally.
@@ -179,58 +150,87 @@ class GlfwWindowImpl(
 //			GLUtil.setupDebugMessageCallback()
 //		}
 
-		setSize(windowConfig.initialWidth, windowConfig.initialHeight, isUserInteraction = true)
+		updateSize(windowConfig.initialWidth, windowConfig.initialHeight)
+
+		// Get the resolution of the primary monitor
+		val vidMode = glfwGetVideoMode(monitor)
+		// Center our window
+		if (vidMode != null) {
+			val pWidth = IntArray(1)
+			val pHeight = IntArray(1)
+			// Get the window size passed to glfwCreateWindow
+			glfwGetWindowSize(windowId, pWidth, pHeight)
+
+			val pX = IntArray(1)
+			val pY = IntArray(1)
+			// Get the window size passed to glfwCreateWindow
+			glfwGetMonitorPos(monitor, pX, pY)
+			glfwSetWindowPos(windowId, pX[0] + (vidMode.width() - (pWidth[0])) / 2, pY[0] + (vidMode.height() - (pHeight[0])) / 2)
+		}
+
+		// Make the window visible
+		glfwShowWindow(windowId)
 
 		clearColor = windowConfig.backgroundColor
 
 		Log.info("Vendor: ${GL11.glGetString(GL11.GL_VENDOR)}")
 		Log.info("Supported GLSL language version: ${GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)}")
+
+
+		// Redraw when the window has been minimized / restored / etc.
+
+		glfwSetWindowIconifyCallback(windowId) { _, iconified ->
+			isVisible = !iconified
+			requestRender()
+		}
+
+		glfwSetWindowSizeCallback(windowId) { _, width, height ->
+			updateSize(width.toFloat() / scaleX, height.toFloat() / scaleY, true)
+		}
+
+		glfwSetWindowContentScaleCallback(windowId) { _, scaleX, scaleY ->
+			updateScale(scaleX, scaleY)
+		}
+
+		glfwSetWindowFocusCallback(windowId) { _, focused ->
+			isActive = focused
+		}
+
+		glfwSetWindowCloseCallback(windowId) {
+			_closeRequested.dispatch(cancel.reset())
+			if (cancel.canceled) {
+				glfwSetWindowShouldClose(windowId, false)
+			}
+		}
 	}
 
 	private fun updateScale(scaleX: Float, scaleY: Float) {
-		_scaleX = scaleX
-		_scaleY = scaleY
+		this.scaleX = scaleX
+		this.scaleY = scaleY
 		_scaleChanged.dispatch(scaleX, scaleY)
 	}
 
-	override var isVisible: Boolean by Delegates.observable(true) {
-		prop, old, new ->
+	override var isVisible: Boolean by Delegates.observable(true) { prop, old, new ->
 		_isVisibleChanged.dispatch(new)
 	}
 
-	override var isActive: Boolean by Delegates.observable(true) {
-		prop, old, new ->
+	override var isActive: Boolean by Delegates.observable(true) { prop, old, new ->
 		_isActiveChanged.dispatch(new)
-		_sizeChanged.dispatch(_width, _height, false)
+		_sizeChanged.dispatch(width, height, false)
 	}
 
-	override val width: Float
-		get() = _width
-
-	override val height: Float
-		get() = _height
-
-	override val scaleX: Float
-		get() = _scaleX
-
-	override val scaleY: Float
-		get() = _scaleY
-
-	override fun setSize(width: Float, height: Float) = setSize(width, height, false)
-
-	private fun setSize(width: Float, height: Float, isUserInteraction: Boolean) {
-		if (_width == width && _height == height) return // no-op
-		if (!isUserInteraction)
-			GLFW.glfwSetWindowSize(windowId, (width * _scaleX).toInt(), (height * _scaleY).toInt())
-		updateSize(width, height, isUserInteraction)
+	override fun setSize(width: Float, height: Float) {
+		if (this.width == width && this.height == height) return // no-op
+		glfwSetWindowSize(windowId, width.toInt(), height.toInt())
+		updateSize(width, height, isUserInteraction = false)
 	}
 
-	private fun updateSize(width: Float, height: Float, userInteraction: Boolean) {
-		if (_width == width && _height == height) return // no-op
+	private fun updateSize(width: Float, height: Float, isUserInteraction: Boolean = false) {
+		if (this.width == width && this.height == height) return // no-op
 		requestRender()
-		_width = width
-		_height = height
-		_sizeChanged.dispatch(_width, _height, userInteraction)
+		this.width = width
+		this.height = height
+		_sizeChanged.dispatch(width, height, isUserInteraction)
 	}
 
 	override var continuousRendering: Boolean = false
@@ -252,15 +252,15 @@ class GlfwWindowImpl(
 	}
 
 	override fun renderEnd() {
-		GLFW.glfwSwapBuffers(windowId) // swap the color buffers
+		glfwSwapBuffers(windowId) // swap the color buffers
 	}
 
 	override fun isCloseRequested(): Boolean {
-		return GLFW.glfwWindowShouldClose(windowId)
+		return glfwWindowShouldClose(windowId)
 	}
 
 	override fun requestClose() {
-		GLFW.glfwSetWindowShouldClose(windowId, true)
+		glfwSetWindowShouldClose(windowId, true)
 	}
 
 	private var lastWidth = windowConfig.initialWidth
@@ -277,21 +277,21 @@ class GlfwWindowImpl(
 		set(value) {
 			if (_fullScreen != value) {
 				Log.info("Fullscreen $value")
-				val videoMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor()) ?: return
+				val videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor()) ?: return
 				_fullScreen = value
 				val w = videoMode.width()
 				val h = videoMode.height()
 				val r = videoMode.refreshRate()
 				if (value) {
-					lastWidth = _width
-					lastHeight = _height
-					setSize(w.toFloat(), h.toFloat(), isUserInteraction = false)
-					GLFW.glfwSetWindowMonitor(windowId, GLFW.glfwGetPrimaryMonitor(), 0, 0, w, h, r)
+					lastWidth = width
+					lastHeight = height
+					setSize(w.toFloat(), h.toFloat())
+					glfwSetWindowMonitor(windowId, glfwGetPrimaryMonitor(), 0, 0, w, h, r)
 				} else {
-					GLFW.glfwSetWindowMonitor(windowId, 0, ((w - lastWidth * _scaleX) * 0.5f).toInt(), ((h - lastHeight * _scaleY) * 0.5f).toInt(), (lastWidth * _scaleX).toInt(), (lastHeight * _scaleY).toInt(), 60)
+					glfwSetWindowMonitor(windowId, 0, ((w - lastWidth * scaleX) * 0.5f).toInt(), ((h - lastHeight * scaleY) * 0.5f).toInt(), (lastWidth * scaleX).toInt(), (lastHeight * scaleY).toInt(), 60)
 				}
 				if (glConfig.vSync)
-					GLFW.glfwSwapInterval(1)
+					glfwSwapInterval(1)
 				requestRender()
 				_fullScreenChanged.dispatch()
 			}
@@ -310,6 +310,6 @@ class GlfwWindowImpl(
 		_isVisibleChanged.dispose()
 		_scaleChanged.dispose()
 		Callbacks.glfwFreeCallbacks(windowId)
-		GLFW.glfwTerminate()
+		glfwTerminate()
 	}
 }

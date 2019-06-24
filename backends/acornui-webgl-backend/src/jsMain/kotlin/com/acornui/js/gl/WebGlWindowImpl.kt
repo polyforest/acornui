@@ -33,6 +33,7 @@ import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.get
 import kotlin.browser.document
 import kotlin.browser.window
+import kotlin.math.ceil
 
 /**
  * @author nbilyk
@@ -196,14 +197,16 @@ class WebGlWindowImpl(
 		}
 
 	override val width: Float
-		get() {
-			return _width
-		}
+		get() = _width
 
 	override val height: Float
-		get() {
-			return _height
-		}
+		get() = _height
+
+	override val framebufferWidth: Int
+		get() = ceil(width * scaleX).toInt()
+
+	override val framebufferHeight: Int
+		get() = ceil(height * scaleY).toInt()
 
 	override var scaleX: Float = window.devicePixelRatio.toFloat()
 		private set
