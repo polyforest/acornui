@@ -412,16 +412,17 @@ class Rect(
 
 					var pixel = 0f
 					var n = 2
-					putVertex(0f, 0f, 0f, colorTint = linearGradient.colorStops[0].color)
-					putVertex(0f, thickness, 0f, colorTint = linearGradient.colorStops[0].color)
+					val firstColor = linearGradient.colorStops.firstOrNull()?.color ?: Color.BLACK
+					putVertex(0f, 0f, 0f, colorTint = firstColor)
+					putVertex(0f, thickness, 0f, colorTint = firstColor)
 					val numColorStops = linearGradient.colorStops.size
 					for (i in 0..numColorStops - 1) {
 						val colorStop = linearGradient.colorStops[i]
 
 						if (colorStop.percent != null) {
-							pixel = maxOf(pixel, colorStop.percent!! * len)
+							pixel = maxOf(pixel, colorStop.percent * len)
 						} else if (colorStop.pixels != null) {
-							pixel = maxOf(pixel, colorStop.pixels!!)
+							pixel = maxOf(pixel, colorStop.pixels)
 						} else if (i == numColorStops - 1) {
 							pixel = len
 						} else if (i > 0) {
@@ -431,11 +432,11 @@ class Rect(
 								val jColorStop = linearGradient.colorStops[j]
 								if (jColorStop.percent != null) {
 									nextKnownJ = j
-									nextKnownPixel = maxOf(pixel, jColorStop.percent!! * len)
+									nextKnownPixel = maxOf(pixel, jColorStop.percent * len)
 									break
 								} else if (jColorStop.pixels != null) {
 									nextKnownJ = j
-									nextKnownPixel = maxOf(pixel, jColorStop.pixels!!)
+									nextKnownPixel = maxOf(pixel, jColorStop.pixels)
 									break
 								}
 							}
@@ -444,21 +445,18 @@ class Rect(
 						if (pixel > 0f) {
 							putVertex(pixel, 0f, 0f, colorTint = colorStop.color)
 							putVertex(pixel, thickness, 0f, colorTint = colorStop.color)
-
-							if (i > 0) {
-								putIndex(n)
-								putIndex(n + 1)
-								putIndex(n - 1)
-								putIndex(n - 1)
-								putIndex(n - 2)
-								putIndex(n)
-							}
+							putIndex(n)
+							putIndex(n + 1)
+							putIndex(n - 1)
+							putIndex(n - 1)
+							putIndex(n - 2)
+							putIndex(n)
 							n += 2
 						}
 					}
 
 					if (pixel < len) {
-						val lastColor = linearGradient.colorStops.last().color
+						val lastColor = linearGradient.colorStops.lastOrNull()?.color ?: Color.BLACK
 						putVertex(len, 0f, 0f, colorTint = lastColor)
 						putVertex(len, thickness, 0f, colorTint = lastColor)
 						putIndex(n)

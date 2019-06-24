@@ -16,6 +16,7 @@
 
 package com.acornui.component
 
+import com.acornui.collection.ArrayList
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.component.style.styleProperty
@@ -31,7 +32,7 @@ open class BoxStyle : StyleBase() {
 
 	override val type: StyleType<BoxStyle> = Companion
 
-	var linearGradient: LinearGradientRo? by prop<LinearGradientRo?>(null)
+	var linearGradient: LinearGradient? by prop<LinearGradient?>(null)
 	var backgroundColor: ColorRo by prop(Color.BLACK)
 
 	var borderColors: BorderColorsRo by prop(BorderColors())
@@ -79,35 +80,31 @@ fun boxStyle(init: BoxStyle.() -> Unit): BoxStyle {
 	return b
 }
 
-/**
- * Creates a linear gradient where the color stops are distributed evenly for the given colors.
- */
-fun LinearGradient(direction: GradientDirection, vararg colors: ColorRo): LinearGradient {
-	val colorStops: Array<ColorStopRo> = Array(colors.size, { ColorStop(colors[it]) })
-	return LinearGradient(direction, 0f, colorStops.toMutableList())
-}
+data class LinearGradient(
 
-fun LinearGradient(direction: GradientDirection, vararg colorStops: ColorStopRo): LinearGradient = LinearGradient(direction, 0f, colorStops.toMutableList())
-fun LinearGradient(angle: Float, vararg colorStops: ColorStopRo): LinearGradient = LinearGradient(GradientDirection.ANGLE, angle, colorStops.toMutableList())
+		/**
+		 * The direction the gradient should go. If direction is [GradientDirection.ANGLE], then the [angle] property
+		 * will be used.
+		 */
+		val direction: GradientDirection,
 
-/**
- * A read-only interface to [LinearGradient]
- */
-interface LinearGradientRo {
+		/**
+		 * In radians, angles start pointing towards top, rotating clockwise.
+		 * PI / 2 is pointing to the right, PI is pointing to bottom, 3 / 2f * PI is pointing to right.
+		 */
+		val angle: Float,
 
-	/**
-	 * The direction the gradient should go. If direction is [GradientDirection.ANGLE], then the [angle] property
-	 * will be used.
-	 */
-	val direction: GradientDirection
+		val colorStops: List<ColorStop>
+) {
 
 	/**
-	 * In radians, angles start pointing towards top, rotating clockwise.
-	 * PI / 2 is pointing to the right, PI is pointing to bottom, 3 / 2f * PI is pointing to right.
+	 * Creates a linear gradient where the color stops are distributed evenly for the given colors.
 	 */
-	val angle: Float
+	constructor(direction: GradientDirection, vararg colors: ColorRo): this(direction, 0f, ArrayList(colors.size) { ColorStop(colors[it]) })
 
-	val colorStops: List<ColorStopRo>
+	constructor(direction: GradientDirection, vararg colorStops: ColorStop) : this(direction, 0f, colorStops.toList())
+
+	constructor(angle: Float, vararg colorStops: ColorStop) : this(GradientDirection.ANGLE, angle, colorStops.toList())
 
 	fun toCssString(): String {
 		val angleStr = when (direction) {
@@ -131,32 +128,22 @@ interface LinearGradientRo {
 
 
 	fun getAngle(width: Float, height: Float): Float {
-		if (direction == GradientDirection.ANGLE) return angle
-		else return direction.getAngle(width, height)
+		return if (direction == GradientDirection.ANGLE) angle
+		else direction.getAngle(width, height)
 	}
 }
 
-data class LinearGradient(
-
-		override var direction: GradientDirection,
-
-		override var angle: Float,
-
-		override val colorStops: MutableList<ColorStopRo>
-) : LinearGradientRo
-
-object LinearGradientSerializer : To<LinearGradientRo>, From<LinearGradient> {
+object LinearGradientSerializer : To<LinearGradient>, From<LinearGradient> {
 
 	override fun read(reader: Reader): LinearGradient {
-		val b = LinearGradient(
+		return LinearGradient(
 				direction = GradientDirection.valueOf(reader.string("direction")!!),
 				angle = reader.float("angle")!!,
 				colorStops = reader.array2("colorStops", ColorStopSerializer)!!.toMutableList()
 		)
-		return b
 	}
 
-	override fun LinearGradientRo.write(writer: Writer) {
+	override fun LinearGradient.write(writer: Writer) {
 		writer.string("direction", direction.name)
 		writer.float("angle", angle)
 		writer.array("colorStops", colorStops, ColorStopSerializer)
@@ -189,29 +176,29 @@ enum class GradientDirection {
 	}
 }
 
-/**
- * A read only interface to [ColorStop]
- */
-interface ColorStopRo {
+data class ColorStop(
 
-	/**
-	 * The color value at this stop.
-	 */
-	val color: ColorRo
+		/**
+		 * The color value at this stop.
+		 */
+		val color: ColorRo,
 
-	/**
-	 * The percent towards the end position of the gradient. This number is absolute, not relative to
-	 * the previous color stop.
-	 * If neither [pixels] or [percent] is set, this stop will be halfway between the previous stop and the next.
-	 */
-	val percent: Float?
+		/**
+		 * The percent towards the end position of the gradient. This number is absolute, not relative to
+		 * the previous color stop.
+		 * If neither [pixels] or [percent] is set, this stop will be halfway between the previous stop and the next.
+		 */
+		val percent: Float? = null,
 
-	/**
-	 * The number of pixels towards the end position of the gradient. This number is absolute, not relative to
-	 * the previous color stop.
-	 * If neither [pixels] or [percent] is set, this stop will be halfway between the previous stop and the next.
-	 */
-	val pixels: Float?
+		/**
+		 * The number of pixels towards the end position of the gradient. This number is absolute, not relative to
+		 * the previous color stop.
+		 * If neither [pixels] or [percent] is set, this stop will be halfway between the previous stop and the next.
+		 */
+		val pixels: Float? = null
+) {
+
+	constructor(rgba: Long, percent: Float? = null, pixels: Float? = null) : this(Color(rgba), percent, pixels)
 
 	fun toCssString(): String {
 		var str = color.toCssString()
@@ -219,42 +206,10 @@ interface ColorStopRo {
 		else if (pixels != null) str += " ${pixels}px"
 		return str
 	}
-}
-
-data class ColorStop(
-
-		/**
-		 * The color value at this stop.
-		 */
-		override var color: ColorRo,
-
-		/**
-		 * The percent towards the end position of the gradient. This number is absolute, not relative to
-		 * the previous color stop.
-		 * If neither [pixels] or [percent] is set, this stop will be halfway between the previous stop and the next.
-		 */
-		override var percent: Float? = null,
-
-		/**
-		 * The number of pixels towards the end position of the gradient. This number is absolute, not relative to
-		 * the previous color stop.
-		 * If neither [pixels] or [percent] is set, this stop will be halfway between the previous stop and the next.
-		 */
-		override var pixels: Float? = null
-) : ColorStopRo {
-
-	constructor(rgba: Long, percent: Float? = null, pixels: Float? = null) : this(Color(rgba), percent, pixels)
-
-	fun set(other: ColorStopRo): ColorStop {
-		color = other.color
-		percent = other.percent
-		pixels = other.pixels
-		return this
-	}
 
 }
 
-object ColorStopSerializer : To<ColorStopRo>, From<ColorStop> {
+object ColorStopSerializer : To<ColorStop>, From<ColorStop> {
 
 	override fun read(reader: Reader): ColorStop {
 		val c = ColorStop(
@@ -265,7 +220,7 @@ object ColorStopSerializer : To<ColorStopRo>, From<ColorStop> {
 		return c
 	}
 
-	override fun ColorStopRo.write(writer: Writer) {
+	override fun ColorStop.write(writer: Writer) {
 		writer.color("color", color)
 		if (percent != null) writer.float("percent", percent)
 		if (pixels != null) writer.float("pixels", pixels)
