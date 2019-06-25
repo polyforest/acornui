@@ -17,29 +17,28 @@
 package com.acornui.component
 
 import com.acornui.component.style.StyleTag
-import com.acornui.component.style.styleTag
 import com.acornui.core.di.Owned
 
-open class Checkbox(
+open class CheckboxImpl(
 		owner: Owned
-) : Button(owner) {
+) : ButtonImpl(owner) {
 
 	init {
-		styleTags.add(Checkbox)
+		styleTags.add(CheckboxImpl)
 		toggleOnClick = true
 	}
 
 	companion object : StyleTag
 }
 
-fun Owned.checkbox(init: ComponentInit<Checkbox> = {}): Checkbox {
-	val c = Checkbox(this)
+fun Owned.checkbox(init: ComponentInit<CheckboxImpl> = {}): CheckboxImpl {
+	val c = CheckboxImpl(this)
 	c.init()
 	return c
 }
 
-fun Owned.checkbox(label: String, init: ComponentInit<Checkbox> = {}): Checkbox {
-	val b = Checkbox(this)
+fun Owned.checkbox(label: String, init: ComponentInit<CheckboxImpl> = {}): CheckboxImpl {
+	val b = CheckboxImpl(this)
 	b.label = label
 	b.init()
 	return b

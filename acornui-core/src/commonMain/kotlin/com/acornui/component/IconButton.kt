@@ -31,7 +31,7 @@ import com.acornui.math.PadRo
 
 class IconButton(
 		owner: Owned
-) : Button(owner), SingleElementContainer<UiComponent> {
+) : ButtonImpl(owner), SingleElementContainer<UiComponent> {
 
 	init {
 		styleTags.add(IconButton)

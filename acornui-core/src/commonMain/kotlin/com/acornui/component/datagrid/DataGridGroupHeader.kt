@@ -50,7 +50,7 @@ open class DataGridGroupHeaderImpl<E>(
 ), DataGridGroupHeader, Labelable {
 
 	private var background: UiComponent? = null
-	private var collapseButton: Button? = null
+	private var collapseButton: ButtonImpl? = null
 
 	val groupStyle = bind(DataGridGroupHeaderStyle())
 
@@ -101,7 +101,7 @@ class DataGridGroupHeaderStyle : StyleBase() {
 	/**
 	 * Added to group headers, when clicked, the group will be collapsed.
 	 */
-	var collapseButton by prop<Owned.() -> Button>({ throw Exception("Skin part must be created.") })
+	var collapseButton by prop<Owned.() -> ButtonImpl>({ throw Exception("Skin part must be created.") })
 
 	/**
 	 * The header background for groups.

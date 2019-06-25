@@ -24,14 +24,19 @@ import com.acornui.core.di.own
 import com.acornui.core.input.interaction.click
 import com.acornui.signal.Signal0
 
+interface RadioButtonRo<out T> : ButtonRo {
+	val data: T
+}
 
-open class RadioButton<out T>(
+interface RadioButton<out T> : Button, RadioButtonRo<T>
+
+open class RadioButtonImpl<out T>(
 		owner: Owned,
-		val data: T
-) : Button(owner) {
+		override val data: T
+) : ButtonImpl(owner), RadioButton<T> {
 
 	init {
-		styleTags.add(RadioButton)
+		styleTags.add(RadioButtonImpl)
 		click().add {
 			if (!toggled) setUserToggled(true)
 		}
@@ -40,15 +45,15 @@ open class RadioButton<out T>(
 	companion object : StyleTag
 }
 
-fun <T> Owned.radioButton(group: RadioGroup<T>, data: T, init: ComponentInit<RadioButton<T>> = {}): RadioButton<T> {
-	val b = RadioButton(this, data)
+fun <T> Owned.radioButton(group: RadioGroup<T>, data: T, init: ComponentInit<RadioButtonImpl<T>> = {}): RadioButtonImpl<T> {
+	val b = RadioButtonImpl(this, data)
 	group.register(b)
 	b.init()
 	return b
 }
 
-fun <T> Owned.radioButton(group: RadioGroup<T>, data: T, label: String, init: ComponentInit<RadioButton<T>> = {}): RadioButton<T> {
-	val b = RadioButton(this, data)
+fun <T> Owned.radioButton(group: RadioGroup<T>, data: T, label: String, init: ComponentInit<RadioButtonImpl<T>> = {}): RadioButtonImpl<T> {
+	val b = RadioButtonImpl(this, data)
 	group.register(b)
 	b.label = label
 	b.init()
@@ -65,12 +70,12 @@ class RadioGroup<T>(val owner: Owned) : Disposable {
 	val changed = _changed.asRo()
 
 	private val _radioButtons = ArrayList<RadioButton<T>>()
-	val radioButtons: List<RadioButton<T>>
+	val radioButtons: List<RadioButtonRo<T>>
 		get() = _radioButtons
 
 	@Suppress("UNCHECKED_CAST")
-	private val selectedChangedHandler: (Button) -> Unit = {
-		selectedButton = it as RadioButton<T>
+	private val toggledChangedHandler: (ButtonRo) -> Unit = {
+		selectedData = (it as RadioButton<T>).data
 		_changed.dispatch()
 	}
 
@@ -80,41 +85,36 @@ class RadioGroup<T>(val owner: Owned) : Disposable {
 	}
 
 	fun register(button: RadioButton<T>) {
-		button.toggledChanged.add(selectedChangedHandler)
+		button.toggledChanged.add(toggledChangedHandler)
 		button.disposed.add(disposedHandler)
 		_radioButtons.add(button)
+		if (button.data == selectedData)
+			toggledButton = button
 	}
 
 	fun unregister(button: RadioButton<T>) {
-		button.toggledChanged.remove(selectedChangedHandler)
-		if (_selectedButton == button)
-			selectedButton = null
+		button.toggledChanged.remove(toggledChangedHandler)
+		if (toggledButton == button)
+			toggledButton = null
 		_radioButtons.remove(button)
 	}
 
-	private var _selectedButton: RadioButton<T>? = null
-	var selectedButton: RadioButton<T>?
-		get() = _selectedButton
-		set(value) {
-			if (_selectedButton == value) return
-			_selectedButton?.toggled = false
-			_selectedButton = value
-			_selectedButton?.toggled = true
+	var toggledButton: RadioButton<T>? = null
+		private set(value) {
+			if (field == value) return
+			field?.toggled = false
+			field = value
+			field?.toggled = true
 		}
 
-	var selectedData: T?
-		get() = _selectedButton?.data
+	var selectedData: T? = null
 		set(value) {
-			for (i in 0.._radioButtons.lastIndex) {
-				if (_radioButtons[i].data == value) {
-					selectedButton = _radioButtons[i]
-					break
-				}
-			}
+			field = value
+			toggledButton = _radioButtons.find { it.data == value }
 		}
 
 	fun radioButton(data: T, label: String, init: ComponentInit<RadioButton<T>> = {}): RadioButton<T> {
-		val b = RadioButton(owner, data)
+		val b = RadioButtonImpl(owner, data)
 		b.label = label
 		register(b)
 		b.init()
@@ -122,7 +122,7 @@ class RadioGroup<T>(val owner: Owned) : Disposable {
 	}
 
 	fun radioButton(data: T, init: ComponentInit<RadioButton<T>> = {}): RadioButton<T> {
-		val b = RadioButton(owner, data)
+		val b = RadioButtonImpl(owner, data)
 		register(b)
 		b.init()
 		return b
@@ -130,7 +130,7 @@ class RadioGroup<T>(val owner: Owned) : Disposable {
 
 	override fun dispose() {
 		_changed.dispose()
-		_selectedButton = null
+		toggledButton = null
 		_radioButtons.clear()
 	}
 }

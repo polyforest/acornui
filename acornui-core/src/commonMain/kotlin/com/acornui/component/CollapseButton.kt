@@ -21,7 +21,7 @@ import com.acornui.core.di.Owned
 
 open class CollapseButton(
 		owner: Owned
-) : Button(owner) {
+) : ButtonImpl(owner) {
 
 	init {
 		styleTags.add(CollapseButton)

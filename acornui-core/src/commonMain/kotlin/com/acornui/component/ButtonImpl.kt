@@ -31,26 +31,38 @@ import com.acornui.factory.LazyInstance
 import com.acornui.factory.disposeInstance
 import com.acornui.math.Bounds
 import com.acornui.reflect.observable
+import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import kotlin.collections.set
 
+interface ButtonRo : UiComponentRo, LabelableRo, ToggleableRo {
+
+	val toggledChanged: Signal<(ButtonRo) -> Unit>
+
+	val disabled: Boolean
+}
+
+interface Button : ButtonRo, UiComponent, Labelable, Toggleable {
+
+	override var disabled: Boolean
+}
 
 /**
  * A skinnable button with up, over, down, and disabled states.
  */
-open class Button(
+open class ButtonImpl(
 		owner: Owned
-) : ContainerImpl(owner), Labelable, Toggleable, Focusable {
+) : ContainerImpl(owner), Button, Focusable {
 
 	val style = bind(ButtonStyle())
 
-	private val _toggledChanged = own(Signal1<Button>())
+	private val _toggledChanged = own(Signal1<ButtonRo>())
 
 	/**
 	 * Dispatched when the toggled flag has changed via user interaction. This will only be invoked if [toggleOnClick]
 	 * is true, and the user clicks this button.
 	 */
-	val toggledChanged = _toggledChanged.asRo()
+	override val toggledChanged = _toggledChanged.asRo()
 
 	/**
 	 * If true, when this button is pressed, the selected state will be toggled.
@@ -62,7 +74,7 @@ open class Button(
 	init {
 		focusEnabled = true
 		focusEnabledChildren = false
-		styleTags.add(Button)
+		styleTags.add(ButtonImpl)
 
 		click().add {
 			if (toggleOnClick) {
@@ -104,7 +116,7 @@ open class Button(
 		_toggledChanged.dispatch(this)
 	}
 
-	var disabled: Boolean by observable(false) {
+	override var disabled: Boolean by observable(false) {
 		interactivityMode = if (it) InteractivityMode.NONE else InteractivityMode.ALL
 		disabledTag = it
 		invalidateProperties()
@@ -218,29 +230,23 @@ enum class ButtonState(
 				DISABLED
 			} else {
 				if (indeterminate) {
-					if (isDown) {
-						INDETERMINATE_DOWN
-					} else if (isOver) {
-						INDETERMINATE_OVER
-					} else {
-						INDETERMINATE_UP
+					when {
+						isDown -> INDETERMINATE_DOWN
+						isOver -> INDETERMINATE_OVER
+						else -> INDETERMINATE_UP
 					}
 				} else {
 					if (toggled) {
-						if (isDown) {
-							TOGGLED_DOWN
-						} else if (isOver) {
-							TOGGLED_OVER
-						} else {
-							TOGGLED_UP
+						when {
+							isDown -> TOGGLED_DOWN
+							isOver -> TOGGLED_OVER
+							else -> TOGGLED_UP
 						}
 					} else {
-						if (isDown) {
-							DOWN
-						} else if (isOver) {
-							OVER
-						} else {
-							UP
+						when {
+							isDown -> DOWN
+							isOver -> OVER
+							else -> UP
 						}
 					}
 				}
@@ -305,6 +311,7 @@ interface Labelable : LabelableRo, UiComponent {
 }
 
 interface ToggleableRo : UiComponentRo {
+
 	val toggled: Boolean
 }
 
@@ -312,14 +319,14 @@ interface Toggleable : ToggleableRo, UiComponent {
 	override var toggled: Boolean
 }
 
-fun Owned.button(init: ComponentInit<Button> = {}): Button {
-	val b = Button(this)
+fun Owned.button(init: ComponentInit<ButtonImpl> = {}): ButtonImpl {
+	val b = ButtonImpl(this)
 	b.init()
 	return b
 }
 
-fun Owned.button(label: String, init: ComponentInit<Button> = {}): Button {
-	val b = Button(this)
+fun Owned.button(label: String, init: ComponentInit<ButtonImpl> = {}): ButtonImpl {
+	val b = ButtonImpl(this)
 	b.label = label
 	b.init()
 	return b

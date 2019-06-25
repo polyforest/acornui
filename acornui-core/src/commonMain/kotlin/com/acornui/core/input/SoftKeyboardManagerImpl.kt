@@ -142,7 +142,7 @@ class SoftKeyboardView(owner: Owned) : LayoutContainer<StackLayoutStyle, StackLa
 	}
 }
 
-private class CharButton(owner: Owned) : Button(owner) {
+private class CharButton(owner: Owned) : ButtonImpl(owner) {
 
 	private val charEvent = CharInteraction().apply {
 		type = CharInteractionRo.CHAR

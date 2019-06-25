@@ -344,11 +344,11 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 }
 
 interface TabNavigatorTab : Owned, Disposable, LayoutDataProvider<StackLayoutData> {
-	val button: Button
+	val button: ButtonImpl
 	val content: LazyInstance<Owned, UiComponent>
 }
 
-class TabNavigatorTabImpl<S : Button, T : UiComponent>(
+class TabNavigatorTabImpl<S : ButtonImpl, T : UiComponent>(
 		owner: Owned,
 		buttonFactory: TabNavigatorTab.() -> S,
 		contentFactory: TabNavigatorTab.() -> T
@@ -390,7 +390,7 @@ class TabNavigatorStyle : StyleBase() {
 }
 
 
-fun <S : Button, T : UiComponent> Owned.tab(buttonFactory: (@ComponentDslMarker TabNavigatorTab).() -> S, contentFactory: (@ComponentDslMarker TabNavigatorTab).() -> T) = TabNavigatorTabImpl(this, buttonFactory, contentFactory)
+fun <S : ButtonImpl, T : UiComponent> Owned.tab(buttonFactory: (@ComponentDslMarker TabNavigatorTab).() -> S, contentFactory: (@ComponentDslMarker TabNavigatorTab).() -> T) = TabNavigatorTabImpl(this, buttonFactory, contentFactory)
 
 fun <T : UiComponent> Owned.tab(label: String, contentFactory: (@ComponentDslMarker TabNavigatorTab).() -> T) = tab({ button(label.orSpace()) }, contentFactory)
 

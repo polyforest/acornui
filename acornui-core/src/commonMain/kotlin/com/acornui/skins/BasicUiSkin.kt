@@ -56,10 +56,10 @@ open class BasicUiSkin(
 	open fun apply() {
 		target.styleRules.clear()
 
-		target.addStyleRule(ButtonStyle().set { labelButtonSkin(theme, it) }, Button)
-		target.addStyleRule(ButtonStyle().set { checkboxSkin(theme, it) }, Checkbox)
+		target.addStyleRule(ButtonStyle().set { labelButtonSkin(theme, it) }, ButtonImpl)
+		target.addStyleRule(ButtonStyle().set { checkboxSkin(theme, it) }, CheckboxImpl)
 		target.addStyleRule(ButtonStyle().set { collapseButtonSkin(theme, it) }, CollapseButton)
-		target.addStyleRule(ButtonStyle().set { radioButtonSkin(theme, it) }, RadioButton)
+		target.addStyleRule(ButtonStyle().set { radioButtonSkin(theme, it) }, RadioButtonImpl)
 		target.addStyleRule(ButtonStyle().set { iconButtonSkin(theme, it) }, IconButton)
 
 		stageStyle()
@@ -161,7 +161,7 @@ open class BasicUiSkin(
 
 		val charStyle = CharStyle()
 		charStyle.selectable = false
-		target.addStyleRule(charStyle, withAncestor(Button))
+		target.addStyleRule(charStyle, withAncestor(ButtonImpl))
 
 		target.addStyleRule(charStyle { fontWeight = FontWeight.BOLD }, withAnyAncestor(
 				TextStyleTags.strong,
