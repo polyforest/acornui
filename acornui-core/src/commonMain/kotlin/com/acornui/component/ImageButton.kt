@@ -16,6 +16,7 @@
 
 package com.acornui.component
 
+import com.acornui.collection.addAll
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.style.*
 import com.acornui.core.cursor.StandardCursors
@@ -24,7 +25,6 @@ import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.core.focus.Focusable
 import com.acornui.core.input.interaction.MouseOrTouchState
-import com.acornui.filter.colorTransformationFilter
 import com.acornui.gl.core.useColorTransformation
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
@@ -45,7 +45,7 @@ class ImageButton(
 	init {
 		focusEnabled = true
 		focusEnabledChildren = false
-		styleTags.add(Button)
+		styleTags.addAll(Companion)
 
 		cursor(StandardCursors.HAND)
 
@@ -118,8 +118,8 @@ fun Owned.iconImageButton(init: ImageButton.() -> Unit = {}): ImageButton =
 
 fun Owned.iconImageButton(atlasPath: String, atlasRegion: String, init: ImageButton.() -> Unit = {}): ImageButton =
 		imageButton {
-			element = atlas(atlasPath, atlasRegion)
 			styleTags.add(ImageButton.ICON_IMAGE)
+			element = atlas(atlasPath, atlasRegion)
 			init()
 		}
 

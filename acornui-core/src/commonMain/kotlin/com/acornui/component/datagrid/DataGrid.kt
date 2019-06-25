@@ -1882,19 +1882,19 @@ class DataGridStyle : StyleBase() {
 	companion object : StyleType<DataGridStyle>
 }
 
-fun <E> Owned.dataGrid(data: ObservableList<E>, init: ComponentInit<DataGrid<E>>): DataGrid<E> {
+fun <E> Owned.dataGrid(data: ObservableList<E>, init: ComponentInit<DataGrid<E>> = {}): DataGrid<E> {
 	val d = DataGrid(this, data)
 	d.init()
 	return d
 }
 
-fun <E> Owned.dataGrid(data: List<E>, init: ComponentInit<DataGrid<E>>): DataGrid<E> {
+fun <E> Owned.dataGrid(data: List<E>, init: ComponentInit<DataGrid<E>> = {}): DataGrid<E> {
 	val d = DataGrid(this, data)
 	d.init()
 	return d
 }
 
-fun <E> Owned.dataGrid(init: ComponentInit<DataGrid<E>>): DataGrid<E> {
+fun <E> Owned.dataGrid(init: ComponentInit<DataGrid<E>> = {}): DataGrid<E> {
 	val d = DataGrid<E>(this)
 	d.init()
 	return d

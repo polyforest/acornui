@@ -245,8 +245,7 @@ open class BasicUiSkin(
 				}
 			}
 			closeButton = {
-				iconImageButton {
-					element = atlas(theme.atlasPath, "ic_clear_white_18dp")
+				iconImageButton(theme.atlasPath, "ic_clear_white_18dp") {
 					style.overState = colorTransformation { tint(Color.RED) }
 				}
 			}

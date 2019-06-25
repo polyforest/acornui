@@ -95,18 +95,18 @@ fun Owned.iconButton(init: ComponentInit<IconButton> = {}): IconButton {
 	return b
 }
 
-fun Owned.iconButton(icon: String, init: ComponentInit<IconButton> = {}): IconButton {
-	val b = IconButton(this)
-	b.contentsImage(icon)
-	b.init()
-	return b
+fun Owned.iconButton(imagePath: String, init: ComponentInit<IconButton> = {}): IconButton {
+	return IconButton(this).apply {
+		element = iconImage(imagePath)
+		init()
+	}
 }
 
 fun Owned.iconButton(atlasPath: String, region: String, init: ComponentInit<IconButton> = {}): IconButton {
-	val b = IconButton(this)
-	b.contentsAtlas(atlasPath, region)
-	b.init()
-	return b
+	return IconButton(this).apply {
+		element = iconAtlas(atlasPath, region)
+		init()
+	}
 }
 
 fun Owned.iconButton(atlasPath: String, regions: Map<ButtonState, String>, init: ComponentInit<IconButton> = {}): IconButton {
