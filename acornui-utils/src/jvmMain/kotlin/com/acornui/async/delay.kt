@@ -40,8 +40,9 @@ private val sleepExecutor by lazy {
  * Suspends the coroutine for [duration] seconds.
  */
 actual suspend fun delay(duration: Float) = suspendCoroutine<Unit> { cont ->
-	sleepExecutor.submit {
-		Thread.sleep((duration * 1000).toLong())
-		cont.resume(Unit)
-	}
+//	sleepExecutor.submit {
+//		Thread.sleep((duration * 1000).toLong())
+//		cont.resume(Unit)
+//	}
+	cont.resume(Unit)
 }
