@@ -46,6 +46,11 @@ interface TouchInteractionRo : InteractionEventRo {
 	 */
 	val touches: List<TouchRo>
 
+	/**
+	 * True if this event was not created from the raw touch input.
+	 */
+	val isFabricated: Boolean
+
 	companion object {
 
 		val TOUCH_START = InteractionType<TouchInteractionRo>("touchStart")
@@ -75,6 +80,8 @@ class TouchInteraction : TouchInteractionRo, InteractionEventBase() {
 	 * target or changed status.
 	 */
 	override val touches: MutableList<Touch> = ArrayList()
+
+	override var isFabricated = false
 
 	override fun localize(currentTarget: UiComponentRo) {
 		super.localize(currentTarget)
@@ -111,6 +118,7 @@ class TouchInteraction : TouchInteractionRo, InteractionEventBase() {
 		super.clear()
 		changedTouches.clear()
 		timestamp = 0L
+		isFabricated = false
 		clearTouches()
 	}
 
