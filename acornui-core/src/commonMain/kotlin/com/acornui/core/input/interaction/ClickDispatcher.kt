@@ -209,13 +209,23 @@ abstract class ClickDispatcher(
 class JvmClickDispatcher(injector: Injector) : ClickDispatcher(injector) {
 
 	init {
-		stage.mouseUp().add(::fireHandler)
-		stage.touchEnd().add(::fireHandler)
+		stage.mouseUp().add(::mouseUpHandler)
+		stage.touchEnd().add(::touchEndHandler)
+	}
+
+	private fun mouseUpHandler(e: MouseInteractionRo) {
+		if (!e.isFabricated && !e.defaultPrevented())
+			fireClickEvent()
+	}
+
+	private fun touchEndHandler(e: TouchInteractionRo) {
+		if (!e.isFabricated && !e.defaultPrevented())
+			fireClickEvent()
 	}
 
 	override fun dispose() {
 		super.dispose()
-		stage.mouseUp().remove(::fireHandler)
-		stage.touchEnd().remove(::fireHandler)
+		stage.mouseUp().remove(::mouseUpHandler)
+		stage.touchEnd().remove(::touchEndHandler)
 	}
 }

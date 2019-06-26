@@ -86,6 +86,7 @@ private val fakeClickEvent = ClickInteraction()
 
 fun UiComponentRo.dispatchClick() {
 	fakeClickEvent.clear()
+	fakeClickEvent.isFabricated = true
 	fakeClickEvent.type = ClickInteractionRo.LEFT_CLICK
 	fakeClickEvent.target = this
 	fakeClickEvent.button = WhichButton.LEFT
