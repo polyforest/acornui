@@ -19,7 +19,7 @@ package com.acornui.build.gradle
 fun main(args: Array<String>) {
 	val argMap = ArgumentMap(args)
 	val target = getTarget(argMap.get("target", default = Targets.ASSETS.name))
-	val usage = """Usage: -target=[assets|asset-manifest|lib-manifest|bust-script-cache] -src=<dir> -dest=<dir> -root=<dir>
+	val usage = """Usage: -target=[assets|asset-manifest|lib-manifest] -src=<dir> -dest=<dir> -root=<dir>
 		|${"\t"}Note - `-target=assets` does not require root or dest
 	""".trimMargin()
 
@@ -63,6 +63,5 @@ fun getTarget(target: String): Targets? {
 enum class Targets {
 	ASSETS,
 	ASSET_MANIFEST,
-	LIB_MANIFEST,
-	BUST_SCRIPT_CACHE
+	LIB_MANIFEST
 }

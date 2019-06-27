@@ -17,15 +17,17 @@
 package com.acornui.texturepacker.jvm.writer
 
 import com.acornui.collection.ArrayList
+import com.acornui.core.graphic.RgbData
 import com.acornui.core.graphic.TextureAtlasData
 import com.acornui.core.graphic.TextureAtlasDataSerializer
 import com.acornui.core.replaceTokens
 import com.acornui.gl.core.TexturePixelFormat
-import com.acornui.jvm.graphic.JvmImageUtils
 import com.acornui.serialization.json
 import com.acornui.serialization.write
 import com.acornui.texturepacker.PackedTextureData
+import java.awt.image.*
 import java.io.File
+import javax.imageio.ImageIO
 
 /**
  * @author nbilyk
@@ -51,12 +53,23 @@ class JvmTextureAtlasWriter {
 		})
 		for (i in 0..packedDataModified.pages.lastIndex) {
 			val page = packedDataModified.pages[i]
-			JvmImageUtils.rgbDataToFile(page.first, dir.path + "/" + page.second.texturePath, packedData.settings.compressionExtension, packedData.settings.pixelFormat == TexturePixelFormat.RGBA, packedData.settings.premultipliedAlpha)
+			rgbDataToFile(page.first, dir.path + "/" + page.second.texturePath, packedData.settings.compressionExtension, packedData.settings.pixelFormat == TexturePixelFormat.RGBA, packedData.settings.premultipliedAlpha)
 		}
 
-		val atlas = TextureAtlasData(List(packedDataModified.pages.size, { packedDataModified.pages[it].second }))
+		val atlas = TextureAtlasData(List(packedDataModified.pages.size) { packedDataModified.pages[it].second })
 		val json = json.write(atlas, TextureAtlasDataSerializer)
 		val atlasFile = File(dir, atlasFilename)
 		atlasFile.writeText(json)
+	}
+
+	private fun rgbDataToFile(rgbData: RgbData, path: String, extension: String = "png", hasAlpha: Boolean, premultipliedAlpha: Boolean) {
+		val pageImage = BufferedImage(rgbData.width, rgbData.height, if (hasAlpha) BufferedImage.TYPE_INT_ARGB else BufferedImage.TYPE_INT_RGB)
+		val sampleModel = ComponentSampleModel(DataBuffer.TYPE_BYTE, rgbData.width, rgbData.height, rgbData.numBands, rgbData.scanSize, if (hasAlpha) intArrayOf(0, 1, 2, 3) else intArrayOf(0, 1, 2))
+		val raster = Raster.createRaster(sampleModel, DataBufferByte(rgbData.bytes, rgbData.bytes.size), null)
+		pageImage.data = raster
+		val output = File(path)
+		output.mkdirs()
+		if (premultipliedAlpha) pageImage.colorModel.coerceData(pageImage.raster, premultipliedAlpha)
+		ImageIO.write(pageImage, extension, output)
 	}
 }

@@ -45,8 +45,7 @@ object ManifestUtil {
 		}
 		fileEntries.sort()
 
-		val manifest = FilesManifest(fileEntries)
-		return manifest
+		return FilesManifest(fileEntries)
 	}
 
 }
