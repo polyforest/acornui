@@ -19,7 +19,7 @@ package com.acornui.build.gradle
 fun main(args: Array<String>) {
 	val argMap = ArgumentMap(args)
 	val target = getTarget(argMap.get("target", default = Targets.ASSETS.name))
-	val usage = """Usage: -target=[assets|asset-manifest|lib-manifest] -src=<dir> -dest=<dir> -root=<dir>
+	val usage = """Usage: -target=[asset-manifest|lib-manifest] -src=<dir> -dest=<dir> -root=<dir>
 		|${"\t"}Note - `-target=assets` does not require root or dest
 	""".trimMargin()
 
@@ -30,11 +30,6 @@ fun main(args: Array<String>) {
 
 	with(argMap) {
 		when (target) {
-
-			Targets.ASSETS -> run {
-				val src = getFileArg("src")
-				com.acornui.build.util.AcornAssets.packAssets(src, src)
-			}
 
 			Targets.ASSET_MANIFEST -> run {
 				val (src, root) = getFileArgs("src", "root")

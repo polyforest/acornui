@@ -16,50 +16,19 @@
 
 package com.acornui.build.util
 
-import com.acornui.core.asset.AssetManager
-import com.acornui.core.di.inject
-import com.acornui.core.io.file.Files
 import com.acornui.io.file.FilesManifestSerializer
-import com.acornui.jvm.JvmHeadlessApplication
 import com.acornui.io.file.ManifestUtil
 import com.acornui.serialization.json
 import com.acornui.serialization.write
-import com.acornui.texturepacker.jvm.TexturePackerUtil
 import java.io.File
 
 
 object AcornAssets {
 
-	fun packAssets(source: File, dest: File) {
-		println("Source directory: " + source.path)
-		if (source != dest) {
-			println("Assets directory: " + dest.path)
-			copyAssets(source, dest)
-		}
-
-		JvmHeadlessApplication(dest.path).start {
-			// Pack the assets in all directories in the dest folder with a name ending in "_unpacked"
-			TexturePackerUtil(inject(Files), inject(AssetManager)).packAssets(dest, File("."))
-
-			dest.setLastModified(System.currentTimeMillis())
-		}
-	}
-
 	fun writeManifest(dest: File, root: File) {
 		println("Creating manifest")
 		val manifest = ManifestUtil.createManifest(dest, root)
 		File(dest, "files.json").writeText(json.write(manifest, FilesManifestSerializer))
-	}
-
-	private fun copyAssets(source: File, destination: File) {
-		if (!source.exists()) {
-			throw Exception(source.path + " does not exist.")
-		}
-		if (destination.exists()) {
-			destination.delete()
-		}
-		destination.mkdir()
-		source.copyRecursively(destination, true)
 	}
 
 }

@@ -15,18 +15,22 @@
  */
 
 plugins {
-    id("com.polyforest.acornui.basic")
-    `maven-publish`
+	id("com.polyforest.acornui.basic")
+	`maven-publish`
 }
 
 kotlin {
-    sourceSets {
-        commonMain {
-            dependencies {
-                implementation(project(":acornui-core"))
-                implementation(project(":acornui-utils"))
-                implementation(project(":backends:acornui-lwjgl-backend"))
-            }
-        }
-    }
+	sourceSets {
+		commonMain {
+			dependencies {
+				implementation(project(":acornui-core"))
+				implementation(project(":acornui-utils"))
+			}
+		}
+		named("jvmMain") {
+			dependencies {
+				implementation(project(":backends:acornui-lwjgl-backend"))
+			}
+		}
+	}
 }
