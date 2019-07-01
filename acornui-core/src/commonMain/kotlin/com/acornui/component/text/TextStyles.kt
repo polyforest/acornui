@@ -241,6 +241,17 @@ class CharStyle : StyleBase() {
 	 */
 	var selectable by prop(true)
 
+	/**
+	 * If true, the glyph will be sized in points, not pixels.
+	 * Take an example where the font size is 24px, and the window pixel scaling is 2x.
+	 * If `allowScaling` is true, characters will be scaled by 2x to match 24 pt, as opposed to not being scaled
+	 * and will match 12pt (but look a lot crisper).
+	 *
+	 * @see [com.acornui.core.graphic.Window.scaleX]
+	 * @see [com.acornui.core.graphic.Window.scaleY]
+	 */
+	var allowScaling by prop(true)
+
 	companion object : StyleType<CharStyle>
 }
 

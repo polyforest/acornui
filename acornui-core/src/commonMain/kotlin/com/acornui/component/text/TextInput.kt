@@ -450,7 +450,8 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 		val h = if (explicitHeight == null && rows != null) {
 			val font = charStyle.font
 			val fontData = font?.resultOrNull()?.data
-			flowStyle.padding.expandHeight((fontData?.lineHeight?.toFloat() ?: 0f) * rows)
+			val lineHeight: Float = (fontData?.lineHeight?.toFloat() ?: 0f) / window.scaleY
+			flowStyle.padding.expandHeight(lineHeight * rows)
 		} else {
 			margin.reduceHeight(explicitHeight)
 		}

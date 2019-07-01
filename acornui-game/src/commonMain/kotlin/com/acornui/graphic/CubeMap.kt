@@ -56,24 +56,24 @@ class CubeMap(
 		wrapT = TextureWrapMode.CLAMP_TO_EDGE
 
 		var w = 0
-		if (positiveZ.width > w) w = positiveZ.width
-		if (negativeZ.width > w) w = negativeZ.width
-		if (positiveY.width > w) w = positiveY.width
-		if (negativeY.width > w) w = negativeY.width
+		if (positiveZ.widthPixels > w) w = positiveZ.widthPixels
+		if (negativeZ.widthPixels > w) w = negativeZ.widthPixels
+		if (positiveY.widthPixels > w) w = positiveY.widthPixels
+		if (negativeY.widthPixels > w) w = negativeY.widthPixels
 		this._width = w
 
 		var h = 0
-		if (positiveZ.height > h) h = positiveZ.height
-		if (negativeZ.height > h) h = negativeZ.height
-		if (positiveX.height > h) h = positiveX.height
-		if (negativeX.height > h) h = negativeX.height
+		if (positiveZ.heightPixels > h) h = positiveZ.heightPixels
+		if (negativeZ.heightPixels > h) h = negativeZ.heightPixels
+		if (positiveX.heightPixels > h) h = positiveX.heightPixels
+		if (negativeX.heightPixels > h) h = negativeX.heightPixels
 		this._height = h
 
 		var d = 0
-		if (positiveX.width > d) d = positiveX.width
-		if (negativeX.width > d) d = negativeX.width
-		if (positiveY.height > d) d = positiveY.height
-		if (negativeY.height > d) d = negativeY.height
+		if (positiveX.widthPixels > d) d = positiveX.widthPixels
+		if (negativeX.widthPixels > d) d = negativeX.widthPixels
+		if (positiveY.heightPixels > d) d = positiveY.heightPixels
+		if (negativeY.heightPixels > d) d = negativeY.heightPixels
 		this._depth = d
 	}
 
@@ -83,12 +83,12 @@ class CubeMap(
 			side.target = TextureTarget.VALUES[i + firstSideOrdinal]
 
 			side.textureHandle = gl.createTexture()
-			if (writeMode) gl.texImage2Db(side.target.value, 0, pixelFormat.value, side.width, side.height, 0, pixelFormat.value, pixelType.value, null)
+			if (writeMode) gl.texImage2Db(side.target.value, 0, pixelFormat.value, side.widthPixels, side.heightPixels, 0, pixelFormat.value, pixelType.value, null)
 			else gl.texImage2D(side.target.value, 0, side.pixelFormat.value, side.pixelFormat.value, side.pixelType.value, side)
 		}
 		if (filterMin.useMipMap) {
-			if (!supportsNpot() && (!MathUtils.isPowerOfTwo(width) || !MathUtils.isPowerOfTwo(height))) {
-				Log.warn("MipMaps cannot be generated for non power of two textures (${width}x$height)")
+			if (!supportsNpot() && (!MathUtils.isPowerOfTwo(widthPixels) || !MathUtils.isPowerOfTwo(heightPixels))) {
+				Log.warn("MipMaps cannot be generated for non power of two textures (${widthPixels}x$heightPixels)")
 				gl.texParameteri(target.value, Gl20.TEXTURE_MIN_FILTER, TextureMinFilter.LINEAR.value)
 			} else {
 				gl.generateMipmap(target.value)
@@ -111,10 +111,10 @@ class CubeMap(
 		return sides[target.ordinal - firstSideOrdinal]
 	}
 
-	override val width: Int
+	override val widthPixels: Int
 		get() = _width
 
-	override val height: Int
+	override val heightPixels: Int
 		get() = _height
 
 	val depth: Int

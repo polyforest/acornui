@@ -82,26 +82,31 @@ class Glyph(
 
 		/**
 		 * The x offset of the top-left u,v coordinate.
+		 * In pixels..
 		 */
 		val offsetX: Int,
 
 		/**
 		 * The y offset of the top-left u,v coordinate.
+		 * In pixels..
 		 */
 		val offsetY: Int,
 
 		/**
 		 * The untransformed width of the glyph.
+		 * In pixels..
 		 */
 		val width: Int,
 
 		/**
 		 * The untransformed height of the glyph.
+		 * In pixels..
 		 */
 		val height: Int,
 
 		/**
 		 * How much the current position should be advanced after drawing the character.
+		 * In pixels..
 		 */
 		val advanceX: Int,
 
@@ -115,6 +120,7 @@ class Glyph(
 
 		/**
 		 * The region within the [texture].
+		 * In pixels..
 		 */
 		val region: IntRectangleRo,
 
@@ -122,6 +128,10 @@ class Glyph(
 
 		val premultipliedAlpha: Boolean
 ) {
+
+	/**
+	 *
+	 */
 	fun getKerning(ch: Char): Int = data.getKerning(ch)
 }
 

@@ -36,21 +36,25 @@ data class BitmapFontData(
 
 		/**
 		 * The distance from one line of text to the next.
+		 * In pixels.
 		 */
 		val lineHeight: Int,
 
 		/**
 		 * The baseline is the line upon which most letters "sit" and below which descenders extend.
+		 * In pixels.
 		 */
 		val baseline: Int,
 
 		/**
 		 * The width of the texture pages.
+		 * In pixels.
 		 */
 		val pageW: Int,
 
 		/**
 		 * The height of the texture pages.
+		 * In pixels.
 		 */
 		val pageH: Int
 
@@ -104,21 +108,25 @@ data class GlyphData(
 		/**
 		 * The x, y, width, height bounds within the original image.
 		 * The [Glyph] object contains the region in the final, packed image.
+		 * In pixels.
 		 */
 		val region: IntRectangleRo = IntRectangle(),
 
 		/**
 		 * How much the current position should be offset when copying the image from the texture to the screen.
+		 * In pixels.
 		 */
 		val offsetX: Int = 0,
 
 		/**
 		 * How much the current position should be offset when copying the image from the texture to the screen.
+		 * In pixels.
 		 */
 		val offsetY: Int = 0,
 
 		/**
 		 * How much the current position should be advanced after drawing the character.
+		 * In pixels.
 		 */
 		val advanceX: Int = 0,
 
@@ -129,9 +137,11 @@ data class GlyphData(
 
 		/**
 		 * Kerning pairs.
+		 * In pixels.
 		 */
 		val kerning: Map<Char, Int> = HashMap()
 ) {
+
 
 	fun getKerning(ch: Char): Int {
 		return kerning[ch] ?: 0

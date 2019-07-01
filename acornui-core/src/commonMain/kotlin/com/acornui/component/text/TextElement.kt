@@ -22,7 +22,6 @@ import com.acornui.component.UiComponentRo
 import com.acornui.component.layout.SizableRo
 import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.core.Disposable
-import com.acornui.core.Renderable
 import com.acornui.core.selection.SelectionRange
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
@@ -49,24 +48,31 @@ interface TextElementRo: SizableRo {
 	val x: Float
 	val y: Float
 
+	val windowScaleX: Float
+	val windowScaleY: Float
+
 	/**
 	 * The natural amount of horizontal space to advance after this part.
 	 * [explicitWidth] will override this value.
+	 * In points, not pixels.
 	 */
 	val advanceX: Float
 
 	/**
 	 * If set, this part should be drawn to fit this width.
+	 * In points, not pixels.
 	 */
 	val explicitWidth: Float?
 
 	/**
 	 * The kerning offset between this element and the next.
+	 * In points, not pixels.
 	 */
 	val kerning: Float
 
 	/**
 	 * Returns the amount of horizontal space to offset this part from the next part.
+	 * In points, not pixels.
 	 */
 	fun getKerning(next: TextElementRo): Float
 
@@ -123,6 +129,10 @@ interface TextElement : TextElementRo, Disposable {
 	override var x: Float
 	override var y: Float
 
+	override var windowScaleX: Float
+	override var windowScaleY: Float
+
+
 	/**
 	 * If set, this element should be drawn to fit this width.
 	 */
@@ -137,6 +147,10 @@ interface TextElement : TextElementRo, Disposable {
 
 	/**
 	 * Finalizes the vertices for rendering.
+	 * @param leftClip The x position in canvas coordinate points for clipping.
+	 * @param topClip The y position in canvas coordinate points for clipping.
+	 * @param rightClip The right position in canvas coordinate points for clipping.
+	 * @param bottomClip The bottom position in canvas coordinate points for clipping.
 	 */
 	fun validateVertices(leftClip: Float, topClip: Float, rightClip: Float, bottomClip: Float)
 
@@ -258,6 +272,8 @@ class LastTextElement(private val flow: Paragraph) : TextElementRo {
 	override val char: Char? = null
 	override var x = 0f
 	override var y = 0f
+	override val windowScaleX: Float = 1f
+	override val windowScaleY: Float = 1f
 
 	override val advanceX = 0f
 

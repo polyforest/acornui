@@ -430,7 +430,7 @@ open class LwjglGl20 : Gl20 {
 	override fun texImage2D(target: Int, level: Int, internalFormat: Int, format: Int, type: Int, texture: Texture) {
 		val jvmTexture = (texture as JvmTexture)
 		jvmTexture.bytes!!.rewind()
-		GL11.glTexImage2D(target, level, internalFormat, texture.width, texture.height, 0, format, type, texture.bytes)
+		GL11.glTexImage2D(target, level, internalFormat, texture.widthPixels, texture.heightPixels, 0, format, type, texture.bytes)
 	}
 
 	override fun texParameterf(target: Int, pName: Int, param: Float) {

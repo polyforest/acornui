@@ -34,12 +34,12 @@ class WebGlTexture(
 
 	val image = document.createElement("img") as HTMLImageElement
 
-	override val width: Int
+	override val widthPixels: Int
 		get() {
 			return image.naturalWidth
 		}
 
-	override val height: Int
+	override val heightPixels: Int
 		get() {
 			return image.naturalHeight
 		}
@@ -49,7 +49,7 @@ class WebGlTexture(
 		val batch = glState.batch
 		val previousShader = glState.shader
 		refInc()
-		val framebuffer = Framebuffer(gl, glState, width, height, false, false)
+		val framebuffer = Framebuffer(gl, glState, widthPixels, heightPixels, false, false)
 		framebuffer.begin()
 		glState.viewProjection = Matrix4.IDENTITY
 		glState.setTexture(this)
@@ -60,12 +60,12 @@ class WebGlTexture(
 		batch.putVertex(-1f, 1f, 0f, u = 0f, v = 1f)
 		batch.putQuadIndices()
 		batch.flush()
-		val pixelData = BufferFactory.byteBuffer(width * height * 4)
-		gl.readPixels(0, 0, width, height, Gl20.RGBA, Gl20.UNSIGNED_BYTE, pixelData)
+		val pixelData = BufferFactory.byteBuffer(widthPixels * heightPixels * 4)
+		gl.readPixels(0, 0, widthPixels, heightPixels, Gl20.RGBA, Gl20.UNSIGNED_BYTE, pixelData)
 		framebuffer.end()
 		glState.shader = previousShader
 		framebuffer.dispose()
-		val rgbData = RgbData(width, height, true)
+		val rgbData = RgbData(widthPixels, heightPixels, true)
 		val bytes = rgbData.bytes
 		var i = 0
 		while (pixelData.hasRemaining) {

@@ -87,7 +87,7 @@ class FramebufferFilter(
 		framebuffer.begin()
 		glState.setViewport(
 				floor(-drawRegion.xMin).toInt(),
-				floor((drawRegion.yMin.toInt() - renderContext.canvasTransform.height + framebuffer.texture.height)).toInt(),
+				floor((drawRegion.yMin.toInt() - renderContext.canvasTransform.height + framebuffer.texture.heightPixels)).toInt(),
 				ceil(renderContext.canvasTransform.width).toInt(),
 				ceil(renderContext.canvasTransform.height).toInt()
 		)

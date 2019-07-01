@@ -91,8 +91,8 @@ abstract class GlTextureBase(
 		gl.texParameteri(target.value, Gl20.TEXTURE_WRAP_T, wrapT.value)
 
 		if (filterMin.useMipMap) {
-			if (!supportsNpot() && (!MathUtils.isPowerOfTwo(width) || !MathUtils.isPowerOfTwo(height))) {
-				Log.warn("MipMaps cannot be generated for non power of two textures (${width}x$height)")
+			if (!supportsNpot() && (!MathUtils.isPowerOfTwo(widthPixels) || !MathUtils.isPowerOfTwo(heightPixels))) {
+				Log.warn("MipMaps cannot be generated for non power of two textures (${widthPixels}x$heightPixels)")
 				gl.texParameteri(target.value, Gl20.TEXTURE_MIN_FILTER, TextureMinFilter.LINEAR.value)
 			} else {
 				gl.generateMipmap(target.value)

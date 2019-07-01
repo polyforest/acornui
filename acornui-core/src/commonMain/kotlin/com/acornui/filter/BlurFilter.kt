@@ -84,10 +84,10 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 		framebufferUtil.drawToFramebuffer()
 		val textureToBlur = framebufferUtil.texture
 
-		blurFramebufferA.setSize(textureToBlur.width, textureToBlur.height)
+		blurFramebufferA.setSize(textureToBlur.widthPixels, textureToBlur.heightPixels)
 		blurFramebufferA.texture.filterMin = TextureMinFilter.LINEAR
 		blurFramebufferA.texture.filterMag = TextureMagFilter.LINEAR
-		blurFramebufferB.setSize(textureToBlur.width, textureToBlur.height)
+		blurFramebufferB.setSize(textureToBlur.widthPixels, textureToBlur.heightPixels)
 		blurFramebufferB.texture.filterMin = TextureMinFilter.LINEAR
 		blurFramebufferB.texture.filterMag = TextureMagFilter.LINEAR
 
@@ -98,7 +98,7 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 		}
 		val blurShader = blurShader!!
 		glState.useShader(blurShader) {
-			gl.uniform2f(blurShader.getRequiredUniformLocation("u_resolutionInv"), 1f / textureToBlur.width.toFloat(), 1f / textureToBlur.height.toFloat())
+			gl.uniform2f(blurShader.getRequiredUniformLocation("u_resolutionInv"), 1f / textureToBlur.widthPixels.toFloat(), 1f / textureToBlur.heightPixels.toFloat())
 			glState.setTexture(framebufferUtil.texture)
 			glState.blendMode(BlendMode.NONE, premultipliedAlpha = false)
 			val passes = quality.passes

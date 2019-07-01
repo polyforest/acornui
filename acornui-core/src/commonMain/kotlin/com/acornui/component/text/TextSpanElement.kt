@@ -41,17 +41,20 @@ interface TextSpanElementRo<out T : TextElementRo> : ElementParentRo<T> {
 
 	/**
 	 * The height of the text line.
+	 * In points, not pixels.
 	 */
 	val lineHeight: Float
 
 	/**
 	 * If the [TextFlowStyle] vertical alignment is BASELINE, this property will be used to vertically align the
 	 * elements.
+	 * In points, not pixels.
 	 */
 	val baseline: Float
 
 	/**
 	 * The size of a space.
+	 * In points, not pixels.
 	 */
 	val spaceSize: Float
 
@@ -59,6 +62,9 @@ interface TextSpanElementRo<out T : TextElementRo> : ElementParentRo<T> {
 	 * The vertical alignment override of the span.
 	 */
 	val verticalAlign: FlowVAlign?
+
+	val windowScaleX: Float
+	val windowScaleY: Float
 
 }
 
@@ -91,6 +97,9 @@ interface TextSpanElement : ElementParent<TextElement>, TextSpanElementRo<TextEl
 
 	override var textParent: TextNodeRo?
 
+	override var windowScaleX: Float
+	override var windowScaleY: Float
+
 	fun validateStyles()
 
 }
@@ -118,6 +127,9 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 	override val charElementStyle: CharElementStyleRo = _charElementStyle
 
 	override var verticalAlign: FlowVAlign? = null
+
+	override var windowScaleX: Float = 1f
+	override var windowScaleY: Float = 1f
 
 	init {
 	}
@@ -150,16 +162,24 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 		get() = _charElementStyle.font?.resultOrNull()
 
 	override val lineHeight: Float
-		get() = (font?.data?.lineHeight?.toFloat() ?: 0f)
+		get() = (font?.data?.lineHeight?.toFloat() ?: 0f) / scaleY
 
 	override val baseline: Float
-		get() = (font?.data?.baseline?.toFloat() ?: 0f)
+		get() = (font?.data?.baseline?.toFloat() ?: 0f) / scaleY
 
 	override val spaceSize: Float
 		get() {
 			val font = font ?: return 6f
-			return (font.data.glyphs[' ']?.advanceX?.toFloat() ?: 6f)
+			return (font.data.glyphs[' ']?.advanceX?.toFloat() ?: 6f) / scaleX
 		}
+
+	private val scaleX: Float
+		get() = if (allowScaling) 1f else windowScaleX
+	private val scaleY: Float
+		get() = if (allowScaling) 1f else windowScaleY
+
+	private val allowScaling: Boolean
+		get() = charStyle.allowScaling
 
 	operator fun Char?.unaryPlus() {
 		if (this == null) return

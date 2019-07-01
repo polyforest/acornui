@@ -106,7 +106,7 @@ object ExtrudeUtil {
  */
 suspend fun Scoped.calculatePerimeter(path: String, alphaThreshold: Float = 0.1f): List<Int> {
 	val texture = inject(AssetManager).load(path, AssetType.TEXTURE).await()
-	return ExtrudeUtil.calculatePerimeter(texture, IntRectangle(0, 0, texture.width, texture.height), alphaThreshold)
+	return ExtrudeUtil.calculatePerimeter(texture, IntRectangle(0, 0, texture.widthPixels, texture.heightPixels), alphaThreshold)
 }
 
 suspend fun Scoped.calculatePerimeter(atlasPath: String, regionName: String, alphaThreshold: Float = 0.1f): List<Int> {

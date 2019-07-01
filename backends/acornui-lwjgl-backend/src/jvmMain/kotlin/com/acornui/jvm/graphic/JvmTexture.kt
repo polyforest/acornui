@@ -33,10 +33,10 @@ class JvmTexture(gl: Gl20,
 
 	var bytes: ByteBuffer? = JvmBufferUtil.wrap(_rgbData.bytes)
 
-	override val width: Int
+	override val widthPixels: Int
 		get() = _rgbData.width
 
-	override val height: Int
+	override val heightPixels: Int
 		get() = _rgbData.height
 
 	override val rgbData: RgbData

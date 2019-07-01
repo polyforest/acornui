@@ -278,9 +278,9 @@ class Rect(
 						glState.setTexture(texture)
 						pad = cPad
 						u = this.u
-						u2 = (topLeftX - innerTopLeftX) / texture.width
+						u2 = (topLeftX - innerTopLeftX) / texture.widthPixels
 						v = this.v
-						v2 = (topLeftY - innerTopLeftY) / texture.height
+						v2 = (topLeftY - innerTopLeftY) / texture.heightPixels
 					} else {
 						glState.setTexture(glState.whitePixel)
 						pad = 0f
@@ -310,10 +310,10 @@ class Rect(
 						if (texture != null) {
 							glState.setTexture(texture)
 							pad = cPad
-							u = (topRightX - innerTopRightX) / texture.width
+							u = (topRightX - innerTopRightX) / texture.widthPixels
 							u2 = this.u2
 							v = this.v
-							v2 = (topRightY - innerTopRightY) / texture.height
+							v2 = (topRightY - innerTopRightY) / texture.heightPixels
 						} else {
 							glState.setTexture(glState.whitePixel)
 							pad = 0f
@@ -343,9 +343,9 @@ class Rect(
 						if (texture != null) {
 							glState.setTexture(texture)
 							pad = cPad
-							u = (bottomRightX - innerBottomRightX) / texture.width
+							u = (bottomRightX - innerBottomRightX) / texture.widthPixels
 							u2 = this.u2
-							v = (bottomRightY - innerBottomRightY) / texture.height
+							v = (bottomRightY - innerBottomRightY) / texture.heightPixels
 							v2 = this.v2
 						} else {
 							glState.setTexture(glState.whitePixel)
@@ -378,8 +378,8 @@ class Rect(
 							glState.setTexture(texture)
 							pad = cPad
 							u = this.u
-							u2 = (bottomLeftX - innerBottomLeftX) / texture.width
-							v = (bottomLeftY - innerBottomLeftY) / texture.height
+							u2 = (bottomLeftX - innerBottomLeftX) / texture.widthPixels
+							v = (bottomLeftY - innerBottomLeftY) / texture.heightPixels
 							v2 = this.v2
 						} else {
 							glState.setTexture(glState.whitePixel)

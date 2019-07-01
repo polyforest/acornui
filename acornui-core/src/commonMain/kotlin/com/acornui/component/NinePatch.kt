@@ -86,9 +86,9 @@ class NinePatch(val glState: GlState) : BasicDrawable {
 		get() {
 			val t = texture ?: return 0f
 			return if (isRotated) {
-				t.height.toFloat() * abs(v2 - v)
+				t.heightPixels.toFloat() * abs(v2 - v)
 			} else {
-				t.width.toFloat() * abs(u2 - u)
+				t.widthPixels.toFloat() * abs(u2 - u)
 			}
 		}
 
@@ -96,9 +96,9 @@ class NinePatch(val glState: GlState) : BasicDrawable {
 		get() {
 			val t = texture ?: return 0f
 			return if (isRotated) {
-				t.width.toFloat() * abs(u2 - u)
+				t.widthPixels.toFloat() * abs(u2 - u)
 			} else {
-				t.height.toFloat() * abs(v2 - v)
+				t.heightPixels.toFloat() * abs(v2 - v)
 			}
 		}
 
@@ -162,10 +162,10 @@ class NinePatch(val glState: GlState) : BasicDrawable {
 			u2 = region[2]
 			v2 = region[3]
 		} else {
-			u = region[0] / t.width.toFloat()
-			v = region[1] / t.height.toFloat()
-			u2 = region[2] / t.width.toFloat()
-			v2 = region[3] / t.height.toFloat()
+			u = region[0] / t.widthPixels.toFloat()
+			v = region[1] / t.heightPixels.toFloat()
+			u2 = region[2] / t.widthPixels.toFloat()
+			v2 = region[3] / t.heightPixels.toFloat()
 		}
 	}
 
@@ -230,10 +230,10 @@ class NinePatch(val glState: GlState) : BasicDrawable {
 		batch.begin()
 
 		if (isRotated) {
-			val splitLeftV = _splitLeft / texture.height
-			val splitRightV = _splitRight / texture.height
-			val splitTopU = _splitTop / texture.width
-			val splitBottomU = _splitBottom / texture.width
+			val splitLeftV = _splitLeft / texture.heightPixels
+			val splitRightV = _splitRight / texture.heightPixels
+			val splitTopU = _splitTop / texture.widthPixels
+			val splitBottomU = _splitBottom / texture.widthPixels
 
 			val colV0 = v
 			val colV1 = v + splitLeftV
@@ -274,10 +274,10 @@ class NinePatch(val glState: GlState) : BasicDrawable {
 			batch.putVertex(transform.prj(tmpVec.set(localPoints[14])), worldNormal, tint, rowU3, colV2)
 			batch.putVertex(transform.prj(tmpVec.set(localPoints[15])), worldNormal, tint, rowU3, colV3)
 		} else {
-			val splitLeftU = _splitLeft / texture.width
-			val splitRightU = _splitRight / texture.width
-			val splitTopV = _splitTop / texture.height
-			val splitBottomV = _splitBottom / texture.height
+			val splitLeftU = _splitLeft / texture.widthPixels
+			val splitRightU = _splitRight / texture.widthPixels
+			val splitTopV = _splitTop / texture.heightPixels
+			val splitBottomV = _splitBottom / texture.heightPixels
 
 			val colU0 = u
 			val colU1 = u + splitLeftU

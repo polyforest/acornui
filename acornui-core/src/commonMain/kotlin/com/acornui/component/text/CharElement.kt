@@ -52,11 +52,25 @@ class CharElement private constructor() : TextElement, Clearable {
 			return style?.font?.resultOrNull()?.getGlyphSafe(char)
 		}
 
-	override var x: Float = 0f
-	override var y: Float = 0f
+	override var x = 0f
+	override var y = 0f
+	override var windowScaleX = 1f
+	override var windowScaleY = 1f
+
+	/**
+	 * If allowScaling is true, font sizes will be scaled so their px size will be rendered as pt sizes.
+	 * @see CharStyle.allowScaling
+	 */
+	private val allowScaling: Boolean
+		get() = style?.allowScaling ?: true
+
+	private val scaleX: Float
+		get() = if (allowScaling) 1f else windowScaleX
+	private val scaleY: Float
+		get() = if (allowScaling) 1f else windowScaleY
 
 	override val advanceX: Float
-		get() = (glyph?.advanceX?.toFloat() ?: 0f)
+		get() = (glyph?.advanceX?.toFloat() ?: 0f) / scaleX
 
 	override var explicitWidth: Float? = null
 
@@ -65,7 +79,7 @@ class CharElement private constructor() : TextElement, Clearable {
 	override fun getKerning(next: TextElementRo): Float {
 		val d = glyph?.data ?: return 0f
 		val c = next.char ?: return 0f
-		return d.getKerning(c).toFloat()
+		return d.getKerning(c).toFloat() / scaleX
 	}
 
 	private var u = 0f
@@ -117,11 +131,6 @@ class CharElement private constructor() : TextElement, Clearable {
 		val y = y
 		val glyph = glyph ?: return
 
-		var charL = glyph.offsetX + x
-		var charT = glyph.offsetY + y
-		var charR = charL + glyph.width
-		var charB = charT + glyph.height
-
 		val lineHeight = parentSpan?.lineHeight ?: 0f
 		val bgL = maxOf(leftClip, x)
 		val bgT = maxOf(topClip, y)
@@ -133,32 +142,40 @@ class CharElement private constructor() : TextElement, Clearable {
 			return
 
 		val region = glyph.region
-		val textureW = glyph.texture.width.toFloat()
-		val textureH = glyph.texture.height.toFloat()
+		val textureW = glyph.texture.widthPixels.toFloat()
+		val textureH = glyph.texture.heightPixels.toFloat()
 
+		// Pixels
 		var regionX = region.x.toFloat()
 		var regionY = region.y.toFloat()
 		var regionR = region.right.toFloat()
 		var regionB = region.bottom.toFloat()
 
+
+		// Points
+		var charL = x + glyph.offsetX / scaleX
+		var charT = y + glyph.offsetY / scaleY
+		var charR = charL + glyph.width / scaleX
+		var charB = charT + glyph.height / scaleY
+
 		if (charL < leftClip) {
 			if (glyph.isRotated) regionY += leftClip - charL
-			else regionX += leftClip - charL
+			else regionX += (leftClip - charL) * scaleX
 			charL = leftClip
 		}
 		if (charT < topClip) {
 			if (glyph.isRotated) regionX += topClip - charT
-			else regionY += topClip - charT
+			else regionY += (topClip - charT) * scaleY
 			charT = topClip
 		}
 		if (charR > rightClip) {
 			if (glyph.isRotated) regionB -= charR - rightClip
-			else regionR -= charR - rightClip
+			else regionR -= (charR - rightClip) * scaleX
 			charR = rightClip
 		}
 		if (charB > bottomClip) {
 			if (glyph.isRotated) regionR -= charB - bottomClip
-			else regionB -= charB - bottomClip
+			else regionB -= (charB - bottomClip) * scaleY
 			charB = bottomClip
 		}
 
@@ -312,6 +329,9 @@ interface CharElementStyleRo {
 	val selectedBackgroundColor: ColorRo
 	val textColorTint: ColorRo
 	val backgroundColor: ColorRo
+
+
+	val allowScaling: Boolean
 }
 
 /**
@@ -327,6 +347,7 @@ class CharElementStyle : CharElementStyleRo {
 	override val selectedBackgroundColor = Color()
 	override val textColorTint = Color()
 	override val backgroundColor = Color()
+	override var allowScaling = false
 
 	fun set(charStyle: CharStyle) {
 		font = charStyle.font
@@ -337,5 +358,6 @@ class CharElementStyle : CharElementStyleRo {
 		selectedBackgroundColor.set(charStyle.selectedBackgroundColor)
 		textColorTint.set(charStyle.colorTint)
 		backgroundColor.set(charStyle.backgroundColor)
+		allowScaling = charStyle.allowScaling
 	}
 }

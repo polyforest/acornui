@@ -55,8 +55,8 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 		framebuffer.setSize(window.framebufferWidth, window.framebufferHeight)
 		sprite.apply {
 			texture = framebuffer.texture
-			val w = framebuffer.width / framebuffer.texture.width
-			val h = framebuffer.height / framebuffer.texture.height
+			val w = framebuffer.width / framebuffer.texture.widthPixels
+			val h = framebuffer.height / framebuffer.texture.heightPixels
 
 			setUv(0f, 0f, w, h, isRotated = false)
 			updateVertices(2f, 2f, -1f, -1f)

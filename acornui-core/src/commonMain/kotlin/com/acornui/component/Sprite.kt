@@ -62,7 +62,7 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 	 */
 	var useAsBackFace = false
 
-	var texture: Texture? by Delegates.observable<Texture?>(null) {
+	var texture by Delegates.observable<Texture?>(null) {
 		_, _, _ ->
 		updateUv()
 	}
@@ -137,9 +137,9 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 		get() {
 			val t = texture ?: return 0f
 			return if (isRotated) {
-				t.height.toFloat() * abs(v2 - v)
+				t.heightPixels.toFloat() * abs(v2 - v)
 			} else {
-				t.width.toFloat() * abs(u2 - u)
+				t.widthPixels.toFloat() * abs(u2 - u)
 			} / scaleX
 		}
 
@@ -147,9 +147,9 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 		get() {
 			val t = texture ?: return 0f
 			return if (isRotated) {
-				t.width.toFloat() * abs(u2 - u)
+				t.widthPixels.toFloat() * abs(u2 - u)
 			} else {
-				t.height.toFloat() * abs(v2 - v)
+				t.heightPixels.toFloat() * abs(v2 - v)
 			} / scaleY
 		}
 
@@ -162,10 +162,10 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 			u2 = region[2]
 			v2 = region[3]
 		} else {
-			u = region[0] / t.width.toFloat()
-			v = region[1] / t.height.toFloat()
-			u2 = region[2] / t.width.toFloat()
-			v2 = region[3] / t.height.toFloat()
+			u = region[0] / t.widthPixels.toFloat()
+			v = region[1] / t.heightPixels.toFloat()
+			u2 = region[2] / t.widthPixels.toFloat()
+			v2 = region[3] / t.heightPixels.toFloat()
 		}
 	}
 

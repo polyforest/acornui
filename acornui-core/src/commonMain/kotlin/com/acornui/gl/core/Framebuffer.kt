@@ -244,12 +244,12 @@ class Framebuffer(
 
 class BufferTexture(gl: Gl20,
 					glState: GlState,
-					override val width: Int = 0,
-					override val height: Int = 0
+					override val widthPixels: Int = 0,
+					override val heightPixels: Int = 0
 ) : GlTextureBase(gl, glState) {
 
 	override fun uploadTexture() {
-		gl.texImage2Db(target.value, 0, pixelFormat.value, width, height, 0, pixelFormat.value, pixelType.value, null)
+		gl.texImage2Db(target.value, 0, pixelFormat.value, widthPixels, heightPixels, 0, pixelFormat.value, pixelType.value, null)
 	}
 }
 

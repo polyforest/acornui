@@ -18,39 +18,91 @@ package com.acornui.core.graphic
 
 import com.acornui.gl.core.*
 
-interface Texture {
+interface TextureRo {
 
-	var target: TextureTarget
+	val target: TextureTarget
 
 	/**
 	 * Possible values:
 	 * NEAREST, LINEAR
 	 */
-	var filterMag: TextureMagFilter
+	val filterMag: TextureMagFilter
 
 	/**
 	 * Possible values:
 	 * NEAREST, LINEAR, NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR, LINEAR_MIPMAP_LINEAR
 	 */
-	var filterMin: TextureMinFilter
+	val filterMin: TextureMinFilter
 
 	/**
 	 * Possible values:
 	 * REPEAT, CLAMP_TO_EDGE, MIRRORED_REPEAT
 	 */
-	var wrapS: TextureWrapMode
-	var wrapT: TextureWrapMode
+	val wrapS: TextureWrapMode
+	val wrapT: TextureWrapMode
 
-	var pixelFormat: TexturePixelFormat
-	var pixelType: TexturePixelType
+	val pixelFormat: TexturePixelFormat
+	val pixelType: TexturePixelType
 
-	var textureHandle: GlTextureRef?
+	val textureHandle: GlTextureRef?
 
 	/**
 	 * In a texture atlas, the 0,0 pixel may be set to white in order to allow vector drawing to be
 	 * done in the same batch.
 	 */
-	var hasWhitePixel: Boolean
+	val hasWhitePixel: Boolean
+
+	/**
+	 * Returns an RgbData object representing the bitmap data for this texture.
+	 * TODO: Not all Texture implementations currently support this feature.
+	 */
+	val rgbData: RgbData
+
+	/**
+	 * The natural width of this texture, in pixels.
+	 */
+	val widthPixels: Int
+
+	/**
+	 * The natural height of this texture, in pixels.
+	 */
+	val heightPixels: Int
+
+}
+
+interface Texture : TextureRo {
+
+	override var target: TextureTarget
+
+	/**
+	 * Possible values:
+	 * NEAREST, LINEAR
+	 */
+	override var filterMag: TextureMagFilter
+
+	/**
+	 * Possible values:
+	 * NEAREST, LINEAR, NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR, LINEAR_MIPMAP_LINEAR
+	 */
+	override var filterMin: TextureMinFilter
+
+	/**
+	 * Possible values:
+	 * REPEAT, CLAMP_TO_EDGE, MIRRORED_REPEAT
+	 */
+	override var wrapS: TextureWrapMode
+	override var wrapT: TextureWrapMode
+
+	override var pixelFormat: TexturePixelFormat
+	override var pixelType: TexturePixelType
+
+	override var textureHandle: GlTextureRef?
+
+	/**
+	 * In a texture atlas, the 0,0 pixel may be set to white in order to allow vector drawing to be
+	 * done in the same batch.
+	 */
+	override var hasWhitePixel: Boolean
 
 	/**
 	 * Increments the number of places this Texture is used. If this Texture was previously not referenced,
@@ -68,16 +120,10 @@ interface Texture {
 	 * Returns an RgbData object representing the bitmap data for this texture.
 	 * TODO: Not all Texture implementations currently support this feature.
 	 */
-	val rgbData: RgbData
+	override val rgbData: RgbData
 
-	/**
-	 * The natural width of this texture
-	 */
-	val width: Int
+	override val widthPixels: Int
 
-	/**
-	 * The natural height of this texture
-	 */
-	val height: Int
+	override val heightPixels: Int
 
 }

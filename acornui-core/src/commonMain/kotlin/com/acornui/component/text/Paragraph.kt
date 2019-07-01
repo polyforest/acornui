@@ -25,6 +25,7 @@ import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.component.text.collection.JoinedList
 import com.acornui.core.di.Owned
 import com.acornui.core.selection.SelectionRange
+import com.acornui.function.as2
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.offsetRound
@@ -74,6 +75,11 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 		validation.addNode(TEXT_ELEMENTS, dependencies = ValidationFlags.HIERARCHY_ASCENDING, dependents = ValidationFlags.LAYOUT, onValidate = _textElements::dirty)
 		validation.addNode(VERTICES, dependencies = TEXT_ELEMENTS or ValidationFlags.LAYOUT or ValidationFlags.STYLES, dependents = 0, onValidate = ::updateVertices)
 		validation.addNode(CHAR_STYLE, dependencies = TEXT_ELEMENTS or ValidationFlags.STYLES, dependents = 0, onValidate = ::updateCharStyle)
+		window.scaleChanged.add(::windowScalingChangedHandler.as2)
+	}
+
+	private fun windowScalingChangedHandler() {
+		invalidateLayout()
 	}
 
 	override val lines: List<LineInfoRo>
@@ -141,13 +147,24 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 
 		var spanPartIndex = 0
 		var allowWordBreak = true
+		val windowScaleX = window.scaleX
+		val windowScaleY = window.scaleY
+
+		for (i in 0.._elements.lastIndex) {
+			val span = _elements[i]
+			span.windowScaleX = windowScaleX
+			span.windowScaleY = windowScaleY
+		}
+
 		while (spanPartIndex < textElements.size) {
 			val part = textElements[spanPartIndex]
 			part.explicitWidth = null
 			part.x = x
+			part.windowScaleX = windowScaleX
+			part.windowScaleY = windowScaleY
 
 			if (part.clearsTabstop) {
-				val tabIndex = kotlin.math.floor(x / tabSize).toInt() + 1
+				val tabIndex = floor(x / tabSize).toInt() + 1
 				var w = tabIndex * tabSize - x
 				// I'm not sure what standard text flows do for this, but if the tab size is too small, skip to
 				// the next tabstop.
@@ -388,6 +405,11 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 				textElements[i].render(clip, transform, tint)
 			}
 		}
+	}
+
+	override fun dispose() {
+		super.dispose()
+		window.scaleChanged.remove(::windowScalingChangedHandler.as2)
 	}
 
 	companion object {

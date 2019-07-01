@@ -31,10 +31,10 @@ class RgbTexture(
 		pixelFormat = if (rgbData.hasAlpha) TexturePixelFormat.RGBA else TexturePixelFormat.RGB
 	}
 
-	override val width: Int
+	override val widthPixels: Int
 		get() = rgbData.width
 
-	override val height: Int
+	override val heightPixels: Int
 		get() = rgbData.height
 	
 	override fun uploadTexture() {
