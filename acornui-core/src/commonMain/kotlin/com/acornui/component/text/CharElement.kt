@@ -54,20 +54,12 @@ class CharElement private constructor() : TextElement, Clearable {
 
 	override var x = 0f
 	override var y = 0f
-	override var windowScaleX = 1f
-	override var windowScaleY = 1f
-
-	/**
-	 * If allowScaling is true, font sizes will be scaled so their px size will be rendered as pt sizes.
-	 * @see CharStyle.allowScaling
-	 */
-	private val allowScaling: Boolean
-		get() = style?.allowScaling ?: true
 
 	private val scaleX: Float
-		get() = if (allowScaling) 1f else windowScaleX
+		get() = style?.scaleX ?: 1f
+
 	private val scaleY: Float
-		get() = if (allowScaling) 1f else windowScaleY
+		get() = style?.scaleY ?: 1f
 
 	override val advanceX: Float
 		get() = (glyph?.advanceX?.toFloat() ?: 0f) / scaleX
@@ -329,9 +321,8 @@ interface CharElementStyleRo {
 	val selectedBackgroundColor: ColorRo
 	val textColorTint: ColorRo
 	val backgroundColor: ColorRo
-
-
-	val allowScaling: Boolean
+	val scaleX: Float
+	val scaleY: Float
 }
 
 /**
@@ -347,10 +338,11 @@ class CharElementStyle : CharElementStyleRo {
 	override val selectedBackgroundColor = Color()
 	override val textColorTint = Color()
 	override val backgroundColor = Color()
-	override var allowScaling = false
+	override var scaleX: Float = 1f
+	override var scaleY: Float = 1f
 
 	fun set(charStyle: CharStyle) {
-		font = charStyle.font
+		font = charStyle.getFont()
 		underlined = charStyle.underlined
 		strikeThrough = charStyle.strikeThrough
 		lineThickness = charStyle.lineThickness
@@ -358,6 +350,7 @@ class CharElementStyle : CharElementStyleRo {
 		selectedBackgroundColor.set(charStyle.selectedBackgroundColor)
 		textColorTint.set(charStyle.colorTint)
 		backgroundColor.set(charStyle.backgroundColor)
-		allowScaling = charStyle.allowScaling
+		scaleX = charStyle.scaleX
+		scaleY = charStyle.scaleY
 	}
 }

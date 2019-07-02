@@ -16,7 +16,9 @@
 
 package com.acornui.component.text
 
+import com.acornui.async.catch
 import com.acornui.async.resultOrNull
+import com.acornui.async.then
 import com.acornui.component.*
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.Styleable
@@ -34,6 +36,7 @@ import com.acornui.core.selection.Selectable
 import com.acornui.core.selection.SelectableComponent
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionRange
+import com.acornui.logging.Log
 import com.acornui.math.Bounds
 
 interface TextField : SingleElementContainer<TextNode>, Labelable, SelectableComponent, Styleable {
@@ -111,16 +114,40 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 	private val _textSpan = span()
 	private val _textContents = p { +_textSpan }
 
-	private var _allowClipping: Boolean = true
+	init {
+		element = _textContents
+		// Add the styles as rules so that they cascade down into the text spans:
+		addStyleRule(flowStyle)
+		addStyleRule(charStyle)
+		styleTags.add(TextField)
+
+		watch(charStyle) { cS ->
+			val font = cS.getFont()?.then {
+				if (!isDisposed) invalidate(ValidationFlags.LAYOUT)
+			}
+			refreshCursor()
+			if (cS.selectable) {
+				if (_drag == null) {
+					val d = DragAttachment(this, 0f)
+					d.drag.add(::dragHandler)
+					_drag = d
+				}
+			} else {
+				_drag?.dispose()
+				_drag = null
+			}
+		}
+		validation.addNode(SELECTION, dependencies = ValidationFlags.HIERARCHY_ASCENDING, onValidate = ::updateSelection)
+		selectionManager.selectionChanged.add(::selectionChangedHandler)
+	}
 
 	/**
 	 * If true (default), the contents will be clipped to the explicit size of this text field.
 	 */
-	override var allowClipping: Boolean
-		get() = _allowClipping
+	override var allowClipping: Boolean = true
 		set(value) {
-			if (_allowClipping == value) return
-			_allowClipping = value
+			if (field == value) return
+			field = value
 			_textContents.allowClipping = value
 			element?.allowClipping = value
 			invalidateLayout()
@@ -203,10 +230,11 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 
 		// Handle sizing if the content is blank:
 		if (contents.textElements.isEmpty()) {
-			val font = charStyle.font
+			val font = charStyle.getFont()
 			val fontData = font?.resultOrNull()?.data
 			val padding = flowStyle.padding
-			out.height = padding.expandHeight(fontData?.lineHeight?.toFloat()) ?: 0f
+			val lineHeight: Float = (fontData?.lineHeight?.toFloat() ?: 0f) / charStyle.scaleY
+			out.height = padding.expandHeight2(lineHeight)
 			out.baseline = padding.top + (fontData?.baseline?.toFloat() ?: 0f)
 		}
 
@@ -223,30 +251,6 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 		selectionManager.selectionChanged.remove(::selectionChangedHandler)
 		_drag?.dispose()
 		_drag = null
-	}
-
-	init {
-		element = _textContents
-		// Add the styles as rules so that they cascade down into the text spans:
-		addStyleRule(flowStyle)
-		addStyleRule(charStyle)
-		styleTags.add(TextField)
-
-		watch(charStyle) { cS ->
-			refreshCursor()
-			if (cS.selectable) {
-				if (_drag == null) {
-					val d = DragAttachment(this, 0f)
-					d.drag.add(::dragHandler)
-					_drag = d
-				}
-			} else {
-				_drag?.dispose()
-				_drag = null
-			}
-		}
-		validation.addNode(SELECTION, dependencies = ValidationFlags.HIERARCHY_ASCENDING, onValidate = ::updateSelection)
-		selectionManager.selectionChanged.add(::selectionChangedHandler)
 	}
 
 	override fun onActivated() {

@@ -213,6 +213,11 @@ class CharStyle : StyleBase() {
 	var fontWeight by prop(FontWeight.REGULAR)
 
 	/**
+	 * The dpi scaling for the font.
+	 */
+	var fontPixelDensity by prop(1f)
+
+	/**
 	 * True if the characters should draw an line at the baseline.
 	 */
 	var underlined by prop(false)
@@ -242,24 +247,30 @@ class CharStyle : StyleBase() {
 	var selectable by prop(true)
 
 	/**
-	 * If true, the glyph will be sized in points, not pixels.
-	 * Take an example where the font size is 24px, and the window pixel scaling is 2x.
-	 * If `allowScaling` is true, characters will be scaled by 2x to match 24 pt, as opposed to not being scaled
-	 * and will match 12pt (but look a lot crisper).
-	 *
-	 * @see [com.acornui.core.graphic.Window.scaleX]
-	 * @see [com.acornui.core.graphic.Window.scaleY]
+	 * The scaling of points to pixels.
+	 * This should correspond to the [com.acornui.core.graphic.Window.scaleX].
 	 */
-	var allowScaling by prop(true)
+	var scaleX: Float by prop(1f)
+
+	/**
+	 * The scaling of points to pixels.
+	 * This should correspond to the [com.acornui.core.graphic.Window.scaleY].
+	 */
+	var scaleY: Float by prop(1f)
 
 	companion object : StyleType<CharStyle>
 }
 
-val CharStyle.font: Deferred<BitmapFont>?
-	get() {
-		val family = fontFamily ?: return null
-		return BitmapFontRegistry.getFont(family, fontSize, fontWeight, fontStyle)
-	}
+fun CharStyle.getFont(): Deferred<BitmapFont>? {
+	val family = fontFamily ?: return null
+	return BitmapFontRegistry.getFont(BitmapFontRequest(
+			family,
+			fontSize,
+			fontWeight,
+			fontStyle,
+			fontPixelDensity
+	))
+}
 
 
 fun charStyle(init: CharStyle.() -> Unit = {}): CharStyle {
@@ -281,6 +292,8 @@ object CharStyleSerializer : To<CharStyle>, From<CharStyle> {
 		writer.styleProperty(this, ::selectedColorTint)?.color(selectedColorTint)
 		writer.styleProperty(this, ::selectedBackgroundColor)?.color(selectedBackgroundColor)
 		writer.styleProperty(this, ::selectable)?.bool(selectable)
+		writer.styleProperty(this, ::scaleX)?.float(scaleX)
+		writer.styleProperty(this, ::scaleY)?.float(scaleY)
 	}
 
 	override fun read(reader: Reader): CharStyle {
@@ -295,6 +308,8 @@ object CharStyleSerializer : To<CharStyle>, From<CharStyle> {
 		reader.contains(c::selectedColorTint.name) { c.selectedColorTint = it.color()!! }
 		reader.contains(c::selectedBackgroundColor.name) { c.selectedBackgroundColor = it.color()!! }
 		reader.contains(c::selectable.name) { c.selectable = it.bool()!! }
+		reader.contains(c::scaleX.name) { c.scaleX = it.float()!! }
+		reader.contains(c::scaleY.name) { c.scaleY = it.float()!! }
 		return c
 	}
 }

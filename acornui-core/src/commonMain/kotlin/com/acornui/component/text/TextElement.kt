@@ -48,9 +48,6 @@ interface TextElementRo: SizableRo {
 	val x: Float
 	val y: Float
 
-	val windowScaleX: Float
-	val windowScaleY: Float
-
 	/**
 	 * The natural amount of horizontal space to advance after this part.
 	 * [explicitWidth] will override this value.
@@ -128,10 +125,6 @@ interface TextElement : TextElementRo, Disposable {
 
 	override var x: Float
 	override var y: Float
-
-	override var windowScaleX: Float
-	override var windowScaleY: Float
-
 
 	/**
 	 * If set, this element should be drawn to fit this width.
@@ -272,8 +265,6 @@ class LastTextElement(private val flow: Paragraph) : TextElementRo {
 	override val char: Char? = null
 	override var x = 0f
 	override var y = 0f
-	override val windowScaleX: Float = 1f
-	override val windowScaleY: Float = 1f
 
 	override val advanceX = 0f
 

@@ -97,9 +97,6 @@ interface TextSpanElement : ElementParent<TextElement>, TextSpanElementRo<TextEl
 
 	override var textParent: TextNodeRo?
 
-	override var windowScaleX: Float
-	override var windowScaleY: Float
-
 	fun validateStyles()
 
 }
@@ -174,12 +171,9 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 		}
 
 	private val scaleX: Float
-		get() = if (allowScaling) 1f else windowScaleX
+		get() = charStyle.scaleX
 	private val scaleY: Float
-		get() = if (allowScaling) 1f else windowScaleY
-
-	private val allowScaling: Boolean
-		get() = charStyle.allowScaling
+		get() = charStyle.scaleY
 
 	operator fun Char?.unaryPlus() {
 		if (this == null) return

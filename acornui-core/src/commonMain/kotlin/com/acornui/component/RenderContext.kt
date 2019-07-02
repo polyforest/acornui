@@ -74,7 +74,6 @@ class DefaultRenderContext(override val injector: Injector) : Scoped, RenderCont
 
 	init {
 		window.sizeChanged.add(::invalidate.as2)
-		window.scaleChanged.add(::invalidate.as2)
 	}
 
 	private fun invalidate() {
@@ -115,7 +114,6 @@ class DefaultRenderContext(override val injector: Injector) : Scoped, RenderCont
 
 	override fun dispose() {
 		window.sizeChanged.remove(::invalidate.as2)
-		window.scaleChanged.remove(::invalidate.as2)
 	}
 }
 

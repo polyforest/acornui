@@ -18,9 +18,8 @@ package com.acornui.component.text
 
 import com.acornui.action.Decorator
 import com.acornui.async.Deferred
+import com.acornui.async.catch
 import com.acornui.async.then
-import com.acornui.collection.*
-import com.acornui.recycle.Clearable
 import com.acornui.core.Disposable
 import com.acornui.core.asset.*
 import com.acornui.core.di.Scoped
@@ -35,6 +34,7 @@ import com.acornui.gl.core.TextureMinFilter
 import com.acornui.logging.Log
 import com.acornui.math.IntRectangle
 import com.acornui.math.IntRectangleRo
+import com.acornui.recycle.Clearable
 
 /**
  * @author nbilyk
@@ -130,7 +130,9 @@ class Glyph(
 ) {
 
 	/**
-	 *
+	 * Gets the kerning of this glyph for the given character.
+	 * This is the horizontal adjustment.
+	 * In pixels.
 	 */
 	fun getKerning(ch: Char): Int = data.getKerning(ch)
 }
@@ -280,72 +282,93 @@ suspend fun Scoped.loadFontFromAtlas(fontKey: String, atlasPath: String, group: 
 				premultipliedAlpha = page.premultipliedAlpha
 		)
 	}
-	val font = BitmapFont(
+	return BitmapFont(
 			bitmapFontData,
 			pages = atlasPageTextures.map { it.await() },
 			premultipliedAlpha = false,
 			glyphs = glyphs
 	)
-	return font
 }
 
+@Suppress("EqualsOrHashCode")
+data class BitmapFontRequest(
 
-typealias FontResolver = (family: String, size: String, weight: String, style: String) -> Deferred<BitmapFont>?
+		/**
+		 * The font type face.
+		 */
+		val family: String,
+
+		/**
+		 * The name of the font size to be passed to the [BitmapFontRegistry.fontResolver].
+		 * @see FontSize
+		 */
+		val size: String,
+
+		/**
+		 * The name of the font weight to be passed to the [BitmapFontRegistry.fontResolver].
+		 * @see FontWeight
+		 */
+		val weight: String,
+
+		/**
+		 * The name of the font style to be passed to the [BitmapFontRegistry.fontResolver].
+		 * @see FontStyle
+		 */
+		val style: String,
+
+		/**
+		 * The dpi scaling for the font.
+		 */
+		val fontPixelDensity: Float
+) {
+
+	// Cache the hashcode; this data class is immutable.
+	private val hashCode by lazy {
+		var result = family.hashCode()
+		result = 31 * result + size.hashCode()
+		result = 31 * result + weight.hashCode()
+		result = 31 * result + style.hashCode()
+		result = 31 * result + fontPixelDensity.hashCode()
+		result
+	}
+
+	override fun hashCode(): Int {
+		return hashCode
+	}
+}
+
+typealias FontResolver = (request: BitmapFontRequest) -> Deferred<BitmapFont>
 
 object BitmapFontRegistry : Clearable, Disposable {
 
 	/**
 	 * family, size, weight, style -> Deferred<BitmapFont>
 	 */
-	private val registry: MutableMultiMap4<String, String, String, String, Deferred<BitmapFont>> = multiMap4()
+	private val registry = HashMap<BitmapFontRequest, Deferred<BitmapFont>>()
 
 	/**
 	 * If set, when a font is requested that isn't registered, this font resolver will be used to load the font with
 	 * the given key.
 	 */
-	var fontResolver: FontResolver? = null
-
-	/**
-	 * Registers a bitmap font to a font path.
-	 */
-	private fun register(family: String, size: String, weight: String, style: String, fontPromise: Deferred<BitmapFont>) {
-		registry[family][size][weight][style]?.let { oldFontPromise ->
-			oldFontPromise.then {
-				for (page in it.pages) {
-					page.refDec()
-				}
-			}
-		}
-		registry[family][size][weight][style] = fontPromise
-		fontPromise.then {
-			for (page in it.pages) {
-				page.refInc()
-			}
-		}
-	}
+	lateinit var fontResolver: FontResolver
 
 	/**
 	 * Returns the font registered to the given style. Throws an exception if the font is not registered.
-	 *
-	 * @param family
-	 * @param size
-	 * @param weight
-	 * @param style
 	 */
-	fun getFont(family: String, size: String, weight: String, style: String): Deferred<BitmapFont>? {
-		var found = registry[family][size][weight][style]
-		if (found != null) return found
-		if (fontResolver != null) {
-			val resolved: Deferred<BitmapFont>? = fontResolver!!.invoke(family, size, weight, style)
-			if (resolved != null)
-				register(family, size, weight, style, resolved)
-			found = resolved
+	fun getFont(request: BitmapFontRequest): Deferred<BitmapFont> {
+		return registry.getOrPut(request) {
+			fontResolver.invoke(request).then {
+				for (page in it.pages) {
+					page.refInc()
+				}
+			}.catch {
+				Log.error(it)
+			}
 		}
-		return found
 	}
 
 	override fun clear() {
-		registry.iterateValues4 { bitmapFont ->
+		registry.values.forEach { bitmapFont ->
 			bitmapFont.then {
 				for (page in it.pages) {
 					page.refDec()

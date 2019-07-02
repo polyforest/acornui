@@ -188,13 +188,13 @@ open class BasicUiSkin(
 	)
 
 	protected open fun textFontStyle() {
-		BitmapFontRegistry.fontResolver = { family, size, weight, style ->
+		BitmapFontRegistry.fontResolver = { request ->
 			async {
-				val weightStr = if (weight != FontWeight.REGULAR) "_$weight" else ""
-				val styleStr = if (style != FontStyle.NORMAL) "_$style" else ""
-				val sizeStr = "_${sizeToPxMap[size]}"
+				val weightStr = if (request.weight != FontWeight.REGULAR) "_${request.weight}" else ""
+				val styleStr = if (request.style != FontStyle.NORMAL) "_${request.style}" else ""
+				val sizeStr = "_${sizeToPxMap[request.size]}"
 
-				loadFontFromAtlas("assets/uiskin/$family$weightStr$styleStr$sizeStr.fnt", theme.atlasPath)
+				loadFontFromAtlas("assets/uiskin/${request.family}$weightStr$styleStr$sizeStr.fnt", theme.atlasPath)
 			}
 		}
 		target.addStyleRule(charStyle { fontFamily = "verdana" })

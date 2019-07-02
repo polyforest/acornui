@@ -76,20 +76,65 @@ data class BitmapFontData(
 }
 
 data class BitmapFontInfo(
+
+		/**
+		 * The font family.
+		 */
 		val face: String,
 
+		/**
+		 * The size of the font, in pixels.
+		 */
 		val size: Int,
 
+		/**
+		 * The font is bold.
+		 */
 		val bold: Boolean,
 
+		/**
+		 * The font is italic.
+		 */
 		val italic: Boolean,
+
+		/**
+		 * The name of the OEM charset used (when not unicode).
+		 */
 		val charset: String,
+
+		/**
+		 * Set to 1 if it is the unicode charset.
+		 */
 		val unicode: Boolean,
+
+		/**
+		 * The font height stretch in percentage. 100 means no stretch.
+		 */
 		val stretchH: Int,
+
+		/**
+		 * Set to 1 if smoothing was turned on.
+		 */
 		val smooth: Boolean,
+
+		/**
+		 * The supersampling level used. 1 means no supersampling was used.
+		 */
 		val antialiasing: Int,
+
+		/**
+		 * The padding for each character.
+		 */
 		val padding: IntPadRo,
+
+		/**
+		 * The horizontal spacing for each character.
+		 */
 		val spacingX: Int,
+
+		/**
+		 * The vertical spacing for each character.
+		 */
 		val spacingY: Int
 )
 
