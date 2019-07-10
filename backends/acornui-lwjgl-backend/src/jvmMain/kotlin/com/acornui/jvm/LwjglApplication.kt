@@ -78,7 +78,6 @@ import org.lwjgl.glfw.GLFWWindowRefreshCallback
 import java.io.File
 import java.io.FileNotFoundException
 import org.lwjgl.Version as LwjglVersion
-import java.util.Locale as LocaleJvm
 
 /**
  * @author nbilyk

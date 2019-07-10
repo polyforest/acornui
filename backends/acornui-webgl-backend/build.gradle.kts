@@ -15,17 +15,26 @@
  */
 
 plugins {
-    id("com.polyforest.acornui.basic")
-    `maven-publish`
+    id("com.acornui.plugins.kotlin-js")
 }
 
 kotlin {
     sourceSets {
-        commonMain {
+        named("jsMain") {
             dependencies {
-                implementation(project(":acornui-core"))
-                implementation(project(":acornui-utils"))
+                implementation("com.acornui:acornui-core")
+                implementation("com.acornui:acornui-utils")
             }
+        }
+    }
+
+    // Webgl backend doesn't need metadata publication:
+    metadata {
+        mavenPublication {
+            val targetPublication = this@mavenPublication
+            tasks.withType<AbstractPublishToMaven>()
+                .matching { it.publication == targetPublication }
+                .all { onlyIf { false } }
         }
     }
 }

@@ -15,30 +15,31 @@
  */
 
 plugins {
-    id("com.polyforest.acornui.basic")
-    `maven-publish`
+	id("com.acornui.plugins.kotlin-mpp")
 }
 
-val MOCKITO_VERSION: String by extra
-val OBJENESIS_VERSION: String by extra
+val mockitoVersion: String by extra
+val objenesisVersion: String by extra
+
 kotlin {
-    sourceSets {
-        commonMain {
-            dependencies {
-                implementation(project(":acornui-utils"))
-            }
-        }
-        commonTest {
-            dependencies {
-                implementation(project(":acornui-test-utils"))
-            }
-        }
-        named("jvmTest") {
-            dependencies {
-                implementation(kotlin("reflect"))
-                implementation("org.mockito:mockito-core:$MOCKITO_VERSION")
-                implementation("org.objenesis:objenesis:$OBJENESIS_VERSION")
-            }
-        }
-    }
+	sourceSets {
+		commonMain {
+			dependencies {
+				implementation("com.acornui:acornui-utils")
+			}
+		}
+		commonTest {
+			dependencies {
+				implementation("com.acornui:acornui-test-utils")
+//				implementation("com.acornui:acornui-utils")
+			}
+		}
+		named("jvmTest") {
+			dependencies {
+				implementation(kotlin("reflect"))
+				implementation("org.mockito:mockito-core:$mockitoVersion")
+				implementation("org.objenesis:objenesis:$objenesisVersion")
+			}
+		}
+	}
 }

@@ -15,17 +15,15 @@
  */
 
 plugins {
-    id("com.polyforest.acornui.basic")
-    `maven-publish`
+    id("com.acornui.plugins.kotlin-mpp")
 }
 
 kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":acornui-core"))
-                implementation(project(":acornui-utils"))
-                implementation(project(":backends:acornui-lwjgl-backend"))
+                implementation("com.acornui:acornui-core")
+                implementation("com.acornui:acornui-utils")
                 implementation(project(":tools:acornui-texture-packer"))
             }
         }

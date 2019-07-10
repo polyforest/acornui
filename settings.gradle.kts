@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+val kotlinVersion: String by extra
+val acornPluginVersion: String by extra
+
 pluginManagement {
     repositories {
         mavenLocal()
@@ -21,17 +24,17 @@ pluginManagement {
     }
     resolutionStrategy {
         eachPlugin {
-            if (requested.id.id.startsWith(ACORNUI_PLUGIN_MARKER_PREFIX))
-                useVersion(ACORNUI_PLUGIN_VERSION)
+            when {
+                requested.id.namespace == "org.jetbrains.kotlin" ->
+                    useVersion(kotlinVersion)
+                requested.id.namespace == "com.acornui.plugins" ->
+                    useVersion(acornPluginVersion)
+            }
         }
     }
 }
-
-val settings = this as ExtensionAware
-val KOTLIN_VERSION: String by settings.extra
-val ACORNUI_PLUGIN_MARKER_PREFIX: String by settings.extra
-val ACORNUI_PLUGIN_VERSION: String by settings.extra
 rootProject.name = "acornui"
 
-// Uncomment below and adapt, adding modules as they are created.  Modules take on the name of their root directory in gradle.
-include("acornui-core", "acornui-game", "acornui-spine", "acornui-utils", "acornui-test-utils", "backends:acornui-lwjgl-backend", "backends:acornui-webgl-backend", "tools:acornui-build-tasks", "tools:acornui-texture-packer")
+include("acornui-utils", "acornui-core", "acornui-game", "acornui-spine", "backends:acornui-lwjgl-backend", "backends:acornui-webgl-backend", "tools:acornui-build-tasks", "tools:acornui-texture-packer", "acornui-test-utils")
+
+enableFeaturePreview("GRADLE_METADATA")

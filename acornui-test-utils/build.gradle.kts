@@ -15,8 +15,8 @@
  */
 
 plugins {
-    id("com.polyforest.acornui.basic")
-    `maven-publish`
+    id("com.acornui.plugins.kotlin-mpp")
+    
 }
 
 kotlin {
@@ -26,7 +26,7 @@ kotlin {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
                 
-                implementation(project(":acornui-utils"))
+                implementation("com.acornui:acornui-utils")
             }
         }
         named("jvmMain") {
