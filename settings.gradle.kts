@@ -19,7 +19,9 @@ val acornPluginVersion: String by extra
 
 pluginManagement {
     repositories {
-        mavenLocal()
+        maven {
+            url = uri("https://github.com/polyforest/acornui-gradle-plugin/raw/repository")
+        }
         gradlePluginPortal()
     }
     resolutionStrategy {

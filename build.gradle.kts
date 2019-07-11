@@ -1,4 +1,3 @@
-import org.gradle.internal.impldep.org.junit.platform.engine.discovery.ModuleSelector
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
@@ -20,8 +19,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 val kotlinJvmTarget: String by extra
 val kotlinLanguageVersion: String by extra
-val productVersion: String by extra
-val productGroup: String by extra
 
 plugins {
 	kotlin("multiplatform") apply false
@@ -34,16 +31,14 @@ subprojects {
 		plugin("org.gradle.maven-publish")
 	}
 }
+
 allprojects {
 	apply {
 		plugin("org.gradle.idea")
 	}
 	repositories {
-		mavenLocal()
 		jcenter()
 	}
-	version = productVersion
-	group = productGroup
 
 	tasks.withType<KotlinCompile> {
 		kotlinOptions {
@@ -55,7 +50,7 @@ allprojects {
 	configurations.all {
 		resolutionStrategy.dependencySubstitution.all {
 			requested.let { r ->
-				if (r is ModuleComponentSelector && r.group == productGroup) {
+				if (r is ModuleComponentSelector && r.group == group) {
 					arrayOf("", "tools:", "backends:").firstNotNullResult {
 						findProject(":$it${r.module}")
 					}?.let { targetProject ->
@@ -65,5 +60,15 @@ allprojects {
 			}
 		}
 	}
-}
 
+	val acornUiGradlePluginRepository: String? by extra
+	if (acornUiGradlePluginRepository != null) {
+		publishing {
+			repositories {
+				maven {
+					url = uri(acornUiGradlePluginRepository!!)
+				}
+			}
+		}
+	}
+}

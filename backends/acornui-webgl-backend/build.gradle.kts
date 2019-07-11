@@ -27,14 +27,4 @@ kotlin {
             }
         }
     }
-
-    // Webgl backend doesn't need metadata publication:
-    metadata {
-        mavenPublication {
-            val targetPublication = this@mavenPublication
-            tasks.withType<AbstractPublishToMaven>()
-                .matching { it.publication == targetPublication }
-                .all { onlyIf { false } }
-        }
-    }
 }
