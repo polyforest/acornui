@@ -36,11 +36,11 @@ class AcornTexturePacker(
 		private val assets: AssetManager,
 		private val json: Serializer<String>) {
 
-	suspend fun pack(root: Directory, settingsFilename: String = "_packSettings.json"): PackedTextureData {
+	suspend fun pack(root: Directory, settingsFilename: String = "_packSettings.json", quiet: Boolean = false): PackedTextureData {
 		val settingsFile = root.getFile(settingsFilename) ?: throw Exception("$settingsFilename is missing")
 		val settingsJson = assets.load(settingsFile.path, AssetType.TEXT).await()
 		val settings = json.read(settingsJson, TexturePackerSettingsSerializer)
-		return pack(root, settings)
+		return pack(root, settings, quiet)
 	}
 
 	/**
@@ -52,7 +52,7 @@ class AcornTexturePacker(
 	 * @param root  The root directory to recurse (up to settings.maxDirectoryDepth)
 	 * @param settings The configuration variables to use when packing.
 	 */
-	suspend fun pack(root: Directory, settings: TexturePackerSettingsData): PackedTextureData {
+	suspend fun pack(root: Directory, settings: TexturePackerSettingsData, quiet: Boolean = false): PackedTextureData {
 		settings.validate()
 
 		val packer: RectanglePacker = when (settings.packAlgorithm) {
@@ -69,7 +69,7 @@ class AcornTexturePacker(
 		}
 
 		// Calculate how the pages should be laid out.
-		val packedRectanglePages = packer.pack(ArrayIterator(rectangles))
+		val packedRectanglePages = packer.pack(ArrayIterator(rectangles), quiet)
 
 		// Create the image data for each page.
 		val packedPages = createPackedPages(imageSources, packedRectanglePages, settings)
@@ -284,7 +284,7 @@ interface RectanglePacker {
 	 * Packs the input rectangles into pages of the provided size.
 	 * @return Returns a list of PackerPage objects, each with a list of the rectangles provided from inputImages.
 	 */
-	fun pack(inputRectangles: Iterable<PackerRectangleData>): List<PackerPageData>
+	fun pack(inputRectangles: Iterable<PackerRectangleData>, quiet: Boolean): List<PackerPageData>
 }
 
 /**
