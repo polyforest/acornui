@@ -236,16 +236,44 @@ fun String.compareTo2(other: String, ignoreCase: Boolean = false): Int {
 		compareTo(other)
 }
 
+private val wordSplitter = Regex("""([a-z]+|\d+|(?:[A-Z][a-z]+)|(?:[A-Z]+(?=(?:[A-Z][a-z])|[^A-Za-z]|[$\d\n]|\b)))([\W_]*)""")
+
+/**
+ * Converts a string to underscore_case.
+ * E.g.
+ * thisIsATest becomes this_is_a_test
+ *
+ * This does not support unicode characters.
+ * See unit tests for more case examples.
+ */
 fun String.toUnderscoreCase(): String {
-	return replace(Regex("([a-z])([A-Z]+)"), "$1_$2").toLowerCase()
+	return replace(wordSplitter, "$1_").trimEnd('_').toLowerCase()
 }
 
+/**
+ * Converts a string to hyphen-case.
+ * E.g.
+ * thisIsATest becomes this-is-a-test
+ *
+ * This does not support unicode characters.
+ * See unit tests for more case examples.
+ */
 fun String.toHyphenCase(): String {
-	return replace(Regex("([a-z])([A-Z]+)"), "$1-$2").toLowerCase()
+	return replace(wordSplitter, "$1-").trimEnd('-').toLowerCase()
 }
 
-fun String.toFirstLowerCase(): String {
-	return this[0].toLowerCase() + substring(1)
+/**
+ * Converts a string to camelCase.
+ * E.g.
+ * this-is-a-test becomes thisIsATest
+ *
+ * This does not support unicode characters.
+ * See unit tests for more case examples.
+ */
+fun String.toCamelCase(): String {
+	return wordSplitter.replace(this) {
+		it.groupValues[1].toLowerCase().capitalize()
+	}.decapitalize()
 }
 
 private val whitespaceChars = mapOf(
