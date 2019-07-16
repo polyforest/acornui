@@ -15,16 +15,15 @@
  */
 
 plugins {
-    id("com.polyforest.acornui.basic")
-    `maven-publish`
+    id("com.acornui.plugins.kotlin-js")
 }
 
 kotlin {
     sourceSets {
-        commonMain {
+        named("jsMain") {
             dependencies {
-                implementation(project(":acornui-core"))
-                implementation(project(":acornui-utils"))
+                implementation("com.acornui:acornui-core")
+                implementation("com.acornui:acornui-utils")
             }
         }
     }

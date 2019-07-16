@@ -16,7 +16,6 @@
 
 package com.acornui.component.text
 
-import com.acornui.async.catch
 import com.acornui.async.resultOrNull
 import com.acornui.async.then
 import com.acornui.component.*
@@ -36,7 +35,6 @@ import com.acornui.core.selection.Selectable
 import com.acornui.core.selection.SelectableComponent
 import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionRange
-import com.acornui.logging.Log
 import com.acornui.math.Bounds
 
 interface TextField : SingleElementContainer<TextNode>, Labelable, SelectableComponent, Styleable {

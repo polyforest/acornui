@@ -46,7 +46,7 @@ class MaxRectsPacker(algorithmSettings: PackerAlgorithmSettingsData) : Rectangle
 		settings.addWhitePixel = algorithmSettings.addWhitePixel
 	}
 
-	override fun pack(inputRectangles: Iterable<PackerRectangleData>): List<PackerPageData> {
+	override fun pack(inputRectangles: Iterable<PackerRectangleData>, quiet: Boolean): List<PackerPageData> {
 		// Finesse the input to match what the LibGdx max rects algorithm expects.
 		val inputRects = ArrayList<Rect>()
 		for (rectangle in inputRectangles) {
@@ -59,7 +59,7 @@ class MaxRectsPacker(algorithmSettings: PackerAlgorithmSettingsData) : Rectangle
 			rect.originalIndex = rectangle.originalIndex
 			inputRects.add(rect)
 		}
-		val pages = pack(inputRects)
+		val pages = pack(inputRects, quiet)
 
 		// Then convert the output to what Acorn expects.
 		val packerPages = Array(pages.size) {
@@ -81,7 +81,7 @@ class MaxRectsPacker(algorithmSettings: PackerAlgorithmSettingsData) : Rectangle
 		return packerPages.toList()
 	}
 
-	private fun pack(inputRects: MutableList<Rect>): MutableList<Page> {
+	private fun pack(inputRects: MutableList<Rect>, quiet: Boolean): MutableList<Page> {
 		var rects = inputRects
 		if (settings.fast) {
 			if (settings.rotation) {
@@ -101,14 +101,14 @@ class MaxRectsPacker(algorithmSettings: PackerAlgorithmSettingsData) : Rectangle
 
 		val pages = ArrayList<Page>()
 		while (rects.size > 0) {
-			val result = packPage(rects)
+			val result = packPage(rects, quiet)
 			pages.add(result)
 			rects = result.remainingRects
 		}
 		return pages
 	}
 
-	private fun packPage(inputRects: MutableList<Rect>): Page {
+	private fun packPage(inputRects: MutableList<Rect>, quiet: Boolean): Page {
 		var minWidth = Int.MAX_VALUE
 		var minHeight = Int.MAX_VALUE
 		val padW = if (settings.edgePadding) settings.paddingX * 2 else 0
@@ -137,7 +137,7 @@ class MaxRectsPacker(algorithmSettings: PackerAlgorithmSettingsData) : Rectangle
 		minWidth = maxOf(minWidth, settings.minWidth)
 		minHeight = maxOf(minHeight, settings.minHeight)
 
-		if (!settings.silent) print("Packing")
+		if (!quiet) print("Packing")
 
 		// Find the minimal page size that fits all rects.
 		var bestResult: Page? = null
@@ -149,14 +149,14 @@ class MaxRectsPacker(algorithmSettings: PackerAlgorithmSettingsData) : Rectangle
 			var i = 0
 			while (size != -1) {
 				val result = packAtSize(true, size, size, inputRects)
-				if (!settings.silent) {
+				if (!quiet) {
 					if (++i % 70 == 0) println()
 					print(".")
 				}
 				bestResult = getBest(bestResult, result)
 				size = sizeSearch.next(result == null)
 			}
-			if (!settings.silent) println()
+			if (!quiet) println()
 			// Rects don't fit on one page. Fill a whole page and return.
 			if (bestResult == null) bestResult = packAtSize(false, maxSize, maxSize, inputRects)
 			bestResult!!.outputRects.sortWith(rectComparator)
@@ -173,7 +173,7 @@ class MaxRectsPacker(algorithmSettings: PackerAlgorithmSettingsData) : Rectangle
 				var bestWidthResult: Page? = null
 				while (width != -1) {
 					val result = packAtSize(true, width, height, inputRects)
-					if (!settings.silent) {
+					if (!quiet) {
 						if (++i % 70 == 0) println()
 						print(".")
 					}
@@ -187,7 +187,7 @@ class MaxRectsPacker(algorithmSettings: PackerAlgorithmSettingsData) : Rectangle
 				if (height == -1) break
 				width = widthSearch.reset()
 			}
-			if (!settings.silent) println()
+			if (!quiet) println()
 			// Rects don't fit on one page. Fill a whole page and return.
 			if (bestResult == null)
 				bestResult = packAtSize(false, maxWidth, maxHeight, inputRects)
@@ -833,7 +833,6 @@ private class MaxRectsSettings {
 	var edgePadding: Boolean = true
 	var pot: Boolean = true
 	var rotation: Boolean = false
-	var silent: Boolean = false
 	var square: Boolean = false
 }
 

@@ -15,46 +15,39 @@
  */
 
 plugins {
-    id("com.polyforest.acornui.basic")
-    `maven-publish`
+	id("com.acornui.plugins.kotlin-jvm")
 }
 
+val kotlinJvmTarget: String by extra
+val kotlinLanguageVersion: String by extra
+
 kotlin {
-    sourceSets {
-        commonMain {
-            dependencies {
-                implementation(project(":acornui-core"))
-                implementation(project(":acornui-utils"))
-            }
-        }
-        named("jvmMain") {
-            dependencies {
-                val LWJGL_VERSION: String by extra
-                val JORBIS_VERSION: String by extra
-                val JLAYER_VERSION: String by extra
-                val lwjglGroup = "org.lwjgl"
-                val lwjglName = "lwjgl"
-                val natives = arrayOf("windows", "macos", "linux")
-                val extensions = arrayOf("glfw", "jemalloc", "opengl", "openal", "stb", "nfd", "tinyfd")
+	sourceSets {
+		named("jvmMain") {
+			dependencies {
+				implementation("com.acornui:acornui-core")
+				implementation("com.acornui:acornui-utils")
 
-                implementation("$lwjglGroup:$lwjglName:$LWJGL_VERSION")
-                extensions.forEach { implementation("$lwjglGroup:$lwjglName-$it:$LWJGL_VERSION") }
-                implementation("com.badlogicgames.jlayer:jlayer:$JLAYER_VERSION-gdx")
-                implementation("org.jcraft:jorbis:$JORBIS_VERSION")
+				val lwjglVersion: String by extra
+				val jorbisVersion: String by extra
+				val jlayerVersion: String by extra
+				val lwjglGroup = "org.lwjgl"
+				val lwjglName = "lwjgl"
+				val extensions = arrayOf("glfw", "jemalloc", "opengl", "openal", "stb", "nfd", "tinyfd")
 
-                for (native in natives) {
-                    runtimeOnly("$lwjglGroup:$lwjglName:$LWJGL_VERSION:natives-$native")
-                    extensions.forEach { runtimeOnly("$lwjglGroup:$lwjglName-$it:$LWJGL_VERSION:natives-$native") }
-                }
-            }
-        }
-        named("jvmTest") {
-            dependencies {
-                val MOCKITO_VERSION: String by extra
-                val OBJENESIS_VERSION: String by extra
-                implementation("org.mockito:mockito-core:$MOCKITO_VERSION")
-                implementation("org.objenesis:objenesis:$OBJENESIS_VERSION")
-            }
-        }
-    }
+				implementation("$lwjglGroup:$lwjglName:$lwjglVersion")
+				extensions.forEach { implementation("$lwjglGroup:$lwjglName-$it:$lwjglVersion") }
+				implementation("com.badlogicgames.jlayer:jlayer:$jlayerVersion-gdx")
+				implementation("org.jcraft:jorbis:$jorbisVersion")
+			}
+		}
+		named("jvmTest") {
+			dependencies {
+				val mockitoVersion: String by extra
+				val objenesisVersion: String by extra
+				implementation("org.mockito:mockito-core:$mockitoVersion")
+				implementation("org.objenesis:objenesis:$objenesisVersion")
+			}
+		}
+	}
 }

@@ -22,9 +22,6 @@ import com.acornui.core.lineSeparator
 import com.acornui.error.stack
 import com.acornui.core.debug as debugFlag
 
-@Deprecated("renamed to Logger", ReplaceWith("Logger"))
-typealias ILogger = Logger
-
 interface Logger {
 
 	companion object {

@@ -27,7 +27,7 @@ class GreedyRectanglePacker(private val settings: PackerAlgorithmSettingsData) :
 	private val SIZES = arrayOf(Pair(16, 16), Pair(32, 32), Pair(64, 32), Pair(64, 64), Pair(128, 128), Pair(256, 128), Pair(256, 256), Pair(512, 256), Pair(512, 512), Pair(1024, 512), Pair(1024, 1024))
 	private val MAX_PAGES = 20
 
-	override fun pack(inputRectangles: Iterable<PackerRectangleData>): List<PackerPageData> {
+	override fun pack(inputRectangles: Iterable<PackerRectangleData>, quiet: Boolean): List<PackerPageData> {
 		val remaining = ArrayList<PackerRectangleData>()
 		remaining.addAll(inputRectangles)
 
@@ -78,7 +78,7 @@ class GreedyRectanglePacker(private val settings: PackerAlgorithmSettingsData) :
 				val (pageWidth, pageHeight) = SIZES[mid]
 				val remainingTest = ArrayList<PackerRectangleData>()
 				remainingTest.addAll(remaining)
-				fillPage(pageWidth, pageHeight, ArrayList<PackerRectangleData>(), remainingTest, true)
+				fillPage(pageWidth, pageHeight, ArrayList(), remainingTest, true)
 
 				if (remainingTest.isNotEmpty()) {
 					left = mid + 1

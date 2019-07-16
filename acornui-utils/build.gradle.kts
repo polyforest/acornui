@@ -15,21 +15,20 @@
  */
 
 plugins {
-    id("com.polyforest.acornui.basic")
-    `maven-publish`
+	id("com.acornui.plugins.kotlin-mpp")
 }
 
 kotlin {
-    sourceSets {
-        commonTest {
-            dependencies {
-                implementation(project(":acornui-test-utils"))
-            }
-        }
-        jvmTest {
-            dependencies {
-                implementation(kotlin("reflect"))
-            }
-        }
-    }
+	sourceSets {
+		commonTest {
+			dependencies {
+				implementation("com.acornui:acornui-test-utils")
+			}
+		}
+		jvmTest {
+			dependencies {
+				implementation(kotlin("reflect"))
+			}
+		}
+	}
 }
