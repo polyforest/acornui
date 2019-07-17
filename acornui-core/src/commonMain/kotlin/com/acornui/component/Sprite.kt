@@ -60,6 +60,7 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 	/**
 	 * If true, the normal and indices will be reversed.
 	 */
+	@Deprecated("Will remove in future versions")
 	var useAsBackFace = false
 
 	var texture by Delegates.observable<Texture?>(null) { _, _, _ ->

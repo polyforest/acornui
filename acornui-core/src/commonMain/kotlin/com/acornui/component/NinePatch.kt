@@ -63,6 +63,7 @@ class NinePatch(val glState: GlState) : BasicDrawable, Clearable {
 	/**
 	 * If true, the normal and indices will be reversed.
 	 */
+	@Deprecated("Will remove in future versions")
 	var useAsBackFace: Boolean = false
 
 	var blendMode: BlendMode = BlendMode.NORMAL

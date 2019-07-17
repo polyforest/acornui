@@ -48,6 +48,8 @@ class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 	/**
 	 * If true, the normal and indices will be reversed.
 	 */
+	@Suppress("DEPRECATION")
+	@Deprecated("Will remove in future versions")
 	var useAsBackFace: Boolean = false
 		set(value) {
 			field = value

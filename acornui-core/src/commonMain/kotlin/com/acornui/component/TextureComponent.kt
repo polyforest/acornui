@@ -40,6 +40,7 @@ open class TextureComponent(owner: Owned) : DrawableComponent(owner) {
 	/**
 	 * If true, the normal and indices will be reversed.
 	 */
+	@Deprecated("Will remove in future versions")
 	var useAsBackFace: Boolean
 		get() = drawable.useAsBackFace
 		set(value) {
