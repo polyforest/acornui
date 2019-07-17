@@ -27,7 +27,6 @@ import com.acornui.core.input.SoftKeyboardManager
 import com.acornui.core.popup.PopUpManager
 import com.acornui.core.time.timer
 import com.acornui.function.as2
-import com.acornui.function.as3
 import com.acornui.logging.Log
 import com.acornui.math.Bounds
 

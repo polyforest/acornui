@@ -20,6 +20,7 @@ import com.acornui.core.di.Owned
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.Matrix4Ro
+import com.acornui.math.MinMax
 import com.acornui.math.MinMaxRo
 
 /**
@@ -52,6 +53,10 @@ abstract class DrawableComponent(
 		val drawable = drawable ?: return
 		useCamera()
 		drawable.render(clip, transform, tint)
+	}
+
+	override fun updateDrawRegion(out: MinMax) {
+		out.set(drawable?.drawRegion)
 	}
 
 	companion object {

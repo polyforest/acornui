@@ -17,17 +17,16 @@
 package com.acornui.filter
 
 import com.acornui.component.*
-import com.acornui.core.AppConfig
-import com.acornui.core.Renderable
+import com.acornui.core.*
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.di.own
 import com.acornui.core.graphic.BlendMode
 import com.acornui.core.graphic.Texture
-import com.acornui.core.graphic.Window
-import com.acornui.core.render
-import com.acornui.core.renderContext
-import com.acornui.gl.core.*
+import com.acornui.gl.core.Gl20
+import com.acornui.gl.core.clearAndReset
+import com.acornui.gl.core.resizeableFramebuffer
+import com.acornui.gl.core.setViewport
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
@@ -53,9 +52,7 @@ class FramebufferFilter(
 	var blendMode = BlendMode.NORMAL
 	var premultipliedAlpha = false
 
-	private val window = inject(Window)
-	private val glState = inject(GlState)
-	private val defaultRenderContext = inject(RenderContextRo)
+	private val defaultRenderContext by RenderContextRo
 
 	private val framebuffer = resizeableFramebuffer(hasDepth = hasDepth, hasStencil = hasStencil)
 
@@ -65,7 +62,6 @@ class FramebufferFilter(
 	private val viewport = IntRectangle()
 	private val sprite = Sprite(glState)
 	private val drawable = PaddedDrawable(sprite)
-	private val mvp = Matrix4()
 	private val drew = own(Signal0())
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
@@ -107,30 +103,30 @@ class FramebufferFilter(
 	}
 
 	fun drawToScreen(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		mvp.idt().scl(2f / window.width, -2f / window.height, 1f).trn(-1f, 1f, 0f) // Projection transform
-		mvp.mul(transform)
-
-		glState.viewProjection = mvp
-		glState.model = Matrix4.IDENTITY
-		drawable.render(clip, Matrix4.IDENTITY, tint)
+		useCamera(glState)
+		drawable.render(clip, transform, tint)
 	}
 
 	/**
 	 * Creates a component that renders the sprite that represents the last time [drawToFramebuffer] was called.
-	 *
-	 * WIP
 	 */
-	private fun createSnapshot(owner: Owned): UiComponent {
-		// TODO: It's odd that the snapshots share the drawable; it only works because updateVertices is called without arguments for each drawable component.
+	fun createSnapshot(owner: Owned): UiComponent {
+		val drawable = drawable()
 		return owner.drawableC(drawable) {
 			own(drew.bind {
+				drawable(drawable)
 				invalidate(ValidationFlags.LAYOUT)
 			})
 		}
 	}
 
-	fun copySprite(): Sprite {
-		return Sprite(glState).set(sprite)
+	/**
+	 * Configures a drawable to match what was last rendered.
+	 */
+	fun drawable(out: PaddedDrawable<Sprite> = PaddedDrawable(Sprite(glState))): PaddedDrawable<Sprite> {
+		out.inner.set(sprite)
+		out.padding.set(drawable.padding)
+		return out
 	}
 
 	override fun dispose() {

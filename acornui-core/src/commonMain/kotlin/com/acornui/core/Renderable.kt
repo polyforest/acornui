@@ -18,6 +18,7 @@ package com.acornui.core
 
 import com.acornui.component.RenderContextRo
 import com.acornui.component.layout.SizableRo
+import com.acornui.gl.core.GlState
 import com.acornui.math.MinMaxRo
 
 interface Renderable : SizableRo {
@@ -45,7 +46,7 @@ interface Renderable : SizableRo {
 	val naturalRenderContext: RenderContextRo
 
 	/**
-	 * Renders any graphics.
+	 * Renders any graphics using the current [renderContext].
 	 */
 	fun render()
 }
@@ -65,4 +66,13 @@ fun Renderable.render(renderContext: RenderContextRo) {
 	renderContextOverride = renderContext
 	render()
 	renderContextOverride = old
+}
+
+/**
+ * Sets the camera on the [glState] using this Renderable's current [renderContext].
+ */
+fun Renderable.useCamera(glState: GlState, useModel: Boolean = false) {
+	val renderContext = renderContext
+	if (useModel) glState.setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform, renderContext.modelTransform)
+	else glState.setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform)
 }

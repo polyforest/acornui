@@ -33,6 +33,11 @@ import com.acornui.math.*
 interface RenderContextRo : CanvasTransformableRo {
 
 	/**
+	 * This render context's parent, if there is one.
+	 */
+	val parentContext: RenderContextRo?
+
+	/**
 	 * The clipping region, in canvas coordinates.
 	 * This is used to early-out on rendering if the render contents is outside of this region.
 	 * This is not done automatically; it is the responsibility of the component.
@@ -56,6 +61,19 @@ interface RenderContextRo : CanvasTransformableRo {
 }
 
 /**
+ * Validates this render context and its entire ancestry.
+ * This is not necessary within UiComponent validation.
+ * @see RenderContextRo.validate
+ */
+fun RenderContextRo.validateAncestry() {
+	var p: RenderContextRo? = this
+	while (p != null) {
+		p.validate()
+		p = p.parentContext
+	}
+}
+
+/**
  * Returns true if the camera and viewport match.
  */
 fun RenderContextRo.cameraEquals(renderContext: RenderContextRo): Boolean {
@@ -63,6 +81,8 @@ fun RenderContextRo.cameraEquals(renderContext: RenderContextRo): Boolean {
 }
 
 class DefaultRenderContext(override val injector: Injector) : Scoped, RenderContextRo, Disposable {
+
+	override val parentContext: RenderContextRo? = null
 
 	private val camera = OrthographicCamera()
 	private val window = inject(Window)
@@ -119,7 +139,7 @@ class DefaultRenderContext(override val injector: Injector) : Scoped, RenderCont
 
 class RenderContext(initialParentContext: RenderContextRo) : RenderContextRo {
 
-	var parentContext: RenderContextRo = initialParentContext
+	override var parentContext: RenderContextRo = initialParentContext
 
 	var cameraOverride: CameraRo? = null
 	var modelTransformLocal: Matrix4Ro = Matrix4.IDENTITY

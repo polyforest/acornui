@@ -19,8 +19,6 @@ package com.acornui.filter
 import com.acornui.component.ComponentInit
 import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
-import com.acornui.gl.core.GlState
 import com.acornui.gl.core.useColorTransformation
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
@@ -67,8 +65,6 @@ open class DropShadowFilter(owner: Owned) : RenderFilterBase(owner) {
 			)
 		}
 
-	private val glState = inject(GlState)
-
 	override val shouldSkipFilter: Boolean
 		get() = !enabled
 
@@ -82,15 +78,24 @@ open class DropShadowFilter(owner: Owned) : RenderFilterBase(owner) {
 	private val offsetTransform = Matrix4()
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		offsetTransform.set(transform).translate(offsetX, offsetY, 0f)
 		if (!bitmapCacheIsValid)
-			blurFilter.drawToPingPongBuffers()
+			drawToFramebuffer()
 
+		offsetTransform.set(transform).translate(offsetX, offsetY, 0f)
 		glState.useColorTransformation(colorTransformation) {
 			blurFilter.drawBlurToScreen(clip, offsetTransform, tint)
 		}
 		blurFilter.drawOriginalToScreen(clip, transform, tint)
 	}
+
+	fun drawToFramebuffer() {
+		blurFilter.drawToPingPongBuffers()
+	}
+
+//	/**
+//	 * Renders this drop shadow
+//	 */
+//	fun renderTo(out: Sprite = Sprite(glState)): Sprite = blurFilter.renderTo(out)
 
 	companion object {
 		private val defaultColorTransformation = colorTransformation { tint(Color(0f, 0f, 0f, 0.5f)) }
@@ -114,3 +119,13 @@ fun Owned.glowFilter(color: ColorRo, init: ComponentInit<DropShadowFilter> = {})
 	b.init()
 	return b
 }
+
+///**
+// * Draws the drop shadow filter for the given target using the default render context.
+// * Returns a rasterized
+// */
+//fun DropShadowFilter.renderTo(target: UiComponentRo, out: PaddedDrawable): PaddedDrawable {
+//	contents = target
+//
+//	return renderTo(out)
+//}

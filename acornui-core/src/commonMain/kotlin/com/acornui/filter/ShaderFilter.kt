@@ -19,7 +19,6 @@ package com.acornui.filter
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.GlState
 import com.acornui.gl.core.ShaderProgram
 import com.acornui.gl.core.useShader
 import com.acornui.graphic.ColorRo
@@ -43,7 +42,6 @@ class ShaderFilter(
 		var configure: (gl: Gl20, shader: ShaderProgram) -> Unit = { _, _ -> }
 ) : RenderFilterBase(owner) {
 
-	private val glState = inject(GlState)
 	private val gl = inject(Gl20)
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {

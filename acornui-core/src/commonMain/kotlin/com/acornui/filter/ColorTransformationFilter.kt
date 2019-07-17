@@ -17,8 +17,6 @@
 package com.acornui.filter
 
 import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
-import com.acornui.gl.core.GlState
 import com.acornui.gl.core.useColorTransformation
 import com.acornui.graphic.ColorRo
 import com.acornui.math.ColorTransformation
@@ -33,8 +31,6 @@ class ColorTransformationFilter(
 		 */
 		val colorTransformation: ColorTransformation
 ) : RenderFilterBase(owner) {
-
-	private val glState = inject(GlState)
 
 	override val shouldSkipFilter: Boolean
 		get() = !enabled || colorTransformation.isIdentity

@@ -1190,6 +1190,9 @@ open class UiComponentImpl(
 		draw(renderContext.clipRegion, renderContext.modelTransform, renderContext.colorTint)
 	}
 
+	/**
+	 * Sets the camera for the [GlState] using the current [renderContext].
+	 */
 	protected fun useCamera(useModel: Boolean = false) {
 		val renderContext = renderContext
 		if (useModel) glState.setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform, renderContext.modelTransform)

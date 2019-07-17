@@ -25,6 +25,7 @@ import com.acornui.core.di.OwnedImpl
 import com.acornui.core.di.inject
 import com.acornui.core.renderContext
 import com.acornui.function.as1
+import com.acornui.gl.core.GlState
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.acornui.observe.Observable
@@ -56,6 +57,8 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 
 	private val _changed = Signal1<Observable>()
 	override val changed = _changed.asRo()
+
+	protected val glState by GlState
 
 	protected var bitmapCacheIsValid = false
 		private set
@@ -99,6 +102,9 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 		_changed.dispatch(this)
 	}
 
+	/**
+	 * Dispatches the [changed] signal.
+	 */
 	protected fun notifyChanged() {
 		_changed.dispatch(this)
 	}
@@ -119,7 +125,14 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 		bitmapCacheIsValid = true
 	}
 
-	abstract fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo)
+	/**
+	 * Called from render if there is something to render.
+	 *
+	 * @param clip [RenderContextRo.clipRegion]
+	 * @param transform [RenderContextRo.modelTransform]
+	 * @param tint [RenderContextRo.colorTint]
+	 */
+	protected abstract fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo)
 
 	override fun dispose() {
 		super.dispose()

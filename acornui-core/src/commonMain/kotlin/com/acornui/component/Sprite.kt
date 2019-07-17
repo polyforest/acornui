@@ -40,6 +40,10 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 	private var width = 0f
 	private var height = 0f
 
+	private val _drawRegion = MinMax()
+	override val drawRegion: MinMaxRo
+		get() = _drawRegion.set(0f, 0f, width, height)
+
 	/**
 	 * [naturalWidth] uses uv coordinates multiplied by the texture size. If the texture uses dpi scaling, this
 	 * scaling should be set on this sprite.
@@ -270,6 +274,7 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 	override fun clear() {
 		texture = null
 		setUv(0f, 0f, 1f, 1f, false)
+		setScaling(1f, 1f)
 		useAsBackFace = false
 		blendMode = BlendMode.NORMAL
 		premultipliedAlpha = false

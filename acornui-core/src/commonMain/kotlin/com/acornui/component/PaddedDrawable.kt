@@ -19,23 +19,35 @@ package com.acornui.component
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 
-class PaddedDrawable(
-		private val wrapped: BasicDrawable
+class PaddedDrawable<T : BasicDrawable>(
+
+		/**
+		 * The inner drawable this padding decorator wraps.
+		 */
+		val inner: T
+
 ) : BasicDrawable {
 
+	/**
+	 * The padding to add to the [inner] drawable's natural size.  (In points)
+	 */
 	val padding = Pad()
 
+	private val _drawRegion = MinMax()
+	override val drawRegion: MinMaxRo
+		get() = _drawRegion.set(inner.drawRegion).translate(padding.left, padding.top)
+
 	override val naturalWidth: Float
-		get() = padding.expandWidth2(wrapped.naturalWidth)
+		get() = padding.expandWidth2(inner.naturalWidth)
 
 	override val naturalHeight: Float
-		get() = padding.expandHeight2(wrapped.naturalHeight)
+		get() = padding.expandHeight2(inner.naturalHeight)
 
 	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
-		wrapped.updateVertices(padding.reduceWidth2(width), padding.reduceHeight2(height), x, y, z, rotation, originX - padding.left, originY - padding.top)
+		inner.updateVertices(padding.reduceWidth2(width), padding.reduceHeight2(height), x, y, z, rotation, originX - padding.left, originY - padding.top)
 	}
 
 	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		wrapped.render(clip, transform, tint)
+		inner.render(clip, transform, tint)
 	}
 }

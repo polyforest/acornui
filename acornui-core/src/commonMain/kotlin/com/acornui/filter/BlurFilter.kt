@@ -18,18 +18,21 @@ package com.acornui.filter
 
 import com.acornui.async.disposeOnShutdown
 import com.acornui.component.ComponentInit
+import com.acornui.component.PaddedDrawable
 import com.acornui.component.Sprite
 import com.acornui.component.drawing.putIdtQuad
 import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
 import com.acornui.core.di.own
 import com.acornui.core.graphic.BlendMode
-import com.acornui.core.graphic.Window
+import com.acornui.core.useCamera
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
-import com.acornui.math.*
+import com.acornui.math.Matrix4Ro
+import com.acornui.math.MinMaxRo
+import com.acornui.math.Pad
+import com.acornui.math.PadRo
 
 open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 
@@ -38,14 +41,12 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 
 	var quality by bindable(BlurQuality.NORMAL)
 
-	private val gl = inject(Gl20)
-	private val window = inject(Window)
-	private val glState = inject(GlState)
+	private val gl by Gl20
 	private val blurFramebufferA = own(resizeableFramebuffer())
 	private val blurFramebufferB = own(resizeableFramebuffer())
 
 	private val sprite = Sprite(glState)
-	private val mvp = Matrix4()
+	private val drawable = PaddedDrawable(sprite)
 
 	private val _drawPadding = Pad()
 	override val drawPadding: PadRo
@@ -58,17 +59,17 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	override val shouldSkipFilter: Boolean
 		get() = super.shouldSkipFilter || (blurX <= 0f && blurY <= 0f)
 
-	private val framebufferUtil = FramebufferFilter(this)
+	private val framebufferFilter = FramebufferFilter(this)
 
 	override var contents: Renderable?
 		get() = super.contents
 		set(value) {
 			super.contents = value
-			framebufferUtil.contents = value
+			framebufferFilter.contents = value
 		}
 
 	init {
-		framebufferUtil.clearColor = Color(0.5f, 0.5f, 0.5f, 0f)
+		framebufferFilter.clearColor = Color(0.5f, 0.5f, 0.5f, 0f)
 	}
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
@@ -78,7 +79,8 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	}
 
 	fun drawToPingPongBuffers() {
-		val framebufferUtil = framebufferUtil
+		val framebufferUtil = framebufferFilter
+		val drawPadding = drawPadding
 		framebufferUtil.drawPadding = drawPadding
 		framebufferUtil.drawToFramebuffer()
 		val textureToBlur = framebufferUtil.texture
@@ -116,23 +118,34 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 			}
 		}
 
-		blurFramebufferB.sprite(sprite)
-		sprite.setUv(sprite.u, 1f - sprite.v, sprite.u2, 1f - sprite.v2, isRotated = false)
+		val fBT = blurFramebufferB.texture
+		val w = fBT.widthPixels.toFloat()
+		val h = fBT.heightPixels.toFloat()
+		val region = framebufferUtil.drawRegion
+		drawable.padding.set(-drawPadding.left, -drawPadding.top, -drawPadding.right, -drawPadding.bottom)
+
+		sprite.texture = fBT
+		sprite.setUv(0f, 1f, region.width / w, 1f - (region.height / h), isRotated = false)
+		drawable.updateVertices()
 		//sprite.setScaling(window.scaleX, window.scaleY)
 	}
 
 	fun drawBlurToScreen(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		mvp.idt().scl(2f / window.width, -2f / window.height, 1f).trn(-1f, 1f, 0f) // Projection transform
-		val region = framebufferUtil.drawRegion
-		mvp.mul(transform).translate(region.xMin, region.yMin, 0f) // Model transform
-
-		glState.viewProjection = mvp
-		glState.model = Matrix4.IDENTITY
-		sprite.render(clip, Matrix4.IDENTITY, tint)
+		useCamera(glState)
+		drawable.render(clip, transform, tint)
 	}
 
 	fun drawOriginalToScreen(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		framebufferUtil.drawToScreen(clip, transform, tint)
+		framebufferFilter.drawToScreen(clip, transform, tint)
+	}
+
+	/**
+	 * Configures a drawable to match what was last rendered.
+	 */
+	fun drawable(out: PaddedDrawable<Sprite> = PaddedDrawable(Sprite(glState))): PaddedDrawable<Sprite> {
+		out.inner.set(sprite)
+		out.padding.set(drawable.padding)
+		return out
 	}
 
 	companion object {

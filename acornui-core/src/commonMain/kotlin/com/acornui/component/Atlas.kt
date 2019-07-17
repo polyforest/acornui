@@ -27,6 +27,11 @@ class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 	private var width = 0f
 	private var height = 0f
 
+	private val _drawRegion = MinMax()
+
+	override val drawRegion: MinMaxRo
+		get() = _drawRegion.set(0f, 0f, width, height)
+
 	var region: AtlasRegionData? = null
 		private set
 
@@ -45,6 +50,13 @@ class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 			ninePatch?.blendMode = value
 		}
 
+	var premultipliedAlpha: Boolean = false
+		set(value) {
+			field = value
+			sprite?.premultipliedAlpha = value
+			ninePatch?.premultipliedAlpha = value
+		}
+
 	/**
 	 * If true, the normal and indices will be reversed.
 	 */
@@ -61,21 +73,28 @@ class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 	 * Sets the region and texture for what should be drawn.
 	 */
 	fun setRegionAndTexture(texture: Texture, region: AtlasRegionData) {
+		val r = this
 		if (region.splits == null) {
 			ninePatch = null
 			if (sprite == null) {
-				sprite = Sprite(glState)
-				sprite?.blendMode = blendMode
-				sprite?.useAsBackFace = useAsBackFace
+				sprite = Sprite(glState).apply {
+					blendMode = r.blendMode
+					premultipliedAlpha = r.premultipliedAlpha
+					useAsBackFace = r.useAsBackFace
+					setScaling(r.scaleX, r.scaleY)
+				}
 			}
 			val t = sprite!!
 			t.setRegion(region.bounds, region.isRotated)
 		} else {
 			sprite = null
 			if (ninePatch == null) {
-				ninePatch = NinePatch(glState)
-				ninePatch?.blendMode = blendMode
-				ninePatch?.useAsBackFace = useAsBackFace
+				ninePatch = NinePatch(glState).apply {
+					blendMode = r.blendMode
+					premultipliedAlpha = r.premultipliedAlpha
+					useAsBackFace = r.useAsBackFace
+					setScaling(r.scaleX, r.scaleY)
+				}
 			}
 			val t = ninePatch!!
 			val splits = region.splits
@@ -91,6 +110,33 @@ class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 		ninePatch?.texture = texture
 		this.region = region
 		this.texture = texture
+	}
+
+	/**
+	 * [naturalWidth] uses uv coordinates multiplied by the texture size. If the texture uses dpi scaling, this
+	 * scaling should be set on this sprite.
+	 */
+	var scaleX: Float = 1f
+		set(value) {
+			field = value
+			sprite?.scaleX = value
+			ninePatch?.scaleX = value
+		}
+
+	/**
+	 * [naturalHeight] uses uv coordinates multiplied by the texture size. If the texture uses dpi scaling, this
+	 * scaling should be set on this sprite.
+	 */
+	var scaleY: Float = 1f
+		set(value) {
+			field = value
+			sprite?.scaleY = value
+			ninePatch?.scaleY = value
+		}
+
+	fun setScaling(scaleX: Float, scaleY: Float) {
+		this.scaleX = scaleX
+		this.scaleY = scaleY
 	}
 
 	override val naturalWidth: Float
@@ -169,6 +215,9 @@ class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 		region = null
 		ninePatch = null
 		sprite = null
+		setScaling(1f, 1f)
+		blendMode = BlendMode.NORMAL
+		premultipliedAlpha = false
 	}
 
 	companion object {

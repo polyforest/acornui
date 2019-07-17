@@ -35,6 +35,10 @@ class NinePatch(val glState: GlState) : BasicDrawable, Clearable {
 	private var width: Float = 0f
 	private var height: Float = 0f
 
+	private val _drawRegion = MinMax()
+	override val drawRegion: MinMaxRo
+		get() = _drawRegion.set(0f, 0f, width, height)
+
 	var isRotated: Boolean = false
 		private set
 
@@ -116,6 +120,11 @@ class NinePatch(val glState: GlState) : BasicDrawable, Clearable {
 	 * scaling should be set on this sprite.
 	 */
 	var scaleY: Float = 1f
+
+	fun setScaling(scaleX: Float, scaleY: Float) {
+		this.scaleX = scaleX
+		this.scaleY = scaleY
+	}
 
 	override val naturalWidth: Float
 		get() {
@@ -385,6 +394,7 @@ class NinePatch(val glState: GlState) : BasicDrawable, Clearable {
 	override fun clear() {
 		texture = null
 		setUv(0f, 0f, 1f, 1f, false)
+		setScaling(1f, 1f)
 		useAsBackFace = false
 		blendMode = BlendMode.NORMAL
 		premultipliedAlpha = false

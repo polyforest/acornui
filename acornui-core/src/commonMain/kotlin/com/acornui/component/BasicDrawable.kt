@@ -33,6 +33,11 @@ interface BasicDrawable {
 	val naturalHeight: Float
 
 	/**
+	 * The region (in local coordinates) that will be drawn with [render].
+	 */
+	val drawRegion: MinMaxRo
+
+	/**
 	 * Updates this BasicDrawable's local vertices.
 	 *
 	 * @param width The width of the sprite.
