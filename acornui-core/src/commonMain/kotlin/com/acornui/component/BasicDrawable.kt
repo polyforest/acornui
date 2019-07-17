@@ -22,7 +22,14 @@ import com.acornui.math.MinMaxRo
 
 interface BasicDrawable {
 
+	/**
+	 * The natural width of this drawable, in points.
+	 */
 	val naturalWidth: Float
+
+	/**
+	 * The natural height of this drawable, in points.
+	 */
 	val naturalHeight: Float
 
 	/**

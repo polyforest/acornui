@@ -24,34 +24,41 @@ import com.acornui.gl.core.putIndicesReversed
 import com.acornui.gl.core.putVertex
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
+import com.acornui.recycle.Clearable
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.properties.Delegates
 
-class NinePatch(val glState: GlState) : BasicDrawable {
+class NinePatch(val glState: GlState) : BasicDrawable, Clearable {
 
 	private var width: Float = 0f
 	private var height: Float = 0f
 
-	private var _isRotated: Boolean = false
+	var isRotated: Boolean = false
+		private set
 
 	/**
-	 * Either represents uv values, or pixel coordinates, depending on _isUv
+	 * Either represents uv values, or pixel coordinates, depending on isUv
 	 * left, top, right, bottom
 	 */
 	private var region: FloatArray = floatArrayOf(0f, 0f, 1f, 1f)
 
 	/**
+	 * Returns the region component at the given index.
+	 * @param index range 0-3
+	 * @return returns either u, v, u2, v2 or x, y, x2, y2 depending on [isUv]
+	 */
+	fun getRegion(index: Int): Float {
+		return region[index]
+	}
+
+	/**
 	 * True if the region represents 0-1 uv coordinates.
 	 * False if the region represents pixel coordinates.
 	 */
-	private var isUv: Boolean = true
-
-	private var _splitLeft = 0f
-	private var _splitTop = 0f
-	private var _splitRight = 0f
-	private var _splitBottom = 0f
+	var isUv: Boolean = true
+		private set
 
 	/**
 	 * If true, the normal and indices will be reversed.
@@ -59,6 +66,20 @@ class NinePatch(val glState: GlState) : BasicDrawable {
 	var useAsBackFace: Boolean = false
 
 	var blendMode: BlendMode = BlendMode.NORMAL
+
+	var premultipliedAlpha = false
+
+	var splitLeft: Float = 0f
+		private set
+
+	var splitTop: Float = 0f
+		private set
+
+	var splitRight: Float = 0f
+		private set
+
+	var splitBottom: Float = 0f
+		private set
 
 	private var u: Float = 0f
 	private var v: Float = 0f
@@ -77,10 +98,23 @@ class NinePatch(val glState: GlState) : BasicDrawable {
 	private val worldNormal = Vector3()
 	private val tmpVec = Vector3()
 
+	@Suppress("RemoveExplicitTypeArguments") // Kotlin compiler bug
 	var texture: Texture? by Delegates.observable<Texture?>(null) {
 		_, _, _ ->
 		updateUv()
 	}
+
+	/**
+	 * [naturalWidth] uses uv coordinates multiplied by the texture size. If the texture uses dpi scaling, this
+	 * scaling should be set on this sprite.
+	 */
+	var scaleX: Float = 1f
+
+	/**
+	 * [naturalHeight] uses uv coordinates multiplied by the texture size. If the texture uses dpi scaling, this
+	 * scaling should be set on this sprite.
+	 */
+	var scaleY: Float = 1f
 
 	override val naturalWidth: Float
 		get() {
@@ -89,7 +123,7 @@ class NinePatch(val glState: GlState) : BasicDrawable {
 				t.heightPixels.toFloat() * abs(v2 - v)
 			} else {
 				t.widthPixels.toFloat() * abs(u2 - u)
-			}
+			} / scaleX
 		}
 
 	override val naturalHeight: Float
@@ -99,23 +133,32 @@ class NinePatch(val glState: GlState) : BasicDrawable {
 				t.widthPixels.toFloat() * abs(u2 - u)
 			} else {
 				t.heightPixels.toFloat() * abs(v2 - v)
-			}
+			} / scaleY
 		}
 
+	/**
+	 * Sets the region for calculating uv coordinates.
+	 */
 	fun setRegion(bounds: RectangleRo, isRotated: Boolean) {
 		setRegion(bounds.x, bounds.y, bounds.width, bounds.height, isRotated)
 	}
 
+	/**
+	 * Sets the region for calculating uv coordinates.
+	 */
 	fun setRegion(region: IntRectangleRo, isRotated: Boolean) {
 		setRegion(region.x.toFloat(), region.y.toFloat(), region.width.toFloat(), region.height.toFloat(), isRotated)
 	}
 
+	/**
+	 * Sets the region for calculating uv coordinates.
+	 */
 	fun setRegion(x: Float, y: Float, width: Float, height: Float, isRotated: Boolean) {
 		region[0] = x
 		region[1] = y
 		region[2] = width + x
 		region[3] = height + y
-		_isRotated = isRotated
+		this.isRotated = isRotated
 		isUv = false
 		updateUv()
 	}
@@ -125,32 +168,20 @@ class NinePatch(val glState: GlState) : BasicDrawable {
 		region[1] = v
 		region[2] = u2
 		region[3] = v2
-		_isRotated = isRotated
+		this.isRotated = isRotated
 		isUv = true
 		updateUv()
 	}
-
-	val isRotated: Boolean
-		get() = _isRotated
-
-	val splitLeft: Float
-		get() = _splitLeft
-	val splitTop: Float
-		get() = _splitTop
-	val splitRight: Float
-		get() = _splitRight
-	val splitBottom: Float
-		get() = _splitBottom
 
 	fun split(splitLeft: Int, splitTop: Int, splitRight: Int, splitBottom: Int) {
 		split(splitLeft.toFloat(), splitTop.toFloat(), splitRight.toFloat(), splitBottom.toFloat())
 	}
 
 	fun split(splitLeft: Float, splitTop: Float, splitRight: Float, splitBottom: Float) {
-		this._splitLeft = splitLeft
-		this._splitTop = splitTop
-		this._splitRight = splitRight
-		this._splitBottom = splitBottom
+		this.splitLeft = splitLeft
+		this.splitTop = splitTop
+		this.splitRight = splitRight
+		this.splitBottom = splitBottom
 	}
 
 	private fun updateUv() {
@@ -169,22 +200,56 @@ class NinePatch(val glState: GlState) : BasicDrawable {
 		}
 	}
 
+	fun set(other: NinePatch) {
+		texture = other.texture
+		region[0] = other.getRegion(0)
+		region[1] = other.getRegion(1)
+		region[2] = other.getRegion(2)
+		region[3] = other.getRegion(3)
+		isRotated = other.isRotated
+		isUv = other.isUv
+		useAsBackFace = other.useAsBackFace
+		blendMode = other.blendMode
+		premultipliedAlpha = other.premultipliedAlpha
+		splitLeft = other.splitLeft
+		splitTop = other.splitTop
+		splitRight = other.splitRight
+		splitBottom = other.splitBottom
+	}
+
+	fun set(other: Sprite) {
+		texture = other.texture
+		region[0] = other.getRegion(0)
+		region[1] = other.getRegion(1)
+		region[2] = other.getRegion(2)
+		region[3] = other.getRegion(3)
+		isRotated = other.isRotated
+		isUv = other.isUv
+		useAsBackFace = other.useAsBackFace
+		blendMode = other.blendMode
+		premultipliedAlpha = other.premultipliedAlpha
+		splitLeft = 0f
+		splitTop = 0f
+		splitRight = 0f
+		splitBottom = 0f
+	}
+
 	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
 		this.width = width
 		this.height = height
-		val minW = _splitLeft + _splitRight
-		val minH = _splitTop + _splitBottom
+		val minW = splitLeft + splitRight
+		val minH = splitTop + splitBottom
 		val scaleX = if (minW <= 0f || width > minW) 1f else width / minW
 		val scaleY = if (minH <= 0f || height > minH) 1f else height / minH
 
 		val x0 = -originX
-		val x1 = scaleX * _splitLeft - originX
-		val x2 = width - scaleX * _splitRight - originX
+		val x1 = scaleX * splitLeft - originX
+		val x2 = width - scaleX * splitRight - originX
 		val x3 = width - originX
 
 		val y0 = -originY
-		val y1 = scaleY * _splitTop - originY
-		val y2 = height - scaleY * _splitBottom - originY
+		val y1 = scaleY * splitTop - originY
+		val y2 = height - scaleY * splitBottom - originY
 		val y3 = height - originY
 
 		val cos = cos(rotation)
@@ -224,16 +289,16 @@ class NinePatch(val glState: GlState) : BasicDrawable {
 		transform.rot(worldNormal.set(normal)).nor()
 
 		glState.setTexture(texture)
-		glState.blendMode(blendMode, premultipliedAlpha = false)
+		glState.blendMode(blendMode, premultipliedAlpha)
 
 		val batch = glState.batch
 		batch.begin()
 
 		if (isRotated) {
-			val splitLeftV = _splitLeft / texture.heightPixels
-			val splitRightV = _splitRight / texture.heightPixels
-			val splitTopU = _splitTop / texture.widthPixels
-			val splitBottomU = _splitBottom / texture.widthPixels
+			val splitLeftV = splitLeft / texture.heightPixels
+			val splitRightV = splitRight / texture.heightPixels
+			val splitTopU = splitTop / texture.widthPixels
+			val splitBottomU = splitBottom / texture.widthPixels
 
 			val colV0 = v
 			val colV1 = v + splitLeftV
@@ -274,10 +339,10 @@ class NinePatch(val glState: GlState) : BasicDrawable {
 			batch.putVertex(transform.prj(tmpVec.set(localPoints[14])), worldNormal, tint, rowU3, colV2)
 			batch.putVertex(transform.prj(tmpVec.set(localPoints[15])), worldNormal, tint, rowU3, colV3)
 		} else {
-			val splitLeftU = _splitLeft / texture.widthPixels
-			val splitRightU = _splitRight / texture.widthPixels
-			val splitTopV = _splitTop / texture.heightPixels
-			val splitBottomV = _splitBottom / texture.heightPixels
+			val splitLeftU = splitLeft / texture.widthPixels
+			val splitRightU = splitRight / texture.widthPixels
+			val splitTopV = splitTop / texture.heightPixels
+			val splitBottomV = splitBottom / texture.heightPixels
 
 			val colU0 = u
 			val colU1 = u + splitLeftU
@@ -314,5 +379,17 @@ class NinePatch(val glState: GlState) : BasicDrawable {
 			batch.putVertex(transform.prj(tmpVec.set(localPoints[15])), worldNormal, tint, colU3, rowV3)
 		}
 		if (useAsBackFace) batch.putIndicesReversed(indices) else batch.putIndices(indices)
+	}
+
+	override fun clear() {
+		texture = null
+		setUv(0f, 0f, 1f, 1f, false)
+		useAsBackFace = false
+		blendMode = BlendMode.NORMAL
+		premultipliedAlpha = false
+		splitLeft = 0f
+		splitTop = 0f
+		splitRight = 0f
+		splitBottom = 0f
 	}
 }

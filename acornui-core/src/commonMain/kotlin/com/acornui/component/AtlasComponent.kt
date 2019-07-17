@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package com.acornui.component
 
 import com.acornui.async.Deferred
@@ -36,10 +38,8 @@ import com.acornui.recycle.Clearable
  */
 open class AtlasComponent(owner: Owned) : DrawableComponent(owner), Clearable {
 
-	private var _region: AtlasRegionData? = null
-
-	val region: AtlasRegionData?
-		get() = _region
+	var region: AtlasRegionData? = null
+		private set
 
 	private var texture: Texture? = null
 
@@ -82,7 +82,7 @@ open class AtlasComponent(owner: Owned) : DrawableComponent(owner), Clearable {
 		}
 
 	private fun setRegionAndTexture(texture: Texture, region: AtlasRegionData) {
-		this._region = region
+		this.region = region
 		val oldTexture = this.texture
 		this.texture = texture
 		if (isActive) {

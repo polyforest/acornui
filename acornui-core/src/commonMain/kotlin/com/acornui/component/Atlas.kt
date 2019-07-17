@@ -24,42 +24,35 @@ import com.acornui.math.*
 
 class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 
-	private var _region: AtlasRegionData? = null
-
 	private var width = 0f
 	private var height = 0f
 
-	val region: AtlasRegionData?
-		get() = _region
+	var region: AtlasRegionData? = null
+		private set
 
 	private var texture: Texture? = null
 
 	private val drawable: BasicDrawable?
-		get() = _sprite ?: _ninePatch
+		get() = sprite ?: ninePatch
 
-	private var _sprite: Sprite? = null
-	private var _ninePatch: NinePatch? = null
+	private var sprite: Sprite? = null
+	private var ninePatch: NinePatch? = null
 
-	private var _blendMode = BlendMode.NORMAL
-	var blendMode: BlendMode
-		get() = _blendMode
+	var blendMode: BlendMode = BlendMode.NORMAL
 		set(value) {
-			_blendMode = value
-			_sprite?.blendMode = value
-			_ninePatch?.blendMode = value
+			field = value
+			sprite?.blendMode = value
+			ninePatch?.blendMode = value
 		}
-
-	private var _useAsBackFace: Boolean = false
 
 	/**
 	 * If true, the normal and indices will be reversed.
 	 */
-	var useAsBackFace: Boolean
-		get() = _useAsBackFace
+	var useAsBackFace: Boolean = false
 		set(value) {
-			_useAsBackFace = value
-			_sprite?.useAsBackFace = value
-			_ninePatch?.useAsBackFace = value
+			field = value
+			sprite?.useAsBackFace = value
+			ninePatch?.useAsBackFace = value
 		}
 
 	/**
@@ -67,22 +60,22 @@ class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 	 */
 	fun setRegionAndTexture(texture: Texture, region: AtlasRegionData) {
 		if (region.splits == null) {
-			_ninePatch = null
-			if (_sprite == null) {
-				_sprite = Sprite(glState)
-				_sprite?.blendMode = _blendMode
-				_sprite?.useAsBackFace = _useAsBackFace
+			ninePatch = null
+			if (sprite == null) {
+				sprite = Sprite(glState)
+				sprite?.blendMode = blendMode
+				sprite?.useAsBackFace = useAsBackFace
 			}
-			val t = _sprite!!
+			val t = sprite!!
 			t.setRegion(region.bounds, region.isRotated)
 		} else {
-			_sprite = null
-			if (_ninePatch == null) {
-				_ninePatch = NinePatch(glState)
-				_ninePatch?.blendMode = _blendMode
-				_ninePatch?.useAsBackFace = _useAsBackFace
+			sprite = null
+			if (ninePatch == null) {
+				ninePatch = NinePatch(glState)
+				ninePatch?.blendMode = blendMode
+				ninePatch?.useAsBackFace = useAsBackFace
 			}
-			val t = _ninePatch!!
+			val t = ninePatch!!
 			val splits = region.splits
 			t.split(
 					maxOf(0f, splits[0] - region.padding[0]),
@@ -92,22 +85,22 @@ class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 			)
 			t.setRegion(region.bounds, region.isRotated)
 		}
-		_sprite?.texture = texture
-		_ninePatch?.texture = texture
-		this._region = region
+		sprite?.texture = texture
+		ninePatch?.texture = texture
+		this.region = region
 		this.texture = texture
 	}
 
 	override val naturalWidth: Float
 		get() {
-			val region = _region ?: return 0f
+			val region = region ?: return 0f
 			val regionWidth = if (region.isRotated) region.bounds.height else region.bounds.width
 			return (region.padding[0] + regionWidth + region.padding[2]).toFloat()
 		}
 
 	override val naturalHeight: Float
 		get() {
-			val region = _region ?: return 0f
+			val region = region ?: return 0f
 			val regionHeight = if (region.isRotated) region.bounds.width else region.bounds.height
 			return (region.padding[1] + regionHeight + region.padding[3]).toFloat()
 		}
@@ -135,7 +128,7 @@ class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 	}
 
 	private fun updatePadding(width: Float, height: Float) {
-		val region = _region ?: return
+		val region = region ?: return
 
 		val paddingLeft = region.padding[0].toFloat()
 		val paddingTop = region.padding[1].toFloat()
@@ -171,9 +164,9 @@ class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 
 	override fun clear() {
 		texture = null
-		_region = null
-		_ninePatch = null
-		_sprite = null
+		region = null
+		ninePatch = null
+		sprite = null
 	}
 
 	companion object {

@@ -44,7 +44,6 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	private val blurFramebufferA = own(resizeableFramebuffer())
 	private val blurFramebufferB = own(resizeableFramebuffer())
 
-	private val viewport = IntRectangle()
 	private val sprite = Sprite(glState)
 	private val mvp = Matrix4()
 

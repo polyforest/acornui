@@ -117,13 +117,20 @@ class FramebufferFilter(
 
 	/**
 	 * Creates a component that renders the sprite that represents the last time [drawToFramebuffer] was called.
+	 *
+	 * WIP
 	 */
-	fun createSnapshot(owner: Owned): UiComponent {
+	private fun createSnapshot(owner: Owned): UiComponent {
+		// TODO: It's odd that the snapshots share the drawable; it only works because updateVertices is called without arguments for each drawable component.
 		return owner.drawableC(drawable) {
 			own(drew.bind {
 				invalidate(ValidationFlags.LAYOUT)
 			})
 		}
+	}
+
+	fun copySprite(): Sprite {
+		return Sprite(glState).set(sprite)
 	}
 
 	override fun dispose() {

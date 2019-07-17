@@ -62,8 +62,7 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 	 */
 	var useAsBackFace = false
 
-	var texture by Delegates.observable<Texture?>(null) {
-		_, _, _ ->
+	var texture by Delegates.observable<Texture?>(null) { _, _, _ ->
 		updateUv()
 	}
 
@@ -74,16 +73,26 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 		private set
 
 	/**
-	 * Either represents uv values, or pixel coordinates, depending on _isUv
+	 * Either represents uv values, or pixel coordinates, depending on isUv
 	 * left, top, right, bottom
 	 */
 	private var region: FloatArray = floatArrayOf(0f, 0f, 1f, 1f)
 
 	/**
+	 * Returns the region component at the given index.
+	 * @param index range 0-3
+	 * @return returns either u, v, u2, v2 or x, y, x2, y2 depending on [isUv]
+	 */
+	fun getRegion(index: Int): Float {
+		return region[index]
+	}
+
+	/**
 	 * True if the region represents 0-1 uv coordinates.
 	 * False if the region represents pixel coordinates.
 	 */
-	private var isUv: Boolean = true
+	var isUv: Boolean = true
+		private set
 
 	private val normalLocal = Vector3()
 	private val normalWorld = Vector3()
@@ -206,7 +215,7 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 
 	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		if (texture == null || tint.a <= 0f || width == 0f || height == 0f) return // Nothing to draw
-		val tmpVec =  tmpVec
+		val tmpVec = tmpVec
 		transform.rot(normalWorld.set(normalLocal)).nor()
 
 		val batch = glState.batch
@@ -244,12 +253,12 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 	 * @return Returns this sprite for chaining purposes.
 	 */
 	fun set(other: Sprite): Sprite {
-		useAsBackFace = other.useAsBackFace
 		texture = other.texture
 		region[0] = other.region[0]
 		region[1] = other.region[1]
 		region[2] = other.region[2]
 		region[3] = other.region[3]
+		useAsBackFace = other.useAsBackFace
 		isUv = other.isUv
 		isRotated = other.isRotated
 		blendMode = other.blendMode
