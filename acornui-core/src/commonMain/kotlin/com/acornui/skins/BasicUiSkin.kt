@@ -33,6 +33,7 @@ import com.acornui.component.scroll.*
 import com.acornui.component.style.*
 import com.acornui.component.text.*
 import com.acornui.core.di.Scoped
+import com.acornui.core.di.inject
 import com.acornui.core.focus.FocusHighlighter
 import com.acornui.core.focus.FocusableStyle
 import com.acornui.core.focus.SimpleFocusHighlighter
@@ -40,6 +41,7 @@ import com.acornui.core.focus.SimpleHighlight
 import com.acornui.core.input.interaction.ContextMenuStyle
 import com.acornui.core.input.interaction.ContextMenuView
 import com.acornui.core.input.interaction.enableDownRepeat
+import com.acornui.core.io.file.Files
 import com.acornui.filter.dropShadowFilter
 import com.acornui.filter.filtered
 import com.acornui.graphic.Color
@@ -90,6 +92,8 @@ open class BasicUiSkin(
 		tooltipStyle()
 		imageButtonStyle()
 		formStyle()
+
+		WindowScalingAttachment.attach(target)
 	}
 
 	protected open fun stageStyle() {
@@ -147,17 +151,17 @@ open class BasicUiSkin(
 		textAreaStyle.multiline = true
 		target.addStyleRule(textAreaStyle, withAncestor(TextArea))
 
-		val errorMessageStyle = CharStyle()
-		errorMessageStyle.colorTint = theme.errorColor
-		target.addStyleRule(errorMessageStyle, withAncestor(TextStyleTags.error))
+		target.addStyleRule(charStyle {
+			colorTint = theme.errorColor
+		}, withAncestor(TextStyleTags.error))
 
-		val warningMessageStyle = CharStyle()
-		warningMessageStyle.colorTint = theme.warningColor
-		target.addStyleRule(warningMessageStyle, withAncestor(TextStyleTags.warning))
+		target.addStyleRule(charStyle {
+			colorTint = theme.warningColor
+		}, withAncestor(TextStyleTags.warning))
 
-		val infoMessageStyle = CharStyle()
-		infoMessageStyle.colorTint = theme.infoColor
-		target.addStyleRule(infoMessageStyle, withAncestor(TextStyleTags.info))
+		target.addStyleRule(charStyle {
+			colorTint = theme.infoColor
+		}, withAncestor(TextStyleTags.info))
 
 		val charStyle = CharStyle()
 		charStyle.selectable = false
@@ -176,28 +180,15 @@ open class BasicUiSkin(
 		target.addStyleRule(charStyle { fontSize = FontSize.EXTRA_LARGE }, withAncestor(TextStyleTags.extraLarge))
 	}
 
-	/**
-	 * The basic skin
-	 */
-	protected val sizeToPxMap = mutableMapOf(
-			FontSize.EXTRA_SMALL to 14,
-			FontSize.SMALL to 14,
-			FontSize.REGULAR to 14,
-			FontSize.LARGE to 14,
-			FontSize.EXTRA_LARGE to 14
-	)
-
 	protected open fun textFontStyle() {
+		val files = inject(Files)
 		BitmapFontRegistry.fontResolver = { request ->
 			async {
-				val weightStr = if (request.weight != FontWeight.REGULAR) "_${request.weight}" else ""
-				val styleStr = if (request.style != FontStyle.NORMAL) "_${request.style}" else ""
-				val sizeStr = "_${sizeToPxMap[request.size]}"
-
-				loadFontFromAtlas("assets/uiskin/${request.family}$weightStr$styleStr$sizeStr.fnt", theme.atlasPath)
+				val fontFile = FontPathResolver.getPath(files, request) ?: throw Exception("Font not found: $request")
+				loadFontFromDir(fontFile.path, fontFile.parent!!.path)
 			}
 		}
-		target.addStyleRule(charStyle { fontFamily = "verdana" })
+		target.addStyleRule(charStyle { fontFamily = "Roboto" })
 	}
 
 	protected open fun panelStyle() {

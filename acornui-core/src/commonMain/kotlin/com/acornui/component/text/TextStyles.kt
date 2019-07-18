@@ -213,11 +213,6 @@ class CharStyle : StyleBase() {
 	var fontWeight by prop(FontWeight.REGULAR)
 
 	/**
-	 * The dpi scaling for the font.
-	 */
-	var fontPixelDensity by prop(1f)
-
-	/**
 	 * True if the characters should draw an line at the baseline.
 	 */
 	var underlined by prop(false)
@@ -268,7 +263,7 @@ fun CharStyle.getFont(): Deferred<BitmapFont>? {
 			fontSize,
 			fontWeight,
 			fontStyle,
-			fontPixelDensity
+			fontPixelDensity = scaleY
 	))
 }
 
