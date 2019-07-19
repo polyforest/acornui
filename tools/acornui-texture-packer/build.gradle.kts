@@ -22,13 +22,13 @@ kotlin {
 	sourceSets {
 		commonMain {
 			dependencies {
-				implementation("com.acornui:acornui-core")
-				implementation("com.acornui:acornui-utils")
+				implementation("com.acornui:acornui-core:$version")
+				implementation("com.acornui:acornui-utils:$version")
 			}
 		}
 		named("jvmMain") {
 			dependencies {
-				implementation("com.acornui:acornui-lwjgl-backend")
+				implementation("com.acornui:acornui-lwjgl-backend:$version")
 			}
 		}
 	}

@@ -25,13 +25,12 @@ kotlin {
 	sourceSets {
 		commonMain {
 			dependencies {
-				implementation("com.acornui:acornui-utils")
+				implementation("com.acornui:acornui-utils:$version")
 			}
 		}
 		commonTest {
 			dependencies {
-				implementation("com.acornui:acornui-test-utils")
-//				implementation("com.acornui:acornui-utils")
+				implementation("com.acornui:acornui-test-utils:$version")
 			}
 		}
 		named("jvmTest") {

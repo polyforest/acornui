@@ -21,7 +21,7 @@ val kotlinJvmTarget: String by extra
 val kotlinLanguageVersion: String by extra
 
 plugins {
-	kotlin("multiplatform") apply false
+	kotlin("multiplatform")
 	`maven-publish`
 	idea
 }
