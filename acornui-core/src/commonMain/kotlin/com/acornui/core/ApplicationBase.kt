@@ -59,7 +59,6 @@ abstract class ApplicationBase : Disposable {
 			val buildTimestamp = get(AssetManager).load(buildFile.path, AssetType.TEXT).await()
 			Version.fromStr(buildTimestamp)
 		}
-		Log.info("Version $version")
 		version
 	}
 
