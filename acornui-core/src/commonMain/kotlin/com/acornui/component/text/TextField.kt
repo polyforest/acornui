@@ -233,7 +233,7 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 			val padding = flowStyle.padding
 			val lineHeight: Float = (fontData?.lineHeight?.toFloat() ?: 0f) / charStyle.scaleY
 			out.height = padding.expandHeight2(lineHeight)
-			out.baseline = padding.top + (fontData?.baseline?.toFloat() ?: 0f)
+			out.baseline = padding.top + (fontData?.baseline?.toFloat() ?: 0f) / charStyle.scaleY
 		}
 
 		if (contents.allowClipping) {
