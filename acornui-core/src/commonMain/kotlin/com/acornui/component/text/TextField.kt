@@ -238,7 +238,10 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 
 		if (contents.allowClipping) {
 			if (explicitWidth != null) out.width = explicitWidth
-			if (explicitHeight != null) out.height = explicitHeight
+			if (explicitHeight != null) {
+				out.height = explicitHeight
+				out.baseline = minOf(explicitHeight, out.baseline)
+			}
 		}
 	}
 

@@ -239,6 +239,7 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 
 		out.height = maxOf(stepperHeights, textInput.height)
 		out.width = textInput.width + hGap + stepperWidths
+		out.baseline = textInput.baselineY
 
 		val tIW = textInput.width
 		stepUpButton.setPosition(tIW + hGap, 0f)

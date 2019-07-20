@@ -177,7 +177,6 @@ open class IconButtonSkinPart(
 		val h = maxOf(padding.expandHeight2(contentHeight), explicitHeight ?: 4f)
 
 		texture.setSize(w, h)
-		out.set(w, h)
 
 		val iconX: Float
 		val textFieldX: Float
@@ -199,6 +198,7 @@ open class IconButtonSkinPart(
 
 		val yOffset = if (childAvailableHeight == null) padding.top else (childAvailableHeight - contentHeight) * 0.5f + padding.top
 
+		val baseline = yOffset + textField.baseline
 		val iconY: Float
 		val textFieldY: Float
 		when (vAlign) {
@@ -210,12 +210,18 @@ open class IconButtonSkinPart(
 				iconY = yOffset + (contentHeight - icon.height) * 0.5f
 				textFieldY = (yOffset + (contentHeight - textField.height) * 0.5f)
 			}
-			VAlign.BASELINE, VAlign.BOTTOM -> {
+			VAlign.BOTTOM -> {
 				iconY = yOffset + (contentHeight - icon.height)
 				textFieldY = yOffset + (contentHeight - textField.height)
+			}
+			VAlign.BASELINE -> {
+				iconY = baseline - icon.baseline
+				textFieldY = baseline - textField.baseline
 			}
 		}
 		icon.moveTo(iconX, iconY)
 		textField.moveTo(textFieldX, textFieldY)
+
+		out.set(w, h, textField.baselineY)
 	}
 }
