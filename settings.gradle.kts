@@ -38,5 +38,6 @@ pluginManagement {
 rootProject.name = "acornui"
 
 include("acornui-utils", "acornui-core", "acornui-game", "acornui-spine", "backends:acornui-lwjgl-backend", "backends:acornui-webgl-backend", "tools:acornui-texture-packer", "acornui-test-utils")
+include("skins:basic")
 
 enableFeaturePreview("GRADLE_METADATA")
