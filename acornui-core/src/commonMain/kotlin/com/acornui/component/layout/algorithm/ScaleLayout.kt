@@ -102,6 +102,7 @@ class ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 			}
 			if (explicitWidth == null) out.width = maxOf(out.width, size.x + padding.left + padding.right)
 			if (explicitHeight == null) out.height = maxOf(out.height, size.y + padding.top + padding.bottom)
+			out.baseline = out.height
 		}
 		Vector2.free(size)
 	}
