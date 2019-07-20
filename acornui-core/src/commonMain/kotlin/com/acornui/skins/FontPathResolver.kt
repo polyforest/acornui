@@ -12,7 +12,7 @@ import com.acornui.math.MathUtils
 
 object FontPathResolver {
 
-	var fontsDir = "assets/uiskin/fonts/"
+	var fontsDir = "assets/fonts/"
 
 	var sizeToPtMap = mutableMapOf(
 			FontSize.EXTRA_SMALL to 10,
