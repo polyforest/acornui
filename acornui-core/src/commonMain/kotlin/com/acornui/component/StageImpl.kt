@@ -94,7 +94,6 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		val h = window.framebufferHeight
 		glState.setViewport(0, 0, w, h)
 		glState.setFramebuffer(null, w, h, window.scaleX, window.scaleY)
-		defaultRenderContext.validate()
 		super.updateRenderContext()
 	}
 

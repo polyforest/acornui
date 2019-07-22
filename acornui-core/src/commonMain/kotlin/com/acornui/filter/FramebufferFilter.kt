@@ -67,7 +67,7 @@ class FramebufferFilter(
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		if (!bitmapCacheIsValid)
 			drawToFramebuffer()
-		drawToScreen(clip, transform, tint)
+		drawToScreen()
 	}
 
 	fun drawToFramebuffer() {
@@ -90,21 +90,20 @@ class FramebufferFilter(
 		if (clearMask != 0)
 			clearAndReset(clearColor, clearMask)
 
-		defaultRenderContext.validate()
 		contents.render(defaultRenderContext)
 
 		framebuffer.end()
 		framebuffer.sprite(sprite)
 		sprite.setUv(sprite.u, 1f - sprite.v, sprite.u2, 1f - sprite.v2, isRotated = false)
 		sprite.setScaling(scaleX, scaleY)
-		drawable.updateVertices()
+		drawable.setSize(null, null)
 		glState.setViewport(viewport)
 		drew.dispatch()
 	}
 
-	fun drawToScreen(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		useCamera(glState)
-		drawable.render(clip, transform, tint)
+	fun drawToScreen() {
+		drawable.renderContextOverride = renderContext
+		drawable.render()
 	}
 
 	/**

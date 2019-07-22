@@ -17,6 +17,7 @@
 package com.acornui.gl.core
 
 import com.acornui.component.ComponentInit
+import com.acornui.component.IdtProjectionContext
 import com.acornui.component.Sprite
 import com.acornui.core.Disposable
 import com.acornui.core.di.Injector
@@ -27,8 +28,6 @@ import com.acornui.core.graphic.Window
 import com.acornui.function.as2
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
-import com.acornui.math.Matrix4
-import com.acornui.math.MinMaxRo
 
 /**
  * Wraps a frame buffer, keeping it the size of the screen.
@@ -38,7 +37,14 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 	private val glState = inject(GlState)
 	private val window = inject(Window)
 	private val framebuffer = ResizeableFramebuffer(injector, window.framebufferWidth.toFloat(), window.framebufferHeight.toFloat(), hasDepth, hasStencil)
-	private val sprite = Sprite(glState)
+
+	private val renderContext = IdtProjectionContext()
+
+	private val sprite = Sprite(glState).apply {
+		setSize(2f, 2f)
+		renderContext.modelTransform.setTranslation(-1f, -1f, 0f)
+		renderContextOverride = renderContext
+	}
 
 	var blendMode: BlendMode
 		get() = sprite.blendMode
@@ -59,7 +65,6 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 			val h = framebuffer.height / framebuffer.texture.heightPixels
 
 			setUv(0f, 0f, w, h, isRotated = false)
-			updateVertices(2f, 2f, -1f, -1f)
 		}
 	}
 
@@ -91,9 +96,8 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 	 * Renders the frame buffer to the screen.
 	 */
 	fun render(colorTint: ColorRo = Color.WHITE) {
-		glState.viewProjection = Matrix4.IDENTITY
-		glState.model = Matrix4.IDENTITY
-		sprite.render(MinMaxRo.POSITIVE_INFINITY, Matrix4.IDENTITY, colorTint)
+		renderContext.colorTint.set(colorTint)
+		sprite.render()
 	}
 
 	override fun dispose() {

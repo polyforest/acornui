@@ -16,28 +16,20 @@
 
 package com.acornui.component
 
+import com.acornui.core.RenderableBase
 import com.acornui.core.graphic.BlendMode
 import com.acornui.core.graphic.Texture
+import com.acornui.core.useCamera
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.putIndices
-import com.acornui.gl.core.putIndicesReversed
 import com.acornui.gl.core.putVertex
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.acornui.recycle.Clearable
 import kotlin.math.abs
-import kotlin.math.cos
-import kotlin.math.sin
 import kotlin.properties.Delegates
 
-class NinePatch(val glState: GlState) : BasicDrawable, Clearable {
-
-	private var width: Float = 0f
-	private var height: Float = 0f
-
-	private val _drawRegion = MinMax()
-	override val drawRegion: MinMaxRo
-		get() = _drawRegion.set(0f, 0f, width, height)
+class NinePatch(val glState: GlState) : RenderableBase(), Clearable {
 
 	var isRotated: Boolean = false
 		private set
@@ -63,12 +55,6 @@ class NinePatch(val glState: GlState) : BasicDrawable, Clearable {
 	 */
 	var isUv: Boolean = true
 		private set
-
-	/**
-	 * If true, the normal and indices will be reversed.
-	 */
-	@Deprecated("Will remove in future versions")
-	var useAsBackFace: Boolean = false
 
 	var blendMode: BlendMode = BlendMode.NORMAL
 
@@ -99,7 +85,7 @@ class NinePatch(val glState: GlState) : BasicDrawable, Clearable {
 	private val indices = intArrayOf(0, 1, 5, 5, 4, 0, 1, 2, 6, 6, 5, 1, 2, 3, 7, 7, 6, 2, 4, 5, 9, 9, 8, 4, 5, 6, 10, 10, 9, 5, 6, 7, 11, 11, 10, 6, 8, 9, 13, 13, 12, 8, 9, 10, 14, 14, 13, 9, 10, 11, 15, 15, 14, 10)
 
 	private val localPoints = Array(16) { Vector3() }
-	private val normal = Vector3()
+	private val normal = Vector3.NEG_Z
 	private val worldNormal = Vector3()
 	private val tmpVec = Vector3()
 
@@ -126,7 +112,7 @@ class NinePatch(val glState: GlState) : BasicDrawable, Clearable {
 		this.scaleY = scaleY
 	}
 
-	override val naturalWidth: Float
+	val naturalWidth: Float
 		get() {
 			val t = texture ?: return 0f
 			return if (isRotated) {
@@ -136,7 +122,7 @@ class NinePatch(val glState: GlState) : BasicDrawable, Clearable {
 			} / scaleX
 		}
 
-	override val naturalHeight: Float
+	val naturalHeight: Float
 		get() {
 			val t = texture ?: return 0f
 			return if (isRotated) {
@@ -218,7 +204,6 @@ class NinePatch(val glState: GlState) : BasicDrawable, Clearable {
 		region[3] = other.getRegion(3)
 		isRotated = other.isRotated
 		isUv = other.isUv
-		useAsBackFace = other.useAsBackFace
 		blendMode = other.blendMode
 		premultipliedAlpha = other.premultipliedAlpha
 		splitLeft = other.splitLeft
@@ -235,7 +220,6 @@ class NinePatch(val glState: GlState) : BasicDrawable, Clearable {
 		region[3] = other.getRegion(3)
 		isRotated = other.isRotated
 		isUv = other.isUv
-		useAsBackFace = other.useAsBackFace
 		blendMode = other.blendMode
 		premultipliedAlpha = other.premultipliedAlpha
 		splitLeft = 0f
@@ -244,57 +228,55 @@ class NinePatch(val glState: GlState) : BasicDrawable, Clearable {
 		splitBottom = 0f
 	}
 
-	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
-		this.width = width
-		this.height = height
+	override fun onSizeSet(oldW: Float?, oldH: Float?, newW: Float?, newH: Float?) {
+		val width = newW ?: naturalWidth
+		val height = newH ?: naturalHeight
 		val minW = splitLeft + splitRight
 		val minH = splitTop + splitBottom
 		val scaleX = if (minW <= 0f || width > minW) 1f else width / minW
 		val scaleY = if (minH <= 0f || height > minH) 1f else height / minH
 
-		val x0 = -originX
-		val x1 = scaleX * splitLeft - originX
-		val x2 = width - scaleX * splitRight - originX
-		val x3 = width - originX
+		val x0 = 0f
+		val x1 = scaleX * splitLeft
+		val x2 = width - scaleX * splitRight
+		val x3 = width
 
-		val y0 = -originY
-		val y1 = scaleY * splitTop - originY
-		val y2 = height - scaleY * splitBottom - originY
-		val y3 = height - originY
-
-		val cos = cos(rotation)
-		val sin = sin(rotation)
+		val y0 = 0f
+		val y1 = scaleY * splitTop
+		val y2 = height - scaleY * splitBottom
+		val y3 = height
 
 		// Row 0
-		localPoints[0].set(cos * x0 - sin * y0 + x, sin * x0 + cos * y0 + y, z)
-		localPoints[1].set(cos * x1 - sin * y0 + x, sin * x1 + cos * y0 + y, z)
-		localPoints[2].set(cos * x2 - sin * y0 + x, sin * x2 + cos * y0 + y, z)
-		localPoints[3].set(cos * x3 - sin * y0 + x, sin * x3 + cos * y0 + y, z)
+		localPoints[ 0].set(x0, y0, 0f)
+		localPoints[ 1].set(x1, y0, 0f)
+		localPoints[ 2].set(x2, y0, 0f)
+		localPoints[ 3].set(x3, y0, 0f)
 
 		// Row 1
-		localPoints[4].set(cos * x0 - sin * y1 + x, sin * x0 + cos * y1 + y, z)
-		localPoints[5].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
-		localPoints[6].set(cos * x2 - sin * y1 + x, sin * x2 + cos * y1 + y, z)
-		localPoints[7].set(cos * x3 - sin * y1 + x, sin * x3 + cos * y1 + y, z)
+		localPoints[ 4].set(x0, y1, 0f)
+		localPoints[ 5].set(x1, y1, 0f)
+		localPoints[ 6].set(x2, y1, 0f)
+		localPoints[ 7].set(x3, y1, 0f)
 
 		// Row 2
-		localPoints[8].set(cos * x0 - sin * y2 + x, sin * x0 + cos * y2 + y, z)
-		localPoints[9].set(cos * x1 - sin * y2 + x, sin * x1 + cos * y2 + y, z)
-		localPoints[10].set(cos * x2 - sin * y2 + x, sin * x2 + cos * y2 + y, z)
-		localPoints[11].set(cos * x3 - sin * y2 + x, sin * x3 + cos * y2 + y, z)
+		localPoints[ 8].set(x0, y2, 0f)
+		localPoints[ 9].set(x1, y2, 0f)
+		localPoints[10].set(x2, y2, 0f)
+		localPoints[11].set(x3, y2, 0f)
 
 		// Row 3
-		localPoints[12].set(cos * x0 - sin * y3 + x, sin * x0 + cos * y3 + y, z)
-		localPoints[13].set(cos * x1 - sin * y3 + x, sin * x1 + cos * y3 + y, z)
-		localPoints[14].set(cos * x2 - sin * y3 + x, sin * x2 + cos * y3 + y, z)
-		localPoints[15].set(cos * x3 - sin * y3 + x, sin * x3 + cos * y3 + y, z)
+		localPoints[12].set(x0, y3, 0f)
+		localPoints[13].set(x1, y3, 0f)
+		localPoints[14].set(x2, y3, 0f)
+		localPoints[15].set(x3, y3, 0f)
 
-		normal.set(if (useAsBackFace) Vector3.Z else Vector3.NEG_Z)
+		_bounds.set(width, height)
 	}
 
-	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		val texture = texture
 		if (texture == null || width <= 0f || height <= 0f || tint.a <= 0f) return
+		useCamera(glState)
 
 		transform.rot(worldNormal.set(normal)).nor()
 
@@ -388,14 +370,13 @@ class NinePatch(val glState: GlState) : BasicDrawable, Clearable {
 			batch.putVertex(transform.prj(tmpVec.set(localPoints[14])), worldNormal, tint, colU2, rowV3)
 			batch.putVertex(transform.prj(tmpVec.set(localPoints[15])), worldNormal, tint, colU3, rowV3)
 		}
-		if (useAsBackFace) batch.putIndicesReversed(indices) else batch.putIndices(indices)
+		batch.putIndices(indices)
 	}
 
 	override fun clear() {
 		texture = null
 		setUv(0f, 0f, 1f, 1f, false)
 		setScaling(1f, 1f)
-		useAsBackFace = false
 		blendMode = BlendMode.NORMAL
 		premultipliedAlpha = false
 		splitLeft = 0f

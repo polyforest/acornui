@@ -25,7 +25,7 @@ import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.core.graphic.BlendMode
-import com.acornui.core.useCamera
+import com.acornui.core.renderContext
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
@@ -75,7 +75,7 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		if (!bitmapCacheIsValid)
 			drawToPingPongBuffers()
-		drawBlurToScreen(clip, transform, tint)
+		drawBlurToScreen()
 	}
 
 	fun drawToPingPongBuffers() {
@@ -126,17 +126,17 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 
 		sprite.texture = fBT
 		sprite.setUv(0f, 1f, region.width / w, 1f - (region.height / h), isRotated = false)
-		drawable.updateVertices()
+		drawable.setSize(null, null)
 		//sprite.setScaling(window.scaleX, window.scaleY)
 	}
 
-	fun drawBlurToScreen(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		useCamera(glState)
-		drawable.render(clip, transform, tint)
+	fun drawBlurToScreen() {
+		drawable.renderContextOverride = renderContext
+		drawable.render()
 	}
 
 	fun drawOriginalToScreen(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		framebufferFilter.drawToScreen(clip, transform, tint)
+		framebufferFilter.drawToScreen()
 	}
 
 	/**

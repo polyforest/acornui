@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("UNUSED_PARAMETER", "RedundantLambdaArrow", "ObjectPropertyName")
+@file:Suppress("UNUSED_PARAMETER", "RedundantLambdaArrow", "ObjectPropertyName", "MemberVisibilityCanBePrivate", "PropertyName")
 
 package com.acornui.component
 
@@ -37,7 +37,6 @@ import com.acornui.core.time.TimeDriver
 import com.acornui.function.as1
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
-import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.acornui.reflect.observable
@@ -100,18 +99,6 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	 * The flags that, if invalidated, will invalidate the parent container's size constraints / layout.
 	 */
 	val layoutInvalidatingFlags: Int
-
-	/**
-	 * The explicit width, as set by width(value)
-	 * Typically one would use [width] in order to retrieve the actual width.
-	 */
-	val explicitWidth: Float?
-
-	/**
-	 * The explicit height, as set by height(value)
-	 * Typically one would use [height] in order to retrieve actual height.
-	 */
-	val explicitHeight: Float?
 
 	companion object {
 		var defaultLayoutInvalidatingFlags = ValidationFlags.HIERARCHY_ASCENDING or
@@ -232,7 +219,7 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
  */
 open class UiComponentImpl(
 		final override val owner: Owned
-) : UiComponent {
+) : UiComponent, RenderableBase() {
 
 	final override val injector = owner.injector
 
@@ -306,14 +293,12 @@ open class UiComponentImpl(
 	protected var validation: ValidationGraph
 
 	// Transformable properties
-	protected val _transform = Matrix4()
 	protected val _position = Vector3(0f, 0f, 0f)
 	protected val _rotation = Vector3(0f, 0f, 0f)
 	protected val _scale = Vector3(1f, 1f, 1f)
 	protected val _origin = Vector3(0f, 0f, 0f)
 
 	// LayoutElement properties
-	protected val _bounds = Bounds()
 	protected val _explicitSizeConstraints = SizeConstraints()
 	protected val _sizeConstraints = SizeConstraints()
 
@@ -356,9 +341,6 @@ open class UiComponentImpl(
 	private val _bubbleSignals = HashMap<InteractionType<*>, StoppableSignal<*>>()
 	private val _attachments = HashMap<Any, Any>()
 
-	// ColorTransformable properties
-	protected val _colorTint: Color = Color.WHITE.copy()
-
 	// ChildRo properties
 	override var parent: ContainerRo? = null
 
@@ -372,10 +354,9 @@ open class UiComponentImpl(
 	// Render context properties
 
 	protected val defaultRenderContext = inject(RenderContextRo)
-	protected val _renderContext = RenderContext(defaultRenderContext)
+	protected val _naturalRenderContext = RenderContext(defaultRenderContext)
 
-	override val naturalRenderContext: RenderContextRo
-		get() = _renderContext
+	override val naturalRenderContext: RenderContextRo = _naturalRenderContext
 
 	override val viewProjectionTransformInv: Matrix4Ro
 		get() = renderContext.viewProjectionTransformInv
@@ -402,9 +383,9 @@ open class UiComponentImpl(
 		}
 
 	var cameraOverride: CameraRo?
-		get() = _renderContext.cameraOverride
+		get() = _naturalRenderContext.cameraOverride
 		set(value) {
-			_renderContext.cameraOverride = value
+			_naturalRenderContext.cameraOverride = value
 			invalidate(ValidationFlags.RENDER_CONTEXT)
 		}
 
@@ -527,37 +508,6 @@ open class UiComponentImpl(
 			return _bounds
 		}
 
-	/**
-	 * The explicit width, as set by width(value)
-	 * Typically one would use width() in order to retrieve the explicit or actual width.
-	 */
-	final override var explicitWidth: Float? = null
-		private set
-
-	/**
-	 * The explicit height, as set by height(value)
-	 * Typically one would use height() in order to retrieve the explicit or actual height.
-	 */
-	final override var explicitHeight: Float? = null
-		private set
-
-	/**
-	 * Sets the explicit width. Set to null to use actual width.
-	 */
-	override fun width(value: Float?) {
-		if (explicitWidth == value) return
-		if (value?.isNaN() == true) throw Exception("May not set the size to be NaN")
-		explicitWidth = value
-		invalidate(ValidationFlags.LAYOUT)
-	}
-
-	override fun height(value: Float?) {
-		if (explicitHeight == value) return
-		if (value?.isNaN() == true) throw Exception("May not set the size to be NaN")
-		explicitHeight = value
-		invalidate(ValidationFlags.LAYOUT)
-	}
-
 	override val shouldLayout: Boolean
 		get() {
 			return includeInLayout && visible
@@ -660,14 +610,8 @@ open class UiComponentImpl(
 	 */
 	final override var defaultHeight: Float? by validationProp(null, ValidationFlags.LAYOUT)
 
-	/**
-	 * Does the same thing as setting width and height individually.
-	 */
-	override fun setSize(width: Float?, height: Float?) {
-		if (width?.isNaN() == true || height?.isNaN() == true) throw Exception("May not set the size to be NaN")
-		if (explicitWidth == width && explicitHeight == height) return
-		explicitWidth = width
-		explicitHeight = height
+	override fun onSizeSet(oldW: Float?, oldH: Float?, newW: Float?, newH: Float?) {
+		if (oldW == newW && oldH == newH) return
 		invalidate(ValidationFlags.LAYOUT)
 	}
 
@@ -781,16 +725,14 @@ open class UiComponentImpl(
 	 * The final pixel color value for the default shader is [colorTint * pixel]
 	 */
 	override var colorTint: ColorRo
-		get() {
-			return _colorTint
-		}
+		get() = renderContext.colorTint
 		set(value) {
-			if (_colorTint == value) return
+			if (renderContext.colorTint == value) return
 			colorTint(value.r, value.g, value.b, value.a)
 		}
 
 	override fun colorTint(r: Float, g: Float, b: Float, a: Float) {
-		_colorTint.set(r, g, b, a)
+		_naturalRenderContext.colorTintLocal.set(r, g, b, a)
 		invalidate(ValidationFlags.RENDER_CONTEXT)
 	}
 
@@ -900,7 +842,7 @@ open class UiComponentImpl(
 	override val transform: Matrix4Ro
 		get() {
 			validate(ValidationFlags.TRANSFORM)
-			return _transform
+			return _naturalRenderContext.modelTransformLocal
 		}
 
 	private var _customTransform: Matrix4Ro? = null
@@ -1080,26 +1022,24 @@ open class UiComponentImpl(
 	 * Do not call this directly, use [validate(ValidationFlags.TRANSFORM)]
 	 */
 	protected open fun updateTransform() {
+		val mat = _naturalRenderContext.modelTransformLocal
 		if (_customTransform != null) {
-			_transform.set(_customTransform!!)
+			mat.set(_customTransform!!)
 			return
 		}
-		_transform.idt()
-		_transform.trn(_position)
+		mat.idt()
+		mat.trn(_position)
 		if (!_rotation.isZero()) {
 			quat.setEulerAngles(_rotation.x, _rotation.y, _rotation.z)
-			_transform.rotate(quat)
+			mat.rotate(quat)
 		}
-		_transform.scale(_scale)
+		mat.scale(_scale)
 		if (!_origin.isZero())
-			_transform.translate(-_origin.x, -_origin.y, -_origin.z)
+			mat.translate(-_origin.x, -_origin.y, -_origin.z)
 	}
 
 	protected open fun updateRenderContext() {
-		_renderContext.parentContext = parent?.renderContext ?: defaultRenderContext
-		_renderContext.modelTransformLocal = _transform
-		_renderContext.colorTintLocal = _colorTint
-		_renderContext.validate()
+		_naturalRenderContext.parentContext = parent?.renderContext ?: defaultRenderContext
 	}
 
 	//-----------------------------------------------
@@ -1139,8 +1079,6 @@ open class UiComponentImpl(
 	//-----------------------------------------------
 	// Renderable
 	//-----------------------------------------------
-
-	private val _drawRegion = MinMax()
 
 	/**
 	 * The local drawing region of this renderable component.
@@ -1183,9 +1121,9 @@ open class UiComponentImpl(
 	 * required.
 	 */
 	override fun render() {
-		// Nothing visible.
 		val renderContext = renderContext
 		if (renderContext.colorTint.a <= 0f)
+			// Nothing visible.
 			return
 		draw(renderContext.clipRegion, renderContext.modelTransform, renderContext.colorTint)
 	}
@@ -1197,12 +1135,6 @@ open class UiComponentImpl(
 		val renderContext = renderContext
 		if (useModel) glState.setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform, renderContext.modelTransform)
 		else glState.setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform)
-	}
-
-	/**
-	 * The core drawing method for this component.
-	 */
-	protected open fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 	}
 
 	//-----------------------------------------------
@@ -1248,7 +1180,7 @@ open class UiComponentImpl(
 	}
 
 	companion object {
-		private val quat: Quaternion = Quaternion()
+		private val quat = Quaternion()
 	}
 }
 

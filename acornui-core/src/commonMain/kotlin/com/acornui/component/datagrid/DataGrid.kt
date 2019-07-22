@@ -778,10 +778,11 @@ class DataGrid<RowData>(
 			_dataView.filter = value
 		}
 
-	override fun setSize(width: Float?, height: Float?) {
-		if (explicitWidth == width && explicitHeight == height) return
-		invalidate(COLUMNS_WIDTHS_VALIDATION)
-		super.setSize(width, height)
+	override fun onSizeSet(oldW: Float?, oldH: Float?, newW: Float?, newH: Float?) {
+		if (oldW != newW && oldH != newH) {
+			invalidate(COLUMNS_WIDTHS_VALIDATION)
+		}
+		super.onSizeSet(oldW, oldH, newW, newH)
 	}
 
 	override fun updateSizeConstraints(out: SizeConstraints) {

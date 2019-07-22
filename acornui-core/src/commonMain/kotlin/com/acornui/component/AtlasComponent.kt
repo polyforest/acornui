@@ -27,6 +27,7 @@ import com.acornui.core.di.Owned
 import com.acornui.core.di.notDisposed
 import com.acornui.core.graphic.*
 import com.acornui.logging.Log
+import com.acornui.math.Bounds
 import com.acornui.recycle.Clearable
 
 /**
@@ -36,7 +37,7 @@ import com.acornui.recycle.Clearable
  *
  * @author nbilyk
  */
-open class AtlasComponent(owner: Owned) : DrawableComponent(owner), Clearable {
+open class AtlasComponent(owner: Owned) : DrawableComponent<Atlas>(owner), Clearable {
 
 	var region: AtlasRegionData? = null
 		private set
@@ -72,16 +73,6 @@ open class AtlasComponent(owner: Owned) : DrawableComponent(owner), Clearable {
 			drawable.blendMode = value
 		}
 
-	/**
-	 * If true, the normal and indices will be reversed.
-	 */
-	@Deprecated("Will remove in future versions")
-	var useAsBackFace: Boolean
-		get() = drawable.useAsBackFace
-		set(value) {
-			drawable.useAsBackFace = value
-		}
-
 	private fun setRegionAndTexture(texture: Texture, region: AtlasRegionData) {
 		this.region = region
 		val oldTexture = this.texture
@@ -102,6 +93,10 @@ open class AtlasComponent(owner: Owned) : DrawableComponent(owner), Clearable {
 	override fun onDeactivated() {
 		super.onDeactivated()
 		texture?.refDec()
+	}
+
+	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+		super.updateLayout(explicitWidth, explicitHeight, out)
 	}
 
 	override fun clear() {

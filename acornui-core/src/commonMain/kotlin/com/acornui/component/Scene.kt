@@ -37,8 +37,8 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	init {
 		validation.addNode(1 shl 16, ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT, ::updateCanvasTransform)
 		cameraOverride = cam
-		_renderContext.modelTransformOverride = Matrix4.IDENTITY
-		_renderContext.clipRegionOverride = MinMaxRo.POSITIVE_INFINITY
+		_naturalRenderContext.modelTransformOverride = Matrix4.IDENTITY
+		_naturalRenderContext.clipRegionOverride = MinMaxRo.POSITIVE_INFINITY
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
@@ -55,8 +55,8 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	private val canvasTransformOverride = Rectangle()
 
 	private fun updateCanvasTransform() {
-		_renderContext.parentContext.localToCanvas(region.set(x, y, width, height))
-		_renderContext.canvasTransformOverride = canvasTransformOverride.set(
+		_naturalRenderContext.parentContext.localToCanvas(region.set(x, y, width, height))
+		_naturalRenderContext.canvasTransformOverride = canvasTransformOverride.set(
 				region.xMin,
 				region.yMin,
 				region.width,

@@ -55,11 +55,8 @@ interface TextElementRo: SizableRo {
 	 */
 	val advanceX: Float
 
-	/**
-	 * If set, this part should be drawn to fit this width.
-	 * In points, not pixels.
-	 */
-	val explicitWidth: Float?
+	override val explicitHeight: Float?
+		get() = null
 
 	/**
 	 * The kerning offset between this element and the next.

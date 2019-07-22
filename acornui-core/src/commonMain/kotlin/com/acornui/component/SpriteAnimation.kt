@@ -21,6 +21,7 @@ import com.acornui.async.async
 import com.acornui.async.then
 import com.acornui.collection.fill
 import com.acornui.core.AppConfig
+import com.acornui.core.Renderable
 import com.acornui.core.asset.CachedGroup
 import com.acornui.core.asset.cachedGroup
 import com.acornui.core.asset.loadAndCacheJson
@@ -29,6 +30,7 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.di.notDisposed
 import com.acornui.core.graphic.*
+import com.acornui.core.renderContext
 import com.acornui.core.time.onTick
 import com.acornui.gl.core.GlState
 import com.acornui.graphic.ColorRo
@@ -142,15 +144,17 @@ class SpriteAnimation(owner: Owned) : UiComponentImpl(owner), Clearable {
 		var h = 0f
 		for (i in 0..animation.frames.lastIndex) {
 			val r = animation.frames[i]
-			if (r.naturalWidth > w) w = r.naturalWidth
-			if (r.naturalHeight > h) h = r.naturalHeight
-			r.updateVertices(explicitWidth ?: r.naturalWidth, explicitHeight ?: r.naturalHeight)
+			r.setSize(explicitWidth, explicitHeight)
+			if (r.width > w) w = r.width
+			if (r.height > h) h = r.height
 		}
 		out.set(w, h)
 	}
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		animation?.frames?.getOrNull(currentFrame - startFrame)?.render(clip, transform, tint)
+		val frame = animation?.frames?.getOrNull(currentFrame - startFrame)
+		frame?.renderContextOverride = renderContext
+		frame?.render()
 	}
 
 	override fun dispose() {
@@ -162,7 +166,7 @@ class SpriteAnimation(owner: Owned) : UiComponentImpl(owner), Clearable {
 
 data class LoadedAnimation(
 		val textures: List<Texture>,
-		val frames: List<BasicDrawable>
+		val frames: List<Renderable>
 ) {
 	fun refDec() {
 		for (i in 0..textures.lastIndex) {

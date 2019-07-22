@@ -26,7 +26,6 @@ import com.acornui.core.popup.PopUpInfo
 import com.acornui.core.popup.PopUpManager
 import com.acornui.core.renderContext
 import com.acornui.math.Bounds
-import com.acornui.math.BoundsRo
 import com.acornui.math.MinMax
 import com.acornui.skins.Theme
 
@@ -95,7 +94,7 @@ open class SimpleHighlight(
 
 	override fun updateRenderContext() {
 		super.updateRenderContext()
-		_renderContext.parentContext = highlighted?.renderContext ?: defaultRenderContext
+		_naturalRenderContext.parentContext = highlighted?.renderContext ?: defaultRenderContext
 	}
 
 	override fun dispose() {

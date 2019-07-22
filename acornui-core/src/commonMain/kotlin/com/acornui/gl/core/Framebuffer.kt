@@ -213,7 +213,7 @@ class Framebuffer(
 		return sprite.apply {
 			setUv(0f, 0f, 1f, 1f, false)
 			texture = this@Framebuffer.texture
-			updateVertices()
+			setSize(null, null)
 		}
 	}
 

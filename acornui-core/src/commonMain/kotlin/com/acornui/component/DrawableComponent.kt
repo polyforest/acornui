@@ -16,7 +16,9 @@
 
 package com.acornui.component
 
+import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
+import com.acornui.core.renderContext
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.Matrix4Ro
@@ -26,47 +28,32 @@ import com.acornui.math.MinMaxRo
 /**
  * @author nbilyk
  */
-abstract class DrawableComponent(
+abstract class DrawableComponent<T : Renderable?>(
 		owner: Owned
 ) : UiComponentImpl(owner) {
 
-	protected abstract val drawable: BasicDrawable?
-
-	init {
-		validation.addNode(VERTICES, ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM) { updateVertices() }
-	}
-
-	fun invalidateVertices() {
-		invalidate(VERTICES)
-	}
+	protected abstract val drawable: T?
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val drawable = drawable ?: return
-		out.set(explicitWidth ?: drawable.naturalWidth, explicitHeight ?: drawable.naturalHeight)
-	}
-
-	protected open fun updateVertices() {
-		drawable?.updateVertices(width, height)
+		drawable.setSize(explicitWidth, explicitHeight)
+		out.set(drawable.bounds)
 	}
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		val drawable = drawable ?: return
-		useCamera()
-		drawable.render(clip, transform, tint)
+		drawable.renderContextOverride = renderContext
+		drawable.render()
 	}
 
 	override fun updateDrawRegion(out: MinMax) {
 		out.set(drawable?.drawRegion)
 	}
-
-	companion object {
-		const val VERTICES = 1 shl 16
-	}
 }
 
-class DrawableComponentImpl(owner: Owned, override val drawable: BasicDrawable) : DrawableComponent(owner)
+class DrawableComponentImpl<T: Renderable>(owner: Owned, override val drawable: T) : DrawableComponent<T>(owner)
 
-fun Owned.drawableC(drawable: BasicDrawable, init: ComponentInit<DrawableComponentImpl> = {}): DrawableComponentImpl {
+fun <T: Renderable> Owned.drawableC(drawable: T, init: ComponentInit<DrawableComponentImpl<T>> = {}): DrawableComponentImpl<T> {
 	val d = DrawableComponentImpl(this, drawable)
 	d.init()
 	return d

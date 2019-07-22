@@ -16,28 +16,23 @@
 
 package com.acornui.component
 
+import com.acornui.core.Renderable
+import com.acornui.core.RenderableBase
 import com.acornui.recycle.Clearable
 import com.acornui.core.graphic.*
+import com.acornui.core.renderContext
 import com.acornui.gl.core.GlState
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 
-class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
-
-	private var width = 0f
-	private var height = 0f
-
-	private val _drawRegion = MinMax()
-
-	override val drawRegion: MinMaxRo
-		get() = _drawRegion.set(0f, 0f, width, height)
+class Atlas(private val glState: GlState) : RenderableBase(), Clearable {
 
 	var region: AtlasRegionData? = null
 		private set
 
 	private var texture: Texture? = null
 
-	private val drawable: BasicDrawable?
+	private val drawable: Renderable?
 		get() = sprite ?: ninePatch
 
 	private var sprite: Sprite? = null
@@ -58,18 +53,6 @@ class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 		}
 
 	/**
-	 * If true, the normal and indices will be reversed.
-	 */
-	@Suppress("DEPRECATION")
-	@Deprecated("Will remove in future versions")
-	var useAsBackFace: Boolean = false
-		set(value) {
-			field = value
-			sprite?.useAsBackFace = value
-			ninePatch?.useAsBackFace = value
-		}
-
-	/**
 	 * Sets the region and texture for what should be drawn.
 	 */
 	fun setRegionAndTexture(texture: Texture, region: AtlasRegionData) {
@@ -80,7 +63,6 @@ class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 				sprite = Sprite(glState).apply {
 					blendMode = r.blendMode
 					premultipliedAlpha = r.premultipliedAlpha
-					useAsBackFace = r.useAsBackFace
 					setScaling(r.scaleX, r.scaleY)
 				}
 			}
@@ -92,7 +74,6 @@ class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 				ninePatch = NinePatch(glState).apply {
 					blendMode = r.blendMode
 					premultipliedAlpha = r.premultipliedAlpha
-					useAsBackFace = r.useAsBackFace
 					setScaling(r.scaleX, r.scaleY)
 				}
 			}
@@ -139,14 +120,14 @@ class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 		this.scaleY = scaleY
 	}
 
-	override val naturalWidth: Float
+	val naturalWidth: Float
 		get() {
 			val region = region ?: return 0f
 			val regionWidth = if (region.isRotated) region.bounds.height else region.bounds.width
 			return (region.padding[0] + regionWidth + region.padding[2]).toFloat()
 		}
 
-	override val naturalHeight: Float
+	val naturalHeight: Float
 		get() {
 			val region = region ?: return 0f
 			val regionHeight = if (region.isRotated) region.bounds.width else region.bounds.height
@@ -158,21 +139,14 @@ class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 	private var totalPadRight = 0f
 	private var totalPadBottom = 0f
 
-	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
-		this.width = width
-		this.height = height
-		val drawable = drawable ?: return
-		updatePadding(width, height)
+	override fun onSizeSet(oldW: Float?, oldH: Float?, newW: Float?, newH: Float?) {
+		val w = newW ?: naturalWidth
+		val h = newH ?: naturalHeight
 
-		drawable.updateVertices(
-				width - totalPadLeft - totalPadRight,
-				height - totalPadBottom - totalPadTop,
-				x = totalPadLeft,
-				y = totalPadTop,
-				rotation = rotation,
-				originX = originX,
-				originY = originY
-		)
+		val drawable = drawable ?: return
+		updatePadding(w, h)
+		drawable.setSize(w - totalPadLeft - totalPadRight, h - totalPadBottom - totalPadTop)
+		_bounds.set(drawable.width + totalPadLeft + totalPadRight, drawable.height + totalPadTop + totalPadBottom)
 	}
 
 	private fun updatePadding(width: Float, height: Float) {
@@ -206,8 +180,15 @@ class Atlas(private val glState: GlState) : BasicDrawable, Clearable {
 		totalPadBottom = unscaledPadBottom + scaledPadBottom * sY
 	}
 
-	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		drawable?.render(clip, transform, tint)
+	private val drawableRenderContext = RenderContext()
+
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		val drawable = drawable ?: return
+
+		drawableRenderContext.parentContext = renderContext
+		drawableRenderContext.modelTransformLocal.setTranslation(totalPadLeft, totalPadTop, 0f)
+		drawable.renderContextOverride = drawableRenderContext
+		drawable.render()
 	}
 
 	override fun clear() {

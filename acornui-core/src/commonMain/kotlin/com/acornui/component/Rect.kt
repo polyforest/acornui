@@ -22,6 +22,7 @@ import com.acornui.component.drawing.staticMeshC
 import com.acornui.component.drawing.transform
 import com.acornui.core.di.Owned
 import com.acornui.core.graphic.BlendMode
+import com.acornui.core.renderContext
 import com.acornui.gl.core.putIndex
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putTriangleIndices
@@ -214,23 +215,43 @@ class Rect(
 					}
 
 					if (topLeftCorner.texture != null) {
-						topLeftCorner.updateVertices(x = fillPad.left - cPad, y = fillPad.top - cPad)
-						topLeftCorner.render(MinMaxRo.POSITIVE_INFINITY, Matrix4.IDENTITY, tint)
+						defaultRenderContext.childRenderContext {
+							modelTransformLocal.translate(fillPad.left - cPad, fillPad.top - cPad)
+							colorTintOverride = tint
+							topLeftCorner.renderContextOverride = this
+							topLeftCorner.setSize(null, null)
+							topLeftCorner.render()
+						}
 					}
 
 					if (topRightCorner.texture != null) {
-						topRightCorner.updateVertices(x = w - topRightX, y = fillPad.top - cPad)
-						topRightCorner.render(MinMaxRo.POSITIVE_INFINITY, Matrix4.IDENTITY, tint)
+						defaultRenderContext.childRenderContext {
+							modelTransformLocal.translate(w - topRightX, fillPad.top - cPad)
+							colorTintOverride = tint
+							topRightCorner.renderContextOverride = this
+							topRightCorner.setSize(null, null)
+							topRightCorner.render()
+						}
 					}
 
 					if (bottomRightCorner.texture != null) {
-						bottomRightCorner.updateVertices(x = w - bottomRightX, y = h - bottomRightY)
-						bottomRightCorner.render(MinMaxRo.POSITIVE_INFINITY, Matrix4.IDENTITY, tint)
+						defaultRenderContext.childRenderContext {
+							modelTransformLocal.translate(w - bottomRightX, h - bottomRightY)
+							colorTintOverride = tint
+							bottomRightCorner.renderContextOverride = this
+							bottomRightCorner.setSize(null, null)
+							bottomRightCorner.render()
+						}
 					}
 
 					if (bottomLeftCorner.texture != null) {
-						bottomLeftCorner.updateVertices(x = fillPad.left - cPad, y = h - bottomLeftY)
-						bottomLeftCorner.render(MinMaxRo.POSITIVE_INFINITY, Matrix4.IDENTITY, tint)
+						defaultRenderContext.childRenderContext {
+							modelTransformLocal.translate(fillPad.left - cPad, h - bottomLeftY)
+							colorTintOverride = tint
+							bottomLeftCorner.renderContextOverride = this
+							bottomLeftCorner.setSize(null, null)
+							bottomLeftCorner.render()
+						}
 					}
 
 					trn(margin.left, margin.top)

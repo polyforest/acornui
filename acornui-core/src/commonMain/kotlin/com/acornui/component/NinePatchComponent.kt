@@ -17,6 +17,7 @@
 package com.acornui.component
 
 import com.acornui.async.then
+import com.acornui.core.Renderable
 import com.acornui.core.asset.AssetType
 import com.acornui.core.asset.CachedGroup
 import com.acornui.core.asset.cachedGroup
@@ -29,18 +30,9 @@ import com.acornui.math.IntRectangleRo
 /**
  * @author nbilyk
  */
-class NinePatchComponent(owner: Owned) : DrawableComponent(owner) {
+class NinePatchComponent(owner: Owned) : DrawableComponent<Renderable>(owner) {
 
 	override val drawable: NinePatch = NinePatch(glState)
-
-	/**
-	 * If true, the normal and indices will be reversed.
-	 */
-	var useAsBackFace: Boolean
-		get() = drawable.useAsBackFace
-		set(value) {
-			drawable.useAsBackFace = value
-		}
 
 	private var cached: CachedGroup? = null
 

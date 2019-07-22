@@ -107,6 +107,25 @@ class RenderFilterList(
 	override val bounds: BoundsRo
 		get() = head.bounds
 
+	override val explicitWidth: Float?
+		get() = head.explicitWidth
+
+	override val explicitHeight: Float?
+		get() = head.explicitHeight
+
+	override fun setSize(width: Float?, height: Float?) {
+		head.setSize(width, height)
+	}
+
+	override fun width(value: Float?) {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun height(value: Float?) {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+
 	//-------------------------------------------
 
 	override fun dispose() {

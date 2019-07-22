@@ -194,6 +194,19 @@ interface SizableRo {
 	 * The actual bounds of this component.
 	 */
 	val bounds: BoundsRo
+
+	/**
+	 * The explicit width, as set by `width(value)`
+	 * Typically one would use [width] in order to retrieve the actual width.
+	 */
+	val explicitWidth: Float?
+
+	/**
+	 * The explicit height, as set by `height(value)`
+	 * Typically one would use [height] in order to retrieve actual height.
+	 */
+	val explicitHeight: Float?
+
 }
 
 interface Sizable : SizableRo {
@@ -209,12 +222,13 @@ interface Sizable : SizableRo {
 	/**
 	 * Sets the explicit width for this layout element. (A null value represents using the measured width)
 	 */
-	fun width(value: Float?)
+	fun width(value: Float?) = setSize(width = value, height = explicitHeight)
+
 
 	/**
 	 * Sets the explicit height for this layout element. (A null value represents using the measured height)
 	 */
-	fun height(value: Float?)
+	fun height(value: Float?) = setSize(width = explicitWidth, height = value)
 
 }
 

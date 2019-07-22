@@ -19,6 +19,7 @@ package com.acornui.particle
 import com.acornui.async.Deferred
 import com.acornui.async.async
 import com.acornui.component.InteractivityMode
+import com.acornui.component.RenderContextRo
 import com.acornui.component.Sprite
 import com.acornui.component.UiComponentImpl
 import com.acornui.core.Disposable
@@ -29,6 +30,7 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.graphic.TextureAtlasDataSerializer
 import com.acornui.core.graphic.loadAndCacheAtlasPage
+import com.acornui.core.renderContext
 import com.acornui.core.time.onTick
 import com.acornui.gl.core.GlState
 import com.acornui.graphic.ColorRo
@@ -106,8 +108,7 @@ class ParticleEffectComponent(
 
 	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		val effect = _effect ?: return
-		glState.setCamera(viewProjectionTransform, viewTransform, modelTransform)
-		effect.render(concatenatedColorTint)
+		effect.render(renderContext)
 	}
 
 	override fun dispose() {
@@ -155,9 +156,9 @@ class LoadedParticleEffect(
 		cachedGroup.dispose()
 	}
 
-	fun render(concatenatedColorTint: ColorRo) {
+	fun render(renderContext: RenderContextRo) {
 		for (i in 0..renderers.lastIndex) {
-			renderers[i].render(concatenatedColorTint)
+			renderers[i].render(renderContext)
 		}
 	}
 }
@@ -221,7 +222,7 @@ interface ParticleEmitterRenderer {
 
 	fun refDec()
 
-	fun render(concatenatedColorTint: ColorRo)
+	fun render(renderContext: RenderContextRo)
 
 }
 

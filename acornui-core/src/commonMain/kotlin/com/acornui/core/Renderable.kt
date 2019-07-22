@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
+@file:Suppress("PropertyName", "MemberVisibilityCanBePrivate")
+
 package com.acornui.core
 
 import com.acornui.component.RenderContextRo
+import com.acornui.component.layout.Sizable
 import com.acornui.component.layout.SizableRo
 import com.acornui.gl.core.GlState
-import com.acornui.math.MinMaxRo
+import com.acornui.graphic.ColorRo
+import com.acornui.math.*
 
-interface Renderable : SizableRo {
+interface Renderable : Sizable {
 
 	/**
 	 * The local drawing region of this renderable component.
@@ -49,6 +53,67 @@ interface Renderable : SizableRo {
 	 * Renders any graphics using the current [renderContext].
 	 */
 	fun render()
+}
+
+abstract class RenderableBase : Renderable, Sizable {
+
+	protected val _bounds = Bounds()
+	override val bounds: BoundsRo
+		get() = _bounds
+
+	protected val _drawRegion = MinMax()
+	override val drawRegion: MinMaxRo
+		get() = _drawRegion.set(0f, 0f, width, height)
+
+	override var renderContextOverride: RenderContextRo? = null
+
+	override val naturalRenderContext: RenderContextRo
+		get() = error("This component has no default render context. Set one via renderContextOverride.")
+
+	/**
+	 * The explicit width, as set by width(value)
+	 * Typically one would use width() in order to retrieve the explicit or actual width.
+	 */
+	final override var explicitWidth: Float? = null
+		private set
+
+	/**
+	 * The explicit height, as set by height(value)
+	 * Typically one would use height() in order to retrieve the explicit or actual height.
+	 */
+	final override var explicitHeight: Float? = null
+		private set
+
+	/**
+	 * Does the same thing as setting width and height individually.
+	 */
+	final override fun setSize(width: Float?, height: Float?) {
+		if (width?.isNaN() == true || height?.isNaN() == true) throw Exception("May not set the size to be NaN")
+		val oldW = explicitWidth
+		val oldH = explicitHeight
+		explicitWidth = width
+		explicitHeight = height
+		onSizeSet(oldW, oldH, width, height)
+	}
+
+	/**
+	 * Invoked when the size has been set, providing the new and old explicit width and height.
+	 */
+	abstract fun onSizeSet(oldW: Float?, oldH: Float?, newW: Float?, newH: Float?)
+
+	override fun render() {
+		val renderContext = renderContext
+		if (renderContext.colorTint.a <= 0f)
+			return // Nothing visible.
+		draw(renderContext.clipRegion, renderContext.modelTransform, renderContext.colorTint)
+	}
+
+	/**
+	 * The core drawing method for this component.
+	 * For convenience, draw is provided commonly used rendering properties from the render context:
+	 * renderContext.clipRegion, renderContext.modelTransform, and renderContext.colorTint
+	 */
+	protected open fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {}
 }
 
 /**

@@ -16,18 +16,17 @@
 
 package com.acornui.component
 
+import com.acornui.core.RenderableBase
 import com.acornui.core.graphic.BlendMode
 import com.acornui.core.graphic.Texture
+import com.acornui.core.useCamera
 import com.acornui.gl.core.GlState
-import com.acornui.gl.core.putCcwQuadIndices
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putVertex
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.acornui.recycle.Clearable
 import kotlin.math.abs
-import kotlin.math.cos
-import kotlin.math.sin
 import kotlin.properties.Delegates
 
 /**
@@ -35,14 +34,7 @@ import kotlin.properties.Delegates
  *
  * @author nbilyk
  */
-class Sprite(val glState: GlState) : BasicDrawable, Clearable {
-
-	private var width = 0f
-	private var height = 0f
-
-	private val _drawRegion = MinMax()
-	override val drawRegion: MinMaxRo
-		get() = _drawRegion.set(0f, 0f, width, height)
+class Sprite(val glState: GlState) : RenderableBase(), Clearable {
 
 	/**
 	 * [naturalWidth] uses uv coordinates multiplied by the texture size. If the texture uses dpi scaling, this
@@ -60,12 +52,6 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 		this.scaleX = scaleX
 		this.scaleY = scaleY
 	}
-
-	/**
-	 * If true, the normal and indices will be reversed.
-	 */
-	@Deprecated("Will remove in future versions")
-	var useAsBackFace = false
 
 	var texture by Delegates.observable<Texture?>(null) { _, _, _ ->
 		updateUv()
@@ -99,7 +85,7 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 	var isUv: Boolean = true
 		private set
 
-	private val normalLocal = Vector3()
+	private val normalLocal = Vector3.NEG_Z
 	private val normalWorld = Vector3()
 
 	fun setUv(u: Float, v: Float, u2: Float, v2: Float, isRotated: Boolean) {
@@ -147,7 +133,7 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 	 */
 	private val pointsLocal: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
 
-	override val naturalWidth: Float
+	val naturalWidth: Float
 		get() {
 			val t = texture ?: return 0f
 			return if (isRotated) {
@@ -157,7 +143,7 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 			} / scaleX
 		}
 
-	override val naturalHeight: Float
+	val naturalHeight: Float
 		get() {
 			val t = texture ?: return 0f
 			return if (isRotated) {
@@ -183,43 +169,22 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 		}
 	}
 
-	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
-		this.width = width
-		this.height = height
+	override fun onSizeSet(oldW: Float?, oldH: Float?, newW: Float?, newH: Float?) {
+		val w = newW ?: naturalWidth
+		val h = newH ?: naturalHeight
+		_bounds.set(w, h)
 
-		// Transform vertex coordinates from local to global
-		if (rotation == 0f) {
-			val aX = x - originX
-			val aY = y - originY
-			val bX = x + width - originX
-			val bY = y + height - originY
-			pointsLocal[0].set(aX, aY, z)
-			pointsLocal[1].set(bX, aY, z)
-			pointsLocal[2].set(bX, bY, z)
-			pointsLocal[3].set(aX, bY, z)
-		} else {
-			// (cos x - sin y, sin x + cos y)
-
-			val cos = cos(rotation)
-			val sin = sin(rotation)
-
-			var x1: Float = -originX
-			var y1: Float = -originY
-			pointsLocal[0].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
-			x1 = -originX + width
-			pointsLocal[1].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
-			y1 = -originY + height
-			pointsLocal[2].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
-			x1 = -originX
-			pointsLocal[3].set(cos * x1 - sin * y1 + x, sin * x1 + cos * y1 + y, z)
-		}
-		normalLocal.set(if (useAsBackFace) Vector3.Z else Vector3.NEG_Z)
+		pointsLocal[0].set(0f, 0f, 0f)
+		pointsLocal[1].set(w, 0f, 0f)
+		pointsLocal[2].set(w, h, 0f)
+		pointsLocal[3].set(0f, h, 0f)
 	}
 
 	private val tmpVec = Vector3()
 
-	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		if (texture == null || tint.a <= 0f || width == 0f || height == 0f) return // Nothing to draw
+		useCamera(glState)
 		val tmpVec = tmpVec
 		transform.rot(normalWorld.set(normalLocal)).nor()
 
@@ -247,8 +212,7 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 			// Bottom left
 			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[3])), normalWorld, tint, u, v2)
 		}
-		if (useAsBackFace) batch.putCcwQuadIndices()
-		else batch.putQuadIndices()
+		batch.putQuadIndices()
 	}
 
 	/**
@@ -263,7 +227,6 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 		region[1] = other.region[1]
 		region[2] = other.region[2]
 		region[3] = other.region[3]
-		useAsBackFace = other.useAsBackFace
 		isUv = other.isUv
 		isRotated = other.isRotated
 		blendMode = other.blendMode
@@ -275,7 +238,6 @@ class Sprite(val glState: GlState) : BasicDrawable, Clearable {
 		texture = null
 		setUv(0f, 0f, 1f, 1f, false)
 		setScaling(1f, 1f)
-		useAsBackFace = false
 		blendMode = BlendMode.NORMAL
 		premultipliedAlpha = false
 	}

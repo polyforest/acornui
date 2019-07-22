@@ -29,6 +29,8 @@ import com.acornui.function.as2
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.ClearableObjectPool
 
 interface RenderContextRo : CanvasTransformableRo {
 
@@ -49,27 +51,9 @@ interface RenderContextRo : CanvasTransformableRo {
 	 */
 	val colorTint: ColorRo
 
-	/**
-	 * Validates the properties of the render context.
-	 */
-	fun validate()
-
 	companion object : DKey<RenderContextRo> {
 
-		override fun factory(injector: Injector): RenderContextRo? = DefaultRenderContext(injector)
-	}
-}
-
-/**
- * Validates this render context and its entire ancestry.
- * This is not necessary within UiComponent validation.
- * @see RenderContextRo.validate
- */
-fun RenderContextRo.validateAncestry() {
-	var p: RenderContextRo? = this
-	while (p != null) {
-		p.validate()
-		p = p.parentContext
+		override fun factory(injector: Injector): RenderContextRo? = OrthographicRenderContext(injector)
 	}
 }
 
@@ -80,7 +64,13 @@ fun RenderContextRo.cameraEquals(renderContext: RenderContextRo): Boolean {
 	return viewProjectionTransform == renderContext.viewProjectionTransform && canvasTransform == renderContext.canvasTransform
 }
 
-class DefaultRenderContext(override val injector: Injector) : Scoped, RenderContextRo, Disposable {
+/**
+ * The orthographic render context is a render context that sets its view projection to an orthographic projection with
+ * the viewport set to the window.
+ * This is the default render context used by the Stage or as the parent context for any components not on the display
+ * graph.
+ */
+class OrthographicRenderContext(override val injector: Injector) : Scoped, RenderContextRo, Disposable {
 
 	override val parentContext: RenderContextRo? = null
 
@@ -104,24 +94,44 @@ class DefaultRenderContext(override val injector: Injector) : Scoped, RenderCont
 	override val modelTransformInv: Matrix4Ro = Matrix4.IDENTITY
 
 	override val viewProjectionTransformInv: Matrix4Ro
-		get() = camera.combinedInv
+		get() {
+			validate()
+			return camera.combinedInv
+		}
 
 	override val viewProjectionTransform: Matrix4Ro
-		get() = camera.combined
+		get() {
+			validate()
+			return camera.combined
+		}
 
 	override val viewTransform: Matrix4Ro
-		get() = camera.view
+		get() {
+			validate()
+			return camera.view
+		}
 
 	override val projectionTransform: Matrix4Ro
-		get() = camera.projection
+		get() {
+			validate()
+			return camera.projection
+		}
 
-	override val clipRegion: MinMaxRo = _clipRegion
+	override val clipRegion: MinMaxRo
+		get() {
+			validate()
+			return _clipRegion
+		}
 
-	override val canvasTransform: RectangleRo = _canvasTransform
+	override val canvasTransform: RectangleRo
+		get() {
+			validate()
+			return _canvasTransform
+		}
 
 	override val colorTint: ColorRo = Color.WHITE
 
-	override fun validate() {
+	private fun validate() {
 		if (isValid) return
 		isValid = true
 		val window = window
@@ -137,12 +147,32 @@ class DefaultRenderContext(override val injector: Injector) : Scoped, RenderCont
 	}
 }
 
-class RenderContext(initialParentContext: RenderContextRo) : RenderContextRo {
+/**
+ * RenderContext is the canonical render context for components.  It is hierarchical for its model and color
+ * transformations, allows for a custom camera to be set, and has properties for external overrides.
+ */
+class RenderContext() : RenderContextRo, Clearable {
 
-	override var parentContext: RenderContextRo = initialParentContext
+	constructor(initialParentContext: RenderContextRo?) : this() {
+		_parentContext = initialParentContext
+	}
 
+	private var _parentContext: RenderContextRo? = null
+	override var parentContext: RenderContextRo
+		get() = _parentContext!!
+		set(value) {
+			_parentContext = value
+		}
+
+	/**
+	 * If set, [viewTransform], [projectionTransform], [viewProjectionTransform], and [viewProjectionTransformInv]
+	 * matrices will be calculated based on this camera.
+	 */
 	var cameraOverride: CameraRo? = null
-	var modelTransformLocal: Matrix4Ro = Matrix4.IDENTITY
+
+	/**
+	 * If set, [canvasTransform] will use this explicit value.
+	 */
 	var canvasTransformOverride: RectangleRo? = null
 
 	/**
@@ -152,11 +182,35 @@ class RenderContext(initialParentContext: RenderContextRo) : RenderContextRo {
 	 */
 	var clipRegionLocal: MinMaxRo? = null
 
-	var colorTintLocal: ColorRo = Color.WHITE
-
-	var modelTransformOverride: Matrix4Ro? = null
-
+	/**
+	 * If set, the [clipRegion] value won't be calculated as the intersection of [clipRegionLocal] and the parent
+	 * context's clip region; it will be this explicit value.
+	 */
 	var clipRegionOverride: MinMaxRo? = null
+
+	/**
+	 * The calculated [colorTint] value will be this value multiplied by the parent context's color tint, unless
+	 * [colorTintOverride] is set.
+	 */
+	var colorTintLocal: Color = Color.WHITE.copy()
+
+	/**
+	 * If set, the [colorTint] value won't be calculated as the multiplication of [colorTintLocal] and the parent
+	 * context's color tint; it will be this explicit value.
+	 */
+	var colorTintOverride: ColorRo? = null
+
+	/**
+	 * The calculated [modelTransform] value will be this value multiplied by the parent context's model transform,
+	 * unless [modelTransformOverride] is set.
+	 */
+	val modelTransformLocal: Matrix4 = Matrix4()
+
+	/**
+	 * If set, the [modelTransform] value won't be calculated as the multiplication of [modelTransformLocal] and the
+	 * parent context's model transform; it will be this explicit value.
+	 */
+	var modelTransformOverride: Matrix4Ro? = null
 
 	private val _modelTransform = Matrix4()
 	override val modelTransform: Matrix4Ro
@@ -190,12 +244,61 @@ class RenderContext(initialParentContext: RenderContextRo) : RenderContextRo {
 			else localToCanvas(_clipRegionIntersection.set(clipRegionLocal!!)).intersection(parentContext.clipRegion)
 		}
 
-	var colorTintOverride: ColorRo? = null
-
 	private val _colorTint = Color()
 	override val colorTint: ColorRo
 		get() = colorTintOverride ?: _colorTint.set(parentContext.colorTint).mul(colorTintLocal).clamp()
 
-	override fun validate() {
+	override fun clear() {
+		_parentContext = null
+		cameraOverride = null
+		canvasTransformOverride = null
+		clipRegionLocal = null
+		colorTintLocal.set(Color.WHITE)
+		colorTintOverride = null
+		modelTransformLocal.idt()
+		modelTransformOverride = null
+	}
+}
+
+@PublishedApi
+internal val renderContextPool = ClearableObjectPool { RenderContext() }
+
+inline fun RenderContextRo.childRenderContext(inner: RenderContext.() -> Unit) {
+	val c = renderContextPool.obtain()
+	c.parentContext = this
+	c.inner()
+	renderContextPool.free(c)
+}
+
+/**
+ * IdtProjectionContext is a render context where the model/view/projection transformations are the identity matrix.
+ */
+class IdtProjectionContext : RenderContextRo, Clearable {
+
+	override val parentContext: RenderContextRo? = null
+
+	override val modelTransform = Matrix4()
+
+	private val _modelTransformInv = Matrix4()
+	override val modelTransformInv: Matrix4Ro
+		get() = _modelTransformInv.set(modelTransform).inv()
+
+	override val viewProjectionTransform: Matrix4Ro = Matrix4.IDENTITY
+
+	override val viewProjectionTransformInv: Matrix4Ro = Matrix4.IDENTITY
+
+	override val viewTransform: Matrix4Ro = Matrix4.IDENTITY
+
+	override val projectionTransform: Matrix4Ro = Matrix4.IDENTITY
+
+	override val canvasTransform: RectangleRo = Rectangle(-1f, -1f, 2f, 2f)
+
+	override val clipRegion: MinMaxRo = MinMax()
+
+	override val colorTint = Color.WHITE.copy()
+
+	override fun clear() {
+		modelTransform.idt()
+		colorTint.set(Color.WHITE)
 	}
 }

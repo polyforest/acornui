@@ -16,38 +16,42 @@
 
 package com.acornui.component
 
+import com.acornui.core.Renderable
+import com.acornui.core.RenderableBase
+import com.acornui.core.renderContext
 import com.acornui.graphic.ColorRo
-import com.acornui.math.*
+import com.acornui.math.Matrix4Ro
+import com.acornui.math.MinMaxRo
+import com.acornui.math.Pad
 
-class PaddedDrawable<T : BasicDrawable>(
+class PaddedDrawable<T : Renderable>(
 
 		/**
 		 * The inner drawable this padding decorator wraps.
 		 */
 		val inner: T
 
-) : BasicDrawable {
+) : RenderableBase() {
 
 	/**
 	 * The padding to add to the [inner] drawable's natural size.  (In points)
 	 */
 	val padding = Pad()
 
-	private val _drawRegion = MinMax()
 	override val drawRegion: MinMaxRo
 		get() = _drawRegion.set(inner.drawRegion).translate(padding.left, padding.top)
 
-	override val naturalWidth: Float
-		get() = padding.expandWidth2(inner.naturalWidth)
-
-	override val naturalHeight: Float
-		get() = padding.expandHeight2(inner.naturalHeight)
-
-	override fun updateVertices(width: Float, height: Float, x: Float, y: Float, z: Float, rotation: Float, originX: Float, originY: Float) {
-		inner.updateVertices(padding.reduceWidth2(width), padding.reduceHeight2(height), x, y, z, rotation, originX - padding.left, originY - padding.top)
+	override fun onSizeSet(oldW: Float?, oldH: Float?, newW: Float?, newH: Float?) {
+		inner.setSize(padding.reduceWidth(newW), padding.reduceHeight(newH))
+		_bounds.set(padding.expandWidth2(inner.width), padding.expandHeight2(inner.height))
 	}
 
-	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		inner.render(clip, transform, tint)
+	private val drawableRenderContext = RenderContext()
+
+	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		drawableRenderContext.parentContext = renderContext
+		drawableRenderContext.modelTransformLocal.setTranslation(padding.left, padding.top, 0f)
+		inner.renderContextOverride = drawableRenderContext
+		inner.render()
 	}
 }

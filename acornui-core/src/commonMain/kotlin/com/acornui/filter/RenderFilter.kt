@@ -17,6 +17,7 @@
 package com.acornui.filter
 
 import com.acornui.component.RenderContextRo
+import com.acornui.component.layout.Sizable
 import com.acornui.core.Disposable
 import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
@@ -51,7 +52,7 @@ interface RenderFilter : Renderable, Observable {
 /**
  * The base class for render filters.
  */
-abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, Disposable {
+abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, Sizable, Disposable {
 
 	private val _changed = Signal1<Observable>()
 	override val changed = _changed.asRo()
@@ -115,6 +116,16 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 		set(value) {
 			contents?.renderContextOverride = value
 		}
+
+	final override val explicitWidth: Float?
+		get() = contents?.explicitWidth
+
+	final override val explicitHeight: Float?
+		get() = contents?.explicitHeight
+
+	final override fun setSize(width: Float?, height: Float?) {
+		contents?.setSize(width, height)
+	}
 
 	final override fun render() {
 		val renderContext = renderContext

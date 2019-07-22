@@ -83,7 +83,7 @@ open class DropShadowFilter(owner: Owned) : RenderFilterBase(owner) {
 
 		offsetTransform.set(transform).translate(offsetX, offsetY, 0f)
 		glState.useColorTransformation(colorTransformation) {
-			blurFilter.drawBlurToScreen(clip, offsetTransform, tint)
+			blurFilter.drawBlurToScreen()
 		}
 		blurFilter.drawOriginalToScreen(clip, transform, tint)
 	}

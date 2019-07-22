@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package com.acornui.filter
 
 import com.acornui.collection.forEach2
@@ -49,6 +51,17 @@ class FilteredContainer(owner: Owned) : ElementContainerImpl<UiComponent>(owner)
 				set(value) {
 					super@FilteredContainer.renderContextOverride = value
 				}
+
+			override val explicitWidth: Float?
+				get() = super@FilteredContainer.explicitWidth
+
+			override val explicitHeight: Float?
+				get() = super@FilteredContainer.explicitHeight
+
+			@Suppress("RedundantOverride") // Erroneous warning
+			override fun setSize(width: Float?, height: Float?) {
+				super@FilteredContainer.setSize(width, height)
+			}
 
 			@Suppress("RedundantOverride") // Erroneous warning
 			override fun render() {

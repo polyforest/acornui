@@ -33,19 +33,9 @@ import com.acornui.math.RectangleRo
  * A UiComponent representing a single Texture.
  * @author nbilyk
  */
-open class TextureComponent(owner: Owned) : DrawableComponent(owner) {
+open class TextureComponent(owner: Owned) : DrawableComponent<Sprite>(owner) {
 
 	override val drawable: Sprite = Sprite(glState)
-
-	/**
-	 * If true, the normal and indices will be reversed.
-	 */
-	@Deprecated("Will remove in future versions")
-	var useAsBackFace: Boolean
-		get() = drawable.useAsBackFace
-		set(value) {
-			drawable.useAsBackFace = value
-		}
 
 	val naturalWidth: Float
 		get() = drawable.naturalWidth
