@@ -16,12 +16,10 @@
 
 package com.acornui.particle
 
+import com.acornui.component.Sprite
 import com.acornui.core.LifecycleBase
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
-import com.acornui.component.Sprite
-import com.acornui.gl.core.GlState
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Matrix4
@@ -33,11 +31,6 @@ class ParticleEmitterRenderer2d(
 		private val emitterInstance: ParticleEmitterInstance,
 		private val sprites: List<Sprite>
 ) : LifecycleBase(), Scoped, ParticleEmitterRenderer {
-
-	private val glState: GlState = inject(GlState)
-
-	init {
-	}
 
 	override fun refInc() {
 		for (i in 0..sprites.lastIndex) {
