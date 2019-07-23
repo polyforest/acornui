@@ -82,7 +82,7 @@ fun Scoped.createSmoothCorner(
 		framebuffer.begin()
 		clearAndReset()
 		glState.blendMode(BlendMode.NONE, premultipliedAlpha = false)
-		glState.useViewport(0, 0, framebuffer.width, framebuffer.height) {
+		glState.useViewport(0, 0, framebuffer.widthPixels, framebuffer.heightPixels) {
 			gl.uniform2f(curvedShader.getRequiredUniformLocation("u_cornerRadius"), cornerRadiusX, cornerRadiusY)
 
 			curvedShader.getUniformLocation("u_strokeThickness")?.let {
@@ -99,8 +99,8 @@ fun Scoped.createSmoothCorner(
 			smoothCornerMap[cacheKey] = disposeOnShutdown(framebuffer)
 		framebuffer
 	}
-	val fBW = framebuffer.width.toFloat()
-	val fBH = framebuffer.height.toFloat()
+	val fBW = framebuffer.widthPixels.toFloat()
+	val fBH = framebuffer.heightPixels.toFloat()
 	val pW = (cornerRadiusX + pad) / fBW
 	val pH = (cornerRadiusY + pad) / fBH
 	val u: Float

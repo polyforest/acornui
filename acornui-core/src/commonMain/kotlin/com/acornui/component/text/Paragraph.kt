@@ -25,11 +25,9 @@ import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.component.text.collection.JoinedList
 import com.acornui.core.di.Owned
 import com.acornui.core.selection.SelectionRange
-import com.acornui.graphic.ColorRo
+import com.acornui.core.setCamera
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.offsetRound
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.MinMaxRo
 import com.acornui.math.Vector3
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -353,7 +351,10 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 	private val tL = Vector3()
 	private val tR = Vector3()
 
-	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+	override fun draw(renderContext: RenderContextRo) {
+		val tint = renderContext.colorTint
+		val clip = renderContext.clipRegion
+		val transform = renderContext.modelTransform
 		if (_lines.isEmpty() || tint.a <= 0f)
 			return
 		val textElements = _textElements
@@ -376,7 +377,7 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 			}
 			if (lineEnd <= lineStart)
 				return
-			useCamera()
+			glState.setCamera(renderContext)
 			for (i in lineStart..lineEnd - 1) {
 				val line = _lines[i]
 				for (j in line.startIndex..line.endIndex - 1) {
@@ -384,7 +385,7 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 				}
 			}
 		} else {
-			useCamera()
+			glState.setCamera(renderContext)
 			for (i in 0..textElements.lastIndex) {
 				textElements[i].render(clip, transform, tint)
 			}

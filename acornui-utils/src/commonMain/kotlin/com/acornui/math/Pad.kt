@@ -111,7 +111,7 @@ class Pad(
 		return this
 	}
 
-	fun set(left: Float = 0f, top: Float = 0f, right: Float = 0f, bottom: Float = 0f): Pad {
+	fun set(top: Float = 0f, right: Float = 0f, bottom: Float = 0f, left: Float = 0f): Pad {
 		this.top = top
 		this.right = right
 		this.bottom = bottom
@@ -128,6 +128,16 @@ class Pad(
 		right += padding.right
 		bottom += padding.bottom
 		return this
+	}
+
+	/**
+	 * Scales all padding values by the given scalar.
+	 */
+	fun scl(scalar: Float) {
+		left *= scalar
+		top *= scalar
+		right *= scalar
+		bottom *= scalar
 	}
 
 	override fun clear() {

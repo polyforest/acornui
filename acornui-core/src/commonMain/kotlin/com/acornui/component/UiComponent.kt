@@ -100,12 +100,23 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	 */
 	val layoutInvalidatingFlags: Int
 
+	/**
+	 * The render context that represents the transformations of this component as it is in the display graph.
+	 * @see UiComponentRo.render
+	 */
+	val naturalRenderContext: RenderContextRo
+
 	companion object {
 		var defaultLayoutInvalidatingFlags = ValidationFlags.HIERARCHY_ASCENDING or
 				ValidationFlags.LAYOUT or
 				ValidationFlags.LAYOUT_ENABLED
 	}
 }
+
+/**
+ * Renders this component using its [UiComponentRo.naturalRenderContext].
+ */
+fun UiComponentRo.render() = render(naturalRenderContext)
 
 /**
  * Traverses this ChildRo's ancestry, invoking a callback on each parent up the chain.
@@ -204,6 +215,12 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	 * Updates this component, validating it and its children.
 	 */
 	fun update()
+
+	/**
+	 * Renders this component using its [UiComponentRo.naturalRenderContext], temporarily setting
+	 * the parent context to the given value.
+	 */
+	fun renderIn(parentRenderContext: RenderContextRo)
 
 }
 
@@ -342,7 +359,9 @@ open class UiComponentImpl(
 	private val _attachments = HashMap<Any, Any>()
 
 	// ChildRo properties
-	override var parent: ContainerRo? = null
+	override var parent by observable<ContainerRo?>(null) { value ->
+		_naturalRenderContext.parentContext = value?.naturalRenderContext ?: defaultRenderContext
+	}
 
 	// Focusable properties
 	protected val focusManager by FocusManager
@@ -355,38 +374,27 @@ open class UiComponentImpl(
 
 	protected val defaultRenderContext = inject(RenderContextRo)
 	protected val _naturalRenderContext = RenderContext(defaultRenderContext)
-
 	override val naturalRenderContext: RenderContextRo = _naturalRenderContext
 
 	override val viewProjectionTransformInv: Matrix4Ro
-		get() = renderContext.viewProjectionTransformInv
+		get() = naturalRenderContext.viewProjectionTransformInv
 
 	override val viewProjectionTransform: Matrix4Ro
-		get() = renderContext.viewProjectionTransform
+		get() = naturalRenderContext.viewProjectionTransform
 
 	override val viewTransform: Matrix4Ro
-		get() = renderContext.viewTransform
+		get() = naturalRenderContext.viewTransform
 
 	override val projectionTransform: Matrix4Ro
-		get() = renderContext.projectionTransform
+		get() = naturalRenderContext.projectionTransform
 
 	override val canvasTransform: RectangleRo
-		get() = renderContext.canvasTransform
-
-	override var renderContextOverride: RenderContextRo? = null
-		set(value) {
-			if (value != field) {
-				invalidate(ValidationFlags.RENDER_CONTEXT)
-				field = value
-				update()
-			}
-		}
+		get() = naturalRenderContext.canvasTransform
 
 	var cameraOverride: CameraRo?
 		get() = _naturalRenderContext.cameraOverride
 		set(value) {
 			_naturalRenderContext.cameraOverride = value
-			invalidate(ValidationFlags.RENDER_CONTEXT)
 		}
 
 	//
@@ -725,9 +733,9 @@ open class UiComponentImpl(
 	 * The final pixel color value for the default shader is [colorTint * pixel]
 	 */
 	override var colorTint: ColorRo
-		get() = renderContext.colorTint
+		get() = naturalRenderContext.colorTint
 		set(value) {
-			if (renderContext.colorTint == value) return
+			if (naturalRenderContext.colorTint == value) return
 			colorTint(value.r, value.g, value.b, value.a)
 		}
 
@@ -740,10 +748,7 @@ open class UiComponentImpl(
 	 * The color multiplier of this component and all ancestor color tints multiplied together.
 	 */
 	override val concatenatedColorTint: ColorRo
-		get() {
-			validate(ValidationFlags.RENDER_CONTEXT)
-			return renderContext.colorTint
-		}
+		get() = naturalRenderContext.colorTint
 
 	protected open fun updateInheritedInteractivityMode() {
 		_inheritedInteractivityMode = _interactivityMode
@@ -1003,19 +1008,13 @@ open class UiComponentImpl(
 	 * Do not modify this matrix directly, it will be overwritten on a TRANSFORM validation.
 	 */
 	override val modelTransform: Matrix4Ro
-		get() {
-			validate(ValidationFlags.RENDER_CONTEXT)
-			return renderContext.modelTransform
-		}
+		get() = naturalRenderContext.modelTransform
 
 	/**
 	 * Returns the inverse concatenated transformation matrix.
 	 */
 	override val modelTransformInv: Matrix4Ro
-		get() {
-			validate(ValidationFlags.RENDER_CONTEXT)
-			return renderContext.modelTransformInv
-		}
+		get() = naturalRenderContext.modelTransformInv
 
 	/**
 	 * Applies all operations to the transformation matrix.
@@ -1039,7 +1038,6 @@ open class UiComponentImpl(
 	}
 
 	protected open fun updateRenderContext() {
-		_naturalRenderContext.parentContext = parent?.renderContext ?: defaultRenderContext
 	}
 
 	//-----------------------------------------------
@@ -1089,8 +1087,8 @@ open class UiComponentImpl(
 	 * The draw region does not have a validation flag associated with it; invalidating any property will cause
 	 * the draw region to be recalculated upon the next request.
 	 *
-	 * @see Renderable.renderContext
-	 * @see com.acornui.component.localToCanvas
+	 * @see naturalRenderContext
+	 * @see localToCanvas
 	 */
 	override val drawRegion: MinMaxRo
 		get() {
@@ -1110,31 +1108,23 @@ open class UiComponentImpl(
 		out.set(0f, 0f, _bounds.width, _bounds.height)
 	}
 
-	/**
-	 * Renders any graphics.
-	 * [render] does not check the [visible] flag; that is the responsibility of the caller.
-	 *
-	 * Canvas coordinates are 0,0 top left, and bottom right is the canvas width/height without dpi scaling.
-	 *
-	 * You may convert the window coordinate clip region to local coordinates via [canvasToLocal], but in general it is
-	 * faster to convert the local coordinates to window coordinates [localToCanvas], as no matrix inversion is
-	 * required.
-	 */
-	override fun render() {
-		val renderContext = renderContext
-		if (renderContext.colorTint.a <= 0f)
-			// Nothing visible.
-			return
-		draw(renderContext.clipRegion, renderContext.modelTransform, renderContext.colorTint)
+	override fun renderIn(parentRenderContext: RenderContextRo) {
+		val previous = _naturalRenderContext.parentContext
+		_naturalRenderContext.parentContext = parentRenderContext
+		render(_naturalRenderContext)
+		_naturalRenderContext.parentContext = previous
+	}
+
+	override fun render(renderContext: RenderContextRo) {
+		if (renderContext.colorTint.a > 0f)
+			draw(renderContext)
 	}
 
 	/**
-	 * Sets the camera for the [GlState] using the current [renderContext].
+	 * Renders this component.
+	 * This will only be called if [alpha] is greater than zero.
 	 */
-	protected fun useCamera(useModel: Boolean = false) {
-		val renderContext = renderContext
-		if (useModel) glState.setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform, renderContext.modelTransform)
-		else glState.setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform)
+	open fun draw(renderContext: RenderContextRo) {
 	}
 
 	//-----------------------------------------------

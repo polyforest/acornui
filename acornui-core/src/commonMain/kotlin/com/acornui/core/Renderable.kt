@@ -20,12 +20,15 @@ package com.acornui.core
 
 import com.acornui.component.RenderContextRo
 import com.acornui.component.layout.Sizable
-import com.acornui.component.layout.SizableRo
+import com.acornui.core.di.Scoped
+import com.acornui.core.di.inject
 import com.acornui.gl.core.GlState
-import com.acornui.graphic.ColorRo
-import com.acornui.math.*
+import com.acornui.math.Bounds
+import com.acornui.math.BoundsRo
+import com.acornui.math.MinMax
+import com.acornui.math.MinMaxRo
 
-interface Renderable : Sizable {
+interface RenderableRo {
 
 	/**
 	 * The local drawing region of this renderable component.
@@ -33,27 +36,17 @@ interface Renderable : Sizable {
 	 * The draw region is not used for a typical [render], but may be used for render filters or components that
 	 * need to set a region for a frame buffer.
 	 *
-	 * @see Renderable.renderContext
 	 * @see com.acornui.component.localToCanvas
 	 */
 	val drawRegion: MinMaxRo
 
 	/**
-	 * Overrides the default render context.
+	 * Renders any graphics using the given [renderContext].
 	 */
-	var renderContextOverride: RenderContextRo?
-
-	/**
-	 * The render context that will be used if there is no [renderContextOverride] value set.
-	 * The render context is responsible for transformation of local vertices to global vertices at the [render] phase.
-	 */
-	val naturalRenderContext: RenderContextRo
-
-	/**
-	 * Renders any graphics using the current [renderContext].
-	 */
-	fun render()
+	fun render(renderContext: RenderContextRo)
 }
+
+interface Renderable : RenderableRo, Sizable
 
 abstract class RenderableBase : Renderable, Sizable {
 
@@ -64,11 +57,6 @@ abstract class RenderableBase : Renderable, Sizable {
 	protected val _drawRegion = MinMax()
 	override val drawRegion: MinMaxRo
 		get() = _drawRegion.set(0f, 0f, width, height)
-
-	override var renderContextOverride: RenderContextRo? = null
-
-	override val naturalRenderContext: RenderContextRo
-		get() = error("This component has no default render context. Set one via renderContextOverride.")
 
 	/**
 	 * The explicit width, as set by width(value)
@@ -101,43 +89,16 @@ abstract class RenderableBase : Renderable, Sizable {
 	 */
 	abstract fun onSizeSet(oldW: Float?, oldH: Float?, newW: Float?, newH: Float?)
 
-	override fun render() {
-		val renderContext = renderContext
-		if (renderContext.colorTint.a <= 0f)
-			return // Nothing visible.
-		draw(renderContext.clipRegion, renderContext.modelTransform, renderContext.colorTint)
-	}
-
 	/**
-	 * The core drawing method for this component.
-	 * For convenience, draw is provided commonly used rendering properties from the render context:
-	 * renderContext.clipRegion, renderContext.modelTransform, and renderContext.colorTint
+	 * Renders any graphics using the provided [renderContext].
 	 */
-	protected open fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {}
+	abstract override fun render(renderContext: RenderContextRo)
 }
 
 /**
- * The rendering context to be used within [render].
- * This can be overriden via [Renderable.renderContextOverride]
+ * Sets the camera on this [GlState] using this the given [renderContext].
  */
-val Renderable.renderContext: RenderContextRo
-	get() = renderContextOverride ?: naturalRenderContext
-
-/**
- * Renders the target with the given render context.
- */
-fun Renderable.render(renderContext: RenderContextRo) {
-	val old = renderContextOverride
-	renderContextOverride = renderContext
-	render()
-	renderContextOverride = old
-}
-
-/**
- * Sets the camera on the [glState] using this Renderable's current [renderContext].
- */
-fun Renderable.useCamera(glState: GlState, useModel: Boolean = false) {
-	val renderContext = renderContext
-	if (useModel) glState.setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform, renderContext.modelTransform)
-	else glState.setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform)
+fun GlState.setCamera(renderContext: RenderContextRo, useModel: Boolean = false) {
+	if (useModel) setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform, renderContext.modelTransform)
+	else setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform)
 }

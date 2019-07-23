@@ -205,8 +205,6 @@ interface Camera : CameraRo {
 
 	fun moveToLookAtPoint(x: Float, y: Float, z: Float, distance: Float = 1.0f)
 
-	fun moveToLookAtRect(rect: RectangleRo, scaling: Scaling = Scaling.FIT) = moveToLookAtRect(rect.x, rect.y, rect.width, rect.height, scaling)
-
 	/**
 	 * Moves and/or zooms the camera to fit the given 2d bounding box into the viewport, maintaining the current
 	 * direction.
@@ -215,8 +213,12 @@ interface Camera : CameraRo {
 	fun moveToLookAtRect(x: Float, y: Float, width: Float, height: Float, scaling: Scaling = Scaling.FIT)
 }
 
+fun Camera.moveToLookAtRect(region: RectangleRo, scaling: Scaling = Scaling.FIT) = moveToLookAtRect(region.x, region.y, region.width, region.height, scaling)
+fun Camera.moveToLookAtRect(region: MinMaxRo, scaling: Scaling = Scaling.FIT) = moveToLookAtRect(region.xMin, region.yMin, region.width, region.height, scaling)
+
 /**
- * Flips the y-down direction.
+ * If true, increasing clip space coordinates will be in the downward direction. 
+ * 
  * Cameras by default will consider the top-left corner of the screen as 0,0.
  * Call this method to consider the bottom-left corner of the screen as 0,0.
  *
@@ -239,9 +241,14 @@ interface Camera : CameraRo {
  *   direction: Vector3.Z
  *  ```
  */
-fun Camera.flipYDown() {
-	setUp(up.x, -up.y, up.z)
-	setDirection(direction.x, direction.y, -direction.z)
+fun Camera.yDown(value: Boolean) {
+	if (value) {
+		setUp(Vector3.NEG_Y)
+		setDirection(Vector3.Z)
+	} else {
+		setUp(Vector3.Y)
+		setDirection(Vector3.NEG_Z)
+	}
 }
 
 abstract class CameraBase : Camera {

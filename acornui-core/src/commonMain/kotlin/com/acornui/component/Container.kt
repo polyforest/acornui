@@ -22,9 +22,8 @@ import com.acornui.component.layout.intersectsGlobalRay
 import com.acornui.core.ParentRo
 import com.acornui.core.di.Owned
 import com.acornui.core.focus.invalidateFocusOrderDeep
-import com.acornui.core.renderContext
-import com.acornui.graphic.ColorRo
-import com.acornui.math.*
+import com.acornui.math.Ray
+import com.acornui.math.RayRo
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 
@@ -220,26 +219,25 @@ open class ContainerImpl(
 
 	override fun update() {
 		super.update()
-		val size = _children.size
-		if (size == 0) return
-		else if (size == 1) {
-			_children[0].update()
-		} else {
-			val c = childrenIterator
-			while (c.hasNext()) {
-				c.next().update()
+		when (_children.size) {
+			0 -> return
+			1 -> _children[0].update()
+			else -> {
+				val c = childrenIterator
+				while (c.hasNext()) {
+					c.next().update()
+				}
+				c.clear()
 			}
-			c.clear()
 		}
 	}
 
-	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+	override fun draw(renderContext: RenderContextRo) {
 		// The children list shouldn't be modified during a draw, so no reason to do a safe iteration here.
 		for (i in 0.._children.lastIndex) {
 			val child = _children[i]
-			if (child.visible) {
-				child.render()
-			}
+			if (child.visible)
+				child.renderIn(renderContext)
 		}
 	}
 
@@ -256,7 +254,7 @@ open class ContainerImpl(
 			if ((returnAll || out.isEmpty())) {
 				for (i in _children.lastIndex downTo 0) {
 					val child = _children[i]
-					val childRayCache = if (child.renderContext.cameraEquals(renderContext)) ray else null
+					val childRayCache = if (child.naturalRenderContext.cameraEquals(naturalRenderContext)) ray else null
 					child.getChildrenUnderPoint(canvasX, canvasY, onlyInteractive, returnAll, out, childRayCache)
 					// Continue iterating if we haven't found an intersecting child yet, or if returnAll is true.
 					returnAll || out.isEmpty()
@@ -341,9 +339,7 @@ open class ContainerImpl(
 				ValidationFlags.INTERACTIVITY_MODE or
 				ValidationFlags.RENDER_CONTEXT
 
-		var bitmapCacheInvalidatingFlags = (
-				ValidationFlags.HIERARCHY_DESCENDING or
-						ValidationFlags.TRANSFORM or
+		var bitmapCacheInvalidatingFlags = (ValidationFlags.HIERARCHY_DESCENDING or
 						ValidationFlags.RENDER_CONTEXT or
 						ValidationFlags.INTERACTIVITY_MODE).inv() or ValidationFlags.BITMAP_CACHE
 	}

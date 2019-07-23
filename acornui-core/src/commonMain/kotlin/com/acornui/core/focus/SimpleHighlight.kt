@@ -24,7 +24,6 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.focus.FocusHighlighter.Companion.HIGHLIGHT_PRIORITY
 import com.acornui.core.popup.PopUpInfo
 import com.acornui.core.popup.PopUpManager
-import com.acornui.core.renderContext
 import com.acornui.math.Bounds
 import com.acornui.math.MinMax
 import com.acornui.skins.Theme
@@ -50,15 +49,13 @@ open class SimpleHighlight(
 				field?.invalidated?.remove(::highlightedInvalidatedHandler)
 				field = value
 				field?.invalidated?.add(::highlightedInvalidatedHandler)
-				invalidate(ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT)
+				invalidate(ValidationFlags.LAYOUT)
 			}
 		}
 
 	private fun highlightedInvalidatedHandler(c: UiComponentRo, flags: Int) {
 		if (flags.containsFlag(ValidationFlags.LAYOUT))
 			invalidateLayout()
-		if (flags.containsFlag(ValidationFlags.RENDER_CONTEXT))
-			invalidate(ValidationFlags.RENDER_CONTEXT)
 	}
 
 	init {
@@ -92,9 +89,9 @@ open class SimpleHighlight(
 		}
 	}
 
-	override fun updateRenderContext() {
-		super.updateRenderContext()
-		_naturalRenderContext.parentContext = highlighted?.renderContext ?: defaultRenderContext
+	override fun render(renderContext: RenderContextRo) {
+		_naturalRenderContext.parentContext = highlighted?.naturalRenderContext ?: defaultRenderContext
+		super.render(renderContext)
 	}
 
 	override fun dispose() {

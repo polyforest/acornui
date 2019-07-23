@@ -19,6 +19,7 @@ package com.acornui.core
 import com.acornui.math.TO_DEG
 import com.acornui.math.TO_RAD
 import kotlin.math.abs
+import kotlin.math.ceil
 import kotlin.math.round
 
 /**
@@ -179,13 +180,15 @@ fun String.zeroPadding(intDigits: Int, decimalDigits: Int = 0): String {
 	return str
 }
 
-fun Float.radToDeg(): Float {
-	return this * TO_DEG
+fun radToDeg(value: Float): Float {
+	return value * TO_DEG
 }
 
-fun Float.degToRad(): Float {
-	return this * TO_RAD
+fun degToRad(value: Float): Float {
+	return value * TO_RAD
 }
+
+fun ceilInt(x: Float): Int = ceil(x).toInt()
 
 /**
  * If this Float is zero, returns [Float.MIN_VALUE]. Otherwise, returns this Float.

@@ -22,7 +22,6 @@ import com.acornui.collection.forEach2
 import com.acornui.core.di.Owned
 import com.acornui.core.graphic.orthographicCamera
 import com.acornui.gl.core.useViewportFromCanvasTransform
-import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 
 /**
@@ -35,7 +34,6 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	private val cam = orthographicCamera(autoCenter = false)
 
 	init {
-		validation.addNode(1 shl 16, ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT, ::updateCanvasTransform)
 		cameraOverride = cam
 		_naturalRenderContext.modelTransformOverride = Matrix4.IDENTITY
 		_naturalRenderContext.clipRegionOverride = MinMaxRo.POSITIVE_INFINITY
@@ -54,8 +52,9 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	private val region = MinMax()
 	private val canvasTransformOverride = Rectangle()
 
-	private fun updateCanvasTransform() {
-		_naturalRenderContext.parentContext.localToCanvas(region.set(x, y, width, height))
+	override fun updateRenderContext() {
+		super.updateRenderContext()
+		_naturalRenderContext.parentContext.localToCanvas(region.set(x, y, width, height).translate(-originX, -originY))
 		_naturalRenderContext.canvasTransformOverride = canvasTransformOverride.set(
 				region.xMin,
 				region.yMin,
@@ -64,9 +63,9 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		)
 	}
 
-	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		glState.useViewportFromCanvasTransform(canvasTransform) {
-			super.draw(clip, transform, tint)
+	override fun draw(renderContext: RenderContextRo) {
+		glState.useViewportFromCanvasTransform(renderContext.canvasTransform) {
+			super.draw(renderContext)
 		}
 	}
 

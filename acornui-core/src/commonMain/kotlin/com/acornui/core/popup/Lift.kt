@@ -21,7 +21,10 @@ import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.core.di.Owned
 import com.acornui.function.as2
 import com.acornui.graphic.ColorRo
-import com.acornui.math.*
+import com.acornui.math.Bounds
+import com.acornui.math.Matrix4
+import com.acornui.math.Vector2
+import com.acornui.math.Vector3
 
 /**
  * The Lift component will place its elements as children in the pop up layer, automatically transforming the children
@@ -34,7 +37,7 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 	/**
 	 * If true, the contents position will be constrained to not extend beyond the stage.
 	 */
-	var constrainToStage: Boolean by validationProp(true, ValidationFlags.RENDER_CONTEXT)
+	var constrainToStage: Boolean = true
 
 	/**
 	 * When the pop-up is closed, this will be invoked.
@@ -62,8 +65,9 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 	init {
 		isFocusContainer = true
 
-		contents.invalidated.add {
-			child, flagsInvalidated ->
+		validation.addNode(CONTENTS_TRANSFORM, ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT, ::updateContentsTransform)
+
+		contents.invalidated.add { child, flagsInvalidated ->
 			if (flagsInvalidated and child.layoutInvalidatingFlags > 0) {
 				// A child has invalidated a flag marked as layout invalidating.
 				if (validation.currentFlag != ValidationFlags.LAYOUT && (child.shouldLayout || flagsInvalidated and ValidationFlags.LAYOUT_ENABLED > 0)) {
@@ -73,9 +77,9 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 					invalidate(ValidationFlags.SIZE_CONSTRAINTS)
 				}
 			}
-			if (constrainToStage)
-				if (constrainToStage) invalidate(ValidationFlags.RENDER_CONTEXT)
 		}
+
+
 	}
 
 	override fun onActivated() {
@@ -83,7 +87,7 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 		window.sizeChanged.add(::windowResizedHandler.as2)
 
 		addPopUp(PopUpInfo(contents, dispose = false, isModal = isModal, priority = priority, focus = focus, highlightFocused = highlightFocused, onClosed = { onClosed?.invoke() }))
-		if (constrainToStage) invalidate(ValidationFlags.RENDER_CONTEXT)
+		invalidate(CONTENTS_TRANSFORM)
 	}
 
 	override fun onDeactivated() {
@@ -93,7 +97,8 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 	}
 
 	private fun windowResizedHandler() {
-		invalidate(ValidationFlags.RENDER_CONTEXT)
+		if (constrainToStage)
+			invalidate(CONTENTS_TRANSFORM)
 	}
 
 	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {
@@ -112,8 +117,7 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 	private val tmpMat = Matrix4()
 	private val points = arrayOf(Vector2(0f, 0f), Vector2(1f, 0f), Vector2(1f, 1f), Vector2(0f, 1f))
 
-	override fun updateRenderContext() {
-		super.updateRenderContext()
+	private fun updateContentsTransform() {
 		tmpMat.set(modelTransform)
 		if (constrainToStage) {
 			val w = window.width
@@ -139,6 +143,10 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 		}
 		contents.customTransform = tmpMat
 	}
+
+	companion object {
+		private const val CONTENTS_TRANSFORM = 1 shl 16
+	}
 }
 
 fun Owned.lift(init: ComponentInit<Lift>): Lift {
@@ -156,7 +164,4 @@ private class LiftStack(private val delegate: UiComponentRo) : StackLayoutContai
 	override val concatenatedColorTint: ColorRo
 		get() = delegate.concatenatedColorTint
 
-	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		super.draw(clip, transform, concatenatedColorTint)
-	}
 }

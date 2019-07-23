@@ -161,6 +161,8 @@ class RenderContext() : RenderContextRo, Clearable {
 	override var parentContext: RenderContextRo
 		get() = _parentContext!!
 		set(value) {
+			if (value === this)
+				throw Exception("Cannot set parentContext to self.")
 			_parentContext = value
 		}
 
@@ -216,9 +218,9 @@ class RenderContext() : RenderContextRo, Clearable {
 	override val modelTransform: Matrix4Ro
 		get() = modelTransformOverride ?: _modelTransform.set(parentContext.modelTransform).mul(modelTransformLocal)
 
-	private val _concatenatedTransformInv = Matrix4()
+	private val _modelTransformInv by lazy { Matrix4() }
 	override val modelTransformInv: Matrix4Ro
-		get() = _concatenatedTransformInv.set(modelTransform).inv()
+		get() = _modelTransformInv.set(modelTransform).inv()
 
 	override val viewProjectionTransform: Matrix4Ro
 		get() = cameraOverride?.combined ?: parentContext.viewProjectionTransform
@@ -258,6 +260,37 @@ class RenderContext() : RenderContextRo, Clearable {
 		modelTransformLocal.idt()
 		modelTransformOverride = null
 	}
+}
+
+/**
+ *
+ */
+class CustomRenderContext<T : CameraRo>(val camera: T) : RenderContextRo {
+
+	override val parentContext: RenderContextRo? = null
+
+	override val clipRegion = MinMax()
+	override val colorTint = Color.WHITE.copy()
+
+	override val viewProjectionTransform: Matrix4Ro
+		get() = camera.combined
+
+	override val viewProjectionTransformInv: Matrix4Ro
+		get() = camera.combinedInv
+
+	override val viewTransform: Matrix4Ro
+		get() = camera.view
+
+	override val projectionTransform: Matrix4Ro
+		get() = camera.projection
+
+	override val canvasTransform = Rectangle()
+
+	override val modelTransform: Matrix4 = Matrix4()
+
+	private val _modelTransformInv by lazy { Matrix4() }
+	override val modelTransformInv: Matrix4Ro
+		get() = _modelTransformInv.set(modelTransform).inv()
 }
 
 @PublishedApi

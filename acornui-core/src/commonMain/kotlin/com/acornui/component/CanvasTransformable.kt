@@ -17,8 +17,7 @@
 package com.acornui.component
 
 import com.acornui.core.Renderable
-import com.acornui.core.graphic.flipYDown
-import com.acornui.core.renderContext
+import com.acornui.core.graphic.yDown
 import com.acornui.gl.core.Framebuffer
 
 import com.acornui.math.*
@@ -48,7 +47,7 @@ interface CanvasTransformableRo : ModelTransformableRo {
 	 * Clip coordinates are in the range of -1 to 1 to determine which vertices will end up on the screen.
 	 * -1, -1 will correspond to bottom left for the screen frame buffer, or top left for [Framebuffer] objects.
 	 *
-	 * @see flipYDown
+	 * @see yDown
 	 */
 	val projectionTransform: Matrix4Ro
 
@@ -176,5 +175,5 @@ fun CanvasTransformableRo.drawRegionIntersectsCanvas(element: Renderable, canvas
 }
 
 fun UiComponentRo.intersectsClipRegion(): Boolean {
-	return localIntersectsCanvas(drawRegion, renderContext.clipRegion)
+	return localIntersectsCanvas(drawRegion, naturalRenderContext.clipRegion)
 }

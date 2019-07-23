@@ -22,8 +22,9 @@ import com.acornui.component.Sprite
 import com.acornui.core.LifecycleBase
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
-import com.acornui.graphic.Color
-import com.acornui.math.*
+import com.acornui.math.PI
+import com.acornui.math.Quaternion
+import com.acornui.math.Vector3
 
 class ParticleEmitterRenderer2d(
 		override val injector: Injector,
@@ -85,8 +86,7 @@ class ParticleEmitterRenderer2d(
 				translate(-origin.x * sprite.naturalWidth, -origin.y * sprite.naturalHeight)
 		}
 		childRenderContext.colorTintLocal.set(colorTint)
-		sprite.renderContextOverride = childRenderContext
-		sprite.render()
+		sprite.render(childRenderContext)
 	}
 
 	companion object {

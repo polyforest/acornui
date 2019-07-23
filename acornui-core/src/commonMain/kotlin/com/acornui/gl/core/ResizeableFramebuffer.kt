@@ -19,33 +19,31 @@ package com.acornui.gl.core
 import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
 import com.acornui.core.Disposable
+import com.acornui.core.ceilInt
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.graphic.Camera
 import com.acornui.core.graphic.OrthographicCamera
 import com.acornui.core.graphic.Texture
-import com.acornui.core.graphic.flipYDown
+import com.acornui.core.graphic.yDown
 import com.acornui.math.MathUtils.nextPowerOfTwo
-import kotlin.math.ceil
 
 /**
  * A ResizableFramebuffer has a backing frame buffer that is discarded and replaced when [setSize] requests a size
  * that is too large for the current backing frame buffer.
+ *
+ * Note: There will be no backing texture until [setSize] has been called.
  */
 class ResizeableFramebuffer(
 		private val gl: Gl20,
 		private val glState: GlState,
-		initialWidth: Float,
-		initialHeight: Float,
 		private val hasDepth: Boolean = false,
 		private val hasStencil: Boolean = false
 ) : Disposable {
 
-	constructor(injector: Injector, initialWidth: Float, initialHeight: Float, hasDepth: Boolean, hasStencil: Boolean) : this(
+	constructor(injector: Injector, hasDepth: Boolean, hasStencil: Boolean) : this(
 			injector.inject(Gl20),
 			injector.inject(GlState),
-			initialWidth,
-			initialHeight,
 			hasDepth,
 			hasStencil
 	)
@@ -54,29 +52,50 @@ class ResizeableFramebuffer(
 	val texture: Texture
 		get() = if (framebuffer == null) throw Exception("Call setSize first.") else framebuffer!!.texture
 
-	var width: Float = 0f
+	var widthPixels: Float = 0f
 		private set
 
-	var height: Float = 0f
+	var heightPixels: Float = 0f
 		private set
 
-	init {
-		setSize(initialWidth, initialHeight)
-	}
+	var scaleX: Float = 1f
+		private set
+
+	var scaleY: Float = 1f
+		private set
+
+	/**
+	 * The width of this frame buffer, in points.
+	 */
+	val width: Float
+		get() = widthPixels / scaleX
+
+	/**
+	 * The height of this frame buffer, in points.
+	 */
+	val height: Float
+		get() = heightPixels / scaleY
 
 	private fun nextSize(size: Int): Int {
 		return nextPowerOfTwo(size)
 	}
 
-	fun setSize(width: Int, height: Int) = setSize(width.toFloat(), height.toFloat())
-	fun setSize(width: Float, height: Float) {
-		this.width = maxOf(0f, width)
-		this.height = maxOf(0f, height)
-		val widthInt = ceil(width).toInt()
-		val heightInt = ceil(height).toInt()
+	fun setSize(widthPixels: Int, heightPixels: Int, scaleX: Float = 1f, scaleY: Float = 1f) = setSize(widthPixels.toFloat(), heightPixels.toFloat(), scaleX, scaleY)
+
+	/**
+	 * Sets the viewport on the wrapped frame buffer. If the new viewport's size is greater than the current frame
+	 * buffer size, a new frame buffer will be allocated with dimensions being the next power of two.
+	 */
+	fun setSize(widthPixels: Float, heightPixels: Float, scaleX: Float, scaleY: Float) {
+		this.widthPixels = maxOf(0f, widthPixels)
+		this.heightPixels = maxOf(0f, heightPixels)
+		this.scaleX = scaleX
+		this.scaleY = scaleY
+		val widthInt = ceilInt(widthPixels)
+		val heightInt = ceilInt(heightPixels)
 		val oldFramebuffer = framebuffer
-		val oldW = oldFramebuffer?.width ?: 0
-		val oldH = oldFramebuffer?.height ?: 0
+		val oldW = oldFramebuffer?.widthPixels ?: 0
+		val oldH = oldFramebuffer?.heightPixels ?: 0
 		val newW = nextSize(widthInt)
 		val newH = nextSize(heightInt)
 		if (newW <= 0 || newH <= 0) {
@@ -86,6 +105,7 @@ class ResizeableFramebuffer(
 			if (newW > oldW || newH > oldH) {
 				framebuffer?.dispose()
 				framebuffer = Framebuffer(gl, glState, maxOf(oldW, newW), maxOf(oldH, newH), hasDepth, hasStencil)
+				framebuffer!!.setScaling(scaleX, scaleY)
 			}
 		}
 		framebuffer!!.setViewport(0, 0, widthInt, heightInt)
@@ -120,7 +140,7 @@ class ResizeableFramebuffer(
 	 *
 	 * @param camera The camera to configure. (A newly constructed Sprite is the default)
 	 */
-	fun camera(camera: Camera = OrthographicCamera().apply { flipYDown() }): Camera {
+	fun camera(camera: Camera = OrthographicCamera().apply { yDown(false) }): Camera {
 		framebuffer?.camera(camera)
 		return camera
 	}
@@ -130,15 +150,14 @@ class ResizeableFramebuffer(
 	 *
 	 * @param sprite The sprite to configure. (A newly constructed Sprite is the default)
 	 */
-	fun sprite(sprite: Sprite = Sprite(glState)): Sprite {
-		val t = this
-		return sprite.apply {
-			texture = framebuffer?.texture
-			val textureW = framebuffer?.width?.toFloat() ?: 0f
-			val textureH = framebuffer?.height?.toFloat() ?: 0f
-			setUv(0f, 0f, t.width / textureW, t.height / textureH, isRotated = false)
-			setSize(null, null)
-		}
+	fun drawable(sprite: Sprite = Sprite(glState)): Sprite {
+		sprite.texture = framebuffer?.texture
+		val textureW = framebuffer?.widthPixels?.toFloat() ?: 0f
+		val textureH = framebuffer?.heightPixels?.toFloat() ?: 0f
+		sprite.setUv(0f, 0f, widthPixels / textureW, heightPixels / textureH, isRotated = false)
+		sprite.setSize(null, null)
+		sprite.setScaling(scaleX, scaleY)
+		return sprite
 	}
 
 	override fun dispose() {
@@ -146,8 +165,8 @@ class ResizeableFramebuffer(
 	}
 }
 
-fun Scoped.resizeableFramebuffer(initialWidth: Float = 256f, initialHeight: Float = 256f, hasDepth: Boolean = false, hasStencil: Boolean = false, init: ComponentInit<ResizeableFramebuffer> = {}): ResizeableFramebuffer {
-	val f = ResizeableFramebuffer(injector, initialWidth, initialHeight, hasDepth, hasStencil)
+fun Scoped.resizeableFramebuffer(hasDepth: Boolean = false, hasStencil: Boolean = false, init: ComponentInit<ResizeableFramebuffer> = {}): ResizeableFramebuffer {
+	val f = ResizeableFramebuffer(injector, hasDepth, hasStencil)
 	f.init()
 	return f
 }

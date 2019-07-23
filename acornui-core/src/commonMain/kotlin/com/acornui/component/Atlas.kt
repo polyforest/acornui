@@ -20,7 +20,6 @@ import com.acornui.core.Renderable
 import com.acornui.core.RenderableBase
 import com.acornui.recycle.Clearable
 import com.acornui.core.graphic.*
-import com.acornui.core.renderContext
 import com.acornui.gl.core.GlState
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
@@ -182,13 +181,12 @@ class Atlas(private val glState: GlState) : RenderableBase(), Clearable {
 
 	private val drawableRenderContext = RenderContext()
 
-	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+	override fun render(renderContext: RenderContextRo) {
 		val drawable = drawable ?: return
 
 		drawableRenderContext.parentContext = renderContext
 		drawableRenderContext.modelTransformLocal.setTranslation(totalPadLeft, totalPadTop, 0f)
-		drawable.renderContextOverride = drawableRenderContext
-		drawable.render()
+		drawable.render(drawableRenderContext)
 	}
 
 	override fun clear() {

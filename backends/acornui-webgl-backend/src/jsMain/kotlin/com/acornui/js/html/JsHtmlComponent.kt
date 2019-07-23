@@ -16,19 +16,19 @@
 
 package com.acornui.js.html
 
-import com.acornui.component.BoxStyle
-import com.acornui.component.HtmlComponent
-import com.acornui.component.UiComponentImpl
-import com.acornui.component.parentWalk
+import com.acornui.component.*
 import com.acornui.core.di.Owned
 import com.acornui.core.focus.Focusable
+import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
+import com.acornui.reflect.observable
 import com.acornui.signal.Cancel
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.css.CSSStyleDeclaration
 import kotlin.browser.document
+import kotlin.properties.Delegates
 
 class JsHtmlComponent(
 		owner: Owned,
@@ -101,14 +101,9 @@ class JsHtmlComponent(
 		out.set(component.bounds)
 	}
 
-	override fun updateRenderContext() {
-		super.updateRenderContext()
-		component.setConcatenatedTransform(modelTransform)
-	}
-
-	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		super.draw(clip, transform, tint)
-		component.setConcatenatedColorTint(tint)
+	override fun draw(renderContext: RenderContextRo) {
+		component.concatenatedTransform = renderContext.modelTransform
+		component.concatenatedColorTint = renderContext.colorTint
 	}
 }
 
@@ -211,11 +206,11 @@ class DomComponent(
 	private val marginH: Float
 		get() = margin.top + margin.bottom
 
-	fun setConcatenatedTransform(value: Matrix4Ro) {
+	var concatenatedTransform: Matrix4Ro by observable(Matrix4.IDENTITY) { value ->
 		element.style.transform = "matrix3d(${value.values.joinToString(",")})"
 	}
 
-	fun setConcatenatedColorTint(value: ColorRo) {
+	var concatenatedColorTint: ColorRo by observable(Color.WHITE) { value ->
 		val str = value.a.toString()
 		if (element.style.opacity != str)
 			element.style.opacity = str

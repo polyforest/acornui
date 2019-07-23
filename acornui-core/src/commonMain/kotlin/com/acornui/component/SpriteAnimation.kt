@@ -30,13 +30,9 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.di.notDisposed
 import com.acornui.core.graphic.*
-import com.acornui.core.renderContext
 import com.acornui.core.time.onTick
 import com.acornui.gl.core.GlState
-import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.MinMaxRo
 import com.acornui.recycle.Clearable
 
 
@@ -151,10 +147,8 @@ class SpriteAnimation(owner: Owned) : UiComponentImpl(owner), Clearable {
 		out.set(w, h)
 	}
 
-	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		val frame = animation?.frames?.getOrNull(currentFrame - startFrame)
-		frame?.renderContextOverride = renderContext
-		frame?.render()
+	override fun draw(renderContext: RenderContextRo) {
+		animation?.frames?.getOrNull(currentFrame - startFrame)?.render(renderContext)
 	}
 
 	override fun dispose() {

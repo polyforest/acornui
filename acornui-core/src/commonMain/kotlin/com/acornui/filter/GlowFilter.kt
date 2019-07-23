@@ -17,6 +17,8 @@
 package com.acornui.filter
 
 import com.acornui.component.ComponentInit
+import com.acornui.component.RenderContextRo
+import com.acornui.component.childRenderContext
 import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
 import com.acornui.gl.core.useColorTransformation
@@ -25,7 +27,7 @@ import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.acornui.reflect.observableAndCall
 
-open class DropShadowFilter(owner: Owned) : RenderFilterBase(owner) {
+open class GlowFilter(owner: Owned) : RenderFilterBase(owner) {
 
 	var colorTransformation: ColorTransformationRo by bindable(defaultColorTransformation)
 
@@ -46,22 +48,22 @@ open class DropShadowFilter(owner: Owned) : RenderFilterBase(owner) {
 	/**
 	 * The x offset to translate the rendering of the framebuffer.
 	 */
-	var offsetX by bindable(3f)
+	var offsetX by bindable(0f)
 
 	/**
 	 * The y offset to translate the rendering of the frame buffer.
 	 */
-	var offsetY by bindable(3f)
+	var offsetY by bindable(0f)
 
 	private val _drawPadding = Pad()
 	override val drawPadding: PadRo
 		get() {
 			val blurPadding = blurFilter.drawPadding
 			return _drawPadding.set(
-					blurPadding.left + maxOf(0f, -offsetX),
 					blurPadding.top + maxOf(0f, -offsetY),
 					blurPadding.right + maxOf(0f, offsetX),
-					blurPadding.bottom + maxOf(0f, offsetY)
+					blurPadding.bottom + maxOf(0f, offsetY),
+					blurPadding.left + maxOf(0f, -offsetX)
 			)
 		}
 
@@ -75,17 +77,17 @@ open class DropShadowFilter(owner: Owned) : RenderFilterBase(owner) {
 			blurFilter.contents = value
 		}
 
-	private val offsetTransform = Matrix4()
-
-	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+	override fun draw(renderContext: RenderContextRo) {
 		if (!bitmapCacheIsValid)
 			drawToFramebuffer()
 
-		offsetTransform.set(transform).translate(offsetX, offsetY, 0f)
 		glState.useColorTransformation(colorTransformation) {
-			blurFilter.drawBlurToScreen()
+			renderContext.childRenderContext {
+				modelTransformLocal.translate(offsetX, offsetY)
+				blurFilter.drawBlurToScreen(this)
+			}
 		}
-		blurFilter.drawOriginalToScreen(clip, transform, tint)
+		blurFilter.drawOriginalToScreen(renderContext)
 	}
 
 	fun drawToFramebuffer() {
@@ -102,14 +104,16 @@ open class DropShadowFilter(owner: Owned) : RenderFilterBase(owner) {
 	}
 }
 
-fun Owned.dropShadowFilter(init: ComponentInit<DropShadowFilter> = {}): DropShadowFilter {
-	val b = DropShadowFilter(this)
+fun Owned.dropShadowFilter(init: ComponentInit<GlowFilter> = {}): GlowFilter {
+	val b = GlowFilter(this)
+	b.offsetX = 3f
+	b.offsetY = 3f
 	b.init()
 	return b
 }
 
-fun Owned.glowFilter(color: ColorRo, init: ComponentInit<DropShadowFilter> = {}): DropShadowFilter {
-	val b = DropShadowFilter(this)
+fun Owned.glowFilter(color: ColorRo, init: ComponentInit<GlowFilter> = {}): GlowFilter {
+	val b = GlowFilter(this)
 	b.offsetX = 0f
 	b.offsetY = 0f
 	b.colorTransformation = colorTransformation {

@@ -19,12 +19,13 @@ package com.acornui.component
 import com.acornui.core.RenderableBase
 import com.acornui.core.graphic.BlendMode
 import com.acornui.core.graphic.Texture
-import com.acornui.core.useCamera
+import com.acornui.core.setCamera
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.putIndices
 import com.acornui.gl.core.putVertex
-import com.acornui.graphic.ColorRo
-import com.acornui.math.*
+import com.acornui.math.IntRectangleRo
+import com.acornui.math.RectangleRo
+import com.acornui.math.Vector3
 import com.acornui.recycle.Clearable
 import kotlin.math.abs
 import kotlin.properties.Delegates
@@ -273,10 +274,12 @@ class NinePatch(val glState: GlState) : RenderableBase(), Clearable {
 		_bounds.set(width, height)
 	}
 
-	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+	override fun render(renderContext: RenderContextRo) {
 		val texture = texture
+		val tint = renderContext.colorTint
+		val transform = renderContext.modelTransform
 		if (texture == null || width <= 0f || height <= 0f || tint.a <= 0f) return
-		useCamera(glState)
+		glState.setCamera(renderContext)
 
 		transform.rot(worldNormal.set(normal)).nor()
 

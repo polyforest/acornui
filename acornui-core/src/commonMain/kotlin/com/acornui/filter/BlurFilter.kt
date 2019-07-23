@@ -19,18 +19,15 @@ package com.acornui.filter
 import com.acornui.async.disposeOnShutdown
 import com.acornui.component.ComponentInit
 import com.acornui.component.PaddedDrawable
+import com.acornui.component.RenderContextRo
 import com.acornui.component.Sprite
 import com.acornui.component.drawing.putIdtQuad
 import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
 import com.acornui.core.graphic.BlendMode
-import com.acornui.core.renderContext
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
-import com.acornui.graphic.ColorRo
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.MinMaxRo
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 
@@ -53,7 +50,7 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 		get() {
 			val hPad = blurX * 4f * quality.passes
 			val vPad = blurY * 4f * quality.passes
-			return _drawPadding.set(left = hPad, top = vPad, right = hPad, bottom = vPad)
+			return _drawPadding.set(top = vPad, right = hPad, bottom = vPad, left = hPad)
 		}
 
 	override val shouldSkipFilter: Boolean
@@ -72,18 +69,17 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 		framebufferFilter.clearColor = Color(0.5f, 0.5f, 0.5f, 0f)
 	}
 
-	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+	override fun draw(renderContext: RenderContextRo) {
 		if (!bitmapCacheIsValid)
 			drawToPingPongBuffers()
-		drawBlurToScreen()
+		drawBlurToScreen(renderContext)
 	}
 
 	fun drawToPingPongBuffers() {
-		val framebufferUtil = framebufferFilter
-		val drawPadding = drawPadding
-		framebufferUtil.drawPadding = drawPadding
-		framebufferUtil.drawToFramebuffer()
-		val textureToBlur = framebufferUtil.texture
+		val framebufferFilter = framebufferFilter
+		framebufferFilter.drawPadding = drawPadding
+		framebufferFilter.drawToFramebuffer()
+		val textureToBlur = framebufferFilter.texture
 
 		blurFramebufferA.setSize(textureToBlur.widthPixels, textureToBlur.heightPixels)
 		blurFramebufferA.texture.filterMin = TextureMinFilter.LINEAR
@@ -100,7 +96,7 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 		val blurShader = blurShader!!
 		glState.useShader(blurShader) {
 			gl.uniform2f(blurShader.getRequiredUniformLocation("u_resolutionInv"), 1f / textureToBlur.widthPixels.toFloat(), 1f / textureToBlur.heightPixels.toFloat())
-			glState.setTexture(framebufferUtil.texture)
+			glState.setTexture(framebufferFilter.texture)
 			glState.blendMode(BlendMode.NONE, premultipliedAlpha = false)
 			val passes = quality.passes
 			for (i in 1..passes) {
@@ -118,25 +114,17 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 			}
 		}
 
-		val fBT = blurFramebufferB.texture
-		val w = fBT.widthPixels.toFloat()
-		val h = fBT.heightPixels.toFloat()
-		val region = framebufferUtil.drawRegion
-		drawable.padding.set(-drawPadding.left, -drawPadding.top, -drawPadding.right, -drawPadding.bottom)
-
-		sprite.texture = fBT
-		sprite.setUv(0f, 1f, region.width / w, 1f - (region.height / h), isRotated = false)
+		blurFramebufferB.drawable(sprite)
+		setDrawPadding(drawable.padding)
 		drawable.setSize(null, null)
-		//sprite.setScaling(window.scaleX, window.scaleY)
 	}
 
-	fun drawBlurToScreen() {
-		drawable.renderContextOverride = renderContext
-		drawable.render()
+	fun drawBlurToScreen(renderContext: RenderContextRo) {
+		drawable.render(renderContext)
 	}
 
-	fun drawOriginalToScreen(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		framebufferFilter.drawToScreen()
+	fun drawOriginalToScreen(renderContext: RenderContextRo) {
+		framebufferFilter.drawToScreen(renderContext)
 	}
 
 	/**

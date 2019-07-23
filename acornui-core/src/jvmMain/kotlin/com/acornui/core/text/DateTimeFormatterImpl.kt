@@ -28,7 +28,6 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.properties.ReadWriteProperty
-import java.util.Locale as JvmLocale
 
 actual class DateTimeFormatter : StringFormatter<DateRo> {
 

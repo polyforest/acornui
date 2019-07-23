@@ -508,16 +508,6 @@ fun GlState.useViewportFromCanvasTransform(canvasTransform: RectangleRo, inner: 
 	)
 }
 
-fun GlState.setViewportFromCanvasTransform(canvasTransform: IntRectangleRo) {
-	getFramebuffer(framebufferInfo)
-	setViewport(
-			floor(canvasTransform.x * framebufferInfo.scaleX).toInt(),
-			floor((framebufferInfo.height - canvasTransform.bottom * framebufferInfo.scaleY)).toInt(),
-			ceil(canvasTransform.width * framebufferInfo.scaleX).toInt(),
-			ceil(canvasTransform.height * framebufferInfo.scaleY).toInt()
-	)
-}
-
 /**
  * Temporarily uses a shader, resetting to the old shader after [inner].
  */

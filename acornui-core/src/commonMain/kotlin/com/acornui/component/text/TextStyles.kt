@@ -287,8 +287,6 @@ object CharStyleSerializer : To<CharStyle>, From<CharStyle> {
 		writer.styleProperty(this, ::selectedColorTint)?.color(selectedColorTint)
 		writer.styleProperty(this, ::selectedBackgroundColor)?.color(selectedBackgroundColor)
 		writer.styleProperty(this, ::selectable)?.bool(selectable)
-		writer.styleProperty(this, ::scaleX)?.float(scaleX)
-		writer.styleProperty(this, ::scaleY)?.float(scaleY)
 	}
 
 	override fun read(reader: Reader): CharStyle {
@@ -303,8 +301,6 @@ object CharStyleSerializer : To<CharStyle>, From<CharStyle> {
 		reader.contains(c::selectedColorTint.name) { c.selectedColorTint = it.color()!! }
 		reader.contains(c::selectedBackgroundColor.name) { c.selectedBackgroundColor = it.color()!! }
 		reader.contains(c::selectable.name) { c.selectable = it.bool()!! }
-		reader.contains(c::scaleX.name) { c.scaleX = it.float()!! }
-		reader.contains(c::scaleY.name) { c.scaleY = it.float()!! }
 		return c
 	}
 }

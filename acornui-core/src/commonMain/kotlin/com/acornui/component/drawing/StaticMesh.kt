@@ -24,9 +24,8 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.graphic.BlendMode
 import com.acornui.core.graphic.Texture
-import com.acornui.core.renderContext
+import com.acornui.core.setCamera
 import com.acornui.gl.core.*
-import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
@@ -60,7 +59,7 @@ open class StaticMeshComponent(
 	private val colorTransformation = colorTransformation()
 
 	init {
-		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.RENDER_CONTEXT or ValidationFlags.LAYOUT, ::updateGlobalBoundingBox)
+		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT, ::updateGlobalBoundingBox)
 	}
 
 	private fun updateGlobalBoundingBox() {
@@ -101,15 +100,10 @@ open class StaticMeshComponent(
 		mesh?.refDec()
 	}
 
-	override fun updateRenderContext() {
-		super.updateRenderContext()
-		colorTransformation.tint(renderContext.colorTint)
-	}
-
-	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+	override fun draw(renderContext: RenderContextRo) {
 		val mesh = mesh ?: return
-		useCamera(useModel = true)
-
+		glState.setCamera(renderContext, useModel = true)
+		colorTransformation.tint(renderContext.colorTint)
 		glState.useColorTransformation(colorTransformation) {
 			mesh.render()
 		}

@@ -16,12 +16,10 @@
 
 package com.acornui.filter
 
+import com.acornui.component.RenderContextRo
 import com.acornui.core.di.Owned
 import com.acornui.gl.core.useColorTransformation
-import com.acornui.graphic.ColorRo
 import com.acornui.math.ColorTransformation
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.MinMaxRo
 
 class ColorTransformationFilter(
 		owner: Owned,
@@ -35,9 +33,9 @@ class ColorTransformationFilter(
 	override val shouldSkipFilter: Boolean
 		get() = !enabled || colorTransformation.isIdentity
 
-	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+	override fun draw(renderContext: RenderContextRo) {
 		glState.useColorTransformation(colorTransformation) {
-			contents?.render()
+			contents?.render(renderContext)
 		}
 	}
 

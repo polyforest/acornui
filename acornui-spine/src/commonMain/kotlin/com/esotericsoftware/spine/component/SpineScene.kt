@@ -17,12 +17,11 @@
 package com.esotericsoftware.spine.component
 
 import com.acornui.component.ComponentInit
+import com.acornui.component.RenderContextRo
 import com.acornui.component.UiComponentImpl
 import com.acornui.core.di.Owned
+import com.acornui.core.setCamera
 import com.acornui.core.time.onTick
-import com.acornui.graphic.ColorRo
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.MinMaxRo
 
 
 /**
@@ -103,13 +102,12 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 		window.requestRender()
 	}
 
-	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		val concatenatedTransform = modelTransform
-		glState.setCamera(viewProjectionTransform, viewTransform, concatenatedTransform)
-		val concatenatedColorTint = concatenatedColorTint
+	override fun render(renderContext: RenderContextRo) {
+		glState.setCamera(renderContext, useModel = true)
+		val colorTint = renderContext.colorTint
 
 		for (i in 0.._children.lastIndex) {
-			_children[i].draw(glState, concatenatedColorTint)
+			_children[i].draw(glState, colorTint)
 		}
 	}
 

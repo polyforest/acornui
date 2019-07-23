@@ -30,12 +30,8 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.graphic.TextureAtlasDataSerializer
 import com.acornui.core.graphic.loadAndCacheAtlasPage
-import com.acornui.core.renderContext
 import com.acornui.core.time.onTick
 import com.acornui.gl.core.GlState
-import com.acornui.graphic.ColorRo
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.MinMaxRo
 
 class ParticleEffectComponent(
 		owner: Owned
@@ -106,7 +102,7 @@ class ParticleEffectComponent(
 	val effectInstance: ParticleEffectInstance?
 		get() = _effect?.effectInstance
 
-	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+	override fun render(renderContext: RenderContextRo) {
 		val effect = _effect ?: return
 		effect.render(renderContext)
 	}

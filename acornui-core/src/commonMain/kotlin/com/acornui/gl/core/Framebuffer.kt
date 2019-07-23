@@ -25,10 +25,11 @@ import com.acornui.core.di.Scoped
 import com.acornui.core.graphic.Camera
 import com.acornui.core.graphic.OrthographicCamera
 import com.acornui.core.graphic.Texture
-import com.acornui.core.graphic.flipYDown
+import com.acornui.core.graphic.yDown
 import com.acornui.core.userInfo
 import com.acornui.logging.Log
 import com.acornui.math.IntRectangle
+import com.acornui.math.IntRectangleRo
 
 /**
  * @author nbilyk
@@ -36,12 +37,35 @@ import com.acornui.math.IntRectangle
 class Framebuffer(
 		private val gl: Gl20,
 		private val glState: GlState,
-		val width: Int,
-		val height: Int,
+
+		/**
+		 * The width of the frame buffer, in pixels.
+		 */
+		val widthPixels: Int,
+
+		/**
+		 * The height of the frame buffer, in pixels.
+		 */
+		val heightPixels: Int,
+
 		hasDepth: Boolean = false,
+
 		hasStencil: Boolean = false,
-		val texture: Texture = BufferTexture(gl, glState, width, height)
+
+		val texture: Texture = BufferTexture(gl, glState, widthPixels, heightPixels)
 ) : Disposable {
+
+	/**
+	 * The width of this frame buffer, in points.
+	 */
+	val width: Float
+		get() = widthPixels / scaleX
+
+	/**
+	 * The height of this frame buffer, in points.
+	 */
+	val height: Float
+		get() = heightPixels / scaleY
 
 	/**
 	 * True if the depth render attachment was created.
@@ -53,7 +77,9 @@ class Framebuffer(
 	 */
 	val hasStencil: Boolean
 
-	private val _viewport = IntRectangle(0, 0, width, height)
+	private val _viewport = IntRectangle(0, 0, widthPixels, heightPixels)
+
+	val viewport: IntRectangleRo = _viewport
 
 	constructor(injector: Injector,
 				width: Int,
@@ -68,8 +94,23 @@ class Framebuffer(
 	private val stencilbufferHandle: GlRenderbufferRef?
 	private val depthStencilbufferHandle: GlRenderbufferRef?
 
+	/**
+	 * The pixel size is divided by the scale factor to get points.
+	 */
+	var scaleX: Float = 1f
+
+	/**
+	 * The pixel size is divided by the scale factor to get points.
+	 */
+	var scaleY: Float = 1f
+
+	fun setScaling(scaleX: Float, scaleY: Float) {
+		this.scaleX = scaleX
+		this.scaleY = scaleY
+	}
+
 	init {
-		if (width <= 0 || height <= 0) throw IllegalArgumentException("width or height cannot be less than zero.")
+		if (widthPixels <= 0 || heightPixels <= 0) throw IllegalArgumentException("width or height cannot be less than zero.")
 		if (hasDepth && hasStencil) {
 			if (allowDepthAndStencil(gl)) {
 				this.hasDepth = true
@@ -94,14 +135,14 @@ class Framebuffer(
 			depthbufferHandle = null
 			stencilbufferHandle = null
 			gl.bindRenderbuffer(Gl20.RENDERBUFFER, depthStencilbufferHandle)
-			gl.renderbufferStorage(Gl20.RENDERBUFFER, Gl20.DEPTH_STENCIL, width, height)
+			gl.renderbufferStorage(Gl20.RENDERBUFFER, Gl20.DEPTH_STENCIL, widthPixels, heightPixels)
 			gl.framebufferRenderbuffer(Gl20.FRAMEBUFFER, Gl20.DEPTH_STENCIL_ATTACHMENT, Gl20.RENDERBUFFER, depthStencilbufferHandle)
 		} else {
 			depthStencilbufferHandle = null
 			if (this.hasDepth) {
 				depthbufferHandle = gl.createRenderbuffer()
 				gl.bindRenderbuffer(Gl20.RENDERBUFFER, depthbufferHandle)
-				gl.renderbufferStorage(Gl20.RENDERBUFFER, Gl20.DEPTH_COMPONENT16, width, height)
+				gl.renderbufferStorage(Gl20.RENDERBUFFER, Gl20.DEPTH_COMPONENT16, widthPixels, heightPixels)
 				gl.framebufferRenderbuffer(Gl20.FRAMEBUFFER, Gl20.DEPTH_ATTACHMENT, Gl20.RENDERBUFFER, depthbufferHandle)
 			} else {
 				depthbufferHandle = null
@@ -109,7 +150,7 @@ class Framebuffer(
 			if (this.hasStencil) {
 				stencilbufferHandle = gl.createRenderbuffer()
 				gl.bindRenderbuffer(Gl20.RENDERBUFFER, stencilbufferHandle)
-				gl.renderbufferStorage(Gl20.RENDERBUFFER, Gl20.STENCIL_INDEX8, width, height)
+				gl.renderbufferStorage(Gl20.RENDERBUFFER, Gl20.STENCIL_INDEX8, widthPixels, heightPixels)
 				gl.framebufferRenderbuffer(Gl20.FRAMEBUFFER, Gl20.STENCIL_ATTACHMENT, Gl20.RENDERBUFFER, stencilbufferHandle)
 			} else {
 				stencilbufferHandle = null
@@ -151,7 +192,7 @@ class Framebuffer(
 	fun begin() {
 		glState.batch.flush()
 		glState.getFramebuffer(previousFramebuffer)
-		glState.setFramebuffer(framebufferHandle, width, height, 1f, 1f)
+		glState.setFramebuffer(framebufferHandle, widthPixels, heightPixels, scaleX, scaleY)
 		previousViewport.set(glState.viewport)
 		glState.setViewport(_viewport)
 		previousStencil = gl.getParameterb(Gl20.STENCIL_TEST)
@@ -197,10 +238,10 @@ class Framebuffer(
 	 *
 	 * @param camera The camera to configure. (A newly constructed Sprite is the default)
 	 */
-	fun camera(camera: Camera = OrthographicCamera().apply { flipYDown() }): Camera {
+	fun camera(camera: Camera = OrthographicCamera().apply { yDown(false) }): Camera {
 		return camera.apply {
-			setViewport(_viewport.width.toFloat(), _viewport.height.toFloat())
-			moveToLookAtRect(_viewport.x.toFloat(), _viewport.y.toFloat(), viewportWidth, viewportHeight)
+			setViewport(_viewport.width.toFloat() / scaleX, _viewport.height.toFloat() / scaleY)
+			moveToLookAtRect(_viewport.x.toFloat() / scaleX, _viewport.y.toFloat() / scaleY, viewportWidth, viewportHeight)
 		}
 	}
 
@@ -214,6 +255,7 @@ class Framebuffer(
 			setUv(0f, 0f, 1f, 1f, false)
 			texture = this@Framebuffer.texture
 			setSize(null, null)
+			setScaling(scaleX, scaleY)
 		}
 	}
 

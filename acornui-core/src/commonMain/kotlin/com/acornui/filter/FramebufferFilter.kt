@@ -17,23 +17,20 @@
 package com.acornui.filter
 
 import com.acornui.component.*
-import com.acornui.core.*
+import com.acornui.core.AppConfig
+import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.di.own
-import com.acornui.core.graphic.BlendMode
-import com.acornui.core.graphic.Texture
+import com.acornui.core.graphic.*
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.clearAndReset
 import com.acornui.gl.core.resizeableFramebuffer
-import com.acornui.gl.core.setViewport
 import com.acornui.graphic.Color
-import com.acornui.graphic.ColorRo
-import com.acornui.math.*
+import com.acornui.math.Pad
+import com.acornui.math.PadRo
 import com.acornui.signal.Signal0
 import com.acornui.signal.bind
-import kotlin.math.ceil
-import kotlin.math.floor
 
 /**
  * Creates a Framebuffer and provides utility to draw a [Renderable] object to it and then draw the frame buffer to the
@@ -45,6 +42,11 @@ class FramebufferFilter(
 		hasStencil: Boolean = owner.inject(AppConfig).gl.stencil
 ) : RenderFilterBase(owner) {
 
+	private val window by Window
+
+	/**
+	 * Extra padding when the contents are rendered to the frame buffer.
+	 */
 	override var drawPadding: PadRo = Pad.EMPTY_PAD
 
 	var clearMask = Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT
@@ -52,58 +54,53 @@ class FramebufferFilter(
 	var blendMode = BlendMode.NORMAL
 	var premultipliedAlpha = false
 
-	private val defaultRenderContext by RenderContextRo
+	private val camera = orthographicCamera {
+		yDown(false)
+	}
 
 	private val framebuffer = resizeableFramebuffer(hasDepth = hasDepth, hasStencil = hasStencil)
+
+	private val framebufferRenderContext = CustomRenderContext(camera)
 
 	val texture: Texture
 		get() = framebuffer.texture
 
-	private val viewport = IntRectangle()
 	private val sprite = Sprite(glState)
 	private val drawable = PaddedDrawable(sprite)
 	private val drew = own(Signal0())
 
-	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+	override fun draw(renderContext: RenderContextRo) {
 		if (!bitmapCacheIsValid)
 			drawToFramebuffer()
-		drawToScreen()
+		drawToScreen(renderContext)
 	}
 
 	fun drawToFramebuffer() {
 		val contents = contents ?: return
 		val drawRegion = drawRegion
-		val scaleX = 1f
-		val scaleY = 1f
-		framebuffer.setSize(drawRegion.width, drawRegion.height)
-		val bounds = bounds
-		drawable.padding.set(drawRegion.xMin, drawRegion.yMin, bounds.width - drawRegion.xMax, bounds.height - drawRegion.yMax)
 
-		viewport.set(glState.viewport)
+		val renderContext = framebufferRenderContext
+		val w = drawRegion.width
+		val h = drawRegion.height
+		camera.setViewport(w, h)
+		camera.moveToLookAtRect(drawRegion)
+		renderContext.clipRegion.set(drawRegion)
+		renderContext.canvasTransform.set(drawRegion)
+
+		framebuffer.setSize(w, h, 1f, 1f)
+
 		framebuffer.begin()
-		glState.setViewport(
-				floor(-drawRegion.xMin).toInt(),
-				floor((drawRegion.yMin.toInt() - renderContext.canvasTransform.height + framebuffer.texture.heightPixels)).toInt(),
-				ceil(renderContext.canvasTransform.width).toInt(),
-				ceil(renderContext.canvasTransform.height).toInt()
-		)
-		if (clearMask != 0)
-			clearAndReset(clearColor, clearMask)
-
-		contents.render(defaultRenderContext)
-
+		clearAndReset(clearColor, clearMask)
+		contents.render(renderContext)
 		framebuffer.end()
-		framebuffer.sprite(sprite)
-		sprite.setUv(sprite.u, 1f - sprite.v, sprite.u2, 1f - sprite.v2, isRotated = false)
-		sprite.setScaling(scaleX, scaleY)
+		framebuffer.drawable(sprite)
+		setDrawPadding(drawable.padding)
 		drawable.setSize(null, null)
-		glState.setViewport(viewport)
 		drew.dispatch()
 	}
 
-	fun drawToScreen() {
-		drawable.renderContextOverride = renderContext
-		drawable.render()
+	fun drawToScreen(renderContext: RenderContextRo) {
+		drawable.render(renderContext)
 	}
 
 	/**

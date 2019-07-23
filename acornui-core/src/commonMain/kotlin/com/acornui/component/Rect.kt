@@ -22,15 +22,16 @@ import com.acornui.component.drawing.staticMeshC
 import com.acornui.component.drawing.transform
 import com.acornui.core.di.Owned
 import com.acornui.core.graphic.BlendMode
-import com.acornui.core.renderContext
+import com.acornui.core.setCamera
 import com.acornui.gl.core.putIndex
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putTriangleIndices
 import com.acornui.gl.core.putVertex
 import com.acornui.graphic.Color
-import com.acornui.graphic.ColorRo
-import com.acornui.math.*
-import com.acornui.math.PI as PI
+import com.acornui.math.Bounds
+import com.acornui.math.PI
+import com.acornui.math.Pad
+import com.acornui.math.Vector3
 import kotlin.math.*
 
 class Rect(
@@ -218,9 +219,8 @@ class Rect(
 						defaultRenderContext.childRenderContext {
 							modelTransformLocal.translate(fillPad.left - cPad, fillPad.top - cPad)
 							colorTintOverride = tint
-							topLeftCorner.renderContextOverride = this
 							topLeftCorner.setSize(null, null)
-							topLeftCorner.render()
+							topLeftCorner.render(this)
 						}
 					}
 
@@ -228,9 +228,8 @@ class Rect(
 						defaultRenderContext.childRenderContext {
 							modelTransformLocal.translate(w - topRightX, fillPad.top - cPad)
 							colorTintOverride = tint
-							topRightCorner.renderContextOverride = this
 							topRightCorner.setSize(null, null)
-							topRightCorner.render()
+							topRightCorner.render(this)
 						}
 					}
 
@@ -238,9 +237,8 @@ class Rect(
 						defaultRenderContext.childRenderContext {
 							modelTransformLocal.translate(w - bottomRightX, h - bottomRightY)
 							colorTintOverride = tint
-							bottomRightCorner.renderContextOverride = this
 							bottomRightCorner.setSize(null, null)
-							bottomRightCorner.render()
+							bottomRightCorner.render(this)
 						}
 					}
 
@@ -248,9 +246,8 @@ class Rect(
 						defaultRenderContext.childRenderContext {
 							modelTransformLocal.translate(fillPad.left - cPad, h - bottomLeftY)
 							colorTintOverride = tint
-							bottomLeftCorner.renderContextOverride = this
 							bottomLeftCorner.setSize(null, null)
-							bottomLeftCorner.render()
+							bottomLeftCorner.render(this)
 						}
 					}
 
@@ -495,11 +492,14 @@ class Rect(
 
 	}
 
-	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+
+	override fun render(renderContext: RenderContextRo) {
+		val tint = renderContext.colorTint
+		val transform = renderContext.modelTransform
 		val margin = style.margin
 		val w = margin.reduceWidth2(_bounds.width)
 		val h = margin.reduceHeight2(_bounds.height)
-		if (w <= 0f || h <= 0f) return
+		if (w <= 0f || h <= 0f || tint.a <= 0f) return
 		if (simpleMode) {
 			simpleModeObj.apply {
 				val borderThicknesses = style.borderThicknesses
@@ -527,9 +527,9 @@ class Rect(
 				fillColor.set(style.backgroundColor).mul(tint)
 				borderColors.set(style.borderColors).mul(tint)
 
+				glState.setCamera(renderContext)
 				val batch = glState.batch
 				glState.setTexture(glState.whitePixel)
-				useCamera()
 				glState.blendMode(BlendMode.NORMAL, false)
 				batch.begin()
 
@@ -581,17 +581,14 @@ class Rect(
 			if (style.linearGradient != null) {
 				complexModeObj.apply {
 					StencilUtil.mask(glState.batch, gl, {
-						if (fillC.visible)
-							fillC.render()
+						if (fillC.visible) fillC.renderIn(renderContext)
 					}) {
-						if (gradientC.visible)
-							gradientC.render()
+						if (gradientC.visible) gradientC.renderIn(renderContext)
 					}
-					if (strokeC.visible)
-						strokeC.render()
+					if (strokeC.visible) strokeC.renderIn(renderContext)
 				}
 			} else {
-				super.draw(clip, transform, tint)
+				super.render(renderContext)
 			}
 		}
 	}

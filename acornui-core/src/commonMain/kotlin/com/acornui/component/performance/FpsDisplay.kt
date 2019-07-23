@@ -16,6 +16,7 @@
 
 package com.acornui.component.performance
 
+import com.acornui.component.RenderContextRo
 import com.acornui.component.text.TextFieldImpl
 import com.acornui.core.di.Owned
 import com.acornui.core.time.timer
@@ -52,8 +53,8 @@ class FpsDisplay(owner: Owned) : TextFieldImpl(owner) {
 		}
 	}
 
-	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		super.draw(clip, transform, tint)
+	override fun draw(renderContext: RenderContextRo) {
+		super.draw(renderContext)
 		frames++
 	}
 }

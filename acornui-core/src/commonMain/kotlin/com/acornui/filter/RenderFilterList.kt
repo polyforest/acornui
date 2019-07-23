@@ -93,16 +93,9 @@ class RenderFilterList(
 	override val drawRegion: MinMaxRo
 		get() = head.drawRegion
 
-	override var renderContextOverride: RenderContextRo?
-		get() = head.renderContextOverride
-		set(value) {
-			head.renderContextOverride = value
-		}
-
-	override val naturalRenderContext: RenderContextRo
-		get() = head.naturalRenderContext
-
-	override fun render() = head.render()
+	override fun render(renderContext: RenderContextRo) {
+		head.render(renderContext)
+	}
 
 	override val bounds: BoundsRo
 		get() = head.bounds

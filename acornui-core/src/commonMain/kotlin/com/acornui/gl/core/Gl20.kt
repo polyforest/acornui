@@ -1282,6 +1282,7 @@ fun Gl20.uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, va
  * color.
  */
 fun Scoped.clearAndReset(color: ColorRo = Color.CLEAR, mask: Int = Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT) {
+	if (mask == 0) return
 	val gl = inject(Gl20)
 	gl.clearColor(color)
 	gl.clear(mask)

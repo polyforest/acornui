@@ -18,9 +18,6 @@ package com.acornui.component
 
 import com.acornui.core.Renderable
 import com.acornui.core.RenderableBase
-import com.acornui.core.renderContext
-import com.acornui.graphic.ColorRo
-import com.acornui.math.Matrix4Ro
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Pad
 
@@ -48,10 +45,9 @@ class PaddedDrawable<T : Renderable>(
 
 	private val drawableRenderContext = RenderContext()
 
-	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+	override fun render(renderContext: RenderContextRo) {
 		drawableRenderContext.parentContext = renderContext
 		drawableRenderContext.modelTransformLocal.setTranslation(padding.left, padding.top, 0f)
-		inner.renderContextOverride = drawableRenderContext
-		inner.render()
+		inner.render(drawableRenderContext)
 	}
 }

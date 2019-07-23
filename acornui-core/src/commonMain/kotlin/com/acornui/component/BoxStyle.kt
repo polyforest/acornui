@@ -116,7 +116,7 @@ data class LinearGradient(
 			GradientDirection.BOTTOM -> "to bottom"
 			GradientDirection.BOTTOM_LEFT -> "to bottom left"
 			GradientDirection.LEFT -> "to left"
-			GradientDirection.ANGLE -> "${angle.radToDeg()}deg"
+			GradientDirection.ANGLE -> "${radToDeg(angle)}deg"
 		}
 		var colorStopsStr = ""
 		for (colorStop in colorStops) {

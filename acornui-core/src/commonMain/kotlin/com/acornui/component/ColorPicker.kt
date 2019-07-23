@@ -549,7 +549,7 @@ open class ColorPickerWithText(owner: Owned) : ContainerImpl(owner) {
 		super.updateStyles()
 		textInput.validate(ValidationFlags.STYLES)
 		val textInputStyle = textInput.textInputStyle
-		text.flowStyle.padding = pad.set(top = textInputStyle.margin.top + textInputStyle.padding.top, bottom = textInputStyle.margin.bottom + textInputStyle.padding.bottom, right = 0f, left = 0f)
+		text.flowStyle.padding = pad.set(top = textInputStyle.margin.top + textInputStyle.padding.top, right = 0f, bottom = textInputStyle.margin.bottom + textInputStyle.padding.bottom, left = 0f)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

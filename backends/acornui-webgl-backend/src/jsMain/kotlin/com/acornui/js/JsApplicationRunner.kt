@@ -17,6 +17,7 @@
 package com.acornui.js
 
 import com.acornui.component.Stage
+import com.acornui.component.render
 import com.acornui.core.di.Injector
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject

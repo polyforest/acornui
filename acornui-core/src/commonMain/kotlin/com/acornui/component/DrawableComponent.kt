@@ -18,12 +18,8 @@ package com.acornui.component
 
 import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
-import com.acornui.core.renderContext
-import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
-import com.acornui.math.Matrix4Ro
 import com.acornui.math.MinMax
-import com.acornui.math.MinMaxRo
 
 /**
  * @author nbilyk
@@ -40,10 +36,8 @@ abstract class DrawableComponent<T : Renderable?>(
 		out.set(drawable.bounds)
 	}
 
-	override fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
-		val drawable = drawable ?: return
-		drawable.renderContextOverride = renderContext
-		drawable.render()
+	override fun draw(renderContext: RenderContextRo) {
+		drawable?.render(renderContext)
 	}
 
 	override fun updateDrawRegion(out: MinMax) {

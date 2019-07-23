@@ -132,7 +132,7 @@ class LightingRenderer(
 		gl.clearColor(Color.BLUE) // Blue represents a z / w depth of 1.0. (The camera's far position)
 		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT)
 		if (directionalLight.color != Color.BLACK) {
-			glState.useScissor(1, 1, directionalShadowsFbo.width - 2, directionalShadowsFbo.height - 2) {
+			glState.useScissor(1, 1, directionalShadowsFbo.widthPixels - 2, directionalShadowsFbo.heightPixels - 2) {
 				if (directionalLightCamera.update(directionalLight.direction, camera)) {
 					gl.uniformMatrix4fv(directionalShadowMapShader.getRequiredUniformLocation("u_directionalLightMvp"), false, directionalLightCamera.combined)
 				}
@@ -188,7 +188,7 @@ class LightingRenderer(
 		glState.shader = lightingShader
 
 		// Prepare uniforms.
-		gl.uniform2f(lightingShader.getRequiredUniformLocation("u_resolutionInv"), 1.0f / directionalShadowsFbo.width.toFloat(), 1.0f / directionalShadowsFbo.height.toFloat())
+		gl.uniform2f(lightingShader.getRequiredUniformLocation("u_resolutionInv"), 1.0f / directionalShadowsFbo.widthPixels.toFloat(), 1.0f / directionalShadowsFbo.heightPixels.toFloat())
 		gl.uniform1i(lightingShader.getRequiredUniformLocation("u_directionalShadowMap"), directionalShadowUnit)
 		for (i in 0..numShadowPointLights - 1) {
 			gl.uniform1i(lightingShader.getRequiredUniformLocation("u_pointLightShadowMaps[$i]"), pointShadowUnit + i)

@@ -22,8 +22,6 @@ import com.acornui.core.Disposable
 import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
 import com.acornui.core.di.OwnedImpl
-import com.acornui.core.di.inject
-import com.acornui.core.renderContext
 import com.acornui.gl.core.GlState
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
@@ -82,7 +80,7 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 	}
 
 	/**
-	 * The padding this filter should inflate the draw region.
+	 * The padding this filter should inflate the [bounds] in order to calculate the [drawRegion].
 	 */
 	open val drawPadding: PadRo = Pad.EMPTY_PAD
 
@@ -97,6 +95,17 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 	override val drawRegion: MinMaxRo
 		get() = _drawRegion.set(contents?.drawRegion).inflate(drawPadding)
 
+
+	/**
+	 * Configures a padding object to represent the shift needed to draw a rasterized representation of the contents
+	 * in the contents coordinate space.
+	 */
+	protected fun setDrawPadding(padding: Pad) {
+		val drawRegion = drawRegion
+		val bounds = bounds
+		padding.set(drawRegion.yMin, bounds.width - drawRegion.xMax, bounds.height - drawRegion.yMax, drawRegion.xMin)
+	}
+
 	protected fun <T> bindable(initial: T): ReadWriteProperty<Any?, T> = observable(initial) {
 		_changed.dispatch(this)
 	}
@@ -108,15 +117,6 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 		_changed.dispatch(this)
 	}
 
-	override val naturalRenderContext: RenderContextRo
-		get() = contents?.naturalRenderContext ?: inject(RenderContextRo)
-
-	override var renderContextOverride: RenderContextRo?
-		get() = contents?.renderContextOverride
-		set(value) {
-			contents?.renderContextOverride = value
-		}
-
 	final override val explicitWidth: Float?
 		get() = contents?.explicitWidth
 
@@ -127,21 +127,17 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 		contents?.setSize(width, height)
 	}
 
-	final override fun render() {
-		val renderContext = renderContext
-		if (shouldSkipFilter) contents?.render()
-		else draw(renderContext.clipRegion, renderContext.modelTransform, renderContext.colorTint)
+	final override fun render(renderContext: RenderContextRo) {
+		if (shouldSkipFilter) contents?.render(renderContext)
+		else draw(renderContext)
 		bitmapCacheIsValid = true
 	}
 
 	/**
-	 * Called from render if there is something to render.
-	 *
-	 * @param clip [RenderContextRo.clipRegion]
-	 * @param transform [RenderContextRo.modelTransform]
-	 * @param tint [RenderContextRo.colorTint]
+	 * Renders this filter.
+	 * This will only be called if [shouldSkipFilter] is false.
 	 */
-	protected abstract fun draw(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo)
+	protected abstract fun draw(renderContext: RenderContextRo)
 
 	override fun dispose() {
 		super.dispose()

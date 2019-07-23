@@ -43,15 +43,6 @@ class FilteredContainer(owner: Owned) : ElementContainerImpl<UiComponent>(owner)
 			override val bounds: BoundsRo
 				get() = super@FilteredContainer.bounds
 
-			override val naturalRenderContext: RenderContextRo
-				get() = super@FilteredContainer.naturalRenderContext
-
-			override var renderContextOverride: RenderContextRo?
-				get() = super@FilteredContainer.renderContextOverride
-				set(value) {
-					super@FilteredContainer.renderContextOverride = value
-				}
-
 			override val explicitWidth: Float?
 				get() = super@FilteredContainer.explicitWidth
 
@@ -64,8 +55,8 @@ class FilteredContainer(owner: Owned) : ElementContainerImpl<UiComponent>(owner)
 			}
 
 			@Suppress("RedundantOverride") // Erroneous warning
-			override fun render() {
-				super@FilteredContainer.render()
+			override fun render(renderContext: RenderContextRo) {
+				super@FilteredContainer.render(renderContext)
 			}
 		}
 	}
@@ -138,16 +129,9 @@ class FilteredContainer(owner: Owned) : ElementContainerImpl<UiComponent>(owner)
 	override val drawRegion: MinMaxRo
 		get() = _renderFilters.drawRegion
 
-	override var renderContextOverride: RenderContextRo?
-		get() = _renderFilters.renderContextOverride
-		set(value) {
-			_renderFilters.renderContextOverride = value
-		}
-
-	override val naturalRenderContext: RenderContextRo
-		get() = _renderFilters.naturalRenderContext
-
-	override fun render() = _renderFilters.render()
+	override fun render(renderContext: RenderContextRo) {
+		_renderFilters.render(renderContext)
+	}
 
 	override val bounds: BoundsRo
 		get() = _renderFilters.bounds
