@@ -33,20 +33,20 @@ import com.acornui.math.RectangleRo
  * A UiComponent representing a single Texture.
  * @author nbilyk
  */
-open class TextureComponent(owner: Owned) : DrawableComponent<Sprite>(owner) {
+open class TextureComponent(owner: Owned) : RenderableComponent<Sprite>(owner) {
 
-	override val drawable: Sprite = Sprite(glState)
+	override val renderable: Sprite = Sprite(glState)
 
 	val naturalWidth: Float
-		get() = drawable.naturalWidth
+		get() = renderable.naturalWidth
 
 	val naturalHeight: Float
-		get() = drawable.naturalHeight
+		get() = renderable.naturalHeight
 
 	var blendMode: BlendMode
-		get() = drawable.blendMode
+		get() = renderable.blendMode
 		set(value) {
-			drawable.blendMode = value
+			renderable.blendMode = value
 			window.requestRender()
 		}
 
@@ -84,20 +84,20 @@ open class TextureComponent(owner: Owned) : DrawableComponent<Sprite>(owner) {
 	 * Sets the texture directly, as opposed to loading a Texture from the asset manager.
 	 */
 	var texture: Texture?
-		get() = drawable.texture
+		get() = renderable.texture
 		set(value) {
 			path = null
 			_setTexture(value)
 		}
 
 	protected open fun _setTexture(value: Texture?) {
-		if (drawable.texture == value) return
-		val oldTexture = drawable.texture
+		if (renderable.texture == value) return
+		val oldTexture = renderable.texture
 		if (isActive)
 			oldTexture?.refDec()
-		drawable.texture = value
+		renderable.texture = value
 		if (isActive)
-			drawable.texture?.refInc()
+			renderable.texture?.refInc()
 		invalidateLayout()
 	}
 
@@ -105,23 +105,23 @@ open class TextureComponent(owner: Owned) : DrawableComponent<Sprite>(owner) {
 	 * If true, the texture's region is rotated.
 	 */
 	val isRotated: Boolean
-		get() = drawable.isRotated
+		get() = renderable.isRotated
 
 	override fun onActivated() {
 		super.onActivated()
-		drawable.texture?.refInc()
+		renderable.texture?.refInc()
 	}
 
 	override fun onDeactivated() {
 		super.onDeactivated()
-		drawable.texture?.refDec()
+		renderable.texture?.refDec()
 	}
 
 	/**
 	 * Sets the UV coordinates of the image to display.
 	 */
 	fun setUv(u: Float, v: Float, u2: Float, v2: Float, isRotated: Boolean = false) {
-		drawable.setUv(u, v, u2, v2, isRotated)
+		renderable.setUv(u, v, u2, v2, isRotated)
 		invalidate(ValidationFlags.LAYOUT)
 	}
 
@@ -129,7 +129,7 @@ open class TextureComponent(owner: Owned) : DrawableComponent<Sprite>(owner) {
 	 * Sets the region of the texture to display.
 	 */
 	fun setRegion(x: Float, y: Float, width: Float, height: Float, isRotated: Boolean = false) {
-		drawable.setRegion(x, y, width, height, isRotated)
+		renderable.setRegion(x, y, width, height, isRotated)
 		invalidate(ValidationFlags.LAYOUT)
 	}
 

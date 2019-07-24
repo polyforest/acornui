@@ -66,7 +66,7 @@ class FramebufferFilter(
 		get() = framebuffer.texture
 
 	private val sprite = Sprite(glState)
-	private val drawable = PaddedDrawable(sprite)
+	private val drawable = PaddedRenderable(sprite)
 	private val drew = own(Signal0())
 
 	override fun draw(renderContext: RenderContextRo) {
@@ -119,7 +119,7 @@ class FramebufferFilter(
 	/**
 	 * Configures a drawable to match what was last rendered.
 	 */
-	fun drawable(out: PaddedDrawable<Sprite> = PaddedDrawable(Sprite(glState))): PaddedDrawable<Sprite> {
+	fun drawable(out: PaddedRenderable<Sprite> = PaddedRenderable(Sprite(glState))): PaddedRenderable<Sprite> {
 		out.inner.set(sprite)
 		out.padding.set(drawable.padding)
 		return out

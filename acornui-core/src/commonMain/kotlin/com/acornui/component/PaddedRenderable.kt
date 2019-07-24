@@ -21,7 +21,11 @@ import com.acornui.core.RenderableBase
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Pad
 
-class PaddedDrawable<T : Renderable>(
+/**
+ * Adds padding to an [inner] renderable component.
+ * [bounds] and [drawRegion] will be inflated by the padding, and the [inner] renderable
+ */
+class PaddedRenderable<T : Renderable>(
 
 		/**
 		 * The inner drawable this padding decorator wraps.

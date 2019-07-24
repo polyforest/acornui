@@ -30,20 +30,20 @@ import com.acornui.math.IntRectangleRo
 /**
  * @author nbilyk
  */
-class NinePatchComponent(owner: Owned) : DrawableComponent<Renderable>(owner) {
+class NinePatchComponent(owner: Owned) : RenderableComponent<Renderable>(owner) {
 
-	override val drawable: NinePatch = NinePatch(glState)
+	override val renderable: NinePatch = NinePatch(glState)
 
 	private var cached: CachedGroup? = null
 
 	override fun onActivated() {
 		super.onActivated()
-		drawable.texture?.refInc()
+		renderable.texture?.refInc()
 	}
 
 	override fun onDeactivated() {
 		super.onDeactivated()
-		drawable.texture?.refDec()
+		renderable.texture?.refDec()
 	}
 
 	private var _path: String? = null
@@ -63,44 +63,44 @@ class NinePatchComponent(owner: Owned) : DrawableComponent<Renderable>(owner) {
 		}
 
 	var texture: Texture?
-		get() = drawable.texture
+		get() = renderable.texture
 		set(value) {
-			if (drawable.texture == value) return
+			if (renderable.texture == value) return
 			path = null
 			_setTexture(value)
 		}
 
 	val naturalWidth: Float
-		get() = drawable.naturalWidth
+		get() = renderable.naturalWidth
 
 	val naturalHeight: Float
-		get() = drawable.naturalHeight
+		get() = renderable.naturalHeight
 
 	var blendMode: BlendMode
-		get() = drawable.blendMode
+		get() = renderable.blendMode
 		set(value) {
-			drawable.blendMode = value
+			renderable.blendMode = value
 			window.requestRender()
 		}
 
 	val splitLeft: Float
-		get() = drawable.splitLeft
+		get() = renderable.splitLeft
 	val splitTop: Float
-		get() = drawable.splitTop
+		get() = renderable.splitTop
 	val splitRight: Float
-		get() = drawable.splitRight
+		get() = renderable.splitRight
 	val splitBottom: Float
-		get() = drawable.splitBottom
+		get() = renderable.splitBottom
 
 	private fun _setTexture(value: Texture?) {
-		if (drawable.texture == value) return
-		val oldTexture = drawable.texture
+		if (renderable.texture == value) return
+		val oldTexture = renderable.texture
 		if (isActive) {
 			oldTexture?.refDec()
 		}
-		drawable.texture = value
+		renderable.texture = value
 		if (isActive) {
-			drawable.texture?.refInc()
+			renderable.texture?.refInc()
 		}
 		invalidateLayout()
 	}
@@ -110,12 +110,12 @@ class NinePatchComponent(owner: Owned) : DrawableComponent<Renderable>(owner) {
 	}
 
 	fun setRegion(x: Float, y: Float, width: Float, height: Float, isRotated: Boolean) {
-		drawable.setRegion(x, y, width, height, isRotated)
+		renderable.setRegion(x, y, width, height, isRotated)
 		invalidateLayout()
 	}
 
 	fun setUv(u: Float, v: Float, u2: Float, v2: Float, isRotated: Boolean) {
-		drawable.setRegion(u,  v, u2, v2, isRotated)
+		renderable.setRegion(u,  v, u2, v2, isRotated)
 		invalidateLayout()
 	}
 
@@ -124,7 +124,7 @@ class NinePatchComponent(owner: Owned) : DrawableComponent<Renderable>(owner) {
 	}
 
 	fun split(splitLeft: Float, splitTop: Float, splitRight: Float, splitBottom: Float) {
-		drawable.split(splitLeft, splitTop, splitRight, splitBottom)
+		renderable.split(splitLeft, splitTop, splitRight, splitBottom)
 		invalidateLayout()
 	}
 

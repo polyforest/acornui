@@ -18,7 +18,7 @@ package com.acornui.filter
 
 import com.acornui.async.disposeOnShutdown
 import com.acornui.component.ComponentInit
-import com.acornui.component.PaddedDrawable
+import com.acornui.component.PaddedRenderable
 import com.acornui.component.RenderContextRo
 import com.acornui.component.Sprite
 import com.acornui.component.drawing.putIdtQuad
@@ -43,7 +43,7 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	private val blurFramebufferB = own(resizeableFramebuffer())
 
 	private val sprite = Sprite(glState)
-	private val drawable = PaddedDrawable(sprite)
+	private val drawable = PaddedRenderable(sprite)
 
 	private val _drawPadding = Pad()
 	override val drawPadding: PadRo
@@ -130,7 +130,7 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	/**
 	 * Configures a drawable to match what was last rendered.
 	 */
-	fun drawable(out: PaddedDrawable<Sprite> = PaddedDrawable(Sprite(glState))): PaddedDrawable<Sprite> {
+	fun drawable(out: PaddedRenderable<Sprite> = PaddedRenderable(Sprite(glState))): PaddedRenderable<Sprite> {
 		out.inner.set(sprite)
 		out.padding.set(drawable.padding)
 		return out

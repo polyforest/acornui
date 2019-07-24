@@ -37,14 +37,14 @@ import com.acornui.recycle.Clearable
  *
  * @author nbilyk
  */
-open class AtlasComponent(owner: Owned) : DrawableComponent<Atlas>(owner), Clearable {
+open class AtlasComponent(owner: Owned) : RenderableComponent<Atlas>(owner), Clearable {
 
 	var region: AtlasRegionData? = null
 		private set
 
 	private var texture: Texture? = null
 
-	override val drawable = Atlas(glState)
+	override val renderable = Atlas(glState)
 
 	private var group: CachedGroup? = null
 
@@ -68,9 +68,9 @@ open class AtlasComponent(owner: Owned) : DrawableComponent<Atlas>(owner), Clear
 	}
 
 	var blendMode: BlendMode
-		get() = drawable.blendMode
+		get() = renderable.blendMode
 		set(value) {
-			drawable.blendMode = value
+			renderable.blendMode = value
 		}
 
 	private fun setRegionAndTexture(texture: Texture, region: AtlasRegionData) {
@@ -81,7 +81,7 @@ open class AtlasComponent(owner: Owned) : DrawableComponent<Atlas>(owner), Clear
 			texture.refInc()
 			oldTexture?.refDec()
 		}
-		drawable.setRegionAndTexture(texture, region)
+		renderable.setRegionAndTexture(texture, region)
 		invalidateLayout()
 	}
 
@@ -104,7 +104,7 @@ open class AtlasComponent(owner: Owned) : DrawableComponent<Atlas>(owner), Clear
 		group = null
 		if (isActive) texture?.refDec()
 		texture = null
-		drawable.clear()
+		renderable.clear()
 		invalidateLayout()
 	}
 

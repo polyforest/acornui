@@ -24,31 +24,31 @@ import com.acornui.math.MinMax
 /**
  * @author nbilyk
  */
-abstract class DrawableComponent<T : Renderable?>(
+abstract class RenderableComponent<T : Renderable?>(
 		owner: Owned
 ) : UiComponentImpl(owner) {
 
-	protected abstract val drawable: T?
+	protected abstract val renderable: T?
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		val drawable = drawable ?: return
+		val drawable = renderable ?: return
 		drawable.setSize(explicitWidth, explicitHeight)
 		out.set(drawable.bounds)
 	}
 
 	override fun draw(renderContext: RenderContextRo) {
-		drawable?.render(renderContext)
+		renderable?.render(renderContext)
 	}
 
 	override fun updateDrawRegion(out: MinMax) {
-		out.set(drawable?.drawRegion)
+		out.set(renderable?.drawRegion)
 	}
 }
 
-class DrawableComponentImpl<T: Renderable>(owner: Owned, override val drawable: T) : DrawableComponent<T>(owner)
+class RenderableComponentImpl<T: Renderable>(owner: Owned, override val renderable: T) : RenderableComponent<T>(owner)
 
-fun <T: Renderable> Owned.drawableC(drawable: T, init: ComponentInit<DrawableComponentImpl<T>> = {}): DrawableComponentImpl<T> {
-	val d = DrawableComponentImpl(this, drawable)
+fun <T: Renderable> Owned.drawableC(drawable: T, init: ComponentInit<RenderableComponentImpl<T>> = {}): RenderableComponentImpl<T> {
+	val d = RenderableComponentImpl(this, drawable)
 	d.init()
 	return d
 }
