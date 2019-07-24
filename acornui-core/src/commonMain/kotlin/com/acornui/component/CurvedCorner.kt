@@ -21,6 +21,7 @@ import com.acornui.component.drawing.putIdtQuad
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
 import com.acornui.core.graphic.BlendMode
+import com.acornui.core.graphic.Window
 import com.acornui.gl.core.*
 import kotlin.math.ceil
 
@@ -31,8 +32,7 @@ private data class SmoothCornerKey(
 		val cornerRadiusX: Float,
 		val cornerRadiusY: Float,
 		val strokeThicknessX: Float?,
-		val strokeThicknessY: Float?,
-		val pad: Float
+		val strokeThicknessY: Float?
 )
 
 private val smoothCornerMap: MutableMap<SmoothCornerKey, Framebuffer> = HashMap()
@@ -47,7 +47,6 @@ private val smoothCornerMap: MutableMap<SmoothCornerKey, Framebuffer> = HashMap(
  * @param flipY If true, the v and v2 values will be flipped.
  * @param spriteOut The Sprite to populate with the uv coordinates and texture.
  * @param useCache If true, the frame buffer used will be saved for matching corner properties.
- * @param pad The padding to
  * @return Returns [spriteOut].
  */
 fun Scoped.createSmoothCorner(
@@ -58,16 +57,20 @@ fun Scoped.createSmoothCorner(
 		flipX: Boolean = false,
 		flipY: Boolean = false,
 		spriteOut: Sprite,
-		useCache: Boolean = true,
-		pad: Float = 0f
+		useCache: Boolean = true
 ): Sprite {
-	val sX = strokeThicknessX ?: cornerRadiusX + 1f
-	val sY = strokeThicknessY ?: cornerRadiusY + 1f
-	if (cornerRadiusX < 0.0001f || cornerRadiusY < 0.0001f || (sX < 0.0001f && sY < 0.0001f)) {
+	val window = inject(Window)
+	val scaleX = window.scaleX
+	val scaleY = window.scaleY
+	val sX = (strokeThicknessX ?: cornerRadiusX + 1f) * scaleX
+	val sY = (strokeThicknessY ?: cornerRadiusY + 1f) * scaleY
+	val cRX = cornerRadiusX * scaleX
+	val cRY = cornerRadiusY * scaleY
+	if (cRX < 0.0001f || cRY < 0.0001f || (sX < 0.0001f && sY < 0.0001f)) {
 		spriteOut.clear()
 		return spriteOut
 	}
-	val cacheKey = SmoothCornerKey(cornerRadiusX, cornerRadiusY, strokeThicknessX, strokeThicknessY, pad)
+	val cacheKey = SmoothCornerKey(cRX, cRY, strokeThicknessX, strokeThicknessY)
 	val framebuffer = if (useCache && smoothCornerMap.containsKey(cacheKey)) {
 		smoothCornerMap[cacheKey]!!
 	} else {
@@ -75,7 +78,7 @@ fun Scoped.createSmoothCorner(
 		val glState = inject(GlState)
 		if (curvedShader == null)
 			curvedShader = disposeOnShutdown(CurvedRectShaderProgram(gl))
-		val framebuffer = framebuffer(ceil(cornerRadiusX + pad).toInt(), ceil(cornerRadiusY + pad).toInt())
+		val framebuffer = framebuffer(ceil(cRX).toInt(), ceil(cRY).toInt())
 		val previousShader = glState.shader
 		val curvedShader = curvedShader!!
 		glState.shader = curvedShader
@@ -83,7 +86,7 @@ fun Scoped.createSmoothCorner(
 		clearAndReset()
 		glState.blendMode(BlendMode.NONE, premultipliedAlpha = false)
 		glState.useViewport(0, 0, framebuffer.widthPixels, framebuffer.heightPixels) {
-			gl.uniform2f(curvedShader.getRequiredUniformLocation("u_cornerRadius"), cornerRadiusX, cornerRadiusY)
+			gl.uniform2f(curvedShader.getRequiredUniformLocation("u_cornerRadius"), cRX, cRY)
 
 			curvedShader.getUniformLocation("u_strokeThickness")?.let {
 				gl.uniform2f(it, sX, sY)
@@ -101,8 +104,8 @@ fun Scoped.createSmoothCorner(
 	}
 	val fBW = framebuffer.widthPixels.toFloat()
 	val fBH = framebuffer.heightPixels.toFloat()
-	val pW = (cornerRadiusX + pad) / fBW
-	val pH = (cornerRadiusY + pad) / fBH
+	val pW = cRX / fBW
+	val pH = cRY / fBH
 	val u: Float
 	val v: Float
 	val u2: Float
@@ -123,6 +126,7 @@ fun Scoped.createSmoothCorner(
 	}
 	spriteOut.setUv(u, v, u2, v2, isRotated = false)
 	spriteOut.texture = framebuffer.texture
+	spriteOut.setScaling(scaleX, scaleY)
 
 	return spriteOut
 }
@@ -148,15 +152,15 @@ void main() {
 	// x^2/a^2 + y^2/b^2 = 1
 	vec2 point = gl_FragCoord.xy;
 
-	float p = length(point / max(vec2(0.0), u_cornerRadius - 0.3));
+	float p = length(point / max(vec2(0.001), u_cornerRadius - 0.5));
 	float p2;
 	float a1;
 	float a2;
-	p2 = length(point / (u_cornerRadius + 0.5));
+	p2 = length(point / (u_cornerRadius + 0.3));
 	a1 = smoothstep(p2, p, 1.0);
 
-	p = length(point / max(vec2(0.0), u_cornerRadius - u_strokeThickness - 0.5));
-	p2 = length(point / max(vec2(0.0), (u_cornerRadius - u_strokeThickness + 0.5)));
+	p = length(point / max(vec2(0.001), u_cornerRadius - u_strokeThickness - 0.5));
+	p2 = length(point / max(vec2(0.001), u_cornerRadius - u_strokeThickness + 0.5));
 	a2 = 1.0 - smoothstep(p2, p, 1.0);
 
 	float a = min(a1, a2);
