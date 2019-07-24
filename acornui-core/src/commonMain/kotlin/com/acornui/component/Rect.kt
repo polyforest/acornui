@@ -286,35 +286,37 @@ class Rect(
 				}
 
 				topLeftStrokeCorner.apply {
-					val texture = texture
-					val u: Float
-					val v: Float
-					val u2: Float
-					val v2: Float
-					val pad: Float
-					if (texture != null) {
-						glState.setTexture(texture)
-						pad = cPad
-						u = this.u
-						u2 = (topLeftX - innerTopLeftX) / texture.widthPixels
-						v = this.v
-						v2 = (topLeftY - innerTopLeftY) / texture.heightPixels
-					} else {
-						glState.setTexture(glState.whitePixel)
-						pad = 0f
-						u = 0f; v = 0f; u2 = 0f; v2 = 0f
-					}
-					val x2 = innerTopLeftX
-					val y2 = innerTopLeftY
-					batch.putVertex(-pad, -pad, 0f, colorTint = borderColors.top, u = u, v = v)
-					batch.putVertex(x2, -pad, 0f, colorTint = borderColors.top, u = u2, v = v)
-					batch.putVertex(x2, y2, 0f, colorTint = borderColors.top, u = u2, v = v2)
-					batch.putTriangleIndices()
+					if (topBorder > 0.0001f || leftBorder > 0.0001f) {
+						val texture = texture
+						val u: Float
+						val v: Float
+						val u2: Float
+						val v2: Float
+						val pad: Float
+						if (texture != null) {
+							glState.setTexture(texture)
+							pad = cPad
+							u = this.u
+							u2 = (topLeftX - innerTopLeftX) / texture.widthPixels
+							v = this.v
+							v2 = (topLeftY - innerTopLeftY) / texture.heightPixels
+						} else {
+							glState.setTexture(glState.whitePixel)
+							pad = 0f
+							u = 0f; v = 0f; u2 = 0f; v2 = 0f
+						}
+						val x2 = innerTopLeftX
+						val y2 = innerTopLeftY
+						batch.putVertex(-pad, -pad, 0f, colorTint = borderColors.top, u = u, v = v)
+						batch.putVertex(x2, -pad, 0f, colorTint = borderColors.top, u = u2, v = v)
+						batch.putVertex(x2, y2, 0f, colorTint = borderColors.top, u = u2, v = v2)
+						batch.putTriangleIndices()
 
-					batch.putVertex(x2, y2, 0f, colorTint = borderColors.left, u = u2, v = v2)
-					batch.putVertex(-pad, y2, 0f, colorTint = borderColors.left, u = u, v = v2)
-					batch.putVertex(-pad, -pad, 0f, colorTint = borderColors.left, u = u, v = v)
-					batch.putTriangleIndices()
+						batch.putVertex(x2, y2, 0f, colorTint = borderColors.left, u = u2, v = v2)
+						batch.putVertex(-pad, y2, 0f, colorTint = borderColors.left, u = u, v = v2)
+						batch.putVertex(-pad, -pad, 0f, colorTint = borderColors.left, u = u, v = v)
+						batch.putTriangleIndices()
+					}
 				}
 
 				topRightStrokeCorner.apply {
