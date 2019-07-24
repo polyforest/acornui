@@ -779,7 +779,7 @@ class DataGrid<RowData>(
 		}
 
 	override fun onSizeSet(oldW: Float?, oldH: Float?, newW: Float?, newH: Float?) {
-		if (oldW != newW && oldH != newH) {
+		if (oldW != newW || oldH != newH) {
 			invalidate(COLUMNS_WIDTHS_VALIDATION)
 		}
 		super.onSizeSet(oldW, oldH, newW, newH)
@@ -823,8 +823,10 @@ class DataGrid<RowData>(
 	var columnsWidth = 0f
 		private set
 
+
 	private fun updateColumnWidths() {
 		var availableW = style.borderThicknesses.reduceWidth(explicitWidth)
+		println("Update column widths ${explicitWidth} $availableW")
 		val vScrollBarW = if (vScrollPolicy == ScrollPolicy.OFF) 0f else vScrollBar.minWidth ?: 0f
 		if (availableW != null) availableW -= vScrollBarW
 
