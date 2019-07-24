@@ -24,8 +24,10 @@ import com.acornui.component.Sprite
 import com.acornui.component.drawing.putIdtQuad
 import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
+import com.acornui.core.di.inject
 import com.acornui.core.di.own
 import com.acornui.core.graphic.BlendMode
+import com.acornui.core.graphic.Window
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
 import com.acornui.math.Pad
@@ -114,7 +116,9 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 			}
 		}
 
+		val window = inject(Window)
 		blurFramebufferB.drawable(sprite)
+		sprite.setScaling(window.scaleX, window.scaleY)
 		setDrawPadding(drawable.padding)
 		drawable.setSize(null, null)
 	}

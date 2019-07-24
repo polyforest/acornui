@@ -94,11 +94,6 @@ open class GlowFilter(owner: Owned) : RenderFilterBase(owner) {
 		blurFilter.drawToPingPongBuffers()
 	}
 
-//	/**
-//	 * Renders this drop shadow
-//	 */
-//	fun renderTo(out: Sprite = Sprite(glState)): Sprite = blurFilter.renderTo(out)
-
 	companion object {
 		private val defaultColorTransformation = colorTransformation { tint(Color(0f, 0f, 0f, 0.5f)) }
 	}

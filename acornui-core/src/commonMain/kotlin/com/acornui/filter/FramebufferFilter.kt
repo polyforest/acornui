@@ -66,7 +66,7 @@ class FramebufferFilter(
 		get() = framebuffer.texture
 
 	private val sprite = Sprite(glState)
-	private val drawable = PaddedRenderable(sprite)
+	private val renderable = PaddedRenderable(sprite)
 	private val drew = own(Signal0())
 
 	override fun draw(renderContext: RenderContextRo) {
@@ -87,20 +87,20 @@ class FramebufferFilter(
 		renderContext.clipRegion.set(drawRegion)
 		renderContext.canvasTransform.set(drawRegion)
 
-		framebuffer.setSize(w, h, 1f, 1f)
+		framebuffer.setSize(w * window.scaleX, h * window.scaleY, window.scaleX, window.scaleY)
 
 		framebuffer.begin()
 		clearAndReset(clearColor, clearMask)
 		contents.render(renderContext)
 		framebuffer.end()
 		framebuffer.drawable(sprite)
-		setDrawPadding(drawable.padding)
-		drawable.setSize(null, null)
+		setDrawPadding(renderable.padding)
+		renderable.setSize(null, null)
 		drew.dispatch()
 	}
 
 	fun drawToScreen(renderContext: RenderContextRo) {
-		drawable.render(renderContext)
+		renderable.render(renderContext)
 	}
 
 	/**
@@ -121,7 +121,7 @@ class FramebufferFilter(
 	 */
 	fun drawable(out: PaddedRenderable<Sprite> = PaddedRenderable(Sprite(glState))): PaddedRenderable<Sprite> {
 		out.inner.set(sprite)
-		out.padding.set(drawable.padding)
+		out.padding.set(renderable.padding)
 		return out
 	}
 
