@@ -50,7 +50,7 @@ class ResizeableFramebuffer(
 
 	private var framebuffer: Framebuffer? = null
 	val texture: Texture
-		get() = if (framebuffer == null) throw Exception("Call setSize first.") else framebuffer!!.texture
+		get() = framebuffer?.texture ?: error("Call setSize first.")
 
 	var widthPixels: Float = 0f
 		private set
@@ -98,15 +98,11 @@ class ResizeableFramebuffer(
 		val oldH = oldFramebuffer?.heightPixels ?: 0
 		val newW = nextSize(widthInt)
 		val newH = nextSize(heightInt)
-		if (newW <= 0 || newH <= 0) {
+
+		if (newW > oldW || newH > oldH) {
 			framebuffer?.dispose()
-			framebuffer = null
-		} else {
-			if (newW > oldW || newH > oldH) {
-				framebuffer?.dispose()
-				framebuffer = Framebuffer(gl, glState, maxOf(oldW, newW), maxOf(oldH, newH), hasDepth, hasStencil)
-				framebuffer!!.setScaling(scaleX, scaleY)
-			}
+			framebuffer = Framebuffer(gl, glState, maxOf(oldW, newW), maxOf(oldH, newH), hasDepth, hasStencil)
+			framebuffer!!.setScaling(scaleX, scaleY)
 		}
 		framebuffer!!.setViewport(0, 0, widthInt, heightInt)
 	}

@@ -18,6 +18,7 @@ package com.acornui.math
 
 import com.acornui.recycle.Clearable
 import com.acornui.serialization.*
+import kotlin.math.ceil
 
 /**
  * A read-only interface to [Pad]
@@ -138,6 +139,17 @@ class Pad(
 		top *= scalar
 		right *= scalar
 		bottom *= scalar
+	}
+
+	/**
+	 * Ceils each value of this padding object. E.g. `top = ceil(top)`
+	 */
+	fun ceil(): Pad {
+		top = ceil(top)
+		right = ceil(right)
+		bottom = ceil(bottom)
+		left = ceil(left)
+		return this
 	}
 
 	override fun clear() {

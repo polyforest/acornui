@@ -110,15 +110,6 @@ class RenderFilterList(
 		head.setSize(width, height)
 	}
 
-	override fun width(value: Float?) {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-	}
-
-	override fun height(value: Float?) {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-	}
-
-
 	//-------------------------------------------
 
 	override fun dispose() {

@@ -32,7 +32,7 @@ open class BoxStyle : StyleBase() {
 
 	override val type: StyleType<BoxStyle> = Companion
 
-	var linearGradient: LinearGradient? by prop<LinearGradient?>(null)
+	var linearGradient: LinearGradient? by prop(null)
 	var backgroundColor: ColorRo by prop(Color.BLACK)
 
 	var borderColors: BorderColorsRo by prop(BorderColors())

@@ -24,8 +24,10 @@ import com.acornui.core.di.Owned
 import com.acornui.gl.core.useColorTransformation
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
-import com.acornui.math.*
-import com.acornui.reflect.observableAndCall
+import com.acornui.math.ColorTransformationRo
+import com.acornui.math.Pad
+import com.acornui.math.PadRo
+import com.acornui.math.colorTransformation
 
 open class GlowFilter(owner: Owned) : RenderFilterBase(owner) {
 
@@ -33,15 +35,15 @@ open class GlowFilter(owner: Owned) : RenderFilterBase(owner) {
 
 	private val blurFilter = BlurFilter(this)
 
-	var blurX by observableAndCall(1f) {
+	var blurX by bindableAndCall(1f) {
 		blurFilter.blurX = it
 	}
 
-	var blurY by observableAndCall(1f) {
+	var blurY by bindableAndCall(1f) {
 		blurFilter.blurY = it
 	}
 
-	var quality by observableAndCall(BlurQuality.NORMAL) {
+	var quality by bindableAndCall(BlurQuality.NORMAL) {
 		blurFilter.quality = it
 	}
 
@@ -118,13 +120,3 @@ fun Owned.glowFilter(color: ColorRo, init: ComponentInit<GlowFilter> = {}): Glow
 	b.init()
 	return b
 }
-
-///**
-// * Draws the drop shadow filter for the given target using the default render context.
-// * Returns a rasterized
-// */
-//fun DropShadowFilter.renderTo(target: UiComponentRo, out: PaddedDrawable): PaddedDrawable {
-//	contents = target
-//
-//	return renderTo(out)
-//}

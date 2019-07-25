@@ -32,6 +32,7 @@ import com.acornui.gl.core.*
 import com.acornui.graphic.Color
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
+import kotlin.math.ceil
 
 open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 
@@ -45,13 +46,13 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	private val blurFramebufferB = own(resizeableFramebuffer())
 
 	private val sprite = Sprite(glState)
-	private val drawable = PaddedRenderable(sprite)
+	private val renderable = PaddedRenderable(sprite)
 
 	private val _drawPadding = Pad()
 	override val drawPadding: PadRo
 		get() {
-			val hPad = blurX * 4f * quality.passes
-			val vPad = blurY * 4f * quality.passes
+			val hPad = ceil(blurX * 4f * quality.passes)
+			val vPad = ceil(blurY * 4f * quality.passes)
 			return _drawPadding.set(top = vPad, right = hPad, bottom = vPad, left = hPad)
 		}
 
@@ -119,12 +120,12 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 		val window = inject(Window)
 		blurFramebufferB.drawable(sprite)
 		sprite.setScaling(window.scaleX, window.scaleY)
-		setDrawPadding(drawable.padding)
-		drawable.setSize(null, null)
+		setDrawPadding(renderable.padding)
+		renderable.setSize(null, null)
 	}
 
 	fun drawBlurToScreen(renderContext: RenderContextRo) {
-		drawable.render(renderContext)
+		renderable.render(renderContext)
 	}
 
 	fun drawOriginalToScreen(renderContext: RenderContextRo) {
@@ -136,7 +137,7 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	 */
 	fun drawable(out: PaddedRenderable<Sprite> = PaddedRenderable(Sprite(glState))): PaddedRenderable<Sprite> {
 		out.inner.set(sprite)
-		out.padding.set(drawable.padding)
+		out.padding.set(renderable.padding)
 		return out
 	}
 

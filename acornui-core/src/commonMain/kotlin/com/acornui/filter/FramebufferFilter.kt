@@ -27,10 +27,12 @@ import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.clearAndReset
 import com.acornui.gl.core.resizeableFramebuffer
 import com.acornui.graphic.Color
+import com.acornui.math.BoundsRo
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.signal.Signal0
 import com.acornui.signal.bind
+import kotlin.math.ceil
 
 /**
  * Creates a Framebuffer and provides utility to draw a [Renderable] object to it and then draw the frame buffer to the
@@ -44,10 +46,17 @@ class FramebufferFilter(
 
 	private val window by Window
 
+	private var _drawPadding: PadRo = Pad.EMPTY_PAD
+
 	/**
 	 * Extra padding when the contents are rendered to the frame buffer.
+	 * The values of this padding are ceiled in order to prevent rendering on a fraction of a pixel.
 	 */
-	override var drawPadding: PadRo = Pad.EMPTY_PAD
+	override var drawPadding: PadRo
+		get() = _drawPadding
+		set(value) {
+			_drawPadding = value.copy().ceil()
+		}
 
 	var clearMask = Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT
 	var clearColor = Color.CLEAR

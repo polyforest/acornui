@@ -23,7 +23,6 @@ import com.acornui.core.Renderable
 import com.acornui.core.di.Owned
 import com.acornui.core.di.OwnedImpl
 import com.acornui.gl.core.GlState
-import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.acornui.observe.Observable
 import com.acornui.reflect.observable
@@ -95,7 +94,6 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 	override val drawRegion: MinMaxRo
 		get() = _drawRegion.set(contents?.drawRegion).inflate(drawPadding)
 
-
 	/**
 	 * Configures a padding object to represent the shift needed to draw a rasterized representation of the contents
 	 * in the contents coordinate space.
@@ -106,8 +104,23 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 		padding.set(drawRegion.yMin, bounds.width - drawRegion.xMax, bounds.height - drawRegion.yMax, drawRegion.xMin)
 	}
 
-	protected fun <T> bindable(initial: T): ReadWriteProperty<Any?, T> = observable(initial) {
-		_changed.dispatch(this)
+	/**
+	 * When the property has changed, [changed] will be dispatched.
+	 */
+	protected fun <T> bindable(initial: T, inner: (T) -> Unit = {}): ReadWriteProperty<Any?, T> = observable(initial) {
+		inner(it)
+		notifyChanged()
+	}
+
+	/**
+	 * When the property has changed, [changed] will be dispatched.
+	 * Additionally, [inner] will be invoked immediately with the initial value.
+	 */
+	protected fun <T> bindableAndCall(initial: T, inner: (T) -> Unit): ReadWriteProperty<Any?, T> {
+		return observable(initial) {
+			inner(it)
+			notifyChanged()
+		}.also { inner(initial) }
 	}
 
 	/**
