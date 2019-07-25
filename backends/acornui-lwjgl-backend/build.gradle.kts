@@ -18,9 +18,6 @@ plugins {
 	id("com.acornui.plugins.kotlin-jvm")
 }
 
-val kotlinJvmTarget: String by extra
-val kotlinLanguageVersion: String by extra
-
 kotlin {
 	sourceSets {
 		named("jvmMain") {
