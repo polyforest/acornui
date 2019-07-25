@@ -26,7 +26,10 @@ import com.acornui.component.style.StyleType
 import com.acornui.core.Disposable
 import com.acornui.core.TreeWalk
 import com.acornui.core.childWalkLevelOrder
-import com.acornui.core.di.*
+import com.acornui.core.di.DKey
+import com.acornui.core.di.Scoped
+import com.acornui.core.di.inject
+import com.acornui.core.di.owns
 import com.acornui.core.isAncestorOf
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
@@ -152,6 +155,28 @@ interface Focusable : Scoped {
 	 * If true, this component will render its focus highlight as provided by the [focusableStyle].
 	 */
 	var showFocusHighlight: Boolean
+
+	/**
+	 * If set, when the focus manager is changing focus to this component, the provided focus delegate will be given
+	 * focus instead. Note that setting this will remove this component from the focus order.
+	 */
+	var focusDelegate: UiComponentRo?
+
+	/**
+	 * If set, the provided delegate will be highlighted instead of this component.
+	 * The highlighter will still be obtained from this component's [focusableStyle].
+	 * It can be used in conjunction with [focusDelegate] like so:
+	 * ```
+	 * panel {
+	 *     focusEnabled = true
+	 *
+	 *     val textInput = +textInput()
+	 *     textInput.focusHighlightDelegate = this // The focus highlight will surround the panel, not the text input.
+	 *     focusDelegate = textInput // When the panel is attempted to be given focus, the text input will be given focus instead.
+	 * }
+	 * ```
+	 */
+	var focusHighlightDelegate: UiComponentRo?
 }
 
 /**
@@ -174,7 +199,7 @@ val UiComponentRo.focusEnabledAncestry: Boolean
  */
 val UiComponentRo.firstFocusable: UiComponentRo?
 	get() {
-		if (!focusEnabledAncestry || !isRendered || !interactivityEnabled) return null
+		if (!focusEnabledAncestry || !isRendered) return null
 		if (focusEnabled) return this
 		val focusManager = inject(FocusManager)
 		return focusManager.focusables.firstOrNull2 {
@@ -188,7 +213,7 @@ val UiComponentRo.firstFocusable: UiComponentRo?
  */
 val UiComponentRo.lastFocusable: UiComponentRo?
 	get() {
-		if (!focusEnabledAncestry || !isRendered || !interactivityEnabled) return null
+		if (!focusEnabledAncestry || !isRendered) return null
 		val focusManager = inject(FocusManager)
 		return focusManager.focusables.lastOrNull2 {
 			isAncestorOf(it) && it.canFocusSelf
@@ -293,35 +318,6 @@ fun UiComponentRo.focus(highlight: Boolean = false) {
 	}
 }
 
-/**
- * When this component is given focus, the focus change is canceled and the [target] is given focus instead.
- */
-fun UiComponentRo.delegateFocus(target: UiComponentRo): Disposable {
-	val focusManager = inject(FocusManager)
-	val focusChangingHandler = { old: UiComponentRo?, new: UiComponentRo?, cancel: Cancel ->
-		if (new === this) {
-			cancel.cancel()
-			focusManager.focused(target)
-		}
-	}
-	val activatedHandler = { c: UiComponentRo ->
-		focusManager.focusedChanging.add(focusChangingHandler)
-	}
-	activated.add(activatedHandler)
-	val deactivatedHandler = { c: UiComponentRo ->
-		focusManager.focusedChanging.remove(focusChangingHandler)
-	}
-	deactivated.add(deactivatedHandler)
-	if (isActive)
-		activatedHandler.invoke(this)
-	return object : Disposable {
-		override fun dispose() {
-			activated.remove(activatedHandler)
-			deactivated.remove(deactivatedHandler)
-		}
-	}
-}
-
 class FocusableStyle : StyleBase() {
 
 	override val type = Companion
@@ -333,9 +329,9 @@ class FocusableStyle : StyleBase() {
 
 interface FocusHighlighter : Disposable {
 
-	fun unhighlight(target: UiComponent)
+	fun unhighlight(target: UiComponentRo)
 
-	fun highlight(target: UiComponent)
+	fun highlight(target: UiComponentRo)
 
 	companion object {
 		const val HIGHLIGHT_PRIORITY = 99999f

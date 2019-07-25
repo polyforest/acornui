@@ -18,7 +18,6 @@ package com.acornui.core.focus
 
 import com.acornui._assert
 import com.acornui.collection.addSorted
-import com.acornui.collection.firstOrNull2
 import com.acornui.collection.poll
 import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
@@ -120,7 +119,7 @@ class FocusManagerImpl() : FocusManager {
 	override fun invalidateFocusableOrder(value: UiComponentRo) {
 		if (!invalidFocusables.contains(value)) {
 			_focusables.remove(value)
-			if (value.isActive && value.focusEnabled)
+			if (value.includeInFocusOrder)
 				invalidFocusables.add(value)
 			else {
 				if (_focused === value) {
@@ -166,7 +165,7 @@ class FocusManagerImpl() : FocusManager {
 		while (invalidFocusables.isNotEmpty()) {
 			// Use poll instead of pop because the invalid focusables are more likely to be closer to already in order than not.
 			val focusable = invalidFocusables.poll()
-			if (!focusable.isActive || !focusable.focusEnabled) continue
+			if (!focusable.includeInFocusOrder) continue
 			if (_focusables.isEmpty()) {
 				// Trivial case
 				_focusables.add(focusable)
@@ -183,6 +182,8 @@ class FocusManagerImpl() : FocusManager {
 	private val focusStack = ArrayList<UiComponentRo?>()
 
 	override fun focused(value: UiComponentRo?) {
+		val delegate = value?.focusDelegate
+		if (delegate != null) return focused(delegate)
 		if (_focusedChanging.isDispatching || _focusedChanged.isDispatching) {
 			if (focusStack.contains(value)) {
 				throw Exception("Attempted focus overflow on element: $value")
@@ -273,5 +274,8 @@ class FocusManagerImpl() : FocusManager {
 		root.touchStart(isCapture = false).remove(::rootTouchStartHandler)
 		_root = null
 	}
+
+	private val UiComponentRo.includeInFocusOrder: Boolean
+		get() = isActive && focusEnabled && focusDelegate == null
 
 }

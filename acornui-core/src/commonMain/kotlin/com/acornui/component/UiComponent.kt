@@ -365,7 +365,8 @@ open class UiComponentImpl(
 
 	// Focusable properties
 	protected val focusManager by FocusManager
-	final override var focusEnabled: Boolean by observable(false) { _ -> invalidateFocusOrder() }
+	final override var focusEnabled by observable(false) { _ -> invalidateFocusOrder() }
+	final override var focusDelegate by observable<UiComponentRo?>(null) { _ -> invalidateFocusOrder() }
 	final override var focusOrder by observable(0f) { _ -> invalidateFocusOrder() }
 	final override var isFocusContainer by observable(false) { _ -> invalidateFocusOrderDeep() }
 	final override var focusEnabledChildren by observable(false) { _ -> invalidateFocusOrderDeep() }
@@ -443,23 +444,20 @@ open class UiComponentImpl(
 		}
 	}
 
-	/**
-	 * If set, the provided delegate will be highlighted instead of this component.
-	 * The highlighter will still be obtained from this component's [focusableStyle].
-	 */
-	var focusHighlightDelegate: UiComponent? by observable(null, ::refreshFocusHighlight.as1)
+	override var focusHighlightDelegate: UiComponentRo? by observable(null, ::refreshFocusHighlight.as1)
 
 	override var showFocusHighlight by observable(false, ::refreshFocusHighlight.as1)
 
-	private var focusTarget: UiComponent? = null
+	private var focusTarget: UiComponentRo? = null
 	private var focusHighlighter: FocusHighlighter? = null
 
 	private fun refreshFocusHighlight() {
 		validate(ValidationFlags.STYLES)
 		if (focusTarget != null)
 			focusHighlighter?.unhighlight(focusTarget!!)
-		if (showFocusHighlight) {
-			focusTarget = focusHighlightDelegate ?: this
+		val newFocusTarget = focusHighlightDelegate ?: this
+		if (newFocusTarget.showFocusHighlight) {
+			focusTarget = newFocusTarget
 			focusHighlighter = focusableStyle.highlighter
 			focusHighlighter?.highlight(focusTarget!!)
 		} else {

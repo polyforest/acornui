@@ -120,11 +120,11 @@ class SimpleFocusHighlighter(
 			highlightFocused = false
 	)
 
-	override fun unhighlight(target: UiComponent) {
+	override fun unhighlight(target: UiComponentRo) {
 		popUpManager.removePopUp(popUpInfo)
 	}
 
-	override fun highlight(target: UiComponent) {
+	override fun highlight(target: UiComponentRo) {
 		highlight.highlighted = target
 		popUpManager.addPopUp(popUpInfo)
 	}

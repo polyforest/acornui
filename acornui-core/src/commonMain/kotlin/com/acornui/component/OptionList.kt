@@ -26,6 +26,7 @@ import com.acornui.component.layout.algorithm.virtual.VirtualVerticalLayoutStyle
 import com.acornui.component.layout.algorithm.virtual.vDataScroller
 import com.acornui.component.scroll.ScrollModel
 import com.acornui.component.style.*
+import com.acornui.component.text.TextInput
 import com.acornui.component.text.selectable
 import com.acornui.component.text.textInput
 import com.acornui.core.Disposable
@@ -35,7 +36,6 @@ import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.di.own
 import com.acornui.core.focus.blurred
-import com.acornui.core.focus.delegateFocus
 import com.acornui.core.focus.focus
 import com.acornui.core.focus.focusSelf
 import com.acornui.core.input.Ascii
@@ -98,11 +98,11 @@ open class OptionList<E : Any>(
 	 * By default this will search for a case insensitive match to the item's string result from the [formatter].
 	 */
 	var textToItem = { text: String ->
-		val textLower = text.toLowerCase()
 		data.firstOrNull {
-			if (it != null)
-				formatter.format(it).toLowerCase() == textLower
-			else false
+			if (it != null) {
+				val itStr = formatter.format(it)
+				itStr.equals(text, ignoreCase = true)
+			} else false
 		}
 	}
 
@@ -122,15 +122,22 @@ open class OptionList<E : Any>(
 	 */
 	var openOnInput = true
 
-	private val textInput = textInput {
+	private val _isOpenChanged = own(Signal0())
+
+	/**
+	 * Dispatched when the [isOpen] property has changed.
+	 */
+	val isOpenChanged = _isOpenChanged.asRo()
+
+	private val textInput: TextInput = textInput {
 		input.add {
 			dataView.dirty()  // Most data views will change based on the text input.
 			if (openOnInput) open()
 			scrollModel.value = 0f // Scroll to the top.
+			dataScroller.highlighted.selectedItem = null
 			setSelectedItemFromText()
 			_input.dispatch()
 		}
-		focusHighlightDelegate = this@OptionList
 	}
 
 	private var handCursor: Disposable? = null
@@ -160,11 +167,11 @@ open class OptionList<E : Any>(
 
 	private val dataScroller = vDataScroller<E> {
 		focusEnabled = true
-		keyDown().add(this@OptionList::keyDownHandler)
+		keyDown().add(::keyDownHandler)
 		selection.changed.add { _, newSelection ->
 			val value = newSelection.firstOrNull()
 			textInput.text = if (value == null) "" else formatter.format(value)
-			this@OptionList.focus()
+			focus()
 			close()
 			_changed.dispatch()
 		}
@@ -262,7 +269,6 @@ open class OptionList<E : Any>(
 	fun data(value: ObservableList<E?>?) {
 		unbindData()
 		dataScroller.data(value)
-		setSelectedItemFromText()
 		dataBinding = value?.bind {
 			setSelectedItemFromText()
 		}
@@ -284,7 +290,8 @@ open class OptionList<E : Any>(
 	init {
 		isFocusContainer = true
 		focusEnabled = true
-		delegateFocus(textInput)
+		focusDelegate = textInput
+		textInput.focusHighlightDelegate = this
 
 		styleTags.add(OptionList)
 		maxItems = 10
@@ -355,7 +362,7 @@ open class OptionList<E : Any>(
 			}
 			Ascii.DOWN -> {
 				event.handled = true
-				if (!_isOpen)
+				if (!isOpen)
 					open()
 				highlightNext(1)
 			}
@@ -384,7 +391,7 @@ open class OptionList<E : Any>(
 
 	private fun highlightNext(delta: Int) {
 		if (delta <= 0) return
-		if (!_isOpen) return
+		if (!isOpen) return
 		val highlighted = dataScroller.highlighted.selectedItem
 		val selectedIndex = if (highlighted == null) -1 else data.indexOf(highlighted)
 		val nextIndex = minOf(data.lastIndex, selectedIndex + delta)
@@ -398,7 +405,7 @@ open class OptionList<E : Any>(
 
 	private fun highlightPrevious(delta: Int) {
 		if (delta <= 0) return
-		if (!_isOpen) return
+		if (!isOpen) return
 		val highlighted = dataScroller.highlighted.selectedItem
 		val selectedIndex = if (highlighted == null) data.size else data.indexOf(highlighted)
 		val previousIndex = maxOf(0, selectedIndex - delta)
@@ -411,7 +418,7 @@ open class OptionList<E : Any>(
 	}
 
 	private fun highlightLast() {
-		if (!_isOpen) return
+		if (!isOpen) return
 		val lastIndexNotNull = data.indexOfLast2 { it != null }
 		if (lastIndexNotNull != -1) {
 			dataScroller.highlighted.selectedItem = data[lastIndexNotNull]
@@ -421,7 +428,7 @@ open class OptionList<E : Any>(
 	}
 
 	private fun highlightFirst() {
-		if (!_isOpen) return
+		if (!isOpen) return
 		val firstIndexNotNull = data.indexOfFirst2 { it != null }
 		if (firstIndexNotNull != -1) {
 			dataScroller.highlighted.selectedItem = data[firstIndexNotNull]
@@ -453,29 +460,32 @@ open class OptionList<E : Any>(
 		return i
 	}
 
-	private var _isOpen = false
-
-	val isOpen: Boolean
-		get() = _isOpen
+	var isOpen: Boolean = false
+		set(value) {
+			if (field != value) {
+				field = value
+				if (value) {
+					dataScroller.highlighted.clear()
+					listLift.priority = inject(PopUpManager).currentPopUps.lastOrNull()?.priority ?: 0f
+					addChild(listLift)
+					textInput.focusSelf()
+				} else {
+					removeChild(listLift)
+				}
+				_isOpenChanged.dispatch()
+			}
+		}
 
 	fun open() {
-		if (_isOpen) return
-		_isOpen = true
-		dataScroller.highlighted.clear()
-		listLift.priority = inject(PopUpManager).currentPopUps.lastOrNull()?.priority ?: 0f
-		addChild(listLift)
-		textInput.focusSelf()
+		isOpen = true
 	}
 
 	fun close() {
-		if (!_isOpen) return
-		_isOpen = false
-		removeChild(listLift)
+		isOpen = false
 	}
 
 	fun toggleOpen() {
-		if (_isOpen) close()
-		else open()
+		isOpen = !isOpen
 	}
 
 	var text: String
@@ -491,15 +501,15 @@ open class OptionList<E : Any>(
 		val pad = style.padding
 		val w = pad.reduceWidth(explicitWidth)
 		val h = pad.reduceHeight(explicitHeight)
-		val downArrow = this.downArrow!!
+		val downArrow = downArrow!!
 		downArrow.cursor(StandardCursors.HAND)
-		textInput.setSize(if (w == null) null else w - style.gap - downArrow.width, h)
+		textInput.setSize(if (w == null) null else w - style.hGap - downArrow.width, h)
 		textInput.setPosition(pad.left, pad.top)
-		downArrow.moveTo(pad.left + textInput.width + style.gap, pad.top + (textInput.height - downArrow.height) * 0.5f)
-		out.set(pad.expandWidth2(textInput.width + style.gap + downArrow.width), pad.expandHeight2(maxOf(textInput.height, downArrow.height)), textInput.baselineY)
+		downArrow.moveTo(pad.left + textInput.width + style.hGap, pad.top + (textInput.height - downArrow.height) * 0.5f)
+		out.set(pad.expandWidth2(textInput.width + style.hGap + downArrow.width), pad.expandHeight2(maxOf(textInput.height, downArrow.height)), textInput.baselineY)
 		background?.setSize(out.width, out.height)
 		listLift.setSize(listWidth ?: out.width, listHeight)
-		listLift.moveTo(0f, out.height)
+		listLift.moveTo(0f, out.height + style.vGap)
 	}
 
 	override fun clear() {
@@ -537,7 +547,12 @@ class OptionListStyle : StyleBase() {
 	/**
 	 * The gap between the down arrow and the text field.
 	 */
-	var gap by prop(2f)
+	var hGap by prop(2f)
+
+	/**
+	 * The gap between the option list background and the data scroller.
+	 */
+	var vGap by prop(0f)
 
 	companion object : StyleType<OptionListStyle>
 }

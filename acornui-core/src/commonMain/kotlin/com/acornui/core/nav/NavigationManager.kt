@@ -400,13 +400,11 @@ fun ElementContainer<UiComponent>.navAddElement(nav: NavBinding, path: String?, 
 			showAssetLoadingBar {
 				if (!child.isDisposed) {
 					c.addElement(child)
-					child.focus()
 				}
 			}
 		} else {
 			if (!child.isDisposed) {
 				c.addElement(child)
-				child.focus()
 			}
 		}
 	}

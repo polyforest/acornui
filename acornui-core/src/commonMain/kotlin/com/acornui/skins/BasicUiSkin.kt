@@ -42,6 +42,7 @@ import com.acornui.core.input.interaction.ContextMenuStyle
 import com.acornui.core.input.interaction.ContextMenuView
 import com.acornui.core.input.interaction.enableDownRepeat
 import com.acornui.core.io.file.Files
+import com.acornui.filter.FilteredContainer
 import com.acornui.filter.dropShadowFilter
 import com.acornui.filter.filtered
 import com.acornui.graphic.Color
@@ -557,7 +558,7 @@ open class BasicUiSkin(
 			padding = pad
 			background = {
 				filtered {
-					+dropShadowFilter()
+					addShadowFilters()
 					+rect {
 						style.apply {
 							backgroundColor = theme.panelBgColor
@@ -716,7 +717,7 @@ open class BasicUiSkin(
 		val calendarPanelStyle = PanelStyle().apply {
 			background = {
 				filtered {
-					+dropShadowFilter()
+					addShadowFilters()
 					+rect {
 						style.backgroundColor = theme.panelBgColor
 						style.borderColors = BorderColors(theme.stroke)
@@ -775,7 +776,7 @@ open class BasicUiSkin(
 		val tooltipStyle = PanelStyle().apply {
 			background = {
 				filtered {
-					+dropShadowFilter()
+					addShadowFilters()
 					+rect {
 						style.backgroundColor = theme.panelBgColor
 						style.borderColors = BorderColors(theme.stroke)
@@ -815,5 +816,12 @@ open class BasicUiSkin(
 			horizontalGap = 10f
 		}
 		target.addStyleRule(formStyle, FormContainer)
+	}
+
+	/**
+	 * Optionally adds shadow filters to drop-down and tool tip overlays.
+	 */
+	protected open fun FilteredContainer.addShadowFilters() {
+		+dropShadowFilter()
 	}
 }
