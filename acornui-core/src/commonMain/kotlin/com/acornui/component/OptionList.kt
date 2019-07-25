@@ -20,7 +20,6 @@ import com.acornui.collection.*
 import com.acornui.component.layout.DataScrollerStyle
 import com.acornui.component.layout.ListItemRenderer
 import com.acornui.component.layout.ListRenderer
-import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.layout.algorithm.VerticalLayoutData
 import com.acornui.component.layout.algorithm.virtual.ItemRendererOwner
 import com.acornui.component.layout.algorithm.virtual.VirtualVerticalLayoutStyle
@@ -35,9 +34,10 @@ import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.di.own
-import com.acornui.core.di.owns
-import com.acornui.core.focus.focusSelf
+import com.acornui.core.focus.blurred
+import com.acornui.core.focus.delegateFocus
 import com.acornui.core.focus.focus
+import com.acornui.core.focus.focusSelf
 import com.acornui.core.input.Ascii
 import com.acornui.core.input.interaction.KeyInteractionRo
 import com.acornui.core.input.interaction.click
@@ -52,9 +52,6 @@ import com.acornui.recycle.Clearable
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal0
 import com.acornui.signal.bind
-
-
-// TODO: open inline mode.
 
 open class OptionList<E : Any>(
 		owner: Owned
@@ -145,7 +142,7 @@ open class OptionList<E : Any>(
 		textInput.editable = it
 		textInput.selectable = it
 		handCursor?.dispose()
-		if (it) handCursor = cursor(StandardCursors.HAND)
+		if (!it) handCursor = cursor(StandardCursors.HAND)
 	}
 
 	/**
@@ -286,7 +283,8 @@ open class OptionList<E : Any>(
 
 	init {
 		isFocusContainer = true
-		cursor(StandardCursors.HAND)
+		focusEnabled = true
+		delegateFocus(textInput)
 
 		styleTags.add(OptionList)
 		maxItems = 10
@@ -321,11 +319,7 @@ open class OptionList<E : Any>(
 			}
 		}
 
-		focusManager.focusedChanged.add(::focusChangedHandler)
-	}
-
-	private fun focusChangedHandler(old: UiComponentRo?, new: UiComponentRo?) {
-		if (owns(old) && !owns(new)) {
+		blurred().add {
 			close()
 			_changed.dispatch()
 		}
@@ -514,7 +508,6 @@ open class OptionList<E : Any>(
 
 	override fun dispose() {
 		unbindData()
-		focusManager.focusedChanged.remove(::focusChangedHandler)
 		close()
 		super.dispose()
 	}

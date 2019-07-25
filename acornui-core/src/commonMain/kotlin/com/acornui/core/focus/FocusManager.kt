@@ -293,6 +293,35 @@ fun UiComponentRo.focus(highlight: Boolean = false) {
 	}
 }
 
+/**
+ * When this component is given focus, the focus change is canceled and the [target] is given focus instead.
+ */
+fun UiComponentRo.delegateFocus(target: UiComponentRo): Disposable {
+	val focusManager = inject(FocusManager)
+	val focusChangingHandler = { old: UiComponentRo?, new: UiComponentRo?, cancel: Cancel ->
+		if (new === this) {
+			cancel.cancel()
+			focusManager.focused(target)
+		}
+	}
+	val activatedHandler = { c: UiComponentRo ->
+		focusManager.focusedChanging.add(focusChangingHandler)
+	}
+	activated.add(activatedHandler)
+	val deactivatedHandler = { c: UiComponentRo ->
+		focusManager.focusedChanging.remove(focusChangingHandler)
+	}
+	deactivated.add(deactivatedHandler)
+	if (isActive)
+		activatedHandler.invoke(this)
+	return object : Disposable {
+		override fun dispose() {
+			activated.remove(activatedHandler)
+			deactivated.remove(deactivatedHandler)
+		}
+	}
+}
+
 class FocusableStyle : StyleBase() {
 
 	override val type = Companion
