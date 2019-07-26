@@ -25,3 +25,6 @@ steps:
     - master
     event:
     - push
+    status:
+      - success
+      - failure
