@@ -6,3 +6,22 @@ steps:
   image: gradle:jdk11
   commands:
   - gradle build --stacktrace
+- name: upload_reports
+  image: cschlosser/drone-ftps
+  environment:
+    FTP_USERNAME:
+      from_secret: username
+    FTP_PASSWORD:
+      from_secret: password
+    PLUGIN_HOSTNAME: bandbox.dreamhost.com:22
+    PLUGIN_DEST_DIR: testreports.acornui.com/
+
+    PLUGIN_SECURE: true
+    PLUGIN_VERIFY: false
+    PLUGIN_EXCLUDE: ^\.git/$
+    PLUGIN_INCLUDE: build/reports
+  when:
+    branch:
+    - master
+    event:
+    - push
