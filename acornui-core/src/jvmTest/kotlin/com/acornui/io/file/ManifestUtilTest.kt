@@ -1,11 +1,13 @@
 package com.acornui.io.file
 
+import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
 
 class ManifestUtilTest {
 
+	@Ignore("KT-24463")
 	@Test
 	fun createManifest() {
 		val manifest = ManifestUtil.createManifest(File("src/jvmTest/resources"))

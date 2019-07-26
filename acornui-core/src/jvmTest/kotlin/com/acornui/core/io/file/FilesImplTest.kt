@@ -1,6 +1,7 @@
 package com.acornui.core.io.file
 
 import com.acornui.io.file.ManifestUtil
+import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -8,6 +9,7 @@ import kotlin.test.assertNotNull
 
 class FilesImplTest {
 
+	@Ignore("KT-24463")
 	@Test
 	fun getDir() {
 		val manifest = ManifestUtil.createManifest(File("src/jvmTest/resources"))
