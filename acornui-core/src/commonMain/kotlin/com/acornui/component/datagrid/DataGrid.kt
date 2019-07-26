@@ -826,7 +826,6 @@ class DataGrid<RowData>(
 
 	private fun updateColumnWidths() {
 		var availableW = style.borderThicknesses.reduceWidth(explicitWidth)
-		println("Update column widths ${explicitWidth} $availableW")
 		val vScrollBarW = if (vScrollPolicy == ScrollPolicy.OFF) 0f else vScrollBar.minWidth ?: 0f
 		if (availableW != null) availableW -= vScrollBarW
 
