@@ -5,5 +5,4 @@ steps:
 - name: test
   image: gradle:jdk11
   commands:
-  - gradle assemble
-  - gradle check
+  - gradle build --stacktrace
