@@ -2,17 +2,17 @@ kind: pipeline
 name: default
 
 steps:
-- name: test
-  image: gradle:jdk11
-  commands:
-  - gradle build --stacktrace
+#- name: test
+#  image: gradle:jdk11
+#  commands:
+#  - gradle build --stacktrace
 - name: upload_reports
   image: cschlosser/drone-ftps
   environment:
     FTP_USERNAME:
-      from_secret: username
+      from_secret: FTP_USERNAME
     FTP_PASSWORD:
-      from_secret: password
+      from_secret: FTP_PASSWORD
     PLUGIN_HOSTNAME: bandbox.dreamhost.com:22
     PLUGIN_DEST_DIR: testreports.acornui.com/
 
