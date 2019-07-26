@@ -18,8 +18,8 @@ steps:
 
     PLUGIN_SECURE: true
     PLUGIN_VERIFY: false
-    PLUGIN_EXCLUDE: ^\.git/$
-    PLUGIN_INCLUDE: build/reports
+#    PLUGIN_EXCLUDE: ^\.git/$
+#    PLUGIN_INCLUDE: build/reports
   when:
     branch:
     - master
