@@ -83,10 +83,12 @@ allprojects {
 		}
 
 		tasks.register<Delete>("cleanSnapshots") {
-			logger.lifecycle("Deleting old snapshots ${project.name} ${project.version}")
-			delete(fileTree(acornUiGradlePluginRepository!!).matching {
-				include("**/com/acornui/${project.name}-*/${project.version}/**")
-			})
+			doLast {
+				logger.lifecycle("Deleting old snapshots ${project.name} ${project.version}")
+				delete(fileTree(acornUiGradlePluginRepository!!).matching {
+					include("**/com/acornui/${project.name}-*/${project.version}/**")
+				})
+			}
 		}
 
 		tasks.publish.configure {
