@@ -15,7 +15,7 @@
  */
 
 val kotlinVersion: String by extra
-val acornPluginVersion: String by extra
+val acornConfigPluginVersion: String by extra
 
 pluginManagement {
     repositories {
@@ -30,7 +30,7 @@ pluginManagement {
                 requested.id.namespace == "org.jetbrains.kotlin" ->
                     useVersion(kotlinVersion)
                 requested.id.namespace == "com.acornui.plugins" ->
-                    useVersion(acornPluginVersion)
+                    useVersion(acornConfigPluginVersion)
             }
         }
     }
