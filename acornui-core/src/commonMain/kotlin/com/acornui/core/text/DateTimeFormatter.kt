@@ -524,6 +524,7 @@ fun getMonths(longFormat: Boolean, locales: List<Locale>? = null): List<String> 
 	}
 	for (i in 0..11) {
 		d.monthIndex = i
+		d.dayOfMonth = 1
 		list.add(formatter.format(d))
 	}
 	monthsOfYearCache[cacheKey] = list
