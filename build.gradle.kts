@@ -113,7 +113,7 @@ tasks.register("publishReports") {
 	}
 }
 
-fun Project.jschSftp(host: String, inner: Project.(channel: ChannelSftp)->Unit) {
+fun jschSftp(host: String, inner: (channel: ChannelSftp)->Unit) {
 	val jsch = JSch()
 	val ftpUsername: String = System.getenv("BANDBOX_FTP_USERNAME")
 	val ftpPassword: String = System.getenv("BANDBOX_FTP_PASSWORD")
