@@ -6,15 +6,20 @@ steps:
   image: gradle:jdk11
   commands:
   - gradle build --stacktrace
-#- name: upload_reports
-#  image: gradle:jdk11
-#  commands:
-#    - gradle publishReports --stacktrace
-#  when:
-#    branch:
-#    - master
-#    event:
-#    - push
-#    status:
-#      - success
-#      - failure
+- name: upload_reports
+  image: gradle:jdk11
+  commands:
+    - gradle publishReports --stacktrace
+  environment:
+    BANDBOX_FTP_USERNAME:
+      from_secret: BANDBOX_FTP_USERNAME
+    BANDBOX_FTP_PASSWORD:
+      from_secret: BANDBOX_FTP_PASSWORD
+  when:
+    branch:
+    - master
+    event:
+    - push
+    status:
+      - success
+      - failure
