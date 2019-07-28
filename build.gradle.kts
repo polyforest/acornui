@@ -1,6 +1,3 @@
-import com.acornui.build.plugins.utils.jschBandbox
-import com.acornui.build.plugins.utils.uploadDir
-import com.acornui.build.plugins.utils.useTmpDirThenSwap
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
@@ -78,39 +75,7 @@ allprojects {
 	}
 }
 
-
-tasks.register("uploadReports") {
-	group = "publishing"
-	doLast {
-		jschBandbox(logger) { channel ->
-			channel.useTmpDirThenSwap("testreports.acornui.com") { tmpDir ->
-				subprojects.forEach { subProject ->
-					val reports = subProject.buildDir.resolve("reports")
-					if (reports.exists()) {
-						channel.uploadDir(reports, "$tmpDir/${subProject.name}")
-						logger.lifecycle("Published unit test reports to http://testreports.acornui.com/${subProject.name}/tests/jvmTest/")
-					}
-				}
-			}
-		}
-	}
-}
-
 val cleanArtifacts = tasks.register<Delete>("cleanArtifacts") {
 	group = "publishing"
 	delete(rootProject.buildDir.resolve("artifacts"))
 }
-
-//tasks.register("uploadArtifacts") {
-//	dependsOn("publish")
-//	group = "publishing"
-//	doLast {
-//		val artifactsDir = rootProject.buildDir.resolve("artifacts")
-//		val remoteDir = "artifacts.acornui.com/mvn"
-//		logger.lifecycle("Uploading artifacts ${artifactsDir.path} to $remoteDir")
-//
-//		jschBandbox(logger) { channel ->
-//			channel.uploadDir(artifactsDir, remoteDir)
-//		}
-//	}
-//}

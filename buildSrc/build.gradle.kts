@@ -30,7 +30,6 @@ kotlinDslPluginOptions {
 val kotlinVersion: String by extra
 dependencies {
     implementation(kotlin("gradle-plugin", version = kotlinVersion))
-    implementation("com.jcraft:jsch:0.1.55")
 }
 
 gradlePlugin {
