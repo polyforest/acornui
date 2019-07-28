@@ -23,7 +23,7 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         project.pluginManager.apply("org.gradle.idea")
-        project.pluginManager.apply("com.acornui.build.plugins.kotlin-mpp")
+        project.pluginManager.apply("com.acornui.kotlin-mpp")
 
         project.extensions.create<AcornUiApplicationExtension>("acornui").apply {
             appResources = project.buildDir.resolve("processedResources")
