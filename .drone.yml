@@ -6,6 +6,11 @@ steps:
   image: gradle:jdk11
   commands:
   - gradle build uploadArtifacts --stacktrace
+  environment:
+    BANDBOX_FTP_USERNAME:
+      from_secret: BANDBOX_FTP_USERNAME
+    BANDBOX_FTP_PASSWORD:
+      from_secret: BANDBOX_FTP_PASSWORD
 - name: upload_reports
   image: gradle:jdk11
   commands:
