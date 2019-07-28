@@ -15,22 +15,13 @@
  */
 
 val kotlinVersion: String by extra
-val acornConfigPluginVersion: String by extra
 
 pluginManagement {
-    repositories {
-        maven {
-            url = uri("https://github.com/polyforest/acornui-gradle-plugin/raw/repository")
-        }
-        gradlePluginPortal()
-    }
     resolutionStrategy {
         eachPlugin {
             when {
                 requested.id.namespace == "org.jetbrains.kotlin" ->
                     useVersion(kotlinVersion)
-                requested.id.namespace == "com.acornui.plugins" ->
-                    useVersion(acornConfigPluginVersion)
             }
         }
     }
@@ -38,6 +29,7 @@ pluginManagement {
 rootProject.name = "acornui"
 
 include("acornui-utils", "acornui-core", "acornui-game", "acornui-spine", "backends:acornui-lwjgl-backend", "backends:acornui-webgl-backend", "tools:acornui-texture-packer", "acornui-test-utils")
+include("build-libs:acornui-app-plugins")
 include("skins:basic")
 
 enableFeaturePreview("GRADLE_METADATA")

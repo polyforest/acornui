@@ -15,7 +15,7 @@
  */
 
 plugins {
-    id("com.acornui.plugins.kotlin-js")
+    id("com.acornui.kotlin-js")
 }
 
 kotlin {

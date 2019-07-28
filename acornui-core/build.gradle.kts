@@ -15,7 +15,7 @@
  */
 
 plugins {
-	id("com.acornui.plugins.kotlin-mpp")
+	id("com.acornui.kotlin-mpp")
 }
 
 val mockitoVersion: String by extra

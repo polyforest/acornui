@@ -1,6 +1,6 @@
-import com.jcraft.jsch.ChannelSftp
-import com.jcraft.jsch.JSch
-import com.jcraft.jsch.SftpATTRS
+import com.acornui.build.plugins.utils.jschBandbox
+import com.acornui.build.plugins.utils.uploadDir
+import com.acornui.build.plugins.utils.useTmpDirThenSwap
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
@@ -30,13 +30,6 @@ plugins {
 	idea
 }
 
-buildscript {
-	dependencies {
-		"classpath"(group = "com.jcraft", name = "jsch", version = "0.1.55")
-	}
-}
-
-
 subprojects {
 	apply {
 		plugin("org.gradle.maven-publish")
@@ -58,11 +51,14 @@ allprojects {
 		}
 	}
 
+	// Inter-project dependencies are not expressed as project(id) because at the time of writing, IDEA cannot handle
+	// multi-platform composite builds.  (KT-30285) So as a workaround, projects needing to work alongside acorn code
+	// will include acorn libraries individually via include() and not includeBuild().
 	configurations.all {
 		resolutionStrategy.dependencySubstitution.all {
 			requested.let { r ->
-				if (r is ModuleComponentSelector && r.group == group) {
-					arrayOf("", "tools:", "backends:").firstNotNullResult {
+				if (r is ModuleComponentSelector && r.group.startsWith("com.acornui")) {
+					arrayOf("", "tools:", "backends:", "build-libs:").firstNotNullResult {
 						findProject(":$it${r.module}")
 					}?.let { targetProject ->
 						useTarget(targetProject)
@@ -72,121 +68,53 @@ allprojects {
 		}
 	}
 
-	val acornUiGradlePluginRepository: String? by extra
-	if (acornUiGradlePluginRepository != null) {
-		publishing {
-			repositories {
-				maven {
-					url = uri(acornUiGradlePluginRepository!!)
-				}
+	publishing {
+		repositories {
+			maven {
+				url = uri(project.buildDir.resolve("artifacts"))
 			}
-		}
-
-		tasks.register<Delete>("cleanSnapshots") {
-			doLast {
-				logger.lifecycle("Deleting old snapshots ${project.name} ${project.version}")
-				delete(fileTree(acornUiGradlePluginRepository!!).matching {
-					include("**/com/acornui/${project.name}-*/${project.version}/**")
-				})
-			}
-		}
-
-		tasks.publish.configure {
-			dependsOn("cleanSnapshots")
 		}
 	}
+
+	val cleanArtifacts = tasks.register<Delete>("cleanArtifacts") {
+		delete(project.buildDir.resolve("artifacts"))
+	}
+
+	tasks.publish.configure {
+		dependsOn(cleanArtifacts)
+	}
+
+	tasks.register("uploadArtifacts") {
+		dependsOn("publish")
+		group = "publishing"
+		doLast {
+			val artifactsDir = project.buildDir.resolve("artifacts")
+			val subDir = if (project.group.toString().endsWith("com.acornui.build.plugins")) "mvn/gradle-plugins" else "mvn/libraries"
+			val remoteDir = "artifacts.acornui.com/$subDir"
+			logger.lifecycle("Uploading artifacts ${artifactsDir.path} to $remoteDir")
+
+			jschBandbox(logger) { channel ->
+				channel.uploadDir(artifactsDir, remoteDir)
+			}
+		}
+	}
+
 }
 
 
-tasks.register("publishReports") {
+tasks.register("uploadReports") {
 	group = "publishing"
 	doLast {
-		jschSftp("bandbox.dreamhost.com") { channel ->
-			val reportDir = "testreports.acornui.com"
-			channel.deleteRecursively(reportDir)
-			subprojects.forEach { subProject ->
-				val reports = subProject.buildDir.resolve("reports")
-				if (reports.exists()) {
-					channel.uploadDir(reports, "$reportDir/${subProject.name}")
-					logger.lifecycle("Published unit test reports to http://testreports.acornui.com/${subProject.name}/tests/jvmTest/")
+		jschBandbox(logger) { channel ->
+			channel.useTmpDirThenSwap("testreports.acornui.com") { tmpDir ->
+				subprojects.forEach { subProject ->
+					val reports = subProject.buildDir.resolve("reports")
+					if (reports.exists()) {
+						channel.uploadDir(reports, "$tmpDir/${subProject.name}")
+						logger.lifecycle("Published unit test reports to http://testreports.acornui.com/${subProject.name}/tests/jvmTest/")
+					}
 				}
 			}
 		}
 	}
-}
-
-fun jschSftp(host: String, inner: (channel: ChannelSftp)->Unit) {
-	val jsch = JSch()
-	val ftpUsername: String = System.getenv("BANDBOX_FTP_USERNAME")
-	val ftpPassword: String = System.getenv("BANDBOX_FTP_PASSWORD")
-
-	val session = jsch.getSession(ftpUsername, host)
-	session.setConfig("StrictHostKeyChecking", "no")
-	session.setPassword(ftpPassword)
-	session.connect()
-	val channel = session.openChannel("sftp") as ChannelSftp
-	channel.connect()
-	try {
-		inner(channel)
-	} finally {
-		channel.disconnect()
-		session.disconnect()
-	}
-}
-
-fun ChannelSftp.deleteRecursively(remoteDir: String) {
-	if (isDir(remoteDir)) {
-		ls(remoteDir).forEach { entry ->
-			entry as ChannelSftp.LsEntry
-			if (!(entry.filename == "." || entry.filename == "..")) {
-				val file = "$remoteDir/${entry.filename}"
-				if (entry.attrs.isDir) {
-					deleteRecursively(file)
-				} else {
-					rm(file)
-				}
-			}
-		}
-		rmdir(remoteDir)
-	}
-}
-
-fun ChannelSftp.mkdirs(destination: String) {
-	var path = ""
-	destination.split("/").forEach {
-		path += it
-		if (!exists(path)) {
-			mkdir(path)
-		}
-		path += "/"
-	}
-}
-
-fun ChannelSftp.uploadDir(file: File, destination: String) {
-	if (!file.exists()) return
-	val children = file.listFiles()!!
-	mkdirs(destination)
-	children.forEach {
-		val childDestination = "$destination/${it.name}"
-		if (it.isDirectory) {
-			uploadDir(it, childDestination)
-		} else {
-			mkdirs(destination)
-			put(it.path, childDestination)
-		}
-	}
-}
-
-fun ChannelSftp.exists(dir: String): Boolean {
-	return statOrNull(dir) != null
-}
-
-fun ChannelSftp.isDir(dir: String): Boolean {
-	return statOrNull(dir)?.isDir == true
-}
-
-fun ChannelSftp.statOrNull(dir: String): SftpATTRS? {
-	return try {
-		stat(dir)
-	} catch (e: Throwable) { null }
 }

@@ -1,6 +1,5 @@
-[![Build Status](https://cloud.drone.io/api/badges/polyforest/acornui/status.svg)](https://cloud.drone.io/polyforest/acornui)
-
 # ![Acorn UI](https://github.com/polyforest/acornui/wiki/images/acornUiLogoText100.png "Acorn UI")
+[![Build Status](https://cloud.drone.io/api/badges/polyforest/acornui/status.svg)](https://cloud.drone.io/polyforest/acornui)
 
 Acorn UI is a Kotlin framework for developing rich, cross-platform applications and games.
 
