@@ -20,7 +20,7 @@ steps:
       strip_components: 2
       target: ~/testreports.acornui.com
       source:
-        - /build/reports
+        - */build/reports
   - name: upload-artifacts
     image: appleboy/drone-scp
     settings:
