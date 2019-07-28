@@ -6,6 +6,20 @@ steps:
     image: gradle:jdk11
     commands:
       - gradle build publish --stacktrace
+  - name: upload-reports
+      image: appleboy/drone-scp
+      settings:
+        host:
+          - bandbox.dreamhost.com
+        username:
+          from_secret: BANDBOX_FTP_USERNAME
+        password:
+          from_secret: BANDBOX_FTP_PASSWORD
+        port: 22
+        command_timeout: 4m
+        target: ~/testreports.acornui.com
+        source:
+          - /*/build/reports
   - name: upload-artifacts
     image: appleboy/drone-scp
     settings:
@@ -18,6 +32,6 @@ steps:
       port: 22
       command_timeout: 4m
       strip_components: 2
-      target: ~/artifacts.acornui.com
+      target: ~/artifacts.acornui.com/mvn
       source:
-        - build/artifacts/mvn
+        - build/artifacts
