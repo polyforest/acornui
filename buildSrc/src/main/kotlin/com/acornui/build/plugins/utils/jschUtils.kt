@@ -8,11 +8,14 @@ import org.gradle.api.logging.Logger
 import java.io.File
 import com.jcraft.jsch.Logger as JschLogger
 
+private lateinit var logger: Logger
+
 /**
  * Creates an SFTP connection to the Acorn UI Artifact server to publish artifacts.
  */
 fun jschBandbox(logger: Logger, inner: (channel: ChannelSftp) -> Unit) {
-	JSch.setLogger(GradleJschLoggingAdapter(logger))
+	com.acornui.build.plugins.utils.logger = logger
+	JSch.setLogger(GradleJschLoggingAdapter(com.acornui.build.plugins.utils.logger))
 	val jsch = JSch()
 	val ftpUsername: String = System.getenv("BANDBOX_FTP_USERNAME")
 	val ftpPassword: String = System.getenv("BANDBOX_FTP_PASSWORD")
@@ -23,11 +26,13 @@ fun jschBandbox(logger: Logger, inner: (channel: ChannelSftp) -> Unit) {
 	session.connect()
 	val channel = session.openChannel("sftp") as ChannelSftp
 	channel.connect()
+	logger.lifecycle("SFTP connected")
 	try {
 		inner(channel)
 	} finally {
 		channel.disconnect()
 		session.disconnect()
+		logger.lifecycle("SFTP disconnected")
 	}
 }
 
@@ -40,10 +45,12 @@ fun ChannelSftp.deleteRecursively(remoteDir: String) {
 				if (entry.attrs.isDir) {
 					deleteRecursively(file)
 				} else {
+					logger.lifecycle("rm $file")
 					rm(file)
 				}
 			}
 		}
+		logger.lifecycle("rmdir $remoteDir")
 		rmdir(remoteDir)
 	}
 }
@@ -59,6 +66,7 @@ fun ChannelSftp.useTmpDirThenSwap(remoteDir: String, inner: (dir: String) -> Uni
 	try {
 		inner(remoteDirTmp)
 		deleteRecursively(remoteDir)
+		logger.lifecycle("rename $remoteDirTmp $remoteDir")
 		rename(remoteDirTmp, remoteDir)
 	} catch (e: Throwable) {
 		deleteRecursively(remoteDirTmp)
@@ -74,6 +82,7 @@ fun ChannelSftp.mkdirs(destination: String) {
 	destination.split("/").forEach {
 		path += it
 		if (!exists(path)) {
+			logger.lifecycle("mkdir $path")
 			mkdir(path)
 		}
 		path += "/"
@@ -96,15 +105,20 @@ fun ChannelSftp.uploadDir(file: File, destination: String) {
 	try {
 		uploadDirTempFiles(file, destination, replacements)
 		for ((childDestinationTmp, childDestination) in replacements) {
-			if (exists(childDestination))
+			if (exists(childDestination)) {
+				logger.lifecycle("rm  $childDestination")
 				rm(childDestination)
+			}
+			logger.lifecycle("rename  $childDestinationTmp $childDestination")
 			rename(childDestinationTmp, childDestination)
 		}
 	} catch (e: Throwable) {
 		// There was an error with the upload. Delete all temporary files.
 		for ((childDestinationTmp, childDestination) in replacements) {
-			if (exists(childDestinationTmp))
+			if (exists(childDestinationTmp)) {
+				logger.lifecycle("rm  $childDestinationTmp")
 				rm(childDestinationTmp)
+			}
 		}
 		throw e
 	}
@@ -127,6 +141,7 @@ private fun ChannelSftp.uploadDirTempFiles(file: File, destination: String, repl
 			mkdirs(destination)
 			val childDestinationTmp = "${childDestination}_tmp${System.currentTimeMillis()}"
 			replacements.add(childDestinationTmp to childDestination)
+			logger.lifecycle("put  ${it.path}, $childDestinationTmp")
 			put(it.path, childDestinationTmp)
 		}
 	}
