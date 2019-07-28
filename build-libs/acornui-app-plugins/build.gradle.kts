@@ -69,14 +69,3 @@ gradlePlugin {
 		}
 	}
 }
-
-val acornUiGradlePluginRepository: String? by extra
-if (acornUiGradlePluginRepository != null) {
-	publishing {
-		repositories {
-			maven {
-				url = uri(acornUiGradlePluginRepository!!)
-			}
-		}
-	}
-}
