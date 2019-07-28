@@ -68,8 +68,7 @@ allprojects {
 	publishing {
 		repositories {
 			maven {
-				val subDir = if (project.group.toString().endsWith("com.acornui.build.plugins")) "gradle-plugins" else "libraries"
-				url = uri(rootProject.buildDir.resolve("artifacts/$subDir"))
+				url = uri(rootProject.buildDir.resolve("artifacts"))
 			}
 		}
 	}

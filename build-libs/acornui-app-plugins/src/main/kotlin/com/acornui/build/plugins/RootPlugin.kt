@@ -31,7 +31,7 @@ class RootPlugin : Plugin<Project> {
                     jcenter()
 
                     maven {
-                        url = uri("http://artifacts.acornui.com/mvn/libraries/")
+                        url = uri("http://artifacts.acornui.com/mvn/")
                     }
                 }
 
