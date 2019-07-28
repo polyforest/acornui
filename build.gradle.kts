@@ -71,34 +71,10 @@ allprojects {
 	publishing {
 		repositories {
 			maven {
-				url = uri(project.buildDir.resolve("artifacts"))
+				url = uri(rootProject.buildDir.resolve("artifacts"))
 			}
 		}
 	}
-
-	val cleanArtifacts = tasks.register<Delete>("cleanArtifacts") {
-		delete(project.buildDir.resolve("artifacts"))
-	}
-
-	tasks.publish.configure {
-		dependsOn(cleanArtifacts)
-	}
-
-	tasks.register("uploadArtifacts") {
-		dependsOn("publish")
-		group = "publishing"
-		doLast {
-			val artifactsDir = project.buildDir.resolve("artifacts")
-			val subDir = if (project.group.toString().endsWith("com.acornui.build.plugins")) "mvn/gradle-plugins" else "mvn/libraries"
-			val remoteDir = "artifacts.acornui.com/$subDir"
-			logger.lifecycle("Uploading artifacts ${artifactsDir.path} to $remoteDir")
-
-			jschBandbox(logger) { channel ->
-				channel.uploadDir(artifactsDir, remoteDir)
-			}
-		}
-	}
-
 }
 
 
@@ -115,6 +91,29 @@ tasks.register("uploadReports") {
 					}
 				}
 			}
+		}
+	}
+}
+
+val cleanArtifacts = tasks.register<Delete>("cleanArtifacts") {
+	delete(rootProject.buildDir.resolve("artifacts"))
+}
+
+tasks.publish.configure {
+	dependsOn(cleanArtifacts)
+}
+
+tasks.register("uploadArtifacts") {
+	dependsOn("publish")
+	group = "publishing"
+	doLast {
+		val artifactsDir = rootProject.buildDir.resolve("artifacts")
+		val subDir = if (project.group.toString().endsWith("com.acornui.build.plugins")) "mvn/gradle-plugins" else "mvn/libraries"
+		val remoteDir = "artifacts.acornui.com/$subDir"
+		logger.lifecycle("Uploading artifacts ${artifactsDir.path} to $remoteDir")
+
+		jschBandbox(logger) { channel ->
+			channel.uploadDir(artifactsDir, remoteDir)
 		}
 	}
 }
