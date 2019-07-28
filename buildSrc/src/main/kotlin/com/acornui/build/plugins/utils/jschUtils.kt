@@ -106,17 +106,17 @@ fun ChannelSftp.uploadDir(file: File, destination: String) {
 		uploadDirTempFiles(file, destination, replacements)
 		for ((childDestinationTmp, childDestination) in replacements) {
 			if (exists(childDestination)) {
-				logger.lifecycle("rm  $childDestination")
+				logger.lifecycle("rm $childDestination")
 				rm(childDestination)
 			}
-			logger.lifecycle("rename  $childDestinationTmp $childDestination")
+			logger.lifecycle("rename $childDestinationTmp -> $childDestination")
 			rename(childDestinationTmp, childDestination)
 		}
 	} catch (e: Throwable) {
 		// There was an error with the upload. Delete all temporary files.
 		for ((childDestinationTmp, childDestination) in replacements) {
 			if (exists(childDestinationTmp)) {
-				logger.lifecycle("rm  $childDestinationTmp")
+				logger.lifecycle("rm $childDestinationTmp")
 				rm(childDestinationTmp)
 			}
 		}
@@ -136,12 +136,12 @@ private fun ChannelSftp.uploadDirTempFiles(file: File, destination: String, repl
 	children.forEach {
 		val childDestination = "$destination/${it.name}"
 		if (it.isDirectory) {
-			uploadDir(it, childDestination)
+			uploadDirTempFiles(it, childDestination, replacements)
 		} else {
 			mkdirs(destination)
 			val childDestinationTmp = "${childDestination}_tmp${System.currentTimeMillis()}"
 			replacements.add(childDestinationTmp to childDestination)
-			logger.lifecycle("put  ${it.path}, $childDestinationTmp")
+			logger.lifecycle("put  ${it.path} -> $childDestinationTmp")
 			put(it.path, childDestinationTmp)
 		}
 	}
