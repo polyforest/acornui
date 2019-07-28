@@ -2,7 +2,11 @@ kind: pipeline
 name: default
 
 steps:
-  - name: publish
+  - name: build-test-publish
+    image: gradle:jdk11
+    commands:
+    - gradle build publish --stacktrace
+  - name: upload-artifacts
     image: appleboy/drone-scp
     settings:
       host:

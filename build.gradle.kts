@@ -101,16 +101,16 @@ val cleanArtifacts = tasks.register<Delete>("cleanArtifacts") {
 	delete(rootProject.buildDir.resolve("artifacts"))
 }
 
-tasks.register("uploadArtifacts") {
-	dependsOn("publish")
-	group = "publishing"
-	doLast {
-		val artifactsDir = rootProject.buildDir.resolve("artifacts")
-		val remoteDir = "artifacts.acornui.com/mvn"
-		logger.lifecycle("Uploading artifacts ${artifactsDir.path} to $remoteDir")
-
-		jschBandbox(logger) { channel ->
-			channel.uploadDir(artifactsDir, remoteDir)
-		}
-	}
-}
+//tasks.register("uploadArtifacts") {
+//	dependsOn("publish")
+//	group = "publishing"
+//	doLast {
+//		val artifactsDir = rootProject.buildDir.resolve("artifacts")
+//		val remoteDir = "artifacts.acornui.com/mvn"
+//		logger.lifecycle("Uploading artifacts ${artifactsDir.path} to $remoteDir")
+//
+//		jschBandbox(logger) { channel ->
+//			channel.uploadDir(artifactsDir, remoteDir)
+//		}
+//	}
+//}
