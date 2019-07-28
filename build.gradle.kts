@@ -71,7 +71,8 @@ allprojects {
 	publishing {
 		repositories {
 			maven {
-				url = uri(rootProject.buildDir.resolve("artifacts"))
+				val subDir = if (project.group.toString().endsWith("com.acornui.build.plugins")) "gradle-plugins" else "libraries"
+				url = uri(rootProject.buildDir.resolve("artifacts/$subDir"))
 			}
 		}
 	}
@@ -96,11 +97,8 @@ tasks.register("uploadReports") {
 }
 
 val cleanArtifacts = tasks.register<Delete>("cleanArtifacts") {
+	group = "publishing"
 	delete(rootProject.buildDir.resolve("artifacts"))
-}
-
-tasks.publish.configure {
-	dependsOn(cleanArtifacts)
 }
 
 tasks.register("uploadArtifacts") {
@@ -108,8 +106,7 @@ tasks.register("uploadArtifacts") {
 	group = "publishing"
 	doLast {
 		val artifactsDir = rootProject.buildDir.resolve("artifacts")
-		val subDir = if (project.group.toString().endsWith("com.acornui.build.plugins")) "mvn/gradle-plugins" else "mvn/libraries"
-		val remoteDir = "artifacts.acornui.com/$subDir"
+		val remoteDir = "artifacts.acornui.com/mvn"
 		logger.lifecycle("Uploading artifacts ${artifactsDir.path} to $remoteDir")
 
 		jschBandbox(logger) { channel ->
