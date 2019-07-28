@@ -20,7 +20,13 @@ steps:
       strip_components: 2
       target: ~/testreports.acornui.com
       source:
-        - /**/build/reports
+        - /acornui-core/build/reports
+        - /acornui-utils/build/reports
+        - /acornui-game/build/reports
+        - /acornui-test-utils/build/reports
+        - /acornui-spine/build/reports
+        - /backends/acornui-lwjgl-backend/build/reports
+        - /backends/acornui-webgl-backend/build/reports
   - name: upload-artifacts
     image: appleboy/drone-scp
     settings:
