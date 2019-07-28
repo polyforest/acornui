@@ -19,7 +19,7 @@ steps:
         command_timeout: 4m
         target: ~/testreports.acornui.com
         source:
-          - */build/reports
+          - /*/build/reports
       when:
         branch:
         - master
