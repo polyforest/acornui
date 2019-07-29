@@ -43,13 +43,13 @@ abstract class GlTextureBase(
 	 * Possible values:
 	 * NEAREST, LINEAR
 	 */
-	override var filterMag: TextureMagFilter = TextureMagFilter.NEAREST
+	override var filterMag: TextureMagFilter = TextureMagFilter.LINEAR
 
 	/**
 	 * Possible values:
 	 * NEAREST, LINEAR, NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR, LINEAR_MIPMAP_LINEAR
 	 */
-	override var filterMin: TextureMinFilter = TextureMinFilter.NEAREST
+	override var filterMin: TextureMinFilter = TextureMinFilter.LINEAR
 
 	/**
 	 * Possible values:
