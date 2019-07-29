@@ -38,7 +38,7 @@ object ManifestUtil {
 		val fileEntries: MutableList<ManifestEntry> = ArrayList()
 		for (file in directory.walkTopDown()) {
 			if (!file.isDirectory) {
-				val relativePath = root.relativePath2(file)
+				val relativePath = file.toRelativeString(root.absoluteFile)
 				val contentType = Files.probeContentType(file.toPath())
 				fileEntries.add(ManifestEntry(relativePath.replace2('\\', '/'), file.lastModified(), file.length(), contentType))
 			}
