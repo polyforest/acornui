@@ -20,6 +20,14 @@ steps:
       target: ~/testreports.acornui.com
       source:
         - ./**/build/reports
+      when:
+        branch:
+        - master
+        event:
+        - push
+        status:
+          - success
+          - failure
   - name: upload-artifacts
     image: appleboy/drone-scp
     settings:
