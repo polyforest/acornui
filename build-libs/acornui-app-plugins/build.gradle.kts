@@ -15,7 +15,8 @@
  */
 
 plugins {
-	id("org.gradle.kotlin.kotlin-dsl") version "1.2.9"
+//	id("org.gradle.kotlin.kotlin-dsl") version "1.2.9"
+	`kotlin-dsl`
 	`maven-publish`
 }
 
