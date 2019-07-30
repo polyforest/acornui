@@ -134,6 +134,13 @@ fun Owned.staticMeshC(init: ComponentInit<StaticMeshComponent> = {}): StaticMesh
 	return s
 }
 
+fun Owned.staticMeshC(mesh: StaticMesh, init: ComponentInit<StaticMeshComponent> = {}): StaticMeshComponent {
+	val s = StaticMeshComponent(this)
+	s.mesh = mesh
+	s.init()
+	return s
+}
+
 /**
  * Feeds mesh data to index and vertex buffers, and can [render] static mesh data.
  *
