@@ -5,7 +5,7 @@ steps:
   - name: build-test-publish
     image: gradle:jdk8
     commands:
-      - gradle build publish --stacktrace
+      - gradle build allTests publish --stacktrace
   - name: upload-reports
     image: appleboy/drone-scp
     settings:
