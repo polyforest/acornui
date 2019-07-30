@@ -17,7 +17,7 @@ class KotlinJsPlugin : Plugin<Project> {
 
 		target.extensions.configure<KotlinMultiplatformExtension> {
 			js {
-				browser {}
+//				browser {}
 				compilations.all {
 					kotlinOptions {
 						moduleKind = "amd"
