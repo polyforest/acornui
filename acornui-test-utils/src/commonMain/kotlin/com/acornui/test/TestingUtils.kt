@@ -61,6 +61,14 @@ fun <T> assertListEquals(expected: Iterable<T>, actual: Iterable<T>, comparator:
 	assertListEquals(expected.iterator(), actual.iterator(), comparator)
 }
 
+fun assertListEquals(expected: Iterable<Float>, actual: Iterable<Float>, tolerance: Float = 0.0001f) {
+	assertListEquals(expected.iterator(), actual.iterator()) { a, b -> a.closeTo(b, tolerance)}
+}
+
+fun assertListEquals(expected: Iterable<Double>, actual: Iterable<Double>, tolerance: Double = 0.0001) {
+	assertListEquals(expected.iterator(), actual.iterator()) { a, b -> a.closeTo(b, tolerance)}
+}
+
 fun <T> assertListEquals(expected: Iterator<T>, actual: Iterator<T>, comparator: (a: T, b: T) -> Boolean = { a, b -> a == b }) {
 	var expectedSize = 0
 	var actualSize = 0

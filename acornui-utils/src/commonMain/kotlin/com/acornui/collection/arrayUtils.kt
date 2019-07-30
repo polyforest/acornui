@@ -34,6 +34,7 @@ fun <E> Array<out E>.indexOf(element: E, fromIndex: Int): Int {
 /**
  * @author nbilyk
  */
+@Deprecated("Use kotlin copyInto methods", ReplaceWith("src.copyInto(dest, destPos, srcPos, length + destPos - 1"))
 fun <E> arrayCopy(src: Array<out E>,
 						 srcPos: Int,
 						 dest: Array<E>,
@@ -53,12 +54,12 @@ fun <E> arrayCopy(src: Array<out E>,
 	}
 }
 
+@Deprecated("Use kotlin copyInto methods", ReplaceWith("src.copyInto(dest, destPos, srcPos, length + destPos - 1"))
 fun arrayCopy(src: FloatArray,
 					 srcPos: Int,
 					 dest: FloatArray,
 					 destPos: Int = 0,
 					 length: Int = src.size) {
-
 	if (destPos > srcPos) {
 		var destIndex = length + destPos - 1
 		for (i in srcPos + length - 1 downTo srcPos) {
@@ -72,6 +73,7 @@ fun arrayCopy(src: FloatArray,
 	}
 }
 
+@Deprecated("Use kotlin copyInto methods", ReplaceWith("src.copyInto(dest, destPos, srcPos, length + destPos - 1"))
 fun arrayCopy(src: IntArray,
 					 srcPos: Int,
 					 dest: IntArray,

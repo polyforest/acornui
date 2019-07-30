@@ -51,6 +51,7 @@ class FloatList(private val target: FloatArray) : ListBase<Float>() {
 	}
 }
 
+@Deprecated("Use kotlin copyInto methods", ReplaceWith("src.copyInto(dest, destPos, srcPos, length + destPos - 1"))
 fun arrayCopy(src: FloatArray,
 			  srcPos: Int,
 			  dest: FloatList,
@@ -69,6 +70,7 @@ fun arrayCopy(src: FloatArray,
 	}
 }
 
+@Deprecated("Use kotlin copyInto methods", ReplaceWith("src.copyInto(dest, destPos, srcPos, length + destPos - 1"))
 fun arrayCopy(src: List<Float>,
 			  srcPos: Int,
 			  dest: FloatList,

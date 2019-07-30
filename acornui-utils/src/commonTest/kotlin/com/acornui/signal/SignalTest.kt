@@ -18,17 +18,24 @@
 
 package com.acornui.signal
 
+import com.acornui.kotlinBugFixes
 import com.acornui.test.assertListEquals
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
 class SignalTest {
+	
+	@BeforeTest fun setup() {
+		println("Patching Kotlin...")
+		kotlinBugFixes()
+	} 
 
 	@Test fun dispatch() {
 		var actual = -1
 		val s = Signal1<Int>()
-		s.add({ actual = it })
+		s.add { actual = it }
 		s.dispatch(3)
 		assertEquals(3, actual)
 		s.dispatch(4)
@@ -49,7 +56,7 @@ class SignalTest {
 
 	@Test fun addMany() {
 
-		val arr = Array(5, { -1 })
+		val arr = Array(5) { -1 }
 		var i = 0
 
 		val handler1 = { it: Int -> arr[i++] = 1 }
@@ -72,7 +79,7 @@ class SignalTest {
 
 	@Test fun addOnceMany() {
 
-		val arr = Array(5, { -1 })
+		val arr = Array(5) { -1 }
 		var i = 0
 
 		val handler1 = { it: Int -> arr[i++] = 1 }
@@ -135,7 +142,6 @@ private class TestConcurrentRemove {
 	private val arr = arrayListOf<Int>()
 
 	init {
-
 		s.add(::testHandler1)
 		s.add(::testHandler2)
 		s.add(::testHandler3)

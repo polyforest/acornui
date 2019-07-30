@@ -17,12 +17,9 @@
 package com.acornui.math
 
 import com.acornui.core.closeTo
+import com.acornui.test.assertClose
 import com.acornui.test.assertListEquals
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class Matrix4Test {
 
@@ -190,22 +187,22 @@ class Matrix4Test {
 
 	@Test
 	fun getScaleX() {
-		assertEquals(25.670996f, m1.getScaleX())
+		assertClose(25.670996f, m1.getScaleX())
 	}
 
 	@Test
 	fun getScaleY() {
-		assertEquals(103.706314f, m1.getScaleY())
+		assertClose(103.706314f, m1.getScaleY())
 	}
 
 	@Test
 	fun getScaleZ() {
-		assertEquals(78.06408f, m1.getScaleZ())
+		assertClose(78.06408f, m1.getScaleZ())
 	}
 
 	@Test
 	fun getScale() {
-		assertEquals(Vector3(25.670996f, 103.706314f, 78.06408f), m1.getScale(Vector3()))
+		assertClose(Vector3(25.670996f, 103.706314f, 78.06408f), m1.getScale(Vector3()))
 	}
 
 	@Test
@@ -254,23 +251,23 @@ class Matrix4Test {
 
 	@Test
 	fun prj() {
-		assertEquals(Vector3(0.90207374f, 4.524194f, 3.3231566f), m1.prj(Vector3(3f, 6f, 76f)))
-		assertEquals(Vector3(x=0.0044117644f, y=0.010588235f, z=-0.20117646f), m3.prj(Vector3(3f, 6f, 76f)))
-		assertEquals(Vector3(x=0.0015243902f, y=0.0030487804f, z=0.038617887f), m4.prj(Vector3(3f, 6f, 76f)))
-		assertEquals(Vector3(3f, 6f, 76f), Matrix4.IDENTITY.prj(Vector3(3f, 6f, 76f)))
+		assertClose(Vector3(0.90207374f, 4.524194f, 3.3231566f), m1.prj(Vector3(3f, 6f, 76f)))
+		assertClose(Vector3(x=0.0044117644f, y=0.010588235f, z=-0.20117646f), m3.prj(Vector3(3f, 6f, 76f)))
+		assertClose(Vector3(x=0.0015243902f, y=0.0030487804f, z=0.038617887f), m4.prj(Vector3(3f, 6f, 76f)))
+		assertClose(Vector3(3f, 6f, 76f), Matrix4.IDENTITY.prj(Vector3(3f, 6f, 76f)))
 	}
 
 	@Test
 	fun rot() {
-		assertEquals(Vector3(3f, 6f, 76f), Matrix4.IDENTITY.rot(Vector3(3f, 6f, 76f)))
-		assertEquals(Vector3(1555f, 7829f, 5728f), m1.rot(Vector3(3f, 6f, 76f)))
-		assertEquals(Vector3(15f, 36f, -684f), m3.rot(Vector3(3f, 6f, 76f)))
-		assertEquals(Vector3(3f, 6f, 76f), m4.rot(Vector3(3f, 6f, 76f)))
+		assertClose(Vector3(3f, 6f, 76f), Matrix4.IDENTITY.rot(Vector3(3f, 6f, 76f)))
+		assertClose(Vector3(1555f, 7829f, 5728f), m1.rot(Vector3(3f, 6f, 76f)))
+		assertClose(Vector3(15f, 36f, -684f), m3.rot(Vector3(3f, 6f, 76f)))
+		assertClose(Vector3(3f, 6f, 76f), m4.rot(Vector3(3f, 6f, 76f)))
 	}
 
 	@Test
 	fun rot1() {
-		assertEquals(Vector2(111f, 153f), m1.rot(Vector2(3f, 6f)))
+		assertClose(Vector2(111f, 153f), m1.rot(Vector2(3f, 6f)))
 	}
 
 	@Test
@@ -278,11 +275,11 @@ class Matrix4Test {
 		m1.shearZ(0.2f, 0.5f)
 		assertListEquals(arrayListOf(11.5f, 16.5f, 6.0f, 13.0f, 17.6f, 24.0f, 27.0f, 35.0f, 19.0f, 101.0f, 73.0f, 19.0f, 11.0f, 25.0f, 41.0f, 43.0f), m1.values)
 	}
-
+	
 	@Test
 	fun copy() {
 		val copy = m1.copy()
-		assertFalse(copy.values === m1.values)
+		assertNotSame(copy.values, m1.values)
 		assertListEquals(copy.values, m1.values)
 	}
 

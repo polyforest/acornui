@@ -135,11 +135,11 @@ class Matrix3Test {
 	@Test
 	fun rotate() {
 		m1.rotate(PI / 2f)
-		assertListEquals(listOf(13.0f, 5.9f, 0.1f, -0.3f, -0.7f, -1.4f, 1.1f, 1.17f, 23.0f), m1.values, { a, b -> a.closeTo(b) })
+		assertListEquals(listOf(13.0f, 5.9f, 0.1f, -0.3f, -0.7f, -1.4f, 1.1f, 1.17f, 23.0f), m1.values)
 		m1.rotate(-PI / 2f)
-		assertListEquals(listOf(0.3f, 0.7f, 1.4f, 13f, 5.9f, 0.1f, 1.1f, 1.17f, 23f), m1.values, { a, b -> a.closeTo(b) })
+		assertListEquals(listOf(0.3f, 0.7f, 1.4f, 13f, 5.9f, 0.1f, 1.1f, 1.17f, 23f), m1.values)
 		m1.rotate(2.131f)
-		assertListEquals(listOf(10.853501f, 4.6262155f, -0.65918756f, -7.1618085f, -3.7280197f, -1.2391415f, 1.1f, 1.17f, 23.0f), m1.values, { a, b -> a.closeTo(b) })
+		assertListEquals(listOf(10.853501f, 4.6262155f, -0.65918756f, -7.1618085f, -3.7280197f, -1.2391415f, 1.1f, 1.17f, 23.0f), m1.values)
 	}
 
 	@Test
@@ -189,7 +189,6 @@ class Matrix3Test {
 		assertListEquals(m1.values, copy.values)
 		assertFalse(m1.values === copy.values)
 	}
-
 
 }
 
