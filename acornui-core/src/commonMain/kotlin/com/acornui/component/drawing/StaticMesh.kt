@@ -197,6 +197,7 @@ class StaticMesh(
 		val previousBatch = glState.batch
 		glState.setTexture(glState.whitePixel)
 		glState.batch = batch
+		batch.clear()
 		batch.begin()
 		glState.blendMode(BlendMode.NORMAL, false)
 		mesh(batch) {
