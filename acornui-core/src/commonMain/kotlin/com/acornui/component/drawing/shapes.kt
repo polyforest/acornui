@@ -20,8 +20,11 @@ import com.acornui._assert
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
+import com.acornui.math.PI2
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
+import kotlin.math.cos
+import kotlin.math.sin
 
 private val v1 = Vector2()
 private val v2 = Vector2()
@@ -129,4 +132,30 @@ fun ShaderBatch.putIdtQuad() {
 	putVertex(1f, 1f, 0f)
 	putVertex(-1f, 1f, 0f)
 	putQuadIndices()
+}
+
+/**
+ * Draws a filled ellipse.
+ *
+ * @param radiusX The half width of the x axis.
+ * @param radiusY The half width of the y axis. (Default = [radiusX])
+ * @param x The x position of the ellipse origin.
+ * @param y The y position of the ellipse origin.
+ * @param segments The ellipse is constructed from triangles. The higher the number of segments, the smoother the
+ * ellipse.
+ */
+fun ShaderBatch.ellipse(radiusX: Float, radiusY: Float = radiusX, x: Float = 0f, y: Float = 0f, segments: Int = 100) {
+	begin(Gl20.TRIANGLE_FAN)
+	var n = highestIndex
+	putVertex(x, y, 0f)
+	putIndex(++n)
+	val first = n + 1
+	for (i in 1..segments) {
+		val theta = i.toFloat() / segments * PI2
+		val iX = x + cos(theta) * radiusX
+		val iY = y + sin(theta) * radiusY
+		putVertex(iX, iY, 0f)
+		putIndex(++n)
+	}
+	putIndex(first)
 }
