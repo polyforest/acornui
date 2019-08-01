@@ -20,6 +20,8 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             when {
+                requested.id.id == "kotlinx-serialization" ->
+                    useModule("org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion")
                 requested.id.namespace == "org.jetbrains.kotlin" ->
                     useVersion(kotlinVersion)
             }

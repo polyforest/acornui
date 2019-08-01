@@ -23,6 +23,7 @@ val kotlinLanguageVersion: String by extra
 
 plugins {
 	kotlin("multiplatform")
+	id("kotlinx-serialization")
 	`maven-publish`
 	idea
 }

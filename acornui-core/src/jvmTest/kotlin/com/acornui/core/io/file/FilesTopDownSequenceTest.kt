@@ -17,8 +17,8 @@
 package com.acornui.core.io.file
 
 import com.acornui.collection.isSorted
-import com.acornui.io.file.FilesManifestSerializer
-import com.acornui.serialization.json
+import com.acornui.io.file.FilesManifest
+import com.acornui.serialization.parseJson
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -539,7 +539,7 @@ class FilesTopDownSequenceTest {
 		"""
 
 		val list = ArrayList<FileEntry>()
-		val manifest = json.read(jsonStr, FilesManifestSerializer)
+		val manifest = parseJson(jsonStr, FilesManifest.serializer())
 		val files = FilesImpl(manifest)
 		files.getDir("")!!.walkFilesTopDown().forEach {
 			fileEntry ->
@@ -549,5 +549,7 @@ class FilesTopDownSequenceTest {
 
 		assertTrue(list.isSorted())
 	}
+
+
 }
 

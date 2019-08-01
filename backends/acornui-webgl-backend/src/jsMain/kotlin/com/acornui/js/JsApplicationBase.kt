@@ -43,7 +43,7 @@ import com.acornui.core.selection.SelectionManager
 import com.acornui.core.selection.SelectionManagerImpl
 import com.acornui.core.time.TimeDriver
 import com.acornui.core.time.TimeDriverImpl
-import com.acornui.io.file.FilesManifestSerializer
+import com.acornui.io.file.FilesManifest
 import com.acornui.js.audio.JsAudioElementMusicLoader
 import com.acornui.js.audio.JsAudioElementSoundLoader
 import com.acornui.js.audio.JsWebAudioSoundLoader
@@ -137,7 +137,7 @@ abstract class JsApplicationBase : ApplicationBase() {
 
 	override val filesTask by task(Files) {
 		val path = config().rootPath + config().assetsManifestPath
-		val manifest = parseJson(JsTextLoader(path).await(), FilesManifestSerializer)
+		val manifest = parseJson(JsTextLoader(path).await(), FilesManifest.serializer())
 		FilesImpl(manifest)
 	}
 

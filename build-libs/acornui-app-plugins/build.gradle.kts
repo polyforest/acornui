@@ -18,6 +18,7 @@ plugins {
 //	id("org.gradle.kotlin.kotlin-dsl") version "1.2.9"
 	`kotlin-dsl`
 	`maven-publish`
+	id("kotlinx-serialization")
 }
 
 kotlinDslPluginOptions {
@@ -25,6 +26,7 @@ kotlinDslPluginOptions {
 }
 
 val kotlinVersion: String by extra
+val kotlinSerializationVersion: String by extra
 
 dependencies {
 	implementation(kotlin("compiler", version = kotlinVersion))
@@ -33,6 +35,7 @@ dependencies {
 	implementation("com.acornui:acornui-core:$version")
 	implementation("com.acornui:acornui-lwjgl-backend:$version")
 	implementation("com.acornui:acornui-texture-packer:$version")
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
 }
 
 gradlePlugin {

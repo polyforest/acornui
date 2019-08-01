@@ -53,7 +53,7 @@ import com.acornui.file.FileIoManager
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.GlStateImpl
-import com.acornui.io.file.FilesManifestSerializer
+import com.acornui.io.file.FilesManifest
 import com.acornui.jvm.audio.NoAudioException
 import com.acornui.jvm.audio.OpenAlAudioManager
 import com.acornui.jvm.audio.OpenAlMusicLoader
@@ -178,7 +178,7 @@ open class LwjglApplication : ApplicationBase() {
 	override val filesTask by task(Files) {
 		val manifestFile = File(config().rootPath + config().assetsManifestPath)
 		if (!manifestFile.exists()) throw FileNotFoundException(manifestFile.absolutePath)
-		val manifest = parseJson(manifestFile.readText(), FilesManifestSerializer)
+		val manifest = parseJson(manifestFile.readText(), FilesManifest.serializer())
 		FilesImpl(manifest)
 	}
 

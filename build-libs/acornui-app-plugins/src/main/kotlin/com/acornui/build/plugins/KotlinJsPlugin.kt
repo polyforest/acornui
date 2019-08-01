@@ -12,8 +12,10 @@ class KotlinJsPlugin : Plugin<Project> {
 
 	override fun apply(target: Project) {
 		target.pluginManager.apply("org.jetbrains.kotlin.multiplatform")
+		target.pluginManager.apply("kotlinx-serialization")
 
 		val kotlinLanguageVersion: String by target.extra
+		val kotlinSerializationVersion: String by target.extra
 
 		target.extensions.configure<KotlinMultiplatformExtension> {
 			js {
@@ -38,9 +40,17 @@ class KotlinJsPlugin : Plugin<Project> {
 			}
 
 			sourceSets {
+				@Suppress("UNUSED_VARIABLE")
+				val commonMain by getting {
+					dependencies {
+						implementation(kotlin("stdlib-common"))
+						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
+					}
+				}
 				js().compilations["main"].defaultSourceSet {
 					dependencies {
 						implementation(kotlin("stdlib-js"))
+						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
 					}
 				}
 				js().compilations["test"].defaultSourceSet {

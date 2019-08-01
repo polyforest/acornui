@@ -20,9 +20,11 @@ import com.acornui.async.Deferred
 import com.acornui.async.async
 import com.acornui.core.di.Scoped
 import com.acornui.core.di.inject
+import com.acornui.io.toByteArray
 import com.acornui.serialization.From
 import com.acornui.serialization.parseBinary
 import com.acornui.serialization.parseJson
+import kotlinx.serialization.DeserializationStrategy
 
 /**
  * A Collection of utilities for making common asset loading tasks more terse.
@@ -32,12 +34,24 @@ import com.acornui.serialization.parseJson
  * Loads a json file, then parses it into the target.
  * This is not cached.
  */
+@Deprecated("use kotlinx serialization")
 fun <T> Scoped.loadJson(path:String, factory: From<T>): Deferred<T> = async {
 	val json = inject(AssetManager).load(path, AssetType.TEXT)
 	parseJson(json.await(), factory)
 }
 
+fun <T> Scoped.loadJson(path:String, deserializer: DeserializationStrategy<T>): Deferred<T> = async {
+	val json = inject(AssetManager).load(path, AssetType.TEXT)
+	parseJson(json.await(), deserializer)
+}
+
+@Deprecated("use kotlinx serialization")
 fun <T> Scoped.loadBinary(path: String, factory: From<T>): Deferred<T> = async {
 	val binary = inject(AssetManager).load(path, AssetType.BINARY)
 	parseBinary(binary.await(), factory)
+}
+
+fun <T> Scoped.loadBinary(path: String, deserializer: DeserializationStrategy<T>): Deferred<T> = async {
+	val binary = inject(AssetManager).load(path, AssetType.BINARY)
+	parseBinary(binary.await().toByteArray(), deserializer)
 }

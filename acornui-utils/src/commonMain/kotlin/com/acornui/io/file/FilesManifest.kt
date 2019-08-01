@@ -16,25 +16,17 @@
 
 package com.acornui.io.file
 
-import com.acornui.serialization.*
+import kotlinx.serialization.Serializable
 
 /**
  * @author nbilyk
  */
+@Serializable
 data class FilesManifest(
 		val files: List<ManifestEntry>
 )
 
-object FilesManifestSerializer : To<FilesManifest>, From<FilesManifest> {
-	override fun FilesManifest.write(writer: Writer) {
-		writer.array("files", files, ManifestEntrySerializer)
-	}
-
-	override fun read(reader: Reader): FilesManifest {
-		return FilesManifest(files = reader.arrayList("files", ManifestEntrySerializer)!!)
-	}
-}
-
+@Serializable
 data class ManifestEntry(
 		val path: String,
 		val modified: Long,
@@ -83,22 +75,4 @@ data class ManifestEntry(
 		}
 	}
 
-}
-
-object ManifestEntrySerializer : To<ManifestEntry>, From<ManifestEntry> {
-	override fun ManifestEntry.write(writer: Writer) {
-		writer.string("path", path)
-		writer.long("modified", modified)
-		writer.long("size", size)
-		writer.string("mimeType", mimeType)
-	}
-
-	override fun read(reader: Reader): ManifestEntry {
-		return ManifestEntry(
-				path = reader.string("path")!!,
-				modified = reader.long("modified")!!,
-				size = reader.long("size")!!,
-				mimeType = reader.string("mimeType")
-		)
-	}
 }

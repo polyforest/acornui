@@ -18,11 +18,16 @@ package com.acornui.serialization
 
 import com.acornui.collection.stringMapOf
 import com.acornui.io.*
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerializationStrategy
+import kotlinx.serialization.cbor.Cbor
 
 /**
  * A factory that provides a Reader and Writer for ReadBuffer<Byte>
  * @author nbilyk
  */
+@Deprecated("use kotlinx serialization")
 private object BinarySerializer : Serializer<NativeReadByteBuffer> {
 
 	override fun read(data: NativeReadByteBuffer): Reader {
@@ -347,6 +352,7 @@ class BinaryWriter(val propertyIndex: MutableList<String>) : Writer {
 	}
 }
 
+@Deprecated("use kotlinx serialization")
 object BinaryType {
 	const val UNKNOWN: Byte = 0
 	const val NULL: Byte = 1
@@ -364,10 +370,22 @@ object BinaryType {
 	const val BYTE_ARRAY: Byte = 13
 }
 
+@Deprecated("use kotlinx serialization")
 fun <T> parseBinary(binary: NativeReadByteBuffer, factory: From<T>): T {
 	return BinarySerializer.read(binary, factory)
 }
 
+@Deprecated("use kotlinx serialization")
 fun <T> toBinary(value: T, factory: To<T>): NativeReadByteBuffer {
 	return BinarySerializer.write(value, factory)
+}
+
+private val cbor = Cbor.plain
+
+fun <T> parseBinary(binary: ByteArray, deserializer: DeserializationStrategy<T>): T {
+	return cbor.load(deserializer, binary)
+}
+
+fun <T> toBinary(value: T, serializer: SerializationStrategy<T>): ByteArray {
+	return cbor.dump(serializer, value)
 }
