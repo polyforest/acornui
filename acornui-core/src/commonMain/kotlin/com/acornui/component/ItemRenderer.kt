@@ -37,7 +37,7 @@ interface ItemRenderer<E> : ItemRendererRo<E>, UiComponent {
 
 /**
  * Recycles a list of item renderers, creating or disposing renderers only as needed.
- * @param data The updated list of data items.
+ * @param data The updated set of data items.
  * @param existingElements The stale list of item renderers. This will be modified to reflect the new item renderers.
  * @param factory Used to create new item renderers as needed. [configure] will be called after factory to configure
  * the new element.
@@ -46,7 +46,7 @@ interface ItemRenderer<E> : ItemRendererRo<E>, UiComponent {
  * @param equality If set, uses custom equality rules. This guides how to know whether an item can be recycled or not.
  */
 fun <E, T : ItemRendererRo<E>> recycle(
-		data: List<E>?,
+		data: Iterable<E>?,
 		existingElements: MutableList<T>,
 		factory: (item: E, index: Int) -> T,
 		configure: (element: T, item: E, index: Int) -> Unit,

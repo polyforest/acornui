@@ -35,7 +35,7 @@ import com.acornui.core.EqualityCheck
  * @param equality If set, uses custom equality rules. This guides how to know whether an item can be recycled or not.
  */
 fun <E, T> recycle(
-		data: List<E>?,
+		data: Iterable<E>?,
 		existingElements: MutableList<T>,
 		factory: (item: E, index: Int) -> T,
 		configure: (element: T, item: E, index: Int) -> Unit,
@@ -46,7 +46,7 @@ fun <E, T> recycle(
 
 	// Dispose items not found in the new data list first, so that the disposer can potentially pool those elements to
 	// be retrieved again immediately in the factory.
-	val remainingData = data?.copy()
+	val remainingData = data?.toMutableList()
 	val toRecycle = existingElements.copy()
 	val iterator = toRecycle.iterator()
 	while (iterator.hasNext()) {
@@ -61,18 +61,16 @@ fun <E, T> recycle(
 	}
 
 	existingElements.clear()
-	if (data != null) {
-		for (i in 0..data.lastIndex) {
-			val item = data[i]
-			val foundIndex = toRecycle.indexOfFirst { equality(retriever(it), item) }
-			val element = if (foundIndex == -1) {
-				factory(item, i)
-			} else {
-				toRecycle.removeAt(foundIndex)
-			}
-			configure(element, item, i)
-			existingElements.add(element)
+	data?.forEachIndexed {
+		i, item ->
+		val foundIndex = toRecycle.indexOfFirst { equality(retriever(it), item) }
+		val element = if (foundIndex == -1) {
+			factory(item, i)
+		} else {
+			toRecycle.removeAt(foundIndex)
 		}
+		configure(element, item, i)
+		existingElements.add(element)
 	}
 }
 
