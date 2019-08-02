@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
+@file:Suppress("EXPERIMENTAL_API_USAGE")
+
 package com.acornui.serialization
 
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 
 @Deprecated("use kotlinx serialization")
 expect val json: Serializer<String>
@@ -34,12 +35,10 @@ fun <T> toJson(value: T, factory: To<T>): String {
 	return json.write(value, factory)
 }
 
-private val jsonx by lazy { Json(JsonConfiguration.Stable) }
-
-fun <T> parseJson(jsonStr: String, deserializer: DeserializationStrategy<T>): T {
-	return jsonx.parse(deserializer, jsonStr)
+fun <T> jsonParse(deserializer: DeserializationStrategy<T>, jsonStr: String): T {
+	return Json.parse(deserializer, jsonStr)
 }
 
-fun <T> toJson(value: T, serializer: SerializationStrategy<T>): String {
-	return jsonx.stringify(serializer, value)
+fun <T> jsonStringify(serializer: SerializationStrategy<T>, value: T): String {
+	return Json.stringify(serializer, value)
 }

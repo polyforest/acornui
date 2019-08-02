@@ -49,6 +49,7 @@ fun <E, T> Serializer<T>.write(value: E, to: To<E>): T {
 	}
 }
 
+@Deprecated("Use kotlinx serialization")
 interface Reader {
 
 	val isNull: Boolean
@@ -267,6 +268,7 @@ fun Reader.charArray(name: String): CharArray? = get(name)?.charArray()
 fun <T> Reader.obj(name: String, factory: From<T>): T? = get(name)?.obj(factory)
 fun <T> Reader.map(name: String, itemFactory: From<T>): Map<String, T>? = get(name)?.map(itemFactory)
 
+@Deprecated("Use kotlinx serialization")
 interface Writer {
 
 	fun property(name: String): Writer
@@ -493,6 +495,7 @@ fun <T> Writer.map(name: String, value: Map<String, T?>?, to: To<T>) = property(
 /**
  * The serialization interface to read from a [Reader] object, producing a new instance.
  */
+@Deprecated("Use kotlinx serialization")
 interface From<out T> {
 	fun read(reader: Reader): T
 }
@@ -500,6 +503,7 @@ interface From<out T> {
 /**
  * The serialization interface to write to a [Writer] object.
  */
+@Deprecated("Use kotlinx serialization")
 interface To<in T> {
 
 	fun write2(receiver: T, writer: Writer) = receiver.write(writer)

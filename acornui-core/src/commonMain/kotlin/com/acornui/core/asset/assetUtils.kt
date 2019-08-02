@@ -25,6 +25,7 @@ import com.acornui.serialization.From
 import com.acornui.serialization.parseBinary
 import com.acornui.serialization.parseJson
 import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.json.Json
 
 /**
  * A Collection of utilities for making common asset loading tasks more terse.
@@ -42,7 +43,7 @@ fun <T> Scoped.loadJson(path:String, factory: From<T>): Deferred<T> = async {
 
 fun <T> Scoped.loadJson(path:String, deserializer: DeserializationStrategy<T>): Deferred<T> = async {
 	val json = inject(AssetManager).load(path, AssetType.TEXT)
-	parseJson(json.await(), deserializer)
+	Json.parse(deserializer, json.await())
 }
 
 @Deprecated("use kotlinx serialization")

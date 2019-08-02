@@ -56,7 +56,7 @@ import com.acornui.js.loader.JsBinaryLoader
 import com.acornui.js.loader.JsTextLoader
 import com.acornui.js.persistence.JsPersistence
 import com.acornui.logging.Log
-import com.acornui.serialization.parseJson
+import com.acornui.serialization.jsonParse
 import com.acornui.uncaughtExceptionHandler
 import org.w3c.dom.DocumentReadyState
 import org.w3c.dom.HTMLElement
@@ -137,7 +137,7 @@ abstract class JsApplicationBase : ApplicationBase() {
 
 	override val filesTask by task(Files) {
 		val path = config().rootPath + config().assetsManifestPath
-		val manifest = parseJson(JsTextLoader(path).await(), FilesManifest.serializer())
+		val manifest = jsonParse(FilesManifest.serializer(), JsTextLoader(path).await())
 		FilesImpl(manifest)
 	}
 

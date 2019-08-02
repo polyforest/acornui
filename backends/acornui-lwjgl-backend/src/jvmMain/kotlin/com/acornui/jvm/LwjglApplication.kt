@@ -71,7 +71,7 @@ import com.acornui.jvm.loader.JvmBinaryLoader
 import com.acornui.jvm.loader.JvmTextLoader
 import com.acornui.jvm.persistence.LwjglPersistence
 import com.acornui.logging.Log
-import com.acornui.serialization.parseJson
+import com.acornui.serialization.jsonParse
 import com.acornui.uncaughtExceptionHandler
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWWindowRefreshCallback
@@ -178,7 +178,7 @@ open class LwjglApplication : ApplicationBase() {
 	override val filesTask by task(Files) {
 		val manifestFile = File(config().rootPath + config().assetsManifestPath)
 		if (!manifestFile.exists()) throw FileNotFoundException(manifestFile.absolutePath)
-		val manifest = parseJson(manifestFile.readText(), FilesManifest.serializer())
+		val manifest = jsonParse(FilesManifest.serializer(), manifestFile.readText())
 		FilesImpl(manifest)
 	}
 

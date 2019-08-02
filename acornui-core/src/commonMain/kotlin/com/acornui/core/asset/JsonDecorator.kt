@@ -21,7 +21,7 @@ import com.acornui.async.Deferred
 import com.acornui.core.di.Scoped
 import com.acornui.serialization.From
 import com.acornui.serialization.json
-import com.acornui.serialization.parseJson
+import com.acornui.serialization.jsonParse
 import kotlinx.serialization.DeserializationStrategy
 
 /**
@@ -65,7 +65,7 @@ fun <R> Scoped.loadAndCacheJson(path: String, factory: From<R>, group: CachedGro
  */
 private class JsonDecorator2<R>(val factory: DeserializationStrategy<R>) : Decorator<String, R> {
 	override fun decorate(target: String): R {
-		return parseJson(target, factory)
+		return jsonParse(factory, target)
 	}
 
 	override fun equals(other: Any?): Boolean {
