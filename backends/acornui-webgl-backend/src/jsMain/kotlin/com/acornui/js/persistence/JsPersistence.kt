@@ -16,8 +16,8 @@
 
 package com.acornui.js.persistence
 
-import com.acornui.core.Version
-import com.acornui.core.persistence.Persistence
+import com.acornui.Version
+import com.acornui.persistence.Persistence
 import kotlin.browser.localStorage
 
 class JsPersistence(private val currentVersion: Version) : Persistence {

@@ -22,8 +22,8 @@ import com.acornui.collection.ListView
 import com.acornui.collection.ObservableListMapping
 import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
-import com.acornui.core.Disposable
-import com.acornui.core.di.Owned
+import com.acornui.Disposable
+import com.acornui.di.Owned
 import com.acornui.recycle.IndexedPool
 import com.acornui.recycle.ObjectPool
 import com.acornui.recycle.UsedTracker

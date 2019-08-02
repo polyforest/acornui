@@ -17,7 +17,7 @@
 package com.acornui.component
 
 import com.acornui.component.style.StyleTag
-import com.acornui.core.di.Owned
+import com.acornui.di.Owned
 
 open class CollapseButton(
 		owner: Owned

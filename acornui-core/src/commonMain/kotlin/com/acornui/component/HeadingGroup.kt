@@ -19,7 +19,7 @@ package com.acornui.component
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.*
 import com.acornui.component.text.text
-import com.acornui.core.di.Owned
+import com.acornui.di.Owned
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 

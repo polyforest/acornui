@@ -19,9 +19,9 @@ package com.esotericsoftware.spine.component
 import com.acornui.component.ComponentInit
 import com.acornui.component.RenderContextRo
 import com.acornui.component.UiComponentImpl
-import com.acornui.core.di.Owned
-import com.acornui.core.setCamera
-import com.acornui.core.time.onTick
+import com.acornui.di.Owned
+import com.acornui.setCamera
+import com.acornui.time.onTick
 
 
 /**

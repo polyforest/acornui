@@ -18,9 +18,9 @@
 
 package com.acornui.js.input
 
-import com.acornui.core.input.MouseInput
-import com.acornui.core.input.WhichButton
-import com.acornui.core.input.interaction.*
+import com.acornui.input.MouseInput
+import com.acornui.input.WhichButton
+import com.acornui.input.interaction.*
 import com.acornui.js.html.TouchEvent
 import com.acornui.signal.Signal0
 import com.acornui.signal.Signal1

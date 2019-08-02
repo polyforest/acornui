@@ -16,14 +16,14 @@
 
 package com.acornui.jvm.input
 
-import com.acornui.core.graphic.Window
-import com.acornui.core.input.MouseInput
-import com.acornui.core.input.WhichButton
-import com.acornui.core.input.interaction.*
-import com.acornui.core.time.time
+import com.acornui.graphic.Window
+import com.acornui.input.MouseInput
+import com.acornui.input.WhichButton
+import com.acornui.input.interaction.*
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.signal.emptySignal
+import com.acornui.time.time
 import org.lwjgl.glfw.*
 
 /**

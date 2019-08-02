@@ -16,11 +16,11 @@
 
 package com.acornui.component.text
 
-import com.acornui.core.mvc.Command
-import com.acornui.core.mvc.CommandGroup
-import com.acornui.core.mvc.CommandType
-import com.acornui.core.mvc.StateCommand
-import com.acornui.core.selection.SelectionRange
+import com.acornui.mvc.Command
+import com.acornui.mvc.CommandGroup
+import com.acornui.mvc.CommandType
+import com.acornui.mvc.StateCommand
+import com.acornui.selection.SelectionRange
 
 class ChangeSelectionCommand(
 		val target: Any?,

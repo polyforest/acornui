@@ -20,9 +20,9 @@ package com.acornui.js.gl
 
 import com.acornui.async.Deferred
 import com.acornui.async.Promise
-import com.acornui.core.asset.AssetLoader
-import com.acornui.core.asset.AssetType
-import com.acornui.core.graphic.Texture
+import com.acornui.asset.AssetLoader
+import com.acornui.asset.AssetType
+import com.acornui.graphic.Texture
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.request.Bandwidth

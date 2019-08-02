@@ -17,7 +17,7 @@
 package com.acornui.recycle
 
 import com.acornui.collection.*
-import com.acornui.core.Disposable
+import com.acornui.Disposable
 
 /**
  * A layer between item reuse and an object pool that first seeks an item from the same index.

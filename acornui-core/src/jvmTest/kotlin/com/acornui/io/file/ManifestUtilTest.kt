@@ -1,8 +1,8 @@
 package com.acornui.io.file
 
-import org.junit.Ignore
-import org.junit.Test
 import java.io.File
+import kotlin.test.Ignore
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ManifestUtilTest {

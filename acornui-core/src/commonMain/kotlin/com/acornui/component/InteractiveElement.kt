@@ -18,11 +18,11 @@ package com.acornui.component
 
 import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.LayoutElementRo
-import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
-import com.acornui.core.input.InteractionEventRo
-import com.acornui.core.input.InteractionType
-import com.acornui.core.input.InteractivityManager
+import com.acornui.di.Owned
+import com.acornui.di.inject
+import com.acornui.input.InteractionEventRo
+import com.acornui.input.InteractionType
+import com.acornui.input.InteractivityManager
 import com.acornui.math.Vector2
 import com.acornui.signal.StoppableSignal
 

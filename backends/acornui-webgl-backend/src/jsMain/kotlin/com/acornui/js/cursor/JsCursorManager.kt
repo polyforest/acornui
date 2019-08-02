@@ -16,10 +16,10 @@
 
 package com.acornui.js.cursor
 
-import com.acornui.core.LifecycleBase
-import com.acornui.core.cursor.Cursor
-import com.acornui.core.cursor.CursorManagerBase
-import com.acornui.core.cursor.StandardCursors
+import com.acornui.LifecycleBase
+import com.acornui.cursor.Cursor
+import com.acornui.cursor.CursorManagerBase
+import com.acornui.cursor.StandardCursors
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 

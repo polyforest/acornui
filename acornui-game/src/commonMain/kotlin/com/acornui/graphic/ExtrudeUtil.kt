@@ -16,16 +16,16 @@
 
 package com.acornui.graphic
 
-import com.acornui.core.asset.AssetManager
-import com.acornui.core.asset.AssetType
-import com.acornui.core.asset.cachedGroup
-import com.acornui.core.asset.loadAndCacheJson
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
-import com.acornui.core.graphic.RgbData
-import com.acornui.core.graphic.Texture
-import com.acornui.core.graphic.TextureAtlasDataSerializer
-import com.acornui.core.graphic.loadAndCacheAtlasPage
+import com.acornui.asset.AssetManager
+import com.acornui.asset.AssetType
+import com.acornui.asset.cachedGroup
+import com.acornui.asset.loadAndCacheJson
+import com.acornui.di.Scoped
+import com.acornui.di.inject
+import com.acornui.graphic.RgbData
+import com.acornui.graphic.Texture
+import com.acornui.graphic.TextureAtlasDataSerializer
+import com.acornui.graphic.loadAndCacheAtlasPage
 import com.acornui.math.IntRectangle
 import com.acornui.math.IntRectangleRo
 import com.acornui.math.MathUtils.mod

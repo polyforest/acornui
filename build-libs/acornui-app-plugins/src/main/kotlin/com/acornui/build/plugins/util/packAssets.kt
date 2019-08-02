@@ -1,9 +1,9 @@
 package com.acornui.build.plugins.util
 
 import com.acornui.async.launch
-import com.acornui.core.asset.AssetManager
-import com.acornui.core.di.inject
-import com.acornui.core.io.file.Files
+import com.acornui.asset.AssetManager
+import com.acornui.di.inject
+import com.acornui.io.file.Files
 import com.acornui.jvm.JvmHeadlessApplication
 import com.acornui.serialization.json
 import com.acornui.texturepacker.AcornTexturePacker

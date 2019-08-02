@@ -20,10 +20,10 @@ import com.acornui.async.catch
 import com.acornui.async.then
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
-import com.acornui.core.asset.AssetType
-import com.acornui.core.asset.cachedGroup
-import com.acornui.core.asset.loadAndCache
-import com.acornui.core.di.Owned
+import com.acornui.asset.AssetType
+import com.acornui.asset.cachedGroup
+import com.acornui.asset.loadAndCache
+import com.acornui.di.Owned
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
 import com.acornui.graphic.Color

@@ -17,7 +17,7 @@
 package com.acornui.component.layout
 
 import com.acornui.component.*
-import com.acornui.core.di.Owned
+import com.acornui.di.Owned
 
 /**
  * A component with no rendering, just used to take up whitespace.

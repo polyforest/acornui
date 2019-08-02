@@ -17,12 +17,12 @@
 package com.acornui.jvm.cursor
 
 import com.acornui.async.then
-import com.acornui.core.LifecycleBase
-import com.acornui.core.asset.*
-import com.acornui.core.cursor.Cursor
-import com.acornui.core.cursor.CursorManagerBase
-import com.acornui.core.cursor.StandardCursors
-import com.acornui.core.graphic.Texture
+import com.acornui.LifecycleBase
+import com.acornui.asset.*
+import com.acornui.cursor.Cursor
+import com.acornui.cursor.CursorManagerBase
+import com.acornui.cursor.StandardCursors
+import com.acornui.graphic.Texture
 import com.acornui.io.JvmBufferUtil
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWImage

@@ -16,8 +16,8 @@
 
 package com.acornui.js.window
 
-import com.acornui.core.browser.Location
-import com.acornui.core.graphic.PopUpSpecs
+import com.acornui.browser.Location
+import com.acornui.graphic.PopUpSpecs
 import kotlin.browser.window
 import org.w3c.dom.Location as DomLocation
 

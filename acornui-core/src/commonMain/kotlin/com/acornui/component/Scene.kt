@@ -19,8 +19,8 @@
 package com.acornui.component
 
 import com.acornui.collection.forEach2
-import com.acornui.core.di.Owned
-import com.acornui.core.graphic.orthographicCamera
+import com.acornui.di.Owned
+import com.acornui.graphic.orthographicCamera
 import com.acornui.gl.core.useViewportFromCanvasTransform
 import com.acornui.math.*
 

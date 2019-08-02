@@ -16,8 +16,8 @@
 
 package com.acornui.jvm.audio
 
-import com.acornui.core.audio.Sound
-import com.acornui.core.audio.SoundFactory
+import com.acornui.audio.Sound
+import com.acornui.audio.SoundFactory
 import com.acornui.math.MathUtils
 import com.acornui.math.Vector3
 import org.lwjgl.openal.AL10

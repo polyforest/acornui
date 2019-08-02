@@ -23,12 +23,12 @@ import com.acornui.component.*
 import com.acornui.component.layout.algorithm.virtual.ItemRendererOwner
 import com.acornui.component.layout.algorithm.virtual.VirtualLayoutAlgorithm
 import com.acornui.component.style.Style
-import com.acornui.core.behavior.Selection
-import com.acornui.core.behavior.SelectionBase
-import com.acornui.core.behavior.deselectNotContaining
+import com.acornui.behavior.Selection
+import com.acornui.behavior.SelectionBase
+import com.acornui.behavior.deselectNotContaining
 import com.acornui.recycle.IndexedPool
-import com.acornui.core.di.Owned
-import com.acornui.core.di.own
+import com.acornui.di.Owned
+import com.acornui.di.own
 import com.acornui.function.as2
 import com.acornui.function.as3
 import com.acornui.math.Bounds

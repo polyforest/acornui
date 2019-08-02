@@ -22,7 +22,7 @@
 
 package com.acornui.math
 
-import com.acornui.core.closeTo
+import com.acornui.closeTo
 import com.acornui.math.MathUtils.clamp
 import kotlin.math.*
 

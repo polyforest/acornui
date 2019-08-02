@@ -20,7 +20,7 @@ import com.acornui.component.layout.LayoutData
 import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.LayoutElementRo
 import com.acornui.component.layout.algorithm.LayoutDataProvider
-import com.acornui.core.di.Owned
+import com.acornui.di.Owned
 import com.acornui.math.Bounds
 
 /**

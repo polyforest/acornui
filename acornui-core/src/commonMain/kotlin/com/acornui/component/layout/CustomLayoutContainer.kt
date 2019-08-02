@@ -19,8 +19,8 @@ package com.acornui.component.layout
 import com.acornui.component.ComponentInit
 import com.acornui.component.ElementContainerImpl
 import com.acornui.component.UiComponent
-import com.acornui.core.di.Owned
-import com.acornui.core.focus.Focusable
+import com.acornui.di.Owned
+import com.acornui.focus.Focusable
 import com.acornui.math.Bounds
 
 /**

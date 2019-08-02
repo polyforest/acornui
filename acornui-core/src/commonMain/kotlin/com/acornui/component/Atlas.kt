@@ -16,10 +16,10 @@
 
 package com.acornui.component
 
-import com.acornui.core.Renderable
-import com.acornui.core.RenderableBase
+import com.acornui.Renderable
+import com.acornui.RenderableBase
 import com.acornui.recycle.Clearable
-import com.acornui.core.graphic.*
+import com.acornui.graphic.*
 import com.acornui.gl.core.GlState
 
 class Atlas(private val glState: GlState) : RenderableBase(), Clearable {

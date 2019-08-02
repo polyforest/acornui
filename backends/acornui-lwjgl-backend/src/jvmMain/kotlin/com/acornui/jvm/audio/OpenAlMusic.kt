@@ -16,8 +16,8 @@
 
 package com.acornui.jvm.audio
 
-import com.acornui.core.audio.Music
-import com.acornui.core.audio.MusicReadyState
+import com.acornui.audio.Music
+import com.acornui.audio.MusicReadyState
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import org.lwjgl.BufferUtils

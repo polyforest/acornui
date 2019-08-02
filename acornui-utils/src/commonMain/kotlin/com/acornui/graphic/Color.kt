@@ -19,7 +19,7 @@
 package com.acornui.graphic
 
 import com.acornui.recycle.Clearable
-import com.acornui.core.closeTo
+import com.acornui.closeTo
 import com.acornui.graphic.Color.Companion.fromStr
 import com.acornui.math.MathUtils.clamp
 import com.acornui.serialization.Reader

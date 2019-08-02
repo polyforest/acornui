@@ -16,7 +16,7 @@
 
 package com.acornui.jvm.loader
 
-import com.acornui.core.asset.AssetType
+import com.acornui.asset.AssetType
 import com.acornui.io.NativeReadByteBuffer
 import com.acornui.io.JvmByteBuffer
 import com.acornui.io.readAllBytes2

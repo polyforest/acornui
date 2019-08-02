@@ -20,7 +20,7 @@ package com.acornui.async
 
 import com.acornui.async.Deferred.Status
 import com.acornui.collection.*
-import com.acornui.core.Disposable
+import com.acornui.Disposable
 import com.acornui.error.getStack
 import kotlin.coroutines.*
 import kotlin.jvm.JvmName

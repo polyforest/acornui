@@ -18,17 +18,17 @@ package com.acornui.component
 
 import com.acornui.collection.forEach2
 import com.acornui.component.style.StyleableRo
-import com.acornui.core.Disposable
-import com.acornui.core.di.Injector
-import com.acornui.core.di.OwnedImpl
-import com.acornui.core.di.inject
-import com.acornui.core.focus.Focusable
-import com.acornui.core.input.SoftKeyboardManager
-import com.acornui.core.popup.PopUpManager
-import com.acornui.core.time.timer
+import com.acornui.Disposable
+import com.acornui.di.Injector
+import com.acornui.di.OwnedImpl
+import com.acornui.di.inject
+import com.acornui.focus.Focusable
+import com.acornui.input.SoftKeyboardManager
+import com.acornui.popup.PopUpManager
 import com.acornui.function.as2
 import com.acornui.logging.Log
 import com.acornui.math.Bounds
+import com.acornui.time.timer
 
 /**
  * @author nbilyk

@@ -22,11 +22,11 @@ import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
 import com.acornui.component.style.noSkin
-import com.acornui.core.cursor.StandardCursors
-import com.acornui.core.cursor.cursor
-import com.acornui.core.di.Owned
-import com.acornui.core.input.interaction.DragInteractionRo
-import com.acornui.core.input.interaction.drag
+import com.acornui.cursor.StandardCursors
+import com.acornui.cursor.cursor
+import com.acornui.di.Owned
+import com.acornui.input.interaction.DragInteractionRo
+import com.acornui.input.interaction.drag
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
 import com.acornui.math.Vector2

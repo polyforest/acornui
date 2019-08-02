@@ -21,8 +21,8 @@ import com.acornui.component.UiComponent
 import com.acornui.component.layout.algorithm.LayoutAlgorithm
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.Style
-import com.acornui.core.di.Owned
-import com.acornui.core.focus.Focusable
+import com.acornui.di.Owned
+import com.acornui.focus.Focusable
 import com.acornui.math.Bounds
 
 /**

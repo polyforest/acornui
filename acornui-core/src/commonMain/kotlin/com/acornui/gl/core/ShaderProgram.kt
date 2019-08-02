@@ -17,8 +17,8 @@
 package com.acornui.gl.core
 
 import com.acornui.collection.stringMapOf
-import com.acornui.core.Disposable
-import com.acornui.core.userInfo
+import com.acornui.Disposable
+import com.acornui.system.userInfo
 
 
 interface ShaderProgram : Disposable {

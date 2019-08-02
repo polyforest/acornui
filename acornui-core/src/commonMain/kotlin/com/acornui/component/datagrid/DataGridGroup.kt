@@ -18,7 +18,7 @@ package com.acornui.component.datagrid
 
 import com.acornui.collection.Filter
 import com.acornui.collection.ObservableList
-import com.acornui.core.di.Owned
+import com.acornui.di.Owned
 import com.acornui.observe.Observable
 import com.acornui.signal.Signal1
 import kotlin.properties.ObservableProperty

@@ -16,8 +16,8 @@
 
 package com.acornui.graphic.lighting
 
-import com.acornui.core.graphic.PerspectiveCamera
-import com.acornui.core.graphic.Window
+import com.acornui.graphic.PerspectiveCamera
+import com.acornui.graphic.Window
 import com.acornui.math.MathUtils
 import com.acornui.math.Vector3
 

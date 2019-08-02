@@ -16,10 +16,10 @@
 
 package com.acornui.component
 
-import com.acornui.core.RenderableBase
-import com.acornui.core.graphic.BlendMode
-import com.acornui.core.graphic.Texture
-import com.acornui.core.setCamera
+import com.acornui.RenderableBase
+import com.acornui.graphic.BlendMode
+import com.acornui.graphic.Texture
+import com.acornui.setCamera
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.putIndices
 import com.acornui.gl.core.putVertex

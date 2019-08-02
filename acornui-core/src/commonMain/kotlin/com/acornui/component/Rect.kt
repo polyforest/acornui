@@ -20,9 +20,9 @@ import com.acornui.component.drawing.rect
 import com.acornui.component.drawing.staticMesh
 import com.acornui.component.drawing.staticMeshC
 import com.acornui.component.drawing.transform
-import com.acornui.core.di.Owned
-import com.acornui.core.graphic.BlendMode
-import com.acornui.core.setCamera
+import com.acornui.di.Owned
+import com.acornui.graphic.BlendMode
+import com.acornui.setCamera
 import com.acornui.gl.core.putIndex
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putTriangleIndices

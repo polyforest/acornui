@@ -19,7 +19,7 @@ package com.acornui.component.layout.algorithm
 import com.acornui.component.ComponentInit
 import com.acornui.component.layout.*
 import com.acornui.component.style.NoopStyle
-import com.acornui.core.di.Owned
+import com.acornui.di.Owned
 import com.acornui.math.Bounds
 
 class CanvasLayout : LayoutAlgorithm<NoopStyle, CanvasLayoutData> {

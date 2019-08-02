@@ -16,7 +16,7 @@
 
 package com.acornui.math
 
-import com.acornui.core.closeTo
+import com.acornui.closeTo
 import com.acornui.test.assertClose
 import com.acornui.test.assertListEquals
 import kotlin.test.*

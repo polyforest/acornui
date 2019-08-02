@@ -22,7 +22,7 @@ import com.acornui.component.ComponentInit
 import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.style.*
-import com.acornui.core.di.Owned
+import com.acornui.di.Owned
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.color
@@ -243,13 +243,13 @@ class CharStyle : StyleBase() {
 
 	/**
 	 * The scaling of points to pixels.
-	 * This should correspond to the [com.acornui.core.graphic.Window.scaleX].
+	 * This should correspond to the [com.acornui.graphic.Window.scaleX].
 	 */
 	var scaleX: Float by prop(1f)
 
 	/**
 	 * The scaling of points to pixels.
-	 * This should correspond to the [com.acornui.core.graphic.Window.scaleY].
+	 * This should correspond to the [com.acornui.graphic.Window.scaleY].
 	 */
 	var scaleY: Float by prop(1f)
 

@@ -17,7 +17,7 @@
 package com.acornui.test
 
 import com.acornui.collection.toList
-import com.acornui.core.closeTo
+import com.acornui.closeTo
 import com.acornui.math.*
 import kotlin.test.Test
 import kotlin.math.abs

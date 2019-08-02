@@ -20,9 +20,9 @@ package com.acornui.filter
 
 import com.acornui.collection.forEach2
 import com.acornui.component.*
-import com.acornui.core.Renderable
-import com.acornui.core.di.Owned
-import com.acornui.core.di.own
+import com.acornui.Renderable
+import com.acornui.di.Owned
+import com.acornui.di.own
 import com.acornui.function.as2
 import com.acornui.math.Bounds
 import com.acornui.math.BoundsRo

@@ -23,7 +23,7 @@ import com.acornui.collection.filterTo2
 import com.acornui.collection.forEach2
 import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.SizeConstraints
-import com.acornui.core.di.Owned
+import com.acornui.di.Owned
 import com.acornui.math.Bounds
 
 interface ElementParentRo<out T> {

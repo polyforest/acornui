@@ -20,9 +20,9 @@ import com.acornui.async.Deferred
 import com.acornui.async.async
 import com.acornui.async.awaitAll
 import com.acornui.collection.stringMapOf
-import com.acornui.core.asset.*
-import com.acornui.core.di.Scoped
-import com.acornui.core.graphic.*
+import com.acornui.asset.*
+import com.acornui.di.Scoped
+import com.acornui.graphic.*
 import com.esotericsoftware.spine.data.SkeletonData
 import com.esotericsoftware.spine.data.SkeletonDataSerializer
 

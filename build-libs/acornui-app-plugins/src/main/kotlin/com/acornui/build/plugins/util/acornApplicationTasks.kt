@@ -1,12 +1,12 @@
 package com.acornui.build.plugins.util
 
-import com.acornui.io.file.ManifestUtil
 import com.acornui.build.plugins.acornui
 import com.acornui.build.plugins.tasks.AcornUiResourceProcessorTask
 import com.acornui.build.plugins.tasks.DceTask
 import com.acornui.build.plugins.tasks.KotlinJsMonkeyPatcherTask
 import com.acornui.io.file.FilesManifest
-import com.acornui.serialization.toJson
+import com.acornui.io.file.ManifestUtil
+import com.acornui.serialization.jsonStringify
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.tasks.Sync
@@ -80,9 +80,9 @@ fun Project.applicationResourceTasks(platforms: Iterable<String>, compilations: 
                     if (assetsDir.exists()) {
                         val manifest = ManifestUtil.createManifest(assetsDir, processedResourcesAllMain)
                         assetsDir.resolve("files.json").writeText(
-                            toJson(
-                                manifest,
-                                FilesManifest.serializer()
+                            jsonStringify(
+                                FilesManifest.serializer(),
+                                manifest
                             )
                         )
                     }

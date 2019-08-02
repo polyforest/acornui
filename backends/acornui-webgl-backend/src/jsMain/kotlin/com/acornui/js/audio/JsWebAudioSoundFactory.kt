@@ -16,9 +16,9 @@
 
 package com.acornui.js.audio
 
-import com.acornui.core.audio.AudioManager
-import com.acornui.core.audio.Sound
-import com.acornui.core.audio.SoundFactory
+import com.acornui.audio.AudioManager
+import com.acornui.audio.Sound
+import com.acornui.audio.SoundFactory
 import org.khronos.webgl.ArrayBuffer
 
 /**

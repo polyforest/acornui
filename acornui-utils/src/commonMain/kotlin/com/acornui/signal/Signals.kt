@@ -16,7 +16,7 @@
 
 package com.acornui.signal
 
-import com.acornui.core.Disposable
+import com.acornui.Disposable
 import com.acornui.function.*
 
 interface Signal<in T : Any> : Bindable {

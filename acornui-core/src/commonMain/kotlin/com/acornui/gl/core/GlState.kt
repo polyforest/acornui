@@ -16,12 +16,12 @@
 
 package com.acornui.gl.core
 
-import com.acornui.core.Disposable
-import com.acornui.core.di.DKey
-import com.acornui.core.graphic.BlendMode
-import com.acornui.core.graphic.Texture
-import com.acornui.core.graphic.Window
-import com.acornui.core.graphic.rgbData
+import com.acornui.Disposable
+import com.acornui.di.DKey
+import com.acornui.graphic.BlendMode
+import com.acornui.graphic.Texture
+import com.acornui.graphic.Window
+import com.acornui.graphic.rgbData
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*

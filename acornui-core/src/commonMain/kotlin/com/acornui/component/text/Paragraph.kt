@@ -23,9 +23,9 @@ import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.layout.algorithm.LineInfo
 import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.component.text.collection.JoinedList
-import com.acornui.core.di.Owned
-import com.acornui.core.selection.SelectionRange
-import com.acornui.core.setCamera
+import com.acornui.di.Owned
+import com.acornui.selection.SelectionRange
+import com.acornui.setCamera
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.offsetRound
 import com.acornui.math.Vector3

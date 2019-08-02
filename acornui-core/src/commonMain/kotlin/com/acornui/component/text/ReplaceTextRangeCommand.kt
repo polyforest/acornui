@@ -16,10 +16,10 @@
 
 package com.acornui.component.text
 
-import com.acornui.core.mvc.Command
-import com.acornui.core.mvc.CommandGroup
-import com.acornui.core.mvc.CommandType
-import com.acornui.core.mvc.StateCommand
+import com.acornui.mvc.Command
+import com.acornui.mvc.CommandGroup
+import com.acornui.mvc.CommandType
+import com.acornui.mvc.StateCommand
 
 class ReplaceTextRangeCommand(
 		val target: Any?,

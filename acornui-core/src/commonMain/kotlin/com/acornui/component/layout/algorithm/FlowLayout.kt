@@ -25,7 +25,7 @@ import com.acornui.component.layout.LayoutElementRo
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
-import com.acornui.core.di.Owned
+import com.acornui.di.Owned
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.PadRo

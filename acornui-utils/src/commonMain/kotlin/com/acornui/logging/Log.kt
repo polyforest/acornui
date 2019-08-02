@@ -18,9 +18,9 @@ package com.acornui.logging
 
 import com.acornui.recycle.Clearable
 import com.acornui.collection.poll
-import com.acornui.core.lineSeparator
+import com.acornui.lineSeparator
 import com.acornui.error.stack
-import com.acornui.core.debug as debugFlag
+import com.acornui.debug as debugFlag
 
 interface Logger {
 

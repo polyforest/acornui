@@ -32,8 +32,8 @@
 package com.esotericsoftware.spine.attachments
 
 import com.acornui.collection.ArrayList
-import com.acornui.core.graphic.AtlasPageData
-import com.acornui.core.graphic.AtlasRegionData
+import com.acornui.graphic.AtlasPageData
+import com.acornui.graphic.AtlasRegionData
 import com.acornui.graphic.Color
 import com.esotericsoftware.spine.Slot
 import com.esotericsoftware.spine.component.SpineVertexUtils.colorOffset

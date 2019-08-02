@@ -18,9 +18,6 @@ plugins {
 	id("com.acornui.kotlin-mpp")
 }
 
-val mockitoVersion: String by extra
-val objenesisVersion: String by extra
-
 kotlin {
 	sourceSets {
 		commonMain {
@@ -36,8 +33,6 @@ kotlin {
 		named("jvmTest") {
 			dependencies {
 				implementation(kotlin("reflect"))
-				implementation("org.mockito:mockito-core:$mockitoVersion")
-				implementation("org.objenesis:objenesis:$objenesisVersion")
 			}
 		}
 	}

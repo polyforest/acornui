@@ -19,10 +19,10 @@
 //import com.acornui.async.launch
 //import com.acornui.component.InteractivityMode
 //import com.acornui.component.UiComponentImpl
-//import com.acornui.core.asset.AssetType
-//import com.acornui.core.di.Owned
-//import com.acornui.core.graphic.BlendMode
-//import com.acornui.core.graphic.Texture
+//import com.acornui.asset.AssetType
+//import com.acornui.di.Owned
+//import com.acornui.graphic.BlendMode
+//import com.acornui.graphic.Texture
 //import com.acornui.io.floatBuffer
 //import com.acornui.gl.core.*
 //import com.acornui.io.put

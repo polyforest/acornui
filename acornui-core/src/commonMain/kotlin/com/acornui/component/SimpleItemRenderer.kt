@@ -22,11 +22,11 @@ import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
 import com.acornui.component.text.text
-import com.acornui.core.di.Owned
-import com.acornui.core.text.StringFormatter
-import com.acornui.core.text.ToStringFormatter
+import com.acornui.di.Owned
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
+import com.acornui.text.StringFormatter
+import com.acornui.text.ToStringFormatter
 
 /**
  * A SimpleItemRenderer is a [ListItemRenderer] implementation that displays data as text using a formatter.

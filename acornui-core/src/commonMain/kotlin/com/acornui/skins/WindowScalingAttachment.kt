@@ -5,9 +5,9 @@ import com.acornui.component.createOrReuseAttachment
 import com.acornui.component.style.AlwaysFilter
 import com.acornui.component.style.StyleRule
 import com.acornui.component.text.charStyle
-import com.acornui.core.Disposable
-import com.acornui.core.di.inject
-import com.acornui.core.graphic.Window
+import com.acornui.Disposable
+import com.acornui.di.inject
+import com.acornui.graphic.Window
 import com.acornui.function.as2
 
 /**

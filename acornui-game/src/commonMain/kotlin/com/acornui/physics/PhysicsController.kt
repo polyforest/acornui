@@ -16,14 +16,14 @@
 
 package com.acornui.physics
 
-import com.acornui.core.Disposable
-import com.acornui.core.Updatable
-import com.acornui.core.di.Injector
-import com.acornui.core.di.Scoped
-import com.acornui.core.mvc.Command
-import com.acornui.core.mvc.CommandType
-import com.acornui.core.mvc.commander
-import com.acornui.core.mvc.invokeCommand
+import com.acornui.Disposable
+import com.acornui.Updatable
+import com.acornui.di.Injector
+import com.acornui.di.Scoped
+import com.acornui.mvc.Command
+import com.acornui.mvc.CommandType
+import com.acornui.mvc.commander
+import com.acornui.mvc.invokeCommand
 import com.acornui.ecs.Entity
 import com.acornui.ecs.componentList
 import com.acornui.geom.CollisionInfo

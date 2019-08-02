@@ -16,14 +16,14 @@
 
 package com.acornui.js.input
 
-import com.acornui.core.Disposable
-import com.acornui.core.focus.FocusManager
-import com.acornui.core.input.Clipboard
-import com.acornui.core.input.InteractionEventBase
-import com.acornui.core.input.InteractivityManager
-import com.acornui.core.input.interaction.ClipboardItemType
-import com.acornui.core.input.interaction.CopyInteractionRo
-import com.acornui.core.input.interaction.PasteInteractionRo
+import com.acornui.Disposable
+import com.acornui.focus.FocusManager
+import com.acornui.input.Clipboard
+import com.acornui.input.InteractionEventBase
+import com.acornui.input.InteractivityManager
+import com.acornui.input.interaction.ClipboardItemType
+import com.acornui.input.interaction.CopyInteractionRo
+import com.acornui.input.interaction.PasteInteractionRo
 import com.acornui.js.html.ClipboardEvent
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLTextAreaElement

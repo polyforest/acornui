@@ -18,7 +18,7 @@ package com.acornui.jvm.audio
 
 import com.acornui.collection.poll
 import com.acornui.collection.pop
-import com.acornui.core.audio.AudioManagerImpl
+import com.acornui.audio.AudioManagerImpl
 import org.lwjgl.BufferUtils
 import org.lwjgl.openal.AL
 import org.lwjgl.openal.AL10

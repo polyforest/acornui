@@ -27,7 +27,7 @@ import com.acornui.component.style.StyleType
 import com.acornui.component.style.styleTag
 import com.acornui.component.text.TextField
 import com.acornui.component.text.text
-import com.acornui.core.di.Owned
+import com.acornui.di.Owned
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.PadRo

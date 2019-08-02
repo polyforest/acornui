@@ -16,7 +16,7 @@
 
 package com.acornui.time
 
-import com.acornui.core.zeroPadding
+import com.acornui.zeroPadding
 
 interface DateRo : Comparable<DateRo> {
 
@@ -131,7 +131,11 @@ interface DateRo : Comparable<DateRo> {
 	/**
 	 * Returns a mutable copy of this date.
 	 */
-	fun copy(): Date
+	fun copy(): Date {
+		val newDate = Date()
+		newDate.time = time
+		return newDate
+	}
 
 	/**
 	 * Outputs to the ISO-8601 standard. The format is: YYYY-MM-DDTHH:mm:ss.sssZ
@@ -185,9 +189,9 @@ val DateRo.isLeapYear: Boolean
 
 /**
  * A Date object.
- * To convert this date to a string, use [com.acornui.core.text.DateTimeFormatter]
+ * To convert this date to a string, use [com.acornui.text.DateTimeFormatter]
  */
-interface Date : DateRo {
+expect class Date() : DateRo {
 
 	override var time: Long
 
@@ -196,17 +200,9 @@ interface Date : DateRo {
 
 	override var monthIndex: Int
 	override var month: Int
-		get() = monthIndex + 1
-		set(value) {
-			monthIndex = value - 1
-		}
 
 	override var utcMonthIndex: Int
 	override var utcMonth: Int
-		get() = utcMonthIndex + 1
-		set(value) {
-			utcMonthIndex = value - 1
-		}
 
 	override var dayOfMonth: Int
 	override var utcDayOfMonth: Int
@@ -222,59 +218,58 @@ interface Date : DateRo {
 
 	override var milli: Int
 	override var utcMilli: Int
+}
 
-	/**
-	 * A convenience function for setting the time of day on a Date object.
-	 * Note that if the time provided is beyond the range of a day, the date will change.
-	 */
-	fun setTimeOfDay(hour: Int, minute: Int, second: Int = 0, milli: Int = 0): Date {
-		this.hour = hour
-		this.minute = minute
-		this.second = second
-		this.milli = milli
-		return this
-	}
+/**
+ * A convenience function for setting the time of day on a Date object.
+ * Note that if the time provided is beyond the range of a day, the date will change.
+ */
+fun Date.setTimeOfDay(hour: Int, minute: Int, second: Int = 0, milli: Int = 0): Date {
+	this.hour = hour
+	this.minute = minute
+	this.second = second
+	this.milli = milli
+	return this
+}
 
-	/**
-	 * A convenience function for setting the UTC time of day on a Date object.
-	 * Note that if the time provided is beyond the range of a day, the date will change.
-	 */
-	fun setUtcTimeOfDay(hour: Int, minute: Int, second: Int = 0, milli: Int = 0): Date {
-		this.utcHour = hour
-		this.utcMinute = minute
-		this.utcSecond = second
-		this.utcMilli = milli
-		return this
-	}
+/**
+ * A convenience function for setting the UTC time of day on a Date object.
+ * Note that if the time provided is beyond the range of a day, the date will change.
+ */
+fun Date.setUtcTimeOfDay(hour: Int, minute: Int, second: Int = 0, milli: Int = 0): Date {
+	this.utcHour = hour
+	this.utcMinute = minute
+	this.utcSecond = second
+	this.utcMilli = milli
+	return this
+}
 
-	/**
-	 * A convenience function for setting the date on a Date object.
-	 */
-	fun setDate(fullYear: Int, month: Int, dayOfMonth: Int): Date {
-		this.fullYear = fullYear
-		this.month = month
-		this.dayOfMonth = dayOfMonth
-		return this
-	}
+/**
+ * A convenience function for setting the date on a Date object.
+ */
+fun Date.setDate(fullYear: Int, month: Int, dayOfMonth: Int): Date {
+	this.fullYear = fullYear
+	this.month = month
+	this.dayOfMonth = dayOfMonth
+	return this
+}
 
-	/**
-	 * A convenience function for setting the utc date on a Date object.
-	 */
-	fun setUtcDate(fullYear: Int, month: Int, dayOfMonth: Int): Date {
-		this.utcFullYear = fullYear
-		this.utcMonth = month
-		this.utcDayOfMonth = dayOfMonth
-		return this
-	}
+/**
+ * A convenience function for setting the utc date on a Date object.
+ */
+fun Date.setUtcDate(fullYear: Int, month: Int, dayOfMonth: Int): Date {
+	this.utcFullYear = fullYear
+	this.utcMonth = month
+	this.utcDayOfMonth = dayOfMonth
+	return this
+}
 
-	/**
-	 * Sets this date object to match the time of the other date object.
-	 */
-	fun set(other: DateRo): Date {
-		this.time = other.time
-		return this
-	}
-
+/**
+ * Sets this date object to match the time of the other date object.
+ */
+fun Date.set(other: DateRo): Date {
+	this.time = other.time
+	return this
 }
 
 enum class Era {
@@ -316,5 +311,3 @@ object Months {
 
 	val DECEMBER: Int = 11
 }
-
-expect class DateImpl() : Date

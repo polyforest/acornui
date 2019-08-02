@@ -17,8 +17,8 @@
 package com.acornui.js.html
 
 import com.acornui.component.*
-import com.acornui.core.di.Owned
-import com.acornui.core.focus.Focusable
+import com.acornui.di.Owned
+import com.acornui.focus.Focusable
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*

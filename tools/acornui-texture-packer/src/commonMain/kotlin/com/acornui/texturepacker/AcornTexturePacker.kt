@@ -18,12 +18,12 @@ package com.acornui.texturepacker
 
 import com.acornui.collection.ArrayIterator
 import com.acornui.collection.ArrayList
-import com.acornui.core.asset.AssetManager
-import com.acornui.core.asset.AssetType
-import com.acornui.core.graphic.AtlasPageData
-import com.acornui.core.graphic.AtlasRegionData
-import com.acornui.core.graphic.RgbData
-import com.acornui.core.io.file.Directory
+import com.acornui.asset.AssetManager
+import com.acornui.asset.AssetType
+import com.acornui.graphic.AtlasPageData
+import com.acornui.graphic.AtlasRegionData
+import com.acornui.graphic.RgbData
+import com.acornui.io.file.Directory
 import com.acornui.gl.core.TexturePixelFormat
 import com.acornui.graphic.Color
 import com.acornui.math.IntRectangle

@@ -18,7 +18,7 @@ package com.acornui.graphic.lighting
 
 import com.acornui._assert
 import com.acornui.collection.equalsArray
-import com.acornui.core.graphic.CameraRo
+import com.acornui.graphic.CameraRo
 import com.acornui.math.*
 import com.acornui.observe.ModTagWatch
 

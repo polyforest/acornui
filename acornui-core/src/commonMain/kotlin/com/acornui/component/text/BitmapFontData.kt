@@ -16,7 +16,7 @@
 
 package com.acornui.component.text
 
-import com.acornui.core.isWhitespace2
+import com.acornui.isWhitespace2
 import com.acornui.math.IntPadRo
 import com.acornui.math.IntRectangle
 import com.acornui.math.IntRectangleRo

@@ -20,20 +20,20 @@ import com.acornui.action.Progress
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
-import com.acornui.core.Disposable
-import com.acornui.core.asset.AssetManager
-import com.acornui.core.asset.onLoadersEmpty
-import com.acornui.core.asset.secondsRemaining
-import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
-import com.acornui.core.popup.PopUpInfo
-import com.acornui.core.popup.addPopUp
-import com.acornui.core.popup.removePopUp
-import com.acornui.core.time.onTick
-import com.acornui.core.time.timer
+import com.acornui.Disposable
+import com.acornui.asset.AssetManager
+import com.acornui.asset.onLoadersEmpty
+import com.acornui.asset.secondsRemaining
+import com.acornui.di.Owned
+import com.acornui.di.inject
+import com.acornui.popup.PopUpInfo
+import com.acornui.popup.addPopUp
+import com.acornui.popup.removePopUp
+import com.acornui.time.onTick
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
+import com.acornui.time.timer
 
 /**
  * A progress bar made from simple rectangles.

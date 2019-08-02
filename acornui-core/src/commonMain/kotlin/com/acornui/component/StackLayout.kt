@@ -22,7 +22,7 @@ import com.acornui.component.layout.algorithm.BasicLayoutData
 import com.acornui.component.layout.algorithm.LayoutAlgorithm
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
-import com.acornui.core.di.Owned
+import com.acornui.di.Owned
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.PadRo

@@ -16,8 +16,8 @@
 
 package com.acornui.component
 
-import com.acornui.core.Renderable
-import com.acornui.core.di.Owned
+import com.acornui.Renderable
+import com.acornui.di.Owned
 import com.acornui.math.Bounds
 import com.acornui.math.MinMax
 

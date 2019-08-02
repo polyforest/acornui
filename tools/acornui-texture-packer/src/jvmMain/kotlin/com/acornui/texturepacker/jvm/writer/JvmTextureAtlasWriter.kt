@@ -17,10 +17,10 @@
 package com.acornui.texturepacker.jvm.writer
 
 import com.acornui.collection.ArrayList
-import com.acornui.core.graphic.RgbData
-import com.acornui.core.graphic.TextureAtlasData
-import com.acornui.core.graphic.TextureAtlasDataSerializer
-import com.acornui.core.replaceTokens
+import com.acornui.graphic.RgbData
+import com.acornui.graphic.TextureAtlasData
+import com.acornui.graphic.TextureAtlasDataSerializer
+import com.acornui.replaceTokens
 import com.acornui.gl.core.TexturePixelFormat
 import com.acornui.serialization.json
 import com.acornui.serialization.write

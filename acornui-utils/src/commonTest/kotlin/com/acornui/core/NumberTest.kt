@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.acornui.core
+package com.acornui
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

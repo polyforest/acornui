@@ -16,7 +16,7 @@
 
 package com.acornui.recycle
 
-import com.acornui.core.Disposable
+import com.acornui.Disposable
 
 
 /**

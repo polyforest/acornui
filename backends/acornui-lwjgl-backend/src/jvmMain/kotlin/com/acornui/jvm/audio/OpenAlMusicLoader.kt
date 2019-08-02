@@ -19,9 +19,9 @@ package com.acornui.jvm.audio
 import com.acornui.async.Promise
 import com.acornui.async.launch
 import com.acornui.collection.stringMapOf
-import com.acornui.core.asset.AssetLoader
-import com.acornui.core.asset.AssetType
-import com.acornui.core.audio.Music
+import com.acornui.asset.AssetLoader
+import com.acornui.asset.AssetType
+import com.acornui.audio.Music
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException

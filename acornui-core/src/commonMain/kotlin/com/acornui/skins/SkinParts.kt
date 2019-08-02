@@ -22,7 +22,7 @@ import com.acornui.component.layout.algorithm.canvas
 import com.acornui.component.style.OptionalSkinPart
 import com.acornui.component.style.addStyleRule
 import com.acornui.component.text.charStyle
-import com.acornui.core.di.Owned
+import com.acornui.di.Owned
 import com.acornui.graphic.Color
 import com.acornui.math.*
 

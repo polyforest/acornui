@@ -23,11 +23,11 @@
 
 package com.acornui.gl.core
 
-import com.acornui.core.di.DKey
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
-import com.acornui.core.graphic.Texture
-import com.acornui.core.graphic.Window
+import com.acornui.di.DKey
+import com.acornui.di.Scoped
+import com.acornui.di.inject
+import com.acornui.graphic.Texture
+import com.acornui.graphic.Window
 import com.acornui.io.floatBuffer
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
@@ -1102,7 +1102,7 @@ interface Gl20 {
 	 * coordinates.
 	 *
 	 * Note - if the current frame buffer is the window, the values should be multiplied by
-	 * [com.acornui.core.graphic.Window.scaleX] and [com.acornui.core.graphic.Window.scaleY]
+	 * [com.acornui.graphic.Window.scaleX] and [com.acornui.graphic.Window.scaleY]
 	 *
 	 * @param x Specify the lower left corner of the viewport rectangle, in pixels. The initial value is (0,0).
 	 * @param y

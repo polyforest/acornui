@@ -16,7 +16,7 @@
 
 package com.acornui.string
 
-import com.acornui.core.isWhitespace2
+import com.acornui.isWhitespace2
 
 /**
  * SubString is class allowing you to make a reference to a substring of a target String without a memory copy.

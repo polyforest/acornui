@@ -18,10 +18,10 @@ package com.acornui.component
 
 import com.acornui.async.disposeOnShutdown
 import com.acornui.component.drawing.putIdtQuad
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
-import com.acornui.core.graphic.BlendMode
-import com.acornui.core.graphic.Window
+import com.acornui.di.Scoped
+import com.acornui.di.inject
+import com.acornui.graphic.BlendMode
+import com.acornui.graphic.Window
 import com.acornui.gl.core.*
 import kotlin.math.ceil
 

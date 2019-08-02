@@ -20,8 +20,8 @@ package com.acornui.js.loader
  * @author nbilyk
  */
 import com.acornui.async.Deferred
-import com.acornui.core.asset.AssetLoader
-import com.acornui.core.asset.AssetType
+import com.acornui.asset.AssetLoader
+import com.acornui.asset.AssetType
 import com.acornui.io.NativeReadByteBuffer
 import com.acornui.request.Bandwidth
 import com.acornui.request.JsBinaryRequest

@@ -17,8 +17,8 @@
 package com.acornui.jvm.audio
 
 import com.acornui.collection.stringMapOf
-import com.acornui.core.asset.AssetType
-import com.acornui.core.audio.SoundFactory
+import com.acornui.asset.AssetType
+import com.acornui.audio.SoundFactory
 import com.acornui.jvm.loader.JvmAssetLoaderBase
 import java.io.InputStream
 

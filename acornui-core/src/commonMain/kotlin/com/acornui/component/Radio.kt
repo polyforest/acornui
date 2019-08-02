@@ -17,11 +17,11 @@
 package com.acornui.component
 
 import com.acornui.component.style.StyleTag
-import com.acornui.core.Disposable
-import com.acornui.core.Lifecycle
-import com.acornui.core.di.Owned
-import com.acornui.core.di.own
-import com.acornui.core.input.interaction.click
+import com.acornui.Disposable
+import com.acornui.Lifecycle
+import com.acornui.di.Owned
+import com.acornui.di.own
+import com.acornui.input.interaction.click
 import com.acornui.signal.Signal0
 
 interface RadioButtonRo<out T> : ButtonRo {

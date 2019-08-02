@@ -25,8 +25,8 @@ import com.acornui.component.ValidationFlags
 import com.acornui.component.layout.algorithm.LineInfo
 import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.component.text.collection.JoinedList
-import com.acornui.core.di.Owned
-import com.acornui.core.selection.SelectionRange
+import com.acornui.di.Owned
+import com.acornui.selection.SelectionRange
 
 interface TextNodeContainerRo : ContainerRo, TextNodeRo
 interface TextNodeContainer : TextNode, TextNodeContainerRo

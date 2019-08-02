@@ -17,8 +17,8 @@
 package com.acornui.component
 
 import com.acornui.component.style.StyleTag
-import com.acornui.core.di.Owned
-import com.acornui.core.di.dKey
+import com.acornui.di.Owned
+import com.acornui.di.dKey
 
 interface HtmlComponent : UiComponent {
 

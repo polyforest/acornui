@@ -16,8 +16,8 @@
 
 package com.acornui.string
 
-import com.acornui.core.replaceTokens
-import com.acornui.core.split2
+import com.acornui.replaceTokens
+import com.acornui.split2
 import kotlin.test.Test
 import kotlin.test.*
 import com.acornui.test.*

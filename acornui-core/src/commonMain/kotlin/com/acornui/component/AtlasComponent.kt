@@ -21,11 +21,11 @@ package com.acornui.component
 import com.acornui.async.Deferred
 import com.acornui.async.catch
 import com.acornui.async.then
-import com.acornui.core.asset.CachedGroup
-import com.acornui.core.asset.cachedGroup
-import com.acornui.core.di.Owned
-import com.acornui.core.di.notDisposed
-import com.acornui.core.graphic.*
+import com.acornui.asset.CachedGroup
+import com.acornui.asset.cachedGroup
+import com.acornui.di.Owned
+import com.acornui.di.notDisposed
+import com.acornui.graphic.*
 import com.acornui.logging.Log
 import com.acornui.math.Bounds
 import com.acornui.recycle.Clearable

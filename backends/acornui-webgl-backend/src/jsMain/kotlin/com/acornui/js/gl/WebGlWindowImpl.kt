@@ -18,9 +18,9 @@
 
 package com.acornui.js.gl
 
-import com.acornui.core.WindowConfig
-import com.acornui.core.browser.Location
-import com.acornui.core.graphic.Window
+import com.acornui.WindowConfig
+import com.acornui.browser.Location
+import com.acornui.graphic.Window
 import com.acornui.function.as1
 import com.acornui.gl.core.Gl20
 import com.acornui.graphic.Color

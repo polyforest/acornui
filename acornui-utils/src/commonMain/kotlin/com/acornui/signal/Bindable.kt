@@ -16,7 +16,7 @@
 
 package com.acornui.signal
 
-import com.acornui.core.Disposable
+import com.acornui.Disposable
 
 /**
  * Bindable is a generic interface that represents the ability to add callbacks to the asynchronous event(s)

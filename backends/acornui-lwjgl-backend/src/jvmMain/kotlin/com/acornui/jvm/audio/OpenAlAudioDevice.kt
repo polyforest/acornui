@@ -16,7 +16,7 @@
 
 package com.acornui.jvm.audio
 
-import com.acornui.core.audio.AudioDevice
+import com.acornui.audio.AudioDevice
 import com.acornui.math.MathUtils
 import java.nio.ByteBuffer
 import java.nio.IntBuffer

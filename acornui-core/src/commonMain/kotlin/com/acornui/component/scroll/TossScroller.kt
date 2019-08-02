@@ -21,18 +21,17 @@ package com.acornui.component.scroll
 import com.acornui.collection.poll
 import com.acornui.component.UiComponent
 import com.acornui.component.createOrReuseAttachment
-import com.acornui.core.Disposable
-import com.acornui.core.input.InteractionType
-import com.acornui.core.input.interaction.*
-import com.acornui.core.tickTime
-import com.acornui.core.time.tick
-import com.acornui.core.time.time
+import com.acornui.Disposable
+import com.acornui.input.InteractionType
+import com.acornui.input.interaction.*
+import com.acornui.tickTime
+import com.acornui.time.tick
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
 import com.acornui.signal.StoppableSignal
 import com.acornui.signal.StoppableSignalImpl
-
+import com.acornui.time.time
 
 /**
  * A toss scroller lets you grab a target component, and update [ScrollModelRo] objects by dragging it.

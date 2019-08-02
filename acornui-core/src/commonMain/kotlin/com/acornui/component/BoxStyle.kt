@@ -20,7 +20,7 @@ import com.acornui.collection.ArrayList
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.component.style.styleProperty
-import com.acornui.core.radToDeg
+import com.acornui.radToDeg
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.color

@@ -18,11 +18,11 @@ package com.acornui.js
 
 import com.acornui.component.Stage
 import com.acornui.component.render
-import com.acornui.core.di.Injector
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
-import com.acornui.core.graphic.Window
-import com.acornui.core.time.TimeDriver
+import com.acornui.di.Injector
+import com.acornui.di.Scoped
+import com.acornui.di.inject
+import com.acornui.graphic.Window
+import com.acornui.time.TimeDriver
 import com.acornui.logging.Log
 import kotlin.browser.window
 

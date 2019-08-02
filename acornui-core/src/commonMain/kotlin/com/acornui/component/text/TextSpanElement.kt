@@ -21,9 +21,9 @@ import com.acornui.async.then
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.style.*
-import com.acornui.core.Disposable
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
+import com.acornui.Disposable
+import com.acornui.di.Scoped
+import com.acornui.di.inject
 import com.acornui.gl.core.GlState
 import com.acornui.recycle.ObjectPool
 

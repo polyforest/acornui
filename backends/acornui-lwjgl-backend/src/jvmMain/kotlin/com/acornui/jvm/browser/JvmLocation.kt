@@ -16,8 +16,8 @@
 
 package com.acornui.jvm.browser
 
-import com.acornui.core.browser.Location
-import com.acornui.core.graphic.PopUpSpecs
+import com.acornui.browser.Location
+import com.acornui.graphic.PopUpSpecs
 import java.awt.Desktop
 import java.net.URI
 

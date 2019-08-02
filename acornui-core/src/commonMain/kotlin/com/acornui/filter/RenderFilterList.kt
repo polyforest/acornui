@@ -2,8 +2,8 @@ package com.acornui.filter
 
 import com.acornui.collection.MutableListBase
 import com.acornui.component.RenderContextRo
-import com.acornui.core.Disposable
-import com.acornui.core.Renderable
+import com.acornui.Disposable
+import com.acornui.Renderable
 import com.acornui.function.as1
 import com.acornui.math.BoundsRo
 import com.acornui.math.MinMaxRo

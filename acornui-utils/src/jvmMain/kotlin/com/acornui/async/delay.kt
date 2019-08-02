@@ -16,7 +16,7 @@
 
 package com.acornui.async
 
-import com.acornui.core.Disposable
+import com.acornui.Disposable
 import java.util.concurrent.Executors
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine

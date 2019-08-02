@@ -16,8 +16,8 @@
 
 package com.acornui.js.audio
 
-import com.acornui.core.audio.AudioManager
-import com.acornui.core.audio.Sound
+import com.acornui.audio.AudioManager
+import com.acornui.audio.Sound
 import com.acornui.math.MathUtils
 import org.w3c.dom.HTMLAudioElement
 import org.w3c.dom.events.Event

@@ -17,7 +17,7 @@
 package com.acornui.ecs
 
 import com.acornui._assert
-import com.acornui.core.Disposable
+import com.acornui.Disposable
 import com.acornui.serialization.*
 
 interface Component : Disposable {

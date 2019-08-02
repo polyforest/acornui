@@ -16,10 +16,10 @@
 
 package com.acornui.js.audio
 
-import com.acornui.core.audio.AudioManager
-import com.acornui.core.audio.Sound
-import com.acornui.core.time.time
+import com.acornui.audio.AudioManager
+import com.acornui.audio.Sound
 import com.acornui.math.MathUtils
+import com.acornui.time.time
 import org.khronos.webgl.ArrayBuffer
 
 class JsWebAudioSound(

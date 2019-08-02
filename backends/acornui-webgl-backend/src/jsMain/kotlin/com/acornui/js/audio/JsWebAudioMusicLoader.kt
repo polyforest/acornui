@@ -17,10 +17,10 @@
 package com.acornui.js.audio
 
 import com.acornui.async.Deferred
-import com.acornui.core.asset.AssetLoader
-import com.acornui.core.asset.AssetType
-import com.acornui.core.audio.AudioManager
-import com.acornui.core.audio.Music
+import com.acornui.asset.AssetLoader
+import com.acornui.asset.AssetType
+import com.acornui.audio.AudioManager
+import com.acornui.audio.Music
 
 /**
  * An asset loader for js AudioContext sounds.

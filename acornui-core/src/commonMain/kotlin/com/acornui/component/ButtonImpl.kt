@@ -20,13 +20,13 @@ package com.acornui.component
 
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.style.*
-import com.acornui.core.cursor.StandardCursors
-import com.acornui.core.cursor.cursor
-import com.acornui.core.di.Owned
-import com.acornui.core.di.own
-import com.acornui.core.focus.Focusable
-import com.acornui.core.input.interaction.MouseOrTouchState
-import com.acornui.core.input.interaction.click
+import com.acornui.cursor.StandardCursors
+import com.acornui.cursor.cursor
+import com.acornui.di.Owned
+import com.acornui.di.own
+import com.acornui.focus.Focusable
+import com.acornui.input.interaction.MouseOrTouchState
+import com.acornui.input.interaction.click
 import com.acornui.factory.LazyInstance
 import com.acornui.factory.disposeInstance
 import com.acornui.math.Bounds

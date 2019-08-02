@@ -21,19 +21,19 @@ import com.acornui.component.DatePicker
 import com.acornui.component.layout.HAlign
 import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.text.*
-import com.acornui.core.compareTo
-import com.acornui.core.compareTo2
-import com.acornui.core.di.Injector
-import com.acornui.core.di.Owned
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.own
-import com.acornui.core.selection.selectAll
-import com.acornui.core.text.*
-import com.acornui.time.DateRo
-import com.acornui.core.userInfo
+import com.acornui.compareTo
+import com.acornui.compareTo2
+import com.acornui.di.Injector
+import com.acornui.di.Owned
+import com.acornui.di.Scoped
+import com.acornui.di.own
+import com.acornui.selection.selectAll
 import com.acornui.math.Bounds
 import com.acornui.signal.Signal0
 import com.acornui.signal.bind
+import com.acornui.system.userInfo
+import com.acornui.text.*
+import com.acornui.time.DateRo
 
 abstract class IntColumn<in E>(override val injector: Injector) : DataGridColumn<E, Int?>(), Scoped {
 

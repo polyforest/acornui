@@ -22,7 +22,7 @@ import com.acornui.component.layout.VAlign
 import com.acornui.component.layout.algorithm.HorizontalLayoutContainer
 import com.acornui.component.text.TextField
 import com.acornui.component.text.text
-import com.acornui.core.di.Owned
+import com.acornui.di.Owned
 import com.acornui.math.Bounds
 
 /**

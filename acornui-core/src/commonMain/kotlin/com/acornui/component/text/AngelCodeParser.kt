@@ -21,7 +21,7 @@ import com.acornui.component.text.GlyphData.Companion.EMPTY_CHAR
 import com.acornui.component.text.GlyphData.Companion.UNKNOWN_CHAR
 import com.acornui.math.IntRectangle
 import com.acornui.string.StringReader
-import com.acornui.core.replace2
+import com.acornui.replace2
 import com.acornui.math.IntPad
 import kotlin.math.abs
 

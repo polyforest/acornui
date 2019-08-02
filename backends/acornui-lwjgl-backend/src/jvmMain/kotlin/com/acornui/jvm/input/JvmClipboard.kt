@@ -16,10 +16,10 @@
 
 package com.acornui.jvm.input
 
-import com.acornui.core.Disposable
-import com.acornui.core.focus.FocusManager
-import com.acornui.core.input.*
-import com.acornui.core.input.interaction.*
+import com.acornui.Disposable
+import com.acornui.focus.FocusManager
+import com.acornui.input.*
+import com.acornui.input.interaction.*
 import org.lwjgl.glfw.GLFW
 
 

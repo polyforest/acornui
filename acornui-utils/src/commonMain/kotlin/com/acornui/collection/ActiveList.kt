@@ -16,7 +16,7 @@
 
 package com.acornui.collection
 
-import com.acornui.core.Disposable
+import com.acornui.Disposable
 import com.acornui.observe.Observable
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool

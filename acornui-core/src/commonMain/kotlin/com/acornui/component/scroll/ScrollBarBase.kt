@@ -18,16 +18,16 @@ package com.acornui.component.scroll
 
 import com.acornui.component.*
 import com.acornui.component.style.*
-import com.acornui.core.cursor.StandardCursors
-import com.acornui.core.cursor.cursor
-import com.acornui.core.di.Owned
-import com.acornui.core.di.own
-import com.acornui.core.input.interaction.*
-import com.acornui.core.input.mouseDown
-import com.acornui.core.input.mouseOver
-import com.acornui.core.tween.driveTween
-import com.acornui.core.tween.killTween
-import com.acornui.core.tween.tweenAlpha
+import com.acornui.cursor.StandardCursors
+import com.acornui.cursor.cursor
+import com.acornui.di.Owned
+import com.acornui.di.own
+import com.acornui.input.interaction.*
+import com.acornui.input.mouseDown
+import com.acornui.input.mouseOver
+import com.acornui.tween.driveTween
+import com.acornui.tween.killTween
+import com.acornui.tween.tweenAlpha
 import com.acornui.math.Easing
 import com.acornui.math.Vector2
 import kotlin.properties.Delegates

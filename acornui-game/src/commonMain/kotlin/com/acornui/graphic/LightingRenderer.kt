@@ -18,13 +18,13 @@
 
 package com.acornui.graphic
 
-import com.acornui.core.Disposable
-import com.acornui.core.di.Injector
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
-import com.acornui.core.graphic.BlendMode
-import com.acornui.core.graphic.CameraRo
-import com.acornui.core.graphic.Window
+import com.acornui.Disposable
+import com.acornui.di.Injector
+import com.acornui.di.Scoped
+import com.acornui.di.inject
+import com.acornui.graphic.BlendMode
+import com.acornui.graphic.CameraRo
+import com.acornui.graphic.Window
 import com.acornui.gl.core.*
 import com.acornui.graphic.lighting.*
 import com.acornui.math.Matrix4

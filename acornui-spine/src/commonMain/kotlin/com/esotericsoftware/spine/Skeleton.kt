@@ -32,7 +32,7 @@
 package com.esotericsoftware.spine
 
 import com.acornui.collection.*
-import com.acornui.core.graphic.TextureAtlasData
+import com.acornui.graphic.TextureAtlasData
 import com.acornui.graphic.Color
 import com.acornui.math.Bounds
 import com.acornui.math.Vector2

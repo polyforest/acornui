@@ -20,8 +20,8 @@ import com.acornui.recycle.Clearable
 import com.acornui.collection.first2
 import com.acornui.component.UiComponent
 import com.acornui.component.layout.spacer
-import com.acornui.core.Disposable
-import com.acornui.core.di.Owned
+import com.acornui.Disposable
+import com.acornui.di.Owned
 import com.acornui.observe.*
 import com.acornui.serialization.Writer
 import com.acornui.signal.Signal

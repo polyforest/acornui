@@ -16,8 +16,7 @@
 
 package com.acornui.jvm.files
 
-import com.acornui.core.Platform
-import com.acornui.core.userInfo
+import com.acornui.system.Platform
 import com.acornui.file.FileFilterGroup
 import com.acornui.file.FileIoManager
 import com.acornui.file.FileReader
@@ -25,6 +24,7 @@ import com.acornui.io.NativeReadBuffer
 import com.acornui.io.NativeReadByteBuffer
 import com.acornui.io.byteBuffer
 import com.acornui.io.toByteArray
+import com.acornui.system.userInfo
 import org.lwjgl.PointerBuffer
 import org.lwjgl.system.MemoryUtil.memAllocPointer
 import org.lwjgl.system.MemoryUtil.memFree

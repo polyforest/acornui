@@ -17,8 +17,8 @@
 package com.acornui.component
 
 
-import com.acornui.core.di.Owned
-import com.acornui.core.graphic.Texture
+import com.acornui.di.Owned
+import com.acornui.graphic.Texture
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
 import com.acornui.gl.core.TextureWrapMode

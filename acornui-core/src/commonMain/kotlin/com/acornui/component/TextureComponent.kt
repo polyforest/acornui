@@ -18,13 +18,13 @@ package com.acornui.component
 
 import com.acornui.async.catch
 import com.acornui.async.then
-import com.acornui.core.asset.AssetType
-import com.acornui.core.asset.CachedGroup
-import com.acornui.core.asset.cachedGroup
-import com.acornui.core.asset.loadAndCache
-import com.acornui.core.di.Owned
-import com.acornui.core.graphic.BlendMode
-import com.acornui.core.graphic.Texture
+import com.acornui.asset.AssetType
+import com.acornui.asset.CachedGroup
+import com.acornui.asset.cachedGroup
+import com.acornui.asset.loadAndCache
+import com.acornui.di.Owned
+import com.acornui.graphic.BlendMode
+import com.acornui.graphic.Texture
 import com.acornui.logging.Log
 import com.acornui.math.IntRectangleRo
 import com.acornui.math.RectangleRo

@@ -17,7 +17,7 @@
 package com.acornui.recycle
 
 import com.acornui.collection.copy
-import com.acornui.core.EqualityCheck
+import com.acornui.EqualityCheck
 
 /**
  * Recycles a list of item renderers, creating or disposing renderers only when there is no data match.

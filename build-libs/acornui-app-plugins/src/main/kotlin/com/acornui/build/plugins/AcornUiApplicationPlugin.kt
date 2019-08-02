@@ -1,6 +1,6 @@
 package com.acornui.build.plugins
 
-import com.acornui.core.toCamelCase
+import com.acornui.toCamelCase
 import com.acornui.build.plugins.util.appAssetsWebTasks
 import com.acornui.build.plugins.util.applicationResourceTasks
 import com.acornui.build.plugins.util.kotlinExt

@@ -16,8 +16,8 @@
 
 package com.acornui.gl.core
 
-import com.acornui.core.graphic.RgbData
-import com.acornui.core.graphic.Texture
+import com.acornui.graphic.RgbData
+import com.acornui.graphic.Texture
 import com.acornui.logging.Log
 import com.acornui.math.MathUtils
 

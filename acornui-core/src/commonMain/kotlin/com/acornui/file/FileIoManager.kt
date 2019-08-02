@@ -16,8 +16,8 @@
 
 package com.acornui.file
 
-import com.acornui.core.Disposable
-import com.acornui.core.di.DKey
+import com.acornui.Disposable
+import com.acornui.di.DKey
 import com.acornui.io.*
 
 /**

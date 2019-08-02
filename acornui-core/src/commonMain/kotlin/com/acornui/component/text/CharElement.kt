@@ -20,7 +20,7 @@ import com.acornui.async.Deferred
 import com.acornui.async.resultOrNull
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
-import com.acornui.core.graphic.BlendMode
+import com.acornui.graphic.BlendMode
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putVertex

@@ -16,11 +16,11 @@
 
 package com.acornui.js.input
 
-import com.acornui.core.di.Injector
-import com.acornui.core.input.WhichButton
-import com.acornui.core.input.interaction.ClickDispatcher
-import com.acornui.core.input.interaction.ClickInteractionRo
-import com.acornui.core.time.time
+import com.acornui.di.Injector
+import com.acornui.input.WhichButton
+import com.acornui.input.interaction.ClickDispatcher
+import com.acornui.input.interaction.ClickInteractionRo
+import com.acornui.time.time
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent

@@ -17,8 +17,8 @@
 package com.acornui.filter
 
 import com.acornui.component.RenderContextRo
-import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
+import com.acornui.di.Owned
+import com.acornui.di.inject
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.ShaderProgram
 import com.acornui.gl.core.useShader

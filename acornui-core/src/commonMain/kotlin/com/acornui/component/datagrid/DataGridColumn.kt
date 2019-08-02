@@ -21,7 +21,7 @@ import com.acornui.component.InteractivityMode
 import com.acornui.component.UiComponent
 import com.acornui.component.layout.HAlign
 import com.acornui.component.layout.VAlign
-import com.acornui.core.di.Owned
+import com.acornui.di.Owned
 import com.acornui.observe.Observable
 import com.acornui.signal.Signal1
 import kotlin.properties.ObservableProperty

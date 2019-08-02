@@ -31,9 +31,9 @@ import com.acornui.serialization.*
 data class Theme(
 
 		/**
-		 * This will be set to the `backgroundColor` property in [com.acornui.core.config] window.
-		 * @see com.acornui.core.WindowConfig.backgroundColor
-		 * @see com.acornui.core.AppConfig
+		 * This will be set to the `backgroundColor` property in [com.acornui.config] window.
+		 * @see com.acornui.WindowConfig.backgroundColor
+		 * @see com.acornui.AppConfig
 		 */
 		val bgColor: ColorRo = Color(0xf1f2f3ff),
 		val panelBgColor: ColorRo = Color(0xe7edf1ff),

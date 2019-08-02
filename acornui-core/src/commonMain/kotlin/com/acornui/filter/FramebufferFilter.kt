@@ -17,12 +17,12 @@
 package com.acornui.filter
 
 import com.acornui.component.*
-import com.acornui.core.AppConfig
-import com.acornui.core.Renderable
-import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
-import com.acornui.core.di.own
-import com.acornui.core.graphic.*
+import com.acornui.AppConfig
+import com.acornui.Renderable
+import com.acornui.di.Owned
+import com.acornui.di.inject
+import com.acornui.di.own
+import com.acornui.graphic.*
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.clearAndReset
 import com.acornui.gl.core.resizeableFramebuffer

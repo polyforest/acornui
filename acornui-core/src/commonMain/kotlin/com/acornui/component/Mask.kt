@@ -16,8 +16,8 @@
 
 package com.acornui.component
 
-import com.acornui.core.di.inject
-import com.acornui.core.graphic.Window
+import com.acornui.di.inject
+import com.acornui.graphic.Window
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.ShaderBatch

@@ -23,20 +23,20 @@ import com.acornui.component.style.StyleType
 import com.acornui.component.style.styleTag
 import com.acornui.component.text.RestrictPatterns
 import com.acornui.component.text.textInput
-import com.acornui.core.di.Owned
-import com.acornui.core.di.own
-import com.acornui.core.input.Ascii
-import com.acornui.core.input.interaction.enableDownRepeat
-import com.acornui.core.input.keyDown
-import com.acornui.core.input.mouseDown
-import com.acornui.core.text.NumberFormatter
-import com.acornui.core.text.numberFormatter
+import com.acornui.di.Owned
+import com.acornui.di.own
+import com.acornui.input.Ascii
+import com.acornui.input.interaction.enableDownRepeat
+import com.acornui.input.keyDown
+import com.acornui.input.mouseDown
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.clamp
 import com.acornui.math.MathUtils.roundToNearest
 import com.acornui.math.fractionDigits
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal1
+import com.acornui.text.NumberFormatter
+import com.acornui.text.numberFormatter
 
 class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 

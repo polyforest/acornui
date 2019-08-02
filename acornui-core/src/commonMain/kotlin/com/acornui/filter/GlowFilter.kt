@@ -19,8 +19,8 @@ package com.acornui.filter
 import com.acornui.component.ComponentInit
 import com.acornui.component.RenderContextRo
 import com.acornui.component.childRenderContext
-import com.acornui.core.Renderable
-import com.acornui.core.di.Owned
+import com.acornui.Renderable
+import com.acornui.di.Owned
 import com.acornui.gl.core.useColorTransformation
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo

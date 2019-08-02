@@ -21,8 +21,8 @@ import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
 import com.acornui.component.layout.SizableRo
 import com.acornui.component.layout.algorithm.LineInfoRo
-import com.acornui.core.Disposable
-import com.acornui.core.selection.SelectionRange
+import com.acornui.Disposable
+import com.acornui.selection.SelectionRange
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.BoundsRo

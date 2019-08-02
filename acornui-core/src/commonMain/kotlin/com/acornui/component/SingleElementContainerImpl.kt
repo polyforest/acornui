@@ -18,7 +18,7 @@
 
 package com.acornui.component
 
-import com.acornui.core.di.Owned
+import com.acornui.di.Owned
 
 
 interface SingleElementContainer<T : UiComponent> : ContainerRo, Container {

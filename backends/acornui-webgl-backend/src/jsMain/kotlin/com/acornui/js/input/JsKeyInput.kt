@@ -21,8 +21,8 @@ package com.acornui.js.input
 import com.acornui.collection.MutableMultiMap2
 import com.acornui.collection.get
 import com.acornui.collection.multiMap2
-import com.acornui.core.input.KeyInput
-import com.acornui.core.input.interaction.*
+import com.acornui.input.KeyInput
+import com.acornui.input.interaction.*
 import com.acornui.signal.Signal1
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event

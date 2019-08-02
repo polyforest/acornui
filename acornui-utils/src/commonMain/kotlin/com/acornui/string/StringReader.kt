@@ -16,7 +16,7 @@
 
 package com.acornui.string
 
-import com.acornui.core.isWhitespace2
+import com.acornui.isWhitespace2
 
 @Deprecated("Renamed to StringReader", ReplaceWith("StringReader(data)"))
 fun StringParser(data: String): StringReader = StringReader(data)

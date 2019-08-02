@@ -16,7 +16,7 @@
 
 package com.acornui.factory
 
-import com.acornui.core.Disposable
+import com.acornui.Disposable
 
 class LazyInstance<out R, out T>(
 		private val receiver: R,

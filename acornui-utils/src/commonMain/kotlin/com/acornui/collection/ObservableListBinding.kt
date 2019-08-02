@@ -16,8 +16,8 @@
 
 package com.acornui.collection
 
-import com.acornui.core.Disposable
-import com.acornui.core.EqualityCheck
+import com.acornui.Disposable
+import com.acornui.EqualityCheck
 
 /**
  * Binds to a target observable list, invoking [configure] on added elements and [unconfigure] on removed elements.

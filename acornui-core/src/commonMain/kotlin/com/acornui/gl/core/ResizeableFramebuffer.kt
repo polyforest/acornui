@@ -18,14 +18,14 @@ package com.acornui.gl.core
 
 import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
-import com.acornui.core.Disposable
-import com.acornui.core.ceilInt
-import com.acornui.core.di.Injector
-import com.acornui.core.di.Scoped
-import com.acornui.core.graphic.Camera
-import com.acornui.core.graphic.OrthographicCamera
-import com.acornui.core.graphic.Texture
-import com.acornui.core.graphic.yDown
+import com.acornui.Disposable
+import com.acornui.ceilInt
+import com.acornui.di.Injector
+import com.acornui.di.Scoped
+import com.acornui.graphic.Camera
+import com.acornui.graphic.OrthographicCamera
+import com.acornui.graphic.Texture
+import com.acornui.graphic.yDown
 import com.acornui.math.MathUtils.nextPowerOfTwo
 
 /**

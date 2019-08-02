@@ -16,11 +16,11 @@
 
 package com.acornui.ecs
 
-import com.acornui.core.di.Scoped
-import com.acornui.core.mvc.Command
-import com.acornui.core.mvc.CommandType
-import com.acornui.core.mvc.Commander
-import com.acornui.core.mvc.invokeCommand
+import com.acornui.di.Scoped
+import com.acornui.mvc.Command
+import com.acornui.mvc.CommandType
+import com.acornui.mvc.Commander
+import com.acornui.mvc.invokeCommand
 
 class AddEntity(val entity: Entity) : Command {
 

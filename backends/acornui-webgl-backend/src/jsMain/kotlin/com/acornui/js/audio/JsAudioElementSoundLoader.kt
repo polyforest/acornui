@@ -17,10 +17,10 @@
 package com.acornui.js.audio
 
 import com.acornui.async.Promise
-import com.acornui.core.asset.AssetLoader
-import com.acornui.core.asset.AssetType
-import com.acornui.core.audio.AudioManager
-import com.acornui.core.audio.SoundFactory
+import com.acornui.asset.AssetLoader
+import com.acornui.asset.AssetType
+import com.acornui.audio.AudioManager
+import com.acornui.audio.SoundFactory
 import org.w3c.dom.HTMLAudioElement
 import org.w3c.dom.events.Event
 

@@ -18,11 +18,11 @@ package com.acornui.component
 
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
-import com.acornui.core.di.DKey
-import com.acornui.core.di.Injector
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
-import com.acornui.core.focus.Focusable
+import com.acornui.di.DKey
+import com.acornui.di.Injector
+import com.acornui.di.Scoped
+import com.acornui.di.inject
+import com.acornui.focus.Focusable
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 

@@ -21,8 +21,8 @@ package com.acornui.observe
 import com.acornui.recycle.Clearable
 import com.acornui.collection.ObservableList
 import com.acornui.collection.rangeCheck
-import com.acornui.core.Disposable
-import com.acornui.core.EqualityCheck
+import com.acornui.Disposable
+import com.acornui.EqualityCheck
 
 /**
  * Returns a binding that tracks an index within the target list.

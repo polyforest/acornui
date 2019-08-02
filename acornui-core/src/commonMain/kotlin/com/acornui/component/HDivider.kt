@@ -19,11 +19,11 @@ package com.acornui.component
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.clampWidth
 import com.acornui.component.style.StyleTag
-import com.acornui.core.cursor.StandardCursors
-import com.acornui.core.cursor.cursor
-import com.acornui.core.di.Owned
-import com.acornui.core.input.interaction.DragInteractionRo
-import com.acornui.core.input.interaction.drag
+import com.acornui.cursor.StandardCursors
+import com.acornui.cursor.cursor
+import com.acornui.di.Owned
+import com.acornui.input.interaction.DragInteractionRo
+import com.acornui.input.interaction.drag
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
 import com.acornui.math.Vector2

@@ -16,10 +16,10 @@
 
 package com.acornui.jvm.graphic
 
-import com.acornui.core.GlConfig
-import com.acornui.core.WindowConfig
-import com.acornui.core.browser.Location
-import com.acornui.core.graphic.Window
+import com.acornui.GlConfig
+import com.acornui.WindowConfig
+import com.acornui.browser.Location
+import com.acornui.graphic.Window
 import com.acornui.gl.core.Gl20
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo

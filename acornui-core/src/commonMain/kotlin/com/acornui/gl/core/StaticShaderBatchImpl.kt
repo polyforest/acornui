@@ -19,7 +19,7 @@ package com.acornui.gl.core
 import com.acornui.recycle.Clearable
 import com.acornui.component.drawing.DrawElementsCall
 import com.acornui.component.drawing.DrawElementsCallRo
-import com.acornui.core.Disposable
+import com.acornui.Disposable
 import com.acornui.io.resizableFloatBuffer
 import com.acornui.io.resizableShortBuffer
 

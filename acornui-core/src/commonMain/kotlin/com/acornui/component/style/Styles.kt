@@ -24,8 +24,8 @@ import com.acornui.collection.ActiveList
 import com.acornui.collection.addSorted
 import com.acornui.collection.firstOrNull2
 import com.acornui.collection.removeFirst
-import com.acornui.core.Disposable
-import com.acornui.core.DisposedException
+import com.acornui.Disposable
+import com.acornui.DisposedException
 import com.acornui.observe.Observable
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty

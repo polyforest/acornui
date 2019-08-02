@@ -16,8 +16,8 @@
 
 package com.acornui.component
 
-import com.acornui.core.Renderable
-import com.acornui.core.graphic.yDown
+import com.acornui.Renderable
+import com.acornui.graphic.yDown
 import com.acornui.gl.core.Framebuffer
 
 import com.acornui.math.*

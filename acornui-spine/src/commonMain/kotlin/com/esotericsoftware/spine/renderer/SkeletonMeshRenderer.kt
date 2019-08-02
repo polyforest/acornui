@@ -30,7 +30,7 @@
  */
 package com.esotericsoftware.spine.renderer
 
-import com.acornui.core.graphic.Texture
+import com.acornui.graphic.Texture
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.putIndex
 import com.acornui.graphic.ColorRo

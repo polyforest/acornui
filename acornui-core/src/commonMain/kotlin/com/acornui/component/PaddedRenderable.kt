@@ -16,8 +16,8 @@
 
 package com.acornui.component
 
-import com.acornui.core.Renderable
-import com.acornui.core.RenderableBase
+import com.acornui.Renderable
+import com.acornui.RenderableBase
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Pad
 

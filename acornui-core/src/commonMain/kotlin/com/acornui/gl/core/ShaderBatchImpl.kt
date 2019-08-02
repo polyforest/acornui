@@ -18,9 +18,9 @@ package com.acornui.gl.core
 
 import com.acornui._assert
 import com.acornui.assertionsEnabled
-import com.acornui.core.Disposable
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
+import com.acornui.Disposable
+import com.acornui.di.Scoped
+import com.acornui.di.inject
 import com.acornui.io.resizableFloatBuffer
 import com.acornui.io.resizableShortBuffer
 

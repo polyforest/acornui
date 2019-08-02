@@ -23,23 +23,23 @@ import com.acornui.component.layout.algorithm.virtual.VirtualLayoutAlgorithm
 import com.acornui.component.layout.algorithm.virtual.VirtualLayoutDirection
 import com.acornui.component.scroll.*
 import com.acornui.component.style.*
-import com.acornui.core.behavior.Selection
-import com.acornui.core.behavior.SelectionBase
-import com.acornui.core.behavior.deselectNotContaining
-import com.acornui.core.cursor.StandardCursors
-import com.acornui.core.cursor.cursor
+import com.acornui.behavior.Selection
+import com.acornui.behavior.SelectionBase
+import com.acornui.behavior.deselectNotContaining
+import com.acornui.cursor.StandardCursors
+import com.acornui.cursor.cursor
 import com.acornui.recycle.IndexedPool
 import com.acornui.recycle.Recycler
 import com.acornui.recycle.disposeAndClear
-import com.acornui.core.di.Owned
-import com.acornui.core.di.own
-import com.acornui.core.focus.Focusable
-import com.acornui.core.input.Ascii
-import com.acornui.core.input.KeyState
-import com.acornui.core.input.interaction.MouseInteractionRo
-import com.acornui.core.input.interaction.click
-import com.acornui.core.input.mouseMove
-import com.acornui.core.input.wheel
+import com.acornui.di.Owned
+import com.acornui.di.own
+import com.acornui.focus.Focusable
+import com.acornui.input.Ascii
+import com.acornui.input.KeyState
+import com.acornui.input.interaction.MouseInteractionRo
+import com.acornui.input.interaction.click
+import com.acornui.input.mouseMove
+import com.acornui.input.wheel
 import com.acornui.math.*
 
 // FIXME: #161 largest renderer?

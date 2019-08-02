@@ -20,8 +20,8 @@ import com.acornui.component.ComponentInit
 import com.acornui.component.layout.*
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
-import com.acornui.core.di.Owned
-import com.acornui.core.graphic.Scaling
+import com.acornui.di.Owned
+import com.acornui.graphic.Scaling
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.PadRo

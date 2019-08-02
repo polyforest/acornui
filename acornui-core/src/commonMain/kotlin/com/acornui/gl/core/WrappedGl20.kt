@@ -16,7 +16,7 @@
 
 package com.acornui.gl.core
 
-import com.acornui.core.graphic.Texture
+import com.acornui.graphic.Texture
 import com.acornui.graphic.ColorRo
 import com.acornui.io.NativeReadBuffer
 

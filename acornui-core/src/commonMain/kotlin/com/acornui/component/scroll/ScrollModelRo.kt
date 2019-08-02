@@ -16,7 +16,7 @@
 
 package com.acornui.component.scroll
 
-import com.acornui.core.Disposable
+import com.acornui.Disposable
 import com.acornui.math.MathUtils
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1

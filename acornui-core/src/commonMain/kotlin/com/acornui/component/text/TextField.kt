@@ -22,19 +22,19 @@ import com.acornui.component.*
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.Styleable
 import com.acornui.component.style.addStyleRule
-import com.acornui.core.cursor.RollOverCursor
-import com.acornui.core.cursor.StandardCursors
-import com.acornui.core.di.Owned
-import com.acornui.core.di.inject
-import com.acornui.core.input.clipboardCopy
-import com.acornui.core.input.interaction.ClipboardItemType
-import com.acornui.core.input.interaction.CopyInteractionRo
-import com.acornui.core.input.interaction.DragAttachment
-import com.acornui.core.input.interaction.DragInteractionRo
-import com.acornui.core.selection.Selectable
-import com.acornui.core.selection.SelectableComponent
-import com.acornui.core.selection.SelectionManager
-import com.acornui.core.selection.SelectionRange
+import com.acornui.cursor.RollOverCursor
+import com.acornui.cursor.StandardCursors
+import com.acornui.di.Owned
+import com.acornui.di.inject
+import com.acornui.input.clipboardCopy
+import com.acornui.input.interaction.ClipboardItemType
+import com.acornui.input.interaction.CopyInteractionRo
+import com.acornui.input.interaction.DragAttachment
+import com.acornui.input.interaction.DragInteractionRo
+import com.acornui.selection.Selectable
+import com.acornui.selection.SelectableComponent
+import com.acornui.selection.SelectionManager
+import com.acornui.selection.SelectionRange
 import com.acornui.math.Bounds
 
 interface TextField : SingleElementContainer<TextNode>, Labelable, SelectableComponent, Styleable {

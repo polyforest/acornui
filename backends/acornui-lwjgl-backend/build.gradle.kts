@@ -40,10 +40,6 @@ kotlin {
 		}
 		named("jvmTest") {
 			dependencies {
-				val mockitoVersion: String by extra
-				val objenesisVersion: String by extra
-				implementation("org.mockito:mockito-core:$mockitoVersion")
-				implementation("org.objenesis:objenesis:$objenesisVersion")
 			}
 		}
 	}

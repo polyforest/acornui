@@ -22,15 +22,15 @@ import com.acornui.component.InteractivityMode
 import com.acornui.component.RenderContextRo
 import com.acornui.component.Sprite
 import com.acornui.component.UiComponentImpl
-import com.acornui.core.Disposable
-import com.acornui.core.Updatable
-import com.acornui.core.asset.*
-import com.acornui.core.di.Owned
-import com.acornui.core.di.Scoped
-import com.acornui.core.di.inject
-import com.acornui.core.graphic.TextureAtlasDataSerializer
-import com.acornui.core.graphic.loadAndCacheAtlasPage
-import com.acornui.core.time.onTick
+import com.acornui.Disposable
+import com.acornui.Updatable
+import com.acornui.asset.*
+import com.acornui.di.Owned
+import com.acornui.di.Scoped
+import com.acornui.di.inject
+import com.acornui.graphic.TextureAtlasDataSerializer
+import com.acornui.graphic.loadAndCacheAtlasPage
+import com.acornui.time.onTick
 import com.acornui.gl.core.GlState
 
 class ParticleEffectComponent(

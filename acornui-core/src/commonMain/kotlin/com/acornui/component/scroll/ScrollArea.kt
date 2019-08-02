@@ -21,12 +21,12 @@ package com.acornui.component.scroll
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.*
-import com.acornui.core.di.Owned
-import com.acornui.core.input.Ascii
-import com.acornui.core.input.KeyState
-import com.acornui.core.input.wheel
-import com.acornui.core.tween.Tween
-import com.acornui.core.tween.createPropertyTween
+import com.acornui.di.Owned
+import com.acornui.input.Ascii
+import com.acornui.input.KeyState
+import com.acornui.input.wheel
+import com.acornui.tween.Tween
+import com.acornui.tween.createPropertyTween
 import com.acornui.math.*
 import kotlin.math.floor
 

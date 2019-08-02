@@ -16,7 +16,7 @@
 
 package com.acornui.io.file
 
-import com.acornui.core.replace2
+import com.acornui.replace2
 import java.io.File
 import java.nio.file.Files
 

@@ -20,8 +20,8 @@ import com.acornui.component.layout.SingleElementLayoutContainerImpl
 import com.acornui.component.layout.algorithm.ScaleLayout
 import com.acornui.component.layout.algorithm.ScaleLayoutData
 import com.acornui.component.layout.algorithm.ScaleLayoutStyle
-import com.acornui.core.di.Owned
-import com.acornui.core.graphic.Texture
+import com.acornui.di.Owned
+import com.acornui.graphic.Texture
 
 /**
  * A scale box layout

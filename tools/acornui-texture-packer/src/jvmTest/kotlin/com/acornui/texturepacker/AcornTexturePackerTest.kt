@@ -17,13 +17,13 @@
 //package com.acornui.texturepacker
 //
 //import com.acornui.async.launch
-//import com.acornui.core.asset.AssetManager
-//import com.acornui.core.di.inject
+//import com.acornui.asset.AssetManager
+//import com.acornui.di.inject
 //import com.acornui.gl.core.TextureMagFilter
 //import com.acornui.gl.core.TextureMinFilter
 //import com.acornui.gl.core.TexturePixelFormat
 //import com.acornui.gl.core.TexturePixelType
-//import com.acornui.core.io.file.Files
+//import com.acornui.io.file.Files
 //import com.acornui.jvm.JvmHeadlessApplication
 //import com.acornui.texturepacker.jvm.writer.JvmTextureAtlasWriter
 //import kotlin.test.Test

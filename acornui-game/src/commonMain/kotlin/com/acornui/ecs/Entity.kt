@@ -18,7 +18,7 @@ package com.acornui.ecs
 
 import com.acornui._assert
 import com.acornui.assertionsEnabled
-import com.acornui.core.UidUtil
+import com.acornui.UidUtil
 import com.acornui.logging.Log
 import com.acornui.serialization.*
 

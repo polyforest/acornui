@@ -16,7 +16,7 @@
 
 package com.acornui.component
 
-import com.acornui.core.EqualityCheck
+import com.acornui.EqualityCheck
 
 interface ItemRendererRo<out E> : UiComponentRo {
 

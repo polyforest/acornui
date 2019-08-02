@@ -18,7 +18,7 @@ package com.acornui.recycle
 
 import com.acornui.collection.forEach2
 import com.acornui.collection.pop
-import com.acornui.core.Disposable
+import com.acornui.Disposable
 
 
 interface Pool<T> {

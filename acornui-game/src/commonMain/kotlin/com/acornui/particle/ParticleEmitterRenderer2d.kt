@@ -19,9 +19,9 @@ package com.acornui.particle
 import com.acornui.component.RenderContext
 import com.acornui.component.RenderContextRo
 import com.acornui.component.Sprite
-import com.acornui.core.LifecycleBase
-import com.acornui.core.di.Injector
-import com.acornui.core.di.Scoped
+import com.acornui.LifecycleBase
+import com.acornui.di.Injector
+import com.acornui.di.Scoped
 import com.acornui.math.PI
 import com.acornui.math.Quaternion
 import com.acornui.math.Vector3

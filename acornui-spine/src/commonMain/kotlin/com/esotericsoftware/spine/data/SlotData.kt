@@ -31,7 +31,7 @@
 
 package com.esotericsoftware.spine.data
 
-import com.acornui.core.graphic.BlendMode
+import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Color
 
 data class SlotData(

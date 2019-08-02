@@ -18,10 +18,10 @@ package com.acornui.filter
 
 import com.acornui.component.RenderContextRo
 import com.acornui.component.layout.Sizable
-import com.acornui.core.Disposable
-import com.acornui.core.Renderable
-import com.acornui.core.di.Owned
-import com.acornui.core.di.OwnedImpl
+import com.acornui.Disposable
+import com.acornui.Renderable
+import com.acornui.di.Owned
+import com.acornui.di.OwnedImpl
 import com.acornui.gl.core.GlState
 import com.acornui.math.*
 import com.acornui.observe.Observable

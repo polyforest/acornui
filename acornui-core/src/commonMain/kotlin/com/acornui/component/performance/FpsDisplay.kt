@@ -18,12 +18,9 @@ package com.acornui.component.performance
 
 import com.acornui.component.RenderContextRo
 import com.acornui.component.text.TextFieldImpl
-import com.acornui.core.di.Owned
-import com.acornui.core.time.timer
+import com.acornui.di.Owned
 import com.acornui.graphic.Color
-import com.acornui.graphic.ColorRo
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.MinMaxRo
+import com.acornui.time.timer
 
 class FpsDisplay(owner: Owned) : TextFieldImpl(owner) {
 

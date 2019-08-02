@@ -20,7 +20,7 @@ package com.acornui.test
  * See https://github.com/polyforest/acornui/issues/122
  * for why it is commented out
  */
-import com.acornui.core.toUnderscoreCase
+import com.acornui.toUnderscoreCase
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor

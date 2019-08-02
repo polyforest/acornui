@@ -20,16 +20,16 @@ package com.acornui.jvm
 
 import com.acornui.async.Promise
 import com.acornui.async.launch
-import com.acornui.core.AppConfig
-import com.acornui.core.ApplicationBase
-import com.acornui.core.asset.AssetManager
-import com.acornui.core.asset.AssetManagerImpl
-import com.acornui.core.asset.AssetType
-import com.acornui.core.asset.LoaderFactory
-import com.acornui.core.di.OwnedImpl
-import com.acornui.core.di.Scoped
-import com.acornui.core.io.file.Files
-import com.acornui.core.io.file.FilesImpl
+import com.acornui.AppConfig
+import com.acornui.ApplicationBase
+import com.acornui.asset.AssetManager
+import com.acornui.asset.AssetManagerImpl
+import com.acornui.asset.AssetType
+import com.acornui.asset.LoaderFactory
+import com.acornui.di.OwnedImpl
+import com.acornui.di.Scoped
+import com.acornui.io.file.Files
+import com.acornui.io.file.FilesImpl
 import com.acornui.io.file.ManifestUtil
 import com.acornui.jvm.graphic.JvmRgbDataLoader
 import com.acornui.jvm.loader.JvmTextLoader

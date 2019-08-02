@@ -18,7 +18,7 @@ package com.acornui.component.text
 
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.ComponentInit
-import com.acornui.core.di.Owned
+import com.acornui.di.Owned
 import com.acornui.math.Bounds
 
 /**

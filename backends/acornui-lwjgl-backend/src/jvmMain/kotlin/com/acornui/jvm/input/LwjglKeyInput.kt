@@ -20,11 +20,11 @@ import com.acornui.collection.MutableMultiMap2
 import com.acornui.collection.get
 import com.acornui.collection.multiMap2
 import com.acornui.collection.remove
-import com.acornui.core.input.Ascii
-import com.acornui.core.input.KeyInput
-import com.acornui.core.input.interaction.*
-import com.acornui.core.time.time
+import com.acornui.input.Ascii
+import com.acornui.input.KeyInput
+import com.acornui.input.interaction.*
 import com.acornui.signal.Signal1
+import com.acornui.time.time
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWCharCallback
 import org.lwjgl.glfw.GLFWKeyCallback

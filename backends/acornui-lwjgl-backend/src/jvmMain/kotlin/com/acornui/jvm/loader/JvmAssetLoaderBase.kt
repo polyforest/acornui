@@ -18,8 +18,8 @@ package com.acornui.jvm.loader
 
 import com.acornui.async.Deferred
 import com.acornui.async.asyncIo
-import com.acornui.core.asset.AssetLoader
-import com.acornui.core.asset.AssetType
+import com.acornui.asset.AssetLoader
+import com.acornui.asset.AssetType
 import com.acornui.request.Bandwidth
 import java.io.File
 import java.io.FileInputStream

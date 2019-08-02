@@ -16,12 +16,3 @@
 
 package com.acornui.js.text
 
-import com.acornui.collection.copy
-import com.acornui.core.i18n.I18n
-import com.acornui.core.i18n.Locale
-import com.acornui.core.text.NumberFormatType
-import com.acornui.core.text.NumberFormatter
-import com.acornui.core.userInfo
-import com.acornui.reflect.observable
-import kotlin.properties.ReadWriteProperty
-

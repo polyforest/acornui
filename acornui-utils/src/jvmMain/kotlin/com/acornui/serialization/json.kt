@@ -20,9 +20,9 @@ package com.acornui.serialization
 
 import com.acornui.collection.peek
 import com.acornui.collection.pop
-import com.acornui.core.addBackslashes
-import com.acornui.core.isWhitespace2
-import com.acornui.core.removeBackslashes
+import com.acornui.addBackslashes
+import com.acornui.isWhitespace2
+import com.acornui.removeBackslashes
 import com.acornui.string.SubString
 
 /**

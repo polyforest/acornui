@@ -16,7 +16,7 @@
 
 package com.acornui.collection
 
-import com.acornui.core.Disposable
+import com.acornui.Disposable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import com.acornui.signal.Signal2

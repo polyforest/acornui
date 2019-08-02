@@ -5,9 +5,9 @@ import com.acornui.component.text.BitmapFontRequest
 import com.acornui.component.text.FontSize
 import com.acornui.component.text.FontStyle
 import com.acornui.component.text.FontWeight
-import com.acornui.core.filterWithWords
-import com.acornui.core.io.file.FileEntry
-import com.acornui.core.io.file.Files
+import com.acornui.filterWithWords
+import com.acornui.io.file.FileEntry
+import com.acornui.io.file.Files
 import com.acornui.math.MathUtils
 
 object FontPathResolver {

@@ -17,7 +17,7 @@
 package com.acornui.component
 
 import com.acornui.component.style.*
-import com.acornui.core.di.Owned
+import com.acornui.di.Owned
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds

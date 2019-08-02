@@ -17,7 +17,7 @@
 package com.acornui.particle
 
 import com.acornui.collection.sortedInsertionIndex
-import com.acornui.core.closeTo
+import com.acornui.closeTo
 import com.acornui.serialization.*
 import kotlin.math.abs
 

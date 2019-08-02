@@ -16,7 +16,7 @@
 
 package com.acornui.serialization
 
-import com.acornui.core.addBackslashes
+import com.acornui.addBackslashes
 import com.acornui.logging.Log
 
 /**
