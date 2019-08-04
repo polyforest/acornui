@@ -30,6 +30,13 @@ class KotlinJvmPlugin : Plugin<Project> {
 				}
 			}
 			sourceSets {
+				@Suppress("UNUSED_VARIABLE")
+				val commonMain by getting {
+					dependencies {
+						implementation(kotlin("stdlib-common"))
+						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
+					}
+				}
 				jvm().compilations["main"].defaultSourceSet {
 					dependencies {
 						implementation(kotlin("stdlib-jdk8"))
@@ -40,6 +47,7 @@ class KotlinJvmPlugin : Plugin<Project> {
 					dependencies {
 						implementation(kotlin("test"))
 						implementation(kotlin("test-junit"))
+						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
 					}
 				}
 			}

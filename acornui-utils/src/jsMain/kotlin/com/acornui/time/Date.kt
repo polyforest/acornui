@@ -17,10 +17,12 @@
 package com.acornui.time
 
 import com.acornui.zeroPadding
+import kotlinx.serialization.Serializable
 
 /**
  * @author nbilyk
  */
+@Serializable(with = DateSerializer::class)
 actual class Date actual constructor() : DateRo {
 
 	val jsDate = js("new Date();")

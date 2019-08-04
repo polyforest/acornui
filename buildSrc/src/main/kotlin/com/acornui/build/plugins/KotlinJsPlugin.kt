@@ -56,6 +56,7 @@ class KotlinJsPlugin : Plugin<Project> {
 				js().compilations["test"].defaultSourceSet {
 					dependencies {
 						implementation(kotlin("test-js"))
+						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
 					}
 				}
 			}

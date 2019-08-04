@@ -16,7 +16,10 @@
 
 package com.acornui.time
 
+import com.acornui.text.parseDate
 import com.acornui.zeroPadding
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.StringDescriptor
 
 interface DateRo : Comparable<DateRo> {
 
@@ -191,6 +194,7 @@ val DateRo.isLeapYear: Boolean
  * A Date object.
  * To convert this date to a string, use [com.acornui.text.DateTimeFormatter]
  */
+@Serializable(with = DateSerializer::class)
 expect class Date() : DateRo {
 
 	override var time: Long
@@ -310,4 +314,109 @@ object Months {
 	val NOVEMBER: Int = 10
 
 	val DECEMBER: Int = 11
+}
+
+@Serializer(forClass = Date::class)
+object DateSerializer : KSerializer<Date> {
+
+	override val descriptor: SerialDescriptor =
+			StringDescriptor.withName("WithCustomDefault")
+
+	override fun serialize(encoder: Encoder, obj: Date) {
+		encoder.encodeString(obj.toIsoString())
+	}
+
+	override fun deserialize(decoder: Decoder): Date {
+		return parseDate(decoder.decodeString())!!
+	}
+}
+
+/**
+ * Returns a new date object with the time set.
+ * @param time The time as UTC milliseconds from the epoch.
+ */
+fun date(time: Long): Date {
+	val date = Date()
+	date.time = time
+	return date
+}
+
+/**
+ * Returns a new date object with the time set.
+ * @param fullYear The full year according to local time.  (e.g. 1999, not 99)
+ * @param month The 1 indexed month according to local time. 1 - January, 12 - December
+ * @param dayOfMonth The 1 indexed day of the month according to local time. 1st - 1, 31st - 31
+ * @param hour Hour of the day using 24-hour clock according to local time.
+ * @param minute The minute within the hour according to local time.
+ * @param second The second within the minute according to local time.
+ * @param milli The millisecond within the second according to local time.
+ */
+fun date(fullYear: Int, month: Int, dayOfMonth: Int = 1, hour: Int = 0, minute: Int = 0, second: Int = 0, milli: Int = 0): Date {
+	val date = Date()
+	date.fullYear = fullYear
+	date.month = month
+	date.dayOfMonth = dayOfMonth
+	date.hour = hour
+	date.minute = minute
+	date.second = second
+	date.milli = milli
+	return date
+}
+
+/**
+ * Returns a new date object with the time set according to universal time.
+ * @param fullYear The full year according to universal time.  (e.g. 1999, not 99)
+ * @param month The 1 indexed month according to universal time. 1 - January, 12 - December
+ * @param dayOfMonth The 1 indexed day of the month according to universal time. 1st - 1, 31st - 31
+ * @param hour Hour of the day using 24-hour clock according to universal time.
+ * @param minute The minute within the hour according to universal time.
+ * @param second The second within the minute according to universal time.
+ * @param milli The millisecond within the second according to universal time.
+ */
+fun utcDate(fullYear: Int, month: Int, dayOfMonth: Int = 1, hour: Int = 0, minute: Int = 0, second: Int = 0, milli: Int = 0): Date {
+	val date = Date()
+	date.utcFullYear = fullYear
+	date.utcMonth = month
+	date.utcDayOfMonth = dayOfMonth
+	date.utcHour = hour
+	date.utcMinute = minute
+	date.utcSecond = second
+	date.utcMilli = milli
+	return date
+}
+
+/**
+ * Returns a date object where the time is set relative to the unix epoch, in local time.
+ *
+ * @param hour Hour of the day using 24-hour clock according to local time.
+ * @param minute The minute within the hour according to local time.
+ * @param second The second within the minute according to local time.
+ * @param milli The millisecond within the second according to local time.
+ */
+fun time(hour: Int, minute: Int, second: Int = 0, milli: Int = 0): Date {
+	val date = Date()
+	date.time = 0
+	date.hour = hour
+	date.minute = minute
+	date.second = second
+	date.milli = milli
+	return date
+}
+
+/**
+ * Returns a date object where the time is set relative to the unix epoch, in universal time.
+ *
+ * @param hour Hour of the day using 24-hour clock according to universal time.
+ * @param minute The minute within the hour according to universal time.
+ * @param second The second within the minute according to universal time.
+ * @param milli The millisecond within the second according to universal time.
+ */
+fun utcTime(hour: Int, minute: Int, second: Int = 0, milli: Int = 0): Date {
+	val date = Date()
+	date.time = 0
+	date.utcHour = hour
+	date.utcMinute = minute
+	date.utcSecond = second
+	date.utcMilli = milli
+	return date
 }

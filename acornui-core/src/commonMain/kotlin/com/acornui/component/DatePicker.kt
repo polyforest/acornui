@@ -40,6 +40,7 @@ import com.acornui.recycle.Clearable
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal0
 import com.acornui.text.*
+import com.acornui.time.Date
 import com.acornui.time.DateRo
 import com.acornui.time.time
 
@@ -87,7 +88,7 @@ open class DatePicker(
 		set(value) {
 			calendar.selection.selectedItem = value
 			textInput.text = if (value == null) "" else formatter.format(value)
-			val d = value ?: time.now()
+			val d = value ?: Date()
 			calendar.month = d.month
 			calendar.fullYear = d.fullYear
 		}
@@ -266,7 +267,7 @@ open class DatePicker(
 		val date = parser.parse(text)
 		calendar.selection.selectedItem = date
 		calendar.highlighted.selectedItem = date
-		val d = date ?: time.now()
+		val d = date ?: Date()
 		calendar.month = d.month
 		calendar.fullYear = d.fullYear
 	}

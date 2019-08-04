@@ -47,6 +47,7 @@ import com.acornui.text.DateTimeFormatStyle
 import com.acornui.text.DateTimeFormatType
 import com.acornui.text.dateFormatter
 import com.acornui.text.dateTimeFormatter
+import com.acornui.time.Date
 import com.acornui.time.DateRo
 import com.acornui.time.time
 
@@ -226,7 +227,7 @@ open class Calendar(
 	val layoutStyle: GridLayoutStyle
 		get() = grid.style
 
-	private val date = time.now().apply {
+	private val date = Date().apply {
 		hour = 0
 		minute = 0
 		second = 0

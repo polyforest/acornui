@@ -21,7 +21,7 @@ fun Writer.dateIso(name: String, date: DateRo?) = property(name).dateIso(date)
  */
 fun Reader.dateTime(): Date? {
 	val t = long() ?: return null
-	return time.date(t)
+	return date(t)
 }
 fun Reader.dateTime(name: String): Date? = get(name)?.dateTime()
 

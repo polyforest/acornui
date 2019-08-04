@@ -62,6 +62,7 @@ class KotlinMppPlugin : Plugin<Project> {
 					dependencies {
 						implementation(kotlin("test-common"))
 						implementation(kotlin("test-annotations-common"))
+						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
 					}
 				}
 				jvm().compilations["main"].defaultSourceSet {
@@ -85,6 +86,7 @@ class KotlinMppPlugin : Plugin<Project> {
 				js().compilations["test"].defaultSourceSet {
 					dependencies {
 						implementation(kotlin("test-js"))
+						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
 					}
 				}
 			}

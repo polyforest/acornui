@@ -15,6 +15,10 @@
  */
 
 package com.acornui.time
+import com.acornui.time.date as aDate
+import com.acornui.time.time as aTime
+import com.acornui.time.utcDate as aUtcDate
+import com.acornui.time.utcTime  as aUtcTime
 
 /**
  * @author nbilyk
@@ -25,11 +29,8 @@ interface TimeProvider {
 	 * Returns a new date object with the time set.
 	 * @param time The time as UTC milliseconds from the epoch.
 	 */
-	fun date(time: Long): Date {
-		val date = now()
-		date.time = time
-		return date
-	}
+	@Deprecated("Use com.acornui.time.date", ReplaceWith("com.acornui.time.date(time)"))
+	fun date(time: Long): Date = aDate(time)
 
 	/**
 	 * Returns a new date object with the time set.
@@ -41,16 +42,9 @@ interface TimeProvider {
 	 * @param second The second within the minute according to local time.
 	 * @param milli The millisecond within the second according to local time.
 	 */
+	@Deprecated("Use com.acornui.time.date", ReplaceWith("com.acornui.time.date(fullYear, month, dayOfMonth, hour, minute, second, milli)"))
 	fun date(fullYear: Int, month: Int, dayOfMonth: Int = 1, hour: Int = 0, minute: Int = 0, second: Int = 0, milli: Int = 0): Date {
-		val date = now()
-		date.fullYear = fullYear
-		date.month = month
-		date.dayOfMonth = dayOfMonth
-		date.hour = hour
-		date.minute = minute
-		date.second = second
-		date.milli = milli
-		return date
+		return aDate(fullYear, month, dayOfMonth, hour, minute, second, milli)
 	}
 
 	/**
@@ -63,47 +57,31 @@ interface TimeProvider {
 	 * @param second The second within the minute according to universal time.
 	 * @param milli The millisecond within the second according to universal time.
 	 */
+	@Deprecated("Use com.acornui.time.date", ReplaceWith("com.acornui.time.utcDate(fullYear, month, dayOfMonth, hour, minute, second, milli)"))
 	fun utcDate(fullYear: Int, month: Int, dayOfMonth: Int = 1, hour: Int = 0, minute: Int = 0, second: Int = 0, milli: Int = 0): Date {
-		val date = now()
-		date.utcFullYear = fullYear
-		date.utcMonth = month
-		date.utcDayOfMonth = dayOfMonth
-		date.utcHour = hour
-		date.utcMinute = minute
-		date.utcSecond = second
-		date.utcMilli = milli
-		return date
+		return aUtcDate(fullYear, month, dayOfMonth, hour, minute, second, milli)
 	}
 
 	/**
 	 * Returns a date object where the time is set relative to the unix epoch, in local time.
 	 */
+	@Deprecated("Use com.acornui.time.time", ReplaceWith("com.acornui.time.time(hour, minute, second, milli)"))
 	fun time(hour: Int, minute: Int, second: Int = 0, milli: Int = 0): Date {
-		val date = now()
-		date.time = 0
-		date.hour = hour
-		date.minute = minute
-		date.second = second
-		date.milli = milli
-		return date
+		return aTime(hour, minute, second, milli)
 	}
 
 	/**
 	 * Returns a date object where the time is set relative to the unix epoch, in universal time.
 	 */
+	@Deprecated("Use com.acornui.time.utcTime", ReplaceWith("com.acornui.time.utcTime(hour, minute, second, milli)"))
 	fun utcTime(hour: Int, minute: Int, second: Int = 0, milli: Int = 0): Date {
-		val date = now()
-		date.time = 0
-		date.utcHour = hour
-		date.utcMinute = minute
-		date.utcSecond = second
-		date.utcMilli = milli
-		return date
+		return aUtcTime(hour, minute, second, milli)
 	}
 
 	/**
 	 * Returns a Date representing the current system time.
 	 */
+	@Deprecated("Use Date()", ReplaceWith("Date()"))
 	fun now(): Date = Date()
 
 	/**

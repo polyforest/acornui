@@ -96,7 +96,7 @@ class DateTimeParser : StringParser<Date> {
 	/**
 	 * If the parsed date is a two digit year and [allowTwoDigitYears] is true, then this year is used as the anchor.
 	 */
-	var currentYear = time.now().fullYear
+	var currentYear = Date().fullYear
 
 	/**
 	 * Parses the timezone offset
@@ -119,7 +119,7 @@ class DateTimeParser : StringParser<Date> {
 		val second = result.groupValues[3].toIntOrNull() ?: 0
 		val milli = result.groupValues[4].toTimeMilli()
 
-		val t = time.date(0)
+		val t = date(0)
 		if (timezoneOffset != null || isUtc) {
 			t.setUtcTimeOfDay(hour, minute + (timezoneOffset ?: 0), second, milli)
 		} else {
@@ -159,7 +159,7 @@ class DateTimeParser : StringParser<Date> {
 				val localeFormat = dateFormatter {
 					locales = this@DateTimeParser.locales
 					dateStyle = DateTimeFormatStyle.SHORT
-				}.format(time.date(fullYear = 1110, month = 7, dayOfMonth = 8))
+				}.format(date(fullYear = 1110, month = 7, dayOfMonth = 8    ))
 				val monthFirst = (localeFormat.indexOf("7") < localeFormat.indexOf("8"))
 				if (monthFirst) {
 					val mDYResult = mDYRegex.find(value)
@@ -200,9 +200,9 @@ class DateTimeParser : StringParser<Date> {
 		}
 		val fullYear = calculateFullYear(year, allowTwoDigitYears, currentYear) ?: return null
 		return if (timezoneOffset != null || isUtc) {
-			range to time.utcDate(fullYear, month, day, 0, timezoneOffset ?: 0)
+			range to utcDate(fullYear, month, day, 0, timezoneOffset ?: 0  )
 		} else {
-			range to time.date(fullYear, month, day)
+			range to date(fullYear, month, day    )
 		}
 	}
 
@@ -228,10 +228,10 @@ class DateTimeParser : StringParser<Date> {
 			val offsetMinute = isoResult.groupValues[10].toIntOrNull() ?: 0
 
 			return if (isUtc || isoResult.groupValues[4].isNotBlank()) {
-				time.utcDate(fullYear, month, day, hour, minute + sign * (offsetHour * 60 + offsetMinute), second, milli)
+				utcDate(fullYear, month, day, hour, minute + sign * (offsetHour * 60 + offsetMinute), second, milli)
 			} else {
 				// No time is provided, use midnight in the local time.
-				time.date(fullYear, month, day, hour, minute + sign * (offsetHour * 60 + offsetMinute), second, milli)
+				date(fullYear, month, day, hour, minute + sign * (offsetHour * 60 + offsetMinute), second, milli)
 			}
 		}
 
@@ -263,7 +263,7 @@ class DateTimeParser : StringParser<Date> {
 				val separator = timeDateSeparatorRegex.find(str)
 				if (separator != null)
 					str -= separator.range
-				time.date(dR.second.time + tR.second.time)
+				date(dR.second.time + tR.second.time)
 			}
 		}
 		if (str.isNotBlank()) return null
@@ -418,7 +418,7 @@ fun parseMonthIndex(str: String, locales: List<Locale>? = null): Int? {
 /**
  *
  */
-fun parseYear(str: String, allowTwoDigitYears: Boolean = true, currentYear: Int = time.now().fullYear): Int? {
+fun parseYear(str: String, allowTwoDigitYears: Boolean = true, currentYear: Int = Date().fullYear): Int? {
 	val year = str.trim().toIntOrNull() ?: return null
 	return calculateFullYear(year, allowTwoDigitYears, currentYear)
 }
@@ -429,7 +429,7 @@ fun parseYear(str: String, allowTwoDigitYears: Boolean = true, currentYear: Int 
  * to [currentYear]. That is, the year returned will be in the century of the span of
  * `currentYear - 49 to currentYear + 50`.
  */
-fun calculateFullYear(year: Int, allowTwoDigitYears: Boolean = true, currentYear: Int = time.now().fullYear): Int? {
+fun calculateFullYear(year: Int, allowTwoDigitYears: Boolean = true, currentYear: Int = Date().fullYear): Int? {
 	return if (year < 100) {
 		// Two digit year
 		if (!allowTwoDigitYears) return null
@@ -484,7 +484,7 @@ private val daysOfWeekCache = HashMap<Pair<Boolean, List<Locale>?>, List<String>
 fun getDaysOfWeek(longFormat: Boolean, locales: List<Locale>? = null): List<String> {
 	val cacheKey = longFormat to locales
 	if (daysOfWeekCache.containsKey(cacheKey)) return daysOfWeekCache[cacheKey]!!
-	val d = time.date(0)
+	val d = date(0)
 	val list = ArrayList<String>(7)
 	val formatter = dateFormatter {
 		this.dateStyle = if (longFormat) DateTimeFormatStyle.FULL else DateTimeFormatStyle.SHORT
@@ -513,7 +513,7 @@ private val monthsOfYearCache = HashMap<Pair<Boolean, List<Locale>?>, List<Strin
 fun getMonths(longFormat: Boolean, locales: List<Locale>? = null): List<String> {
 	val cacheKey = longFormat to locales
 	if (monthsOfYearCache.containsKey(cacheKey)) return monthsOfYearCache[cacheKey]!!
-	val d = time.date(0)
+	val d = date(0)
 	val list = ArrayList<String>(12)
 	val formatter = dateFormatter {
 		this.dateStyle = if (longFormat) DateTimeFormatStyle.FULL else DateTimeFormatStyle.LONG

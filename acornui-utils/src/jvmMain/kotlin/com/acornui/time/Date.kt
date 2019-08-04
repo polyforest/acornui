@@ -17,12 +17,14 @@
 package com.acornui.time
 
 import com.acornui.zeroPadding
+import kotlinx.serialization.Serializable
 import java.time.ZoneOffset
 import java.util.*
 
 /**
  * @author nbilyk
  */
+@Serializable(with = DateSerializer::class)
 actual class Date actual constructor() : DateRo {
 
 	private var localDateIsValid = true
@@ -177,4 +179,5 @@ actual class Date actual constructor() : DateRo {
 	override fun toString(): String {
 		return "Date($fullYear/$month/$dayOfMonth $hour:${minute.zeroPadding(2)}:${second.zeroPadding(2)}.$milli)"
 	}
+
 }
