@@ -362,7 +362,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		val contents = textField.element ?: return
 		val sel = firstSelection ?: return
 		val n = contents.textElements.size
-		var i = MathUtils.clamp(sel.startIndex, 0, n)
+		var i = MathUtils.clamp(sel.endIndex, 0, n)
 		if (i == 0) return
 		if (event.commandPlat) i = previousWordIndex(i) else --i
 		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else i, i))
