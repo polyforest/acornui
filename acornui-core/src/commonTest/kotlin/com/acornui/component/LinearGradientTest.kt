@@ -11,7 +11,6 @@ class LinearGradientTest {
 	@Test fun serialize() {
 		val g = LinearGradient(GradientDirection.ANGLE, Color.RED, Color.BLACK, Color.BLUE)
 		val json = jsonStringify(LinearGradient.serializer(), g)
-		println(json)
 		assertEquals(g, jsonParse(LinearGradient.serializer(), json))
 	}
 }
