@@ -304,7 +304,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			Ascii.DOWN -> cursorDown(event)
 			Ascii.BACKSPACE -> {
 				event.handled = true
-				backspace()
+				backspace(event)
 				_input.dispatch()
 			}
 			Ascii.TAB -> if (allowTab) {
@@ -362,19 +362,23 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		val contents = textField.element ?: return
 		val sel = firstSelection ?: return
 		val n = contents.textElements.size
-		var i = MathUtils.clamp(sel.endIndex, 0, n)
+		var i = MathUtils.clamp(sel.startIndex, 0, n)
 		if (i == 0) return
-		if (event.commandPlat) {
-			while (i > 0 && charAt(i - 1).charType() == 0) {
-				i--
-			}
-			val startType = charAt(--i).charType()
-			while (i > 0 && charAt(i - 1).charType() == startType) {
-				i--
-			}
-		} else --i
-		if (i < 0) i = 0
+		if (event.commandPlat) i = previousWordIndex(i) else --i
 		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else i, i))
+	}
+
+	private fun previousWordIndex(index: Int): Int {
+		var i = index
+		if (i == 0) return 0
+		while (i > 0 && charAt(i - 1).charType() == 0) {
+			i--
+		}
+		val startType = charAt(--i).charType()
+		while (i > 0 && charAt(i - 1).charType() == startType) {
+			i--
+		}
+		return i
 	}
 
 	private fun cursorRight(event: KeyInteractionRo) {
@@ -383,17 +387,23 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		val n = contents.textElements.size
 		var i = MathUtils.clamp(sel.endIndex, 0, n)
 		if (i == n) return
-		if (event.commandPlat) {
-			val startType = charAt(i++).charType()
-			while (i < n && charAt(i).charType() == startType) {
-				i++
-			}
-			while (i < n && charAt(i).charType() == 0) {
-				i++
-			}
-		} else ++i
-		if (i > n) i = n
+		if (event.commandPlat) i = nextWordIndex(i) else ++i
 		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else i, i))
+	}
+
+	private fun nextWordIndex(index: Int): Int {
+		val contents = textField.element ?: return -1
+		var i = index
+		val n = contents.textElements.size
+		if (i == n) return n
+		val startType = charAt(i++).charType()
+		while (i < n && charAt(i).charType() == startType) {
+			i++
+		}
+		while (i < n && charAt(i).charType() == 0) {
+			i++
+		}
+		return i
 	}
 
 	private fun charAt(index: Int): Char? {
@@ -517,14 +527,15 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	 * If there is a non-empty selection, that selection is replaced with nothing. If there is an empty selection,
 	 * the previous character is deleted.
 	 */
-	private fun backspace() {
+	private fun backspace(event: KeyInteractionRo) {
 		val sel = firstSelection ?: return
 		if (sel.startIndex != sel.endIndex) {
 			replaceTextRange(sel.min, sel.max, "")
 			setSelection(listOf(SelectionRange(host, sel.min, sel.min)))
 		} else if (sel.min > 0) {
-			val i = minOf(contentsSize, sel.min)
-			replaceTextRange(i - 1, i, "")
+			val to = minOf(contentsSize, sel.min)
+			val from = if (event.commandPlat) previousWordIndex(to) else (to - 1)
+			replaceTextRange(from, to, "")
 			setSelection(listOf(SelectionRange(host, sel.min - 1, sel.min - 1)))
 		}
 	}
