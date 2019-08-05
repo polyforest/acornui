@@ -363,6 +363,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		val sel = firstSelection ?: return
 		val n = contents.textElements.size
 		var i = MathUtils.clamp(sel.endIndex, 0, n)
+		if (i == 0) return
 		if (event.commandPlat) {
 			while (i > 0 && charAt(i - 1).charType() == 0) {
 				i--
@@ -381,6 +382,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		val sel = firstSelection ?: return
 		val n = contents.textElements.size
 		var i = MathUtils.clamp(sel.endIndex, 0, n)
+		if (i == n) return
 		if (event.commandPlat) {
 			val startType = charAt(i++).charType()
 			while (i < n && charAt(i).charType() == startType) {
