@@ -1,16 +1,11 @@
 package com.acornui.serialization
 
-import com.acornui.graphic.Color
-import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import kotlinx.serialization.modules.SerializersModule
 
 val dataModule = SerializersModule {
-	polymorphic(ColorRo::class) {
-		Color::class with Color.serializer()
-	}
-	polymorphic(CornersRo::class) {
-		Corners::class with Corners.serializer()
+	polymorphic(RayRo::class) {
+		Ray::class with Ray.serializer()
 	}
 	polymorphic(PadRo::class) {
 		Pad::class with Pad.serializer()

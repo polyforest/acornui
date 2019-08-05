@@ -20,16 +20,19 @@ import com.acornui.collection.ArrayList
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.component.style.styleProperty
-import com.acornui.radToDeg
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.color
 import com.acornui.math.*
+import com.acornui.radToDeg
 import com.acornui.serialization.*
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlin.math.atan2
 
 open class BoxStyle : StyleBase() {
 
+	@Transient
 	override val type: StyleType<BoxStyle> = Companion
 
 	var linearGradient: LinearGradient? by prop(null)
@@ -80,6 +83,7 @@ fun boxStyle(init: BoxStyle.() -> Unit): BoxStyle {
 	return b
 }
 
+@Serializable
 data class LinearGradient(
 
 		/**
@@ -176,6 +180,7 @@ enum class GradientDirection {
 	}
 }
 
+@Serializable
 data class ColorStop(
 
 		/**
@@ -202,7 +207,7 @@ data class ColorStop(
 
 	fun toCssString(): String {
 		var str = color.toCssString()
-		if (percent != null) str += " ${percent!! * 100f}%"
+		if (percent != null) str += " ${percent * 100f}%"
 		else if (pixels != null) str += " ${pixels}px"
 		return str
 	}

@@ -25,9 +25,11 @@ import com.acornui.math.MathUtils.clamp
 import com.acornui.serialization.Reader
 import com.acornui.serialization.Writer
 import com.acornui.string.toRadix
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.StringDescriptor
 import kotlin.math.abs
 
+@Serializable(with = ColorSerializer::class)
 interface ColorRo {
 
 	val r: Float
@@ -146,7 +148,7 @@ fun Color(rgba: Long): Color {
  *
  * @author mzechner
  */
-@Serializable
+@Serializable(with = ColorSerializer::class)
 data class Color(
 		override var r: Float = 0f,
 		override var g: Float = 0f,
@@ -571,6 +573,21 @@ data class Color(
 		fun fromName(name: String): ColorRo? {
 			return nameColorMap[name.toLowerCase().trim()]
 		}
+	}
+}
+
+@Serializer(forClass = Color::class)
+object ColorSerializer : KSerializer<Color> {
+
+	override val descriptor: SerialDescriptor =
+			StringDescriptor.withName("Color")
+
+	override fun serialize(encoder: Encoder, obj: Color) {
+		encoder.encodeString("#" + obj.toRgbaString())
+	}
+
+	override fun deserialize(decoder: Decoder): Color {
+		return fromStr(decoder.decodeString())
 	}
 }
 

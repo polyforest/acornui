@@ -117,27 +117,6 @@ abstract class StyleBase : Style, Disposable {
 	}
 }
 
-open class StyleBaseSerializer<T : StyleBase>(val name: String, val factory: () -> T) : KSerializer<T> {
-	override val descriptor: SerialDescriptor = object : SerialClassDescImpl(name) {
-		init {
-			val e = factory()
-			e.allProps.forEach2 {
-				addElement(it.name!!, isOptional = true)
-			}
-		}
-	}
-
-	override fun deserialize(decoder: Decoder): T {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-	}
-
-	override fun serialize(encoder: Encoder, obj: T) {
-		obj.allProps.forEach2 {
-			
-		}
-	}
-}
-
 class StyleValidator(
 		val style: Style,
 		private val calculator: StyleCalculator

@@ -21,6 +21,7 @@ import com.acornui.zeroPadding
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.StringDescriptor
 
+@Serializable(with = DateSerializer::class)
 interface DateRo : Comparable<DateRo> {
 
 	/**
@@ -320,7 +321,7 @@ object Months {
 object DateSerializer : KSerializer<Date> {
 
 	override val descriptor: SerialDescriptor =
-			StringDescriptor.withName("WithCustomDefault")
+			StringDescriptor.withName("DateSerializer")
 
 	override fun serialize(encoder: Encoder, obj: Date) {
 		encoder.encodeString(obj.toIsoString())

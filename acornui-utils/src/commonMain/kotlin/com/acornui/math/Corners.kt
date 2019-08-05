@@ -18,8 +18,11 @@ package com.acornui.math
 
 import com.acornui.recycle.Clearable
 import com.acornui.serialization.*
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.*
+import kotlinx.serialization.internal.ListLikeDescriptor
 
+@Serializable(with = CornersSerializer2::class)
 interface CornersRo {
 
 	val topLeft: Vector2Ro
@@ -34,15 +37,83 @@ interface CornersRo {
 	fun copy(topLeft: Vector2Ro = this.topLeft, topRight: Vector2Ro = this.topRight, bottomRight: Vector2Ro = this.bottomRight, bottomLeft: Vector2Ro = this.bottomLeft): Corners {
 		return Corners(topLeft.copy(), topRight.copy(), bottomRight.copy(), bottomLeft.copy())
 	}
-
 }
+
+private object CornersSerializer2 : KSerializer<CornersRo> {
+	override val descriptor: SerialDescriptor = ListDescriptor("com.acornui.math.Corners", FloatDescriptor)
+
+	override fun deserialize(decoder: Decoder): Corners {
+		val arr = decoder.decodeSerializableValue(ArrayListSerializer(FloatSerializer))
+		return when (arr.size) {
+			1 -> Corners(arr[0])
+			4 -> Corners(arr[0], arr[1], arr[2], arr[3])
+			8 -> Corners(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5], arr[6], arr[7])
+			else -> error("Expected 1, 4, or 8 elements")
+		}
+	}
+
+	override fun serialize(encoder: Encoder, obj: CornersRo) {
+		val list = listOf(
+				obj.topLeft.x,
+				obj.topLeft.y,
+				obj.topRight.x,
+				obj.topRight.y,
+				obj.bottomRight.x,
+				obj.bottomRight.y,
+				obj.bottomLeft.x,
+				obj.bottomLeft.y
+		)
+		var allEqual = true
+		var pairsEqual = true
+		val first = list[0]
+		for (i in 0 until 8 step 2) {
+			val a = list[i]
+			val b = list[i + 1]
+			if (a != first) allEqual = false
+			if (a != b) {
+				allEqual = false
+				pairsEqual = false
+				break
+			}
+		}
+		when {
+			allEqual -> encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), listOf(first))
+			pairsEqual -> encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), listOf(list[0], list[2], list[4], list[6]))
+			else -> encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), list)
+		}
+	}
+}
+
+private class ListDescriptor(override val name: String, val elementDesc: SerialDescriptor) : SerialDescriptor {
+	override val kind: SerialKind get() = StructureKind.LIST
+	override val elementsCount: Int = 1
+	override fun getElementName(index: Int): String = index.toString()
+	override fun getElementIndex(name: String): Int =
+			name.toIntOrNull() ?: throw IllegalArgumentException("$name is not a valid list index")
+
+	override fun getElementDescriptor(index: Int): SerialDescriptor = elementDesc
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (other !is ListLikeDescriptor) return false
+
+		if (elementDesc == other.elementDesc && name == other.name) return true
+
+		return false
+	}
+
+	override fun hashCode(): Int {
+		return elementDesc.hashCode() * 31 + name.hashCode()
+	}
+}
+
 
 /**
  * A representation of corner radii.
  *
  * @author nbilyk
  */
-@Serializable
+@Serializable(with = CornersSerializer2::class)
 class Corners() : CornersRo, Clearable {
 
 	override val topLeft = Vector2()
@@ -63,6 +134,10 @@ class Corners() : CornersRo, Clearable {
 
 	constructor(topLeft: Float, topRight: Float, bottomRight: Float, bottomLeft: Float) : this() {
 		set(topLeft, topRight, bottomRight, bottomLeft)
+	}
+
+	constructor(topLeftX: Float, topLeftY: Float, topRightX: Float, topRightY: Float, bottomRightX: Float, bottomRightY: Float, bottomLeftX: Float, bottomLeftY: Float) : this() {
+		set(topLeftX, topLeftY, topRightX, topRightY, bottomRightX, bottomRightY, bottomLeftX, bottomLeftY)
 	}
 
 	fun set(all: Float): Corners {
@@ -89,6 +164,14 @@ class Corners() : CornersRo, Clearable {
 		return this
 	}
 
+	fun set(topLeftX: Float, topLeftY: Float, topRightX: Float, topRightY: Float, bottomRightX: Float, bottomRightY: Float, bottomLeftX: Float, bottomLeftY: Float): Corners {
+		this.topLeft.set(topLeftX, topLeftY)
+		this.topRight.set(topRightX, topRightY)
+		this.bottomRight.set(bottomRightX, bottomRightY)
+		this.bottomLeft.set(bottomLeftX, bottomLeftY)
+		return this
+	}
+
 	fun set(topLeft: Vector2Ro, topRight: Vector2Ro, bottomRight: Vector2Ro, bottomLeft: Vector2Ro): Corners {
 		this.topLeft.set(topLeft)
 		this.topRight.set(topRight)
@@ -101,6 +184,7 @@ class Corners() : CornersRo, Clearable {
 	 * Decreases the corner radius by the given padding.
 	 */
 	fun deflate(pad: PadRo): Corners = inflate(-pad.left, -pad.top, -pad.right, -pad.bottom)
+
 	fun deflate(left: Float, top: Float, right: Float, bottom: Float): Corners = inflate(-left, -top, -right, -bottom)
 	fun deflate(all: Float): Corners = inflate(-all, -all, -all, -all)
 
@@ -152,10 +236,10 @@ class Corners() : CornersRo, Clearable {
 	override fun toString(): String {
 		return "Corners(topLeft=$topLeft, topRight=$topRight, bottomRight=$bottomRight, bottomLeft=$bottomLeft)"
 	}
-
-
 }
 
+
+@Deprecated("use kotlinx serialization")
 object CornersSerializer : To<CornersRo>, From<Corners> {
 	override fun read(reader: Reader): Corners {
 		val c = Corners(

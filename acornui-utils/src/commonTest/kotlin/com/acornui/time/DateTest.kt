@@ -25,4 +25,4 @@ class DateTest {
 }
 
 @Serializable
-private data class MyClassWithDate(val d: Date?)
+private data class MyClassWithDate(val d: DateRo?)

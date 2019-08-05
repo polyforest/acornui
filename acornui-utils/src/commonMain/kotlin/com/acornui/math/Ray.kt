@@ -26,6 +26,7 @@ import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
 import com.acornui.notCloseTo
 import com.acornui.math.MathUtils.FLOAT_ROUNDING_ERROR
+import kotlinx.serialization.Serializable
 import kotlin.math.sqrt
 
 interface RayRo {
@@ -110,6 +111,7 @@ interface RayRo {
  *
  * @author badlogicgames@gmail.com
  */
+@Serializable
 class Ray(
 		override val origin: Vector3 = Vector3(),
 		override val direction: Vector3 = Vector3()

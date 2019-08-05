@@ -1,5 +1,8 @@
 package com.acornui.graphic
 
+import com.acornui.serialization.jsonParse
+import com.acornui.serialization.jsonStringify
+import kotlinx.serialization.Serializable
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -86,7 +89,21 @@ class ColorTest {
 		assertEquals("ffffff", Color(2f, 3f, 4f, 5f).toRgbString())
 		assertEquals("00ff00ff", Color(0f, 3f, 0f, 5f).toRgbaString())
 	}
+
+	@Test fun serialize() {
+		val c = Color(0x4c669933)
+		val json = jsonStringify(Color.serializer(), c)
+		assertEquals("\"#4c669933\"", json)
+		assertEquals(c, jsonParse(Color.serializer(), json))
+
+		val cW = ColorWrapper(Color.RED)
+		val json2 = jsonStringify(ColorWrapper.serializer(), cW)
+		assertEquals(cW, jsonParse(ColorWrapper.serializer(), json2))
+	}
 }
+
+@Serializable
+private data class ColorWrapper(val c: ColorRo)
 
 class HSLTest {
 	@Test fun toRgb() {
