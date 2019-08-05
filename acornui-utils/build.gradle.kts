@@ -25,10 +25,5 @@ kotlin {
 				implementation("com.acornui:acornui-test-utils:$version")
 			}
 		}
-		jvmTest {
-			dependencies {
-				implementation(kotlin("reflect"))
-			}
-		}
 	}
 }

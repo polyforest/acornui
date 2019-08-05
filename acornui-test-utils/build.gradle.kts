@@ -33,7 +33,6 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(kotlin("test-junit"))
-                implementation(kotlin("reflect"))
             }
         }
         named("jsMain") {
