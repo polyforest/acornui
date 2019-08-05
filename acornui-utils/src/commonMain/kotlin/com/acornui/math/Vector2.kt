@@ -19,6 +19,7 @@ package com.acornui.math
 import com.acornui.recycle.ClearableObjectPool
 import com.acornui.recycle.Clearable
 import com.acornui.serialization.*
+import kotlinx.serialization.Serializable
 import kotlin.math.*
 import kotlin.random.Random
 
@@ -129,6 +130,7 @@ interface Vector2Ro {
  * Encapsulates a 2D vector. Allows chaining methods by returning a reference to itself
  * @author badlogicgames@gmail.com
  */
+@Serializable
 class Vector2(
 
 		/**

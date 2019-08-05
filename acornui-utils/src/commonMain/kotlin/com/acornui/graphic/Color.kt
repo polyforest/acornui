@@ -25,6 +25,7 @@ import com.acornui.math.MathUtils.clamp
 import com.acornui.serialization.Reader
 import com.acornui.serialization.Writer
 import com.acornui.string.toRadix
+import kotlinx.serialization.Serializable
 import kotlin.math.abs
 
 interface ColorRo {
@@ -145,6 +146,7 @@ fun Color(rgba: Long): Color {
  *
  * @author mzechner
  */
+@Serializable
 data class Color(
 		override var r: Float = 0f,
 		override var g: Float = 0f,

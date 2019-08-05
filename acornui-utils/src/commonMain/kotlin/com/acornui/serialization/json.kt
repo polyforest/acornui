@@ -21,6 +21,7 @@ package com.acornui.serialization
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 
 @Deprecated("use kotlinx serialization")
 expect val json: Serializer<String>
@@ -35,10 +36,12 @@ fun <T> toJson(value: T, factory: To<T>): String {
 	return json.write(value, factory)
 }
 
+private val jsonx = Json(JsonConfiguration.Default.copy(encodeDefaults = false), context = dataModule)
+
 fun <T> jsonParse(deserializer: DeserializationStrategy<T>, jsonStr: String): T {
-	return Json.parse(deserializer, jsonStr)
+	return jsonx.parse(deserializer, jsonStr)
 }
 
 fun <T> jsonStringify(serializer: SerializationStrategy<T>, value: T): String {
-	return Json.stringify(serializer, value)
+	return jsonx.stringify(serializer, value)
 }

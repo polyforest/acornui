@@ -18,6 +18,7 @@ package com.acornui.math
 
 import com.acornui.recycle.Clearable
 import com.acornui.serialization.*
+import kotlinx.serialization.Serializable
 import kotlin.math.ceil
 
 /**
@@ -84,6 +85,7 @@ interface PadRo {
  *
  * @author nbilyk
  */
+@Serializable
 class Pad(
 		override var top: Float,
 		override var right: Float,

@@ -21,11 +21,14 @@ import com.acornui.collection.first2
 import com.acornui.component.UiComponent
 import com.acornui.component.layout.spacer
 import com.acornui.Disposable
+import com.acornui.collection.forEach2
 import com.acornui.di.Owned
 import com.acornui.observe.*
 import com.acornui.serialization.Writer
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.SerialClassDescImpl
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -111,6 +114,27 @@ abstract class StyleBase : Style, Disposable {
 	override fun toString(): String {
 		val props = allProps.joinToString(", ")
 		return "Style($props)"
+	}
+}
+
+open class StyleBaseSerializer<T : StyleBase>(val name: String, val factory: () -> T) : KSerializer<T> {
+	override val descriptor: SerialDescriptor = object : SerialClassDescImpl(name) {
+		init {
+			val e = factory()
+			e.allProps.forEach2 {
+				addElement(it.name!!, isOptional = true)
+			}
+		}
+	}
+
+	override fun deserialize(decoder: Decoder): T {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun serialize(encoder: Encoder, obj: T) {
+		obj.allProps.forEach2 {
+			
+		}
 	}
 }
 

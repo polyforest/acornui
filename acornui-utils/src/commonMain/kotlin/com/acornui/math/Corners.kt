@@ -18,6 +18,7 @@ package com.acornui.math
 
 import com.acornui.recycle.Clearable
 import com.acornui.serialization.*
+import kotlinx.serialization.Serializable
 
 interface CornersRo {
 
@@ -41,6 +42,7 @@ interface CornersRo {
  *
  * @author nbilyk
  */
+@Serializable
 class Corners() : CornersRo, Clearable {
 
 	override val topLeft = Vector2()
