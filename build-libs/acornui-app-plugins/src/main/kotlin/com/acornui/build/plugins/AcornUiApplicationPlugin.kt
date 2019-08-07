@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 package com.acornui.build.plugins
 
 import com.acornui.toCamelCase

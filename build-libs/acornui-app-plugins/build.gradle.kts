@@ -15,7 +15,7 @@
  */
 
 plugins {
-//	id("org.gradle.kotlin.kotlin-dsl") version "1.2.9"
+	//	id("org.gradle.kotlin.kotlin-dsl") version "1.2.9"
 	`kotlin-dsl`
 	`maven-publish`
 	id("kotlinx-serialization")
@@ -27,6 +27,7 @@ kotlinDslPluginOptions {
 
 val kotlinVersion: String by extra
 val kotlinSerializationVersion: String by extra
+val gdxVersion = "1.9.8"
 
 dependencies {
 	implementation(kotlin("compiler", version = kotlinVersion))
@@ -36,16 +37,11 @@ dependencies {
 	implementation("com.acornui:acornui-lwjgl-backend:$version")
 	implementation("com.acornui:acornui-texture-packer:$version")
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
-}
 
-kotlin {
-	sourceSets {
-		main {
-			// This is gross, but as far as I know there's no way to publish plugins from the buildSrc project,
-			// and this is less gross than duplicating code.
-			kotlin.srcDirs(rootProject.file("buildSrc/src/main/kotlin"))
-		}
-	}
+	implementation("com.badlogicgames.gdx:gdx-tools:$gdxVersion")
+	implementation("com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion")
+	implementation("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop")
+
 }
 
 gradlePlugin {
