@@ -26,6 +26,8 @@ import com.acornui.cursor.RollOverCursor
 import com.acornui.cursor.StandardCursors
 import com.acornui.di.Owned
 import com.acornui.di.inject
+import com.acornui.input.Ascii
+import com.acornui.input.KeyState
 import com.acornui.input.clipboardCopy
 import com.acornui.input.interaction.ClipboardItemType
 import com.acornui.input.interaction.CopyInteractionRo
@@ -109,6 +111,8 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 	 */
 	override var selectionTarget: Selectable = this
 
+	private val keyState by KeyState
+
 	private val _textSpan = span()
 	private val _textContents = p { +_textSpan }
 
@@ -120,7 +124,7 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 		styleTags.add(TextField)
 
 		watch(charStyle) { cS ->
-			val font = cS.getFont()?.then {
+			cS.getFont()?.then {
 				if (!isDisposed) invalidate(ValidationFlags.LAYOUT)
 			}
 			refreshCursor()
@@ -176,7 +180,8 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 		val p1 = event.startPositionLocal
 		val p2 = event.positionLocal
 
-		val p1A = contents.getSelectionIndex(p1.x, p1.y)
+		val p1A = if (keyState.keyIsDown(Ascii.SHIFT)) firstSelection?.startIndex ?: 0
+		else contents.getSelectionIndex(p1.x, p1.y)
 		val p2A = contents.getSelectionIndex(p2.x, p2.y)
 		return listOf(SelectionRange(selectionTarget, p1A, p2A))
 	}
@@ -277,7 +282,7 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 	}
 
 	private val firstSelection: SelectionRange?
-		get() = selectionManager.selection.firstOrNull { it.target == this }
+		get() = selectionManager.selection.firstOrNull { it.target == selectionTarget }
 
 	companion object {
 		const val SELECTION = 1 shl 16

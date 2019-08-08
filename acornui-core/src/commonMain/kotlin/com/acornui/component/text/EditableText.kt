@@ -170,8 +170,8 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 		host.char().add {
 			if (editable && !it.defaultPrevented()) {
-				val font = host.charStyle.getFont()?.resultOrNull()
-				if (font?.glyphs?.containsKey(it.char) == true && it.char != '\n' && it.char != '\r') {
+				val glyphs = host.charStyle.getFont()?.resultOrNull()?.glyphs
+				if (glyphs?.containsKey(it.char) == true && it.char != '\n' && it.char != '\r') {
 					it.handled = true
 					replaceSelection(it.char.toString())
 					_input.dispatch()
@@ -186,7 +186,8 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 					it.getItemByType(ClipboardItemType.PLAIN_TEXT)
 				} then notDisposed { str ->
 					if (str != null) {
-						replaceSelection(str.replace("\r", ""), CommandGroup())
+						val glyphs = host.charStyle.getFont()?.resultOrNull()?.glyphs
+						replaceSelection(str.filter { char -> glyphs?.containsKey(char) == true && char != '\n' && char != '\r' }, CommandGroup())
 						currentGroup = CommandGroup()
 						_input.dispatch()
 					}
@@ -536,7 +537,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			val to = minOf(contentsSize, sel.min)
 			val from = if (event.commandPlat) previousWordIndex(to) else (to - 1)
 			replaceTextRange(from, to, "")
-			setSelection(listOf(SelectionRange(host, sel.min - 1, sel.min - 1)))
+			setSelection(listOf(SelectionRange(host, from, from)))
 		}
 	}
 
