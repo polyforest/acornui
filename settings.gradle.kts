@@ -1,3 +1,5 @@
+import com.acornui.build.AcornDependencies
+
 /*
  * Copyright 2019 Poly Forest, LLC
  *
@@ -14,23 +16,14 @@
  * limitations under the License.
  */
 
+AcornDependencies.addVersionProperties(extra)
+
 val kotlinVersion: String by extra
 
-pluginManagement {
-    resolutionStrategy {
-        eachPlugin {
-            when {
-                requested.id.id == "kotlinx-serialization" ->
-                    useModule("org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion")
-                requested.id.namespace == "org.jetbrains.kotlin" ->
-                    useVersion(kotlinVersion)
-            }
-        }
-    }
-}
 rootProject.name = "acornui"
 
-include("acornui-utils", "acornui-core", "acornui-game", "acornui-spine", "backends:acornui-lwjgl-backend", "backends:acornui-webgl-backend", "tools:acornui-texture-packer", "acornui-test-utils")
+include("acornui-utils", "acornui-core", "acornui-game", "acornui-spine", "backends:acornui-lwjgl-backend", "backends:acornui-webgl-backend", "acornui-test-utils")
+include("tools:acornui-texture-packer", "tools:gdx-font-processor")
 include("build-libs:acornui-app-plugins")
 include("skins:basic")
 

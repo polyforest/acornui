@@ -21,6 +21,7 @@ plugins {
 }
 
 repositories {
+    jcenter()
     gradlePluginPortal()
 }
 
@@ -31,6 +32,7 @@ kotlinDslPluginOptions {
 val kotlinVersion: String by extra
 dependencies {
     implementation(kotlin("gradle-plugin", version = kotlinVersion))
+    implementation(kotlin("serialization", version = kotlinVersion))
 }
 
 gradlePlugin {

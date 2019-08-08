@@ -1,5 +1,6 @@
 package com.acornui.build.plugins
 
+import com.acornui.build.AcornDependencies
 import com.acornui.build.plugins.logging.LoggerAdapter
 import com.acornui.build.plugins.util.preventSnapshotDependencyCaching
 import org.gradle.api.Plugin
@@ -25,6 +26,8 @@ class RootPlugin : Plugin<Project> {
             preventSnapshotDependencyCaching()
 
             allprojects {
+                AcornDependencies.addVersionProperties(extra)
+                
                 project.pluginManager.apply("org.gradle.idea")
                 repositories {
                     mavenLocal()

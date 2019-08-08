@@ -1,3 +1,4 @@
+import com.acornui.build.AcornDependencies
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
@@ -23,9 +24,7 @@ val kotlinLanguageVersion: String by extra
 
 plugins {
 	kotlin("multiplatform")
-	id("kotlinx-serialization")
 	`maven-publish`
-	idea
 }
 
 subprojects {
@@ -35,9 +34,8 @@ subprojects {
 }
 
 allprojects {
-	apply {
-		plugin("org.gradle.idea")
-	}
+	AcornDependencies.addVersionProperties(extra)
+
 	repositories {
 		jcenter()
 	}

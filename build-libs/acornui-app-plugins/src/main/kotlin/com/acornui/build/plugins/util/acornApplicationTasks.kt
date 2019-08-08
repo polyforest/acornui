@@ -4,6 +4,7 @@ import com.acornui.build.plugins.acornui
 import com.acornui.build.plugins.tasks.AcornUiResourceProcessorTask
 import com.acornui.build.plugins.tasks.DceTask
 import com.acornui.build.plugins.tasks.KotlinJsMonkeyPatcherTask
+import com.acornui.build.plugins.tasks.createBitmapFontGeneratorConfig
 import com.acornui.io.file.FilesManifest
 import com.acornui.io.file.ManifestUtil
 import com.acornui.serialization.jsonStringify
@@ -18,6 +19,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilationToRunnabl
 import java.io.File
 
 fun Project.applicationResourceTasks(platforms: Iterable<String>, compilations: Iterable<String>) {
+    createBitmapFontGeneratorConfig()
+
     platforms.forEach { platform ->
         val platformCapitalized = platform.capitalize()
         compilations.forEach { compilationName ->
@@ -65,6 +68,7 @@ fun Project.applicationResourceTasks(platforms: Iterable<String>, compilations: 
 
             val processAcornResources =
                 project.tasks.register<AcornUiResourceProcessorTask>("${platform}ProcessAcornResources") {
+
                     dependsOn(combineAcornResources)
                     from(unprocessedResourcesAllMain)
                     into(processedResourcesAllMain)

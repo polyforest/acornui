@@ -1,0 +1,11 @@
+{
+  "imagesDir": "",
+  "pageWidth": 512,
+  "pageHeight": 512,
+  "padding": 2,
+  "sizes": [36, 44],
+  "defaultFontSettings": {
+	"hinting": "Full",
+	"characters": "⋃⋂∅–—‘’‚“”„ †!‡\"•#$%&…'()*+,-./0123456789‹:›;<=>?@ABCD⁄EFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ�￿"
+  }
+}

@@ -1,20 +1,20 @@
-@file:Suppress("UnstableApiUsage")
+@file:Suppress("UnstableApiUsage", "UNUSED_PARAMETER", "unused")
 
 package com.acornui.build.plugins.tasks
 
 import com.acornui.build.plugins.util.packAssets
 import org.gradle.api.DefaultTask
-import org.gradle.api.Task
-import org.gradle.api.file.Directory
-import org.gradle.api.file.FileCollection
-import org.gradle.api.file.FileTree
-import org.gradle.api.file.FileType
+import org.gradle.api.Project
+import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
+import org.gradle.kotlin.dsl.extra
+import org.gradle.process.internal.ExecActionFactory
 import org.gradle.work.ChangeType
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
 import java.io.File
+import javax.inject.Inject
 
 open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(private val objects: ObjectFactory) : DefaultTask() {
 
@@ -54,7 +54,9 @@ open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(private
 	}
 
 	@get:OutputDirectory
-	val outputDir = objects.directoryProperty()
+	val outputDir: DirectoryProperty = objects.directoryProperty()
+
+	private val processors: Map<String, DirectoryProcessor> = mapOf("_unpacked" to ::packAssets, "_unprocessedFonts" to ::processFonts)
 
 	@TaskAction
 	fun execute(inputChanges: InputChanges) {
@@ -68,20 +70,21 @@ open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(private
 			val sourceFile = change.file
 			val targetFile = outputDir.file(relPath).get().asFile
 
-            val foundSpecialFolder = change.file.findSpecialFolder()
-			if (foundSpecialFolder != null) {
-				val specialFolderToFilePath = change.file.relativeTo(foundSpecialFolder.second).path
+            val found = change.file.findSpecialFolder()
+			if (found != null) {
+				val (suffix, foundSpecialFolder) = found
+				val specialFolderToFilePath = sourceFile.relativeTo(foundSpecialFolder).invariantSeparatorsPath
 				val specialFolderDest = outputDir.file(relPath.removeSuffix(specialFolderToFilePath)).get().asFile
+				val dest = specialFolderDest.parentFile.resolve(specialFolderDest.name.removeSuffix(suffix))
 
-				directoriesToProcess[foundSpecialFolder.first]!!.add(DirectoryToProcessEntry(
-						foundSpecialFolder.second,
-						specialFolderDest,
-						removed = specialFolderToFilePath.isEmpty() && change.changeType == ChangeType.REMOVED
+				directoriesToProcess[suffix]!!.add(DirectoryToProcessEntry(
+						foundSpecialFolder,
+						dest
 				))
 			} else {
 				if (change.changeType == ChangeType.REMOVED || !sourceFile.exists()) {
 					if (targetFile.exists())
-						if (targetFile.isDirectory) targetFile.deleteRecursively() else targetFile.delete()
+						targetFile.deleteRecursively()
 				} else {
 					if (change.fileType != FileType.DIRECTORY) {
 						sourceFile.parentFile.mkdirs()
@@ -96,7 +99,7 @@ open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(private
             (suffix, processor) ->
             val directoryToProcess = directoriesToProcess[suffix]!!
             if (directoryToProcess.isNotEmpty()) {
-                processor.invoke(this, suffix, directoryToProcess)
+                processor.invoke(suffix, directoryToProcess)
             }
         }
 	}
@@ -115,38 +118,62 @@ open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(private
         return null
     }
 
-	companion object {
+	@Inject
+	protected open fun getExecActionFactory(): ExecActionFactory {
+		throw UnsupportedOperationException()
+	}
 
-		var processors: Map<String, DirectoryProcessor> = mapOf("_unpacked" to ::packAssets)
+	private val packedExtensions = arrayOf("json", "png")
 
-		private val packedExtensions = arrayOf("json", "png")
-
-		fun packAssets(task: Task, suffix: String, entries: Iterable<DirectoryToProcessEntry>) {
-			entries.forEach {
-				if (it.removed) {
-					task.logger.lifecycle("Removing assets: " + it.sourceDir.path)
-					val name = it.sourceDir.name.removeSuffix(suffix)
-					it.destinationDir.parentFile.listFiles()?.forEach { child ->
-						if (child.name.startsWith(name) && packedExtensions.contains(child.extension.toLowerCase()))
-							child.delete()
-					}
-				} else {
-					task.logger.lifecycle("Packing assets: " + it.sourceDir.path)
-					packAssets(it.sourceDir, it.destinationDir.parentFile, suffix)
+	private fun packAssets(suffix: String, entries: Iterable<DirectoryToProcessEntry>) {
+		entries.forEach {
+			if (it.sourceDir.exists()) {
+				logger.lifecycle("Packing assets: " + it.sourceDir.path)
+				packAssets(it.sourceDir, it.destinationDir.parentFile, suffix)
+			} else {
+				logger.lifecycle("Removing assets: " + it.sourceDir.path)
+				val name = it.sourceDir.name.removeSuffix(suffix)
+				it.destinationDir.parentFile.listFiles()?.forEach { child ->
+					if (child.name.startsWith(name) && packedExtensions.contains(child.extension.toLowerCase()))
+						child.delete()
 				}
+			}
+		}
+	}
+
+	private fun processFonts(suffix: String, entries: Iterable<DirectoryToProcessEntry>) {
+		entries.forEach {
+			it.destinationDir.deleteRecursively()
+			if (it.sourceDir.exists()) {
+				logger.lifecycle("Processing fonts: " + it.sourceDir.path)
+//				processFonts(it.sourceDir, it.destinationDir)
+				getExecActionFactory().newJavaExecAction().apply {
+					main = "com.acornui.font.ProcessFontsKt"
+					args = listOf(it.sourceDir.absolutePath, it.destinationDir.absolutePath)
+					classpath = project.configurations.getByName("bitmapFontGenerator")
+					execute()
+				}
+			} else {
+				logger.lifecycle("Removing fonts: " + it.destinationDir.path)
 			}
 		}
 	}
 }
 
-data class DirectoryToProcessEntry(
-        val sourceDir: File,
-        val destinationDir: File,
+fun Project.createBitmapFontGeneratorConfig() {
+	val gdxVersion: String = extra.get("gdxVersion") as String
+	configurations.create("bitmapFontGenerator") {
+		dependencies.apply {
+			add(project.dependencies.create("com.acornui:gdx-font-processor:0.2.4-SNAPSHOT"))
+			add(project.dependencies.create("com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"))
+			add(project.dependencies.create("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"))
+		}
+	}
+}
 
-        /**
-         * True if the directory has been removed, instead of created or modified.
-         */
-        val removed: Boolean
+data class DirectoryToProcessEntry(
+		val sourceDir: File,
+		val destinationDir: File
 )
 
-typealias DirectoryProcessor = (task: Task, suffix: String, entries: Iterable<DirectoryToProcessEntry>) -> Unit
+typealias DirectoryProcessor = (suffix: String, entries: Iterable<DirectoryToProcessEntry>) -> Unit
