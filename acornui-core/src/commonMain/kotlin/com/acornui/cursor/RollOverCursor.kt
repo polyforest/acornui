@@ -36,32 +36,44 @@ class RollOverCursor(
 
 	private var cursorRef: CursorReference? = null
 
-	private val rollOverHandler = {
-		event: MouseInteractionRo ->
+	var enabled: Boolean = false
+		set(value) {
+			if (field != value) {
+				field = value
+				if (value) {
+					target.rollOver().add(::rollOverHandler)
+					target.rollOut().add(::rollOutHandler)
+					if (target.mouseIsOver()) {
+						cursorRef = cursorManager?.addCursor(cursor, priority)
+					}
+				} else {
+					cursorRef?.remove()
+					cursorRef = null
+					target.rollOver().remove(::rollOverHandler)
+					target.rollOut().remove(::rollOutHandler)
+				}
+			}
+		}
+
+	init {
+		enabled = true
+	}
+
+	private fun rollOverHandler(event: MouseInteractionRo) {
 		cursorRef?.remove()
 		cursorRef = cursorManager?.addCursor(cursor, priority)
 	}
 
-	private val rollOutHandler = {
-		event: MouseInteractionRo ->
+	private fun rollOutHandler(event: MouseInteractionRo) {
 		cursorRef?.remove()
 		cursorRef = null
-	}
-
-	init {
-		target.rollOver().add(rollOverHandler)
-		target.rollOut().add(rollOutHandler)
-		// TODO:
-//		if (target.mouseIsOver()) {
-//			cursorRef = cursorManager.addCursor(cursor, priority)
-//		}
 	}
 
 	override fun dispose() {
 		cursorRef?.remove()
 		cursorRef = null
-		target.rollOver().remove(rollOverHandler)
-		target.rollOut().remove(rollOutHandler)
+		target.rollOver().remove(::rollOverHandler)
+		target.rollOut().remove(::rollOutHandler)
 	}
 
 	companion object
