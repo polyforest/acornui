@@ -6,6 +6,7 @@ import com.acornui.component.text.FontSize
 import com.acornui.component.text.FontStyle
 import com.acornui.component.text.FontWeight
 import com.acornui.filterWithWords
+import com.acornui.io.file.Directory
 import com.acornui.io.file.FileEntry
 import com.acornui.io.file.Files
 import com.acornui.math.MathUtils
@@ -22,16 +23,32 @@ object FontPathResolver {
 			FontSize.EXTRA_LARGE to 32
 	)
 
+	private val fileSizeRegex = Regex("""_(\d+)""")
+
 	/**
-	 * The font sizes available.
+	 * The size check regex will provide the size of the font based on the filename.
 	 */
-	var supportedSizes = listOf(10, 14, 18, 20, 22, 28, 32, 36, 44, 64)
+	var sizeCheck: (filename: String) -> Int = {
+		fileSizeRegex.find(it)?.groups?.get(1)?.value?.toInt() ?: -1
+	}
+
+	private val supportedSizesCache = HashMap<Directory, List<Int>>()
 
 	/**
 	 * Returns the path to the font with the given characteristics.
 	 */
 	fun getPath(files: Files, request: BitmapFontRequest): FileEntry? {
 		val dir = files.getDir(fontsDir)?.getDir(request.family) ?: return null
+
+		val supportedSizes = supportedSizesCache.getOrPut(dir) {
+			val foundSizes = mutableSetOf<Int>()
+			dir.files.values.forEach {
+				if (it.hasExtension("fnt")) {
+					foundSizes.add(sizeCheck(it.nameNoExtension))
+				}
+			}
+			foundSizes.toList().filter { it > 0 }.sorted()
+		}
 
 		val desiredPt = sizeToPtMap[request.size] ?: error("Unknown size: ${request.size}")
 		val scaledSize = (desiredPt.toFloat() * request.fontPixelDensity).toInt()
