@@ -23,7 +23,7 @@ object FontPathResolver {
 			FontSize.EXTRA_LARGE to 32
 	)
 
-	private val fileSizeRegex = Regex("""_(\d+)""")
+	private val fileSizeRegex = Regex("""_(\d+)$""")
 
 	/**
 	 * The size check regex will provide the size of the font based on the filename.
