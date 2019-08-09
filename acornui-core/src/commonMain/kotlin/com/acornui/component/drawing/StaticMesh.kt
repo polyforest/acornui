@@ -254,7 +254,7 @@ class StaticMesh(
 			if (drawCall.count != 0) {
 				indices.position = drawCall.offset
 				if (drawCall.mode == Gl20.TRIANGLES) {
-					for (j in 0..drawCall.count - 1 step 3) {
+					for (j in 0 until drawCall.count step 3) {
 						vertexComponents.position = indices.get() * vertexSize + positionOffset
 						v0.set(vertexComponents.get(), vertexComponents.get(), vertexComponents.get())
 						vertexComponents.position = indices.get() * vertexSize + positionOffset

@@ -150,12 +150,26 @@ fun ShaderBatch.ellipse(radiusX: Float, radiusY: Float = radiusX, x: Float = 0f,
 	putVertex(x, y, 0f)
 	putIndex(++n)
 	val first = n + 1
+	val d = 1f / segments * PI2
 	for (i in 1..segments) {
-		val theta = i.toFloat() / segments * PI2
+		val theta = i.toFloat() * d
 		val iX = x + cos(theta) * radiusX
 		val iY = y + sin(theta) * radiusY
 		putVertex(iX, iY, 0f)
 		putIndex(++n)
 	}
 	putIndex(first)
+}
+
+fun ShaderBatch.ellipseLine(radiusX: Float, radiusY: Float = radiusX, x: Float = 0f, y: Float = 0f, segments: Int = 100, lineStyle: LineStyleRo = LineStyle()) {
+	val d = 1f / segments * PI2
+	for (i in 1..segments) {
+		val theta1 = (i - 1).toFloat() * d
+		val x1 = x + cos(theta1) * radiusX
+		val y1 = y + sin(theta1) * radiusY
+		val theta2 = i.toFloat() * d
+		val x2 = x + cos(theta2) * radiusX
+		val y2 = y + sin(theta2) * radiusY
+		line(x1, y1, x2, y2, lineStyle)
+	}
 }
