@@ -204,6 +204,7 @@ class GlStateImpl(
 	override fun activeTexture(value: Int) {
 		if (value < 0 || value > 30) throw IllegalArgumentException("Texture index must be between 0 and 30")
 		if (_activeTexture == value) return
+		batch.flush()
 		_activeTexture = value
 		gl.activeTexture(Gl20.TEXTURE0 + value)
 	}
