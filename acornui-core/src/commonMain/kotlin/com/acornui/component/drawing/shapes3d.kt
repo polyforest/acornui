@@ -35,11 +35,9 @@ import kotlin.math.sin
  * gl.frontFace(Gl20.CW)
  * gl.cullFace(Gl20.BACK)
  */
-fun ShaderBatch.cylinder(width: Float, height: Float, depth: Float, segments: Int = 180, fillColor: ColorRo = Color.WHITE, init: ShaderBatch.() -> Unit = {}) {
-	val hW = width * 0.5f
-	val hH = height * 0.5f
-	putVertex(hW, hH, 0f, Vector3.NEG_Z, fillColor) // 0
-	putVertex(hW, hH, depth, Vector3.Z, fillColor) // 1
+fun ShaderBatch.cylinder(radiusX: Float, radiusY: Float, depth: Float, segments: Int = 180, fillColor: ColorRo = Color.WHITE, init: ShaderBatch.() -> Unit = {}) {
+	putVertex(0f, 0f, 0f, Vector3.NEG_Z, fillColor) // 0
+	putVertex(0f, 0f, depth, Vector3.Z, fillColor) // 1
 	var index = 2
 
 	val n = highestIndex + 1
@@ -48,8 +46,8 @@ fun ShaderBatch.cylinder(width: Float, height: Float, depth: Float, segments: In
 		val theta = i.toFloat() / segments * PI2
 		val cos = cos(theta)
 		val sin = sin(theta)
-		val x = (cos + 1f) * hW
-		val y = (sin + 1f) * hH
+		val x = cos * radiusX
+		val y = sin * radiusY
 
 		// Top
 		putVertex(x, y, 0f, Vector3.NEG_Z, fillColor) // index - 4
