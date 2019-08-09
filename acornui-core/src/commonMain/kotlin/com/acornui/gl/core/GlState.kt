@@ -171,7 +171,7 @@ class GlStateImpl(
 
 	private var _activeTexture: Int = -1
 
-	private val _boundTextures: Array<TextureRo?> = Array(30) { null }
+	private val _boundTextures: Array<TextureRo?> = Array(Gl20.MAX_COMBINED_TEXTURE_IMAGE_UNITS) { null }
 
 	private var _batch: ShaderBatch = ShaderBatchImpl(gl, this, uiVertexAttributes)
 
@@ -197,7 +197,7 @@ class GlStateImpl(
 		get() = _whitePixel ?: defaultWhitePixel
 
 	override fun activeTexture(value: Int) {
-		if (value < 0 || value > 30) throw IllegalArgumentException("Texture index must be between 0 and 30")
+		if (value < 0 || value >= Gl20.MAX_COMBINED_TEXTURE_IMAGE_UNITS) throw IllegalArgumentException("Texture index must be between 0 and ${Gl20.MAX_COMBINED_TEXTURE_IMAGE_UNITS - 1}")
 		if (_activeTexture == value) return
 		batch.flush()
 		_activeTexture = value
@@ -313,10 +313,10 @@ class GlStateImpl(
 	override fun getFramebuffer(out: FramebufferInfo) = out.set(_framebuffer)
 
 	override fun setFramebuffer(framebuffer: GlFramebufferRef?,
-					   width: Int,
-					   height: Int,
-					   scaleX: Float,
-					   scaleY: Float) {
+								width: Int,
+								height: Int,
+								scaleX: Float,
+								scaleY: Float) {
 		if (_framebuffer.equals(framebuffer, width, height, scaleX, scaleY)) return
 		batch.flush()
 		_framebuffer.set(framebuffer, width, height, scaleX, scaleY)
@@ -507,7 +507,7 @@ fun GlState.useViewportFromCanvasTransform(canvasTransform: RectangleRo, inner: 
 /**
  * Temporarily uses a shader, resetting to the old shader after [inner].
  */
-inline fun GlState.useShader(s: ShaderProgram, inner: ()->Unit) {
+inline fun GlState.useShader(s: ShaderProgram, inner: () -> Unit) {
 	val previousShader = shader
 	shader = s
 	inner()
@@ -528,7 +528,7 @@ private val combined = ColorTransformation()
 /**
  * Adds a color transformation to the current stack, using that color transformation within [inner].
  */
-fun GlState.useColorTransformation(cT: ColorTransformationRo, inner: ()->Unit) {
+fun GlState.useColorTransformation(cT: ColorTransformationRo, inner: () -> Unit) {
 	val wasSet = colorTransformation != null
 	val previous = if (wasSet) ColorTransformation.obtain().set(colorTransformation!!) else null
 	colorTransformation = combined.combine(previous, cT)
