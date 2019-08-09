@@ -26,6 +26,7 @@ import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Texture
 import com.acornui.setCamera
 import com.acornui.gl.core.*
+import com.acornui.graphic.TextureRo
 import com.acornui.math.*
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
@@ -159,8 +160,8 @@ class StaticMesh(
 		get() = _boundingBox
 
 	private val batch = StaticShaderBatchImpl(gl, glState, vertexAttributes)
-	private val textures = ArrayList<Texture>()
-	private val oldTextures = ArrayList<Texture>()
+	private val textures = ArrayList<TextureRo>()
+	private val oldTextures = ArrayList<TextureRo>()
 
 	init {
 		val positionAttribute = vertexAttributes.getAttributeByUsage(VertexAttributeUsage.POSITION) ?: throw IllegalArgumentException("A static mesh must at least have a position attribute.")
@@ -289,7 +290,7 @@ class StaticMesh(
 }
 
 interface DrawElementsCallRo {
-	val texture: Texture?
+	val texture: TextureRo?
 	val blendMode: BlendMode
 	val premultipliedAlpha: Boolean
 	val mode: Int
@@ -299,7 +300,7 @@ interface DrawElementsCallRo {
 
 class DrawElementsCall private constructor() : Clearable, DrawElementsCallRo {
 
-	override var texture: Texture? = null
+	override var texture: TextureRo? = null
 	override var blendMode = BlendMode.NORMAL
 	override var premultipliedAlpha = false
 	override var mode = Gl20.TRIANGLES

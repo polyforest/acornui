@@ -68,6 +68,18 @@ interface TextureRo {
 	 */
 	val heightPixels: Int
 
+	/**
+	 * Increments the number of places this Texture is used. If this Texture was previously not referenced,
+	 * this texture will be initialized and uploaded to the GPU.
+	 */
+	fun refInc()
+
+	/**
+	 * Decrements the number of places this Texture is used. If the count reaches zero, the texture will be unloaded
+	 * from the gpu.
+	 */
+	fun refDec()
+
 }
 
 interface Texture : TextureRo {
@@ -103,18 +115,6 @@ interface Texture : TextureRo {
 	 * done in the same batch.
 	 */
 	override var hasWhitePixel: Boolean
-
-	/**
-	 * Increments the number of places this Texture is used. If this Texture was previously not referenced,
-	 * this texture will be initialized and uploaded to the GPU.
-	 */
-	fun refInc()
-
-	/**
-	 * Decrements the number of places this Texture is used. If the count reaches zero, the texture will be unloaded
-	 * from the gpu.
-	 */
-	fun refDec()
 
 	/**
 	 * Returns an RgbData object representing the bitmap data for this texture.

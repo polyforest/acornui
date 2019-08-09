@@ -18,12 +18,7 @@ package com.acornui.gl.core
 
 import com.acornui.Disposable
 import com.acornui.di.DKey
-import com.acornui.graphic.BlendMode
-import com.acornui.graphic.Texture
-import com.acornui.graphic.Window
-import com.acornui.graphic.rgbData
-import com.acornui.graphic.Color
-import com.acornui.graphic.ColorRo
+import com.acornui.graphic.*
 import com.acornui.math.*
 import com.acornui.reflect.observable
 import kotlin.math.ceil
@@ -81,20 +76,20 @@ interface GlState {
 	 * in mesh drawings, a texture can declare that its 0,0 pixel is white.
 	 * The acorn texture packer will optionally add this white pixel.
 	 */
-	val whitePixel: Texture
+	val whitePixel: TextureRo
 
 	/**
 	 * @see Gl20.activeTexture
 	 */
 	fun activeTexture(value: Int)
 
-	fun getTexture(unit: Int): Texture?
-	fun setTexture(texture: Texture? = null, unit: Int = 0)
+	fun getTexture(unit: Int): TextureRo?
+	fun setTexture(texture: TextureRo? = null, unit: Int = 0)
 
 	/**
 	 * For any unit where this texture is bound, unbind it.
 	 */
-	fun unsetTexture(texture: Texture)
+	fun unsetTexture(texture: TextureRo)
 
 	fun blendMode(blendMode: BlendMode, premultipliedAlpha: Boolean)
 
@@ -176,7 +171,7 @@ class GlStateImpl(
 
 	private var _activeTexture: Int = -1
 
-	private val _boundTextures: Array<Texture?> = Array(30) { null }
+	private val _boundTextures: Array<TextureRo?> = Array(30) { null }
 
 	private var _batch: ShaderBatch = ShaderBatchImpl(gl, this, uiVertexAttributes)
 
@@ -196,9 +191,9 @@ class GlStateImpl(
 		}
 	}
 
-	private var _whitePixel: Texture? = null
+	private var _whitePixel: TextureRo? = null
 
-	override val whitePixel: Texture
+	override val whitePixel: TextureRo
 		get() = _whitePixel ?: defaultWhitePixel
 
 	override fun activeTexture(value: Int) {
@@ -209,12 +204,12 @@ class GlStateImpl(
 		gl.activeTexture(Gl20.TEXTURE0 + value)
 	}
 
-	override fun getTexture(unit: Int): Texture? {
+	override fun getTexture(unit: Int): TextureRo? {
 		return _boundTextures[unit]
 	}
 
-	override fun setTexture(texture: Texture?, unit: Int) {
-		val previous: Texture? = _boundTextures[unit]
+	override fun setTexture(texture: TextureRo?, unit: Int) {
+		val previous = _boundTextures[unit]
 		if (previous == texture && _activeTexture == unit) return
 		batch.flush()
 		_whitePixel = if (unit == 0 && texture?.hasWhitePixel == true) texture else null
@@ -230,7 +225,7 @@ class GlStateImpl(
 		}
 	}
 
-	override fun unsetTexture(texture: Texture) {
+	override fun unsetTexture(texture: TextureRo) {
 		for (i in 0.._boundTextures.lastIndex) {
 			if (_boundTextures[i] == texture) {
 				setTexture(null, i)
