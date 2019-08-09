@@ -456,7 +456,7 @@ open class UiComponentImpl(
 		if (focusTarget != null)
 			focusHighlighter?.unhighlight(focusTarget!!)
 		val newFocusTarget = focusHighlightDelegate ?: this
-		if (newFocusTarget.showFocusHighlight) {
+		if (showFocusHighlight) {
 			focusTarget = newFocusTarget
 			focusHighlighter = focusableStyle.highlighter
 			focusHighlighter?.highlight(focusTarget!!)
