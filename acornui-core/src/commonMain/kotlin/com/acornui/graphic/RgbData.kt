@@ -136,6 +136,7 @@ class RgbData(
 	private fun transferPixelTo(sourceX: Int, sourceY: Int, dest: RgbData, destX: Int, destY: Int) {
 		transferPixelTo(sourceX, sourceY, dest.bytes, dest.scanSize, dest.hasAlpha, dest.numBands, destX, destY)
 	}
+
 	private fun transferPixelTo(sourceX: Int, sourceY: Int, destBytes: ByteArray, destScanSize: Int, destHasAlpha: Boolean, destNumBands: Int, destX: Int, destY: Int) {
 		var sourceIndex = sourceY * scanSize + sourceX * numBands
 		var destIndex = destY * destScanSize + destX * destNumBands
@@ -152,6 +153,7 @@ class RgbData(
 	fun copySubRgbData(region: Rectangle): RgbData {
 		return copySubRgbData(region.x.toInt(), region.y.toInt(), region.width.toInt(), region.height.toInt())
 	}
+
 	/**
 	 * Creates a new RgbData object with the pixels set to the sub-region specified.
 	 */
@@ -220,7 +222,7 @@ class RgbData(
 	}
 }
 
-fun rgbData(width: Int, height: Int, hasAlpha: Boolean = true, init: RgbData.()->Unit): RgbData {
+fun rgbData(width: Int, height: Int, hasAlpha: Boolean = true, init: RgbData.() -> Unit = {}): RgbData {
 	val r = RgbData(width, height, hasAlpha)
 	r.init()
 	return r
