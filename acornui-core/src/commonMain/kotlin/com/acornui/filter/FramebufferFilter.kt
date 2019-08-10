@@ -63,7 +63,7 @@ class FramebufferFilter(
 	var blendMode = BlendMode.NORMAL
 	var premultipliedAlpha = false
 
-	private val camera = orthographicCamera {
+	private val camera: Camera = orthographicCamera {
 		yDown(false)
 	}
 

@@ -265,7 +265,7 @@ class RenderContext() : RenderContextRo, Clearable {
 /**
  *
  */
-class CustomRenderContext<T : CameraRo>(val camera: T) : RenderContextRo {
+class CustomRenderContext(var camera: CameraRo) : RenderContextRo {
 
 	override val parentContext: RenderContextRo? = null
 
