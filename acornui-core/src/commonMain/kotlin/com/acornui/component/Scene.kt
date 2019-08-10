@@ -29,14 +29,19 @@ import com.acornui.math.*
  *
  * Does not support z translation, rotations, or custom transformations.
  */
-class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
+open class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 
-	private val cam = orthographicCamera(autoCenter = false)
+	var camera: Camera = OrthographicCamera()
+		set(value) {
+			field = value
+			cameraOverride = field
+		}
 
 	init {
 		cameraOverride = cam
 		_naturalRenderContext.modelTransformOverride = Matrix4.IDENTITY
 		_naturalRenderContext.clipRegionOverride = MinMaxRo.POSITIVE_INFINITY
+		validation.addNode(1 shl 16, ValidationFlags.RENDER_CONTEXT or ValidationFlags.LAYOUT, ::updateCanvasTransform)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
@@ -52,9 +57,8 @@ class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	private val region = MinMax()
 	private val canvasTransformOverride = Rectangle()
 
-	override fun updateRenderContext() {
-		super.updateRenderContext()
-		_naturalRenderContext.parentContext.localToCanvas(region.set(x, y, width, height).translate(-originX, -originY))
+	protected open fun updateCanvasTransform() {
+		_naturalRenderContext.parentContext.localToCanvas(region.set(x, y, right, bottom).translate(-originX, -originY))
 		_naturalRenderContext.canvasTransformOverride = canvasTransformOverride.set(
 				region.xMin,
 				region.yMin,
