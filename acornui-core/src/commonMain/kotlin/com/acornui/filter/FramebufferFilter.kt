@@ -16,23 +16,20 @@
 
 package com.acornui.filter
 
-import com.acornui.component.*
 import com.acornui.AppConfig
 import com.acornui.Renderable
+import com.acornui.component.*
 import com.acornui.di.Owned
 import com.acornui.di.inject
 import com.acornui.di.own
-import com.acornui.graphic.*
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.clearAndReset
 import com.acornui.gl.core.resizeableFramebuffer
-import com.acornui.graphic.Color
-import com.acornui.math.BoundsRo
+import com.acornui.graphic.*
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.signal.Signal0
 import com.acornui.signal.bind
-import kotlin.math.ceil
 
 /**
  * Creates a Framebuffer and provides utility to draw a [Renderable] object to it and then draw the frame buffer to the

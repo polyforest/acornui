@@ -20,8 +20,9 @@ package com.acornui.component
 
 import com.acornui.collection.forEach2
 import com.acornui.di.Owned
-import com.acornui.graphic.orthographicCamera
 import com.acornui.gl.core.useViewportFromCanvasTransform
+import com.acornui.graphic.Camera
+import com.acornui.graphic.OrthographicCamera
 import com.acornui.math.*
 
 /**
@@ -38,7 +39,7 @@ open class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		}
 
 	init {
-		cameraOverride = cam
+		cameraOverride = camera
 		_naturalRenderContext.modelTransformOverride = Matrix4.IDENTITY
 		_naturalRenderContext.clipRegionOverride = MinMaxRo.POSITIVE_INFINITY
 		validation.addNode(1 shl 16, ValidationFlags.RENDER_CONTEXT or ValidationFlags.LAYOUT, ::updateCanvasTransform)
@@ -46,8 +47,8 @@ open class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		out.set(explicitWidth ?: window.width, explicitHeight ?: window.height)
-		cam.setViewport(out.width, out.height)
-		cam.moveToLookAtRect(0f, 0f, out.width, out.height)
+		camera.setViewport(out.width, out.height)
+		camera.moveToLookAtRect(0f, 0f, out.width, out.height)
 		elementsToLayout.forEach2 {
 			// Elements of the stage all are explicitly sized to the dimensions of the stage.
 			it.setSize(explicitWidth, explicitHeight)
