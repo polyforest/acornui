@@ -22,9 +22,6 @@ import com.acornui.Disposable
 import com.acornui.di.Injector
 import com.acornui.di.Scoped
 import com.acornui.di.inject
-import com.acornui.graphic.BlendMode
-import com.acornui.graphic.CameraRo
-import com.acornui.graphic.Window
 import com.acornui.gl.core.*
 import com.acornui.graphic.lighting.*
 import com.acornui.math.Matrix4
