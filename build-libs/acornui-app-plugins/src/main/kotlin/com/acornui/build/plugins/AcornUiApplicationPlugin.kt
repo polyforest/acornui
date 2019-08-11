@@ -8,8 +8,10 @@ import com.acornui.build.plugins.util.applicationResourceTasks
 import com.acornui.build.plugins.util.kotlinExt
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.file.CopySpec
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
@@ -37,6 +39,7 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 		project.applicationResourceTasks(platforms, listOf("main"))
 		project.appAssetsWebTasks()
 		project.runJvmTask()
+		project.uberJarTask()
 
 		project.tasks.named<Delete>("clean") {
 			doLast {
@@ -125,6 +128,27 @@ private fun Project.runJvmTask() {
 		)) + if (OperatingSystem.current() == OperatingSystem.MAC_OS) listOf("-XstartOnFirstThread") else emptyList()
 	}
 }
+
+private fun Project.uberJarTask() {
+	tasks.register<Jar>("uberJar") {
+		dependsOn("jvmAssemble")
+		group = "build"
+		archiveBaseName.set("${project.name}-uber")
+		val mainClass = tasks.getByName<JavaExec>("runJvm").main
+		manifest {
+			attributes["Implementation-Version"] = project.version.toString()
+			attributes["Main-Class"] = mainClass
+		}
+		val jvmTarget: KotlinTarget = kotlinExt.targets["jvm"]
+		val compilation = jvmTarget.compilations["main"] as KotlinCompilationToRunnableFiles<KotlinCommonOptions>
+		from({
+			compilation.runtimeDependencyFiles.filter { it.name.endsWith("jar") }.map { zipTree(it) }
+		})
+		from(acornui.appResources.resolve("jvm/allMain"))
+		with(tasks["jvmJar"] as CopySpec)
+	}
+}
+
 
 open class AcornUiApplicationExtension {
 
