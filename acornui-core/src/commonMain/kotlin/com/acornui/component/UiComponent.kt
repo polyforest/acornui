@@ -480,8 +480,7 @@ open class UiComponentImpl(
 	}
 
 	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
-		val bounds = bounds
-		// TODO: make these temp vars
+		val bounds = _bounds // Accessing _bounds instead of bounds to avoid a validation.
 		val topLeft = Vector3.obtain()
 		val topRight = Vector3.obtain()
 		val bottomRight = Vector3.obtain()
