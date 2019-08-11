@@ -48,9 +48,10 @@ abstract class JvmAssetLoaderBase<T>(
 
 	protected fun init() {
 		initialized = true
-		if (path.startsWith("http:", ignoreCase = true) || path.startsWith("https:", ignoreCase = true)) {
+		val resource = this::class.java.classLoader.getResource(path)
+		if (resource != null || path.startsWith("http:", ignoreCase = true) || path.startsWith("https:", ignoreCase = true)) {
 			work = asyncIo {
-				val connection = URL(path).openConnection()
+				val connection = (resource ?: URL(path)).openConnection()
 				_bytesTotal = connection.contentLength
 				create(connection.inputStream).also { _bytesLoaded = bytesTotal }
 			}

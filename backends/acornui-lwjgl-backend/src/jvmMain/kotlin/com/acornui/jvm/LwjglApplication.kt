@@ -176,9 +176,9 @@ open class LwjglApplication : ApplicationBase() {
 	}
 
 	override val filesTask by task(Files) {
-		val manifestFile = File(config().rootPath + config().assetsManifestPath)
-		if (!manifestFile.exists()) throw FileNotFoundException(manifestFile.absolutePath)
-		val manifest = jsonParse(FilesManifest.serializer(), manifestFile.readText())
+		val textLoader = JvmTextLoader(config().rootPath + config().assetsManifestPath, Charsets.UTF_8)
+		val manifestJson = textLoader.await()
+		val manifest = jsonParse(FilesManifest.serializer(), manifestJson)
 		FilesImpl(manifest)
 	}
 
