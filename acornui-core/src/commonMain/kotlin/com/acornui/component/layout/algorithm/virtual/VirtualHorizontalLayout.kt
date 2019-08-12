@@ -25,6 +25,7 @@ import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.di.Owned
 import com.acornui.math.Bounds
+import com.acornui.math.MathUtils
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 
@@ -36,10 +37,11 @@ class VirtualHorizontalLayout : VirtualLayoutAlgorithm<VirtualHorizontalLayoutSt
 	override fun getOffset(width: Float, height: Float, element: LayoutElement, index: Int, lastIndex: Int, isReversed: Boolean, props: VirtualHorizontalLayoutStyle): Float {
 		val padding = props.padding
 		val gap = props.gap
+		val elementW = round(element.width)
 		return if (isReversed) {
-			(width - padding.right - (element.x + element.width)) / maxOf(0.0001f, element.width + gap)
+			(width - padding.right - (element.x + elementW)) / maxOf(0.0001f, elementW + gap)
 		} else {
-			(element.x - padding.bottom) / maxOf(0.0001f, element.width + gap)
+			(element.x - padding.bottom) / maxOf(0.0001f, elementW + gap)
 		}
 	}
 
@@ -57,16 +59,18 @@ class VirtualHorizontalLayout : VirtualLayoutAlgorithm<VirtualHorizontalLayoutSt
 		element.setSize(w, h)
 
 		// Position the element
+		val elementW = round(element.width)
+
 		val x = if (previousElement == null) {
-			val startX = (currentIndex - startIndex) * (element.width + gap)
+			val startX = (currentIndex - startIndex) * (elementW + gap)
 			if (isReversed) {
-				(childAvailableWidth ?: 0f) - padding.right + startX - element.width
+				(childAvailableWidth ?: 0f) - padding.right + startX - elementW
 			} else {
 				padding.left + startX
 			}
 		} else {
 			if (isReversed) {
-				previousElement.x - gap - element.width
+				previousElement.x - gap - elementW
 			} else {
 				previousElement.x + previousElement.width + gap
 			}
@@ -85,6 +89,9 @@ class VirtualHorizontalLayout : VirtualLayoutAlgorithm<VirtualHorizontalLayoutSt
 			}
 		}
 	}
+
+	@Suppress("NOTHING_TO_INLINE")
+	private inline fun round(value: Float) : Float = MathUtils.offsetRound(value)
 
 	override fun measure(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, props: VirtualHorizontalLayoutStyle, out: Bounds) {
 		val padding = props.padding

@@ -76,6 +76,7 @@ interface VirtualLayoutAlgorithm<in S, out T : LayoutData> : LayoutDataProvider<
 			if (b > out.height)
 				out.height = b
 		}
+		out.baseline = out.height
 	}
 
 	/**

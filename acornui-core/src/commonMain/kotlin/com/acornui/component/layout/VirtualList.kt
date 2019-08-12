@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("UNUSED_ANONYMOUS_PARAMETER")
+@file:Suppress("UNUSED_ANONYMOUS_PARAMETER", "ConvertTwoComparisonsToRangeCheck")
 
 package com.acornui.component.layout
 
@@ -270,7 +270,6 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 	val selection: Selection<E> = _selection
 
 	private var observableData: ObservableList<E?>? = null
-
 
 	private fun unwatchWrappedList() {
 		val old = observableData ?: return

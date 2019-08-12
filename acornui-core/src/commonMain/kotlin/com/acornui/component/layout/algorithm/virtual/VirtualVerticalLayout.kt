@@ -25,6 +25,7 @@ import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.di.Owned
 import com.acornui.math.Bounds
+import com.acornui.math.MathUtils
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import kotlin.math.floor
@@ -36,10 +37,11 @@ class VirtualVerticalLayout : VirtualLayoutAlgorithm<VirtualVerticalLayoutStyle,
 	override fun getOffset(width: Float, height: Float, element: LayoutElement, index: Int, lastIndex: Int, isReversed: Boolean, props: VirtualVerticalLayoutStyle): Float {
 		val padding = props.padding
 		val gap = props.gap
+		val elementH = round(element.height)
 		return if (isReversed) {
-			(height - padding.bottom - (element.y + element.height)) / maxOf(0.0001f, element.height + gap)
+			(height - padding.bottom - element.bottom) / maxOf(0.0001f, elementH + gap)
 		} else {
-			(element.y - padding.top) / maxOf(0.0001f, element.height + gap)
+			(element.y - padding.top) / maxOf(0.0001f, elementH + gap)
 		}
 	}
 
@@ -57,18 +59,20 @@ class VirtualVerticalLayout : VirtualLayoutAlgorithm<VirtualVerticalLayoutStyle,
 		element.setSize(w, h)
 
 		// Position the element
+		val elementH = round(element.height)
+
 		val y = if (previousElement == null) {
-			val startY = (currentIndex - startIndex) * (element.height + gap)
+			val startY = (currentIndex - startIndex) * (elementH + gap)
 			if (isReversed) {
-				(childAvailableHeight ?: 0f) - padding.bottom + startY - element.height
+				(childAvailableHeight ?: 0f) - padding.bottom + startY - elementH
 			} else {
 				padding.top + startY
 			}
 		} else {
 			if (isReversed) {
-				previousElement.y - gap - element.height
+				previousElement.y - gap - elementH
 			} else {
-				previousElement.y + previousElement.height + gap
+				previousElement.y + round(previousElement.height) + gap
 			}
 		}
 
@@ -85,6 +89,9 @@ class VirtualVerticalLayout : VirtualLayoutAlgorithm<VirtualVerticalLayoutStyle,
 			}
 		}
 	}
+
+	@Suppress("NOTHING_TO_INLINE")
+	private inline fun round(value: Float) : Float = MathUtils.offsetRound(value)
 
 	override fun measure(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, props: VirtualVerticalLayoutStyle, out: Bounds) {
 		val padding = props.padding
