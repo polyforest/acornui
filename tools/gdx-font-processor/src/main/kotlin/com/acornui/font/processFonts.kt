@@ -10,9 +10,11 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 import com.badlogic.gdx.tools.bmfont.BitmapFontWriter
 import com.badlogic.gdx.utils.Json
 import java.io.File
+import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
 	processFonts(File(args[0]), File(args[1]))
+	exitProcess(0)
 }
 
 /**
