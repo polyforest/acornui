@@ -19,7 +19,6 @@ package com.acornui.serialization
 import com.acornui.collection.stringMapOf
 import com.acornui.io.*
 import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.cbor.Cbor
 
@@ -371,7 +370,7 @@ object BinaryType {
 }
 
 @Deprecated("use kotlinx serialization")
-fun <T> parseBinary(binary: NativeReadByteBuffer, factory: From<T>): T {
+fun <T> binaryParse(binary: NativeReadByteBuffer, factory: From<T>): T {
 	return BinarySerializer.read(binary, factory)
 }
 
@@ -380,12 +379,12 @@ fun <T> toBinary(value: T, factory: To<T>): NativeReadByteBuffer {
 	return BinarySerializer.write(value, factory)
 }
 
-private val cbor = Cbor.plain
+private val cbor = Cbor(context = dataModule)
 
-fun <T> parseBinary(binary: ByteArray, deserializer: DeserializationStrategy<T>): T {
+fun <T> binaryParse(deserializer: DeserializationStrategy<T>, binary: ByteArray): T {
 	return cbor.load(deserializer, binary)
 }
 
-fun <T> toBinary(value: T, serializer: SerializationStrategy<T>): ByteArray {
+fun <T> binaryDump(serializer: SerializationStrategy<T>, value: T): ByteArray {
 	return cbor.dump(serializer, value)
 }
