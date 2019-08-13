@@ -38,6 +38,7 @@ import com.acornui.selection.SelectableComponent
 import com.acornui.selection.SelectionManager
 import com.acornui.selection.SelectionRange
 import com.acornui.math.Bounds
+import com.acornui.substringInRange
 
 interface TextField : SingleElementContainer<TextNode>, Labelable, SelectableComponent, Styleable {
 
@@ -275,7 +276,7 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 			val sel = firstSelection
 			if (sel != null) {
 				val text = this.text
-				val subStr = text.substring(sel.min, sel.max)
+				val subStr = text.substringInRange(sel.min, sel.max)
 				e.addItem(ClipboardItemType.PLAIN_TEXT, subStr)
 			}
 		}
