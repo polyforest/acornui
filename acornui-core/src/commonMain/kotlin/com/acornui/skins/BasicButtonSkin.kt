@@ -101,9 +101,8 @@ fun Owned.basicButtonSkin(
  */
 private class BasicLabelButtonSkin(
 		owner: Owned,
-		val theme: Theme,
-		val texture: ButtonSkin,
-		val padding: PadRo
+		private val texture: ButtonSkin,
+		private val padding: PadRo
 ) : ElementContainerImpl<UiComponent>(owner), ButtonSkin {
 
 	private val textField: TextField = text()
@@ -118,7 +117,8 @@ private class BasicLabelButtonSkin(
 
 	override var buttonState: ButtonState by observableAndCall(ButtonState.UP) { value ->
 		texture.buttonState = value
-		textField.colorTint = if (value == ButtonState.DISABLED) theme.textDisabledColor else Color.WHITE
+		textField.styleTags.clear()
+		textField.styleTags.add(value.styleTag)
 	}
 
 	override var label: String by observableAndCall("") { value ->
@@ -137,14 +137,13 @@ private class BasicLabelButtonSkin(
 	}
 }
 
-fun Owned.basicLabelButtonSkin(theme: Theme, texture: ButtonSkin = basicButtonSkin(theme), padding: PadRo = theme.buttonPad): ButtonSkin = BasicLabelButtonSkin(this, theme, texture, padding)
+fun Owned.basicLabelButtonSkin(theme: Theme, texture: ButtonSkin = basicButtonSkin(theme), padding: PadRo = theme.buttonPad): ButtonSkin = BasicLabelButtonSkin(this, texture, padding)
 
 /**
  * A typical implementation of a skin part for a labelable button state.
  */
 private class BasicCheckboxSkin(
 		owner: Owned,
-		private val theme: Theme,
 		private val box: ButtonSkin
 ) : HorizontalLayoutContainer(owner), ButtonSkin {
 
@@ -160,7 +159,8 @@ private class BasicCheckboxSkin(
 
 	override var buttonState: ButtonState by observableAndCall(ButtonState.UP) { value ->
 		box.buttonState = value
-		textField.colorTint = if (value == ButtonState.DISABLED) theme.textDisabledColor else Color.WHITE
+		textField.styleTags.clear()
+		textField.styleTags.add(value.styleTag)
 	}
 
 	override var label: String by observableAndCall("") { value ->
@@ -210,7 +210,7 @@ private class BasicCheckboxBox(
 }
 
 fun Owned.basicCheckboxSkin(theme: Theme): ButtonSkin {
-	return BasicCheckboxSkin(this, theme, BasicCheckboxBox(
+	return BasicCheckboxSkin(this, BasicCheckboxBox(
 			this,
 			theme,
 			upRegion = "ic_check_box_outline_blank_white_24dp",
@@ -220,7 +220,7 @@ fun Owned.basicCheckboxSkin(theme: Theme): ButtonSkin {
 }
 
 fun Owned.basicRadioButtonSkin(theme: Theme): ButtonSkin {
-	return BasicCheckboxSkin(this, theme, BasicCheckboxBox(
+	return BasicCheckboxSkin(this, BasicCheckboxBox(
 			this,
 			theme,
 			upRegion = "ic_radio_button_unchecked_white_24dp",
@@ -230,7 +230,7 @@ fun Owned.basicRadioButtonSkin(theme: Theme): ButtonSkin {
 }
 
 fun Owned.collapseButtonSkin(theme: Theme): ButtonSkin {
-	return BasicCheckboxSkin(this, theme, BasicCheckboxBox(
+	return BasicCheckboxSkin(this, BasicCheckboxBox(
 			this,
 			theme,
 			upRegion = "ic_chevron_right_white_24dp",

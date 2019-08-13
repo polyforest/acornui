@@ -24,10 +24,12 @@ import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.math.PadSerializer
 import com.acornui.serialization.*
+import kotlinx.serialization.Serializable
 
 /**
  * The Theme is a set of common styling properties, used to build a skin.
  */
+@Serializable
 data class Theme(
 
 		/**
@@ -38,22 +40,20 @@ data class Theme(
 		val bgColor: ColorRo = Color(0xf1f2f3ff),
 		val panelBgColor: ColorRo = Color(0xe7edf1ff),
 
-		val brighten: ColorRo = Color(0x15151500),
-
 		val fill: ColorRo = Color(0xf3f9faff),
-		val fillOver: ColorRo = fill + brighten,
-		val fillDown: ColorRo = fill - brighten,
+		val fillOver: ColorRo = Color(0xffffffff),
+		val fillDown: ColorRo = Color(0xe3e9eaff),
 		val fillToggled: ColorRo = Color(0xedf1faff),
-		val fillToggledOver: ColorRo = fillToggled + brighten,
-		val fillToggledDown: ColorRo = fillToggled - brighten,
+		val fillToggledOver: ColorRo = Color(0xfdffffff),
+		val fillToggledDown: ColorRo = Color(0xdde1eaff),
 		val fillDisabled: ColorRo = Color(0xccccccff),
 
 		val stroke: ColorRo = Color(0x888888ff),
-		val strokeOver: ColorRo = stroke + brighten,
-		val strokeDown: ColorRo = stroke - brighten,
+		val strokeOver: ColorRo = Color(0x989898ff),
+		val strokeDown: ColorRo = Color(0x787878ff),
 		val strokeToggled: ColorRo = Color(0x2287f9cc),
-		val strokeToggledOver: ColorRo = strokeToggled + brighten,
-		val strokeToggledDown: ColorRo = strokeToggled - brighten,
+		val strokeToggledOver: ColorRo = Color(0x3297ffcc),
+		val strokeToggledDown: ColorRo = Color(0x1277e9cc),
 		val strokeDisabled: ColorRo = Color(0x999999ff),
 
 		/**
@@ -85,8 +85,8 @@ data class Theme(
 
 		val controlBarBgColor: ColorRo = Color(0xdae5f0ff),
 
-		val evenRowBgColor: ColorRo = bgColor + Color(0x03030300),
-		val oddRowBgColor: ColorRo = bgColor - Color(0x03030300),
+		val evenRowBgColor: ColorRo = Color(0xffffffff),
+		val oddRowBgColor: ColorRo = Color(0xe1e2e3ff),
 
 		val highlightedEvenRowBgColor: ColorRo = Color(0xfeffd2ff),
 		val highlightedOddRowBgColor: ColorRo = Color(0xfeffd2ff),
@@ -102,13 +102,13 @@ data class Theme(
 		val atlasPath: String = "assets/uiskin/uiskin.json"
 )
 
+@Deprecated("Use kotlinx serialization")
 object ThemeSerializer : To<Theme>, From<Theme> {
 
 	override fun read(reader: Reader): Theme {
 		return Theme(
 				bgColor = reader.color("bgColor")!!,
 				borderRadius = reader.float("borderRadius")!!,
-				brighten = reader.color("brighten")!!,
 				buttonPad = reader.obj("buttonPad", PadSerializer)!!,
 				controlBarBgColor = reader.color("controlBarBgColor")!!,
 				errorColor = reader.color("errorColor")!!,
@@ -153,7 +153,6 @@ object ThemeSerializer : To<Theme>, From<Theme> {
 	override fun Theme.write(writer: Writer) {
 		writer.color("bgColor", bgColor)
 		writer.float("borderRadius", borderRadius)
-		writer.color("brighten", brighten)
 		writer.obj("buttonPad", buttonPad, PadSerializer)
 		writer.color("controlBarBgColor", controlBarBgColor)
 		writer.color("errorColor", errorColor)

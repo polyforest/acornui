@@ -278,7 +278,7 @@ data class Color(
 	 *
 	 * @return this Color for chaining
 	 */
-	fun set(r: Float, g: Float, b: Float, a: Float): Color {
+	fun set(r: Float = this.r, g: Float = this.g, b: Float = this.b, a: Float = this.a): Color {
 		this.r = r
 		this.g = g
 		this.b = b

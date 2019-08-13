@@ -19,10 +19,7 @@
 package com.acornui.component
 
 import com.acornui.component.layout.SizeConstraints
-import com.acornui.component.style.StyleBase
-import com.acornui.component.style.StyleTag
-import com.acornui.component.style.StyleType
-import com.acornui.component.style.disabledTag
+import com.acornui.component.style.*
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
 import com.acornui.di.Owned
@@ -34,6 +31,8 @@ import com.acornui.math.Bounds
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
+import com.acornui.skins.Theme
+import com.acornui.skins.basicButtonSkin
 
 interface ButtonRo : UiComponentRo, LabelableRo, ToggleableRo {
 
@@ -118,7 +117,10 @@ open class ButtonImpl(
 	var indeterminate: Boolean by validationProp(false, ValidationFlags.PROPERTIES)
 
 	protected open fun updateProperties() {
+		val previousState = _currentState
 		_currentState = ButtonState.calculateButtonState(mouseOrTouchState.isOver, mouseOrTouchState.isDown, toggled, indeterminate, disabled)
+		skin?.styleTags?.remove(previousState.styleTag)
+		skin?.styleTags?.add(_currentState.styleTag)
 		skin?.buttonState = _currentState
 		if (skin?.label != label)
 			skin?.label = label
@@ -170,17 +172,18 @@ enum class ButtonState(
 		val isDown: Boolean = false,
 		val isToggled: Boolean = false,
 		val isIndeterminate: Boolean = false,
-		val fallback: ButtonState?
+		val fallback: ButtonState?,
+		val styleTag: StyleTag = styleTag()
 ) {
 	UP(isUp = true, fallback = null),
 	OVER(isOver = true, fallback = UP),
-	DOWN(isDown = true, fallback = OVER),
+	DOWN(isDown = true, isOver = true, fallback = OVER),
 	TOGGLED_UP(isUp = true, isToggled = true, fallback = UP),
 	TOGGLED_OVER(isOver = true, isToggled = true, fallback = TOGGLED_UP),
-	TOGGLED_DOWN(isDown = true, isToggled = true, fallback = TOGGLED_UP),
+	TOGGLED_DOWN(isDown = true, isOver = true, isToggled = true, fallback = TOGGLED_UP),
 	INDETERMINATE_UP(isUp = true, isIndeterminate = true, fallback = UP),
 	INDETERMINATE_OVER(isOver = true, isIndeterminate = true, fallback = INDETERMINATE_UP),
-	INDETERMINATE_DOWN(isDown = true, isIndeterminate = true, fallback = INDETERMINATE_UP),
+	INDETERMINATE_DOWN(isDown = true, isOver = true, isIndeterminate = true, fallback = INDETERMINATE_UP),
 	DISABLED(fallback = UP);
 
 	companion object {
@@ -233,7 +236,7 @@ open class ButtonStyle : StyleBase() {
 
 	override val type: StyleType<ButtonStyle> = ButtonStyle
 
-	var skin by prop<Owned.() -> ButtonSkin> { error("Button skin must be set.") }
+	var skin by prop<Owned.() -> ButtonSkin> { basicButtonSkin(Theme()) }
 
 	companion object : StyleType<ButtonStyle>
 }

@@ -122,6 +122,7 @@ open class BasicUiSkin(
 
 	protected open fun textStyle() {
 		target.addStyleRule(charStyle { colorTint = theme.textColor })
+		target.addStyleRule(charStyle { colorTint = theme.textDisabledColor }, withAncestor(ButtonState.DISABLED.styleTag), priority = 1f)
 		target.addStyleRule(charStyle { colorTint = theme.headingColor }, withAnyAncestor(
 				TextStyleTags.large
 		))
@@ -486,7 +487,7 @@ open class BasicUiSkin(
 			background = {
 				button {
 					focusEnabled = false
-					basicButtonSkin(theme, Corners(32f), Pad(theme.strokeThickness))
+					style.skin = { basicButtonSkin(theme, Corners(32f), Pad(theme.strokeThickness)) }
 				}
 			}
 			colorSwatch = {
