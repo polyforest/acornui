@@ -23,7 +23,6 @@ import com.acornui.component.style.OptionalSkinPart
 import com.acornui.component.style.addStyleRule
 import com.acornui.component.text.charStyle
 import com.acornui.di.Owned
-import com.acornui.graphic.Color
 import com.acornui.math.*
 
 interface SkinPartProvider {
@@ -177,6 +176,7 @@ open class BasicSkinPartProvider : SkinPartProvider {
 			ButtonState.TOGGLED_UP,
 			ButtonState.TOGGLED_OVER -> {
 				+rect {
+					snapToPixel = false
 					style.apply {
 						margin = Pad(top = borderThickness.top, right = borderThickness.right, bottom = 0f, left = borderThickness.left)
 						backgroundColor = if (buttonState.isToggled) theme.fillToggledShine else theme.fillShine
@@ -195,6 +195,7 @@ open class BasicSkinPartProvider : SkinPartProvider {
 			}
 			else -> {
 				+rect {
+					snapToPixel = false
 					style.apply {
 						margin = Pad(top = 0f, right = borderThickness.right, bottom = borderThickness.bottom, left = borderThickness.left)
 						backgroundColor = if (buttonState.isToggled) theme.fillToggledShine else theme.fillShine

@@ -41,25 +41,19 @@ class IconButton(
 
 	/**
 	 * Sets a map of icons to use.
-	 * ButtonState.UP must be set in the map.
+	 * @throws IllegalArgumentException If the map does not contain the key [ButtonState.UP]
 	 */
 	fun iconMap(map: Map<ButtonState, UiComponent>) {
 		if (!map.containsKey(ButtonState.UP)) throw IllegalArgumentException("iconMap must at least set the icon for the UP state.")
-		_element = null
+		element = null
 		_iconMap = map
 		refreshContents()
 	}
 
-	private var _element: UiComponent? = null
-	override var element: UiComponent?
-		get() = _element
-		set(value) {
-			if (value === _element) return
-			_element = value
-			refreshContents()
-		}
+	override var element: UiComponent? by validationProp(null, ValidationFlags.PROPERTIES)
 
-	override fun onCurrentStateChanged(previousState: ButtonState, newState: ButtonState, previousSkinPart: UiComponent?, newSkinPart: UiComponent?) {
+	override fun updateProperties() {
+		super.updateProperties()
 		refreshContents()
 	}
 
@@ -68,17 +62,17 @@ class IconButton(
 	private fun getContents(): UiComponent? {
 		val iconMap = _iconMap
 		if (iconMap != null) {
-			return currentState.backupWalk {
+			return currentState.fallbackWalk {
 				iconMap[it]
 			}
 		}
-		return _element
+		return element
 	}
 
 	private fun refreshContents() {
 		val contents = getContents()
 		@Suppress("UNCHECKED_CAST")
-		val currentContentsContainer = currentSkinPart as? SingleElementContainer<UiComponent>
+		val currentContentsContainer = skin as? SingleElementContainer<UiComponent>
 		if (currentContentsContainer != null && currentContentsContainer.element != contents) {
 			_contentsContainer?.element = null
 			_contentsContainer = currentContentsContainer

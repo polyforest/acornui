@@ -19,7 +19,10 @@
 package com.acornui.component
 
 import com.acornui.component.layout.SizeConstraints
-import com.acornui.component.style.*
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleTag
+import com.acornui.component.style.StyleType
+import com.acornui.component.style.disabledTag
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
 import com.acornui.di.Owned
@@ -27,13 +30,10 @@ import com.acornui.di.own
 import com.acornui.focus.Focusable
 import com.acornui.input.interaction.MouseOrTouchState
 import com.acornui.input.interaction.click
-import com.acornui.factory.LazyInstance
-import com.acornui.factory.disposeInstance
 import com.acornui.math.Bounds
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
-import kotlin.collections.set
 
 interface ButtonRo : UiComponentRo, LabelableRo, ToggleableRo {
 
@@ -69,7 +69,7 @@ open class ButtonImpl(
 	 */
 	var toggleOnClick = false
 
-	private val _stateSkinMap = HashMap<ButtonState, LazyInstance<Owned, UiComponent?>>()
+	protected var skin: ButtonSkin? = null
 
 	init {
 		focusEnabled = true
@@ -83,27 +83,10 @@ open class ButtonImpl(
 		}
 		cursor(StandardCursors.HAND)
 
-		val oldInstances = ArrayList<LazyInstance<Owned, UiComponent?>>()
 		watch(style) {
-			oldInstances.addAll(_stateSkinMap.values)
-			_stateSkinMap[ButtonState.UP] = LazyInstance(this, it.upState)
-			_stateSkinMap[ButtonState.OVER] = LazyInstance(this, it.overState)
-			_stateSkinMap[ButtonState.DOWN] = LazyInstance(this, it.downState)
-			_stateSkinMap[ButtonState.TOGGLED_UP] = LazyInstance(this, it.toggledUpState)
-			_stateSkinMap[ButtonState.TOGGLED_OVER] = LazyInstance(this, it.toggledOverState)
-			_stateSkinMap[ButtonState.TOGGLED_DOWN] = LazyInstance(this, it.toggledDownState)
-			_stateSkinMap[ButtonState.INDETERMINATE_UP] = LazyInstance(this, it.indeterminateUpState)
-			_stateSkinMap[ButtonState.INDETERMINATE_OVER] = LazyInstance(this, it.indeterminateOverState)
-			_stateSkinMap[ButtonState.INDETERMINATE_DOWN] = LazyInstance(this, it.indeterminateDownState)
-			_stateSkinMap[ButtonState.DISABLED] = LazyInstance(this, it.disabledState)
-			// Dispose the old state instances after we refresh state so that onCurrentStateChanged overrides have a
-			// chance to transfer content children if necessary.
-			for (i in 0..oldInstances.lastIndex) {
-				oldInstances[i].disposeInstance()
-			}
-			oldInstances.clear()
+			skin?.dispose()
+			skin = addChild(it.skin(this))
 		}
-
 		validation.addNode(ValidationFlags.PROPERTIES, dependencies = ValidationFlags.STYLES, dependents = ValidationFlags.SIZE_CONSTRAINTS, onValidate = ::updateProperties)
 	}
 
@@ -135,42 +118,18 @@ open class ButtonImpl(
 	var indeterminate: Boolean by validationProp(false, ValidationFlags.PROPERTIES)
 
 	protected open fun updateProperties() {
-		currentState(calculateButtonState())
+		_currentState = ButtonState.calculateButtonState(mouseOrTouchState.isOver, mouseOrTouchState.isDown, toggled, indeterminate, disabled)
+		skin?.buttonState = _currentState
+		if (skin?.label != label)
+			skin?.label = label
 	}
 
-	protected open fun calculateButtonState(): ButtonState =
-			ButtonState.calculateButtonState(mouseOrTouchState.isOver, mouseOrTouchState.isDown, toggled, indeterminate, disabled)
-
-	protected var currentSkinPart: UiComponent? = null
-		private set
-
-	var currentState: ButtonState = ButtonState.UP
+	private var _currentState = ButtonState.UP
+	val currentState: ButtonState
 		get() {
 			validate(ValidationFlags.PROPERTIES)
-			return field
+			return _currentState
 		}
-		private set
-
-	protected open fun currentState(newState: ButtonState) {
-		if (isDisposed) return
-		val previousState = currentState
-		currentState = newState
-		val newSkinPart = newState.backupWalk { state ->
-			_stateSkinMap[state]?.instance
-		}
-		val previousSkinPart = currentSkinPart
-		if (previousSkinPart == newSkinPart) return
-		currentSkinPart = newSkinPart
-		if (newSkinPart is Labelable) {
-			newSkinPart.label = label
-		}
-		onCurrentStateChanged(previousState, newState, previousSkinPart, newSkinPart)
-		if (newSkinPart != null) addChild(newSkinPart)
-		removeChild(previousSkinPart)
-	}
-
-	protected open fun onCurrentStateChanged(previousState: ButtonState, newState: ButtonState, previousSkinPart: UiComponent?, newSkinPart: UiComponent?) {
-	}
 
 	/**
 	 * Sets the label of this button. It is up to the skin to implement [Labelable] and use this label.
@@ -179,20 +138,20 @@ open class ButtonImpl(
 		set(value) {
 			if (field != value) {
 				field = value
-				(currentSkinPart as? Labelable)?.label = (value)
+				skin?.label = value
 				invalidateSize()
 			}
 		}
 
 	override fun updateSizeConstraints(out: SizeConstraints) {
-		if (currentSkinPart == null) return
-		out.set(currentSkinPart!!.sizeConstraints)
+		if (skin == null) return
+		out.set(skin!!.sizeConstraints)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		if (currentSkinPart != null) {
-			currentSkinPart!!.setSize(explicitWidth, explicitHeight)
-			out.set(currentSkinPart!!.bounds)
+		if (skin != null) {
+			skin!!.setSize(explicitWidth, explicitHeight)
+			out.set(skin!!.bounds)
 		}
 	}
 
@@ -211,18 +170,18 @@ enum class ButtonState(
 		val isDown: Boolean = false,
 		val isToggled: Boolean = false,
 		val isIndeterminate: Boolean = false,
-		val backup: ButtonState?
+		val fallback: ButtonState?
 ) {
-	UP(isUp = true, backup = null),
-	OVER(isOver = true, backup = UP),
-	DOWN(isDown = true, backup = OVER),
-	TOGGLED_UP(isUp = true, isToggled = true, backup = UP),
-	TOGGLED_OVER(isOver = true, isToggled = true, backup = TOGGLED_UP),
-	TOGGLED_DOWN(isDown = true, isToggled = true, backup = TOGGLED_UP),
-	INDETERMINATE_UP(isUp = true, isIndeterminate = true, backup = UP),
-	INDETERMINATE_OVER(isOver = true, isIndeterminate = true, backup = INDETERMINATE_UP),
-	INDETERMINATE_DOWN(isDown = true, isIndeterminate = true, backup = INDETERMINATE_UP),
-	DISABLED(backup = UP);
+	UP(isUp = true, fallback = null),
+	OVER(isOver = true, fallback = UP),
+	DOWN(isDown = true, fallback = OVER),
+	TOGGLED_UP(isUp = true, isToggled = true, fallback = UP),
+	TOGGLED_OVER(isOver = true, isToggled = true, fallback = TOGGLED_UP),
+	TOGGLED_DOWN(isDown = true, isToggled = true, fallback = TOGGLED_UP),
+	INDETERMINATE_UP(isUp = true, isIndeterminate = true, fallback = UP),
+	INDETERMINATE_OVER(isOver = true, isIndeterminate = true, fallback = INDETERMINATE_UP),
+	INDETERMINATE_DOWN(isDown = true, isIndeterminate = true, fallback = INDETERMINATE_UP),
+	DISABLED(fallback = UP);
 
 	companion object {
 		fun calculateButtonState(isOver: Boolean = false, isDown: Boolean = false, toggled: Boolean = false, indeterminate: Boolean = false, disabled: Boolean = false): ButtonState {
@@ -255,12 +214,17 @@ enum class ButtonState(
 	}
 }
 
-fun <T : Any> ButtonState.backupWalk(block: (ButtonState) -> T?): T? {
+/**
+ * All button states except for [ButtonState.UP] have a fallback in case they aren't handled.
+ * This method will find the first button state where [block] does not return null.
+ * @return Returns the first state where [block] returned a non-null value, or null if no return value was non-null.
+ */
+fun <T : Any> ButtonState.fallbackWalk(block: (ButtonState) -> T?): T? {
 	var curr: ButtonState? = this
 	while (curr != null) {
 		val result = block(curr)
 		if (result != null) return result
-		curr = curr.backup
+		curr = curr.fallback
 	}
 	return null
 }
@@ -269,34 +233,9 @@ open class ButtonStyle : StyleBase() {
 
 	override val type: StyleType<ButtonStyle> = ButtonStyle
 
-	var upState by prop(noSkin)
-	var overState by prop(noSkinOptional)
-	var downState by prop(noSkinOptional)
-	var toggledUpState by prop(noSkinOptional)
-	var toggledOverState by prop(noSkinOptional)
-	var toggledDownState by prop(noSkinOptional)
-	var indeterminateUpState by prop(noSkinOptional)
-	var indeterminateOverState by prop(noSkinOptional)
-	var indeterminateDownState by prop(noSkinOptional)
-
-	var disabledState by prop(noSkinOptional)
+	var skin by prop<Owned.() -> ButtonSkin> { error("Button skin must be set.") }
 
 	companion object : StyleType<ButtonStyle>
-}
-
-fun ButtonStyle.set(skinPartFactory: (ButtonState) -> OptionalSkinPart): ButtonStyle {
-	@Suppress("UNCHECKED_CAST")
-	upState = skinPartFactory(ButtonState.UP) as SkinPart
-	overState = skinPartFactory(ButtonState.OVER)
-	downState = skinPartFactory(ButtonState.DOWN)
-	toggledUpState = skinPartFactory(ButtonState.TOGGLED_UP)
-	toggledOverState = skinPartFactory(ButtonState.TOGGLED_OVER)
-	toggledDownState = skinPartFactory(ButtonState.TOGGLED_DOWN)
-	indeterminateUpState = skinPartFactory(ButtonState.INDETERMINATE_UP)
-	indeterminateOverState = skinPartFactory(ButtonState.INDETERMINATE_OVER)
-	indeterminateDownState = skinPartFactory(ButtonState.INDETERMINATE_DOWN)
-	disabledState = skinPartFactory(ButtonState.DISABLED)
-	return this
 }
 
 interface LabelableRo : UiComponentRo {
@@ -317,6 +256,12 @@ interface ToggleableRo : UiComponentRo {
 
 interface Toggleable : ToggleableRo, UiComponent {
 	override var toggled: Boolean
+}
+
+interface ButtonSkin : Labelable {
+
+	var buttonState: ButtonState
+
 }
 
 fun Owned.button(init: ComponentInit<ButtonImpl> = {}): ButtonImpl {
