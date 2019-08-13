@@ -50,20 +50,19 @@ import com.acornui.math.*
 
 open class BasicUiSkin(
 		protected val target: UiComponent,
-		protected val theme: Theme,
-		private val skinPartProvider: SkinPartProvider = BasicSkinPartProvider()
-) : Scoped, SkinPartProvider by skinPartProvider {
+		protected val theme: Theme = Theme()
+) : Scoped {
 
 	final override val injector = target.injector
 
 	open fun apply() {
 		target.styleRules.clear()
 
-		target.addStyleRule(ButtonStyle().set { labelButtonSkin(theme, it) }, ButtonImpl)
-		target.addStyleRule(ButtonStyle().set { checkboxSkin(theme, it) }, CheckboxImpl)
-		target.addStyleRule(ButtonStyle().set { collapseButtonSkin(theme, it) }, CollapseButton)
-		target.addStyleRule(ButtonStyle().set { radioButtonSkin(theme, it) }, RadioButtonImpl)
-		target.addStyleRule(ButtonStyle().set { iconButtonSkin(theme, it) }, IconButton)
+		target.addStyleRule(buttonStyle { basicLabelButtonSkin(theme) }, ButtonImpl)
+		target.addStyleRule(buttonStyle { basicCheckboxSkin(theme) }, CheckboxImpl)
+		target.addStyleRule(buttonStyle { collapseButtonSkin(theme) }, CollapseButton)
+		target.addStyleRule(buttonStyle { basicRadioButtonSkin(theme) }, RadioButtonImpl)
+		target.addStyleRule(buttonStyle { basicIconButtonSkin(theme) }, IconButton)
 
 		stageStyle()
 		iconStyle()
@@ -290,9 +289,7 @@ open class BasicUiSkin(
 		}
 		target.addStyleRule(tabNavStyle, TabNavigator)
 
-		target.addStyleRule(ButtonStyle().set { tabButtonSkin(theme, it) }, TabNavigator.DEFAULT_TAB_STYLE)
-		target.addStyleRule(ButtonStyle().set { tabButtonSkin(theme, it) }, TabNavigator.DEFAULT_TAB_STYLE_FIRST)
-		target.addStyleRule(ButtonStyle().set { tabButtonSkin(theme, it) }, TabNavigator.DEFAULT_TAB_STYLE_LAST)
+		target.addStyleRule(buttonStyle { basicTabSkin(theme) }, TabNavigator.DEFAULT_TAB_STYLE)
 	}
 
 	protected open fun dividerStyle() {
@@ -324,28 +321,25 @@ open class BasicUiSkin(
 	protected open fun numericStepperStyle() {
 		val stepperPad = Pad(4f)
 		stepperPad.right = 5f
-		target.addStyleRule(ButtonStyle().set {
-			{
-				val texture = buttonTexture(theme, it, Corners(topLeft = 0f, topRight = maxOf(4f, theme.borderRadius), bottomRight = 0f, bottomLeft = 0f))
-				val skinPart = IconButtonSkinPart(this, texture, stepperPad)
-				val theme = theme
-				skinPart.element = atlas(theme.atlasPath, "ArrowUpSm") {
-					colorTint = theme.iconColor
-				}
-				skinPart
+
+		target.addStyleRule(buttonStyle {
+			val texture = basicButtonSkin(theme, Corners(topLeft = 0f, topRight = maxOf(4f, theme.borderRadius), bottomRight = 0f, bottomLeft = 0f))
+			val skinPart = basicIconButtonSkin(texture, stepperPad)
+			val theme = theme
+			skinPart.element = atlas(theme.atlasPath, "ArrowUpSm") {
+				colorTint = theme.iconColor
 			}
+			skinPart
 		}, NumericStepper.STEP_UP_STYLE)
 
-		target.addStyleRule(ButtonStyle().set {
-			{
-				val texture = buttonTexture(theme, it, Corners(topLeft = 0f, topRight = 0f, bottomRight = maxOf(4f, theme.borderRadius), bottomLeft = 0f))
-				val skinPart = IconButtonSkinPart(this, texture, stepperPad)
-				val theme = theme
-				skinPart.element = atlas(theme.atlasPath, "ArrowDownSm") {
-					colorTint = theme.iconColor
-				}
-				skinPart
+		target.addStyleRule(buttonStyle {
+			val texture = basicButtonSkin(theme, Corners(topLeft = 0f, topRight = 0f, bottomRight = maxOf(4f, theme.borderRadius), bottomLeft = 0f))
+			val skinPart = basicIconButtonSkin(texture, stepperPad)
+			val theme = theme
+			skinPart.element = atlas(theme.atlasPath, "ArrowDownSm") {
+				colorTint = theme.iconColor
 			}
+			skinPart
 		}, NumericStepper.STEP_DOWN_STYLE)
 	}
 
@@ -492,7 +486,7 @@ open class BasicUiSkin(
 			background = {
 				button {
 					focusEnabled = false
-					style.set { { buttonTexture(theme, it) } }
+					basicButtonSkin(theme, Corners(32f), Pad(theme.strokeThickness))
 				}
 			}
 			colorSwatch = {
@@ -607,9 +601,7 @@ open class BasicUiSkin(
 			}
 			headerCellBackground = {
 				button {
-					style.set { buttonState ->
-						{ buttonTexture(theme, buttonState, Corners(0f), Pad(0f)) }
-					}
+					style.skin = { basicButtonSkin(theme, Corners(0f), Pad(0f)) }
 				}
 			}
 		}

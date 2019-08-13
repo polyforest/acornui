@@ -105,8 +105,7 @@ fun Owned.iconButton(atlasPath: String, region: String, init: ComponentInit<Icon
 
 fun Owned.iconButton(atlasPath: String, regions: Map<ButtonState, String>, init: ComponentInit<IconButton> = {}): IconButton {
 	val b = IconButton(this)
-	b.iconMap(regions.mapTo {
-		key, value ->
+	b.iconMap(regions.mapTo { key, value ->
 		key to atlas(atlasPath, value)
 	})
 	b.init()
@@ -117,6 +116,7 @@ fun Owned.iconButton(atlasPath: String, regions: Map<ButtonState, String>, init:
 /**
  * A typical implementation of a skin part for an icon button state.
  */
+@Deprecated("Use IconButtonSkin")
 open class IconButtonSkinPart(
 		owner: Owned,
 		private val texture: UiComponent,

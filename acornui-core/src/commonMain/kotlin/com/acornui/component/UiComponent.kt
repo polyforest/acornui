@@ -1062,7 +1062,7 @@ open class UiComponentImpl(
 	 * Validates the specified flags for this component.
 	 *
 	 * @param flags A bit mask for which flags to validate. (Use -1 to validate all)
-	 * Example: validate(ValidationFlags.LAYOUT or ValidationFlags.PROPERTIES) to validate both layout an properties.
+	 * Example: validate(ValidationFlags.LAYOUT or ValidationFlags.PROPERTIES) to validate both layout and properties.
 	 */
 	override fun validate(flags: Int) {
 		if (isDisposed) return

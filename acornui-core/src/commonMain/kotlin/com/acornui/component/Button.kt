@@ -238,6 +238,12 @@ open class ButtonStyle : StyleBase() {
 	companion object : StyleType<ButtonStyle>
 }
 
+fun buttonStyle(skinProvider: Owned.() -> ButtonSkin) : ButtonStyle {
+	return ButtonStyle().apply {
+		skin = skinProvider
+	}
+}
+
 interface LabelableRo : UiComponentRo {
 	val label: String
 }
