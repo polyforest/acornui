@@ -171,20 +171,34 @@ enum class ButtonState(
 		val isOver: Boolean = false,
 		val isDown: Boolean = false,
 		val isToggled: Boolean = false,
-		val isIndeterminate: Boolean = false,
-		val fallback: ButtonState?,
-		val styleTag: StyleTag = styleTag()
+		val isIndeterminate: Boolean = false
 ) {
-	UP(isUp = true, fallback = null),
-	OVER(isOver = true, fallback = UP),
-	DOWN(isDown = true, isOver = true, fallback = OVER),
-	TOGGLED_UP(isUp = true, isToggled = true, fallback = UP),
-	TOGGLED_OVER(isOver = true, isToggled = true, fallback = TOGGLED_UP),
-	TOGGLED_DOWN(isDown = true, isOver = true, isToggled = true, fallback = TOGGLED_UP),
-	INDETERMINATE_UP(isUp = true, isIndeterminate = true, fallback = UP),
-	INDETERMINATE_OVER(isOver = true, isIndeterminate = true, fallback = INDETERMINATE_UP),
-	INDETERMINATE_DOWN(isDown = true, isOver = true, isIndeterminate = true, fallback = INDETERMINATE_UP),
-	DISABLED(fallback = UP);
+	UP(isUp = true),
+	OVER(isOver = true),
+	DOWN(isOver = true, isDown = true),
+	TOGGLED_UP(isUp = true, isToggled = true),
+	TOGGLED_OVER(isOver = true, isToggled = true),
+	TOGGLED_DOWN(isOver = true, isDown = true, isToggled = true),
+	INDETERMINATE_UP(isUp = true, isIndeterminate = true),
+	INDETERMINATE_OVER(isOver = true, isIndeterminate = true),
+	INDETERMINATE_DOWN(isOver = true, isDown = true, isIndeterminate = true),
+	DISABLED();
+
+	val styleTag: StyleTag = styleTag()
+
+	val fallback: ButtonState?
+		get() = when (this) {
+			UP -> null
+			OVER -> UP
+			DOWN -> OVER
+			TOGGLED_UP -> UP
+			TOGGLED_OVER -> TOGGLED_UP
+			TOGGLED_DOWN -> TOGGLED_UP
+			INDETERMINATE_UP -> UP
+			INDETERMINATE_OVER -> INDETERMINATE_UP
+			INDETERMINATE_DOWN -> INDETERMINATE_UP
+			DISABLED -> UP
+		}
 
 	companion object {
 		fun calculateButtonState(isOver: Boolean = false, isDown: Boolean = false, toggled: Boolean = false, indeterminate: Boolean = false, disabled: Boolean = false): ButtonState {
@@ -241,7 +255,7 @@ open class ButtonStyle : StyleBase() {
 	companion object : StyleType<ButtonStyle>
 }
 
-fun buttonStyle(skinProvider: Owned.() -> ButtonSkin) : ButtonStyle {
+fun buttonStyle(skinProvider: Owned.() -> ButtonSkin): ButtonStyle {
 	return ButtonStyle().apply {
 		skin = skinProvider
 	}
