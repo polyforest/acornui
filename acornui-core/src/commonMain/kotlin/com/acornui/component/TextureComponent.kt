@@ -37,6 +37,13 @@ open class TextureComponent(owner: Owned) : RenderableComponent<Sprite>(owner) {
 
 	override val renderable: Sprite = Sprite(glState)
 
+	/**
+	 * Sets the dpi scaling on the Sprite.
+	 */
+	fun setSpriteScaling(scaleX: Float, scaleY: Float) {
+		renderable.setScaling(scaleX, scaleY)
+	}
+
 	val naturalWidth: Float
 		get() = renderable.naturalWidth
 

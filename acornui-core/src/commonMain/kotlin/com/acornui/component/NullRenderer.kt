@@ -74,7 +74,7 @@ class NullRendererStyle : StyleBase() {
 
 	var padding by prop(Pad())
 
-	var contents by prop<SkinPart>({ spacer(15f, 15f) })
+	var contents by prop<SkinPart> { spacer(15f, 15f) }
 
 	companion object : StyleType<NullRendererStyle>
 }
